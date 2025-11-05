@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Radio } from "../src/ui/form/radio";
+import { Radio } from "../ui/form/radio";
 
 const meta: Meta<typeof Radio> = {
     title: "Components/Form/Radio",

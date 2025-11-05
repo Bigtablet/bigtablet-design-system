@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TextField } from "../src/ui/form/textfield";
+import { TextField } from "../ui/form/textfield";
 import { Search, Mail, Eye } from "lucide-react";
 
 const meta: Meta<typeof TextField> = {

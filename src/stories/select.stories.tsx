@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Select, type SelectOption } from "../src/ui/general/select";
+import { Select, type SelectOption } from "../ui/general/select";
 
 const options: SelectOption[] = [
     { value: "apple", label: "Apple" },
