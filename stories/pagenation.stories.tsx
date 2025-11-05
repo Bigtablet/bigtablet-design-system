@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Pagination } from "../src/ui/pagenation";
+import { Pagination } from "../src/ui/pagination";
 
 const meta: Meta<typeof Pagination> = {
     title: "Components/Navigation/Pagination",
@@ -21,7 +21,15 @@ const meta: Meta<typeof Pagination> = {
     }
 };
 export default meta;
+
 type Story = StoryObj<typeof Pagination>;
+
+export const Basic: Story = {
+    render: (args) => {
+        const [page, setPage] = useState(1);
+        return <Pagination {...args} page={page} onChange={setPage} />;
+    }
+};
 
 export const Controlled: Story = {
     render: (args) => {
