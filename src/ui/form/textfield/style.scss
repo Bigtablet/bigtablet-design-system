@@ -1,5 +1,5 @@
-@use 'src/styles/variables' as *;
-@use './mixin' as *;
+@use "src/styles/variables" as *;
+@use 'mixin' as *;
 
 .tf {
   &__label   { @include tf-label; }

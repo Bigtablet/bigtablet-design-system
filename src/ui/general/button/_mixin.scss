@@ -1,6 +1,6 @@
-@use 'src/styles/variables' as *;
-@use 'src/styles/typography' as *;
-@use 'src/styles/flex' as *;
+@use "src/styles/variables" as *;
+@use "src/styles/typography" as *;
+@use "src/styles/flex" as *;
 
 @mixin button-base {
   @include flex-center;

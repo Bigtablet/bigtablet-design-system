@@ -1,6 +1,6 @@
-@use 'src/styles/variables' as *;
-@use 'src/styles/typography' as *;
-@use './_mixin' as *;
+@use "src/styles/variables" as *;
+@use "src/styles/typography" as *;
+@use 'mixin' as *;
 
 .select {
   @include sel-base;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Sidebar } from "../src/ui/sidebar";
+import { Sidebar } from "../src/ui/navigation/sidebar";
 import {Folder, Home, Settings} from "lucide-react";
 
 const meta: Meta<typeof Sidebar> = {

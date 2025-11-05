@@ -1,6 +1,6 @@
-@use 'src/styles/variables' as *;
-@use 'src/styles/typography' as *;
-@use 'src/styles/flex' as *;
+@use '../../../styles/variables' as *;
+@use '../../../styles/typography' as *;
+@use '../../../styles/flex' as *;
 
 /* Label & Helper */
 @mixin tf-label {
