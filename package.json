@@ -1,7 +1,7 @@
 {
-  "name": "bigtablet-design-system",
+  "name": "@bigtablet/design-system",
   "version": "0.1.0",
-  "description": "Bigtablet Design System - reusable UI components",
+  "description": "Bigtablet Design System UI Components",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -17,11 +17,16 @@
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": [
+    "**/*.scss",
+    "**/*.css"
+  ],
   "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
     "build:sb": "storybook build",
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts --watch",
+    "prepublishOnly": "pnpm run build",
     "test": "echo \"no tests yet\""
   },
   "keywords": [
@@ -34,8 +39,10 @@
   "license": "MIT",
   "packageManager": "pnpm@10.20.0",
   "peerDependencies": {
+    "lucide-react": ">=0.552.0",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-toastify": ">=11.0.5"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "8.6.14",
@@ -44,17 +51,18 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild-sass-plugin": "^3",
+    "lucide-react": "^0.552.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-toastify": "^11.0.5",
     "sass-embedded": "^1.93.3",
     "storybook": "8.6.14",
     "tsup": "^8.5.0",
     "typescript": "^5",
     "vite": "^5"
   },
-  "dependencies": {
-    "lucide-react": "^0.552.0",
-    "react-toastify": "^11.0.5",
-    "scss": "^0.2.4"
+  "publishConfig": {
+    "access": "public"
   }
 }
