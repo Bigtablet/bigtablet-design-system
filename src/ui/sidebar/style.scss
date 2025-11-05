@@ -1,0 +1,67 @@
+@use "src/styles/variables" as *;
+@use "src/styles/typography" as *;
+
+.sidebar {
+  height: 100%;
+  background: $color-background;
+  border-right: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+
+  &__toggle {
+    align-self: flex-end;
+    width: 24px;
+    height: 24px;
+    border-radius: $radius-sm;
+    border: 1px solid $color-border;
+    background: $color-background;
+  }
+
+  &__nav {
+    display: grid;
+    gap: $spacing-xs;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+    border-radius: $radius-md;
+    color: $color-text-primary;
+    background: transparent;
+    border: 1px solid transparent;
+    @include text-base;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: $color-background-secondary;
+    }
+
+    &.is-active {
+      background: mix($color-primary, $color-background, 90%);
+      border-color: mix($color-primary, $color-background, 70%);
+      color: $color-background;
+
+      .sidebar__icon {
+        color: $color-background;
+      }
+    }
+  }
+
+  &__icon {
+    display: inline-grid;
+    place-items: center;
+    color: $color-text-secondary;
+    transition: color 0.2s ease;
+  }
+
+  &.is-collapsed .sidebar__item {
+    grid-template-columns: 1fr;
+    place-items: center;
+  }
+}
