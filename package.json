@@ -53,6 +53,7 @@
     "vite": "^5"
   },
   "dependencies": {
+    "lucide-react": "^0.552.0",
     "scss": "^0.2.4"
   }
 }
