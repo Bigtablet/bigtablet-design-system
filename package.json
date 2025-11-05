@@ -1,0 +1,57 @@
+{
+  "name": "bigtablet-design-system",
+  "version": "0.1.0",
+  "description": "Bigtablet Design System - reusable UI components",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build:sb": "storybook build",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --watch",
+    "test": "echo \"no tests yet\""
+  },
+  "keywords": [
+    "design-system",
+    "react",
+    "storybook",
+    "ui"
+  ],
+  "author": "sangmin",
+  "license": "MIT",
+  "packageManager": "pnpm@10.20.0",
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "8.6.14",
+    "@storybook/react": "8.6.14",
+    "@storybook/react-vite": "8.6.14",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "storybook": "8.6.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5",
+    "vite": "^5"
+  },
+  "dependencies": {
+    "scss": "^0.2.4"
+  }
+}
