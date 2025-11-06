@@ -1,4 +1,4 @@
-name: Release with Pnpm
+name: Release with semantic-release
 
 on:
   push:
@@ -24,23 +24,22 @@ jobs:
           node-version: 22.14.0
           cache: pnpm
           registry-url: https://registry.npmjs.org
-          always-auth: true
           scope: '@bigtablet'
+          always-auth: true
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
       - name: Configure npm auth
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm whoami || true
-        env:
-          NPM_TOKEN: ${{ secrets.PNPM_TOKEN }}
+          npm whoami
 
-      - name: Release (semantic-release)
+      - name: Release
         env:
-          NPM_TOKEN: ${{ secrets.PNPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.PNPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
