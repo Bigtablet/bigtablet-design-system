@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.0.1...v1.1.0) (2025-11-06)
+
+
+### Features
+
+* sidebar next routing ([a2be98b](https://github.com/Bigtablet/bigtablet-design-system/commit/a2be98b0a09d2afefa5a4267d48d4f0bc78bdd7a))
+
 ## [1.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.0.0...v1.0.1) (2025-11-06)
 
 
