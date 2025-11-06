@@ -1,33 +1,25 @@
-name: Deploy Storybook
+name: Chromatic
 
 on:
+  pull_request:
   push:
     branches: [ main ]
 
 jobs:
-  build-deploy:
+  upload:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
       - name: Install
         run: pnpm install --frozen-lockfile
-
-      - name: Build Storybook
-        run: pnpm run build:sb -- --storybook-base-url "/bigtablet-design-system/"
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./storybook-static
-          publish_branch: gh-pages
+      - name: Publish Storybook to Chromatic
+        run: pnpm dlx chromatic --build-script-name=build:sb --only-changed --exit-once-uploaded
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}

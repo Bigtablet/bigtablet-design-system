@@ -27,7 +27,8 @@
     "storybook": "storybook dev -p 6006",
     "build:sb": "storybook build",
     "prepublishOnly": "pnpm run build",
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "chromatic": "npx chromatic --project-token=chpt_2f758912f0dde5c --build-script-name=build:sb"
   },
   "keywords": [
     "design-system",
@@ -51,6 +52,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "chromatic": "^13.3.3",
     "esbuild-sass-plugin": "^3",
     "gh-pages": "^6.3.0",
     "lucide-react": "^0.552.0",
