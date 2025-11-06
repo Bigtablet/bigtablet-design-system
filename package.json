@@ -1,6 +1,6 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
   "main": "dist/index.cjs",
