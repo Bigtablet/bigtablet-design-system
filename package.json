@@ -48,6 +48,11 @@
     "react-toastify": ">=11.0.5"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.1",
+    "@semantic-release/npm": "^13.1.1",
     "@storybook/addon-essentials": "8.6.14",
     "@storybook/react": "8.6.14",
     "@storybook/react-vite": "8.6.14",
@@ -62,6 +67,7 @@
     "react-dom": "19.2.0",
     "react-toastify": "^11.0.5",
     "sass-embedded": "^1.93.3",
+    "semantic-release": "^25.0.1",
     "storybook": "8.6.14",
     "tsup": "^8.5.0",
     "typescript": "^5",
