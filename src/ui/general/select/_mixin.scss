@@ -1,5 +1,6 @@
-@use '../../../styles/variables' as *;
-@use '../../../styles/typography' as *;
+@use 'src/styles/variables' as *;
+@use 'src/styles/typography' as *;
+@use "sass:color";
 
 @mixin sel-base {
   position: relative;
@@ -43,7 +44,7 @@
   @include sel-control-base;
   background: $color-background-secondary;
   border: 1px solid transparent;
-  &:hover:not(.is-disabled) { background: mix($color-background, $color-background-secondary, 70%); }
+  &:hover:not(.is-disabled) { background: color.mix($color-background, $color-background-secondary, 70%); }
   &.is-open { background: $color-background; border-color: $color-primary; box-shadow: 0 0 0 3px rgba($color-primary, .15); }
 }
 

@@ -1,5 +1,6 @@
 @use "src/styles/variables" as *;
 @use "src/styles/typography" as *;
+@use "sass:color";
 
 .alert {
   position: relative;
@@ -64,26 +65,26 @@
   }
 
   &--info {
-    background: mix($color-info, $color-background, 6%);
-    border-color: mix($color-info, $color-background, 28%);
+    background: color.mix($color-info, $color-background, 6%);
+    border-color: color.mix($color-info, $color-background, 28%);
     &::before { background: $color-info; }
     .alert__icon { color: $color-info; }
   }
   &--success {
-    background: mix($color-success, $color-background, 6%);
-    border-color: mix($color-success, $color-background, 28%);
+    background: color.mix($color-success, $color-background, 6%);
+    border-color: color.mix($color-success, $color-background, 28%);
     &::before { background: $color-success; }
     .alert__icon { color: $color-success; }
   }
   &--warning {
-    background: mix($color-warning, $color-background, 8%);
-    border-color: mix($color-warning, $color-background, 32%);
+    background: color.mix($color-warning, $color-background, 8%);
+    border-color: color.mix($color-warning, $color-background, 32%);
     &::before { background: $color-warning; }
     .alert__icon { color: $color-warning; }
   }
   &--error {
-    background: mix($color-error, $color-background, 6%);
-    border-color: mix($color-error, $color-background, 28%);
+    background: color.mix($color-error, $color-background, 6%);
+    border-color: color.mix($color-error, $color-background, 28%);
     &::before { background: $color-error; }
     .alert__icon { color: $color-error; }
   }

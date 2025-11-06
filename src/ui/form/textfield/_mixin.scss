@@ -1,6 +1,7 @@
-@use '../../../styles/variables' as *;
-@use '../../../styles/typography' as *;
-@use '../../../styles/flex' as *;
+@use 'src/styles/variables' as *;
+@use 'src/styles/typography' as *;
+@use 'src/styles/flex' as *;
+@use "sass:color";
 
 /* Label & Helper */
 @mixin tf-label {
@@ -38,7 +39,7 @@
   @include tf-input-base;
   background: $color-background-secondary;
   border: 1px solid transparent;
-  &:hover:not(:disabled) { background: mix($color-background, $color-background-secondary, 70%); }
+  &:hover:not(:disabled) { background: color.mix($color-background, $color-background-secondary, 70%); }
   &:focus-visible { outline: none; border-color: $color-primary; background: $color-background; box-shadow: 0 0 0 3px rgba($color-primary, .15); }
 }
 @mixin tf-input-ghost {

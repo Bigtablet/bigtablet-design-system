@@ -1,5 +1,6 @@
 @use "src/styles/variables" as *;
 @use "src/styles/typography" as *;
+@use "sass:color";
 
 .sidebar {
   height: 100%;
@@ -43,8 +44,8 @@
     }
 
     &.is-active {
-      background: mix($color-primary, $color-background, 90%);
-      border-color: mix($color-primary, $color-background, 70%);
+      background: color.mix($color-primary, $color-background, 90%);
+      border-color: color.mix($color-primary, $color-background, 70%);
       color: $color-background;
 
       .sidebar__icon {
