@@ -1,6 +1,6 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
   "main": "dist/index.cjs",
@@ -10,9 +10,10 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     },
-    "./style.scss": "./dist/index.css"
+    "./styles.css": "./dist/index.css"
   },
   "files": [
     "dist",
