@@ -22,6 +22,7 @@ Storybook 기반으로 컴포넌트 개발 및 문서화를 진행하며,
 ---
 
 ## 프로젝트 구조
+```bash
 src/
 ├── ui/
 │   ├── form/         # TextField, Checkbox, Switch, Radio, FileInput
