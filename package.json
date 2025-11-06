@@ -11,7 +11,8 @@
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./style.scss": "./dist/index.css"
   },
   "files": [
     "dist",
@@ -19,8 +20,7 @@
     "LICENSE"
   ],
   "sideEffects": [
-    "**/*.scss",
-    "**/*.css"
+    "dist/index.css"
   ],
   "scripts": {
     "build": "tsup",
