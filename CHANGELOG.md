@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.0.0...v1.0.1) (2025-11-06)
+
+
+### Bug Fixes
+
+* toast position ([ef9ab61](https://github.com/Bigtablet/bigtablet-design-system/commit/ef9ab6168151ad99c08a06d4f22dc0b1423849a2))
+
 # 1.0.0 (2025-11-06)
 
 
