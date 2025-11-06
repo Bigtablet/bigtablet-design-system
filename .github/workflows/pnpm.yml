@@ -25,9 +25,17 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
           always-auth: true
+          scope: '@bigtablet'
 
       - name: Install
         run: pnpm install --frozen-lockfile
+
+      - name: Configure npm auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm whoami || true
+        env:
+          NPM_TOKEN: ${{ secrets.PNPM_TOKEN }}
 
       - name: Release (semantic-release)
         env:
