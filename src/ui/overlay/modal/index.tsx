@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react";
 import "./style.scss";
 
@@ -7,7 +9,7 @@ export interface ModalProps
     onClose?: () => void;
     closeOnOverlay?: boolean;
     width?: number | string;
-    title?: React.ReactNode; // 컴포넌트 전용 제목 (DOM title과 분리)
+    title?: React.ReactNode;
 }
 
 export const Modal = ({

@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react";
 import "./style.scss";
 import { X } from "lucide-react";

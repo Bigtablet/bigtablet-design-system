@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react";
 import "./style.scss";
 import { ChevronDown, Check } from "lucide-react";
@@ -15,17 +17,10 @@ export interface SelectProps {
     id?: string;
     label?: string;
     placeholder?: string;
-
-    /** options 목록 */
     options: SelectOption[];
-
-    /** 값 제어(컨트롤드) */
     value?: string | null;
     onChange?: (value: string | null, option?: SelectOption | null) => void;
-
-    /** 언컨트롤드 기본값 */
     defaultValue?: string | null;
-
     disabled?: boolean;
     size?: SelectSize;
     variant?: SelectVariant;

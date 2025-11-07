@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ToastProvider, useToast } from "../ui/feedback/toast";
+import { ToastProvider } from "src/ui/feedback/toast/client";
+import {useToast} from "src/ui/feedback/toast/client";
 
 const meta: Meta<typeof ToastProvider> = {
     title: "Components/Feedback/Toast",

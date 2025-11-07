@@ -8,7 +8,8 @@ export type { AlertProps, AlertVariant } from "./ui/feedback/alert";
 
 export { Loading } from "./ui/feedback/loading";
 
-export { ToastProvider, useToast } from "./ui/feedback/toast";
+export { ToastProvider } from "./ui/feedback/toast/client";
+export {useToast} from "./ui/feedback/toast/client";
 
 // Form
 export { Checkbox } from "./ui//form/checkbox";

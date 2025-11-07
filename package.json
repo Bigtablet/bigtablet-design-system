@@ -1,28 +1,33 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "style": "dist/index.css",
+
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js"
     },
     "./styles.css": "./dist/index.css"
   },
+
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+
   "sideEffects": [
-    "dist/index.css"
+    "*.css"
   ],
+
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -32,21 +37,25 @@
     "test": "echo \"no tests yet\"",
     "chromatic": "npx chromatic --project-token=chpt_2f758912f0dde5c --build-script-name=build:sb"
   },
+
   "keywords": [
     "design-system",
     "react",
     "storybook",
     "ui"
   ],
+
   "author": "sangmin",
   "license": "MIT",
   "packageManager": "pnpm@10.20.0",
+
   "peerDependencies": {
     "lucide-react": ">=0.552.0",
     "react": "^19",
     "react-dom": "^19",
     "react-toastify": ">=11.0.5"
   },
+
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
     "@semantic-release/changelog": "^6.0.3",
@@ -74,10 +83,8 @@
     "typescript": "^5",
     "vite": "^5"
   },
+
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@bigtablet/design-system": "^1.0.1"
   }
 }
