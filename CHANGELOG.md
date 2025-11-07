@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.0...v1.1.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* deploy version ([5f9bf08](https://github.com/Bigtablet/bigtablet-design-system/commit/5f9bf086985a846077e90714d05ec0c42c663dcf))
+* next client error ([8fad209](https://github.com/Bigtablet/bigtablet-design-system/commit/8fad2093eeaa1e230b6094d6d9036084d97ed267))
+
 # [1.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.0.1...v1.1.0) (2025-11-06)
 
 
