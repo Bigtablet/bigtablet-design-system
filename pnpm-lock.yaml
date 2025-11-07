@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@bigtablet/design-system':
-        specifier: ^1.0.1
-        version: 1.0.1(lucide-react@0.552.0(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-toastify@11.0.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.29.7
@@ -172,14 +168,6 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
-
-  '@bigtablet/design-system@1.0.1':
-    resolution: {integrity: sha512-hnj9FsoCAldeuO2g4+z3ibRK7Mc657ALY+qKZuK59pukjLKOm+8RAT9tAW17jEya9ActViKYh1jIyfClIENoZg==}
-    peerDependencies:
-      lucide-react: '>=0.552.0'
-      react: ^19
-      react-dom: ^19
-      react-toastify: '>=11.0.5'
 
   '@bufbuild/protobuf@2.10.0':
     resolution: {integrity: sha512-fdRs9PSrBF7QUntpZpq6BTw58fhgGJojgg39m9oFOJGZT+nip9b0so5cYY1oWl5pvemDLr0cPPsH46vwThEbpQ==}
@@ -3572,13 +3560,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-
-  '@bigtablet/design-system@1.0.1(lucide-react@0.552.0(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-toastify@11.0.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      lucide-react: 0.552.0(react@19.2.0)
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      react-toastify: 11.0.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
 
   '@bufbuild/protobuf@2.10.0': {}
 
