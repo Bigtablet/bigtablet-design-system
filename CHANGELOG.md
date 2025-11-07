@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.1...v1.1.2) (2025-11-07)
+
+
+### Bug Fixes
+
+* client ([802dc28](https://github.com/Bigtablet/bigtablet-design-system/commit/802dc281c8e34a9161003a5c24b62f922a487dbb))
+
 ## [1.1.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.0...v1.1.1) (2025-11-07)
 
 
