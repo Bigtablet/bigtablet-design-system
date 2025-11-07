@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.2...v1.1.3) (2025-11-07)
+
+
+### Bug Fixes
+
+* divider client ([89ade15](https://github.com/Bigtablet/bigtablet-design-system/commit/89ade15b75381745570a283e9957edaabd697665))
+
 ## [1.1.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.1...v1.1.2) (2025-11-07)
 
 
