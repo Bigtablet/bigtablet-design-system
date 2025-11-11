@@ -1,44 +1,62 @@
-import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { Sidebar } from "../ui/navigation/sidebar";
-import {Folder, Home, Settings} from "lucide-react";
 
 const meta: Meta<typeof Sidebar> = {
     title: "Components/Navigation/Sidebar",
     component: Sidebar,
-    tags: [],
+    tags: ["autodocs"],
     argTypes: {
+        items: { control: "object" },
+        activePath: { control: "text" },
         width: { control: "number" },
-        collapsible: { control: "boolean" },
-        defaultCollapsed: { control: "boolean" },
-        items: { table: { disable: true } },
-        onItemSelect: { table: { disable: true } }
+        className: { control: "text" },
+        style: { control: "object" },
+        match: {
+            control: "inline-radio",
+            options: ["startsWith", "exact"],
+        },
+        brandHref: { control: "text" },
+        onItemSelect: { action: "itemSelected" },
+    },
+    args: {
+        width: 240,
+        match: "startsWith",
+        brandHref: "/main",
+        items: [
+            { href: "/dashboard", label: "대시보드" },
+            { href: "/orders", label: "주문" },
+            { href: "/products", label: "상품" },
+            { href: "/settings", label: "설정" },
+        ],
+        activePath: "/dashboard",
     },
     parameters: {
-        layout: "fullscreen",
-        docs: { disable: true },
-        controls: { disable: true },
-        actions: { disable: true },
-        previewTabs: { "storybook/docs/panel": { hidden: true } },
-        options: { showPanel: false }
-    }
+        docs: {
+            description: {
+                component:
+                    "현재 경로(`activePath`)와 매칭 방식(`match`)에 따라 활성 항목을 표시하는 사이드바입니다.",
+            },
+        },
+    },
 };
 export default meta;
 
 type Story = StoryObj<typeof Sidebar>;
 
 export const Basic: Story = {
-    render: () => (
-        <div style={{ height: 360, border: "1px solid #eee" }}>
+    render: (args) => <Sidebar {...args} />,
+};
+
+export const ControlledActivePath: Story = {
+    render: (args) => {
+        const [active, setActive] = useState(args.activePath ?? "/dashboard");
+        return (
             <Sidebar
-                items={[
-                    { href: "/home", label: "Home", icon: Home },
-                    { href: "/projects", label: "Projects", icon: Folder },
-                    { href: "/settings", label: "Settings", icon: Settings }
-                ]}
-                activePath="/home"
-                onItemSelect={(href) => console.log("selected:", href)}
+                {...args}
+                activePath={active}
+                onItemSelect={(href) => setActive(href)}
             />
-        </div>
-    )
+        );
+    },
 };
