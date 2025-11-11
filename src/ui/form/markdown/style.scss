@@ -1,8 +1,14 @@
-@use "src/shared/styles/token" as *;
+@use "src/styles/token" as *;
 
-.md { display: grid; gap: $spacing-sm; }
+.md {
+  display: grid;
+  gap: $spacing-sm;
+}
 
-.md__label { @include caption; color: $text-subtle; }
+.md__label {
+  @include caption;
+  color: $text-subtle;
+}
 
 .md__grid {
   display: grid;
@@ -10,7 +16,9 @@
   align-items: stretch;
   column-gap: $spacing-2xl;
   row-gap: $spacing-md;
-  @media (max-width: 960px) { grid-template-columns: 1fr; }
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .md__input,
@@ -33,8 +41,14 @@
   line-height: $line-height-relaxed;
   resize: vertical;
   transition: border-color $transition-base, box-shadow $transition-base;
-  &:hover  { border-color: $color-border-light; }
-  &:focus  { border-color: $color-primary; box-shadow: 0 0 0 3px rgba(0,0,0,.06); outline: none; }
+  &:hover {
+    border-color: $color-border-light;
+  }
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+    outline: none;
+  }
 }
 
 .md__preview {
@@ -52,15 +66,33 @@
   word-break: break-word;
   overflow-wrap: anywhere;
 
-  img, video { max-width: 100%; height: auto; display: block; }
-  h1, h2, h3, h4, h5, h6 {
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @include heading-3;
     color: $text-strong;
     margin: $spacing-lg 0 $spacing-sm;
   }
-  p { margin: $spacing-sm 0; }
-  a { color: $color-primary; text-decoration: underline; }
-  ul, ol { margin: $spacing-sm 0 $spacing-sm $spacing-lg; }
+  p {
+    margin: $spacing-sm 0;
+  }
+  a {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+  ul,
+  ol {
+    margin: $spacing-sm 0 $spacing-sm $spacing-lg;
+  }
   blockquote {
     border-left: 4px solid $color-border;
     padding-left: $spacing-md;
@@ -71,8 +103,15 @@
     width: 100%;
     border-collapse: collapse;
     margin: $spacing-md 0;
-    th, td { border: 1px solid $color-border; padding: $spacing-sm $spacing-md; text-align: left; }
-    th { background: $color-background-secondary; }
+    th,
+    td {
+      border: 1px solid $color-border;
+      padding: $spacing-sm $spacing-md;
+      text-align: left;
+    }
+    th {
+      background: $color-background-secondary;
+    }
   }
   code {
     background: $color-background-secondary;
@@ -85,6 +124,9 @@
     padding: $spacing-md;
     border-radius: $radius-md;
     overflow: auto;
-    code { background: transparent; padding: 0; }
+    code {
+      background: transparent;
+      padding: 0;
+    }
   }
 }

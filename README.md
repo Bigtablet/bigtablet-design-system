@@ -31,8 +31,10 @@ src/
 │   ├── overlay/      # Modal
 │   ├── display/      # Card
 │   ├── general/      # Button, Select
+│   ├── skeleton/     # SkeletonCard, SkeletonList
 │   └── styles/       # variables, typography 등 글로벌 스타일
-└── index.ts          # 컴포넌트 export 집약
+├── index.ts          # Pure React 컴포넌트 export
+└── next.ts           # Next.js 전용 컴포넌트 export (Sidebar)
 ```
 
 ---
@@ -97,7 +99,137 @@ pnpm build
 ```
 
 - 결과물: dist/
-- ESM + CJS + Type Definitions + CSS 포함
+- ESM + Type Definitions + CSS 포함
+
+---
+
+## 📦 사용 방법
+
+### 설치
+
+```bash
+npm install @bigtablet/design-system
+# or
+pnpm add @bigtablet/design-system
+# or
+yarn add @bigtablet/design-system
+```
+
+### Pure React 프로젝트에서 사용
+
+순수 React 프로젝트 (Create React App, Vite 등)에서는 메인 export를 사용하세요:
+
+```tsx
+// 스타일 import (필수)
+import "@bigtablet/design-system/styles.css";
+
+// 컴포넌트 import
+import {
+  Button,
+  Card,
+  Alert,
+  Loading,
+  Modal,
+  TextField,
+  Checkbox,
+  Radio,
+  Switch,
+  Select,
+  Pagination,
+  ToastProvider,
+  useToast
+} from "@bigtablet/design-system";
+
+function App() {
+  const toast = useToast();
+
+  return (
+    <>
+      <Button onClick={() => toast.success("Success!")}>
+        Click me
+      </Button>
+      <ToastProvider />
+    </>
+  );
+}
+```
+
+### Next.js 프로젝트에서 사용
+
+Next.js에서는 Sidebar를 포함한 모든 컴포넌트를 사용할 수 있습니다.
+
+#### App Router (Next.js 13+)
+
+**✅ Server Component 호환**: Button, Card, Loading, Radio, SkeletonCard, SkeletonList
+**⚡ Client Component 필요**: Alert, Checkbox, FileInput, MarkdownEditor, Modal, Pagination, Select, Switch, TextField, ToastProvider, Sidebar
+
+자세한 내용은 [Next.js 호환성 가이드](NEXTJS_COMPATIBILITY.md)를 참고하세요.
+
+```tsx
+// Pure React 컴포넌트
+import { Button, Card, Alert } from "@bigtablet/design-system";
+import "@bigtablet/design-system/styles.css";
+
+// Next.js 전용 컴포넌트 (next/link, next/image 사용)
+import { Sidebar } from "@bigtablet/design-system/next";
+
+export default function Layout({ children }) {
+  return (
+    <div style={{ display: "flex" }}>
+      <Sidebar
+        items={[
+          { href: "/dashboard", label: "Dashboard", icon: HomeIcon },
+          { href: "/settings", label: "Settings", icon: SettingsIcon }
+        ]}
+        activePath="/dashboard"
+      />
+      <main>{children}</main>
+    </div>
+  );
+}
+```
+
+### 컴포넌트 구조
+
+#### 📦 메인 번들 (`@bigtablet/design-system`)
+**순수 React 컴포넌트 - 프레임워크 독립적**
+
+- **Display**: Card
+- **Feedback**: Alert, Loading, ToastProvider, useToast
+- **Form**: Button, Checkbox, FileInput, MarkdownEditor, Radio, Select, Switch, TextField
+- **Navigation**: Pagination
+- **Overlay**: Modal
+- **Skeleton**: SkeletonCard, SkeletonList
+
+#### ⚡ Next.js 번들 (`@bigtablet/design-system/next`)
+**Next.js 전용 컴포넌트 - next/link, next/image 의존**
+
+- **Navigation**: Sidebar
+
+---
+
+## ⚙️ 의존성
+
+### Peer Dependencies (필수)
+프로젝트에 반드시 설치되어 있어야 합니다:
+
+```json
+{
+  "react": "^19",
+  "react-dom": "^19",
+  "lucide-react": ">=0.552.0",
+  "react-toastify": ">=11.0.5"
+}
+```
+
+### Optional Peer Dependencies
+Next.js 컴포넌트를 사용할 경우에만 필요합니다:
+
+```json
+{
+  "next": ">=14.0.0"
+}
+```
 
 ## 주로 발생하는 에러
 

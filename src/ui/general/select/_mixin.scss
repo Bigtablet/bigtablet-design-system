@@ -1,4 +1,4 @@
-@use "src/shared/styles/token" as *;
+@use "src/styles/token" as *;
 @use "sass:color";
 
 @mixin sel-base {
@@ -20,13 +20,14 @@
   color: $color-text-primary;
   background: $color-background;
   border-radius: $radius-md;
-  transition: border-color $transition-base, box-shadow $transition-base, background $transition-base;
+  transition: border-color $transition-base, box-shadow $transition-base,
+    background $transition-base;
   @include text-base;
 
   &:disabled,
   &.is-disabled {
     cursor: not-allowed;
-    opacity: .7;
+    opacity: 0.7;
     background: $color-background-secondary;
     color: $color-text-tertiary;
   }
@@ -35,29 +36,55 @@
 @mixin sel-control-outline {
   @include sel-control-base;
   border: 1px solid $color-border;
-  &:hover:not(.is-disabled) { border-color: $color-border-light; }
-  &.is-open { border-color: $color-primary; box-shadow: 0 0 0 3px rgba($color-primary, .15); }
+  &:hover:not(.is-disabled) {
+    border-color: $color-border-light;
+  }
+  &.is-open {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+  }
 }
 
 @mixin sel-control-filled {
   @include sel-control-base;
   background: $color-background-secondary;
   border: 1px solid transparent;
-  &:hover:not(.is-disabled) { background: color.mix($color-background, $color-background-secondary, 70%); }
-  &.is-open { background: $color-background; border-color: $color-primary; box-shadow: 0 0 0 3px rgba($color-primary, .15); }
+  &:hover:not(.is-disabled) {
+    background: color.mix($color-background, $color-background-secondary, 70%);
+  }
+  &.is-open {
+    background: $color-background;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+  }
 }
 
 @mixin sel-control-ghost {
   @include sel-control-base;
   background: transparent;
   border: 1px solid transparent;
-  &:hover:not(.is-disabled) { background: rgba(0,0,0,.03); }
-  &.is-open { background: $color-background; border-color: $color-primary; box-shadow: 0 0 0 3px rgba($color-primary, .15); }
+  &:hover:not(.is-disabled) {
+    background: rgba(0, 0, 0, 0.03);
+  }
+  &.is-open {
+    background: $color-background;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+  }
 }
 
-@mixin sel-sm { padding: $spacing-sm $spacing-lg; @include text-sm; }
-@mixin sel-md { padding: $spacing-md $spacing-xl; @include text-base; }
-@mixin sel-lg { padding: $spacing-lg $spacing-2xl; @include text-md; }
+@mixin sel-sm {
+  padding: $spacing-sm $spacing-lg;
+  @include text-sm;
+}
+@mixin sel-md {
+  padding: $spacing-md $spacing-xl;
+  @include text-base;
+}
+@mixin sel-lg {
+  padding: $spacing-lg $spacing-2xl;
+  @include text-md;
+}
 
 @mixin sel-icon {
   display: inline-flex;
@@ -119,9 +146,13 @@
   }
 
   &:hover,
-  &.is-active { background: $color-background-secondary; }
+  &.is-active {
+    background: $color-background-secondary;
+  }
 
-  &.is-selected { font-weight: $font-weight-medium; }
+  &.is-selected {
+    font-weight: $font-weight-medium;
+  }
 
   &.is-disabled {
     cursor: not-allowed;

@@ -1,4 +1,4 @@
-@use "src/shared/styles/token" as *;
+@use "src/styles/token" as *;
 
 .sidebar {
   display: flex;
@@ -47,13 +47,16 @@
   border: 1px solid transparent;
   @include text-base;
   cursor: pointer;
-  transition: background-color $transition-base, color $transition-base, border-color $transition-base;
+  transition: background-color $transition-base, color $transition-base,
+    border-color $transition-base;
 
   &:hover {
     background: $color-background-secondary;
     color: $text-strong;
 
-    .sidebar__icon { color: $text-strong; }
+    .sidebar__icon {
+      color: $text-strong;
+    }
   }
 
   &.is-active {
@@ -74,7 +77,9 @@
       background: $color-primary;
     }
 
-    .sidebar__icon { color: $text-strong; }
+    .sidebar__icon {
+      color: $text-strong;
+    }
   }
 }
 

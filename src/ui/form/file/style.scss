@@ -1,9 +1,29 @@
-@use "src/shared/styles/token" as *;
+@use "src/styles/token" as *;
 
 .file {
-  position: relative; display: inline-flex; align-items: center;
-  &__input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  &__label { border: 1px solid $color-border; border-radius: $radius-md; background: $color-background; padding: $spacing-sm $spacing-lg; color: $color-text-primary; transition: background $transition-base, border-color $transition-base; @include text-base; }
-  &:hover .file__label { border-color: $color-border-light; }
-  &:has(.file__input:focus-visible) .file__label { box-shadow: 0 0 0 3px rgba($color-primary,.15); border-color: $color-primary; }
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  &__input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  &__label {
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-background;
+    padding: $spacing-sm $spacing-lg;
+    color: $color-text-primary;
+    transition: background $transition-base, border-color $transition-base;
+    @include text-base;
+  }
+  &:hover .file__label {
+    border-color: $color-border-light;
+  }
+  &:has(.file__input:focus-visible) .file__label {
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+    border-color: $color-primary;
+  }
 }
