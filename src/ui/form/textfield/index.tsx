@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from "react";
 import "./style.scss";
@@ -7,7 +7,7 @@ export type TextFieldVariant = "outline" | "filled" | "ghost";
 export type TextFieldSize = "sm" | "md" | "lg";
 
 export interface TextFieldProps
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "onChange"> {
     label?: string;
     helperText?: string;
     error?: boolean;
@@ -17,6 +17,7 @@ export interface TextFieldProps
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
     fullWidth?: boolean;
+    onChangeAction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
@@ -33,6 +34,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             rightIcon,
             fullWidth,
             className,
+            onChangeAction,
             ...props
         },
         ref
@@ -48,7 +50,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             rightIcon && "tf__input--with-right",
             error && "tf__input--error",
             success && "tf__input--success",
-            className
+            className,
         ]
             .filter(Boolean)
             .join(" ");
@@ -71,6 +73,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                         aria-invalid={!!error}
                         aria-describedby={helperId}
                         {...props}
+                        onChange={onChangeAction}
                     />
 
                     {rightIcon && <span className="tf__icon tf__icon--right">{rightIcon}</span>}

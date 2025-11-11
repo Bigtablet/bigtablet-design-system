@@ -4,13 +4,13 @@
   justify-content: center;
 }
 
-@mixin flex-start {
+@mixin flex-left {
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-@mixin flex-end {
+@mixin flex-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;

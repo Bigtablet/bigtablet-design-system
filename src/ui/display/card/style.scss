@@ -1,5 +1,3 @@
-@use "src/styles/variables" as *;
-
 .card {
   border-radius: $radius-lg; background: $color-background;
   &--bordered { border: 1px solid $color-border; }

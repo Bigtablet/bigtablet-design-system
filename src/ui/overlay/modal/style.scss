@@ -1,5 +1,4 @@
-@use "src/styles/variables" as *;
-@use "src/styles/typography" as *;
+@use "src/shared/styles/token" as *;
 
 .modal {
   position: fixed; inset: 0; background: $color-overlay; display: grid; place-items: center; z-index: $z-modal;

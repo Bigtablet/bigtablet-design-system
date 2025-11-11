@@ -1,11 +1,9 @@
-@use 'src/styles/variables' as *;
-@use 'src/styles/typography' as *;
-@use 'src/styles/flex' as *;
+@use "src/shared/styles/token" as *;
 @use "sass:color";
 
 /* Label & Helper */
 @mixin tf-label {
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-xs;
   color: $color-text-primary;
   @include text-sm;
   font-weight: $font-weight-medium;

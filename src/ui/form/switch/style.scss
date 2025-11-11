@@ -1,4 +1,4 @@
-@use "src/styles/variables" as *;
+@use "src/shared/styles/token" as *;
 
 .switch {
   position: relative; display: inline-flex; align-items: center; border-radius: $radius-full; background: $color-border; transition: background $transition-base; cursor: pointer;

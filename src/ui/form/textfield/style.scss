@@ -1,7 +1,8 @@
-@use "src/styles/variables" as *;
+@use "src/shared/styles/token" as *;
 @use 'mixin' as *;
 
 .tf {
+  @include flex-column;
   &__label   { @include tf-label; }
   &__wrapper { @include tf-wrapper; }
 

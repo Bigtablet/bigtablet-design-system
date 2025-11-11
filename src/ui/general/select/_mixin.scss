@@ -1,5 +1,4 @@
-@use 'src/styles/variables' as *;
-@use 'src/styles/typography' as *;
+@use "src/shared/styles/token" as *;
 @use "sass:color";
 
 @mixin sel-base {

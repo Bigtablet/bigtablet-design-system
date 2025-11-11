@@ -1,5 +1,4 @@
-@use "src/styles/variables" as *;
-@use "src/styles/typography" as *;
+@use "src/shared/styles/token" as *;
 
 .radio {
   display: inline-flex; align-items: center; gap: $spacing-sm; cursor: pointer;
