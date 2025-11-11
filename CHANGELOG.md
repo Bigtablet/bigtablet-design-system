@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.3...v1.2.0) (2025-11-11)
+
+
+### Features
+
+* design system ui ver1 ([3cc044f](https://github.com/Bigtablet/bigtablet-design-system/commit/3cc044f1b105795c711b4c2bdca34f5a51d5064a))
+
 ## [1.1.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.2...v1.1.3) (2025-11-07)
 
 
