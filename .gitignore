@@ -1,36 +1,26 @@
-# macOS system files
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# WebStorm / JetBrains
-.idea/
-*.iml
-
-# Node
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-
-# Storybook build output
 storybook-static/
+*.tsbuildinfo
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-
-# Build caches
-.cache/
-tsbuildinfo
-.vite/
-coverage/
-
-# Temporary
-*.tmp
-*.temp
-
-# Environment files
+# Environment
 .env
 .env.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Temp
+.cache/
+*.tmp

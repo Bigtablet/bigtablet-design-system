@@ -1,13 +1,33 @@
-@use "src/shared/styles/token" as *;
+@use "src/styles/token" as *;
 
 .pagination {
-  display: inline-flex; align-items: center; gap: $spacing-sm;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
   &__item {
-    border: 1px solid $color-border; background: $color-background; color: $color-text-primary; border-radius: $radius-sm;
-    padding: $spacing-xs $spacing-sm; cursor: pointer; @include text-sm;
-    &.is-active { background: $color-primary; color: $color-background; border-color: $color-primary; }
-    &:disabled { opacity: .5; cursor: not-allowed; }
-    &:focus-visible { box-shadow: 0 0 0 3px rgba($color-primary,.15); border-color: $color-primary; }
+    border: 1px solid $color-border;
+    background: $color-background;
+    color: $color-text-primary;
+    border-radius: $radius-sm;
+    padding: $spacing-xs $spacing-sm;
+    cursor: pointer;
+    @include text-sm;
+    &.is-active {
+      background: $color-primary;
+      color: $color-background;
+      border-color: $color-primary;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+      border-color: $color-primary;
+    }
   }
-  &__ellipsis { padding: 0 $spacing-xs; color: $color-text-tertiary; }
+  &__ellipsis {
+    padding: 0 $spacing-xs;
+    color: $color-text-tertiary;
+  }
 }

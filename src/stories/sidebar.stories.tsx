@@ -32,12 +32,12 @@ export const Basic: Story = {
         <div style={{ height: 360, border: "1px solid #eee" }}>
             <Sidebar
                 items={[
-                    { key: "home", label: "Home", icon: Home },
-                    { key: "projects", label: "Projects", icon: Folder },
-                    { key: "settings", label: "Settings", icon: Settings }
+                    { href: "/home", label: "Home", icon: Home },
+                    { href: "/projects", label: "Projects", icon: Folder },
+                    { href: "/settings", label: "Settings", icon: Settings }
                 ]}
-                activeKey="home"
-                onItemSelect={(k) => console.log("selected:", k)}
+                activePath="/home"
+                onItemSelect={(href) => console.log("selected:", href)}
             />
         </div>
     )

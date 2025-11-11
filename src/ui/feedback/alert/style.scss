@@ -1,89 +1,193 @@
 @use "sass:color";
+@use "src/styles/token" as *;
 
-.alert {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: start;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  border-radius: $radius-md;
-  border: 1px solid $color-border;
-  background: $color-background;
+// 모달 스타일
+.alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 4px;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-    background: $color-info;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-
-  &__icon {
-    margin-top: 2px;
-    color: $color-text-secondary;
-    display: inline-grid;
-    place-items: center;
-  }
-
-  &__content { min-width: 0; }
-
-  &__title {
-    @include text-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-xs;
-  }
-
-  &__desc {
-    @include body-regular;
-    color: $color-text-secondary;
-  }
-
-  &__close {
-    align-self: start;
-    display: inline-grid;
-    place-items: center;
-    margin-left: $spacing-md;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: 0;
-    border-radius: $radius-sm;
-    background: transparent;
-    color: $color-text-secondary;
-    line-height: 1;
-    cursor: pointer;
-    transition: background .15s ease, color .15s ease, transform .05s ease;
-    &:hover { background: rgba(0,0,0,.05); color: $color-text-primary; }
-    &:active { transform: translateY(.5px); }
-    &:focus-visible { outline: 2px solid rgba(0,0,0,.2); outline-offset: 2px; }
-  }
-
-  &--info {
-    background: color.mix($color-info, $color-background, 6%);
-    border-color: color.mix($color-info, $color-background, 28%);
-    &::before { background: $color-info; }
-    .alert__icon { color: $color-info; }
-  }
-  &--success {
-    background: color.mix($color-success, $color-background, 6%);
-    border-color: color.mix($color-success, $color-background, 28%);
-    &::before { background: $color-success; }
-    .alert__icon { color: $color-success; }
-  }
-  &--warning {
-    background: color.mix($color-warning, $color-background, 8%);
-    border-color: color.mix($color-warning, $color-background, 32%);
-    &::before { background: $color-warning; }
-    .alert__icon { color: $color-warning; }
-  }
-  &--error {
-    background: color.mix($color-error, $color-background, 6%);
-    border-color: color.mix($color-error, $color-background, 28%);
-    &::before { background: $color-error; }
-    .alert__icon { color: $color-error; }
+  to {
+    opacity: 1;
   }
 }
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-modal {
+  background: white;
+  border-radius: $radius-lg;
+  padding: 0;
+  min-width: 320px;
+  max-width: 480px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &__title {
+    @include text-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-info;
+    margin-top: 8px;
+    padding: $spacing-md $spacing-xl;
+    padding-bottom: $spacing-xs;
+  }
+
+  &__message {
+    @include body-regular;
+    color: $color-text-secondary;
+    margin: 0;
+    padding: $spacing-xl;
+    padding-bottom: $spacing-lg;
+    line-height: 1.6;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+    padding: 0 $spacing-xl $spacing-xl $spacing-xl;
+
+    &--left {
+      justify-content: flex-start;
+    }
+
+    &--center {
+      justify-content: center;
+    }
+
+    &--right {
+      justify-content: flex-end;
+    }
+  }
+
+  &__button {
+    padding: 10px 24px;
+    border-radius: $radius-sm;
+    font-size: 14px;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    min-width: 80px;
+    line-height: 1.5;
+
+    &:focus-visible {
+      outline: 2px solid rgba(0, 0, 0, 0.3);
+      outline-offset: 2px;
+    }
+
+    &--cancel {
+      background: white;
+      border-color: $color-border;
+      color: $color-text-primary;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.3);
+      }
+
+      &:active {
+        transform: scale(0.98);
+        background: rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    &--confirm {
+      color: white;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  // Variant styles
+  &--info {
+    .alert-modal__title {
+      color: $color-info;
+    }
+
+    .alert-modal__button--confirm {
+      background: $color-info;
+      border-color: $color-info;
+
+      &:hover {
+        background: color.adjust($color-info, $lightness: -6%);
+        border-color: color.adjust($color-info, $lightness: -6%);
+      }
+    }
+  }
+
+  &--success {
+    .alert-modal__title {
+      color: $color-success;
+    }
+
+    .alert-modal__button--confirm {
+      background: $color-success;
+      border-color: $color-success;
+
+      &:hover {
+        background: color.adjust($color-success, $lightness: -6%);
+        border-color: color.adjust($color-success, $lightness: -6%);
+      }
+    }
+  }
+
+  &--warning {
+    .alert-modal__title {
+      color: $color-warning;
+    }
+
+    .alert-modal__button--confirm {
+      background: $color-warning;
+      border-color: $color-warning;
+
+      &:hover {
+        background: color.adjust($color-warning, $lightness: -6%);
+        border-color: color.adjust($color-warning, $lightness: -6%);
+      }
+    }
+  }
+
+  &--error {
+    .alert-modal__title {
+      color: $color-error;
+    }
+
+    .alert-modal__button--confirm {
+      background: $color-error;
+      border-color: $color-error;
+
+      &:hover {
+        background: color.adjust($color-error, $lightness: -6%);
+        border-color: color.adjust($color-error, $lightness: -6%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}
+
