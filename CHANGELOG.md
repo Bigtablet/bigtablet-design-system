@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.1...v1.2.2) (2025-11-11)
+
+
+### Bug Fixes
+
+* dist file ([6c4680b](https://github.com/Bigtablet/bigtablet-design-system/commit/6c4680bff9838a15832ca2c7fd2591f947ee1a11))
+* pagination storybook ([72b3bcd](https://github.com/Bigtablet/bigtablet-design-system/commit/72b3bcd9f4f679e6d2ac7eac739914e5750a672b))
+* sidebar stotybook ([04a67f6](https://github.com/Bigtablet/bigtablet-design-system/commit/04a67f60566ba7cff8417b29ec130782da6975f9))
+
 ## [1.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.0...v1.2.1) (2025-11-11)
 
 
