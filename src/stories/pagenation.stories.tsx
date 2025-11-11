@@ -7,18 +7,21 @@ const meta: Meta<typeof Pagination> = {
     component: Pagination,
     tags: ["autodocs"],
     argTypes: {
-        total: { control: "number" },
-        siblingCount: { control: "number" }
+        hasNext: { control: "boolean" },
+        size: { control: "number" },
     },
-    args: { total: 20, siblingCount: 1 },
+    args: {
+        hasNext: true,
+        size: 0,
+    },
     parameters: {
         docs: {
             description: {
                 component:
-                    "`page`/`onChange`로 제어하는 페이지네이션입니다. `siblingCount`로 현재 페이지 주변에 보여줄 숫자 수를 조절합니다."
-            }
-        }
-    }
+                    "`page`/`onChange`로 제어하는 Prev/Next 페이지네이션입니다. `hasNext`로 다음 페이지 존재 여부를 제어합니다.",
+            },
+        },
+    },
 };
 export default meta;
 
@@ -28,12 +31,12 @@ export const Basic: Story = {
     render: (args) => {
         const [page, setPage] = useState(1);
         return <Pagination {...args} page={page} onChange={setPage} />;
-    }
+    },
 };
 
 export const Controlled: Story = {
     render: (args) => {
         const [page, setPage] = useState(7);
         return <Pagination {...args} page={page} onChange={setPage} />;
-    }
+    },
 };
