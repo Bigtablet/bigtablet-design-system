@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.0...v1.2.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* nextjs compablity, error in storybook, apply pretendard fonts in preview, alert re-design ([5470c42](https://github.com/Bigtablet/bigtablet-design-system/commit/5470c42ac5b416402de312d5823372c6dc4007bd))
+
 # [1.2.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.1.3...v1.2.0) (2025-11-11)
 
 
