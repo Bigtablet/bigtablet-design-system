@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.2...v1.2.3) (2025-11-13)
+
+
+### Bug Fixes
+
+* css imports, use in server component, componets exports ([88c1d41](https://github.com/Bigtablet/bigtablet-design-system/commit/88c1d4175ad1654be12c2c49f951497793d37659))
+
 ## [1.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.1...v1.2.2) (2025-11-11)
 
 
