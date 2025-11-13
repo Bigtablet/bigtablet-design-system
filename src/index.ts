@@ -4,6 +4,8 @@ export { Card } from "./ui/display/card";
 
 // Feedback
 export { Alert } from "./ui/feedback/alert";
+export { useAlert } from "./ui/feedback/alert";
+export { AlertProvider } from "./ui/feedback/alert";
 export { Loading } from "./ui/feedback/loading";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/useToast";

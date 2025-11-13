@@ -3,18 +3,18 @@
   "version": "1.2.2",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
-  "types": "dist/next.d.ts",
-  "style": "dist/next.css",
+  "types": "dist/index.d.ts",
+  "style": "dist/index.css",
   "exports": {
     ".": {
-      "types": "./dist/next.d.ts",
-      "import": "./dist/next.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./next": {
       "types": "./dist/next.d.ts",
       "import": "./dist/next.js"
     },
-    "./style.css": "./dist/next.css"
+    "./style.css": "./dist/index.css"
   },
   "files": [
     "dist",

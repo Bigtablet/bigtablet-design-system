@@ -1,5 +1,7 @@
 import { defineConfig } from "tsup";
 import { sassPlugin } from "esbuild-sass-plugin";
+import fs from "fs";
+import path from "path";
 
 export default defineConfig([
   // Pure React components bundle
@@ -21,6 +23,25 @@ export default defineConfig([
     esbuildPlugins: [sassPlugin({ type: "css", loadPaths: [".", "src"] })],
     loader: { ".svg": "dataurl" },
     splitting: false,
+    async onSuccess() {
+      const filePath = path.join(process.cwd(), "dist/index.js");
+      const content = fs.readFileSync(filePath, "utf-8");
+
+      // Add "use client" and CSS import
+      let newContent = content;
+      if (!content.startsWith('"use client"')) {
+        newContent = '"use client";\n' + content;
+      }
+
+      // Add CSS import after "use client" if not already present
+      if (!newContent.includes("import './index.css'")) {
+        const lines = newContent.split('\n');
+        lines.splice(1, 0, "import './index.css';");
+        newContent = lines.join('\n');
+      }
+
+      fs.writeFileSync(filePath, newContent);
+    },
   },
   // Next.js-specific components bundle
   {
@@ -34,5 +55,24 @@ export default defineConfig([
     esbuildPlugins: [sassPlugin({ type: "css", loadPaths: [".", "src"] })],
     loader: { ".svg": "dataurl" },
     splitting: false,
+    async onSuccess() {
+      const filePath = path.join(process.cwd(), "dist/next.js");
+      const content = fs.readFileSync(filePath, "utf-8");
+
+      // Add "use client" and CSS import
+      let newContent = content;
+      if (!content.startsWith('"use client"')) {
+        newContent = '"use client";\n' + content;
+      }
+
+      // Add CSS import after "use client" if not already present
+      if (!newContent.includes("import './next.css'")) {
+        const lines = newContent.split('\n');
+        lines.splice(1, 0, "import './next.css';");
+        newContent = lines.join('\n');
+      }
+
+      fs.writeFileSync(filePath, newContent);
+    },
   },
 ]);
