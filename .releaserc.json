@@ -1,14 +1,36 @@
 {
   "branches": ["main"],
   "plugins": [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits",
+        "releaseRules": [
+          { "type": "feat", "release": "minor" },
+          { "type": "fix", "release": "patch" },
+          { "type": "bug", "release": "patch" },
+          { "type": "delete", "release": "patch" },
+          { "type": "config", "release": "patch" },
+          { "type": "deploy", "release": "patch" },
+          { "type": "tada", "release": "minor" },
+          { "type": "style", "release": false },
+          { "type": "note", "release": false },
+          { "type": "docs", "release": false },
+          { "type": "merge", "release": false },
+          { "type": "etc", "release": false }
+        ]
+      }
+    ],
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     ["@semantic-release/npm", { "npmPublish": true }],
     "@semantic-release/github",
-    ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "package.json", "pnpm-lock.yaml"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]"
-    }]
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md", "package.json", "pnpm-lock.yaml"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]"
+      }
+    ]
   ]
 }
