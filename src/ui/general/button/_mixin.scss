@@ -1,6 +1,7 @@
 @use "src/styles/token" as *;
 
 @mixin button-base {
+  width: 100%;
   @include flex-center;
   border: none;
   cursor: pointer;
