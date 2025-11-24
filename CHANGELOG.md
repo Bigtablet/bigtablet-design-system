@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.4...v1.2.5) (2025-11-24)
+
+
+### Bug Fixes
+
+* button size ([195568c](https://github.com/Bigtablet/bigtablet-design-system/commit/195568cd639c5b7a9904ce1c6159df04002ce3da))
+
 ## [1.2.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.3...v1.2.4) (2025-11-18)
 
 
