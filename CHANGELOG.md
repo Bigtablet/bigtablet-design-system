@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.3...v1.2.4) (2025-11-18)
+
+
+### Bug Fixes
+
+* commit convention ([a959204](https://github.com/Bigtablet/bigtablet-design-system/commit/a959204568c7cb575b60dee533c5dd942e514c7e))
+* release label ([ead67f5](https://github.com/Bigtablet/bigtablet-design-system/commit/ead67f5936b9670249f6892aa3ecdb4d1f3111b4))
+
 ## [1.2.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.2...v1.2.3) (2025-11-13)
 
 
