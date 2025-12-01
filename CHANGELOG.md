@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.3.0...v1.3.1) (2025-12-01)
+
+
+### Bug Fixes
+
+* export select option ([c259cc3](https://github.com/Bigtablet/bigtablet-design-system/commit/c259cc3c89bcc796f7c8ad54f66729a5e7c5c46e))
+
 # [1.3.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.5...v1.3.0) (2025-12-01)
 
 
