@@ -16,6 +16,7 @@ export { Checkbox } from "./ui/form/checkbox";
 export { FileInput } from "./ui/form/file";
 export { Radio } from "./ui/form/radio";
 export { Select } from "./ui/general/select";
+export { SelectOption } from "./ui/general/select";
 export { Switch } from "./ui/form/switch";
 export { TextField } from "./ui/form/textfield";
 
