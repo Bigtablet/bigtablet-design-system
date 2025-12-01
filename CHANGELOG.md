@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.5...v1.3.0) (2025-12-01)
+
+
+### Bug Fixes
+
+* auto install status ([a0fef8e](https://github.com/Bigtablet/bigtablet-design-system/commit/a0fef8e60f58807125bc92cd24d96217fbb762f0))
+
+
+### Features
+
+* card heading text ([f8f82ff](https://github.com/Bigtablet/bigtablet-design-system/commit/f8f82ffa40a3d469d9cd0fe19ba61d64bc3d64b7))
+
 ## [1.2.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.2.4...v1.2.5) (2025-11-24)
 
 
