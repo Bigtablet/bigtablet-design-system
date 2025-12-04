@@ -1737,8 +1737,8 @@ packages:
   git-log-parser@1.2.1:
     resolution: {integrity: sha512-PI+sPDvHXNPl5WNOErAK05s3j0lgwUzMN6o8cyQrDaKfT3qd7TmNJKeXX+SknI5I0QhG5fVPAEwSY4tRGDtYoQ==}
 
-  glob@10.4.5:
-    resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+  glob@10.5.0:
+    resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
     hasBin: true
 
   gopd@1.2.0:
@@ -3520,7 +3520,7 @@ snapshots:
 
   '@joshwooding/vite-plugin-react-docgen-typescript@0.5.0(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.0)(sass-embedded@1.93.3)(sass@1.93.3))':
     dependencies:
-      glob: 10.4.5
+      glob: 10.5.0
       magic-string: 0.27.0
       react-docgen-typescript: 2.4.0(typescript@5.9.3)
       vite: 5.4.21(@types/node@24.10.0)(sass-embedded@1.93.3)(sass@1.93.3)
@@ -4678,7 +4678,7 @@ snapshots:
       through2: 2.0.5
       traverse: 0.6.8
 
-  glob@10.4.5:
+  glob@10.5.0:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 3.4.3
@@ -5673,7 +5673,7 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       commander: 4.1.1
-      glob: 10.4.5
+      glob: 10.5.0
       lines-and-columns: 1.2.4
       mz: 2.7.0
       pirates: 4.0.7
