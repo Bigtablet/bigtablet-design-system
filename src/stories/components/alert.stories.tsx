@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import * as React from "react";
-import {AlertProvider, useAlert} from "../ui/feedback/alert";
+import {AlertProvider, useAlert} from "../../ui/feedback/alert";
 
 type AlertDemoProps = {
     variant?: "info" | "success" | "warning" | "error";
