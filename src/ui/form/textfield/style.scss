@@ -1,71 +1,158 @@
-@use "src/styles/token" as *;
-@use "mixin" as *;
+@use "src/styles/token" as token;
+@use "sass:color";
 
-.tf {
-  @include flex-column;
-  &__label {
-    @include tf-label;
-  }
-  &__wrapper {
-    @include tf-wrapper;
-  }
+.text_field {
+  display: flex;
+  flex-direction: column;
 
-  &__input {
-    &--outline {
-      @include tf-input-outline;
-    }
-    &--filled {
-      @include tf-input-filled;
-    }
-    &--ghost {
-      @include tf-input-ghost;
-    }
-
-    &--sm {
-      @include tf-sm;
-    }
-    &--md {
-      @include tf-md;
-    }
-    &--lg {
-      @include tf-lg;
-    }
-
-    &--with-left {
-      @include tf-with-left;
-    }
-    &--with-right {
-      @include tf-with-right;
-    }
-
-    &--error {
-      @include tf-error;
-    }
-    &--success {
-      @include tf-success;
-    }
+  &_full_width {
+    width: 100%;
   }
 
-  &__icon {
+  &_label {
+    margin-bottom: token.$spacing_xs;
+    color: token.$color_text_primary;
+    @include token.text_sm;
+    font-weight: token.$font_weight_medium;
+  }
+
+  &_wrap {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  &_helper {
+    margin-top: token.$spacing_xs;
+    @include token.text_sm;
+    color: token.$color_text_secondary;
+  }
+
+  &_helper_error {
+    color: token.$color_error;
+  }
+
+  &_helper_success {
+    color: token.$color_success;
+  }
+
+  &_icon {
     position: absolute;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
-    color: $color-text-secondary;
-    &--left {
-      left: $spacing-md;
+    color: token.$color_text_secondary;
+
+    &_left {
+      left: token.$spacing_md;
     }
-    &--right {
-      right: $spacing-md;
+
+    &_right {
+      right: token.$spacing_md;
     }
   }
 
-  &__helper {
-    @include tf-helper;
-    &--error {
-      @include tf-helper-error;
+  &_input {
+    width: 100%;
+    border-radius: token.$radius_md;
+    transition: border-color token.$transition_base,
+    box-shadow token.$transition_base,
+    background token.$transition_base;
+    @include token.text_base;
+    color: token.$color_text_primary;
+    background: token.$color_background;
+
+    &::placeholder {
+      color: token.$color_text_tertiary;
     }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: token.$color_background_secondary;
+      color: token.$color_text_tertiary;
+      opacity: 0.7;
+    }
+  }
+
+  &_variant_outline {
+    border: 1px solid token.$color_border;
+
+    &:hover:not(:disabled) {
+      border-color: token.$color_border_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: token.$color_primary;
+      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+    }
+  }
+
+  &_variant_filled {
+    background: token.$color_background_secondary;
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+      background: color.mix(token.$color_background, token.$color_background_secondary, 70%);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: token.$color_primary;
+      background: token.$color_background;
+      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+    }
+  }
+
+  &_variant_ghost {
+    background: transparent;
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: token.$color_primary;
+      background: token.$color_background;
+      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+    }
+  }
+
+  &_size_sm {
+    padding: token.$spacing_sm token.$spacing_lg;
+    @include token.text_sm;
+  }
+
+  &_size_md {
+    padding: token.$spacing_md token.$spacing_xl;
+    @include token.text_base;
+  }
+
+  &_size_lg {
+    padding: token.$spacing_lg token.$spacing_2xl;
+    @include token.text_md;
+  }
+
+  &_with_left {
+    padding-left: calc(#{token.$spacing_xl} + 1.25rem);
+  }
+
+  &_with_right {
+    padding-right: calc(#{token.$spacing_xl} + 1.25rem);
+  }
+
+  &_error {
+    border-color: token.$color_error !important;
+    box-shadow: 0 0 0 3px rgba(token.$color_error, 0.15) !important;
+  }
+
+  &_success {
+    border-color: token.$color_success !important;
+    box-shadow: 0 0 0 3px rgba(token.$color_success, 0.15) !important;
   }
 }

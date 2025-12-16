@@ -7,95 +7,112 @@ export type TextFieldVariant = "outline" | "filled" | "ghost";
 export type TextFieldSize = "sm" | "md" | "lg";
 
 export interface TextFieldProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "size" | "onChange"
-  > {
-  label?: string;
-  helperText?: string;
-  error?: boolean;
-  success?: boolean;
-  variant?: TextFieldVariant;
-  size?: TextFieldSize;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  fullWidth?: boolean;
-  onChangeAction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    extends Omit<
+        React.InputHTMLAttributes<HTMLInputElement>,
+        "size" | "onChange"
+    > {
+    label?: string;
+    helperText?: string;
+    error?: boolean;
+    success?: boolean;
+    variant?: TextFieldVariant;
+    size?: TextFieldSize;
+    leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    fullWidth?: boolean;
+    onChangeAction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-  (
-    {
-      id,
-      label,
-      helperText,
-      error,
-      success,
-      variant = "outline",
-      size = "md",
-      leftIcon,
-      rightIcon,
-      fullWidth,
-      className,
-      onChangeAction,
-      ...props
-    },
-    ref
-  ) => {
-    const inputId = id ?? React.useId();
-    const helperId = helperText ? `${inputId}-help` : undefined;
+    (
+        {
+            id,
+            label,
+            helperText,
+            error,
+            success,
+            variant = "outline",
+            size = "md",
+            leftIcon,
+            rightIcon,
+            fullWidth,
+            className,
+            onChangeAction,
+            ...props
+        },
+        ref
+    ) => {
+        const inputId = id ?? React.useId();
+        const helperId = helperText ? `${inputId}-help` : undefined;
 
-    const classNames = [
-      "tf__input",
-      `tf__input--${variant}`,
-      `tf__input--${size}`,
-      leftIcon && "tf__input--with-left",
-      rightIcon && "tf__input--with-right",
-      error && "tf__input--error",
-      success && "tf__input--success",
-      className,
-    ]
-      .filter(Boolean)
-      .join(" ");
+        const rootClassName = [
+            "text_field",
+            fullWidth && "text_field_full_width",
+            className ?? "",
+        ]
+            .filter(Boolean)
+            .join(" ");
 
-    return (
-      <div className="tf" style={fullWidth ? { width: "100%" } : undefined}>
-        {label && (
-          <label className="tf__label" htmlFor={inputId}>
-            {label}
-          </label>
-        )}
+        const inputClassName = [
+            "text_field_input",
+            `text_field_variant_${variant}`,
+            `text_field_size_${size}`,
+            leftIcon && "text_field_with_left",
+            rightIcon && "text_field_with_right",
+            error && "text_field_error",
+            success && "text_field_success",
+        ]
+            .filter(Boolean)
+            .join(" ");
 
-        <div className="tf__wrapper">
-          {leftIcon && (
-            <span className="tf__icon tf__icon--left">{leftIcon}</span>
-          )}
+        const helperClassName = [
+            "text_field_helper",
+            error && "text_field_helper_error",
+            success && "text_field_helper_success",
+        ]
+            .filter(Boolean)
+            .join(" ");
 
-          <input
-            id={inputId}
-            ref={ref}
-            className={classNames}
-            aria-invalid={!!error}
-            aria-describedby={helperId}
-            {...props}
-            onChange={onChangeAction}
-          />
+        return (
+            <div className={rootClassName}>
+                {label ? (
+                    <label className="text_field_label" htmlFor={inputId}>
+                        {label}
+                    </label>
+                ) : null}
 
-          {rightIcon && (
-            <span className="tf__icon tf__icon--right">{rightIcon}</span>
-          )}
-        </div>
+                <div className="text_field_wrap">
+                    {leftIcon ? (
+                        <span className="text_field_icon text_field_icon_left">
+              {leftIcon}
+            </span>
+                    ) : null}
 
-        {helperText && (
-          <div
-            id={helperId}
-            className={`tf__helper ${error ? "tf__helper--error" : ""}`}>
-            {helperText}
-          </div>
-        )}
-      </div>
-    );
-  }
+                    <input
+                        id={inputId}
+                        ref={ref}
+                        className={inputClassName}
+                        aria-invalid={!!error}
+                        aria-describedby={helperId}
+                        {...props}
+                        onChange={onChangeAction}
+                    />
+
+                    {rightIcon ? (
+                        <span className="text_field_icon text_field_icon_right">
+              {rightIcon}
+            </span>
+                    ) : null}
+                </div>
+
+                {helperText ? (
+                    <div id={helperId} className={helperClassName}>
+                        {helperText}
+                    </div>
+                ) : null}
+            </div>
+        );
+    }
 );
 
 TextField.displayName = "TextField";
