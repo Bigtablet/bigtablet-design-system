@@ -1,3 +1,33 @@
+# [1.5.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.4.0...v1.5.0) (2025-12-16)
+
+
+### Bug Fixes
+
+* alert docs ([e44fccd](https://github.com/Bigtablet/bigtablet-design-system/commit/e44fccd65f473439a6fd84a6aae3e1ea7b39ab0a))
+* button docs ([b5e5daf](https://github.com/Bigtablet/bigtablet-design-system/commit/b5e5daf4b5a27d6622944ba308d0e817c3bbbf9f))
+* button type parentheses ([5c05306](https://github.com/Bigtablet/bigtablet-design-system/commit/5c05306da7e152aefd3f141ec60ab0e758eca714))
+* button width ([fc4a8a5](https://github.com/Bigtablet/bigtablet-design-system/commit/fc4a8a55bd18e92ae3ba4d50af8ba330f3f1d26a))
+* card docs ([c9d141a](https://github.com/Bigtablet/bigtablet-design-system/commit/c9d141a5f00bf68ccce5f65f417298740051b475))
+* checkbox docs ([05017ad](https://github.com/Bigtablet/bigtablet-design-system/commit/05017adc6dfd13aceb38b0c37721ef5f438da84b))
+* file input docs ([78bfe3b](https://github.com/Bigtablet/bigtablet-design-system/commit/78bfe3be4f3ec09331b5af40b8bc311389574b9d))
+* image folder ([aa7183a](https://github.com/Bigtablet/bigtablet-design-system/commit/aa7183a4d0c9654e7931946500d5c81e780792c6))
+* loading docs ([bfa1202](https://github.com/Bigtablet/bigtablet-design-system/commit/bfa1202908f8f955b66346885d1fe85c638906d3))
+* modal docs ([e1c47e7](https://github.com/Bigtablet/bigtablet-design-system/commit/e1c47e788acdc388de68df918734118975c0d29c))
+* page render ([85a4875](https://github.com/Bigtablet/bigtablet-design-system/commit/85a4875b079e85935edbd4c9f6b0536d4775ca3b))
+* radio docs ([814c57c](https://github.com/Bigtablet/bigtablet-design-system/commit/814c57cc0a81d93b3505c3095ff47911a68cf581))
+* select docs ([07ff909](https://github.com/Bigtablet/bigtablet-design-system/commit/07ff909d05e68449a51e44347c2793c3f9360928))
+* sidebar docs ([92cc882](https://github.com/Bigtablet/bigtablet-design-system/commit/92cc882df1cf0843dfa12e52c533a0f1b6e9b214))
+* switch docs ([cb49a4a](https://github.com/Bigtablet/bigtablet-design-system/commit/cb49a4a087ea6c4f9a04e6235284cf2577bd5282))
+* textfield docs ([cb15234](https://github.com/Bigtablet/bigtablet-design-system/commit/cb152345028a65958ebe6e89f7b63cf91e23989d))
+* toast docs ([d33ba7e](https://github.com/Bigtablet/bigtablet-design-system/commit/d33ba7e75e4d33350e31d91bdcbf339e354dd8d2))
+* update radio docs ([db70cf5](https://github.com/Bigtablet/bigtablet-design-system/commit/db70cf5d17abccd293b90b643ae97fdd789d00e9))
+* woff -> woff2 ([da06308](https://github.com/Bigtablet/bigtablet-design-system/commit/da06308a3fcdd787b2ddc9fdf529efcbcaae5e36))
+
+
+### Features
+
+* add logo ([3e48a9e](https://github.com/Bigtablet/bigtablet-design-system/commit/3e48a9e29b5038d6cf27105e1781778ee98eb1de))
+
 # [1.4.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.3.3...v1.4.0) (2025-12-16)
 
 
