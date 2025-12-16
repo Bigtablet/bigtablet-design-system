@@ -58,6 +58,20 @@
   }
 }
 
+@mixin button-danger {
+  @include button-base;
+  background: $color-error;
+  color: $color-background;
+
+  &:hover:not(:disabled) {
+    background: darken($color-error, 8%);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 @mixin button-sm {
   padding: $spacing-sm $spacing-lg;
   @include text-sm;
@@ -72,3 +86,4 @@
   padding: $spacing-lg $spacing-2xl;
   @include text-md;
 }
+

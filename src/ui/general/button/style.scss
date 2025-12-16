@@ -17,6 +17,10 @@
   @include button-ghost;
 }
 
+.btn--danger {
+  @include button-danger;
+}
+
 /* Sizes */
 .btn--sm {
   @include button-sm;
