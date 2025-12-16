@@ -13,25 +13,25 @@ export const Card = ({
                          heading,
                          shadow = "sm",
                          padding = "md",
-                         bordered,
+                         bordered = false,
                          className,
                          children,
                          ...props
                      }: CardProps) => {
     const cls = [
         "card",
-        `card--shadow-${shadow}`,
-        `card--p-${padding}`,
-        bordered && "card--bordered",
-        className,
+        `card_shadow_${shadow}`,
+        `card_p_${padding}`,
+        bordered ? "card_bordered" : "",
+        className ?? "",
     ]
         .filter(Boolean)
         .join(" ");
 
     return (
         <div className={cls} {...props}>
-            {heading && <div className="card__title">{heading}</div>}
-            <div className="card__body">{children}</div>
+            {heading ? <div className="card_title">{heading}</div> : null}
+            <div className="card_body">{children}</div>
         </div>
     );
 };
