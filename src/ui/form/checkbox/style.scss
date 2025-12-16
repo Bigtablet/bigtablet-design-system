@@ -1,76 +1,116 @@
-@use "src/styles/token" as *;
+@use "src/styles/token" as token;
 
 .checkbox {
   display: inline-flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: token.$spacing_sm;
   cursor: pointer;
   user-select: none;
-  &__input {
+  position: relative;
+
+  &_input {
     position: absolute;
-    opacity: 0;
-    pointer-events: none;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  &__box {
+
+  &_box {
     width: 1.125rem;
     height: 1.125rem;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    background: $color-background;
-    transition: background $transition-base, border-color $transition-base,
-      box-shadow $transition-base;
+    box-sizing: border-box;
+
+    border: 1px solid token.$color_border;
+    border-radius: token.$radius_sm;
+    background: token.$color_background;
+
+    transition: background token.$transition_base, border-color token.$transition_base,
+    box-shadow token.$transition_base;
+    display: inline-block;
+    position: relative;
   }
-  &__label {
-    @include text-base;
-    color: $color-text-primary;
+
+  &_label {
+    @include token.text_base;
+    color: token.$color_text_primary;
   }
-  &--sm {
-    .checkbox__box {
+
+  &_size_sm {
+    .checkbox_box {
       width: 1rem;
       height: 1rem;
     }
-    .checkbox__label {
-      @include text-sm;
+
+    .checkbox_label {
+      @include token.text_sm;
     }
   }
-  &--md {
-    .checkbox__box {
+
+  &_size_md {
+    .checkbox_box {
       width: 1.125rem;
       height: 1.125rem;
     }
   }
-  &--lg {
-    .checkbox__box {
+
+  &_size_lg {
+    .checkbox_box {
       width: 1.25rem;
       height: 1.25rem;
     }
-    .checkbox__label {
-      @include text-md;
+
+    .checkbox_label {
+      @include token.text_md;
     }
   }
-  &:has(.checkbox__input:focus-visible) .checkbox__box {
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
-    border-color: $color-primary;
+
+  &_input:focus-visible + .checkbox_box {
+    box-shadow: 0 0 0 3px token.$color_border_light;
+    border-color: token.$color_primary;
   }
-  &:has(.checkbox__input:checked) .checkbox__box,
-  &:has(.checkbox__input:indeterminate) .checkbox__box {
-    background: $color-primary;
-    border-color: $color-primary;
-  }
-  &:has(.checkbox__input:checked) .checkbox__box::after,
-  &:has(.checkbox__input:indeterminate) .checkbox__box::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: $color-background;
-    clip-path: polygon(14% 52%, 0 66%, 40% 100%, 100% 24%, 86% 10%, 38% 70%);
-  }
-  &:has(.checkbox__input:indeterminate) .checkbox__box::after {
-    clip-path: inset(40% 15% 40% 15%);
-  }
-  &:has(.checkbox__input:disabled) {
+
+  &_input:disabled + .checkbox_box,
+  &_input:disabled ~ .checkbox_label {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &_input:checked + .checkbox_box,
+  &_input:indeterminate + .checkbox_box {
+    background: token.$color_primary;
+    border-color: token.$color_primary;
+  }
+
+  &_input:checked + .checkbox_box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 0.28rem;
+    height: 0.55rem;
+
+    border: 2px solid token.$color_background;
+    border-top: 0;
+    border-left: 0;
+
+    transform: translate(-50%, -58%) rotate(45deg);
+  }
+
+  &_input:indeterminate + .checkbox_box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 0.65rem;
+    height: 2px;
+    background: token.$color_background;
+
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
   }
 }
