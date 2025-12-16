@@ -1,33 +1,45 @@
 @use "src/styles/token" as *;
 
 .pagination {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: $spacing-sm;
-  &__item {
-    border: 1px solid $color-border;
-    background: $color-background;
-    color: $color-text-primary;
-    border-radius: $radius-sm;
-    padding: $spacing-xs $spacing-sm;
-    cursor: pointer;
-    @include text-sm;
-    &.is-active {
-      background: $color-primary;
-      color: $color-background;
-      border-color: $color-primary;
-    }
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    &:focus-visible {
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
-      border-color: $color-primary;
-    }
+  margin-top: $spacing-3xl;
+}
+
+.pagination_item {
+  border: 1px solid $color-border;
+  background: $color-background;
+  border-radius: $radius-md;
+  padding: 6px 10px;
+  min-width: 36px;
+
+  @include text-sm;
+  color: $text-normal;
+
+  transition: background $transition-base, border-color $transition-base;
+
+  &:hover:not(:disabled) {
+    background: $color-background-secondary;
   }
-  &__ellipsis {
-    padding: 0 $spacing-xs;
-    color: $color-text-tertiary;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+    border-color: $color-primary;
+  }
+}
+
+.pagination_page {
+  min-width: 36px;
+  text-align: center;
+
+  @include text-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-strong;
 }

@@ -8,11 +8,9 @@ const meta: Meta<typeof Pagination> = {
     tags: ["autodocs"],
     argTypes: {
         hasNext: { control: "boolean" },
-        size: { control: "number" },
     },
     args: {
         hasNext: true,
-        size: 0,
     },
     parameters: {
         docs: {
