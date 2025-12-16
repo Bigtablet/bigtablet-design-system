@@ -1,3 +1,26 @@
+# [1.6.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.5.0...v1.6.0) (2025-12-16)
+
+
+### Bug Fixes
+
+* storybook setting ([0783863](https://github.com/Bigtablet/bigtablet-design-system/commit/07838630af1148cb781b3f25ecea7c3aef193d48))
+* token styling ([bfee6c8](https://github.com/Bigtablet/bigtablet-design-system/commit/bfee6c8c9662e280cc65cd33c5995f38f9a4c12b))
+* update readme ([5f5792a](https://github.com/Bigtablet/bigtablet-design-system/commit/5f5792a75bed8c3ae53cadb0b9583f90fdbfb170))
+
+
+### Features
+
+* a11y ([deff73e](https://github.com/Bigtablet/bigtablet-design-system/commit/deff73e006c0534d7764cc2af885beec09ad90ac))
+* breakpoints ([9b58557](https://github.com/Bigtablet/bigtablet-design-system/commit/9b5855714531c6fbf648372253ea01cb2ecd1c98))
+* colors ([c68dffa](https://github.com/Bigtablet/bigtablet-design-system/commit/c68dffa5d1aca33396043e5d929d3c064e3d192e))
+* focundation common styling code ([de44974](https://github.com/Bigtablet/bigtablet-design-system/commit/de4497482512aee1edb94da13ce83fabbba5f93d))
+* motion ([d9c5361](https://github.com/Bigtablet/bigtablet-design-system/commit/d9c536153bc57d3b72843baa36cd18e3b6f24837))
+* radius ([dca35cf](https://github.com/Bigtablet/bigtablet-design-system/commit/dca35cfb8c949ca9e81a837b795aade24639f1a0))
+* shadows ([e32c342](https://github.com/Bigtablet/bigtablet-design-system/commit/e32c34213f196713855fd889a9e4d0ed0b23c6e0))
+* spacing ([7fb10b8](https://github.com/Bigtablet/bigtablet-design-system/commit/7fb10b8c5ae1e69678f176cc50daf14f1e9381bc))
+* typography ([358b424](https://github.com/Bigtablet/bigtablet-design-system/commit/358b424423eebe89accce5836f327337e7e363d9))
+* z index ([6882e78](https://github.com/Bigtablet/bigtablet-design-system/commit/6882e78cd9036fe5dfc0a93aa50632f5eb7f7272))
+
 # [1.5.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.4.0...v1.5.0) (2025-12-16)
 
 
