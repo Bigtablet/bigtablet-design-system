@@ -1,23 +1,28 @@
+"use client";
+
 import * as React from "react";
 import "./style.scss";
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  size?: "sm" | "md" | "lg";
-  style?: React.CSSProperties;
+    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: "primary" | "secondary" | "ghost" | "danger";
+    size?: "sm" | "md" | "lg";
 }
 
 export const Button = ({
-  variant = "primary",
-  size = "md",
-  className,
-  style,
-  ...props
-}: ButtonProps) => {
-  const classes = ["btn", `btn--${variant}`, `btn--${size}`, className]
-    .filter(Boolean)
-    .join(" ");
+                           variant = "primary",
+                           size = "md",
+                           className,
+                           ...props
+                       }: ButtonProps) => {
+    const buttonClassName = [
+        "button",
+        `button_variant_${variant}`,
+        `button_size_${size}`,
+        className ?? "",
+    ]
+        .filter(Boolean)
+        .join(" ");
 
-  return <button className={classes} {...props} />;
+    return <button className={buttonClassName} {...props} />;
 };
