@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.3.3...v1.4.0) (2025-12-16)
+
+
+### Features
+
+* button danger ([2eb07f7](https://github.com/Bigtablet/bigtablet-design-system/commit/2eb07f7cda289e027d78a810c636552ec4d24d7d))
+
 ## [1.3.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.3.2...v1.3.3) (2025-12-16)
 
 
