@@ -1,0 +1,8 @@
+@mixin flex_center { display: flex; align-items: center; justify-content: center; }
+@mixin flex_left { display: flex; align-items: center; justify-content: flex-start; }
+@mixin flex_right { display: flex; align-items: center; justify-content: flex-end; }
+@mixin flex_between { display: flex; align-items: center; justify-content: space-between; }
+
+@mixin flex_column { display: flex; flex-direction: column; }
+@mixin flex_column_center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+@mixin flex_column_start { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; }

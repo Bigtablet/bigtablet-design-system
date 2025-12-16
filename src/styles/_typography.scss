@@ -1,114 +1,77 @@
-// Typography Tokens
-$font-family-primary: 'Pretendard', sans-serif;
+$font_family_primary: "Pretendard", sans-serif;
 
-// Font Size Tokens
-$font-size-xs: 0.75rem;      // 12px
-$font-size-sm: 0.875rem;     // 14px
-$font-size-base: 0.9375rem;  // 15px
-$font-size-md: 1rem;         // 16px
-$font-size-lg: 1.125rem;     // 18px
-$font-size-xl: 1.25rem;      // 20px
-$font-size-2xl: 1.5rem;      // 24px
-$font-size-3xl: 2rem;        // 32px
-$font-size-4xl: 2.5rem;      // 40px
+$font_size_xs: 0.75rem;
+$font_size_sm: 0.875rem;
+$font_size_base: 0.9375rem;
+$font_size_md: 1rem;
+$font_size_lg: 1.125rem;
+$font_size_xl: 1.25rem;
+$font_size_2xl: 1.5rem;
+$font_size_3xl: 2rem;
+$font_size_4xl: 2.5rem;
 
-// Font Weight Tokens
-$font-weight-thin: 100;
-$font-weight-extralight: 200;
-$font-weight-light: 300;
-$font-weight-regular: 400;
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
-$font-weight-bold: 700;
-$font-weight-extrabold: 800;
-$font-weight-black: 900;
+$font_weight_thin: 100;
+$font_weight_extralight: 200;
+$font_weight_light: 300;
+$font_weight_regular: 400;
+$font_weight_medium: 500;
+$font_weight_semibold: 600;
+$font_weight_bold: 700;
+$font_weight_extrabold: 800;
+$font_weight_black: 900;
 
-// Line Height Tokens
-$line-height-tight: 1.25;
-$line-height-snug: 1.3;
-$line-height-normal: 1.5;
-$line-height-relaxed: 1.75;
+$line_height_tight: 1.25;
+$line_height_snug: 1.3;
+$line_height_normal: 1.5;
+$line_height_relaxed: 1.75;
 
-// Letter Spacing Tokens
-$letter-spacing-tight: -0.02em;
-$letter-spacing-normal: 0;
-$letter-spacing-wide: 0.02em;
+$letter_spacing_tight: -0.02em;
+$letter_spacing_normal: 0;
+$letter_spacing_wide: 0.02em;
 
-// Typography Mixins
-@mixin text-xs {
-  font-size: $font-size-xs;
-  line-height: $line-height-normal;
+@mixin text_xs { font-size: $font_size_xs; line-height: $line_height_normal; }
+@mixin text_sm { font-size: $font_size_sm; line-height: $line_height_normal; }
+@mixin text_base { font-size: $font_size_base; line-height: $line_height_normal; }
+@mixin text_md { font-size: $font_size_md; line-height: $line_height_normal; }
+@mixin text_lg { font-size: $font_size_lg; line-height: $line_height_normal; }
+@mixin text_xl { font-size: $font_size_xl; line-height: $line_height_snug; }
+@mixin text_2xl { font-size: $font_size_2xl; line-height: $line_height_snug; }
+@mixin text_3xl { font-size: $font_size_3xl; line-height: $line_height_tight; }
+
+@mixin heading_1 {
+  font-size: $font_size_3xl;
+  font-weight: $font_weight_bold;
+  line-height: $line_height_tight;
+  letter-spacing: $letter_spacing_tight;
 }
 
-@mixin text-sm {
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
+@mixin heading_2 {
+  font-size: $font_size_2xl;
+  font-weight: $font_weight_semibold;
+  line-height: $line_height_snug;
+  letter-spacing: $letter_spacing_tight;
 }
 
-@mixin text-base {
-  font-size: $font-size-base;
-  line-height: $line-height-normal;
+@mixin heading_3 {
+  font-size: $font_size_xl;
+  font-weight: $font_weight_semibold;
+  line-height: $line_height_snug;
 }
 
-@mixin text-md {
-  font-size: $font-size-md;
-  line-height: $line-height-normal;
+@mixin body_regular {
+  font-size: $font_size_base;
+  font-weight: $font_weight_regular;
+  line-height: $line_height_normal;
 }
 
-@mixin text-lg {
-  font-size: $font-size-lg;
-  line-height: $line-height-normal;
-}
-
-@mixin text-xl {
-  font-size: $font-size-xl;
-  line-height: $line-height-snug;
-}
-
-@mixin text-2xl {
-  font-size: $font-size-2xl;
-  line-height: $line-height-snug;
-}
-
-@mixin text-3xl {
-  font-size: $font-size-3xl;
-  line-height: $line-height-tight;
-}
-
-@mixin heading-1 {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-tight;
-}
-
-@mixin heading-2 {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-snug;
-  letter-spacing: $letter-spacing-tight;
-}
-
-@mixin heading-3 {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-snug;
-}
-
-@mixin body-regular {
-  font-size: $font-size-base;
-  font-weight: $font-weight-regular;
-  line-height: $line-height-normal;
-}
-
-@mixin body-medium {
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  line-height: $line-height-normal;
+@mixin body_medium {
+  font-size: $font_size_base;
+  font-weight: $font_weight_medium;
+  line-height: $line_height_normal;
 }
 
 @mixin caption {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-regular;
-  line-height: $line-height-normal;
+  font-size: $font_size_sm;
+  font-weight: $font_weight_regular;
+  line-height: $line_height_normal;
 }

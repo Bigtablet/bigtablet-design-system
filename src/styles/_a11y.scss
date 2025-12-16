@@ -1,0 +1,7 @@
+@use "./colors" as colors;
+
+$focus_ring: 0 0 0 3px rgba(colors.$color_primary, 0.15);
+$focus_ring_error: 0 0 0 3px rgba(colors.$color_error, 0.15);
+$focus_ring_success: 0 0 0 3px rgba(colors.$color_success, 0.15);
+
+$tap_min_size: 44px;
