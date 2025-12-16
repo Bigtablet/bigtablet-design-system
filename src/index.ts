@@ -8,7 +8,7 @@ export { useAlert } from "./ui/feedback/alert";
 export { AlertProvider } from "./ui/feedback/alert";
 export { Loading } from "./ui/feedback/loading";
 export { ToastProvider } from "./ui/feedback/toast";
-export { useToast } from "./ui/feedback/toast/useToast";
+export { useToast } from "./ui/feedback/toast/use-toast";
 
 // Form
 export { Button } from "./ui/general/button";
