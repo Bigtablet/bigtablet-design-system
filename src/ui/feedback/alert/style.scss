@@ -1,193 +1,121 @@
 @use "sass:color";
-@use "src/styles/token" as *;
+@use "src/styles/token" as token;
 
-// 모달 스타일
-.alert-overlay {
+/* overlay */
+.alert_overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: token.$color_overlay;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease;
+  z-index: token.$z_modal;
+  animation: fade_in token.$transition_base;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.alert-modal {
-  background: white;
-  border-radius: $radius-lg;
-  padding: 0;
+/* modal */
+.alert_modal {
+  background: token.$color_background;
+  border-radius: token.$radius_lg;
   min-width: 320px;
   max-width: 480px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  box-shadow: token.$shadow_xl;
+  animation: slide_up token.$transition_slow;
   overflow: hidden;
 
-  &__title {
-    @include text-lg;
-    font-weight: $font-weight-semibold;
-    color: $color-info;
-    margin-top: 8px;
-    padding: $spacing-md $spacing-xl;
-    padding-bottom: $spacing-xs;
+  &_title {
+    @include token.text_lg;
+    font-weight: 600;
+    padding: token.$spacing_md token.$spacing_xl token.$spacing_xs;
   }
 
-  &__message {
-    @include body-regular;
-    color: $color-text-secondary;
-    margin: 0;
-    padding: $spacing-xl;
-    padding-bottom: $spacing-lg;
+  &_message {
+    @include token.body_regular;
+    color: token.$color_text_secondary;
+    padding: token.$spacing_xl;
     line-height: 1.6;
   }
 
-  &__actions {
+  &_actions {
     display: flex;
-    gap: $spacing-sm;
-    align-items: center;
-    padding: 0 $spacing-xl $spacing-xl $spacing-xl;
+    gap: token.$spacing_sm;
+    padding: 0 token.$spacing_xl token.$spacing_xl;
 
-    &--left {
+    &_left {
       justify-content: flex-start;
     }
 
-    &--center {
+    &_center {
       justify-content: center;
     }
 
-    &--right {
+    &_right {
       justify-content: flex-end;
     }
   }
 
-  &__button {
-    padding: 10px 24px;
-    border-radius: $radius-sm;
-    font-size: 14px;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent;
+  &_button {
     min-width: 80px;
-    line-height: 1.5;
+    padding: 10px 24px;
+    border-radius: token.$radius_sm;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: token.$transition_base;
 
     &:focus-visible {
-      outline: 2px solid rgba(0, 0, 0, 0.3);
-      outline-offset: 2px;
+      outline: 2px solid token.$color_border_light;
     }
 
-    &--cancel {
-      background: white;
-      border-color: $color-border;
-      color: $color-text-primary;
+    &_cancel {
+      background: token.$color_background;
+      border-color: token.$color_border;
+      color: token.$color_text_primary;
 
       &:hover {
-        background: rgba(0, 0, 0, 0.04);
-        border-color: rgba(0, 0, 0, 0.3);
-      }
-
-      &:active {
-        transform: scale(0.98);
-        background: rgba(0, 0, 0, 0.06);
+        background: token.$color_background_secondary;
       }
     }
 
-    &--confirm {
-      color: white;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-
-      &:active {
-        transform: scale(0.98);
-      }
+    &_confirm {
+      color: token.$text_inverse;
     }
   }
 
-  // Variant styles
-  &--info {
-    .alert-modal__title {
-      color: $color-info;
+  /* variants */
+  &_info {
+    .alert_modal_title {
+      color: token.$color_info;
     }
-
-    .alert-modal__button--confirm {
-      background: $color-info;
-      border-color: $color-info;
-
-      &:hover {
-        background: color.adjust($color-info, $lightness: -6%);
-        border-color: color.adjust($color-info, $lightness: -6%);
-      }
+    .alert_modal_button_confirm {
+      background: token.$color_info;
     }
   }
 
-  &--success {
-    .alert-modal__title {
-      color: $color-success;
+  &_success {
+    .alert_modal_title {
+      color: token.$color_success;
     }
-
-    .alert-modal__button--confirm {
-      background: $color-success;
-      border-color: $color-success;
-
-      &:hover {
-        background: color.adjust($color-success, $lightness: -6%);
-        border-color: color.adjust($color-success, $lightness: -6%);
-      }
+    .alert_modal_button_confirm {
+      background: token.$color_success;
     }
   }
 
-  &--warning {
-    .alert-modal__title {
-      color: $color-warning;
+  &_warning {
+    .alert_modal_title {
+      color: token.$color_warning;
     }
-
-    .alert-modal__button--confirm {
-      background: $color-warning;
-      border-color: $color-warning;
-
-      &:hover {
-        background: color.adjust($color-warning, $lightness: -6%);
-        border-color: color.adjust($color-warning, $lightness: -6%);
-      }
+    .alert_modal_button_confirm {
+      background: token.$color_warning;
     }
   }
 
-  &--error {
-    .alert-modal__title {
-      color: $color-error;
+  &_error {
+    .alert_modal_title {
+      color: token.$color_error;
     }
-
-    .alert-modal__button--confirm {
-      background: $color-error;
-      border-color: $color-error;
-
-      &:hover {
-        background: color.adjust($color-error, $lightness: -6%);
-        border-color: color.adjust($color-error, $lightness: -6%);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      }
+    .alert_modal_button_confirm {
+      background: token.$color_error;
     }
   }
 }
-
