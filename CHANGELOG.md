@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.0...v1.6.1) (2025-12-16)
+
+
+### Bug Fixes
+
+* pretendard safari error ([c314bbf](https://github.com/Bigtablet/bigtablet-design-system/commit/c314bbf41eb80247cdbb143f643b203b086e27ee))
+
 # [1.6.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.5.0...v1.6.0) (2025-12-16)
 
 
