@@ -1,29 +1,54 @@
-@use "src/styles/token" as *;
+@use "src/styles/token" as token;
 
-.file {
+.file_input {
   position: relative;
   display: inline-flex;
   align-items: center;
-  &__input {
+
+  &_control {
     position: absolute;
     inset: 0;
     opacity: 0;
     cursor: pointer;
   }
-  &__label {
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    background: $color-background;
-    padding: $spacing-sm $spacing-lg;
-    color: $color-text-primary;
-    transition: background $transition-base, border-color $transition-base;
-    @include text-base;
+
+  &_label {
+    border: 1px solid token.$color_border;
+    border-radius: token.$radius_md;
+    background: token.$color_background;
+
+    padding: token.$spacing_sm token.$spacing_lg;
+
+    @include token.text_base;
+    color: token.$color_text_primary;
+
+    transition: background token.$transition_base, border-color token.$transition_base,
+    box-shadow token.$transition_base;
   }
-  &:hover .file__label {
-    border-color: $color-border-light;
+
+  &:hover .file_input_label {
+    border-color: token.$color_border_light;
   }
-  &:has(.file__input:focus-visible) .file__label {
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
-    border-color: $color-primary;
+
+  &_control:focus-visible + .file_input_label {
+    box-shadow: 0 0 0 3px token.$color_border_light;
+    border-color: token.$color_primary;
+  }
+
+  &_disabled {
+    cursor: not-allowed;
+
+    .file_input_control {
+      cursor: not-allowed;
+    }
+
+    .file_input_label {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover .file_input_label {
+      border-color: token.$color_border;
+    }
   }
 }
