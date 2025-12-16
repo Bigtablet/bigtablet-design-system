@@ -16,7 +16,7 @@
   min-width: 36px;
 
   @include text-sm;
-  color: $text-normal;
+  color: $color-text-primary;
 
   transition: background $transition-base, border-color $transition-base;
 
@@ -30,16 +30,51 @@
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+    box-shadow: 0 0 0 3px $color-border-light;
     border-color: $color-primary;
   }
 }
 
-.pagination_page {
+.pagination_pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination_pageButton {
+  border: 0;
+  background: transparent;
   min-width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+
+  @include text-sm;
+  color: $color-text-secondary;
+
+  transition: background $transition-base, color $transition-base;
+
+  &:hover {
+    background: $color-background-secondary;
+    color: $color-text-primary;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px $color-border-light;
+  }
+
+  &.is-active {
+    color: $color-text-primary;
+    font-weight: 600; /* 토큰에 있으면 $font-weight-semibold로 교체 */
+    /* 스샷 느낌으로 더 “현재 페이지”를 주고 싶으면 아래 중 하나만 추가 추천 */
+    /* text-decoration: underline; */
+    /* border: 1px solid $color-border; background: $color-background; */
+  }
+}
+
+.pagination_ellipsis {
+  min-width: 20px;
   text-align: center;
 
   @include text-sm;
-  font-weight: $font-weight-semibold;
-  color: $text-strong;
+  color: $color-text-tertiary;
 }
