@@ -1,9 +1,8 @@
-@use "src/styles/token" as token;
+@use "src/styles/scss/token" as token;
 @use "sass:color";
 
 .text_field {
-  display: flex;
-  flex-direction: column;
+  @include token.flex_column;
 
   &_full_width {
     width: 100%;
