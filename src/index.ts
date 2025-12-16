@@ -25,7 +25,3 @@ export { Pagination } from "./ui/navigation/pagination";
 
 // Overlay
 export { Modal } from "./ui/overlay/modal";
-
-// Skeleton
-export { default as SkeletonCard } from "./ui/skeleton/card";
-export { SkeletonList } from "./ui/skeleton/list";
