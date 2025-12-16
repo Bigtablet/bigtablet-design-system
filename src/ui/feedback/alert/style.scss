@@ -1,7 +1,26 @@
 @use "src/styles/scss/token" as token;
 @use "sass:color";
 
-/* overlay */
+@keyframes fade_in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide_up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .alert_overlay {
   position: fixed;
   inset: 0;
@@ -13,7 +32,6 @@
   animation: fade_in token.$transition_base;
 }
 
-/* modal */
 .alert_modal {
   background: token.$color_background;
   border-radius: token.$radius_lg;
@@ -25,7 +43,8 @@
 
   &_title {
     @include token.text_lg;
-    font-weight: 600;
+    font-weight: token.$font_weight_semibold;
+    color: token.$color_info;
     padding: token.$spacing_md token.$spacing_xl token.$spacing_xs;
   }
 
@@ -33,12 +52,13 @@
     @include token.body_regular;
     color: token.$color_text_secondary;
     padding: token.$spacing_xl;
-    line-height: 1.6;
+    line-height: token.$line_height_relaxed;
   }
 
   &_actions {
     display: flex;
     gap: token.$spacing_sm;
+    align-items: center;
     padding: 0 token.$spacing_xl token.$spacing_xl;
 
     &_left {
@@ -58,13 +78,29 @@
     min-width: 80px;
     padding: 10px 24px;
     border-radius: token.$radius_sm;
-    font-weight: 600;
+    font-weight: token.$font_weight_semibold;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: token.$transition_base;
+    line-height: token.$line_height_normal;
+
+    transition:
+            background token.$transition_base,
+            border-color token.$transition_base,
+            box-shadow token.$transition_base,
+            transform token.$transition_base;
 
     &:focus-visible {
-      outline: 2px solid token.$color_border_light;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
     }
 
     &_cancel {
@@ -72,8 +108,9 @@
       border-color: token.$color_border;
       color: token.$color_text_primary;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background: token.$color_background_secondary;
+        border-color: token.$color_border_light;
       }
     }
 
@@ -82,13 +119,19 @@
     }
   }
 
-  /* variants */
   &_info {
     .alert_modal_title {
       color: token.$color_info;
     }
+
     .alert_modal_button_confirm {
       background: token.$color_info;
+      border-color: token.$color_info;
+
+      &:hover:not(:disabled) {
+        background: color.adjust(token.$color_info, $lightness: -6%);
+        border-color: color.adjust(token.$color_info, $lightness: -6%);
+      }
     }
   }
 
@@ -96,8 +139,15 @@
     .alert_modal_title {
       color: token.$color_success;
     }
+
     .alert_modal_button_confirm {
       background: token.$color_success;
+      border-color: token.$color_success;
+
+      &:hover:not(:disabled) {
+        background: color.adjust(token.$color_success, $lightness: -6%);
+        border-color: color.adjust(token.$color_success, $lightness: -6%);
+      }
     }
   }
 
@@ -105,8 +155,15 @@
     .alert_modal_title {
       color: token.$color_warning;
     }
+
     .alert_modal_button_confirm {
       background: token.$color_warning;
+      border-color: token.$color_warning;
+
+      &:hover:not(:disabled) {
+        background: color.adjust(token.$color_warning, $lightness: -6%);
+        border-color: color.adjust(token.$color_warning, $lightness: -6%);
+      }
     }
   }
 
@@ -114,8 +171,15 @@
     .alert_modal_title {
       color: token.$color_error;
     }
+
     .alert_modal_button_confirm {
       background: token.$color_error;
+      border-color: token.$color_error;
+
+      &:hover:not(:disabled) {
+        background: color.adjust(token.$color_error, $lightness: -6%);
+        border-color: color.adjust(token.$color_error, $lightness: -6%);
+      }
     }
   }
 }
