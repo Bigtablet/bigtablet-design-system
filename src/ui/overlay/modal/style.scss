@@ -1,25 +1,29 @@
-@use "src/styles/token" as *;
+@use "src/styles/token" as token;
 
 .modal {
   position: fixed;
   inset: 0;
-  background: $color-overlay;
   display: grid;
   place-items: center;
-  z-index: $z-modal;
-  &__panel {
-    background: $color-background;
-    border-radius: $radius-lg;
-    box-shadow: $shadow-lg;
+  background: token.$color_overlay;
+  z-index: token.$z_modal;
+
+  &_panel {
+    background: token.$color_background;
+    border-radius: token.$radius_lg;
+    box-shadow: token.$shadow_lg;
     max-width: calc(100% - 32px);
+    overflow: hidden;
   }
-  &__header {
-    padding: $spacing-lg;
-    @include heading-3;
-    color: $color-text-primary;
-    border-bottom: 1px solid $color-border;
+
+  &_header {
+    padding: token.$spacing_lg;
+    border-bottom: 1px solid token.$color_border;
+    color: token.$color_text_primary;
+    @include token.heading_3;
   }
-  &__body {
-    padding: $spacing-lg;
+
+  &_body {
+    padding: token.$spacing_lg;
   }
 }
