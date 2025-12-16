@@ -1,53 +1,73 @@
-@use "src/styles/token" as *;
+@use "src/styles/token" as token;
 
 .switch {
   position: relative;
   display: inline-flex;
   align-items: center;
-  border-radius: $radius-full;
-  background: $color-border;
-  transition: background $transition-base;
-  cursor: pointer;
+
   width: 40px;
   height: 22px;
   padding: 2px;
-  &__thumb {
+
+  border-radius: token.$radius_full;
+  background: token.$color_border;
+
+  transition: background token.$transition_base;
+  cursor: pointer;
+
+  &_thumb {
     width: 18px;
     height: 18px;
-    background: $color-background;
-    border-radius: $radius-full;
-    transition: transform $transition-base;
+    background: token.$color_background;
+    border-radius: token.$radius_full;
+    transition: transform token.$transition_base;
     transform: translateX(0);
   }
-  &.is-on {
-    background: $color-primary;
+
+  &_on {
+    background: token.$color_primary;
+
+    .switch_thumb {
+      transform: translateX(18px);
+    }
   }
-  &.is-on .switch__thumb {
-    transform: translateX(18px);
-  }
-  &--sm {
+
+  &_size_sm {
     width: 34px;
     height: 18px;
-    .switch__thumb {
+    padding: 2px;
+
+    .switch_thumb {
       width: 14px;
       height: 14px;
     }
-    &.is-on .switch__thumb {
+
+    &.switch_on .switch_thumb {
       transform: translateX(16px);
     }
   }
-  &--lg {
+
+  &_size_md {
+    width: 40px;
+    height: 22px;
+  }
+
+  &_size_lg {
     width: 48px;
     height: 26px;
-    .switch__thumb {
+    padding: 2px;
+
+    .switch_thumb {
       width: 22px;
       height: 22px;
     }
-    &.is-on .switch__thumb {
+
+    &.switch_on .switch_thumb {
       transform: translateX(22px);
     }
   }
-  &.is-disabled {
+
+  &_disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }

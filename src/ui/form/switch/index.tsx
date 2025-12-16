@@ -4,52 +4,55 @@ import * as React from "react";
 import "./style.scss";
 
 export interface SwitchProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
-  checked?: boolean;
-  defaultChecked?: boolean;
-  onChange?: (checked: boolean) => void;
-  size?: "sm" | "md" | "lg";
-  disabled?: boolean;
+    extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+    checked?: boolean;
+    defaultChecked?: boolean;
+    onChange?: (checked: boolean) => void;
+    size?: "sm" | "md" | "lg";
+    disabled?: boolean;
 }
 
 export const Switch = ({
-  checked,
-  defaultChecked,
-  onChange,
-  size = "md",
-  disabled,
-  className,
-  ...props
-}: SwitchProps) => {
-  const controlled = checked !== undefined;
-  const [inner, setInner] = React.useState(!!defaultChecked);
-  const on = controlled ? !!checked : inner;
+                           checked,
+                           defaultChecked,
+                           onChange,
+                           size = "md",
+                           disabled,
+                           className,
+                           ...props
+                       }: SwitchProps) => {
+    const isControlled = checked !== undefined;
+    const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
+    const isOn = isControlled ? !!checked : innerChecked;
 
-  const toggle = () => {
-    if (disabled) return;
-    const next = !on;
-    if (!controlled) setInner(next);
-    onChange?.(next);
-  };
+    const handleToggle = () => {
+        if (disabled) return;
+        const next = !isOn;
+        if (!isControlled) setInnerChecked(next);
+        onChange?.(next);
+    };
 
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      disabled={disabled}
-      onClick={toggle}
-      className={[
+    const rootClassName = [
         "switch",
-        `switch--${size}`,
-        on && "is-on",
-        disabled && "is-disabled",
-        className,
-      ]
+        `switch_size_${size}`,
+        isOn && "switch_on",
+        disabled && "switch_disabled",
+        className ?? "",
+    ]
         .filter(Boolean)
-        .join(" ")}
-      {...props}>
-      <span className="switch__thumb" />
-    </button>
-  );
+        .join(" ");
+
+    return (
+        <button
+            type="button"
+            role="switch"
+            aria-checked={isOn}
+            disabled={disabled}
+            onClick={handleToggle}
+            className={rootClassName}
+            {...props}
+        >
+            <span className="switch_thumb" />
+        </button>
+    );
 };
