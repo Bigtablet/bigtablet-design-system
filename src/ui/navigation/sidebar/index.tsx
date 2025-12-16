@@ -25,64 +25,76 @@ export interface SidebarProps {
 }
 
 export const Sidebar = ({
-  items = [],
-  activePath,
-  onItemSelect,
-  width = 240,
-  className,
-  style,
-  match = "startsWith",
-  brandHref = "/main",
-}: SidebarProps) => {
+                          items = [],
+                          activePath,
+                          onItemSelect,
+                          width = 240,
+                          className,
+                          style,
+                          match = "startsWith",
+                          brandHref = "/main",
+                        }: SidebarProps) => {
   const isActive = (href: string) => {
     if (!activePath) return false;
     return match === "exact"
-      ? activePath === href
-      : activePath.startsWith(href);
+        ? activePath === href
+        : activePath.startsWith(href);
   };
 
-  return (
-    <aside
-      className={["sidebar", className].filter(Boolean).join(" ")}
-      style={{ width, ...style }}>
-      <div className="sidebar__brand">
-        <Link
-          href={brandHref}
-          className="sidebar__brand-link"
-          aria-label="Bigtablet 홈으로">
-          <Image
-            src="/assets/images/logo/bigtablet.svg"
-            alt="Bigtablet"
-            width={200}
-            height={44}
-            priority
-            className="sidebar__brand-img"
-          />
-        </Link>
-      </div>
+  const rootClassName = ["sidebar", className ?? ""]
+      .filter(Boolean)
+      .join(" ");
 
-      <nav className="sidebar__nav">
-        {items.map((it) => {
-          const active = isActive(it.href);
-          return (
-            <Link
-              key={it.href}
-              href={it.href}
-              className={["sidebar__item", active && "is-active"]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={() => onItemSelect?.(it.href)}
-              title={typeof it.label === "string" ? it.label : undefined}>
-              {it.icon && (
-                <span className="sidebar__icon">
-                  {React.createElement(it.icon, { size: 16 })}
+  return (
+      <aside
+          className={rootClassName}
+          style={{ width, ...style }}
+          aria-label="사이드 내비게이션"
+      >
+        <div className="sidebar_brand">
+          <Link
+              href={brandHref}
+              className="sidebar_brand_link"
+              aria-label="Bigtablet 홈으로"
+          >
+            <Image
+                src="/images/logo/bigtablet.png"
+                alt="Bigtablet"
+                width={200}
+                height={44}
+                priority
+                className="sidebar_brand_img"
+            />
+          </Link>
+        </div>
+
+        <nav className="sidebar_nav">
+          {items.map((item) => {
+            const active = isActive(item.href);
+
+            return (
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    className={[
+                      "sidebar_item",
+                      active && "is_active",
+                    ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    onClick={() => onItemSelect?.(item.href)}
+                    title={typeof item.label === "string" ? item.label : undefined}
+                >
+                  {item.icon && (
+                      <span className="sidebar_icon">
+                  {React.createElement(item.icon, { size: 16 })}
                 </span>
-              )}
-              <span className="sidebar__label">{it.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
+                  )}
+                  <span className="sidebar_label">{item.label}</span>
+                </Link>
+            );
+          })}
+        </nav>
+      </aside>
   );
 };
