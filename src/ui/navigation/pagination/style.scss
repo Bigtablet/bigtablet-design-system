@@ -4,24 +4,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-sm;
-  margin-top: $spacing-3xl;
+  gap: token.$spacing-sm;
+  margin-top: token.$spacing-3xl;
 }
 
 .pagination_item {
-  border: 1px solid $color-border;
-  background: $color-background;
-  border-radius: $radius-md;
+  border: 1px solid token.$color-border;
+  background: token.$color-background;
+  border-radius: token.$radius-md;
   padding: 6px 10px;
   min-width: 36px;
 
-  @include text-sm;
-  color: $color-text-primary;
+  @include token.text-sm;
+  color: token.$color-text-primary;
 
-  transition: background $transition-base, border-color $transition-base;
+  transition: background token.$transition-base,
+  border-color token.$transition-base;
 
   &:hover:not(:disabled) {
-    background: $color-background-secondary;
+    background: token.$color-background-secondary;
   }
 
   &:disabled {
@@ -30,8 +31,8 @@
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px $color-border-light;
-    border-color: $color-primary;
+    box-shadow: 0 0 0 3px token.$color-border-light;
+    border-color: token.$color-primary;
   }
 }
 
@@ -46,28 +47,26 @@
   background: transparent;
   min-width: 36px;
   height: 36px;
-  border-radius: $radius-md;
+  border-radius: token.$radius-md;
 
-  @include text-sm;
-  color: $color-text-secondary;
+  @include token.text-sm;
+  color: token.$color-text-secondary;
 
-  transition: background $transition-base, color $transition-base;
+  transition: background token.$transition-base,
+  color token.$transition-base;
 
   &:hover {
-    background: $color-background-secondary;
-    color: $color-text-primary;
+    background: token.$color-background-secondary;
+    color: token.$color-text-primary;
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px $color-border-light;
+    box-shadow: 0 0 0 3px token.$color-border-light;
   }
 
   &.is-active {
-    color: $color-text-primary;
-    font-weight: 600; /* 토큰에 있으면 $font-weight-semibold로 교체 */
-    /* 스샷 느낌으로 더 “현재 페이지”를 주고 싶으면 아래 중 하나만 추가 추천 */
-    /* text-decoration: underline; */
-    /* border: 1px solid $color-border; background: $color-background; */
+    color: token.$color-text-primary;
+    font-weight: token.$font-weight-semibold;
   }
 }
 
@@ -75,6 +74,6 @@
   min-width: 20px;
   text-align: center;
 
-  @include text-sm;
-  color: $color-text-tertiary;
+  @include token.text-sm;
+  color: token.$color-text-tertiary;
 }
