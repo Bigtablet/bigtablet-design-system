@@ -28,61 +28,58 @@ export interface SelectProps {
   className?: string;
 }
 
-export function Select({
-  id,
-  label,
-  placeholder = "Select…",
-  options,
-  value,
-  onChange,
-  defaultValue = null,
-  disabled,
-  size = "md",
-  variant = "outline",
-  fullWidth,
-  className,
-}: SelectProps) {
+export const Select = ({
+                         id,
+                         label,
+                         placeholder = "Select…",
+                         options,
+                         value,
+                         onChange,
+                         defaultValue = null,
+                         disabled,
+                         size = "md",
+                         variant = "outline",
+                         fullWidth,
+                         className,
+                       }: SelectProps) => {
   const internalId = React.useId();
   const selectId = id ?? internalId;
 
   const isControlled = value !== undefined;
-  const [internal, setInternal] = React.useState<string | null>(defaultValue);
-  const currentValue = isControlled ? value ?? null : internal;
+  const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
+  const currentValue = isControlled ? value ?? null : internalValue;
 
-  const [open, setOpen] = React.useState(false);
-  const [activeIndex, setActiveIndex] = React.useState<number>(-1);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(-1);
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
-  const listRef = React.useRef<HTMLUListElement>(null);
 
   const currentOption = React.useMemo(
-    () => options.find((o) => o.value === currentValue) ?? null,
-    [options, currentValue]
+      () => options.find((o) => o.value === currentValue) ?? null,
+      [options, currentValue]
   );
 
   const setValue = React.useCallback(
-    (next: string | null) => {
-      const opt = options.find((o) => o.value === next) ?? null;
-      if (!isControlled) setInternal(next);
-      onChange?.(next, opt);
-    },
-    [isControlled, onChange, options]
+      (next: string | null) => {
+        const option = options.find((o) => o.value === next) ?? null;
+        if (!isControlled) setInternalValue(next);
+        onChange?.(next, option);
+      },
+      [isControlled, onChange, options]
   );
 
-  // 외부 클릭 닫기
   React.useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       if (!wrapperRef.current) return;
-      if (!wrapperRef.current.contains(e.target as Node)) setOpen(false);
+      if (!wrapperRef.current.contains(e.target as Node)) setIsOpen(false);
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  // 키보드
   const moveActive = (dir: 1 | -1) => {
-    if (!open) {
-      setOpen(true);
+    if (!isOpen) {
+      setIsOpen(true);
       return;
     }
     let i = activeIndex;
@@ -101,17 +98,18 @@ export function Select({
     const opt = options[activeIndex];
     if (!opt.disabled) {
       setValue(opt.value);
-      setOpen(false);
+      setIsOpen(false);
     }
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (disabled) return;
+
     switch (e.key) {
       case " ":
       case "Enter":
         e.preventDefault();
-        if (!open) setOpen(true);
+        if (!isOpen) setIsOpen(true);
         else commitActive();
         break;
       case "ArrowDown":
@@ -124,12 +122,12 @@ export function Select({
         break;
       case "Home":
         e.preventDefault();
-        setOpen(true);
+        setIsOpen(true);
         setActiveIndex(options.findIndex((o) => !o.disabled));
         break;
       case "End":
         e.preventDefault();
-        setOpen(true);
+        setIsOpen(true);
         for (let i = options.length - 1; i >= 0; i--) {
           if (!options[i].disabled) {
             setActiveIndex(i);
@@ -139,95 +137,98 @@ export function Select({
         break;
       case "Escape":
         e.preventDefault();
-        setOpen(false);
+        setIsOpen(false);
         break;
     }
   };
 
-  // 열릴 때 현재값으로 active 설정
   React.useEffect(() => {
-    if (open) {
-      const idx = Math.max(
-        0,
-        options.findIndex((o) => o.value === currentValue && !o.disabled)
-      );
-      setActiveIndex(idx === -1 ? 0 : idx);
-    }
-  }, [open, options, currentValue]);
+    if (!isOpen) return;
+    const idx = options.findIndex((o) => o.value === currentValue && !o.disabled);
+    setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
+  }, [isOpen, options, currentValue]);
+
+  const rootClassName = ["select", className ?? ""].filter(Boolean).join(" ");
+  const controlClassName = [
+    "select_control",
+    `select_control_variant_${variant}`,
+    `select_control_size_${size}`,
+    isOpen && "is_open",
+    disabled && "is_disabled",
+  ]
+      .filter(Boolean)
+      .join(" ");
 
   return (
-    <div
-      ref={wrapperRef}
-      className={`select${className ? ` ${className}` : ""}`}
-      style={fullWidth ? { width: "100%" } : undefined}>
-      {label && (
-        <label htmlFor={selectId} className="select__label">
-          {label}
-        </label>
-      )}
+      <div
+          ref={wrapperRef}
+          className={rootClassName}
+          style={fullWidth ? { width: "100%" } : undefined}
+      >
+        {label ? (
+            <label htmlFor={selectId} className="select_label">
+              {label}
+            </label>
+        ) : null}
 
-      <button
-        id={selectId}
-        type="button"
-        className={[
-          "select__control",
-          `select__control--${variant}`,
-          `select__control--${size}`,
-          open && "is-open",
-          disabled && "is-disabled",
-        ]
-          .filter(Boolean)
-          .join(" ")}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={`${selectId}-listbox`}
-        onClick={() => !disabled && setOpen((o) => !o)}
-        onKeyDown={onKeyDown}
-        disabled={disabled}>
-        <span
-          className={currentOption ? "select__value" : "select__placeholder"}>
+        <button
+            id={selectId}
+            type="button"
+            className={controlClassName}
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+            aria-controls={`${selectId}_listbox`}
+            onClick={() => !disabled && setIsOpen((o) => !o)}
+            onKeyDown={onKeyDown}
+            disabled={disabled}
+        >
+        <span className={currentOption ? "select_value" : "select_placeholder"}>
           {currentOption ? currentOption.label : placeholder}
         </span>
-        <span className="select__icon" aria-hidden>
+          <span className="select_icon" aria-hidden="true">
           <ChevronDown size={16} />
         </span>
-      </button>
+        </button>
 
-      {open && (
-        <ul
-          ref={listRef}
-          id={`${selectId}-listbox`}
-          role="listbox"
-          className="select__list">
-          {options.map((opt, i) => {
-            const selected = currentValue === opt.value;
-            const active = i === activeIndex;
-            return (
-              <li
-                key={opt.value}
-                role="option"
-                aria-selected={selected}
-                className={[
-                  "select__option",
-                  selected && "is-selected",
-                  active && "is-active",
-                  opt.disabled && "is-disabled",
+        {isOpen ? (
+            <ul
+                id={`${selectId}_listbox`}
+                role="listbox"
+                className="select_list"
+            >
+              {options.map((opt, i) => {
+                const selected = currentValue === opt.value;
+                const active = i === activeIndex;
+
+                const optionClassName = [
+                  "select_option",
+                  selected && "is_selected",
+                  active && "is_active",
+                  opt.disabled && "is_disabled",
                 ]
-                  .filter(Boolean)
-                  .join(" ")}
-                onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
-                onClick={() => {
-                  if (opt.disabled) return;
-                  setValue(opt.value);
-                  setOpen(false);
-                }}>
-                <span>{opt.label}</span>
-                {selected && <Check size={16} aria-hidden />}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+                    .filter(Boolean)
+                    .join(" ");
+
+                return (
+                    <li
+                        key={opt.value}
+                        role="option"
+                        aria-selected={selected}
+                        className={optionClassName}
+                        onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
+                        onClick={() => {
+                          if (opt.disabled) return;
+                          setValue(opt.value);
+                          setIsOpen(false);
+                        }}
+                    >
+                      <span>{opt.label}</span>
+                      {selected ? <Check size={16} aria-hidden="true" /> : null}
+                    </li>
+                );
+              })}
+            </ul>
+        ) : null}
+      </div>
   );
-}
+};
