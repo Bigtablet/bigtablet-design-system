@@ -58,21 +58,21 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Primary: Story = {
-    name: "Primary (기본)",
+    name: "Primary",
 };
 
 export const Secondary: Story = {
-    name: "Secondary (보조)",
+    name: "Secondary",
     args: { variant: "secondary" },
 };
 
 export const Ghost: Story = {
-    name: "Ghost (최소 UI)",
+    name: "Ghost",
     args: { variant: "ghost" },
 };
 
 export const Danger: Story = {
-    name: "Danger (위험)",
+    name: "Danger",
     args: { variant: "danger" },
 };
 
