@@ -1,0 +1,68 @@
+@use "../../styles/scss/token" as token;
+
+.foundation {
+  font-family: token.$font_family_primary;
+  color: token.$color_text_primary;
+
+  &_section {
+    display: grid;
+    gap: token.$spacing_md;
+  }
+
+  &_grid {
+    display: grid;
+    gap: token.$spacing_md;
+
+    &_2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &_3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &_4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  &_card {
+    border: 1px solid token.$color_border;
+    border-radius: token.$radius_md;
+    background: token.$color_background;
+    padding: token.$spacing_md;
+  }
+
+  &_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_md;
+  }
+
+  &_swatch {
+    border: 1px solid token.$color_border;
+    border-radius: token.$radius_md;
+    overflow: hidden;
+
+    &_box {
+      height: 56px;
+    }
+
+    &_meta {
+      padding: token.$spacing_sm token.$spacing_md;
+      display: grid;
+      gap: token.$spacing_xs;
+    }
+
+    &_name {
+      @include token.text_sm;
+      font-weight: token.$font_weight_medium;
+    }
+
+    &_value {
+      @include token.text_xs;
+      color: token.$color_text_secondary;
+    }
+  }
+}
