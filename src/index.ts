@@ -20,7 +20,6 @@ export {TextField} from "./ui/form/textfield";
 
 // Navigation
 export {Pagination} from "./ui/navigation/pagination";
-export {Sidebar} from "./ui/navigation/sidebar";
 
 // Overlay
 export {Modal} from "./ui/overlay/modal";
