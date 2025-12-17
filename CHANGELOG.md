@@ -1,3 +1,10 @@
+## [1.6.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.4...v1.6.5) (2025-12-17)
+
+
+### Bug Fixes
+
+* add spacing 4xl, 5xl ([4d981bd](https://github.com/Bigtablet/bigtablet-design-system/commit/4d981bdf280aab8c856baa79061b6e5549b27124))
+
 ## [1.6.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.3...v1.6.4) (2025-12-17)
 
 
