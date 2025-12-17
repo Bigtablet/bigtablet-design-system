@@ -14,10 +14,12 @@
       "types": "./dist/next.d.ts",
       "import": "./dist/next.js"
     },
-    "./style.css": "./dist/index.css"
+    "./style.css": "./dist/index.css",
+    "./scss/token": "./dist/styles/scss/token.scss"
   },
   "files": [
     "dist",
+    "src/styles/scss",
     "README.md",
     "LICENSE"
   ],
@@ -27,7 +29,8 @@
     "./dist/next.css"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && pnpm run copy:scss",
+    "copy:scss": "node scripts/copy-scss.mjs",
     "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
     "build:sb": "storybook build",
