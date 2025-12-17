@@ -100,6 +100,10 @@ function spacingUseCase(key: string) {
             return "페이지 여백";
         case "3xl":
             return "큰 레이아웃";
+        case "4xl":
+            return "페이지 섹션";
+        case "5xl":
+            return "히어로 / 최상위 레이아웃";
         default:
             return "공통 여백";
     }
