@@ -1,3 +1,10 @@
+## [1.6.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.5...v1.6.6) (2025-12-17)
+
+
+### Bug Fixes
+
+* layout import ([a54bbff](https://github.com/Bigtablet/bigtablet-design-system/commit/a54bbffa56a6e09d57dbbfa89467253268a88575))
+
 ## [1.6.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.4...v1.6.5) (2025-12-17)
 
 
