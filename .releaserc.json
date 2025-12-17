@@ -6,21 +6,21 @@
       {
         "preset": "conventionalcommits",
         "releaseRules": [
-          { "type": "feat", "release": "minor" },
+          { "type": "feat", "release": "major" },
 
-          { "type": "fix", "release": "patch" },
-          { "type": "bug", "release": "patch" },
-          { "type": "perf", "release": "patch" },
-          { "type": "refactor", "release": "patch" },
-          { "type": "config", "release": "patch" },
-          { "type": "deploy", "release": "patch" },
-          { "type": "chore", "release": "patch" },
+          { "type": "fix", "release": "minor" },
+          { "type": "bug", "release": "minor" },
+          { "type": "perf", "release": "minor" },
+          { "type": "refactor", "release": "minor" },
+          { "type": "config", "release": "minor" },
+          { "type": "deploy", "release": "minor" },
+          { "type": "chore", "release": "minor" },
 
-          { "type": "docs", "release": false },
-          { "type": "style", "release": false },
-          { "type": "test", "release": false },
-          { "type": "merge", "release": false },
-          { "type": "etc", "release": false }
+          { "type": "docs", "release": "patch" },
+          { "type": "style", "release": "patch" },
+          { "type": "test", "release": "patch" },
+          { "type": "merge", "release": "patch" },
+          { "type": "etc", "release": "patch" }
         ]
       }
     ],
