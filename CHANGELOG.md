@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.0...v1.7.1) (2025-12-18)
+
+
+### Bug Fixes
+
+* sidebar style ([a02a150](https://github.com/Bigtablet/bigtablet-design-system/commit/a02a1502d4cd753ce277cc59e4f0f422d90e7668))
+
 # [1.7.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.7...v1.7.0) (2025-12-18)
 
 
