@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.7...v1.7.0) (2025-12-18)
+
+
+### Features
+
+* sidebar group ([09b606a](https://github.com/Bigtablet/bigtablet-design-system/commit/09b606a3cacb158ea38594d0d1c5de63d8e14c3d))
+
 ## [1.6.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.6...v1.6.7) (2025-12-18)
 
 
