@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.1...v1.7.2) (2025-12-18)
+
+
+### Bug Fixes
+
+* remove code used for local ([ca818d2](https://github.com/Bigtablet/bigtablet-design-system/commit/ca818d2063403e6374a2d93d7fd6be0b03f51b7e))
+
 ## [1.7.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.0...v1.7.1) (2025-12-18)
 
 
