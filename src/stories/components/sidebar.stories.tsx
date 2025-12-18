@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import {
+    LayoutDashboard,
+    ShoppingCart,
+    Package,
+    Settings,
+    User,
+    Shield,
+} from "lucide-react";
 import { Sidebar } from "../../ui/navigation/sidebar";
+import type { SidebarItem } from "../../ui/navigation/sidebar";
 
 const meta: Meta<typeof Sidebar> = {
     title: "Components/Navigation/Sidebar",
@@ -22,8 +31,7 @@ const meta: Meta<typeof Sidebar> = {
         match: {
             control: "inline-radio",
             options: ["startsWith", "exact"],
-            description:
-                "현재 경로와 메뉴 href를 비교하는 방식입니다.",
+            description: "현재 경로와 메뉴 href를 비교하는 방식입니다.",
         },
         brandHref: {
             control: "text",
@@ -38,58 +46,125 @@ const meta: Meta<typeof Sidebar> = {
         width: 240,
         match: "startsWith",
         brandHref: "/main",
-        items: [
-            { href: "/dashboard", label: "대시보드" },
-            { href: "/orders", label: "주문" },
-            { href: "/products", label: "상품" },
-            { href: "/settings", label: "설정" },
-        ],
-        activePath: "/dashboard",
-    },
-    parameters: {
-        docs: {
-            description: {
-                component: `
-**Sidebar**는 좌측 내비게이션 영역에 사용되는 컴포넌트입니다.
-
-### 언제 사용하나요?
-- 관리자 페이지
-- 대시보드
-- 메뉴 구조가 명확한 화면
-
-### 핵심 포인트
-- \`activePath\`로 현재 선택된 메뉴를 표시합니다.
-- \`match\` 옵션으로 경로 매칭 방식을 제어할 수 있습니다.
-- 상태를 외부에서 제어할 수도 있고(Controlled),
-  단순 표시용으로도 사용할 수 있습니다.
-
-### 디자이너 체크 포인트
-- 활성 메뉴가 충분히 눈에 띄는지
-- hover / active 상태가 일관적인지
-        `,
-            },
-        },
     },
 };
 
 export default meta;
 type Story = StoryObj<typeof Sidebar>;
 
-export const Basic: Story = {
-    name: "기본 사용",
+const OneDepthItems: SidebarItem[] = [
+    {
+        href: "/dashboard",
+        label: "대시보드",
+        icon: LayoutDashboard,
+    },
+    {
+        href: "/orders",
+        label: "주문",
+        icon: ShoppingCart,
+    },
+    {
+        href: "/products",
+        label: "상품",
+        icon: Package,
+    },
+    {
+        href: "/settings",
+        label: "설정",
+        icon: Settings,
+    },
+];
+
+const TwoDepthItems: SidebarItem[] = [
+    {
+        href: "/dashboard",
+        label: "대시보드",
+        icon: LayoutDashboard,
+    },
+    {
+        href: "/orders",
+        label: "주문",
+        icon: ShoppingCart,
+    },
+    {
+        type: "group",
+        id: "products",
+        label: "상품",
+        icon: Package,
+        children: [
+            {
+                href: "/products/list",
+                label: "상품 목록",
+            },
+            {
+                href: "/products/category",
+                label: "카테고리",
+            },
+        ],
+    },
+    {
+        type: "group",
+        id: "settings",
+        label: "설정",
+        icon: Settings,
+        children: [
+            {
+                href: "/settings/profile",
+                label: "프로필",
+                icon: User,
+            },
+            {
+                href: "/settings/security",
+                label: "보안",
+                icon: Shield,
+            },
+        ],
+    },
+];
+
+export const OneDepth: Story = {
+    name: "1Depth (Group 없음)",
+    args: {
+        items: OneDepthItems,
+        activePath: "/dashboard",
+    },
     render: (args) => <Sidebar {...args} />,
 };
 
-export const ControlledActivePath: Story = {
-    name: "선택 상태 제어",
+export const OneDepthControlled: Story = {
+    name: "1Depth (선택 상태 제어)",
     render: (args) => {
-        const [active, setActive] = useState(
-            args.activePath ?? "/dashboard"
-        );
+        const [active, setActive] = useState("/dashboard");
 
         return (
             <Sidebar
                 {...args}
+                items={OneDepthItems}
+                activePath={active}
+                onItemSelect={(href) => setActive(href)}
+            />
+        );
+    },
+};
+
+export const WithGroup: Story = {
+    name: "2Depth (Group 포함)",
+    args: {
+        items: TwoDepthItems,
+        activePath: "/products/list",
+    },
+    render: (args) => <Sidebar {...args} />,
+};
+
+export const WithGroupControlled: Story = {
+    name: "2Depth (Group 포함 · Controlled)",
+    render: (args) => {
+        const [active, setActive] = useState("/products/list");
+
+        return (
+            <Sidebar
+                {...args}
+                items={TwoDepthItems}
                 activePath={active}
                 onItemSelect={(href) => setActive(href)}
             />

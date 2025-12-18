@@ -33,9 +33,14 @@
     padding: token.$spacing_sm 0;
   }
 
+  &_group {
+    display: grid;
+    gap: token.$spacing_xs;
+  }
+
   &_item {
     display: grid;
-    grid-template-columns: 24px 1fr;
+    grid-template-columns: 24px 1fr auto;
     align-items: center;
     gap: token.$spacing_sm;
     padding: token.$spacing_sm token.$spacing_md;
@@ -47,9 +52,10 @@
 
     @include token.text_base;
 
-    transition: background-color token.$transition_base,
-    color token.$transition_base,
-    border-color token.$transition_base;
+    transition:
+            background-color token.$transition_base,
+            color token.$transition_base,
+            border-color token.$transition_base;
 
     &:hover {
       background: token.$color_background_secondary;
@@ -77,10 +83,6 @@
         border-radius: token.$radius_full;
         background: token.$color_primary;
       }
-
-      .sidebar_icon {
-        color: token.$text_strong;
-      }
     }
   }
 
@@ -94,5 +96,38 @@
   &_label {
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  &_chevron {
+    display: inline-grid;
+    place-items: center;
+    color: token.$text_subtle;
+    transition: transform token.$transition_base;
+
+    &.is_open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &_sub {
+    display: grid;
+    gap: token.$spacing_xs;
+    padding-left: token.$spacing_lg;
+  }
+
+  &_sub_item {
+    padding: token.$spacing_xs token.$spacing_md;
+    border-radius: token.$radius_sm;
+    color: token.$text_subtle;
+
+    &:hover {
+      background: token.$color_background_secondary;
+      color: token.$text_strong;
+    }
+
+    &.is_active {
+      color: token.$color_primary;
+      font-weight: 500;
+    }
   }
 }
