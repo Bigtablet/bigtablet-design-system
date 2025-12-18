@@ -17,12 +17,12 @@
   }
 
   &_dot {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: token.$font_size_md;
+    height: token.$font_size_md;
     box-sizing: border-box;
 
     border: 1px solid token.$color_border;
-    border-radius: 9999px;
+    border-radius: token.$radius_full;
     background: token.$color_background;
 
     transition: background token.$transition_base,
