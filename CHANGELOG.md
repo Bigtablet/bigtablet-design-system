@@ -1,3 +1,10 @@
+## [1.6.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.6...v1.6.7) (2025-12-18)
+
+
+### Bug Fixes
+
+* radio dot position ([e47697a](https://github.com/Bigtablet/bigtablet-design-system/commit/e47697a796869726bfb49cdf53df6c9d08cc41f2))
+
 ## [1.6.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.6.5...v1.6.6) (2025-12-17)
 
 
