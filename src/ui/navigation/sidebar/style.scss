@@ -45,17 +45,15 @@
     gap: token.$spacing_sm;
     padding: token.$spacing_sm token.$spacing_md;
     border-radius: token.$radius_md;
-    color: token.$text_normal;
+    color: token.$text_subtle;
     background: transparent;
     border: 1px solid transparent;
     cursor: pointer;
 
     @include token.text_base;
 
-    transition:
-            background-color token.$transition_base,
-            color token.$transition_base,
-            border-color token.$transition_base;
+    transition: background-color token.$transition_base,
+      color token.$transition_base, border-color token.$transition_base;
 
     &:hover {
       background: token.$color_background_secondary;
@@ -96,6 +94,12 @@
   &_label {
     white-space: nowrap;
     text-overflow: ellipsis;
+    text-align: left;
+
+    &.is_active {
+      color: token.$color_primary;
+      font-weight: 500;
+    }
   }
 
   &_chevron {

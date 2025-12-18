@@ -195,7 +195,16 @@ export const Sidebar = ({
                   <item.icon size={16} />
                 </span>
                             )}
-                            <span className="sidebar_label">{item.label}</span>
+                            <span 
+                                className={[
+                                    "sidebar_label",
+                                    active && "is_active"
+                                ]
+                                    .filter(Boolean)
+                                    .join(" ")}
+                            >
+                                {item.label}
+                            </span>
                         </Link>
                     );
                 })}
