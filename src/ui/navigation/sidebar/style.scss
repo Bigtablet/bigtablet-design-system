@@ -15,14 +15,13 @@
     border-bottom: 1px solid token.$color_border;
 
     &_link {
-      display: block;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       width: 100%;
     }
 
     &_img {
-      display: block;
-      width: 100%;
-      height: auto;
       object-fit: contain;
     }
   }
