@@ -15,8 +15,7 @@
     border-bottom: 1px solid token.$color_border;
 
     &_link {
-      display: flex;
-      justify-content: space-between;
+      @include token.flex_between;
       align-items: center;
       width: 100%;
     }
