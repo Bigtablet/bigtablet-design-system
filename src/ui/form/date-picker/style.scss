@@ -2,7 +2,24 @@
 
 .date_picker {
   display: flex;
-  gap: token.$spacing_sm;
+  flex-direction: column;
+  gap: token.$spacing_xs;
+
+  &_label {
+    font-family: token.$font_family_primary;
+    @include token.text_sm;
+    color: token.$color_text_secondary;
+  }
+
+  &_required {
+    margin-left: token.$spacing_xs;
+    color: token.$color_error;
+  }
+
+  &_fields {
+    display: flex;
+    gap: token.$spacing_sm;
+  }
 
   select {
     min-width: 88px;
@@ -59,21 +76,33 @@
     }
   }
 
-  select:nth-child(1) {
-    min-width: 96px;
+  &_full {
+    width: 100%;
+
+    .date_picker_fields {
+      width: 100%;
+    }
+
+    select {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
-  select:nth-child(2),
-  select:nth-child(3) {
-    min-width: 72px;
+  &_disabled {
+    .date_picker_label {
+      color: token.$text_disabled;
+    }
   }
 
   @media (max-width: 480px) {
-    gap: token.$spacing_xs;
+    &_fields {
+      gap: token.$spacing_xs;
+    }
 
     select {
-      min-width: 0;
       flex: 1;
+      min-width: 0;
     }
   }
 }
