@@ -17,6 +17,7 @@ export {Select} from "./ui/general/select";
 export {SelectOption} from "./ui/general/select";
 export {Switch} from "./ui/form/switch";
 export {TextField} from "./ui/form/textfield";
+export {DatePicker} from "./ui/form/date-picker";
 
 // Navigation
 export {Pagination} from "./ui/navigation/pagination";
