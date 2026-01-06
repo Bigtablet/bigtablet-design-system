@@ -1,3 +1,16 @@
+# [1.8.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.2...v1.8.0) (2026-01-06)
+
+
+### Bug Fixes
+
+* style token ([768bcc0](https://github.com/Bigtablet/bigtablet-design-system/commit/768bcc04fa413bade92f7a3353a8e48aadcc7361))
+
+
+### Features
+
+* date picker ([a9b6ed1](https://github.com/Bigtablet/bigtablet-design-system/commit/a9b6ed11a19c3e486c9a1d03b7f8c74f28604a74))
+* toggle sidebar ([3a8239a](https://github.com/Bigtablet/bigtablet-design-system/commit/3a8239a370a097b2e17a15726e661ed1e70b1584))
+
 ## [1.7.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.1...v1.7.2) (2025-12-18)
 
 
