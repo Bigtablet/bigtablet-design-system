@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.9.0...v1.9.1) (2026-01-06)
+
+
+### Bug Fixes
+
+* date picker select label ([e65036f](https://github.com/Bigtablet/bigtablet-design-system/commit/e65036f4c5f94d711fc9ecc6f004488871ce8b91))
+
 # [1.9.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.8.0...v1.9.0) (2026-01-06)
 
 
