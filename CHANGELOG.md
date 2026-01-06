@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.8.0...v1.9.0) (2026-01-06)
+
+
+### Features
+
+* export date picker ([c344e8e](https://github.com/Bigtablet/bigtablet-design-system/commit/c344e8ee9b0cc6f37a758bb96382618383aa70d6))
+
 # [1.8.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.7.2...v1.8.0) (2026-01-06)
 
 
