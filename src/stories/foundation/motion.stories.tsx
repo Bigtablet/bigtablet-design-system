@@ -60,7 +60,7 @@ function MotionPreview({
             <div
                 onClick={() => setActive((v) => !v)}
                 style={{
-                    width: 120,
+                    width: active ? 160 : 120,
                     height: 40,
                     borderRadius: 6,
                     background: active ? "#000" : "#e5e5e5",
@@ -69,7 +69,7 @@ function MotionPreview({
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    transition,
+                    transition: `all ${transition}`,
                 }}
             >
                 Click me
@@ -85,13 +85,23 @@ function MotionPreview({
 function motionDescription(key: string) {
     switch (key) {
         case "fast":
-            return "아이콘 hover, 미세한 상태 변화에 사용";
+            return "아이콘 hover, 체크 상태 등 미세한 인터랙션";
         case "base":
-            return "버튼, 입력창 등 기본 인터랙션";
+            return "버튼, 메뉴, 입력창 등 기본 UI 반응";
         case "slow":
-            return "모달, 패널 등 주의가 필요한 전환";
+            return "모달, 패널, 드로어 등 시선 이동이 필요한 전환";
+        case "emphasized":
+            return "중요한 상태 변화 (Primary action, 강조 UI)";
         case "bounce":
-            return "강조가 필요한 인터랙션 (토글, 피드백)";
+            return "토글, 아코디언 등 피드백이 필요한 인터랙션";
+        case "fade":
+            return "툴팁, 도움말 등 부드러운 등장/퇴장";
+        case "slide":
+            return "리스트 이동, 패널 전환";
+        case "scale":
+            return "버튼 press, 카드 hover 강조";
+        case "state":
+            return "disabled → enabled 상태 전환";
         default:
             return "공통 인터랙션 전환";
     }
