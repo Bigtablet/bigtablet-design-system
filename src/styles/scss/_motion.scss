@@ -1,4 +1,12 @@
-$transition_fast: 0.1s ease-out;
-$transition_base: 0.2s ease-out;
-$transition_slow: 0.3s ease-out;
-$transition_bounce: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+$transition_fast: 0.1s ease-in-out;   // hover, icon
+$transition_base: 0.2s ease-in-out;   // 메뉴 열림
+$transition_slow: 0.3s ease-in-out;   // 레이아웃 변화
+
+$transition_emphasized: 0.25s cubic-bezier(0.4, 0, 0.2, 1); // Material 계열
+$transition_bounce: 0.3s cubic-bezier(0.16, 1, 0.3, 1);    // accordion, toast
+
+$transition_fade: 0.15s ease-in-out;      // opacity
+$transition_slide: 0.25s ease-in-out;     // translate
+$transition_scale: 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+$transition_state: 0.18s ease-in-out;     // disabled → enabled
