@@ -7,11 +7,13 @@ export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "ghost" | "danger";
     size?: "sm" | "md" | "lg";
+    width?: string;
 }
 
 export const Button = ({
                            variant = "primary",
                            size = "md",
+                           width = "100%",
                            className,
                            ...props
                        }: ButtonProps) => {
@@ -24,5 +26,5 @@ export const Button = ({
         .filter(Boolean)
         .join(" ");
 
-    return <button className={buttonClassName} {...props} />;
+    return <button className={buttonClassName} style={{width}} {...props} />;
 };
