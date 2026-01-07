@@ -26,8 +26,10 @@
   color: token.$color_text_primary;
   background: token.$color_background;
   border-radius: token.$radius_md;
-  transition: border-color token.$transition_base, box-shadow token.$transition_base,
-  background token.$transition_base;
+  transition:
+          border-color token.$transition_base,
+          box-shadow token.$transition_base,
+          background token.$transition_base;
   @include token.text_base;
 
   &:disabled,
@@ -56,7 +58,11 @@
     border: 1px solid transparent;
 
     &:hover:not(.is_disabled) {
-      background: color.mix(token.$color_background, token.$color_background_secondary, 70%);
+      background: color.mix(
+                      token.$color_background,
+                      token.$color_background_secondary,
+                      70%
+      );
     }
 
     &.is_open {
@@ -121,15 +127,19 @@
 .select_list {
   position: absolute;
   z-index: token.$z_modal;
-  top: token.$spacing_xs;
+  top: 100%;
   left: 0;
   width: 100%;
   min-width: 100%;
   box-sizing: border-box;
+
+  margin-top: token.$spacing_xs;
+
   background: token.$color_background;
   border: 1px solid token.$color_border;
   border-radius: token.$radius_md;
   box-shadow: token.$shadow_md;
+
   max-height: 18rem;
   overflow-y: auto;
   overflow-x: hidden;
