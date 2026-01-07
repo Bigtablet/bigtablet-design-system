@@ -4,12 +4,11 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CornerDownRight } from "lucide-react";
 import "./style.scss";
 
 export type MatchMode = "startsWith" | "exact";
 
-/** 단일 링크 메뉴 */
 export interface SidebarLinkItem {
     type?: "link";
     href: string;
@@ -17,7 +16,6 @@ export interface SidebarLinkItem {
     icon?: LucideIcon;
 }
 
-/** 서브 메뉴 그룹 */
 export interface SidebarGroupItem {
     type: "group";
     id: string;
@@ -32,7 +30,6 @@ export interface SidebarProps {
     items?: SidebarItem[];
     activePath?: string;
     onItemSelect?: (href: string) => void;
-    width?: number;
     className?: string;
     style?: React.CSSProperties;
     match?: MatchMode;
@@ -43,7 +40,6 @@ export const Sidebar = ({
                             items = [],
                             activePath,
                             onItemSelect,
-                            width = 240,
                             className,
                             style,
                             match = "startsWith",
@@ -57,27 +53,26 @@ export const Sidebar = ({
     };
 
     const [openGroups, setOpenGroups] = React.useState<string[]>([]);
-    const [isOpen, setIsOpen] = React.useState<boolean>(true);
+    const [isOpen, setIsOpen] = React.useState(true);
 
-    const handleToggleSidebar = (value: boolean) => {
-        setIsOpen(value);
-        localStorage.setItem("isOpen", JSON.stringify(value));
-    }
+    const toggleSidebar = (next: boolean) => {
+        setIsOpen(next);
+        localStorage.setItem("isOpen", JSON.stringify(next));
+    };
 
-    /** activePath 기준으로 그룹 자동 열림 */
     React.useEffect(() => {
         if (!activePath) return;
 
-        const autoOpenIds = items
+        const autoOpen = items
             .filter(
                 (item): item is SidebarGroupItem =>
                     item.type === "group" &&
-                    item.children.some((child) => isActive(child.href))
+                    item.children.some((c) => isActive(c.href))
             )
-            .map((group) => group.id);
+            .map((g) => g.id);
 
         setOpenGroups((prev) =>
-            Array.from(new Set([...prev, ...autoOpenIds]))
+            Array.from(new Set([...prev, ...autoOpen]))
         );
     }, [activePath, items]);
 
@@ -89,156 +84,163 @@ export const Sidebar = ({
         );
     };
 
-    const rootClassName = ["sidebar", className ?? ""]
-        .filter(Boolean)
-        .join(" ");
-
     return (
         <aside
-            className={rootClassName}
-            style={{ width: isOpen ? `${width}px` : "56px", ...style }}
-            aria-label="사이드 내비게이션"
+            className={[
+                "sidebar",
+                isOpen ? "is_open" : "is_closed",
+                className ?? "",
+            ]
+                .filter(Boolean)
+                .join(" ")}
+            style={style}
         >
-            {
-                isOpen ? 
-                    (
-                        <>
-                            <div className="sidebar_brand">
-                                <Link
-                                    href={brandHref}
-                                    className="sidebar_brand_link"
-                                    aria-label="Bigtablet 홈으로"
-                                >
-                                    <Image
-                                        src="/images/logo/bigtablet.png"
-                                        alt="Bigtablet"
-                                        width={96}
-                                        height={30}
-                                        priority
-                                        className="sidebar_brand_img"
-                                    />
-                                    <Image
-                                        src="/images/sidebar/arrow-close.svg"
-                                        alt="ArrowClose"
-                                        width={24}
-                                        height={24}
-                                        onClick={() => handleToggleSidebar(false)}
-                                    />
-                                </Link>
-                            </div>
+            {isOpen ? (
+                <>
+                    <div className="sidebar_brand">
+                        <Link href={brandHref} className="sidebar_brand_link">
+                            <div />
+                            <Image
+                                src="/images/logo/bigtablet.png"
+                                alt="Bigtablet"
+                                width={96}
+                                height={30}
+                                priority
+                            />
+                            <Image
+                                src="/images/sidebar/arrow-close.svg"
+                                alt="Close"
+                                width={24}
+                                height={24}
+                                onClick={() => toggleSidebar(false)}
+                            />
+                        </Link>
+                    </div>
 
-                            <nav className="sidebar_nav">
-                                {items.map((item) => {
-                                    /** 그룹 메뉴 */
-                                    if (item.type === "group") {
-                                        const isOpen = openGroups.includes(item.id);
-                                    
-                                        return (
-                                            <div key={item.id} className="sidebar_group">
-                                                <button
-                                                    type="button"
+                    <nav className="sidebar_nav">
+                        {items.map((item) => {
+                            if (item.type === "group") {
+                                const open = openGroups.includes(item.id);
+
+                                return (
+                                    <div key={item.id} className="sidebar_group">
+                                        <button
+                                            type="button"
+                                            className="sidebar_item"
+                                            onClick={() =>
+                                                toggleGroup(item.id)
+                                            }
+                                        >
+                                            <div className="sidebar_item_left">
+                                                {item.icon && (
+                                                    <span className="sidebar_icon">
+                                                        <item.icon size={16} />
+                                                    </span>
+                                                )}
+                                                <span className="sidebar_label">
+                                                    {item.label}
+                                                </span>
+                                            </div>
+
+                                            <span className="sidebar_item_right">
+                                                <ChevronDown
+                                                    size={16}
                                                     className={[
-                                                        "sidebar_item",
-                                                        isOpen && "is_open",
+                                                        "sidebar_chevron",
+                                                        open && "is_open",
                                                     ]
                                                         .filter(Boolean)
                                                         .join(" ")}
-                                                    onClick={() => toggleGroup(item.id)}
-                                                >
-                                                    {item.icon && (
-                                                        <span className="sidebar_icon">
-                                      <item.icon size={16} />
-                                    </span>
-                                                    )}
+                                                />
+                                            </span>
+                                        </button>
 
-                                                    <span className="sidebar_label">{item.label}</span>
-                                                
-                                                    <span
-                                                        className={[
-                                                            "sidebar_chevron",
-                                                            isOpen && "is_open",
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(" ")}
-                                                    >
-                                    <ChevronDown size={16} />
-                                  </span>
-                                                </button>
-                                                    
-                                                {isOpen && (
-                                                    <div className="sidebar_sub">
-                                                        {item.children.map((child) => {
-                                                            const active = isActive(child.href);
-                                                        
-                                                            return (
-                                                                <Link
-                                                                    key={child.href}
-                                                                    href={child.href}
-                                                                    className={[
-                                                                        "sidebar_sub_item",
-                                                                        active && "is_active",
-                                                                    ]
-                                                                        .filter(Boolean)
-                                                                        .join(" ")}
-                                                                    onClick={() => onItemSelect?.(child.href)}
-                                                                >
-                                                                    {child.label}
-                                                                </Link>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        );
-                                    }
-                                
-                                    /** 단일 링크 메뉴 */
-                                    const active = isActive(item.href);
-                                
-                                    return (
-                                        <Link
-                                            key={item.href}
-                                            href={item.href}
+                                        <div
                                             className={[
-                                                "sidebar_item",
-                                                active && "is_active",
+                                                "sidebar_sub",
+                                                open && "is_open",
                                             ]
                                                 .filter(Boolean)
                                                 .join(" ")}
-                                            onClick={() => onItemSelect?.(item.href)}
                                         >
-                                            {item.icon && (
-                                                <span className="sidebar_icon">
-                                  <item.icon size={16} />
-                                </span>
-                                            )}
-                                            <span 
-                                                className={[
-                                                    "sidebar_label",
-                                                    active && "is_active"
-                                                ]
-                                                    .filter(Boolean)
-                                                    .join(" ")}
-                                            >
-                                                {item.label}
+                                            {item.children.map((child) => {
+                                                const active = isActive(
+                                                    child.href
+                                                );
+
+                                                return (
+                                                    <Link
+                                                        key={child.href}
+                                                        href={child.href}
+                                                        className={[
+                                                            "sidebar_sub_item",
+                                                            active &&
+                                                            "is_active",
+                                                        ]
+                                                            .filter(Boolean)
+                                                            .join(" ")}
+                                                        onClick={() =>
+                                                            onItemSelect?.(
+                                                                child.href
+                                                            )
+                                                        }
+                                                    >
+                                                        <span className="sidebar_sub_icon">
+                                                            <CornerDownRight
+                                                                size={14}
+                                                            />
+                                                        </span>
+                                                        <span className="sidebar_sub_label">
+                                                            {child.label}
+                                                        </span>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            const active = isActive(item.href);
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={[
+                                        "sidebar_item",
+                                        active && "is_active",
+                                    ]
+                                        .filter(Boolean)
+                                        .join(" ")}
+                                    onClick={() =>
+                                        onItemSelect?.(item.href)
+                                    }
+                                >
+                                    <div className="sidebar_item_left">
+                                        {item.icon && (
+                                            <span className="sidebar_icon">
+                                                <item.icon size={16} />
                                             </span>
-                                        </Link>
-                                    );
-                                })}
-                            </nav>
-                        </>
-                    ) : (
-                        <>
-                            <Image
-                                src="/images/sidebar/menu.svg"
-                                alt="menu"
-                                width={24}
-                                height={24}
-                                onClick={() => handleToggleSidebar(true)}
-                            />
-                        </>
-                    )
-            }
+                                        )}
+                                        <span className="sidebar_label">
+                                            {item.label}
+                                        </span>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </>
+            ) : (
+                <Image
+                    src="/images/sidebar/menu.svg"
+                    alt="Open"
+                    width={24}
+                    height={24}
+                    onClick={() => toggleSidebar(true)}
+                />
+            )}
         </aside>
     );
 };

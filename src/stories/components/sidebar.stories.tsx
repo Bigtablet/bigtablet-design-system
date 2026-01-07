@@ -15,6 +15,31 @@ const meta: Meta<typeof Sidebar> = {
     title: "Components/Navigation/Sidebar",
     component: Sidebar,
     tags: ["autodocs"],
+    parameters: {
+        docs: {
+            description: {
+                component: `
+### Sidebar Navigation
+
+사이드바는 **애플리케이션의 주요 탐색 구조**를 담당합니다.
+
+#### 구조 기준
+- **1Depth**: 즉시 이동 가능한 단일 링크
+- **2Depth(Group)**: 관련 메뉴를 묶는 아코디언 구조
+- Group 상위 메뉴는 **일반 메뉴와 동일한 디자인**을 사용합니다.
+- 선택 상태(active)는 **하위 메뉴에만 적용**됩니다.
+
+#### 인터랙션 & Motion
+- 메뉴 hover / active: \`motion.transition.base\`
+- Group 열림/닫힘: \`motion.transition.slow\`
+- Chevron 회전: \`motion.transition.base\`
+- 사이드바 열림/닫힘: **CSS width transition 기반**
+
+사이드바는 **빠른 탐색성과 안정적인 레이아웃**을 우선으로 설계되었습니다.
+                `,
+            },
+        },
+    },
     argTypes: {
         items: {
             control: "object",
@@ -23,10 +48,6 @@ const meta: Meta<typeof Sidebar> = {
         activePath: {
             control: "text",
             description: "현재 선택된 경로입니다.",
-        },
-        width: {
-            control: "number",
-            description: "사이드바의 너비(px)입니다.",
         },
         match: {
             control: "inline-radio",
@@ -43,7 +64,6 @@ const meta: Meta<typeof Sidebar> = {
         },
     },
     args: {
-        width: 240,
         match: "startsWith",
         brandHref: "/main",
     },
