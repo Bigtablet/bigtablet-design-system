@@ -1,3 +1,17 @@
+# [1.10.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.9.1...v1.10.0) (2026-01-07)
+
+
+### Bug Fixes
+
+* add button width property ([6846a9d](https://github.com/Bigtablet/bigtablet-design-system/commit/6846a9dc263b50bfbbfc8096012939aaac579b68))
+* select list position ([912d038](https://github.com/Bigtablet/bigtablet-design-system/commit/912d038945527adb6671d62ebfbc0230b5a5784f))
+* sidebar design ([b2224f0](https://github.com/Bigtablet/bigtablet-design-system/commit/b2224f0072b3dc664a26ec2b52041cefb6bc136f))
+
+
+### Features
+
+* motion value token ([30fc4da](https://github.com/Bigtablet/bigtablet-design-system/commit/30fc4da039a8d2e9ba329c729cf8a74cbaeb5e95))
+
 ## [1.9.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.9.0...v1.9.1) (2026-01-06)
 
 
