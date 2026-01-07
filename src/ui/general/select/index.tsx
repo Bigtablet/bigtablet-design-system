@@ -46,7 +46,8 @@ export const Select = ({
   const selectId = id ?? internalId;
 
   const isControlled = value !== undefined;
-  const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
+  const [internalValue, setInternalValue] =
+      React.useState<string | null>(defaultValue);
   const currentValue = isControlled ? value ?? null : internalValue;
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -71,10 +72,13 @@ export const Select = ({
   React.useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       if (!wrapperRef.current) return;
-      if (!wrapperRef.current.contains(e.target as Node)) setIsOpen(false);
+      if (!wrapperRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
+    return () =>
+        document.removeEventListener("mousedown", onDocClick);
   }, []);
 
   const moveActive = (dir: 1 | -1) => {
@@ -102,7 +106,9 @@ export const Select = ({
     }
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+  const onKeyDown = (
+      e: React.KeyboardEvent<HTMLButtonElement>
+  ) => {
     if (disabled) return;
 
     switch (e.key) {
@@ -123,7 +129,9 @@ export const Select = ({
       case "Home":
         e.preventDefault();
         setIsOpen(true);
-        setActiveIndex(options.findIndex((o) => !o.disabled));
+        setActiveIndex(
+            options.findIndex((o) => !o.disabled)
+        );
         break;
       case "End":
         e.preventDefault();
@@ -144,11 +152,23 @@ export const Select = ({
 
   React.useEffect(() => {
     if (!isOpen) return;
-    const idx = options.findIndex((o) => o.value === currentValue && !o.disabled);
-    setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
+    const idx = options.findIndex(
+        (o) => o.value === currentValue && !o.disabled
+    );
+    setActiveIndex(
+        idx >= 0
+            ? idx
+            : Math.max(
+                0,
+                options.findIndex((o) => !o.disabled)
+            )
+    );
   }, [isOpen, options, currentValue]);
 
-  const rootClassName = ["select", className ?? ""].filter(Boolean).join(" ");
+  const rootClassName = ["select", className ?? ""]
+      .filter(Boolean)
+      .join(" ");
+
   const controlClassName = [
     "select_control",
     `select_control_variant_${variant}`,
@@ -165,11 +185,14 @@ export const Select = ({
           className={rootClassName}
           style={fullWidth ? { width: "100%" } : undefined}
       >
-        {label ? (
-            <label htmlFor={selectId} className="select_label">
+        {label && (
+            <label
+                htmlFor={selectId}
+                className="select_label"
+            >
               {label}
             </label>
-        ) : null}
+        )}
 
         <button
             id={selectId}
@@ -178,26 +201,37 @@ export const Select = ({
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-controls={`${selectId}_listbox`}
-            onClick={() => !disabled && setIsOpen((o) => !o)}
+            onClick={() =>
+                !disabled && setIsOpen((o) => !o)
+            }
             onKeyDown={onKeyDown}
             disabled={disabled}
         >
-        <span className={currentOption ? "select_value" : "select_placeholder"}>
-          {currentOption ? currentOption.label : placeholder}
-        </span>
+                <span
+                    className={
+                      currentOption
+                          ? "select_value"
+                          : "select_placeholder"
+                    }
+                >
+                    {currentOption
+                        ? currentOption.label
+                        : placeholder}
+                </span>
           <span className="select_icon" aria-hidden="true">
-          <ChevronDown size={16} />
-        </span>
+                    <ChevronDown size={16} />
+                </span>
         </button>
 
-        {isOpen ? (
+        {isOpen && (
             <ul
                 id={`${selectId}_listbox`}
                 role="listbox"
                 className="select_list"
             >
               {options.map((opt, i) => {
-                const selected = currentValue === opt.value;
+                const selected =
+                    currentValue === opt.value;
                 const active = i === activeIndex;
 
                 const optionClassName = [
@@ -215,7 +249,10 @@ export const Select = ({
                         role="option"
                         aria-selected={selected}
                         className={optionClassName}
-                        onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
+                        onMouseEnter={() =>
+                            !opt.disabled &&
+                            setActiveIndex(i)
+                        }
                         onClick={() => {
                           if (opt.disabled) return;
                           setValue(opt.value);
@@ -223,12 +260,17 @@ export const Select = ({
                         }}
                     >
                       <span>{opt.label}</span>
-                      {selected ? <Check size={16} aria-hidden="true" /> : null}
+                      {selected && (
+                          <Check
+                              size={16}
+                              aria-hidden="true"
+                          />
+                      )}
                     </li>
                 );
               })}
             </ul>
-        ) : null}
+        )}
       </div>
   );
 };
