@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.0...v1.11.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* add background color token ([b5957b3](https://github.com/Bigtablet/bigtablet-design-system/commit/b5957b3b9ce10b6c656c02eddaa16e2be664af4a))
+
 # [1.11.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.10.0...v1.11.0) (2026-01-08)
 
 
