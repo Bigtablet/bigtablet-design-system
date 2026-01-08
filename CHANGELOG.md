@@ -1,3 +1,15 @@
+# [1.11.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.10.0...v1.11.0) (2026-01-08)
+
+
+### Bug Fixes
+
+* color token value naming ([3f7979d](https://github.com/Bigtablet/bigtablet-design-system/commit/3f7979db40bee878271ee7f7e5824557fca969d8))
+
+
+### Features
+
+* spacing token value ([943c8e3](https://github.com/Bigtablet/bigtablet-design-system/commit/943c8e3df8fc2956137f3e0cd30168206c0820c3))
+
 # [1.10.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.9.1...v1.10.0) (2026-01-07)
 
 
