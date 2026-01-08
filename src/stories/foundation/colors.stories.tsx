@@ -13,12 +13,14 @@ const meta: Meta = {
 제품 전반에서 사용하는 **공식 색상 토큰**입니다.  
 ❗️직접 HEX / RGB 값을 쓰지 말고 **반드시 이 토큰을 사용**하세요.
 
-색상은 역할(Role)에 따라 나뉩니다:
+색상은 **역할(Role)** 기준으로 정의됩니다:
+
 - **Primary**: 브랜드, 주요 액션
-- **Text**: 텍스트 계층
 - **Background**: 화면 배경
+- **Text**: 텍스트 계층
 - **Border**: 구분선
-- **State**: 성공 / 오류 / 경고 / 정보
+- **Status**: 성공 / 오류 / 경고 / 정보
+- **Overlay**: 오버레이
         `,
             },
         },
@@ -33,7 +35,7 @@ export const Palette: Story = {
     render: () => (
         <div
             style={{
-                background: "#fafafa",
+                background: colors.color_background_secondary,
                 borderRadius: 12,
                 padding: 24,
                 display: "grid",
@@ -46,15 +48,16 @@ export const Palette: Story = {
                     key={key}
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "160px 1fr 160px",
+                        gridTemplateColumns: "180px 1fr 160px",
                         alignItems: "center",
                         gap: 12,
                         padding: 12,
-                        background: "#fff",
-                        border: "1px solid rgba(0,0,0,0.06)",
+                        background: colors.color_background,
+                        border: `1px solid ${colors.color_border_light}`,
                         borderRadius: 12,
                     }}
                 >
+                    {/* token + hex */}
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <div
                             style={{
@@ -62,7 +65,7 @@ export const Palette: Story = {
                                 height: 40,
                                 borderRadius: 8,
                                 background: value,
-                                border: "1px solid rgba(0,0,0,0.1)",
+                                border: `1px solid ${colors.color_border}`,
                             }}
                         />
                         <div>
@@ -71,6 +74,7 @@ export const Palette: Story = {
                         </div>
                     </div>
 
+                    {/* sample */}
                     <div
                         style={{
                             padding: "8px 12px",
@@ -84,6 +88,7 @@ export const Palette: Story = {
                         Sample Text
                     </div>
 
+                    {/* use case */}
                     <div
                         style={{
                             fontSize: 12,
@@ -98,19 +103,3 @@ export const Palette: Story = {
         </div>
     ),
 };
-
-function colorUseCase(key: string) {
-    if (key.includes("primary")) return "주요 액션 / 브랜드";
-    if (key.includes("background")) return "배경";
-    if (key.includes("text")) return "텍스트";
-    if (key.includes("border")) return "구분선";
-    if (key.includes("success")) return "성공 상태";
-    if (key.includes("error")) return "오류 상태";
-    if (key.includes("warning")) return "경고 상태";
-    if (key.includes("info")) return "정보 상태";
-    return "공통 색상";
-}
-
-function getReadableTextColor(bg: string) {
-    return bg.toLowerCase() === "#ffffff" || bg === "white" ? "#000" : "#fff";
-}
