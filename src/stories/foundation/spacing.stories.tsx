@@ -87,23 +87,29 @@ export const Scale: Story = {
 function spacingUseCase(key: string) {
     switch (key) {
         case "xs":
-            return "텍스트 사이";
+            return "텍스트 / 아이콘 최소 간격";
         case "sm":
-            return "라벨/아이콘";
+            return "라벨 · 아이콘 사이";
         case "md":
-            return "폼 필드";
+            return "폼 필드 내부 / 요소 간";
         case "lg":
-            return "카드 padding";
+            return "카드 내부 padding";
         case "xl":
-            return "섹션 간격";
+            return "카드 간격 / 섹션 내부";
         case "2xl":
-            return "페이지 여백";
+            return "섹션 간 기본 여백";
         case "3xl":
-            return "큰 레이아웃";
+            return "페이지 기본 padding";
         case "4xl":
-            return "페이지 섹션";
+            return "페이지 섹션 간격";
         case "5xl":
-            return "히어로 / 최상위 레이아웃";
+            return "큰 레이아웃 분리";
+        case "6xl":
+            return "히어로 / 주요 영역";
+        case "7xl":
+            return "페이지 최상위 구조";
+        case "8xl":
+            return "랜딩 · 대형 레이아웃";
         default:
             return "공통 여백";
     }
