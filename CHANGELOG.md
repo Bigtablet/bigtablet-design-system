@@ -1,3 +1,10 @@
+## [1.11.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.2...v1.11.3) (2026-01-12)
+
+
+### Bug Fixes
+
+*  verification blocking ui reflected ([bfff201](https://github.com/Bigtablet/bigtablet-design-system/commit/bfff2016a371cab9ce01ba59ae379d83d33038db))
+
 ## [1.11.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.1...v1.11.2) (2026-01-12)
 
 
