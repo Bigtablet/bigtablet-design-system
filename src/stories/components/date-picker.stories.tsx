@@ -49,7 +49,7 @@ const DateFieldDemo = ({
                 <code style={{fontSize: 13}}>{value}</code>
                 <div style={{opacity: 0.8, lineHeight: 1.5}}>
                     <div>
-                        - mode가 <b>year-month</b> 인 경우, 선택 결과는 <b>YYYY-MM-01</b> 로
+                        - mode가 <b>year-month</b> 인 경우, 선택 결과는 <b>YYYY-MM</b> 로
                         정규화됩니다.
                     </div>
                     <div>
@@ -145,10 +145,10 @@ export const YearMonthDay: Story = {
 };
 
 export const YearMonth: Story = {
-    name: "연/월 (YYYY-MM-01로 정규화)",
+    name: "연/월 (YYYY-MM로 정규화)",
     args: {
         mode: "year-month",
-        defaultValue: "2026-01-06",
+        defaultValue: "2026-01",
     },
 };
 
