@@ -10,7 +10,14 @@ interface DatePickerProps {
     mode?: DatePickerMode;
     startYear?: number;
     endYear?: number;
+    minDate?: string;
     disabled?: boolean;
+    width?: {
+        container?: number | string;
+        year?: number | string;
+        month?: number | string;
+        day?: number | string;
+    };
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -18,39 +25,56 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const getDaysInMonth = (year: number, month: number) =>
     new Date(year, month, 0).getDate();
 
+const normalizeWidth = (v?: number | string) =>
+    typeof v === "number" ? `${v}px` : v;
+
 export const DatePicker = ({
-                              value,
-                              onChange,
-                              mode = "year-month-day",
-                              startYear = 1950,
-                              endYear = new Date().getFullYear() + 10,
-                              disabled,
-                          }: DatePickerProps) => {
+                               value,
+                               onChange,
+                               mode = "year-month-day",
+                               startYear = 1950,
+                               endYear = new Date().getFullYear() + 10,
+                               minDate,
+                               disabled,
+                               width,
+                           }: DatePickerProps) => {
     const [y, m, d] = value?.split("-").map(Number) ?? [];
+    const [minY, minM, minD] = minDate?.split("-").map(Number) ?? [];
 
     const year = y ?? "";
     const month = m ?? "";
     const day = d ?? "";
 
+    const minMonth =
+        minY && year === minY ? minM : 1;
+
+    const minDay =
+        minY && minM && year === minY && month === minM
+            ? minD
+            : 1;
+
     const days =
-        year && month ? getDaysInMonth(year, month) : 31;
+        year && month
+            ? getDaysInMonth(year, month)
+            : 31;
 
     const emit = (yy: number, mm: number, dd?: number) => {
         const result =
             mode === "year-month"
-                ? `${yy}-${pad(mm)}-01`
+                ? `${yy}-${pad(mm)}`
                 : `${yy}-${pad(mm)}-${pad(dd ?? 1)}`;
 
         onChange(result);
     };
 
     return (
-        <div className="date_picker">
+        <div className="date_picker" style={{ width: normalizeWidth(width?.container) }}>
             <select
+                style={{ width: normalizeWidth(width?.year) }}
                 value={year}
                 disabled={disabled}
                 onChange={(e) =>
-                    emit(Number(e.target.value), month || 1, day || 1)
+                    emit(Number(e.target.value), month || minMonth, day || minDay)
                 }
             >
                 <option value="" disabled />
@@ -65,22 +89,26 @@ export const DatePicker = ({
             </select>
 
             <select
+                style={{ width: normalizeWidth(width?.month) }}
                 value={month}
                 disabled={disabled || !year}
                 onChange={(e) =>
-                    emit(year, Number(e.target.value), day || 1)
+                    emit(year, Number(e.target.value), day || minDay)
                 }
             >
                 <option value="" disabled />
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                    <option key={m} value={m}>
-                        {pad(m)}
-                    </option>
-                ))}
+                {Array.from({ length: 12 - minMonth + 1 }, (_, i) => minMonth + i).map(
+                    (m) => (
+                        <option key={m} value={m}>
+                            {pad(m)}
+                        </option>
+                    ),
+                )}
             </select>
 
             {mode === "year-month-day" && (
                 <select
+                    style={{ width: normalizeWidth(width?.day) }}
                     value={day}
                     disabled={disabled || !month}
                     onChange={(e) =>
@@ -88,13 +116,14 @@ export const DatePicker = ({
                     }
                 >
                     <option value="" disabled />
-                    {Array.from({ length: days }, (_, i) => i + 1).map(
-                        (d) => (
-                            <option key={d} value={d}>
-                                {pad(d)}
-                            </option>
-                        ),
-                    )}
+                    {Array.from(
+                        { length: days - minDay + 1 },
+                        (_, i) => minDay + i,
+                    ).map((d) => (
+                        <option key={d} value={d}>
+                            {pad(d)}
+                        </option>
+                    ))}
                 </select>
             )}
         </div>
