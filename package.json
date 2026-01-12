@@ -1,6 +1,6 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "1.7.2",
+  "version": "1.11.3",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
   "types": "dist/index.d.ts",
