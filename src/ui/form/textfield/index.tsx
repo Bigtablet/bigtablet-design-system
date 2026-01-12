@@ -21,17 +21,12 @@ export interface TextFieldProps
     rightIcon?: React.ReactNode;
     fullWidth?: boolean;
 
-    /**
-     * 외부에 최종 값만 전달하는 콜백
-     * IME 조합 중 값은 내부에서만 관리된다.
-     */
     onChangeAction?: (value: string) => void;
 
-    /**
-     * controlled / uncontrolled 모두 지원
-     */
     value?: string;
     defaultValue?: string;
+
+    transformValue?: (value: string) => string;
 }
 
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
@@ -51,6 +46,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             onChangeAction,
             value,
             defaultValue,
+            transformValue,
             ...props
         },
         ref,
@@ -59,18 +55,19 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         const helperId = helperText ? `${inputId}-help` : undefined;
 
         const isControlled = value !== undefined;
+        const applyTransform = (nextValue: string) =>
+            transformValue ? transformValue(nextValue) : nextValue;
 
-        const [innerValue, setInnerValue] = React.useState(
-            value ?? defaultValue ?? "",
+        const [innerValue, setInnerValue] = React.useState(() =>
+            applyTransform(value ?? defaultValue ?? ""),
         );
 
         const isComposingRef = React.useRef(false);
 
         React.useEffect(() => {
-            if (isControlled) {
-                setInnerValue(value ?? "");
-            }
-        }, [isControlled, value]);
+            if (!isControlled) return;
+            setInnerValue(applyTransform(value ?? ""));
+        }, [isControlled, value, transformValue]);
 
         const rootClassName = [
             "text_field",
@@ -128,16 +125,23 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                         }}
                         onCompositionEnd={(event) => {
                             isComposingRef.current = false;
-                            const nextValue = event.currentTarget.value;
+
+                            const rawValue = event.currentTarget.value;
+                            const nextValue = applyTransform(rawValue);
+
                             setInnerValue(nextValue);
                             onChangeAction?.(nextValue);
                         }}
                         onChange={(event) => {
-                            const nextValue = event.target.value;
+                            const rawValue = event.target.value;
+
+                            if (isComposingRef.current) {
+                                setInnerValue(rawValue);
+                                return;
+                            }
+
+                            const nextValue = applyTransform(rawValue);
                             setInnerValue(nextValue);
-
-                            if (isComposingRef.current) return;
-
                             onChangeAction?.(nextValue);
                         }}
                     />
