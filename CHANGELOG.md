@@ -1,3 +1,10 @@
+## [1.11.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.3...v1.11.4) (2026-01-12)
+
+
+### Bug Fixes
+
+* date picker yyyy-mm logic ([9b5407a](https://github.com/Bigtablet/bigtablet-design-system/commit/9b5407a898cccb30210fca58b19bb8a58057c85d))
+
 ## [1.11.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.2...v1.11.3) (2026-01-12)
 
 
