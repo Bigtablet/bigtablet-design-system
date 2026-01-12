@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.1...v1.11.2) (2026-01-12)
+
+
+### Bug Fixes
+
+* textfield ime ([b99e39a](https://github.com/Bigtablet/bigtablet-design-system/commit/b99e39ad402b17f3cf68f3c4383ff2c00e363795))
+
 ## [1.11.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.0...v1.11.1) (2026-01-08)
 
 
