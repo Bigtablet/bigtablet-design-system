@@ -7,7 +7,7 @@ type DateFieldDemoProps = {
     startYear?: number;
     endYear?: number;
     disabled?: boolean;
-    defaultValue?: string; // YYYY-MM-DD
+    defaultValue?: string; 
 };
 
 const DateFieldDemo = ({
