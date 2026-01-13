@@ -5,6 +5,7 @@ import "./style.scss";
 type DatePickerMode = "year-month" | "year-month-day";
 
 interface DatePickerProps {
+    label?: string;
     value?: string;
     onChange: (value: string) => void;
     mode?: DatePickerMode;
@@ -29,6 +30,7 @@ const normalizeWidth = (v?: number | string) =>
     typeof v === "number" ? `${v}px` : v;
 
 export const DatePicker = ({
+                               label,
                                value,
                                onChange,
                                mode = "year-month-day",
@@ -58,28 +60,38 @@ export const DatePicker = ({
             ? getDaysInMonth(year, month)
             : 31;
 
-    const emit = (yy: number, mm: number, dd?: number) => {
-        const result =
-            mode === "year-month"
-                ? `${yy}-${pad(mm)}`
-                : `${yy}-${pad(mm)}-${pad(dd ?? 1)}`;
+    const clampDay = (year: number, month: number, day: number) => {
+        const maxDay = getDaysInMonth(year, month);
+        return Math.min(day, maxDay);
+    };
 
-        onChange(result);
+    const emit = (yy: number, mm: number, dd?: number) => {
+        if (mode === "year-month") {
+            onChange(`${yy}-${pad(mm)}`);
+            return;
+        }
+
+        const safeDay = clampDay(yy, mm, dd ?? 1);
+
+        onChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
     };
 
     return (
-        <div className="date_picker" style={{ width: normalizeWidth(width?.container) }}>
+        <div className="date_picker" style={{width: normalizeWidth(width?.container)}}>
+            {label && (
+                <label className="date_picker_label">{label}</label>
+            )}
             <select
-                style={{ width: normalizeWidth(width?.year) }}
+                style={{width: normalizeWidth(width?.year)}}
                 value={year}
                 disabled={disabled}
                 onChange={(e) =>
                     emit(Number(e.target.value), month || minMonth, day || minDay)
                 }
             >
-                <option value="" disabled />
+                <option value="" disabled/>
                 {Array.from(
-                    { length: endYear - startYear + 1 },
+                    {length: endYear - startYear + 1},
                     (_, i) => startYear + i,
                 ).map((y) => (
                     <option key={y} value={y}>
@@ -89,15 +101,15 @@ export const DatePicker = ({
             </select>
 
             <select
-                style={{ width: normalizeWidth(width?.month) }}
+                style={{width: normalizeWidth(width?.month)}}
                 value={month}
                 disabled={disabled || !year}
                 onChange={(e) =>
                     emit(year, Number(e.target.value), day || minDay)
                 }
             >
-                <option value="" disabled />
-                {Array.from({ length: 12 - minMonth + 1 }, (_, i) => minMonth + i).map(
+                <option value="" disabled/>
+                {Array.from({length: 12 - minMonth + 1}, (_, i) => minMonth + i).map(
                     (m) => (
                         <option key={m} value={m}>
                             {pad(m)}
@@ -108,16 +120,16 @@ export const DatePicker = ({
 
             {mode === "year-month-day" && (
                 <select
-                    style={{ width: normalizeWidth(width?.day) }}
+                    style={{width: normalizeWidth(width?.day)}}
                     value={day}
                     disabled={disabled || !month}
                     onChange={(e) =>
                         emit(year, month, Number(e.target.value))
                     }
                 >
-                    <option value="" disabled />
+                    <option value="" disabled/>
                     {Array.from(
-                        { length: days - minDay + 1 },
+                        {length: days - minDay + 1},
                         (_, i) => minDay + i,
                     ).map((d) => (
                         <option key={d} value={d}>
