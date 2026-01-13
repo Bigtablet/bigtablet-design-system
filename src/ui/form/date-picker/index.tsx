@@ -3,6 +3,7 @@
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
+type SelectableRange = "all" | "until-today";
 
 interface DatePickerProps {
     label?: string;
@@ -12,6 +13,7 @@ interface DatePickerProps {
     startYear?: number;
     endYear?: number;
     minDate?: string;
+    selectableRange?: SelectableRange;
     disabled?: boolean;
     width?: {
         container?: number | string;
@@ -37,9 +39,15 @@ export const DatePicker = ({
                                startYear = 1950,
                                endYear = new Date().getFullYear() + 10,
                                minDate,
+                               selectableRange = "all",
                                disabled,
                                width,
                            }: DatePickerProps) => {
+    const today = new Date();
+    const todayYear = today.getFullYear();
+    const todayMonth = today.getMonth() + 1;
+    const todayDay = today.getDate();
+
     const [y, m, d] = value?.split("-").map(Number) ?? [];
     const [minY, minM, minD] = minDate?.split("-").map(Number) ?? [];
 
@@ -47,23 +55,38 @@ export const DatePicker = ({
     const month = m ?? "";
     const day = d ?? "";
 
+    const maxYear =
+        selectableRange === "until-today"
+            ? todayYear
+            : endYear;
+
     const minMonth =
         minY && year === minY ? minM : 1;
+
+    const maxMonth =
+        selectableRange === "until-today" && year === todayYear
+            ? todayMonth
+            : 12;
 
     const minDay =
         minY && minM && year === minY && month === minM
             ? minD
             : 1;
 
+    const maxDay =
+        selectableRange === "until-today" &&
+        year === todayYear &&
+        month === todayMonth
+            ? todayDay
+            : getDaysInMonth(year || todayYear, month || 1);
+
     const days =
         year && month
-            ? getDaysInMonth(year, month)
+            ? Math.min(getDaysInMonth(year, month), maxDay)
             : 31;
 
-    const clampDay = (year: number, month: number, day: number) => {
-        const maxDay = getDaysInMonth(year, month);
-        return Math.min(day, maxDay);
-    };
+    const clampDay = (year: number, month: number, day: number) =>
+        Math.min(day, getDaysInMonth(year, month));
 
     const emit = (yy: number, mm: number, dd?: number) => {
         if (mode === "year-month") {
@@ -91,7 +114,7 @@ export const DatePicker = ({
             >
                 <option value="" disabled/>
                 {Array.from(
-                    {length: endYear - startYear + 1},
+                    {length: maxYear - startYear + 1},
                     (_, i) => startYear + i,
                 ).map((y) => (
                     <option key={y} value={y}>
@@ -109,7 +132,7 @@ export const DatePicker = ({
                 }
             >
                 <option value="" disabled/>
-                {Array.from({length: 12 - minMonth + 1}, (_, i) => minMonth + i).map(
+                {Array.from({length: maxMonth - minMonth + 1}, (_, i) => minMonth + i).map(
                     (m) => (
                         <option key={m} value={m}>
                             {pad(m)}
