@@ -1,3 +1,24 @@
+## [1.11.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.5...v1.11.6) (2026-01-13)
+
+
+### Bug Fixes
+
+* leap year ([2c8c127](https://github.com/Bigtablet/bigtablet-design-system/commit/2c8c1277f29a7b7b43f637b280ae33b2962e63de))
+
+## [1.11.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.4...v1.11.5) (2026-01-13)
+
+
+### Bug Fixes
+
+* leap year handling ([3ed3e8e](https://github.com/Bigtablet/bigtablet-design-system/commit/3ed3e8e884c2417f67c91bab2bf69cd6a5a4ab8d))
+
+## [1.11.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.3...v1.11.4) (2026-01-12)
+
+
+### Bug Fixes
+
+* date picker yyyy-mm logic ([9b5407a](https://github.com/Bigtablet/bigtablet-design-system/commit/9b5407a898cccb30210fca58b19bb8a58057c85d))
+
 ## [1.11.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.2...v1.11.3) (2026-01-12)
 
 
