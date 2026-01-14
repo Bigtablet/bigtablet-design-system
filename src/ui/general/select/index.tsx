@@ -26,6 +26,7 @@ export interface SelectProps {
   variant?: SelectVariant;
   fullWidth?: boolean;
   className?: string;
+  textAlign?: "left" | "center"
 }
 
 export const Select = ({
@@ -41,6 +42,7 @@ export const Select = ({
                          variant = "outline",
                          fullWidth,
                          className,
+                         textAlign = "left"
                        }: SelectProps) => {
   const internalId = React.useId();
   const selectId = id ?? internalId;
@@ -213,6 +215,7 @@ export const Select = ({
                           ? "select_value"
                           : "select_placeholder"
                     }
+                    style={textAlign === "left" ? { textAlign: "start" } : undefined}
                 >
                     {currentOption
                         ? currentOption.label
