@@ -1,3 +1,17 @@
+# [1.12.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.6...v1.12.0) (2026-01-14)
+
+
+### Bug Fixes
+
+* date selectable range ([aa027b4](https://github.com/Bigtablet/bigtablet-design-system/commit/aa027b4dbc94705af4023b96ba47f03303df0072))
+* select text-align start ([d06ef03](https://github.com/Bigtablet/bigtablet-design-system/commit/d06ef0311b9532d4fcce87a95f8b69988bd45731))
+* update storybook ([eec396e](https://github.com/Bigtablet/bigtablet-design-system/commit/eec396e63715a0797a39bdb691759760021d71ea))
+
+
+### Features
+
+* add text align props ([c2abc1d](https://github.com/Bigtablet/bigtablet-design-system/commit/c2abc1d93a084b8573a722e5ae2fbd304154edda))
+
 ## [1.11.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.5...v1.11.6) (2026-01-13)
 
 
