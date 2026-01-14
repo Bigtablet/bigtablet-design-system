@@ -7,7 +7,8 @@ type DateFieldDemoProps = {
     startYear?: number;
     endYear?: number;
     disabled?: boolean;
-    defaultValue?: string; 
+    defaultValue?: string; // YYYY-MM-DD
+    selectableRange?: "all" | "until-today";
 };
 
 const DateFieldDemo = ({
@@ -16,6 +17,7 @@ const DateFieldDemo = ({
                            endYear = new Date().getFullYear() + 10,
                            disabled = false,
                            defaultValue = "2026-01-06",
+                           selectableRange = "all",
                        }: DateFieldDemoProps) => {
     const [value, setValue] = React.useState<string>(defaultValue);
 
@@ -32,6 +34,7 @@ const DateFieldDemo = ({
                 startYear={startYear}
                 endYear={endYear}
                 disabled={disabled}
+                selectableRange={selectableRange}
             />
 
             <div
@@ -73,6 +76,12 @@ const meta: Meta<typeof DateFieldDemo> = {
             description:
                 "입력 모드입니다. year-month는 연/월까지만 선택하며 결과는 YYYY-MM-01로 정규화됩니다.",
         },
+        selectableRange: {
+            control: "select",
+            options: ["all", "until-today"],
+            description:
+                "날짜 선택 범위를 설정합니다."
+        },
         startYear: {
             control: "number",
             description:
@@ -100,6 +109,7 @@ const meta: Meta<typeof DateFieldDemo> = {
         endYear: new Date().getFullYear() + 10,
         disabled: false,
         defaultValue: "2026-01-06",
+        selectableRange: "all",
     },
     parameters: {
         docs: {
@@ -168,6 +178,13 @@ export const YearRangeExample: Story = {
         defaultValue: "2026-01-06",
     },
 };
+
+export const DateSelectableRange: Story = {
+    name: "날짜 선택 범위 설정 (오늘까지 선택 가능)",
+    args: {
+        selectableRange: "until-today"
+    }
+}
 
 export const InvalidDayAutoAdjustExample: Story = {
     name: "일자 자동 보정 예시 (31일 → 2월)",
