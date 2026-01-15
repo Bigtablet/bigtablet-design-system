@@ -1,3 +1,26 @@
+# [1.12.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.6...v1.12.0) (2026-01-15)
+
+
+### Bug Fixes
+
+*  logic modifications due to storybook version updates ([90becda](https://github.com/Bigtablet/bigtablet-design-system/commit/90becda9001f95a473d34559f44ec5da91cc6fb7))
+* date selectable range ([aa027b4](https://github.com/Bigtablet/bigtablet-design-system/commit/aa027b4dbc94705af4023b96ba47f03303df0072))
+* select text-align start ([d06ef03](https://github.com/Bigtablet/bigtablet-design-system/commit/d06ef0311b9532d4fcce87a95f8b69988bd45731))
+* sementic release pnpm.yml -> .releaserc.json ([00884d8](https://github.com/Bigtablet/bigtablet-design-system/commit/00884d8bd712d55b89797a2a955cee338ec1a843))
+* update storybook ([eec396e](https://github.com/Bigtablet/bigtablet-design-system/commit/eec396e63715a0797a39bdb691759760021d71ea))
+
+
+### Features
+
+* 2FA ([4940d90](https://github.com/Bigtablet/bigtablet-design-system/commit/4940d904a50cb75b1db532b3561f662cd104728f))
+* add text align props ([c2abc1d](https://github.com/Bigtablet/bigtablet-design-system/commit/c2abc1d93a084b8573a722e5ae2fbd304154edda))
+* deploy 2FA ([a7c1191](https://github.com/Bigtablet/bigtablet-design-system/commit/a7c119132f0cea46ebc112476d22d96ffdde88cd))
+* radius pill token ([4d2e770](https://github.com/Bigtablet/bigtablet-design-system/commit/4d2e770151e270b6c137db7ad8a68f8d82fd10f9))
+* skeleton animation token ([63f8b60](https://github.com/Bigtablet/bigtablet-design-system/commit/63f8b6037d46eee2424a13c1f8a176ac7625e6ec))
+* trigger release ([a9584a0](https://github.com/Bigtablet/bigtablet-design-system/commit/a9584a0cffc2d868348dcb3933f0849c81e260c5))
+* trigger release ([51dfa2e](https://github.com/Bigtablet/bigtablet-design-system/commit/51dfa2e5cfeccbd923884c3f18077ee94c201735))
+* trigger release ([48c7dfc](https://github.com/Bigtablet/bigtablet-design-system/commit/48c7dfc2916d662c29efab267549689b352935b6))
+
 # [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.15.0...v1.16.0) (2026-01-15)
 
 
