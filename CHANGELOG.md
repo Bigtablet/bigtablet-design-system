@@ -1,3 +1,10 @@
+## [1.13.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.1...v1.13.2) (2026-01-15)
+
+
+### Bug Fixes
+
+*  logic modifications due to storybook version updates ([90becda](https://github.com/Bigtablet/bigtablet-design-system/commit/90becda9001f95a473d34559f44ec5da91cc6fb7))
+
 ## [1.13.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.0...v1.13.1) (2026-01-15)
 
 # [1.13.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.0...v1.13.0) (2026-01-15)
