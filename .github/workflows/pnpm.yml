@@ -28,8 +28,6 @@ jobs:
         with:
           node-version: 22.14.0
           cache: pnpm
-          registry-url: https://registry.npmjs.org
-          scope: "@bigtablet"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
