@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.0...v1.13.0) (2026-01-15)
+
+
+### Features
+
+* skeleton animation token ([63f8b60](https://github.com/Bigtablet/bigtablet-design-system/commit/63f8b6037d46eee2424a13c1f8a176ac7625e6ec))
+
 # [1.12.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.6...v1.12.0) (2026-01-14)
 
 
