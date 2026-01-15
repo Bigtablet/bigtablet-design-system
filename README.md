@@ -11,7 +11,7 @@
 
 Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 Components(UI 컴포넌트)로 구성된 통합 UI 라이브러리입니다.
 
-> **현재 버전**: v1.11.6 | **최근 업데이트**: 2025년 1월 15일
+> **현재 버전**: v1.12.0 | **최근 업데이트**: 2025년 1월 15일
 
 [깃허브 링크](https://github.com/Bigtablet/bigtablet-design-system) | [📦 NPM 패키지](https://www.npmjs.com/package/@bigtablet/design-system)
 
