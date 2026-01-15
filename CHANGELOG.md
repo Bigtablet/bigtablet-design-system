@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.0...v1.15.0) (2026-01-15)
+
+
+### Features
+
+* deploy 2FA ([a7c1191](https://github.com/Bigtablet/bigtablet-design-system/commit/a7c119132f0cea46ebc112476d22d96ffdde88cd))
+
 # [1.14.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.7...v1.14.0) (2026-01-15)
 
 
