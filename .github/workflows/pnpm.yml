@@ -25,11 +25,12 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build
 
-      - name: Build
-        run: pnpm build
-
-      - name: Publish to npm (OIDC)
-        run: npm publish --access public --provenance
+      - name: Semantic Release (includes npm publish via OIDC)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
