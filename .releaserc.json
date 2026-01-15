@@ -8,7 +8,14 @@
         "releaseRules": [
           { "type": "feat", "release": "minor" },
           { "type": "fix", "release": "patch" },
-          { "type": "docs", "release": "patch" }
+          { "type": "bug", "release": "patch" },
+          { "type": "config", "release": "patch" },
+          { "type": "deploy", "release": "patch" },
+          { "type": "docs", "release": "patch" },
+          { "type": "note", "release":  false},
+          { "type": "style", "release": false },
+          { "type": "merge", "release": false },
+          { "type": "etc", "release": false }
         ]
       }
     ],
