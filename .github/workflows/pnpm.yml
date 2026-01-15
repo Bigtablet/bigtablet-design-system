@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  id-token: write   
+  id-token: write
 
 jobs:
   release:
@@ -27,6 +27,9 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       - name: Semantic Release
         env:
