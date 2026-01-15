@@ -31,10 +31,5 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Semantic Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
-
       - name: Publish to npm (OIDC)
         run: npm publish --access public --provenance
