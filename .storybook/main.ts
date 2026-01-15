@@ -1,19 +1,26 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import type { StorybookConfig } from "@storybook/react-vite";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
     stories: ["../src/stories/**/*.stories.@(ts|tsx)"],
-    addons: ["@storybook/addon-essentials"],
-    framework: { name: "@storybook/react-vite", options: {} },
+    framework: {
+        name: "@storybook/react-vite",
+        options: {},
+    },
     staticDirs: ["../public"],
     viteFinal: async (cfg) => {
         cfg.resolve = cfg.resolve || {};
         cfg.resolve.alias = {
             ...(cfg.resolve.alias || {}),
-            "src": path.resolve(__dirname, "../src"),
+            src: path.resolve(__dirname, "../src"),
             "next/link": path.resolve(__dirname, "./mocks/next-link.tsx"),
             "next/image": path.resolve(__dirname, "./mocks/next-image.tsx"),
         };
+
         cfg.css = {
             ...(cfg.css || {}),
             preprocessorOptions: {
@@ -24,10 +31,12 @@ const config: StorybookConfig = {
                 },
             },
         };
+
         cfg.define = {
             ...(cfg.define || {}),
-            'process.env': {},
+            "process.env": {},
         };
+
         return cfg;
     },
 };

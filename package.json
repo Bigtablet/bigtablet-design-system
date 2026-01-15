@@ -5,6 +5,10 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "style": "dist/index.css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bigtablet/bigtablet-design-system.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -62,9 +66,8 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.1",
     "@semantic-release/npm": "^13.1.1",
-    "@storybook/addon-essentials": "8.6.14",
-    "@storybook/react": "8.6.14",
-    "@storybook/react-vite": "8.6.14",
+    "@storybook/react": "10.1.10",
+    "@storybook/react-vite": "10.1.10",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -78,7 +81,7 @@
     "react-toastify": "^11.0.5",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
-    "storybook": "8.6.14",
+    "storybook": "10.1.10",
     "tsup": "^8.5.0",
     "typescript": "^5",
     "vite": "^5"
