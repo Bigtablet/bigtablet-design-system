@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.15.0...v1.16.0) (2026-01-15)
+
+
+### Features
+
+* 2FA ([4940d90](https://github.com/Bigtablet/bigtablet-design-system/commit/4940d904a50cb75b1db532b3561f662cd104728f))
+
 # [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.0...v1.15.0) (2026-01-15)
 
 
