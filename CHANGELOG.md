@@ -1,3 +1,10 @@
+## [1.13.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.6...v1.13.7) (2026-01-15)
+
+
+### Bug Fixes
+
+* sementic release pnpm.yml -> .releaserc.json ([00884d8](https://github.com/Bigtablet/bigtablet-design-system/commit/00884d8bd712d55b89797a2a955cee338ec1a843))
+
 ## [1.13.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.5...v1.13.6) (2026-01-15)
 
 ## [1.13.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.4...v1.13.5) (2026-01-15)
