@@ -11,9 +11,9 @@
           { "type": "bug", "release": "patch" },
           { "type": "config", "release": "patch" },
           { "type": "deploy", "release": "patch" },
+          { "type": "docs", "release": "patch" },
 
-          { "type": "docs", "release": false },
-          { "type": "note", "release":  false},
+          { "type": "note", "release": false },
           { "type": "style", "release": false },
           { "type": "merge", "release": false },
           { "type": "etc", "release": false }
@@ -26,7 +26,9 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "provenance": true
+        "npmConfig": {
+          "provenance": true
+        }
       }
     ],
     "@semantic-release/github",
@@ -34,7 +36,7 @@
       "@semantic-release/git",
       {
         "assets": ["CHANGELOG.md", "package.json", "pnpm-lock.yaml"],
-        "message": "deploy(release): ${nextRelease.version}"
+        "message": "deploy: ${nextRelease.version}"
       }
     ]
   ]
