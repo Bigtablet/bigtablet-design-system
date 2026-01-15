@@ -1,3 +1,12 @@
+# [1.14.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.7...v1.14.0) (2026-01-15)
+
+
+### Features
+
+* trigger release ([a9584a0](https://github.com/Bigtablet/bigtablet-design-system/commit/a9584a0cffc2d868348dcb3933f0849c81e260c5))
+* trigger release ([51dfa2e](https://github.com/Bigtablet/bigtablet-design-system/commit/51dfa2e5cfeccbd923884c3f18077ee94c201735))
+* trigger release ([48c7dfc](https://github.com/Bigtablet/bigtablet-design-system/commit/48c7dfc2916d662c29efab267549689b352935b6))
+
 ## [1.13.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.6...v1.13.7) (2026-01-15)
 
 
