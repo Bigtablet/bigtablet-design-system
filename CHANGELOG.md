@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.1...v1.13.0) (2026-01-16)
+
+
+### Features
+
+* skeleton token ([f1a0466](https://github.com/Bigtablet/bigtablet-design-system/commit/f1a04660fa56646dafd7db468f6db4346b883e6c))
+
 ## [1.12.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.0...v1.12.1) (2026-01-15)
 
 # [1.12.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.11.6...v1.12.0) (2026-01-15)
