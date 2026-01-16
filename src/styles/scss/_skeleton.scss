@@ -1,0 +1,69 @@
+@use "src/styles/scss/token" as token;
+
+$color_skeleton_base: token.$color_background_neutral;
+$color_skeleton_wave: token.$color_background_muted;
+$color_skeleton_highlight: token.$color_background_secondary;
+
+$skeleton_gradient: linear-gradient(
+                90deg,
+                $color_skeleton_base 25%,
+                $color_skeleton_highlight 37%,
+                $color_skeleton_wave 63%
+);
+
+$skeleton_radius_sm: token.$radius_sm;
+$skeleton_radius_md: token.$radius_md;
+$skeleton_radius_lg: token.$radius_lg;
+
+$skeleton_height_xs: token.$spacing_xs;
+$skeleton_height_sm: token.$spacing_sm;
+$skeleton_height_md: token.$spacing_md;
+$skeleton_height_lg: token.$spacing_lg;
+$skeleton_height_xl: token.$spacing_xl;
+
+$skeleton_animation_duration: 1.4s;
+$skeleton_animation_timing: ease-in-out;
+
+@mixin skeleton(
+  $width: 100%,
+  $height: $skeleton_height_md,
+  $radius: $skeleton_radius_md
+) {
+  width: $width;
+  height: $height;
+  background: $skeleton_gradient;
+  background-size: 400% 100%;
+  border-radius: $radius;
+  animation: skeleton_loading
+  $skeleton_animation_duration
+  $skeleton_animation_timing
+  infinite;
+}
+
+@mixin skeleton_text {
+  @include skeleton(100%, $skeleton_height_md);
+}
+
+@mixin skeleton_title {
+  @include skeleton(100%, $skeleton_height_xl);
+}
+
+@mixin skeleton_avatar($size: token.$spacing_6xl) {
+  @include skeleton($size, $size, $skeleton_radius_lg);
+}
+
+@mixin skeleton_rect(
+  $width: 100%,
+  $height: token.$spacing_8xl
+) {
+  @include skeleton($width, $height, $skeleton_radius_md);
+}
+
+@keyframes skeleton_loading {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
