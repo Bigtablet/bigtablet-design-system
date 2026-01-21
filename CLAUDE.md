@@ -133,7 +133,7 @@ label/domain
 
 ### Merge Convention
 - 병합 커밋 메시지: `merge: branch-name`
-- main 배포: `merge: release [version]`
+- main 배포: `merge: release`
 - 병합 전 반드시 코드 리뷰어 approve 필요
 
 ---
