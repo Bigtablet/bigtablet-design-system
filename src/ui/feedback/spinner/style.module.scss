@@ -1,12 +1,12 @@
 @use "src/styles/scss/token" as token;
 
-@keyframes loading_spin {
+@keyframes spinner_spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-.loading {
+.spinner {
   display: inline-block;
   box-sizing: border-box;
   border-radius: 50%;
@@ -14,5 +14,5 @@
   border: 2px solid token.$color_border;
   border-top-color: token.$color_primary;
 
-  animation: loading_spin 0.8s linear infinite;
+  animation: spinner_spin 0.8s linear infinite;
 }
