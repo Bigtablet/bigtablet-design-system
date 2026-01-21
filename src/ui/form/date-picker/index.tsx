@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./style.module.scss";
+import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
 type SelectableRange = "all" | "until-today";
@@ -100,11 +100,11 @@ export const DatePicker = ({
     };
 
     return (
-        <div className={styles.date_picker} style={{width: normalizeWidth(width?.container)}}>
+        <div className="date_picker" style={{width: normalizeWidth(width?.container)}}>
             {label && (
-                <label className={styles.label}>{label}</label>
+                <label className="date_picker_label">{label}</label>
             )}
-            <div className={styles.fields}>
+            <div className="date_picker_fields">
                 <select
                     style={{width: normalizeWidth(width?.year)}}
                     value={year}

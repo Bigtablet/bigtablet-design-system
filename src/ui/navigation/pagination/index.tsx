@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface PaginationProps {
     page: number;
@@ -47,9 +47,9 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
     );
 
     return (
-        <nav className={styles.pagination} aria-label="Pagination">
+        <nav className="pagination" aria-label="Pagination">
             <button
-                className={styles.item}
+                className="pagination_item"
                 onClick={() => onChange(page - 1)}
                 disabled={prevDisabled}
                 aria-label="Previous page"
@@ -57,11 +57,11 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                 ‹
             </button>
 
-            <div className={styles.pages} role="list">
+            <div className="pagination_pages" role="list">
                 {items.map((it, idx) => {
                     if (it === "ellipsis") {
                         return (
-                            <span key={`e-${idx}`} className={styles.ellipsis} aria-hidden="true">
+                            <span key={`e-${idx}`} className="pagination_ellipsis" aria-hidden="true">
                                 …
                             </span>
                         );
@@ -70,8 +70,8 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                     const isActive = it === page;
 
                     const buttonClassName = [
-                        styles.pageButton,
-                        isActive && styles.active,
+                        "pagination_page_button",
+                        isActive && "pagination_active",
                     ]
                         .filter(Boolean)
                         .join(" ");
@@ -91,7 +91,7 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
             </div>
 
             <button
-                className={styles.item}
+                className="pagination_item"
                 onClick={() => onChange(page + 1)}
                 disabled={nextDisabled}
                 aria-label="Next page"

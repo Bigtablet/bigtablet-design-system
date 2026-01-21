@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,9 +18,9 @@ export const Button = ({
                            ...props
                        }: ButtonProps) => {
     const buttonClassName = [
-        styles.button,
-        styles[`size_${size}`],
-        styles[`variant_${variant}`],
+        "button",
+        `button_variant_${variant}`,
+        `button_size_${size}`,
         className ?? "",
     ]
         .filter(Boolean)

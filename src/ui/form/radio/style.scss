@@ -1,0 +1,96 @@
+@use "src/styles/scss/token" as token;
+
+.radio {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: token.$spacing_sm;
+  cursor: pointer;
+  user-select: none;
+
+  &_input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  &_dot {
+    width: token.$font_size_md;
+    height: token.$font_size_md;
+    box-sizing: border-box;
+
+    border: 1px solid token.$color_border;
+    border-radius: token.$radius_full;
+    background: token.$color_background;
+
+    transition: background token.$transition_base,
+    border-color token.$transition_base,
+    box-shadow token.$transition_base;
+
+    position: relative;
+    display: inline-block;
+  }
+
+  &_label {
+    @include token.text_base;
+    color: token.$color_text_primary;
+  }
+
+  &_size_sm {
+    .radio_dot {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .radio_label {
+      @include token.text_sm;
+    }
+  }
+
+  &_size_md {
+    .radio_dot {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
+
+  &_size_lg {
+    .radio_dot {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .radio_label {
+      @include token.text_md;
+    }
+  }
+
+  &_input:focus-visible + .radio_dot {
+    box-shadow: 0 0 0 3px token.$color_border_light;
+    border-color: token.$color_primary;
+  }
+
+  &_input:checked + .radio_dot {
+    border-color: token.$color_primary;
+  }
+
+  &_input:checked + .radio_dot::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60%;
+    height: 60%;
+    transform: translate(-50%, -50%);
+    background: token.$color_primary;
+    border-radius: 9999px;
+  }
+
+  &_input:disabled + .radio_dot,
+  &_input:disabled ~ .radio_label {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

@@ -3,7 +3,7 @@
 import * as React from "react";
 import {createContext, useContext, useState, useCallback} from "react";
 import {createPortal} from "react-dom";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
 export type AlertActionsAlign = "left" | "center" | "right";
@@ -100,21 +100,21 @@ const AlertModal: React.FC<AlertModalProps> = ({
                                                    onClose,
                                                }) => {
     const modalClassName = [
-        styles.modal,
-        styles[`variant_${variant}`],
+        "alert_modal",
+        `alert_variant_${variant}`,
     ]
         .filter(Boolean)
         .join(" ");
 
     const actionsClassName = [
-        styles.actions,
-        styles[`actions_${actionsAlign}`],
+        "alert_actions",
+        `alert_actions_${actionsAlign}`,
     ]
         .filter(Boolean)
         .join(" ");
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
+        <div className="alert_overlay" onClick={onClose}>
             <div
                 className={modalClassName}
                 onClick={(e) => e.stopPropagation()}
@@ -124,13 +124,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
                 aria-describedby="alert_message"
             >
                 {title && (
-                    <div className={styles.title} id="alert_title">
+                    <div className="alert_title" id="alert_title">
                         {title}
                     </div>
                 )}
 
                 {message && (
-                    <div className={styles.message} id="alert_message">
+                    <div className="alert_message" id="alert_message">
                         {message}
                     </div>
                 )}
@@ -139,7 +139,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
                     {showCancel && (
                         <button
                             type="button"
-                            className={`${styles.button} ${styles.button_cancel}`}
+                            className="alert_button alert_button_cancel"
                             onClick={onCancel}
                         >
                             {cancelText}
@@ -147,7 +147,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
                     )}
                     <button
                         type="button"
-                        className={`${styles.button} ${styles.button_confirm}`}
+                        className="alert_button alert_button_confirm"
                         onClick={onConfirm}
                     >
                         {confirmText}

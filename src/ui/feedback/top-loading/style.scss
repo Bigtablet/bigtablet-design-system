@@ -8,24 +8,24 @@
   z-index: token.$z_toast;
   overflow: hidden;
   background-color: transparent;
+
+  &_bar {
+    height: 100%;
+    background-color: token.$color_primary;
+    transition: width token.$transition_base;
+  }
+
+  &_indeterminate {
+    width: 30%;
+    animation: top_loading_indeterminate 1.5s ease-in-out infinite;
+  }
 }
 
-.bar {
-  height: 100%;
-  background-color: token.$color_primary;
-  transition: width token.$transition_base;
-}
-
-@keyframes indeterminate {
+@keyframes top_loading_indeterminate {
   0% {
     transform: translateX(-100%);
   }
   100% {
     transform: translateX(400%);
   }
-}
-
-.indeterminate {
-  width: 30%;
-  animation: indeterminate 1.5s ease-in-out infinite;
 }
