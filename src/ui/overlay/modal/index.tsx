@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import "./style.scss";
+import styles from "./style.module.scss";
 
 export interface ModalProps
     extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -35,21 +35,25 @@ export const Modal = ({
 
   if (!open) return null;
 
+  const panelClassName = [styles.panel, className]
+      .filter(Boolean)
+      .join(" ");
+
   return (
       <div
-          className="modal"
+          className={styles.modal}
           role="dialog"
           aria-modal="true"
           onClick={() => closeOnOverlay && onClose?.()}
       >
         <div
-            className={["modal_panel", className].filter(Boolean).join(" ")}
+            className={panelClassName}
             style={{ width }}
             onClick={(e) => e.stopPropagation()}
             {...props}
         >
-          {title && <div className="modal_header">{title}</div>}
-          <div className="modal_body">{children}</div>
+          {title && <div className={styles.header}>{title}</div>}
+          <div className={styles.body}>{children}</div>
         </div>
       </div>
   );

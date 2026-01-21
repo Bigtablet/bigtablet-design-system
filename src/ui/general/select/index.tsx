@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import "./style.scss";
+import styles from "./style.module.scss";
 import { ChevronDown, Check } from "lucide-react";
 
 export type SelectSize = "sm" | "md" | "lg";
@@ -167,16 +167,16 @@ export const Select = ({
     );
   }, [isOpen, options, currentValue]);
 
-  const rootClassName = ["select", className ?? ""]
+  const rootClassName = [styles.select, className ?? ""]
       .filter(Boolean)
       .join(" ");
 
   const controlClassName = [
-    "select_control",
-    `select_control_variant_${variant}`,
-    `select_control_size_${size}`,
-    isOpen && "is_open",
-    disabled && "is_disabled",
+    styles.control,
+    styles[`variant_${variant}`],
+    styles[`size_${size}`],
+    isOpen && styles.is_open,
+    disabled && styles.is_disabled,
   ]
       .filter(Boolean)
       .join(" ");
@@ -190,7 +190,7 @@ export const Select = ({
         {label && (
             <label
                 htmlFor={selectId}
-                className="select_label"
+                className={styles.label}
             >
               {label}
             </label>
@@ -212,8 +212,8 @@ export const Select = ({
                 <span
                     className={
                       currentOption
-                          ? "select_value"
-                          : "select_placeholder"
+                          ? styles.value
+                          : styles.placeholder
                     }
                     style={textAlign === "left" ? { textAlign: "start" } : undefined}
                 >
@@ -221,7 +221,7 @@ export const Select = ({
                         ? currentOption.label
                         : placeholder}
                 </span>
-          <span className="select_icon" aria-hidden="true">
+          <span className={styles.icon} aria-hidden="true">
                     <ChevronDown size={16} />
                 </span>
         </button>
@@ -230,7 +230,7 @@ export const Select = ({
             <ul
                 id={`${selectId}_listbox`}
                 role="listbox"
-                className="select_list"
+                className={styles.list}
             >
               {options.map((opt, i) => {
                 const selected =
@@ -238,10 +238,10 @@ export const Select = ({
                 const active = i === activeIndex;
 
                 const optionClassName = [
-                  "select_option",
-                  selected && "is_selected",
-                  active && "is_active",
-                  opt.disabled && "is_disabled",
+                  styles.option,
+                  selected && styles.is_selected,
+                  active && styles.is_active,
+                  opt.disabled && styles.is_disabled,
                 ]
                     .filter(Boolean)
                     .join(" ");
