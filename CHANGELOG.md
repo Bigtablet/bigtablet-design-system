@@ -1,3 +1,15 @@
+# [1.14.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.0...v1.14.0) (2026-01-21)
+
+
+### Bug Fixes
+
+* change datePicker label layout to top position like textField ([899130b](https://github.com/Bigtablet/bigtablet-design-system/commit/899130b1417e946ce73b9289005b013eec5e8d73))
+
+
+### Features
+
+* split loading component into spinner and topLoading ([66b2ef9](https://github.com/Bigtablet/bigtablet-design-system/commit/66b2ef9136e6beb914876278ce004fdf96080bca))
+
 # [1.13.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.1...v1.13.0) (2026-01-16)
 
 
