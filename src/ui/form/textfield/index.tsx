@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export type TextFieldVariant = "outline" | "filled" | "ghost";
 export type TextFieldSize = "sm" | "md" | "lg";
@@ -70,29 +70,29 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         }, [isControlled, value, transformValue]);
 
         const rootClassName = [
-            styles.text_field,
-            fullWidth && styles.full_width,
+            "text_field",
+            fullWidth && "text_field_full_width",
             className ?? "",
         ]
             .filter(Boolean)
             .join(" ");
 
         const inputClassName = [
-            styles.input,
-            styles[`variant_${variant}`],
-            styles[`size_${size}`],
-            leftIcon && styles.with_left,
-            rightIcon && styles.with_right,
-            error && styles.error,
-            success && styles.success,
+            "text_field_input",
+            `text_field_variant_${variant}`,
+            `text_field_size_${size}`,
+            leftIcon && "text_field_with_left",
+            rightIcon && "text_field_with_right",
+            error && "text_field_error",
+            success && "text_field_success",
         ]
             .filter(Boolean)
             .join(" ");
 
         const helperClassName = [
-            styles.helper,
-            error && styles.helper_error,
-            success && styles.helper_success,
+            "text_field_helper",
+            error && "text_field_helper_error",
+            success && "text_field_helper_success",
         ]
             .filter(Boolean)
             .join(" ");
@@ -100,14 +100,14 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         return (
             <div className={rootClassName}>
                 {label ? (
-                    <label className={styles.label} htmlFor={inputId}>
+                    <label className="text_field_label" htmlFor={inputId}>
                         {label}
                     </label>
                 ) : null}
 
-                <div className={styles.wrap}>
+                <div className="text_field_wrap">
                     {leftIcon ? (
-                        <span className={`${styles.icon} ${styles.icon_left}`}>
+                        <span className="text_field_icon text_field_icon_left">
 							{leftIcon}
 						</span>
                     ) : null}
@@ -147,7 +147,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                     />
 
                     {rightIcon ? (
-                        <span className={`${styles.icon} ${styles.icon_right}`}>
+                        <span className="text_field_icon text_field_icon_right">
 							{rightIcon}
 						</span>
                     ) : null}

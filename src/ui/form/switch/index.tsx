@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface SwitchProps
     extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
@@ -33,10 +33,10 @@ export const Switch = ({
     };
 
     const rootClassName = [
-        styles.switch,
-        styles[`size_${size}`],
-        isOn && styles.on,
-        disabled && styles.disabled,
+        "switch",
+        `switch_size_${size}`,
+        isOn && "switch_on",
+        disabled && "switch_disabled",
         className ?? "",
     ]
         .filter(Boolean)
@@ -52,7 +52,7 @@ export const Switch = ({
             className={rootClassName}
             {...props}
         >
-            <span className={styles.thumb} />
+            <span className="switch_thumb" />
         </button>
     );
 };

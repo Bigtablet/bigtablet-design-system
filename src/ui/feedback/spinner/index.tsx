@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface SpinnerProps {
     size?: number;
@@ -9,7 +9,7 @@ export interface SpinnerProps {
 export const Spinner = ({ size = 24 }: SpinnerProps) => {
     return (
         <span
-            className={styles.spinner}
+            className="spinner"
             style={{ width: size, height: size }}
             role="status"
             aria-label="로딩 중"
