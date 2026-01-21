@@ -20,18 +20,29 @@ const getPaginationItems = (page: number, totalPages: number) => {
 
     const items: Array<number | "ellipsis"> = [];
     const last = totalPages;
+    const sibling = 2;
 
-    const start = Math.max(2, page - 1);
-    const end = Math.min(last - 1, page + 1);
+    // 시작 부분 (1~5페이지 근처)
+    if (page <= sibling + 2) {
+        for (const p of range(1, sibling + 3)) items.push(p);
+        items.push("ellipsis");
+        items.push(last);
+        return items;
+    }
 
+    // 끝 부분 (마지막 5페이지 근처)
+    if (page >= last - sibling - 1) {
+        items.push(1);
+        items.push("ellipsis");
+        for (const p of range(last - sibling - 2, last)) items.push(p);
+        return items;
+    }
+
+    // 중간 부분
     items.push(1);
-
-    if (start > 2) items.push("ellipsis");
-
-    for (const p of range(start, end)) items.push(p);
-
-    if (end < last - 1) items.push("ellipsis");
-
+    items.push("ellipsis");
+    for (const p of range(page - sibling, page + sibling)) items.push(p);
+    items.push("ellipsis");
     items.push(last);
 
     return items;

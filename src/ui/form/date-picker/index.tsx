@@ -15,12 +15,7 @@ interface DatePickerProps {
     minDate?: string;
     selectableRange?: SelectableRange;
     disabled?: boolean;
-    width?: {
-        container?: number | string;
-        year?: number | string;
-        month?: number | string;
-        day?: number | string;
-    };
+    width?: number | string;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -99,21 +94,22 @@ export const DatePicker = ({
         onChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
     };
 
+    const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
+
     return (
-        <div className="date_picker" style={{width: normalizeWidth(width?.container)}}>
+        <div className="date_picker date_picker_full" style={containerStyle}>
             {label && (
                 <label className="date_picker_label">{label}</label>
             )}
             <div className="date_picker_fields">
                 <select
-                    style={{width: normalizeWidth(width?.year)}}
                     value={year}
                     disabled={disabled}
                     onChange={(e) =>
                         emit(Number(e.target.value), month || minMonth, day || minDay)
                     }
                 >
-                    <option value="" disabled/>
+                    <option value="">연도</option>
                     {Array.from(
                         {length: maxYear - startYear + 1},
                         (_, i) => startYear + i,
@@ -125,14 +121,13 @@ export const DatePicker = ({
                 </select>
 
                 <select
-                    style={{width: normalizeWidth(width?.month)}}
                     value={month}
                     disabled={disabled || !year}
                     onChange={(e) =>
                         emit(year, Number(e.target.value), day || minDay)
                     }
                 >
-                    <option value="" disabled/>
+                    <option value="">월</option>
                     {Array.from({length: maxMonth - minMonth + 1}, (_, i) => minMonth + i).map(
                         (m) => (
                             <option key={m} value={m}>
@@ -144,14 +139,13 @@ export const DatePicker = ({
 
                 {mode === "year-month-day" && (
                     <select
-                        style={{width: normalizeWidth(width?.day)}}
                         value={day}
                         disabled={disabled || !month}
                         onChange={(e) =>
                             emit(year, month, Number(e.target.value))
                         }
                     >
-                        <option value="" disabled/>
+                        <option value="">일</option>
                         {Array.from(
                             {length: days - minDay + 1},
                             (_, i) => minDay + i,
