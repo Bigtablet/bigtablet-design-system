@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -25,8 +25,8 @@ export const Checkbox = ({
   }, [indeterminate]);
 
   const rootClassName = [
-    styles.checkbox,
-    styles[`size_${size}`],
+    "checkbox",
+    `checkbox_size_${size}`,
     className ?? "",
   ]
       .filter(Boolean)
@@ -37,11 +37,11 @@ export const Checkbox = ({
         <input
             ref={inputRef}
             type="checkbox"
-            className={styles.input}
+            className="checkbox_input"
             {...props}
         />
-        <span className={styles.box} aria-hidden="true" />
-        {label ? <span className={styles.label}>{label}</span> : null}
+        <span className="checkbox_box" aria-hidden="true" />
+        {label ? <span className="checkbox_label">{label}</span> : null}
       </label>
   );
 };

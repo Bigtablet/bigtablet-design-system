@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface TopLoadingProps {
     /** 진행률 (0-100). undefined면 indeterminate 모드 */
@@ -25,7 +25,7 @@ export const TopLoading = ({
 
     return (
         <div
-            className={styles.top_loading}
+            className="top_loading"
             style={{ height }}
             role="progressbar"
             aria-valuemin={0}
@@ -35,8 +35,8 @@ export const TopLoading = ({
         >
             <div
                 className={[
-                    styles.bar,
-                    isIndeterminate && styles.indeterminate,
+                    "top_loading_bar",
+                    isIndeterminate && "top_loading_indeterminate",
                 ]
                     .filter(Boolean)
                     .join(" ")}

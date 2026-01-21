@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface FileInputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -19,8 +19,8 @@ export const FileInput = ({
     const inputId = React.useId();
 
     const rootClassName = [
-        styles.file_input,
-        disabled && styles.disabled,
+        "file_input",
+        disabled && "file_input_disabled",
         className ?? ""
     ]
         .filter(Boolean)
@@ -31,12 +31,12 @@ export const FileInput = ({
             <input
                 id={inputId}
                 type="file"
-                className={styles.control}
+                className="file_input_control"
                 disabled={disabled}
                 onChange={(e) => onFiles?.(e.currentTarget.files)}
                 {...props}
             />
-            <label htmlFor={inputId} className={styles.label}>
+            <label htmlFor={inputId} className="file_input_label">
                 {label}
             </label>
         </div>
