@@ -1,3 +1,11 @@
+## [1.14.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.1...v1.14.2) (2026-01-21)
+
+
+### Bug Fixes
+
+* datePicker selection and width props ([a98721d](https://github.com/Bigtablet/bigtablet-design-system/commit/a98721dad0334c80912309d6178597d485c5f119))
+* pagination display logic for many pages ([c53d51d](https://github.com/Bigtablet/bigtablet-design-system/commit/c53d51d6d6b7abca09fb5ba9d49e71b50a24a749))
+
 ## [1.14.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.0...v1.14.1) (2026-01-21)
 
 # [1.14.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.0...v1.14.0) (2026-01-21)
