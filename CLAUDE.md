@@ -44,29 +44,48 @@ src/
 - Standard structure:
   ```
   src/ui/{category}/{ComponentName}/
-  ├── index.tsx            # Component implementation
-  ├── style.module.scss    # CSS Module styles
-  └── *.stories.tsx        # Storybook stories (optional)
+  ├── index.tsx       # Component implementation
+  ├── style.scss      # Global SCSS styles (snake_case naming)
+  └── *.stories.tsx   # Storybook stories (optional)
   ```
 
-### Styling (CSS Modules)
-- **CSS Modules**: All styles use `style.module.scss` files
-- Import pattern: `import styles from "./style.module.scss";`
-- Class usage: `className={styles.button}` or `className={styles[`variant_${variant}`]}`
+### Styling (Global SCSS with BEM-like snake_case)
+- **Global SCSS**: All styles use `style.scss` files (NOT CSS Modules)
+- Import pattern: `import "./style.scss";`
+- Class naming convention: `component_modifier` (snake_case)
 - SCSS tokens: `@use "src/styles/scss/token" as token;`
 - Never use hardcoded values - always use tokens
 
 ### className Pattern
 ```tsx
 const buttonClassName = [
-    styles.button,
-    styles[`size_${size}`],
-    styles[`variant_${variant}`],
-    isActive && styles.active,
+    "button",
+    `button_variant_${variant}`,
+    `button_size_${size}`,
+    isActive && "button_active",
     className ?? "",
 ]
     .filter(Boolean)
     .join(" ");
+```
+
+### SCSS Structure (BEM-like with &_)
+```scss
+.component {
+  // base styles
+
+  &_variant_primary {
+    // variant styles
+  }
+
+  &_size_md {
+    // size styles
+  }
+
+  &_child {
+    // child element styles
+  }
+}
 ```
 
 ### Design Tokens
@@ -93,15 +112,81 @@ Located in `src/styles/ts/`:
 - `scripts/copy-scss.mjs` - Copies SCSS to dist
 - `.github/workflows/pnpm.yml` - CI/CD pipeline
 
-## Commit Convention
+## Git Convention
 
+### Commit Message
 ```
-feat: New feature
-fix: Bug fix
-docs: Documentation
-style: Formatting
-refactor: Code refactoring
-test: Tests
-chore: Build/tooling
-deploy: Deployment
+label: message
 ```
+
+1. Label (category) comes first, followed by message describing the change
+2. All lowercase, use camelCase when necessary
+3. Message should be in English and describe what/where/how
+
+### Commit Labels
+
+| Label | Description |
+| --- | --- |
+| feat | New feature / new code |
+| fix | Code/feature modification |
+| bug | Bug/error fix |
+| merge | Branch merge |
+| deploy | Deployment / related docs |
+| docs | Documentation add/update |
+| delete | Code/file/docs deletion |
+| note | Comment add/remove |
+| style | Code style/structure change |
+| config | Config files / dependencies / library version changes |
+| etc | Other (doesn't fit above categories) |
+| tada | Project creation |
+
+### Branch Naming
+```
+label/domain
+```
+
+Examples:
+- `fix/auth` - Fix authentication code
+- `feat/sidebar` - Add sidebar feature
+- `style/global-scss` - Style structure changes
+
+### Merge Convention
+- Merge commit message: `merge: branch-name`
+- Release to main: `merge: release [version]`
+- Always require code review approval before merge
+
+### Pull Request
+1. Always create an issue first and link to PR
+2. PR title should match branch name
+3. Request code review from team members
+4. Don't merge until approved
+
+## Claude Workflow (AI Assistant Instructions)
+
+When user requests feature/fix work:
+
+1. **Create Issue** (if requested)
+   - Use `gh issue create` command
+
+2. **Create Branch**
+   - Format: `label/domain`
+   - Example: `git checkout -b feat/new-component`
+
+3. **Make Changes**
+   - Follow styling conventions (global SCSS with snake_case)
+   - Use design tokens from `src/styles/scss/token`
+
+4. **Commit**
+   - Format: `label: message`
+   - Always include Co-Authored-By in commit
+   - Example:
+     ```
+     feat: add new button variant
+
+     Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+     ```
+
+5. **Create PR** (if requested)
+   - Use `gh pr create` command
+   - Link to related issue
+   - Include summary and test plan

@@ -1,0 +1,29 @@
+@use "src/styles/scss/token" as token;
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: token.$color_overlay;
+  z-index: token.$z_modal;
+
+  &_panel {
+    background: token.$color_background;
+    border-radius: token.$radius_lg;
+    box-shadow: token.$shadow_lg;
+    max-width: calc(100% - 32px);
+    overflow: hidden;
+  }
+
+  &_header {
+    padding: token.$spacing_lg;
+    border-bottom: 1px solid token.$color_border;
+    color: token.$color_text_primary;
+    @include token.heading_3;
+  }
+
+  &_body {
+    padding: token.$spacing_lg;
+  }
+}
