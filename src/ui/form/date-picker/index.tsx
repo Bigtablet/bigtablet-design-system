@@ -1,6 +1,6 @@
 "use client";
 
-import "./style.scss";
+import styles from "./style.module.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
 type SelectableRange = "all" | "until-today";
@@ -100,67 +100,69 @@ export const DatePicker = ({
     };
 
     return (
-        <div className="date_picker" style={{width: normalizeWidth(width?.container)}}>
+        <div className={styles.date_picker} style={{width: normalizeWidth(width?.container)}}>
             {label && (
-                <label className="date_picker_label">{label}</label>
+                <label className={styles.label}>{label}</label>
             )}
-            <select
-                style={{width: normalizeWidth(width?.year)}}
-                value={year}
-                disabled={disabled}
-                onChange={(e) =>
-                    emit(Number(e.target.value), month || minMonth, day || minDay)
-                }
-            >
-                <option value="" disabled/>
-                {Array.from(
-                    {length: maxYear - startYear + 1},
-                    (_, i) => startYear + i,
-                ).map((y) => (
-                    <option key={y} value={y}>
-                        {y}
-                    </option>
-                ))}
-            </select>
-
-            <select
-                style={{width: normalizeWidth(width?.month)}}
-                value={month}
-                disabled={disabled || !year}
-                onChange={(e) =>
-                    emit(year, Number(e.target.value), day || minDay)
-                }
-            >
-                <option value="" disabled/>
-                {Array.from({length: maxMonth - minMonth + 1}, (_, i) => minMonth + i).map(
-                    (m) => (
-                        <option key={m} value={m}>
-                            {pad(m)}
-                        </option>
-                    ),
-                )}
-            </select>
-
-            {mode === "year-month-day" && (
+            <div className={styles.fields}>
                 <select
-                    style={{width: normalizeWidth(width?.day)}}
-                    value={day}
-                    disabled={disabled || !month}
+                    style={{width: normalizeWidth(width?.year)}}
+                    value={year}
+                    disabled={disabled}
                     onChange={(e) =>
-                        emit(year, month, Number(e.target.value))
+                        emit(Number(e.target.value), month || minMonth, day || minDay)
                     }
                 >
                     <option value="" disabled/>
                     {Array.from(
-                        {length: days - minDay + 1},
-                        (_, i) => minDay + i,
-                    ).map((d) => (
-                        <option key={d} value={d}>
-                            {pad(d)}
+                        {length: maxYear - startYear + 1},
+                        (_, i) => startYear + i,
+                    ).map((y) => (
+                        <option key={y} value={y}>
+                            {y}
                         </option>
                     ))}
                 </select>
-            )}
+
+                <select
+                    style={{width: normalizeWidth(width?.month)}}
+                    value={month}
+                    disabled={disabled || !year}
+                    onChange={(e) =>
+                        emit(year, Number(e.target.value), day || minDay)
+                    }
+                >
+                    <option value="" disabled/>
+                    {Array.from({length: maxMonth - minMonth + 1}, (_, i) => minMonth + i).map(
+                        (m) => (
+                            <option key={m} value={m}>
+                                {pad(m)}
+                            </option>
+                        ),
+                    )}
+                </select>
+
+                {mode === "year-month-day" && (
+                    <select
+                        style={{width: normalizeWidth(width?.day)}}
+                        value={day}
+                        disabled={disabled || !month}
+                        onChange={(e) =>
+                            emit(year, month, Number(e.target.value))
+                        }
+                    >
+                        <option value="" disabled/>
+                        {Array.from(
+                            {length: days - minDay + 1},
+                            (_, i) => minDay + i,
+                        ).map((d) => (
+                            <option key={d} value={d}>
+                                {pad(d)}
+                            </option>
+                        ))}
+                    </select>
+                )}
+            </div>
         </div>
     );
 };

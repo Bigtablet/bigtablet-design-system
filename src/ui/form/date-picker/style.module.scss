@@ -1,26 +1,8 @@
 @use "src/styles/scss/token" as token;
 
 .date_picker {
-  display: flex;
+  @include token.flex_column;
   gap: token.$spacing_xs;
-
-  &_label {
-    color: token.$color_text_primary;
-    margin-bottom: token.$spacing_xs;
-    font-weight: token.$font_weight_medium;
-    font-size: token.$font_size_sm;
-    line-height: token.$line_height_normal;
-  }
-
-  &_required {
-    margin-left: token.$spacing_xs;
-    color: token.$color_error;
-  }
-
-  &_fields {
-    display: flex;
-    gap: token.$spacing_sm;
-  }
 
   select {
     min-width: 88px;
@@ -77,33 +59,51 @@
     }
   }
 
-  &_full {
-    width: 100%;
-
-    .date_picker_fields {
-      width: 100%;
-    }
-
+  @media (max-width: 480px) {
     select {
       flex: 1;
       min-width: 0;
     }
   }
+}
 
-  &_disabled {
-    .date_picker_label {
-      color: token.$text_disabled;
-    }
-  }
+.label {
+  color: token.$color_text_primary;
+  margin-bottom: token.$spacing_xs;
+  font-weight: token.$font_weight_medium;
+  font-size: token.$font_size_sm;
+  line-height: token.$line_height_normal;
+}
+
+.required {
+  margin-left: token.$spacing_xs;
+  color: token.$color_error;
+}
+
+.fields {
+  display: flex;
+  gap: token.$spacing_sm;
 
   @media (max-width: 480px) {
-    &_fields {
-      gap: token.$spacing_xs;
-    }
+    gap: token.$spacing_xs;
+  }
+}
 
-    select {
-      flex: 1;
-      min-width: 0;
-    }
+.full {
+  width: 100%;
+
+  .fields {
+    width: 100%;
+  }
+
+  select {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.disabled {
+  .label {
+    color: token.$text_disabled;
   }
 }
