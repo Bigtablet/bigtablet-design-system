@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, CornerDownRight } from "lucide-react";
-import "./style.scss";
+import styles from "./style.module.scss";
 
 export type MatchMode = "startsWith" | "exact";
 
@@ -84,21 +84,23 @@ export const Sidebar = ({
         );
     };
 
+    const sidebarClassName = [
+        styles.sidebar,
+        isOpen ? styles.is_open : styles.is_closed,
+        className ?? "",
+    ]
+        .filter(Boolean)
+        .join(" ");
+
     return (
         <aside
-            className={[
-                "sidebar",
-                isOpen ? "is_open" : "is_closed",
-                className ?? "",
-            ]
-                .filter(Boolean)
-                .join(" ")}
+            className={sidebarClassName}
             style={style}
         >
             {isOpen ? (
                 <>
-                    <div className="sidebar_brand">
-                        <Link href={brandHref} className="sidebar_brand_link">
+                    <div className={styles.brand}>
+                        <Link href={brandHref} className={styles.brand_link}>
                             <div />
                             <Image
                                 src="/images/logo/bigtablet.png"
@@ -117,80 +119,83 @@ export const Sidebar = ({
                         </Link>
                     </div>
 
-                    <nav className="sidebar_nav">
+                    <nav className={styles.nav}>
                         {items.map((item) => {
                             if (item.type === "group") {
                                 const open = openGroups.includes(item.id);
 
+                                const subClassName = [
+                                    styles.sub,
+                                    open && styles.sub_open,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" ");
+
+                                const chevronClassName = [
+                                    styles.chevron,
+                                    open && styles.chevron_open,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" ");
+
                                 return (
-                                    <div key={item.id} className="sidebar_group">
+                                    <div key={item.id} className={styles.group}>
                                         <button
                                             type="button"
-                                            className="sidebar_item"
+                                            className={styles.item}
                                             onClick={() =>
                                                 toggleGroup(item.id)
                                             }
                                         >
-                                            <div className="sidebar_item_left">
+                                            <div className={styles.item_left}>
                                                 {item.icon && (
-                                                    <span className="sidebar_icon">
+                                                    <span className={styles.icon}>
                                                         <item.icon size={16} />
                                                     </span>
                                                 )}
-                                                <span className="sidebar_label">
+                                                <span className={styles.label}>
                                                     {item.label}
                                                 </span>
                                             </div>
 
-                                            <span className="sidebar_item_right">
+                                            <span className={styles.item_right}>
                                                 <ChevronDown
                                                     size={16}
-                                                    className={[
-                                                        "sidebar_chevron",
-                                                        open && "is_open",
-                                                    ]
-                                                        .filter(Boolean)
-                                                        .join(" ")}
+                                                    className={chevronClassName}
                                                 />
                                             </span>
                                         </button>
 
-                                        <div
-                                            className={[
-                                                "sidebar_sub",
-                                                open && "is_open",
-                                            ]
-                                                .filter(Boolean)
-                                                .join(" ")}
-                                        >
+                                        <div className={subClassName}>
                                             {item.children.map((child) => {
                                                 const active = isActive(
                                                     child.href
                                                 );
 
+                                                const subItemClassName = [
+                                                    styles.sub_item,
+                                                    active && styles.sub_item_active,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(" ");
+
                                                 return (
                                                     <Link
                                                         key={child.href}
                                                         href={child.href}
-                                                        className={[
-                                                            "sidebar_sub_item",
-                                                            active &&
-                                                            "is_active",
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(" ")}
+                                                        className={subItemClassName}
                                                         onClick={() =>
                                                             onItemSelect?.(
                                                                 child.href
                                                             )
                                                         }
                                                     >
-                                                        <span className="sidebar_sub_icon">
+                                                        <span className={styles.sub_icon}>
                                                             <CornerDownRight
                                                                 size={14}
                                                             />
                                                         </span>
-                                                        <span className="sidebar_sub_label">
+                                                        <span className={styles.sub_label}>
                                                             {child.label}
                                                         </span>
                                                     </Link>
@@ -203,27 +208,29 @@ export const Sidebar = ({
 
                             const active = isActive(item.href);
 
+                            const itemClassName = [
+                                styles.item,
+                                active && styles.item_active,
+                            ]
+                                .filter(Boolean)
+                                .join(" ");
+
                             return (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={[
-                                        "sidebar_item",
-                                        active && "is_active",
-                                    ]
-                                        .filter(Boolean)
-                                        .join(" ")}
+                                    className={itemClassName}
                                     onClick={() =>
                                         onItemSelect?.(item.href)
                                     }
                                 >
-                                    <div className="sidebar_item_left">
+                                    <div className={styles.item_left}>
                                         {item.icon && (
-                                            <span className="sidebar_icon">
+                                            <span className={styles.icon}>
                                                 <item.icon size={16} />
                                             </span>
                                         )}
-                                        <span className="sidebar_label">
+                                        <span className={styles.label}>
                                             {item.label}
                                         </span>
                                     </div>

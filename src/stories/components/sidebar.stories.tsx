@@ -19,23 +19,37 @@ const meta: Meta<typeof Sidebar> = {
         docs: {
             description: {
                 component: `
-### Sidebar Navigation
+**Sidebar**는 애플리케이션의 주요 탐색 구조를 담당하는 네비게이션입니다.
 
-사이드바는 **애플리케이션의 주요 탐색 구조**를 담당합니다.
+### 언제 사용하나요?
+- 대시보드, 관리자 페이지 등 다양한 섹션이 있는 앱
+- 메뉴 구조가 계층적일 때 (1Depth + 2Depth)
 
-#### 구조 기준
-- **1Depth**: 즉시 이동 가능한 단일 링크
-- **2Depth(Group)**: 관련 메뉴를 묶는 아코디언 구조
-- Group 상위 메뉴는 **일반 메뉴와 동일한 디자인**을 사용합니다.
-- 선택 상태(active)는 **하위 메뉴에만 적용**됩니다.
+### 메뉴 구조
+| 타입 | 설명 |
+|------|------|
+| **1Depth (Link)** | 즉시 이동 가능한 단일 링크 |
+| **2Depth (Group)** | 관련 메뉴를 묶는 아코디언. 클릭하면 하위 메뉴 펼침 |
 
-#### 인터랙션 & Motion
-- 메뉴 hover / active: \`motion.transition.base\`
-- Group 열림/닫힘: \`motion.transition.slow\`
-- Chevron 회전: \`motion.transition.base\`
-- 사이드바 열림/닫힘: **CSS width transition 기반**
+### 선택 상태(active) 규칙
+- 1Depth 메뉴: 해당 메뉴가 active 표시
+- 2Depth 메뉴: **하위 메뉴에만** active 표시 (상위 Group은 펼쳐지기만 함)
 
-사이드바는 **빠른 탐색성과 안정적인 레이아웃**을 우선으로 설계되었습니다.
+### 인터랙션 & Motion
+| 동작 | 속도 |
+|------|------|
+| hover / active | base (0.2s) |
+| Group 열림/닫힘 | slow (0.3s) |
+| Chevron 회전 | base (0.2s) |
+| 사이드바 접기/펼치기 | slow (0.3s) |
+
+### 디자이너 체크 포인트
+- 현재 페이지(active) 메뉴가 명확히 구분되는지
+- Group 펼침/접힘 애니메이션이 부드러운지
+- 메뉴 항목 간 간격이 터치하기 충분한지
+- 아이콘과 텍스트 정렬이 일관적인지
+- 사이드바 접힌 상태에서도 메뉴 인식이 가능한지 (아이콘만 표시)
+- 긴 메뉴 텍스트가 잘리거나 줄바꿈 없이 처리되는지
                 `,
             },
         },

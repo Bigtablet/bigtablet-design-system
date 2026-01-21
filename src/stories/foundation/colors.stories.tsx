@@ -1,6 +1,49 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { colors } from "src/styles/ts/colors";
 
+/** 배경색에 따라 읽기 쉬운 텍스트 색상 반환 */
+const getReadableTextColor = (bgColor: string): string => {
+    // rgba 또는 transparent 처리
+    if (bgColor.startsWith("rgba") || bgColor === "transparent") {
+        return colors.color_text_primary;
+    }
+
+    // hex to rgb
+    const hex = bgColor.replace("#", "");
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    // 밝기 계산 (YIQ 공식)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128 ? "#000000" : "#ffffff";
+};
+
+/** 색상 토큰별 용도 설명 */
+const colorUseCase = (key: string): string => {
+    const useCases: Record<string, string> = {
+        color_primary: "주요 버튼, 링크",
+        color_primary_hover: "버튼 hover",
+        color_background: "기본 배경",
+        color_background_secondary: "카드, 섹션 배경",
+        color_background_neutral: "중립 배경",
+        color_background_muted: "비활성 배경",
+        color_text_primary: "본문 텍스트",
+        color_text_secondary: "보조 텍스트",
+        color_text_tertiary: "placeholder",
+        text_subtle: "미묘한 텍스트",
+        text_strong: "강조 텍스트",
+        color_border: "기본 테두리",
+        color_border_light: "연한 테두리",
+        color_success: "성공 상태",
+        color_error: "오류 상태",
+        color_warning: "경고 상태",
+        color_info: "정보 상태",
+        color_overlay: "모달 오버레이",
+    };
+    return useCases[key] ?? "";
+};
+
 const meta: Meta = {
     title: "foundation/colors",
     tags: ["autodocs"],

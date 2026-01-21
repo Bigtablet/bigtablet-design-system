@@ -1,0 +1,31 @@
+@use "src/styles/scss/token" as token;
+
+.top_loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: token.$z_toast;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.bar {
+  height: 100%;
+  background-color: token.$color_primary;
+  transition: width token.$transition_base;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.indeterminate {
+  width: 30%;
+  animation: indeterminate 1.5s ease-in-out infinite;
+}

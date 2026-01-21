@@ -8,15 +8,15 @@
   width: 100%;
   gap: token.$spacing_xs;
   font-family: token.$font_family_primary;
-
-  &_label {
-    @include token.text_sm;
-    font-weight: token.$font_weight_medium;
-    color: token.$color_text_primary;
-  }
 }
 
-.select_control {
+.label {
+  @include token.text_sm;
+  font-weight: token.$font_weight_medium;
+  color: token.$color_text_primary;
+}
+
+.control {
   width: 100%;
   display: inline-flex;
   align-items: center;
@@ -39,71 +39,71 @@
     background: token.$color_background_secondary;
     color: token.$color_text_tertiary;
   }
+}
 
-  &_variant_outline {
-    border: 1px solid token.$color_border;
+.variant_outline {
+  border: 1px solid token.$color_border;
 
-    &:hover:not(.is_disabled) {
-      border-color: token.$color_border_light;
-    }
-
-    &.is_open {
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
-    }
+  &:hover:not(.is_disabled) {
+    border-color: token.$color_border_light;
   }
 
-  &_variant_filled {
-    background: token.$color_background_secondary;
-    border: 1px solid transparent;
-
-    &:hover:not(.is_disabled) {
-      background: color.mix(
-                      token.$color_background,
-                      token.$color_background_secondary,
-                      70%
-      );
-    }
-
-    &.is_open {
-      background: token.$color_background;
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
-    }
-  }
-
-  &_variant_ghost {
-    background: transparent;
-    border: 1px solid transparent;
-
-    &:hover:not(.is_disabled) {
-      background: rgba(0, 0, 0, 0.03);
-    }
-
-    &.is_open {
-      background: token.$color_background;
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
-    }
-  }
-
-  &_size_sm {
-    padding: token.$spacing_sm token.$spacing_lg;
-    @include token.text_sm;
-  }
-
-  &_size_md {
-    padding: token.$spacing_md token.$spacing_xl;
-    @include token.text_base;
-  }
-
-  &_size_lg {
-    padding: token.$spacing_lg token.$spacing_2xl;
-    @include token.text_md;
+  &.is_open {
+    border-color: token.$color_primary;
+    box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
   }
 }
 
-.select_value {
+.variant_filled {
+  background: token.$color_background_secondary;
+  border: 1px solid transparent;
+
+  &:hover:not(.is_disabled) {
+    background: color.mix(
+                    token.$color_background,
+                    token.$color_background_secondary,
+                    70%
+    );
+  }
+
+  &.is_open {
+    background: token.$color_background;
+    border-color: token.$color_primary;
+    box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+  }
+}
+
+.variant_ghost {
+  background: transparent;
+  border: 1px solid transparent;
+
+  &:hover:not(.is_disabled) {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  &.is_open {
+    background: token.$color_background;
+    border-color: token.$color_primary;
+    box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+  }
+}
+
+.size_sm {
+  padding: token.$spacing_sm token.$spacing_lg;
+  @include token.text_sm;
+}
+
+.size_md {
+  padding: token.$spacing_md token.$spacing_xl;
+  @include token.text_base;
+}
+
+.size_lg {
+  padding: token.$spacing_lg token.$spacing_2xl;
+  @include token.text_md;
+}
+
+.value {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
@@ -113,19 +113,25 @@
   @include token.body_regular;
 }
 
-.select_placeholder {
-  @extend .select_value;
+.placeholder {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+  @include token.body_regular;
   color: token.$color_text_tertiary;
 }
 
-.select_icon {
+.icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: token.$color_text_secondary;
 }
 
-.select_list {
+.list {
   position: absolute;
   z-index: token.$z_modal;
   top: 100%;
@@ -147,7 +153,7 @@
   padding: token.$spacing_xs 0;
 }
 
-.select_option {
+.option {
   width: 100%;
   box-sizing: border-box;
   display: grid;

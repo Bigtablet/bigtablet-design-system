@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import "./style.scss";
+import styles from "./style.module.scss";
 
 export interface PaginationProps {
     page: number;
@@ -16,10 +16,8 @@ const range = (start: number, end: number) => {
 };
 
 const getPaginationItems = (page: number, totalPages: number) => {
-    /** totalPages <= 7: show all */
     if (totalPages <= 7) return range(1, totalPages);
 
-    /** totalPages >= 8: show 1 … (page-1,page,page+1) … last */
     const items: Array<number | "ellipsis"> = [];
     const last = totalPages;
 
@@ -49,9 +47,9 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
     );
 
     return (
-        <nav className="pagination" aria-label="Pagination">
+        <nav className={styles.pagination} aria-label="Pagination">
             <button
-                className="pagination_item"
+                className={styles.item}
                 onClick={() => onChange(page - 1)}
                 disabled={prevDisabled}
                 aria-label="Previous page"
@@ -59,23 +57,30 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                 ‹
             </button>
 
-            <div className="pagination_pages" role="list">
+            <div className={styles.pages} role="list">
                 {items.map((it, idx) => {
                     if (it === "ellipsis") {
                         return (
-                            <span key={`e-${idx}`} className="pagination_ellipsis" aria-hidden="true">
-                …
-              </span>
+                            <span key={`e-${idx}`} className={styles.ellipsis} aria-hidden="true">
+                                …
+                            </span>
                         );
                     }
 
                     const isActive = it === page;
 
+                    const buttonClassName = [
+                        styles.pageButton,
+                        isActive && styles.active,
+                    ]
+                        .filter(Boolean)
+                        .join(" ");
+
                     return (
                         <button
                             key={it}
                             type="button"
-                            className={`pagination_pageButton ${isActive ? "is-active" : ""}`}
+                            className={buttonClassName}
                             onClick={() => onChange(it)}
                             aria-current={isActive ? "page" : undefined}
                         >
@@ -86,7 +91,7 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
             </div>
 
             <button
-                className="pagination_item"
+                className={styles.item}
                 onClick={() => onChange(page + 1)}
                 disabled={nextDisabled}
                 aria-label="Next page"
