@@ -1,0 +1,79 @@
+@use "src/styles/scss/token" as token;
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: token.$spacing_sm;
+  margin-top: token.$spacing_3xl;
+}
+
+.item {
+  border: 1px solid token.$color_border;
+  background: token.$color_background;
+  border-radius: token.$radius_md;
+  padding: 6px 10px;
+  min-width: 36px;
+
+  @include token.text_sm;
+  color: token.$color_text_primary;
+
+  transition: background token.$transition_base,
+  border-color token.$transition_base;
+
+  &:hover:not(:disabled) {
+    background: token.$color_background_secondary;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px token.$color_border_light;
+    border-color: token.$color_primary;
+  }
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pageButton {
+  border: 0;
+  background: transparent;
+  min-width: 36px;
+  height: 36px;
+  border-radius: token.$radius_md;
+
+  @include token.text_sm;
+  color: token.$color_text_secondary;
+
+  transition: background token.$transition_base,
+  color token.$transition_base;
+
+  &:hover {
+    background: token.$color_background_secondary;
+    color: token.$color_text_primary;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px token.$color_border_light;
+  }
+}
+
+.active {
+  color: token.$color_text_primary;
+  font-weight: token.$font_weight_semibold;
+}
+
+.ellipsis {
+  min-width: 20px;
+  text-align: center;
+
+  @include token.text_sm;
+  color: token.$color_text_tertiary;
+}

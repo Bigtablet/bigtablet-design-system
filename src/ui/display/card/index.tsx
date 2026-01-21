@@ -1,7 +1,6 @@
 import * as React from "react";
-import "./style.scss";
+import styles from "./style.module.scss";
 
-/** Card UI */
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     heading?: React.ReactNode;
     shadow?: "none" | "sm" | "md" | "lg";
@@ -19,10 +18,10 @@ export const Card = ({
                          ...props
                      }: CardProps) => {
     const cls = [
-        "card",
-        `card_shadow_${shadow}`,
-        `card_p_${padding}`,
-        bordered ? "card_bordered" : "",
+        styles.card,
+        styles[`shadow_${shadow}`],
+        styles[`p_${padding}`],
+        bordered && styles.bordered,
         className ?? "",
     ]
         .filter(Boolean)
@@ -30,8 +29,8 @@ export const Card = ({
 
     return (
         <div className={cls} {...props}>
-            {heading ? <div className="card_title">{heading}</div> : null}
-            <div className="card_body">{children}</div>
+            {heading ? <div className={styles.title}>{heading}</div> : null}
+            <div className={styles.body}>{children}</div>
         </div>
     );
 };

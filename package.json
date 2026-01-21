@@ -1,6 +1,6 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "1.11.6",
+  "version": "1.13.0",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -66,28 +66,35 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.1",
     "@semantic-release/npm": "^13.1.1",
-    "@storybook/react": "10.1.10",
-    "@storybook/react-vite": "10.1.10",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-vitest": "10.1.11",
+    "@storybook/react": "10.1.11",
+    "@storybook/react-vite": "10.1.11",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.17",
     "chromatic": "^13.3.3",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "esbuild-sass-plugin": "^3",
     "lucide-react": "^0.552.0",
     "next": "16.0.10",
+    "playwright": "^1.57.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-toastify": "^11.0.5",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
-    "storybook": "10.1.10",
+    "storybook": "10.1.11",
     "tsup": "^8.5.0",
     "typescript": "^5",
-    "vite": "^5"
+    "vite": "^5",
+    "vitest": "^4.0.17"
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
   }
 }

@@ -1,3 +1,9 @@
+<div align="center">
+
+<img width="1800" height="300" alt="Image" src="https://github.com/user-attachments/assets/420a15cc-5be3-447f-9c64-068e946cb118" /> <br>
+
+</div>
+
 # Bigtablet Design System
 
 [![npm version](https://img.shields.io/npm/v/@bigtablet/design-system.svg)](https://www.npmjs.com/package/@bigtablet/design-system)
@@ -5,7 +11,7 @@
 
 Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 Components(UI 컴포넌트)로 구성된 통합 UI 라이브러리입니다.
 
-> **현재 버전**: v1.10.0 | **최근 업데이트**: 2025년 1월 7일
+> **현재 버전**: v1.12.0 | **최근 업데이트**: 2025년 1월 15일
 
 [깃허브 링크](https://github.com/Bigtablet/bigtablet-design-system) | [📦 NPM 패키지](https://www.npmjs.com/package/@bigtablet/design-system)
 
@@ -771,16 +777,3 @@ pnpm changeset
 - [이슈 트래커](https://github.com/Bigtablet/bigtablet-design-system/issues)
 - [토론](https://github.com/Bigtablet/bigtablet-design-system/discussions)
 
----
-
-## 팀
-
-이 프로젝트는 5명의 기여자들에 의해 관리되고 있습니다.
-
----
-
-<div align="center">
-
-Made with by Bigtablet, Icn.
-
-</div>

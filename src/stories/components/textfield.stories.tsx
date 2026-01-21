@@ -80,6 +80,14 @@ const meta: Meta<typeof TextField> = {
 ### 아이콘 사용
 - **leftIcon**: 입력의 의미를 보조(검색/메일 등)
 - **rightIcon**: 액션/상태(비밀번호 보기/숨기기, 입력 지우기 등)
+
+### 디자이너 체크 포인트
+- label과 input 간 간격이 적절한지
+- placeholder 텍스트가 너무 밝지 않은지 (가독성)
+- error/success 색상이 색약자도 인식 가능한지 (아이콘 병행 권장)
+- helperText가 입력창과 충분히 구분되는지
+- 아이콘과 텍스트 사이 간격이 균형 잡혀 있는지
+- focus 시 테두리/그림자가 명확히 보이는지
         `,
             },
         },

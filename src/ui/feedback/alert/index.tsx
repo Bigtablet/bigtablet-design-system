@@ -3,7 +3,7 @@
 import * as React from "react";
 import {createContext, useContext, useState, useCallback} from "react";
 import {createPortal} from "react-dom";
-import "./style.scss";
+import styles from "./style.module.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
 export type AlertActionsAlign = "left" | "center" | "right";
@@ -99,10 +99,24 @@ const AlertModal: React.FC<AlertModalProps> = ({
                                                    onCancel,
                                                    onClose,
                                                }) => {
+    const modalClassName = [
+        styles.modal,
+        styles[`variant_${variant}`],
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    const actionsClassName = [
+        styles.actions,
+        styles[`actions_${actionsAlign}`],
+    ]
+        .filter(Boolean)
+        .join(" ");
+
     return (
-        <div className="alert_overlay" onClick={onClose}>
+        <div className={styles.overlay} onClick={onClose}>
             <div
-                className={`alert_modal alert_modal_${variant}`}
+                className={modalClassName}
                 onClick={(e) => e.stopPropagation()}
                 role="alertdialog"
                 aria-modal="true"
@@ -110,22 +124,22 @@ const AlertModal: React.FC<AlertModalProps> = ({
                 aria-describedby="alert_message"
             >
                 {title && (
-                    <div className="alert_modal_title" id="alert_title">
+                    <div className={styles.title} id="alert_title">
                         {title}
                     </div>
                 )}
 
                 {message && (
-                    <div className="alert_modal_message" id="alert_message">
+                    <div className={styles.message} id="alert_message">
                         {message}
                     </div>
                 )}
 
-                <div className={`alert_modal_actions alert_modal_actions_${actionsAlign}`}>
+                <div className={actionsClassName}>
                     {showCancel && (
                         <button
                             type="button"
-                            className="alert_modal_button alert_modal_button_cancel"
+                            className={`${styles.button} ${styles.button_cancel}`}
                             onClick={onCancel}
                         >
                             {cancelText}
@@ -133,112 +147,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
                     )}
                     <button
                         type="button"
-                        className="alert_modal_button alert_modal_button_confirm"
+                        className={`${styles.button} ${styles.button_confirm}`}
                         onClick={onConfirm}
                     >
                         {confirmText}
                     </button>
                 </div>
             </div>
-        </div>
-    );
-};
-
-// 기존 Alert 컴포넌트는 deprecated로 유지
-export interface AlertProps
-    extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-    variant?: AlertVariant;
-    title?: React.ReactNode;
-    icon?: React.ReactNode;
-    closable?: boolean;
-    onClose?: () => void;
-    showActions?: boolean;
-    onConfirm?: () => void;
-    onCancel?: () => void;
-    confirmText?: string;
-    cancelText?: string;
-    actionsAlign?: AlertActionsAlign;
-}
-
-/**
- * @deprecated Use useAlert hook with AlertProvider instead
- */
-export const Alert = ({
-                          variant = "info",
-                          title,
-                          icon,
-                          closable,
-                          onClose,
-                          showActions = false,
-                          onConfirm,
-                          onCancel,
-                          confirmText = "확인",
-                          cancelText = "취소",
-                          actionsAlign = "left",
-                          className,
-                          children,
-                          ...props
-                      }: AlertProps) => {
-    return (
-        <div
-            className={["alert", `alert--${variant}`, closable && "alert--closable", className]
-                .filter(Boolean)
-                .join(" ")}
-            role="alert"
-            aria-live="polite"
-            {...props}>
-            {icon && (
-                <span className="alert__icon" aria-hidden="true">
-          {icon}
-        </span>
-            )}
-
-            <div className="alert__content">
-                {title && <div className="alert__title">{title}</div>}
-                {children && <div className="alert__desc">{children}</div>}
-
-                {showActions && (
-                    <div className={`alert__actions alert__actions--${actionsAlign}`}>
-                        {onCancel && (
-                            <button
-                                type="button"
-                                className="alert__button alert__button--cancel"
-                                onClick={onCancel}>
-                                {cancelText}
-                            </button>
-                        )}
-                        {onConfirm && (
-                            <button
-                                type="button"
-                                className="alert__button alert__button--confirm"
-                                onClick={onConfirm}>
-                                {confirmText}
-                            </button>
-                        )}
-                    </div>
-                )}
-            </div>
-
-            {closable && (
-                <button
-                    type="button"
-                    className="alert__close"
-                    aria-label="닫기"
-                    onClick={onClose}>
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            )}
         </div>
     );
 };
