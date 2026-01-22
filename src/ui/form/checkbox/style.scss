@@ -78,6 +78,26 @@
     cursor: not-allowed;
   }
 
+  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::before,
+  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.7rem;
+    height: 2px;
+    background: token.$text_disabled;
+    border-radius: 9999px;
+  }
+
+  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
   &_input:checked + .checkbox_box,
   &_input:indeterminate + .checkbox_box {
     background: token.$color_primary;
