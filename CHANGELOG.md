@@ -1,3 +1,10 @@
+## [1.14.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.2...v1.14.3) (2026-01-22)
+
+
+### Bug Fixes
+
+* check box disabled design ([74362ea](https://github.com/Bigtablet/bigtablet-design-system/commit/74362eaf60b4e8d6cfd47b07bbc1d43605fcfbee))
+
 ## [1.14.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.1...v1.14.2) (2026-01-21)
 
 
