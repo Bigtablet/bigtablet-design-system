@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.3...v1.15.0) (2026-01-23)
+
+
+### Features
+
+* add modern design tokens for tech/glass effects ([a93cb35](https://github.com/Bigtablet/bigtablet-design-system/commit/a93cb35daea03b3ad13f7486e400147ad2f44b83))
+
 ## [1.14.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.2...v1.14.3) (2026-01-22)
 
 
