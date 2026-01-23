@@ -1,3 +1,4 @@
+/* Flex Utilities */
 @mixin flex_center { display: flex; align-items: center; justify-content: center; }
 @mixin flex_left { display: flex; align-items: center; justify-content: flex-start; }
 @mixin flex_right { display: flex; align-items: center; justify-content: flex-end; }
@@ -6,3 +7,46 @@
 @mixin flex_column { display: flex; flex-direction: column; }
 @mixin flex_column_center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 @mixin flex_column_start { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+
+/* Glass Effect Mixins */
+@mixin glass_light {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@mixin glass_dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@mixin glass_card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Hover Lift Effect */
+@mixin hover_lift($y: -4px, $shadow: 0 12px 24px rgba(0, 0, 0, 0.15)) {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY($y);
+    box-shadow: $shadow;
+  }
+}
+
+/* Glow on Hover */
+@mixin hover_glow($color: rgba(59, 130, 246, 0.4)) {
+  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    box-shadow: 0 0 30px $color;
+  }
+}

@@ -9,6 +9,11 @@ $color_background_neutral: #F3F3F3;
 $color_background_muted: #f0f0f0;
 $color_background_primary: #47555E;
 
+/* Background - Dark Palette (for modern/tech sections) */
+$color_background_dark: #1E293B;
+$color_background_darker: #0F172A;
+$color_background_darkest: #020617;
+
 /* Text */
 $color_text_primary: #1a1a1a;
 $color_text_secondary: #666666;
@@ -30,5 +35,17 @@ $color_error: #ef4444;
 $color_warning: #f59e0b;
 $color_info: #3b82f6;
 
+/* Accent - Tech Blue */
+$color_accent: #3B82F6;
+$color_accent_light: #60A5FA;
+$color_accent_dark: #2563EB;
+
 /* Overlay */
 $color_overlay: rgba(0, 0, 0, 0.5);
+$color_overlay_light: rgba(0, 0, 0, 0.3);
+$color_overlay_strong: rgba(0, 0, 0, 0.7);
+
+/* Glass Effect */
+$color_glass_light: rgba(255, 255, 255, 0.08);
+$color_glass_border: rgba(255, 255, 255, 0.12);
+$color_glass_dark: rgba(0, 0, 0, 0.4);

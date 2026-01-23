@@ -1,6 +1,6 @@
 {
   "name": "@bigtablet/design-system",
-  "version": "1.14.3",
+  "version": "1.15.0",
   "description": "Bigtablet Design System UI Components",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -94,7 +94,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true,
     "registry": "https://registry.npmjs.org/"
   }
 }
