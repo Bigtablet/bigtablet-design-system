@@ -1,12 +1,28 @@
+/* Base Transitions */
 $transition_fast: 0.1s ease-in-out;   // hover, icon
 $transition_base: 0.2s ease-in-out;   // 메뉴 열림
 $transition_slow: 0.3s ease-in-out;   // 레이아웃 변화
 
-$transition_emphasized: 0.25s cubic-bezier(0.4, 0, 0.2, 1); // Material 계열
-$transition_bounce: 0.3s cubic-bezier(0.16, 1, 0.3, 1);    // accordion, toast
+/* Easing Curves */
+$ease_out_expo: cubic-bezier(0.16, 1, 0.3, 1);
+$ease_out_quart: cubic-bezier(0.25, 1, 0.5, 1);
+$ease_in_out_cubic: cubic-bezier(0.65, 0, 0.35, 1);
+$ease_spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-$transition_fade: 0.15s ease-in-out;      // opacity
-$transition_slide: 0.25s ease-in-out;     // translate
+/* Material / Emphasized */
+$transition_emphasized: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$transition_bounce: 0.3s $ease_out_expo;
+
+/* Specific Transitions */
+$transition_fade: 0.15s ease-in-out;
+$transition_slide: 0.25s $ease_out_expo;
 $transition_scale: 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+$transition_state: 0.18s ease-in-out;
 
-$transition_state: 0.18s ease-in-out;     // disabled → enabled
+/* Modern/Tech Transitions */
+$transition_smooth: 0.4s $ease_out_expo;
+$transition_spring: 0.5s $ease_spring;
+$transition_dramatic: 0.6s $ease_out_quart;
+
+/* Hover Lift */
+$transition_lift: transform 0.25s $ease_out_expo, box-shadow 0.25s $ease_out_expo;
