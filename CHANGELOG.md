@@ -1,3 +1,32 @@
+## [1.14.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.2...v1.14.3) (2026-01-22)
+
+
+### Bug Fixes
+
+* check box disabled design ([74362ea](https://github.com/Bigtablet/bigtablet-design-system/commit/74362eaf60b4e8d6cfd47b07bbc1d43605fcfbee))
+
+## [1.14.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.1...v1.14.2) (2026-01-21)
+
+
+### Bug Fixes
+
+* datePicker selection and width props ([a98721d](https://github.com/Bigtablet/bigtablet-design-system/commit/a98721dad0334c80912309d6178597d485c5f119))
+* pagination display logic for many pages ([c53d51d](https://github.com/Bigtablet/bigtablet-design-system/commit/c53d51d6d6b7abca09fb5ba9d49e71b50a24a749))
+
+## [1.14.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.0...v1.14.1) (2026-01-21)
+
+# [1.14.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.13.0...v1.14.0) (2026-01-21)
+
+
+### Bug Fixes
+
+* change datePicker label layout to top position like textField ([899130b](https://github.com/Bigtablet/bigtablet-design-system/commit/899130b1417e946ce73b9289005b013eec5e8d73))
+
+
+### Features
+
+* split loading component into spinner and topLoading ([66b2ef9](https://github.com/Bigtablet/bigtablet-design-system/commit/66b2ef9136e6beb914876278ce004fdf96080bca))
+
 # [1.13.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.12.1...v1.13.0) (2026-01-16)
 
 
