@@ -24,14 +24,14 @@
       "style": "./dist/vanilla/bigtablet.min.css",
       "default": "./dist/vanilla/bigtablet.min.js"
     },
-    "./vanilla/style.css": "./dist/vanilla/bigtablet.css",
     "./vanilla/style.min.css": "./dist/vanilla/bigtablet.min.css",
-    "./vanilla/bigtablet.js": "./dist/vanilla/bigtablet.js",
     "./vanilla/bigtablet.min.js": "./dist/vanilla/bigtablet.min.js"
   },
   "files": [
     "dist",
-    "src/styles/scss",
+    "!dist/vanilla/bigtablet.css",
+    "!dist/vanilla/bigtablet.js",
+    "!dist/vanilla/examples",
     "README.md",
     "LICENSE"
   ],
