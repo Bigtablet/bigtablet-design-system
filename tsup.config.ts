@@ -75,4 +75,16 @@ export default defineConfig([
       fs.writeFileSync(filePath, newContent);
     },
   },
+  // Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.)
+  {
+    entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },
+    format: ["iife"],
+    globalName: "Bigtablet",
+    dts: false,
+    clean: false,
+    treeshake: true,
+    sourcemap: false,
+    minify: true,
+    outExtension: () => ({ js: ".min.js" }),
+  },
 ]);

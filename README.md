@@ -20,6 +20,7 @@ Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 C
 - [주요 특징](#주요-특징)
 - [설치](#설치)
 - [빠른 시작](#빠른-시작)
+- [Vanilla JS (HTML/CSS/JS)](#vanilla-js-htmlcssjs)
 - [컴포넌트](#컴포넌트)
 - [Foundation (디자인 토큰)](#foundation-디자인-토큰)
 - [개발 가이드](#개발-가이드)
@@ -32,6 +33,7 @@ Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 C
 - **React 19 지원** - 최신 React 버전 완벽 지원
 - **TypeScript** - 완전한 타입 안정성
 - **Pure React / Next.js** - 프레임워크별 최적화된 번들 제공
+- **Vanilla JS** - Thymeleaf, JSP 등 서버 템플릿 지원
 - **디자인 토큰** - 일관된 색상, 타이포그래피, 간격 시스템
 - **접근성(a11y)** - 키보드 네비게이션, 스크린 리더 호환
 - **Storybook** - 인터랙티브 문서화
@@ -97,6 +99,33 @@ export default function Layout({ children }) {
   );
 }
 ```
+
+---
+
+## Vanilla JS (HTML/CSS/JS)
+
+React 없이 **Thymeleaf, JSP, PHP** 등 서버 템플릿 환경에서 사용할 수 있습니다.
+
+```html
+<!-- CSS -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+
+<!-- JS (선택) -->
+<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+```
+
+```html
+<button class="bt-button bt-button--md bt-button--primary">버튼</button>
+
+<div class="bt-text-field">
+  <label class="bt-text-field__label">이메일</label>
+  <div class="bt-text-field__wrap">
+    <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md">
+  </div>
+</div>
+```
+
+👉 **[Vanilla JS 전체 문서 보기](./docs/VANILLA.md)**
 
 ---
 
