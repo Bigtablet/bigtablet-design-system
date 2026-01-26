@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.2...v1.17.0) (2026-01-26)
+
+
+### Features
+
+* add vanilla JS package for HTML/CSS/JS environments ([a763f0f](https://github.com/Bigtablet/bigtablet-design-system/commit/a763f0f1eb5cb9be719ae8025efd78a9ac6164a3))
+
 ## [1.16.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.1...v1.16.2) (2026-01-26)
 
 
