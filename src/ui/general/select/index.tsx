@@ -55,7 +55,7 @@ export const Select = ({
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [activeIndex, setActiveIndex] = React.useState(-1);
 	const [dropUp, setDropUp] = React.useState(false);
-	const [listPosition, setListPosition] = React.useState({ top: 0, left: 0, width: 0 });
+	const [listPosition, setListPosition] = React.useState<{ top: number; left: number; width: number } | null>(null);
 
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const controlRef = React.useRef<HTMLButtonElement>(null);
@@ -176,7 +176,10 @@ export const Select = ({
 	}, [options.length]);
 
 	React.useLayoutEffect(() => {
-		if (!isOpen) return;
+		if (!isOpen) {
+			setListPosition(null);
+			return;
+		}
 		updatePosition();
 	}, [isOpen, updatePosition]);
 
@@ -204,19 +207,21 @@ export const Select = ({
 		.filter(Boolean)
 		.join(" ");
 
-	const renderList = () => (
-		<ul
-			ref={listRef}
-			id={`${selectId}_listbox`}
-			role="listbox"
-			className={`select_list select_list_portal${dropUp ? " select_list_up" : ""}`}
-			style={{
-				position: "fixed",
-				top: listPosition.top,
-				left: listPosition.left,
-				width: listPosition.width,
-			}}
-		>
+	const renderList = () => {
+		if (!listPosition) return null;
+		return (
+			<ul
+				ref={listRef}
+				id={`${selectId}_listbox`}
+				role="listbox"
+				className={`select_list select_list_portal${dropUp ? " select_list_up" : ""}`}
+				style={{
+					position: "fixed",
+					top: listPosition.top,
+					left: listPosition.left,
+					width: listPosition.width,
+				}}
+			>
 			{options.map((opt, i) => {
 				const selected = currentValue === opt.value;
 				const active = i === activeIndex;
@@ -248,8 +253,9 @@ export const Select = ({
 					</li>
 				);
 			})}
-		</ul>
-	);
+			</ul>
+		);
+	};
 
 	return (
 		<div ref={wrapperRef} className={rootClassName} style={fullWidth ? { width: "100%" } : undefined}>
