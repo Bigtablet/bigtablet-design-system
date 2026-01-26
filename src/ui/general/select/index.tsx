@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { createPortal } from "react-dom";
 import "./style.scss";
 import { ChevronDown, Check } from "lucide-react";
 
@@ -55,19 +54,9 @@ export const Select = ({
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [activeIndex, setActiveIndex] = React.useState(-1);
 	const [dropUp, setDropUp] = React.useState(false);
-	const [listPosition, setListPosition] = React.useState<{ top: number; left: number; width: number } | null>(null);
 
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const controlRef = React.useRef<HTMLButtonElement>(null);
-	const listRef = React.useRef<HTMLUListElement>(null);
-	const [portalContainer, setPortalContainer] = React.useState<HTMLElement | null>(null);
-
-	// 컴포넌트가 속한 document의 body를 찾음 (iframe 대응)
-	React.useEffect(() => {
-		if (wrapperRef.current) {
-			setPortalContainer(wrapperRef.current.ownerDocument.body);
-		}
-	}, []);
 
 	const currentOption = React.useMemo(
 		() => options.find((o) => o.value === currentValue) ?? null,
@@ -83,13 +72,12 @@ export const Select = ({
 		[isControlled, onChange, options],
 	);
 
-	// 외부 클릭 시 닫기 (Portal 내부 클릭도 체크)
 	React.useEffect(() => {
 		const onDocClick = (e: MouseEvent) => {
-			const target = e.target as Node;
-			if (wrapperRef.current?.contains(target)) return;
-			if (listRef.current?.contains(target)) return;
-			setIsOpen(false);
+			if (!wrapperRef.current) return;
+			if (!wrapperRef.current.contains(e.target as Node)) {
+				setIsOpen(false);
+			}
 		};
 		document.addEventListener("mousedown", onDocClick);
 		return () => document.removeEventListener("mousedown", onDocClick);
@@ -166,42 +154,17 @@ export const Select = ({
 		setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
 	}, [isOpen, options, currentValue]);
 
-	// 드롭다운 위치 계산
-	const updatePosition = React.useCallback(() => {
-		if (!controlRef.current) return;
+	// 드롭다운 방향 계산 (auto-flip)
+	React.useLayoutEffect(() => {
+		if (!isOpen || !controlRef.current) return;
+
 		const rect = controlRef.current.getBoundingClientRect();
 		const listHeight = Math.min(options.length * 40, 288);
 		const spaceBelow = window.innerHeight - rect.bottom;
 		const spaceAbove = rect.top;
-		const shouldDropUp = spaceBelow < listHeight && spaceAbove > spaceBelow;
 
-		setDropUp(shouldDropUp);
-		setListPosition({
-			top: shouldDropUp ? rect.top - listHeight - 4 : rect.bottom + 4,
-			left: rect.left,
-			width: rect.width,
-		});
-	}, [options.length]);
-
-	React.useLayoutEffect(() => {
-		if (!isOpen) {
-			setListPosition(null);
-			return;
-		}
-		updatePosition();
-	}, [isOpen, updatePosition]);
-
-	// 스크롤/리사이즈 시 위치 업데이트
-	React.useEffect(() => {
-		if (!isOpen) return;
-
-		window.addEventListener("scroll", updatePosition, true);
-		window.addEventListener("resize", updatePosition);
-		return () => {
-			window.removeEventListener("scroll", updatePosition, true);
-			window.removeEventListener("resize", updatePosition);
-		};
-	}, [isOpen, updatePosition]);
+		setDropUp(spaceBelow < listHeight && spaceAbove > spaceBelow);
+	}, [isOpen, options.length]);
 
 	const rootClassName = ["select", className ?? ""].filter(Boolean).join(" ");
 
@@ -215,55 +178,12 @@ export const Select = ({
 		.filter(Boolean)
 		.join(" ");
 
-	const renderList = () => {
-		if (!listPosition) return null;
-		return (
-			<ul
-				ref={listRef}
-				id={`${selectId}_listbox`}
-				role="listbox"
-				className={`select_list select_list_portal${dropUp ? " select_list_up" : ""}`}
-				style={{
-					position: "fixed",
-					top: listPosition.top,
-					left: listPosition.left,
-					width: listPosition.width,
-				}}
-			>
-			{options.map((opt, i) => {
-				const selected = currentValue === opt.value;
-				const active = i === activeIndex;
-
-				const optionClassName = [
-					"select_option",
-					selected && "is_selected",
-					active && "is_active",
-					opt.disabled && "is_disabled",
-				]
-					.filter(Boolean)
-					.join(" ");
-
-				return (
-					<li
-						key={opt.value}
-						role="option"
-						aria-selected={selected}
-						className={optionClassName}
-						onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
-						onClick={() => {
-							if (opt.disabled) return;
-							setValue(opt.value);
-							setIsOpen(false);
-						}}
-					>
-						<span>{opt.label}</span>
-						{selected && <Check size={16} aria-hidden="true" />}
-					</li>
-				);
-			})}
-			</ul>
-		);
-	};
+	const listClassName = [
+		"select_list",
+		dropUp && "select_list_up",
+	]
+		.filter(Boolean)
+		.join(" ");
 
 	return (
 		<div ref={wrapperRef} className={rootClassName} style={fullWidth ? { width: "100%" } : undefined}>
@@ -296,7 +216,45 @@ export const Select = ({
 				</span>
 			</button>
 
-			{isOpen && portalContainer && createPortal(renderList(), portalContainer)}
+			{isOpen && (
+				<ul
+					id={`${selectId}_listbox`}
+					role="listbox"
+					className={listClassName}
+				>
+					{options.map((opt, i) => {
+						const selected = currentValue === opt.value;
+						const active = i === activeIndex;
+
+						const optionClassName = [
+							"select_option",
+							selected && "is_selected",
+							active && "is_active",
+							opt.disabled && "is_disabled",
+						]
+							.filter(Boolean)
+							.join(" ");
+
+						return (
+							<li
+								key={opt.value}
+								role="option"
+								aria-selected={selected}
+								className={optionClassName}
+								onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
+								onClick={() => {
+									if (opt.disabled) return;
+									setValue(opt.value);
+									setIsOpen(false);
+								}}
+							>
+								<span>{opt.label}</span>
+								{selected && <Check size={16} aria-hidden="true" />}
+							</li>
+						);
+					})}
+				</ul>
+			)}
 		</div>
 	);
 };
