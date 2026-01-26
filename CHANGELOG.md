@@ -1,3 +1,11 @@
+## [1.16.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.0...v1.16.1) (2026-01-26)
+
+
+### Bug Fixes
+
+* select overflow ([6eda0ce](https://github.com/Bigtablet/bigtablet-design-system/commit/6eda0ce584abf6151f90035ab3cd30edde6cda25))
+* select overflow with createPortal ([d4378fa](https://github.com/Bigtablet/bigtablet-design-system/commit/d4378fa1c50c525b97471e3f61c23bcc8c0b8225)), closes [#67](https://github.com/Bigtablet/bigtablet-design-system/issues/67)
+
 # [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.15.0...v1.16.0) (2026-01-26)
 
 
