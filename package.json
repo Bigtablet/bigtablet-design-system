@@ -19,7 +19,15 @@
       "import": "./dist/next.js"
     },
     "./style.css": "./dist/index.css",
-    "./scss/token": "./dist/styles/scss/token.scss"
+    "./scss/token": "./dist/styles/scss/token.scss",
+    "./vanilla": {
+      "style": "./dist/vanilla/bigtablet.min.css",
+      "default": "./dist/vanilla/bigtablet.min.js"
+    },
+    "./vanilla/style.css": "./dist/vanilla/bigtablet.css",
+    "./vanilla/style.min.css": "./dist/vanilla/bigtablet.min.css",
+    "./vanilla/bigtablet.js": "./dist/vanilla/bigtablet.js",
+    "./vanilla/bigtablet.min.js": "./dist/vanilla/bigtablet.min.js"
   },
   "files": [
     "dist",
@@ -33,7 +41,8 @@
     "./dist/next.css"
   ],
   "scripts": {
-    "build": "tsup && pnpm run copy:scss",
+    "build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
+    "build:vanilla": "node scripts/build-vanilla.mjs",
     "copy:scss": "node scripts/copy-scss.mjs",
     "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
@@ -45,7 +54,11 @@
     "design-system",
     "react",
     "storybook",
-    "ui"
+    "ui",
+    "vanilla",
+    "thymeleaf",
+    "html",
+    "css"
   ],
   "author": "sangmin",
   "license": "MIT",
