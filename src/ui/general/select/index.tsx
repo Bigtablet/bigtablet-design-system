@@ -52,12 +52,6 @@ export const Select = ({
 	const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
 	const currentValue = isControlled ? value ?? null : internalValue;
 
-<<<<<<< Updated upstream
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [activeIndex, setActiveIndex] = React.useState(-1);
-
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
-=======
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [activeIndex, setActiveIndex] = React.useState(-1);
 	const [dropUp, setDropUp] = React.useState(false);
@@ -66,7 +60,6 @@ export const Select = ({
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const controlRef = React.useRef<HTMLButtonElement>(null);
 	const listRef = React.useRef<HTMLUListElement>(null);
->>>>>>> Stashed changes
 
 	const currentOption = React.useMemo(
 		() => options.find((o) => o.value === currentValue) ?? null,
@@ -165,15 +158,9 @@ export const Select = ({
 		setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
 	}, [isOpen, options, currentValue]);
 
-<<<<<<< Updated upstream
-  const rootClassName = ["select", className ?? ""]
-      .filter(Boolean)
-      .join(" ");
-=======
 	// 드롭다운 위치 계산
-	React.useLayoutEffect(() => {
-		if (!isOpen || !controlRef.current) return;
-
+	const updatePosition = React.useCallback(() => {
+		if (!controlRef.current) return;
 		const rect = controlRef.current.getBoundingClientRect();
 		const listHeight = Math.min(options.length * 40, 288);
 		const spaceBelow = window.innerHeight - rect.bottom;
@@ -186,81 +173,26 @@ export const Select = ({
 			left: rect.left,
 			width: rect.width,
 		});
-	}, [isOpen, options.length]);
+	}, [options.length]);
+
+	React.useLayoutEffect(() => {
+		if (!isOpen) return;
+		updatePosition();
+	}, [isOpen, updatePosition]);
 
 	// 스크롤/리사이즈 시 위치 업데이트
 	React.useEffect(() => {
 		if (!isOpen) return;
->>>>>>> Stashed changes
 
-		const updatePosition = () => {
-			if (!controlRef.current) return;
-			const rect = controlRef.current.getBoundingClientRect();
-			const listHeight = Math.min(options.length * 40, 288);
-			const spaceBelow = window.innerHeight - rect.bottom;
-			const spaceAbove = rect.top;
-			const shouldDropUp = spaceBelow < listHeight && spaceAbove > spaceBelow;
-
-			setDropUp(shouldDropUp);
-			setListPosition({
-				top: shouldDropUp ? rect.top - listHeight - 4 : rect.bottom + 4,
-				left: rect.left,
-				width: rect.width,
-			});
-		};
-
-<<<<<<< Updated upstream
-        <button
-            id={selectId}
-            type="button"
-            className={controlClassName}
-            aria-haspopup="listbox"
-            aria-expanded={isOpen}
-            aria-controls={`${selectId}_listbox`}
-            onClick={() =>
-                !disabled && setIsOpen((o) => !o)
-            }
-            onKeyDown={onKeyDown}
-            disabled={disabled}
-        >
-                <span
-                    className={
-                      currentOption
-                          ? "select_value"
-                          : "select_placeholder"
-                    }
-                    style={textAlign === "left" ? { textAlign: "start" } : undefined}
-                >
-                    {currentOption
-                        ? currentOption.label
-                        : placeholder}
-                </span>
-          <span className="select_icon" aria-hidden="true">
-                    <ChevronDown size={16} />
-                </span>
-        </button>
-
-        {isOpen && (
-            <ul
-                id={`${selectId}_listbox`}
-                role="listbox"
-                className="select_list"
-            >
-              {options.map((opt, i) => {
-                const selected =
-                    currentValue === opt.value;
-                const active = i === activeIndex;
-=======
 		window.addEventListener("scroll", updatePosition, true);
 		window.addEventListener("resize", updatePosition);
 		return () => {
 			window.removeEventListener("scroll", updatePosition, true);
 			window.removeEventListener("resize", updatePosition);
 		};
-	}, [isOpen, options.length]);
+	}, [isOpen, updatePosition]);
 
 	const rootClassName = ["select", className ?? ""].filter(Boolean).join(" ");
->>>>>>> Stashed changes
 
 	const controlClassName = [
 		"select_control",
