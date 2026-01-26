@@ -9,16 +9,16 @@ const outDir = path.join(root, "dist/vanilla");
 // Create output directory
 fs.mkdirSync(outDir, { recursive: true });
 
-// Compile SCSS to CSS using sass-embedded
+// Compile SCSS to CSS using sass-embedded (--no-source-map to exclude source maps)
 try {
   execSync(
-    `npx sass --load-path=. --load-path=src ${srcDir}/bigtablet.scss ${outDir}/bigtablet.css`,
+    `npx sass --no-source-map --load-path=. --load-path=src ${srcDir}/bigtablet.scss ${outDir}/bigtablet.css`,
     { stdio: "inherit" }
   );
 
   // Also create minified version
   execSync(
-    `npx sass --load-path=. --load-path=src --style=compressed ${srcDir}/bigtablet.scss ${outDir}/bigtablet.min.css`,
+    `npx sass --no-source-map --load-path=. --load-path=src --style=compressed ${srcDir}/bigtablet.scss ${outDir}/bigtablet.min.css`,
     { stdio: "inherit" }
   );
 
