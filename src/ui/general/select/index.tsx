@@ -60,6 +60,14 @@ export const Select = ({
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const controlRef = React.useRef<HTMLButtonElement>(null);
 	const listRef = React.useRef<HTMLUListElement>(null);
+	const [portalContainer, setPortalContainer] = React.useState<HTMLElement | null>(null);
+
+	// 컴포넌트가 속한 document의 body를 찾음 (iframe 대응)
+	React.useEffect(() => {
+		if (wrapperRef.current) {
+			setPortalContainer(wrapperRef.current.ownerDocument.body);
+		}
+	}, []);
 
 	const currentOption = React.useMemo(
 		() => options.find((o) => o.value === currentValue) ?? null,
@@ -288,7 +296,7 @@ export const Select = ({
 				</span>
 			</button>
 
-			{isOpen && typeof document !== "undefined" && createPortal(renderList(), document.body)}
+			{isOpen && portalContainer && createPortal(renderList(), portalContainer)}
 		</div>
 	);
 };
