@@ -1,3 +1,10 @@
+## [1.17.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.2...v1.17.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* remove source map from vanilla CSS build ([ee97f9d](https://github.com/Bigtablet/bigtablet-design-system/commit/ee97f9d1c0c33b2854b6d2804dc60be1ffafe8b5))
+
 ## [1.17.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.1...v1.17.2) (2026-01-26)
 
 ## [1.17.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.0...v1.17.1) (2026-01-26)
