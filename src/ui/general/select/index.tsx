@@ -54,8 +54,10 @@ export const Select = ({
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(-1);
+  const [dropUp, setDropUp] = React.useState(false);
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const controlRef = React.useRef<HTMLButtonElement>(null);
 
   const currentOption = React.useMemo(
       () => options.find((o) => o.value === currentValue) ?? null,
@@ -167,6 +169,17 @@ export const Select = ({
     );
   }, [isOpen, options, currentValue]);
 
+  React.useLayoutEffect(() => {
+    if (!isOpen || !controlRef.current) return;
+
+    const rect = controlRef.current.getBoundingClientRect();
+    const listHeight = Math.min(options.length * 40, 288);
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    setDropUp(spaceBelow < listHeight && spaceAbove > spaceBelow);
+  }, [isOpen, options.length]);
+
   const rootClassName = ["select", className ?? ""]
       .filter(Boolean)
       .join(" ");
@@ -197,6 +210,7 @@ export const Select = ({
         )}
 
         <button
+            ref={controlRef}
             id={selectId}
             type="button"
             className={controlClassName}
@@ -230,7 +244,7 @@ export const Select = ({
             <ul
                 id={`${selectId}_listbox`}
                 role="listbox"
-                className="select_list"
+                className={`select_list${dropUp ? " select_list_up" : ""}`}
             >
               {options.map((opt, i) => {
                 const selected =
