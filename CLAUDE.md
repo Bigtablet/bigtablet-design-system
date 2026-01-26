@@ -4,10 +4,13 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 
 ## Project Overview
 
-- **Package**: `@bigtablet/design-system` (v1.12.1)
-- **Type**: React 19 component library with TypeScript
+- **Package**: `@bigtablet/design-system` (v1.15.0)
+- **Type**: React 19 component library with TypeScript + Vanilla JS
 - **Package Manager**: pnpm@10.20.0 (enforced)
-- **Exports**: Pure React (`/`) and Next.js (`/next`) entry points
+- **Exports**:
+  - Pure React (`/`)
+  - Next.js (`/next`)
+  - Vanilla JS (`/vanilla`) - for Thymeleaf, JSP, PHP, etc.
 
 ## Quick Commands
 
@@ -32,6 +35,10 @@ src/
 │   ├── navigation/# Navigation (Pagination, Sidebar)
 │   ├── overlay/   # Modal components
 │   └── display/   # Card component
+├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
+│   ├── bigtablet.scss    # All component styles + CSS custom properties
+│   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
+│   └── examples/         # HTML usage examples
 ├── index.ts       # Pure React entry point
 └── next.ts        # Next.js entry point (includes Sidebar with next/link)
 ```
@@ -88,10 +95,253 @@ Located in `src/styles/ts/`:
 
 ## Important Files
 
-- `tsup.config.ts` - Build config (dual bundles for React/Next.js)
+- `tsup.config.ts` - Build config (dual bundles for React/Next.js + Vanilla)
 - `.releaserc.json` - Semantic Release config
 - `scripts/copy-scss.mjs` - Copies SCSS to dist
+- `scripts/build-vanilla.mjs` - Builds Vanilla CSS/JS
 - `.github/workflows/pnpm.yml` - CI/CD pipeline
+
+---
+
+## Vanilla JS Package
+
+For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
+
+### Build Output
+```
+dist/vanilla/
+├── bigtablet.css       # Full CSS (27KB)
+├── bigtablet.min.css   # Minified CSS (21KB)
+├── bigtablet.js        # Full JS (20KB)
+├── bigtablet.min.js    # Minified JS (9KB)
+└── examples/           # HTML examples
+```
+
+### Class Naming Convention (BEM-like)
+```
+.bt-{component}
+.bt-{component}__{element}
+.bt-{component}--{modifier}
+.bt-{component}.is-{state}
+```
+
+### Component Classes Reference
+
+| Component | Base Class | Modifiers | States |
+|-----------|------------|-----------|--------|
+| Button | `.bt-button` | `--sm/md/lg`, `--primary/secondary/ghost/danger` | `:disabled` |
+| TextField | `.bt-text-field` | `--full-width` | |
+| TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
+| Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
+| Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
+| Switch | `.bt-switch` | `--sm/md/lg` | `.bt-switch--on`, `.bt-switch--disabled` |
+| Select | `.bt-select` | | |
+| Select Control | `.bt-select__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
+| Select List | `.bt-select__list` | `--up` (opens upward) | |
+| Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
+| Modal | `.bt-modal` | | `.is-open` |
+| Card | `.bt-card` | `--bordered`, `--shadow-sm/md/lg`, `--p-sm/md/lg` | |
+| Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
+| Pagination | `.bt-pagination` | | |
+| DatePicker | `.bt-date-picker` | `--full-width` | |
+| FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
+
+### HTML Examples
+
+#### Button
+```html
+<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--secondary">Secondary</button>
+<button class="bt-button bt-button--md bt-button--danger">Danger</button>
+```
+
+#### TextField
+```html
+<div class="bt-text-field">
+  <label class="bt-text-field__label">Label</label>
+  <div class="bt-text-field__wrap">
+    <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter...">
+  </div>
+  <span class="bt-text-field__helper">Helper text</span>
+</div>
+
+<!-- Error state -->
+<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error">
+<span class="bt-text-field__helper bt-text-field__helper--error">Error message</span>
+```
+
+#### Checkbox
+```html
+<label class="bt-checkbox">
+  <input type="checkbox" class="bt-checkbox__input">
+  <span class="bt-checkbox__box"></span>
+  <span class="bt-checkbox__label">Label</span>
+</label>
+```
+
+#### Radio
+```html
+<label class="bt-radio">
+  <input type="radio" name="group" class="bt-radio__input">
+  <span class="bt-radio__dot"></span>
+  <span class="bt-radio__label">Option</span>
+</label>
+```
+
+#### Switch
+```html
+<button class="bt-switch" data-bt-switch>
+  <span class="bt-switch__thumb"></span>
+</button>
+
+<!-- On state -->
+<button class="bt-switch bt-switch--on" data-bt-switch>
+  <span class="bt-switch__thumb"></span>
+</button>
+```
+
+#### Select
+```html
+<div class="bt-select" data-bt-select>
+  <label class="bt-select__label">Label</label>
+  <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
+    <span class="bt-select__placeholder">Select...</span>
+    <span class="bt-select__icon">▼</span>
+  </button>
+  <ul class="bt-select__list">
+    <li class="bt-select__option" data-value="1">Option 1</li>
+    <li class="bt-select__option" data-value="2">Option 2</li>
+    <li class="bt-select__option is-disabled" data-value="3">Disabled</li>
+  </ul>
+</div>
+```
+
+#### Modal
+```html
+<button data-bt-modal-open="my-modal">Open</button>
+
+<div id="my-modal" class="bt-modal" data-bt-modal>
+  <div class="bt-modal__panel" style="width: 480px;">
+    <div class="bt-modal__header">Title</div>
+    <div class="bt-modal__body">Content</div>
+    <div class="bt-modal__footer">
+      <button class="bt-button bt-button--md bt-button--secondary" data-modal-close>Cancel</button>
+      <button class="bt-button bt-button--md bt-button--primary" data-modal-close>Confirm</button>
+    </div>
+  </div>
+</div>
+```
+
+#### Card
+```html
+<div class="bt-card bt-card--bordered bt-card--p-md">
+  <div class="bt-card__title">Title</div>
+  <p>Content</p>
+</div>
+
+<div class="bt-card bt-card--shadow-md bt-card--p-lg">
+  Shadow card
+</div>
+```
+
+#### Spinner
+```html
+<div class="bt-spinner bt-spinner--md"></div>
+```
+
+#### Pagination
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10">
+  <!-- JS renders automatically -->
+</nav>
+```
+
+### JavaScript API
+
+```javascript
+// Auto-init: elements with data-bt-* are initialized on DOMContentLoaded
+
+// Manual initialization
+const select = Bigtablet.Select('#my-select', {
+  options: [{ value: '1', label: 'One' }],
+  onChange: (value, option) => console.log(value)
+});
+select.getValue();
+select.setValue('1');
+select.open();
+select.close();
+
+const modal = Bigtablet.Modal('#my-modal', {
+  closeOnOverlay: true,
+  onOpen: () => {},
+  onClose: () => {}
+});
+modal.open();
+modal.close();
+
+const sw = Bigtablet.Switch('#my-switch', {
+  onChange: (checked) => console.log(checked)
+});
+sw.toggle();
+sw.setChecked(true);
+
+const pagination = Bigtablet.Pagination('#my-pagination', {
+  page: 1,
+  totalPages: 10,
+  onChange: (page) => console.log(page)
+});
+pagination.setPage(5);
+
+// Alert (no element needed)
+Bigtablet.Alert({
+  title: 'Title',
+  message: 'Message',
+  variant: 'info',  // info, success, warning, error
+  showCancel: true,
+  onConfirm: () => {},
+  onCancel: () => {}
+});
+```
+
+### CSS Custom Properties
+
+All design tokens available as CSS variables:
+```css
+:root {
+  --bt-color-primary: #000000;
+  --bt-color-background: #ffffff;
+  --bt-color-text-primary: #1a1a1a;
+  --bt-color-border: #e5e5e5;
+  --bt-color-error: #ef4444;
+  --bt-color-success: #10b981;
+  --bt-spacing-xs: 0.25rem;
+  --bt-spacing-sm: 0.5rem;
+  --bt-spacing-md: 0.75rem;
+  --bt-spacing-lg: 1rem;
+  --bt-radius-sm: 6px;
+  --bt-radius-md: 8px;
+  --bt-shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --bt-transition-base: 0.2s ease-in-out;
+}
+```
+
+### Thymeleaf Example
+```html
+<form th:action="@{/submit}" method="post">
+  <div class="bt-text-field">
+    <label class="bt-text-field__label">Name</label>
+    <input type="text"
+           th:field="*{name}"
+           class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md"
+           th:classappend="${#fields.hasErrors('name')} ? 'bt-text-field__input--error' : ''">
+    <span class="bt-text-field__helper bt-text-field__helper--error"
+          th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}"></span>
+  </div>
+
+  <button type="submit" class="bt-button bt-button--md bt-button--primary">Submit</button>
+</form>
+```
 
 ---
 
