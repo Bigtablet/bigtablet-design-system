@@ -150,6 +150,13 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: token.$spacing_xs 0;
+
+    &_up {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: token.$spacing_xs;
+    }
   }
 
   &_option {
