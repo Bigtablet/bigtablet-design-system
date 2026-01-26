@@ -1,3 +1,12 @@
+## [1.16.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.1...v1.16.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* revert portal, use absolute positioning with auto-flip ([ef38d18](https://github.com/Bigtablet/bigtablet-design-system/commit/ef38d1835a5217ab52a1c0b9631ab9916fc5455c))
+* select dropdown position flicker on initial render ([3b777f9](https://github.com/Bigtablet/bigtablet-design-system/commit/3b777f90d73d6ca9f370a8139943478bca96931f))
+* select portal renders in correct document body ([9113405](https://github.com/Bigtablet/bigtablet-design-system/commit/9113405c8c9e12f6f419d0ca3790f97c6057ee39))
+
 ## [1.16.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.0...v1.16.1) (2026-01-26)
 
 
