@@ -150,8 +150,6 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: token.$spacing_xs 0;
-<<<<<<< Updated upstream
-=======
 
     &_up {
       top: auto;
@@ -160,13 +158,11 @@
       margin-bottom: token.$spacing_xs;
     }
 
-    // Portal로 렌더링될 때 (document.body에 직접 추가)
     &_portal {
       position: fixed;
       margin-top: 0;
       margin-bottom: 0;
     }
->>>>>>> Stashed changes
   }
 
   &_option {
