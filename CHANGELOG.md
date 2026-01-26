@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.15.0...v1.16.0) (2026-01-26)
+
+
+### Features
+
+* add auto-flip dropdown for Select component ([4ba5afa](https://github.com/Bigtablet/bigtablet-design-system/commit/4ba5afaae5a16e6ae542007dd8b161b9119c8404)), closes [#63](https://github.com/Bigtablet/bigtablet-design-system/issues/63)
+
 # [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.3...v1.15.0) (2026-01-23)
 
 
