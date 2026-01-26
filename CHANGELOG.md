@@ -1,3 +1,10 @@
+## [1.17.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.3...v1.17.4) (2026-01-26)
+
+
+### Bug Fixes
+
+* reduce npm package size by excluding unminified files ([57b5e0a](https://github.com/Bigtablet/bigtablet-design-system/commit/57b5e0add9ae6ea18a2f4171ce03ba4ecac6f09e))
+
 ## [1.17.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.2...v1.17.3) (2026-01-26)
 
 
