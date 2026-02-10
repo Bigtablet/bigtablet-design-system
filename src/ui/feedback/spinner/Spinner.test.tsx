@@ -19,7 +19,7 @@ describe("Spinner", () => {
     it("has correct accessibility attributes", () => {
         render(<Spinner />);
         const spinner = screen.getByRole("status");
-        expect(spinner).toHaveAttribute("aria-label");
+        expect(spinner).toHaveAttribute("aria-label", "로딩 중");
     });
 
     it("has spinner class", () => {
