@@ -11,7 +11,7 @@ export interface TopLoadingProps {
     height?: number;
     /** 표시 여부 */
     isLoading?: boolean;
-    /** Accessible label for the progress bar (default: "Page loading") */
+    /** 프로그레스 바의 접근성 레이블 (기본값: "Page loading") */
     ariaLabel?: string;
 }
 
