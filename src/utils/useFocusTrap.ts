@@ -28,12 +28,15 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, 
             return container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS);
         };
 
+        let wasTabIndexAdded = false;
+
         // Focus the first focusable element or the container itself
         const focusableElements = getFocusableElements();
         if (focusableElements.length > 0) {
             focusableElements[0].focus();
         } else {
             container.setAttribute('tabindex', '-1');
+            wasTabIndexAdded = true;
             container.focus();
         }
 
@@ -68,6 +71,12 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, 
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+
+            // Remove tabindex if it was added by us
+            if (wasTabIndexAdded) {
+                container.removeAttribute('tabindex');
+            }
+
             // Restore focus to the previously focused element
             if (previousActiveElement.current && previousActiveElement.current.focus) {
                 previousActiveElement.current.focus();
