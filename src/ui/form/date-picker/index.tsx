@@ -42,7 +42,7 @@ export const DatePicker = ({
                                minDate,
                                selectableRange = "all",
                                disabled,
-                               fullWidth,
+                               fullWidth = true,
                                width,
                            }: DatePickerProps) => {
     const today = new Date();
