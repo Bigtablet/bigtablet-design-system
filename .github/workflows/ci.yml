@@ -32,9 +32,12 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Coverage Report
-        uses: davelosert/vitest-coverage-report-action@v2
+      - name: 커버리지 리포트 생성
         if: github.event_name == 'pull_request'
+        run: node scripts/coverage-report.mjs
+
+      - name: PR에 커버리지 코멘트 달기
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
+          path: coverage-report.md
