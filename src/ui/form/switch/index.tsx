@@ -12,7 +12,7 @@ export interface SwitchProps
     size?: "sm" | "md" | "lg";
     disabled?: boolean;
     /** Accessible label for the switch (for screen readers) */
-    ariaLabel?: string;
+    ariaLabel: string;
 }
 
 export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
