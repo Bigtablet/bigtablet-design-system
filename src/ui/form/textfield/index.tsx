@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export type TextFieldVariant = "outline" | "filled" | "ghost";
@@ -69,33 +70,31 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             setInnerValue(applyTransform(value ?? ""));
         }, [isControlled, value, transformValue]);
 
-        const rootClassName = [
+        const rootClassName = cn(
             "text_field",
-            fullWidth && "text_field_full_width",
-            className ?? "",
-        ]
-            .filter(Boolean)
-            .join(" ");
+            { text_field_full_width: fullWidth },
+            className
+        );
 
-        const inputClassName = [
+        const inputClassName = cn(
             "text_field_input",
             `text_field_variant_${variant}`,
             `text_field_size_${size}`,
-            leftIcon && "text_field_with_left",
-            rightIcon && "text_field_with_right",
-            error && "text_field_error",
-            success && "text_field_success",
-        ]
-            .filter(Boolean)
-            .join(" ");
+            {
+                text_field_with_left: !!leftIcon,
+                text_field_with_right: !!rightIcon,
+                text_field_error: !!error,
+                text_field_success: !!success,
+            }
+        );
 
-        const helperClassName = [
+        const helperClassName = cn(
             "text_field_helper",
-            error && "text_field_helper_error",
-            success && "text_field_helper_success",
-        ]
-            .filter(Boolean)
-            .join(" ");
+            {
+                text_field_helper_error: error,
+                text_field_helper_success: success,
+            }
+        );
 
         return (
             <div className={rootClassName}>

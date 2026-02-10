@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "../../../utils";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -15,6 +16,12 @@ interface DatePickerProps {
     minDate?: string;
     selectableRange?: SelectableRange;
     disabled?: boolean;
+    /** Whether the date picker should take the full width of its container */
+    fullWidth?: boolean;
+    /**
+     * Custom width for the date picker
+     * @deprecated Use `fullWidth` prop or CSS instead
+     */
     width?: number | string;
 }
 
@@ -27,17 +34,18 @@ const normalizeWidth = (v?: number | string) =>
     typeof v === "number" ? `${v}px` : v;
 
 export const DatePicker = ({
-                               label,
-                               value,
-                               onChange,
-                               mode = "year-month-day",
-                               startYear = 1950,
-                               endYear = new Date().getFullYear() + 10,
-                               minDate,
-                               selectableRange = "all",
-                               disabled,
-                               width,
-                           }: DatePickerProps) => {
+    label,
+    value,
+    onChange,
+    mode = "year-month-day",
+    startYear = 1950,
+    endYear = new Date().getFullYear() + 10,
+    minDate,
+    selectableRange = "all",
+    disabled,
+    fullWidth = true,
+    width,
+}: DatePickerProps) => {
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
@@ -95,9 +103,10 @@ export const DatePicker = ({
     };
 
     const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
+    const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
 
     return (
-        <div className="date_picker date_picker_full" style={containerStyle}>
+        <div className={rootClassName} style={containerStyle}>
             {label && (
                 <label className="date_picker_label">{label}</label>
             )}
