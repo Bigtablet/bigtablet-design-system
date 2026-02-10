@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface SwitchProps
@@ -10,49 +11,58 @@ export interface SwitchProps
     onChange?: (checked: boolean) => void;
     size?: "sm" | "md" | "lg";
     disabled?: boolean;
+    /** Accessible label for the switch (for screen readers) */
+    ariaLabel?: string;
 }
 
-export const Switch = ({
-                           checked,
-                           defaultChecked,
-                           onChange,
-                           size = "md",
-                           disabled,
-                           className,
-                           ...props
-                       }: SwitchProps) => {
-    const isControlled = checked !== undefined;
-    const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
-    const isOn = isControlled ? !!checked : innerChecked;
+export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
+    (
+        {
+            checked,
+            defaultChecked,
+            onChange,
+            size = "md",
+            disabled,
+            className,
+            ariaLabel,
+            ...props
+        },
+        ref
+    ) => {
+        const isControlled = checked !== undefined;
+        const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
+        const isOn = isControlled ? !!checked : innerChecked;
 
-    const handleToggle = () => {
-        if (disabled) return;
-        const next = !isOn;
-        if (!isControlled) setInnerChecked(next);
-        onChange?.(next);
-    };
+        const handleToggle = () => {
+            if (disabled) return;
+            const next = !isOn;
+            if (!isControlled) setInnerChecked(next);
+            onChange?.(next);
+        };
 
-    const rootClassName = [
-        "switch",
-        `switch_size_${size}`,
-        isOn && "switch_on",
-        disabled && "switch_disabled",
-        className ?? "",
-    ]
-        .filter(Boolean)
-        .join(" ");
+        const rootClassName = cn(
+            "switch",
+            `switch_size_${size}`,
+            { switch_on: isOn, switch_disabled: disabled },
+            className
+        );
 
-    return (
-        <button
-            type="button"
-            role="switch"
-            aria-checked={isOn}
-            disabled={disabled}
-            onClick={handleToggle}
-            className={rootClassName}
-            {...props}
-        >
-            <span className="switch_thumb" />
-        </button>
-    );
-};
+        return (
+            <button
+                ref={ref}
+                type="button"
+                role="switch"
+                aria-checked={isOn}
+                aria-label={ariaLabel}
+                disabled={disabled}
+                onClick={handleToggle}
+                className={rootClassName}
+                {...props}
+            >
+                <span className="switch_thumb" />
+            </button>
+        );
+    }
+);
+
+Switch.displayName = "Switch";

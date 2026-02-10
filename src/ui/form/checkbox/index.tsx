@@ -1,47 +1,46 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
-  label?: React.ReactNode;
-  size?: "sm" | "md" | "lg";
-  indeterminate?: boolean;
+    label?: React.ReactNode;
+    size?: "sm" | "md" | "lg";
+    indeterminate?: boolean;
 }
 
-export const Checkbox = ({
-                           label,
-                           size = "md",
-                           indeterminate,
-                           className,
-                           ...props
-                         }: CheckboxProps) => {
-  const inputRef = React.useRef<HTMLInputElement>(null);
+export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+    ({ label, size = "md", indeterminate, className, ...props }, ref) => {
+        const inputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    if (!inputRef.current) return;
-    inputRef.current.indeterminate = Boolean(indeterminate);
-  }, [indeterminate]);
+        React.useImperativeHandle(ref, () => inputRef.current!);
 
-  const rootClassName = [
-    "checkbox",
-    `checkbox_size_${size}`,
-    className ?? "",
-  ]
-      .filter(Boolean)
-      .join(" ");
+        React.useEffect(() => {
+            if (!inputRef.current) return;
+            inputRef.current.indeterminate = Boolean(indeterminate);
+        }, [indeterminate]);
 
-  return (
-      <label className={rootClassName}>
-        <input
-            ref={inputRef}
-            type="checkbox"
-            className="checkbox_input"
-            {...props}
-        />
-        <span className="checkbox_box" aria-hidden="true" />
-        {label ? <span className="checkbox_label">{label}</span> : null}
-      </label>
-  );
-};
+        const rootClassName = cn(
+            "checkbox",
+            `checkbox_size_${size}`,
+            className
+        );
+
+        return (
+            <label className={rootClassName}>
+                <input
+                    ref={inputRef}
+                    type="checkbox"
+                    className="checkbox_input"
+                    {...props}
+                />
+                <span className="checkbox_box" aria-hidden="true" />
+                {label ? <span className="checkbox_label">{label}</span> : null}
+            </label>
+        );
+    }
+);
+
+Checkbox.displayName = "Checkbox";
