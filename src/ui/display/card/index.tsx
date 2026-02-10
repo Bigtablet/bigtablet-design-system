@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,26 +12,24 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Card = ({
-                         heading,
-                         shadow = "sm",
-                         padding = "md",
-                         bordered = false,
-                         className,
-                         children,
-                         ...props
-                     }: CardProps) => {
-    const cls = [
+    heading,
+    shadow = "sm",
+    padding = "md",
+    bordered = false,
+    className,
+    children,
+    ...props
+}: CardProps) => {
+    const cardClassName = cn(
         "card",
         `card_shadow_${shadow}`,
         `card_p_${padding}`,
-        bordered && "card_bordered",
-        className ?? "",
-    ]
-        .filter(Boolean)
-        .join(" ");
+        { card_bordered: bordered },
+        className
+    );
 
     return (
-        <div className={cls} {...props}>
+        <div className={cardClassName} {...props}>
             {heading ? <div className="card_title">{heading}</div> : null}
             <div className="card_body">{children}</div>
         </div>
