@@ -11,6 +11,12 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     bordered?: boolean;
 }
 
+/**
+ * 카드 컴포넌트를 렌더링한다.
+ * 그림자/패딩/테두리 옵션을 조합해 레이아웃 컨테이너를 구성한다.
+ * @param props 카드 속성
+ * @returns 렌더링된 카드 UI
+ */
 export const Card = ({
     heading,
     shadow = "sm",

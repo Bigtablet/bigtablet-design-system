@@ -4,7 +4,7 @@ import { ToastProvider } from "./index";
 import { useToast } from "./use-toast";
 import { toast } from "react-toastify";
 
-// Mock react-toastify
+// react-toastify 목 처리
 vi.mock("react-toastify", () => ({
     ToastContainer: ({ containerId }: { containerId: string }) => (
         <div data-testid="toast-container" data-container-id={containerId} />

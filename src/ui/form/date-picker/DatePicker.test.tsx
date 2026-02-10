@@ -101,6 +101,6 @@ describe("DatePicker", () => {
         const selects = screen.getAllByRole("combobox");
         const yearSelect = selects[0];
 
-        expect(yearSelect.querySelectorAll("option").length).toBe(7); // 6 years + placeholder
+        expect(yearSelect.querySelectorAll("option").length).toBe(7); // 6년 + 플레이스홀더
     });
 });

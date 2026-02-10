@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { Sidebar, SidebarItem } from "./index";
 import { Home, Settings } from "lucide-react";
 
-// Mock next/link
+// next/link 목 처리
 vi.mock("next/link", () => ({
     default: ({ children, href, className, onClick }: {
         children: React.ReactNode;
@@ -17,7 +17,7 @@ vi.mock("next/link", () => ({
     ),
 }));
 
-// Mock next/image
+// next/image 목 처리
 vi.mock("next/image", () => ({
     default: ({ src, alt, onClick }: {
         src: string;
@@ -31,7 +31,7 @@ vi.mock("next/image", () => ({
     ),
 }));
 
-// Mock localStorage
+// localStorage 목 처리
 const localStorageMock = {
     getItem: vi.fn(),
     setItem: vi.fn(),
@@ -85,14 +85,14 @@ describe("Sidebar", () => {
         const adminButton = screen.getByText("Admin");
         const subContainer = adminButton.closest(".sidebar_group")?.querySelector(".sidebar_sub");
 
-        // Group should be collapsed initially (no open class)
+        // 초기에는 그룹이 닫혀 있어야 한다(오픈 클래스 없음)
         expect(subContainer).not.toHaveClass("sidebar_sub_open");
 
-        // Click to expand
+        // 클릭하여 확장
         fireEvent.click(adminButton);
         expect(subContainer).toHaveClass("sidebar_sub_open");
 
-        // Click to collapse
+        // 다시 클릭하여 접기
         fireEvent.click(adminButton);
         expect(subContainer).not.toHaveClass("sidebar_sub_open");
     });
@@ -155,24 +155,24 @@ describe("Sidebar", () => {
     it("toggles sidebar closed when close button is clicked", () => {
         render(<Sidebar items={basicItems} />);
 
-        // Initially open
+        // 초기 상태는 열림
         expect(screen.getByRole("navigation")).toBeInTheDocument();
 
-        // Click close button
+        // 닫기 버튼 클릭
         fireEvent.click(screen.getByAltText("Close"));
 
-        // Sidebar should be closed (nav hidden)
+        // 사이드바가 닫혀야 한다(nav 숨김)
         expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
     });
 
     it("toggles sidebar open when menu button is clicked", () => {
         render(<Sidebar items={basicItems} />);
 
-        // Close sidebar first
+        // 먼저 사이드바를 닫는다
         fireEvent.click(screen.getByAltText("Close"));
         expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
 
-        // Click menu button to open
+        // 메뉴 버튼 클릭으로 다시 연다
         fireEvent.click(screen.getByAltText("Open"));
         expect(screen.getByRole("navigation")).toBeInTheDocument();
     });
@@ -191,7 +191,7 @@ describe("Sidebar", () => {
 
     it("renders icons for items with icon prop", () => {
         render(<Sidebar items={basicItems} />);
-        // Icons are rendered via lucide-react
+        // 아이콘은 lucide-react로 렌더링된다
         const sidebarIcons = document.querySelectorAll(".sidebar_icon");
         expect(sidebarIcons.length).toBeGreaterThan(0);
     });

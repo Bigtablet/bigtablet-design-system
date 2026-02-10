@@ -16,23 +16,45 @@ interface DatePickerProps {
     minDate?: string;
     selectableRange?: SelectableRange;
     disabled?: boolean;
-    /** Whether the date picker should take the full width of its container */
+    /** 데이트 피커가 컨테이너의 전체 너비를 차지할지 여부 */
     fullWidth?: boolean;
     /**
-     * Custom width for the date picker
-     * @deprecated Use `fullWidth` prop or CSS instead
+     * 데이트 피커의 커스텀 너비
+     * @deprecated `fullWidth` 사용 또는 CSS로 처리
      */
     width?: number | string;
 }
 
+/**
+ * 숫자를 두 자리 문자열로 보정한다.
+ * @param n 숫자
+ * @returns 두 자리 문자열
+ */
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/**
+ * 해당 연/월의 일 수를 구한다.
+ * @param year 연도
+ * @param month 월(1-12)
+ * @returns 일 수
+ */
 const getDaysInMonth = (year: number, month: number) =>
     new Date(year, month, 0).getDate();
 
+/**
+ * 너비 값을 CSS 문자열로 정규화한다.
+ * @param v 너비 값
+ * @returns CSS 너비 문자열 또는 undefined
+ */
 const normalizeWidth = (v?: number | string) =>
     typeof v === "number" ? `${v}px` : v;
 
+/**
+ * 연/월/일 선택형 데이트 피커를 렌더링한다.
+ * 입력 값과 선택 범위를 기준으로 옵션을 계산하고, 선택 변경을 상위로 전달한다.
+ * @param props 데이트 피커 속성
+ * @returns 렌더링된 데이트 피커 UI
+ */
 export const DatePicker = ({
     label,
     value,
@@ -88,9 +110,23 @@ export const DatePicker = ({
             ? Math.min(getDaysInMonth(year, month), maxDay)
             : 31;
 
+    /**
+     * 해당 연/월의 최대 일 수를 기준으로 일 값을 보정한다.
+     * @param year 연도
+     * @param month 월
+     * @param day 일
+     * @returns 보정된 일
+     */
     const clampDay = (year: number, month: number, day: number) =>
         Math.min(day, getDaysInMonth(year, month));
 
+    /**
+     * 선택 값을 포맷팅해 onChange로 전달한다.
+     * @param yy 연도
+     * @param mm 월
+     * @param dd 일
+     * @returns void
+     */
     const emit = (yy: number, mm: number, dd?: number) => {
         if (mode === "year-month") {
             onChange(`${yy}-${pad(mm)}`);

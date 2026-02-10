@@ -11,10 +11,17 @@ export interface SwitchProps
     onChange?: (checked: boolean) => void;
     size?: "sm" | "md" | "lg";
     disabled?: boolean;
-    /** Accessible label for the switch (for screen readers) */
+    /** 스위치 접근성 레이블(스크린 리더용) */
     ariaLabel: string;
 }
 
+/**
+ * 스위치를 렌더링한다.
+ * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 스위치 UI를 반환한다.
+ * @param props 스위치 속성
+ * @param ref 버튼 참조
+ * @returns 렌더링된 스위치 요소
+ */
 export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     (
         {
@@ -33,6 +40,10 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
         const isOn = isControlled ? !!checked : innerChecked;
 
+        /**
+         * 현재 상태를 토글하고 변경 콜백을 호출한다.
+         * @returns void
+         */
         const handleToggle = () => {
             if (disabled) return;
             const next = !isOn;
