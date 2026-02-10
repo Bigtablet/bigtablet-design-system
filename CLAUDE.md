@@ -99,7 +99,29 @@ Located in `src/styles/ts/`:
 - `.releaserc.json` - Semantic Release config
 - `scripts/copy-scss.mjs` - Copies SCSS to dist
 - `scripts/build-vanilla.mjs` - Builds Vanilla CSS/JS
-- `.github/workflows/pnpm.yml` - CI/CD pipeline
+- `.github/workflows/ci.yml` - CI/CD pipeline (test + coverage)
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | 프로젝트 개요 및 빠른 시작 |
+| [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 API 및 사용법 |
+| [docs/VANILLA.md](./docs/VANILLA.md) | HTML/CSS/JS 환경 가이드 |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | 프로젝트 구조 및 아키텍처 |
+| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 기여 가이드라인 |
+| [docs/TESTING.md](./docs/TESTING.md) | 테스트 작성 가이드 |
+
+## Testing
+
+- **Test Runner**: Vitest
+- **Coverage**: 86%
+- **Commands**:
+  ```bash
+  pnpm test              # Run tests
+  pnpm test:watch        # Watch mode
+  pnpm test:coverage     # Coverage report
+  ```
 
 ---
 
