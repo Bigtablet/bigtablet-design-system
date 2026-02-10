@@ -24,5 +24,22 @@ describe("cn", () => {
 
     it("filters out empty strings", () => {
         expect(cn("btn", "", "active")).toBe("btn active");
+        expect(cn("btn", "", "active")).toBe("btn active");
+    });
+
+    it("handles arrays of classes", () => {
+        expect(cn(["btn", "btn--primary"])).toBe("btn btn--primary");
+    });
+
+    it("handles nested arrays of classes", () => {
+        expect(cn("btn", ["btn--primary", ["active"]])).toBe("btn btn--primary active");
+    });
+
+    it("handles objects of classes", () => {
+        expect(cn({ btn: true, "btn--primary": true, active: false })).toBe("btn btn--primary");
+    });
+
+    it("handles mixed arrays, objects, and strings", () => {
+        expect(cn("base", ["a", { b: true, c: false }], "d")).toBe("base a b d");
     });
 });
