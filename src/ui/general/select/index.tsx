@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 import { ChevronDown, Check } from "lucide-react";
 
@@ -72,15 +73,16 @@ export const Select = ({
 		[isControlled, onChange, options],
 	);
 
+	// Outside click handler with useEffectEvent
+	const handleOutsideClick = React.useEffectEvent((e: MouseEvent) => {
+		if (!wrapperRef.current?.contains(e.target as Node)) {
+			setIsOpen(false);
+		}
+	});
+
 	React.useEffect(() => {
-		const onDocClick = (e: MouseEvent) => {
-			if (!wrapperRef.current) return;
-			if (!wrapperRef.current.contains(e.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", onDocClick);
-		return () => document.removeEventListener("mousedown", onDocClick);
+		document.addEventListener("mousedown", handleOutsideClick);
+		return () => document.removeEventListener("mousedown", handleOutsideClick);
 	}, []);
 
 	const moveActive = (dir: 1 | -1) => {
@@ -166,24 +168,16 @@ export const Select = ({
 		setDropUp(spaceBelow < listHeight && spaceAbove > spaceBelow);
 	}, [isOpen, options.length]);
 
-	const rootClassName = ["select", className ?? ""].filter(Boolean).join(" ");
+	const rootClassName = cn("select", className);
 
-	const controlClassName = [
+	const controlClassName = cn(
 		"select_control",
 		`select_variant_${variant}`,
 		`select_size_${size}`,
-		isOpen && "is_open",
-		disabled && "is_disabled",
-	]
-		.filter(Boolean)
-		.join(" ");
+		{ is_open: isOpen, is_disabled: disabled }
+	);
 
-	const listClassName = [
-		"select_list",
-		dropUp && "select_list_up",
-	]
-		.filter(Boolean)
-		.join(" ");
+	const listClassName = cn("select_list", { select_list_up: dropUp });
 
 	return (
 		<div ref={wrapperRef} className={rootClassName} style={fullWidth ? { width: "100%" } : undefined}>
@@ -226,14 +220,10 @@ export const Select = ({
 						const selected = currentValue === opt.value;
 						const active = i === activeIndex;
 
-						const optionClassName = [
+						const optionClassName = cn(
 							"select_option",
-							selected && "is_selected",
-							active && "is_active",
-							opt.disabled && "is_disabled",
-						]
-							.filter(Boolean)
-							.join(" ");
+							{ is_selected: selected, is_active: active, is_disabled: opt.disabled }
+						);
 
 						return (
 							<li

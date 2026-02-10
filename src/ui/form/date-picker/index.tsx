@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "../../../utils";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -33,18 +34,18 @@ const normalizeWidth = (v?: number | string) =>
     typeof v === "number" ? `${v}px` : v;
 
 export const DatePicker = ({
-                               label,
-                               value,
-                               onChange,
-                               mode = "year-month-day",
-                               startYear = 1950,
-                               endYear = new Date().getFullYear() + 10,
-                               minDate,
-                               selectableRange = "all",
-                               disabled,
-                               fullWidth = true,
-                               width,
-                           }: DatePickerProps) => {
+    label,
+    value,
+    onChange,
+    mode = "year-month-day",
+    startYear = 1950,
+    endYear = new Date().getFullYear() + 10,
+    minDate,
+    selectableRange = "all",
+    disabled,
+    fullWidth = true,
+    width,
+}: DatePickerProps) => {
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
@@ -102,10 +103,7 @@ export const DatePicker = ({
     };
 
     const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
-    const rootClassName = [
-        "date_picker",
-        fullWidth && "date_picker_full_width",
-    ].filter(Boolean).join(" ");
+    const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
 
     return (
         <div className={rootClassName} style={containerStyle}>
