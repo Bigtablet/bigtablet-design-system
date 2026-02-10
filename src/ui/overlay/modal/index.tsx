@@ -44,15 +44,31 @@ export const Modal = ({
         return () => document.removeEventListener("keydown", handleEscape);
     }, [open]);
 
-    // Body scroll lock
+    // Body scroll lock (supports nested modals)
     React.useEffect(() => {
         if (!open) return;
 
-        const originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
+        const body = document.body;
+        const openModals = parseInt(body.dataset.openModals || "0", 10);
+
+        if (openModals === 0) {
+            body.dataset.originalOverflow = window.getComputedStyle(body).overflow;
+            body.style.overflow = "hidden";
+        }
+
+        body.dataset.openModals = String(openModals + 1);
 
         return () => {
-            document.body.style.overflow = originalOverflow;
+            const currentOpenModals = parseInt(body.dataset.openModals || "1", 10);
+            const nextOpenModals = currentOpenModals - 1;
+
+            if (nextOpenModals === 0) {
+                body.style.overflow = body.dataset.originalOverflow || "";
+                delete body.dataset.openModals;
+                delete body.dataset.originalOverflow;
+            } else {
+                body.dataset.openModals = String(nextOpenModals);
+            }
         };
     }, [open]);
 
