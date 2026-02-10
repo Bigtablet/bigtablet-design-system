@@ -11,11 +11,11 @@ export interface CheckboxProps
     indeterminate?: boolean;
 }
 
-export const Checkbox = React.forwardRef<HTMLInputElement | null, CheckboxProps>(
+export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     ({ label, size = "md", indeterminate, className, ...props }, ref) => {
         const inputRef = React.useRef<HTMLInputElement>(null);
 
-        React.useImperativeHandle(ref, () => inputRef.current);
+        React.useImperativeHandle(ref, () => inputRef.current!);
 
         React.useEffect(() => {
             if (!inputRef.current) return;
