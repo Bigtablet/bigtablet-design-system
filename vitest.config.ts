@@ -16,8 +16,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.stories.{ts,tsx}', 'src/test/**'],
+      include: ['src/ui/**/*.{ts,tsx}', 'src/utils/**/*.{ts,tsx}'],
+      exclude: [
+        '**/*.test.{ts,tsx}',
+        '**/*.stories.{ts,tsx}',
+      ],
     },
     projects: [
       // Unit tests with jsdom
