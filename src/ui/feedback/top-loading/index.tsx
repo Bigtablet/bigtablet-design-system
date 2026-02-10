@@ -11,6 +11,8 @@ export interface TopLoadingProps {
     height?: number;
     /** 표시 여부 */
     isLoading?: boolean;
+    /** 프로그레스 바의 접근성 레이블 (기본값: "Page loading") */
+    ariaLabel?: string;
 }
 
 export const TopLoading = ({
@@ -18,6 +20,7 @@ export const TopLoading = ({
     color,
     height = 3,
     isLoading = true,
+    ariaLabel = "Page loading",
 }: TopLoadingProps) => {
     if (!isLoading) return null;
 
@@ -31,7 +34,7 @@ export const TopLoading = ({
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={isIndeterminate ? undefined : progress}
-            aria-label="페이지 로딩 중"
+            aria-label={ariaLabel}
         >
             <div
                 className={[
