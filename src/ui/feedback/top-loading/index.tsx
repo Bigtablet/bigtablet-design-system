@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "../../../utils/cn";
 import "./style.scss";
 
 export interface TopLoadingProps {
@@ -11,6 +12,8 @@ export interface TopLoadingProps {
     height?: number;
     /** 표시 여부 */
     isLoading?: boolean;
+    /** Accessible label for the progress bar (default: "Page loading") */
+    ariaLabel?: string;
 }
 
 export const TopLoading = ({
@@ -18,6 +21,7 @@ export const TopLoading = ({
     color,
     height = 3,
     isLoading = true,
+    ariaLabel = "Page loading",
 }: TopLoadingProps) => {
     if (!isLoading) return null;
 
@@ -31,15 +35,13 @@ export const TopLoading = ({
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={isIndeterminate ? undefined : progress}
-            aria-label="페이지 로딩 중"
+            aria-label={ariaLabel}
         >
             <div
-                className={[
+                className={cn(
                     "top_loading_bar",
                     isIndeterminate && "top_loading_indeterminate",
-                ]
-                    .filter(Boolean)
-                    .join(" ")}
+                )}
                 style={{
                     width: isIndeterminate ? undefined : `${progress}%`,
                     backgroundColor: color,

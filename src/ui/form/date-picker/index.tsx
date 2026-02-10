@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "../../../utils/cn";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -15,6 +16,12 @@ interface DatePickerProps {
     minDate?: string;
     selectableRange?: SelectableRange;
     disabled?: boolean;
+    /** Whether the date picker should take the full width of its container */
+    fullWidth?: boolean;
+    /**
+     * Custom width for the date picker
+     * @deprecated Use `fullWidth` prop or CSS instead
+     */
     width?: number | string;
 }
 
@@ -36,6 +43,7 @@ export const DatePicker = ({
                                minDate,
                                selectableRange = "all",
                                disabled,
+                               fullWidth,
                                width,
                            }: DatePickerProps) => {
     const today = new Date();
@@ -95,9 +103,10 @@ export const DatePicker = ({
     };
 
     const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
+    const rootClassName = cn("date_picker", fullWidth && "date_picker_full_width");
 
     return (
-        <div className="date_picker date_picker_full" style={containerStyle}>
+        <div className={rootClassName} style={containerStyle}>
             {label && (
                 <label className="date_picker_label">{label}</label>
             )}

@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useFocusTrap } from "../../../utils/useFocusTrap";
+import { cn } from "../../../utils/cn";
 import "./style.scss";
 
 export interface ModalProps
@@ -10,6 +12,8 @@ export interface ModalProps
   closeOnOverlay?: boolean;
   width?: number | string;
   title?: React.ReactNode;
+  /** Accessible label for the modal (required if no title) */
+  ariaLabel?: string;
 }
 
 export const Modal = ({
@@ -18,10 +22,17 @@ export const Modal = ({
                         closeOnOverlay = true,
                         width = 520,
                         title,
+                        ariaLabel,
                         children,
                         className,
                         ...props
                       }: ModalProps) => {
+  const panelRef = React.useRef<HTMLDivElement>(null);
+
+  // Focus trap
+  useFocusTrap(panelRef, open);
+
+  // Escape key handler
   React.useEffect(() => {
     if (!open) return;
 
@@ -33,26 +44,38 @@ export const Modal = ({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
+  // Prevent body scroll when modal is open
+  React.useEffect(() => {
+    if (open) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
-  const panelClassName = ["modal_panel", className]
-      .filter(Boolean)
-      .join(" ");
+  const panelClassName = cn("modal_panel", className);
 
   return (
       <div
           className="modal"
           role="dialog"
           aria-modal="true"
+          aria-label={ariaLabel}
+          aria-labelledby={title ? "modal-title" : undefined}
           onClick={() => closeOnOverlay && onClose?.()}
       >
         <div
+            ref={panelRef}
             className={panelClassName}
             style={{ width }}
             onClick={(e) => e.stopPropagation()}
             {...props}
         >
-          {title && <div className="modal_header">{title}</div>}
+          {title && <div id="modal-title" className="modal_header">{title}</div>}
           <div className="modal_body">{children}</div>
         </div>
       </div>

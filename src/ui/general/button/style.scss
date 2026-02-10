@@ -11,6 +11,10 @@
   border: none;
   cursor: pointer;
 
+  &_full_width {
+    width: 100%;
+  }
+
   font-weight: token.$font_weight_medium;
   transition: background token.$transition_base,
   color token.$transition_base,
