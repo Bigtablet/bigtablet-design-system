@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface PaginationProps {
@@ -79,13 +80,10 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                     }
 
                     const isActive = it === page;
-
-                    const buttonClassName = [
+                    const buttonClassName = cn(
                         "pagination_page_button",
-                        isActive && "pagination_active",
-                    ]
-                        .filter(Boolean)
-                        .join(" ");
+                        { pagination_active: isActive }
+                    );
 
                     return (
                         <button
