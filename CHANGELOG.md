@@ -1,3 +1,10 @@
+## [1.18.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.2...v1.18.3) (2026-02-11)
+
+
+### Bug Fixes
+
+* develop ([8e3d7f8](https://github.com/Bigtablet/bigtablet-design-system/commit/8e3d7f8d0db1a62864577428cd7f31f53628eb81))
+
 ## [1.18.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.1...v1.18.2) (2026-02-11)
 
 
