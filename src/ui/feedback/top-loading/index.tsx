@@ -15,6 +15,12 @@ export interface TopLoadingProps {
     ariaLabel?: string;
 }
 
+/**
+ * 상단 로딩바를 렌더링한다.
+ * 표시 여부와 진행률에 따라 determinate/indeterminate 상태를 구성한다.
+ * @param props 로딩바 속성
+ * @returns 렌더링된 로딩바 요소 또는 null
+ */
 export const TopLoading = ({
     progress,
     color,

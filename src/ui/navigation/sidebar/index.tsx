@@ -36,6 +36,12 @@ export interface SidebarProps {
     brandHref?: string;
 }
 
+/**
+ * 사이드바를 렌더링한다.
+ * 활성 경로를 기준으로 메뉴 상태를 계산하고 그룹 열림/닫힘을 관리한다.
+ * @param props 사이드바 속성
+ * @returns 렌더링된 사이드바 UI
+ */
 export const Sidebar = ({
                             items = [],
                             activePath,
@@ -45,6 +51,11 @@ export const Sidebar = ({
                             match = "startsWith",
                             brandHref = "/main",
                         }: SidebarProps) => {
+    /**
+     * 현재 활성 경로와 항목 경로를 비교해 활성 상태를 반환한다.
+     * @param href 대상 경로
+     * @returns 활성 여부
+     */
     const isActive = (href: string) => {
         if (!activePath) return false;
         return match === "exact"
@@ -55,6 +66,11 @@ export const Sidebar = ({
     const [openGroups, setOpenGroups] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(true);
 
+    /**
+     * 사이드바 열림 상태를 갱신하고 로컬 스토리지에 저장한다.
+     * @param next 다음 열림 상태
+     * @returns void
+     */
     const toggleSidebar = (next: boolean) => {
         setIsOpen(next);
         localStorage.setItem("isOpen", JSON.stringify(next));
@@ -76,6 +92,11 @@ export const Sidebar = ({
         );
     }, [activePath, items]);
 
+    /**
+     * 그룹의 열림/닫힘 상태를 토글한다.
+     * @param id 그룹 ID
+     * @returns void
+     */
     const toggleGroup = (id: string) => {
         setOpenGroups((prev) =>
             prev.includes(id)

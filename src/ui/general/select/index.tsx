@@ -30,6 +30,12 @@ export interface SelectProps {
 	textAlign?: "left" | "center";
 }
 
+/**
+ * 셀렉트 컴포넌트를 렌더링한다.
+ * 제어형/비제어형 상태를 정리하고, 키보드/마우스 상호작용과 드롭다운 표시를 관리한다.
+ * @param props 셀렉트 속성
+ * @returns 렌더링된 셀렉트 UI
+ */
 export const Select = ({
 	id,
 	label,
@@ -64,6 +70,11 @@ export const Select = ({
 		[options, currentValue],
 	);
 
+	/**
+	 * 값을 갱신하고 변경 이벤트를 전파한다.
+	 * @param next 다음 값
+	 * @returns void
+	 */
 	const setValue = React.useCallback(
 		(next: string | null) => {
 			const option = options.find((o) => o.value === next) ?? null;
@@ -73,7 +84,11 @@ export const Select = ({
 		[isControlled, onChange, options],
 	);
 
-	// Outside click handler with useEffectEvent
+	/**
+	 * 외부 클릭 시 드롭다운을 닫는다.
+	 * @param e 마우스 이벤트
+	 * @returns void
+	 */
 	const handleOutsideClick = React.useEffectEvent((e: MouseEvent) => {
 		if (!wrapperRef.current?.contains(e.target as Node)) {
 			setIsOpen(false);
@@ -85,6 +100,12 @@ export const Select = ({
 		return () => document.removeEventListener("mousedown", handleOutsideClick);
 	}, []);
 
+	/**
+	 * 활성 옵션을 위/아래로 이동한다.
+	 * 닫혀 있으면 먼저 열고, 비활성 옵션은 건너뛴다.
+	 * @param dir 이동 방향
+	 * @returns void
+	 */
 	const moveActive = (dir: 1 | -1) => {
 		if (!isOpen) {
 			setIsOpen(true);
@@ -101,6 +122,10 @@ export const Select = ({
 		}
 	};
 
+	/**
+	 * 현재 활성 옵션을 선택으로 확정한다.
+	 * @returns void
+	 */
 	const commitActive = () => {
 		if (activeIndex < 0 || activeIndex >= options.length) return;
 		const opt = options[activeIndex];
@@ -110,6 +135,11 @@ export const Select = ({
 		}
 	};
 
+	/**
+	 * 키보드 입력에 따라 열기/선택/이동을 처리한다.
+	 * @param e 키보드 이벤트
+	 * @returns void
+	 */
 	const onKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
 		if (disabled) return;
 
@@ -156,7 +186,7 @@ export const Select = ({
 		setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
 	}, [isOpen, options, currentValue]);
 
-	// 드롭다운 방향 계산 (auto-flip)
+	// 드롭다운 방향 계산(자동 플립)
 	React.useLayoutEffect(() => {
 		if (!isOpen || !controlRef.current) return;
 

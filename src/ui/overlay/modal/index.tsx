@@ -12,10 +12,16 @@ export interface ModalProps
     closeOnOverlay?: boolean;
     width?: number | string;
     title?: React.ReactNode;
-    /** Accessible label for the modal (default uses title or "Dialog") */
+    /** 모달 접근성 레이블(기본값: title 또는 "Dialog") */
     ariaLabel?: string;
 }
 
+/**
+ * 모달을 렌더링한다.
+ * 포커스 트랩과 스크롤 잠금을 적용하고, 열림 상태에 따라 오버레이/패널을 구성한다.
+ * @param props 모달 속성
+ * @returns 열림 상태일 때 렌더링된 모달, 닫힘 상태면 null
+ */
 export const Modal = ({
     open,
     onClose,
@@ -29,10 +35,14 @@ export const Modal = ({
 }: ModalProps) => {
     const panelRef = React.useRef<HTMLDivElement>(null);
 
-    // Focus trap
+    // 포커스 트랩
     useFocusTrap(panelRef, open);
 
-    // Escape key handler with useEffectEvent
+    /**
+     * Escape 키 입력 시 닫기 동작을 처리한다.
+     * @param e 키보드 이벤트
+     * @returns void
+     */
     const handleEscape = React.useEffectEvent((e: KeyboardEvent) => {
         if (e.key === "Escape") onClose?.();
     });
@@ -44,7 +54,7 @@ export const Modal = ({
         return () => document.removeEventListener("keydown", handleEscape);
     }, [open]);
 
-    // Body scroll lock (supports nested modals)
+    // 바디 스크롤 잠금(중첩 모달 지원)
     React.useEffect(() => {
         if (!open) return;
 

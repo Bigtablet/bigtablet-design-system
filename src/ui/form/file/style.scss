@@ -4,6 +4,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
 
   &:hover .file_input_label {
     border-color: token.$color_border_light;

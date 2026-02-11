@@ -11,6 +11,13 @@ export interface CheckboxProps
     indeterminate?: boolean;
 }
 
+/**
+ * 체크박스를 렌더링한다.
+ * indeterminate 상태를 반영하고 라벨을 포함한 UI를 구성한다.
+ * @param props 체크박스 속성
+ * @param ref 입력 요소 참조
+ * @returns 렌더링된 체크박스 UI
+ */
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     ({ label, size = "md", indeterminate, className, ...props }, ref) => {
         const inputRef = React.useRef<HTMLInputElement>(null);

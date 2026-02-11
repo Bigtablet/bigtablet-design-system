@@ -9,6 +9,12 @@ export interface FileInputProps
     onFiles?: (files: FileList | null) => void;
 }
 
+/**
+ * 파일 입력 컴포넌트를 렌더링한다.
+ * 내부 input 변경을 감지해 파일 목록을 콜백으로 전달한다.
+ * @param props 파일 입력 속성
+ * @returns 렌더링된 파일 입력 UI
+ */
 export const FileInput = ({
                               label = "파일 선택",
                               onFiles,

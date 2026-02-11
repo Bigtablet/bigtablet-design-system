@@ -30,6 +30,13 @@ export interface TextFieldProps
     transformValue?: (value: string) => string;
 }
 
+/**
+ * 텍스트 필드를 렌더링한다.
+ * 제어형/비제어형 값을 동기화하고, 조합 입력(IME)을 고려해 변경 이벤트를 전달한다.
+ * @param props 텍스트 필드 속성
+ * @param ref 입력 요소 참조
+ * @returns 렌더링된 텍스트 필드 UI
+ */
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     (
         {
@@ -56,6 +63,11 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         const helperId = helperText ? `${inputId}-help` : undefined;
 
         const isControlled = value !== undefined;
+        /**
+         * 입력값 변환 함수를 적용한다.
+         * @param nextValue 원본 값
+         * @returns 변환된 값
+         */
         const applyTransform = (nextValue: string) =>
             transformValue ? transformValue(nextValue) : nextValue;
 

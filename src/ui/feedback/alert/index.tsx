@@ -26,6 +26,11 @@ interface AlertContextValue {
 
 const AlertContext = createContext<AlertContextValue | null>(null);
 
+/**
+ * AlertContext를 사용하는 훅.
+ * Provider 외부에서 호출되면 오류를 던진다.
+ * @returns alert 컨트롤러
+ */
 export const useAlert = () => {
     const context = useContext(AlertContext);
     if (!context) {
@@ -38,6 +43,12 @@ interface AlertState extends AlertOptions {
     isOpen: boolean;
 }
 
+/**
+ * 알림 모달을 제어하는 Provider를 렌더링한다.
+ * 내부 상태를 통해 AlertModal 표시와 확인/취소 흐름을 관리한다.
+ * @param props Provider 속성
+ * @returns 렌더링된 Provider와 모달
+ */
 export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({
                                                                            children,
                                                                        }) => {
@@ -45,6 +56,11 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({
         isOpen: false,
     });
 
+    /**
+     * 알림을 열고 옵션을 상태로 반영한다.
+     * @param options 알림 옵션
+     * @returns void
+     */
     const showAlert = useCallback((options: AlertOptions) => {
         setAlertState({
             ...options,
@@ -52,15 +68,27 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({
         });
     }, []);
 
+    /**
+     * 알림을 닫는다.
+     * @returns void
+     */
     const handleClose = useCallback(() => {
         setAlertState((prev) => ({...prev, isOpen: false}));
     }, []);
 
+    /**
+     * 확인 동작을 실행하고 알림을 닫는다.
+     * @returns void
+     */
     const handleConfirm = useCallback(() => {
         alertState.onConfirm?.();
         handleClose();
     }, [alertState.onConfirm, handleClose]);
 
+    /**
+     * 취소 동작을 실행하고 알림을 닫는다.
+     * @returns void
+     */
     const handleCancel = useCallback(() => {
         alertState.onCancel?.();
         handleClose();
@@ -87,6 +115,12 @@ interface AlertModalProps extends AlertOptions {
     onClose: () => void;
 }
 
+/**
+ * AlertModal을 렌더링한다.
+ * 옵션에 따라 제목/메시지/액션 버튼을 구성하고 오버레이 닫기를 처리한다.
+ * @param props 모달 속성
+ * @returns 렌더링된 알림 모달
+ */
 const AlertModal: React.FC<AlertModalProps> = ({
                                                    variant = "info",
                                                    title,
