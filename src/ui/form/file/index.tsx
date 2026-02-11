@@ -33,7 +33,7 @@ export const FileInput = ({
         .join(" ");
 
     return (
-        <div className={rootClassName}>
+        <div style={{cursor: "pointer"}} className={rootClassName}>
             <input
                 id={inputId}
                 type="file"
