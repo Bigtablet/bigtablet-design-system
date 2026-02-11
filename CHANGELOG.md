@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.1...v1.18.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* file input cursor ([119042f](https://github.com/Bigtablet/bigtablet-design-system/commit/119042f95ffc178b5aac0cf4f2097821f151c8c9))
+
 ## [1.18.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.0...v1.18.1) (2026-02-10)
 
 # [1.18.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.4...v1.18.0) (2026-02-10)
