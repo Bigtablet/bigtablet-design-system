@@ -1,3 +1,10 @@
+## [1.18.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.3...v1.18.4) (2026-02-13)
+
+
+### Bug Fixes
+
+* modal overflow ([5d2bc62](https://github.com/Bigtablet/bigtablet-design-system/commit/5d2bc6203d427f4d0ae99a56cf1c673c236aa525))
+
 ## [1.18.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.2...v1.18.3) (2026-02-11)
 
 
