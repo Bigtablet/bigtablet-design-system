@@ -13,7 +13,7 @@
     border-radius: token.$radius_lg;
     box-shadow: token.$shadow_lg;
     max-width: calc(100% - 32px);
-    overflow: hidden;
+    overflow: visible;
   }
 
   &_header {
@@ -25,5 +25,6 @@
 
   &_body {
     padding: token.$spacing_lg;
+    overflow: visible; 
   }
 }
