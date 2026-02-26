@@ -86,5 +86,12 @@ export default defineConfig([
     sourcemap: false,
     minify: true,
     outExtension: () => ({ js: ".min.js" }),
+    esbuildOptions(options) {
+      // bigtablet.js uses UMD pattern (module.exports) for browser compatibility.
+      // Since package.json has "type": "module", esbuild treats it as ESM and warns
+      // about the CommonJS `module` variable. Suppress this — the IIFE format handles
+      // the global export and the UMD check is irrelevant at runtime.
+      options.logOverride = { "commonjs-variable-in-esm": "silent" };
+    },
   },
 ]);
