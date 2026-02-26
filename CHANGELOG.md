@@ -1,3 +1,10 @@
+## [1.18.9](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.8...v1.18.9) (2026-02-26)
+
+
+### Bug Fixes
+
+* resolve Chromatic on main PR and ESM build warning ([e155f74](https://github.com/Bigtablet/bigtablet-design-system/commit/e155f744712130bcd68c04e0df0d140f110bc16f))
+
 ## [1.18.8](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.7...v1.18.8) (2026-02-26)
 
 ## [1.18.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.6...v1.18.7) (2026-02-26)
