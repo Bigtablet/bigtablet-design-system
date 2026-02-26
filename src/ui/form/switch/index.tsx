@@ -6,10 +6,15 @@ import "./style.scss";
 
 export interface SwitchProps
     extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+    /** 제어형 스위치 상태 */
     checked?: boolean;
+    /** 비제어형 초기 스위치 상태 */
     defaultChecked?: boolean;
+    /** 상태 변경 시 호출되는 콜백 */
     onChange?: (checked: boolean) => void;
+    /** 스위치 크기 (기본값: "md") */
     size?: "sm" | "md" | "lg";
+    /** 비활성화 여부 */
     disabled?: boolean;
     /** 스위치 접근성 레이블(스크린 리더용) */
     ariaLabel: string;

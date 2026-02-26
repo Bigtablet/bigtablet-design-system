@@ -15,18 +15,31 @@ export interface SelectOption {
 }
 
 export interface SelectProps {
+	/** 셀렉트 요소의 id (미입력 시 자동 생성) */
 	id?: string;
+	/** 셀렉트 위에 표시할 라벨 텍스트 */
 	label?: string;
+	/** 선택 전 표시할 플레이스홀더 (기본값: "Select…") */
 	placeholder?: string;
+	/** 표시할 옵션 목록 */
 	options: SelectOption[];
+	/** 제어형 선택 값 */
 	value?: string | null;
+	/** 값 변경 시 호출되는 콜백 */
 	onChange?: (value: string | null, option?: SelectOption | null) => void;
+	/** 비제어형 초기 선택 값 */
 	defaultValue?: string | null;
+	/** 비활성화 여부 */
 	disabled?: boolean;
+	/** 셀렉트 크기 (기본값: "md") */
 	size?: SelectSize;
+	/** 셀렉트 스타일 변형 (기본값: "outline") */
 	variant?: SelectVariant;
+	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
+	/** 루트 요소에 추가할 className */
 	className?: string;
+	/** 선택된 값 텍스트 정렬 (기본값: "left") */
 	textAlign?: "left" | "center";
 }
 

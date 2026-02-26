@@ -6,8 +6,11 @@ import "./style.scss";
 
 export interface CheckboxProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+    /** 체크박스 옆에 표시할 라벨 */
     label?: React.ReactNode;
+    /** 체크박스 크기 (기본값: "md") */
     size?: "sm" | "md" | "lg";
+    /** 중간 선택(indeterminate) 상태 여부 */
     indeterminate?: boolean;
 }
 

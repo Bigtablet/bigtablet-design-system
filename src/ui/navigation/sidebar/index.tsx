@@ -10,29 +10,45 @@ import "./style.scss";
 export type MatchMode = "startsWith" | "exact";
 
 export interface SidebarLinkItem {
+    /** 항목 타입 (생략 시 "link"로 간주) */
     type?: "link";
+    /** 링크 경로 */
     href: string;
+    /** 메뉴 항목에 표시할 라벨 */
     label: React.ReactNode;
+    /** 메뉴 항목 앞에 표시할 아이콘 */
     icon?: LucideIcon;
 }
 
 export interface SidebarGroupItem {
+    /** 항목 타입 ("group"으로 고정) */
     type: "group";
+    /** 그룹 고유 식별자 */
     id: string;
+    /** 그룹 헤더에 표시할 라벨 */
     label: React.ReactNode;
+    /** 그룹 헤더 앞에 표시할 아이콘 */
     icon?: LucideIcon;
+    /** 그룹 하위 링크 항목 목록 */
     children: SidebarLinkItem[];
 }
 
 export type SidebarItem = SidebarLinkItem | SidebarGroupItem;
 
 export interface SidebarProps {
+    /** 사이드바에 표시할 메뉴 항목 목록 */
     items?: SidebarItem[];
+    /** 현재 활성 경로 (활성 메뉴 항목 하이라이트에 사용) */
     activePath?: string;
+    /** 메뉴 항목 클릭 시 호출되는 콜백 */
     onItemSelect?: (href: string) => void;
+    /** 루트 요소에 추가할 className */
     className?: string;
+    /** 루트 요소에 적용할 인라인 스타일 */
     style?: React.CSSProperties;
+    /** 활성 경로 매칭 방식 (기본값: "startsWith") */
     match?: MatchMode;
+    /** 브랜드 로고 클릭 시 이동할 경로 (기본값: "/main") */
     brandHref?: string;
 }
 

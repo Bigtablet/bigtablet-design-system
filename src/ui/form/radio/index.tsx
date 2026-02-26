@@ -6,7 +6,9 @@ import "./style.scss";
 
 export interface RadioProps
     extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+    /** 라디오 버튼 옆에 표시할 라벨 */
     label?: React.ReactNode;
+    /** 라디오 버튼 크기 (기본값: "md") */
     size?: "sm" | "md" | "lg";
 }
 

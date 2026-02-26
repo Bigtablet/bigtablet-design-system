@@ -12,21 +12,31 @@ export interface TextFieldProps
         React.InputHTMLAttributes<HTMLInputElement>,
         "size" | "onChange" | "value" | "defaultValue"
     > {
+    /** 입력 필드 위에 표시할 라벨 텍스트 */
     label?: string;
+    /** 입력 필드 아래에 표시할 도움말 텍스트 */
     helperText?: string;
+    /** 에러 상태 여부 */
     error?: boolean;
+    /** 성공 상태 여부 */
     success?: boolean;
+    /** 입력 필드 스타일 변형 (기본값: "outline") */
     variant?: TextFieldVariant;
+    /** 입력 필드 크기 (기본값: "md") */
     size?: TextFieldSize;
+    /** 입력 필드 왼쪽에 표시할 아이콘 */
     leftIcon?: React.ReactNode;
+    /** 입력 필드 오른쪽에 표시할 아이콘 */
     rightIcon?: React.ReactNode;
+    /** 컨테이너 전체 너비 차지 여부 */
     fullWidth?: boolean;
-
+    /** 값 변경 시 호출되는 콜백 (IME 조합 완료 후 실행) */
     onChangeAction?: (value: string) => void;
-
+    /** 제어형 입력 값 */
     value?: string;
+    /** 비제어형 초기 입력 값 */
     defaultValue?: string;
-
+    /** 입력값 변환 함수 (예: 숫자만 허용, 대문자 변환) */
     transformValue?: (value: string) => string;
 }
 

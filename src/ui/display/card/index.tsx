@@ -5,9 +5,13 @@ import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+    /** 카드 상단에 표시할 제목 */
     heading?: React.ReactNode;
+    /** 카드 그림자 크기 (기본값: "sm") */
     shadow?: "none" | "sm" | "md" | "lg";
+    /** 카드 내부 여백 (기본값: "md") */
     padding?: "none" | "sm" | "md" | "lg";
+    /** 테두리 표시 여부 (기본값: false) */
     bordered?: boolean;
 }
 

@@ -4,6 +4,7 @@ import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export interface ToastProviderProps {
+  /** 토스트 컨테이너 식별자 (기본값: "default") */
   containerId?: string;
 }
 
