@@ -11,7 +11,7 @@ interface DatePickerProps {
     label?: string;
     /** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
     value?: string;
-    /** 날짜 변경 시 호출되는 콜백 */
+    /** 날짜 변경 시 호출되는 콜백. `mode` 값에 따라 "YYYY-MM" 또는 "YYYY-MM-DD" 형식의 문자열이 전달됩니다. */
     onChange: (value: string) => void;
     /** 선택 모드 (기본값: "year-month-day") */
     mode?: DatePickerMode;
