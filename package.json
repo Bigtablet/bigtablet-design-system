@@ -114,5 +114,12 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": ">=4.59.0",
+      "lodash": ">=4.17.23",
+      "lodash-es": ">=4.17.23"
+    }
   }
 }
