@@ -25,7 +25,7 @@ export interface SelectProps {
 	options: SelectOption[];
 	/** 제어형 선택 값 */
 	value?: string | null;
-	/** 값 변경 시 호출되는 콜백 */
+/** 값 변경 시 호출되는 콜백. 선택된 값과 전체 옵션 객체를 인자로 전달합니다. */
 	onChange?: (value: string | null, option?: SelectOption | null) => void;
 	/** 비제어형 초기 선택 값 */
 	defaultValue?: string | null;
