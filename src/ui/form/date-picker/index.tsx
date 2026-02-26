@@ -7,14 +7,23 @@ type DatePickerMode = "year-month" | "year-month-day";
 type SelectableRange = "all" | "until-today";
 
 interface DatePickerProps {
+    /** 데이트 피커 위에 표시할 라벨 텍스트 */
     label?: string;
+    /** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
     value?: string;
+    /** 날짜 변경 시 호출되는 콜백. `mode` 값에 따라 "YYYY-MM" 또는 "YYYY-MM-DD" 형식의 문자열이 전달됩니다. */
     onChange: (value: string) => void;
+    /** 선택 모드 (기본값: "year-month-day") */
     mode?: DatePickerMode;
+    /** 연도 선택 범위 시작 (기본값: 1950) */
     startYear?: number;
+    /** 연도 선택 범위 끝 (기본값: 현재 연도 + 10) */
     endYear?: number;
+    /** 선택 가능한 최소 날짜 ("YYYY-MM-DD" 형식) */
     minDate?: string;
+    /** 선택 가능한 날짜 범위 ("all": 제한 없음, "until-today": 오늘까지) */
     selectableRange?: SelectableRange;
+    /** 비활성화 여부 */
     disabled?: boolean;
     /** 데이트 피커가 컨테이너의 전체 너비를 차지할지 여부 */
     fullWidth?: boolean;

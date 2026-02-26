@@ -5,7 +5,9 @@ import "./style.scss";
 
 export interface FileInputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
+    /** 파일 선택 버튼 라벨 텍스트 (기본값: "파일 선택") */
     label?: string;
+    /** 파일 선택 시 호출되는 콜백 */
     onFiles?: (files: FileList | null) => void;
 }
 

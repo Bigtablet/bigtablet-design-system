@@ -6,7 +6,9 @@ import "./style.scss";
 
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    /** 버튼 스타일 변형 (기본값: "primary") */
     variant?: "primary" | "secondary" | "ghost" | "danger";
+    /** 버튼 크기 (기본값: "md") */
     size?: "sm" | "md" | "lg";
     /** 버튼이 컨테이너의 전체 너비를 차지할지 여부 */
     fullWidth?: boolean;

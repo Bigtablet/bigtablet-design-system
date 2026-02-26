@@ -7,10 +7,15 @@ import "./style.scss";
 
 export interface ModalProps
     extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+    /** 모달 열림 여부 */
     open: boolean;
+    /** 모달 닫기 콜백 */
     onClose?: () => void;
+    /** 오버레이 클릭 시 닫기 여부 (기본값: true) */
     closeOnOverlay?: boolean;
+    /** 모달 패널 너비 (기본값: 520) */
     width?: number | string;
+    /** 모달 헤더에 표시할 제목 */
     title?: React.ReactNode;
     /** 모달 접근성 레이블(기본값: title 또는 "Dialog") */
     ariaLabel?: string;

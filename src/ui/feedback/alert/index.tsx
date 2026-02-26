@@ -9,14 +9,23 @@ export type AlertVariant = "info" | "success" | "warning" | "error";
 export type AlertActionsAlign = "left" | "center" | "right";
 
 export interface AlertOptions {
+    /** 알림 스타일 변형 (기본값: "info") */
     variant?: AlertVariant;
+    /** 알림 제목 */
     title?: React.ReactNode;
+    /** 알림 본문 메시지 */
     message?: React.ReactNode;
+    /** 확인 버튼 텍스트 (기본값: "확인") */
     confirmText?: string;
+    /** 취소 버튼 텍스트 (기본값: "취소") */
     cancelText?: string;
+    /** 취소 버튼 표시 여부 (기본값: false) */
     showCancel?: boolean;
+    /** 액션 버튼 정렬 (기본값: "right") */
     actionsAlign?: AlertActionsAlign;
+    /** 확인 버튼 클릭 시 호출되는 콜백 */
     onConfirm?: () => void;
+    /** 취소 버튼 클릭 시 호출되는 콜백 */
     onCancel?: () => void;
 }
 

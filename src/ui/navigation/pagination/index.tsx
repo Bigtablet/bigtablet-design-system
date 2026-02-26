@@ -5,8 +5,11 @@ import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface PaginationProps {
+    /** 현재 페이지 번호 (1-based) */
     page: number;
+    /** 전체 페이지 수 */
     totalPages: number;
+    /** 페이지 변경 시 호출되는 콜백 */
     onChange: (page: number) => void;
 }
 
