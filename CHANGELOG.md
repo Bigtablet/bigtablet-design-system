@@ -1,3 +1,11 @@
+## [1.18.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.5...v1.18.6) (2026-02-26)
+
+
+### Bug Fixes
+
+* patch rollup, lodash, lodash-es security vulnerabilities via pnpm overrides ([b501ff0](https://github.com/Bigtablet/bigtablet-design-system/commit/b501ff055e56daa2f50c4a78b18ce4d7fdfcc3ca))
+* use caret ranges in pnpm overrides to prevent major version jumps ([47ad213](https://github.com/Bigtablet/bigtablet-design-system/commit/47ad213d13b2b6fd522c6cb9b9f77799219b7774))
+
 ## [1.18.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.4...v1.18.5) (2026-02-26)
 
 ## [1.18.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.3...v1.18.4) (2026-02-13)
