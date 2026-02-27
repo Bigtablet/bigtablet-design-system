@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { ToastProvider } from "src/ui/feedback/toast";
-import {useToast} from "src/ui/feedback/toast/use-toast";
+import { useToast } from "src/ui/feedback/toast/use-toast";
 
 const demo_wrap_style: React.CSSProperties = {
     display: "grid",
@@ -30,12 +30,8 @@ const demo_hint_style: React.CSSProperties = {
     lineHeight: 1.5,
 };
 
-type ToastDemoButtonsProps = {
-    containerId: string;
-};
-
-function ToastDemoButtons({ containerId }: ToastDemoButtonsProps) {
-    const t = useToast(containerId);
+function ToastDemoButtons() {
+    const t = useToast();
 
     return (
         <div style={demo_wrap_style}>
@@ -96,6 +92,25 @@ const meta: Meta = {
 | error | 오류 발생 알림 |
 | info | 정보성 안내 |
 
+### 사용 방법
+\`\`\`tsx
+// 1) 앱 루트에서 ToastProvider로 감쌉니다
+<ToastProvider>
+  <App />
+</ToastProvider>
+
+// 2) 컴포넌트 내에서 useToast()로 메시지를 표시합니다
+const t = useToast();
+t.success("저장 완료");
+t.error("오류 발생");
+t.warning("세션이 곧 만료됩니다");
+t.info("새 버전이 있습니다");
+t.message("알림 메시지");
+
+// 3) 표시 시간 조정 (기본 3000ms)
+t.success("저장 완료", 5000);
+\`\`\`
+
 ### 디자이너 체크 포인트
 - 표시 시간이 메시지를 읽기에 충분한지 (기본 3초)
 - 화면 위치가 콘텐츠를 가리지 않는지 (우측 상단 기본)
@@ -113,16 +128,11 @@ type Story = StoryObj;
 
 export const Playground: Story = {
     name: "Playground",
-    render: () => {
-        const containerId = "toast_playground";
-
-        return (
-            <>
-                <ToastProvider containerId={containerId} />
-                <ToastDemoButtons containerId={containerId} />
-            </>
-        );
-    },
+    render: () => (
+        <ToastProvider>
+            <ToastDemoButtons />
+        </ToastProvider>
+    ),
 };
 
 export const UsageExample: Story = {
@@ -140,12 +150,21 @@ export const UsageExample: Story = {
               lineHeight: 1.5,
               overflowX: "auto",
           }}
-      >{`// 1) 앱 루트에 ToastProvider를 한 번만 렌더링합니다.
-<ToastProvider />
+      >{`// 1) 앱 루트에서 ToastProvider로 감쌉니다.
+<ToastProvider>
+  <App />
+</ToastProvider>
 
-// 2) 필요한 곳에서 useToast()로 메시지를 띄웁니다.
+// 2) 컴포넌트 내에서 useToast()로 메시지를 표시합니다.
 const t = useToast();
-t.success("저장 완료");`}</pre>
+t.success("저장 완료");
+t.error("오류 발생");
+t.warning("경고 메시지");
+t.info("정보 메시지");
+t.message("기본 메시지");
+
+// 3) 표시 시간 조정 (기본 3000ms)
+t.success("저장 완료", 5000);`}</pre>
         </div>
     ),
 };

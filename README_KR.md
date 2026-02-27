@@ -49,7 +49,7 @@ pnpm add @bigtablet/design-system
 **Peer Dependencies**
 
 ```bash
-npm install react react-dom lucide-react react-toastify
+npm install react react-dom lucide-react
 ```
 
 > React 18+ 및 Next.js 13+ 이상에서 사용하는 것을 권장합니다.
@@ -129,8 +129,9 @@ export default function RootLayout({ children }) {
     <html>
       <body>
         <AlertProvider>
-          <ToastProvider />
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </AlertProvider>
       </body>
     </html>
@@ -138,8 +139,9 @@ export default function RootLayout({ children }) {
 }
 ```
 
+**Alert 사용 예시**
+
 ```tsx
-// 사용 예시
 import { useAlert } from '@bigtablet/design-system';
 
 function MyComponent() {
@@ -158,6 +160,27 @@ function MyComponent() {
     >
       삭제
     </Button>
+  );
+}
+```
+
+**Toast 사용 예시**
+
+```tsx
+import { useToast } from '@bigtablet/design-system';
+
+function MyComponent() {
+  const toast = useToast();
+
+  return (
+    <div>
+      <Button onClick={() => toast.success('저장되었습니다!')}>저장</Button>
+      <Button onClick={() => toast.error('오류가 발생했습니다.')}>오류</Button>
+      <Button onClick={() => toast.warning('세션이 곧 만료됩니다.')}>경고</Button>
+      <Button onClick={() => toast.info('새 버전이 있습니다.')}>정보</Button>
+      {/* 두 번째 인수로 표시 시간(ms) 지정 */}
+      <Button onClick={() => toast.success('저장 완료!', 5000)}>저장 (5초)</Button>
+    </div>
   );
 }
 ```

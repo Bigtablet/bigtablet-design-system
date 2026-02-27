@@ -49,7 +49,7 @@ pnpm add @bigtablet/design-system
 **Peer Dependencies**
 
 ```bash
-npm install react react-dom lucide-react react-toastify
+npm install react react-dom lucide-react
 ```
 
 > Recommended for use with **React 18+** and **Next.js 13+**.
@@ -129,8 +129,9 @@ export default function RootLayout({ children }) {
     <html>
       <body>
         <AlertProvider>
-          <ToastProvider />
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </AlertProvider>
       </body>
     </html>
@@ -138,8 +139,9 @@ export default function RootLayout({ children }) {
 }
 ```
 
+**Alert usage**
+
 ```tsx
-// Usage example
 import { useAlert } from '@bigtablet/design-system';
 
 function MyComponent() {
@@ -158,6 +160,27 @@ function MyComponent() {
     >
       Delete
     </Button>
+  );
+}
+```
+
+**Toast usage**
+
+```tsx
+import { useToast } from '@bigtablet/design-system';
+
+function MyComponent() {
+  const toast = useToast();
+
+  return (
+    <div>
+      <Button onClick={() => toast.success('Saved successfully!')}>Save</Button>
+      <Button onClick={() => toast.error('An error occurred.')}>Error</Button>
+      <Button onClick={() => toast.warning('Session expiring soon.')}>Warning</Button>
+      <Button onClick={() => toast.info('New version available.')}>Info</Button>
+      {/* Custom duration (ms) as second argument */}
+      <Button onClick={() => toast.success('Saved!', 5000)}>Save (5s)</Button>
+    </div>
   );
 }
 ```

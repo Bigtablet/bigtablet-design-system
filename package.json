@@ -68,8 +68,7 @@
   "peerDependencies": {
     "lucide-react": ">=0.552.0",
     "react": "^19",
-    "react-dom": "^19",
-    "react-toastify": ">=11.0.5"
+    "react-dom": "^19"
   },
   "peerDependenciesMeta": {
     "next": {
@@ -102,7 +101,6 @@
     "playwright": "^1.57.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-toastify": "^11.0.5",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
     "storybook": "10.1.11",
