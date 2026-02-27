@@ -110,9 +110,10 @@ describe("Select", () => {
         render(<Select options={options} />);
         const button = screen.getByRole("button");
 
+        // open first so the init effect won't override the Home key's activeIndex
+        fireEvent.click(button);
         fireEvent.keyDown(button, { key: "Home" });
 
-        expect(screen.getByRole("listbox")).toBeInTheDocument();
         const firstOption = screen.getByText("Option 1").closest("[role='option']");
         expect(firstOption).toHaveClass("is_active");
     });

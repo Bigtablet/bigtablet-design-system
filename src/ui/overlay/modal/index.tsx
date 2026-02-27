@@ -39,6 +39,7 @@ export const Modal = ({
     ...props
 }: ModalProps) => {
     const panelRef = React.useRef<HTMLDivElement>(null);
+    const titleId = React.useId();
 
     // 포커스 트랩
     useFocusTrap(panelRef, open);
@@ -90,14 +91,15 @@ export const Modal = ({
     if (!open) return null;
 
     const panelClassName = cn("modal_panel", className);
-    const modalAriaLabel = ariaLabel ?? (typeof title === "string" ? title : "Dialog");
+    const hasTitle = !!title;
 
     return (
         <div
             className="modal"
             role="dialog"
             aria-modal="true"
-            aria-label={modalAriaLabel}
+            aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
+            aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
             onClick={() => closeOnOverlay && onClose?.()}
         >
             <div
@@ -107,7 +109,7 @@ export const Modal = ({
                 onClick={(e) => e.stopPropagation()}
                 {...props}
             >
-                {title && <div className="modal_header">{title}</div>}
+                {title && <div id={titleId} className="modal_header">{title}</div>}
                 <div className="modal_body">{children}</div>
             </div>
         </div>

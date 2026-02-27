@@ -117,7 +117,7 @@ describe("TextField", () => {
         expect(document.getElementById(helperId!)).toHaveTextContent("Required field");
     });
 
-    it("does not call onChangeAction during IME composition", () => {
+    it("handles IME composition correctly", () => {
         const handleChange = vi.fn();
         render(<TextField onChangeAction={handleChange} />);
 
@@ -125,21 +125,11 @@ describe("TextField", () => {
 
         fireEvent.compositionStart(input);
         fireEvent.change(input, { target: { value: "중" } });
-
         expect(handleChange).not.toHaveBeenCalled();
-    });
 
-    it("calls onChangeAction after IME composition ends", () => {
-        const handleChange = vi.fn();
-        render(<TextField onChangeAction={handleChange} />);
-
-        const input = screen.getByRole("textbox");
-
-        fireEvent.compositionStart(input);
-        fireEvent.change(input, { target: { value: "중" } });
         fireEvent.compositionEnd(input, { target: { value: "중간" } });
-
         expect(handleChange).toHaveBeenCalledWith("중간");
+        expect(handleChange).toHaveBeenCalledTimes(1);
     });
 
     it("applies transform after IME composition ends", () => {
