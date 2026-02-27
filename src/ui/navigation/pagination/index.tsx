@@ -107,15 +107,16 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                     );
 
                     return (
-                        <button
-                            key={it}
-                            type="button"
-                            className={buttonClassName}
-                            onClick={() => onChange(it)}
-                            aria-current={isActive ? "page" : undefined}
-                        >
-                            {it}
-                        </button>
+                        <span key={it} role="listitem">
+                            <button
+                                type="button"
+                                className={buttonClassName}
+                                onClick={() => onChange(it)}
+                                aria-current={isActive ? "page" : undefined}
+                            >
+                                {it}
+                            </button>
+                        </span>
                     );
                 })}
             </div>

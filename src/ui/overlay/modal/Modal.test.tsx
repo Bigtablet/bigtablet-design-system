@@ -111,4 +111,28 @@ describe("Modal", () => {
         const panel = screen.getByRole("dialog").querySelector(".modal_panel");
         expect(panel).toHaveClass("custom-modal");
     });
+
+    it("keeps scroll locked when one of multiple open modals is closed", () => {
+        const { rerender } = render(
+            <>
+                <Modal open onClose={() => {}}>First</Modal>
+                <Modal open onClose={() => {}}>Second</Modal>
+            </>
+        );
+
+        expect(document.body.style.overflow).toBe("hidden");
+        expect(document.body.dataset.openModals).toBe("2");
+
+        // Close the second modal
+        rerender(
+            <>
+                <Modal open onClose={() => {}}>First</Modal>
+                <Modal open={false} onClose={() => {}}>Second</Modal>
+            </>
+        );
+
+        // First modal still open — scroll must remain locked
+        expect(document.body.style.overflow).toBe("hidden");
+        expect(document.body.dataset.openModals).toBe("1");
+    });
 });

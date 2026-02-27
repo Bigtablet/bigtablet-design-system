@@ -157,6 +157,7 @@ export const DatePicker = ({
             )}
             <div className="date_picker_fields">
                 <select
+                    aria-label="연도"
                     value={year}
                     disabled={disabled}
                     onChange={(e) =>
@@ -175,6 +176,7 @@ export const DatePicker = ({
                 </select>
 
                 <select
+                    aria-label="월"
                     value={month}
                     disabled={disabled || !year}
                     onChange={(e) =>
@@ -193,6 +195,7 @@ export const DatePicker = ({
 
                 {mode === "year-month-day" && (
                     <select
+                        aria-label="일"
                         value={day}
                         disabled={disabled || !month}
                         onChange={(e) =>

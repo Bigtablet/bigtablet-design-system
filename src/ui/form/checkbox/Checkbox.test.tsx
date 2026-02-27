@@ -54,4 +54,16 @@ describe("Checkbox", () => {
         render(<Checkbox ref={ref} />);
         expect(ref).toHaveBeenCalled();
     });
+
+    it("updates indeterminate state dynamically on rerender", () => {
+        const { rerender } = render(<Checkbox indeterminate={false} />);
+        const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
+        expect(checkbox.indeterminate).toBe(false);
+
+        rerender(<Checkbox indeterminate={true} />);
+        expect(checkbox.indeterminate).toBe(true);
+
+        rerender(<Checkbox indeterminate={false} />);
+        expect(checkbox.indeterminate).toBe(false);
+    });
 });

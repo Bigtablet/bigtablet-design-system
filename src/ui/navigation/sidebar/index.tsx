@@ -146,14 +146,19 @@ export const Sidebar = ({
                                 height={30}
                                 priority
                             />
+                        </Link>
+                        <button
+                            type="button"
+                            className="sidebar_close_btn"
+                            onClick={() => toggleSidebar(false)}
+                        >
                             <Image
                                 src="/images/sidebar/arrow-close.svg"
                                 alt="Close"
                                 width={24}
                                 height={24}
-                                onClick={() => toggleSidebar(false)}
                             />
-                        </Link>
+                        </button>
                     </div>
 
                     <nav className="sidebar_nav">
@@ -180,13 +185,14 @@ export const Sidebar = ({
                                         <button
                                             type="button"
                                             className="sidebar_item"
+                                            aria-expanded={open}
                                             onClick={() =>
                                                 toggleGroup(item.id)
                                             }
                                         >
                                             <div className="sidebar_item_left">
                                                 {item.icon && (
-                                                    <span className="sidebar_icon">
+                                                    <span className="sidebar_icon" aria-hidden="true">
                                                         <item.icon size={16} />
                                                     </span>
                                                 )}
@@ -195,7 +201,7 @@ export const Sidebar = ({
                                                 </span>
                                             </div>
 
-                                            <span className="sidebar_item_right">
+                                            <span className="sidebar_item_right" aria-hidden="true">
                                                 <ChevronDown
                                                     size={16}
                                                     className={chevronClassName}
@@ -227,7 +233,7 @@ export const Sidebar = ({
                                                             )
                                                         }
                                                     >
-                                                        <span className="sidebar_sub_icon">
+                                                        <span className="sidebar_sub_icon" aria-hidden="true">
                                                             <CornerDownRight
                                                                 size={14}
                                                             />
@@ -263,7 +269,7 @@ export const Sidebar = ({
                                 >
                                     <div className="sidebar_item_left">
                                         {item.icon && (
-                                            <span className="sidebar_icon">
+                                            <span className="sidebar_icon" aria-hidden="true">
                                                 <item.icon size={16} />
                                             </span>
                                         )}
@@ -277,13 +283,18 @@ export const Sidebar = ({
                     </nav>
                 </>
             ) : (
-                <Image
-                    src="/images/sidebar/menu.svg"
-                    alt="Open"
-                    width={24}
-                    height={24}
+                <button
+                    type="button"
+                    className="sidebar_open_btn"
                     onClick={() => toggleSidebar(true)}
-                />
+                >
+                    <Image
+                        src="/images/sidebar/menu.svg"
+                        alt="Open"
+                        width={24}
+                        height={24}
+                    />
+                </button>
             )}
         </aside>
     );
