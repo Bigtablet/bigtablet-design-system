@@ -116,4 +116,47 @@ describe("TextField", () => {
         expect(helperId).toBeTruthy();
         expect(document.getElementById(helperId!)).toHaveTextContent("Required field");
     });
+
+    it("does not call onChangeAction during IME composition", () => {
+        const handleChange = vi.fn();
+        render(<TextField onChangeAction={handleChange} />);
+
+        const input = screen.getByRole("textbox");
+
+        fireEvent.compositionStart(input);
+        fireEvent.change(input, { target: { value: "중" } });
+
+        expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    it("calls onChangeAction after IME composition ends", () => {
+        const handleChange = vi.fn();
+        render(<TextField onChangeAction={handleChange} />);
+
+        const input = screen.getByRole("textbox");
+
+        fireEvent.compositionStart(input);
+        fireEvent.change(input, { target: { value: "중" } });
+        fireEvent.compositionEnd(input, { target: { value: "중간" } });
+
+        expect(handleChange).toHaveBeenCalledWith("중간");
+    });
+
+    it("applies transform after IME composition ends", () => {
+        const handleChange = vi.fn();
+        render(
+            <TextField
+                onChangeAction={handleChange}
+                transformValue={(v) => v.toUpperCase()}
+            />
+        );
+
+        const input = screen.getByRole("textbox");
+
+        fireEvent.compositionStart(input);
+        fireEvent.change(input, { target: { value: "abc" } });
+        fireEvent.compositionEnd(input, { target: { value: "abc" } });
+
+        expect(handleChange).toHaveBeenCalledWith("ABC");
+    });
 });

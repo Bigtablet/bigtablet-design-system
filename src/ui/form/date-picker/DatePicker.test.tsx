@@ -103,4 +103,34 @@ describe("DatePicker", () => {
 
         expect(yearSelect.querySelectorAll("option").length).toBe(7); // 6년 + 플레이스홀더
     });
+
+    it("calls onChange with YYYY-MM format in year-month mode", () => {
+        const onChange = vi.fn();
+        render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
+
+        const selects = screen.getAllByRole("combobox");
+        fireEvent.change(selects[0], { target: { value: "2024" } });
+
+        expect(onChange).toHaveBeenCalledWith("2024-01");
+    });
+
+    it("calls onChange when month is changed", () => {
+        const onChange = vi.fn();
+        render(<DatePicker value="2024" onChange={onChange} />);
+
+        const selects = screen.getAllByRole("combobox");
+        fireEvent.change(selects[1], { target: { value: "6" } });
+
+        expect(onChange).toHaveBeenCalledWith("2024-06-01");
+    });
+
+    it("calls onChange when day is changed", () => {
+        const onChange = vi.fn();
+        render(<DatePicker value="2024-06" onChange={onChange} />);
+
+        const selects = screen.getAllByRole("combobox");
+        fireEvent.change(selects[2], { target: { value: "15" } });
+
+        expect(onChange).toHaveBeenCalledWith("2024-06-15");
+    });
 });

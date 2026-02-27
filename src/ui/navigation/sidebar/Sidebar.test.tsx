@@ -195,4 +195,17 @@ describe("Sidebar", () => {
         const sidebarIcons = document.querySelectorAll(".sidebar_icon");
         expect(sidebarIcons.length).toBeGreaterThan(0);
     });
+
+    it("calls onItemSelect when group sub-item is clicked", () => {
+        const onItemSelect = vi.fn();
+        render(<Sidebar items={groupItems} onItemSelect={onItemSelect} />);
+
+        // Open the group first
+        fireEvent.click(screen.getByText("Admin"));
+
+        // Click a sub-item
+        fireEvent.click(screen.getByText("Users"));
+
+        expect(onItemSelect).toHaveBeenCalledWith("/admin/users");
+    });
 });
