@@ -1,0 +1,143 @@
+@use "src/styles/scss/token" as token;
+
+// ── Animations ───────────────────────────────────────────────────────────────
+
+@keyframes toast_slide_in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast_slide_out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 16px));
+  }
+}
+
+@keyframes toast_progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+// ── Container ────────────────────────────────────────────────────────────────
+
+.toast_container {
+  position: fixed;
+  top: token.$spacing_lg;
+  right: token.$spacing_lg;
+  z-index: token.$z_toast;
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_sm;
+  pointer-events: none;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+}
+
+// ── Item ─────────────────────────────────────────────────────────────────────
+
+.toast_item {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: token.$spacing_sm;
+  padding: token.$spacing_md token.$spacing_md token.$spacing_lg;
+
+  background: token.$color_background;
+  border: 1px solid token.$color_border;
+  border-radius: token.$radius_lg;
+  box-shadow: token.$shadow_md;
+
+  font-family: token.$font_family_primary;
+  font-size: token.$font_size_sm;
+  font-weight: token.$font_weight_medium;
+  color: token.$color_text_primary;
+  line-height: token.$line_height_normal;
+
+  animation: toast_slide_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  &_exiting {
+    animation: toast_slide_out 0.26s ease-in forwards;
+  }
+}
+
+// ── Icon ─────────────────────────────────────────────────────────────────────
+
+.toast_icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+
+  &_success { color: token.$color_success; }
+  &_error   { color: token.$color_error; }
+  &_warning { color: token.$color_warning; }
+  &_info    { color: token.$color_info; }
+  &_default { color: token.$color_text_secondary; }
+}
+
+// ── Message ───────────────────────────────────────────────────────────────────
+
+.toast_message {
+  flex: 1;
+  word-break: break-word;
+}
+
+// ── Close button ──────────────────────────────────────────────────────────────
+
+.toast_close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: token.$color_text_tertiary;
+  border-radius: token.$radius_sm;
+  transition:
+    color token.$transition_fast,
+    background-color token.$transition_fast;
+
+  &:hover {
+    color: token.$color_text_primary;
+    background-color: token.$color_background_secondary;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+// ── Progress bar ─────────────────────────────────────────────────────────────
+
+.toast_progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 0 0 0 token.$radius_lg;
+  animation: toast_progress var(--toast-duration, 3000ms) linear forwards;
+
+  &_success { background: token.$color_success; }
+  &_error   { background: token.$color_error; }
+  &_warning { background: token.$color_warning; }
+  &_info    { background: token.$color_info; }
+  &_default { background: token.$color_text_secondary; }
+}
