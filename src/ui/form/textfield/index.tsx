@@ -128,7 +128,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 
                 <div className="text_field_wrap">
                     {leftIcon ? (
-                        <span className="text_field_icon text_field_icon_left">
+                        <span className="text_field_icon text_field_icon_left" aria-hidden="true">
 							{leftIcon}
 						</span>
                     ) : null}
@@ -168,7 +168,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                     />
 
                     {rightIcon ? (
-                        <span className="text_field_icon text_field_icon_right">
+                        <span className="text_field_icon text_field_icon_right" aria-hidden="true">
 							{rightIcon}
 						</span>
                     ) : null}

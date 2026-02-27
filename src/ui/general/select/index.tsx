@@ -273,6 +273,7 @@ export const Select = ({
 								key={opt.value}
 								role="option"
 								aria-selected={selected}
+								aria-disabled={opt.disabled ? true : undefined}
 								className={optionClassName}
 								onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
 								onClick={() => {

@@ -116,4 +116,37 @@ describe("TextField", () => {
         expect(helperId).toBeTruthy();
         expect(document.getElementById(helperId!)).toHaveTextContent("Required field");
     });
+
+    it("handles IME composition correctly", () => {
+        const handleChange = vi.fn();
+        render(<TextField onChangeAction={handleChange} />);
+
+        const input = screen.getByRole("textbox");
+
+        fireEvent.compositionStart(input);
+        fireEvent.change(input, { target: { value: "중" } });
+        expect(handleChange).not.toHaveBeenCalled();
+
+        fireEvent.compositionEnd(input, { target: { value: "중간" } });
+        expect(handleChange).toHaveBeenCalledWith("중간");
+        expect(handleChange).toHaveBeenCalledTimes(1);
+    });
+
+    it("applies transform after IME composition ends", () => {
+        const handleChange = vi.fn();
+        render(
+            <TextField
+                onChangeAction={handleChange}
+                transformValue={(v) => v.toUpperCase()}
+            />
+        );
+
+        const input = screen.getByRole("textbox");
+
+        fireEvent.compositionStart(input);
+        fireEvent.change(input, { target: { value: "abc" } });
+        fireEvent.compositionEnd(input, { target: { value: "abc" } });
+
+        expect(handleChange).toHaveBeenCalledWith("ABC");
+    });
 });

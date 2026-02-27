@@ -70,4 +70,15 @@ describe("Switch", () => {
         render(<Switch ariaLabel="Toggle" ref={ref} />);
         expect(ref).toHaveBeenCalled();
     });
+
+    it("calls onChange but keeps controlled value in controlled mode", () => {
+        const onChange = vi.fn();
+        render(<Switch ariaLabel="Toggle" checked={false} onChange={onChange} />);
+
+        fireEvent.click(screen.getByRole("switch"));
+
+        expect(onChange).toHaveBeenCalledWith(true);
+        // Controlled: aria-checked stays at the prop value (false)
+        expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "false");
+    });
 });
