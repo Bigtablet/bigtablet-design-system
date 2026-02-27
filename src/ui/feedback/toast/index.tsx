@@ -61,7 +61,7 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
         closingRef.current = true;
         setExiting(true);
         setTimeout(() => onRemove(item.id), 260);
-    }, [item.id, onRemove, closingRef.current, setExiting]);
+    }, [item.id, onRemove]);
 
     const itemClassName = [
         "toast_item",
@@ -74,8 +74,6 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
         <div
             className={itemClassName}
             role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
         >
             <span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
                 {VARIANT_ICONS[item.variant]}
@@ -122,7 +120,7 @@ export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) =>
      */
     const addToast = React.useCallback(
         (message: string, variant: ToastVariant, duration = 3000) => {
-            const id = Math.random().toString(36).slice(2, 9);
+            const id = crypto.randomUUID();
             setToasts(prev => [{ id, message, variant, duration }, ...prev].slice(0, maxCount));
         },
         [maxCount],
@@ -142,11 +140,7 @@ export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) =>
             {children}
             {typeof document !== "undefined" &&
                 createPortal(
-                    <div
-                        className="toast_container"
-                        aria-live="polite"
-                        aria-atomic="false"
-                    >
+                    <div className="toast_container">
                         {toasts.map(item => (
                             <ToastItemComponent
                                 key={item.id}

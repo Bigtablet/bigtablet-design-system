@@ -225,16 +225,11 @@ describe("Toast close", () => {
     it("does not double-close when close is called twice rapidly", async () => {
         vi.useFakeTimers();
 
-        const removeCount = { value: 0 };
-
-        function CountingTrigger() {
-            const t = useToast();
-            return <button onClick={() => t.success("중복 닫기")}>trigger</button>;
-        }
+        const timeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
         render(
             <ToastProvider>
-                <CountingTrigger />
+                <ToastTrigger fn={(t) => t.success("중복 닫기")} />
             </ToastProvider>
         );
 
@@ -246,14 +241,19 @@ describe("Toast close", () => {
         fireEvent.click(closeBtn);
         fireEvent.click(closeBtn);
 
+        // 260ms 지연 setTimeout은 closingRef 덕분에 한 번만 호출되어야 함
+        const removalTimeouts = timeoutSpy.mock.calls.filter(
+            ([, ms]) => ms === 260
+        );
+        expect(removalTimeouts).toHaveLength(1);
+
         await act(async () => {
             vi.advanceTimersByTime(300);
         });
 
-        // 한 번만 제거되어야 함
         expect(screen.queryByText("중복 닫기")).not.toBeInTheDocument();
-        expect(removeCount.value).toBe(0); // closingRef가 두 번째 호출을 막음
 
+        timeoutSpy.mockRestore();
         vi.useRealTimers();
     });
 });
