@@ -1,3 +1,142 @@
+## [1.18.9](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.8...v1.18.9) (2026-02-26)
+
+
+### Bug Fixes
+
+* resolve Chromatic on main PR and ESM build warning ([e155f74](https://github.com/Bigtablet/bigtablet-design-system/commit/e155f744712130bcd68c04e0df0d140f110bc16f))
+
+## [1.18.8](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.7...v1.18.8) (2026-02-26)
+
+## [1.18.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.6...v1.18.7) (2026-02-26)
+
+## [1.18.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.5...v1.18.6) (2026-02-26)
+
+
+### Bug Fixes
+
+* patch rollup, lodash, lodash-es security vulnerabilities via pnpm overrides ([b501ff0](https://github.com/Bigtablet/bigtablet-design-system/commit/b501ff055e56daa2f50c4a78b18ce4d7fdfcc3ca))
+* use caret ranges in pnpm overrides to prevent major version jumps ([47ad213](https://github.com/Bigtablet/bigtablet-design-system/commit/47ad213d13b2b6fd522c6cb9b9f77799219b7774))
+
+## [1.18.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.4...v1.18.5) (2026-02-26)
+
+## [1.18.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.3...v1.18.4) (2026-02-13)
+
+
+### Bug Fixes
+
+* modal overflow ([5d2bc62](https://github.com/Bigtablet/bigtablet-design-system/commit/5d2bc6203d427f4d0ae99a56cf1c673c236aa525))
+
+## [1.18.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.2...v1.18.3) (2026-02-11)
+
+
+### Bug Fixes
+
+* develop ([8e3d7f8](https://github.com/Bigtablet/bigtablet-design-system/commit/8e3d7f8d0db1a62864577428cd7f31f53628eb81))
+
+## [1.18.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.1...v1.18.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* file input cursor ([119042f](https://github.com/Bigtablet/bigtablet-design-system/commit/119042f95ffc178b5aac0cf4f2097821f151c8c9))
+
+## [1.18.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.0...v1.18.1) (2026-02-10)
+
+# [1.18.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.4...v1.18.0) (2026-02-10)
+
+
+### Bug Fixes
+
+* add aria-label test result ([489973e](https://github.com/Bigtablet/bigtablet-design-system/commit/489973e52d2bc0eb5b7524df6dd537d6089eb99d))
+* add pull-requests write permission to CI workflow ([75ae159](https://github.com/Bigtablet/bigtablet-design-system/commit/75ae15971de5f4f47a11a42b11488c08a4b787a5))
+* add rendering scenario ([9648684](https://github.com/Bigtablet/bigtablet-design-system/commit/96486841ee40cdf85614e5e244e9245c359e4225))
+* body scroll lock supports nested modals ([c3c7835](https://github.com/Bigtablet/bigtablet-design-system/commit/c3c7835483bf569b0dfde98bb7ceef04b8b50e82))
+* check box input element null error ([a9da0a1](https://github.com/Bigtablet/bigtablet-design-system/commit/a9da0a1930edb560fb86b02e285d0995b0e8f5f9))
+* cleanup tabindex attribute in useFocusTrap ([f714ce9](https://github.com/Bigtablet/bigtablet-design-system/commit/f714ce9fe819971a962daae104619e53f57afba9))
+* date picker fullWidth props default boolean ([0a0531c](https://github.com/Bigtablet/bigtablet-design-system/commit/0a0531c559530b35c70a1960398227e7760f5403))
+* delete ariaLabel optional ([00495c1](https://github.com/Bigtablet/bigtablet-design-system/commit/00495c1d33bce07fbc0020d86c79890970906699))
+* enhance cn() to support arrays and objects (clsx-like) ([2c43a95](https://github.com/Bigtablet/bigtablet-design-system/commit/2c43a954d5611e56771aa98cb451239d945b5180))
+* update cn() to enhanced clsx-like version ([cf2b2dd](https://github.com/Bigtablet/bigtablet-design-system/commit/cf2b2dda175ebc768bf88321267e4bca82ddfa90))
+
+
+### Features
+
+* add ariaLabel prop to Spinner and TopLoading ([53d41a4](https://github.com/Bigtablet/bigtablet-design-system/commit/53d41a407f2ebaa32c498c0efb31f371c784e815))
+* add button test ([d2fa74e](https://github.com/Bigtablet/bigtablet-design-system/commit/d2fa74e3facdd0acfebf555d5aed8c255cf61650))
+* add cn test case ([13a3f73](https://github.com/Bigtablet/bigtablet-design-system/commit/13a3f736d9073cb42987befa0747010065e16779))
+* add cn() className utility function ([a329e24](https://github.com/Bigtablet/bigtablet-design-system/commit/a329e2428daebf7566b243ed2f78acda9b4c11b8))
+* add comprehensive unit tests for form and UI components ([5cb4e9a](https://github.com/Bigtablet/bigtablet-design-system/commit/5cb4e9aeb40b796616610790318048e979ece544))
+* add focus trap and scroll lock to Modal ([4855cca](https://github.com/Bigtablet/bigtablet-design-system/commit/4855ccaf3a9c13358e33e8373dde6ed35a236ae2))
+* add fullWidth prop to Button and DatePicker ([74e2349](https://github.com/Bigtablet/bigtablet-design-system/commit/74e2349331892969344551d18edd7f316afc5132))
+* add modal test ([30bab90](https://github.com/Bigtablet/bigtablet-design-system/commit/30bab90920126cbc6be6f230d4c0b5707d4333c1))
+* add text field test ([6630780](https://github.com/Bigtablet/bigtablet-design-system/commit/663078089c1eac3624ffdd552900427a60ecf916))
+* add unit test environment and component tests ([c7182bb](https://github.com/Bigtablet/bigtablet-design-system/commit/c7182bb45b84c7151cd5e1941a23f4e9b460b994))
+* add unit tests for remaining UI components ([d28af1c](https://github.com/Bigtablet/bigtablet-design-system/commit/d28af1c788a0f81af518e2c010c16a8df3f58f68))
+* apply cn(), forwardRef, ariaLabel to remaining components ([cd79060](https://github.com/Bigtablet/bigtablet-design-system/commit/cd7906024633cceb1f00495fa51a765fa7c260c1))
+* apply useFocusTrap, cn(), fullWidth, useEffectEvent ([48d3f54](https://github.com/Bigtablet/bigtablet-design-system/commit/48d3f541698ae3628ee241e1af98bbf2af6aadd8))
+
+
+### Reverts
+
+* keep CI workflow with English coverage report ([f2fb772](https://github.com/Bigtablet/bigtablet-design-system/commit/f2fb77265c83871bba179bac0dd42cb7676941de))
+* remove CI workflow and coverage report ([636b1b3](https://github.com/Bigtablet/bigtablet-design-system/commit/636b1b3ee3a8a635d5c5fe0d7b4dae757c11be4d))
+
+## [1.17.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.3...v1.17.4) (2026-01-26)
+
+
+### Bug Fixes
+
+* reduce npm package size by excluding unminified files ([57b5e0a](https://github.com/Bigtablet/bigtablet-design-system/commit/57b5e0add9ae6ea18a2f4171ce03ba4ecac6f09e))
+
+## [1.17.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.2...v1.17.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* remove source map from vanilla CSS build ([ee97f9d](https://github.com/Bigtablet/bigtablet-design-system/commit/ee97f9d1c0c33b2854b6d2804dc60be1ffafe8b5))
+
+## [1.17.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.1...v1.17.2) (2026-01-26)
+
+## [1.17.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.17.0...v1.17.1) (2026-01-26)
+
+# [1.17.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.2...v1.17.0) (2026-01-26)
+
+
+### Features
+
+* add vanilla JS package for HTML/CSS/JS environments ([a763f0f](https://github.com/Bigtablet/bigtablet-design-system/commit/a763f0f1eb5cb9be719ae8025efd78a9ac6164a3))
+
+## [1.16.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.1...v1.16.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* revert portal, use absolute positioning with auto-flip ([ef38d18](https://github.com/Bigtablet/bigtablet-design-system/commit/ef38d1835a5217ab52a1c0b9631ab9916fc5455c))
+* select dropdown position flicker on initial render ([3b777f9](https://github.com/Bigtablet/bigtablet-design-system/commit/3b777f90d73d6ca9f370a8139943478bca96931f))
+* select portal renders in correct document body ([9113405](https://github.com/Bigtablet/bigtablet-design-system/commit/9113405c8c9e12f6f419d0ca3790f97c6057ee39))
+
+## [1.16.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.16.0...v1.16.1) (2026-01-26)
+
+
+### Bug Fixes
+
+* select overflow ([6eda0ce](https://github.com/Bigtablet/bigtablet-design-system/commit/6eda0ce584abf6151f90035ab3cd30edde6cda25))
+* select overflow with createPortal ([d4378fa](https://github.com/Bigtablet/bigtablet-design-system/commit/d4378fa1c50c525b97471e3f61c23bcc8c0b8225)), closes [#67](https://github.com/Bigtablet/bigtablet-design-system/issues/67)
+
+# [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.15.0...v1.16.0) (2026-01-26)
+
+
+### Features
+
+* add auto-flip dropdown for Select component ([4ba5afa](https://github.com/Bigtablet/bigtablet-design-system/commit/4ba5afaae5a16e6ae542007dd8b161b9119c8404)), closes [#63](https://github.com/Bigtablet/bigtablet-design-system/issues/63)
+
+# [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.3...v1.15.0) (2026-01-23)
+
+
+### Features
+
+* add modern design tokens for tech/glass effects ([a93cb35](https://github.com/Bigtablet/bigtablet-design-system/commit/a93cb35daea03b3ad13f7486e400147ad2f44b83))
+
 ## [1.14.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.14.2...v1.14.3) (2026-01-22)
 
 
