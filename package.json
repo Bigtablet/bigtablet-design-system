@@ -103,7 +103,7 @@
     "react-dom": "19.2.0",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
-    "storybook": "10.2.10",
+    "storybook": "10.2.13",
     "tsup": "^8.5.0",
     "typescript": "^5",
     "vite": "^5",
