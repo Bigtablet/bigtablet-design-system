@@ -1,3 +1,10 @@
+## [1.19.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.0...v1.19.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* resolve SSR hydration mismatch in ToastProvider ([c347193](https://github.com/Bigtablet/bigtablet-design-system/commit/c3471936acfb4eb9efe201e07eb10bff30a38452)), closes [#418](https://github.com/Bigtablet/bigtablet-design-system/issues/418)
+
 # [1.19.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.9...v1.19.0) (2026-02-27)
 
 
