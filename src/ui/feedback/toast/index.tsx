@@ -110,6 +110,11 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
  */
 export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) => {
     const [toasts, setToasts] = React.useState<ToastItem[]>([]);
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     /**
      * 토스트를 큐에 추가한다. maxCount를 초과하면 가장 오래된 항목을 제거한다.
@@ -138,7 +143,7 @@ export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) =>
     return (
         <ToastContext.Provider value={{ addToast }}>
             {children}
-            {typeof document !== "undefined" &&
+            {isMounted &&
                 createPortal(
                     <div className="toast_container">
                         {toasts.map(item => (
