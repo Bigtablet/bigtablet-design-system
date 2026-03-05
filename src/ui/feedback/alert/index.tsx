@@ -3,6 +3,7 @@
 import * as React from "react";
 import {createContext, useContext, useState, useCallback} from "react";
 import {createPortal} from "react-dom";
+import { useFocusTrap } from "../../../utils";
 import "./style.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
@@ -142,6 +143,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
                                                    onCancel,
                                                    onClose,
                                                }) => {
+    const panelRef = React.useRef<HTMLDivElement>(null);
+    useFocusTrap(panelRef, true);
+
     const modalClassName = [
         "alert_modal",
         `alert_variant_${variant}`,
@@ -157,8 +161,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
         .join(" ");
 
     return (
-        <div className="alert_overlay" onClick={onClose}>
+        <div
+            className="alert_overlay"
+            onClick={onClose}
+            onKeyDown={(e) => e.key === "Escape" && onClose()}
+        >
             <div
+                ref={panelRef}
                 className={modalClassName}
                 onClick={(e) => e.stopPropagation()}
                 role="alertdialog"

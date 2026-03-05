@@ -11,6 +11,10 @@ export interface PaginationProps {
     totalPages: number;
     /** 페이지 변경 시 호출되는 콜백 */
     onChange: (page: number) => void;
+    /** 이전 페이지 버튼 aria-label (기본값: "Previous page") */
+    prevLabel?: string;
+    /** 다음 페이지 버튼 aria-label (기본값: "Next page") */
+    nextLabel?: string;
 }
 
 /**
@@ -70,7 +74,7 @@ const getPaginationItems = (page: number, totalPages: number) => {
  * @param props 페이지네이션 속성
  * @returns 렌더링된 페이지네이션 UI
  */
-export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
+export const Pagination = ({ page, totalPages, onChange, prevLabel = "Previous page", nextLabel = "Next page" }: PaginationProps) => {
     const prevDisabled = page <= 1;
     const nextDisabled = page >= totalPages;
 
@@ -85,7 +89,7 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                 className="pagination_item"
                 onClick={() => onChange(page - 1)}
                 disabled={prevDisabled}
-                aria-label="Previous page"
+                aria-label={prevLabel}
             >
                 ‹
             </button>
@@ -125,7 +129,7 @@ export const Pagination = ({ page, totalPages, onChange }: PaginationProps) => {
                 className="pagination_item"
                 onClick={() => onChange(page + 1)}
                 disabled={nextDisabled}
-                aria-label="Next page"
+                aria-label={nextLabel}
             >
                 ›
             </button>

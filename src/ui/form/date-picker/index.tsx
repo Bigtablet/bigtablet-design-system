@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -32,6 +33,12 @@ interface DatePickerProps {
      * @deprecated `fullWidth` 사용 또는 CSS로 처리
      */
     width?: number | string;
+    /** 연도 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Year") */
+    yearLabel?: string;
+    /** 월 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Month") */
+    monthLabel?: string;
+    /** 일 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Day") */
+    dayLabel?: string;
 }
 
 /**
@@ -76,7 +83,11 @@ export const DatePicker = ({
     disabled,
     fullWidth = true,
     width,
+    yearLabel = "Year",
+    monthLabel = "Month",
+    dayLabel = "Day",
 }: DatePickerProps) => {
+    const groupId = React.useId();
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
@@ -153,18 +164,22 @@ export const DatePicker = ({
     return (
         <div className={rootClassName} style={containerStyle}>
             {label && (
-                <label className="date_picker_label">{label}</label>
+                <label className="date_picker_label" id={groupId}>{label}</label>
             )}
-            <div className="date_picker_fields">
+            <div
+                className="date_picker_fields"
+                role="group"
+                aria-labelledby={label ? groupId : undefined}
+            >
                 <select
-                    aria-label="연도"
+                    aria-label={yearLabel}
                     value={year}
                     disabled={disabled}
                     onChange={(e) =>
                         emit(Number(e.target.value), month || minMonth, day || minDay)
                     }
                 >
-                    <option value="">연도</option>
+                    <option value="">{yearLabel}</option>
                     {Array.from(
                         {length: maxYear - startYear + 1},
                         (_, i) => startYear + i,
@@ -176,14 +191,14 @@ export const DatePicker = ({
                 </select>
 
                 <select
-                    aria-label="월"
+                    aria-label={monthLabel}
                     value={month}
                     disabled={disabled || !year}
                     onChange={(e) =>
                         emit(year, Number(e.target.value), day || minDay)
                     }
                 >
-                    <option value="">월</option>
+                    <option value="">{monthLabel}</option>
                     {Array.from({length: maxMonth - minMonth + 1}, (_, i) => minMonth + i).map(
                         (m) => (
                             <option key={m} value={m}>
@@ -195,14 +210,14 @@ export const DatePicker = ({
 
                 {mode === "year-month-day" && (
                     <select
-                        aria-label="일"
+                        aria-label={dayLabel}
                         value={day}
                         disabled={disabled || !month}
                         onChange={(e) =>
                             emit(year, month, Number(e.target.value))
                         }
                     >
-                        <option value="">일</option>
+                        <option value="">{dayLabel}</option>
                         {Array.from(
                             {length: days - minDay + 1},
                             (_, i) => minDay + i,

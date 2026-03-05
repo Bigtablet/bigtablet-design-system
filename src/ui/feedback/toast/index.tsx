@@ -25,6 +25,8 @@ export interface ToastProviderProps {
     children: React.ReactNode;
     /** 최대 동시 표시 토스트 수 (기본값: 5) */
     maxCount?: number;
+    /** 토스트 닫기 버튼의 aria-label (기본값: "Close") */
+    closeAriaLabel?: string;
 }
 
 const VARIANT_ICONS: Record<ToastVariant, React.ReactElement> = {
@@ -40,6 +42,7 @@ const VARIANT_ICONS: Record<ToastVariant, React.ReactElement> = {
 interface ToastItemComponentProps {
     item: ToastItem;
     onRemove: (id: string) => void;
+    closeAriaLabel: string;
 }
 
 /**
@@ -48,7 +51,7 @@ interface ToastItemComponentProps {
  * @param props 토스트 아이템 속성
  * @returns 렌더링된 토스트 아이템
  */
-const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
+const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemComponentProps) => {
     const [exiting, setExiting] = React.useState(false);
     const closingRef = React.useRef(false);
 
@@ -73,7 +76,7 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
     return (
         <div
             className={itemClassName}
-            role="alert"
+            role={item.variant === "error" ? "alert" : "status"}
         >
             <span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
                 {VARIANT_ICONS[item.variant]}
@@ -85,7 +88,7 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
                 type="button"
                 className="toast_close"
                 onClick={close}
-                aria-label="닫기"
+                aria-label={closeAriaLabel}
             >
                 <X size={14} />
             </button>
@@ -108,7 +111,7 @@ const ToastItemComponent = ({ item, onRemove }: ToastItemComponentProps) => {
  * @param props Provider 속성
  * @returns 렌더링된 Provider와 토스트 컨테이너
  */
-export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) => {
+export const ToastProvider = ({ children, maxCount = 5, closeAriaLabel = "Close" }: ToastProviderProps) => {
     const [toasts, setToasts] = React.useState<ToastItem[]>([]);
     const [isMounted, setIsMounted] = React.useState(false);
 
@@ -145,12 +148,18 @@ export const ToastProvider = ({ children, maxCount = 5 }: ToastProviderProps) =>
             {children}
             {isMounted &&
                 createPortal(
-                    <div className="toast_container">
+                    <div
+                        className="toast_container"
+                        aria-live="polite"
+                        aria-atomic="false"
+                        aria-label="Notifications"
+                    >
                         {toasts.map(item => (
                             <ToastItemComponent
                                 key={item.id}
                                 item={item}
                                 onRemove={removeToast}
+                                closeAriaLabel={closeAriaLabel}
                             />
                         ))}
                     </div>,

@@ -5,7 +5,7 @@ import { FileInput } from "./index";
 describe("FileInput", () => {
     it("renders with default label", () => {
         render(<FileInput />);
-        expect(screen.getByText("파일 선택")).toBeInTheDocument();
+        expect(screen.getByText("Choose file")).toBeInTheDocument();
     });
 
     it("renders with custom label", () => {
@@ -22,7 +22,7 @@ describe("FileInput", () => {
     it("associates label with input", () => {
         render(<FileInput />);
         const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-        const label = screen.getByText("파일 선택");
+        const label = screen.getByText("Choose file");
 
         expect(label).toHaveAttribute("for", input.id);
     });
@@ -79,7 +79,7 @@ describe("FileInput", () => {
 
     it("has file_input_label class on label", () => {
         render(<FileInput />);
-        const label = screen.getByText("파일 선택");
+        const label = screen.getByText("Choose file");
         expect(label).toHaveClass("file_input_label");
     });
 });
