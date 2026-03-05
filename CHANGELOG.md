@@ -1,3 +1,10 @@
+## [1.19.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.1...v1.19.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* downgrade storybook to 10.1.11 to fix Chromatic build error ([4d722e1](https://github.com/Bigtablet/bigtablet-design-system/commit/4d722e1c545e6b178e900d92c2a81d134403b988))
+
 ## [1.19.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.0...v1.19.1) (2026-03-03)
 
 
