@@ -159,7 +159,7 @@ describe("Sidebar", () => {
         expect(screen.getByRole("navigation")).toBeInTheDocument();
 
         // 닫기 버튼 클릭
-        fireEvent.click(screen.getByAltText("Close"));
+        fireEvent.click(screen.getByAltText("사이드바 닫기"));
 
         // 사이드바가 닫혀야 한다(nav 숨김)
         expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
@@ -169,18 +169,18 @@ describe("Sidebar", () => {
         render(<Sidebar items={basicItems} />);
 
         // 먼저 사이드바를 닫는다
-        fireEvent.click(screen.getByAltText("Close"));
+        fireEvent.click(screen.getByAltText("사이드바 닫기"));
         expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
 
         // 메뉴 버튼 클릭으로 다시 연다
-        fireEvent.click(screen.getByAltText("Open"));
+        fireEvent.click(screen.getByAltText("사이드바 열기"));
         expect(screen.getByRole("navigation")).toBeInTheDocument();
     });
 
     it("saves sidebar state to localStorage", () => {
         render(<Sidebar items={basicItems} />);
 
-        fireEvent.click(screen.getByAltText("Close"));
+        fireEvent.click(screen.getByAltText("사이드바 닫기"));
         expect(localStorageMock.setItem).toHaveBeenCalledWith("isOpen", "false");
     });
 

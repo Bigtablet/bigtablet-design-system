@@ -82,7 +82,7 @@ describe("Toast display", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-        expect(screen.getByRole("alert")).toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeInTheDocument();
         expect(screen.getByText("저장 완료")).toBeInTheDocument();
     });
 
@@ -108,7 +108,7 @@ describe("Toast display", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-        expect(screen.getByRole("alert")).toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeInTheDocument();
         expect(screen.getByText("경고 메시지")).toBeInTheDocument();
     });
 
@@ -121,7 +121,7 @@ describe("Toast display", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-        expect(screen.getByRole("alert")).toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeInTheDocument();
         expect(screen.getByText("정보 메시지")).toBeInTheDocument();
     });
 
@@ -134,7 +134,7 @@ describe("Toast display", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-        expect(screen.getByRole("alert")).toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeInTheDocument();
         expect(screen.getByText("기본 메시지")).toBeInTheDocument();
     });
 
@@ -158,8 +158,9 @@ describe("Toast display", () => {
         fireEvent.click(screen.getByRole("button", { name: "first" }));
         fireEvent.click(screen.getByRole("button", { name: "second" }));
 
-        const alerts = screen.getAllByRole("alert");
-        expect(alerts).toHaveLength(2);
+        // 첫 번째는 success(role="status"), 두 번째는 error(role="alert")
+        expect(screen.getByRole("status")).toBeInTheDocument();
+        expect(screen.getByRole("alert")).toBeInTheDocument();
         expect(screen.getByText("첫 번째")).toBeInTheDocument();
         expect(screen.getByText("두 번째")).toBeInTheDocument();
     });
@@ -189,9 +190,9 @@ describe("Toast display", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "spam" }));
 
-        // maxCount=3 이므로 최대 3개만 표시됨
-        const alerts = screen.getAllByRole("alert");
-        expect(alerts.length).toBeLessThanOrEqual(3);
+        // maxCount=3 이므로 최대 3개만 표시됨 (success는 role="status")
+        const statuses = screen.getAllByRole("status");
+        expect(statuses.length).toBeLessThanOrEqual(3);
     });
 });
 
@@ -210,7 +211,7 @@ describe("Toast close", () => {
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
         expect(screen.getByText("닫기 테스트")).toBeInTheDocument();
 
-        fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+        fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
         // 슬라이드 아웃 setTimeout(260ms) 완료 대기
         await act(async () => {
@@ -235,7 +236,7 @@ describe("Toast close", () => {
 
         fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-        const closeBtn = screen.getByRole("button", { name: "닫기" });
+        const closeBtn = screen.getByRole("button", { name: "Close" });
 
         // 빠르게 두 번 클릭
         fireEvent.click(closeBtn);

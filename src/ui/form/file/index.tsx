@@ -18,7 +18,7 @@ export interface FileInputProps
  * @returns 렌더링된 파일 입력 UI
  */
 export const FileInput = ({
-                              label = "파일 선택",
+                              label = "Choose file",
                               onFiles,
                               className,
                               disabled,
@@ -35,7 +35,7 @@ export const FileInput = ({
         .join(" ");
 
     return (
-        <div style={{cursor: "pointer"}} className={rootClassName}>
+        <div className={rootClassName}>
             <input
                 id={inputId}
                 type="file"
