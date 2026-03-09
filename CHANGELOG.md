@@ -1,3 +1,10 @@
+## [1.19.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.3...v1.19.4) (2026-03-09)
+
+
+### Bug Fixes
+
+* improve a11y, i18n, and convention compliance across components ([3bd0099](https://github.com/Bigtablet/bigtablet-design-system/commit/3bd00999a79f625fd860a0fe140cfc529a315d5d))
+
 ## [1.19.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.2...v1.19.3) (2026-03-09)
 
 
