@@ -19,6 +19,9 @@ export const colors = {
 
     overlay: "rgba(0, 0, 0, 0.5)",
 
+    hoverSubtle: "rgba(0, 0, 0, 0.03)",
+    hoverLight: "rgba(0, 0, 0, 0.05)",
+
     textStrong: "#1F2937",
     textNormal: "#3B3B3B",
     textSubtle: "#6B7280",
