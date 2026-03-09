@@ -10,22 +10,22 @@ describe("DatePicker", () => {
 
     it("renders year select with placeholder", () => {
         render(<DatePicker onChange={() => {}} />);
-        expect(screen.getByText("연도")).toBeInTheDocument();
+        expect(screen.getByText("Year")).toBeInTheDocument();
     });
 
     it("renders month select with placeholder", () => {
         render(<DatePicker onChange={() => {}} />);
-        expect(screen.getByText("월")).toBeInTheDocument();
+        expect(screen.getByText("Month")).toBeInTheDocument();
     });
 
     it("renders day select in year-month-day mode", () => {
         render(<DatePicker mode="year-month-day" onChange={() => {}} />);
-        expect(screen.getByText("일")).toBeInTheDocument();
+        expect(screen.getByText("Day")).toBeInTheDocument();
     });
 
     it("does not render day select in year-month mode", () => {
         render(<DatePicker mode="year-month" onChange={() => {}} />);
-        expect(screen.queryByText("일")).not.toBeInTheDocument();
+        expect(screen.queryByText("Day")).not.toBeInTheDocument();
     });
 
     it("calls onChange when year is selected", () => {

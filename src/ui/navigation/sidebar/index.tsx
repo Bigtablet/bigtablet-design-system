@@ -154,14 +154,14 @@ export const Sidebar = ({
                         >
                             <Image
                                 src="/images/sidebar/arrow-close.svg"
-                                alt="Close"
+                                alt="사이드바 닫기"
                                 width={24}
                                 height={24}
                             />
                         </button>
                     </div>
 
-                    <nav className="sidebar_nav">
+                    <nav className="sidebar_nav" aria-label="메인 메뉴">
                         {items.map((item) => {
                             if (item.type === "group") {
                                 const open = openGroups.includes(item.id);
@@ -227,6 +227,7 @@ export const Sidebar = ({
                                                         key={child.href}
                                                         href={child.href}
                                                         className={subItemClassName}
+                                                        aria-current={active ? "page" : undefined}
                                                         onClick={() =>
                                                             onItemSelect?.(
                                                                 child.href
@@ -263,6 +264,7 @@ export const Sidebar = ({
                                     key={item.href}
                                     href={item.href}
                                     className={itemClassName}
+                                    aria-current={active ? "page" : undefined}
                                     onClick={() =>
                                         onItemSelect?.(item.href)
                                     }
@@ -290,7 +292,7 @@ export const Sidebar = ({
                 >
                     <Image
                         src="/images/sidebar/menu.svg"
-                        alt="Open"
+                        alt="사이드바 열기"
                         width={24}
                         height={24}
                     />
