@@ -52,28 +52,37 @@ src/
   ```
   src/ui/{category}/{ComponentName}/
   ├── index.tsx            # Component implementation
-  ├── style.module.scss    # CSS Module styles
+  ├── style.scss           # Global SCSS styles
   └── *.stories.tsx        # Storybook stories (optional)
   ```
 
-### Styling (CSS Modules)
-- **CSS Modules**: All styles use `style.module.scss` files
-- Import pattern: `import styles from "./style.module.scss";`
-- Class usage: `className={styles.button}` or `className={styles[`variant_${variant}`]}`
+### Styling (Global SCSS)
+- **Global SCSS**: All styles use `style.scss` files (not CSS Modules)
+- Import pattern: `import "./style.scss";`
+- Class usage: `className="button"` or `` className={`button_variant_${variant}`} ``
 - SCSS tokens: `@use "src/styles/scss/token" as token;`
 - Never use hardcoded values - always use tokens
 
 ### className Pattern
 ```tsx
 const buttonClassName = [
-    styles.button,
-    styles[`size_${size}`],
-    styles[`variant_${variant}`],
-    isActive && styles.active,
+    "button",
+    `button_size_${size}`,
+    `button_variant_${variant}`,
+    isActive && "button_active",
     className ?? "",
 ]
     .filter(Boolean)
     .join(" ");
+
+// cn() utility also supported:
+const buttonClassName = cn(
+    "button",
+    `button_size_${size}`,
+    `button_variant_${variant}`,
+    isActive && "button_active",
+    className,
+);
 ```
 
 ### Design Tokens

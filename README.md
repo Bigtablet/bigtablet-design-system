@@ -7,10 +7,15 @@
 [![npm version](https://img.shields.io/npm/v/@bigtablet/design-system.svg)](https://www.npmjs.com/package/@bigtablet/design-system)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Test Coverage](https://img.shields.io/badge/coverage-86%25-brightgreen.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions)
+[![CI](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml)
+[![Storybook](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=white)](https://bigtablet.github.io/bigtablet-design-system)
 
 [🇰🇷 한국어](./README_KR.md) · 🇺🇸 English
 
 The official design system of Bigtablet — a unified UI library composed of Foundation (design tokens) and UI Components.
+
+> **Note**: This is Bigtablet's in-house design system, open-sourced for community reference.
+> External use is welcome, but minor versions may include breaking changes without prior notice.
 
 [GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Storybook](https://bigtablet.github.io/bigtablet-design-system)
 
@@ -30,6 +35,7 @@ The official design system of Bigtablet — a unified UI library composed of Fou
 | ♿ **Accessibility** | Keyboard navigation, screen reader support, full ARIA attributes |
 | 🧪 **86% Coverage** | Stable test coverage powered by Vitest |
 | 🎭 **Storybook** | Interactive documentation for all components |
+| 🎯 **Zero Dependencies** | No bundled runtime dependencies — peer deps only |
 
 ---
 
@@ -49,14 +55,16 @@ pnpm add @bigtablet/design-system
 **Peer Dependencies**
 
 ```bash
-npm install react react-dom lucide-react
+npm install react@^19 react-dom@^19 "lucide-react@>=0.552.0"
 ```
 
-> Recommended for use with **React 18+** and **Next.js 13+**.
+> Requires **React 19** and **lucide-react ≥ 0.552.0**. Compatible with **Next.js 13+**.
 
 ---
 
 ## Quick Start
+
+> ⚠️ **Alert** and **Toast** require Providers at the root of your app — see [Provider Setup](#provider-setup) below.
 
 ### Pure React
 
