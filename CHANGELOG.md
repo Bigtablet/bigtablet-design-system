@@ -1,3 +1,30 @@
+## [1.19.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.1...v1.19.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* downgrade storybook to 10.1.11 to fix Chromatic build error ([4d722e1](https://github.com/Bigtablet/bigtablet-design-system/commit/4d722e1c545e6b178e900d92c2a81d134403b988))
+
+## [1.19.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.0...v1.19.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* resolve SSR hydration mismatch in ToastProvider ([c347193](https://github.com/Bigtablet/bigtablet-design-system/commit/c3471936acfb4eb9efe201e07eb10bff30a38452)), closes [#418](https://github.com/Bigtablet/bigtablet-design-system/issues/418)
+
+# [1.19.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.9...v1.19.0) (2026-02-27)
+
+
+### Bug Fixes
+
+* apply Gemini code review suggestions on Toast ([f6238f8](https://github.com/Bigtablet/bigtablet-design-system/commit/f6238f82067e57954307072fd2cb65ef85f194ac))
+* apply Gemini review feedback and improve accessibility ([d9c9a6e](https://github.com/Bigtablet/bigtablet-design-system/commit/d9c9a6edf88f947f00ecc747f58db2bc0555e02d))
+
+
+### Features
+
+* replace react-toastify with custom Toast implementation ([9c209b3](https://github.com/Bigtablet/bigtablet-design-system/commit/9c209b36b689d730e651da2138c1e583764dcf02))
+
 ## [1.18.9](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.18.8...v1.18.9) (2026-02-26)
 
 

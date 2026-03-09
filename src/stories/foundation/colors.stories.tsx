@@ -22,24 +22,27 @@ const getReadableTextColor = (bgColor: string): string => {
 /** 색상 토큰별 용도 설명 */
 const colorUseCase = (key: string): string => {
     const useCases: Record<string, string> = {
-        color_primary: "주요 버튼, 링크",
-        color_primary_hover: "버튼 hover",
-        color_background: "기본 배경",
-        color_background_secondary: "카드, 섹션 배경",
-        color_background_neutral: "중립 배경",
-        color_background_muted: "비활성 배경",
-        color_text_primary: "본문 텍스트",
-        color_text_secondary: "보조 텍스트",
-        color_text_tertiary: "placeholder",
-        text_subtle: "미묘한 텍스트",
-        text_strong: "강조 텍스트",
-        color_border: "기본 테두리",
-        color_border_light: "연한 테두리",
-        color_success: "성공 상태",
-        color_error: "오류 상태",
-        color_warning: "경고 상태",
-        color_info: "정보 상태",
-        color_overlay: "모달 오버레이",
+        primary: "주요 버튼, 링크",
+        primaryHover: "버튼 hover",
+        background: "기본 배경",
+        backgroundSecondary: "카드, 섹션 배경",
+        textPrimary: "본문 텍스트",
+        textSecondary: "보조 텍스트",
+        textTertiary: "placeholder",
+        textSubtle: "미묘한 텍스트",
+        textStrong: "강조 텍스트",
+        textNormal: "일반 텍스트",
+        textDisabled: "비활성 텍스트",
+        textInverse: "어두운 배경 위 텍스트",
+        border: "기본 테두리",
+        borderLight: "연한 테두리",
+        success: "성공 상태",
+        error: "오류 상태",
+        warning: "경고 상태",
+        info: "정보 상태",
+        overlay: "모달 오버레이",
+        hoverSubtle: "텍스트필드, 셀렉트 호버 배경",
+        hoverLight: "버튼 ghost/secondary 호버 배경",
     };
     return useCases[key] ?? "";
 };
@@ -64,6 +67,7 @@ const meta: Meta = {
 - **Border**: 구분선
 - **Status**: 성공 / 오류 / 경고 / 정보
 - **Overlay**: 오버레이
+- **Hover**: 인터랙티브 요소 호버 배경
         `,
             },
         },
