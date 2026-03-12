@@ -1,3 +1,17 @@
+# [1.20.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.4...v1.20.0) (2026-03-12)
+
+
+### Bug Fixes
+
+* apply gemini code review suggestions ([34f2b19](https://github.com/Bigtablet/bigtablet-design-system/commit/34f2b19fd85d62794580ee7ccf569480e45232cf))
+* use CHROMATIC_TOKEN env var instead of hardcoded token ([8f5c3ef](https://github.com/Bigtablet/bigtablet-design-system/commit/8f5c3ef36c7b2159ba64e33168686c0fc05e7788))
+
+
+### Features
+
+* add figma color sync automation ([00856d2](https://github.com/Bigtablet/bigtablet-design-system/commit/00856d28a5e8a097ab7e22c65c241882e296bae4))
+* add size-limit bundle size check ([1432fa1](https://github.com/Bigtablet/bigtablet-design-system/commit/1432fa1aa10534c518914d749924c46577b6b9c8))
+
 ## [1.19.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.3...v1.19.4) (2026-03-09)
 
 
