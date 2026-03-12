@@ -44,7 +44,11 @@ async function figmaFetch(path) {
     return res.json();
 }
 
-function rgbToHex(r, g, b) {
+function rgbToValue(r, g, b, opacity) {
+    if (opacity < 1) {
+        const ro = Math.round(opacity * 100) / 100;
+        return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${ro})`;
+    }
     return (
         "#" +
         [r, g, b]
@@ -55,7 +59,7 @@ function rgbToHex(r, g, b) {
 
 // ─── 현재 Figma 색상 스타일 가져오기 ─────────────────────────────
 async function fetchColorStyles() {
-    const fileData = await figmaFetch(`/v1/files/${FILE_KEY}?depth=1`);
+    const fileData = await figmaFetch(`/v1/files/${FILE_KEY}`);
     const stylesMap = fileData.styles ?? {};
 
     const colorEntries = Object.entries(stylesMap).filter(
@@ -79,10 +83,7 @@ async function fetchColorStyles() {
         let value = null;
         if (fill?.type === "SOLID" && fill.color) {
             const { r, g, b } = fill.color;
-            const opacity = fill.opacity ?? 1;
-            value = opacity < 1
-                ? `${rgbToHex(r, g, b)}${Math.round(opacity * 255).toString(16).padStart(2, "0")}`
-                : rgbToHex(r, g, b);
+            value = rgbToValue(r, g, b, fill.opacity ?? 1);
         }
 
         colors[styleMeta.name] = { nodeId, key: styleMeta.key, value };

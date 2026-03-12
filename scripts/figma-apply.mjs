@@ -102,7 +102,8 @@ function applyToColorsTs(modified, added) {
     // 수정된 색상값 교체
     for (const { name, after } of modified) {
         // `    name: "값",` 또는 `    name: 'rgba(...)',` 패턴 교체
-        const regex = new RegExp(`([ \\t]+${name}:\\s*)["'][^"'\\n]*["']`);
+        const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`([ \\t]+${escapedName}:\\s*)["'][^"'\\n]*["']`);
         if (regex.test(content)) {
             content = content.replace(regex, `$1"${after}"`);
         } else {
