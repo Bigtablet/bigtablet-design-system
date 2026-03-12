@@ -50,7 +50,7 @@
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
-    "chromatic": "npx chromatic --project-token=chpt_2f758912f0dde5c --build-script-name=build:sb",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
     "figma:test": "node scripts/figma-connect.mjs",
     "figma:snapshot": "node scripts/figma-snapshot.mjs",
     "figma:diff": "node scripts/figma-diff.mjs",
