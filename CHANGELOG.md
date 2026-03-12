@@ -1,3 +1,12 @@
+## [1.20.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.20.0...v1.20.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* restore CHROMATIC_PROJECT_TOKEN env var name for chromatic CLI ([c3dd8b8](https://github.com/Bigtablet/bigtablet-design-system/commit/c3dd8b8e6b9a7e5bcb78e5ff185123d9de1f1266))
+* use CHROMATIC_PROJECT_TOKEN as required by chromatic CLI ([3e90090](https://github.com/Bigtablet/bigtablet-design-system/commit/3e900905aa5cc0888bcc849f9f1889875541c53e))
+* use CHROMATIC_TOKEN env var (supported in CLI v15+) ([e8e3ace](https://github.com/Bigtablet/bigtablet-design-system/commit/e8e3aceaaaf42c10bcd79108723e57556a27bcd1))
+
 # [1.20.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.4...v1.20.0) (2026-03-12)
 
 
