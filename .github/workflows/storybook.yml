@@ -27,4 +27,4 @@ jobs:
       - name: Publish Storybook to Chromatic
         run: pnpm dlx chromatic --build-script-name=build:sb --only-changed --exit-once-uploaded --no-interactive
         env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
+          CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
