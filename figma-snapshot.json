@@ -1,0 +1,111 @@
+{
+  "version": "2329971470844843452",
+  "lastModified": "2026-03-12T08:16:06Z",
+  "colors": {
+    "primary": {
+      "nodeId": "601:79",
+      "key": "0012c64b15d3647ee10178f6ca24202bb593540b",
+      "value": "#000000"
+    },
+    "primaryHover": {
+      "nodeId": "601:80",
+      "key": "058a30a072fb908dfe9d025fa8cc27a4f806a94e",
+      "value": "#333333"
+    },
+    "background": {
+      "nodeId": "601:81",
+      "key": "a1823c1b4cdea1959d1cb9fcc35aca66c2fd76d6",
+      "value": "#ffffff"
+    },
+    "backgroundSecondary": {
+      "nodeId": "601:82",
+      "key": "f97b02d74eddd2f8580588f68d51997c28825938",
+      "value": "#fafafa"
+    },
+    "textPrimary": {
+      "nodeId": "601:83",
+      "key": "d84a0e311efa4de0b90f9cd3c9d58f1b0e479983",
+      "value": "#1a1a1a"
+    },
+    "textSecondary": {
+      "nodeId": "601:84",
+      "key": "f6dc586dba16f04efa52d4f36378e31d2a1c5685",
+      "value": "#666666"
+    },
+    "textTertiary": {
+      "nodeId": "601:85",
+      "key": "7b1ad07cd0b4f9bbf0122415241c0e6d2d4e0427",
+      "value": "#999999"
+    },
+    "textStrong": {
+      "nodeId": "601:86",
+      "key": "1c8d38cb233184b6eda8d603ed1b0eaa9d07356d",
+      "value": "#1f2937"
+    },
+    "textNormal": {
+      "nodeId": "601:87",
+      "key": "ca37113318efa937fd307f209239b26435160bf7",
+      "value": "#3b3b3b"
+    },
+    "textSubtle": {
+      "nodeId": "601:88",
+      "key": "a0b35dbb52b483481fb80e4654411c7df8c48ea1",
+      "value": "#6b7280"
+    },
+    "textDisabled": {
+      "nodeId": "601:89",
+      "key": "8375cd053f7c7a3a0a2eb6201b3d9f99416056bd",
+      "value": "#9ca3af"
+    },
+    "textInverse": {
+      "nodeId": "601:90",
+      "key": "1322e59b0c43f230aa2232192d0fbf6a85e53388",
+      "value": "#ffffff"
+    },
+    "border": {
+      "nodeId": "601:91",
+      "key": "2188177bc79f87ca8e6f4b8b0fd61fbe263ede1f",
+      "value": "#e5e5e5"
+    },
+    "borderLight": {
+      "nodeId": "601:92",
+      "key": "cb6b8c963777586d1a4c0b84b4aa595b63f8f88c",
+      "value": "rgba(0, 0, 0, 0.08)"
+    },
+    "success": {
+      "nodeId": "601:93",
+      "key": "14aba8dd856ccf4c7aaab777cf4e2e957db12817",
+      "value": "#10b981"
+    },
+    "error": {
+      "nodeId": "601:94",
+      "key": "6de1af5d9ebd54d2df6395ab9c72f3f8010018e8",
+      "value": "#ef4444"
+    },
+    "warning": {
+      "nodeId": "601:95",
+      "key": "57badda325802f421933f81334587af6be3c0e0d",
+      "value": "#f59e0b"
+    },
+    "info": {
+      "nodeId": "601:96",
+      "key": "afde1fc38f262e0b0434af2dc3d2ddf669b7d0d6",
+      "value": "#3b82f6"
+    },
+    "overlay": {
+      "nodeId": "601:97",
+      "key": "530da1b060db9deab1599b95fbe9c8c23e884b23",
+      "value": "rgba(0, 0, 0, 0.5)"
+    },
+    "hoverSubtle": {
+      "nodeId": "601:98",
+      "key": "0cdd3b25fff01cbb74aeb572464c57f22124553d",
+      "value": "rgba(0, 0, 0, 0.03)"
+    },
+    "hoverLight": {
+      "nodeId": "601:99",
+      "key": "a484c090eec49ac08a4118ff335e7fd9ff9e7835",
+      "value": "rgba(0, 0, 0, 0.05)"
+    }
+  }
+}
