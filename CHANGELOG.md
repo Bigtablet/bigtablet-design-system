@@ -1,3 +1,17 @@
+## [1.19.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.3...v1.19.4) (2026-03-09)
+
+
+### Bug Fixes
+
+* improve a11y, i18n, and convention compliance across components ([3bd0099](https://github.com/Bigtablet/bigtablet-design-system/commit/3bd00999a79f625fd860a0fe140cfc529a315d5d))
+
+## [1.19.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.2...v1.19.3) (2026-03-09)
+
+
+### Bug Fixes
+
+* apply design token review feedback and update Storybook color story ([c242e1e](https://github.com/Bigtablet/bigtablet-design-system/commit/c242e1eb5aa2148574a89b6bf1557502d11b26e7))
+
 ## [1.19.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.19.1...v1.19.2) (2026-03-05)
 
 
