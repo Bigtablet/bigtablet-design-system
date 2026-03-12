@@ -50,7 +50,12 @@
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --project unit --coverage",
-    "chromatic": "npx chromatic --project-token=chpt_2f758912f0dde5c --build-script-name=build:sb"
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
+    "figma:test": "node scripts/figma-connect.mjs",
+    "figma:snapshot": "node scripts/figma-snapshot.mjs",
+    "figma:diff": "node scripts/figma-diff.mjs",
+    "figma:apply": "node scripts/figma-apply.mjs",
+    "size": "size-limit"
   },
   "keywords": [
     "design-system",
@@ -80,10 +85,11 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.1",
     "@semantic-release/npm": "^13.1.1",
-    "@storybook/addon-docs": "^10.1.11",
-    "@storybook/addon-vitest": "10.1.11",
-    "@storybook/react": "10.1.11",
-    "@storybook/react-vite": "10.1.11",
+    "@size-limit/preset-small-lib": "^12.0.1",
+    "@storybook/addon-docs": "^10.2.17",
+    "@storybook/addon-vitest": "10.2.17",
+    "@storybook/react": "10.2.17",
+    "@storybook/react-vite": "10.2.17",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -103,7 +109,8 @@
     "react-dom": "19.2.0",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
-    "storybook": "10.1.11",
+    "size-limit": "^12.0.1",
+    "storybook": "10.2.17",
     "tsup": "^8.5.0",
     "typescript": "^5",
     "vite": "^5",
@@ -113,11 +120,23 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "12 kB"
+    },
+    {
+      "path": "dist/vanilla/bigtablet.min.js",
+      "limit": "5 kB"
+    }
+  ],
   "pnpm": {
     "overrides": {
       "rollup": "^4.59.0",
       "lodash": "^4.17.23",
-      "lodash-es": "^4.17.23"
+      "lodash-es": "^4.17.23",
+      "immutable": "^5.1.5",
+      "minimatch": "^10.2.4"
     }
   }
 }
