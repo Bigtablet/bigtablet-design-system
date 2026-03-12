@@ -36,6 +36,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check bundle size
+        run: pnpm size
+
       - name: Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2
         if: github.event_name == 'pull_request'

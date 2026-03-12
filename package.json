@@ -54,7 +54,8 @@
     "figma:test": "node scripts/figma-connect.mjs",
     "figma:snapshot": "node scripts/figma-snapshot.mjs",
     "figma:diff": "node scripts/figma-diff.mjs",
-    "figma:apply": "node scripts/figma-apply.mjs"
+    "figma:apply": "node scripts/figma-apply.mjs",
+    "size": "size-limit"
   },
   "keywords": [
     "design-system",
@@ -84,6 +85,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.1",
     "@semantic-release/npm": "^13.1.1",
+    "@size-limit/preset-small-lib": "^12.0.1",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-vitest": "10.1.11",
     "@storybook/react": "10.1.11",
@@ -107,6 +109,7 @@
     "react-dom": "19.2.0",
     "sass-embedded": "^1.93.3",
     "semantic-release": "^25.0.1",
+    "size-limit": "^12.0.1",
     "storybook": "10.1.11",
     "tsup": "^8.5.0",
     "typescript": "^5",
@@ -117,6 +120,16 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "12 kB"
+    },
+    {
+      "path": "dist/vanilla/bigtablet.min.js",
+      "limit": "5 kB"
+    }
+  ],
   "pnpm": {
     "overrides": {
       "rollup": "^4.59.0",
