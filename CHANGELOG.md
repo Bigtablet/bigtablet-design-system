@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.20.1...v1.21.0) (2026-03-13)
+
+
+### Features
+
+* sync _colors.scss on figma color changes ([9f450a7](https://github.com/Bigtablet/bigtablet-design-system/commit/9f450a72d60ce2876a5ba03f62a57211d74931ca))
+
 ## [1.20.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.20.0...v1.20.1) (2026-03-12)
 
 
