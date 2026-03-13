@@ -158,4 +158,14 @@ describe("DatePicker", () => {
         const group = document.querySelector("[role='group']") as HTMLElement;
         expect(group).not.toHaveAttribute("aria-describedby");
     });
+
+    it("uses custom minDateSrFormat when provided", () => {
+        render(<DatePicker minDate="2020-01-01" minDateSrFormat="최소 날짜: {date}" onChange={() => {}} />);
+        expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
+    });
+
+    it("uses custom selectableRangeUntilTodaySrText when provided", () => {
+        render(<DatePicker selectableRange="until-today" selectableRangeUntilTodaySrText="오늘까지 선택 가능" onChange={() => {}} />);
+        expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
+    });
 });

@@ -39,6 +39,16 @@ interface DatePickerProps {
     monthLabel?: string;
     /** 일 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Day") */
     dayLabel?: string;
+    /**
+     * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
+     * `{date}` 자리에 minDate 값이 치환됩니다. (기본값: "Minimum date: {date}")
+     */
+    minDateSrFormat?: string;
+    /**
+     * selectableRange="until-today" 설정 시 스크린리더에 전달할 안내 문구.
+     * (기본값: "Selectable up to today")
+     */
+    selectableRangeUntilTodaySrText?: string;
 }
 
 /**
@@ -86,6 +96,8 @@ export const DatePicker = ({
     yearLabel = "Year",
     monthLabel = "Month",
     dayLabel = "Day",
+    minDateSrFormat = "Minimum date: {date}",
+    selectableRangeUntilTodaySrText = "Selectable up to today",
 }: DatePickerProps) => {
     const groupId = React.useId();
     const constraintId = React.useId();
@@ -163,8 +175,8 @@ export const DatePicker = ({
     const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
 
     const constraintParts: string[] = [];
-    if (minDate) constraintParts.push(`Minimum date: ${minDate}`);
-    if (selectableRange === "until-today") constraintParts.push("Selectable up to today");
+    if (minDate) constraintParts.push(minDateSrFormat.replace("{date}", minDate));
+    if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
     const constraintDesc = constraintParts.join(". ");
 
     return (
