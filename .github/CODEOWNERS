@@ -1,0 +1,12 @@
+# 기본 리뷰어 (모든 변경사항)
+* @qtaghdi
+
+# 디자인 토큰
+src/styles/ @qtaghdi
+
+# 워크플로우
+.github/workflows/ @qtaghdi
+
+# 빌드 설정
+tsup.config.ts @qtaghdi
+package.json @qtaghdi
