@@ -13,6 +13,16 @@ describe("Card", () => {
         expect(screen.getByText("Card Title")).toBeInTheDocument();
     });
 
+    it("renders heading as h3 by default", () => {
+        render(<Card heading="Card Title">Content</Card>);
+        expect(screen.getByRole("heading", { level: 3, name: "Card Title" })).toBeInTheDocument();
+    });
+
+    it("renders heading with custom headingAs level", () => {
+        render(<Card heading="Card Title" headingAs="h2">Content</Card>);
+        expect(screen.getByRole("heading", { level: 2, name: "Card Title" })).toBeInTheDocument();
+    });
+
     it("does not render heading element when not provided", () => {
         render(<Card>Content</Card>);
         expect(screen.queryByText("Card Title")).not.toBeInTheDocument();
