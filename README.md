@@ -40,21 +40,25 @@ The official design system of Bigtablet — a unified UI library composed of Fou
 
 ## Installation
 
+### One-line setup (recommended)
+
+Auto-detects your package manager (npm / yarn / pnpm / bun) and environment (React / Next.js), installs the package + peer deps, and prints CSS/Provider setup instructions.
+
 ```bash
-# npm
-npm install @bigtablet/design-system
-
-# yarn
-yarn add @bigtablet/design-system
-
-# pnpm
-pnpm add @bigtablet/design-system
+curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-**Peer Dependencies**
+### Manual
 
 ```bash
-npm install react@^19 react-dom@^19 "lucide-react@>=0.552.0"
+# npm
+npm install @bigtablet/design-system react@^19 react-dom@^19 lucide-react
+
+# yarn
+yarn add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
+
+# pnpm
+pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
 > Requires **React 19** and **lucide-react ≥ 0.552.0**. Compatible with **Next.js 13+**.
