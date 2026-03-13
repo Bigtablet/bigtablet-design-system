@@ -39,6 +39,16 @@ interface DatePickerProps {
     monthLabel?: string;
     /** 일 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Day") */
     dayLabel?: string;
+    /**
+     * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
+     * `{date}` 자리에 minDate 값이 치환됩니다. (기본값: "Minimum date: {date}")
+     */
+    minDateSrFormat?: string;
+    /**
+     * selectableRange="until-today" 설정 시 스크린리더에 전달할 안내 문구.
+     * (기본값: "Selectable up to today")
+     */
+    selectableRangeUntilTodaySrText?: string;
 }
 
 /**
@@ -86,8 +96,11 @@ export const DatePicker = ({
     yearLabel = "Year",
     monthLabel = "Month",
     dayLabel = "Day",
+    minDateSrFormat = "Minimum date: {date}",
+    selectableRangeUntilTodaySrText = "Selectable up to today",
 }: DatePickerProps) => {
     const groupId = React.useId();
+    const constraintId = React.useId();
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
@@ -161,15 +174,26 @@ export const DatePicker = ({
     const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
     const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
 
+    const constraintParts: string[] = [];
+    if (minDate) constraintParts.push(minDateSrFormat.replace("{date}", minDate));
+    if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
+    const constraintDesc = constraintParts.join(". ");
+
     return (
         <div className={rootClassName} style={containerStyle}>
             {label && (
                 <label className="date_picker_label" id={groupId}>{label}</label>
             )}
+            {constraintDesc && (
+                <span id={constraintId} className="date_picker_sr_only">
+                    {constraintDesc}
+                </span>
+            )}
             <div
                 className="date_picker_fields"
                 role="group"
                 aria-labelledby={label ? groupId : undefined}
+                aria-describedby={constraintDesc ? constraintId : undefined}
             >
                 <select
                     aria-label={yearLabel}

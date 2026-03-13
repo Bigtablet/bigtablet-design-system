@@ -180,12 +180,15 @@ export const Sidebar = ({
                                     .filter(Boolean)
                                     .join(" ");
 
+                                const subId = `sidebar_sub_${item.id}`;
+
                                 return (
                                     <div key={item.id} className="sidebar_group">
                                         <button
                                             type="button"
                                             className="sidebar_item"
                                             aria-expanded={open}
+                                            aria-controls={subId}
                                             onClick={() =>
                                                 toggleGroup(item.id)
                                             }
@@ -209,7 +212,7 @@ export const Sidebar = ({
                                             </span>
                                         </button>
 
-                                        <div className={subClassName}>
+                                        <div id={subId} className={subClassName}>
                                             {item.children.map((child) => {
                                                 const active = isActive(
                                                     child.href
@@ -228,6 +231,7 @@ export const Sidebar = ({
                                                         href={child.href}
                                                         className={subItemClassName}
                                                         aria-current={active ? "page" : undefined}
+                                                        tabIndex={open ? undefined : -1}
                                                         onClick={() =>
                                                             onItemSelect?.(
                                                                 child.href

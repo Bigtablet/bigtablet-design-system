@@ -8,7 +8,6 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Test Coverage](https://img.shields.io/badge/coverage-86%25-brightgreen.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions)
 [![CI](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml)
-[![Storybook](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=white)](https://bigtablet.github.io/bigtablet-design-system)
 
 [🇰🇷 한국어](./README_KR.md) · 🇺🇸 English
 
@@ -17,7 +16,7 @@ The official design system of Bigtablet — a unified UI library composed of Fou
 > **Note**: This is Bigtablet's in-house design system, open-sourced for community reference.
 > External use is welcome, but minor versions may include breaking changes without prior notice.
 
-[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Storybook](https://bigtablet.github.io/bigtablet-design-system)
+[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system)
 
 </div>
 
@@ -34,7 +33,7 @@ The official design system of Bigtablet — a unified UI library composed of Fou
 | 🎨 **Design Tokens** | Consistent token-based system for colors, typography, spacing |
 | ♿ **Accessibility** | Keyboard navigation, screen reader support, full ARIA attributes |
 | 🧪 **86% Coverage** | Stable test coverage powered by Vitest |
-| 🎭 **Storybook** | Interactive documentation for all components |
+| 🎭 **Storybook** | Interactive component documentation (run locally via `pnpm storybook`) |
 | 🎯 **Zero Dependencies** | No bundled runtime dependencies — peer deps only |
 
 ---
@@ -315,6 +314,6 @@ pnpm test:coverage # Coverage report
 
 <div align="center">
 
-[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Storybook](https://bigtablet.github.io/bigtablet-design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues)
+[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues)
 
 </div>

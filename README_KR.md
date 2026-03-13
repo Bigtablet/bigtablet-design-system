@@ -12,7 +12,7 @@
 
 Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 Components(UI 컴포넌트)로 구성된 통합 UI 라이브러리입니다.
 
-[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Storybook](https://bigtablet.github.io/bigtablet-design-system)
+[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system)
 
 </div>
 
@@ -29,7 +29,7 @@ Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 C
 | 🎨 **Design Tokens** | 색상, 타이포그래피, 간격 등 일관된 디자인 토큰 시스템 |
 | ♿ **Accessibility** | 키보드 네비게이션, 스크린 리더 호환, ARIA 속성 완비 |
 | 🧪 **86% Coverage** | Vitest 기반 안정적인 테스트 커버리지 |
-| 🎭 **Storybook** | 모든 컴포넌트 인터랙티브 문서 제공 |
+| 🎭 **Storybook** | 컴포넌트 인터랙티브 문서 (`pnpm storybook`으로 로컬 실행) |
 
 ---
 
@@ -307,6 +307,6 @@ pnpm test:coverage # 커버리지 리포트
 
 <div align="center">
 
-[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Storybook](https://bigtablet.github.io/bigtablet-design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues)
+[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues)
 
 </div>

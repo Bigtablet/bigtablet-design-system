@@ -5,13 +5,15 @@ import { Home, Settings } from "lucide-react";
 
 // next/link 목 처리
 vi.mock("next/link", () => ({
-    default: ({ children, href, className, onClick }: {
+    default: ({ children, href, className, onClick, tabIndex, "aria-current": ariaCurrent }: {
         children: React.ReactNode;
         href: string;
         className?: string;
         onClick?: () => void;
+        tabIndex?: number;
+        "aria-current"?: string;
     }) => (
-        <a href={href} className={className} onClick={onClick}>
+        <a href={href} className={className} onClick={onClick} tabIndex={tabIndex} aria-current={ariaCurrent}>
             {children}
         </a>
     ),
@@ -207,5 +209,31 @@ describe("Sidebar", () => {
         fireEvent.click(screen.getByText("Users"));
 
         expect(onItemSelect).toHaveBeenCalledWith("/admin/users");
+    });
+
+    it("group button has aria-controls pointing to sub-container", () => {
+        render(<Sidebar items={groupItems} />);
+        const adminButton = screen.getByText("Admin").closest("button") as HTMLButtonElement;
+        const controlsId = adminButton.getAttribute("aria-controls");
+
+        expect(controlsId).toBeTruthy();
+        expect(document.getElementById(controlsId!)).toBeInTheDocument();
+    });
+
+    it("sub-items have tabIndex=-1 when group is closed", () => {
+        render(<Sidebar items={groupItems} />);
+
+        // 닫힌 그룹의 서브 아이템은 키보드로 포커스되면 안 된다
+        const usersLink = screen.getByText("Users").closest("a");
+        expect(usersLink).toHaveAttribute("tabindex", "-1");
+    });
+
+    it("sub-items are keyboard-reachable when group is open", () => {
+        render(<Sidebar items={groupItems} />);
+
+        fireEvent.click(screen.getByText("Admin"));
+
+        const usersLink = screen.getByText("Users").closest("a");
+        expect(usersLink).not.toHaveAttribute("tabindex", "-1");
     });
 });
