@@ -9,9 +9,15 @@
  *   (GitHub Actions에서 이슈 자동 생성 트리거)
  */
 
-import { writeFileSync, existsSync, readFileSync } from "fs";
+import { writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
-import { loadEnv, fetchColorStyles, type ColorSnapshot } from "./figma-utils";
+import {
+    loadEnv,
+    fetchColorStyles,
+    parseJsonFile,
+    FigmaApiError,
+    type ColorSnapshot,
+} from "./figma-utils";
 
 loadEnv();
 
@@ -117,7 +123,13 @@ async function main(): Promise<void> {
         process.exit(0);
     }
 
-    const prev: ColorSnapshot = JSON.parse(readFileSync(snapshotPath, "utf-8"));
+    const prev = parseJsonFile<ColorSnapshot>(snapshotPath, "figma-snapshot.json");
+
+    // 스냅샷 구조 검증
+    if (!prev.version || !prev.colors) {
+        console.error("❌ figma-snapshot.json 구조가 올바르지 않습니다. pnpm figma:snapshot을 다시 실행해주세요.");
+        process.exit(1);
+    }
 
     console.log("🔍 Figma 색상 변경사항 확인 중...");
     const current = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN);
@@ -154,10 +166,24 @@ async function main(): Promise<void> {
 
     const report = buildReport(diff, prev.version, current.version, current.lastModified);
     const reportPath = resolve(process.cwd(), ".figma-diff-report.md");
-    writeFileSync(reportPath, report);
-    console.log(`\n📄 리포트 저장: .figma-diff-report.md`);
 
+    try {
+        writeFileSync(reportPath, report);
+    } catch (err) {
+        throw new Error(`.figma-diff-report.md 저장 실패: ${(err as Error).message}`);
+    }
+
+    console.log(`\n📄 리포트 저장: .figma-diff-report.md`);
     process.exit(1);
 }
 
-main();
+main().catch((err) => {
+    if (err instanceof FigmaApiError && err.statusCode === 403) {
+        console.error("❌ Figma 접근 권한이 없습니다. FIGMA_TOKEN이 유효한지 확인해주세요.");
+    } else if (err instanceof FigmaApiError && err.statusCode === 404) {
+        console.error("❌ Figma 파일을 찾을 수 없습니다. FIGMA_FILE_KEY를 확인해주세요.");
+    } else {
+        console.error(`❌ diff 실패: ${err.message}`);
+    }
+    process.exit(1);
+});

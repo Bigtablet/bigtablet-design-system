@@ -10,7 +10,7 @@
 
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import { loadEnv, fetchColorStyles } from "./figma-utils";
+import { loadEnv, fetchColorStyles, FigmaApiError } from "./figma-utils";
 
 loadEnv();
 
@@ -29,7 +29,11 @@ async function main(): Promise<void> {
     const count = Object.keys(snapshot.colors).length;
 
     const outPath = resolve(process.cwd(), "figma-snapshot.json");
-    writeFileSync(outPath, JSON.stringify(snapshot, null, 2) + "\n");
+    try {
+        writeFileSync(outPath, JSON.stringify(snapshot, null, 2) + "\n");
+    } catch (err) {
+        throw new Error(`figma-snapshot.json 저장 실패: ${(err as Error).message}`);
+    }
 
     console.log(`✅ ${count}개 색상 스타일 저장 완료`);
     console.log(`   버전: ${snapshot.version}`);
@@ -37,4 +41,13 @@ async function main(): Promise<void> {
     console.log(`   파일: figma-snapshot.json`);
 }
 
-main();
+main().catch((err) => {
+    if (err instanceof FigmaApiError && err.statusCode === 403) {
+        console.error("❌ Figma 접근 권한이 없습니다. FIGMA_TOKEN이 유효한지 확인해주세요.");
+    } else if (err instanceof FigmaApiError && err.statusCode === 404) {
+        console.error("❌ Figma 파일을 찾을 수 없습니다. FIGMA_FILE_KEY를 확인해주세요.");
+    } else {
+        console.error(`❌ 스냅샷 저장 실패: ${err.message}`);
+    }
+    process.exit(1);
+});

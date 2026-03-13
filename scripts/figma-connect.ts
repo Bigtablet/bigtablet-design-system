@@ -13,7 +13,7 @@
 
 import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
-import { figmaFetch } from "./figma-utils";
+import { figmaFetch, FigmaApiError } from "./figma-utils";
 
 // ── Env loader (requires .env — fails hard if missing) ───────────────────────
 
@@ -23,7 +23,13 @@ function loadEnv(): void {
         console.error("❌ .env 파일이 없습니다. .env.example을 복사해서 만들어주세요.");
         process.exit(1);
     }
-    const lines = readFileSync(envPath, "utf-8").split("\n");
+    let lines: string[];
+    try {
+        lines = readFileSync(envPath, "utf-8").split("\n");
+    } catch (err) {
+        console.error(`❌ .env 파일을 읽을 수 없습니다: ${(err as Error).message}`);
+        process.exit(1);
+    }
     for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith("#")) continue;
@@ -44,19 +50,41 @@ const TEAM_ID = process.env.FIGMA_TEAM_ID ?? "";
 
 async function testToken(): Promise<void> {
     console.log("\n1️⃣  API 토큰 유효성 확인...");
-    const data = await figmaFetch<{ email: string; handle: string }>("/v1/me", FIGMA_TOKEN);
-    console.log(`   ✅ 인증 성공: ${data.email} (${data.handle})`);
+    try {
+        const data = await figmaFetch<{ email: string; handle: string }>("/v1/me", FIGMA_TOKEN);
+        console.log(`   ✅ 인증 성공: ${data.email} (${data.handle})`);
+    } catch (err) {
+        const e = err as FigmaApiError;
+        if (e.statusCode === 403) {
+            throw new FigmaApiError("FIGMA_TOKEN이 유효하지 않거나 만료되었습니다.", 403);
+        }
+        throw err;
+    }
 }
 
 async function testFileAccess(): Promise<void> {
     console.log("\n2️⃣  파일 접근 권한 확인...");
-    const data = await figmaFetch<{ name: string; lastModified: string; version: string }>(
-        `/v1/files/${FILE_KEY}?depth=1`,
-        FIGMA_TOKEN
-    );
-    console.log(`   ✅ 파일 접근 성공: "${data.name}"`);
-    console.log(`   📅 마지막 수정: ${new Date(data.lastModified).toLocaleString("ko-KR")}`);
-    console.log(`   🔢 현재 버전: ${data.version}`);
+    try {
+        const data = await figmaFetch<{ name: string; lastModified: string; version: string }>(
+            `/v1/files/${FILE_KEY}?depth=1`,
+            FIGMA_TOKEN
+        );
+        console.log(`   ✅ 파일 접근 성공: "${data.name}"`);
+        console.log(`   📅 마지막 수정: ${new Date(data.lastModified).toLocaleString("ko-KR")}`);
+        console.log(`   🔢 현재 버전: ${data.version}`);
+    } catch (err) {
+        const e = err as FigmaApiError;
+        if (e.statusCode === 404) {
+            throw new FigmaApiError(
+                `파일을 찾을 수 없습니다. FIGMA_FILE_KEY("${FILE_KEY}")가 올바른지 확인해주세요.`,
+                404
+            );
+        }
+        if (e.statusCode === 403) {
+            throw new FigmaApiError("파일 접근 권한이 없습니다. 파일이 공유되어 있는지 확인해주세요.", 403);
+        }
+        throw err;
+    }
 }
 
 async function testColorStyles(): Promise<void> {
@@ -95,31 +123,37 @@ async function testColorStyles(): Promise<void> {
             }
         }
     } catch (err) {
+        // 스타일 확인 실패는 치명적이지 않으므로 경고만 출력
         console.log(`   ⚠️  Styles API 오류: ${(err as Error).message}`);
     }
 }
 
 async function testComponents(): Promise<void> {
     console.log("\n4️⃣  컴포넌트 목록 확인...");
-    const data = await figmaFetch<{
-        meta?: { components?: Record<string, { name: string; updated_at: string }> };
-    }>(`/v1/files/${FILE_KEY}/components`, FIGMA_TOKEN);
+    try {
+        const data = await figmaFetch<{
+            meta?: { components?: Record<string, { name: string; updated_at: string }> };
+        }>(`/v1/files/${FILE_KEY}/components`, FIGMA_TOKEN);
 
-    const components = Object.values(data.meta?.components ?? {});
-    if (components.length === 0) {
-        console.log("   ⚠️  컴포넌트가 없습니다.");
-        return;
-    }
+        const components = Object.values(data.meta?.components ?? {});
+        if (components.length === 0) {
+            console.log("   ⚠️  컴포넌트가 없습니다.");
+            return;
+        }
 
-    console.log(`   ✅ ${components.length}개 컴포넌트 발견`);
-    const recent = components
-        .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-        .slice(0, 5);
+        console.log(`   ✅ ${components.length}개 컴포넌트 발견`);
+        const recent = components
+            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+            .slice(0, 5);
 
-    console.log("   📦 최근 수정된 컴포넌트:");
-    for (const comp of recent) {
-        const updated = new Date(comp.updated_at).toLocaleDateString("ko-KR");
-        console.log(`      - ${comp.name} (${updated})`);
+        console.log("   📦 최근 수정된 컴포넌트:");
+        for (const comp of recent) {
+            const updated = new Date(comp.updated_at).toLocaleDateString("ko-KR");
+            console.log(`      - ${comp.name} (${updated})`);
+        }
+    } catch (err) {
+        // 컴포넌트 목록 실패는 치명적이지 않으므로 경고만 출력
+        console.log(`   ⚠️  컴포넌트 목록 조회 실패: ${(err as Error).message}`);
     }
 }
 
@@ -175,10 +209,12 @@ async function main(): Promise<void> {
         console.log("\n" + "─".repeat(40));
         console.log("✅ 연결 테스트 완료! 다음 단계: pnpm figma:snapshot\n");
     } catch (err) {
-        console.error("\n❌ 연결 실패:", (err as Error).message);
-        console.error("\n확인해주세요:");
-        console.error("  - FIGMA_TOKEN이 올바른지");
-        console.error("  - FIGMA_FILE_KEY가 올바른지 (URL에서 /file/[KEY]/ 부분)");
+        console.error(`\n❌ 연결 실패: ${(err as Error).message}`);
+        if (!(err instanceof FigmaApiError)) {
+            console.error("확인해주세요:");
+            console.error("  - FIGMA_TOKEN이 올바른지");
+            console.error("  - FIGMA_FILE_KEY가 올바른지 (URL에서 /file/[KEY]/ 부분)");
+        }
         process.exit(1);
     }
 }

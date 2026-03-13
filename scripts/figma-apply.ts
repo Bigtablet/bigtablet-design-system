@@ -13,7 +13,13 @@
 
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
-import { loadEnv, fetchColorStyles, type ColorSnapshot } from "./figma-utils";
+import {
+    loadEnv,
+    fetchColorStyles,
+    parseJsonFile,
+    FigmaApiError,
+    type ColorSnapshot,
+} from "./figma-utils";
 
 loadEnv();
 
@@ -27,7 +33,20 @@ interface ValueEntry { name: string; value: string | null }
 
 function applyToColorsTs(modified: ModifiedEntry[], added: ValueEntry[]): void {
     const colorsPath = resolve(process.cwd(), "src/styles/ts/colors.ts");
-    let content = readFileSync(colorsPath, "utf-8");
+
+    if (!existsSync(colorsPath)) {
+        throw new Error(`colors.ts 파일을 찾을 수 없습니다: ${colorsPath}`);
+    }
+
+    let content: string;
+    try {
+        content = readFileSync(colorsPath, "utf-8");
+    } catch (err) {
+        throw new Error(`colors.ts 읽기 실패: ${(err as Error).message}`);
+    }
+
+    // 백업 저장 (쓰기 실패 시 복구 가능)
+    writeFileSync(colorsPath + ".bak", content);
 
     for (const { name, after } of modified) {
         const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -46,7 +65,15 @@ function applyToColorsTs(modified: ModifiedEntry[], added: ValueEntry[]): void {
         content = content.replace(/^} as const;/m, `${newLines}\n} as const;`);
     }
 
-    writeFileSync(colorsPath, content);
+    try {
+        writeFileSync(colorsPath, content);
+    } catch (err) {
+        // 쓰기 실패 시 백업 복원
+        try {
+            writeFileSync(colorsPath, readFileSync(colorsPath + ".bak", "utf-8"));
+        } catch { /* 복원도 실패하면 포기 */ }
+        throw new Error(`colors.ts 쓰기 실패: ${(err as Error).message}`);
+    }
 }
 
 // ── Patch _colors.scss ────────────────────────────────────────────────────────
@@ -81,7 +108,20 @@ function camelToScss(name: string): string {
 
 function applyToColorsSCSS(modified: ModifiedEntry[], added: ValueEntry[]): void {
     const scssPath = resolve(process.cwd(), "src/styles/scss/_colors.scss");
-    let content = readFileSync(scssPath, "utf-8");
+
+    if (!existsSync(scssPath)) {
+        throw new Error(`_colors.scss 파일을 찾을 수 없습니다: ${scssPath}`);
+    }
+
+    let content: string;
+    try {
+        content = readFileSync(scssPath, "utf-8");
+    } catch (err) {
+        throw new Error(`_colors.scss 읽기 실패: ${(err as Error).message}`);
+    }
+
+    // 백업 저장
+    writeFileSync(scssPath + ".bak", content);
 
     for (const { name, after } of modified) {
         const scssVar = SCSS_VAR_MAP[name] ?? camelToScss(name);
@@ -101,7 +141,14 @@ function applyToColorsSCSS(modified: ModifiedEntry[], added: ValueEntry[]): void
         content = content.trimEnd() + "\n\n/* Figma Synced */\n" + newLines + "\n";
     }
 
-    writeFileSync(scssPath, content);
+    try {
+        writeFileSync(scssPath, content);
+    } catch (err) {
+        try {
+            writeFileSync(scssPath, readFileSync(scssPath + ".bak", "utf-8"));
+        } catch { /* 복원 실패 포기 */ }
+        throw new Error(`_colors.scss 쓰기 실패: ${(err as Error).message}`);
+    }
 }
 
 // ── PR body ───────────────────────────────────────────────────────────────────
@@ -160,7 +207,12 @@ async function main(): Promise<void> {
         process.exit(0);
     }
 
-    const prev: ColorSnapshot = JSON.parse(readFileSync(snapshotPath, "utf-8"));
+    const prev = parseJsonFile<ColorSnapshot>(snapshotPath, "figma-snapshot.json");
+
+    if (!prev.version || !prev.colors) {
+        console.error("❌ figma-snapshot.json 구조가 올바르지 않습니다. pnpm figma:snapshot을 다시 실행해주세요.");
+        process.exit(1);
+    }
 
     console.log("🔍 Figma 색상 변경사항 확인 중...");
     const current = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN);
@@ -225,4 +277,13 @@ async function main(): Promise<void> {
     process.exit(1);
 }
 
-main();
+main().catch((err) => {
+    if (err instanceof FigmaApiError && err.statusCode === 403) {
+        console.error("❌ Figma 접근 권한이 없습니다. FIGMA_TOKEN이 유효한지 확인해주세요.");
+    } else if (err instanceof FigmaApiError && err.statusCode === 404) {
+        console.error("❌ Figma 파일을 찾을 수 없습니다. FIGMA_FILE_KEY를 확인해주세요.");
+    } else {
+        console.error(`❌ apply 실패: ${err.message}`);
+    }
+    process.exit(1);
+});
