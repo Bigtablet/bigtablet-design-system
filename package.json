@@ -42,8 +42,8 @@
   ],
   "scripts": {
     "build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
-    "build:vanilla": "node scripts/build-vanilla.mjs",
-    "copy:scss": "node scripts/copy-scss.mjs",
+    "build:vanilla": "sh scripts/build-vanilla.sh",
+    "copy:scss": "sh scripts/copy-scss.sh",
     "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
     "build:sb": "storybook build",
