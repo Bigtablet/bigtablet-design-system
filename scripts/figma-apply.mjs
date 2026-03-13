@@ -122,6 +122,63 @@ function applyToColorsTs(modified, added) {
     writeFileSync(colorsPath, content);
 }
 
+// ─── _colors.scss 수정 ───────────────────────────────────────────
+
+// colors.ts 키 → SCSS 변수명 매핑 (기존 파일의 네이밍 불일치 처리)
+const SCSS_VAR_MAP = {
+    primary: "$color_primary",
+    primaryHover: "$color_primary_hover",
+    background: "$color_background",
+    backgroundSecondary: "$color_background_secondary",
+    textPrimary: "$color_text_primary",
+    textSecondary: "$color_text_secondary",
+    textTertiary: "$color_text_tertiary",
+    textStrong: "$text_strong",
+    textNormal: "$text_normal",
+    textSubtle: "$text_subtle",
+    textDisabled: "$text_disabled",
+    textInverse: "$text_inverse",
+    border: "$color_border",
+    borderLight: "$color_border_light",
+    success: "$color_success",
+    error: "$color_error",
+    warning: "$color_warning",
+    info: "$color_info",
+    overlay: "$color_overlay",
+    hoverSubtle: "$color_hover_subtle",
+    hoverLight: "$color_hover_light",
+};
+
+// 새 색상 추가 시 기본 변수명 생성: camelCase → $color_snake_case
+function camelToScss(name) {
+    return "$color_" + name.replace(/([A-Z])/g, "_$1").toLowerCase();
+}
+
+function applyToColorsSCSS(modified, added) {
+    const scssPath = resolve(process.cwd(), "src/styles/scss/_colors.scss");
+    let content = readFileSync(scssPath, "utf-8");
+
+    for (const { name, after } of modified) {
+        const scssVar = SCSS_VAR_MAP[name] ?? camelToScss(name);
+        const escapedVar = scssVar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(${escapedVar}:\\s*)[^;\\n]+`);
+        if (regex.test(content)) {
+            content = content.replace(regex, `$1${after}`);
+        } else {
+            console.warn(`   ⚠️  _colors.scss에서 '${scssVar}' 변수를 찾지 못했습니다.`);
+        }
+    }
+
+    if (added.length > 0) {
+        const newLines = added
+            .map(({ name, value }) => `${camelToScss(name)}: ${value};`)
+            .join("\n");
+        content = content.trimEnd() + "\n\n/* Figma Synced */\n" + newLines + "\n";
+    }
+
+    writeFileSync(scssPath, content);
+}
+
 // ─── PR 본문 생성 (git-workflow.md 포맷) ────────────────────────
 function buildPrBody(diff, prevVersion, currentVersion, lastModified) {
     const workItems = [];
@@ -223,6 +280,11 @@ async function main() {
     console.log("\n✏️  colors.ts 업데이트 중...");
     applyToColorsTs(modified, added);
     console.log("   ✅ colors.ts 업데이트 완료");
+
+    // _colors.scss 자동 반영
+    console.log("✏️  _colors.scss 업데이트 중...");
+    applyToColorsSCSS(modified, added);
+    console.log("   ✅ _colors.scss 업데이트 완료");
 
     // 스냅샷 갱신
     writeFileSync(snapshotPath, JSON.stringify(current, null, 2) + "\n");

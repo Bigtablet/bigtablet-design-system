@@ -40,7 +40,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add src/styles/ts/colors.ts figma-snapshot.json
+          git add src/styles/ts/colors.ts src/styles/scss/_colors.scss figma-snapshot.json
           git commit -m "fix: sync figma color styles
 
           Co-Authored-By: Claude <noreply@anthropic.com>"
