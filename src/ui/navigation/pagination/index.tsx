@@ -86,6 +86,7 @@ export const Pagination = ({ page, totalPages, onChange, prevLabel = "Previous p
     return (
         <nav className="pagination" aria-label="Pagination">
             <button
+                type="button"
                 className="pagination_item"
                 onClick={() => onChange(page - 1)}
                 disabled={prevDisabled}
@@ -126,6 +127,7 @@ export const Pagination = ({ page, totalPages, onChange, prevLabel = "Previous p
             </div>
 
             <button
+                type="button"
                 className="pagination_item"
                 onClick={() => onChange(page + 1)}
                 disabled={nextDisabled}

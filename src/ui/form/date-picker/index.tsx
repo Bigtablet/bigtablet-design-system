@@ -88,6 +88,7 @@ export const DatePicker = ({
     dayLabel = "Day",
 }: DatePickerProps) => {
     const groupId = React.useId();
+    const constraintId = React.useId();
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
@@ -161,15 +162,26 @@ export const DatePicker = ({
     const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
     const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
 
+    const constraintParts: string[] = [];
+    if (minDate) constraintParts.push(`Minimum date: ${minDate}`);
+    if (selectableRange === "until-today") constraintParts.push("Selectable up to today");
+    const constraintDesc = constraintParts.join(". ");
+
     return (
         <div className={rootClassName} style={containerStyle}>
             {label && (
                 <label className="date_picker_label" id={groupId}>{label}</label>
             )}
+            {constraintDesc && (
+                <span id={constraintId} className="date_picker_sr_only">
+                    {constraintDesc}
+                </span>
+            )}
             <div
                 className="date_picker_fields"
                 role="group"
                 aria-labelledby={label ? groupId : undefined}
+                aria-describedby={constraintDesc ? constraintId : undefined}
             >
                 <select
                     aria-label={yearLabel}
