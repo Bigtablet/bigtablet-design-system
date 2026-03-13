@@ -35,24 +35,28 @@ Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 C
 
 ## 설치
 
+### 한 줄 설치 (권장)
+
+패키지 매니저(npm / yarn / pnpm / bun)와 환경(React / Next.js)을 자동으로 감지하여 패키지 + peer deps를 설치하고, CSS 및 Provider 설정 방법을 안내합니다.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
+```
+
+### 수동 설치
+
 ```bash
 # npm
-npm install @bigtablet/design-system
+npm install @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 
 # yarn
-yarn add @bigtablet/design-system
+yarn add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 
 # pnpm
-pnpm add @bigtablet/design-system
+pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
-**Peer Dependencies**
-
-```bash
-npm install react react-dom lucide-react
-```
-
-> React 18+ 및 Next.js 13+ 이상에서 사용하는 것을 권장합니다.
+> React 19 및 lucide-react ≥ 0.552.0 이 필요합니다. Next.js 13+ 와 호환됩니다.
 
 ---
 
