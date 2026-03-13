@@ -7,9 +7,8 @@ set -e
 PACKAGE="@bigtablet/design-system"
 PEER_REACT="react@^19 react-dom@^19"
 PEER_LUCIDE="lucide-react"
-PEER_NEXT="next"
 
-# ── Colors ──────────────────────────────────────────────────────────────────
+# ── Colors ───────────────────────────────────────────────────────────────────
 if [ -t 1 ]; then
   BOLD="\033[1m"; RESET="\033[0m"
   GREEN="\033[32m"; CYAN="\033[36m"; YELLOW="\033[33m"; GRAY="\033[90m"
@@ -23,7 +22,7 @@ warn()    { printf "${YELLOW}⚠ ${RESET}%s\n" "$*"; }
 step()    { printf "\n${BOLD}%s${RESET}\n" "$*"; }
 code()    { printf "${GRAY}  %s${RESET}\n" "$*"; }
 
-# ── Banner ───────────────────────────────────────────────────────────────────
+# ── Banner ────────────────────────────────────────────────────────────────────
 printf "\n${BOLD}${CYAN}Bigtablet Design System — Setup${RESET}\n"
 printf "${GRAY}─────────────────────────────────${RESET}\n\n"
 
@@ -32,7 +31,6 @@ detect_pm() {
   if [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
   elif [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then echo "bun"
   elif [ -f "yarn.lock" ]; then echo "yarn"
-  elif [ -f "package-lock.json" ]; then echo "npm"
   else echo "npm"
   fi
 }
@@ -42,25 +40,19 @@ info "Detected package manager: ${BOLD}${PM}${RESET}"
 
 # ── Detect environment ────────────────────────────────────────────────────────
 detect_env() {
-  if [ -f "next.config.js" ] || [ -f "next.config.ts" ] || [ -f "next.config.mjs" ]; then
-    echo "nextjs"
-  else
-    echo "react"
-  fi
+  for config_file in next.config.js next.config.ts next.config.mjs next.config.cjs; do
+    if [ -f "$config_file" ]; then
+      echo "nextjs"
+      return
+    fi
+  done
+  echo "react"
 }
 
 ENV=$(detect_env)
 info "Detected environment:     ${BOLD}${ENV}${RESET}"
 
-# ── Build install command ─────────────────────────────────────────────────────
-case "$PM" in
-  pnpm) ADD="pnpm add" ;;
-  bun)  ADD="bun add" ;;
-  yarn) ADD="yarn add" ;;
-  npm)  ADD="npm install" ;;
-esac
-
-# Decide which peer deps to include
+# ── Decide peer deps ──────────────────────────────────────────────────────────
 if [ "$ENV" = "nextjs" ]; then
   PEERS="$PEER_LUCIDE"
   # next + react already in project, only lucide-react is truly new
@@ -70,9 +62,21 @@ fi
 
 # ── Install ───────────────────────────────────────────────────────────────────
 step "1 / 3  Installing packages"
-CMD="$ADD $PACKAGE $PEERS"
-info "Running: ${BOLD}${CMD}${RESET}"
-eval "$CMD"
+
+# run_install: avoids eval while keeping the command visible in logs
+run_install() {
+  info "Running: ${BOLD}$*${RESET}"
+  "$@"
+}
+
+# shellcheck disable=SC2086  # intentional word-split on $PEERS
+case "$PM" in
+  pnpm) run_install pnpm add "$PACKAGE" $PEERS ;;
+  bun)  run_install bun  add "$PACKAGE" $PEERS ;;
+  yarn) run_install yarn add "$PACKAGE" $PEERS ;;
+  npm)  run_install npm install "$PACKAGE" $PEERS ;;
+esac
+
 success "Packages installed"
 
 # ── Print setup instructions ──────────────────────────────────────────────────
