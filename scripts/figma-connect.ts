@@ -11,36 +11,9 @@
  *   5. 팀 Webhook 등록 가능 여부
  */
 
-import { readFileSync, existsSync } from "fs";
-import { resolve } from "path";
-import { figmaFetch, FigmaApiError } from "./figma-utils";
+import { figmaFetch, FigmaApiError, loadEnv } from "./figma-utils";
 
-// ── Env loader (requires .env — fails hard if missing) ───────────────────────
-
-function loadEnv(): void {
-    const envPath = resolve(process.cwd(), ".env");
-    if (!existsSync(envPath)) {
-        console.error("❌ .env 파일이 없습니다. .env.example을 복사해서 만들어주세요.");
-        process.exit(1);
-    }
-    let lines: string[];
-    try {
-        lines = readFileSync(envPath, "utf-8").split("\n");
-    } catch (err) {
-        console.error(`❌ .env 파일을 읽을 수 없습니다: ${(err as Error).message}`);
-        process.exit(1);
-    }
-    for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
-        const [key, ...rest] = trimmed.split("=");
-        if (key && rest.length) {
-            process.env[key.trim()] = rest.join("=").trim();
-        }
-    }
-}
-
-loadEnv();
+loadEnv({ required: true });
 
 const FIGMA_TOKEN = process.env.FIGMA_TOKEN ?? "";
 const FILE_KEY = process.env.FIGMA_FILE_KEY ?? "";

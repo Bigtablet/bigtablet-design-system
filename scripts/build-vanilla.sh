@@ -39,7 +39,8 @@ echo "✓ Vanilla JS copied"
 
 # ── Copy examples (if present) ────────────────────────────────────────────────
 if [ -d "$SRC/examples" ]; then
-  cp -r "$SRC/examples" "$OUT/examples"
+  mkdir -p "$OUT/examples"
+  cp -r "$SRC/examples/." "$OUT/examples/"
   echo "✓ Examples copied"
 fi
 

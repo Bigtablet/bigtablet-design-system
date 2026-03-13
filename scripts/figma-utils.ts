@@ -56,14 +56,24 @@ export class FigmaApiError extends Error {
 
 // ── Env loader ───────────────────────────────────────────────────────────────
 
-export function loadEnv(): void {
+export function loadEnv({ required = false }: { required?: boolean } = {}): void {
     const envPath = resolve(process.cwd(), ".env");
-    if (!existsSync(envPath)) return;
+    if (!existsSync(envPath)) {
+        if (required) {
+            console.error("❌ .env 파일이 없습니다. .env.example을 복사해서 만들어주세요.");
+            process.exit(1);
+        }
+        return;
+    }
 
     let lines: string[];
     try {
         lines = readFileSync(envPath, "utf-8").split("\n");
     } catch (err) {
+        if (required) {
+            console.error(`❌ .env 파일을 읽을 수 없습니다: ${(err as Error).message}`);
+            process.exit(1);
+        }
         console.warn(`⚠️  .env 파일을 읽을 수 없습니다: ${(err as Error).message}`);
         return;
     }
