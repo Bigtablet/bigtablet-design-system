@@ -1,0 +1,19 @@
+pull_request_rules:
+  - name: Merge when approved and CI passes
+    conditions:
+      - base=develop
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - check-success=test
+    actions:
+      merge:
+        method: squash
+
+  - name: Auto-merge Dependabot PRs when CI passes
+    conditions:
+      - base=develop
+      - author=dependabot[bot]
+      - check-success=test
+    actions:
+      merge:
+        method: squash
