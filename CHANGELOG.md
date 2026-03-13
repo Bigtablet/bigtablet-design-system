@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.21.0...v1.21.1) (2026-03-13)
+
+
+### Bug Fixes
+
+* skip commitlint for dependabot PRs ([232bf93](https://github.com/Bigtablet/bigtablet-design-system/commit/232bf9379a4ddc82a0988535bc28a9b95626fe7b))
+
 # [1.21.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.20.1...v1.21.0) (2026-03-13)
 
 
