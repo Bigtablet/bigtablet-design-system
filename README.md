@@ -48,13 +48,6 @@ Auto-detects your package manager (npm / yarn / pnpm / bun) and environment (Rea
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-> **Security tip**: To inspect the script before running it:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh -o setup.sh
-> cat setup.sh   # review contents
-> sh setup.sh
-> ```
-
 ### Manual
 
 ```bash

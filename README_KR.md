@@ -43,13 +43,6 @@ Bigtablet의 공식 디자인 시스템으로, Foundation(디자인 토큰)과 C
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-> **보안 팁**: 스크립트를 실행하기 전에 내용을 확인하려면:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh -o setup.sh
-> cat setup.sh   # 내용 확인
-> sh setup.sh
-> ```
-
 ### 수동 설치
 
 ```bash
