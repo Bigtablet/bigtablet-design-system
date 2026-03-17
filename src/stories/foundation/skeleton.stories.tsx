@@ -19,19 +19,16 @@ function SkeletonBlock({
     borderRadius: string;
 }) {
     return (
-        <>
-            <style>{keyframeStyle}</style>
-            <div
-                style={{
-                    width,
-                    height,
-                    borderRadius,
-                    background: skeleton.gradient,
-                    backgroundSize: "400% 100%",
-                    animation: `skeleton_loading ${skeleton.animation.duration} ${skeleton.animation.timing} infinite`,
-                }}
-            />
-        </>
+        <div
+            style={{
+                width,
+                height,
+                borderRadius,
+                background: skeleton.gradient,
+                backgroundSize: "400% 100%",
+                animation: `skeleton_loading ${skeleton.animation.duration} ${skeleton.animation.timing} infinite`,
+            }}
+        />
     );
 }
 

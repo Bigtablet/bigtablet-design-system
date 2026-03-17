@@ -51,5 +51,4 @@ printf "\n📦 Vanilla build complete!\n"
 printf "  %s\n" \
   "dist/vanilla/bigtablet.css" \
   "dist/vanilla/bigtablet.min.css" \
-  "dist/vanilla/bigtablet.js" \
-  "dist/vanilla/bigtablet.min.js"
+  "dist/vanilla/bigtablet.js"
