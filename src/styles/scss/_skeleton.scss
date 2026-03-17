@@ -1,8 +1,9 @@
-@use "src/styles/scss/token" as token;
+// Standalone skeleton tokens — no external @use so consumers can import
+// this file directly without needing the design system's src/ in their loadPaths.
 
-$color_skeleton_base: token.$color_background_neutral;
-$color_skeleton_wave: token.$color_background_muted;
-$color_skeleton_highlight: token.$color_background_secondary;
+$color_skeleton_base: #F3F3F3;
+$color_skeleton_wave: #f0f0f0;
+$color_skeleton_highlight: #fafafa;
 
 $skeleton_gradient: linear-gradient(
                 90deg,
@@ -11,15 +12,15 @@ $skeleton_gradient: linear-gradient(
                 $color_skeleton_wave 63%
 );
 
-$skeleton_radius_sm: token.$radius_sm;
-$skeleton_radius_md: token.$radius_md;
-$skeleton_radius_lg: token.$radius_lg;
+$skeleton_radius_sm: 6px;
+$skeleton_radius_md: 8px;
+$skeleton_radius_lg: 12px;
 
-$skeleton_height_xs: token.$spacing_xs;
-$skeleton_height_sm: token.$spacing_sm;
-$skeleton_height_md: token.$spacing_md;
-$skeleton_height_lg: token.$spacing_lg;
-$skeleton_height_xl: token.$spacing_xl;
+$skeleton_height_xs: 0.25rem;  // 4px
+$skeleton_height_sm: 0.5rem;   // 8px
+$skeleton_height_md: 0.75rem;  // 12px
+$skeleton_height_lg: 1rem;     // 16px
+$skeleton_height_xl: 1.25rem;  // 20px
 
 $skeleton_animation_duration: 1.4s;
 $skeleton_animation_timing: ease-in-out;
@@ -48,13 +49,13 @@ $skeleton_animation_timing: ease-in-out;
   @include skeleton(100%, $skeleton_height_xl);
 }
 
-@mixin skeleton_avatar($size: token.$spacing_6xl) {
+@mixin skeleton_avatar($size: 2.5rem) {
   @include skeleton($size, $size, $skeleton_radius_lg);
 }
 
 @mixin skeleton_rect(
   $width: 100%,
-  $height: token.$spacing_8xl
+  $height: 5rem
 ) {
   @include skeleton($width, $height, $skeleton_radius_md);
 }
