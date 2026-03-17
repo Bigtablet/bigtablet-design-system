@@ -1,24 +1,28 @@
+import { colors } from "./colors";
+import { radius } from "./radius";
+import { spacing } from "./spacing";
+
 export const skeleton = {
     color: {
-        base: "#F3F3F3",
-        wave: "#f0f0f0",
-        highlight: "#fafafa",
+        base: colors.backgroundNeutral,
+        wave: colors.backgroundMuted,
+        highlight: colors.backgroundSecondary,
     },
 
-    gradient: "linear-gradient(90deg, #F3F3F3 25%, #fafafa 37%, #f0f0f0 63%)",
+    gradient: `linear-gradient(90deg, ${colors.backgroundNeutral} 25%, ${colors.backgroundSecondary} 37%, ${colors.backgroundMuted} 63%)`,
 
     radius: {
-        sm: "6px",
-        md: "8px",
-        lg: "12px",
+        sm: radius.sm,
+        md: radius.md,
+        lg: radius.lg,
     },
 
     height: {
-        xs: "0.25rem",  // 4px
-        sm: "0.5rem",   // 8px
-        md: "0.75rem",  // 12px
-        lg: "1rem",     // 16px
-        xl: "1.25rem",  // 20px
+        xs: spacing.xs,
+        sm: spacing.sm,
+        md: spacing.md,
+        lg: spacing.lg,
+        xl: spacing.xl,
     },
 
     animation: {
