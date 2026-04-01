@@ -12,8 +12,16 @@ const meta: Meta = {
 
 화면 크기에 따라 **레이아웃과 컴포넌트 배치를 변경하기 위한 기준값**입니다.
 
-👉 모바일 · 태블릿 · 노트북 · 데스크탑을 명확히 구분해  
-일관된 반응형 UI를 설계할 수 있도록 합니다.
+Material Design 3의 Window Size Class에 기반한 4단계 시스템입니다.
+
+| 이름 | 기준 | 대표 환경 |
+|------|------|-----------|
+| compact | 0px~ | 모바일 (세로 방향) |
+| medium | 600px~ | 태블릿 / 대형 폰 (가로) |
+| expanded | 840px~ | 노트북 / 작은 데스크탑 |
+| large | 1200px~ | 와이드 데스크탑 |
+
+SCSS: \`@include token.compact { ... }\` / \`@include token.from_medium { ... }\`
         `,
             },
         },
@@ -36,11 +44,12 @@ export const Overview: Story = {
                         padding: 16,
                     }}
                 >
-                    <div style={{ marginBottom: 8 }}>
+                    <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
                         <strong>{key}</strong>
-                        <span style={{ marginLeft: 8, opacity: 0.7 }}>
-              {value}px 이상
-            </span>
+                        <code style={{ fontSize: 12, opacity: 0.8 }}>breakpoints.{key}</code>
+                        <span style={{ marginLeft: "auto", opacity: 0.7, fontSize: 13 }}>
+                            {value === 0 ? "0px~" : `${value}px 이상`}
+                        </span>
                     </div>
 
                     {/* Visual bar */}
@@ -55,7 +64,7 @@ export const Overview: Story = {
                     >
                         <div
                             style={{
-                                width: `${Math.min((value / 1440) * 100, 100)}%`,
+                                width: value === 0 ? "4%" : `${Math.min((value / 1440) * 100, 100)}%`,
                                 height: "100%",
                                 background: "#000",
                             }}
@@ -73,15 +82,10 @@ export const Overview: Story = {
 
 function breakpointDescription(key: string) {
     switch (key) {
-        case "mobile":
-            return "모바일 환경 (한 손 사용, 단일 컬럼 기준)";
-        case "tablet":
-            return "태블릿 환경 (2컬럼 레이아웃 시작)";
-        case "laptop":
-            return "노트북 화면 (사이드바 고정 레이아웃)";
-        case "desktop":
-            return "데스크탑 / 대형 화면 (넉넉한 여백과 정보 밀도)";
-        default:
-            return "";
+        case "compact":  return "모바일 환경 (세로 방향, 단일 컬럼 기준)";
+        case "medium":   return "태블릿 / 대형 폰 가로 방향 (2컬럼 레이아웃 시작)";
+        case "expanded": return "노트북 / 작은 데스크탑 (사이드바 고정 레이아웃)";
+        case "large":    return "와이드 데스크탑 (넉넉한 여백과 높은 정보 밀도)";
+        default:         return "";
     }
 }
