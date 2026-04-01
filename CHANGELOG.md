@@ -1,3 +1,19 @@
+## [1.22.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.1...v1.22.2) (2026-03-31)
+
+## [1.22.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.0...v1.22.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* add next as optional peerDependency to prevent duplicate React instances ([d442590](https://github.com/Bigtablet/bigtablet-design-system/commit/d4425906aead4ba2fe330981d5ff6f24a57e0229)), closes [#311](https://github.com/Bigtablet/bigtablet-design-system/issues/311)
+
+# [1.22.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.21.1...v1.22.0) (2026-03-17)
+
+
+### Features
+
+* add skeleton design tokens, export all tokens, and Storybook foundation story ([b27fccc](https://github.com/Bigtablet/bigtablet-design-system/commit/b27fcccb8dfd1f793e072f07b503f8aeb80543b9))
+
 ## [1.21.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.21.0...v1.21.1) (2026-03-13)
 
 
