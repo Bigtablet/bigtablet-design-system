@@ -1,5 +1,5 @@
 // Design Tokens
-export { colors } from "./styles/ts/colors";
+export { colors, baseColors } from "./styles/ts/colors";
 export { spacing } from "./styles/ts/spacing";
 export { typography } from "./styles/ts/typography";
 export { radius } from "./styles/ts/radius";
