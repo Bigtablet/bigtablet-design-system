@@ -27,6 +27,18 @@
   }
 
   /**
+   * Escape HTML special characters to prevent XSS
+   */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  /**
    * Add event listener with cleanup
    */
   function on(element, event, handler, options) {
@@ -428,8 +440,8 @@
 
     overlay.innerHTML = `
       <div class="bt-alert__modal">
-        ${config.title ? `<div class="bt-alert__title">${config.title}</div>` : ""}
-        <div class="bt-alert__message">${config.message}</div>
+        ${config.title ? `<div class="bt-alert__title">${escapeHtml(config.title)}</div>` : ""}
+        <div class="bt-alert__message">${escapeHtml(config.message)}</div>
         <div class="bt-alert__actions" style="justify-content: ${
           config.actionsAlign === "left"
             ? "flex-start"
@@ -439,10 +451,10 @@
         }">
           ${
             config.showCancel
-              ? `<button class="bt-button bt-button--md bt-button--secondary" data-alert-cancel>${config.cancelText}</button>`
+              ? `<button class="bt-button bt-button--md bt-button--secondary" data-alert-cancel>${escapeHtml(config.cancelText)}</button>`
               : ""
           }
-          <button class="bt-button bt-button--md bt-button--primary" data-alert-confirm>${config.confirmText}</button>
+          <button class="bt-button bt-button--md bt-button--primary" data-alert-confirm>${escapeHtml(config.confirmText)}</button>
         </div>
       </div>
     `;
@@ -629,10 +641,10 @@
           html += `
             <button
               class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}"
-              data-page="${item}"
+              data-page="${escapeHtml(item)}"
               ${isActive ? 'aria-current="page"' : ""}
             >
-              ${item}
+              ${escapeHtml(item)}
             </button>
           `;
         }
