@@ -1,2 +1,1 @@
-// Storybook 10.3+: @storybook/addon-vitest applies project annotations automatically.
-// No manual setProjectAnnotations call needed.
+// Storybook 10.3+: preview annotations are applied automatically via @storybook/addon-vitest.
