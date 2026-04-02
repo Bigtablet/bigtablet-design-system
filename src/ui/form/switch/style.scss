@@ -10,7 +10,7 @@
   padding: 2px;
 
   border-radius: token.$radius_full;
-  background: token.$color_border;
+  background: token.$color_border_default;
 
   transition: background token.$transition_base;
   cursor: pointer;
@@ -18,14 +18,14 @@
   &_thumb {
     width: 18px;
     height: 18px;
-    background: token.$color_background;
+    background: token.$color_bg_solid;
     border-radius: token.$radius_full;
     transition: transform token.$transition_base;
     transform: translateX(0);
   }
 
   &_on {
-    background: token.$color_primary;
+    background: token.$color_brand_primary;
 
     .switch_thumb {
       transform: translateX(18px);

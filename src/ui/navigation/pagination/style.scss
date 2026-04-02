@@ -4,24 +4,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: token.$spacing_sm;
-  margin-top: token.$spacing_3xl;
+  gap: token.$spacing_8;
+  margin-top: token.$spacing_32;
 
   &_item {
-    border: 1px solid token.$color_border;
-    background: token.$color_background;
+    border: 1px solid token.$color_border_default;
+    background: token.$color_bg_solid;
     border-radius: token.$radius_md;
     padding: 6px 10px;
     min-width: 36px;
 
-    @include token.text_sm;
-    color: token.$color_text_primary;
+    @include token.label_small;
+    color: token.$color_text_heading;
 
     transition: background token.$transition_base,
     border-color token.$transition_base;
 
     &:hover:not(:disabled) {
-      background: token.$color_background_secondary;
+      background: token.$color_bg_solid_dim;
     }
 
     &:disabled {
@@ -30,8 +30,8 @@
     }
 
     &:focus-visible {
-      box-shadow: 0 0 0 3px token.$color_border_light;
-      border-color: token.$color_primary;
+      box-shadow: 0 0 0 3px token.$color_border_subtle;
+      border-color: token.$color_brand_primary;
     }
   }
 
@@ -48,32 +48,32 @@
     height: 36px;
     border-radius: token.$radius_md;
 
-    @include token.text_sm;
-    color: token.$color_text_secondary;
+    @include token.label_small;
+    color: token.$color_text_body;
 
     transition: background token.$transition_base,
     color token.$transition_base;
 
     &:hover {
-      background: token.$color_background_secondary;
-      color: token.$color_text_primary;
+      background: token.$color_bg_solid_dim;
+      color: token.$color_text_heading;
     }
 
     &:focus-visible {
-      box-shadow: 0 0 0 3px token.$color_border_light;
+      box-shadow: 0 0 0 3px token.$color_border_subtle;
     }
   }
 
   &_active {
-    color: token.$color_text_primary;
-    font-weight: token.$font_weight_semibold;
+    color: token.$color_text_heading;
+    font-weight: token.$font_weight_medium;
   }
 
   &_ellipsis {
     min-width: 20px;
     text-align: center;
 
-    @include token.text_sm;
-    color: token.$color_text_tertiary;
+    @include token.label_small;
+    color: token.$color_text_caption;
   }
 }
