@@ -1,3 +1,17 @@
+# [1.24.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.23.0...v1.24.0) (2026-04-02)
+
+
+### Bug Fixes
+
+* apply Gemini review on design token structure ([6b8ecae](https://github.com/Bigtablet/bigtablet-design-system/commit/6b8ecae2ecbb605f2a133e4d7d00daf8cac493da)), closes [#F2F2F2](https://github.com/Bigtablet/bigtablet-design-system/issues/F2F2F2)
+
+
+### Features
+
+* add missing token files and fix SCSS variable references ([2c84fa8](https://github.com/Bigtablet/bigtablet-design-system/commit/2c84fa86c595ef06676a26ae03a1ea66da93fb4c)), closes [#F2F2F2](https://github.com/Bigtablet/bigtablet-design-system/issues/F2F2F2)
+* export new borderWidth, baseBorderWidth, opacity, baseTypography tokens ([eb0199c](https://github.com/Bigtablet/bigtablet-design-system/commit/eb0199c873b015c07d835f85a12a886cf12d71af))
+* update design tokens to match Figma token spec ([e3eca5b](https://github.com/Bigtablet/bigtablet-design-system/commit/e3eca5bfb9427e417b45b715f98777520012d855))
+
 # [1.23.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.2...v1.23.0) (2026-04-01)
 
 
