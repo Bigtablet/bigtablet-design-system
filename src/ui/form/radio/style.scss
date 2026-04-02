@@ -4,7 +4,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: token.$spacing_sm;
+  gap: token.$spacing_8;
   cursor: pointer;
   user-select: none;
 
@@ -17,13 +17,13 @@
   }
 
   &_dot {
-    width: token.$font_size_md;
-    height: token.$font_size_md;
+    width: token.$font_size_16;
+    height: token.$font_size_16;
     box-sizing: border-box;
 
-    border: 1px solid token.$color_border;
+    border: 1px solid token.$color_border_default;
     border-radius: token.$radius_full;
-    background: token.$color_background;
+    background: token.$color_bg_solid;
 
     transition: background token.$transition_base,
     border-color token.$transition_base,
@@ -34,8 +34,8 @@
   }
 
   &_label {
-    @include token.text_base;
-    color: token.$color_text_primary;
+    @include token.body_medium;
+    color: token.$color_text_heading;
   }
 
   &_size_sm {
@@ -45,7 +45,7 @@
     }
 
     .radio_label {
-      @include token.text_sm;
+      @include token.label_small;
     }
   }
 
@@ -63,17 +63,17 @@
     }
 
     .radio_label {
-      @include token.text_md;
+      @include token.body_large;
     }
   }
 
   &_input:focus-visible + .radio_dot {
-    box-shadow: 0 0 0 3px token.$color_border_light;
-    border-color: token.$color_primary;
+    box-shadow: 0 0 0 3px token.$color_border_subtle;
+    border-color: token.$color_brand_primary;
   }
 
   &_input:checked + .radio_dot {
-    border-color: token.$color_primary;
+    border-color: token.$color_brand_primary;
   }
 
   &_input:checked + .radio_dot::after {
@@ -84,7 +84,7 @@
     width: 60%;
     height: 60%;
     transform: translate(-50%, -50%);
-    background: token.$color_primary;
+    background: token.$color_brand_primary;
     border-radius: 9999px;
   }
 

@@ -10,58 +10,60 @@
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-  /* Colors - Primary */
-  --bt-color-primary: #{token.$color_primary};
-  --bt-color-primary-hover: #{token.$color_primary_hover};
+  /* Colors - Brand */
+  --bt-color-primary: #{token.$color_brand_primary};
+  --bt-color-on-primary: #{token.$color_brand_on_primary};
 
   /* Colors - Background */
-  --bt-color-background: #{token.$color_background};
-  --bt-color-background-secondary: #{token.$color_background_secondary};
-  --bt-color-background-neutral: #{token.$color_background_neutral};
-  --bt-color-background-muted: #{token.$color_background_muted};
+  --bt-color-background: #{token.$color_bg_solid};
+  --bt-color-background-dim: #{token.$color_bg_solid_dim};
+  --bt-color-background-overlay: #{token.$color_bg_overlay};
 
   /* Colors - Text */
-  --bt-color-text-primary: #{token.$color_text_primary};
-  --bt-color-text-secondary: #{token.$color_text_secondary};
-  --bt-color-text-tertiary: #{token.$color_text_tertiary};
-  --bt-text-inverse: #{token.$text_inverse};
-  --bt-text-disabled: #{token.$text_disabled};
+  --bt-color-text-heading: #{token.$color_text_heading};
+  --bt-color-text-body: #{token.$color_text_body};
+  --bt-color-text-caption: #{token.$color_text_caption};
+  --bt-color-text-inverse: #{token.$color_text_inverse};
+  --bt-color-text-disabled: #{token.$color_text_disabled};
 
   /* Colors - Border */
-  --bt-color-border: #{token.$color_border};
-  --bt-color-border-light: #{token.$color_border_light};
+  --bt-color-border: #{token.$color_border_default};
+  --bt-color-border-subtle: #{token.$color_border_subtle};
+  --bt-color-border-focus: #{token.$color_border_focus};
+
+  /* Colors - State */
+  --bt-color-hover: #{token.$color_state_hover_on_light};
+  --bt-color-pressed: #{token.$color_state_pressed_on_light};
 
   /* Colors - Status */
-  --bt-color-success: #{token.$color_success};
-  --bt-color-error: #{token.$color_error};
-  --bt-color-warning: #{token.$color_warning};
-  --bt-color-info: #{token.$color_info};
-
-  /* Colors - Overlay */
-  --bt-color-overlay: #{token.$color_overlay};
+  --bt-color-success: #{token.$color_status_success};
+  --bt-color-error: #{token.$color_status_error};
+  --bt-color-warning: #{token.$color_status_warning};
+  --bt-color-info: #{token.$color_status_info};
 
   /* Spacing */
-  --bt-spacing-xs: #{token.$spacing_xs};
-  --bt-spacing-sm: #{token.$spacing_sm};
-  --bt-spacing-md: #{token.$spacing_md};
-  --bt-spacing-lg: #{token.$spacing_lg};
-  --bt-spacing-xl: #{token.$spacing_xl};
-  --bt-spacing-2xl: #{token.$spacing_2xl};
-  --bt-spacing-3xl: #{token.$spacing_3xl};
+  --bt-spacing-4:  #{token.$spacing_4};
+  --bt-spacing-8:  #{token.$spacing_8};
+  --bt-spacing-12: #{token.$spacing_12};
+  --bt-spacing-16: #{token.$spacing_16};
+  --bt-spacing-20: #{token.$spacing_20};
+  --bt-spacing-24: #{token.$spacing_24};
+  --bt-spacing-32: #{token.$spacing_32};
+  --bt-spacing-40: #{token.$spacing_40};
+  --bt-spacing-48: #{token.$spacing_48};
 
   /* Typography */
   --bt-font-family: #{token.$font_family_primary};
-  --bt-font-size-xs: #{token.$font_size_xs};
-  --bt-font-size-sm: #{token.$font_size_sm};
-  --bt-font-size-base: #{token.$font_size_base};
-  --bt-font-size-md: #{token.$font_size_md};
-  --bt-font-size-lg: #{token.$font_size_lg};
-  --bt-font-size-xl: #{token.$font_size_xl};
+  --bt-font-size-12: #{token.$font_size_12};
+  --bt-font-size-14: #{token.$font_size_14};
+  --bt-font-size-15: #{token.$font_size_15};
+  --bt-font-size-16: #{token.$font_size_16};
+  --bt-font-size-18: #{token.$font_size_18};
+  --bt-font-size-20: #{token.$font_size_20};
   --bt-font-weight-regular: #{token.$font_weight_regular};
   --bt-font-weight-medium: #{token.$font_weight_medium};
-  --bt-font-weight-semibold: #{token.$font_weight_semibold};
-  --bt-font-weight-bold: #{token.$font_weight_bold};
-  --bt-line-height-normal: #{token.$line_height_normal};
+  --bt-line-height-20: #{token.$line_height_20};
+  --bt-line-height-24: #{token.$line_height_24};
 
   /* Radius */
   --bt-radius-sm: #{token.$radius_sm};
@@ -70,10 +72,10 @@
   --bt-radius-full: #{token.$radius_full};
 
   /* Shadows */
-  --bt-shadow-sm: #{token.$shadow_sm};
-  --bt-shadow-md: #{token.$shadow_md};
-  --bt-shadow-lg: #{token.$shadow_lg};
-  --bt-shadow-xl: #{token.$shadow_xl};
+  --bt-shadow-sm: #{token.$shadow_level1};
+  --bt-shadow-md: #{token.$shadow_level2};
+  --bt-shadow-lg: #{token.$shadow_level3};
+  --bt-shadow-xl: #{token.$shadow_level4};
 
   /* Transitions */
   --bt-transition-fast: #{token.$transition_fast};
@@ -81,8 +83,8 @@
   --bt-transition-slow: #{token.$transition_slow};
 
   /* Z-index */
-  --bt-z-modal: #{token.$z_modal};
-  --bt-z-toast: #{token.$z_toast};
+  --bt-z-modal: #{token.$z_level5};
+  --bt-z-toast: #{token.$z_level5};
 }
 
 /* ========================================
@@ -170,7 +172,7 @@
     color: var(--bt-color-background);
 
     &:hover:not(:disabled) {
-      background: #{color.adjust(token.$color_error, $lightness: -8%)};
+      background: #{color.adjust(token.$color_status_error, $lightness: -8%)};
     }
 
     &:active:not(:disabled) {

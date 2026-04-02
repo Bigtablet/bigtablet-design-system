@@ -11,8 +11,8 @@
   box-sizing: border-box;
   border-radius: 50%;
 
-  border: 2px solid token.$color_border;
-  border-top-color: token.$color_primary;
+  border: 2px solid token.$color_border_default;
+  border-top-color: token.$color_brand_primary;
 
   animation: spinner_spin 0.8s linear infinite;
 }

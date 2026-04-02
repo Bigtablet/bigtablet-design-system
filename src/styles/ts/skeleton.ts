@@ -1,15 +1,15 @@
-import { colors } from "./colors";
+import { baseColors } from "./colors";
 import { radius } from "./radius";
 import { spacing } from "./spacing";
 
 export const skeleton = {
     color: {
-        base: colors.backgroundNeutral,
-        wave: colors.backgroundMuted,
-        highlight: colors.backgroundSecondary,
+        base:      baseColors.neutral50,
+        wave:      baseColors.neutral200,
+        highlight: baseColors.neutral0,
     },
 
-    gradient: `linear-gradient(90deg, ${colors.backgroundNeutral} 25%, ${colors.backgroundSecondary} 37%, ${colors.backgroundMuted} 63%)`,
+    gradient: `linear-gradient(90deg, ${baseColors.neutral50} 25%, ${baseColors.neutral0} 37%, ${baseColors.neutral200} 63%)`,
 
     radius: {
         sm: radius.sm,
@@ -18,11 +18,11 @@ export const skeleton = {
     },
 
     height: {
-        xs: spacing.xs,
-        sm: spacing.sm,
-        md: spacing.md,
-        lg: spacing.lg,
-        xl: spacing.xl,
+        xs: spacing["4"],
+        sm: spacing["8"],
+        md: spacing["12"],
+        lg: spacing["16"],
+        xl: spacing["20"],
     },
 
     animation: {

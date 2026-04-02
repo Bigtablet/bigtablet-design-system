@@ -424,9 +424,12 @@ label/domain
 When a user requests feature development or modifications, follow this workflow:
 
 ### 1. Create Issue (if requested)
-```bash
-gh issue create --title "Issue title" --body "Issue description"
-```
+
+작업 유형에 맞는 Issue 템플릿을 선택합니다:
+- **Task**: `[TASK]` (labels: Fix) — 작업 개요, TO DO, 전달할 추가 이슈
+- **Feature Request**: `[FEATURE]` (labels: Feature) — 기능 개요, 세부 기능, 기능 플로우, TO DO
+- **Bug Report**: `[BUG]` (labels: Bug) — 버그 개요, 버그 내용, 재현 경로, TO DO
+- **Security Report**: `[SECURITY]` (labels: Bug, Hotfix) — 보안 이슈 개요, 관련 CVE, TO DO
 
 ### 2. Create Branch
 ```bash
@@ -455,7 +458,7 @@ EOF
 
 ```bash
 gh pr create --base develop --title "label/domain" --body "$(cat <<'EOF'
-## PR 제목 (작업 요약)
+## 작업 개요
 
 ## 작업한 내용
 - [x] 작업1

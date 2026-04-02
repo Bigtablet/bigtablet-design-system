@@ -60,19 +60,68 @@ label/domain
 
 ### 1. Issue 생성
 
-기능 단위로 Issue를 생성합니다. Issue 본문은 한글로 작성합니다.
+작업 유형에 맞는 Issue 템플릿을 선택하여 생성합니다. Issue 본문은 한글로 작성합니다.
 
+**Task** (일반 작업):
 ```bash
-gh issue create --title "제목제목제목" --body "$(cat <<'EOF'
-## 제목
-제목제목제목
+gh issue create --title "[TASK] 설명" --label "Fix" --body "$(cat <<'EOF'
+## 작업 개요
 
-## 작업한 내용
+## TO DO
 - [ ] 작업1
 - [ ] 작업2
 
 ## 전달할 추가 이슈
-- 이슈1 (없으면 "없음")
+- 이슈1
+- 이슈2
+EOF
+)"
+```
+
+**Feature Request** (새 기능):
+```bash
+gh issue create --title "[FEATURE] 설명" --label "Feature" --body "$(cat <<'EOF'
+## 기능 개요
+
+## 세부 기능
+
+## 기능 플로우
+
+## TO DO
+- [ ]
+EOF
+)"
+```
+
+**Bug Report** (버그):
+```bash
+gh issue create --title "[BUG] 설명" --label "Bug" --body "$(cat <<'EOF'
+## 버그 개요
+
+## 버그 내용
+-
+-
+
+## 재현 경로
+
+## TO DO
+- [ ]
+- [ ]
+EOF
+)"
+```
+
+**Security Report** (보안):
+```bash
+gh issue create --title "[SECURITY] 설명" --label "Bug,Hotfix" --body "$(cat <<'EOF'
+## 보안 이슈 개요
+
+## 관련 CVE
+-
+-
+
+## TO DO
+- [ ]
 EOF
 )"
 ```

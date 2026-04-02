@@ -5,7 +5,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: token.$spacing_sm;
+  gap: token.$spacing_8;
 
   border-radius: token.$radius_md;
   border: none;
@@ -23,26 +23,26 @@
   }
 
   &_size_sm {
-    padding: token.$spacing_sm token.$spacing_lg;
-    @include token.text_sm;
+    padding: token.$spacing_8 token.$spacing_16;
+    @include token.label_small;
   }
 
   &_size_md {
-    padding: token.$spacing_md token.$spacing_xl;
-    @include token.text_base;
+    padding: token.$spacing_12 token.$spacing_20;
+    @include token.body_medium;
   }
 
   &_size_lg {
-    padding: token.$spacing_lg token.$spacing_2xl;
-    @include token.text_md;
+    padding: token.$spacing_16 token.$spacing_24;
+    @include token.body_large;
   }
 
   &_variant_primary {
-    background: token.$color_primary;
-    color: token.$color_background;
+    background: token.$color_brand_primary;
+    color: token.$color_bg_solid;
 
     &:hover:not(:disabled) {
-      background: token.$color_primary_hover;
+      background: token.$color_base_neutral_300;
     }
 
     &:active:not(:disabled) {
@@ -52,11 +52,11 @@
 
   &_variant_secondary {
     background: transparent;
-    border: 1px solid token.$color_border;
-    color: token.$color_text_primary;
+    border: 1px solid token.$color_border_default;
+    color: token.$color_text_heading;
 
     &:hover:not(:disabled) {
-      background: token.$color_background_secondary;
+      background: token.$color_bg_solid_dim;
     }
 
     &:active:not(:disabled) {
@@ -66,10 +66,10 @@
 
   &_variant_ghost {
     background: transparent;
-    color: token.$color_text_primary;
+    color: token.$color_text_heading;
 
     &:hover:not(:disabled) {
-      background: token.$color_hover_light;
+      background: token.$color_state_hover_on_light;
     }
 
     &:active:not(:disabled) {
@@ -78,11 +78,11 @@
   }
 
   &_variant_danger {
-    background: token.$color_error;
-    color: token.$color_background;
+    background: token.$color_status_error;
+    color: token.$color_bg_solid;
 
     &:hover:not(:disabled) {
-      background: color.adjust(token.$color_error, $lightness: -8%);
+      background: color.adjust(token.$color_status_error, $lightness: -8%);
     }
 
     &:active:not(:disabled) {

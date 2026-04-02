@@ -33,12 +33,12 @@
 
 .toast_container {
   position: fixed;
-  top: token.$spacing_lg;
-  right: token.$spacing_lg;
-  z-index: token.$z_toast;
+  top: token.$spacing_16;
+  right: token.$spacing_16;
+  z-index: token.$z_level5;
   display: flex;
   flex-direction: column;
-  gap: token.$spacing_sm;
+  gap: token.$spacing_8;
   pointer-events: none;
   width: 360px;
   max-width: calc(100vw - 32px);
@@ -52,19 +52,19 @@
   overflow: hidden;
   display: flex;
   align-items: flex-start;
-  gap: token.$spacing_sm;
-  padding: token.$spacing_md token.$spacing_md token.$spacing_lg;
+  gap: token.$spacing_8;
+  padding: token.$spacing_12 token.$spacing_12 token.$spacing_16;
 
-  background: token.$color_background;
-  border: 1px solid token.$color_border;
+  background: token.$color_bg_solid;
+  border: 1px solid token.$color_border_default;
   border-radius: token.$radius_lg;
-  box-shadow: token.$shadow_md;
+  box-shadow: token.$shadow_level2;
 
   font-family: token.$font_family_primary;
-  font-size: token.$font_size_sm;
+  font-size: token.$font_size_14;
   font-weight: token.$font_weight_medium;
-  color: token.$color_text_primary;
-  line-height: token.$line_height_normal;
+  color: token.$color_text_heading;
+  line-height: token.$line_height_24;
 
   animation: toast_slide_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
@@ -80,11 +80,11 @@
   margin-top: 1px;
   display: flex;
 
-  &_success { color: token.$color_success; }
-  &_error   { color: token.$color_error; }
-  &_warning { color: token.$color_warning; }
-  &_info    { color: token.$color_info; }
-  &_default { color: token.$color_text_secondary; }
+  &_success { color: token.$color_status_success; }
+  &_error   { color: token.$color_status_error; }
+  &_warning { color: token.$color_status_warning; }
+  &_info    { color: token.$color_status_info; }
+  &_default { color: token.$color_text_body; }
 }
 
 // ── Message ───────────────────────────────────────────────────────────────────
@@ -108,15 +108,15 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: token.$color_text_tertiary;
+  color: token.$color_text_caption;
   border-radius: token.$radius_sm;
   transition:
     color token.$transition_fast,
     background-color token.$transition_fast;
 
   &:hover {
-    color: token.$color_text_primary;
-    background-color: token.$color_background_secondary;
+    color: token.$color_text_heading;
+    background-color: token.$color_bg_solid_dim;
   }
 
   &:focus-visible {
@@ -135,9 +135,9 @@
   border-radius: 0 0 0 token.$radius_lg;
   animation: toast_progress var(--toast-duration, 3000ms) linear forwards;
 
-  &_success { background: token.$color_success; }
-  &_error   { background: token.$color_error; }
-  &_warning { background: token.$color_warning; }
-  &_info    { background: token.$color_info; }
-  &_default { background: token.$color_text_secondary; }
+  &_success { background: token.$color_status_success; }
+  &_error   { background: token.$color_status_error; }
+  &_warning { background: token.$color_status_warning; }
+  &_info    { background: token.$color_status_info; }
+  &_default { background: token.$color_text_body; }
 }

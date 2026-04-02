@@ -38,37 +38,35 @@ export interface TextFieldProps
     defaultValue?: string;
     /** 입력값 변환 함수 (예: 숫자만 허용, 대문자 변환) */
     transformValue?: (value: string) => string;
+    /** 입력 요소 참조 */
+    ref?: React.Ref<HTMLInputElement>;
 }
 
 /**
  * 텍스트 필드를 렌더링한다.
  * 제어형/비제어형 값을 동기화하고, 조합 입력(IME)을 고려해 변경 이벤트를 전달한다.
  * @param props 텍스트 필드 속성
- * @param ref 입력 요소 참조
  * @returns 렌더링된 텍스트 필드 UI
  */
-export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-    (
-        {
-            id,
-            label,
-            helperText,
-            error,
-            success,
-            variant = "outline",
-            size = "md",
-            leftIcon,
-            rightIcon,
-            fullWidth,
-            className,
-            onChangeAction,
-            value,
-            defaultValue,
-            transformValue,
-            ...props
-        },
-        ref,
-    ) => {
+export const TextField = ({
+    id,
+    label,
+    helperText,
+    error,
+    success,
+    variant = "outline",
+    size = "md",
+    leftIcon,
+    rightIcon,
+    fullWidth,
+    className,
+    onChangeAction,
+    value,
+    defaultValue,
+    transformValue,
+    ref,
+    ...props
+}: TextFieldProps) => {
         const inputId = id ?? React.useId();
         const helperId = helperText ? `${inputId}-help` : undefined;
 
@@ -181,7 +179,6 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                 ) : null}
             </div>
         );
-    },
-);
+};
 
 TextField.displayName = "TextField";

@@ -10,12 +10,12 @@ const meta: Meta = {
                 component: `
 ### Spacing (여백)
 
-Spacing은 화면의 **호흡(간격)** 을 만드는 기준입니다.  
-margin / padding / gap 같은 “거리”는 가능한 한 **이 토큰만** 사용합니다.
+Spacing은 화면의 **호흡(간격)** 을 만드는 기준입니다.
+margin / padding / gap 같은 "거리"는 가능한 한 **이 토큰만** 사용합니다.
 
-- 작은 값: 텍스트/아이콘 사이, 라벨과 입력 사이
-- 중간 값: 카드 내부 padding, 섹션 간 gap
-- 큰 값: 페이지 섹션 간격, 주요 레이아웃 여백
+- 작은 값(1–6): 텍스트/아이콘 사이, 인라인 요소
+- 중간 값(8–16): 라벨과 입력 사이, 폼 필드 내부
+- 큰 값(20–48): 카드 padding, 섹션 간격, 레이아웃 여백
         `,
             },
         },
@@ -43,7 +43,7 @@ export const Scale: Story = {
                     key={key}
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "140px 1fr 110px",
+                        gridTemplateColumns: "100px 1fr 160px",
                         alignItems: "center",
                         gap: 12,
                         padding: 12,
@@ -53,8 +53,7 @@ export const Scale: Story = {
                     }}
                 >
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <code>{key}</code>
-                        <span style={{ fontSize: 12, opacity: 0.75 }}>{value}</span>
+                        <code style={{ fontSize: 12 }}>spacing["{key}"]</code>
                     </div>
 
                     <div
@@ -68,7 +67,8 @@ export const Scale: Story = {
                     >
                         <div
                             style={{
-                                width: value,
+                                width: value === "0px" ? "2px" : value,
+                                maxWidth: "100%",
                                 height: "100%",
                                 background: "#000",
                             }}
@@ -76,6 +76,7 @@ export const Scale: Story = {
                     </div>
 
                     <div style={{ fontSize: 12, opacity: 0.8, textAlign: "right" }}>
+                        <span style={{ marginRight: 8, opacity: 0.6 }}>{value}</span>
                         {spacingUseCase(key)}
                     </div>
                 </div>
@@ -86,31 +87,20 @@ export const Scale: Story = {
 
 function spacingUseCase(key: string) {
     switch (key) {
-        case "xs":
-            return "텍스트 / 아이콘 최소 간격";
-        case "sm":
-            return "라벨 · 아이콘 사이";
-        case "md":
-            return "폼 필드 내부 / 요소 간";
-        case "lg":
-            return "카드 내부 padding";
-        case "xl":
-            return "카드 간격 / 섹션 내부";
-        case "2xl":
-            return "섹션 간 기본 여백";
-        case "3xl":
-            return "페이지 기본 padding";
-        case "4xl":
-            return "페이지 섹션 간격";
-        case "5xl":
-            return "큰 레이아웃 분리";
-        case "6xl":
-            return "히어로 / 주요 영역";
-        case "7xl":
-            return "페이지 최상위 구조";
-        case "8xl":
-            return "랜딩 · 대형 레이아웃";
-        default:
-            return "공통 여백";
+        case "0":  return "간격 없음";
+        case "1":  return "최소 구분선";
+        case "2":  return "인라인 최소 간격";
+        case "3":  return "아이콘·텍스트 인접";
+        case "4":  return "텍스트 / 아이콘 간격";
+        case "6":  return "라벨 · 아이콘 사이";
+        case "8":  return "폼 필드 내부";
+        case "12": return "요소 간 기본 간격";
+        case "16": return "카드 내부 padding";
+        case "20": return "카드 간격 / 섹션 내부";
+        case "24": return "섹션 간 기본 여백";
+        case "32": return "페이지 기본 padding";
+        case "40": return "페이지 섹션 간격";
+        case "48": return "큰 레이아웃 분리";
+        default:   return "공통 여백";
     }
 }

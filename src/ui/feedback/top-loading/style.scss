@@ -5,13 +5,13 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: token.$z_toast;
+  z-index: token.$z_level5;
   overflow: hidden;
   background-color: transparent;
 
   &_bar {
     height: 100%;
-    background-color: token.$color_primary;
+    background-color: token.$color_brand_primary;
     transition: width token.$transition_base;
   }
 
