@@ -6,6 +6,7 @@ export const baseColors = {
 
     neutral0: "#FFFFFF",
     neutral50: "#F4F4F4",
+    neutral100: "#F2F2F2",
     neutral200: "#E5E5E5",
     neutral300: "#999999",
     neutral400: "#B3B3B3",
@@ -65,7 +66,7 @@ export const colors = {
         hover: baseColors.neutral400,
         subtle: baseColors.alphaBlack8,
         focus: baseColors.neutral900,
-        disabled: "#f2f2f2",
+        disabled: baseColors.neutral100,
     },
 
     status: {

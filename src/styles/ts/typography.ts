@@ -46,53 +46,55 @@ export const baseTypography = {
 
 // ── Semantic typography tokens ────────────────────────────────────────────────
 
+const { fontSize: fs, fontWeight: fw, lineHeight: lh, letterSpacing: ls } = baseTypography;
+
 export const typography = {
     fontFamily: {
         primary: `'${baseTypography.fontFamily.primary}', sans-serif`,
     },
 
     display: {
-        large:        { fontSize: "48px", fontWeight: "Regular", lineHeight: "60px", letterSpacing: "0px" },
-        largeMedium:  { fontSize: "48px", fontWeight: "Medium",  lineHeight: "60px", letterSpacing: "0px" },
-        medium:       { fontSize: "40px", fontWeight: "Regular", lineHeight: "50px", letterSpacing: "0px" },
-        mediumMedium: { fontSize: "40px", fontWeight: "Medium",  lineHeight: "50px", letterSpacing: "0px" },
-        small:        { fontSize: "32px", fontWeight: "Regular", lineHeight: "40px", letterSpacing: "0px" },
-        smallMedium:  { fontSize: "32px", fontWeight: "Medium",  lineHeight: "40px", letterSpacing: "0px" },
+        large:        { fontSize: fs["48"], fontWeight: fw.regular, lineHeight: lh["60"], letterSpacing: ls.normal },
+        largeMedium:  { fontSize: fs["48"], fontWeight: fw.medium,  lineHeight: lh["60"], letterSpacing: ls.normal },
+        medium:       { fontSize: fs["40"], fontWeight: fw.regular, lineHeight: lh["50"], letterSpacing: ls.normal },
+        mediumMedium: { fontSize: fs["40"], fontWeight: fw.medium,  lineHeight: lh["50"], letterSpacing: ls.normal },
+        small:        { fontSize: fs["32"], fontWeight: fw.regular, lineHeight: lh["40"], letterSpacing: ls.normal },
+        smallMedium:  { fontSize: fs["32"], fontWeight: fw.medium,  lineHeight: lh["40"], letterSpacing: ls.normal },
     },
 
     heading: {
-        large:        { fontSize: "28px", fontWeight: "Regular", lineHeight: "36px", letterSpacing: "0px" },
-        largeMedium:  { fontSize: "28px", fontWeight: "Medium",  lineHeight: "36px", letterSpacing: "0px" },
-        medium:       { fontSize: "24px", fontWeight: "Regular", lineHeight: "32px", letterSpacing: "0px" },
-        mediumMedium: { fontSize: "24px", fontWeight: "Medium",  lineHeight: "32px", letterSpacing: "0px" },
-        small:        { fontSize: "20px", fontWeight: "Regular", lineHeight: "28px", letterSpacing: "0px" },
-        smallMedium:  { fontSize: "20px", fontWeight: "Medium",  lineHeight: "28px", letterSpacing: "0px" },
+        large:        { fontSize: fs["28"], fontWeight: fw.regular, lineHeight: lh["36"], letterSpacing: ls.normal },
+        largeMedium:  { fontSize: fs["28"], fontWeight: fw.medium,  lineHeight: lh["36"], letterSpacing: ls.normal },
+        medium:       { fontSize: fs["24"], fontWeight: fw.regular, lineHeight: lh["32"], letterSpacing: ls.normal },
+        mediumMedium: { fontSize: fs["24"], fontWeight: fw.medium,  lineHeight: lh["32"], letterSpacing: ls.normal },
+        small:        { fontSize: fs["20"], fontWeight: fw.regular, lineHeight: lh["28"], letterSpacing: ls.normal },
+        smallMedium:  { fontSize: fs["20"], fontWeight: fw.medium,  lineHeight: lh["28"], letterSpacing: ls.normal },
     },
 
     title: {
-        large:        { fontSize: "18px", fontWeight: "Regular", lineHeight: "24px", letterSpacing: "0px" },
-        largeMedium:  { fontSize: "18px", fontWeight: "Medium",  lineHeight: "24px", letterSpacing: "0px" },
-        medium:       { fontSize: "16px", fontWeight: "Regular", lineHeight: "24px", letterSpacing: "0px" },
-        mediumMedium: { fontSize: "16px", fontWeight: "Medium",  lineHeight: "24px", letterSpacing: "0px" },
-        small:        { fontSize: "14px", fontWeight: "Regular", lineHeight: "20px", letterSpacing: "0px" },
-        smallMedium:  { fontSize: "14px", fontWeight: "Medium",  lineHeight: "20px", letterSpacing: "0px" },
+        large:        { fontSize: fs["18"], fontWeight: fw.regular, lineHeight: lh["24"], letterSpacing: ls.normal },
+        largeMedium:  { fontSize: fs["18"], fontWeight: fw.medium,  lineHeight: lh["24"], letterSpacing: ls.normal },
+        medium:       { fontSize: fs["16"], fontWeight: fw.regular, lineHeight: lh["24"], letterSpacing: ls.normal },
+        mediumMedium: { fontSize: fs["16"], fontWeight: fw.medium,  lineHeight: lh["24"], letterSpacing: ls.normal },
+        small:        { fontSize: fs["14"], fontWeight: fw.regular, lineHeight: lh["20"], letterSpacing: ls.normal },
+        smallMedium:  { fontSize: fs["14"], fontWeight: fw.medium,  lineHeight: lh["20"], letterSpacing: ls.normal },
     },
 
     body: {
-        large:        { fontSize: "16px", fontWeight: "Regular", lineHeight: "24px",    letterSpacing: "0px" },
-        largeMedium:  { fontSize: "16px", fontWeight: "Medium",  lineHeight: "24px",    letterSpacing: "0px" },
-        medium:       { fontSize: "15px", fontWeight: "Regular", lineHeight: "22.5px",  letterSpacing: "0px" },
-        mediumMedium: { fontSize: "15px", fontWeight: "Medium",  lineHeight: "22.5px",  letterSpacing: "0px" },
-        small:        { fontSize: "14px", fontWeight: "Regular", lineHeight: "20px",    letterSpacing: "0px" },
-        smallMedium:  { fontSize: "14px", fontWeight: "Medium",  lineHeight: "20px",    letterSpacing: "0px" },
+        large:        { fontSize: fs["16"], fontWeight: fw.regular, lineHeight: lh["24"],   letterSpacing: ls.normal },
+        largeMedium:  { fontSize: fs["16"], fontWeight: fw.medium,  lineHeight: lh["24"],   letterSpacing: ls.normal },
+        medium:       { fontSize: fs["15"], fontWeight: fw.regular, lineHeight: lh["22-5"], letterSpacing: ls.normal },
+        mediumMedium: { fontSize: fs["15"], fontWeight: fw.medium,  lineHeight: lh["22-5"], letterSpacing: ls.normal },
+        small:        { fontSize: fs["14"], fontWeight: fw.regular, lineHeight: lh["20"],   letterSpacing: ls.normal },
+        smallMedium:  { fontSize: fs["14"], fontWeight: fw.medium,  lineHeight: lh["20"],   letterSpacing: ls.normal },
     },
 
     label: {
-        large:        { fontSize: "14px", fontWeight: "Regular", lineHeight: "20px", letterSpacing: "0px" },
-        largeMedium:  { fontSize: "14px", fontWeight: "Medium",  lineHeight: "20px", letterSpacing: "0px" },
-        medium:       { fontSize: "13px", fontWeight: "Regular", lineHeight: "18px", letterSpacing: "0px" },
-        mediumMedium: { fontSize: "13px", fontWeight: "Medium",  lineHeight: "18px", letterSpacing: "0px" },
-        small:        { fontSize: "12px", fontWeight: "Regular", lineHeight: "16px", letterSpacing: "0px" },
-        smallMedium:  { fontSize: "12px", fontWeight: "Medium",  lineHeight: "16px", letterSpacing: "0px" },
+        large:        { fontSize: fs["14"], fontWeight: fw.regular, lineHeight: lh["20"], letterSpacing: ls.normal },
+        largeMedium:  { fontSize: fs["14"], fontWeight: fw.medium,  lineHeight: lh["20"], letterSpacing: ls.normal },
+        medium:       { fontSize: fs["13"], fontWeight: fw.regular, lineHeight: lh["18"], letterSpacing: ls.normal },
+        mediumMedium: { fontSize: fs["13"], fontWeight: fw.medium,  lineHeight: lh["18"], letterSpacing: ls.normal },
+        small:        { fontSize: fs["12"], fontWeight: fw.regular, lineHeight: lh["16"], letterSpacing: ls.normal },
+        smallMedium:  { fontSize: fs["12"], fontWeight: fw.medium,  lineHeight: lh["16"], letterSpacing: ls.normal },
     },
 } as const;
