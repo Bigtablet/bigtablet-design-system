@@ -6,7 +6,7 @@
   display: grid;
   place-items: center;
   background: token.$color_bg_overlay;
-  z-index: token.$z_level5;
+  z-index: token.$z_level2;
 
   &_panel {
     background: token.$color_bg_solid;
