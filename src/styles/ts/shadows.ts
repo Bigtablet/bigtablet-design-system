@@ -1,6 +1,7 @@
 export const shadows = {
-    sm: "0 2px 4px rgba(0, 0, 0, 0.04)",
-    md: "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
-    lg: "0 8px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06)",
-    xl: "0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)",
+    level1: "0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12)",
+    level2: "0 2px 2px -2px rgba(0, 0, 0, 0.20), 0 6px 6px 0px rgba(0, 0, 0, 0.12)",
+    level3: "0 3px 3px -3px rgba(0, 0, 0, 0.20), 0 9px 9px 0px rgba(0, 0, 0, 0.12)",
+    level4: "0 5px 5px -5px rgba(0, 0, 0, 0.20), 0 15px 15px 0px rgba(0, 0, 0, 0.12)",
+    level5: "0 8px 10px -5px rgba(0, 0, 0, 0.20), 0 20px 20px 0px rgba(0, 0, 0, 0.12)",
 } as const;

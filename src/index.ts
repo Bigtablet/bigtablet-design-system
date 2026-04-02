@@ -1,9 +1,11 @@
 // Design Tokens
-export { colors } from "./styles/ts/colors";
+export { colors, baseColors } from "./styles/ts/colors";
 export { spacing } from "./styles/ts/spacing";
-export { typography } from "./styles/ts/typography";
+export { typography, baseTypography } from "./styles/ts/typography";
 export { radius } from "./styles/ts/radius";
 export { shadows } from "./styles/ts/shadows";
+export { borderWidth, baseBorderWidth } from "./styles/ts/border-width";
+export { opacity } from "./styles/ts/opacity";
 export { motion } from "./styles/ts/motion";
 export { skeleton } from "./styles/ts/skeleton";
 export { breakpoints } from "./styles/ts/breakpoints";

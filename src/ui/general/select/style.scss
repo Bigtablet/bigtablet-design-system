@@ -6,13 +6,13 @@
   display: inline-flex;
   flex-direction: column;
   width: 100%;
-  gap: token.$spacing_xs;
+  gap: token.$spacing_4;
   font-family: token.$font_family_primary;
 
   &_label {
-    @include token.text_sm;
+    @include token.label_small;
     font-weight: token.$font_weight_medium;
-    color: token.$color_text_primary;
+    color: token.$color_text_heading;
   }
 
   &_control {
@@ -20,55 +20,55 @@
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
-    gap: token.$spacing_sm;
+    gap: token.$spacing_8;
     cursor: pointer;
-    color: token.$color_text_primary;
-    background: token.$color_background;
+    color: token.$color_text_heading;
+    background: token.$color_bg_solid;
     border-radius: token.$radius_md;
     transition:
             border-color token.$transition_base,
             box-shadow token.$transition_base,
             background token.$transition_base;
-    @include token.text_base;
+    @include token.body_medium;
 
     &:disabled,
     &.is_disabled {
       cursor: not-allowed;
       opacity: 0.7;
-      background: token.$color_background_secondary;
-      color: token.$color_text_tertiary;
+      background: token.$color_bg_solid_dim;
+      color: token.$color_text_caption;
     }
   }
 
   &_variant_outline {
-    border: 1px solid token.$color_border;
+    border: 1px solid token.$color_border_default;
 
     &:hover:not(.is_disabled) {
-      border-color: token.$color_border_light;
+      border-color: token.$color_border_subtle;
     }
 
     &.is_open {
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+      border-color: token.$color_brand_primary;
+      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
     }
   }
 
   &_variant_filled {
-    background: token.$color_background_secondary;
+    background: token.$color_bg_solid_dim;
     border: 1px solid transparent;
 
     &:hover:not(.is_disabled) {
       background: color.mix(
-                      token.$color_background,
-                      token.$color_background_secondary,
+                      token.$color_bg_solid,
+                      token.$color_bg_solid_dim,
                       70%
       );
     }
 
     &.is_open {
-      background: token.$color_background;
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+      background: token.$color_bg_solid;
+      border-color: token.$color_brand_primary;
+      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
     }
   }
 
@@ -77,29 +77,29 @@
     border: 1px solid transparent;
 
     &:hover:not(.is_disabled) {
-      background: token.$color_hover_subtle;
+      background: token.$color_state_hover_on_light;
     }
 
     &.is_open {
-      background: token.$color_background;
-      border-color: token.$color_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_primary, 0.15);
+      background: token.$color_bg_solid;
+      border-color: token.$color_brand_primary;
+      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
     }
   }
 
   &_size_sm {
-    padding: token.$spacing_sm token.$spacing_lg;
-    @include token.text_sm;
+    padding: token.$spacing_8 token.$spacing_16;
+    @include token.label_small;
   }
 
   &_size_md {
-    padding: token.$spacing_md token.$spacing_xl;
-    @include token.text_base;
+    padding: token.$spacing_12 token.$spacing_20;
+    @include token.body_medium;
   }
 
   &_size_lg {
-    padding: token.$spacing_lg token.$spacing_2xl;
-    @include token.text_md;
+    padding: token.$spacing_16 token.$spacing_24;
+    @include token.body_large;
   }
 
   &_value {
@@ -109,7 +109,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: start;
-    @include token.body_regular;
+    @include token.body_medium;
   }
 
   &_placeholder {
@@ -119,43 +119,43 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: start;
-    @include token.body_regular;
-    color: token.$color_text_tertiary;
+    @include token.body_medium;
+    color: token.$color_text_caption;
   }
 
   &_icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: token.$color_text_secondary;
+    color: token.$color_text_body;
   }
 
   &_list {
     position: absolute;
-    z-index: token.$z_modal;
+    z-index: token.$z_level5;
     top: 100%;
     left: 0;
     width: 100%;
     min-width: 100%;
     box-sizing: border-box;
 
-    margin-top: token.$spacing_xs;
+    margin-top: token.$spacing_4;
 
-    background: token.$color_background;
-    border: 1px solid token.$color_border;
+    background: token.$color_bg_solid;
+    border: 1px solid token.$color_border_default;
     border-radius: token.$radius_md;
-    box-shadow: token.$shadow_md;
+    box-shadow: token.$shadow_level2;
 
     max-height: 18rem;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: token.$spacing_xs 0;
+    padding: token.$spacing_4 0;
 
     &_up {
       top: auto;
       bottom: 100%;
       margin-top: 0;
-      margin-bottom: token.$spacing_xs;
+      margin-bottom: token.$spacing_4;
     }
   }
 
@@ -165,12 +165,12 @@
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    gap: token.$spacing_sm;
-    padding: token.$spacing_sm token.$spacing_lg;
+    gap: token.$spacing_8;
+    padding: token.$spacing_8 token.$spacing_16;
     cursor: pointer;
-    color: token.$color_text_primary;
+    color: token.$color_text_heading;
     background: transparent;
-    @include token.body_regular;
+    @include token.body_medium;
 
     > span:first-child {
       min-width: 0;
@@ -181,7 +181,7 @@
 
     &:hover,
     &.is_active {
-      background: token.$color_background_secondary;
+      background: token.$color_bg_solid_dim;
     }
 
     &.is_selected {
@@ -190,7 +190,7 @@
 
     &.is_disabled {
       cursor: not-allowed;
-      color: token.$color_text_tertiary;
+      color: token.$color_text_caption;
     }
   }
 }

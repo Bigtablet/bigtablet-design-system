@@ -10,12 +10,13 @@ const meta: Meta = {
                 component: `
 ### 그림자(Shadows) 기준
 
-그림자는 “떠 있음(레이어)”과 “중요도(위계)”를 표현합니다.
+그림자는 "떠 있음(레이어)"과 **Elevation(높이 위계)** 을 표현합니다.
 
-- **sm**: 아주 가벼운 분리(카드/섹션 경계)
-- **md**: 드롭다운/팝오버 같이 떠 있는 UI
-- **lg**: 모달/오버레이 패널
-- **xl**: 가장 강한 강조(중요한 떠 있음)
+- **level1**: 아주 가벼운 분리 (카드, 인풋 배경)
+- **level2**: 드롭다운 / 팝오버 같이 떠 있는 UI
+- **level3**: 사이드시트 / 작은 패널
+- **level4**: 모달 / 오버레이 패널
+- **level5**: 가장 강한 강조 (중요한 전체화면 레이어)
         `,
             },
         },
@@ -96,30 +97,22 @@ export const Levels: Story = {
 
 function shadowDescription(key: string) {
     switch (key) {
-        case "sm":
-            return "가벼운 경계/분리(카드, 섹션)";
-        case "md":
-            return "떠 있는 UI(드롭다운, 팝오버)";
-        case "lg":
-            return "오버레이 계열(모달 패널 등)";
-        case "xl":
-            return "가장 강한 강조(중요한 레이어)";
-        default:
-            return "공통 그림자";
+        case "level1": return "가벼운 경계/분리 (카드, 섹션)";
+        case "level2": return "떠 있는 UI (드롭다운, 팝오버)";
+        case "level3": return "작은 패널 / 사이드시트";
+        case "level4": return "오버레이 계열 (모달 패널 등)";
+        case "level5": return "가장 강한 강조 (중요한 레이어)";
+        default:       return "공통 그림자";
     }
 }
 
 function shadowUseCase(key: string) {
     switch (key) {
-        case "sm":
-            return "Card, Panel";
-        case "md":
-            return "Select list, Tooltip, Popover";
-        case "lg":
-            return "Modal, Drawer";
-        case "xl":
-            return "Full overlay emphasis";
-        default:
-            return "UI layer";
+        case "level1": return "Card, Input background";
+        case "level2": return "Select list, Tooltip, Popover";
+        case "level3": return "Side sheet, Small panel";
+        case "level4": return "Modal, Drawer";
+        case "level5": return "Full overlay emphasis";
+        default:       return "UI layer";
     }
 }

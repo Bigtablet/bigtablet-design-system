@@ -13,13 +13,14 @@ const meta: Meta = {
 z-index는 **화면에서 어떤 요소가 위에 보일지**를 정하는 기준입니다.
 
 숫자가 클수록 위에 표시되며,
-아래와 같은 **역할 기준**으로 값을 고정해 두는 것이 중요합니다.
+아래와 같은 **레벨 기준**으로 값을 고정해 두는 것이 중요합니다.
 
-- 🔹 기본 화면 요소
-- 🔹 드롭다운 / 팝오버
-- 🔹 모달
-- 🔹 토스트 / 알림
-- 🔹 로딩 오버레이
+- **level0 (0)**: 기본 배경 / flat 레이아웃 요소
+- **level1 (10)**: 드롭다운 / 팝오버
+- **level2 (100)**: 모달 다이얼로그
+- **level3 (200)**: 토스트 / 알림
+- **level4 (500)**: 전체 화면 로딩 오버레이
+- **level5 (1000)**: 최상위 레이어 (긴급 공지 등)
         `,
             },
         },
@@ -124,22 +125,17 @@ const td: React.CSSProperties = {
 
 function descriptionForKey(key: string) {
     switch (key) {
-        case "base":
-            return "기본 레이아웃 요소";
-        case "dropdown":
-            return "셀렉트, 드롭다운, 팝오버";
-        case "modal":
-            return "모달 다이얼로그";
-        case "toast":
-            return "토스트 알림";
-        case "loading":
-            return "전체 화면 로딩 오버레이";
-        default:
-            return "공통 레이어";
+        case "level0": return "기본 배경 / flat 레이아웃";
+        case "level1": return "셀렉트, 드롭다운, 팝오버";
+        case "level2": return "모달 다이얼로그";
+        case "level3": return "토스트 알림";
+        case "level4": return "전체 화면 로딩 오버레이";
+        case "level5": return "최상위 레이어 (긴급 공지 등)";
+        default:       return "공통 레이어";
     }
 }
 
 function layerColor(index: number) {
-    const colors = ["#9ca3af", "#60a5fa", "#34d399", "#fbbf24", "#f87171"];
+    const colors = ["#9ca3af", "#60a5fa", "#34d399", "#fbbf24", "#f87171", "#a78bfa"];
     return colors[index % colors.length];
 }

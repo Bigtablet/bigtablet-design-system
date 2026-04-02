@@ -1,11 +1,11 @@
 @use "src/styles/scss/token" as token;
 
 .card {
-  background: token.$color_background;
+  background: token.$color_bg_solid;
   border-radius: token.$radius_lg;
 
   &_bordered {
-    border: 1px solid token.$color_border;
+    border: 1px solid token.$color_border_default;
   }
 
   &_shadow_none {
@@ -13,15 +13,15 @@
   }
 
   &_shadow_sm {
-    box-shadow: token.$shadow_sm;
+    box-shadow: token.$shadow_level1;
   }
 
   &_shadow_md {
-    box-shadow: token.$shadow_md;
+    box-shadow: token.$shadow_level2;
   }
 
   &_shadow_lg {
-    box-shadow: token.$shadow_lg;
+    box-shadow: token.$shadow_level3;
   }
 
   &_p_none {
@@ -29,21 +29,21 @@
   }
 
   &_p_sm {
-    padding: token.$spacing_sm;
+    padding: token.$spacing_8;
   }
 
   &_p_md {
-    padding: token.$spacing_lg;
+    padding: token.$spacing_16;
   }
 
   &_p_lg {
-    padding: token.$spacing_2xl;
+    padding: token.$spacing_24;
   }
 
   &_title {
-    @include token.heading_3;
-    margin-bottom: token.$spacing_md;
-    color: token.$text_strong;
+    @include token.heading_small;
+    margin-bottom: token.$spacing_12;
+    color: token.$color_text_heading;
   }
 
   &_body {
