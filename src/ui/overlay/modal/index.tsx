@@ -107,7 +107,7 @@ export const Modal = ({
 				style={{ width }}
 				role="document"
 				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
+onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
 				{...props}
 			>
 				{title && (
