@@ -1,22 +1,21 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
-export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    /** 버튼 스타일 변형 (기본값: "primary") */
-    variant?: "primary" | "secondary" | "ghost" | "danger";
-    /** 버튼 크기 (기본값: "md") */
-    size?: "sm" | "md" | "lg";
-    /** 버튼이 컨테이너의 전체 너비를 차지할지 여부 */
-    fullWidth?: boolean;
-    /**
-     * 버튼의 커스텀 너비
-     * @deprecated `fullWidth` 사용 또는 CSS로 처리
-     */
-    width?: string;
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+	/** 버튼 스타일 변형 (기본값: "primary") */
+	variant?: "primary" | "secondary" | "ghost" | "danger";
+	/** 버튼 크기 (기본값: "md") */
+	size?: "sm" | "md" | "lg";
+	/** 버튼이 컨테이너의 전체 너비를 차지할지 여부 */
+	fullWidth?: boolean;
+	/**
+	 * 버튼의 커스텀 너비
+	 * @deprecated `fullWidth` 사용 또는 CSS로 처리
+	 */
+	width?: string;
 }
 
 /**
@@ -26,23 +25,23 @@ export interface ButtonProps
  * @returns 렌더링된 버튼 요소
  */
 export const Button = ({
-    variant = "primary",
-    size = "md",
-    fullWidth = true,
-    width,
-    className,
-    style,
-    ...props
+	variant = "primary",
+	size = "md",
+	fullWidth = true,
+	width,
+	className,
+	style,
+	...props
 }: ButtonProps) => {
-    const buttonClassName = cn(
-        "button",
-        `button_variant_${variant}`,
-        `button_size_${size}`,
-        fullWidth && !width && "button_full_width",
-        className
-    );
+	const buttonClassName = cn(
+		"button",
+		`button_variant_${variant}`,
+		`button_size_${size}`,
+		fullWidth && !width && "button_full_width",
+		className,
+	);
 
-    const buttonStyle = width ? { ...style, width } : style;
+	const buttonStyle = width ? { ...style, width } : style;
 
-    return <button className={buttonClassName} style={buttonStyle} {...props} />;
+	return <button className={buttonClassName} style={buttonStyle} {...props} />;
 };

@@ -3,13 +3,13 @@
  * Supports strings, numbers, booleans, arrays, and conditional objects
  */
 type ClassValue =
-    | string
-    | number
-    | boolean
-    | undefined
-    | null
-    | ClassValue[]
-    | Record<string, boolean | undefined | null>;
+	| string
+	| number
+	| boolean
+	| undefined
+	| null
+	| ClassValue[]
+	| Record<string, boolean | undefined | null>;
 
 /**
  * Utility for combining class names (clsx-like)
@@ -36,26 +36,26 @@ type ClassValue =
  * // "btn btn--primary custom-class"
  */
 export const cn = (...classes: ClassValue[]): string => {
-    const classNames: string[] = [];
+	const classNames: string[] = [];
 
-    for (const item of classes) {
-        if (!item) continue;
+	for (const item of classes) {
+		if (!item) continue;
 
-        if (typeof item === "string" || typeof item === "number") {
-            classNames.push(String(item));
-        } else if (Array.isArray(item)) {
-            const nested = cn(...item);
-            if (nested) {
-                classNames.push(nested);
-            }
-        } else if (typeof item === "object") {
-            for (const key in item) {
-                if (Object.prototype.hasOwnProperty.call(item, key) && item[key]) {
-                    classNames.push(key);
-                }
-            }
-        }
-    }
+		if (typeof item === "string" || typeof item === "number") {
+			classNames.push(String(item));
+		} else if (Array.isArray(item)) {
+			const nested = cn(...item);
+			if (nested) {
+				classNames.push(nested);
+			}
+		} else if (typeof item === "object") {
+			for (const key in item) {
+				if (Object.hasOwn(item, key) && item[key]) {
+					classNames.push(key);
+				}
+			}
+		}
+	}
 
-    return classNames.join(" ");
+	return classNames.join(" ");
 };

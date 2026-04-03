@@ -2,23 +2,22 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Spinner } from "../../ui/feedback/spinner";
 
 const meta: Meta<typeof Spinner> = {
-    title: "Components/Feedback/Spinner",
-    component: Spinner,
-    tags: ["autodocs"],
-    argTypes: {
-        size: {
-            control: "number",
-            description:
-                "스피너의 크기(px)입니다. 숫자만 입력하면 자동으로 정사각형 크기로 적용됩니다.",
-        },
-    },
-    args: {
-        size: 24,
-    },
-    parameters: {
-        docs: {
-            description: {
-                component: `
+	title: "Components/Feedback/Spinner",
+	component: Spinner,
+	tags: ["autodocs"],
+	argTypes: {
+		size: {
+			control: "number",
+			description: "스피너의 크기(px)입니다. 숫자만 입력하면 자동으로 정사각형 크기로 적용됩니다.",
+		},
+	},
+	args: {
+		size: 24,
+	},
+	parameters: {
+		docs: {
+			description: {
+				component: `
 **Spinner**는 작업 처리 중임을 사용자에게 알려주는 **회전 형태의 로딩 표시**입니다.
 
 ### 언제 사용하나요?
@@ -46,50 +45,50 @@ const meta: Meta<typeof Spinner> = {
 - 회전 속도가 너무 빠르거나 느리지 않은지 (현재: 0.8초/1회전)
 - 전체 화면 로딩 시 오버레이와 함께 사용하는 것을 권장
         `,
-            },
-        },
-    },
+			},
+		},
+	},
 };
 
 export default meta;
 type Story = StoryObj<typeof Spinner>;
 
 export const Basic: Story = {
-    name: "기본",
+	name: "기본",
 };
 
 export const Sizes: Story = {
-    name: "크기별 예시",
-    render: () => (
-        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            <Spinner size={16} />
-            <Spinner size={24} />
-            <Spinner size={32} />
-            <Spinner size={48} />
-        </div>
-    ),
+	name: "크기별 예시",
+	render: () => (
+		<div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+			<Spinner size={16} />
+			<Spinner size={24} />
+			<Spinner size={32} />
+			<Spinner size={48} />
+		</div>
+	),
 };
 
 export const InButton: Story = {
-    name: "버튼 내부 사용 예",
-    render: () => (
-        <button
-            type="button"
-            disabled
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "8px 16px",
-                borderRadius: 8,
-                border: "1px solid #e5e5e5",
-                background: "#fafafa",
-                color: "#666",
-                cursor: "not-allowed",
-            }}
-        >
-            <Spinner size={16} />
-            처리 중
-        </button>
-    ),
+	name: "버튼 내부 사용 예",
+	render: () => (
+		<button
+			type="button"
+			disabled
+			style={{
+				display: "inline-flex",
+				alignItems: "center",
+				gap: 8,
+				padding: "8px 16px",
+				borderRadius: 8,
+				border: "1px solid #e5e5e5",
+				background: "#fafafa",
+				color: "#666",
+				cursor: "not-allowed",
+			}}
+		>
+			<Spinner size={16} />
+			처리 중
+		</button>
+	),
 };
