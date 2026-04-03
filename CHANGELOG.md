@@ -1,3 +1,17 @@
+## [1.24.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.24.0...v1.24.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* align z-index levels with layer documentation ([d249de2](https://github.com/Bigtablet/bigtablet-design-system/commit/d249de2bc814b24cabc090f432d51232bccb3c96))
+* correct Biome package setup and alert keyboard accessibility ([a6ddf28](https://github.com/Bigtablet/bigtablet-design-system/commit/a6ddf28eb027ad8768aa49d97457f619213d270c))
+* Escape key event ([8490ae7](https://github.com/Bigtablet/bigtablet-design-system/commit/8490ae7d0511191b60d854065abff8ae00c62c3f))
+* espace key handler ([15e81d8](https://github.com/Bigtablet/bigtablet-design-system/commit/15e81d8a822047e67ec8418e86567fe67549e603))
+* resolve Biome a11y lint errors in UI components ([682767a](https://github.com/Bigtablet/bigtablet-design-system/commit/682767a5f99cf9f698eb8ded2617f66ade8e6017))
+* resolve Biome lint errors in Storybook stories and vanilla examples ([0431769](https://github.com/Bigtablet/bigtablet-design-system/commit/0431769eb8f578ae5e9ff5916d2dc9c5e2a6dcbd))
+* resolve Biome lint errors in unit tests ([a5b0e1e](https://github.com/Bigtablet/bigtablet-design-system/commit/a5b0e1ec06950cff1f10774d4b6934ad6c88ef55))
+* update design token definitions and package exports ([f4a55ee](https://github.com/Bigtablet/bigtablet-design-system/commit/f4a55ee6a8f998a4b326e2f315032638298ea287))
+
 # [1.24.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.23.0...v1.24.0) (2026-04-02)
 
 
