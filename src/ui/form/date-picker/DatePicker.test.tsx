@@ -1,171 +1,179 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { DatePicker } from "./index";
 
 describe("DatePicker", () => {
-    it("renders with label", () => {
-        render(<DatePicker label="Birth Date" onChange={() => {}} />);
-        expect(screen.getByText("Birth Date")).toBeInTheDocument();
-    });
+	it("renders with label", () => {
+		render(<DatePicker label="Birth Date" onChange={() => {}} />);
+		expect(screen.getByText("Birth Date")).toBeInTheDocument();
+	});
 
-    it("renders year select with placeholder", () => {
-        render(<DatePicker onChange={() => {}} />);
-        expect(screen.getByText("Year")).toBeInTheDocument();
-    });
+	it("renders year select with placeholder", () => {
+		render(<DatePicker onChange={() => {}} />);
+		expect(screen.getByText("Year")).toBeInTheDocument();
+	});
 
-    it("renders month select with placeholder", () => {
-        render(<DatePicker onChange={() => {}} />);
-        expect(screen.getByText("Month")).toBeInTheDocument();
-    });
+	it("renders month select with placeholder", () => {
+		render(<DatePicker onChange={() => {}} />);
+		expect(screen.getByText("Month")).toBeInTheDocument();
+	});
 
-    it("renders day select in year-month-day mode", () => {
-        render(<DatePicker mode="year-month-day" onChange={() => {}} />);
-        expect(screen.getByText("Day")).toBeInTheDocument();
-    });
+	it("renders day select in year-month-day mode", () => {
+		render(<DatePicker mode="year-month-day" onChange={() => {}} />);
+		expect(screen.getByText("Day")).toBeInTheDocument();
+	});
 
-    it("does not render day select in year-month mode", () => {
-        render(<DatePicker mode="year-month" onChange={() => {}} />);
-        expect(screen.queryByText("Day")).not.toBeInTheDocument();
-    });
+	it("does not render day select in year-month mode", () => {
+		render(<DatePicker mode="year-month" onChange={() => {}} />);
+		expect(screen.queryByText("Day")).not.toBeInTheDocument();
+	});
 
-    it("calls onChange when year is selected", () => {
-        const onChange = vi.fn();
-        render(<DatePicker onChange={onChange} />);
+	it("calls onChange when year is selected", () => {
+		const onChange = vi.fn();
+		render(<DatePicker onChange={onChange} />);
 
-        const selects = screen.getAllByRole("combobox");
-        fireEvent.change(selects[0], { target: { value: "2024" } });
+		const selects = screen.getAllByRole("combobox");
+		fireEvent.change(selects[0], { target: { value: "2024" } });
 
-        expect(onChange).toHaveBeenCalled();
-    });
+		expect(onChange).toHaveBeenCalled();
+	});
 
-    it("shows selected year", () => {
-        render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        expect(selects[0]).toHaveValue("2024");
-    });
+	it("shows selected year", () => {
+		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		expect(selects[0]).toHaveValue("2024");
+	});
 
-    it("shows selected month", () => {
-        render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        expect(selects[1]).toHaveValue("6");
-    });
+	it("shows selected month", () => {
+		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		expect(selects[1]).toHaveValue("6");
+	});
 
-    it("shows selected day", () => {
-        render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        expect(selects[2]).toHaveValue("15");
-    });
+	it("shows selected day", () => {
+		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		expect(selects[2]).toHaveValue("15");
+	});
 
-    it("disables all selects when disabled", () => {
-        render(<DatePicker disabled onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        selects.forEach(select => {
-            expect(select).toBeDisabled();
-        });
-    });
+	it("disables all selects when disabled", () => {
+		render(<DatePicker disabled onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		selects.forEach((select) => {
+			expect(select).toBeDisabled();
+		});
+	});
 
-    it("disables month select when year is not selected", () => {
-        render(<DatePicker onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        expect(selects[1]).toBeDisabled();
-    });
+	it("disables month select when year is not selected", () => {
+		render(<DatePicker onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		expect(selects[1]).toBeDisabled();
+	});
 
-    it("disables day select when month is not selected", () => {
-        render(<DatePicker value="2024" onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        expect(selects[2]).toBeDisabled();
-    });
+	it("disables day select when month is not selected", () => {
+		render(<DatePicker value="2024" onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		expect(selects[2]).toBeDisabled();
+	});
 
-    it("applies fullWidth class by default", () => {
-        const { container } = render(<DatePicker onChange={() => {}} />);
-        expect(container.firstChild).toHaveClass("date_picker_full_width");
-    });
+	it("applies fullWidth class by default", () => {
+		const { container } = render(<DatePicker onChange={() => {}} />);
+		expect(container.firstChild).toHaveClass("date_picker_full_width");
+	});
 
-    it("does not apply fullWidth class when fullWidth is false", () => {
-        const { container } = render(<DatePicker fullWidth={false} onChange={() => {}} />);
-        expect(container.firstChild).not.toHaveClass("date_picker_full_width");
-    });
+	it("does not apply fullWidth class when fullWidth is false", () => {
+		const { container } = render(<DatePicker fullWidth={false} onChange={() => {}} />);
+		expect(container.firstChild).not.toHaveClass("date_picker_full_width");
+	});
 
-    it("applies custom width style", () => {
-        const { container } = render(<DatePicker width={300} onChange={() => {}} />);
-        expect(container.firstChild).toHaveStyle({ width: "300px" });
-    });
+	it("applies custom width style", () => {
+		const { container } = render(<DatePicker width={300} onChange={() => {}} />);
+		expect(container.firstChild).toHaveStyle({ width: "300px" });
+	});
 
-    it("applies string width style", () => {
-        const { container } = render(<DatePicker width="50%" onChange={() => {}} />);
-        expect(container.firstChild).toHaveStyle({ width: "50%" });
-    });
+	it("applies string width style", () => {
+		const { container } = render(<DatePicker width="50%" onChange={() => {}} />);
+		expect(container.firstChild).toHaveStyle({ width: "50%" });
+	});
 
-    it("generates year options from startYear to endYear", () => {
-        render(<DatePicker startYear={2020} endYear={2025} onChange={() => {}} />);
-        const selects = screen.getAllByRole("combobox");
-        const yearSelect = selects[0];
+	it("generates year options from startYear to endYear", () => {
+		render(<DatePicker startYear={2020} endYear={2025} onChange={() => {}} />);
+		const selects = screen.getAllByRole("combobox");
+		const yearSelect = selects[0];
 
-        expect(yearSelect.querySelectorAll("option").length).toBe(7); // 6년 + 플레이스홀더
-    });
+		expect(yearSelect.querySelectorAll("option").length).toBe(7); // 6년 + 플레이스홀더
+	});
 
-    it("calls onChange with YYYY-MM format in year-month mode", () => {
-        const onChange = vi.fn();
-        render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
+	it("calls onChange with YYYY-MM format in year-month mode", () => {
+		const onChange = vi.fn();
+		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
 
-        const selects = screen.getAllByRole("combobox");
-        fireEvent.change(selects[0], { target: { value: "2024" } });
+		const selects = screen.getAllByRole("combobox");
+		fireEvent.change(selects[0], { target: { value: "2024" } });
 
-        expect(onChange).toHaveBeenCalledWith("2024-01");
-    });
+		expect(onChange).toHaveBeenCalledWith("2024-01");
+	});
 
-    it("calls onChange when month is changed", () => {
-        const onChange = vi.fn();
-        render(<DatePicker value="2024" onChange={onChange} />);
+	it("calls onChange when month is changed", () => {
+		const onChange = vi.fn();
+		render(<DatePicker value="2024" onChange={onChange} />);
 
-        const selects = screen.getAllByRole("combobox");
-        fireEvent.change(selects[1], { target: { value: "6" } });
+		const selects = screen.getAllByRole("combobox");
+		fireEvent.change(selects[1], { target: { value: "6" } });
 
-        expect(onChange).toHaveBeenCalledWith("2024-06-01");
-    });
+		expect(onChange).toHaveBeenCalledWith("2024-06-01");
+	});
 
-    it("calls onChange when day is changed", () => {
-        const onChange = vi.fn();
-        render(<DatePicker value="2024-06" onChange={onChange} />);
+	it("calls onChange when day is changed", () => {
+		const onChange = vi.fn();
+		render(<DatePicker value="2024-06" onChange={onChange} />);
 
-        const selects = screen.getAllByRole("combobox");
-        fireEvent.change(selects[2], { target: { value: "15" } });
+		const selects = screen.getAllByRole("combobox");
+		fireEvent.change(selects[2], { target: { value: "15" } });
 
-        expect(onChange).toHaveBeenCalledWith("2024-06-15");
-    });
+		expect(onChange).toHaveBeenCalledWith("2024-06-15");
+	});
 
-    it("renders sr-only constraint description when minDate is set", () => {
-        render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
-        expect(screen.getByText(/Minimum date: 2020-01-01/)).toBeInTheDocument();
-    });
+	it("renders sr-only constraint description when minDate is set", () => {
+		render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
+		expect(screen.getByText(/Minimum date: 2020-01-01/)).toBeInTheDocument();
+	});
 
-    it("renders sr-only constraint description when selectableRange is until-today", () => {
-        render(<DatePicker selectableRange="until-today" onChange={() => {}} />);
-        expect(screen.getByText(/Selectable up to today/)).toBeInTheDocument();
-    });
+	it("renders sr-only constraint description when selectableRange is until-today", () => {
+		render(<DatePicker selectableRange="until-today" onChange={() => {}} />);
+		expect(screen.getByText(/Selectable up to today/)).toBeInTheDocument();
+	});
 
-    it("links group to constraint description via aria-describedby", () => {
-        render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
-        const group = document.querySelector("[role='group']") as HTMLElement;
-        const descId = group.getAttribute("aria-describedby");
+	it("links group to constraint description via aria-describedby", () => {
+		render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
+		const group = document.querySelector("[role='group']") as HTMLElement;
+		const descId = group.getAttribute("aria-describedby");
 
-        expect(descId).toBeTruthy();
-        expect(document.getElementById(descId!)).toBeInTheDocument();
-    });
+		expect(descId).toBeTruthy();
+		expect(document.getElementById(descId!)).toBeInTheDocument();
+	});
 
-    it("does not render constraint description when no constraints set", () => {
-        render(<DatePicker onChange={() => {}} />);
-        const group = document.querySelector("[role='group']") as HTMLElement;
-        expect(group).not.toHaveAttribute("aria-describedby");
-    });
+	it("does not render constraint description when no constraints set", () => {
+		render(<DatePicker onChange={() => {}} />);
+		const group = document.querySelector("[role='group']") as HTMLElement;
+		expect(group).not.toHaveAttribute("aria-describedby");
+	});
 
-    it("uses custom minDateSrFormat when provided", () => {
-        render(<DatePicker minDate="2020-01-01" minDateSrFormat="최소 날짜: {date}" onChange={() => {}} />);
-        expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
-    });
+	it("uses custom minDateSrFormat when provided", () => {
+		render(
+			<DatePicker minDate="2020-01-01" minDateSrFormat="최소 날짜: {date}" onChange={() => {}} />,
+		);
+		expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
+	});
 
-    it("uses custom selectableRangeUntilTodaySrText when provided", () => {
-        render(<DatePicker selectableRange="until-today" selectableRangeUntilTodaySrText="오늘까지 선택 가능" onChange={() => {}} />);
-        expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
-    });
+	it("uses custom selectableRangeUntilTodaySrText when provided", () => {
+		render(
+			<DatePicker
+				selectableRange="until-today"
+				selectableRangeUntilTodaySrText="오늘까지 선택 가능"
+				onChange={() => {}}
+			/>,
+		);
+		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
+	});
 });

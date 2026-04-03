@@ -1,149 +1,150 @@
 {
-  "name": "@bigtablet/design-system",
-  "version": "1.22.2",
-  "description": "Bigtablet Design System UI Components",
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "style": "dist/index.css",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Bigtablet/bigtablet-design-system.git"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./next": {
-      "types": "./dist/next.d.ts",
-      "import": "./dist/next.js"
-    },
-    "./style.css": "./dist/index.css",
-    "./scss/token": "./dist/styles/scss/token.scss",
-    "./vanilla": {
-      "style": "./dist/vanilla/bigtablet.min.css",
-      "default": "./dist/vanilla/bigtablet.min.js"
-    },
-    "./vanilla/style.min.css": "./dist/vanilla/bigtablet.min.css",
-    "./vanilla/bigtablet.min.js": "./dist/vanilla/bigtablet.min.js"
-  },
-  "files": [
-    "dist",
-    "!dist/vanilla/bigtablet.css",
-    "!dist/vanilla/bigtablet.js",
-    "!dist/vanilla/examples",
-    "README.md",
-    "LICENSE"
-  ],
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss",
-    "./dist/next.css"
-  ],
-  "scripts": {
-    "build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
-    "build:vanilla": "sh scripts/build-vanilla.sh",
-    "copy:scss": "sh scripts/copy-scss.sh",
-    "dev": "tsup --watch",
-    "storybook": "storybook dev -p 6006",
-    "build:sb": "storybook build",
-    "test": "vitest run --project unit",
-    "test:watch": "vitest --project unit",
-    "test:coverage": "vitest run --project unit --coverage",
-    "chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
-    "figma:test": "tsx scripts/figma-connect.ts",
-    "figma:snapshot": "tsx scripts/figma-snapshot.ts",
-    "figma:diff": "tsx scripts/figma-diff.ts",
-    "figma:apply": "tsx scripts/figma-apply.ts",
-    "size": "size-limit",
-    "prepare": "husky"
-  },
-  "keywords": [
-    "design-system",
-    "react",
-    "storybook",
-    "ui",
-    "vanilla",
-    "thymeleaf",
-    "html",
-    "css"
-  ],
-  "author": "sangmin",
-  "license": "MIT",
-  "packageManager": "pnpm@10.20.0",
-  "peerDependencies": {
-    "lucide-react": ">=0.552.0",
-    "next": ">=16",
-    "react": "^19",
-    "react-dom": "^19"
-  },
-  "peerDependenciesMeta": {
-    "next": {
-      "optional": true
-    }
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/core": "^20.5.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^12.0.1",
-    "@semantic-release/npm": "^13.1.1",
-    "@size-limit/preset-small-lib": "^12.0.1",
-    "@storybook/addon-docs": "^10.3.3",
-    "@storybook/addon-vitest": "^10.3.3",
-    "@storybook/react": "^10.3.3",
-    "@storybook/react-vite": "^10.3.3",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@types/node": "^24",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19",
-    "@vitest/browser-playwright": "^4.1.2",
-    "@vitest/coverage-v8": "^4.1.2",
-    "chromatic": "^16.0.0",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
-    "esbuild-sass-plugin": "^3.7.0",
-    "husky": "^9.1.7",
-    "jsdom": "^29.0.1",
-    "lucide-react": "^1.7.0",
-    "next": "^16.2.1",
-    "playwright": "^1.57.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "sass-embedded": "^1.93.3",
-    "semantic-release": "^25.0.1",
-    "size-limit": "^12.0.1",
-    "storybook": "^10.3.3",
-    "tsup": "^8.5.0",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2",
-    "vite": "^6.4.1",
-    "vitest": "^4.1.2"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "size-limit": [
-    {
-      "path": "dist/index.js",
-      "limit": "12 kB"
-    },
-    {
-      "path": "dist/vanilla/bigtablet.min.js",
-      "limit": "5 kB"
-    }
-  ],
-  "pnpm": {
-    "overrides": {
-      "rollup": "^4.59.0",
-      "lodash": "^4.18.1",
-      "lodash-es": "^4.18.1",
-      "immutable": "^5.1.5",
-      "minimatch": "^10.2.4",
-      "handlebars": "^4.7.9"
-    }
-  }
+	"name": "@bigtablet/design-system",
+	"version": "1.22.2",
+	"description": "Bigtablet Design System UI Components",
+	"type": "module",
+	"types": "dist/index.d.ts",
+	"style": "dist/index.css",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Bigtablet/bigtablet-design-system.git"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./next": {
+			"types": "./dist/next.d.ts",
+			"import": "./dist/next.js"
+		},
+		"./style.css": "./dist/index.css",
+		"./scss/token": "./dist/styles/scss/token.scss",
+		"./vanilla": {
+			"style": "./dist/vanilla/bigtablet.min.css",
+			"default": "./dist/vanilla/bigtablet.min.js"
+		},
+		"./vanilla/style.min.css": "./dist/vanilla/bigtablet.min.css",
+		"./vanilla/bigtablet.min.js": "./dist/vanilla/bigtablet.min.js"
+	},
+	"files": [
+		"dist",
+		"!dist/vanilla/bigtablet.css",
+		"!dist/vanilla/bigtablet.js",
+		"!dist/vanilla/examples",
+		"README.md",
+		"LICENSE"
+	],
+	"sideEffects": [
+		"**/*.css",
+		"**/*.scss",
+		"./dist/next.css"
+	],
+	"scripts": {
+		"build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
+		"build:vanilla": "sh scripts/build-vanilla.sh",
+		"copy:scss": "sh scripts/copy-scss.sh",
+		"dev": "tsup --watch",
+		"storybook": "storybook dev -p 6006",
+		"build:sb": "storybook build",
+		"test": "vitest run --project unit",
+		"test:watch": "vitest --project unit",
+		"test:coverage": "vitest run --project unit --coverage",
+		"chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
+		"figma:test": "tsx scripts/figma-connect.ts",
+		"figma:snapshot": "tsx scripts/figma-snapshot.ts",
+		"figma:diff": "tsx scripts/figma-diff.ts",
+		"figma:apply": "tsx scripts/figma-apply.ts",
+		"size": "size-limit",
+		"prepare": "husky"
+	},
+	"keywords": [
+		"design-system",
+		"react",
+		"storybook",
+		"ui",
+		"vanilla",
+		"thymeleaf",
+		"html",
+		"css"
+	],
+	"author": "sangmin",
+	"license": "MIT",
+	"packageManager": "pnpm@10.20.0",
+	"peerDependencies": {
+		"lucide-react": ">=0.552.0",
+		"next": ">=16",
+		"react": "^19",
+		"react-dom": "^19"
+	},
+	"peerDependenciesMeta": {
+		"next": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^20.5.0",
+		"@commitlint/core": "^20.5.0",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/github": "^12.0.1",
+		"@semantic-release/npm": "^13.1.1",
+		"@size-limit/preset-small-lib": "^12.0.1",
+		"@storybook/addon-docs": "^10.3.3",
+		"@storybook/addon-vitest": "^10.3.3",
+		"@storybook/react": "^10.3.3",
+		"@storybook/react-vite": "^10.3.3",
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2",
+		"@types/node": "^24",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19",
+		"@vitest/browser-playwright": "^4.1.2",
+		"@vitest/coverage-v8": "^4.1.2",
+		"chromatic": "^16.0.0",
+		"conventional-changelog-conventionalcommits": "^9.3.1",
+		"esbuild-sass-plugin": "^3.7.0",
+		"husky": "^9.1.7",
+		"jsdom": "^29.0.1",
+		"lucide-react": "^1.7.0",
+		"next": "^16.2.1",
+		"playwright": "^1.57.0",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"sass-embedded": "^1.93.3",
+		"semantic-release": "^25.0.1",
+		"size-limit": "^12.0.1",
+		"storybook": "^10.3.3",
+		"tsup": "^8.5.0",
+		"tsx": "^4.21.0",
+		"typescript": "^6.0.2",
+		"vite": "^6.4.1",
+		"vitest": "^4.1.2",
+		"@biomejs/biome": "^2.4.10"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"size-limit": [
+		{
+			"path": "dist/index.js",
+			"limit": "12 kB"
+		},
+		{
+			"path": "dist/vanilla/bigtablet.min.js",
+			"limit": "5 kB"
+		}
+	],
+	"pnpm": {
+		"overrides": {
+			"rollup": "^4.59.0",
+			"lodash": "^4.18.1",
+			"lodash-es": "^4.18.1",
+			"immutable": "^5.1.5",
+			"minimatch": "^10.2.4",
+			"handlebars": "^4.7.9"
+		}
+	}
 }

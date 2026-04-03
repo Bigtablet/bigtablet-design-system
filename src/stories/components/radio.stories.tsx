@@ -3,30 +3,28 @@ import * as React from "react";
 import { Radio } from "../../ui/form/radio";
 
 const meta: Meta<typeof Radio> = {
-    title: "Components/Form/Radio",
-    component: Radio,
-    tags: ["autodocs"],
-    argTypes: {
-        size: {
-            control: "select",
-            options: ["sm", "md", "lg"],
-            description:
-                "라디오 버튼의 크기입니다. 텍스트와 선택 원(circle)의 크기가 함께 변경됩니다.",
-        },
-        disabled: {
-            control: "boolean",
-            description:
-                "비활성화 상태입니다. 선택할 수 없으며 흐리게 표시됩니다.",
-        },
-    },
-    args: {
-        size: "md",
-        disabled: false,
-    },
-    parameters: {
-        docs: {
-            description: {
-                component: `
+	title: "Components/Form/Radio",
+	component: Radio,
+	tags: ["autodocs"],
+	argTypes: {
+		size: {
+			control: "select",
+			options: ["sm", "md", "lg"],
+			description: "라디오 버튼의 크기입니다. 텍스트와 선택 원(circle)의 크기가 함께 변경됩니다.",
+		},
+		disabled: {
+			control: "boolean",
+			description: "비활성화 상태입니다. 선택할 수 없으며 흐리게 표시됩니다.",
+		},
+	},
+	args: {
+		size: "md",
+		disabled: false,
+	},
+	parameters: {
+		docs: {
+			description: {
+				component: `
 **Radio**는 여러 선택지 중에서 **하나만 선택해야 할 때** 사용하는 입력 요소입니다.
 
 ### 언제 사용하나요?
@@ -47,75 +45,63 @@ const meta: Meta<typeof Radio> = {
 - 옵션 간 간격이 충분한지
 - 비활성화 상태가 “선택 불가”로 인지되는지
         `,
-            },
-        },
-    },
+			},
+		},
+	},
 };
 
 export default meta;
 type Story = StoryObj<typeof Radio>;
 
 export const Group: Story = {
-    name: "그룹 선택 예시",
-    render: (args) => {
-        const groupId = React.useId();
-        const groupName = `radio_group_${groupId}`;
-        const [value, setValue] = React.useState("b");
+	name: "그룹 선택 예시",
+	render: (args) => {
+		const groupId = React.useId();
+		const groupName = `radio_group_${groupId}`;
+		const [value, setValue] = React.useState("b");
 
-        return (
-            <div style={{ display: "grid", gap: 8 }}>
-                <Radio
-                    {...args}
-                    name={groupName}
-                    value="a"
-                    checked={value === "a"}
-                    onChange={() => setValue("a")}
-                    label="Option A"
-                />
-                <Radio
-                    {...args}
-                    name={groupName}
-                    value="b"
-                    checked={value === "b"}
-                    onChange={() => setValue("b")}
-                    label="Option B (기본 선택)"
-                />
-                <Radio
-                    {...args}
-                    name={groupName}
-                    value="c"
-                    checked={value === "c"}
-                    onChange={() => setValue("c")}
-                    label="Option C"
-                />
-            </div>
-        );
-    },
+		return (
+			<div style={{ display: "grid", gap: 8 }}>
+				<Radio
+					{...args}
+					name={groupName}
+					value="a"
+					checked={value === "a"}
+					onChange={() => setValue("a")}
+					label="Option A"
+				/>
+				<Radio
+					{...args}
+					name={groupName}
+					value="b"
+					checked={value === "b"}
+					onChange={() => setValue("b")}
+					label="Option B (기본 선택)"
+				/>
+				<Radio
+					{...args}
+					name={groupName}
+					value="c"
+					checked={value === "c"}
+					onChange={() => setValue("c")}
+					label="Option C"
+				/>
+			</div>
+		);
+	},
 };
 
 export const Disabled: Story = {
-    name: "비활성화",
-    render: (args) => {
-        const groupId = React.useId();
-        const groupName = `radio_disabled_${groupId}`;
+	name: "비활성화",
+	render: (args) => {
+		const groupId = React.useId();
+		const groupName = `radio_disabled_${groupId}`;
 
-        return (
-            <div style={{ display: "grid", gap: 8 }}>
-                <Radio
-                    {...args}
-                    name={groupName}
-                    value="a"
-                    disabled
-                    label="Disabled A"
-                />
-                <Radio
-                    {...args}
-                    name={groupName}
-                    value="b"
-                    disabled
-                    label="Disabled B"
-                />
-            </div>
-        );
-    },
+		return (
+			<div style={{ display: "grid", gap: 8 }}>
+				<Radio {...args} name={groupName} value="a" disabled label="Disabled A" />
+				<Radio {...args} name={groupName} value="b" disabled label="Disabled B" />
+			</div>
+		);
+	},
 };
