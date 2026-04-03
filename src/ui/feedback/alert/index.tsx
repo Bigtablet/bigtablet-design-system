@@ -161,7 +161,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				ref={panelRef}
 				className={modalClassName}
 				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
+				onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
 				role="alertdialog"
 				aria-modal="true"
 				aria-labelledby="alert_title"
