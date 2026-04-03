@@ -1,17 +1,16 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
-export interface RadioProps
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
-    /** 라디오 버튼 옆에 표시할 라벨 */
-    label?: React.ReactNode;
-    /** 라디오 버튼 크기 (기본값: "md") */
-    size?: "sm" | "md" | "lg";
-    /** 입력 요소 참조 */
-    ref?: React.Ref<HTMLInputElement>;
+export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+	/** 라디오 버튼 옆에 표시할 라벨 */
+	label?: React.ReactNode;
+	/** 라디오 버튼 크기 (기본값: "md") */
+	size?: "sm" | "md" | "lg";
+	/** 입력 요소 참조 */
+	ref?: React.Ref<HTMLInputElement>;
 }
 
 /**
@@ -21,19 +20,15 @@ export interface RadioProps
  * @returns 렌더링된 라디오 UI
  */
 export const Radio = ({ label, size = "md", className, ref, ...props }: RadioProps) => {
-    const rootClassName = cn(
-        "radio",
-        `radio_size_${size}`,
-        className
-    );
+	const rootClassName = cn("radio", `radio_size_${size}`, className);
 
-    return (
-        <label className={rootClassName}>
-            <input ref={ref} type="radio" className="radio_input" {...props} />
-            <span className="radio_dot" aria-hidden="true" />
-            {label ? <span className="radio_label">{label}</span> : null}
-        </label>
-    );
+	return (
+		<label className={rootClassName}>
+			<input ref={ref} type="radio" className="radio_input" {...props} />
+			<span className="radio_dot" aria-hidden="true" />
+			{label ? <span className="radio_label">{label}</span> : null}
+		</label>
+	);
 };
 
 Radio.displayName = "Radio";

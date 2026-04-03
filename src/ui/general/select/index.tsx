@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
-import { ChevronDown, Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 export type SelectSize = "sm" | "md" | "lg";
 export type SelectVariant = "outline" | "filled" | "ghost";
@@ -25,7 +25,7 @@ export interface SelectProps {
 	options: SelectOption[];
 	/** 제어형 선택 값 */
 	value?: string | null;
-/** 값 변경 시 호출되는 콜백. 선택된 값과 전체 옵션 객체를 인자로 전달합니다. */
+	/** 값 변경 시 호출되는 콜백. 선택된 값과 전체 옵션 객체를 인자로 전달합니다. */
 	onChange?: (value: string | null, option?: SelectOption | null) => void;
 	/** 비제어형 초기 선택 값 */
 	defaultValue?: string | null;
@@ -69,7 +69,7 @@ export const Select = ({
 
 	const isControlled = value !== undefined;
 	const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
-	const currentValue = isControlled ? value ?? null : internalValue;
+	const currentValue = isControlled ? (value ?? null) : internalValue;
 
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [activeIndex, setActiveIndex] = React.useState(-1);
@@ -196,7 +196,14 @@ export const Select = ({
 	React.useEffect(() => {
 		if (!isOpen) return;
 		const idx = options.findIndex((o) => o.value === currentValue && !o.disabled);
-		setActiveIndex(idx >= 0 ? idx : Math.max(0, options.findIndex((o) => !o.disabled)));
+		setActiveIndex(
+			idx >= 0
+				? idx
+				: Math.max(
+						0,
+						options.findIndex((o) => !o.disabled),
+					),
+		);
 	}, [isOpen, options, currentValue]);
 
 	// 드롭다운 방향 계산(자동 플립)
@@ -217,13 +224,17 @@ export const Select = ({
 		"select_control",
 		`select_variant_${variant}`,
 		`select_size_${size}`,
-		{ is_open: isOpen, is_disabled: disabled }
+		{ is_open: isOpen, is_disabled: disabled },
 	);
 
 	const listClassName = cn("select_list", { select_list_up: dropUp });
 
 	return (
-		<div ref={wrapperRef} className={rootClassName} style={fullWidth ? { width: "100%" } : undefined}>
+		<div
+			ref={wrapperRef}
+			className={rootClassName}
+			style={fullWidth ? { width: "100%" } : undefined}
+		>
 			{label && (
 				<label htmlFor={selectId} className="select_label">
 					{label}
@@ -254,24 +265,22 @@ export const Select = ({
 			</button>
 
 			{isOpen && (
-				<ul
-					id={`${selectId}_listbox`}
-					role="listbox"
-					className={listClassName}
-				>
+				<div id={`${selectId}_listbox`} role="listbox" className={listClassName}>
 					{options.map((opt, i) => {
 						const selected = currentValue === opt.value;
 						const active = i === activeIndex;
 
-						const optionClassName = cn(
-							"select_option",
-							{ is_selected: selected, is_active: active, is_disabled: opt.disabled }
-						);
+						const optionClassName = cn("select_option", {
+							is_selected: selected,
+							is_active: active,
+							is_disabled: opt.disabled,
+						});
 
 						return (
-							<li
+							<div
 								key={opt.value}
 								role="option"
+								tabIndex={-1}
 								aria-selected={selected}
 								aria-disabled={opt.disabled ? true : undefined}
 								className={optionClassName}
@@ -281,13 +290,21 @@ export const Select = ({
 									setValue(opt.value);
 									setIsOpen(false);
 								}}
+								onKeyDown={(e) => {
+									if (opt.disabled) return;
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										setValue(opt.value);
+										setIsOpen(false);
+									}
+								}}
 							>
 								<span>{opt.label}</span>
 								{selected && <Check size={16} aria-hidden="true" />}
-							</li>
+							</div>
 						);
 					})}
-				</ul>
+				</div>
 			)}
 		</div>
 	);
