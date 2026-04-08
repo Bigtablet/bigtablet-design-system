@@ -1,3 +1,35 @@
+# [1.24.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.23.0...v1.24.0) (2026-04-02)
+
+
+### Bug Fixes
+
+* apply Gemini review on design token structure ([6b8ecae](https://github.com/Bigtablet/bigtablet-design-system/commit/6b8ecae2ecbb605f2a133e4d7d00daf8cac493da)), closes [#F2F2F2](https://github.com/Bigtablet/bigtablet-design-system/issues/F2F2F2)
+
+
+### Features
+
+* add missing token files and fix SCSS variable references ([2c84fa8](https://github.com/Bigtablet/bigtablet-design-system/commit/2c84fa86c595ef06676a26ae03a1ea66da93fb4c)), closes [#F2F2F2](https://github.com/Bigtablet/bigtablet-design-system/issues/F2F2F2)
+* export new borderWidth, baseBorderWidth, opacity, baseTypography tokens ([eb0199c](https://github.com/Bigtablet/bigtablet-design-system/commit/eb0199c873b015c07d835f85a12a886cf12d71af))
+* update design tokens to match Figma token spec ([e3eca5b](https://github.com/Bigtablet/bigtablet-design-system/commit/e3eca5bfb9427e417b45b715f98777520012d855))
+
+# [1.23.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.2...v1.23.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* add comprehensive error handling to all scripts ([d87445d](https://github.com/Bigtablet/bigtablet-design-system/commit/d87445d1f3c26d8796395c51513cd0cfb5c7e4fb))
+* apply code review suggestions to setup.sh ([2ceea1e](https://github.com/Bigtablet/bigtablet-design-system/commit/2ceea1e9704eaf443c769c27feb04d264b10431f))
+* apply gemini bot review suggestions ([6c483a0](https://github.com/Bigtablet/bigtablet-design-system/commit/6c483a01d3ffaba47ddd835227c11f723777d5fb)), closes [#f3f3f3](https://github.com/Bigtablet/bigtablet-design-system/issues/f3f3f3)
+* apply gemini bot review suggestions ([2d68289](https://github.com/Bigtablet/bigtablet-design-system/commit/2d68289d9f72d39b87f22bb0e3464a70f383a54f))
+* forward skeleton in token.scss ([99cd871](https://github.com/Bigtablet/bigtablet-design-system/commit/99cd871a3f78f6cf4b25d11e75313335146c0368))
+* make _skeleton.scss standalone to fix consumer build errors ([016f8b8](https://github.com/Bigtablet/bigtablet-design-system/commit/016f8b843bdf6a3ba39528d4df07b647a19a10f7))
+* resolve pnpm-lock.yaml conflict with main ([767b044](https://github.com/Bigtablet/bigtablet-design-system/commit/767b04436e22623caebbdfb8ddabca2adecf38bd))
+
+
+### Features
+
+* add shell setup script for one-line package installation ([4579a7a](https://github.com/Bigtablet/bigtablet-design-system/commit/4579a7a4d52320bf3c2b383500b28ee3e272d517))
+
 ## [1.22.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.1...v1.22.2) (2026-03-31)
 
 ## [1.22.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.22.0...v1.22.1) (2026-03-23)
