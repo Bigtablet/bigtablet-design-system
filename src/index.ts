@@ -29,7 +29,8 @@ export { Switch } from "./ui/form/switch";
 export { TextField } from "./ui/form/textfield";
 // Form
 export { Button } from "./ui/general/button";
-export { Select, SelectOption } from "./ui/general/select";
+export { Select } from "./ui/general/select";
+export type { SelectOption } from "./ui/general/select";
 
 // Navigation
 export { Pagination } from "./ui/navigation/pagination";
