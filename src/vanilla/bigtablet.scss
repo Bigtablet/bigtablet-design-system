@@ -31,9 +31,24 @@
   --bt-color-border-subtle: #{token.$color_border_subtle};
   --bt-color-border-focus: #{token.$color_border_focus};
 
+  /* Colors - Text Semantic */
+  --bt-color-text-primary: var(--bt-color-text-heading);
+  --bt-color-text-secondary: var(--bt-color-text-body);
+  --bt-color-text-tertiary: var(--bt-color-text-caption);
+
+  /* Colors - Background Semantic */
+  --bt-color-background-secondary: var(--bt-color-background-dim);
+
+  /* Colors - Border Semantic */
+  --bt-color-border-light: #{token.$color_border_hover};
+
   /* Colors - State */
   --bt-color-hover: #{token.$color_state_hover_on_light};
   --bt-color-pressed: #{token.$color_state_pressed_on_light};
+  --bt-color-primary-hover: #{color.adjust(token.$color_brand_primary, $lightness: 15%)};
+
+  /* Colors - Overlay */
+  --bt-color-overlay: #{token.$color_bg_overlay};
 
   /* Colors - Status */
   --bt-color-success: #{token.$color_status_success};
@@ -41,7 +56,7 @@
   --bt-color-warning: #{token.$color_status_warning};
   --bt-color-info: #{token.$color_status_info};
 
-  /* Spacing */
+  /* Spacing - Base */
   --bt-spacing-4:  #{token.$spacing_4};
   --bt-spacing-8:  #{token.$spacing_8};
   --bt-spacing-12: #{token.$spacing_12};
@@ -52,7 +67,16 @@
   --bt-spacing-40: #{token.$spacing_40};
   --bt-spacing-48: #{token.$spacing_48};
 
-  /* Typography */
+  /* Spacing - Semantic */
+  --bt-spacing-xs:  var(--bt-spacing-4);
+  --bt-spacing-sm:  var(--bt-spacing-8);
+  --bt-spacing-md:  var(--bt-spacing-12);
+  --bt-spacing-lg:  var(--bt-spacing-16);
+  --bt-spacing-xl:  var(--bt-spacing-20);
+  --bt-spacing-2xl: var(--bt-spacing-24);
+  --bt-spacing-3xl: var(--bt-spacing-32);
+
+  /* Typography - Base */
   --bt-font-family: #{token.$font_family_primary};
   --bt-font-size-12: #{token.$font_size_12};
   --bt-font-size-14: #{token.$font_size_14};
@@ -62,8 +86,17 @@
   --bt-font-size-20: #{token.$font_size_20};
   --bt-font-weight-regular: #{token.$font_weight_regular};
   --bt-font-weight-medium: #{token.$font_weight_medium};
+  --bt-font-weight-semibold: 600;
   --bt-line-height-20: #{token.$line_height_20};
   --bt-line-height-24: #{token.$line_height_24};
+
+  /* Typography - Semantic */
+  --bt-font-size-sm:   var(--bt-font-size-14);
+  --bt-font-size-base: var(--bt-font-size-15);
+  --bt-font-size-md:   var(--bt-font-size-16);
+  --bt-font-size-lg:   var(--bt-font-size-18);
+  --bt-font-size-xl:   var(--bt-font-size-20);
+  --bt-line-height-normal: 1.5;
 
   /* Radius */
   --bt-radius-sm: #{token.$radius_sm};
@@ -1045,7 +1078,7 @@
 
     &:disabled {
       cursor: not-allowed;
-      color: var(--bt-text-disabled);
+      color: var(--bt-color-text-disabled);
       background-color: var(--bt-color-background-secondary);
       border-color: var(--bt-color-border-light);
     }
