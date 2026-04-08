@@ -173,10 +173,15 @@ export function rgbToValue(r: number, g: number, b: number, opacity: number): st
 
 // ── Page node ID collector ────────────────────────────────────────────────────
 
-function collectNodeIds(node: FigmaNode, ids: Set<string> = new Set()): Set<string> {
-	ids.add(node.id);
-	for (const child of node.children ?? []) {
-		collectNodeIds(child, ids);
+function collectNodeIds(node: FigmaNode): Set<string> {
+	const ids = new Set<string>();
+	const stack: FigmaNode[] = [node];
+	while (stack.length > 0) {
+		const current = stack.pop()!;
+		ids.add(current.id);
+		for (let i = (current.children?.length ?? 0) - 1; i >= 0; i--) {
+			stack.push(current.children![i]);
+		}
 	}
 	return ids;
 }
