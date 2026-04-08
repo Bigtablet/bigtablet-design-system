@@ -17,17 +17,25 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Use Node.js 22
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Apply Figma color changes
         id: apply
         env:
           FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
           FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
-        run: node scripts/figma-apply.mjs
+          FIGMA_PAGE_NAME: ${{ secrets.FIGMA_PAGE_NAME }}
+        run: pnpm figma:apply
         continue-on-error: true
 
       - name: Create PR with color changes
