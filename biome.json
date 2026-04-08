@@ -16,7 +16,8 @@
 		"enabled": true,
 		"indentStyle": "tab",
 		"indentWidth": 2,
-		"lineWidth": 100
+		"lineWidth": 100,
+		"ignoreUnknown": true
 	},
 	"javascript": {
 		"formatter": {
@@ -32,16 +33,30 @@
 			"recommended": true,
 			"correctness": {
 				"noUnusedImports": "error",
-				"useExhaustiveDependencies": "warn"
+				"useExhaustiveDependencies": "warn",
+				"noUnusedVariables": "warn",
+				"noUnusedFunctionParameters": "warn"
 			},
 			"style": {
 				"noExportedImports": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "warn",
+				"noArrayIndexKey": "warn",
+				"noImplicitAnyLet": "warn"
+			},
+			"nursery": {
+				"useButtonType": "error",
+				"useHookAtTopLevel": "error"
 			}
-		}
+		},
+		"recommended": true
 	},
 	"overrides": [
 		{
-			"includes": ["packages/*/src/**"],
+			"includes": [
+				"packages/*/src/**"
+			],
 			"linter": {
 				"rules": {
 					"style": {
@@ -51,7 +66,9 @@
 			}
 		},
 		{
-			"includes": ["apps/*/src/shared/**"],
+			"includes": [
+				"apps/*/src/shared/**"
+			],
 			"linter": {
 				"rules": {
 					"style": {
@@ -61,7 +78,11 @@
 			}
 		},
 		{
-			"includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.stories.tsx"],
+			"includes": [
+				"**/*.test.ts",
+				"**/*.test.tsx",
+				"**/*.stories.tsx"
+			],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -70,5 +91,8 @@
 				}
 			}
 		}
-	]
+	],
+	"organizeImports": {
+		"enabled": true
+	}
 }
