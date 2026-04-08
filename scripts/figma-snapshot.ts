@@ -16,6 +16,7 @@ loadEnv();
 
 const FIGMA_TOKEN = process.env.FIGMA_TOKEN ?? "";
 const FILE_KEY = process.env.FIGMA_FILE_KEY ?? "";
+const PAGE_NAME = process.env.FIGMA_PAGE_NAME;
 
 async function main(): Promise<void> {
 	if (!FIGMA_TOKEN || !FILE_KEY) {
@@ -24,8 +25,9 @@ async function main(): Promise<void> {
 	}
 
 	console.log("📸 Figma 색상 스냅샷 저장 중...");
+	if (PAGE_NAME) console.log(`   📄 페이지 필터: "${PAGE_NAME}"`);
 
-	const snapshot = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN);
+	const snapshot = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN, PAGE_NAME);
 	const count = Object.keys(snapshot.colors).length;
 
 	const outPath = resolve(process.cwd(), "figma-snapshot.json");

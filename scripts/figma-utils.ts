@@ -30,6 +30,13 @@ export interface FigmaNodeDocument {
 	fills?: FigmaFill[];
 }
 
+export interface FigmaNode {
+	id: string;
+	name: string;
+	type: string;
+	children?: FigmaNode[];
+}
+
 export interface ColorEntry {
 	nodeId: string;
 	key: string;
@@ -164,17 +171,55 @@ export function rgbToValue(r: number, g: number, b: number, opacity: number): st
 	);
 }
 
+// ── Page node ID collector ────────────────────────────────────────────────────
+
+function collectNodeIds(node: FigmaNode, ids: Set<string> = new Set()): Set<string> {
+	ids.add(node.id);
+	for (const child of node.children ?? []) {
+		collectNodeIds(child, ids);
+	}
+	return ids;
+}
+
 // ── Fetch all color styles from a Figma file ─────────────────────────────────
 
-export async function fetchColorStyles(fileKey: string, token: string): Promise<ColorSnapshot> {
+export async function fetchColorStyles(
+	fileKey: string,
+	token: string,
+	pageName?: string,
+): Promise<ColorSnapshot> {
 	const fileData = await figmaFetch<{
 		version: string;
 		lastModified: string;
+		document?: { children?: Array<{ id: string; name: string; type: string }> };
 		styles?: Record<string, FigmaStyleMeta>;
-	}>(`/v1/files/${fileKey}`, token);
+	}>(`/v1/files/${fileKey}?depth=1`, token);
 
 	const stylesMap = fileData.styles ?? {};
-	const colorEntries = Object.entries(stylesMap).filter(([, s]) => s.styleType === "FILL");
+	let colorEntries = Object.entries(stylesMap).filter(([, s]) => s.styleType === "FILL");
+
+	// ── Page filtering ────────────────────────────────────────────────────────
+	if (pageName) {
+		const pages = fileData.document?.children ?? [];
+		const page = pages.find((p) => p.type === "CANVAS" && p.name === pageName);
+
+		if (!page) {
+			const pageNames = pages.map((p) => `"${p.name}"`).join(", ");
+			throw new FigmaApiError(
+				`페이지 "${pageName}"을 찾을 수 없습니다. 사용 가능한 페이지: ${pageNames}`,
+			);
+		}
+
+		const pageNodesData = await figmaFetch<{
+			nodes?: Record<string, { document?: FigmaNode }>;
+		}>(`/v1/files/${fileKey}/nodes?ids=${encodeURIComponent(page.id)}`, token);
+
+		const pageDoc = pageNodesData.nodes?.[page.id]?.document;
+		const pageNodeIds = pageDoc ? collectNodeIds(pageDoc) : new Set<string>();
+
+		colorEntries = colorEntries.filter(([nodeId]) => pageNodeIds.has(nodeId));
+		console.log(`   📄 페이지 "${pageName}" 필터 적용 → ${colorEntries.length}개 색상`);
+	}
 
 	if (colorEntries.length === 0) {
 		return { version: fileData.version, lastModified: fileData.lastModified, colors: {} };

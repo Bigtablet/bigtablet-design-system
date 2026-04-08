@@ -25,6 +25,7 @@ loadEnv();
 
 const FIGMA_TOKEN = process.env.FIGMA_TOKEN ?? "";
 const FILE_KEY = process.env.FIGMA_FILE_KEY ?? "";
+const PAGE_NAME = process.env.FIGMA_PAGE_NAME;
 
 // ── Patch colors.ts ───────────────────────────────────────────────────────────
 
@@ -232,7 +233,7 @@ async function main(): Promise<void> {
 	}
 
 	console.log("🔍 Figma 색상 변경사항 확인 중...");
-	const current = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN);
+	const current = await fetchColorStyles(FILE_KEY, FIGMA_TOKEN, PAGE_NAME);
 
 	if (prev.version === current.version) {
 		console.log(`✅ 변경사항 없음 (버전: ${current.version})`);
