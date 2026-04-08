@@ -27,8 +27,7 @@
 		"isolatedModules": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowJs": true,
-		"noImplicitOverride": true,
-		"incremental": true
+		"noImplicitOverride": true
 	},
 	"include": [
 		"src/**/*"
