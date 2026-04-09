@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Modal } from ".";
 
 const meta: Meta<typeof Modal> = {
-	title: "Components/Overlay/Modal",
+	title: "Components/Modal",
 	component: Modal,
 	tags: ["autodocs"],
 	argTypes: {
@@ -37,10 +37,12 @@ const meta: Meta<typeof Modal> = {
 - \`closeOnOverlay\`: 바깥 영역 클릭 시 닫힘 제어
 - \`Esc 키\`를 누르면 자동으로 닫힙니다
 
-### 디자이너 체크 포인트
-- 제목과 본문 간 여백이 충분한지
-- 모바일에서도 가로가 넘치지 않는지
-- 배경 오버레이 대비가 적절한지
+### 접근성 (구현 완료)
+- \`role="dialog"\` + \`aria-modal="true"\` → 스크린 리더가 모달로 인식
+- **포커스 트랩**: 모달 내부에서만 Tab 이동 (바깥 요소로 빠지지 않음)
+- **Escape 키**로 닫기
+- 모달 열릴 때 배경 스크롤 자동 잠금 (중첩 모달도 지원)
+- \`title\` 제공 시 \`aria-labelledby\`로 자동 연결
         `,
 			},
 		},

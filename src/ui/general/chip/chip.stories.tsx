@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Chip } from ".";
 
 const meta: Meta<typeof Chip> = {
-	title: "Components/General/Chip",
+	title: "Components/Chip",
 	component: Chip,
 	tags: ["autodocs"],
 	argTypes: {
@@ -42,6 +42,11 @@ const meta: Meta<typeof Chip> = {
 				component: `
 **Chip**은 속성, 필터, 입력값 등을 표현하는 컴팩트한 UI 요소입니다.
 
+### 언제 사용하나요?
+- 태그/카테고리 표시 (basic)
+- 검색 필터 조건 선택 (filter)
+- 사용자가 입력한 값 목록 (input) — 이메일 수신자, 태그 입력 등
+
 ### 유형 가이드
 | Type | 용도 |
 |------|------|
@@ -53,6 +58,12 @@ const meta: Meta<typeof Chip> = {
 - **selected**: 체크 아이콘이 앞에 표시됩니다 (basic)
 - **removable**: 닫기 아이콘이 뒤에 표시됩니다 (input)
 - **disabled**: 투명도 0.38, 상호작용 불가
+
+### 접근성 (구현 완료)
+- \`<button>\` 요소 사용 → Tab 포커스, Enter/Space 클릭 자동 지원
+- 삭제 버튼에 \`aria-label="Remove"\` 제공
+- 필터 드롭다운 버튼에 \`aria-label="Toggle dropdown"\` 제공
+- 장식 아이콘에 \`aria-hidden="true"\` 적용
 				`,
 			},
 		},

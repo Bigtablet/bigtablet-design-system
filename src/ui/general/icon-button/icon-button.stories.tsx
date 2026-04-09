@@ -21,7 +21,7 @@ const SearchIcon = () => (
 );
 
 const meta: Meta<typeof IconButton> = {
-	title: "Components/General/IconButton",
+	title: "Components/IconButton",
 	component: IconButton,
 	tags: ["autodocs"],
 	argTypes: {
@@ -54,6 +54,11 @@ const meta: Meta<typeof IconButton> = {
 				component: `
 **IconButton**은 아이콘만 포함하는 동작 버튼입니다. 라벨 없이 아이콘만으로 의미가 명확할 때 사용합니다.
 
+### 언제 사용하나요?
+- 닫기(X), 삭제, 설정 등 아이콘만으로 의미가 통하는 액션
+- 툴바, 앱바 등 공간이 제한된 영역
+- Button보다 시각적 비중을 줄이고 싶을 때
+
 ### variant 선택 가이드
 | Variant | 용도 |
 |---------|------|
@@ -66,8 +71,10 @@ const meta: Meta<typeof IconButton> = {
 - **sm**: 40px — 밀집된 UI, 작은 아이콘(20px)
 - **md**: 48px — 기본 크기, 아이콘(24px)
 
-### 접근성
-\`aria-label\` 또는 \`aria-labelledby\`를 반드시 제공하여 스크린 리더 사용자에게 버튼의 목적을 전달하세요.
+### 접근성 (구현 완료)
+- \`aria-label\` **필수** — 스크린 리더 사용자에게 버튼 목적을 전달
+- \`<button>\` 네이티브 요소 → Tab 포커스, Enter/Space 클릭 자동 지원
+- 아이콘에 \`aria-hidden="true"\` 적용 → 스크린 리더가 중복 읽기 방지
         `,
 			},
 		},

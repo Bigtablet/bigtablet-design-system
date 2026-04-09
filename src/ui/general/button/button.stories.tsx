@@ -8,7 +8,7 @@ const PlusIcon = () => (
 );
 
 const meta: Meta<typeof Button> = {
-	title: "Components/General/Button",
+	title: "Components/Button",
 	component: Button,
 	tags: ["autodocs"],
 	argTypes: {
@@ -44,6 +44,11 @@ const meta: Meta<typeof Button> = {
 				component: `
 **Button**은 사용자가 어떤 행동(Action)을 실행할 때 사용하는 기본 컴포넌트입니다.
 
+### 언제 사용하나요?
+- 폼 제출 (저장, 확인, 전송)
+- 페이지 이동이나 다음 단계 진행
+- 데이터 삭제, 취소 등 명시적인 사용자 액션
+
 ### variant 선택 가이드
 | Variant | 용도 |
 |---------|------|
@@ -56,6 +61,11 @@ const meta: Meta<typeof Button> = {
 - **sm**: 36px — 밀집된 UI, 인라인 액션
 - **md**: 40px — 기본 크기
 - **xl**: 56px — 모바일 CTA, 강조 액션
+
+### 접근성 (구현 완료)
+- \`<button>\` 네이티브 요소 사용 → Tab 포커스, Enter/Space 클릭 자동 지원
+- 아이콘에 \`aria-hidden="true"\` 적용 → 스크린 리더가 장식 아이콘 무시
+- \`disabled\` 시 포커스에서 자동 제외
         `,
 			},
 		},

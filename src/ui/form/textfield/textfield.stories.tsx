@@ -16,7 +16,7 @@ const CloseIcon = () => (
 );
 
 const meta: Meta<typeof TextField> = {
-	title: "Components/Form/TextField",
+	title: "Components/TextField",
 	component: TextField,
 	tags: ["autodocs"],
 	argTypes: {
@@ -58,6 +58,11 @@ const meta: Meta<typeof TextField> = {
 				component: `
 **TextField**는 사용자가 글자를 입력하는 기본 입력창입니다.
 
+### 언제 사용하나요?
+- 이름, 이메일, 비밀번호 등 한 줄 텍스트 입력
+- 검색창 (leadingIcon에 돋보기 아이콘 조합)
+- 폼 입력 필드 전반
+
 ### 구성 요소
 - **Floating Label**: 입력 필드 상단 테두리 위에 표시
 - **Leading/Trailing Icon**: 입력의 의미 보조 또는 액션 제공
@@ -71,6 +76,11 @@ const meta: Meta<typeof TextField> = {
 | Focus | 포커스 시 테두리 검정 |
 | Error | 오류 시 빨간 테두리 + 라벨/도움말 색상 변경 |
 | Disabled | 비활성화 (배경 회색) |
+
+### 접근성 (구현 완료)
+- \`<label>\`과 \`<input>\`이 \`htmlFor\`/\`id\`로 자동 연결 → 라벨 클릭 시 입력 필드 포커스
+- \`error\` 상태에서 \`aria-invalid="true"\` + \`aria-describedby\`로 에러 메시지 연결
+- Tab으로 포커스 이동, 네이티브 \`<input>\` 동작 그대로 사용
         `,
 			},
 		},

@@ -3,7 +3,7 @@ import * as React from "react";
 import { Checkbox } from ".";
 
 const meta: Meta<typeof Checkbox> = {
-	title: "Components/Form/Checkbox",
+	title: "Components/Checkbox",
 	component: Checkbox,
 	tags: ["autodocs"],
 	argTypes: {
@@ -39,6 +39,11 @@ const meta: Meta<typeof Checkbox> = {
 				component: `
 **Checkbox**는 사용자가 선택/해제를 할 수 있는 입력 요소입니다.
 
+### 언제 사용하나요?
+- 약관 동의, 알림 설정 등 ON/OFF 선택
+- 여러 항목 중 **복수 선택**이 필요할 때 (하나만 → Radio 사용)
+- 전체 선택/해제 컨트롤 (indeterminate 활용)
+
 ### 타입
 | Type | 설명 |
 |------|------|
@@ -50,6 +55,11 @@ const meta: Meta<typeof Checkbox> = {
 - **Enable / Hover / Focus / Pressed**: State layer overlay로 시각적 피드백
 - **Disabled**: 0.38 투명도
 - **Error**: 빨간 테두리/배경
+
+### 접근성 (구현 완료)
+- 네이티브 \`<input type="checkbox">\` 사용 → Tab 포커스, Space로 토글 자동 지원
+- \`<label>\`로 감싸져 있어 라벨 텍스트 클릭으로도 선택 가능
+- \`indeterminate\` 상태가 \`input.indeterminate\` 속성으로 설정 → 스크린 리더가 "mixed" 상태 인식
         `,
 			},
 		},
