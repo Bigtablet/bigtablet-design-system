@@ -83,19 +83,19 @@ describe("FileInput", () => {
 		expect(label).toHaveClass("file_input_label");
 	});
 
-	it("renders helperText when provided", () => {
-		render(<FileInput helperText="PDF, DOC 파일만 업로드 가능합니다" />);
+	it("renders supportingText when provided", () => {
+		render(<FileInput supportingText="PDF, DOC 파일만 업로드 가능합니다" />);
 		expect(screen.getByText("PDF, DOC 파일만 업로드 가능합니다")).toBeInTheDocument();
 	});
 
-	it("links input to helperText via aria-describedby", () => {
-		render(<FileInput helperText="PDF only" />);
+	it("links input to supportingText via aria-describedby", () => {
+		render(<FileInput supportingText="PDF only" />);
 		const input = document.querySelector('input[type="file"]') as HTMLInputElement;
 		const helper = screen.getByText("PDF only");
 		expect(input).toHaveAttribute("aria-describedby", helper.id);
 	});
 
-	it("does not set aria-describedby when helperText is not provided", () => {
+	it("does not set aria-describedby when supportingText is not provided", () => {
 		render(<FileInput />);
 		const input = document.querySelector('input[type="file"]');
 		expect(input).not.toHaveAttribute("aria-describedby");

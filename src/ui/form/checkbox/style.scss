@@ -26,7 +26,7 @@
     align-items: center;
     justify-content: center;
     padding: token.$spacing_8;
-    border-radius: 100px;
+    border-radius: token.$radius_full;
     transition: background token.$transition_base;
   }
 
@@ -73,11 +73,11 @@
   // ── States: Disabled ───────────────────────────────────────────────────
 
   &_input:disabled ~ .checkbox_state_layer {
-    opacity: 0.38;
+    opacity: token.$opacity_38;
   }
 
   &_input:disabled ~ .checkbox_label {
-    opacity: 0.38;
+    opacity: token.$opacity_38;
   }
 
   &_input:disabled {

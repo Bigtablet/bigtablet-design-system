@@ -139,7 +139,7 @@ export const WithLeading: Story = {
 					alignItems: "center",
 					justifyContent: "center",
 					fontSize: 12,
-					color: "#888",
+					color: "#666",
 				}}
 			>
 				56x56
@@ -205,7 +205,7 @@ export const MiddleAlignment: Story = {
 					alignItems: "center",
 					justifyContent: "center",
 					fontSize: 11,
-					color: "#888",
+					color: "#666",
 				}}
 			>
 				40

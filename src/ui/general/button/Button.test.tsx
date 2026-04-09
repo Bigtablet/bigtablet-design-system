@@ -72,4 +72,9 @@ describe("Button", () => {
 		render(<Button fullWidth>Button</Button>);
 		expect(screen.getByRole("button")).toHaveClass("button_full_width");
 	});
+
+	it("does not apply fullWidth by default", () => {
+		render(<Button>Button</Button>);
+		expect(screen.getByRole("button")).not.toHaveClass("button_full_width");
+	});
 });

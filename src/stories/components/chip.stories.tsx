@@ -102,19 +102,19 @@ export const AllTypes: Story = {
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-				<span style={{ width: 80, fontSize: 12, color: "#888" }}>basic</span>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>basic</span>
 				<Chip type="basic" label="Default" />
 				<Chip type="basic" label="Selected" selected />
 				<Chip type="basic" label="Disabled" disabled />
 			</div>
 			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-				<span style={{ width: 80, fontSize: 12, color: "#888" }}>input</span>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>input</span>
 				<Chip type="input" label="Input" />
 				<Chip type="input" label="Removable" removable />
 				<Chip type="input" label="Disabled" removable disabled />
 			</div>
 			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-				<span style={{ width: 80, fontSize: 12, color: "#888" }}>filter</span>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>filter</span>
 				<Chip type="filter" label="Filter" />
 				<Chip type="filter" label="Selected" selected />
 				<Chip type="filter" label="Disabled" disabled />

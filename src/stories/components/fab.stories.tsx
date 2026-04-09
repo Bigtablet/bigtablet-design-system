@@ -73,7 +73,7 @@ export const AllVariants: Story = {
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 			{(["primary", "additive"] as const).map((variant) => (
 				<div key={variant} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-					<span style={{ width: 80, fontSize: 12, color: "#888" }}>{variant}</span>
+					<span style={{ width: 80, fontSize: 12, color: "#666" }}>{variant}</span>
 					<FAB variant={variant} icon={<PlusIcon />} />
 					<FAB variant={variant} icon={<PlusIcon />} disabled />
 				</div>

@@ -99,4 +99,32 @@ describe("ListItem", () => {
 		render(<ListItem label="Label" data-testid="test-list-item" />);
 		expect(screen.getByTestId("test-list-item")).toBeInTheDocument();
 	});
+
+	it("activates on Enter key when interactive", () => {
+		const handleClick = vi.fn();
+		const { container } = render(
+			<ListItem label="Label" onClick={handleClick} />,
+		);
+		fireEvent.keyDown(container.firstChild as Element, { key: "Enter" });
+		expect(handleClick).toHaveBeenCalledTimes(1);
+	});
+
+	it("activates on Space key when interactive", () => {
+		const handleClick = vi.fn();
+		const { container } = render(
+			<ListItem label="Label" onClick={handleClick} />,
+		);
+		fireEvent.keyDown(container.firstChild as Element, { key: " " });
+		expect(handleClick).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not activate on Enter/Space when disabled", () => {
+		const handleClick = vi.fn();
+		const { container } = render(
+			<ListItem label="Label" disabled onClick={handleClick} />,
+		);
+		fireEvent.keyDown(container.firstChild as Element, { key: "Enter" });
+		fireEvent.keyDown(container.firstChild as Element, { key: " " });
+		expect(handleClick).not.toHaveBeenCalled();
+	});
 });

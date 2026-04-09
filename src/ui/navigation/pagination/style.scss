@@ -25,7 +25,7 @@
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: token.$opacity_50;
       cursor: not-allowed;
     }
 

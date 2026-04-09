@@ -127,7 +127,7 @@ export const AllVariants: Story = {
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 			{(["filled", "tonal", "outline", "text"] as const).map((variant) => (
 				<div key={variant} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-					<span style={{ width: 60, fontSize: 12, color: "#888" }}>{variant}</span>
+					<span style={{ width: 60, fontSize: 12, color: "#666" }}>{variant}</span>
 					<Button variant={variant} size="sm">Small</Button>
 					<Button variant={variant} size="md">Medium</Button>
 					<Button variant={variant} size="xl">XLarge</Button>

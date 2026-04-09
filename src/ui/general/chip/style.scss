@@ -127,7 +127,7 @@
 	// ── Disabled ────────────────────────────────────────────────────────────
 
 	&_disabled {
-		opacity: 0.38;
+		opacity: token.$opacity_38;
 		pointer-events: none;
 
 		button {

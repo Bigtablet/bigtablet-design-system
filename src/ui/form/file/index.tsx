@@ -9,8 +9,8 @@ export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 	label?: string;
 	/** 파일 선택 시 호출되는 콜백 */
 	onFiles?: (files: FileList | null) => void;
-	/** 허용 파일 형식 안내 텍스트. 스크린리더에게 전달됩니다. (예: "PDF, DOC 파일만 업로드 가능합니다") */
-	helperText?: string;
+	/** 입력 필드 아래에 표시할 도움말 텍스트 (예: "PDF, DOC 파일만 업로드 가능합니다") */
+	supportingText?: string;
 }
 
 /**
@@ -22,7 +22,7 @@ export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 export const FileInput = ({
 	label = "Choose file",
 	onFiles,
-	helperText,
+	supportingText,
 	className,
 	disabled,
 	...props
@@ -39,16 +39,16 @@ export const FileInput = ({
 				type="file"
 				className="file_input_control"
 				disabled={disabled}
-				aria-describedby={helperText ? helperId : undefined}
+				aria-describedby={supportingText ? helperId : undefined}
 				onChange={(e) => onFiles?.(e.currentTarget.files)}
 				{...props}
 			/>
 			<label htmlFor={inputId} className="file_input_label">
 				{label}
 			</label>
-			{helperText && (
+			{supportingText && (
 				<span id={helperId} className="file_input_helper">
-					{helperText}
+					{supportingText}
 				</span>
 			)}
 		</div>

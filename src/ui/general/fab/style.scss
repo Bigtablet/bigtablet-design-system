@@ -50,7 +50,7 @@
     &:disabled {
       background: token.$color_bg_disabled;
       color: token.$color_brand_primary;
-      opacity: 0.38;
+      opacity: token.$opacity_38;
     }
   }
 
@@ -75,7 +75,7 @@
     &:disabled {
       background: token.$color_bg_disabled;
       color: token.$color_brand_primary;
-      opacity: 0.38;
+      opacity: token.$opacity_38;
     }
   }
 

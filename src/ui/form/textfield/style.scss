@@ -155,7 +155,7 @@
 
       // 내부 콘텐츠 전체 opacity 0.38
       > *:not(.text_field_label) {
-        opacity: 0.38;
+        opacity: token.$opacity_38;
       }
     }
 
@@ -164,7 +164,7 @@
     }
 
     .text_field_helper {
-      opacity: 0.38;
+      opacity: token.$opacity_38;
     }
   }
 }

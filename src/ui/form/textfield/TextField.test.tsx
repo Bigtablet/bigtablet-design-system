@@ -56,6 +56,16 @@ describe("TextField", () => {
 		expect(screen.queryByText("Email")).not.toBeInTheDocument();
 	});
 
+	it("sets aria-label when showLabel is false", () => {
+		render(<TextField label="Email" showLabel={false} />);
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-label", "Email");
+	});
+
+	it("does not set aria-label when showLabel is true", () => {
+		render(<TextField label="Email" />);
+		expect(screen.getByRole("textbox")).not.toHaveAttribute("aria-label");
+	});
+
 	it("renders full width", () => {
 		render(<TextField fullWidth />);
 		expect(screen.getByRole("textbox").closest(".text_field")).toHaveClass("text_field_full_width");
