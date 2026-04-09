@@ -35,6 +35,7 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_TOKEN }}
           buildScriptName: build:sb
           onlyChanged: true
+          exitOnceUploaded: true
           externals: "src/styles/**"
 
   # ── main: 배포 기준 스냅샷 (자동 승인) ──────────────────────────────
