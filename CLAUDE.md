@@ -27,15 +27,22 @@ pnpm test:storybook # Run a11y tests via Storybook + Playwright
 ```
 src/
 ├── styles/
-│   ├── ts/        # TypeScript design tokens (colors, spacing, typography, etc.)
-│   └── scss/      # SCSS tokens and mixins
-├── ui/
-│   ├── general/   # General components (Button, Select, Chip, FAB, IconButton)
-│   ├── form/      # Form inputs (TextField, Checkbox, Radio, Switch, DatePicker, FileInput)
-│   ├── feedback/  # Feedback (Alert, Toast, Spinner, TopLoading, LinearProgress)
-│   ├── navigation/# Navigation (Pagination)
-│   ├── overlay/   # Modal components
-│   └── display/   # Card, Divider, ListItem
+│   ├── token.scss       # SCSS barrel (@forward all domains)
+│   ├── tokens.json      # Designer JSON tokens
+│   ├── colors/          # _index.scss + index.ts per domain
+│   ├── spacing/
+│   ├── typography/
+│   ├── radius/
+│   ├── shadows/
+│   ├── motion/
+│   ├── breakpoints/
+│   ├── opacity/
+│   ├── border-width/
+│   ├── z-index/
+│   ├── skeleton/
+│   ├── a11y/
+│   └── layout/          # SCSS only (no TS)
+├── ui/                  # Flat component folders (no category subdirs)
 ├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
 │   ├── bigtablet.scss    # All component styles + CSS custom properties
 │   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
@@ -61,7 +68,7 @@ src/
 - **Global SCSS**: All styles use `style.scss` files (not CSS Modules)
 - Import pattern: `import "./style.scss";`
 - Class usage: `className="button"` or `` className={`button_variant_${variant}`} ``
-- SCSS tokens: `@use "src/styles/scss/token" as token;`
+- SCSS tokens: `@use "src/styles/token" as token;`
 - Never use hardcoded values - always use tokens
 
 ### className Pattern
@@ -87,16 +94,16 @@ const buttonClassName = cn(
 ```
 
 ### Design Tokens
-Located in `src/styles/ts/`:
-- `colors.ts` - Brand, background, text, status colors
-- `spacing.ts` - xs(4px) to 5xl(48px)
-- `typography.ts` - Font families, heading/body styles
-- `radius.ts` - Border radius values
-- `shadows.ts` - Elevation shadows
-- `motion.ts` - Animation durations and easings
-- `z-index.ts` - Layer priorities
-- `breakpoints.ts` - Responsive breakpoints
-- `a11y.ts` - Accessibility (focus rings, tap targets)
+Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`):
+- `colors/` - Brand, background, text, status colors
+- `spacing/` - xs(4px) to 5xl(48px)
+- `typography/` - Font families, heading/body styles
+- `radius/` - Border radius values
+- `shadows/` - Elevation shadows
+- `motion/` - Animation durations and easings
+- `z-index/` - Layer priorities
+- `breakpoints/` - Responsive breakpoints
+- `a11y/` - Accessibility (focus rings, tap targets)
 
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`
@@ -443,7 +450,7 @@ git checkout -b label/domain
 
 ### 3. Implement Changes
 - Follow Global SCSS convention (`style.scss`)
-- Use design tokens (`src/styles/scss/token`)
+- Use design tokens (`src/styles/token`)
 
 ### 4. Commit
 ```bash

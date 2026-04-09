@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { motion } from "src/styles/ts/motion";
+import { motion } from "src/styles/motion";
 
 const meta: Meta = {
 	title: "Foundation/motion",

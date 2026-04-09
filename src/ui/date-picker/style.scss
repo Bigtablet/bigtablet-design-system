@@ -1,5 +1,5 @@
-@use "src/styles/scss/token" as token;
-@use "src/styles/scss/_breakpoints" as breakpoint;
+@use "src/styles/token" as token;
+@use "src/styles/breakpoints" as breakpoint;
 
 .date_picker {
   @include token.flex_column;

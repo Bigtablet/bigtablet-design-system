@@ -175,7 +175,7 @@ export const Button = ({
 - 하드코딩된 값 대신 토큰 사용
 
 ```scss
-@use "src/styles/scss/token" as token;
+@use "src/styles/token" as token;
 
 .button {
     display: inline-flex;

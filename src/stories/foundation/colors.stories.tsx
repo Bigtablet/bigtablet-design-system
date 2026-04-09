@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { baseColors, colors } from "src/styles/ts/colors";
+import { baseColors, colors } from "src/styles/colors";
 
 const getReadableTextColor = (bgColor: string): string => {
 	if (bgColor.startsWith("rgba") || bgColor === "transparent") return "#000000";

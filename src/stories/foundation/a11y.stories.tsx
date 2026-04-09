@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { a11y } from "src/styles/ts/a11y";
-import { baseColors, colors } from "src/styles/ts/colors";
+import { a11y } from "src/styles/a11y";
+import { baseColors, colors } from "src/styles/colors";
 
 const meta: Meta = {
 	title: "Foundation/a11y",

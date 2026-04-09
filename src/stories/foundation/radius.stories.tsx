@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { radius } from "src/styles/ts/radius";
+import { radius } from "src/styles/radius";
 
 const meta: Meta = {
 	title: "Foundation/radius",

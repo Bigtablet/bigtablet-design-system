@@ -15,7 +15,7 @@
 			"import": "./dist/index.js"
 		},
 		"./style.css": "./dist/index.css",
-		"./scss/token": "./dist/styles/scss/token.scss",
+		"./scss/token": "./dist/styles/token.scss",
 		"./vanilla": {
 			"style": "./dist/vanilla/bigtablet.min.css",
 			"default": "./dist/vanilla/bigtablet.min.js"

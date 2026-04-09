@@ -220,7 +220,7 @@ React를 사용하지 않는 환경(Thymeleaf, JSP, PHP 등)에서는 CDN으로 
 
 ```scss
 // SCSS
-@use "src/styles/scss/token" as token;
+@use "src/styles/token" as token;
 
 .my-component {
   color: token.$color_text_primary;

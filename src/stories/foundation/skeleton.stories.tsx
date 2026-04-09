@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { skeleton } from "src/styles/ts/skeleton";
+import { skeleton } from "src/styles/skeleton";
 
 const keyframeStyle = `
 @keyframes skeleton_loading {

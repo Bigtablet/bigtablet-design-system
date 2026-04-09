@@ -1,6 +1,6 @@
-import { baseColors } from "./colors";
-import { radius } from "./radius";
-import { spacing } from "./spacing";
+import { baseColors } from "../colors";
+import { radius } from "../radius";
+import { spacing } from "../spacing";
 
 export const skeleton = {
 	color: {

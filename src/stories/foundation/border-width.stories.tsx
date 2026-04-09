@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { baseBorderWidth, borderWidth } from "src/styles/ts/border-width";
+import { baseBorderWidth, borderWidth } from "src/styles/border-width";
 
 const meta: Meta = {
 	title: "Foundation/border-width",

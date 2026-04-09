@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { opacity } from "src/styles/ts/opacity";
+import { opacity } from "src/styles/opacity";
 
 const meta: Meta = {
 	title: "Foundation/opacity",

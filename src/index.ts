@@ -1,17 +1,17 @@
 // Design Tokens
 
-export { a11y } from "./styles/ts/a11y";
-export { baseBorderWidth, borderWidth } from "./styles/ts/border-width";
-export { breakpoints } from "./styles/ts/breakpoints";
-export { baseColors, colors } from "./styles/ts/colors";
-export { motion } from "./styles/ts/motion";
-export { opacity } from "./styles/ts/opacity";
-export { radius } from "./styles/ts/radius";
-export { shadows } from "./styles/ts/shadows";
-export { skeleton } from "./styles/ts/skeleton";
-export { spacing } from "./styles/ts/spacing";
-export { baseTypography, typography } from "./styles/ts/typography";
-export { zIndex } from "./styles/ts/z-index";
+export { a11y } from "./styles/a11y";
+export { baseBorderWidth, borderWidth } from "./styles/border-width";
+export { breakpoints } from "./styles/breakpoints";
+export { baseColors, colors } from "./styles/colors";
+export { motion } from "./styles/motion";
+export { opacity } from "./styles/opacity";
+export { radius } from "./styles/radius";
+export { shadows } from "./styles/shadows";
+export { skeleton } from "./styles/skeleton";
+export { spacing } from "./styles/spacing";
+export { baseTypography, typography } from "./styles/typography";
+export { zIndex } from "./styles/z-index";
 
 // Components
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { shadows } from "src/styles/ts/shadows";
+import { shadows } from "src/styles/shadows";
 
 const meta: Meta = {
 	title: "Foundation/shadows",
