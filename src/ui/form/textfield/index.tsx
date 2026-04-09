@@ -14,7 +14,7 @@ export interface TextFieldProps
 	/** 라벨 표시 여부 (기본값: true) */
 	showLabel?: boolean;
 	/** 입력 필드 아래에 표시할 도움말 텍스트 */
-	helperText?: string;
+	supportingText?: string;
 	/** 에러 상태 여부 */
 	error?: boolean;
 	/** 입력 필드 왼쪽에 표시할 아이콘 */
@@ -45,7 +45,7 @@ export const TextField = ({
 	id,
 	label,
 	showLabel = true,
-	helperText,
+	supportingText,
 	error,
 	leadingIcon,
 	trailingIcon,
@@ -60,7 +60,7 @@ export const TextField = ({
 }: TextFieldProps) => {
 	const generatedId = React.useId();
 	const inputId = id ?? generatedId;
-	const helperId = helperText ? `${inputId}-help` : undefined;
+	const helperId = supportingText ? `${inputId}-help` : undefined;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>
@@ -140,9 +140,9 @@ export const TextField = ({
 				)}
 			</div>
 
-			{helperText && (
+			{supportingText && (
 				<div id={helperId} className="text_field_helper">
-					{helperText}
+					{supportingText}
 				</div>
 			)}
 		</div>

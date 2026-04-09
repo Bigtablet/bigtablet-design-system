@@ -1,0 +1,118 @@
+@use "src/styles/scss/token" as token;
+
+.list_item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 52px;
+  border: 1px solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  overflow: hidden;
+  background: token.$color_bg_solid;
+
+  // ── State layer ──────────────────────────────────────────────────────
+  &_state_layer {
+    display: flex;
+    gap: token.$spacing_4;
+    align-items: flex-start;
+    min-height: 52px;
+    padding-left: token.$spacing_16;
+    position: relative;
+  }
+
+  &_align_middle > .list_item_state_layer {
+    align-items: center;
+  }
+
+  // ── Interactive state overlay ────────────────────────────────────────
+  &_interactive {
+    cursor: pointer;
+
+    .list_item_state_layer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transition: background token.$transition_base;
+      pointer-events: none;
+    }
+
+    &:hover .list_item_state_layer::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible .list_item_state_layer::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active .list_item_state_layer::before {
+      background: token.$color_state_pressed_on_light;
+    }
+  }
+
+  // ── Content ──────────────────────────────────────────────────────────
+  &_content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: token.$spacing_12 0;
+  }
+
+  &_overline {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_16;
+    letter-spacing: 0.32px;
+    color: token.$color_text_caption;
+  }
+
+  &_label {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    font-weight: token.$font_weight_medium;
+    line-height: token.$line_height_20;
+    color: token.$color_text_heading;
+  }
+
+  &_supporting {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_20;
+    color: token.$color_text_body;
+  }
+
+  &_metadata {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_20;
+    color: token.$color_text_body;
+    margin-top: token.$spacing_8;
+  }
+
+  // ── Leading / Trailing ───────────────────────────────────────────────
+  &_leading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: token.$spacing_4;
+  }
+
+  &_trailing {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
+  // ── Disabled ─────────────────────────────────────────────────────────
+  &_disabled {
+    opacity: 0.38;
+    pointer-events: none;
+  }
+}
