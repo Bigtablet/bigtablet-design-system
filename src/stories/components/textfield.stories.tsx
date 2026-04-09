@@ -1,58 +1,54 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Eye, Mail, Search } from "lucide-react";
-import * as React from "react";
 import { TextField } from "../../ui/form/textfield";
+
+const SearchIcon = () => (
+	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+		<circle cx="11" cy="11" r="8" />
+		<line x1="21" y1="21" x2="16.65" y2="16.65" />
+	</svg>
+);
+
+const CloseIcon = () => (
+	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+		<line x1="18" y1="6" x2="6" y2="18" />
+		<line x1="6" y1="6" x2="18" y2="18" />
+	</svg>
+);
 
 const meta: Meta<typeof TextField> = {
 	title: "Components/Form/TextField",
 	component: TextField,
 	tags: ["autodocs"],
 	argTypes: {
-		variant: {
-			control: "select",
-			options: ["outline", "filled", "ghost"],
-			description:
-				"입력창의 스타일입니다. outline(기본), filled(배경 강조), ghost(최소 UI) 중 선택합니다.",
-		},
-		size: {
-			control: "select",
-			options: ["sm", "md", "lg"],
-			description: "입력창 크기입니다. 높이/패딩/텍스트 크기가 함께 바뀝니다.",
-		},
 		label: {
 			control: "text",
-			description: "입력창 위에 표시되는 제목(라벨)입니다.",
+			description: "입력창 위에 표시되는 floating label입니다.",
+		},
+		showLabel: {
+			control: "boolean",
+			description: "라벨 표시 여부입니다.",
 		},
 		helperText: {
 			control: "text",
-			description: "입력창 아래에 표시되는 안내 문구입니다. 오류/도움말을 여기로 보여줍니다.",
+			description: "입력창 아래에 표시되는 안내 문구입니다.",
 		},
 		error: {
 			control: "boolean",
-			description:
-				"오류 상태입니다. 입력이 잘못됐을 때 사용합니다(보통 helperText로 이유를 같이 안내).",
-		},
-		success: {
-			control: "boolean",
-			description: "성공 상태입니다. 입력이 유효함을 보여주고 싶을 때 사용합니다.",
+			description: "오류 상태입니다.",
 		},
 		disabled: {
 			control: "boolean",
-			description: "비활성화 상태입니다. 입력할 수 없습니다.",
+			description: "비활성화 상태입니다.",
 		},
 		fullWidth: {
 			control: "boolean",
 			description: "부모 너비에 맞춰 가로폭을 100%로 확장합니다.",
 		},
-		leftIcon: { table: { disable: true } },
-		rightIcon: { table: { disable: true } },
 		onChangeAction: { control: false },
 	},
 	args: {
 		label: "Label",
-		placeholder: "Type something...",
-		variant: "outline",
-		size: "md",
+		placeholder: "Input",
 		disabled: false,
 		fullWidth: false,
 	},
@@ -62,29 +58,19 @@ const meta: Meta<typeof TextField> = {
 				component: `
 **TextField**는 사용자가 글자를 입력하는 기본 입력창입니다.
 
-### 언제 사용하나요?
-- 이메일/이름/검색어/코드 입력 등 대부분의 텍스트 입력
+### 구성 요소
+- **Floating Label**: 입력 필드 상단 테두리 위에 표시
+- **Leading/Trailing Icon**: 입력의 의미 보조 또는 액션 제공
+- **Supporting Text**: 입력 안내 또는 에러 메시지
 
-### variant(스타일) 선택 가이드
-- **outline**: 가장 기본. 폼 입력에서 기본값으로 추천
-- **filled**: 배경이 있는 입력창. 카드/섹션 안에서 입력창을 더 눈에 띄게 할 때
-- **ghost**: 최소한의 UI. 검색/필터처럼 가볍게 쓰는 입력에 적합
-
-### 상태 표시 가이드
-- **error**: 입력이 잘못됐을 때(예: 이메일 형식 오류). helperText로 이유를 함께 안내하면 좋습니다.
-- **success**: 입력이 유효할 때(예: 인증 코드 확인 완료) 같은 긍정 피드백에 사용합니다.
-
-### 아이콘 사용
-- **leftIcon**: 입력의 의미를 보조(검색/메일 등)
-- **rightIcon**: 액션/상태(비밀번호 보기/숨기기, 입력 지우기 등)
-
-### 디자이너 체크 포인트
-- label과 input 간 간격이 적절한지
-- placeholder 텍스트가 너무 밝지 않은지 (가독성)
-- error/success 색상이 색약자도 인식 가능한지 (아이콘 병행 권장)
-- helperText가 입력창과 충분히 구분되는지
-- 아이콘과 텍스트 사이 간격이 균형 잡혀 있는지
-- focus 시 테두리/그림자가 명확히 보이는지
+### 상태
+| State | 설명 |
+|-------|------|
+| Enable | 기본 상태 |
+| Hover | 마우스 오버 시 테두리 강조 |
+| Focus | 포커스 시 테두리 검정 |
+| Error | 오류 시 빨간 테두리 + 라벨/도움말 색상 변경 |
+| Disabled | 비활성화 (배경 회색) |
         `,
 			},
 		},
@@ -94,30 +80,8 @@ const meta: Meta<typeof TextField> = {
 export default meta;
 type Story = StoryObj<typeof TextField>;
 
-export const Outline: Story = {
+export const Default: Story = {
 	name: "기본",
-};
-
-export const Filled: Story = {
-	name: "filled",
-	args: { variant: "filled" },
-};
-
-export const Ghost: Story = {
-	name: "ghost",
-	args: { variant: "ghost" },
-};
-
-export const Sizes: Story = {
-	name: "크기 비교",
-	render: (args) => (
-		<div style={{ display: "grid", gap: 12, width: 360 }}>
-			<TextField {...args} size="sm" placeholder="Small" />
-			<TextField {...args} size="md" placeholder="Medium" />
-			<TextField {...args} size="lg" placeholder="Large" />
-		</div>
-	),
-	args: { label: "Size demo", variant: "outline" },
 };
 
 export const WithIcons: Story = {
@@ -125,21 +89,12 @@ export const WithIcons: Story = {
 	args: {
 		label: "Search",
 		placeholder: "Search…",
-		leftIcon: <Search size={16} />,
-		rightIcon: <Eye size={16} />,
+		leadingIcon: <SearchIcon />,
+		trailingIcon: <CloseIcon />,
 	},
 };
 
-export const WithMailIcon: Story = {
-	name: "이메일 입력 예시",
-	args: {
-		label: "Email",
-		placeholder: "you@example.com",
-		leftIcon: <Mail size={16} />,
-	},
-};
-
-export const ErrorAndHelper: Story = {
+export const ErrorState: Story = {
 	name: "오류 상태",
 	args: {
 		label: "Email",
@@ -149,12 +104,32 @@ export const ErrorAndHelper: Story = {
 	},
 };
 
-export const Success: Story = {
-	name: "성공 상태",
+export const DisabledState: Story = {
+	name: "비활성화",
 	args: {
-		label: "Code",
-		placeholder: "Looks good!",
-		helperText: "사용 가능한 값입니다.",
-		success: true,
+		label: "이름",
+		placeholder: "입력할 수 없습니다",
+		disabled: true,
 	},
+};
+
+export const NoLabel: Story = {
+	name: "라벨 없음",
+	args: {
+		label: "Label",
+		showLabel: false,
+		placeholder: "라벨 없는 입력 필드",
+	},
+};
+
+export const AllStates: Story = {
+	name: "전체 상태 비교",
+	render: () => (
+		<div style={{ display: "grid", gap: 24, width: 320 }}>
+			<TextField label="Enable" placeholder="Input" helperText="Supporting text" />
+			<TextField label="Error" placeholder="Input" helperText="Error message" error />
+			<TextField label="Disabled" placeholder="Input" helperText="Supporting text" disabled />
+			<TextField label="With Icons" placeholder="Search" leadingIcon={<SearchIcon />} trailingIcon={<CloseIcon />} helperText="Supporting text" />
+		</div>
+	),
 };

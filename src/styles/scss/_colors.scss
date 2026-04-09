@@ -48,9 +48,15 @@ $color_bg_overlay:            $color_base_alpha_black_50;
 // ── Semantic: State ───────────────────────────────────────────────────────────
 
 $color_state_hover_on_light:    $color_base_alpha_black_5;
-$color_state_pressed_on_light:  $color_base_alpha_black_12;
-$color_state_hover_on_dark:     $color_base_alpha_white_5;
-$color_state_pressed_on_dark:   $color_base_alpha_white_12;
+$color_state_focus_on_light:    $color_base_alpha_black_8;
+$color_state_pressed_on_light:  rgba(18, 18, 18, 0.10);
+$color_state_hover_on_dark:     $color_base_alpha_white_8;
+$color_state_focus_on_dark:     $color_base_alpha_white_12;
+$color_state_pressed_on_dark:   rgba(255, 255, 255, 0.15);
+
+// ── Semantic: Brand extended ─────────────────────────────────────────────────
+
+$color_brand_primary_container: $color_base_alpha_black_5;
 
 // ── Semantic: Border ──────────────────────────────────────────────────────────
 
