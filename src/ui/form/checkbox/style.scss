@@ -3,10 +3,11 @@
 .checkbox {
   display: inline-flex;
   align-items: center;
-  gap: token.$spacing_8;
   cursor: pointer;
   user-select: none;
-  position: relative;
+  padding: token.$spacing_4;
+
+  // ── Hidden native input ────────────────────────────────────────────────
 
   &_input {
     position: absolute;
@@ -18,119 +19,120 @@
     white-space: nowrap;
   }
 
-  &_box {
-    width: 1.125rem;
-    height: 1.125rem;
-    box-sizing: border-box;
+  // ── State layer (circular overlay for hover/focus/pressed) ─────────────
 
-    border: 1px solid token.$color_border_default;
-    border-radius: token.$radius_sm;
-    background: token.$color_bg_solid;
-
-    transition: background token.$transition_base, border-color token.$transition_base,
-    box-shadow token.$transition_base;
-    display: inline-block;
-    position: relative;
+  &_state_layer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: token.$spacing_8;
+    border-radius: token.$radius_full;
+    transition: background token.$transition_base;
   }
+
+  // ── Icon box (24x24 checkbox graphic) ──────────────────────────────────
+
+  &_icon {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: 2px solid token.$color_text_heading;
+    border-radius: token.$radius_xs;
+    background: transparent;
+    position: relative;
+    transition: background token.$transition_base,
+      border-color token.$transition_base;
+  }
+
+  // ── Label ──────────────────────────────────────────────────────────────
 
   &_label {
-    @include token.body_medium;
+    @include token.body_small;
     color: token.$color_text_heading;
+    margin-left: token.$spacing_4;
   }
 
-  &_size_sm {
-    .checkbox_box {
-      width: 1rem;
-      height: 1rem;
-    }
+  // ── States: Hover ──────────────────────────────────────────────────────
 
-    .checkbox_label {
-      @include token.label_small;
-    }
+  &:hover .checkbox_state_layer {
+    background: token.$color_state_hover_on_light;
   }
 
-  &_size_md {
-    .checkbox_box {
-      width: 1.125rem;
-      height: 1.125rem;
-    }
+  // ── States: Focus ──────────────────────────────────────────────────────
+
+  &_input:focus-visible ~ .checkbox_state_layer {
+    background: token.$color_state_focus_on_light;
   }
 
-  &_size_lg {
-    .checkbox_box {
-      width: 1.25rem;
-      height: 1.25rem;
-    }
+  // ── States: Active/Pressed ─────────────────────────────────────────────
 
-    .checkbox_label {
-      @include token.body_large;
-    }
+  &:active .checkbox_state_layer {
+    background: token.$color_state_pressed_on_light;
   }
 
-  &_input:focus-visible + .checkbox_box {
-    box-shadow: 0 0 0 3px token.$color_border_subtle;
-    border-color: token.$color_brand_primary;
+  // ── States: Disabled ───────────────────────────────────────────────────
+
+  &_input:disabled ~ .checkbox_state_layer {
+    opacity: token.$opacity_38;
   }
 
-  &_input:disabled + .checkbox_box,
   &_input:disabled ~ .checkbox_label {
-    opacity: 0.6;
+    opacity: token.$opacity_38;
+  }
+
+  &_input:disabled {
     cursor: not-allowed;
   }
 
-  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::before,
-  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0.7rem;
-    height: 2px;
-    background: token.$color_text_disabled;
-    border-radius: 9999px;
+  &:has(.checkbox_input:disabled) {
+    cursor: not-allowed;
   }
 
-  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
+  // ── Checked state ──────────────────────────────────────────────────────
 
-  &_input:disabled:not(:checked):not(:indeterminate) + .checkbox_box::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-  }
-
-  &_input:checked + .checkbox_box,
-  &_input:indeterminate + .checkbox_box {
+  &_input:checked ~ .checkbox_state_layer .checkbox_icon,
+  &_input:indeterminate ~ .checkbox_state_layer .checkbox_icon {
     background: token.$color_brand_primary;
     border-color: token.$color_brand_primary;
   }
 
-  &_input:checked + .checkbox_box::after {
+  // Checkmark
+  &_input:checked ~ .checkbox_state_layer .checkbox_icon::after {
     content: "";
     position: absolute;
     left: 50%;
-    top: 50%;
-
-    width: 0.28rem;
-    height: 0.55rem;
-
+    top: 45%;
+    width: 6px;
+    height: 11px;
     border: 2px solid token.$color_bg_solid;
     border-top: 0;
     border-left: 0;
-
-    transform: translate(-50%, -58%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
   }
 
-  &_input:indeterminate + .checkbox_box::after {
+  // Indeterminate dash
+  &_input:indeterminate ~ .checkbox_state_layer .checkbox_icon::after {
     content: "";
     position: absolute;
     left: 50%;
     top: 50%;
-
-    width: 0.65rem;
+    width: 12px;
     height: 2px;
     background: token.$color_bg_solid;
-
     transform: translate(-50%, -50%);
-    border-radius: 9999px;
+    border: none;
+    border-radius: 1px;
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────
+
+  &_error .checkbox_icon {
+    border-color: token.$color_status_error;
+  }
+
+  &_error .checkbox_input:checked ~ .checkbox_state_layer .checkbox_icon,
+  &_error .checkbox_input:indeterminate ~ .checkbox_state_layer .checkbox_icon {
+    background: token.$color_status_error;
+    border-color: token.$color_status_error;
   }
 }

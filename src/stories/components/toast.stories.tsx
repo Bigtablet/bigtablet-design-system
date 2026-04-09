@@ -77,7 +77,7 @@ function ToastDemoButtons() {
 }
 
 const meta: Meta = {
-	title: "Components/Feedback/Toast",
+	title: "Components/Toast",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

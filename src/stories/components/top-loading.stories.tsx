@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { TopLoading } from "../../ui/feedback/top-loading";
 
 const meta: Meta<typeof TopLoading> = {
-	title: "Components/Feedback/TopLoading",
+	title: "Components/TopLoading",
 	component: TopLoading,
 	tags: ["autodocs"],
 	argTypes: {

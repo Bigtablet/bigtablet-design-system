@@ -50,6 +50,7 @@
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
+		"test:storybook": "vitest run --project storybook",
 		"chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
 		"size": "size-limit",
 		"prepare": "husky"
@@ -79,6 +80,7 @@
 		}
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.10",
 		"@commitlint/cli": "^20.5.0",
 		"@commitlint/core": "^20.5.0",
 		"@semantic-release/changelog": "^6.0.3",
@@ -86,6 +88,7 @@
 		"@semantic-release/github": "^12.0.1",
 		"@semantic-release/npm": "^13.1.1",
 		"@size-limit/preset-small-lib": "^12.0.1",
+		"@storybook/addon-a11y": "^10.3.5",
 		"@storybook/addon-docs": "^10.3.3",
 		"@storybook/addon-vitest": "^10.3.3",
 		"@storybook/react": "^10.3.3",
@@ -116,8 +119,7 @@
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
 		"vite": "^6.4.1",
-		"vitest": "^4.1.2",
-		"@biomejs/biome": "^2.4.10"
+		"vitest": "^4.1.2"
 	},
 	"publishConfig": {
 		"access": "public",

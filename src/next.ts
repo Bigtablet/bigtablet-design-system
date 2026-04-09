@@ -1,4 +1,4 @@
-// Next.js-specific components (requires next/link and next/image)
+// Next.js-specific components
+// Currently all components are framework-agnostic. This entry point is reserved for future Next.js-specific exports.
 
-export type { SidebarItem, SidebarProps } from "./ui/navigation/sidebar";
-export { Sidebar } from "./ui/navigation/sidebar";
+export {};

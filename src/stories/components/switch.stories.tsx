@@ -3,7 +3,7 @@ import * as React from "react";
 import { Switch } from "../../ui/form/switch";
 
 const meta: Meta<typeof Switch> = {
-	title: "Components/Form/Switch",
+	title: "Components/Switch",
 	component: Switch,
 	tags: ["autodocs"],
 	argTypes: {
@@ -23,6 +23,7 @@ const meta: Meta<typeof Switch> = {
 	args: {
 		size: "md",
 		disabled: false,
+		ariaLabel: "스위치 토글",
 	},
 	parameters: {
 		docs: {
@@ -66,7 +67,7 @@ export const Controlled: Story = {
 		return (
 			<div style={{ display: "grid", gap: 10, padding: 20 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-					<Switch size={size} disabled={disabled} checked={isOn} onChange={setIsOn} />
+					<Switch size={size} disabled={disabled} checked={isOn} onChange={setIsOn} ariaLabel="스위치 토글" />
 					<span style={{ fontSize: 14, color: "#666" }}>현재 상태: {isOn ? "ON" : "OFF"}</span>
 				</div>
 
@@ -84,7 +85,7 @@ export const Uncontrolled: Story = {
 	name: "비제어형",
 	render: ({ size, disabled }) => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
-			<Switch size={size} disabled={disabled} defaultChecked />
+			<Switch size={size} disabled={disabled} defaultChecked ariaLabel="스위치 토글" />
 			<p style={{ margin: 0, fontSize: 13, color: "#666", lineHeight: 1.5 }}>
 				이 예시는 처음에만 ON으로 시작하고, 이후에는 컴포넌트 내부에서 켜짐/꺼짐을 관리합니다.
 			</p>
@@ -97,17 +98,17 @@ export const Sizes: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-				<Switch size="sm" defaultChecked />
+				<Switch size="sm" defaultChecked ariaLabel="sm 스위치" />
 				<span style={{ fontSize: 13, color: "#666" }}>sm</span>
 			</div>
 
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-				<Switch size="md" defaultChecked />
+				<Switch size="md" defaultChecked ariaLabel="md 스위치" />
 				<span style={{ fontSize: 13, color: "#666" }}>md (기본)</span>
 			</div>
 
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-				<Switch size="lg" defaultChecked />
+				<Switch size="lg" defaultChecked ariaLabel="lg 스위치" />
 				<span style={{ fontSize: 13, color: "#666" }}>lg</span>
 			</div>
 		</div>
@@ -118,7 +119,7 @@ export const Disabled: Story = {
 	name: "비활성화",
 	render: () => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
-			<Switch disabled defaultChecked />
+			<Switch disabled defaultChecked ariaLabel="스위치 토글" />
 			<p style={{ margin: 0, fontSize: 13, color: "#666", lineHeight: 1.5 }}>
 				비활성화 상태에서는 스위치를 눌러도 상태가 바뀌지 않습니다.
 			</p>

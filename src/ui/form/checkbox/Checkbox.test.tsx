@@ -31,12 +31,6 @@ describe("Checkbox", () => {
 		expect(screen.getByRole("checkbox")).toBeDisabled();
 	});
 
-	it("applies size class", () => {
-		render(<Checkbox size="lg" />);
-		const label = screen.getByRole("checkbox").closest("label");
-		expect(label).toHaveClass("checkbox_size_lg");
-	});
-
 	it("applies custom className", () => {
 		render(<Checkbox className="custom-class" />);
 		const label = screen.getByRole("checkbox").closest("label");
@@ -47,6 +41,12 @@ describe("Checkbox", () => {
 		render(<Checkbox indeterminate />);
 		const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
 		expect(checkbox.indeterminate).toBe(true);
+	});
+
+	it("applies error state", () => {
+		render(<Checkbox error />);
+		const label = screen.getByRole("checkbox").closest("label");
+		expect(label).toHaveClass("checkbox_error");
 	});
 
 	it("forwards ref correctly", () => {

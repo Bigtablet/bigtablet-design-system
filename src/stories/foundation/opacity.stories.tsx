@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { opacity } from "src/styles/ts/opacity";
 
 const meta: Meta = {
-	title: "foundation/opacity",
+	title: "Foundation/opacity",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
@@ -56,7 +56,7 @@ export const Scale: Story = {
 				>
 					<div>
 						<strong style={{ fontSize: 12 }}>{value}</strong>
-						<div style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>{opacityUseCase(key)}</div>
+						<div style={{ fontSize: 11, color: "#666", marginTop: 1 }}>{opacityUseCase(key)}</div>
 					</div>
 
 					<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -86,7 +86,7 @@ export const Scale: Story = {
 						</div>
 					</div>
 
-					<span style={{ fontSize: 11, opacity: 0.6, textAlign: "right" }}>
+					<span style={{ fontSize: 11, color: "#666", textAlign: "right" }}>
 						<code>opacity-{key}</code>
 					</span>
 				</div>

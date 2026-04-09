@@ -21,7 +21,7 @@
     height: token.$font_size_16;
     box-sizing: border-box;
 
-    border: 1px solid token.$color_border_default;
+    border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_full;
     background: token.$color_bg_solid;
 
@@ -68,7 +68,7 @@
   }
 
   &_input:focus-visible + .radio_dot {
-    box-shadow: 0 0 0 3px token.$color_border_subtle;
+    box-shadow: token.$focus_ring;
     border-color: token.$color_brand_primary;
   }
 
@@ -85,12 +85,12 @@
     height: 60%;
     transform: translate(-50%, -50%);
     background: token.$color_brand_primary;
-    border-radius: 9999px;
+    border-radius: token.$radius_full;
   }
 
   &_input:disabled + .radio_dot,
   &_input:disabled ~ .radio_label {
-    opacity: 0.6;
+    opacity: token.$opacity_38;
     cursor: not-allowed;
   }
 }

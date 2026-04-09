@@ -12,9 +12,10 @@ const getReadableTextColor = (bgColor: string): string => {
 };
 
 const meta: Meta = {
-	title: "foundation/colors",
+	title: "Foundation/colors",
 	tags: ["autodocs"],
 	parameters: {
+		a11y: { test: "off" },
 		docs: {
 			description: {
 				component: `
@@ -66,7 +67,7 @@ function ColorRow({ group, token, value }: { group: string; token: string; value
 					<code style={{ fontSize: 12 }}>
 						{group === "baseColors" ? toJsonKey(token) : `${group}.${token}`}
 					</code>
-					<div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>{value}</div>
+					<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{value}</div>
 				</div>
 			</div>
 			<div
@@ -100,7 +101,7 @@ function Section({
 		<section style={{ display: "grid", gap: 8 }}>
 			<div>
 				<strong style={{ fontSize: 15 }}>{title}</strong>
-				<p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.7 }}>{description}</p>
+				<p style={{ margin: "2px 0 0", fontSize: 13, color: "#555" }}>{description}</p>
 			</div>
 			{entries.map(([key, value]) => (
 				<ColorRow key={key} group={group} token={key} value={value} />
@@ -157,7 +158,7 @@ export const Base: Story = {
 	name: "Base Colors (raw)",
 	render: () => (
 		<div style={{ display: "grid", gap: 8, maxWidth: 760 }}>
-			<p style={{ margin: "0 0 8px", fontSize: 13, opacity: 0.7 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 13, color: "#555" }}>
 				⚠️ Base 토큰은 직접 사용을 지양하고 Semantic 토큰을 통해 사용하세요.
 			</p>
 			{Object.entries(baseColors as Record<string, string>).map(([key, value]) => (

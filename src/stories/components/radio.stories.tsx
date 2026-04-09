@@ -3,7 +3,7 @@ import * as React from "react";
 import { Radio } from "../../ui/form/radio";
 
 const meta: Meta<typeof Radio> = {
-	title: "Components/Form/Radio",
+	title: "Components/Radio",
 	component: Radio,
 	tags: ["autodocs"],
 	argTypes: {

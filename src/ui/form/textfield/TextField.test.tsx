@@ -9,23 +9,15 @@ describe("TextField", () => {
 	});
 
 	it("renders with helper text", () => {
-		render(<TextField helperText="Enter your email address" />);
+		render(<TextField supportingText="Enter your email address" />);
 		expect(screen.getByText("Enter your email address")).toBeInTheDocument();
 	});
 
 	it("shows error state", () => {
-		render(<TextField error helperText="Invalid email" />);
-		const input = screen.getByRole("textbox");
-		expect(input).toHaveClass("text_field_error");
-		expect(input).toHaveAttribute("aria-invalid", "true");
-		expect(screen.getByText("Invalid email")).toHaveClass("text_field_helper_error");
-	});
-
-	it("shows success state", () => {
-		render(<TextField success helperText="Valid email" />);
-		const input = screen.getByRole("textbox");
-		expect(input).toHaveClass("text_field_success");
-		expect(screen.getByText("Valid email")).toHaveClass("text_field_helper_success");
+		render(<TextField error supportingText="Invalid email" />);
+		const root = screen.getByRole("textbox").closest(".text_field");
+		expect(root).toHaveClass("text_field_error");
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
 	});
 
 	it("handles value changes", () => {
@@ -48,23 +40,30 @@ describe("TextField", () => {
 		expect(handleChange).toHaveBeenCalledWith("HELLO");
 	});
 
-	it("renders with different variants", () => {
-		const { rerender } = render(<TextField variant="outline" />);
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_variant_outline");
-
-		rerender(<TextField variant="filled" />);
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_variant_filled");
-
-		rerender(<TextField variant="ghost" />);
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_variant_ghost");
+	it("renders with leading and trailing icons", () => {
+		render(
+			<TextField
+				leadingIcon={<span data-testid="lead">Q</span>}
+				trailingIcon={<span data-testid="trail">X</span>}
+			/>,
+		);
+		expect(screen.getByTestId("lead")).toBeInTheDocument();
+		expect(screen.getByTestId("trail")).toBeInTheDocument();
 	});
 
-	it("renders with different sizes", () => {
-		const { rerender } = render(<TextField size="sm" />);
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_size_sm");
+	it("hides label when showLabel is false", () => {
+		render(<TextField label="Email" showLabel={false} />);
+		expect(screen.queryByText("Email")).not.toBeInTheDocument();
+	});
 
-		rerender(<TextField size="lg" />);
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_size_lg");
+	it("sets aria-label when showLabel is false", () => {
+		render(<TextField label="Email" showLabel={false} />);
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-label", "Email");
+	});
+
+	it("does not set aria-label when showLabel is true", () => {
+		render(<TextField label="Email" />);
+		expect(screen.getByRole("textbox")).not.toHaveAttribute("aria-label");
 	});
 
 	it("renders full width", () => {
@@ -75,18 +74,7 @@ describe("TextField", () => {
 	it("can be disabled", () => {
 		render(<TextField disabled />);
 		expect(screen.getByRole("textbox")).toBeDisabled();
-	});
-
-	it("renders with left icon", () => {
-		render(<TextField leftIcon={<span data-testid="left-icon">@</span>} />);
-		expect(screen.getByTestId("left-icon")).toBeInTheDocument();
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_with_left");
-	});
-
-	it("renders with right icon", () => {
-		render(<TextField rightIcon={<span data-testid="right-icon">✓</span>} />);
-		expect(screen.getByTestId("right-icon")).toBeInTheDocument();
-		expect(screen.getByRole("textbox")).toHaveClass("text_field_with_right");
+		expect(screen.getByRole("textbox").closest(".text_field")).toHaveClass("text_field_disabled");
 	});
 
 	it("supports controlled mode", () => {
@@ -103,7 +91,7 @@ describe("TextField", () => {
 	});
 
 	it("links helper text with aria-describedby", () => {
-		render(<TextField label="Email" helperText="Required field" />);
+		render(<TextField label="Email" supportingText="Required field" />);
 		const input = screen.getByRole("textbox");
 		const helperId = input.getAttribute("aria-describedby");
 		expect(helperId).toBeTruthy();

@@ -1,0 +1,97 @@
+@use "src/styles/scss/token" as token;
+
+.fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  width: 56px;
+  height: 56px;
+  padding: token.$spacing_16;
+  border-radius: token.$radius_full;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background token.$transition_base,
+    color token.$transition_base;
+
+  // State layer overlay
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transition: background token.$transition_base;
+    pointer-events: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // ── Variant: Primary ──────────────────────────────────────────────────────
+
+  &_variant_primary {
+    background: token.$color_brand_primary;
+    color: token.$color_text_inverse;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_dark;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_dark;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_dark;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Additive ─────────────────────────────────────────────────────
+
+  &_variant_additive {
+    background: token.$color_brand_primary_container;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Elements ─────────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

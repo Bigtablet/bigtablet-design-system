@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { shadows } from "src/styles/ts/shadows";
 
 const meta: Meta = {
-	title: "foundation/shadows",
+	title: "Foundation/shadows",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

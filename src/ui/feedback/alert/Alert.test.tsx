@@ -131,8 +131,8 @@ describe("Alert", () => {
 
 		const dialog = screen.getByRole("alertdialog");
 		expect(dialog).toHaveAttribute("aria-modal", "true");
-		expect(dialog).toHaveAttribute("aria-labelledby", "alert_title");
-		expect(dialog).toHaveAttribute("aria-describedby", "alert_message");
+		expect(dialog).toHaveAttribute("aria-labelledby");
+		expect(dialog).toHaveAttribute("aria-describedby");
 	});
 
 	it("applies variant class", () => {

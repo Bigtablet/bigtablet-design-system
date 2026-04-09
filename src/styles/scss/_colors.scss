@@ -8,17 +8,18 @@ $color_base_neutral_200:      #E5E5E5;
 $color_base_neutral_300:      #999999;
 $color_base_neutral_400:      #B3B3B3;
 $color_base_neutral_500:      #888888;
+$color_base_neutral_600:      #6B6B6B;
 $color_base_neutral_700:      #666666;
 $color_base_neutral_900:      #121212;
-$color_base_status_error:     #EF4444;
-$color_base_status_success:   #10B981;
+$color_base_status_error:     #CC0000;
+$color_base_status_success:   #047857;
 $color_base_status_warning:   #F59E0B;
-$color_base_status_info:      #3B82F6;
-$color_base_alpha_black_5:    rgba(0, 0, 0, 0.05);
-$color_base_alpha_black_8:    rgba(0, 0, 0, 0.08);
-$color_base_alpha_black_12:   rgba(26, 26, 26, 0.12);
-$color_base_alpha_black_38:   rgba(26, 26, 26, 0.38);
-$color_base_alpha_black_50:   rgba(0, 0, 0, 0.50);
+$color_base_status_info:      #2563EB;
+$color_base_alpha_black_5:    rgba(18, 18, 18, 0.05);
+$color_base_alpha_black_8:    rgba(18, 18, 18, 0.08);
+$color_base_alpha_black_12:   rgba(18, 18, 18, 0.12);
+$color_base_alpha_black_38:   rgba(18, 18, 18, 0.38);
+$color_base_alpha_black_50:   rgba(18, 18, 18, 0.50);
 $color_base_alpha_white_5:    rgba(255, 255, 255, 0.05);
 $color_base_alpha_white_8:    rgba(255, 255, 255, 0.08);
 $color_base_alpha_white_12:   rgba(255, 255, 255, 0.12);
@@ -32,7 +33,7 @@ $color_brand_on_primary:      $color_base_neutral_0;
 
 $color_text_heading:          $color_base_neutral_900;
 $color_text_body:             $color_base_neutral_700;
-$color_text_caption:          $color_base_neutral_500;
+$color_text_caption:          $color_base_neutral_600;
 $color_text_brand:            $color_base_brand_primary;
 $color_text_inverse:          $color_base_neutral_0;
 $color_text_disabled:         $color_base_alpha_black_38;
@@ -48,9 +49,15 @@ $color_bg_overlay:            $color_base_alpha_black_50;
 // ── Semantic: State ───────────────────────────────────────────────────────────
 
 $color_state_hover_on_light:    $color_base_alpha_black_5;
-$color_state_pressed_on_light:  $color_base_alpha_black_12;
-$color_state_hover_on_dark:     $color_base_alpha_white_5;
-$color_state_pressed_on_dark:   $color_base_alpha_white_12;
+$color_state_focus_on_light:    $color_base_alpha_black_8;
+$color_state_pressed_on_light:  rgba(18, 18, 18, 0.10);
+$color_state_hover_on_dark:     $color_base_alpha_white_8;
+$color_state_focus_on_dark:     $color_base_alpha_white_12;
+$color_state_pressed_on_dark:   rgba(255, 255, 255, 0.15);
+
+// ── Semantic: Brand extended ─────────────────────────────────────────────────
+
+$color_brand_primary_container: $color_base_alpha_black_5;
 
 // ── Semantic: Border ──────────────────────────────────────────────────────────
 
@@ -58,7 +65,7 @@ $color_border_default:        $color_base_neutral_200;
 $color_border_hover:          $color_base_neutral_400;
 $color_border_subtle:         $color_base_alpha_black_8;
 $color_border_focus:          $color_base_neutral_900;
-$color_border_disabled:       #F2F2F2;
+$color_border_disabled:       $color_base_alpha_black_12;
 
 // ── Semantic: Status ──────────────────────────────────────────────────────────
 

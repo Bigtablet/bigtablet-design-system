@@ -3,6 +3,7 @@
 import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -66,7 +67,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 		setTimeout(() => onRemove(item.id), 260);
 	}, [item.id, onRemove]);
 
-	const itemClassName = ["toast_item", exiting && "toast_item_exiting"].filter(Boolean).join(" ");
+	const itemClassName = cn("toast_item", exiting && "toast_item_exiting");
 
 	return (
 		<div className={itemClassName} role={item.variant === "error" ? "alert" : "status"}>

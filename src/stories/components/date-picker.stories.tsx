@@ -64,7 +64,7 @@ const DateFieldDemo = ({
 };
 
 const meta: Meta<typeof DateFieldDemo> = {
-	title: "Components/Form/DatePicker",
+	title: "Components/DatePicker",
 	component: DateFieldDemo,
 	tags: ["autodocs"],
 	argTypes: {

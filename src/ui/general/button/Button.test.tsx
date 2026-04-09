@@ -7,26 +7,37 @@ describe("Button", () => {
 		render(<Button>Click me</Button>);
 		const button = screen.getByRole("button", { name: "Click me" });
 		expect(button).toBeInTheDocument();
-		expect(button).toHaveClass("button", "button_variant_primary", "button_size_md");
+		expect(button).toHaveClass("button", "button_variant_filled", "button_size_md");
 	});
 
 	it("renders with different variants", () => {
-		const { rerender } = render(<Button variant="secondary">Button</Button>);
-		expect(screen.getByRole("button")).toHaveClass("button_variant_secondary");
+		const { rerender } = render(<Button variant="tonal">Button</Button>);
+		expect(screen.getByRole("button")).toHaveClass("button_variant_tonal");
 
-		rerender(<Button variant="ghost">Button</Button>);
-		expect(screen.getByRole("button")).toHaveClass("button_variant_ghost");
+		rerender(<Button variant="outline">Button</Button>);
+		expect(screen.getByRole("button")).toHaveClass("button_variant_outline");
 
-		rerender(<Button variant="danger">Button</Button>);
-		expect(screen.getByRole("button")).toHaveClass("button_variant_danger");
+		rerender(<Button variant="text">Button</Button>);
+		expect(screen.getByRole("button")).toHaveClass("button_variant_text");
 	});
 
 	it("renders with different sizes", () => {
 		const { rerender } = render(<Button size="sm">Button</Button>);
 		expect(screen.getByRole("button")).toHaveClass("button_size_sm");
 
-		rerender(<Button size="lg">Button</Button>);
-		expect(screen.getByRole("button")).toHaveClass("button_size_lg");
+		rerender(<Button size="xl">Button</Button>);
+		expect(screen.getByRole("button")).toHaveClass("button_size_xl");
+	});
+
+	it("renders with leading and trailing icons", () => {
+		render(
+			<Button leadingIcon={<svg data-testid="lead" />} trailingIcon={<svg data-testid="trail" />}>
+				Button
+			</Button>,
+		);
+
+		expect(screen.getByTestId("lead")).toBeInTheDocument();
+		expect(screen.getByTestId("trail")).toBeInTheDocument();
 	});
 
 	it("handles click events", () => {
@@ -57,8 +68,13 @@ describe("Button", () => {
 		expect(screen.getByRole("button")).toHaveClass("custom-class");
 	});
 
-	it("applies custom width", () => {
-		render(<Button width="200px">Button</Button>);
-		expect(screen.getByRole("button")).toHaveStyle({ width: "200px" });
+	it("applies fullWidth", () => {
+		render(<Button fullWidth>Button</Button>);
+		expect(screen.getByRole("button")).toHaveClass("button_full_width");
+	});
+
+	it("does not apply fullWidth by default", () => {
+		render(<Button>Button</Button>);
+		expect(screen.getByRole("button")).not.toHaveClass("button_full_width");
 	});
 });

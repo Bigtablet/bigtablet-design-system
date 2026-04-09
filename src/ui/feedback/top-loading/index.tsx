@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface TopLoadingProps {
@@ -43,9 +44,7 @@ export const TopLoading = ({
 			aria-label={ariaLabel}
 		>
 			<div
-				className={["top_loading_bar", isIndeterminate && "top_loading_indeterminate"]
-					.filter(Boolean)
-					.join(" ")}
+				className={cn("top_loading_bar", isIndeterminate && "top_loading_indeterminate")}
 				style={{
 					width: isIndeterminate ? undefined : `${progress}%`,
 					backgroundColor: color,
