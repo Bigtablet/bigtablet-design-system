@@ -18,6 +18,9 @@ const preview: Preview = {
 				expanded: { name: "Expanded", styles: { width: "1024px", height: "550px" } },
 			},
 		},
+		a11y: {
+			test: "todo",
+		},
 		controls: { expanded: true },
 		nextjs: {
 			appDirectory: true,
