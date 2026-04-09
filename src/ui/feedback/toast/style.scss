@@ -1,4 +1,5 @@
 @use "src/styles/scss/token" as token;
+@use "src/styles/scss/_breakpoints" as breakpoint;
 
 // ── Animations ───────────────────────────────────────────────────────────────
 
@@ -24,6 +25,28 @@
   }
 }
 
+@keyframes toast_slide_in_mobile {
+  from {
+    opacity: 0;
+    transform: translateY(calc(100% + 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast_slide_out_mobile {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(100% + 16px));
+  }
+}
+
 @keyframes toast_progress {
   from { width: 100%; }
   to   { width: 0%; }
@@ -42,6 +65,14 @@
   pointer-events: none;
   width: 360px;
   max-width: calc(100vw - 32px);
+
+  @include breakpoint.compact {
+    top: auto;
+    bottom: token.$spacing_16;
+    left: token.$spacing_16;
+    right: token.$spacing_16;
+    width: auto;
+  }
 }
 
 // ── Item ─────────────────────────────────────────────────────────────────────
@@ -70,6 +101,14 @@
 
   &_exiting {
     animation: toast_slide_out 0.26s ease-in forwards;
+  }
+
+  @include breakpoint.compact {
+    animation-name: toast_slide_in_mobile;
+
+    &_exiting {
+      animation-name: toast_slide_out_mobile;
+    }
   }
 }
 
