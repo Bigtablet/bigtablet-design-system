@@ -155,13 +155,15 @@ export const Playground: Story = {
 
 export const Mobile: Story = {
 	name: "Mobile (Compact)",
-	parameters: { viewport: { defaultViewport: "compact" } },
+	globals: { viewport: { value: "compact" } },
+	parameters: { layout: "fullscreen" },
 	render: () => <PlaygroundContent />,
 };
 
 export const Tablet: Story = {
 	name: "Tablet (Medium)",
-	parameters: { viewport: { defaultViewport: "medium" } },
+	globals: { viewport: { value: "medium" } },
+	parameters: { layout: "fullscreen" },
 	render: () => <PlaygroundContent />,
 };
 
