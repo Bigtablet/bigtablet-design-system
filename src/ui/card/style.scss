@@ -13,15 +13,15 @@
   }
 
   &_shadow_sm {
-    box-shadow: token.$shadow_level1;
+    box-shadow: token.$elevation_level1;
   }
 
   &_shadow_md {
-    box-shadow: token.$shadow_level2;
+    box-shadow: token.$elevation_level2;
   }
 
   &_shadow_lg {
-    box-shadow: token.$shadow_level3;
+    box-shadow: token.$elevation_level3;
   }
 
   &_p_none {

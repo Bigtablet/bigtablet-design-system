@@ -7,7 +7,7 @@ export { baseColors, colors } from "./styles/colors";
 export { motion } from "./styles/motion";
 export { opacity } from "./styles/opacity";
 export { radius } from "./styles/radius";
-export { shadows } from "./styles/shadows";
+export { elevation } from "./styles/elevation";
 export { skeleton } from "./styles/skeleton";
 export { spacing } from "./styles/spacing";
 export { baseTypography, typography } from "./styles/typography";

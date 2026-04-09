@@ -144,7 +144,7 @@
     background: token.$color_bg_solid;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_md;
-    box-shadow: token.$shadow_level2;
+    box-shadow: token.$elevation_level2;
 
     max-height: 18rem;
     overflow-y: auto;

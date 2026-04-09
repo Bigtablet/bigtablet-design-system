@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { shadows } from "src/styles/shadows";
+import { elevation } from "src/styles/elevation";
 
 const meta: Meta = {
-	title: "Foundation/shadows",
+	title: "Foundation/elevation",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
 			description: {
 				component: `
-### 그림자(Shadows) 기준
+### Elevation(높이 위계) 기준
 
-그림자는 "떠 있음(레이어)"과 **Elevation(높이 위계)** 을 표현합니다.
+Elevation은 "떠 있음(레이어)"과 **높이 위계** 를 표현합니다.
 
 - **level1**: 아주 가벼운 분리 (카드, 인풋 배경)
 - **level2**: 드롭다운 / 팝오버 같이 떠 있는 UI
@@ -27,7 +27,7 @@ export default meta;
 type Story = StoryObj;
 
 export const Levels: Story = {
-	name: "그림자 단계 한눈에 보기",
+	name: "Elevation 단계 한눈에 보기",
 	render: () => (
 		<div
 			style={{
@@ -39,7 +39,7 @@ export const Levels: Story = {
 				maxWidth: 720,
 			}}
 		>
-			{Object.entries(shadows).map(([key, value]) => (
+			{Object.entries(elevation).map(([key, value]) => (
 				<div
 					key={key}
 					style={{
@@ -61,7 +61,7 @@ export const Levels: Story = {
 						<div>
 							<strong style={{ fontSize: 16 }}>{key}</strong>
 							<div style={{ fontSize: 13, opacity: 0.75, marginTop: 4 }}>
-								{shadowDescription(key)}
+								{elevationDescription(key)}
 							</div>
 						</div>
 
@@ -86,7 +86,7 @@ export const Levels: Story = {
 							aria-hidden
 						/>
 						<div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.5 }}>
-							이 그림자는 <strong>{shadowUseCase(key)}</strong> 같은 UI에서 사용하면 자연스럽습니다.
+							이 elevation은 <strong>{elevationUseCase(key)}</strong> 같은 UI에서 사용하면 자연스럽습니다.
 						</div>
 					</div>
 				</div>
@@ -112,7 +112,7 @@ export const ElevationStack: Story = {
 			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
 				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이 강해집니다.
 			</p>
-			{Object.entries(shadows).map(([key, value], i) => (
+			{Object.entries(elevation).map(([key, value], i) => (
 				<div
 					key={key}
 					style={{
@@ -133,7 +133,7 @@ export const ElevationStack: Story = {
 					}}
 				>
 					<strong>{key}</strong>
-					<span style={{ fontSize: 11, color: "#999" }}>{shadowUseCase(key)}</span>
+					<span style={{ fontSize: 11, color: "#999" }}>{elevationUseCase(key)}</span>
 				</div>
 			))}
 		</div>
@@ -148,13 +148,13 @@ export const DoAndDont: Story = {
 			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
 				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
 				<div style={{ display: "grid", gap: 8 }}>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level1, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level1, fontSize: 13 }}>
 						카드 → level1
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level2, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level2, fontSize: 13 }}>
 						드롭다운 → level2
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level4, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level4, fontSize: 13 }}>
 						모달 → level4
 					</div>
 				</div>
@@ -167,13 +167,13 @@ export const DoAndDont: Story = {
 			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
 				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
 				<div style={{ display: "grid", gap: 8 }}>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
 						카드에 level5 사용
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
 						버튼에 level5 사용
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
 						모든 요소에 같은 그림자
 					</div>
 				</div>
@@ -185,7 +185,7 @@ export const DoAndDont: Story = {
 	),
 };
 
-function shadowDescription(key: string) {
+function elevationDescription(key: string) {
 	switch (key) {
 		case "level1":
 			return "가벼운 경계/분리 (카드, 섹션)";
@@ -198,11 +198,11 @@ function shadowDescription(key: string) {
 		case "level5":
 			return "가장 강한 강조 (중요한 레이어)";
 		default:
-			return "공통 그림자";
+			return "공통 elevation";
 	}
 }
 
-function shadowUseCase(key: string) {
+function elevationUseCase(key: string) {
 	switch (key) {
 		case "level1":
 			return "카드, 입력창 배경";

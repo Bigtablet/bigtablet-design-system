@@ -33,7 +33,7 @@ src/
 │   ├── spacing/
 │   ├── typography/
 │   ├── radius/
-│   ├── shadows/
+│   ├── elevation/
 │   ├── motion/
 │   ├── breakpoints/
 │   ├── opacity/
@@ -99,7 +99,7 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 - `spacing/` - xs(4px) to 5xl(48px)
 - `typography/` - Font families, heading/body styles
 - `radius/` - Border radius values
-- `shadows/` - Elevation shadows
+- `elevation/` - Elevation shadows (level1-5)
 - `motion/` - Animation durations and easings
 - `z-index/` - Layer priorities
 - `breakpoints/` - Responsive breakpoints
@@ -181,7 +181,7 @@ dist/vanilla/
 | Select List | `.bt-select__list` | `--up` (opens upward) | |
 | Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--shadow-sm/md/lg`, `--p-sm/md/lg` | |
+| Card | `.bt-card` | `--bordered`, `--elevation-1/2/3`, `--p-sm/md/lg` | |
 | Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
@@ -280,8 +280,8 @@ dist/vanilla/
   <p>Content</p>
 </div>
 
-<div class="bt-card bt-card--shadow-md bt-card--p-lg">
-  Shadow card
+<div class="bt-card bt-card--elevation-2 bt-card--p-lg">
+  Elevation card
 </div>
 ```
 
@@ -362,7 +362,7 @@ All design tokens available as CSS variables:
   --bt-spacing-lg: 1rem;
   --bt-radius-sm: 6px;
   --bt-radius-md: 8px;
-  --bt-shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --bt-elevation-1: 0 1px 1px -1px rgba(0,0,0,0.20), 0 3px 3px 0 rgba(0,0,0,0.12);
   --bt-transition-base: 0.2s ease-in-out;
 }
 ```

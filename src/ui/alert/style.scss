@@ -38,7 +38,7 @@
     border-radius: token.$radius_lg;
     min-width: 320px;
     max-width: 480px;
-    box-shadow: token.$shadow_level4;
+    box-shadow: token.$elevation_level4;
     animation: alert_slide_up token.$transition_slow;
     overflow: hidden;
   }

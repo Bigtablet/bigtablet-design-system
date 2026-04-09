@@ -89,7 +89,7 @@
   background: token.$color_bg_solid;
   border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_lg;
-  box-shadow: token.$shadow_level2;
+  box-shadow: token.$elevation_level2;
 
   font-family: token.$font_family_primary;
   font-size: token.$font_size_14;
@@ -108,7 +108,7 @@
     font-size: token.$font_size_13;
     line-height: token.$line_height_20;
     border-radius: token.$radius_md;
-    box-shadow: token.$shadow_level1;
+    box-shadow: token.$elevation_level1;
     animation-name: toast_slide_in_mobile;
 
     &_exiting {
