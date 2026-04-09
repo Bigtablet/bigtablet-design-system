@@ -28,7 +28,7 @@ const meta: Meta<typeof TextField> = {
 			control: "boolean",
 			description: "라벨 표시 여부입니다.",
 		},
-		helperText: {
+		supportingText: {
 			control: "text",
 			description: "입력창 아래에 표시되는 안내 문구입니다.",
 		},
@@ -99,7 +99,7 @@ export const ErrorState: Story = {
 	args: {
 		label: "Email",
 		placeholder: "name@example.com",
-		helperText: "이메일 형식이 올바르지 않습니다.",
+		supportingText: "이메일 형식이 올바르지 않습니다.",
 		error: true,
 	},
 };
@@ -126,10 +126,10 @@ export const AllStates: Story = {
 	name: "전체 상태 비교",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, width: 320 }}>
-			<TextField label="Enable" placeholder="Input" helperText="Supporting text" />
-			<TextField label="Error" placeholder="Input" helperText="Error message" error />
-			<TextField label="Disabled" placeholder="Input" helperText="Supporting text" disabled />
-			<TextField label="With Icons" placeholder="Search" leadingIcon={<SearchIcon />} trailingIcon={<CloseIcon />} helperText="Supporting text" />
+			<TextField label="Enable" placeholder="Input" supportingText="Supporting text" />
+			<TextField label="Error" placeholder="Input" supportingText="Error message" error />
+			<TextField label="Disabled" placeholder="Input" supportingText="Supporting text" disabled />
+			<TextField label="With Icons" placeholder="Search" leadingIcon={<SearchIcon />} trailingIcon={<CloseIcon />} supportingText="Supporting text" />
 		</div>
 	),
 };

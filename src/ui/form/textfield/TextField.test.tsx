@@ -9,12 +9,12 @@ describe("TextField", () => {
 	});
 
 	it("renders with helper text", () => {
-		render(<TextField helperText="Enter your email address" />);
+		render(<TextField supportingText="Enter your email address" />);
 		expect(screen.getByText("Enter your email address")).toBeInTheDocument();
 	});
 
 	it("shows error state", () => {
-		render(<TextField error helperText="Invalid email" />);
+		render(<TextField error supportingText="Invalid email" />);
 		const root = screen.getByRole("textbox").closest(".text_field");
 		expect(root).toHaveClass("text_field_error");
 		expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
@@ -81,7 +81,7 @@ describe("TextField", () => {
 	});
 
 	it("links helper text with aria-describedby", () => {
-		render(<TextField label="Email" helperText="Required field" />);
+		render(<TextField label="Email" supportingText="Required field" />);
 		const input = screen.getByRole("textbox");
 		const helperId = input.getAttribute("aria-describedby");
 		expect(helperId).toBeTruthy();

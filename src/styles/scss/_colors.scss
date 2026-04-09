@@ -10,15 +10,15 @@ $color_base_neutral_400:      #B3B3B3;
 $color_base_neutral_500:      #888888;
 $color_base_neutral_700:      #666666;
 $color_base_neutral_900:      #121212;
-$color_base_status_error:     #EF4444;
+$color_base_status_error:     #CC0000;
 $color_base_status_success:   #10B981;
 $color_base_status_warning:   #F59E0B;
 $color_base_status_info:      #3B82F6;
-$color_base_alpha_black_5:    rgba(0, 0, 0, 0.05);
-$color_base_alpha_black_8:    rgba(0, 0, 0, 0.08);
-$color_base_alpha_black_12:   rgba(26, 26, 26, 0.12);
-$color_base_alpha_black_38:   rgba(26, 26, 26, 0.38);
-$color_base_alpha_black_50:   rgba(0, 0, 0, 0.50);
+$color_base_alpha_black_5:    rgba(18, 18, 18, 0.05);
+$color_base_alpha_black_8:    rgba(18, 18, 18, 0.08);
+$color_base_alpha_black_12:   rgba(18, 18, 18, 0.12);
+$color_base_alpha_black_38:   rgba(18, 18, 18, 0.38);
+$color_base_alpha_black_50:   rgba(18, 18, 18, 0.50);
 $color_base_alpha_white_5:    rgba(255, 255, 255, 0.05);
 $color_base_alpha_white_8:    rgba(255, 255, 255, 0.08);
 $color_base_alpha_white_12:   rgba(255, 255, 255, 0.12);
@@ -64,7 +64,7 @@ $color_border_default:        $color_base_neutral_200;
 $color_border_hover:          $color_base_neutral_400;
 $color_border_subtle:         $color_base_alpha_black_8;
 $color_border_focus:          $color_base_neutral_900;
-$color_border_disabled:       #F2F2F2;
+$color_border_disabled:       $color_base_alpha_black_12;
 
 // ── Semantic: Status ──────────────────────────────────────────────────────────
 
