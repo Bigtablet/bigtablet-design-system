@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { baseBorderWidth, borderWidth } from "src/styles/ts/border-width";
 
 const meta: Meta = {
-	title: "foundation/border-width",
+	title: "Foundation/border-width",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

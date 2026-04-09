@@ -8,7 +8,7 @@ const PlusIcon = () => (
 );
 
 const meta: Meta<typeof Button> = {
-	title: "Components/General/Button",
+	title: "Components/Button",
 	component: Button,
 	tags: ["autodocs"],
 	argTypes: {

@@ -4,7 +4,7 @@ import { a11y } from "src/styles/ts/a11y";
 import { baseColors, colors } from "src/styles/ts/colors";
 
 const meta: Meta = {
-	title: "foundation/a11y",
+	title: "Foundation/a11y",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

@@ -5,7 +5,7 @@ import type { SidebarItem } from "../../ui/navigation/sidebar";
 import { Sidebar } from "../../ui/navigation/sidebar";
 
 const meta: Meta<typeof Sidebar> = {
-	title: "Components/Navigation/Sidebar",
+	title: "Components/Sidebar",
 	component: Sidebar,
 	tags: ["autodocs"],
 	parameters: {

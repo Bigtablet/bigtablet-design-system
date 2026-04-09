@@ -3,7 +3,7 @@ import * as React from "react";
 import { Checkbox } from "../../ui/form/checkbox";
 
 const meta: Meta<typeof Checkbox> = {
-	title: "Components/Form/Checkbox",
+	title: "Components/Checkbox",
 	component: Checkbox,
 	tags: ["autodocs"],
 	argTypes: {

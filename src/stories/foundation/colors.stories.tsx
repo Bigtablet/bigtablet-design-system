@@ -12,7 +12,7 @@ const getReadableTextColor = (bgColor: string): string => {
 };
 
 const meta: Meta = {
-	title: "foundation/colors",
+	title: "Foundation/colors",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

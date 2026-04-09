@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { opacity } from "src/styles/ts/opacity";
 
 const meta: Meta = {
-	title: "foundation/opacity",
+	title: "Foundation/opacity",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

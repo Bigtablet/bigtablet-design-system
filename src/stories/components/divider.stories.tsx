@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Divider } from "../../ui/display/divider";
 
 const meta: Meta<typeof Divider> = {
-	title: "Components/Display/Divider",
+	title: "Components/Divider",
 	component: Divider,
 	tags: ["autodocs"],
 	argTypes: {

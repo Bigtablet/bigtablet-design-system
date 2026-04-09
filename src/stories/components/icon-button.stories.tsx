@@ -21,7 +21,7 @@ const SearchIcon = () => (
 );
 
 const meta: Meta<typeof IconButton> = {
-	title: "Components/General/IconButton",
+	title: "Components/IconButton",
 	component: IconButton,
 	tags: ["autodocs"],
 	argTypes: {

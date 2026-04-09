@@ -8,7 +8,7 @@ const PlusIcon = () => (
 );
 
 const meta: Meta<typeof FAB> = {
-	title: "Components/General/FAB",
+	title: "Components/FAB",
 	component: FAB,
 	tags: ["autodocs"],
 	argTypes: {

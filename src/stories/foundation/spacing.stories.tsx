@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { spacing } from "src/styles/ts/spacing";
 
 const meta: Meta = {
-	title: "foundation/spacing",
+	title: "Foundation/spacing",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

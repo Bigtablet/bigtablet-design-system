@@ -16,7 +16,7 @@ const CloseIcon = () => (
 );
 
 const meta: Meta<typeof TextField> = {
-	title: "Components/Form/TextField",
+	title: "Components/TextField",
 	component: TextField,
 	tags: ["autodocs"],
 	argTypes: {

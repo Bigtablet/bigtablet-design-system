@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { baseTypography, typography } from "src/styles/ts/typography";
 
 const meta: Meta = {
-	title: "foundation/typography",
+	title: "Foundation/typography",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

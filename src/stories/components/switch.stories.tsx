@@ -3,7 +3,7 @@ import * as React from "react";
 import { Switch } from "../../ui/form/switch";
 
 const meta: Meta<typeof Switch> = {
-	title: "Components/Form/Switch",
+	title: "Components/Switch",
 	component: Switch,
 	tags: ["autodocs"],
 	argTypes: {

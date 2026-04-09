@@ -3,7 +3,7 @@ import * as React from "react";
 import { zIndex } from "src/styles/ts/z-index";
 
 const meta: Meta = {
-	title: "foundation/z-index",
+	title: "Foundation/z-index",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {

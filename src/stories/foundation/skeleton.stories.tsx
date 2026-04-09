@@ -33,7 +33,7 @@ function SkeletonBlock({
 }
 
 const meta: Meta = {
-	title: "foundation/skeleton",
+	title: "Foundation/skeleton",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
