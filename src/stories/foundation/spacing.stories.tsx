@@ -52,8 +52,9 @@ export const Scale: Story = {
 						borderRadius: 12,
 					}}
 				>
-					<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-						<code style={{ fontSize: 12 }}>spacing["{key}"]</code>
+					<div>
+						<strong style={{ fontSize: 13 }}>{value}</strong>
+						<div style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>spacing-{key}</div>
 					</div>
 
 					<div

@@ -2,10 +2,45 @@ name: Chromatic
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
+  pull_request:
+    branches: [develop]
 
 jobs:
-  upload:
+  # ── develop / PR: 시각적 리뷰용 (변경사항 비교) ──────────────────────
+  review:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.14.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish to Chromatic (review)
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_TOKEN }}
+          buildScriptName: build:sb
+          onlyChanged: true
+          exitOnceUploaded: true
+          externals: "src/styles/**"
+
+  # ── main: 배포 기준 스냅샷 (자동 승인) ──────────────────────────────
+  publish:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,7 +59,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Publish Storybook to Chromatic
-        run: pnpm dlx chromatic --build-script-name=build:sb --only-changed --exit-once-uploaded --no-interactive
-        env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
+      - name: Publish to Chromatic (baseline)
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_TOKEN }}
+          buildScriptName: build:sb
+          autoAcceptChanges: true
+          onlyChanged: true
+          externals: "src/styles/**"

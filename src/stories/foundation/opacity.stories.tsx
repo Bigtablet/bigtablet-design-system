@@ -54,7 +54,10 @@ export const Scale: Story = {
 						borderRadius: 10,
 					}}
 				>
-					<code style={{ fontSize: 12 }}>opacity["{key}"]</code>
+					<div>
+						<strong style={{ fontSize: 12 }}>{value}</strong>
+						<div style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>{opacityUseCase(key)}</div>
+					</div>
 
 					<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
 						{/* 체커보드 배경으로 투명도 시각화 */}
@@ -83,9 +86,38 @@ export const Scale: Story = {
 						</div>
 					</div>
 
-					<span style={{ fontSize: 12, opacity: 0.7, textAlign: "right" }}>{value}</span>
+					<span style={{ fontSize: 11, opacity: 0.6, textAlign: "right" }}>
+						<code>opacity-{key}</code>
+					</span>
 				</div>
 			))}
 		</div>
 	),
 };
+
+function opacityUseCase(key: string) {
+	switch (key) {
+		case "0":
+			return "완전 투명 (숨김)";
+		case "5":
+			return "호버 배경";
+		case "8":
+			return "눌림/서브틀 배경";
+		case "12":
+			return "비활성 배경";
+		case "16":
+			return "약한 오버레이";
+		case "38":
+			return "비활성 텍스트·아이콘";
+		case "50":
+			return "반투명 오버레이";
+		case "80":
+			return "거의 불투명 레이어";
+		case "90":
+			return "강한 불투명 레이어";
+		case "100":
+			return "완전 불투명";
+		default:
+			return "";
+	}
+}

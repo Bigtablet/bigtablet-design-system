@@ -6,11 +6,16 @@ const preview: Preview = {
 		viewport: { value: "responsive" },
 	},
 	parameters: {
+		options: {
+			storySort: {
+				order: ["Guide", ["Introduction", "Installation"], "foundation", "Components"],
+			},
+		},
 		viewport: {
 			options: {
-				compact: { name: "Compact (Mobile)", styles: { width: "375px", height: "812px" } },
-				medium: { name: "Medium (Tablet)", styles: { width: "768px", height: "1024px" } },
-				expanded: { name: "Expanded", styles: { width: "1024px", height: "768px" } },
+				compact: { name: "Compact (Mobile)", styles: { width: "375px", height: "550px" } },
+				medium: { name: "Medium (Tablet)", styles: { width: "768px", height: "550px" } },
+				expanded: { name: "Expanded", styles: { width: "1024px", height: "550px" } },
 			},
 		},
 		controls: { expanded: true },
