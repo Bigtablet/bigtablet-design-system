@@ -44,6 +44,8 @@ const config: StorybookConfig = {
 	},
 
 	addons: ["@storybook/addon-docs", "@storybook/addon-vitest"],
+
+	disableTelemetry: true,
 };
 
 export default config;
