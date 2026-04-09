@@ -36,7 +36,7 @@ const meta: Meta = {
 | 환경 | Import |
 |------|--------|
 | React 19 | \`import { Button } from "@bigtablet/design-system"\` |
-| Next.js (App Router) | \`import { Sidebar } from "@bigtablet/design-system/next"\` |
+| Next.js (App Router) | \`import { Button } from "@bigtablet/design-system"\` |
 | Vanilla (Thymeleaf, JSP, PHP) | \`bigtablet.min.css\` + \`bigtablet.min.js\` |
         `,
 			},

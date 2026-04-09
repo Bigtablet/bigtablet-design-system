@@ -46,19 +46,13 @@ function MyPage() {
 }`}
 			/>
 			<CodeSection
-				title="Next.js 전용 컴포넌트"
-				description="Sidebar 등 next/link를 사용하는 컴포넌트는 /next에서 import합니다."
-				code={`import { Sidebar } from "@bigtablet/design-system/next";`}
-			/>
-			<CodeSection
 				title="SCSS 토큰 사용 (선택)"
-				description="컴포넌트 스타일을 커스텀할 때 SCSS 토큰을 직접 참조할 수 있습니다."
+				description="컴포넌트 스타일을 커스텀할 때 디자인 토큰을 직접 사용할 수 있습니다."
 				code={`@use "@bigtablet/design-system/scss/token" as token;
 
-.custom-card {
-  padding: token.$spacing_md;
+.my-card {
+  padding: token.$spacing_16;
   border-radius: token.$radius_md;
-  color: token.$color_text_primary;
 }`}
 			/>
 		</div>
