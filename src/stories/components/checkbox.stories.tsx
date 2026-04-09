@@ -11,18 +11,17 @@ const meta: Meta<typeof Checkbox> = {
 			control: "text",
 			description: "체크박스 오른쪽에 표시되는 텍스트(라벨)입니다.",
 		},
-		size: {
-			control: "select",
-			options: ["sm", "md", "lg"],
-			description: "체크박스 크기입니다. 보통 md를 기본으로 사용합니다.",
-		},
 		disabled: {
 			control: "boolean",
-			description: "비활성화 상태입니다. 선택할 수 없고 스타일이 흐려집니다.",
+			description: "비활성화 상태입니다.",
 		},
 		indeterminate: {
 			control: "boolean",
-			description: "중간 상태(일부 선택됨)를 표시합니다. 예: ‘전체 선택’에서 일부만 체크된 경우.",
+			description: "중간 상태(일부 선택됨)를 표시합니다.",
+		},
+		error: {
+			control: "boolean",
+			description: "에러 상태입니다. 체크박스 테두리가 빨간색으로 변합니다.",
 		},
 		checked: { control: false },
 		defaultChecked: { control: false },
@@ -30,9 +29,9 @@ const meta: Meta<typeof Checkbox> = {
 	},
 	args: {
 		label: "동의합니다",
-		size: "md",
 		disabled: false,
 		indeterminate: false,
+		error: false,
 	},
 	parameters: {
 		docs: {
@@ -40,19 +39,17 @@ const meta: Meta<typeof Checkbox> = {
 				component: `
 **Checkbox**는 사용자가 선택/해제를 할 수 있는 입력 요소입니다.
 
-### 언제 쓰나요?
-- 약관 동의, 옵션 선택, 필터 등 “여러 개 중 일부 선택” UI
+### 타입
+| Type | 설명 |
+|------|------|
+| **Unselected** | 선택되지 않은 상태 |
+| **Checked** | 선택된 상태 (체크마크) |
+| **Indeterminate** | 중간 상태 (대시) — 전체 선택에서 일부만 선택된 경우 |
 
-### indeterminate(중간 상태)는 언제 쓰나요?
-- “전체 선택” 체크박스가 있고, 하위 항목이 일부만 선택된 경우
-  - 전체 선택: ✅ (모두 선택)
-  - 전체 선택: ▬ (일부 선택 = indeterminate)
-  - 전체 선택: ⬜ (아무것도 선택 안 함)
-
-### 디자이너 체크 포인트
-- 라벨과 체크박스 간격(가독성)
-- disabled 대비(읽을 수는 있어야 함)
-- 체크 표시가 다양한 해상도에서 깨지지 않는지
+### 상태
+- **Enable / Hover / Focus / Pressed**: State layer overlay로 시각적 피드백
+- **Disabled**: 0.38 투명도
+- **Error**: 빨간 테두리/배경
         `,
 			},
 		},
@@ -66,9 +63,9 @@ export const Basic: Story = {
 	name: "기본",
 };
 
-export const Disabled: Story = {
-	name: "비활성화",
-	args: { disabled: true },
+export const Checked: Story = {
+	name: "선택됨",
+	args: { defaultChecked: true },
 };
 
 export const Indeterminate: Story = {
@@ -76,13 +73,35 @@ export const Indeterminate: Story = {
 	args: { indeterminate: true },
 };
 
-export const Sizes: Story = {
-	name: "크기 비교",
-	render: (args) => (
-		<div style={{ display: "grid", gap: 8 }}>
-			<Checkbox {...args} size="sm" label="Small" />
-			<Checkbox {...args} size="md" label="Medium" />
-			<Checkbox {...args} size="lg" label="Large" />
+export const Error: Story = {
+	name: "에러 상태",
+	args: { error: true },
+};
+
+export const Disabled: Story = {
+	name: "비활성화",
+	args: { disabled: true },
+};
+
+export const AllStates: Story = {
+	name: "전체 상태 비교",
+	render: () => (
+		<div style={{ display: "grid", gap: 16 }}>
+			<div style={{ display: "flex", gap: 16 }}>
+				<Checkbox label="Unselected" />
+				<Checkbox label="Checked" defaultChecked />
+				<Checkbox label="Indeterminate" indeterminate />
+			</div>
+			<div style={{ display: "flex", gap: 16 }}>
+				<Checkbox label="Disabled" disabled />
+				<Checkbox label="Disabled Checked" disabled defaultChecked />
+				<Checkbox label="Disabled Indeterminate" disabled indeterminate />
+			</div>
+			<div style={{ display: "flex", gap: 16 }}>
+				<Checkbox label="Error" error />
+				<Checkbox label="Error Checked" error defaultChecked />
+				<Checkbox label="Error Indeterminate" error indeterminate />
+			</div>
 		</div>
 	),
 };
