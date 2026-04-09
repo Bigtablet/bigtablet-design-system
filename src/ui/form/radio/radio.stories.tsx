@@ -91,6 +91,17 @@ export const Group: Story = {
 	},
 };
 
+export const Sizes: Story = {
+	name: "크기 비교",
+	render: () => (
+		<div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+			{(["sm", "md", "lg"] as const).map((size) => (
+				<Radio key={size} size={size} label={size} name="size-demo" defaultChecked={size === "md"} />
+			))}
+		</div>
+	),
+};
+
 export const Disabled: Story = {
 	name: "비활성화",
 	render: (args) => {
@@ -100,7 +111,7 @@ export const Disabled: Story = {
 		return (
 			<div style={{ display: "grid", gap: 8 }}>
 				<Radio {...args} name={groupName} value="a" disabled label="Disabled A" />
-				<Radio {...args} name={groupName} value="b" disabled label="Disabled B" />
+				<Radio {...args} name={groupName} value="b" disabled checked label="Disabled B (선택됨)" />
 			</div>
 		);
 	},

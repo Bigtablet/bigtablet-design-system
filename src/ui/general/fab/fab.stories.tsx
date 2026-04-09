@@ -68,6 +68,31 @@ export const Disabled: Story = {
 	args: { disabled: true },
 };
 
+export const FloatingPosition: Story = {
+	name: "플로팅 위치 (실제 사용 예시)",
+	render: () => (
+		<div
+			style={{
+				position: "relative",
+				width: "100%",
+				height: 320,
+				background: "#f5f5f5",
+				borderRadius: 12,
+				overflow: "hidden",
+			}}
+		>
+			<div style={{ padding: 24 }}>
+				<p style={{ margin: 0, fontSize: 14, color: "#666" }}>
+					FAB는 보통 화면 우측 하단에 고정 배치합니다.
+				</p>
+			</div>
+			<div style={{ position: "absolute", right: 24, bottom: 24 }}>
+				<FAB variant="primary" icon={<PlusIcon />} aria-label="추가" />
+			</div>
+		</div>
+	),
+};
+
 export const AllVariants: Story = {
 	name: "전체 Variant 비교",
 	render: () => (

@@ -89,6 +89,33 @@ export const Multiple: Story = {
 	args: { multiple: true, label: "여러 파일 선택" },
 };
 
+export const AcceptFilter: Story = {
+	name: "파일 형식 제한",
+	render: (args) => {
+		const [fileNames, setFileNames] = React.useState<string>("선택된 파일 없음");
+
+		return (
+			<div style={{ display: "grid", gap: 10 }}>
+				<FileInput
+					{...args}
+					label="이미지 선택"
+					accept="image/*"
+					onFiles={(files) => {
+						const names = files?.length
+							? Array.from(files)
+									.map((f) => f.name)
+									.join(", ")
+							: "선택된 파일 없음";
+						setFileNames(names);
+					}}
+					supportingText="JPG, PNG, GIF 등 이미지 파일만 선택 가능합니다."
+				/>
+				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>{fileNames}</p>
+			</div>
+		);
+	},
+};
+
 export const Disabled: Story = {
 	name: "비활성화",
 	args: { disabled: true },

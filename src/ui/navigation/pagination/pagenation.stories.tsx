@@ -6,6 +6,20 @@ const meta: Meta<typeof Pagination> = {
 	title: "Components/Navigation/Pagination",
 	component: Pagination,
 	tags: ["autodocs"],
+	argTypes: {
+		page: {
+			control: { type: "number", min: 1 },
+			description: "현재 페이지 번호입니다.",
+		},
+		totalPages: {
+			control: { type: "number", min: 1 },
+			description: "전체 페이지 수입니다.",
+		},
+		onChange: {
+			action: "changed",
+			description: "페이지 변경 시 호출되는 콜백입니다.",
+		},
+	},
 	parameters: {
 		docs: {
 			description: {
