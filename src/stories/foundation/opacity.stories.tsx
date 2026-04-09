@@ -95,6 +95,69 @@ export const Scale: Story = {
 	),
 };
 
+export const UsageExamples: Story = {
+	name: "실제 적용 예시",
+	render: () => (
+		<div
+			style={{
+				background: "#fafafa",
+				borderRadius: 12,
+				padding: 24,
+				display: "grid",
+				gap: 20,
+				maxWidth: 560,
+			}}
+		>
+			<h3 style={{ margin: 0, fontSize: 14 }}>컴포넌트에서 이렇게 사용됩니다</h3>
+
+			{/* Hover overlay */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-5</code> — 버튼 호버 오버레이
+				</div>
+				<div style={{ display: "flex", gap: 12 }}>
+					<div style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+						기본 상태
+					</div>
+					<div style={{ position: "relative", padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+						호버 상태
+						<div style={{ position: "absolute", inset: 0, borderRadius: 8, background: "#fff", opacity: 0.05 }} />
+					</div>
+				</div>
+			</div>
+
+			{/* Disabled */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-38</code> — 비활성화 상태
+				</div>
+				<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+					<button type="button" style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none" }}>
+						활성 버튼
+					</button>
+					<button type="button" disabled style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none", opacity: 0.38, cursor: "not-allowed" }}>
+						비활성 버튼
+					</button>
+				</div>
+			</div>
+
+			{/* Modal overlay */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-50</code> — 모달 배경 오버레이
+				</div>
+				<div style={{ position: "relative", height: 80, borderRadius: 8, overflow: "hidden" }}>
+					<div style={{ padding: 12, fontSize: 13, color: "#333" }}>배경 콘텐츠 영역</div>
+					<div style={{ position: "absolute", inset: 0, background: "#000", opacity: 0.5 }} />
+					<div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "#fff", borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 600 }}>
+						모달
+					</div>
+				</div>
+			</div>
+		</div>
+	),
+};
+
 function opacityUseCase(key: string) {
 	switch (key) {
 		case "0":

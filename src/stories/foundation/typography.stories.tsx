@@ -237,6 +237,48 @@ export const Base: Story = {
 	),
 };
 
+export const Hierarchy: Story = {
+	name: "실제 페이지 위계 예시",
+	render: () => (
+		<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 32, maxWidth: 560 }}>
+			<p style={{ margin: "0 0 20px", fontSize: 12, color: "#2563eb", background: "#eff6ff", borderRadius: 8, padding: 10 }}>
+				아래는 하나의 페이지에서 각 Typography 토큰이 어떤 역할을 하는지 보여줍니다.
+			</p>
+
+			{/* Display */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "36px", fontWeight: 500, lineHeight: "1.3", letterSpacing: "-0.02em", marginBottom: 8 }}>
+				캠페인 타이틀
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 24 }}>↑ Display.large</span>
+
+			{/* Heading */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "24px", fontWeight: 500, lineHeight: "1.35", marginBottom: 4 }}>
+				섹션 제목
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 16 }}>↑ Heading.large</span>
+
+			{/* Title */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "16px", fontWeight: 500, lineHeight: "1.5", marginBottom: 4 }}>
+				카드 헤더 텍스트
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 8 }}>↑ Title.medium</span>
+
+			{/* Body */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "14px", fontWeight: 400, lineHeight: "1.6", color: "#444", marginBottom: 4 }}>
+				본문 텍스트입니다. 이 영역은 사용자에게 상세한 정보를 전달하는 데 사용됩니다.
+				적절한 line-height와 letter-spacing으로 가독성을 확보합니다.
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 12 }}>↑ Body.medium</span>
+
+			{/* Label */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "12px", fontWeight: 400, lineHeight: "1.4", color: "#999", marginBottom: 4 }}>
+				2026-04-09 · 보조 텍스트 · 캡션
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block" }}>↑ Label.small</span>
+		</div>
+	),
+};
+
 function sampleText(scale: string) {
 	switch (scale) {
 		case "display":

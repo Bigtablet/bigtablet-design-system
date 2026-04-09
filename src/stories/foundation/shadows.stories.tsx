@@ -95,6 +95,96 @@ export const Levels: Story = {
 	),
 };
 
+export const ElevationStack: Story = {
+	name: "Elevation 시각화",
+	render: () => (
+		<div
+			style={{
+				background: "#f0f0f0",
+				borderRadius: 16,
+				padding: 32,
+				maxWidth: 480,
+				position: "relative",
+				height: 320,
+				perspective: "800px",
+			}}
+		>
+			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
+				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이 강해집니다.
+			</p>
+			{Object.entries(shadows).map(([key, value], i) => (
+				<div
+					key={key}
+					style={{
+						position: "absolute",
+						left: 32 + i * 8,
+						right: 32 + i * 8,
+						bottom: 60 + i * 48,
+						height: 44,
+						background: "#fff",
+						borderRadius: 10,
+						boxShadow: value,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						padding: "0 16px",
+						fontSize: 13,
+						zIndex: i,
+					}}
+				>
+					<strong>{key}</strong>
+					<span style={{ fontSize: 11, color: "#999" }}>{shadowUseCase(key)}</span>
+				</div>
+			))}
+		</div>
+	),
+};
+
+export const DoAndDont: Story = {
+	name: "DO / DON'T",
+	render: () => (
+		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640 }}>
+			{/* DO */}
+			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
+				<div style={{ display: "grid", gap: 8 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level1, fontSize: 13 }}>
+						카드 → level1
+					</div>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level2, fontSize: 13 }}>
+						드롭다운 → level2
+					</div>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level4, fontSize: 13 }}>
+						모달 → level4
+					</div>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
+					UI의 높낮이에 맞게 단계적으로 사용합니다.
+				</p>
+			</div>
+
+			{/* DON'T */}
+			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
+				<div style={{ display: "grid", gap: 8 }}>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+						카드에 level5 사용
+					</div>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+						버튼에 level5 사용
+					</div>
+					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: shadows.level5, fontSize: 13 }}>
+						모든 요소에 같은 그림자
+					</div>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
+					강한 그림자를 남용하면 위계가 무너집니다.
+				</p>
+			</div>
+		</div>
+	),
+};
+
 function shadowDescription(key: string) {
 	switch (key) {
 		case "level1":

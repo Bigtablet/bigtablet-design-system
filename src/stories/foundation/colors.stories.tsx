@@ -168,6 +168,36 @@ export const Base: Story = {
 	),
 };
 
+export const DoAndDont: Story = {
+	name: "DO / DON'T",
+	render: () => (
+		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640 }}>
+			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
+				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>color: colors.text.body</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>background: colors.bg.surface</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>border: colors.border.default</code>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
+					Semantic 토큰을 사용하면 테마 변경 시 자동 반영됩니다.
+				</p>
+			</div>
+			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
+				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>color: "#333333"</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>background: "#ffffff"</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>border: "#e5e5e5"</code>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
+					하드코딩된 HEX 값은 테마 변경 시 깨지고 일관성이 무너집니다.
+				</p>
+			</div>
+		</div>
+	),
+};
+
 /** camelCase → kebab-case (tokens.json 키 표시용) */
 function toJsonKey(key: string) {
 	return key.replace(/([a-z])([A-Z0-9])/g, "$1-$2").replace(/([0-9])([a-zA-Z])/g, "$1-$2").toLowerCase();
