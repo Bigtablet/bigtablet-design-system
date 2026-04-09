@@ -32,7 +32,7 @@ export const Button = ({
 	size = "md",
 	leadingIcon,
 	trailingIcon,
-	fullWidth,
+	fullWidth = false,
 	className,
 	children,
 	...props

@@ -57,6 +57,13 @@ export const ListItem = ({
 		<div
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}
+			onKeyDown={(e) => {
+				if (disabled || !onClick) return;
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+				}
+			}}
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick && !disabled ? 0 : undefined}
 			{...props}

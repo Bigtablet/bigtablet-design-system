@@ -102,6 +102,7 @@ export const TextField = ({
 						className="text_field_input"
 						aria-invalid={!!error}
 						aria-describedby={helperId}
+						aria-label={!showLabel ? label : undefined}
 						{...props}
 						value={innerValue}
 						onCompositionStart={() => {
