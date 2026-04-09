@@ -115,16 +115,16 @@ function shadowDescription(key: string) {
 function shadowUseCase(key: string) {
 	switch (key) {
 		case "level1":
-			return "Card, Input background";
+			return "카드, 입력창 배경";
 		case "level2":
-			return "Select list, Tooltip, Popover";
+			return "셀렉트 목록, 툴팁, 팝오버";
 		case "level3":
-			return "Side sheet, Small panel";
+			return "사이드시트, 작은 패널";
 		case "level4":
-			return "Modal, Drawer";
+			return "모달, 드로어";
 		case "level5":
-			return "Full overlay emphasis";
+			return "전체 오버레이 강조";
 		default:
-			return "UI layer";
+			return "UI 레이어";
 	}
 }

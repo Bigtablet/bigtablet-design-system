@@ -89,7 +89,7 @@ export const Base: Story = {
 						borderRadius: 10,
 					}}
 				>
-					<code style={{ fontSize: 12 }}>baseBorderWidth["{key}"]</code>
+					<code style={{ fontSize: 12 }}>border-width-{key}</code>
 					<span style={{ fontSize: 13, opacity: 0.7 }}>{value}</span>
 				</div>
 			))}

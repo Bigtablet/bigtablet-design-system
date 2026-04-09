@@ -69,7 +69,7 @@ function MotionPreview({ name, transition }: { name: string; transition: string 
 					transition: `all ${transition}`,
 				}}
 			>
-				Click me
+				클릭해 보세요
 			</div>
 
 			<p style={{ marginTop: 8, fontSize: 13, opacity: 0.75 }}>{motionDescription(name)}</p>

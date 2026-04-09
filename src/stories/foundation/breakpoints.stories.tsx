@@ -46,7 +46,7 @@ export const Overview: Story = {
 				>
 					<div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 12 }}>
 						<strong>{key}</strong>
-						<code style={{ fontSize: 12, opacity: 0.8 }}>breakpoints.{key}</code>
+						<code style={{ fontSize: 12, opacity: 0.8 }}>breakpoint-{key}</code>
 						<span style={{ marginLeft: "auto", opacity: 0.7, fontSize: 13 }}>
 							{value === 0 ? "0px~" : `${value}px 이상`}
 						</span>

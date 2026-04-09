@@ -12,8 +12,18 @@ const meta: Meta = {
 
 **Base / Semantic 2계층 구조**로 정의된 타이포그래피 토큰입니다.
 
-- **Base**: 원시 값 (fontSize, fontWeight, lineHeight)
-- **Semantic**: 역할 기반 스케일 (display / heading / title / body / label × large/medium/small × regular/medium)
+- **Base**: 원시 값 (fontSize, fontWeight, lineHeight, letterSpacing)
+- **Semantic**: 역할 기반 스케일 — 5단계 × 3사이즈 × 2굵기
+
+| 스케일 | 사이즈 범위 | 사용처 |
+|--------|-------------|--------|
+| Display | 32–48px | 히어로·캠페인 타이틀 |
+| Heading | 20–28px | 페이지/섹션 제목 |
+| Title | 14–18px | 카드·컴포넌트 헤더 |
+| Body | 14–16px | 본문·설명 텍스트 |
+| Label | 12–14px | 라벨·캡션·보조 텍스트 |
+
+각 스케일에는 **large / medium / small** 사이즈와 **regular / medium** 굵기가 있습니다.
 
 ❗️직접 px 값을 쓰지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,
@@ -110,31 +120,31 @@ export const Semantic: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 820 }}>
 			<ScaleSection
 				title="Display"
-				description="히어로·캠페인 타이틀 (32–48px)"
+				description="히어로·캠페인 타이틀 (32–48px) — 랜딩페이지, 프로모션 배너 등 시선을 끄는 대형 텍스트"
 				scale="display"
 				entries={Object.entries(typography.display) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Heading"
-				description="페이지/섹션 제목 (20–28px)"
+				description="페이지/섹션 제목 (20–28px) — 페이지 타이틀, 섹션 구분, 주요 콘텐츠 영역 제목"
 				scale="heading"
 				entries={Object.entries(typography.heading) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Title"
-				description="카드·컴포넌트 헤더 (14–18px)"
+				description="카드·컴포넌트 헤더 (14–18px) — 카드 제목, 리스트 아이템 타이틀, 모달 헤더"
 				scale="title"
 				entries={Object.entries(typography.title) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Body"
-				description="본문·설명 텍스트 (14–16px)"
+				description="본문·설명 텍스트 (14–16px) — 단락 텍스트, 설명문, 안내 메시지"
 				scale="body"
 				entries={Object.entries(typography.body) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Label"
-				description="라벨·캡션·보조 텍스트 (12–14px)"
+				description="라벨·캡션·보조 텍스트 (12–14px) — 폼 라벨, 버튼 텍스트, 뱃지, 헬퍼 텍스트, 타임스탬프"
 				scale="label"
 				entries={Object.entries(typography.label) as [string, TypoStyle][]}
 			/>
@@ -181,7 +191,7 @@ export const Base: Story = {
 							borderRadius: 12,
 						}}
 					>
-						<code style={{ fontSize: 12 }}>fontSize.{key}</code>
+						<code style={{ fontSize: 12 }}>font-size-{key}</code>
 						<div
 							style={{
 								fontFamily: typography.fontFamily.primary,
@@ -217,7 +227,7 @@ export const Base: Story = {
 						}}
 					>
 						<div style={{ fontWeight: fontWeightMap[value] ?? 400, fontSize: 16 }}>
-							굵기 예시 — {key} ({value})
+							굵기 예시 — font-weight-{key} ({value})
 						</div>
 						<code style={{ fontSize: 12 }}>{fontWeightMap[value] ?? value}</code>
 					</div>

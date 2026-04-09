@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import * as React from "react";
 import { zIndex } from "src/styles/ts/z-index";
 
 const meta: Meta = {
@@ -68,46 +69,208 @@ export const Overview: Story = {
 					</table>
 				</section>
 
-				{/* 시각적 레이어 예시 */}
-				<section>
-					<h3 style={{ marginBottom: 8 }}>겹침 예시 (시각적 이해)</h3>
-					<p style={{ marginTop: 0, fontSize: 13, opacity: 0.75 }}>
-						실제 화면에서 요소들이 어떤 순서로 겹쳐 보이는지 예시입니다.
-					</p>
-
-					<div
-						style={{
-							position: "relative",
-							height: 220,
-							background: "#f5f5f5",
-							borderRadius: 12,
-							overflow: "hidden",
-						}}
-					>
-						{entries.map(([key, value], index) => (
-							<div
-								key={key}
-								style={{
-									position: "absolute",
-									inset: 20 + index * 10,
-									background: layerColor(index),
-									color: "#fff",
-									padding: 12,
-									borderRadius: 10,
-									zIndex: value as number,
-									fontSize: 13,
-								}}
-							>
-								<strong>{key}</strong>
-								<div style={{ opacity: 0.8 }}>z-index: {value}</div>
-							</div>
-						))}
-					</div>
-				</section>
+				{/* 인터랙티브 레이어 스택 */}
+				<LayerStack entries={entries} />
 			</div>
 		);
 	},
 };
+
+function LayerStack({ entries }: { entries: [string, number | string][] }) {
+	const [expanded, setExpanded] = React.useState(false);
+	const [rotation, setRotation] = React.useState({ x: 50, z: -25 });
+	const [hoveredLayer, setHoveredLayer] = React.useState<string | null>(null);
+	const dragging = React.useRef(false);
+	const lastPos = React.useRef({ x: 0, y: 0 });
+	const reversed = [...entries].reverse(); // level5(위) → level0(아래)
+
+	const handleMouseDown = (e: React.MouseEvent) => {
+		if (!expanded) return;
+		dragging.current = true;
+		lastPos.current = { x: e.clientX, y: e.clientY };
+	};
+
+	const handleMouseMove = (e: React.MouseEvent) => {
+		if (!dragging.current) return;
+		const dx = e.clientX - lastPos.current.x;
+		const dy = e.clientY - lastPos.current.y;
+		setRotation((prev) => ({
+			x: Math.max(10, Math.min(80, prev.x - dy * 0.5)),
+			z: prev.z + dx * 0.5,
+		}));
+		lastPos.current = { x: e.clientX, y: e.clientY };
+	};
+
+	const handleMouseUp = () => {
+		dragging.current = false;
+	};
+
+	return (
+		<section>
+			<div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+				<h3 style={{ margin: 0 }}>레이어 스택</h3>
+				<button
+					type="button"
+					onClick={() => {
+						setExpanded((v) => !v);
+						setRotation({ x: 50, z: -25 });
+					}}
+					style={{
+						padding: "4px 12px",
+						borderRadius: 6,
+						border: "1px solid #e5e5e5",
+						background: expanded ? "#121212" : "#fff",
+						color: expanded ? "#fff" : "#121212",
+						fontSize: 12,
+						cursor: "pointer",
+						transition: "all 0.2s ease-in-out",
+					}}
+				>
+					{expanded ? "접기" : "3D 분해도"}
+				</button>
+			</div>
+			<p style={{ marginTop: 0, fontSize: 13, opacity: 0.75 }}>
+				{expanded
+					? "마우스로 회전할 수 있습니다. 위에 있을수록 사용자에게 먼저 보입니다."
+					: "숫자가 높은 레이어가 위에 쌓입니다. 버튼을 눌러 분해도를 확인하세요."}
+			</p>
+
+			<div
+				style={{
+					background: "#f5f5f5",
+					borderRadius: 12,
+					overflow: "hidden",
+					transition: "height 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+					height: expanded ? 520 : 220,
+				}}
+			>
+				{/* 접힌 상태: 겹침 예시 (absolute + inset) */}
+				{!expanded && (
+					<div style={{ position: "relative", height: 220 }}>
+						{entries.map(([key, value], index) => {
+							const isHovered = hoveredLayer === key;
+							return (
+								<div
+									key={key}
+									onMouseEnter={() => setHoveredLayer(key)}
+									onMouseLeave={() => setHoveredLayer(null)}
+									style={{
+										position: "absolute",
+										inset: 20 + index * 10,
+										background: layerColor(index),
+										color: "#fff",
+										padding: 12,
+										borderRadius: 10,
+										zIndex: value as number,
+										fontSize: 13,
+										cursor: "pointer",
+										outline: isHovered ? "2px solid #fff" : "none",
+										transition: "outline 0.15s ease",
+									}}
+								>
+									<strong>{key}</strong>
+									<div style={{ opacity: 0.8 }}>z-index: {value}</div>
+								</div>
+							);
+						})}
+
+						{/* 호버 툴팁 */}
+						{hoveredLayer && (
+							<div
+								style={{
+									position: "absolute",
+									bottom: 8,
+									left: "50%",
+									transform: "translateX(-50%)",
+									background: "#121212",
+									color: "#fff",
+									padding: "6px 14px",
+									borderRadius: 8,
+									fontSize: 12,
+									zIndex: 9999,
+									whiteSpace: "nowrap",
+									boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+								}}
+							>
+								<strong>{hoveredLayer}</strong> · z-index: {entries.find(([k]) => k === hoveredLayer)?.[1]} · {descriptionForKey(hoveredLayer)}
+							</div>
+						)}
+					</div>
+				)}
+
+				{/* 펼친 상태: 3D 분해도 (마우스 회전 가능) */}
+				{expanded && (
+					<div
+						onMouseDown={handleMouseDown}
+						onMouseMove={handleMouseMove}
+						onMouseUp={handleMouseUp}
+						onMouseLeave={handleMouseUp}
+						style={{
+							height: 520,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							perspective: 1000,
+							paddingTop: 40,
+							cursor: dragging.current ? "grabbing" : "grab",
+							userSelect: "none",
+						}}
+					>
+						<div
+							style={{
+								position: "relative",
+								width: 360,
+								height: 160,
+								transformStyle: "preserve-3d",
+								transform: `rotateX(${rotation.x}deg) rotateZ(${rotation.z}deg)`,
+								transition: dragging.current ? "none" : "transform 0.3s ease-out",
+							}}
+						>
+							{entries.map(([key, value], i) => (
+								<div
+									key={key}
+									style={{
+										position: "absolute",
+										inset: 0,
+										background: layerColor(i),
+										borderRadius: 10,
+										border: "1px solid rgba(255,255,255,0.3)",
+										boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "space-between",
+										padding: "0 16px",
+										color: "#fff",
+										fontSize: 13,
+										transform: `translateZ(${i * 40}px)`,
+										opacity: 0.92,
+									}}
+								>
+									<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+										<strong>{key}</strong>
+										<span
+											style={{
+												background: "rgba(255,255,255,0.2)",
+												padding: "2px 6px",
+												borderRadius: 4,
+												fontSize: 11,
+											}}
+										>
+											{value}
+										</span>
+									</div>
+									<span style={{ fontSize: 11 }}>
+										{descriptionForKey(key)}
+									</span>
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+			</div>
+		</section>
+	);
+}
 
 const th: React.CSSProperties = {
 	textAlign: "left",
