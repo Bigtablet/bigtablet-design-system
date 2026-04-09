@@ -54,7 +54,7 @@ const AlertDemo = ({
 };
 
 const meta: Meta<typeof AlertDemo> = {
-	title: "Components/Feedback/Alert",
+	title: "Components/Alert",
 	component: AlertDemo,
 	decorators: [
 		(Story) => (

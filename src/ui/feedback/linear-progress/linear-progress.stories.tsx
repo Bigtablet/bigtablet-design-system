@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LinearProgress } from ".";
 
 const meta: Meta<typeof LinearProgress> = {
-	title: "Components/Feedback/LinearProgress",
+	title: "Components/LinearProgress",
 	component: LinearProgress,
 	tags: ["autodocs"],
 	argTypes: {

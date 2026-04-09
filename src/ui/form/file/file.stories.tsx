@@ -3,7 +3,7 @@ import * as React from "react";
 import { FileInput } from ".";
 
 const meta: Meta<typeof FileInput> = {
-	title: "Components/Form/FileInput",
+	title: "Components/FileInput",
 	component: FileInput,
 	tags: ["autodocs"],
 	argTypes: {

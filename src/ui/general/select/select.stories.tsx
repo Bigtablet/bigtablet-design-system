@@ -10,7 +10,7 @@ const options: SelectOption[] = [
 ];
 
 const meta: Meta<typeof Select> = {
-	title: "Components/General/Select",
+	title: "Components/Select",
 	component: Select,
 	tags: ["autodocs"],
 	argTypes: {
