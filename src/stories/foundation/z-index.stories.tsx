@@ -82,7 +82,7 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 	const [hoveredLayer, setHoveredLayer] = React.useState<string | null>(null);
 	const dragging = React.useRef(false);
 	const lastPos = React.useRef({ x: 0, y: 0 });
-	const reversed = [...entries].reverse(); // level5(위) → level0(아래)
+
 
 	const handleMouseDown = (e: React.MouseEvent) => {
 		if (!expanded) return;

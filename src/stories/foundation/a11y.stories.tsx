@@ -261,15 +261,31 @@ export const TapTarget: Story = {
 
 // ── 색상 대비 ────────────────────────────────────────────────────────────────
 
-function getLuminance(hex: string): number {
-	const rgb = hex
-		.replace("#", "")
-		.match(/.{2}/g)!
-		.map((c) => {
-			const v = parseInt(c, 16) / 255;
-			return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-		});
-	return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+/** rgba(r, g, b, a) 또는 #rrggbb → [r, g, b] (0~255), 알파는 흰 배경과 블렌딩 */
+function parseToRGB(color: string): [number, number, number] {
+	const rgba = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+	if (rgba) {
+		const r = parseInt(rgba[1]);
+		const g = parseInt(rgba[2]);
+		const b = parseInt(rgba[3]);
+		const a = rgba[4] !== undefined ? parseFloat(rgba[4]) : 1;
+		// 흰 배경(255,255,255)과 알파 블렌딩
+		return [
+			Math.round(r * a + 255 * (1 - a)),
+			Math.round(g * a + 255 * (1 - a)),
+			Math.round(b * a + 255 * (1 - a)),
+		];
+	}
+	const hex = color.replace("#", "").match(/.{2}/g)!;
+	return [parseInt(hex[0], 16), parseInt(hex[1], 16), parseInt(hex[2], 16)];
+}
+
+function getLuminance(color: string): number {
+	const [r, g, b] = parseToRGB(color).map((c) => {
+		const v = c / 255;
+		return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+	});
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
 function getContrastRatio(hex1: string, hex2: string): number {
@@ -289,16 +305,16 @@ type ContrastPair = {
 };
 
 const contrastPairs: ContrastPair[] = [
-	{ label: "제목 텍스트", fg: "#121212", fgName: "text.heading", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "본문 텍스트", fg: "#666666", fgName: "text.body", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "캡션 텍스트", fg: "#888888", fgName: "text.caption", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "비활성 텍스트", fg: "#9A9A9A", fgName: "text.disabled", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "반전 텍스트", fg: "#FFFFFF", fgName: "brand.onPrimary", bg: "#121212", bgName: "brand.primary" },
-	{ label: "에러 텍스트", fg: "#EF4444", fgName: "status.error", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "성공 텍스트", fg: "#10B981", fgName: "status.success", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "정보 텍스트", fg: "#3B82F6", fgName: "status.info", bg: "#FFFFFF", bgName: "bg.solid" },
-	{ label: "보조 배경 위 제목", fg: "#121212", fgName: "text.heading", bg: "#F4F4F4", bgName: "bg.solidDim" },
-	{ label: "보조 배경 위 본문", fg: "#666666", fgName: "text.body", bg: "#F4F4F4", bgName: "bg.solidDim" },
+	{ label: "제목 텍스트", fg: colors.text.heading, fgName: "text.heading", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "본문 텍스트", fg: colors.text.body, fgName: "text.body", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "캡션 텍스트", fg: colors.text.caption, fgName: "text.caption", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "비활성 텍스트", fg: colors.text.disabled, fgName: "text.disabled", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "반전 텍스트", fg: colors.brand.onPrimary, fgName: "brand.onPrimary", bg: colors.brand.primary, bgName: "brand.primary" },
+	{ label: "에러 텍스트", fg: colors.status.error, fgName: "status.error", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "성공 텍스트", fg: colors.status.success, fgName: "status.success", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "정보 텍스트", fg: colors.status.info, fgName: "status.info", bg: colors.bg.solid, bgName: "bg.solid" },
+	{ label: "보조 배경 위 제목", fg: colors.text.heading, fgName: "text.heading", bg: colors.bg.solidDim, bgName: "bg.solidDim" },
+	{ label: "보조 배경 위 본문", fg: colors.text.body, fgName: "text.body", bg: colors.bg.solidDim, bgName: "bg.solidDim" },
 ];
 
 export const ColorContrast: Story = {

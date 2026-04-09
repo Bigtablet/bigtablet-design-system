@@ -38,7 +38,7 @@ export const colors = {
 
 	text: {
 		heading: baseColors.neutral900,
-		body: baseColors.neutral700,
+		body: baseColors.neutral500,
 		caption: baseColors.neutral500,
 		brand: baseColors.brandPrimary,
 		inverse: baseColors.neutral0,
