@@ -54,7 +54,7 @@ export const Scale: Story = {
 				>
 					<div>
 						<strong style={{ fontSize: 13 }}>{value}</strong>
-						<div style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>spacing-{key}</div>
+						<div style={{ fontSize: 11, color: "#666", marginTop: 1 }}>spacing-{key}</div>
 					</div>
 
 					<div
@@ -76,8 +76,8 @@ export const Scale: Story = {
 						/>
 					</div>
 
-					<div style={{ fontSize: 12, opacity: 0.8, textAlign: "right" }}>
-						<span style={{ marginRight: 8, opacity: 0.6 }}>{value}</span>
+					<div style={{ fontSize: 12, color: "#444", textAlign: "right" }}>
+						<span style={{ marginRight: 8, color: "#666" }}>{value}</span>
 						{spacingUseCase(key)}
 					</div>
 				</div>

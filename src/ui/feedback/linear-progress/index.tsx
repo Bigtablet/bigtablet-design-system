@@ -8,6 +8,8 @@ export interface LinearProgressProps extends React.HTMLAttributes<HTMLDivElement
 	totalSteps: number;
 	/** 현재 단계 (0부터 totalSteps까지) */
 	currentStep: number;
+	/** 접근성 레이블 (스크린 리더용) */
+	"aria-label": string;
 }
 
 /**

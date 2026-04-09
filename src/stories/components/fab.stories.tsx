@@ -27,6 +27,7 @@ const meta: Meta<typeof FAB> = {
 		icon: <PlusIcon />,
 		variant: "primary",
 		disabled: false,
+		"aria-label": "추가",
 	},
 	parameters: {
 		docs: {
@@ -74,8 +75,8 @@ export const AllVariants: Story = {
 			{(["primary", "additive"] as const).map((variant) => (
 				<div key={variant} style={{ display: "flex", gap: 8, alignItems: "center" }}>
 					<span style={{ width: 80, fontSize: 12, color: "#666" }}>{variant}</span>
-					<FAB variant={variant} icon={<PlusIcon />} />
-					<FAB variant={variant} icon={<PlusIcon />} disabled />
+					<FAB variant={variant} icon={<PlusIcon />} aria-label="추가" />
+					<FAB variant={variant} icon={<PlusIcon />} aria-label="추가" disabled />
 				</div>
 			))}
 		</div>

@@ -66,6 +66,7 @@ export const ListItem = ({
 			}}
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick && !disabled ? 0 : undefined}
+			aria-disabled={disabled || undefined}
 			{...props}
 		>
 			<div className="list_item_state_layer">

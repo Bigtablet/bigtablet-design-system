@@ -139,7 +139,7 @@ export const WithLeading: Story = {
 					alignItems: "center",
 					justifyContent: "center",
 					fontSize: 12,
-					color: "#666",
+					color: "#444",
 				}}
 			>
 				56x56
@@ -156,6 +156,7 @@ export const WithTrailing: Story = {
 		trailingElement: (
 			<button
 				type="button"
+				aria-label="더보기"
 				style={{
 					width: 40,
 					height: 40,
@@ -205,7 +206,7 @@ export const MiddleAlignment: Story = {
 					alignItems: "center",
 					justifyContent: "center",
 					fontSize: 11,
-					color: "#666",
+					color: "#444",
 				}}
 			>
 				40
@@ -214,6 +215,7 @@ export const MiddleAlignment: Story = {
 		trailingElement: (
 			<button
 				type="button"
+				aria-label="더보기"
 				style={{
 					width: 40,
 					height: 40,

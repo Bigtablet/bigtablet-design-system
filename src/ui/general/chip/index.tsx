@@ -89,7 +89,7 @@ export const Chip = ({
 					className="chip_trailing"
 					disabled={disabled}
 					onClick={type === "input" && removable ? onRemove : onClick}
-					aria-label={type === "input" && removable ? "Remove" : undefined}
+					aria-label={type === "input" && removable ? "Remove" : "Toggle dropdown"}
 				>
 					<span className="chip_icon" aria-hidden="true">
 						{type === "input" && removable ? <CloseIcon /> : <ChevronDownIcon />}

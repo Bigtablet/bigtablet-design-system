@@ -12,6 +12,8 @@ export interface FABProps
 	variant?: FABVariant;
 	/** 표시할 아이콘 */
 	icon: React.ReactNode;
+	/** 접근성 레이블 (스크린 리더용, 아이콘 전용 버튼이므로 필수) */
+	"aria-label": string;
 }
 
 /**

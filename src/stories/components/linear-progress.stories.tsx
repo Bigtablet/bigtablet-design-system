@@ -18,6 +18,7 @@ const meta: Meta<typeof LinearProgress> = {
 	args: {
 		totalSteps: 4,
 		currentStep: 2,
+		"aria-label": "진행률",
 	},
 	parameters: {
 		docs: {
@@ -99,7 +100,7 @@ export const AllSteps: Story = {
 					<p style={{ margin: "0 0 8px", fontSize: 14, color: "#666" }}>
 						{step}/4 ({Math.round((step / 4) * 100)}%)
 					</p>
-					<LinearProgress totalSteps={4} currentStep={step} />
+					<LinearProgress totalSteps={4} currentStep={step} aria-label={`진행률 ${step}/4`} />
 				</div>
 			))}
 		</div>

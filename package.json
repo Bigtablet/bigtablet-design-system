@@ -50,6 +50,7 @@
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
+		"test:storybook": "vitest run --project storybook",
 		"chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
 		"size": "size-limit",
 		"prepare": "husky"

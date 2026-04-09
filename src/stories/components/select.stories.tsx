@@ -129,7 +129,7 @@ export const Controlled: Story = {
 		return (
 			<div style={{ width: 320 }}>
 				<Select {...args} value={value} onChange={setValue} />
-				<div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
+				<div style={{ marginTop: 8, fontSize: 12, color: "#555" }}>
 					현재 선택 값: {String(value)}
 				</div>
 			</div>

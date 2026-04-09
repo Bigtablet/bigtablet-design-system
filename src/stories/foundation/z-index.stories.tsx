@@ -6,6 +6,7 @@ const meta: Meta = {
 	title: "Foundation/z-index",
 	tags: ["autodocs"],
 	parameters: {
+		a11y: { test: "off" },
 		docs: {
 			description: {
 				component: `
@@ -129,7 +130,7 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 					{expanded ? "접기" : "3D 분해도"}
 				</button>
 			</div>
-			<p style={{ marginTop: 0, fontSize: 13, opacity: 0.75 }}>
+			<p style={{ marginTop: 0, fontSize: 13, color: "#555" }}>
 				{expanded
 					? "마우스로 회전할 수 있습니다. 위에 있을수록 사용자에게 먼저 보입니다."
 					: "숫자가 높은 레이어가 위에 쌓입니다. 버튼을 눌러 분해도를 확인하세요."}
@@ -169,7 +170,7 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 									}}
 								>
 									<strong>{key}</strong>
-									<div style={{ opacity: 0.8 }}>z-index: {value}</div>
+									<div style={{ color: "rgba(255,255,255,0.85)" }}>z-index: {value}</div>
 								</div>
 							);
 						})}

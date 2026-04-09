@@ -10,6 +10,7 @@ export const baseColors = {
 	neutral300: "#999999",
 	neutral400: "#B3B3B3",
 	neutral500: "#888888",
+	neutral600: "#6B6B6B",
 	neutral700: "#666666",
 	neutral900: "#121212",
 
@@ -38,8 +39,8 @@ export const colors = {
 
 	text: {
 		heading: baseColors.neutral900,
-		body: baseColors.neutral500,
-		caption: baseColors.neutral500,
+		body: baseColors.neutral700,
+		caption: baseColors.neutral600,
 		brand: baseColors.brandPrimary,
 		inverse: baseColors.neutral0,
 		disabled: baseColors.alphaBlack38,
