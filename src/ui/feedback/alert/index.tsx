@@ -3,7 +3,7 @@
 import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
-import { useFocusTrap } from "../../../utils";
+import { cn, useFocusTrap } from "../../../utils";
 import "./style.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
@@ -142,13 +142,12 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onClose,
 }) => {
 	const panelRef = React.useRef<HTMLDivElement>(null);
+	const titleId = React.useId();
+	const messageId = React.useId();
 	useFocusTrap(panelRef, true);
 
-	const modalClassName = ["alert_modal", `alert_variant_${variant}`].filter(Boolean).join(" ");
-
-	const actionsClassName = ["alert_actions", `alert_actions_${actionsAlign}`]
-		.filter(Boolean)
-		.join(" ");
+	const modalClassName = cn("alert_modal", `alert_variant_${variant}`);
+	const actionsClassName = cn("alert_actions", `alert_actions_${actionsAlign}`);
 
 	return (
 		<div
@@ -164,17 +163,17 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
 				role="alertdialog"
 				aria-modal="true"
-				aria-labelledby="alert_title"
-				aria-describedby="alert_message"
+				aria-labelledby={titleId}
+				aria-describedby={messageId}
 			>
 				{title && (
-					<div className="alert_title" id="alert_title">
+					<div className="alert_title" id={titleId}>
 						{title}
 					</div>
 				)}
 
 				{message && (
-					<div className="alert_message" id="alert_message">
+					<div className="alert_message" id={messageId}>
 						{message}
 					</div>
 				)}

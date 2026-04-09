@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -29,9 +30,7 @@ export const FileInput = ({
 	const inputId = React.useId();
 	const helperId = React.useId();
 
-	const rootClassName = ["file_input", disabled && "file_input_disabled", className ?? ""]
-		.filter(Boolean)
-		.join(" ");
+	const rootClassName = cn("file_input", disabled && "file_input_disabled", className);
 
 	return (
 		<div className={rootClassName}>

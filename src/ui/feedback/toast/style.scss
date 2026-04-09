@@ -64,7 +64,7 @@
   gap: token.$spacing_8;
   pointer-events: none;
   width: 360px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - #{token.$spacing_32});
 
   @include breakpoint.compact {
     top: auto;
@@ -87,7 +87,7 @@
   padding: token.$spacing_12 token.$spacing_12 token.$spacing_16;
 
   background: token.$color_bg_solid;
-  border: 1px solid token.$color_border_default;
+  border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_lg;
   box-shadow: token.$shadow_level2;
 
@@ -105,7 +105,7 @@
 
   @include breakpoint.compact {
     padding: token.$spacing_8 token.$spacing_12 token.$spacing_12;
-    font-size: 13px;
+    font-size: token.$font_size_13;
     line-height: token.$line_height_20;
     border-radius: token.$radius_md;
     box-shadow: token.$shadow_level1;
@@ -187,7 +187,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 3px;
+  height: token.$spacing_3;
   border-radius: 0 0 0 token.$radius_lg;
   animation: toast_progress var(--toast-duration, 3000ms) linear forwards;
 

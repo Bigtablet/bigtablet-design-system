@@ -78,11 +78,11 @@
 
   &_button {
     min-width: 80px;
-    padding: 10px 24px;
+    padding: token.$spacing_12 token.$spacing_24;
     border-radius: token.$radius_sm;
     font-weight: token.$font_weight_medium;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: token.$border_width_standard solid transparent;
     line-height: token.$line_height_24;
 
     transition:
@@ -93,7 +93,7 @@
 
     &:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
+      box-shadow: token.$focus_ring;
     }
 
     &:active:not(:disabled) {
@@ -102,7 +102,7 @@
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: token.$opacity_38;
     }
 
     &_cancel {

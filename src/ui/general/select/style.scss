@@ -34,14 +34,14 @@
     &:disabled,
     &.is_disabled {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: token.$opacity_38;
       background: token.$color_bg_solid_dim;
       color: token.$color_text_caption;
     }
   }
 
   &_variant_outline {
-    border: 1px solid token.$color_border_default;
+    border: token.$border_width_standard solid token.$color_border_default;
 
     &:hover:not(.is_disabled) {
       border-color: token.$color_border_subtle;
@@ -49,13 +49,13 @@
 
     &.is_open {
       border-color: token.$color_brand_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
+      box-shadow: token.$focus_ring;
     }
   }
 
   &_variant_filled {
     background: token.$color_bg_solid_dim;
-    border: 1px solid transparent;
+    border: token.$border_width_standard solid transparent;
 
     &:hover:not(.is_disabled) {
       background: color.mix(
@@ -68,13 +68,13 @@
     &.is_open {
       background: token.$color_bg_solid;
       border-color: token.$color_brand_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
+      box-shadow: token.$focus_ring;
     }
   }
 
   &_variant_ghost {
     background: transparent;
-    border: 1px solid transparent;
+    border: token.$border_width_standard solid transparent;
 
     &:hover:not(.is_disabled) {
       background: token.$color_state_hover_on_light;
@@ -83,7 +83,7 @@
     &.is_open {
       background: token.$color_bg_solid;
       border-color: token.$color_brand_primary;
-      box-shadow: 0 0 0 3px rgba(token.$color_brand_primary, 0.15);
+      box-shadow: token.$focus_ring;
     }
   }
 
@@ -142,7 +142,7 @@
     margin-top: token.$spacing_4;
 
     background: token.$color_bg_solid;
-    border: 1px solid token.$color_border_default;
+    border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_md;
     box-shadow: token.$shadow_level2;
 

@@ -19,7 +19,7 @@ const preview: Preview = {
 			},
 		},
 		a11y: {
-			test: "todo",
+			test: "warning",
 		},
 		controls: { expanded: true },
 		nextjs: {
