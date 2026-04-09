@@ -603,10 +603,10 @@ Alert는 JavaScript로만 사용합니다.
   --bt-color-text-secondary: #666666;
   --bt-color-text-tertiary: #999999;
   --bt-color-border: #e5e5e5;
-  --bt-color-success: #10b981;
+  --bt-color-success: #047857;
   --bt-color-error: #ef4444;
   --bt-color-warning: #f59e0b;
-  --bt-color-info: #3b82f6;
+  --bt-color-info: #2563eb;
 
   /* Spacing */
   --bt-spacing-xs: 0.25rem;   /* 4px */

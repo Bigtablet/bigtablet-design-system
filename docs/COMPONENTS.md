@@ -9,6 +9,9 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 - [General](#general)
   - [Button](#button)
   - [Select](#select)
+  - [Chip](#chip)
+  - [FAB](#fab)
+  - [IconButton](#iconbutton)
 - [Form](#form)
   - [TextField](#textfield)
   - [Checkbox](#checkbox)
@@ -21,13 +24,15 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Toast](#toast)
   - [Spinner](#spinner)
   - [TopLoading](#toploading)
+  - [LinearProgress](#linearprogress)
 - [Navigation](#navigation)
   - [Pagination](#pagination)
-  - [Sidebar](#sidebar)
 - [Overlay](#overlay)
   - [Modal](#modal)
 - [Display](#display)
   - [Card](#card)
+  - [Divider](#divider)
+  - [ListItem](#listitem)
 
 ---
 
@@ -114,6 +119,80 @@ const [fruit, setFruit] = useState<string | null>(null);
 
 ---
 
+### Chip
+
+```tsx
+import { Chip } from '@bigtablet/design-system';
+
+// 기본 사용
+<Chip label="태그" />
+
+// 타입별
+<Chip type="basic" label="Basic" onClick={() => {}} />
+<Chip type="input" label="Input" removable onRemove={() => {}} />
+<Chip type="filter" label="Filter" selected onClick={() => {}} />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'basic' \| 'input' \| 'filter'` | `'basic'` | 칩 유형 |
+| `label` | `string` | required | 라벨 텍스트 |
+| `selected` | `boolean` | - | 선택 상태 |
+| `removable` | `boolean` | - | 삭제 가능 여부 (input 타입) |
+| `disabled` | `boolean` | `false` | 비활성화 |
+| `onClick` | `(event) => void` | - | 클릭 핸들러 |
+| `onRemove` | `() => void` | - | 삭제 핸들러 |
+
+---
+
+### FAB
+
+```tsx
+import { FAB } from '@bigtablet/design-system';
+import { Plus } from 'lucide-react';
+
+// 기본 사용
+<FAB icon={<Plus />} aria-label="추가" />
+
+// Additive variant
+<FAB variant="additive" icon={<Plus />} aria-label="새 항목 추가" />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'primary' \| 'additive'` | `'primary'` | FAB 스타일 |
+| `icon` | `ReactNode` | required | 표시할 아이콘 |
+| `aria-label` | `string` | required | 접근성 라벨 (필수) |
+| `disabled` | `boolean` | `false` | 비활성화 |
+
+---
+
+### IconButton
+
+```tsx
+import { IconButton } from '@bigtablet/design-system';
+import { Settings } from 'lucide-react';
+
+// Variants
+<IconButton variant="standard" icon={<Settings />} aria-label="설정" />
+<IconButton variant="filled" icon={<Settings />} aria-label="설정" />
+<IconButton variant="tonal" icon={<Settings />} aria-label="설정" />
+<IconButton variant="outlined" icon={<Settings />} aria-label="설정" />
+
+// Sizes
+<IconButton size="sm" icon={<Settings />} aria-label="설정" />
+<IconButton size="md" icon={<Settings />} aria-label="설정" />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'standard' \| 'filled' \| 'tonal' \| 'outlined'` | `'standard'` | 스타일 |
+| `size` | `'sm' \| 'md'` | `'md'` | 크기 |
+| `icon` | `ReactNode` | required | 표시할 아이콘 |
+| `disabled` | `boolean` | `false` | 비활성화 |
+
+---
+
 ## Form
 
 ### TextField
@@ -125,8 +204,8 @@ import { TextField } from '@bigtablet/design-system';
 <TextField label="이름" placeholder="이름을 입력하세요" />
 
 // 상태 표시
-<TextField label="이메일" error helperText="유효하지 않은 이메일입니다" />
-<TextField label="이메일" success helperText="사용 가능한 이메일입니다" />
+<TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
+<TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 
 // 아이콘
 import { Search, Eye } from 'lucide-react';
@@ -149,7 +228,7 @@ import { Search, Eye } from 'lucide-react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `string` | - | 라벨 |
-| `helperText` | `string` | - | 도움말 텍스트 |
+| `supportingText` | `string` | - | 도움말 텍스트 |
 | `error` | `boolean` | `false` | 에러 상태 |
 | `success` | `boolean` | `false` | 성공 상태 |
 | `variant` | `'outline' \| 'filled' \| 'ghost'` | `'outline'` | 스타일 |
@@ -258,7 +337,7 @@ const [isOn, setIsOn] = useState(false);
 | `defaultChecked` | `boolean` | `false` | 기본 상태 |
 | `onChange` | `(checked: boolean) => void` | - | 변경 핸들러 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `ariaLabel` | `string` | - | 접근성 라벨 |
+| `ariaLabel` | `string` | required | 접근성 라벨 (필수) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
 ---
@@ -467,6 +546,26 @@ import { TopLoading } from '@bigtablet/design-system';
 
 ---
 
+### LinearProgress
+
+```tsx
+import { LinearProgress } from '@bigtablet/design-system';
+
+// 기본 사용
+<LinearProgress totalSteps={5} currentStep={3} aria-label="진행률" />
+
+// 완료 상태
+<LinearProgress totalSteps={10} currentStep={10} aria-label="업로드 진행률" />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `totalSteps` | `number` | required | 전체 단계 수 |
+| `currentStep` | `number` | required | 현재 단계 (0~totalSteps) |
+| `aria-label` | `string` | required | 접근성 라벨 (필수) |
+
+---
+
 ## Navigation
 
 ### Pagination
@@ -488,47 +587,6 @@ const [page, setPage] = useState(1);
 | `page` | `number` | required | 현재 페이지 |
 | `totalPages` | `number` | required | 전체 페이지 수 |
 | `onChange` | `(page: number) => void` | required | 페이지 변경 핸들러 |
-
----
-
-### Sidebar
-
-> **Note:** Sidebar는 Next.js 전용입니다. `@bigtablet/design-system/next`에서 import 해야 합니다.
-
-```tsx
-import { Sidebar } from '@bigtablet/design-system/next';
-import { Home, Settings, Users } from 'lucide-react';
-
-const items = [
-  { href: '/', label: '홈', icon: Home },
-  { href: '/users', label: '사용자', icon: Users },
-  {
-    type: 'group',
-    id: 'settings',
-    label: '설정',
-    icon: Settings,
-    children: [
-      { href: '/settings/profile', label: '프로필' },
-      { href: '/settings/security', label: '보안' },
-    ],
-  },
-];
-
-<Sidebar
-  items={items}
-  activePath={pathname}
-  match="startsWith"
-  brandHref="/main"
-/>
-```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `SidebarItem[]` | `[]` | 메뉴 아이템 |
-| `activePath` | `string` | - | 현재 활성 경로 |
-| `match` | `'startsWith' \| 'exact'` | `'startsWith'` | 경로 매칭 방식 |
-| `brandHref` | `string` | `'/main'` | 로고 클릭 시 이동 경로 |
-| `onItemSelect` | `(href: string) => void` | - | 아이템 선택 핸들러 |
 
 ---
 
@@ -586,3 +644,59 @@ import { Card } from '@bigtablet/design-system';
 | `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 |
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
+
+---
+
+### Divider
+
+```tsx
+import { Divider } from '@bigtablet/design-system';
+
+// 기본 사용
+<Divider />
+
+// 굵은 구분선
+<Divider weight="heavy" />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `weight` | `'standard' \| 'heavy'` | `'standard'` | 구분선 두께 |
+
+---
+
+### ListItem
+
+```tsx
+import { ListItem } from '@bigtablet/design-system';
+import { User, MoreVertical } from 'lucide-react';
+
+// 기본 사용
+<ListItem label="항목 이름" />
+
+// 전체 옵션
+<ListItem
+  overline="카테고리"
+  label="항목 이름"
+  supportingText="보조 설명 텍스트"
+  metadata="2024-01-01"
+  leadingElement={<User size={24} />}
+  trailingElement={<IconButton icon={<MoreVertical />} aria-label="더보기" />}
+  onClick={() => console.log('clicked')}
+/>
+
+// 정렬
+<ListItem label="중앙 정렬" alignment="middle" leadingElement={<User />} />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | required | 주요 텍스트 |
+| `overline` | `string` | - | 상단 오버라인 텍스트 |
+| `supportingText` | `string` | - | 보조 텍스트 |
+| `metadata` | `string` | - | 메타데이터 텍스트 |
+| `leadingElement` | `ReactNode` | - | 왼쪽 요소 |
+| `trailingElement` | `ReactNode` | - | 오른쪽 요소 |
+| `alignment` | `'top' \| 'middle'` | `'top'` | 요소 정렬 |
+| `disabled` | `boolean` | `false` | 비활성화 |
+| `onClick` | `(event) => void` | - | 클릭 핸들러 |

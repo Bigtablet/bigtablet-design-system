@@ -26,6 +26,9 @@ bigtablet-design-system/
 │   ├── ui/                  # UI 컴포넌트
 │   │   ├── general/         # 범용 컴포넌트
 │   │   │   ├── button/
+│   │   │   ├── chip/
+│   │   │   ├── fab/
+│   │   │   ├── icon-button/
 │   │   │   └── select/
 │   │   ├── form/            # 폼 컴포넌트
 │   │   │   ├── textfield/
@@ -36,16 +39,18 @@ bigtablet-design-system/
 │   │   │   └── file/
 │   │   ├── feedback/        # 피드백 컴포넌트
 │   │   │   ├── alert/
-│   │   │   ├── toast/
+│   │   │   ├── linear-progress/
 │   │   │   ├── spinner/
+│   │   │   ├── toast/
 │   │   │   └── top-loading/
 │   │   ├── navigation/      # 네비게이션 컴포넌트
-│   │   │   ├── pagination/
-│   │   │   └── sidebar/
+│   │   │   └── pagination/
 │   │   ├── overlay/         # 오버레이 컴포넌트
 │   │   │   └── modal/
 │   │   └── display/         # 디스플레이 컴포넌트
-│   │       └── card/
+│   │       ├── card/
+│   │       ├── divider/
+│   │       └── list-item/
 │   │
 │   ├── utils/               # 유틸리티 함수
 │   │   ├── cn.ts            # className 유틸리티
@@ -87,7 +92,7 @@ bigtablet-design-system/
 ```
 src/ui/{category}/{ComponentName}/
 ├── index.tsx              # 컴포넌트 구현
-├── style.module.scss      # CSS Module 스타일 (또는 style.scss)
+├── style.scss             # Global SCSS 스타일
 ├── {ComponentName}.test.tsx  # 단위 테스트
 └── *.stories.tsx          # Storybook 스토리 (선택)
 ```
@@ -98,9 +103,9 @@ src/ui/{category}/{ComponentName}/
 // src/ui/general/button/index.tsx
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -108,41 +113,43 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     fullWidth?: boolean;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ variant = "primary", size = "md", fullWidth, className, children, ...props }, ref) => {
-        return (
-            <button
-                ref={ref}
-                className={cn(
-                    styles.button,
-                    styles[`variant_${variant}`],
-                    styles[`size_${size}`],
-                    { [styles.fullWidth]: fullWidth },
-                    className
-                )}
-                {...props}
-            >
-                {children}
-            </button>
-        );
-    }
-);
-
-Button.displayName = "Button";
+export const Button = ({
+    variant = "primary",
+    size = "md",
+    fullWidth,
+    className,
+    children,
+    ...props
+}: ButtonProps) => {
+    return (
+        <button
+            className={cn(
+                "button",
+                `button_variant_${variant}`,
+                `button_size_${size}`,
+                fullWidth && "button_full_width",
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+};
 ```
 
 ---
 
 ## 스타일링 규칙
 
-### CSS Modules
+### Global SCSS
 
-- 모든 스타일은 `style.module.scss` 파일에 작성
+- 모든 스타일은 `style.scss` 파일에 작성
 - 클래스명은 snake_case 사용
 - SCSS 토큰 import: `@use "src/styles/scss/token" as token;`
 
 ```scss
-// style.module.scss
+// style.scss
 @use "src/styles/scss/token" as token;
 
 .button {
@@ -204,9 +211,10 @@ export * from "./ui/form/textfield";
 
 ```ts
 // src/next.ts
-export * from "./index";
-// Next.js 전용 컴포넌트 (예: Sidebar with next/link)
-export * from "./ui/navigation/sidebar";
+// Next.js-specific components
+// Currently all components are framework-agnostic.
+// This entry point is reserved for future Next.js-specific exports.
+export {};
 ```
 
 ### Vanilla JS (`/vanilla`)
@@ -230,7 +238,7 @@ export const colors = {
     primary: "#000000",
     primaryHover: "#333333",
     error: "#ef4444",
-    success: "#10b981",
+    success: "#047857",
     // ...
 };
 ```
@@ -242,7 +250,7 @@ export const colors = {
 $color_primary: #000000;
 $color_primary_hover: #333333;
 $color_error: #ef4444;
-$color_success: #10b981;
+$color_success: #047857;
 
 $spacing_xs: 0.25rem;
 $spacing_sm: 0.5rem;
@@ -382,6 +390,8 @@ jobs:
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm test
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:storybook
       - run: pnpm build
 ```
 

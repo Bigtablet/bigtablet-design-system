@@ -18,9 +18,11 @@ Bigtablet Design System의 테스트 작성 가이드입니다.
 
 ### 사용 도구
 
-- **Vitest** - 테스트 러너
+- **Vitest** - 테스트 러너 (multi-project: `unit` + `storybook`)
 - **React Testing Library** - 컴포넌트 테스트
-- **jsdom** - DOM 환경
+- **jsdom** - DOM 환경 (unit 테스트)
+- **Playwright** - 브라우저 환경 (a11y 테스트, headless Chromium)
+- **@storybook/addon-a11y** - axe-core 기반 접근성 자동 테스트
 - **v8** - 커버리지 프로바이더
 
 ### 설정 파일
@@ -84,6 +86,9 @@ pnpm vitest run src/ui/general/button/Button.test.tsx
 # 커버리지 리포트
 pnpm test:coverage
 
+# a11y 테스트 (Storybook + Playwright)
+pnpm test:storybook
+
 # UI 모드
 pnpm vitest --ui
 ```
@@ -99,7 +104,7 @@ pnpm vitest --ui
 ```
 src/ui/general/button/
 ├── index.tsx
-├── style.module.scss
+├── style.scss
 └── Button.test.tsx    # 테스트 파일
 ```
 
@@ -243,9 +248,9 @@ it("calls onChange with new value", () => {
 });
 
 it("shows error state", () => {
-    render(<TextField error helperText="Error message" />);
+    render(<TextField error supportingText="Error message" />);
 
-    expect(screen.getByRole("textbox")).toHaveClass("input_error");
+    expect(screen.getByRole("textbox")).toHaveClass("text_field_input_error");
     expect(screen.getByText("Error message")).toBeInTheDocument();
 });
 ```
@@ -344,7 +349,7 @@ it("calls callback with correct arguments", () => {
 | Pagination | 100% |
 | TopLoading | 100% |
 | FileInput | 100% |
-| Sidebar | 97% |
+| Chip | 95% |
 | Modal | 97% |
 | Switch | 93% |
 | Checkbox | 91% |
@@ -478,6 +483,63 @@ describe("Modal", () => {
         expect(dialog).toHaveAttribute("aria-modal", "true");
     });
 });
+```
+
+---
+
+## 접근성(a11y) 테스트
+
+### 개요
+
+모든 Storybook 스토리는 `@storybook/addon-a11y`를 통해 axe-core 기반 접근성 검사를 자동으로 수행합니다.
+CI에서는 Playwright(headless Chromium)로 실제 DOM에서 렌더링하여 테스트합니다.
+
+### 동작 방식
+
+1. Storybook 스토리가 Playwright 브라우저에서 렌더링
+2. axe-core가 각 스토리에 대해 WCAG 위반 검사
+3. `error` 모드로 설정되어 위반 시 테스트 실패
+
+### 설정
+
+```ts
+// .storybook/preview.ts
+const preview: Preview = {
+    parameters: {
+        a11y: {
+            test: "error",  // 위반 시 에러 발생
+        },
+    },
+};
+```
+
+### 특정 스토리 비활성화
+
+의도적으로 접근성 위반을 보여주는 데모 스토리 등에서 사용:
+
+```tsx
+// 스토리 단위 비활성화
+export const DemoStory: Story = {
+    parameters: {
+        a11y: { test: "off" },
+    },
+};
+
+// 스토리 전체를 Vitest에서 제외
+const meta: Meta = {
+    tags: ["autodocs", "!test"],
+};
+```
+
+### CI 파이프라인
+
+```yaml
+# .github/workflows/ci.yml
+- name: Install Playwright browsers
+  run: pnpm exec playwright install --with-deps chromium
+
+- name: Run a11y tests (Storybook)
+  run: pnpm test:storybook
 ```
 
 ---

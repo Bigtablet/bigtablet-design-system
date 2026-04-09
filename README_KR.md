@@ -76,7 +76,7 @@ function App() {
       <TextField
         label="이메일"
         placeholder="email@example.com"
-        helperText="업무용 이메일을 입력해 주세요."
+        supportingText="업무용 이메일을 입력해 주세요."
       />
       <Button variant="primary" onClick={() => setOpen(true)}>확인</Button>
       <Modal open={open} onClose={() => setOpen(false)} title="알림">
@@ -89,35 +89,12 @@ function App() {
 
 ### Next.js
 
-Next.js 환경에서는 `/next` 경로에서 import합니다. `Sidebar`는 `next/link`를 사용하므로 반드시 이 경로를 사용하세요.
+`/next` 진입점은 향후 Next.js 전용 export를 위해 예약되어 있습니다. 현재 모든 컴포넌트는 프레임워크에 독립적입니다:
 
 ```tsx
 // app/layout.tsx
-import { Sidebar } from '@bigtablet/design-system/next';
+import { Button, TextField, Modal } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';
-
-const navItems = [
-  { label: '홈', href: '/home', icon: HomeIcon },
-  {
-    type: 'group' as const,
-    id: 'settings',
-    label: '설정',
-    icon: SettingsIcon,
-    children: [
-      { label: '프로필', href: '/settings/profile' },
-      { label: '보안', href: '/settings/security' },
-    ],
-  },
-];
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar items={navItems} activePath="/home" />
-      <main style={{ flex: 1 }}>{children}</main>
-    </div>
-  );
-}
 ```
 
 ### Provider 설정
@@ -226,12 +203,12 @@ React를 사용하지 않는 환경(Thymeleaf, JSP, PHP 등)에서는 CDN으로 
 
 | 카테고리 | 컴포넌트 |
 |----------|----------|
-| **General** | `Button`, `Select` |
+| **General** | `Button`, `Select`, `Chip`, `FAB`, `IconButton` |
 | **Form** | `TextField`, `Checkbox`, `Radio`, `Switch`, `DatePicker`, `FileInput` |
-| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading` |
-| **Navigation** | `Pagination`, `Sidebar` |
+| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress` |
+| **Navigation** | `Pagination` |
 | **Overlay** | `Modal` |
-| **Display** | `Card` |
+| **Display** | `Card`, `Divider`, `ListItem` |
 
 👉 **[전체 컴포넌트 문서](./docs/COMPONENTS.md)**
 
@@ -285,6 +262,7 @@ pnpm storybook     # Storybook 실행 (port 6006)
 pnpm build         # 라이브러리 빌드
 pnpm dev           # 와치 모드
 pnpm test          # 테스트 실행
+pnpm test:storybook # a11y 테스트 (Storybook + Playwright)
 pnpm test:coverage # 커버리지 리포트
 ```
 

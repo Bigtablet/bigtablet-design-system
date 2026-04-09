@@ -5,7 +5,7 @@
 # Bigtablet Design System
 
 [![npm version](https://img.shields.io/npm/v/@bigtablet/design-system.svg)](https://www.npmjs.com/package/@bigtablet/design-system)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Test Coverage](https://img.shields.io/badge/coverage-86%25-brightgreen.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions)
 [![CI](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml)
 
@@ -83,7 +83,7 @@ function App() {
       <TextField
         label="Email"
         placeholder="email@example.com"
-        helperText="Please enter your work email."
+        supportingText="Please enter your work email."
       />
       <Button variant="primary" onClick={() => setOpen(true)}>Confirm</Button>
       <Modal open={open} onClose={() => setOpen(false)} title="Notice">
@@ -96,35 +96,12 @@ function App() {
 
 ### Next.js
 
-In a Next.js environment, import from the `/next` path. `Sidebar` uses `next/link`, so always use this path.
+In a Next.js environment, the `/next` entry point is reserved for future Next.js-specific exports. Currently all components are framework-agnostic:
 
 ```tsx
 // app/layout.tsx
-import { Sidebar } from '@bigtablet/design-system/next';
+import { Button, TextField, Modal } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';
-
-const navItems = [
-  { label: 'Home', href: '/home', icon: HomeIcon },
-  {
-    type: 'group' as const,
-    id: 'settings',
-    label: 'Settings',
-    icon: SettingsIcon,
-    children: [
-      { label: 'Profile', href: '/settings/profile' },
-      { label: 'Security', href: '/settings/security' },
-    ],
-  },
-];
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar items={navItems} activePath="/home" />
-      <main style={{ flex: 1 }}>{children}</main>
-    </div>
-  );
-}
 ```
 
 ### Provider Setup
@@ -233,12 +210,12 @@ For non-React environments (Thymeleaf, JSP, PHP, etc.), use directly via CDN.
 
 | Category | Components |
 |----------|------------|
-| **General** | `Button`, `Select` |
+| **General** | `Button`, `Select`, `Chip`, `FAB`, `IconButton` |
 | **Form** | `TextField`, `Checkbox`, `Radio`, `Switch`, `DatePicker`, `FileInput` |
-| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading` |
-| **Navigation** | `Pagination`, `Sidebar` |
+| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress` |
+| **Navigation** | `Pagination` |
 | **Overlay** | `Modal` |
-| **Display** | `Card` |
+| **Display** | `Card`, `Divider`, `ListItem` |
 
 👉 **[Full Component Docs](./docs/COMPONENTS.md)**
 
@@ -292,6 +269,7 @@ pnpm storybook     # Start Storybook (port 6006)
 pnpm build         # Build library
 pnpm dev           # Watch mode
 pnpm test          # Run tests
+pnpm test:storybook # Run a11y tests (Storybook + Playwright)
 pnpm test:coverage # Coverage report
 ```
 
