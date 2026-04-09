@@ -140,13 +140,31 @@ t.success("저장 완료", 5000);
 export default meta;
 type Story = StoryObj;
 
-export const Playground: Story = {
-	name: "Playground",
-	render: () => (
+function PlaygroundContent() {
+	return (
 		<ToastProvider>
 			<ToastDemoButtons />
 		</ToastProvider>
-	),
+	);
+}
+
+export const Playground: Story = {
+	name: "Playground",
+	render: () => <PlaygroundContent />,
+};
+
+export const Mobile: Story = {
+	name: "Mobile (Compact)",
+	globals: { viewport: { value: "compact" } },
+	parameters: { layout: "fullscreen" },
+	render: () => <PlaygroundContent />,
+};
+
+export const Tablet: Story = {
+	name: "Tablet (Medium)",
+	globals: { viewport: { value: "medium" } },
+	parameters: { layout: "fullscreen" },
+	render: () => <PlaygroundContent />,
 };
 
 export const UsageExample: Story = {

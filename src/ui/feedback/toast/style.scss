@@ -1,4 +1,5 @@
 @use "src/styles/scss/token" as token;
+@use "src/styles/scss/_breakpoints" as breakpoint;
 
 // ── Animations ───────────────────────────────────────────────────────────────
 
@@ -24,6 +25,28 @@
   }
 }
 
+@keyframes toast_slide_in_mobile {
+  from {
+    opacity: 0;
+    transform: translateY(calc(100% + 16px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast_slide_out_mobile {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(100% + 16px));
+  }
+}
+
 @keyframes toast_progress {
   from { width: 100%; }
   to   { width: 0%; }
@@ -42,6 +65,14 @@
   pointer-events: none;
   width: 360px;
   max-width: calc(100vw - 32px);
+
+  @include breakpoint.compact {
+    top: auto;
+    bottom: token.$spacing_16;
+    left: token.$spacing_16;
+    right: token.$spacing_16;
+    width: auto;
+  }
 }
 
 // ── Item ─────────────────────────────────────────────────────────────────────
@@ -71,6 +102,19 @@
   &_exiting {
     animation: toast_slide_out 0.26s ease-in forwards;
   }
+
+  @include breakpoint.compact {
+    padding: token.$spacing_8 token.$spacing_12 token.$spacing_12;
+    font-size: 13px;
+    line-height: token.$line_height_20;
+    border-radius: token.$radius_md;
+    box-shadow: token.$shadow_level1;
+    animation-name: toast_slide_in_mobile;
+
+    &_exiting {
+      animation-name: toast_slide_out_mobile;
+    }
+  }
 }
 
 // ── Icon ─────────────────────────────────────────────────────────────────────
@@ -85,6 +129,12 @@
   &_warning { color: token.$color_status_warning; }
   &_info    { color: token.$color_status_info; }
   &_default { color: token.$color_text_body; }
+
+  @include breakpoint.compact {
+    margin-top: 0;
+
+    svg { width: 16px; height: 16px; }
+  }
 }
 
 // ── Message ───────────────────────────────────────────────────────────────────
@@ -122,6 +172,12 @@
   &:focus-visible {
     outline: none;
     box-shadow: token.$focus_ring;
+  }
+
+  @include breakpoint.compact {
+    width: 18px;
+    height: 18px;
+    margin-top: 0;
   }
 }
 
