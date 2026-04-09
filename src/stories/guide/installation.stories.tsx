@@ -40,7 +40,7 @@ function MyPage() {
   return (
     <div>
       <TextField label="이름" placeholder="이름을 입력하세요" />
-      <Button variant="primary" size="md">저장</Button>
+      <Button variant="filled" size="md">저장</Button>
     </div>
   );
 }`}

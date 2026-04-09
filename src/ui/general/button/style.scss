@@ -1,93 +1,172 @@
 @use "src/styles/scss/token" as token;
-@use "sass:color";
 
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: token.$spacing_8;
-
-  border-radius: token.$radius_md;
   border: none;
+  border-radius: token.$radius_full;
   cursor: pointer;
-
-  font-weight: token.$font_weight_medium;
+  overflow: hidden;
+  white-space: nowrap;
+  @include token.body_small_medium;
   transition: background token.$transition_base,
-  color token.$transition_base,
-  box-shadow token.$transition_base,
-  transform token.$transition_base;
+    color token.$transition_base,
+    border-color token.$transition_base;
+
+  // State layer overlay
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transition: background token.$transition_base;
+    pointer-events: none;
+  }
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
   }
 
+  // ── Sizes ────────────────────────────────────────────────────────────────
+
   &_size_sm {
-    padding: token.$spacing_8 token.$spacing_16;
-    @include token.label_small;
+    min-height: 36px;
+    padding: token.$spacing_6 token.$spacing_12;
+    gap: token.$spacing_4;
   }
 
   &_size_md {
-    padding: token.$spacing_12 token.$spacing_20;
-    @include token.body_medium;
+    min-height: 40px;
+    padding: token.$spacing_8 token.$spacing_16;
+    gap: token.$spacing_6;
   }
 
-  &_size_lg {
+  &_size_xl {
+    min-height: 56px;
     padding: token.$spacing_16 token.$spacing_24;
-    @include token.body_large;
+    gap: token.$spacing_6;
   }
 
-  &_variant_primary {
+  // ── Variant: Filled ──────────────────────────────────────────────────────
+
+  &_variant_filled {
     background: token.$color_brand_primary;
-    color: token.$color_bg_solid;
+    color: token.$color_text_inverse;
 
-    &:hover:not(:disabled) {
-      background: token.$color_base_neutral_300;
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_dark;
     }
 
-    &:active:not(:disabled) {
-      transform: scale(0.98);
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_dark;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_dark;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: 0.38;
     }
   }
 
-  &_variant_secondary {
+  // ── Variant: Tonal ───────────────────────────────────────────────────────
+
+  &_variant_tonal {
+    background: token.$color_brand_primary_container;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: 0.38;
+    }
+  }
+
+  // ── Variant: Outline ─────────────────────────────────────────────────────
+
+  &_variant_outline {
     background: transparent;
     border: 1px solid token.$color_border_default;
     color: token.$color_text_heading;
 
-    &:hover:not(:disabled) {
-      background: token.$color_bg_solid_dim;
-    }
-
-    &:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-  }
-
-  &_variant_ghost {
-    background: transparent;
-    color: token.$color_text_heading;
-
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_light;
     }
 
-    &:active:not(:disabled) {
-      transform: scale(0.96);
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      border-color: token.$color_border_default;
+      color: token.$color_brand_primary;
+      opacity: 0.38;
     }
   }
 
-  &_variant_danger {
-    background: token.$color_status_error;
-    color: token.$color_bg_solid;
+  // ── Variant: Text ────────────────────────────────────────────────────────
 
-    &:hover:not(:disabled) {
-      background: color.adjust(token.$color_status_error, $lightness: -8%);
+  &_variant_text {
+    background: transparent;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
     }
 
-    &:active:not(:disabled) {
-      transform: scale(0.98);
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
     }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      color: token.$color_brand_primary;
+      opacity: 0.38;
+    }
+  }
+
+  // ── Elements ─────────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_label {
+    position: relative;
   }
 
   &_full_width {
