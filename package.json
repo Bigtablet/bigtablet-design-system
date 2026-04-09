@@ -51,10 +51,6 @@
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
 		"chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
-		"figma:test": "tsx scripts/figma-connect.ts",
-		"figma:snapshot": "tsx scripts/figma-snapshot.ts",
-		"figma:diff": "tsx scripts/figma-diff.ts",
-		"figma:apply": "tsx scripts/figma-apply.ts",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
