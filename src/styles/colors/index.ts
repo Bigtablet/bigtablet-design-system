@@ -14,16 +14,16 @@ export const baseColors = {
 	neutral700: "#666666",
 	neutral900: "#121212",
 
-	statusError: "#CC0000",
-	statusSuccess: "#047857",
+	statusError: "#EF4444",
+	statusSuccess: "#10B981",
 	statusWarning: "#F59E0B",
-	statusInfo: "#2563EB",
+	statusInfo: "#3B82F6",
 
-	alphaBlack5: "rgba(18, 18, 18, 0.05)",
-	alphaBlack8: "rgba(18, 18, 18, 0.08)",
-	alphaBlack12: "rgba(18, 18, 18, 0.12)",
-	alphaBlack38: "rgba(18, 18, 18, 0.38)",
-	alphaBlack50: "rgba(18, 18, 18, 0.50)",
+	alphaBlack5: "rgba(0, 0, 0, 0.05)",
+	alphaBlack8: "rgba(0, 0, 0, 0.08)",
+	alphaBlack12: "rgba(26, 26, 26, 0.12)",
+	alphaBlack38: "rgba(26, 26, 26, 0.38)",
+	alphaBlack50: "rgba(0, 0, 0, 0.50)",
 	alphaWhite5: "rgba(255, 255, 255, 0.05)",
 	alphaWhite8: "rgba(255, 255, 255, 0.08)",
 	alphaWhite12: "rgba(255, 255, 255, 0.12)",
@@ -40,7 +40,7 @@ export const colors = {
 	text: {
 		heading: baseColors.neutral900,
 		body: baseColors.neutral700,
-		caption: baseColors.neutral600,
+		caption: baseColors.neutral500,
 		brand: baseColors.brandPrimary,
 		inverse: baseColors.neutral0,
 		disabled: baseColors.alphaBlack38,
@@ -66,7 +66,7 @@ export const colors = {
 		hover: baseColors.neutral400,
 		subtle: baseColors.alphaBlack8,
 		focus: baseColors.neutral900,
-		disabled: baseColors.alphaBlack12,
+		disabled: "#F2F2F2",
 	},
 
 	status: {
