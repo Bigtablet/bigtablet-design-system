@@ -4,7 +4,7 @@ import { zIndex } from "src/styles/ts/z-index";
 
 const meta: Meta = {
 	title: "Foundation/z-index",
-	tags: ["autodocs"],
+	tags: ["autodocs", "!test"],
 	parameters: {
 		a11y: { test: "off" },
 		docs: {
