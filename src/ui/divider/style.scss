@@ -1,0 +1,16 @@
+@use "src/styles/token" as token;
+
+.divider {
+  border: none;
+  margin: 0;
+  width: 100%;
+  background: token.$color_border_default;
+
+  &_weight_standard {
+    height: 1px;
+  }
+
+  &_weight_heavy {
+    height: 2px;
+  }
+}

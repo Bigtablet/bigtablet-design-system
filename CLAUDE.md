@@ -27,15 +27,22 @@ pnpm test:storybook # Run a11y tests via Storybook + Playwright
 ```
 src/
 ├── styles/
-│   ├── ts/        # TypeScript design tokens (colors, spacing, typography, etc.)
-│   └── scss/      # SCSS tokens and mixins
-├── ui/
-│   ├── general/   # General components (Button, Select, Chip, FAB, IconButton)
-│   ├── form/      # Form inputs (TextField, Checkbox, Radio, Switch, DatePicker, FileInput)
-│   ├── feedback/  # Feedback (Alert, Toast, Spinner, TopLoading, LinearProgress)
-│   ├── navigation/# Navigation (Pagination)
-│   ├── overlay/   # Modal components
-│   └── display/   # Card, Divider, ListItem
+│   ├── token.scss       # SCSS barrel (@forward all domains)
+│   ├── tokens.json      # Designer JSON tokens
+│   ├── colors/          # _index.scss + index.ts per domain
+│   ├── spacing/
+│   ├── typography/
+│   ├── radius/
+│   ├── elevation/
+│   ├── motion/
+│   ├── breakpoints/
+│   ├── opacity/
+│   ├── border-width/
+│   ├── z-index/
+│   ├── skeleton/
+│   ├── a11y/
+│   └── layout/          # SCSS only (no TS)
+├── ui/                  # Flat component folders (no category subdirs)
 ├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
 │   ├── bigtablet.scss    # All component styles + CSS custom properties
 │   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
@@ -61,7 +68,7 @@ src/
 - **Global SCSS**: All styles use `style.scss` files (not CSS Modules)
 - Import pattern: `import "./style.scss";`
 - Class usage: `className="button"` or `` className={`button_variant_${variant}`} ``
-- SCSS tokens: `@use "src/styles/scss/token" as token;`
+- SCSS tokens: `@use "src/styles/token" as token;`
 - Never use hardcoded values - always use tokens
 
 ### className Pattern
@@ -87,16 +94,16 @@ const buttonClassName = cn(
 ```
 
 ### Design Tokens
-Located in `src/styles/ts/`:
-- `colors.ts` - Brand, background, text, status colors
-- `spacing.ts` - xs(4px) to 5xl(48px)
-- `typography.ts` - Font families, heading/body styles
-- `radius.ts` - Border radius values
-- `shadows.ts` - Elevation shadows
-- `motion.ts` - Animation durations and easings
-- `z-index.ts` - Layer priorities
-- `breakpoints.ts` - Responsive breakpoints
-- `a11y.ts` - Accessibility (focus rings, tap targets)
+Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`):
+- `colors/` - Brand, background, text, status colors
+- `spacing/` - xs(4px) to 5xl(48px)
+- `typography/` - Font families, heading/body styles
+- `radius/` - Border radius values
+- `elevation/` - Elevation shadows (level1-5)
+- `motion/` - Animation durations and easings
+- `z-index/` - Layer priorities
+- `breakpoints/` - Responsive breakpoints
+- `a11y/` - Accessibility (focus rings, tap targets)
 
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`
@@ -174,7 +181,7 @@ dist/vanilla/
 | Select List | `.bt-select__list` | `--up` (opens upward) | |
 | Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--shadow-sm/md/lg`, `--p-sm/md/lg` | |
+| Card | `.bt-card` | `--bordered`, `--elevation-1/2/3`, `--p-sm/md/lg` | |
 | Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
@@ -273,8 +280,8 @@ dist/vanilla/
   <p>Content</p>
 </div>
 
-<div class="bt-card bt-card--shadow-md bt-card--p-lg">
-  Shadow card
+<div class="bt-card bt-card--elevation-2 bt-card--p-lg">
+  Elevation card
 </div>
 ```
 
@@ -355,7 +362,7 @@ All design tokens available as CSS variables:
   --bt-spacing-lg: 1rem;
   --bt-radius-sm: 6px;
   --bt-radius-md: 8px;
-  --bt-shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --bt-elevation-1: 0 1px 1px -1px rgba(0,0,0,0.20), 0 3px 3px 0 rgba(0,0,0,0.12);
   --bt-transition-base: 0.2s ease-in-out;
 }
 ```
@@ -443,7 +450,7 @@ git checkout -b label/domain
 
 ### 3. Implement Changes
 - Follow Global SCSS convention (`style.scss`)
-- Use design tokens (`src/styles/scss/token`)
+- Use design tokens (`src/styles/token`)
 
 ### 4. Commit
 ```bash
@@ -482,3 +489,16 @@ EOF
 - Write PR body in Korean
 - Create issues first if needed and link them to PR
 - Requires team review before merging
+
+---
+
+## Temporary: Disabled A11y Rules
+
+> 디자이너와 접근성 색상 협의 완료 후 이 섹션을 삭제하고 룰을 다시 활성화할 것.
+
+### color-contrast (비활성화)
+- **위치**: `.storybook/preview.ts` → `parameters.a11y.config.rules`
+- **원인**: TextField helper text 색상이 WCAG AA 대비율(4.5:1) 미달
+  - Error helper (`#EF4444` on `#FFFFFF`) → 3.76:1
+  - Supporting text (`#888888` on `#FFFFFF`) → 3.54:1
+- **해결 방법**: 디자이너와 접근성 충족 색상 합의 후, 해당 룰의 `enabled: false`를 제거하고 이 섹션 삭제

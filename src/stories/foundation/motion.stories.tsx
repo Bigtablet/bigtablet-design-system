@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { motion } from "src/styles/ts/motion";
+import { motion } from "src/styles/motion";
 
 const meta: Meta = {
 	title: "Foundation/motion",
@@ -76,6 +76,36 @@ function MotionPreview({ name, transition }: { name: string; transition: string 
 		</div>
 	);
 }
+
+export const ComponentMapping: Story = {
+	name: "컴포넌트별 모션 매핑",
+	render: () => {
+		const mappings = [
+			{ component: "Button hover", token: "base", desc: "배경색·테두리 변화" },
+			{ component: "Checkbox 체크", token: "fast", desc: "체크 아이콘 표시" },
+			{ component: "Modal 등장", token: "slow", desc: "오버레이 + 패널 슬라이드" },
+			{ component: "Toast 등장/퇴장", token: "fade", desc: "부드러운 페이드인/아웃" },
+			{ component: "Select 드롭다운", token: "base", desc: "목록 열림/닫힘" },
+			{ component: "Switch 토글", token: "bounce", desc: "thumb 이동 + 바운스" },
+			{ component: "Card hover", token: "scale", desc: "살짝 확대 강조" },
+		];
+
+		return (
+			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 560 }}>
+				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>어떤 컴포넌트에 어떤 모션 토큰을 쓰나요?</h3>
+				<div style={{ display: "grid", gap: 8 }}>
+					{mappings.map(({ component, token, desc }) => (
+						<div key={component} style={{ display: "grid", gridTemplateColumns: "140px 80px 1fr", alignItems: "center", gap: 12, padding: 10, background: "#fff", borderRadius: 8, border: "1px solid rgba(0,0,0,0.06)", fontSize: 13 }}>
+							<strong>{component}</strong>
+							<code style={{ color: "#2563eb" }}>{token}</code>
+							<span style={{ color: "#666" }}>{desc}</span>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	},
+};
 
 function motionDescription(key: string) {
 	switch (key) {

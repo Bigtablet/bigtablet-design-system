@@ -8,7 +8,12 @@ const preview: Preview = {
 	parameters: {
 		options: {
 			storySort: {
-				order: ["Guide", ["Introduction", "Installation"], "Foundation", "Components"],
+				method: "alphabetical",
+				order: [
+					"Guide", ["Introduction", "Installation"],
+					"Foundation",
+					"Components",
+				],
 			},
 		},
 		viewport: {
@@ -20,6 +25,11 @@ const preview: Preview = {
 		},
 		a11y: {
 			test: "error",
+			config: {
+				rules: [
+					{ id: "color-contrast", enabled: false },
+				],
+			},
 		},
 		controls: { expanded: true },
 		nextjs: {

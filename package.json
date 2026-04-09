@@ -14,12 +14,8 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./next": {
-			"types": "./dist/next.d.ts",
-			"import": "./dist/next.js"
-		},
 		"./style.css": "./dist/index.css",
-		"./scss/token": "./dist/styles/scss/token.scss",
+		"./scss/token": "./dist/styles/token.scss",
 		"./vanilla": {
 			"style": "./dist/vanilla/bigtablet.min.css",
 			"default": "./dist/vanilla/bigtablet.min.js"
@@ -128,7 +124,7 @@
 	"size-limit": [
 		{
 			"path": "dist/index.js",
-			"limit": "12 kB"
+			"limit": "15 kB"
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",

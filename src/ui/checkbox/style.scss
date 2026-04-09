@@ -1,0 +1,138 @@
+@use "src/styles/token" as token;
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: token.$spacing_4;
+
+  // ── Hidden native input ────────────────────────────────────────────────
+
+  &_input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  // ── State layer (circular overlay for hover/focus/pressed) ─────────────
+
+  &_state_layer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: token.$spacing_8;
+    border-radius: token.$radius_full;
+    transition: background token.$transition_base;
+  }
+
+  // ── Icon box (24x24 checkbox graphic) ──────────────────────────────────
+
+  &_icon {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: 2px solid token.$color_text_heading;
+    border-radius: token.$radius_xs;
+    background: transparent;
+    position: relative;
+    transition: background token.$transition_base,
+      border-color token.$transition_base;
+  }
+
+  // ── Label ──────────────────────────────────────────────────────────────
+
+  &_label {
+    @include token.body_small;
+    color: token.$color_text_heading;
+    margin-left: token.$spacing_4;
+  }
+
+  // ── States: Hover ──────────────────────────────────────────────────────
+
+  &:hover .checkbox_state_layer {
+    background: token.$color_state_hover_on_light;
+  }
+
+  // ── States: Focus ──────────────────────────────────────────────────────
+
+  &_input:focus-visible ~ .checkbox_state_layer {
+    background: token.$color_state_focus_on_light;
+  }
+
+  // ── States: Active/Pressed ─────────────────────────────────────────────
+
+  &:active .checkbox_state_layer {
+    background: token.$color_state_pressed_on_light;
+  }
+
+  // ── States: Disabled ───────────────────────────────────────────────────
+
+  &_input:disabled ~ .checkbox_state_layer {
+    opacity: token.$opacity_38;
+  }
+
+  &_input:disabled ~ .checkbox_label {
+    opacity: token.$opacity_38;
+  }
+
+  &_input:disabled {
+    cursor: not-allowed;
+  }
+
+  &:has(.checkbox_input:disabled) {
+    cursor: not-allowed;
+  }
+
+  // ── Checked state ──────────────────────────────────────────────────────
+
+  &_input:checked ~ .checkbox_state_layer .checkbox_icon,
+  &_input:indeterminate ~ .checkbox_state_layer .checkbox_icon {
+    background: token.$color_brand_primary;
+    border-color: token.$color_brand_primary;
+  }
+
+  // Checkmark
+  &_input:checked ~ .checkbox_state_layer .checkbox_icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 6px;
+    height: 11px;
+    border: 2px solid token.$color_bg_solid;
+    border-top: 0;
+    border-left: 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  // Indeterminate dash
+  &_input:indeterminate ~ .checkbox_state_layer .checkbox_icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    background: token.$color_bg_solid;
+    transform: translate(-50%, -50%);
+    border: none;
+    border-radius: 1px;
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────
+
+  &_error .checkbox_icon {
+    border-color: token.$color_status_error;
+  }
+
+  &_error .checkbox_input:checked ~ .checkbox_state_layer .checkbox_icon,
+  &_error .checkbox_input:indeterminate ~ .checkbox_state_layer .checkbox_icon {
+    background: token.$color_status_error;
+    border-color: token.$color_status_error;
+  }
+}

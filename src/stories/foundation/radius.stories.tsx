@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { radius } from "src/styles/ts/radius";
+import { radius } from "src/styles/radius";
 
 const meta: Meta = {
 	title: "Foundation/radius",
@@ -70,6 +70,35 @@ export const Scale: Story = {
 			))}
 		</div>
 	),
+};
+
+export const ComponentMapping: Story = {
+	name: "컴포넌트별 radius 매핑",
+	render: () => {
+		const mappings = [
+			{ component: "Badge / Tag", token: "sm", value: radius.sm, bg: "#f3f4f6" },
+			{ component: "Button", token: "md", value: radius.md, bg: "#f3f4f6" },
+			{ component: "Input", token: "md", value: radius.md, bg: "#fff" },
+			{ component: "Card", token: "lg", value: radius.lg, bg: "#fff" },
+			{ component: "Modal", token: "lg", value: radius.lg, bg: "#fff" },
+			{ component: "Avatar", token: "full", value: radius.full, bg: "#e5e5e5" },
+		];
+
+		return (
+			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 560 }}>
+				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>어떤 컴포넌트에 어떤 radius를 쓰나요?</h3>
+				<div style={{ display: "grid", gap: 10 }}>
+					{mappings.map(({ component, token, value, bg }) => (
+						<div key={component} style={{ display: "grid", gridTemplateColumns: "120px 56px 1fr", alignItems: "center", gap: 12, padding: 12, background: "#fff", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<span style={{ fontSize: 13, fontWeight: 600 }}>{component}</span>
+							<div style={{ width: 40, height: 28, borderRadius: value, background: bg, border: "1.5px solid #333" }} />
+							<code style={{ fontSize: 12, color: "#666" }}>radius.{token} ({value})</code>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	},
 };
 
 function radiusUseCase(key: string) {

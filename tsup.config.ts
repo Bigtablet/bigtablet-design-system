@@ -43,38 +43,6 @@ export default defineConfig([
 			fs.writeFileSync(filePath, newContent);
 		},
 	},
-	// Next.js-specific components bundle
-	{
-		entry: { next: "src/next.ts" },
-		format: ["esm"],
-		dts: true,
-		clean: false,
-		treeshake: true,
-		sourcemap: false,
-		external: ["react", "react-dom", "next/link", "next/image", "next"],
-		esbuildPlugins: [sassPlugin({ type: "css", loadPaths: [".", "src"] })],
-		loader: { ".svg": "dataurl" },
-		splitting: false,
-		async onSuccess() {
-			const filePath = path.join(process.cwd(), "dist/next.js");
-			const content = fs.readFileSync(filePath, "utf-8");
-
-			// Add "use client" and CSS import
-			let newContent = content;
-			if (!content.startsWith('"use client"')) {
-				newContent = '"use client";\n' + content;
-			}
-
-			// Add CSS import after "use client" if not already present
-			if (!newContent.includes("import './next.css'")) {
-				const lines = newContent.split("\n");
-				lines.splice(1, 0, "import './next.css';");
-				newContent = lines.join("\n");
-			}
-
-			fs.writeFileSync(filePath, newContent);
-		},
-	},
 	// Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.)
 	{
 		entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { baseColors, colors } from "src/styles/ts/colors";
+import { baseColors, colors } from "src/styles/colors";
 
 const getReadableTextColor = (bgColor: string): string => {
 	if (bgColor.startsWith("rgba") || bgColor === "transparent") return "#000000";
@@ -164,6 +164,36 @@ export const Base: Story = {
 			{Object.entries(baseColors as Record<string, string>).map(([key, value]) => (
 				<ColorRow key={key} group="baseColors" token={key} value={value} />
 			))}
+		</div>
+	),
+};
+
+export const DoAndDont: Story = {
+	name: "DO / DON'T",
+	render: () => (
+		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640 }}>
+			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
+				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>color: colors.text.body</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>background: colors.bg.surface</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>border: colors.border.default</code>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
+					Semantic 토큰을 사용하면 테마 변경 시 자동 반영됩니다.
+				</p>
+			</div>
+			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
+				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>color: "#333333"</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>background: "#ffffff"</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>border: "#e5e5e5"</code>
+				</div>
+				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
+					하드코딩된 HEX 값은 테마 변경 시 깨지고 일관성이 무너집니다.
+				</p>
+			</div>
 		</div>
 	),
 };

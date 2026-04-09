@@ -9,48 +9,45 @@ Bigtablet Design System의 프로젝트 구조 및 아키텍처 문서입니다.
 ```
 bigtablet-design-system/
 ├── src/
-│   ├── styles/
-│   │   ├── ts/              # TypeScript 디자인 토큰
-│   │   │   ├── colors.ts
-│   │   │   ├── spacing.ts
-│   │   │   ├── typography.ts
-│   │   │   ├── radius.ts
-│   │   │   ├── shadows.ts
-│   │   │   ├── motion.ts
-│   │   │   ├── z-index.ts
-│   │   │   ├── breakpoints.ts
-│   │   │   └── a11y.ts
-│   │   └── scss/            # SCSS 토큰 및 믹스인
-│   │       └── _token.scss
+│   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
+│   │   ├── token.scss       # SCSS barrel (@forward all domains)
+│   │   ├── tokens.json      # 디자이너 JSON 토큰
+│   │   ├── colors/
+│   │   ├── spacing/
+│   │   ├── typography/
+│   │   ├── radius/
+│   │   ├── shadows/
+│   │   ├── motion/
+│   │   ├── breakpoints/
+│   │   ├── opacity/
+│   │   ├── border-width/
+│   │   ├── z-index/
+│   │   ├── skeleton/
+│   │   ├── a11y/
+│   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트
-│   │   ├── general/         # 범용 컴포넌트
-│   │   │   ├── button/
-│   │   │   ├── chip/
-│   │   │   ├── fab/
-│   │   │   ├── icon-button/
-│   │   │   └── select/
-│   │   ├── form/            # 폼 컴포넌트
-│   │   │   ├── textfield/
-│   │   │   ├── checkbox/
-│   │   │   ├── radio/
-│   │   │   ├── switch/
-│   │   │   ├── date-picker/
-│   │   │   └── file/
-│   │   ├── feedback/        # 피드백 컴포넌트
-│   │   │   ├── alert/
-│   │   │   ├── linear-progress/
-│   │   │   ├── spinner/
-│   │   │   ├── toast/
-│   │   │   └── top-loading/
-│   │   ├── navigation/      # 네비게이션 컴포넌트
-│   │   │   └── pagination/
-│   │   ├── overlay/         # 오버레이 컴포넌트
-│   │   │   └── modal/
-│   │   └── display/         # 디스플레이 컴포넌트
-│   │       ├── card/
-│   │       ├── divider/
-│   │       └── list-item/
+│   ├── ui/                  # UI 컴포넌트 (플랫 구조)
+│   │   ├── alert/
+│   │   ├── button/
+│   │   ├── card/
+│   │   ├── checkbox/
+│   │   ├── chip/
+│   │   ├── date-picker/
+│   │   ├── divider/
+│   │   ├── fab/
+│   │   ├── file/
+│   │   ├── icon-button/
+│   │   ├── linear-progress/
+│   │   ├── list-item/
+│   │   ├── modal/
+│   │   ├── pagination/
+│   │   ├── radio/
+│   │   ├── select/
+│   │   ├── spinner/
+│   │   ├── switch/
+│   │   ├── textfield/
+│   │   ├── toast/
+│   │   └── top-loading/
 │   │
 │   ├── utils/               # 유틸리티 함수
 │   │   ├── cn.ts            # className 유틸리티
@@ -146,11 +143,11 @@ export const Button = ({
 
 - 모든 스타일은 `style.scss` 파일에 작성
 - 클래스명은 snake_case 사용
-- SCSS 토큰 import: `@use "src/styles/scss/token" as token;`
+- SCSS 토큰 import: `@use "src/styles/token" as token;`
 
 ```scss
 // style.scss
-@use "src/styles/scss/token" as token;
+@use "src/styles/token" as token;
 
 .button {
     display: inline-flex;
@@ -233,7 +230,7 @@ CDN 또는 직접 import로 사용:
 ### TypeScript 토큰
 
 ```ts
-// src/styles/ts/colors.ts
+// src/styles/colors/index.ts
 export const colors = {
     primary: "#000000",
     primaryHover: "#333333",
@@ -246,7 +243,7 @@ export const colors = {
 ### SCSS 토큰
 
 ```scss
-// src/styles/scss/_token.scss
+// src/styles/colors/_index.scss
 $color_primary: #000000;
 $color_primary_hover: #333333;
 $color_error: #ef4444;

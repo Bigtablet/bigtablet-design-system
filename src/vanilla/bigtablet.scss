@@ -3,7 +3,7 @@
  * For use with plain HTML/CSS/JS, Thymeleaf, JSP, etc.
  */
 
-@use "../styles/scss/token" as token;
+@use "../styles/token" as token;
 @use "sass:color";
 
 /* ========================================
@@ -104,11 +104,12 @@
   --bt-radius-lg: #{token.$radius_lg};
   --bt-radius-full: #{token.$radius_full};
 
-  /* Shadows */
-  --bt-shadow-sm: #{token.$shadow_level1};
-  --bt-shadow-md: #{token.$shadow_level2};
-  --bt-shadow-lg: #{token.$shadow_level3};
-  --bt-shadow-xl: #{token.$shadow_level4};
+  /* Elevation */
+  --bt-elevation-1: #{token.$elevation_level1};
+  --bt-elevation-2: #{token.$elevation_level2};
+  --bt-elevation-3: #{token.$elevation_level3};
+  --bt-elevation-4: #{token.$elevation_level4};
+  --bt-elevation-5: #{token.$elevation_level5};
 
   /* Transitions */
   --bt-transition-fast: #{token.$transition_fast};
@@ -734,7 +735,7 @@
     background: var(--bt-color-background);
     border: 1px solid var(--bt-color-border);
     border-radius: var(--bt-radius-md);
-    box-shadow: var(--bt-shadow-md);
+    box-shadow: var(--bt-elevation-2);
     max-height: 18rem;
     overflow-y: auto;
     overflow-x: hidden;
@@ -799,7 +800,7 @@
   &__panel {
     background: var(--bt-color-background);
     border-radius: var(--bt-radius-lg);
-    box-shadow: var(--bt-shadow-lg);
+    box-shadow: var(--bt-elevation-3);
     max-width: calc(100% - 32px);
     overflow: hidden;
   }
@@ -860,7 +861,7 @@
     border-radius: var(--bt-radius-lg);
     min-width: 320px;
     max-width: 480px;
-    box-shadow: var(--bt-shadow-xl);
+    box-shadow: var(--bt-elevation-4);
     animation: bt-alert-slide-up var(--bt-transition-slow);
     overflow: hidden;
   }
@@ -906,9 +907,9 @@
     border: 1px solid var(--bt-color-border);
   }
 
-  &--shadow-sm { box-shadow: var(--bt-shadow-sm); }
-  &--shadow-md { box-shadow: var(--bt-shadow-md); }
-  &--shadow-lg { box-shadow: var(--bt-shadow-lg); }
+  &--elevation-1 { box-shadow: var(--bt-elevation-1); }
+  &--elevation-2 { box-shadow: var(--bt-elevation-2); }
+  &--elevation-3 { box-shadow: var(--bt-elevation-3); }
 
   &--p-sm { padding: var(--bt-spacing-sm); }
   &--p-md { padding: var(--bt-spacing-lg); }
@@ -1160,7 +1161,7 @@
   font-family: var(--bt-font-family);
   font-size: var(--bt-font-size-base);
   border-radius: var(--bt-radius-md);
-  box-shadow: var(--bt-shadow-lg);
+  box-shadow: var(--bt-elevation-3);
 }
 
 /* ========================================

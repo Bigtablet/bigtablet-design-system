@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { breakpoints } from "src/styles/ts/breakpoints";
+import { breakpoints } from "src/styles/breakpoints";
 
 const meta: Meta = {
 	title: "Foundation/breakpoints",
@@ -74,6 +74,61 @@ export const Overview: Story = {
 					<p style={{ marginTop: 8, fontSize: 13, opacity: 0.75 }}>{breakpointDescription(key)}</p>
 				</div>
 			))}
+		</div>
+	),
+};
+
+export const LayoutTransition: Story = {
+	name: "레이아웃 변화 예시",
+	render: () => (
+		<div style={{ display: "grid", gap: 20, maxWidth: 720 }}>
+			<h3 style={{ margin: 0, fontSize: 14 }}>각 breakpoint에서 레이아웃이 어떻게 바뀌나요?</h3>
+
+			{/* Compact */}
+			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+					<strong style={{ fontSize: 13 }}>compact</strong>
+					<span style={{ fontSize: 11, color: "#999" }}>~ 599px (모바일)</span>
+				</div>
+				<div style={{ display: "grid", gap: 8, maxWidth: 200 }}>
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+				</div>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>단일 컬럼, 풀 너비</p>
+			</div>
+
+			{/* Medium */}
+			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+					<strong style={{ fontSize: 13 }}>medium</strong>
+					<span style={{ fontSize: 11, color: "#999" }}>600px ~ 839px (태블릿)</span>
+				</div>
+				<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 320 }}>
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+				</div>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>2컬럼 그리드 시작</p>
+			</div>
+
+			{/* Expanded */}
+			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+					<strong style={{ fontSize: 13 }}>expanded</strong>
+					<span style={{ fontSize: 11, color: "#999" }}>840px+ (데스크탑)</span>
+				</div>
+				<div style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: 8, maxWidth: 400 }}>
+					<div style={{ height: 80, background: "#d4d4d4", borderRadius: 6 }} />
+					<div style={{ display: "grid", gap: 8 }}>
+						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					</div>
+				</div>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>사이드바 + 콘텐츠 영역</p>
+			</div>
 		</div>
 	),
 };

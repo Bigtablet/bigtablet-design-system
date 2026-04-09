@@ -227,7 +227,7 @@ SCSS tokens and CSS custom properties are provided for a consistent design.
 
 ```scss
 // SCSS
-@use "src/styles/scss/token" as token;
+@use "src/styles/token" as token;
 
 .my-component {
   color: token.$color_text_primary;
