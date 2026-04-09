@@ -19,6 +19,7 @@ pnpm install       # Install dependencies
 pnpm storybook     # Start Storybook dev server (port 6006)
 pnpm build         # Build library (tsup + copy SCSS)
 pnpm dev           # Watch mode development
+pnpm test:storybook # Run a11y tests via Storybook + Playwright
 ```
 
 ## Architecture
@@ -29,18 +30,18 @@ src/
 │   ├── ts/        # TypeScript design tokens (colors, spacing, typography, etc.)
 │   └── scss/      # SCSS tokens and mixins
 ├── ui/
-│   ├── general/   # General components (Button, Select)
+│   ├── general/   # General components (Button, Select, Chip, FAB, IconButton)
 │   ├── form/      # Form inputs (TextField, Checkbox, Radio, Switch, DatePicker, FileInput)
-│   ├── feedback/  # Feedback (Alert, Toast, Loading)
-│   ├── navigation/# Navigation (Pagination, Sidebar)
+│   ├── feedback/  # Feedback (Alert, Toast, Spinner, TopLoading, LinearProgress)
+│   ├── navigation/# Navigation (Pagination)
 │   ├── overlay/   # Modal components
-│   └── display/   # Card component
+│   └── display/   # Card, Divider, ListItem
 ├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
 │   ├── bigtablet.scss    # All component styles + CSS custom properties
 │   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
 │   └── examples/         # HTML usage examples
 ├── index.ts       # Pure React entry point
-└── next.ts        # Next.js entry point (includes Sidebar with next/link)
+└── next.ts        # Next.js entry point (reserved for future Next.js-specific exports)
 ```
 
 ## Key Conventions
@@ -123,13 +124,15 @@ Located in `src/styles/ts/`:
 
 ## Testing
 
-- **Test Runner**: Vitest
+- **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
+- **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
 - **Coverage**: 86%
 - **Commands**:
   ```bash
-  pnpm test              # Run tests
+  pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
+  pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 
 ---
@@ -344,7 +347,8 @@ All design tokens available as CSS variables:
   --bt-color-text-primary: #1a1a1a;
   --bt-color-border: #e5e5e5;
   --bt-color-error: #ef4444;
-  --bt-color-success: #10b981;
+  --bt-color-success: #047857;
+  --bt-color-info: #2563eb;
   --bt-spacing-xs: 0.25rem;
   --bt-spacing-sm: 0.5rem;
   --bt-spacing-md: 0.75rem;
@@ -438,7 +442,7 @@ git checkout -b label/domain
 ```
 
 ### 3. Implement Changes
-- Follow CSS Modules convention (`style.module.scss`)
+- Follow Global SCSS convention (`style.scss`)
 - Use design tokens (`src/styles/scss/token`)
 
 ### 4. Commit
