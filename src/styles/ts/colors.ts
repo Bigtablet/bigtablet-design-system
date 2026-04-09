@@ -15,9 +15,9 @@ export const baseColors = {
 	neutral900: "#121212",
 
 	statusError: "#CC0000",
-	statusSuccess: "#10B981",
+	statusSuccess: "#047857",
 	statusWarning: "#F59E0B",
-	statusInfo: "#3B82F6",
+	statusInfo: "#2563EB",
 
 	alphaBlack5: "rgba(18, 18, 18, 0.05)",
 	alphaBlack8: "rgba(18, 18, 18, 0.08)",

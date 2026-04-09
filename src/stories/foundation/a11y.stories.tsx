@@ -367,6 +367,7 @@ export const ColorContrast: Story = {
 									fontSize: 14,
 									border: "1px solid rgba(0,0,0,0.06)",
 								}}
+								aria-disabled={pair.fgName === "text.disabled" || undefined}
 							>
 								가나다라 ABC 123
 							</div>
