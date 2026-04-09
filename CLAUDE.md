@@ -489,3 +489,16 @@ EOF
 - Write PR body in Korean
 - Create issues first if needed and link them to PR
 - Requires team review before merging
+
+---
+
+## Temporary: Disabled A11y Rules
+
+> 디자이너와 접근성 색상 협의 완료 후 이 섹션을 삭제하고 룰을 다시 활성화할 것.
+
+### color-contrast (비활성화)
+- **위치**: `.storybook/preview.ts` → `parameters.a11y.config.rules`
+- **원인**: TextField helper text 색상이 WCAG AA 대비율(4.5:1) 미달
+  - Error helper (`#EF4444` on `#FFFFFF`) → 3.76:1
+  - Supporting text (`#888888` on `#FFFFFF`) → 3.54:1
+- **해결 방법**: 디자이너와 접근성 충족 색상 합의 후, 해당 룰의 `enabled: false`를 제거하고 이 섹션 삭제
