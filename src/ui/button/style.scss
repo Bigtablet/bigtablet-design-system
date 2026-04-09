@@ -149,6 +149,16 @@
     }
   }
 
+  // ── Radius overrides ─────────────────────────────────────────────────────
+
+  &_radius_none { border-radius: token.$radius_none; }
+  &_radius_xs   { border-radius: token.$radius_xs; }
+  &_radius_sm   { border-radius: token.$radius_sm; }
+  &_radius_md   { border-radius: token.$radius_md; }
+  &_radius_lg   { border-radius: token.$radius_lg; }
+  &_radius_xl   { border-radius: token.$radius_xl; }
+  &_radius_full { border-radius: token.$radius_full; }
+
   // ── Elements ─────────────────────────────────────────────────────────────
 
   &_icon {

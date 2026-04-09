@@ -45,6 +45,21 @@
     color: token.$color_text_body;
   }
 
+  &_preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_8;
+    margin-top: token.$spacing_8;
+  }
+
+  &_preview_img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: token.$radius_md;
+    border: token.$border_width_standard solid token.$color_border_default;
+  }
+
   &_disabled {
     cursor: not-allowed;
 

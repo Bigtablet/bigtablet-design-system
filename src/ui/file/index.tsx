@@ -11,6 +11,8 @@ export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputEleme
 	onFiles?: (files: FileList | null) => void;
 	/** 입력 필드 아래에 표시할 도움말 텍스트 (예: "PDF, DOC 파일만 업로드 가능합니다") */
 	supportingText?: string;
+	/** 이미지 파일 선택 시 썸네일 미리보기 표시 여부 (기본값: false) */
+	preview?: boolean;
 }
 
 /**
@@ -23,12 +25,42 @@ export const FileInput = ({
 	label = "Choose file",
 	onFiles,
 	supportingText,
+	preview = false,
 	className,
 	disabled,
 	...props
 }: FileInputProps) => {
 	const inputId = React.useId();
 	const helperId = React.useId();
+	const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.currentTarget.files;
+		onFiles?.(files);
+
+		if (preview && files) {
+			// 이전 URL 해제
+			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
+			const urls: string[] = [];
+			for (let i = 0; i < files.length; i++) {
+				if (files[i].type.startsWith("image/")) {
+					urls.push(URL.createObjectURL(files[i]));
+				}
+			}
+			setPreviewUrls(urls);
+		} else {
+			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+			setPreviewUrls([]);
+		}
+	};
+
+	// cleanup on unmount
+	React.useEffect(() => {
+		return () => {
+			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+		};
+	}, [previewUrls]);
 
 	const rootClassName = cn("file_input", disabled && "file_input_disabled", className);
 
@@ -40,7 +72,7 @@ export const FileInput = ({
 				className="file_input_control"
 				disabled={disabled}
 				aria-describedby={supportingText ? helperId : undefined}
-				onChange={(e) => onFiles?.(e.currentTarget.files)}
+				onChange={handleChange}
 				{...props}
 			/>
 			<label htmlFor={inputId} className="file_input_label">
@@ -50,6 +82,13 @@ export const FileInput = ({
 				<span id={helperId} className="file_input_helper">
 					{supportingText}
 				</span>
+			)}
+			{previewUrls.length > 0 && (
+				<div className="file_input_preview">
+					{previewUrls.map((url) => (
+						<img key={url} src={url} alt="" className="file_input_preview_img" />
+					))}
+				</div>
 			)}
 		</div>
 	);

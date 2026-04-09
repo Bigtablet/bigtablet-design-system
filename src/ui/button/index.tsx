@@ -19,6 +19,8 @@ export interface ButtonProps
 	trailingIcon?: React.ReactNode;
 	/** 버튼이 컨테이너의 전체 너비를 차지할지 여부 */
 	fullWidth?: boolean;
+	/** border-radius 토큰 (기본값: "full") */
+	radius?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "full";
 }
 
 /**
@@ -33,6 +35,7 @@ export const Button = ({
 	leadingIcon,
 	trailingIcon,
 	fullWidth = false,
+	radius,
 	className,
 	children,
 	...props
@@ -42,6 +45,7 @@ export const Button = ({
 		`button_variant_${variant}`,
 		`button_size_${size}`,
 		fullWidth && "button_full_width",
+		radius && `button_radius_${radius}`,
 		className,
 	);
 
