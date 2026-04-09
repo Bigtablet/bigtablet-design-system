@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { IconButton } from "../../ui/general/icon-button";
+import { IconButton } from ".";
 
 const PlusIcon = () => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -21,7 +21,7 @@ const SearchIcon = () => (
 );
 
 const meta: Meta<typeof IconButton> = {
-	title: "Components/IconButton",
+	title: "Components/General/IconButton",
 	component: IconButton,
 	tags: ["autodocs"],
 	argTypes: {

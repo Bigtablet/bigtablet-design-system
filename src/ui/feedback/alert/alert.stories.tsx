@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type * as React from "react";
-import { AlertProvider, useAlert } from "../../ui/feedback/alert";
+import { AlertProvider, useAlert } from ".";
 
 type AlertDemoProps = {
 	variant?: "info" | "success" | "warning" | "error";
@@ -54,7 +54,7 @@ const AlertDemo = ({
 };
 
 const meta: Meta<typeof AlertDemo> = {
-	title: "Components/Alert",
+	title: "Components/Feedback/Alert",
 	component: AlertDemo,
 	decorators: [
 		(Story) => (

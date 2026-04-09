@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Radio } from "../../ui/form/radio";
+import { Radio } from ".";
 
 const meta: Meta<typeof Radio> = {
-	title: "Components/Radio",
+	title: "Components/Form/Radio",
 	component: Radio,
 	tags: ["autodocs"],
 	argTypes: {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TextField } from "../../ui/form/textfield";
+import { TextField } from ".";
 
 const SearchIcon = () => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +16,7 @@ const CloseIcon = () => (
 );
 
 const meta: Meta<typeof TextField> = {
-	title: "Components/TextField",
+	title: "Components/Form/TextField",
 	component: TextField,
 	tags: ["autodocs"],
 	argTypes: {

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LinearProgress } from "../../ui/feedback/linear-progress";
+import { LinearProgress } from ".";
 
 const meta: Meta<typeof LinearProgress> = {
-	title: "Components/LinearProgress",
+	title: "Components/Feedback/LinearProgress",
 	component: LinearProgress,
 	tags: ["autodocs"],
 	argTypes: {

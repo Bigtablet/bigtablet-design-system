@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Switch } from "../../ui/form/switch";
+import { Switch } from ".";
 
 const meta: Meta<typeof Switch> = {
-	title: "Components/Switch",
+	title: "Components/Form/Switch",
 	component: Switch,
 	tags: ["autodocs"],
 	argTypes: {

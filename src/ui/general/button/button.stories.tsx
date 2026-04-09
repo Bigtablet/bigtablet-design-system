@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "../../ui/general/button";
+import { Button } from ".";
 
 const PlusIcon = () => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -8,7 +8,7 @@ const PlusIcon = () => (
 );
 
 const meta: Meta<typeof Button> = {
-	title: "Components/Button",
+	title: "Components/General/Button",
 	component: Button,
 	tags: ["autodocs"],
 	argTypes: {

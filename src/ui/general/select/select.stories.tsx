@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Select, type SelectOption } from "../../ui/general/select";
+import { Select, type SelectOption } from ".";
 
 const options: SelectOption[] = [
 	{ value: "apple", label: "Apple" },
@@ -10,7 +10,7 @@ const options: SelectOption[] = [
 ];
 
 const meta: Meta<typeof Select> = {
-	title: "Components/Select",
+	title: "Components/General/Select",
 	component: Select,
 	tags: ["autodocs"],
 	argTypes: {

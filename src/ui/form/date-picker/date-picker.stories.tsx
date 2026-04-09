@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { DatePicker } from "src/ui/form/date-picker";
+import { DatePicker } from ".";
 
 type DateFieldDemoProps = {
 	mode?: "year-month" | "year-month-day";
@@ -64,7 +64,7 @@ const DateFieldDemo = ({
 };
 
 const meta: Meta<typeof DateFieldDemo> = {
-	title: "Components/DatePicker",
+	title: "Components/Form/DatePicker",
 	component: DateFieldDemo,
 	tags: ["autodocs"],
 	argTypes: {

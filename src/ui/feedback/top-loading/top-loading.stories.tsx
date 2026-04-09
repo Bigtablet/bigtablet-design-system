@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
-import { TopLoading } from "../../ui/feedback/top-loading";
+import { TopLoading } from ".";
 
 const meta: Meta<typeof TopLoading> = {
-	title: "Components/TopLoading",
+	title: "Components/Feedback/TopLoading",
 	component: TopLoading,
 	tags: ["autodocs"],
 	argTypes: {

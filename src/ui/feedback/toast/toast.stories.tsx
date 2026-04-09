@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type * as React from "react";
-import { ToastProvider } from "src/ui/feedback/toast";
-import { useToast } from "src/ui/feedback/toast/use-toast";
+import { ToastProvider } from ".";
+import { useToast } from "./use-toast";
 
 const demo_wrap_style: React.CSSProperties = {
 	display: "grid",
@@ -77,7 +77,7 @@ function ToastDemoButtons() {
 }
 
 const meta: Meta = {
-	title: "Components/Toast",
+	title: "Components/Feedback/Toast",
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
