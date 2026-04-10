@@ -6,12 +6,6 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["storybook", "--no-open"],
       "port": 6006
-    },
-    {
-      "name": "storybook-static",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "storybook-static", "-p", "4173"],
-      "port": 4173
     }
   ]
 }
