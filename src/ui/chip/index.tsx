@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import type * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
@@ -46,8 +46,6 @@ const ChevronDownIcon = () => (
 	</svg>
 );
 
-type HoverZone = "leading" | "label" | "trailing-icon" | null;
-
 export const Chip = ({
 	type = "basic",
 	label,
@@ -60,12 +58,8 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	const [hoverZone, setHoverZone] = useState<HoverZone>(null);
-
 	const hasLeading = selected;
-	// removable input chip만 별도 trailing 버튼 유지 (두 가지 다른 액션 필요)
 	const hasTrailingButton = type === "input" && removable;
-	// filter/removable input 모두 trailing 아이콘 패딩 적용
 	const hasTrailingIcon = hasTrailingButton || type === "filter";
 
 	const chipClassName = cn(
@@ -78,41 +72,52 @@ export const Chip = ({
 		className,
 	);
 
-	const handleMouseLeave = () => setHoverZone(null);
-
 	return (
 		<div className={chipClassName} {...props}>
-			<button
-				type="button"
-				className={cn("chip_content", !disabled && hoverZone === "label" && "chip_content_hover")}
-				disabled={disabled}
-				onClick={onClick}
-				onMouseOver={() => setHoverZone("label")}
-				onMouseLeave={handleMouseLeave}
-				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
-			>
-				{hasLeading && (
-					<span
-						className={cn("chip_icon", !disabled && hoverZone === "leading" && "chip_icon_hover")}
-						aria-hidden="true"
-						onMouseOver={(e) => { e.stopPropagation(); setHoverZone("leading"); }}
-						onMouseLeave={handleMouseLeave}
-					>
+			{/* Leading icon — 독립 버튼 (원형 hover) */}
+			{hasLeading && (
+				<button
+					type="button"
+					className="chip_icon_btn chip_icon_btn_leading"
+					disabled={disabled}
+					onClick={onClick}
+					tabIndex={-1}
+					aria-hidden="true"
+				>
+					<span className="chip_icon">
 						<CheckIcon />
 					</span>
-				)}
+				</button>
+			)}
+
+			{/* Label — 메인 버튼 (전체 영역 hover) */}
+			<button
+				type="button"
+				className="chip_label_btn"
+				disabled={disabled}
+				onClick={onClick}
+				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
+			>
 				<span className="chip_label">{label}</span>
-				{type === "filter" && (
-					<span
-						className={cn("chip_icon", !disabled && hoverZone === "trailing-icon" && "chip_icon_hover")}
-						aria-hidden="true"
-						onMouseOver={(e) => { e.stopPropagation(); setHoverZone("trailing-icon"); }}
-						onMouseLeave={handleMouseLeave}
-					>
+			</button>
+
+			{/* Filter trailing icon — 독립 버튼 (원형 hover) */}
+			{type === "filter" && (
+				<button
+					type="button"
+					className="chip_icon_btn chip_icon_btn_trailing"
+					disabled={disabled}
+					onClick={onClick}
+					tabIndex={-1}
+					aria-hidden="true"
+				>
+					<span className="chip_icon">
 						<ChevronDownIcon />
 					</span>
-				)}
-			</button>
+				</button>
+			)}
+
+			{/* Remove button — 독립 버튼 (원형 hover) */}
 			{hasTrailingButton && (
 				<button
 					type="button"

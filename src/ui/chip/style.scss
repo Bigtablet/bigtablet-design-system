@@ -9,34 +9,32 @@
 	overflow: hidden;
 	transition: border-color token.$transition_base;
 
-	// ── Content button ──────────────────────────────────────────────────────
+	// ── Label button (메인 클릭 영역, 전체 state layer) ─────────────────────
 
-	&_content {
+	&_label_btn {
 		flex: 1;
 		display: inline-flex;
 		align-items: center;
-		gap: token.$spacing_4;
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		padding: token.$spacing_6 token.$spacing_12 token.$spacing_6 token.$spacing_16;
+		padding: token.$spacing_6 token.$spacing_12;
 		@include token.body_small_medium;
 		color: token.$color_text_heading;
 		position: relative;
 		overflow: hidden;
+		white-space: nowrap;
 
-		// State layer overlay
+		// State layer overlay (전체 영역)
 		&::before {
 			content: "";
 			position: absolute;
 			top: 0; right: 0; bottom: 0; left: 0;
-			border-radius: inherit;
 			transition: background token.$transition_base;
 			pointer-events: none;
 		}
 
-		// Hover: React-controlled class (label zone only)
-		&.chip_content_hover:not(:disabled)::before {
+		&:hover:not(:disabled)::before {
 			background: token.$color_state_hover_on_light;
 		}
 
@@ -53,30 +51,29 @@
 		}
 	}
 
-	// ── Leading icon padding adjustment ─────────────────────────────────────
+	// ── Icon buttons (leading / filter trailing, 원형 hover) ──────────────
 
-	&_has_leading .chip_content {
-		padding-left: token.$spacing_8;
-	}
-
-	// ── Trailing icon padding adjustment ────────────────────────────────────
-
-	&_has_trailing .chip_content {
-		padding-right: token.$spacing_8;
-	}
-
-	// ── Trailing button ─────────────────────────────────────────────────────
-	// X 버튼: 아이콘 자체에만 circular hover 적용 (다른 아이콘과 동일 방식)
-
-	&_trailing {
+	&_icon_btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
+		padding: 0;
 		color: token.$color_text_heading;
+
+		&_leading {
+			padding-left: token.$spacing_8;
+		}
+
+		&_trailing {
+			padding-right: token.$spacing_8;
+		}
+
+		&:hover:not(:disabled) .chip_icon {
+			background: token.$color_state_hover_on_light;
+		}
 
 		&:focus-visible:not(:disabled) .chip_icon {
 			background: token.$color_state_focus_on_light;
@@ -91,7 +88,36 @@
 		}
 	}
 
-	// ── Icon ────────────────────────────────────────────────────────────────
+	// ── Remove button (X, 원형 hover) ──────────────────────────────────────
+
+	&_trailing {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
+		color: token.$color_text_heading;
+
+		&:hover:not(:disabled) .chip_icon {
+			background: token.$color_state_hover_on_light;
+		}
+
+		&:focus-visible:not(:disabled) .chip_icon {
+			background: token.$color_state_focus_on_light;
+		}
+
+		&:active:not(:disabled) .chip_icon {
+			background: token.$color_state_pressed_on_light;
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+		}
+	}
+
+	// ── Icon ───────────────────────────────────────────────────────────────
 
 	&_icon {
 		display: inline-flex;
@@ -109,28 +135,16 @@
 		}
 	}
 
-	// Circular icon hover — 모든 아이콘 공통 (원형)
-	// chip_content 내부: React-controlled class
-	// chip_trailing X: CSS :hover
-	&_icon_hover,
-	&_trailing:hover:not(:disabled) .chip_icon {
-		background: token.$color_state_hover_on_light;
-	}
-
-	// ── Label ───────────────────────────────────────────────────────────────
+	// ── Label ──────────────────────────────────────────────────────────────
 
 	&_label {
 		white-space: nowrap;
 	}
 
-	// ── Disabled ────────────────────────────────────────────────────────────
+	// ── Disabled ───────────────────────────────────────────────────────────
 
 	&_disabled {
 		opacity: token.$opacity_38;
 		pointer-events: none;
-
-		button {
-			cursor: not-allowed;
-		}
 	}
 }
