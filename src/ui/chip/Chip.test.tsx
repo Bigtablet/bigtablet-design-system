@@ -33,7 +33,7 @@ describe("Chip", () => {
 	it("shows chevron for filter type", () => {
 		const { container } = render(<Chip label="Tag" type="filter" />);
 		expect(container.firstChild).toHaveClass("chip_has_trailing");
-		expect(container.querySelector(".chip_trailing .chip_icon svg")).toBeInTheDocument();
+		expect(container.querySelector(".chip_content .chip_icon svg")).toBeInTheDocument();
 	});
 
 	it("handles disabled state", () => {

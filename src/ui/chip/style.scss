@@ -12,6 +12,7 @@
 	// ── Content button ──────────────────────────────────────────────────────
 
 	&_content {
+		flex: 1;
 		display: inline-flex;
 		align-items: center;
 		gap: token.$spacing_4;
@@ -85,10 +86,6 @@
 			border-radius: inherit;
 			transition: background token.$transition_base;
 			pointer-events: none;
-		}
-
-		&:hover:not(:disabled)::before {
-			background: token.$color_state_hover_on_light;
 		}
 
 		&:focus-visible:not(:disabled)::before {
