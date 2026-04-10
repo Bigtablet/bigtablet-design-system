@@ -4,6 +4,7 @@ const meta: Meta = {
 	title: "Guide/Introduction",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

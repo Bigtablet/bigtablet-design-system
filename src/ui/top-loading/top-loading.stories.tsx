@@ -68,6 +68,8 @@ export default meta;
 type Story = StoryObj<typeof TopLoading>;
 
 export const Indeterminate: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "무한 애니메이션",
 	args: {
 		isLoading: true,
@@ -75,6 +77,8 @@ export const Indeterminate: Story = {
 };
 
 export const WithProgress: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "진행률 표시",
 	args: {
 		progress: 60,
@@ -99,6 +103,8 @@ export const CustomHeight: Story = {
 };
 
 export const Animated: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "진행률 애니메이션 예시",
 	render: () => {
 		const [progress, setProgress] = useState(0);

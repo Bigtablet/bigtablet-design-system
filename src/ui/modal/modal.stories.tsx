@@ -53,6 +53,8 @@ export default meta;
 type Story = StoryObj<typeof Modal>;
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: (args) => {
 		const [open, setOpen] = useState(false);

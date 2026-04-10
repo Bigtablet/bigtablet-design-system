@@ -141,6 +141,8 @@ export const Padding: Story = {
 };
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 320 }}>

@@ -5,6 +5,7 @@ const meta: Meta = {
 	title: "Foundation/opacity",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

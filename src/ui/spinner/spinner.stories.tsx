@@ -70,6 +70,8 @@ export const Sizes: Story = {
 };
 
 export const InButton: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "버튼 내부 사용 예",
 	render: () => (
 		<button

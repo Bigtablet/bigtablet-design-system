@@ -92,6 +92,8 @@ export const Complete: Story = {
 };
 
 export const AllSteps: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "모든 단계 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>

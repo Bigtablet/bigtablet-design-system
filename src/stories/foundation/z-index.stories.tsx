@@ -6,6 +6,7 @@ const meta: Meta = {
 	title: "Foundation/z-index",
 	tags: ["autodocs", "!test"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		a11y: { test: "off" },
 		docs: {
 			description: {

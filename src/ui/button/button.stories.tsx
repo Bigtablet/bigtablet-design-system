@@ -132,6 +132,8 @@ export const Sizes: Story = {
 };
 
 export const AllVariants: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 Variant 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -154,6 +156,8 @@ export const Disabled: Story = {
 };
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 200 }}>

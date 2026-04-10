@@ -69,6 +69,8 @@ export const Disabled: Story = {
 };
 
 export const FloatingPosition: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "플로팅 위치 (실제 사용 예시)",
 	render: () => (
 		<div
@@ -94,6 +96,8 @@ export const FloatingPosition: Story = {
 };
 
 export const AllVariants: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 Variant 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

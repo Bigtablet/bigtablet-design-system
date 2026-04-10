@@ -154,6 +154,8 @@ export const Playground: Story = {
 };
 
 export const Mobile: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "Mobile (Compact)",
 	globals: { viewport: { value: "compact" } },
 	parameters: { layout: "fullscreen" },
@@ -161,6 +163,8 @@ export const Mobile: Story = {
 };
 
 export const Tablet: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "Tablet (Medium)",
 	globals: { viewport: { value: "medium" } },
 	parameters: { layout: "fullscreen" },
@@ -208,11 +212,15 @@ function LongTextButtons() {
 }
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => <LongTextContent />,
 };
 
 export const UsageExample: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "코드 형태",
 	render: () => (
 		<div style={{ padding: 20, maxWidth: 720 }}>

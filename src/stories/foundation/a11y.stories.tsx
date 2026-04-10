@@ -7,6 +7,7 @@ const meta: Meta = {
 	title: "Foundation/a11y",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

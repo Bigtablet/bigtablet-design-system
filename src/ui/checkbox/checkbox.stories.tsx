@@ -94,6 +94,8 @@ export const Disabled: Story = {
 };
 
 export const AllStates: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 상태 비교",
 	render: () => (
 		<div style={{ display: "grid", gap: 16 }}>
@@ -117,6 +119,8 @@ export const AllStates: Story = {
 };
 
 export const AllSelectExample: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 선택 예시",
 	render: () => {
 		const [items, setItems] = React.useState([true, false, false]);

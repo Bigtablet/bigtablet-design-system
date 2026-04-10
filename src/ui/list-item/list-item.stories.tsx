@@ -259,6 +259,8 @@ export const Disabled: Story = {
 };
 
 export const Interactive: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "인터랙티브",
 	args: {
 		label: "클릭 가능한 리스트 아이템",
@@ -268,6 +270,8 @@ export const Interactive: Story = {
 };
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 320 }}>
@@ -286,6 +290,8 @@ export const LongText: Story = {
 };
 
 export const AllVariants: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "모든 변형",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 480 }}>

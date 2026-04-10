@@ -6,6 +6,7 @@ const meta: Meta = {
 	title: "Foundation/motion",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

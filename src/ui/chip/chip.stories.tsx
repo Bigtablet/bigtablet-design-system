@@ -110,6 +110,8 @@ export const Disabled: Story = {
 };
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => (
 		<div style={{ display: "flex", flexWrap: "wrap", gap: 8, maxWidth: 300 }}>
@@ -121,6 +123,8 @@ export const LongText: Story = {
 };
 
 export const Interactive: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "인터랙티브 (클릭해보세요)",
 	render: () => {
 		const options = ["디자인", "개발", "기획", "마케팅", "데이터"];
@@ -154,6 +158,8 @@ export const Interactive: Story = {
 };
 
 export const AllTypes: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 유형 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

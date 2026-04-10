@@ -5,6 +5,7 @@ const meta: Meta = {
 	title: "Foundation/breakpoints",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

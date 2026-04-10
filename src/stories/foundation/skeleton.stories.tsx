@@ -36,6 +36,7 @@ const meta: Meta = {
 	title: "Foundation/skeleton",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `

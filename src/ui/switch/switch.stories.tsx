@@ -60,6 +60,8 @@ export default meta;
 type Story = StoryObj<typeof Switch>;
 
 export const Controlled: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "제어형",
 	render: ({ size, disabled }) => {
 		const [isOn, setIsOn] = React.useState(true);
@@ -82,6 +84,8 @@ export const Controlled: Story = {
 };
 
 export const Uncontrolled: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "비제어형",
 	render: ({ size, disabled }) => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>

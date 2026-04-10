@@ -129,6 +129,8 @@ const longOptions: SelectOption[] = [
 ];
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: (args) => (
 		<div style={{ width: 240 }}>
@@ -143,6 +145,8 @@ export const LongText: Story = {
 };
 
 export const Controlled: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "제어형",
 	render: (args) => {
 		const [value, setValue] = React.useState<string | null>("banana");

@@ -133,6 +133,8 @@ export const NoLabel: Story = {
 };
 
 export const LongText: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "긴 텍스트",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, width: 240 }}>
@@ -152,6 +154,8 @@ export const LongText: Story = {
 };
 
 export const AllStates: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 상태 비교",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, width: 320 }}>

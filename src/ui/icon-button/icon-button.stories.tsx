@@ -129,6 +129,8 @@ export const Sizes: Story = {
 };
 
 export const AllVariants: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "전체 Variant 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

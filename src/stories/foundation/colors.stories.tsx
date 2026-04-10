@@ -15,6 +15,7 @@ const meta: Meta = {
 	title: "Foundation/colors",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		a11y: { test: "off" },
 		docs: {
 			description: {

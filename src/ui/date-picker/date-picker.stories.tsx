@@ -181,6 +181,8 @@ export const DateSelectableRange: Story = {
 };
 
 export const InvalidDayAutoAdjustExample: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
 	name: "일자 자동 보정 예시 (31일 → 2월)",
 	render: () => {
 		const [value, setValue] = React.useState<string>("2026-01-31");
