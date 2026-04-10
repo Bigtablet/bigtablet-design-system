@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../utils";
+import { Icon } from "../icon";
 import "./style.scss";
 
 export interface TextFieldProps
@@ -37,19 +38,8 @@ export interface TextFieldProps
 	ref?: React.Ref<HTMLInputElement>;
 }
 
-// X 아이콘 (인라인 SVG)
-const ClearIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="20"
-		height="20"
-		viewBox="0 -960 960 960"
-		fill="currentColor"
-		aria-hidden="true"
-	>
-		<path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L504-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z" />
-	</svg>
-);
+// X 아이콘 — Icon 컴포넌트 재사용
+const ClearIcon = () => <Icon name="close" size={20} />;
 
 /**
  * 텍스트 필드를 렌더링한다.
