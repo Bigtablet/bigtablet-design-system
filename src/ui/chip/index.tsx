@@ -78,6 +78,7 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
+				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!selected } : {})}
 			>
 				{hasLeading && (
 					<span className="chip_icon" aria-hidden="true">

@@ -132,6 +132,16 @@ export const NoLabel: Story = {
 	},
 };
 
+export const Clearable: Story = {
+	name: "지우기 버튼",
+	args: {
+		label: "Search",
+		placeholder: "검색어를 입력하세요",
+		defaultValue: "삭제 가능한 텍스트",
+		clearable: true,
+	},
+};
+
 export const LongText: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
 
