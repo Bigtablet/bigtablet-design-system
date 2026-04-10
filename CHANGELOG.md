@@ -1,3 +1,19 @@
+## [2.0.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.2...v2.0.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* add full-area state layer to chip_trailing X button ([628ff7f](https://github.com/Bigtablet/bigtablet-design-system/commit/628ff7fc9ab87c9f5e184d6ce755cb1c4b055c4a))
+* chip_trailing X button full-area state layer on hover ([95e9ce8](https://github.com/Bigtablet/bigtablet-design-system/commit/95e9ce8d69fcc0f83c22af4cef5182410e7e143a))
+* eliminate double state layer overlap on Chip active/pressed ([6d264d4](https://github.com/Bigtablet/bigtablet-design-system/commit/6d264d4dc67f22dfa5ae7b2622c2ee04b9541d97))
+* move hover state layer from chip_content to chip container ([ef862e1](https://github.com/Bigtablet/bigtablet-design-system/commit/ef862e1145d299271461fc161bfabac3d5d8585f))
+* refactor Chip hover zones — split content into separate buttons ([a8691da](https://github.com/Bigtablet/bigtablet-design-system/commit/a8691da8cfb5977eae28bf1aca9db47782a67794))
+* revert Chip to single-button structure with smart icon hover toggle ([395c79c](https://github.com/Bigtablet/bigtablet-design-system/commit/395c79c59be26b0f4c045af2a8d570c0693b3037))
+* revert chip_trailing to icon-only circular hover for consistency ([7512e9a](https://github.com/Bigtablet/bigtablet-design-system/commit/7512e9aad5f02aca5b49111be617648b5264f68e))
+* simplify chip_trailing hover — full state layer only, no icon toggle ([88c9432](https://github.com/Bigtablet/bigtablet-design-system/commit/88c943264658645ffe932639571ef489f5d17f9c))
+* unify chip_trailing hover with other icons — circular only ([a7e99aa](https://github.com/Bigtablet/bigtablet-design-system/commit/a7e99aa95a9b2ab6d0c6f9022476120409370504))
+* zone-based hover for Chip — each icon/label area highlights independently ([3d5da7e](https://github.com/Bigtablet/bigtablet-design-system/commit/3d5da7ea693e6f67696b92b1fd7b9a5a699fe6df))
+
 ## [2.0.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.1...v2.0.2) (2026-04-10)
 
 
