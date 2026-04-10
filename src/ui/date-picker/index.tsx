@@ -51,33 +51,24 @@ interface DatePickerProps {
 	selectableRangeUntilTodaySrText?: string;
 }
 
-/**
- * 숫자를 두 자리 문자열로 보정한다.
- * @param n 숫자
- * @returns 두 자리 문자열
- */
+/** 숫자를 두 자리 문자열로 보정한다. */
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/**
- * 해당 연/월의 일 수를 구한다.
- * @param year 연도
- * @param month 월(1-12)
- * @returns 일 수
- */
-const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
+/** 해당 연/월의 일 수를 구한다. */
+const getDaysInMonth = (year: number, month: number) =>
+	new Date(year, month, 0).getDate();
 
-/**
- * 너비 값을 CSS 문자열로 정규화한다.
- * @param v 너비 값
- * @returns CSS 너비 문자열 또는 undefined
- */
-const normalizeWidth = (v?: number | string) => (typeof v === "number" ? `${v}px` : v);
+/** 너비 값을 CSS 문자열로 정규화한다. */
+const normalizeWidth = (v?: number | string) =>
+	typeof v === "number" ? `${v}px` : v;
+
+/** start~end 범위의 숫자 배열을 생성한다. */
+const range = (start: number, end: number) =>
+	Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
 /**
  * 연/월/일 선택형 데이트 피커를 렌더링한다.
  * 입력 값과 선택 범위를 기준으로 옵션을 계산하고, 선택 변경을 상위로 전달한다.
- * @param props 데이트 피커 속성
- * @returns 렌더링된 데이트 피커 UI
  */
 export const DatePicker = ({
 	label,
@@ -85,7 +76,7 @@ export const DatePicker = ({
 	onChange,
 	mode = "year-month-day",
 	startYear = 1950,
-	endYear = new Date().getFullYear() + 10,
+	endYear: endYearProp,
 	minDate,
 	selectableRange = "all",
 	disabled,
@@ -99,67 +90,152 @@ export const DatePicker = ({
 }: DatePickerProps) => {
 	const groupId = React.useId();
 	const constraintId = React.useId();
-	const today = new Date();
-	const todayYear = today.getFullYear();
-	const todayMonth = today.getMonth() + 1;
-	const todayDay = today.getDate();
 
-	const [y, m, d] = value?.split("-").map(Number) ?? [];
-	const [minY, minM, minD] = minDate?.split("-").map(Number) ?? [];
+	// today 값을 마운트 시점에 한 번만 계산
+	const { todayYear, todayMonth, todayDay } = React.useMemo(() => {
+		const now = new Date();
+		return {
+			todayYear: now.getFullYear(),
+			todayMonth: now.getMonth() + 1,
+			todayDay: now.getDate(),
+		};
+	}, []);
 
-	const year = y ?? "";
-	const month = m ?? "";
-	const day = d ?? "";
+	const endYear = endYearProp ?? todayYear + 10;
 
-	const maxYear = selectableRange === "until-today" ? todayYear : endYear;
+	// value 파싱 (NaN → 0으로 통일)
+	const parsed = React.useMemo(() => {
+		if (!value) return { year: 0, month: 0, day: 0 };
+		const [y, m, d] = value.split("-").map(Number);
+		return {
+			year: y || 0,
+			month: m || 0,
+			day: d || 0,
+		};
+	}, [value]);
 
-	const minMonth = minY && year === minY ? minM : 1;
+	// minDate 파싱
+	const min = React.useMemo(() => {
+		if (!minDate) return { year: 0, month: 0, day: 0 };
+		const [y, m, d] = minDate.split("-").map(Number);
+		return {
+			year: y || 0,
+			month: m || 0,
+			day: d || 0,
+		};
+	}, [minDate]);
 
-	const maxMonth = selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
+	const { year, month, day } = parsed;
 
-	const minDay = minY && minM && year === minY && month === minM ? minD : 1;
+	// ── 범위 계산 ────────────────────────────────────────────────────────
 
-	const maxDay =
-		selectableRange === "until-today" && year === todayYear && month === todayMonth
-			? todayDay
-			: getDaysInMonth(year || todayYear, month || 1);
+	const maxYear =
+		selectableRange === "until-today" ? todayYear : endYear;
 
-	const days = year && month ? Math.min(getDaysInMonth(year, month), maxDay) : 31;
+	const minMonth =
+		min.year > 0 && year === min.year ? min.month : 1;
 
-	/**
-	 * 해당 연/월의 최대 일 수를 기준으로 일 값을 보정한다.
-	 * @param year 연도
-	 * @param month 월
-	 * @param day 일
-	 * @returns 보정된 일
-	 */
-	const clampDay = (year: number, month: number, day: number) =>
-		Math.min(day, getDaysInMonth(year, month));
+	const maxMonth =
+		selectableRange === "until-today" && year === todayYear
+			? todayMonth
+			: 12;
 
-	/**
-	 * 선택 값을 포맷팅해 onChange로 전달한다.
-	 * @param yy 연도
-	 * @param mm 월
-	 * @param dd 일
-	 * @returns void
-	 */
-	const emit = (yy: number, mm: number, dd?: number) => {
-		if (mode === "year-month") {
-			onChange(`${yy}-${pad(mm)}`);
-			return;
+	const minDay =
+		min.year > 0 && min.month > 0 && year === min.year && month === min.month
+			? min.day
+			: 1;
+
+	const maxDay = React.useMemo(() => {
+		if (!year || !month) return 31;
+		const daysInMonth = getDaysInMonth(year, month);
+		if (selectableRange === "until-today" && year === todayYear && month === todayMonth) {
+			return Math.min(daysInMonth, todayDay);
 		}
+		return daysInMonth;
+	}, [year, month, selectableRange, todayYear, todayMonth, todayDay]);
 
-		const safeDay = clampDay(yy, mm, dd ?? 1);
+	// ── 옵션 배열 메모이제이션 ────────────────────────────────────────────
 
-		onChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
-	};
+	const yearOptions = React.useMemo(
+		() => range(startYear, maxYear),
+		[startYear, maxYear],
+	);
+
+	const monthOptions = React.useMemo(
+		() => range(minMonth, maxMonth),
+		[minMonth, maxMonth],
+	);
+
+	const dayOptions = React.useMemo(
+		() => range(minDay, Math.max(minDay, maxDay)),
+		[minDay, maxDay],
+	);
+
+	// ── emit: 선택 값을 포맷팅해 onChange로 전달 ─────────────────────────
+
+	const emit = React.useCallback(
+		(yy: number, mm: number, dd?: number) => {
+			if (mode === "year-month") {
+				onChange(`${yy}-${pad(mm)}`);
+				return;
+			}
+			const safeDay = Math.min(dd ?? 1, getDaysInMonth(yy, mm));
+			onChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
+		},
+		[mode, onChange],
+	);
+
+	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
+
+	const handleYearChange = React.useCallback(
+		(newYear: number) => {
+			let newMonth = month;
+			// 월이 새 범위를 벗어나면 보정
+			const newMinMonth = min.year > 0 && newYear === min.year ? min.month : 1;
+			const newMaxMonth =
+				selectableRange === "until-today" && newYear === todayYear
+					? todayMonth
+					: 12;
+			if (newMonth > 0 && newMonth < newMinMonth) newMonth = newMinMonth;
+			if (newMonth > newMaxMonth) newMonth = newMaxMonth;
+
+			if (newMonth > 0) {
+				emit(newYear, newMonth, day || undefined);
+			} else {
+				// 월이 아직 선택 안 된 상태면 연도만 반영
+				emit(newYear, newMinMonth, day || undefined);
+			}
+		},
+		[month, day, min.year, min.month, selectableRange, todayYear, todayMonth, emit],
+	);
+
+	const handleMonthChange = React.useCallback(
+		(newMonth: number) => {
+			if (!year) return;
+			emit(year, newMonth, day || undefined);
+		},
+		[year, day, emit],
+	);
+
+	const handleDayChange = React.useCallback(
+		(newDay: number) => {
+			if (!year || !month) return;
+			emit(year, month, newDay);
+		},
+		[year, month, emit],
+	);
+
+	// ── 렌더링 ───────────────────────────────────────────────────────────
 
 	const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
-	const rootClassName = cn("date_picker", { date_picker_full_width: fullWidth && !width });
+	const rootClassName = cn("date_picker", {
+		date_picker_full_width: fullWidth && !width,
+	});
 
 	const constraintParts: string[] = [];
 	if (minDate) constraintParts.push(minDateSrFormat.replace("{date}", minDate));
-	if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
+	if (selectableRange === "until-today")
+		constraintParts.push(selectableRangeUntilTodaySrText);
 	const constraintDesc = constraintParts.join(". ");
 
 	return (
@@ -182,12 +258,12 @@ export const DatePicker = ({
 			>
 				<select
 					aria-label={yearLabel}
-					value={year}
+					value={year || ""}
 					disabled={disabled}
-					onChange={(e) => emit(Number(e.target.value), month || minMonth, day || minDay)}
+					onChange={(e) => handleYearChange(Number(e.target.value))}
 				>
 					<option value="">{yearLabel}</option>
-					{Array.from({ length: maxYear - startYear + 1 }, (_, i) => startYear + i).map((y) => (
+					{yearOptions.map((y) => (
 						<option key={y} value={y}>
 							{y}
 						</option>
@@ -196,12 +272,12 @@ export const DatePicker = ({
 
 				<select
 					aria-label={monthLabel}
-					value={month}
+					value={month || ""}
 					disabled={disabled || !year}
-					onChange={(e) => emit(year, Number(e.target.value), day || minDay)}
+					onChange={(e) => handleMonthChange(Number(e.target.value))}
 				>
 					<option value="">{monthLabel}</option>
-					{Array.from({ length: maxMonth - minMonth + 1 }, (_, i) => minMonth + i).map((m) => (
+					{monthOptions.map((m) => (
 						<option key={m} value={m}>
 							{pad(m)}
 						</option>
@@ -211,12 +287,12 @@ export const DatePicker = ({
 				{mode === "year-month-day" && (
 					<select
 						aria-label={dayLabel}
-						value={day}
+						value={day || ""}
 						disabled={disabled || !month}
-						onChange={(e) => emit(year, month, Number(e.target.value))}
+						onChange={(e) => handleDayChange(Number(e.target.value))}
 					>
 						<option value="">{dayLabel}</option>
-						{Array.from({ length: days - minDay + 1 }, (_, i) => minDay + i).map((d) => (
+						{dayOptions.map((d) => (
 							<option key={d} value={d}>
 								{pad(d)}
 							</option>
