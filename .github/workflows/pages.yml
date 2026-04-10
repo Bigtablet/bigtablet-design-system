@@ -35,6 +35,11 @@ jobs:
       - name: Build Storybook
         run: pnpm build:sb
 
+      - name: Protect Storybook
+        run: node scripts/protect-storybook.mjs
+        env:
+          STORYBOOK_PASSWORD_HASH: ${{ secrets.STORYBOOK_PASSWORD_HASH }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -43,6 +43,7 @@
 		"dev": "tsup --watch",
 		"storybook": "storybook dev -p 6006",
 		"build:sb": "storybook build",
+		"protect:sb": "node scripts/protect-storybook.mjs",
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
