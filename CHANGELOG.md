@@ -1,3 +1,16 @@
+# [1.26.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.25.0...v1.26.0) (2026-04-10)
+
+
+### Features
+
+* trigger v2.0.0 major release ([f55a240](https://github.com/Bigtablet/bigtablet-design-system/commit/f55a240fe8932b31aad62f5ce63097e1e2db36c3))
+
+
+### BREAKING CHANGES
+
+* helperText renamed to supportingText in TextField. src/styles restructured to domain-based architecture — import paths changed. src/ui directory flattened — import paths changed. Button, TextField, Checkbox APIs fully renewed.
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
 # [1.25.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.24.2...v1.25.0) (2026-04-10)
 
 
