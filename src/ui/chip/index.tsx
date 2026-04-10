@@ -58,8 +58,9 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	// 아이콘에 직접 hover 시 전체 state layer를 끄기 위한 상태
-	const [iconHovered, setIconHovered] = useState(false);
+	// 아이콘에 직접 hover 시 해당 버튼의 전체 state layer를 끄기 위한 상태
+	const [contentIconHovered, setContentIconHovered] = useState(false);
+	const [trailingIconHovered, setTrailingIconHovered] = useState(false);
 
 	const hasLeading = selected;
 	const hasTrailingButton = type === "input" && removable;
@@ -75,14 +76,16 @@ export const Chip = ({
 		className,
 	);
 
-	const enterIcon = () => setIconHovered(true);
-	const leaveIcon = () => setIconHovered(false);
+	const enterContentIcon = () => setContentIconHovered(true);
+	const leaveContentIcon = () => setContentIconHovered(false);
+	const enterTrailingIcon = () => setTrailingIconHovered(true);
+	const leaveTrailingIcon = () => setTrailingIconHovered(false);
 
 	return (
 		<div className={chipClassName} {...props}>
 			<button
 				type="button"
-				className={cn("chip_content", iconHovered && "chip_icon_hovered")}
+				className={cn("chip_content", contentIconHovered && "chip_icon_hovered")}
 				disabled={disabled}
 				onClick={onClick}
 				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
@@ -91,8 +94,8 @@ export const Chip = ({
 					<span
 						className="chip_icon"
 						aria-hidden="true"
-						onPointerEnter={enterIcon}
-						onPointerLeave={leaveIcon}
+						onPointerEnter={enterContentIcon}
+						onPointerLeave={leaveContentIcon}
 					>
 						<CheckIcon />
 					</span>
@@ -102,8 +105,8 @@ export const Chip = ({
 					<span
 						className="chip_icon"
 						aria-hidden="true"
-						onPointerEnter={enterIcon}
-						onPointerLeave={leaveIcon}
+						onPointerEnter={enterContentIcon}
+						onPointerLeave={leaveContentIcon}
 					>
 						<ChevronDownIcon />
 					</span>
@@ -112,12 +115,17 @@ export const Chip = ({
 			{hasTrailingButton && (
 				<button
 					type="button"
-					className="chip_trailing"
+					className={cn("chip_trailing", trailingIconHovered && "chip_icon_hovered")}
 					disabled={disabled}
 					onClick={onRemove}
 					aria-label="Remove"
 				>
-					<span className="chip_icon" aria-hidden="true">
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterTrailingIcon}
+						onPointerLeave={leaveTrailingIcon}
+					>
 						<CloseIcon />
 					</span>
 				</button>
