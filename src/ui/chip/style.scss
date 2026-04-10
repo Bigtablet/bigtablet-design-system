@@ -10,8 +10,6 @@
 	transition: border-color token.$transition_base;
 	position: relative;
 
-	// ── Hover state layer (칩 전체 커버) ────────────────────────────────────
-
 	&::before {
 		content: "";
 		position: absolute;
@@ -25,17 +23,22 @@
 		background: token.$color_state_hover_on_light;
 	}
 
-	// 아이콘 직접 hover 시 전체 state layer 숨김
-	&.chip_icon_hovered:hover::before {
+	&:active::before {
+		background: token.$color_state_pressed_on_light;
+	}
+
+	&.chip_icon_hovered:hover::before,
+	&.chip_icon_hovered:active::before {
 		background: transparent;
 	}
 
-	// 모든 아이콘 공통 원형 hover (chip_content/chip_trailing 무관)
 	.chip_icon:hover {
 		background: token.$color_state_hover_on_light;
 	}
 
-	// ── Content button ──────────────────────────────────────────────────────
+	.chip_icon:active {
+		background: token.$color_state_pressed_on_light;
+	}
 
 	&_content {
 		flex: 1;
@@ -51,7 +54,6 @@
 		position: relative;
 		overflow: hidden;
 
-		// State layer overlay (focus/active 전용)
 		&::before {
 			content: "";
 			position: absolute;
@@ -65,28 +67,18 @@
 			background: token.$color_state_focus_on_light;
 		}
 
-		&:active:not(:disabled)::before {
-			background: token.$color_state_pressed_on_light;
-		}
-
 		&:disabled {
 			cursor: not-allowed;
 		}
 	}
 
-	// ── Leading icon padding adjustment ─────────────────────────────────────
-
 	&_has_leading .chip_content {
 		padding-left: token.$spacing_8;
 	}
 
-	// ── Trailing icon padding adjustment ────────────────────────────────────
-
 	&_has_trailing .chip_content {
 		padding-right: token.$spacing_8;
 	}
-
-	// ── Trailing button (X) ─────────────────────────────────────────────────
 
 	&_trailing {
 		display: inline-flex;
@@ -102,16 +94,10 @@
 			background: token.$color_state_focus_on_light;
 		}
 
-		&:active:not(:disabled) .chip_icon {
-			background: token.$color_state_pressed_on_light;
-		}
-
 		&:disabled {
 			cursor: not-allowed;
 		}
 	}
-
-	// ── Icon ────────────────────────────────────────────────────────────────
 
 	&_icon {
 		display: inline-flex;
@@ -122,7 +108,7 @@
 		flex-shrink: 0;
 		border-radius: token.$radius_full;
 		transition: background token.$transition_base;
-		position: relative; // chip ::before 위에 렌더링되도록
+		position: relative;
 
 		svg {
 			width: 100%;
@@ -130,13 +116,9 @@
 		}
 	}
 
-	// ── Label ───────────────────────────────────────────────────────────────
-
 	&_label {
 		white-space: nowrap;
 	}
-
-	// ── Disabled ────────────────────────────────────────────────────────────
 
 	&_disabled {
 		opacity: token.$opacity_38;
