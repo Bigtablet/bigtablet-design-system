@@ -1,0 +1,11 @@
+// ── Base border-width ────────────────────────────────────────────────────────
+
+$border_width_0: 0px;
+$border_width_1: 1px;
+$border_width_2: 2px;
+
+// ── Semantic border-width ────────────────────────────────────────────────────
+
+$border_width_none:      $border_width_0;
+$border_width_standard:  $border_width_1;
+$border_width_indicator: $border_width_2;

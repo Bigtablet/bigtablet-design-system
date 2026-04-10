@@ -1,0 +1,81 @@
+$font_family_primary: "Pretendard", sans-serif;
+
+// ── Base: Font size ───────────────────────────────────────────────────────────
+
+$font_size_12: 12px;
+$font_size_13: 13px;
+$font_size_14: 14px;
+$font_size_15: 15px;
+$font_size_16: 16px;
+$font_size_18: 18px;
+$font_size_20: 20px;
+$font_size_24: 24px;
+$font_size_28: 28px;
+$font_size_32: 32px;
+$font_size_40: 40px;
+$font_size_48: 48px;
+
+// ── Base: Font weight ─────────────────────────────────────────────────────────
+
+$font_weight_thin:        100;
+$font_weight_extra_light: 200;
+$font_weight_light:       300;
+$font_weight_regular:     400;
+$font_weight_medium:      500;
+$font_weight_semi_bold:   600;
+$font_weight_bold:        700;
+$font_weight_extra_bold:  800;
+$font_weight_black:       900;
+
+// ── Base: Line height ─────────────────────────────────────────────────────────
+
+$line_height_16:   16px;
+$line_height_18:   18px;
+$line_height_20:   20px;
+$line_height_22_5: 22.5px;
+$line_height_24:   24px;
+$line_height_28:   28px;
+$line_height_32:   32px;
+$line_height_36:   36px;
+$line_height_40:   40px;
+$line_height_50:   50px;
+$line_height_60:   60px;
+
+$letter_spacing_normal: 0px;
+
+// ── Semantic mixins ───────────────────────────────────────────────────────────
+
+@mixin display_large         { font-size: $font_size_48; font-weight: $font_weight_regular; line-height: $line_height_60; letter-spacing: $letter_spacing_normal; }
+@mixin display_large_medium  { font-size: $font_size_48; font-weight: $font_weight_medium;  line-height: $line_height_60; letter-spacing: $letter_spacing_normal; }
+@mixin display_medium        { font-size: $font_size_40; font-weight: $font_weight_regular; line-height: $line_height_50; letter-spacing: $letter_spacing_normal; }
+@mixin display_medium_medium { font-size: $font_size_40; font-weight: $font_weight_medium;  line-height: $line_height_50; letter-spacing: $letter_spacing_normal; }
+@mixin display_small         { font-size: $font_size_32; font-weight: $font_weight_regular; line-height: $line_height_40; letter-spacing: $letter_spacing_normal; }
+@mixin display_small_medium  { font-size: $font_size_32; font-weight: $font_weight_medium;  line-height: $line_height_40; letter-spacing: $letter_spacing_normal; }
+
+@mixin heading_large         { font-size: $font_size_28; font-weight: $font_weight_regular; line-height: $line_height_36; letter-spacing: $letter_spacing_normal; }
+@mixin heading_large_medium  { font-size: $font_size_28; font-weight: $font_weight_medium;  line-height: $line_height_36; letter-spacing: $letter_spacing_normal; }
+@mixin heading_medium        { font-size: $font_size_24; font-weight: $font_weight_regular; line-height: $line_height_32; letter-spacing: $letter_spacing_normal; }
+@mixin heading_medium_medium { font-size: $font_size_24; font-weight: $font_weight_medium;  line-height: $line_height_32; letter-spacing: $letter_spacing_normal; }
+@mixin heading_small         { font-size: $font_size_20; font-weight: $font_weight_regular; line-height: $line_height_28; letter-spacing: $letter_spacing_normal; }
+@mixin heading_small_medium  { font-size: $font_size_20; font-weight: $font_weight_medium;  line-height: $line_height_28; letter-spacing: $letter_spacing_normal; }
+
+@mixin title_large           { font-size: $font_size_18; font-weight: $font_weight_regular; line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_large_medium    { font-size: $font_size_18; font-weight: $font_weight_medium;  line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_medium          { font-size: $font_size_16; font-weight: $font_weight_regular; line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_medium_medium   { font-size: $font_size_16; font-weight: $font_weight_medium;  line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_small           { font-size: $font_size_14; font-weight: $font_weight_regular; line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+@mixin title_small_medium    { font-size: $font_size_14; font-weight: $font_weight_medium;  line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+
+@mixin body_large            { font-size: $font_size_16; font-weight: $font_weight_regular; line-height: $line_height_24;   letter-spacing: $letter_spacing_normal; }
+@mixin body_large_medium     { font-size: $font_size_16; font-weight: $font_weight_medium;  line-height: $line_height_24;   letter-spacing: $letter_spacing_normal; }
+@mixin body_medium           { font-size: $font_size_15; font-weight: $font_weight_regular; line-height: $line_height_22_5; letter-spacing: $letter_spacing_normal; }
+@mixin body_medium_medium    { font-size: $font_size_15; font-weight: $font_weight_medium;  line-height: $line_height_22_5; letter-spacing: $letter_spacing_normal; }
+@mixin body_small            { font-size: $font_size_14; font-weight: $font_weight_regular; line-height: $line_height_20;   letter-spacing: $letter_spacing_normal; }
+@mixin body_small_medium     { font-size: $font_size_14; font-weight: $font_weight_medium;  line-height: $line_height_20;   letter-spacing: $letter_spacing_normal; }
+
+@mixin label_large           { font-size: $font_size_14; font-weight: $font_weight_regular; line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+@mixin label_large_medium    { font-size: $font_size_14; font-weight: $font_weight_medium;  line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+@mixin label_medium          { font-size: $font_size_13; font-weight: $font_weight_regular; line-height: $line_height_18; letter-spacing: $letter_spacing_normal; }
+@mixin label_medium_medium   { font-size: $font_size_13; font-weight: $font_weight_medium;  line-height: $line_height_18; letter-spacing: $letter_spacing_normal; }
+@mixin label_small           { font-size: $font_size_12; font-weight: $font_weight_regular; line-height: $line_height_16; letter-spacing: $letter_spacing_normal; }
+@mixin label_small_medium    { font-size: $font_size_12; font-weight: $font_weight_medium;  line-height: $line_height_16; letter-spacing: $letter_spacing_normal; }

@@ -1,0 +1,166 @@
+@use "src/styles/token" as token;
+
+.icon_button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: token.$radius_full;
+  cursor: pointer;
+  overflow: hidden;
+  background: transparent;
+  padding: 0;
+  transition: background token.$transition_base,
+    color token.$transition_base,
+    border-color token.$transition_base;
+
+  // State layer overlay
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transition: background token.$transition_base;
+    pointer-events: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // ── Sizes ────────────────────────────────────────────────────────────────
+
+  &_size_sm {
+    width: 40px;
+    height: 40px;
+  }
+
+  &_size_md {
+    width: 48px;
+    height: 48px;
+  }
+
+  // ── Variant: Standard ───────────────────────────────────────────────────
+
+  &_variant_standard {
+    background: transparent;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Filled ─────────────────────────────────────────────────────
+
+  &_variant_filled {
+    background: token.$color_brand_primary;
+    color: token.$color_text_inverse;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_dark;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_dark;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_dark;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Tonal ──────────────────────────────────────────────────────
+
+  &_variant_tonal {
+    background: token.$color_brand_primary_container;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Outlined ───────────────────────────────────────────────────
+
+  &_variant_outlined {
+    background: transparent;
+    border: 1px solid token.$color_border_default;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      border-color: token.$color_border_default;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Icon Element ────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_size_sm &_icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &_size_md &_icon {
+    width: 24px;
+    height: 24px;
+  }
+}

@@ -1,1 +1,15 @@
 <link rel="icon" href="/images/logo/favicon.png" />
+<script>
+  // Storybook 온보딩 "Get started" 패널 제거
+  const _obs = new MutationObserver(() => {
+    const btn = document.querySelector('button[aria-label="Open onboarding guide"]');
+    if (btn) {
+      // btn → 6단계 상위로 올라가 전체 온보딩 wrapper 제거
+      const wrapper = btn.closest('[role="dialog"]');
+      if (wrapper) wrapper.style.display = 'none';
+      _obs.disconnect();
+    }
+  });
+  _obs.observe(document.documentElement, { childList: true, subtree: true });
+  setTimeout(() => _obs.disconnect(), 10000);
+</script>

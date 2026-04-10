@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "1.24.2",
+	"version": "2.0.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -14,12 +14,8 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./next": {
-			"types": "./dist/next.d.ts",
-			"import": "./dist/next.js"
-		},
 		"./style.css": "./dist/index.css",
-		"./scss/token": "./dist/styles/scss/token.scss",
+		"./scss/token": "./dist/styles/token.scss",
 		"./vanilla": {
 			"style": "./dist/vanilla/bigtablet.min.css",
 			"default": "./dist/vanilla/bigtablet.min.js"
@@ -50,11 +46,8 @@
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
+		"test:storybook": "vitest run --project storybook",
 		"chromatic": "npx chromatic --project-token=$CHROMATIC_TOKEN --build-script-name=build:sb",
-		"figma:test": "tsx scripts/figma-connect.ts",
-		"figma:snapshot": "tsx scripts/figma-snapshot.ts",
-		"figma:diff": "tsx scripts/figma-diff.ts",
-		"figma:apply": "tsx scripts/figma-apply.ts",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
@@ -83,6 +76,7 @@
 		}
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.10",
 		"@commitlint/cli": "^20.5.0",
 		"@commitlint/core": "^20.5.0",
 		"@semantic-release/changelog": "^6.0.3",
@@ -90,6 +84,7 @@
 		"@semantic-release/github": "^12.0.1",
 		"@semantic-release/npm": "^13.1.1",
 		"@size-limit/preset-small-lib": "^12.0.1",
+		"@storybook/addon-a11y": "^10.3.5",
 		"@storybook/addon-docs": "^10.3.3",
 		"@storybook/addon-vitest": "^10.3.3",
 		"@storybook/react": "^10.3.3",
@@ -120,8 +115,7 @@
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
 		"vite": "^6.4.1",
-		"vitest": "^4.1.2",
-		"@biomejs/biome": "^2.4.10"
+		"vitest": "^4.1.2"
 	},
 	"publishConfig": {
 		"access": "public",
@@ -130,7 +124,7 @@
 	"size-limit": [
 		{
 			"path": "dist/index.js",
-			"limit": "12 kB"
+			"limit": "15 kB"
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",

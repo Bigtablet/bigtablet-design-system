@@ -1,0 +1,31 @@
+@use "src/styles/token" as token;
+
+.top_loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: token.$z_level4;
+  overflow: hidden;
+  background-color: transparent;
+
+  &_bar {
+    height: 100%;
+    background-color: token.$color_brand_primary;
+    transition: width token.$transition_base;
+  }
+
+  &_indeterminate {
+    width: 30%;
+    animation: top_loading_indeterminate 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes top_loading_indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}

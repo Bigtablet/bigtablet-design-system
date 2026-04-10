@@ -52,6 +52,7 @@ pnpm build
 | `pnpm test` | 테스트 실행 |
 | `pnpm test:watch` | 테스트 Watch 모드 |
 | `pnpm test:coverage` | 커버리지 리포트 |
+| `pnpm test:storybook` | a11y 테스트 (Storybook + Playwright) |
 | `pnpm lint` | ESLint 실행 |
 | `pnpm typecheck` | TypeScript 타입 체크 |
 
@@ -83,7 +84,7 @@ git checkout -b feat/new-component
 ```
 src/ui/{category}/{ComponentName}/
 ├── index.tsx              # 컴포넌트 구현
-├── style.module.scss      # 스타일
+├── style.scss             # Global SCSS 스타일
 ├── {ComponentName}.test.tsx  # 테스트
 └── ComponentName.stories.tsx # Storybook (선택)
 ```
@@ -135,45 +136,46 @@ gh pr create --base develop --title "feat/new-component" --body "..."
 ```tsx
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary";
     size?: "sm" | "md" | "lg";
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ variant = "primary", size = "md", className, children, ...props }, ref) => {
-        return (
-            <button
-                ref={ref}
-                className={cn(
-                    styles.button,
-                    styles[`variant_${variant}`],
-                    styles[`size_${size}`],
-                    className
-                )}
-                {...props}
-            >
-                {children}
-            </button>
-        );
-    }
-);
-
-Button.displayName = "Button";
+export const Button = ({
+    variant = "primary",
+    size = "md",
+    className,
+    children,
+    ...props
+}: ButtonProps) => {
+    return (
+        <button
+            className={cn(
+                "button",
+                `button_variant_${variant}`,
+                `button_size_${size}`,
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+};
 ```
 
 ### 스타일링
 
-- CSS Modules 사용 (`style.module.scss`)
+- Global SCSS 사용 (`style.scss`)
 - 클래스명은 snake_case
 - 하드코딩된 값 대신 토큰 사용
 
 ```scss
-@use "src/styles/scss/token" as token;
+@use "src/styles/token" as token;
 
 .button {
     display: inline-flex;
@@ -201,10 +203,10 @@ Button.displayName = "Button";
 import { cn } from "../../../utils";
 
 const buttonClassName = cn(
-    styles.button,
-    styles[`size_${size}`],
-    styles[`variant_${variant}`],
-    { [styles.active]: isActive },
+    "button",
+    `button_size_${size}`,
+    `button_variant_${variant}`,
+    isActive && "button_active",
     className
 );
 ```

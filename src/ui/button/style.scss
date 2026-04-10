@@ -1,0 +1,188 @@
+@use "src/styles/token" as token;
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: token.$radius_full;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  @include token.body_small_medium;
+  transition: background token.$transition_base,
+    color token.$transition_base,
+    border-color token.$transition_base;
+
+  // State layer overlay
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transition: background token.$transition_base;
+    pointer-events: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  // ── Sizes ────────────────────────────────────────────────────────────────
+
+  &_size_sm {
+    min-height: 36px;
+    padding: token.$spacing_6 token.$spacing_12;
+    gap: token.$spacing_4;
+  }
+
+  &_size_md {
+    min-height: 40px;
+    padding: token.$spacing_8 token.$spacing_16;
+    gap: token.$spacing_6;
+  }
+
+  &_size_xl {
+    min-height: 56px;
+    padding: token.$spacing_16 token.$spacing_24;
+    gap: token.$spacing_6;
+  }
+
+  // ── Variant: Filled ──────────────────────────────────────────────────────
+
+  &_variant_filled {
+    background: token.$color_brand_primary;
+    color: token.$color_text_inverse;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_dark;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_dark;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_dark;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Tonal ───────────────────────────────────────────────────────
+
+  &_variant_tonal {
+    background: token.$color_brand_primary_container;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      background: token.$color_bg_disabled;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Outline ─────────────────────────────────────────────────────
+
+  &_variant_outline {
+    background: transparent;
+    border: 1px solid token.$color_border_default;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      border-color: token.$color_border_default;
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Variant: Text ────────────────────────────────────────────────────────
+
+  &_variant_text {
+    background: transparent;
+    color: token.$color_text_heading;
+
+    &:hover:not(:disabled)::before {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible:not(:disabled)::before {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &:active:not(:disabled)::before {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:disabled {
+      color: token.$color_brand_primary;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Radius overrides ─────────────────────────────────────────────────────
+
+  &_radius_none { border-radius: token.$radius_none; }
+  &_radius_xs   { border-radius: token.$radius_xs; }
+  &_radius_sm   { border-radius: token.$radius_sm; }
+  &_radius_md   { border-radius: token.$radius_md; }
+  &_radius_lg   { border-radius: token.$radius_lg; }
+  &_radius_xl   { border-radius: token.$radius_xl; }
+  &_radius_full { border-radius: token.$radius_full; }
+
+  // ── Elements ─────────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &_label {
+    position: relative;
+    white-space: normal;
+    word-break: break-word;
+    text-align: center;
+  }
+
+  &_full_width {
+    width: 100%;
+  }
+}

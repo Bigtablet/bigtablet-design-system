@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { baseTypography, typography } from "src/styles/ts/typography";
+import { baseTypography, typography } from "src/styles/typography";
 
 const meta: Meta = {
-	title: "foundation/typography",
+	title: "Foundation/typography",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `
@@ -12,8 +13,18 @@ const meta: Meta = {
 
 **Base / Semantic 2계층 구조**로 정의된 타이포그래피 토큰입니다.
 
-- **Base**: 원시 값 (fontSize, fontWeight, lineHeight)
-- **Semantic**: 역할 기반 스케일 (display / heading / title / body / label × large/medium/small × regular/medium)
+- **Base**: 원시 값 (fontSize, fontWeight, lineHeight, letterSpacing)
+- **Semantic**: 역할 기반 스케일 — 5단계 × 3사이즈 × 2굵기
+
+| 스케일 | 사이즈 범위 | 사용처 |
+|--------|-------------|--------|
+| Display | 32–48px | 히어로·캠페인 타이틀 |
+| Heading | 20–28px | 페이지/섹션 제목 |
+| Title | 14–18px | 카드·컴포넌트 헤더 |
+| Body | 14–16px | 본문·설명 텍스트 |
+| Label | 12–14px | 라벨·캡션·보조 텍스트 |
+
+각 스케일에는 **large / medium / small** 사이즈와 **regular / medium** 굵기가 있습니다.
 
 ❗️직접 px 값을 쓰지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,
@@ -33,8 +44,15 @@ type TypoStyle = {
 };
 
 const fontWeightMap: Record<string, number> = {
+	Thin: 100,
+	ExtraLight: 200,
+	Light: 300,
 	Regular: 400,
 	Medium: 500,
+	SemiBold: 600,
+	Bold: 700,
+	ExtraBold: 800,
+	Black: 900,
 };
 
 function TypoRow({ scale, variant, style }: { scale: string; variant: string; style: TypoStyle }) {
@@ -110,31 +128,31 @@ export const Semantic: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 820 }}>
 			<ScaleSection
 				title="Display"
-				description="히어로·캠페인 타이틀 (32–48px)"
+				description="히어로·캠페인 타이틀 (32–48px) — 랜딩페이지, 프로모션 배너 등 시선을 끄는 대형 텍스트"
 				scale="display"
 				entries={Object.entries(typography.display) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Heading"
-				description="페이지/섹션 제목 (20–28px)"
+				description="페이지/섹션 제목 (20–28px) — 페이지 타이틀, 섹션 구분, 주요 콘텐츠 영역 제목"
 				scale="heading"
 				entries={Object.entries(typography.heading) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Title"
-				description="카드·컴포넌트 헤더 (14–18px)"
+				description="카드·컴포넌트 헤더 (14–18px) — 카드 제목, 리스트 아이템 타이틀, 모달 헤더"
 				scale="title"
 				entries={Object.entries(typography.title) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Body"
-				description="본문·설명 텍스트 (14–16px)"
+				description="본문·설명 텍스트 (14–16px) — 단락 텍스트, 설명문, 안내 메시지"
 				scale="body"
 				entries={Object.entries(typography.body) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Label"
-				description="라벨·캡션·보조 텍스트 (12–14px)"
+				description="라벨·캡션·보조 텍스트 (12–14px) — 폼 라벨, 버튼 텍스트, 뱃지, 헬퍼 텍스트, 타임스탬프"
 				scale="label"
 				entries={Object.entries(typography.label) as [string, TypoStyle][]}
 			/>
@@ -181,7 +199,7 @@ export const Base: Story = {
 							borderRadius: 12,
 						}}
 					>
-						<code style={{ fontSize: 12 }}>fontSize.{key}</code>
+						<code style={{ fontSize: 12 }}>font-size-{key}</code>
 						<div
 							style={{
 								fontFamily: typography.fontFamily.primary,
@@ -217,7 +235,7 @@ export const Base: Story = {
 						}}
 					>
 						<div style={{ fontWeight: fontWeightMap[value] ?? 400, fontSize: 16 }}>
-							굵기 예시 — {key} ({value})
+							굵기 예시 — font-weight-{key} ({value})
 						</div>
 						<code style={{ fontSize: 12 }}>{fontWeightMap[value] ?? value}</code>
 					</div>
@@ -225,6 +243,106 @@ export const Base: Story = {
 			</section>
 		</div>
 	),
+};
+
+export const Hierarchy: Story = {
+	name: "실제 페이지 위계 예시",
+	render: () => (
+		<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 32, maxWidth: 560 }}>
+			<p style={{ margin: "0 0 20px", fontSize: 12, color: "#2563eb", background: "#eff6ff", borderRadius: 8, padding: 10 }}>
+				아래는 하나의 페이지에서 각 Typography 토큰이 어떤 역할을 하는지 보여줍니다.
+			</p>
+
+			{/* Display */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "36px", fontWeight: 500, lineHeight: "1.3", letterSpacing: "-0.02em", marginBottom: 8 }}>
+				캠페인 타이틀
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 24 }}>↑ Display.large</span>
+
+			{/* Heading */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "24px", fontWeight: 500, lineHeight: "1.35", marginBottom: 4 }}>
+				섹션 제목
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 16 }}>↑ Heading.large</span>
+
+			{/* Title */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "16px", fontWeight: 500, lineHeight: "1.5", marginBottom: 4 }}>
+				카드 헤더 텍스트
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 8 }}>↑ Title.medium</span>
+
+			{/* Body */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "14px", fontWeight: 400, lineHeight: "1.6", color: "#444", marginBottom: 4 }}>
+				본문 텍스트입니다. 이 영역은 사용자에게 상세한 정보를 전달하는 데 사용됩니다.
+				적절한 line-height와 letter-spacing으로 가독성을 확보합니다.
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 12 }}>↑ Body.medium</span>
+
+			{/* Label */}
+			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "12px", fontWeight: 400, lineHeight: "1.4", color: "#999", marginBottom: 4 }}>
+				2026-04-09 · 보조 텍스트 · 캡션
+			</div>
+			<span style={{ fontSize: 10, color: "#999", display: "block" }}>↑ Label.small</span>
+		</div>
+	),
+};
+
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => {
+		const sentence = "디자인 시스템은 일관된 사용자 경험을 만듭니다.";
+		const scales = [
+			{ name: "Display Large", style: typography.display.large },
+			{ name: "Heading Large", style: typography.heading.large },
+			{ name: "Title Medium", style: typography.title.medium },
+			{ name: "Body Medium", style: typography.body.medium },
+			{ name: "Label Small", style: typography.label.small },
+		];
+
+		return (
+			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+					같은 문장을 다른 타이포 스케일로 비교해보세요.
+				</p>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+					위에서 아래로 갈수록 작아집니다. 크기만으로 "이건 제목이고 이건 본문이구나"를 느낄 수 있어야 합니다.
+				</p>
+
+				<div style={{ display: "grid", gap: 16 }}>
+					{scales.map(({ name, style }) => (
+						<div key={name} style={{ display: "grid", gridTemplateColumns: "140px 1fr", alignItems: "baseline", gap: 12, padding: 12, background: "#fff", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div>
+								<div style={{ fontSize: 11, fontWeight: 600, color: "#666" }}>{name}</div>
+								<div style={{ fontSize: 10, color: "#999" }}>{style.fontSize}</div>
+							</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: style.fontSize, fontWeight: style.fontWeight === "Medium" ? 500 : 400, lineHeight: style.lineHeight }}>
+								{sentence}
+							</div>
+						</div>
+					))}
+				</div>
+
+				{/* Weight 비교 */}
+				<div style={{ marginTop: 24 }}>
+					<p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600 }}>Regular vs Medium 무게 비교</p>
+					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Regular (400)</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 400, lineHeight: "28px" }}>
+								{sentence}
+							</div>
+						</div>
+						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Medium (500)</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 500, lineHeight: "28px" }}>
+								{sentence}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	},
 };
 
 function sampleText(scale: string) {

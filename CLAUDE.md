@@ -19,6 +19,7 @@ pnpm install       # Install dependencies
 pnpm storybook     # Start Storybook dev server (port 6006)
 pnpm build         # Build library (tsup + copy SCSS)
 pnpm dev           # Watch mode development
+pnpm test:storybook # Run a11y tests via Storybook + Playwright
 ```
 
 ## Architecture
@@ -26,21 +27,28 @@ pnpm dev           # Watch mode development
 ```
 src/
 ├── styles/
-│   ├── ts/        # TypeScript design tokens (colors, spacing, typography, etc.)
-│   └── scss/      # SCSS tokens and mixins
-├── ui/
-│   ├── general/   # General components (Button, Select)
-│   ├── form/      # Form inputs (TextField, Checkbox, Radio, Switch, DatePicker, FileInput)
-│   ├── feedback/  # Feedback (Alert, Toast, Loading)
-│   ├── navigation/# Navigation (Pagination, Sidebar)
-│   ├── overlay/   # Modal components
-│   └── display/   # Card component
+│   ├── token.scss       # SCSS barrel (@forward all domains)
+│   ├── tokens.json      # Designer JSON tokens
+│   ├── colors/          # _index.scss + index.ts per domain
+│   ├── spacing/
+│   ├── typography/
+│   ├── radius/
+│   ├── elevation/
+│   ├── motion/
+│   ├── breakpoints/
+│   ├── opacity/
+│   ├── border-width/
+│   ├── z-index/
+│   ├── skeleton/
+│   ├── a11y/
+│   └── layout/          # SCSS only (no TS)
+├── ui/                  # Flat component folders (no category subdirs)
 ├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
 │   ├── bigtablet.scss    # All component styles + CSS custom properties
 │   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
 │   └── examples/         # HTML usage examples
 ├── index.ts       # Pure React entry point
-└── next.ts        # Next.js entry point (includes Sidebar with next/link)
+└── next.ts        # Next.js entry point (reserved for future Next.js-specific exports)
 ```
 
 ## Key Conventions
@@ -60,7 +68,7 @@ src/
 - **Global SCSS**: All styles use `style.scss` files (not CSS Modules)
 - Import pattern: `import "./style.scss";`
 - Class usage: `className="button"` or `` className={`button_variant_${variant}`} ``
-- SCSS tokens: `@use "src/styles/scss/token" as token;`
+- SCSS tokens: `@use "src/styles/token" as token;`
 - Never use hardcoded values - always use tokens
 
 ### className Pattern
@@ -86,16 +94,16 @@ const buttonClassName = cn(
 ```
 
 ### Design Tokens
-Located in `src/styles/ts/`:
-- `colors.ts` - Brand, background, text, status colors
-- `spacing.ts` - xs(4px) to 5xl(48px)
-- `typography.ts` - Font families, heading/body styles
-- `radius.ts` - Border radius values
-- `shadows.ts` - Elevation shadows
-- `motion.ts` - Animation durations and easings
-- `z-index.ts` - Layer priorities
-- `breakpoints.ts` - Responsive breakpoints
-- `a11y.ts` - Accessibility (focus rings, tap targets)
+Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`):
+- `colors/` - Brand, background, text, status colors
+- `spacing/` - xs(4px) to 5xl(48px)
+- `typography/` - Font families, heading/body styles
+- `radius/` - Border radius values
+- `elevation/` - Elevation shadows (level1-5)
+- `motion/` - Animation durations and easings
+- `z-index/` - Layer priorities
+- `breakpoints/` - Responsive breakpoints
+- `a11y/` - Accessibility (focus rings, tap targets)
 
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`
@@ -123,13 +131,15 @@ Located in `src/styles/ts/`:
 
 ## Testing
 
-- **Test Runner**: Vitest
+- **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
+- **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
 - **Coverage**: 86%
 - **Commands**:
   ```bash
-  pnpm test              # Run tests
+  pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
+  pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 
 ---
@@ -171,7 +181,7 @@ dist/vanilla/
 | Select List | `.bt-select__list` | `--up` (opens upward) | |
 | Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--shadow-sm/md/lg`, `--p-sm/md/lg` | |
+| Card | `.bt-card` | `--bordered`, `--elevation-1/2/3`, `--p-sm/md/lg` | |
 | Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
@@ -270,8 +280,8 @@ dist/vanilla/
   <p>Content</p>
 </div>
 
-<div class="bt-card bt-card--shadow-md bt-card--p-lg">
-  Shadow card
+<div class="bt-card bt-card--elevation-2 bt-card--p-lg">
+  Elevation card
 </div>
 ```
 
@@ -344,14 +354,15 @@ All design tokens available as CSS variables:
   --bt-color-text-primary: #1a1a1a;
   --bt-color-border: #e5e5e5;
   --bt-color-error: #ef4444;
-  --bt-color-success: #10b981;
+  --bt-color-success: #047857;
+  --bt-color-info: #2563eb;
   --bt-spacing-xs: 0.25rem;
   --bt-spacing-sm: 0.5rem;
   --bt-spacing-md: 0.75rem;
   --bt-spacing-lg: 1rem;
   --bt-radius-sm: 6px;
   --bt-radius-md: 8px;
-  --bt-shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --bt-elevation-1: 0 1px 1px -1px rgba(0,0,0,0.20), 0 3px 3px 0 rgba(0,0,0,0.12);
   --bt-transition-base: 0.2s ease-in-out;
 }
 ```
@@ -438,8 +449,8 @@ git checkout -b label/domain
 ```
 
 ### 3. Implement Changes
-- Follow CSS Modules convention (`style.module.scss`)
-- Use design tokens (`src/styles/scss/token`)
+- Follow Global SCSS convention (`style.scss`)
+- Use design tokens (`src/styles/token`)
 
 ### 4. Commit
 ```bash
@@ -478,3 +489,41 @@ EOF
 - Write PR body in Korean
 - Create issues first if needed and link them to PR
 - Requires team review before merging
+
+---
+
+## Chromatic Snapshot 절약 규칙
+
+Chromatic은 `git push` 시 자동으로 실행되며 스냅샷을 소모합니다.
+**불필요한 push를 최소화해서 스냅샷 낭비를 방지합니다.**
+
+### Push 규칙
+- **모든 작업이 완전히 끝난 후에만 push**
+- 중간 커밋은 로컬에만 쌓아두고, 작업 단위가 완료됐을 때 한 번에 push
+- 리뷰 피드백 반영도 한 번에 모아서 push
+
+### 하면 안 되는 것
+```bash
+# ❌ 커밋할 때마다 바로 push
+git commit -m "fix: ..."
+git push  # 매번 Chromatic 빌드 발생
+
+# ✅ 작업 다 끝나면 한 번에 push
+git commit -m "fix: ..."
+git commit -m "docs: ..."
+git commit -m "style: ..."
+git push  # Chromatic 빌드 1번만 발생
+```
+
+---
+
+## Temporary: Disabled A11y Rules
+
+> 디자이너와 접근성 색상 협의 완료 후 이 섹션을 삭제하고 룰을 다시 활성화할 것.
+
+### color-contrast (비활성화)
+- **위치**: `.storybook/preview.ts` → `parameters.a11y.config.rules`
+- **원인**: TextField helper text 색상이 WCAG AA 대비율(4.5:1) 미달
+  - Error helper (`#EF4444` on `#FFFFFF`) → 3.76:1
+  - Supporting text (`#888888` on `#FFFFFF`) → 3.54:1
+- **해결 방법**: 디자이너와 접근성 충족 색상 합의 후, 해당 룰의 `enabled: false`를 제거하고 이 섹션 삭제

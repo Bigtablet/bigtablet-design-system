@@ -9,43 +9,45 @@ Bigtablet Design System의 프로젝트 구조 및 아키텍처 문서입니다.
 ```
 bigtablet-design-system/
 ├── src/
-│   ├── styles/
-│   │   ├── ts/              # TypeScript 디자인 토큰
-│   │   │   ├── colors.ts
-│   │   │   ├── spacing.ts
-│   │   │   ├── typography.ts
-│   │   │   ├── radius.ts
-│   │   │   ├── shadows.ts
-│   │   │   ├── motion.ts
-│   │   │   ├── z-index.ts
-│   │   │   ├── breakpoints.ts
-│   │   │   └── a11y.ts
-│   │   └── scss/            # SCSS 토큰 및 믹스인
-│   │       └── _token.scss
+│   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
+│   │   ├── token.scss       # SCSS barrel (@forward all domains)
+│   │   ├── tokens.json      # 디자이너 JSON 토큰
+│   │   ├── colors/
+│   │   ├── spacing/
+│   │   ├── typography/
+│   │   ├── radius/
+│   │   ├── shadows/
+│   │   ├── motion/
+│   │   ├── breakpoints/
+│   │   ├── opacity/
+│   │   ├── border-width/
+│   │   ├── z-index/
+│   │   ├── skeleton/
+│   │   ├── a11y/
+│   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트
-│   │   ├── general/         # 범용 컴포넌트
-│   │   │   ├── button/
-│   │   │   └── select/
-│   │   ├── form/            # 폼 컴포넌트
-│   │   │   ├── textfield/
-│   │   │   ├── checkbox/
-│   │   │   ├── radio/
-│   │   │   ├── switch/
-│   │   │   ├── date-picker/
-│   │   │   └── file/
-│   │   ├── feedback/        # 피드백 컴포넌트
-│   │   │   ├── alert/
-│   │   │   ├── toast/
-│   │   │   ├── spinner/
-│   │   │   └── top-loading/
-│   │   ├── navigation/      # 네비게이션 컴포넌트
-│   │   │   ├── pagination/
-│   │   │   └── sidebar/
-│   │   ├── overlay/         # 오버레이 컴포넌트
-│   │   │   └── modal/
-│   │   └── display/         # 디스플레이 컴포넌트
-│   │       └── card/
+│   ├── ui/                  # UI 컴포넌트 (플랫 구조)
+│   │   ├── alert/
+│   │   ├── button/
+│   │   ├── card/
+│   │   ├── checkbox/
+│   │   ├── chip/
+│   │   ├── date-picker/
+│   │   ├── divider/
+│   │   ├── fab/
+│   │   ├── file/
+│   │   ├── icon-button/
+│   │   ├── linear-progress/
+│   │   ├── list-item/
+│   │   ├── modal/
+│   │   ├── pagination/
+│   │   ├── radio/
+│   │   ├── select/
+│   │   ├── spinner/
+│   │   ├── switch/
+│   │   ├── textfield/
+│   │   ├── toast/
+│   │   └── top-loading/
 │   │
 │   ├── utils/               # 유틸리티 함수
 │   │   ├── cn.ts            # className 유틸리티
@@ -87,7 +89,7 @@ bigtablet-design-system/
 ```
 src/ui/{category}/{ComponentName}/
 ├── index.tsx              # 컴포넌트 구현
-├── style.module.scss      # CSS Module 스타일 (또는 style.scss)
+├── style.scss             # Global SCSS 스타일
 ├── {ComponentName}.test.tsx  # 단위 테스트
 └── *.stories.tsx          # Storybook 스토리 (선택)
 ```
@@ -98,9 +100,9 @@ src/ui/{category}/{ComponentName}/
 // src/ui/general/button/index.tsx
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
-import styles from "./style.module.scss";
+import "./style.scss";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -108,42 +110,44 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     fullWidth?: boolean;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ variant = "primary", size = "md", fullWidth, className, children, ...props }, ref) => {
-        return (
-            <button
-                ref={ref}
-                className={cn(
-                    styles.button,
-                    styles[`variant_${variant}`],
-                    styles[`size_${size}`],
-                    { [styles.fullWidth]: fullWidth },
-                    className
-                )}
-                {...props}
-            >
-                {children}
-            </button>
-        );
-    }
-);
-
-Button.displayName = "Button";
+export const Button = ({
+    variant = "primary",
+    size = "md",
+    fullWidth,
+    className,
+    children,
+    ...props
+}: ButtonProps) => {
+    return (
+        <button
+            className={cn(
+                "button",
+                `button_variant_${variant}`,
+                `button_size_${size}`,
+                fullWidth && "button_full_width",
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+};
 ```
 
 ---
 
 ## 스타일링 규칙
 
-### CSS Modules
+### Global SCSS
 
-- 모든 스타일은 `style.module.scss` 파일에 작성
+- 모든 스타일은 `style.scss` 파일에 작성
 - 클래스명은 snake_case 사용
-- SCSS 토큰 import: `@use "src/styles/scss/token" as token;`
+- SCSS 토큰 import: `@use "src/styles/token" as token;`
 
 ```scss
-// style.module.scss
-@use "src/styles/scss/token" as token;
+// style.scss
+@use "src/styles/token" as token;
 
 .button {
     display: inline-flex;
@@ -204,9 +208,10 @@ export * from "./ui/form/textfield";
 
 ```ts
 // src/next.ts
-export * from "./index";
-// Next.js 전용 컴포넌트 (예: Sidebar with next/link)
-export * from "./ui/navigation/sidebar";
+// Next.js-specific components
+// Currently all components are framework-agnostic.
+// This entry point is reserved for future Next.js-specific exports.
+export {};
 ```
 
 ### Vanilla JS (`/vanilla`)
@@ -225,12 +230,12 @@ CDN 또는 직접 import로 사용:
 ### TypeScript 토큰
 
 ```ts
-// src/styles/ts/colors.ts
+// src/styles/colors/index.ts
 export const colors = {
     primary: "#000000",
     primaryHover: "#333333",
     error: "#ef4444",
-    success: "#10b981",
+    success: "#047857",
     // ...
 };
 ```
@@ -238,11 +243,11 @@ export const colors = {
 ### SCSS 토큰
 
 ```scss
-// src/styles/scss/_token.scss
+// src/styles/colors/_index.scss
 $color_primary: #000000;
 $color_primary_hover: #333333;
 $color_error: #ef4444;
-$color_success: #10b981;
+$color_success: #047857;
 
 $spacing_xs: 0.25rem;
 $spacing_sm: 0.5rem;
@@ -382,6 +387,8 @@ jobs:
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm test
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:storybook
       - run: pnpm build
 ```
 

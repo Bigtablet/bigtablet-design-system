@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { opacity } from "src/styles/ts/opacity";
+import { opacity } from "src/styles/opacity";
 
 const meta: Meta = {
-	title: "foundation/opacity",
+	title: "Foundation/opacity",
 	tags: ["autodocs"],
 	parameters: {
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: `
@@ -54,7 +55,10 @@ export const Scale: Story = {
 						borderRadius: 10,
 					}}
 				>
-					<code style={{ fontSize: 12 }}>opacity["{key}"]</code>
+					<div>
+						<strong style={{ fontSize: 12 }}>{value}</strong>
+						<div style={{ fontSize: 11, color: "#666", marginTop: 1 }}>{opacityUseCase(key)}</div>
+					</div>
 
 					<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
 						{/* 체커보드 배경으로 투명도 시각화 */}
@@ -83,9 +87,154 @@ export const Scale: Story = {
 						</div>
 					</div>
 
-					<span style={{ fontSize: 12, opacity: 0.7, textAlign: "right" }}>{value}</span>
+					<span style={{ fontSize: 11, color: "#666", textAlign: "right" }}>
+						<code>opacity-{key}</code>
+					</span>
 				</div>
 			))}
 		</div>
 	),
 };
+
+export const UsageExamples: Story = {
+	name: "실제 적용 예시",
+	render: () => (
+		<div
+			style={{
+				background: "#fafafa",
+				borderRadius: 12,
+				padding: 24,
+				display: "grid",
+				gap: 20,
+				maxWidth: 560,
+			}}
+		>
+			<h3 style={{ margin: 0, fontSize: 14 }}>컴포넌트에서 이렇게 사용됩니다</h3>
+
+			{/* Hover overlay */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-5</code> — 버튼 호버 오버레이
+				</div>
+				<div style={{ display: "flex", gap: 12 }}>
+					<div style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+						기본 상태
+					</div>
+					<div style={{ position: "relative", padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+						호버 상태
+						<div style={{ position: "absolute", inset: 0, borderRadius: 8, background: "#fff", opacity: 0.05 }} />
+					</div>
+				</div>
+			</div>
+
+			{/* Disabled */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-38</code> — 비활성화 상태
+				</div>
+				<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+					<button type="button" style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none" }}>
+						활성 버튼
+					</button>
+					<button type="button" disabled style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none", opacity: 0.38, cursor: "not-allowed" }}>
+						비활성 버튼
+					</button>
+				</div>
+			</div>
+
+			{/* Modal overlay */}
+			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+					<code>opacity-50</code> — 모달 배경 오버레이
+				</div>
+				<div style={{ position: "relative", height: 80, borderRadius: 8, overflow: "hidden" }}>
+					<div style={{ padding: 12, fontSize: 13, color: "#333" }}>배경 콘텐츠 영역</div>
+					<div style={{ position: "absolute", inset: 0, background: "#000", opacity: 0.5 }} />
+					<div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "#fff", borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 600 }}>
+						모달
+					</div>
+				</div>
+			</div>
+		</div>
+	),
+};
+
+const bgContent = (
+	<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, width: "100%", height: "100%" }}>
+		<div style={{ background: "#3B82F6", borderRadius: 4 }} />
+		<div style={{ background: "#EF4444", borderRadius: 4 }} />
+		<div style={{ background: "#10B981", borderRadius: 4 }} />
+		<div style={{ background: "#F59E0B", borderRadius: 4 }} />
+	</div>
+);
+
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				뒤에 같은 물체를 놓고, opacity에 따라 얼마나 가려지는지 비교해보세요.
+			</p>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				검은 오버레이의 투명도만 다릅니다. 숫자가 클수록 뒤가 안 보입니다.
+			</p>
+			<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12 }}>
+				{([0, 0.05, 0.12, 0.38, 0.5, 0.8, 1] as const).map((value) => (
+					<div key={value} style={{ textAlign: "center" }}>
+						<div style={{ position: "relative", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)" }}>
+							<div style={{ position: "absolute", inset: 8, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+								<div style={{ background: "#3B82F6", borderRadius: 4 }} />
+								<div style={{ background: "#EF4444", borderRadius: 4 }} />
+								<div style={{ background: "#10B981", borderRadius: 4 }} />
+								<div style={{ background: "#F59E0B", borderRadius: 4 }} />
+							</div>
+							<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+								<span style={{ fontSize: 13, fontWeight: 600, color: "#fff", textShadow: "0 1px 3px rgba(0,0,0,0.5)", zIndex: 2 }}>텍스트</span>
+							</div>
+							<div style={{ position: "absolute", inset: 0, background: "#000", opacity: value }} />
+						</div>
+						<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>{Math.round(value * 100)}%</div>
+						<div style={{ fontSize: 11, color: "#666" }}>{opacityLabel(value)}</div>
+					</div>
+				))}
+			</div>
+		</div>
+	),
+};
+
+function opacityLabel(value: number) {
+	if (value === 0) return "완전 투명";
+	if (value <= 0.05) return "호버 배경";
+	if (value <= 0.12) return "비활성 배경";
+	if (value <= 0.38) return "비활성 텍스트";
+	if (value <= 0.5) return "모달 오버레이";
+	if (value <= 0.8) return "거의 불투명";
+	return "완전 불투명";
+}
+
+function opacityUseCase(key: string) {
+	switch (key) {
+		case "0":
+			return "완전 투명 (숨김)";
+		case "5":
+			return "호버 배경";
+		case "8":
+			return "눌림/서브틀 배경";
+		case "12":
+			return "비활성 배경";
+		case "16":
+			return "약한 오버레이";
+		case "38":
+			return "비활성 텍스트·아이콘";
+		case "50":
+			return "반투명 오버레이";
+		case "80":
+			return "거의 불투명 레이어";
+		case "90":
+			return "강한 불투명 레이어";
+		case "100":
+			return "완전 불투명";
+		default:
+			return "";
+	}
+}
