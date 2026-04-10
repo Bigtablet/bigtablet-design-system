@@ -25,6 +25,7 @@ export type { CheckboxProps } from "./ui/checkbox";
 export { Chip } from "./ui/chip";
 export type { ChipProps, ChipType } from "./ui/chip";
 export { DatePicker } from "./ui/date-picker";
+export type { DatePickerProps } from "./ui/date-picker";
 export { Divider } from "./ui/divider";
 export type { DividerProps } from "./ui/divider";
 export { FAB } from "./ui/fab";

@@ -39,28 +39,39 @@ const meta: Meta<typeof Icon> = {
     docs: {
       description: {
         component: `
-**Icon**은 Material Symbols 기반의 인라인 SVG 아이콘 컴포넌트입니다.
+**Icon** — Material Symbols 기반 인라인 SVG 아이콘 컴포넌트
 
-### 특징
-- 폰트/CDN 의존 없는 인라인 SVG — 오프라인, SSR 완전 지원
-- 트리쉐이킹 지원 (사용한 아이콘만 번들에 포함)
-- \`currentColor\` 상속 — 부모의 \`color\` CSS로 색상 제어 가능
+Inline SVG icon component based on Material Symbols.
 
-### 사용법
+### 특징 / Features
+- 폰트/CDN 의존 없는 인라인 SVG — 오프라인, SSR 완전 지원 (No font/CDN dependency)
+- 트리쉐이킹 지원 — 사용한 아이콘만 번들에 포함 (Tree-shakable)
+- \`currentColor\` 상속 — 부모의 \`color\` CSS로 색상 제어 가능 (Inherits parent color)
+- 기본적으로 \`aria-hidden="true"\` — 장식용 아이콘으로 사용 (Decorative by default)
+
+### 사용법 / Usage
 \`\`\`tsx
 import { Icon } from "@bigtablet/design-system";
 
+// 기본 사용 (장식용 — aria-hidden="true" 자동 적용)
 <Icon name="search" />
 <Icon name="settings" size={20} weight={300} fill />
+
+// 의미를 전달해야 할 때 aria-label 추가
+<Icon name="error" aria-hidden={undefined} aria-label="오류" role="img" />
 \`\`\`
 
 ### Props
 | Prop | Type | Default | 설명 |
 |------|------|---------|------|
-| **name** | IconName | — | 아이콘 이름 (필수) |
-| **size** | 20 \\| 24 | 24 | 아이콘 크기 (px) |
-| **weight** | 300 \\| 400 | 400 | 선 굵기 |
-| **fill** | boolean | false | 채움 스타일 |
+| **name** | IconName | — | 아이콘 이름 (필수) / Icon name (required) |
+| **size** | 20 \\| 24 | 24 | 아이콘 크기 (px) / Size in pixels |
+| **weight** | 300 \\| 400 | 400 | 선 굵기 / Stroke weight |
+| **fill** | boolean | false | 채움 스타일 / Filled style |
+
+### 접근성 / Accessibility
+- 기본: \`aria-hidden="true"\` + \`focusable="false"\` (장식용)
+- 독립적 의미 전달 시: \`aria-hidden={undefined}\`, \`aria-label\`, \`role="img"\` 추가
 
 > 색상은 \`color\` CSS 속성으로 제어합니다. (\`currentColor\` 상속)
         `,

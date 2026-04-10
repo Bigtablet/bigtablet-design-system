@@ -31,9 +31,7 @@ export const Icon = ({
   const entry = ICON_DATA[name];
 
   if (!entry) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn(`[Icon] Unknown icon name: "${name}"`);
-    }
+    console.warn(`[Icon] Unknown icon name: "${name}"`);
     return null;
   }
 
