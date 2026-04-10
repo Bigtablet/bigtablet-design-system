@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.4...v2.0.5) (2026-04-10)
+
+
+### Bug Fixes
+
+* use relative paths for Storybook logo and favicon ([ac2c2fa](https://github.com/Bigtablet/bigtablet-design-system/commit/ac2c2fa00f2de31e4e50b8cf1a4b03a3cf837288))
+
 ## [2.0.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.3...v2.0.4) (2026-04-10)
 
 ## [2.0.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.2...v2.0.3) (2026-04-10)
