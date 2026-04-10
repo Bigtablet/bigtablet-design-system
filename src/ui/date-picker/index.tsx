@@ -162,7 +162,7 @@ export const DatePicker = ({
 	);
 
 	const monthOptions = React.useMemo(
-		() => range(minMonth, maxMonth),
+		() => range(minMonth, Math.max(minMonth, maxMonth)),
 		[minMonth, maxMonth],
 	);
 

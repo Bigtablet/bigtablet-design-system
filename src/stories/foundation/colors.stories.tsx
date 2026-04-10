@@ -205,7 +205,7 @@ export const Comparison: Story = {
 			{ name: "Error", color: colors.status.error, bg: "#FEF2F2", text: "결제에 실패했습니다." },
 			{ name: "Success", color: colors.status.success, bg: "#F0FDF4", text: "저장이 완료되었습니다." },
 			{ name: "Info", color: colors.status.info, bg: "#EFF6FF", text: "새 버전이 있습니다." },
-			{ name: "Warning", color: "#F59E0B", bg: "#FFFBEB", text: "세션이 곧 만료됩니다." },
+			{ name: "Warning", color: colors.status.warning, bg: "#FFFBEB", text: "세션이 곧 만료됩니다." },
 		];
 
 		return (
