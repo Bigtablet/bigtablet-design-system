@@ -28,8 +28,8 @@ const meta: Meta<typeof Chip> = {
 			control: "boolean",
 			description: "비활성화 상태입니다.",
 		},
-		onClick: { action: "clicked" },
-		onRemove: { action: "removed" },
+		onClick: { action: "onClick", control: false },
+		onRemove: { action: "onRemove", control: false },
 	},
 	args: {
 		type: "basic",
