@@ -1,3 +1,12 @@
+## [2.0.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.1...v2.0.2) (2026-04-10)
+
+
+### Bug Fixes
+
+* fix chip double action and double hover, scope icon circular hover to trailing button only ([38fcdf0](https://github.com/Bigtablet/bigtablet-design-system/commit/38fcdf03f91e97bf7b1609633ef83f79ef673f81))
+* fix Spinner animation, add hover effect to chip_icon ([e1320f4](https://github.com/Bigtablet/bigtablet-design-system/commit/e1320f4267a7917fcdc2b6109cb7e770a907c95a))
+* restore Chip trailing hover, widen left padding, add removable interactive story ([0456c78](https://github.com/Bigtablet/bigtablet-design-system/commit/0456c782d5e118f342d7e08896b17e917fc9d2df))
+
 ## [2.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.0.1) (2026-04-10)
 
 
