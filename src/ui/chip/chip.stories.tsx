@@ -122,6 +122,39 @@ export const LongText: Story = {
 	),
 };
 
+export const InputRemovableInteractive: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
+	name: "Input 삭제 (인터랙티브)",
+	render: () => {
+		const [items, setItems] = React.useState(["디자인", "개발", "기획", "마케팅"]);
+		const remove = (label: string) => setItems((prev) => prev.filter((v) => v !== label));
+		return (
+			<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
+					X 버튼을 눌러 칩을 삭제해보세요.
+				</p>
+				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+					{items.map((label) => (
+						<Chip
+							key={label}
+							type="input"
+							label={label}
+							removable
+							onRemove={() => remove(label)}
+						/>
+					))}
+					{items.length === 0 && (
+						<p style={{ margin: 0, fontSize: 13, color: "#999" }}>
+							모든 칩이 삭제되었습니다.
+						</p>
+					)}
+				</div>
+			</div>
+		);
+	},
+};
+
 export const Interactive: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
 
