@@ -106,7 +106,6 @@ export const TextField = ({
 				className="text_field_clear"
 				onClick={handleClear}
 				aria-label="Clear"
-				tabIndex={-1}
 			>
 				<ClearIcon />
 			</button>

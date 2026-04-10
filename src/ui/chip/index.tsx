@@ -18,6 +18,8 @@ export interface ChipProps
 	removable?: boolean;
 	/** 비활성화 상태 */
 	disabled?: boolean;
+	/** 팝업 열림 상태 (filter 타입에서 aria-expanded로 사용) */
+	open?: boolean;
 	/** 칩 클릭 시 콜백 */
 	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	/** 삭제 버튼 클릭 시 콜백 */
@@ -50,6 +52,7 @@ export const Chip = ({
 	selected,
 	removable,
 	disabled,
+	open,
 	onClick,
 	onRemove,
 	className,
@@ -78,7 +81,7 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
-				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!selected } : {})}
+				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
 			>
 				{hasLeading && (
 					<span className="chip_icon" aria-hidden="true">
