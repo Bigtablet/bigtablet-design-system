@@ -7,7 +7,7 @@ import "./style.scss";
 type DatePickerMode = "year-month" | "year-month-day";
 type SelectableRange = "all" | "until-today";
 
-interface DatePickerProps {
+export interface DatePickerProps {
 	/** 데이트 피커 위에 표시할 라벨 텍스트 */
 	label?: string;
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */

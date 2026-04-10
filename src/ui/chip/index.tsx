@@ -18,6 +18,8 @@ export interface ChipProps
 	removable?: boolean;
 	/** 비활성화 상태 */
 	disabled?: boolean;
+	/** 팝업 열림 상태 (filter 타입에서 aria-expanded로 사용) */
+	open?: boolean;
 	/** 칩 클릭 시 콜백 */
 	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	/** 삭제 버튼 클릭 시 콜백 */
@@ -50,20 +52,24 @@ export const Chip = ({
 	selected,
 	removable,
 	disabled,
+	open,
 	onClick,
 	onRemove,
 	className,
 	...props
 }: ChipProps) => {
 	const hasLeading = selected;
-	const hasTrailing = (type === "input" && removable) || type === "filter";
+	// removable input chip만 별도 trailing 버튼 유지 (두 가지 다른 액션 필요)
+	const hasTrailingButton = type === "input" && removable;
+	// filter/removable input 모두 trailing 아이콘 패딩 적용
+	const hasTrailingIcon = hasTrailingButton || type === "filter";
 
 	const chipClassName = cn(
 		"chip",
 		`chip_type_${type}`,
 		selected && "chip_selected",
 		hasLeading && "chip_has_leading",
-		hasTrailing && "chip_has_trailing",
+		hasTrailingIcon && "chip_has_trailing",
 		disabled && "chip_disabled",
 		className,
 	);
@@ -75,6 +81,7 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
+				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
 			>
 				{hasLeading && (
 					<span className="chip_icon" aria-hidden="true">
@@ -82,17 +89,22 @@ export const Chip = ({
 					</span>
 				)}
 				<span className="chip_label">{label}</span>
+				{type === "filter" && (
+					<span className="chip_icon" aria-hidden="true">
+						<ChevronDownIcon />
+					</span>
+				)}
 			</button>
-			{hasTrailing && (
+			{hasTrailingButton && (
 				<button
 					type="button"
 					className="chip_trailing"
 					disabled={disabled}
-					onClick={type === "input" && removable ? onRemove : onClick}
-					aria-label={type === "input" && removable ? "Remove" : "Toggle dropdown"}
+					onClick={onRemove}
+					aria-label="Remove"
 				>
 					<span className="chip_icon" aria-hidden="true">
-						{type === "input" && removable ? <CloseIcon /> : <ChevronDownIcon />}
+						<CloseIcon />
 					</span>
 				</button>
 			)}

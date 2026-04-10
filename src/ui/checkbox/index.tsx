@@ -45,6 +45,7 @@ export const Checkbox = ({
 	const rootClassName = cn(
 		"checkbox",
 		error && "checkbox_error",
+		props.disabled && "checkbox_disabled",
 		className,
 	);
 
