@@ -84,7 +84,7 @@
     cursor: not-allowed;
   }
 
-  &:has(.checkbox_input:disabled) {
+  &_disabled {
     cursor: not-allowed;
   }
 

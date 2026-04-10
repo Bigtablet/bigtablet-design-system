@@ -463,7 +463,7 @@
 
   &__input {
     position: absolute;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     opacity: 0;
     cursor: pointer;
     margin: 0;
@@ -787,7 +787,7 @@
    ======================================== */
 .bt-modal {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   display: none;
   place-items: center;
   background: var(--bt-color-overlay);
@@ -843,7 +843,7 @@
 .bt-alert {
   &__overlay {
     position: fixed;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     background: var(--bt-color-overlay);
     display: none;
     align-items: center;
@@ -1113,7 +1113,7 @@
 
   &__control {
     position: absolute;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     opacity: 0;
     cursor: pointer;
   }

@@ -2,7 +2,7 @@
 
 .modal {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   display: grid;
   place-items: center;
   background: token.$color_bg_overlay;

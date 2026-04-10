@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../utils";
+import { Icon } from "../icon";
 import "./style.scss";
 
 export interface TextFieldProps
@@ -21,6 +22,8 @@ export interface TextFieldProps
 	leadingIcon?: React.ReactNode;
 	/** 입력 필드 오른쪽에 표시할 아이콘 */
 	trailingIcon?: React.ReactNode;
+	/** 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 여부 */
+	clearable?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
 	/** 값 변경 시 호출되는 콜백 (IME 조합 완료 후 실행) */
@@ -34,6 +37,9 @@ export interface TextFieldProps
 	/** 입력 요소 참조 */
 	ref?: React.Ref<HTMLInputElement>;
 }
+
+// X 아이콘 — Icon 컴포넌트 재사용
+const ClearIcon = () => <Icon name="close" size={20} />;
 
 /**
  * 텍스트 필드를 렌더링한다.
@@ -49,6 +55,7 @@ export const TextField = ({
 	error,
 	leadingIcon,
 	trailingIcon,
+	clearable,
 	fullWidth,
 	className,
 	onChangeAction,
@@ -78,6 +85,11 @@ export const TextField = ({
 		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
 	}, [isControlled, value, transformValue]);
 
+	const handleClear = React.useCallback(() => {
+		setInnerValue("");
+		onChangeAction?.("");
+	}, [onChangeAction]);
+
 	const rootClassName = cn(
 		"text_field",
 		fullWidth && "text_field_full_width",
@@ -85,6 +97,23 @@ export const TextField = ({
 		props.disabled && "text_field_disabled",
 		className,
 	);
+
+	// clearable이 켜져 있고 값이 있으면 X 버튼, 없으면 trailingIcon
+	const resolvedTrailing = clearable && innerValue
+		? (
+			<button
+				type="button"
+				className="text_field_clear"
+				onClick={handleClear}
+				aria-label="Clear"
+				tabIndex={-1}
+			>
+				<ClearIcon />
+			</button>
+		)
+		: trailingIcon
+			? <span className="text_field_icon" aria-hidden="true">{trailingIcon}</span>
+			: null;
 
 	return (
 		<div className={rootClassName}>
@@ -95,7 +124,7 @@ export const TextField = ({
 					</span>
 				)}
 
-				<div className="text_field_input_wrap">
+				<div className={cn("text_field_input_wrap", (resolvedTrailing) && "text_field_input_wrap_no_pad_right")}>
 					<input
 						id={inputId}
 						ref={ref}
@@ -128,11 +157,7 @@ export const TextField = ({
 					/>
 				</div>
 
-				{trailingIcon && (
-					<span className="text_field_icon" aria-hidden="true">
-						{trailingIcon}
-					</span>
-				)}
+				{resolvedTrailing}
 
 				{label && showLabel && (
 					<label className="text_field_label" htmlFor={inputId}>

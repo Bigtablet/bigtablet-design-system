@@ -67,7 +67,7 @@
     padding-left: 0;
   }
 
-  &_input_wrap:has(+ .text_field_icon) {
+  &_input_wrap_no_pad_right {
     padding-right: 0;
   }
 
@@ -109,6 +109,36 @@
       height: 20px;
     }
   }
+
+  // ── Clear button ───────────────────────────────────────────────────────
+
+  &_clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: token.$color_text_caption;
+    border-radius: token.$radius_full;
+    transition: color token.$transition_base, background token.$transition_base;
+    padding: 0;
+
+    &:hover {
+      color: token.$color_text_heading;
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // clear 버튼이 있으면 input_wrap 오른쪽 패딩 제거 (_no_pad_right 클래스로 처리)
 
   // ── Helper text ────────────────────────────────────────────────────────
 
