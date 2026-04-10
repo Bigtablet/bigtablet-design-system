@@ -25,7 +25,9 @@ export const Radio = ({ label, size = "md", className, ref, ...props }: RadioPro
 	return (
 		<label className={rootClassName}>
 			<input ref={ref} type="radio" className="radio_input" {...props} />
-			<span className="radio_dot" aria-hidden="true" />
+			<span className="radio_state_layer" aria-hidden="true">
+				<span className="radio_dot" />
+			</span>
 			{label ? <span className="radio_label">{label}</span> : null}
 		</label>
 	);

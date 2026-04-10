@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type * as React from "react";
 import { IconButton } from ".";
 
 const PlusIcon = () => (
@@ -20,6 +21,12 @@ const SearchIcon = () => (
 	</svg>
 );
 
+const iconMap = {
+	Plus: <PlusIcon />,
+	Close: <CloseIcon />,
+	Search: <SearchIcon />,
+};
+
 const meta: Meta<typeof IconButton> = {
 	title: "Components/IconButton",
 	component: IconButton,
@@ -35,6 +42,12 @@ const meta: Meta<typeof IconButton> = {
 			options: ["sm", "md"],
 			description: "아이콘 버튼의 크기입니다.",
 		},
+		icon: {
+			control: "select",
+			options: Object.keys(iconMap),
+			mapping: iconMap,
+			description: "표시할 아이콘을 선택합니다.",
+		},
 		disabled: {
 			control: "boolean",
 			description: "비활성화 상태입니다.",
@@ -42,7 +55,7 @@ const meta: Meta<typeof IconButton> = {
 		onClick: { action: "clicked" },
 	},
 	args: {
-		icon: <PlusIcon />,
+		icon: "Plus" as unknown as React.ReactNode,
 		variant: "standard",
 		size: "md",
 		disabled: false,

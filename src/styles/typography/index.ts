@@ -21,8 +21,15 @@ export const baseTypography = {
 	},
 
 	fontWeight: {
+		thin: "Thin",
+		extraLight: "ExtraLight",
+		light: "Light",
 		regular: "Regular",
 		medium: "Medium",
+		semiBold: "SemiBold",
+		bold: "Bold",
+		extraBold: "ExtraBold",
+		black: "Black",
 	},
 
 	lineHeight: {

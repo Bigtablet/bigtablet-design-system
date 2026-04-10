@@ -132,6 +132,25 @@ export const NoLabel: Story = {
 	},
 };
 
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => (
+		<div style={{ display: "grid", gap: 24, width: 240 }}>
+			<TextField
+				label="긴 라벨 — 사용자의 이메일 주소를 입력해주세요"
+				placeholder="Lorem ipsum dolor sit amet"
+				supportingText="이 필드는 반드시 입력해야 하며, 올바른 이메일 형식이어야 합니다."
+			/>
+			<TextField
+				label="에러 + 긴 텍스트"
+				defaultValue="동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세"
+				supportingText="입력한 값이 올바르지 않습니다. 다시 확인해주세요."
+				error
+			/>
+		</div>
+	),
+};
+
 export const AllStates: Story = {
 	name: "전체 상태 비교",
 	render: () => (

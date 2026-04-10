@@ -185,6 +185,46 @@ export const DoAndDont: Story = {
 	),
 };
 
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				완전히 같은 카드인데, 그림자만 다릅니다.
+			</p>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				level이 올라갈수록 "공중에 떠 있는" 느낌이 강해지는 걸 비교해보세요.
+			</p>
+			<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 20 }}>
+				{Object.entries(elevation).map(([key, value]) => (
+					<div key={key} style={{ textAlign: "center" }}>
+						<div
+							style={{
+								background: "#fff",
+								borderRadius: 12,
+								padding: 16,
+								boxShadow: value,
+								minHeight: 100,
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								alignItems: "center",
+								gap: 8,
+							}}
+						>
+							<div style={{ width: 32, height: 32, borderRadius: 8, background: "#f3f4f6" }} />
+							<div style={{ fontSize: 12, color: "#333" }}>카드 제목</div>
+							<div style={{ fontSize: 11, color: "#999" }}>설명 텍스트</div>
+						</div>
+						<div style={{ marginTop: 10, fontSize: 13, fontWeight: 600 }}>{key}</div>
+						<div style={{ fontSize: 11, color: "#666" }}>{elevationUseCase(key)}</div>
+					</div>
+				))}
+			</div>
+		</div>
+	),
+};
+
 function elevationDescription(key: string) {
 	switch (key) {
 		case "level1":

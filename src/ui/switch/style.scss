@@ -4,68 +4,133 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  box-sizing: border-box;
 
   width: 40px;
-  height: 22px;
+  height: 24px;
   padding: 2px;
 
+  border: 2px solid token.$color_border_default;
   border-radius: token.$radius_full;
-  background: token.$color_border_default;
+  background: token.$color_bg_solid_dim;
 
-  transition: background token.$transition_base;
+  transition: background token.$transition_base,
+    border-color token.$transition_base;
   cursor: pointer;
 
+  // ── Thumb ──────────────────────────────────────────────────────────────
+
   &_thumb {
-    width: 18px;
-    height: 18px;
-    background: token.$color_bg_solid;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    background: token.$color_text_caption;
     border-radius: token.$radius_full;
-    transition: transform token.$transition_base;
+    transition: transform token.$transition_base,
+      width token.$transition_base,
+      height token.$transition_base,
+      background token.$transition_base;
     transform: translateX(0);
   }
 
+  // ── On state ───────────────────────────────────────────────────────────
+
   &_on {
     background: token.$color_brand_primary;
+    border-color: token.$color_brand_primary;
 
     .switch_thumb {
-      transform: translateX(18px);
+      width: 20px;
+      height: 20px;
+      background: token.$color_bg_solid;
+      transform: translateX(14px);
     }
   }
 
+  // ── States: Hover ──────────────────────────────────────────────────────
+
+  &:not(:disabled):hover {
+    opacity: 0.88;
+  }
+
+  // ── States: Focus ──────────────────────────────────────────────────────
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  // ── States: Active/Pressed ─────────────────────────────────────────────
+
+  &:not(:disabled):active .switch_thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  &_on:not(:disabled):active .switch_thumb {
+    transform: translateX(12px);
+  }
+
+  // ── Sizes ──────────────────────────────────────────────────────────────
+
   &_size_sm {
     width: 34px;
-    height: 18px;
+    height: 20px;
     padding: 2px;
 
     .switch_thumb {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
     }
 
     &.switch_on .switch_thumb {
-      transform: translateX(16px);
+      width: 16px;
+      height: 16px;
+      transform: translateX(12px);
+    }
+
+    &:not(:disabled):active .switch_thumb {
+      width: 16px;
+      height: 16px;
+    }
+
+    &.switch_on:not(:disabled):active .switch_thumb {
+      transform: translateX(10px);
     }
   }
 
   &_size_md {
     width: 40px;
-    height: 22px;
+    height: 24px;
   }
 
   &_size_lg {
     width: 48px;
-    height: 26px;
+    height: 28px;
     padding: 2px;
 
     .switch_thumb {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
 
     &.switch_on .switch_thumb {
-      transform: translateX(22px);
+      width: 24px;
+      height: 24px;
+      transform: translateX(18px);
+    }
+
+    &:not(:disabled):active .switch_thumb {
+      width: 24px;
+      height: 24px;
+    }
+
+    &.switch_on:not(:disabled):active .switch_thumb {
+      transform: translateX(16px);
     }
   }
+
+  // ── Disabled ───────────────────────────────────────────────────────────
 
   &_disabled {
     opacity: token.$opacity_38;

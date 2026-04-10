@@ -131,6 +131,49 @@ export const LayoutExample: Story = {
 	),
 };
 
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => {
+		const gaps = [
+			{ token: "spacing-4", value: spacing[4], desc: "아이콘·텍스트 인접" },
+			{ token: "spacing-12", value: spacing[12], desc: "기본 간격" },
+			{ token: "spacing-24", value: spacing[24], desc: "섹션 간 여백" },
+			{ token: "spacing-48", value: spacing[48], desc: "큰 레이아웃 분리" },
+		];
+
+		const card = (
+			<div style={{ background: "#fff", borderRadius: 8, border: "1px solid #e5e5e5", padding: 12 }}>
+				<div style={{ fontSize: 13, fontWeight: 600 }}>카드</div>
+				<div style={{ fontSize: 11, color: "#666", marginTop: 4 }}>내용</div>
+			</div>
+		);
+
+		return (
+			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+					같은 카드 3개를 놓고, 간격만 바꿨습니다.
+				</p>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+					간격이 넓을수록 여유로운 느낌, 좁을수록 빽빽한 느낌이 나는 걸 비교해보세요.
+				</p>
+				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 20 }}>
+					{gaps.map(({ token, value, desc }) => (
+						<div key={token}>
+							<div style={{ display: "grid", gap: parseInt(value), background: "#f0f0f0", borderRadius: 10, padding: 12 }}>
+								{card}
+								{card}
+								{card}
+							</div>
+							<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600, textAlign: "center" }}>{token}</div>
+							<div style={{ fontSize: 11, color: "#666", textAlign: "center" }}>{value} — {desc}</div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	},
+};
+
 function spacingUseCase(key: string) {
 	switch (key) {
 		case "0":

@@ -121,6 +121,27 @@ export const Sizes: Story = {
 	),
 };
 
+const longOptions: SelectOption[] = [
+	{ value: "long1", label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
+	{ value: "long2", label: "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세" },
+	{ value: "long3", label: "Very long option text that should test overflow and truncation behavior" },
+	{ value: "long4", label: "아주 긴 옵션 텍스트 — 드롭다운과 선택 영역에서 어떻게 표시되는지 확인" },
+];
+
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: (args) => (
+		<div style={{ width: 240 }}>
+			<Select
+				{...args}
+				label="긴 옵션 텍스트 테스트"
+				placeholder="선택해주세요"
+				options={longOptions}
+			/>
+		</div>
+	),
+};
+
 export const Controlled: Story = {
 	name: "제어형",
 	render: (args) => {

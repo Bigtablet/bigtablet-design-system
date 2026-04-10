@@ -52,6 +52,39 @@ const meta: Meta<typeof Modal> = {
 export default meta;
 type Story = StoryObj<typeof Modal>;
 
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: (args) => {
+		const [open, setOpen] = useState(false);
+
+		return (
+			<div>
+				<button type="button" onClick={() => setOpen(true)}>
+					긴 텍스트 모달 열기
+				</button>
+
+				<Modal {...args} open={open} onClose={() => setOpen(false)} title="Lorem ipsum dolor sit amet, consectetur adipiscing elit">
+					<div style={{ display: "grid", gap: 16 }}>
+						<p style={{ margin: 0 }}>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+							Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+							Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+						<p style={{ margin: 0 }}>
+							동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세.
+							남산 위에 저 소나무 철갑을 두른 듯 바람서리 불변함은 우리 기상일세. 가을 하늘 공활한데 높고 구름 없이 밝은 달은 우리 가슴 일편단심일세.
+						</p>
+						<p style={{ margin: 0 }}>
+							이 기상과 이 맘으로 충성을 다하여 괴로우나 즐거우나 나라 사랑하세. 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세.
+						</p>
+					</div>
+				</Modal>
+			</div>
+		);
+	},
+};
+
 export const Playground: Story = {
 	name: "기본 사용 예시",
 	render: (args) => {
