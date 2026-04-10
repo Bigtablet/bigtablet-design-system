@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Chip } from ".";
 
@@ -117,6 +118,39 @@ export const LongText: Story = {
 			<Chip type="filter" label="동해물과 백두산이 마르고 닳도록" selected />
 		</div>
 	),
+};
+
+export const Interactive: Story = {
+	name: "인터랙티브 (클릭해보세요)",
+	render: () => {
+		const options = ["디자인", "개발", "기획", "마케팅", "데이터"];
+		const [selected, setSelected] = React.useState<string[]>([]);
+		const toggle = (label: string) =>
+			setSelected((prev) =>
+				prev.includes(label) ? prev.filter((v) => v !== label) : [...prev, label],
+			);
+		return (
+			<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
+					칩을 클릭해 선택/해제해보세요. Chip은 controlled 컴포넌트로, 부모가 selected 상태를 관리합니다.
+				</p>
+				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+					{options.map((label) => (
+						<Chip
+							key={label}
+							type="basic"
+							label={label}
+							selected={selected.includes(label)}
+							onClick={() => toggle(label)}
+						/>
+					))}
+				</div>
+				<p style={{ margin: 0, fontSize: 12, color: "#999" }}>
+					선택됨: {selected.length > 0 ? selected.join(", ") : "없음"}
+				</p>
+			</div>
+		);
+	},
 };
 
 export const AllTypes: Story = {
