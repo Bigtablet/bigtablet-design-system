@@ -10,11 +10,26 @@
 
   &_input {
     position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    margin: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
+
+  // ── State layer (circular overlay for hover/focus/pressed) ─────────────
+
+  &_state_layer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: token.$spacing_8;
+    border-radius: token.$radius_full;
+    transition: background token.$transition_base;
+  }
+
+  // ── Dot (radio graphic) ────────────────────────────────────────────────
 
   &_dot {
     width: token.$font_size_16;
@@ -26,8 +41,7 @@
     background: token.$color_bg_solid;
 
     transition: background token.$transition_base,
-    border-color token.$transition_base,
-    box-shadow token.$transition_base;
+      border-color token.$transition_base;
 
     position: relative;
     display: inline-block;
@@ -37,6 +51,8 @@
     @include token.body_medium;
     color: token.$color_text_heading;
   }
+
+  // ── Sizes ──────────────────────────────────────────────────────────────
 
   &_size_sm {
     .radio_dot {
@@ -67,16 +83,45 @@
     }
   }
 
-  &_input:focus-visible + .radio_dot {
-    box-shadow: token.$focus_ring;
+  // ── States: Hover ──────────────────────────────────────────────────────
+
+  &:hover .radio_state_layer {
+    background: token.$color_state_hover_on_light;
+  }
+
+  // ── States: Focus ──────────────────────────────────────────────────────
+
+  &_input:focus-visible ~ .radio_state_layer {
+    background: token.$color_state_focus_on_light;
+  }
+
+  // ── States: Active/Pressed ─────────────────────────────────────────────
+
+  &:active .radio_state_layer {
+    background: token.$color_state_pressed_on_light;
+  }
+
+  // ── States: Disabled ───────────────────────────────────────────────────
+
+  &_input:disabled ~ .radio_state_layer {
+    opacity: token.$opacity_38;
+  }
+
+  &_input:disabled ~ .radio_label {
+    opacity: token.$opacity_38;
+  }
+
+  &:has(.radio_input:disabled) {
+    cursor: not-allowed;
+  }
+
+  // ── Checked state ──────────────────────────────────────────────────────
+
+  &_input:checked ~ .radio_state_layer .radio_dot {
     border-color: token.$color_brand_primary;
   }
 
-  &_input:checked + .radio_dot {
-    border-color: token.$color_brand_primary;
-  }
-
-  &_input:checked + .radio_dot::after {
+  &_input:checked ~ .radio_state_layer .radio_dot::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -86,11 +131,5 @@
     transform: translate(-50%, -50%);
     background: token.$color_brand_primary;
     border-radius: token.$radius_full;
-  }
-
-  &_input:disabled + .radio_dot,
-  &_input:disabled ~ .radio_label {
-    opacity: token.$opacity_38;
-    cursor: not-allowed;
   }
 }
