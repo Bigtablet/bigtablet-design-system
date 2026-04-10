@@ -21,6 +21,8 @@ export interface TextFieldProps
 	leadingIcon?: React.ReactNode;
 	/** 입력 필드 오른쪽에 표시할 아이콘 */
 	trailingIcon?: React.ReactNode;
+	/** 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 여부 */
+	clearable?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
 	/** 값 변경 시 호출되는 콜백 (IME 조합 완료 후 실행) */
@@ -34,6 +36,20 @@ export interface TextFieldProps
 	/** 입력 요소 참조 */
 	ref?: React.Ref<HTMLInputElement>;
 }
+
+// X 아이콘 (인라인 SVG)
+const ClearIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="20"
+		height="20"
+		viewBox="0 -960 960 960"
+		fill="currentColor"
+		aria-hidden="true"
+	>
+		<path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L504-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z" />
+	</svg>
+);
 
 /**
  * 텍스트 필드를 렌더링한다.
@@ -49,6 +65,7 @@ export const TextField = ({
 	error,
 	leadingIcon,
 	trailingIcon,
+	clearable,
 	fullWidth,
 	className,
 	onChangeAction,
@@ -78,6 +95,11 @@ export const TextField = ({
 		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
 	}, [isControlled, value, transformValue]);
 
+	const handleClear = React.useCallback(() => {
+		setInnerValue("");
+		onChangeAction?.("");
+	}, [onChangeAction]);
+
 	const rootClassName = cn(
 		"text_field",
 		fullWidth && "text_field_full_width",
@@ -85,6 +107,23 @@ export const TextField = ({
 		props.disabled && "text_field_disabled",
 		className,
 	);
+
+	// clearable이 켜져 있고 값이 있으면 X 버튼, 없으면 trailingIcon
+	const resolvedTrailing = clearable && innerValue
+		? (
+			<button
+				type="button"
+				className="text_field_clear"
+				onClick={handleClear}
+				aria-label="Clear"
+				tabIndex={-1}
+			>
+				<ClearIcon />
+			</button>
+		)
+		: trailingIcon
+			? <span className="text_field_icon" aria-hidden="true">{trailingIcon}</span>
+			: null;
 
 	return (
 		<div className={rootClassName}>
@@ -128,11 +167,7 @@ export const TextField = ({
 					/>
 				</div>
 
-				{trailingIcon && (
-					<span className="text_field_icon" aria-hidden="true">
-						{trailingIcon}
-					</span>
-				)}
+				{resolvedTrailing}
 
 				{label && showLabel && (
 					<label className="text_field_label" htmlFor={inputId}>
