@@ -107,6 +107,49 @@ export const ComponentMapping: Story = {
 	},
 };
 
+function MotionRace() {
+	const [go, setGo] = React.useState(false);
+	const speeds = [
+		{ name: "fast", transition: motion.transition.fast },
+		{ name: "base", transition: motion.transition.base },
+		{ name: "slow", transition: motion.transition.slow },
+		{ name: "emphasized", transition: motion.transition.emphasized },
+	];
+
+	return (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				같은 애니메이션을 동시에 재생 — 속도 차이를 비교해보세요.
+			</p>
+			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
+				버튼을 누르면 4개 바가 동시에 늘어납니다. 누가 먼저 도착하는지 보세요.
+			</p>
+			<button
+				type="button"
+				onClick={() => setGo((v) => !v)}
+				style={{ padding: "8px 16px", borderRadius: 8, background: "#121212", color: "#fff", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, marginBottom: 16 }}
+			>
+				{go ? "리셋" : "재생"}
+			</button>
+			<div style={{ display: "grid", gap: 10 }}>
+				{speeds.map(({ name, transition }) => (
+					<div key={name} style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
+						<div style={{ fontSize: 12, fontWeight: 600 }}>{name} <span style={{ color: "#999", fontWeight: 400 }}>({transition.split(" ")[0]})</span></div>
+						<div style={{ height: 28, background: "#e5e5e5", borderRadius: 6, overflow: "hidden" }}>
+							<div style={{ width: go ? "100%" : "8%", height: "100%", background: "#121212", borderRadius: 6, transition: `width ${transition}` }} />
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => <MotionRace />,
+};
+
 function motionDescription(key: string) {
 	switch (key) {
 		case "fast":

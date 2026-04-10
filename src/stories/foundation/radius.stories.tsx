@@ -101,6 +101,63 @@ export const ComponentMapping: Story = {
 	},
 };
 
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				같은 모양인데, 모서리 둥글기만 다릅니다.
+			</p>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				둥글기가 커질수록 부드럽고 친근한 느낌, 작을수록 단정하고 정보성 느낌이 됩니다.
+			</p>
+
+			{/* 버튼 비교 */}
+			<div style={{ marginBottom: 24 }}>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>버튼에 적용했을 때</div>
+				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+					{Object.entries(radius).map(([key, value]) => (
+						<div key={key} style={{ textAlign: "center" }}>
+							<div style={{ background: "#121212", color: "#fff", padding: "10px 20px", borderRadius: value, fontSize: 13, fontWeight: 600 }}>
+								Button
+							</div>
+							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key} ({value})</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* 카드 비교 */}
+			<div style={{ marginBottom: 24 }}>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>카드에 적용했을 때</div>
+				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12 }}>
+					{Object.entries(radius).map(([key, value]) => (
+						<div key={key} style={{ textAlign: "center" }}>
+							<div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: value, padding: 12, height: 60, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#999" }}>
+								Card
+							</div>
+							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key}</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* 아바타 비교 */}
+			<div>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>아바타에 적용했을 때</div>
+				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+					{Object.entries(radius).map(([key, value]) => (
+						<div key={key} style={{ textAlign: "center" }}>
+							<div style={{ width: 48, height: 48, background: "#e5e5e5", borderRadius: value }} />
+							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key}</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	),
+};
+
 function radiusUseCase(key: string) {
 	switch (key) {
 		case "none":

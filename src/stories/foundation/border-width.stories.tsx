@@ -153,6 +153,43 @@ export const UsageExamples: Story = {
 	),
 };
 
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				같은 인풋인데, 테두리 두께만 다릅니다.
+			</p>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				두꺼울수록 "이 요소에 주목하세요"라는 신호가 강해집니다. 비활성 → 일반 → 강조 순서입니다.
+			</p>
+			<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+				{(Object.entries(borderWidth) as [string, string][]).map(([key, value]) => (
+					<div key={key} style={{ textAlign: "center" }}>
+						<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>{key} ({value})</div>
+						<div style={{
+							height: 44,
+							borderRadius: 10,
+							border: `${value} solid ${key === "indicator" ? "#000" : "#e5e5e5"}`,
+							display: "flex",
+							alignItems: "center",
+							padding: "0 12px",
+							fontSize: 13,
+							color: key === "none" ? "#ccc" : "#333",
+							background: "#fff",
+						}}>
+							{key === "none" ? "비활성 상태" : key === "standard" ? "기본 상태" : "포커스/강조"}
+						</div>
+						<div style={{ marginTop: 8, fontSize: 11, color: "#666" }}>
+							{key === "none" ? "경계 없음" : key === "standard" ? "기본 구분선" : "시선 집중"}
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	),
+};
+
 function borderWidthDescription(key: string) {
 	switch (key) {
 		case "none":

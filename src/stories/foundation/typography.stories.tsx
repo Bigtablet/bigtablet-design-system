@@ -43,8 +43,15 @@ type TypoStyle = {
 };
 
 const fontWeightMap: Record<string, number> = {
+	Thin: 100,
+	ExtraLight: 200,
+	Light: 300,
 	Regular: 400,
 	Medium: 500,
+	SemiBold: 600,
+	Bold: 700,
+	ExtraBold: 800,
+	Black: 900,
 };
 
 function TypoRow({ scale, variant, style }: { scale: string; variant: string; style: TypoStyle }) {
@@ -277,6 +284,64 @@ export const Hierarchy: Story = {
 			<span style={{ fontSize: 10, color: "#999", display: "block" }}>↑ Label.small</span>
 		</div>
 	),
+};
+
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => {
+		const sentence = "디자인 시스템은 일관된 사용자 경험을 만듭니다.";
+		const scales = [
+			{ name: "Display Large", style: typography.display.large },
+			{ name: "Heading Large", style: typography.heading.large },
+			{ name: "Title Medium", style: typography.title.medium },
+			{ name: "Body Medium", style: typography.body.medium },
+			{ name: "Label Small", style: typography.label.small },
+		];
+
+		return (
+			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+					같은 문장을 다른 타이포 스케일로 비교해보세요.
+				</p>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+					위에서 아래로 갈수록 작아집니다. 크기만으로 "이건 제목이고 이건 본문이구나"를 느낄 수 있어야 합니다.
+				</p>
+
+				<div style={{ display: "grid", gap: 16 }}>
+					{scales.map(({ name, style }) => (
+						<div key={name} style={{ display: "grid", gridTemplateColumns: "140px 1fr", alignItems: "baseline", gap: 12, padding: 12, background: "#fff", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div>
+								<div style={{ fontSize: 11, fontWeight: 600, color: "#666" }}>{name}</div>
+								<div style={{ fontSize: 10, color: "#999" }}>{style.fontSize}</div>
+							</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: style.fontSize, fontWeight: style.fontWeight === "Medium" ? 500 : 400, lineHeight: style.lineHeight }}>
+								{sentence}
+							</div>
+						</div>
+					))}
+				</div>
+
+				{/* Weight 비교 */}
+				<div style={{ marginTop: 24 }}>
+					<p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600 }}>Regular vs Medium 무게 비교</p>
+					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Regular (400)</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 400, lineHeight: "28px" }}>
+								{sentence}
+							</div>
+						</div>
+						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Medium (500)</div>
+							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 500, lineHeight: "28px" }}>
+								{sentence}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	},
 };
 
 function sampleText(scale: string) {

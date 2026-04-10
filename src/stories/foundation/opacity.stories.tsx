@@ -158,6 +158,59 @@ export const UsageExamples: Story = {
 	),
 };
 
+const bgContent = (
+	<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, width: "100%", height: "100%" }}>
+		<div style={{ background: "#3B82F6", borderRadius: 4 }} />
+		<div style={{ background: "#EF4444", borderRadius: 4 }} />
+		<div style={{ background: "#10B981", borderRadius: 4 }} />
+		<div style={{ background: "#F59E0B", borderRadius: 4 }} />
+	</div>
+);
+
+export const Comparison: Story = {
+	name: "차이 비교",
+	render: () => (
+		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
+				뒤에 같은 물체를 놓고, opacity에 따라 얼마나 가려지는지 비교해보세요.
+			</p>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				검은 오버레이의 투명도만 다릅니다. 숫자가 클수록 뒤가 안 보입니다.
+			</p>
+			<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12 }}>
+				{([0, 0.05, 0.12, 0.38, 0.5, 0.8, 1] as const).map((value) => (
+					<div key={value} style={{ textAlign: "center" }}>
+						<div style={{ position: "relative", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)" }}>
+							<div style={{ position: "absolute", inset: 8, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+								<div style={{ background: "#3B82F6", borderRadius: 4 }} />
+								<div style={{ background: "#EF4444", borderRadius: 4 }} />
+								<div style={{ background: "#10B981", borderRadius: 4 }} />
+								<div style={{ background: "#F59E0B", borderRadius: 4 }} />
+							</div>
+							<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+								<span style={{ fontSize: 13, fontWeight: 600, color: "#fff", textShadow: "0 1px 3px rgba(0,0,0,0.5)", zIndex: 2 }}>텍스트</span>
+							</div>
+							<div style={{ position: "absolute", inset: 0, background: "#000", opacity: value }} />
+						</div>
+						<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>{Math.round(value * 100)}%</div>
+						<div style={{ fontSize: 11, color: "#666" }}>{opacityLabel(value)}</div>
+					</div>
+				))}
+			</div>
+		</div>
+	),
+};
+
+function opacityLabel(value: number) {
+	if (value === 0) return "완전 투명";
+	if (value <= 0.05) return "호버 배경";
+	if (value <= 0.12) return "비활성 배경";
+	if (value <= 0.38) return "비활성 텍스트";
+	if (value <= 0.5) return "모달 오버레이";
+	if (value <= 0.8) return "거의 불투명";
+	return "완전 불투명";
+}
+
 function opacityUseCase(key: string) {
 	switch (key) {
 		case "0":
