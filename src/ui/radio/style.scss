@@ -124,11 +124,10 @@
   &_input:checked ~ .radio_state_layer .radio_dot::after {
     content: "";
     position: absolute;
-    left: 50%;
-    top: 50%;
+    inset: 0;
+    margin: auto;
     width: 60%;
     height: 60%;
-    transform: translate(-50%, -50%);
     background: token.$color_brand_primary;
     border-radius: token.$radius_full;
   }
