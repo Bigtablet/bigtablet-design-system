@@ -267,6 +267,24 @@ export const Interactive: Story = {
 	},
 };
 
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => (
+		<div style={{ display: "grid", gap: 12, maxWidth: 320 }}>
+			<ListItem
+				label="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"
+				supportingText="동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세"
+			/>
+			<ListItem
+				overline="아주 긴 오버라인 텍스트 — Lorem ipsum dolor sit amet consectetur"
+				label="라벨도 매우 긴 경우를 테스트합니다. 텍스트가 어떻게 줄바꿈되는지 확인하세요."
+				supportingText="보조 텍스트도 길 수 있습니다. 여러 줄이 표시되는 경우 간격과 정렬이 올바른지 확인해야 합니다."
+				metadata="2026-04-10"
+			/>
+		</div>
+	),
+};
+
 export const AllVariants: Story = {
 	name: "모든 변형",
 	render: () => (

@@ -135,6 +135,23 @@ export const Padding: Story = {
 	},
 };
 
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => (
+		<div style={{ display: "grid", gap: 12, maxWidth: 320 }}>
+			<Card shadow="sm" padding="md" heading="아주 긴 제목 — Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+				Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+			</Card>
+			<Card shadow="sm" padding="sm" bordered heading="좁은 패딩 + 긴 내용">
+				동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세.
+				남산 위에 저 소나무 철갑을 두른 듯 바람서리 불변함은 우리 기상일세.
+			</Card>
+		</div>
+	),
+};
+
 export const Border: Story = {
 	name: "테두리 사용",
 	render: (args) => (

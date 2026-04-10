@@ -167,6 +167,51 @@ export const Tablet: Story = {
 	render: () => <PlaygroundContent />,
 };
 
+function LongTextContent() {
+	return (
+		<ToastProvider>
+			<LongTextButtons />
+		</ToastProvider>
+	);
+}
+
+function LongTextButtons() {
+	const t = useToast();
+
+	return (
+		<div style={demo_wrap_style}>
+			<p style={demo_hint_style}>긴 메시지가 Toast에서 어떻게 표시되는지 테스트합니다.</p>
+			<button
+				type="button"
+				style={demo_btn_style}
+				onClick={() =>
+					t.success(
+						"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+					)
+				}
+			>
+				긴 성공 메시지
+			</button>
+			<button
+				type="button"
+				style={demo_btn_style}
+				onClick={() =>
+					t.error(
+						"동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세. 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세.",
+					)
+				}
+			>
+				긴 에러 메시지
+			</button>
+		</div>
+	);
+}
+
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => <LongTextContent />,
+};
+
 export const UsageExample: Story = {
 	name: "코드 형태",
 	render: () => (

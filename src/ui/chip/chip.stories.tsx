@@ -108,6 +108,17 @@ export const Disabled: Story = {
 	args: { type: "basic", label: "Disabled", disabled: true },
 };
 
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => (
+		<div style={{ display: "flex", flexWrap: "wrap", gap: 8, maxWidth: 300 }}>
+			<Chip type="basic" label="Lorem ipsum dolor sit amet consectetur" />
+			<Chip type="input" label="아주 긴 칩 라벨 텍스트 테스트입니다" removable />
+			<Chip type="filter" label="동해물과 백두산이 마르고 닳도록" selected />
+		</div>
+	),
+};
+
 export const AllTypes: Story = {
 	name: "전체 유형 비교",
 	render: () => (

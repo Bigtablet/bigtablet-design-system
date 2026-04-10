@@ -152,3 +152,20 @@ export const Disabled: Story = {
 	name: "비활성화",
 	args: { disabled: true },
 };
+
+export const LongText: Story = {
+	name: "긴 텍스트",
+	render: () => (
+		<div style={{ display: "grid", gap: 12, maxWidth: 200 }}>
+			<Button variant="filled" size="md">
+				Lorem ipsum dolor sit amet consectetur adipiscing elit
+			</Button>
+			<Button variant="tonal" size="md">
+				동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세
+			</Button>
+			<Button variant="outline" size="sm" fullWidth>
+				fullWidth 긴 텍스트 — Lorem ipsum dolor sit amet
+			</Button>
+		</div>
+	),
+};
