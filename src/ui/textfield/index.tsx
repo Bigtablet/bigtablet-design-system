@@ -142,7 +142,7 @@ export const TextField = ({
 			</div>
 
 			{supportingText && (
-				<div id={helperId} className="text_field_helper" aria-disabled={props.disabled || undefined}>
+				<div id={helperId} className="text_field_helper">
 					{supportingText}
 				</div>
 			)}

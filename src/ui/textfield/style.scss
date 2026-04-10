@@ -19,7 +19,7 @@
     width: 100%;
     min-height: 52px;
     padding: token.$spacing_4 0;
-    border: 1px solid token.$color_border_default;
+    border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
     background: token.$color_bg_solid;
     transition: border-color token.$transition_base;
