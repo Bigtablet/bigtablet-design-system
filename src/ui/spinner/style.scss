@@ -14,5 +14,5 @@
   border: token.$border_width_indicator solid token.$color_border_default;
   border-top-color: token.$color_brand_primary;
 
-  animation: spinner_spin token.$transition_dramatic linear infinite;
+  animation: spinner_spin 0.8s linear infinite;
 }

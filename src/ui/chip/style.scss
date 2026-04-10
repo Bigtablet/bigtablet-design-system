@@ -109,14 +109,23 @@
 
 	&_icon {
 		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		width: 20px;
 		height: 20px;
 		flex-shrink: 0;
+		border-radius: token.$radius_full;
+		transition: background token.$transition_base;
 
 		svg {
 			width: 100%;
 			height: 100%;
 		}
+	}
+
+	&_content:hover:not(:disabled) .chip_icon,
+	&_trailing:hover:not(:disabled) .chip_icon {
+		background: token.$color_state_hover_on_light;
 	}
 
 	// ── Label ───────────────────────────────────────────────────────────────
