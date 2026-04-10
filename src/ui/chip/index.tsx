@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import React, { useState } from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
@@ -58,11 +58,15 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
+	// 아이콘 직접 hover 시 칩 전체 state layer를 끄기 위한 상태
+	const [iconHovered, setIconHovered] = useState(false);
+
 	const hasLeading = selected;
-	// removable input chip만 별도 trailing 버튼 유지 (두 가지 다른 액션 필요)
 	const hasTrailingButton = type === "input" && removable;
-	// filter/removable input 모두 trailing 아이콘 패딩 적용
 	const hasTrailingIcon = hasTrailingButton || type === "filter";
+
+	const enterIcon = () => setIconHovered(true);
+	const leaveIcon = () => setIconHovered(false);
 
 	const chipClassName = cn(
 		"chip",
@@ -71,6 +75,7 @@ export const Chip = ({
 		hasLeading && "chip_has_leading",
 		hasTrailingIcon && "chip_has_trailing",
 		disabled && "chip_disabled",
+		iconHovered && "chip_icon_hovered",
 		className,
 	);
 
@@ -84,13 +89,23 @@ export const Chip = ({
 				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
 			>
 				{hasLeading && (
-					<span className="chip_icon" aria-hidden="true">
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
 						<CheckIcon />
 					</span>
 				)}
 				<span className="chip_label">{label}</span>
 				{type === "filter" && (
-					<span className="chip_icon" aria-hidden="true">
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
 						<ChevronDownIcon />
 					</span>
 				)}
@@ -103,7 +118,12 @@ export const Chip = ({
 					onClick={onRemove}
 					aria-label="Remove"
 				>
-					<span className="chip_icon" aria-hidden="true">
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
 						<CloseIcon />
 					</span>
 				</button>

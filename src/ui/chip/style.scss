@@ -8,8 +8,37 @@
 	border: token.$border_width_standard solid token.$color_border_default;
 	overflow: hidden;
 	transition: border-color token.$transition_base;
+	position: relative;
 
-	// ── Content button ──────────────────────────────────────────────────────
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0; right: 0; bottom: 0; left: 0;
+		border-radius: inherit;
+		transition: background token.$transition_base;
+		pointer-events: none;
+	}
+
+	&:hover::before {
+		background: token.$color_state_hover_on_light;
+	}
+
+	&:active::before {
+		background: token.$color_state_pressed_on_light;
+	}
+
+	&.chip_icon_hovered:hover::before,
+	&.chip_icon_hovered:active::before {
+		background: transparent;
+	}
+
+	.chip_icon:hover {
+		background: token.$color_state_hover_on_light;
+	}
+
+	.chip_icon:active {
+		background: token.$color_state_pressed_on_light;
+	}
 
 	&_content {
 		flex: 1;
@@ -25,7 +54,6 @@
 		position: relative;
 		overflow: hidden;
 
-		// State layer overlay
 		&::before {
 			content: "";
 			position: absolute;
@@ -35,16 +63,8 @@
 			pointer-events: none;
 		}
 
-		&:hover:not(:disabled)::before {
-			background: token.$color_state_hover_on_light;
-		}
-
 		&:focus-visible:not(:disabled)::before {
 			background: token.$color_state_focus_on_light;
-		}
-
-		&:active:not(:disabled)::before {
-			background: token.$color_state_pressed_on_light;
 		}
 
 		&:disabled {
@@ -52,20 +72,13 @@
 		}
 	}
 
-	// ── Leading icon padding adjustment ─────────────────────────────────────
-
 	&_has_leading .chip_content {
 		padding-left: token.$spacing_8;
 	}
 
-	// ── Trailing icon padding adjustment ────────────────────────────────────
-
 	&_has_trailing .chip_content {
 		padding-right: token.$spacing_8;
 	}
-
-	// ── Trailing button ─────────────────────────────────────────────────────
-	// X 버튼: 아이콘 자체에만 circular hover 적용 (전체 state layer 없음)
 
 	&_trailing {
 		display: inline-flex;
@@ -81,16 +94,10 @@
 			background: token.$color_state_focus_on_light;
 		}
 
-		&:active:not(:disabled) .chip_icon {
-			background: token.$color_state_pressed_on_light;
-		}
-
 		&:disabled {
 			cursor: not-allowed;
 		}
 	}
-
-	// ── Icon ────────────────────────────────────────────────────────────────
 
 	&_icon {
 		display: inline-flex;
@@ -101,6 +108,7 @@
 		flex-shrink: 0;
 		border-radius: token.$radius_full;
 		transition: background token.$transition_base;
+		position: relative;
 
 		svg {
 			width: 100%;
@@ -108,18 +116,9 @@
 		}
 	}
 
-	// chip_trailing의 X 아이콘만 circular hover (chip_content는 전체 state layer 사용)
-	&_trailing:hover:not(:disabled) .chip_icon {
-		background: token.$color_state_hover_on_light;
-	}
-
-	// ── Label ───────────────────────────────────────────────────────────────
-
 	&_label {
 		white-space: nowrap;
 	}
-
-	// ── Disabled ────────────────────────────────────────────────────────────
 
 	&_disabled {
 		opacity: token.$opacity_38;
