@@ -177,6 +177,9 @@
 
   &_label {
     position: relative;
+    white-space: normal;
+    word-break: break-word;
+    text-align: center;
   }
 
   &_full_width {

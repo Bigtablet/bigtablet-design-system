@@ -10,6 +10,11 @@ const meta: Meta<typeof Card> = {
 			control: "text",
 			description: "카드 상단에 표시되는 제목 영역입니다. 비워두면 제목 줄이 렌더링되지 않습니다.",
 		},
+		headingAs: {
+			control: "select",
+			options: ["h2", "h3", "h4", "h5", "h6"],
+			description: "제목에 사용할 시맨틱 헤딩 태그입니다. 페이지 구조에 맞게 선택하세요.",
+		},
 		shadow: {
 			control: "select",
 			options: ["none", "sm", "md", "lg"],
