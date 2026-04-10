@@ -58,12 +58,15 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	// chip_content 내부 아이콘 hover 시 전체 state layer를 끄기 위한 상태
-	const [contentIconHovered, setContentIconHovered] = useState(false);
+	// 아이콘 직접 hover 시 칩 전체 state layer를 끄기 위한 상태
+	const [iconHovered, setIconHovered] = useState(false);
 
 	const hasLeading = selected;
 	const hasTrailingButton = type === "input" && removable;
 	const hasTrailingIcon = hasTrailingButton || type === "filter";
+
+	const enterIcon = () => setIconHovered(true);
+	const leaveIcon = () => setIconHovered(false);
 
 	const chipClassName = cn(
 		"chip",
@@ -72,17 +75,15 @@ export const Chip = ({
 		hasLeading && "chip_has_leading",
 		hasTrailingIcon && "chip_has_trailing",
 		disabled && "chip_disabled",
+		iconHovered && "chip_icon_hovered",
 		className,
 	);
-
-	const enterContentIcon = () => setContentIconHovered(true);
-	const leaveContentIcon = () => setContentIconHovered(false);
 
 	return (
 		<div className={chipClassName} {...props}>
 			<button
 				type="button"
-				className={cn("chip_content", contentIconHovered && "chip_icon_hovered")}
+				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
 				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
@@ -91,8 +92,8 @@ export const Chip = ({
 					<span
 						className="chip_icon"
 						aria-hidden="true"
-						onPointerEnter={enterContentIcon}
-						onPointerLeave={leaveContentIcon}
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
 					>
 						<CheckIcon />
 					</span>
@@ -102,8 +103,8 @@ export const Chip = ({
 					<span
 						className="chip_icon"
 						aria-hidden="true"
-						onPointerEnter={enterContentIcon}
-						onPointerLeave={leaveContentIcon}
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
 					>
 						<ChevronDownIcon />
 					</span>
@@ -117,7 +118,12 @@ export const Chip = ({
 					onClick={onRemove}
 					aria-label="Remove"
 				>
-					<span className="chip_icon" aria-hidden="true">
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
 						<CloseIcon />
 					</span>
 				</button>

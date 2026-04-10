@@ -8,6 +8,32 @@
 	border: token.$border_width_standard solid token.$color_border_default;
 	overflow: hidden;
 	transition: border-color token.$transition_base;
+	position: relative;
+
+	// ── Hover state layer (칩 전체 커버) ────────────────────────────────────
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0; right: 0; bottom: 0; left: 0;
+		border-radius: inherit;
+		transition: background token.$transition_base;
+		pointer-events: none;
+	}
+
+	&:hover::before {
+		background: token.$color_state_hover_on_light;
+	}
+
+	// 아이콘 직접 hover 시 전체 state layer 숨김
+	&.chip_icon_hovered:hover::before {
+		background: transparent;
+	}
+
+	// 모든 아이콘 공통 원형 hover (chip_content/chip_trailing 무관)
+	.chip_icon:hover {
+		background: token.$color_state_hover_on_light;
+	}
 
 	// ── Content button ──────────────────────────────────────────────────────
 
@@ -25,7 +51,7 @@
 		position: relative;
 		overflow: hidden;
 
-		// State layer overlay (전체 영역)
+		// State layer overlay (focus/active 전용)
 		&::before {
 			content: "";
 			position: absolute;
@@ -33,16 +59,6 @@
 			border-radius: inherit;
 			transition: background token.$transition_base;
 			pointer-events: none;
-		}
-
-		// 기본 hover: 전체 state layer
-		&:hover:not(:disabled)::before {
-			background: token.$color_state_hover_on_light;
-		}
-
-		// 아이콘에 직접 hover 중이면 전체 state layer 숨김
-		&.chip_icon_hovered:hover:not(:disabled)::before {
-			background: transparent;
 		}
 
 		&:focus-visible:not(:disabled)::before {
@@ -55,11 +71,6 @@
 
 		&:disabled {
 			cursor: not-allowed;
-		}
-
-		// chip_content 내부 아이콘: 직접 hover 시 원형 highlight
-		.chip_icon:hover {
-			background: token.$color_state_hover_on_light;
 		}
 	}
 
@@ -76,7 +87,6 @@
 	}
 
 	// ── Trailing button (X) ─────────────────────────────────────────────────
-	// chip_content 내부 아이콘과 동일하게 원형 hover만 적용
 
 	&_trailing {
 		display: inline-flex;
@@ -87,10 +97,6 @@
 		cursor: pointer;
 		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
 		color: token.$color_text_heading;
-
-		&:hover:not(:disabled) .chip_icon {
-			background: token.$color_state_hover_on_light;
-		}
 
 		&:focus-visible:not(:disabled) .chip_icon {
 			background: token.$color_state_focus_on_light;
@@ -116,7 +122,7 @@
 		flex-shrink: 0;
 		border-radius: token.$radius_full;
 		transition: background token.$transition_base;
-		position: relative; // ::before state layer 위에 렌더링되도록
+		position: relative; // chip ::before 위에 렌더링되도록
 
 		svg {
 			width: 100%;
