@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import React, { useState } from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
@@ -58,6 +58,9 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
+	// 아이콘에 직접 hover 시 전체 state layer를 끄기 위한 상태
+	const [iconHovered, setIconHovered] = useState(false);
+
 	const hasLeading = selected;
 	const hasTrailingButton = type === "input" && removable;
 	const hasTrailingIcon = hasTrailingButton || type === "filter";
@@ -72,52 +75,40 @@ export const Chip = ({
 		className,
 	);
 
+	const enterIcon = () => setIconHovered(true);
+	const leaveIcon = () => setIconHovered(false);
+
 	return (
 		<div className={chipClassName} {...props}>
-			{/* Leading icon — 독립 버튼 (원형 hover) */}
-			{hasLeading && (
-				<button
-					type="button"
-					className="chip_icon_btn chip_icon_btn_leading"
-					disabled={disabled}
-					onClick={onClick}
-					tabIndex={-1}
-					aria-hidden="true"
-				>
-					<span className="chip_icon">
-						<CheckIcon />
-					</span>
-				</button>
-			)}
-
-			{/* Label — 메인 버튼 (전체 영역 hover) */}
 			<button
 				type="button"
-				className="chip_label_btn"
+				className={cn("chip_content", iconHovered && "chip_icon_hovered")}
 				disabled={disabled}
 				onClick={onClick}
 				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
 			>
+				{hasLeading && (
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
+						<CheckIcon />
+					</span>
+				)}
 				<span className="chip_label">{label}</span>
-			</button>
-
-			{/* Filter trailing icon — 독립 버튼 (원형 hover) */}
-			{type === "filter" && (
-				<button
-					type="button"
-					className="chip_icon_btn chip_icon_btn_trailing"
-					disabled={disabled}
-					onClick={onClick}
-					tabIndex={-1}
-					aria-hidden="true"
-				>
-					<span className="chip_icon">
+				{type === "filter" && (
+					<span
+						className="chip_icon"
+						aria-hidden="true"
+						onPointerEnter={enterIcon}
+						onPointerLeave={leaveIcon}
+					>
 						<ChevronDownIcon />
 					</span>
-				</button>
-			)}
-
-			{/* Remove button — 독립 버튼 (원형 hover) */}
+				)}
+			</button>
 			{hasTrailingButton && (
 				<button
 					type="button"

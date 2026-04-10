@@ -9,33 +9,40 @@
 	overflow: hidden;
 	transition: border-color token.$transition_base;
 
-	// ── Label button (메인 클릭 영역, 전체 state layer) ─────────────────────
+	// ── Content button ──────────────────────────────────────────────────────
 
-	&_label_btn {
+	&_content {
 		flex: 1;
 		display: inline-flex;
 		align-items: center;
+		gap: token.$spacing_4;
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		padding: token.$spacing_6 token.$spacing_12;
+		padding: token.$spacing_6 token.$spacing_12 token.$spacing_6 token.$spacing_16;
 		@include token.body_small_medium;
 		color: token.$color_text_heading;
 		position: relative;
 		overflow: hidden;
-		white-space: nowrap;
 
 		// State layer overlay (전체 영역)
 		&::before {
 			content: "";
 			position: absolute;
 			top: 0; right: 0; bottom: 0; left: 0;
+			border-radius: inherit;
 			transition: background token.$transition_base;
 			pointer-events: none;
 		}
 
+		// 기본 hover: 전체 state layer
 		&:hover:not(:disabled)::before {
 			background: token.$color_state_hover_on_light;
+		}
+
+		// 아이콘에 직접 hover 중이면 전체 state layer 숨김
+		&.chip_icon_hovered:hover:not(:disabled)::before {
+			background: transparent;
 		}
 
 		&:focus-visible:not(:disabled)::before {
@@ -49,46 +56,26 @@
 		&:disabled {
 			cursor: not-allowed;
 		}
-	}
 
-	// ── Icon buttons (leading / filter trailing, 원형 hover) ──────────────
-
-	&_icon_btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		padding: 0;
-		color: token.$color_text_heading;
-
-		&_leading {
-			padding-left: token.$spacing_8;
-		}
-
-		&_trailing {
-			padding-right: token.$spacing_8;
-		}
-
-		&:hover:not(:disabled) .chip_icon {
+		// chip_content 내부 아이콘: 직접 hover 시 원형 highlight
+		.chip_icon:hover {
 			background: token.$color_state_hover_on_light;
 		}
-
-		&:focus-visible:not(:disabled) .chip_icon {
-			background: token.$color_state_focus_on_light;
-		}
-
-		&:active:not(:disabled) .chip_icon {
-			background: token.$color_state_pressed_on_light;
-		}
-
-		&:disabled {
-			cursor: not-allowed;
-		}
 	}
 
-	// ── Remove button (X, 원형 hover) ──────────────────────────────────────
+	// ── Leading icon padding adjustment ─────────────────────────────────────
+
+	&_has_leading .chip_content {
+		padding-left: token.$spacing_8;
+	}
+
+	// ── Trailing icon padding adjustment ────────────────────────────────────
+
+	&_has_trailing .chip_content {
+		padding-right: token.$spacing_8;
+	}
+
+	// ── Trailing button (X) ─────────────────────────────────────────────────
 
 	&_trailing {
 		display: inline-flex;
@@ -117,7 +104,7 @@
 		}
 	}
 
-	// ── Icon ───────────────────────────────────────────────────────────────
+	// ── Icon ────────────────────────────────────────────────────────────────
 
 	&_icon {
 		display: inline-flex;
@@ -128,6 +115,7 @@
 		flex-shrink: 0;
 		border-radius: token.$radius_full;
 		transition: background token.$transition_base;
+		position: relative; // ::before state layer 위에 렌더링되도록
 
 		svg {
 			width: 100%;
@@ -135,16 +123,20 @@
 		}
 	}
 
-	// ── Label ──────────────────────────────────────────────────────────────
+	// ── Label ───────────────────────────────────────────────────────────────
 
 	&_label {
 		white-space: nowrap;
 	}
 
-	// ── Disabled ───────────────────────────────────────────────────────────
+	// ── Disabled ────────────────────────────────────────────────────────────
 
 	&_disabled {
 		opacity: token.$opacity_38;
 		pointer-events: none;
+
+		button {
+			cursor: not-allowed;
+		}
 	}
 }
