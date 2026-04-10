@@ -134,7 +134,7 @@ export const TextField = ({
 					</span>
 				)}
 
-				<div className="text_field_input_wrap">
+				<div className={cn("text_field_input_wrap", (resolvedTrailing) && "text_field_input_wrap_no_pad_right")}>
 					<input
 						id={inputId}
 						ref={ref}

@@ -67,7 +67,7 @@
     padding-left: 0;
   }
 
-  &_input_wrap:has(+ .text_field_icon) {
+  &_input_wrap_no_pad_right {
     padding-right: 0;
   }
 
@@ -138,10 +138,7 @@
     }
   }
 
-  // clear 버튼이 있으면 input_wrap 오른쪽 패딩 제거
-  &_input_wrap:has(+ .text_field_clear) {
-    padding-right: 0;
-  }
+  // clear 버튼이 있으면 input_wrap 오른쪽 패딩 제거 (_no_pad_right 클래스로 처리)
 
   // ── Helper text ────────────────────────────────────────────────────────
 

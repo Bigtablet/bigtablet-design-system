@@ -111,7 +111,7 @@
     opacity: token.$opacity_38;
   }
 
-  &:has(.radio_input:disabled) {
+  &_disabled {
     cursor: not-allowed;
   }
 

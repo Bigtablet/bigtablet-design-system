@@ -63,7 +63,7 @@ const meta: Meta<typeof Chip> = {
 ### 접근성 (구현 완료)
 - \`<button>\` 요소 사용 → Tab 포커스, Enter/Space 클릭 자동 지원
 - 삭제 버튼에 \`aria-label="Remove"\` 제공
-- 필터 드롭다운 버튼에 \`aria-label="Toggle dropdown"\` 제공
+- 필터 칩 버튼에 \`aria-haspopup="listbox"\` 제공
 - 장식 아이콘에 \`aria-hidden="true"\` 적용
 				`,
 			},

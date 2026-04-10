@@ -20,7 +20,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
  * @returns 렌더링된 라디오 UI
  */
 export const Radio = ({ label, size = "md", className, ref, ...props }: RadioProps) => {
-	const rootClassName = cn("radio", `radio_size_${size}`, className);
+	const rootClassName = cn("radio", `radio_size_${size}`, props.disabled && "radio_disabled", className);
 
 	return (
 		<label className={rootClassName}>

@@ -29,6 +29,14 @@ export const Icon = ({
   ...props
 }: IconProps) => {
   const entry = ICON_DATA[name];
+
+  if (!entry) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[Icon] Unknown icon name: "${name}"`);
+    }
+    return null;
+  }
+
   const pathData = fill ? entry[weight].fill : entry[weight].noFill;
 
   return (
