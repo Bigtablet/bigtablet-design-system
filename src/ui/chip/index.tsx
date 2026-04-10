@@ -26,7 +26,6 @@ export interface ChipProps
 	onRemove?: () => void;
 }
 
-// Internal SVG icons
 const CheckIcon = () => (
 	<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
 		<polyline points="4 10 8 14 16 6" />
@@ -58,7 +57,6 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	// 아이콘 직접 hover 시 칩 전체 state layer를 끄기 위한 상태
 	const [iconHovered, setIconHovered] = useState(false);
 
 	const hasLeading = selected;
