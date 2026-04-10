@@ -76,7 +76,7 @@
 	}
 
 	// ── Trailing button (X) ─────────────────────────────────────────────────
-	// 아이콘만 있는 단일 버튼 — 전체 state layer만 적용 (아이콘 토글 불필요)
+	// chip_content 내부 아이콘과 동일하게 원형 hover만 적용
 
 	&_trailing {
 		display: inline-flex;
@@ -87,26 +87,16 @@
 		cursor: pointer;
 		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
 		color: token.$color_text_heading;
-		position: relative;
-		overflow: hidden;
 
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0; right: 0; bottom: 0; left: 0;
-			transition: background token.$transition_base;
-			pointer-events: none;
-		}
-
-		&:hover:not(:disabled)::before {
+		&:hover:not(:disabled) .chip_icon {
 			background: token.$color_state_hover_on_light;
 		}
 
-		&:focus-visible:not(:disabled)::before {
+		&:focus-visible:not(:disabled) .chip_icon {
 			background: token.$color_state_focus_on_light;
 		}
 
-		&:active:not(:disabled)::before {
+		&:active:not(:disabled) .chip_icon {
 			background: token.$color_state_pressed_on_light;
 		}
 
