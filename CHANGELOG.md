@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.0.1) (2026-04-10)
+
+
+### Bug Fixes
+
+* reset version to 2.0.0 for 2.0.1 patch release ([6c093ff](https://github.com/Bigtablet/bigtablet-design-system/commit/6c093ff6544423636eb3c1d86a01c9e845e1d57d))
+
 # [2.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.0.1) (2026-04-10)
 
 
