@@ -1,3 +1,22 @@
+# [2.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.1.0) (2026-04-10)
+
+
+### Bug Fixes
+
+* add chip aria attrs, textfield clearable story, tokenize borders, replace inset shorthand ([2f1f62c](https://github.com/Bigtablet/bigtablet-design-system/commit/2f1f62cffbd947e177fbac15f978be5f10c53449))
+* add equal right padding to ListItem state layer ([df5cf8b](https://github.com/Bigtablet/bigtablet-design-system/commit/df5cf8bc5907cbccbfb0083ba7470e713a6f9783))
+* align toast icon to text baseline, add clearable prop to TextField ([39f6f9e](https://github.com/Bigtablet/bigtablet-design-system/commit/39f6f9e717f3594f5977896c966218b95d354b7d))
+* improve Chip aria-expanded and TextField clear button accessibility ([6dfc7bf](https://github.com/Bigtablet/bigtablet-design-system/commit/6dfc7bf3012f5c423c593bbb39aba00418c04cc9))
+* make entire Chip clickable, move filter chevron into content button ([1e2505e](https://github.com/Bigtablet/bigtablet-design-system/commit/1e2505e31a2ac7c275e9d80250951fa38a475126))
+* use Icon component for TextField clear button, increase size-limit for icon data ([de8bff9](https://github.com/Bigtablet/bigtablet-design-system/commit/de8bff98db959724f978447c3d9931ca0a702dd0))
+* use inset + margin auto for Radio ::after centering ([3ea8880](https://github.com/Bigtablet/bigtablet-design-system/commit/3ea8880bd807bfc9d1e43ec485580dc9659cfc80))
+* use whole-pixel inner dot sizes for Radio, fix Icon story invalid name ([b9d864f](https://github.com/Bigtablet/bigtablet-design-system/commit/b9d864fe9597c022dadbb25b8389860230f89cd2))
+
+
+### Features
+
+* add Icon component with 57 Material Symbols icons ([7a2ef79](https://github.com/Bigtablet/bigtablet-design-system/commit/7a2ef79a3fd1683e78e07fd2b6a4eba5d4b0e8fd))
+
 # [2.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.24.2...v2.0.0) (2026-04-10)
 
 
