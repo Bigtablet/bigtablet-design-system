@@ -35,7 +35,8 @@
 			pointer-events: none;
 		}
 
-		&:hover:not(:disabled)::before {
+		// Hover: React-controlled class (label zone only)
+		&.chip_content_hover:not(:disabled)::before {
 			background: token.$color_state_hover_on_light;
 		}
 
@@ -108,7 +109,9 @@
 		}
 	}
 
-	// chip_trailing의 X 아이콘만 circular hover (chip_content는 전체 state layer 사용)
+	// Circular icon hover — React-controlled (chip_content 내부 아이콘)
+	// CSS-controlled (chip_trailing X 버튼)
+	&_icon_hover,
 	&_trailing:hover:not(:disabled) .chip_icon {
 		background: token.$color_state_hover_on_light;
 	}
