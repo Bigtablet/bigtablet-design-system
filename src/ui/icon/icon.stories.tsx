@@ -131,7 +131,7 @@ export const Colors: Story = {
   render: () => (
     <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
       {(["#1a1a1a", "#6366f1", "#ef4444", "#10b981", "#f59e0b"] as const).map((color) => (
-        <Icon key={color} name="favorite" size={24} fill style={{ color }} />
+        <Icon key={color} name="check_circle" size={24} fill style={{ color }} />
       ))}
     </div>
   ),
