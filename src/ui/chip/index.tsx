@@ -58,9 +58,8 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	// 아이콘에 직접 hover 시 해당 버튼의 전체 state layer를 끄기 위한 상태
+	// chip_content 내부 아이콘 hover 시 전체 state layer를 끄기 위한 상태
 	const [contentIconHovered, setContentIconHovered] = useState(false);
-	const [trailingIconHovered, setTrailingIconHovered] = useState(false);
 
 	const hasLeading = selected;
 	const hasTrailingButton = type === "input" && removable;
@@ -78,8 +77,6 @@ export const Chip = ({
 
 	const enterContentIcon = () => setContentIconHovered(true);
 	const leaveContentIcon = () => setContentIconHovered(false);
-	const enterTrailingIcon = () => setTrailingIconHovered(true);
-	const leaveTrailingIcon = () => setTrailingIconHovered(false);
 
 	return (
 		<div className={chipClassName} {...props}>
@@ -115,17 +112,12 @@ export const Chip = ({
 			{hasTrailingButton && (
 				<button
 					type="button"
-					className={cn("chip_trailing", trailingIconHovered && "chip_icon_hovered")}
+					className="chip_trailing"
 					disabled={disabled}
 					onClick={onRemove}
 					aria-label="Remove"
 				>
-					<span
-						className="chip_icon"
-						aria-hidden="true"
-						onPointerEnter={enterTrailingIcon}
-						onPointerLeave={leaveTrailingIcon}
-					>
+					<span className="chip_icon" aria-hidden="true">
 						<CloseIcon />
 					</span>
 				</button>

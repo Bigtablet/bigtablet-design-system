@@ -76,7 +76,7 @@
 	}
 
 	// ── Trailing button (X) ─────────────────────────────────────────────────
-	// chip_content와 동일한 패턴: 전체 state layer + 아이콘 원형 hover 토글
+	// 아이콘만 있는 단일 버튼 — 전체 state layer만 적용 (아이콘 토글 불필요)
 
 	&_trailing {
 		display: inline-flex;
@@ -90,7 +90,6 @@
 		position: relative;
 		overflow: hidden;
 
-		// State layer overlay (전체 영역)
 		&::before {
 			content: "";
 			position: absolute;
@@ -99,14 +98,8 @@
 			pointer-events: none;
 		}
 
-		// 기본 hover: 전체 state layer
 		&:hover:not(:disabled)::before {
 			background: token.$color_state_hover_on_light;
-		}
-
-		// 아이콘에 직접 hover 중이면 전체 state layer 숨김
-		&.chip_icon_hovered:hover:not(:disabled)::before {
-			background: transparent;
 		}
 
 		&:focus-visible:not(:disabled)::before {
@@ -119,11 +112,6 @@
 
 		&:disabled {
 			cursor: not-allowed;
-		}
-
-		// 아이콘 직접 hover 시 원형 highlight
-		.chip_icon:hover {
-			background: token.$color_state_hover_on_light;
 		}
 	}
 
