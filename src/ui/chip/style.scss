@@ -66,7 +66,7 @@
 	}
 
 	// ── Trailing button ─────────────────────────────────────────────────────
-	// X 버튼: 버튼 전체 영역에 state layer 적용
+	// X 버튼: 아이콘 자체에만 circular hover 적용 (다른 아이콘과 동일 방식)
 
 	&_trailing {
 		display: inline-flex;
@@ -77,27 +77,12 @@
 		cursor: pointer;
 		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
 		color: token.$color_text_heading;
-		position: relative;
-		overflow: hidden;
 
-		// State layer overlay
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0; right: 0; bottom: 0; left: 0;
-			transition: background token.$transition_base;
-			pointer-events: none;
-		}
-
-		&:hover:not(:disabled)::before {
-			background: token.$color_state_hover_on_light;
-		}
-
-		&:focus-visible:not(:disabled)::before {
+		&:focus-visible:not(:disabled) .chip_icon {
 			background: token.$color_state_focus_on_light;
 		}
 
-		&:active:not(:disabled)::before {
+		&:active:not(:disabled) .chip_icon {
 			background: token.$color_state_pressed_on_light;
 		}
 
@@ -124,8 +109,11 @@
 		}
 	}
 
-	// Circular icon hover — React-controlled (chip_content 내부 아이콘)
-	&_icon_hover {
+	// Circular icon hover — 모든 아이콘 공통 (원형)
+	// chip_content 내부: React-controlled class
+	// chip_trailing X: CSS :hover
+	&_icon_hover,
+	&_trailing:hover:not(:disabled) .chip_icon {
 		background: token.$color_state_hover_on_light;
 	}
 
