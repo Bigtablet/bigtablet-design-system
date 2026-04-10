@@ -31,6 +31,8 @@ export { FAB } from "./ui/fab";
 export type { FABProps, FABVariant } from "./ui/fab";
 export { FileInput } from "./ui/file";
 export type { FileInputProps } from "./ui/file";
+export { Icon } from "./ui/icon";
+export type { IconProps, IconName, IconWeight } from "./ui/icon";
 export { IconButton } from "./ui/icon-button";
 export type { IconButtonProps, IconButtonVariant, IconButtonSize } from "./ui/icon-button";
 export { LinearProgress } from "./ui/linear-progress";
