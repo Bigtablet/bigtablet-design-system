@@ -492,6 +492,31 @@ EOF
 
 ---
 
+## Chromatic Snapshot 절약 규칙
+
+Chromatic은 `git push` 시 자동으로 실행되며 스냅샷을 소모합니다.
+**불필요한 push를 최소화해서 스냅샷 낭비를 방지합니다.**
+
+### Push 규칙
+- **모든 작업이 완전히 끝난 후에만 push**
+- 중간 커밋은 로컬에만 쌓아두고, 작업 단위가 완료됐을 때 한 번에 push
+- 리뷰 피드백 반영도 한 번에 모아서 push
+
+### 하면 안 되는 것
+```bash
+# ❌ 커밋할 때마다 바로 push
+git commit -m "fix: ..."
+git push  # 매번 Chromatic 빌드 발생
+
+# ✅ 작업 다 끝나면 한 번에 push
+git commit -m "fix: ..."
+git commit -m "docs: ..."
+git commit -m "style: ..."
+git push  # Chromatic 빌드 1번만 발생
+```
+
+---
+
 ## Temporary: Disabled A11y Rules
 
 > 디자이너와 접근성 색상 협의 완료 후 이 섹션을 삭제하고 룰을 다시 활성화할 것.
