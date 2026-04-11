@@ -1,3 +1,10 @@
+## [2.0.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.5...v2.0.6) (2026-04-11)
+
+
+### Bug Fixes
+
+* update token import ([025f397](https://github.com/Bigtablet/bigtablet-design-system/commit/025f3974b1ff714ededb4fa55fe6a7801c419d5a))
+
 ## [2.0.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.4...v2.0.5) (2026-04-10)
 
 
