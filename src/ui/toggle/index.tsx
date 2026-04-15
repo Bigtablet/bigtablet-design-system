@@ -4,41 +4,41 @@ import * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
-export interface SwitchProps
+export interface ToggleProps
 	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
-	/** 제어형 스위치 상태 */
+	/** 제어형 토글 상태 */
 	checked?: boolean;
-	/** 비제어형 초기 스위치 상태 */
+	/** 비제어형 초기 토글 상태 */
 	defaultChecked?: boolean;
 	/** 상태 변경 시 호출되는 콜백 */
 	onChange?: (checked: boolean) => void;
-	/** 스위치 크기 (기본값: "md") */
-	size?: "sm" | "md" | "lg";
+	/** 토글 크기 (기본값: "sm") */
+	size?: "sm" | "md";
 	/** 비활성화 여부 */
 	disabled?: boolean;
-	/** 스위치 접근성 레이블(스크린 리더용) */
+	/** 토글 접근성 레이블(스크린 리더용) */
 	ariaLabel: string;
 	/** 버튼 요소 참조 */
 	ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
- * 스위치를 렌더링한다.
- * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 스위치 UI를 반환한다.
- * @param props 스위치 속성
- * @returns 렌더링된 스위치 요소
+ * 토글을 렌더링한다.
+ * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 토글 UI를 반환한다.
+ * @param props 토글 속성
+ * @returns 렌더링된 토글 요소
  */
-export const Switch = ({
+export const Toggle = ({
 	checked,
 	defaultChecked,
 	onChange,
-	size = "md",
+	size = "sm",
 	disabled,
 	className,
 	ariaLabel,
 	ref,
 	...props
-}: SwitchProps) => {
+}: ToggleProps) => {
 	const isControlled = checked !== undefined;
 	const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
 	const isOn = isControlled ? !!checked : innerChecked;
@@ -55,9 +55,9 @@ export const Switch = ({
 	};
 
 	const rootClassName = cn(
-		"switch",
-		`switch_size_${size}`,
-		{ switch_on: isOn, switch_disabled: disabled },
+		"toggle",
+		`toggle_size_${size}`,
+		{ toggle_on: isOn, toggle_disabled: disabled },
 		className,
 	);
 
@@ -73,9 +73,9 @@ export const Switch = ({
 			className={rootClassName}
 			{...props}
 		>
-			<span className="switch_thumb" />
+			<span className="toggle_thumb" />
 		</button>
 	);
 };
 
-Switch.displayName = "Switch";
+Toggle.displayName = "Toggle";

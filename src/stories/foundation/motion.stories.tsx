@@ -87,7 +87,7 @@ export const ComponentMapping: Story = {
 			{ component: "Modal 등장", token: "slow", desc: "오버레이 + 패널 슬라이드" },
 			{ component: "Toast 등장/퇴장", token: "fade", desc: "부드러운 페이드인/아웃" },
 			{ component: "Select 드롭다운", token: "base", desc: "목록 열림/닫힘" },
-			{ component: "Switch 토글", token: "bounce", desc: "thumb 이동 + 바운스" },
+			{ component: "Toggle", token: "bounce", desc: "thumb 이동 + 바운스" },
 			{ component: "Card hover", token: "scale", desc: "살짝 확대 강조" },
 		];
 

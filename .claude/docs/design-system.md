@@ -39,7 +39,7 @@ import { ToastProvider, useToast } from '@bigtablet/design-system';
 |------|------|---------|---------|
 | `variant` | `"primary" \| "secondary" \| "ghost" \| "danger"` | `"primary"` | Button |
 | `variant` | `"outline" \| "filled" \| "ghost"` | `"outline"` | TextField, Select |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button, TextField, Select, Checkbox, Radio, Switch |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button, TextField, Select, Checkbox, Radio, Toggle |
 | `fullWidth` | `boolean` | varies | Button, TextField, Select, DatePicker |
 | `disabled` | `boolean` | `false` | All form components |
 | `className` | `string` | - | All components |
@@ -241,22 +241,21 @@ const [selected, setSelected] = useState('opt1');
 
 ---
 
-### Switch
+### Toggle
 
 ```tsx
-import { Switch } from '@bigtablet/design-system';
+import { Toggle } from '@bigtablet/design-system';
 
 // Basic (ariaLabel is REQUIRED)
-<Switch ariaLabel="Enable notifications" onChange={(checked) => console.log(checked)} />
+<Toggle ariaLabel="Enable notifications" onChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [on, setOn] = useState(false);
-<Switch ariaLabel="Dark mode" checked={on} onChange={setOn} />
+<Toggle ariaLabel="Dark mode" checked={on} onChange={setOn} />
 
 // Sizes
-<Switch size="sm" ariaLabel="Small" />
-<Switch size="md" ariaLabel="Medium" />
-<Switch size="lg" ariaLabel="Large" />
+<Toggle size="sm" ariaLabel="Small" />
+<Toggle size="md" ariaLabel="Medium" />
 ```
 
 **Props:**
@@ -706,9 +705,9 @@ For server templates (Thymeleaf, JSP, PHP, Django):
   <span class="bt-radio__label">Option</span>
 </label>
 
-<!-- Switch -->
-<button class="bt-switch" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<!-- Toggle -->
+<button class="bt-toggle" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- Card -->
@@ -741,12 +740,12 @@ const modal = Bigtablet.Modal('#my-modal', {
 modal.open();
 modal.close();
 
-// Switch
-const sw = Bigtablet.Switch('#my-switch', {
+// Toggle
+const tg = Bigtablet.Toggle('#my-toggle', {
   onChange: (checked) => console.log(checked)
 });
-sw.toggle();
-sw.setChecked(true);
+tg.toggle();
+tg.setChecked(true);
 
 // Alert
 Bigtablet.Alert({
@@ -909,7 +908,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 1. **Always import CSS**: `import '@bigtablet/design-system/style.css'`
 2. **Next.js Sidebar**: Import from `/next` entry point
 3. **Provider setup**: AlertProvider and ToastProvider wrap your app
-4. **Switch accessibility**: `ariaLabel` prop is required
+4. **Toggle accessibility**: `ariaLabel` prop is required
 5. **Size scale**: `"sm" | "md" | "lg"` consistent across components
 6. **Controlled/Uncontrolled**: All form components support both patterns
 7. **Vanilla JS**: Use `.bt-` prefix classes

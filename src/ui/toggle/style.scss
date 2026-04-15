@@ -1,6 +1,6 @@
 @use "src/styles/token" as token;
 
-.switch {
+.toggle {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -10,9 +10,9 @@
   height: 24px;
   padding: 2px;
 
-  border: 2px solid token.$color_border_default;
+  border: 2px solid transparent;
   border-radius: token.$radius_full;
-  background: token.$color_bg_solid_dim;
+  background: token.$color_base_neutral_400;
 
   transition: background token.$transition_base,
     border-color token.$transition_base;
@@ -22,9 +22,9 @@
 
   &_thumb {
     position: relative;
-    width: 16px;
-    height: 16px;
-    background: token.$color_text_caption;
+    width: 12px;
+    height: 12px;
+    background: token.$color_bg_solid;
     border-radius: token.$radius_full;
     transition: transform token.$transition_base,
       width token.$transition_base,
@@ -37,13 +37,22 @@
 
   &_on {
     background: token.$color_brand_primary;
-    border-color: token.$color_brand_primary;
 
-    .switch_thumb {
+    .toggle_thumb {
       width: 20px;
       height: 20px;
       background: token.$color_bg_solid;
       transform: translateX(14px);
+    }
+
+    // disabled overrides on-state (specificity 0,2,0 beats .toggle_on 0,1,0)
+    &.toggle_disabled {
+      background: token.$color_base_neutral_400;
+      border-color: transparent;
+
+      .toggle_thumb {
+        background: token.$color_bg_solid;
+      }
     }
   }
 
@@ -62,70 +71,44 @@
 
   // ── States: Active/Pressed ─────────────────────────────────────────────
 
-  &:not(:disabled):active .switch_thumb {
+  &:not(:disabled):active .toggle_thumb {
     width: 20px;
     height: 20px;
   }
 
-  &_on:not(:disabled):active .switch_thumb {
+  &_on:not(:disabled):active .toggle_thumb {
     transform: translateX(12px);
   }
 
   // ── Sizes ──────────────────────────────────────────────────────────────
 
   &_size_sm {
-    width: 34px;
-    height: 20px;
-    padding: 2px;
-
-    .switch_thumb {
-      width: 12px;
-      height: 12px;
-    }
-
-    &.switch_on .switch_thumb {
-      width: 16px;
-      height: 16px;
-      transform: translateX(12px);
-    }
-
-    &:not(:disabled):active .switch_thumb {
-      width: 16px;
-      height: 16px;
-    }
-
-    &.switch_on:not(:disabled):active .switch_thumb {
-      transform: translateX(10px);
-    }
-  }
-
-  &_size_md {
     width: 40px;
     height: 24px;
   }
 
-  &_size_lg {
+  &_size_md {
     width: 48px;
     height: 28px;
     padding: 2px;
 
-    .switch_thumb {
-      width: 20px;
-      height: 20px;
+    .toggle_thumb {
+      width: 16px;
+      height: 16px;
     }
 
-    &.switch_on .switch_thumb {
+    &.toggle_on .toggle_thumb {
       width: 24px;
       height: 24px;
       transform: translateX(18px);
     }
 
-    &:not(:disabled):active .switch_thumb {
+    &:not(:disabled):active .toggle_thumb {
       width: 24px;
       height: 24px;
     }
 
-    &.switch_on:not(:disabled):active .switch_thumb {
+    &.toggle_on:not(:disabled):active .toggle_thumb {
       transform: translateX(16px);
     }
   }
@@ -133,7 +116,12 @@
   // ── Disabled ───────────────────────────────────────────────────────────
 
   &_disabled {
-    opacity: token.$opacity_38;
     cursor: not-allowed;
+    border-color: transparent;
+    background: token.$color_base_neutral_400;
+
+    .toggle_thumb {
+      background: token.$color_bg_solid;
+    }
   }
 }

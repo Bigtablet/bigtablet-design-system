@@ -16,7 +16,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [TextField](#textfield)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
-  - [Switch](#switch)
+  - [Toggle](#toggle)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
 - [Feedback](#feedback)
@@ -310,25 +310,24 @@ const [selected, setSelected] = useState('option1');
 
 ---
 
-### Switch
+### Toggle
 
 ```tsx
-import { Switch } from '@bigtablet/design-system';
+import { Toggle } from '@bigtablet/design-system';
 
 // 기본 사용
-<Switch onChange={(checked) => console.log(checked)} />
+<Toggle onChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [isOn, setIsOn] = useState(false);
-<Switch checked={isOn} onChange={setIsOn} />
+<Toggle checked={isOn} onChange={setIsOn} />
 
 // Sizes
-<Switch size="sm" />
-<Switch size="md" />
-<Switch size="lg" />
+<Toggle size="sm" />
+<Toggle size="md" />
 
 // 접근성
-<Switch ariaLabel="알림 설정" />
+<Toggle ariaLabel="알림 설정" />
 ```
 
 | Prop | Type | Default | Description |
@@ -336,7 +335,7 @@ const [isOn, setIsOn] = useState(false);
 | `checked` | `boolean` | - | 켜짐 상태 (controlled) |
 | `defaultChecked` | `boolean` | `false` | 기본 상태 |
 | `onChange` | `(checked: boolean) => void` | - | 변경 핸들러 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
 | `ariaLabel` | `string` | required | 접근성 라벨 (필수) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
