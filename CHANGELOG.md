@@ -1,3 +1,16 @@
+## [2.0.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.6...v2.0.7) (2026-04-15)
+
+
+### Bug Fixes
+
+* correct Toggle thumb sizes and remove border in disabled state ([09163a5](https://github.com/Bigtablet/bigtablet-design-system/commit/09163a54bdd87a4b5a6beeeefa9b2559445a5456))
+* ensure disabled state overrides on-state via compound selector ([6d8973b](https://github.com/Bigtablet/bigtablet-design-system/commit/6d8973b4cce6c2389ec77c6e88c66429ad20bcf9))
+* rename switch folder and files to toggle ([cb8db54](https://github.com/Bigtablet/bigtablet-design-system/commit/cb8db547bffbb643773906baacca6a69120ca57b))
+* rename Switch to Toggle and reduce sizes to sm/md ([7864b1f](https://github.com/Bigtablet/bigtablet-design-system/commit/7864b1faa6685df4576046e8fa810701629258ea))
+* rename vanilla Switch to Toggle and update sizes ([3b6fe83](https://github.com/Bigtablet/bigtablet-design-system/commit/3b6fe83e74650887a23ca8490d920f23804ca004))
+* update Toggle disabled state to use explicit #B3B3B3 background ([e7ccdca](https://github.com/Bigtablet/bigtablet-design-system/commit/e7ccdca177fa147822dbc48f5ce35a69069e7c04)), closes [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3) [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3)
+* update Toggle OFF state background to #B3B3B3 per Figma spec ([a04003b](https://github.com/Bigtablet/bigtablet-design-system/commit/a04003b058f91eea6822328942786939ea8b129a)), closes [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3) [#F4F4F4](https://github.com/Bigtablet/bigtablet-design-system/issues/F4F4F4) [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3)
+
 ## [2.0.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.5...v2.0.6) (2026-04-11)
 
 
