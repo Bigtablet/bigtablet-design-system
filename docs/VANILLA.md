@@ -14,7 +14,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [TextField](#textfield)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
-  - [Switch](#switch)
+  - [Toggle](#toggle)
   - [Select](#select)
   - [Modal](#modal)
   - [Alert](#alert)
@@ -246,53 +246,52 @@ npm install @bigtablet/design-system
 
 ---
 
-### Switch
+### Toggle
 
 ```html
 <!-- 기본 (Off) -->
-<button class="bt-switch" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- On 상태 -->
-<button class="bt-switch bt-switch--on" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle bt-toggle--on" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- Sizes -->
-<button class="bt-switch bt-switch--sm" data-bt-switch>...</button>
-<button class="bt-switch" data-bt-switch>...</button>  <!-- 기본 md -->
-<button class="bt-switch bt-switch--lg" data-bt-switch>...</button>
+<button class="bt-toggle" data-bt-toggle>...</button>  <!-- 기본 sm -->
+<button class="bt-toggle bt-toggle--md" data-bt-toggle>...</button>
 
 <!-- 비활성화 -->
-<button class="bt-switch bt-switch--disabled" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle bt-toggle--disabled" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 ```
 
 **JavaScript 연동:**
 
 ```html
-<button class="bt-switch" data-bt-switch id="my-switch">
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle" data-bt-toggle id="my-toggle">
+  <span class="bt-toggle__thumb"></span>
 </button>
 
 <script>
-  // 자동 초기화 (data-bt-switch 속성이 있으면 자동으로 초기화됨)
+  // 자동 초기화 (data-bt-toggle 속성이 있으면 자동으로 초기화됨)
 
   // 또는 수동 초기화
-  const switchEl = document.getElementById('my-switch');
-  const mySwitch = Bigtablet.Switch(switchEl, {
+  const toggleEl = document.getElementById('my-toggle');
+  const myToggle = Bigtablet.Toggle(toggleEl, {
     defaultChecked: false,
     onChange: (checked) => {
-      console.log('Switch:', checked);
+      console.log('Toggle:', checked);
     }
   });
 
   // API
-  mySwitch.isChecked();     // 현재 상태
-  mySwitch.setChecked(true); // 상태 설정
-  mySwitch.toggle();        // 토글
+  myToggle.isChecked();     // 현재 상태
+  myToggle.setChecked(true); // 상태 설정
+  myToggle.toggle();        // 토글
 </script>
 ```
 
@@ -670,7 +669,7 @@ Alert는 JavaScript로만 사용합니다.
 ```html
 <div data-bt-select>...</div>     <!-- Select 자동 초기화 -->
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
-<button data-bt-switch>...</button> <!-- Switch 자동 초기화 -->
+<button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
 ```
 
@@ -685,8 +684,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Modal
   const modal = Bigtablet.Modal('#my-modal', options);
 
-  // Switch
-  const sw = Bigtablet.Switch('#my-switch', options);
+  // Toggle
+  const sw = Bigtablet.Toggle('#my-toggle', options);
 
   // Pagination
   const pagination = Bigtablet.Pagination('#my-pagination', options);

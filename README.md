@@ -211,7 +211,7 @@ For non-React environments (Thymeleaf, JSP, PHP, etc.), use directly via CDN.
 | Category | Components |
 |----------|------------|
 | **General** | `Button`, `Select`, `Chip`, `FAB`, `IconButton` |
-| **Form** | `TextField`, `Checkbox`, `Radio`, `Switch`, `DatePicker`, `FileInput` |
+| **Form** | `TextField`, `Checkbox`, `Radio`, `Toggle`, `DatePicker`, `FileInput` |
 | **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress` |
 | **Navigation** | `Pagination` |
 | **Overlay** | `Modal` |

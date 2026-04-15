@@ -175,7 +175,7 @@ dist/vanilla/
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
-| Switch | `.bt-switch` | `--sm/md/lg` | `.bt-switch--on`, `.bt-switch--disabled` |
+| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `.bt-toggle--disabled` |
 | Select | `.bt-select` | | |
 | Select Control | `.bt-select__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Select List | `.bt-select__list` | `--up` (opens upward) | |
@@ -229,15 +229,15 @@ dist/vanilla/
 </label>
 ```
 
-#### Switch
+#### Toggle
 ```html
-<button class="bt-switch" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- On state -->
-<button class="bt-switch bt-switch--on" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle bt-toggle--on" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 ```
 
@@ -320,7 +320,7 @@ const modal = Bigtablet.Modal('#my-modal', {
 modal.open();
 modal.close();
 
-const sw = Bigtablet.Switch('#my-switch', {
+const sw = Bigtablet.Toggle('#my-toggle', {
   onChange: (checked) => console.log(checked)
 });
 sw.toggle();

@@ -245,7 +245,7 @@ label: message
 ### 예시
 
 ```bash
-git commit -m "feat: add Switch component"
+git commit -m "feat: add Toggle component"
 git commit -m "fix: resolve Modal focus trap issue"
 git commit -m "docs: update README installation guide"
 git commit -m "style: refactor Button className pattern"

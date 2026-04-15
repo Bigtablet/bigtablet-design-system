@@ -25,7 +25,7 @@ JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
 - TextField: .bt-text-field, .bt-text-field__input --outline/filled --sm/md/lg --error/success
 - Checkbox: .bt-checkbox --sm/md/lg
 - Radio: .bt-radio --sm/md/lg
-- Switch: .bt-switch --sm/md/lg --on --disabled
+- Toggle: .bt-toggle --sm/md --on --disabled
 - Select: .bt-select, .bt-select__control --outline/filled --sm/md/lg
 - Modal: .bt-modal .is-open
 - Card: .bt-card --bordered --shadow-sm/md/lg --p-sm/md/lg
@@ -87,7 +87,7 @@ Bigtablet Design System으로 데이터 테이블 페이지 HTML 만들어줘.
 
 ```
 Bigtablet Design System으로 설정 페이지 HTML 만들어줘.
-- 알림 설정 (Switch로 이메일 알림, 푸시 알림)
+- 알림 설정 (Toggle로 이메일 알림, 푸시 알림)
 - 테마 설정 (Radio로 라이트/다크/시스템)
 - 언어 설정 (Select로 한국어/English)
 - 저장 버튼
@@ -187,10 +187,10 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
 </label>
 ```
 
-### Switch
+### Toggle
 ```html
-<button class="bt-switch" data-bt-switch>
-  <span class="bt-switch__thumb"></span>
+<button class="bt-toggle" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
 </button>
 ```
 
