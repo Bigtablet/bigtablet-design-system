@@ -45,6 +45,16 @@
       background: token.$color_bg_solid;
       transform: translateX(14px);
     }
+
+    // disabled overrides on-state (specificity 0,2,0 beats .toggle_on 0,1,0)
+    &.toggle_disabled {
+      background: token.$color_base_neutral_400;
+      border-color: transparent;
+
+      .toggle_thumb {
+        background: token.$color_bg_solid;
+      }
+    }
   }
 
   // ── States: Hover ──────────────────────────────────────────────────────
