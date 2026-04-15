@@ -10,9 +10,9 @@
   height: 24px;
   padding: 2px;
 
-  border: 2px solid token.$color_border_default;
+  border: 2px solid transparent;
   border-radius: token.$radius_full;
-  background: token.$color_bg_solid_dim;
+  background: token.$color_base_neutral_400;
 
   transition: background token.$transition_base,
     border-color token.$transition_base;
@@ -24,7 +24,7 @@
     position: relative;
     width: 12px;
     height: 12px;
-    background: token.$color_text_caption;
+    background: token.$color_bg_solid;
     border-radius: token.$radius_full;
     transition: transform token.$transition_base,
       width token.$transition_base,
@@ -37,7 +37,6 @@
 
   &_on {
     background: token.$color_brand_primary;
-    border-color: token.$color_brand_primary;
 
     .toggle_thumb {
       width: 20px;
