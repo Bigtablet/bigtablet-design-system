@@ -541,70 +541,66 @@
 }
 
 /* ========================================
-   Switch
+   Toggle
    ======================================== */
-.bt-switch {
+.bt-toggle {
   position: relative;
   display: inline-flex;
   align-items: center;
   width: 40px;
-  height: 22px;
+  height: 24px;
   padding: 2px;
   border-radius: var(--bt-radius-full);
-  background: var(--bt-color-border);
+  background: var(--bt-color-border-light);
   transition: background var(--bt-transition-base);
   cursor: pointer;
   border: none;
 
   &__thumb {
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
     background: var(--bt-color-background);
     border-radius: var(--bt-radius-full);
-    transition: transform var(--bt-transition-base);
+    transition: transform var(--bt-transition-base),
+                width var(--bt-transition-base),
+                height var(--bt-transition-base);
     transform: translateX(0);
   }
 
   &--on {
     background: var(--bt-color-primary);
 
-    .bt-switch__thumb {
-      transform: translateX(18px);
-    }
-  }
-
-  /* Sizes */
-  &--sm {
-    width: 34px;
-    height: 18px;
-
-    .bt-switch__thumb {
-      width: 14px;
-      height: 14px;
-    }
-
-    &.bt-switch--on .bt-switch__thumb {
+    .bt-toggle__thumb {
+      width: 20px;
+      height: 20px;
       transform: translateX(16px);
     }
   }
 
-  &--lg {
+  /* Sizes */
+  &--md {
     width: 48px;
-    height: 26px;
+    height: 28px;
 
-    .bt-switch__thumb {
-      width: 22px;
-      height: 22px;
+    .bt-toggle__thumb {
+      width: 16px;
+      height: 16px;
     }
 
-    &.bt-switch--on .bt-switch__thumb {
-      transform: translateX(22px);
+    &.bt-toggle--on .bt-toggle__thumb {
+      width: 24px;
+      height: 24px;
+      transform: translateX(20px);
     }
   }
 
   &--disabled {
-    opacity: 0.6;
     cursor: not-allowed;
+    background: var(--bt-color-border-light);
+
+    .bt-toggle__thumb {
+      background: #ffffff;
+    }
   }
 }
 

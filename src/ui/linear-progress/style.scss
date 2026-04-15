@@ -1,19 +1,19 @@
 @use "src/styles/token" as token;
 
 .linear_progress {
-	position: relative;
-	width: 100%;
-	height: 2px;
-	background: token.$color_border_default;
-	overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background: token.$color_border_default;
+    overflow: hidden;
 
-	&_indicator {
-		position: absolute;
-		top: 0;
-		left: 0;
-		height: 100%;
-		background: token.$color_text_heading;
-		border-radius: token.$radius_full;
-		transition: width token.$transition_base;
-	}
+    &_indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: token.$color_text_heading;
+        border-radius: token.$radius_full;
+        transition: width token.$transition_base;
+    }
 }

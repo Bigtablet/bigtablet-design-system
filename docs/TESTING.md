@@ -215,20 +215,20 @@ it("does not call onClick when disabled", () => {
 ```tsx
 describe("controlled mode", () => {
     it("uses value prop", () => {
-        const { rerender } = render(<Switch checked={false} onChange={() => {}} />);
-        expect(screen.getByRole("switch")).not.toHaveClass("switch_on");
+        const { rerender } = render(<Toggle checked={false} onChange={() => {}} />);
+        expect(screen.getByRole("switch")).not.toHaveClass("toggle_on");
 
-        rerender(<Switch checked={true} onChange={() => {}} />);
-        expect(screen.getByRole("switch")).toHaveClass("switch_on");
+        rerender(<Toggle checked={true} onChange={() => {}} />);
+        expect(screen.getByRole("switch")).toHaveClass("toggle_on");
     });
 });
 
 describe("uncontrolled mode", () => {
     it("manages internal state", () => {
-        render(<Switch defaultChecked={false} />);
+        render(<Toggle defaultChecked={false} />);
 
         fireEvent.click(screen.getByRole("switch"));
-        expect(screen.getByRole("switch")).toHaveClass("switch_on");
+        expect(screen.getByRole("switch")).toHaveClass("toggle_on");
     });
 });
 ```
@@ -351,7 +351,7 @@ it("calls callback with correct arguments", () => {
 | FileInput | 100% |
 | Chip | 95% |
 | Modal | 97% |
-| Switch | 93% |
+| Toggle | 93% |
 | Checkbox | 91% |
 | DatePicker | 90% |
 | Toast | 90% |

@@ -505,17 +505,17 @@
 	}
 
 	/* ========================================
-     Switch Component
+     Toggle Component
      ======================================== */
 
 	/**
-	 * Initialize Switch component
-	 * @param {HTMLElement|string} element - Switch element or selector
+	 * Initialize Toggle component
+	 * @param {HTMLElement|string} element - Toggle element or selector
 	 * @param {Object} options - Configuration options
 	 */
-	function Switch(element, options = {}) {
-		const switchEl = typeof element === "string" ? $(element) : element;
-		if (!switchEl) return null;
+	function Toggle(element, options = {}) {
+		const toggleEl = typeof element === "string" ? $(element) : element;
+		if (!toggleEl) return null;
 
 		const config = {
 			defaultChecked: false,
@@ -525,12 +525,12 @@
 		};
 
 		const state = {
-			checked: config.defaultChecked || switchEl.classList.contains("bt-switch--on"),
+			checked: config.defaultChecked || toggleEl.classList.contains("bt-toggle--on"),
 		};
 
 		function setChecked(checked) {
 			state.checked = checked;
-			switchEl.classList.toggle("bt-switch--on", checked);
+			toggleEl.classList.toggle("bt-toggle--on", checked);
 
 			if (config.onChange) {
 				config.onChange(checked);
@@ -538,12 +538,12 @@
 		}
 
 		function toggle() {
-			if (!config.disabled && !switchEl.classList.contains("bt-switch--disabled")) {
+			if (!config.disabled && !toggleEl.classList.contains("bt-toggle--disabled")) {
 				setChecked(!state.checked);
 			}
 		}
 
-		const cleanup = on(switchEl, "click", toggle);
+		const cleanup = on(toggleEl, "click", toggle);
 
 		// Initialize
 		if (config.defaultChecked) {
@@ -556,7 +556,7 @@
 			toggle,
 			setDisabled: (disabled) => {
 				config.disabled = disabled;
-				switchEl.classList.toggle("bt-switch--disabled", disabled);
+				toggleEl.classList.toggle("bt-toggle--disabled", disabled);
 			},
 			destroy: () => cleanup(),
 		};
@@ -735,10 +735,10 @@
 			}
 		});
 
-		// Switch
-		$$("[data-bt-switch]").forEach((el) => {
-			if (!el._btSwitch) {
-				el._btSwitch = Switch(el);
+		// Toggle
+		$$("[data-bt-toggle]").forEach((el) => {
+			if (!el._btToggle) {
+				el._btToggle = Toggle(el);
 			}
 		});
 
@@ -770,7 +770,7 @@
 		Select,
 		Modal,
 		Alert,
-		Switch,
+		Toggle,
 		Pagination,
 
 		// Utilities

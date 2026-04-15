@@ -204,7 +204,7 @@ React를 사용하지 않는 환경(Thymeleaf, JSP, PHP 등)에서는 CDN으로 
 | 카테고리 | 컴포넌트 |
 |----------|----------|
 | **General** | `Button`, `Select`, `Chip`, `FAB`, `IconButton` |
-| **Form** | `TextField`, `Checkbox`, `Radio`, `Switch`, `DatePicker`, `FileInput` |
+| **Form** | `TextField`, `Checkbox`, `Radio`, `Toggle`, `DatePicker`, `FileInput` |
 | **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress` |
 | **Navigation** | `Pagination` |
 | **Overlay** | `Modal` |

@@ -24,6 +24,11 @@ const meta: Meta<typeof TopLoading> = {
 			control: "boolean",
 			description: "로딩 표시 여부입니다.",
 		},
+		ariaLabel: {
+			control: "text",
+			description:
+				"스크린 리더용 접근성 레이블입니다. 기본값은 'Page loading'입니다.",
+		},
 	},
 	args: {
 		isLoading: true,
