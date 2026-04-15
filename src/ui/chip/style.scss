@@ -1,131 +1,131 @@
 @use "src/styles/token" as token;
 
 .chip {
-	display: inline-flex;
-	align-items: center;
-	height: 32px;
-	border-radius: token.$radius_full;
-	border: token.$border_width_standard solid token.$color_border_default;
-	overflow: hidden;
-	transition: border-color token.$transition_base;
-	position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    border-radius: token.$radius_full;
+    border: token.$border_width_standard solid token.$color_border_default;
+    overflow: hidden;
+    transition: border-color token.$transition_base;
+    position: relative;
 
-	&::before {
-		content: "";
-		position: absolute;
-		top: 0; right: 0; bottom: 0; left: 0;
-		border-radius: inherit;
-		transition: background token.$transition_base;
-		pointer-events: none;
-	}
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        border-radius: inherit;
+        transition: background token.$transition_base;
+        pointer-events: none;
+    }
 
-	&:hover::before {
-		background: token.$color_state_hover_on_light;
-	}
+    &:hover::before {
+        background: token.$color_state_hover_on_light;
+    }
 
-	&:active::before {
-		background: token.$color_state_pressed_on_light;
-	}
+    &:active::before {
+        background: token.$color_state_pressed_on_light;
+    }
 
-	&.chip_icon_hovered:hover::before,
-	&.chip_icon_hovered:active::before {
-		background: transparent;
-	}
+    &.chip_icon_hovered:hover::before,
+    &.chip_icon_hovered:active::before {
+        background: transparent;
+    }
 
-	.chip_icon:hover {
-		background: token.$color_state_hover_on_light;
-	}
+    .chip_icon:hover {
+        background: token.$color_state_hover_on_light;
+    }
 
-	.chip_icon:active {
-		background: token.$color_state_pressed_on_light;
-	}
+    .chip_icon:active {
+        background: token.$color_state_pressed_on_light;
+    }
 
-	&_content {
-		flex: 1;
-		display: inline-flex;
-		align-items: center;
-		gap: token.$spacing_4;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		padding: token.$spacing_6 token.$spacing_12 token.$spacing_6 token.$spacing_16;
-		@include token.body_small_medium;
-		color: token.$color_text_heading;
-		position: relative;
-		overflow: hidden;
+    &_content {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: token.$spacing_4;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: token.$spacing_6 token.$spacing_12 token.$spacing_6 token.$spacing_16;
+        @include token.body_small_medium;
+        color: token.$color_text_heading;
+        position: relative;
+        overflow: hidden;
 
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0; right: 0; bottom: 0; left: 0;
-			border-radius: inherit;
-			transition: background token.$transition_base;
-			pointer-events: none;
-		}
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            border-radius: inherit;
+            transition: background token.$transition_base;
+            pointer-events: none;
+        }
 
-		&:focus-visible:not(:disabled)::before {
-			background: token.$color_state_focus_on_light;
-		}
+        &:focus-visible:not(:disabled)::before {
+            background: token.$color_state_focus_on_light;
+        }
 
-		&:disabled {
-			cursor: not-allowed;
-		}
-	}
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
 
-	&_has_leading .chip_content {
-		padding-left: token.$spacing_8;
-	}
+    &_has_leading .chip_content {
+        padding-left: token.$spacing_8;
+    }
 
-	&_has_trailing .chip_content {
-		padding-right: token.$spacing_8;
-	}
+    &_has_trailing .chip_content {
+        padding-right: token.$spacing_8;
+    }
 
-	&_trailing {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
-		color: token.$color_text_heading;
+    &_trailing {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
+        color: token.$color_text_heading;
 
-		&:focus-visible:not(:disabled) .chip_icon {
-			background: token.$color_state_focus_on_light;
-		}
+        &:focus-visible:not(:disabled) .chip_icon {
+            background: token.$color_state_focus_on_light;
+        }
 
-		&:disabled {
-			cursor: not-allowed;
-		}
-	}
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
 
-	&_icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 20px;
-		height: 20px;
-		flex-shrink: 0;
-		border-radius: token.$radius_full;
-		transition: background token.$transition_base;
-		position: relative;
+    &_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        border-radius: token.$radius_full;
+        transition: background token.$transition_base;
+        position: relative;
 
-		svg {
-			width: 100%;
-			height: 100%;
-		}
-	}
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
 
-	&_label {
-		white-space: nowrap;
-	}
+    &_label {
+        white-space: nowrap;
+    }
 
-	&_disabled {
-		opacity: token.$opacity_38;
-		pointer-events: none;
+    &_disabled {
+        opacity: token.$opacity_38;
+        pointer-events: none;
 
-		button {
-			cursor: not-allowed;
-		}
-	}
+        button {
+            cursor: not-allowed;
+        }
+    }
 }
