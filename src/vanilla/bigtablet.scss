@@ -595,8 +595,12 @@
   }
 
   &--disabled {
-    opacity: 0.6;
     cursor: not-allowed;
+    background: var(--bt-color-border-light);
+
+    .bt-toggle__thumb {
+      background: #ffffff;
+    }
   }
 }
 

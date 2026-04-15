@@ -107,8 +107,12 @@
   // ── Disabled ───────────────────────────────────────────────────────────
 
   &_disabled {
-    opacity: token.$opacity_38;
     cursor: not-allowed;
     border-color: transparent;
+    background: token.$color_base_neutral_400;
+
+    .toggle_thumb {
+      background: token.$color_bg_solid;
+    }
   }
 }
