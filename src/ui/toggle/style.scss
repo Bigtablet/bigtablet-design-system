@@ -22,8 +22,8 @@
 
   &_thumb {
     position: relative;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     background: token.$color_text_caption;
     border-radius: token.$radius_full;
     transition: transform token.$transition_base,
@@ -84,8 +84,8 @@
     padding: 2px;
 
     .toggle_thumb {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
     }
 
     &.toggle_on .toggle_thumb {
@@ -109,5 +109,6 @@
   &_disabled {
     opacity: token.$opacity_38;
     cursor: not-allowed;
+    border-color: transparent;
   }
 }
