@@ -541,9 +541,9 @@
 }
 
 /* ========================================
-   Switch
+   Toggle
    ======================================== */
-.bt-switch {
+.bt-toggle {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -568,36 +568,22 @@
   &--on {
     background: var(--bt-color-primary);
 
-    .bt-switch__thumb {
+    .bt-toggle__thumb {
       transform: translateX(18px);
     }
   }
 
   /* Sizes */
-  &--sm {
-    width: 34px;
-    height: 18px;
-
-    .bt-switch__thumb {
-      width: 14px;
-      height: 14px;
-    }
-
-    &.bt-switch--on .bt-switch__thumb {
-      transform: translateX(16px);
-    }
-  }
-
-  &--lg {
+  &--md {
     width: 48px;
     height: 26px;
 
-    .bt-switch__thumb {
+    .bt-toggle__thumb {
       width: 22px;
       height: 22px;
     }
 
-    &.bt-switch--on .bt-switch__thumb {
+    &.bt-toggle--on .bt-toggle__thumb {
       transform: translateX(22px);
     }
   }
