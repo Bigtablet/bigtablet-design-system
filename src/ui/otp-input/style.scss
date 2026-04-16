@@ -1,0 +1,86 @@
+@use "src/styles/token" as token;
+
+// ── Root ─────────────────────────────────────────────────────────────────────
+
+.otp_input {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+// ── Boxes container ──────────────────────────────────────────────────────────
+
+.otp_input_boxes {
+  display: flex;
+  gap: token.$spacing_6;
+}
+
+// ── Individual box ───────────────────────────────────────────────────────────
+
+.otp_input_box {
+  width: 48px;
+  min-height: 56px;
+  padding: token.$spacing_4;
+
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  background: none;
+
+  font-family: token.$font_family_primary;
+  font-size: token.$font_size_14;
+  font-weight: token.$font_weight_regular;
+  line-height: token.$line_height_20;
+  color: token.$color_text_heading;
+  text-align: center;
+
+  outline: none;
+  transition:
+    border-color token.$transition_fast,
+    box-shadow token.$transition_fast;
+
+  // ── Hover ──────────────────────────────────────────────────────────────
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: token.$color_border_hover;
+  }
+
+  // ── Focus ──────────────────────────────────────────────────────────────
+
+  &:focus {
+    border-color: token.$color_border_focus;
+    border-width: 2px;
+    padding: calc(#{token.$spacing_4} - 1px);
+  }
+
+  // ── Disabled ───────────────────────────────────────────────────────────
+
+  &_disabled {
+    opacity: token.$opacity_38;
+    cursor: not-allowed;
+  }
+
+  // ── Error ──────────────────────────────────────────────────────────────
+
+  &_error {
+    border-color: token.$color_status_error;
+
+    &:focus {
+      border-color: token.$color_status_error;
+    }
+  }
+}
+
+// ── Supporting text ──────────────────────────────────────────────────────────
+
+.otp_input_supporting {
+  padding-top: token.$spacing_4;
+  font-family: token.$font_family_primary;
+  font-size: token.$font_size_12;
+  font-weight: token.$font_weight_regular;
+  line-height: token.$line_height_16;
+  color: token.$color_text_body;
+
+  &_error {
+    color: token.$color_status_error;
+  }
+}
