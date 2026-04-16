@@ -1,3 +1,16 @@
+# [2.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.7...v2.1.0) (2026-04-16)
+
+
+### Bug Fixes
+
+* remove opacity from disabled OtpInput, use text color token instead ([6f7a498](https://github.com/Bigtablet/bigtablet-design-system/commit/6f7a4982ad3547e38c6c651333fb5b41b0e08c41))
+* use text/body color for disabled OtpInput per Figma spec ([a6c060a](https://github.com/Bigtablet/bigtablet-design-system/commit/a6c060a75efaad51e3b2b1951d780ae3a675fe67))
+
+
+### Features
+
+* add OtpInput component per Figma spec ([fce5540](https://github.com/Bigtablet/bigtablet-design-system/commit/fce5540c68bce4a999177b8b6da558650a81c4e9))
+
 ## [2.0.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.6...v2.0.7) (2026-04-15)
 
 
