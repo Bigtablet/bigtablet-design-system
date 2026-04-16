@@ -71,6 +71,13 @@ export const OtpInput = ({
 		}
 	};
 
+	const handleFocus = (index: number) => {
+		const firstEmpty = digits.findIndex((d) => d === "");
+		if (firstEmpty !== -1 && firstEmpty < index) {
+			focusInput(firstEmpty);
+		}
+	};
+
 	const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Backspace") {
 			if (digits[index]) {
@@ -126,8 +133,9 @@ export const OtpInput = ({
 						maxLength={1}
 						value={digit}
 						onChange={(e) => handleChange(i, e)}
+						onFocus={() => handleFocus(i)}
 						onKeyDown={(e) => handleKeyDown(i, e)}
-						onPaste={i === 0 ? handlePaste : undefined}
+						onPaste={handlePaste}
 						disabled={disabled}
 						autoFocus={autoFocus && i === 0}
 						aria-label={`${i + 1}번째 자리`}
