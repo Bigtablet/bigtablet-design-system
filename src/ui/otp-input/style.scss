@@ -55,8 +55,8 @@
   // ── Disabled ───────────────────────────────────────────────────────────
 
   &_disabled {
-    opacity: token.$opacity_38;
     cursor: not-allowed;
+    color: token.$color_text_disabled;
   }
 
   // ── Error ──────────────────────────────────────────────────────────────
