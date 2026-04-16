@@ -39,6 +39,8 @@ export type { IconButtonProps, IconButtonVariant, IconButtonSize } from "./ui/ic
 export { LinearProgress } from "./ui/linear-progress";
 export type { LinearProgressProps } from "./ui/linear-progress";
 export { ListItem } from "./ui/list-item";
+export { OtpInput } from "./ui/otp-input";
+export type { OtpInputProps } from "./ui/otp-input";
 export type { ListItemProps } from "./ui/list-item";
 export { Modal } from "./ui/modal";
 export type { ModalProps } from "./ui/modal";
