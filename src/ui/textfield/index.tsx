@@ -123,7 +123,7 @@ export const TextField = ({
 
 	return (
 		<div className={rootClassName}>
-			{/* fieldset + legend: 배경색 없이 border notch를 브라우저가 자동 처리 */}
+			{/* fieldset + legend: 브라우저가 legend 주변 border를 자동으로 끊어줌 */}
 			<fieldset className="text_field_container">
 				{label && showLabel && (
 					<legend className="text_field_label">
