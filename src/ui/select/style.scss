@@ -29,12 +29,11 @@
     border: token.$border_width_standard solid token.$color_border_default;
 
     &:hover:not(.is_disabled) {
-      border-color: token.$color_border_subtle;
+      border-color: token.$color_border_hover;
     }
 
     &.is_open {
-      border-color: token.$color_brand_primary;
-      box-shadow: token.$focus_ring;
+      border-color: token.$color_border_focus;
     }
   }
 
@@ -52,8 +51,7 @@
 
     &.is_open {
       background: token.$color_bg_solid;
-      border-color: token.$color_brand_primary;
-      box-shadow: token.$focus_ring;
+      border-color: token.$color_border_focus;
     }
   }
 
@@ -67,8 +65,7 @@
 
     &.is_open {
       background: token.$color_bg_solid;
-      border-color: token.$color_brand_primary;
-      box-shadow: token.$focus_ring;
+      border-color: token.$color_border_focus;
     }
   }
 
@@ -136,8 +133,14 @@
     cursor: pointer;
     background: transparent;
     border: none;
-    outline: none; // 클릭 시 브라우저 기본 focus ring 제거
+    outline: none; // 마우스 클릭 시 브라우저 기본 focus ring 제거
     color: token.$color_text_heading;
+    border-radius: token.$radius_lg; // focus-visible box-shadow가 fieldset 모서리와 맞도록
+
+    // 키보드 Tab 포커스에만 focus ring (마우스 클릭 시엔 뜨지 않음)
+    &:focus-visible {
+      box-shadow: token.$focus_ring;
+    }
 
     &:disabled,
     &.is_disabled {
