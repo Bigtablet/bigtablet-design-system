@@ -6,6 +6,14 @@ const preview: Preview = {
 		viewport: { value: "responsive" },
 	},
 	parameters: {
+		backgrounds: {
+			default: "white",
+			values: [
+				{ name: "white", value: "#FFFFFF" },
+				{ name: "dim (color_bg_solid_dim)", value: "#F4F4F4" },
+				{ name: "dark", value: "#1A1A1A" },
+			],
+		},
 		options: {
 			storySort: {
 				method: "alphabetical",

@@ -9,19 +9,16 @@
     width: 100%;
   }
 
-  // ── Container (border + border-radius) ─────────────────────────────────
+  // ── Container (fieldset: border + border-radius) ────────────────────────
 
   &_container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: token.$spacing_4;
-    width: 100%;
-    min-height: 52px;
-    padding: token.$spacing_4 0;
+    // fieldset UA 스타일 reset
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
-    background: inherit;
+    padding: 0;
+    margin: 0;
+    min-inline-size: 0; // fieldset 기본값 min-content 제거
+    width: 100%;
     transition: border-color token.$transition_base;
 
     &:hover {
@@ -29,9 +26,23 @@
     }
   }
 
+  &_container:focus-within {
+    border-color: token.$color_border_focus;
+  }
+
+  // ── Inner row (아이콘 + input + trailing 감싸는 flex row) ───────────────
+
+  &_inner {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    min-height: 52px;
+    padding: token.$spacing_4 0;
+  }
+
   // ── Size variants ──────────────────────────────────────────────────────
 
-  &_size_sm &_container {
+  &_size_sm &_inner {
     min-height: 40px;
   }
 
@@ -44,27 +55,28 @@
     line-height: token.$line_height_20;
   }
 
-  &_container:focus-within {
-    border-color: token.$color_border_focus;
-  }
-
-  // ── Floating label ─────────────────────────────────────────────────────
+  // ── Floating label (legend) ────────────────────────────────────────────
+  // fieldset + legend 구조: 브라우저가 border를 legend 주변에서 자동으로 끊어줌.
+  // 배경색 불필요.
 
   &_label {
-    position: absolute;
-    top: -8px;
-    left: token.$spacing_16;
+    margin-inline-start: token.$spacing_12; // 16px 정렬 (16px - 4px padding)
     padding: 0 token.$spacing_4;
-    background: var(--text-field-surface, #{token.$color_bg_solid});
-    font-family: token.$font_family_primary;
-    font-size: token.$font_size_12;
-    font-weight: token.$font_weight_regular;
-    line-height: token.$line_height_16;
-    letter-spacing: 0.32px;
     color: token.$color_text_heading;
-    white-space: nowrap;
-    pointer-events: none;
     transition: color token.$transition_base;
+
+    > label {
+      display: block;
+      font-family: token.$font_family_primary;
+      font-size: token.$font_size_12;
+      font-weight: token.$font_weight_regular;
+      line-height: token.$line_height_16;
+      letter-spacing: 0.32px;
+      color: inherit;
+      white-space: nowrap;
+      pointer-events: none;
+      cursor: default;
+    }
   }
 
   // ── Input ──────────────────────────────────────────────────────────────
@@ -153,8 +165,6 @@
     }
   }
 
-  // clear 버튼이 있으면 input_wrap 오른쪽 패딩 제거 (_no_pad_right 클래스로 처리)
-
   // ── Helper text ────────────────────────────────────────────────────────
 
   &_helper {
@@ -198,7 +208,7 @@
         border-color: token.$color_bg_disabled;
       }
 
-      // 내부 콘텐츠 전체 opacity 0.38
+      // legend 제외한 내부 콘텐츠 전체 opacity 0.38
       > *:not(.text_field_label) {
         opacity: token.$opacity_38;
       }
