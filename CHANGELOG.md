@@ -1,3 +1,10 @@
+## [2.2.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.2...v2.2.3) (2026-04-17)
+
+
+### Bug Fixes
+
+* Select fieldset/legend 구조 전환으로 label 배경색 제거 ([b9113be](https://github.com/Bigtablet/bigtablet-design-system/commit/b9113becdb3dabfafca0808fff415832e345be41))
+
 ## [2.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.1...v2.2.2) (2026-04-17)
 
 
