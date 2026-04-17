@@ -242,28 +242,31 @@ export const Select = ({
 					</legend>
 				)}
 
-				<button
-					ref={controlRef}
-					id={selectId}
-					type="button"
-					className={cn("select_control", { is_disabled: disabled })}
-					aria-haspopup="listbox"
-					aria-expanded={isOpen}
-					aria-controls={`${selectId}_listbox`}
-					onClick={() => !disabled && setIsOpen((o) => !o)}
-					onKeyDown={onKeyDown}
-					disabled={disabled}
-				>
-				<span
-					className={currentOption ? "select_value" : "select_placeholder"}
-					style={textAlign === "left" ? { textAlign: "start" } : undefined}
-				>
-					{currentOption ? currentOption.label : placeholder}
-				</span>
-				<span className="select_icon" aria-hidden="true">
-					<ChevronDown size={16} />
-				</span>
-			</button>
+				{/* select_inner: legend가 layout 공간 차지하므로 TextField의 text_field_inner 패턴 적용 */}
+				<div className="select_inner">
+					<button
+						ref={controlRef}
+						id={selectId}
+						type="button"
+						className={cn("select_control", { is_disabled: disabled })}
+						aria-haspopup="listbox"
+						aria-expanded={isOpen}
+						aria-controls={`${selectId}_listbox`}
+						onClick={() => !disabled && setIsOpen((o) => !o)}
+						onKeyDown={onKeyDown}
+						disabled={disabled}
+					>
+						<span
+							className={currentOption ? "select_value" : "select_placeholder"}
+							style={textAlign === "left" ? { textAlign: "start" } : undefined}
+						>
+							{currentOption ? currentOption.label : placeholder}
+						</span>
+						<span className="select_icon" aria-hidden="true">
+							<ChevronDown size={16} />
+						</span>
+					</button>
+				</div>
 			</fieldset>
 
 			{isOpen && (
