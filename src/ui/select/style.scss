@@ -8,46 +8,22 @@
   width: 100%;
   font-family: token.$font_family_primary;
 
-  &_label {
-    position: absolute;
-    top: -8px;
-    left: token.$spacing_16;
-    padding: 0 token.$spacing_4;
-    background: var(--select-surface, #{token.$color_bg_solid});
-    font-family: token.$font_family_primary;
-    font-size: token.$font_size_12;
-    font-weight: token.$font_weight_regular;
-    line-height: token.$line_height_16;
-    letter-spacing: 0.32px;
-    color: token.$color_text_heading;
-    white-space: nowrap;
-    pointer-events: none;
-  }
+  // ── Fieldset (border + border-radius) ─────────────────────────────────────
 
-  &_control {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: token.$spacing_8;
-    cursor: pointer;
-    color: token.$color_text_heading;
-    background: var(--select-surface, #{token.$color_bg_solid});
+  &_fieldset {
+    // fieldset UA 스타일 reset
+    padding: 0;
+    margin: 0;
+    min-inline-size: 0;
+
     border-radius: token.$radius_lg;
+    background-color: token.$color_bg_solid;
     transition:
-            border-color token.$transition_base,
-            box-shadow token.$transition_base,
-            background token.$transition_base;
-    @include token.body_medium;
-
-    &:disabled,
-    &.is_disabled {
-      cursor: not-allowed;
-      opacity: token.$opacity_38;
-      background: token.$color_bg_solid_dim;
-      color: token.$color_text_caption;
-    }
+      border-color token.$transition_base,
+      background-color token.$transition_base;
   }
+
+  // ── Variant 클래스 (fieldset으로 이동) ────────────────────────────────────
 
   &_variant_outline {
     border: token.$border_width_standard solid token.$color_border_default;
@@ -68,14 +44,14 @@
 
     &:hover:not(.is_disabled) {
       background: color.mix(
-                      token.$color_bg_solid,
-                      token.$color_bg_solid_dim,
-                      70%
+        token.$color_bg_solid,
+        token.$color_bg_solid_dim,
+        70%
       );
     }
 
     &.is_open {
-      background: var(--select-surface, #{token.$color_bg_solid});
+      background: token.$color_bg_solid;
       border-color: token.$color_brand_primary;
       box-shadow: token.$focus_ring;
     }
@@ -90,29 +66,98 @@
     }
 
     &.is_open {
-      background: var(--select-surface, #{token.$color_bg_solid});
+      background: token.$color_bg_solid;
       border-color: token.$color_brand_primary;
       box-shadow: token.$focus_ring;
     }
   }
 
+  // ── Disabled 상태 (fieldset) ──────────────────────────────────────────────
+
+  &_fieldset.is_disabled {
+    background-color: token.$color_bg_solid_dim;
+  }
+
+  // ── Size 클래스 (fieldset으로 이동) ───────────────────────────────────────
+
   &_size_sm {
     min-height: 40px;
-    padding: token.$spacing_8 token.$spacing_16;
-    @include token.label_small;
   }
 
   &_size_md {
     min-height: 52px;
-    padding: token.$spacing_12 token.$spacing_20;
-    @include token.body_medium;
   }
 
   &_size_lg {
     min-height: 52px;
+  }
+
+  // ── Label (legend) ────────────────────────────────────────────────────────
+
+  &_label {
+    margin-inline-start: token.$spacing_12; // 16px 정렬 (16px - 4px padding)
+    padding: 0 token.$spacing_4;
+    color: token.$color_text_heading;
+    transition: color token.$transition_base;
+
+    > label {
+      display: block;
+      font-family: token.$font_family_primary;
+      font-size: token.$font_size_12;
+      font-weight: token.$font_weight_regular;
+      line-height: token.$line_height_16;
+      letter-spacing: 0.32px;
+      color: inherit;
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+
+  // disabled label 색상
+  &_fieldset.is_disabled .select_label {
+    color: token.$color_text_disabled;
+  }
+
+  // ── Control (button) ──────────────────────────────────────────────────────
+
+  &_control {
+    width: 100%;
+    min-height: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: token.$color_text_heading;
+
+    &:disabled,
+    &.is_disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+      color: token.$color_text_caption;
+    }
+  }
+
+  // ── Padding은 control에 (descendant selector) ─────────────────────────────
+
+  &_size_sm &_control {
+    padding: token.$spacing_8 token.$spacing_16;
+    @include token.label_small;
+  }
+
+  &_size_md &_control {
+    padding: token.$spacing_12 token.$spacing_20;
+    @include token.body_medium;
+  }
+
+  &_size_lg &_control {
     padding: token.$spacing_16 token.$spacing_24;
     @include token.body_large;
   }
+
+  // ── Value / Placeholder ───────────────────────────────────────────────────
 
   &_value {
     flex: 1 1 auto;
@@ -135,12 +180,16 @@
     color: token.$color_text_caption;
   }
 
+  // ── Icon ──────────────────────────────────────────────────────────────────
+
   &_icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: token.$color_text_body;
   }
+
+  // ── List (dropdown) ───────────────────────────────────────────────────────
 
   &_list {
     position: absolute;
@@ -170,6 +219,8 @@
       margin-bottom: token.$spacing_4;
     }
   }
+
+  // ── Option ────────────────────────────────────────────────────────────────
 
   &_option {
     width: 100%;
@@ -204,12 +255,5 @@
       cursor: not-allowed;
       color: token.$color_text_caption;
     }
-  }
-
-  // ── Label states ─────────────────────────────────────────────────────────
-
-  &:has(.select_control:disabled) .select_label,
-  &:has(.select_control.is_disabled) .select_label {
-    color: token.$color_text_disabled;
   }
 }
