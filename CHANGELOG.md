@@ -1,3 +1,16 @@
+# [2.2.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.1.0...v2.2.0) (2026-04-17)
+
+
+### Bug Fixes
+
+* apply paste handler to all OTP inputs and redirect focus to first empty box ([f1c48d7](https://github.com/Bigtablet/bigtablet-design-system/commit/f1c48d76bbdd636a350d1b9c5a8d64aa93525422))
+
+
+### Features
+
+* add size prop to TextField and use CSS variable for surface color ([4868811](https://github.com/Bigtablet/bigtablet-design-system/commit/4868811c90373d9b5379c3c6ebb5daef08ddafca)), closes [#fff](https://github.com/Bigtablet/bigtablet-design-system/issues/fff)
+* redesign Select label to floating style and align height with TextField ([15ca34c](https://github.com/Bigtablet/bigtablet-design-system/commit/15ca34ca4d107afed614f0699434124c2bdb6216))
+
 # [2.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.7...v2.1.0) (2026-04-16)
 
 
