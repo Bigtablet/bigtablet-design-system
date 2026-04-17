@@ -89,15 +89,6 @@ const meta: Meta<typeof Select> = {
 | Enter / Space | 선택 / 열기 |
 | Esc | 닫기 |
 | Home / End | 첫/마지막 비활성화되지 않은 항목 |
-
-### 디자이너 체크 포인트
-- placeholder가 "선택해주세요" 같은 안내 문구인지
-- disabled 옵션이 시각적으로 구분되는지 (커서 not-allowed, 글자 옅어짐)
-- 드롭다운 최대 높이(max-height: 18rem)가 적절한지
-- 긴 텍스트 옵션이 말줄임(...)으로 처리되는지
-- 선택된 항목에 체크 아이콘이 표시되는지
-- TextField와 나란히 놓았을 때 border/높이/radius가 동일하게 보이는지 (sm 40px, md/lg 52px)
-- 열렸을 때 테두리 강조가 과하지 않은지 (subtle border color 변경만)
         `,
 			},
 		},

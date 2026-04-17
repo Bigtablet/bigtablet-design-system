@@ -110,16 +110,6 @@ const meta: Meta<typeof AlertDemo> = {
 ### 버튼 구성
 - **확인만 있는 Alert**: 안내/완료/정보성 메시지
 - **취소 + 확인 Alert**: 경고/삭제/결제 등 사용자가 “되돌릴 수 있는 선택”이 필요한 상황
-
-### 디자이너 체크 포인트
-- 모달 폭: min 320px / max 480px — 긴 메시지도 가독성 유지되는지
-- 오버레이 \`color_bg_overlay\` (alpha_black_50) + 페이드인 \`transition_base\`, 모달은 slide up(+20px) \`transition_slow\`
-- variant별 title 색상: info→blue_600, success→green, warning→amber, error→red (\`color_status_*\` 토큰)
-- confirm 버튼 배경은 variant 상태 색. hover 시 \`color.adjust(..., -6%)\`로 약간 어두워짐 — 색상 간 충분한 대비 유지되는지
-- cancel 버튼은 outline(\`color_border_default\`) — 시각적 위계가 confirm보다 낮게 보이는지
-- 되돌릴 수 없는 액션(삭제/종료)에는 \`showCancel\` 켜고 \`variant="warning"\` 또는 \`error\` 사용 권장
-- 버튼 정렬 기본 \`right\` — 확인/취소 순서와 문화권(우측이 primary) 일치
-- 최소 버튼 폭 \`min-width: 80px\`로 문구 짧아도 시각 균형 유지
         `,
 			},
 		},

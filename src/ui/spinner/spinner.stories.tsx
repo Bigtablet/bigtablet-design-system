@@ -38,14 +38,6 @@ const meta: Meta<typeof Spinner> = {
 | 버튼 내부 | 16–24px |
 | 카드/섹션 단위 | 24–32px |
 | 화면 중심 강조 | 40px 이상 |
-
-### 디자이너 체크 포인트
-- 트랙 색상 \`color_border_default\` + 헤드 색상 \`color_brand_primary\` — 배경과 충분히 대비되는지
-- 테두리 두께 \`border_width_indicator\` — 크기별로 적절히 보이는지 (16px / 48px에서도 어색하지 않은지)
-- 회전 속도 0.8s linear infinite — 빠르거나 느리지 않은지
-- 버튼 내부 사용 시 텍스트와 \`gap: spacing_8\` 정도 권장 (라벨↔스피너 간격)
-- 전체 화면 로딩에는 별도 overlay 컨테이너와 조합 (Spinner만으로는 오버레이 제공 안 함)
-- 텍스트와 함께 쓸 때는 "처리 중", "로딩 중…" 등 동사형으로 상태 안내
         `,
 			},
 		},
