@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import type * as React from "react";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { OtpInput } from "./index";
 
@@ -62,6 +62,23 @@ describe("OtpInput", () => {
 			clipboardData: { getData: () => "12-34-56" },
 		});
 		expect(onChange).toHaveBeenCalledWith("123456");
+	});
+
+	it("handles paste on non-first input", () => {
+		const onChange = vi.fn();
+		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		const inputs = screen.getAllByRole("textbox");
+		fireEvent.paste(inputs[3], {
+			clipboardData: { getData: () => "123456" },
+		});
+		expect(onChange).toHaveBeenCalledWith("123456");
+	});
+
+	it("redirects focus to first empty box on focus", () => {
+		render(<ControlledOtp length={6} value="12" ariaLabel="OTP" />);
+		const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
+		fireEvent.focus(inputs[5]);
+		expect(document.activeElement).toBe(inputs[2]);
 	});
 
 	it("renders supporting text", () => {
