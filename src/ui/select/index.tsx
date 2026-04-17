@@ -220,8 +220,8 @@ export const Select = ({
 
 	const rootClassName = cn("select", { select_has_label: !!label }, className);
 
-	const controlClassName = cn(
-		"select_control",
+	const fieldsetClassName = cn(
+		"select_fieldset",
 		`select_variant_${variant}`,
 		`select_size_${size}`,
 		{ is_open: isOpen, is_disabled: disabled },
@@ -235,24 +235,25 @@ export const Select = ({
 			className={rootClassName}
 			style={fullWidth ? { width: "100%" } : undefined}
 		>
-			{label && (
-				<label htmlFor={selectId} className="select_label">
-					{label}
-				</label>
-			)}
+			<fieldset className={fieldsetClassName}>
+				{label && (
+					<legend className="select_label">
+						<label htmlFor={selectId}>{label}</label>
+					</legend>
+				)}
 
-			<button
-				ref={controlRef}
-				id={selectId}
-				type="button"
-				className={controlClassName}
-				aria-haspopup="listbox"
-				aria-expanded={isOpen}
-				aria-controls={`${selectId}_listbox`}
-				onClick={() => !disabled && setIsOpen((o) => !o)}
-				onKeyDown={onKeyDown}
-				disabled={disabled}
-			>
+				<button
+					ref={controlRef}
+					id={selectId}
+					type="button"
+					className={cn("select_control", { is_disabled: disabled })}
+					aria-haspopup="listbox"
+					aria-expanded={isOpen}
+					aria-controls={`${selectId}_listbox`}
+					onClick={() => !disabled && setIsOpen((o) => !o)}
+					onKeyDown={onKeyDown}
+					disabled={disabled}
+				>
 				<span
 					className={currentOption ? "select_value" : "select_placeholder"}
 					style={textAlign === "left" ? { textAlign: "start" } : undefined}
@@ -263,6 +264,7 @@ export const Select = ({
 					<ChevronDown size={16} />
 				</span>
 			</button>
+			</fieldset>
 
 			{isOpen && (
 				<div id={`${selectId}_listbox`} role="listbox" className={listClassName}>

@@ -80,7 +80,8 @@ describe("Select", () => {
 
 	it("applies fullWidth style", () => {
 		render(<Select options={options} fullWidth />);
-		const wrapper = screen.getByRole("button").parentElement;
+		// button → fieldset → div.select (fullWidth style은 최상위 래퍼에 적용)
+		const wrapper = screen.getByRole("button").parentElement?.parentElement;
 		expect(wrapper).toHaveStyle({ width: "100%" });
 	});
 
