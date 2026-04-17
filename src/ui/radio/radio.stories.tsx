@@ -39,14 +39,6 @@ const meta: Meta<typeof Radio> = {
 ### 사용 방법 (중요)
 - 같은 그룹으로 묶으려면 **\`name\` 값을 동일하게 설정**해야 합니다.
 - 선택 상태는 \`checked\`와 \`onChange\`로 제어합니다.
-
-### 디자이너 체크 포인트
-- 선택된 Radio의 dot border + 내부 점이 \`color_brand_primary\`로 뚜렷이 보이는지
-- 크기별 dot 지름 (sm 16px / md 18px / lg 20px)과 라벨 타이포(sm \`label_small\`, md \`body_medium\`, lg \`body_large\`)가 의도한 비율인지
-- state layer(원형 배경 오버레이)의 hover/focus/pressed 상태가 눌렀다는 느낌을 주는지 — 배경 토큰 \`state_hover/focus/pressed_on_light\`
-- 라벨과 dot 사이 간격 \`spacing_8\`이 적절한지
-- 비활성화 시 \`opacity_38\` + \`cursor: not-allowed\` — 선택 불가가 인지되는지
-- 그룹 묶음 시 같은 \`name\`을 쓰고, 옵션 간 수직 간격은 호출자 측에서 \`spacing_8\`~\`spacing_12\` 권장
         `,
 			},
 		},

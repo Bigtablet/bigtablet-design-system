@@ -37,15 +37,6 @@ const meta: Meta<typeof Pagination> = {
 | 7페이지 초과 | 현재 페이지 주변만 보여주고 \`…\`로 축약 |
 | 첫 페이지 | 이전 버튼 비활성화 |
 | 마지막 페이지 | 다음 버튼 비활성화 |
-
-### 디자이너 체크 포인트
-- 현재 페이지(\`pagination_active\`)가 \`font_weight_medium\` + \`color_text_heading\`으로 강조되는지
-- 이전/다음(\`pagination_item\`)은 테두리 있는 버튼, 숫자(\`pagination_page_button\`)는 테두리 없는 버튼 — 역할 대비가 명확한지
-- 페이지 버튼 크기 \`min-width: 36px / height: 36px\` — 모바일 터치 영역으로 충분한지 (필요 시 주변 gap으로 확보)
-- 페이지 번호 사이 \`gap: 6px\`, 전체 \`gap: spacing_8\` — 오클릭 방지에 적절한지
-- 상단 여백 \`margin-top: spacing_32\`가 리스트/테이블 하단 여백으로 과하거나 부족하지 않은지
-- 비활성화 버튼 \`opacity_50\` + \`cursor: not-allowed\` — 클릭 불가가 인지되는지
-- 키보드 포커스 시 \`focus_ring\` 표시 — 접근성 유지 확인
         `,
 			},
 		},

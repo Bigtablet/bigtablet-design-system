@@ -124,17 +124,6 @@ t.message("알림 메시지");
 // 3) 표시 시간 조정 (기본 3000ms)
 t.success("저장 완료", 5000);
 \`\`\`
-
-### 디자이너 체크 포인트
-- 표시 시간 기본 3000ms (\`--toast-duration\` CSS variable로 개별 조정 가능). 메시지 길이에 맞게 5000ms까지 늘리는 것 권장
-- 위치: 데스크톱 \`top: 16px; right: 16px\`, 모바일(\`compact\`) \`bottom: 16px; left/right: 16px\` 반응형
-- 폭: 데스크톱 \`width: 360px\`, 모바일 화면 폭 대응
-- 여러 Toast 쌓일 때 \`gap: spacing_8\` — 간격이 구분에 충분한지
-- 진입/퇴장 애니메이션: 데스크톱 X축 슬라이드 (0.3s in / 0.26s out), 모바일 Y축 슬라이드. \`cubic-bezier(0.16, 1, 0.3, 1)\`로 부드럽게
-- 아이콘 색상: success→green, error→red, warning→amber, info→blue, default→\`color_text_body\`
-- 하단 progress bar 3px — duration에 맞춰 100% → 0% 감소. 타입별 색상 동일
-- 긴 메시지는 \`word-break: break-word\`로 줄바꿈 — 잘리지 않는지
-- close 버튼 20px(데스크톱) / 18px(모바일) — 터치 영역이 충분한지
         `,
 			},
 		},
