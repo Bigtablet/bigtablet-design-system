@@ -1,3 +1,11 @@
+## [2.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.1...v2.2.2) (2026-04-17)
+
+
+### Bug Fixes
+
+* TextField 컨테이너 흰색 배경 복구 ([ff57129](https://github.com/Bigtablet/bigtablet-design-system/commit/ff57129b5668c6913593ba7591178b3589584a2c))
+* TextField 코드리뷰 반영 ([3cb9cba](https://github.com/Bigtablet/bigtablet-design-system/commit/3cb9cba8f7a8e747a231f66827c9f767fdf4da7c))
+
 ## [2.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.0...v2.2.1) (2026-04-17)
 
 
