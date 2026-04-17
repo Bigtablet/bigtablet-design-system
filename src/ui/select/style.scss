@@ -6,13 +6,22 @@
   display: inline-flex;
   flex-direction: column;
   width: 100%;
-  gap: token.$spacing_4;
   font-family: token.$font_family_primary;
 
   &_label {
-    @include token.label_small;
-    font-weight: token.$font_weight_medium;
+    position: absolute;
+    top: -8px;
+    left: token.$spacing_16;
+    padding: 0 token.$spacing_4;
+    background: var(--select-surface, #{token.$color_bg_solid});
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_16;
+    letter-spacing: 0.32px;
     color: token.$color_text_heading;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
   &_control {
@@ -23,8 +32,8 @@
     gap: token.$spacing_8;
     cursor: pointer;
     color: token.$color_text_heading;
-    background: token.$color_bg_solid;
-    border-radius: token.$radius_md;
+    background: var(--select-surface, #{token.$color_bg_solid});
+    border-radius: token.$radius_lg;
     transition:
             border-color token.$transition_base,
             box-shadow token.$transition_base,
@@ -66,7 +75,7 @@
     }
 
     &.is_open {
-      background: token.$color_bg_solid;
+      background: var(--select-surface, #{token.$color_bg_solid});
       border-color: token.$color_brand_primary;
       box-shadow: token.$focus_ring;
     }
@@ -81,23 +90,26 @@
     }
 
     &.is_open {
-      background: token.$color_bg_solid;
+      background: var(--select-surface, #{token.$color_bg_solid});
       border-color: token.$color_brand_primary;
       box-shadow: token.$focus_ring;
     }
   }
 
   &_size_sm {
+    min-height: 40px;
     padding: token.$spacing_8 token.$spacing_16;
     @include token.label_small;
   }
 
   &_size_md {
+    min-height: 52px;
     padding: token.$spacing_12 token.$spacing_20;
     @include token.body_medium;
   }
 
   &_size_lg {
+    min-height: 52px;
     padding: token.$spacing_16 token.$spacing_24;
     @include token.body_large;
   }
@@ -192,5 +204,12 @@
       cursor: not-allowed;
       color: token.$color_text_caption;
     }
+  }
+
+  // ── Label states ─────────────────────────────────────────────────────────
+
+  &:has(.select_control:disabled) .select_label,
+  &:has(.select_control.is_disabled) .select_label {
+    color: token.$color_text_disabled;
   }
 }

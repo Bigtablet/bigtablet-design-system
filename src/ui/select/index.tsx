@@ -218,7 +218,7 @@ export const Select = ({
 		setDropUp(spaceBelow < listHeight && spaceAbove > spaceBelow);
 	}, [isOpen, options.length]);
 
-	const rootClassName = cn("select", className);
+	const rootClassName = cn("select", { select_has_label: !!label }, className);
 
 	const controlClassName = cn(
 		"select_control",
