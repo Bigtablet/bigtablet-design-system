@@ -1,3 +1,14 @@
+## [2.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.0...v2.2.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* Select fieldset/legend 구조 전환으로 label 배경색 제거 ([b9113be](https://github.com/Bigtablet/bigtablet-design-system/commit/b9113becdb3dabfafca0808fff415832e345be41))
+* Select 밀림 및 클릭 테두리 강조 버그 수정 ([eeb8a0c](https://github.com/Bigtablet/bigtablet-design-system/commit/eeb8a0cdc350f5bbcfef93bc8300aeee32cbb834))
+* TextField fieldset/legend 구조 전환으로 label 배경색 제거 ([724bd1a](https://github.com/Bigtablet/bigtablet-design-system/commit/724bd1a65226966a59ccbe62bc10813ece152408))
+* TextField 컨테이너 흰색 배경 복구 ([ff57129](https://github.com/Bigtablet/bigtablet-design-system/commit/ff57129b5668c6913593ba7591178b3589584a2c))
+* TextField 코드리뷰 반영 ([3cb9cba](https://github.com/Bigtablet/bigtablet-design-system/commit/3cb9cba8f7a8e747a231f66827c9f767fdf4da7c))
+
 ## [2.2.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.2...v2.2.3) (2026-04-17)
 
 
