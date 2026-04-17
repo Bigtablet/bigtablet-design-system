@@ -176,3 +176,42 @@ export const AllStates: Story = {
 		</div>
 	),
 };
+
+export const OnDimBackground: Story = {
+	parameters: {
+		chromatic: { disableSnapshot: true },
+		backgrounds: { default: "dim (color_bg_solid_dim)" },
+	},
+
+	name: "Dim 배경 테스트 (fieldset/legend border notch)",
+	render: () => (
+		<div
+			style={{
+				display: "grid",
+				gap: 24,
+				width: 320,
+				padding: 32,
+				backgroundColor: "#F4F4F4",
+				// fieldset+legend 구조: 배경색 CSS variable 불필요
+			}}
+		>
+			<TextField label="기본" placeholder="Input" />
+			<TextField label="에러 상태" placeholder="Input" supportingText="에러 메시지" error />
+			<TextField label="비활성화" placeholder="Input" disabled />
+			<TextField label="아이콘 포함" placeholder="Search" leadingIcon={<SearchIcon />} />
+		</div>
+	),
+};
+
+export const SizeComparison: Story = {
+	parameters: { chromatic: { disableSnapshot: true } },
+
+	name: "크기 비교 (sm / md)",
+	render: () => (
+		<div style={{ display: "grid", gap: 24, width: 320 }}>
+			<TextField label="Size md (기본)" placeholder="Input" size="md" supportingText="min-height 52px" />
+			<TextField label="Size sm" placeholder="Input" size="sm" supportingText="min-height 40px" />
+			<TextField label="Size sm + 아이콘" placeholder="Search" size="sm" leadingIcon={<SearchIcon />} />
+		</div>
+	),
+};
