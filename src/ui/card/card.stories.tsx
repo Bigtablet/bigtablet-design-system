@@ -75,10 +75,12 @@ const meta: Meta<typeof Card> = {
 - **lg**: 주요 CTA, 핵심 정보 카드
 
 ### 디자이너 체크 포인트
-- 한 화면에 shadow 레벨이 너무 다양하지 않은지 (일관성)
-- 카드 간 간격(gap)이 충분한지
-- 모바일에서 카드가 화면을 벗어나지 않는지
-- heading과 body 사이 시각적 구분이 명확한지
+- shadow 토큰 매핑: sm → \`elevation_level1\`, md → \`elevation_level2\`, lg → \`elevation_level3\` (한 화면에 레벨이 2개 이상 섞이지 않는지)
+- padding 토큰 매핑: sm → \`spacing_8\`, md → \`spacing_16\`, lg → \`spacing_24\` — 콘텐츠 밀도에 맞는지
+- 모서리 \`radius_lg\`, 배경 \`color_bg_solid\` — bordered 사용 시 \`color_border_default\` 1px 추가됨
+- heading은 \`heading_small\` + \`margin-bottom: spacing_12\` — body와의 수직 간격이 충분한지
+- headingAs로 페이지 heading 레벨 (h2~h6) 조정 — outline 계층과 일치하는지
+- 모바일에서 카드 좌우 padding이 화면 폭 초과하지 않는지
         `,
 			},
 		},

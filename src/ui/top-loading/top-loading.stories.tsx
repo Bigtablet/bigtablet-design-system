@@ -59,10 +59,12 @@ const meta: Meta<typeof TopLoading> = {
 | **Determinate** | progress 지정 시 해당 퍼센트만큼 채움 |
 
 ### 디자이너 체크 포인트
-- 로딩바가 다른 UI 요소(헤더 등)와 겹치지 않는지
-- 색상이 배경과 충분히 대비되는지
-- 애니메이션 속도가 자연스러운지
-- 진행률 모드에서 변화가 부드럽게 전환되는지
+- \`position: fixed; top: 0\` + \`z_level4\` — 헤더/모달 등과 겹치는 z-index 관계 확인 (모달보다는 뒤)
+- 기본 바 색상 \`color_brand_primary\` — 페이지 배경과 충분히 대비되는지 (custom color prop으로 오버라이드 가능)
+- 기본 높이 3px — 얇아서 콘텐츠 밀어내지 않지만 인지되는지
+- Indeterminate 모드: 폭 30%가 1.5s 주기로 좌→우 슬라이드 — 속도가 자연스러운지
+- Determinate(progress) 모드: \`transition: width transition_base\` — 퍼센트 변화 전환이 튀지 않는지
+- 전역 로딩 vs 특정 영역 로딩: 이 컴포넌트는 전역 전용. 영역 로딩은 Spinner / LinearProgress 사용
         `,
 			},
 		},

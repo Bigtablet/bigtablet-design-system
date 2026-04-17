@@ -128,9 +128,15 @@ const meta: Meta<typeof DateFieldDemo> = {
   - 이 동작은 제품 UX 정책에 따라 추후 조정 가능합니다.
 
 ### 디자이너 체크 포인트
-- 3개 셀렉트의 간격/정렬(한 줄 유지, 반응형)
-- disabled 상태 대비(가독성 유지)
-- 긴 연도 범위에서도 스크롤/선택이 부담스럽지 않은지
+- 각 \`<select>\` 높이 \`tap_min_size\` (44px) — 터치 가능 영역 확보
+- 간격: 데스크톱 \`spacing_8\`, 모바일(compact) \`spacing_4\` — 한 줄 유지되는지
+- \`fullWidth\` 시 3개 셀렉트가 \`flex: 1\`로 균등 분배 — 좁은 폭에서도 안 깨지는지
+- border 기본 \`color_border_default\`, hover/focus \`color_brand_primary\`, focus에 \`focus_ring\` 추가 — TextField와 시각 언어 어긋나지 않는지
+- 커스텀 화살표: CSS gradient로 그린 ▼ — native select 아이콘 위치/색(\`color_text_body\`) 확인
+- 라벨 \`color_text_heading\` + \`font_weight_medium\`, 필수 표시 \`*\`는 \`color_status_error\`
+- disabled 시 border \`color_border_subtle\`, 글자 \`color_text_disabled\`, 배경 \`color_bg_solid_dim\` — 가독성 유지되는지
+- 연도 범위가 넓을 때(예: 1950~2036): native select 스크롤 사용 — 사용자 피로 고려해 startYear/endYear로 범위 좁히기 권장
+- 31일 → 2월 등 유효하지 않은 날짜 자동 보정 동작이 사용자에게 놀라움을 주지 않는지
         `,
 			},
 		},
