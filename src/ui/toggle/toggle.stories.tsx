@@ -47,9 +47,14 @@ const meta: Meta<typeof Toggle> = {
   \`defaultChecked\`를 사용합니다.
 
 ### 디자이너 체크 포인트
-- ON/OFF 상태가 색으로 명확히 구분되는지
-- disabled(비활성화) 상태가 "눌 수 없음"으로 인지되는지
-- 작은 화면에서도 손가락으로 누르기 불편하지 않은지 (권장: md)
+- OFF 배경 \`color_base_neutral_400\` / ON 배경 \`color_brand_primary\` — 색 대비가 충분한지
+- 크기: sm 40x24 / md 48x28 — 터치 영역 44px 기준에 미달하므로 라벨 영역까지 포함해 확보 권장
+- thumb 크기: OFF sm 12px / md 16px, ON sm 20px / md 24px — 눌렸을 때 grow 애니메이션 (active 상태)
+- 애니메이션: transform/width/height/background 모두 \`transition_base\` — 자연스러운 전환
+- hover 시 \`opacity: 0.88\` — 너무 과하지 않은지
+- 키보드 포커스 \`:focus-visible\`에서 \`focus_ring\` — 접근성 유지
+- disabled: neutral_400 배경 + \`cursor: not-allowed\` — ON/OFF 관계없이 동일 — 상태 불가가 인지되는지
+- 실시간 반영이 중요한 설정에는 제어형(\`checked\` + \`onChange\`) 사용 권장
         `,
 			},
 		},

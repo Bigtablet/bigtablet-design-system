@@ -45,11 +45,13 @@ const meta: Meta<typeof FileInput> = {
 - 이미지 미리보기가 필요하면 별도 구현 필요
 
 ### 디자이너 체크 포인트
-- 버튼 라벨이 동작을 명확히 설명하는지 ("파일 선택", "이미지 업로드" 등)
-- disabled 상태가 "선택 불가"로 인지되는지
-- 선택된 파일명을 표시할 영역이 있는지 (컴포넌트 외부에서 구현)
-- 파일 형식 제한이 있다면 안내 텍스트가 있는지
-- 용량 제한이 있다면 명시되어 있는지
+- 라벨 문구가 동작을 명확히 표현하는지 ("파일 선택", "이미지 업로드" 등)
+- 라벨 스타일: border \`color_border_default\`, radius \`radius_md\`, padding \`spacing_8 spacing_16\`, 타이포 \`body_medium\` — TextField/Button과 시각적으로 어긋나지 않는지
+- hover 시 border가 \`color_border_hover\`로 바뀌는지 (인풋 자체는 시각적으로 숨겨져 있어 label이 interactive surface 역할)
+- 키보드 포커스(\`:focus-visible\`): label에 \`focus_ring\` + border \`color_brand_primary\` 적용 — 접근성 유지
+- supportingText(\`file_input_helper\`)로 파일 형식/용량 제한 안내 — 표시되어 있는지
+- 선택된 파일명 / 이미지 프리뷰는 컴포넌트 외부 구현 — 필요하면 \`file_input_preview\` 스타일 활용
+- disabled 상태 \`opacity_38\` + \`cursor: not-allowed\` — 선택 불가가 인지되는지
         `,
 			},
 		},
