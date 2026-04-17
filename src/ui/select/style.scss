@@ -78,17 +78,24 @@
     background-color: token.$color_bg_solid_dim;
   }
 
-  // ── Size 클래스 (fieldset으로 이동) ───────────────────────────────────────
+  // ── Inner row (legend이 layout 공간 차지하므로 TextField의 inner 패턴 적용) ──
 
-  &_size_sm {
+  &_inner {
+    display: flex;
+    align-items: stretch;
+  }
+
+  // ── Size 클래스 (inner에 min-height 적용) ─────────────────────────────────
+
+  &_size_sm &_inner {
     min-height: 40px;
   }
 
-  &_size_md {
+  &_size_md &_inner {
     min-height: 52px;
   }
 
-  &_size_lg {
+  &_size_lg &_inner {
     min-height: 52px;
   }
 
@@ -121,8 +128,7 @@
   // ── Control (button) ──────────────────────────────────────────────────────
 
   &_control {
-    width: 100%;
-    min-height: inherit;
+    flex: 1;
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
@@ -130,6 +136,7 @@
     cursor: pointer;
     background: transparent;
     border: none;
+    outline: none; // 클릭 시 브라우저 기본 focus ring 제거
     color: token.$color_text_heading;
 
     &:disabled,
