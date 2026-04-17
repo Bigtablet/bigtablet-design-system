@@ -19,8 +19,8 @@
     margin: 0;
     min-inline-size: 0; // fieldset 기본값 min-content 제거
     width: 100%;
-    background: token.$color_bg_solid;
-    transition: border-color token.$transition_base;
+    background-color: token.$color_bg_solid;
+    transition: border-color token.$transition_base, background-color token.$transition_base;
 
     &:hover {
       border-color: token.$color_border_hover;
@@ -204,6 +204,7 @@
   &_disabled {
     .text_field_container {
       border-color: token.$color_bg_disabled;
+      background-color: token.$color_bg_solid_dim;
 
       &:hover {
         border-color: token.$color_bg_disabled;
