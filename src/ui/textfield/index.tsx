@@ -48,6 +48,7 @@ const ClearIcon = () => <Icon name="close" size={20} />;
 /**
  * 텍스트 필드를 렌더링한다.
  * Figma DS 기준 outlined 스타일 + floating label을 지원한다.
+ * fieldset + legend 구조로 배경색 없이 border notch를 자연스럽게 처리한다.
  * @param props 텍스트 필드 속성
  * @returns 렌더링된 텍스트 필드 UI
  */
@@ -122,54 +123,57 @@ export const TextField = ({
 
 	return (
 		<div className={rootClassName}>
-			<div className="text_field_container">
-				{leadingIcon && (
-					<span className="text_field_icon" aria-hidden="true">
-						{leadingIcon}
-					</span>
-				)}
-
-				<div className={cn("text_field_input_wrap", (resolvedTrailing) && "text_field_input_wrap_no_pad_right")}>
-					<input
-						id={inputId}
-						ref={ref}
-						className="text_field_input"
-						aria-invalid={!!error}
-						aria-describedby={helperId}
-						aria-label={!showLabel ? label : undefined}
-						{...props}
-						value={innerValue}
-						onCompositionStart={() => {
-							isComposingRef.current = true;
-						}}
-						onCompositionEnd={(event) => {
-							isComposingRef.current = false;
-							const rawValue = event.currentTarget.value;
-							const nextValue = applyTransform(rawValue);
-							setInnerValue(nextValue);
-							onChangeAction?.(nextValue);
-						}}
-						onChange={(event) => {
-							const rawValue = event.target.value;
-							if (isComposingRef.current) {
-								setInnerValue(rawValue);
-								return;
-							}
-							const nextValue = applyTransform(rawValue);
-							setInnerValue(nextValue);
-							onChangeAction?.(nextValue);
-						}}
-					/>
-				</div>
-
-				{resolvedTrailing}
-
+			{/* fieldset + legend: 배경색 없이 border notch를 브라우저가 자동 처리 */}
+			<fieldset className="text_field_container">
 				{label && showLabel && (
-					<label className="text_field_label" htmlFor={inputId}>
-						{label}
-					</label>
+					<legend className="text_field_label">
+						<label htmlFor={inputId}>{label}</label>
+					</legend>
 				)}
-			</div>
+
+				<div className="text_field_inner">
+					{leadingIcon && (
+						<span className="text_field_icon" aria-hidden="true">
+							{leadingIcon}
+						</span>
+					)}
+
+					<div className={cn("text_field_input_wrap", resolvedTrailing && "text_field_input_wrap_no_pad_right")}>
+						<input
+							id={inputId}
+							ref={ref}
+							className="text_field_input"
+							aria-invalid={!!error}
+							aria-describedby={helperId}
+							aria-label={!showLabel ? label : undefined}
+							{...props}
+							value={innerValue}
+							onCompositionStart={() => {
+								isComposingRef.current = true;
+							}}
+							onCompositionEnd={(event) => {
+								isComposingRef.current = false;
+								const rawValue = event.currentTarget.value;
+								const nextValue = applyTransform(rawValue);
+								setInnerValue(nextValue);
+								onChangeAction?.(nextValue);
+							}}
+							onChange={(event) => {
+								const rawValue = event.target.value;
+								if (isComposingRef.current) {
+									setInnerValue(rawValue);
+									return;
+								}
+								const nextValue = applyTransform(rawValue);
+								setInnerValue(nextValue);
+								onChangeAction?.(nextValue);
+							}}
+						/>
+					</div>
+
+					{resolvedTrailing}
+				</div>
+			</fieldset>
 
 			{supportingText && (
 				<div id={helperId} className="text_field_helper">
