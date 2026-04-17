@@ -5,11 +5,15 @@ import { cn } from "../../utils";
 import { Icon } from "../icon";
 import "./style.scss";
 
+export type TextFieldSize = "sm" | "md";
+
 export interface TextFieldProps
 	extends Omit<
 		React.InputHTMLAttributes<HTMLInputElement>,
 		"size" | "onChange" | "value" | "defaultValue"
 	> {
+	/** 입력 필드 크기 (기본값: "md") */
+	size?: TextFieldSize;
 	/** 입력 필드 위에 표시할 라벨 텍스트 */
 	label?: string;
 	/** 라벨 표시 여부 (기본값: true) */
@@ -57,6 +61,7 @@ export const TextField = ({
 	trailingIcon,
 	clearable,
 	fullWidth,
+	size = "md",
 	className,
 	onChangeAction,
 	value,
@@ -92,6 +97,7 @@ export const TextField = ({
 
 	const rootClassName = cn(
 		"text_field",
+		size === "sm" && "text_field_size_sm",
 		fullWidth && "text_field_full_width",
 		error && "text_field_error",
 		props.disabled && "text_field_disabled",

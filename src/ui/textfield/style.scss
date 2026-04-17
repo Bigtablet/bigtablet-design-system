@@ -21,12 +21,27 @@
     padding: token.$spacing_4 0;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
-    background: token.$color_bg_solid;
+    background: inherit;
     transition: border-color token.$transition_base;
 
     &:hover {
       border-color: token.$color_border_hover;
     }
+  }
+
+  // ── Size variants ──────────────────────────────────────────────────────
+
+  &_size_sm &_container {
+    min-height: 40px;
+  }
+
+  &_size_sm &_input_wrap {
+    padding: token.$spacing_8 token.$spacing_16;
+  }
+
+  &_size_sm &_input {
+    font-size: token.$font_size_14;
+    line-height: token.$line_height_20;
   }
 
   &_container:focus-within {
@@ -40,7 +55,7 @@
     top: -8px;
     left: token.$spacing_16;
     padding: 0 token.$spacing_4;
-    background: token.$color_bg_solid;
+    background: var(--text-field-surface, #{token.$color_bg_solid});
     font-family: token.$font_family_primary;
     font-size: token.$font_size_12;
     font-weight: token.$font_weight_regular;
