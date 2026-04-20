@@ -173,7 +173,7 @@ export const DatePicker = ({
 
 	const dayOptions = React.useMemo<SelectOption[]>(
 		() =>
-			range(minDay, Math.max(minDay, maxDay)).map((d) => ({
+			range(Math.min(31, Math.max(1, minDay)), Math.max(minDay, maxDay)).map((d) => ({
 				value: String(d),
 				label: pad(d),
 			})),
