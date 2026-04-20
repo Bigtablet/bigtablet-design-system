@@ -80,6 +80,7 @@
   &_inner {
     display: flex;
     align-items: stretch;
+    padding: token.$spacing_4 0;
   }
 
   // ── Size 클래스 (inner에 min-height 적용) ─────────────────────────────────
