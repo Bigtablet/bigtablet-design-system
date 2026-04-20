@@ -42,6 +42,7 @@
 
   &_title {
     @include token.heading_small;
+    margin-top: 0;
     margin-bottom: token.$spacing_12;
     color: token.$color_text_heading;
   }
