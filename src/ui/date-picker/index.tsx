@@ -137,10 +137,11 @@ export const DatePicker = ({
 	const maxMonth =
 		selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
 
-	const minDay =
+	const minDay = Math.min(31, Math.max(1,
 		min.year > 0 && min.month > 0 && year === min.year && month === min.month
 			? min.day
-			: 1;
+			: 1,
+	));
 
 	const maxDay = React.useMemo(() => {
 		if (!year || !month) return 31;
@@ -173,7 +174,7 @@ export const DatePicker = ({
 
 	const dayOptions = React.useMemo<SelectOption[]>(
 		() =>
-			range(Math.min(31, Math.max(1, minDay)), Math.max(minDay, maxDay)).map((d) => ({
+			range(minDay, Math.max(minDay, maxDay)).map((d) => ({
 				value: String(d),
 				label: pad(d),
 			})),
