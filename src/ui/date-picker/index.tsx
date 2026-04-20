@@ -132,7 +132,7 @@ export const DatePicker = ({
 
 	const maxYear = selectableRange === "until-today" ? todayYear : endYear;
 
-	const minMonth = min.year > 0 && year === min.year ? min.month : 1;
+	const minMonth = min.year > 0 && year === min.year ? Math.min(12, Math.max(1, min.month)) : 1;
 
 	const maxMonth =
 		selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
