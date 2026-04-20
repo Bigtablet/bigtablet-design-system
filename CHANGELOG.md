@@ -1,3 +1,16 @@
+## [2.2.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.3...v2.2.4) (2026-04-20)
+
+
+### Bug Fixes
+
+* align Select focus highlight style with TextField pattern ([e4c6917](https://github.com/Bigtablet/bigtablet-design-system/commit/e4c691743a4e3357f87a9b528018e5d9a9eb4968))
+* clamp minDay at definition to guard upper bound against invalid input ([ff6645c](https://github.com/Bigtablet/bigtablet-design-system/commit/ff6645c5adbe0521f061a617812fca0591b94478))
+* clamp minDay to 1–31 range to guard against invalid minDate input ([32c8f9c](https://github.com/Bigtablet/bigtablet-design-system/commit/32c8f9c23bcd3e964638dae84905250bbf31dd5c))
+* clamp minMonth to 1–12 range to guard against invalid minDate input ([7619fc7](https://github.com/Bigtablet/bigtablet-design-system/commit/7619fc7cc8d166334c12614f77feb0e725fe92c0))
+* refactor DatePicker to use DS Select component for consistent UX ([5387f9a](https://github.com/Bigtablet/bigtablet-design-system/commit/5387f9aa84a16c2365f17604d6d90780a790cc10))
+* remove default margin-top from Card title ([cf44ff7](https://github.com/Bigtablet/bigtablet-design-system/commit/cf44ff758f8c3423a46758bc3c88c4bd20dcd45c))
+* Select 밀림 및 클릭 테두리 강조 버그 수정 ([eeb8a0c](https://github.com/Bigtablet/bigtablet-design-system/commit/eeb8a0cdc350f5bbcfef93bc8300aeee32cbb834))
+
 ## [2.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.1...v2.2.2) (2026-04-20)
 
 
