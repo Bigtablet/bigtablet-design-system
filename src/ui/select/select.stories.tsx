@@ -63,6 +63,20 @@ const meta: Meta<typeof Select> = {
 | 공간을 절약해야 할 때 | 모든 옵션을 한눈에 보여줘야 할 때 |
 | 드롭다운으로 숨겨도 괜찮을 때 | 옵션 비교가 중요할 때 |
 
+### 구조 (fieldset + legend)
+- 라벨은 \`<legend>\`로, 컨트롤은 \`<fieldset>\` 안의 \`<button>\`으로 구성됩니다.
+- 브라우저가 legend 주변에서 fieldset border를 자동으로 끊어주므로 라벨에 배경색 처리가 필요 없습니다. Dim 배경 위에서도 자연스럽게 표시됩니다.
+- 시각 언어는 TextField와 동일합니다 (같은 border / radius / hover / focus 토큰).
+
+### 상태
+| State | 설명 |
+|-------|------|
+| Enable | \`color_border_default\` |
+| Hover | \`color_border_hover\` (TextField와 동일) |
+| Open | \`color_border_focus\` (subtle, box-shadow 없음) |
+| Keyboard focus | 컨트롤 버튼에 \`focus_ring\` (\`:focus-visible\`) — 마우스 클릭 시엔 표시되지 않음 |
+| Disabled | 배경 \`color_bg_solid_dim\`, 텍스트 \`opacity_38\` |
+
 ### 사용 방법
 - \`options\`: 선택지를 전달합니다.
 - **제어형**: \`value\` + \`onChange\`로 상태 관리
@@ -71,17 +85,10 @@ const meta: Meta<typeof Select> = {
 ### 키보드 접근성
 | 키 | 동작 |
 |----|------|
-| ↑ / ↓ | 항목 이동 |
+| ↑ / ↓ | 항목 이동 (비활성 항목은 건너뜀) |
 | Enter / Space | 선택 / 열기 |
 | Esc | 닫기 |
-| Home / End | 첫/마지막 항목 |
-
-### 디자이너 체크 포인트
-- placeholder가 "선택해주세요" 같은 안내 문구인지
-- disabled 옵션이 시각적으로 구분되는지
-- 드롭다운 최대 높이(max-height)가 적절한지
-- 긴 텍스트 옵션이 말줄임(...)으로 처리되는지
-- 선택된 항목에 체크 아이콘 등 시각적 표시가 있는지
+| Home / End | 첫/마지막 비활성화되지 않은 항목 |
         `,
 			},
 		},
