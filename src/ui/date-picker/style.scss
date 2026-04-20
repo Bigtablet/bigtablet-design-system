@@ -5,68 +5,6 @@
   @include token.flex_column;
   gap: token.$spacing_4;
 
-  select {
-    min-width: 88px;
-    height: token.$tap_min_size;
-    padding: 0 token.$spacing_12;
-
-    font-family: token.$font_family_primary;
-    @include token.body_medium;
-
-    color: token.$color_text_heading;
-    background-color: token.$color_bg_solid;
-
-    border: token.$border_width_standard solid token.$color_border_default;
-    border-radius: token.$radius_sm;
-
-    cursor: pointer;
-    transition:
-            border-color token.$transition_fast,
-            box-shadow token.$transition_fast,
-            background-color token.$transition_fast;
-
-    appearance: none;
-
-    background-image:
-            linear-gradient(45deg, transparent 50%, token.$color_text_body 50%),
-            linear-gradient(135deg, token.$color_text_body 50%, transparent 50%);
-    background-position:
-            calc(100% - 16px) calc(50% - 3px),
-            calc(100% - 11px) calc(50% - 3px);
-    background-size: 5px 5px;
-    background-repeat: no-repeat;
-
-    &:hover:not(:disabled) {
-      border-color: token.$color_brand_primary;
-      background-color: token.$color_bg_solid_dim;
-    }
-
-    &:focus-visible {
-      outline: none;
-      border-color: token.$color_brand_primary;
-      box-shadow: token.$focus_ring;
-      background-color: token.$color_bg_solid;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      color: token.$color_text_disabled;
-      background-color: token.$color_bg_solid_dim;
-      border-color: token.$color_border_subtle;
-    }
-
-    option {
-      color: token.$color_text_heading;
-    }
-  }
-
-  @include breakpoint.compact {
-    select {
-      flex: 1;
-      min-width: 0;
-    }
-  }
-
   &_label {
     color: token.$color_text_heading;
     margin-bottom: token.$spacing_4;
@@ -83,6 +21,7 @@
   &_fields {
     display: flex;
     gap: token.$spacing_8;
+    align-items: flex-end;
 
     @include breakpoint.compact {
       gap: token.$spacing_4;
@@ -94,11 +33,11 @@
 
     .date_picker_fields {
       width: 100%;
-    }
 
-    select {
-      flex: 1;
-      min-width: 0;
+      > * {
+        flex: 1;
+        min-width: 0;
+      }
     }
   }
 

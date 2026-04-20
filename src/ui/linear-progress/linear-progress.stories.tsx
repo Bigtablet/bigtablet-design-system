@@ -38,11 +38,6 @@ const meta: Meta<typeof LinearProgress> = {
 | **형태** | 인라인 수평 바 | 회전 애니메이션 | 상단 고정 바 |
 | **진행률** | 단계 기반 (step/total) | 표시 불가 | 퍼센트 기반 (0-100) |
 | **위치** | 문서 흐름 내 배치 | 문서 흐름 내 배치 | 화면 상단 고정 (fixed) |
-
-### 디자이너 체크 포인트
-- 트랙 높이: 2px, 배경 #e5e5e5 (border_default)
-- 인디케이터 높이: 2px, 배경 #121212 (text_heading), border-radius: 9999px
-- 너비 변경 시 부드러운 전환 애니메이션 적용
         `,
 			},
 		},

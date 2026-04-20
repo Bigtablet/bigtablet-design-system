@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../utils";
+import { Select, type SelectOption } from "../select";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -33,11 +34,11 @@ export interface DatePickerProps {
 	 * @deprecated `fullWidth` 사용 또는 CSS로 처리
 	 */
 	width?: number | string;
-	/** 연도 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Year") */
+	/** 연도 select의 라벨/플레이스홀더 (기본값: "Year") */
 	yearLabel?: string;
-	/** 월 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Month") */
+	/** 월 select의 라벨/플레이스홀더 (기본값: "Month") */
 	monthLabel?: string;
-	/** 일 select의 aria-label 및 빈 옵션 텍스트 (기본값: "Day") */
+	/** 일 select의 라벨/플레이스홀더 (기본값: "Day") */
 	dayLabel?: string;
 	/**
 	 * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
@@ -68,7 +69,7 @@ const range = (start: number, end: number) =>
 
 /**
  * 연/월/일 선택형 데이트 피커를 렌더링한다.
- * 입력 값과 선택 범위를 기준으로 옵션을 계산하고, 선택 변경을 상위로 전달한다.
+ * 내부적으로 DS Select 3개를 조합해 드롭다운 UX 일관성을 유지한다.
  */
 export const DatePicker = ({
 	label,
@@ -129,16 +130,12 @@ export const DatePicker = ({
 
 	// ── 범위 계산 ────────────────────────────────────────────────────────
 
-	const maxYear =
-		selectableRange === "until-today" ? todayYear : endYear;
+	const maxYear = selectableRange === "until-today" ? todayYear : endYear;
 
-	const minMonth =
-		min.year > 0 && year === min.year ? min.month : 1;
+	const minMonth = min.year > 0 && year === min.year ? Math.min(12, Math.max(1, min.month)) : 1;
 
 	const maxMonth =
-		selectableRange === "until-today" && year === todayYear
-			? todayMonth
-			: 12;
+		selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
 
 	const minDay =
 		min.year > 0 && min.month > 0 && year === min.year && month === min.month
@@ -154,20 +151,32 @@ export const DatePicker = ({
 		return daysInMonth;
 	}, [year, month, selectableRange, todayYear, todayMonth, todayDay]);
 
-	// ── 옵션 배열 메모이제이션 ────────────────────────────────────────────
+	// ── SelectOption[] 변환 ──────────────────────────────────────────────
 
-	const yearOptions = React.useMemo(
-		() => range(startYear, maxYear),
+	const yearOptions = React.useMemo<SelectOption[]>(
+		() =>
+			range(startYear, maxYear).map((y) => ({
+				value: String(y),
+				label: String(y),
+			})),
 		[startYear, maxYear],
 	);
 
-	const monthOptions = React.useMemo(
-		() => range(minMonth, Math.max(minMonth, maxMonth)),
+	const monthOptions = React.useMemo<SelectOption[]>(
+		() =>
+			range(minMonth, Math.max(minMonth, maxMonth)).map((m) => ({
+				value: String(m),
+				label: pad(m),
+			})),
 		[minMonth, maxMonth],
 	);
 
-	const dayOptions = React.useMemo(
-		() => range(minDay, Math.max(minDay, maxDay)),
+	const dayOptions = React.useMemo<SelectOption[]>(
+		() =>
+			range(minDay, Math.max(minDay, maxDay)).map((d) => ({
+				value: String(d),
+				label: pad(d),
+			})),
 		[minDay, maxDay],
 	);
 
@@ -188,21 +197,19 @@ export const DatePicker = ({
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
 
 	const handleYearChange = React.useCallback(
-		(newYear: number) => {
+		(raw: string | null) => {
+			if (!raw) return;
+			const newYear = Number(raw);
 			let newMonth = month;
-			// 월이 새 범위를 벗어나면 보정
 			const newMinMonth = min.year > 0 && newYear === min.year ? min.month : 1;
 			const newMaxMonth =
-				selectableRange === "until-today" && newYear === todayYear
-					? todayMonth
-					: 12;
+				selectableRange === "until-today" && newYear === todayYear ? todayMonth : 12;
 			if (newMonth > 0 && newMonth < newMinMonth) newMonth = newMinMonth;
 			if (newMonth > newMaxMonth) newMonth = newMaxMonth;
 
 			if (newMonth > 0) {
 				emit(newYear, newMonth, day || undefined);
 			} else {
-				// 월이 아직 선택 안 된 상태면 연도만 반영
 				emit(newYear, newMinMonth, day || undefined);
 			}
 		},
@@ -210,17 +217,17 @@ export const DatePicker = ({
 	);
 
 	const handleMonthChange = React.useCallback(
-		(newMonth: number) => {
-			if (!year) return;
-			emit(year, newMonth, day || undefined);
+		(raw: string | null) => {
+			if (!raw || !year) return;
+			emit(year, Number(raw), day || undefined);
 		},
 		[year, day, emit],
 	);
 
 	const handleDayChange = React.useCallback(
-		(newDay: number) => {
-			if (!year || !month) return;
-			emit(year, month, newDay);
+		(raw: string | null) => {
+			if (!raw || !year || !month) return;
+			emit(year, month, Number(raw));
 		},
 		[year, month, emit],
 	);
@@ -230,6 +237,7 @@ export const DatePicker = ({
 	const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
 	const rootClassName = cn("date_picker", {
 		date_picker_full_width: fullWidth && !width,
+		date_picker_disabled: disabled,
 	});
 
 	const constraintParts: string[] = [];
@@ -256,48 +264,39 @@ export const DatePicker = ({
 				aria-labelledby={label ? groupId : undefined}
 				aria-describedby={constraintDesc ? constraintId : undefined}
 			>
-				<select
-					aria-label={yearLabel}
-					value={year || ""}
+				<Select
+					size="sm"
+					fullWidth
+					label={yearLabel}
+					placeholder={yearLabel}
+					options={yearOptions}
+					value={year ? String(year) : null}
+					onChange={handleYearChange}
 					disabled={disabled}
-					onChange={(e) => handleYearChange(Number(e.target.value))}
-				>
-					<option value="">{yearLabel}</option>
-					{yearOptions.map((y) => (
-						<option key={y} value={y}>
-							{y}
-						</option>
-					))}
-				</select>
+				/>
 
-				<select
-					aria-label={monthLabel}
-					value={month || ""}
+				<Select
+					size="sm"
+					fullWidth
+					label={monthLabel}
+					placeholder={monthLabel}
+					options={monthOptions}
+					value={month ? String(month) : null}
+					onChange={handleMonthChange}
 					disabled={disabled || !year}
-					onChange={(e) => handleMonthChange(Number(e.target.value))}
-				>
-					<option value="">{monthLabel}</option>
-					{monthOptions.map((m) => (
-						<option key={m} value={m}>
-							{pad(m)}
-						</option>
-					))}
-				</select>
+				/>
 
 				{mode === "year-month-day" && (
-					<select
-						aria-label={dayLabel}
-						value={day || ""}
+					<Select
+						size="sm"
+						fullWidth
+						label={dayLabel}
+						placeholder={dayLabel}
+						options={dayOptions}
+						value={day ? String(day) : null}
+						onChange={handleDayChange}
 						disabled={disabled || !month}
-						onChange={(e) => handleDayChange(Number(e.target.value))}
-					>
-						<option value="">{dayLabel}</option>
-						{dayOptions.map((d) => (
-							<option key={d} value={d}>
-								{pad(d)}
-							</option>
-						))}
-					</select>
+					/>
 				)}
 			</div>
 		</div>
