@@ -1,3 +1,15 @@
+# [2.3.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.4...v2.3.0) (2026-04-24)
+
+
+### Bug Fixes
+
+* restore tokens.json original format, apply only targeted token changes ([7ad6e63](https://github.com/Bigtablet/bigtablet-design-system/commit/7ad6e63855146e9e3f6f4cdeff182c9c4cef363c)), closes [#6B6B6B](https://github.com/Bigtablet/bigtablet-design-system/issues/6B6B6B) [#777777](https://github.com/Bigtablet/bigtablet-design-system/issues/777777) [#333333](https://github.com/Bigtablet/bigtablet-design-system/issues/333333)
+
+
+### Features
+
+* update color tokens — neutral 600/800, add bg inverse-surface ([6c975a2](https://github.com/Bigtablet/bigtablet-design-system/commit/6c975a2b8341fed175979d790b2cc8f17c8d89a1)), closes [#6B6B6B](https://github.com/Bigtablet/bigtablet-design-system/issues/6B6B6B) [#777777](https://github.com/Bigtablet/bigtablet-design-system/issues/777777) [#333333](https://github.com/Bigtablet/bigtablet-design-system/issues/333333) [#228](https://github.com/Bigtablet/bigtablet-design-system/issues/228)
+
 ## [2.2.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.3...v2.2.4) (2026-04-20)
 
 
