@@ -8,8 +8,9 @@ $color_base_neutral_200:      #E5E5E5;
 $color_base_neutral_300:      #999999;
 $color_base_neutral_400:      #B3B3B3;
 $color_base_neutral_500:      #888888;
-$color_base_neutral_600:      #6B6B6B;
+$color_base_neutral_600:      #777777;
 $color_base_neutral_700:      #666666;
+$color_base_neutral_800:      #333333;
 $color_base_neutral_900:      #121212;
 $color_base_status_error:     #EF4444;
 $color_base_status_success:   #10B981;
@@ -45,6 +46,7 @@ $color_bg_solid_dim:          $color_base_neutral_50;
 $color_bg_additive:           $color_base_alpha_black_5;
 $color_bg_disabled:           $color_base_alpha_black_12;
 $color_bg_overlay:            $color_base_alpha_black_50;
+$color_bg_inverse_surface:    $color_base_neutral_800;
 
 // ── Semantic: State ───────────────────────────────────────────────────────────
 

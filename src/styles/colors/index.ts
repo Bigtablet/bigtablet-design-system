@@ -10,8 +10,9 @@ export const baseColors = {
 	neutral300: "#999999",
 	neutral400: "#B3B3B3",
 	neutral500: "#888888",
-	neutral600: "#6B6B6B",
+	neutral600: "#777777",
 	neutral700: "#666666",
+	neutral800: "#333333",
 	neutral900: "#121212",
 
 	statusError: "#EF4444",
@@ -52,6 +53,7 @@ export const colors = {
 		additive: baseColors.alphaBlack5,
 		disabled: baseColors.alphaBlack12,
 		overlay: baseColors.alphaBlack50,
+		inverseSurface: baseColors.neutral800,
 	},
 
 	state: {
