@@ -30,7 +30,7 @@ importers:
         version: 0.44.0
       '@material-symbols/svg-400':
         specifier: ^0.44.0
-        version: 0.44.1
+        version: 0.44.4
       '@semantic-release/changelog':
         specifier: ^6.0.3
         version: 6.0.3(semantic-release@25.0.3(typescript@6.0.2))
@@ -1095,8 +1095,8 @@ packages:
   '@material-symbols/svg-300@0.44.0':
     resolution: {integrity: sha512-mLqECM7ZwtrM4O/071DzflGJmraaQ6yK3QUK6n/DoU1oKeXK7kAtS0vVcsuMbBroYUltD156/ehhSwtOahgeNg==}
 
-  '@material-symbols/svg-400@0.44.1':
-    resolution: {integrity: sha512-Ku/NsX6pqk0yCx5ir2KX1IyaTC2D6SL8893g+Exvmb5N2swm+mYdtBRAZrDSgdWFkbUTAkaJUzh1WOPfUzV74A==}
+  '@material-symbols/svg-400@0.44.4':
+    resolution: {integrity: sha512-H170BEVf77bE0LBI2yIqbvvMB4x7u+xoWgcoFtqehRuYNm10ltdi4u0CONOLxhgzOgIwFLoNZTVbOjPFdu2t3g==}
 
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
@@ -4776,7 +4776,7 @@ snapshots:
 
   '@material-symbols/svg-300@0.44.0': {}
 
-  '@material-symbols/svg-400@0.44.1': {}
+  '@material-symbols/svg-400@0.44.4': {}
 
   '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4)':
     dependencies:
