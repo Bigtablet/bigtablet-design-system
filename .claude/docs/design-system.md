@@ -17,7 +17,7 @@ Complete reference for AI assistants to generate code using the Bigtablet Design
 
 ```tsx
 // Pure React - use this for standard React apps
-import { Button, TextField, Select, Modal, Card } from '@bigtablet/design-system';
+import { Button, TextField, Dropdown, Modal, Card } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';  // REQUIRED
 
 // Next.js - use this when you need Sidebar (uses next/link internally)
@@ -38,9 +38,9 @@ import { ToastProvider, useToast } from '@bigtablet/design-system';
 | Prop | Type | Default | Used By |
 |------|------|---------|---------|
 | `variant` | `"primary" \| "secondary" \| "ghost" \| "danger"` | `"primary"` | Button |
-| `variant` | `"outline" \| "filled" \| "ghost"` | `"outline"` | TextField, Select |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button, TextField, Select, Checkbox, Radio, Toggle |
-| `fullWidth` | `boolean` | varies | Button, TextField, Select, DatePicker |
+| `variant` | `"outline" \| "filled" \| "ghost"` | `"outline"` | TextField |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button, TextField, Dropdown, Checkbox, Radio, Toggle |
+| `fullWidth` | `boolean` | varies | Button, TextField, Dropdown, DatePicker |
 | `disabled` | `boolean` | `false` | All form components |
 | `className` | `string` | - | All components |
 
@@ -120,19 +120,19 @@ const [phone, setPhone] = useState('');
 
 ---
 
-### Select
+### Dropdown
 
 ```tsx
-import { Select, SelectOption } from '@bigtablet/design-system';
+import { Dropdown, DropdownOption } from '@bigtablet/design-system';
 
-const options: SelectOption[] = [
+const options: DropdownOption[] = [
   { value: 'apple', label: 'Apple' },
   { value: 'banana', label: 'Banana' },
   { value: 'orange', label: 'Orange', disabled: true },
 ];
 
 // Basic
-<Select
+<Dropdown
   label="Fruit"
   options={options}
   placeholder="Select..."
@@ -141,35 +141,44 @@ const options: SelectOption[] = [
 
 // Controlled
 const [value, setValue] = useState<string | null>(null);
-<Select options={options} value={value} onChange={(v) => setValue(v)} />
+<Dropdown options={options} value={value} onChange={(v) => setValue(v)} />
 
-// Variants
-<Select options={options} variant="outline" />
-<Select options={options} variant="filled" />
+// With supporting text + icon
+<Dropdown
+  options={[
+    { value: 'seoul', label: 'Seoul', supportingText: 'South Korea', leadingIcon: <Globe size={20} /> },
+    { value: 'tokyo', label: 'Tokyo', supportingText: 'Japan', showDivider: true },
+  ]}
+/>
 ```
 
 **Props:**
-- `options`: `SelectOption[]` - **required**
+- `options`: `DropdownOption[]` - **required**
 - `value`: `string | null` - controlled value
 - `defaultValue`: `string | null` - uncontrolled default
-- `onChange`: `(value: string | null, option: SelectOption | null) => void`
+- `onChange`: `(value: string | null, option: DropdownOption | null) => void`
 - `placeholder`: `string` (default: `"Select…"`)
-- `label`: `string`
-- `variant`: `"outline" | "filled" | "ghost"` (default: `"outline"`)
+- `label`: `string` — floating label, visible when open or value selected
 - `size`: `"sm" | "md" | "lg"` (default: `"md"`)
 - `disabled`: `boolean`
 - `fullWidth`: `boolean`
 
-**SelectOption interface:**
+**DropdownOption interface:**
 ```typescript
-interface SelectOption {
+interface DropdownOption {
   value: string;
   label: string;
   disabled?: boolean;
+  supportingText?: string;     // secondary text below label
+  leadingIcon?: ReactNode;     // icon before label
+  trailingIcon?: ReactNode;    // icon after label (auto check when selected)
+  showDivider?: boolean;       // divider below this item
 }
 ```
 
 **Keyboard:** Arrow Up/Down, Enter, Escape, Home, End
+
+> **Migration:** `Select` is a deprecated alias. Replace `Select` → `Dropdown`, `SelectOption` → `DropdownOption`.
 
 ---
 
