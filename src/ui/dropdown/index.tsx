@@ -104,18 +104,18 @@ export const Dropdown = ({
 		[isControlled, onChange, options],
 	);
 
-	const handleOutsideClick = React.useEffectEvent((e: MouseEvent) => {
-		if (!wrapperRef.current?.contains(e.target as Node)) {
-			setIsOpen(false);
-		}
-	});
-
 	React.useEffect(() => {
+		const handleOutsideClick = (e: MouseEvent) => {
+			if (!wrapperRef.current?.contains(e.target as Node)) {
+				setIsOpen(false);
+			}
+		};
 		document.addEventListener("mousedown", handleOutsideClick);
 		return () => document.removeEventListener("mousedown", handleOutsideClick);
 	}, []);
 
 	const moveActive = (dir: 1 | -1) => {
+		if (options.length === 0) return;
 		if (!isOpen) {
 			setIsOpen(true);
 			return;
@@ -267,14 +267,6 @@ export const Dropdown = ({
 										if (opt.disabled) return;
 										setValue(opt.value);
 										setIsOpen(false);
-									}}
-									onKeyDown={(e) => {
-										if (opt.disabled) return;
-										if (e.key === "Enter" || e.key === " ") {
-											e.preventDefault();
-											setValue(opt.value);
-											setIsOpen(false);
-										}
 									}}
 								>
 									{opt.leadingIcon && (
