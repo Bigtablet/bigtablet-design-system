@@ -1,0 +1,248 @@
+@use "src/styles/token" as token;
+
+.dropdown {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  font-family: token.$font_family_primary;
+
+  // ── Size variants ─────────────────────────────────────────────────────────────
+
+  &_size_sm &_fieldset {
+    min-height: 40px;
+  }
+
+  &_size_md &_fieldset,
+  &_size_lg &_fieldset {
+    min-height: 56px;
+  }
+
+  &_size_sm &_control {
+    padding: token.$spacing_8 token.$spacing_16;
+  }
+
+  &_size_sm &_value,
+  &_size_sm &_placeholder {
+    @include token.label_small;
+  }
+
+  // ── Fieldset (border container) ───────────────────────────────────────────────
+
+  &_fieldset {
+    position: relative;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background-color: token.$color_bg_solid;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
+
+    &:hover:not(.is_open):not(.is_disabled) {
+      border-color: token.$color_border_hover;
+    }
+
+    &.is_open {
+      border-color: token.$color_border_focus;
+    }
+
+    &.is_disabled {
+      background-color: token.$color_bg_solid_dim;
+      border-color: token.$color_bg_disabled;
+    }
+  }
+
+  // ── Floating label ────────────────────────────────────────────────────────────
+
+  &_label {
+    position: absolute;
+    top: -8px;
+    left: 12px; // 16px 정렬 (16px - 4px padding)
+    padding: 0 token.$spacing_4;
+    background: var(--dropdown-surface, #{token.$color_bg_solid});
+    @include token.label_small;
+    letter-spacing: 0.32px;
+    color: token.$color_text_heading;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      opacity token.$transition_base,
+      color token.$transition_base;
+
+    &.is_visible {
+      opacity: 1;
+    }
+  }
+
+  &_fieldset.is_disabled &_label {
+    color: token.$color_text_disabled;
+  }
+
+  // ── Control (button trigger) ──────────────────────────────────────────────────
+
+  &_control {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    padding: token.$spacing_12 token.$spacing_16;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: token.$color_text_heading;
+    border-radius: token.$radius_lg;
+    text-align: start;
+
+    &:focus-visible {
+      box-shadow: token.$focus_ring;
+    }
+
+    &:disabled,
+    &.is_disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+      color: token.$color_text_caption;
+    }
+  }
+
+  // ── Value / Placeholder ───────────────────────────────────────────────────────
+
+  &_value {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: start;
+    @include token.body_small;
+  }
+
+  &_placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: start;
+    @include token.body_small;
+    color: token.$color_text_body; // #666 (Figma: text/body)
+  }
+
+  // ── Trailing icon ─────────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: token.$color_text_body;
+  }
+
+  // ── List (dropdown panel) ─────────────────────────────────────────────────────
+
+  &_list {
+    position: absolute;
+    z-index: token.$z_level5;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    margin-top: token.$spacing_4;
+
+    background: token.$color_bg_solid;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: 4px; // Figma spec: 4px
+    box-shadow: token.$elevation_level2;
+
+    max-height: 18rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: token.$spacing_4 0;
+
+    &_up {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: token.$spacing_4;
+    }
+  }
+
+  // ── Option ────────────────────────────────────────────────────────────────────
+
+  &_option {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_12;
+    padding: token.$spacing_8 token.$spacing_16;
+    min-height: 56px; // Figma spec: 56px
+    cursor: pointer;
+    background: transparent;
+    color: token.$color_text_heading;
+
+    &:hover {
+      background: token.$color_state_hover_on_light; // rgba(0,0,0,0.05)
+    }
+
+    &.is_active {
+      background: token.$color_state_focus_on_light; // rgba(0,0,0,0.08)
+    }
+
+    &.is_disabled {
+      cursor: not-allowed;
+      color: token.$color_text_caption;
+    }
+  }
+
+  &_option_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: token.$color_text_body;
+  }
+
+  &_option_content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &_option_label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include token.body_small_medium; // 14px Medium 500
+
+    .is_selected & {
+      font-weight: token.$font_weight_medium;
+    }
+  }
+
+  &_option_supporting {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include token.body_small; // 14px Regular
+    color: token.$color_text_body;
+  }
+
+  &_option_trailing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: token.$color_text_body;
+  }
+
+  &_option_divider {
+    height: 1px;
+    background: token.$color_border_default;
+    border: none;
+    margin: 0;
+  }
+}

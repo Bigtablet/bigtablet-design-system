@@ -26,6 +26,8 @@ export { Chip } from "./ui/chip";
 export type { ChipProps, ChipType } from "./ui/chip";
 export { DatePicker } from "./ui/date-picker";
 export type { DatePickerProps } from "./ui/date-picker";
+export { Dropdown } from "./ui/dropdown";
+export type { DropdownProps, DropdownOption, DropdownSize } from "./ui/dropdown";
 export { Divider } from "./ui/divider";
 export type { DividerProps } from "./ui/divider";
 export { FAB } from "./ui/fab";
