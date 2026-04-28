@@ -8,7 +8,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 - [General](#general)
   - [Button](#button)
-  - [Select](#select)
+  - [Dropdown](#dropdown)
   - [Chip](#chip)
   - [FAB](#fab)
   - [IconButton](#iconbutton)
@@ -72,10 +72,10 @@ import { Button } from '@bigtablet/design-system';
 
 ---
 
-### Select
+### Dropdown
 
 ```tsx
-import { Select } from '@bigtablet/design-system';
+import { Dropdown } from '@bigtablet/design-system';
 
 const options = [
   { value: 'apple', label: '사과' },
@@ -84,7 +84,7 @@ const options = [
 ];
 
 // 기본 사용
-<Select
+<Dropdown
   label="과일 선택"
   options={options}
   placeholder="선택하세요"
@@ -93,29 +93,52 @@ const options = [
 
 // Controlled
 const [fruit, setFruit] = useState<string | null>(null);
-<Select
+<Dropdown
   options={options}
   value={fruit}
   onChange={(value) => setFruit(value)}
 />
 
-// Variants & Sizes
-<Select options={options} variant="outline" size="md" />
-<Select options={options} variant="filled" size="lg" />
-<Select options={options} variant="ghost" size="sm" />
+// 크기
+<Dropdown options={options} size="sm" />
+<Dropdown options={options} size="md" />
+
+// 보조 텍스트 + 아이콘 옵션
+<Dropdown
+  label="도시 선택"
+  options={[
+    { value: 'seoul', label: '서울', supportingText: '대한민국', leadingIcon: <Globe size={20} /> },
+    { value: 'tokyo', label: '도쿄', supportingText: '일본', leadingIcon: <Globe size={20} />, showDivider: true },
+    { value: 'nyc', label: '뉴욕', supportingText: '미국' },
+  ]}
+/>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `options` | `SelectOption[]` | required | 옵션 목록 |
+| `options` | `DropdownOption[]` | required | 옵션 목록 |
 | `value` | `string \| null` | - | 선택된 값 (controlled) |
 | `defaultValue` | `string \| null` | `null` | 기본 선택값 |
 | `onChange` | `(value, option) => void` | - | 변경 핸들러 |
+| `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
 | `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
-| `variant` | `'outline' \| 'filled' \| 'ghost'` | `'outline'` | 스타일 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
+
+**DropdownOption:**
+
+| 필드 | Type | Description |
+|------|------|-------------|
+| `value` | `string` | 옵션 값 |
+| `label` | `string` | 표시 텍스트 |
+| `disabled` | `boolean` | 비활성화 여부 |
+| `supportingText` | `string` | 라벨 아래 보조 텍스트 |
+| `leadingIcon` | `ReactNode` | 왼쪽 아이콘 |
+| `trailingIcon` | `ReactNode` | 오른쪽 아이콘 (미지정 시 선택 상태에 체크 자동 표시) |
+| `showDivider` | `boolean` | 아이템 아래 구분선 |
+
+> **마이그레이션**: 기존 `Select`는 `Dropdown`의 deprecated alias로 유지됩니다. `Select` → `Dropdown`, `SelectOption` → `DropdownOption`으로 교체하세요.
 
 ---
 
