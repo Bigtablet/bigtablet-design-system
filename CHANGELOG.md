@@ -1,3 +1,15 @@
+# [2.4.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.3.0...v2.4.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* address Gemini code review on Dropdown component ([ab0c279](https://github.com/Bigtablet/bigtablet-design-system/commit/ab0c279da372adcb5d794303e46cd12145d33bf0))
+
+
+### Features
+
+* add Dropdown component — redesign from Figma spec ([a89e1e5](https://github.com/Bigtablet/bigtablet-design-system/commit/a89e1e55ffc4d8c4ad8b40c8774afd1b09101225))
+
 # [2.3.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.4...v2.3.0) (2026-04-24)
 
 
