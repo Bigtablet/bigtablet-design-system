@@ -42,7 +42,8 @@ bigtablet-design-system/
 │   │   ├── modal/
 │   │   ├── pagination/
 │   │   ├── radio/
-│   │   ├── select/
+│   │   ├── dropdown/
+│   │   ├── select/              # deprecated — re-exports Dropdown
 │   │   ├── spinner/
 │   │   ├── switch/
 │   │   ├── textfield/
@@ -199,7 +200,8 @@ cn(styles.button, styles[`size_${size}`], className);
 ```ts
 // src/index.ts
 export * from "./ui/general/button";
-export * from "./ui/general/select";
+export * from "./ui/dropdown";
+export * from "./ui/select";    // deprecated alias
 export * from "./ui/form/textfield";
 // ... 모든 컴포넌트 export
 ```

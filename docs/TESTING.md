@@ -320,7 +320,7 @@ Object.defineProperty(window, "localStorage", { value: localStorageMock });
 // 함수 Mock
 it("calls callback with correct arguments", () => {
     const onChange = vi.fn();
-    render(<Select options={options} onChange={onChange} />);
+    render(<Dropdown options={options} onChange={onChange} />);
 
     // Select option
     fireEvent.click(screen.getByText("Option 1"));
@@ -356,7 +356,8 @@ it("calls callback with correct arguments", () => {
 | DatePicker | 90% |
 | Toast | 90% |
 | TextField | 74% |
-| Select | 69% |
+| Dropdown | 89% |
+| Select (deprecated alias) | - |
 
 ### 커버리지 목표
 
