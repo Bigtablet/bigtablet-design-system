@@ -28,7 +28,7 @@ importers:
         version: 20.5.0(@types/node@24.12.2)(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
       '@material-symbols/svg-300':
         specifier: ^0.44.0
-        version: 0.44.0
+        version: 0.44.4
       '@material-symbols/svg-400':
         specifier: ^0.44.0
         version: 0.44.4
@@ -1097,8 +1097,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@material-symbols/svg-300@0.44.0':
-    resolution: {integrity: sha512-mLqECM7ZwtrM4O/071DzflGJmraaQ6yK3QUK6n/DoU1oKeXK7kAtS0vVcsuMbBroYUltD156/ehhSwtOahgeNg==}
+  '@material-symbols/svg-300@0.44.4':
+    resolution: {integrity: sha512-fFDUDZlvYC5qiTrVkX+CksrfHFLZ5oHTcuo3Zp86mwt8dgpstULgUHIkz/4c6H5NRpSkelht7PNEfSAXRfLKeg==}
 
   '@material-symbols/svg-400@0.44.4':
     resolution: {integrity: sha512-H170BEVf77bE0LBI2yIqbvvMB4x7u+xoWgcoFtqehRuYNm10ltdi4u0CONOLxhgzOgIwFLoNZTVbOjPFdu2t3g==}
@@ -4789,7 +4789,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@material-symbols/svg-300@0.44.0': {}
+  '@material-symbols/svg-300@0.44.4': {}
 
   '@material-symbols/svg-400@0.44.4': {}
 
