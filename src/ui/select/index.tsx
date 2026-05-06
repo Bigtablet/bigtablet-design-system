@@ -7,7 +7,7 @@
 
 export {
 	Dropdown as Select,
-	type DropdownProps as SelectProps,
 	type DropdownOption as SelectOption,
+	type DropdownProps as SelectProps,
 	type DropdownSize as SelectSize,
 } from "../dropdown";

@@ -112,45 +112,126 @@ export const UsageExamples: Story = {
 			<h3 style={{ margin: 0, fontSize: 14 }}>컴포넌트에서 이렇게 사용됩니다</h3>
 
 			{/* Hover overlay */}
-			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 10,
+					padding: 16,
+					border: "1px solid rgba(0,0,0,0.06)",
+				}}
+			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
 					<code>opacity-5</code> — 버튼 호버 오버레이
 				</div>
 				<div style={{ display: "flex", gap: 12 }}>
-					<div style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+					<div
+						style={{
+							padding: "8px 16px",
+							borderRadius: 8,
+							background: "#000",
+							color: "#fff",
+							fontSize: 14,
+						}}
+					>
 						기본 상태
 					</div>
-					<div style={{ position: "relative", padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14 }}>
+					<div
+						style={{
+							position: "relative",
+							padding: "8px 16px",
+							borderRadius: 8,
+							background: "#000",
+							color: "#fff",
+							fontSize: 14,
+						}}
+					>
 						호버 상태
-						<div style={{ position: "absolute", inset: 0, borderRadius: 8, background: "#fff", opacity: 0.05 }} />
+						<div
+							style={{
+								position: "absolute",
+								inset: 0,
+								borderRadius: 8,
+								background: "#fff",
+								opacity: 0.05,
+							}}
+						/>
 					</div>
 				</div>
 			</div>
 
 			{/* Disabled */}
-			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 10,
+					padding: 16,
+					border: "1px solid rgba(0,0,0,0.06)",
+				}}
+			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
 					<code>opacity-38</code> — 비활성화 상태
 				</div>
 				<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-					<button type="button" style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none" }}>
+					<button
+						type="button"
+						style={{
+							padding: "8px 16px",
+							borderRadius: 8,
+							background: "#000",
+							color: "#fff",
+							fontSize: 14,
+							border: "none",
+						}}
+					>
 						활성 버튼
 					</button>
-					<button type="button" disabled style={{ padding: "8px 16px", borderRadius: 8, background: "#000", color: "#fff", fontSize: 14, border: "none", opacity: 0.38, cursor: "not-allowed" }}>
+					<button
+						type="button"
+						disabled
+						style={{
+							padding: "8px 16px",
+							borderRadius: 8,
+							background: "#000",
+							color: "#fff",
+							fontSize: 14,
+							border: "none",
+							opacity: 0.38,
+							cursor: "not-allowed",
+						}}
+					>
 						비활성 버튼
 					</button>
 				</div>
 			</div>
 
 			{/* Modal overlay */}
-			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 10,
+					padding: 16,
+					border: "1px solid rgba(0,0,0,0.06)",
+				}}
+			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
 					<code>opacity-50</code> — 모달 배경 오버레이
 				</div>
 				<div style={{ position: "relative", height: 80, borderRadius: 8, overflow: "hidden" }}>
 					<div style={{ padding: 12, fontSize: 13, color: "#333" }}>배경 콘텐츠 영역</div>
 					<div style={{ position: "absolute", inset: 0, background: "#000", opacity: 0.5 }} />
-					<div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "#fff", borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 600 }}>
+					<div
+						style={{
+							position: "absolute",
+							top: "50%",
+							left: "50%",
+							transform: "translate(-50%, -50%)",
+							background: "#fff",
+							borderRadius: 8,
+							padding: "8px 20px",
+							fontSize: 13,
+							fontWeight: 600,
+						}}
+					>
 						모달
 					</div>
 				</div>
@@ -159,8 +240,16 @@ export const UsageExamples: Story = {
 	),
 };
 
-const bgContent = (
-	<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, width: "100%", height: "100%" }}>
+const _bgContent = (
+	<div
+		style={{
+			display: "grid",
+			gridTemplateColumns: "1fr 1fr",
+			gap: 4,
+			width: "100%",
+			height: "100%",
+		}}
+	>
 		<div style={{ background: "#3B82F6", borderRadius: 4 }} />
 		<div style={{ background: "#EF4444", borderRadius: 4 }} />
 		<div style={{ background: "#10B981", borderRadius: 4 }} />
@@ -178,22 +267,65 @@ export const Comparison: Story = {
 			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
 				검은 오버레이의 투명도만 다릅니다. 숫자가 클수록 뒤가 안 보입니다.
 			</p>
-			<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12 }}>
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+					gap: 12,
+				}}
+			>
 				{([0, 0.05, 0.12, 0.38, 0.5, 0.8, 1] as const).map((value) => (
 					<div key={value} style={{ textAlign: "center" }}>
-						<div style={{ position: "relative", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)" }}>
-							<div style={{ position: "absolute", inset: 8, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+						<div
+							style={{
+								position: "relative",
+								width: "100%",
+								aspectRatio: "1",
+								borderRadius: 10,
+								overflow: "hidden",
+								border: "1px solid rgba(0,0,0,0.08)",
+							}}
+						>
+							<div
+								style={{
+									position: "absolute",
+									inset: 8,
+									display: "grid",
+									gridTemplateColumns: "1fr 1fr",
+									gap: 4,
+								}}
+							>
 								<div style={{ background: "#3B82F6", borderRadius: 4 }} />
 								<div style={{ background: "#EF4444", borderRadius: 4 }} />
 								<div style={{ background: "#10B981", borderRadius: 4 }} />
 								<div style={{ background: "#F59E0B", borderRadius: 4 }} />
 							</div>
-							<div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-								<span style={{ fontSize: 13, fontWeight: 600, color: "#fff", textShadow: "0 1px 3px rgba(0,0,0,0.5)", zIndex: 2 }}>텍스트</span>
+							<div
+								style={{
+									position: "absolute",
+									inset: 0,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<span
+									style={{
+										fontSize: 13,
+										fontWeight: 600,
+										color: "#fff",
+										textShadow: "0 1px 3px rgba(0,0,0,0.5)",
+										zIndex: 2,
+									}}
+								>
+									텍스트
+								</span>
 							</div>
 							<div style={{ position: "absolute", inset: 0, background: "#000", opacity: value }} />
 						</div>
-						<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>{Math.round(value * 100)}%</div>
+						<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>
+							{Math.round(value * 100)}%
+						</div>
 						<div style={{ fontSize: 11, color: "#666" }}>{opacityLabel(value)}</div>
 					</div>
 				))}

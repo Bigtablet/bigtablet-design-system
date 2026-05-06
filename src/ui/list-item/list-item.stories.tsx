@@ -17,29 +17,24 @@ const meta: Meta<typeof ListItem> = {
 		},
 		supportingText: {
 			control: "text",
-			description:
-				"라벨 아래 표시되는 보조 텍스트입니다. 설명이나 상세 정보를 제공합니다.",
+			description: "라벨 아래 표시되는 보조 텍스트입니다. 설명이나 상세 정보를 제공합니다.",
 		},
 		metadata: {
 			control: "text",
-			description:
-				"하단에 표시되는 메타데이터 텍스트입니다. 날짜, 상태 등 부가 정보에 사용합니다.",
+			description: "하단에 표시되는 메타데이터 텍스트입니다. 날짜, 상태 등 부가 정보에 사용합니다.",
 		},
 		leadingElement: {
 			control: false,
-			description:
-				"왼쪽에 표시되는 요소입니다. 아이콘, 이미지, 체크박스 등을 배치합니다.",
+			description: "왼쪽에 표시되는 요소입니다. 아이콘, 이미지, 체크박스 등을 배치합니다.",
 		},
 		trailingElement: {
 			control: false,
-			description:
-				"오른쪽에 표시되는 요소입니다. 아이콘 버튼, 체크박스 등을 배치합니다.",
+			description: "오른쪽에 표시되는 요소입니다. 아이콘 버튼, 체크박스 등을 배치합니다.",
 		},
 		alignment: {
 			control: "radio",
 			options: ["top", "middle"],
-			description:
-				"내부 요소의 수직 정렬입니다. top은 상단 정렬, middle은 중앙 정렬입니다.",
+			description: "내부 요소의 수직 정렬입니다. top은 상단 정렬, middle은 중앙 정렬입니다.",
 		},
 		disabled: {
 			control: "boolean",
@@ -297,10 +292,7 @@ export const AllVariants: Story = {
 		<div style={{ display: "grid", gap: 12, maxWidth: 480 }}>
 			<ListItem label="한 줄 아이템" />
 
-			<ListItem
-				label="두 줄 아이템"
-				supportingText="보조 텍스트가 있는 아이템입니다."
-			/>
+			<ListItem label="두 줄 아이템" supportingText="보조 텍스트가 있는 아이템입니다." />
 
 			<ListItem
 				overline="카테고리"
@@ -308,11 +300,7 @@ export const AllVariants: Story = {
 				supportingText="세 줄 구조의 리스트 아이템입니다."
 			/>
 
-			<ListItem
-				label="메타데이터 포함"
-				supportingText="보조 텍스트 영역"
-				metadata="2026-04-09"
-			/>
+			<ListItem label="메타데이터 포함" supportingText="보조 텍스트 영역" metadata="2026-04-09" />
 
 			<ListItem
 				label="리딩 요소 포함"
@@ -344,18 +332,9 @@ export const AllVariants: Story = {
 				}
 			/>
 
-			<ListItem
-				label="인터랙티브 아이템"
-				supportingText="hover 해 보세요"
-				onClick={() => {}}
-			/>
+			<ListItem label="인터랙티브 아이템" supportingText="hover 해 보세요" onClick={() => {}} />
 
-			<ListItem
-				label="비활성화 아이템"
-				supportingText="클릭 불가"
-				disabled
-				onClick={() => {}}
-			/>
+			<ListItem label="비활성화 아이템" supportingText="클릭 불가" disabled onClick={() => {}} />
 		</div>
 	),
 };

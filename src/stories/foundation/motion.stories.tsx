@@ -56,7 +56,9 @@ function MotionPreview({ name, transition }: { name: string; transition: string 
 				role="button"
 				tabIndex={0}
 				onClick={() => setActive((v) => !v)}
-				onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setActive((v) => !v); }}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") setActive((v) => !v);
+				}}
 				style={{
 					width: active ? 160 : 120,
 					height: 40,
@@ -93,10 +95,25 @@ export const ComponentMapping: Story = {
 
 		return (
 			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 560 }}>
-				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>어떤 컴포넌트에 어떤 모션 토큰을 쓰나요?</h3>
+				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>
+					어떤 컴포넌트에 어떤 모션 토큰을 쓰나요?
+				</h3>
 				<div style={{ display: "grid", gap: 8 }}>
 					{mappings.map(({ component, token, desc }) => (
-						<div key={component} style={{ display: "grid", gridTemplateColumns: "140px 80px 1fr", alignItems: "center", gap: 12, padding: 10, background: "#fff", borderRadius: 8, border: "1px solid rgba(0,0,0,0.06)", fontSize: 13 }}>
+						<div
+							key={component}
+							style={{
+								display: "grid",
+								gridTemplateColumns: "140px 80px 1fr",
+								alignItems: "center",
+								gap: 12,
+								padding: 10,
+								background: "#fff",
+								borderRadius: 8,
+								border: "1px solid rgba(0,0,0,0.06)",
+								fontSize: 13,
+							}}
+						>
 							<strong>{component}</strong>
 							<code style={{ color: "#2563eb" }}>{token}</code>
 							<span style={{ color: "#666" }}>{desc}</span>
@@ -128,16 +145,45 @@ function MotionRace() {
 			<button
 				type="button"
 				onClick={() => setGo((v) => !v)}
-				style={{ padding: "8px 16px", borderRadius: 8, background: "#121212", color: "#fff", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, marginBottom: 16 }}
+				style={{
+					padding: "8px 16px",
+					borderRadius: 8,
+					background: "#121212",
+					color: "#fff",
+					border: "none",
+					cursor: "pointer",
+					fontSize: 13,
+					fontWeight: 600,
+					marginBottom: 16,
+				}}
 			>
 				{go ? "리셋" : "재생"}
 			</button>
 			<div style={{ display: "grid", gap: 10 }}>
 				{speeds.map(({ name, transition }) => (
-					<div key={name} style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
-						<div style={{ fontSize: 12, fontWeight: 600 }}>{name} <span style={{ color: "#999", fontWeight: 400 }}>({transition.split(" ")[0]})</span></div>
+					<div
+						key={name}
+						style={{
+							display: "grid",
+							gridTemplateColumns: "100px 1fr",
+							alignItems: "center",
+							gap: 12,
+						}}
+					>
+						<div style={{ fontSize: 12, fontWeight: 600 }}>
+							{name}{" "}
+							<span style={{ color: "#999", fontWeight: 400 }}>({transition.split(" ")[0]})</span>
+						</div>
 						<div style={{ height: 28, background: "#e5e5e5", borderRadius: 6, overflow: "hidden" }}>
-							<div style={{ width: go ? "100%" : "8%", height: "100%", background: "#121212", borderRadius: 6, transition: `width ${transition}` }} />
+							<div
+								style={{
+									width: go ? "100%" : "8%",
+									height: "100%",
+									background: "#121212",
+									borderRadius: 6,
+									transition: `width ${transition}`,
+								}}
+							/>
 						</div>
 					</div>
 				))}

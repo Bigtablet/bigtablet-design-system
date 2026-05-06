@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
 export type ChipType = "basic" | "input" | "filter";
 
-export interface ChipProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
+export interface ChipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
 	/** 칩 유형 (기본값: "basic") */
 	type?: ChipType;
 	/** 라벨 텍스트 */
@@ -27,20 +27,47 @@ export interface ChipProps
 }
 
 const CheckIcon = () => (
-	<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+	<svg
+		viewBox="0 0 20 20"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+		focusable="false"
+	>
 		<polyline points="4 10 8 14 16 6" />
 	</svg>
 );
 
 const CloseIcon = () => (
-	<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+	<svg
+		viewBox="0 0 20 20"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+		focusable="false"
+	>
 		<line x1="6" y1="6" x2="14" y2="14" />
 		<line x1="14" y1="6" x2="6" y2="14" />
 	</svg>
 );
 
 const ChevronDownIcon = () => (
-	<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+	<svg
+		viewBox="0 0 20 20"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+		focusable="false"
+	>
 		<polyline points="5 8 10 13 15 8" />
 	</svg>
 );
@@ -84,7 +111,9 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
-				{...(type === "filter" ? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open } : {})}
+				{...(type === "filter"
+					? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open }
+					: {})}
 			>
 				{hasLeading && (
 					<span

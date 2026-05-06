@@ -44,6 +44,10 @@ export const OtpInput = ({
 }: OtpInputProps) => {
 	const inputsRef = React.useRef<(HTMLInputElement | null)[]>([]);
 
+	React.useEffect(() => {
+		if (autoFocus) inputsRef.current[0]?.focus();
+	}, [autoFocus]);
+
 	const digits = React.useMemo(() => {
 		const arr = value.split("").slice(0, length);
 		while (arr.length < length) arr.push("");
@@ -72,7 +76,7 @@ export const OtpInput = ({
 	};
 
 	const handleFocus = (index: number) => {
-		const firstEmpty = digits.findIndex((d) => d === "");
+		const firstEmpty = digits.indexOf("");
 		if (firstEmpty !== -1 && firstEmpty < index) {
 			focusInput(firstEmpty);
 		}
@@ -121,12 +125,16 @@ export const OtpInput = ({
 	const rootClassName = cn("otp_input", className);
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: <fieldset> would force border/legend styles; role=group is the WAI-ARIA equivalent for OTP grouping
 		<div className={rootClassName} role="group" aria-label={ariaLabel}>
 			<div className="otp_input_boxes">
 				{digits.map((digit, i) => (
 					<input
+						// biome-ignore lint/suspicious/noArrayIndexKey: OTP slots are position-bound; index is the stable identity
 						key={i}
-						ref={(el) => { inputsRef.current[i] = el; }}
+						ref={(el) => {
+							inputsRef.current[i] = el;
+						}}
 						type="text"
 						inputMode="numeric"
 						pattern="\d*"
@@ -137,7 +145,6 @@ export const OtpInput = ({
 						onKeyDown={(e) => handleKeyDown(i, e)}
 						onPaste={handlePaste}
 						disabled={disabled}
-						autoFocus={autoFocus && i === 0}
 						aria-label={`${i + 1}번째 자리`}
 						className={cn(
 							"otp_input_box",

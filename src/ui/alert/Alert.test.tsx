@@ -8,7 +8,11 @@ const TestComponent = ({
 	options?: Parameters<ReturnType<typeof useAlert>["showAlert"]>[0];
 }) => {
 	const { showAlert } = useAlert();
-	return <button type="button" onClick={() => showAlert(options || { title: "Test Alert" })}>Show Alert</button>;
+	return (
+		<button type="button" onClick={() => showAlert(options || { title: "Test Alert" })}>
+			Show Alert
+		</button>
+	);
 };
 
 const renderWithProvider = (ui: React.ReactElement) => {

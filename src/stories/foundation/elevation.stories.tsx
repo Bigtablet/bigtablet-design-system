@@ -87,7 +87,8 @@ export const Levels: Story = {
 							aria-hidden
 						/>
 						<div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.5 }}>
-							이 elevation은 <strong>{elevationUseCase(key)}</strong> 같은 UI에서 사용하면 자연스럽습니다.
+							이 elevation은 <strong>{elevationUseCase(key)}</strong> 같은 UI에서 사용하면
+							자연스럽습니다.
 						</div>
 					</div>
 				</div>
@@ -111,7 +112,8 @@ export const ElevationStack: Story = {
 			}}
 		>
 			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
-				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이 강해집니다.
+				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이
+				강해집니다.
 			</p>
 			{Object.entries(elevation).map(([key, value], i) => (
 				<div
@@ -149,13 +151,37 @@ export const DoAndDont: Story = {
 			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
 				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
 				<div style={{ display: "grid", gap: 8 }}>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level1, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level1,
+							fontSize: 13,
+						}}
+					>
 						카드 → level1
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level2, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level2,
+							fontSize: 13,
+						}}
+					>
 						드롭다운 → level2
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level4, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level4,
+							fontSize: 13,
+						}}
+					>
 						모달 → level4
 					</div>
 				</div>
@@ -166,15 +192,41 @@ export const DoAndDont: Story = {
 
 			{/* DON'T */}
 			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>
+					DON'T
+				</div>
 				<div style={{ display: "grid", gap: 8 }}>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level5,
+							fontSize: 13,
+						}}
+					>
 						카드에 level5 사용
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level5,
+							fontSize: 13,
+						}}
+					>
 						버튼에 level5 사용
 					</div>
-					<div style={{ background: "#fff", borderRadius: 8, padding: 12, boxShadow: elevation.level5, fontSize: 13 }}>
+					<div
+						style={{
+							background: "#fff",
+							borderRadius: 8,
+							padding: 12,
+							boxShadow: elevation.level5,
+							fontSize: 13,
+						}}
+					>
 						모든 요소에 같은 그림자
 					</div>
 				</div>
@@ -196,7 +248,13 @@ export const Comparison: Story = {
 			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
 				level이 올라갈수록 "공중에 떠 있는" 느낌이 강해지는 걸 비교해보세요.
 			</p>
-			<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 20 }}>
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+					gap: 20,
+				}}
+			>
 				{Object.entries(elevation).map(([key, value]) => (
 					<div key={key} style={{ textAlign: "center" }}>
 						<div

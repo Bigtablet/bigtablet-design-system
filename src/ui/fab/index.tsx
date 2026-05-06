@@ -6,8 +6,7 @@ import "./style.scss";
 
 export type FABVariant = "primary" | "additive";
 
-export interface FABProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface FABProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/** FAB 스타일 변형 (기본값: "primary") */
 	variant?: FABVariant;
 	/** 표시할 아이콘 */
@@ -22,17 +21,8 @@ export interface FABProps
  * @param props FAB 속성
  * @returns 렌더링된 FAB 요소
  */
-export const FAB = ({
-	variant = "primary",
-	icon,
-	className,
-	...props
-}: FABProps) => {
-	const fabClassName = cn(
-		"fab",
-		`fab_variant_${variant}`,
-		className,
-	);
+export const FAB = ({ variant = "primary", icon, className, ...props }: FABProps) => {
+	const fabClassName = cn("fab", `fab_variant_${variant}`, className);
 
 	return (
 		<button className={fabClassName} {...props}>

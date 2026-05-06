@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Globe, MapPin, Star, User } from "lucide-react";
 import * as React from "react";
-import { Globe, User, Star, MapPin } from "lucide-react";
 import { Dropdown, type DropdownOption } from ".";
 
 const basicOptions: DropdownOption[] = [
@@ -126,8 +126,14 @@ export const Sizes: Story = {
 const longOptions: DropdownOption[] = [
 	{ value: "long1", label: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
 	{ value: "long2", label: "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세" },
-	{ value: "long3", label: "Very long option text that should test overflow and truncation behavior" },
-	{ value: "long4", label: "아주 긴 옵션 텍스트 — 드롭다운과 선택 영역에서 어떻게 표시되는지 확인" },
+	{
+		value: "long3",
+		label: "Very long option text that should test overflow and truncation behavior",
+	},
+	{
+		value: "long4",
+		label: "아주 긴 옵션 텍스트 — 드롭다운과 선택 영역에서 어떻게 표시되는지 확인",
+	},
 ];
 
 export const LongText: Story = {
@@ -183,7 +189,8 @@ export const WithLeadingIcon: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "옵션 왼쪽에 아이콘을 추가합니다. `DropdownOption.leadingIcon`에 ReactNode를 전달하세요.",
+				story:
+					"옵션 왼쪽에 아이콘을 추가합니다. `DropdownOption.leadingIcon`에 ReactNode를 전달하세요.",
 			},
 		},
 	},

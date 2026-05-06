@@ -40,7 +40,9 @@ export const FileInput = ({
 
 		if (preview && files) {
 			// 이전 URL 해제
-			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+			for (const url of previewUrls) {
+				URL.revokeObjectURL(url);
+			}
 
 			const urls: string[] = [];
 			for (let i = 0; i < files.length; i++) {
@@ -50,7 +52,9 @@ export const FileInput = ({
 			}
 			setPreviewUrls(urls);
 		} else {
-			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+			for (const url of previewUrls) {
+				URL.revokeObjectURL(url);
+			}
 			setPreviewUrls([]);
 		}
 	};
@@ -58,7 +62,9 @@ export const FileInput = ({
 	// cleanup on unmount
 	React.useEffect(() => {
 		return () => {
-			previewUrls.forEach((url) => URL.revokeObjectURL(url));
+			for (const url of previewUrls) {
+				URL.revokeObjectURL(url);
+			}
 		};
 	}, [previewUrls]);
 
@@ -86,6 +92,7 @@ export const FileInput = ({
 			{previewUrls.length > 0 && (
 				<div className="file_input_preview">
 					{previewUrls.map((url) => (
+						// biome-ignore lint/performance/noImgElement: framework-agnostic DS — host app should swap with next/image if needed
 						<img key={url} src={url} alt="" className="file_input_preview_img" />
 					))}
 				</div>

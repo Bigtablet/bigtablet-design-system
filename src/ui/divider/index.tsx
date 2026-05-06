@@ -15,16 +15,8 @@ export interface DividerProps extends React.HTMLAttributes<HTMLHRElement> {
  * @param props 구분선 속성
  * @returns 렌더링된 구분선 UI
  */
-export const Divider = ({
-	weight = "standard",
-	className,
-	...props
-}: DividerProps) => {
-	const dividerClassName = cn(
-		"divider",
-		`divider_weight_${weight}`,
-		className,
-	);
+export const Divider = ({ weight = "standard", className, ...props }: DividerProps) => {
+	const dividerClassName = cn("divider", `divider_weight_${weight}`, className);
 
 	return <hr className={dividerClassName} {...props} />;
 };

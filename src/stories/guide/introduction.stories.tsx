@@ -62,9 +62,21 @@ export const Overview: Story = {
 			>
 				<h3 style={{ margin: "0 0 16px", fontSize: 16 }}>빠른 시작</h3>
 				<div style={{ display: "grid", gap: 12 }}>
-					<Step number={1} title="Foundation 확인" description="디자인 토큰(색상, 타이포, 간격 등)이 최신 시안과 일치하는지 확인합니다." />
-					<Step number={2} title="컴포넌트 검증" description="각 컴포넌트의 Props를 조작하며 기대한 대로 동작하는지 확인합니다." />
-					<Step number={3} title="Chromatic 리뷰" description="PR에 연결된 Chromatic 링크에서 시각적 변경사항을 승인합니다." />
+					<Step
+						number={1}
+						title="Foundation 확인"
+						description="디자인 토큰(색상, 타이포, 간격 등)이 최신 시안과 일치하는지 확인합니다."
+					/>
+					<Step
+						number={2}
+						title="컴포넌트 검증"
+						description="각 컴포넌트의 Props를 조작하며 기대한 대로 동작하는지 확인합니다."
+					/>
+					<Step
+						number={3}
+						title="Chromatic 리뷰"
+						description="PR에 연결된 Chromatic 링크에서 시각적 변경사항을 승인합니다."
+					/>
 				</div>
 			</section>
 
@@ -88,7 +100,15 @@ export const Overview: Story = {
 	),
 };
 
-function Step({ number, title, description }: { number: number; title: string; description: string }) {
+function Step({
+	number,
+	title,
+	description,
+}: {
+	number: number;
+	title: string;
+	description: string;
+}) {
 	return (
 		<div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
 			<div
@@ -110,7 +130,9 @@ function Step({ number, title, description }: { number: number; title: string; d
 			</div>
 			<div>
 				<strong style={{ fontSize: 14 }}>{title}</strong>
-				<p style={{ margin: "4px 0 0", fontSize: 13, opacity: 0.75, lineHeight: 1.5 }}>{description}</p>
+				<p style={{ margin: "4px 0 0", fontSize: 13, opacity: 0.75, lineHeight: 1.5 }}>
+					{description}
+				</p>
 			</div>
 		</div>
 	);

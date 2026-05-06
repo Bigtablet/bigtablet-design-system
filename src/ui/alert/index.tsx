@@ -150,6 +150,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const actionsClassName = cn("alert_actions", `alert_actions_${actionsAlign}`);
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: modal overlay pattern — clickable backdrop without role=button (focus is trapped on the panel inside)
 		<div
 			className="alert_overlay"
 			role="presentation"
@@ -160,7 +161,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				ref={panelRef}
 				className={modalClassName}
 				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
+				onKeyDown={(e) => {
+					if (e.key !== "Escape") e.stopPropagation();
+				}}
 				role="alertdialog"
 				aria-modal="true"
 				aria-labelledby={titleId}

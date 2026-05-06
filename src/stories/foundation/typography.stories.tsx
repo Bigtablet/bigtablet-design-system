@@ -248,38 +248,106 @@ export const Base: Story = {
 export const Hierarchy: Story = {
 	name: "실제 페이지 위계 예시",
 	render: () => (
-		<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 32, maxWidth: 560 }}>
-			<p style={{ margin: "0 0 20px", fontSize: 12, color: "#2563eb", background: "#eff6ff", borderRadius: 8, padding: 10 }}>
+		<div
+			style={{
+				background: "#fff",
+				borderRadius: 12,
+				border: "1px solid #e5e5e5",
+				padding: 32,
+				maxWidth: 560,
+			}}
+		>
+			<p
+				style={{
+					margin: "0 0 20px",
+					fontSize: 12,
+					color: "#2563eb",
+					background: "#eff6ff",
+					borderRadius: 8,
+					padding: 10,
+				}}
+			>
 				아래는 하나의 페이지에서 각 Typography 토큰이 어떤 역할을 하는지 보여줍니다.
 			</p>
 
 			{/* Display */}
-			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "36px", fontWeight: 500, lineHeight: "1.3", letterSpacing: "-0.02em", marginBottom: 8 }}>
+			<div
+				style={{
+					fontFamily: typography.fontFamily.primary,
+					fontSize: "36px",
+					fontWeight: 500,
+					lineHeight: "1.3",
+					letterSpacing: "-0.02em",
+					marginBottom: 8,
+				}}
+			>
 				캠페인 타이틀
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 24 }}>↑ Display.large</span>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 24 }}>
+				↑ Display.large
+			</span>
 
 			{/* Heading */}
-			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "24px", fontWeight: 500, lineHeight: "1.35", marginBottom: 4 }}>
+			<div
+				style={{
+					fontFamily: typography.fontFamily.primary,
+					fontSize: "24px",
+					fontWeight: 500,
+					lineHeight: "1.35",
+					marginBottom: 4,
+				}}
+			>
 				섹션 제목
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 16 }}>↑ Heading.large</span>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 16 }}>
+				↑ Heading.large
+			</span>
 
 			{/* Title */}
-			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "16px", fontWeight: 500, lineHeight: "1.5", marginBottom: 4 }}>
+			<div
+				style={{
+					fontFamily: typography.fontFamily.primary,
+					fontSize: "16px",
+					fontWeight: 500,
+					lineHeight: "1.5",
+					marginBottom: 4,
+				}}
+			>
 				카드 헤더 텍스트
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 8 }}>↑ Title.medium</span>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 8 }}>
+				↑ Title.medium
+			</span>
 
 			{/* Body */}
-			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "14px", fontWeight: 400, lineHeight: "1.6", color: "#444", marginBottom: 4 }}>
-				본문 텍스트입니다. 이 영역은 사용자에게 상세한 정보를 전달하는 데 사용됩니다.
-				적절한 line-height와 letter-spacing으로 가독성을 확보합니다.
+			<div
+				style={{
+					fontFamily: typography.fontFamily.primary,
+					fontSize: "14px",
+					fontWeight: 400,
+					lineHeight: "1.6",
+					color: "#444",
+					marginBottom: 4,
+				}}
+			>
+				본문 텍스트입니다. 이 영역은 사용자에게 상세한 정보를 전달하는 데 사용됩니다. 적절한
+				line-height와 letter-spacing으로 가독성을 확보합니다.
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 12 }}>↑ Body.medium</span>
+			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 12 }}>
+				↑ Body.medium
+			</span>
 
 			{/* Label */}
-			<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "12px", fontWeight: 400, lineHeight: "1.4", color: "#999", marginBottom: 4 }}>
+			<div
+				style={{
+					fontFamily: typography.fontFamily.primary,
+					fontSize: "12px",
+					fontWeight: 400,
+					lineHeight: "1.4",
+					color: "#999",
+					marginBottom: 4,
+				}}
+			>
 				2026-04-09 · 보조 텍스트 · 캡션
 			</div>
 			<span style={{ fontSize: 10, color: "#999", display: "block" }}>↑ Label.small</span>
@@ -305,17 +373,37 @@ export const Comparison: Story = {
 					같은 문장을 다른 타이포 스케일로 비교해보세요.
 				</p>
 				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
-					위에서 아래로 갈수록 작아집니다. 크기만으로 "이건 제목이고 이건 본문이구나"를 느낄 수 있어야 합니다.
+					위에서 아래로 갈수록 작아집니다. 크기만으로 "이건 제목이고 이건 본문이구나"를 느낄 수
+					있어야 합니다.
 				</p>
 
 				<div style={{ display: "grid", gap: 16 }}>
 					{scales.map(({ name, style }) => (
-						<div key={name} style={{ display: "grid", gridTemplateColumns: "140px 1fr", alignItems: "baseline", gap: 12, padding: 12, background: "#fff", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)" }}>
+						<div
+							key={name}
+							style={{
+								display: "grid",
+								gridTemplateColumns: "140px 1fr",
+								alignItems: "baseline",
+								gap: 12,
+								padding: 12,
+								background: "#fff",
+								borderRadius: 10,
+								border: "1px solid rgba(0,0,0,0.06)",
+							}}
+						>
 							<div>
 								<div style={{ fontSize: 11, fontWeight: 600, color: "#666" }}>{name}</div>
 								<div style={{ fontSize: 10, color: "#999" }}>{style.fontSize}</div>
 							</div>
-							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: style.fontSize, fontWeight: style.fontWeight === "Medium" ? 500 : 400, lineHeight: style.lineHeight }}>
+							<div
+								style={{
+									fontFamily: typography.fontFamily.primary,
+									fontSize: style.fontSize,
+									fontWeight: style.fontWeight === "Medium" ? 500 : 400,
+									lineHeight: style.lineHeight,
+								}}
+							>
 								{sentence}
 							</div>
 						</div>
@@ -324,17 +412,47 @@ export const Comparison: Story = {
 
 				{/* Weight 비교 */}
 				<div style={{ marginTop: 24 }}>
-					<p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600 }}>Regular vs Medium 무게 비교</p>
+					<p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600 }}>
+						Regular vs Medium 무게 비교
+					</p>
 					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+						<div
+							style={{
+								background: "#fff",
+								borderRadius: 10,
+								padding: 16,
+								border: "1px solid rgba(0,0,0,0.06)",
+							}}
+						>
 							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Regular (400)</div>
-							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 400, lineHeight: "28px" }}>
+							<div
+								style={{
+									fontFamily: typography.fontFamily.primary,
+									fontSize: "20px",
+									fontWeight: 400,
+									lineHeight: "28px",
+								}}
+							>
 								{sentence}
 							</div>
 						</div>
-						<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+						<div
+							style={{
+								background: "#fff",
+								borderRadius: 10,
+								padding: 16,
+								border: "1px solid rgba(0,0,0,0.06)",
+							}}
+						>
 							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Medium (500)</div>
-							<div style={{ fontFamily: typography.fontFamily.primary, fontSize: "20px", fontWeight: 500, lineHeight: "28px" }}>
+							<div
+								style={{
+									fontFamily: typography.fontFamily.primary,
+									fontSize: "20px",
+									fontWeight: 500,
+									lineHeight: "28px",
+								}}
+							>
 								{sentence}
 							</div>
 						</div>

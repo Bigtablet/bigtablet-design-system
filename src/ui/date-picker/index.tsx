@@ -56,12 +56,10 @@ export interface DatePickerProps {
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** 해당 연/월의 일 수를 구한다. */
-const getDaysInMonth = (year: number, month: number) =>
-	new Date(year, month, 0).getDate();
+const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
 
 /** 너비 값을 CSS 문자열로 정규화한다. */
-const normalizeWidth = (v?: number | string) =>
-	typeof v === "number" ? `${v}px` : v;
+const normalizeWidth = (v?: number | string) => (typeof v === "number" ? `${v}px` : v);
 
 /** start~end 범위의 숫자 배열을 생성한다. */
 const range = (start: number, end: number) =>
@@ -134,14 +132,15 @@ export const DatePicker = ({
 
 	const minMonth = min.year > 0 && year === min.year ? Math.min(12, Math.max(1, min.month)) : 1;
 
-	const maxMonth =
-		selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
+	const maxMonth = selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
 
-	const minDay = Math.min(31, Math.max(1,
-		min.year > 0 && min.month > 0 && year === min.year && month === min.month
-			? min.day
-			: 1,
-	));
+	const minDay = Math.min(
+		31,
+		Math.max(
+			1,
+			min.year > 0 && min.month > 0 && year === min.year && month === min.month ? min.day : 1,
+		),
+	);
 
 	const maxDay = React.useMemo(() => {
 		if (!year || !month) return 31;
@@ -243,8 +242,7 @@ export const DatePicker = ({
 
 	const constraintParts: string[] = [];
 	if (minDate) constraintParts.push(minDateSrFormat.replace("{date}", minDate));
-	if (selectableRange === "until-today")
-		constraintParts.push(selectableRangeUntilTodaySrText);
+	if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
 	const constraintDesc = constraintParts.join(". ");
 
 	return (
@@ -259,6 +257,7 @@ export const DatePicker = ({
 					{constraintDesc}
 				</span>
 			)}
+			{/* biome-ignore lint/a11y/useSemanticElements: <fieldset> would conflict with parent label/legend conventions; role=group is the WAI-ARIA equivalent */}
 			<div
 				className="date_picker_fields"
 				role="group"

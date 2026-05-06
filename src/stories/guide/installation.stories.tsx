@@ -24,10 +24,7 @@ export const React: Story = {
 	name: "React / Next.js",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, maxWidth: 640 }}>
-			<CodeSection
-				title="1. 설치"
-				code="pnpm add @bigtablet/design-system"
-			/>
+			<CodeSection title="1. 설치" code="pnpm add @bigtablet/design-system" />
 			<CodeSection
 				title="2. 스타일 import"
 				code={`// app/layout.tsx 또는 최상위 파일
@@ -68,7 +65,7 @@ export const Vanilla: Story = {
 				title="1. CDN 또는 파일 복사"
 				description="dist/vanilla/ 폴더의 CSS와 JS를 프로젝트에 포함합니다."
 				code={`<link rel="stylesheet" href="/assets/bigtablet.min.css">
-<script src="/assets/bigtablet.min.js"><\/script>`}
+<script src="/assets/bigtablet.min.js"></script>`}
 			/>
 			<CodeSection
 				title="2. HTML에서 바로 사용"
@@ -97,7 +94,7 @@ export const Vanilla: Story = {
   const select = Bigtablet.Select('#my-select', {
     onChange: (value) => console.log(value)
   });
-<\/script>`}
+</script>`}
 			/>
 		</div>
 	),

@@ -114,26 +114,68 @@ export const UsageExamples: Story = {
 			<h3 style={{ margin: 0, fontSize: 14 }}>컴포넌트에서 이렇게 사용됩니다</h3>
 
 			{/* none → standard → indicator 상태 변화 */}
-			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 10,
+					padding: 16,
+					border: "1px solid rgba(0,0,0,0.06)",
+				}}
+			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
 					입력 필드의 상태 변화: none → standard → indicator
 				</div>
 				<div style={{ display: "grid", gap: 12 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 						<span style={{ width: 80, fontSize: 12, color: "#999" }}>기본</span>
-						<div style={{ flex: 1, height: 40, borderRadius: 8, border: `${borderWidth.standard} solid #e5e5e5`, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 13, color: "#999" }}>
+						<div
+							style={{
+								flex: 1,
+								height: 40,
+								borderRadius: 8,
+								border: `${borderWidth.standard} solid #e5e5e5`,
+								display: "flex",
+								alignItems: "center",
+								padding: "0 12px",
+								fontSize: 13,
+								color: "#999",
+							}}
+						>
 							placeholder
 						</div>
 					</div>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 						<span style={{ width: 80, fontSize: 12, color: "#999" }}>포커스</span>
-						<div style={{ flex: 1, height: 40, borderRadius: 8, border: `${borderWidth.indicator} solid #000`, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 13 }}>
+						<div
+							style={{
+								flex: 1,
+								height: 40,
+								borderRadius: 8,
+								border: `${borderWidth.indicator} solid #000`,
+								display: "flex",
+								alignItems: "center",
+								padding: "0 12px",
+								fontSize: 13,
+							}}
+						>
 							입력 중...
 						</div>
 					</div>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
 						<span style={{ width: 80, fontSize: 12, color: "#999" }}>에러</span>
-						<div style={{ flex: 1, height: 40, borderRadius: 8, border: `${borderWidth.indicator} solid #ef4444`, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 13, color: "#ef4444" }}>
+						<div
+							style={{
+								flex: 1,
+								height: 40,
+								borderRadius: 8,
+								border: `${borderWidth.indicator} solid #ef4444`,
+								display: "flex",
+								alignItems: "center",
+								padding: "0 12px",
+								fontSize: 13,
+								color: "#ef4444",
+							}}
+						>
 							잘못된 입력
 						</div>
 					</div>
@@ -141,13 +183,24 @@ export const UsageExamples: Story = {
 			</div>
 
 			{/* Card border */}
-			<div style={{ background: "#fff", borderRadius: 10, padding: 16, border: "1px solid rgba(0,0,0,0.06)" }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 10,
+					padding: 16,
+					border: "1px solid rgba(0,0,0,0.06)",
+				}}
+			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
 					카드: <code>standard</code> (1px) — 영역 구분
 				</div>
-				<div style={{ border: `${borderWidth.standard} solid #e5e5e5`, borderRadius: 12, padding: 16 }}>
+				<div
+					style={{ border: `${borderWidth.standard} solid #e5e5e5`, borderRadius: 12, padding: 16 }}
+				>
 					<div style={{ fontWeight: 600, fontSize: 14 }}>카드 제목</div>
-					<div style={{ fontSize: 13, color: "#666", marginTop: 4 }}>standard 두께의 테두리로 영역을 구분합니다.</div>
+					<div style={{ fontSize: 13, color: "#666", marginTop: 4 }}>
+						standard 두께의 테두리로 영역을 구분합니다.
+					</div>
 				</div>
 			</div>
 		</div>
@@ -167,18 +220,22 @@ export const Comparison: Story = {
 			<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
 				{(Object.entries(borderWidth) as [string, string][]).map(([key, value]) => (
 					<div key={key} style={{ textAlign: "center" }}>
-						<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>{key} ({value})</div>
-						<div style={{
-							height: 44,
-							borderRadius: 10,
-							border: `${value} solid ${key === "indicator" ? "#000" : "#e5e5e5"}`,
-							display: "flex",
-							alignItems: "center",
-							padding: "0 12px",
-							fontSize: 13,
-							color: key === "none" ? "#ccc" : "#333",
-							background: "#fff",
-						}}>
+						<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>
+							{key} ({value})
+						</div>
+						<div
+							style={{
+								height: 44,
+								borderRadius: 10,
+								border: `${value} solid ${key === "indicator" ? "#000" : "#e5e5e5"}`,
+								display: "flex",
+								alignItems: "center",
+								padding: "0 12px",
+								fontSize: 13,
+								color: key === "none" ? "#ccc" : "#333",
+								background: "#fff",
+							}}
+						>
 							{key === "none" ? "비활성 상태" : key === "standard" ? "기본 상태" : "포커스/강조"}
 						</div>
 						<div style={{ marginTop: 8, fontSize: 11, color: "#666" }}>

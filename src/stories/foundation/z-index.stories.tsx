@@ -85,7 +85,6 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 	const dragging = React.useRef(false);
 	const lastPos = React.useRef({ x: 0, y: 0 });
 
-
 	const handleMouseDown = (e: React.MouseEvent) => {
 		if (!expanded) return;
 		dragging.current = true;
@@ -194,7 +193,8 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 									boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
 								}}
 							>
-								<strong>{hoveredLayer}</strong> · z-index: {entries.find(([k]) => k === hoveredLayer)?.[1]} · {descriptionForKey(hoveredLayer)}
+								<strong>{hoveredLayer}</strong> · z-index:{" "}
+								{entries.find(([k]) => k === hoveredLayer)?.[1]} · {descriptionForKey(hoveredLayer)}
 							</div>
 						)}
 					</div>
@@ -261,9 +261,7 @@ function LayerStack({ entries }: { entries: [string, number | string][] }) {
 											{value}
 										</span>
 									</div>
-									<span style={{ fontSize: 11 }}>
-										{descriptionForKey(key)}
-									</span>
+									<span style={{ fontSize: 11 }}>{descriptionForKey(key)}</span>
 								</div>
 							))}
 						</div>

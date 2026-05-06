@@ -90,10 +90,32 @@ export const ComponentMapping: Story = {
 				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>어떤 컴포넌트에 어떤 radius를 쓰나요?</h3>
 				<div style={{ display: "grid", gap: 10 }}>
 					{mappings.map(({ component, token, value, bg }) => (
-						<div key={component} style={{ display: "grid", gridTemplateColumns: "120px 56px 1fr", alignItems: "center", gap: 12, padding: 12, background: "#fff", borderRadius: 10, border: "1px solid rgba(0,0,0,0.06)" }}>
+						<div
+							key={component}
+							style={{
+								display: "grid",
+								gridTemplateColumns: "120px 56px 1fr",
+								alignItems: "center",
+								gap: 12,
+								padding: 12,
+								background: "#fff",
+								borderRadius: 10,
+								border: "1px solid rgba(0,0,0,0.06)",
+							}}
+						>
 							<span style={{ fontSize: 13, fontWeight: 600 }}>{component}</span>
-							<div style={{ width: 40, height: 28, borderRadius: value, background: bg, border: "1.5px solid #333" }} />
-							<code style={{ fontSize: 12, color: "#666" }}>radius.{token} ({value})</code>
+							<div
+								style={{
+									width: 40,
+									height: 28,
+									borderRadius: value,
+									background: bg,
+									border: "1.5px solid #333",
+								}}
+							/>
+							<code style={{ fontSize: 12, color: "#666" }}>
+								radius.{token} ({value})
+							</code>
 						</div>
 					))}
 				</div>
@@ -115,14 +137,27 @@ export const Comparison: Story = {
 
 			{/* 버튼 비교 */}
 			<div style={{ marginBottom: 24 }}>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>버튼에 적용했을 때</div>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+					버튼에 적용했을 때
+				</div>
 				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
 					{Object.entries(radius).map(([key, value]) => (
 						<div key={key} style={{ textAlign: "center" }}>
-							<div style={{ background: "#121212", color: "#fff", padding: "10px 20px", borderRadius: value, fontSize: 13, fontWeight: 600 }}>
+							<div
+								style={{
+									background: "#121212",
+									color: "#fff",
+									padding: "10px 20px",
+									borderRadius: value,
+									fontSize: 13,
+									fontWeight: 600,
+								}}
+							>
 								Button
 							</div>
-							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key} ({value})</div>
+							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>
+								{key} ({value})
+							</div>
 						</div>
 					))}
 				</div>
@@ -130,11 +165,32 @@ export const Comparison: Story = {
 
 			{/* 카드 비교 */}
 			<div style={{ marginBottom: 24 }}>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>카드에 적용했을 때</div>
-				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12 }}>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+					카드에 적용했을 때
+				</div>
+				<div
+					style={{
+						display: "grid",
+						gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+						gap: 12,
+					}}
+				>
 					{Object.entries(radius).map(([key, value]) => (
 						<div key={key} style={{ textAlign: "center" }}>
-							<div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: value, padding: 12, height: 60, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#999" }}>
+							<div
+								style={{
+									background: "#fff",
+									border: "1px solid #e5e5e5",
+									borderRadius: value,
+									padding: 12,
+									height: 60,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									fontSize: 12,
+									color: "#999",
+								}}
+							>
 								Card
 							</div>
 							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key}</div>
@@ -145,7 +201,9 @@ export const Comparison: Story = {
 
 			{/* 아바타 비교 */}
 			<div>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>아바타에 적용했을 때</div>
+				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+					아바타에 적용했을 때
+				</div>
 				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
 					{Object.entries(radius).map(([key, value]) => (
 						<div key={key} style={{ textAlign: "center" }}>

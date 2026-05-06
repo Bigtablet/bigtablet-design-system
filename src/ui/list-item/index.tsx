@@ -4,8 +4,7 @@ import type * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
-export interface ListItemProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
+export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
 	/** 오버라인 텍스트 (상단 작은 글씨) */
 	overline?: string;
 	/** 라벨 텍스트 (주요 텍스트) */
@@ -54,6 +53,7 @@ export const ListItem = ({
 	);
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item — role=button + tabIndex set conditionally based on onClick
 		<div
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}
@@ -70,22 +70,14 @@ export const ListItem = ({
 			{...props}
 		>
 			<div className="list_item_state_layer">
-				{leadingElement && (
-					<div className="list_item_leading">{leadingElement}</div>
-				)}
+				{leadingElement && <div className="list_item_leading">{leadingElement}</div>}
 				<div className="list_item_content">
 					{overline && <span className="list_item_overline">{overline}</span>}
 					<span className="list_item_label">{label}</span>
-					{supportingText && (
-						<span className="list_item_supporting">{supportingText}</span>
-					)}
-					{metadata && (
-						<span className="list_item_metadata">{metadata}</span>
-					)}
+					{supportingText && <span className="list_item_supporting">{supportingText}</span>}
+					{metadata && <span className="list_item_metadata">{metadata}</span>}
 				</div>
-				{trailingElement && (
-					<div className="list_item_trailing">{trailingElement}</div>
-				)}
+				{trailingElement && <div className="list_item_trailing">{trailingElement}</div>}
 			</div>
 		</div>
 	);

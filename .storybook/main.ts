@@ -1,15 +1,12 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/react-vite";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
-	stories: [
-		"../src/ui/**/*.stories.@(ts|tsx)",
-		"../src/stories/**/*.stories.@(ts|tsx)",
-	],
+	stories: ["../src/ui/**/*.stories.@(ts|tsx)", "../src/stories/**/*.stories.@(ts|tsx)"],
 
 	framework: {
 		name: "@storybook/react-vite",
@@ -46,11 +43,7 @@ const config: StorybookConfig = {
 		return cfg;
 	},
 
-	addons: [
-		"@storybook/addon-docs",
-		"@storybook/addon-a11y",
-		"@storybook/addon-vitest",
-	],
+	addons: ["@storybook/addon-docs", "@storybook/addon-a11y", "@storybook/addon-vitest"],
 
 	disableTelemetry: true,
 };

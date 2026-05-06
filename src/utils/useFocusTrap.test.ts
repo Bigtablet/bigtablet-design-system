@@ -16,7 +16,9 @@ function createContainer(buttonCount: number): HTMLDivElement {
 
 const containers: HTMLElement[] = [];
 afterEach(() => {
-	containers.forEach((c) => { if (c.isConnected) document.body.removeChild(c); });
+	containers.forEach((c) => {
+		if (c.isConnected) document.body.removeChild(c);
+	});
 	containers.length = 0;
 });
 

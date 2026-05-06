@@ -93,18 +93,53 @@ export const LayoutExample: Story = {
 		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 400 }}>
 			<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>폼 레이아웃에서의 spacing 사용</h3>
 
-			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: spacing[16] }}>
+			<div
+				style={{
+					background: "#fff",
+					borderRadius: 12,
+					border: "1px solid #e5e5e5",
+					padding: spacing[16],
+				}}
+			>
 				{/* Label + Input gap */}
 				<div style={{ marginBottom: spacing[12] }}>
-					<div style={{ display: "flex", alignItems: "center", gap: spacing[4], marginBottom: spacing[6] }}>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: spacing[4],
+							marginBottom: spacing[6],
+						}}
+					>
 						<span style={{ fontSize: 13, fontWeight: 600 }}>이름</span>
 						<span style={{ fontSize: 11, color: "#ef4444" }}>*</span>
 					</div>
 					<div style={{ position: "relative" }}>
-						<div style={{ height: 40, borderRadius: 8, border: "1px solid #e5e5e5", padding: `0 ${spacing[8]}`, display: "flex", alignItems: "center", fontSize: 13, color: "#999" }}>
+						<div
+							style={{
+								height: 40,
+								borderRadius: 8,
+								border: "1px solid #e5e5e5",
+								padding: `0 ${spacing[8]}`,
+								display: "flex",
+								alignItems: "center",
+								fontSize: 13,
+								color: "#999",
+							}}
+						>
 							홍길동
 						</div>
-						<div style={{ position: "absolute", left: 0, top: -2, fontSize: 10, color: "#2563eb", background: "#fff", padding: "0 4px" }}>
+						<div
+							style={{
+								position: "absolute",
+								left: 0,
+								top: -2,
+								fontSize: 10,
+								color: "#2563eb",
+								background: "#fff",
+								padding: "0 4px",
+							}}
+						>
 							← gap: spacing-4
 						</div>
 					</div>
@@ -112,20 +147,56 @@ export const LayoutExample: Story = {
 
 				{/* Between fields */}
 				<div style={{ position: "relative", marginBottom: spacing[12] }}>
-					<div style={{ display: "flex", alignItems: "center", gap: spacing[4], marginBottom: spacing[6] }}>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: spacing[4],
+							marginBottom: spacing[6],
+						}}
+					>
 						<span style={{ fontSize: 13, fontWeight: 600 }}>이메일</span>
 					</div>
-					<div style={{ height: 40, borderRadius: 8, border: "1px solid #e5e5e5", padding: `0 ${spacing[8]}`, display: "flex", alignItems: "center", fontSize: 13, color: "#999" }}>
+					<div
+						style={{
+							height: 40,
+							borderRadius: 8,
+							border: "1px solid #e5e5e5",
+							padding: `0 ${spacing[8]}`,
+							display: "flex",
+							alignItems: "center",
+							fontSize: 13,
+							color: "#999",
+						}}
+					>
 						example@email.com
 					</div>
 				</div>
 
 				{/* Annotation */}
-				<div style={{ display: "grid", gap: 4, fontSize: 11, color: "#2563eb", background: "#eff6ff", borderRadius: 8, padding: 10 }}>
-					<div>카드 내부 padding: <strong>spacing-16 (16px)</strong></div>
-					<div>필드 간격: <strong>spacing-12 (12px)</strong></div>
-					<div>라벨-입력 사이: <strong>spacing-6 (6px)</strong></div>
-					<div>아이콘-텍스트 사이: <strong>spacing-4 (4px)</strong></div>
+				<div
+					style={{
+						display: "grid",
+						gap: 4,
+						fontSize: 11,
+						color: "#2563eb",
+						background: "#eff6ff",
+						borderRadius: 8,
+						padding: 10,
+					}}
+				>
+					<div>
+						카드 내부 padding: <strong>spacing-16 (16px)</strong>
+					</div>
+					<div>
+						필드 간격: <strong>spacing-12 (12px)</strong>
+					</div>
+					<div>
+						라벨-입력 사이: <strong>spacing-6 (6px)</strong>
+					</div>
+					<div>
+						아이콘-텍스트 사이: <strong>spacing-4 (4px)</strong>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -143,7 +214,9 @@ export const Comparison: Story = {
 		];
 
 		const card = (
-			<div style={{ background: "#fff", borderRadius: 8, border: "1px solid #e5e5e5", padding: 12 }}>
+			<div
+				style={{ background: "#fff", borderRadius: 8, border: "1px solid #e5e5e5", padding: 12 }}
+			>
 				<div style={{ fontSize: 13, fontWeight: 600 }}>카드</div>
 				<div style={{ fontSize: 11, color: "#666", marginTop: 4 }}>내용</div>
 			</div>
@@ -157,16 +230,34 @@ export const Comparison: Story = {
 				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
 					간격이 넓을수록 여유로운 느낌, 좁을수록 빽빽한 느낌이 나는 걸 비교해보세요.
 				</p>
-				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 20 }}>
+				<div
+					style={{
+						display: "grid",
+						gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+						gap: 20,
+					}}
+				>
 					{gaps.map(({ token, value, desc }) => (
 						<div key={token}>
-							<div style={{ display: "grid", gap: parseInt(value), background: "#f0f0f0", borderRadius: 10, padding: 12 }}>
+							<div
+								style={{
+									display: "grid",
+									gap: parseInt(value, 10),
+									background: "#f0f0f0",
+									borderRadius: 10,
+									padding: 12,
+								}}
+							>
 								{card}
 								{card}
 								{card}
 							</div>
-							<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600, textAlign: "center" }}>{token}</div>
-							<div style={{ fontSize: 11, color: "#666", textAlign: "center" }}>{value} — {desc}</div>
+							<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600, textAlign: "center" }}>
+								{token}
+							</div>
+							<div style={{ fontSize: 11, color: "#666", textAlign: "center" }}>
+								{value} — {desc}
+							</div>
 						</div>
 					))}
 				</div>

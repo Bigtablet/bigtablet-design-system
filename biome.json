@@ -77,6 +77,32 @@
 				"rules": {
 					"correctness": {
 						"useExhaustiveDependencies": "off"
+					},
+					"suspicious": {
+						"noArrayIndexKey": "off",
+						"noShadowRestrictedNames": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
+					},
+					"a11y": {
+						"noSvgWithoutTitle": "off",
+						"noStaticElementInteractions": "off",
+						"useValidAnchor": "off",
+						"useSemanticElements": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [".storybook/**", "**/*.html"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noSvgWithoutTitle": "off"
+					},
+					"suspicious": {
+						"noExplicitAny": "off"
 					}
 				}
 			}

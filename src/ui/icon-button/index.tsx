@@ -7,8 +7,7 @@ import "./style.scss";
 export type IconButtonVariant = "standard" | "filled" | "tonal" | "outlined";
 export type IconButtonSize = "sm" | "md";
 
-export interface IconButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/** 아이콘 버튼 스타일 변형 (기본값: "standard") */
 	variant?: IconButtonVariant;
 	/** 아이콘 버튼 크기 (기본값: "md") */

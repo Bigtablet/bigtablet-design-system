@@ -176,20 +176,55 @@ export const DoAndDont: Story = {
 			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
 				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
 				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>color: colors.text.body</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>background: colors.bg.surface</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>border: colors.border.default</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+						color: colors.text.body
+					</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+						background: colors.bg.surface
+					</code>
+					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+						border: colors.border.default
+					</code>
 				</div>
 				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
 					Semantic 토큰을 사용하면 테마 변경 시 자동 반영됩니다.
 				</p>
 			</div>
 			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>DON'T</div>
+				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>
+					DON'T
+				</div>
 				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>color: "#333333"</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>background: "#ffffff"</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6, textDecoration: "line-through" }}>border: "#e5e5e5"</code>
+					<code
+						style={{
+							background: "#fff",
+							padding: 8,
+							borderRadius: 6,
+							textDecoration: "line-through",
+						}}
+					>
+						color: "#333333"
+					</code>
+					<code
+						style={{
+							background: "#fff",
+							padding: 8,
+							borderRadius: 6,
+							textDecoration: "line-through",
+						}}
+					>
+						background: "#ffffff"
+					</code>
+					<code
+						style={{
+							background: "#fff",
+							padding: 8,
+							borderRadius: 6,
+							textDecoration: "line-through",
+						}}
+					>
+						border: "#e5e5e5"
+					</code>
 				</div>
 				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
 					하드코딩된 HEX 값은 테마 변경 시 깨지고 일관성이 무너집니다.
@@ -204,9 +239,19 @@ export const Comparison: Story = {
 	render: () => {
 		const statuses = [
 			{ name: "Error", color: colors.status.error, bg: "#FEF2F2", text: "결제에 실패했습니다." },
-			{ name: "Success", color: colors.status.success, bg: "#F0FDF4", text: "저장이 완료되었습니다." },
+			{
+				name: "Success",
+				color: colors.status.success,
+				bg: "#F0FDF4",
+				text: "저장이 완료되었습니다.",
+			},
 			{ name: "Info", color: colors.status.info, bg: "#EFF6FF", text: "새 버전이 있습니다." },
-			{ name: "Warning", color: colors.status.warning, bg: "#FFFBEB", text: "세션이 곧 만료됩니다." },
+			{
+				name: "Warning",
+				color: colors.status.warning,
+				bg: "#FFFBEB",
+				text: "세션이 곧 만료됩니다.",
+			},
 		];
 
 		return (
@@ -218,9 +263,23 @@ export const Comparison: Story = {
 					색 하나만 바꿔도 "에러인지 성공인지" 즉시 전달됩니다. 색상이 가진 의미를 느껴보세요.
 				</p>
 
-				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+				<div
+					style={{
+						display: "grid",
+						gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+						gap: 12,
+					}}
+				>
 					{statuses.map(({ name, color, bg, text }) => (
-						<div key={name} style={{ background: bg, borderRadius: 10, padding: 16, borderLeft: `3px solid ${color}` }}>
+						<div
+							key={name}
+							style={{
+								background: bg,
+								borderRadius: 10,
+								padding: 16,
+								borderLeft: `3px solid ${color}`,
+							}}
+						>
 							<div style={{ fontSize: 13, fontWeight: 600, color, marginBottom: 6 }}>{name}</div>
 							<div style={{ fontSize: 12, color: "#333" }}>{text}</div>
 						</div>
@@ -232,7 +291,17 @@ export const Comparison: Story = {
 					<p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600 }}>버튼에 상태 색상 적용</p>
 					<div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
 						{statuses.map(({ name, color }) => (
-							<div key={name} style={{ background: color, color: "#fff", padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
+							<div
+								key={name}
+								style={{
+									background: color,
+									color: "#fff",
+									padding: "8px 16px",
+									borderRadius: 8,
+									fontSize: 13,
+									fontWeight: 600,
+								}}
+							>
 								{name}
 							</div>
 						))}
@@ -245,5 +314,8 @@ export const Comparison: Story = {
 
 /** camelCase → kebab-case (tokens.json 키 표시용) */
 function toJsonKey(key: string) {
-	return key.replace(/([a-z])([A-Z0-9])/g, "$1-$2").replace(/([0-9])([a-zA-Z])/g, "$1-$2").toLowerCase();
+	return key
+		.replace(/([a-z])([A-Z0-9])/g, "$1-$2")
+		.replace(/([0-9])([a-zA-Z])/g, "$1-$2")
+		.toLowerCase();
 }

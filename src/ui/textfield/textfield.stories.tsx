@@ -2,14 +2,28 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TextField } from ".";
 
 const SearchIcon = () => (
-	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+	<svg
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
 		<circle cx="11" cy="11" r="8" />
 		<line x1="21" y1="21" x2="16.65" y2="16.65" />
 	</svg>
 );
 
 const CloseIcon = () => (
-	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+	<svg
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
 		<line x1="18" y1="6" x2="6" y2="18" />
 		<line x1="6" y1="6" x2="18" y2="18" />
 	</svg>
@@ -172,7 +186,13 @@ export const AllStates: Story = {
 			<TextField label="Enable" placeholder="Input" supportingText="Supporting text" />
 			<TextField label="Error" placeholder="Input" supportingText="Error message" error />
 			<TextField label="Disabled" placeholder="Input" supportingText="Supporting text" disabled />
-			<TextField label="With Icons" placeholder="Search" leadingIcon={<SearchIcon />} trailingIcon={<CloseIcon />} supportingText="Supporting text" />
+			<TextField
+				label="With Icons"
+				placeholder="Search"
+				leadingIcon={<SearchIcon />}
+				trailingIcon={<CloseIcon />}
+				supportingText="Supporting text"
+			/>
 		</div>
 	),
 };
@@ -209,9 +229,19 @@ export const SizeComparison: Story = {
 	name: "크기 비교 (sm / md)",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, width: 320 }}>
-			<TextField label="Size md (기본)" placeholder="Input" size="md" supportingText="min-height 52px" />
+			<TextField
+				label="Size md (기본)"
+				placeholder="Input"
+				size="md"
+				supportingText="min-height 52px"
+			/>
 			<TextField label="Size sm" placeholder="Input" size="sm" supportingText="min-height 40px" />
-			<TextField label="Size sm + 아이콘" placeholder="Search" size="sm" leadingIcon={<SearchIcon />} />
+			<TextField
+				label="Size sm + 아이콘"
+				placeholder="Search"
+				size="sm"
+				leadingIcon={<SearchIcon />}
+			/>
 		</div>
 	),
 };

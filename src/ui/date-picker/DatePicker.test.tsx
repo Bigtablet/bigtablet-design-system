@@ -37,9 +37,7 @@ describe("DatePicker", () => {
 
 	it("calls onChange when year is selected (year-month mode)", () => {
 		const onChange = vi.fn();
-		render(
-			<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />,
-		);
+		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
 
 		// 첫 Select 버튼(연도) 열고 "2024" 클릭
 		const buttons = screen.getAllByRole("button");
