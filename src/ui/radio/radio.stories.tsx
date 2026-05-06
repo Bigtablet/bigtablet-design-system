@@ -91,7 +91,13 @@ export const Sizes: Story = {
 	render: () => (
 		<div style={{ display: "flex", gap: 24, alignItems: "center" }}>
 			{(["sm", "md", "lg"] as const).map((size) => (
-				<Radio key={size} size={size} label={size} name="size-demo" defaultChecked={size === "md"} />
+				<Radio
+					key={size}
+					size={size}
+					label={size}
+					name="size-demo"
+					defaultChecked={size === "md"}
+				/>
 			))}
 		</div>
 	),

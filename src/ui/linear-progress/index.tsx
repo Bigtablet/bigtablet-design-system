@@ -24,10 +24,7 @@ export const LinearProgress = ({
 	className,
 	...props
 }: LinearProgressProps) => {
-	const percent =
-		totalSteps > 0
-			? Math.min(Math.max(currentStep / totalSteps, 0), 1) * 100
-			: 0;
+	const percent = totalSteps > 0 ? Math.min(Math.max(currentStep / totalSteps, 0), 1) * 100 : 0;
 
 	return (
 		<div
@@ -38,10 +35,7 @@ export const LinearProgress = ({
 			aria-valuemax={totalSteps}
 			{...props}
 		>
-			<div
-				className="linear_progress_indicator"
-				style={{ width: `${percent}%` }}
-			/>
+			<div className="linear_progress_indicator" style={{ width: `${percent}%` }} />
 		</div>
 	);
 };

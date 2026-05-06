@@ -9,8 +9,7 @@ const meta: Meta<typeof Divider> = {
 		weight: {
 			control: "select",
 			options: ["standard", "heavy"],
-			description:
-				"구분선의 두께입니다. standard는 1px, heavy는 2px입니다.",
+			description: "구분선의 두께입니다. standard는 1px, heavy는 2px입니다.",
 		},
 		className: { control: false },
 	},

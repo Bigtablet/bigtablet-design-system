@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
 import { a11y } from "src/styles/a11y";
 import { baseColors, colors } from "src/styles/colors";
 
@@ -81,7 +80,14 @@ export const FocusRing: Story = {
 
 				<div style={{ display: "grid", gap: 16, marginTop: 16 }}>
 					{/* 인풋 */}
-					<div style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "100px 1fr",
+							alignItems: "center",
+							gap: 12,
+						}}
+					>
 						<span style={{ fontSize: 13, color: "#555" }}>입력창</span>
 						<input
 							type="text"
@@ -95,13 +101,24 @@ export const FocusRing: Story = {
 								width: "100%",
 								boxSizing: "border-box",
 							}}
-							onFocus={(e) => { e.currentTarget.style.boxShadow = a11y.focusRing; }}
-							onBlur={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+							onFocus={(e) => {
+								e.currentTarget.style.boxShadow = a11y.focusRing;
+							}}
+							onBlur={(e) => {
+								e.currentTarget.style.boxShadow = "none";
+							}}
 						/>
 					</div>
 
 					{/* 에러 인풋 */}
-					<div style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "100px 1fr",
+							alignItems: "center",
+							gap: 12,
+						}}
+					>
 						<span style={{ fontSize: 13, color: "#555" }}>에러 상태</span>
 						<input
 							type="text"
@@ -115,13 +132,24 @@ export const FocusRing: Story = {
 								width: "100%",
 								boxSizing: "border-box",
 							}}
-							onFocus={(e) => { e.currentTarget.style.boxShadow = a11y.focusRingError; }}
-							onBlur={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+							onFocus={(e) => {
+								e.currentTarget.style.boxShadow = a11y.focusRingError;
+							}}
+							onBlur={(e) => {
+								e.currentTarget.style.boxShadow = "none";
+							}}
 						/>
 					</div>
 
 					{/* 버튼 */}
-					<div style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "100px 1fr",
+							alignItems: "center",
+							gap: 12,
+						}}
+					>
 						<span style={{ fontSize: 13, color: "#555" }}>버튼</span>
 						<div style={{ display: "flex", gap: 8 }}>
 							<button
@@ -136,8 +164,12 @@ export const FocusRing: Story = {
 									cursor: "pointer",
 									outline: "none",
 								}}
-								onFocus={(e) => { e.currentTarget.style.boxShadow = a11y.focusRing; }}
-								onBlur={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+								onFocus={(e) => {
+									e.currentTarget.style.boxShadow = a11y.focusRing;
+								}}
+								onBlur={(e) => {
+									e.currentTarget.style.boxShadow = "none";
+								}}
 							>
 								Primary
 							</button>
@@ -152,8 +184,12 @@ export const FocusRing: Story = {
 									cursor: "pointer",
 									outline: "none",
 								}}
-								onFocus={(e) => { e.currentTarget.style.boxShadow = a11y.focusRing; }}
-								onBlur={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+								onFocus={(e) => {
+									e.currentTarget.style.boxShadow = a11y.focusRing;
+								}}
+								onBlur={(e) => {
+									e.currentTarget.style.boxShadow = "none";
+								}}
 							>
 								Secondary
 							</button>
@@ -161,7 +197,14 @@ export const FocusRing: Story = {
 					</div>
 
 					{/* 링크 */}
-					<div style={{ display: "grid", gridTemplateColumns: "100px 1fr", alignItems: "center", gap: 12 }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "100px 1fr",
+							alignItems: "center",
+							gap: 12,
+						}}
+					>
 						<span style={{ fontSize: 13, color: "#555" }}>링크</span>
 						<a
 							href="#"
@@ -174,8 +217,12 @@ export const FocusRing: Story = {
 								borderRadius: 4,
 								padding: "2px 4px",
 							}}
-							onFocus={(e) => { e.currentTarget.style.boxShadow = a11y.focusRing; }}
-							onBlur={(e) => { e.currentTarget.style.boxShadow = "none"; }}
+							onFocus={(e) => {
+								e.currentTarget.style.boxShadow = a11y.focusRing;
+							}}
+							onBlur={(e) => {
+								e.currentTarget.style.boxShadow = "none";
+							}}
 						>
 							텍스트 링크 예시
 						</a>
@@ -195,8 +242,9 @@ export const TapTarget: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 44px인가요?</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					성인 손가락 끝 평균 크기가 약 44px입니다. 이보다 작으면 탭 실수가 잦아지고,
-					특히 이동 중이거나 손이 큰 사용자에게 불편합니다. WCAG 2.2 / Apple HIG / Material Design 모두 최소 44px을 권장합니다.
+					성인 손가락 끝 평균 크기가 약 44px입니다. 이보다 작으면 탭 실수가 잦아지고, 특히 이동
+					중이거나 손이 큰 사용자에게 불편합니다. WCAG 2.2 / Apple HIG / Material Design 모두 최소
+					44px을 권장합니다.
 				</p>
 			</section>
 
@@ -237,7 +285,9 @@ export const TapTarget: Story = {
 							<div style={{ marginTop: 6, fontSize: 12 }}>
 								<strong>{label}</strong>
 							</div>
-							<div style={{ fontSize: 11, color: "#666" }}>{size}×{size}px</div>
+							<div style={{ fontSize: 11, color: "#666" }}>
+								{size}×{size}px
+							</div>
 						</div>
 					))}
 				</div>
@@ -252,8 +302,9 @@ export const TapTarget: Story = {
 						fontSize: 13,
 					}}
 				>
-					<strong>규칙:</strong> 시각적으로 작아 보여도 <strong>터치 영역(hit area)</strong>은 반드시 44×44px 이상이어야 합니다.
-					CSS의 <code>padding</code>이나 <code>min-width/min-height</code>로 확보하세요.
+					<strong>규칙:</strong> 시각적으로 작아 보여도 <strong>터치 영역(hit area)</strong>은
+					반드시 44×44px 이상이어야 합니다. CSS의 <code>padding</code>이나{" "}
+					<code>min-width/min-height</code>로 확보하세요.
 				</div>
 			</section>
 		</div>
@@ -266,9 +317,9 @@ export const TapTarget: Story = {
 function parseToRGB(color: string): [number, number, number] {
 	const rgba = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
 	if (rgba) {
-		const r = parseInt(rgba[1]);
-		const g = parseInt(rgba[2]);
-		const b = parseInt(rgba[3]);
+		const r = parseInt(rgba[1], 10);
+		const g = parseInt(rgba[2], 10);
+		const b = parseInt(rgba[3], 10);
 		const a = rgba[4] !== undefined ? parseFloat(rgba[4]) : 1;
 		// 흰 배경(255,255,255)과 알파 블렌딩
 		return [
@@ -306,16 +357,76 @@ type ContrastPair = {
 };
 
 const contrastPairs: ContrastPair[] = [
-	{ label: "제목 텍스트", fg: colors.text.heading, fgName: "text.heading", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "본문 텍스트", fg: colors.text.body, fgName: "text.body", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "캡션 텍스트", fg: colors.text.caption, fgName: "text.caption", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "비활성 텍스트", fg: colors.text.disabled, fgName: "text.disabled", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "반전 텍스트", fg: colors.brand.onPrimary, fgName: "brand.onPrimary", bg: colors.brand.primary, bgName: "brand.primary" },
-	{ label: "에러 텍스트", fg: colors.status.error, fgName: "status.error", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "성공 텍스트", fg: colors.status.success, fgName: "status.success", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "정보 텍스트", fg: colors.status.info, fgName: "status.info", bg: colors.bg.solid, bgName: "bg.solid" },
-	{ label: "보조 배경 위 제목", fg: colors.text.heading, fgName: "text.heading", bg: colors.bg.solidDim, bgName: "bg.solidDim" },
-	{ label: "보조 배경 위 본문", fg: colors.text.body, fgName: "text.body", bg: colors.bg.solidDim, bgName: "bg.solidDim" },
+	{
+		label: "제목 텍스트",
+		fg: colors.text.heading,
+		fgName: "text.heading",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "본문 텍스트",
+		fg: colors.text.body,
+		fgName: "text.body",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "캡션 텍스트",
+		fg: colors.text.caption,
+		fgName: "text.caption",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "비활성 텍스트",
+		fg: colors.text.disabled,
+		fgName: "text.disabled",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "반전 텍스트",
+		fg: colors.brand.onPrimary,
+		fgName: "brand.onPrimary",
+		bg: colors.brand.primary,
+		bgName: "brand.primary",
+	},
+	{
+		label: "에러 텍스트",
+		fg: colors.status.error,
+		fgName: "status.error",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "성공 텍스트",
+		fg: colors.status.success,
+		fgName: "status.success",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "정보 텍스트",
+		fg: colors.status.info,
+		fgName: "status.info",
+		bg: colors.bg.solid,
+		bgName: "bg.solid",
+	},
+	{
+		label: "보조 배경 위 제목",
+		fg: colors.text.heading,
+		fgName: "text.heading",
+		bg: colors.bg.solidDim,
+		bgName: "bg.solidDim",
+	},
+	{
+		label: "보조 배경 위 본문",
+		fg: colors.text.body,
+		fgName: "text.body",
+		bg: colors.bg.solidDim,
+		bgName: "bg.solidDim",
+	},
 ];
 
 export const ColorContrast: Story = {
@@ -327,8 +438,8 @@ export const ColorContrast: Story = {
 				<h3 style={{ marginBottom: 4 }}>WCAG AA 기준</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
 					일반 텍스트는 <strong>4.5:1 이상</strong>, 큰 텍스트(18px bold 또는 24px 이상)는{" "}
-					<strong>3:1 이상</strong>의 명도 대비가 필요합니다.
-					아래는 우리 디자인 토큰의 주요 텍스트/배경 조합별 대비율입니다.
+					<strong>3:1 이상</strong>의 명도 대비가 필요합니다. 아래는 우리 디자인 토큰의 주요
+					텍스트/배경 조합별 대비율입니다.
 				</p>
 			</section>
 
@@ -433,8 +544,9 @@ export const ColorContrast: Story = {
 					fontSize: 13,
 				}}
 			>
-				<strong>참고:</strong> 비활성(disabled) 상태는 의도적으로 대비가 낮습니다. WCAG에서도 비활성 UI는 대비
-				요구사항에서 제외됩니다. 단, 비활성임을 인지할 수 있을 정도의 차이는 유지해야 합니다.
+				<strong>참고:</strong> 비활성(disabled) 상태는 의도적으로 대비가 낮습니다. WCAG에서도 비활성
+				UI는 대비 요구사항에서 제외됩니다. 단, 비활성임을 인지할 수 있을 정도의 차이는 유지해야
+				합니다.
 			</div>
 		</div>
 	),

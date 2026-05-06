@@ -324,7 +324,9 @@
 				control.classList.toggle("is-disabled", disabled);
 			},
 			destroy: () => {
-				cleanups.forEach((cleanup) => { cleanup(); });
+				cleanups.forEach((cleanup) => {
+					cleanup();
+				});
 			},
 		};
 	}
@@ -403,7 +405,9 @@
 			close,
 			toggle: () => (state.isOpen ? close() : open()),
 			destroy: () => {
-				cleanups.forEach((cleanup) => { cleanup(); });
+				cleanups.forEach((cleanup) => {
+					cleanup();
+				});
 				document.body.style.overflow = "";
 			},
 		};

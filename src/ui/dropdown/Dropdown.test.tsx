@@ -1,6 +1,5 @@
-import * as React from "react";
-import { Star } from "lucide-react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { Star } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 import { Dropdown } from "./index";
 
@@ -201,7 +200,9 @@ describe("Dropdown", () => {
 	});
 
 	it("renders leadingIcon in option", () => {
-		const withIcon = [{ value: "1", label: "Option 1", leadingIcon: <Star data-testid="lead-icon" /> }];
+		const withIcon = [
+			{ value: "1", label: "Option 1", leadingIcon: <Star data-testid="lead-icon" /> },
+		];
 		render(<Dropdown options={withIcon} />);
 		fireEvent.click(screen.getByRole("button"));
 		expect(screen.getByTestId("lead-icon")).toBeInTheDocument();
@@ -218,7 +219,9 @@ describe("Dropdown", () => {
 	});
 
 	it("renders custom trailingIcon instead of check", () => {
-		const withTrail = [{ value: "1", label: "Option 1", trailingIcon: <Star data-testid="trail-icon" /> }];
+		const withTrail = [
+			{ value: "1", label: "Option 1", trailingIcon: <Star data-testid="trail-icon" /> },
+		];
 		render(<Dropdown options={withTrail} value="1" />);
 		fireEvent.click(screen.getByRole("button"));
 		expect(screen.getByTestId("trail-icon")).toBeInTheDocument();

@@ -185,7 +185,10 @@ export const Dropdown = ({
 		setActiveIndex(
 			idx >= 0
 				? idx
-				: Math.max(0, options.findIndex((o) => !o.disabled)),
+				: Math.max(
+						0,
+						options.findIndex((o) => !o.disabled),
+					),
 		);
 	}, [isOpen, options, currentValue]);
 
@@ -210,10 +213,7 @@ export const Dropdown = ({
 		>
 			<div className={fieldsetClassName}>
 				{label && (
-					<span
-						className={cn("dropdown_label", { is_visible: isLabelVisible })}
-						aria-hidden="true"
-					>
+					<span className={cn("dropdown_label", { is_visible: isLabelVisible })} aria-hidden="true">
 						{label}
 					</span>
 				)}
@@ -241,17 +241,14 @@ export const Dropdown = ({
 			</div>
 
 			{isOpen && (
-				<div
-					id={`${dropdownId}_listbox`}
-					role="listbox"
-					className={listClassName}
-				>
+				<div id={`${dropdownId}_listbox`} role="listbox" className={listClassName}>
 					{options.map((opt, i) => {
 						const selected = currentValue === opt.value;
 						const active = i === activeIndex;
 
 						return (
 							<React.Fragment key={opt.value}>
+								{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button — options are non-focusable role=option per WAI-ARIA listbox pattern */}
 								<div
 									role="option"
 									tabIndex={-1}
@@ -284,9 +281,7 @@ export const Dropdown = ({
 										</span>
 									)}
 								</div>
-								{opt.showDivider && (
-									<div className="dropdown_option_divider" role="separator" />
-								)}
+								{opt.showDivider && <hr className="dropdown_option_divider" />}
 							</React.Fragment>
 						);
 					})}

@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ImageProps {
 	src: string;
 	alt: string;
@@ -7,10 +5,19 @@ interface ImageProps {
 	height?: number;
 	className?: string;
 	priority?: boolean;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
-const Image = ({ src, alt, width, height, className, priority, ...props }: ImageProps) => {
+const Image = ({
+	src,
+	alt,
+	width,
+	height,
+	className,
+	priority: _priority,
+	...props
+}: ImageProps) => {
+	// biome-ignore lint/performance/noImgElement: Storybook mock for next/image — must use raw <img>
 	return <img src={src} alt={alt} width={width} height={height} className={className} {...props} />;
 };
 

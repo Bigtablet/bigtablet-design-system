@@ -140,6 +140,7 @@ export const ToastProvider = ({
 			{children}
 			{isMounted &&
 				createPortal(
+					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the WAI-ARIA equivalent for live announcements
 					<div
 						className="toast_container"
 						role="region"

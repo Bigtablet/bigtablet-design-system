@@ -26,8 +26,7 @@ const meta: Meta<typeof TopLoading> = {
 		},
 		ariaLabel: {
 			control: "text",
-			description:
-				"스크린 리더용 접근성 레이블입니다. 기본값은 'Page loading'입니다.",
+			description: "스크린 리더용 접근성 레이블입니다. 기본값은 'Page loading'입니다.",
 		},
 	},
 	args: {

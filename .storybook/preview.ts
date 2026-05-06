@@ -17,11 +17,7 @@ const preview: Preview = {
 		options: {
 			storySort: {
 				method: "alphabetical",
-				order: [
-					"Guide", ["Introduction", "Installation"],
-					"Foundation",
-					"Components",
-				],
+				order: ["Guide", ["Introduction", "Installation"], "Foundation", "Components"],
 			},
 		},
 		viewport: {
@@ -34,19 +30,17 @@ const preview: Preview = {
 		a11y: {
 			test: "error",
 			config: {
-				rules: [
-					{ id: "color-contrast", enabled: false },
-				],
+				rules: [{ id: "color-contrast", enabled: false }],
 			},
 		},
 		controls: { expanded: true },
 		nextjs: {
 			appDirectory: true,
 			navigation: {
-				push(...args: any[]) {
+				push(...args: unknown[]) {
 					console.log("Navigation push:", ...args);
 				},
-				replace(...args: any[]) {
+				replace(...args: unknown[]) {
 					console.log("Navigation replace:", ...args);
 				},
 			},

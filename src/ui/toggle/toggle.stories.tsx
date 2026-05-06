@@ -64,7 +64,13 @@ export const Controlled: Story = {
 		return (
 			<div style={{ display: "grid", gap: 10, padding: 20 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-					<Toggle size={size} disabled={disabled} checked={isOn} onChange={setIsOn} ariaLabel="토글" />
+					<Toggle
+						size={size}
+						disabled={disabled}
+						checked={isOn}
+						onChange={setIsOn}
+						ariaLabel="토글"
+					/>
 					<span style={{ fontSize: 14, color: "#666" }}>현재 상태: {isOn ? "ON" : "OFF"}</span>
 				</div>
 

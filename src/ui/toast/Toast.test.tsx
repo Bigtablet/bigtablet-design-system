@@ -17,7 +17,11 @@ function ToastTrigger({
 	label?: string;
 }) {
 	const toast = useToast();
-	return <button type="button" onClick={() => fn(toast)}>{label}</button>;
+	return (
+		<button type="button" onClick={() => fn(toast)}>
+			{label}
+		</button>
+	);
 }
 
 // ── ToastProvider ────────────────────────────────────────────────────────────
@@ -140,8 +144,12 @@ describe("Toast display", () => {
 			const t = useToast();
 			return (
 				<>
-					<button type="button" onClick={() => t.success("첫 번째")}>first</button>
-					<button type="button" onClick={() => t.error("두 번째")}>second</button>
+					<button type="button" onClick={() => t.success("첫 번째")}>
+						first
+					</button>
+					<button type="button" onClick={() => t.error("두 번째")}>
+						second
+					</button>
 				</>
 			);
 		}

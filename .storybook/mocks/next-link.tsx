@@ -13,7 +13,7 @@ const Link = ({ href, children, className, onClick, ...props }: LinkProps) => {
 	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
 		e.preventDefault();
 		console.log("Mock Link clicked:", href);
-		onClick?.(e as any);
+		onClick?.(e as unknown as React.MouseEvent);
 	};
 
 	return (

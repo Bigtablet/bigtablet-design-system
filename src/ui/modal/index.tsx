@@ -99,7 +99,9 @@ export const Modal = ({
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
-onKeyDown={(e) => { if (e.key === "Escape") onClose?.(); }}
+			onKeyDown={(e) => {
+				if (e.key === "Escape") onClose?.();
+			}}
 		>
 			<div
 				ref={panelRef}
@@ -107,7 +109,9 @@ onKeyDown={(e) => { if (e.key === "Escape") onClose?.(); }}
 				style={{ width }}
 				role="document"
 				onClick={(e) => e.stopPropagation()}
-onKeyDown={(e) => { if (e.key !== "Escape") e.stopPropagation(); }}
+				onKeyDown={(e) => {
+					if (e.key !== "Escape") e.stopPropagation();
+				}}
 				{...props}
 			>
 				{title && (

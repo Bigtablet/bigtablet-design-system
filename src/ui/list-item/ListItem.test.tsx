@@ -24,16 +24,12 @@ describe("ListItem", () => {
 	});
 
 	it("renders leading element", () => {
-		render(
-			<ListItem label="Label" leadingElement={<span>Leading</span>} />,
-		);
+		render(<ListItem label="Label" leadingElement={<span>Leading</span>} />);
 		expect(screen.getByText("Leading")).toBeInTheDocument();
 	});
 
 	it("renders trailing element", () => {
-		render(
-			<ListItem label="Label" trailingElement={<span>Trailing</span>} />,
-		);
+		render(<ListItem label="Label" trailingElement={<span>Trailing</span>} />);
 		expect(screen.getByText("Trailing")).toBeInTheDocument();
 	});
 
@@ -43,17 +39,13 @@ describe("ListItem", () => {
 	});
 
 	it("applies middle alignment class", () => {
-		const { container } = render(
-			<ListItem label="Label" alignment="middle" />,
-		);
+		const { container } = render(<ListItem label="Label" alignment="middle" />);
 		expect(container.firstChild).toHaveClass("list_item_align_middle");
 	});
 
 	it("applies disabled class and prevents click", () => {
 		const handleClick = vi.fn();
-		const { container } = render(
-			<ListItem label="Label" disabled onClick={handleClick} />,
-		);
+		const { container } = render(<ListItem label="Label" disabled onClick={handleClick} />);
 		expect(container.firstChild).toHaveClass("list_item_disabled");
 		fireEvent.click(container.firstChild as Element);
 		expect(handleClick).not.toHaveBeenCalled();
@@ -61,17 +53,13 @@ describe("ListItem", () => {
 
 	it("calls onClick when interactive and not disabled", () => {
 		const handleClick = vi.fn();
-		const { container } = render(
-			<ListItem label="Label" onClick={handleClick} />,
-		);
+		const { container } = render(<ListItem label="Label" onClick={handleClick} />);
 		fireEvent.click(container.firstChild as Element);
 		expect(handleClick).toHaveBeenCalledTimes(1);
 	});
 
 	it("applies interactive class when onClick is provided", () => {
-		const { container } = render(
-			<ListItem label="Label" onClick={() => {}} />,
-		);
+		const { container } = render(<ListItem label="Label" onClick={() => {}} />);
 		expect(container.firstChild).toHaveClass("list_item_interactive");
 	});
 
@@ -81,17 +69,13 @@ describe("ListItem", () => {
 	});
 
 	it("sets role=button and tabIndex when interactive", () => {
-		const { container } = render(
-			<ListItem label="Label" onClick={() => {}} />,
-		);
+		const { container } = render(<ListItem label="Label" onClick={() => {}} />);
 		expect(container.firstChild).toHaveAttribute("role", "button");
 		expect(container.firstChild).toHaveAttribute("tabindex", "0");
 	});
 
 	it("applies custom className", () => {
-		const { container } = render(
-			<ListItem label="Label" className="custom-class" />,
-		);
+		const { container } = render(<ListItem label="Label" className="custom-class" />);
 		expect(container.firstChild).toHaveClass("custom-class");
 	});
 
@@ -102,27 +86,21 @@ describe("ListItem", () => {
 
 	it("activates on Enter key when interactive", () => {
 		const handleClick = vi.fn();
-		const { container } = render(
-			<ListItem label="Label" onClick={handleClick} />,
-		);
+		const { container } = render(<ListItem label="Label" onClick={handleClick} />);
 		fireEvent.keyDown(container.firstChild as Element, { key: "Enter" });
 		expect(handleClick).toHaveBeenCalledTimes(1);
 	});
 
 	it("activates on Space key when interactive", () => {
 		const handleClick = vi.fn();
-		const { container } = render(
-			<ListItem label="Label" onClick={handleClick} />,
-		);
+		const { container } = render(<ListItem label="Label" onClick={handleClick} />);
 		fireEvent.keyDown(container.firstChild as Element, { key: " " });
 		expect(handleClick).toHaveBeenCalledTimes(1);
 	});
 
 	it("does not activate on Enter/Space when disabled", () => {
 		const handleClick = vi.fn();
-		const { container } = render(
-			<ListItem label="Label" disabled onClick={handleClick} />,
-		);
+		const { container } = render(<ListItem label="Label" disabled onClick={handleClick} />);
 		fireEvent.keyDown(container.firstChild as Element, { key: "Enter" });
 		fireEvent.keyDown(container.firstChild as Element, { key: " " });
 		expect(handleClick).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import { Chip } from ".";
 
 const meta: Meta<typeof Chip> = {
@@ -131,23 +131,13 @@ export const InputRemovableInteractive: Story = {
 		const remove = (label: string) => setItems((prev) => prev.filter((v) => v !== label));
 		return (
 			<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-					X 버튼을 눌러 칩을 삭제해보세요.
-				</p>
+				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>X 버튼을 눌러 칩을 삭제해보세요.</p>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 					{items.map((label) => (
-						<Chip
-							key={label}
-							type="input"
-							label={label}
-							removable
-							onRemove={() => remove(label)}
-						/>
+						<Chip key={label} type="input" label={label} removable onRemove={() => remove(label)} />
 					))}
 					{items.length === 0 && (
-						<p style={{ margin: 0, fontSize: 13, color: "#999" }}>
-							모든 칩이 삭제되었습니다.
-						</p>
+						<p style={{ margin: 0, fontSize: 13, color: "#999" }}>모든 칩이 삭제되었습니다.</p>
 					)}
 				</div>
 			</div>
@@ -169,7 +159,8 @@ export const Interactive: Story = {
 		return (
 			<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-					칩을 클릭해 선택/해제해보세요. Chip은 controlled 컴포넌트로, 부모가 selected 상태를 관리합니다.
+					칩을 클릭해 선택/해제해보세요. Chip은 controlled 컴포넌트로, 부모가 selected 상태를
+					관리합니다.
 				</p>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 					{options.map((label) => (

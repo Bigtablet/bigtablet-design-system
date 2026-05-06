@@ -86,7 +86,9 @@ export const LayoutTransition: Story = {
 			<h3 style={{ margin: 0, fontSize: 14 }}>각 breakpoint에서 레이아웃이 어떻게 바뀌나요?</h3>
 
 			{/* Compact */}
-			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+			<div
+				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>compact</strong>
 					<span style={{ fontSize: 11, color: "#999" }}>~ 599px (모바일)</span>
@@ -100,7 +102,9 @@ export const LayoutTransition: Story = {
 			</div>
 
 			{/* Medium */}
-			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+			<div
+				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>medium</strong>
 					<span style={{ fontSize: 11, color: "#999" }}>600px ~ 839px (태블릿)</span>
@@ -115,7 +119,9 @@ export const LayoutTransition: Story = {
 			</div>
 
 			{/* Expanded */}
-			<div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}>
+			<div
+				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>expanded</strong>
 					<span style={{ fontSize: 11, color: "#999" }}>840px+ (데스크탑)</span>

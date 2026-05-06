@@ -1,6 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
 import { sassPlugin } from "esbuild-sass-plugin";
-import fs from "fs";
-import path from "path";
 import { defineConfig } from "tsup";
 
 export default defineConfig([
@@ -30,7 +30,7 @@ export default defineConfig([
 			// Add "use client" and CSS import
 			let newContent = content;
 			if (!content.startsWith('"use client"')) {
-				newContent = '"use client";\n' + content;
+				newContent = `"use client";\n${content}`;
 			}
 
 			// Add CSS import after "use client" if not already present

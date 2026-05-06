@@ -101,8 +101,10 @@ export const Pagination = ({
 			<ul className="pagination_pages">
 				{items.map((it, idx) => {
 					if (it === "ellipsis") {
+						const prev = items[idx - 1];
+						const next = items[idx + 1];
 						return (
-							<li key={`e-${idx}`} className="pagination_ellipsis" aria-hidden="true">
+							<li key={`e-${prev}-${next}`} className="pagination_ellipsis" aria-hidden="true">
 								…
 							</li>
 						);

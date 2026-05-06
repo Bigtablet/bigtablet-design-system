@@ -27,39 +27,27 @@ describe("IconButton", () => {
 		);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_filled");
 
-		rerender(
-			<IconButton variant="tonal" icon={<TestIcon />} aria-label="action" />,
-		);
+		rerender(<IconButton variant="tonal" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_tonal");
 
-		rerender(
-			<IconButton variant="outlined" icon={<TestIcon />} aria-label="action" />,
-		);
+		rerender(<IconButton variant="outlined" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_outlined");
 
-		rerender(
-			<IconButton variant="standard" icon={<TestIcon />} aria-label="action" />,
-		);
+		rerender(<IconButton variant="standard" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_standard");
 	});
 
 	it("renders with different sizes", () => {
-		const { rerender } = render(
-			<IconButton size="sm" icon={<TestIcon />} aria-label="action" />,
-		);
+		const { rerender } = render(<IconButton size="sm" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_size_sm");
 
-		rerender(
-			<IconButton size="md" icon={<TestIcon />} aria-label="action" />,
-		);
+		rerender(<IconButton size="md" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_size_md");
 	});
 
 	it("handles click events", () => {
 		const handleClick = vi.fn();
-		render(
-			<IconButton icon={<TestIcon />} aria-label="action" onClick={handleClick} />,
-		);
+		render(<IconButton icon={<TestIcon />} aria-label="action" onClick={handleClick} />);
 
 		fireEvent.click(screen.getByRole("button"));
 		expect(handleClick).toHaveBeenCalledTimes(1);
@@ -67,14 +55,7 @@ describe("IconButton", () => {
 
 	it("can be disabled", () => {
 		const handleClick = vi.fn();
-		render(
-			<IconButton
-				icon={<TestIcon />}
-				aria-label="action"
-				disabled
-				onClick={handleClick}
-			/>,
-		);
+		render(<IconButton icon={<TestIcon />} aria-label="action" disabled onClick={handleClick} />);
 
 		const button = screen.getByRole("button");
 		expect(button).toBeDisabled();
@@ -84,13 +65,7 @@ describe("IconButton", () => {
 	});
 
 	it("applies custom className", () => {
-		render(
-			<IconButton
-				icon={<TestIcon />}
-				aria-label="action"
-				className="custom-class"
-			/>,
-		);
+		render(<IconButton icon={<TestIcon />} aria-label="action" className="custom-class" />);
 		expect(screen.getByRole("button")).toHaveClass("custom-class");
 	});
 });

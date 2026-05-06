@@ -137,11 +137,37 @@ export const AllVariants: Story = {
 			{(["standard", "filled", "tonal", "outlined"] as const).map((variant) => (
 				<div key={variant} style={{ display: "flex", gap: 8, alignItems: "center" }}>
 					<span style={{ width: 80, fontSize: 12, color: "#666" }}>{variant}</span>
-					<IconButton variant={variant} size="sm" icon={<PlusIcon />} aria-label={`${variant} sm`} />
-					<IconButton variant={variant} size="md" icon={<PlusIcon />} aria-label={`${variant} md`} />
-					<IconButton variant={variant} size="md" icon={<CloseIcon />} aria-label={`${variant} close`} />
-					<IconButton variant={variant} size="md" icon={<SearchIcon />} aria-label={`${variant} search`} />
-					<IconButton variant={variant} size="md" icon={<PlusIcon />} aria-label={`${variant} disabled`} disabled />
+					<IconButton
+						variant={variant}
+						size="sm"
+						icon={<PlusIcon />}
+						aria-label={`${variant} sm`}
+					/>
+					<IconButton
+						variant={variant}
+						size="md"
+						icon={<PlusIcon />}
+						aria-label={`${variant} md`}
+					/>
+					<IconButton
+						variant={variant}
+						size="md"
+						icon={<CloseIcon />}
+						aria-label={`${variant} close`}
+					/>
+					<IconButton
+						variant={variant}
+						size="md"
+						icon={<SearchIcon />}
+						aria-label={`${variant} search`}
+					/>
+					<IconButton
+						variant={variant}
+						size="md"
+						icon={<PlusIcon />}
+						aria-label={`${variant} disabled`}
+						disabled
+					/>
 				</div>
 			))}
 		</div>

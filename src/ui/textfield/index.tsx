@@ -106,20 +106,16 @@ export const TextField = ({
 	);
 
 	// clearable이 켜져 있고 값이 있으면 X 버튼, 없으면 trailingIcon
-	const resolvedTrailing = clearable && innerValue
-		? (
-			<button
-				type="button"
-				className="text_field_clear"
-				onClick={handleClear}
-				aria-label="Clear"
-			>
+	const resolvedTrailing =
+		clearable && innerValue ? (
+			<button type="button" className="text_field_clear" onClick={handleClear} aria-label="Clear">
 				<ClearIcon />
 			</button>
-		)
-		: trailingIcon
-			? <span className="text_field_icon" aria-hidden="true">{trailingIcon}</span>
-			: null;
+		) : trailingIcon ? (
+			<span className="text_field_icon" aria-hidden="true">
+				{trailingIcon}
+			</span>
+		) : null;
 
 	return (
 		<div className={rootClassName}>
@@ -138,7 +134,12 @@ export const TextField = ({
 						</span>
 					)}
 
-					<div className={cn("text_field_input_wrap", resolvedTrailing && "text_field_input_wrap_no_pad_right")}>
+					<div
+						className={cn(
+							"text_field_input_wrap",
+							resolvedTrailing && "text_field_input_wrap_no_pad_right",
+						)}
+					>
 						<input
 							id={inputId}
 							ref={ref}

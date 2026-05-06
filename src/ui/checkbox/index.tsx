@@ -4,8 +4,7 @@ import * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
-export interface CheckboxProps
-	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
 	/** 체크박스 옆에 표시할 라벨 */
 	label?: React.ReactNode;
 	/** 중간 선택(indeterminate) 상태 여부 */
@@ -34,7 +33,7 @@ export const Checkbox = ({
 
 	React.useImperativeHandle(
 		ref as React.Ref<HTMLInputElement>,
-		() => inputRef.current!,
+		() => inputRef.current as HTMLInputElement,
 	);
 
 	React.useEffect(() => {
@@ -51,12 +50,7 @@ export const Checkbox = ({
 
 	return (
 		<label className={rootClassName}>
-			<input
-				ref={inputRef}
-				type="checkbox"
-				className="checkbox_input"
-				{...props}
-			/>
+			<input ref={inputRef} type="checkbox" className="checkbox_input" {...props} />
 			<span className="checkbox_state_layer" aria-hidden="true">
 				<span className="checkbox_icon" />
 			</span>

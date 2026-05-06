@@ -1,10 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"lib": [
-			"ES2022",
-			"DOM"
-		],
+		"lib": ["ES2022", "DOM"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"jsx": "react-jsx",
@@ -15,9 +12,7 @@
 		"outDir": "dist",
 		"baseUrl": ".",
 		"paths": {
-			"src/*": [
-				"src/*"
-			]
+			"src/*": ["src/*"]
 		},
 		"ignoreDeprecations": "6.0",
 		"esModuleInterop": true,
@@ -29,7 +24,5 @@
 		"allowJs": true,
 		"noImplicitOverride": true
 	},
-	"include": [
-		"src/**/*"
-	]
+	"include": ["src/**/*"]
 }

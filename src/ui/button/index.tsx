@@ -7,8 +7,7 @@ import "./style.scss";
 export type ButtonVariant = "filled" | "tonal" | "outline" | "text";
 export type ButtonSize = "sm" | "md" | "xl";
 
-export interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/** 버튼 스타일 변형 (기본값: "filled") */
 	variant?: ButtonVariant;
 	/** 버튼 크기 (기본값: "md") */
