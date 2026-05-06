@@ -1,3 +1,10 @@
+## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.1...v2.4.2) (2026-05-06)
+
+
+### Bug Fixes
+
+* restore vanilla example function names broken by lint auto-fix ([df706f8](https://github.com/Bigtablet/bigtablet-design-system/commit/df706f8a6a57c727ea6ffc1fe34ac2f5581c0bd8))
+
 ## [2.4.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.0...v2.4.1) (2026-05-04)
 
 # [2.4.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.3.0...v2.4.0) (2026-04-28)
