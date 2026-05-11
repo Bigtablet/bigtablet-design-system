@@ -1,3 +1,5 @@
+## [2.4.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.2...v2.4.3) (2026-05-11)
+
 ## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.1...v2.4.2) (2026-05-06)
 
 
