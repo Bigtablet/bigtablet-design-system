@@ -3,15 +3,69 @@ name: CI
 on:
   pull_request:
     branches: [develop, main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'LICENSE'
   push:
     branches: [develop]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'LICENSE'
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
+  # 무엇이 바뀌었는지 한 번만 검사해서 후속 step의 조건으로 사용한다
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      stories: ${{ steps.filter.outputs.stories }}
+      deps: ${{ steps.filter.outputs.deps }}
+      vanilla: ${{ steps.filter.outputs.vanilla }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/ui/**'
+              - 'src/styles/**'
+              - 'src/utils/**'
+              - 'src/index.ts'
+              - 'src/next.ts'
+              - 'src/test/**'
+              - 'tsup.config.ts'
+              - 'vitest.config.ts'
+              - 'tsconfig.json'
+              - 'biome.json'
+              - 'scripts/**'
+            stories:
+              - 'src/**/*.stories.tsx'
+              - 'src/stories/**'
+              - '.storybook/**'
+            deps:
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            vanilla:
+              - 'src/vanilla/**'
+
   test:
+    needs: changes
+    # docs-only / config-only PR은 paths-ignore에서 이미 걸러짐.
+    # 그 외엔 code / stories / deps / vanilla 중 하나라도 변경된 경우만 돈다.
+    if: |
+      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.stories == 'true' ||
+      needs.changes.outputs.deps == 'true' ||
+      needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -36,24 +90,32 @@ jobs:
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.base_ref == 'develop'
         run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
+      # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
       - name: Run tests with coverage
+        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'
         run: pnpm test:coverage
 
+      # Storybook a11y는 무겁다 (Playwright + Chromium 다운로드 ~200MB)
+      # 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다
       - name: Install Playwright browsers
+        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run a11y tests (Storybook)
+        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
         run: pnpm test:storybook
 
+      # 빌드는 모든 변경에서 검증 (deps/scripts 변경도 빌드 영향 가능)
       - name: Build
         run: pnpm build
 
+      # size-limit은 dist 산출물 기반 — 빌드 직후 항상
       - name: Check bundle size
         run: pnpm size
 
       - name: Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && (needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true')
         with:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json

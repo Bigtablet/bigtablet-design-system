@@ -3,8 +3,30 @@ name: Chromatic
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'src/ui/**'
+      - 'src/stories/**'
+      - 'src/styles/**'
+      - 'src/**/*.stories.tsx'
+      - '.storybook/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsup.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/storybook.yml'
   pull_request:
     branches: [develop]
+    paths:
+      - 'src/ui/**'
+      - 'src/stories/**'
+      - 'src/styles/**'
+      - 'src/**/*.stories.tsx'
+      - '.storybook/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsup.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/storybook.yml'
 
 jobs:
   # ── develop / PR: 시각적 리뷰용 (변경사항 비교) ──────────────────────
