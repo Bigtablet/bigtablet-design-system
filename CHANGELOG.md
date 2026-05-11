@@ -1,3 +1,198 @@
+## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.1...v2.4.2) (2026-05-06)
+
+
+### Bug Fixes
+
+* restore vanilla example function names broken by lint auto-fix ([df706f8](https://github.com/Bigtablet/bigtablet-design-system/commit/df706f8a6a57c727ea6ffc1fe34ac2f5581c0bd8))
+
+## [2.4.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.0...v2.4.1) (2026-05-04)
+
+# [2.4.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.3.0...v2.4.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* address Gemini code review on Dropdown component ([ab0c279](https://github.com/Bigtablet/bigtablet-design-system/commit/ab0c279da372adcb5d794303e46cd12145d33bf0))
+
+
+### Features
+
+* add Dropdown component — redesign from Figma spec ([a89e1e5](https://github.com/Bigtablet/bigtablet-design-system/commit/a89e1e55ffc4d8c4ad8b40c8774afd1b09101225))
+
+# [2.3.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.4...v2.3.0) (2026-04-24)
+
+
+### Bug Fixes
+
+* restore tokens.json original format, apply only targeted token changes ([7ad6e63](https://github.com/Bigtablet/bigtablet-design-system/commit/7ad6e63855146e9e3f6f4cdeff182c9c4cef363c)), closes [#6B6B6B](https://github.com/Bigtablet/bigtablet-design-system/issues/6B6B6B) [#777777](https://github.com/Bigtablet/bigtablet-design-system/issues/777777) [#333333](https://github.com/Bigtablet/bigtablet-design-system/issues/333333)
+
+
+### Features
+
+* update color tokens — neutral 600/800, add bg inverse-surface ([6c975a2](https://github.com/Bigtablet/bigtablet-design-system/commit/6c975a2b8341fed175979d790b2cc8f17c8d89a1)), closes [#6B6B6B](https://github.com/Bigtablet/bigtablet-design-system/issues/6B6B6B) [#777777](https://github.com/Bigtablet/bigtablet-design-system/issues/777777) [#333333](https://github.com/Bigtablet/bigtablet-design-system/issues/333333) [#228](https://github.com/Bigtablet/bigtablet-design-system/issues/228)
+
+## [2.2.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.3...v2.2.4) (2026-04-20)
+
+
+### Bug Fixes
+
+* align Select focus highlight style with TextField pattern ([e4c6917](https://github.com/Bigtablet/bigtablet-design-system/commit/e4c691743a4e3357f87a9b528018e5d9a9eb4968))
+* clamp minDay at definition to guard upper bound against invalid input ([ff6645c](https://github.com/Bigtablet/bigtablet-design-system/commit/ff6645c5adbe0521f061a617812fca0591b94478))
+* clamp minDay to 1–31 range to guard against invalid minDate input ([32c8f9c](https://github.com/Bigtablet/bigtablet-design-system/commit/32c8f9c23bcd3e964638dae84905250bbf31dd5c))
+* clamp minMonth to 1–12 range to guard against invalid minDate input ([7619fc7](https://github.com/Bigtablet/bigtablet-design-system/commit/7619fc7cc8d166334c12614f77feb0e725fe92c0))
+* refactor DatePicker to use DS Select component for consistent UX ([5387f9a](https://github.com/Bigtablet/bigtablet-design-system/commit/5387f9aa84a16c2365f17604d6d90780a790cc10))
+* remove default margin-top from Card title ([cf44ff7](https://github.com/Bigtablet/bigtablet-design-system/commit/cf44ff758f8c3423a46758bc3c88c4bd20dcd45c))
+* Select 밀림 및 클릭 테두리 강조 버그 수정 ([eeb8a0c](https://github.com/Bigtablet/bigtablet-design-system/commit/eeb8a0cdc350f5bbcfef93bc8300aeee32cbb834))
+
+## [2.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.1...v2.2.2) (2026-04-20)
+
+
+### Bug Fixes
+
+* align Select focus highlight style with TextField pattern ([e4c6917](https://github.com/Bigtablet/bigtablet-design-system/commit/e4c691743a4e3357f87a9b528018e5d9a9eb4968))
+* clamp minMonth to 1–12 range to guard against invalid minDate input ([7619fc7](https://github.com/Bigtablet/bigtablet-design-system/commit/7619fc7cc8d166334c12614f77feb0e725fe92c0))
+* refactor DatePicker to use DS Select component for consistent UX ([5387f9a](https://github.com/Bigtablet/bigtablet-design-system/commit/5387f9aa84a16c2365f17604d6d90780a790cc10))
+* remove default margin-top from Card title ([cf44ff7](https://github.com/Bigtablet/bigtablet-design-system/commit/cf44ff758f8c3423a46758bc3c88c4bd20dcd45c))
+
+## [2.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.0...v2.2.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* Select fieldset/legend 구조 전환으로 label 배경색 제거 ([b9113be](https://github.com/Bigtablet/bigtablet-design-system/commit/b9113becdb3dabfafca0808fff415832e345be41))
+* Select 밀림 및 클릭 테두리 강조 버그 수정 ([eeb8a0c](https://github.com/Bigtablet/bigtablet-design-system/commit/eeb8a0cdc350f5bbcfef93bc8300aeee32cbb834))
+* TextField fieldset/legend 구조 전환으로 label 배경색 제거 ([724bd1a](https://github.com/Bigtablet/bigtablet-design-system/commit/724bd1a65226966a59ccbe62bc10813ece152408))
+* TextField 컨테이너 흰색 배경 복구 ([ff57129](https://github.com/Bigtablet/bigtablet-design-system/commit/ff57129b5668c6913593ba7591178b3589584a2c))
+* TextField 코드리뷰 반영 ([3cb9cba](https://github.com/Bigtablet/bigtablet-design-system/commit/3cb9cba8f7a8e747a231f66827c9f767fdf4da7c))
+
+## [2.2.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.2...v2.2.3) (2026-04-17)
+
+
+### Bug Fixes
+
+* Select fieldset/legend 구조 전환으로 label 배경색 제거 ([b9113be](https://github.com/Bigtablet/bigtablet-design-system/commit/b9113becdb3dabfafca0808fff415832e345be41))
+
+## [2.2.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.1...v2.2.2) (2026-04-17)
+
+
+### Bug Fixes
+
+* TextField 컨테이너 흰색 배경 복구 ([ff57129](https://github.com/Bigtablet/bigtablet-design-system/commit/ff57129b5668c6913593ba7591178b3589584a2c))
+* TextField 코드리뷰 반영 ([3cb9cba](https://github.com/Bigtablet/bigtablet-design-system/commit/3cb9cba8f7a8e747a231f66827c9f767fdf4da7c))
+
+## [2.2.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.2.0...v2.2.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* TextField fieldset/legend 구조 전환으로 label 배경색 제거 ([724bd1a](https://github.com/Bigtablet/bigtablet-design-system/commit/724bd1a65226966a59ccbe62bc10813ece152408))
+
+# [2.2.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.1.0...v2.2.0) (2026-04-17)
+
+
+### Bug Fixes
+
+* apply paste handler to all OTP inputs and redirect focus to first empty box ([f1c48d7](https://github.com/Bigtablet/bigtablet-design-system/commit/f1c48d76bbdd636a350d1b9c5a8d64aa93525422))
+
+
+### Features
+
+* add size prop to TextField and use CSS variable for surface color ([4868811](https://github.com/Bigtablet/bigtablet-design-system/commit/4868811c90373d9b5379c3c6ebb5daef08ddafca)), closes [#fff](https://github.com/Bigtablet/bigtablet-design-system/issues/fff)
+* redesign Select label to floating style and align height with TextField ([15ca34c](https://github.com/Bigtablet/bigtablet-design-system/commit/15ca34ca4d107afed614f0699434124c2bdb6216))
+
+# [2.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.7...v2.1.0) (2026-04-16)
+
+
+### Bug Fixes
+
+* remove opacity from disabled OtpInput, use text color token instead ([6f7a498](https://github.com/Bigtablet/bigtablet-design-system/commit/6f7a4982ad3547e38c6c651333fb5b41b0e08c41))
+* use text/body color for disabled OtpInput per Figma spec ([a6c060a](https://github.com/Bigtablet/bigtablet-design-system/commit/a6c060a75efaad51e3b2b1951d780ae3a675fe67))
+
+
+### Features
+
+* add OtpInput component per Figma spec ([fce5540](https://github.com/Bigtablet/bigtablet-design-system/commit/fce5540c68bce4a999177b8b6da558650a81c4e9))
+
+## [2.0.7](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.6...v2.0.7) (2026-04-15)
+
+
+### Bug Fixes
+
+* correct Toggle thumb sizes and remove border in disabled state ([09163a5](https://github.com/Bigtablet/bigtablet-design-system/commit/09163a54bdd87a4b5a6beeeefa9b2559445a5456))
+* ensure disabled state overrides on-state via compound selector ([6d8973b](https://github.com/Bigtablet/bigtablet-design-system/commit/6d8973b4cce6c2389ec77c6e88c66429ad20bcf9))
+* rename switch folder and files to toggle ([cb8db54](https://github.com/Bigtablet/bigtablet-design-system/commit/cb8db547bffbb643773906baacca6a69120ca57b))
+* rename Switch to Toggle and reduce sizes to sm/md ([7864b1f](https://github.com/Bigtablet/bigtablet-design-system/commit/7864b1faa6685df4576046e8fa810701629258ea))
+* rename vanilla Switch to Toggle and update sizes ([3b6fe83](https://github.com/Bigtablet/bigtablet-design-system/commit/3b6fe83e74650887a23ca8490d920f23804ca004))
+* update Toggle disabled state to use explicit #B3B3B3 background ([e7ccdca](https://github.com/Bigtablet/bigtablet-design-system/commit/e7ccdca177fa147822dbc48f5ce35a69069e7c04)), closes [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3) [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3)
+* update Toggle OFF state background to #B3B3B3 per Figma spec ([a04003b](https://github.com/Bigtablet/bigtablet-design-system/commit/a04003b058f91eea6822328942786939ea8b129a)), closes [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3) [#F4F4F4](https://github.com/Bigtablet/bigtablet-design-system/issues/F4F4F4) [#B3B3B3](https://github.com/Bigtablet/bigtablet-design-system/issues/B3B3B3)
+
+## [2.0.6](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.5...v2.0.6) (2026-04-11)
+
+
+### Bug Fixes
+
+* update token import ([025f397](https://github.com/Bigtablet/bigtablet-design-system/commit/025f3974b1ff714ededb4fa55fe6a7801c419d5a))
+
+## [2.0.5](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.4...v2.0.5) (2026-04-10)
+
+
+### Bug Fixes
+
+* use relative paths for Storybook logo and favicon ([ac2c2fa](https://github.com/Bigtablet/bigtablet-design-system/commit/ac2c2fa00f2de31e4e50b8cf1a4b03a3cf837288))
+
+## [2.0.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.3...v2.0.4) (2026-04-10)
+
+## [2.0.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.2...v2.0.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* add full-area state layer to chip_trailing X button ([628ff7f](https://github.com/Bigtablet/bigtablet-design-system/commit/628ff7fc9ab87c9f5e184d6ce755cb1c4b055c4a))
+* chip_trailing X button full-area state layer on hover ([95e9ce8](https://github.com/Bigtablet/bigtablet-design-system/commit/95e9ce8d69fcc0f83c22af4cef5182410e7e143a))
+* eliminate double state layer overlap on Chip active/pressed ([6d264d4](https://github.com/Bigtablet/bigtablet-design-system/commit/6d264d4dc67f22dfa5ae7b2622c2ee04b9541d97))
+* move hover state layer from chip_content to chip container ([ef862e1](https://github.com/Bigtablet/bigtablet-design-system/commit/ef862e1145d299271461fc161bfabac3d5d8585f))
+* refactor Chip hover zones — split content into separate buttons ([a8691da](https://github.com/Bigtablet/bigtablet-design-system/commit/a8691da8cfb5977eae28bf1aca9db47782a67794))
+* revert Chip to single-button structure with smart icon hover toggle ([395c79c](https://github.com/Bigtablet/bigtablet-design-system/commit/395c79c59be26b0f4c045af2a8d570c0693b3037))
+* revert chip_trailing to icon-only circular hover for consistency ([7512e9a](https://github.com/Bigtablet/bigtablet-design-system/commit/7512e9aad5f02aca5b49111be617648b5264f68e))
+* simplify chip_trailing hover — full state layer only, no icon toggle ([88c9432](https://github.com/Bigtablet/bigtablet-design-system/commit/88c943264658645ffe932639571ef489f5d17f9c))
+* unify chip_trailing hover with other icons — circular only ([a7e99aa](https://github.com/Bigtablet/bigtablet-design-system/commit/a7e99aa95a9b2ab6d0c6f9022476120409370504))
+* zone-based hover for Chip — each icon/label area highlights independently ([3d5da7e](https://github.com/Bigtablet/bigtablet-design-system/commit/3d5da7ea693e6f67696b92b1fd7b9a5a699fe6df))
+
+## [2.0.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.1...v2.0.2) (2026-04-10)
+
+
+### Bug Fixes
+
+* fix chip double action and double hover, scope icon circular hover to trailing button only ([38fcdf0](https://github.com/Bigtablet/bigtablet-design-system/commit/38fcdf03f91e97bf7b1609633ef83f79ef673f81))
+* fix Spinner animation, add hover effect to chip_icon ([e1320f4](https://github.com/Bigtablet/bigtablet-design-system/commit/e1320f4267a7917fcdc2b6109cb7e770a907c95a))
+* restore Chip trailing hover, widen left padding, add removable interactive story ([0456c78](https://github.com/Bigtablet/bigtablet-design-system/commit/0456c782d5e118f342d7e08896b17e917fc9d2df))
+
+## [2.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.0.1) (2026-04-10)
+
+
+### Bug Fixes
+
+* reset version to 2.0.0 for 2.0.1 patch release ([6c093ff](https://github.com/Bigtablet/bigtablet-design-system/commit/6c093ff6544423636eb3c1d86a01c9e845e1d57d))
+
+# [2.0.1](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.0.0...v2.0.1) (2026-04-10)
+
+
+### Bug Fixes
+
+* add chip aria attrs, textfield clearable story, tokenize borders, replace inset shorthand ([2f1f62c](https://github.com/Bigtablet/bigtablet-design-system/commit/2f1f62cffbd947e177fbac15f978be5f10c53449))
+* add equal right padding to ListItem state layer ([df5cf8b](https://github.com/Bigtablet/bigtablet-design-system/commit/df5cf8bc5907cbccbfb0083ba7470e713a6f9783))
+* align toast icon to text baseline, add clearable prop to TextField ([39f6f9e](https://github.com/Bigtablet/bigtablet-design-system/commit/39f6f9e717f3594f5977896c966218b95d354b7d))
+* improve Chip aria-expanded and TextField clear button accessibility ([6dfc7bf](https://github.com/Bigtablet/bigtablet-design-system/commit/6dfc7bf3012f5c423c593bbb39aba00418c04cc9))
+* make entire Chip clickable, move filter chevron into content button ([1e2505e](https://github.com/Bigtablet/bigtablet-design-system/commit/1e2505e31a2ac7c275e9d80250951fa38a475126))
+* use Icon component for TextField clear button, increase size-limit for icon data ([de8bff9](https://github.com/Bigtablet/bigtablet-design-system/commit/de8bff98db959724f978447c3d9931ca0a702dd0))
+* use inset + margin auto for Radio ::after centering ([3ea8880](https://github.com/Bigtablet/bigtablet-design-system/commit/3ea8880bd807bfc9d1e43ec485580dc9659cfc80))
+* use whole-pixel inner dot sizes for Radio, fix Icon story invalid name ([b9d864f](https://github.com/Bigtablet/bigtablet-design-system/commit/b9d864fe9597c022dadbb25b8389860230f89cd2))
+
+
+### Features
+
+* add Icon component with 57 Material Symbols icons ([7a2ef79](https://github.com/Bigtablet/bigtablet-design-system/commit/7a2ef79a3fd1683e78e07fd2b6a4eba5d4b0e8fd))
+
 # [2.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v1.24.2...v2.0.0) (2026-04-10)
 
 
