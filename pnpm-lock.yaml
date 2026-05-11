@@ -88,7 +88,7 @@ importers:
         version: 4.1.5(@vitest/browser@4.1.5)(vitest@4.1.5)
       chromatic:
         specifier: ^16.9.0
-        version: 16.9.0
+        version: 16.9.1
       conventional-changelog-conventionalcommits:
         specifier: ^9.3.1
         version: 9.3.1
@@ -2075,8 +2075,8 @@ packages:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
 
-  chromatic@16.9.0:
-    resolution: {integrity: sha512-KJ1qvHMMP3jYZksxA229dREL81TeS+XxerRgd83klJIgtuQdY8kYg5TClNaF+K9HAzHmF19VIDHF6d0XwsRqzQ==}
+  chromatic@16.9.1:
+    resolution: {integrity: sha512-+EkBJqLfeCfSqC3rz1H8GDwT9OoHRB/iX3qbjtW9wu3BeySnDjumD8E/BflEsHV7RoCzeKcp85zKGR/ZKcX7rw==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -3529,6 +3529,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.8.0:
+    resolution: {integrity: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   sharp@0.34.5:
     resolution: {integrity: sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -4388,7 +4393,7 @@ snapshots:
   '@commitlint/is-ignored@20.5.0':
     dependencies:
       '@commitlint/types': 20.5.0
-      semver: 7.7.4
+      semver: 7.8.0
 
   '@commitlint/lint@20.5.3':
     dependencies:
@@ -4462,7 +4467,7 @@ snapshots:
     dependencies:
       '@simple-libs/child-process-utils': 1.0.2
       '@simple-libs/stream-utils': 1.2.0
-      semver: 7.7.4
+      semver: 7.8.0
     optionalDependencies:
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.4.0
@@ -5774,9 +5779,9 @@ snapshots:
     dependencies:
       readdirp: 4.1.2
 
-  chromatic@16.9.0:
+  chromatic@16.9.1:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.0
 
   clean-stack@2.2.0: {}
 
@@ -6580,7 +6585,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.0
 
   marked-terminal@7.3.0(marked@15.0.12):
     dependencies:
@@ -7194,11 +7199,13 @@ snapshots:
 
   semver@7.7.4: {}
 
+  semver@7.8.0: {}
+
   sharp@0.34.5:
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.7.4
+      semver: 7.8.0
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
