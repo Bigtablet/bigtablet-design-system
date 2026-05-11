@@ -3,6 +3,20 @@ name: Deploy Storybook to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/ui/**'
+      - 'src/stories/**'
+      - 'src/styles/**'
+      - 'src/**/*.stories.tsx'
+      - '.storybook/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsup.config.ts'
+      - 'tsconfig.json'
+      - 'scripts/protect-storybook.mjs'
+      - '.github/workflows/pages.yml'
+  # 수동 트리거 (브랜드 / 도메인 외부 콘텐츠 갱신 필요할 때)
+  workflow_dispatch:
 
 permissions:
   contents: read

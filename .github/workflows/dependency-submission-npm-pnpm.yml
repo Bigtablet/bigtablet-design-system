@@ -3,8 +3,16 @@ name: Dependency Submission (npm + pnpm)
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/dependency-submission-npm-pnpm.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/dependency-submission-npm-pnpm.yml'
   schedule:
     - cron: '0 23 * * *'
   workflow_dispatch:
