@@ -400,7 +400,7 @@ export const Comparison: Story = {
 								style={{
 									fontFamily: typography.fontFamily.primary,
 									fontSize: style.fontSize,
-									fontWeight: style.fontWeight === "Medium" ? 500 : 400,
+									fontWeight: fontWeightMap[style.fontWeight] ?? 400,
 									lineHeight: style.lineHeight,
 								}}
 							>
