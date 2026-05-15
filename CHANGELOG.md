@@ -1,3 +1,11 @@
+## [2.4.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.3...v2.4.4) (2026-05-15)
+
+
+### Bug Fixes
+
+* resolve type errors in fab/linear-progress tests and typography story ([4d55abd](https://github.com/Bigtablet/bigtablet-design-system/commit/4d55abd0d2f281585337bb265cea2a77a3e5bcd0))
+* use fontWeightMap in typography Comparison story ([48cc262](https://github.com/Bigtablet/bigtablet-design-system/commit/48cc26218060c304a8f9b499b7f7029790e5f8a8)), closes [#251](https://github.com/Bigtablet/bigtablet-design-system/issues/251)
+
 ## [2.4.3](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.2...v2.4.3) (2026-05-11)
 
 ## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.1...v2.4.2) (2026-05-06)
