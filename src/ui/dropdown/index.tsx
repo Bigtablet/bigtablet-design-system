@@ -181,10 +181,10 @@ export const Dropdown = ({
 
 	React.useEffect(() => {
 		if (!isOpen) return;
-		const idx = options.findIndex((o) => o.value === currentValue && !o.disabled);
+		const matchedIndex = options.findIndex((o) => o.value === currentValue && !o.disabled);
 		setActiveIndex(
-			idx >= 0
-				? idx
+			matchedIndex >= 0
+				? matchedIndex
 				: Math.max(
 						0,
 						options.findIndex((o) => !o.disabled),
