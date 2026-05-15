@@ -49,9 +49,9 @@ export const OtpInput = ({
 	}, [autoFocus]);
 
 	const digits = React.useMemo(() => {
-		const arr = value.split("").slice(0, length);
-		while (arr.length < length) arr.push("");
-		return arr;
+		const chars = value.split("").slice(0, length);
+		while (chars.length < length) chars.push("");
+		return chars;
 	}, [value, length]);
 
 	const focusInput = (index: number) => {
@@ -63,14 +63,14 @@ export const OtpInput = ({
 	};
 
 	const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-		const val = e.target.value;
-		if (val && !/^\d$/.test(val)) return;
+		const nextDigit = e.target.value;
+		if (nextDigit && !/^\d$/.test(nextDigit)) return;
 
 		const newDigits = [...digits];
-		newDigits[index] = val;
+		newDigits[index] = nextDigit;
 		updateValue(newDigits);
 
-		if (val && index < length - 1) {
+		if (nextDigit && index < length - 1) {
 			focusInput(index + 1);
 		}
 	};
