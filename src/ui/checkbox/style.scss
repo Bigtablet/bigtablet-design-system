@@ -108,6 +108,7 @@
     border-top: 0;
     border-left: 0;
     transform: translate(-50%, -50%) rotate(45deg);
+    animation: checkbox_check_in token.$transition_scale;
   }
 
   // Indeterminate dash
@@ -122,6 +123,7 @@
     transform: translate(-50%, -50%);
     border: none;
     border-radius: 1px;
+    animation: checkbox_dash_in token.$transition_scale;
   }
 
   // ── Error state ────────────────────────────────────────────────────────
@@ -134,5 +136,27 @@
   &_error .checkbox_input:indeterminate ~ .checkbox_state_layer .checkbox_icon {
     background: token.$color_status_error;
     border-color: token.$color_status_error;
+  }
+}
+
+@keyframes checkbox_check_in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+  }
+}
+
+@keyframes checkbox_dash_in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1);
   }
 }

@@ -13,7 +13,8 @@
   @include token.body_small_medium;
   transition: background token.$transition_base,
     color token.$transition_base,
-    border-color token.$transition_base;
+    border-color token.$transition_base,
+    transform token.$transition_fast;
 
   // State layer overlay
   &::before {
@@ -23,6 +24,10 @@
     border-radius: inherit;
     transition: background token.$transition_base;
     pointer-events: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   &:disabled {

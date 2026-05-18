@@ -7,6 +7,7 @@
   place-items: center;
   background: token.$color_bg_overlay;
   z-index: token.$z_level2;
+  animation: modal_overlay_fade token.$transition_fade;
 
   &_panel {
     background: token.$color_bg_solid;
@@ -14,6 +15,7 @@
     box-shadow: token.$elevation_level3;
     max-width: calc(100% - #{token.$spacing_32 * 2});
     overflow: visible;
+    animation: modal_panel_enter token.$transition_scale;
   }
 
   &_header {
@@ -26,5 +28,21 @@
   &_body {
     padding: token.$spacing_16;
     overflow: visible;
+  }
+}
+
+@keyframes modal_overlay_fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal_panel_enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }

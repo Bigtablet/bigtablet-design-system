@@ -132,6 +132,7 @@
     transform: translate(-50%, -50%);
     background: token.$color_brand_primary;
     border-radius: token.$radius_full;
+    animation: radio_dot_in token.$transition_spring;
   }
 
   // md: 18px 외부 → 16px 내부 → 내부 점 10px → 마진 3px (정수)
@@ -144,5 +145,16 @@
   &_size_lg &_input:checked ~ .radio_state_layer .radio_dot::after {
     width: 10px;
     height: 10px;
+  }
+}
+
+@keyframes radio_dot_in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }

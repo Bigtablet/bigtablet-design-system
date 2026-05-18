@@ -15,6 +15,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	padding?: "none" | "sm" | "md" | "lg";
 	/** 테두리 표시 여부 (기본값: false) */
 	bordered?: boolean;
+	/** hover 시 살짝 떠오르는 효과 (기본값: false) */
+	hoverable?: boolean;
 }
 
 /**
@@ -29,6 +31,7 @@ export const Card = ({
 	shadow = "sm",
 	padding = "md",
 	bordered = false,
+	hoverable = false,
 	className,
 	children,
 	...props
@@ -37,7 +40,7 @@ export const Card = ({
 		"card",
 		`card_shadow_${shadow}`,
 		`card_p_${padding}`,
-		{ card_bordered: bordered },
+		{ card_bordered: bordered, card_hoverable: hoverable },
 		className,
 	);
 

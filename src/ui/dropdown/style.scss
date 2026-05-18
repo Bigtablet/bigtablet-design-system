@@ -137,6 +137,11 @@
     justify-content: center;
     flex-shrink: 0;
     color: token.$color_text_body;
+    transition: transform token.$transition_bounce;
+
+    &.is_open {
+      transform: rotate(180deg);
+    }
   }
 
   // ── List (dropdown panel) ─────────────────────────────────────────────────────
@@ -161,11 +166,16 @@
     overflow-x: hidden;
     padding: token.$spacing_4 0;
 
+    animation: dropdown_slide_down token.$transition_slide;
+    transform-origin: top center;
+
     &_up {
       top: auto;
       bottom: 100%;
       margin-top: 0;
       margin-bottom: token.$spacing_4;
+      animation: dropdown_slide_up token.$transition_slide;
+      transform-origin: bottom center;
     }
   }
 
@@ -244,5 +254,27 @@
     background: token.$color_border_default;
     border: none;
     margin: 0;
+  }
+}
+
+@keyframes dropdown_slide_down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes dropdown_slide_up {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scaleY(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
   }
 }

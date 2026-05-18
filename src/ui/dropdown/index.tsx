@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 export type DropdownSize = "sm" | "md" | "lg";
 
@@ -234,8 +234,8 @@ export const Dropdown = ({
 					<span className={currentOption ? "dropdown_value" : "dropdown_placeholder"}>
 						{currentOption ? currentOption.label : placeholder}
 					</span>
-					<span className="dropdown_icon" aria-hidden="true">
-						{isOpen ? <X size={24} /> : <ChevronDown size={24} />}
+					<span className={cn("dropdown_icon", { is_open: isOpen })} aria-hidden="true">
+						<ChevronDown size={24} />
 					</span>
 				</button>
 			</div>
