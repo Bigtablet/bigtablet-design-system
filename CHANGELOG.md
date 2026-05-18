@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.4...v2.5.0) (2026-05-18)
+
+
+### Features
+
+* add natural animations to Dropdown, Modal, Checkbox, Radio, Button, Card ([331a505](https://github.com/Bigtablet/bigtablet-design-system/commit/331a505cc655d3663b435ed0ad246322c3eb6001))
+
 ## [2.4.4](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.3...v2.4.4) (2026-05-15)
 
 
