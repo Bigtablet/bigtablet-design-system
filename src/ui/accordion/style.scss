@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: token.$spacing_16 token.$spacing_20;
+    padding: token.$spacing_12 token.$spacing_16;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -70,7 +70,7 @@
   }
 
   &_content {
-    padding: 0 token.$spacing_20 token.$spacing_16;
+    padding: 0 token.$spacing_16 token.$spacing_12;
     @include token.body_small;
     color: token.$color_text_body;
   }
