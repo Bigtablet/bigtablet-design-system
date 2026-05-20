@@ -29,8 +29,6 @@ export type {
 	TabsVariant,
 } from "./ui/tabs";
 export { Tab, TabList, TabPanel, Tabs } from "./ui/tabs";
-export type { TagProps, TagVariant } from "./ui/tag";
-export { Tag } from "./ui/tag";
 export type { TooltipPlacement, TooltipProps } from "./ui/tooltip";
 export { Tooltip } from "./ui/tooltip";
 
@@ -58,7 +56,7 @@ export type { CardProps } from "./ui/card";
 export { Card } from "./ui/card";
 export type { CheckboxProps } from "./ui/checkbox";
 export { Checkbox } from "./ui/checkbox";
-export type { ChipProps, ChipType } from "./ui/chip";
+export type { ChipProps, ChipSize, ChipTone, ChipType } from "./ui/chip";
 export { Chip } from "./ui/chip";
 export type { DatePickerProps } from "./ui/date-picker";
 export { DatePicker } from "./ui/date-picker";

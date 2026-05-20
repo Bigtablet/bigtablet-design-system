@@ -26,7 +26,7 @@ const meta: Meta<typeof Button> = {
 		},
 		size: {
 			control: "select",
-			options: ["sm", "md", "xl"],
+			options: ["sm", "md", "lg", "xl"],
 			description: "버튼의 크기입니다.",
 		},
 		disabled: {
@@ -65,9 +65,10 @@ const meta: Meta<typeof Button> = {
 | **text** | UI를 최소화한 행동 (인라인 액션) |
 
 ### 사이즈
-- **sm**: 36px — 밀집된 UI, 인라인 액션
+- **sm**: 32px — 밀집된 UI, 인라인 액션
 - **md**: 40px — 기본 크기
-- **xl**: 56px — 모바일 CTA, 강조 액션
+- **lg**: 48px — 강조 액션, 모바일 친화 CTA
+- **xl**: 56px — 풀스크린 CTA, 메인 액션 (legacy)
 
 ### 접근성 (구현 완료)
 - \`<button>\` 네이티브 요소 사용 → Tab 포커스, Enter/Space 클릭 자동 지원
@@ -122,13 +123,24 @@ export const WithIcons: Story = {
 
 export const Sizes: Story = {
 	name: "크기 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"데스크탑(≥600px) 기준 사이즈: sm=32, md=40, lg=48, xl=56. 모바일(<600px)에선 자동으로 한 단계 키워집니다 (sm→40, md→48, lg→56, xl 유지).",
+			},
+		},
+	},
 	render: (args) => (
-		<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+		<div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
 			<Button {...args} size="sm">
 				Small
 			</Button>
 			<Button {...args} size="md">
 				Medium
+			</Button>
+			<Button {...args} size="lg">
+				Large
 			</Button>
 			<Button {...args} size="xl">
 				XLarge
@@ -152,6 +164,9 @@ export const AllVariants: Story = {
 					</Button>
 					<Button variant={variant} size="md">
 						Medium
+					</Button>
+					<Button variant={variant} size="lg">
+						Large
 					</Button>
 					<Button variant={variant} size="xl">
 						XLarge

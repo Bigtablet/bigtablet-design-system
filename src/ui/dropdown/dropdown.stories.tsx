@@ -114,9 +114,9 @@ export const Sizes: Story = {
 	name: "크기 비교",
 	render: (args) => (
 		<div style={{ display: "grid", gap: 12, width: 320 }}>
-			<Dropdown {...args} size="sm" label={undefined} placeholder="Small (40px)" />
-			<Dropdown {...args} size="md" label="Medium (56px)" />
-			<Dropdown {...args} size="lg" label="Large (56px)" />
+			<Dropdown {...args} size="sm" label="Small" placeholder="40px height" />
+			<Dropdown {...args} size="md" label="Medium" placeholder="40px height" />
+			<Dropdown {...args} size="lg" label="Large" placeholder="48px height" />
 		</div>
 	),
 };

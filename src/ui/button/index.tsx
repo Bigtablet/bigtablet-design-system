@@ -5,7 +5,7 @@ import { cn } from "../../utils";
 import "./style.scss";
 
 export type ButtonVariant = "filled" | "tonal" | "outline" | "text";
-export type ButtonSize = "sm" | "md" | "xl";
+export type ButtonSize = "sm" | "md" | "lg" | "xl";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/** 버튼 스타일 변형 (기본값: "filled") */
@@ -24,7 +24,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 /**
  * 버튼을 렌더링한다.
- * Figma DS 기준 4가지 variant(filled/tonal/outline/text)와 3가지 size(sm/md/xl)를 지원한다.
+ * Figma DS 기준 4가지 variant(filled/tonal/outline/text)와 4가지 size(sm/md/lg/xl)를 지원한다.
  * @param props 버튼 속성
  * @returns 렌더링된 버튼 요소
  */

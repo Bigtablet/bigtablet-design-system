@@ -68,8 +68,14 @@
   }
 
   &_active {
-    color: token.$color_text_heading;
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
     font-weight: token.$font_weight_medium;
+
+    &:hover {
+      background: token.$color_accent_strong;
+      color: token.$color_accent_on_surface;
+    }
   }
 
   &_ellipsis {

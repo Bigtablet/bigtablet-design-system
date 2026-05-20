@@ -4,6 +4,8 @@ import type * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
+export type CardVariant = "default" | "accent";
+
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	/** 카드 상단에 표시할 제목 */
 	heading?: React.ReactNode;
@@ -15,6 +17,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	padding?: "none" | "sm" | "md" | "lg";
 	/** 테두리 표시 여부 (기본값: false) */
 	bordered?: boolean;
+	/** 카드 variant — "accent"는 navy bg + white text (강조 카드) */
+	variant?: CardVariant;
 }
 
 /**
@@ -29,6 +33,7 @@ export const Card = ({
 	shadow = "sm",
 	padding = "md",
 	bordered = false,
+	variant = "default",
 	className,
 	children,
 	...props
@@ -37,6 +42,7 @@ export const Card = ({
 		"card",
 		`card_shadow_${shadow}`,
 		`card_p_${padding}`,
+		variant !== "default" && `card_variant_${variant}`,
 		{ card_bordered: bordered },
 		className,
 	);

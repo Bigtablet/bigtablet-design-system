@@ -226,16 +226,17 @@ export const OnDimBackground: Story = {
 export const SizeComparison: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
 
-	name: "크기 비교 (sm / md)",
+	name: "크기 비교 (sm / md / lg)",
 	render: () => (
 		<div style={{ display: "grid", gap: 24, width: 320 }}>
+			<TextField label="Size sm" placeholder="Input" size="sm" supportingText="height 40px (desktop) / 48px (mobile)" />
 			<TextField
 				label="Size md (기본)"
 				placeholder="Input"
 				size="md"
-				supportingText="min-height 52px"
+				supportingText="height 40px (desktop) / 48px (mobile)"
 			/>
-			<TextField label="Size sm" placeholder="Input" size="sm" supportingText="min-height 40px" />
+			<TextField label="Size lg" placeholder="Input" size="lg" supportingText="height 48px (desktop) / 56px (mobile)" />
 			<TextField
 				label="Size sm + 아이콘"
 				placeholder="Search"

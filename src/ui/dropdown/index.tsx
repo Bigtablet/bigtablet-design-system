@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "../../utils";
 import "./style.scss";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 export type DropdownSize = "sm" | "md" | "lg";
 
@@ -92,8 +92,7 @@ export const Dropdown = ({
 		[options, currentValue],
 	);
 
-	/** 라벨: 열려있거나 값이 있을 때만 표시 */
-	const isLabelVisible = isOpen || !!currentOption;
+	// 라벨은 항상 보이는 정적 라벨 (notched outline + always visible)
 
 	const setValue = React.useCallback(
 		(next: string | null) => {
@@ -211,13 +210,13 @@ export const Dropdown = ({
 			className={rootClassName}
 			style={fullWidth ? { width: "100%" } : undefined}
 		>
-			<div className={fieldsetClassName}>
-				{label && (
-					<span className={cn("dropdown_label", { is_visible: isLabelVisible })} aria-hidden="true">
-						{label}
-					</span>
-				)}
+			{label && (
+				<label htmlFor={dropdownId} className="dropdown_label">
+					{label}
+				</label>
+			)}
 
+			<div className={fieldsetClassName}>
 				<button
 					ref={controlRef}
 					id={dropdownId}
@@ -226,7 +225,6 @@ export const Dropdown = ({
 					aria-haspopup="listbox"
 					aria-expanded={isOpen}
 					aria-controls={`${dropdownId}_listbox`}
-					aria-label={label}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
 					onKeyDown={onKeyDown}
 					disabled={disabled}
@@ -234,8 +232,11 @@ export const Dropdown = ({
 					<span className={currentOption ? "dropdown_value" : "dropdown_placeholder"}>
 						{currentOption ? currentOption.label : placeholder}
 					</span>
-					<span className="dropdown_icon" aria-hidden="true">
-						{isOpen ? <X size={24} /> : <ChevronDown size={24} />}
+					<span
+						className={cn("dropdown_icon", { dropdown_icon_open: isOpen })}
+						aria-hidden="true"
+					>
+						<ChevronDown size={20} />
 					</span>
 				</button>
 			</div>

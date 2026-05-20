@@ -1,24 +1,23 @@
 @use "src/styles/token" as token;
-@use "sass:color";
 
-@keyframes alert_fade_in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+@keyframes alert_overlay_in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-@keyframes alert_slide_up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes alert_overlay_out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes alert_panel_in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes alert_panel_out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(4px) scale(0.98); }
 }
 
 .alert {
@@ -30,7 +29,7 @@
     align-items: center;
     justify-content: center;
     z-index: token.$z_level5;
-    animation: alert_fade_in token.$transition_base;
+    animation: alert_overlay_in token.$transition_enter_base forwards;
   }
 
   &_modal {
@@ -39,22 +38,68 @@
     min-width: 320px;
     max-width: 480px;
     box-shadow: token.$elevation_level4;
-    animation: alert_slide_up token.$transition_slow;
+    animation: alert_panel_in token.$transition_enter_base forwards;
+    will-change: transform, opacity;
     overflow: hidden;
   }
 
+  &_exiting {
+    animation: alert_overlay_out token.$transition_exit_fast forwards;
+
+    .alert_modal {
+      animation: alert_panel_out token.$transition_exit_fast forwards;
+    }
+  }
+
+  &_header {
+    display: flex;
+    align-items: flex-start;
+    gap: token.$spacing_8;
+    padding: token.$spacing_20 token.$spacing_20 token.$spacing_4;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+
+    &_info    { color: token.$color_status_info; }
+    &_success { color: token.$color_status_success; }
+    &_warning { color: token.$color_status_warning; }
+    &_error   { color: token.$color_status_error; }
+  }
+
   &_title {
-    @include token.title_large;
-    font-weight: token.$font_weight_medium;
-    color: token.$color_status_info;
-    padding: token.$spacing_12 token.$spacing_20 token.$spacing_4;
+    flex: 1;
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+  }
+
+  // ── Variant title + primary button colors ───────────────────────────────
+
+  &_variant_info {
+    .alert_title { color: token.$color_status_info; }
+    .alert_actions .button_variant_filled { background: token.$color_status_info; }
+  }
+  &_variant_success {
+    .alert_title { color: token.$color_status_success; }
+    .alert_actions .button_variant_filled { background: token.$color_status_success; }
+  }
+  &_variant_warning {
+    .alert_title { color: token.$color_status_warning; }
+    .alert_actions .button_variant_filled { background: token.$color_status_warning; }
+  }
+  &_variant_error {
+    .alert_title { color: token.$color_status_error; }
+    .alert_actions .button_variant_filled { background: token.$color_status_error; }
   }
 
   &_message {
     @include token.body_medium;
     color: token.$color_text_body;
-    padding: token.$spacing_20;
-    line-height: token.$line_height_28;
+    padding: 0 token.$spacing_20 token.$spacing_20;
   }
 
   &_actions {
@@ -63,125 +108,8 @@
     align-items: center;
     padding: 0 token.$spacing_20 token.$spacing_20;
 
-    &_left {
-      justify-content: flex-start;
-    }
-
-    &_center {
-      justify-content: center;
-    }
-
-    &_right {
-      justify-content: flex-end;
-    }
-  }
-
-  &_button {
-    min-width: 80px;
-    padding: token.$spacing_12 token.$spacing_24;
-    border-radius: token.$radius_sm;
-    font-weight: token.$font_weight_medium;
-    cursor: pointer;
-    border: token.$border_width_standard solid transparent;
-    line-height: token.$line_height_24;
-
-    transition:
-            background token.$transition_base,
-            border-color token.$transition_base,
-            box-shadow token.$transition_base,
-            transform token.$transition_base;
-
-    &:focus-visible {
-      outline: none;
-      box-shadow: token.$focus_ring;
-    }
-
-    &:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: token.$opacity_38;
-    }
-
-    &_cancel {
-      background: token.$color_bg_solid;
-      border-color: token.$color_border_default;
-      color: token.$color_text_heading;
-
-      &:hover:not(:disabled) {
-        background: token.$color_bg_solid_dim;
-        border-color: token.$color_border_subtle;
-      }
-    }
-
-    &_confirm {
-      color: token.$color_text_inverse;
-    }
-  }
-
-  &_variant_info {
-    .alert_title {
-      color: token.$color_status_info;
-    }
-
-    .alert_button_confirm {
-      background: token.$color_status_info;
-      border-color: token.$color_status_info;
-
-      &:hover:not(:disabled) {
-        background: color.adjust(token.$color_status_info, $lightness: -6%);
-        border-color: color.adjust(token.$color_status_info, $lightness: -6%);
-      }
-    }
-  }
-
-  &_variant_success {
-    .alert_title {
-      color: token.$color_status_success;
-    }
-
-    .alert_button_confirm {
-      background: token.$color_status_success;
-      border-color: token.$color_status_success;
-
-      &:hover:not(:disabled) {
-        background: color.adjust(token.$color_status_success, $lightness: -6%);
-        border-color: color.adjust(token.$color_status_success, $lightness: -6%);
-      }
-    }
-  }
-
-  &_variant_warning {
-    .alert_title {
-      color: token.$color_status_warning;
-    }
-
-    .alert_button_confirm {
-      background: token.$color_status_warning;
-      border-color: token.$color_status_warning;
-
-      &:hover:not(:disabled) {
-        background: color.adjust(token.$color_status_warning, $lightness: -6%);
-        border-color: color.adjust(token.$color_status_warning, $lightness: -6%);
-      }
-    }
-  }
-
-  &_variant_error {
-    .alert_title {
-      color: token.$color_status_error;
-    }
-
-    .alert_button_confirm {
-      background: token.$color_status_error;
-      border-color: token.$color_status_error;
-
-      &:hover:not(:disabled) {
-        background: color.adjust(token.$color_status_error, $lightness: -6%);
-        border-color: color.adjust(token.$color_status_error, $lightness: -6%);
-      }
-    }
+    &_left   { justify-content: flex-start; }
+    &_center { justify-content: center; }
+    &_right  { justify-content: flex-end; }
   }
 }

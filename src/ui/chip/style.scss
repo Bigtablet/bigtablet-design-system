@@ -7,7 +7,10 @@
     border-radius: token.$radius_full;
     border: token.$border_width_standard solid token.$color_border_default;
     overflow: hidden;
-    transition: border-color token.$transition_base;
+    transition:
+      border-color token.$transition_base,
+      background token.$transition_base,
+      color token.$transition_base;
     position: relative;
 
     &::before {
@@ -25,6 +28,28 @@
 
     &:active::before {
         background: token.$color_state_pressed_on_light;
+    }
+
+    // ── Selected (navy accent) ──────────────────────────────────────────
+    &_selected {
+        background: token.$color_accent_default;
+        border-color: token.$color_accent_default;
+
+        .chip_content {
+            color: token.$color_accent_on_surface;
+        }
+
+        .chip_icon {
+            color: token.$color_accent_on_surface;
+        }
+
+        &:hover::before {
+            background: token.$color_state_hover_on_dark;
+        }
+
+        &:active::before {
+            background: token.$color_state_pressed_on_dark;
+        }
     }
 
     &.chip_icon_hovered:hover::before,
@@ -126,6 +151,99 @@
 
         button {
             cursor: not-allowed;
+        }
+    }
+
+    // ── Static type: non-interactive label (구 Tag 대체) ──────────────────
+    &_type_static {
+        cursor: default;
+        border: none;
+
+        &::before, &:hover::before, &:active::before {
+            display: none;
+        }
+
+        .chip_content {
+            cursor: default;
+        }
+    }
+
+    // Tone variants (static type only) — color-mix로 dark mode 대응
+    &_tone_default {
+        background: token.$color_bg_solid_dim;
+
+        .chip_content { color: token.$color_text_body; }
+    }
+
+    &_tone_accent {
+        background: color-mix(in srgb, token.$color_accent_default 14%, transparent);
+
+        .chip_content { color: token.$color_accent_default; }
+    }
+
+    &_tone_info {
+        background: color-mix(in srgb, token.$color_status_info 12%, transparent);
+
+        .chip_content { color: token.$color_status_info; }
+    }
+
+    &_tone_success {
+        background: color-mix(in srgb, token.$color_status_success 12%, transparent);
+
+        .chip_content { color: token.$color_status_success; }
+    }
+
+    &_tone_warning {
+        background: color-mix(in srgb, token.$color_status_warning 14%, transparent);
+
+        .chip_content { color: token.$color_status_warning; }
+    }
+
+    &_tone_error {
+        background: color-mix(in srgb, token.$color_status_error 12%, transparent);
+
+        .chip_content { color: token.$color_status_error; }
+    }
+
+    // ── Size variants (default = 32px) ────────────────────────────────────
+
+    &_size_sm {
+        height: 24px;
+
+        .chip_content {
+            padding-top: 0;
+            padding-bottom: 0;
+            @include token.label_small_medium;
+        }
+
+        .chip_trailing {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .chip_icon {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    &_size_md {
+        height: 28px;
+
+        .chip_content {
+            padding-top: 0;
+            padding-bottom: 0;
+            @include token.label_large_medium;
+        }
+
+        .chip_trailing {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .chip_icon {
+            width: 18px;
+            height: 18px;
         }
     }
 }

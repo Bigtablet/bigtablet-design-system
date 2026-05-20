@@ -97,27 +97,30 @@ describe("Alert", () => {
 		expect(onCancel).toHaveBeenCalled();
 	});
 
-	it("closes alert when confirm is clicked", () => {
+	it("starts exit animation when confirm is clicked", () => {
 		renderWithProvider(<TestComponent options={{ title: "Test" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("확인"));
-		expect(screen.queryByText("Test")).not.toBeInTheDocument();
+		// Exit animation in progress — overlay still rendered with exiting class
+		const overlay = screen.getByRole("alertdialog").parentElement;
+		expect(overlay).toHaveClass("alert_exiting");
 	});
 
-	it("closes alert when cancel is clicked", () => {
+	it("starts exit animation when cancel is clicked", () => {
 		renderWithProvider(<TestComponent options={{ title: "Test", showCancel: true }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("취소"));
-		expect(screen.queryByText("Test")).not.toBeInTheDocument();
+		const overlay = screen.getByRole("alertdialog").parentElement;
+		expect(overlay).toHaveClass("alert_exiting");
 	});
 
-	it("closes alert when overlay is clicked", () => {
+	it("starts exit animation when overlay is clicked", () => {
 		renderWithProvider(<TestComponent options={{ title: "Test" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
@@ -125,7 +128,7 @@ describe("Alert", () => {
 
 		const overlay = screen.getByRole("alertdialog").parentElement;
 		if (overlay) fireEvent.click(overlay);
-		expect(screen.queryByText("Test")).not.toBeInTheDocument();
+		expect(overlay).toHaveClass("alert_exiting");
 	});
 
 	it("has correct accessibility attributes", () => {
@@ -146,6 +149,33 @@ describe("Alert", () => {
 
 		const dialog = screen.getByRole("alertdialog");
 		expect(dialog).toHaveClass("alert_variant_error");
+	});
+
+	it("does not render icon by default", () => {
+		renderWithProvider(<TestComponent options={{ variant: "info" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		expect(document.querySelector(".alert_icon")).not.toBeInTheDocument();
+	});
+
+	it("renders variant icon when showIcon=true", () => {
+		renderWithProvider(<TestComponent options={{ variant: "error", showIcon: true }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		expect(document.querySelector(".alert_icon_error")).toBeInTheDocument();
+	});
+
+	it("destructive=true makes cancel filled and confirm outline", () => {
+		renderWithProvider(<TestComponent options={{ destructive: true, showCancel: true }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		const cancelBtn = screen.getByText("취소").closest("button");
+		const confirmBtn = screen.getByText("확인").closest("button");
+		expect(cancelBtn).toHaveClass("button_variant_filled");
+		expect(confirmBtn).toHaveClass("button_variant_outline");
 	});
 
 	it("applies actionsAlign class", () => {

@@ -311,6 +311,122 @@ export const TapTarget: Story = {
 	),
 };
 
+// ── 밀도 / 반응형 사이즈 ────────────────────────────────────────────────────
+
+const DENSITY_TOKENS = [
+	{ key: "dense", size: 32, desc: "데스크탑 인라인 폼, 컴팩트 UI" },
+	{ key: "compact", size: 40, desc: "데스크탑 기본" },
+	{ key: "comfortable", size: 48, desc: "모바일/터치 기본 (44 초과)" },
+	{ key: "spacious", size: 56, desc: "강조 CTA, 풀스크린 액션" },
+] as const;
+
+export const Density: Story = {
+	name: "밀도 / 반응형 사이즈 (Density)",
+	render: () => (
+		<div style={{ display: "grid", gap: 32, maxWidth: 760 }}>
+			<section>
+				<h3 style={{ marginBottom: 4 }}>왜 반응형 밀도인가요?</h3>
+				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+					웹과 앱은 입력 방식이 다릅니다. 데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만, 모바일은
+					손가락이라 더 큰 영역이 필요합니다. Bigtablet DS는 동일한 사이즈 prop이 viewport에 따라
+					자동으로 한 단계 키워지도록 설계됩니다 — 데스크탑 <code>compact(40)</code> → 모바일{" "}
+					<code>comfortable(48)</code>.
+				</p>
+			</section>
+
+			<section>
+				<h3 style={{ marginBottom: 4 }}>밀도 토큰</h3>
+				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+					폼 컨트롤(Button, TextField, Select)의 height 결정에 사용됩니다.
+				</p>
+				<div style={{ display: "grid", gap: 12, marginTop: 16 }}>
+					{DENSITY_TOKENS.map(({ key, size, desc }) => (
+						<div
+							key={key}
+							style={{
+								display: "grid",
+								gridTemplateColumns: "160px 1fr 80px",
+								alignItems: "center",
+								gap: 12,
+								padding: 12,
+								background: "#fff",
+								border: "1px solid rgba(0,0,0,0.06)",
+								borderRadius: 12,
+							}}
+						>
+							<div>
+								<code style={{ fontSize: 12 }}>tap-target-{key}</code>
+								<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{desc}</div>
+							</div>
+							<div
+								style={{
+									height: size,
+									background: "#fff",
+									border: "1px solid #e5e5e5",
+									borderRadius: 8,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									fontSize: 12,
+									color: "#555",
+								}}
+							>
+								height {size}px
+							</div>
+							<span style={{ textAlign: "right", fontSize: 12, color: "#666" }}>{size}px</span>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section>
+				<h3 style={{ marginBottom: 4 }}>반응형 매핑 규칙</h3>
+				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+					compact breakpoint (<code>{"<"}600px</code>)에서 한 단계 키움. 이미 spacious(56)면 유지.
+				</p>
+				<div style={{ display: "grid", gap: 8, marginTop: 16 }}>
+					{[
+						["dense (32)", "→", "compact (40)"],
+						["compact (40)", "→", "comfortable (48)"],
+						["comfortable (48)", "→", "spacious (56)"],
+						["spacious (56)", "→", "spacious (56) — 유지"],
+					].map(([desktop, arrow, mobile]) => (
+						<div
+							key={desktop}
+							style={{
+								display: "grid",
+								gridTemplateColumns: "160px 40px 1fr",
+								alignItems: "center",
+								gap: 8,
+								padding: 10,
+								background: "#fafafa",
+								borderRadius: 8,
+								fontSize: 13,
+								fontFamily: "monospace",
+							}}
+						>
+							<span>{desktop}</span>
+							<span style={{ textAlign: "center", color: "#999" }}>{arrow}</span>
+							<span style={{ color: "#0369A1" }}>{mobile}</span>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section>
+				<h3 style={{ marginBottom: 4 }}>실사용 예시</h3>
+				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+					Storybook 뷰포트 툴(▼)에서 모바일로 전환하면 같은 <code>size="md"</code> Button이
+					자동으로 키워지는 걸 확인할 수 있습니다.
+				</p>
+				<p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>
+					적용: Button, TextField, Select. Chip은 인라인 컴포넌트라 제외.
+				</p>
+			</section>
+		</div>
+	),
+};
+
 // ── 색상 대비 ────────────────────────────────────────────────────────────────
 
 /** rgba(r, g, b, a) 또는 #rrggbb → [r, g, b] (0~255), 알파는 흰 배경과 블렌딩 */

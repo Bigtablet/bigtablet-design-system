@@ -11,5 +11,6 @@ export const baseBorderWidth = {
 export const borderWidth = {
 	none: baseBorderWidth["0"],
 	standard: baseBorderWidth["1"],
+	thick: baseBorderWidth["2"],
 	indicator: baseBorderWidth["2"],
 } as const;

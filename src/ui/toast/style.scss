@@ -97,10 +97,11 @@
   color: token.$color_text_heading;
   line-height: token.$line_height_24;
 
-  animation: toast_slide_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: toast_slide_in token.$transition_enter_base forwards;
+  will-change: transform, opacity;
 
   &_exiting {
-    animation: toast_slide_out 0.26s ease-in forwards;
+    animation: toast_slide_out token.$transition_exit_base forwards;
   }
 
   @include breakpoint.compact {

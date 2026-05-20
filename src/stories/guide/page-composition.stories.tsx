@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Avatar } from "../../ui/avatar";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
+import { Chip } from "../../ui/chip";
 import { Container } from "../../ui/container";
 import { EmptyState } from "../../ui/empty-state";
 import { Grid } from "../../ui/grid";
@@ -11,7 +12,6 @@ import { Section } from "../../ui/section";
 import { Sidebar, SidebarItem, SidebarSection } from "../../ui/sidebar";
 import { Stack } from "../../ui/stack";
 import { Tab, TabList, TabPanel, Tabs } from "../../ui/tabs";
-import { Tag } from "../../ui/tag";
 
 const meta: Meta = {
 	title: "Guide/Page Composition",
@@ -52,7 +52,7 @@ export const MarketingPage: Story = {
 				<Container size="xl">
 					<Stack gap={32}>
 						<Stack gap={8} align="center">
-							<Tag variant="navy">핵심 기능</Tag>
+							<Chip type="static" tone="accent" label="핵심 기능" />
 							<h2
 								style={{
 									margin: 0,
@@ -351,21 +351,24 @@ export const AdminDashboard: Story = {
 										</Stack>
 										<Stack direction="horizontal" gap={12} align="center">
 											<span style={{ fontSize: 14, fontWeight: 600 }}>{order.amount}</span>
-											<Tag
-												variant={
+											<Chip
+												type="static"
+												size="sm"
+												tone={
 													order.status === "completed"
 														? "success"
 														: order.status === "processing"
-															? "navy"
+															? "accent"
 															: "warning"
 												}
-											>
-												{order.status === "completed"
-													? "완료"
-													: order.status === "processing"
-														? "처리중"
-														: "대기"}
-											</Tag>
+												label={
+													order.status === "completed"
+														? "완료"
+														: order.status === "processing"
+															? "처리중"
+															: "대기"
+												}
+											/>
 										</Stack>
 									</Stack>
 								))}

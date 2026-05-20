@@ -50,4 +50,15 @@
   &_body {
     width: 100%;
   }
+
+  // ── Variant: accent (navy bg + white text) ──────────────────────────
+
+  &_variant_accent {
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+
+    .card_title {
+      color: token.$color_accent_on_surface;
+    }
+  }
 }

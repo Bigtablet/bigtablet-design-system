@@ -218,6 +218,40 @@ export const Base: Story = {
 			</section>
 
 			<section style={{ display: "grid", gap: 8 }}>
+				<strong style={{ fontSize: 15 }}>Letter Spacing</strong>
+				<p style={{ margin: "0 0 4px", fontSize: 13, opacity: 0.7 }}>
+					자간(letter-spacing) 토큰. 좁은 폭의 폼 라벨이나 캡션에서 가독성을 보강할 때 사용합니다.
+				</p>
+				{Object.entries(baseTypography.letterSpacing).map(([key, value]) => (
+					<div
+						key={key}
+						style={{
+							display: "grid",
+							gridTemplateColumns: "120px 1fr 80px",
+							alignItems: "center",
+							gap: 12,
+							padding: 12,
+							background: "#fff",
+							border: "1px solid rgba(0,0,0,0.06)",
+							borderRadius: 12,
+						}}
+					>
+						<code style={{ fontSize: 12 }}>letter-spacing-{key}</code>
+						<div
+							style={{
+								fontFamily: typography.fontFamily.primary,
+								fontSize: 14,
+								letterSpacing: value,
+							}}
+						>
+							폼 라벨 텍스트 — Form label sample
+						</div>
+						<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
+					</div>
+				))}
+			</section>
+
+			<section style={{ display: "grid", gap: 8 }}>
 				<strong style={{ fontSize: 15 }}>Font Weight</strong>
 				{Object.entries(baseTypography.fontWeight).map(([key, value]) => (
 					<div

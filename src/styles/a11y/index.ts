@@ -4,4 +4,11 @@ export const a11y = {
 	focusRingSuccess: "0 0 0 3px rgba(16, 185, 129, 0.15)",
 
 	tapMinSize: "44px",
+
+	tapTarget: {
+		dense: "32px",
+		compact: "40px",
+		comfortable: "48px",
+		spacious: "56px",
+	},
 } as const;

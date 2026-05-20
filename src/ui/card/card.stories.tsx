@@ -32,6 +32,11 @@ const meta: Meta<typeof Card> = {
 			description:
 				"테두리 표시 여부입니다. 배경이 흰 화면에서 카드 경계를 또렷하게 보여주고 싶을 때 사용합니다.",
 		},
+		variant: {
+			control: "select",
+			options: ["default", "accent"],
+			description: "카드 variant. `accent`는 navy 배경 + 흰 텍스트 (강조 카드).",
+		},
 		children: {
 			control: false,
 			description: "카드 안에 들어가는 콘텐츠 영역입니다.",
@@ -84,6 +89,19 @@ type Story = StoryObj<typeof Card>;
 
 export const Basic: Story = {
 	name: "기본",
+};
+
+export const AccentVariant: Story = {
+	name: "Accent (navy 강조)",
+	args: {
+		variant: "accent",
+		heading: "주요 강조 카드",
+		children: (
+			<p style={{ margin: 0 }}>
+				navy 배경 + 흰 텍스트로 강조되는 카드. CTA/주요 정보 표시에 사용.
+			</p>
+		),
+	},
 };
 
 export const Shadows: Story = {

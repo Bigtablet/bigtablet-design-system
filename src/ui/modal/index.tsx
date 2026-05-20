@@ -38,6 +38,9 @@ export const Modal = ({
 }: ModalProps) => {
 	const panelRef = React.useRef<HTMLDivElement>(null);
 	const titleId = React.useId();
+	const [shouldRender, setShouldRender] = React.useState(open);
+	const [isExiting, setIsExiting] = React.useState(false);
+	const wasOpenRef = React.useRef(open);
 
 	// 포커스 트랩
 	useFocusTrap(panelRef, open);
@@ -50,6 +53,16 @@ export const Modal = ({
 	const handleEscape = React.useEffectEvent((e: KeyboardEvent) => {
 		if (e.key === "Escape") onClose?.();
 	});
+
+	React.useEffect(() => {
+		if (open) {
+			setShouldRender(true);
+			setIsExiting(false);
+		} else if (wasOpenRef.current) {
+			setIsExiting(true);
+		}
+		wasOpenRef.current = open;
+	}, [open]);
 
 	React.useEffect(() => {
 		if (!open) return;
@@ -86,14 +99,15 @@ export const Modal = ({
 		};
 	}, [open]);
 
-	if (!open) return null;
+	if (!shouldRender) return null;
 
 	const panelClassName = cn("modal_panel", className);
 	const hasTitle = !!title;
+	const rootClassName = cn("modal", isExiting && "modal_exiting");
 
 	return (
 		<div
-			className="modal"
+			className={rootClassName}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
@@ -111,6 +125,12 @@ export const Modal = ({
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
+				}}
+				onAnimationEnd={(e) => {
+					if (isExiting && e.target === e.currentTarget) {
+						setShouldRender(false);
+						setIsExiting(false);
+					}
 				}}
 				{...props}
 			>

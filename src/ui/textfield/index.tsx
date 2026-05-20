@@ -5,7 +5,7 @@ import { cn } from "../../utils";
 import { Icon } from "../icon";
 import "./style.scss";
 
-export type TextFieldSize = "sm" | "md";
+export type TextFieldSize = "sm" | "md" | "lg";
 
 export interface TextFieldProps
 	extends Omit<
@@ -99,6 +99,7 @@ export const TextField = ({
 	const rootClassName = cn(
 		"text_field",
 		size === "sm" && "text_field_size_sm",
+		size === "lg" && "text_field_size_lg",
 		fullWidth && "text_field_full_width",
 		error && "text_field_error",
 		props.disabled && "text_field_disabled",

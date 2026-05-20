@@ -1,5 +1,14 @@
 @use "src/styles/token" as token;
-@use "sass:color";
+
+@keyframes select_pop_in_down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes select_pop_in_up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .select {
   position: relative;
@@ -42,11 +51,8 @@
     border: token.$border_width_standard solid transparent;
 
     &:hover:not(.is_disabled) {
-      background: color.mix(
-        token.$color_bg_solid,
-        token.$color_bg_solid_dim,
-        70%
-      );
+      // CSS native color-mix — SCSS color.mix는 var()와 안 맞음
+      background: color-mix(in srgb, token.$color_bg_solid 70%, token.$color_bg_solid_dim);
     }
 
     &.is_open {
@@ -80,21 +86,21 @@
   &_inner {
     display: flex;
     align-items: stretch;
-    padding: token.$spacing_4 0;
+    box-sizing: border-box; // min-height = 시각 height
   }
 
   // ── Size 클래스 (inner에 min-height 적용) ─────────────────────────────────
 
   &_size_sm &_inner {
-    min-height: 40px;
+    @include token.responsive_height(token.$tap_target_compact); // 40 → 48
   }
 
   &_size_md &_inner {
-    min-height: 52px;
+    @include token.responsive_height(token.$tap_target_compact); // 40 → 48
   }
 
   &_size_lg &_inner {
-    min-height: 52px;
+    @include token.responsive_height(token.$tap_target_comfortable); // 48 → 56
   }
 
   // ── Label (legend) ────────────────────────────────────────────────────────
@@ -111,7 +117,7 @@
       font-size: token.$font_size_12;
       font-weight: token.$font_weight_regular;
       line-height: token.$line_height_16;
-      letter-spacing: 0.32px;
+      letter-spacing: token.$letter_spacing_tight;
       color: inherit;
       pointer-events: none;
       cursor: default;
@@ -159,12 +165,12 @@
   }
 
   &_size_md &_control {
-    padding: token.$spacing_12 token.$spacing_20;
+    padding: token.$spacing_4 token.$spacing_20; // height 40 fit
     @include token.body_medium;
   }
 
   &_size_lg &_control {
-    padding: token.$spacing_16 token.$spacing_24;
+    padding: token.$spacing_8 token.$spacing_20;
     @include token.body_large;
   }
 
@@ -223,11 +229,17 @@
     overflow-x: hidden;
     padding: token.$spacing_4 0;
 
+    animation: select_pop_in_down token.$transition_enter_fast forwards;
+    transform-origin: top center;
+    will-change: transform, opacity;
+
     &_up {
       top: auto;
       bottom: 100%;
       margin-top: 0;
       margin-bottom: token.$spacing_4;
+      animation-name: select_pop_in_up;
+      transform-origin: bottom center;
     }
   }
 
@@ -259,7 +271,14 @@
     }
 
     &.is_selected {
+      background: token.$color_accent_subtle;
+      color: token.$color_accent_default;
       font-weight: token.$font_weight_medium;
+    }
+
+    &.is_selected:hover,
+    &.is_selected.is_active {
+      background: token.$color_accent_muted;
     }
 
     &.is_disabled {

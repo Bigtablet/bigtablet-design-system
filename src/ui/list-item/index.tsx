@@ -21,6 +21,8 @@ export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 	alignment?: "top" | "middle";
 	/** 비활성화 상태 */
 	disabled?: boolean;
+	/** 선택 상태 — accent.subtle 배경 + accent.default 좌측 인디케이터 */
+	selected?: boolean;
 	/** 클릭 시 콜백 */
 	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
@@ -40,6 +42,7 @@ export const ListItem = ({
 	trailingElement,
 	alignment = "top",
 	disabled,
+	selected,
 	onClick,
 	className,
 	...props
@@ -48,6 +51,7 @@ export const ListItem = ({
 		"list_item",
 		`list_item_align_${alignment}`,
 		disabled && "list_item_disabled",
+		selected && "list_item_selected",
 		onClick && "list_item_interactive",
 		className,
 	);
@@ -67,6 +71,7 @@ export const ListItem = ({
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick && !disabled ? 0 : undefined}
 			aria-disabled={disabled || undefined}
+			aria-selected={selected || undefined}
 			{...props}
 		>
 			<div className="list_item_state_layer">

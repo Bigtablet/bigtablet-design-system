@@ -11,11 +11,11 @@
   overflow: hidden;
   white-space: nowrap;
   @include token.body_small_medium;
-  transition: background token.$transition_base,
+  transition:
     color token.$transition_base,
     border-color token.$transition_base;
 
-  // State layer overlay
+  // State layer overlay — interaction색은 여기서만 변하므로 transition 1개로 단순화
   &::before {
     content: "";
     position: absolute;
@@ -32,19 +32,25 @@
   // ── Sizes ────────────────────────────────────────────────────────────────
 
   &_size_sm {
-    min-height: 36px;
-    padding: token.$spacing_6 token.$spacing_12;
+    @include token.responsive_height(token.$tap_target_dense);
+    padding: token.$spacing_4 token.$spacing_12;
     gap: token.$spacing_4;
   }
 
   &_size_md {
-    min-height: 40px;
+    @include token.responsive_height(token.$tap_target_compact);
     padding: token.$spacing_8 token.$spacing_16;
     gap: token.$spacing_6;
   }
 
+  &_size_lg {
+    @include token.responsive_height(token.$tap_target_comfortable);
+    padding: token.$spacing_12 token.$spacing_20;
+    gap: token.$spacing_6;
+  }
+
   &_size_xl {
-    min-height: 56px;
+    @include token.responsive_height(token.$tap_target_spacious);
     padding: token.$spacing_16 token.$spacing_24;
     gap: token.$spacing_6;
   }

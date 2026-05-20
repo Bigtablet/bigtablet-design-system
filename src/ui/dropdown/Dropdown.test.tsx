@@ -15,24 +15,21 @@ describe("Dropdown", () => {
 		expect(screen.getByText("Select an option")).toBeInTheDocument();
 	});
 
-	it("renders with label (hidden by default)", () => {
-		render(<Dropdown options={options} label="Choose" />);
-		// 라벨은 DOM에 있지만 is_visible 클래스 없이 opacity 0
-		const label = screen.getByText("Choose");
-		expect(label).toBeInTheDocument();
-		expect(label).not.toHaveClass("is_visible");
+	it("renders label always visible", () => {
+		const { container } = render(<Dropdown options={options} label="Choose" />);
+		expect(screen.getByText("Choose")).toBeInTheDocument();
+		expect(container.querySelector("label.dropdown_label")).toBeInTheDocument();
 	});
 
-	it("shows label when open", () => {
+	it("keeps label visible when open", () => {
 		render(<Dropdown options={options} label="Choose" />);
-		const button = screen.getByRole("button");
-		fireEvent.click(button);
-		expect(screen.getByText("Choose")).toHaveClass("is_visible");
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.getByText("Choose")).toBeInTheDocument();
 	});
 
-	it("shows label when value is selected", () => {
+	it("keeps label visible when value is selected", () => {
 		render(<Dropdown options={options} label="Choose" value="1" />);
-		expect(screen.getByText("Choose")).toHaveClass("is_visible");
+		expect(screen.getByText("Choose")).toBeInTheDocument();
 	});
 
 	it("opens dropdown on click", () => {
@@ -42,17 +39,18 @@ describe("Dropdown", () => {
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 	});
 
-	it("shows X icon when open, ChevronDown when closed", () => {
+	it("rotates ChevronDown icon when open", () => {
 		render(<Dropdown options={options} />);
 		const button = screen.getByRole("button");
+		const icon = button.querySelector(".dropdown_icon");
 
-		// 닫힌 상태: ChevronDown
-		expect(button.querySelector(".dropdown_icon")).toBeInTheDocument();
+		// 닫힌 상태: rotation 없음
+		expect(icon).not.toHaveClass("dropdown_icon_open");
 
 		fireEvent.click(button);
 
-		// 열린 상태: X
-		expect(screen.getByRole("listbox")).toBeInTheDocument();
+		// 열린 상태: 180도 회전 클래스
+		expect(button.querySelector(".dropdown_icon")).toHaveClass("dropdown_icon_open");
 	});
 
 	it("selects option on click", () => {

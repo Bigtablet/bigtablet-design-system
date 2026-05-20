@@ -13,6 +13,24 @@ CSS Custom Properties 기반 dark mode 토큰, `ThemeProvider`, `Container/Secti
 
 ### Breaking changes
 
+#### 0. Tag 컴포넌트 폐기 → Chip `type="static"` 흡수
+
+`Tag`는 Chip / Badge label과 시각적 중복이라 폐기. 대신 **Chip에 `type="static"` + `tone` prop** 추가.
+
+```diff
+- import { Tag } from "@bigtablet/design-system";
++ import { Chip } from "@bigtablet/design-system";
+
+- <Tag variant="accent">Featured</Tag>
++ <Chip type="static" tone="accent" label="Featured" />
+
+- <Tag variant="success" onRemove={fn}>Active</Tag>
++ <Chip type="static" tone="success" label="Active" removable onRemove={fn} />
+```
+
+`tone`: `default` | `accent` | `info` | `success` | `warning` | `error`  
+`size`: `sm` (24px) | (기본) (32px). `static`은 pill 형태, `color-mix`로 dark mode 자동 대응.
+
 #### 1. Dark mode 토큰 시스템 (CSS Custom Properties)
 
 기존 SCSS 변수가 CSS custom properties로 컴파일됨. 기존 코드는 **그대로 작동**하지만:

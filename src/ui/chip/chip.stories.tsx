@@ -9,8 +9,18 @@ const meta: Meta<typeof Chip> = {
 	argTypes: {
 		type: {
 			control: "select",
-			options: ["basic", "input", "filter"],
-			description: "칩의 유형입니다.",
+			options: ["basic", "input", "filter", "static"],
+			description: "칩의 유형입니다. static은 비인터랙티브 라벨 (구 Tag 대체).",
+		},
+		tone: {
+			control: "select",
+			options: ["default", "accent", "info", "success", "warning", "error"],
+			description: "색조 (type='static'에서만 적용)",
+		},
+		size: {
+			control: "select",
+			options: [undefined, "sm", "md"],
+			description: "칩의 크기입니다. 미지정 시 기본 32px.",
 		},
 		label: {
 			control: "text",
@@ -59,6 +69,14 @@ const meta: Meta<typeof Chip> = {
 - **selected**: 체크 아이콘이 앞에 표시됩니다 (basic)
 - **removable**: 닫기 아이콘이 뒤에 표시됩니다 (input)
 - **disabled**: 투명도 0.38, 상호작용 불가
+
+### 사이즈 (size)
+| Size | Height | 사용처 |
+|------|--------|--------|
+| (미지정) | 32px | 기본값, 폼/리스트 내 일반 사용 |
+| **sm** | 24px | 매우 컴팩트한 UI, 인라인 태그 |
+| **md** | 28px | 컴팩트한 UI |
+> Chip은 인라인 컴포넌트라 form control(sm=32/md=40/lg=48)과 별도 micro scale을 사용합니다.
 
 ### 접근성 (구현 완료)
 - \`<button>\` 요소 사용 → Tab 포커스, Enter/Space 클릭 자동 지원
@@ -181,6 +199,35 @@ export const Interactive: Story = {
 	},
 };
 
+export const Sizes: Story = {
+	name: "크기 비교 (sm / md / default)",
+	render: () => (
+		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>sm (24px)</span>
+				<Chip type="basic" label="Basic" size="sm" />
+				<Chip type="basic" label="Selected" size="sm" selected />
+				<Chip type="input" label="Removable" size="sm" removable />
+				<Chip type="filter" label="Filter" size="sm" />
+			</div>
+			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>md (28px)</span>
+				<Chip type="basic" label="Basic" size="md" />
+				<Chip type="basic" label="Selected" size="md" selected />
+				<Chip type="input" label="Removable" size="md" removable />
+				<Chip type="filter" label="Filter" size="md" />
+			</div>
+			<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>default (32px)</span>
+				<Chip type="basic" label="Basic" />
+				<Chip type="basic" label="Selected" selected />
+				<Chip type="input" label="Removable" removable />
+				<Chip type="filter" label="Filter" />
+			</div>
+		</div>
+	),
+};
+
 export const AllTypes: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
 
@@ -204,6 +251,37 @@ export const AllTypes: Story = {
 				<Chip type="filter" label="Filter" />
 				<Chip type="filter" label="Selected" selected />
 				<Chip type="filter" label="Disabled" disabled />
+			</div>
+		</div>
+	),
+};
+
+export const StaticTones: Story = {
+	name: "Static · 색조 (구 Tag 대체)",
+	render: () => (
+		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>default</span>
+				<Chip type="static" tone="default" label="Frontend" />
+				<Chip type="static" tone="accent" label="Featured" />
+				<Chip type="static" tone="info" label="Beta" />
+				<Chip type="static" tone="success" label="Active" />
+				<Chip type="static" tone="warning" label="Pending" />
+				<Chip type="static" tone="error" label="Deprecated" />
+			</div>
+			<div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>sm</span>
+				<Chip type="static" size="sm" tone="default" label="처리 대기" />
+				<Chip type="static" size="sm" tone="accent" label="처리중" />
+				<Chip type="static" size="sm" tone="success" label="완료" />
+				<Chip type="static" size="sm" tone="warning" label="대기" />
+				<Chip type="static" size="sm" tone="error" label="실패" />
+			</div>
+			<div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+				<span style={{ width: 80, fontSize: 12, color: "#666" }}>removable</span>
+				<Chip type="static" tone="accent" label="Open" removable onRemove={() => {}} />
+				<Chip type="static" tone="success" label="In progress" removable onRemove={() => {}} />
+				<Chip type="static" tone="error" label="Bug" removable onRemove={() => {}} />
 			</div>
 		</div>
 	),

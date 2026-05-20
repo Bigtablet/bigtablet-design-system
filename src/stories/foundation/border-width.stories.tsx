@@ -15,8 +15,11 @@ const meta: Meta = {
 
 - **none (0px)**: 테두리 없음
 - **standard (1px)**: 기본 테두리 (카드, 인풋, 구분선)
+- **thick (2px)**: 두꺼운 테두리 (강조 입력 필드, OTP, 포커스 강조)
 - **indicator (2px)**: 강조 테두리 (포커스 링, 선택 상태, 탭 인디케이터)
-        `,
+
+> \`thick\`과 \`indicator\`는 동일한 2px 값을 공유하지만 의미가 다릅니다 — \`thick\`은 시각적 두께, \`indicator\`는 상태 표시.
+`,
 			},
 		},
 	},
@@ -217,7 +220,7 @@ export const Comparison: Story = {
 			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
 				두꺼울수록 "이 요소에 주목하세요"라는 신호가 강해집니다. 비활성 → 일반 → 강조 순서입니다.
 			</p>
-			<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+			<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
 				{(Object.entries(borderWidth) as [string, string][]).map(([key, value]) => (
 					<div key={key} style={{ textAlign: "center" }}>
 						<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>
@@ -227,7 +230,7 @@ export const Comparison: Story = {
 							style={{
 								height: 44,
 								borderRadius: 10,
-								border: `${value} solid ${key === "indicator" ? "#000" : "#e5e5e5"}`,
+								border: `${value} solid ${key === "indicator" || key === "thick" ? "#000" : "#e5e5e5"}`,
 								display: "flex",
 								alignItems: "center",
 								padding: "0 12px",
@@ -236,10 +239,22 @@ export const Comparison: Story = {
 								background: "#fff",
 							}}
 						>
-							{key === "none" ? "비활성 상태" : key === "standard" ? "기본 상태" : "포커스/강조"}
+							{key === "none"
+								? "비활성"
+								: key === "standard"
+									? "기본"
+									: key === "thick"
+										? "두꺼움"
+										: "강조"}
 						</div>
 						<div style={{ marginTop: 8, fontSize: 11, color: "#666" }}>
-							{key === "none" ? "경계 없음" : key === "standard" ? "기본 구분선" : "시선 집중"}
+							{key === "none"
+								? "경계 없음"
+								: key === "standard"
+									? "기본 구분선"
+									: key === "thick"
+										? "강조 입력 두께"
+										: "시선 집중"}
 						</div>
 					</div>
 				))}
@@ -254,6 +269,8 @@ function borderWidthDescription(key: string) {
 			return "테두리 없음";
 		case "standard":
 			return "카드, 인풋, 구분선";
+		case "thick":
+			return "강조 입력 필드 (OTP, 포커스 강조)";
 		case "indicator":
 			return "포커스 링, 선택 상태, 탭 인디케이터";
 		default:

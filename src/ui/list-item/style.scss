@@ -26,6 +26,23 @@
     align-items: center;
   }
 
+  // ── Selected (navy accent) ──────────────────────────────────────────
+  &_selected {
+    background: token.$color_accent_subtle;
+    position: relative;
+
+    // 왼쪽 navy 인디케이터 바
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: token.$color_accent_default;
+    }
+  }
+
   // ── Interactive state overlay ────────────────────────────────────────
   &_interactive {
     cursor: pointer;
@@ -56,7 +73,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: token.$spacing_2;
     min-width: 0;
     padding: token.$spacing_12 0;
   }
@@ -66,7 +83,7 @@
     font-size: token.$font_size_12;
     font-weight: token.$font_weight_regular;
     line-height: token.$line_height_16;
-    letter-spacing: 0.32px;
+    letter-spacing: token.$letter_spacing_tight;
     color: token.$color_text_caption;
   }
 

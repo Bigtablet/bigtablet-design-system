@@ -8,6 +8,10 @@ type AlertDemoProps = {
 	message?: React.ReactNode;
 	showCancel?: boolean;
 	actionsAlign?: "left" | "center" | "right";
+	destructive?: boolean;
+	showIcon?: boolean;
+	confirmText?: string;
+	cancelText?: string;
 };
 
 const AlertDemo = ({
@@ -16,6 +20,10 @@ const AlertDemo = ({
 	message = "내용을 확인해주세요.",
 	showCancel = false,
 	actionsAlign = "right",
+	destructive,
+	showIcon,
+	confirmText,
+	cancelText,
 }: AlertDemoProps) => {
 	const { showAlert } = useAlert();
 
@@ -26,6 +34,10 @@ const AlertDemo = ({
 			message,
 			showCancel,
 			actionsAlign,
+			destructive,
+			showIcon,
+			confirmText,
+			cancelText,
 			onConfirm: () => console.log("확인됨"),
 			onCancel: () => console.log("취소됨"),
 		});
@@ -109,8 +121,14 @@ const meta: Meta<typeof AlertDemo> = {
 
 ### 버튼 구성
 - **확인만 있는 Alert**: 안내/완료/정보성 메시지
-- **취소 + 확인 Alert**: 경고/삭제/결제 등 사용자가 “되돌릴 수 있는 선택”이 필요한 상황
-        `,
+- **취소 + 확인 Alert**: 경고/삭제/결제 등 사용자가 "되돌릴 수 있는 선택"이 필요한 상황
+
+### Destructive 패턴
+\`destructive={true}\` 사용 시 **취소가 primary(강조)**, **확인이 secondary(약함)**로 변환됩니다. 삭제/계정 종료처럼 되돌릴 수 없는 행동에서 실수 클릭을 막기 위함 (Apple HIG 권장 패턴).
+
+### 아이콘 + 색상 (a11y)
+variant별 아이콘이 자동 표시됩니다. 제목 텍스트는 status 색이 아닌 \`text.heading\` 색으로 — 텍스트 자체 대비를 유지하면서 variant는 아이콘 색상으로 전달. \`showIcon={false}\` 로 끌 수 있음.
+`,
 			},
 		},
 	},
@@ -219,6 +237,42 @@ export const LongMessage: Story = {
 			message="이것은 매우 긴 메시지입니다. Alert는 자동으로 메시지의 길이에 맞춰 크기가 조정됩니다. 여러 줄의 텍스트도 잘 표시됩니다."
 			showCancel={true}
 			actionsAlign="right"
+		/>
+	),
+};
+
+export const Destructive: Story = {
+	name: "Destructive (삭제/되돌릴 수 없는 작업)",
+	render: () => (
+		<AlertDemo
+			variant="error"
+			title="계정을 삭제하시겠습니까?"
+			message="이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구 삭제됩니다."
+			showCancel={true}
+			destructive={true}
+			confirmText="삭제"
+			cancelText="유지"
+			actionsAlign="right"
+		/>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"destructive 패턴에선 cancel이 primary(채워진 버튼), confirm이 outline(약한 버튼)으로 표시됨. 실수로 destructive 액션을 누르는 걸 막는 게 목적.",
+			},
+		},
+	},
+};
+
+export const NoIcon: Story = {
+	name: "아이콘 숨김",
+	render: () => (
+		<AlertDemo
+			variant="info"
+			title="아이콘 없이"
+			message="아이콘 영역 없이 깔끔하게 표시"
+			showIcon={false}
 		/>
 	),
 };

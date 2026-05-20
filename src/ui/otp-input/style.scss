@@ -48,7 +48,7 @@
 
   &:focus {
     border-color: token.$color_border_focus;
-    border-width: 2px;
+    border-width: token.$border_width_thick;
     padding: calc(#{token.$spacing_4} - 1px);
   }
 
