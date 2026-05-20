@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 
@@ -94,7 +95,7 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	const [iconHovered, setIconHovered] = React.useState(false);
+	const [iconHovered, setIconHovered] = useState(false);
 
 	const isStatic = type === "static";
 	const hasLeading = !isStatic && selected;

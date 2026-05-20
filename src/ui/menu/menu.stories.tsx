@@ -22,6 +22,7 @@ type Story = StoryObj<typeof Menu>;
 const TriggerBtn = () => (
 	<button
 		type="button"
+		aria-label="More options"
 		style={{
 			padding: 8,
 			border: "1px solid #e5e5e5",
@@ -32,7 +33,7 @@ const TriggerBtn = () => (
 			alignItems: "center",
 		}}
 	>
-		<MoreVertical size={16} />
+		<MoreVertical size={16} aria-hidden="true" />
 	</button>
 );
 

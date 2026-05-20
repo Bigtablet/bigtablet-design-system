@@ -1,6 +1,16 @@
 "use client";
 
 import * as React from "react";
+import {
+	Fragment,
+	useCallback,
+	useEffect,
+	useId,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { cn } from "../../utils";
 import "./style.scss";
 import { Check, ChevronDown } from "lucide-react";
@@ -73,28 +83,28 @@ export const Dropdown = ({
 	fullWidth,
 	className,
 }: DropdownProps) => {
-	const internalId = React.useId();
+	const internalId = useId();
 	const dropdownId = id ?? internalId;
 
 	const isControlled = value !== undefined;
-	const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
+	const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
 	const currentValue = isControlled ? (value ?? null) : internalValue;
 
-	const [isOpen, setIsOpen] = React.useState(false);
-	const [activeIndex, setActiveIndex] = React.useState(-1);
-	const [dropUp, setDropUp] = React.useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const [activeIndex, setActiveIndex] = useState(-1);
+	const [dropUp, setDropUp] = useState(false);
 
-	const wrapperRef = React.useRef<HTMLDivElement>(null);
-	const controlRef = React.useRef<HTMLButtonElement>(null);
+	const wrapperRef = useRef<HTMLDivElement>(null);
+	const controlRef = useRef<HTMLButtonElement>(null);
 
-	const currentOption = React.useMemo(
+	const currentOption = useMemo(
 		() => options.find((o) => o.value === currentValue) ?? null,
 		[options, currentValue],
 	);
 
 	// 라벨은 항상 보이는 정적 라벨 (notched outline + always visible)
 
-	const setValue = React.useCallback(
+	const setValue = useCallback(
 		(next: string | null) => {
 			const option = options.find((o) => o.value === next) ?? null;
 			if (!isControlled) setInternalValue(next);
@@ -103,7 +113,7 @@ export const Dropdown = ({
 		[isControlled, onChange, options],
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const handleOutsideClick = (e: MouseEvent) => {
 			if (!wrapperRef.current?.contains(e.target as Node)) {
 				setIsOpen(false);
@@ -178,7 +188,7 @@ export const Dropdown = ({
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!isOpen) return;
 		const matchedIndex = options.findIndex((o) => o.value === currentValue && !o.disabled);
 		setActiveIndex(
@@ -191,7 +201,7 @@ export const Dropdown = ({
 		);
 	}, [isOpen, options, currentValue]);
 
-	React.useLayoutEffect(() => {
+	useLayoutEffect(() => {
 		if (!isOpen || !controlRef.current) return;
 		const rect = controlRef.current.getBoundingClientRect();
 		const listHeight = Math.min(options.length * 56, 288);
@@ -248,7 +258,7 @@ export const Dropdown = ({
 						const active = i === activeIndex;
 
 						return (
-							<React.Fragment key={opt.value}>
+							<Fragment key={opt.value}>
 								{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button — options are non-focusable role=option per WAI-ARIA listbox pattern */}
 								<div
 									role="option"
@@ -283,7 +293,7 @@ export const Dropdown = ({
 									)}
 								</div>
 								{opt.showDivider && <hr className="dropdown_option_divider" />}
-							</React.Fragment>
+							</Fragment>
 						);
 					})}
 				</div>
