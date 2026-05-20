@@ -42,7 +42,7 @@ type Story = StoryObj;
 export const MarketingPage: Story = {
 	name: "마케팅 페이지",
 	render: () => (
-		<div style={{ minHeight: "100vh", background: "#fff" }}>
+		<div style={{ minHeight: "100vh", background: "var(--bt-color-bg-solid)" }}>
 			{/* Hero */}
 			<Hero
 				title="매장 운영을 더 스마트하게"
@@ -66,13 +66,13 @@ export const MarketingPage: Story = {
 									margin: 0,
 									fontSize: 32,
 									fontWeight: 700,
-									color: "#121212",
+									color: "var(--bt-color-text-heading)",
 									textAlign: "center",
 								}}
 							>
 								왜 Bigtablet인가요?
 							</h2>
-							<p style={{ margin: 0, color: "#666", textAlign: "center", maxWidth: 480 }}>
+							<p style={{ margin: 0, color: "var(--bt-color-text-body)", textAlign: "center", maxWidth: 480 }}>
 								수천 개의 매장이 신뢰하는 올인원 솔루션
 							</p>
 						</Stack>
@@ -115,9 +115,9 @@ export const MarketingPage: Story = {
 									style={{
 										position: "relative",
 										padding: "28px 24px",
-										background: "#fff",
+										background: "var(--bt-color-bg-solid)",
 										borderRadius: "16px",
-										border: "1px solid #E5E5E5",
+										border: "1px solid var(--bt-color-border-default)",
 										boxShadow:
 											"0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
 										overflow: "hidden",
@@ -161,13 +161,13 @@ export const MarketingPage: Story = {
 											margin: "0 0 6px",
 											fontSize: 16,
 											fontWeight: 700,
-											color: "#121212",
+											color: "var(--bt-color-text-heading)",
 											letterSpacing: "-0.01em",
 										}}
 									>
 										{f.title}
 									</h3>
-									<p style={{ margin: 0, fontSize: 14, color: "#666", lineHeight: 1.55 }}>
+									<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.55 }}>
 										{f.desc}
 									</p>
 								</div>
@@ -186,7 +186,7 @@ export const MarketingPage: Story = {
 								margin: 0,
 								fontSize: 28,
 								fontWeight: 700,
-								color: "#121212",
+								color: "var(--bt-color-text-heading)",
 								textAlign: "center",
 							}}
 						>
@@ -296,8 +296,8 @@ export const MarketingPage: Story = {
 								variant="primary"
 								size="lg"
 								style={{
-									background: "#fff",
-									color: "#121212",
+									background: "var(--bt-color-bg-solid)",
+									color: "var(--bt-color-text-heading)",
 									boxShadow: "0 8px 24px rgba(0, 0, 0, 0.18)",
 								}}
 							>
@@ -327,7 +327,7 @@ export const MarketingPage: Story = {
 export const AdminDashboard: Story = {
 	name: "어드민 대시보드",
 	render: () => (
-		<div style={{ display: "flex", minHeight: "100vh", background: "#F2F5F8" }}>
+		<div style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}>
 			{/* Sidebar */}
 			<Sidebar
 				header={
@@ -407,8 +407,8 @@ export const AdminDashboard: Story = {
 				{/* Header */}
 				<Stack direction="horizontal" justify="between" align="center" gap={0} style={{ marginBottom: 24 }}>
 					<Stack gap={4}>
-						<h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#121212" }}>대시보드</h1>
-						<p style={{ margin: 0, fontSize: 14, color: "#888" }}>2026년 5월 20일 화요일</p>
+						<h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>대시보드</h1>
+						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-caption)" }}>2026년 5월 20일 화요일</p>
 					</Stack>
 					<Stack direction="horizontal" gap={12} align="center">
 						<Badge shape="dot" variant="success" />
@@ -427,17 +427,17 @@ export const AdminDashboard: Story = {
 						<div
 							key={stat.label}
 							style={{
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 12,
 								padding: "20px 24px",
-								border: "1px solid #E5E5E5",
+								border: "1px solid var(--bt-color-border-default)",
 							}}
 						>
-							<p style={{ margin: "0 0 4px", fontSize: 13, color: "#888" }}>{stat.label}</p>
-							<p style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 700, color: "#121212" }}>
+							<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>{stat.label}</p>
+							<p style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 								{stat.value}
 							</p>
-							<p style={{ margin: 0, fontSize: 12, color: "#47555E", fontWeight: 600 }}>
+							<p style={{ margin: 0, fontSize: 12, color: "var(--bt-color-accent-default)", fontWeight: 600 }}>
 								{stat.delta}
 							</p>
 						</div>
@@ -447,9 +447,9 @@ export const AdminDashboard: Story = {
 				{/* Tabs section */}
 				<div
 					style={{
-						background: "#fff",
+						background: "var(--bt-color-bg-solid)",
 						borderRadius: 12,
-						border: "1px solid #E5E5E5",
+						border: "1px solid var(--bt-color-border-default)",
 						padding: "24px",
 					}}
 				>
@@ -474,7 +474,7 @@ export const AdminDashboard: Story = {
 										gap={0}
 										style={{
 											padding: "12px 16px",
-											background: "#F2F5F8",
+											background: "var(--bt-color-bg-solid-dim)",
 											borderRadius: 8,
 										}}
 									>
@@ -482,7 +482,7 @@ export const AdminDashboard: Story = {
 											<Avatar name={order.customer} size="sm" />
 											<Stack gap={2}>
 												<span style={{ fontSize: 14, fontWeight: 600 }}>{order.customer}</span>
-												<span style={{ fontSize: 12, color: "#888" }}>{order.id}</span>
+												<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{order.id}</span>
 											</Stack>
 										</Stack>
 										<Stack direction="horizontal" gap={12} align="center">

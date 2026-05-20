@@ -1,9 +1,33 @@
 @use "../colors" as colors;
 @use "../breakpoints" as breakpoint;
 
-$focus_ring:         0 0 0 3px rgba(colors.$color_base_brand_primary, 0.15);
-$focus_ring_error:   0 0 0 3px rgba(colors.$color_base_status_error, 0.15);
-$focus_ring_success: 0 0 0 3px rgba(colors.$color_base_status_success, 0.15);
+// Focus rings — CSS Custom Properties로 light/dark 자동 전환.
+// Dark 모드는 흰색 alpha 기반으로 navy bg 위에서도 가시성 확보.
+
+:root {
+  --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.30);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.30);
+}
+
+[data-theme="dark"] {
+  --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+    --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+    --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+  }
+}
+
+// SCSS aliases — 기존 사용처는 그대로 작동
+$focus_ring:         var(--bt-focus-ring);
+$focus_ring_error:   var(--bt-focus-ring-error);
+$focus_ring_success: var(--bt-focus-ring-success);
 
 // ── Tap target sizes (a11y) ─────────────────────────────────────────────
 // WCAG 2.1 SC 2.5.5 권장 최소: 44×44
