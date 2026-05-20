@@ -59,7 +59,7 @@
 
   &_variant_filled {
     background: token.$color_brand_primary;
-    color: token.$color_text_inverse;
+    color: token.$color_brand_on_primary;
 
     &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_dark;

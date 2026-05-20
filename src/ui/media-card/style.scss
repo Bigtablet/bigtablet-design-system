@@ -117,7 +117,7 @@
   &_image_overlay {
     display: block;
     position: relative;
-    color: token.$color_text_inverse;
+    color: token.$color_brand_on_primary;
 
     &:not([style*="aspect-ratio"]) {
       aspect-ratio: 4 / 3;
@@ -152,7 +152,7 @@
     }
 
     .media_card_eyebrow  { color: rgba(255, 255, 255, 0.75); }
-    .media_card_heading  { color: token.$color_text_inverse; }
+    .media_card_heading  { color: token.$color_brand_on_primary; }
     .media_card_content  {
       color: rgba(255, 255, 255, 0.85);
       flex: 0 0 auto; // overlay에선 늘어나지 않음 — 텍스트 블록이 하단에 모이도록

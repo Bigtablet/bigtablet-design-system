@@ -91,7 +91,7 @@
 
   &_text_inverse {
     .hero_eyebrow  { color: rgba(255, 255, 255, 0.7); }
-    .hero_title    { color: token.$color_text_inverse; }
+    .hero_title    { color: token.$color_brand_on_primary; }
     .hero_subtitle { color: rgba(255, 255, 255, 0.85); }
   }
 
