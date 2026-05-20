@@ -68,7 +68,7 @@ background: color.mix($color_base_neutral_0, black, 50%);
 import { ThemeProvider, useTheme } from "@bigtablet/design-system";
 
 // 앱 최상단 wrap
-<ThemeProvider mode="system">
+<ThemeProvider defaultMode="system">
   <App />
 </ThemeProvider>
 

@@ -9,12 +9,10 @@ const withTheme: Decorator = (Story, context) => {
 	const theme = (context.globals.theme as string | undefined) ?? "light";
 
 	if (typeof document !== "undefined") {
-		if (theme === "dark") {
-			document.documentElement.setAttribute("data-theme", "dark");
-		} else if (theme === "light") {
-			document.documentElement.setAttribute("data-theme", "light");
-		} else {
+		if (theme === "system") {
 			document.documentElement.removeAttribute("data-theme");
+		} else {
+			document.documentElement.setAttribute("data-theme", theme);
 		}
 	}
 

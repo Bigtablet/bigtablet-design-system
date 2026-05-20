@@ -8,15 +8,11 @@
 <script>
     // Storybook preview iframe 안의 anchor 클릭을 차단 — demo 환경에서 실제 navigate 방지.
     // target="_blank" 등 명시적 외부 링크만 허용.
-    document.addEventListener("click", function (e) {
-        var target = e.target;
-        while (target && target !== document.body) {
-            if (target.tagName === "A" && target.getAttribute("href") && !target.target) {
-                e.preventDefault();
-                console.log("[Storybook] navigation blocked:", target.getAttribute("href"));
-                return;
-            }
-            target = target.parentNode;
+    document.addEventListener("click", (e) => {
+        const anchor = e.target.closest("a[href]");
+        if (anchor && !anchor.target) {
+            e.preventDefault();
+            console.log("[Storybook] navigation blocked:", anchor.getAttribute("href"));
         }
     }, true);
 </script>
