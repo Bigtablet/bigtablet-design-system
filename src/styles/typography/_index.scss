@@ -1,3 +1,5 @@
+@use "../breakpoints" as breakpoint;
+
 $font_family_primary: "Pretendard", sans-serif;
 
 // ── Base: Font size ───────────────────────────────────────────────────────────
@@ -80,3 +82,71 @@ $letter_spacing_tight:  0.32px;
 @mixin label_medium_medium   { font-size: $font_size_13; font-weight: $font_weight_medium;  line-height: $line_height_18; letter-spacing: $letter_spacing_normal; }
 @mixin label_small           { font-size: $font_size_12; font-weight: $font_weight_regular; line-height: $line_height_16; letter-spacing: $letter_spacing_normal; }
 @mixin label_small_medium    { font-size: $font_size_12; font-weight: $font_weight_medium;  line-height: $line_height_16; letter-spacing: $letter_spacing_normal; }
+
+// ── Bold weight variants (v3.1) ───────────────────────────────────────────
+// 강조용 — 매번 font-weight 명시 안 해도 되도록.
+
+@mixin display_large_bold    { font-size: $font_size_48; font-weight: $font_weight_bold; line-height: $line_height_60; letter-spacing: -0.02em; }
+@mixin display_medium_bold   { font-size: $font_size_40; font-weight: $font_weight_bold; line-height: $line_height_50; letter-spacing: -0.02em; }
+@mixin display_small_bold    { font-size: $font_size_32; font-weight: $font_weight_bold; line-height: $line_height_40; letter-spacing: -0.015em; }
+
+@mixin heading_large_bold    { font-size: $font_size_28; font-weight: $font_weight_bold; line-height: $line_height_36; letter-spacing: -0.01em; }
+@mixin heading_medium_bold   { font-size: $font_size_24; font-weight: $font_weight_bold; line-height: $line_height_32; letter-spacing: -0.01em; }
+@mixin heading_small_bold    { font-size: $font_size_20; font-weight: $font_weight_bold; line-height: $line_height_28; letter-spacing: $letter_spacing_normal; }
+
+@mixin title_large_bold      { font-size: $font_size_18; font-weight: $font_weight_bold; line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_medium_bold     { font-size: $font_size_16; font-weight: $font_weight_bold; line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin title_small_bold      { font-size: $font_size_14; font-weight: $font_weight_bold; line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+
+@mixin body_large_bold       { font-size: $font_size_16; font-weight: $font_weight_bold; line-height: $line_height_24; letter-spacing: $letter_spacing_normal; }
+@mixin body_medium_bold      { font-size: $font_size_15; font-weight: $font_weight_bold; line-height: $line_height_22_5; letter-spacing: $letter_spacing_normal; }
+@mixin body_small_bold       { font-size: $font_size_14; font-weight: $font_weight_bold; line-height: $line_height_20; letter-spacing: $letter_spacing_normal; }
+
+@mixin label_large_bold      { font-size: $font_size_14; font-weight: $font_weight_bold; line-height: $line_height_20; letter-spacing: $letter_spacing_tight; }
+@mixin label_medium_bold     { font-size: $font_size_13; font-weight: $font_weight_bold; line-height: $line_height_18; letter-spacing: $letter_spacing_tight; }
+@mixin label_small_bold      { font-size: $font_size_12; font-weight: $font_weight_bold; line-height: $line_height_16; letter-spacing: $letter_spacing_tight; }
+
+// ── Semantic aliases (v3.1) ───────────────────────────────────────────────
+// 의미상 명확한 이름. heading_*/body_* 외워두기 어려운 경우 대안.
+
+@mixin caption               { font-size: $font_size_12; font-weight: $font_weight_regular; line-height: $line_height_16; letter-spacing: $letter_spacing_tight; }
+@mixin caption_bold          { font-size: $font_size_12; font-weight: $font_weight_bold;    line-height: $line_height_16; letter-spacing: $letter_spacing_tight; }
+@mixin overline              { font-size: $font_size_12; font-weight: $font_weight_semi_bold; line-height: $line_height_16; letter-spacing: 0.08em; text-transform: uppercase; }
+@mixin subtitle              { font-size: $font_size_15; font-weight: $font_weight_medium;  line-height: $line_height_22_5; letter-spacing: $letter_spacing_normal; }
+@mixin code                  { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: $font_size_13; line-height: $line_height_18; }
+
+// ── Responsive display (v3.1) ─────────────────────────────────────────────
+// Hero/marketing title — 데스크탑 큰 사이즈, 모바일에서 자동 한 단계 축소.
+
+@mixin display_large_responsive {
+  @include display_large_bold;
+  @include breakpoint.compact { @include display_small_bold; }
+}
+
+@mixin display_medium_responsive {
+  @include display_medium_bold;
+  @include breakpoint.compact { @include heading_large_bold; }
+}
+
+@mixin heading_large_responsive {
+  @include heading_large_bold;
+  @include breakpoint.compact { @include heading_medium_bold; }
+}
+
+// ── Text wrap helpers (v3.1) ──────────────────────────────────────────────
+// CSS text-wrap 신기능 활용 — heading은 균형, body는 pretty.
+
+@mixin text_balance { text-wrap: balance; }
+@mixin text_pretty  { text-wrap: pretty; }
+@mixin text_nowrap  { white-space: nowrap; }
+@mixin text_truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── Numeric (v3.1) ────────────────────────────────────────────────────────
+// 매출/지표 표시할 때 숫자 자릿수 정렬.
+
+@mixin tabular_nums  { font-variant-numeric: tabular-nums; }
+@mixin slashed_zero  { font-variant-numeric: slashed-zero; }
