@@ -68,7 +68,7 @@ export type { FABProps, FABVariant } from "./ui/fab";
 export { FAB } from "./ui/fab";
 export type { FileInputProps } from "./ui/file";
 export { FileInput } from "./ui/file";
-export type { HeroAlign, HeroHeight, HeroOverlay, HeroProps } from "./ui/hero";
+export type { HeroAction, HeroAlign, HeroHeight, HeroOverlay, HeroProps } from "./ui/hero";
 export { Hero } from "./ui/hero";
 export type { IconName, IconProps, IconWeight } from "./ui/icon";
 export { Icon } from "./ui/icon";

@@ -1,26 +1,38 @@
 @use "src/styles/token" as token;
 
 .text_field {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: token.$spacing_6;
+  font-family: token.$font_family_primary;
 
   &_full_width {
     width: 100%;
   }
 
-  // ── Container (fieldset: border + border-radius) ────────────────────────
+  // ── Standalone label (above container) — Dropdown 패턴과 통일 ─────────────
+
+  &_label {
+    display: block;
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_heading;
+    cursor: pointer;
+    transition: color token.$transition_base;
+  }
+
+  // ── Container (border + border-radius) ─────────────────────────────────
 
   &_container {
-    // fieldset UA 스타일 reset
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
-    padding: 0;
-    margin: 0;
-    min-inline-size: 0; // fieldset 기본값 min-content 제거
-    width: 100%;
     background-color: token.$color_bg_solid;
-    transition: border-color token.$transition_base, background-color token.$transition_base;
+    box-sizing: border-box;
+    width: 100%;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
 
     &:hover {
       border-color: token.$color_border_hover;
@@ -37,7 +49,7 @@
     display: flex;
     align-items: center;
     gap: token.$spacing_4;
-    box-sizing: border-box; // min-height = 시각 height (Button md=40 정렬)
+    box-sizing: border-box;
     @include token.responsive_height(token.$tap_target_compact); // md: 40 → 48 (mobile)
   }
 
@@ -48,7 +60,7 @@
   }
 
   &_size_sm &_input_wrap {
-    padding: token.$spacing_8 token.$spacing_16;
+    padding: token.$spacing_4 token.$spacing_16;
   }
 
   &_size_sm &_input {
@@ -69,30 +81,6 @@
     line-height: token.$line_height_24;
   }
 
-  // ── Floating label (legend) ────────────────────────────────────────────
-  // fieldset + legend 구조: 브라우저가 border를 legend 주변에서 자동으로 끊어줌.
-  // 배경색 불필요.
-
-  &_label {
-    margin-inline-start: token.$spacing_12; // 16px 정렬 (16px - 4px padding)
-    padding: 0 token.$spacing_4;
-    color: token.$color_text_heading;
-    transition: color token.$transition_base;
-
-    > label {
-      display: block;
-      font-family: token.$font_family_primary;
-      font-size: token.$font_size_12;
-      font-weight: token.$font_weight_regular;
-      line-height: token.$line_height_16;
-      letter-spacing: token.$letter_spacing_tight;
-      color: inherit;
-      white-space: nowrap;
-      pointer-events: none;
-      cursor: default;
-    }
-  }
-
   // ── Input ──────────────────────────────────────────────────────────────
 
   &_input_wrap {
@@ -100,7 +88,7 @@
     display: flex;
     align-items: center;
     min-width: 0;
-    padding: token.$spacing_6 token.$spacing_16; // md 기본 (height 40 fit)
+    padding: token.$spacing_4 token.$spacing_16; // Dropdown control과 동일 (4px 16px)
   }
 
   // 아이콘이 있으면 해당 쪽 패딩 제거 (아이콘 자체 padding이 여백 역할)
@@ -124,7 +112,7 @@
     color: token.$color_text_heading;
 
     &::placeholder {
-      color: token.$color_text_caption;
+      color: token.$color_text_body; // Dropdown placeholder와 동일 (#666 — 더 진함)
     }
 
     &:disabled {
@@ -182,7 +170,7 @@
   // ── Helper text ────────────────────────────────────────────────────────
 
   &_helper {
-    padding: token.$spacing_4 token.$spacing_16 0;
+    padding: 0 token.$spacing_4;
     font-family: token.$font_family_primary;
     font-size: token.$font_size_12;
     font-weight: token.$font_weight_regular;
@@ -223,14 +211,14 @@
         border-color: token.$color_bg_disabled;
       }
 
-      // legend 제외한 내부 콘텐츠 전체 opacity 0.38
-      > *:not(.text_field_label) {
+      > * {
         opacity: token.$opacity_38;
       }
     }
 
     .text_field_label {
       color: token.$color_text_disabled;
+      cursor: not-allowed;
     }
 
     .text_field_helper {

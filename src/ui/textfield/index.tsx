@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { cn } from "../../utils";
 import { Icon } from "../icon";
 import "./style.scss";
@@ -71,7 +72,7 @@ export const TextField = ({
 	ref,
 	...props
 }: TextFieldProps) => {
-	const generatedId = React.useId();
+	const generatedId = useId();
 	const inputId = id ?? generatedId;
 	const helperId = supportingText ? `${inputId}-help` : undefined;
 
@@ -79,19 +80,19 @@ export const TextField = ({
 	const applyTransform = (nextValue: string) =>
 		transformValue ? transformValue(nextValue) : nextValue;
 
-	const [innerValue, setInnerValue] = React.useState(() =>
+	const [innerValue, setInnerValue] = useState(() =>
 		applyTransform(value ?? defaultValue ?? ""),
 	);
 
-	const isComposingRef = React.useRef(false);
+	const isComposingRef = useRef(false);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!isControlled) return;
 		const nextValue = value ?? "";
 		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
 	}, [isControlled, value, transformValue]);
 
-	const handleClear = React.useCallback(() => {
+	const handleClear = useCallback(() => {
 		setInnerValue("");
 		onChangeAction?.("");
 	}, [onChangeAction]);
@@ -120,14 +121,13 @@ export const TextField = ({
 
 	return (
 		<div className={rootClassName}>
-			{/* fieldset + legend: 브라우저가 legend 주변 border를 자동으로 끊어줌 */}
-			<fieldset className="text_field_container">
-				{label && showLabel && (
-					<legend className="text_field_label">
-						<label htmlFor={inputId}>{label}</label>
-					</legend>
-				)}
+			{label && showLabel && (
+				<label htmlFor={inputId} className="text_field_label">
+					{label}
+				</label>
+			)}
 
+			<div className="text_field_container">
 				<div className="text_field_inner">
 					{leadingIcon && (
 						<span className="text_field_icon" aria-hidden="true">
@@ -175,7 +175,7 @@ export const TextField = ({
 
 					{resolvedTrailing}
 				</div>
-			</fieldset>
+			</div>
 
 			{supportingText && (
 				<div id={helperId} className="text_field_helper">

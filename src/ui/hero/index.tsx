@@ -2,7 +2,17 @@
 
 import type * as React from "react";
 import { cn } from "../../utils";
+import { Button } from "../button";
 import "./style.scss";
+
+export interface HeroAction {
+	/** 버튼 라벨 */
+	label: React.ReactNode;
+	/** 클릭 핸들러 */
+	onClick?: () => void;
+	/** href 사용 시 anchor로 렌더링 */
+	href?: string;
+}
 
 export type HeroHeight = "sm" | "md" | "lg" | "full";
 export type HeroAlign = "left" | "center" | "right";
@@ -34,6 +44,10 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 	children?: React.ReactNode;
 	/** 텍스트 색상 — 배경이 어두우면 흰색 권장 (기본값: "auto" — overlay가 dark면 white) */
 	textColor?: "auto" | "inverse" | "default";
+	/** Primary CTA — 미지정 시 children으로 직접 Button 전달 가능 */
+	primaryAction?: HeroAction;
+	/** Secondary CTA */
+	secondaryAction?: HeroAction;
 }
 
 /**
@@ -52,6 +66,8 @@ export const Hero = ({
 	subtitle,
 	eyebrow,
 	textColor = "auto",
+	primaryAction,
+	secondaryAction,
 	children,
 	className,
 	style,
@@ -86,7 +102,21 @@ export const Hero = ({
 				{eyebrow && <div className="hero_eyebrow">{eyebrow}</div>}
 				{title && <h1 className="hero_title">{title}</h1>}
 				{subtitle && <p className="hero_subtitle">{subtitle}</p>}
-				{children && <div className="hero_actions">{children}</div>}
+				{(primaryAction || secondaryAction || children) && (
+					<div className="hero_actions">
+						{primaryAction && (
+							<Button size="lg" variant="filled" onClick={primaryAction.onClick}>
+								{primaryAction.label}
+							</Button>
+						)}
+						{secondaryAction && (
+							<Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
+								{secondaryAction.label}
+							</Button>
+						)}
+						{children}
+					</div>
+				)}
 			</div>
 		</section>
 	);
