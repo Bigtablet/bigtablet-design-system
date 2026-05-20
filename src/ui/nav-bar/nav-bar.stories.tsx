@@ -20,26 +20,14 @@ const meta: Meta<typeof NavBar> = {
 export default meta;
 type Story = StoryObj<typeof NavBar>;
 
-function Brand() {
+function Brand({ invert = false }: { invert?: boolean }) {
 	return (
-		<div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}>
-			<div
-				style={{
-					width: 24,
-					height: 24,
-					background: "#121212",
-					color: "#fff",
-					borderRadius: 4,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					fontSize: 13,
-				}}
-			>
-				B
-			</div>
-			<span>Bigtablet</span>
-		</div>
+		<img
+			src="/images/logo/bigtablet.png"
+			alt="Bigtablet"
+			height={28}
+			style={{ display: "block", filter: invert ? "brightness(0) invert(1)" : undefined }}
+		/>
 	);
 }
 
@@ -62,7 +50,7 @@ export const Accent: Story = {
 	render: () => (
 		<NavBar
 			variant="accent"
-			brand={<Brand />}
+			brand={<Brand invert />}
 			actions={
 				<Button variant="outline" size="sm">
 					로그인
@@ -88,7 +76,7 @@ export const Transparent: Story = {
 				color: "#fff",
 			}}
 		>
-			<NavBar variant="transparent" brand={<Brand />} actions={<Button size="sm">시작</Button>}>
+			<NavBar variant="transparent" brand={<Brand invert />} actions={<Button size="sm">시작</Button>}>
 				<NavLink href="#">소개</NavLink>
 				<NavLink href="#">기능</NavLink>
 			</NavBar>

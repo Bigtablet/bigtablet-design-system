@@ -193,7 +193,16 @@ export const AdminDashboard: Story = {
 	render: () => (
 		<div style={{ display: "flex", minHeight: "100vh", background: "#F2F5F8" }}>
 			{/* Sidebar */}
-			<Sidebar>
+			<Sidebar
+				header={
+					<img
+						src="/images/logo/bigtablet.png"
+						alt="Bigtablet"
+						height={26}
+						style={{ filter: "brightness(0) invert(1)" }}
+					/>
+				}
+			>
 				<SidebarSection label="메인">
 					<SidebarItem
 						icon={

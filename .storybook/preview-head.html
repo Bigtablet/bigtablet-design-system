@@ -13,4 +13,11 @@
         "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol", sans-serif;
     }
+
+    /* Dark mode: body background & text follow CSS custom properties */
+    body {
+        background-color: var(--bt-color-bg-solid, #ffffff);
+        color: var(--bt-color-text-heading, #121212);
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
 </style>

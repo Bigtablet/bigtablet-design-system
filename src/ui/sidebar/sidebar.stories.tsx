@@ -30,24 +30,12 @@ const SAMPLE_ITEMS = [
 
 function BrandHeader() {
 	return (
-		<div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 16 }}>
-			<div
-				style={{
-					width: 28,
-					height: 28,
-					borderRadius: 6,
-					background: "#fff",
-					color: "#47555E",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					fontWeight: 800,
-				}}
-			>
-				B
-			</div>
-			<span>Bigtablet</span>
-		</div>
+		<img
+			src="/images/logo/bigtablet.png"
+			alt="Bigtablet"
+			height={28}
+			style={{ display: "block", filter: "brightness(0) invert(1)" }}
+		/>
 	);
 }
 
