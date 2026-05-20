@@ -70,7 +70,7 @@ export type { FileInputProps } from "./ui/file";
 export { FileInput } from "./ui/file";
 export type { HeroAction, HeroAlign, HeroHeight, HeroOverlay, HeroProps } from "./ui/hero";
 export { Hero } from "./ui/hero";
-export type { IconName, IconProps, IconWeight } from "./ui/icon";
+export type { IconProps, LucideIcon, LucideProps } from "./ui/icon";
 export { Icon } from "./ui/icon";
 export type { IconButtonProps, IconButtonSize, IconButtonVariant } from "./ui/icon-button";
 export { IconButton } from "./ui/icon-button";

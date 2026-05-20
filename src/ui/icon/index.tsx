@@ -1,56 +1,37 @@
 "use client";
 
-import type * as React from "react";
-import { ICON_DATA, type IconName, type IconWeight } from "./icon-data";
+import type { LucideIcon, LucideProps } from "lucide-react";
 
-export type { IconName, IconWeight } from "./icon-data";
+export type { LucideIcon, LucideProps } from "lucide-react";
 
-export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, "fill"> {
-	/** 아이콘 이름 */
-	name: IconName;
-	/** 아이콘 크기 (px, 기본값: 24) */
-	size?: 20 | 24;
-	/** 선의 굵기 (기본값: 400) */
-	weight?: IconWeight;
-	/** 채움 스타일 여부 (기본값: false) */
-	fill?: boolean;
+export interface IconProps extends Omit<LucideProps, "ref"> {
+	/** lucide-react 아이콘 컴포넌트 */
+	icon: LucideIcon;
 }
 
 /**
- * Material Symbols 기반 인라인 SVG 아이콘 컴포넌트.
- * weight(300/400) × fill(true/false) × size(20/24) 조합을 지원한다.
+ * lucide-react 아이콘 wrapper.
+ * aria-label이 없으면 aria-hidden을 자동 적용해 스크린리더 노이즈를 방지한다.
+ *
+ * @example
+ * ```tsx
+ * import { Icon } from "@bigtablet/design-system";
+ * import { Search, X } from "lucide-react";
+ *
+ * <Icon icon={Search} size={20} />
+ * <Icon icon={X} size={16} strokeWidth={2.5} aria-label="닫기" />
+ * ```
+ *
+ * lucide-react 아이콘 전체 카탈로그: https://lucide.dev/icons/
  */
-export const Icon = ({
-	name,
-	size = 24,
-	weight = 400,
-	fill = false,
-	style,
-	...props
-}: IconProps) => {
-	const entry = ICON_DATA[name];
-
-	if (!entry) {
-		console.warn(`[Icon] Unknown icon name: "${name}"`);
-		return null;
-	}
-
-	const pathData = fill ? entry[weight].fill : entry[weight].noFill;
-
+export const Icon = ({ icon: IconComponent, ...props }: IconProps) => {
+	const hasLabel = !!props["aria-label"];
 	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width={size}
-			height={size}
-			viewBox="0 -960 960 960"
-			fill="currentColor"
-			aria-hidden="true"
-			focusable="false"
-			style={{ display: "inline-block", flexShrink: 0, ...style }}
+		<IconComponent
+			aria-hidden={hasLabel ? undefined : true}
+			focusable={hasLabel ? undefined : false}
 			{...props}
-		>
-			<path d={pathData} />
-		</svg>
+		/>
 	);
 };
 

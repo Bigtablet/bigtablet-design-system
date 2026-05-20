@@ -1,9 +1,9 @@
 "use client";
 
+import { X } from "lucide-react";
 import * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { cn } from "../../utils";
-import { Icon } from "../icon";
 import "./style.scss";
 
 export type TextFieldSize = "sm" | "md" | "lg";
@@ -43,8 +43,8 @@ export interface TextFieldProps
 	ref?: React.Ref<HTMLInputElement>;
 }
 
-// X 아이콘 — Icon 컴포넌트 재사용
-const ClearIcon = () => <Icon name="close" size={20} />;
+// X 아이콘 — lucide-react
+const ClearIcon = () => <X size={20} aria-hidden="true" />;
 
 /**
  * 텍스트 필드를 렌더링한다.
