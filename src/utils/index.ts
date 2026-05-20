@@ -1,4 +1,4 @@
 export { cn } from "./cn";
-export { useFocusTrap } from "./useFocusTrap";
-export { useSpringHover } from "./useSpringHover";
-export { useSpringPresence } from "./useSpringPresence";
+export { useFocusTrap } from "./use-focus-trap";
+export { useSpringHover } from "./use-spring-hover";
+export { useSpringPresence } from "./use-spring-presence";

@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useFocusTrap } from "./useFocusTrap";
+import { useFocusTrap } from "./use-focus-trap";
 
 // Helper: container with focusable buttons
 function createContainer(buttonCount: number): HTMLDivElement {

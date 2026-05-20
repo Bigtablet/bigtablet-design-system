@@ -110,11 +110,16 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 }
 
 [data-theme="dark"] {
+  // Font rendering — dark bg 위 흰 글씨의 halation/노이즈 보정
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
   // Brand (dark 모드에서도 black 유지 — bg가 navy라 black 버튼 구분됨.
   // 단 텍스트로 쓰일 땐 inverse 사용 권장)
 
   // Text (light → inverted)
-  --bt-color-text-heading:         #{$color_base_neutral_0};
+  // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
+  --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
   --bt-color-text-body:            #{$color_base_navy_200};
   --bt-color-text-caption:         #{$color_base_neutral_400};
   --bt-color-text-inverse:         #{$color_base_neutral_900};
@@ -150,7 +155,10 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 // `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bt-color-text-heading:         #{$color_base_neutral_0};
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
     --bt-color-text-body:            #{$color_base_navy_200};
     --bt-color-text-caption:         #{$color_base_neutral_400};
     --bt-color-text-inverse:         #{$color_base_neutral_900};
