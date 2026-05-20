@@ -30,18 +30,8 @@
     text-align: start;
     transition: background token.$transition_fast;
 
-    // 펼치지 않은 상태에서만 hover bg 적용 (펼친 상태 = active, content가 표시 중이라 추가 강조 불필요)
-    &:hover:not(:disabled):not([aria-expanded="true"]) {
+    &:hover:not(:disabled) {
       background: token.$color_state_hover_on_light;
-    }
-
-    // 펼친 상태에서는 chevron 색만 좀 더 진하게 (subtle active 표시)
-    &[aria-expanded="true"] {
-      color: token.$color_text_heading;
-
-      .accordion_chevron {
-        color: token.$color_text_heading;
-      }
     }
 
     &:focus-visible {
