@@ -9,15 +9,15 @@ import {
 	TrendingUp,
 	Truck,
 } from "lucide-react";
-import { Avatar } from "../../ui/avatar";
-import { Badge } from "../../ui/badge";
-import { Card } from "../../ui/card";
-import { Chip } from "../../ui/chip";
-import { Divider } from "../../ui/divider";
-import { Grid } from "../../ui/grid";
-import { IconButton } from "../../ui/icon-button";
-import { Menu } from "../../ui/menu";
-import { Stack } from "../../ui/stack";
+import { Avatar } from "../../ui/display/avatar";
+import { Badge } from "../../ui/display/badge";
+import { Card } from "../../ui/display/card";
+import { Chip } from "../../ui/general/chip";
+import { Divider } from "../../ui/display/divider";
+import { Grid } from "../../ui/layout/grid";
+import { IconButton } from "../../ui/general/icon-button";
+import { Menu } from "../../ui/navigation/menu";
+import { Stack } from "../../ui/layout/stack";
 
 const meta: Meta = {
 	title: "Guide/Cookbook/Data Display",

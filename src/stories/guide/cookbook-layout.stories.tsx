@@ -12,20 +12,20 @@ import {
 	Users,
 	Zap,
 } from "lucide-react";
-import { Avatar } from "../../ui/avatar";
-import { Badge } from "../../ui/badge";
-import { Breadcrumb } from "../../ui/breadcrumb";
-import { Button } from "../../ui/button";
-import { Card } from "../../ui/card";
-import { Chip } from "../../ui/chip";
-import { Container } from "../../ui/container";
-import { Grid } from "../../ui/grid";
-import { Hero } from "../../ui/hero";
-import { Section } from "../../ui/section";
-import { Sidebar, SidebarItem, SidebarSection } from "../../ui/sidebar";
-import { Stack } from "../../ui/stack";
-import { Tab, TabList, TabPanel, Tabs } from "../../ui/tabs";
-import { Table } from "../../ui/table";
+import { Avatar } from "../../ui/display/avatar";
+import { Badge } from "../../ui/display/badge";
+import { Breadcrumb } from "../../ui/navigation/breadcrumb";
+import { Button } from "../../ui/general/button";
+import { Card } from "../../ui/display/card";
+import { Chip } from "../../ui/general/chip";
+import { Container } from "../../ui/layout/container";
+import { Grid } from "../../ui/layout/grid";
+import { Hero } from "../../ui/display/hero";
+import { Section } from "../../ui/layout/section";
+import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
+import { Stack } from "../../ui/layout/stack";
+import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
+import { Table } from "../../ui/display/table";
 
 const meta: Meta = {
 	title: "Guide/Cookbook/Layout Patterns",

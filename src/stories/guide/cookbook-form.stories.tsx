@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Filter, Lock, Mail, Search, User } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
-import { Chip } from "../../ui/chip";
-import { Divider } from "../../ui/divider";
-import { Dropdown } from "../../ui/dropdown";
-import { Radio } from "../../ui/radio";
-import { Stack } from "../../ui/stack";
-import { TextField } from "../../ui/textfield";
-import { Toggle } from "../../ui/toggle";
+import { Button } from "../../ui/general/button";
+import { Checkbox } from "../../ui/forms/checkbox";
+import { Chip } from "../../ui/general/chip";
+import { Divider } from "../../ui/display/divider";
+import { Dropdown } from "../../ui/forms/dropdown";
+import { Radio } from "../../ui/forms/radio";
+import { Stack } from "../../ui/layout/stack";
+import { TextField } from "../../ui/forms/textfield";
+import { Toggle } from "../../ui/forms/toggle";
 
 const meta: Meta = {
 	title: "Guide/Cookbook/Form Patterns",

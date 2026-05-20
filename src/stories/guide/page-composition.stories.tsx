@@ -7,19 +7,19 @@ import {
 	Package,
 	Receipt,
 } from "lucide-react";
-import { Avatar } from "../../ui/avatar";
-import { Badge } from "../../ui/badge";
-import { Button } from "../../ui/button";
-import { Chip } from "../../ui/chip";
-import { Container } from "../../ui/container";
-import { EmptyState } from "../../ui/empty-state";
-import { Grid } from "../../ui/grid";
-import { Hero } from "../../ui/hero";
-import { MediaCard } from "../../ui/media-card";
-import { Section } from "../../ui/section";
-import { Sidebar, SidebarItem, SidebarSection } from "../../ui/sidebar";
-import { Stack } from "../../ui/stack";
-import { Tab, TabList, TabPanel, Tabs } from "../../ui/tabs";
+import { Avatar } from "../../ui/display/avatar";
+import { Badge } from "../../ui/display/badge";
+import { Button } from "../../ui/general/button";
+import { Chip } from "../../ui/general/chip";
+import { Container } from "../../ui/layout/container";
+import { EmptyState } from "../../ui/feedback/empty-state";
+import { Grid } from "../../ui/layout/grid";
+import { Hero } from "../../ui/display/hero";
+import { MediaCard } from "../../ui/display/media-card";
+import { Section } from "../../ui/layout/section";
+import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
+import { Stack } from "../../ui/layout/stack";
+import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
 
 const meta: Meta = {
 	title: "Guide/Page Composition",
@@ -335,7 +335,6 @@ export const AdminDashboard: Story = {
 						src="/images/logo/bigtablet.png"
 						alt="Bigtablet"
 						height={26}
-						style={{ filter: "brightness(0) invert(1)" }}
 					/>
 				}
 			>

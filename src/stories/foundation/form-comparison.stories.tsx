@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dropdown } from "../../ui/dropdown";
-import { TextField } from "../../ui/textfield";
+import { Dropdown } from "../../ui/forms/dropdown";
+import { TextField } from "../../ui/forms/textfield";
 
 const meta: Meta = {
 	title: "Foundation/Form Comparison",

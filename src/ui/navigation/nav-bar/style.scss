@@ -1,0 +1,280 @@
+@use "src/styles/token" as token;
+
+.nav_bar {
+  width: 100%;
+  z-index: token.$z_level3;
+
+  &_sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  &_inner {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_24;
+    padding: token.$spacing_12 token.$spacing_24;
+    min-height: 60px;
+
+    @include token.compact {
+      padding: token.$spacing_8 token.$spacing_16;
+      gap: token.$spacing_12;
+    }
+  }
+
+  // contained — marketing/B2C 헤더: max-width 1200, 중앙 정렬
+  &_layout_contained &_inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  // fluid — admin/dashboard 헤더: 전체 폭 사용 (insight 스타일)
+  &_layout_fluid &_inner {
+    max-width: none;
+  }
+
+  &_brand {
+    flex-shrink: 0;
+    @include token.title_large_medium;
+    color: inherit;
+  }
+
+  &_links {
+    position: relative;       // indicator absolute 기준
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+
+    @include token.compact {
+      gap: 0;
+    }
+  }
+
+  // ── Sliding indicator ───────────────────────────────────────────────
+  // active link 위치/너비로 transform — 좌우 부드럽게 이동
+
+  &_indicator {
+    position: absolute;
+    bottom: -10px;            // link bottom과 NavBar bottom border 사이
+    height: 2px;
+    background: token.$color_accent_default;
+    border-radius: 1px;
+    pointer-events: none;
+    will-change: left, width;
+
+    &_animated {
+      transition:
+        left token.$duration_base token.$easing_enter,
+        width token.$duration_base token.$easing_enter;
+    }
+  }
+
+  &_search {
+    flex: 1;
+    max-width: 360px;
+    min-width: 0;
+
+    @include token.compact {
+      max-width: none;
+    }
+  }
+
+  &_right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_12;
+    margin-left: auto;
+  }
+
+  &_actions {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+  }
+
+  &_divider {
+    width: 1px;
+    height: 24px;
+    background: token.$color_border_default;
+    flex-shrink: 0;
+  }
+
+  &_profile {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  // ── LocaleSwitcher ───────────────────────────────────────────────────
+
+  &_locale {
+    position: relative;
+    flex-shrink: 0;
+
+    &_trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: token.$spacing_4;
+      padding: 6px 10px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: inherit;
+      border-radius: token.$radius_md;
+      @include token.label_medium_medium;
+      transition: background token.$duration_fast token.$easing_enter;
+
+      &:hover {
+        background: token.$color_state_hover_on_light;
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: token.$focus_ring;
+      }
+
+      &[aria-expanded="true"] .nav_bar_locale_chevron {
+        transform: rotate(180deg);
+      }
+    }
+
+    &_label {
+      // 더 작은 화면에서 텍스트는 숨기고 아이콘만
+      @include token.compact {
+        display: none;
+      }
+    }
+
+    &_chevron {
+      transition: transform token.$duration_fast token.$easing_enter;
+    }
+
+    &_menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 140px;
+      list-style: none;
+      margin: 0;
+      padding: token.$spacing_4;
+      background: token.$color_bg_solid;
+      border: token.$border_width_standard solid token.$color_border_default;
+      border-radius: token.$radius_md;
+      box-shadow: token.$elevation_level2;
+      z-index: token.$z_level5;
+    }
+
+    &_item {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: start;
+      color: token.$color_text_heading;
+      border-radius: token.$radius_sm;
+      @include token.body_small;
+      transition: background token.$duration_fast token.$easing_enter;
+
+      &:hover {
+        background: token.$color_state_hover_on_light;
+      }
+
+      &_active {
+        background: token.$color_accent_subtle;
+        color: token.$color_accent_default;
+        font-weight: token.$font_weight_medium;
+      }
+    }
+  }
+
+  &_link {
+    position: relative;
+    padding: token.$spacing_8 token.$spacing_4;
+    margin: 0 token.$spacing_8;
+    color: token.$color_text_body;
+    text-decoration: none;
+    @include token.label_large_medium;
+    // underline은 부모 NavBar의 indicator가 처리 — link 자체에 border-bottom 없음
+    transition: color token.$duration_fast token.$easing_enter;
+
+    &:hover:not(.nav_bar_link_active) {
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+      border-radius: token.$radius_sm;
+    }
+
+    // active — 색 + 굵기만. underline은 indicator가 sliding 처리
+    &_active {
+      color: token.$color_text_heading;
+      font-weight: token.$font_weight_semi_bold;
+    }
+  }
+
+  // ── Variant: default ─────────────────────────────────────────────────
+
+  &_variant_default {
+    background: token.$color_bg_solid;
+    color: token.$color_text_heading;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  // ── Variant: transparent ─────────────────────────────────────────────
+
+  &_variant_transparent {
+    background: transparent;
+    color: token.$color_text_heading;
+  }
+
+  // ── Variant: accent (navy) ───────────────────────────────────────────
+
+  &_variant_accent {
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+
+    .nav_bar_link {
+      color: rgba(255, 255, 255, 0.7);
+
+      &:hover:not(.nav_bar_link_active) {
+        color: token.$color_accent_on_surface;
+      }
+
+      &_active {
+        color: token.$color_accent_on_surface;
+      }
+    }
+
+    // navy bg 위 indicator는 흰색
+    .nav_bar_indicator {
+      background: token.$color_accent_on_surface;
+    }
+  }
+
+  // ── Variant: transparent — Hero 이미지 위 (대부분 어두운 bg) ─────────
+
+  &_variant_transparent {
+    .nav_bar_link {
+      color: rgba(255, 255, 255, 0.7);
+
+      &:hover:not(.nav_bar_link_active) {
+        color: #fff;
+      }
+
+      &_active {
+        color: #fff;
+      }
+    }
+
+    // 어두운 bg 가정 — 흰색 indicator
+    .nav_bar_indicator {
+      background: #fff;
+    }
+  }
+}

@@ -1,0 +1,145 @@
+@use "src/styles/token" as token;
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &_list {
+    position: relative; // indicator absolute 기준
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+  }
+
+  &_list_line {
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  // ── Sliding indicator (line + fills 양쪽 지원) ───────────────────────
+  // active tab 위치/너비로 transform — 좌우 부드럽게 이동
+
+  &_indicator {
+    position: absolute;
+    pointer-events: none;
+    will-change: left, width;
+
+    &_animated {
+      transition:
+        left token.$duration_base token.$easing_enter,
+        width token.$duration_base token.$easing_enter;
+    }
+
+    // line — 하단 underline (얇은 navy/검정 라인)
+    &_line {
+      bottom: -1px;
+      height: 2px;
+      background: token.$color_accent_default;
+      border-radius: 1px;
+    }
+
+    // fills — tab 전체 영역을 채우는 박스 (active tab 배경 역할)
+    &_fills {
+      top: token.$spacing_4;
+      bottom: token.$spacing_4;
+      background: token.$color_accent_default;
+      border-radius: token.$radius_md;
+      z-index: 0;     // tab text 아래
+    }
+  }
+
+  // fills variant — tab 자체에 background 없음 (indicator가 처리)
+  &_variant_fills .tabs_tab {
+    position: relative;
+    z-index: 1;       // indicator 위 — text 보임
+  }
+
+  &_list_fills {
+    background: token.$color_bg_solid_dim;
+    padding: token.$spacing_4;
+    border-radius: token.$radius_lg;
+    width: fit-content;
+  }
+
+  &_tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: token.$spacing_6;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: token.$color_text_body;
+    @include token.label_large_medium;
+    transition:
+      color token.$transition_base,
+      background token.$transition_base,
+      border-color token.$transition_base;
+
+    &:hover {
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  // ── Size variants ────────────────────────────────────────────────────
+
+  &_size_sm .tabs_tab {
+    @include token.label_medium_medium;
+    padding: token.$spacing_4 token.$spacing_8;
+    min-height: 32px;
+  }
+
+  &_size_md .tabs_tab {
+    padding: token.$spacing_8 token.$spacing_12;
+    min-height: 40px;
+  }
+
+  // ── Variant: line ────────────────────────────────────────────────────
+  // tab 자체 border-bottom 없음 — sliding indicator가 처리
+
+  &_variant_line .tabs_tab {
+    border-radius: 0;
+  }
+
+  &_variant_line .tabs_tab_active {
+    color: token.$color_accent_default;
+    font-weight: token.$font_weight_semi_bold;
+  }
+
+  // ── Variant: fills ───────────────────────────────────────────────────
+  // background는 sliding indicator가 처리. active tab은 text 색만 변경.
+
+  &_variant_fills .tabs_tab {
+    border-radius: token.$radius_md;
+  }
+
+  &_variant_fills .tabs_tab_active {
+    color: token.$color_accent_on_surface;
+  }
+
+  &_variant_fills .tabs_tab_active:hover {
+    color: token.$color_accent_on_surface;
+  }
+
+  // ── Panel ────────────────────────────────────────────────────────────
+
+  &_panel {
+    padding: token.$spacing_16 0;
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+      border-radius: token.$radius_sm;
+    }
+  }
+}

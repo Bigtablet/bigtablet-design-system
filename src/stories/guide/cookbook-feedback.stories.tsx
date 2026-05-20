@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Inbox, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../ui/button";
-import { Card } from "../../ui/card";
-import { EmptyState } from "../../ui/empty-state";
-import { Grid } from "../../ui/grid";
-import { Modal } from "../../ui/modal";
-import { Skeleton } from "../../ui/skeleton";
-import { Stack } from "../../ui/stack";
-import { ToastProvider } from "../../ui/toast";
-import { useToast } from "../../ui/toast/use-toast";
+import { Button } from "../../ui/general/button";
+import { Card } from "../../ui/display/card";
+import { EmptyState } from "../../ui/feedback/empty-state";
+import { Grid } from "../../ui/layout/grid";
+import { Modal } from "../../ui/overlay/modal";
+import { Skeleton } from "../../ui/feedback/skeleton";
+import { Stack } from "../../ui/layout/stack";
+import { ToastProvider } from "../../ui/feedback/toast";
+import { useToast } from "../../ui/feedback/toast/use-toast";
 
 const meta: Meta = {
 	title: "Guide/Cookbook/Feedback Patterns",

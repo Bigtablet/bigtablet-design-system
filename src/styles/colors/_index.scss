@@ -100,13 +100,15 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-status-warning:       #{$color_base_status_warning};
   --bt-color-status-info:          #{$color_base_status_info};
 
-  // Accent (Bigtablet navy — light/dark 동일)
-  --bt-color-accent-subtle:        #{$color_base_navy_50};
-  --bt-color-accent-muted:         #{$color_base_navy_100};
-  --bt-color-accent-light:         #{$color_base_navy_300};
-  --bt-color-accent-default:       #{$color_base_navy_600};
-  --bt-color-accent-strong:        #{$color_base_navy_800};
-  --bt-color-accent-on-surface:    #{$color_base_neutral_0};
+  // Accent (검정 brand 기반 — light에서 검정, dark에서 흰색 반전)
+  // 컴포넌트 active/selected/indicator 강조에 사용.
+  // navy 색상은 `color_base_navy_*`로 별도 보존 (legacy/optional usage).
+  --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
+  --bt-color-accent-muted:         #{$color_base_alpha_black_12};
+  --bt-color-accent-light:         #{$color_base_neutral_400};
+  --bt-color-accent-default:       #{$color_base_brand_primary};   // 검정 (brand와 동일)
+  --bt-color-accent-strong:        #{$color_base_neutral_900};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
 }
 
 [data-theme="dark"] {
@@ -150,6 +152,14 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 
   // Brand container — dark 모드에선 white alpha로
   --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+  // Accent (dark — 흰색 반전. active/selected가 dark navy bg 위에서 잘 보임)
+  --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+  --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+  --bt-color-accent-light:         #{$color_base_neutral_300};
+  --bt-color-accent-default:       #{$color_base_neutral_0};         // 흰색
+  --bt-color-accent-strong:        #{$color_base_neutral_0};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
 }
 
 // `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
@@ -185,6 +195,14 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     --bt-color-border-disabled:      #{$color_base_navy_800};
 
     --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+    // Accent dark — 흰색 반전
+    --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+    --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+    --bt-color-accent-light:         #{$color_base_neutral_300};
+    --bt-color-accent-default:       #{$color_base_neutral_0};
+    --bt-color-accent-strong:        #{$color_base_neutral_0};
+    --bt-color-accent-on-surface:    #{$color_base_neutral_900};
   }
 }
 
