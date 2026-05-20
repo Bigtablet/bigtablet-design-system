@@ -24,10 +24,12 @@ function useTabsContext() {
 }
 
 export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
-	/** 현재 활성 tab의 value */
-	value: string;
+	/** 제어형: 현재 활성 tab의 value */
+	value?: string;
+	/** 비제어형: 초기 활성 tab의 value */
+	defaultValue?: string;
 	/** value 변경 콜백 */
-	onValueChange: (value: string) => void;
+	onValueChange?: (value: string) => void;
 	/** 시각 스타일 (기본값: "line"). line=하단 underline, pills=둥근 박스 */
 	variant?: TabsVariant;
 	/** 크기 (기본값: "md") */
@@ -37,9 +39,12 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
 /**
  * 탭 컨테이너. TabList + TabPanel을 자식으로 받음.
  * 컨텍스트로 value/onValueChange를 자식들에게 공유.
+ * - 제어형: `value` + `onValueChange`
+ * - 비제어형: `defaultValue`
  */
 export const Tabs = ({
-	value,
+	value: controlledValue,
+	defaultValue = "",
 	onValueChange,
 	variant = "line",
 	size = "md",
@@ -47,10 +52,22 @@ export const Tabs = ({
 	children,
 	...props
 }: TabsProps) => {
+	const isControlled = controlledValue !== undefined;
+	const [internalValue, setInternalValue] = React.useState(defaultValue);
+	const value = isControlled ? controlledValue : internalValue;
+
+	const setValue = React.useCallback(
+		(v: string) => {
+			if (!isControlled) setInternalValue(v);
+			onValueChange?.(v);
+		},
+		[isControlled, onValueChange],
+	);
+
 	const idPrefix = React.useId();
 	const ctx = React.useMemo<TabsContextValue>(
-		() => ({ value, setValue: onValueChange, variant, size, idPrefix }),
-		[value, onValueChange, variant, size, idPrefix],
+		() => ({ value, setValue, variant, size, idPrefix }),
+		[value, setValue, variant, size, idPrefix],
 	);
 	return (
 		<TabsContext.Provider value={ctx}>
