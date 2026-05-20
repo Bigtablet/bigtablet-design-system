@@ -1,4 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+	Award,
+	BarChart3,
+	Building2,
+	CalendarClock,
+	Package,
+	Receipt,
+} from "lucide-react";
 import { Avatar } from "../../ui/avatar";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
@@ -71,35 +79,97 @@ export const MarketingPage: Story = {
 
 						<Grid cols="auto" minColWidth="260px" gap={24}>
 							{[
-								{ title: "실시간 주문 관리", desc: "POS 연동으로 주문 현황 즉시 파악" },
-								{ title: "스마트 재고 추적", desc: "재고 부족 전 자동 알림" },
-								{ title: "직원 스케줄링", desc: "근무 배치와 급여 정산 통합" },
-								{ title: "매출 분석 대시보드", desc: "일별·월별 매출 트렌드 한눈에" },
-								{ title: "고객 멤버십", desc: "적립·쿠폰으로 재방문 유도" },
-								{ title: "멀티 매장 관리", desc: "체인점 전체를 하나의 계정으로" },
+								{
+									icon: <Receipt size={22} strokeWidth={1.8} />,
+									title: "실시간 주문 관리",
+									desc: "POS 연동으로 주문 현황 즉시 파악",
+								},
+								{
+									icon: <Package size={22} strokeWidth={1.8} />,
+									title: "스마트 재고 추적",
+									desc: "재고 부족 전 자동 알림",
+								},
+								{
+									icon: <CalendarClock size={22} strokeWidth={1.8} />,
+									title: "직원 스케줄링",
+									desc: "근무 배치와 급여 정산 통합",
+								},
+								{
+									icon: <BarChart3 size={22} strokeWidth={1.8} />,
+									title: "매출 분석 대시보드",
+									desc: "일별·월별 매출 트렌드 한눈에",
+								},
+								{
+									icon: <Award size={22} strokeWidth={1.8} />,
+									title: "고객 멤버십",
+									desc: "적립·쿠폰으로 재방문 유도",
+								},
+								{
+									icon: <Building2 size={22} strokeWidth={1.8} />,
+									title: "멀티 매장 관리",
+									desc: "체인점 전체를 하나의 계정으로",
+								},
 							].map((f) => (
 								<div
 									key={f.title}
 									style={{
-										padding: "24px",
-										background: "#F2F5F8",
-										borderRadius: "12px",
-										border: "1px solid #DDE3E9",
+										position: "relative",
+										padding: "28px 24px",
+										background: "#fff",
+										borderRadius: "16px",
+										border: "1px solid #E5E5E5",
+										boxShadow:
+											"0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
+										overflow: "hidden",
 									}}
 								>
+									{/* subtle accent corner */}
 									<div
 										style={{
-											width: 40,
-											height: 40,
-											borderRadius: 8,
-											background: "#47555E",
-											marginBottom: 12,
+											position: "absolute",
+											top: -40,
+											right: -40,
+											width: 120,
+											height: 120,
+											borderRadius: "50%",
+											background:
+												"radial-gradient(circle, rgba(122, 165, 210, 0.12) 0%, transparent 70%)",
+											pointerEvents: "none",
 										}}
 									/>
-									<h3 style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 700, color: "#121212" }}>
+									<div
+										style={{
+											position: "relative",
+											display: "inline-flex",
+											alignItems: "center",
+											justifyContent: "center",
+											width: 44,
+											height: 44,
+											borderRadius: 12,
+											background:
+												"linear-gradient(135deg, #47555E 0%, #303841 100%)",
+											color: "#fff",
+											marginBottom: 14,
+											boxShadow:
+												"0 4px 12px rgba(71, 85, 94, 0.25), inset 0 1px 0 rgba(255,255,255,0.15)",
+										}}
+									>
+										{f.icon}
+									</div>
+									<h3
+										style={{
+											margin: "0 0 6px",
+											fontSize: 16,
+											fontWeight: 700,
+											color: "#121212",
+											letterSpacing: "-0.01em",
+										}}
+									>
 										{f.title}
 									</h3>
-									<p style={{ margin: 0, fontSize: 14, color: "#666" }}>{f.desc}</p>
+									<p style={{ margin: 0, fontSize: 14, color: "#666", lineHeight: 1.55 }}>
+										{f.desc}
+									</p>
 								</div>
 							))}
 						</Grid>
@@ -154,28 +224,94 @@ export const MarketingPage: Story = {
 			</Section>
 
 			{/* CTA Navy */}
-			<Section spacing="lg" bg="navy">
-				<Container size="md">
+			<Section
+				spacing="lg"
+				bg="navy"
+				style={{
+					position: "relative",
+					overflow: "hidden",
+					background:
+						"radial-gradient(at 20% 10%, rgba(122, 165, 210, 0.35) 0%, transparent 45%)," +
+						"radial-gradient(at 85% 90%, rgba(94, 106, 128, 0.45) 0%, transparent 50%)," +
+						"radial-gradient(at 50% 50%, rgba(48, 56, 65, 0.3) 0%, transparent 60%)," +
+						"linear-gradient(135deg, #303841 0%, #47555E 100%)",
+				}}
+			>
+				{/* dot pattern overlay */}
+				<div
+					aria-hidden="true"
+					style={{
+						position: "absolute",
+						inset: 0,
+						backgroundImage:
+							"radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
+						backgroundSize: "24px 24px",
+						maskImage:
+							"radial-gradient(ellipse at center, black 0%, transparent 70%)",
+						pointerEvents: "none",
+					}}
+				/>
+				{/* soft top highlight */}
+				<div
+					aria-hidden="true"
+					style={{
+						position: "absolute",
+						top: 0,
+						left: "50%",
+						width: 600,
+						height: 1,
+						transform: "translateX(-50%)",
+						background:
+							"linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+						pointerEvents: "none",
+					}}
+				/>
+				<Container size="md" style={{ position: "relative" }}>
 					<Stack gap={24} align="center">
 						<h2
 							style={{
 								margin: 0,
-								fontSize: 32,
-								fontWeight: 700,
+								fontSize: 36,
+								fontWeight: 800,
 								color: "#fff",
 								textAlign: "center",
+								letterSpacing: "-0.02em",
+								textShadow: "0 2px 20px rgba(0,0,0,0.15)",
 							}}
 						>
 							지금 바로 시작하세요
 						</h2>
-						<p style={{ margin: 0, color: "rgba(255,255,255,0.7)", textAlign: "center" }}>
+						<p
+							style={{
+								margin: 0,
+								color: "rgba(255,255,255,0.75)",
+								textAlign: "center",
+								fontSize: 16,
+							}}
+						>
 							14일 무료 체험 · 신용카드 불필요
 						</p>
 						<Stack direction="horizontal" gap={12}>
-							<Button variant="primary" size="lg">
+							<Button
+								variant="primary"
+								size="lg"
+								style={{
+									background: "#fff",
+									color: "#121212",
+									boxShadow: "0 8px 24px rgba(0, 0, 0, 0.18)",
+								}}
+							>
 								무료 체험 시작
 							</Button>
-							<Button variant="ghost" size="lg" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.3)" }}>
+							<Button
+								variant="ghost"
+								size="lg"
+								style={{
+									color: "#fff",
+									borderColor: "rgba(255,255,255,0.3)",
+									backdropFilter: "blur(4px)",
+								}}
+							>
 								영업팀 문의
 							</Button>
 						</Stack>
