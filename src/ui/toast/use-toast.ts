@@ -12,7 +12,13 @@ export const useToast = () => {
 	const ctx = useContext(ToastContext);
 
 	if (!ctx) {
-		throw new Error("useToast must be used within ToastProvider");
+		throw new Error(
+			"[Bigtablet DS] useToast는 <ToastProvider> 안에서만 사용 가능합니다.\n\n" +
+				"앱 최상단에 <ToastProvider>로 감싸주세요:\n" +
+				"  <ToastProvider>\n" +
+				"    <YourApp />\n" +
+				"  </ToastProvider>",
+		);
 	}
 
 	return {

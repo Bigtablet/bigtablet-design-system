@@ -52,9 +52,7 @@ describe("Tabs", () => {
 
 	it("throws when Tab is used outside Tabs", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-		expect(() => render(<Tab value="a">A</Tab>)).toThrow(
-			"Tabs primitives must be used within <Tabs>",
-		);
+		expect(() => render(<Tab value="a">A</Tab>)).toThrow("[Bigtablet DS]");
 		consoleError.mockRestore();
 	});
 

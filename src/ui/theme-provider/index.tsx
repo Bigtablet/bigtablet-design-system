@@ -22,7 +22,15 @@ const ThemeContext = React.createContext<ThemeContextValue | null>(null);
  */
 export const useTheme = (): ThemeContextValue => {
 	const ctx = React.useContext(ThemeContext);
-	if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+	if (!ctx) {
+		throw new Error(
+			"[Bigtablet DS] useTheme는 <ThemeProvider> 안에서만 사용 가능합니다.\n\n" +
+				"앱 최상단에 <ThemeProvider>로 감싸주세요:\n" +
+				'  <ThemeProvider mode="system">\n' +
+				"    <YourApp />\n" +
+				"  </ThemeProvider>",
+		);
+	}
 	return ctx;
 };
 

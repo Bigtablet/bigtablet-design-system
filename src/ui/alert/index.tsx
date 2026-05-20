@@ -56,7 +56,13 @@ const AlertContext = createContext<AlertContextValue | null>(null);
 export const useAlert = () => {
 	const context = useContext(AlertContext);
 	if (!context) {
-		throw new Error("useAlert must be used within AlertProvider");
+		throw new Error(
+			"[Bigtablet DS] useAlert는 <AlertProvider> 안에서만 사용 가능합니다.\n\n" +
+				"앱 최상단에 <AlertProvider>로 감싸주세요:\n" +
+				"  <AlertProvider>\n" +
+				"    <YourApp />\n" +
+				"  </AlertProvider>",
+		);
 	}
 	return context;
 };

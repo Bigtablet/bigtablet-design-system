@@ -146,7 +146,7 @@ describe("ThemeProvider", () => {
 
 	it("throws when useTheme is used outside provider", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-		expect(() => render(<TestConsumer />)).toThrow("useTheme must be used within ThemeProvider");
+		expect(() => render(<TestConsumer />)).toThrow("[Bigtablet DS]");
 		consoleError.mockRestore();
 	});
 });

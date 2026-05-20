@@ -23,7 +23,7 @@ describe("Alert", () => {
 	it("throws error when useAlert is used outside provider", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
-		expect(() => render(<TestComponent />)).toThrow("useAlert must be used within AlertProvider");
+		expect(() => render(<TestComponent />)).toThrow("[Bigtablet DS]");
 
 		consoleError.mockRestore();
 	});

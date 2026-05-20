@@ -49,9 +49,7 @@ describe("useToast", () => {
 	it("throws when used outside ToastProvider", () => {
 		const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-		expect(() => renderHook(() => useToast())).toThrow(
-			"useToast must be used within ToastProvider",
-		);
+		expect(() => renderHook(() => useToast())).toThrow("[Bigtablet DS]");
 
 		spy.mockRestore();
 	});

@@ -19,7 +19,18 @@ const TabsContext = React.createContext<TabsContextValue | null>(null);
 
 function useTabsContext() {
 	const ctx = React.useContext(TabsContext);
-	if (!ctx) throw new Error("Tabs primitives must be used within <Tabs>");
+	if (!ctx) {
+		throw new Error(
+			"[Bigtablet DS] <Tab>, <TabList>, <TabPanel>은 반드시 <Tabs> 안에 있어야 합니다.\n\n" +
+				"올바른 사용 예:\n" +
+				'  <Tabs defaultValue="a">\n' +
+				"    <TabList>\n" +
+				'      <Tab value="a">A</Tab>\n' +
+				"    </TabList>\n" +
+				'    <TabPanel value="a">...</TabPanel>\n' +
+				"  </Tabs>",
+		);
+	}
 	return ctx;
 }
 
