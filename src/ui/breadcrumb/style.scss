@@ -1,0 +1,52 @@
+@use "src/styles/token" as token;
+
+.breadcrumb {
+  &_list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: token.$spacing_4;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    @include token.label_medium;
+  }
+
+  &_item {
+    display: inline-flex;
+    align-items: center;
+    gap: token.$spacing_4;
+  }
+
+  &_link {
+    color: token.$color_text_body;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    border-radius: token.$radius_xs;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color token.$transition_fast;
+
+    &:hover {
+      color: token.$color_accent_default;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  &_current {
+    color: token.$color_text_heading;
+    font-weight: token.$font_weight_medium;
+    padding: 2px 4px;
+  }
+
+  &_separator {
+    display: inline-flex;
+    align-items: center;
+    color: token.$color_text_caption;
+  }
+}

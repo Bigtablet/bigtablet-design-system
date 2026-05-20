@@ -1,0 +1,37 @@
+@use "src/styles/token" as token;
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: token.$color_accent_default;
+  color: token.$color_accent_on_surface;
+  user-select: none;
+  font-weight: token.$font_weight_medium;
+
+  &_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &_initials {
+    line-height: 1;
+  }
+
+  // ── Size ─────────────────────────────────────────────────────────────
+
+  &_size_xs { width: 24px; height: 24px; font-size: 10px; }
+  &_size_sm { width: 32px; height: 32px; font-size: 12px; }
+  &_size_md { width: 40px; height: 40px; font-size: 14px; }
+  &_size_lg { width: 48px; height: 48px; font-size: 16px; }
+  &_size_xl { width: 64px; height: 64px; font-size: 20px; }
+
+  // ── Shape ────────────────────────────────────────────────────────────
+
+  &_shape_circle { border-radius: token.$radius_full; }
+  &_shape_square { border-radius: token.$radius_md; }
+}

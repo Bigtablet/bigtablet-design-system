@@ -1,0 +1,127 @@
+@use "src/styles/token" as token;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  background: token.$color_accent_default;
+  color: token.$color_accent_on_surface;
+  transition: width token.$transition_base;
+  flex-shrink: 0;
+
+  &_header {
+    padding: token.$spacing_20 token.$spacing_16;
+    border-bottom: token.$border_width_standard solid token.$color_accent_strong;
+    flex-shrink: 0;
+  }
+
+  &_nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: token.$spacing_12 token.$spacing_8;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+  }
+
+  &_footer {
+    padding: token.$spacing_12 token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_accent_strong;
+    flex-shrink: 0;
+  }
+
+  // ── Section ──────────────────────────────────────────────────────────
+
+  &_section {
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+    padding: token.$spacing_8 0;
+
+    &_label {
+      @include token.label_small_medium;
+      letter-spacing: token.$letter_spacing_tight;
+      color: rgba(255, 255, 255, 0.55);
+      padding: token.$spacing_4 token.$spacing_12;
+      text-transform: uppercase;
+    }
+  }
+
+  // ── Item ─────────────────────────────────────────────────────────────
+
+  &_item {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_12;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    padding: token.$spacing_8 token.$spacing_12;
+    border-radius: token.$radius_md;
+    cursor: pointer;
+    text-decoration: none;
+    @include token.label_large_medium;
+    transition:
+      background token.$transition_fast,
+      color token.$transition_fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: token.$color_accent_on_surface;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+    }
+
+    &_active {
+      background: rgba(255, 255, 255, 0.15);
+      color: token.$color_accent_on_surface;
+    }
+
+    &_icon {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+    }
+
+    &_label {
+      flex: 1;
+      text-align: start;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: opacity token.$transition_fast;
+    }
+
+    &_trailing {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  // ── Collapsed state ─────────────────────────────────────────────────
+
+  &_collapsed {
+    .sidebar_item_label,
+    .sidebar_item_trailing,
+    .sidebar_section_label {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .sidebar_item {
+      justify-content: center;
+      padding: token.$spacing_8;
+    }
+  }
+}

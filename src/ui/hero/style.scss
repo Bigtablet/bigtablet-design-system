@@ -1,0 +1,127 @@
+@use "src/styles/token" as token;
+
+.hero {
+  position: relative;
+  display: flex;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+
+  // ── Height variants ───────────────────────────────────────────────────
+
+  &_height_sm   { min-height: 320px; }
+  &_height_md   { min-height: 480px; }
+  &_height_lg   { min-height: 640px; }
+  &_height_full { min-height: 100vh; }
+
+  @include token.compact {
+    &_height_sm   { min-height: 240px; }
+    &_height_md   { min-height: 360px; }
+    &_height_lg   { min-height: 480px; }
+  }
+
+  // ── Overlay ───────────────────────────────────────────────────────────
+
+  .hero_overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: token.$z_level1;
+  }
+
+  &_overlay_dark .hero_overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+
+  &_overlay_light .hero_overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.7) 100%
+    );
+  }
+
+  &_overlay_navy .hero_overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(48, 56, 65, 0) 0%,
+      rgba(48, 56, 65, 0.85) 100%
+    );
+  }
+
+  // ── Content area ──────────────────────────────────────────────────────
+
+  &_content {
+    position: relative;
+    z-index: token.$z_level2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: token.$spacing_48 token.$spacing_24;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_16;
+    align-self: center;
+
+    @include token.compact {
+      padding: token.$spacing_32 token.$spacing_20;
+      gap: token.$spacing_12;
+    }
+  }
+
+  // ── Align ─────────────────────────────────────────────────────────────
+
+  &_align_left   .hero_content { text-align: start;  align-items: flex-start; }
+  &_align_center .hero_content { text-align: center; align-items: center; }
+  &_align_right  .hero_content { text-align: end;    align-items: flex-end; }
+
+  // ── Text color ────────────────────────────────────────────────────────
+
+  &_text_default {
+    .hero_eyebrow  { color: token.$color_text_caption; }
+    .hero_title    { color: token.$color_text_heading; }
+    .hero_subtitle { color: token.$color_text_body; }
+  }
+
+  &_text_inverse {
+    .hero_eyebrow  { color: rgba(255, 255, 255, 0.7); }
+    .hero_title    { color: token.$color_text_inverse; }
+    .hero_subtitle { color: rgba(255, 255, 255, 0.85); }
+  }
+
+  // ── Typography ────────────────────────────────────────────────────────
+
+  &_eyebrow {
+    @include token.label_large_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    text-transform: uppercase;
+  }
+
+  &_title {
+    @include token.display_small_medium;
+    margin: 0;
+
+    @include token.compact {
+      @include token.heading_large_medium;
+    }
+  }
+
+  &_subtitle {
+    @include token.body_large;
+    margin: 0;
+    max-width: 640px;
+  }
+
+  &_actions {
+    display: flex;
+    gap: token.$spacing_8;
+    margin-top: token.$spacing_8;
+    flex-wrap: wrap;
+  }
+}
