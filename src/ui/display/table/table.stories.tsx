@@ -44,32 +44,16 @@ const columns: TableColumn<User>[] = [
 ];
 
 const meta: Meta<typeof Table> = {
-	title: "Components/Table",
+	title: "Components/Display/Table",
 	component: Table,
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
 			description: {
 				component: `
-**Table**은 정형 데이터를 행/열로 표시하는 컴포넌트입니다.
+**Table** — 정형 데이터 행/열 표시. 제네릭 row 타입 안전.
 
-### 언제 사용하나요?
-- 사용자 목록, 주문 내역, 게시글 등 데이터 그리드
-- Admin 대시보드의 리스트 뷰
-- 페이지네이션 위에 올라가는 데이터 영역
-
-### 특징
-- 제네릭 타입으로 row 데이터 타입 안전
-- \`isLoading\` 시 헤더 유지, 바디만 Skeleton 행 표시
-- \`size\` (sm/md/lg) 지원
-- \`onRowClick\` 으로 행 단위 인터랙션
-- 빈 상태 자동 처리 (\`emptyMessage\`)
-- \`stickyHeader\` 옵션 (스크롤 컨테이너 안에서 헤더 고정)
-
-### 접근성
-- \`<th scope="col">\` 자동 적용
-- 빈 상태에 \`role="status"\` — 스크린 리더가 알림으로 인식
-- 스켈레톤 행은 \`pointer-events: none\` + \`aria-hidden\` (Skeleton 컴포넌트로)
+주요 prop: \`columns\`, \`rows\`, \`size\` (sm/md/lg), \`isLoading\` (Skeleton 행 자동), \`stickyHeader\`, \`onRowClick\`, \`emptyMessage\`.
         `,
 			},
 		},
@@ -158,7 +142,12 @@ export const StickyHeader: Story = {
 			tabIndex={0}
 			role="region"
 			aria-label="사용자 목록"
-			style={{ height: 240, overflow: "auto", border: "1px solid #e5e5e5", borderRadius: 8 }}
+			style={{
+				height: 240,
+				overflow: "auto",
+				border: "1px solid var(--bt-color-border-default)",
+				borderRadius: 8,
+			}}
 		>
 			<Table<User>
 				columns={columns}
