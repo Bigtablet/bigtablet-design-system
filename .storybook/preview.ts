@@ -90,7 +90,14 @@ const preview: Preview = {
 		options: {
 			storySort: {
 				method: "alphabetical",
-				order: ["Guide", ["Introduction", "Installation"], "Foundation", "Components"],
+				order: [
+					"Getting Started",
+					["Introduction", "Installation"],
+					"Cookbook",
+					"Examples",
+					"Foundation",
+					"Components",
+				],
 			},
 		},
 		viewport: {
