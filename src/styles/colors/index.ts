@@ -6,6 +6,7 @@ export const baseColors = {
 
 	neutral0: "#FFFFFF",
 	neutral50: "#F4F4F4",
+	neutral100: "#F2F2F2",
 	neutral200: "#E5E5E5",
 	neutral300: "#999999",
 	neutral400: "#B3B3B3",
@@ -19,6 +20,18 @@ export const baseColors = {
 	statusSuccess: "#10B981",
 	statusWarning: "#F59E0B",
 	statusInfo: "#3B82F6",
+
+	// Navy — Bigtablet 초기 홈페이지 컬러. #47555E 메인 navy + sky blue 패밀리.
+	navy50: "#F2F5F8",
+	navy100: "#DDE3E9",
+	navy200: "#B4C2CD",
+	navy300: "#7AA5D2",
+	navy400: "#5A8DCB",
+	navy500: "#4C7CB6",
+	navy600: "#47555E",
+	navy700: "#3D4852",
+	navy800: "#303841",
+	navy900: "#1F2630",
 
 	alphaBlack5: "rgba(0, 0, 0, 0.05)",
 	alphaBlack8: "rgba(0, 0, 0, 0.08)",
@@ -68,7 +81,7 @@ export const colors = {
 		hover: baseColors.neutral400,
 		subtle: baseColors.alphaBlack8,
 		focus: baseColors.neutral900,
-		disabled: "#F2F2F2",
+		disabled: baseColors.neutral100,
 	},
 
 	status: {
@@ -76,5 +89,15 @@ export const colors = {
 		success: baseColors.statusSuccess,
 		warning: baseColors.statusWarning,
 		info: baseColors.statusInfo,
+	},
+
+	// Accent (Bigtablet navy) — 메인 brand 검정과 함께 B2C/마케팅 강조에 사용.
+	accent: {
+		subtle: baseColors.navy50,
+		muted: baseColors.navy100,
+		light: baseColors.navy300,
+		default: baseColors.navy600,
+		strong: baseColors.navy800,
+		onSurface: baseColors.neutral0,
 	},
 } as const;

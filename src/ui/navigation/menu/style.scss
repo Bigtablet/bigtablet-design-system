@@ -1,0 +1,75 @@
+@use "src/styles/token" as token;
+
+.menu_wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: token.$z_level5;
+  min-width: 180px;
+  // bg_solid_dim — light=거의 흰색 / dark=navy_800 (canvas navy_900 보다 한 톤 밝음 → 메뉴 panel 시각 분리)
+  background: token.$color_bg_solid_dim;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  box-shadow: token.$elevation_level2;
+  padding: token.$spacing_4 0;
+  will-change: transform, opacity;
+
+  &_align_start { left: 0; }
+  &_align_end   { right: 0; }
+
+  &_item {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    width: 100%;
+    padding: token.$spacing_8 token.$spacing_12;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: token.$color_text_heading;
+    @include token.body_small;
+    text-align: start;
+    transition: background token.$transition_fast;
+
+    &:hover:not(:disabled) {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      background: token.$color_state_focus_on_light;
+    }
+
+    &_icon {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: token.$color_text_body;
+    }
+
+    &_label {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &_destructive {
+      color: token.$color_status_error;
+
+      .menu_item_icon {
+        color: token.$color_status_error;
+      }
+    }
+
+    &_disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+}

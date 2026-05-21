@@ -1,9 +1,22 @@
-// ── Base colors ───────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════
+// Bigtablet 컬러 토큰 — Light/Dark 양쪽 지원
+//
+// 구조:
+//   1. Base colors (raw values) — SCSS 변수
+//   2. CSS custom properties (:root + [data-theme="dark"]) — 런타임 테마 전환
+//   3. Semantic SCSS 변수 — CSS var를 참조 → 기존 사용처(@use token; $color_*) 호환 유지
+//
+// `brand_primary`, `accent.*`, `status.*` 는 light/dark 동일 (브랜드 일관성).
+// 나머지 표면/텍스트/border 는 dark에서 navy 계열로 자동 전환.
+// ════════════════════════════════════════════════════════════════════════
+
+// ── Base colors (raw, never theme-aware) ────────────────────────────────
 
 $color_base_brand_primary:    #121212;
 $color_base_blue_600:         #1A73E8;
 $color_base_neutral_0:        #FFFFFF;
 $color_base_neutral_50:       #F4F4F4;
+$color_base_neutral_100:      #F2F2F2;
 $color_base_neutral_200:      #E5E5E5;
 $color_base_neutral_300:      #999999;
 $color_base_neutral_400:      #B3B3B3;
@@ -16,6 +29,20 @@ $color_base_status_error:     #EF4444;
 $color_base_status_success:   #10B981;
 $color_base_status_warning:   #F59E0B;
 $color_base_status_info:      #3B82F6;
+
+// Bigtablet navy (초기 홈페이지에서 추출) — slate-gray-blue + sky blue
+$color_base_navy_50:          #F2F5F8;
+$color_base_navy_100:         #DDE3E9;
+$color_base_navy_200:         #B4C2CD;
+$color_base_navy_300:         #7AA5D2;
+$color_base_navy_400:         #5A8DCB;
+$color_base_navy_500:         #4C7CB6;
+$color_base_navy_600:         #47555E;
+$color_base_navy_700:         #3D4852;
+$color_base_navy_800:         #303841;
+$color_base_navy_900:         #1F2630;
+
+// Alpha
 $color_base_alpha_black_5:    rgba(0, 0, 0, 0.05);
 $color_base_alpha_black_8:    rgba(0, 0, 0, 0.08);
 $color_base_alpha_black_12:   rgba(26, 26, 26, 0.12);
@@ -24,54 +51,227 @@ $color_base_alpha_black_50:   rgba(0, 0, 0, 0.50);
 $color_base_alpha_white_5:    rgba(255, 255, 255, 0.05);
 $color_base_alpha_white_8:    rgba(255, 255, 255, 0.08);
 $color_base_alpha_white_12:   rgba(255, 255, 255, 0.12);
+$color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 
-// ── Semantic: Brand ───────────────────────────────────────────────────────────
+// ── CSS custom properties (런타임 테마 전환) ────────────────────────────
+// `:root` = light mode 기본. `[data-theme="dark"]` = dark overrides.
+// 컴포넌트는 SCSS `$color_*` 변수로 접근 — 아래 변수들이 var()로 컴파일됨.
 
-$color_brand_primary:         $color_base_brand_primary;
-$color_brand_on_primary:      $color_base_neutral_0;
+:root {
+  // Brand (light/dark 동일)
+  --bt-color-brand-primary:        #{$color_base_brand_primary};
+  --bt-color-brand-on-primary:     #{$color_base_neutral_0};
+  --bt-color-brand-primary-container: #{$color_base_alpha_black_5};
 
-// ── Semantic: Text ────────────────────────────────────────────────────────────
+  // Text
+  --bt-color-text-heading:         #{$color_base_neutral_900};
+  --bt-color-text-body:            #{$color_base_neutral_700};
+  --bt-color-text-caption:         #{$color_base_neutral_500};
+  --bt-color-text-brand:           #{$color_base_brand_primary};
+  --bt-color-text-inverse:         #{$color_base_neutral_0};
+  --bt-color-text-disabled:        #{$color_base_alpha_black_38};
 
-$color_text_heading:          $color_base_neutral_900;
-$color_text_body:             $color_base_neutral_700;
-$color_text_caption:          $color_base_neutral_500;
-$color_text_brand:            $color_base_brand_primary;
-$color_text_inverse:          $color_base_neutral_0;
-$color_text_disabled:         $color_base_alpha_black_38;
+  // Background
+  --bt-color-bg-solid:             #{$color_base_neutral_0};
+  --bt-color-bg-solid-dim:         #{$color_base_neutral_50};
+  --bt-color-bg-additive:          #{$color_base_alpha_black_5};
+  --bt-color-bg-disabled:          #{$color_base_alpha_black_12};
+  --bt-color-bg-overlay:           #{$color_base_alpha_black_50};
+  --bt-color-bg-inverse-surface:   #{$color_base_neutral_800};
 
-// ── Semantic: Background ──────────────────────────────────────────────────────
+  // State
+  --bt-color-state-hover-on-light:    #{$color_base_alpha_black_5};
+  --bt-color-state-pressed-on-light:  #{$color_base_alpha_black_12};
+  --bt-color-state-focus-on-light:    #{$color_base_alpha_black_8};
+  --bt-color-state-hover-on-dark:     #{$color_base_alpha_white_5};
+  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_white_12};
+  --bt-color-state-focus-on-dark:     #{$color_base_alpha_white_8};
 
-$color_bg_solid:              $color_base_neutral_0;
-$color_bg_solid_dim:          $color_base_neutral_50;
-$color_bg_additive:           $color_base_alpha_black_5;
-$color_bg_disabled:           $color_base_alpha_black_12;
-$color_bg_overlay:            $color_base_alpha_black_50;
-$color_bg_inverse_surface:    $color_base_neutral_800;
+  // Border
+  --bt-color-border-default:       #{$color_base_neutral_200};
+  --bt-color-border-hover:         #{$color_base_neutral_400};
+  --bt-color-border-subtle:        #{$color_base_alpha_black_8};
+  --bt-color-border-focus:         #{$color_base_neutral_900};
+  --bt-color-border-disabled:      #{$color_base_neutral_100};
 
-// ── Semantic: State ───────────────────────────────────────────────────────────
+  // Status (light/dark 동일)
+  --bt-color-status-error:         #{$color_base_status_error};
+  --bt-color-status-success:       #{$color_base_status_success};
+  --bt-color-status-warning:       #{$color_base_status_warning};
+  --bt-color-status-info:          #{$color_base_status_info};
 
-$color_state_hover_on_light:    $color_base_alpha_black_5;
-$color_state_pressed_on_light:  $color_base_alpha_black_12;
-$color_state_hover_on_dark:     $color_base_alpha_white_5;
-$color_state_pressed_on_dark:   $color_base_alpha_white_12;
+  // Accent (검정 brand 기반 — light에서 검정, dark에서 흰색 반전)
+  // 컴포넌트 active/selected/indicator 강조에 사용.
+  // navy 색상은 `color_base_navy_*`로 별도 보존 (legacy/optional usage).
+  --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
+  --bt-color-accent-muted:         #{$color_base_alpha_black_12};
+  --bt-color-accent-light:         #{$color_base_neutral_400};
+  --bt-color-accent-default:       #{$color_base_brand_primary};   // 검정 (brand와 동일)
+  --bt-color-accent-strong:        #{$color_base_neutral_900};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
 
-// ── Extended: tokens.json에 없지만 컴포넌트에서 사용 중 ─────────────────────
+  // Skeleton (light gray gradient — dark 에서 navy gray 로 전환)
+  --bt-color-skeleton-base:        #F3F3F3;
+  --bt-color-skeleton-wave:        #f0f0f0;
+  --bt-color-skeleton-highlight:   #fafafa;
+}
 
-$color_state_focus_on_light:    $color_base_alpha_black_8;
-$color_state_focus_on_dark:     $color_base_alpha_white_8;
-$color_brand_primary_container: $color_base_alpha_black_5;
+[data-theme="dark"] {
+  // 브라우저 기본 UI (스크롤바, form control 등) 다크 적응
+  color-scheme: dark;
+  // Font rendering — dark bg 위 흰 글씨의 halation/노이즈 보정
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-// ── Semantic: Border ──────────────────────────────────────────────────────────
+  // Brand (dark 모드에서도 black 유지 — bg가 navy라 black 버튼 구분됨.
+  // 단 텍스트로 쓰일 땐 inverse 사용 권장)
 
-$color_border_default:        $color_base_neutral_200;
-$color_border_hover:          $color_base_neutral_400;
-$color_border_subtle:         $color_base_alpha_black_8;
-$color_border_focus:          $color_base_neutral_900;
-$color_border_disabled:       #F2F2F2;
+  // Text (light → inverted)
+  // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
+  --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
+  --bt-color-text-body:            #{$color_base_navy_200};
+  --bt-color-text-caption:         #{$color_base_neutral_400};
+  --bt-color-text-inverse:         #{$color_base_neutral_900};
+  --bt-color-text-disabled:        #{$color_base_alpha_white_38};
 
-// ── Semantic: Status ──────────────────────────────────────────────────────────
+  // Background (light → navy)
+  --bt-color-bg-solid:             #{$color_base_navy_900};
+  --bt-color-bg-solid-dim:         #{$color_base_navy_800};
+  --bt-color-bg-additive:          #{$color_base_alpha_white_5};
+  --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
+  --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
+  --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
 
-$color_status_error:          $color_base_status_error;
-$color_status_success:        $color_base_status_success;
-$color_status_warning:        $color_base_status_warning;
-$color_status_info:           $color_base_status_info;
+  // State (검정 alpha → 흰색 alpha — dark bg 위에서 작동)
+  --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
+  --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
+  --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
+  --bt-color-state-hover-on-dark:     #{$color_base_alpha_black_8};
+  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
+  --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
+
+  // Border (light gray → navy mid)
+  --bt-color-border-default:       #{$color_base_navy_700};
+  --bt-color-border-hover:         #{$color_base_navy_400};
+  --bt-color-border-subtle:        #{$color_base_alpha_white_12};
+  --bt-color-border-focus:         #{$color_base_neutral_0};
+  --bt-color-border-disabled:      #{$color_base_navy_800};
+
+  // Brand container — dark 모드에선 white alpha로
+  --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+  // Accent (dark — 흰색 반전. active/selected가 dark navy bg 위에서 잘 보임)
+  --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+  --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+  --bt-color-accent-light:         #{$color_base_neutral_300};
+  --bt-color-accent-default:       #{$color_base_neutral_0};         // 흰색
+  --bt-color-accent-strong:        #{$color_base_neutral_0};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
+
+  // Skeleton — navy_700 (bg-solid-dim navy_800 보다 살짝 밝음 → 시각 대비)
+  --bt-color-skeleton-base:        #{$color_base_navy_700};
+  --bt-color-skeleton-wave:        #{$color_base_navy_700};
+  --bt-color-skeleton-highlight:   #{$color_base_navy_600};
+}
+
+// `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
+    --bt-color-text-body:            #{$color_base_navy_200};
+    --bt-color-text-caption:         #{$color_base_neutral_400};
+    --bt-color-text-inverse:         #{$color_base_neutral_900};
+    --bt-color-text-disabled:        #{$color_base_alpha_white_38};
+
+    --bt-color-bg-solid:             #{$color_base_navy_900};
+    --bt-color-bg-solid-dim:         #{$color_base_navy_800};
+    --bt-color-bg-additive:          #{$color_base_alpha_white_5};
+    --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
+    --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
+    --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
+
+    --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
+    --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
+    --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
+    --bt-color-state-hover-on-dark:     #{$color_base_alpha_black_8};
+    --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
+    --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
+
+    --bt-color-border-default:       #{$color_base_navy_700};
+    --bt-color-border-hover:         #{$color_base_navy_400};
+    --bt-color-border-subtle:        #{$color_base_alpha_white_12};
+    --bt-color-border-focus:         #{$color_base_neutral_0};
+    --bt-color-border-disabled:      #{$color_base_navy_800};
+
+    --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+    // Accent dark — 흰색 반전
+    --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+    --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+    --bt-color-accent-light:         #{$color_base_neutral_300};
+    --bt-color-accent-default:       #{$color_base_neutral_0};
+    --bt-color-accent-strong:        #{$color_base_neutral_0};
+    --bt-color-accent-on-surface:    #{$color_base_neutral_900};
+
+    --bt-color-skeleton-base:        #{$color_base_navy_700};
+    --bt-color-skeleton-wave:        #{$color_base_navy_700};
+    --bt-color-skeleton-highlight:   #{$color_base_navy_600};
+  }
+}
+
+// ── Semantic SCSS variables (CSS var 참조) ─────────────────────────────
+// 기존 사용처 호환 — `@use "..." as token; background: token.$color_bg_solid;`
+
+// Brand
+$color_brand_primary:         var(--bt-color-brand-primary);
+$color_brand_on_primary:      var(--bt-color-brand-on-primary);
+$color_brand_primary_container: var(--bt-color-brand-primary-container);
+
+// Text
+$color_text_heading:          var(--bt-color-text-heading);
+$color_text_body:             var(--bt-color-text-body);
+$color_text_caption:          var(--bt-color-text-caption);
+$color_text_brand:            var(--bt-color-text-brand);
+$color_text_inverse:          var(--bt-color-text-inverse);
+$color_text_disabled:         var(--bt-color-text-disabled);
+
+// Background
+$color_bg_solid:              var(--bt-color-bg-solid);
+$color_bg_solid_dim:          var(--bt-color-bg-solid-dim);
+$color_bg_additive:           var(--bt-color-bg-additive);
+$color_bg_disabled:           var(--bt-color-bg-disabled);
+$color_bg_overlay:            var(--bt-color-bg-overlay);
+$color_bg_inverse_surface:    var(--bt-color-bg-inverse-surface);
+
+// State
+$color_state_hover_on_light:    var(--bt-color-state-hover-on-light);
+$color_state_pressed_on_light:  var(--bt-color-state-pressed-on-light);
+$color_state_focus_on_light:    var(--bt-color-state-focus-on-light);
+$color_state_hover_on_dark:     var(--bt-color-state-hover-on-dark);
+$color_state_pressed_on_dark:   var(--bt-color-state-pressed-on-dark);
+$color_state_focus_on_dark:     var(--bt-color-state-focus-on-dark);
+
+// Border
+$color_border_default:        var(--bt-color-border-default);
+$color_border_hover:          var(--bt-color-border-hover);
+$color_border_subtle:         var(--bt-color-border-subtle);
+$color_border_focus:          var(--bt-color-border-focus);
+$color_border_disabled:       var(--bt-color-border-disabled);
+
+// Status
+$color_status_error:          var(--bt-color-status-error);
+$color_status_success:        var(--bt-color-status-success);
+$color_status_warning:        var(--bt-color-status-warning);
+$color_status_info:           var(--bt-color-status-info);
+
+// Accent
+$color_accent_subtle:         var(--bt-color-accent-subtle);
+$color_accent_muted:          var(--bt-color-accent-muted);
+$color_accent_light:          var(--bt-color-accent-light);
+$color_accent_default:        var(--bt-color-accent-default);
+$color_accent_strong:         var(--bt-color-accent-strong);
+$color_accent_on_surface:     var(--bt-color-accent-on-surface);

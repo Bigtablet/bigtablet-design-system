@@ -52,7 +52,7 @@ bigtablet-design-system/
 │   │
 │   ├── utils/               # 유틸리티 함수
 │   │   ├── cn.ts            # className 유틸리티
-│   │   ├── useFocusTrap.ts  # Focus trap hook
+│   │   ├── use-focus-trap.ts  # Focus trap hook
 │   │   └── index.ts
 │   │
 │   ├── vanilla/             # Vanilla JS 패키지

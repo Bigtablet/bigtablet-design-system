@@ -1,0 +1,162 @@
+@use "src/styles/token" as token;
+
+.media_card {
+  position: relative;
+  display: flex;
+  background: token.$color_bg_solid;
+  border-radius: token.$radius_lg;
+  overflow: hidden;
+  transition:
+    transform token.$transition_base,
+    box-shadow token.$transition_base;
+
+  // ── Shadow variants ───────────────────────────────────────────────────
+
+  &_shadow_none {}
+  &_shadow_sm { box-shadow: token.$elevation_level1; }
+  &_shadow_md { box-shadow: token.$elevation_level2; }
+  &_shadow_lg { box-shadow: token.$elevation_level3; }
+
+  &_bordered {
+    border: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  &_clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: token.$elevation_level3;
+    }
+  }
+
+  // ── Image wrapper ─────────────────────────────────────────────────────
+
+  &_image_wrap {
+    position: relative;
+    flex-shrink: 0;
+    background: token.$color_bg_solid_dim;
+    overflow: hidden;
+  }
+
+  &_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  // ── Body ──────────────────────────────────────────────────────────────
+
+  &_body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_8;
+    padding: token.$spacing_16 token.$spacing_20;
+  }
+
+  &_eyebrow {
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_caption;
+    text-transform: uppercase;
+  }
+
+  &_heading {
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+    margin: 0;
+  }
+
+  &_content {
+    @include token.body_small;
+    color: token.$color_text_body;
+    flex: 1;
+  }
+
+  &_meta {
+    @include token.label_medium;
+    color: token.$color_text_caption;
+    margin-top: token.$spacing_4;
+  }
+
+  // ── Image position: top (default) ────────────────────────────────────
+
+  &_image_top {
+    flex-direction: column;
+
+    .media_card_image_wrap:not([style*="aspect-ratio"]) {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  // ── Image position: left ─────────────────────────────────────────────
+
+  &_image_left {
+    flex-direction: row;
+
+    .media_card_image_wrap {
+      width: 40%;
+      max-width: 320px;
+    }
+
+    @include token.compact {
+      flex-direction: column;
+
+      .media_card_image_wrap {
+        width: 100%;
+        max-width: none;
+        aspect-ratio: 16 / 9;
+      }
+    }
+  }
+
+  // ── Image position: overlay ──────────────────────────────────────────
+
+  &_image_overlay {
+    display: block;
+    position: relative;
+    color: token.$color_brand_on_primary;
+
+    &:not([style*="aspect-ratio"]) {
+      aspect-ratio: 4 / 3;
+    }
+
+    .media_card_image_wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .media_card_overlay {
+      position: absolute;
+      inset: 0;
+      // navy 그라데이션 — Bigtablet brand accent.strong (#303841) 사용
+      background: linear-gradient(
+        180deg,
+        rgba(48, 56, 65, 0) 30%,
+        rgba(48, 56, 65, 0.85) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .media_card_body {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .media_card_eyebrow  { color: rgba(255, 255, 255, 0.75); }
+    .media_card_heading  { color: token.$color_brand_on_primary; }
+    .media_card_content  {
+      color: rgba(255, 255, 255, 0.85);
+      flex: 0 0 auto; // overlay에선 늘어나지 않음 — 텍스트 블록이 하단에 모이도록
+    }
+    .media_card_meta     { color: rgba(255, 255, 255, 0.6); }
+  }
+}

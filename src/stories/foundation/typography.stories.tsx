@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type * as React from "react";
 import { baseTypography, typography } from "src/styles/typography";
 
 const meta: Meta = {
-	title: "Foundation/typography",
+	title: "Foundation/Typography",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },
@@ -15,6 +16,7 @@ const meta: Meta = {
 
 - **Base**: 원시 값 (fontSize, fontWeight, lineHeight, letterSpacing)
 - **Semantic**: 역할 기반 스케일 — 5단계 × 3사이즈 × 2굵기
+- **Extras**: bold variants, semantic aliases, responsive, text wrap, numeric — 페이지 하단 참고
 
 | 스케일 | 사이즈 범위 | 사용처 |
 |--------|-------------|--------|
@@ -211,6 +213,40 @@ export const Base: Story = {
 							}}
 						>
 							텍스트 샘플 Text Sample
+						</div>
+						<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
+					</div>
+				))}
+			</section>
+
+			<section style={{ display: "grid", gap: 8 }}>
+				<strong style={{ fontSize: 15 }}>Letter Spacing</strong>
+				<p style={{ margin: "0 0 4px", fontSize: 13, opacity: 0.7 }}>
+					자간(letter-spacing) 토큰. 좁은 폭의 폼 라벨이나 캡션에서 가독성을 보강할 때 사용합니다.
+				</p>
+				{Object.entries(baseTypography.letterSpacing).map(([key, value]) => (
+					<div
+						key={key}
+						style={{
+							display: "grid",
+							gridTemplateColumns: "120px 1fr 80px",
+							alignItems: "center",
+							gap: 12,
+							padding: 12,
+							background: "#fff",
+							border: "1px solid rgba(0,0,0,0.06)",
+							borderRadius: 12,
+						}}
+					>
+						<code style={{ fontSize: 12 }}>letter-spacing-{key}</code>
+						<div
+							style={{
+								fontFamily: typography.fontFamily.primary,
+								fontSize: 14,
+								letterSpacing: value,
+							}}
+						>
+							폼 라벨 텍스트 — Form label sample
 						</div>
 						<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
 					</div>
@@ -479,3 +515,231 @@ function sampleText(scale: string) {
 			return "텍스트 샘플";
 	}
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Extras — 기본 스케일 외 추가 mixin (bold variants, aliases, wrap, numeric)
+// ────────────────────────────────────────────────────────────────────────────
+
+const ExtrasRow = ({
+	label,
+	desc,
+	children,
+}: {
+	label: string;
+	desc: string;
+	children: React.ReactNode;
+}) => (
+	<div
+		style={{
+			display: "grid",
+			gridTemplateColumns: "240px 1fr",
+			gap: 24,
+			padding: "16px 20px",
+			border: "1px solid var(--bt-color-border-default)",
+			borderRadius: 12,
+			alignItems: "center",
+			background: "var(--bt-color-bg-solid)",
+		}}
+	>
+		<div>
+			<code style={{ fontSize: 12, color: "var(--bt-color-text-heading)" }}>{label}</code>
+			<p
+				style={{
+					margin: "4px 0 0",
+					fontSize: 11,
+					color: "var(--bt-color-text-caption)",
+					lineHeight: 1.4,
+				}}
+			>
+				{desc}
+			</p>
+		</div>
+		<div>{children}</div>
+	</div>
+);
+
+const inlineDisplayLargeBold: React.CSSProperties = {
+	fontSize: 48,
+	fontWeight: 700,
+	lineHeight: "60px",
+	letterSpacing: "-0.02em",
+};
+const inlineHeadingLargeBold: React.CSSProperties = {
+	fontSize: 28,
+	fontWeight: 700,
+	lineHeight: "36px",
+	letterSpacing: "-0.01em",
+};
+const inlineTitleLargeBold: React.CSSProperties = {
+	fontSize: 18,
+	fontWeight: 700,
+	lineHeight: "24px",
+};
+const inlineBodyLargeBold: React.CSSProperties = {
+	fontSize: 16,
+	fontWeight: 700,
+	lineHeight: "24px",
+};
+const inlineCaption: React.CSSProperties = {
+	fontSize: 12,
+	fontWeight: 400,
+	lineHeight: "16px",
+	letterSpacing: "0.32px",
+};
+const inlineOverline: React.CSSProperties = {
+	fontSize: 12,
+	fontWeight: 600,
+	lineHeight: "16px",
+	letterSpacing: "0.08em",
+	textTransform: "uppercase",
+};
+const inlineSubtitle: React.CSSProperties = {
+	fontSize: 15,
+	fontWeight: 500,
+	lineHeight: "22.5px",
+};
+const inlineCode: React.CSSProperties = {
+	fontFamily: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
+	fontSize: 13,
+	lineHeight: "18px",
+};
+
+export const BoldVariants: Story = {
+	name: "Extras — Bold weights (강조용)",
+	render: () => (
+		<div
+			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
+		>
+			<ExtrasRow label="@include display_large_bold" desc="48px / 700 / -0.02em letter-spacing">
+				<div style={inlineDisplayLargeBold}>매장 운영을 더 스마트하게</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include heading_large_bold" desc="28px / 700 / -0.01em">
+				<div style={inlineHeadingLargeBold}>왜 Bigtablet인가요?</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include title_large_bold" desc="18px / 700">
+				<div style={inlineTitleLargeBold}>핵심 기능</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include body_large_bold" desc="16px / 700">
+				<div style={inlineBodyLargeBold}>주문을 받았습니다</div>
+			</ExtrasRow>
+		</div>
+	),
+};
+
+export const SemanticAliases: Story = {
+	name: "Extras — 의미적 alias",
+	render: () => (
+		<div
+			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
+		>
+			<ExtrasRow label="@include subtitle" desc="제목 아래 보조 설명 — 15/500/22.5">
+				<div style={inlineSubtitle}>14일 무료 체험 · 신용카드 불필요</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include overline" desc="섹션 위 작은 라벨 — 12/600/uppercase">
+				<div style={{ ...inlineOverline, color: "var(--bt-color-accent-default)" }}>
+					핵심 기능
+				</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include caption" desc="이미지/카드 캡션 — 12/400/tight">
+				<div style={{ ...inlineCaption, color: "var(--bt-color-text-caption)" }}>
+					2026년 5월 20일 화요일
+				</div>
+			</ExtrasRow>
+			<ExtrasRow label="@include code" desc="인라인 코드 — ui-monospace 13/18">
+				<code style={inlineCode}>npm i @bigtablet/design-system</code>
+			</ExtrasRow>
+		</div>
+	),
+};
+
+export const TextWrapHelpers: Story = {
+	name: "Extras — Text wrap helpers",
+	render: () => (
+		<div
+			style={{ display: "flex", flexDirection: "column", gap: 16, color: "var(--bt-color-text-heading)" }}
+		>
+			<div>
+				<code style={{ fontSize: 12 }}>@include text_balance</code>
+				<p
+					style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}
+				>
+					줄바꿈 자연스럽게 — 마지막 줄 한두 단어 외톨이 방지. 헤딩에 유용.
+				</p>
+				<h2
+					style={{
+						...inlineHeadingLargeBold,
+						margin: 0,
+						maxWidth: 400,
+						textWrap: "balance",
+					}}
+				>
+					Bigtablet으로 매장 운영을 한곳에서 관리하세요
+				</h2>
+			</div>
+			<div>
+				<code style={{ fontSize: 12 }}>@include text_truncate</code>
+				<p
+					style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}
+				>
+					한 줄 ellipsis (...).
+				</p>
+				<div
+					style={{
+						maxWidth: 300,
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+						whiteSpace: "nowrap",
+					}}
+				>
+					한 줄에 안 들어가는 매우 긴 텍스트는 자동으로 ellipsis 처리됩니다.
+				</div>
+			</div>
+		</div>
+	),
+};
+
+export const NumericFeatures: Story = {
+	name: "Extras — 숫자 정렬 (tabular-nums)",
+	render: () => (
+		<div style={{ color: "var(--bt-color-text-heading)" }}>
+			<p style={{ fontSize: 13, color: "var(--bt-color-text-body)", marginBottom: 16 }}>
+				매출/지표 표시 시 자릿수 정렬 — <code>@include tabular_nums</code>로 숫자 너비 균등화.
+			</p>
+			<div style={{ display: "flex", gap: 32 }}>
+				<div>
+					<div
+						style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}
+					>
+						기본 (proportional)
+					</div>
+					<div style={{ ...inlineHeadingLargeBold, fontVariantNumeric: "normal" }}>
+						₩1,284,000
+						<br />
+						₩342,500
+						<br />
+						₩98,000
+					</div>
+				</div>
+				<div>
+					<div
+						style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}
+					>
+						tabular-nums (정렬)
+					</div>
+					<div
+						style={{
+							...inlineHeadingLargeBold,
+							fontVariantNumeric: "tabular-nums",
+						}}
+					>
+						₩1,284,000
+						<br />
+						₩342,500
+						<br />
+						₩98,000
+					</div>
+				</div>
+			</div>
+		</div>
+	),
+};

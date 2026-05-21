@@ -1,0 +1,228 @@
+@use "src/styles/token" as token;
+
+.text_field {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: token.$spacing_6;
+  font-family: token.$font_family_primary;
+
+  &_full_width {
+    width: 100%;
+  }
+
+  // ── Standalone label (above container) — Dropdown 패턴과 통일 ─────────────
+
+  &_label {
+    display: block;
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_heading;
+    cursor: pointer;
+    transition: color token.$transition_base;
+  }
+
+  // ── Container (border + border-radius) ─────────────────────────────────
+
+  &_container {
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background-color: token.$color_bg_solid;
+    box-sizing: border-box;
+    width: 100%;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
+
+    &:hover {
+      border-color: token.$color_border_hover;
+    }
+  }
+
+  &_container:focus-within {
+    border-color: token.$color_border_focus;
+  }
+
+  // ── Inner row (아이콘 + input + trailing 감싸는 flex row) ───────────────
+
+  &_inner {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    box-sizing: border-box;
+    @include token.responsive_height(token.$tap_target_compact); // md: 40 → 48 (mobile)
+  }
+
+  // ── Size variants ──────────────────────────────────────────────────────
+
+  &_size_sm &_inner {
+    @include token.responsive_height(token.$tap_target_compact); // 40 → 48
+  }
+
+  &_size_sm &_input_wrap {
+    padding: token.$spacing_4 token.$spacing_16;
+  }
+
+  &_size_sm &_input {
+    font-size: token.$font_size_14;
+    line-height: token.$line_height_20;
+  }
+
+  &_size_lg &_inner {
+    @include token.responsive_height(token.$tap_target_comfortable); // 48 → 56
+  }
+
+  &_size_lg &_input_wrap {
+    padding: token.$spacing_8 token.$spacing_20;
+  }
+
+  &_size_lg &_input {
+    font-size: token.$font_size_16;
+    line-height: token.$line_height_24;
+  }
+
+  // ── Input ──────────────────────────────────────────────────────────────
+
+  &_input_wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: token.$spacing_4 token.$spacing_16; // Dropdown control과 동일 (4px 16px)
+  }
+
+  // 아이콘이 있으면 해당 쪽 패딩 제거 (아이콘 자체 padding이 여백 역할)
+  &_icon + .text_field_input_wrap {
+    padding-left: 0;
+  }
+
+  &_input_wrap_no_pad_right {
+    padding-right: 0;
+  }
+
+  &_input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_20;
+    color: token.$color_text_heading;
+
+    &::placeholder {
+      color: token.$color_text_body; // Dropdown placeholder와 동일 (#666 — 더 진함)
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: token.$color_text_disabled;
+    }
+  }
+
+  // ── Icons ──────────────────────────────────────────────────────────────
+
+  &_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: token.$radius_full;
+    color: token.$color_text_heading;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  // ── Clear button ───────────────────────────────────────────────────────
+
+  &_clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: token.$color_text_caption;
+    border-radius: token.$radius_full;
+    transition: color token.$transition_base, background token.$transition_base;
+    padding: 0;
+
+    &:hover {
+      color: token.$color_text_heading;
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── Helper text ────────────────────────────────────────────────────────
+
+  &_helper {
+    padding: 0 token.$spacing_4;
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_16;
+    color: token.$color_text_caption;
+    transition: color token.$transition_base;
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────
+
+  &_error {
+    .text_field_container {
+      border-color: token.$color_status_error;
+    }
+
+    .text_field_container:hover,
+    .text_field_container:focus-within {
+      border-color: token.$color_status_error;
+    }
+
+    .text_field_label {
+      color: token.$color_status_error;
+    }
+
+    .text_field_helper {
+      color: token.$color_status_error;
+    }
+  }
+
+  // ── Disabled state ─────────────────────────────────────────────────────
+
+  &_disabled {
+    .text_field_container {
+      border-color: token.$color_bg_disabled;
+      background-color: token.$color_bg_solid_dim;
+
+      &:hover {
+        border-color: token.$color_bg_disabled;
+      }
+
+      > * {
+        opacity: token.$opacity_38;
+      }
+    }
+
+    .text_field_label {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+
+    .text_field_helper {
+      opacity: token.$opacity_38;
+    }
+  }
+}

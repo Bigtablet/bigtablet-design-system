@@ -1,0 +1,29 @@
+@use "src/styles/token" as token;
+
+.stack {
+  display: flex;
+  gap: var(--stack-gap, #{token.$spacing_16});
+
+  // direction
+  &_vertical   { flex-direction: column; }
+  &_horizontal { flex-direction: row; }
+
+  // align-items
+  &_align_start   { align-items: flex-start; }
+  &_align_center  { align-items: center; }
+  &_align_end     { align-items: flex-end; }
+  &_align_stretch { align-items: stretch; }
+
+  // justify-content
+  &_justify_start   { justify-content: flex-start; }
+  &_justify_center  { justify-content: center; }
+  &_justify_end     { justify-content: flex-end; }
+  &_justify_between { justify-content: space-between; }
+  &_justify_around  { justify-content: space-around; }
+  &_justify_evenly  { justify-content: space-evenly; }
+
+  // flex-wrap
+  &_wrap_nowrap       { flex-wrap: nowrap; }
+  &_wrap_wrap         { flex-wrap: wrap; }
+  &_wrap_wrap_reverse { flex-wrap: wrap-reverse; }
+}

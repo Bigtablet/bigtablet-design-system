@@ -1,3 +1,39 @@
+# [3.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.2...v3.0.0) (2026-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Tag**: `Tag` component is removed — migrate to `Chip type="static" tone={...}`
+* **TextField**: markup changed from `<fieldset>` + `<legend>` to `<div>` + `<label>` (label now sits standalone above the control)
+* **TextField**: placeholder color updated from `text_caption` to `text_body`
+* **TextField**: inner padding reduced 6px → 4px
+
+
+### Features
+
+* add 16 new components — `Tabs` (compound API), `Sidebar`, `NavBar`, `Breadcrumb`, `Avatar`, `Badge`, `EmptyState`, `Accordion`, `Tooltip`, `Menu`, `Skeleton`, `Table`, `MediaCard`, plus layout primitives `Container`, `Section`, `Stack`, `Grid`
+* add `ThemeProvider` + `useTheme` hook for light/dark theme management
+* add full dark mode support via CSS custom properties (`:root` + `[data-theme="dark"]`) — every component token auto-adapts
+* add `Chip` `type="static"` + `tone` prop (absorbs former `Tag` component)
+* add `Tabs` `defaultValue` for uncontrolled mode
+* add `Hero` `primaryAction` / `secondaryAction` props
+* add Storybook toolbar theme toggle (☀️ / 🌙 / 🖥)
+
+
+### Bug Fixes
+
+* fix `React.useState` null issue in Chip / Dropdown / TextField by importing hooks directly
+* fix Vite 8 upgrade resolves `import.meta.env` clone error in Storybook test environment
+
+
+### Dependencies
+
+* upgrade `vite` 6 → 8 (major)
+* upgrade `storybook` 10.3 → 10.4
+* upgrade `vitest` 4.1.5 → 4.1.6
+* upgrade `chromatic` 16 → 17, `@commitlint/*` 20 → 21, `@types/node` 24 → 25
+* minor bumps on remaining dependencies
+
 ## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.1...v2.4.2) (2026-05-06)
 
 

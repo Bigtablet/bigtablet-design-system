@@ -1,0 +1,30 @@
+@use "src/styles/token" as token;
+
+.container {
+  width: 100%;
+  padding-inline: token.$spacing_16;
+
+  @include token.from_medium {
+    padding-inline: token.$spacing_24;
+  }
+
+  @include token.from_expanded {
+    padding-inline: token.$spacing_32;
+  }
+
+  @include token.from_large {
+    padding-inline: token.$spacing_40;
+  }
+
+  // center
+  &_center {
+    margin-inline: auto;
+  }
+
+  // size variants
+  &_size_sm   { max-width: 640px; }
+  &_size_md   { max-width: 768px; }
+  &_size_lg   { max-width: 1024px; }
+  &_size_xl   { max-width: 1200px; }
+  &_size_full { max-width: none; }
+}

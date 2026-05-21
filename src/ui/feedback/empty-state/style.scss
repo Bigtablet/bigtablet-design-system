@@ -1,0 +1,56 @@
+@use "src/styles/token" as token;
+
+.empty_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: token.$spacing_12;
+
+  &_illustration {
+    color: token.$color_text_caption;
+    display: inline-flex;
+  }
+
+  &_title {
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+    margin: 0;
+  }
+
+  &_description {
+    @include token.body_small;
+    color: token.$color_text_body;
+    margin: 0;
+    max-width: 480px;
+  }
+
+  &_action {
+    margin-top: token.$spacing_8;
+  }
+
+  // ── Size ─────────────────────────────────────────────────────────────
+
+  &_size_sm {
+    padding: token.$spacing_24 token.$spacing_16;
+    gap: token.$spacing_8;
+
+    .empty_state_title {
+      @include token.title_medium_medium;
+    }
+  }
+
+  &_size_md {
+    padding: token.$spacing_40 token.$spacing_24;
+  }
+
+  &_size_lg {
+    padding: token.$spacing_48 token.$spacing_24;
+    gap: token.$spacing_16;
+
+    .empty_state_title {
+      @include token.heading_small_medium;
+    }
+  }
+}

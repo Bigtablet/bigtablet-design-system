@@ -1,7 +1,67 @@
 @use "../colors" as colors;
+@use "../breakpoints" as breakpoint;
 
-$focus_ring:         0 0 0 3px rgba(colors.$color_base_brand_primary, 0.15);
-$focus_ring_error:   0 0 0 3px rgba(colors.$color_base_status_error, 0.15);
-$focus_ring_success: 0 0 0 3px rgba(colors.$color_base_status_success, 0.15);
+// Focus rings — CSS Custom Properties로 light/dark 자동 전환.
+// Dark 모드는 흰색 alpha 기반으로 navy bg 위에서도 가시성 확보.
 
-$tap_min_size: 44px;
+:root {
+  --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.30);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.30);
+}
+
+[data-theme="dark"] {
+  --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+    --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+    --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+  }
+}
+
+// SCSS aliases — 기존 사용처는 그대로 작동
+$focus_ring:         var(--bt-focus-ring);
+$focus_ring_error:   var(--bt-focus-ring-error);
+$focus_ring_success: var(--bt-focus-ring-success);
+
+// ── Tap target sizes (a11y) ─────────────────────────────────────────────
+// WCAG 2.1 SC 2.5.5 권장 최소: 44×44
+
+$tap_min_size:           44px;  // a11y 최소 권장
+$tap_target_dense:       32px;  // 데스크탑 인라인 폼, 컴팩트 UI
+$tap_target_compact:     40px;  // 데스크탑 기본
+$tap_target_comfortable: 48px;  // 모바일/터치 기본 (44 초과)
+$tap_target_spacious:    56px;  // 강조 CTA, 풀스크린 액션
+
+// ── Responsive height mixin ─────────────────────────────────────────────
+// 데스크탑 height 기준으로 compact breakpoint(<600px)에서 한 단계 키움.
+// 명시적으로 $mobile 지정 시 그 값을 사용.
+//
+// 사용 예:
+//   @include token.responsive_height(token.$tap_target_compact);
+//     → 데스크탑 40, 모바일 48
+//   @include token.responsive_height(token.$tap_target_compact, token.$tap_target_spacious);
+//     → 명시
+
+@mixin responsive_height($desktop, $mobile: null) {
+  min-height: $desktop;
+
+  $bumped: $mobile;
+  @if $bumped == null {
+    @if      $desktop == $tap_target_dense       { $bumped: $tap_target_compact; }
+    @else if $desktop == $tap_target_compact     { $bumped: $tap_target_comfortable; }
+    @else if $desktop == $tap_target_comfortable { $bumped: $tap_target_spacious; }
+    @else                                        { $bumped: $desktop; }
+  }
+
+  @if $bumped != $desktop {
+    @include breakpoint.compact {
+      min-height: $bumped;
+    }
+  }
+}

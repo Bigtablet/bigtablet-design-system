@@ -1,0 +1,40 @@
+@use "src/styles/token" as token;
+
+@keyframes spinner_fade {
+  0%   { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.spinner {
+  position: relative;
+  display: inline-block;
+  color: token.$color_text_heading;
+
+  // Vercel-style spinner: 12개 가로 spoke (긴 막대) 가 중앙에서 바깥 방향으로 배치.
+  // bar 자체는 가로 (24% × 8%) — 중앙 (left:-10%, top:46%) 에 시작점, 회전으로 spoke 형성.
+  &_bar {
+    position: absolute;
+    width: 24%;
+    height: 8%;
+    left: -10%;
+    top: 46%;
+    border-radius: 5px;
+    background: currentColor;
+    transform-origin: 250% 50%; // bar 의 우측 (= 컨테이너 정중앙) 기준 회전
+    animation: spinner_fade 1.2s linear infinite;
+  }
+
+  @for $i from 0 through 11 {
+    &_bar:nth-child(#{$i + 1}) {
+      transform: rotate(#{$i * 30}deg);
+      animation-delay: #{-1.2 + $i * 0.1}s;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner_bar {
+    animation: none;
+    opacity: 0.5;
+  }
+}

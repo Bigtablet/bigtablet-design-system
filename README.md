@@ -31,10 +31,21 @@ The official design system of Bigtablet — a unified UI library composed of Fou
 | 📦 **Dual Bundle** | Separate bundles optimized for Pure React and Next.js |
 | 🌐 **Vanilla JS** | Supports non-React environments (Thymeleaf, JSP, PHP, etc.) |
 | 🎨 **Design Tokens** | Consistent token-based system for colors, typography, spacing |
+| 🌓 **Dark Mode** | CSS Custom Property based light/dark auto-switching (`ThemeProvider`) |
+| 🎨 **Navy Accent** | Bigtablet brand navy (#47555E) token system |
 | ♿ **Accessibility** | Keyboard navigation, screen reader support, full ARIA attributes |
 | 🧪 **86% Coverage** | Stable test coverage powered by Vitest |
 | 🎭 **Storybook** | Interactive component documentation (run locally via `pnpm storybook`) |
 | 🎯 **Zero Dependencies** | No bundled runtime dependencies — peer deps only |
+
+---
+
+## What's New in v3.0
+
+- **16 new components** — Tabs, Sidebar, NavBar, Breadcrumb, Avatar, Badge, Tooltip, Menu, EmptyState, Accordion, Skeleton, Table, MediaCard, Hero, plus layout primitives (Container, Section, Stack, Grid)
+- **Dark mode** with `ThemeProvider` + `useTheme` hook — every token auto-adapts via CSS custom properties
+- **Tag → Chip consolidation** — the old `Tag` component is absorbed into `Chip` via `type="static"` + `tone={...}`
+- **Unified label pattern** — TextField/Dropdown labels now sit standalone above the control (`<div>+<label>`) instead of `<fieldset>+<legend>`
 
 ---
 
@@ -210,12 +221,14 @@ For non-React environments (Thymeleaf, JSP, PHP, etc.), use directly via CDN.
 
 | Category | Components |
 |----------|------------|
-| **General** | `Button`, `Select`, `Chip`, `FAB`, `IconButton` |
-| **Form** | `TextField`, `Checkbox`, `Radio`, `Toggle`, `DatePicker`, `FileInput` |
-| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress` |
-| **Navigation** | `Pagination` |
-| **Overlay** | `Modal` |
-| **Display** | `Card`, `Divider`, `ListItem` |
+| **General** | `Button`, `Select`, `Chip`, `IconButton` |
+| **Form** | `TextField`, `Checkbox`, `Radio`, `Toggle`, `DatePicker`, `FileInput`, `Dropdown` |
+| **Feedback** | `Alert`, `Toast`, `Spinner`, `TopLoading`, `LinearProgress`, `Skeleton`, `EmptyState` |
+| **Navigation** | `Pagination`, `Tabs`, `Sidebar`, `NavBar`, `Breadcrumb`, `Menu` |
+| **Overlay** | `Modal`, `Tooltip` |
+| **Display** | `Card`, `Divider`, `ListItem`, `Avatar`, `Badge`, `Accordion`, `Table`, `MediaCard`, `Hero` |
+| **Layout** | `Container`, `Section`, `Stack`, `Grid` |
+| **Foundation** | `ThemeProvider` (+ `useTheme`) |
 
 👉 **[Full Component Docs](./docs/COMPONENTS.md)**
 

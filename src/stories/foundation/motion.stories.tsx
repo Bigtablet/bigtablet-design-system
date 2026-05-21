@@ -3,7 +3,7 @@ import * as React from "react";
 import { motion } from "src/styles/motion";
 
 const meta: Meta = {
-	title: "Foundation/motion",
+	title: "Foundation/Motion",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },
@@ -14,9 +14,20 @@ const meta: Meta = {
 
 UI가 **얼마나 빠르게, 얼마나 부드럽게 반응하는지**를 정의하는 기준입니다.
 
-👉 버튼 hover, 카드 강조, 모달 등장 같은  
+👉 버튼 hover, 카드 강조, 모달 등장 같은
 모든 인터랙션 애니메이션에 공통으로 사용됩니다.
-        `,
+
+### 진입 / 퇴출 페어 (Enter / Exit pair)
+
+팝업·모달·드로어·토스트 등 **나타났다 사라지는 컴포넌트**는 진입과 퇴출에 다른 토큰을 사용합니다.
+
+| 페어 | 진입 | 퇴출 | 사용처 |
+|------|------|------|--------|
+| Fast | \`enterFast\` (0.15s) | \`exitFast\` (0.12s) | Dropdown, Tooltip, Popover |
+| Base | \`enterBase\` (0.2s) | \`exitBase\` (0.15s) | Modal, Drawer, Toast |
+
+규칙: **퇴출이 진입보다 짧음**. 진입은 감속(\`easing.enter\` = expo out), 퇴출은 가속(\`easing.exit\` = ease-in).
+`,
 			},
 		},
 	},
@@ -84,11 +95,13 @@ export const ComponentMapping: Story = {
 	name: "컴포넌트별 모션 매핑",
 	render: () => {
 		const mappings = [
-			{ component: "Button hover", token: "base", desc: "배경색·테두리 변화" },
+			{ component: "Button hover", token: "base", desc: "상태 레이어 색 변화" },
 			{ component: "Checkbox 체크", token: "fast", desc: "체크 아이콘 표시" },
-			{ component: "Modal 등장", token: "slow", desc: "오버레이 + 패널 슬라이드" },
-			{ component: "Toast 등장/퇴장", token: "fade", desc: "부드러운 페이드인/아웃" },
-			{ component: "Select 드롭다운", token: "base", desc: "목록 열림/닫힘" },
+			{ component: "Modal 진입", token: "enterBase", desc: "fade + scale 등장" },
+			{ component: "Modal 퇴출", token: "exitFast", desc: "fade 사라짐" },
+			{ component: "Dropdown/Select 팝업", token: "enterFast", desc: "fade + translateY 등장" },
+			{ component: "Toast 진입", token: "enterBase", desc: "슬라이드 + 페이드" },
+			{ component: "Toast 퇴출", token: "exitBase", desc: "역방향 슬라이드" },
 			{ component: "Toggle", token: "bounce", desc: "thumb 이동 + 바운스" },
 			{ component: "Card hover", token: "scale", desc: "살짝 확대 강조" },
 		];
@@ -217,6 +230,14 @@ function motionDescription(key: string) {
 			return "버튼 press, 카드 hover 강조";
 		case "state":
 			return "disabled → enabled 상태 전환";
+		case "enterFast":
+			return "팝업/드롭다운 진입 — 감속 ease(expo out)으로 부드럽게 등장";
+		case "enterBase":
+			return "모달/토스트 진입 — 기본 진입 속도, 시선 유도";
+		case "exitFast":
+			return "팝업/드롭다운 퇴출 — 가속 ease로 빠르게 사라짐";
+		case "exitBase":
+			return "모달/토스트 퇴출 — 진입보다 살짝 짧은 퇴출";
 		default:
 			return "공통 인터랙션 전환";
 	}

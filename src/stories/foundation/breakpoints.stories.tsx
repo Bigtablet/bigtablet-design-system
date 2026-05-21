@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { breakpoints } from "src/styles/breakpoints";
 
 const meta: Meta = {
-	title: "Foundation/breakpoints",
+	title: "Foundation/Breakpoints",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

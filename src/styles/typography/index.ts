@@ -48,6 +48,7 @@ export const baseTypography = {
 
 	letterSpacing: {
 		normal: "0px",
+		tight: "0.32px",
 	},
 } as const;
 

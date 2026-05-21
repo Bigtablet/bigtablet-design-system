@@ -4,7 +4,6 @@
  */
 
 @use "../styles/token" as token;
-@use "sass:color";
 
 /* ========================================
    CSS Custom Properties (Design Tokens)
@@ -45,7 +44,7 @@
   /* Colors - State */
   --bt-color-hover: #{token.$color_state_hover_on_light};
   --bt-color-pressed: #{token.$color_state_pressed_on_light};
-  --bt-color-primary-hover: #{color.adjust(token.$color_brand_primary, $lightness: 15%)};
+  --bt-color-primary-hover: #{token.$color_base_neutral_800}; // brand_primary lighten 15% 근사 (CSS var와 SCSS color.adjust 호환 X)
 
   /* Colors - Overlay */
   --bt-color-overlay: #{token.$color_bg_overlay};
@@ -206,7 +205,7 @@
     color: var(--bt-color-background);
 
     &:hover:not(:disabled) {
-      background: #{color.adjust(token.$color_status_error, $lightness: -8%)};
+      background: color-mix(in srgb, var(--bt-color-error) 92%, #000);
     }
 
     &:active:not(:disabled) {

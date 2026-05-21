@@ -3,7 +3,7 @@ import * as React from "react";
 import { zIndex } from "src/styles/z-index";
 
 const meta: Meta = {
-	title: "Foundation/z-index",
+	title: "Foundation/Z-Index",
 	tags: ["autodocs", "!test"],
 	parameters: {
 		chromatic: { disableSnapshot: true },
