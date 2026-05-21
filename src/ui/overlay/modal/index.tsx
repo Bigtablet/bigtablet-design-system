@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import * as React from "react";
 import { cn, useFocusTrap } from "../../../utils";
 import "./style.scss";
@@ -23,6 +24,10 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 	footer?: React.ReactNode;
 	/** Footer 정렬 (기본값: "end"). between은 좌우 분리 패턴 (destructive 액션 등) */
 	footerAlign?: ModalFooterAlign;
+	/** 우상단 X 닫기 아이콘 표시 여부 (기본값: true) */
+	showCloseIcon?: boolean;
+	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
+	closeLabel?: string;
 	/** 모달 접근성 레이블(기본값: title 또는 "Dialog") */
 	ariaLabel?: string;
 }
@@ -42,6 +47,8 @@ export const Modal = ({
 	description,
 	footer,
 	footerAlign = "end",
+	showCloseIcon = true,
+	closeLabel = "닫기",
 	children,
 	className,
 	ariaLabel,
@@ -145,6 +152,16 @@ export const Modal = ({
 				}}
 				{...props}
 			>
+				{showCloseIcon && onClose && (
+					<button
+						type="button"
+						className="modal_close"
+						onClick={onClose}
+						aria-label={closeLabel}
+					>
+						<X size={18} aria-hidden="true" />
+					</button>
+				)}
 				{title && (
 					<h2 id={titleId} className="modal_title">
 						{title}

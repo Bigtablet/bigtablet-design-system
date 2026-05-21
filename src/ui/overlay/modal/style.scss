@@ -30,6 +30,7 @@
   animation: modal_overlay_in token.$transition_enter_base forwards;
 
   &_panel {
+    position: relative; // close button 의 absolute 기준
     display: flex;
     flex-direction: column;
     gap: token.$spacing_16;
@@ -47,10 +48,41 @@
     }
   }
 
+  // ── Close (우상단 X 아이콘 버튼) ───────────────────────────────────────
+  &_close {
+    position: absolute;
+    top: token.$spacing_12;
+    right: token.$spacing_12;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: token.$color_text_caption;
+    border-radius: token.$radius_md;
+    cursor: pointer;
+    transition:
+      background token.$transition_fast,
+      color token.$transition_fast;
+
+    &:hover {
+      background: token.$color_state_hover_on_light;
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
   // ── Title (heading_large_bold) ─────────────────────────────────────────
 
   &_title {
     margin: 0;
+    padding-right: token.$spacing_32; // 우상단 close 버튼과 겹침 방지
     color: token.$color_text_heading;
     @include token.heading_large_bold;
   }
