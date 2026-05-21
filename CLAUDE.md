@@ -364,6 +364,9 @@ dist/vanilla/
 
 <div id="my-modal" class="bt-modal" data-bt-modal>
   <div class="bt-modal__panel" style="width: 480px;">
+    <button class="bt-modal__close" data-modal-close aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
     <div class="bt-modal__header">Title</div>
     <div class="bt-modal__body">Content</div>
     <div class="bt-modal__footer">
