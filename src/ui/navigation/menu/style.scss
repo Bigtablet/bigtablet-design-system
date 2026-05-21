@@ -10,7 +10,8 @@
   top: calc(100% + 4px);
   z-index: token.$z_level5;
   min-width: 180px;
-  background: token.$color_bg_solid;
+  // bg_solid_dim — light=거의 흰색 / dark=navy_800 (canvas navy_900 보다 한 톤 밝음 → 메뉴 panel 시각 분리)
+  background: token.$color_bg_solid_dim;
   border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_lg;
   box-shadow: token.$elevation_level2;
