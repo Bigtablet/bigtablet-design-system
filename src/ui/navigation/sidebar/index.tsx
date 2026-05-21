@@ -1,38 +1,57 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
-export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
-	/** 상단 brand 영역 (로고/타이틀) */
+export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
+	/** 상단 brand 영역 (펼친 상태 로고) */
 	header?: React.ReactNode;
+	/** collapsed 상태 헤더 (보통 favicon). 미지정 시 collapsed 에서도 `header` 사용. */
+	headerCollapsed?: React.ReactNode;
 	/** 하단 영역 (사용자/설정/로그아웃 등) */
 	footer?: React.ReactNode;
-	/** collapsed 상태 — 너비 축소, 아이콘만 표시 */
+	/** collapsed 상태 (controlled) */
 	collapsed?: boolean;
-	/** 너비 (기본 240px, collapsed 시 64px) */
+	/** collapsed 초기값 (uncontrolled). `collapsed` 미지정 시 사용. */
+	defaultCollapsed?: boolean;
+	/** collapsed 변경 콜백 (controlled/uncontrolled 모두에서 호출) */
+	onCollapsedChange?: (collapsed: boolean) => void;
+	/** 내장 collapse 토글 버튼 표시 (기본 true) */
+	collapsible?: boolean;
+	/** 토글 버튼 a11y label (기본 "사이드바 토글") */
+	toggleLabel?: string;
+	/** 너비 (기본 240px) */
 	width?: number;
 	/** collapsed 너비 (기본 64px) */
 	collapsedWidth?: number;
 }
 
 /**
- * admin/dashboard 좌측 네비게이션. navy bg + 흰 텍스트.
- * SidebarItem 컴포넌트와 함께 사용.
+ * admin/dashboard 좌측 네비게이션.
+ * `SidebarItem` + `SidebarSection` 과 함께 사용.
  *
  * @example
  * ```tsx
- * <Sidebar header={<Logo />}>
+ * <Sidebar
+ *   header={<Logo />}
+ *   headerCollapsed={<Favicon />}
+ *   defaultCollapsed={false}
+ * >
  *   <SidebarItem icon={<HomeIcon />} active>홈</SidebarItem>
- *   <SidebarItem icon={<UsersIcon />}>사용자</SidebarItem>
  * </Sidebar>
  * ```
  */
 export const Sidebar = ({
 	header,
+	headerCollapsed,
 	footer,
-	collapsed = false,
+	collapsed: collapsedProp,
+	defaultCollapsed = false,
+	onCollapsedChange,
+	collapsible = true,
+	toggleLabel = "사이드바 토글",
 	width = 240,
 	collapsedWidth = 64,
 	className,
@@ -40,15 +59,51 @@ export const Sidebar = ({
 	style,
 	...props
 }: SidebarProps) => {
+	const isControlled = collapsedProp !== undefined;
+	const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
+	const collapsed = isControlled ? (collapsedProp as boolean) : internalCollapsed;
+
+	const toggle = React.useCallback(() => {
+		const next = !collapsed;
+		if (!isControlled) setInternalCollapsed(next);
+		onCollapsedChange?.(next);
+	}, [collapsed, isControlled, onCollapsedChange]);
+
 	return (
 		<aside
 			className={cn("sidebar", collapsed && "sidebar_collapsed", className)}
 			style={{ width: collapsed ? collapsedWidth : width, ...style }}
 			{...props}
 		>
-			{header && <div className="sidebar_header">{header}</div>}
+			{(header || headerCollapsed) && (
+				<div className="sidebar_header">
+					<div className="sidebar_header_layers">
+						{header && (
+							<div className="sidebar_header_layer sidebar_header_layer_full">
+								{header}
+							</div>
+						)}
+						{headerCollapsed && (
+							<div className="sidebar_header_layer sidebar_header_layer_mark">
+								{headerCollapsed}
+							</div>
+						)}
+					</div>
+				</div>
+			)}
 			<nav className="sidebar_nav">{children}</nav>
 			{footer && <div className="sidebar_footer">{footer}</div>}
+			{collapsible && (
+				<button
+					type="button"
+					className="sidebar_collapse_btn"
+					onClick={toggle}
+					aria-label={toggleLabel}
+					aria-expanded={!collapsed}
+				>
+					{collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+				</button>
+			)}
 		</aside>
 	);
 };

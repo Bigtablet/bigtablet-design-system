@@ -4,7 +4,7 @@ import * as React from "react";
 import { Sidebar, SidebarItem, SidebarSection } from ".";
 
 const meta: Meta<typeof Sidebar> = {
-	title: "Components/Sidebar",
+	title: "Components/Navigation/Sidebar",
 	component: Sidebar,
 	tags: ["autodocs"],
 	parameters: {
@@ -12,27 +12,9 @@ const meta: Meta<typeof Sidebar> = {
 		docs: {
 			description: {
 				component: `
-**Sidebar**는 admin/dashboard 좌측 메인 네비게이션. **navy bg + 흰 텍스트** 고정. \`SidebarItem\` + \`SidebarSection\`과 함께 사용.
+**Sidebar** — admin/dashboard 좌측 네비게이션. \`SidebarItem\` + \`SidebarSection\` 조합.
 
-### 언제 쓰는가
-- ✅ Admin/dashboard 좌측 영구 네비게이션
-- ❌ B2C/마케팅 헤더는 **NavBar**
-- ❌ 페이지 위계 표시는 **Breadcrumb**
-- ❌ 페이지 내 섹션 전환은 **Tabs**
-
-### collapsed
-\`collapsed={true}\`로 너비를 \`240px → 64px\`로 축소, 아이콘만 표시.
-label / trailing / section label은 \`opacity:0 + width:0\`으로 숨김 (DOM 유지 → 스크린리더 접근 가능).
-
-### 접근성
-\`<aside>\` + 내부 \`<nav>\` 시멘틱. \`active={true}\` → \`aria-current="page"\` 자동.
-focus ring은 navy bg에 맞춰 흰색 outline.
-
-### 애니메이션
-너비 변화: 200ms (\`transition_base\`). hover/active: 100ms (\`transition_fast\`).
-
-### Next.js Link 통합
-\`<SidebarItem as="a" href="/path">\` 형태로 anchor 렌더.
+\`collapsed\` (240→64px) — 아이콘만 표시, \`headerCollapsed\` 로 favicon 노드. \`collapsible\` (기본 true) → floating chevron 토글. \`active={true}\` → \`aria-current="page"\` 자동.
 				`,
 			},
 		},
@@ -60,36 +42,68 @@ function BrandHeader() {
 	);
 }
 
-function ProfileFooter() {
+function FaviconHeader() {
+	// collapsed 시 표시되는 favicon (작은 정사각형 마크)
 	return (
-		<div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px" }}>
+		<img
+			src="/images/logo/favicon.png"
+			alt="Bigtablet"
+			width={28}
+			height={28}
+			style={{ display: "block", borderRadius: 6 }}
+		/>
+	);
+}
+
+function ProfileFooter({ collapsed = false }: { collapsed?: boolean }) {
+	return (
+		<div
+			style={{
+				display: "flex",
+				alignItems: "center",
+				gap: 8,
+				padding: collapsed ? "8px" : "8px 12px",
+				justifyContent: collapsed ? "center" : "flex-start",
+			}}
+		>
 			<div
 				style={{
 					width: 32,
 					height: 32,
 					borderRadius: 999,
-					background: "rgba(255,255,255,0.2)",
+					background: "#e5e5e5",
+					color: "#121212",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
 					fontWeight: 600,
+					flexShrink: 0,
 				}}
 			>
 				S
 			</div>
-			<div style={{ display: "grid", gap: 2, fontSize: 13 }}>
-				<strong>sangmin</strong>
-				<span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11 }}>sangmin@bigtablet.com</span>
-			</div>
+			{!collapsed && (
+				<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
+					<strong>sangmin</strong>
+					<span style={{ color: "#666", fontSize: 11 }}>sangmin@bigtablet.com</span>
+				</div>
+			)}
 		</div>
 	);
 }
 
-function FullDemo({ collapsed = false }: { collapsed?: boolean }) {
+function FullDemo({ defaultCollapsed = false }: { defaultCollapsed?: boolean }) {
 	const [active, setActive] = React.useState("home");
+	const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 	return (
 		<div style={{ display: "flex", minHeight: 480, background: "#f4f4f4" }}>
-			<Sidebar header={<BrandHeader />} footer={<ProfileFooter />} collapsed={collapsed}>
+			<Sidebar
+				header={<BrandHeader />}
+				headerCollapsed={<FaviconHeader />}
+				footer={<ProfileFooter collapsed={collapsed} />}
+				collapsed={collapsed}
+				onCollapsedChange={setCollapsed}
+			>
 				<SidebarSection label="Main">
 					{SAMPLE_ITEMS.slice(0, 2).map((it) => (
 						<SidebarItem
@@ -131,5 +145,5 @@ export const Default: Story = {
 
 export const Collapsed: Story = {
 	name: "Collapsed (아이콘만)",
-	render: () => <FullDemo collapsed />,
+	render: () => <FullDemo defaultCollapsed />,
 };
