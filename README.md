@@ -2,23 +2,55 @@
 
 <img width="1800" height="300" alt="Bigtablet Design System" src="https://github.com/user-attachments/assets/420a15cc-5be3-447f-9c64-068e946cb118" />
 
-# Bigtablet Design System
+<br />
+<br />
 
-Token-based React + TypeScript UI library. Dark mode out of the box. ~40 components.
+### Bigtablet Design System
+
+The unified UI library powering Bigtablet products.<br />
+Crafted for clarity. Built on tokens. Ships with dark mode.
+
+<br />
 
 <p>
-  <a href="https://www.npmjs.com/package/@bigtablet/design-system"><img src="https://img.shields.io/npm/v/@bigtablet/design-system.svg?style=flat&color=121212" alt="npm" /></a>
-  <a href="https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md"><img src="https://img.shields.io/badge/license-Bigtablet-blue.svg?style=flat" alt="license" /></a>
-  <a href="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml"><img src="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml/badge.svg" alt="ci" /></a>
+  <a href="https://www.npmjs.com/package/@bigtablet/design-system"><img src="https://img.shields.io/npm/v/@bigtablet/design-system?style=for-the-badge&color=121212&labelColor=000" alt="npm" /></a>
+  <a href="https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md"><img src="https://img.shields.io/badge/license-Bigtablet-303841?style=for-the-badge&labelColor=000" alt="license" /></a>
+  <a href="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Bigtablet/bigtablet-design-system/ci.yml?style=for-the-badge&color=10b981&labelColor=000" alt="ci" /></a>
 </p>
 
-[Docs](./docs/COMPONENTS.md) · [Storybook](#development) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system) · [🇰🇷 한국어](./README_KR.md)
+[**Documentation**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Storybook](#development)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇰🇷 한국어](./README_KR.md)
 
 </div>
 
-> Bigtablet's in-house DS, open-sourced for reference. External use welcome — minor versions may include breaking changes without notice.
+<br />
 
----
+```tsx
+import { ThemeProvider, Button, Modal, useToast } from "@bigtablet/design-system";
+import "@bigtablet/design-system/style.css";
+
+export default function App() {
+  const toast = useToast();
+  return (
+    <ThemeProvider>
+      <Button onClick={() => toast.success("Saved")}>Save</Button>
+    </ThemeProvider>
+  );
+}
+```
+
+A complete React + TypeScript design system maintained by Bigtablet for internal product work. Open-sourced for reference — external use welcome, but minor versions may include breaking changes.
+
+<br />
+
+## What's inside
+
+— **40+ components** across forms, display, feedback, navigation, overlay, and layout<br />
+— **11 token domains** — colors, typography, spacing, motion, radius, elevation, and more — exposed as SCSS variables and CSS custom properties<br />
+— **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
+— **Vanilla JS bundle** for non-React backends — Thymeleaf, JSP, PHP, Django<br />
+— **Accessibility tested** with axe-core in CI · keyboard nav · ARIA throughout
+
+<br />
 
 ## Install
 
@@ -26,101 +58,93 @@ Token-based React + TypeScript UI library. Dark mode out of the box. ~40 compone
 pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
-```tsx
-import { Button, TextField, Modal } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
-```
-
 Requires React 19 + lucide-react ≥ 0.552. Compatible with Next.js 13+.
 
 <details>
-<summary>One-line setup (auto-detect)</summary>
+<summary><b>One-line setup</b> — auto-detect package manager + framework</summary>
+
+<br />
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-Detects your package manager (npm / yarn / pnpm / bun) + framework (React / Next.js), installs deps, and prints CSS / Provider setup steps.
+Detects npm / yarn / pnpm / bun and React / Next.js, installs deps, prints CSS + provider setup steps.
 
 </details>
 
+<br />
+
 ## Providers
 
-Dark mode + Alert/Toast need providers. Wrap your root once:
-
 ```tsx
-import {
-  ThemeProvider,
-  AlertProvider,
-  ToastProvider,
-} from "@bigtablet/design-system";
+import { ThemeProvider, AlertProvider, ToastProvider } from "@bigtablet/design-system";
 
-export default function RootLayout({ children }) {
-  return (
-    <ThemeProvider>
-      <AlertProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </AlertProvider>
-    </ThemeProvider>
-  );
-}
+<ThemeProvider>
+  <AlertProvider>
+    <ToastProvider>{children}</ToastProvider>
+  </AlertProvider>
+</ThemeProvider>
 ```
 
-Then use the hooks anywhere:
+Use the hooks anywhere:
 
 ```tsx
-const { showAlert } = useAlert();
 const toast = useToast();
+const { showAlert } = useAlert();
 
-toast.success("Saved!");
+toast.success("Saved");
 showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ```
 
+<br />
+
 ## Components
 
-**Forms** — Button · IconButton · TextField · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput
+<table>
+<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
+<tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState</td></tr>
+<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · NavBar · Breadcrumb · Menu · Pagination</td></tr>
+<tr><td><b>Overlay</b></td><td>Modal · Tooltip</td></tr>
+<tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
+</table>
 
-**Display** — Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion
+→&nbsp;Full API · [`docs/COMPONENTS.md`](./docs/COMPONENTS.md)
 
-**Feedback** — Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState
-
-**Navigation** — Tabs · Sidebar · NavBar · Breadcrumb · Menu · Pagination
-
-**Overlay** — Modal · Tooltip
-
-**Layout** — Container · Section · Stack · Grid
-
-→ Full API: [`docs/COMPONENTS.md`](./docs/COMPONENTS.md)
+<br />
 
 ## Design tokens
-
-SCSS variables + CSS custom properties — light/dark auto-switching via `[data-theme="dark"]` or `prefers-color-scheme`.
 
 ```scss
 @use "src/styles/token" as token;
 
-.my-card {
+.card {
   background: token.$color_bg_solid;
   color: token.$color_text_heading;
   padding: token.$spacing_16;
   border-radius: token.$radius_md;
+  box-shadow: token.$elevation_level1;
 }
 ```
 
 ```css
-.my-card {
+.card {
   background: var(--bt-color-bg-solid);
   color: var(--bt-color-text-heading);
   padding: var(--bt-spacing-16);
   border-radius: var(--bt-radius-md);
+  box-shadow: var(--bt-elevation-level1);
 }
 ```
 
-Categories: `colors` · `spacing` · `typography` · `radius` · `elevation` · `motion` · `z-index` · `breakpoints` · `border-width` · `opacity` · `a11y`
+`colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`a11y`
+
+<br />
 
 ## Vanilla JS
 
-For non-React environments (Thymeleaf, JSP, PHP, Django):
+For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
@@ -129,36 +153,44 @@ For non-React environments (Thymeleaf, JSP, PHP, Django):
 <button class="bt-button bt-button--md bt-button--primary">Primary</button>
 ```
 
-→ Full guide: [`docs/VANILLA.md`](./docs/VANILLA.md)
+→&nbsp;Full guide · [`docs/VANILLA.md`](./docs/VANILLA.md)
+
+<br />
 
 ## Development
 
 ```bash
 pnpm install
 pnpm storybook        # localhost:6006
-pnpm test             # Vitest unit tests
+pnpm test             # Vitest unit
 pnpm test:storybook   # a11y + Playwright
 pnpm build            # tsup + SCSS copy
 ```
 
-## Docs
+<br />
 
-| Doc | About |
-|-----|-------|
-| [Components](./docs/COMPONENTS.md) | Props API + usage per component |
-| [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
-| [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |
-| [Testing](./docs/TESTING.md) | Test patterns + a11y testing |
-| [Vanilla JS](./docs/VANILLA.md) | HTML/CSS/JS integration |
+## Documentation
+
+| | |
+|---|---|
+| 📚 [Components](./docs/COMPONENTS.md) | Props API + usage per component |
+| 🏗️ [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
+| 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |
+| 🧪 [Testing](./docs/TESTING.md) | Test patterns + a11y testing |
+| 🌐 [Vanilla JS](./docs/VANILLA.md) | HTML/CSS/JS integration |
+
+<br />
 
 ## License
 
-[Bigtablet License](https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md)
+Licensed under the [Bigtablet License](https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md).
 
----
+<br />
 
 <div align="center">
 
-[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system)
+<sub>Made with care by the Bigtablet team.</sub>
+
+<sub>[GitHub](https://github.com/Bigtablet/bigtablet-design-system) · [Issues](https://github.com/Bigtablet/bigtablet-design-system/issues) · [NPM](https://www.npmjs.com/package/@bigtablet/design-system)</sub>
 
 </div>
