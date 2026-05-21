@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Spinner } from ".";
 
 const meta: Meta<typeof Spinner> = {
-	title: "Components/Spinner",
+	title: "Components/Feedback/Spinner",
 	component: Spinner,
 	tags: ["autodocs"],
 	argTypes: {
@@ -18,26 +18,11 @@ const meta: Meta<typeof Spinner> = {
 		docs: {
 			description: {
 				component: `
-**Spinner**는 작업 처리 중임을 사용자에게 알려주는 **회전 형태의 로딩 표시**입니다.
+**Spinner** — 인라인 회전 로딩 표시. 버튼/카드 내부용.
 
-### 언제 사용하나요?
-- 버튼 클릭 후 잠시 대기 시간이 있을 때
-- 데이터 로딩 중임을 알려야 할 때
-- 화면 전체가 아닌 **부분 로딩(인라인 로딩)**이 필요할 때
+크기: 버튼 16–24, 카드 24–32, 강조 40+. 페이지 전환은 \`TopLoading\` 참고.
 
-### TopLoading과의 차이
-| Spinner | TopLoading |
-|---------|------------|
-| 인라인/부분 영역 | 화면 상단 고정 |
-| 버튼, 카드 내부 | 페이지 전환, 전역 상태 |
-| 크기 조절 가능 | 진행률 표시 가능 |
-
-### 크기 가이드
-| 상황 | 권장 크기 |
-|------|----------|
-| 버튼 내부 | 16–24px |
-| 카드/섹션 단위 | 24–32px |
-| 화면 중심 강조 | 40px 이상 |
+> ⚠️ **Docs 뷰 안내** — 이 페이지의 미리보기는 정적 캡처라 spinner 가 멈춰 있거나 한 프레임만 보일 수 있다. 실제 회전은 좌측 사이드바에서 개별 스토리 (Basic 등) 를 열면 확인 가능.
         `,
 			},
 		},

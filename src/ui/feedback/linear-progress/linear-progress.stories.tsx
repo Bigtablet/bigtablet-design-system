@@ -2,43 +2,23 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LinearProgress } from ".";
 
 const meta: Meta<typeof LinearProgress> = {
-	title: "Components/LinearProgress",
+	title: "Components/Feedback/LinearProgress",
 	component: LinearProgress,
 	tags: ["autodocs"],
 	argTypes: {
-		totalSteps: {
-			control: "number",
-			description: "전체 단계 수입니다.",
-		},
-		currentStep: {
-			control: "number",
-			description: "현재 진행 중인 단계입니다. 0부터 totalSteps까지의 값을 가집니다.",
-		},
+		totalSteps: { control: "number" },
+		currentStep: { control: "number" },
 	},
-	args: {
-		totalSteps: 4,
-		currentStep: 2,
-		"aria-label": "진행률",
-	},
+	args: { totalSteps: 4, currentStep: 2, "aria-label": "진행률" },
 	parameters: {
 		docs: {
 			description: {
 				component: `
-**LinearProgress**는 단계 기반 작업의 진행률을 **수평 바** 형태로 표시하는 컴포넌트입니다.
+**LinearProgress** — 단계 기반 진행률 수평 바. 회원가입/설문 Stepper 용.
 
-### 언제 사용하나요?
-- 회원가입, 설문조사 등 **단계별 흐름(Stepper)**의 진행률을 표시할 때
-- 전체 과정 중 현재 위치를 시각적으로 안내할 때
-- 페이지 상단이나 섹션 사이에서 진행 상황을 간결하게 보여줄 때
-
-### Spinner / TopLoading과의 차이
-| | LinearProgress | Spinner | TopLoading |
-|---|---|---|---|
-| **용도** | 단계별 흐름 진행률 | 비동기 로딩 상태 | 페이지 전환 로딩 |
-| **형태** | 인라인 수평 바 | 회전 애니메이션 | 상단 고정 바 |
-| **진행률** | 단계 기반 (step/total) | 표시 불가 | 퍼센트 기반 (0-100) |
-| **위치** | 문서 흐름 내 배치 | 문서 흐름 내 배치 | 화면 상단 고정 (fixed) |
-        `,
+주요 prop: \`totalSteps\`, \`currentStep\` (0 ~ totalSteps).
+비동기 로딩은 \`Spinner\`, 페이지 전환은 \`TopLoading\` 참고.
+				`,
 			},
 		},
 	},
@@ -47,50 +27,11 @@ const meta: Meta<typeof LinearProgress> = {
 export default meta;
 type Story = StoryObj<typeof LinearProgress>;
 
-export const Empty: Story = {
-	name: "0/4 (비어 있음)",
-	args: {
-		totalSteps: 4,
-		currentStep: 0,
-	},
-};
-
-export const Quarter: Story = {
-	name: "1/4 (25%)",
-	args: {
-		totalSteps: 4,
-		currentStep: 1,
-	},
-};
-
-export const Half: Story = {
-	name: "2/4 (50%)",
-	args: {
-		totalSteps: 4,
-		currentStep: 2,
-	},
-};
-
-export const ThreeQuarters: Story = {
-	name: "3/4 (75%)",
-	args: {
-		totalSteps: 4,
-		currentStep: 3,
-	},
-};
-
-export const Complete: Story = {
-	name: "4/4 (100%)",
-	args: {
-		totalSteps: 4,
-		currentStep: 4,
-	},
+export const Default: Story = {
+	args: { totalSteps: 4, currentStep: 2 },
 };
 
 export const AllSteps: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
-	name: "모든 단계 비교",
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 			{[0, 1, 2, 3, 4].map((step) => (
