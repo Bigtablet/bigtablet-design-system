@@ -12,7 +12,9 @@
 
 .dropdown {
   position: relative;
-  display: inline-flex;
+  // block-level — 부모 너비 채움. 선택값/옵션 길이와 무관하게 일정한 폭 보장.
+  // 인라인 사용 시 부모를 inline-block + width 로 감쌀 것.
+  display: flex;
   flex-direction: column;
   gap: token.$spacing_6;
   font-family: token.$font_family_primary;
@@ -168,13 +170,13 @@
     z-index: token.$z_level5;
     top: 100%;
     left: 0;
-    min-width: 100%;          // 컨트롤 폭 보장 (최소)
-    width: max-content;       // 옵션 텍스트가 길면 늘어남
-    max-width: min(90vw, 28rem); // 화면 넘침 방지
+    // 트리거 폭과 동일. 옵션 텍스트가 길어도 패널이 넓어지지 않음 (label 에 ellipsis 처리됨).
+    width: 100%;
     box-sizing: border-box;
     margin-top: token.$spacing_4;
 
-    background: token.$color_bg_solid;
+    // bg_solid_dim — dark 에서 canvas (navy_900) 보다 한 톤 밝음 → 패널 분리감
+    background: token.$color_bg_solid_dim;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg; // 컨트롤과 동일 radius
     box-shadow: token.$elevation_level1; // 좀 더 가볍게

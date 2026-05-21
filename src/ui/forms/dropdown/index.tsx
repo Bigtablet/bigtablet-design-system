@@ -50,7 +50,9 @@ export interface DropdownProps {
 	disabled?: boolean;
 	/** 드롭다운 크기 (기본값: "md") */
 	size?: DropdownSize;
-	/** 컨테이너 전체 너비 차지 여부 */
+	/**
+	 * @deprecated Dropdown 은 이제 항상 부모 너비를 채웁니다. 인라인 사용 시 부모를 `inline-block + width` 로 감싸세요.
+	 */
 	fullWidth?: boolean;
 	/** 루트 요소에 추가할 className */
 	className?: string;
@@ -80,7 +82,6 @@ export const Dropdown = ({
 	defaultValue = null,
 	disabled,
 	size = "md",
-	fullWidth,
 	className,
 }: DropdownProps) => {
 	const internalId = useId();
@@ -218,7 +219,6 @@ export const Dropdown = ({
 		<div
 			ref={wrapperRef}
 			className={rootClassName}
-			style={fullWidth ? { width: "100%" } : undefined}
 		>
 			{label && (
 				<label htmlFor={dropdownId} className="dropdown_label">

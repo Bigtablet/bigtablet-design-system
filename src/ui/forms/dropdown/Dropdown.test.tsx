@@ -106,10 +106,15 @@ describe("Dropdown", () => {
 		expect(screen.getByRole("button")).toBeDisabled();
 	});
 
-	it("applies fullWidth style", () => {
-		render(<Dropdown options={options} fullWidth />);
+	it("renders root with .dropdown class (block-level, fills parent width)", () => {
+		render(<Dropdown options={options} />);
 		const wrapper = screen.getByRole("button").closest(".dropdown");
-		expect(wrapper).toHaveStyle({ width: "100%" });
+		expect(wrapper).toHaveClass("dropdown");
+	});
+
+	it("fullWidth prop is accepted but no-op (back-compat)", () => {
+		render(<Dropdown options={options} fullWidth />);
+		expect(screen.getByRole("button")).toBeInTheDocument();
 	});
 
 	it("opens on Space key when closed", () => {
