@@ -73,7 +73,7 @@
         border: none;
         background: transparent;
         cursor: pointer;
-        padding: token.$spacing_6 token.$spacing_12 token.$spacing_6 token.$spacing_16;
+        padding: token.$spacing_6 token.$spacing_12;
         @include token.body_small_medium;
         color: token.$color_text_heading;
         position: relative;
