@@ -9,9 +9,13 @@
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-  /* Colors - Brand */
+  /* Colors - Brand (양 테마 검정/흰 고정 — Button --primary 등 의도된 다크 fill) */
   --bt-color-primary: #{token.$color_brand_primary};
   --bt-color-on-primary: #{token.$color_brand_on_primary};
+
+  /* Colors - Accent (light=검정/dark=흰 자동 반전 — indicator/checked/focus 강조) */
+  --bt-color-accent: #{token.$color_accent_default};
+  --bt-color-accent-on-surface: #{token.$color_accent_on_surface};
 
   /* Colors - Background */
   --bt-color-background: #{token.$color_bg_solid};
@@ -277,7 +281,7 @@
 
       &:focus-visible {
         outline: none;
-        border-color: var(--bt-color-primary);
+        border-color: var(--bt-color-accent);
         box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
       }
     }
@@ -288,7 +292,7 @@
 
       &:focus-visible {
         outline: none;
-        border-color: var(--bt-color-primary);
+        border-color: var(--bt-color-accent);
         background: var(--bt-color-background);
         box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
       }
@@ -421,7 +425,7 @@
   /* States */
   &__input:focus-visible + .bt-checkbox__box {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:disabled + .bt-checkbox__box,
@@ -431,8 +435,8 @@
   }
 
   &__input:checked + .bt-checkbox__box {
-    background: var(--bt-color-primary);
-    border-color: var(--bt-color-primary);
+    background: var(--bt-color-accent);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:checked + .bt-checkbox__box::after {
@@ -442,7 +446,7 @@
     top: 50%;
     width: 0.28rem;
     height: 0.55rem;
-    border: 2px solid var(--bt-color-background);
+    border: 2px solid var(--bt-color-accent-on-surface);
     border-top: 0;
     border-left: 0;
     transform: translate(-50%, -58%) rotate(45deg);
@@ -513,11 +517,12 @@
   /* States */
   &__input:focus-visible + .bt-radio__dot {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:checked + .bt-radio__dot {
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
+    border-width: 2px;
   }
 
   &__input:checked + .bt-radio__dot::after {
@@ -528,7 +533,7 @@
     width: 60%;
     height: 60%;
     transform: translate(-50%, -50%);
-    background: var(--bt-color-primary);
+    background: var(--bt-color-accent);
     border-radius: 9999px;
   }
 
@@ -567,11 +572,12 @@
   }
 
   &--on {
-    background: var(--bt-color-primary);
+    background: var(--bt-color-accent);
 
     .bt-toggle__thumb {
       width: 20px;
       height: 20px;
+      background: var(--bt-color-accent-on-surface);
       transform: translateX(16px);
     }
   }
@@ -656,7 +662,7 @@
       }
 
       &.is-open {
-        border-color: var(--bt-color-primary);
+        border-color: var(--bt-color-accent);
         box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
       }
     }
@@ -667,7 +673,7 @@
 
       &.is-open {
         background: var(--bt-color-background);
-        border-color: var(--bt-color-primary);
+        border-color: var(--bt-color-accent);
         box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
       }
     }
@@ -931,7 +937,7 @@
   box-sizing: border-box;
   border-radius: 50%;
   border: 2px solid var(--bt-color-border);
-  border-top-color: var(--bt-color-primary);
+  border-top-color: var(--bt-color-accent);
   animation: bt-spinner-spin 0.8s linear infinite;
 
   &--sm { width: 16px; height: 16px; }
@@ -1062,13 +1068,13 @@
     background-repeat: no-repeat;
 
     &:hover:not(:disabled) {
-      border-color: var(--bt-color-primary);
+      border-color: var(--bt-color-accent);
       background-color: var(--bt-color-background-secondary);
     }
 
     &:focus-visible {
       outline: none;
-      border-color: var(--bt-color-primary);
+      border-color: var(--bt-color-accent);
       box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
     }
 
@@ -1128,7 +1134,7 @@
 
   &__control:focus-visible + .bt-file-input__label {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &--disabled {
