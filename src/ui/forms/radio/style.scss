@@ -116,15 +116,17 @@
   }
 
   // ── Checked state ──────────────────────────────────────────────────────
-  // Checkbox/Toggle과 통일 — 검정 brand fill + 흰 inner dot.
-  // light/dark 양쪽에서 동일하게 명확한 contrast.
+  // 표준 Radio 디자인 — outline ring + 같은 색 inner dot (Material/iOS 패턴).
+  // light=검정 ring + 검정 dot / dark=흰 ring + 흰 dot (자동 반전).
+  // 외곽은 fill 하지 않음 → 도넛 느낌 X.
 
   &_input:checked ~ .radio_state_layer .radio_dot {
-    background: token.$color_brand_primary;
-    border-color: token.$color_brand_primary;
+    border-color: token.$color_accent_default;
+    border-width: 2px;
+    // background 는 bg_solid 그대로 — 가운데 비워서 ring 강조
   }
 
-  // default/sm: inner dot — 항상 흰색 (검정 brand 위)
+  // default/sm: inner dot — ring 과 동일 색
   &_input:checked ~ .radio_state_layer .radio_dot::after {
     content: "";
     position: absolute;
@@ -133,7 +135,7 @@
     width: 8px;
     height: 8px;
     transform: translate(-50%, -50%);
-    background: token.$color_brand_on_primary;
+    background: token.$color_accent_default;
     border-radius: token.$radius_full;
   }
 

@@ -11,7 +11,8 @@
 
   &_bar {
     height: 100%;
-    background-color: token.$color_brand_primary;
+    // accent_default: light = 검정, dark = 흰색 — 양 테마에서 indicator 가독성 보장
+    background-color: token.$color_accent_default;
     transition: width token.$transition_base;
   }
 

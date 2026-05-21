@@ -36,12 +36,12 @@
   // ── On state ───────────────────────────────────────────────────────────
 
   &_on {
-    background: token.$color_brand_primary;
+    background: token.$color_accent_default;
 
     .toggle_thumb {
       width: 20px;
       height: 20px;
-      background: token.$color_brand_on_primary;
+      background: token.$color_accent_on_surface;
       transform: translateX(14px);
     }
 
@@ -51,7 +51,7 @@
       border-color: transparent;
 
       .toggle_thumb {
-        background: token.$color_brand_on_primary;
+        background: token.$color_accent_on_surface;
       }
     }
   }

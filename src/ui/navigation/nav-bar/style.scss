@@ -233,27 +233,48 @@
     color: token.$color_text_heading;
   }
 
-  // ── Variant: accent (navy) ───────────────────────────────────────────
+  // ── Variant: accent (검정) ───────────────────────────────────────────
+  // Marketing-style 다크 헤더 — 양 테마 동일하게 brand_primary (#121212) + 흰 텍스트.
+  // 라이트: 흰 캔버스 위 강한 dark bar / 다크: navy_900 캔버스보다 짙어 명확.
+  // (accent_default 는 light=검정/dark=흰 반전 토큰이라 navbar 에 부적합)
 
   &_variant_accent {
-    background: token.$color_accent_default;
-    color: token.$color_accent_on_surface;
+    background: token.$color_brand_primary;
+    color: #fff;
 
     .nav_bar_link {
       color: rgba(255, 255, 255, 0.7);
 
       &:hover:not(.nav_bar_link_active) {
-        color: token.$color_accent_on_surface;
+        color: #fff;
       }
 
       &_active {
-        color: token.$color_accent_on_surface;
+        color: #fff;
       }
     }
 
-    // navy bg 위 indicator는 흰색
+    // 네이비 bg 위 indicator는 흰색
     .nav_bar_indicator {
-      background: token.$color_accent_on_surface;
+      background: #fff;
+    }
+
+    // dark accent bg 위 button — outline/text variant 강제 흰 텍스트 + 흰 border
+    .button_variant_outline {
+      border-color: rgba(255, 255, 255, 0.55);
+      color: #fff;
+
+      &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
+      &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }
+      &:active:not(:disabled)::before { background: token.$color_state_pressed_on_dark; }
+    }
+
+    .button_variant_text {
+      color: rgba(255, 255, 255, 0.9);
+
+      &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
+      &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }
+      &:active:not(:disabled)::before { background: token.$color_state_pressed_on_dark; }
     }
   }
 

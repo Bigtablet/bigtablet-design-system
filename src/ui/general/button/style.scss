@@ -75,7 +75,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_text_heading;
       opacity: token.$opacity_38;
     }
   }
@@ -100,7 +100,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_text_heading;
       opacity: token.$opacity_38;
     }
   }
@@ -126,7 +126,7 @@
 
     &:disabled {
       border-color: token.$color_border_default;
-      color: token.$color_brand_primary;
+      color: token.$color_text_heading;
       opacity: token.$opacity_38;
     }
   }
@@ -150,7 +150,7 @@
     }
 
     &:disabled {
-      color: token.$color_brand_primary;
+      color: token.$color_text_heading;
       opacity: token.$opacity_38;
     }
   }

@@ -109,9 +109,16 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-accent-default:       #{$color_base_brand_primary};   // 검정 (brand와 동일)
   --bt-color-accent-strong:        #{$color_base_neutral_900};
   --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
+
+  // Skeleton (light gray gradient — dark 에서 navy gray 로 전환)
+  --bt-color-skeleton-base:        #F3F3F3;
+  --bt-color-skeleton-wave:        #f0f0f0;
+  --bt-color-skeleton-highlight:   #fafafa;
 }
 
 [data-theme="dark"] {
+  // 브라우저 기본 UI (스크롤바, form control 등) 다크 적응
+  color-scheme: dark;
   // Font rendering — dark bg 위 흰 글씨의 halation/노이즈 보정
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -160,11 +167,17 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-accent-default:       #{$color_base_neutral_0};         // 흰색
   --bt-color-accent-strong:        #{$color_base_neutral_0};
   --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
+
+  // Skeleton — navy_700 (bg-solid-dim navy_800 보다 살짝 밝음 → 시각 대비)
+  --bt-color-skeleton-base:        #{$color_base_navy_700};
+  --bt-color-skeleton-wave:        #{$color_base_navy_700};
+  --bt-color-skeleton-highlight:   #{$color_base_navy_600};
 }
 
 // `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
+    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
@@ -203,6 +216,10 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     --bt-color-accent-default:       #{$color_base_neutral_0};
     --bt-color-accent-strong:        #{$color_base_neutral_0};
     --bt-color-accent-on-surface:    #{$color_base_neutral_900};
+
+    --bt-color-skeleton-base:        #{$color_base_navy_700};
+    --bt-color-skeleton-wave:        #{$color_base_navy_700};
+    --bt-color-skeleton-highlight:   #{$color_base_navy_600};
   }
 }
 
