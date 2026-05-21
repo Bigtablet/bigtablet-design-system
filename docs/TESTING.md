@@ -357,7 +357,6 @@ it("calls callback with correct arguments", () => {
 | Toast | 90% |
 | TextField | 74% |
 | Dropdown | 89% |
-| Select (deprecated alias) | - |
 
 ### 커버리지 목표
 
