@@ -3,7 +3,7 @@ import * as React from "react";
 import { Radio } from ".";
 
 const meta: Meta<typeof Radio> = {
-	title: "Components/Radio",
+	title: "Components/Forms/Radio",
 	component: Radio,
 	tags: ["autodocs"],
 	argTypes: {
@@ -25,20 +25,9 @@ const meta: Meta<typeof Radio> = {
 		docs: {
 			description: {
 				component: `
-**Radio**는 여러 선택지 중에서 **하나만 선택해야 할 때** 사용하는 입력 요소입니다.
+**Radio** — 단일 선택 (다중은 Checkbox).
 
-### 언제 사용하나요?
-- 배송 방법 선택 (일반 배송 / 빠른 배송)
-- 결제 수단 선택 (카드 / 계좌이체 / 간편결제)
-- 설문에서 “하나만 고르세요” 형태의 질문
-
-### Checkbox와의 차이점
-- **Radio**: 여러 개 중 **하나만 선택**
-- **Checkbox**: 여러 개를 **동시에 선택 가능**
-
-### 사용 방법 (중요)
-- 같은 그룹으로 묶으려면 **\`name\` 값을 동일하게 설정**해야 합니다.
-- 선택 상태는 \`checked\`와 \`onChange\`로 제어합니다.
+같은 그룹은 \`name\` 동일 + 각 \`value\`. \`checked\` / \`onChange\` 제어.
         `,
 			},
 		},

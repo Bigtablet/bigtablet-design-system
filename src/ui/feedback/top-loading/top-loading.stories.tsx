@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { TopLoading } from ".";
 
 const meta: Meta<typeof TopLoading> = {
-	title: "Components/TopLoading",
+	title: "Components/Feedback/TopLoading",
 	component: TopLoading,
 	tags: ["autodocs"],
 	argTypes: {
@@ -37,25 +37,10 @@ const meta: Meta<typeof TopLoading> = {
 		docs: {
 			description: {
 				component: `
-**TopLoading**은 화면 상단에 고정되어 페이지 로딩 상태를 표시하는 프로그레스 바입니다.
+**TopLoading** — 화면 상단 고정 프로그레스 바. 페이지 전환/전역 로딩용.
 
-### 언제 사용하나요?
-- 페이지 전환 시 로딩 상태 표시
-- API 호출 중 전역 로딩 표시
-- 파일 업로드/다운로드 진행률 표시
-
-### Spinner와의 차이
-| TopLoading | Spinner |
-|------------|---------|
-| 화면 상단 고정 | 인라인/부분 영역 |
-| 페이지 전환, 전역 상태 | 버튼, 카드 내부 |
-| 진행률 표시 가능 | 크기 조절 가능 |
-
-### 모드
-| 모드 | 설명 |
-|------|------|
-| **Indeterminate** | progress 미지정 시 무한 애니메이션 |
-| **Determinate** | progress 지정 시 해당 퍼센트만큼 채움 |
+\`progress\` 미지정 → indeterminate 무한 애니메이션 / 지정 → determinate 퍼센트 fill.
+인라인 로딩은 \`Spinner\` 참고.
         `,
 			},
 		},

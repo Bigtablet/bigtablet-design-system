@@ -2,33 +2,16 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Grid } from ".";
 
 const meta: Meta<typeof Grid> = {
-	title: "Layout/Grid",
+	title: "Components/Layout/Grid",
 	component: Grid,
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
 			description: {
 				component: [
-					"**Grid** — CSS Grid 기반 2D 레이아웃. `cols` 고정 열 수 또는 `cols=\"auto\"` auto-fill 반응형 그리드.",
+					"**Grid** — CSS Grid 2D 레이아웃. 1D 흐름은 `Stack`.",
 					"",
-					"#### 역할",
-					"4개 Layout 프리미티브 중 **2D 격자**(m열 × n행)를 담당. 한 줄/한 열만 흐른다면 `Stack`을 사용하세요.",
-					"",
-					"#### cols 선택",
-					"- `1` — 모바일/좁은 사이드 영역",
-					"- `2` — 비교 카드·통계 페어",
-					"- `3` (기본) — 기능 소개·MediaCard 카드 리스트",
-					"- `4` — 콤팩트 카드·통계 패널",
-					"- `5`/`6` — 작은 아이콘 그리드·로고 월",
-					"- `\"auto\"` — `repeat(auto-fill, minmax(minColWidth, 1fr))`. 컨테이너 폭에 따라 자동 열 수",
-					"",
-					"#### gap / rowGap / colGap",
-					"`gap`은 행/열 모두에 적용. `rowGap`/`colGap`을 명시하면 해당 축만 override합니다.",
-					"",
-					"#### 반응형",
-					"- `singleColOnMobile={true}` (기본) — `< 600px`에서 무조건 1열로 축소.",
-					"- `singleColOnMobile={false}` — 작은 아이콘 그리드처럼 모바일에서도 다열을 유지해야 할 때.",
-					"- `cols=\"auto\"` — `singleColOnMobile`과 무관하게 `minmax`로 자동 줄바꿈.",
+					"주요 prop: `cols` (1~6 또는 `\"auto\"` = minmax auto-fill), `gap`/`rowGap`/`colGap`, `singleColOnMobile` (<600 1열 축소, 기본 true).",
 				].join("\n"),
 			},
 		},

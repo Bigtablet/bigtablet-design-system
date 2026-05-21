@@ -24,31 +24,16 @@ import {
 import { Icon } from ".";
 
 const meta: Meta<typeof Icon> = {
-	title: "Components/Icon",
+	title: "Components/Display/Icon",
 	component: Icon,
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
 			description: {
 				component: `
-**Icon** — lucide-react 아이콘 wrapper.
+**Icon** — lucide-react 아이콘 wrapper. 카탈로그: [lucide.dev/icons](https://lucide.dev/icons/).
 
-lucide-react는 1000+ 아이콘을 제공하는 오픈소스 SVG 아이콘 라이브러리. 일관된 line weight, 깔끔한 stroke, tree-shakable.
-
-전체 카탈로그: [lucide.dev/icons](https://lucide.dev/icons/)
-
-### 사용
-
-\`\`\`tsx
-import { Icon } from "@bigtablet/design-system";
-import { Search, X } from "lucide-react";
-
-<Icon icon={Search} size={20} />
-<Icon icon={X} size={16} strokeWidth={2.5} aria-label="닫기" />
-\`\`\`
-
-### Props
-모든 props는 lucide-react로 forward. \`aria-label\` 없으면 \`aria-hidden=true\` 자동 적용.
+주요 prop: \`icon\` (lucide 컴포넌트), \`size\`, \`strokeWidth\`, \`aria-label\` (미지정 시 \`aria-hidden\` 자동).
         `,
 			},
 		},

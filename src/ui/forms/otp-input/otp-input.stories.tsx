@@ -3,7 +3,7 @@ import * as React from "react";
 import { OtpInput } from ".";
 
 const meta: Meta<typeof OtpInput> = {
-	title: "Components/OtpInput",
+	title: "Components/Forms/OtpInput",
 	component: OtpInput,
 	tags: ["autodocs"],
 	argTypes: {
@@ -34,39 +34,9 @@ const meta: Meta<typeof OtpInput> = {
 		docs: {
 			description: {
 				component: `
-**OtpInput**은 일회용 비밀번호(OTP) 입력을 위한 컴포넌트입니다.
+**OtpInput** — OTP/2FA 코드 입력. 자동 포커스 이동, 백스페이스/화살표/붙여넣기 지원.
 
-### 언제 사용하나요?
-- 이메일/SMS 인증 코드 입력
-- 2단계 인증(2FA) 코드 입력
-- 결제 인증 번호 입력
-
-### 주요 기능
-- **자동 포커스 이동**: 숫자 입력 시 다음 칸으로 자동 이동
-- **백스페이스**: 현재 칸 삭제 후 이전 칸으로 이동
-- **붙여넣기**: 복사한 코드를 한 번에 붙여넣기
-- **화살표 키**: 좌/우 키로 칸 간 이동
-
-### 사용 방법
-\`\`\`tsx
-const [otp, setOtp] = React.useState("");
-
-<OtpInput
-  length={6}
-  value={otp}
-  onChange={setOtp}
-  supportingText="인증 코드를 입력하세요"
-/>
-
-// 에러 상태
-<OtpInput
-  length={6}
-  value={otp}
-  onChange={setOtp}
-  error
-  supportingText="인증 코드가 올바르지 않습니다"
-/>
-\`\`\`
+주요 prop: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`.
         `,
 			},
 		},

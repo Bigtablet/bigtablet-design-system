@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Container } from ".";
 
 const meta: Meta<typeof Container> = {
-	title: "Layout/Container",
+	title: "Components/Layout/Container",
 	component: Container,
 	tags: ["autodocs"],
 	argTypes: {
@@ -32,20 +32,10 @@ const meta: Meta<typeof Container> = {
 		docs: {
 			description: {
 				component: [
-					"**Container** — `max-width` 제한 + **반응형 수평 패딩**. 모든 페이지 섹션의 기본 wrapper.",
+					"**Container** — max-width 제한 + 반응형 좌우 패딩. 페이지 wrapper.",
 					"",
-					"#### 역할",
-					"4개 Layout 프리미티브 중 **수평 정렬**을 담당. 가로 폭 제한과 좌우 패딩만 책임지고, 수직 spacing/배경은 `Section`이, 자식 정렬은 `Stack`/`Grid`가 맡습니다.",
-					"",
-					"#### size 선택",
-					"- `sm` (640) — 좁은 폼·온보딩",
-					"- `md` (768) — 블로그 본문·아티클",
-					"- `lg` (1024) — 일반 서비스 페이지",
-					"- `xl` (1200, 기본) — 마케팅 페이지·대시보드",
-					"- `full` — 풀-블리드 (좌우 패딩은 유지)",
-					"",
-					"#### 반응형 패딩",
-					"`< 600px` 16px · `≥ 600px` 24px · `≥ 840px` 32px · `≥ 1200px` 40px — size에 무관하게 자동 적용됩니다.",
+					"Sizes: `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1200 (기본) / `full`.",
+					"패딩 자동: <600 16, ≥600 24, ≥840 32, ≥1200 40.",
 				].join("\n"),
 			},
 		},
@@ -54,34 +44,6 @@ const meta: Meta<typeof Container> = {
 
 export default meta;
 type Story = StoryObj<typeof Container>;
-
-export const Playground: Story = {
-	name: "Playground (Controls로 조작)",
-	parameters: {
-		docs: {
-			description: {
-				story: "우측 Controls 패널에서 size/center를 바꿔보세요.",
-			},
-		},
-	},
-	render: (args) => (
-		<Container {...args}>
-			<div
-				style={{
-					background: "#E5F0FF",
-					padding: "24px",
-					borderRadius: "8px",
-					fontSize: "14px",
-					fontWeight: 600,
-					color: "#303841",
-					textAlign: "center",
-				}}
-			>
-				Container size="{args.size}" {args.center ? "(centered)" : "(left)"}
-			</div>
-		</Container>
-	),
-};
 
 const Box = ({ label, bg = "#E5F0FF" }: { label: string; bg?: string }) => (
 	<div

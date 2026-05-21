@@ -3,7 +3,7 @@ import * as React from "react";
 import { Toggle } from ".";
 
 const meta: Meta<typeof Toggle> = {
-	title: "Components/Toggle",
+	title: "Components/Forms/Toggle",
 	component: Toggle,
 	tags: ["autodocs"],
 	argTypes: {
@@ -29,22 +29,9 @@ const meta: Meta<typeof Toggle> = {
 		docs: {
 			description: {
 				component: `
-**Toggle**은 설정을 **켜기/끄기(ON/OFF)** 로 전환할 때 사용하는 토글입니다.
+**Toggle** — ON/OFF 즉시 전환. 다중 선택은 Checkbox 사용.
 
-### 언제 사용하나요?
-- 알림 받기 ON/OFF
-- 다크 모드 ON/OFF
-- 공개/비공개 전환처럼 "상태를 즉시 바꾸는 설정"
-
-### 언제는 Checkbox가 더 나은가요?
-- "여러 개 중 일부 선택"처럼 선택 항목이 여러 개인 경우 → **Checkbox**
-- "단 하나의 설정을 켜고 끄는 경우" → **Toggle**
-
-### 동작 방식(중요)
-- **제어형(권장)**: 앱 상태에 따라 ON/OFF를 확실히 맞출 때 사용
-  \`checked\`와 \`onChange\`로 상태를 관리합니다.
-- **비제어형(간단 사용)**: 초기값만 주고 내부에서 상태를 관리할 때 사용
-  \`defaultChecked\`를 사용합니다.
+Controlled: \`checked\` + \`onChange\` / Uncontrolled: \`defaultChecked\`.
         `,
 			},
 		},

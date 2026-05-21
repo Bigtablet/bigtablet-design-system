@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Pagination } from ".";
 
 const meta: Meta<typeof Pagination> = {
-	title: "Components/Pagination",
+	title: "Components/Navigation/Pagination",
 	component: Pagination,
 	tags: ["autodocs"],
 	argTypes: {
@@ -24,19 +24,7 @@ const meta: Meta<typeof Pagination> = {
 		docs: {
 			description: {
 				component: `
-**Pagination**은 많은 양의 데이터를 여러 페이지로 나누어 탐색할 때 사용하는 네비게이션입니다.
-
-### 언제 사용하나요?
-- 상품 목록, 게시판, 검색 결과 등 데이터가 많을 때
-- 무한 스크롤 대신 명시적인 페이지 이동이 필요할 때
-
-### 동작 방식
-| 상황 | 표시 방식 |
-|------|----------|
-| 7페이지 이하 | 모든 페이지 번호 표시 |
-| 7페이지 초과 | 현재 페이지 주변만 보여주고 \`…\`로 축약 |
-| 첫 페이지 | 이전 버튼 비활성화 |
-| 마지막 페이지 | 다음 버튼 비활성화 |
+**Pagination** — 페이지 이동 네비게이션. 7페이지 초과 시 \`…\` 축약, 첫/마지막에서 prev/next 비활성.
         `,
 			},
 		},

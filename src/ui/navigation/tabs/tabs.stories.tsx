@@ -3,45 +3,17 @@ import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from ".";
 
 const meta: Meta<typeof Tabs> = {
-	title: "Components/Tabs",
+	title: "Components/Navigation/Tabs",
 	component: Tabs,
 	tags: ["autodocs"],
 	parameters: {
 		docs: {
 			description: {
 				component: `
-**Tabs**는 한 영역에서 서로 배타적인 콘텐츠 패널을 전환하는 네비게이션. \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\` compound API.
+**Tabs** — 배타적 패널 전환. compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`.
 
-### 언제 쓰는가
-- ✅ 카테고리 간 전환 (서로 배타적, 한 번에 하나만)
-- ✅ 리스트 필터 그룹 — \`variant="fills"\`
-- ❌ 점진적 노출 / 여러 섹션 동시 펼침은 **Accordion**
-- ❌ 페이지 간 이동은 **NavBar / Sidebar**
-
-### Variants
-- \`variant="line"\` (기본) — 하단 underline. 페이지 내 섹션 전환
-- \`variant="fills"\` — 둥근 박스 그룹. 카테고리 필터, segmented control 형태
-
-### Compound API
-\`\`\`tsx
-<Tabs value={current} onValueChange={setCurrent} variant="line">
-  <TabList ariaLabel="Settings tabs">
-    <Tab value="general">General</Tab>
-    <Tab value="security">Security</Tab>
-  </TabList>
-  <TabPanel value="general">...</TabPanel>
-  <TabPanel value="security">...</TabPanel>
-</Tabs>
-\`\`\`
-
-### 접근성
-WAI-ARIA Tabs 패턴 자동 적용: \`role="tab"\` / \`role="tabpanel"\`, \`aria-selected\`, \`aria-controls\`, \`aria-labelledby\`.
-**Roving tabIndex** — 활성 tab만 \`tabIndex=0\`, Tab 키 진입은 1회.
-**키보드**: <kbd>←</kbd>/<kbd>→</kbd>로 이전·다음 (양 끝 wrap), <kbd>Home</kbd>/<kbd>End</kbd>로 처음·마지막. \`disabled\` tab은 자동 스킵.
-
-### 애니메이션
-Tab 색상/border: 200ms (\`transition_base\`). TabPanel 전환은 즉시 (애니메이션 없음).
-\`unmountInactive={false}\`로 비활성 panel을 DOM 유지 가능 (스크롤/입력 보존).
+Variants: \`line\` (기본, 하단 underline) / \`fills\` (segmented control).
+WAI-ARIA + roving tabIndex + 키보드 (←→/Home/End, disabled 스킵).
         `,
 			},
 		},

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Divider } from ".";
 
 const meta: Meta<typeof Divider> = {
-	title: "Components/Divider",
+	title: "Components/Display/Divider",
 	component: Divider,
 	tags: ["autodocs"],
 	argTypes: {
@@ -20,21 +20,9 @@ const meta: Meta<typeof Divider> = {
 		docs: {
 			description: {
 				component: `
-**Divider**는 콘텐츠 영역을 시각적으로 분리하는 수평 구분선입니다.
+**Divider** — 콘텐츠 영역 수평 구분선.
 
-### 언제 사용하나요?
-- 섹션과 섹션 사이를 구분할 때
-- 리스트 아이템 사이를 나눌 때
-- 카드 내부 영역을 분리할 때
-
-### 속성 가이드
-| 속성 | 설명 |
-|------|------|
-| **weight** | 구분선 두께. standard(1px) 또는 heavy(2px) |
-
-### 두께 선택 가이드
-- **standard**: 일반적인 구분선. 콘텐츠 흐름을 끊지 않으면서 영역을 나눌 때
-- **heavy**: 강조 구분선. 섹션 간 구분을 명확하게 하고 싶을 때
+\`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
         `,
 			},
 		},
