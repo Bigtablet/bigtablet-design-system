@@ -196,7 +196,7 @@
     color: var(--bt-color-text-primary);
 
     &:hover:not(:disabled) {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--bt-color-hover);
     }
 
     &:active:not(:disabled) {
@@ -282,7 +282,7 @@
       &:focus-visible {
         outline: none;
         border-color: var(--bt-color-accent);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -294,7 +294,7 @@
         outline: none;
         border-color: var(--bt-color-accent);
         background: var(--bt-color-background);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -663,7 +663,7 @@
 
       &.is-open {
         border-color: var(--bt-color-accent);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -674,7 +674,7 @@
       &.is-open {
         background: var(--bt-color-background);
         border-color: var(--bt-color-accent);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -1105,7 +1105,7 @@
     &:focus-visible {
       outline: none;
       border-color: var(--bt-color-accent);
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 0 0 3px var(--bt-color-border-light);
     }
 
     &:disabled {
