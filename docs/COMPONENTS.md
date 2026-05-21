@@ -240,8 +240,6 @@ const [fruit, setFruit] = useState<string | null>(null);
 | `trailingIcon` | `ReactNode` | 오른쪽 아이콘 (미지정 시 선택 상태에 체크 자동 표시) |
 | `showDivider` | `boolean` | 아이템 아래 구분선 |
 
-> **마이그레이션**: 기존 `Select`는 `Dropdown`의 deprecated alias로 유지됩니다. `Select` → `Dropdown`, `SelectOption` → `DropdownOption`으로 교체하세요.
-
 ---
 
 ### Chip
