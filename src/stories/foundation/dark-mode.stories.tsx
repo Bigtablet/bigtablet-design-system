@@ -5,7 +5,7 @@ import { TextField } from "../../ui/forms/textfield";
 import { ThemeProvider, useTheme } from "../../ui/system/theme-provider";
 
 const meta: Meta = {
-	title: "Foundation/dark mode",
+	title: "Foundation/Dark Mode",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

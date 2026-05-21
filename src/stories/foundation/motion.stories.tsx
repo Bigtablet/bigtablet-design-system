@@ -3,7 +3,7 @@ import * as React from "react";
 import { motion } from "src/styles/motion";
 
 const meta: Meta = {
-	title: "Foundation/motion",
+	title: "Foundation/Motion",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

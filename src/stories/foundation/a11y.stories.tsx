@@ -3,7 +3,7 @@ import { a11y } from "src/styles/a11y";
 import { baseColors, colors } from "src/styles/colors";
 
 const meta: Meta = {
-	title: "Foundation/a11y",
+	title: "Foundation/A11y",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },
@@ -337,7 +337,7 @@ export const Density: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>밀도 토큰</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					폼 컨트롤(Button, TextField, Select)의 height 결정에 사용됩니다.
+					폼 컨트롤(Button, TextField, Dropdown)의 height 결정에 사용됩니다.
 				</p>
 				<div style={{ display: "grid", gap: 12, marginTop: 16 }}>
 					{DENSITY_TOKENS.map(({ key, size, desc }) => (
@@ -420,7 +420,7 @@ export const Density: Story = {
 					자동으로 키워지는 걸 확인할 수 있습니다.
 				</p>
 				<p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>
-					적용: Button, TextField, Select. Chip은 인라인 컴포넌트라 제외.
+					적용: Button, TextField, Dropdown. Chip은 인라인 컴포넌트라 제외.
 				</p>
 			</section>
 		</div>
