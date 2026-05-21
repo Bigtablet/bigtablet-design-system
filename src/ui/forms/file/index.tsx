@@ -1,18 +1,29 @@
 "use client";
 
+import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
+export type FileInputVariant = "button" | "preview";
+
 export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-	/** 파일 선택 버튼 라벨 텍스트 (기본값: "Choose file") */
+	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 (기본값: "Choose file") */
 	label?: string;
 	/** 파일 선택 시 호출되는 콜백 */
 	onFiles?: (files: FileList | null) => void;
 	/** 입력 필드 아래에 표시할 도움말 텍스트 (예: "PDF, DOC 파일만 업로드 가능합니다") */
 	supportingText?: string;
-	/** 이미지 파일 선택 시 썸네일 미리보기 표시 여부 (기본값: false) */
+	/** 이미지 파일 선택 시 64×64 썸네일을 버튼 아래 나열 (variant="button" 전용) */
 	preview?: boolean;
+	/**
+	 * 표시 형태 (기본값: "button").
+	 * - `"button"`: 일반 파일 선택 버튼. `preview=true` 면 아래에 작은 썸네일 표시.
+	 * - `"preview"`: 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴). 단일 이미지.
+	 */
+	variant?: FileInputVariant;
+	/** variant="preview" 박스 크기 (px, 기본값: 160) */
+	previewSize?: number;
 }
 
 /**
@@ -26,26 +37,37 @@ export const FileInput = ({
 	onFiles,
 	supportingText,
 	preview = false,
+	variant = "button",
+	previewSize = 160,
 	className,
 	disabled,
+	accept,
+	onChange,
 	...props
 }: FileInputProps) => {
 	const inputId = React.useId();
 	const helperId = React.useId();
+	const inputRef = React.useRef<HTMLInputElement>(null);
 	const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
+
+	const isPreviewVariant = variant === "preview";
+	const showPreview = isPreviewVariant || preview;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.currentTarget.files;
 		onFiles?.(files);
+		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
+		onChange?.(e);
 
-		if (preview && files) {
-			// 이전 URL 해제
+		if (showPreview && files) {
 			for (const url of previewUrls) {
 				URL.revokeObjectURL(url);
 			}
 
 			const urls: string[] = [];
-			for (let i = 0; i < files.length; i++) {
+			// preview variant 는 단일 이미지만, button variant 는 모든 이미지 썸네일
+			const limit = isPreviewVariant ? Math.min(1, files.length) : files.length;
+			for (let i = 0; i < limit; i++) {
 				if (files[i].type.startsWith("image/")) {
 					urls.push(URL.createObjectURL(files[i]));
 				}
@@ -59,6 +81,19 @@ export const FileInput = ({
 		}
 	};
 
+	const handleRemove = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		for (const url of previewUrls) {
+			URL.revokeObjectURL(url);
+		}
+		setPreviewUrls([]);
+		if (inputRef.current) {
+			inputRef.current.value = "";
+		}
+		onFiles?.(null);
+	};
+
 	// cleanup on unmount
 	React.useEffect(() => {
 		return () => {
@@ -68,32 +103,83 @@ export const FileInput = ({
 		};
 	}, [previewUrls]);
 
-	const rootClassName = cn("file_input", disabled && "file_input_disabled", className);
+	const hasImage = previewUrls.length > 0;
+	const rootClassName = cn(
+		"file_input",
+		`file_input_variant_${variant}`,
+		isPreviewVariant && hasImage && "file_input_variant_preview_filled",
+		disabled && "file_input_disabled",
+		className,
+	);
 
 	return (
 		<div className={rootClassName}>
 			<input
+				{...props}
+				ref={inputRef}
 				id={inputId}
 				type="file"
 				className="file_input_control"
 				disabled={disabled}
+				accept={isPreviewVariant ? (accept ?? "image/*") : accept}
 				aria-describedby={supportingText ? helperId : undefined}
 				onChange={handleChange}
-				{...props}
 			/>
-			<label htmlFor={inputId} className="file_input_label">
-				{label}
-			</label>
+
+			{isPreviewVariant ? (
+				<label
+					htmlFor={inputId}
+					className="file_input_label"
+					style={{ width: previewSize, height: previewSize }}
+				>
+					{hasImage ? (
+						// biome-ignore lint/performance/noImgElement: framework-agnostic DS — host app should swap with next/image if needed
+						<img
+							src={previewUrls[0]}
+							alt=""
+							className="file_input_preview_image"
+						/>
+					) : (
+						<span className="file_input_preview_empty">
+							<ImageIcon size={32} aria-hidden="true" />
+							<span className="file_input_preview_empty_text">{label}</span>
+						</span>
+					)}
+				</label>
+			) : (
+				<label htmlFor={inputId} className="file_input_label">
+					{label}
+				</label>
+			)}
+
+			{isPreviewVariant && hasImage && !disabled && (
+				<button
+					type="button"
+					className="file_input_preview_remove"
+					onClick={handleRemove}
+					aria-label="이미지 제거"
+				>
+					<X size={14} aria-hidden="true" />
+				</button>
+			)}
+
 			{supportingText && (
 				<span id={helperId} className="file_input_helper">
 					{supportingText}
 				</span>
 			)}
-			{previewUrls.length > 0 && (
+
+			{/* button variant + preview=true: 버튼 아래 작은 썸네일들 */}
+			{!isPreviewVariant && previewUrls.length > 0 && (
 				<div className="file_input_preview">
 					{previewUrls.map((url) => (
 						// biome-ignore lint/performance/noImgElement: framework-agnostic DS — host app should swap with next/image if needed
-						<img key={url} src={url} alt="" className="file_input_preview_img" />
+						<img
+							key={url}
+							src={url}
+							alt=""
+							className="file_input_preview_img"
+						/>
 					))}
 				</div>
 			)}
