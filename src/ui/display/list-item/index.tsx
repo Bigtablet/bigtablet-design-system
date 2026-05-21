@@ -17,7 +17,7 @@ export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 	leadingElement?: React.ReactNode;
 	/** 오른쪽에 표시할 요소 (아이콘 버튼, 체크박스 등) */
 	trailingElement?: React.ReactNode;
-	/** 요소 정렬 (기본값: "top") */
+	/** 요소 정렬. 미지정 시 자동: OneLine(label 만) → middle, multi-line → top */
 	alignment?: "top" | "middle";
 	/** 비활성화 상태 */
 	disabled?: boolean;
@@ -40,16 +40,20 @@ export const ListItem = ({
 	metadata,
 	leadingElement,
 	trailingElement,
-	alignment = "top",
+	alignment,
 	disabled,
 	selected,
 	onClick,
 	className,
 	...props
 }: ListItemProps) => {
+	// OneLine (label 만) 은 시각 중앙 정렬이 자연스러움. 명시 alignment 가 있으면 그것 우선.
+	const isOneLine = !overline && !supportingText && !metadata;
+	const effectiveAlignment = alignment ?? (isOneLine ? "middle" : "top");
+
 	const rootClassName = cn(
 		"list_item",
-		`list_item_align_${alignment}`,
+		`list_item_align_${effectiveAlignment}`,
 		disabled && "list_item_disabled",
 		selected && "list_item_selected",
 		onClick && "list_item_interactive",

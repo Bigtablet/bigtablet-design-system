@@ -13,6 +13,7 @@
     border-radius: token.$radius_md;
     padding: 6px 10px;
     min-width: 36px;
+    cursor: pointer;
 
     @include token.label_small;
     color: token.$color_text_heading;
@@ -50,6 +51,7 @@
     min-width: 36px;
     height: 36px;
     border-radius: token.$radius_md;
+    cursor: pointer;
 
     @include token.label_small;
     color: token.$color_text_body;

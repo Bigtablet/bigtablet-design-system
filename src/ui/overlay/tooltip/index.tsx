@@ -85,14 +85,16 @@ export const Tooltip = ({
 		<span className="tooltip_wrapper">
 			{trigger}
 			{open && (
-				<animated.span
-					id={tooltipId}
-					role="tooltip"
-					style={style}
-					className={cn("tooltip", `tooltip_placement_${placement}`)}
-				>
-					{content}
-				</animated.span>
+				<span className={cn("tooltip_position", `tooltip_placement_${placement}`)}>
+					<animated.span
+						id={tooltipId}
+						role="tooltip"
+						style={style}
+						className={cn("tooltip", `tooltip_placement_${placement}`)}
+					>
+						{content}
+					</animated.span>
+				</span>
 			)}
 		</span>
 	);

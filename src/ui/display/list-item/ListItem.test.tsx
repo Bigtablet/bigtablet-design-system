@@ -33,8 +33,18 @@ describe("ListItem", () => {
 		expect(screen.getByText("Trailing")).toBeInTheDocument();
 	});
 
-	it("applies top alignment class by default", () => {
+	it("auto-aligns OneLine (label only) to middle", () => {
 		const { container } = render(<ListItem label="Label" />);
+		expect(container.firstChild).toHaveClass("list_item_align_middle");
+	});
+
+	it("auto-aligns multi-line (with supportingText) to top", () => {
+		const { container } = render(<ListItem label="Label" supportingText="Sup" />);
+		expect(container.firstChild).toHaveClass("list_item_align_top");
+	});
+
+	it("explicit alignment overrides auto", () => {
+		const { container } = render(<ListItem label="Label" alignment="top" />);
 		expect(container.firstChild).toHaveClass("list_item_align_top");
 	});
 

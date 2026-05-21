@@ -5,9 +5,41 @@
   display: inline-flex;
 }
 
-.tooltip {
+// 위치 정렬 wrapper — placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// 안의 .tooltip 은 spring 으로 entrance transform 사용 — 두 transform context 분리해서 충돌 X.
+.tooltip_position {
   position: absolute;
   z-index: token.$z_level5;
+  pointer-events: none;
+  display: inline-block;
+
+  &.tooltip_placement_top {
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.tooltip_placement_bottom {
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.tooltip_placement_left {
+    right: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.tooltip_placement_right {
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.tooltip {
+  display: inline-block;
   background: token.$color_accent_strong;
   color: token.$color_accent_on_surface;
   padding: 6px 10px;
@@ -15,33 +47,11 @@
   font-size: 12px;
   line-height: 1.4;
   font-weight: token.$font_weight_medium;
-  white-space: nowrap;
-  pointer-events: none;
+  // 긴 텍스트는 wrap 허용 — max-width 안에서 줄바꿈
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: keep-all; // 한글 단어 단위 줄바꿈 (어절 보존)
   box-shadow: token.$elevation_level2;
   max-width: 240px;
   will-change: transform, opacity;
-
-  &_placement_top {
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &_placement_bottom {
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &_placement_left {
-    right: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  &_placement_right {
-    left: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
