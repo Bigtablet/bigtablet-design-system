@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
-import { Select, type SelectOption } from "../select";
+import { Dropdown, type DropdownOption } from "../dropdown";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -67,7 +67,7 @@ const range = (start: number, end: number) =>
 
 /**
  * 연/월/일 선택형 데이트 피커를 렌더링한다.
- * 내부적으로 DS Select 3개를 조합해 드롭다운 UX 일관성을 유지한다.
+ * 내부적으로 DS Dropdown 3개를 조합해 드롭다운 UX 일관성을 유지한다.
  */
 export const DatePicker = ({
 	label,
@@ -151,9 +151,9 @@ export const DatePicker = ({
 		return daysInMonth;
 	}, [year, month, selectableRange, todayYear, todayMonth, todayDay]);
 
-	// ── SelectOption[] 변환 ──────────────────────────────────────────────
+	// ── DropdownOption[] 변환 ──────────────────────────────────────────────
 
-	const yearOptions = React.useMemo<SelectOption[]>(
+	const yearOptions = React.useMemo<DropdownOption[]>(
 		() =>
 			range(startYear, maxYear).map((y) => ({
 				value: String(y),
@@ -162,7 +162,7 @@ export const DatePicker = ({
 		[startYear, maxYear],
 	);
 
-	const monthOptions = React.useMemo<SelectOption[]>(
+	const monthOptions = React.useMemo<DropdownOption[]>(
 		() =>
 			range(minMonth, Math.max(minMonth, maxMonth)).map((m) => ({
 				value: String(m),
@@ -171,7 +171,7 @@ export const DatePicker = ({
 		[minMonth, maxMonth],
 	);
 
-	const dayOptions = React.useMemo<SelectOption[]>(
+	const dayOptions = React.useMemo<DropdownOption[]>(
 		() =>
 			range(minDay, Math.max(minDay, maxDay)).map((d) => ({
 				value: String(d),
@@ -264,7 +264,7 @@ export const DatePicker = ({
 				aria-labelledby={label ? groupId : undefined}
 				aria-describedby={constraintDesc ? constraintId : undefined}
 			>
-				<Select
+				<Dropdown
 					size="sm"
 					fullWidth
 					label={yearLabel}
@@ -275,7 +275,7 @@ export const DatePicker = ({
 					disabled={disabled}
 				/>
 
-				<Select
+				<Dropdown
 					size="sm"
 					fullWidth
 					label={monthLabel}
@@ -287,7 +287,7 @@ export const DatePicker = ({
 				/>
 
 				{mode === "year-month-day" && (
-					<Select
+					<Dropdown
 						size="sm"
 						fullWidth
 						label={dayLabel}

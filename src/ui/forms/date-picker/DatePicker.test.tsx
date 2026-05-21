@@ -10,7 +10,7 @@ describe("DatePicker", () => {
 
 	it("renders year/month selects by default", () => {
 		render(<DatePicker onChange={() => {}} />);
-		// label + placeholder 로 각 Select 에 두 번씩 "Year"/"Month" 나타남
+		// label + placeholder 로 각 Dropdown 에 두 번씩 "Year"/"Month" 나타남
 		expect(screen.getAllByText("Year").length).toBeGreaterThan(0);
 		expect(screen.getAllByText("Month").length).toBeGreaterThan(0);
 	});
