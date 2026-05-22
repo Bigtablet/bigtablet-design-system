@@ -1,5 +1,6 @@
 "use client";
 
+import { animated, useSpring } from "@react-spring/web";
 import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
@@ -131,20 +132,26 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const messageId = React.useId();
 
 	const [shouldRender, setShouldRender] = useState(isOpen);
-	const [isExiting, setIsExiting] = useState(false);
-	const wasOpenRef = React.useRef(isOpen);
 
 	useFocusTrap(panelRef, isOpen);
 
 	React.useEffect(() => {
-		if (isOpen) {
-			setShouldRender(true);
-			setIsExiting(false);
-		} else if (wasOpenRef.current) {
-			setIsExiting(true);
-		}
-		wasOpenRef.current = isOpen;
+		if (isOpen) setShouldRender(true);
 	}, [isOpen]);
+
+	const overlayStyle = useSpring({
+		opacity: isOpen ? 1 : 0,
+		config: { tension: 280, friction: 28, clamp: !isOpen },
+		onRest: (result) => {
+			if (!isOpen && result.finished) setShouldRender(false);
+		},
+	});
+
+	const panelStyle = useSpring({
+		opacity: isOpen ? 1 : 0,
+		transform: isOpen ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		config: { tension: 280, friction: 28, clamp: !isOpen },
+	});
 
 	if (!shouldRender) return null;
 
@@ -153,29 +160,24 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const confirmVariant: ButtonVariant = "filled";
 	const cancelVariant: ButtonVariant = "outline";
 
-	const overlayClassName = cn("alert_overlay", isExiting && "alert_exiting");
 	const modalClassName = cn("alert_modal", `alert_variant_${variant}`);
 
 	return createPortal(
 		// biome-ignore lint/a11y/noStaticElementInteractions: modal overlay pattern
-		<div
-			className={overlayClassName}
+		<animated.div
+			className="alert_overlay"
+			style={overlayStyle}
 			role="presentation"
 			onClick={onClose}
 			onKeyDown={(e) => e.key === "Escape" && onClose()}
 		>
-			<div
+			<animated.div
 				ref={panelRef}
 				className={modalClassName}
+				style={panelStyle}
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
-				}}
-				onAnimationEnd={(e) => {
-					if (isExiting && e.target === e.currentTarget) {
-						setShouldRender(false);
-						setIsExiting(false);
-					}
 				}}
 				role="alertdialog"
 				aria-modal="true"
@@ -219,8 +221,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 						{confirmText}
 					</Button>
 				</div>
-			</div>
-		</div>,
+			</animated.div>
+		</animated.div>,
 		document.body,
 	);
 };
