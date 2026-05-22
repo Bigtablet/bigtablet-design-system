@@ -2,50 +2,8 @@
 @use "src/styles/breakpoints" as breakpoint;
 
 // ── Animations ───────────────────────────────────────────────────────────────
-
-@keyframes toast_slide_in {
-  from {
-    opacity: 0;
-    transform: translateX(calc(100% + 16px));
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes toast_slide_out {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(calc(100% + 16px));
-  }
-}
-
-@keyframes toast_slide_in_mobile {
-  from {
-    opacity: 0;
-    transform: translateY(calc(100% + 16px));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes toast_slide_out_mobile {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(calc(100% + 16px));
-  }
-}
+// Toast item 진입/퇴출 모션은 react-spring (useSpringPresence) 가 처리.
+// progress bar 는 CSS keyframes 로.
 
 @keyframes toast_progress {
   from { width: 100%; }
@@ -97,12 +55,7 @@
   color: token.$color_text_heading;
   line-height: token.$line_height_24;
 
-  animation: toast_slide_in token.$transition_enter_base forwards;
   will-change: transform, opacity;
-
-  &_exiting {
-    animation: toast_slide_out token.$transition_exit_base forwards;
-  }
 
   @include breakpoint.compact {
     padding: token.$spacing_8 token.$spacing_12 token.$spacing_12;
@@ -110,11 +63,6 @@
     line-height: token.$line_height_20;
     border-radius: token.$radius_md;
     box-shadow: token.$elevation_level1;
-    animation-name: toast_slide_in_mobile;
-
-    &_exiting {
-      animation-name: toast_slide_out_mobile;
-    }
   }
 }
 

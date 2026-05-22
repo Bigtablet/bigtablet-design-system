@@ -1,15 +1,5 @@
 @use "src/styles/token" as token;
 
-@keyframes dropdown_pop_in_down {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes dropdown_pop_in_up {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .dropdown {
   position: relative;
   // block-level — 부모 너비 채움. 선택값/옵션 길이와 무관하게 일정한 폭 보장.
@@ -186,8 +176,6 @@
     overflow-x: hidden;
     padding: token.$spacing_4 0;
 
-    animation: dropdown_pop_in_down token.$transition_enter_fast forwards;
-    transform-origin: top center;
     will-change: transform, opacity;
 
     &_up {
@@ -195,8 +183,6 @@
       bottom: 100%;
       margin-top: 0;
       margin-bottom: token.$spacing_4;
-      animation-name: dropdown_pop_in_up;
-      transform-origin: bottom center;
     }
   }
 

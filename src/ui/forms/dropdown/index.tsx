@@ -1,5 +1,6 @@
 "use client";
 
+import { animated } from "@react-spring/web";
 import * as React from "react";
 import {
 	Fragment,
@@ -11,7 +12,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { cn } from "../../../utils";
+import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -215,6 +216,12 @@ export const Dropdown = ({
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 
+	// Spring presence — list 진입 모션 (Menu/Tooltip 과 동일 패턴)
+	const listStyle = useSpringPresence({
+		visible: isOpen,
+		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
+	});
+
 	return (
 		<div
 			ref={wrapperRef}
@@ -252,7 +259,12 @@ export const Dropdown = ({
 			</div>
 
 			{isOpen && (
-				<div id={`${dropdownId}_listbox`} role="listbox" className={listClassName}>
+				<animated.div
+					id={`${dropdownId}_listbox`}
+					role="listbox"
+					className={listClassName}
+					style={listStyle}
+				>
 					{options.map((opt, i) => {
 						const selected = currentValue === opt.value;
 						const active = i === activeIndex;
@@ -296,7 +308,7 @@ export const Dropdown = ({
 							</Fragment>
 						);
 					})}
-				</div>
+				</animated.div>
 			)}
 		</div>
 	);
