@@ -216,7 +216,10 @@ export const Dropdown = ({
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 
-	// Spring presence — list 진입 모션 (Menu/Tooltip 과 동일 패턴)
+	// Spring presence — list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
+	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
+	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
+	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
 	const listStyle = useSpringPresence({
 		visible: isOpen,
 		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
