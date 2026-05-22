@@ -51,14 +51,14 @@ export const AllWeights: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 24 }}>
 			<div>
-				<p style={{ margin: "0 0 8px", fontSize: 14, color: "#737373" }}>
+				<p style={{ margin: "0 0 8px", fontSize: 14, color: "var(--bt-color-text-body)" }}>
 					Standard (1px) — 일반적인 콘텐츠 구분
 				</p>
 				<Divider weight="standard" />
 			</div>
 
 			<div>
-				<p style={{ margin: "0 0 8px", fontSize: 14, color: "#737373" }}>
+				<p style={{ margin: "0 0 8px", fontSize: 14, color: "var(--bt-color-text-body)" }}>
 					Heavy (2px) — 섹션 간 강조 구분
 				</p>
 				<Divider weight="heavy" />

@@ -65,7 +65,7 @@ export const Controlled: Story = {
 					supportingText="인증 코드를 입력하세요"
 					autoFocus
 				/>
-				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>입력된 값: "{val}"</p>
+				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>입력된 값: "{val}"</p>
 			</div>
 		);
 	},
@@ -82,11 +82,11 @@ export const Lengths: Story = {
 		return (
 			<div style={{ display: "grid", gap: 24, padding: 20 }}>
 				<div>
-					<p style={{ margin: "0 0 8px", fontSize: 13, color: "#666" }}>4자리</p>
+					<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>4자리</p>
 					<OtpInput length={4} value={val4} onChange={setVal4} supportingText="4자리 코드" />
 				</div>
 				<div>
-					<p style={{ margin: "0 0 8px", fontSize: 13, color: "#666" }}>6자리</p>
+					<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>6자리</p>
 					<OtpInput length={6} value={val6} onChange={setVal6} supportingText="6자리 코드" />
 				</div>
 			</div>
@@ -101,15 +101,15 @@ export const States: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 24, padding: 20 }}>
 			<div>
-				<p style={{ margin: "0 0 8px", fontSize: 13, color: "#666" }}>기본</p>
+				<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>기본</p>
 				<OtpInput length={6} value="123456" supportingText="Supporting text" />
 			</div>
 			<div>
-				<p style={{ margin: "0 0 8px", fontSize: 13, color: "#666" }}>에러</p>
+				<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>에러</p>
 				<OtpInput length={6} value="123456" error supportingText="인증 코드가 올바르지 않습니다" />
 			</div>
 			<div>
-				<p style={{ margin: "0 0 8px", fontSize: 13, color: "#666" }}>비활성화</p>
+				<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>비활성화</p>
 				<OtpInput length={6} disabled supportingText="Supporting text" />
 			</div>
 		</div>

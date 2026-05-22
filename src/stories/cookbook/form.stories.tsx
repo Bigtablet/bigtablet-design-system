@@ -40,9 +40,9 @@ const FormCard = ({
 	<div
 		style={{
 			width,
-			background: "#fff",
+			background: "var(--bt-color-bg-solid)",
 			borderRadius: 16,
-			border: "1px solid #E5E5E5",
+			border: "1px solid var(--bt-color-border-default)",
 			padding: "28px 24px",
 			boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
 		}}
@@ -52,7 +52,7 @@ const FormCard = ({
 				margin: "0 0 20px",
 				fontSize: 18,
 				fontWeight: 700,
-				color: "#121212",
+				color: "var(--bt-color-text-heading)",
 				letterSpacing: "-0.01em",
 			}}
 		>
@@ -105,7 +105,7 @@ export const LoginForm: Story = {
 								background: "none",
 								border: "none",
 								padding: 0,
-								color: "#47555E",
+								color: "var(--bt-color-text-body)",
 								fontSize: 13,
 								fontWeight: 500,
 								cursor: "pointer",
@@ -123,14 +123,14 @@ export const LoginForm: Story = {
 					<Divider />
 
 					<Stack direction="horizontal" justify="center" gap={4} align="center">
-						<span style={{ fontSize: 13, color: "#666" }}>아직 계정이 없으신가요?</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>아직 계정이 없으신가요?</span>
 						<button
 							type="button"
 							style={{
 								background: "none",
 								border: "none",
 								padding: 0,
-								color: "#303841",
+								color: "var(--bt-color-text-heading)",
 								fontSize: 13,
 								fontWeight: 600,
 								cursor: "pointer",
@@ -212,14 +212,14 @@ export const SignUpForm: Story = {
 							<span style={{ fontSize: 13 }}>
 								<a
 									href="#terms"
-									style={{ color: "#303841", textDecoration: "underline" }}
+									style={{ color: "var(--bt-color-text-heading)", textDecoration: "underline" }}
 								>
 									이용약관
 								</a>{" "}
 								및{" "}
 								<a
 									href="#privacy"
-									style={{ color: "#303841", textDecoration: "underline" }}
+									style={{ color: "var(--bt-color-text-heading)", textDecoration: "underline" }}
 								>
 									개인정보처리방침
 								</a>
@@ -263,9 +263,9 @@ export const SearchWithFilter: Story = {
 			<div
 				style={{
 					width: 600,
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 16,
-					border: "1px solid #E5E5E5",
+					border: "1px solid var(--bt-color-border-default)",
 					padding: "24px",
 					boxShadow:
 						"0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
@@ -327,7 +327,7 @@ export const SearchWithFilter: Story = {
 									border: "none",
 									padding: 0,
 									marginLeft: 4,
-									color: "#666",
+									color: "var(--bt-color-text-body)",
 									fontSize: 12,
 									fontWeight: 500,
 									cursor: "pointer",
@@ -366,7 +366,7 @@ export const SettingsSection: Story = {
 								margin: 0,
 								fontSize: 13,
 								fontWeight: 600,
-								color: "#888",
+								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
 								letterSpacing: "0.04em",
 							}}
@@ -397,7 +397,7 @@ export const SettingsSection: Story = {
 								margin: 0,
 								fontSize: 13,
 								fontWeight: 600,
-								color: "#888",
+								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
 								letterSpacing: "0.04em",
 							}}
@@ -406,10 +406,10 @@ export const SettingsSection: Story = {
 						</p>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span style={{ fontSize: 14, fontWeight: 500, color: "#121212" }}>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									이메일 알림
 								</span>
-								<span style={{ fontSize: 12, color: "#888" }}>
+								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 									주문·정산 등 주요 활동을 이메일로 받아보기
 								</span>
 							</Stack>
@@ -422,10 +422,10 @@ export const SettingsSection: Story = {
 						</Stack>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span style={{ fontSize: 14, fontWeight: 500, color: "#121212" }}>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									푸시 알림
 								</span>
-								<span style={{ fontSize: 12, color: "#888" }}>
+								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 									앱에서 실시간 푸시 알림 수신
 								</span>
 							</Stack>
@@ -438,10 +438,10 @@ export const SettingsSection: Story = {
 						</Stack>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span style={{ fontSize: 14, fontWeight: 500, color: "#121212" }}>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									SMS 알림
 								</span>
-								<span style={{ fontSize: 12, color: "#888" }}>
+								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 									긴급 알림만 SMS로 발송
 								</span>
 							</Stack>
@@ -463,7 +463,7 @@ export const SettingsSection: Story = {
 								margin: 0,
 								fontSize: 13,
 								fontWeight: 600,
-								color: "#888",
+								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
 								letterSpacing: "0.04em",
 							}}

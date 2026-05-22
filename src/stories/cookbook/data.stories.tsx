@@ -94,7 +94,7 @@ export const UserList: Story = {
 								margin: 0,
 								fontSize: 16,
 								fontWeight: 700,
-								color: "#121212",
+								color: "var(--bt-color-text-heading)",
 							}}
 						>
 							팀 멤버
@@ -126,24 +126,24 @@ export const UserList: Story = {
 												borderRadius: "50%",
 												background:
 													user.status === "online"
-														? "#16A34A"
+														? "var(--bt-color-status-success)"
 														: user.status === "away"
-															? "#F59E0B"
-															: "#94A3B8",
-												border: "2px solid #fff",
+															? "var(--bt-color-status-warning)"
+															: "var(--bt-color-text-caption)",
+												border: "2px solid var(--bt-color-bg-solid)",
 											}}
 										/>
 									</span>
 									<Stack gap={2}>
 										<Stack direction="horizontal" gap={8} align="center">
-											<span style={{ fontSize: 14, fontWeight: 600, color: "#121212" }}>
+											<span style={{ fontSize: 14, fontWeight: 600, color: "var(--bt-color-text-heading)" }}>
 												{user.name}
 											</span>
 											<Badge variant={STATUS_VARIANT[user.status]} shape="label">
 												{STATUS_LABEL[user.status]}
 											</Badge>
 										</Stack>
-										<span style={{ fontSize: 12, color: "#888" }}>
+										<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 											{user.role} · {user.email}
 										</span>
 									</Stack>
@@ -191,7 +191,7 @@ export const StatusBadgesRow: Story = {
 						style={{
 							fontSize: 12,
 							fontWeight: 600,
-							color: "#888",
+							color: "var(--bt-color-text-caption)",
 							textTransform: "uppercase",
 							letterSpacing: "0.04em",
 						}}
@@ -213,7 +213,7 @@ export const StatusBadgesRow: Story = {
 						style={{
 							fontSize: 12,
 							fontWeight: 600,
-							color: "#888",
+							color: "var(--bt-color-text-caption)",
 							textTransform: "uppercase",
 							letterSpacing: "0.04em",
 						}}
@@ -233,7 +233,7 @@ export const StatusBadgesRow: Story = {
 						style={{
 							fontSize: 12,
 							fontWeight: 600,
-							color: "#888",
+							color: "var(--bt-color-text-caption)",
 							textTransform: "uppercase",
 							letterSpacing: "0.04em",
 						}}
@@ -297,7 +297,7 @@ export const StatCards: Story = {
 				<Card key={stat.label} bordered padding="lg" shadow="sm">
 					<Stack gap={12}>
 						<Stack direction="horizontal" justify="between" align="center">
-							<span style={{ fontSize: 13, color: "#888", fontWeight: 500 }}>
+							<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}>
 								{stat.label}
 							</span>
 							<span
@@ -308,8 +308,8 @@ export const StatCards: Story = {
 									width: 36,
 									height: 36,
 									borderRadius: 10,
-									background: "#F2F5F8",
-									color: "#47555E",
+									background: "var(--bt-color-bg-solid-dim)",
+									color: "var(--bt-color-text-body)",
 								}}
 							>
 								{stat.icon}
@@ -319,7 +319,7 @@ export const StatCards: Story = {
 							style={{
 								fontSize: 28,
 								fontWeight: 700,
-								color: "#121212",
+								color: "var(--bt-color-text-heading)",
 								letterSpacing: "-0.02em",
 							}}
 						>
@@ -335,14 +335,18 @@ export const StatCards: Story = {
 									fontWeight: 700,
 									padding: "2px 8px",
 									borderRadius: 999,
-									background: stat.positive ? "#DCFCE7" : "#FEE2E2",
-									color: stat.positive ? "#047857" : "#B91C1C",
+									background: stat.positive
+										? "color-mix(in srgb, var(--bt-color-status-success) 18%, transparent)"
+										: "color-mix(in srgb, var(--bt-color-status-error) 18%, transparent)",
+									color: stat.positive
+										? "var(--bt-color-status-success)"
+										: "var(--bt-color-status-error)",
 								}}
 							>
 								{stat.positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
 								{stat.delta}
 							</span>
-							<span style={{ fontSize: 12, color: "#888" }}>{stat.caption}</span>
+							<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{stat.caption}</span>
 						</Stack>
 					</Stack>
 				</Card>
@@ -408,12 +412,12 @@ export const OrderTimeline: Story = {
 								margin: 0,
 								fontSize: 16,
 								fontWeight: 700,
-								color: "#121212",
+								color: "var(--bt-color-text-heading)",
 							}}
 						>
 							주문 #1024
 						</h3>
-						<span style={{ fontSize: 12, color: "#888" }}>
+						<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 							2026.05.20 · 김민준 고객
 						</span>
 					</Stack>
@@ -437,16 +441,16 @@ export const OrderTimeline: Story = {
 											borderRadius: "50%",
 											background:
 												item.status === "active"
-													? "#303841"
+													? "var(--bt-color-accent-default)"
 													: item.status === "done"
-														? "#DCFCE7"
-														: "#F2F5F8",
+														? "color-mix(in srgb, var(--bt-color-status-success) 18%, transparent)"
+														: "var(--bt-color-bg-solid-dim)",
 											color:
 												item.status === "active"
-													? "#fff"
+													? "var(--bt-color-accent-on-surface)"
 													: item.status === "done"
-														? "#047857"
-														: "#94A3B8",
+														? "var(--bt-color-status-success)"
+														: "var(--bt-color-text-caption)",
 											display: "inline-flex",
 											alignItems: "center",
 											justifyContent: "center",
@@ -460,7 +464,9 @@ export const OrderTimeline: Story = {
 												width: 2,
 												flex: 1,
 												minHeight: 32,
-												background: isPending ? "#E5E7EB" : "#CBD5E1",
+												background: isPending
+													? "var(--bt-color-border-default)"
+													: "var(--bt-color-border-hover)",
 												marginTop: 4,
 												marginBottom: 4,
 											}}
@@ -474,19 +480,23 @@ export const OrderTimeline: Story = {
 											style={{
 												fontSize: 14,
 												fontWeight: 600,
-												color: isPending ? "#888" : "#121212",
+												color: isPending
+													? "var(--bt-color-text-caption)"
+													: "var(--bt-color-text-heading)",
 											}}
 										>
 											{item.title}
 										</span>
 										<Chip type="static" size="sm" tone={item.statusTone} label={item.statusLabel} />
 									</Stack>
-									<span style={{ fontSize: 12, color: "#888" }}>{item.time}</span>
+									<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{item.time}</span>
 									<p
 										style={{
 											margin: 0,
 											fontSize: 13,
-											color: isPending ? "#94A3B8" : "#444",
+											color: isPending
+												? "var(--bt-color-text-caption)"
+												: "var(--bt-color-text-body)",
 											lineHeight: 1.55,
 										}}
 									>

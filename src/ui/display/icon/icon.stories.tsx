@@ -58,7 +58,7 @@ export const Sizes: Story = {
 					style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
 				>
 					<Icon icon={Search} size={size} />
-					<code style={{ fontSize: 11, color: "#888" }}>{size}px</code>
+					<code style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>{size}px</code>
 				</div>
 			))}
 		</div>
@@ -75,7 +75,7 @@ export const StrokeWidths: Story = {
 					style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
 				>
 					<Icon icon={Settings} size={32} strokeWidth={sw} />
-					<code style={{ fontSize: 11, color: "#888" }}>{sw}</code>
+					<code style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>{sw}</code>
 				</div>
 			))}
 		</div>

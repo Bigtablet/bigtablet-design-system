@@ -58,10 +58,10 @@ export const Controlled: Story = {
 						onChange={setIsOn}
 						ariaLabel="토글"
 					/>
-					<span style={{ fontSize: 14, color: "#666" }}>현재 상태: {isOn ? "ON" : "OFF"}</span>
+					<span style={{ fontSize: 14, color: "var(--bt-color-text-body)" }}>현재 상태: {isOn ? "ON" : "OFF"}</span>
 				</div>
 
-				<p style={{ margin: 0, fontSize: 13, color: "#666", lineHeight: 1.5 }}>
+				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
 					이 예시는 Toggle의 상태가 화면의 텍스트와 항상 동일하게 유지되는 형태입니다.
 					<br />
 					(실서비스에서는 이 방식이 가장 안전합니다)
@@ -78,7 +78,7 @@ export const Uncontrolled: Story = {
 	render: ({ size, disabled }) => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
 			<Toggle size={size} disabled={disabled} defaultChecked ariaLabel="토글" />
-			<p style={{ margin: 0, fontSize: 13, color: "#666", lineHeight: 1.5 }}>
+			<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
 				이 예시는 처음에만 ON으로 시작하고, 이후에는 컴포넌트 내부에서 켜짐/꺼짐을 관리합니다.
 			</p>
 		</div>
@@ -91,12 +91,12 @@ export const Sizes: Story = {
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
 				<Toggle size="sm" defaultChecked ariaLabel="sm 토글" />
-				<span style={{ fontSize: 13, color: "#666" }}>sm (기본)</span>
+				<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>sm (기본)</span>
 			</div>
 
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
 				<Toggle size="md" defaultChecked ariaLabel="md 토글" />
-				<span style={{ fontSize: 13, color: "#666" }}>md</span>
+				<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>md</span>
 			</div>
 		</div>
 	),
@@ -107,7 +107,7 @@ export const Disabled: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 10, padding: 20 }}>
 			<Toggle disabled defaultChecked ariaLabel="토글" />
-			<p style={{ margin: 0, fontSize: 13, color: "#666", lineHeight: 1.5 }}>
+			<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
 				비활성화 상태에서는 토글을 눌러도 상태가 바뀌지 않습니다.
 			</p>
 		</div>

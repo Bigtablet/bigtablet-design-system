@@ -24,14 +24,14 @@ type Story = StoryObj<typeof Grid>;
 const Card = ({ label }: { label: string }) => (
 	<div
 		style={{
-			background: "#F2F5F8",
+			background: "var(--bt-color-bg-solid-dim)",
 			border: "1px solid #DDE3E9",
 			borderRadius: 8,
 			padding: "24px 16px",
 			textAlign: "center",
 			fontSize: 13,
 			fontWeight: 600,
-			color: "#47555E",
+			color: "var(--bt-color-text-body)",
 		}}
 	>
 		{label}
@@ -66,7 +66,7 @@ export const ColVariants: Story = {
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 			{([1, 2, 3, 4] as const).map((cols) => (
 				<div key={cols}>
-					<p style={{ margin: "0 0 8px", fontSize: 12, color: "#888", fontWeight: 600 }}>
+					<p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--bt-color-text-caption)", fontWeight: 600 }}>
 						cols={cols}
 					</p>
 					<Grid cols={cols} gap={12}>

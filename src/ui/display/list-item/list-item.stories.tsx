@@ -63,12 +63,12 @@ const Thumb = (
 			width: 56,
 			height: 56,
 			borderRadius: 8,
-			background: "#E5E5E5",
+			background: "var(--bt-color-bg-solid-dim)",
 			display: "flex",
 			alignItems: "center",
 			justifyContent: "center",
 			fontSize: 12,
-			color: "#444",
+			color: "var(--bt-color-text-body)",
 		}}
 	>
 		56×56

@@ -63,8 +63,8 @@ export const InButton: Story = {
 				padding: "8px 16px",
 				borderRadius: 8,
 				border: "1px solid #e5e5e5",
-				background: "#fafafa",
-				color: "#666",
+				background: "var(--bt-color-bg-solid-dim)",
+				color: "var(--bt-color-text-body)",
 				cursor: "not-allowed",
 			}}
 		>

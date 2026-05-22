@@ -89,7 +89,7 @@ export const Controlled: Story = {
 		return (
 			<div style={{ width: 320 }}>
 				<Dropdown {...args} value={value} onChange={setValue} />
-				<div style={{ marginTop: 8, fontSize: 12, color: "#888" }}>
+				<div style={{ marginTop: 8, fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 					선택: <strong>{String(value)}</strong>
 				</div>
 			</div>
