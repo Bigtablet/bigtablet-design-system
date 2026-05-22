@@ -110,7 +110,7 @@ function btnStyle(active: boolean): React.CSSProperties {
 		borderRadius: 6,
 		border: "1px solid var(--bt-color-border-default)",
 		background: active ? "var(--bt-color-accent-default)" : "var(--bt-color-bg-solid)",
-		color: active ? "#fff" : "var(--bt-color-text-heading)",
+		color: active ? "var(--bt-color-accent-on-surface)" : "var(--bt-color-text-heading)",
 		cursor: "pointer",
 		fontSize: 13,
 	};
