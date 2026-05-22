@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Inbox, Search, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/general/button";
 import { Card } from "../../ui/display/card";
@@ -42,7 +42,7 @@ export const LoadingSkeleton: Story = {
 							margin: 0,
 							fontSize: 16,
 							fontWeight: 700,
-							color: "#121212",
+							color: "var(--bt-color-text-heading)",
 						}}
 					>
 						게시물 목록
@@ -102,17 +102,17 @@ export const LoadingSkeleton: Story = {
 											{post.name.charAt(0)}
 										</div>
 										<Stack gap={4} style={{ flex: 1 }}>
-											<span style={{ fontSize: 13, color: "#888", fontWeight: 500 }}>
+											<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}>
 												{post.name}
 											</span>
-											<span style={{ fontSize: 15, fontWeight: 700, color: "#121212" }}>
+											<span style={{ fontSize: 15, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 												{post.title}
 											</span>
 											<p
 												style={{
 													margin: 0,
 													fontSize: 13,
-													color: "#666",
+													color: "var(--bt-color-text-body)",
 													lineHeight: 1.55,
 												}}
 											>
@@ -133,29 +133,30 @@ export const LoadingSkeleton: Story = {
 export const EmptyStatePattern: Story = {
 	name: "빈 상태 + CTA",
 	render: () => (
-		<Grid cols={2} gap={24} style={{ width: 760 }}>
-			<Card bordered padding="lg" shadow="sm">
-				<EmptyState
-					illustration={<Inbox size={56} strokeWidth={1.5} color="#94A3B8" />}
-					title="받은 메일이 없습니다"
-					description="새 메일이 오면 여기에서 바로 확인할 수 있어요."
-					action={<Button variant="filled">새 메일 작성</Button>}
-				/>
-			</Card>
-			<Card bordered padding="lg" shadow="sm">
-				<EmptyState
-					illustration={<Search size={56} strokeWidth={1.5} color="#94A3B8" />}
-					title="검색 결과가 없습니다"
-					description='"비건 디저트"에 대한 결과를 찾지 못했어요. 검색어를 바꿔 다시 시도해 보세요.'
-					action={
-						<Stack direction="horizontal" gap={8} justify="center">
-							<Button variant="outline">검색어 지우기</Button>
-							<Button variant="filled">필터 재설정</Button>
-						</Stack>
-					}
-				/>
-			</Card>
-		</Grid>
+		<div
+			style={{
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				minHeight: 480,
+				padding: 48,
+				background: "var(--bt-color-bg-solid)",
+			}}
+		>
+			<EmptyState
+				size="lg"
+				illustration={<Search size={56} strokeWidth={1.5} />}
+				title="검색 결과가 없습니다"
+				description={
+					<>
+						<span>{'"비건 디저트"에 대한 결과를 찾지 못했어요.'}</span>
+						<br />
+						<span>검색어를 바꾸거나 필터를 재설정해 다시 시도해 보세요.</span>
+					</>
+				}
+				action={<Button variant="filled">필터 재설정</Button>}
+			/>
+		</div>
 	),
 };
 
@@ -177,13 +178,16 @@ export const ConfirmationModal: Story = {
 						setCompleted(false);
 						setOpen(true);
 					}}
-					style={{ color: "#B91C1C", borderColor: "#FCA5A5" }}
+					style={{
+						color: "var(--bt-color-status-error)",
+						borderColor: "color-mix(in srgb, var(--bt-color-status-error) 45%, transparent)",
+					}}
 				>
 					계정 삭제
 				</Button>
 
 				{completed && (
-					<span style={{ fontSize: 13, color: "#047857", fontWeight: 600 }}>
+					<span style={{ fontSize: 13, color: "var(--bt-color-status-success)", fontWeight: 600 }}>
 						삭제 요청이 접수되었습니다.
 					</span>
 				)}
@@ -195,7 +199,7 @@ export const ConfirmationModal: Story = {
 					width={440}
 				>
 					<Stack gap={20}>
-						<p style={{ margin: 0, fontSize: 14, color: "#444", lineHeight: 1.6 }}>
+						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.6 }}>
 							계정을 삭제하면 모든 매장 데이터·정산 기록·연동 정보가 영구적으로
 							제거되며, 이 작업은 되돌릴 수 없습니다.
 						</p>
@@ -203,10 +207,10 @@ export const ConfirmationModal: Story = {
 							style={{
 								padding: 12,
 								borderRadius: 8,
-								background: "#FEF2F2",
-								border: "1px solid #FECACA",
+								background: "color-mix(in srgb, var(--bt-color-status-error) 12%, transparent)",
+								border: "1px solid color-mix(in srgb, var(--bt-color-status-error) 35%, transparent)",
 								fontSize: 13,
-								color: "#B91C1C",
+								color: "var(--bt-color-status-error)",
 							}}
 						>
 							삭제 후 7일 동안은 동일 이메일로 신규 가입이 제한됩니다.
@@ -221,7 +225,7 @@ export const ConfirmationModal: Story = {
 									setCompleted(true);
 									setOpen(false);
 								}}
-								style={{ background: "#B91C1C", color: "#fff" }}
+								style={{ background: "var(--bt-color-status-error)", color: "#fff" }}
 							>
 								삭제하기
 							</Button>
@@ -242,10 +246,10 @@ const ToastDemo = () => {
 		<Card bordered padding="lg" shadow="sm">
 			<Stack gap={16} style={{ width: 360 }}>
 				<Stack gap={4}>
-					<h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#121212" }}>
+					<h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 						토스트 메시지
 					</h3>
-					<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
+					<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>
 						짧고 일시적인 시스템 피드백에 사용하세요.
 					</p>
 				</Stack>

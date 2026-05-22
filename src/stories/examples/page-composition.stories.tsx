@@ -332,10 +332,43 @@ export const AdminDashboard: Story = {
 			{/* Sidebar */}
 			<Sidebar
 				header={
-					<img src="/images/logo/bigtablet.png" alt="Bigtablet" height={20} style={{ display: "block" }} />
+					<img src="/images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
 				}
 				headerCollapsed={
-					<img src="/images/logo/favicon.png" alt="" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
+					<img src="/images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
+				}
+				footer={
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: 8,
+							padding: "8px 12px",
+						}}
+					>
+						<div
+							style={{
+								width: 32,
+								height: 32,
+								borderRadius: 999,
+								background: "var(--bt-color-bg-solid-dim)",
+								color: "var(--bt-color-text-heading)",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								fontWeight: 600,
+								flexShrink: 0,
+							}}
+						>
+							S
+						</div>
+						<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
+							<strong style={{ color: "var(--bt-color-text-heading)" }}>sangmin</strong>
+							<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>
+								sangmin@bigtablet.com
+							</span>
+						</div>
+					</div>
 				}
 			>
 				<SidebarSection label="메인">
