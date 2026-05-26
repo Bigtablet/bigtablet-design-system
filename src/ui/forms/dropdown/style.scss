@@ -1,15 +1,5 @@
 @use "src/styles/token" as token;
 
-@keyframes dropdown_pop_in_down {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes dropdown_pop_in_up {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .dropdown {
   position: relative;
   // block-level — 부모 너비 채움. 선택값/옵션 길이와 무관하게 일정한 폭 보장.
@@ -175,19 +165,27 @@
     box-sizing: border-box;
     margin-top: token.$spacing_4;
 
-    // bg_solid_dim — dark 에서 canvas (navy_900) 보다 한 톤 밝음 → 패널 분리감
-    background: token.$color_bg_solid_dim;
+    // 라이트: 흰색 (canvas 와 동일하지만 border + shadow 로 분리)
+    // 다크: bg_solid_dim (navy_800) — canvas (navy_900) 보다 한 톤 밝아 elevation
+    background: token.$color_bg_solid;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg; // 컨트롤과 동일 radius
     box-shadow: token.$elevation_level1; // 좀 더 가볍게
+
+    [data-theme="dark"] & {
+      background: token.$color_bg_solid_dim;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) & {
+        background: token.$color_bg_solid_dim;
+      }
+    }
 
     max-height: 18rem;
     overflow-y: auto;
     overflow-x: hidden;
     padding: token.$spacing_4 0;
 
-    animation: dropdown_pop_in_down token.$transition_enter_fast forwards;
-    transform-origin: top center;
     will-change: transform, opacity;
 
     &_up {
@@ -195,8 +193,6 @@
       bottom: 100%;
       margin-top: 0;
       margin-bottom: token.$spacing_4;
-      animation-name: dropdown_pop_in_up;
-      transform-origin: bottom center;
     }
   }
 

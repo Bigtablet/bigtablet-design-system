@@ -1,5 +1,6 @@
 "use client";
 
+import { animated } from "@react-spring/web";
 import * as React from "react";
 import {
 	Fragment,
@@ -11,7 +12,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { cn } from "../../../utils";
+import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -205,15 +206,26 @@ export const Dropdown = ({
 	useLayoutEffect(() => {
 		if (!isOpen || !controlRef.current) return;
 		const rect = controlRef.current.getBoundingClientRect();
-		const listHeight = Math.min(options.length * 56, 288);
 		const spaceBelow = window.innerHeight - rect.bottom;
 		const spaceAbove = rect.top;
-		setDropUp(spaceBelow < listHeight && spaceAbove > spaceBelow);
-	}, [isOpen, options.length]);
+		// dropUp 보수적 — 아래 최소 공간 (120px) 부족하고 위가 더 넓을 때만.
+		// 작은 viewport (Storybook Docs iframe 등) 에서 무분별한 dropUp 방지.
+		const MIN_BELOW = 120;
+		setDropUp(spaceBelow < MIN_BELOW && spaceAbove > spaceBelow);
+	}, [isOpen]);
 
 	const rootClassName = cn("dropdown", `dropdown_size_${size}`, className);
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
+
+	// Spring presence — list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
+	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
+	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
+	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
+	const listStyle = useSpringPresence({
+		visible: isOpen,
+		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
+	});
 
 	return (
 		<div
@@ -252,7 +264,12 @@ export const Dropdown = ({
 			</div>
 
 			{isOpen && (
-				<div id={`${dropdownId}_listbox`} role="listbox" className={listClassName}>
+				<animated.div
+					id={`${dropdownId}_listbox`}
+					role="listbox"
+					className={listClassName}
+					style={listStyle}
+				>
 					{options.map((opt, i) => {
 						const selected = currentValue === opt.value;
 						const active = i === activeIndex;
@@ -296,7 +313,7 @@ export const Dropdown = ({
 							</Fragment>
 						);
 					})}
-				</div>
+				</animated.div>
 			)}
 		</div>
 	);

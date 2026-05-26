@@ -1,25 +1,5 @@
 @use "src/styles/token" as token;
 
-@keyframes alert_overlay_in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes alert_overlay_out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-@keyframes alert_panel_in {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes alert_panel_out {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(4px) scale(0.98); }
-}
-
 .alert {
   &_overlay {
     position: fixed;
@@ -29,7 +9,7 @@
     align-items: center;
     justify-content: center;
     z-index: token.$z_level5;
-    animation: alert_overlay_in token.$transition_enter_base forwards;
+    will-change: opacity;
   }
 
   &_modal {
@@ -38,17 +18,8 @@
     min-width: 320px;
     max-width: 480px;
     box-shadow: token.$elevation_level4;
-    animation: alert_panel_in token.$transition_enter_base forwards;
     will-change: transform, opacity;
     overflow: hidden;
-  }
-
-  &_exiting {
-    animation: alert_overlay_out token.$transition_exit_fast forwards;
-
-    .alert_modal {
-      animation: alert_panel_out token.$transition_exit_fast forwards;
-    }
   }
 
   &_header {

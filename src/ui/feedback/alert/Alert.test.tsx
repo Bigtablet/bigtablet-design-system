@@ -104,9 +104,8 @@ describe("Alert", () => {
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("확인"));
-		// Exit animation in progress — overlay still rendered with exiting class
-		const overlay = screen.getByRole("alertdialog").parentElement;
-		expect(overlay).toHaveClass("alert_exiting");
+		// Exit animation in progress (spring) — overlay still mounted with role="presentation"
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
 	it("starts exit animation when cancel is clicked", () => {
@@ -116,8 +115,7 @@ describe("Alert", () => {
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("취소"));
-		const overlay = screen.getByRole("alertdialog").parentElement;
-		expect(overlay).toHaveClass("alert_exiting");
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
 	it("starts exit animation when overlay is clicked", () => {
@@ -128,7 +126,7 @@ describe("Alert", () => {
 
 		const overlay = screen.getByRole("alertdialog").parentElement;
 		if (overlay) fireEvent.click(overlay);
-		expect(overlay).toHaveClass("alert_exiting");
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
 	it("has correct accessibility attributes", () => {

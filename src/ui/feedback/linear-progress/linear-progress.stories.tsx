@@ -36,7 +36,7 @@ export const AllSteps: Story = {
 		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 			{[0, 1, 2, 3, 4].map((step) => (
 				<div key={step}>
-					<p style={{ margin: "0 0 8px", fontSize: 14, color: "#666" }}>
+					<p style={{ margin: "0 0 8px", fontSize: 14, color: "var(--bt-color-text-body)" }}>
 						{step}/4 ({Math.round((step / 4) * 100)}%)
 					</p>
 					<LinearProgress totalSteps={4} currentStep={step} aria-label={`진행률 ${step}/4`} />

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, renderHook, screen } from "@testing-library/react";
+import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "./index";
@@ -203,9 +203,7 @@ describe("Toast display", () => {
 // ── Toast close ───────────────────────────────────────────────────────────────
 
 describe("Toast close", () => {
-	it("removes toast after close button click and animation delay", async () => {
-		vi.useFakeTimers();
-
+	it("removes toast after close button click (spring exit)", async () => {
 		render(
 			<ToastProvider>
 				<ToastTrigger fn={(t) => t.success("닫기 테스트")} />
@@ -217,21 +215,16 @@ describe("Toast close", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
-		// 슬라이드 아웃 setTimeout(260ms) 완료 대기
-		await act(async () => {
-			vi.advanceTimersByTime(300);
-		});
-
-		expect(screen.queryByText("닫기 테스트")).not.toBeInTheDocument();
-
-		vi.useRealTimers();
+		// spring exit 완료 후 unmount (실제 RAF 진행 대기)
+		await waitFor(
+			() => {
+				expect(screen.queryByText("닫기 테스트")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
 	});
 
 	it("does not double-close when close is called twice rapidly", async () => {
-		vi.useFakeTimers();
-
-		const timeoutSpy = vi.spyOn(globalThis, "setTimeout");
-
 		render(
 			<ToastProvider>
 				<ToastTrigger fn={(t) => t.success("중복 닫기")} />
@@ -241,23 +234,17 @@ describe("Toast close", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		const closeBtn = screen.getByRole("button", { name: "Close" });
-
-		// 빠르게 두 번 클릭
+		// 빠르게 두 번 클릭 — closingRef 가 두 번째 호출 무시
 		fireEvent.click(closeBtn);
 		fireEvent.click(closeBtn);
 
-		// 260ms 지연 setTimeout은 closingRef 덕분에 한 번만 호출되어야 함
-		const removalTimeouts = timeoutSpy.mock.calls.filter(([, ms]) => ms === 260);
-		expect(removalTimeouts).toHaveLength(1);
-
-		await act(async () => {
-			vi.advanceTimersByTime(300);
-		});
-
-		expect(screen.queryByText("중복 닫기")).not.toBeInTheDocument();
-
-		timeoutSpy.mockRestore();
-		vi.useRealTimers();
+		// 결국 단 한 번만 unmount 되고 토스트 사라짐
+		await waitFor(
+			() => {
+				expect(screen.queryByText("중복 닫기")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
 	});
 });
 
@@ -482,9 +469,7 @@ describe("Toast auto-dismiss", () => {
 		vi.useRealTimers();
 	});
 
-	it("adds toast_item_exiting class during slide-out animation", async () => {
-		vi.useFakeTimers();
-
+	it("toast remains in DOM during spring exit then unmounts", async () => {
 		render(
 			<ToastProvider>
 				<ToastTrigger fn={(t) => t.success("exiting 상태")} />
@@ -492,26 +477,21 @@ describe("Toast auto-dismiss", () => {
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		const item = document.querySelector(".toast_item");
+		expect(item).not.toBeNull();
 
-		const item = document.querySelector(".toast_item") as HTMLElement;
-		expect(item.className).not.toContain("toast_item_exiting");
+		fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
-		await act(async () => {
-			fireEvent.click(screen.getByRole("button", { name: "Close" }));
-		});
+		// spring exit 진행 중 — 잠시 DOM 유지
+		expect(document.querySelector(".toast_item")).not.toBeNull();
 
-		// 아직 setTimeout(260ms) 완료 전 — DOM은 유지되고 exiting 클래스만 부여됨
-		const exitingItem = document.querySelector(".toast_item") as HTMLElement | null;
-		expect(exitingItem).not.toBeNull();
-		expect(exitingItem?.className).toContain("toast_item_exiting");
-
-		await act(async () => {
-			vi.advanceTimersByTime(300);
-		});
-
-		expect(document.querySelector(".toast_item")).toBeNull();
-
-		vi.useRealTimers();
+		// spring 완료 후 unmount
+		await waitFor(
+			() => {
+				expect(document.querySelector(".toast_item")).toBeNull();
+			},
+			{ timeout: 1500 },
+		);
 	});
 });
 

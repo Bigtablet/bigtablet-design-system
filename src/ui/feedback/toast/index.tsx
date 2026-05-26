@@ -1,9 +1,10 @@
 "use client";
 
+import { animated } from "@react-spring/web";
 import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { cn } from "../../../utils";
+import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -53,24 +54,31 @@ interface ToastItemComponentProps {
  * @returns 렌더링된 토스트 아이템
  */
 const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemComponentProps) => {
-	const [exiting, setExiting] = React.useState(false);
+	const [visible, setVisible] = React.useState(true);
 	const closingRef = React.useRef(false);
 
+	const style = useSpringPresence({
+		visible,
+		from: "translateX(20px)", // 우측에서 슬라이드 인
+		onExitComplete: () => onRemove(item.id),
+	});
+
 	/**
-	 * 슬라이드 아웃 애니메이션 후 토스트를 제거한다.
+	 * 슬라이드 아웃 모션 후 토스트를 제거한다 (onExitComplete 가 onRemove 호출).
 	 * @returns void
 	 */
 	const close = React.useCallback(() => {
 		if (closingRef.current) return;
 		closingRef.current = true;
-		setExiting(true);
-		setTimeout(() => onRemove(item.id), 260);
-	}, [item.id, onRemove]);
-
-	const itemClassName = cn("toast_item", exiting && "toast_item_exiting");
+		setVisible(false);
+	}, []);
 
 	return (
-		<div className={itemClassName} role={item.variant === "error" ? "alert" : "status"}>
+		<animated.div
+			className="toast_item"
+			style={style}
+			role={item.variant === "error" ? "alert" : "status"}
+		>
 			<span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
 				{VARIANT_ICONS[item.variant]}
 			</span>
@@ -87,7 +95,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 				onAnimationEnd={close}
 				aria-hidden="true"
 			/>
-		</div>
+		</animated.div>
 	);
 };
 

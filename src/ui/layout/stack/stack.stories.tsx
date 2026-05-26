@@ -39,14 +39,14 @@ const Item = ({ label, w = 80, h = 48 }: { label: string; w?: number; h?: number
 		style={{
 			width: w,
 			height: h,
-			background: "#DDE3E9",
+			background: "var(--bt-color-bg-solid-dim)",
 			borderRadius: 6,
 			display: "flex",
 			alignItems: "center",
 			justifyContent: "center",
 			fontSize: 12,
 			fontWeight: 600,
-			color: "#47555E",
+			color: "var(--bt-color-text-body)",
 			flexShrink: 0,
 		}}
 	>
@@ -69,7 +69,7 @@ export const GapScale: Story = {
 		<Stack gap={32}>
 			{([4, 8, 16, 24, 32] as const).map((gap) => (
 				<div key={gap}>
-					<p style={{ margin: "0 0 8px", fontSize: 12, color: "#888" }}>gap={gap}</p>
+					<p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--bt-color-text-caption)" }}>gap={gap}</p>
 					<Stack direction="horizontal" gap={gap} align="center">
 						<Item label="1" />
 						<Item label="2" />

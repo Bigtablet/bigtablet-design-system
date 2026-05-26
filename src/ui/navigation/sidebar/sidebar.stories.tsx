@@ -71,8 +71,8 @@ function ProfileFooter({ collapsed = false }: { collapsed?: boolean }) {
 					width: 32,
 					height: 32,
 					borderRadius: 999,
-					background: "#e5e5e5",
-					color: "#121212",
+					background: "var(--bt-color-bg-solid-dim)",
+					color: "var(--bt-color-text-heading)",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
@@ -85,7 +85,7 @@ function ProfileFooter({ collapsed = false }: { collapsed?: boolean }) {
 			{!collapsed && (
 				<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
 					<strong>sangmin</strong>
-					<span style={{ color: "#666", fontSize: 11 }}>sangmin@bigtablet.com</span>
+					<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>sangmin@bigtablet.com</span>
 				</div>
 			)}
 		</div>
@@ -96,7 +96,7 @@ function FullDemo({ defaultCollapsed = false }: { defaultCollapsed?: boolean }) 
 	const [active, setActive] = React.useState("home");
 	const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 	return (
-		<div style={{ display: "flex", minHeight: 480, background: "#f4f4f4" }}>
+		<div style={{ display: "flex", minHeight: 480, background: "var(--bt-color-bg-solid-dim)" }}>
 			<Sidebar
 				header={<BrandHeader />}
 				headerCollapsed={<FaviconHeader />}
@@ -132,7 +132,7 @@ function FullDemo({ defaultCollapsed = false }: { defaultCollapsed?: boolean }) 
 			</Sidebar>
 			<main style={{ flex: 1, padding: 32 }}>
 				<h2 style={{ margin: 0 }}>{SAMPLE_ITEMS.find((i) => i.key === active)?.label}</h2>
-				<p style={{ color: "#666" }}>현재 활성 페이지의 콘텐츠 영역.</p>
+				<p style={{ color: "var(--bt-color-text-body)" }}>현재 활성 페이지의 콘텐츠 영역.</p>
 			</main>
 		</div>
 	);

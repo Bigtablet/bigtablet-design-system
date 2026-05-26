@@ -39,7 +39,7 @@ const columns: TableColumn<User>[] = [
 		header: "관리",
 		width: "15%",
 		align: "right",
-		render: () => <span style={{ color: "#0369A1", cursor: "pointer" }}>편집</span>,
+		render: () => <span style={{ color: "var(--bt-color-status-info)", cursor: "pointer" }}>편집</span>,
 	},
 ];
 
@@ -108,7 +108,7 @@ export const Sizes: Story = {
 		<div style={{ display: "grid", gap: 24 }}>
 			{(["sm", "md", "lg"] as const).map((size) => (
 				<div key={size}>
-					<div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>size={size}</div>
+					<div style={{ fontSize: 12, color: "var(--bt-color-text-body)", marginBottom: 6 }}>size={size}</div>
 					<Table<User>
 						columns={columns.slice(0, 3)}
 						data={sampleUsers.slice(0, 3)}

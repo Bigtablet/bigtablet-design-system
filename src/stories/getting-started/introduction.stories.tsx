@@ -57,9 +57,9 @@ export const Overview: Story = {
 			<section
 				style={{
 					padding: 24,
-					background: "#f8f9fa",
+					background: "var(--bt-color-bg-solid-dim)",
 					borderRadius: 12,
-					border: "1px solid #e5e5e5",
+					border: "1px solid var(--bt-color-border-default)",
 				}}
 			>
 				<h3 style={{ margin: "0 0 16px", fontSize: 16 }}>빠른 시작</h3>
@@ -85,9 +85,9 @@ export const Overview: Story = {
 			<section
 				style={{
 					padding: 24,
-					background: "#f8f9fa",
+					background: "var(--bt-color-bg-solid-dim)",
 					borderRadius: 12,
-					border: "1px solid #e5e5e5",
+					border: "1px solid var(--bt-color-border-default)",
 				}}
 			>
 				<h3 style={{ margin: "0 0 12px", fontSize: 16 }}>버전 정보</h3>
@@ -118,8 +118,8 @@ function Step({
 					width: 28,
 					height: 28,
 					borderRadius: "50%",
-					background: "#121212",
-					color: "#fff",
+					background: "var(--bt-color-accent-default)",
+					color: "var(--bt-color-accent-on-surface)",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
@@ -145,9 +145,9 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 		<div
 			style={{
 				padding: "12px 16px",
-				background: "#fff",
+				background: "var(--bt-color-bg-solid)",
 				borderRadius: 8,
-				border: "1px solid #e5e5e5",
+				border: "1px solid var(--bt-color-border-default)",
 			}}
 		>
 			<div style={{ fontSize: 11, opacity: 0.55, marginBottom: 4 }}>{label}</div>

@@ -75,7 +75,7 @@ export const Basic: Story = {
 						console.log("files", files);
 					}}
 				/>
-				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>{fileNames}</p>
+				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>{fileNames}</p>
 			</div>
 		);
 	},
@@ -137,7 +137,7 @@ export const AcceptFilter: Story = {
 					}}
 					supportingText="JPG, PNG, GIF 등 이미지 파일만 선택 가능합니다."
 				/>
-				<p style={{ margin: 0, fontSize: 13, color: "#666" }}>{fileNames}</p>
+				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>{fileNames}</p>
 			</div>
 		);
 	},

@@ -53,7 +53,7 @@ const Box = ({ label, bg = "#E5F0FF" }: { label: string; bg?: string }) => (
 			borderRadius: "8px",
 			fontSize: "14px",
 			fontWeight: 600,
-			color: "#303841",
+			color: "var(--bt-color-text-heading)",
 			textAlign: "center",
 		}}
 	>
@@ -86,7 +86,7 @@ export const Sizes: Story = {
 export const WithSection: Story = {
 	name: "Section 내부 사용",
 	render: () => (
-		<div style={{ background: "#F2F5F8", padding: "48px 0" }}>
+		<div style={{ background: "var(--bt-color-bg-solid-dim)", padding: "48px 0" }}>
 			<Container size="lg">
 				<Box label="Container inside Section" bg="#fff" />
 			</Container>

@@ -1,5 +1,6 @@
 "use client";
 
+import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
 import { cn, useFocusTrap } from "../../../utils";
@@ -34,7 +35,7 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 
 /**
  * 모달을 렌더링한다.
- * 포커스 트랩과 스크롤 잠금을 적용하고, 열림 상태에 따라 오버레이/패널을 구성한다.
+ * react-spring 기반 진입/퇴출 모션 + 포커스 트랩 + 바디 스크롤 잠금.
  * @param props 모달 속성
  * @returns 열림 상태일 때 렌더링된 모달, 닫힘 상태면 null
  */
@@ -57,34 +58,37 @@ export const Modal = ({
 	const panelRef = React.useRef<HTMLDivElement>(null);
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
-	const [isExiting, setIsExiting] = React.useState(false);
-	const wasOpenRef = React.useRef(open);
 
 	// 포커스 트랩
 	useFocusTrap(panelRef, open);
 
-	/**
-	 * Escape 키 입력 시 닫기 동작을 처리한다.
-	 * @param e 키보드 이벤트
-	 * @returns void
-	 */
+	// 진입 시 마운트 보장
+	React.useEffect(() => {
+		if (open) setShouldRender(true);
+	}, [open]);
+
+	// Spring: overlay (opacity) — onRest 로 exit 완료 후 unmount
+	const overlayStyle = useSpring({
+		opacity: open ? 1 : 0,
+		config: { tension: 280, friction: 28, clamp: !open },
+		onRest: (result) => {
+			if (!open && result.finished) setShouldRender(false);
+		},
+	});
+
+	// Spring: panel (opacity + scale + translateY)
+	const panelStyle = useSpring({
+		opacity: open ? 1 : 0,
+		transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		config: { tension: 280, friction: 28, clamp: !open },
+	});
+
 	const handleEscape = React.useEffectEvent((e: KeyboardEvent) => {
 		if (e.key === "Escape") onClose?.();
 	});
 
 	React.useEffect(() => {
-		if (open) {
-			setShouldRender(true);
-			setIsExiting(false);
-		} else if (wasOpenRef.current) {
-			setIsExiting(true);
-		}
-		wasOpenRef.current = open;
-	}, [open]);
-
-	React.useEffect(() => {
 		if (!open) return;
-
 		document.addEventListener("keydown", handleEscape);
 		return () => document.removeEventListener("keydown", handleEscape);
 	}, [open]);
@@ -119,13 +123,12 @@ export const Modal = ({
 
 	if (!shouldRender) return null;
 
-	const panelClassName = cn("modal_panel", className);
 	const hasTitle = !!title;
-	const rootClassName = cn("modal", isExiting && "modal_exiting");
 
 	return (
-		<div
-			className={rootClassName}
+		<animated.div
+			className="modal"
+			style={overlayStyle}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
@@ -135,20 +138,14 @@ export const Modal = ({
 				if (e.key === "Escape") onClose?.();
 			}}
 		>
-			<div
+			<animated.div
 				ref={panelRef}
-				className={panelClassName}
-				style={{ width }}
+				className={cn("modal_panel", className)}
+				style={{ ...panelStyle, width }}
 				role="document"
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
-				}}
-				onAnimationEnd={(e) => {
-					if (isExiting && e.target === e.currentTarget) {
-						setShouldRender(false);
-						setIsExiting(false);
-					}
 				}}
 				{...props}
 			>
@@ -172,7 +169,7 @@ export const Modal = ({
 				{footer && (
 					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{footer}</div>
 				)}
-			</div>
-		</div>
+			</animated.div>
+		</animated.div>
 	);
 };
