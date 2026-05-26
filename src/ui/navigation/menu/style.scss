@@ -10,13 +10,22 @@
   top: calc(100% + 4px);
   z-index: token.$z_level5;
   min-width: 180px;
-  // bg_solid_dim — light=거의 흰색 / dark=navy_800 (canvas navy_900 보다 한 톤 밝음 → 메뉴 panel 시각 분리)
-  background: token.$color_bg_solid_dim;
+  // 라이트: 흰색 / 다크: bg_solid_dim (navy_800, canvas 보다 한 톤 밝음 → elevation)
+  background: token.$color_bg_solid;
   border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_lg;
   box-shadow: token.$elevation_level2;
   padding: token.$spacing_4 0;
   will-change: transform, opacity;
+
+  [data-theme="dark"] & {
+    background: token.$color_bg_solid_dim;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) & {
+      background: token.$color_bg_solid_dim;
+    }
+  }
 
   &_align_start { left: 0; }
   &_align_end   { right: 0; }
