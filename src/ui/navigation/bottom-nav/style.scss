@@ -1,0 +1,122 @@
+@use "src/styles/token" as token;
+
+// height + safe-area 합산 — 소비처 layout 계산용 노출
+:root {
+  --bt-bottom-nav-height: 56px;
+  --bt-bottom-nav-safe-area: env(safe-area-inset-bottom, 0px);
+  --bt-bottom-nav-total-height: calc(
+    var(--bt-bottom-nav-height) + var(--bt-bottom-nav-safe-area)
+  );
+}
+
+.bottom_nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: token.$z_level2;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+
+  height: var(--bt-bottom-nav-total-height);
+  padding-bottom: var(--bt-bottom-nav-safe-area); // iOS 홈 인디케이터 영역 회피
+  background: token.$color_bg_solid;
+  border-top: token.$border_width_standard solid token.$color_border_default;
+
+  // 데스크탑에서도 fixed bottom 유지 — viewport 정책은 소비처 결정.
+  // 숨기고 싶으면 wrap 후 media query 로 hidden 처리.
+
+  &_item {
+    flex: 1;
+    min-width: 0; // 좁은 viewport 에서 label 잘림 방지
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: token.$spacing_2;
+    padding: token.$spacing_8 token.$spacing_4;
+    border: none;
+    background: transparent;
+    color: token.$color_text_caption;
+    cursor: pointer;
+    text-decoration: none;
+    min-height: 56px; // a11y tap target
+    transition:
+      color token.$duration_fast token.$easing_enter,
+      background token.$duration_fast token.$easing_enter;
+
+    &:hover:not(.bottom_nav_item_active) {
+      background: token.$color_state_hover_on_light;
+      color: token.$color_text_heading;
+    }
+
+    &:active:not(.bottom_nav_item_active) {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    // disabled — 시각 흐림 + 인터랙션 차단 (anchor 케이스는 `_disabled` modifier 도 매칭)
+    &:disabled,
+    &_disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    // active — 아이콘 + 라벨 강조 (검정/흰 반전 토큰)
+    &_active {
+      color: token.$color_accent_default;
+
+      .bottom_nav_item_label {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &_item_icon {
+    position: relative; // badge anchor
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  &_item_badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    pointer-events: none;
+  }
+
+  &_item_label {
+    @include token.label_small_medium;
+    line-height: 1.2;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ── Spacer — 본문 끝에 두면 BottomNav 가 가리는 영역 보정 ──────────────────
+
+.bottom_nav_spacer {
+  height: var(--bt-bottom-nav-total-height);
+  flex-shrink: 0;
+}
+
+// ── Reduced motion ─────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom_nav_item {
+    transition: none;
+  }
+}

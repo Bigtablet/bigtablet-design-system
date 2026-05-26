@@ -67,4 +67,22 @@ describe("Sidebar", () => {
 		);
 		expect(container.firstChild).toHaveClass("sidebar_collapsed");
 	});
+
+	it("applies sidebar_static modifier when mode='static'", () => {
+		const { container } = render(
+			<Sidebar mode="static">
+				<SidebarItem>홈</SidebarItem>
+			</Sidebar>,
+		);
+		expect(container.firstChild).toHaveClass("sidebar_static");
+	});
+
+	it("does NOT apply sidebar_static by default (auto mode)", () => {
+		const { container } = render(
+			<Sidebar>
+				<SidebarItem>홈</SidebarItem>
+			</Sidebar>,
+		);
+		expect(container.firstChild).not.toHaveClass("sidebar_static");
+	});
 });

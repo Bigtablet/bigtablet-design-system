@@ -26,6 +26,25 @@
         "Segoe UI Symbol", sans-serif;
     }
 
+    /* Reset Storybook iframe 의 기본 body margin/padding —
+       `position: fixed; bottom: 0` 컴포넌트 (BottomNav, Modal overlay 등) 가
+       iframe viewport edge 까지 정확히 도달하도록. */
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Storybook fullscreen 레이아웃의 root 도 padding/margin 제거 —
+       container 가 fixed positioning context 만들지 않도록. */
+    .sb-show-main.sb-main-fullscreen {
+        padding: 0 !important;
+    }
+    #storybook-root,
+    .sb-show-main #storybook-root {
+        padding: 0;
+        margin: 0;
+    }
+
     /* Dark mode: body background & text follow CSS custom properties */
     body {
         background-color: var(--bt-color-bg-solid, #ffffff);
