@@ -232,3 +232,122 @@
     }
   }
 }
+
+// ── Mobile transform (< 600px) — auto 모드에서 BottomBar 형태로 자동 변신 ────
+//
+// `.sidebar_static` 가 붙으면 변신 무효 (admin 등 desktop-only 케이스).
+// CSS-only 변환 — JS / Context / matchMedia 불필요, SSR 안전, hydration mismatch X.
+
+@media (max-width: 599px) {
+  .sidebar:not(.sidebar_static) {
+    // BottomBar 본체 — fixed bottom, 가로 flex
+    position: fixed;
+    inset: auto 0 0 0;            // bottom: 0; left/right: 0
+    width: 100% !important;       // 인라인 style.width override
+    height: auto;
+    min-height: 0;
+    flex-direction: row;
+    border-right: none;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+    box-shadow: token.$elevation_level2;
+    z-index: token.$z_level2;
+    padding-bottom: env(safe-area-inset-bottom, 0px); // iOS 홈 인디케이터
+
+    // 변신 시 숨겨질 영역들 — header / footer / 섹션 라벨 / collapse btn
+    .sidebar_header,
+    .sidebar_footer,
+    .sidebar_collapse_btn,
+    .sidebar_section_label {
+      display: none;
+    }
+
+    // nav 가 horizontal flex 컨테이너
+    .sidebar_nav {
+      flex: 1;
+      flex-direction: row;
+      align-items: stretch;
+      padding: 0;
+      gap: 0;
+      overflow: visible;
+    }
+
+    // section 은 transparent — items 가 nav 의 flex 자식으로 직접 흐름
+    .sidebar_section {
+      display: contents;
+    }
+
+    // 아이템 — icon 위 / label 아래 stacked, 균등 분할
+    .sidebar_item {
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: token.$spacing_4;
+      padding: token.$spacing_6 token.$spacing_4;
+      min-height: 56px;             // a11y tap target
+      border-radius: 0;
+      color: token.$color_text_body; // rail inactive 와 동일 톤
+
+      &:hover:not(.sidebar_item_active) {
+        background: token.$color_state_hover_on_light;
+        color: token.$color_text_heading;
+      }
+
+      // active — rail 의 "검정 fill" 언어 유지하되 icon area pill 로 축소
+      // (iOS / Material You 패턴 — 작은 bottom bar item 에 full-row fill 은 무거움)
+      &_active {
+        background: transparent;    // rail 의 full-width bg 무효
+        color: token.$color_text_heading;
+
+        .sidebar_item_icon {
+          background: token.$color_brand_primary;
+          color: token.$color_brand_on_primary;
+          border-radius: token.$radius_full;  // 완전한 pill
+          padding: 0 token.$spacing_16;
+          width: auto;                        // rail 24px 고정 width override
+          height: 32px;
+          min-width: 56px;
+        }
+
+        .sidebar_item_label {
+          font-weight: 600;
+        }
+      }
+    }
+
+    .sidebar_item_icon {
+      width: 24px;
+      height: 24px;
+      transition: background token.$transition_fast, color token.$transition_fast;
+    }
+
+    .sidebar_item_label {
+      @include token.label_small_medium;
+      flex: 0 0 auto;               // rail 모드 flex: 1 override
+      line-height: 1.2;
+      text-align: center;
+      max-width: 100%;
+      white-space: nowrap;
+    }
+
+    // trailing (Badge 등) — BottomBar 에선 공간 부족 → 숨김.
+    // 알림이 필요하면 미래 prop 으로 icon 위 dot badge 추가 검토.
+    .sidebar_item_trailing {
+      display: none;
+    }
+  }
+
+  // collapsed 상태 + mobile + auto → collapsed 무효 (BottomBar 가 우선)
+  .sidebar:not(.sidebar_static).sidebar_collapsed {
+    .sidebar_item_label {
+      // collapsed 가 적용한 visually-hidden 해제 — BottomBar 에선 label 보여야 함
+      position: static;
+      width: auto;
+      height: auto;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+    }
+  }
+}

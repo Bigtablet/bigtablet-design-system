@@ -15,6 +15,8 @@ const meta: Meta<typeof Sidebar> = {
 **Sidebar** — admin/dashboard 좌측 네비게이션. \`SidebarItem\` + \`SidebarSection\` 조합.
 
 \`collapsed\` (240→64px) — 아이콘만 표시, \`headerCollapsed\` 로 favicon 노드. \`collapsible\` (기본 true) → floating chevron 토글. \`active={true}\` → \`aria-current="page"\` 자동.
+
+**Responsive** — 기본 \`mode="auto"\`: viewport \`< 600px\` 에서 자동으로 하단 bar (BottomNav 형태) 로 변신. header/footer/섹션 라벨 hide, 아이템은 horizontal stack. \`mode="static"\` 으로 변신 끄기 (admin desktop-only 케이스).
 				`,
 			},
 		},

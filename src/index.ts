@@ -10,6 +10,8 @@ export type { AvatarProps, AvatarShape, AvatarSize } from "./ui/display/avatar";
 export { Avatar } from "./ui/display/avatar";
 export type { BadgeProps, BadgeShape, BadgeSize, BadgeVariant } from "./ui/display/badge";
 export { Badge } from "./ui/display/badge";
+export type { BottomNavItemProps, BottomNavProps } from "./ui/navigation/bottom-nav";
+export { BottomNav, BottomNavItem, BottomNavSpacer } from "./ui/navigation/bottom-nav";
 export type { BreadcrumbItem, BreadcrumbProps } from "./ui/navigation/breadcrumb";
 export { Breadcrumb } from "./ui/navigation/breadcrumb";
 export type { EmptyStateProps } from "./ui/feedback/empty-state";
@@ -25,7 +27,12 @@ export type {
 	NavLinkProps,
 } from "./ui/navigation/nav-bar";
 export { NavBar, NavLink } from "./ui/navigation/nav-bar";
-export type { SidebarItemProps, SidebarProps, SidebarSectionProps } from "./ui/navigation/sidebar";
+export type {
+	SidebarItemProps,
+	SidebarMode,
+	SidebarProps,
+	SidebarSectionProps,
+} from "./ui/navigation/sidebar";
 export { Sidebar, SidebarItem, SidebarSection } from "./ui/navigation/sidebar";
 export type {
 	TabListProps,

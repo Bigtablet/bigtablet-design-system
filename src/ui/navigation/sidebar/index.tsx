@@ -5,6 +5,8 @@ import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
+export type SidebarMode = "auto" | "static";
+
 export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
 	/** 상단 brand 영역 (펼친 상태 로고) */
 	header?: React.ReactNode;
@@ -26,6 +28,12 @@ export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLElement>, "o
 	width?: number;
 	/** collapsed 너비 (기본 64px) */
 	collapsedWidth?: number;
+	/**
+	 * 반응형 모드 (기본 `"auto"`).
+	 * - `"auto"`: viewport `< 600px` 에서 자동으로 하단 bar 로 변신.
+	 * - `"static"`: 어떤 viewport 에서도 좌측 rail 유지 (admin desktop-only).
+	 */
+	mode?: SidebarMode;
 }
 
 /**
@@ -54,6 +62,7 @@ export const Sidebar = ({
 	toggleLabel = "사이드바 토글",
 	width = 240,
 	collapsedWidth = 64,
+	mode = "auto",
 	className,
 	children,
 	style,
@@ -69,9 +78,18 @@ export const Sidebar = ({
 		onCollapsedChange?.(next);
 	}, [collapsed, isControlled, onCollapsedChange]);
 
+	// `mode="static"` 일 때 SCSS 의 mobile media query 무효화 (admin/desktop-only)
+	const isStatic = mode === "static";
+
 	return (
 		<aside
-			className={cn("sidebar", collapsed && "sidebar_collapsed", className)}
+			className={cn(
+				"sidebar",
+				collapsed && "sidebar_collapsed",
+				isStatic && "sidebar_static",
+				className,
+			)}
+			// auto 모드 + mobile 일 때 SCSS 가 width 100% override 함. static / desktop 은 인라인 그대로.
 			style={{ width: collapsed ? collapsedWidth : width, ...style }}
 			{...props}
 		>
