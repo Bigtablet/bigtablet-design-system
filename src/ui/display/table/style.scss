@@ -47,6 +47,11 @@
     &:active {
       background: token.$color_state_pressed_on_light;
     }
+
+    &:focus-visible {
+      outline: none;
+      background: token.$color_state_focus_on_light;
+    }
   }
 
   .table_row_skeleton {

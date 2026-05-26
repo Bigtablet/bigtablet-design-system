@@ -116,7 +116,19 @@ export const Table = <T extends object>({
 										hoverable && "table_row_hoverable",
 										onRowClick && "table_row_clickable",
 									)}
+									role={onRowClick ? "button" : undefined}
+									tabIndex={onRowClick ? 0 : undefined}
 									onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
+									onKeyDown={
+										onRowClick
+											? (e) => {
+													if (e.key === "Enter" || e.key === " ") {
+														e.preventDefault();
+														onRowClick(item, rowIndex);
+													}
+												}
+											: undefined
+									}
 								>
 									{columns.map((col) => (
 										<td

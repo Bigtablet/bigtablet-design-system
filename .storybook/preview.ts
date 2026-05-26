@@ -46,7 +46,7 @@ const withStoryCaption: Decorator = (Story, context) => {
 	} as const;
 
 	return h(Fragment, null,
-		h(Story, null),
+		Story(),
 		h("div", { style: captionStyle, "aria-label": "스토리 설명" },
 			h("span", { style: { color: "var(--bt-color-accent-default, #47555E)", fontWeight: 600, marginRight: 6 } }, "ℹ"),
 			storyDesc,

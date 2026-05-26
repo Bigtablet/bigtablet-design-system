@@ -7,7 +7,6 @@ import {
 	useCallback,
 	useEffect,
 	useId,
-	useLayoutEffect,
 	useMemo,
 	useRef,
 	useState,
@@ -203,7 +202,7 @@ export const Dropdown = ({
 		);
 	}, [isOpen, options, currentValue]);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (!isOpen || !controlRef.current) return;
 		const rect = controlRef.current.getBoundingClientRect();
 		const spaceBelow = window.innerHeight - rect.bottom;
