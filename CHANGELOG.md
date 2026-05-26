@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v3.0.0...v3.1.0) (2026-05-26)
+
+
+### Bug Fixes
+
+* address Gemini review feedback (PR [#269](https://github.com/Bigtablet/bigtablet-design-system/issues/269)) ([22f5a1c](https://github.com/Bigtablet/bigtablet-design-system/commit/22f5a1c45b2798b5ed50051e2d89f347691e477b)), closes [#2](https://github.com/Bigtablet/bigtablet-design-system/issues/2)
+* convert SidebarItem + BottomNavItem to discriminated union (PR [#269](https://github.com/Bigtablet/bigtablet-design-system/issues/269)) ([a5aa1e0](https://github.com/Bigtablet/bigtablet-design-system/commit/a5aa1e071d5e88f802dff18803d4e7d3e238b3a9)), closes [#2](https://github.com/Bigtablet/bigtablet-design-system/issues/2)
+
+
+### Features
+
+* add BottomNav + Sidebar responsive transform for mobile nav ([f2f67b1](https://github.com/Bigtablet/bigtablet-design-system/commit/f2f67b111069f0187d9cc3dd0b2756675cbf0802))
+
 # [3.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.5.0...v3.0.0) (2026-05-26)
 
 
