@@ -126,54 +126,71 @@ export const Sidebar = ({
 	);
 };
 
-export interface SidebarItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface SidebarItemCommon {
 	/** 왼쪽 아이콘 */
 	icon?: React.ReactNode;
 	/** 현재 활성 상태 */
 	active?: boolean;
 	/** 오른쪽 trailing (Badge 등) */
 	trailing?: React.ReactNode;
-	/** 링크 컴포넌트 (Next Link 등). `asChild` 패턴 — `as="a" href="..."` */
-	as?: "button" | "a";
-	/** as="a"일 때 사용 */
-	href?: string;
 }
 
-export const SidebarItem = ({
-	icon,
-	active,
-	trailing,
-	as = "button",
-	href,
-	className,
-	children,
-	type,
-	...props
-}: SidebarItemProps) => {
+// Discriminated union — `as` 값에 따라 허용되는 HTML attribute 동적 결정.
+// `target` / `rel` / `download` 는 anchor 만, `type` / `form` 등은 button 만.
+type SidebarItemButton = SidebarItemCommon & {
+	as?: "button";
+	href?: never;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+type SidebarItemAnchor = SidebarItemCommon & {
+	as: "a";
+	href: string;
+} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type">;
+
+export type SidebarItemProps = SidebarItemButton | SidebarItemAnchor;
+
+export const SidebarItem = (props: SidebarItemProps) => {
+	const { icon, active, trailing, as = "button", className, children, ...rest } = props;
 	const classes = cn("sidebar_item", active && "sidebar_item_active", className);
 	const ariaCurrent = active ? "page" : undefined;
 
-	if (as === "a" && href) {
+	const inner = (
+		<>
+			{icon && (
+				<span className="sidebar_item_icon" aria-hidden="true">
+					{icon}
+				</span>
+			)}
+			<span className="sidebar_item_label">{children}</span>
+			{trailing && <span className="sidebar_item_trailing">{trailing}</span>}
+		</>
+	);
+
+	if (as === "a") {
+		const { href, ...anchorRest } = rest as Omit<
+			SidebarItemAnchor,
+			"icon" | "active" | "trailing" | "as" | "className" | "children"
+		>;
 		return (
 			// biome-ignore lint/a11y/useValidAnchor: navigation link with optional active state
-			<a className={classes} href={href} aria-current={ariaCurrent} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
-				{icon && <span className="sidebar_item_icon" aria-hidden="true">{icon}</span>}
-				<span className="sidebar_item_label">{children}</span>
-				{trailing && <span className="sidebar_item_trailing">{trailing}</span>}
+			<a className={classes} href={href} aria-current={ariaCurrent} {...anchorRest}>
+				{inner}
 			</a>
 		);
 	}
 
+	const { type, ...buttonRest } = rest as Omit<
+		SidebarItemButton,
+		"icon" | "active" | "trailing" | "as" | "className" | "children"
+	>;
 	return (
 		<button
 			type={type ?? "button"}
 			className={classes}
 			aria-current={ariaCurrent}
-			{...props}
+			{...buttonRest}
 		>
-			{icon && <span className="sidebar_item_icon" aria-hidden="true">{icon}</span>}
-			<span className="sidebar_item_label">{children}</span>
-			{trailing && <span className="sidebar_item_trailing">{trailing}</span>}
+			{inner}
 		</button>
 	);
 };

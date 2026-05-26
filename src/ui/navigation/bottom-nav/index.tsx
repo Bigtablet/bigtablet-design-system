@@ -45,8 +45,7 @@ export const BottomNav = ({
 	);
 };
 
-export interface BottomNavItemProps
-	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+interface BottomNavItemCommon {
 	/** 아이콘 (필수) */
 	icon: React.ReactNode;
 	/** 라벨 텍스트 (필수, 짧게 — 2–4자) */
@@ -55,29 +54,40 @@ export interface BottomNavItemProps
 	active?: boolean;
 	/** 아이콘 우상단 dot/카운트 (Badge 등) */
 	badge?: React.ReactNode;
-	/** 링크 컴포넌트 (Next Link 등) */
-	as?: "button" | "a";
-	/** as="a" 일 때 사용 */
-	href?: string;
 }
+
+// Discriminated union — `as` 값에 따라 허용되는 HTML attribute 가 동적으로 결정됨.
+// `target` / `rel` / `download` 는 anchor 에만, `type` / `form` 등은 button 에만 허용.
+type BottomNavItemButton = BottomNavItemCommon & {
+	as?: "button";
+	href?: never;
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">;
+
+type BottomNavItemAnchor = BottomNavItemCommon & {
+	as: "a";
+	href: string;
+	/** anchor 에 native `disabled` 없음 — `aria-disabled` + `preventDefault` 로 처리. */
+	disabled?: boolean;
+} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "type">;
+
+export type BottomNavItemProps = BottomNavItemButton | BottomNavItemAnchor;
 
 /**
  * `BottomNav` 의 항목. icon + label 수직 스택.
  * active 시 `aria-current="page"` 자동 부여.
  */
-export const BottomNavItem = ({
-	icon,
-	label,
-	active,
-	badge,
-	as = "button",
-	href,
-	className,
-	type,
-	disabled,
-	onClick,
-	...props
-}: BottomNavItemProps) => {
+export const BottomNavItem = (props: BottomNavItemProps) => {
+	const {
+		icon,
+		label,
+		active,
+		badge,
+		as = "button",
+		className,
+		disabled,
+		...rest
+	} = props;
+
 	const classes = cn(
 		"bottom_nav_item",
 		active && "bottom_nav_item_active",
@@ -96,8 +106,12 @@ export const BottomNavItem = ({
 		</>
 	);
 
-	if (as === "a" && href) {
+	if (as === "a") {
 		// HTML 의 `<a disabled>` 는 무효 — `aria-disabled` + `tabIndex={-1}` + `preventDefault` 로 접근성 있게 비활성화.
+		const { href, onClick, ...anchorRest } = rest as Omit<
+			BottomNavItemAnchor,
+			"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"
+		>;
 		return (
 			// biome-ignore lint/a11y/useValidAnchor: navigation link with optional active state
 			<a
@@ -111,15 +125,19 @@ export const BottomNavItem = ({
 						e.preventDefault();
 						return;
 					}
-					(onClick as ((evt: React.MouseEvent<HTMLAnchorElement>) => void) | undefined)?.(e);
+					onClick?.(e);
 				}}
-				{...(props as Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type" | "onClick">)}
+				{...anchorRest}
 			>
 				{content}
 			</a>
 		);
 	}
 
+	const { type, onClick, ...buttonRest } = rest as Omit<
+		BottomNavItemButton,
+		"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"
+	>;
 	return (
 		<button
 			type={type ?? "button"}
@@ -127,7 +145,7 @@ export const BottomNavItem = ({
 			disabled={disabled}
 			aria-current={ariaCurrent}
 			onClick={onClick}
-			{...props}
+			{...buttonRest}
 		>
 			{content}
 		</button>
