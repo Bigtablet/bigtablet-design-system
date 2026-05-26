@@ -1,3 +1,66 @@
+# [3.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.5.0...v3.0.0) (2026-05-26)
+
+
+### Bug Fixes
+
+* Accordion hover bg leaks on opened trigger ([59f3741](https://github.com/Bigtablet/bigtablet-design-system/commit/59f3741b5908fd32787a60f2085cd218264bf318))
+* Accordion trigger padding too big (hover area felt too large) ([d058bdc](https://github.com/Bigtablet/bigtablet-design-system/commit/d058bdc9299d6bf240ca056dcb14fded87252ee7))
+* adapt component tokens for dark mode visibility ([8aa3ee7](https://github.com/Bigtablet/bigtablet-design-system/commit/8aa3ee787fe30078a7a000739be28fee71f14608)), closes [#121212](https://github.com/Bigtablet/bigtablet-design-system/issues/121212)
+* adapt stories hardcoded colors for dark mode ([54c9e62](https://github.com/Bigtablet/bigtablet-design-system/commit/54c9e628dc094ba171ac3d643848dfeb3b5902fd))
+* address gemini review feedback (PR [#258](https://github.com/Bigtablet/bigtablet-design-system/issues/258)) ([a151273](https://github.com/Bigtablet/bigtablet-design-system/commit/a151273f9855e0c6115f8bd0d6315caa51042f40))
+* address Gemini review feedback (PR [#268](https://github.com/Bigtablet/bigtablet-design-system/issues/268)) ([96adabd](https://github.com/Bigtablet/bigtablet-design-system/commit/96adabd682e53d67e61a18c9a12efcb6201758e5))
+* cookbook layout patterns visual consistency ([983ed74](https://github.com/Bigtablet/bigtablet-design-system/commit/983ed74979859570237def56fc98da6f727a965c))
+* dark mode coverage — elevation + focus ring + page composition tokens ([48ff083](https://github.com/Bigtablet/bigtablet-design-system/commit/48ff083a4c7637329bd3e1310639f841160ff9cb))
+* dark mode text invisible on dark/brand bg (5 components) ([97d6100](https://github.com/Bigtablet/bigtablet-design-system/commit/97d6100953428d7ca5e3b5f391b2917a14a21f73)), closes [#FFFFFF](https://github.com/Bigtablet/bigtablet-design-system/issues/FFFFFF) [#121212](https://github.com/Bigtablet/bigtablet-design-system/issues/121212) [#121212](https://github.com/Bigtablet/bigtablet-design-system/issues/121212) [#FFFFFF](https://github.com/Bigtablet/bigtablet-design-system/issues/FFFFFF)
+* dark mode text rendering (smoothing + opacity) ([3cac2a3](https://github.com/Bigtablet/bigtablet-design-system/commit/3cac2a30c7513fa8b398b042508ff09a27c2025c))
+* dropdown dropUp threshold conservative for small viewports ([c049224](https://github.com/Bigtablet/bigtablet-design-system/commit/c049224984a2aa73e442d2e2701640d7729ca5bd))
+* dropdown width stability and dark mode panel visibility ([98a323c](https://github.com/Bigtablet/bigtablet-design-system/commit/98a323c532b23b6f3656481a6942f13a6f20bd66))
+* dropdown/menu panel bg white in light, bg_solid_dim in dark ([38a6044](https://github.com/Bigtablet/bigtablet-design-system/commit/38a6044b86523054ca2c0ad762cc541c5dfe7a9c))
+* keep Dropdown on Menu/Tooltip spring pattern (no shouldRender) ([6809df0](https://github.com/Bigtablet/bigtablet-design-system/commit/6809df07522e7c3132aeb1bb3c8604658c477d2e))
+* menu trigger props forwarding + dark mode panel bg ([39ef952](https://github.com/Bigtablet/bigtablet-design-system/commit/39ef95238cf9dce2d7dd984c61975be1afcd08e6))
+* misc UI refinements across components ([d591fe5](https://github.com/Bigtablet/bigtablet-design-system/commit/d591fe5067e004ac5116f1f9e9a3aed0d5158583))
+* move chip to display category and symmetric padding ([dff1122](https://github.com/Bigtablet/bigtablet-design-system/commit/dff1122a0dd31f9cfdf754a7760e62f06954635a))
+* real logo + dark mode canvas background ([1c2aa02](https://github.com/Bigtablet/bigtablet-design-system/commit/1c2aa02492b5a0943d5a13e48bdd471855963f7e))
+* replace hardcoded black shadows with theme variable ([5c9ba58](https://github.com/Bigtablet/bigtablet-design-system/commit/5c9ba5854e6ed2773915708162d45d6465689011)), closes [#260](https://github.com/Bigtablet/bigtablet-design-system/issues/260)
+* replace hardcoded colors with theme tokens in stories ([6fcdedb](https://github.com/Bigtablet/bigtablet-design-system/commit/6fcdedb41c9edfb53d4c7d9d1db16e69431c9617)), closes [#121212](https://github.com/Bigtablet/bigtablet-design-system/issues/121212) [#888](https://github.com/Bigtablet/bigtablet-design-system/issues/888) [#444](https://github.com/Bigtablet/bigtablet-design-system/issues/444) [#fff](https://github.com/Bigtablet/bigtablet-design-system/issues/fff) [#F2F5F8](https://github.com/Bigtablet/bigtablet-design-system/issues/F2F5F8) [444/#303841](https://github.com/Bigtablet/bigtablet-design-system/issues/303841) [f8f9fa/#E5E5E5](https://github.com/Bigtablet/bigtablet-design-system/issues/E5E5E5) [e5e5e5/#E5E7EB](https://github.com/Bigtablet/bigtablet-design-system/issues/E5E7EB) [F59E0B/#94A3B8](https://github.com/Bigtablet/bigtablet-design-system/issues/94A3B8) [DCFCE7/#047857](https://github.com/Bigtablet/bigtablet-design-system/issues/047857)
+* restore Accordion hover bg on opened trigger (revert) ([a70b8a8](https://github.com/Bigtablet/bigtablet-design-system/commit/a70b8a88cceeec13f47032fd92db6b139b5ddb4a))
+* sidebar logo crossfade between expanded and collapsed states ([d1f3557](https://github.com/Bigtablet/bigtablet-design-system/commit/d1f3557772159aca44bc634c683f780b53476e41))
+* skip Chromatic review job on dependabot PRs ([ca8e721](https://github.com/Bigtablet/bigtablet-design-system/commit/ca8e721bdb61d355d41049b79654aaf6363f06b9))
+* skip Chromatic review job on dependabot PRs ([#267](https://github.com/Bigtablet/bigtablet-design-system/issues/267)) ([2887e77](https://github.com/Bigtablet/bigtablet-design-system/commit/2887e77b5462bf5454394f8c462f34331e967f82))
+* storybook test failures (React null + a11y) ([6708530](https://github.com/Bigtablet/bigtablet-design-system/commit/6708530699fbc3807ad25e3866a7a509d2c1a728))
+* Tabs support uncontrolled mode via defaultValue prop ([55adca2](https://github.com/Bigtablet/bigtablet-design-system/commit/55adca22de8ed4a7f68030a524ba5fb25f8d5f44))
+* ThemeProvider demo Dark button text invisible in dark mode ([148652a](https://github.com/Bigtablet/bigtablet-design-system/commit/148652a119c22abc5204e81421838049d4ef7474))
+* tooltip centering + long text wrap consistency ([41542fe](https://github.com/Bigtablet/bigtablet-design-system/commit/41542fef318a2c95667d4ef8b76eb03e5de8163a))
+* vanilla SCSS dark mode parity + Modal X close icon ([01b9ff4](https://github.com/Bigtablet/bigtablet-design-system/commit/01b9ff4ac69612492677fa71b8308866ecdbca09))
+
+
+### Features
+
+* add Getting Started and Cookbook story sections ([b92a7f3](https://github.com/Bigtablet/bigtablet-design-system/commit/b92a7f377c33e3ab51e82cee4b80447542b1b8b5))
+* add preview variant to FileInput ([6607b5b](https://github.com/Bigtablet/bigtablet-design-system/commit/6607b5b021cc2d659e319d70cbcc82d7ba21a35c))
+* add top-right X close icon to Modal ([73f2e8e](https://github.com/Bigtablet/bigtablet-design-system/commit/73f2e8e9a83f9774abd595c05fd32f3300560a04))
+* Chip type='static' + tone variants (replaces Tag) ([a00b7a9](https://github.com/Bigtablet/bigtablet-design-system/commit/a00b7a9fd63bdb00da6eb9f333f6a5133cba88d2))
+* Icon component — Material Symbols → lucide-react ([b4b4b8b](https://github.com/Bigtablet/bigtablet-design-system/commit/b4b4b8bbbc0f84d624e612bafd0a794388a7badc))
+* migrate Dropdown and Toast to react-spring ([1b5853b](https://github.com/Bigtablet/bigtablet-design-system/commit/1b5853b1ed59e84eb704904f38409596cfabf674))
+* migrate Modal and Alert from CSS keyframes to react-spring ([780fef8](https://github.com/Bigtablet/bigtablet-design-system/commit/780fef82d063464264dfee12835fe5f729ae172f))
+* redesign Spinner and LinearProgress ([a6ea9e9](https://github.com/Bigtablet/bigtablet-design-system/commit/a6ea9e94233f32af9639713290a9c170ac3e45b4))
+* typography v3.0 — bold + responsive + semantic + utils ([213f42c](https://github.com/Bigtablet/bigtablet-design-system/commit/213f42c2c4aae6c0a732247ee55276561e2f78a4))
+* unify TextField w/ Dropdown label pattern + bump all deps to latest ([0540465](https://github.com/Bigtablet/bigtablet-design-system/commit/0540465b036cff8cf9b0a0f56e635f29ef3009c9))
+* useSpringPresence onExitComplete + test skipAnimation ([840c5e6](https://github.com/Bigtablet/bigtablet-design-system/commit/840c5e66cb074e5188c8855531b5b5d3e55f5182))
+* v3.0 — brand policy + ui reorg + coverage 90%+ ([52dd73f](https://github.com/Bigtablet/bigtablet-design-system/commit/52dd73ff6a8191331bb1464e4d5851dab4358916)), closes [#47555E](https://github.com/Bigtablet/bigtablet-design-system/issues/47555E) [#121212](https://github.com/Bigtablet/bigtablet-design-system/issues/121212) [#FFFFFF](https://github.com/Bigtablet/bigtablet-design-system/issues/FFFFFF)
+* v3.0 — navy accent DS, dark mode, 15 new components, layout primitives ([d305223](https://github.com/Bigtablet/bigtablet-design-system/commit/d3052230d931b0c30416bf5ef98ff624940667bc))
+* v3.0 release marker ([b8df580](https://github.com/Bigtablet/bigtablet-design-system/commit/b8df5803bf4801df8bfeec7c425b39dc12ad5950))
+
+
+### BREAKING CHANGES
+
+* Select component removed (use Dropdown). Chip moved
+from src/ui/general/chip to src/ui/display/chip (path import update
+required). Vanilla --bt-color-primary now reserved for Button --primary
+fill only — accent indicators use new --bt-color-accent / --bt-color-
+accent-on-surface CSS vars. fullWidth prop on Dropdown is now a no-op
+(default fills parent).
+
 # [3.0.0](https://github.com/Bigtablet/bigtablet-design-system/compare/v2.4.2...v3.0.0) (2026-05-20)
 
 
