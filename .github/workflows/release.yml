@@ -29,7 +29,17 @@ jobs:
         with:
           node-version: 22.14.0
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+          # registry-url 를 설정하면 setup-node 가 `~/.npmrc` 에
+          # `:_authToken=${NODE_AUTH_TOKEN}` 을 깔아둠 — NODE_AUTH_TOKEN 미설정 시
+          # 리터럴 `${NODE_AUTH_TOKEN}` 가 잘못된 토큰으로 인식되어 npm CLI 의
+          # 자동 OIDC 가 트리거 안됨. Trusted Publisher 만 쓸 거라 빈 npmrc 가 정답.
+
+      # Node 22.14 ships npm 10.x — auto-OIDC (Trusted Publisher) 는 npm 11.5+ 에서 추가됨.
+      # @semantic-release/npm@13.1.5 의 oidc-context.js 는 토큰 exchange 후 토큰을 버려서 (`!!exchangeToken(...)`)
+      # npmrc 에 안 씀 → publish 시 npm CLI 가 직접 OIDC 해야 동작.
+      # 따라서 npm 11+ 으로 업그레이드 필수.
+      - name: Update npm to latest (OIDC Trusted Publisher 지원)
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -40,5 +50,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
