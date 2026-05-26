@@ -30,8 +30,9 @@ on:
 
 jobs:
   # ── develop / PR: 시각적 리뷰용 (변경사항 비교) ──────────────────────
+  # dependabot PR 은 secrets 접근 불가 — Chromatic 토큰 없어 skip
   review:
-    if: github.ref != 'refs/heads/main'
+    if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read
