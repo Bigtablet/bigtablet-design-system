@@ -1,0 +1,20 @@
+@use "src/styles/token" as token;
+
+.grid_layout {
+  display: grid;
+  grid-template-columns: var(--grid-cols, repeat(3, 1fr));
+  gap: var(--grid-gap, #{token.$spacing_24});
+
+  // independent row / col gap (overrides gap when set)
+  @supports (row-gap: 0px) {
+    row-gap: var(--grid-row-gap, var(--grid-gap, #{token.$spacing_24}));
+    column-gap: var(--grid-col-gap, var(--grid-gap, #{token.$spacing_24}));
+  }
+
+  // force 1 column on mobile
+  &_mobile_single {
+    @include token.compact {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}

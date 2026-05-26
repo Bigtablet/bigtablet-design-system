@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { elevation } from "src/styles/elevation";
 
 const meta: Meta = {
-	title: "Foundation/elevation",
+	title: "Foundation/Elevation",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

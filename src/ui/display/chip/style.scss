@@ -1,0 +1,249 @@
+@use "src/styles/token" as token;
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    border-radius: token.$radius_full;
+    border: token.$border_width_standard solid token.$color_border_default;
+    overflow: hidden;
+    transition:
+      border-color token.$transition_base,
+      background token.$transition_base,
+      color token.$transition_base;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        border-radius: inherit;
+        transition: background token.$transition_base;
+        pointer-events: none;
+    }
+
+    &:hover::before {
+        background: token.$color_state_hover_on_light;
+    }
+
+    &:active::before {
+        background: token.$color_state_pressed_on_light;
+    }
+
+    // ── Selected (navy accent) ──────────────────────────────────────────
+    &_selected {
+        background: token.$color_accent_default;
+        border-color: token.$color_accent_default;
+
+        .chip_content {
+            color: token.$color_accent_on_surface;
+        }
+
+        .chip_icon {
+            color: token.$color_accent_on_surface;
+        }
+
+        &:hover::before {
+            background: token.$color_state_hover_on_dark;
+        }
+
+        &:active::before {
+            background: token.$color_state_pressed_on_dark;
+        }
+    }
+
+    &.chip_icon_hovered:hover::before,
+    &.chip_icon_hovered:active::before {
+        background: transparent;
+    }
+
+    .chip_icon:hover {
+        background: token.$color_state_hover_on_light;
+    }
+
+    .chip_icon:active {
+        background: token.$color_state_pressed_on_light;
+    }
+
+    &_content {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: token.$spacing_4;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: token.$spacing_6 token.$spacing_12;
+        @include token.body_small_medium;
+        color: token.$color_text_heading;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            border-radius: inherit;
+            transition: background token.$transition_base;
+            pointer-events: none;
+        }
+
+        &:focus-visible:not(:disabled)::before {
+            background: token.$color_state_focus_on_light;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &_has_leading .chip_content {
+        padding-left: token.$spacing_8;
+    }
+
+    &_has_trailing .chip_content {
+        padding-right: token.$spacing_8;
+    }
+
+    &_trailing {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: token.$spacing_6 token.$spacing_8 token.$spacing_6 0;
+        color: token.$color_text_heading;
+
+        &:focus-visible:not(:disabled) .chip_icon {
+            background: token.$color_state_focus_on_light;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        border-radius: token.$radius_full;
+        transition: background token.$transition_base;
+        position: relative;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &_label {
+        white-space: nowrap;
+    }
+
+    &_disabled {
+        opacity: token.$opacity_38;
+        pointer-events: none;
+
+        button {
+            cursor: not-allowed;
+        }
+    }
+
+    // ── Static type: non-interactive label (구 Tag 대체) ──────────────────
+    &_type_static {
+        cursor: default;
+        border: none;
+
+        &::before, &:hover::before, &:active::before {
+            display: none;
+        }
+
+        .chip_content {
+            cursor: default;
+        }
+    }
+
+    // Tone variants (static type only) — color-mix로 dark mode 대응
+    &_tone_default {
+        background: token.$color_bg_solid_dim;
+
+        .chip_content { color: token.$color_text_body; }
+    }
+
+    &_tone_accent {
+        background: color-mix(in srgb, token.$color_accent_default 14%, transparent);
+
+        .chip_content { color: token.$color_accent_default; }
+    }
+
+    &_tone_info {
+        background: color-mix(in srgb, token.$color_status_info 12%, transparent);
+
+        .chip_content { color: token.$color_status_info; }
+    }
+
+    &_tone_success {
+        background: color-mix(in srgb, token.$color_status_success 12%, transparent);
+
+        .chip_content { color: token.$color_status_success; }
+    }
+
+    &_tone_warning {
+        background: color-mix(in srgb, token.$color_status_warning 14%, transparent);
+
+        .chip_content { color: token.$color_status_warning; }
+    }
+
+    &_tone_error {
+        background: color-mix(in srgb, token.$color_status_error 12%, transparent);
+
+        .chip_content { color: token.$color_status_error; }
+    }
+
+    // ── Size variants (default = 32px) ────────────────────────────────────
+
+    &_size_sm {
+        height: 24px;
+
+        .chip_content {
+            padding-top: 0;
+            padding-bottom: 0;
+            @include token.label_small_medium;
+        }
+
+        .chip_trailing {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .chip_icon {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    &_size_md {
+        height: 28px;
+
+        .chip_content {
+            padding-top: 0;
+            padding-bottom: 0;
+            @include token.label_large_medium;
+        }
+
+        .chip_trailing {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .chip_icon {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}

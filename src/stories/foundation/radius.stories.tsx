@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { radius } from "src/styles/radius";
 
 const meta: Meta = {
-	title: "Foundation/radius",
+	title: "Foundation/Radius",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

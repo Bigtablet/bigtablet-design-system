@@ -1,13 +1,22 @@
-/* Base Transitions */
-$transition_fast: 0.1s ease-in-out;   // hover, icon
-$transition_base: 0.2s ease-in-out;   // 메뉴 열림
-$transition_slow: 0.3s ease-in-out;   // 레이아웃 변화
+/* Duration only — easing 따로 조합할 때 사용 */
+$duration_fast:  0.1s;
+$duration_base:  0.2s;
+$duration_slow:  0.3s;
+
+/* Base Transitions (composite shorthand — easing 이미 포함) */
+$transition_fast: $duration_fast ease-in-out;   // hover, icon
+$transition_base: $duration_base ease-in-out;   // 메뉴 열림
+$transition_slow: $duration_slow ease-in-out;   // 레이아웃 변화
 
 /* Easing Curves */
 $ease_out_expo: cubic-bezier(0.16, 1, 0.3, 1);
 $ease_out_quart: cubic-bezier(0.25, 1, 0.5, 1);
 $ease_in_out_cubic: cubic-bezier(0.65, 0, 0.35, 1);
 $ease_spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* Enter / Exit easing aliases (use these for popups, modals, drawers, toasts) */
+$easing_enter: $ease_out_expo;                 // 감속 진입
+$easing_exit:  cubic-bezier(0.4, 0, 1, 1);     // 가속 퇴출
 
 /* Material / Emphasized */
 $transition_emphasized: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,6 +27,12 @@ $transition_fade: 0.15s ease-in-out;
 $transition_slide: 0.25s $ease_out_expo;
 $transition_scale: 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 $transition_state: 0.18s ease-in-out;
+
+/* Enter / Exit pairs (퇴출은 진입보다 짧게가 관례) */
+$transition_enter_fast: 0.15s $easing_enter;
+$transition_enter_base: 0.2s  $easing_enter;
+$transition_exit_fast:  0.12s $easing_exit;
+$transition_exit_base:  0.15s $easing_exit;
 
 /* Modern/Tech Transitions */
 $transition_smooth: 0.4s $ease_out_expo;

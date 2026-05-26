@@ -4,15 +4,18 @@
  */
 
 @use "../styles/token" as token;
-@use "sass:color";
 
 /* ========================================
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-  /* Colors - Brand */
+  /* Colors - Brand (양 테마 검정/흰 고정 — Button --primary 등 의도된 다크 fill) */
   --bt-color-primary: #{token.$color_brand_primary};
   --bt-color-on-primary: #{token.$color_brand_on_primary};
+
+  /* Colors - Accent (light=검정/dark=흰 자동 반전 — indicator/checked/focus 강조) */
+  --bt-color-accent: #{token.$color_accent_default};
+  --bt-color-accent-on-surface: #{token.$color_accent_on_surface};
 
   /* Colors - Background */
   --bt-color-background: #{token.$color_bg_solid};
@@ -45,7 +48,7 @@
   /* Colors - State */
   --bt-color-hover: #{token.$color_state_hover_on_light};
   --bt-color-pressed: #{token.$color_state_pressed_on_light};
-  --bt-color-primary-hover: #{color.adjust(token.$color_brand_primary, $lightness: 15%)};
+  --bt-color-primary-hover: #{token.$color_base_neutral_800}; // brand_primary lighten 15% 근사 (CSS var와 SCSS color.adjust 호환 X)
 
   /* Colors - Overlay */
   --bt-color-overlay: #{token.$color_bg_overlay};
@@ -193,7 +196,7 @@
     color: var(--bt-color-text-primary);
 
     &:hover:not(:disabled) {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--bt-color-hover);
     }
 
     &:active:not(:disabled) {
@@ -206,7 +209,7 @@
     color: var(--bt-color-background);
 
     &:hover:not(:disabled) {
-      background: #{color.adjust(token.$color_status_error, $lightness: -8%)};
+      background: color-mix(in srgb, var(--bt-color-error) 92%, #000);
     }
 
     &:active:not(:disabled) {
@@ -278,8 +281,8 @@
 
       &:focus-visible {
         outline: none;
-        border-color: var(--bt-color-primary);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        border-color: var(--bt-color-accent);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -289,9 +292,9 @@
 
       &:focus-visible {
         outline: none;
-        border-color: var(--bt-color-primary);
+        border-color: var(--bt-color-accent);
         background: var(--bt-color-background);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -422,7 +425,7 @@
   /* States */
   &__input:focus-visible + .bt-checkbox__box {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:disabled + .bt-checkbox__box,
@@ -432,8 +435,8 @@
   }
 
   &__input:checked + .bt-checkbox__box {
-    background: var(--bt-color-primary);
-    border-color: var(--bt-color-primary);
+    background: var(--bt-color-accent);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:checked + .bt-checkbox__box::after {
@@ -443,7 +446,7 @@
     top: 50%;
     width: 0.28rem;
     height: 0.55rem;
-    border: 2px solid var(--bt-color-background);
+    border: 2px solid var(--bt-color-accent-on-surface);
     border-top: 0;
     border-left: 0;
     transform: translate(-50%, -58%) rotate(45deg);
@@ -514,11 +517,12 @@
   /* States */
   &__input:focus-visible + .bt-radio__dot {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &__input:checked + .bt-radio__dot {
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
+    border-width: 2px;
   }
 
   &__input:checked + .bt-radio__dot::after {
@@ -529,7 +533,7 @@
     width: 60%;
     height: 60%;
     transform: translate(-50%, -50%);
-    background: var(--bt-color-primary);
+    background: var(--bt-color-accent);
     border-radius: 9999px;
   }
 
@@ -568,11 +572,12 @@
   }
 
   &--on {
-    background: var(--bt-color-primary);
+    background: var(--bt-color-accent);
 
     .bt-toggle__thumb {
       width: 20px;
       height: 20px;
+      background: var(--bt-color-accent-on-surface);
       transform: translateX(16px);
     }
   }
@@ -657,8 +662,8 @@
       }
 
       &.is-open {
-        border-color: var(--bt-color-primary);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        border-color: var(--bt-color-accent);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -668,8 +673,8 @@
 
       &.is-open {
         background: var(--bt-color-background);
-        border-color: var(--bt-color-primary);
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+        border-color: var(--bt-color-accent);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
       }
     }
 
@@ -794,6 +799,7 @@
   }
 
   &__panel {
+    position: relative; // close button 의 absolute 기준
     background: var(--bt-color-background);
     border-radius: var(--bt-radius-lg);
     box-shadow: var(--bt-elevation-3);
@@ -803,11 +809,40 @@
 
   &__header {
     padding: var(--bt-spacing-lg);
+    padding-right: calc(var(--bt-spacing-lg) + 32px); // close 버튼 겹침 방지
     border-bottom: 1px solid var(--bt-color-border);
     color: var(--bt-color-text-primary);
     font-size: var(--bt-font-size-xl);
     font-weight: var(--bt-font-weight-semibold);
     line-height: 1.3;
+  }
+
+  &__close {
+    position: absolute;
+    top: var(--bt-spacing-md);
+    right: var(--bt-spacing-md);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--bt-color-text-tertiary);
+    border-radius: var(--bt-radius-md);
+    cursor: pointer;
+    transition: background var(--bt-transition-fast),
+                color var(--bt-transition-fast);
+
+    &:hover {
+      background: var(--bt-color-hover);
+      color: var(--bt-color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--bt-color-border-light);
+    }
   }
 
   &__body {
@@ -932,7 +967,7 @@
   box-sizing: border-box;
   border-radius: 50%;
   border: 2px solid var(--bt-color-border);
-  border-top-color: var(--bt-color-primary);
+  border-top-color: var(--bt-color-accent);
   animation: bt-spinner-spin 0.8s linear infinite;
 
   &--sm { width: 16px; height: 16px; }
@@ -1063,14 +1098,14 @@
     background-repeat: no-repeat;
 
     &:hover:not(:disabled) {
-      border-color: var(--bt-color-primary);
+      border-color: var(--bt-color-accent);
       background-color: var(--bt-color-background-secondary);
     }
 
     &:focus-visible {
       outline: none;
-      border-color: var(--bt-color-primary);
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+      border-color: var(--bt-color-accent);
+      box-shadow: 0 0 0 3px var(--bt-color-border-light);
     }
 
     &:disabled {
@@ -1129,7 +1164,7 @@
 
   &__control:focus-visible + .bt-file-input__label {
     box-shadow: 0 0 0 3px var(--bt-color-border-light);
-    border-color: var(--bt-color-primary);
+    border-color: var(--bt-color-accent);
   }
 
   &--disabled {

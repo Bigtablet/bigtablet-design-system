@@ -1,0 +1,170 @@
+@use "src/styles/token" as token;
+
+.file_input {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+
+  &:hover .file_input_label {
+    border-color: token.$color_border_hover;
+    cursor: pointer;
+  }
+
+  &_control {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &_label {
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_md;
+    background: token.$color_bg_solid;
+
+    padding: token.$spacing_8 token.$spacing_16;
+
+    @include token.body_medium;
+    color: token.$color_text_heading;
+
+    transition: background token.$transition_base, border-color token.$transition_base,
+    box-shadow token.$transition_base;
+  }
+
+  &_control:focus-visible + .file_input_label {
+    box-shadow: token.$focus_ring;
+    border-color: token.$color_brand_primary;
+  }
+
+  &_helper {
+    display: block;
+    margin-top: token.$spacing_4;
+    @include token.label_small;
+    color: token.$color_text_body;
+  }
+
+  &_preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_8;
+    margin-top: token.$spacing_8;
+  }
+
+  &_preview_img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: token.$radius_md;
+    border: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  &_disabled {
+    cursor: not-allowed;
+
+    .file_input_control {
+      cursor: not-allowed;
+    }
+
+    .file_input_label {
+      opacity: token.$opacity_38;
+      cursor: not-allowed;
+    }
+
+    &:hover .file_input_label {
+      border-color: token.$color_border_default;
+    }
+  }
+
+  // ── Preview variant — 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴) ──
+
+  &_variant_preview {
+    display: inline-block; // root flex column 오버라이드. label 이 주된 박스.
+    position: relative;
+
+    .file_input_label {
+      // 단순 block — 안의 empty span / img 가 각자 100% 채움
+      display: block;
+      padding: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      border-style: dashed;
+      border-width: 2px;
+      cursor: pointer;
+      // width/height 는 inline style 로 컨트롤 (previewSize)
+    }
+
+    &:hover .file_input_label {
+      background: token.$color_state_hover_on_light;
+    }
+
+    // Filled — 이미지 있을 때: solid border (이미지 꽉 채움)
+    &.file_input_variant_preview_filled .file_input_label {
+      border-style: solid;
+      background: transparent;
+    }
+
+    .file_input_preview_image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .file_input_preview_empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      gap: token.$spacing_8;
+      padding: token.$spacing_16;
+      box-sizing: border-box;
+      color: token.$color_text_caption;
+
+      &_text {
+        @include token.body_small;
+        text-align: center;
+      }
+    }
+
+    // 우상단 X 제거 버튼
+    .file_input_preview_remove {
+      position: absolute;
+      top: token.$spacing_8;
+      right: token.$spacing_8;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: token.$radius_full;
+      background: token.$color_bg_solid;
+      color: token.$color_text_heading;
+      box-shadow: token.$elevation_level1;
+      cursor: pointer;
+      z-index: 1;
+      transition:
+        background token.$transition_fast,
+        transform token.$transition_fast;
+
+      &:hover {
+        background: token.$color_state_hover_on_light;
+        transform: scale(1.05);
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: token.$focus_ring;
+      }
+    }
+
+    // helper text 박스 아래 정렬
+    .file_input_helper {
+      display: block;
+    }
+  }
+}

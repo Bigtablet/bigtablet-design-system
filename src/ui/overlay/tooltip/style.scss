@@ -1,0 +1,61 @@
+@use "src/styles/token" as token;
+
+.tooltip_wrapper {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle; // baseline 정렬로 인한 미세 offset 제거
+}
+
+// 위치 정렬 wrapper — placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// 안의 .tooltip 은 spring 으로 entrance transform 사용 — 두 transform context 분리해서 충돌 X.
+.tooltip_position {
+  position: absolute;
+  z-index: token.$z_level5;
+  pointer-events: none;
+  display: block;
+  width: max-content; // 내부 .tooltip 의 max-content 와 일치 — translateX(-50%) 정확
+
+  &.tooltip_placement_top {
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.tooltip_placement_bottom {
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.tooltip_placement_left {
+    right: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.tooltip_placement_right {
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.tooltip {
+  display: block; // 정렬 quirk 제거
+  background: token.$color_accent_strong;
+  color: token.$color_accent_on_surface;
+  padding: 6px 10px;
+  border-radius: token.$radius_sm;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: token.$font_weight_medium;
+  // 긴 텍스트 wrap 허용 + 다중 라인 중앙 정렬
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: keep-all; // 한글 어절 단위 줄바꿈
+  text-align: center;
+  box-shadow: token.$elevation_level2;
+  width: max-content; // 짧은 텍스트는 폭 자동, 긴 텍스트는 max-width 까지
+  max-width: 240px;
+  will-change: transform, opacity;
+}

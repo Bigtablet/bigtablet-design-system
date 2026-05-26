@@ -1,0 +1,34 @@
+@use "src/styles/token" as token;
+
+.section {
+  width: 100%;
+
+  // spacing variants (vertical padding)
+  &_spacing_xs { padding-block: token.$spacing_32; }
+  &_spacing_sm { padding-block: token.$spacing_48; }
+  &_spacing_md {
+    padding-block: token.$spacing_40;
+    @include token.from_medium   { padding-block: token.$spacing_48; }
+    @include token.from_expanded { padding-block: 64px; }
+    @include token.from_large    { padding-block: 64px; }
+  }
+  &_spacing_lg {
+    padding-block: token.$spacing_48;
+    @include token.from_medium   { padding-block: 64px; }
+    @include token.from_expanded { padding-block: 96px; }
+    @include token.from_large    { padding-block: 96px; }
+  }
+  &_spacing_xl {
+    padding-block: 64px;
+    @include token.from_medium   { padding-block: 96px; }
+    @include token.from_expanded { padding-block: 128px; }
+    @include token.from_large    { padding-block: 128px; }
+  }
+
+  // background variants
+  &_bg_default     { background: token.$color_bg_solid; }
+  &_bg_dim         { background: token.$color_bg_solid_dim; }
+  &_bg_accent      { background: token.$color_accent_subtle; }
+  &_bg_navy        { background: token.$color_accent_default; color: #fff; }
+  &_bg_transparent { background: transparent; }
+}

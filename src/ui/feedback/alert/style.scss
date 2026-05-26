@@ -1,0 +1,86 @@
+@use "src/styles/token" as token;
+
+.alert {
+  &_overlay {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: token.$color_bg_overlay;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: token.$z_level5;
+    will-change: opacity;
+  }
+
+  &_modal {
+    background: token.$color_bg_solid;
+    border-radius: token.$radius_lg;
+    min-width: 320px;
+    max-width: 480px;
+    box-shadow: token.$elevation_level4;
+    will-change: transform, opacity;
+    overflow: hidden;
+  }
+
+  &_header {
+    display: flex;
+    align-items: flex-start;
+    gap: token.$spacing_8;
+    padding: token.$spacing_20 token.$spacing_20 token.$spacing_4;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+
+    &_info    { color: token.$color_status_info; }
+    &_success { color: token.$color_status_success; }
+    &_warning { color: token.$color_status_warning; }
+    &_error   { color: token.$color_status_error; }
+  }
+
+  &_title {
+    flex: 1;
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+  }
+
+  // ── Variant title + primary button colors ───────────────────────────────
+
+  &_variant_info {
+    .alert_title { color: token.$color_status_info; }
+    .alert_actions .button_variant_filled { background: token.$color_status_info; }
+  }
+  &_variant_success {
+    .alert_title { color: token.$color_status_success; }
+    .alert_actions .button_variant_filled { background: token.$color_status_success; }
+  }
+  &_variant_warning {
+    .alert_title { color: token.$color_status_warning; }
+    .alert_actions .button_variant_filled { background: token.$color_status_warning; }
+  }
+  &_variant_error {
+    .alert_title { color: token.$color_status_error; }
+    .alert_actions .button_variant_filled { background: token.$color_status_error; }
+  }
+
+  &_message {
+    @include token.body_medium;
+    color: token.$color_text_body;
+    padding: 0 token.$spacing_20 token.$spacing_20;
+  }
+
+  &_actions {
+    display: flex;
+    gap: token.$spacing_8;
+    align-items: center;
+    padding: 0 token.$spacing_20 token.$spacing_20;
+
+    &_left   { justify-content: flex-start; }
+    &_center { justify-content: center; }
+    &_right  { justify-content: flex-end; }
+  }
+}

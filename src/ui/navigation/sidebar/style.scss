@@ -1,0 +1,234 @@
+@use "src/styles/token" as token;
+
+.sidebar {
+  position: relative; // floating collapse btn anchor
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  // 흰 bg + 우측 border 1px — 다른 페이지 디자인과 통일
+  background: token.$color_bg_solid;
+  color: token.$color_text_heading;
+  border-right: token.$border_width_standard solid token.$color_border_default;
+  transition: width token.$transition_base;
+  flex-shrink: 0;
+
+  &_header {
+    padding: token.$spacing_20 token.$spacing_16;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    transition: padding token.$transition_base;
+    overflow: hidden;
+
+    // ── Header layers — full lockup (header) + mark only (headerCollapsed)
+    //    크로스페이드 스택. 같은 자리에 absolute 로 겹쳐 opacity 로 토글.
+    &_layers {
+      position: relative;
+      width: 100%;
+      min-height: 28px; // favicon 크기 보장 (collapsed 시 헤더 높이 유지)
+    }
+
+    &_layer {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      transition: opacity token.$transition_base;
+      pointer-events: none;
+    }
+
+    &_layer_full {
+      left: 0;
+      opacity: 1;
+    }
+
+    &_layer_mark {
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+  }
+
+  &_nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: token.$spacing_12 token.$spacing_8;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+  }
+
+  &_footer {
+    padding: token.$spacing_12 token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+    flex-shrink: 0;
+  }
+
+  // ── Section ──────────────────────────────────────────────────────────
+
+  &_section {
+    position: relative; // collapsed 시 section_label visually-hidden 의 anchor
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+    padding: token.$spacing_8 0;
+
+    &_label {
+      @include token.label_small_medium;
+      letter-spacing: token.$letter_spacing_tight;
+      color: token.$color_text_caption;
+      padding: token.$spacing_4 token.$spacing_12;
+      text-transform: uppercase;
+    }
+  }
+
+  // ── Item ─────────────────────────────────────────────────────────────
+
+  &_item {
+    position: relative; // collapsed 시 label visually-hidden 의 anchor
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_12;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: token.$color_text_body;
+    padding: token.$spacing_8 token.$spacing_12;
+    border-radius: token.$radius_md;
+    cursor: pointer;
+    text-decoration: none;
+    @include token.label_large_medium;
+    transition:
+      background token.$duration_fast token.$easing_enter,
+      color token.$duration_fast token.$easing_enter;
+
+    &:hover:not(.sidebar_item_active) {
+      background: token.$color_state_hover_on_light;
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    // active — 검정 fill + 흰 텍스트 (brand 강조)
+    &_active {
+      background: token.$color_brand_primary;
+      color: token.$color_brand_on_primary;
+    }
+
+    &_icon {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+    }
+
+    &_label {
+      flex: 1;
+      text-align: start;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: opacity token.$transition_fast;
+    }
+
+    &_trailing {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  // ── Collapse 토글 버튼 ───────────────────────────────────────────────
+
+  // ── Floating collapse 토글 (sidebar 우측 외곽) ────────────────────────
+
+  &_collapse_btn {
+    position: absolute;
+    top: token.$spacing_24;
+    right: -12px; // 절반 sidebar 밖으로
+    z-index: token.$z_level1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: 50%;
+    background: token.$color_bg_solid;
+    color: token.$color_text_caption;
+    cursor: pointer;
+    box-shadow: token.$elevation_level1;
+    transition:
+      background token.$transition_fast,
+      color token.$transition_fast,
+      border-color token.$transition_fast,
+      transform token.$transition_fast;
+
+    &:hover {
+      background: token.$color_brand_primary;
+      color: token.$color_brand_on_primary;
+      border-color: token.$color_brand_primary;
+      transform: scale(1.05);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── Collapsed state ─────────────────────────────────────────────────
+
+  &_collapsed {
+    // collapsed 헤더: favicon center
+    .sidebar_header {
+      padding: token.$spacing_16 token.$spacing_8;
+      justify-content: center;
+    }
+
+    // Layer 크로스페이드 스왑
+    .sidebar_header_layer_full {
+      opacity: 0;
+    }
+
+    .sidebar_header_layer_mark {
+      opacity: 1;
+    }
+
+    // 텍스트/trailing 은 visually-hidden (SR 접근 유지, flex 흐름에서 제외).
+    // 흐름에서 빠지므로 icon 이 진짜 중앙에 옴.
+    .sidebar_item_label,
+    .sidebar_item_trailing,
+    .sidebar_section_label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .sidebar_section {
+      padding: token.$spacing_4 0;
+    }
+
+    .sidebar_item {
+      justify-content: center;
+      padding: token.$spacing_8;
+      gap: 0; // hidden label 의 gap 제거 → 아이콘 정확히 중앙
+    }
+  }
+}

@@ -77,48 +77,46 @@
 		}
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.10",
-		"@commitlint/cli": "^20.5.0",
-		"@commitlint/core": "^20.5.3",
-		"@material-symbols/svg-300": "^0.44.5",
-		"@material-symbols/svg-400": "^0.44.5",
+		"@biomejs/biome": "^2.4.15",
+		"@commitlint/cli": "^21.0.1",
+		"@commitlint/core": "^21.0.1",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
-		"@semantic-release/github": "^12.0.1",
-		"@semantic-release/npm": "^13.1.1",
+		"@semantic-release/github": "^12.0.8",
+		"@semantic-release/npm": "^13.1.5",
 		"@size-limit/preset-small-lib": "^12.1.0",
-		"@storybook/addon-a11y": "^10.3.6",
-		"@storybook/addon-docs": "^10.3.6",
-		"@storybook/addon-vitest": "^10.3.6",
-		"@storybook/react": "^10.3.6",
-		"@storybook/react-vite": "^10.3.6",
+		"@storybook/addon-a11y": "^10.4.0",
+		"@storybook/addon-docs": "^10.4.0",
+		"@storybook/addon-vitest": "^10.4.0",
+		"@storybook/react": "^10.4.0",
+		"@storybook/react-vite": "^10.4.0",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
-		"@types/node": "^24",
-		"@types/react": "^19.2.14",
+		"@types/node": "^25.9.1",
+		"@types/react": "^19.2.15",
 		"@types/react-dom": "^19.2.3",
-		"@vitest/browser-playwright": "^4.1.5",
-		"@vitest/coverage-v8": "^4.1.5",
-		"chromatic": "^16.9.0",
+		"@vitest/browser-playwright": "^4.1.6",
+		"@vitest/coverage-v8": "^4.1.6",
+		"chromatic": "^17.0.0",
 		"conventional-changelog-conventionalcommits": "^9.3.1",
 		"esbuild-sass-plugin": "^3.7.0",
 		"husky": "^9.1.7",
 		"jsdom": "^29.1.1",
-		"lucide-react": "^1.14.0",
-		"next": "^16.2.5",
-		"playwright": "^1.59.1",
+		"lucide-react": "^1.16.0",
+		"next": "^16.2.6",
+		"playwright": "^1.60.0",
 		"react": "^19.2.6",
 		"react-dom": "^19.2.6",
 		"sass-embedded": "^1.99.0",
-		"semantic-release": "^25.0.1",
+		"semantic-release": "^25.0.3",
 		"size-limit": "^12.1.0",
-		"storybook": "^10.3.6",
-		"tsup": "^8.5.0",
-		"tsx": "^4.21.0",
+		"storybook": "^10.4.0",
+		"tsup": "^8.5.1",
+		"tsx": "^4.22.3",
 		"typescript": "^6.0.3",
-		"vite": "^6.4.2",
-		"vitest": "^4.1.5"
+		"vite": "^8.0.13",
+		"vitest": "^4.1.6"
 	},
 	"publishConfig": {
 		"access": "public",
@@ -127,7 +125,7 @@
 	"size-limit": [
 		{
 			"path": "dist/index.js",
-			"limit": "32 kB"
+			"limit": "45 kB"
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
@@ -144,5 +142,8 @@
 			"handlebars": "^4.7.9",
 			"postcss": "^8.5.10"
 		}
+	},
+	"dependencies": {
+		"@react-spring/web": "^10.0.3"
 	}
 }

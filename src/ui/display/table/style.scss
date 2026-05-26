@@ -1,0 +1,108 @@
+@use "src/styles/token" as token;
+
+.table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: token.$font_family_primary;
+}
+
+.table_thead {
+  background: token.$color_bg_solid_dim;
+  border-bottom: token.$border_width_standard solid token.$color_border_default;
+}
+
+.table_th {
+  padding: token.$spacing_12 token.$spacing_16;
+  text-align: start;
+  color: token.$color_text_heading;
+  white-space: nowrap;
+  @include token.label_large_medium;
+}
+
+.table_tbody {
+  .table_row {
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+    transition: background-color token.$transition_fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .table_row_hoverable:hover {
+    background: token.$color_state_hover_on_light;
+  }
+
+  .table_row_clickable {
+    cursor: pointer;
+
+    &:active {
+      background: token.$color_state_pressed_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      background: token.$color_state_focus_on_light;
+    }
+  }
+
+  .table_row_skeleton {
+    pointer-events: none;
+  }
+}
+
+.table_td {
+  padding: token.$spacing_12 token.$spacing_16;
+  color: token.$color_text_body;
+  vertical-align: middle;
+  @include token.body_small;
+}
+
+.table_align_left   { text-align: start; }
+.table_align_center { text-align: center; }
+.table_align_right  { text-align: end; }
+
+// ── Size variants ─────────────────────────────────────────────────────────
+
+.table_size_sm {
+  .table_th, .table_td {
+    padding: token.$spacing_8 token.$spacing_12;
+    @include token.label_medium;
+  }
+  .table_th { @include token.label_medium_medium; }
+}
+
+.table_size_lg {
+  .table_th, .table_td {
+    padding: token.$spacing_16 token.$spacing_20;
+  }
+  .table_th { @include token.body_large_medium; }
+  .table_td { @include token.body_medium; }
+}
+
+// ── Sticky header ─────────────────────────────────────────────────────────
+
+.table_sticky_header {
+  .table_thead {
+    position: sticky;
+    top: 0;
+    z-index: token.$z_level1;
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────
+
+.table_empty {
+  padding: token.$spacing_40 token.$spacing_16;
+  text-align: center;
+  color: token.$color_text_caption;
+  @include token.body_small;
+}

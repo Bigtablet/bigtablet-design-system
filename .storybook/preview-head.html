@@ -5,6 +5,18 @@
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
 />
 
+<script>
+    // Storybook preview iframe 안의 anchor 클릭을 차단 — demo 환경에서 실제 navigate 방지.
+    // target="_blank" 등 명시적 외부 링크만 허용.
+    document.addEventListener("click", (e) => {
+        const anchor = e.target.closest("a[href]");
+        if (anchor && !anchor.target) {
+            e.preventDefault();
+            console.log("[Storybook] navigation blocked:", anchor.getAttribute("href"));
+        }
+    }, true);
+</script>
+
 <style>
     body,
     body * {
@@ -12,5 +24,12 @@
         system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
         "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol", sans-serif;
+    }
+
+    /* Dark mode: body background & text follow CSS custom properties */
+    body {
+        background-color: var(--bt-color-bg-solid, #ffffff);
+        color: var(--bt-color-text-heading, #121212);
+        transition: background-color 0.2s ease, color 0.2s ease;
     }
 </style>

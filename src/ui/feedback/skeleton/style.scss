@@ -1,0 +1,45 @@
+@use "src/styles/token" as token;
+
+.skeleton {
+  display: block;
+  background: token.$skeleton_gradient;
+  background-size: 400% 100%;
+  border-radius: token.$skeleton_radius_md;
+  animation: skeleton_loading token.$skeleton_animation_duration token.$skeleton_animation_timing infinite;
+  will-change: background-position;
+
+  // ── Variants ──────────────────────────────────────────────────────────
+
+  &_variant_text {
+    width: 100%;
+    height: token.$skeleton_height_md;
+  }
+
+  &_variant_title {
+    width: 100%;
+    height: token.$skeleton_height_xl;
+  }
+
+  &_variant_avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: token.$skeleton_radius_lg;
+  }
+
+  &_variant_rect {
+    width: 100%;
+    height: 5rem;
+  }
+
+  // ── Radius overrides ──────────────────────────────────────────────────
+
+  &_radius_sm   { border-radius: token.$skeleton_radius_sm; }
+  &_radius_md   { border-radius: token.$skeleton_radius_md; }
+  &_radius_lg   { border-radius: token.$skeleton_radius_lg; }
+  &_radius_full { border-radius: token.$radius_full; }
+}
+
+@keyframes skeleton_loading {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}

@@ -32,7 +32,7 @@ function SkeletonBlock({
 }
 
 const meta: Meta = {
-	title: "Foundation/skeleton",
+	title: "Foundation/Skeleton",
 	tags: ["autodocs"],
 	parameters: {
 		chromatic: { disableSnapshot: true },

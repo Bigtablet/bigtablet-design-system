@@ -110,6 +110,107 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 - Foundation stories: `foundation/{token-name}`
 - Include bilingual descriptions (Korean/English)
 
+### Animation (Required for Interactive Components)
+
+**모든 신규 인터랙티브 컴포넌트는 자연스러운 애니메이션을 기본 포함해야 한다.** 정적 스타일만 작성하지 말 것.
+
+#### 1. Motion 토큰 사용 (절대 하드코딩 X)
+
+```scss
+@use "src/styles/token" as token;
+
+// Duration only (easing 따로 조합할 때)
+token.$duration_fast        // 0.1s
+token.$duration_base        // 0.2s
+token.$duration_slow        // 0.3s
+
+// Composite shorthand (duration + ease-in-out 기본 easing 포함)
+token.$transition_fast      // 0.1s ease-in-out — color/border 작은 변화
+token.$transition_base      // 0.2s ease-in-out — bg/transform 일반 인터랙션
+token.$transition_slow      // 0.3s ease-in-out — panel 펼침 등
+
+// Enter/Exit pair (asymmetric — 진입은 부드럽고 퇴출은 빠르게)
+token.$transition_enter_fast  // 0.15s easing_enter
+token.$transition_enter_base  // 0.2s
+token.$transition_exit_fast   // 0.12s easing_exit
+token.$transition_exit_base   // 0.15s
+
+// Easing
+token.$easing_enter  // cubic-bezier(0.16, 1, 0.3, 1)  — out-expo (감속 진입)
+token.$easing_exit   // cubic-bezier(0.4, 0, 1, 1)     — ease-in (가속 퇴출)
+```
+
+**⚠️ 중요**: composite 토큰(`$transition_*`)은 easing이 이미 포함되어 있음.
+- ✅ `transition: bg token.$transition_base;` (composite 단독)
+- ✅ `transition: bg token.$duration_base token.$easing_enter;` (duration + easing 조합)
+- ❌ `transition: bg token.$transition_base token.$easing_enter;` (easing 두 번 → CSS 파싱 실패)
+
+#### 2. 인터랙션별 표준 패턴
+
+| 인터랙션 | duration | easing | 적용 속성 |
+|---------|----------|--------|----------|
+| Hover bg | `transition_fast` | linear | `background` |
+| Focus ring | `transition_fast` | linear | `box-shadow` |
+| Button press | `transition_fast` | `easing_exit` | `transform`, `bg` |
+| Chevron 회전 | `transition_base` | `easing_enter` | `transform` |
+| Panel 펼침/닫힘 | `transition_base` | `easing_enter` | `grid-template-rows`, `max-height` |
+| Modal/Toast 진입 | `transition_enter_base` | `easing_enter` | `opacity`, `transform` |
+| Modal/Toast 퇴출 | `transition_exit_fast` | `easing_exit` | `opacity`, `transform` |
+| Tooltip/Menu pop | `useSpringPresence` hook | spring | `opacity`, `scale` |
+
+#### 3. Height auto transition
+
+`max-height` 트릭 대신 **`grid-template-rows: 0fr → 1fr`** 사용 (modern CSS, height 정확):
+
+```scss
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows token.$transition_base token.$easing_enter;
+
+  &_open { grid-template-rows: 1fr; }
+}
+.panel_wrap {
+  overflow: hidden;  // 닫힌 상태에서 자식 자르기
+  min-height: 0;     // grid item 기본 min-content 해제
+}
+```
+
+(참고: padding이 있는 content를 panel 직접 자식으로 두면 닫힌 상태에서도 padding만큼 공간 남음 — 반드시 `panel > wrap > content` 구조로.)
+
+#### 4. Reduced motion 필수 준수
+
+WCAG 2.1 SC 2.3.3 — `prefers-reduced-motion: reduce` 사용자 위해 모든 컴포넌트 SCSS 끝에:
+
+```scss
+@media (prefers-reduced-motion: reduce) {
+  .component_animated_part {
+    transition: none;
+    animation: none;
+  }
+}
+```
+
+#### 5. React 컴포넌트의 진입/퇴출 애니메이션
+
+`unmount` 시점에 exit animation을 위해 `useSpringPresence` hook 사용 (`src/utils/use-spring-presence.ts`). Modal/Toast/Tooltip/Menu 패턴.
+
+```tsx
+import { useSpringPresence } from "../../utils";
+
+const { shouldRender, style } = useSpringPresence({ open });
+if (!shouldRender) return null;
+return <div style={style}>...</div>;
+```
+
+#### 6. 금지 사항
+
+- ❌ 하드코딩 `transition: 0.2s ease;` (반드시 token 사용)
+- ❌ `transition: all` (특정 속성만 명시 — performance)
+- ❌ `animation: ... infinite` (loading spinner 외 금지)
+- ❌ `height: auto` 직접 transition (안 됨 — grid trick 사용)
+- ❌ 1초 이상 transition (지루함)
+
 ## Important Files
 
 - `tsup.config.ts` - Build config (dual bundles for React/Next.js + Vanilla)
@@ -263,6 +364,9 @@ dist/vanilla/
 
 <div id="my-modal" class="bt-modal" data-bt-modal>
   <div class="bt-modal__panel" style="width: 480px;">
+    <button class="bt-modal__close" data-modal-close aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
     <div class="bt-modal__header">Title</div>
     <div class="bt-modal__body">Content</div>
     <div class="bt-modal__footer">
