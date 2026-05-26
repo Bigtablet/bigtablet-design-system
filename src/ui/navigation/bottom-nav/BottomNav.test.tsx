@@ -105,6 +105,27 @@ describe("BottomNav", () => {
 		expect(onClick).not.toHaveBeenCalled();
 	});
 
+	it("disabled prop on anchor — aria-disabled + tabIndex -1 + click blocked", () => {
+		const onClick = vi.fn();
+		render(
+			<BottomNav>
+				<BottomNavItem
+					as="a"
+					href="/orders"
+					icon={<Home />}
+					label="주문"
+					disabled
+					onClick={onClick}
+				/>
+			</BottomNav>,
+		);
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).toHaveAttribute("tabindex", "-1");
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
 	it("passes additional props through (data attribute)", () => {
 		render(
 			<BottomNav data-testid="nav">

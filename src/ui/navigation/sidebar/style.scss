@@ -239,6 +239,17 @@
 // CSS-only 변환 — JS / Context / matchMedia 불필요, SSR 안전, hydration mismatch X.
 
 @media (max-width: 599px) {
+  // 소비처 layout 계산용 CSS 변수 노출 — Sidebar 가 BottomBar 로 변신했을 때
+  // main content 끝에 `padding-bottom: var(--bt-sidebar-total-height)` 등으로 가림 방지.
+  // (desktop 에선 정의 X — Sidebar 가 fixed bottom 이 아니라 padding 불필요)
+  :root {
+    --bt-sidebar-height: 56px;
+    --bt-sidebar-safe-area: env(safe-area-inset-bottom, 0px);
+    --bt-sidebar-total-height: calc(
+      var(--bt-sidebar-height) + var(--bt-sidebar-safe-area)
+    );
+  }
+
   .sidebar:not(.sidebar_static) {
     // BottomBar 본체 — fixed bottom, 가로 flex
     position: fixed;
@@ -251,7 +262,7 @@
     border-top: token.$border_width_standard solid token.$color_border_default;
     box-shadow: token.$elevation_level2;
     z-index: token.$z_level2;
-    padding-bottom: env(safe-area-inset-bottom, 0px); // iOS 홈 인디케이터
+    padding-bottom: var(--bt-sidebar-safe-area); // iOS 홈 인디케이터
 
     // 변신 시 숨겨질 영역들 — header / footer / 섹션 라벨 / collapse btn
     .sidebar_header,

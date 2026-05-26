@@ -74,9 +74,16 @@ export const BottomNavItem = ({
 	href,
 	className,
 	type,
+	disabled,
+	onClick,
 	...props
 }: BottomNavItemProps) => {
-	const classes = cn("bottom_nav_item", active && "bottom_nav_item_active", className);
+	const classes = cn(
+		"bottom_nav_item",
+		active && "bottom_nav_item_active",
+		disabled && "bottom_nav_item_disabled",
+		className,
+	);
 	const ariaCurrent = active ? "page" : undefined;
 
 	const content = (
@@ -90,13 +97,23 @@ export const BottomNavItem = ({
 	);
 
 	if (as === "a" && href) {
+		// HTML 의 `<a disabled>` 는 무효 — `aria-disabled` + `tabIndex={-1}` + `preventDefault` 로 접근성 있게 비활성화.
 		return (
 			// biome-ignore lint/a11y/useValidAnchor: navigation link with optional active state
 			<a
 				className={classes}
 				href={href}
 				aria-current={ariaCurrent}
-				{...(props as Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type">)}
+				aria-disabled={disabled ? "true" : undefined}
+				tabIndex={disabled ? -1 : undefined}
+				onClick={(e) => {
+					if (disabled) {
+						e.preventDefault();
+						return;
+					}
+					(onClick as ((evt: React.MouseEvent<HTMLAnchorElement>) => void) | undefined)?.(e);
+				}}
+				{...(props as Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type" | "onClick">)}
 			>
 				{content}
 			</a>
@@ -107,7 +124,9 @@ export const BottomNavItem = ({
 		<button
 			type={type ?? "button"}
 			className={classes}
+			disabled={disabled}
 			aria-current={ariaCurrent}
+			onClick={onClick}
 			{...props}
 		>
 			{content}

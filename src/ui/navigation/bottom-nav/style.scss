@@ -61,6 +61,14 @@
       box-shadow: token.$focus_ring;
     }
 
+    // disabled — 시각 흐림 + 인터랙션 차단 (anchor 케이스는 `_disabled` modifier 도 매칭)
+    &:disabled,
+    &_disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     // active — 아이콘 + 라벨 강조 (검정/흰 반전 토큰)
     &_active {
       color: token.$color_accent_default;
