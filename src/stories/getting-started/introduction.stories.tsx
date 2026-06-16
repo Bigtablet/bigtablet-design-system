@@ -10,7 +10,7 @@ const meta: Meta = {
 				component: `
 ### Bigtablet Design System
 
-서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
+A design system that manages the **UI components and design tokens** used across the service. / 서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
 
 ---
 
@@ -26,11 +26,11 @@ const meta: Meta = {
 
 #### 사이드바 구조
 
-- **Getting Started** — Introduction, Installation
-- **Cookbook** — 자주 쓰는 조합 레시피 (Form / Layout / Feedback / Data)
-- **Examples** — 실전 페이지 조립 예제 (Page Composition)
-- **Foundation** — 색상, 타이포그래피, 간격 등 디자인 토큰
-- **Components** — 실제 UI 컴포넌트 (버튼, 인풋, 모달 등)
+- **Getting Started** - Introduction, Installation
+- **Cookbook** - 자주 쓰는 조합 레시피 (Form / Layout / Feedback / Data)
+- **Examples** - 실전 페이지 조립 예제 (Page Composition)
+- **Foundation** - 색상, 타이포그래피, 간격 등 디자인 토큰
+- **Components** - 실제 UI 컴포넌트 (버튼, 인풋, 모달 등)
 
 ---
 

@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### Elevation(높이 위계) 기준
 
+**Elevation** - expresses "floating" (layering) and **height hierarchy** via shadows. \`level1\` (cards) through \`level5\` (strongest, top-most layers).
+
 Elevation은 "떠 있음(레이어)"과 **높이 위계** 를 표현합니다.
 
 - **level1**: 아주 가벼운 분리 (카드, 인풋 배경)

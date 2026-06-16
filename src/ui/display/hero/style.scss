@@ -47,19 +47,11 @@
     );
   }
 
-  // Light overlay 는 항상 흰색계 표면 — 텍스트는 theme 무관 forced dark.
+  // Light overlay 는 항상 흰색계 표면 - 텍스트는 theme 무관 forced dark.
   &_overlay_light.hero_text_default {
     .hero_eyebrow  { color: rgba(0, 0, 0, 0.6); }
-    .hero_title    { color: #1A1A1A; }
+    .hero_title    { color: token.$color_brand_primary; }
     .hero_subtitle { color: rgba(0, 0, 0, 0.85); }
-  }
-
-  &_overlay_navy .hero_overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(48, 56, 65, 0) 0%,
-      rgba(48, 56, 65, 0.85) 100%
-    );
   }
 
   // ── Content area ──────────────────────────────────────────────────────
@@ -101,11 +93,11 @@
     .hero_title    { color: token.$color_brand_on_primary; }
     .hero_subtitle { color: rgba(255, 255, 255, 0.85); }
 
-    // 어두운 배경 위 버튼 — outline/text 를 흰색 계열로 강제
+    // 어두운 배경 위 버튼 - outline/text 를 흰색 계열로 강제
     .hero_actions {
       .button_variant_outline {
         border-color: rgba(255, 255, 255, 0.55);
-        color: #fff;
+        color: token.$color_brand_on_primary;
 
         &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
         &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }

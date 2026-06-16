@@ -11,7 +11,7 @@
     width: 100%;
   }
 
-  // ── Standalone label (above container) — Dropdown 패턴과 통일 ─────────────
+  // ── Standalone label (above container) - Dropdown 패턴과 통일 ─────────────
 
   &_label {
     display: block;
@@ -112,7 +112,7 @@
     color: token.$color_text_heading;
 
     &::placeholder {
-      color: token.$color_text_body; // Dropdown placeholder와 동일 (#666 — 더 진함)
+      color: token.$color_text_body; // Dropdown placeholder와 동일 (#666 - 더 진함)
     }
 
     &:disabled {
@@ -192,11 +192,12 @@
     }
 
     .text_field_label {
-      color: token.$color_status_error;
+      // surface 위 직접 텍스트 - light/dark 자동 swap (다크 모드 가독성 보장)
+      color: token.$color_status_error_on_surface;
     }
 
     .text_field_helper {
-      color: token.$color_status_error;
+      color: token.$color_status_error_on_surface;
     }
   }
 

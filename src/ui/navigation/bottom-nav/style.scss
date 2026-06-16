@@ -1,6 +1,6 @@
 @use "src/styles/token" as token;
 
-// height + safe-area 합산 — 소비처 layout 계산용 노출
+// height + safe-area 합산 - 소비처 layout 계산용 노출
 :root {
   --bt-bottom-nav-height: 56px;
   --bt-bottom-nav-safe-area: env(safe-area-inset-bottom, 0px);
@@ -25,7 +25,7 @@
   background: token.$color_bg_solid;
   border-top: token.$border_width_standard solid token.$color_border_default;
 
-  // 데스크탑에서도 fixed bottom 유지 — viewport 정책은 소비처 결정.
+  // 데스크탑에서도 fixed bottom 유지 - viewport 정책은 소비처 결정.
   // 숨기고 싶으면 wrap 후 media query 로 hidden 처리.
 
   &_item {
@@ -61,7 +61,7 @@
       box-shadow: token.$focus_ring;
     }
 
-    // disabled — 시각 흐림 + 인터랙션 차단 (anchor 케이스는 `_disabled` modifier 도 매칭)
+    // disabled - 시각 흐림 + 인터랙션 차단 (anchor 케이스는 `_disabled` modifier 도 매칭)
     &:disabled,
     &_disabled {
       opacity: 0.4;
@@ -69,7 +69,7 @@
       pointer-events: none;
     }
 
-    // active — 아이콘 + 라벨 강조 (검정/흰 반전 토큰)
+    // active - 아이콘 + 라벨 강조 (검정/흰 반전 토큰)
     &_active {
       color: token.$color_accent_default;
 
@@ -106,7 +106,7 @@
   }
 }
 
-// ── Spacer — 본문 끝에 두면 BottomNav 가 가리는 영역 보정 ──────────────────
+// ── Spacer - 본문 끝에 두면 BottomNav 가 가리는 영역 보정 ──────────────────
 
 .bottom_nav_spacer {
   height: var(--bt-bottom-nav-total-height);

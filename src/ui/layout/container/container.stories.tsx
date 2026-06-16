@@ -9,7 +9,7 @@ const meta: Meta<typeof Container> = {
 		size: {
 			control: "select",
 			options: ["sm", "md", "lg", "xl", "full"],
-			description: "max-width — sm:640 / md:768 / lg:1024 / xl:1200 / full:100%",
+			description: "max-width - sm:640 / md:768 / lg:1024 / xl:1200 / full:100%",
 		},
 		center: {
 			control: "boolean",
@@ -32,7 +32,7 @@ const meta: Meta<typeof Container> = {
 		docs: {
 			description: {
 				component: [
-					"**Container** — max-width 제한 + 반응형 좌우 패딩. 페이지 wrapper.",
+					"**Container** - max-width 제한 + 반응형 좌우 패딩. 페이지 wrapper.",
 					"",
 					"Sizes: `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1200 (기본) / `full`.",
 					"패딩 자동: <600 16, ≥600 24, ≥840 32, ≥1200 40.",

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Badge } from "../badge";
 import { ListItem } from ".";
 
 const meta: Meta<typeof ListItem> = {
@@ -22,9 +23,11 @@ const meta: Meta<typeof ListItem> = {
 		docs: {
 			description: {
 				component: `
-**ListItem** — 목록 한 항목. 슬롯형 (\`leadingElement\` / \`trailingElement\`).
+**ListItem** - A single row in a list. Slot-based (\`leadingElement\` / \`trailingElement\`). / **ListItem** - 목록 한 항목. 슬롯형.
 
-주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄+아이콘), \`onClick\` (인터랙티브).
+Key props: \`label\`, \`overline\` (small text above), \`supportingText\` (secondary text below), \`metadata\` (bottom meta), \`alignment\` (\`top\` multi-line / \`middle\` single line + icon), \`onClick\` (interactive). / 주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄+아이콘), \`onClick\` (인터랙티브).
+
+The four text slots accept **string or ReactNode** — inline \`<strong>\`, \`<a>\`, or a \`Badge\`. / 텍스트 4종 슬롯은 **string·ReactNode 모두 허용** — 인라인 \`<strong>\`, \`<a>\`, \`Badge\` 등.
 				`,
 			},
 		},
@@ -118,5 +121,34 @@ export const Interactive: Story = {
 		label: "클릭 가능한 리스트 아이템",
 		supportingText: "hover/focus/pressed 상태.",
 		onClick: () => alert("리스트 아이템 클릭!"),
+	},
+};
+
+export const RichContent: Story = {
+	name: "Rich content (ReactNode)",
+	args: {
+		overline: (
+			<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+				프로젝트
+				<Badge variant="success" appearance="soft" shape="label">
+					활성
+				</Badge>
+			</span>
+		),
+		label: (
+			<span>
+				디자인 시스템 <strong>v3.2</strong> 릴리스
+			</span>
+		),
+		supportingText: (
+			<span>
+				자세한 내용은{" "}
+				<a href="#changelog" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+					체인지로그
+				</a>
+				를 확인하세요.
+			</span>
+		),
+		metadata: "2026-06-16 · 박상민",
 	},
 };

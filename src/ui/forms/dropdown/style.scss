@@ -2,7 +2,7 @@
 
 .dropdown {
   position: relative;
-  // block-level — 부모 너비 채움. 선택값/옵션 길이와 무관하게 일정한 폭 보장.
+  // block-level - 부모 너비 채움. 선택값/옵션 길이와 무관하게 일정한 폭 보장.
   // 인라인 사용 시 부모를 inline-block + width 로 감쌀 것.
   display: flex;
   flex-direction: column;
@@ -71,7 +71,7 @@
     }
   }
 
-  // ── Standalone label (above control) — modern 패턴, 어떤 배경에서도 작동 ──
+  // ── Standalone label (above control) - modern 패턴, 어떤 배경에서도 작동 ──
 
   &_label {
     display: block;
@@ -166,7 +166,7 @@
     margin-top: token.$spacing_4;
 
     // 라이트: 흰색 (canvas 와 동일하지만 border + shadow 로 분리)
-    // 다크: bg_solid_dim (navy_800) — canvas (navy_900) 보다 한 톤 밝아 elevation
+    // 다크: bg_solid_dim (neutral_925) - canvas (neutral_950) 보다 한 톤 밝아 elevation
     background: token.$color_bg_solid;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg; // 컨트롤과 동일 radius
@@ -210,7 +210,7 @@
     background: transparent;
     color: token.$color_text_heading;
 
-    // 라벨 옆에 시각적 호흡 — supporting text 있으면 더 큼
+    // 라벨 옆에 시각적 호흡 - supporting text 있으면 더 큼
     &:has(.dropdown_option_supporting) {
       min-height: 56px;
       padding: token.$spacing_8 token.$spacing_16;

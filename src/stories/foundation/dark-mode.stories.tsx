@@ -15,6 +15,8 @@ const meta: Meta = {
 				component: `
 ### Dark Mode
 
+**Dark Mode** - Bigtablet DS supports dark mode powered by CSS Custom Properties. Set a \`data-theme\` attribute (\`light\`/\`dark\`, or omit it to follow \`prefers-color-scheme\`), or use the \`ThemeProvider\` in React.
+
 Bigtablet DS는 CSS Custom Properties 기반 dark mode를 지원합니다.
 
 #### 작동 방식
@@ -48,12 +50,12 @@ import { ThemeProvider } from "@bigtablet/design-system";
 
 | Semantic | Light | Dark |
 |----------|-------|------|
-| bg.solid | #FFFFFF | #1F2630 (navy-900) |
-| bg.solid_dim | #F4F4F4 | #303841 (navy-800) |
+| bg.solid | #FFFFFF | #0A0A0A (neutral-950) |
+| bg.solid_dim | #F4F4F4 | #141414 (neutral-925) |
 | text.heading | #121212 | #FFFFFF |
-| text.body | #666666 | #B4C2CD (navy-200) |
-| text.caption | #888888 | #999999 |
-| border.default | #E5E5E5 | #3D4852 (navy-700) |
+| text.body | #666666 | #B3B3B3 (neutral-400) |
+| text.caption | #888888 | #777777 (neutral-600) |
+| border.default | #E5E5E5 | #333333 (neutral-800) |
 
 \`brand_primary\`, \`accent.*\`, \`status.*\` 는 라이트/다크 동일 (브랜드 일관성).
 
@@ -134,7 +136,7 @@ export const Demo: Story = {
 				<div style={{ marginTop: 24, display: "grid", gap: 16, maxWidth: 480 }}>
 					<h2 style={{ margin: 0, color: "var(--bt-color-text-heading)" }}>제목 텍스트</h2>
 					<p style={{ margin: 0, color: "var(--bt-color-text-body)" }}>
-						본문 텍스트 — light/dark 모드에 따라 색이 자동 전환됩니다.
+						본문 텍스트 - light/dark 모드에 따라 색이 자동 전환됩니다.
 					</p>
 					<p style={{ margin: 0, color: "var(--bt-color-text-caption)" }}>caption 텍스트</p>
 
@@ -149,7 +151,7 @@ export const Demo: Story = {
 
 					<Card heading="카드 제목" bordered>
 						<p style={{ margin: 0, color: "var(--bt-color-text-body)" }}>
-							카드 본문 — 배경과 border가 테마에 맞춰 전환됩니다.
+							카드 본문 - 배경과 border가 테마에 맞춰 전환됩니다.
 						</p>
 					</Card>
 				</div>
@@ -163,12 +165,12 @@ export const TokenComparison: Story = {
 	parameters: { docs: { source: { code: "" } } },
 	render: () => {
 		const items = [
-			{ token: "bg.solid", lightHex: "#FFFFFF", darkHex: "#1F2630" },
-			{ token: "bg.solid_dim", lightHex: "#F4F4F4", darkHex: "#303841" },
+			{ token: "bg.solid", lightHex: "#FFFFFF", darkHex: "#0A0A0A" },
+			{ token: "bg.solid_dim", lightHex: "#F4F4F4", darkHex: "#141414" },
 			{ token: "text.heading", lightHex: "#121212", darkHex: "#FFFFFF" },
-			{ token: "text.body", lightHex: "#666666", darkHex: "#B4C2CD" },
-			{ token: "text.caption", lightHex: "#888888", darkHex: "#999999" },
-			{ token: "border.default", lightHex: "#E5E5E5", darkHex: "#3D4852" },
+			{ token: "text.body", lightHex: "#666666", darkHex: "#B3B3B3" },
+			{ token: "text.caption", lightHex: "#888888", darkHex: "#777777" },
+			{ token: "border.default", lightHex: "#E5E5E5", darkHex: "#333333" },
 		];
 		return (
 			<div

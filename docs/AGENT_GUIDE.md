@@ -1,4 +1,4 @@
-# Bigtablet Design System — Agent Guide
+# Bigtablet Design System - Agent Guide
 
 > Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^3.0.0`. Load this file as context before generating any component code.
 
@@ -24,7 +24,7 @@ pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
 ```tsx
-// app entry — providers wrap the tree once
+// app entry - providers wrap the tree once
 import {
   ThemeProvider,
   AlertProvider,
@@ -44,15 +44,15 @@ export default function RootLayout({ children }) {
 ```
 
 Providers needed:
-- `ThemeProvider` — required for runtime dark mode toggle via `useTheme()`. If you only need OS-preference-based dark mode, you can omit it (CSS handles it).
-- `AlertProvider` — required for `useAlert()` confirmation dialogs.
-- `ToastProvider` — required for `useToast()` snackbar notifications.
+- `ThemeProvider` - required for runtime dark mode toggle via `useTheme()`. If you only need OS-preference-based dark mode, you can omit it (CSS handles it).
+- `AlertProvider` - required for `useAlert()` confirmation dialogs.
+- `ToastProvider` - required for `useToast()` snackbar notifications.
 
 ---
 
 ## Design Tokens
 
-All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing-*`, etc. Always reference them — never inline a hex value.
+All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing-*`, etc. Always reference them - never inline a hex value.
 
 ### Color tokens
 
@@ -94,16 +94,16 @@ All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing
 ### Motion
 
 ```scss
-$transition_fast    // 0.1s ease-in-out — color/border micro-changes
-$transition_base    // 0.2s ease-in-out — bg/transform normal interactions
-$transition_slow    // 0.3s ease-in-out — panel expansion
+$transition_fast    // 0.1s ease-in-out - color/border micro-changes
+$transition_base    // 0.2s ease-in-out - bg/transform normal interactions
+$transition_slow    // 0.3s ease-in-out - panel expansion
 ```
 
 Easing pair for entrance/exit:
-- `$easing_enter` — `cubic-bezier(0.16, 1, 0.3, 1)` (out-expo)
-- `$easing_exit` — `cubic-bezier(0.4, 0, 1, 1)` (ease-in)
+- `$easing_enter` - `cubic-bezier(0.16, 1, 0.3, 1)` (out-expo)
+- `$easing_exit` - `cubic-bezier(0.4, 0, 1, 1)` (ease-in)
 
-Composite shorthands `$transition_enter_*` / `$transition_exit_*` already include easing — do NOT add another easing or CSS parse fails.
+Composite shorthands `$transition_enter_*` / `$transition_exit_*` already include easing - do NOT add another easing or CSS parse fails.
 
 ### Inline style usage
 
@@ -155,7 +155,7 @@ Composite shorthands `$transition_enter_*` / `$transition_exit_*` already includ
 
    Everything else: tokens.
 
-6. **`color-scheme: dark`** is already set on `[data-theme="dark"]` root — browser native UI (scrollbars, form controls) adapts automatically.
+6. **`color-scheme: dark`** is already set on `[data-theme="dark"]` root - browser native UI (scrollbars, form controls) adapts automatically.
 
 ---
 
@@ -169,11 +169,13 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
 | `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
-| `TextField` | Text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `variant` (outline/filled), `leadingIcon`, `clearable` |
+| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`, `clearable`, `onChangeAction` (value callback), `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
+| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
-| `Radio` | Single from group. | Inside a `<fieldset>` for grouping. `value`, `checked`, `name` |
+| `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
+| `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
-| `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level — fills parent. |
+| `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
 | `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
 | `OTPInput` | Single-digit code boxes. | `length`, `value`, `onChange`, `autoFocus`, `error` |
@@ -182,13 +184,13 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Card` | Generic container. | `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg), `variant` (default/accent) |
+| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outlined — glass=frosted blur over colored bg, outlined=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
 | `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
-| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (default/accent/danger/success/warning/info), `count` |
-| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error — static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
-| `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata`, `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
+| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
+| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
+| `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** — inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal/vertical line. | `orientation` |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
@@ -205,13 +207,15 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `LinearProgress` | Step progress with dots. | `totalSteps`, `currentStep`, `aria-label`. Renders N+1 checkpoints. |
 | `Skeleton` | Loading placeholder. | `variant` (text/title/avatar/rect), `width`, `height`, `radius` |
 | `EmptyState` | "Nothing here" block. | `illustration`, `title`, `description`, `action`, `size` (sm/md/lg). Vertically centers when parent is flex column. |
+| `ErrorState` | Error block (boundary / load failure). | `title` (default "문제가 발생했습니다"), `description`, `icon` (default warning, `null` to hide), `action` (retry button), `variant` (page = full-area fallback / widget = inline compact). Uses `status-error` token, `role="alert"`. |
 
 ### Navigation
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). Variants `line` (default) / `fills`. |
-| `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`. Children = `SidebarSection` + `SidebarItem`. |
+| `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`, `mode` (auto/static - auto transforms to bottom bar <600px). Children = `SidebarSection` + `SidebarItem`. |
+| `BottomNav` | Mobile bottom nav bar. | 2–5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
 | `Breadcrumb` | Page path nav. | `items` array (`label`, `href`, `current`). |
 | `Menu` | Action menu (context/kebab). | `trigger` element, `items` (key/label/icon/onSelect/destructive/disabled), `align` (start/end). Trigger components MUST forward props (`<button {...props}>`). |
@@ -223,6 +227,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Modal` | Centered dialog. | `open`, `onClose`, `title`, `description`, `footer`, `footerAlign` (end/between/start), `showCloseIcon` (default true), `width`, `closeOnOverlay`. X close icon top-right by default. |
 | `Tooltip` | Hover info. | `content`, `placement` (top/bottom/left/right), `delay`, `disabled`. Children = single trigger element. Long text wraps with `text-align: center`, max-width 240px. |
+| `Popover` | Click-triggered non-modal panel for arbitrary interactive content (form/explanation/actions). | `trigger` element, `content` (ReactNode), `placement` (top/bottom/left/right, default bottom), `open`/`defaultOpen`/`onOpenChange` (controlled/uncontrolled), `aria-label`/`aria-labelledby`. `role="dialog"`. Focus moves into panel on open; `Esc` closes + returns focus to trigger. Use `Menu` for action lists, `Tooltip` for hover info. Trigger MUST forward props (`<button {...props}>`). |
 
 ### Layout
 
@@ -235,8 +240,8 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ### Foundation
 
-- `ThemeProvider` — wraps app for runtime theme control. `defaultMode` (light/dark/system).
-- `useTheme()` — returns `{ mode, setMode, resolvedMode }`.
+- `ThemeProvider` - wraps app for runtime theme control. `defaultMode` (light/dark/system).
+- `useTheme()` - returns `{ mode, setMode, resolvedMode }`.
 
 ---
 
@@ -246,7 +251,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ### Built-in motion (just use the components)
 - Modal, Alert: overlay fade + panel scale-translate spring
-- Dropdown, Menu, Tooltip: pop-in spring
+- Dropdown, Menu, Tooltip, Popover: pop-in spring
 - Toast: slide-in spring with onExitComplete unmount
 - Accordion: grid-template-rows 0fr → 1fr (CSS, height-auto-safe)
 - Sidebar logo: crossfade between collapsed/expanded layers
@@ -366,7 +371,7 @@ toast.error("Network error", 6000); // custom 6s duration
 ```tsx
 <Hero
   title="Run smarter stores"
-  subtitle="Orders, inventory, staff — one platform."
+  subtitle="Orders, inventory, staff - one platform."
   backgroundImage="https://..."
   overlay="dark"
   height="lg"
@@ -406,20 +411,20 @@ toast.error("Network error", 6000); // custom 6s duration
 | `transition: all 0.2s ease` | Specific properties + motion tokens |
 | `animation: ... infinite` outside loading indicators | Spring (`useSpringPresence`) for entrance/exit |
 | Skip `aria-label` on icon-only triggers | `<IconButton icon={...} aria-label="..." />` |
-| Hardcode logo color white inside a Sidebar | Sidebar uses light bg by default — use `text-heading` for text |
-| Use Tag component | Removed in v3.0 — use `<Chip type="static" tone="..." />` |
-| Use Select component | Removed in v3.0 — use `<Dropdown>` |
+| Hardcode logo color white inside a Sidebar | Sidebar uses light bg by default - use `text-heading` for text |
+| Use Tag component | Removed in v3.0 - use `<Chip type="static" tone="..." />` |
+| Use Select component | Removed in v3.0 - use `<Dropdown>` |
 
 ---
 
 ## Storybook Reference
 
 Stories are organized:
-- **Getting Started** — Installation, Introduction
-- **Cookbook** — Composition recipes (Form / Layout / Feedback / Data patterns)
-- **Examples** — Full page patterns (Admin Dashboard, Marketing landing)
-- **Foundation** — Token visualization (colors, spacing, typography, etc.)
-- **Components/{Category}/{Component}** — Each component's variants
+- **Getting Started** - Installation, Introduction
+- **Cookbook** - Composition recipes (Form / Layout / Feedback / Data patterns)
+- **Examples** - Full page patterns (Admin Dashboard, Marketing landing)
+- **Foundation** - Token visualization (colors, spacing, typography, etc.)
+- **Components/{Category}/{Component}** - Each component's variants
 
 Run locally: `pnpm storybook` (port 6006).
 
@@ -473,7 +478,7 @@ When asked to generate UI:
 
 - `Select` → `Dropdown` (`SelectOption` → `DropdownOption`)
 - `Tag` → `<Chip type="static" tone="..." />`
-- `Chip` import path changed (`general/chip` → `display/chip`) — root import unaffected
+- `Chip` import path changed (`general/chip` → `display/chip`) - root import unaffected
 - `Dropdown` `fullWidth` prop is now a no-op (always full width)
 - `Icon` API: `<Icon name="search" />` → `<Icon icon={Search} />` (pass lucide-react component)
 - Vanilla `--bt-color-primary` is now reserved for Button `--primary` only. Use `--bt-color-accent` for indicators.
@@ -496,6 +501,8 @@ When asked to generate UI:
 
 **Need a tooltip?** → `<Tooltip content="..." placement="top"><TriggerElement /></Tooltip>`.
 
+**Need a click-triggered panel with interactive content (filter form, profile card, inline actions)?** → `<Popover trigger={<Button>…</Button>} content={…} aria-label="…" />`. For a plain action list use `<Menu>`; for hover-only info use `<Tooltip>`; for a blocking center dialog use `<Modal>`.
+
 **Need a sidebar nav?** → `<Sidebar>` with `<SidebarSection>` + `<SidebarItem>`. Include `headerCollapsed` for collapse animation.
 
 **Need a data table?** → `<Table>`. Pass `onRowClick` for interactive rows (keyboard support included).
@@ -511,6 +518,6 @@ When asked to generate UI:
 ## Final Reminders
 
 - Read the [Components](./COMPONENTS.md) doc for full props API per component.
-- Storybook is the source of truth for visual behavior — `pnpm storybook` and explore.
+- Storybook is the source of truth for visual behavior - `pnpm storybook` and explore.
 - When in doubt, **use tokens, use components, use providers**. Don't reinvent.
-- Dark mode bugs are the most common failure mode — test both themes mentally before shipping code.
+- Dark mode bugs are the most common failure mode - test both themes mentally before shipping code.

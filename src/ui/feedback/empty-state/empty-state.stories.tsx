@@ -10,7 +10,7 @@ const meta: Meta<typeof EmptyState> = {
 	argTypes: {
 		title: {
 			control: "text",
-			description: "제목 — h3로 렌더링.",
+			description: "제목 - h3로 렌더링.",
 		},
 		description: {
 			control: "text",
@@ -19,7 +19,7 @@ const meta: Meta<typeof EmptyState> = {
 		size: {
 			control: "select",
 			options: ["sm", "md", "lg"],
-			description: "크기 — sm: 24/16, md: 40/24, lg: 48/24",
+			description: "크기 - sm: 24/16, md: 40/24, lg: 48/24",
 		},
 		illustration: {
 			control: false,
@@ -27,7 +27,7 @@ const meta: Meta<typeof EmptyState> = {
 		},
 		action: {
 			control: false,
-			description: "액션 영역 (Button 등) — 1~2개 권장.",
+			description: "액션 영역 (Button 등) - 1~2개 권장.",
 		},
 	},
 	args: {
@@ -39,9 +39,9 @@ const meta: Meta<typeof EmptyState> = {
 		docs: {
 			description: {
 				component: `
-**EmptyState** — 데이터 없는 영역 placeholder. \`illustration\` + \`title\` + \`description\` + \`action\` 슬롯.
+**EmptyState** - Placeholder for areas with no data. / **EmptyState** - 데이터 없는 영역 placeholder. Slots / 슬롯: \`illustration\` + \`title\` + \`description\` + \`action\`.
 
-Sizes: \`sm\` (모달/사이드바) / \`md\` (콘텐츠 영역, 기본) / \`lg\` (페이지 메인).
+Sizes: \`sm\` (modal/sidebar / 모달·사이드바) / \`md\` (content area, default / 콘텐츠 영역, 기본) / \`lg\` (page main / 페이지 메인).
 				`,
 			},
 		},

@@ -7,7 +7,7 @@ const meta: Meta = {
 	parameters: {
 		docs: {
 			description: {
-				component: "**TextField vs Dropdown** — 디자인 차이 비교용 임시 스토리.",
+				component: "**TextField vs Dropdown** - 디자인 차이 비교용 임시 스토리.",
 			},
 		},
 	},

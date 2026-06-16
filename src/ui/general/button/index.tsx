@@ -21,7 +21,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 	/** border-radius 토큰 (기본값: "full") */
 	radius?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "full";
 	/**
-	 * 위험한 액션 (삭제/취소 등) — 빨간 강조.
+	 * 위험한 액션 (삭제/취소 등) - 빨간 강조.
 	 * filled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash.
 	 */
 	danger?: boolean;

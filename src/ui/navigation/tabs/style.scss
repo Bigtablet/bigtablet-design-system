@@ -17,7 +17,7 @@
   }
 
   // ── Sliding indicator (line + fills 양쪽 지원) ───────────────────────
-  // active tab 위치/너비로 transform — 좌우 부드럽게 이동
+  // active tab 위치/너비로 transform - 좌우 부드럽게 이동
 
   &_indicator {
     position: absolute;
@@ -30,7 +30,7 @@
         width token.$duration_base token.$easing_enter;
     }
 
-    // line — 하단 underline (얇은 navy/검정 라인)
+    // line - 하단 underline (얇은 검정 라인)
     &_line {
       bottom: -1px;
       height: 2px;
@@ -38,7 +38,7 @@
       border-radius: 1px;
     }
 
-    // fills — tab 전체 영역을 채우는 박스 (active tab 배경 역할)
+    // fills - tab 전체 영역을 채우는 박스 (active tab 배경 역할)
     &_fills {
       top: token.$spacing_4;
       bottom: token.$spacing_4;
@@ -48,10 +48,10 @@
     }
   }
 
-  // fills variant — tab 자체에 background 없음 (indicator가 처리)
+  // fills variant - tab 자체에 background 없음 (indicator가 처리)
   &_variant_fills .tabs_tab {
     position: relative;
-    z-index: 1;       // indicator 위 — text 보임
+    z-index: 1;       // indicator 위 - text 보임
   }
 
   &_list_fills {
@@ -105,7 +105,7 @@
   }
 
   // ── Variant: line ────────────────────────────────────────────────────
-  // tab 자체 border-bottom 없음 — sliding indicator가 처리
+  // tab 자체 border-bottom 없음 - sliding indicator가 처리
 
   &_variant_line .tabs_tab {
     border-radius: 0;

@@ -73,7 +73,7 @@ export const OtpInput = ({
 		updateValue(newDigits);
 
 		if (nextDigit && index < length - 1) {
-			// typing 후 next 칸 이동 — onFocus의 redirect 로직 잠시 비활성
+			// typing 후 next 칸 이동 - onFocus의 redirect 로직 잠시 비활성
 			isTypingRef.current = true;
 			focusInput(index + 1);
 			// 부모의 controlled value 업데이트 + onFocus 사이클 완료 후 해제

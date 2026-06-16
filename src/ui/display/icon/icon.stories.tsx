@@ -31,9 +31,9 @@ const meta: Meta<typeof Icon> = {
 		docs: {
 			description: {
 				component: `
-**Icon** — lucide-react 아이콘 wrapper. 카탈로그: [lucide.dev/icons](https://lucide.dev/icons/).
+**Icon** - Wrapper around lucide-react icons. Catalog: [lucide.dev/icons](https://lucide.dev/icons/). / lucide-react 아이콘 wrapper.
 
-주요 prop: \`icon\` (lucide 컴포넌트), \`size\`, \`strokeWidth\`, \`aria-label\` (미지정 시 \`aria-hidden\` 자동).
+Key props: \`icon\` (lucide component), \`size\`, \`strokeWidth\`, \`aria-label\` (\`aria-hidden\` applied automatically when omitted). / 주요 prop: \`icon\` (lucide 컴포넌트), \`size\`, \`strokeWidth\`, \`aria-label\` (미지정 시 \`aria-hidden\` 자동).
         `,
 			},
 		},

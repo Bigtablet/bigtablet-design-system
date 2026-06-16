@@ -9,9 +9,9 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component: `
-### 설치 및 설정
+### Installation & Setup / 설치 및 설정
 
-프로젝트에 디자인 시스템을 설치하고 사용하는 방법입니다. React/Next.js와 Vanilla(Thymeleaf, JSP, PHP) 두 환경을 지원합니다.
+How to install and use the design system in your project. Supports both React/Next.js and Vanilla (Thymeleaf, JSP, PHP) environments. / 프로젝트에 디자인 시스템을 설치하고 사용하는 방법입니다. React/Next.js와 Vanilla(Thymeleaf, JSP, PHP) 두 환경을 지원합니다.
         `,
 			},
 		},

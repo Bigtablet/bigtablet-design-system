@@ -28,7 +28,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**Page Composition** — DS v3.0 컴포넌트를 합성한 실제 페이지 패턴 예시.\n\nSection + Container + Grid + Hero + Sidebar + Tabs + Avatar + Badge + Tag 조합.",
+					"**Page Composition** - DS v3.0 컴포넌트를 합성한 실제 페이지 패턴 예시.\n\nSection + Container + Grid + Hero + Sidebar + Tabs + Avatar + Badge + Tag 조합.",
 			},
 		},
 	},
@@ -224,10 +224,10 @@ export const MarketingPage: Story = {
 				</Container>
 			</Section>
 
-			{/* CTA Navy */}
+			{/* CTA Inverted */}
 			<Section
 				spacing="lg"
-				bg="navy"
+				bg="inverted"
 				style={{
 					position: "relative",
 					overflow: "hidden",

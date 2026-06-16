@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### Border Width (테두리 두께)
 
+**Border Width** - expresses an element's boundary and emphasis level. \`none\`/\`standard\`/\`thick\`/\`indicator\` map from no border to focus/state indicators.
+
 테두리 두께는 **요소의 경계와 강조 수준**을 표현합니다.
 
 - **none (0px)**: 테두리 없음
@@ -18,7 +20,7 @@ const meta: Meta = {
 - **thick (2px)**: 두꺼운 테두리 (강조 입력 필드, OTP, 포커스 강조)
 - **indicator (2px)**: 강조 테두리 (포커스 링, 선택 상태, 탭 인디케이터)
 
-> \`thick\`과 \`indicator\`는 동일한 2px 값을 공유하지만 의미가 다릅니다 — \`thick\`은 시각적 두께, \`indicator\`는 상태 표시.
+> \`thick\`과 \`indicator\`는 동일한 2px 값을 공유하지만 의미가 다릅니다 - \`thick\`은 시각적 두께, \`indicator\`는 상태 표시.
 `,
 			},
 		},
@@ -195,7 +197,7 @@ export const UsageExamples: Story = {
 				}}
 			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
-					카드: <code>standard</code> (1px) — 영역 구분
+					카드: <code>standard</code> (1px) - 영역 구분
 				</div>
 				<div
 					style={{ border: `${borderWidth.standard} solid #e5e5e5`, borderRadius: 12, padding: 16 }}

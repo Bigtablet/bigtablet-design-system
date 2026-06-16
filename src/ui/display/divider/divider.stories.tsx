@@ -20,9 +20,9 @@ const meta: Meta<typeof Divider> = {
 		docs: {
 			description: {
 				component: `
-**Divider** — 콘텐츠 영역 수평 구분선.
+**Divider** - Horizontal rule separating content areas. / **Divider** - 콘텐츠 영역 수평 구분선.
 
-\`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
+\`weight\`: \`standard\` (1px, default) / \`heavy\` (2px, section emphasis). - \`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
         `,
 			},
 		},
@@ -52,14 +52,14 @@ export const AllWeights: Story = {
 		<div style={{ display: "grid", gap: 24 }}>
 			<div>
 				<p style={{ margin: "0 0 8px", fontSize: 14, color: "var(--bt-color-text-body)" }}>
-					Standard (1px) — 일반적인 콘텐츠 구분
+					Standard (1px) - 일반적인 콘텐츠 구분
 				</p>
 				<Divider weight="standard" />
 			</div>
 
 			<div>
 				<p style={{ margin: "0 0 8px", fontSize: 14, color: "var(--bt-color-text-body)" }}>
-					Heavy (2px) — 섹션 간 강조 구분
+					Heavy (2px) - 섹션 간 강조 구분
 				</p>
 				<Divider weight="heavy" />
 			</div>

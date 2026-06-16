@@ -30,7 +30,7 @@
         background: token.$color_state_pressed_on_light;
     }
 
-    // ── Selected (navy accent) ──────────────────────────────────────────
+    // ── Selected (accent) ──────────────────────────────────────────
     &_selected {
         background: token.$color_accent_default;
         border-color: token.$color_accent_default;
@@ -168,7 +168,7 @@
         }
     }
 
-    // Tone variants (static type only) — color-mix로 dark mode 대응
+    // Tone variants (static type only) - color-mix로 dark mode 대응
     &_tone_default {
         background: token.$color_bg_solid_dim;
 

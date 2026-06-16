@@ -19,12 +19,12 @@ const meta: Meta<typeof Checkbox> = {
 		docs: {
 			description: {
 				component: `
-**Checkbox** — 다중 선택 (단일 선택은 Radio).
+**Checkbox** - Multi-select control (use Radio for single-select). / **Checkbox** - 다중 선택 (단일 선택은 Radio).
 
-States: \`checked\` / \`indeterminate\` (전체 선택의 일부) / \`disabled\` / \`error\`.
-네이티브 \`<input type="checkbox">\` — Tab/Space 자동.
+States: \`checked\` / \`indeterminate\` (part of a select-all) / \`disabled\` / \`error\`. / States: \`checked\` / \`indeterminate\` (전체 선택의 일부) / \`disabled\` / \`error\`.
+Native \`<input type="checkbox">\` - Tab/Space handled automatically. / 네이티브 \`<input type="checkbox">\` - Tab/Space 자동.
 
-> ⚠️ **Docs 뷰 안내** — Hover/focus/active 인터랙션 상태는 정적 미리보기에 안 보인다. 실제 동작은 좌측 사이드바에서 개별 스토리 (Basic 등) 를 열고 마우스/키보드 입력으로 확인. Checked/Indeterminate 박스 색은 다크 모드에서 자동 반전 (검정↔흰).
+> ⚠️ **Docs view note / Docs 뷰 안내** - Hover/focus/active interaction states are not visible in the static preview; open an individual story (e.g. Basic) from the left sidebar and use mouse/keyboard to see real behavior. Checked/Indeterminate box color auto-inverts in dark mode (black↔white). / Hover/focus/active 인터랙션 상태는 정적 미리보기에 안 보인다. 실제 동작은 좌측 사이드바에서 개별 스토리 (Basic 등) 를 열고 마우스/키보드 입력으로 확인. Checked/Indeterminate 박스 색은 다크 모드에서 자동 반전 (검정↔흰).
 				`,
 			},
 		},

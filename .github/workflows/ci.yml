@@ -90,6 +90,11 @@ jobs:
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.base_ref == 'develop'
         run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
+      # SCSS lint — raw hex / named color 금지 (DS 토큰 강제)
+      - name: Lint SCSS (Stylelint)
+        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
+        run: pnpm lint:css
+
       # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
       - name: Run tests with coverage
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'

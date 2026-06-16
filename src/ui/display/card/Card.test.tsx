@@ -81,4 +81,74 @@ describe("Card", () => {
 		const { container } = render(<Card padding="none">Content</Card>);
 		expect(container.firstChild).toHaveClass("card_p_none");
 	});
+
+	// ── variant (glass / outlined) ──────────────────────────────────────
+
+	it("does not apply a variant class for default variant", () => {
+		const { container } = render(<Card>Content</Card>);
+		expect(container.firstChild).not.toHaveClass("card_variant_default");
+	});
+
+	it("applies accent variant class", () => {
+		const { container } = render(<Card variant="accent">Content</Card>);
+		expect(container.firstChild).toHaveClass("card_variant_accent");
+	});
+
+	it("applies glass variant class", () => {
+		const { container } = render(<Card variant="glass">Content</Card>);
+		expect(container.firstChild).toHaveClass("card_variant_glass");
+	});
+
+	it("applies outlined variant class", () => {
+		const { container } = render(<Card variant="outlined">Content</Card>);
+		expect(container.firstChild).toHaveClass("card_variant_outlined");
+	});
+
+	// ── interactive (hover-lift) ────────────────────────────────────────
+
+	it("applies interactive class when interactive is true", () => {
+		const { container } = render(<Card interactive>Content</Card>);
+		expect(container.firstChild).toHaveClass("card_interactive");
+	});
+
+	it("does not apply interactive class by default", () => {
+		const { container } = render(<Card>Content</Card>);
+		expect(container.firstChild).not.toHaveClass("card_interactive");
+	});
+
+	// ── footer slot ─────────────────────────────────────────────────────
+
+	it("renders footer when provided", () => {
+		render(<Card footer={<button type="button">Save</button>}>Content</Card>);
+		expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+	});
+
+	it("does not render footer element when not provided", () => {
+		const { container } = render(<Card>Content</Card>);
+		expect(container.querySelector(".card_footer")).not.toBeInTheDocument();
+	});
+
+	it("applies footerAlign=end by default", () => {
+		const { container } = render(<Card footer={<span>f</span>}>Content</Card>);
+		expect(container.querySelector(".card_footer")).toHaveClass("card_footer_end");
+	});
+
+	it("applies custom footerAlign class", () => {
+		const { container } = render(
+			<Card footer={<span>f</span>} footerAlign="between">
+				Content
+			</Card>,
+		);
+		expect(container.querySelector(".card_footer")).toHaveClass("card_footer_between");
+	});
+
+	// ── 회귀: 신규 prop 미지정 시 기존 동작 유지 ────────────────────────
+
+	it("keeps default behavior when new props are omitted", () => {
+		const { container } = render(<Card heading="T">Content</Card>);
+		const card = container.firstChild as HTMLElement;
+		expect(card).toHaveClass("card", "card_shadow_sm", "card_p_md");
+		expect(card).not.toHaveClass("card_interactive");
+		expect(card.querySelector(".card_footer")).not.toBeInTheDocument();
+	});
 });

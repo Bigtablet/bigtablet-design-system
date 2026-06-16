@@ -5,14 +5,14 @@ import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
-	/** 오버라인 텍스트 (상단 작은 글씨) */
-	overline?: string;
-	/** 라벨 텍스트 (주요 텍스트) */
-	label: string;
-	/** 보조 텍스트 (라벨 아래) */
-	supportingText?: string;
-	/** 메타데이터 텍스트 (보조 정보) */
-	metadata?: string;
+	/** 오버라인 (상단 작은 글씨). 문자열 또는 노드(강조/링크/아이콘) */
+	overline?: React.ReactNode;
+	/** 라벨 (주요 텍스트). 문자열 또는 노드(강조/링크/Badge 등) */
+	label: React.ReactNode;
+	/** 보조 텍스트 (라벨 아래). 문자열 또는 노드 */
+	supportingText?: React.ReactNode;
+	/** 메타데이터 (보조 정보). 문자열 또는 노드 */
+	metadata?: React.ReactNode;
 	/** 왼쪽에 표시할 요소 (아이콘, 이미지, 체크박스 등) */
 	leadingElement?: React.ReactNode;
 	/** 오른쪽에 표시할 요소 (아이콘 버튼, 체크박스 등) */
@@ -21,7 +21,7 @@ export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 	alignment?: "top" | "middle";
 	/** 비활성화 상태 */
 	disabled?: boolean;
-	/** 선택 상태 — accent.subtle 배경 + accent.default 좌측 인디케이터 */
+	/** 선택 상태 - accent.subtle 배경 + accent.default 좌측 인디케이터 */
 	selected?: boolean;
 	/** 클릭 시 콜백 */
 	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -61,7 +61,7 @@ export const ListItem = ({
 	);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item — role=button + tabIndex set conditionally based on onClick
+		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item - role=button + tabIndex set conditionally based on onClick
 		<div
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}
@@ -81,10 +81,10 @@ export const ListItem = ({
 			<div className="list_item_state_layer">
 				{leadingElement && <div className="list_item_leading">{leadingElement}</div>}
 				<div className="list_item_content">
-					{overline && <span className="list_item_overline">{overline}</span>}
-					<span className="list_item_label">{label}</span>
-					{supportingText && <span className="list_item_supporting">{supportingText}</span>}
-					{metadata && <span className="list_item_metadata">{metadata}</span>}
+					{overline && <div className="list_item_overline">{overline}</div>}
+					<div className="list_item_label">{label}</div>
+					{supportingText && <div className="list_item_supporting">{supportingText}</div>}
+					{metadata && <div className="list_item_metadata">{metadata}</div>}
 				</div>
 				{trailingElement && <div className="list_item_trailing">{trailingElement}</div>}
 			</div>

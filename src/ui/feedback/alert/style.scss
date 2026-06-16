@@ -36,10 +36,11 @@
     justify-content: center;
     margin-top: 2px;
 
-    &_info    { color: token.$color_status_info; }
-    &_success { color: token.$color_status_success; }
-    &_warning { color: token.$color_status_warning; }
-    &_error   { color: token.$color_status_error; }
+    // Alert icon - surface 위 직접 색 (배경 없는 SVG 아이콘) - light/dark 자동 swap
+    &_info    { color: token.$color_status_info_on_surface; }
+    &_success { color: token.$color_status_success_on_surface; }
+    &_warning { color: token.$color_status_warning_on_surface; }
+    &_error   { color: token.$color_status_error_on_surface; }
   }
 
   &_title {
@@ -49,21 +50,23 @@
   }
 
   // ── Variant title + primary button colors ───────────────────────────────
+  // title: surface 위 텍스트 → *-on-surface (light/dark 자동 swap)
+  // button bg: solid fill → status-* (darkened, AA 통과)
 
   &_variant_info {
-    .alert_title { color: token.$color_status_info; }
+    .alert_title { color: token.$color_status_info_on_surface; }
     .alert_actions .button_variant_filled { background: token.$color_status_info; }
   }
   &_variant_success {
-    .alert_title { color: token.$color_status_success; }
+    .alert_title { color: token.$color_status_success_on_surface; }
     .alert_actions .button_variant_filled { background: token.$color_status_success; }
   }
   &_variant_warning {
-    .alert_title { color: token.$color_status_warning; }
+    .alert_title { color: token.$color_status_warning_on_surface; }
     .alert_actions .button_variant_filled { background: token.$color_status_warning; }
   }
   &_variant_error {
-    .alert_title { color: token.$color_status_error; }
+    .alert_title { color: token.$color_status_error_on_surface; }
     .alert_actions .button_variant_filled { background: token.$color_status_error; }
   }
 

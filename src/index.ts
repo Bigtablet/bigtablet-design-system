@@ -16,6 +16,8 @@ export type { BreadcrumbItem, BreadcrumbProps } from "./ui/navigation/breadcrumb
 export { Breadcrumb } from "./ui/navigation/breadcrumb";
 export type { EmptyStateProps } from "./ui/feedback/empty-state";
 export { EmptyState } from "./ui/feedback/empty-state";
+export type { ErrorStateProps, ErrorStateVariant } from "./ui/feedback/error-state";
+export { ErrorState } from "./ui/feedback/error-state";
 export type { MenuItem, MenuProps } from "./ui/navigation/menu";
 export { Menu } from "./ui/navigation/menu";
 export type {
@@ -43,6 +45,8 @@ export type {
 	TabsVariant,
 } from "./ui/navigation/tabs";
 export { Tab, TabList, TabPanel, Tabs } from "./ui/navigation/tabs";
+export type { PopoverPlacement, PopoverProps } from "./ui/overlay/popover";
+export { Popover } from "./ui/overlay/popover";
 export type { TooltipPlacement, TooltipProps } from "./ui/overlay/tooltip";
 export { Tooltip } from "./ui/overlay/tooltip";
 
@@ -66,7 +70,7 @@ export { zIndex } from "./styles/z-index";
 export { AlertProvider, useAlert } from "./ui/feedback/alert";
 export type { ButtonProps } from "./ui/general/button";
 export { Button } from "./ui/general/button";
-export type { CardProps } from "./ui/display/card";
+export type { CardFooterAlign, CardProps, CardVariant } from "./ui/display/card";
 export { Card } from "./ui/display/card";
 export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
@@ -105,6 +109,12 @@ export type { PaginationProps } from "./ui/navigation/pagination";
 export { Pagination } from "./ui/navigation/pagination";
 export type { RadioProps } from "./ui/forms/radio";
 export { Radio } from "./ui/forms/radio";
+export type {
+	RadioGroupOrientation,
+	RadioGroupProps,
+	RadioGroupSize,
+} from "./ui/forms/radio-group";
+export { RadioGroup } from "./ui/forms/radio-group";
 export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
@@ -113,8 +123,14 @@ export type { TableColumn, TableProps, TableSize } from "./ui/display/table";
 export { Table } from "./ui/display/table";
 export type { ResolvedTheme, ThemeMode, ThemeProviderProps } from "./ui/system/theme-provider";
 export { ThemeProvider, useTheme } from "./ui/system/theme-provider";
-export type { TextFieldProps } from "./ui/forms/textfield";
+export type { ImeStrategy, TextFieldProps, TextFieldSize } from "./ui/forms/textfield";
 export { TextField } from "./ui/forms/textfield";
+export type {
+	TextareaProps,
+	TextareaResize,
+	TextareaSize,
+} from "./ui/forms/textarea";
+export { Textarea } from "./ui/forms/textarea";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/use-toast";
 export type { ToggleProps } from "./ui/forms/toggle";

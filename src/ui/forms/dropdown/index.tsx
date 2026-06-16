@@ -207,7 +207,7 @@ export const Dropdown = ({
 		const rect = controlRef.current.getBoundingClientRect();
 		const spaceBelow = window.innerHeight - rect.bottom;
 		const spaceAbove = rect.top;
-		// dropUp 보수적 — 아래 최소 공간 (120px) 부족하고 위가 더 넓을 때만.
+		// dropUp 보수적 - 아래 최소 공간 (120px) 부족하고 위가 더 넓을 때만.
 		// 작은 viewport (Storybook Docs iframe 등) 에서 무분별한 dropUp 방지.
 		const MIN_BELOW = 120;
 		setDropUp(spaceBelow < MIN_BELOW && spaceAbove > spaceBelow);
@@ -217,7 +217,7 @@ export const Dropdown = ({
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 
-	// Spring presence — list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
+	// Spring presence - list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
 	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
 	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
 	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
@@ -275,7 +275,7 @@ export const Dropdown = ({
 
 						return (
 							<Fragment key={opt.value}>
-								{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button — options are non-focusable role=option per WAI-ARIA listbox pattern */}
+								{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button - options are non-focusable role=option per WAI-ARIA listbox pattern */}
 								<div
 									role="option"
 									tabIndex={-1}

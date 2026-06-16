@@ -38,17 +38,17 @@ export default function App() {
 }
 ```
 
-A complete React + TypeScript design system maintained by Bigtablet for internal product work. Open-sourced for reference — external use welcome, but minor versions may include breaking changes.
+A complete React + TypeScript design system maintained by Bigtablet for internal product work. Open-sourced for reference - external use welcome, but minor versions may include breaking changes.
 
 <br />
 
 ## What's inside
 
-— **40+ components** across forms, display, feedback, navigation, overlay, and layout<br />
-— **11 token domains** — colors, typography, spacing, motion, radius, elevation, and more — exposed as SCSS variables and CSS custom properties<br />
-— **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
-— **Vanilla JS bundle** for non-React backends — Thymeleaf, JSP, PHP, Django<br />
-— **Accessibility tested** with axe-core in CI · keyboard nav · ARIA throughout
+- **40+ components** across forms, display, feedback, navigation, overlay, and layout<br />
+- **11 token domains** - colors, typography, spacing, motion, radius, elevation, and more - exposed as SCSS variables and CSS custom properties<br />
+- **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
+- **Vanilla JS bundle** for non-React backends - Thymeleaf, JSP, PHP, Django<br />
+- **Accessibility tested** with axe-core in CI · keyboard nav · ARIA throughout
 
 <br />
 
@@ -61,7 +61,7 @@ pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 Requires React 19 + lucide-react ≥ 0.552. Compatible with Next.js 13+.
 
 <details>
-<summary><b>One-line setup</b> — auto-detect package manager + framework</summary>
+<summary><b>One-line setup</b> - auto-detect package manager + framework</summary>
 
 <br />
 
@@ -102,10 +102,10 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ## Components
 
 <table>
-<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
+<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Textarea · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
 <tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
-<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState</td></tr>
-<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · NavBar · Breadcrumb · Menu · Pagination</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState · ErrorState</td></tr>
+<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · BottomNav · NavBar · Breadcrumb · Menu · Pagination</td></tr>
 <tr><td><b>Overlay</b></td><td>Modal · Tooltip</td></tr>
 <tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
 </table>

@@ -12,11 +12,13 @@ const meta: Meta = {
 				component: `
 ### Typography (타이포그래피)
 
+**Typography** - typography tokens defined in a two-tier Base / Semantic structure (5 scales × 3 sizes × 2 weights). Always use Semantic tokens instead of raw px values.
+
 **Base / Semantic 2계층 구조**로 정의된 타이포그래피 토큰입니다.
 
 - **Base**: 원시 값 (fontSize, fontWeight, lineHeight, letterSpacing)
-- **Semantic**: 역할 기반 스케일 — 5단계 × 3사이즈 × 2굵기
-- **Extras**: bold variants, semantic aliases, responsive, text wrap, numeric — 페이지 하단 참고
+- **Semantic**: 역할 기반 스케일 - 5단계 × 3사이즈 × 2굵기
+- **Extras**: bold variants, semantic aliases, responsive, text wrap, numeric - 페이지 하단 참고
 
 | 스케일 | 사이즈 범위 | 사용처 |
 |--------|-------------|--------|
@@ -130,31 +132,31 @@ export const Semantic: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 820 }}>
 			<ScaleSection
 				title="Display"
-				description="히어로·캠페인 타이틀 (32–48px) — 랜딩페이지, 프로모션 배너 등 시선을 끄는 대형 텍스트"
+				description="히어로·캠페인 타이틀 (32–48px) - 랜딩페이지, 프로모션 배너 등 시선을 끄는 대형 텍스트"
 				scale="display"
 				entries={Object.entries(typography.display) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Heading"
-				description="페이지/섹션 제목 (20–28px) — 페이지 타이틀, 섹션 구분, 주요 콘텐츠 영역 제목"
+				description="페이지/섹션 제목 (20–28px) - 페이지 타이틀, 섹션 구분, 주요 콘텐츠 영역 제목"
 				scale="heading"
 				entries={Object.entries(typography.heading) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Title"
-				description="카드·컴포넌트 헤더 (14–18px) — 카드 제목, 리스트 아이템 타이틀, 모달 헤더"
+				description="카드·컴포넌트 헤더 (14–18px) - 카드 제목, 리스트 아이템 타이틀, 모달 헤더"
 				scale="title"
 				entries={Object.entries(typography.title) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Body"
-				description="본문·설명 텍스트 (14–16px) — 단락 텍스트, 설명문, 안내 메시지"
+				description="본문·설명 텍스트 (14–16px) - 단락 텍스트, 설명문, 안내 메시지"
 				scale="body"
 				entries={Object.entries(typography.body) as [string, TypoStyle][]}
 			/>
 			<ScaleSection
 				title="Label"
-				description="라벨·캡션·보조 텍스트 (12–14px) — 폼 라벨, 버튼 텍스트, 뱃지, 헬퍼 텍스트, 타임스탬프"
+				description="라벨·캡션·보조 텍스트 (12–14px) - 폼 라벨, 버튼 텍스트, 뱃지, 헬퍼 텍스트, 타임스탬프"
 				scale="label"
 				entries={Object.entries(typography.label) as [string, TypoStyle][]}
 			/>
@@ -177,7 +179,7 @@ export const Base: Story = {
 						fontFamily: typography.fontFamily.primary,
 					}}
 				>
-					<div style={{ fontSize: 18, marginBottom: 6 }}>Pretendard — 가나다라마바사 ABC 123</div>
+					<div style={{ fontSize: 18, marginBottom: 6 }}>Pretendard - 가나다라마바사 ABC 123</div>
 					<code style={{ fontSize: 12 }}>{typography.fontFamily.primary}</code>
 				</div>
 			</section>
@@ -246,7 +248,7 @@ export const Base: Story = {
 								letterSpacing: value,
 							}}
 						>
-							폼 라벨 텍스트 — Form label sample
+							폼 라벨 텍스트 - Form label sample
 						</div>
 						<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
 					</div>
@@ -271,7 +273,7 @@ export const Base: Story = {
 						}}
 					>
 						<div style={{ fontWeight: fontWeightMap[value] ?? 400, fontSize: 16 }}>
-							굵기 예시 — font-weight-{key} ({value})
+							굵기 예시 - font-weight-{key} ({value})
 						</div>
 						<code style={{ fontSize: 12 }}>{fontWeightMap[value] ?? value}</code>
 					</div>
@@ -517,7 +519,7 @@ function sampleText(scale: string) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Extras — 기본 스케일 외 추가 mixin (bold variants, aliases, wrap, numeric)
+// Extras - 기본 스케일 외 추가 mixin (bold variants, aliases, wrap, numeric)
 // ────────────────────────────────────────────────────────────────────────────
 
 const ExtrasRow = ({
@@ -605,7 +607,7 @@ const inlineCode: React.CSSProperties = {
 };
 
 export const BoldVariants: Story = {
-	name: "Extras — Bold weights (강조용)",
+	name: "Extras - Bold weights (강조용)",
 	render: () => (
 		<div
 			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
@@ -627,25 +629,25 @@ export const BoldVariants: Story = {
 };
 
 export const SemanticAliases: Story = {
-	name: "Extras — 의미적 alias",
+	name: "Extras - 의미적 alias",
 	render: () => (
 		<div
 			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
 		>
-			<ExtrasRow label="@include subtitle" desc="제목 아래 보조 설명 — 15/500/22.5">
+			<ExtrasRow label="@include subtitle" desc="제목 아래 보조 설명 - 15/500/22.5">
 				<div style={inlineSubtitle}>14일 무료 체험 · 신용카드 불필요</div>
 			</ExtrasRow>
-			<ExtrasRow label="@include overline" desc="섹션 위 작은 라벨 — 12/600/uppercase">
+			<ExtrasRow label="@include overline" desc="섹션 위 작은 라벨 - 12/600/uppercase">
 				<div style={{ ...inlineOverline, color: "var(--bt-color-accent-default)" }}>
 					핵심 기능
 				</div>
 			</ExtrasRow>
-			<ExtrasRow label="@include caption" desc="이미지/카드 캡션 — 12/400/tight">
+			<ExtrasRow label="@include caption" desc="이미지/카드 캡션 - 12/400/tight">
 				<div style={{ ...inlineCaption, color: "var(--bt-color-text-caption)" }}>
 					2026년 5월 20일 화요일
 				</div>
 			</ExtrasRow>
-			<ExtrasRow label="@include code" desc="인라인 코드 — ui-monospace 13/18">
+			<ExtrasRow label="@include code" desc="인라인 코드 - ui-monospace 13/18">
 				<code style={inlineCode}>npm i @bigtablet/design-system</code>
 			</ExtrasRow>
 		</div>
@@ -653,7 +655,7 @@ export const SemanticAliases: Story = {
 };
 
 export const TextWrapHelpers: Story = {
-	name: "Extras — Text wrap helpers",
+	name: "Extras - Text wrap helpers",
 	render: () => (
 		<div
 			style={{ display: "flex", flexDirection: "column", gap: 16, color: "var(--bt-color-text-heading)" }}
@@ -663,7 +665,7 @@ export const TextWrapHelpers: Story = {
 				<p
 					style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}
 				>
-					줄바꿈 자연스럽게 — 마지막 줄 한두 단어 외톨이 방지. 헤딩에 유용.
+					줄바꿈 자연스럽게 - 마지막 줄 한두 단어 외톨이 방지. 헤딩에 유용.
 				</p>
 				<h2
 					style={{
@@ -699,11 +701,11 @@ export const TextWrapHelpers: Story = {
 };
 
 export const NumericFeatures: Story = {
-	name: "Extras — 숫자 정렬 (tabular-nums)",
+	name: "Extras - 숫자 정렬 (tabular-nums)",
 	render: () => (
 		<div style={{ color: "var(--bt-color-text-heading)" }}>
 			<p style={{ fontSize: 13, color: "var(--bt-color-text-body)", marginBottom: 16 }}>
-				매출/지표 표시 시 자릿수 정렬 — <code>@include tabular_nums</code>로 숫자 너비 균등화.
+				매출/지표 표시 시 자릿수 정렬 - <code>@include tabular_nums</code>로 숫자 너비 균등화.
 			</p>
 			<div style={{ display: "flex", gap: 32 }}>
 				<div>

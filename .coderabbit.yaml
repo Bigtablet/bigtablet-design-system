@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit 설정 — https://docs.coderabbit.ai/reference/yaml-template
+#
+# 기본 동작은 default branch(main) 대상 PR 만 auto-review 한다.
+# 우리는 feature → develop PR 이 대부분이므로 base_branches 에 develop 을 추가해
+# develop 대상 PR 도 자동 리뷰되게 한다.
+
+language: "ko-KR"
+
+reviews:
+  # chill — 핵심 위주 가벼운 리뷰 (assertive 는 과한 nitpick 많음)
+  profile: "chill"
+  # 리뷰 코멘트가 모두 resolve 되면 자동 approve
+  request_changes_workflow: true
+  # walkthrough 요약은 유지, poem 은 잡음이라 끔
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    # default branch(main) 외 추가로 자동 리뷰할 base 브랜치 (정규식).
+    base_branches:
+      - "develop"
+      - "release"
+    # draft PR 은 리뷰 안 함 (ready 전환 시 리뷰)
+    drafts: false
+
+chat:
+  # 멘션(@coderabbitai) 없이도 스레드에 자동 응답
+  auto_reply: true

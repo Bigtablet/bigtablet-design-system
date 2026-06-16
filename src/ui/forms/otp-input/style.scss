@@ -81,6 +81,7 @@
   color: token.$color_text_body;
 
   &_error {
-    color: token.$color_status_error;
+    // surface 위 직접 텍스트 - light/dark 자동 swap
+    color: token.$color_status_error_on_surface;
   }
 }

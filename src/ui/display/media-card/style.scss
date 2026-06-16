@@ -132,11 +132,10 @@
     .media_card_overlay {
       position: absolute;
       inset: 0;
-      // navy 그라데이션 — Bigtablet brand accent.strong (#303841) 사용
       background: linear-gradient(
         180deg,
-        rgba(48, 56, 65, 0) 30%,
-        rgba(48, 56, 65, 0.85) 100%
+        rgba(0, 0, 0, 0) 30%,
+        rgba(0, 0, 0, 0.85) 100%
       );
       pointer-events: none;
       z-index: 1;
@@ -155,7 +154,7 @@
     .media_card_heading  { color: token.$color_brand_on_primary; }
     .media_card_content  {
       color: rgba(255, 255, 255, 0.85);
-      flex: 0 0 auto; // overlay에선 늘어나지 않음 — 텍스트 블록이 하단에 모이도록
+      flex: 0 0 auto; // overlay에선 늘어나지 않음 - 텍스트 블록이 하단에 모이도록
     }
     .media_card_meta     { color: rgba(255, 255, 255, 0.6); }
   }

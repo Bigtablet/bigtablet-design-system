@@ -60,7 +60,7 @@
   }
 
   // ── Panel (애니메이션 가능한 wrapper) ─────────────────────────────────────
-  // grid-template-rows 트릭 — height auto transition 구현. modern browser 호환.
+  // grid-template-rows 트릭 - height auto transition 구현. modern browser 호환.
   // panel(grid 0fr→1fr) > panel_wrap(overflow:hidden) > content(padding 보유)
 
   &_panel {
