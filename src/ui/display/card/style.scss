@@ -119,6 +119,10 @@
       color: token.$color_brand_on_primary;
     }
 
+    .card_footer {
+      border-top-color: token.$color_state_hover_on_dark;
+    }
+
     [data-theme="dark"] & {
       @include token.glass_card;
     }
