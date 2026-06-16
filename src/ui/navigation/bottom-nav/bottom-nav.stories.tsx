@@ -14,11 +14,11 @@ const meta: Meta<typeof BottomNav> = {
 		docs: {
 			description: {
 				component: `
-**BottomNav** — 모바일 하단 네비게이션. 2–5개 \`BottomNavItem\` 으로 구성.
+**BottomNav** — Mobile bottom navigation, composed of 2–5 \`BottomNavItem\`s. / 모바일 하단 네비게이션. 2–5개 \`BottomNavItem\` 으로 구성.
 
-\`position: fixed; bottom: 0\` 으로 viewport 하단 고정. iOS 홈 인디케이터 영역 (\`env(safe-area-inset-bottom)\`) 자동 패딩. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 깔거나 \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 layout 계산.
+Pinned to the bottom of the viewport via \`position: fixed; bottom: 0\`. Auto-padding for the iOS home-indicator area (\`env(safe-area-inset-bottom)\`). To keep content from being hidden, add a \`<BottomNavSpacer />\` at the end of the page or use the \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS variables for layout calculation. / \`position: fixed; bottom: 0\` 으로 viewport 하단 고정. iOS 홈 인디케이터 영역 (\`env(safe-area-inset-bottom)\`) 자동 패딩. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 깔거나 \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 layout 계산.
 
-\`<BottomNavItem icon label active badge as href />\` — \`active\` 시 \`aria-current="page"\` 자동.
+\`<BottomNavItem icon label active badge as href />\` — \`aria-current="page"\` is set automatically when \`active\`. / \`active\` 시 \`aria-current="page"\` 자동.
 				`,
 			},
 		},
@@ -87,7 +87,7 @@ export const WithBadge: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "아이콘 우상단에 `badge` prop 으로 알림 dot/카운트 표시. `<Badge>` 컴포넌트 활용.",
+				story: "Show a notification dot/count at the top-right of the icon via the `badge` prop, using the `<Badge>` component. / 아이콘 우상단에 `badge` prop 으로 알림 dot/카운트 표시. `<Badge>` 컴포넌트 활용.",
 			},
 		},
 	},
@@ -131,7 +131,7 @@ export const FiveItems: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "5개까지 균등 분할 권장. 그 이상은 라벨 잘림 / 탭 영역 부족.",
+				story: "Recommended up to 5 items with even distribution. More than that causes label truncation / insufficient tap area. / 5개까지 균등 분할 권장. 그 이상은 라벨 잘림 / 탭 영역 부족.",
 			},
 		},
 	},

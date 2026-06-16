@@ -12,6 +12,8 @@ const meta: Meta = {
 				component: `
 ### Typography (타이포그래피)
 
+**Typography** — typography tokens defined in a two-tier Base / Semantic structure (5 scales × 3 sizes × 2 weights). Always use Semantic tokens instead of raw px values.
+
 **Base / Semantic 2계층 구조**로 정의된 타이포그래피 토큰입니다.
 
 - **Base**: 원시 값 (fontSize, fontWeight, lineHeight, letterSpacing)

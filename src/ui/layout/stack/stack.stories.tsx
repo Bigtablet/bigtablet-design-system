@@ -22,9 +22,9 @@ const meta: Meta<typeof Stack> = {
 		docs: {
 			description: {
 				component: `
-**Stack** — Flex 기반 1D 레이아웃. 2D 격자는 \`Grid\`.
+**Stack** — Flex-based 1D layout. For a 2D grid use \`Grid\`. / Flex 기반 1D 레이아웃. 2D 격자는 \`Grid\`.
 
-주요 prop: \`direction\` (\`vertical\`/\`horizontal\`), \`gap\` (px), \`align\` (교차축), \`justify\` (주축), \`wrap\`.
+Key props: \`direction\` (\`vertical\`/\`horizontal\`), \`gap\` (px), \`align\` (cross axis), \`justify\` (main axis), \`wrap\`. / 주요 prop: \`direction\` (\`vertical\`/\`horizontal\`), \`gap\` (px), \`align\` (교차축), \`justify\` (주축), \`wrap\`.
 				`,
 			},
 		},

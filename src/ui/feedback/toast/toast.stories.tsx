@@ -58,10 +58,10 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component: `
-**Toast** — 화면을 막지 않는 짧은 알림. 자동 사라짐.
+**Toast** — Brief, non-blocking notification that auto-dismisses. / 화면을 막지 않는 짧은 알림. 자동 사라짐.
 
 Types: \`message\` (default) / \`success\` / \`warning\` / \`error\` / \`info\`.
-사용: \`<ToastProvider>\` 감싸고 \`useToast()\` 훅 — \`t.success("저장 완료", 5000)\`.
+Usage / 사용: wrap with \`<ToastProvider>\` and use the \`useToast()\` hook — \`t.success("저장 완료", 5000)\`. / \`<ToastProvider>\` 감싸고 \`useToast()\` 훅.
 				`,
 			},
 		},

@@ -12,6 +12,8 @@ const meta: Meta = {
 				component: `
 ### 접근성 (Accessibility) 토큰
 
+**Accessibility tokens** — baseline values that help keyboard, low-vision, and touch users perceive every interaction clearly and safely. Covers focus rings, minimum tap targets, and color contrast (WCAG AA).
+
 **키보드 사용자, 저시력 사용자, 터치 사용자**를 고려해
 모든 인터랙션이 명확하고 안전하게 인식되도록 돕는 기준값입니다.
 

@@ -10,11 +10,11 @@ const meta: Meta<typeof Radio> = {
 		size: {
 			control: "select",
 			options: ["sm", "md", "lg"],
-			description: "라디오 버튼의 크기입니다. 텍스트와 선택 원(circle)의 크기가 함께 변경됩니다.",
+			description: "Radio button size. The text and the selection circle scale together. / 라디오 버튼의 크기입니다. 텍스트와 선택 원(circle)의 크기가 함께 변경됩니다.",
 		},
 		disabled: {
 			control: "boolean",
-			description: "비활성화 상태입니다. 선택할 수 없으며 흐리게 표시됩니다.",
+			description: "Disabled state. Cannot be selected and appears dimmed. / 비활성화 상태입니다. 선택할 수 없으며 흐리게 표시됩니다.",
 		},
 	},
 	args: {
@@ -25,9 +25,9 @@ const meta: Meta<typeof Radio> = {
 		docs: {
 			description: {
 				component: `
-**Radio** — 단일 선택 (다중은 Checkbox).
+**Radio** — Single-select (use Checkbox for multi-select). / 단일 선택 (다중은 Checkbox).
 
-같은 그룹은 \`name\` 동일 + 각 \`value\`. \`checked\` / \`onChange\` 제어.
+Items in the same group share \`name\` and each has its own \`value\`. Control via \`checked\` / \`onChange\`. / 같은 그룹은 \`name\` 동일 + 각 \`value\`. \`checked\` / \`onChange\` 제어.
         `,
 			},
 		},

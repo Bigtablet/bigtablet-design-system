@@ -42,12 +42,12 @@ const meta: Meta<typeof IconButton> = {
 		docs: {
 			description: {
 				component: `
-**IconButton** — 아이콘만 가진 버튼. \`aria-label\` 필수.
+**IconButton** — A button containing only an icon. \`aria-label\` required. / 아이콘만 가진 버튼. \`aria-label\` 필수.
 
 Variants: \`standard\` / \`filled\` / \`tonal\` / \`outlined\`.
-Sizes: \`sm\` 40 (아이콘 20) / \`md\` 48 (아이콘 24).
+Sizes: \`sm\` 40 (icon 20 / 아이콘 20) / \`md\` 48 (icon 24 / 아이콘 24).
 
-> ⚠️ **Docs 뷰 안내** — \`standard\` variant 는 배경이 투명이라 부모 색에 의존. Storybook Docs 의 스토리 프리뷰 패널은 흰 배경 고정이라 다크 모드 토글 시 아이콘이 흰 위에 흰으로 안 보일 수 있다. 실제 동작은 좌측 사이드바에서 개별 스토리를 열어 Canvas 뷰에서 확인.
+> ⚠️ **Docs view note / Docs 뷰 안내** — The \`standard\` variant has a transparent background and depends on the parent color. Storybook Docs' story preview panel has a fixed white background, so toggling dark mode may render the icon white-on-white and invisible. To check actual behavior, open an individual story from the left sidebar in Canvas view. / \`standard\` variant 는 배경이 투명이라 부모 색에 의존. Storybook Docs 의 스토리 프리뷰 패널은 흰 배경 고정이라 다크 모드 토글 시 아이콘이 흰 위에 흰으로 안 보일 수 있다. 실제 동작은 좌측 사이드바에서 개별 스토리를 열어 Canvas 뷰에서 확인.
 				`,
 			},
 		},

@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### Border Width (테두리 두께)
 
+**Border Width** — expresses an element's boundary and emphasis level. \`none\`/\`standard\`/\`thick\`/\`indicator\` map from no border to focus/state indicators.
+
 테두리 두께는 **요소의 경계와 강조 수준**을 표현합니다.
 
 - **none (0px)**: 테두리 없음

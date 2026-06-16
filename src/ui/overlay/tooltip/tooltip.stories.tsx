@@ -38,10 +38,10 @@ const meta: Meta<typeof Tooltip> = {
 		docs: {
 			description: {
 				component: `
-**Tooltip** — hover/focus 시 비차단 보조 설명. 클릭 상호작용은 Popover.
+**Tooltip** — Non-blocking supplementary description on hover/focus. For click interactions use Popover. / hover/focus 시 비차단 보조 설명. 클릭 상호작용은 Popover.
 
-주요 prop: \`content\`, \`placement\` (\`top\`/\`bottom\`/\`left\`/\`right\`, 자동 flip 없음), \`delay\` (기본 200ms), \`disabled\`.
-\`role="tooltip"\` + \`aria-describedby\` 자동.
+Key props: \`content\`, \`placement\` (\`top\`/\`bottom\`/\`left\`/\`right\`, no auto-flip), \`delay\` (default 200ms), \`disabled\`. / 주요 prop: \`content\`, \`placement\` (\`top\`/\`bottom\`/\`left\`/\`right\`, 자동 flip 없음), \`delay\` (기본 200ms), \`disabled\`.
+\`role="tooltip"\` + \`aria-describedby\` set automatically. / \`role="tooltip"\` + \`aria-describedby\` 자동.
 				`.trim(),
 			},
 		},

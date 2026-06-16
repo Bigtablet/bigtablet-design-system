@@ -22,9 +22,9 @@ const meta: Meta<typeof ListItem> = {
 		docs: {
 			description: {
 				component: `
-**ListItem** — 목록 한 항목. 슬롯형 (\`leadingElement\` / \`trailingElement\`).
+**ListItem** — A single row in a list. Slot-based (\`leadingElement\` / \`trailingElement\`). / 목록 한 항목. 슬롯형.
 
-주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄+아이콘), \`onClick\` (인터랙티브).
+Key props: \`label\`, \`overline\` (small text above), \`supportingText\` (secondary text below), \`metadata\` (bottom meta), \`alignment\` (\`top\` multi-line / \`middle\` single line + icon), \`onClick\` (interactive). / 주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄+아이콘), \`onClick\` (인터랙티브).
 				`,
 			},
 		},

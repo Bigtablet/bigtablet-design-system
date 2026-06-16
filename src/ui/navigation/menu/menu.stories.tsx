@@ -29,10 +29,10 @@ const meta: Meta<typeof Menu> = {
 		docs: {
 			description: {
 				component: `
-**Menu** — 액션 메뉴 (컨텍스트/케밥/행 단위). 값 선택은 \`Dropdown\`.
+**Menu** — Action menu (context / kebab / per-row). For value selection use \`Dropdown\`. / 액션 메뉴 (컨텍스트/케밥/행 단위). 값 선택은 \`Dropdown\`.
 
-\`align\`: \`start\` (기본) / \`end\` (우측 화면 밖 방지).
-\`MenuItem\` 필드: \`key\`, \`label\`, \`icon\`, \`onSelect\` (자동 close), \`destructive\`, \`disabled\`.
+\`align\`: \`start\` (default) / \`end\` (prevents overflow off the right edge). / \`align\`: \`start\` (기본) / \`end\` (우측 화면 밖 방지).
+\`MenuItem\` fields: \`key\`, \`label\`, \`icon\`, \`onSelect\` (auto close), \`destructive\`, \`disabled\`. / \`MenuItem\` 필드: \`key\`, \`label\`, \`icon\`, \`onSelect\` (자동 close), \`destructive\`, \`disabled\`.
 				`.trim(),
 			},
 		},

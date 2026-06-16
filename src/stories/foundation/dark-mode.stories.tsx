@@ -15,6 +15,8 @@ const meta: Meta = {
 				component: `
 ### Dark Mode
 
+**Dark Mode** — Bigtablet DS supports dark mode powered by CSS Custom Properties. Set a \`data-theme\` attribute (\`light\`/\`dark\`, or omit it to follow \`prefers-color-scheme\`), or use the \`ThemeProvider\` in React.
+
 Bigtablet DS는 CSS Custom Properties 기반 dark mode를 지원합니다.
 
 #### 작동 방식

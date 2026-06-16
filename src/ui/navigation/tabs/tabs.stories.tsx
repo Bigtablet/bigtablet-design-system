@@ -10,10 +10,10 @@ const meta: Meta<typeof Tabs> = {
 		docs: {
 			description: {
 				component: `
-**Tabs** — 배타적 패널 전환. compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`.
+**Tabs** — Exclusive panel switching. Compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`. / 배타적 패널 전환. compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`.
 
-Variants: \`line\` (기본, 하단 underline) / \`fills\` (segmented control).
-WAI-ARIA + roving tabIndex + 키보드 (←→/Home/End, disabled 스킵).
+Variants: \`line\` (default, bottom underline) / \`fills\` (segmented control). / Variants: \`line\` (기본, 하단 underline) / \`fills\` (segmented control).
+WAI-ARIA + roving tabIndex + keyboard (←→/Home/End, skips disabled). / WAI-ARIA + roving tabIndex + 키보드 (←→/Home/End, disabled 스킵).
         `,
 			},
 		},

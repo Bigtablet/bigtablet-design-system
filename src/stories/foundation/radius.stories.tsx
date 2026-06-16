@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### Radius (모서리 둥글기)
 
+**Radius** — corner rounding expresses a component's **character and approachability**. \`none\`/\`xs\`/\`sm\` for crisp informational UI, \`md\`/\`lg\` for clickable elements, \`xl\` for hero areas, \`full\` for circles.
+
 모서리 둥글기는 컴포넌트의 **성격과 친밀도**를 표현합니다.
 
 - **none**: 모서리 없음 (표, 인라인 UI)

@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### 반응형 기준 (Breakpoints)
 
+**Breakpoints** — threshold values for changing layout and component placement based on screen size. A 4-tier system based on Material Design 3's Window Size Class.
+
 화면 크기에 따라 **레이아웃과 컴포넌트 배치를 변경하기 위한 기준값**입니다.
 
 Material Design 3의 Window Size Class에 기반한 4단계 시스템입니다.
