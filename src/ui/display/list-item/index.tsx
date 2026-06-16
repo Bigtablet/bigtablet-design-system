@@ -81,10 +81,10 @@ export const ListItem = ({
 			<div className="list_item_state_layer">
 				{leadingElement && <div className="list_item_leading">{leadingElement}</div>}
 				<div className="list_item_content">
-					{overline && <span className="list_item_overline">{overline}</span>}
-					<span className="list_item_label">{label}</span>
-					{supportingText && <span className="list_item_supporting">{supportingText}</span>}
-					{metadata && <span className="list_item_metadata">{metadata}</span>}
+					{overline && <div className="list_item_overline">{overline}</div>}
+					<div className="list_item_label">{label}</div>
+					{supportingText && <div className="list_item_supporting">{supportingText}</div>}
+					{metadata && <div className="list_item_metadata">{metadata}</div>}
 				</div>
 				{trailingElement && <div className="list_item_trailing">{trailingElement}</div>}
 			</div>

@@ -143,7 +143,7 @@ export const RichContent: Story = {
 		supportingText: (
 			<span>
 				자세한 내용은{" "}
-				<a href="#changelog" onClick={(e) => e.preventDefault()}>
+				<a href="#changelog" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
 					체인지로그
 				</a>
 				를 확인하세요.
