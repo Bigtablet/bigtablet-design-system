@@ -1,0 +1,67 @@
+@use "src/styles/token" as token;
+
+.popover_wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+// 위치 정렬 wrapper - placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// 안의 .popover 는 spring 으로 entrance transform 사용 - 두 transform context 분리해서 충돌 X.
+// Tooltip 과 달리 interactive content 라 pointer-events 유지.
+.popover_position {
+  position: absolute;
+  z-index: token.$z_level5;
+  width: max-content;
+
+  &.popover_placement_top {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.popover_placement_bottom {
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.popover_placement_left {
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.popover_placement_right {
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.popover {
+  // 라이트: 흰색 / 다크: bg_solid_dim (navy_800, canvas 보다 한 톤 밝음 → elevation)
+  background: token.$color_bg_solid;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  box-shadow: token.$elevation_level2;
+  padding: token.$spacing_16;
+  min-width: 200px;
+  max-width: 320px;
+  color: token.$color_text_body;
+  @include token.body_small;
+  will-change: transform, opacity;
+
+  // 패널 자체 포커스(첫 focusable 없을 때 fallback) 시 ring 숨김 - 내부 요소가 ring 가짐
+  &:focus-visible {
+    outline: none;
+  }
+
+  [data-theme="dark"] & {
+    background: token.$color_bg_solid_dim;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) & {
+      background: token.$color_bg_solid_dim;
+    }
+  }
+}
