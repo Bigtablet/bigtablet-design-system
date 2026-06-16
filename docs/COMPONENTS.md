@@ -1929,14 +1929,21 @@ import { User, MoreVertical } from 'lucide-react';
 
 // 정렬
 <ListItem label="중앙 정렬" alignment="middle" leadingElement={<User />} />
+
+// rich content - 텍스트 슬롯에 노드 인라인 (string·ReactNode 모두 허용)
+<ListItem
+  overline={<Badge variant="success" appearance="soft">활성</Badge>}
+  label={<span>릴리스 <strong>v3.2</strong></span>}
+  supportingText={<span>자세히는 <a href="/changelog">체인지로그</a></span>}
+/>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | required | 주요 텍스트 |
-| `overline` | `string` | - | 상단 오버라인 텍스트 |
-| `supportingText` | `string` | - | 보조 텍스트 |
-| `metadata` | `string` | - | 메타데이터 텍스트 |
+| `label` | `ReactNode` | required | 주요 텍스트 (string 또는 노드 — `<strong>`/`<a>`/`Badge` 인라인 가능) |
+| `overline` | `ReactNode` | - | 상단 오버라인 (string·노드) |
+| `supportingText` | `ReactNode` | - | 보조 텍스트 (string·노드) |
+| `metadata` | `ReactNode` | - | 메타데이터 (string·노드) |
 | `leadingElement` | `ReactNode` | - | 왼쪽 요소 |
 | `trailingElement` | `ReactNode` | - | 오른쪽 요소 |
 | `alignment` | `'top' \| 'middle'` | `'top'` | 요소 정렬 |

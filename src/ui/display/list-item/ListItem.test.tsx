@@ -115,4 +115,41 @@ describe("ListItem", () => {
 		fireEvent.keyDown(container.firstChild as Element, { key: " " });
 		expect(handleClick).not.toHaveBeenCalled();
 	});
+
+	// ── ReactNode 텍스트 슬롯 (string 호환) ─────────────────────────────
+
+	it("renders ReactNode label inside the label slot", () => {
+		const { container } = render(
+			<ListItem label={<strong data-testid="rich-label">Rich</strong>} />,
+		);
+		expect(screen.getByTestId("rich-label")).toBeInTheDocument();
+		expect(container.querySelector(".list_item_label")?.querySelector("strong")).toBeInTheDocument();
+	});
+
+	it("renders ReactNode in overline / supportingText / metadata slots", () => {
+		render(
+			<ListItem
+				overline={<span data-testid="ov">OV</span>}
+				label="Label"
+				supportingText={<a href="#x" data-testid="sup-link">link</a>}
+				metadata={<em data-testid="meta">meta</em>}
+			/>,
+		);
+		expect(screen.getByTestId("ov")).toBeInTheDocument();
+		expect(screen.getByTestId("sup-link")).toBeInTheDocument();
+		expect(screen.getByTestId("meta")).toBeInTheDocument();
+	});
+
+	it("ReactNode overline still triggers multi-line (top) auto-alignment", () => {
+		const { container } = render(<ListItem label="Label" overline={<span>OV</span>} />);
+		expect(container.firstChild).toHaveClass("list_item_align_top");
+	});
+
+	it("keeps string slots working (backward compatibility)", () => {
+		render(<ListItem overline="O" label="L" supportingText="S" metadata="M" />);
+		expect(screen.getByText("O")).toBeInTheDocument();
+		expect(screen.getByText("L")).toBeInTheDocument();
+		expect(screen.getByText("S")).toBeInTheDocument();
+		expect(screen.getByText("M")).toBeInTheDocument();
+	});
 });
