@@ -102,10 +102,10 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ## Components
 
 <table>
-<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
+<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Textarea · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
 <tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
-<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState</td></tr>
-<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · NavBar · Breadcrumb · Menu · Pagination</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState · ErrorState</td></tr>
+<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · BottomNav · NavBar · Breadcrumb · Menu · Pagination</td></tr>
 <tr><td><b>Overlay</b></td><td>Modal · Tooltip</td></tr>
 <tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
 </table>

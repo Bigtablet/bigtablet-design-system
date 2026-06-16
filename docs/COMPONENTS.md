@@ -16,6 +16,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [IconButton](#iconbutton)
 - [Form](#form)
   - [TextField](#textfield)
+  - [Textarea](#textarea)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
   - [Toggle](#toggle)
@@ -31,6 +32,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Pagination](#pagination)
   - [Tabs](#tabs)
   - [Sidebar](#sidebar)
+  - [BottomNav](#bottomnav)
   - [NavBar](#navbar)
   - [Breadcrumb](#breadcrumb)
 - [Overlay](#overlay)
@@ -46,6 +48,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Hero](#hero)
   - [MediaCard](#mediacard)
   - [EmptyState](#emptystate)
+  - [ErrorState](#errorstate)
   - [Accordion](#accordion)
 - [Layout](#layout)
   - [Container](#container)
@@ -352,6 +355,92 @@ import { Search, Eye } from 'lucide-react';
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
 
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
+
+> **v3.1 추가**: `imeStrategy` prop — 한글 IME 조합 중 콜백 전략. 기본 `"delayed"` (조합 완료 후 `onChangeAction`), 실시간 검색/필터엔 `"immediate"` (조합 중에도 즉시 호출).
+
+---
+
+### Textarea
+
+멀티라인 텍스트 입력. `TextField` 와 **동일한 시각/토큰** (border / focus / error / label / helper / disabled) + textarea 특화 기능 (auto-grow, 글자 수 카운터, resize 제어, 한글 IME 정책).
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 한 줄 입력 (이름, 이메일, 검색) | ❌ [TextField](#textfield) |
+| 여러 줄 입력 (공지 내용, 문의, 메모, 설명) | ✅ Textarea |
+| 고정 높이 다중 입력 | ✅ Textarea `rows={n}` |
+| 내용 따라 늘어나는 입력 | ✅ Textarea `minRows`/`maxRows` (auto-grow) |
+| 글자 수 제한 표시 필요 | ✅ Textarea `maxLength` + `showCounter` |
+
+#### auto-grow
+
+`minRows` 또는 `maxRows` 중 하나라도 지정하면 auto-grow 모드 — 내용에 따라 높이가 자동으로 늘어나고 `maxRows` 초과 시 스크롤. 이 모드에선 사용자 resize 핸들이 자동 비활성화됩니다. 둘 다 미지정 시 `rows` 고정 높이.
+
+```tsx
+// 고정 3행
+<Textarea label="메모" rows={3} />
+
+// auto-grow: 2행에서 시작, 최대 6행까지 늘어남
+<Textarea label="자기소개" minRows={2} maxRows={6} />
+```
+
+#### 한글 IME
+
+`TextField` 와 동일하게 `imeStrategy` 지원. 조합 중 외부 `value` 구독이 즉시 필요하면 `"immediate"`. 조합 중에는 `transformValue` 가 보류되어 한글 조합이 깨지지 않습니다.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | - | 라벨 |
+| `showLabel` | `boolean` | `true` | 라벨 표시 여부 |
+| `supportingText` | `string` | - | 도움말 텍스트 (error 시 에러 색) |
+| `error` | `boolean` | `false` | 에러 상태 (`aria-invalid` 자동) |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `rows` | `number` | `3` | 고정 행 수 (auto-grow 미사용 시) |
+| `minRows` | `number` | - | auto-grow 최소 행 (지정 시 auto-grow 활성) |
+| `maxRows` | `number` | - | auto-grow 최대 행 (초과 시 스크롤) |
+| `maxLength` | `number` | - | 최대 글자 수 |
+| `showCounter` | `boolean` | `false` | 글자 수 카운터 표시 (`maxLength` 와 함께 권장) |
+| `resize` | `'none' \| 'vertical' \| 'both'` | `'vertical'` | resize 핸들 (auto-grow 시 무시) |
+| `fullWidth` | `boolean` | `false` | 전체 너비 |
+| `onChangeAction` | `(value: string) => void` | - | 값 변경 콜백 |
+| `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 |
+| `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
+| `value` / `defaultValue` | `string` | - | 제어/비제어 값 |
+| `...rest` | `TextareaHTMLAttributes` | - | `placeholder`, `disabled`, `aria-*` 등 |
+
+#### 접근성
+
+- `error` 시 `aria-invalid="true"` + `supportingText` 가 `aria-describedby` 로 연결
+- `showLabel={false}` 면 `label` 이 `aria-label` 로 적용 (시각 라벨 숨김)
+- 카운터는 `aria-hidden` — 스크린 리더용 글자수 안내가 필요하면 `supportingText` 로 별도 제공
+
+**Usage**
+
+```tsx
+import { Textarea } from "@bigtablet/design-system";
+
+// 공지 내용 — auto-grow + 카운터
+<Textarea
+  label="공지 내용"
+  placeholder="최대 500자"
+  minRows={3}
+  maxRows={10}
+  maxLength={500}
+  showCounter
+  fullWidth
+  onChangeAction={(v) => setContent(v)}
+/>
+
+// 실시간 미리보기 (한글 즉시 반영)
+<Textarea label="마크다운" imeStrategy="immediate" value={md} onChangeAction={setMd} />
+
+// 에러
+<Textarea label="문의 내용" error supportingText="내용을 입력해주세요." rows={4} />
+```
 
 ---
 
@@ -951,6 +1040,91 @@ const [collapsed, setCollapsed] = useState(false);
 
 // Next.js Link와 통합 — as="a" + href 사용
 <SidebarItem icon={<Home />} as="a" href="/dashboard">대시보드</SidebarItem>
+```
+
+> **v3.1 추가**: `mode` prop — `"auto"` (기본) 시 viewport `< 600px` 에서 자동으로 하단 bar 형태로 변신 (CSS-only, SSR 안전). `"static"` 으로 끄기 (admin 등 desktop-only). 모바일 우선 앱이라면 별도 [BottomNav](#bottomnav) 컴포넌트를 직접 쓰는 것도 고려.
+
+---
+
+### BottomNav
+
+모바일 하단 네비게이션 바. `position: fixed; bottom: 0` 하단 고정 + iOS safe-area 대응. 2–5개 `BottomNavItem` 으로 구성. mobile-first PWA 의 메인 nav 패턴.
+
+#### Sidebar vs BottomNav
+
+| | Sidebar | BottomNav |
+|---|---------|-----------|
+| 위치 | 좌측 rail | 하단 fixed bar |
+| 항목 수 | 다수 + 섹션 그룹 | 2–5개 (flat) |
+| 적합 | admin/dashboard (계층적) | owner/support (mobile-first, flat) |
+| 반응형 | `mode="auto"` 시 모바일에서 하단 변신 | 항상 하단 (소비처가 viewport 제어) |
+
+> 데스크탑 Sidebar + 모바일 BottomNav 를 한 앱에서 동시에 쓰려면, 각각 CSS media query 로 노출 제어. Sidebar `mode="auto"` 하나로 해결되면 그게 더 간단.
+
+#### 구성
+
+- `<BottomNav>` — `<nav role="navigation">` 컨테이너. 2–5 `BottomNavItem` 자식.
+- `<BottomNavItem>` — icon + label 수직 스택. `active` 시 `aria-current="page"` 자동.
+- `<BottomNavSpacer>` — 본문 끝에 두면 fixed bar 가 콘텐츠를 가리지 않게 공간 확보.
+
+#### CSS 변수 (layout 계산용)
+
+```css
+--bt-bottom-nav-height        /* 56px */
+--bt-bottom-nav-safe-area     /* env(safe-area-inset-bottom) */
+--bt-bottom-nav-total-height  /* 합산 — BottomNavSpacer 가 자동 사용 */
+```
+
+**Props — BottomNav**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `ariaLabel` | `string` | `"주요 메뉴"` | `<nav>` 스크린 리더 레이블 |
+| `children` | `ReactNode` | - | 2–5 `BottomNavItem` |
+| `...rest` | `HTMLAttributes<HTMLElement>` | - | |
+
+**Props — BottomNavItem**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `ReactNode` | - | 아이콘 (필수) |
+| `label` | `string` | - | 라벨 (필수, 짧게 2–4자) |
+| `active` | `boolean` | `false` | 활성 상태 (`aria-current="page"` 자동) |
+| `badge` | `ReactNode` | - | 아이콘 우상단 dot/카운트 (`Badge` 등) |
+| `disabled` | `boolean` | `false` | 비활성 (anchor 는 `aria-disabled`+`tabIndex=-1`) |
+| `as` | `'button' \| 'a'` | `'button'` | 렌더 요소 |
+| `href` | `string` | - | `as="a"` 일 때 |
+
+#### 접근성
+
+- `<nav>` + `aria-label`, active item `aria-current="page"` 자동
+- 탭 영역 최소 56px (WCAG)
+- `disabled` anchor 는 `aria-disabled="true"` + `tabIndex={-1}` + 클릭 차단 (`<a disabled>` 무효 HTML 회피)
+
+**Usage**
+
+```tsx
+import { BottomNav, BottomNavItem, BottomNavSpacer, Badge } from "@bigtablet/design-system";
+import { Home, UtensilsCrossed, BarChart3 } from "lucide-react";
+
+function App() {
+  const [tab, setTab] = useState("orders");
+  return (
+    <>
+      <main>{/* 페이지 콘텐츠 */}</main>
+      <BottomNavSpacer />
+      <BottomNav>
+        <BottomNavItem icon={<Home />} label="주문" active={tab === "orders"} onClick={() => setTab("orders")} />
+        <BottomNavItem icon={<UtensilsCrossed />} label="메뉴" active={tab === "menu"} onClick={() => setTab("menu")}
+          badge={<Badge variant="error" shape="dot" size="sm" />} />
+        <BottomNavItem icon={<BarChart3 />} label="매출" active={tab === "sales"} onClick={() => setTab("sales")} />
+      </BottomNav>
+    </>
+  );
+}
+
+// 라우팅 (Next.js Link)
+<BottomNavItem as="a" href="/orders" icon={<Home />} label="주문" active />
 ```
 
 ---
@@ -2205,6 +2379,78 @@ import { Inbox, Search } from "lucide-react";
 
 // 최소 — title만
 <EmptyState title="아직 데이터가 없습니다" size="sm" />
+```
+
+---
+
+### ErrorState
+
+에러 상태 표시 — **error boundary fallback, 데이터 로드 실패, 위젯 에러**. [EmptyState](#emptystate) 의 형제. `status-error` 토큰 사용 (하드코딩 없음), `role="alert"` 자동.
+
+#### EmptyState vs ErrorState
+
+| | EmptyState | ErrorState |
+|---|------------|------------|
+| 의도 | "지금은 비어있어요" (중립) | "문제가 생겼어요" (에러) |
+| 아이콘 | Inbox, Search 등 정보성 | 경고 아이콘 (기본 제공) |
+| 색 | caption tone | `status-error` |
+| 액션 | CTA (시작하기) | 재시도 버튼 |
+| role | (옵션) `status` | `alert` 자동 |
+
+#### variant — page vs widget
+
+| variant | 용도 | 시각 |
+|---------|------|------|
+| `page` (기본) | 전체 화면/영역 fallback (route error boundary) | 큰 아이콘 (48) + `min-height: 320` + 넉넉한 패딩 |
+| `widget` | 위젯/카드 내부 인라인 fallback | 작은 아이콘 (28) + 좁은 패딩 |
+
+#### 아이콘
+
+미지정 시 기본 경고 아이콘(`TriangleAlert`). `icon` prop 으로 교체, `icon={null}` 로 숨김.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
+| `description` | `ReactNode` | - | 보조 설명 |
+| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. `null` 로 숨김 |
+| `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
+| `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
+| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |
+
+#### 접근성
+
+- 루트 `role="alert"` 자동 — 에러 발생 시 스크린 리더가 즉시 announce
+- 아이콘은 `aria-hidden` — 의미는 `title`/`description` 텍스트로 전달
+- 색은 `status-error-on-surface` (surface 위 텍스트, light/dark 자동 swap)
+
+**Usage**
+
+```tsx
+import { ErrorState, Button } from "@bigtablet/design-system";
+
+// 페이지 전체 (error boundary fallback)
+<ErrorState
+  title="페이지를 불러오지 못했습니다"
+  description="잠시 후 다시 시도해 주세요."
+  action={<Button onClick={retry}>다시 시도</Button>}
+/>
+
+// 위젯 인라인
+<ErrorState
+  variant="widget"
+  title="데이터를 불러오지 못했어요"
+  action={<Button variant="outline" size="sm" onClick={retry}>재시도</Button>}
+/>
+
+// 커스텀 아이콘
+import { ServerCrash } from "lucide-react";
+<ErrorState
+  icon={<ServerCrash size={48} strokeWidth={1.5} />}
+  title="서버에 연결할 수 없습니다"
+  action={<Button onClick={refetch}>새로고침</Button>}
+/>
 ```
 
 ---
