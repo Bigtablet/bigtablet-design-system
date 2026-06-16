@@ -596,6 +596,28 @@ EOF
 
 ---
 
+## 코드 리뷰 응대 규칙 (AI Assistant)
+
+PR 에 리뷰 봇/리뷰어(`@gemini-code-assist`, `@coderabbitai`, 사람 리뷰어)가 코멘트를 달면 AI 어시스턴트는 **항상** 다음을 수행한다:
+
+1. **재확인** — 지적 사항을 현재 소스로 검증한다. `실재 / 무관 / 이미수정` 판정 후 움직인다. 봇 지적이라고 무조건 따르지 않는다.
+2. **수정** — actionable 한 지적은 반영한다. 보류 시 그 이유를 답글에 명시한다.
+3. **답글 (멘션 필수)** — 처리한 각 인라인 코멘트(`comment_id` 가 있는 것)마다:
+   - 리뷰어를 **반드시 멘션** (`@gemini-code-assist` / `@coderabbitai` 등) — 봇이 학습·추적할 수 있도록.
+   - 무엇을 바꿨는지(또는 왜 안 했는지) 한 줄 + 반영 커밋 해시.
+   - `gh api repos/{owner}/{repo}/pulls/{pr}/comments/{comment_id}/replies -X POST -f body='...'` 사용.
+4. **resolve** — 처리 완료한 thread 는 GraphQL `resolveReviewThread` mutation 으로 닫는다.
+   변수 바인딩(`-f`) 사용 — 문자열 보간보다 안전 (injection 방지):
+   ```bash
+   gh api graphql -f query='mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { isResolved } } }' -f threadId="PRRT_..."
+   ```
+   `threadId` 는 REST 의 `comment_id` 가 아닌 GraphQL 노드 ID(`PRRT_` 접두사) — `pullRequest.reviewThreads` 쿼리의 thread `id` 필드로 얻는다 (`comment_id` → thread 매핑).
+5. **skip 기준** — acknowledgment-only(감사/확인 답신) / status notice(`comment_id` 없는 봇 공지, 예: Chromatic 한도, 빌드 상태) 는 답글·resolve 불필요. 답글 루프 방지.
+
+> CodeRabbit 은 `.coderabbit.yaml` 로 `develop` 대상 PR 도 자동 리뷰된다. Gemini 는 `.yml`/`.json` 등 일부 파일 타입은 리뷰를 skip 한다 (정상).
+
+---
+
 ## Chromatic Snapshot 절약 규칙
 
 Chromatic은 `git push` 시 자동으로 실행되며 스냅샷을 소모합니다.
