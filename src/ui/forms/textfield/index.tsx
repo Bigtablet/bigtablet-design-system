@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -98,18 +98,33 @@ export const TextField = ({
 	);
 
 	const isComposingRef = useRef(false);
+	// 마지막으로 onChangeAction 에 방출한 값 — 중복 호출(특히 IME 종료 직후) 차단용.
+	const lastEmittedValueRef = useRef(innerValue);
 
-	useEffect(() => {
-		// IME 조합 중에는 외부 value 로 덮어쓰지 않음 — controlled + immediate 모드에서
-		// 조합 중 부모 re-render 가 innerValue 를 되돌려 커서 튐/글자 중복을 막는다.
-		if (!isControlled || isComposingRef.current) return;
-		const nextValue = value ?? "";
-		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
-	}, [isControlled, value, transformValue]);
+	// Controlled value 동기화 — useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
+	// paint 전 즉시 반영해 flicker 방지. IME 조합 중에는 덮어쓰지 않아 조합 깨짐을 막는다.
+	const [prevValue, setPrevValue] = useState(value);
+	if (isControlled && value !== prevValue) {
+		setPrevValue(value);
+		if (!isComposingRef.current) {
+			const nextValue = applyTransform(value ?? "");
+			setInnerValue(nextValue);
+			lastEmittedValueRef.current = nextValue;
+		}
+	}
+
+	// 비조합 입력 / 조합 종료 / clear 공통 — 중복 방출 차단 후 방출.
+	const emit = (nextValue: string) => {
+		setInnerValue(nextValue);
+		if (nextValue !== lastEmittedValueRef.current) {
+			lastEmittedValueRef.current = nextValue;
+			onChangeAction?.(nextValue);
+		}
+	};
 
 	const handleClear = useCallback(() => {
-		setInnerValue("");
-		onChangeAction?.("");
+		emit("");
+		// biome-ignore lint/correctness/useExhaustiveDependencies: emit 는 매 렌더 생성되지만 onChangeAction 만 의존
 	}, [onChangeAction]);
 
 	const rootClassName = cn(
@@ -170,10 +185,8 @@ export const TextField = ({
 							}}
 							onCompositionEnd={(event) => {
 								isComposingRef.current = false;
-								const rawValue = event.currentTarget.value;
-								const nextValue = applyTransform(rawValue);
-								setInnerValue(nextValue);
-								onChangeAction?.(nextValue);
+								// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 — emit 가 중복 차단.
+								emit(applyTransform(event.currentTarget.value));
 							}}
 							onChange={(event) => {
 								const rawValue = event.target.value;
@@ -181,12 +194,13 @@ export const TextField = ({
 								if (isComposingRef.current) {
 									setInnerValue(rawValue);
 									// immediate: 조합 중에도 외부 구독 즉시 반영 (raw value).
-									if (imeStrategy === "immediate") onChangeAction?.(rawValue);
+									if (imeStrategy === "immediate" && rawValue !== lastEmittedValueRef.current) {
+										lastEmittedValueRef.current = rawValue;
+										onChangeAction?.(rawValue);
+									}
 									return;
 								}
-								const nextValue = applyTransform(rawValue);
-								setInnerValue(nextValue);
-								onChangeAction?.(nextValue);
+								emit(applyTransform(rawValue));
 							}}
 						/>
 					</div>
