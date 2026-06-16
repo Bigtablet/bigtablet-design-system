@@ -5,9 +5,13 @@
   border-radius: token.$radius_lg;
   transition: token.$transition_lift;
 
-  &_hoverable:hover {
-    transform: translateY(-2px);
-    box-shadow: token.$elevation_level2;
+  &_interactive {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: token.$elevation_level2;
+    }
   }
 
   &_bordered {
@@ -57,6 +61,27 @@
     width: 100%;
   }
 
+  // ── Footer (header/body/footer composition) ─────────────────────────
+
+  &_footer {
+    display: flex;
+    gap: token.$spacing_8;
+    align-items: center;
+    margin-top: token.$spacing_16;
+    padding-top: token.$spacing_16;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+
+    &_start {
+      justify-content: flex-start;
+    }
+    &_between {
+      justify-content: space-between;
+    }
+    &_end {
+      justify-content: flex-end;
+    }
+  }
+
   // ── Variant: accent (navy bg + white text) ──────────────────────────
 
   &_variant_accent {
@@ -65,6 +90,56 @@
 
     .card_title {
       color: token.$color_accent_on_surface;
+    }
+
+    .card_footer {
+      // navy bg 위에서는 반투명 흰 구분선이 자연스러움
+      border-top-color: token.$color_state_hover_on_dark;
+    }
+  }
+
+  // ── Variant: outlined (투명 bg + 테두리만) ──────────────────────────
+
+  &_variant_outlined {
+    background: transparent;
+    border: token.$border_width_standard solid token.$color_border_default;
+    box-shadow: none;
+  }
+
+  // ── Variant: glass (반투명 frosted + backdrop blur) ─────────────────
+  // 컬러/이미지 배경 위에서 빛난다. light = 어두운 frosted(밝은 배경 위 가시),
+  // dark = 밝은 frosted(navy 위 가시). rgba/blur 는 layout mixin 내부 처리.
+
+  &_variant_glass {
+    @include token.glass_dark;
+    // 어두운 frosted(또는 navy 위 밝은 frosted) 표면 - 흰 텍스트로 가독성 확보
+    color: token.$color_brand_on_primary;
+
+    .card_title {
+      color: token.$color_brand_on_primary;
+    }
+
+    .card_footer {
+      border-top-color: token.$color_state_hover_on_dark;
+    }
+
+    [data-theme="dark"] & {
+      @include token.glass_card;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) & {
+        @include token.glass_card;
+      }
+    }
+  }
+
+  // ── Reduced motion ──────────────────────────────────────────────────
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &_interactive:hover {
+      transform: none;
     }
   }
 }

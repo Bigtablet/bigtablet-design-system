@@ -1846,7 +1846,7 @@ const [open, setOpen] = useState(false);
 ### Card
 
 ```tsx
-import { Card } from '@bigtablet/design-system';
+import { Card, Button } from '@bigtablet/design-system';
 
 <Card heading="카드 제목">
   <p>카드 내용입니다.</p>
@@ -1856,14 +1856,36 @@ import { Card } from '@bigtablet/design-system';
 <Card heading="제목" shadow="lg" padding="lg" bordered>
   내용
 </Card>
+
+// variant - glass 는 컬러/이미지 배경 위에서 빛난다, outlined 는 투명 + 테두리
+<Card variant="glass" heading="Glass">내용</Card>
+<Card variant="outlined" heading="Outlined">내용</Card>
+
+// interactive - hover 시 살짝 떠오름 (클릭 가능한 카드)
+<Card interactive onClick={open}>내용</Card>
+
+// footer 슬롯 - header / body / footer 3단 composition
+<Card
+  heading="제목"
+  footer={<><Button variant="text">취소</Button><Button>저장</Button></>}
+>
+  내용
+</Card>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `heading` | `ReactNode` | - | 카드 제목 |
-| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 |
+| `heading` | `ReactNode` | - | 카드 제목 (header) |
+| `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
+| `variant` | `'default' \| 'accent' \| 'glass' \| 'outlined'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outlined=투명 bg+테두리(shadow 무시) |
+| `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
+| `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
+| `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
+| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outlined/glass 는 자체 처리) |
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
+
+> ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 실제 클릭/키보드 처리는 `onClick` 이나 래핑 요소로 직접 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
 
 ---
 
