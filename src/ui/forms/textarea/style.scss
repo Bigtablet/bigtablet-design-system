@@ -1,6 +1,6 @@
 @use "src/styles/token" as token;
 
-// Textarea — TextField 와 동일한 토큰/시각 (border, focus, error, label, helper, disabled).
+// Textarea - TextField 와 동일한 토큰/시각 (border, focus, error, label, helper, disabled).
 // 차이: multiline, 아이콘/clear 없음, auto-grow + 카운터 + resize.
 
 .textarea {
@@ -141,7 +141,7 @@
 
     .textarea_label,
     .textarea_helper {
-      // surface 위 직접 텍스트 — light/dark 자동 swap
+      // surface 위 직접 텍스트 - light/dark 자동 swap
       color: token.$color_status_error_on_surface;
     }
   }

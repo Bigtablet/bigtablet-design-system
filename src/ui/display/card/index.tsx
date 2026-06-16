@@ -17,7 +17,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	padding?: "none" | "sm" | "md" | "lg";
 	/** 테두리 표시 여부 (기본값: false) */
 	bordered?: boolean;
-	/** 카드 variant — "accent"는 navy bg + white text (강조 카드) */
+	/** 카드 variant - "accent"는 navy bg + white text (강조 카드) */
 	variant?: CardVariant;
 }
 

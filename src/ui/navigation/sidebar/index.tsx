@@ -135,7 +135,7 @@ interface SidebarItemCommon {
 	trailing?: React.ReactNode;
 }
 
-// Discriminated union — `as` 값에 따라 허용되는 HTML attribute 동적 결정.
+// Discriminated union - `as` 값에 따라 허용되는 HTML attribute 동적 결정.
 // `target` / `rel` / `download` 는 anchor 만, `type` / `form` 등은 button 만.
 type SidebarItemButton = SidebarItemCommon & {
 	as?: "button";

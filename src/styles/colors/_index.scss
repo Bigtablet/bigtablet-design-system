@@ -1,10 +1,10 @@
 // ════════════════════════════════════════════════════════════════════════
-// Bigtablet 컬러 토큰 — Light/Dark 양쪽 지원
+// Bigtablet 컬러 토큰 - Light/Dark 양쪽 지원
 //
 // 구조:
-//   1. Base colors (raw values) — SCSS 변수
-//   2. CSS custom properties (:root + [data-theme="dark"]) — 런타임 테마 전환
-//   3. Semantic SCSS 변수 — CSS var를 참조 → 기존 사용처(@use token; $color_*) 호환 유지
+//   1. Base colors (raw values) - SCSS 변수
+//   2. CSS custom properties (:root + [data-theme="dark"]) - 런타임 테마 전환
+//   3. Semantic SCSS 변수 - CSS var를 참조 → 기존 사용처(@use token; $color_*) 호환 유지
 //
 // `brand_primary`, `accent.*`, `status.*` 는 light/dark 동일 (브랜드 일관성).
 // 나머지 표면/텍스트/border 는 dark에서 navy 계열로 자동 전환.
@@ -25,40 +25,40 @@ $color_base_neutral_600:      #777777;
 $color_base_neutral_700:      #666666;
 $color_base_neutral_800:      #333333;
 $color_base_neutral_900:      #121212;
-// Status — light mode default (darkened for AA on #fff text, 5+:1)
-// 이전 값 (#EF4444 등) 은 #fff 텍스트 조합 시 AA 미달 (2.0~3.7:1) — Tailwind 700 계열로 교체.
+// Status - light mode default (darkened for AA on #fff text, 5+:1)
+// 이전 값 (#EF4444 등) 은 #fff 텍스트 조합 시 AA 미달 (2.0~3.7:1) - Tailwind 700 계열로 교체.
 $color_base_status_error:     #B91C1C;  // red-700, with #fff = 6.4:1
 $color_base_status_success:   #047857;  // green-700, with #fff = 5.5:1
 $color_base_status_warning:   #B45309;  // amber-700, with #fff = 5.1:1
 $color_base_status_info:      #1D4ED8;  // blue-700, with #fff = 6.5:1
 
-// Status — dark mode 텍스트 / surface 위 직접 사용용 (brightened)
+// Status - dark mode 텍스트 / surface 위 직접 사용용 (brightened)
 // dark canvas (navy_900 lum ~0.005) 위에서 6+:1 보장.
 $color_base_status_error_dark_text:    #F87171;  // red-400, on navy_900 ~6.8:1
 $color_base_status_success_dark_text:  #4ADE80;  // green-400, on navy_900 ~10.5:1
 $color_base_status_warning_dark_text:  #FBBF24;  // amber-400, on navy_900 ~13:1
 $color_base_status_info_dark_text:     #60A5FA;  // blue-400, on navy_900 ~7.8:1
 
-// Status container — light mode (연한 tint 배경)
+// Status container - light mode (연한 tint 배경)
 $color_base_status_error_container_light:    #FEE2E2;  // red-100
 $color_base_status_success_container_light:  #DCFCE7;  // green-100
 $color_base_status_warning_container_light:  #FEF3C7;  // amber-100
 $color_base_status_info_container_light:     #DBEAFE;  // blue-100
 
-// Status container — dark mode (deep alpha tint, navy bg 위 식별 가능)
-// Sass rgba(hex, alpha) — 다른 토큰 정의와 hex 일관성 유지.
+// Status container - dark mode (deep alpha tint, navy bg 위 식별 가능)
+// Sass rgba(hex, alpha) - 다른 토큰 정의와 hex 일관성 유지.
 $color_base_status_error_container_dark:     rgba(#7f1d1d, 0.35);   // red-900 @ 35%
 $color_base_status_success_container_dark:   rgba(#064e3b, 0.35);   // green-900 @ 35%
 $color_base_status_warning_container_dark:   rgba(#78350f, 0.35);   // amber-900 @ 35%
 $color_base_status_info_container_dark:      rgba(#1e3a8a, 0.35);   // blue-900 @ 35%
 
-// Status on-container — dark mode (tint 위에서 보일 만한 밝은 색)
+// Status on-container - dark mode (tint 위에서 보일 만한 밝은 색)
 $color_base_status_error_on_container_dark:    #FCA5A5;  // red-300
 $color_base_status_success_on_container_dark:  #86EFAC;  // green-300
 $color_base_status_warning_on_container_dark:  #FCD34D;  // amber-300
 $color_base_status_info_on_container_dark:     #93C5FD;  // blue-300
 
-// Bigtablet navy (초기 홈페이지에서 추출) — slate-gray-blue + sky blue
+// Bigtablet navy (초기 홈페이지에서 추출) - slate-gray-blue + sky blue
 $color_base_navy_50:          #F2F5F8;
 $color_base_navy_100:         #DDE3E9;
 $color_base_navy_200:         #B4C2CD;
@@ -70,7 +70,7 @@ $color_base_navy_700:         #3D4852;
 $color_base_navy_800:         #303841;
 $color_base_navy_900:         #1F2630;
 
-// Skeleton — light mode (off-white grays, not in neutral scale)
+// Skeleton - light mode (off-white grays, not in neutral scale)
 $color_base_skeleton_base:       #F3F3F3;
 $color_base_skeleton_wave:       #F0F0F0;
 $color_base_skeleton_highlight:  #FAFAFA;
@@ -88,7 +88,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 
 // ── CSS custom properties (런타임 테마 전환) ────────────────────────────
 // `:root` = light mode 기본. `[data-theme="dark"]` = dark overrides.
-// 컴포넌트는 SCSS `$color_*` 변수로 접근 — 아래 변수들이 var()로 컴파일됨.
+// 컴포넌트는 SCSS `$color_*` 변수로 접근 - 아래 변수들이 var()로 컴파일됨.
 
 :root {
   // Brand (light/dark 동일)
@@ -127,38 +127,38 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-border-focus:         #{$color_base_neutral_900};
   --bt-color-border-disabled:      #{$color_base_neutral_100};
 
-  // Status — base (solid bg 용, light = darkened — #fff text 5+:1)
+  // Status - base (solid bg 용, light = darkened - #fff text 5+:1)
   --bt-color-status-error:         #{$color_base_status_error};
   --bt-color-status-success:       #{$color_base_status_success};
   --bt-color-status-warning:       #{$color_base_status_warning};
   --bt-color-status-info:          #{$color_base_status_info};
 
-  // Status — on-default (solid bg 위 텍스트)
+  // Status - on-default (solid bg 위 텍스트)
   --bt-color-status-error-on-default:    #{$color_base_neutral_0};
   --bt-color-status-success-on-default:  #{$color_base_neutral_0};
   --bt-color-status-warning-on-default:  #{$color_base_neutral_0};
   --bt-color-status-info-on-default:     #{$color_base_neutral_0};
 
-  // Status — container (tint 배경 — soft variant 용)
+  // Status - container (tint 배경 - soft variant 용)
   --bt-color-status-error-container:    #{$color_base_status_error_container_light};
   --bt-color-status-success-container:  #{$color_base_status_success_container_light};
   --bt-color-status-warning-container:  #{$color_base_status_warning_container_light};
   --bt-color-status-info-container:     #{$color_base_status_info_container_light};
 
-  // Status — on-container (tint 위 텍스트)
+  // Status - on-container (tint 위 텍스트)
   --bt-color-status-error-on-container:    #{$color_base_status_error};
   --bt-color-status-success-on-container:  #{$color_base_status_success};
   --bt-color-status-warning-on-container:  #{$color_base_status_warning};
   --bt-color-status-info-on-container:     #{$color_base_status_info};
 
-  // Status — on-surface (앱 surface 위 직접 텍스트, e.g. TextField error helper)
+  // Status - on-surface (앱 surface 위 직접 텍스트, e.g. TextField error helper)
   // light: darkened (= status-* 와 동일), dark 에서만 분기 됨.
   --bt-color-status-error-on-surface:    #{$color_base_status_error};
   --bt-color-status-success-on-surface:  #{$color_base_status_success};
   --bt-color-status-warning-on-surface:  #{$color_base_status_warning};
   --bt-color-status-info-on-surface:     #{$color_base_status_info};
 
-  // Accent (검정 brand 기반 — light에서 검정, dark에서 흰색 반전)
+  // Accent (검정 brand 기반 - light에서 검정, dark에서 흰색 반전)
   // 컴포넌트 active/selected/indicator 강조에 사용.
   // navy 색상은 `color_base_navy_*`로 별도 보존 (legacy/optional usage).
   --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
@@ -168,7 +168,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-accent-strong:        #{$color_base_neutral_900};
   --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
 
-  // Skeleton (light gray gradient — dark 에서 navy gray 로 전환)
+  // Skeleton (light gray gradient - dark 에서 navy gray 로 전환)
   --bt-color-skeleton-base:        #{$color_base_skeleton_base};
   --bt-color-skeleton-wave:        #{$color_base_skeleton_wave};
   --bt-color-skeleton-highlight:   #{$color_base_skeleton_highlight};
@@ -177,11 +177,11 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 [data-theme="dark"] {
   // 브라우저 기본 UI (스크롤바, form control 등) 다크 적응
   color-scheme: dark;
-  // Font rendering — dark bg 위 흰 글씨의 halation/노이즈 보정
+  // Font rendering - dark bg 위 흰 글씨의 halation/노이즈 보정
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Brand (dark 모드에서도 black 유지 — bg가 navy라 black 버튼 구분됨.
+  // Brand (dark 모드에서도 black 유지 - bg가 navy라 black 버튼 구분됨.
   // 단 텍스트로 쓰일 땐 inverse 사용 권장)
 
   // Text (light → inverted)
@@ -200,7 +200,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
   --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
 
-  // State (검정 alpha → 흰색 alpha — dark bg 위에서 작동)
+  // State (검정 alpha → 흰색 alpha - dark bg 위에서 작동)
   --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
   --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
   --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
@@ -215,10 +215,10 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-border-focus:         #{$color_base_neutral_0};
   --bt-color-border-disabled:      #{$color_base_navy_800};
 
-  // Brand container — dark 모드에선 white alpha로
+  // Brand container - dark 모드에선 white alpha로
   --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
 
-  // Accent (dark — 흰색 반전. active/selected가 dark navy bg 위에서 잘 보임)
+  // Accent (dark - 흰색 반전. active/selected가 dark navy bg 위에서 잘 보임)
   --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
   --bt-color-accent-muted:         #{$color_base_alpha_white_12};
   --bt-color-accent-light:         #{$color_base_neutral_300};
@@ -226,8 +226,8 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-accent-strong:        #{$color_base_neutral_0};
   --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
 
-  // Status — dark mode 분기
-  // base solid 는 light 와 동일 (darkened) 유지 — Badge solid 의 #fff 텍스트 대비 보존.
+  // Status - dark mode 분기
+  // base solid 는 light 와 동일 (darkened) 유지 - Badge solid 의 #fff 텍스트 대비 보존.
   // container / on-container / on-surface 만 dark variant 적용.
   --bt-color-status-error-container:     #{$color_base_status_error_container_dark};
   --bt-color-status-success-container:   #{$color_base_status_success_container_dark};
@@ -244,7 +244,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
   --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
 
-  // Skeleton — navy_700 (bg-solid-dim navy_800 보다 살짝 밝음 → 시각 대비)
+  // Skeleton - navy_700 (bg-solid-dim navy_800 보다 살짝 밝음 → 시각 대비)
   --bt-color-skeleton-base:        #{$color_base_navy_700};
   --bt-color-skeleton-wave:        #{$color_base_navy_700};
   --bt-color-skeleton-highlight:   #{$color_base_navy_600};
@@ -285,7 +285,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 
     --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
 
-    // Accent dark — 흰색 반전
+    // Accent dark - 흰색 반전
     --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
     --bt-color-accent-muted:         #{$color_base_alpha_white_12};
     --bt-color-accent-light:         #{$color_base_neutral_300};
@@ -293,7 +293,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     --bt-color-accent-strong:        #{$color_base_neutral_0};
     --bt-color-accent-on-surface:    #{$color_base_neutral_900};
 
-    // Status — dark variant (container / on-container / on-surface 만 분기)
+    // Status - dark variant (container / on-container / on-surface 만 분기)
     --bt-color-status-error-container:     #{$color_base_status_error_container_dark};
     --bt-color-status-success-container:   #{$color_base_status_success_container_dark};
     --bt-color-status-warning-container:   #{$color_base_status_warning_container_dark};
@@ -316,7 +316,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 }
 
 // ── Semantic SCSS variables (CSS var 참조) ─────────────────────────────
-// 기존 사용처 호환 — `@use "..." as token; background: token.$color_bg_solid;`
+// 기존 사용처 호환 - `@use "..." as token; background: token.$color_bg_solid;`
 
 // Brand
 $color_brand_primary:         var(--bt-color-brand-primary);
@@ -354,31 +354,31 @@ $color_border_subtle:         var(--bt-color-border-subtle);
 $color_border_focus:          var(--bt-color-border-focus);
 $color_border_disabled:       var(--bt-color-border-disabled);
 
-// Status — solid (light=darkened for AA, dark=동일)
+// Status - solid (light=darkened for AA, dark=동일)
 $color_status_error:          var(--bt-color-status-error);
 $color_status_success:        var(--bt-color-status-success);
 $color_status_warning:        var(--bt-color-status-warning);
 $color_status_info:           var(--bt-color-status-info);
 
-// Status — on-default (solid bg 위 텍스트)
+// Status - on-default (solid bg 위 텍스트)
 $color_status_error_on_default:    var(--bt-color-status-error-on-default);
 $color_status_success_on_default:  var(--bt-color-status-success-on-default);
 $color_status_warning_on_default:  var(--bt-color-status-warning-on-default);
 $color_status_info_on_default:     var(--bt-color-status-info-on-default);
 
-// Status — container (tint 배경, soft variant 용)
+// Status - container (tint 배경, soft variant 용)
 $color_status_error_container:    var(--bt-color-status-error-container);
 $color_status_success_container:  var(--bt-color-status-success-container);
 $color_status_warning_container:  var(--bt-color-status-warning-container);
 $color_status_info_container:     var(--bt-color-status-info-container);
 
-// Status — on-container (tint 위 텍스트)
+// Status - on-container (tint 위 텍스트)
 $color_status_error_on_container:    var(--bt-color-status-error-on-container);
 $color_status_success_on_container:  var(--bt-color-status-success-on-container);
 $color_status_warning_on_container:  var(--bt-color-status-warning-on-container);
 $color_status_info_on_container:     var(--bt-color-status-info-on-container);
 
-// Status — on-surface (앱 surface 위 직접 텍스트, light/dark 자동 swap)
+// Status - on-surface (앱 surface 위 직접 텍스트, light/dark 자동 swap)
 $color_status_error_on_surface:    var(--bt-color-status-error-on-surface);
 $color_status_success_on_surface:  var(--bt-color-status-success-on-surface);
 $color_status_warning_on_surface:  var(--bt-color-status-warning-on-surface);

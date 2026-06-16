@@ -1,7 +1,7 @@
 @use "src/styles/token" as token;
 
-// ErrorState — EmptyState 형제. error boundary / widget fallback.
-// icon 색은 status-error-on-surface (surface 위 직접 — light/dark 자동 swap).
+// ErrorState - EmptyState 형제. error boundary / widget fallback.
+// icon 색은 status-error-on-surface (surface 위 직접 - light/dark 자동 swap).
 
 .error_state {
   display: flex;

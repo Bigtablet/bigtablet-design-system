@@ -15,7 +15,7 @@
 
   &_required {
     margin-left: token.$spacing_4;
-    // surface 위 직접 텍스트 (required 별표) — light/dark 자동 swap
+    // surface 위 직접 텍스트 (required 별표) - light/dark 자동 swap
     color: token.$color_status_error_on_surface;
   }
 

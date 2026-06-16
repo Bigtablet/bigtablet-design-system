@@ -21,7 +21,7 @@ export interface NavBarLocaleConfig {
 	options: NavBarLocaleOption[];
 	/** locale 변경 콜백 */
 	onChange: (next: string) => void;
-	/** 표시 라벨 — 기본은 옵션의 label, 미지정 시 short code 표시 */
+	/** 표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시 */
 	hideLabel?: boolean;
 }
 
@@ -38,9 +38,9 @@ export interface NavBarProps extends React.HTMLAttributes<HTMLElement> {
 	profile?: React.ReactNode;
 	/** actions / locale 와 profile 사이 수직 divider 표시 (기본 true, profile 있을 때만 표시) */
 	divider?: boolean;
-	/** 시각 variant — default(흰 bg + 회색 border), transparent(투명, hero 위에), accent(navy bg) */
+	/** 시각 variant - default(흰 bg + 회색 border), transparent(투명, hero 위에), accent(navy bg) */
 	variant?: NavBarVariant;
-	/** 레이아웃 — contained(max 1200, marketing) / fluid(full width, admin/dashboard) */
+	/** 레이아웃 - contained(max 1200, marketing) / fluid(full width, admin/dashboard) */
 	layout?: NavBarLayout;
 	/** sticky 고정 여부 */
 	sticky?: boolean;
@@ -84,7 +84,7 @@ export const NavBar = ({
 }: NavBarProps) => {
 	const showDivider = divider && !!profile && (!!actions || !!locale || !!searchSlot);
 
-	// active underline indicator — children NavLink의 active 위치/너비를 측정해서 sliding bar로 표시
+	// active underline indicator - children NavLink의 active 위치/너비를 측정해서 sliding bar로 표시
 	const linksRef = useRef<HTMLElement>(null);
 	const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = useState(false);

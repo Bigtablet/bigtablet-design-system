@@ -22,9 +22,9 @@ const meta: Meta<typeof Chip> = {
 		docs: {
 			description: {
 				component: `
-**Chip** — Compact element representing an attribute, filter, or input value. / **Chip** — 속성/필터/입력값을 표현하는 컴팩트 요소.
+**Chip** - Compact element representing an attribute, filter, or input value. / **Chip** - 속성/필터/입력값을 표현하는 컴팩트 요소.
 
-Types: \`basic\` (tag) / \`input\` (input value, removable) / \`filter\` (dropdown) / \`static\` (label, tone). — **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
+Types: \`basic\` (tag) / \`input\` (input value, removable) / \`filter\` (dropdown) / \`static\` (label, tone). - **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
 Key props: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / default 32), \`selected\`, \`removable\`. / 주요 prop.
 				`,
 			},
@@ -64,7 +64,7 @@ export const Static: Story = {
 
 export const InteractiveSelect: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
-	name: "Interactive — basic 다중 선택",
+	name: "Interactive - basic 다중 선택",
 	render: () => {
 		const options = ["디자인", "개발", "기획", "마케팅", "데이터"];
 		const [selected, setSelected] = React.useState<string[]>([]);
@@ -90,7 +90,7 @@ export const InteractiveSelect: Story = {
 
 export const InteractiveRemove: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
-	name: "Interactive — input 삭제",
+	name: "Interactive - input 삭제",
 	render: () => {
 		const [items, setItems] = React.useState(["디자인", "개발", "기획"]);
 		return (

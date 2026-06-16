@@ -59,7 +59,7 @@ describe("Textarea", () => {
 		expect(screen.getByRole("textbox")).toBeDisabled();
 	});
 
-	it("delayed IME — onChangeAction NOT called during composition", () => {
+	it("delayed IME - onChangeAction NOT called during composition", () => {
 		const onChange = vi.fn();
 		render(<Textarea label="내용" onChangeAction={onChange} />);
 		const ta = screen.getByRole("textbox");
@@ -70,7 +70,7 @@ describe("Textarea", () => {
 		expect(onChange).toHaveBeenCalledWith("한");
 	});
 
-	it("immediate IME — onChangeAction called during composition", () => {
+	it("immediate IME - onChangeAction called during composition", () => {
 		const onChange = vi.fn();
 		render(<Textarea label="내용" imeStrategy="immediate" onChangeAction={onChange} />);
 		const ta = screen.getByRole("textbox");
@@ -100,7 +100,7 @@ describe("Textarea", () => {
 		const ta = screen.getByRole("textbox") as HTMLTextAreaElement;
 		fireEvent.compositionStart(ta);
 		fireEvent.change(ta, { target: { value: "가" } });
-		// 부모가 조합 중 이전 value 로 re-render — 가드로 인해 innerValue 유지
+		// 부모가 조합 중 이전 value 로 re-render - 가드로 인해 innerValue 유지
 		rerender(<Textarea value="ㄱ" imeStrategy="immediate" onChangeAction={() => {}} />);
 		expect(ta.value).toBe("가");
 		// 조합 종료 후엔 정상 동기화
@@ -114,9 +114,9 @@ describe("Textarea", () => {
 		render(<Textarea onChangeAction={onChange} />);
 		const ta = screen.getByRole("textbox");
 		fireEvent.compositionStart(ta);
-		fireEvent.change(ta, { target: { value: "한" } }); // delayed — 조합 중 방출 X
+		fireEvent.change(ta, { target: { value: "한" } }); // delayed - 조합 중 방출 X
 		fireEvent.compositionEnd(ta, { target: { value: "한" } }); // 방출 1회
-		fireEvent.change(ta, { target: { value: "한" } }); // 같은 값 재트리거 — 중복 차단
+		fireEvent.change(ta, { target: { value: "한" } }); // 같은 값 재트리거 - 중복 차단
 		expect(onChange).toHaveBeenCalledTimes(1);
 		expect(onChange).toHaveBeenLastCalledWith("한");
 	});

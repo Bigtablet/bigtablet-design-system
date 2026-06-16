@@ -24,7 +24,7 @@ const meta: Meta<typeof Pagination> = {
 		docs: {
 			description: {
 				component: `
-**Pagination** — Page navigation. Collapses with \`…\` beyond 7 pages; prev/next are disabled at the first/last page. / **Pagination** — 페이지 이동 네비게이션. 7페이지 초과 시 \`…\` 축약, 첫/마지막에서 prev/next 비활성.
+**Pagination** - Page navigation. Collapses with \`…\` beyond 7 pages; prev/next are disabled at the first/last page. / **Pagination** - 페이지 이동 네비게이션. 7페이지 초과 시 \`…\` 축약, 첫/마지막에서 prev/next 비활성.
         `,
 			},
 		},

@@ -10,7 +10,7 @@ export type TextFieldSize = "sm" | "md" | "lg";
 
 /**
  * IME 조합(한글/일본어/중국어) 중 외부 콜백 처리 전략.
- * - `delayed`: 조합 완료 후에만 `onChangeAction` 호출 (기본 — 폼 제출/검증용).
+ * - `delayed`: 조합 완료 후에만 `onChangeAction` 호출 (기본 - 폼 제출/검증용).
  * - `immediate`: 조합 중에도 매 입력마다 즉시 호출 (실시간 검색/필터/미리보기용).
  */
 export type ImeStrategy = "delayed" | "immediate";
@@ -42,7 +42,7 @@ export interface TextFieldProps
 	onChangeAction?: (value: string) => void;
 	/**
 	 * IME 조합 중 콜백 전략 (기본값: "delayed").
-	 * 실시간 구독(검색/필터) 이 필요하면 "immediate" — 한글 조합 중에도 매 입력 즉시 반영.
+	 * 실시간 구독(검색/필터) 이 필요하면 "immediate" - 한글 조합 중에도 매 입력 즉시 반영.
 	 */
 	imeStrategy?: ImeStrategy;
 	/** 제어형 입력 값 */
@@ -55,7 +55,7 @@ export interface TextFieldProps
 	ref?: React.Ref<HTMLInputElement>;
 }
 
-// X 아이콘 — lucide-react
+// X 아이콘 - lucide-react
 const ClearIcon = () => <X size={20} aria-hidden="true" />;
 
 /**
@@ -98,12 +98,12 @@ export const TextField = ({
 	);
 
 	const isComposingRef = useRef(false);
-	// 마지막으로 onChangeAction 에 방출한 값 — 중복 호출(특히 IME 종료 직후) 차단용.
+	// 마지막으로 onChangeAction 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
 	const lastEmittedValueRef = useRef(innerValue);
 
-	// Controlled value 동기화 — useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
+	// Controlled value 동기화 - useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
 	// paint 전 즉시 반영해 flicker 방지.
-	// 조합 중에는 prevValue 까지 함께 보류 — 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
+	// 조합 중에는 prevValue 까지 함께 보류 - 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
 	// 조합 종료 후 value===prevValue 가 되어 외부 value 가 영영 반영되지 않는 버그 발생.
 	const [prevValue, setPrevValue] = useState(value);
 	if (isControlled && value !== prevValue && !isComposingRef.current) {
@@ -113,7 +113,7 @@ export const TextField = ({
 		lastEmittedValueRef.current = nextValue;
 	}
 
-	// 비조합 입력 / 조합 종료 / clear 공통 — 중복 방출 차단 후 방출.
+	// 비조합 입력 / 조합 종료 / clear 공통 - 중복 방출 차단 후 방출.
 	const emit = useCallback(
 		(nextValue: string) => {
 			setInnerValue(nextValue);
@@ -187,12 +187,12 @@ export const TextField = ({
 							}}
 							onCompositionEnd={(event) => {
 								isComposingRef.current = false;
-								// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 — emit 가 중복 차단.
+								// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 - emit 가 중복 차단.
 								emit(applyTransform(event.currentTarget.value));
 							}}
 							onChange={(event) => {
 								const rawValue = event.target.value;
-								// 조합 중 — transform 은 조합 깨짐 방지 위해 보류, raw 로 표시.
+								// 조합 중 - transform 은 조합 깨짐 방지 위해 보류, raw 로 표시.
 								if (isComposingRef.current) {
 									setInnerValue(rawValue);
 									// immediate: 조합 중에도 외부 구독 즉시 반영 (raw value).

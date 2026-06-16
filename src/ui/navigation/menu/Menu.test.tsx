@@ -141,7 +141,7 @@ describe("Menu", () => {
 		fireEvent.click(trigger);
 		const menu = screen.getByRole("menu");
 
-		// 메뉴 컨테이너 자체에 mousedown — 닫히면 안 됨 (외부 클릭이 아니므로)
+		// 메뉴 컨테이너 자체에 mousedown - 닫히면 안 됨 (외부 클릭이 아니므로)
 		fireEvent.mouseDown(menu);
 		expect(screen.getByRole("menu")).toBeInTheDocument();
 	});
@@ -215,7 +215,7 @@ describe("Menu", () => {
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
 		expect(screen.getByTestId("ic")).toBeInTheDocument();
-		// 아이콘은 장식 — aria-hidden 처리되어야 함
+		// 아이콘은 장식 - aria-hidden 처리되어야 함
 		const iconWrapper = screen.getByTestId("ic").parentElement;
 		expect(iconWrapper).toHaveAttribute("aria-hidden", "true");
 	});

@@ -17,11 +17,11 @@ const meta: Meta<typeof ErrorState> = {
 		docs: {
 			description: {
 				component: `
-**ErrorState** — Error display for error boundary / data load failure / widget fallback. Sister of \`EmptyState\`.
+**ErrorState** - Error display for error boundary / data load failure / widget fallback. Sister of \`EmptyState\`.
 에러 표시 (error boundary / 데이터 로드 실패 / 위젯 fallback). \`EmptyState\` 의 형제.
 
-- \`variant="page"\` (default) — full-screen fill, large icon + min-height. For error boundary fallback. / 전체 화면 채움.
-- \`variant="widget"\` — inline compact, inside widget/card. / 인라인 컴팩트.
+- \`variant="page"\` (default) - full-screen fill, large icon + min-height. For error boundary fallback. / 전체 화면 채움.
+- \`variant="widget"\` - inline compact, inside widget/card. / 인라인 컴팩트.
 - Default warning icon + \`status-error\` token. Hide with \`icon={null}\`, replace via \`icon\`. / 기본 경고 아이콘, 숨김/교체 가능.
 - Automatic \`role="alert"\`. / 자동 적용.
 				`,

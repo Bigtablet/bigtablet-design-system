@@ -25,13 +25,13 @@ const meta: Meta = {
 				component: `
 ### Colors (색상 시스템)
 
-**Colors** — official color tokens defined in a two-tier Base / Semantic structure. Always use Semantic tokens (brand / text / bg / state / border / status) instead of raw HEX/RGB values.
+**Colors** - official color tokens defined in a two-tier Base / Semantic structure. Always use Semantic tokens (brand / text / bg / state / border / status) instead of raw HEX/RGB values.
 
 **Base / Semantic 2계층 구조**로 정의된 공식 색상 토큰입니다.
 
 - **Base**: raw 값 (직접 사용 지양)
 - **Semantic**: 역할 기반 (brand / text / bg / state / border / status)
-- **Brand Accent (Navy)**: 검정(\`brand_primary\`)과 함께 위계 만드는 navy slate accent — 페이지 하단 "Navy 팔레트 / Accent 토큰 / Spring 모션" 참고
+- **Brand Accent (Navy)**: 검정(\`brand_primary\`)과 함께 위계 만드는 navy slate accent - 페이지 하단 "Navy 팔레트 / Accent 토큰 / Spring 모션" 참고
 
 ❗️직접 HEX / RGB 값을 쓰지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,
@@ -327,7 +327,7 @@ function toJsonKey(key: string) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Brand Accent (Navy) — 초기 홈페이지 brand 컬러. 검정과 함께 위계 만드는 보조 강조.
+// Brand Accent (Navy) - 초기 홈페이지 brand 컬러. 검정과 함께 위계 만드는 보조 강조.
 // ────────────────────────────────────────────────────────────────────────────
 
 const NAVY_SCALE = [
@@ -348,7 +348,7 @@ export const NavyPalette: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
 			<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-				<strong>10단계 스케일</strong> — 라이트 wash부터 거의 검정까지. 검정 brand 컬러와 함께
+				<strong>10단계 스케일</strong> - 라이트 wash부터 거의 검정까지. 검정 brand 컬러와 함께
 				사용해 텍스트/배경 위계를 만드세요. (메인 navy: <code>#47555E</code>)
 			</p>
 			{NAVY_SCALE.map(({ key, value }) => {
@@ -521,7 +521,7 @@ function HoverDemo() {
 			>
 				<strong>강한 lift (-4px, scale 1.04)</strong>
 				<p style={{ margin: "8px 0 0", fontSize: 13, opacity: 0.8 }}>
-					CTA 카드에 적합 — navy accent 배경
+					CTA 카드에 적합 - navy accent 배경
 				</p>
 			</animated.div>
 		</div>

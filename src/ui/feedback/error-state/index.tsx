@@ -18,8 +18,8 @@ export interface ErrorStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 	action?: React.ReactNode;
 	/**
 	 * 레이아웃 모드 (기본 "page").
-	 * - `page`: 전체 화면/영역 채움 — error boundary fallback. 큰 아이콘 + 넉넉한 패딩 + min-height.
-	 * - `widget`: 인라인 컴팩트 — 위젯/카드 내부 error fallback. 작은 아이콘 + 좁은 패딩.
+	 * - `page`: 전체 화면/영역 채움 - error boundary fallback. 큰 아이콘 + 넉넉한 패딩 + min-height.
+	 * - `widget`: 인라인 컴팩트 - 위젯/카드 내부 error fallback. 작은 아이콘 + 좁은 패딩.
 	 */
 	variant?: ErrorStateVariant;
 }
@@ -30,7 +30,7 @@ const DEFAULT_ICON_SIZE: Record<ErrorStateVariant, number> = {
 };
 
 /**
- * 에러 상태 표시 — error boundary / 데이터 로드 실패 / 위젯 에러 fallback.
+ * 에러 상태 표시 - error boundary / 데이터 로드 실패 / 위젯 에러 fallback.
  * `EmptyState` 의 형제. `status-error` 토큰 사용 (하드코딩 없음).
  *
  * @example

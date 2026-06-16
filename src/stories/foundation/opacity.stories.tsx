@@ -11,7 +11,7 @@ const meta: Meta = {
 				component: `
 ### Opacity (불투명도)
 
-**Opacity** — transparency tokens used for overlays, disabled states, hover effects, etc. (\`0\` fully transparent → \`100\` fully opaque).
+**Opacity** - transparency tokens used for overlays, disabled states, hover effects, etc. (\`0\` fully transparent → \`100\` fully opaque).
 
 투명도 토큰입니다. 오버레이, 비활성 상태, 호버 효과 등에서 사용합니다.
 
@@ -123,7 +123,7 @@ export const UsageExamples: Story = {
 				}}
 			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
-					<code>opacity-5</code> — 버튼 호버 오버레이
+					<code>opacity-5</code> - 버튼 호버 오버레이
 				</div>
 				<div style={{ display: "flex", gap: 12 }}>
 					<div
@@ -171,7 +171,7 @@ export const UsageExamples: Story = {
 				}}
 			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
-					<code>opacity-38</code> — 비활성화 상태
+					<code>opacity-38</code> - 비활성화 상태
 				</div>
 				<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
 					<button
@@ -216,7 +216,7 @@ export const UsageExamples: Story = {
 				}}
 			>
 				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
-					<code>opacity-50</code> — 모달 배경 오버레이
+					<code>opacity-50</code> - 모달 배경 오버레이
 				</div>
 				<div style={{ position: "relative", height: 80, borderRadius: 8, overflow: "hidden" }}>
 					<div style={{ padding: 12, fontSize: 13, color: "#333" }}>배경 콘텐츠 영역</div>

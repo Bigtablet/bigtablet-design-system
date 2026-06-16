@@ -12,16 +12,16 @@ const meta: Meta = {
 				component: `
 ### 접근성 (Accessibility) 토큰
 
-**Accessibility tokens** — baseline values that help keyboard, low-vision, and touch users perceive every interaction clearly and safely. Covers focus rings, minimum tap targets, and color contrast (WCAG AA).
+**Accessibility tokens** - baseline values that help keyboard, low-vision, and touch users perceive every interaction clearly and safely. Covers focus rings, minimum tap targets, and color contrast (WCAG AA).
 
 **키보드 사용자, 저시력 사용자, 터치 사용자**를 고려해
 모든 인터랙션이 명확하고 안전하게 인식되도록 돕는 기준값입니다.
 
 이 페이지에서는 다음 세 가지를 다룹니다:
 
-1. **포커스 링** — 키보드 탐색 시 현재 위치를 표시하는 시각적 표시
-2. **최소 터치 영역** — 모바일에서 손가락으로 누르기 충분한 최소 크기
-3. **색상 대비** — 텍스트와 배경 간 충분한 명도 차이 (WCAG AA 기준)
+1. **포커스 링** - 키보드 탐색 시 현재 위치를 표시하는 시각적 표시
+2. **최소 터치 영역** - 모바일에서 손가락으로 누르기 충분한 최소 크기
+3. **색상 대비** - 텍스트와 배경 간 충분한 명도 차이 (WCAG AA 기준)
         `,
 			},
 		},
@@ -331,7 +331,7 @@ export const Density: Story = {
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
 					웹과 앱은 입력 방식이 다릅니다. 데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만, 모바일은
 					손가락이라 더 큰 영역이 필요합니다. Bigtablet DS는 동일한 사이즈 prop이 viewport에 따라
-					자동으로 한 단계 키워지도록 설계됩니다 — 데스크탑 <code>compact(40)</code> → 모바일{" "}
+					자동으로 한 단계 키워지도록 설계됩니다 - 데스크탑 <code>compact(40)</code> → 모바일{" "}
 					<code>comfortable(48)</code>.
 				</p>
 			</section>
@@ -391,7 +391,7 @@ export const Density: Story = {
 						["dense (32)", "→", "compact (40)"],
 						["compact (40)", "→", "comfortable (48)"],
 						["comfortable (48)", "→", "spacious (56)"],
-						["spacious (56)", "→", "spacious (56) — 유지"],
+						["spacious (56)", "→", "spacious (56) - 유지"],
 					].map(([desktop, arrow, mobile]) => (
 						<div
 							key={desktop}

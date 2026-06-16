@@ -41,7 +41,7 @@ const meta: Meta = {
 				component: `
 ### 스켈레톤(Skeleton) 토큰
 
-**Skeleton tokens** — used for **placeholder UI** that fills space while content is loading. Includes gradient colors, wave animation, shape radius, height steps, and animation timing.
+**Skeleton tokens** - used for **placeholder UI** that fills space while content is loading. Includes gradient colors, wave animation, shape radius, height steps, and animation timing.
 
 콘텐츠가 로딩 중일 때 자리를 채우는 **플레이스홀더 UI**에 사용하는 토큰입니다.
 

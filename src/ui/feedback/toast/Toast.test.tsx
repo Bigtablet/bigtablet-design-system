@@ -234,7 +234,7 @@ describe("Toast close", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		const closeBtn = screen.getByRole("button", { name: "Close" });
-		// 빠르게 두 번 클릭 — closingRef 가 두 번째 호출 무시
+		// 빠르게 두 번 클릭 - closingRef 가 두 번째 호출 무시
 		fireEvent.click(closeBtn);
 		fireEvent.click(closeBtn);
 
@@ -482,7 +482,7 @@ describe("Toast auto-dismiss", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
-		// spring exit 진행 중 — 잠시 DOM 유지
+		// spring exit 진행 중 - 잠시 DOM 유지
 		expect(document.querySelector(".toast_item")).not.toBeNull();
 
 		// spring 완료 후 unmount

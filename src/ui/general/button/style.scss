@@ -16,7 +16,7 @@
     border-color token.$transition_base,
     transform token.$transition_fast;
 
-  // State layer overlay — interaction색은 여기서만 변하므로 transition 1개로 단순화
+  // State layer overlay - interaction색은 여기서만 변하므로 transition 1개로 단순화
   &::before {
     content: "";
     position: absolute;
@@ -197,7 +197,7 @@
     width: 100%;
   }
 
-  // ── Danger variant — 삭제/취소 등 위험 액션 ──────────────────────────────
+  // ── Danger variant - 삭제/취소 등 위험 액션 ──────────────────────────────
   // variant + danger 조합: filled는 빨간 bg, outline은 빨간 텍스트/보더, tonal은 빨간 wash, text는 빨간 텍스트.
 
   &_danger {

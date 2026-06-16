@@ -73,7 +73,7 @@
   margin-top: 3px;
   display: flex;
 
-  // Toast icon — surface 위 직접 색 (배경 없는 SVG) — light/dark 자동 swap
+  // Toast icon - surface 위 직접 색 (배경 없는 SVG) - light/dark 자동 swap
   &_success { color: token.$color_status_success_on_surface; }
   &_error   { color: token.$color_status_error_on_surface; }
   &_warning { color: token.$color_status_warning_on_surface; }

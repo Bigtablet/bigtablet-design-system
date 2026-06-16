@@ -1,7 +1,7 @@
-// Standalone skeleton tokens — no external @use so consumers can import
+// Standalone skeleton tokens - no external @use so consumers can import
 // this file directly without needing the design system's src/ in their loadPaths.
 
-// CSS custom property 기반 — `[data-theme="dark"]` 에서 자동 전환.
+// CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환.
 // fallback 값은 standalone import (colors 미포함) 시 light 동작 보장.
 $color_skeleton_base:      var(--bt-color-skeleton-base, #F3F3F3);
 $color_skeleton_wave:      var(--bt-color-skeleton-wave, #f0f0f0);

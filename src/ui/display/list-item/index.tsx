@@ -21,7 +21,7 @@ export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 	alignment?: "top" | "middle";
 	/** 비활성화 상태 */
 	disabled?: boolean;
-	/** 선택 상태 — accent.subtle 배경 + accent.default 좌측 인디케이터 */
+	/** 선택 상태 - accent.subtle 배경 + accent.default 좌측 인디케이터 */
 	selected?: boolean;
 	/** 클릭 시 콜백 */
 	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -61,7 +61,7 @@ export const ListItem = ({
 	);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item — role=button + tabIndex set conditionally based on onClick
+		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item - role=button + tabIndex set conditionally based on onClick
 		<div
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}

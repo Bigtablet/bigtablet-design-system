@@ -6,14 +6,14 @@
   vertical-align: middle; // baseline 정렬로 인한 미세 offset 제거
 }
 
-// 위치 정렬 wrapper — placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
-// 안의 .tooltip 은 spring 으로 entrance transform 사용 — 두 transform context 분리해서 충돌 X.
+// 위치 정렬 wrapper - placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// 안의 .tooltip 은 spring 으로 entrance transform 사용 - 두 transform context 분리해서 충돌 X.
 .tooltip_position {
   position: absolute;
   z-index: token.$z_level5;
   pointer-events: none;
   display: block;
-  width: max-content; // 내부 .tooltip 의 max-content 와 일치 — translateX(-50%) 정확
+  width: max-content; // 내부 .tooltip 의 max-content 와 일치 - translateX(-50%) 정확
 
   &.tooltip_placement_top {
     bottom: calc(100% + 6px);

@@ -18,7 +18,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**폼 패턴 cookbook** — 로그인·가입·검색·설정 등 실제 화면에서 자주 쓰는 폼 조합을 그대로 복사해 사용할 수 있도록 정리한 레시피 모음입니다.\n\n각 예시는 Stack 레이아웃 프리미티브와 입력 컴포넌트만으로 self-contained되어 있어 import 후 바로 붙여 넣을 수 있습니다.",
+					"**폼 패턴 cookbook** - 로그인·가입·검색·설정 등 실제 화면에서 자주 쓰는 폼 조합을 그대로 복사해 사용할 수 있도록 정리한 레시피 모음입니다.\n\n각 예시는 Stack 레이아웃 프리미티브와 입력 컴포넌트만으로 self-contained되어 있어 import 후 바로 붙여 넣을 수 있습니다.",
 			},
 		},
 	},
@@ -27,7 +27,7 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-// 공통 카드 래퍼 — 코드에 영향을 주지 않는 스토리북 디스플레이용
+// 공통 카드 래퍼 - 코드에 영향을 주지 않는 스토리북 디스플레이용
 const FormCard = ({
 	title,
 	width = 400,

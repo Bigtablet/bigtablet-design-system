@@ -23,7 +23,7 @@ const meta: Meta<typeof Button> = {
 		docs: {
 			description: {
 				component: `
-**Button** — Triggers a user action. / **Button** — 사용자 액션 트리거.
+**Button** - Triggers a user action. / **Button** - 사용자 액션 트리거.
 
 Variants: \`filled\` (primary action / 주 액션) / \`tonal\` (soft emphasis / 부드러운 강조) / \`outline\` (secondary / 보조) / \`text\` (inline / 인라인).
 Sizes: \`sm\` 32 / \`md\` 40 / \`lg\` 48 / \`xl\` 56 (auto-bumps one step up on mobile / 모바일 자동 한 단계 ↑).

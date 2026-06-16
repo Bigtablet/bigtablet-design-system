@@ -33,7 +33,7 @@ const meta: Meta<typeof Dropdown> = {
 		docs: {
 			description: {
 				component: `
-**Dropdown** — Single-select dropdown. Floating label (shows when a value is selected/opened). / **Dropdown** — 단일 선택 드롭다운. 플로팅 라벨 (값 선택/열림 시 표시).
+**Dropdown** - Single-select dropdown. Floating label (shows when a value is selected/opened). / **Dropdown** - 단일 선택 드롭다운. 플로팅 라벨 (값 선택/열림 시 표시).
 
 Sizes: \`sm\` / \`md\` (default) / \`lg\`. / Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
 \`DropdownOption\` fields: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`. / \`DropdownOption\` 필드: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`.
