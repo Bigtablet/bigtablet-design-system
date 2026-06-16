@@ -240,29 +240,29 @@
 
   &_variant_accent {
     background: token.$color_brand_primary;
-    color: #fff;
+    color: token.$color_brand_on_primary;
 
     .nav_bar_link {
       color: rgba(255, 255, 255, 0.7);
 
       &:hover:not(.nav_bar_link_active) {
-        color: #fff;
+        color: token.$color_brand_on_primary;
       }
 
       &_active {
-        color: #fff;
+        color: token.$color_brand_on_primary;
       }
     }
 
     // 네이비 bg 위 indicator는 흰색
     .nav_bar_indicator {
-      background: #fff;
+      background: token.$color_brand_on_primary;
     }
 
     // dark accent bg 위 button — outline/text variant 강제 흰 텍스트 + 흰 border
     .button_variant_outline {
       border-color: rgba(255, 255, 255, 0.55);
-      color: #fff;
+      color: token.$color_brand_on_primary;
 
       &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
       &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }
@@ -285,17 +285,17 @@
       color: rgba(255, 255, 255, 0.7);
 
       &:hover:not(.nav_bar_link_active) {
-        color: #fff;
+        color: token.$color_brand_on_primary;
       }
 
       &_active {
-        color: #fff;
+        color: token.$color_brand_on_primary;
       }
     }
 
     // 어두운 bg 가정 — 흰색 indicator
     .nav_bar_indicator {
-      background: #fff;
+      background: token.$color_brand_on_primary;
     }
   }
 }
