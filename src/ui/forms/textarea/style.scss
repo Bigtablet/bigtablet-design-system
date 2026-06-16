@@ -1,0 +1,183 @@
+@use "src/styles/token" as token;
+
+// Textarea — TextField 와 동일한 토큰/시각 (border, focus, error, label, helper, disabled).
+// 차이: multiline, 아이콘/clear 없음, auto-grow + 카운터 + resize.
+
+.textarea {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: token.$spacing_6;
+  font-family: token.$font_family_primary;
+
+  &_full_width {
+    width: 100%;
+  }
+
+  // ── Label (TextField 와 동일) ──────────────────────────────────────────
+
+  &_label {
+    display: block;
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_heading;
+    cursor: pointer;
+    transition: color token.$transition_base;
+  }
+
+  // ── Container ──────────────────────────────────────────────────────────
+
+  &_container {
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background-color: token.$color_bg_solid;
+    box-sizing: border-box;
+    width: 100%;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
+
+    &:hover {
+      border-color: token.$color_border_hover;
+    }
+
+    &:focus-within {
+      border-color: token.$color_border_focus;
+    }
+  }
+
+  // ── Input wrap ─────────────────────────────────────────────────────────
+
+  &_input_wrap {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    padding: token.$spacing_8 token.$spacing_16; // md 기본
+  }
+
+  &_input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_20;
+    color: token.$color_text_heading;
+    resize: vertical;
+
+    &::placeholder {
+      color: token.$color_text_body;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: token.$color_text_disabled;
+    }
+  }
+
+  // ── Size variants ──────────────────────────────────────────────────────
+
+  &_size_sm &_input_wrap {
+    padding: token.$spacing_8 token.$spacing_16;
+  }
+
+  &_size_sm &_input {
+    font-size: token.$font_size_14;
+    line-height: token.$line_height_20;
+  }
+
+  &_size_lg &_input_wrap {
+    padding: token.$spacing_12 token.$spacing_20;
+  }
+
+  &_size_lg &_input {
+    font-size: token.$font_size_16;
+    line-height: token.$line_height_24;
+  }
+
+  // ── Footer (helper + counter) ──────────────────────────────────────────
+
+  &_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+    width: 100%;
+    padding: 0 token.$spacing_4;
+  }
+
+  &_helper {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_16;
+    color: token.$color_text_caption;
+    transition: color token.$transition_base;
+  }
+
+  &_counter {
+    flex-shrink: 0;
+    margin-left: auto;
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    line-height: token.$line_height_16;
+    color: token.$color_text_caption;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────
+
+  &_error {
+    .textarea_container {
+      border-color: token.$color_status_error;
+    }
+
+    .textarea_container:hover,
+    .textarea_container:focus-within {
+      border-color: token.$color_status_error;
+    }
+
+    .textarea_label,
+    .textarea_helper {
+      // surface 위 직접 텍스트 — light/dark 자동 swap
+      color: token.$color_status_error_on_surface;
+    }
+  }
+
+  // ── Disabled state ─────────────────────────────────────────────────────
+
+  &_disabled {
+    .textarea_container {
+      border-color: token.$color_bg_disabled;
+      background-color: token.$color_bg_solid_dim;
+
+      &:hover {
+        border-color: token.$color_bg_disabled;
+      }
+
+      > * {
+        opacity: token.$opacity_38;
+      }
+    }
+
+    .textarea_label {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+
+    .textarea_helper,
+    .textarea_counter {
+      opacity: token.$opacity_38;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textarea_container,
+  .textarea_label,
+  .textarea_helper {
+    transition: none;
+  }
+}
