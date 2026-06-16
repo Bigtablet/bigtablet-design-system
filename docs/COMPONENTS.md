@@ -39,6 +39,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Modal](#modal)
   - [Tooltip](#tooltip)
   - [Menu](#menu)
+  - [Popover](#popover)
 - [Display](#display)
   - [Card](#card)
   - [Divider](#divider)
@@ -1631,6 +1632,139 @@ import { MoreVertical, Edit, Copy, Trash, Share, Archive } from "lucide-react";
     { key: "export", label: "내보내기", onSelect: handleExport },
     { key: "import", label: "가져오기", onSelect: handleImport },
   ]}
+/>
+```
+
+---
+
+### Popover
+
+trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 interactive 콘텐츠 (폼, 설명, 액션 조합)**를 담는다. Menu(액션 리스트) / Tooltip(hover 정보)과 역할이 다르다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 클릭으로 여는 작은 폼/필터 (체크박스, 입력, 적용 버튼) | ✅ Popover |
+| 프로필 카드, 미리보기, 부가 설명 + 액션 버튼 | ✅ Popover |
+| 단순 액션 리스트 (Edit / Duplicate / Delete) | ❌ Menu 권장 |
+| hover로 뜨는 짧은 텍스트 라벨 | ❌ Tooltip 권장 (`pointer-events: none`) |
+| 화면 중앙 차단(modal) 다이얼로그 / 확인창 | ❌ Modal · `useAlert()` 권장 |
+| 폼 필드 상시 도움말 | ❌ helper text 권장 |
+
+**Popover vs Menu vs Tooltip**
+- **Popover**: 클릭으로 열고 외부 클릭/Esc로 닫음. `role="dialog"` (non-modal). 임의의 상호작용 콘텐츠. 열릴 때 포커스가 패널로 이동.
+- **Menu**: 클릭으로 열리는 **액션 리스트**. `role="menu"` + `menuitem`. 선택 시 사이드 이펙트.
+- **Tooltip**: hover/focus로 뜨는 **짧은 정보**. `pointer-events: none`, dismissable 아님.
+
+#### 선택 가이드
+
+**placement (4방향)**
+- `"bottom"` (기본) - trigger 아래. 대부분의 케이스.
+- `"top"` - trigger가 화면 하단에 가까울 때.
+- `"left"` / `"right"` - 가로 공간이 충분하고 위/아래가 막혔을 때.
+
+> ℹ️ 현재 구현은 **자동 flipping이 없으니** 뷰포트 경계 근처라면 placement를 직접 지정하라.
+
+**제어 / 비제어**
+- 비제어 (기본) - `defaultOpen`만 주고 내부 state로 토글. 가장 간단.
+- 제어 - `open` + `onOpenChange`로 외부 state가 소유. 외부 버튼/로직과 연동하거나 닫힘 시점을 직접 제어할 때.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `trigger` | `ReactElement` | required | 클릭 시 팝오버를 토글하는 trigger (단일 ReactElement) |
+| `content` | `ReactNode` | required | 팝오버 내부 콘텐츠 (임의 interactive 노드) |
+| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | trigger 기준 위치 |
+| `open` | `boolean` | - | 제어 모드 열림 상태 (주면 비제어 state 무시) |
+| `defaultOpen` | `boolean` | `false` | 비제어 모드 초기 열림 상태 |
+| `onOpenChange` | `(open: boolean) => void` | - | 열림 상태 변경 콜백 |
+| `aria-label` | `string` | - | dialog 접근성 라벨 (content에 제목 없으면 권장) |
+| `aria-labelledby` | `string` | - | dialog 접근성 라벨 요소 id |
+| `className` | `string` | - | 팝오버 패널에 추가 |
+
+> ⚠️ `trigger`는 **반드시 단일 ReactElement**. `cloneElement`로 `onClick`/`aria-*` 주입 (trigger의 기존 `onClick`은 보존). trigger 컴포넌트는 props를 forward해야 한다 (`<button {...props}>`).
+
+#### 접근성 (WAI-ARIA non-modal dialog)
+
+자동 처리되는 a11y 속성:
+
+- 패널: `role="dialog"`, `tabIndex={-1}`, `id={useId()}`
+- 트리거: `aria-haspopup="dialog"`, `aria-expanded={open}`, `aria-controls={popoverId}` (열렸을 때)
+- **포커스**: 열릴 때 패널 내 **첫 focusable**로 이동 (없으면 패널 자체). `Esc`로 닫으면 **trigger로 복귀**
+- **키보드**: <kbd>Tab</kbd> trigger 포커스 → Enter/Space로 토글 / <kbd>Esc</kbd> 닫음 (+ trigger 복귀)
+- non-modal이므로 Tab을 트랩하지 않음 (Modal과 차이). 페이지 나머지와 상호작용 가능
+
+> 📌 `dialog`는 접근성 이름이 필요하다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줘라.
+
+#### 애니메이션
+
+`useSpringPresence` 훅 + react-spring:
+
+- **진입**: opacity `0→1` + transform `translate(4px) → 0` (placement별 진입 방향 다름 - Tooltip과 동일 규칙)
+- **퇴출**: `clamp: true`로 진동 없이 빠르게
+- spring config: `tension: 280, friction: 28`
+
+#### 외부 클릭/Esc 처리
+
+열린 동안에만 listener 등록:
+- **외부 클릭** (`mousedown`, wrapper 바깥) → close (포커스는 자연 이동, trigger 복귀 안 함)
+- **Esc 키** (`keydown`) → close + trigger로 포커스 복귀
+- 패널 내부 클릭은 닫지 않음 (interactive 콘텐츠 보호)
+- `open === false`로 바뀌면 listener 모두 cleanup
+
+#### DOM 구조 (SCSS override 시 참고)
+
+```
+span.popover_wrapper               ← position: relative; ref 부착 (외부 클릭 판정)
+├── {trigger}                      ← cloneElement로 onClick/aria 주입
+└── span.popover_position          ← position: absolute, placement별 정렬
+    └── popover_placement_*        ← top|bottom|left|right
+        └── div.popover            ← role="dialog", spring transform
+```
+
+Portal을 **쓰지 않음** → trigger의 `position: relative` 조상 기준 absolute. `overflow: hidden` 컨테이너 안에서 잘릴 수 있으니 주의. `z-index`는 `z_level5` 사용.
+
+**Usage**
+
+```tsx
+import { Popover, Button, Checkbox, Stack } from "@bigtablet/design-system";
+
+// 1) 필터 팝오버 - 폼 + 적용 버튼
+<Popover
+  aria-label="상태 필터"
+  trigger={<Button variant="outline">필터</Button>}
+  content={
+    <Stack gap={12}>
+      <Checkbox label="활성" defaultChecked />
+      <Checkbox label="대기" />
+      <Button size="sm">적용</Button>
+    </Stack>
+  }
+/>
+
+// 2) placement 지정
+<Popover
+  placement="top"
+  aria-label="도움말"
+  trigger={<Button variant="text">?</Button>}
+  content={<p>이 항목은 월 단위로 집계됩니다.</p>}
+/>
+
+// 3) 제어 모드 - 외부 state가 소유
+const [open, setOpen] = useState(false);
+<Popover
+  open={open}
+  onOpenChange={setOpen}
+  aria-labelledby="pop-title"
+  trigger={<Button>프로필</Button>}
+  content={
+    <Stack gap={8}>
+      <strong id="pop-title">박상민</strong>
+      <Button size="sm" onClick={() => setOpen(false)}>닫기</Button>
+    </Stack>
+  }
 />
 ```
 
