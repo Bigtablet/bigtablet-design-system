@@ -100,7 +100,9 @@ export const TextField = ({
 	const isComposingRef = useRef(false);
 
 	useEffect(() => {
-		if (!isControlled) return;
+		// IME 조합 중에는 외부 value 로 덮어쓰지 않음 — controlled + immediate 모드에서
+		// 조합 중 부모 re-render 가 innerValue 를 되돌려 커서 튐/글자 중복을 막는다.
+		if (!isControlled || isComposingRef.current) return;
 		const nextValue = value ?? "";
 		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
 	}, [isControlled, value, transformValue]);

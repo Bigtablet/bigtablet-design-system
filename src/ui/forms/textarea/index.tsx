@@ -61,12 +61,6 @@ const LINE_HEIGHT_PX: Record<TextareaSize, number> = {
 	md: 20,
 	lg: 24,
 };
-// container vertical padding (위/아래 합) — size 별 input_wrap padding 과 일치
-const VERTICAL_PAD_PX: Record<TextareaSize, number> = {
-	sm: 16, // 8*2
-	md: 16,
-	lg: 24, // 12*2
-};
 
 /**
  * 멀티라인 텍스트 입력. `TextField` 와 동일한 시각/토큰 + textarea 특화 기능.
@@ -128,20 +122,23 @@ export const Textarea = ({
 	);
 
 	useEffect(() => {
-		if (!isControlled) return;
+		// IME 조합 중에는 외부 value 로 덮어쓰지 않음 — controlled + immediate 모드에서
+		// 조합 중 부모 re-render 가 innerValue 를 되돌려 커서 튐/글자 중복을 막는다.
+		if (!isControlled || isComposingRef.current) return;
 		const nextValue = value ?? "";
 		setInnerValue(transformValue ? transformValue(nextValue) : nextValue);
 	}, [isControlled, value, transformValue]);
 
-	// auto-grow — 내용 변할 때마다 scrollHeight 기준 높이 재계산
+	// auto-grow — 내용 변할 때마다 scrollHeight 기준 높이 재계산.
+	// textarea 자체엔 padding 없음 (wrapper 가 padding 담당) → scrollHeight 는 순수 콘텐츠 높이.
+	// minH/maxH 도 padding 없이 line 높이만 — 안 그러면 wrapper padding 과 이중 적용됨.
 	useLayoutEffect(() => {
 		if (!autoGrow) return;
 		const el = innerRef.current;
 		if (!el) return;
 		const lh = LINE_HEIGHT_PX[size];
-		const pad = VERTICAL_PAD_PX[size];
-		const minH = minRows ? minRows * lh + pad : 0;
-		const maxH = maxRows ? maxRows * lh + pad : Number.POSITIVE_INFINITY;
+		const minH = minRows ? minRows * lh : 0;
+		const maxH = maxRows ? maxRows * lh : Number.POSITIVE_INFINITY;
 		el.style.height = "auto";
 		const next = Math.min(Math.max(el.scrollHeight, minH), maxH);
 		el.style.height = `${next}px`;

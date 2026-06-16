@@ -91,4 +91,20 @@ describe("Textarea", () => {
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "abc" } });
 		expect(onChange).toHaveBeenCalledWith("ABC");
 	});
+
+	it("controlled value does NOT override innerValue mid-composition", () => {
+		// immediate + controlled: 조합 중 부모 value 가 되돌아와도 입력 중 글자 보존
+		const { rerender } = render(
+			<Textarea value="ㄱ" imeStrategy="immediate" onChangeAction={() => {}} />,
+		);
+		const ta = screen.getByRole("textbox") as HTMLTextAreaElement;
+		fireEvent.compositionStart(ta);
+		fireEvent.change(ta, { target: { value: "가" } });
+		// 부모가 조합 중 이전 value 로 re-render — 가드로 인해 innerValue 유지
+		rerender(<Textarea value="ㄱ" imeStrategy="immediate" onChangeAction={() => {}} />);
+		expect(ta.value).toBe("가");
+		// 조합 종료 후엔 정상 동기화
+		fireEvent.compositionEnd(ta, { target: { value: "가" } });
+		expect(ta.value).toBe("가");
+	});
 });
