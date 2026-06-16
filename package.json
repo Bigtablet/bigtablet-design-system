@@ -48,7 +48,7 @@
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
 		"test:storybook": "vitest run --project storybook",
-"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss'",
+		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss'",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
