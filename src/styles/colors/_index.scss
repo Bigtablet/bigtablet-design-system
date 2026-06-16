@@ -171,8 +171,9 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Brand (dark 모드에서도 black 유지 - neutral bg 위에서 black 버튼 구분됨.
-  // 단 텍스트로 쓰일 땐 inverse 사용 권장)
+  // Brand (dark 모드에서도 black 유지.
+  // neutral_950 (#0A0A0A) bg와 대비가 낮아 버튼 등에서 border/elevation 보조 필요.
+  // 텍스트로 쓰일 땐 inverse 사용 권장)
 
   // Text (light → inverted)
   // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)

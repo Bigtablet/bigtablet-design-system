@@ -165,12 +165,12 @@ export const TokenComparison: Story = {
 	parameters: { docs: { source: { code: "" } } },
 	render: () => {
 		const items = [
-			{ token: "bg.solid", lightHex: "#FFFFFF", darkHex: "#1F2630" },
-			{ token: "bg.solid_dim", lightHex: "#F4F4F4", darkHex: "#303841" },
+			{ token: "bg.solid", lightHex: "#FFFFFF", darkHex: "#0A0A0A" },
+			{ token: "bg.solid_dim", lightHex: "#F4F4F4", darkHex: "#141414" },
 			{ token: "text.heading", lightHex: "#121212", darkHex: "#FFFFFF" },
-			{ token: "text.body", lightHex: "#666666", darkHex: "#B4C2CD" },
-			{ token: "text.caption", lightHex: "#888888", darkHex: "#999999" },
-			{ token: "border.default", lightHex: "#E5E5E5", darkHex: "#3D4852" },
+			{ token: "text.body", lightHex: "#666666", darkHex: "#B3B3B3" },
+			{ token: "text.caption", lightHex: "#888888", darkHex: "#777777" },
+			{ token: "border.default", lightHex: "#E5E5E5", darkHex: "#333333" },
 		];
 		return (
 			<div
