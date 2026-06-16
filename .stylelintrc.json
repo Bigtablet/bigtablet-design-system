@@ -1,0 +1,34 @@
+{
+  "customSyntax": "postcss-scss",
+  "rules": {
+    "color-no-hex": [true, {
+      "severity": "error",
+      "message": "DS 컴포넌트 SCSS 에 raw hex 금지 — token (var(--bt-color-*) / token.$color_*) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
+    }],
+    "color-named": ["never", {
+      "severity": "error",
+      "message": "named color (white, black, red 등) 금지 — DS 토큰 사용."
+    }]
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/**/*.scss"],
+      "rules": {
+        "color-no-hex": null,
+        "color-named": null
+      }
+    },
+    {
+      "files": ["src/vanilla/**/*.scss"],
+      "rules": {
+        "color-no-hex": null,
+        "color-named": null
+      }
+    }
+  ],
+  "ignoreFiles": [
+    "dist/**",
+    "node_modules/**",
+    "storybook-static/**"
+  ]
+}
