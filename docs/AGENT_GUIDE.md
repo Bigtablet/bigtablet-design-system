@@ -239,7 +239,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 ### Foundation
 
 - `ThemeProvider` - wraps app for runtime theme control. `defaultMode` (light/dark/system).
-- `useTheme()` - returns `{ mode, setMode, resolvedMode }`.
+- `useTheme()` - returns `{ mode, resolved, setMode }`. (`resolved` is the concrete `"light"`/`"dark"` after resolving `"system"`.)
 
 ---
 
@@ -421,8 +421,8 @@ Stories are organized:
 - **Getting Started** - Installation, Introduction
 - **Cookbook** - Composition recipes (Form / Layout / Feedback / Data patterns)
 - **Examples** - Full page patterns (Admin Dashboard, Marketing landing)
-- **Foundation** - Token visualization (colors, spacing, typography, etc.)
-- **Components/{Category}/{Component}** - Each component's variants
+- **Foundation** - Token visualization (colors, spacing, typography, etc.). Token stories use the `foundation/{token-name}` title path.
+- **Components/{Category}/{Component}** - Each component's variants. Component stories use the `Components/{Category}/{ComponentName}` title path.
 
 Run locally: `pnpm storybook` (port 6006).
 

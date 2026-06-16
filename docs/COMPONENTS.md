@@ -152,26 +152,32 @@ import { Button } from '@bigtablet/design-system';
 <Button>클릭</Button>
 
 // Variants
-<Button variant="primary">Primary</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="danger">Danger</Button>
+<Button variant="filled">Filled</Button>
+<Button variant="tonal">Tonal</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="text">Text</Button>
+
+// 위험 액션 (삭제/취소 등) — variant 와 조합 (filled=빨간 fill, outline=빨간 보더 등)
+<Button variant="filled" danger>삭제</Button>
 
 // Sizes
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
+<Button size="xl">XL</Button>
 
-// 너비 조절
-<Button width="200px">고정 너비</Button>
+// 아이콘 + 너비
+<Button leadingIcon={<Plus size={16} />}>추가</Button>
 <Button fullWidth>전체 너비</Button>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | 버튼 스타일 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 버튼 크기 |
-| `width` | `string` | - | 버튼 너비 |
+| `variant` | `'filled' \| 'tonal' \| 'outline' \| 'text'` | `'filled'` | 버튼 스타일 |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 버튼 크기 |
+| `danger` | `boolean` | `false` | 위험 액션 강조 (variant 와 조합) |
+| `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
+| `leadingIcon` / `trailingIcon` | `ReactNode` | - | 좌/우 아이콘 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
@@ -320,17 +326,14 @@ import { TextField } from '@bigtablet/design-system';
 
 // 상태 표시
 <TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
-<TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 
 // 아이콘
 import { Search, Eye } from 'lucide-react';
-<TextField leftIcon={<Search size={16} />} placeholder="검색..." />
-<TextField rightIcon={<Eye size={16} />} type="password" />
+<TextField leadingIcon={<Search size={16} />} placeholder="검색..." />
+<TextField trailingIcon={<Eye size={16} />} type="password" />
 
-// Variants
-<TextField variant="outline" label="Outline" />
-<TextField variant="filled" label="Filled" />
-<TextField variant="ghost" label="Ghost" />
+// 지우기 버튼 (값 있을 때 X)
+<TextField clearable placeholder="검색..." />
 
 // 값 변환 (자동 포맷팅)
 <TextField
@@ -343,13 +346,13 @@ import { Search, Eye } from 'lucide-react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `string` | - | 라벨 |
+| `showLabel` | `boolean` | `true` | 라벨 표시 (false 면 `aria-label` 로) |
 | `supportingText` | `string` | - | 도움말 텍스트 |
-| `error` | `boolean` | `false` | 에러 상태 |
-| `success` | `boolean` | `false` | 성공 상태 |
-| `variant` | `'outline' \| 'filled' \| 'ghost'` | `'outline'` | 스타일 |
+| `error` | `boolean` | `false` | 에러 상태 (`aria-invalid` 자동) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `leftIcon` | `ReactNode` | - | 왼쪽 아이콘 |
-| `rightIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 |
+| `trailingIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `clearable` | `boolean` | `false` | 값 있을 때 지우기(X) 버튼 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onChangeAction` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 (v3.1). `immediate` = 조합 중에도 즉시 호출 |
@@ -2080,16 +2083,20 @@ import { Hero, Button } from "@bigtablet/design-system";
   backgroundColor="#F4F4F4"
 />
 
-// 외부 링크 CTA - children으로 직접 anchor
+// 외부 링크 CTA - Button 은 href 미지원 + <a><button> 중첩은 잘못된 마크업이므로
+// Button 에 onClick 으로 프로그래매틱 네비게이션 (또는 anchor 를 직접 CTA 로).
 <Hero
   height="md"
   title="문서 보기"
   backgroundColor="#121212"
   textColor="inverse"
 >
-  <a href="https://docs.bigtablet.com" target="_blank" rel="noreferrer">
-    <Button size="lg">문서로 이동</Button>
-  </a>
+  <Button
+    size="lg"
+    onClick={() => window.open("https://docs.bigtablet.com", "_blank", "noreferrer")}
+  >
+    문서로 이동
+  </Button>
 </Hero>
 ```
 

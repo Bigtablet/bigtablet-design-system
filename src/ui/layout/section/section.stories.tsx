@@ -10,20 +10,20 @@ const meta: Meta<typeof Section> = {
 		spacing: {
 			control: "select",
 			options: ["xs", "sm", "md", "lg", "xl"],
-			description: "수직 패딩 크기 - md/lg/xl은 뷰포트에 따라 반응형.",
+			description: "Vertical padding scale - md/lg/xl are viewport-responsive. / 수직 패딩 크기 - md/lg/xl은 뷰포트에 따라 반응형.",
 		},
 		bg: {
 			control: "select",
 			options: ["default", "dim", "accent", "navy", "transparent"],
-			description: "배경 - default/dim/accent/navy(다크)/transparent.",
+			description: "Background - default/dim/accent/navy(dark)/transparent. / 배경 - default/dim/accent/navy(다크)/transparent.",
 		},
 		as: {
 			control: "text",
-			description: "렌더링할 HTML 요소 (기본 section).",
+			description: "HTML element to render (default section). / 렌더링할 HTML 요소 (기본 section).",
 		},
 		children: {
 			control: false,
-			description: "Section 내부 콘텐츠 (보통 Container).",
+			description: "Content inside Section (usually Container). / Section 내부 콘텐츠 (보통 Container).",
 		},
 	},
 	args: {
@@ -35,10 +35,10 @@ const meta: Meta<typeof Section> = {
 		docs: {
 			description: {
 				component: [
-					"**Section** - 마케팅 섹션 단위. 수직 여백 + 배경. 내부에 `Container` 권장.",
+					"**Section** - Marketing section unit. Vertical spacing + background, with `Container` recommended inside. / 마케팅 섹션 단위. 수직 여백 + 배경. 내부에 `Container` 권장.",
 					"",
-					"Spacing: `xs`/`sm`/`md` (기본)/`lg`/`xl` - md+ 는 뷰포트별 반응형.",
-					"Bg: `default` / `dim` (Zebra) / `accent` (옅은 navy) / `navy` (다크 자동 흰 텍스트) / `transparent`.",
+					"Spacing: `xs`/`sm`/`md` (default)/`lg`/`xl` - md+ is viewport-responsive. / Spacing: `xs`/`sm`/`md` (기본)/`lg`/`xl` - md+ 는 뷰포트별 반응형.",
+					"Bg: `default` / `dim` (Zebra) / `accent` (light navy) / `navy` (dark, auto white text) / `transparent`. / Bg: `default` / `dim` (Zebra) / `accent` (옅은 navy) / `navy` (다크 자동 흰 텍스트) / `transparent`.",
 				].join("\n"),
 			},
 		},
