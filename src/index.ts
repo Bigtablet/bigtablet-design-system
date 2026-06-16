@@ -68,7 +68,7 @@ export { zIndex } from "./styles/z-index";
 export { AlertProvider, useAlert } from "./ui/feedback/alert";
 export type { ButtonProps } from "./ui/general/button";
 export { Button } from "./ui/general/button";
-export type { CardProps } from "./ui/display/card";
+export type { CardFooterAlign, CardProps, CardVariant } from "./ui/display/card";
 export { Card } from "./ui/display/card";
 export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
