@@ -50,12 +50,12 @@ import { ThemeProvider } from "@bigtablet/design-system";
 
 | Semantic | Light | Dark |
 |----------|-------|------|
-| bg.solid | #FFFFFF | #1F2630 (navy-900) |
-| bg.solid_dim | #F4F4F4 | #303841 (navy-800) |
+| bg.solid | #FFFFFF | #0A0A0A (neutral-950) |
+| bg.solid_dim | #F4F4F4 | #141414 (neutral-925) |
 | text.heading | #121212 | #FFFFFF |
-| text.body | #666666 | #B4C2CD (navy-200) |
-| text.caption | #888888 | #999999 |
-| border.default | #E5E5E5 | #3D4852 (navy-700) |
+| text.body | #666666 | #B3B3B3 (neutral-400) |
+| text.caption | #888888 | #777777 (neutral-600) |
+| border.default | #E5E5E5 | #333333 (neutral-800) |
 
 \`brand_primary\`, \`accent.*\`, \`status.*\` 는 라이트/다크 동일 (브랜드 일관성).
 

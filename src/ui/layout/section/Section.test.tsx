@@ -23,8 +23,8 @@ describe("Section", () => {
 	});
 
 	it("applies bg class", () => {
-		const { container } = render(<Section bg="navy" />);
-		expect(container.firstChild).toHaveClass("section_bg_navy");
+		const { container } = render(<Section bg="inverted" />);
+		expect(container.firstChild).toHaveClass("section_bg_inverted");
 	});
 
 	it("renders as section element by default", () => {

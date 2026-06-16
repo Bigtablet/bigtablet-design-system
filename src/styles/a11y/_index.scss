@@ -2,7 +2,7 @@
 @use "../breakpoints" as breakpoint;
 
 // Focus rings - CSS Custom Properties로 light/dark 자동 전환.
-// Dark 모드는 흰색 alpha 기반으로 navy bg 위에서도 가시성 확보.
+// Dark 모드는 흰색 alpha 기반으로 neutral dark bg 위에서도 가시성 확보.
 
 :root {
   --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);

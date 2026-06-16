@@ -26,12 +26,12 @@
     align-items: center;
   }
 
-  // ── Selected (navy accent) ──────────────────────────────────────────
+  // ── Selected (accent) ──────────────────────────────────────────
   &_selected {
     background: token.$color_accent_subtle;
     position: relative;
 
-    // 왼쪽 navy 인디케이터 바
+    // 왼쪽 인디케이터 바
     &::after {
       content: "";
       position: absolute;

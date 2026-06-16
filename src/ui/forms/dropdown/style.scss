@@ -166,7 +166,7 @@
     margin-top: token.$spacing_4;
 
     // 라이트: 흰색 (canvas 와 동일하지만 border + shadow 로 분리)
-    // 다크: bg_solid_dim (navy_800) - canvas (navy_900) 보다 한 톤 밝아 elevation
+    // 다크: bg_solid_dim (neutral_925) - canvas (neutral_950) 보다 한 톤 밝아 elevation
     background: token.$color_bg_solid;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg; // 컨트롤과 동일 radius

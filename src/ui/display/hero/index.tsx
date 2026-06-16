@@ -16,7 +16,7 @@ export interface HeroAction {
 
 export type HeroHeight = "sm" | "md" | "lg" | "full";
 export type HeroAlign = "left" | "center" | "right";
-export type HeroOverlay = boolean | "dark" | "light" | "navy";
+export type HeroOverlay = boolean | "dark" | "light";
 
 export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
 	/** 히어로 높이 (기본값: "md"). sm=320 / md=480 / lg=640 / full=100vh */
@@ -31,7 +31,6 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 	 * 텍스트 대비를 위한 오버레이.
 	 * - `true`/"dark": 위→아래 검정 그라데이션
 	 * - "light": 흰색 그라데이션
-	 * - "navy": Bigtablet brand navy 그라데이션 (marketing 강조)
 	 */
 	overlay?: HeroOverlay;
 	/** h1으로 렌더링되는 메인 제목 */
@@ -74,7 +73,7 @@ export const Hero = ({
 	...props
 }: HeroProps) => {
 	const resolvedOverlay = overlay === true ? "dark" : overlay;
-	const isDarkOverlay = resolvedOverlay === "dark" || resolvedOverlay === "navy";
+	const isDarkOverlay = resolvedOverlay === "dark";
 	const resolvedTextColor =
 		textColor === "auto"
 			? isDarkOverlay || (backgroundImage && !resolvedOverlay)

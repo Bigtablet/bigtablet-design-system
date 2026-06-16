@@ -7,7 +7,7 @@
 //   3. Semantic SCSS 변수 - CSS var를 참조 → 기존 사용처(@use token; $color_*) 호환 유지
 //
 // `brand_primary`, `accent.*`, `status.*` 는 light/dark 동일 (브랜드 일관성).
-// 나머지 표면/텍스트/border 는 dark에서 navy 계열로 자동 전환.
+// 나머지 표면/텍스트/border 는 dark에서 neutral 계열로 자동 전환 (Vercel-style pure gray).
 // ════════════════════════════════════════════════════════════════════════
 
 // ── Base colors (raw, never theme-aware) ────────────────────────────────
@@ -25,6 +25,8 @@ $color_base_neutral_600:      #777777;
 $color_base_neutral_700:      #666666;
 $color_base_neutral_800:      #333333;
 $color_base_neutral_900:      #121212;
+$color_base_neutral_925:      #141414;  // dark panel/card bg (Vercel-style)
+$color_base_neutral_950:      #0A0A0A;  // darkest page bg (Vercel-style)
 // Status - light mode default (darkened for AA on #fff text, 5+:1)
 // 이전 값 (#EF4444 등) 은 #fff 텍스트 조합 시 AA 미달 (2.0~3.7:1) - Tailwind 700 계열로 교체.
 $color_base_status_error:     #B91C1C;  // red-700, with #fff = 6.4:1
@@ -33,11 +35,11 @@ $color_base_status_warning:   #B45309;  // amber-700, with #fff = 5.1:1
 $color_base_status_info:      #1D4ED8;  // blue-700, with #fff = 6.5:1
 
 // Status - dark mode 텍스트 / surface 위 직접 사용용 (brightened)
-// dark canvas (navy_900 lum ~0.005) 위에서 6+:1 보장.
-$color_base_status_error_dark_text:    #F87171;  // red-400, on navy_900 ~6.8:1
-$color_base_status_success_dark_text:  #4ADE80;  // green-400, on navy_900 ~10.5:1
-$color_base_status_warning_dark_text:  #FBBF24;  // amber-400, on navy_900 ~13:1
-$color_base_status_info_dark_text:     #60A5FA;  // blue-400, on navy_900 ~7.8:1
+// dark canvas (neutral_950 #0A0A0A lum ~0.001) 위에서 6+:1 이상 보장.
+$color_base_status_error_dark_text:    #F87171;  // red-400, on neutral_950 ~8.2:1
+$color_base_status_success_dark_text:  #4ADE80;  // green-400, on neutral_950 ~12.6:1
+$color_base_status_warning_dark_text:  #FBBF24;  // amber-400, on neutral_950 ~15.7:1
+$color_base_status_info_dark_text:     #60A5FA;  // blue-400, on neutral_950 ~9.4:1
 
 // Status container - light mode (연한 tint 배경)
 $color_base_status_error_container_light:    #FEE2E2;  // red-100
@@ -45,7 +47,7 @@ $color_base_status_success_container_light:  #DCFCE7;  // green-100
 $color_base_status_warning_container_light:  #FEF3C7;  // amber-100
 $color_base_status_info_container_light:     #DBEAFE;  // blue-100
 
-// Status container - dark mode (deep alpha tint, navy bg 위 식별 가능)
+// Status container - dark mode (deep alpha tint, dark neutral bg 위 식별 가능)
 // Sass rgba(hex, alpha) - 다른 토큰 정의와 hex 일관성 유지.
 $color_base_status_error_container_dark:     rgba(#7f1d1d, 0.35);   // red-900 @ 35%
 $color_base_status_success_container_dark:   rgba(#064e3b, 0.35);   // green-900 @ 35%
@@ -57,18 +59,6 @@ $color_base_status_error_on_container_dark:    #FCA5A5;  // red-300
 $color_base_status_success_on_container_dark:  #86EFAC;  // green-300
 $color_base_status_warning_on_container_dark:  #FCD34D;  // amber-300
 $color_base_status_info_on_container_dark:     #93C5FD;  // blue-300
-
-// Bigtablet navy (초기 홈페이지에서 추출) - slate-gray-blue + sky blue
-$color_base_navy_50:          #F2F5F8;
-$color_base_navy_100:         #DDE3E9;
-$color_base_navy_200:         #B4C2CD;
-$color_base_navy_300:         #7AA5D2;
-$color_base_navy_400:         #5A8DCB;
-$color_base_navy_500:         #4C7CB6;
-$color_base_navy_600:         #47555E;
-$color_base_navy_700:         #3D4852;
-$color_base_navy_800:         #303841;
-$color_base_navy_900:         #1F2630;
 
 // Skeleton - light mode (off-white grays, not in neutral scale)
 $color_base_skeleton_base:       #F3F3F3;
@@ -160,7 +150,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
 
   // Accent (검정 brand 기반 - light에서 검정, dark에서 흰색 반전)
   // 컴포넌트 active/selected/indicator 강조에 사용.
-  // navy 색상은 `color_base_navy_*`로 별도 보존 (legacy/optional usage).
+  // Accent: brand 검정 기반 (light=검정, dark=흰색 반전)
   --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
   --bt-color-accent-muted:         #{$color_base_alpha_black_12};
   --bt-color-accent-light:         #{$color_base_neutral_400};
@@ -168,7 +158,7 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-accent-strong:        #{$color_base_neutral_900};
   --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
 
-  // Skeleton (light gray gradient - dark 에서 navy gray 로 전환)
+  // Skeleton (light gray gradient - dark 에서 neutral gray 로 전환)
   --bt-color-skeleton-base:        #{$color_base_skeleton_base};
   --bt-color-skeleton-wave:        #{$color_base_skeleton_wave};
   --bt-color-skeleton-highlight:   #{$color_base_skeleton_highlight};
@@ -181,20 +171,20 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Brand (dark 모드에서도 black 유지 - bg가 navy라 black 버튼 구분됨.
+  // Brand (dark 모드에서도 black 유지 - neutral bg 위에서 black 버튼 구분됨.
   // 단 텍스트로 쓰일 땐 inverse 사용 권장)
 
   // Text (light → inverted)
   // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
   --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
-  --bt-color-text-body:            #{$color_base_navy_200};
-  --bt-color-text-caption:         #{$color_base_neutral_400};
+  --bt-color-text-body:            #{$color_base_neutral_400};
+  --bt-color-text-caption:         #{$color_base_neutral_600};
   --bt-color-text-inverse:         #{$color_base_neutral_900};
   --bt-color-text-disabled:        #{$color_base_alpha_white_38};
 
-  // Background (light → navy)
-  --bt-color-bg-solid:             #{$color_base_navy_900};
-  --bt-color-bg-solid-dim:         #{$color_base_navy_800};
+  // Background (light → neutral dark)
+  --bt-color-bg-solid:             #{$color_base_neutral_950};
+  --bt-color-bg-solid-dim:         #{$color_base_neutral_925};
   --bt-color-bg-additive:          #{$color_base_alpha_white_5};
   --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
   --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
@@ -208,17 +198,17 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
   --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
 
-  // Border (light gray → navy mid)
-  --bt-color-border-default:       #{$color_base_navy_700};
-  --bt-color-border-hover:         #{$color_base_navy_400};
+  // Border (light gray → neutral dark)
+  --bt-color-border-default:       #{$color_base_neutral_800};
+  --bt-color-border-hover:         #{$color_base_neutral_600};
   --bt-color-border-subtle:        #{$color_base_alpha_white_12};
   --bt-color-border-focus:         #{$color_base_neutral_0};
-  --bt-color-border-disabled:      #{$color_base_navy_800};
+  --bt-color-border-disabled:      #{$color_base_neutral_925};
 
   // Brand container - dark 모드에선 white alpha로
   --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
 
-  // Accent (dark - 흰색 반전. active/selected가 dark navy bg 위에서 잘 보임)
+  // Accent (dark - 흰색 반전. active/selected가 dark neutral bg 위에서 잘 보임)
   --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
   --bt-color-accent-muted:         #{$color_base_alpha_white_12};
   --bt-color-accent-light:         #{$color_base_neutral_300};
@@ -244,10 +234,10 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
   --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
   --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
 
-  // Skeleton - navy_700 (bg-solid-dim navy_800 보다 살짝 밝음 → 시각 대비)
-  --bt-color-skeleton-base:        #{$color_base_navy_700};
-  --bt-color-skeleton-wave:        #{$color_base_navy_700};
-  --bt-color-skeleton-highlight:   #{$color_base_navy_600};
+  // Skeleton - neutral_800 (bg-solid-dim neutral_925 보다 밝음 → 시각 대비)
+  --bt-color-skeleton-base:        #{$color_base_neutral_800};
+  --bt-color-skeleton-wave:        #{$color_base_neutral_800};
+  --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
 }
 
 // `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
@@ -258,13 +248,13 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     -moz-osx-font-smoothing: grayscale;
 
     --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
-    --bt-color-text-body:            #{$color_base_navy_200};
-    --bt-color-text-caption:         #{$color_base_neutral_400};
+    --bt-color-text-body:            #{$color_base_neutral_400};
+    --bt-color-text-caption:         #{$color_base_neutral_600};
     --bt-color-text-inverse:         #{$color_base_neutral_900};
     --bt-color-text-disabled:        #{$color_base_alpha_white_38};
 
-    --bt-color-bg-solid:             #{$color_base_navy_900};
-    --bt-color-bg-solid-dim:         #{$color_base_navy_800};
+    --bt-color-bg-solid:             #{$color_base_neutral_950};
+    --bt-color-bg-solid-dim:         #{$color_base_neutral_925};
     --bt-color-bg-additive:          #{$color_base_alpha_white_5};
     --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
     --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
@@ -277,11 +267,11 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
     --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
 
-    --bt-color-border-default:       #{$color_base_navy_700};
-    --bt-color-border-hover:         #{$color_base_navy_400};
+    --bt-color-border-default:       #{$color_base_neutral_800};
+    --bt-color-border-hover:         #{$color_base_neutral_600};
     --bt-color-border-subtle:        #{$color_base_alpha_white_12};
     --bt-color-border-focus:         #{$color_base_neutral_0};
-    --bt-color-border-disabled:      #{$color_base_navy_800};
+    --bt-color-border-disabled:      #{$color_base_neutral_925};
 
     --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
 
@@ -309,9 +299,9 @@ $color_base_alpha_white_38:   rgba(255, 255, 255, 0.38);
     --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
     --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
 
-    --bt-color-skeleton-base:        #{$color_base_navy_700};
-    --bt-color-skeleton-wave:        #{$color_base_navy_700};
-    --bt-color-skeleton-highlight:   #{$color_base_navy_600};
+    --bt-color-skeleton-base:        #{$color_base_neutral_800};
+    --bt-color-skeleton-wave:        #{$color_base_neutral_800};
+    --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
   }
 }
 

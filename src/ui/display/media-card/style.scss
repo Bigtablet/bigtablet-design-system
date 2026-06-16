@@ -132,11 +132,10 @@
     .media_card_overlay {
       position: absolute;
       inset: 0;
-      // navy 그라데이션 - Bigtablet brand accent.strong (#303841) 사용
       background: linear-gradient(
         180deg,
-        rgba(48, 56, 65, 0) 30%,
-        rgba(48, 56, 65, 0.85) 100%
+        rgba(0, 0, 0, 0) 30%,
+        rgba(0, 0, 0, 0.85) 100%
       );
       pointer-events: none;
       z-index: 1;
