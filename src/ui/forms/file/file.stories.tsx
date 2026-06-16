@@ -41,7 +41,7 @@ const meta: Meta<typeof FileInput> = {
 		docs: {
 			description: {
 				component: `
-**FileInput** — File selection. Choose the display form with \`variant\`. / 파일 선택. \`variant\` 로 표시 형태 선택.
+**FileInput** — File selection. Choose the display form with \`variant\`. / **FileInput** — 파일 선택. \`variant\` 로 표시 형태 선택.
 
 - \`variant="button"\` (default): regular file-select button. Show thumbnails below via the \`preview\` option. / (기본): 일반 파일 선택 버튼. \`preview\` 옵션으로 아래 썸네일 표시.
 - \`variant="preview"\`: single image preview inside a large box (avatar / image uploader pattern). Adjust box size with \`previewSize\`. / 큰 박스 안에 단일 이미지 미리보기 (avatar / 이미지 업로더 패턴). \`previewSize\` 로 박스 크기 조정.

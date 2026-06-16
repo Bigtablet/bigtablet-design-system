@@ -42,7 +42,7 @@ const meta: Meta<typeof IconButton> = {
 		docs: {
 			description: {
 				component: `
-**IconButton** — A button containing only an icon. \`aria-label\` required. / 아이콘만 가진 버튼. \`aria-label\` 필수.
+**IconButton** — A button containing only an icon. \`aria-label\` required. / **IconButton** — 아이콘만 가진 버튼. \`aria-label\` 필수.
 
 Variants: \`standard\` / \`filled\` / \`tonal\` / \`outlined\`.
 Sizes: \`sm\` 40 (icon 20 / 아이콘 20) / \`md\` 48 (icon 24 / 아이콘 24).

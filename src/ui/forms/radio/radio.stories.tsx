@@ -25,7 +25,7 @@ const meta: Meta<typeof Radio> = {
 		docs: {
 			description: {
 				component: `
-**Radio** — Single-select (use Checkbox for multi-select). / 단일 선택 (다중은 Checkbox).
+**Radio** — Single-select (use Checkbox for multi-select). / **Radio** — 단일 선택 (다중은 Checkbox).
 
 Items in the same group share \`name\` and each has its own \`value\`. Control via \`checked\` / \`onChange\`. / 같은 그룹은 \`name\` 동일 + 각 \`value\`. \`checked\` / \`onChange\` 제어.
         `,

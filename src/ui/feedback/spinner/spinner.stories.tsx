@@ -18,7 +18,7 @@ const meta: Meta<typeof Spinner> = {
 		docs: {
 			description: {
 				component: `
-**Spinner** — Inline rotating loading indicator. / 인라인 회전 로딩 표시. For use inside buttons/cards. / 버튼·카드 내부용.
+**Spinner** — Inline rotating loading indicator. / **Spinner** — 인라인 회전 로딩 표시. For use inside buttons/cards. / 버튼·카드 내부용.
 
 Size / 크기: button 16–24 / 버튼, card 24–32 / 카드, emphasis 40+ / 강조. For page transitions see \`TopLoading\`. / 페이지 전환은 \`TopLoading\` 참고.
 

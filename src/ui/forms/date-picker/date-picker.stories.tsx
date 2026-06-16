@@ -62,7 +62,7 @@ const meta: Meta<typeof DateFieldDemo> = {
 		docs: {
 			description: {
 				component: `
-**DatePicker** — Year/month/day Dropdown combo. \`onChange\` always returns \`YYYY-MM-DD\`. / 연/월/일 Dropdown 조합. \`onChange\` 항상 \`YYYY-MM-DD\` 반환.
+**DatePicker** — Year/month/day Dropdown combo. \`onChange\` always returns \`YYYY-MM-DD\`. / **DatePicker** — 연/월/일 Dropdown 조합. \`onChange\` 항상 \`YYYY-MM-DD\` 반환.
 
 \`mode\`: \`year-month\` (normalized → YYYY-MM-01) / \`year-month-day\`. / \`year-month\` (정규화 → YYYY-MM-01) / \`year-month-day\`.
 Key props: \`startYear\`, \`endYear\`, \`selectableRange\` (\`all\` / \`until-today\`), \`disabled\`. / 주요 prop: \`startYear\`, \`endYear\`, \`selectableRange\` (\`all\` / \`until-today\`), \`disabled\`.

@@ -11,7 +11,7 @@ const meta: Meta<typeof Hero> = {
 		docs: {
 			description: {
 				component: `
-**Hero** — Large banner area at the top of a page. Renders \`<section>\` + \`<h1>\` (one per page). / 페이지 상단 큰 영역. \`<section>\` + \`<h1>\` (페이지당 하나).
+**Hero** — Large banner area at the top of a page. Renders \`<section>\` + \`<h1>\` (one per page). / **Hero** — 페이지 상단 큰 영역. \`<section>\` + \`<h1>\` (페이지당 하나).
 
 Slots: \`eyebrow\` / \`title\` / \`subtitle\` / \`primaryAction\` / \`secondaryAction\` / \`children\`. / 슬롯.
 Key props: \`height\` (sm/md/lg/full), \`overlay\` (\`dark\`/\`light\`/\`navy\`), \`align\`, \`backgroundImage\`, \`backgroundColor\`. / 주요 prop.

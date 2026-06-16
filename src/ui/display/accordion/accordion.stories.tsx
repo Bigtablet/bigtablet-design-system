@@ -18,7 +18,7 @@ const meta: Meta<typeof Accordion> = {
 		docs: {
 			description: {
 				component: `
-**Accordion** — Progressively reveals content via expand/collapse panels. / 펼침/접힘으로 컨텐츠 점진 노출.
+**Accordion** — Progressively reveals content via expand/collapse panels. / **Accordion** — 펼침/접힘으로 컨텐츠 점진 노출.
 
 \`multiple={false}\` (default): one open at a time / \`multiple={true}\`: independent toggles. — \`multiple={false}\` (기본): 한 번에 하나 / \`multiple={true}\`: 독립 토글.
 WAI-ARIA Disclosure handled automatically (\`aria-expanded\`, \`aria-controls\`, \`role="region"\`). / WAI-ARIA Disclosure 자동.

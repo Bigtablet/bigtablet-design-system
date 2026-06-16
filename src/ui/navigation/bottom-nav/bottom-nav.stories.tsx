@@ -14,11 +14,11 @@ const meta: Meta<typeof BottomNav> = {
 		docs: {
 			description: {
 				component: `
-**BottomNav** — Mobile bottom navigation, composed of 2–5 \`BottomNavItem\`s. / 모바일 하단 네비게이션. 2–5개 \`BottomNavItem\` 으로 구성.
+**BottomNav** — Mobile bottom navigation, composed of 2–5 \`BottomNavItem\`s. / **BottomNav** — 모바일 하단 네비게이션. 2–5개 \`BottomNavItem\` 으로 구성.
 
 Pinned to the bottom of the viewport via \`position: fixed; bottom: 0\`. Auto-padding for the iOS home-indicator area (\`env(safe-area-inset-bottom)\`). To keep content from being hidden, add a \`<BottomNavSpacer />\` at the end of the page or use the \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS variables for layout calculation. / \`position: fixed; bottom: 0\` 으로 viewport 하단 고정. iOS 홈 인디케이터 영역 (\`env(safe-area-inset-bottom)\`) 자동 패딩. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 깔거나 \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 layout 계산.
 
-\`<BottomNavItem icon label active badge as href />\` — \`aria-current="page"\` is set automatically when \`active\`. / \`active\` 시 \`aria-current="page"\` 자동.
+\`<BottomNavItem icon label active badge as href />\` — \`aria-current="page"\` is set automatically when \`active\`. / \`<BottomNavItem icon label active badge as href />\` — \`active\` 시 \`aria-current="page"\` 자동.
 				`,
 			},
 		},
