@@ -30,12 +30,13 @@ const meta: Meta<typeof Textarea> = {
 		docs: {
 			description: {
 				component: `
-**Textarea** — 멀티라인 텍스트 입력. \`TextField\` 와 동일한 시각/토큰 (border / focus / error / label / helper / disabled).
+**Textarea** — Multi-line text input, same visuals/tokens as \`TextField\` (border / focus / error / label / helper / disabled).
+멀티라인 텍스트 입력. \`TextField\` 와 동일한 시각/토큰.
 
-- auto-grow: \`minRows\` / \`maxRows\` 지정 시 내용 따라 높이 자동 증가
-- \`showCounter\` + \`maxLength\` → 글자 수 카운터
-- \`resize\`: none / vertical (기본) / both
-- 한글 IME: \`imeStrategy="immediate"\` 로 조합 중 실시간 콜백
+- **auto-grow** — height grows with content when \`minRows\`/\`maxRows\` set. / \`minRows\`/\`maxRows\` 지정 시 높이 자동 증가
+- **counter** — \`showCounter\` + \`maxLength\` shows character count. / 글자 수 카운터
+- **resize** — none / vertical (default) / both
+- **Korean IME** — \`imeStrategy="immediate"\` for live callback during composition. / 조합 중 실시간 콜백
 				`,
 			},
 		},
