@@ -1,0 +1,63 @@
+@use "src/styles/token" as token;
+
+// ErrorState — EmptyState 형제. error boundary / widget fallback.
+// icon 색은 status-error-on-surface (surface 위 직접 — light/dark 자동 swap).
+
+.error_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: token.$spacing_12;
+
+  &_icon {
+    display: inline-flex;
+    color: token.$color_status_error_on_surface;
+  }
+
+  &_title {
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+    margin: 0;
+  }
+
+  &_description {
+    @include token.body_small;
+    color: token.$color_text_body;
+    margin: 0;
+    max-width: 480px;
+  }
+
+  &_action {
+    margin-top: token.$spacing_8;
+  }
+
+  // ── Variant: page (전체 화면 fallback) ─────────────────────────────────
+
+  &_variant_page {
+    justify-content: center;
+    min-height: 320px;
+    padding: token.$spacing_48 token.$spacing_24;
+    gap: token.$spacing_16;
+
+    .error_state_title {
+      @include token.heading_small_medium;
+    }
+  }
+
+  // ── Variant: widget (인라인 컴팩트) ────────────────────────────────────
+
+  &_variant_widget {
+    padding: token.$spacing_24 token.$spacing_16;
+    gap: token.$spacing_8;
+
+    .error_state_title {
+      @include token.title_medium_medium;
+    }
+
+    .error_state_description {
+      @include token.label_medium;
+    }
+  }
+}
