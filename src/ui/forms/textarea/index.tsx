@@ -114,15 +114,15 @@ export const Textarea = ({
 	const autoGrow = minRows !== undefined || maxRows !== undefined;
 
 	// Controlled value 동기화 — useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
-	// paint 전 즉시 반영해 flicker 방지. IME 조합 중에는 덮어쓰지 않아 조합 깨짐을 막는다.
+	// paint 전 즉시 반영해 flicker 방지.
+	// 조합 중에는 prevValue 까지 함께 보류 — 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
+	// 조합 종료 후 value===prevValue 가 되어 외부 value 가 영영 반영되지 않는 버그 발생.
 	const [prevValue, setPrevValue] = useState(value);
-	if (isControlled && value !== prevValue) {
+	if (isControlled && value !== prevValue && !isComposingRef.current) {
 		setPrevValue(value);
-		if (!isComposingRef.current) {
-			const nextValue = applyTransform(value ?? "");
-			setInnerValue(nextValue);
-			lastEmittedValueRef.current = nextValue;
-		}
+		const nextValue = applyTransform(value ?? "");
+		setInnerValue(nextValue);
+		lastEmittedValueRef.current = nextValue;
 	}
 
 	// 외부 ref + 내부 ref 병합 (auto-grow 측정용)
