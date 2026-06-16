@@ -90,7 +90,7 @@ export const Placements: Story = {
 					trigger={<Button variant="outline">{placement}</Button>}
 					content={
 						<div style={{ color: "var(--bt-color-text-body)" }}>
-							placement="{placement}"
+							{}
 						</div>
 					}
 				/>

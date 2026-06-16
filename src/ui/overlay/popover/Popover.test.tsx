@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Popover } from "./index";
@@ -29,7 +29,7 @@ describe("Popover", () => {
 		expect(screen.getByText("Panel content")).toBeInTheDocument();
 	});
 
-	it("toggles closed when trigger is clicked again", () => {
+	it("toggles closed when trigger is clicked again", async () => {
 		render(
 			<Popover
 				trigger={<button type="button">Open</button>}
@@ -41,10 +41,12 @@ describe("Popover", () => {
 		fireEvent.click(trigger);
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 		fireEvent.click(trigger);
-		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		});
 	});
 
-	it("closes on Escape and restores focus to trigger", () => {
+	it("closes on Escape and restores focus to trigger", async () => {
 		render(
 			<Popover
 				trigger={<button type="button">Open</button>}
@@ -58,11 +60,13 @@ describe("Popover", () => {
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 
 		fireEvent.keyDown(document, { key: "Escape" });
-		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		});
 		expect(trigger).toHaveFocus();
 	});
 
-	it("closes when clicking outside", () => {
+	it("closes when clicking outside", async () => {
 		render(
 			<div>
 				<Popover
@@ -79,7 +83,9 @@ describe("Popover", () => {
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 
 		fireEvent.mouseDown(screen.getByTestId("outside"));
-		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		});
 	});
 
 	it("does not close when clicking inside the panel", () => {

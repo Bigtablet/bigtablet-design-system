@@ -71,7 +71,10 @@ export const Popover = ({
 	const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
 	const open = isControlled ? openProp : internalOpen;
 
-	const wrapperRef = React.useRef<HTMLSpanElement>(null);
+	const [shouldRender, setShouldRender] = React.useState(open ?? false);
+	if (open && !shouldRender) setShouldRender(true);
+
+	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const popoverRef = React.useRef<HTMLDivElement>(null);
 	/** 팝오버 열기 직전의 포커스 요소 (보통 trigger) - Esc 닫힘 시 복귀 대상 */
 	const previousFocusRef = React.useRef<HTMLElement | null>(null);
@@ -98,7 +101,7 @@ export const Popover = ({
 		}
 	})();
 
-	const style = useSpringPresence({ visible: open, from: fromTransform });
+	const style = useSpringPresence({ visible: open, from: fromTransform, onExitComplete: () => setShouldRender(false) });
 
 	// 열릴 때 content 첫 focusable(없으면 패널 자체)로 포커스 이동
 	React.useEffect(() => {
@@ -135,6 +138,7 @@ export const Popover = ({
 		{
 			onClick: (e: React.MouseEvent<HTMLElement>) => {
 				(trigger.props as React.HTMLAttributes<HTMLElement>).onClick?.(e);
+				if (e.defaultPrevented) return;
 				setOpen(!open);
 			},
 			"aria-haspopup": "dialog",
@@ -144,10 +148,10 @@ export const Popover = ({
 	);
 
 	return (
-		<span className="popover_wrapper" ref={wrapperRef}>
+		<div className="popover_wrapper" ref={wrapperRef}>
 			{triggerWithProps}
-			{open && (
-				<span className={cn("popover_position", `popover_placement_${placement}`)}>
+			{shouldRender && (
+				<div className={cn("popover_position", `popover_placement_${placement}`)}>
 					<animated.div
 						id={popoverId}
 						ref={popoverRef}
@@ -160,9 +164,9 @@ export const Popover = ({
 					>
 						{content}
 					</animated.div>
-				</span>
+				</div>
 			)}
-		</span>
+		</div>
 	);
 };
 
