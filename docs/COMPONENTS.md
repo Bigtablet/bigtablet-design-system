@@ -19,6 +19,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Textarea](#textarea)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
+  - [RadioGroup](#radiogroup)
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
@@ -511,6 +512,76 @@ const [selected, setSelected] = useState('option1');
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `checked` | `boolean` | - | 선택 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
+
+> `RadioGroup` 안에서는 `name` / `checked` / `size` / `disabled` 가 그룹 컨텍스트에서 자동 주입됩니다. 이 경우 `value` 만 지정하면 됩니다. (그룹 밖에서는 위 props 로 standalone 동작)
+
+---
+
+### RadioGroup
+
+`Radio` 들을 묶는 **Context 기반 합성 래퍼**. 그룹 단위 value 제어/비제어 + `name` 자동 공유 + label/error/supportingText 묶음 + 방향키 이동(native radio).
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 여러 옵션 중 하나 선택 (그룹) | ✅ RadioGroup + `Radio value=...` |
+| 단일 라디오 (그룹 아님) | △ [Radio](#radio) standalone |
+| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+| 여러 개 동시 선택 | ❌ [Checkbox](#checkbox) |
+
+#### 제어 / 비제어
+
+- **제어형**: `value` + `onValueChange`
+- **비제어형**: `defaultValue`
+
+자식 `Radio` 는 `value` 만 지정 — `name`/`checked`/`size`/`disabled` 는 그룹에서 상속.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | 제어형 선택 값 |
+| `defaultValue` | `string` | - | 비제어형 초기 값 |
+| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 |
+| `name` | `string` | (auto) | 그룹 name (미지정 시 자동 생성) |
+| `label` | `ReactNode` | - | 그룹 라벨 (`radiogroup` 접근성 레이블) |
+| `supportingText` | `ReactNode` | - | 보조 설명 (error 시 빨간색) |
+| `error` | `boolean` | `false` | 에러 상태 (`aria-invalid` 자동) |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 그룹 사이즈 (자식 Radio 에 전파) |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 배치 방향 |
+| `disabled` | `boolean` | `false` | 그룹 전체 비활성화 |
+
+#### 접근성
+
+- 옵션 컨테이너에 `role="radiogroup"` + `aria-labelledby`(label) / `aria-describedby`(supportingText) / `aria-invalid`(error)
+- native `input[type=radio]` 라 같은 `name` 공유 시 브라우저가 방향키 이동을 기본 제공
+
+**Usage**
+
+```tsx
+import { RadioGroup, Radio } from "@bigtablet/design-system";
+
+// 비제어
+<RadioGroup label="크기" defaultValue="md">
+  <Radio value="sm" label="작게" />
+  <Radio value="md" label="보통" />
+  <Radio value="lg" label="크게" />
+</RadioGroup>
+
+// 제어 + 에러 + 가로 배치
+<RadioGroup
+  label="결제 수단"
+  value={method}
+  onValueChange={setMethod}
+  orientation="horizontal"
+  error={!method}
+  supportingText={!method ? "결제 수단을 선택해 주세요." : undefined}
+>
+  <Radio value="card" label="카드" />
+  <Radio value="bank" label="계좌이체" />
+</RadioGroup>
+```
 
 ---
 

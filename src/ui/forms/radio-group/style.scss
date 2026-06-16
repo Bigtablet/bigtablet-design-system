@@ -1,0 +1,50 @@
+@use "src/styles/token" as token;
+
+.radio_group {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_8;
+  font-family: token.$font_family_primary;
+
+  // ── Group label ────────────────────────────────────────────────────────
+
+  &_label {
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_heading;
+  }
+
+  // ── Options container ────────────────────────────────────────────────────
+
+  &_options {
+    display: flex;
+    gap: token.$spacing_8;
+  }
+
+  &_orientation_vertical &_options {
+    flex-direction: column;
+  }
+
+  &_orientation_horizontal &_options {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: token.$spacing_16;
+  }
+
+  // ── Helper / supporting text ──────────────────────────────────────────────
+
+  &_helper {
+    @include token.label_small;
+    color: token.$color_text_caption;
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────────
+  // surface 위 직접 텍스트 - light/dark 자동 swap (다크 모드 가독성 보장).
+
+  &_error {
+    .radio_group_label,
+    .radio_group_helper {
+      color: token.$color_status_error_on_surface;
+    }
+  }
+}
