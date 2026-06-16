@@ -25,10 +25,5 @@
         "color-named": null
       }
     }
-  ],
-  "ignoreFiles": [
-    "dist/**",
-    "node_modules/**",
-    "storybook-static/**"
   ]
 }

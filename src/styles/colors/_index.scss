@@ -46,10 +46,11 @@ $color_base_status_warning_container_light:  #FEF3C7;  // amber-100
 $color_base_status_info_container_light:     #DBEAFE;  // blue-100
 
 // Status container — dark mode (deep alpha tint, navy bg 위 식별 가능)
-$color_base_status_error_container_dark:     rgba(127, 29, 29, 0.35);   // red-900 alpha
-$color_base_status_success_container_dark:   rgba(6, 78, 59, 0.35);    // green-900 alpha
-$color_base_status_warning_container_dark:   rgba(120, 53, 15, 0.35);  // amber-900 alpha
-$color_base_status_info_container_dark:      rgba(30, 58, 138, 0.35);  // blue-900 alpha
+// Sass rgba(hex, alpha) — 다른 토큰 정의와 hex 일관성 유지.
+$color_base_status_error_container_dark:     rgba(#7f1d1d, 0.35);   // red-900 @ 35%
+$color_base_status_success_container_dark:   rgba(#064e3b, 0.35);   // green-900 @ 35%
+$color_base_status_warning_container_dark:   rgba(#78350f, 0.35);   // amber-900 @ 35%
+$color_base_status_info_container_dark:      rgba(#1e3a8a, 0.35);   // blue-900 @ 35%
 
 // Status on-container — dark mode (tint 위에서 보일 만한 밝은 색)
 $color_base_status_error_on_container_dark:    #FCA5A5;  // red-300
