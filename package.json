@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "3.1.1",
+	"version": "4.0.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -48,7 +48,7 @@
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
 		"test:storybook": "vitest run --project storybook",
-"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss'",
+		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss'",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
@@ -98,7 +98,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitest/browser-playwright": "^4.1.6",
 		"@vitest/coverage-v8": "^4.1.6",
-"conventional-changelog-conventionalcommits": "^9.3.1",
+		"conventional-changelog-conventionalcommits": "^9.3.1",
 		"esbuild-sass-plugin": "^3.7.0",
 		"husky": "^9.1.7",
 		"jsdom": "^29.1.1",
