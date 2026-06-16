@@ -16,6 +16,8 @@ export type { BreadcrumbItem, BreadcrumbProps } from "./ui/navigation/breadcrumb
 export { Breadcrumb } from "./ui/navigation/breadcrumb";
 export type { EmptyStateProps } from "./ui/feedback/empty-state";
 export { EmptyState } from "./ui/feedback/empty-state";
+export type { ErrorStateProps, ErrorStateVariant } from "./ui/feedback/error-state";
+export { ErrorState } from "./ui/feedback/error-state";
 export type { MenuItem, MenuProps } from "./ui/navigation/menu";
 export { Menu } from "./ui/navigation/menu";
 export type {
@@ -113,8 +115,14 @@ export type { TableColumn, TableProps, TableSize } from "./ui/display/table";
 export { Table } from "./ui/display/table";
 export type { ResolvedTheme, ThemeMode, ThemeProviderProps } from "./ui/system/theme-provider";
 export { ThemeProvider, useTheme } from "./ui/system/theme-provider";
-export type { TextFieldProps } from "./ui/forms/textfield";
+export type { ImeStrategy, TextFieldProps, TextFieldSize } from "./ui/forms/textfield";
 export { TextField } from "./ui/forms/textfield";
+export type {
+	TextareaProps,
+	TextareaResize,
+	TextareaSize,
+} from "./ui/forms/textarea";
+export { Textarea } from "./ui/forms/textarea";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/use-toast";
 export type { ToggleProps } from "./ui/forms/toggle";

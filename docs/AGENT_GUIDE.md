@@ -169,7 +169,8 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
 | `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
-| `TextField` | Text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `variant` (outline/filled), `leadingIcon`, `clearable` |
+| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`, `clearable`, `onChangeAction` (value callback), `imeStrategy` (delayed/immediate — use `immediate` for live search w/ Korean IME) |
+| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
 | `Radio` | Single from group. | Inside a `<fieldset>` for grouping. `value`, `checked`, `name` |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
@@ -186,7 +187,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
-| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (default/accent/danger/success/warning/info), `count` |
+| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (accent/neutral/info/success/warning/error), `appearance` (solid/soft — soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error — static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata`, `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
@@ -205,6 +206,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `LinearProgress` | Step progress with dots. | `totalSteps`, `currentStep`, `aria-label`. Renders N+1 checkpoints. |
 | `Skeleton` | Loading placeholder. | `variant` (text/title/avatar/rect), `width`, `height`, `radius` |
 | `EmptyState` | "Nothing here" block. | `illustration`, `title`, `description`, `action`, `size` (sm/md/lg). Vertically centers when parent is flex column. |
+| `ErrorState` | Error block (boundary / load failure). | `title` (default "문제가 발생했습니다"), `description`, `icon` (default warning, `null` to hide), `action` (retry button), `variant` (page = full-area fallback / widget = inline compact). Uses `status-error` token, `role="alert"`. |
 
 ### Navigation
 
