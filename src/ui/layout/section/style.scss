@@ -29,6 +29,6 @@
   &_bg_default     { background: token.$color_bg_solid; }
   &_bg_dim         { background: token.$color_bg_solid_dim; }
   &_bg_accent      { background: token.$color_accent_subtle; }
-  &_bg_navy        { background: token.$color_accent_default; color: #fff; }
+  &_bg_navy        { background: token.$color_accent_default; color: token.$color_accent_on_surface; }
   &_bg_transparent { background: transparent; }
 }

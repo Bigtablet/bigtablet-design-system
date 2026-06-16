@@ -192,11 +192,12 @@
     }
 
     .text_field_label {
-      color: token.$color_status_error;
+      // surface 위 직접 텍스트 — light/dark 자동 swap (다크 모드 가독성 보장)
+      color: token.$color_status_error_on_surface;
     }
 
     .text_field_helper {
-      color: token.$color_status_error;
+      color: token.$color_status_error_on_surface;
     }
   }
 
