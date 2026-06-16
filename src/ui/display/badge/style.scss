@@ -49,35 +49,71 @@
     &.badge_shape_label   { padding: 5px 12px; font-size: 13px; }
   }
 
-  // ── Variant ──────────────────────────────────────────────────────────
+  // ── Variant × appearance ────────────────────────────────────────────
+  //
+  // solid (기본): 강한 fill bg + on-default 텍스트
+  // soft: tint 배경 (status-*-container) + 진한 텍스트 (status-*-on-container)
+  //
+  // accent / neutral 은 status 가 아니라 별도 처리 — soft 도 동일 분기.
 
   &_variant_accent {
-    background: token.$color_accent_default;
-    color: token.$color_accent_on_surface;
+    &.badge_appearance_solid {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+    }
+    &.badge_appearance_soft {
+      background: token.$color_accent_subtle;
+      color: token.$color_accent_default;
+    }
   }
 
   &_variant_neutral {
+    // neutral 은 solid / soft 동일 — 이미 subtle 톤
     background: token.$color_bg_solid_dim;
     color: token.$color_text_body;
   }
 
   &_variant_info {
-    background: token.$color_status_info;
-    color: #fff;
+    &.badge_appearance_solid {
+      background: token.$color_status_info;
+      color: token.$color_status_info_on_default;
+    }
+    &.badge_appearance_soft {
+      background: token.$color_status_info_container;
+      color: token.$color_status_info_on_container;
+    }
   }
 
   &_variant_success {
-    background: token.$color_status_success;
-    color: #fff;
+    &.badge_appearance_solid {
+      background: token.$color_status_success;
+      color: token.$color_status_success_on_default;
+    }
+    &.badge_appearance_soft {
+      background: token.$color_status_success_container;
+      color: token.$color_status_success_on_container;
+    }
   }
 
   &_variant_warning {
-    background: token.$color_status_warning;
-    color: #fff;
+    &.badge_appearance_solid {
+      background: token.$color_status_warning;
+      color: token.$color_status_warning_on_default;
+    }
+    &.badge_appearance_soft {
+      background: token.$color_status_warning_container;
+      color: token.$color_status_warning_on_container;
+    }
   }
 
   &_variant_error {
-    background: token.$color_status_error;
-    color: #fff;
+    &.badge_appearance_solid {
+      background: token.$color_status_error;
+      color: token.$color_status_error_on_default;
+    }
+    &.badge_appearance_soft {
+      background: token.$color_status_error_container;
+      color: token.$color_status_error_on_container;
+    }
   }
 }
