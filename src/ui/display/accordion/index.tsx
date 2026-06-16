@@ -15,7 +15,7 @@ export interface AccordionItem {
 export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
 	/** 아이템 목록 */
 	items: AccordionItem[];
-	/** 여러 개 동시에 펼침 허용 (기본 false — 한 번에 하나) */
+	/** 여러 개 동시에 펼침 허용 (기본 false - 한 번에 하나) */
 	multiple?: boolean;
 	/** 기본으로 펼쳐진 키들 */
 	defaultOpenKeys?: string[];

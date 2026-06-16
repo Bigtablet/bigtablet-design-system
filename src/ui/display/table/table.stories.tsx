@@ -51,7 +51,7 @@ const meta: Meta<typeof Table> = {
 		docs: {
 			description: {
 				component: `
-**Table** — Displays structured data in rows/columns with generic row type safety. / **Table** — 정형 데이터 행/열 표시. 제네릭 row 타입 안전.
+**Table** - Displays structured data in rows/columns with generic row type safety. / **Table** - 정형 데이터 행/열 표시. 제네릭 row 타입 안전.
 
 Key props: \`columns\`, \`rows\`, \`size\` (sm/md/lg), \`isLoading\` (auto Skeleton rows), \`stickyHeader\`, \`onRowClick\`, \`emptyMessage\`. / 주요 prop: \`columns\`, \`rows\`, \`size\` (sm/md/lg), \`isLoading\` (Skeleton 행 자동), \`stickyHeader\`, \`onRowClick\`, \`emptyMessage\`.
         `,

@@ -10,12 +10,12 @@ const meta: Meta<typeof Section> = {
 		spacing: {
 			control: "select",
 			options: ["xs", "sm", "md", "lg", "xl"],
-			description: "수직 패딩 크기 — md/lg/xl은 뷰포트에 따라 반응형.",
+			description: "수직 패딩 크기 - md/lg/xl은 뷰포트에 따라 반응형.",
 		},
 		bg: {
 			control: "select",
 			options: ["default", "dim", "accent", "navy", "transparent"],
-			description: "배경 — default/dim/accent/navy(다크)/transparent.",
+			description: "배경 - default/dim/accent/navy(다크)/transparent.",
 		},
 		as: {
 			control: "text",
@@ -35,9 +35,9 @@ const meta: Meta<typeof Section> = {
 		docs: {
 			description: {
 				component: [
-					"**Section** — 마케팅 섹션 단위. 수직 여백 + 배경. 내부에 `Container` 권장.",
+					"**Section** - 마케팅 섹션 단위. 수직 여백 + 배경. 내부에 `Container` 권장.",
 					"",
-					"Spacing: `xs`/`sm`/`md` (기본)/`lg`/`xl` — md+ 는 뷰포트별 반응형.",
+					"Spacing: `xs`/`sm`/`md` (기본)/`lg`/`xl` - md+ 는 뷰포트별 반응형.",
 					"Bg: `default` / `dim` (Zebra) / `accent` (옅은 navy) / `navy` (다크 자동 흰 텍스트) / `transparent`.",
 				].join("\n"),
 			},

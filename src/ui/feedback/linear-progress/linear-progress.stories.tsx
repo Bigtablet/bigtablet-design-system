@@ -14,7 +14,7 @@ const meta: Meta<typeof LinearProgress> = {
 		docs: {
 			description: {
 				component: `
-**LinearProgress** — Horizontal step-based progress bar. / **LinearProgress** — 단계 기반 진행률 수평 바. For signup/survey steppers. / 회원가입·설문 Stepper 용.
+**LinearProgress** - Horizontal step-based progress bar. / **LinearProgress** - 단계 기반 진행률 수평 바. For signup/survey steppers. / 회원가입·설문 Stepper 용.
 
 Key props / 주요 prop: \`totalSteps\`, \`currentStep\` (0 ~ totalSteps).
 For async loading see \`Spinner\`, for page transitions see \`TopLoading\`. / 비동기 로딩은 \`Spinner\`, 페이지 전환은 \`TopLoading\` 참고.

@@ -15,7 +15,7 @@ const meta: Meta = {
 				component: `
 ### Dark Mode
 
-**Dark Mode** — Bigtablet DS supports dark mode powered by CSS Custom Properties. Set a \`data-theme\` attribute (\`light\`/\`dark\`, or omit it to follow \`prefers-color-scheme\`), or use the \`ThemeProvider\` in React.
+**Dark Mode** - Bigtablet DS supports dark mode powered by CSS Custom Properties. Set a \`data-theme\` attribute (\`light\`/\`dark\`, or omit it to follow \`prefers-color-scheme\`), or use the \`ThemeProvider\` in React.
 
 Bigtablet DS는 CSS Custom Properties 기반 dark mode를 지원합니다.
 
@@ -136,7 +136,7 @@ export const Demo: Story = {
 				<div style={{ marginTop: 24, display: "grid", gap: 16, maxWidth: 480 }}>
 					<h2 style={{ margin: 0, color: "var(--bt-color-text-heading)" }}>제목 텍스트</h2>
 					<p style={{ margin: 0, color: "var(--bt-color-text-body)" }}>
-						본문 텍스트 — light/dark 모드에 따라 색이 자동 전환됩니다.
+						본문 텍스트 - light/dark 모드에 따라 색이 자동 전환됩니다.
 					</p>
 					<p style={{ margin: 0, color: "var(--bt-color-text-caption)" }}>caption 텍스트</p>
 
@@ -151,7 +151,7 @@ export const Demo: Story = {
 
 					<Card heading="카드 제목" bordered>
 						<p style={{ margin: 0, color: "var(--bt-color-text-body)" }}>
-							카드 본문 — 배경과 border가 테마에 맞춰 전환됩니다.
+							카드 본문 - 배경과 border가 테마에 맞춰 전환됩니다.
 						</p>
 					</Card>
 				</div>

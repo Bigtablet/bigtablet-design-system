@@ -22,13 +22,13 @@
     }
   }
 
-  // contained — marketing/B2C 헤더: max-width 1200, 중앙 정렬
+  // contained - marketing/B2C 헤더: max-width 1200, 중앙 정렬
   &_layout_contained &_inner {
     max-width: 1200px;
     margin: 0 auto;
   }
 
-  // fluid — admin/dashboard 헤더: 전체 폭 사용 (insight 스타일)
+  // fluid - admin/dashboard 헤더: 전체 폭 사용 (insight 스타일)
   &_layout_fluid &_inner {
     max-width: none;
   }
@@ -52,7 +52,7 @@
   }
 
   // ── Sliding indicator ───────────────────────────────────────────────
-  // active link 위치/너비로 transform — 좌우 부드럽게 이동
+  // active link 위치/너비로 transform - 좌우 부드럽게 이동
 
   &_indicator {
     position: absolute;
@@ -198,7 +198,7 @@
     color: token.$color_text_body;
     text-decoration: none;
     @include token.label_large_medium;
-    // underline은 부모 NavBar의 indicator가 처리 — link 자체에 border-bottom 없음
+    // underline은 부모 NavBar의 indicator가 처리 - link 자체에 border-bottom 없음
     transition: color token.$duration_fast token.$easing_enter;
 
     &:hover:not(.nav_bar_link_active) {
@@ -211,7 +211,7 @@
       border-radius: token.$radius_sm;
     }
 
-    // active — 색 + 굵기만. underline은 indicator가 sliding 처리
+    // active - 색 + 굵기만. underline은 indicator가 sliding 처리
     &_active {
       color: token.$color_text_heading;
       font-weight: token.$font_weight_semi_bold;
@@ -234,7 +234,7 @@
   }
 
   // ── Variant: accent (검정) ───────────────────────────────────────────
-  // Marketing-style 다크 헤더 — 양 테마 동일하게 brand_primary (#121212) + 흰 텍스트.
+  // Marketing-style 다크 헤더 - 양 테마 동일하게 brand_primary (#121212) + 흰 텍스트.
   // 라이트: 흰 캔버스 위 강한 dark bar / 다크: navy_900 캔버스보다 짙어 명확.
   // (accent_default 는 light=검정/dark=흰 반전 토큰이라 navbar 에 부적합)
 
@@ -259,7 +259,7 @@
       background: token.$color_brand_on_primary;
     }
 
-    // dark accent bg 위 button — outline/text variant 강제 흰 텍스트 + 흰 border
+    // dark accent bg 위 button - outline/text variant 강제 흰 텍스트 + 흰 border
     .button_variant_outline {
       border-color: rgba(255, 255, 255, 0.55);
       color: token.$color_brand_on_primary;
@@ -278,7 +278,7 @@
     }
   }
 
-  // ── Variant: transparent — Hero 이미지 위 (대부분 어두운 bg) ─────────
+  // ── Variant: transparent - Hero 이미지 위 (대부분 어두운 bg) ─────────
 
   &_variant_transparent {
     .nav_bar_link {
@@ -293,7 +293,7 @@
       }
     }
 
-    // 어두운 bg 가정 — 흰색 indicator
+    // 어두운 bg 가정 - 흰색 indicator
     .nav_bar_indicator {
       background: token.$color_brand_on_primary;
     }

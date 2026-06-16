@@ -100,7 +100,7 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 	const [indicator, setIndicator] = React.useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = React.useState(false);
 
-	// active tab 위치 추적 — sliding indicator (line=underline / fills=filled box)
+	// active tab 위치 추적 - sliding indicator (line=underline / fills=filled box)
 	React.useLayoutEffect(() => {
 		const list = listRef.current;
 		if (!list) return;

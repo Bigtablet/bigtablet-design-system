@@ -69,7 +69,7 @@
     }
 
     &_destructive {
-      // surface 위 직접 텍스트 — light/dark 자동 swap (다크 모드 가독성)
+      // surface 위 직접 텍스트 - light/dark 자동 swap (다크 모드 가독성)
       color: token.$color_status_error_on_surface;
 
       .menu_item_icon {

@@ -1,9 +1,9 @@
-/* Duration only — easing 따로 조합할 때 사용 */
+/* Duration only - easing 따로 조합할 때 사용 */
 $duration_fast:  0.1s;
 $duration_base:  0.2s;
 $duration_slow:  0.3s;
 
-/* Base Transitions (composite shorthand — easing 이미 포함) */
+/* Base Transitions (composite shorthand - easing 이미 포함) */
 $transition_fast: $duration_fast ease-in-out;   // hover, icon
 $transition_base: $duration_base ease-in-out;   // 메뉴 열림
 $transition_slow: $duration_slow ease-in-out;   // 레이아웃 변화

@@ -139,7 +139,7 @@ describe("Modal", () => {
 			</>,
 		);
 
-		// First modal still open — scroll must remain locked
+		// First modal still open - scroll must remain locked
 		expect(document.body.style.overflow).toBe("hidden");
 		expect(document.body.dataset.openModals).toBe("1");
 	});

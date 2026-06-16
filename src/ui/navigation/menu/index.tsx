@@ -10,16 +10,16 @@ export interface MenuItem {
 	label: React.ReactNode;
 	icon?: React.ReactNode;
 	disabled?: boolean;
-	/** 클릭 시 호출 — 자동으로 메뉴 닫힘 */
+	/** 클릭 시 호출 - 자동으로 메뉴 닫힘 */
 	onSelect?: () => void;
-	/** destructive 액션 (삭제 등) — 빨간 텍스트 */
+	/** destructive 액션 (삭제 등) - 빨간 텍스트 */
 	destructive?: boolean;
 }
 
 export interface MenuProps {
 	/** 메뉴 아이템들 */
 	items: MenuItem[];
-	/** trigger 요소 — 클릭 시 메뉴 열림 */
+	/** trigger 요소 - 클릭 시 메뉴 열림 */
 	trigger: React.ReactElement;
 	/** 정렬 (기본 "start") */
 	align?: "start" | "end";
@@ -27,7 +27,7 @@ export interface MenuProps {
 
 /**
  * 컨텍스트 메뉴. trigger 클릭 시 아래에 메뉴 표시. 외부 클릭/Esc로 닫힘.
- * Form Dropdown과 다름 — 액션 메뉴 (Edit/Delete 등).
+ * Form Dropdown과 다름 - 액션 메뉴 (Edit/Delete 등).
  *
  * @example
  * ```tsx

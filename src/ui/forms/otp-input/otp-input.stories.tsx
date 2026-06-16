@@ -34,7 +34,7 @@ const meta: Meta<typeof OtpInput> = {
 		docs: {
 			description: {
 				component: `
-**OtpInput** — OTP/2FA code entry. Auto focus advance, backspace/arrow/paste support. / **OtpInput** — OTP/2FA 코드 입력. 자동 포커스 이동, 백스페이스/화살표/붙여넣기 지원.
+**OtpInput** - OTP/2FA code entry. Auto focus advance, backspace/arrow/paste support. / **OtpInput** - OTP/2FA 코드 입력. 자동 포커스 이동, 백스페이스/화살표/붙여넣기 지원.
 
 Key props: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`. / 주요 prop: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`.
         `,

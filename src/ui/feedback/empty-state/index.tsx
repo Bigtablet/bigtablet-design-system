@@ -18,7 +18,7 @@ export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 }
 
 /**
- * 빈 상태 표시 — 데이터 없음, 검색 결과 없음, 시작 가이드 등.
+ * 빈 상태 표시 - 데이터 없음, 검색 결과 없음, 시작 가이드 등.
  *
  * @example
  * ```tsx

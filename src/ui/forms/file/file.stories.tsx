@@ -41,7 +41,7 @@ const meta: Meta<typeof FileInput> = {
 		docs: {
 			description: {
 				component: `
-**FileInput** — File selection. Choose the display form with \`variant\`. / **FileInput** — 파일 선택. \`variant\` 로 표시 형태 선택.
+**FileInput** - File selection. Choose the display form with \`variant\`. / **FileInput** - 파일 선택. \`variant\` 로 표시 형태 선택.
 
 - \`variant="button"\` (default): regular file-select button. Show thumbnails below via the \`preview\` option. / (기본): 일반 파일 선택 버튼. \`preview\` 옵션으로 아래 썸네일 표시.
 - \`variant="preview"\`: single image preview inside a large box (avatar / image uploader pattern). Adjust box size with \`previewSize\`. / 큰 박스 안에 단일 이미지 미리보기 (avatar / 이미지 업로더 패턴). \`previewSize\` 로 박스 크기 조정.
@@ -110,7 +110,7 @@ export const Multiple: Story = {
 		docs: {
 			description: {
 				story:
-					"`multiple={true}` + `preview={true}` — when multiple images are selected, 64×64 thumbnails are laid out horizontally below the button. File names show in the text below. / 여러 이미지 선택 시 64×64 썸네일이 버튼 아래 가로로 나열. 파일 이름은 아래 텍스트로 확인.",
+					"`multiple={true}` + `preview={true}` - when multiple images are selected, 64×64 thumbnails are laid out horizontally below the button. File names show in the text below. / 여러 이미지 선택 시 64×64 썸네일이 버튼 아래 가로로 나열. 파일 이름은 아래 텍스트로 확인.",
 			},
 		},
 	},

@@ -105,7 +105,7 @@ describe("BottomNav", () => {
 		expect(onClick).not.toHaveBeenCalled();
 	});
 
-	it("disabled prop on anchor — aria-disabled + tabIndex -1 + click blocked", () => {
+	it("disabled prop on anchor - aria-disabled + tabIndex -1 + click blocked", () => {
 		const onClick = vi.fn();
 		render(
 			<BottomNav>

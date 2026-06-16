@@ -29,8 +29,8 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 	size?: BadgeSize;
 	/**
 	 * 시각 강도 (기본값: "solid").
-	 * - `solid`: 강한 fill bg + 흰/검 텍스트 — 기존 동작 (notification dot, status emphasis)
-	 * - `soft`: tint 배경 + 진한 텍스트 — 차분한 정보 라벨 (WCAG AA 통과)
+	 * - `solid`: 강한 fill bg + 흰/검 텍스트 - 기존 동작 (notification dot, status emphasis)
+	 * - `soft`: tint 배경 + 진한 텍스트 - 차분한 정보 라벨 (WCAG AA 통과)
 	 */
 	appearance?: BadgeAppearance;
 	/** count shape 일 때 표시할 숫자. max를 넘으면 "max+" */

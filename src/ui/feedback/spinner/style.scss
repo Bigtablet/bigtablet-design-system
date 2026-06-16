@@ -11,7 +11,7 @@
   color: token.$color_text_heading;
 
   // Vercel-style spinner: 12개 가로 spoke (긴 막대) 가 중앙에서 바깥 방향으로 배치.
-  // bar 자체는 가로 (24% × 8%) — 중앙 (left:-10%, top:46%) 에 시작점, 회전으로 spoke 형성.
+  // bar 자체는 가로 (24% × 8%) - 중앙 (left:-10%, top:46%) 에 시작점, 회전으로 spoke 형성.
   &_bar {
     position: absolute;
     width: 24%;

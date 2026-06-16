@@ -23,7 +23,7 @@ export interface MediaCardProps extends Omit<React.HTMLAttributes<HTMLDivElement
 	heading?: React.ReactNode;
 	/** 제목 시맨틱 태그 (기본값: "h3") */
 	headingAs?: "h2" | "h3" | "h4" | "h5" | "h6";
-	/** Eyebrow — 제목 위 작은 라벨/카테고리 */
+	/** Eyebrow - 제목 위 작은 라벨/카테고리 */
 	eyebrow?: React.ReactNode;
 	/** 카드 그림자 (기본값: "sm") */
 	shadow?: MediaCardShadow;
@@ -31,7 +31,7 @@ export interface MediaCardProps extends Omit<React.HTMLAttributes<HTMLDivElement
 	bordered?: boolean;
 	/** 카드 클릭 가능 여부 (hover 강조 + cursor) */
 	clickable?: boolean;
-	/** 메타 영역 (날짜/작성자/조회수 등) — 본문 아래 작은 텍스트 */
+	/** 메타 영역 (날짜/작성자/조회수 등) - 본문 아래 작은 텍스트 */
 	meta?: React.ReactNode;
 }
 
@@ -74,7 +74,7 @@ export const MediaCard = ({
 	return (
 		<div className={cardClassName} style={cardStyle} {...props}>
 			<div className="media_card_image_wrap" style={wrapStyle}>
-				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic — consumers wrap with next/image if needed */}
+				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image if needed */}
 				<img className="media_card_image" src={image.src} alt={image.alt} loading="lazy" />
 				{isOverlay && <div className="media_card_overlay" aria-hidden="true" />}
 			</div>

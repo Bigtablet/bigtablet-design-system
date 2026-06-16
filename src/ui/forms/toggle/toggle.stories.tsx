@@ -29,7 +29,7 @@ const meta: Meta<typeof Toggle> = {
 		docs: {
 			description: {
 				component: `
-**Toggle** — Instant ON/OFF switch. Use Checkbox for multi-select. / **Toggle** — ON/OFF 즉시 전환. 다중 선택은 Checkbox 사용.
+**Toggle** - Instant ON/OFF switch. Use Checkbox for multi-select. / **Toggle** - ON/OFF 즉시 전환. 다중 선택은 Checkbox 사용.
 
 Controlled: \`checked\` + \`onChange\` / Uncontrolled: \`defaultChecked\`.
         `,

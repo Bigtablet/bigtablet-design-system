@@ -18,11 +18,11 @@ const meta: Meta<typeof Spinner> = {
 		docs: {
 			description: {
 				component: `
-**Spinner** — Inline rotating loading indicator. / **Spinner** — 인라인 회전 로딩 표시. For use inside buttons/cards. / 버튼·카드 내부용.
+**Spinner** - Inline rotating loading indicator. / **Spinner** - 인라인 회전 로딩 표시. For use inside buttons/cards. / 버튼·카드 내부용.
 
 Size / 크기: button 16–24 / 버튼, card 24–32 / 카드, emphasis 40+ / 강조. For page transitions see \`TopLoading\`. / 페이지 전환은 \`TopLoading\` 참고.
 
-> ⚠️ **Docs view note / Docs 뷰 안내** — The preview on this page is a static capture, so the spinner may appear frozen or show a single frame. / 이 페이지의 미리보기는 정적 캡처라 spinner 가 멈춰 있거나 한 프레임만 보일 수 있다. To see the real rotation, open an individual story (e.g. Basic) from the left sidebar. / 실제 회전은 좌측 사이드바에서 개별 스토리 (Basic 등) 를 열면 확인 가능.
+> ⚠️ **Docs view note / Docs 뷰 안내** - The preview on this page is a static capture, so the spinner may appear frozen or show a single frame. / 이 페이지의 미리보기는 정적 캡처라 spinner 가 멈춰 있거나 한 프레임만 보일 수 있다. To see the real rotation, open an individual story (e.g. Basic) from the left sidebar. / 실제 회전은 좌측 사이드바에서 개별 스토리 (Basic 등) 를 열면 확인 가능.
         `,
 			},
 		},

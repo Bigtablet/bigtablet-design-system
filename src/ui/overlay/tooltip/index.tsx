@@ -14,7 +14,7 @@ export interface TooltipProps {
 	placement?: TooltipPlacement;
 	/** hover 후 지연 시간 ms (기본 200) */
 	delay?: number;
-	/** 비활성화 — children만 그대로 렌더, 툴팁 없음 */
+	/** 비활성화 - children만 그대로 렌더, 툴팁 없음 */
 	disabled?: boolean;
 	children: React.ReactElement;
 }

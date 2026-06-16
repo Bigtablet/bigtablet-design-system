@@ -9,11 +9,11 @@
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-  /* Colors - Brand (양 테마 검정/흰 고정 — Button --primary 등 의도된 다크 fill) */
+  /* Colors - Brand (양 테마 검정/흰 고정 - Button --primary 등 의도된 다크 fill) */
   --bt-color-primary: #{token.$color_brand_primary};
   --bt-color-on-primary: #{token.$color_brand_on_primary};
 
-  /* Colors - Accent (light=검정/dark=흰 자동 반전 — indicator/checked/focus 강조) */
+  /* Colors - Accent (light=검정/dark=흰 자동 반전 - indicator/checked/focus 강조) */
   --bt-color-accent: #{token.$color_accent_default};
   --bt-color-accent-on-surface: #{token.$color_accent_on_surface};
 

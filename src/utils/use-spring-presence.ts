@@ -17,11 +17,11 @@ export function useSpringPresence({
 	from = "translateY(8px)",
 	onExitComplete,
 }: {
-	/** 보이는 상태인지 — false면 사라짐 모션 */
+	/** 보이는 상태인지 - false면 사라짐 모션 */
 	visible: boolean;
 	/** 진입 시 시작 transform (기본: 아래에서 살짝 올라옴) */
 	from?: string;
-	/** exit 모션 완료 시 호출 — 부모에서 unmount 트리거용 */
+	/** exit 모션 완료 시 호출 - 부모에서 unmount 트리거용 */
 	onExitComplete?: () => void;
 }) {
 	return useSpring({

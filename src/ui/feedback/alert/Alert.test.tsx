@@ -104,7 +104,7 @@ describe("Alert", () => {
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("확인"));
-		// Exit animation in progress (spring) — overlay still mounted with role="presentation"
+		// Exit animation in progress (spring) - overlay still mounted with role="presentation"
 		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
@@ -172,7 +172,7 @@ describe("Alert", () => {
 
 		const cancelBtn = screen.getByText("취소").closest("button");
 		const confirmBtn = screen.getByText("확인").closest("button");
-		// 위험 액션(confirm)은 빨간 강조 — 사용자에게 위험성 명확히 표시
+		// 위험 액션(confirm)은 빨간 강조 - 사용자에게 위험성 명확히 표시
 		expect(confirmBtn).toHaveClass("button_variant_filled");
 		expect(confirmBtn).toHaveClass("button_danger");
 		expect(cancelBtn).toHaveClass("button_variant_outline");

@@ -84,7 +84,7 @@ $letter_spacing_tight:  0.32px;
 @mixin label_small_medium    { font-size: $font_size_12; font-weight: $font_weight_medium;  line-height: $line_height_16; letter-spacing: $letter_spacing_normal; }
 
 // ── Bold weight variants (v3.1) ───────────────────────────────────────────
-// 강조용 — 매번 font-weight 명시 안 해도 되도록.
+// 강조용 - 매번 font-weight 명시 안 해도 되도록.
 
 @mixin display_large_bold    { font-size: $font_size_48; font-weight: $font_weight_bold; line-height: $line_height_60; letter-spacing: -0.02em; }
 @mixin display_medium_bold   { font-size: $font_size_40; font-weight: $font_weight_bold; line-height: $line_height_50; letter-spacing: -0.02em; }
@@ -116,7 +116,7 @@ $letter_spacing_tight:  0.32px;
 @mixin code                  { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: $font_size_13; line-height: $line_height_18; }
 
 // ── Responsive display (v3.1) ─────────────────────────────────────────────
-// Hero/marketing title — 데스크탑 큰 사이즈, 모바일에서 자동 한 단계 축소.
+// Hero/marketing title - 데스크탑 큰 사이즈, 모바일에서 자동 한 단계 축소.
 
 @mixin display_large_responsive {
   @include display_large_bold;
@@ -134,7 +134,7 @@ $letter_spacing_tight:  0.32px;
 }
 
 // ── Text wrap helpers (v3.1) ──────────────────────────────────────────────
-// CSS text-wrap 신기능 활용 — heading은 균형, body는 pretty.
+// CSS text-wrap 신기능 활용 - heading은 균형, body는 pretty.
 
 @mixin text_balance { text-wrap: balance; }
 @mixin text_pretty  { text-wrap: pretty; }

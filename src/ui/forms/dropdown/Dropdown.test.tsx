@@ -334,7 +334,7 @@ describe("Dropdown", () => {
 		// 열린 직후 activeIndex는 첫 번째 enabled = 0
 		fireEvent.keyDown(button, { key: "ArrowDown" });
 
-		// 두 번째는 disabled — 세 번째로 점프
+		// 두 번째는 disabled - 세 번째로 점프
 		const skipped = screen.getByText("Opt 3").closest("[role='option']");
 		expect(skipped).toHaveClass("is_active");
 	});
@@ -361,7 +361,7 @@ describe("Dropdown", () => {
 		fireEvent.click(button);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 
-		// 내부 옵션에 mousedown — 닫히지 않아야 함
+		// 내부 옵션에 mousedown - 닫히지 않아야 함
 		fireEvent.mouseDown(screen.getByText("Option 1"));
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 	});
@@ -454,7 +454,7 @@ describe("Dropdown", () => {
 	});
 
 	it("does nothing on Enter when no enabled option is active", () => {
-		// 모든 옵션 disabled — activeIndex가 결정되지 않을 수 있는 경계 케이스
+		// 모든 옵션 disabled - activeIndex가 결정되지 않을 수 있는 경계 케이스
 		const allDisabled = [
 			{ value: "1", label: "X", disabled: true },
 			{ value: "2", label: "Y", disabled: true },
@@ -478,7 +478,7 @@ describe("Dropdown", () => {
 	it("calls onChange with null option when value not in options list", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onChange={onChange} value="999" />);
-		// value="999" 는 옵션에 없음 — placeholder가 보여야 함
+		// value="999" 는 옵션에 없음 - placeholder가 보여야 함
 		expect(screen.getByText("Select…")).toBeInTheDocument();
 	});
 });

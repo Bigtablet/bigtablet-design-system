@@ -61,7 +61,7 @@ export const Avatar = ({
 			{...props}
 		>
 			{showImage ? (
-				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic — consumers wrap with next/image
+				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image
 				<img
 					src={src}
 					alt={name}

@@ -30,7 +30,7 @@ const meta: Meta<typeof Textarea> = {
 		docs: {
 			description: {
 				component: `
-**Textarea** — 멀티라인 텍스트 입력. \`TextField\` 와 동일한 시각/토큰 (border / focus / error / label / helper / disabled).
+**Textarea** - 멀티라인 텍스트 입력. \`TextField\` 와 동일한 시각/토큰 (border / focus / error / label / helper / disabled).
 
 - auto-grow: \`minRows\` / \`maxRows\` 지정 시 내용 따라 높이 자동 증가
 - \`showCounter\` + \`maxLength\` → 글자 수 카운터
@@ -57,7 +57,7 @@ export const AutoGrow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "`minRows={2}` `maxRows={6}` — 입력할수록 늘어나다 6행 초과 시 스크롤. resize 핸들 자동 비활성.",
+				story: "`minRows={2}` `maxRows={6}` - 입력할수록 늘어나다 6행 초과 시 스크롤. resize 핸들 자동 비활성.",
 			},
 		},
 	},

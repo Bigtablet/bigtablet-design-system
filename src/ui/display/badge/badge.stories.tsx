@@ -19,7 +19,7 @@ const meta: Meta<typeof Badge> = {
 		docs: {
 			description: {
 				component: `
-**Badge** — 작은 상태/카운트 표시. 정적 표시 전용 (클릭/삭제 X — Chip 참고).
+**Badge** - 작은 상태/카운트 표시. 정적 표시 전용 (클릭/삭제 X - Chip 참고).
 
 Shapes: \`dot\` / \`count\` / \`label\`.
 Variants: \`accent\` / \`neutral\` / \`info\` / \`success\` / \`warning\` / \`error\`.
@@ -76,7 +76,7 @@ export const SolidVsSoft: Story = {
 		docs: {
 			description: {
 				story:
-					"`appearance=\"solid\"` (기본) — 강한 fill, notification / status emphasis 용. `appearance=\"soft\"` — tint 배경 + 진한 글자, 정보성 라벨. 둘 다 WCAG AA 통과 (대비 5~7:1).",
+					"`appearance=\"solid\"` (기본) - 강한 fill, notification / status emphasis 용. `appearance=\"soft\"` - tint 배경 + 진한 글자, 정보성 라벨. 둘 다 WCAG AA 통과 (대비 5~7:1).",
 			},
 		},
 	},

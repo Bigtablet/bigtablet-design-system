@@ -77,14 +77,14 @@
     }
   }
 
-  // ── Preview variant — 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴) ──
+  // ── Preview variant - 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴) ──
 
   &_variant_preview {
     display: inline-block; // root flex column 오버라이드. label 이 주된 박스.
     position: relative;
 
     .file_input_label {
-      // 단순 block — 안의 empty span / img 가 각자 100% 채움
+      // 단순 block - 안의 empty span / img 가 각자 100% 채움
       display: block;
       padding: 0;
       box-sizing: border-box;
@@ -99,7 +99,7 @@
       background: token.$color_state_hover_on_light;
     }
 
-    // Filled — 이미지 있을 때: solid border (이미지 꽉 채움)
+    // Filled - 이미지 있을 때: solid border (이미지 꽉 채움)
     &.file_input_variant_preview_filled .file_input_label {
       border-style: solid;
       background: transparent;
