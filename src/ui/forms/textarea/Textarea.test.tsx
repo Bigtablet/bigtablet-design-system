@@ -107,4 +107,18 @@ describe("Textarea", () => {
 		fireEvent.compositionEnd(ta, { target: { value: "가" } });
 		expect(ta.value).toBe("가");
 	});
+
+	it("does NOT emit onChangeAction twice when compositionEnd is followed by duplicate onChange", () => {
+		// 일부 브라우저는 compositionEnd 직후 같은 값으로 onChange 를 한 번 더 트리거 → 중복 방출 차단 검증
+		const onChange = vi.fn();
+		render(<Textarea onChangeAction={onChange} />);
+		const ta = screen.getByRole("textbox");
+		fireEvent.compositionStart(ta);
+		fireEvent.change(ta, { target: { value: "한" } }); // delayed — 조합 중 방출 X
+		fireEvent.compositionEnd(ta, { target: { value: "한" } }); // 방출 1회
+		fireEvent.change(ta, { target: { value: "한" } }); // 같은 값 재트리거 — 중복 차단
+		expect(onChange).toHaveBeenCalledTimes(1);
+		expect(onChange).toHaveBeenLastCalledWith("한");
+	});
+
 });
