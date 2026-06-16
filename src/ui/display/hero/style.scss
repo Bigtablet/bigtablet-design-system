@@ -54,14 +54,6 @@
     .hero_subtitle { color: rgba(0, 0, 0, 0.85); }
   }
 
-  &_overlay_navy .hero_overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(48, 56, 65, 0) 0%,
-      rgba(48, 56, 65, 0.85) 100%
-    );
-  }
-
   // ── Content area ──────────────────────────────────────────────────────
 
   &_content {

@@ -31,7 +31,7 @@ const meta: Meta = {
 
 - **Base**: raw 값 (직접 사용 지양)
 - **Semantic**: 역할 기반 (brand / text / bg / state / border / status)
-- **Brand Accent (Navy)**: 검정(\`brand_primary\`)과 함께 위계 만드는 navy slate accent - 페이지 하단 "Navy 팔레트 / Accent 토큰 / Spring 모션" 참고
+- **Brand Accent**: 검정(\`brand_primary\`) 기반 accent 토큰 - 페이지 하단 "Accent 토큰 / Spring 모션" 참고
 
 ❗️직접 HEX / RGB 값을 쓰지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,
@@ -327,65 +327,55 @@ function toJsonKey(key: string) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Brand Accent (Navy) - 초기 홈페이지 brand 컬러. 검정과 함께 위계 만드는 보조 강조.
+// Neutral Dark Scale - dark mode 표면 컬러 (Vercel-style pure neutral)
 // ────────────────────────────────────────────────────────────────────────────
 
-const NAVY_SCALE = [
-	{ key: "50", value: baseColors.navy50 },
-	{ key: "100", value: baseColors.navy100 },
-	{ key: "200", value: baseColors.navy200 },
-	{ key: "300", value: baseColors.navy300 },
-	{ key: "400", value: baseColors.navy400 },
-	{ key: "500", value: baseColors.navy500 },
-	{ key: "600", value: baseColors.navy600 },
-	{ key: "700", value: baseColors.navy700 },
-	{ key: "800", value: baseColors.navy800 },
-	{ key: "900", value: baseColors.navy900 },
+const NEUTRAL_DARK_SCALE = [
+	{ key: "800", value: baseColors.neutral800 },
+	{ key: "900", value: baseColors.neutral900 },
+	{ key: "925", value: baseColors.neutral925 },
+	{ key: "950", value: baseColors.neutral950 },
 ];
 
-export const NavyPalette: Story = {
-	name: "Navy 팔레트",
+export const NeutralDarkPalette: Story = {
+	name: "Neutral Dark 스케일",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
 			<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-				<strong>10단계 스케일</strong> - 라이트 wash부터 거의 검정까지. 검정 brand 컬러와 함께
-				사용해 텍스트/배경 위계를 만드세요. (메인 navy: <code>#47555E</code>)
+				<strong>Dark mode 표면 컬러</strong> - Vercel-style 순수 중성 그레이. 925/950은 dark mode 전용 추가 단계.
 			</p>
-			{NAVY_SCALE.map(({ key, value }) => {
-				const isLight = parseInt(key, 10) <= 300;
-				return (
+			{NEUTRAL_DARK_SCALE.map(({ key, value }) => (
+				<div
+					key={key}
+					style={{
+						display: "grid",
+						gridTemplateColumns: "120px 1fr 100px",
+						alignItems: "center",
+						gap: 12,
+						padding: 12,
+						background: "#fff",
+						border: "1px solid rgba(0,0,0,0.06)",
+						borderRadius: 10,
+					}}
+				>
+					<code style={{ fontSize: 12 }}>neutral-{key}</code>
 					<div
-						key={key}
 						style={{
-							display: "grid",
-							gridTemplateColumns: "120px 1fr 100px",
+							height: 44,
+							borderRadius: 8,
+							background: value,
+							display: "flex",
 							alignItems: "center",
-							gap: 12,
-							padding: 12,
-							background: "#fff",
-							border: "1px solid rgba(0,0,0,0.06)",
-							borderRadius: 10,
+							justifyContent: "center",
+							color: "#fff",
+							fontSize: 13,
 						}}
 					>
-						<code style={{ fontSize: 12 }}>navy-{key}</code>
-						<div
-							style={{
-								height: 44,
-								borderRadius: 8,
-								background: value,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								color: isLight ? "#121212" : "#fff",
-								fontSize: 13,
-							}}
-						>
-							가나다 Aa 123
-						</div>
-						<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
+						가나다 Aa 123
 					</div>
-				);
-			})}
+					<span style={{ fontSize: 12, opacity: 0.6, textAlign: "right" }}>{value}</span>
+				</div>
+			))}
 		</div>
 	),
 };
@@ -394,11 +384,11 @@ export const AccentTokens: Story = {
 	name: "Accent 토큰 (semantic)",
 	render: () => {
 		const items = [
-			{ key: "subtle", value: colors.accent.subtle, desc: "hero wash, 카드 배경" },
-			{ key: "muted", value: colors.accent.muted, desc: "보조 카드 배경" },
-			{ key: "light", value: colors.accent.light, desc: "sky blue 강조 (보조 CTA)" },
-			{ key: "default", value: colors.accent.default, desc: "PRIMARY navy (dark section, CTA)" },
-			{ key: "strong", value: colors.accent.strong, desc: "hover/pressed, 진한 navy" },
+			{ key: "subtle", value: colors.accent.subtle, desc: "배경 wash (hover/selected 배경)" },
+			{ key: "muted", value: colors.accent.muted, desc: "보조 배경 (pressed 상태)" },
+			{ key: "light", value: colors.accent.light, desc: "연한 강조 (보조 border)" },
+			{ key: "default", value: colors.accent.default, desc: "PRIMARY accent (dark section, CTA)" },
+			{ key: "strong", value: colors.accent.strong, desc: "hover/pressed 강조" },
 		];
 		return (
 			<div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
@@ -521,7 +511,7 @@ function HoverDemo() {
 			>
 				<strong>강한 lift (-4px, scale 1.04)</strong>
 				<p style={{ margin: "8px 0 0", fontSize: 13, opacity: 0.8 }}>
-					CTA 카드에 적합 - navy accent 배경
+					CTA 카드에 적합 - accent 배경
 				</p>
 			</animated.div>
 		</div>

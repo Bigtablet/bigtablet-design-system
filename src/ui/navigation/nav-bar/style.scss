@@ -235,7 +235,7 @@
 
   // ── Variant: accent (검정) ───────────────────────────────────────────
   // Marketing-style 다크 헤더 - 양 테마 동일하게 brand_primary (#121212) + 흰 텍스트.
-  // 라이트: 흰 캔버스 위 강한 dark bar / 다크: navy_900 캔버스보다 짙어 명확.
+  // 라이트: 흰 캔버스 위 강한 dark bar / 다크: neutral_950(#0A0A0A)보다 약간 밝아 subtle 구분.
   // (accent_default 는 light=검정/dark=흰 반전 토큰이라 navbar 에 부적합)
 
   &_variant_accent {

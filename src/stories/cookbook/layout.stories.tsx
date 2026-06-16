@@ -53,7 +53,7 @@ export const MarketingHeroFeatureGrid: Story = {
 				eyebrow="신규 출시"
 				title="더 빠르게, 더 단순하게"
 				subtitle="Bigtablet으로 매장 운영의 복잡함을 한 줄로 정리하세요."
-				overlay="navy"
+				overlay="dark"
 				height="lg"
 				align="center"
 				primaryAction={{ label: "무료로 시작하기", onClick: () => {} }}

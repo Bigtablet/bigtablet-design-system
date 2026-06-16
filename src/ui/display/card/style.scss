@@ -82,7 +82,7 @@
     }
   }
 
-  // ── Variant: accent (navy bg + white text) ──────────────────────────
+  // ── Variant: accent (inverted bg + white text) ──────────────────────────
 
   &_variant_accent {
     background: token.$color_accent_default;

@@ -30,7 +30,7 @@
         background: token.$color_state_pressed_on_light;
     }
 
-    // ── Selected (navy accent) ──────────────────────────────────────────
+    // ── Selected (accent) ──────────────────────────────────────────
     &_selected {
         background: token.$color_accent_default;
         border-color: token.$color_accent_default;

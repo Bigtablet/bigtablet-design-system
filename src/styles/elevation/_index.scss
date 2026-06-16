@@ -1,5 +1,5 @@
 // Elevation shadows - CSS Custom Properties로 light/dark 자동 전환.
-// Dark 모드는 navy bg 위에서 그림자가 보이도록 더 강한 검정 + 살짝 spread 증가.
+// Dark 모드는 neutral dark bg 위에서 그림자가 보이도록 더 강한 검정 + 살짝 spread 증가.
 
 :root {
   --bt-elevation-level1: 0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12);
@@ -10,7 +10,7 @@
 }
 
 [data-theme="dark"] {
-  // navy bg 위에서 그림자 가시성 - 검정 더 진하게 + 약간 더 큰 spread
+  // neutral dark bg 위에서 그림자 가시성 - 검정 더 진하게 + 약간 더 큰 spread
   --bt-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 3px 6px 0 rgba(0, 0, 0, 0.30);
   --bt-elevation-level2: 0 2px 4px 0 rgba(0, 0, 0, 0.45), 0 6px 12px 0 rgba(0, 0, 0, 0.30);
   --bt-elevation-level3: 0 3px 6px 0 rgba(0, 0, 0, 0.50), 0 9px 18px 0 rgba(0, 0, 0, 0.35);

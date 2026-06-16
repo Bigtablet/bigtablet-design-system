@@ -38,7 +38,7 @@ export interface NavBarProps extends React.HTMLAttributes<HTMLElement> {
 	profile?: React.ReactNode;
 	/** actions / locale 와 profile 사이 수직 divider 표시 (기본 true, profile 있을 때만 표시) */
 	divider?: boolean;
-	/** 시각 variant - default(흰 bg + 회색 border), transparent(투명, hero 위에), accent(navy bg) */
+	/** 시각 variant - default(흰 bg + 회색 border), transparent(투명, hero 위에), accent(검정 bg) */
 	variant?: NavBarVariant;
 	/** 레이아웃 - contained(max 1200, marketing) / fluid(full width, admin/dashboard) */
 	layout?: NavBarLayout;

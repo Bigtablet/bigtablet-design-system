@@ -32,7 +32,7 @@ const meta: Meta<typeof Card> = {
 				component: `
 **Card** - Container that groups related content into a single block. / **Card** - 콘텐츠를 한 덩어리로 묶는 컨테이너.
 
-**Variants**: \`default\` / \`accent\` (navy bg + white text) / \`glass\` (frosted + backdrop blur, use over colored/image backgrounds) / \`outlined\` (transparent bg + border only). / \`accent\`(navy + 흰 텍스트) · \`glass\`(반투명 blur, 컬러/이미지 배경 위 권장) · \`outlined\`(투명 + 테두리).
+**Variants**: \`default\` / \`accent\` (inverted bg + white text) / \`glass\` (frosted + backdrop blur, use over colored/image backgrounds) / \`outlined\` (transparent bg + border only). / \`accent\`(반전 bg + 흰 텍스트) · \`glass\`(반투명 blur, 컬러/이미지 배경 위 권장) · \`outlined\`(투명 + 테두리).
 
 **Composition**: \`heading\` (header) + children (body) + \`footer\` (with \`footerAlign\` start/between/end). \`interactive\` adds a hover-lift for clickable cards. / \`heading\`+body+\`footer\` 3단 + \`interactive\` hover-lift.
 
@@ -49,11 +49,11 @@ type Story = StoryObj<typeof Card>;
 export const Basic: Story = {};
 
 export const AccentVariant: Story = {
-	name: "Accent (navy)",
+	name: "Accent (inverted)",
 	args: {
 		variant: "accent",
 		heading: "주요 강조 카드",
-		children: <p style={{ margin: 0 }}>navy 배경 + 흰 텍스트. CTA/주요 정보용.</p>,
+		children: <p style={{ margin: 0 }}>반전 배경 + 흰 텍스트. CTA/주요 정보용.</p>,
 	},
 };
 

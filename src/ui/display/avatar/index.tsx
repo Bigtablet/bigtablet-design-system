@@ -16,7 +16,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
 	size?: AvatarSize;
 	/** 모양 (기본값: "circle") */
 	shape?: AvatarShape;
-	/** 색상 (기본값: navy accent) */
+	/** 색상 (기본값: accent-default — 검정/흰색 테마 자동) */
 	bgColor?: string;
 }
 

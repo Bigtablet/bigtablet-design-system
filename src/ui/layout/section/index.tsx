@@ -5,7 +5,7 @@ import { cn } from "../../../utils";
 import "./style.scss";
 
 export type SectionSpacing = "xs" | "sm" | "md" | "lg" | "xl";
-export type SectionBg = "default" | "dim" | "accent" | "navy" | "transparent";
+export type SectionBg = "default" | "dim" | "accent" | "inverted" | "transparent";
 
 export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 	/**
@@ -16,7 +16,7 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 	spacing?: SectionSpacing;
 	/**
 	 * 배경색 변형
-	 * - default: bg-solid | dim: bg-solid-dim | accent: accent-subtle | navy: accent-default
+	 * - default: bg-solid | dim: bg-solid-dim | accent: accent-subtle | inverted: accent-default (검정/흰색 반전)
 	 * @default "default"
 	 */
 	bg?: SectionBg;

@@ -21,7 +21,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	bordered?: boolean;
 	/**
 	 * 카드 variant (기본값: "default")
-	 * - "accent": navy bg + white text (강조 카드)
+	 * - "accent": inverted bg + white text (강조 카드)
 	 * - "glass": 반투명 + backdrop blur (컬러/이미지 배경 위에 권장)
 	 * - "outlined": 투명 bg + 테두리만 (shadow 무시)
 	 */

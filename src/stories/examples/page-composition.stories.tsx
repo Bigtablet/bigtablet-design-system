@@ -224,10 +224,10 @@ export const MarketingPage: Story = {
 				</Container>
 			</Section>
 
-			{/* CTA Navy */}
+			{/* CTA Inverted */}
 			<Section
 				spacing="lg"
-				bg="navy"
+				bg="inverted"
 				style={{
 					position: "relative",
 					overflow: "hidden",
