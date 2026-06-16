@@ -107,6 +107,12 @@ export type { PaginationProps } from "./ui/navigation/pagination";
 export { Pagination } from "./ui/navigation/pagination";
 export type { RadioProps } from "./ui/forms/radio";
 export { Radio } from "./ui/forms/radio";
+export type {
+	RadioGroupOrientation,
+	RadioGroupProps,
+	RadioGroupSize,
+} from "./ui/forms/radio-group";
+export { RadioGroup } from "./ui/forms/radio-group";
 export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
