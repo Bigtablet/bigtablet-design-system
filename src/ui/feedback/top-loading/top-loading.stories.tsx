@@ -37,10 +37,10 @@ const meta: Meta<typeof TopLoading> = {
 		docs: {
 			description: {
 				component: `
-**TopLoading** — 화면 상단 고정 프로그레스 바. 페이지 전환/전역 로딩용.
+**TopLoading** — Progress bar pinned to the top of the screen. / **TopLoading** — 화면 상단 고정 프로그레스 바. For page transitions/global loading. / 페이지 전환·전역 로딩용.
 
-\`progress\` 미지정 → indeterminate 무한 애니메이션 / 지정 → determinate 퍼센트 fill.
-인라인 로딩은 \`Spinner\` 참고.
+\`progress\` unset → indeterminate infinite animation / 미지정 → indeterminate 무한 애니메이션; set → determinate percent fill / 지정 → determinate 퍼센트 fill.
+For inline loading see \`Spinner\`. / 인라인 로딩은 \`Spinner\` 참고.
         `,
 			},
 		},

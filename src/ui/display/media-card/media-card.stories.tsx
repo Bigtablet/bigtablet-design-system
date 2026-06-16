@@ -13,10 +13,10 @@ const meta: Meta<typeof MediaCard> = {
 		docs: {
 			description: {
 				component: `
-**MediaCard** — 이미지 + 텍스트 콘텐츠 카드. 블로그/제품 그리드/메뉴 진열용.
+**MediaCard** — Image + text content card for blog/product grids and menu displays. / **MediaCard** — 이미지 + 텍스트 콘텐츠 카드. 블로그/제품 그리드/메뉴 진열용.
 
-\`imagePosition\`: \`top\` (그리드, 기본 16/9) / \`left\` (리스트, 모바일 자동 top) / \`overlay\` (이미지 위 텍스트, 4/3).
-주요 prop: \`image\`, \`heading\`, \`aspectRatio\`, \`shadow\`, \`bordered\`, \`clickable\` (hover lift).
+\`imagePosition\`: \`top\` (grid, default 16/9) / \`left\` (list, auto top on mobile) / \`overlay\` (text over image, 4/3). — \`imagePosition\`: \`top\` (그리드, 기본 16/9) / \`left\` (리스트, 모바일 자동 top) / \`overlay\` (이미지 위 텍스트, 4/3).
+Key props: \`image\`, \`heading\`, \`aspectRatio\`, \`shadow\`, \`bordered\`, \`clickable\` (hover lift). / 주요 prop.
 				`,
 			},
 		},

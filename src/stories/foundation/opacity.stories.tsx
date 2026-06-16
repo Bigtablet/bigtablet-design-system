@@ -11,6 +11,8 @@ const meta: Meta = {
 				component: `
 ### Opacity (불투명도)
 
+**Opacity** — transparency tokens used for overlays, disabled states, hover effects, etc. (\`0\` fully transparent → \`100\` fully opaque).
+
 투명도 토큰입니다. 오버레이, 비활성 상태, 호버 효과 등에서 사용합니다.
 
 - **0**: 완전 투명 (숨김)

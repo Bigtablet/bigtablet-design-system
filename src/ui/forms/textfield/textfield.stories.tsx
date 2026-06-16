@@ -47,10 +47,10 @@ const meta: Meta<typeof TextField> = {
 		docs: {
 			description: {
 				component: `
-**TextField** — 한 줄 텍스트 입력. Floating label + leading/trailing icon + supporting text.
+**TextField** — Single-line text input. Floating label + leading/trailing icon + supporting text. / **TextField** — 한 줄 텍스트 입력. 플로팅 라벨 + leading/trailing 아이콘 + supporting text.
 
-Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
-\`error\` → \`aria-invalid\` + \`aria-describedby\` 자동.
+Sizes: \`sm\` / \`md\` (default) / \`lg\`. / Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
+\`error\` → \`aria-invalid\` + \`aria-describedby\` set automatically. / \`error\` → \`aria-invalid\` + \`aria-describedby\` 자동.
 				`,
 			},
 		},

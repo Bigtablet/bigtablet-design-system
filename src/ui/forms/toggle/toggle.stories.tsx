@@ -10,11 +10,11 @@ const meta: Meta<typeof Toggle> = {
 		size: {
 			control: "select",
 			options: ["sm", "md"],
-			description: "토글 크기입니다. 화면에서 토글이 차지하는 크기(가로/세로)가 함께 바뀝니다.",
+			description: "Toggle size. The width/height it occupies on screen scale together. / 토글 크기입니다. 화면에서 토글이 차지하는 크기(가로/세로)가 함께 바뀝니다.",
 		},
 		disabled: {
 			control: "boolean",
-			description: "비활성화 상태입니다. 켜기/끄기 조작이 불가능하며 흐리게 표시됩니다.",
+			description: "Disabled state. Cannot be turned on/off and appears dimmed. / 비활성화 상태입니다. 켜기/끄기 조작이 불가능하며 흐리게 표시됩니다.",
 		},
 		checked: { control: false },
 		defaultChecked: { control: false },
@@ -29,7 +29,7 @@ const meta: Meta<typeof Toggle> = {
 		docs: {
 			description: {
 				component: `
-**Toggle** — ON/OFF 즉시 전환. 다중 선택은 Checkbox 사용.
+**Toggle** — Instant ON/OFF switch. Use Checkbox for multi-select. / **Toggle** — ON/OFF 즉시 전환. 다중 선택은 Checkbox 사용.
 
 Controlled: \`checked\` + \`onChange\` / Uncontrolled: \`defaultChecked\`.
         `,

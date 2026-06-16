@@ -20,9 +20,9 @@ const meta: Meta<typeof Divider> = {
 		docs: {
 			description: {
 				component: `
-**Divider** — 콘텐츠 영역 수평 구분선.
+**Divider** — Horizontal rule separating content areas. / **Divider** — 콘텐츠 영역 수평 구분선.
 
-\`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
+\`weight\`: \`standard\` (1px, default) / \`heavy\` (2px, section emphasis). — \`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
         `,
 			},
 		},

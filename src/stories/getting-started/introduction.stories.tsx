@@ -10,7 +10,7 @@ const meta: Meta = {
 				component: `
 ### Bigtablet Design System
 
-서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
+A design system that manages the **UI components and design tokens** used across the service. / 서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
 
 ---
 

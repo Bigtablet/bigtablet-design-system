@@ -12,6 +12,8 @@ const meta: Meta = {
 				component: `
 ### 모션(Motion) 기준
 
+**Motion** — defines **how fast and how smoothly** the UI responds. Shared across all interaction animations (button hover, card emphasis, modal entrance, etc.). Enter/exit pairs use different tokens — exits are shorter than entrances.
+
 UI가 **얼마나 빠르게, 얼마나 부드럽게 반응하는지**를 정의하는 기준입니다.
 
 👉 버튼 hover, 카드 강조, 모달 등장 같은

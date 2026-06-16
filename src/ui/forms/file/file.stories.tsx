@@ -9,24 +9,24 @@ const meta: Meta<typeof FileInput> = {
 	argTypes: {
 		label: {
 			control: "text",
-			description: "버튼 라벨 / preview 빈 상태 텍스트.",
+			description: "Button label / preview empty-state text. / 버튼 라벨 / preview 빈 상태 텍스트.",
 		},
 		variant: {
 			control: "radio",
 			options: ["button", "preview"],
-			description: "표시 형태. `button` 일반 버튼 / `preview` 큰 박스 안 이미지 미리보기.",
+			description: "Display form. `button` regular button / `preview` image preview inside a large box. / 표시 형태. `button` 일반 버튼 / `preview` 큰 박스 안 이미지 미리보기.",
 		},
 		previewSize: {
 			control: { type: "number", min: 80, max: 400, step: 8 },
-			description: "variant=\"preview\" 박스 크기 (px).",
+			description: "variant=\"preview\" box size (px). / variant=\"preview\" 박스 크기 (px).",
 		},
 		multiple: {
 			control: "boolean",
-			description: "여러 파일 선택 허용 여부 (button variant 만).",
+			description: "Allow selecting multiple files (button variant only). / 여러 파일 선택 허용 여부 (button variant 만).",
 		},
 		disabled: {
 			control: "boolean",
-			description: "비활성화 상태.",
+			description: "Disabled state. / 비활성화 상태.",
 		},
 		onFiles: { control: false },
 	},
@@ -41,12 +41,12 @@ const meta: Meta<typeof FileInput> = {
 		docs: {
 			description: {
 				component: `
-**FileInput** — 파일 선택. \`variant\` 로 표시 형태 선택.
+**FileInput** — File selection. Choose the display form with \`variant\`. / **FileInput** — 파일 선택. \`variant\` 로 표시 형태 선택.
 
-- \`variant="button"\` (기본): 일반 파일 선택 버튼. \`preview\` 옵션으로 아래 썸네일 표시.
-- \`variant="preview"\`: 큰 박스 안에 단일 이미지 미리보기 (avatar / 이미지 업로더 패턴). \`previewSize\` 로 박스 크기 조정.
+- \`variant="button"\` (default): regular file-select button. Show thumbnails below via the \`preview\` option. / (기본): 일반 파일 선택 버튼. \`preview\` 옵션으로 아래 썸네일 표시.
+- \`variant="preview"\`: single image preview inside a large box (avatar / image uploader pattern). Adjust box size with \`previewSize\`. / 큰 박스 안에 단일 이미지 미리보기 (avatar / 이미지 업로더 패턴). \`previewSize\` 로 박스 크기 조정.
 
-주요 prop: \`accept\`, \`multiple\`, \`onFiles(files)\`. 업로드는 별도 API.
+Key props: \`accept\`, \`multiple\`, \`onFiles(files)\`. Uploading is a separate API. / 주요 prop: \`accept\`, \`multiple\`, \`onFiles(files)\`. 업로드는 별도 API.
         `,
 			},
 		},
@@ -110,7 +110,7 @@ export const Multiple: Story = {
 		docs: {
 			description: {
 				story:
-					"`multiple={true}` + `preview={true}` — 여러 이미지 선택 시 64×64 썸네일이 버튼 아래 가로로 나열. 파일 이름은 아래 텍스트로 확인.",
+					"`multiple={true}` + `preview={true}` — when multiple images are selected, 64×64 thumbnails are laid out horizontally below the button. File names show in the text below. / 여러 이미지 선택 시 64×64 썸네일이 버튼 아래 가로로 나열. 파일 이름은 아래 텍스트로 확인.",
 			},
 		},
 	},
@@ -159,7 +159,7 @@ export const Preview: Story = {
 		docs: {
 			description: {
 				story:
-					"큰 박스 안에 이미지 미리보기. 비어 있을 때 점선 border + 아이콘 + 라벨. 선택 후 이미지가 박스 채움 + 우상단 X 로 제거 가능.",
+					"Image preview inside a large box. When empty, shows a dashed border + icon + label. After selection the image fills the box and can be removed via the X in the top-right. / 큰 박스 안에 이미지 미리보기. 비어 있을 때 점선 border + 아이콘 + 라벨. 선택 후 이미지가 박스 채움 + 우상단 X 로 제거 가능.",
 			},
 		},
 	},

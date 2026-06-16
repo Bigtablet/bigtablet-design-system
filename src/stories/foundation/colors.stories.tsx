@@ -25,6 +25,8 @@ const meta: Meta = {
 				component: `
 ### Colors (색상 시스템)
 
+**Colors** — official color tokens defined in a two-tier Base / Semantic structure. Always use Semantic tokens (brand / text / bg / state / border / status) instead of raw HEX/RGB values.
+
 **Base / Semantic 2계층 구조**로 정의된 공식 색상 토큰입니다.
 
 - **Base**: raw 값 (직접 사용 지양)

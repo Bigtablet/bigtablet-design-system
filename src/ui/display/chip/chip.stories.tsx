@@ -22,10 +22,10 @@ const meta: Meta<typeof Chip> = {
 		docs: {
 			description: {
 				component: `
-**Chip** — 속성/필터/입력값을 표현하는 컴팩트 요소.
+**Chip** — Compact element representing an attribute, filter, or input value. / **Chip** — 속성/필터/입력값을 표현하는 컴팩트 요소.
 
-Types: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
-주요 prop: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / default 32), \`selected\`, \`removable\`.
+Types: \`basic\` (tag) / \`input\` (input value, removable) / \`filter\` (dropdown) / \`static\` (label, tone). — **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
+Key props: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / default 32), \`selected\`, \`removable\`. / 주요 prop.
 				`,
 			},
 		},
