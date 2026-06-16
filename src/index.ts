@@ -45,6 +45,8 @@ export type {
 	TabsVariant,
 } from "./ui/navigation/tabs";
 export { Tab, TabList, TabPanel, Tabs } from "./ui/navigation/tabs";
+export type { PopoverPlacement, PopoverProps } from "./ui/overlay/popover";
+export { Popover } from "./ui/overlay/popover";
 export type { TooltipPlacement, TooltipProps } from "./ui/overlay/tooltip";
 export { Tooltip } from "./ui/overlay/tooltip";
 

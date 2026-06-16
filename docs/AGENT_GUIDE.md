@@ -227,6 +227,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Modal` | Centered dialog. | `open`, `onClose`, `title`, `description`, `footer`, `footerAlign` (end/between/start), `showCloseIcon` (default true), `width`, `closeOnOverlay`. X close icon top-right by default. |
 | `Tooltip` | Hover info. | `content`, `placement` (top/bottom/left/right), `delay`, `disabled`. Children = single trigger element. Long text wraps with `text-align: center`, max-width 240px. |
+| `Popover` | Click-triggered non-modal panel for arbitrary interactive content (form/explanation/actions). | `trigger` element, `content` (ReactNode), `placement` (top/bottom/left/right, default bottom), `open`/`defaultOpen`/`onOpenChange` (controlled/uncontrolled), `aria-label`/`aria-labelledby`. `role="dialog"`. Focus moves into panel on open; `Esc` closes + returns focus to trigger. Use `Menu` for action lists, `Tooltip` for hover info. Trigger MUST forward props (`<button {...props}>`). |
 
 ### Layout
 
@@ -250,7 +251,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ### Built-in motion (just use the components)
 - Modal, Alert: overlay fade + panel scale-translate spring
-- Dropdown, Menu, Tooltip: pop-in spring
+- Dropdown, Menu, Tooltip, Popover: pop-in spring
 - Toast: slide-in spring with onExitComplete unmount
 - Accordion: grid-template-rows 0fr → 1fr (CSS, height-auto-safe)
 - Sidebar logo: crossfade between collapsed/expanded layers
@@ -499,6 +500,8 @@ When asked to generate UI:
 **Need a layout?** → `Container > Section > Stack/Grid`. Don't manually do flexbox/grid CSS unless inside a Stack/Grid child.
 
 **Need a tooltip?** → `<Tooltip content="..." placement="top"><TriggerElement /></Tooltip>`.
+
+**Need a click-triggered panel with interactive content (filter form, profile card, inline actions)?** → `<Popover trigger={<Button>…</Button>} content={…} aria-label="…" />`. For a plain action list use `<Menu>`; for hover-only info use `<Tooltip>`; for a blocking center dialog use `<Modal>`.
 
 **Need a sidebar nav?** → `<Sidebar>` with `<SidebarSection>` + `<SidebarItem>`. Include `headerCollapsed` for collapse animation.
 
