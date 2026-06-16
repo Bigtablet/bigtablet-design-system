@@ -8,7 +8,7 @@ import "./style.scss";
 export type TableSize = "sm" | "md" | "lg";
 
 export interface TableColumn<T extends object> {
-	/** 컬럼 식별자 — `data[key]` 자동 렌더링에도 쓰임 */
+	/** 컬럼 식별자 - `data[key]` 자동 렌더링에도 쓰임 */
 	key: string;
 	/** thead에 표시할 헤더 텍스트 */
 	header: React.ReactNode;
@@ -29,7 +29,7 @@ export interface TableProps<T extends object> {
 	keyExtractor: (item: T, index: number) => string | number;
 	/** 데이터 없을 때 표시 (기본값: "데이터가 없습니다") */
 	emptyMessage?: React.ReactNode;
-	/** 로딩 상태 — 헤더 유지, 바디만 스켈레톤 */
+	/** 로딩 상태 - 헤더 유지, 바디만 스켈레톤 */
 	isLoading?: boolean;
 	/** 로딩 시 스켈레톤 행 개수 (기본값: 5) */
 	skeletonRows?: number;

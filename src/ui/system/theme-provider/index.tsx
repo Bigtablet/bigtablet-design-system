@@ -52,7 +52,7 @@ function readStored(key: string | null): ThemeMode | null {
 		const value = window.localStorage.getItem(key);
 		if (value === "light" || value === "dark" || value === "system") return value;
 	} catch {
-		// localStorage disabled (incognito 등) — 무시
+		// localStorage disabled (incognito 등) - 무시
 	}
 	return null;
 }

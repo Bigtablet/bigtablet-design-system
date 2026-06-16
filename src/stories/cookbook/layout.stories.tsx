@@ -34,7 +34,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**레이아웃 패턴 cookbook** — 마케팅 페이지·대시보드·관리자 목록 등 자주 쓰는 페이지 골격을 Section / Container / Grid / Stack 조합으로 정리했습니다.\n\n페이지 단위로 복붙해 시작점으로 사용하세요.",
+					"**레이아웃 패턴 cookbook** - 마케팅 페이지·대시보드·관리자 목록 등 자주 쓰는 페이지 골격을 Section / Container / Grid / Stack 조합으로 정리했습니다.\n\n페이지 단위로 복붙해 시작점으로 사용하세요.",
 			},
 		},
 	},
@@ -86,7 +86,7 @@ export const MarketingHeroFeatureGrid: Story = {
 									maxWidth: 520,
 								}}
 							>
-								주문, 결제, 재고, 직원까지 — 매장의 흐름을 끊김 없이 연결합니다.
+								주문, 결제, 재고, 직원까지 - 매장의 흐름을 끊김 없이 연결합니다.
 							</p>
 						</Stack>
 

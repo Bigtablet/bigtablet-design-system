@@ -13,7 +13,7 @@ const meta: Meta = {
 				component: `
 ### Z-Index (레이어 우선순위)
 
-**Z-Index** — the standard for deciding **which element appears on top** on screen. Higher numbers render above; fix values to the level scale below (\`level0\` base → \`level5\` top-most).
+**Z-Index** - the standard for deciding **which element appears on top** on screen. Higher numbers render above; fix values to the level scale below (\`level0\` base → \`level5\` top-most).
 
 z-index는 **화면에서 어떤 요소가 위에 보일지**를 정하는 기준입니다.
 

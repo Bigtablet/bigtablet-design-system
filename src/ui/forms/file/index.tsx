@@ -133,7 +133,7 @@ export const FileInput = ({
 					style={{ width: previewSize, height: previewSize }}
 				>
 					{hasImage ? (
-						// biome-ignore lint/performance/noImgElement: framework-agnostic DS — host app should swap with next/image if needed
+						// biome-ignore lint/performance/noImgElement: framework-agnostic DS - host app should swap with next/image if needed
 						<img
 							src={previewUrls[0]}
 							alt=""
@@ -173,7 +173,7 @@ export const FileInput = ({
 			{!isPreviewVariant && previewUrls.length > 0 && (
 				<div className="file_input_preview">
 					{previewUrls.map((url) => (
-						// biome-ignore lint/performance/noImgElement: framework-agnostic DS — host app should swap with next/image if needed
+						// biome-ignore lint/performance/noImgElement: framework-agnostic DS - host app should swap with next/image if needed
 						<img
 							key={url}
 							src={url}

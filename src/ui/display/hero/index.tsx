@@ -25,7 +25,7 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 	align?: HeroAlign;
 	/** 배경 이미지 URL (CSS background-image로 사용) */
 	backgroundImage?: string;
-	/** 배경색 — backgroundImage 없을 때 또는 그 위에 색 적용 */
+	/** 배경색 - backgroundImage 없을 때 또는 그 위에 색 적용 */
 	backgroundColor?: string;
 	/**
 	 * 텍스트 대비를 위한 오버레이.
@@ -38,13 +38,13 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 	title?: React.ReactNode;
 	/** 제목 아래 부제목 */
 	subtitle?: React.ReactNode;
-	/** Eyebrow 텍스트 — 제목 위에 작게 표시되는 카테고리/태그 */
+	/** Eyebrow 텍스트 - 제목 위에 작게 표시되는 카테고리/태그 */
 	eyebrow?: React.ReactNode;
 	/** CTA 영역 (Button 등) */
 	children?: React.ReactNode;
-	/** 텍스트 색상 — 배경이 어두우면 흰색 권장 (기본값: "auto" — overlay가 dark면 white) */
+	/** 텍스트 색상 - 배경이 어두우면 흰색 권장 (기본값: "auto" - overlay가 dark면 white) */
 	textColor?: "auto" | "inverse" | "default";
-	/** Primary CTA — 미지정 시 children으로 직접 Button 전달 가능 */
+	/** Primary CTA - 미지정 시 children으로 직접 Button 전달 가능 */
 	primaryAction?: HeroAction;
 	/** Secondary CTA */
 	secondaryAction?: HeroAction;

@@ -43,7 +43,7 @@ bigtablet-design-system/
 │   │   ├── pagination/
 │   │   ├── radio/
 │   │   ├── dropdown/
-│   │   ├── select/              # deprecated — re-exports Dropdown
+│   │   ├── select/              # deprecated - re-exports Dropdown
 │   │   ├── spinner/
 │   │   ├── switch/
 │   │   ├── textfield/

@@ -47,7 +47,7 @@
     );
   }
 
-  // Light overlay 는 항상 흰색계 표면 — 텍스트는 theme 무관 forced dark.
+  // Light overlay 는 항상 흰색계 표면 - 텍스트는 theme 무관 forced dark.
   &_overlay_light.hero_text_default {
     .hero_eyebrow  { color: rgba(0, 0, 0, 0.6); }
     .hero_title    { color: token.$color_brand_primary; }
@@ -101,7 +101,7 @@
     .hero_title    { color: token.$color_brand_on_primary; }
     .hero_subtitle { color: rgba(255, 255, 255, 0.85); }
 
-    // 어두운 배경 위 버튼 — outline/text 를 흰색 계열로 강제
+    // 어두운 배경 위 버튼 - outline/text 를 흰색 계열로 강제
     .hero_actions {
       .button_variant_outline {
         border-color: rgba(255, 255, 255, 0.55);

@@ -36,7 +36,7 @@
     justify-content: center;
     margin-top: 2px;
 
-    // Alert icon — surface 위 직접 색 (배경 없는 SVG 아이콘) — light/dark 자동 swap
+    // Alert icon - surface 위 직접 색 (배경 없는 SVG 아이콘) - light/dark 자동 swap
     &_info    { color: token.$color_status_info_on_surface; }
     &_success { color: token.$color_status_success_on_surface; }
     &_warning { color: token.$color_status_warning_on_surface; }

@@ -12,7 +12,7 @@ const meta: Meta = {
 				component: `
 ### 모션(Motion) 기준
 
-**Motion** — defines **how fast and how smoothly** the UI responds. Shared across all interaction animations (button hover, card emphasis, modal entrance, etc.). Enter/exit pairs use different tokens — exits are shorter than entrances.
+**Motion** - defines **how fast and how smoothly** the UI responds. Shared across all interaction animations (button hover, card emphasis, modal entrance, etc.). Enter/exit pairs use different tokens - exits are shorter than entrances.
 
 UI가 **얼마나 빠르게, 얼마나 부드럽게 반응하는지**를 정의하는 기준입니다.
 
@@ -152,7 +152,7 @@ function MotionRace() {
 	return (
 		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
-				같은 애니메이션을 동시에 재생 — 속도 차이를 비교해보세요.
+				같은 애니메이션을 동시에 재생 - 속도 차이를 비교해보세요.
 			</p>
 			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
 				버튼을 누르면 4개 바가 동시에 늘어납니다. 누가 먼저 도착하는지 보세요.
@@ -233,13 +233,13 @@ function motionDescription(key: string) {
 		case "state":
 			return "disabled → enabled 상태 전환";
 		case "enterFast":
-			return "팝업/드롭다운 진입 — 감속 ease(expo out)으로 부드럽게 등장";
+			return "팝업/드롭다운 진입 - 감속 ease(expo out)으로 부드럽게 등장";
 		case "enterBase":
-			return "모달/토스트 진입 — 기본 진입 속도, 시선 유도";
+			return "모달/토스트 진입 - 기본 진입 속도, 시선 유도";
 		case "exitFast":
-			return "팝업/드롭다운 퇴출 — 가속 ease로 빠르게 사라짐";
+			return "팝업/드롭다운 퇴출 - 가속 ease로 빠르게 사라짐";
 		case "exitBase":
-			return "모달/토스트 퇴출 — 진입보다 살짝 짧은 퇴출";
+			return "모달/토스트 퇴출 - 진입보다 살짝 짧은 퇴출";
 		default:
 			return "공통 인터랙션 전환";
 	}

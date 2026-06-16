@@ -6,7 +6,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
-  // 흰 bg + 우측 border 1px — 다른 페이지 디자인과 통일
+  // 흰 bg + 우측 border 1px - 다른 페이지 디자인과 통일
   background: token.$color_bg_solid;
   color: token.$color_text_heading;
   border-right: token.$border_width_standard solid token.$color_border_default;
@@ -22,7 +22,7 @@
     transition: padding token.$transition_base;
     overflow: hidden;
 
-    // ── Header layers — full lockup (header) + mark only (headerCollapsed)
+    // ── Header layers - full lockup (header) + mark only (headerCollapsed)
     //    크로스페이드 스택. 같은 자리에 absolute 로 겹쳐 opacity 로 토글.
     &_layers {
       position: relative;
@@ -116,7 +116,7 @@
       box-shadow: token.$focus_ring;
     }
 
-    // active — 검정 fill + 흰 텍스트 (brand 강조)
+    // active - 검정 fill + 흰 텍스트 (brand 강조)
     &_active {
       background: token.$color_brand_primary;
       color: token.$color_brand_on_primary;
@@ -233,15 +233,15 @@
   }
 }
 
-// ── Mobile transform (< 600px) — auto 모드에서 BottomBar 형태로 자동 변신 ────
+// ── Mobile transform (< 600px) - auto 모드에서 BottomBar 형태로 자동 변신 ────
 //
 // `.sidebar_static` 가 붙으면 변신 무효 (admin 등 desktop-only 케이스).
-// CSS-only 변환 — JS / Context / matchMedia 불필요, SSR 안전, hydration mismatch X.
+// CSS-only 변환 - JS / Context / matchMedia 불필요, SSR 안전, hydration mismatch X.
 
 @media (max-width: 599px) {
-  // 소비처 layout 계산용 CSS 변수 노출 — Sidebar 가 BottomBar 로 변신했을 때
+  // 소비처 layout 계산용 CSS 변수 노출 - Sidebar 가 BottomBar 로 변신했을 때
   // main content 끝에 `padding-bottom: var(--bt-sidebar-total-height)` 등으로 가림 방지.
-  // (desktop 에선 정의 X — Sidebar 가 fixed bottom 이 아니라 padding 불필요)
+  // (desktop 에선 정의 X - Sidebar 가 fixed bottom 이 아니라 padding 불필요)
   :root {
     --bt-sidebar-height: 56px;
     --bt-sidebar-safe-area: env(safe-area-inset-bottom, 0px);
@@ -251,7 +251,7 @@
   }
 
   .sidebar:not(.sidebar_static) {
-    // BottomBar 본체 — fixed bottom, 가로 flex
+    // BottomBar 본체 - fixed bottom, 가로 flex
     position: fixed;
     inset: auto 0 0 0;            // bottom: 0; left/right: 0
     width: 100% !important;       // 인라인 style.width override
@@ -264,7 +264,7 @@
     z-index: token.$z_level2;
     padding-bottom: var(--bt-sidebar-safe-area); // iOS 홈 인디케이터
 
-    // 변신 시 숨겨질 영역들 — header / footer / 섹션 라벨 / collapse btn
+    // 변신 시 숨겨질 영역들 - header / footer / 섹션 라벨 / collapse btn
     .sidebar_header,
     .sidebar_footer,
     .sidebar_collapse_btn,
@@ -282,12 +282,12 @@
       overflow: visible;
     }
 
-    // section 은 transparent — items 가 nav 의 flex 자식으로 직접 흐름
+    // section 은 transparent - items 가 nav 의 flex 자식으로 직접 흐름
     .sidebar_section {
       display: contents;
     }
 
-    // 아이템 — icon 위 / label 아래 stacked, 균등 분할
+    // 아이템 - icon 위 / label 아래 stacked, 균등 분할
     .sidebar_item {
       flex: 1;
       flex-direction: column;
@@ -304,8 +304,8 @@
         color: token.$color_text_heading;
       }
 
-      // active — rail 의 "검정 fill" 언어 유지하되 icon area pill 로 축소
-      // (iOS / Material You 패턴 — 작은 bottom bar item 에 full-row fill 은 무거움)
+      // active - rail 의 "검정 fill" 언어 유지하되 icon area pill 로 축소
+      // (iOS / Material You 패턴 - 작은 bottom bar item 에 full-row fill 은 무거움)
       &_active {
         background: transparent;    // rail 의 full-width bg 무효
         color: token.$color_text_heading;
@@ -341,7 +341,7 @@
       white-space: nowrap;
     }
 
-    // trailing (Badge 등) — BottomBar 에선 공간 부족 → 숨김.
+    // trailing (Badge 등) - BottomBar 에선 공간 부족 → 숨김.
     // 알림이 필요하면 미래 prop 으로 icon 위 dot badge 추가 검토.
     .sidebar_item_trailing {
       display: none;
@@ -351,7 +351,7 @@
   // collapsed 상태 + mobile + auto → collapsed 무효 (BottomBar 가 우선)
   .sidebar:not(.sidebar_static).sidebar_collapsed {
     .sidebar_item_label {
-      // collapsed 가 적용한 visually-hidden 해제 — BottomBar 에선 label 보여야 함
+      // collapsed 가 적용한 visually-hidden 해제 - BottomBar 에선 label 보여야 함
       position: static;
       width: auto;
       height: auto;

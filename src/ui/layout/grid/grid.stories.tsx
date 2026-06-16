@@ -9,7 +9,7 @@ const meta: Meta<typeof Grid> = {
 		docs: {
 			description: {
 				component: [
-					"**Grid** — CSS Grid 2D 레이아웃. 1D 흐름은 `Stack`.",
+					"**Grid** - CSS Grid 2D 레이아웃. 1D 흐름은 `Stack`.",
 					"",
 					"주요 prop: `cols` (1~6 또는 `\"auto\"` = minmax auto-fill), `gap`/`rowGap`/`colGap`, `singleColOnMobile` (<600 1열 축소, 기본 true).",
 				].join("\n"),

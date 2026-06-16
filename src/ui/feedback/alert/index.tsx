@@ -155,8 +155,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
 	if (!shouldRender) return null;
 
-	// destructive: confirm을 빨간 filled(danger)로 강조 — 위험성을 시각적으로 표현
-	// (Material/shadcn/Radix 표준 — 빨간 버튼 = 위험한 액션)
+	// destructive: confirm을 빨간 filled(danger)로 강조 - 위험성을 시각적으로 표현
+	// (Material/shadcn/Radix 표준 - 빨간 버튼 = 위험한 액션)
 	const confirmVariant: ButtonVariant = "filled";
 	const cancelVariant: ButtonVariant = "outline";
 

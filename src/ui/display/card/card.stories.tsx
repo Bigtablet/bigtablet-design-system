@@ -26,9 +26,9 @@ const meta: Meta<typeof Card> = {
 		docs: {
 			description: {
 				component: `
-**Card** — Container that groups related content into a single block. / **Card** — 콘텐츠를 한 덩어리로 묶는 컨테이너.
+**Card** - Container that groups related content into a single block. / **Card** - 콘텐츠를 한 덩어리로 묶는 컨테이너.
 
-Variants: \`default\` / \`accent\` (navy bg + white text). — **Variants**: \`accent\` (navy bg + 흰 텍스트).
+Variants: \`default\` / \`accent\` (navy bg + white text). - **Variants**: \`accent\` (navy bg + 흰 텍스트).
 Key props: \`heading\`, \`shadow\` (none/sm/md/lg), \`padding\` (none/sm/md/lg), \`bordered\`. / 주요 prop.
 				`,
 			},

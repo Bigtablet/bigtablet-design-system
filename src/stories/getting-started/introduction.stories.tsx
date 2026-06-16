@@ -26,11 +26,11 @@ A design system that manages the **UI components and design tokens** used across
 
 #### 사이드바 구조
 
-- **Getting Started** — Introduction, Installation
-- **Cookbook** — 자주 쓰는 조합 레시피 (Form / Layout / Feedback / Data)
-- **Examples** — 실전 페이지 조립 예제 (Page Composition)
-- **Foundation** — 색상, 타이포그래피, 간격 등 디자인 토큰
-- **Components** — 실제 UI 컴포넌트 (버튼, 인풋, 모달 등)
+- **Getting Started** - Introduction, Installation
+- **Cookbook** - 자주 쓰는 조합 레시피 (Form / Layout / Feedback / Data)
+- **Examples** - 실전 페이지 조립 예제 (Page Composition)
+- **Foundation** - 색상, 타이포그래피, 간격 등 디자인 토큰
+- **Components** - 실제 UI 컴포넌트 (버튼, 인풋, 모달 등)
 
 ---
 

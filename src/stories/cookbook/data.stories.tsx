@@ -26,7 +26,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**데이터 디스플레이 cookbook** — 사용자 목록·상태 칩·통계 카드·타임라인 등 데이터를 보여주는 패턴 모음입니다.\n\nAvatar + Badge + Chip + Menu 조합으로 흔히 쓰는 디스플레이 구조를 빠르게 복붙해 시작할 수 있도록 정리했습니다.",
+					"**데이터 디스플레이 cookbook** - 사용자 목록·상태 칩·통계 카드·타임라인 등 데이터를 보여주는 패턴 모음입니다.\n\nAvatar + Badge + Chip + Menu 조합으로 흔히 쓰는 디스플레이 구조를 빠르게 복붙해 시작할 수 있도록 정리했습니다.",
 			},
 		},
 	},

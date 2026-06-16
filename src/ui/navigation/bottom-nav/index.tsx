@@ -48,7 +48,7 @@ export const BottomNav = ({
 interface BottomNavItemCommon {
 	/** 아이콘 (필수) */
 	icon: React.ReactNode;
-	/** 라벨 텍스트 (필수, 짧게 — 2–4자) */
+	/** 라벨 텍스트 (필수, 짧게 - 2–4자) */
 	label: string;
 	/** 활성 상태 */
 	active?: boolean;
@@ -56,7 +56,7 @@ interface BottomNavItemCommon {
 	badge?: React.ReactNode;
 }
 
-// Discriminated union — `as` 값에 따라 허용되는 HTML attribute 가 동적으로 결정됨.
+// Discriminated union - `as` 값에 따라 허용되는 HTML attribute 가 동적으로 결정됨.
 // `target` / `rel` / `download` 는 anchor 에만, `type` / `form` 등은 button 에만 허용.
 type BottomNavItemButton = BottomNavItemCommon & {
 	as?: "button";
@@ -66,7 +66,7 @@ type BottomNavItemButton = BottomNavItemCommon & {
 type BottomNavItemAnchor = BottomNavItemCommon & {
 	as: "a";
 	href: string;
-	/** anchor 에 native `disabled` 없음 — `aria-disabled` + `preventDefault` 로 처리. */
+	/** anchor 에 native `disabled` 없음 - `aria-disabled` + `preventDefault` 로 처리. */
 	disabled?: boolean;
 } & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "type">;
 
@@ -107,7 +107,7 @@ export const BottomNavItem = (props: BottomNavItemProps) => {
 	);
 
 	if (as === "a") {
-		// HTML 의 `<a disabled>` 는 무효 — `aria-disabled` + `tabIndex={-1}` + `preventDefault` 로 접근성 있게 비활성화.
+		// HTML 의 `<a disabled>` 는 무효 - `aria-disabled` + `tabIndex={-1}` + `preventDefault` 로 접근성 있게 비활성화.
 		const { href, onClick, ...anchorRest } = rest as Omit<
 			BottomNavItemAnchor,
 			"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"

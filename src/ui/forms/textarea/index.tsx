@@ -30,7 +30,7 @@ export interface TextareaProps
 	onChangeAction?: (value: string) => void;
 	/**
 	 * IME 조합 중 콜백 전략 (기본값: "delayed").
-	 * 실시간 구독이 필요하면 "immediate" — 한글 조합 중에도 매 입력 즉시 반영.
+	 * 실시간 구독이 필요하면 "immediate" - 한글 조합 중에도 매 입력 즉시 반영.
 	 */
 	imeStrategy?: ImeStrategy;
 	/** 제어형 입력 값 */
@@ -109,13 +109,13 @@ export const Textarea = ({
 
 	const isComposingRef = useRef(false);
 	const innerRef = useRef<HTMLTextAreaElement | null>(null);
-	// 마지막으로 onChangeAction 에 방출한 값 — 중복 호출(특히 IME 종료 직후) 차단용.
+	// 마지막으로 onChangeAction 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
 	const lastEmittedValueRef = useRef(innerValue);
 	const autoGrow = minRows !== undefined || maxRows !== undefined;
 
-	// Controlled value 동기화 — useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
+	// Controlled value 동기화 - useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
 	// paint 전 즉시 반영해 flicker 방지.
-	// 조합 중에는 prevValue 까지 함께 보류 — 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
+	// 조합 중에는 prevValue 까지 함께 보류 - 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
 	// 조합 종료 후 value===prevValue 가 되어 외부 value 가 영영 반영되지 않는 버그 발생.
 	const [prevValue, setPrevValue] = useState(value);
 	if (isControlled && value !== prevValue && !isComposingRef.current) {
@@ -135,10 +135,10 @@ export const Textarea = ({
 		[ref],
 	);
 
-	// auto-grow — 내용 변할 때마다 scrollHeight 기준 높이 재계산.
+	// auto-grow - 내용 변할 때마다 scrollHeight 기준 높이 재계산.
 	// textarea 자체엔 padding 없음 (wrapper 가 padding 담당) → scrollHeight 는 순수 콘텐츠 높이.
-	// minH/maxH 도 padding 없이 line 높이만 — 안 그러면 wrapper padding 과 이중 적용됨.
-	// useSafeLayoutEffect — SSR 경고 방지 (서버에선 useEffect fallback).
+	// minH/maxH 도 padding 없이 line 높이만 - 안 그러면 wrapper padding 과 이중 적용됨.
+	// useSafeLayoutEffect - SSR 경고 방지 (서버에선 useEffect fallback).
 	useSafeLayoutEffect(() => {
 		if (!autoGrow) return;
 		const el = innerRef.current;
@@ -169,7 +169,7 @@ export const Textarea = ({
 				? String(innerValue.length)
 				: null;
 
-	// 비조합(non-composition) 입력 또는 조합 종료 시 공통 — 중복 방출 차단 후 방출.
+	// 비조합(non-composition) 입력 또는 조합 종료 시 공통 - 중복 방출 차단 후 방출.
 	const emit = (nextValue: string) => {
 		setInnerValue(nextValue);
 		if (nextValue !== lastEmittedValueRef.current) {
@@ -205,13 +205,13 @@ export const Textarea = ({
 						}}
 						onCompositionEnd={(event) => {
 							isComposingRef.current = false;
-							// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 — emit 가 중복 차단.
+							// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 - emit 가 중복 차단.
 							emit(applyTransform(event.currentTarget.value));
 						}}
 						onChange={(event) => {
 							const rawValue = event.target.value;
 							if (isComposingRef.current) {
-								// 조합 중 — transform 보류(조합 깨짐 방지), raw 표시.
+								// 조합 중 - transform 보류(조합 깨짐 방지), raw 표시.
 								setInnerValue(rawValue);
 								if (imeStrategy === "immediate" && rawValue !== lastEmittedValueRef.current) {
 									lastEmittedValueRef.current = rawValue;

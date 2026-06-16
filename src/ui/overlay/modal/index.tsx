@@ -19,7 +19,7 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 	width?: number | string;
 	/** 모달 제목 (h2, heading_large_bold) */
 	title?: React.ReactNode;
-	/** 제목 아래 본문 설명 — paragraph로 자동 wrap */
+	/** 제목 아래 본문 설명 - paragraph로 자동 wrap */
 	description?: React.ReactNode;
 	/** 하단 액션 영역 (Button들). 미지정 시 footer 영역 자체가 안 보임 */
 	footer?: React.ReactNode;
@@ -67,7 +67,7 @@ export const Modal = ({
 		if (open) setShouldRender(true);
 	}, [open]);
 
-	// Spring: overlay (opacity) — onRest 로 exit 완료 후 unmount
+	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
 		opacity: open ? 1 : 0,
 		config: { tension: 280, friction: 28, clamp: !open },

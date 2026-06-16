@@ -21,7 +21,7 @@ export const baseColors = {
 	statusWarning: "#F59E0B",
 	statusInfo: "#3B82F6",
 
-	// Navy — Bigtablet 초기 홈페이지 컬러. #47555E 메인 navy + sky blue 패밀리.
+	// Navy - Bigtablet 초기 홈페이지 컬러. #47555E 메인 navy + sky blue 패밀리.
 	navy50: "#F2F5F8",
 	navy100: "#DDE3E9",
 	navy200: "#B4C2CD",
@@ -91,7 +91,7 @@ export const colors = {
 		info: baseColors.statusInfo,
 	},
 
-	// Accent (Bigtablet navy) — 메인 brand 검정과 함께 B2C/마케팅 강조에 사용.
+	// Accent (Bigtablet navy) - 메인 brand 검정과 함께 B2C/마케팅 강조에 사용.
 	accent: {
 		subtle: baseColors.navy50,
 		muted: baseColors.navy100,

@@ -27,7 +27,7 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
 	rowGap?: GridGap;
 	/** 열 간격 (gap을 override) */
 	colGap?: GridGap;
-	/** 반응형 — compact(< 600px)에서 강제 1열 (기본 true) */
+	/** 반응형 - compact(< 600px)에서 강제 1열 (기본 true) */
 	singleColOnMobile?: boolean;
 	/** 렌더링할 HTML 요소 */
 	as?: React.ElementType;
