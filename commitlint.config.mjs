@@ -16,6 +16,7 @@ export default {
 				"note",
 				"style",
 				"config",
+				"refactor",
 				"etc",
 				"tada",
 			],
