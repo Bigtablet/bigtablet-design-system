@@ -16,10 +16,8 @@ const QUERY = "(prefers-reduced-motion: reduce)";
  * ```
  */
 export function useReducedMotion(): boolean {
-	const [reduced, setReduced] = React.useState<boolean>(() => {
-		if (!isClient || typeof window.matchMedia !== "function") return false;
-		return window.matchMedia(QUERY).matches;
-	});
+	// SSR/hydration 안전: 초기값은 항상 false (서버 마크업과 일치). 클라이언트 마운트 후 effect 에서 실제 값 보정.
+	const [reduced, setReduced] = React.useState<boolean>(false);
 
 	React.useEffect(() => {
 		if (!isClient || typeof window.matchMedia !== "function") return;
