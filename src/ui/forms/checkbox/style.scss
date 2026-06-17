@@ -161,3 +161,8 @@
     transform: translate(-50%, -50%) scaleX(1);
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .checkbox_icon::after { animation: none; }
+}

@@ -30,3 +30,9 @@
     transform: translateX(400%);
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .top_loading_bar { transition: none; }
+  .top_loading_indeterminate { animation: none; }
+}

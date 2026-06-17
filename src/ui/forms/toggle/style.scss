@@ -125,3 +125,9 @@
     }
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggle_thumb { transition: none; }
+}
