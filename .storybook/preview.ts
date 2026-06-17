@@ -109,9 +109,6 @@ const preview: Preview = {
 		},
 		a11y: {
 			test: "error",
-			config: {
-				rules: [{ id: "color-contrast", enabled: false }],
-			},
 		},
 		// Controls/Actions 패널 활성 — args가 명시된 story에서 size/variant 등 enum prop을 dropdown으로 조작 가능.
 		// disableSaveFromUI: UI에서 args 변경 시 뜨는 "Update story / Create new story" 다이얼로그 비활성 (잡음 제거)
