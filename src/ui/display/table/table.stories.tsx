@@ -26,7 +26,11 @@ const columns: TableColumn<User>[] = [
 		header: "상태",
 		width: "15%",
 		render: (u) => {
-			const colorMap = { active: "#10B981", invited: "#F59E0B", disabled: "#999999" };
+			const colorMap = {
+				active: "var(--bt-color-status-success-on-surface)",
+				invited: "var(--bt-color-status-warning-on-surface)",
+				disabled: "var(--bt-color-text-caption)",
+			};
 			return (
 				<span style={{ color: colorMap[u.status], fontWeight: 500 }}>
 					{u.status === "active" ? "활성" : u.status === "invited" ? "초대됨" : "비활성"}

@@ -150,7 +150,7 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 				border: "1px solid var(--bt-color-border-default)",
 			}}
 		>
-			<div style={{ fontSize: 11, opacity: 0.55, marginBottom: 4 }}>{label}</div>
+			<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 4 }}>{label}</div>
 			<div style={{ fontSize: 13, fontWeight: 600 }}>{value}</div>
 		</div>
 	);

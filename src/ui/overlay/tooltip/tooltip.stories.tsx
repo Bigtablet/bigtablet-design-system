@@ -110,8 +110,8 @@ export const LongText: Story = {
 					type="button"
 					style={{
 						padding: "8px 16px",
-						background: "#EF4444",
-						color: "#fff",
+						background: "var(--bt-color-status-error)",
+						color: "var(--bt-color-status-error-on-default)",
 						border: "none",
 						borderRadius: 8,
 					}}
