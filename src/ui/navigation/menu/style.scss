@@ -83,3 +83,8 @@
     }
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .menu_item { transition: none; }
+}
