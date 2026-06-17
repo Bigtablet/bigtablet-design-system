@@ -4,6 +4,8 @@ const meta: Meta = {
 	title: "Getting Started/Introduction",
 	tags: ["autodocs"],
 	parameters: {
+		// 온보딩 데모 페이지 — 의도적으로 다양한 색 샘플을 렌더(실제 컴포넌트 아님). color-contrast 제외.
+		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
