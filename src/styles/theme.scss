@@ -27,7 +27,7 @@
   // Text
   --bt-color-text-heading:         #{$color_base_neutral_900};
   --bt-color-text-body:            #{$color_base_neutral_700};
-  --bt-color-text-caption:         #{$color_base_neutral_500};
+  --bt-color-text-caption:         #{$color_base_text_caption_light};
   --bt-color-text-brand:           #{$color_base_brand_primary};
   --bt-color-text-inverse:         #{$color_base_neutral_0};
   --bt-color-text-disabled:        #{$color_base_alpha_black_38};
@@ -125,7 +125,7 @@
   // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
   --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
   --bt-color-text-body:            #{$color_base_neutral_400};
-  --bt-color-text-caption:         #{$color_base_neutral_600};
+  --bt-color-text-caption:         #{$color_base_text_caption_dark};
   --bt-color-text-inverse:         #{$color_base_neutral_900};
   --bt-color-text-disabled:        #{$color_base_alpha_white_38};
 
