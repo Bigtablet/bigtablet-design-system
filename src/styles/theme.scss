@@ -1,0 +1,290 @@
+// ════════════════════════════════════════════════════════════════════════
+// CSS custom properties (런타임 테마 전환) - light 기본 + dark overrides.
+//
+// `scss/token` 진입점(@use 대상)에서 분리한다: 소비자의 *.module.scss 가
+// `@use token` 할 때 이 :root / [data-theme] CSS 룰이 함께 새어나가
+// CSS Modules 의 pure-selector 검사를 깨는 문제를 방지하기 위함.
+//
+// 이 파일은 컴포넌트 번들(src/index.ts)이 1회 import → dist/index.css
+// (= `@bigtablet/design-system/style.css`) 에 포함된다. SCSS 변수만 필요한
+// 소비처는 `scss/token` 을 @use 하고, var() 정의는 style.css 로 받는다.
+// ════════════════════════════════════════════════════════════════════════
+
+@use "./colors/index" as *;
+
+:root {
+  // Brand (light/dark 동일)
+  --bt-color-brand-primary:        #{$color_base_brand_primary};
+  --bt-color-brand-on-primary:     #{$color_base_neutral_0};
+  --bt-color-brand-primary-container: #{$color_base_alpha_black_5};
+
+  // Text
+  --bt-color-text-heading:         #{$color_base_neutral_900};
+  --bt-color-text-body:            #{$color_base_neutral_700};
+  --bt-color-text-caption:         #{$color_base_neutral_500};
+  --bt-color-text-brand:           #{$color_base_brand_primary};
+  --bt-color-text-inverse:         #{$color_base_neutral_0};
+  --bt-color-text-disabled:        #{$color_base_alpha_black_38};
+
+  // Background
+  --bt-color-bg-solid:             #{$color_base_neutral_0};
+  --bt-color-bg-solid-dim:         #{$color_base_neutral_50};
+  --bt-color-bg-additive:          #{$color_base_alpha_black_5};
+  --bt-color-bg-disabled:          #{$color_base_alpha_black_12};
+  --bt-color-bg-overlay:           #{$color_base_alpha_black_50};
+  --bt-color-bg-inverse-surface:   #{$color_base_neutral_800};
+
+  // State
+  --bt-color-state-hover-on-light:    #{$color_base_alpha_black_5};
+  --bt-color-state-pressed-on-light:  #{$color_base_alpha_black_12};
+  --bt-color-state-focus-on-light:    #{$color_base_alpha_black_8};
+  --bt-color-state-hover-on-dark:     #{$color_base_alpha_white_5};
+  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_white_12};
+  --bt-color-state-focus-on-dark:     #{$color_base_alpha_white_8};
+
+  // Border
+  --bt-color-border-default:       #{$color_base_neutral_200};
+  --bt-color-border-hover:         #{$color_base_neutral_400};
+  --bt-color-border-subtle:        #{$color_base_alpha_black_8};
+  --bt-color-border-focus:         #{$color_base_neutral_900};
+  --bt-color-border-disabled:      #{$color_base_neutral_100};
+
+  // Status - base (solid bg 용, light = darkened - #fff text 5+:1)
+  --bt-color-status-error:         #{$color_base_status_error};
+  --bt-color-status-success:       #{$color_base_status_success};
+  --bt-color-status-warning:       #{$color_base_status_warning};
+  --bt-color-status-info:          #{$color_base_status_info};
+
+  // Status - on-default (solid bg 위 텍스트)
+  --bt-color-status-error-on-default:    #{$color_base_neutral_0};
+  --bt-color-status-success-on-default:  #{$color_base_neutral_0};
+  --bt-color-status-warning-on-default:  #{$color_base_neutral_0};
+  --bt-color-status-info-on-default:     #{$color_base_neutral_0};
+
+  // Status - container (tint 배경 - soft variant 용)
+  --bt-color-status-error-container:    #{$color_base_status_error_container_light};
+  --bt-color-status-success-container:  #{$color_base_status_success_container_light};
+  --bt-color-status-warning-container:  #{$color_base_status_warning_container_light};
+  --bt-color-status-info-container:     #{$color_base_status_info_container_light};
+
+  // Status - on-container (tint 위 텍스트)
+  --bt-color-status-error-on-container:    #{$color_base_status_error};
+  --bt-color-status-success-on-container:  #{$color_base_status_success};
+  --bt-color-status-warning-on-container:  #{$color_base_status_warning};
+  --bt-color-status-info-on-container:     #{$color_base_status_info};
+
+  // Status - on-surface (앱 surface 위 직접 텍스트, e.g. TextField error helper)
+  // light: darkened (= status-* 와 동일), dark 에서만 분기 됨.
+  --bt-color-status-error-on-surface:    #{$color_base_status_error};
+  --bt-color-status-success-on-surface:  #{$color_base_status_success};
+  --bt-color-status-warning-on-surface:  #{$color_base_status_warning};
+  --bt-color-status-info-on-surface:     #{$color_base_status_info};
+
+  // Accent (검정 brand 기반 - light에서 검정, dark에서 흰색 반전)
+  // 컴포넌트 active/selected/indicator 강조에 사용.
+  // Accent: brand 검정 기반 (light=검정, dark=흰색 반전)
+  --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
+  --bt-color-accent-muted:         #{$color_base_alpha_black_12};
+  --bt-color-accent-light:         #{$color_base_neutral_400};
+  --bt-color-accent-default:       #{$color_base_brand_primary};   // 검정 (brand와 동일)
+  --bt-color-accent-strong:        #{$color_base_neutral_900};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
+
+  // Skeleton (light gray gradient - dark 에서 neutral gray 로 전환)
+  --bt-color-skeleton-base:        #{$color_base_skeleton_base};
+  --bt-color-skeleton-wave:        #{$color_base_skeleton_wave};
+  --bt-color-skeleton-highlight:   #{$color_base_skeleton_highlight};
+}
+
+[data-theme="dark"] {
+  // 브라우저 기본 UI (스크롤바, form control 등) 다크 적응
+  color-scheme: dark;
+  // Font rendering - dark bg 위 흰 글씨의 halation/노이즈 보정
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  // Brand (dark 모드에서도 black 유지.
+  // neutral_950 (#0A0A0A) bg와 대비가 낮아 버튼 등에서 border/elevation 보조 필요.
+  // 텍스트로 쓰일 땐 inverse 사용 권장)
+
+  // Text (light → inverted)
+  // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
+  --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
+  --bt-color-text-body:            #{$color_base_neutral_400};
+  --bt-color-text-caption:         #{$color_base_neutral_600};
+  --bt-color-text-inverse:         #{$color_base_neutral_900};
+  --bt-color-text-disabled:        #{$color_base_alpha_white_38};
+
+  // Background (light → neutral dark)
+  --bt-color-bg-solid:             #{$color_base_neutral_950};
+  --bt-color-bg-solid-dim:         #{$color_base_neutral_925};
+  --bt-color-bg-additive:          #{$color_base_alpha_white_5};
+  --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
+  --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
+  --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
+
+  // State (검정 alpha → 흰색 alpha - dark bg 위에서 작동)
+  --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
+  --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
+  --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
+  --bt-color-state-hover-on-dark:     #{$color_base_alpha_black_8};
+  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
+  --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
+
+  // Border (light gray → neutral dark)
+  --bt-color-border-default:       #{$color_base_neutral_800};
+  --bt-color-border-hover:         #{$color_base_neutral_600};
+  --bt-color-border-subtle:        #{$color_base_alpha_white_12};
+  --bt-color-border-focus:         #{$color_base_neutral_0};
+  --bt-color-border-disabled:      #{$color_base_neutral_925};
+
+  // Brand container - dark 모드에선 white alpha로
+  --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+  // Accent (dark - 흰색 반전. active/selected가 dark neutral bg 위에서 잘 보임)
+  --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+  --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+  --bt-color-accent-light:         #{$color_base_neutral_300};
+  --bt-color-accent-default:       #{$color_base_neutral_0};         // 흰색
+  --bt-color-accent-strong:        #{$color_base_neutral_0};
+  --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
+
+  // Status - dark mode 분기
+  // base solid 는 light 와 동일 (darkened) 유지 - Badge solid 의 #fff 텍스트 대비 보존.
+  // container / on-container / on-surface 만 dark variant 적용.
+  --bt-color-status-error-container:     #{$color_base_status_error_container_dark};
+  --bt-color-status-success-container:   #{$color_base_status_success_container_dark};
+  --bt-color-status-warning-container:   #{$color_base_status_warning_container_dark};
+  --bt-color-status-info-container:      #{$color_base_status_info_container_dark};
+
+  --bt-color-status-error-on-container:    #{$color_base_status_error_on_container_dark};
+  --bt-color-status-success-on-container:  #{$color_base_status_success_on_container_dark};
+  --bt-color-status-warning-on-container:  #{$color_base_status_warning_on_container_dark};
+  --bt-color-status-info-on-container:     #{$color_base_status_info_on_container_dark};
+
+  --bt-color-status-error-on-surface:    #{$color_base_status_error_dark_text};
+  --bt-color-status-success-on-surface:  #{$color_base_status_success_dark_text};
+  --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
+  --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
+
+  // Skeleton - neutral_800 (bg-solid-dim neutral_925 보다 밝음 → 시각 대비)
+  --bt-color-skeleton-base:        #{$color_base_neutral_800};
+  --bt-color-skeleton-wave:        #{$color_base_neutral_800};
+  --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
+}
+
+// `prefers-color-scheme: dark` 자동 응답 (ThemeProvider 없이도 작동)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
+    --bt-color-text-body:            #{$color_base_neutral_400};
+    --bt-color-text-caption:         #{$color_base_neutral_600};
+    --bt-color-text-inverse:         #{$color_base_neutral_900};
+    --bt-color-text-disabled:        #{$color_base_alpha_white_38};
+
+    --bt-color-bg-solid:             #{$color_base_neutral_950};
+    --bt-color-bg-solid-dim:         #{$color_base_neutral_925};
+    --bt-color-bg-additive:          #{$color_base_alpha_white_5};
+    --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
+    --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
+    --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
+
+    --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
+    --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
+    --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
+    --bt-color-state-hover-on-dark:     #{$color_base_alpha_black_8};
+    --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
+    --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
+
+    --bt-color-border-default:       #{$color_base_neutral_800};
+    --bt-color-border-hover:         #{$color_base_neutral_600};
+    --bt-color-border-subtle:        #{$color_base_alpha_white_12};
+    --bt-color-border-focus:         #{$color_base_neutral_0};
+    --bt-color-border-disabled:      #{$color_base_neutral_925};
+
+    --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
+
+    // Accent dark - 흰색 반전
+    --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
+    --bt-color-accent-muted:         #{$color_base_alpha_white_12};
+    --bt-color-accent-light:         #{$color_base_neutral_300};
+    --bt-color-accent-default:       #{$color_base_neutral_0};
+    --bt-color-accent-strong:        #{$color_base_neutral_0};
+    --bt-color-accent-on-surface:    #{$color_base_neutral_900};
+
+    // Status - dark variant (container / on-container / on-surface 만 분기)
+    --bt-color-status-error-container:     #{$color_base_status_error_container_dark};
+    --bt-color-status-success-container:   #{$color_base_status_success_container_dark};
+    --bt-color-status-warning-container:   #{$color_base_status_warning_container_dark};
+    --bt-color-status-info-container:      #{$color_base_status_info_container_dark};
+
+    --bt-color-status-error-on-container:    #{$color_base_status_error_on_container_dark};
+    --bt-color-status-success-on-container:  #{$color_base_status_success_on_container_dark};
+    --bt-color-status-warning-on-container:  #{$color_base_status_warning_on_container_dark};
+    --bt-color-status-info-on-container:     #{$color_base_status_info_on_container_dark};
+
+    --bt-color-status-error-on-surface:    #{$color_base_status_error_dark_text};
+    --bt-color-status-success-on-surface:  #{$color_base_status_success_dark_text};
+    --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
+    --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
+
+    --bt-color-skeleton-base:        #{$color_base_neutral_800};
+    --bt-color-skeleton-wave:        #{$color_base_neutral_800};
+    --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
+  }
+}
+
+// ── Focus rings (a11y) ──────────────────────────────────────────────────
+// Dark 모드는 흰색 alpha 기반으로 neutral dark bg 위에서도 가시성 확보.
+:root {
+  --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.30);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.30);
+}
+
+[data-theme="dark"] {
+  --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
+    --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
+    --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+  }
+}
+
+// ── Elevation shadows ───────────────────────────────────────────────────
+// Dark 모드는 neutral dark bg 위에서 그림자가 보이도록 더 강한 검정 + 살짝 spread 증가.
+:root {
+  --bt-elevation-level1: 0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12);
+  --bt-elevation-level2: 0 2px 2px -2px rgba(0, 0, 0, 0.20), 0 6px 6px 0px rgba(0, 0, 0, 0.12);
+  --bt-elevation-level3: 0 3px 3px -3px rgba(0, 0, 0, 0.20), 0 9px 9px 0px rgba(0, 0, 0, 0.12);
+  --bt-elevation-level4: 0 5px 5px -5px rgba(0, 0, 0, 0.20), 0 15px 15px 0px rgba(0, 0, 0, 0.12);
+  --bt-elevation-level5: 0 8px 10px -5px rgba(0, 0, 0, 0.20), 0 20px 20px 0px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  // neutral dark bg 위에서 그림자 가시성 - 검정 더 진하게 + 약간 더 큰 spread
+  --bt-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 3px 6px 0 rgba(0, 0, 0, 0.30);
+  --bt-elevation-level2: 0 2px 4px 0 rgba(0, 0, 0, 0.45), 0 6px 12px 0 rgba(0, 0, 0, 0.30);
+  --bt-elevation-level3: 0 3px 6px 0 rgba(0, 0, 0, 0.50), 0 9px 18px 0 rgba(0, 0, 0, 0.35);
+  --bt-elevation-level4: 0 5px 10px 0 rgba(0, 0, 0, 0.55), 0 15px 30px 0 rgba(0, 0, 0, 0.40);
+  --bt-elevation-level5: 0 8px 16px 0 rgba(0, 0, 0, 0.60), 0 20px 40px 0 rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bt-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 3px 6px 0 rgba(0, 0, 0, 0.30);
+    --bt-elevation-level2: 0 2px 4px 0 rgba(0, 0, 0, 0.45), 0 6px 12px 0 rgba(0, 0, 0, 0.30);
+    --bt-elevation-level3: 0 3px 6px 0 rgba(0, 0, 0, 0.50), 0 9px 18px 0 rgba(0, 0, 0, 0.35);
+    --bt-elevation-level4: 0 5px 10px 0 rgba(0, 0, 0, 0.55), 0 15px 30px 0 rgba(0, 0, 0, 0.40);
+    --bt-elevation-level5: 0 8px 16px 0 rgba(0, 0, 0, 0.60), 0 20px 40px 0 rgba(0, 0, 0, 0.45);
+  }
+}
