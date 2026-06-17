@@ -6,7 +6,7 @@ const meta: Meta = {
 	title: "Foundation/Motion",
 	tags: ["autodocs"],
 	parameters: {
-		// 토큰 쇼케이스 — 의도적으로 다양한 색/투명도 샘플을 렌더(실제 컴포넌트 아님). color-contrast 제외.
+		// 토큰 레퍼런스 갤러리 — 값/스케일을 보여주는 샘플·라벨이 의도적으로 저대비(실제 컴포넌트 아님). color-contrast 제외.
 		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {

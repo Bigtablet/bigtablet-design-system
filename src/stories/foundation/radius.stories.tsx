@@ -5,8 +5,6 @@ const meta: Meta = {
 	title: "Foundation/Radius",
 	tags: ["autodocs"],
 	parameters: {
-		// 토큰 쇼케이스 — 의도적으로 다양한 색/투명도 샘플을 렌더(실제 컴포넌트 아님). color-contrast 제외.
-		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
@@ -192,7 +190,7 @@ export const Comparison: Story = {
 									alignItems: "center",
 									justifyContent: "center",
 									fontSize: 12,
-									color: "#999",
+									color: "var(--bt-color-text-caption)",
 								}}
 							>
 								Card

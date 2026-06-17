@@ -4,8 +4,6 @@ const meta: Meta = {
 	title: "Getting Started/Introduction",
 	tags: ["autodocs"],
 	parameters: {
-		// 온보딩 데모 페이지 — 의도적으로 다양한 색 샘플을 렌더(실제 컴포넌트 아님). color-contrast 제외.
-		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
@@ -152,7 +150,7 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 				border: "1px solid var(--bt-color-border-default)",
 			}}
 		>
-			<div style={{ fontSize: 11, opacity: 0.55, marginBottom: 4 }}>{label}</div>
+			<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 4 }}>{label}</div>
 			<div style={{ fontSize: 13, fontWeight: 600 }}>{value}</div>
 		</div>
 	);
