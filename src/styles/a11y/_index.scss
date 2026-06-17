@@ -1,28 +1,7 @@
-@use "../colors" as colors;
 @use "../breakpoints" as breakpoint;
 
-// Focus rings - CSS Custom Properties로 light/dark 자동 전환.
-// Dark 모드는 흰색 alpha 기반으로 neutral dark bg 위에서도 가시성 확보.
-
-:root {
-  --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);
-  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.30);
-  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.30);
-}
-
-[data-theme="dark"] {
-  --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
-  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
-  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
-    --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
-    --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
-  }
-}
+// Focus rings - var() 정의(:root/[data-theme])는 ../theme.scss 로 분리.
+// scss/token @use 시 CSS 가 새어 CSS Modules pure-selector 를 깨지 않도록 함.
 
 // SCSS aliases - 기존 사용처는 그대로 작동
 $focus_ring:         var(--bt-focus-ring);

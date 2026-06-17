@@ -1,3 +1,8 @@
+// Theme CSS custom properties (:root + [data-theme="dark"]).
+// 컴포넌트 번들(dist/index.css = style.css)에 1회 포함시킨다.
+// scss/token 진입점에서 분리되어 있어 소비자 module.scss 로는 새지 않는다.
+import "./styles/theme.scss";
+
 // Hooks / Utils
 
 export { cn, useFocusTrap, useSpringHover, useSpringPresence } from "./utils";
