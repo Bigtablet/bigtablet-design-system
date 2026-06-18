@@ -365,6 +365,11 @@
 
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar_header,
+  .sidebar_header_layer,
+  .sidebar_item,
+  .sidebar_item_label,
   .sidebar_collapse_btn { transition: none; }
   .sidebar_collapse_btn:hover { transform: none; }
 }
