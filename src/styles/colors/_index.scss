@@ -32,6 +32,11 @@ $color_base_neutral_800:      #333333;
 $color_base_neutral_900:      #121212;
 $color_base_neutral_925:      #141414;  // dark panel/card bg (Vercel-style)
 $color_base_neutral_950:      #0A0A0A;  // darkest page bg (Vercel-style)
+
+// Text caption - AA 전용값 (neutral scale 과 분리: neutral_500/600 은 border-hover 등 재사용되므로 caption 만 따로)
+$color_base_text_caption_light: #6F6F6F;  // on #fff 5.0:1 / on #F4F4F4 4.57:1 (WCAG AA)
+$color_base_text_caption_dark:  #808080;  // on #0A0A0A 5.0:1 / on #141414 4.66:1 (WCAG AA)
+
 // Status - light mode default (darkened for AA on #fff text, 5+:1)
 // 이전 값 (#EF4444 등) 은 #fff 텍스트 조합 시 AA 미달 (2.0~3.7:1) - Tailwind 700 계열로 교체.
 $color_base_status_error:     #B91C1C;  // red-700, with #fff = 6.4:1

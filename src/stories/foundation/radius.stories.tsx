@@ -190,7 +190,7 @@ export const Comparison: Story = {
 									alignItems: "center",
 									justifyContent: "center",
 									fontSize: 12,
-									color: "#999",
+									color: "var(--bt-color-text-caption)",
 								}}
 							>
 								Card

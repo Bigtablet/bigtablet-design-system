@@ -5,6 +5,8 @@ const meta: Meta = {
 	title: "Foundation/Opacity",
 	tags: ["autodocs"],
 	parameters: {
+		// 투명도 토큰 데모 — 의도적으로 반투명/저대비 샘플을 렌더(실제 컴포넌트 아님). color-contrast 제외.
+		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {

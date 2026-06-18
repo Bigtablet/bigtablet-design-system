@@ -5,6 +5,8 @@ const meta: Meta = {
 	title: "Foundation/Border Width",
 	tags: ["autodocs"],
 	parameters: {
+		// 토큰 레퍼런스 갤러리 — 값/스케일을 보여주는 샘플·라벨이 의도적으로 저대비(실제 컴포넌트 아님). color-contrast 제외.
+		a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } },
 		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {

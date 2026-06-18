@@ -299,3 +299,9 @@
     }
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .nav_bar_indicator_animated { transition: none; }
+  .nav_bar_locale_chevron { transition: none; }
+}

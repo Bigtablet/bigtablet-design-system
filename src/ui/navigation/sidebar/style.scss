@@ -362,3 +362,9 @@
     }
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .sidebar_collapse_btn { transition: none; }
+  .sidebar_collapse_btn:hover { transform: none; }
+}

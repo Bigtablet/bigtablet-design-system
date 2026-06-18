@@ -114,7 +114,7 @@ export const LayoutExample: Story = {
 						}}
 					>
 						<span style={{ fontSize: 13, fontWeight: 600 }}>이름</span>
-						<span style={{ fontSize: 11, color: "#ef4444" }}>*</span>
+						<span style={{ fontSize: 11, color: "var(--bt-color-status-error-on-surface)" }}>*</span>
 					</div>
 					<div style={{ position: "relative" }}>
 						<div
@@ -126,7 +126,7 @@ export const LayoutExample: Story = {
 								display: "flex",
 								alignItems: "center",
 								fontSize: 13,
-								color: "#999",
+								color: "var(--bt-color-text-caption)",
 							}}
 						>
 							홍길동
@@ -168,7 +168,7 @@ export const LayoutExample: Story = {
 							display: "flex",
 							alignItems: "center",
 							fontSize: 13,
-							color: "#999",
+							color: "var(--bt-color-text-caption)",
 						}}
 					>
 						example@email.com
