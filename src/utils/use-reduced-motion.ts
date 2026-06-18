@@ -4,20 +4,33 @@ import * as React from "react";
 
 const QUERY = "(prefers-reduced-motion: reduce)";
 
-function hasMatchMedia(): boolean {
-	return typeof window !== "undefined" && typeof window.matchMedia === "function";
+// MediaQueryList 를 모듈 스코프에 1회 생성·재사용 (getSnapshot 이 렌더마다 호출되므로).
+// 단, window.matchMedia 참조가 바뀌면(테스트 목 교체/SSR) 캐시를 무효화한다.
+let mqCache: MediaQueryList | null = null;
+let cachedFor: typeof window.matchMedia | null = null;
+
+function getMediaQuery(): MediaQueryList | null {
+	if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+		mqCache = null;
+		cachedFor = null;
+		return null;
+	}
+	if (!mqCache || cachedFor !== window.matchMedia) {
+		mqCache = window.matchMedia(QUERY);
+		cachedFor = window.matchMedia;
+	}
+	return mqCache;
 }
 
 function subscribe(onStoreChange: () => void): () => void {
-	if (!hasMatchMedia()) return () => {};
-	const mq = window.matchMedia(QUERY);
+	const mq = getMediaQuery();
+	if (!mq) return () => {};
 	mq.addEventListener("change", onStoreChange);
 	return () => mq.removeEventListener("change", onStoreChange);
 }
 
 function getSnapshot(): boolean {
-	if (!hasMatchMedia()) return false;
-	return window.matchMedia(QUERY).matches;
+	return getMediaQuery()?.matches ?? false;
 }
 
 // SSR 초기값 - 서버 마크업과 일치(hydration mismatch 방지)
