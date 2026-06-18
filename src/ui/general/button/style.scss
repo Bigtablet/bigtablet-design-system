@@ -248,6 +248,7 @@
 
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-  .button { transition: none; }
+  .button,
+  .button::before { transition: none; }
   .button:active { transform: none; }
 }

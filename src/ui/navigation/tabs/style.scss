@@ -146,5 +146,6 @@
 
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-  .tabs_indicator_animated { transition: none; }
+  .tabs_indicator_animated,
+  .tabs_tab { transition: none; }
 }
