@@ -535,7 +535,7 @@ label/domain
 
 ### Release & Changelog
 **태그 기반 배포** — semantic-release / changeset 미사용. 릴리즈 절차:
-1. `package.json` `version` 수동 bump (SemVer). 공개 API 기준은 `src/index.ts` export — 새 export 추가 시 minor, 버그/문서/내부 전용(미export) 변경은 patch.
+1. `package.json` `version` 수동 bump (SemVer). 공개 API 기준은 `src/index.ts` export — 하위 호환이 깨지는 변경(export 제거/이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
 2. `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`
 3. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성
 
