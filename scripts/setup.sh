@@ -100,7 +100,7 @@ info "Wrap your app with the required providers:"
 if [ "$ENV" = "nextjs" ]; then
   printf "\n"
   code "// app/layout.tsx"
-  code "import { AlertProvider, ToastProvider } from '@bigtablet/design-system/next';"
+  code "import { AlertProvider, ToastProvider } from '@bigtablet/design-system';"
   code ""
   code "export default function RootLayout({ children }) {"
   code "  return ("
