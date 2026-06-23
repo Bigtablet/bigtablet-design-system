@@ -21,7 +21,7 @@ import { Button, TextField, Dropdown, Modal, Card } from '@bigtablet/design-syst
 import '@bigtablet/design-system/style.css';  // REQUIRED
 
 // Next.js - use this when you need Sidebar (uses next/link internally)
-import { Sidebar, Button } from '@bigtablet/design-system/next';
+import { Sidebar, Button } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';  // REQUIRED
 
 // Provider components - need wrapper setup
@@ -557,7 +557,7 @@ const [page, setPage] = useState(1);
 
 ```tsx
 // IMPORTANT: Import from /next
-import { Sidebar } from '@bigtablet/design-system/next';
+import { Sidebar } from '@bigtablet/design-system';
 import { Home, Users, Settings } from 'lucide-react';
 
 const items = [
@@ -890,7 +890,7 @@ function DataLoader() {
 ```tsx
 'use client';
 import { usePathname } from 'next/navigation';
-import { Sidebar } from '@bigtablet/design-system/next';
+import { Sidebar } from '@bigtablet/design-system';
 import { Home, Users } from 'lucide-react';
 
 const menuItems = [
