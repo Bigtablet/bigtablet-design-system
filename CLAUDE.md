@@ -7,10 +7,10 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 - **Package**: `@bigtablet/design-system` (v1.15.0)
 - **Type**: React 19 component library with TypeScript + Vanilla JS
 - **Package Manager**: pnpm@10.20.0 (enforced)
-- **Exports**:
-  - Pure React (`/`)
-  - Next.js (`/next`)
-  - Vanilla JS (`/vanilla`) - for Thymeleaf, JSP, PHP, etc.
+- **Exports** (`package.json` `exports`):
+  - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
+  - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
+  - SCSS 토큰 (`./scss/token`), CSS (`./style.css`)
 
 ## Quick Commands
 
@@ -26,29 +26,26 @@ pnpm test:storybook # Run a11y tests via Storybook + Playwright
 
 ```
 src/
-├── styles/
-│   ├── token.scss       # SCSS barrel (@forward all domains)
+├── index.ts             # 진입점 (React/Next.js 공용 — 빌드 시 "use client" 자동 주입)
+├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
+│   ├── token.scss       # SCSS barrel (@forward all domains) — 소비자 @use 진입점
 │   ├── tokens.json      # Designer JSON tokens
-│   ├── colors/          # _index.scss + index.ts per domain
-│   ├── spacing/
-│   ├── typography/
-│   ├── radius/
-│   ├── elevation/
-│   ├── motion/
-│   ├── breakpoints/
-│   ├── opacity/
-│   ├── border-width/
-│   ├── z-index/
-│   ├── skeleton/
-│   ├── a11y/
+│   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
+│   ├── global.css
+│   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
+│   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   └── layout/          # SCSS only (no TS)
-├── ui/                  # Flat component folders (no category subdirs)
-├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
-│   ├── bigtablet.scss    # All component styles + CSS custom properties
-│   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
-│   └── examples/         # HTML usage examples
-├── index.ts       # Pure React entry point
-└── next.ts        # Next.js entry point (reserved for future Next.js-specific exports)
+├── ui/                  # 8 카테고리 폴더 하위에 컴포넌트 폴더
+│   ├── display/  feedback/  forms/  general/
+│   └── layout/  navigation/  overlay/  system/
+├── utils/               # cn + 훅 (use-focus-trap, use-reduced-motion, use-spring-presence/hover, use-safe-layout-effect)
+├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
+├── test/                # setup.ts (Vitest)
+├── types/               # scss.d.ts
+└── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)
+    ├── bigtablet.scss   # 컴포넌트 스타일 + CSS custom properties
+    ├── bigtablet.js     # JS 유틸 (Select, Modal, Alert, etc.)
+    └── examples/        # HTML 사용 예시
 ```
 
 ## Key Conventions
@@ -213,10 +210,10 @@ return <div style={style}>...</div>;
 
 ## Important Files
 
-- `tsup.config.ts` - Build config (dual bundles for React/Next.js + Vanilla)
+- `tsup.config.ts` - Build config (2 bundles: React `index.ts` + Vanilla `bigtablet.js`)
 - `.github/workflows/release.yml` - 태그 기반 배포 (`v*` 태그 → npm publish + GitHub Release)
-- `scripts/copy-scss.mjs` - Copies SCSS to dist
-- `scripts/build-vanilla.mjs` - Builds Vanilla CSS/JS
+- `scripts/copy-scss.sh` - Copies SCSS to dist
+- `scripts/build-vanilla.sh` - Builds Vanilla CSS/JS
 - `.github/workflows/ci.yml` - CI/CD pipeline (test + coverage)
 
 ## Documentation
@@ -534,12 +531,25 @@ label/domain
 - 병합 전 반드시 코드 리뷰어 approve 필요
 
 ### Release & Changelog
-**태그 기반 배포** — semantic-release / changeset 미사용. 릴리즈 절차:
-1. `package.json` `version` 수동 bump (SemVer). 공개 API 기준은 `package.json` `exports` 의 모든 표면 — React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
-2. `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`
-3. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성
+**태그 기반 배포** — semantic-release / changeset 미사용. 절차:
 
-**GitHub Release 노트는 Bigtablet 양식 필수** (title = 버전명만, 예: `v3.2.2`). `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체:
+1. **dev→main 릴리즈 PR(`merge: release`)에 아래 둘을 반드시 함께 포함** (별도 커밋으로 미루지 말 것):
+   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports` 의 모든 표면 — React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
+   - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
+2. 리뷰어 approve 후 머지.
+3. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
+4. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
+
+**CHANGELOG.md 양식** — 릴리즈 노트와 동일한 Key Updates 를 미러링:
+```
+## [X.Y.Z](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/vX.Y.Z) - YYYY-MM-DD
+- 핵심 변경 1
+- 핵심 변경 2
+```
+- Key Updates 불릿만 — 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
+- 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
+
+**GitHub Release 노트는 Bigtablet 양식 필수** (title = 버전명만, 예: `v3.2.2`) — CHANGELOG 의 해당 버전 Key Updates 를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체:
 ```
 ## Design System of Bigtablet, Inc.
 
@@ -547,14 +557,6 @@ label/domain
 - 핵심 변경 1
 - 핵심 변경 2
 ```
-
-**CHANGELOG.md 는 GitHub Releases 를 미러링** — 릴리즈마다 새 버전 섹션을 파일 맨 위에 추가하고 semver 내림차순 유지:
-```
-## [X.Y.Z](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/vX.Y.Z) - YYYY-MM-DD
-- 릴리즈 노트의 Key Updates 불릿과 동일하게
-```
-- Key Updates 불릿만 — 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
-- 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
 
 ---
 
