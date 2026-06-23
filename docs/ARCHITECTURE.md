@@ -251,7 +251,7 @@ export default defineConfig([
         entry: { index: "src/index.ts" },
         format: ["esm"],
         dts: true,
-        external: ["react", "react-dom", "lucide-react", "react-toastify", "react-markdown", "remark-gfm"],
+        external: ["react", "react-dom", "lucide-react"],
     },
     // Vanilla JS 번들 (IIFE, 전역 Bigtablet)
     {
