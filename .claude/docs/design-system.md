@@ -20,7 +20,7 @@ Complete reference for AI assistants to generate code using the Bigtablet Design
 import { Button, TextField, Dropdown, Modal, Card } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';  // REQUIRED
 
-// Next.js - use this when you need Sidebar (uses next/link internally)
+// Sidebar uses next/link internally — works in Next.js App Router
 import { Sidebar, Button } from '@bigtablet/design-system';
 import '@bigtablet/design-system/style.css';  // REQUIRED
 
@@ -556,7 +556,7 @@ const [page, setPage] = useState(1);
 ### Sidebar (Next.js Only)
 
 ```tsx
-// IMPORTANT: Import from /next
+// Sidebar — main package export (Next.js App Router 호환)
 import { Sidebar } from '@bigtablet/design-system';
 import { Home, Users, Settings } from 'lucide-react';
 
