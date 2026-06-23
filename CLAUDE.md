@@ -7,10 +7,10 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 - **Package**: `@bigtablet/design-system` (v1.15.0)
 - **Type**: React 19 component library with TypeScript + Vanilla JS
 - **Package Manager**: pnpm@10.20.0 (enforced)
-- **Exports**:
-  - Pure React (`/`)
-  - Next.js (`/next`)
-  - Vanilla JS (`/vanilla`) - for Thymeleaf, JSP, PHP, etc.
+- **Exports** (`package.json` `exports`):
+  - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
+  - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
+  - SCSS 토큰 (`./scss/token`), CSS (`./style.css`)
 
 ## Quick Commands
 
@@ -26,29 +26,26 @@ pnpm test:storybook # Run a11y tests via Storybook + Playwright
 
 ```
 src/
-├── styles/
-│   ├── token.scss       # SCSS barrel (@forward all domains)
+├── index.ts             # 진입점 (React/Next.js 공용 — 빌드 시 "use client" 자동 주입)
+├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
+│   ├── token.scss       # SCSS barrel (@forward all domains) — 소비자 @use 진입점
 │   ├── tokens.json      # Designer JSON tokens
-│   ├── colors/          # _index.scss + index.ts per domain
-│   ├── spacing/
-│   ├── typography/
-│   ├── radius/
-│   ├── elevation/
-│   ├── motion/
-│   ├── breakpoints/
-│   ├── opacity/
-│   ├── border-width/
-│   ├── z-index/
-│   ├── skeleton/
-│   ├── a11y/
+│   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
+│   ├── global.css
+│   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
+│   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   └── layout/          # SCSS only (no TS)
-├── ui/                  # Flat component folders (no category subdirs)
-├── vanilla/       # Vanilla JS package (HTML/CSS/JS)
-│   ├── bigtablet.scss    # All component styles + CSS custom properties
-│   ├── bigtablet.js      # JS utilities (Select, Modal, Alert, etc.)
-│   └── examples/         # HTML usage examples
-├── index.ts       # Pure React entry point
-└── next.ts        # Next.js entry point (reserved for future Next.js-specific exports)
+├── ui/                  # 8 카테고리 폴더 하위에 컴포넌트 폴더
+│   ├── display/  feedback/  forms/  general/
+│   └── layout/  navigation/  overlay/  system/
+├── utils/               # cn + 훅 (use-focus-trap, use-reduced-motion, use-spring-presence/hover, use-safe-layout-effect)
+├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
+├── test/                # setup.ts (Vitest)
+├── types/               # scss.d.ts
+└── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)
+    ├── bigtablet.scss   # 컴포넌트 스타일 + CSS custom properties
+    ├── bigtablet.js     # JS 유틸 (Select, Modal, Alert, etc.)
+    └── examples/        # HTML 사용 예시
 ```
 
 ## Key Conventions
@@ -213,10 +210,10 @@ return <div style={style}>...</div>;
 
 ## Important Files
 
-- `tsup.config.ts` - Build config (dual bundles for React/Next.js + Vanilla)
+- `tsup.config.ts` - Build config (2 bundles: React `index.ts` + Vanilla `bigtablet.js`)
 - `.github/workflows/release.yml` - 태그 기반 배포 (`v*` 태그 → npm publish + GitHub Release)
-- `scripts/copy-scss.mjs` - Copies SCSS to dist
-- `scripts/build-vanilla.mjs` - Builds Vanilla CSS/JS
+- `scripts/copy-scss.sh` - Copies SCSS to dist
+- `scripts/build-vanilla.sh` - Builds Vanilla CSS/JS
 - `.github/workflows/ci.yml` - CI/CD pipeline (test + coverage)
 
 ## Documentation

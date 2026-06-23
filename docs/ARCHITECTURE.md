@@ -9,73 +9,47 @@ Bigtablet Design System의 프로젝트 구조 및 아키텍처 문서입니다.
 ```
 bigtablet-design-system/
 ├── src/
+│   ├── index.ts             # React/Next.js 공용 진입점 (빌드 시 "use client" 자동 주입)
+│   │
 │   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
-│   │   ├── token.scss       # SCSS barrel (@forward all domains)
+│   │   ├── token.scss       # SCSS barrel (@forward all domains) — 소비자 @use 진입점
 │   │   ├── tokens.json      # 디자이너 JSON 토큰
-│   │   ├── colors/
-│   │   ├── spacing/
-│   │   ├── typography/
-│   │   ├── radius/
-│   │   ├── shadows/
-│   │   ├── motion/
-│   │   ├── breakpoints/
-│   │   ├── opacity/
-│   │   ├── border-width/
-│   │   ├── z-index/
-│   │   ├── skeleton/
-│   │   ├── a11y/
+│   │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
+│   │   ├── global.css
+│   │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
+│   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트 (플랫 구조)
-│   │   ├── alert/
-│   │   ├── button/
-│   │   ├── card/
-│   │   ├── checkbox/
-│   │   ├── chip/
-│   │   ├── date-picker/
-│   │   ├── divider/
-│   │   ├── fab/
-│   │   ├── file/
-│   │   ├── icon-button/
-│   │   ├── linear-progress/
-│   │   ├── list-item/
-│   │   ├── modal/
-│   │   ├── pagination/
-│   │   ├── radio/
-│   │   ├── dropdown/
-│   │   ├── select/              # deprecated - re-exports Dropdown
-│   │   ├── spinner/
-│   │   ├── switch/
-│   │   ├── textfield/
-│   │   ├── toast/
-│   │   └── top-loading/
+│   ├── ui/                  # UI 컴포넌트 — 8 카테고리 폴더 하위에 컴포넌트
+│   │   ├── display/         # accordion avatar badge card chip divider hero icon list-item media-card table
+│   │   ├── feedback/        # alert empty-state error-state linear-progress skeleton spinner toast top-loading
+│   │   ├── forms/           # checkbox date-picker dropdown file otp-input radio radio-group textarea textfield toggle
+│   │   ├── general/         # button icon-button
+│   │   ├── layout/          # container grid section stack
+│   │   ├── navigation/      # bottom-nav breadcrumb menu nav-bar pagination sidebar tabs
+│   │   ├── overlay/         # modal popover tooltip
+│   │   └── system/          # theme-provider
 │   │
-│   ├── utils/               # 유틸리티 함수
-│   │   ├── cn.ts            # className 유틸리티
-│   │   ├── use-focus-trap.ts  # Focus trap hook
+│   ├── utils/               # cn + 훅
+│   │   ├── cn.ts
+│   │   ├── use-focus-trap.ts
+│   │   ├── use-reduced-motion.ts
+│   │   ├── use-spring-presence.ts  /  use-spring-hover.ts
+│   │   ├── use-safe-layout-effect.ts
 │   │   └── index.ts
 │   │
-│   ├── vanilla/             # Vanilla JS 패키지
-│   │   ├── bigtablet.scss
-│   │   ├── bigtablet.js
-│   │   └── examples/
-│   │
-│   ├── index.ts             # Pure React 진입점
-│   └── next.ts              # Next.js 진입점
+│   ├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
+│   ├── test/                # setup.ts (Vitest)
+│   ├── types/               # scss.d.ts
+│   └── vanilla/             # Vanilla JS 패키지
+│       ├── bigtablet.scss
+│       ├── bigtablet.js
+│       └── examples/
 │
-├── docs/                    # 문서
-│   ├── COMPONENTS.md
-│   ├── VANILLA.md
-│   ├── ARCHITECTURE.md
-│   ├── CONTRIBUTING.md
-│   └── TESTING.md
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml           # CI/CD 파이프라인
-│
+├── docs/                    # 문서 (COMPONENTS, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
+├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포)
 ├── .storybook/              # Storybook 설정
-├── scripts/                 # 빌드 스크립트
+├── scripts/                 # 빌드 스크립트 (copy-scss.sh, build-vanilla.sh, ...)
 ├── tsup.config.ts           # 빌드 설정
 ├── vitest.config.ts         # 테스트 설정
 └── package.json
@@ -195,26 +169,17 @@ cn(styles.button, styles[`size_${size}`], className);
 
 ## 진입점 (Entry Points)
 
-### Pure React (`/`)
+### React / Next.js (`.`)
 
 ```ts
-// src/index.ts
+// src/index.ts — 모든 컴포넌트·훅·유틸 re-export
 export * from "./ui/general/button";
-export * from "./ui/dropdown";
-export * from "./ui/select";    // deprecated alias
-export * from "./ui/form/textfield";
+export * from "./ui/forms/textfield";
+export { cn, useReducedMotion } from "./utils";
 // ... 모든 컴포넌트 export
 ```
 
-### Next.js (`/next`)
-
-```ts
-// src/next.ts
-// Next.js-specific components
-// Currently all components are framework-agnostic.
-// This entry point is reserved for future Next.js-specific exports.
-export {};
-```
+별도 `/next` entry 는 없다. 컴포넌트가 `"use client"` 로 마킹되고(빌드 시 tsup 가 `dist/index.js` 선두에 자동 주입) `next` 가 optional peer dependency 라, 동일한 `.` export 로 Next.js App Router 에서 그대로 동작한다.
 
 ### Vanilla JS (`/vanilla`)
 
@@ -281,35 +246,32 @@ $transition_base: 0.2s ease-in-out;
 import { defineConfig } from "tsup";
 
 export default defineConfig([
-    // React 번들
+    // React 번들 (Next.js 공용) — 빌드 후 dist/index.js 선두에 "use client" 주입
     {
-        entry: ["src/index.ts"],
-        format: ["cjs", "esm"],
+        entry: { index: "src/index.ts" },
+        format: ["esm"],
         dts: true,
-        external: ["react", "react-dom"],
+        external: ["react", "react-dom", "lucide-react", "react-toastify", "react-markdown", "remark-gfm"],
     },
-    // Next.js 번들
+    // Vanilla JS 번들 (IIFE, 전역 Bigtablet)
     {
-        entry: ["src/next.ts"],
-        format: ["cjs", "esm"],
-        dts: true,
-        external: ["react", "react-dom", "next"],
+        entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },
+        format: ["iife"],
+        globalName: "Bigtablet",
     },
 ]);
 ```
+
+별도 Next.js 번들은 없다 (React 번들이 `"use client"` 마킹으로 Next 호환). SCSS 복사·Vanilla CSS 빌드는 `pnpm build` 가 `scripts/copy-scss.sh` · `scripts/build-vanilla.sh` 로 처리.
 
 ### 빌드 출력
 
 ```
 dist/
-├── index.js           # CJS (React)
-├── index.mjs          # ESM (React)
+├── index.js           # ESM (React/Next.js)
 ├── index.d.ts         # TypeScript 타입
-├── next.js            # CJS (Next.js)
-├── next.mjs           # ESM (Next.js)
-├── next.d.ts          # TypeScript 타입
-├── style.css          # 통합 스타일
-├── scss/              # SCSS 토큰
+├── index.css          # 통합 스타일 (= style.css, theme.scss CSS 변수 포함)
+├── styles/token.scss  # SCSS 토큰 (/scss/token)
 └── vanilla/           # Vanilla JS 패키지
     ├── bigtablet.css
     ├── bigtablet.min.css
