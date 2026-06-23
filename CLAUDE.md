@@ -9,8 +9,8 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 - **Package Manager**: pnpm@10.20.0 (enforced)
 - **Exports** (`package.json` `exports`):
   - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
-  - Vanilla JS (`/vanilla`) - for Thymeleaf, JSP, PHP, etc.
-  - SCSS 토큰 (`/scss/token`), CSS (`/style.css`)
+  - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
+  - SCSS 토큰 (`./scss/token`), CSS (`./style.css`)
 
 ## Quick Commands
 
