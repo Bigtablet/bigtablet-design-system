@@ -5,7 +5,7 @@ import "./styles/theme.scss";
 
 // Hooks / Utils
 
-export { cn, useFocusTrap, useSpringHover, useSpringPresence } from "./utils";
+export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
 
 // New primitives (v3.0)
 
