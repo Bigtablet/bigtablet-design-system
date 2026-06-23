@@ -13,6 +13,19 @@ updates:
       - dependencies
     commit-message:
       prefix: "config"
+    groups:
+      # react/react-dom 는 반드시 같은 버전이어야 함 — 한 PR 로 묶어 버전 불일치 방지
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      # Storybook 패키지 다발 — 노이즈 감소 위해 묶음
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
     ignore:
       # major 버전 업은 수동으로 검토
       - dependency-name: "*"
