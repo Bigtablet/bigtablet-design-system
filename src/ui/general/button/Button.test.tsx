@@ -77,4 +77,11 @@ describe("Button", () => {
 		render(<Button>Button</Button>);
 		expect(screen.getByRole("button")).not.toHaveClass("button_full_width");
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLButtonElement | null = null;
+		render(<Button ref={(el) => { node = el; }}>X</Button>);
+		expect(node).toBeInstanceOf(HTMLButtonElement);
+	});
+
 });

@@ -151,4 +151,11 @@ describe("Card", () => {
 		expect(card).not.toHaveClass("card_interactive");
 		expect(card.querySelector(".card_footer")).not.toBeInTheDocument();
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLDivElement | null = null;
+		render(<Card ref={(el) => { node = el; }}>X</Card>);
+		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
 });

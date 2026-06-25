@@ -32,4 +32,11 @@ describe("Container", () => {
 		const { container } = render(<Container className="custom" />);
 		expect(container.firstChild).toHaveClass("custom");
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLElement | null = null;
+		render(<Container ref={(el) => { node = el; }}>X</Container>);
+		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
 });

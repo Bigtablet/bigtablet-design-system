@@ -31,6 +31,8 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
 	singleColOnMobile?: boolean;
 	/** 렌더링할 HTML 요소 */
 	as?: React.ElementType;
+	/** 루트 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLElement>;
 }
 
 /**
@@ -58,6 +60,7 @@ export const Grid = ({
 	colGap,
 	singleColOnMobile = true,
 	as: Tag = "div",
+	ref,
 	className,
 	children,
 	style,
@@ -70,6 +73,7 @@ export const Grid = ({
 
 	return (
 		<Tag
+			ref={ref}
 			className={cn("grid_layout", singleColOnMobile && "grid_layout_mobile_single", className)}
 			style={
 				{
