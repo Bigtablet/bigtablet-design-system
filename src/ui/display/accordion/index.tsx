@@ -89,6 +89,8 @@ export const Accordion = ({
 							role="region"
 							aria-labelledby={headerId}
 							aria-hidden={!isOpen}
+							// 닫힌 패널은 grid 애니메이션이라 display:none 이 아님 → inert 로 내부 포커스 차단 (WCAG 4.1.2)
+							inert={!isOpen}
 							className={cn("accordion_panel", isOpen && "accordion_panel_open")}
 						>
 							<div className="accordion_panel_wrap">

@@ -69,7 +69,8 @@ export const ListItem = ({
 				if (disabled || !onClick) return;
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
-					onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+					// 실제 click 디스패치 → onClick 이 진짜 MouseEvent 로 호출됨 (가짜 캐스팅 제거)
+					e.currentTarget.click();
 				}
 			}}
 			role={onClick ? "button" : undefined}
