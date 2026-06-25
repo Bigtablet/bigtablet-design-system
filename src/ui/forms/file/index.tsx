@@ -94,14 +94,20 @@ export const FileInput = ({
 		onFiles?.(null);
 	};
 
-	// cleanup on unmount
+	// unmount 시에만 마지막 URL 정리. 변경 시 revoke 는 handleChange/handleRemove 가 담당하므로
+	// deps 를 [previewUrls] 로 두면 변경마다 cleanup 이 돌아 이중 revoke 가 된다 → ref 로 최신값 추적.
+	const previewUrlsRef = React.useRef<string[]>([]);
+	// 최신 previewUrls 를 effect 에서 동기화 — render phase 에서 ref 직접 수정 금지(concurrent/strict 안전)
+	React.useEffect(() => {
+		previewUrlsRef.current = previewUrls;
+	}, [previewUrls]);
 	React.useEffect(() => {
 		return () => {
-			for (const url of previewUrls) {
+			for (const url of previewUrlsRef.current) {
 				URL.revokeObjectURL(url);
 			}
 		};
-	}, [previewUrls]);
+	}, []);
 
 	const hasImage = previewUrls.length > 0;
 	const rootClassName = cn(

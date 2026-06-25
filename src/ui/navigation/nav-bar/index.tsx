@@ -174,6 +174,7 @@ export const NavBar = ({
 const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	const [open, setOpen] = useState(false);
 	const wrapperRef = useRef<HTMLDivElement>(null);
+	const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 	const menuId = useId();
 
 	const currentOption = locale.options.find((o) => o.value === locale.current);
@@ -193,6 +194,52 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 			document.removeEventListener("keydown", escHandler);
 		};
 	}, [open]);
+
+	// 열릴 때 첫 아이템 포커스 (WAI-ARIA menu button). 이미 내부 포커스면 가로채지 않음.
+	useEffect(() => {
+		if (!open || wrapperRef.current?.contains(document.activeElement)) return;
+		itemRefs.current[0]?.focus();
+	}, [open]);
+
+	// 화살표/Home/End roving 포커스 + Esc 닫고 trigger 복귀
+	const moveFocus = (dir: 1 | -1 | "first" | "last") => {
+		const n = locale.options.length;
+		if (n === 0) return;
+		if (dir === "first") return void itemRefs.current[0]?.focus();
+		if (dir === "last") return void itemRefs.current[n - 1]?.focus();
+		const pos = itemRefs.current.indexOf(document.activeElement as HTMLButtonElement | null);
+		const next = pos < 0 ? (dir === 1 ? 0 : n - 1) : (pos + dir + n) % n;
+		itemRefs.current[next]?.focus();
+	};
+
+	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+		switch (e.key) {
+			case "ArrowDown":
+				e.preventDefault();
+				moveFocus(1);
+				break;
+			case "ArrowUp":
+				e.preventDefault();
+				moveFocus(-1);
+				break;
+			case "Home":
+				e.preventDefault();
+				moveFocus("first");
+				break;
+			case "End":
+				e.preventDefault();
+				moveFocus("last");
+				break;
+			case "Escape":
+				e.preventDefault();
+				setOpen(false);
+				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
+				break;
+			case "Tab":
+				setOpen(false);
+				break;
+		}
+	};
 
 	const handleSelect = (value: string) => {
 		locale.onChange(value);
@@ -218,12 +265,21 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				<ChevronDown size={14} aria-hidden="true" className="nav_bar_locale_chevron" />
 			</button>
 			{open && (
-				<ul id={menuId} role="menu" className="nav_bar_locale_menu">
-					{locale.options.map((opt) => (
+				<ul
+					id={menuId}
+					role="menu"
+					className="nav_bar_locale_menu"
+					onKeyDown={handleMenuKeyDown}
+				>
+					{locale.options.map((opt, index) => (
 						<li key={opt.value} role="none">
 							<button
+								ref={(el) => {
+									itemRefs.current[index] = el;
+								}}
 								type="button"
 								role="menuitem"
+								tabIndex={-1}
 								className={cn(
 									"nav_bar_locale_item",
 									opt.value === locale.current && "nav_bar_locale_item_active",
