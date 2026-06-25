@@ -54,4 +54,11 @@ describe("Grid", () => {
 		const { container } = render(<Grid as="ul" />);
 		expect(container.querySelector("ul")).toBeInTheDocument();
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLDivElement | null = null;
+		render(<Grid ref={(el) => { node = el; }}>X</Grid>);
+		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
 });

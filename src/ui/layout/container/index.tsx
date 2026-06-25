@@ -17,6 +17,8 @@ export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 	center?: boolean;
 	/** 렌더링할 HTML 요소 */
 	as?: React.ElementType;
+	/** 루트 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLElement>;
 }
 
 /**
@@ -35,12 +37,14 @@ export const Container = ({
 	size = "xl",
 	center = true,
 	as: Tag = "div",
+	ref,
 	className,
 	children,
 	...props
 }: ContainerProps) => {
 	return (
 		<Tag
+			ref={ref}
 			className={cn("container", `container_size_${size}`, center && "container_center", className)}
 			{...props}
 		>

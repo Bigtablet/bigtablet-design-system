@@ -22,6 +22,8 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 	bg?: SectionBg;
 	/** 렌더링할 HTML 요소 */
 	as?: React.ElementType;
+	/** 루트 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLElement>;
 }
 
 /**
@@ -41,12 +43,14 @@ export const Section = ({
 	spacing = "md",
 	bg = "default",
 	as: Tag = "section",
+	ref,
 	className,
 	children,
 	...props
 }: SectionProps) => {
 	return (
 		<Tag
+			ref={ref}
 			className={cn(
 				"section",
 				`section_spacing_${spacing}`,

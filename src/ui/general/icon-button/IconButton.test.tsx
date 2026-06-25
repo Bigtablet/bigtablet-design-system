@@ -68,4 +68,11 @@ describe("IconButton", () => {
 		render(<IconButton icon={<TestIcon />} aria-label="action" className="custom-class" />);
 		expect(screen.getByRole("button")).toHaveClass("custom-class");
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLButtonElement | null = null;
+		render(<IconButton icon={<i />} aria-label="x" ref={(el) => { node = el; }} />);
+		expect(node).toBeInstanceOf(HTMLButtonElement);
+	});
+
 });

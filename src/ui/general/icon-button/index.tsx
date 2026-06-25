@@ -14,6 +14,8 @@ export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 	size?: IconButtonSize;
 	/** 표시할 아이콘 */
 	icon: React.ReactNode;
+	/** 루트 button 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -27,6 +29,7 @@ export const IconButton = ({
 	size = "md",
 	icon,
 	type = "button",
+	ref,
 	className,
 	...props
 }: IconButtonProps) => {
@@ -38,7 +41,7 @@ export const IconButton = ({
 	);
 
 	return (
-		<button type={type} className={buttonClassName} {...props}>
+		<button ref={ref} type={type} className={buttonClassName} {...props}>
 			<span className="icon_button_icon" aria-hidden="true">
 				{icon}
 			</span>
