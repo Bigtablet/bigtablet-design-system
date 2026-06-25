@@ -336,11 +336,11 @@ export const StatCards: Story = {
 									padding: "2px 8px",
 									borderRadius: 999,
 									background: stat.positive
-										? "color-mix(in srgb, var(--bt-color-status-success) 18%, transparent)"
-										: "color-mix(in srgb, var(--bt-color-status-error) 18%, transparent)",
+										? "var(--bt-color-status-success-container)"
+										: "var(--bt-color-status-error-container)",
 									color: stat.positive
-										? "var(--bt-color-status-success)"
-										: "var(--bt-color-status-error)",
+										? "var(--bt-color-status-success-on-container)"
+										: "var(--bt-color-status-error-on-container)",
 								}}
 							>
 								{stat.positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}

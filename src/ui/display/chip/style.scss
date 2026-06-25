@@ -181,28 +181,30 @@
         .chip_content { color: token.$color_accent_default; }
     }
 
+    // status tone 은 Badge soft 와 동일한 container/on_container AA 쌍 사용
+    // (color-mix(12~14%) 틴트 위 raw status 텍스트는 4.15~4.24 로 4.5:1 미달이었음)
     &_tone_info {
-        background: color-mix(in srgb, token.$color_status_info 12%, transparent);
+        background: token.$color_status_info_container;
 
-        .chip_content { color: token.$color_status_info; }
+        .chip_content { color: token.$color_status_info_on_container; }
     }
 
     &_tone_success {
-        background: color-mix(in srgb, token.$color_status_success 12%, transparent);
+        background: token.$color_status_success_container;
 
-        .chip_content { color: token.$color_status_success; }
+        .chip_content { color: token.$color_status_success_on_container; }
     }
 
     &_tone_warning {
-        background: color-mix(in srgb, token.$color_status_warning 14%, transparent);
+        background: token.$color_status_warning_container;
 
-        .chip_content { color: token.$color_status_warning; }
+        .chip_content { color: token.$color_status_warning_on_container; }
     }
 
     &_tone_error {
-        background: color-mix(in srgb, token.$color_status_error 12%, transparent);
+        background: token.$color_status_error_container;
 
-        .chip_content { color: token.$color_status_error; }
+        .chip_content { color: token.$color_status_error_on_container; }
     }
 
     // ── Size variants (default = 32px) ────────────────────────────────────
