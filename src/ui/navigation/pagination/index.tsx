@@ -9,8 +9,10 @@ export interface PaginationProps {
 	page: number;
 	/** 전체 페이지 수 */
 	totalPages: number;
-	/** 페이지 변경 시 호출되는 콜백 */
-	onChange: (page: number) => void;
+	/** 페이지 변경 콜백 (canonical) */
+	onPageChange?: (page: number) => void;
+	/** @deprecated `onPageChange` 를 사용하세요. */
+	onChange?: (page: number) => void;
 	/** 이전 페이지 버튼 aria-label (기본값: "Previous page") */
 	prevLabel?: string;
 	/** 다음 페이지 버튼 aria-label (기본값: "Next page") */
@@ -77,10 +79,12 @@ const getPaginationItems = (page: number, totalPages: number) => {
 export const Pagination = ({
 	page,
 	totalPages,
+	onPageChange,
 	onChange,
 	prevLabel = "Previous page",
 	nextLabel = "Next page",
 }: PaginationProps) => {
+	const emit = onPageChange ?? onChange;
 	const prevDisabled = page <= 1;
 	const nextDisabled = page >= totalPages;
 
@@ -91,7 +95,7 @@ export const Pagination = ({
 			<button
 				type="button"
 				className="pagination_item"
-				onClick={() => onChange(page - 1)}
+				onClick={() => emit?.(page - 1)}
 				disabled={prevDisabled}
 				aria-label={prevLabel}
 			>
@@ -118,7 +122,7 @@ export const Pagination = ({
 							<button
 								type="button"
 								className={buttonClassName}
-								onClick={() => onChange(it)}
+								onClick={() => emit?.(it)}
 								aria-current={isActive ? "page" : undefined}
 							>
 								{it}
@@ -131,7 +135,7 @@ export const Pagination = ({
 			<button
 				type="button"
 				className="pagination_item"
-				onClick={() => onChange(page + 1)}
+				onClick={() => emit?.(page + 1)}
 				disabled={nextDisabled}
 				aria-label={nextLabel}
 			>

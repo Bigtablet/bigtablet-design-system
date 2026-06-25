@@ -125,4 +125,12 @@ describe("TextField", () => {
 
 		expect(handleChange).toHaveBeenCalledWith("ABC");
 	});
+
+	it("calls onValueChange (canonical) on input", () => {
+		const handleChange = vi.fn();
+		render(<TextField onValueChange={handleChange} />);
+		fireEvent.change(screen.getByRole("textbox"), { target: { value: "test@example.com" } });
+		expect(handleChange).toHaveBeenCalledWith("test@example.com");
+	});
+
 });

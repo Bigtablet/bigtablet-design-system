@@ -121,4 +121,12 @@ describe("Textarea", () => {
 		expect(onChange).toHaveBeenLastCalledWith("한");
 	});
 
+
+	it("calls onValueChange (canonical) on input", () => {
+		const onValueChange = vi.fn();
+		render(<Textarea label="내용" onValueChange={onValueChange} />);
+		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
+		expect(onValueChange).toHaveBeenCalledWith("hello");
+	});
+
 });

@@ -38,7 +38,9 @@ export interface TextFieldProps
 	clearable?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
-	/** 값 변경 시 호출되는 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
+	/** 값 변경 콜백 (canonical). 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
+	onValueChange?: (value: string) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. (Next 서버액션 전달용으로 `Action` 접미사가 필요하면 그대로 사용 가능) */
 	onChangeAction?: (value: string) => void;
 	/**
 	 * IME 조합 중 콜백 전략 (기본값: "delayed").
@@ -77,6 +79,7 @@ export const TextField = ({
 	fullWidth,
 	size = "md",
 	className,
+	onValueChange,
 	onChangeAction,
 	imeStrategy = "delayed",
 	value,
@@ -119,10 +122,10 @@ export const TextField = ({
 			setInnerValue(nextValue);
 			if (nextValue !== lastEmittedValueRef.current) {
 				lastEmittedValueRef.current = nextValue;
-				onChangeAction?.(nextValue);
+				(onValueChange ?? onChangeAction)?.(nextValue);
 			}
 		},
-		[onChangeAction],
+		[onValueChange, onChangeAction],
 	);
 
 	const handleClear = useCallback(() => {
@@ -198,7 +201,7 @@ export const TextField = ({
 									// immediate: 조합 중에도 외부 구독 즉시 반영 (raw value).
 									if (imeStrategy === "immediate" && rawValue !== lastEmittedValueRef.current) {
 										lastEmittedValueRef.current = rawValue;
-										onChangeAction?.(rawValue);
+										(onValueChange ?? onChangeAction)?.(rawValue);
 									}
 									return;
 								}

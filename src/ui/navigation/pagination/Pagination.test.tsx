@@ -77,4 +77,12 @@ describe("Pagination", () => {
 		render(<Pagination page={3} totalPages={5} onChange={() => {}} />);
 		expect(screen.getByText("3")).toHaveClass("pagination_active");
 	});
+
+	it("calls onPageChange (canonical) when clicking previous", () => {
+		const onPageChange = vi.fn();
+		render(<Pagination page={5} totalPages={10} onPageChange={onPageChange} />);
+		fireEvent.click(screen.getByLabelText("Previous page"));
+		expect(onPageChange).toHaveBeenCalledWith(4);
+	});
+
 });

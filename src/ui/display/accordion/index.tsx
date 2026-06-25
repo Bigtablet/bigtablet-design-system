@@ -21,7 +21,9 @@ export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement
 	defaultOpenKeys?: string[];
 	/** 제어형: 펼쳐진 키들 */
 	openKeys?: string[];
-	/** 펼침/접힘 콜백 */
+	/** 펼침/접힘 콜백 (canonical). 열린 키 배열 전달 */
+	onValueChange?: (openKeys: string[]) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
 	onChange?: (openKeys: string[]) => void;
 }
 
@@ -38,6 +40,7 @@ export const Accordion = ({
 	multiple = false,
 	defaultOpenKeys = [],
 	openKeys: controlledKeys,
+	onValueChange,
 	onChange,
 	className,
 	...props
@@ -54,7 +57,7 @@ export const Accordion = ({
 				? [...open, key]
 				: [key];
 		if (!isControlled) setInternalKeys(next);
-		onChange?.(next);
+		(onValueChange ?? onChange)?.(next);
 	};
 
 	return (

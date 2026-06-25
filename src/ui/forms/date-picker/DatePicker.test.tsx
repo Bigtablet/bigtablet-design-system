@@ -170,4 +170,14 @@ describe("DatePicker", () => {
 		);
 		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
 	});
+
+	it("calls onValueChange (canonical) when year is selected", () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onValueChange={onValueChange} />);
+		const buttons = screen.getAllByRole("button");
+		fireEvent.click(buttons[0]);
+		fireEvent.click(screen.getByText("2024"));
+		expect(onValueChange).toHaveBeenCalledWith("2024-01");
+	});
+
 });

@@ -9,7 +9,9 @@ export interface OtpInputProps {
 	length?: 4 | 6;
 	/** 제어형 값 */
 	value?: string;
-	/** 값 변경 콜백 */
+	/** 값 변경 콜백 (canonical) */
+	onValueChange?: (value: string) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
 	onChange?: (value: string) => void;
 	/** 에러 상태 */
 	error?: boolean;
@@ -34,6 +36,7 @@ export interface OtpInputProps {
 export const OtpInput = ({
 	length = 6,
 	value = "",
+	onValueChange,
 	onChange,
 	error = false,
 	disabled = false,
@@ -61,7 +64,7 @@ export const OtpInput = ({
 	};
 
 	const updateValue = (newDigits: string[]) => {
-		onChange?.(newDigits.join(""));
+		(onValueChange ?? onChange)?.(newDigits.join(""));
 	};
 
 	const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {

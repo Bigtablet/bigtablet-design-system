@@ -81,4 +81,12 @@ describe("Toggle", () => {
 		// Controlled: aria-checked stays at the prop value (false)
 		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "false");
 	});
+
+	it("calls onCheckedChange (canonical) on click", () => {
+		const onCheckedChange = vi.fn();
+		render(<Toggle ariaLabel="Toggle" onCheckedChange={onCheckedChange} />);
+		fireEvent.click(screen.getByRole("switch"));
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+	});
+
 });
