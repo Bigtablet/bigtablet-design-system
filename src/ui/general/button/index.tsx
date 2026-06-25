@@ -41,6 +41,7 @@ export const Button = ({
 	fullWidth = false,
 	radius,
 	danger = false,
+	type = "button",
 	className,
 	children,
 	...props
@@ -56,7 +57,7 @@ export const Button = ({
 	);
 
 	return (
-		<button className={buttonClassName} {...props}>
+		<button type={type} className={buttonClassName} {...props}>
 			{leadingIcon && (
 				<span className="button_icon" aria-hidden="true">
 					{leadingIcon}

@@ -1,9 +1,9 @@
 "use client";
 
 import { ChevronDown, Globe } from "lucide-react";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type NavBarVariant = "default" | "transparent" | "accent";
@@ -89,7 +89,7 @@ export const NavBar = ({
 	const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = useState(false);
 
-	useLayoutEffect(() => {
+	useSafeLayoutEffect(() => {
 		const links = linksRef.current;
 		if (!links) return;
 

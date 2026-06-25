@@ -143,8 +143,11 @@ export const ToastProvider = ({
 		setToasts((prev) => prev.filter((t) => t.id !== id));
 	}, []);
 
+	// addToast 는 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
+	const contextValue = React.useMemo(() => ({ addToast }), [addToast]);
+
 	return (
-		<ToastContext.Provider value={{ addToast }}>
+		<ToastContext.Provider value={contextValue}>
 			{children}
 			{isMounted &&
 				createPortal(
