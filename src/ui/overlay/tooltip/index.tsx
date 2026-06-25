@@ -71,12 +71,30 @@ export const Tooltip = ({
 
 	const style = useSpringPresence({ visible: open, from: fromTransform });
 
-	const trigger = React.cloneElement(children as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
-		onMouseEnter: show,
-		onMouseLeave: hide,
-		onFocus: show,
-		onBlur: hide,
-		"aria-describedby": open ? tooltipId : undefined,
+	const child = children as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+	const childProps = child.props;
+	// 자식의 기존 핸들러를 보존하고 tooltip 핸들러를 합성 (덮어쓰기 방지)
+	const trigger = React.cloneElement(child, {
+		onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+			childProps.onMouseEnter?.(e);
+			show();
+		},
+		onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+			childProps.onMouseLeave?.(e);
+			hide();
+		},
+		onFocus: (e: React.FocusEvent<HTMLElement>) => {
+			childProps.onFocus?.(e);
+			show();
+		},
+		onBlur: (e: React.FocusEvent<HTMLElement>) => {
+			childProps.onBlur?.(e);
+			hide();
+		},
+		// 자식의 기존 aria-describedby 보존 + tooltip id 합성 (폼 설명/에러 연결 끊김 방지)
+		"aria-describedby": open
+			? [childProps["aria-describedby"], tooltipId].filter(Boolean).join(" ")
+			: childProps["aria-describedby"],
 	} as React.HTMLAttributes<HTMLElement>);
 
 	if (disabled) return children;

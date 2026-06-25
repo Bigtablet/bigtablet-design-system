@@ -83,12 +83,17 @@ export const Modal = ({
 		config: { tension: 280, friction: 28, clamp: !open },
 	});
 
-	const handleEscape = React.useEffectEvent((e: KeyboardEvent) => {
-		if (e.key === "Escape") onClose?.();
+	// onClose 를 ref 로 보관 — useEffectEvent(React 19.2+) 대신 ref 패턴으로 peer react ^19 전체 호환
+	const onCloseRef = React.useRef(onClose);
+	React.useEffect(() => {
+		onCloseRef.current = onClose;
 	});
 
 	React.useEffect(() => {
 		if (!open) return;
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onCloseRef.current?.();
+		};
 		document.addEventListener("keydown", handleEscape);
 		return () => document.removeEventListener("keydown", handleEscape);
 	}, [open]);
