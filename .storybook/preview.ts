@@ -1,5 +1,9 @@
 import type { Decorator, Preview } from "@storybook/react";
 import { createElement as h, Fragment } from "react";
+// 컴포넌트가 참조하는 --bt-color-* / focus-ring / elevation CSS 변수 정의.
+// theme.scss 는 scss/token 진입점에서 분리돼 있어(소비자는 style.css 로 받음),
+// Storybook preview 에도 직접 import 해줘야 컴포넌트 색/다크모드가 적용된다.
+import "../src/styles/theme.scss";
 
 /**
  * Theme decorator — globals.theme 값에 따라 document.documentElement에 data-theme 적용.
