@@ -40,7 +40,6 @@ jobs:
               - 'src/styles/**'
               - 'src/utils/**'
               - 'src/index.ts'
-              - 'src/next.ts'
               - 'src/test/**'
               - 'tsup.config.ts'
               - 'vitest.config.ts'

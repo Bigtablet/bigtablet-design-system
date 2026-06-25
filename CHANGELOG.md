@@ -51,6 +51,7 @@
 - react-spring 기반 진입/퇴출 애니메이션 — Modal, Toast, Tooltip, Menu 적용
 - Vanilla JS 패키지 완성 — Thymeleaf/JSP/PHP 환경 지원
 - `useSpringPresence` hook 공개 — 커스텀 overlay 애니메이션 지원
+- 추가 컴포넌트: Accordion · Table · Breadcrumb · EmptyState + 레이아웃 프리미티브(Container · Stack · Grid · Section)
 
 ## [2.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.5.0) - 2026-05-18
 
@@ -145,6 +146,7 @@
 
 - GitHub Pages Storybook 배포 — 클라이언트 사이드 비밀번호 보호 적용
 - Chip `aria-expanded` 및 TextField clear button 접근성 개선
+- `IconButton` 컴포넌트 추가
 
 ## [1.24.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.24.2) - 2026-04-08
 
