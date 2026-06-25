@@ -18,10 +18,14 @@ export const baseColors = {
 	neutral925: "#141414",
 	neutral950: "#0A0A0A",
 
-	statusError: "#EF4444",
-	statusSuccess: "#10B981",
-	statusWarning: "#F59E0B",
-	statusInfo: "#3B82F6",
+	// caption 전용 AA 값 (neutral_500 과 분리 — SCSS _index.scss 와 동일)
+	textCaptionLight: "#6F6F6F",
+
+	// status — SCSS _index.scss 와 동일한 AA 통과(red/green/amber/blue-700) 값
+	statusError: "#B91C1C",
+	statusSuccess: "#047857",
+	statusWarning: "#B45309",
+	statusInfo: "#1D4ED8",
 
 	alphaBlack5: "rgba(0, 0, 0, 0.05)",
 	alphaBlack8: "rgba(0, 0, 0, 0.08)",
@@ -44,7 +48,7 @@ export const colors = {
 	text: {
 		heading: baseColors.neutral900,
 		body: baseColors.neutral700,
-		caption: baseColors.neutral500,
+		caption: baseColors.textCaptionLight,
 		brand: baseColors.brandPrimary,
 		inverse: baseColors.neutral0,
 		disabled: baseColors.alphaBlack38,
