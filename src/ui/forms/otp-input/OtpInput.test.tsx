@@ -399,4 +399,12 @@ describe("OtpInput", () => {
 			expect(onChange).not.toHaveBeenCalled();
 		});
 	});
+
+	it("calls onValueChange (canonical) when digit entered", () => {
+		const onValueChange = vi.fn();
+		render(<OtpInput length={6} value="" onValueChange={onValueChange} ariaLabel="OTP" />);
+		fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "5" } });
+		expect(onValueChange).toHaveBeenCalledWith("5");
+	});
+
 });

@@ -82,4 +82,24 @@ describe("NavBar", () => {
 		});
 	});
 
+
+	it("LocaleSwitcher calls onValueChange (canonical) on select", () => {
+		const onValueChange = vi.fn();
+		render(
+			<NavBar
+				locale={{
+					current: "ko",
+					options: [
+						{ value: "ko", label: "한국어" },
+						{ value: "en", label: "English" },
+					],
+					onValueChange,
+				}}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(screen.getByRole("menuitem", { name: "English" }));
+		expect(onValueChange).toHaveBeenCalledWith("en");
+	});
+
 });

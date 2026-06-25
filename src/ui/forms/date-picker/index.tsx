@@ -13,8 +13,10 @@ export interface DatePickerProps {
 	label?: string;
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
 	value?: string;
-	/** 날짜 변경 시 호출되는 콜백. `mode` 값에 따라 "YYYY-MM" 또는 "YYYY-MM-DD" 형식의 문자열이 전달됩니다. */
-	onChange: (value: string) => void;
+	/** 날짜 변경 콜백 (canonical). `mode` 값에 따라 "YYYY-MM" 또는 "YYYY-MM-DD" 형식의 문자열이 전달됩니다. */
+	onValueChange?: (value: string) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
+	onChange?: (value: string) => void;
 	/** 선택 모드 (기본값: "year-month-day") */
 	mode?: DatePickerMode;
 	/** 연도 선택 범위 시작 (기본값: 1950) */
@@ -72,6 +74,7 @@ const range = (start: number, end: number) =>
 export const DatePicker = ({
 	label,
 	value,
+	onValueChange,
 	onChange,
 	mode = "year-month-day",
 	startYear = 1950,
@@ -184,14 +187,15 @@ export const DatePicker = ({
 
 	const emit = React.useCallback(
 		(yy: number, mm: number, dd?: number) => {
+			const cb = onValueChange ?? onChange;
 			if (mode === "year-month") {
-				onChange(`${yy}-${pad(mm)}`);
+				cb?.(`${yy}-${pad(mm)}`);
 				return;
 			}
 			const safeDay = Math.min(dd ?? 1, getDaysInMonth(yy, mm));
-			onChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
+			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onChange],
+		[mode, onValueChange, onChange],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
@@ -271,7 +275,7 @@ export const DatePicker = ({
 					placeholder={yearLabel}
 					options={yearOptions}
 					value={year ? String(year) : null}
-					onChange={handleYearChange}
+					onValueChange={handleYearChange}
 					disabled={disabled}
 				/>
 
@@ -282,7 +286,7 @@ export const DatePicker = ({
 					placeholder={monthLabel}
 					options={monthOptions}
 					value={month ? String(month) : null}
-					onChange={handleMonthChange}
+					onValueChange={handleMonthChange}
 					disabled={disabled || !year}
 				/>
 
@@ -294,7 +298,7 @@ export const DatePicker = ({
 						placeholder={dayLabel}
 						options={dayOptions}
 						value={day ? String(day) : null}
-						onChange={handleDayChange}
+						onValueChange={handleDayChange}
 						disabled={disabled || !month}
 					/>
 				)}

@@ -74,4 +74,12 @@ describe("Accordion", () => {
 		fireEvent.click(screen.getByText("Title A"));
 		expect(onChange).toHaveBeenCalledWith(["a"]);
 	});
+
+	it("fires onValueChange (canonical)", () => {
+		const onValueChange = vi.fn();
+		render(<Accordion items={items} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByText("Title A"));
+		expect(onValueChange).toHaveBeenCalledWith(["a"]);
+	});
+
 });

@@ -10,7 +10,9 @@ export interface ToggleProps
 	checked?: boolean;
 	/** 비제어형 초기 토글 상태 */
 	defaultChecked?: boolean;
-	/** 상태 변경 시 호출되는 콜백 */
+	/** 상태 변경 콜백 (canonical) */
+	onCheckedChange?: (checked: boolean) => void;
+	/** @deprecated `onCheckedChange` 를 사용하세요. */
 	onChange?: (checked: boolean) => void;
 	/** 토글 크기 (기본값: "sm") */
 	size?: "sm" | "md";
@@ -31,6 +33,7 @@ export interface ToggleProps
 export const Toggle = ({
 	checked,
 	defaultChecked,
+	onCheckedChange,
 	onChange,
 	size = "sm",
 	disabled,
@@ -51,7 +54,7 @@ export const Toggle = ({
 		if (disabled) return;
 		const next = !isOn;
 		if (!isControlled) setInnerChecked(next);
-		onChange?.(next);
+		(onCheckedChange ?? onChange)?.(next);
 	};
 
 	const rootClassName = cn(

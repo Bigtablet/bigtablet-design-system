@@ -19,8 +19,10 @@ export interface NavBarLocaleConfig {
 	current: string;
 	/** 가능한 옵션 */
 	options: NavBarLocaleOption[];
-	/** locale 변경 콜백 */
-	onChange: (next: string) => void;
+	/** locale 변경 콜백 (canonical) */
+	onValueChange?: (next: string) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
+	onChange?: (next: string) => void;
 	/** 표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시 */
 	hideLabel?: boolean;
 }
@@ -242,7 +244,7 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	};
 
 	const handleSelect = (value: string) => {
-		locale.onChange(value);
+		(locale.onValueChange ?? locale.onChange)?.(value);
 		setOpen(false);
 	};
 
