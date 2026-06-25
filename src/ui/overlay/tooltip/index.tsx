@@ -91,7 +91,10 @@ export const Tooltip = ({
 			childProps.onBlur?.(e);
 			hide();
 		},
-		"aria-describedby": open ? tooltipId : undefined,
+		// 자식의 기존 aria-describedby 보존 + tooltip id 합성 (폼 설명/에러 연결 끊김 방지)
+		"aria-describedby": open
+			? [childProps["aria-describedby"], tooltipId].filter(Boolean).join(" ")
+			: childProps["aria-describedby"],
 	} as React.HTMLAttributes<HTMLElement>);
 
 	if (disabled) return children;
