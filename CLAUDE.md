@@ -193,11 +193,12 @@ WCAG 2.1 SC 2.3.3 - `prefers-reduced-motion: reduce` 사용자 위해 모든 컴
 `unmount` 시점에 exit animation을 위해 `useSpringPresence` hook 사용 (`src/utils/use-spring-presence.ts`). Modal/Toast/Tooltip/Menu 패턴.
 
 ```tsx
+import { animated } from "@react-spring/web";
 import { useSpringPresence } from "../../utils";
 
-const { shouldRender, style } = useSpringPresence({ open });
-if (!shouldRender) return null;
-return <div style={style}>...</div>;
+// visible=false 가 되면 exit 애니메이션 후 onExitComplete 발화 → 부모에서 unmount.
+const style = useSpringPresence({ visible: open, onExitComplete: () => setMounted(false) });
+return <animated.div style={style}>...</animated.div>;
 ```
 
 #### 6. 금지 사항
