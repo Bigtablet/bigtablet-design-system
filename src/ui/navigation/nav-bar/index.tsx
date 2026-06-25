@@ -215,6 +215,10 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	};
 
 	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+		// 처리하는 키는 상위로 전파 차단 (NavBar 가 키 핸들러를 가진 컨테이너 안에 있을 때 충돌 방지)
+		if (["ArrowDown", "ArrowUp", "Home", "End", "Escape", "Tab"].includes(e.key)) {
+			e.stopPropagation();
+		}
 		switch (e.key) {
 			case "ArrowDown":
 				e.preventDefault();
