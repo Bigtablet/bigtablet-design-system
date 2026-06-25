@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type TabsVariant = "line" | "fills";
@@ -101,7 +101,7 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 	const [hasMounted, setHasMounted] = React.useState(false);
 
 	// active tab 위치 추적 - sliding indicator (line=underline / fills=filled box)
-	React.useLayoutEffect(() => {
+	useSafeLayoutEffect(() => {
 		const list = listRef.current;
 		if (!list) return;
 

@@ -26,6 +26,7 @@ export const IconButton = ({
 	variant = "standard",
 	size = "md",
 	icon,
+	type = "button",
 	className,
 	...props
 }: IconButtonProps) => {
@@ -37,7 +38,7 @@ export const IconButton = ({
 	);
 
 	return (
-		<button className={buttonClassName} {...props}>
+		<button type={type} className={buttonClassName} {...props}>
 			<span className="icon_button_icon" aria-hidden="true">
 				{icon}
 			</span>
