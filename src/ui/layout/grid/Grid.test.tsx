@@ -56,7 +56,7 @@ describe("Grid", () => {
 	});
 
 	it("forwards ref to the root element", () => {
-		let node: HTMLDivElement | null = null;
+		let node: HTMLElement | null = null;
 		render(<Grid ref={(el) => { node = el; }}>X</Grid>);
 		expect(node).toBeInstanceOf(HTMLDivElement);
 	});
