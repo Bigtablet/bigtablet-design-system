@@ -394,4 +394,30 @@ describe("Menu", () => {
 		expect(trigger).toHaveFocus();
 	});
 
+
+	it("does not bubble handled keys to parent (stopPropagation)", () => {
+		const parentKeyDown = vi.fn();
+		render(
+			<div onKeyDown={parentKeyDown}>
+				<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />
+			</div>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "ArrowDown" });
+		expect(parentKeyDown).not.toHaveBeenCalled();
+	});
+
+
+	it("lets Tab bubble to parent (focus-trap compatibility)", () => {
+		const parentKeyDown = vi.fn();
+		render(
+			<div onKeyDown={parentKeyDown}>
+				<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />
+			</div>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "Tab" });
+		expect(parentKeyDown).toHaveBeenCalled();
+	});
+
 });

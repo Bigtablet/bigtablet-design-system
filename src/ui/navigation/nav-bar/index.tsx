@@ -215,6 +215,10 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	};
 
 	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+		// 내부에서 소비하는 키만 상위로 전파 차단. Tab 은 제외 — 부모 focus trap 이 감지해야 하므로 전파시킨다.
+		if (["ArrowDown", "ArrowUp", "Home", "End", "Escape"].includes(e.key)) {
+			e.stopPropagation();
+		}
 		switch (e.key) {
 			case "ArrowDown":
 				e.preventDefault();

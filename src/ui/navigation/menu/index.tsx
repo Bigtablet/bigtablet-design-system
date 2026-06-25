@@ -85,6 +85,11 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	};
 
 	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		// 메뉴 내부에서 소비하는 키만 상위로 전파 차단 — 예: Modal 안의 Menu 에서 Esc 가 둘 다 닫히는 것 방지.
+		// Tab 은 제외 — 부모 focus trap(Modal 등)이 Tab 을 감지해 포커스를 가둬야 하므로 전파시킨다.
+		if (["ArrowDown", "ArrowUp", "Home", "End", "Escape"].includes(e.key)) {
+			e.stopPropagation();
+		}
 		switch (e.key) {
 			case "ArrowDown":
 				e.preventDefault();
