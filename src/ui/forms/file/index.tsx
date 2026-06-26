@@ -58,10 +58,9 @@ export const FileInput = ({
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.currentTarget.files;
-		onFiles?.(files);
-		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
-		onChange?.(e);
 
+		// preview URL 생성 + ref 갱신을 onFiles/onChange 호출보다 먼저 — 부모가 onFiles 안에서
+		// 동기 unmount 해도 ref 가 새 URL 을 이미 담고 있어 unmount cleanup 이 정리할 수 있도록.
 		if (showPreview && files) {
 			for (const url of previewUrls) {
 				URL.revokeObjectURL(url);
@@ -84,6 +83,10 @@ export const FileInput = ({
 			setPreviewUrls([]);
 			previewUrlsRef.current = [];
 		}
+
+		onFiles?.(files);
+		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
+		onChange?.(e);
 	};
 
 	const handleRemove = (e: React.MouseEvent) => {

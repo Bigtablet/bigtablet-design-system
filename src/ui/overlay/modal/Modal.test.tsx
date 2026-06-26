@@ -75,7 +75,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.keyDown(document, { key: "Escape" });
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
