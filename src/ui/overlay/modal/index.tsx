@@ -138,10 +138,8 @@ export const Modal = ({
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
+			// Escape 는 document keydown 리스너가 단독 처리 (여기서도 onClose 하면 이중 호출됨)
 			onClick={() => closeOnOverlay && onClose?.()}
-			onKeyDown={(e) => {
-				if (e.key === "Escape") onClose?.();
-			}}
 		>
 			<animated.div
 				ref={panelRef}

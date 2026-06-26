@@ -8,15 +8,11 @@ import "./style.scss";
 type DatePickerMode = "year-month" | "year-month-day";
 type SelectableRange = "all" | "until-today";
 
-export interface DatePickerProps {
+interface DatePickerBaseProps {
 	/** 데이트 피커 위에 표시할 라벨 텍스트 */
 	label?: string;
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
 	value?: string;
-	/** 날짜 변경 콜백 (canonical). `mode` 값에 따라 "YYYY-MM" 또는 "YYYY-MM-DD" 형식의 문자열이 전달됩니다. */
-	onValueChange?: (value: string) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. */
-	onChange?: (value: string) => void;
 	/** 선택 모드 (기본값: "year-month-day") */
 	mode?: DatePickerMode;
 	/** 연도 선택 범위 시작 (기본값: 1950) */
@@ -53,6 +49,14 @@ export interface DatePickerProps {
 	 */
 	selectableRangeUntilTodaySrText?: string;
 }
+
+// DatePicker 는 controlled 전용(내부 value 상태 없음) → 콜백이 최소 하나는 필요.
+// canonical `onValueChange` 권장, 구 `onChange` 도 허용(@deprecated). 둘 중 하나는 필수.
+type DatePickerCallbacks =
+	| { onValueChange: (value: string) => void; onChange?: (value: string) => void }
+	| { onValueChange?: (value: string) => void; onChange: (value: string) => void };
+
+export type DatePickerProps = DatePickerBaseProps & DatePickerCallbacks;
 
 /** 숫자를 두 자리 문자열로 보정한다. */
 const pad = (n: number) => String(n).padStart(2, "0");
