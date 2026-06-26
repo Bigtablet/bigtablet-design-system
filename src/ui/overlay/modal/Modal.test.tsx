@@ -75,7 +75,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -151,7 +151,7 @@ describe("Modal", () => {
 				Content
 			</Modal>,
 		);
-		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
