@@ -1,9 +1,9 @@
 "use client";
 
 import { ChevronDown, Globe } from "lucide-react";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type NavBarVariant = "default" | "transparent" | "accent";
@@ -19,8 +19,10 @@ export interface NavBarLocaleConfig {
 	current: string;
 	/** 가능한 옵션 */
 	options: NavBarLocaleOption[];
-	/** locale 변경 콜백 */
-	onChange: (next: string) => void;
+	/** locale 변경 콜백 (canonical) */
+	onValueChange?: (next: string) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
+	onChange?: (next: string) => void;
 	/** 표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시 */
 	hideLabel?: boolean;
 }
@@ -89,7 +91,7 @@ export const NavBar = ({
 	const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = useState(false);
 
-	useLayoutEffect(() => {
+	useSafeLayoutEffect(() => {
 		const links = linksRef.current;
 		if (!links) return;
 
@@ -174,6 +176,7 @@ export const NavBar = ({
 const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	const [open, setOpen] = useState(false);
 	const wrapperRef = useRef<HTMLDivElement>(null);
+	const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 	const menuId = useId();
 
 	const currentOption = locale.options.find((o) => o.value === locale.current);
@@ -194,8 +197,61 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 		};
 	}, [open]);
 
+	// 열릴 때 첫 아이템 포커스 (WAI-ARIA menu button). 이미 메뉴 "아이템"에 포커스가 있을 때만
+	// 가로채지 않음 — trigger 포커스는 내부로 치지 않아 클릭으로 열 때 첫 항목 포커스를 보장.
+	useEffect(() => {
+		const active = document.activeElement;
+		// active 가 실제 메뉴 아이템일 때만 가로채지 않음 (null/trigger 는 첫 항목 포커스 진행).
+		if (!open || (active && itemRefs.current.includes(active as HTMLButtonElement))) return;
+		itemRefs.current[0]?.focus();
+	}, [open]);
+
+	// 화살표/Home/End roving 포커스 + Esc 닫고 trigger 복귀
+	const moveFocus = (dir: 1 | -1 | "first" | "last") => {
+		const n = locale.options.length;
+		if (n === 0) return;
+		if (dir === "first") return void itemRefs.current[0]?.focus();
+		if (dir === "last") return void itemRefs.current[n - 1]?.focus();
+		const pos = itemRefs.current.indexOf(document.activeElement as HTMLButtonElement | null);
+		const next = pos < 0 ? (dir === 1 ? 0 : n - 1) : (pos + dir + n) % n;
+		itemRefs.current[next]?.focus();
+	};
+
+	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+		// 내부에서 소비하는 키만 상위로 전파 차단. Tab 은 제외 — 부모 focus trap 이 감지해야 하므로 전파시킨다.
+		if (["ArrowDown", "ArrowUp", "Home", "End", "Escape"].includes(e.key)) {
+			e.stopPropagation();
+		}
+		switch (e.key) {
+			case "ArrowDown":
+				e.preventDefault();
+				moveFocus(1);
+				break;
+			case "ArrowUp":
+				e.preventDefault();
+				moveFocus(-1);
+				break;
+			case "Home":
+				e.preventDefault();
+				moveFocus("first");
+				break;
+			case "End":
+				e.preventDefault();
+				moveFocus("last");
+				break;
+			case "Escape":
+				e.preventDefault();
+				setOpen(false);
+				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
+				break;
+			case "Tab":
+				setOpen(false);
+				break;
+		}
+	};
+
 	const handleSelect = (value: string) => {
-		locale.onChange(value);
+		(locale.onValueChange ?? locale.onChange)?.(value);
 		setOpen(false);
 	};
 
@@ -218,12 +274,21 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				<ChevronDown size={14} aria-hidden="true" className="nav_bar_locale_chevron" />
 			</button>
 			{open && (
-				<ul id={menuId} role="menu" className="nav_bar_locale_menu">
-					{locale.options.map((opt) => (
+				<ul
+					id={menuId}
+					role="menu"
+					className="nav_bar_locale_menu"
+					onKeyDown={handleMenuKeyDown}
+				>
+					{locale.options.map((opt, index) => (
 						<li key={opt.value} role="none">
 							<button
+								ref={(el) => {
+									itemRefs.current[index] = el;
+								}}
 								type="button"
 								role="menuitem"
+								tabIndex={-1}
 								className={cn(
 									"nav_bar_locale_item",
 									opt.value === locale.current && "nav_bar_locale_item_active",

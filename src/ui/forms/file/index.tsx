@@ -49,16 +49,18 @@ export const FileInput = ({
 	const helperId = React.useId();
 	const inputRef = React.useRef<HTMLInputElement>(null);
 	const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
+	// 최신 objectURL 목록을 동기적으로 추적 — unmount(특히 onFiles 안에서 부모가 동기 unmount 하는
+	// 경우)에도 새로 만든 URL 까지 정리되도록 handleChange/handleRemove 에서 즉시 갱신.
+	const previewUrlsRef = React.useRef<string[]>([]);
 
 	const isPreviewVariant = variant === "preview";
 	const showPreview = isPreviewVariant || preview;
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.currentTarget.files;
-		onFiles?.(files);
-		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
-		onChange?.(e);
 
+		// preview URL 생성 + ref 갱신을 onFiles/onChange 호출보다 먼저 — 부모가 onFiles 안에서
+		// 동기 unmount 해도 ref 가 새 URL 을 이미 담고 있어 unmount cleanup 이 정리할 수 있도록.
 		if (showPreview && files) {
 			for (const url of previewUrls) {
 				URL.revokeObjectURL(url);
@@ -73,12 +75,18 @@ export const FileInput = ({
 				}
 			}
 			setPreviewUrls(urls);
+			previewUrlsRef.current = urls;
 		} else {
 			for (const url of previewUrls) {
 				URL.revokeObjectURL(url);
 			}
 			setPreviewUrls([]);
+			previewUrlsRef.current = [];
 		}
+
+		onFiles?.(files);
+		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
+		onChange?.(e);
 	};
 
 	const handleRemove = (e: React.MouseEvent) => {
@@ -88,20 +96,21 @@ export const FileInput = ({
 			URL.revokeObjectURL(url);
 		}
 		setPreviewUrls([]);
+		previewUrlsRef.current = [];
 		if (inputRef.current) {
 			inputRef.current.value = "";
 		}
 		onFiles?.(null);
 	};
 
-	// cleanup on unmount
+	// unmount 시 남은 objectURL 정리 (변경 시 revoke 는 handleChange/handleRemove 가 담당)
 	React.useEffect(() => {
 		return () => {
-			for (const url of previewUrls) {
+			for (const url of previewUrlsRef.current) {
 				URL.revokeObjectURL(url);
 			}
 		};
-	}, [previewUrls]);
+	}, []);
 
 	const hasImage = previewUrls.length > 0;
 	const rootClassName = cn(

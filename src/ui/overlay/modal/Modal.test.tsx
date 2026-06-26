@@ -75,7 +75,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.keyDown(document, { key: "Escape" });
+		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -143,4 +143,16 @@ describe("Modal", () => {
 		expect(document.body.style.overflow).toBe("hidden");
 		expect(document.body.dataset.openModals).toBe("1");
 	});
+
+	it("calls onClose once on Escape from inside the modal (no duplicate handler)", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose}>
+				Content
+			</Modal>,
+		);
+		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
+		expect(handleClose).toHaveBeenCalledTimes(1);
+	});
+
 });

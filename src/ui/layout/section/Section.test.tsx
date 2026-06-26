@@ -37,4 +37,11 @@ describe("Section", () => {
 		expect(container.querySelector("div")).toBeInTheDocument();
 		expect(container.querySelector("section")).not.toBeInTheDocument();
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLElement | null = null;
+		render(<Section ref={(el) => { node = el; }}>X</Section>);
+		expect(node).toBeInstanceOf(HTMLElement);
+	});
+
 });

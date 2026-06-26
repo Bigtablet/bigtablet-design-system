@@ -25,6 +25,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 	 * filled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash.
 	 */
 	danger?: boolean;
+	/** 루트 button 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -41,6 +43,8 @@ export const Button = ({
 	fullWidth = false,
 	radius,
 	danger = false,
+	type = "button",
+	ref,
 	className,
 	children,
 	...props
@@ -56,7 +60,7 @@ export const Button = ({
 	);
 
 	return (
-		<button className={buttonClassName} {...props}>
+		<button ref={ref} type={type} className={buttonClassName} {...props}>
 			{leadingIcon && (
 				<span className="button_icon" aria-hidden="true">
 					{leadingIcon}

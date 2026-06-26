@@ -83,16 +83,6 @@ export const Modal = ({
 		config: { tension: 280, friction: 28, clamp: !open },
 	});
 
-	const handleEscape = React.useEffectEvent((e: KeyboardEvent) => {
-		if (e.key === "Escape") onClose?.();
-	});
-
-	React.useEffect(() => {
-		if (!open) return;
-		document.addEventListener("keydown", handleEscape);
-		return () => document.removeEventListener("keydown", handleEscape);
-	}, [open]);
-
 	// 바디 스크롤 잠금(중첩 모달 지원)
 	React.useEffect(() => {
 		if (!open) return;
@@ -134,8 +124,14 @@ export const Modal = ({
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
+			// Escape 는 여기서 단독 처리 + stopPropagation — 중첩 모달에서 가장 안쪽만 닫히도록
+			// (document 전역 리스너로 처리하면 열린 모든 모달이 동시에 닫힘). panel onKeyDown 이
+			// Escape 는 막지 않으므로 focus 가 panel 안에 있어도 여기까지 버블됨.
 			onKeyDown={(e) => {
-				if (e.key === "Escape") onClose?.();
+				if (e.key === "Escape") {
+					e.stopPropagation();
+					onClose?.();
+				}
 			}}
 		>
 			<animated.div

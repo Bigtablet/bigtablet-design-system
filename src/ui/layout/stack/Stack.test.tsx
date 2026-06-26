@@ -49,4 +49,11 @@ describe("Stack", () => {
 		const { container } = render(<Stack as="ul" />);
 		expect(container.querySelector("ul")).toBeInTheDocument();
 	});
+
+	it("forwards ref to the root element", () => {
+		let node: HTMLElement | null = null;
+		render(<Stack ref={(el) => { node = el; }}>X</Stack>);
+		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
 });

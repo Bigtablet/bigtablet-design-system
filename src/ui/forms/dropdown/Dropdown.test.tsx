@@ -481,4 +481,13 @@ describe("Dropdown", () => {
 		// value="999" 는 옵션에 없음 - placeholder가 보여야 함
 		expect(screen.getByText("Select…")).toBeInTheDocument();
 	});
+
+	it("calls onValueChange (canonical) on select", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown options={options} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(screen.getByText("Option 1"));
+		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
+	});
+
 });

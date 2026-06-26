@@ -10,6 +10,8 @@ if [ ! -f "$SRC/token.scss" ]; then
   exit 1
 fi
 
+# 과거 도메인 폴더가 빈 채로 잔류하지 않도록 매 빌드마다 정리(결정적 출력)
+rm -rf "$OUT"
 mkdir -p "$OUT"
 cp "$SRC/token.scss" "$OUT/token.scss"
 

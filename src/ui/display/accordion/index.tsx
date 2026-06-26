@@ -21,7 +21,9 @@ export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement
 	defaultOpenKeys?: string[];
 	/** 제어형: 펼쳐진 키들 */
 	openKeys?: string[];
-	/** 펼침/접힘 콜백 */
+	/** 펼침/접힘 콜백 (canonical). 열린 키 배열 전달 */
+	onValueChange?: (openKeys: string[]) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
 	onChange?: (openKeys: string[]) => void;
 }
 
@@ -38,6 +40,7 @@ export const Accordion = ({
 	multiple = false,
 	defaultOpenKeys = [],
 	openKeys: controlledKeys,
+	onValueChange,
 	onChange,
 	className,
 	...props
@@ -54,7 +57,7 @@ export const Accordion = ({
 				? [...open, key]
 				: [key];
 		if (!isControlled) setInternalKeys(next);
-		onChange?.(next);
+		(onValueChange ?? onChange)?.(next);
 	};
 
 	return (
@@ -89,6 +92,8 @@ export const Accordion = ({
 							role="region"
 							aria-labelledby={headerId}
 							aria-hidden={!isOpen}
+							// 닫힌 패널은 grid 애니메이션이라 display:none 이 아님 → inert 로 내부 포커스 차단 (WCAG 4.1.2)
+							inert={!isOpen}
 							className={cn("accordion_panel", isOpen && "accordion_panel_open")}
 						>
 							<div className="accordion_panel_wrap">

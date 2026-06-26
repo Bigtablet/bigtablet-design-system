@@ -57,11 +57,6 @@ function readStored(key: string | null): ThemeMode | null {
 	return null;
 }
 
-function resolveSystem(): ResolvedTheme {
-	if (!isClient) return "light";
-	return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
 /**
  * Bigtablet DS 테마 컨텍스트를 제공한다.
  * `data-theme` attribute를 root element에 적용해서 CSS 변수 레이어를 전환한다.
@@ -79,14 +74,23 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 	targetSelector,
 	children,
 }) => {
-	const [mode, setModeState] = React.useState<ThemeMode>(() => {
-		return readStored(storageKey) ?? defaultMode;
-	});
+	// SSR/CSR 첫 렌더를 deterministic 하게 — server 와 동일한 기본값으로 시작해 hydration mismatch 방지.
+	// 저장된 mode / 시스템 다크 설정은 mount 후 effect 에서 1회 동기화한다.
+	// (테마 깜빡임을 완전히 없애려면 hydration 전에 inline <script> 로 document.documentElement 의
+	//  data-theme 를 직접 세팅하는 것을 권장 — next-themes 와 동일한 패턴)
+	const [mode, setModeState] = React.useState<ThemeMode>(defaultMode);
+	const [systemDark, setSystemDark] = React.useState<boolean>(false);
 
-	const [systemDark, setSystemDark] = React.useState<boolean>(() => {
-		if (!isClient) return false;
-		return window.matchMedia("(prefers-color-scheme: dark)").matches;
-	});
+	// mount 후 저장값 + 시스템 설정 동기화 (storageKey 변경 시에만 재실행 — body 는 storageKey 외
+	// 모듈 상수/안정 setter 만 참조하므로 deps 완전)
+	React.useEffect(() => {
+		// storageKey 가 바뀌면 새 키의 저장값으로 동기화. 저장값이 없으면 defaultMode 로 리셋
+		// (이전 키의 테마가 남지 않도록).
+		setModeState(readStored(storageKey) ?? defaultMode);
+		if (isClient) {
+			setSystemDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+		}
+	}, [storageKey, defaultMode]);
 
 	// prefers-color-scheme 변경 감지
 	React.useEffect(() => {

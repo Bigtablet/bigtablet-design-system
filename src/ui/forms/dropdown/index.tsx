@@ -42,7 +42,9 @@ export interface DropdownProps {
 	options: DropdownOption[];
 	/** 제어형 선택 값 */
 	value?: string | null;
-	/** 값 변경 시 호출되는 콜백. 선택된 값과 전체 옵션 객체를 인자로 전달합니다. */
+	/** 값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다. */
+	onValueChange?: (value: string | null, option?: DropdownOption | null) => void;
+	/** @deprecated `onValueChange` 를 사용하세요. */
 	onChange?: (value: string | null, option?: DropdownOption | null) => void;
 	/** 비제어형 초기 선택 값 */
 	defaultValue?: string | null;
@@ -78,6 +80,7 @@ export const Dropdown = ({
 	placeholder = "Select…",
 	options,
 	value,
+	onValueChange,
 	onChange,
 	defaultValue = null,
 	disabled,
@@ -109,9 +112,9 @@ export const Dropdown = ({
 		(next: string | null) => {
 			const option = options.find((o) => o.value === next) ?? null;
 			if (!isControlled) setInternalValue(next);
-			onChange?.(next, option);
+			(onValueChange ?? onChange)?.(next, option);
 		},
-		[isControlled, onChange, options],
+		[isControlled, onValueChange, onChange, options],
 	);
 
 	useEffect(() => {

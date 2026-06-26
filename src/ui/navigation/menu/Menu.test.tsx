@@ -305,4 +305,137 @@ describe("Menu", () => {
 		unmount();
 		expect(() => fireEvent.keyDown(document, { key: "Escape" })).not.toThrow();
 	});
+
+	it("focuses first enabled item when opened (APG menu button)", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B" },
+				]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		expect(screen.getAllByRole("menuitem")[0]).toHaveFocus();
+	});
+
+	it("moves focus with ArrowDown / ArrowUp (wraps)", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B" },
+				]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const menu = screen.getByRole("menu");
+		const items = screen.getAllByRole("menuitem");
+		fireEvent.keyDown(menu, { key: "ArrowDown" });
+		expect(items[1]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "ArrowDown" });
+		expect(items[0]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "ArrowUp" });
+		expect(items[1]).toHaveFocus();
+	});
+
+	it("Home / End jump to first / last item", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B" },
+					{ key: "c", label: "C" },
+				]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const menu = screen.getByRole("menu");
+		const items = screen.getAllByRole("menuitem");
+		fireEvent.keyDown(menu, { key: "End" });
+		expect(items[2]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "Home" });
+		expect(items[0]).toHaveFocus();
+	});
+
+	it("skips disabled items during arrow navigation", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B", disabled: true },
+					{ key: "c", label: "C" },
+				]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const menu = screen.getByRole("menu");
+		const items = screen.getAllByRole("menuitem");
+		expect(items[0]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "ArrowDown" });
+		expect(items[2]).toHaveFocus();
+	});
+
+	it("Escape closes and returns focus to the trigger", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[{ key: "a", label: "A" }]}
+			/>,
+		);
+		const trigger = screen.getByRole("button", { name: "Open" });
+		fireEvent.click(trigger);
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" });
+		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+		expect(trigger).toHaveFocus();
+	});
+
+
+	it("does not bubble handled keys to parent (stopPropagation)", () => {
+		const parentKeyDown = vi.fn();
+		render(
+			<div onKeyDown={parentKeyDown}>
+				<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />
+			</div>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "ArrowDown" });
+		expect(parentKeyDown).not.toHaveBeenCalled();
+	});
+
+
+	it("lets Tab bubble to parent (focus-trap compatibility)", () => {
+		const parentKeyDown = vi.fn();
+		render(
+			<div onKeyDown={parentKeyDown}>
+				<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />
+			</div>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "Tab" });
+		expect(parentKeyDown).toHaveBeenCalled();
+	});
+
+
+	it("focuses first item even when the trigger had focus before opening", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B" },
+				]}
+			/>,
+		);
+		const trigger = screen.getByRole("button", { name: "Open" });
+		trigger.focus();
+		expect(trigger).toHaveFocus();
+		fireEvent.click(trigger);
+		expect(screen.getAllByRole("menuitem")[0]).toHaveFocus();
+	});
+
 });

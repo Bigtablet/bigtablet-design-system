@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.3.0) - 2026-06-25
+
+- `ref` 전달(React 19 ref-as-prop) 지원 — Button · IconButton · Card · Container · Stack · Grid · Section
+- 변경 콜백 네이밍을 Radix식 `on*Change` 패밀리로 통일 (`onValueChange` / `onCheckedChange` / `onPageChange`) — 기존 prop 은 `@deprecated` alias 로 호환 유지
+- 접근성: Menu · NavBar 화살표키 네비게이션(WAI-ARIA APG), Tooltip `aria-describedby` 합성, ThemeProvider SSR hydration mismatch 수정
+- Chip tone · 통계 카드 트렌드 WCAG AA(4.5:1) 대비 충족, Storybook 에 테마 CSS 변수 로드(Divider 등 표시 수정)
+- TS 컬러 토큰을 AA 값으로 SCSS 와 동기화, `next` peer 범위를 `>=15`(React 19 호환)로 정정
+- FileInput objectURL 정리 안정화, Modal Escape 핸들러 React 19 전 버전 호환
+- undici dev 의존성 보안 패치 (`>=7.28.0`, 경보 6건 해소)
+
 ## [3.2.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.2.2) - 2026-06-18
 
 - caption 텍스트 색을 WCAG AA(4.5:1) 충족값으로 조정하고, axe `color-contrast` 검사를 재활성화해 전 컴포넌트 대비를 CI 가 가드
@@ -51,6 +61,7 @@
 - react-spring 기반 진입/퇴출 애니메이션 — Modal, Toast, Tooltip, Menu 적용
 - Vanilla JS 패키지 완성 — Thymeleaf/JSP/PHP 환경 지원
 - `useSpringPresence` hook 공개 — 커스텀 overlay 애니메이션 지원
+- 추가 컴포넌트: Accordion · Table · Breadcrumb · EmptyState + 레이아웃 프리미티브(Container · Stack · Grid · Section)
 
 ## [2.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.5.0) - 2026-05-18
 
@@ -145,6 +156,7 @@
 
 - GitHub Pages Storybook 배포 — 클라이언트 사이드 비밀번호 보호 적용
 - Chip `aria-expanded` 및 TextField clear button 접근성 개선
+- `IconButton` 컴포넌트 추가
 
 ## [1.24.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.24.2) - 2026-04-08
 

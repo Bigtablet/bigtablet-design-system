@@ -32,6 +32,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	footer?: React.ReactNode;
 	/** footer 정렬 (기본값: "end") */
 	footerAlign?: CardFooterAlign;
+	/** 루트 div 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -50,6 +52,7 @@ export const Card = ({
 	interactive = false,
 	footer,
 	footerAlign = "end",
+	ref,
 	className,
 	children,
 	...props
@@ -64,7 +67,7 @@ export const Card = ({
 	);
 
 	return (
-		<div className={cardClassName} {...props}>
+		<div ref={ref} className={cardClassName} {...props}>
 			{heading ? <HeadingTag className="card_title">{heading}</HeadingTag> : null}
 			<div className="card_body">{children}</div>
 			{footer ? (
