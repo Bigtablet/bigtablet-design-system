@@ -4,20 +4,23 @@ import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
-export interface PaginationProps {
+interface PaginationBaseProps {
 	/** 현재 페이지 번호 (1-based) */
 	page: number;
 	/** 전체 페이지 수 */
 	totalPages: number;
-	/** 페이지 변경 콜백 (canonical) */
-	onPageChange?: (page: number) => void;
-	/** @deprecated `onPageChange` 를 사용하세요. */
-	onChange?: (page: number) => void;
 	/** 이전 페이지 버튼 aria-label (기본값: "Previous page") */
 	prevLabel?: string;
 	/** 다음 페이지 버튼 aria-label (기본값: "Next page") */
 	nextLabel?: string;
 }
+
+// Pagination 은 controlled 전용 → 콜백 최소 하나 필수. canonical `onPageChange` 권장, 구 `onChange` 허용(@deprecated).
+type PaginationCallbacks =
+	| { onPageChange: (page: number) => void; onChange?: (page: number) => void }
+	| { onPageChange?: (page: number) => void; onChange: (page: number) => void };
+
+export type PaginationProps = PaginationBaseProps & PaginationCallbacks;
 
 /**
  * 시작-끝 범위의 숫자 배열을 만든다.

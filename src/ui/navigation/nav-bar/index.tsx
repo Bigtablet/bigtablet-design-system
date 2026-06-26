@@ -197,9 +197,12 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 		};
 	}, [open]);
 
-	// 열릴 때 첫 아이템 포커스 (WAI-ARIA menu button). 이미 내부 포커스면 가로채지 않음.
+	// 열릴 때 첫 아이템 포커스 (WAI-ARIA menu button). 이미 메뉴 "아이템"에 포커스가 있을 때만
+	// 가로채지 않음 — trigger 포커스는 내부로 치지 않아 클릭으로 열 때 첫 항목 포커스를 보장.
 	useEffect(() => {
-		if (!open || wrapperRef.current?.contains(document.activeElement)) return;
+		const active = document.activeElement;
+		// active 가 실제 메뉴 아이템일 때만 가로채지 않음 (null/trigger 는 첫 항목 포커스 진행).
+		if (!open || (active && itemRefs.current.includes(active as HTMLButtonElement))) return;
 		itemRefs.current[0]?.focus();
 	}, [open]);
 

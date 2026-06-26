@@ -420,4 +420,22 @@ describe("Menu", () => {
 		expect(parentKeyDown).toHaveBeenCalled();
 	});
 
+
+	it("focuses first item even when the trigger had focus before opening", () => {
+		render(
+			<Menu
+				trigger={<button type="button">Open</button>}
+				items={[
+					{ key: "a", label: "A" },
+					{ key: "b", label: "B" },
+				]}
+			/>,
+		);
+		const trigger = screen.getByRole("button", { name: "Open" });
+		trigger.focus();
+		expect(trigger).toHaveFocus();
+		fireEvent.click(trigger);
+		expect(screen.getAllByRole("menuitem")[0]).toHaveFocus();
+	});
+
 });

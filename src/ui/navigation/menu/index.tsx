@@ -64,10 +64,14 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 		};
 	}, [open]);
 
-	// 열릴 때 첫 활성 아이템에 포커스 (WAI-ARIA menu button 패턴). 이미 메뉴 내부에 포커스가
-	// 있으면(사용자 네비 중·items 재생성 re-run) 가로채지 않음.
+	// 열릴 때 첫 활성 아이템에 포커스 (WAI-ARIA menu button 패턴). 이미 메뉴 "아이템"에 포커스가
+	// 있으면(사용자 네비 중·items 재생성 re-run) 가로채지 않음 — trigger 포커스는 내부로 치지 않아
+	// 트리거 클릭으로 열 때 첫 항목 포커스를 보장한다.
 	React.useEffect(() => {
-		if (!open || wrapperRef.current?.contains(document.activeElement)) return;
+		const active = document.activeElement;
+		// active 가 실제 메뉴 아이템일 때만 가로채지 않음. null/trigger 는 첫 항목 포커스를 진행
+		// (itemRefs 에 null 이 섞여 있어도 includes(null) 오탐이 나지 않도록 active truthy 체크).
+		if (!open || (active && itemRefs.current.includes(active as HTMLButtonElement))) return;
 		const first = items.findIndex((it) => !it.disabled);
 		if (first >= 0) itemRefs.current[first]?.focus();
 	}, [open, items]);

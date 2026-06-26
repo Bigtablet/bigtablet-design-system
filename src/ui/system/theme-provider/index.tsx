@@ -84,12 +84,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 	// mount 후 저장값 + 시스템 설정 동기화 (storageKey 변경 시에만 재실행 — body 는 storageKey 외
 	// 모듈 상수/안정 setter 만 참조하므로 deps 완전)
 	React.useEffect(() => {
-		const stored = readStored(storageKey);
-		if (stored) setModeState(stored);
+		// storageKey 가 바뀌면 새 키의 저장값으로 동기화. 저장값이 없으면 defaultMode 로 리셋
+		// (이전 키의 테마가 남지 않도록).
+		setModeState(readStored(storageKey) ?? defaultMode);
 		if (isClient) {
 			setSystemDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
 		}
-	}, [storageKey]);
+	}, [storageKey, defaultMode]);
 
 	// prefers-color-scheme 변경 감지
 	React.useEffect(() => {
