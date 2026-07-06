@@ -550,9 +550,9 @@ label/domain
 - 주요 업데이트 불릿만 — 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
 - 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
 
-**GitHub Release 노트는 조직 공통 양식 필수** — 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG 의 해당 버전 주요 업데이트 를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (저장소명 = `Bigtablet Design System Web`, `##` 제목과 `####` 사이 빈 줄 없음):
+**GitHub Release 노트는 조직 공통 양식 필수** — 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG 의 해당 버전 주요 업데이트 를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (제목 = `Design System of Bigtablet, Inc.`, `##` 제목과 `####` 사이 빈 줄 없음):
 ```
-## Bigtablet Design System Web
+## Design System of Bigtablet, Inc.
 #### 주요 업데이트
 - 핵심 변경 1
 - 핵심 변경 2

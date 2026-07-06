@@ -54,5 +54,5 @@ jobs:
             f { print }
           ' CHANGELOG.md)
           [ -z "$(printf '%s' "$NOTES" | tr -d '[:space:]')" ] && NOTES="- 자세한 변경은 CHANGELOG.md 참고"
-          BODY=$(printf '## Bigtablet Design System Web\n#### 주요 업데이트\n%s' "$NOTES")
+          BODY=$(printf '## Design System of Bigtablet, Inc.\n#### 주요 업데이트\n%s' "$NOTES")
           gh release create "$TAG" --title "$TAG" --notes "$BODY"
