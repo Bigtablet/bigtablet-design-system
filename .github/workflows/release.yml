@@ -46,7 +46,7 @@ jobs:
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           VERSION=${TAG#v}
-          # CHANGELOG.md 의 해당 버전 Key Updates 를 릴리즈 노트로 사용 (Bigtablet 양식 SSOT).
+          # CHANGELOG.md 의 해당 버전 주요 업데이트 를 릴리즈 노트로 사용 (조직 공통 양식 SSOT, 한글).
           # --generate-notes 자동 PR 목록은 양식에 안 맞아 사용하지 않는다.
           NOTES=$(awk -v v="$VERSION" '
             index($0, "## [" v "]") == 1 { f=1; next }
@@ -54,5 +54,5 @@ jobs:
             f { print }
           ' CHANGELOG.md)
           [ -z "$(printf '%s' "$NOTES" | tr -d '[:space:]')" ] && NOTES="- 자세한 변경은 CHANGELOG.md 참고"
-          BODY=$(printf '## Design System of Bigtablet, Inc.\n\n#### Key Updates\n%s' "$NOTES")
+          BODY=$(printf '## Design System of Bigtablet, Inc.\n#### 주요 업데이트\n%s' "$NOTES")
           gh release create "$TAG" --title "$TAG" --notes "$BODY"
