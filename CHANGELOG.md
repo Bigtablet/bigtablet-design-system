@@ -6,8 +6,8 @@
 
 ## [3.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.3.0) - 2026-06-25
 
-- `ref` 전달(React 19 ref-as-prop) 지원 — Button · IconButton · Card · Container · Stack · Grid · Section
-- 변경 콜백 네이밍을 Radix식 `on*Change` 패밀리로 통일 (`onValueChange` / `onCheckedChange` / `onPageChange`) — 기존 prop 은 `@deprecated` alias 로 호환 유지
+- `ref` 전달(React 19 ref-as-prop) 지원 - Button · IconButton · Card · Container · Stack · Grid · Section
+- 변경 콜백 네이밍을 Radix식 `on*Change` 패밀리로 통일 (`onValueChange` / `onCheckedChange` / `onPageChange`) - 기존 prop 은 `@deprecated` alias 로 호환 유지
 - 접근성: Menu · NavBar 화살표키 네비게이션(WAI-ARIA APG), Tooltip `aria-describedby` 합성, ThemeProvider SSR hydration mismatch 수정
 - Chip tone · 통계 카드 트렌드 WCAG AA(4.5:1) 대비 충족, Storybook 에 테마 CSS 변수 로드(Divider 등 표시 수정)
 - TS 컬러 토큰을 AA 값으로 SCSS 와 동기화, `next` peer 범위를 `>=15`(React 19 호환)로 정정
@@ -17,50 +17,50 @@
 ## [3.2.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.2.2) - 2026-06-18
 
 - caption 텍스트 색을 WCAG AA(4.5:1) 충족값으로 조정하고, axe `color-contrast` 검사를 재활성화해 전 컴포넌트 대비를 CI 가 가드
-- `prefers-reduced-motion` 대응 확대 — spring 훅(Modal/Toast/Dropdown/Menu/Tooltip/Popover) + CSS 모션 컴포넌트(button/checkbox/radio/toggle/tabs/sidebar/skeleton 등), 커버 7→20개
+- `prefers-reduced-motion` 대응 확대 - spring 훅(Modal/Toast/Dropdown/Menu/Tooltip/Popover) + CSS 모션 컴포넌트(button/checkbox/radio/toggle/tabs/sidebar/skeleton 등), 커버 7→20개
 - 커밋 컨벤션에 `refactor` 라벨 추가, 미사용 changeset 설정 정리
 
 ## [3.2.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.2.1) - 2026-06-17
 
-- 라이트/다크 테마 CSS custom property 를 `theme.scss` 로 분리 — `scss/token` 을 `@use` 하는 소비자에게 테마가 강제 주입되거나 CSS Modules pure-selector 검사가 깨지던 문제 수정
+- 라이트/다크 테마 CSS custom property 를 `theme.scss` 로 분리 - `scss/token` 을 `@use` 하는 소비자에게 테마가 강제 주입되거나 CSS Modules pure-selector 검사가 깨지던 문제 수정
 - 컴포넌트 사용 시 `@bigtablet/design-system/style.css` 가 테마 변수를 제공 (단일 번들 포함)
 - dark 테마 속성 중복을 mixin 으로 정리 (출력 CSS 동일)
 
 ## [3.2.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.2.0) - 2026-06-16
 
-- `RadioGroup` 신규 컴포넌트 — Context 기반 합성 래퍼, name/value/onChange 중앙 관리
-- `Popover` 신규 컴포넌트 — 클릭 트리거 non-modal 패널, placement 4방향, spring 애니메이션
-- `Textarea` 신규 컴포넌트 — auto-grow, 글자 카운터, 한글 IME 정책
-- `ErrorState` 신규 컴포넌트 — error boundary / widget fallback, variant page/widget
-- Card variant 확장 — glass(frosted+blur), outlined(투명+테두리), interactive hover-lift, footer 슬롯
+- `RadioGroup` 신규 컴포넌트 - Context 기반 합성 래퍼, name/value/onChange 중앙 관리
+- `Popover` 신규 컴포넌트 - 클릭 트리거 non-modal 패널, placement 4방향, spring 애니메이션
+- `Textarea` 신규 컴포넌트 - auto-grow, 글자 카운터, 한글 IME 정책
+- `ErrorState` 신규 컴포넌트 - error boundary / widget fallback, variant page/widget
+- Card variant 확장 - glass(frosted+blur), outlined(투명+테두리), interactive hover-lift, footer 슬롯
 - ListItem 텍스트 슬롯 string → ReactNode 확장 (하위호환)
 - 다크모드 표면 색상 navy → 순수 중성 그레이 전환
 - status 색상 WCAG AA 통과 hex + container/on-container/on-surface 토큰 신설
-- Badge `appearance` prop — solid/soft 지원
+- Badge `appearance` prop - solid/soft 지원
 - Stylelint `color-no-hex` CI 게이트 도입
 - semantic-release → 태그 기반 배포 전환
 - 보안 취약점 6건 수정 (vite, esbuild, @vitest/browser, js-yaml)
 
 ## [3.1.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.1.1) - 2026-05-26
 
-- npm v11+ 업그레이드 — OIDC Trusted Publisher 방식 npm 배포 정상화
+- npm v11+ 업그레이드 - OIDC Trusted Publisher 방식 npm 배포 정상화
 - release workflow에 `npm install -g npm@latest` step 추가
 
 ## [3.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.1.0) - 2026-05-26
 
-- `BottomNav` 신규 컴포넌트 — iOS safe-area 대응, 2–5 항목 균등 분할, `BottomNavSpacer` helper
-- `Sidebar` 자동 반응형 변신 — `mode="auto"` 시 600px 미만에서 하단 bar로 전환 (CSS-only, SSR 안전)
-- `SidebarItem` + `BottomNavItem` discriminated union 타입 전환 — as="a"/"button" 조합 컴파일 에러 차단
-- `docs/AGENT_GUIDE.md` 신규 — AI 코딩 에이전트용 영문 레퍼런스
+- `BottomNav` 신규 컴포넌트 - iOS safe-area 대응, 2-5 항목 균등 분할, `BottomNavSpacer` helper
+- `Sidebar` 자동 반응형 변신 - `mode="auto"` 시 600px 미만에서 하단 bar로 전환 (CSS-only, SSR 안전)
+- `SidebarItem` + `BottomNavItem` discriminated union 타입 전환 - as="a"/"button" 조합 컴파일 에러 차단
+- `docs/AGENT_GUIDE.md` 신규 - AI 코딩 에이전트용 영문 레퍼런스
 
 ## [3.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.0.0) - 2026-05-26
 
-- 다크 모드 풀 지원 — `ThemeProvider` + `useTheme` hook, CSS custom properties 자동 swap
-- Navy accent 팔레트 전면 도입 — `color_accent_*` 토큰 체계
+- 다크 모드 풀 지원 - `ThemeProvider` + `useTheme` hook, CSS custom properties 자동 swap
+- Navy accent 팔레트 전면 도입 - `color_accent_*` 토큰 체계
 - 15+ 신규 컴포넌트: Modal, Toast, Tooltip, Menu, Dropdown, MediaCard, Hero, NavBar, Tabs, LinearProgress, FAB, FileInput, DatePicker, Pagination, Chip
-- react-spring 기반 진입/퇴출 애니메이션 — Modal, Toast, Tooltip, Menu 적용
-- Vanilla JS 패키지 완성 — Thymeleaf/JSP/PHP 환경 지원
-- `useSpringPresence` hook 공개 — 커스텀 overlay 애니메이션 지원
+- react-spring 기반 진입/퇴출 애니메이션 - Modal, Toast, Tooltip, Menu 적용
+- Vanilla JS 패키지 완성 - Thymeleaf/JSP/PHP 환경 지원
+- `useSpringPresence` hook 공개 - 커스텀 overlay 애니메이션 지원
 - 추가 컴포넌트: Accordion · Table · Breadcrumb · EmptyState + 레이아웃 프리미티브(Container · Stack · Grid · Section)
 
 ## [2.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.5.0) - 2026-05-18
@@ -83,7 +83,7 @@
 
 ## [2.4.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.4.2) - 2026-05-06
 
-- Vanilla 예제 파일 함수명 복원 — lint auto-fix가 잘못 변경한 function 이름 수정
+- Vanilla 예제 파일 함수명 복원 - lint auto-fix가 잘못 변경한 function 이름 수정
 - 코드 품질 lint 에러 정리
 
 ## [2.4.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.4.1) - 2026-05-04
@@ -93,7 +93,7 @@
 
 ## [2.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.4.0) - 2026-04-28
 
-- `Dropdown` 신규 컴포넌트 — Figma 스펙 기반 완전 재설계, 옵션 그룹핑/검색/다중 선택 지원
+- `Dropdown` 신규 컴포넌트 - Figma 스펙 기반 완전 재설계, 옵션 그룹핑/검색/다중 선택 지원
 - `Select` 컴포넌트 deprecated (Dropdown으로 대체)
 - 키보드 네비게이션, aria-* 완전 지원
 - TypeScript 6.0.3 업그레이드
@@ -112,12 +112,12 @@
 
 - Select label floating 스타일로 재설계, TextField와 높이 통일
 - TextField `size` prop 추가 (sm/md/lg)
-- OtpInput paste handler 개선 — 전체 입력에 적용, 첫 번째 빈 칸으로 포커스 이동
+- OtpInput paste handler 개선 - 전체 입력에 적용, 첫 번째 빈 칸으로 포커스 이동
 - OtpInput disabled 상태 opacity 제거, 텍스트 색상 토큰으로 처리
 
 ## [2.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.1.0) - 2026-04-16
 
-- `OtpInput` 신규 컴포넌트 — n자리 OTP 박스형 입력, 자동 포커스 이동, paste 지원
+- `OtpInput` 신규 컴포넌트 - n자리 OTP 박스형 입력, 자동 포커스 이동, paste 지원
 
 ## [2.0.7](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.0.7) - 2026-04-15
 
@@ -140,7 +140,7 @@
 ## [2.0.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.0.3) - 2026-04-10
 
 - Chip active/pressed 상태 이중 state layer 중복 제거
-- Chip hover zone 리팩토링 — trailing 아이콘 circular hover 통일
+- Chip hover zone 리팩토링 - trailing 아이콘 circular hover 통일
 
 ## [2.0.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.0.2) - 2026-04-10
 
@@ -154,7 +154,7 @@
 
 ## [2.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v2.0.0) - 2026-04-10
 
-- GitHub Pages Storybook 배포 — 클라이언트 사이드 비밀번호 보호 적용
+- GitHub Pages Storybook 배포 - 클라이언트 사이드 비밀번호 보호 적용
 - Chip `aria-expanded` 및 TextField clear button 접근성 개선
 - `IconButton` 컴포넌트 추가
 
@@ -174,7 +174,7 @@
 
 ## [1.23.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.23.0) - 2026-04-01
 
-- Vanilla Alert / Pagination HTML injection XSS 취약점 수정 — HTML escape 처리
+- Vanilla Alert / Pagination HTML injection XSS 취약점 수정 - HTML escape 처리
 - 주요 의존성 업그레이드
 
 ## [1.22.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.22.2) - 2026-03-31
@@ -183,7 +183,7 @@
 
 ## [1.22.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.22.1) - 2026-03-23
 
-- `next`를 optional peerDependency로 설정 — 중복 React 인스턴스 방지
+- `next`를 optional peerDependency로 설정 - 중복 React 인스턴스 방지
 
 ## [1.22.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.22.0) - 2026-03-17
 
@@ -207,7 +207,7 @@
 
 ## [1.20.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.20.0) - 2026-03-12
 
-- Size limit 설정 추가 — bundle 크기 CI 게이트
+- Size limit 설정 추가 - bundle 크기 CI 게이트
 - 보안 취약점 수정
 
 ## [1.19.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.19.4) - 2026-03-09
@@ -222,7 +222,7 @@
 
 ## [1.19.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.19.2) - 2026-03-05
 
-- Storybook 10.1.11 다운그레이드 — Chromatic 빌드 오류 수정
+- Storybook 10.1.11 다운그레이드 - Chromatic 빌드 오류 수정
 
 ## [1.19.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.19.1) - 2026-03-03
 
@@ -230,7 +230,7 @@
 
 ## [1.19.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.19.0) - 2026-02-27
 
-- 접근성 개선 — Gemini 리뷰 피드백 반영
+- 접근성 개선 - Gemini 리뷰 피드백 반영
 - 단위 테스트 커버리지 강화
 
 ## [1.18.9](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.18.9) - 2026-02-26
@@ -280,7 +280,7 @@
 
 ## [1.17.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.17.4) - 2026-01-26
 
-- npm 패키지 크기 최적화 — 비압축 파일 배포 제외
+- npm 패키지 크기 최적화 - 비압축 파일 배포 제외
 
 ## [1.17.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.17.3) - 2026-01-26
 
@@ -296,7 +296,7 @@
 
 ## [1.17.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.17.0) - 2026-01-26
 
-- Vanilla JS 패키지 초기 릴리즈 — Thymeleaf/JSP/PHP 등 non-React 환경 지원
+- Vanilla JS 패키지 초기 릴리즈 - Thymeleaf/JSP/PHP 등 non-React 환경 지원
 - Vanilla JS 문서 추가
 
 ## [1.16.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.16.2) - 2026-01-26
@@ -309,7 +309,7 @@
 
 ## [1.16.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.16.0) - 2026-01-26
 
-- Select 자동 flip 드롭다운 추가 — 화면 하단 여백 부족 시 위로 열림
+- Select 자동 flip 드롭다운 추가 - 화면 하단 여백 부족 시 위로 열림
 
 ## [1.15.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.15.0) - 2026-01-23
 
@@ -502,4 +502,4 @@
 
 ## [1.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v1.0.0) - 2025-11-06
 
-- 초기 릴리즈 — Button, TextField, Checkbox, Radio, Toggle, Select, Modal, Toast, Card, Chip, Avatar, Badge, Divider, Icon, Pagination, DatePicker, FileInput, Spinner 등 기본 컴포넌트 제공
+- 초기 릴리즈 - Button, TextField, Checkbox, Radio, Toggle, Select, Modal, Toast, Card, Chip, Avatar, Badge, Divider, Icon, Pagination, DatePicker, FileInput, Spinner 등 기본 컴포넌트 제공
