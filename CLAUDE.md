@@ -4,7 +4,7 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 
 ## Project Overview
 
-- **Package**: `@bigtablet/design-system` (v1.15.0)
+- **Package**: `@bigtablet/design-system` (버전은 `package.json` 참조)
 - **Type**: React 19 component library with TypeScript + Vanilla JS
 - **Package Manager**: pnpm@10.20.0 (enforced)
 - **Exports** (`package.json` `exports`):
@@ -26,9 +26,9 @@ pnpm test:storybook # Run a11y tests via Storybook + Playwright
 
 ```
 src/
-├── index.ts             # 진입점 (React/Next.js 공용 — 빌드 시 "use client" 자동 주입)
+├── index.ts             # 진입점 (React/Next.js 공용 - 빌드 시 "use client" 자동 주입)
 ├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
-│   ├── token.scss       # SCSS barrel (@forward all domains) — 소비자 @use 진입점
+│   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
 │   ├── tokens.json      # Designer JSON tokens
 │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
 │   ├── global.css
@@ -101,6 +101,7 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 - `z-index/` - Layer priorities
 - `breakpoints/` - Responsive breakpoints
 - `a11y/` - Accessibility (focus rings, tap targets)
+- `icon/` - Icon sizes (xs 14px - xl 32px, lucide-react `size` prop)
 
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`
@@ -223,6 +224,8 @@ return <animated.div style={style}>...</animated.div>;
 |----------|-------------|
 | [README.md](./README.md) | 프로젝트 개요 및 빠른 시작 |
 | [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 API 및 사용법 |
+| [docs/MIGRATION.md](./docs/MIGRATION.md) | deprecated prop 마이그레이션 가이드 |
+| [docs/THEMING.md](./docs/THEMING.md) | 라이트/다크 테마 시스템 가이드 |
 | [docs/VANILLA.md](./docs/VANILLA.md) | HTML/CSS/JS 환경 가이드 |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | 프로젝트 구조 및 아키텍처 |
 | [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 기여 가이드라인 |
@@ -532,32 +535,32 @@ label/domain
 - 병합 전 반드시 코드 리뷰어 approve 필요
 
 ### Release & Changelog
-**태그 기반 배포** — semantic-release / changeset 미사용. 절차:
+**태그 기반 배포** - semantic-release / changeset 미사용. 절차:
 
 1. **dev→main 릴리즈 PR(`merge: release`)에 아래 둘을 반드시 함께 포함** (별도 커밋으로 미루지 말 것):
-   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports` 의 모든 표면 — React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
+   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
 2. 리뷰어 approve 후 머지.
 3. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 4. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
 
-**CHANGELOG.md 양식** — 릴리즈 노트와 동일한 Key Updates 를 미러링:
-```
+**CHANGELOG.md 양식** - 릴리즈 노트와 동일한 주요 업데이트를 미러링:
+```text
 ## [X.Y.Z](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/vX.Y.Z) - YYYY-MM-DD
 - 핵심 변경 1
 - 핵심 변경 2
 ```
-- Key Updates 불릿만 — 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
+- 주요 업데이트 불릿만 - 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
 - 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
 
-**GitHub Release 노트는 Bigtablet 양식 필수** (title = 버전명만, 예: `v3.2.2`) — CHANGELOG 의 해당 버전 Key Updates 를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체:
-```
+**GitHub Release 노트는 조직 공통 양식 필수** - 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG의 해당 버전 주요 업데이트를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (제목 = `Design System of Bigtablet, Inc.`, `##` 제목과 `####` 사이 빈 줄 없음):
+```text
 ## Design System of Bigtablet, Inc.
-
-#### Key Updates
+#### 주요 업데이트
 - 핵심 변경 1
 - 핵심 변경 2
 ```
+> 태그/버전 규칙은 조직 [버저닝 원칙](https://app.notion.com/p/Version-Convention-25eef4b5605c805aa8a6fc929b5ec848?pvs=21)을 따른다.
 
 ---
 

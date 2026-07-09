@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -119,7 +120,11 @@ export const Sidebar = ({
 					aria-label={toggleLabel}
 					aria-expanded={!collapsed}
 				>
-					{collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+					{collapsed ? (
+						<ChevronRight size={iconSize.xs} />
+					) : (
+						<ChevronLeft size={iconSize.xs} />
+					)}
 				</button>
 			)}
 		</aside>

@@ -3,6 +3,7 @@
 import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn, useFocusTrap } from "../../../utils";
 import "./style.scss";
 
@@ -152,7 +153,7 @@ export const Modal = ({
 						onClick={onClose}
 						aria-label={closeLabel}
 					>
-						<X size={18} aria-hidden="true" />
+						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}
 				{title && (

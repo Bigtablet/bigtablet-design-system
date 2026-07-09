@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -58,7 +59,7 @@ export interface TextFieldProps
 }
 
 // X 아이콘 - lucide-react
-const ClearIcon = () => <X size={20} aria-hidden="true" />;
+const ClearIcon = () => <X size={iconSize.lg} aria-hidden="true" />;
 
 /**
  * 텍스트 필드를 렌더링한다.
