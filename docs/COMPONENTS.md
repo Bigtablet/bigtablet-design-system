@@ -38,6 +38,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Breadcrumb](#breadcrumb)
 - [Overlay](#overlay)
   - [Modal](#modal)
+  - [Drawer](#drawer)
   - [Tooltip](#tooltip)
   - [Menu](#menu)
   - [Popover](#popover)
@@ -1429,6 +1430,45 @@ const [isOpen, setIsOpen] = useState(false);
 | `title` | `ReactNode` | - | 제목 |
 | `width` | `number \| string` | `520` | 모달 너비 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+
+---
+
+### Drawer
+
+화면 가장자리(left/right/bottom)에서 미끄러져 들어오는 패널. 필터, 상세 보기, 모바일 내비게이션, 하단 시트에 적합. Modal 과 동일하게 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금을 자동 처리한다.
+
+```tsx
+import { Drawer } from '@bigtablet/design-system';
+
+const [isOpen, setIsOpen] = useState(false);
+
+<button onClick={() => setIsOpen(true)}>드로어 열기</button>
+
+<Drawer
+  open={isOpen}
+  onClose={() => setIsOpen(false)}
+  placement="right"
+  size={360}
+  title="설정"
+  footer={<button onClick={() => setIsOpen(false)}>저장</button>}
+>
+  <p>드로어 내용입니다.</p>
+</Drawer>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | required | 열림 상태 |
+| `onClose` | `() => void` | - | 닫기 핸들러 |
+| `placement` | `'left' \| 'right' \| 'bottom'` | `'right'` | 슬라이드 방향 |
+| `size` | `number \| string` | `360` | 패널 크기 - left/right 는 너비, bottom 은 높이 (number ⇒ px) |
+| `title` | `ReactNode` | - | 헤더 제목 (있으면 `aria-labelledby` 자동 연결) |
+| `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
+| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
+| `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
+
+> 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
 ---
 

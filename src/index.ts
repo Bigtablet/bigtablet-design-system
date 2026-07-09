@@ -50,6 +50,8 @@ export type {
 	TabsVariant,
 } from "./ui/navigation/tabs";
 export { Tab, TabList, TabPanel, Tabs } from "./ui/navigation/tabs";
+export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
+export { Drawer } from "./ui/overlay/drawer";
 export type { PopoverPlacement, PopoverProps } from "./ui/overlay/popover";
 export { Popover } from "./ui/overlay/popover";
 export type { TooltipPlacement, TooltipProps } from "./ui/overlay/tooltip";
