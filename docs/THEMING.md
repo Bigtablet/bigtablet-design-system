@@ -103,7 +103,10 @@ const NO_FLASH_SCRIPT = `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    // 인라인 스크립트가 hydration 이전에 <html> 의 data-theme 를 바꾸므로 서버 HTML 과
+    // 클라이언트 DOM 이 달라진다. suppressHydrationWarning 으로 이 최상위 노드의 불일치 경고를
+    // 무시한다 (next-themes 와 동일한 처리, 자식에는 전파되지 않음).
+    <html lang="ko" suppressHydrationWarning>
       <head>
         {/* next/script 의 beforeInteractive 는 인라인 스크립트(src 없는 스크립트)를 보장하지 않으므로
             hydration 이전 실행을 위해 head 에 일반 <script> 로 주입한다 */}
