@@ -105,15 +105,16 @@ jobs:
             gh api --method POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/reactions" -f content=eyes
           fi
 
-      # 모든 이벤트에서 PR head 를 체크아웃한다 - 기본(merge ref) 체크아웃을 쓰면 "리뷰 대상 커밋"
-      # SHA 가 실제 head 가 아닌 임시 병합 커밋이 되어 staleness 추적이 깨진다.
-      # base..head diff 는 fetch-depth:0 + `gh pr diff` 로 읽는다.
-      # 보안: mutable ref(refs/pull/*/head) 대신 immutable commit SHA 를 사용해
-      # issue_comment 기반 권한 워크플로우의 TOCTOU(검증 후 변경) 위험을 막는다.
+      # 신뢰 가능한 ref(기본 브랜치)만 체크아웃한다.
+      # 이 job 은 secret(CLAUDE_CODE_REVIEW_API_KEY) + write 권한을 가진 privileged 컨텍스트다.
+      # 여기서 PR head(컨트리뷰터가 통제하는 신뢰 불가 코드)를 체크아웃하면 pwn-request /
+      # untrusted-checkout 위험이 생긴다 (immutable SHA 여도 "코드 자체"가 신뢰 불가라 동일).
+      # 그래서 head 를 체크아웃하지 않고, PR 변경분은 리뷰 단계가 `gh pr diff`(GitHub API)로만
+      # 읽는다 - 신뢰 불가 코드를 로컬에 두거나 실행하지 않는다. head SHA 는 `gh pr view` 로 조회.
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
 
       # ── [리뷰 모드] - pull_request(자동) / issue_comment(@claude review 재리뷰) ──
       # 판정 제출 + 인라인 코멘트. gh api 는 주지 않는다(리뷰는 gh pr review/comment 로 충분).
@@ -167,7 +168,8 @@ jobs:
                  폴백으로 `gh pr comment <PR번호> --body "본문"` 로 승인 요약만 남긴다.
                본문 형식:
                - 첫 줄 헤더 `## 코드 리뷰 (Claude)`
-               - 둘째 줄 `리뷰 대상 커밋: <SHA>` (`git log -1 --format=%h` 의 short SHA).
+               - 둘째 줄 `리뷰 대상 커밋: <SHA>` (`gh pr view <PR번호> --json headRefOid --jq '.headRefOid[0:7]'`
+                 로 얻은 head short SHA. 로컬은 기본 브랜치라 `git log` 를 쓰지 말 것).
                - 셋째 줄 판정: `판정: ✅ 승인` 또는 `판정: 🔴 변경 요청 (High N · Medium M)`
                - 이 PR 이 무엇을 바꾸는지 2~4문장 요약
                - 발견한 핵심 이슈를 심각도와 함께 불릿으로 정리(없으면 "특이사항 없음")
