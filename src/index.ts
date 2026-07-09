@@ -50,8 +50,6 @@ export type {
 	TabsVariant,
 } from "./ui/navigation/tabs";
 export { Tab, TabList, TabPanel, Tabs } from "./ui/navigation/tabs";
-export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
-export { Drawer } from "./ui/overlay/drawer";
 export type { PopoverPlacement, PopoverProps } from "./ui/overlay/popover";
 export { Popover } from "./ui/overlay/popover";
 export type { TooltipPlacement, TooltipProps } from "./ui/overlay/tooltip";
@@ -88,6 +86,8 @@ export type { DatePickerProps } from "./ui/forms/date-picker";
 export { DatePicker } from "./ui/forms/date-picker";
 export type { DividerProps } from "./ui/display/divider";
 export { Divider } from "./ui/display/divider";
+export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
+export { Drawer } from "./ui/overlay/drawer";
 export type { DropdownOption, DropdownProps, DropdownSize } from "./ui/forms/dropdown";
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FileInputProps } from "./ui/forms/file";

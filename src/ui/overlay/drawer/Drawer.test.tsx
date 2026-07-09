@@ -194,6 +194,22 @@ describe("Drawer", () => {
 		expect(panel?.contains(document.activeElement)).toBe(true);
 	});
 
+	it("activates the focus trap when toggled open after mounting closed", () => {
+		// 닫힌 채로 마운트 → open=true 로 전환하는 일반적인 controlled 패턴에서도 트랩이 걸려야 함
+		const { rerender } = render(
+			<Drawer open={false} onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Drawer>,
+		);
+		rerender(
+			<Drawer open onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Drawer>,
+		);
+		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+		expect(panel?.contains(document.activeElement)).toBe(true);
+	});
+
 	// ── Accessibility ────────────────────────────────────────────────────────
 
 	it("has dialog role and modal accessibility attributes", () => {
