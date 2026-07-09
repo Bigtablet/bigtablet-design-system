@@ -112,7 +112,10 @@ export const Modal = ({
 		};
 	}, [open]);
 
-	if (!shouldRender) return null;
+	// open 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
+	// panelRef.current 가 이미 붙어 있어 포커스 트랩이 정상 활성화된다. shouldRender 만 보면
+	// 마운트가 한 렌더 늦어 트랩이 걸리지 않는다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.
+	if (!open && !shouldRender) return null;
 
 	const hasTitle = !!title;
 

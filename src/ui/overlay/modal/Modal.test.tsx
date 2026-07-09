@@ -144,6 +144,22 @@ describe("Modal", () => {
 		expect(document.body.dataset.openModals).toBe("1");
 	});
 
+	it("activates the focus trap when toggled open after mounting closed", () => {
+		// 닫힌 채로 마운트 → open=true 로 전환하는 일반적인 controlled 패턴에서도 트랩이 걸려야 함
+		const { rerender } = render(
+			<Modal open={false} onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Modal>,
+		);
+		rerender(
+			<Modal open onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Modal>,
+		);
+		const panel = screen.getByRole("dialog").querySelector(".modal_panel");
+		expect(panel?.contains(document.activeElement)).toBe(true);
+	});
+
 	it("calls onClose once on Escape from inside the modal (no duplicate handler)", () => {
 		const handleClose = vi.fn();
 		render(
