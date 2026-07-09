@@ -31,6 +31,7 @@
 
 .table_th_checkbox,
 .table_td_checkbox {
+  box-sizing: border-box;
   width: token.$spacing_48;
 }
 
