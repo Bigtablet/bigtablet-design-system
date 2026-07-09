@@ -2,6 +2,7 @@
 
 import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -150,7 +151,7 @@ export const FileInput = ({
 						/>
 					) : (
 						<span className="file_input_preview_empty">
-							<ImageIcon size={32} aria-hidden="true" />
+							<ImageIcon size={iconSize.xl} aria-hidden="true" />
 							<span className="file_input_preview_empty_text">{label}</span>
 						</span>
 					)}
@@ -168,7 +169,7 @@ export const FileInput = ({
 					onClick={handleRemove}
 					aria-label="이미지 제거"
 				>
-					<X size={14} aria-hidden="true" />
+					<X size={iconSize.xs} aria-hidden="true" />
 				</button>
 			)}
 

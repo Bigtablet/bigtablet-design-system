@@ -18,6 +18,7 @@ bigtablet-design-system/
 │   │   ├── global.css
 │   │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
+│   │   ├── icon/            # 아이콘 사이즈 (xs-xl)
 │   │   └── layout/          # SCSS only
 │   │
 │   ├── ui/                  # UI 컴포넌트 — 8 카테고리 폴더 하위에 컴포넌트

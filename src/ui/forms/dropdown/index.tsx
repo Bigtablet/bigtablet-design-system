@@ -11,6 +11,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 import { Check, ChevronDown } from "lucide-react";
@@ -260,7 +261,7 @@ export const Dropdown = ({
 						className={cn("dropdown_icon", { dropdown_icon_open: isOpen })}
 						aria-hidden="true"
 					>
-						<ChevronDown size={20} />
+						<ChevronDown size={iconSize.lg} />
 					</span>
 				</button>
 			</div>
@@ -307,7 +308,7 @@ export const Dropdown = ({
 									</span>
 									{(selected || opt.trailingIcon) && (
 										<span className="dropdown_option_trailing">
-											{opt.trailingIcon ?? <Check size={16} aria-hidden="true" />}
+											{opt.trailingIcon ?? <Check size={iconSize.sm} aria-hidden="true" />}
 										</span>
 									)}
 								</div>

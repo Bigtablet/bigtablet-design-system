@@ -2,6 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -81,7 +82,7 @@ export const Accordion = ({
 							>
 								<span className="accordion_title">{item.title}</span>
 								<ChevronDown
-									size={20}
+									size={iconSize.lg}
 									className={cn("accordion_chevron", isOpen && "accordion_chevron_open")}
 									aria-hidden="true"
 								/>
