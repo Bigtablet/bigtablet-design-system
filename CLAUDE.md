@@ -535,14 +535,14 @@ label/domain
 **태그 기반 배포** - semantic-release / changeset 미사용. 절차:
 
 1. **dev→main 릴리즈 PR(`merge: release`)에 아래 둘을 반드시 함께 포함** (별도 커밋으로 미루지 말 것):
-   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports` 의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
+   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
 2. 리뷰어 approve 후 머지.
 3. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 4. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
 
 **CHANGELOG.md 양식** - 릴리즈 노트와 동일한 주요 업데이트를 미러링:
-```
+```text
 ## [X.Y.Z](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/vX.Y.Z) - YYYY-MM-DD
 - 핵심 변경 1
 - 핵심 변경 2
@@ -550,8 +550,8 @@ label/domain
 - 주요 업데이트 불릿만 - 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
 - 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
 
-**GitHub Release 노트는 조직 공통 양식 필수** - 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG 의 해당 버전 주요 업데이트를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (제목 = `Design System of Bigtablet, Inc.`, `##` 제목과 `####` 사이 빈 줄 없음):
-```
+**GitHub Release 노트는 조직 공통 양식 필수** - 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG의 해당 버전 주요 업데이트를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (제목 = `Design System of Bigtablet, Inc.`, `##` 제목과 `####` 사이 빈 줄 없음):
+```text
 ## Design System of Bigtablet, Inc.
 #### 주요 업데이트
 - 핵심 변경 1

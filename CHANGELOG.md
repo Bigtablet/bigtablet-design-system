@@ -7,7 +7,7 @@
 ## [3.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.3.0) - 2026-06-25
 
 - `ref` 전달(React 19 ref-as-prop) 지원 - Button · IconButton · Card · Container · Stack · Grid · Section
-- 변경 콜백 네이밍을 Radix식 `on*Change` 패밀리로 통일 (`onValueChange` / `onCheckedChange` / `onPageChange`) - 기존 prop 은 `@deprecated` alias 로 호환 유지
+- 변경 콜백 네이밍을 Radix식 `on*Change` 패밀리로 통일 (`onValueChange` / `onCheckedChange` / `onPageChange`) - 기존 prop은 `@deprecated` alias로 호환 유지
 - 접근성: Menu · NavBar 화살표키 네비게이션(WAI-ARIA APG), Tooltip `aria-describedby` 합성, ThemeProvider SSR hydration mismatch 수정
 - Chip tone · 통계 카드 트렌드 WCAG AA(4.5:1) 대비 충족, Storybook 에 테마 CSS 변수 로드(Divider 등 표시 수정)
 - TS 컬러 토큰을 AA 값으로 SCSS 와 동기화, `next` peer 범위를 `>=15`(React 19 호환)로 정정
@@ -22,7 +22,7 @@
 
 ## [3.2.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.2.1) - 2026-06-17
 
-- 라이트/다크 테마 CSS custom property 를 `theme.scss` 로 분리 - `scss/token` 을 `@use` 하는 소비자에게 테마가 강제 주입되거나 CSS Modules pure-selector 검사가 깨지던 문제 수정
+- 라이트/다크 테마 CSS custom property를 `theme.scss`로 분리 - `scss/token`을 `@use` 하는 소비자에게 테마가 강제 주입되거나 CSS Modules pure-selector 검사가 깨지던 문제 수정
 - 컴포넌트 사용 시 `@bigtablet/design-system/style.css` 가 테마 변수를 제공 (단일 번들 포함)
 - dark 테마 속성 중복을 mixin 으로 정리 (출력 CSS 동일)
 

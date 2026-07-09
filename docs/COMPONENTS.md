@@ -536,7 +536,7 @@ const [selected, setSelected] = useState('option1');
 - **제어형**: `value` + `onValueChange`
 - **비제어형**: `defaultValue`
 
-자식 `Radio` 는 `value` 만 지정 - `name`/`checked`/`size`/`disabled` 는 그룹에서 상속.
+자식 `Radio`는 `value`만 지정 - `name`/`checked`/`size`/`disabled`는 그룹에서 상속.
 
 **Props**
 
@@ -1122,7 +1122,7 @@ const [collapsed, setCollapsed] = useState(false);
 
 ### BottomNav
 
-모바일 하단 네비게이션 바. `position: fixed; bottom: 0` 하단 고정 + iOS safe-area 대응. 2-5개 `BottomNavItem` 으로 구성. mobile-first PWA 의 메인 nav 패턴.
+모바일 하단 네비게이션 바. `position: fixed; bottom: 0` 하단 고정 + iOS safe-area 대응. 2-5개 `BottomNavItem`으로 구성. mobile-first PWA의 메인 nav 패턴.
 
 #### Sidebar vs BottomNav
 
