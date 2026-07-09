@@ -6,7 +6,11 @@
 
 ## [3.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.4.0) - 2026-07-09
 
+- Dropdown `searchable`(검색 필터) + `multiple`(다중 선택) opt-in 추가 - 한글 IME 조합 대응, 선택 요약 텍스트 커스터마이즈(`selectedSummary`)
+- Table 정렬(controlled `sort` / `onSortChange`) + 행 선택(`selectable` / `selectedKeys` / `onSelectionChange`) 추가 - 전체선택 3-state, off-page 선택 보존
+- Drawer 신규 컴포넌트 - left/right/bottom 슬라이드 오버레이 (Modal 인프라 재사용, 포커스 트랩·스크롤 잠금·방향별 애니메이션)
 - `iconSize` 토큰 export 추가 (xs~xl 스케일) - 컴포넌트 내부 아이콘 사이즈 하드코딩 제거
+- Modal · Drawer 포커스 트랩이 "닫힌 채 마운트 후 열림" controlled 패턴에서 활성화되지 않던 버그 수정
 - 마이그레이션 가이드 `docs/MIGRATION.md` + 테마 가이드 `docs/THEMING.md` 문서 추가
 - 문서 정합화: `docs/COMPONENTS.md` 를 v3.3.0 canonical prop 이름으로 갱신, 릴리즈 노트 양식 통일, em-dash 등 타이포 정리
 - (개발) Claude PR 리뷰 워크플로 도입, dev 의존성 보안/버전 업데이트
