@@ -191,7 +191,7 @@ describe("Table sort", () => {
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "Name" }));
-		expect(onSortChange).toHaveBeenLastCalledWith(null);
+		expect(onSortChange).toHaveBeenLastCalledWith(undefined);
 	});
 
 	it("clicking a different column starts it at asc regardless of previous column state", () => {
@@ -207,6 +207,21 @@ describe("Table sort", () => {
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Score" }));
 		expect(onSortChange).toHaveBeenCalledWith({ key: "score", direction: "asc" });
+	});
+
+	it("emits undefined (not null) when a desc-sorted column is clicked again to clear sort", () => {
+		const onSortChange = vi.fn();
+		render(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+				onSortChange={onSortChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Name" }));
+		expect(onSortChange).toHaveBeenLastCalledWith(undefined);
 	});
 
 	it("does not sort data itself - relies on consumer-provided data order", () => {
@@ -339,5 +354,82 @@ describe("Table selection", () => {
 		const alphaCheckbox = screen.getByRole("checkbox", { name: "1번째 행 선택" });
 		fireEvent.click(alphaCheckbox);
 		expect(onSelectionChange).toHaveBeenCalledWith([]);
+	});
+
+	it("toggling select-all preserves keys selected on other pages (server pagination)", () => {
+		const onSelectionChange = vi.fn();
+		// "99" belongs to a row not present in the current page's `data`
+		const { rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["99"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		const firstCallKeys = onSelectionChange.mock.calls[0][0] as string[];
+		expect(new Set(firstCallKeys)).toEqual(new Set(["99", "1", "2"]));
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["99", "1", "2"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		expect(onSelectionChange).toHaveBeenLastCalledWith(["99"]);
+	});
+
+	it("supports custom selectAllAriaLabel / selectRowAriaLabel", () => {
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				selectAllAriaLabel="Select all rows"
+				selectRowAriaLabel={(index) => `Select row ${index + 1}`}
+			/>,
+		);
+		expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "Select row 1" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "Select row 2" })).toBeInTheDocument();
+	});
+
+	it("disables the select-all checkbox while isLoading", () => {
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				isLoading
+			/>,
+		);
+		expect(screen.getByRole("checkbox", { name: "전체 선택" })).toBeDisabled();
+	});
+});
+
+describe("Table isLoading guards", () => {
+	const sortableColumns: TableColumn<Row>[] = [{ key: "name", header: "Name", sortable: true }];
+
+	it("disables sortable header buttons while isLoading", () => {
+		render(
+			<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} isLoading />,
+		);
+		expect(screen.getByRole("button", { name: "Name" })).toBeDisabled();
 	});
 });

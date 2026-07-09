@@ -175,7 +175,7 @@ export const Sortable: Story = {
 		},
 	},
 	render: () => {
-		const [sort, setSort] = useState<TableSort | null>(null);
+		const [sort, setSort] = useState<TableSort | undefined>(undefined);
 
 		const sortableColumns: TableColumn<User>[] = columns.map((col) =>
 			col.key === "name" || col.key === "email" || col.key === "role"
@@ -195,7 +195,7 @@ export const Sortable: Story = {
 				columns={sortableColumns}
 				data={sortedUsers}
 				keyExtractor={(u) => u.id}
-				sort={sort ?? undefined}
+				sort={sort}
 				onSortChange={setSort}
 				ariaLabel="정렬 가능한 사용자 목록"
 			/>
@@ -247,7 +247,7 @@ export const SortableAndSelectable: Story = {
 		},
 	},
 	render: () => {
-		const [sort, setSort] = useState<TableSort | null>(null);
+		const [sort, setSort] = useState<TableSort | undefined>(undefined);
 		const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
 		const sortableColumns: TableColumn<User>[] = columns.map((col) =>
@@ -266,7 +266,7 @@ export const SortableAndSelectable: Story = {
 				columns={sortableColumns}
 				data={sortedUsers}
 				keyExtractor={(u) => u.id}
-				sort={sort ?? undefined}
+				sort={sort}
 				onSortChange={setSort}
 				selectable
 				rowKey={(u) => String(u.id)}

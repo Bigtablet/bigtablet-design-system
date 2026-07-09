@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import { Skeleton } from "../../feedback/skeleton";
@@ -81,7 +81,11 @@ export type TableProps<T extends object> = {
 	/** 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 */
 	sort?: TableSort;
 	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
-	onSortChange?: (sort: TableSort | null) => void;
+	onSortChange?: (sort: TableSort | undefined) => void;
+	/** 전체 선택 체크박스 aria-label (기본값: "전체 선택") */
+	selectAllAriaLabel?: string;
+	/** 개별 행 선택 체크박스 aria-label (기본값: (i) => `${i+1}번째 행 선택`) */
+	selectRowAriaLabel?: (index: number) => string;
 } & TableSelectionProps<T>;
 
 /**
@@ -104,6 +108,8 @@ export const Table = <T extends object>({
 	onRowClick,
 	sort,
 	onSortChange,
+	selectAllAriaLabel = "전체 선택",
+	selectRowAriaLabel = (index: number) => `${index + 1}번째 행 선택`,
 	selectable = false,
 	rowKey,
 	selectedKeys,
@@ -121,12 +127,16 @@ export const Table = <T extends object>({
 	// ── Row selection ──────────────────────────────────────────────────────
 	const getRowKey = (item: T, index: number) => rowKey?.(item) ?? String(index);
 	const allRowKeys = selectable ? data.map((item, index) => getRowKey(item, index)) : [];
-	const selectedCount = allRowKeys.filter((key) => selectedKeys?.includes(key)).length;
+	const selectedSet = React.useMemo(() => new Set(selectedKeys), [selectedKeys]);
+	const selectedCount = allRowKeys.filter((key) => selectedSet.has(key)).length;
 	const isAllSelected = allRowKeys.length > 0 && selectedCount === allRowKeys.length;
 	const isSomeSelected = selectedCount > 0 && !isAllSelected;
 
 	const handleToggleAll = () => {
-		onSelectionChange?.(isAllSelected ? [] : allRowKeys);
+		const pageKeys = new Set(allRowKeys);
+		const offPage = (selectedKeys ?? []).filter((k) => !pageKeys.has(k));
+		// 현재 페이지가 모두 선택돼 있으면 해제, 아니면 전체 선택 - 다른 페이지 선택은 보존
+		onSelectionChange?.(isAllSelected ? offPage : [...offPage, ...allRowKeys]);
 	};
 
 	const handleToggleRow = (key: string) => {
@@ -137,12 +147,12 @@ export const Table = <T extends object>({
 
 	// ── Sort ───────────────────────────────────────────────────────────────
 	const handleSortClick = (key: string) => {
-		const next: TableSort | null =
+		const next: TableSort | undefined =
 			sort?.key !== key
 				? { key, direction: "asc" }
 				: sort.direction === "asc"
 					? { key, direction: "desc" }
-					: null;
+					: undefined;
 		onSortChange?.(next);
 	};
 
@@ -154,10 +164,10 @@ export const Table = <T extends object>({
 						{selectable && (
 							<th scope="col" className="table_th table_th_checkbox">
 								<Checkbox
-									aria-label="전체 선택"
+									aria-label={selectAllAriaLabel}
 									checked={isAllSelected}
 									indeterminate={isSomeSelected}
-									disabled={allRowKeys.length === 0}
+									disabled={isLoading || allRowKeys.length === 0}
 									onChange={handleToggleAll}
 								/>
 							</th>
@@ -190,6 +200,7 @@ export const Table = <T extends object>({
 											type="button"
 											className="table_sort_button"
 											onClick={() => handleSortClick(col.key)}
+											disabled={isLoading}
 										>
 											<span className="table_sort_label">{col.header}</span>
 											{direction === "asc" ? (
@@ -239,8 +250,7 @@ export const Table = <T extends object>({
 							))
 						: data.map((item, rowIndex) => {
 								const rowIdentity = selectable ? getRowKey(item, rowIndex) : undefined;
-								const isSelected =
-									rowIdentity !== undefined && (selectedKeys?.includes(rowIdentity) ?? false);
+								const isSelected = rowIdentity !== undefined && selectedSet.has(rowIdentity);
 
 								return (
 									<tr
@@ -273,7 +283,7 @@ export const Table = <T extends object>({
 												onKeyDown={(e) => e.stopPropagation()}
 											>
 												<Checkbox
-													aria-label={`${rowIndex + 1}번째 행 선택`}
+													aria-label={selectRowAriaLabel(rowIndex)}
 													checked={isSelected}
 													onChange={() => handleToggleRow(rowIdentity)}
 												/>
