@@ -62,6 +62,7 @@ export { baseBorderWidth, borderWidth } from "./styles/border-width";
 export { breakpoints } from "./styles/breakpoints";
 export { baseColors, colors } from "./styles/colors";
 export { elevation } from "./styles/elevation";
+export { iconSize } from "./styles/icon";
 export { motion } from "./styles/motion";
 export { opacity } from "./styles/opacity";
 export { radius } from "./styles/radius";

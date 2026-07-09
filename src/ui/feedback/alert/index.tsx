@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
+import { iconSize } from "../../../styles/icon";
 import { cn, useFocusTrap } from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
 import "./style.scss";
@@ -13,10 +14,10 @@ export type AlertVariant = "info" | "success" | "warning" | "error";
 export type AlertActionsAlign = "left" | "center" | "right";
 
 const ICONS: Record<AlertVariant, React.ReactNode> = {
-	info: <Info size={20} aria-hidden="true" />,
-	success: <CheckCircle2 size={20} aria-hidden="true" />,
-	warning: <AlertTriangle size={20} aria-hidden="true" />,
-	error: <XCircle size={20} aria-hidden="true" />,
+	info: <Info size={iconSize.lg} aria-hidden="true" />,
+	success: <CheckCircle2 size={iconSize.lg} aria-hidden="true" />,
+	warning: <AlertTriangle size={iconSize.lg} aria-hidden="true" />,
+	error: <XCircle size={iconSize.lg} aria-hidden="true" />,
 };
 
 export interface AlertOptions {

@@ -101,6 +101,7 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 - `z-index/` - Layer priorities
 - `breakpoints/` - Responsive breakpoints
 - `a11y/` - Accessibility (focus rings, tap targets)
+- `icon/` - Icon sizes (xs 14px - xl 32px, lucide-react `size` prop)
 
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`

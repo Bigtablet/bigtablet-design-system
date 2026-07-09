@@ -2,6 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -39,7 +40,7 @@ export const Breadcrumb = ({
 	className,
 	...props
 }: BreadcrumbProps) => {
-	const sep = separator ?? <ChevronRight size={14} aria-hidden="true" />;
+	const sep = separator ?? <ChevronRight size={iconSize.xs} aria-hidden="true" />;
 
 	return (
 		<nav aria-label="Breadcrumb" className={cn("breadcrumb", className)} {...props}>

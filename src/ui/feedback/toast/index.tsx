@@ -4,6 +4,7 @@ import { animated } from "@react-spring/web";
 import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
@@ -32,11 +33,11 @@ export interface ToastProviderProps {
 }
 
 const VARIANT_ICONS: Record<ToastVariant, React.ReactElement> = {
-	success: <CheckCircle2 size={18} />,
-	error: <XCircle size={18} />,
-	warning: <AlertTriangle size={18} />,
-	info: <Info size={18} />,
-	default: <Bell size={18} />,
+	success: <CheckCircle2 size={iconSize.md} />,
+	error: <XCircle size={iconSize.md} />,
+	warning: <AlertTriangle size={iconSize.md} />,
+	info: <Info size={iconSize.md} />,
+	default: <Bell size={iconSize.md} />,
 };
 
 // ── ToastItemComponent ───────────────────────────────────────────────────────
@@ -86,7 +87,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 			<span className="toast_message">{item.message}</span>
 
 			<button type="button" className="toast_close" onClick={close} aria-label={closeAriaLabel}>
-				<X size={14} />
+				<X size={iconSize.xs} />
 			</button>
 
 			<div

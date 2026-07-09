@@ -3,6 +3,7 @@
 import { ChevronDown, Globe } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import type * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
@@ -265,13 +266,17 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				aria-controls={menuId}
 				onClick={() => setOpen((p) => !p)}
 			>
-				<Globe size={16} aria-hidden="true" />
+				<Globe size={iconSize.sm} aria-hidden="true" />
 				{!locale.hideLabel && (
 					<span className="nav_bar_locale_label">
 						{currentOption?.label ?? locale.current.toUpperCase()}
 					</span>
 				)}
-				<ChevronDown size={14} aria-hidden="true" className="nav_bar_locale_chevron" />
+				<ChevronDown
+					size={iconSize.xs}
+					aria-hidden="true"
+					className="nav_bar_locale_chevron"
+				/>
 			</button>
 			{open && (
 				<ul
