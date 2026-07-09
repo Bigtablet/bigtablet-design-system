@@ -171,6 +171,7 @@
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg; // 컨트롤과 동일 radius
     box-shadow: token.$elevation_level1; // 좀 더 가볍게
+    overflow: hidden; // radius 안쪽으로 자식(검색바/스크롤) 클립
 
     [data-theme="dark"] & {
       background: token.$color_bg_solid_dim;
@@ -181,11 +182,6 @@
       }
     }
 
-    max-height: 18rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: token.$spacing_4 0;
-
     will-change: transform, opacity;
 
     &_up {
@@ -194,6 +190,63 @@
       margin-top: 0;
       margin-bottom: token.$spacing_4;
     }
+  }
+
+  // ── Search (검색 입력 - searchable) ────────────────────────────────────────
+  // 패널 상단 고정. 옵션 스크롤과 분리되도록 &_options 에만 스크롤을 둔다.
+
+  &_search {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    padding: token.$spacing_8 token.$spacing_12;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  &_search_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: token.$color_text_body;
+  }
+
+  &_search_input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: token.$color_text_heading;
+    border-radius: token.$radius_sm;
+    @include token.body_small;
+    transition: box-shadow token.$transition_fast;
+
+    &::placeholder {
+      color: token.$color_text_body;
+    }
+
+    &:focus-visible {
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── Options scroll container (role=listbox) ─────────────────────────────────
+
+  &_options {
+    max-height: 18rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: token.$spacing_4 0;
+  }
+
+  // ── Empty state (필터 결과 0개) ─────────────────────────────────────────────
+
+  &_empty {
+    padding: token.$spacing_12 token.$spacing_16;
+    @include token.body_small;
+    color: token.$color_text_caption;
+    text-align: center;
   }
 
   // ── Option ────────────────────────────────────────────────────────────────────
@@ -240,6 +293,16 @@
       cursor: not-allowed;
       color: token.$color_text_caption;
     }
+  }
+
+  // 다중 선택: 왼쪽 체크 슬롯. 미선택 시에도 폭 유지해 정렬 안정.
+  &_option_check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: token.$spacing_16;
+    color: token.$color_accent_default;
   }
 
   &_option_icon {
@@ -295,4 +358,5 @@
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .dropdown_icon { transition: none; }
+  .dropdown_search_input { transition: none; }
 }
