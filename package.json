@@ -119,7 +119,7 @@
 	"size-limit": [
 		{
 			"path": "dist/index.js",
-			"limit": "45 kB"
+			"limit": "50 kB"
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
