@@ -1,0 +1,118 @@
+@use "src/styles/token" as token;
+
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex;
+  background: token.$color_bg_overlay;
+  z-index: token.$z_level2; // Modal 과 동일 레이어
+  will-change: opacity;
+
+  // ── Placement (패널을 가장자리에 정렬) ─────────────────────────────────
+  &_placement_left  { justify-content: flex-start; }
+  &_placement_right { justify-content: flex-end; }
+  &_placement_bottom {
+    align-items: flex-end;
+    justify-content: stretch;
+  }
+
+  // ── Panel ──────────────────────────────────────────────────────────────
+  &_panel {
+    position: relative; // close button 의 absolute 기준
+    display: flex;
+    flex-direction: column;
+    background: token.$color_bg_solid;
+    box-shadow: token.$elevation_level3;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden; // body 영역만 스크롤
+    will-change: transform;
+  }
+
+  &_placement_left &_panel,
+  &_placement_right &_panel {
+    height: 100%;
+  }
+
+  &_placement_bottom &_panel {
+    width: 100%;
+    border-top-left-radius: token.$radius_lg;
+    border-top-right-radius: token.$radius_lg;
+  }
+
+  // ── Close (우상단 X 아이콘 버튼) ───────────────────────────────────────
+  &_close {
+    position: absolute;
+    top: token.$spacing_12;
+    right: token.$spacing_12;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: token.$color_text_caption;
+    border-radius: token.$radius_md;
+    cursor: pointer;
+    transition:
+      background token.$transition_fast,
+      color token.$transition_fast;
+
+    &:hover {
+      background: token.$color_state_hover_on_light;
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── Header (title) ─────────────────────────────────────────────────────
+  &_header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: token.$spacing_20 token.$spacing_24;
+    padding-right: token.$spacing_48; // 우상단 close 버튼과 겹침 방지
+    border-bottom: token.$border_width_standard solid token.$color_border_subtle;
+  }
+
+  &_title {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.heading_small_bold;
+  }
+
+  // ── Body (자유 children) ───────────────────────────────────────────────
+  &_body {
+    flex: 1 1 auto;
+    min-height: 0; // flex item 이 넘칠 때 내부 스크롤 허용
+    overflow-y: auto;
+    padding: token.$spacing_24;
+    color: token.$color_text_body;
+    @include token.body_medium;
+  }
+
+  // ── Footer (액션 영역) ─────────────────────────────────────────────────
+  &_footer {
+    flex: 0 0 auto;
+    display: flex;
+    gap: token.$spacing_8;
+    justify-content: flex-end;
+    padding: token.$spacing_16 token.$spacing_24;
+    border-top: token.$border_width_standard solid token.$color_border_subtle;
+  }
+}
+
+// Reduced motion (WCAG 2.3.3) - JS 스프링은 immediate 로 처리, CSS transition 은 여기서 제거
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .drawer_panel,
+  .drawer_close {
+    transition: none;
+    animation: none;
+  }
+}
