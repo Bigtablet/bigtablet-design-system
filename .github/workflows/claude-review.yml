@@ -105,15 +105,27 @@ jobs:
             gh api --method POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/reactions" -f content=eyes
           fi
 
-      # 모든 이벤트에서 PR head 를 체크아웃한다 - 기본(merge ref) 체크아웃을 쓰면 "리뷰 대상 커밋"
-      # SHA 가 실제 head 가 아닌 임시 병합 커밋이 되어 staleness 추적이 깨진다.
-      # base..head diff 는 fetch-depth:0 + `gh pr diff` 로 읽는다.
-      # 보안: mutable ref(refs/pull/*/head) 대신 immutable commit SHA 를 사용해
-      # issue_comment 기반 권한 워크플로우의 TOCTOU(검증 후 변경) 위험을 막는다.
+      # PR 의 base 브랜치를 조회한다 (리뷰의 병합 목표 = 신뢰 가능한 기존 코드).
+      # repository.default_branch 가 아니라 base 를 쓰는 이유: dev→main 릴리즈 PR 처럼
+      # base(main)가 default_branch(develop)와 다를 수 있어, 엉뚱한 브랜치를 컨텍스트로 읽지 않도록.
+      - name: Resolve PR base branch
+        id: prctx
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          base=$(gh pr view "$PR" --repo "${{ github.repository }}" --json baseRefName --jq '.baseRefName')
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+      # base(trusted) 만 체크아웃한다. 이 job 은 secret(CLAUDE_CODE_REVIEW_API_KEY) + write 를 가진
+      # privileged 컨텍스트라, PR head(컨트리뷰터가 통제하는 신뢰 불가 코드)를 체크아웃하면
+      # pwn-request / untrusted-checkout 위험이 생긴다 (immutable SHA 여도 코드 자체가 신뢰 불가라 동일).
+      # 그래서 head 를 로컬에 두지 않고, PR 변경분은 리뷰/답글 단계가 `gh pr diff`(GitHub API)로만
+      # 읽는다 - 신뢰 불가 코드를 로컬에 두거나 실행하지 않는다. head SHA 는 `gh pr view` 로 조회.
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}
+          ref: ${{ steps.prctx.outputs.base }}
+          persist-credentials: false
 
       # ── [리뷰 모드] - pull_request(자동) / issue_comment(@claude review 재리뷰) ──
       # 판정 제출 + 인라인 코멘트. gh api 는 주지 않는다(리뷰는 gh pr review/comment 로 충분).
@@ -167,7 +179,8 @@ jobs:
                  폴백으로 `gh pr comment <PR번호> --body "본문"` 로 승인 요약만 남긴다.
                본문 형식:
                - 첫 줄 헤더 `## 코드 리뷰 (Claude)`
-               - 둘째 줄 `리뷰 대상 커밋: <SHA>` (`git log -1 --format=%h` 의 short SHA).
+               - 둘째 줄 `리뷰 대상 커밋: <SHA>` (`gh pr view <PR번호> --json headRefOid --jq '.headRefOid[0:7]'`
+                 로 얻은 head short SHA. 로컬은 기본 브랜치라 `git log` 를 쓰지 말 것).
                - 셋째 줄 판정: `판정: ✅ 승인` 또는 `판정: 🔴 변경 요청 (High N · Medium M)`
                - 이 PR 이 무엇을 바꾸는지 2~4문장 요약
                - 발견한 핵심 이슈를 심각도와 함께 불릿으로 정리(없으면 "특이사항 없음")
@@ -190,7 +203,10 @@ jobs:
 
             리뷰 관점: 정확성/버그, 보안/민감정보, 성능, 접근성, 레포 컨벤션(위 문서들).
             사소한 포매팅은 Biome 가 강제하므로 지적하지 않는다. diff 에 직접 드러난 위반만 지적하고
-            추측성 제안은 자제한다. 정확한 라인 번호는 `gh pr diff` / `git diff` 로 확인한다.
+            추측성 제안은 자제한다. 정확한 라인 번호는 `gh pr diff <PR번호>` 로 확인한다.
+            로컬 체크아웃은 PR base 브랜치(변경 전 코드)다. PR 변경분은 반드시 `gh pr diff <PR번호>` 로
+            확인하고, 로컬 Read/Grep 은 변경 주변의 base 컨텍스트 참고용으로만 쓴다 (`git diff` 는 변경분을
+            안 보여주니 쓰지 말 것).
 
             중요:
             - 어떤 파일도 수정하지 마 (리뷰 코멘트만 게시).
@@ -218,7 +234,7 @@ jobs:
           # 임의 REST 호출로 번지는 경로를 원천 차단한다. Edit/Write 계열도 없어 파일 수정 불가.
           claude_args: |
             --max-turns 50
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(git diff:*),Bash(git show:*),Bash(git status:*),Bash(git log:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(git show:*),Bash(git log:*)"
 
       # ── [대화형 답글 모드] - pull_request_review_comment(인라인 스레드 @claude) ──
       # 보안 핵심: 이 에이전트에는 게시 도구도 gh api 도 주지 않는다(읽기 전용). 트리거 코멘트는
@@ -246,7 +262,8 @@ jobs:
             </코멘트 본문>
 
             할 일:
-            - FILE/LINE 주변과 필요한 저장소 파일을 Read/Grep 으로 열어 근거를 확인한다(로컬 한정).
+            - 로컬 체크아웃은 PR base 브랜치라 "변경 후" 코드가 아닐 수 있다. 해당 라인의 변경 내용은
+              `gh pr diff <PR번호>` 로 확인하고, 로컬 Read/Grep 은 base 컨텍스트 참고용으로만 쓴다.
             - 질문에 한국어로 간결/정확하게 답한다. 확실치 않으면 단정하지 말고 모른다고 한다.
             - 결과는 반드시 구조화 출력으로만 낸다: 답할 내용이 있으면 answered=true 와 reply(답변
               마크다운), 답할 가치가 없거나(단순 인사/이미 해결) 확신이 없어 침묵이 나으면
@@ -256,7 +273,7 @@ jobs:
           claude_args: |
             --max-turns 20
             --json-schema '{"type":"object","additionalProperties":false,"properties":{"answered":{"type":"boolean"},"reply":{"type":"string"}},"required":["answered","reply"]}'
-            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git show:*),Bash(git log:*)"
+            --allowedTools "Read,Grep,Glob,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git log:*)"
 
       # ── 결정적 게시 - 에이전트가 만든 reply 텍스트를 고정 엔드포인트로만 POST ──
       # 명령/엔드포인트가 워크플로에 하드코딩돼 있어 인젝션이 바꿀 수 없다(답변 본문에만 영향).
