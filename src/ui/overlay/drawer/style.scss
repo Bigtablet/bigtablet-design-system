@@ -45,8 +45,8 @@
     position: absolute;
     top: token.$spacing_12;
     right: token.$spacing_12;
-    width: 32px;
-    height: 32px;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
     display: inline-flex;
     align-items: center;
     justify-content: center;

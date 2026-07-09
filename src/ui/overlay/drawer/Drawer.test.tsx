@@ -208,6 +208,15 @@ describe("Drawer", () => {
 		expect(dialog).toHaveAttribute("aria-label", "Dialog");
 	});
 
+	it("uses ariaLabel for the dialog when provided without a title", () => {
+		render(
+			<Drawer open onClose={() => {}} ariaLabel="필터 패널">
+				Content
+			</Drawer>,
+		);
+		expect(screen.getByRole("dialog")).toHaveAttribute("aria-label", "필터 패널");
+	});
+
 	// ── Body scroll lock ───────────────────────────────────────────────────
 
 	it("locks body scroll while open and restores on close", () => {
@@ -222,6 +231,46 @@ describe("Drawer", () => {
 			<Drawer open={false} onClose={() => {}}>
 				Content
 			</Drawer>,
+		);
+		expect(document.body.style.overflow).not.toBe("hidden");
+	});
+
+	it("keeps body scroll locked until the last overlay closes (shared counter)", () => {
+		const { rerender } = render(
+			<>
+				<Drawer open onClose={() => {}}>
+					Outer
+				</Drawer>
+				<Drawer open onClose={() => {}}>
+					Inner
+				</Drawer>
+			</>,
+		);
+		expect(document.body.style.overflow).toBe("hidden");
+
+		// 안쪽만 닫힘 - 바깥이 아직 열려 있으므로 잠금 유지 (카운터 1)
+		rerender(
+			<>
+				<Drawer open onClose={() => {}}>
+					Outer
+				</Drawer>
+				<Drawer open={false} onClose={() => {}}>
+					Inner
+				</Drawer>
+			</>,
+		);
+		expect(document.body.style.overflow).toBe("hidden");
+
+		// 마지막까지 닫히면 원래 overflow 복원 (카운터 0)
+		rerender(
+			<>
+				<Drawer open={false} onClose={() => {}}>
+					Outer
+				</Drawer>
+				<Drawer open={false} onClose={() => {}}>
+					Inner
+				</Drawer>
+			</>,
 		);
 		expect(document.body.style.overflow).not.toBe("hidden");
 	});

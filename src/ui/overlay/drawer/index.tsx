@@ -29,6 +29,8 @@ export interface DrawerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 	showCloseIcon?: boolean;
 	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
 	closeLabel?: string;
+	/** 드로어 접근성 레이블 (title 없을 때 사용, 기본값: "Dialog") */
+	ariaLabel?: string;
 }
 
 // placement 별 진입 시작(=퇴출 도착) transform. 방향 축과 단위(%)를 진입/퇴출 양쪽에서
@@ -56,6 +58,7 @@ export const Drawer = ({
 	closeOnOverlay = true,
 	showCloseIcon = true,
 	closeLabel = "닫기",
+	ariaLabel,
 	children,
 	className,
 	...props
@@ -91,17 +94,33 @@ export const Drawer = ({
 		config: { tension: 280, friction: 28, clamp: !open },
 	});
 
-	// 바디 스크롤 잠금 (Modal 과 동일 mechanism - 카운터 없이 저장/설정/복원)
+	// 바디 스크롤 잠금 - Modal 과 동일한 data-open-modals 카운터 공유.
+	// Modal/Drawer 를 동시에 열거나 중첩해도 카운터가 0 이 될 때만 원래 overflow 를 복원해
+	// 스크롤 잠금 오작동/원래 스타일 유실을 막는다.
 	React.useEffect(() => {
 		if (!open) return;
 
 		const body = document.body;
-		body.dataset.originalOverflow = window.getComputedStyle(body).overflow;
-		body.style.overflow = "hidden";
+		const openModals = parseInt(body.dataset.openModals || "0", 10);
+
+		if (openModals === 0) {
+			body.dataset.originalOverflow = window.getComputedStyle(body).overflow;
+			body.style.overflow = "hidden";
+		}
+
+		body.dataset.openModals = String(openModals + 1);
 
 		return () => {
-			body.style.overflow = body.dataset.originalOverflow || "";
-			delete body.dataset.originalOverflow;
+			const currentOpenModals = parseInt(body.dataset.openModals || "1", 10);
+			const nextOpenModals = currentOpenModals - 1;
+
+			if (nextOpenModals === 0) {
+				body.style.overflow = body.dataset.originalOverflow || "";
+				delete body.dataset.openModals;
+				delete body.dataset.originalOverflow;
+			} else {
+				body.dataset.openModals = String(nextOpenModals);
+			}
 		};
 	}, [open]);
 
@@ -117,8 +136,8 @@ export const Drawer = ({
 			style={overlayStyle}
 			role="dialog"
 			aria-modal="true"
-			aria-labelledby={hasTitle ? titleId : undefined}
-			aria-label={!hasTitle ? "Dialog" : undefined}
+			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
+			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
 			// Escape 는 여기서 단독 처리 + stopPropagation - 중첩 오버레이에서 가장 위(topmost)만
 			// 닫히도록 (document 전역 리스너로 처리하면 열린 모든 오버레이가 동시에 닫힘).

@@ -1467,6 +1467,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
+| `ariaLabel` | `string` | `'Dialog'` | `title` 없을 때 dialog 접근성 레이블 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
