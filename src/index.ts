@@ -127,7 +127,13 @@ export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
 export { Spinner } from "./ui/feedback/spinner";
-export type { TableColumn, TableProps, TableSize } from "./ui/display/table";
+export type {
+	TableColumn,
+	TableProps,
+	TableSize,
+	TableSort,
+	TableSortDirection,
+} from "./ui/display/table";
 export { Table } from "./ui/display/table";
 export type { ResolvedTheme, ThemeMode, ThemeProviderProps } from "./ui/system/theme-provider";
 export { ThemeProvider, useTheme } from "./ui/system/theme-provider";

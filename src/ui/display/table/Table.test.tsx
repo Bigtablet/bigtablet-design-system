@@ -119,3 +119,317 @@ describe("Table", () => {
 		expect(screen.getByRole("table")).toHaveAttribute("aria-label", "결과 목록");
 	});
 });
+
+describe("Table sort", () => {
+	const sortableColumns: TableColumn<Row>[] = [
+		{ key: "name", header: "Name", sortable: true },
+		{ key: "score", header: "Score", sortable: true },
+	];
+
+	it("renders aria-sort='none' on sortable headers when unsorted", () => {
+		render(<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} />);
+		expect(screen.getByRole("columnheader", { name: "Name" })).toHaveAttribute(
+			"aria-sort",
+			"none",
+		);
+		expect(screen.getByRole("columnheader", { name: "Score" })).toHaveAttribute(
+			"aria-sort",
+			"none",
+		);
+	});
+
+	it("does not set aria-sort on non-sortable columns", () => {
+		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+		expect(screen.getByRole("columnheader", { name: "Name" })).not.toHaveAttribute("aria-sort");
+	});
+
+	it("cycles a column through none -> asc -> desc -> none on click", () => {
+		const onSortChange = vi.fn();
+		const { rerender } = render(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={undefined}
+				onSortChange={onSortChange}
+			/>,
+		);
+		const nameHeaderButton = screen.getByRole("button", { name: "Name" });
+
+		fireEvent.click(nameHeaderButton);
+		expect(onSortChange).toHaveBeenLastCalledWith({ key: "name", direction: "asc" });
+
+		rerender(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "asc" }}
+				onSortChange={onSortChange}
+			/>,
+		);
+		expect(screen.getByRole("columnheader", { name: "Name" })).toHaveAttribute(
+			"aria-sort",
+			"ascending",
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "Name" }));
+		expect(onSortChange).toHaveBeenLastCalledWith({ key: "name", direction: "desc" });
+
+		rerender(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+				onSortChange={onSortChange}
+			/>,
+		);
+		expect(screen.getByRole("columnheader", { name: "Name" })).toHaveAttribute(
+			"aria-sort",
+			"descending",
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "Name" }));
+		expect(onSortChange).toHaveBeenLastCalledWith(undefined);
+	});
+
+	it("clicking a different column starts it at asc regardless of previous column state", () => {
+		const onSortChange = vi.fn();
+		render(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+				onSortChange={onSortChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Score" }));
+		expect(onSortChange).toHaveBeenCalledWith({ key: "score", direction: "asc" });
+	});
+
+	it("emits undefined (not null) when a desc-sorted column is clicked again to clear sort", () => {
+		const onSortChange = vi.fn();
+		render(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+				onSortChange={onSortChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Name" }));
+		expect(onSortChange).toHaveBeenLastCalledWith(undefined);
+	});
+
+	it("does not sort data itself - relies on consumer-provided data order", () => {
+		render(
+			<Table
+				columns={sortableColumns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+				onSortChange={vi.fn()}
+			/>,
+		);
+		const cells = screen.getAllByRole("cell");
+		// rows prop order (Alpha, Beta) is unchanged even though sort=desc is set
+		expect(cells[0]).toHaveTextContent("Alpha");
+	});
+});
+
+describe("Table selection", () => {
+	it("renders a checkbox column when selectable", () => {
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		// 1 select-all + 2 row checkboxes
+		expect(screen.getAllByRole("checkbox")).toHaveLength(3);
+	});
+
+	it("select-all is unchecked when nothing selected, checked when all selected, indeterminate when some selected", () => {
+		const { rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+			/>,
+		);
+		const selectAll = screen.getByRole("checkbox", { name: "전체 선택" }) as HTMLInputElement;
+		expect(selectAll.checked).toBe(false);
+		expect(selectAll.indeterminate).toBe(false);
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1"]}
+			/>,
+		);
+		expect(selectAll.indeterminate).toBe(true);
+		expect(selectAll.checked).toBe(false);
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1", "2"]}
+			/>,
+		);
+		expect(selectAll.indeterminate).toBe(false);
+		expect(selectAll.checked).toBe(true);
+	});
+
+	it("toggling select-all selects all row keys, toggling again clears them", () => {
+		const onSelectionChange = vi.fn();
+		const { rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		expect(onSelectionChange).toHaveBeenLastCalledWith(["1", "2"]);
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1", "2"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+	});
+
+	it("toggles an individual row via rowKey mapping and marks it aria-selected", () => {
+		const onSelectionChange = vi.fn();
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+
+		const rowsInTable = screen.getAllByRole("row");
+		// rowsInTable[0] is header row; body rows follow
+		expect(rowsInTable[1]).toHaveAttribute("aria-selected", "true");
+		expect(rowsInTable[2]).not.toHaveAttribute("aria-selected");
+
+		const betaCheckbox = screen.getByRole("checkbox", { name: "2번째 행 선택" });
+		fireEvent.click(betaCheckbox);
+		expect(onSelectionChange).toHaveBeenCalledWith(["1", "2"]);
+
+		const alphaCheckbox = screen.getByRole("checkbox", { name: "1번째 행 선택" });
+		fireEvent.click(alphaCheckbox);
+		expect(onSelectionChange).toHaveBeenCalledWith([]);
+	});
+
+	it("toggling select-all preserves keys selected on other pages (server pagination)", () => {
+		const onSelectionChange = vi.fn();
+		// "99" belongs to a row not present in the current page's `data`
+		const { rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["99"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		const firstCallKeys = onSelectionChange.mock.calls[0][0] as string[];
+		expect(new Set(firstCallKeys)).toEqual(new Set(["99", "1", "2"]));
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["99", "1", "2"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+		expect(onSelectionChange).toHaveBeenLastCalledWith(["99"]);
+	});
+
+	it("supports custom selectAllAriaLabel / selectRowAriaLabel", () => {
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				selectAllAriaLabel="Select all rows"
+				selectRowAriaLabel={(index) => `Select row ${index + 1}`}
+			/>,
+		);
+		expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "Select row 1" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "Select row 2" })).toBeInTheDocument();
+	});
+
+	it("disables the select-all checkbox while isLoading", () => {
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				isLoading
+			/>,
+		);
+		expect(screen.getByRole("checkbox", { name: "전체 선택" })).toBeDisabled();
+	});
+});
+
+describe("Table isLoading guards", () => {
+	const sortableColumns: TableColumn<Row>[] = [{ key: "name", header: "Name", sortable: true }];
+
+	it("disables sortable header buttons while isLoading", () => {
+		render(
+			<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} isLoading />,
+		);
+		expect(screen.getByRole("button", { name: "Name" })).toBeDisabled();
+	});
+});

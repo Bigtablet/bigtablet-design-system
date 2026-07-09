@@ -1,11 +1,23 @@
 "use client";
 
-import type * as React from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import { Skeleton } from "../../feedback/skeleton";
+import { Checkbox } from "../../forms/checkbox";
 import "./style.scss";
 
 export type TableSize = "sm" | "md" | "lg";
+
+export type TableSortDirection = "asc" | "desc";
+
+export interface TableSort {
+	/** 정렬 중인 컬럼의 `TableColumn.key` */
+	key: string;
+	/** 정렬 방향 */
+	direction: TableSortDirection;
+}
 
 export interface TableColumn<T extends object> {
 	/** 컬럼 식별자 - `data[key]` 자동 렌더링에도 쓰임 */
@@ -18,9 +30,30 @@ export interface TableColumn<T extends object> {
 	width?: string;
 	/** 정렬 (기본값: "left") */
 	align?: "left" | "center" | "right";
+	/** 정렬 가능한 컬럼 여부 (기본값: false). 클릭 시 `onSortChange` 발화 - 실제 정렬은 소비자가 수행 */
+	sortable?: boolean;
 }
 
-export interface TableProps<T extends object> {
+/** `selectable` 시 `rowKey` 를 요구하기 위한 판별 유니온 */
+type TableSelectionProps<T extends object> =
+	| {
+			/** 행 선택(체크박스 컬럼) 활성화 여부 */
+			selectable: true;
+			/** 행 고유 key 추출 함수 - `selectable` 사용 시 필수 */
+			rowKey: (row: T) => string;
+			/** 선택된 행 key 배열 (제어형) */
+			selectedKeys?: string[];
+			/** 선택 변경 콜백 */
+			onSelectionChange?: (keys: string[]) => void;
+	  }
+	| {
+			selectable?: false;
+			rowKey?: (row: T) => string;
+			selectedKeys?: string[];
+			onSelectionChange?: (keys: string[]) => void;
+	  };
+
+export type TableProps<T extends object> = {
 	/** 컬럼 정의 */
 	columns: TableColumn<T>[];
 	/** 표시할 데이터 배열 */
@@ -45,7 +78,15 @@ export interface TableProps<T extends object> {
 	className?: string;
 	/** 행 클릭 콜백 */
 	onRowClick?: (item: T, index: number) => void;
-}
+	/** 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 */
+	sort?: TableSort;
+	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
+	onSortChange?: (sort: TableSort | undefined) => void;
+	/** 전체 선택 체크박스 aria-label (기본값: "전체 선택") */
+	selectAllAriaLabel?: string;
+	/** 개별 행 선택 체크박스 aria-label (기본값: (i) => `${i+1}번째 행 선택`) */
+	selectRowAriaLabel?: (index: number) => string;
+} & TableSelectionProps<T>;
 
 /**
  * 데이터 테이블을 렌더링한다. 로딩 중에는 헤더 유지, 바디에 스켈레톤 행을 표시한다.
@@ -65,6 +106,14 @@ export const Table = <T extends object>({
 	ariaLabel,
 	className,
 	onRowClick,
+	sort,
+	onSortChange,
+	selectAllAriaLabel = "전체 선택",
+	selectRowAriaLabel = (index: number) => `${index + 1}번째 행 선택`,
+	selectable = false,
+	rowKey,
+	selectedKeys,
+	onSelectionChange,
 }: TableProps<T>) => {
 	const wrapperClassName = cn(
 		"table_wrapper",
@@ -75,21 +124,111 @@ export const Table = <T extends object>({
 
 	const isEmpty = !isLoading && data.length === 0;
 
+	// ── Row selection ──────────────────────────────────────────────────────
+	const getRowKey = (item: T, index: number) => rowKey?.(item) ?? String(index);
+	const allRowKeys = selectable ? data.map((item, index) => getRowKey(item, index)) : [];
+	const selectedSet = React.useMemo(() => new Set(selectedKeys), [selectedKeys]);
+	const selectedCount = allRowKeys.filter((key) => selectedSet.has(key)).length;
+	const isAllSelected = allRowKeys.length > 0 && selectedCount === allRowKeys.length;
+	const isSomeSelected = selectedCount > 0 && !isAllSelected;
+
+	const handleToggleAll = () => {
+		const pageKeys = new Set(allRowKeys);
+		const offPage = (selectedKeys ?? []).filter((k) => !pageKeys.has(k));
+		// 현재 페이지가 모두 선택돼 있으면 해제, 아니면 전체 선택 - 다른 페이지 선택은 보존
+		onSelectionChange?.(isAllSelected ? offPage : [...offPage, ...allRowKeys]);
+	};
+
+	const handleToggleRow = (key: string) => {
+		const current = selectedKeys ?? [];
+		const next = current.includes(key) ? current.filter((k) => k !== key) : [...current, key];
+		onSelectionChange?.(next);
+	};
+
+	// ── Sort ───────────────────────────────────────────────────────────────
+	const handleSortClick = (key: string) => {
+		const next: TableSort | undefined =
+			sort?.key !== key
+				? { key, direction: "asc" }
+				: sort.direction === "asc"
+					? { key, direction: "desc" }
+					: undefined;
+		onSortChange?.(next);
+	};
+
 	return (
 		<div className={wrapperClassName}>
 			<table className="table" aria-label={ariaLabel}>
 				<thead className="table_thead">
 					<tr>
-						{columns.map((col) => (
-							<th
-								key={col.key}
-								scope="col"
-								className={cn("table_th", col.align && `table_align_${col.align}`)}
-								style={{ width: col.width }}
-							>
-								{col.header}
+						{selectable && (
+							<th scope="col" className="table_th table_th_checkbox">
+								<Checkbox
+									aria-label={selectAllAriaLabel}
+									checked={isAllSelected}
+									indeterminate={isSomeSelected}
+									disabled={isLoading || allRowKeys.length === 0}
+									onChange={handleToggleAll}
+								/>
 							</th>
-						))}
+						)}
+						{columns.map((col) => {
+							const isSortActive = Boolean(col.sortable) && sort?.key === col.key;
+							const direction = isSortActive ? sort?.direction : undefined;
+							const ariaSort = col.sortable
+								? direction === "asc"
+									? "ascending"
+									: direction === "desc"
+										? "descending"
+										: "none"
+								: undefined;
+
+							return (
+								<th
+									key={col.key}
+									scope="col"
+									className={cn(
+										"table_th",
+										col.align && `table_align_${col.align}`,
+										col.sortable && "table_th_sortable",
+									)}
+									style={{ width: col.width }}
+									aria-sort={ariaSort}
+								>
+									{col.sortable ? (
+										<button
+											type="button"
+											className="table_sort_button"
+											onClick={() => handleSortClick(col.key)}
+											disabled={isLoading}
+										>
+											<span className="table_sort_label">{col.header}</span>
+											{direction === "asc" ? (
+												<ArrowUp
+													size={iconSize.sm}
+													className="table_sort_icon table_sort_icon_active"
+													aria-hidden="true"
+												/>
+											) : direction === "desc" ? (
+												<ArrowDown
+													size={iconSize.sm}
+													className="table_sort_icon table_sort_icon_active"
+													aria-hidden="true"
+												/>
+											) : (
+												<ArrowUpDown
+													size={iconSize.sm}
+													className="table_sort_icon"
+													aria-hidden="true"
+												/>
+											)}
+										</button>
+									) : (
+										col.header
+									)}
+								</th>
+							);
+						})}
 					</tr>
 				</thead>
 				<tbody className="table_tbody">
@@ -97,6 +236,7 @@ export const Table = <T extends object>({
 						? Array.from({ length: skeletonRows }).map((_, rowIndex) => (
 								// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows have no stable identity
 								<tr key={rowIndex} className="table_row table_row_skeleton">
+									{selectable && <td className="table_td table_td_checkbox" />}
 									{columns.map((col) => (
 										<td
 											key={col.key}
@@ -108,45 +248,65 @@ export const Table = <T extends object>({
 									))}
 								</tr>
 							))
-						: data.map((item, rowIndex) => (
-								<tr
-									key={keyExtractor(item, rowIndex)}
-									className={cn(
-										"table_row",
-										hoverable && "table_row_hoverable",
-										onRowClick && "table_row_clickable",
-									)}
-									role={onRowClick ? "button" : undefined}
-									tabIndex={onRowClick ? 0 : undefined}
-									onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
-									onKeyDown={
-										onRowClick
-											? (e) => {
-													if (e.key === "Enter" || e.key === " ") {
-														e.preventDefault();
-														onRowClick(item, rowIndex);
+						: data.map((item, rowIndex) => {
+								const rowIdentity = selectable ? getRowKey(item, rowIndex) : undefined;
+								const isSelected = rowIdentity !== undefined && selectedSet.has(rowIdentity);
+
+								return (
+									<tr
+										key={keyExtractor(item, rowIndex)}
+										className={cn(
+											"table_row",
+											hoverable && "table_row_hoverable",
+											onRowClick && "table_row_clickable",
+											isSelected && "table_row_selected",
+										)}
+										aria-selected={isSelected ? "true" : undefined}
+										role={onRowClick ? "button" : undefined}
+										tabIndex={onRowClick ? 0 : undefined}
+										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
+										onKeyDown={
+											onRowClick
+												? (e) => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															onRowClick(item, rowIndex);
+														}
 													}
-												}
-											: undefined
-									}
-								>
-									{columns.map((col) => (
-										<td
-											key={col.key}
-											className={cn("table_td", col.align && `table_align_${col.align}`)}
-											style={{ width: col.width }}
-										>
-											{(() => {
-												if (col.render) return col.render(item, rowIndex);
-												const value = (item as Record<string, unknown>)[col.key];
-												return value === null || value === undefined || value === ""
-													? "-"
-													: String(value);
-											})()}
-										</td>
-									))}
-								</tr>
-							))}
+												: undefined
+										}
+									>
+										{selectable && rowIdentity !== undefined && (
+											<td
+												className="table_td table_td_checkbox"
+												onClick={(e) => e.stopPropagation()}
+												onKeyDown={(e) => e.stopPropagation()}
+											>
+												<Checkbox
+													aria-label={selectRowAriaLabel(rowIndex)}
+													checked={isSelected}
+													onChange={() => handleToggleRow(rowIdentity)}
+												/>
+											</td>
+										)}
+										{columns.map((col) => (
+											<td
+												key={col.key}
+												className={cn("table_td", col.align && `table_align_${col.align}`)}
+												style={{ width: col.width }}
+											>
+												{(() => {
+													if (col.render) return col.render(item, rowIndex);
+													const value = (item as Record<string, unknown>)[col.key];
+													return value === null || value === undefined || value === ""
+														? "-"
+														: String(value);
+												})()}
+											</td>
+										))}
+									</tr>
+								);
+							})}
 				</tbody>
 			</table>
 
