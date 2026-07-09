@@ -71,10 +71,11 @@ export const Drawer = ({
 	// 포커스 트랩
 	useFocusTrap(panelRef, open);
 
-	// 진입 시 마운트 보장
-	React.useEffect(() => {
-		if (open) setShouldRender(true);
-	}, [open]);
+	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
+	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
+	// true 가 안 돼 exit 애니메이션이 누락될 수 있다. React "render 중 상태 조정" 패턴 — setState 는 이
+	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
+	if (open && !shouldRender) setShouldRender(true);
 
 	// 오버레이 opacity 페이드 + presence 라이프사이클(퇴출 완료 후 unmount).
 	// 오버레이는 이동하지 않으므로 transform 을 translateY(0px) 로 고정한다.
