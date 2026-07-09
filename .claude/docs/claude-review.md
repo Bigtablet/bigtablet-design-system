@@ -19,6 +19,8 @@ CodeRabbit(`.coderabbit.yaml`) / Gemini Code Assist 는 그대로 병행한다 (
    gh secret set CLAUDE_CODE_REVIEW_API_KEY -R Bigtablet/bigtablet-design-system
    ```
    (프롬프트에 위 토큰 붙여넣기. GitHub UI Settings -> Secrets -> Actions 로도 가능.)
+   - secret 이름에 `API_KEY` 가 들어가지만 값은 위 **OAuth 토큰**(`sk-ant-oat...`)이다.
+     워크플로는 이를 `anthropic_api_key`(x-api-key) 가 아니라 `claude_code_oauth_token`(Bearer) 으로 넘긴다.
 
 - 이 토큰은 **발급자 개인 Claude 구독 사용량**을 소모한다.
 - `GITHUB_TOKEN` 은 Actions 기본 제공 - 별도 등록 불필요.
