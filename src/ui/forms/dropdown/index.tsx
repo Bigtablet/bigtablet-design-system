@@ -61,6 +61,8 @@ interface DropdownCommonProps {
 	searchPlaceholder?: string;
 	/** 필터 결과가 0개일 때 표시할 텍스트 (기본값: "결과 없음") */
 	emptyText?: string;
+	/** 멀티 선택 요약 텍스트 (기본값: "N개 선택") */
+	selectedSummary?: (count: number) => string;
 }
 
 /** 단일 선택 (기본) */
@@ -115,6 +117,7 @@ export const Dropdown = (props: DropdownProps) => {
 		searchable = false,
 		searchPlaceholder = "검색…",
 		emptyText = "결과 없음",
+		selectedSummary = (count: number) => `${count}개 선택`,
 	} = props;
 
 	const multiple = props.multiple === true;
@@ -291,6 +294,8 @@ export const Dropdown = (props: DropdownProps) => {
 
 	// 검색 입력 내 키보드 - ↑/↓ 이동, Enter 선택/토글, Esc 닫기. Home/End 는 커서 이동에 양보.
 	const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		// IME 조합 중 Enter 는 조합 확정용 - 선택/토글·네비게이션·닫기 트리거 금지
+		if (e.nativeEvent.isComposing) return;
 		switch (e.key) {
 			case "ArrowDown":
 				e.preventDefault();
@@ -351,14 +356,15 @@ export const Dropdown = (props: DropdownProps) => {
 
 	// ── 표시 값 계산 ────────────────────────────────────────────────────────
 
-	const currentOption = multiple
-		? null
-		: (options.find((o) => o.value === selectedValues[0]) ?? null);
+	const currentOption = useMemo(
+		() => (multiple ? null : (options.find((o) => o.value === selectedValues[0]) ?? null)),
+		[multiple, options, selectedValues],
+	);
 	const hasSelection = selectedValues.length > 0;
 	const showValue = multiple ? hasSelection : currentOption != null;
 	const controlText = multiple
 		? hasSelection
-			? `${selectedValues.length}개 선택`
+			? selectedSummary(selectedValues.length)
 			: placeholder
 		: currentOption
 			? currentOption.label

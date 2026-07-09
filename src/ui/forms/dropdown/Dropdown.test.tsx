@@ -580,6 +580,23 @@ describe("Dropdown", () => {
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
 
+	it("ignores Enter during IME composition, then selects on a normal Enter", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown options={options} searchable onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+
+		// 조합 중 Enter (한글 확정) - 선택/토글·닫기 발생하지 않아야 함
+		fireEvent.keyDown(search, { key: "Enter", isComposing: true });
+		expect(onValueChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+		// 조합이 끝난 뒤의 일반 Enter - 이제 활성 옵션 선택
+		fireEvent.keyDown(search, { key: "Enter" });
+		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
 	// ── multiple ──────────────────────────────────────────────────────────────
 
 	it("toggles selection and keeps the list open in multiple mode", () => {
@@ -603,6 +620,18 @@ describe("Dropdown", () => {
 	it("shows N개 선택 summary in multiple mode", () => {
 		render(<Dropdown multiple options={options} defaultValue={["1", "2"]} placeholder="선택" />);
 		expect(screen.getByText("2개 선택")).toBeInTheDocument();
+	});
+
+	it("uses a custom selectedSummary in multiple mode", () => {
+		render(
+			<Dropdown
+				multiple
+				options={options}
+				defaultValue={["1", "2"]}
+				selectedSummary={(n) => `${n} selected`}
+			/>,
+		);
+		expect(screen.getByText("2 selected")).toBeInTheDocument();
 	});
 
 	it("shows placeholder when nothing is selected in multiple mode", () => {
