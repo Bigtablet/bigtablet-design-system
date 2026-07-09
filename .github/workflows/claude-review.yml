@@ -108,10 +108,12 @@ jobs:
       # 모든 이벤트에서 PR head 를 체크아웃한다 - 기본(merge ref) 체크아웃을 쓰면 "리뷰 대상 커밋"
       # SHA 가 실제 head 가 아닌 임시 병합 커밋이 되어 staleness 추적이 깨진다.
       # base..head diff 는 fetch-depth:0 + `gh pr diff` 로 읽는다.
+      # 보안: mutable ref(refs/pull/*/head) 대신 immutable commit SHA 를 사용해
+      # issue_comment 기반 권한 워크플로우의 TOCTOU(검증 후 변경) 위험을 막는다.
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: refs/pull/${{ github.event.pull_request.number || github.event.issue.number }}/head
+          ref: ${{ github.event.pull_request.head.sha || github.event.issue.pull_request.head.sha }}
 
       # ── [리뷰 모드] - pull_request(자동) / issue_comment(@claude review 재리뷰) ──
       # 판정 제출 + 인라인 코멘트. gh api 는 주지 않는다(리뷰는 gh pr review/comment 로 충분).
