@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.4.0) - 2026-07-09
+
+- `iconSize` 토큰 export 추가 (xs~xl 스케일) - 컴포넌트 내부 아이콘 사이즈 하드코딩 제거
+- 마이그레이션 가이드 `docs/MIGRATION.md` + 테마 가이드 `docs/THEMING.md` 문서 추가
+- 문서 정합화: `docs/COMPONENTS.md` 를 v3.3.0 canonical prop 이름으로 갱신, 릴리즈 노트 양식 통일, em-dash 등 타이포 정리
+- (개발) Claude PR 리뷰 워크플로 도입, dev 의존성 보안/버전 업데이트
+
 ## [3.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.3.0) - 2026-06-25
 
 - `ref` 전달(React 19 ref-as-prop) 지원 - Button · IconButton · Card · Container · Stack · Grid · Section
