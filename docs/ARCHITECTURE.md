@@ -12,7 +12,7 @@ bigtablet-design-system/
 │   ├── index.ts             # React/Next.js 공용 진입점 (빌드 시 "use client" 자동 주입)
 │   │
 │   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
-│   │   ├── token.scss       # SCSS barrel (@forward all domains) — 소비자 @use 진입점
+│   │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
 │   │   ├── tokens.json      # 디자이너 JSON 토큰
 │   │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
 │   │   ├── global.css
@@ -20,7 +20,7 @@ bigtablet-design-system/
 │   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트 — 8 카테고리 폴더 하위에 컴포넌트
+│   ├── ui/                  # UI 컴포넌트 - 8 카테고리 폴더 하위에 컴포넌트
 │   │   ├── display/         # accordion avatar badge card chip divider hero icon list-item media-card table
 │   │   ├── feedback/        # alert empty-state error-state linear-progress skeleton spinner toast top-loading
 │   │   ├── forms/           # checkbox date-picker dropdown file otp-input radio radio-group textarea textfield toggle
@@ -172,7 +172,7 @@ cn(styles.button, styles[`size_${size}`], className);
 ### React / Next.js (`.`)
 
 ```ts
-// src/index.ts — 모든 컴포넌트·훅·유틸 re-export
+// src/index.ts - 모든 컴포넌트·훅·유틸 re-export
 export * from "./ui/general/button";
 export * from "./ui/forms/textfield";
 export { cn, useReducedMotion } from "./utils";
@@ -246,7 +246,7 @@ $transition_base: 0.2s ease-in-out;
 import { defineConfig } from "tsup";
 
 export default defineConfig([
-    // React 번들 (Next.js 공용) — 빌드 후 dist/index.js 선두에 "use client" 주입
+    // React 번들 (Next.js 공용) - 빌드 후 dist/index.js 선두에 "use client" 주입
     {
         entry: { index: "src/index.ts" },
         format: ["esm"],

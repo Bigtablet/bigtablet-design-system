@@ -184,13 +184,13 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outlined — glass=frosted blur over colored bg, outlined=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
+| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outlined - glass=frosted blur over colored bg, outlined=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
 | `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
 | `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
-| `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** — inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
+| `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal/vertical line. | `orientation` |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
@@ -215,7 +215,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). Variants `line` (default) / `fills`. |
 | `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`, `mode` (auto/static - auto transforms to bottom bar <600px). Children = `SidebarSection` + `SidebarItem`. |
-| `BottomNav` | Mobile bottom nav bar. | 2–5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
+| `BottomNav` | Mobile bottom nav bar. | 2-5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
 | `Breadcrumb` | Page path nav. | `items` array (`label`, `href`, `current`). |
 | `Menu` | Action menu (context/kebab). | `trigger` element, `items` (key/label/icon/onSelect/destructive/disabled), `align` (start/end). Trigger components MUST forward props (`<button {...props}>`). |
