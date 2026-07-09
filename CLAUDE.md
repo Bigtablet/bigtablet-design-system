@@ -223,6 +223,8 @@ return <animated.div style={style}>...</animated.div>;
 |----------|-------------|
 | [README.md](./README.md) | 프로젝트 개요 및 빠른 시작 |
 | [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 API 및 사용법 |
+| [docs/MIGRATION.md](./docs/MIGRATION.md) | deprecated prop 마이그레이션 가이드 |
+| [docs/THEMING.md](./docs/THEMING.md) | 라이트/다크 테마 시스템 가이드 |
 | [docs/VANILLA.md](./docs/VANILLA.md) | HTML/CSS/JS 환경 가이드 |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | 프로젝트 구조 및 아키텍처 |
 | [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | 기여 가이드라인 |
