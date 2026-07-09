@@ -27,7 +27,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
 |------|------|---------|-------------|
 | `defaultMode` | `'light' \| 'dark' \| 'system'` | `'system'` | 초기 테마. 서버와 동일한 값으로 첫 렌더를 시작하기 위한 기준값입니다 |
 | `storageKey` | `string \| null` | `'bt-theme'` | 선택한 모드를 저장할 localStorage 키. `null` 이면 저장하지 않고 매 새로고침마다 `defaultMode` 로 초기화됩니다 |
-| `targetSelector` | `string` | `document.documentElement` | `data-theme` attribute 를 적용할 대상 element 의 selector |
+| `targetSelector` | `string` | `-` | `data-theme` 를 적용할 대상 element 의 CSS selector. 미지정 시 `document.documentElement` 에 적용 |
 
 **`useTheme()` 반환값**
 
@@ -84,7 +84,6 @@ function ThemeToggle() {
 Next.js App Router 예시 (`app/layout.tsx`):
 
 ```tsx
-import Script from "next/script";
 import { ThemeProvider } from "@bigtablet/design-system";
 import "@bigtablet/design-system/style.css";
 
@@ -106,9 +105,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <head>
-        <Script id="bt-theme-no-flash" strategy="beforeInteractive">
-          {NO_FLASH_SCRIPT}
-        </Script>
+        {/* next/script 의 beforeInteractive 는 인라인 스크립트(src 없는 스크립트)를 보장하지 않으므로
+            hydration 이전 실행을 위해 head 에 일반 <script> 로 주입한다 */}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: 정적 no-flash 스니펫(사용자 입력 아님) */}
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
       </head>
       <body>
         <ThemeProvider defaultMode="system">{children}</ThemeProvider>
@@ -139,7 +139,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 </head>
 ```
 
-`storageKey` 나 `targetSelector` 를 기본값에서 바꿨다면 스크립트의 `"bt-theme"` 와 `document.documentElement` 도 동일하게 맞춰야 합니다.
+`storageKey`/`targetSelector`/`defaultMode` 를 기본값에서 바꿨다면 스크립트의 `"bt-theme"`, `document.documentElement`, 그리고 저장값이 없을 때의 fallback(위 예시의 `"system"`)도 각각 그 값에 맞춰야 합니다. 예: `defaultMode="light"` 면 fallback 도 `"light"`.
 
 ---
 
