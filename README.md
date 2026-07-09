@@ -174,6 +174,8 @@ pnpm build            # tsup + SCSS copy
 | | |
 |---|---|
 | 📚 [Components](./docs/COMPONENTS.md) | Props API + usage per component |
+| 🔄 [Migration](./docs/MIGRATION.md) | Deprecated prop migration guide |
+| 🎨 [Theming](./docs/THEMING.md) | Light/dark theme system guide |
 | 🏗️ [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |
 | 🧪 [Testing](./docs/TESTING.md) | Test patterns + a11y testing |
