@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.4.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.4.1) - 2026-07-10
+
+- Modal · Drawer: 소비자 `style`/`className`/`data-*` 는 반영하되 컴포넌트의 애니메이션 style · `onClick`/`onKeyDown`(stopPropagation·Escape) · `role` 이 항상 우선하도록 정리 (소비자 style 이 오버레이 동작을 덮던 문제 수정)
+- Table `rowClickAriaLabel` prop 추가 - clickable 행의 스크린리더 접근성 이름 지정
+- Dropdown 옵션 리스트 max-height 를 `$overlay_list_max_height` 토큰으로 추출
+
 ## [3.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.4.0) - 2026-07-09
 
 - Dropdown `searchable`(검색 필터) + `multiple`(다중 선택) opt-in 추가 - 한글 IME 조합 대응, 선택 요약 텍스트 커스터마이즈(`selectedSummary`)
