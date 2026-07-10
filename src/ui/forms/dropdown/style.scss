@@ -234,7 +234,7 @@
   // ── Options scroll container (role=listbox) ─────────────────────────────────
 
   &_options {
-    max-height: 18rem;
+    max-height: token.$overlay_list_max_height;
     overflow-y: auto;
     overflow-x: hidden;
     padding: token.$spacing_4 0;

@@ -330,4 +330,13 @@ describe("Drawer", () => {
 		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
 		expect(panel).toHaveClass("custom-drawer");
 	});
+
+	it("forwards arbitrary props to the panel (spread order keeps them)", () => {
+		const { container } = render(
+			<Drawer open onClose={() => {}} data-testid="panel-x">
+				Content
+			</Drawer>,
+		);
+		expect(container.querySelector(".drawer_panel")).toHaveAttribute("data-testid", "panel-x");
+	});
 });

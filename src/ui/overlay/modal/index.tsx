@@ -141,6 +141,10 @@ export const Modal = ({
 		>
 			<animated.div
 				ref={panelRef}
+				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
+				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				{...props}
 				className={cn("modal_panel", className)}
 				style={{ ...panelStyle, width }}
 				role="document"
@@ -148,7 +152,6 @@ export const Modal = ({
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
-				{...props}
 			>
 				{showCloseIcon && onClose && (
 					<button
