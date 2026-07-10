@@ -690,4 +690,15 @@ describe("Dropdown", () => {
 		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
 		expect(screen.getByText("Option 2")).toBeInTheDocument();
 	});
+
+	it("exposes combobox a11y on the search input pointing at the active option", () => {
+		render(<Dropdown options={options} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAttribute("aria-autocomplete", "list");
+		expect(input).toHaveAttribute("aria-expanded", "true");
+		const activeId = input.getAttribute("aria-activedescendant");
+		expect(activeId).toBeTruthy();
+		expect(document.getElementById(activeId as string)).toHaveAttribute("role", "option");
+	});
 });
