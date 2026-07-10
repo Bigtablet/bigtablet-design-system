@@ -331,12 +331,27 @@ describe("Drawer", () => {
 		expect(panel).toHaveClass("custom-drawer");
 	});
 
-	it("forwards arbitrary props to the panel (spread order keeps them)", () => {
+	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
+		const consumerClick = vi.fn();
 		const { container } = render(
-			<Drawer open onClose={() => {}} data-testid="panel-x">
+			<Drawer
+				open
+				onClose={() => {}}
+				data-testid="panel-x"
+				style={{ backgroundColor: "rgb(255, 0, 0)" }}
+				{...({ role: "menu", onClick: consumerClick } as Record<string, unknown>)}
+			>
 				Content
 			</Drawer>,
 		);
-		expect(container.querySelector(".drawer_panel")).toHaveAttribute("data-testid", "panel-x");
+		const panel = container.querySelector(".drawer_panel") as HTMLElement;
+		// data-* 등은 통과
+		expect(panel).toHaveAttribute("data-testid", "panel-x");
+		// role/onClick 은 컴포넌트가 전유 - 소비자 값 무시(스프레드 순서 회귀 시 깨짐)
+		expect(panel).toHaveAttribute("role", "document");
+		fireEvent.click(panel);
+		expect(consumerClick).not.toHaveBeenCalled();
+		// style 은 병합 - 소비자 값 적용
+		expect(panel.style.backgroundColor).toBe("rgb(255, 0, 0)");
 	});
 });
