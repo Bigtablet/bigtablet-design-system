@@ -235,7 +235,9 @@ export const Dropdown = (props: DropdownProps) => {
 				setIsOpen(true);
 				return;
 			}
-			let i = activeIndex;
+			// activeIndex === -1(활성 없음)에서 첫 입력은 아래=첫 항목, 위=마지막 항목으로 진입해야 한다.
+			// 시드를 보정하지 않으면 위 방향에서 (-1-1+len)%len = len-2 로 마지막을 건너뛴다.
+			let i = activeIndex === -1 ? (dir === 1 ? -1 : 0) : activeIndex;
 			const len = visibleOptions.length;
 			for (let step = 0; step < len; step++) {
 				i = (i + dir + len) % len;
@@ -427,6 +429,15 @@ export const Dropdown = (props: DropdownProps) => {
 								placeholder={searchPlaceholder}
 								aria-label={searchPlaceholder}
 								autoComplete="off"
+								role="combobox"
+								aria-autocomplete="list"
+								aria-expanded={isOpen}
+								aria-controls={`${dropdownId}_listbox`}
+								aria-activedescendant={
+									activeIndex >= 0 && visibleOptions[activeIndex]
+										? `${dropdownId}_option_${visibleOptions[activeIndex].value}`
+										: undefined
+								}
 								value={searchText}
 								onChange={(e) => {
 									const v = e.target.value;
@@ -464,6 +475,7 @@ export const Dropdown = (props: DropdownProps) => {
 										<Fragment key={opt.value}>
 											{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button - options are non-focusable role=option per WAI-ARIA listbox pattern */}
 											<div
+												id={`${dropdownId}_option_${opt.value}`}
 												role="option"
 												tabIndex={-1}
 												aria-selected={selected}

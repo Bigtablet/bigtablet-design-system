@@ -127,7 +127,7 @@ export const Table = <T extends object>({
 	// ── Row selection ──────────────────────────────────────────────────────
 	const getRowKey = (item: T, index: number) => rowKey?.(item) ?? String(index);
 	const allRowKeys = selectable ? data.map((item, index) => getRowKey(item, index)) : [];
-	const selectedSet = React.useMemo(() => new Set(selectedKeys), [selectedKeys]);
+	const selectedSet = React.useMemo(() => new Set(selectedKeys ?? []), [selectedKeys]);
 	const selectedCount = allRowKeys.filter((key) => selectedSet.has(key)).length;
 	const isAllSelected = allRowKeys.length > 0 && selectedCount === allRowKeys.length;
 	const isSomeSelected = selectedCount > 0 && !isAllSelected;
@@ -262,8 +262,8 @@ export const Table = <T extends object>({
 											isSelected && "table_row_selected",
 										)}
 										aria-selected={isSelected ? "true" : undefined}
-										role={onRowClick ? "button" : undefined}
-										tabIndex={onRowClick ? 0 : undefined}
+										role={onRowClick && !selectable ? "button" : undefined}
+										tabIndex={onRowClick && !selectable ? 0 : undefined}
 										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
 										onKeyDown={
 											onRowClick

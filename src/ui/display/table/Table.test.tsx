@@ -432,4 +432,38 @@ describe("Table isLoading guards", () => {
 		);
 		expect(screen.getByRole("button", { name: "Name" })).toBeDisabled();
 	});
+
+	it("does not crash when selectedKeys is null", () => {
+		expect(() =>
+			render(
+				<Table
+					columns={columns}
+					data={rows}
+					keyExtractor={(r) => r.id}
+					selectable
+					rowKey={(r) => String(r.id)}
+					selectedKeys={null as unknown as string[]}
+					onSelectionChange={() => {}}
+				/>,
+			),
+		).not.toThrow();
+	});
+
+	it("keeps native row semantics (no button role) when selectable and clickable", () => {
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={() => {}}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				onSelectionChange={() => {}}
+			/>,
+		);
+		const row = container.querySelector(".table_row");
+		expect(row).not.toHaveAttribute("role", "button");
+		expect(row).not.toHaveAttribute("tabindex");
+	});
 });
