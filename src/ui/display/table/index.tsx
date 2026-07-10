@@ -78,6 +78,8 @@ export type TableProps<T extends object> = {
 	className?: string;
 	/** 행 클릭 콜백 */
 	onRowClick?: (item: T, index: number) => void;
+	/** clickable 행(onRowClick)의 aria-label - 스크린리더에 행의 동작을 알림 (예: (row) => `${row.name} 상세로 이동`) */
+	rowClickAriaLabel?: (item: T, index: number) => string;
 	/** 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 */
 	sort?: TableSort;
 	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
@@ -106,6 +108,7 @@ export const Table = <T extends object>({
 	ariaLabel,
 	className,
 	onRowClick,
+	rowClickAriaLabel,
 	sort,
 	onSortChange,
 	selectAllAriaLabel = "전체 선택",
@@ -262,7 +265,9 @@ export const Table = <T extends object>({
 											isSelected && "table_row_selected",
 										)}
 										aria-selected={isSelected ? "true" : undefined}
-										role={onRowClick && !selectable ? "button" : undefined}
+										aria-label={
+											onRowClick && rowClickAriaLabel ? rowClickAriaLabel(item, rowIndex) : undefined
+										}
 										tabIndex={onRowClick ? 0 : undefined}
 										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
 										onKeyDown={
