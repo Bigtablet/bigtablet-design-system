@@ -50,3 +50,6 @@
     box-shadow: 0 0 30px $color;
   }
 }
+
+/* Overlay list scroll cap - dropdown/menu/select 등 오버레이 옵션 리스트의 최대 높이 */
+$overlay_list_max_height: 18rem;

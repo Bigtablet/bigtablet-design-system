@@ -10,7 +10,10 @@ import "./style.scss";
 /** Drawer 가 미끄러져 들어오는 방향 (top 은 범위 외) */
 export type DrawerPlacement = "left" | "right" | "bottom";
 
-export interface DrawerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+// onClick/onKeyDown/role 은 오버레이 동작(stopPropagation·Escape·role="document")을 위해
+// 컴포넌트가 전유하므로 타입에서 제외한다. style/className 은 병합되어 소비자 값도 반영된다.
+export interface DrawerProps
+	extends Omit<React.HTMLAttributes<HTMLDivElement>, "title" | "onClick" | "onKeyDown" | "role"> {
 	/** 드로어 열림 여부 */
 	open: boolean;
 	/** 드로어 닫기 콜백 */
@@ -156,14 +159,17 @@ export const Drawer = ({
 		>
 			<animated.div
 				ref={panelRef}
+				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
+				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				{...props}
 				className={cn("drawer_panel", className)}
-				style={{ ...panelStyle, ...panelSizeStyle }}
+				style={{ ...props.style, ...panelStyle, ...panelSizeStyle }}
 				role="document"
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
-				{...props}
 			>
 				{showCloseIcon && onClose && (
 					<button

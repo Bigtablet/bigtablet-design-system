@@ -171,4 +171,24 @@ describe("Modal", () => {
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
+	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
+		const consumerClick = vi.fn();
+		const { container } = render(
+			<Modal
+				open
+				onClose={() => {}}
+				data-testid="panel-x"
+				style={{ backgroundColor: "rgb(255, 0, 0)" }}
+				{...({ role: "menu", onClick: consumerClick } as Record<string, unknown>)}
+			>
+				Content
+			</Modal>,
+		);
+		const panel = container.querySelector(".modal_panel") as HTMLElement;
+		expect(panel).toHaveAttribute("data-testid", "panel-x");
+		expect(panel).toHaveAttribute("role", "document");
+		fireEvent.click(panel);
+		expect(consumerClick).not.toHaveBeenCalled();
+		expect(panel.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
 });
