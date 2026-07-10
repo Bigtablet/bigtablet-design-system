@@ -79,10 +79,11 @@ export type TableProps<T extends object> = {
 	/** 행 클릭 콜백 */
 	onRowClick?: (item: T, index: number) => void;
 	/**
-	 * clickable 행(onRowClick)의 동작 설명. 지정 시 각 clickable 행에 `aria-describedby` 로 연결된다.
-	 * `aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label` 은 행/셀의 accessible name 을
-	 * 덮어써 스크린리더가 셀 데이터를 못 읽는다. describedby 는 셀 낭독을 유지하며 동작만 덧붙인다.
-	 * (예: "행을 선택하면 상세 항목으로 이동합니다")
+	 * clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다 (기본값: "클릭 가능한 행").
+	 * 행마다 셀 데이터가 이미 행을 식별하므로 여기엔 동작만 담으면 된다 (예: "선택하면 상세 항목으로 이동").
+	 * `""`(빈 문자열)로 두면 힌트를 붙이지 않는다.
+	 * `aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label`/`role="button"` 은 행/셀의
+	 * accessible name 을 덮거나 셀을 presentational 로 만들어 스크린리더가 셀 데이터를 못 읽는다.
 	 */
 	rowClickHint?: string;
 	/** 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 */
@@ -113,7 +114,7 @@ export const Table = <T extends object>({
 	ariaLabel,
 	className,
 	onRowClick,
-	rowClickHint,
+	rowClickHint = "클릭 가능한 행",
 	sort,
 	onSortChange,
 	selectAllAriaLabel = "전체 선택",

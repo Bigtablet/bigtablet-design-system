@@ -483,6 +483,23 @@ describe("Table isLoading guards", () => {
 		expect(row).toHaveAttribute("tabindex", "0");
 		fireEvent.keyDown(row, { key: "Enter" });
 		expect(onRowClick).toHaveBeenCalledTimes(1);
+		// rowClickHint 미지정이어도 기본 힌트로 affordance 유지
+		const describedby = row.getAttribute("aria-describedby");
+		expect(describedby).toBeTruthy();
+		expect(document.getElementById(describedby as string)?.textContent).toBe("클릭 가능한 행");
+	});
+
+	it("suppresses the row hint when rowClickHint is an empty string", () => {
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={() => {}}
+				rowClickHint=""
+			/>,
+		);
+		expect(container.querySelector(".table_row")).not.toHaveAttribute("aria-describedby");
 	});
 
 	it("describes clickable rows via aria-describedby (rowClickHint), not aria-label", () => {
