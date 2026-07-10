@@ -8,6 +8,19 @@
   background: token.$color_bg_solid;
 }
 
+// 스크린리더 전용(시각적으로 숨김) - clickable 행 동작 힌트를 aria-describedby 로 노출할 때 사용
+.table_sr_only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
