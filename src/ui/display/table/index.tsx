@@ -78,8 +78,13 @@ export type TableProps<T extends object> = {
 	className?: string;
 	/** 행 클릭 콜백 */
 	onRowClick?: (item: T, index: number) => void;
-	/** clickable 행(onRowClick)의 aria-label - 스크린리더에 행의 동작을 알림 (예: (row) => `${row.name} 상세로 이동`) */
-	rowClickAriaLabel?: (item: T, index: number) => string;
+	/**
+	 * clickable 행(onRowClick)의 동작 설명. 지정 시 각 clickable 행에 `aria-describedby` 로 연결된다.
+	 * `aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label` 은 행/셀의 accessible name 을
+	 * 덮어써 스크린리더가 셀 데이터를 못 읽는다. describedby 는 셀 낭독을 유지하며 동작만 덧붙인다.
+	 * (예: "행을 선택하면 상세 항목으로 이동합니다")
+	 */
+	rowClickHint?: string;
 	/** 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 */
 	sort?: TableSort;
 	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
@@ -108,7 +113,7 @@ export const Table = <T extends object>({
 	ariaLabel,
 	className,
 	onRowClick,
-	rowClickAriaLabel,
+	rowClickHint,
 	sort,
 	onSortChange,
 	selectAllAriaLabel = "전체 선택",
@@ -130,6 +135,8 @@ export const Table = <T extends object>({
 	// ── Row selection ──────────────────────────────────────────────────────
 	const getRowKey = (item: T, index: number) => rowKey?.(item) ?? String(index);
 	const allRowKeys = selectable ? data.map((item, index) => getRowKey(item, index)) : [];
+	// clickable 행 동작 힌트를 aria-describedby 로 연결할 visually-hidden 요소 id
+	const rowClickHintId = React.useId();
 	const selectedSet = React.useMemo(() => new Set(selectedKeys ?? []), [selectedKeys]);
 	const selectedCount = allRowKeys.filter((key) => selectedSet.has(key)).length;
 	const isAllSelected = allRowKeys.length > 0 && selectedCount === allRowKeys.length;
@@ -265,13 +272,11 @@ export const Table = <T extends object>({
 											isSelected && "table_row_selected",
 										)}
 										aria-selected={isSelected ? "true" : undefined}
-										// 비-selectable clickable 행엔 role="button" 으로 기본 인터랙티브 affordance 제공
-										// (aria-selected 가 없어 무효 조합 아님). selectable 행은 aria-selected 와 충돌하므로 role 생략 -
-										// 체크박스가 1차 affordance. rowClickAriaLabel 로 서술형 접근성 이름을 덧붙일 수 있다.
-										role={onRowClick && !selectable ? "button" : undefined}
-										aria-label={
-											onRowClick && rowClickAriaLabel ? rowClickAriaLabel(item, rowIndex) : undefined
-										}
+										// clickable 행은 role/aria-label 을 tr 에 붙이지 않는다 (role="button" 은 셀을
+										// presentational 로, aria-label 은 셀 이름을 덮어써 스크린리더가 데이터를 못 읽음).
+										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작하고, 동작 설명은 rowClickHint 를
+										// aria-describedby 로 덧붙여 셀 낭독을 유지한다.
+										aria-describedby={onRowClick && rowClickHint ? rowClickHintId : undefined}
 										tabIndex={onRowClick ? 0 : undefined}
 										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
 										onKeyDown={
@@ -318,6 +323,12 @@ export const Table = <T extends object>({
 							})}
 				</tbody>
 			</table>
+
+			{onRowClick && rowClickHint && (
+				<span id={rowClickHintId} className="table_sr_only">
+					{rowClickHint}
+				</span>
+			)}
 
 			{isEmpty && (
 				<div className="table_empty" role="status">
