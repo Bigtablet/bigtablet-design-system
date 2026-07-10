@@ -467,4 +467,58 @@ describe("Table isLoading guards", () => {
 		expect(row).not.toHaveAttribute("role", "button");
 		expect(row).toHaveAttribute("tabindex", "0");
 	});
+
+	it("makes clickable rows keyboard-operable without hiding cell content", () => {
+		const onRowClick = vi.fn();
+		const { container } = render(
+			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={onRowClick} />,
+		);
+		const row = container.querySelector(".table_row") as HTMLElement;
+		// 셀을 가리는 role="button"/aria-label 을 tr 에 붙이지 않음
+		expect(row).not.toHaveAttribute("role", "button");
+		expect(row).not.toHaveAttribute("aria-label");
+		// 셀 데이터는 그대로 낭독됨
+		expect(row.textContent).toContain("Alpha");
+		// focus 가능 + Enter 로 동작
+		expect(row).toHaveAttribute("tabindex", "0");
+		fireEvent.keyDown(row, { key: "Enter" });
+		expect(onRowClick).toHaveBeenCalledTimes(1);
+		// rowClickHint 미지정이어도 기본 힌트로 affordance 유지
+		const describedby = row.getAttribute("aria-describedby");
+		expect(describedby).toBeTruthy();
+		expect(document.getElementById(describedby as string)?.textContent).toBe("클릭 가능한 행");
+	});
+
+	it("suppresses the row hint when rowClickHint is an empty string", () => {
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={() => {}}
+				rowClickHint=""
+			/>,
+		);
+		expect(container.querySelector(".table_row")).not.toHaveAttribute("aria-describedby");
+	});
+
+	it("describes clickable rows via aria-describedby (rowClickHint), not aria-label", () => {
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={() => {}}
+				rowClickHint="행을 선택하면 상세로 이동"
+			/>,
+		);
+		const row = container.querySelector(".table_row") as HTMLElement;
+		const describedby = row.getAttribute("aria-describedby");
+		expect(describedby).toBeTruthy();
+		expect(document.getElementById(describedby as string)?.textContent).toBe(
+			"행을 선택하면 상세로 이동",
+		);
+		expect(row).not.toHaveAttribute("aria-label");
+		expect(row.textContent).toContain("Alpha");
+	});
 });

@@ -9,7 +9,10 @@ import "./style.scss";
 
 export type ModalFooterAlign = "end" | "between" | "start";
 
-export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+// onClick/onKeyDown/role 은 오버레이 동작(stopPropagation·Escape·role="document")을 위해
+// 컴포넌트가 전유하므로 타입에서 제외한다. style/className 은 병합되어 소비자 값도 반영된다.
+export interface ModalProps
+	extends Omit<React.HTMLAttributes<HTMLDivElement>, "title" | "onClick" | "onKeyDown" | "role"> {
 	/** 모달 열림 여부 */
 	open: boolean;
 	/** 모달 닫기 콜백 */
@@ -141,14 +144,17 @@ export const Modal = ({
 		>
 			<animated.div
 				ref={panelRef}
+				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
+				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				{...props}
 				className={cn("modal_panel", className)}
-				style={{ ...panelStyle, width }}
+				style={{ ...props.style, ...panelStyle, width }}
 				role="document"
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
-				{...props}
 			>
 				{showCloseIcon && onClose && (
 					<button
