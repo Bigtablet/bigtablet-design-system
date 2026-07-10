@@ -463,7 +463,8 @@ describe("Table isLoading guards", () => {
 			/>,
 		);
 		const row = container.querySelector(".table_row");
+		// role="button" 은 aria-selected 와 무효 조합이라 제거하되, 키보드 진입용 tabindex 는 유지
 		expect(row).not.toHaveAttribute("role", "button");
-		expect(row).not.toHaveAttribute("tabindex");
+		expect(row).toHaveAttribute("tabindex", "0");
 	});
 });

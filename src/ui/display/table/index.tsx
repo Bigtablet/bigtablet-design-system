@@ -263,7 +263,7 @@ export const Table = <T extends object>({
 										)}
 										aria-selected={isSelected ? "true" : undefined}
 										role={onRowClick && !selectable ? "button" : undefined}
-										tabIndex={onRowClick && !selectable ? 0 : undefined}
+										tabIndex={onRowClick ? 0 : undefined}
 										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
 										onKeyDown={
 											onRowClick
