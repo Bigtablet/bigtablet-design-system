@@ -28,8 +28,8 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Update npm to latest (OIDC Trusted Publisher)
-        run: npm install -g npm@latest
+      - name: Pin npm to 11.x (OIDC Trusted Publisher; npm@12 ships broken sigstore)
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
