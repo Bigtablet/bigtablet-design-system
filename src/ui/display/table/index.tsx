@@ -265,6 +265,10 @@ export const Table = <T extends object>({
 											isSelected && "table_row_selected",
 										)}
 										aria-selected={isSelected ? "true" : undefined}
+										// 비-selectable clickable 행엔 role="button" 으로 기본 인터랙티브 affordance 제공
+										// (aria-selected 가 없어 무효 조합 아님). selectable 행은 aria-selected 와 충돌하므로 role 생략 -
+										// 체크박스가 1차 affordance. rowClickAriaLabel 로 서술형 접근성 이름을 덧붙일 수 있다.
+										role={onRowClick && !selectable ? "button" : undefined}
 										aria-label={
 											onRowClick && rowClickAriaLabel ? rowClickAriaLabel(item, rowIndex) : undefined
 										}
