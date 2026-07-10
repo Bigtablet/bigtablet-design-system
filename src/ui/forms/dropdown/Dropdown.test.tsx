@@ -490,4 +490,215 @@ describe("Dropdown", () => {
 		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
 	});
 
+	// ── searchable ──────────────────────────────────────────────────────────────
+
+	it("renders a search input at the top of the panel when searchable", () => {
+		render(<Dropdown options={options} searchable searchPlaceholder="Find…" />);
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.getByPlaceholderText("Find…")).toBeInTheDocument();
+	});
+
+	it("does not render a search input when not searchable", () => {
+		render(<Dropdown options={options} />);
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.queryByPlaceholderText("검색…")).not.toBeInTheDocument();
+	});
+
+	it("filters options case- and whitespace-insensitively by label", () => {
+		render(<Dropdown options={options} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "  OPTION2 " } });
+		expect(screen.getByText("Option 2")).toBeInTheDocument();
+		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
+		expect(screen.queryByText("Option 3")).not.toBeInTheDocument();
+	});
+
+	it("shows emptyText when the filter yields no options", () => {
+		render(<Dropdown options={options} searchable emptyText="No results" />);
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "zzz" } });
+		expect(screen.getByText("No results")).toBeInTheDocument();
+		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
+	});
+
+	it("defers filtering until composition ends (Korean IME)", () => {
+		const imeOptions = [
+			{ value: "seoul", label: "서울" },
+			{ value: "busan", label: "부산" },
+		];
+		render(<Dropdown options={imeOptions} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+
+		fireEvent.compositionStart(search);
+		// 조합 중: 표시는 갱신되지만 필터는 아직 적용되지 않아야 함
+		fireEvent.change(search, { target: { value: "서" } });
+		expect(screen.getByText("서울")).toBeInTheDocument();
+		expect(screen.getByText("부산")).toBeInTheDocument();
+
+		// 조합 종료: 이제 필터 적용
+		fireEvent.compositionEnd(search, { target: { value: "서울" } });
+		expect(screen.getByText("서울")).toBeInTheDocument();
+		expect(screen.queryByText("부산")).not.toBeInTheDocument();
+	});
+
+	it("keeps active option in range after the filter reduces the list", () => {
+		const searchOptions = [
+			{ value: "a", label: "Alpha" },
+			{ value: "b", label: "Bravo" },
+			{ value: "c", label: "Charlie" },
+		];
+		render(<Dropdown options={searchOptions} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+
+		fireEvent.keyDown(search, { key: "ArrowDown" }); // active -> Bravo
+		fireEvent.keyDown(search, { key: "ArrowDown" }); // active -> Charlie (idx 2)
+
+		fireEvent.change(search, { target: { value: "Bravo" } }); // 남는 옵션은 Bravo 뿐
+		const bravo = screen.getByText("Bravo").closest("[role='option']");
+		expect(bravo).toHaveClass("is_active");
+	});
+
+	it("selects active option with Enter from the search input (single)", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown options={options} searchable onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+		fireEvent.change(search, { target: { value: "Option 2" } });
+		fireEvent.keyDown(search, { key: "Enter" });
+		expect(onValueChange).toHaveBeenCalledWith("2", options[1]);
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
+	it("closes on Escape from the search input", () => {
+		render(<Dropdown options={options} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+		fireEvent.keyDown(search, { key: "Escape" });
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
+	it("ignores Enter during IME composition, then selects on a normal Enter", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown options={options} searchable onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+
+		// 조합 중 Enter (한글 확정) - 선택/토글·닫기 발생하지 않아야 함
+		fireEvent.keyDown(search, { key: "Enter", isComposing: true });
+		expect(onValueChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+		// 조합이 끝난 뒤의 일반 Enter - 이제 활성 옵션 선택
+		fireEvent.keyDown(search, { key: "Enter" });
+		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
+	// ── multiple ──────────────────────────────────────────────────────────────
+
+	it("toggles selection and keeps the list open in multiple mode", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown multiple options={options} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+
+		fireEvent.click(screen.getByText("Option 1"));
+		expect(onValueChange).toHaveBeenLastCalledWith(["1"], [options[0]]);
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+		fireEvent.click(screen.getByText("Option 2"));
+		expect(onValueChange).toHaveBeenLastCalledWith(["1", "2"], [options[0], options[1]]);
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+		// 다시 클릭하면 토글 해제
+		fireEvent.click(screen.getByText("Option 1"));
+		expect(onValueChange).toHaveBeenLastCalledWith(["2"], [options[1]]);
+	});
+
+	it("shows N개 선택 summary in multiple mode", () => {
+		render(<Dropdown multiple options={options} defaultValue={["1", "2"]} placeholder="선택" />);
+		expect(screen.getByText("2개 선택")).toBeInTheDocument();
+	});
+
+	it("uses a custom selectedSummary in multiple mode", () => {
+		render(
+			<Dropdown
+				multiple
+				options={options}
+				defaultValue={["1", "2"]}
+				selectedSummary={(n) => `${n} selected`}
+			/>,
+		);
+		expect(screen.getByText("2 selected")).toBeInTheDocument();
+	});
+
+	it("shows placeholder when nothing is selected in multiple mode", () => {
+		render(<Dropdown multiple options={options} placeholder="항목 선택" />);
+		expect(screen.getByText("항목 선택")).toBeInTheDocument();
+	});
+
+	it("renders a left check mark on selected options in multiple mode", () => {
+		render(<Dropdown multiple options={options} defaultValue={["1"]} />);
+		fireEvent.click(screen.getByRole("button"));
+		const opt1 = screen.getByText("Option 1").closest("[role='option']");
+		expect(opt1?.querySelector(".dropdown_option_check svg")).toBeInTheDocument();
+		const opt2 = screen.getByText("Option 2").closest("[role='option']");
+		expect(opt2?.querySelector(".dropdown_option_check svg")).not.toBeInTheDocument();
+	});
+
+	it("sets aria-multiselectable on the listbox in multiple mode", () => {
+		render(<Dropdown multiple options={options} />);
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
+	});
+
+	it("does not set aria-multiselectable in single mode", () => {
+		render(<Dropdown options={options} />);
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.getByRole("listbox")).not.toHaveAttribute("aria-multiselectable");
+	});
+
+	it("toggles with Enter from the search input in multiple mode (stays open)", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown multiple searchable options={options} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+		fireEvent.change(search, { target: { value: "Option 1" } });
+		fireEvent.keyDown(search, { key: "Enter" });
+		expect(onValueChange).toHaveBeenLastCalledWith(["1"], [options[0]]);
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+	});
+
+	// ── searchable + multiple combined ──────────────────────────────────────────
+
+	it("keeps the active filter after selecting in searchable + multiple mode", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown multiple searchable options={options} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button"));
+		const search = screen.getByPlaceholderText("검색…");
+
+		fireEvent.change(search, { target: { value: "Option 2" } });
+		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
+
+		fireEvent.click(screen.getByText("Option 2"));
+		expect(onValueChange).toHaveBeenLastCalledWith(["2"], [options[1]]);
+
+		// 리스트 유지 + 필터 유지 (Option 1 여전히 숨김)
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
+		expect(screen.getByText("Option 2")).toBeInTheDocument();
+	});
+
+	it("exposes combobox a11y on the search input pointing at the active option", () => {
+		render(<Dropdown options={options} searchable />);
+		fireEvent.click(screen.getByRole("button"));
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAttribute("aria-autocomplete", "list");
+		expect(input).toHaveAttribute("aria-expanded", "true");
+		const activeId = input.getAttribute("aria-activedescendant");
+		expect(activeId).toBeTruthy();
+		expect(document.getElementById(activeId as string)).toHaveAttribute("role", "option");
+	});
 });

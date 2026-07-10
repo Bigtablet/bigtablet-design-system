@@ -27,6 +27,67 @@
   @include token.label_large_medium;
 }
 
+// ── Checkbox column (selection) ─────────────────────────────────────────────
+
+.table_th_checkbox,
+.table_td_checkbox {
+  box-sizing: border-box;
+  width: token.$spacing_48;
+}
+
+// ── Sortable header ──────────────────────────────────────────────────────────
+// th 는 padding 을 0으로 비우고 button 이 전체 셀 크기/패딩을 대신 맡는다 - 클릭 영역 확대.
+
+.table_th_sortable {
+  padding: 0;
+}
+
+.table_sort_button {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+  width: 100%;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background token.$transition_fast;
+
+  &:hover:not(:disabled) {
+    background: token.$color_state_hover_on_light;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: token.$opacity_38;
+  }
+}
+
+.table_align_center .table_sort_button {
+  justify-content: center;
+}
+
+.table_align_right .table_sort_button {
+  justify-content: flex-end;
+}
+
+.table_sort_icon {
+  flex-shrink: 0;
+  color: token.$color_text_caption;
+  transition: color token.$transition_fast;
+}
+
+.table_sort_icon_active {
+  color: token.$color_text_heading;
+}
+
 .table_tbody {
   .table_row {
     border-bottom: token.$border_width_standard solid token.$color_border_default;
@@ -57,6 +118,15 @@
   .table_row_skeleton {
     pointer-events: none;
   }
+
+  // ── Selected (accent) ────────────────────────────────────────────────────
+  .table_row_selected {
+    background: token.$color_accent_subtle;
+  }
+
+  .table_row_selected.table_row_hoverable:hover {
+    background: token.$color_accent_muted;
+  }
 }
 
 .table_td {
@@ -78,6 +148,8 @@
     @include token.label_medium;
   }
   .table_th { @include token.label_medium_medium; }
+  .table_th_sortable { padding: 0; }
+  .table_sort_button { padding: token.$spacing_8 token.$spacing_12; }
 }
 
 .table_size_lg {
@@ -86,6 +158,8 @@
   }
   .table_th { @include token.body_large_medium; }
   .table_td { @include token.body_medium; }
+  .table_th_sortable { padding: 0; }
+  .table_sort_button { padding: token.$spacing_16 token.$spacing_20; }
 }
 
 // ── Sticky header ─────────────────────────────────────────────────────────
@@ -105,4 +179,13 @@
   text-align: center;
   color: token.$color_text_caption;
   @include token.body_small;
+}
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .table_row,
+  .table_sort_button,
+  .table_sort_icon {
+    transition: none;
+  }
 }

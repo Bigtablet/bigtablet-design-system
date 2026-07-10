@@ -86,6 +86,8 @@ export type { DatePickerProps } from "./ui/forms/date-picker";
 export { DatePicker } from "./ui/forms/date-picker";
 export type { DividerProps } from "./ui/display/divider";
 export { Divider } from "./ui/display/divider";
+export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
+export { Drawer } from "./ui/overlay/drawer";
 export type { DropdownOption, DropdownProps, DropdownSize } from "./ui/forms/dropdown";
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FileInputProps } from "./ui/forms/file";
@@ -125,7 +127,13 @@ export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
 export { Spinner } from "./ui/feedback/spinner";
-export type { TableColumn, TableProps, TableSize } from "./ui/display/table";
+export type {
+	TableColumn,
+	TableProps,
+	TableSize,
+	TableSort,
+	TableSortDirection,
+} from "./ui/display/table";
 export { Table } from "./ui/display/table";
 export type { ResolvedTheme, ThemeMode, ThemeProviderProps } from "./ui/system/theme-provider";
 export { ThemeProvider, useTheme } from "./ui/system/theme-provider";
