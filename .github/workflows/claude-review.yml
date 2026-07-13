@@ -72,6 +72,14 @@ jobs:
       contents: read
       pull-requests: write
       issues: write
+    # OTel resource 마커 - Claude Code 텔레메트리에서 이 워커를 분류(그룹핑)한다.
+    # 러너가 실행마다 새 user.id 를 만들어 인트라넷 /admin/claude-usage 검역소에 휘발 설치로
+    # 쌓이는 것을 막고, bt.worker 로 CI 코드리뷰 워커를 우선 판별한다 (intranet PR #2307).
+    # 주의: self-asserted 분류 라벨이며 신뢰/인증 경계가 아니다 - 검역소는 이 마커를 그룹핑
+    #       용도로만 써야 한다 (워크플로 수정 가능자면 누구나 동일 마커 부착 가능).
+    # job-level 로 두어 두 claude-code-action 스텝(Review / Answer inline thread)에 함께 적용.
+    env:
+      OTEL_RESOURCE_ATTRIBUTES: bt.worker=coderev
     steps:
       # secret 미설정이면 리뷰 단계를 조용히 skip (첫 셋업 전 PR 에서 빨간 X 방지).
       # secret 은 job `if:` 에서 못 읽으므로 step 에서 존재 여부만 output 으로 넘긴다.
