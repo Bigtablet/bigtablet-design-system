@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { AlertProvider, useAlert } from "./index";
 
@@ -185,5 +185,29 @@ describe("Alert", () => {
 
 		const actions = screen.getByRole("alertdialog").querySelector(".alert_actions");
 		expect(actions).toHaveClass("alert_actions_center");
+	});
+
+	it("activates the focus trap when opened via showAlert (mounted closed)", () => {
+		// AlertProvider 는 AlertModal 을 항상 isOpen=false 로 마운트해 두고 showAlert() 로 연다.
+		// 이 deferred-mount 경로에서도 트랩이 걸려 초기 포커스가 alertdialog 안으로 이동해야 함.
+		renderWithProvider(<TestComponent options={{ title: "Trap", showCancel: true }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		const dialog = screen.getByRole("alertdialog");
+		expect(dialog.contains(document.activeElement)).toBe(true);
+	});
+
+	it("closes on Escape after opening via showAlert", async () => {
+		// 포커스가 alertdialog 안에 있어야 overlay onKeyDown 까지 버블되어 Escape 가 동작한다
+		// (트랩 미활성 시 포커스가 트리거에 남아 Escape 가 절대 발화하지 않던 회귀 방지).
+		renderWithProvider(<TestComponent options={{ title: "Esc" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+
+		fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
+		// 퇴출 spring 애니메이션 완료 후 unmount 되므로 대기
+		await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
 	});
 });

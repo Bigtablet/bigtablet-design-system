@@ -136,9 +136,12 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
 	useFocusTrap(panelRef, isOpen);
 
-	React.useEffect(() => {
-		if (isOpen) setShouldRender(true);
-	}, [isOpen]);
+	// isOpen 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다 (Modal 과 동일한
+	// React "render 중 상태 조정" 패턴). effect 로 미루면 패널 마운트가 한 렌더 늦어져
+	// useFocusTrap effect 실행 시점에 panelRef.current 가 null 이라 트랩(초기 포커스 이동·
+	// Tab 격리·포커스 복원)이 전혀 걸리지 않는다 — AlertProvider 는 항상 isOpen=false 로
+	// 마운트해 두고 showAlert() 로 여는 구조라 모든 useAlert() 경로에서 재현되는 버그였다.
+	if (isOpen && !shouldRender) setShouldRender(true);
 
 	const overlayStyle = useSpring({
 		opacity: isOpen ? 1 : 0,
@@ -154,7 +157,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 		config: { tension: 280, friction: 28, clamp: !isOpen },
 	});
 
-	if (!shouldRender) return null;
+	// isOpen 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
+	// panelRef.current 가 붙어 있다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.
+	if (!isOpen && !shouldRender) return null;
 
 	// destructive: confirm을 빨간 filled(danger)로 강조 - 위험성을 시각적으로 표현
 	// (Material/shadcn/Radix 표준 - 빨간 버튼 = 위험한 액션)
