@@ -474,7 +474,7 @@ export const OrderTimeline: Story = {
 									)}
 								</Stack>
 
-								<Stack gap={6} style={{ flex: 1, paddingBottom: isLast ? 0 : 8 }}>
+								<Stack gap={4} style={{ flex: 1, paddingBottom: isLast ? 0 : 8 }}>
 									<Stack direction="horizontal" justify="between" align="center">
 										<span
 											style={{
