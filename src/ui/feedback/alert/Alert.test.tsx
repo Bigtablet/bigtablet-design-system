@@ -239,6 +239,29 @@ describe("Alert", () => {
 		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
+	it("renders without motion when prefers-reduced-motion is set", () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+		renderWithProvider(<TestComponent options={{ title: "Reduced" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		// reduced-motion 에서 패널이 최종(휴지) 상태로 즉시 도달 (spring immediate)
+		const dialog = screen.getByRole("alertdialog");
+		expect(dialog).toHaveStyle({ transform: "scale(1) translateY(0px)" });
+		vi.unstubAllGlobals();
+	});
+
 	it("locks body scroll while open (data-open-modals counter)", async () => {
 		renderWithProvider(<TestComponent options={{ title: "S" }} />);
 

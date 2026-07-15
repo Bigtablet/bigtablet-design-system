@@ -172,9 +172,11 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	});
 
 	// 바디 스크롤 잠금 - Modal/Drawer 와 동일한 data-open-modals 카운터 공유
-	// (Modal 위에서 confirm Alert 를 띄우는 패턴에서도 카운터가 맞게 유지된다)
+	// (Modal 위에서 confirm Alert 를 띄우는 패턴에서도 카운터가 맞게 유지된다).
+	// isOpen 대신 shouldRender 에 묶어 퇴출 애니메이션이 끝나 완전히 unmount 될 때까지
+	// 잠금을 유지한다 (isOpen 기준이면 닫힘 시작 즉시 풀려 페이드 중 배경이 스크롤됨).
 	React.useEffect(() => {
-		if (!isOpen) return;
+		if (!shouldRender) return;
 
 		const body = document.body;
 		const openModals = parseInt(body.dataset.openModals || "0", 10);
@@ -198,7 +200,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				body.dataset.openModals = String(nextOpenModals);
 			}
 		};
-	}, [isOpen]);
+	}, [shouldRender]);
 
 	// isOpen 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
 	// panelRef.current 가 붙어 있다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.

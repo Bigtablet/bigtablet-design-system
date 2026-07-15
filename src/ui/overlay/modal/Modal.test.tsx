@@ -1,8 +1,38 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "./index";
 
 describe("Modal", () => {
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
+	it("renders without motion when prefers-reduced-motion is set", () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+
+		render(
+			<Modal open onClose={() => {}} title="Reduced">
+				Content
+			</Modal>,
+		);
+
+		// reduced-motion 에서 패널이 최종(휴지) 상태로 즉시 도달 (spring immediate)
+		const panel = screen.getByRole("dialog").querySelector(".modal_panel");
+		expect(panel).toBeInTheDocument();
+		expect(panel).toHaveStyle({ transform: "scale(1) translateY(0px)" });
+	});
+
 	it("renders when open", () => {
 		render(
 			<Modal open onClose={() => {}}>
