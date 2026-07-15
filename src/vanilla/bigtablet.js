@@ -76,18 +76,26 @@
 	 * 하나만 닫혀도 배경 스크롤이 풀리던 문제 방지 (React 쪽 data-open-modals 와 동일 패턴)
 	 */
 	function lockScroll() {
-		const n = parseInt(document.body.dataset.btOpenModals || "0", 10);
-		if (n === 0) document.body.style.overflow = "hidden";
-		document.body.dataset.btOpenModals = String(n + 1);
+		const body = document.body;
+		const n = parseInt(body.dataset.btOpenModals || "0", 10);
+		if (n === 0) {
+			// 소비자가 인라인으로 지정해둔 overflow 를 저장했다가 마지막 unlock 때 복원
+			// (React Modal 의 dataset.originalOverflow 와 동일 동작).
+			body.dataset.btOriginalOverflow = body.style.overflow;
+			body.style.overflow = "hidden";
+		}
+		body.dataset.btOpenModals = String(n + 1);
 	}
 
 	function unlockScroll() {
-		const n = parseInt(document.body.dataset.btOpenModals || "1", 10) - 1;
+		const body = document.body;
+		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
 		if (n <= 0) {
-			document.body.style.overflow = "";
-			delete document.body.dataset.btOpenModals;
+			body.style.overflow = body.dataset.btOriginalOverflow || "";
+			delete body.dataset.btOpenModals;
+			delete body.dataset.btOriginalOverflow;
 		} else {
-			document.body.dataset.btOpenModals = String(n);
+			body.dataset.btOpenModals = String(n);
 		}
 	}
 
@@ -256,12 +264,19 @@
 		}
 
 		function updateActiveOption() {
+			let activeId = null;
 			$$(".bt-select__option", list).forEach((el, i) => {
 				const active = i === state.activeIndex;
 				el.classList.toggle("is-active", active);
-				// 키보드 탐색 중 활성 옵션을 AT 에 전달 (없으면 화살표 탐색이 스크린리더에 무음)
-				if (active) control.setAttribute("aria-activedescendant", el.id);
+				if (active) activeId = el.id;
 			});
+			// 키보드 탐색 중 활성 옵션을 AT 에 전달 (없으면 화살표 탐색이 스크린리더에 무음).
+			// 활성 옵션이 없으면(activeIndex=-1 등) 잘못된 참조가 남지 않게 속성을 제거.
+			if (activeId) {
+				control.setAttribute("aria-activedescendant", activeId);
+			} else {
+				control.removeAttribute("aria-activedescendant");
+			}
 		}
 
 		function moveActive(dir) {
@@ -438,14 +453,26 @@
 
 		const panel = modal.querySelector(".bt-modal__panel");
 		let previousFocus = null;
+		let panelTabindexAdded = false;
 
-		// Dialog ARIA - React Modal 과 패리티
+		// Dialog ARIA - React Modal 과 패리티. 접근 가능한 이름(aria-labelledby/label)도 연결한다
+		// (없으면 axe aria-dialog-name 실패). 헤더가 있으면 그 id 로, 없으면 aria-label fallback.
 		if (panel) {
 			panel.setAttribute("role", "dialog");
 			panel.setAttribute("aria-modal", "true");
+			if (!panel.hasAttribute("aria-label") && !panel.hasAttribute("aria-labelledby")) {
+				const header = panel.querySelector(".bt-modal__header");
+				if (header) {
+					header.id = header.id || generateId("modal_title");
+					panel.setAttribute("aria-labelledby", header.id);
+				} else {
+					panel.setAttribute("aria-label", "Dialog");
+				}
+			}
 		}
 
 		function open() {
+			if (state.isOpen) return; // 이미 열림 - 중복 lockScroll 방지
 			state.isOpen = true;
 			modal.classList.add("is-open");
 			lockScroll();
@@ -458,6 +485,7 @@
 					first.focus();
 				} else {
 					panel.setAttribute("tabindex", "-1");
+					panelTabindexAdded = true;
 					panel.focus();
 				}
 			}
@@ -468,9 +496,16 @@
 		}
 
 		function close() {
+			if (!state.isOpen) return; // 이미 닫힘 - 중복 unlockScroll 방지
 			state.isOpen = false;
 			modal.classList.remove("is-open");
 			unlockScroll();
+
+			// 우리가 추가한 tabindex 정리 (React useFocusTrap 의 wasTabIndexAdded 와 동일)
+			if (panelTabindexAdded && panel) {
+				panel.removeAttribute("tabindex");
+				panelTabindexAdded = false;
+			}
 
 			// 포커스 복원
 			if (previousFocus && typeof previousFocus.focus === "function") {
@@ -607,7 +642,13 @@
 		document.body.appendChild(overlay);
 		lockScroll();
 
+		let isOpen = true;
+
 		function close() {
+			// 중복 호출 방지 - 버튼/오버레이/Escape 연타 시 unlockScroll 이 여러 번 불려
+			// 스크롤 잠금 카운터가 오동작하지 않도록 최초 1회만 실행.
+			if (!isOpen) return;
+			isOpen = false;
 			// Escape 리스너를 닫힘 경로 공통에서 해제 - 버튼/오버레이로 닫을 때
 			// 리스너가 남아 누수되던 문제 방지
 			document.removeEventListener("keydown", onKeyDown);
@@ -646,10 +687,27 @@
 			}
 		});
 
-		// Close on Escape (해제는 close() 공통 경로에서)
+		// Close on Escape + Tab 포커스 트랩 (WAI-ARIA APG Dialog) - Modal 과 동일 패턴
 		function onKeyDown(e) {
 			if (e.key === "Escape") {
 				close();
+				return;
+			}
+			if (e.key === "Tab" && alertPanel) {
+				const focusables = $$(FOCUSABLE_SELECTORS, alertPanel);
+				if (focusables.length === 0) {
+					e.preventDefault();
+					return;
+				}
+				const first = focusables[0];
+				const last = focusables[focusables.length - 1];
+				if (e.shiftKey && document.activeElement === first) {
+					e.preventDefault();
+					last.focus();
+				} else if (!e.shiftKey && document.activeElement === last) {
+					e.preventDefault();
+					first.focus();
+				}
 			}
 		}
 		document.addEventListener("keydown", onKeyDown);
