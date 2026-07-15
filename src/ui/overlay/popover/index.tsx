@@ -121,15 +121,20 @@ export const Popover = ({
 		};
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
+				// capture 단계에서 전파를 끊어 아래층 오버레이(Modal 등)가 함께 닫히지 않게 한다.
+				// bubble 리스너였을 땐 Modal 의 React onKeyDown(stopPropagation)이 root 에서 먼저
+				// 실행돼 이 리스너가 아예 발화하지 못하고 Modal 만 닫히는 역전이 있었다 (APG:
+				// Escape 는 최상단 오버레이만 닫아야 함).
+				e.stopPropagation();
 				setOpen(false);
 				previousFocusRef.current?.focus();
 			}
 		};
 		document.addEventListener("mousedown", handleClick);
-		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener("keydown", handleKeyDown, true);
 		return () => {
 			document.removeEventListener("mousedown", handleClick);
-			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener("keydown", handleKeyDown, true);
 		};
 	}, [open, setOpen]);
 

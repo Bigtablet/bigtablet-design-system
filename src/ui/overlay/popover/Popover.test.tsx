@@ -257,4 +257,27 @@ describe("Popover", () => {
 		unmount();
 		expect(() => fireEvent.keyDown(document, { key: "Escape" })).not.toThrow();
 	});
+
+	it("Escape inside a Modal closes only the Popover, not the Modal (topmost overlay)", async () => {
+		const { Modal } = await import("../modal");
+		const modalClose = vi.fn();
+		render(
+			<Modal open onClose={modalClose} title="M">
+				<Popover
+					trigger={<button type="button">Open pop</button>}
+					content={<span>Pop content</span>}
+					aria-label="popover"
+				/>
+			</Modal>,
+		);
+		fireEvent.click(screen.getByText("Open pop"));
+		expect(screen.getByText("Pop content")).toBeInTheDocument();
+
+		// 회귀: bubble 리스너 시절엔 Modal 의 stopPropagation 때문에 Popover 리스너가
+		// 발화하지 못하고 Modal 만 닫혔다 (아래층이 닫히는 역전)
+		fireEvent.keyDown(screen.getByText("Pop content"), { key: "Escape" });
+
+		expect(modalClose).not.toHaveBeenCalled();
+		await waitFor(() => expect(screen.queryByText("Pop content")).not.toBeInTheDocument());
+	});
 });

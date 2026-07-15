@@ -40,14 +40,28 @@ export const Tooltip = ({
 	const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const tooltipId = React.useId();
 
+	// 포인터가 trigger→tooltip 사이 갭(6px)을 건널 시간 (WCAG 1.4.13 Hoverable)
+	const HIDE_DELAY = 120;
+
 	const show = React.useCallback(() => {
 		if (timerRef.current) clearTimeout(timerRef.current);
 		timerRef.current = setTimeout(() => setOpen(true), delay);
 	}, [delay]);
 
-	const hide = React.useCallback(() => {
+	// blur/Escape 는 즉시, mouseleave 는 지연 닫힘 - 포인터가 툴팁 위로 이동할 수 있도록
+	const hideNow = React.useCallback(() => {
 		if (timerRef.current) clearTimeout(timerRef.current);
 		setOpen(false);
+	}, []);
+
+	const hide = React.useCallback(() => {
+		if (timerRef.current) clearTimeout(timerRef.current);
+		timerRef.current = setTimeout(() => setOpen(false), HIDE_DELAY);
+	}, []);
+
+	// 툴팁 자체에 포인터가 올라오면 지연 닫힘 취소 (WCAG 1.4.13 Hoverable)
+	const cancelHide = React.useCallback(() => {
+		if (timerRef.current) clearTimeout(timerRef.current);
 	}, []);
 
 	React.useEffect(() => {
@@ -55,6 +69,20 @@ export const Tooltip = ({
 			if (timerRef.current) clearTimeout(timerRef.current);
 		};
 	}, []);
+
+	// WCAG 1.4.13 Dismissable - 포인터/포커스를 옮기지 않고 Escape 로 닫기.
+	// capture 단계 document 리스너라 아래층 오버레이(Modal 등)의 Escape 핸들러보다
+	// 먼저 실행되고, 닫을 때 전파를 끊어 최상단(툴팁)만 닫는다.
+	React.useEffect(() => {
+		if (!open) return;
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key !== "Escape") return;
+			e.stopPropagation();
+			hideNow();
+		};
+		document.addEventListener("keydown", onKeyDown, true);
+		return () => document.removeEventListener("keydown", onKeyDown, true);
+	}, [open, hideNow]);
 
 	const fromTransform = (() => {
 		switch (placement) {
@@ -89,7 +117,7 @@ export const Tooltip = ({
 		},
 		onBlur: (e: React.FocusEvent<HTMLElement>) => {
 			childProps.onBlur?.(e);
-			hide();
+			hideNow();
 		},
 		// 자식의 기존 aria-describedby 보존 + tooltip id 합성 (폼 설명/에러 연결 끊김 방지)
 		"aria-describedby": open
@@ -103,7 +131,12 @@ export const Tooltip = ({
 		<span className="tooltip_wrapper">
 			{trigger}
 			{open && (
-				<span className={cn("tooltip_position", `tooltip_placement_${placement}`)}>
+				<span
+					className={cn("tooltip_position", `tooltip_placement_${placement}`)}
+					// WCAG 1.4.13 Hoverable - 툴팁 위로 포인터가 오면 열림 유지
+					onMouseEnter={cancelHide}
+					onMouseLeave={hide}
+				>
 					<animated.span
 						id={tooltipId}
 						role="tooltip"

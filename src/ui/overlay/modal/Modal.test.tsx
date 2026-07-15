@@ -173,7 +173,7 @@ describe("Modal", () => {
 
 	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
 		const consumerClick = vi.fn();
-		const { container } = render(
+		render(
 			<Modal
 				open
 				onClose={() => {}}
@@ -184,7 +184,8 @@ describe("Modal", () => {
 				Content
 			</Modal>,
 		);
-		const panel = container.querySelector(".modal_panel") as HTMLElement;
+		// 포털 렌더라 render container 밖(document.body)에 붙는다
+		const panel = document.querySelector(".modal_panel") as HTMLElement;
 		expect(panel).toHaveAttribute("data-testid", "panel-x");
 		expect(panel).toHaveAttribute("role", "document");
 		fireEvent.click(panel);

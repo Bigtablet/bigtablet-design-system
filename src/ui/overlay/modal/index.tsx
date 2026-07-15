@@ -3,8 +3,9 @@
 import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap } from "../../../utils";
+import { cn, useFocusTrap, useReducedMotion } from "../../../utils";
 import "./style.scss";
 
 export type ModalFooterAlign = "end" | "between" | "start";
@@ -72,9 +73,13 @@ export const Modal = ({
 	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
 	if (open && !shouldRender) setShouldRender(true);
 
+	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
+	const reduced = useReducedMotion();
+
 	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
 		opacity: open ? 1 : 0,
+		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 		onRest: (result) => {
 			if (!open && result.finished) setShouldRender(false);
@@ -85,6 +90,7 @@ export const Modal = ({
 	const panelStyle = useSpring({
 		opacity: open ? 1 : 0,
 		transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 	});
 
@@ -121,9 +127,16 @@ export const Modal = ({
 	// 마운트가 한 렌더 늦어 트랩이 걸리지 않는다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.
 	if (!open && !shouldRender) return null;
 
+	// SSR 가드 - 포털 대상(document.body)이 서버에는 없다. 클라이언트 하이드레이션 후
+	// 첫 렌더부터 포털이 붙으므로(commit 시점, effect 이전) 포커스 트랩 타이밍은 유지된다.
+	if (typeof document === "undefined") return null;
+
 	const hasTitle = !!title;
 
-	return (
+	// 포털로 body 끝에 렌더 - 트리거 위치 인라인 렌더는 transform/filter 조상 아래서
+	// position: fixed 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다
+	// (이 DS 자체가 useSpringHover 등 transform 을 광범위하게 사용). Alert/Toast 와 동일 패턴.
+	return createPortal(
 		<animated.div
 			className="modal"
 			style={overlayStyle}
@@ -177,6 +190,7 @@ export const Modal = ({
 					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{footer}</div>
 				)}
 			</animated.div>
-		</animated.div>
+		</animated.div>,
+		document.body,
 	);
 };
