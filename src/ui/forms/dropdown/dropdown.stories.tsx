@@ -112,8 +112,15 @@ export const Controlled: Story = {
 		const [value, setValue] = React.useState<string | null>("banana");
 		return (
 			<div style={{ width: 320 }}>
-				{/* args 는 single/multiple 유니온이라 단일 모드 제어 prop 과 스프레드로 섞을 수 없음 - 단일로 단언 */}
-				<Dropdown {...(args as DropdownSingleProps)} value={value} onValueChange={setValue} />
+				{/* args 는 single/multiple 유니온이라 단일 모드 제어 prop 과 스프레드로 섞을 수 없음 - 단일로 단언.
+				    multiple={false} 을 명시 고정해 Storybook Controls 에서 multiple 을 켜도
+				    단일 문자열 value 에 .filter 를 호출해 크래시하지 않도록 방지. */}
+				<Dropdown
+					{...(args as DropdownSingleProps)}
+					multiple={false}
+					value={value}
+					onValueChange={setValue}
+				/>
 				<div style={{ marginTop: 8, fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 					선택: <strong>{String(value)}</strong>
 				</div>
