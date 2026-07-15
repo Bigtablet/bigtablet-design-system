@@ -69,6 +69,19 @@ export const OtpInput = ({
 
 	const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
 		const nextDigit = e.target.value;
+
+		// SMS/키체인 자동입력(autocomplete="one-time-code")은 첫 박스의 onChange 로 전체 코드가
+		// 한 번에 들어온다. 단일 숫자 정규식에 걸려 무시되지 않도록 handlePaste 처럼 각 자리에 분배.
+		if (nextDigit.length > 1) {
+			const filled = nextDigit.replace(/\D/g, "").slice(0, length);
+			if (!filled) return;
+			const newDigits = [...digits];
+			for (let i = 0; i < filled.length; i++) newDigits[i] = filled[i];
+			updateValue(newDigits);
+			focusInput(Math.min(filled.length, length - 1));
+			return;
+		}
+
 		if (nextDigit && !/^\d$/.test(nextDigit)) return;
 
 		const newDigits = [...digits];

@@ -435,12 +435,15 @@ export const Dropdown = (props: DropdownProps) => {
 				</button>
 			</div>
 
-			{/* 네이티브 폼 제출 참여 - name 지정 시 선택 값을 hidden input 으로 노출 */}
+			{/* 네이티브 폼 제출 참여 - name 지정 시 선택 값을 hidden input 으로 노출.
+			    disabled 시 값 전송 제외 (native <select disabled> 처럼 FormData 에서 빠지도록). */}
 			{name &&
 				(multiple ? (
-					selectedValues.map((v) => <input key={v} type="hidden" name={name} value={v} />)
+					selectedValues.map((v) => (
+						<input key={v} type="hidden" name={name} value={v} disabled={disabled} />
+					))
 				) : (
-					<input type="hidden" name={name} value={selectedValues[0] ?? ""} />
+					<input type="hidden" name={name} value={selectedValues[0] ?? ""} disabled={disabled} />
 				))}
 
 			{isOpen && (

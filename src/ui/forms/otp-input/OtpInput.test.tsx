@@ -54,6 +54,15 @@ describe("OtpInput", () => {
 		expect(onChange).toHaveBeenCalledWith("123456");
 	});
 
+	it("distributes a multi-char value from SMS autofill (onChange with full code)", () => {
+		// autocomplete="one-time-code" 자동입력은 첫 박스 onChange 로 전체 코드가 한 번에 들어옴
+		const onChange = vi.fn();
+		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		const inputs = screen.getAllByRole("textbox");
+		fireEvent.change(inputs[0], { target: { value: "123456" } });
+		expect(onChange).toHaveBeenCalledWith("123456");
+	});
+
 	it("handles paste with non-numeric characters", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
@@ -375,12 +384,14 @@ describe("OtpInput", () => {
 	});
 
 	describe("Non-digit handling on change", () => {
-		it("rejects multi-character input", () => {
+		it("distributes multi-character input across boxes (SMS autofill)", () => {
+			// 이전엔 멀티문자를 거부했으나, SMS 자동입력이 첫 박스에 전체 코드를 넣으므로
+			// handlePaste 처럼 각 자리에 분배하도록 변경됨.
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.change(inputs[0], { target: { value: "12" } });
-			expect(onChange).not.toHaveBeenCalled();
+			expect(onChange).toHaveBeenCalledWith("12");
 		});
 
 		it("allows clearing a digit (empty string)", () => {
