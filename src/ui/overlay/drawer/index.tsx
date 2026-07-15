@@ -3,6 +3,7 @@
 import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import { cn, useFocusTrap, useReducedMotion, useSpringPresence } from "../../../utils";
 import "./style.scss";
@@ -134,11 +135,16 @@ export const Drawer = ({
 	// 동안 마운트 유지용.
 	if (!open && !shouldRender) return null;
 
+	// SSR 가드 - 포털 대상(document.body)이 서버에는 없다.
+	if (typeof document === "undefined") return null;
+
 	const hasTitle = !!title;
 	const sizeValue = typeof size === "number" ? `${size}px` : size;
 	const panelSizeStyle = placement === "bottom" ? { height: sizeValue } : { width: sizeValue };
 
-	return (
+	// 포털로 body 끝에 렌더 - transform/filter 조상 아래서 position: fixed 가 깨지는 문제 방지
+	// (Modal/Alert/Toast 와 동일 패턴).
+	return createPortal(
 		<animated.div
 			className={cn("drawer", `drawer_placement_${placement}`)}
 			style={overlayStyle}
@@ -191,7 +197,8 @@ export const Drawer = ({
 				{children && <div className="drawer_body">{children}</div>}
 				{footer && <div className="drawer_footer">{footer}</div>}
 			</animated.div>
-		</animated.div>
+		</animated.div>,
+		document.body,
 	);
 };
 

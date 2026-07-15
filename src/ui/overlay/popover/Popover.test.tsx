@@ -59,7 +59,8 @@ describe("Popover", () => {
 		fireEvent.click(trigger);
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-		fireEvent.keyDown(document, { key: "Escape" });
+		// Escape 는 wrapper 의 React onKeyDown(버블)으로 처리되므로 팝오버 내부 요소에서 발사
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 		await waitFor(() => {
 			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 		});
@@ -256,5 +257,28 @@ describe("Popover", () => {
 		expect(() => fireEvent.keyDown(document, { key: "Escape" })).not.toThrow();
 		unmount();
 		expect(() => fireEvent.keyDown(document, { key: "Escape" })).not.toThrow();
+	});
+
+	it("Escape inside a Modal closes only the Popover, not the Modal (topmost overlay)", async () => {
+		const { Modal } = await import("../modal");
+		const modalClose = vi.fn();
+		render(
+			<Modal open onClose={modalClose} title="M">
+				<Popover
+					trigger={<button type="button">Open pop</button>}
+					content={<span>Pop content</span>}
+					aria-label="popover"
+				/>
+			</Modal>,
+		);
+		fireEvent.click(screen.getByText("Open pop"));
+		expect(screen.getByText("Pop content")).toBeInTheDocument();
+
+		// 회귀: bubble 리스너 시절엔 Modal 의 stopPropagation 때문에 Popover 리스너가
+		// 발화하지 못하고 Modal 만 닫혔다 (아래층이 닫히는 역전)
+		fireEvent.keyDown(screen.getByText("Pop content"), { key: "Escape" });
+
+		expect(modalClose).not.toHaveBeenCalled();
+		await waitFor(() => expect(screen.queryByText("Pop content")).not.toBeInTheDocument());
 	});
 });

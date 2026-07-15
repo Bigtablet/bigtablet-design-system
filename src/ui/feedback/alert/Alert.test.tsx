@@ -210,4 +210,67 @@ describe("Alert", () => {
 		// 퇴출 spring 애니메이션 완료 후 unmount 되므로 대기
 		await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
 	});
+
+	it("routes Escape and overlay-click dismissal through onCancel (APG alertdialog)", () => {
+		const onCancel = vi.fn();
+		renderWithProvider(<TestComponent options={{ title: "C", onCancel }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+		fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
+		expect(onCancel).toHaveBeenCalledTimes(1);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+		const overlay = screen.getByRole("alertdialog").parentElement as HTMLElement;
+		fireEvent.click(overlay);
+		expect(onCancel).toHaveBeenCalledTimes(2);
+	});
+
+	it("closeOnOverlay=false ignores overlay clicks", () => {
+		const onCancel = vi.fn();
+		renderWithProvider(
+			<TestComponent options={{ title: "C", onCancel, closeOnOverlay: false }} />,
+		);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+		const overlay = screen.getByRole("alertdialog").parentElement as HTMLElement;
+		fireEvent.click(overlay);
+
+		expect(onCancel).not.toHaveBeenCalled();
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+	});
+
+	it("renders without motion when prefers-reduced-motion is set", () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+		renderWithProvider(<TestComponent options={{ title: "Reduced" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		// reduced-motion 에서 패널이 최종(휴지) 상태로 즉시 도달 (spring immediate)
+		const dialog = screen.getByRole("alertdialog");
+		expect(dialog).toHaveStyle({ transform: "scale(1) translateY(0px)" });
+		vi.unstubAllGlobals();
+	});
+
+	it("locks body scroll while open (data-open-modals counter)", async () => {
+		renderWithProvider(<TestComponent options={{ title: "S" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.body.dataset.openModals).toBe("1");
+
+		fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
+		await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+		expect(document.body.style.overflow).toBe("");
+	});
 });
