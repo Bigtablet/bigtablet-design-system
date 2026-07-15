@@ -167,7 +167,7 @@ export interface TabProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElem
 	value: string;
 }
 
-export const Tab = ({ value, className, children, onClick, ...props }: TabProps) => {
+export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }: TabProps) => {
 	const ctx = useTabsContext();
 	const isActive = ctx.value === value;
 	const panelId = `${ctx.idPrefix}-panel-${value}`;
@@ -179,6 +179,10 @@ export const Tab = ({ value, className, children, onClick, ...props }: TabProps)
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+		// 소비자 onKeyDown 을 먼저 실행하고 화살표 내비게이션을 이어간다
+		// ({...props} 로 넘어온 onKeyDown 이 내비게이션을 통째로 제거하지 않도록 합성).
+		onKeyDown?.(e);
+		if (e.defaultPrevented) return;
 		if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
 		const list = (e.currentTarget as HTMLElement).closest('[role="tablist"]');
 		if (!list) return;
@@ -200,17 +204,23 @@ export const Tab = ({ value, className, children, onClick, ...props }: TabProps)
 
 	return (
 		<button
+			// {...props} 를 먼저 펼쳐 data-*/aria-* 는 통과시키되, tab 패턴에 필수인
+			// role/aria-selected/tabIndex/onClick·onKeyDown(소비자 핸들러는 내부에서 합성)은
+			// 컴포넌트가 항상 이긴다.
+			{...props}
 			type="button"
 			role="tab"
 			id={tabId}
 			data-value={value}
 			aria-selected={isActive}
-			aria-controls={panelId}
-			tabIndex={isActive ? 0 : -1}
+			// 비활성 panel 은 unmount 될 수 있어 dangling IDREF 방지 위해 활성 탭에만 지정
+			aria-controls={isActive ? panelId : undefined}
+			// 로빙 tabindex - 단, 선택된 탭이 없으면(비제어 + defaultValue 없음, value="") 전부 -1 이
+			// 되어 키보드로 tablist 진입이 불가능해지므로 그 경우 모든 탭을 도달 가능하게 둔다.
+			tabIndex={isActive || !ctx.value ? 0 : -1}
 			className={cn("tabs_tab", isActive && "tabs_tab_active", className)}
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
-			{...props}
 		>
 			{children}
 		</button>

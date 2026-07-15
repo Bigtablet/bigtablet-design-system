@@ -76,7 +76,9 @@ export const ListItem = ({
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick && !disabled ? 0 : undefined}
 			aria-disabled={disabled || undefined}
-			aria-selected={selected || undefined}
+			// aria-selected 는 option/tab/row 등 특정 role 전용이라 button/일반 div 에선 무효
+			// (axe aria-allowed-attr 위반). 인터랙티브 항목의 선택 상태는 aria-pressed 로 노출한다.
+			aria-pressed={onClick && selected !== undefined ? selected : undefined}
 			{...props}
 		>
 			<div className="list_item_state_layer">

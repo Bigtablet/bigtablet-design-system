@@ -142,5 +142,10 @@
     gap: token.$spacing_8;
     margin-top: token.$spacing_8;
     flex-wrap: wrap;
+
+    // href 액션은 Button 클래스를 입힌 anchor 로 렌더링됨 - 링크 기본 밑줄 제거
+    a.button {
+      text-decoration: none;
+    }
   }
 }

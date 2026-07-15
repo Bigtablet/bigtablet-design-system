@@ -27,7 +27,7 @@ describe("Chip", () => {
 
 	it("shows close icon when removable", () => {
 		render(<Chip label="Tag" type="input" removable />);
-		expect(screen.getByLabelText("Remove")).toBeInTheDocument();
+		expect(screen.getByLabelText("Tag 제거")).toBeInTheDocument();
 	});
 
 	it("shows chevron for filter type", () => {
@@ -58,7 +58,7 @@ describe("Chip", () => {
 		const handleRemove = vi.fn();
 		render(<Chip label="Tag" type="input" removable onRemove={handleRemove} />);
 
-		fireEvent.click(screen.getByLabelText("Remove"));
+		fireEvent.click(screen.getByLabelText("Tag 제거"));
 		expect(handleRemove).toHaveBeenCalledTimes(1);
 	});
 });

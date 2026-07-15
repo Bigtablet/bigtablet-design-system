@@ -55,9 +55,12 @@ export const Avatar = ({
 		<span
 			className={cn("avatar", `avatar_size_${size}`, `avatar_shape_${shape}`, className)}
 			style={{ background: !showImage ? bgColor : undefined, ...style }}
-			// initials-only: span IS the img. with src: <img> provides the role
-			role={showImage ? undefined : "img"}
+			// initials-only: span IS the img. with src: <img> provides the role.
+			// name 없이 쓰이면 접근 가능한 이름 없는 role=img 가 되므로(axe role-img-alt)
+			// 그 경우 role 을 달지 않고 장식 요소로 둔다.
+			role={showImage || !name ? undefined : "img"}
 			aria-label={showImage ? undefined : name || undefined}
+			aria-hidden={!showImage && !name ? true : undefined}
 			{...props}
 		>
 			{showImage ? (
