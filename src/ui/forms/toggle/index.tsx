@@ -48,10 +48,12 @@ export const Toggle = ({
 
 	/**
 	 * 현재 상태를 토글하고 변경 콜백을 호출한다.
+	 * 소비자 onClick 을 먼저 실행하고 preventDefault 시 토글을 건너뛴다.
 	 * @returns void
 	 */
-	const handleToggle = () => {
-		if (disabled) return;
+	const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+		props.onClick?.(e);
+		if (disabled || e.defaultPrevented) return;
 		const next = !isOn;
 		if (!isControlled) setInnerChecked(next);
 		(onCheckedChange ?? onChange)?.(next);
@@ -66,6 +68,10 @@ export const Toggle = ({
 
 	return (
 		<button
+			// {...props} 를 먼저 펼쳐 data-*/aria-* 는 통과시키되, switch 동작에 필수인
+			// role/aria-checked/onClick(소비자 onClick 은 handleToggle 안에서 합성 실행)은
+			// 컴포넌트가 항상 이기도록 뒤에 둔다.
+			{...props}
 			ref={ref}
 			type="button"
 			role="switch"
@@ -74,7 +80,6 @@ export const Toggle = ({
 			disabled={disabled}
 			onClick={handleToggle}
 			className={rootClassName}
-			{...props}
 		>
 			<span className="toggle_thumb" />
 		</button>

@@ -39,7 +39,9 @@ export const Radio = ({
 	const size = sizeProp ?? group?.size ?? "md";
 	const name = nameProp ?? group?.name;
 	const disabled = disabledProp ?? group?.disabled;
-	const resolvedChecked = group ? group.value === value : checked;
+	// value 없는 Radio 가 그룹 미선택 상태(group.value === undefined)에서
+	// undefined === undefined 로 전부 checked 렌더되지 않도록 value 존재를 먼저 확인.
+	const resolvedChecked = group ? value !== undefined && group.value === value : checked;
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (group && value !== undefined) group.onChange(String(value));
