@@ -77,7 +77,9 @@ export const Tooltip = ({
 		if (!open) return;
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (e.key !== "Escape") return;
-			e.stopPropagation();
+			// stopImmediatePropagation - 같은 document 노드에 등록된 다른 오버레이 리스너의
+			// 실행까지 막아(stopPropagation 은 못 막음) 툴팁만 닫히고 하위 오버레이는 유지.
+			e.stopImmediatePropagation();
 			hideNow();
 		};
 		document.addEventListener("keydown", onKeyDown, true);

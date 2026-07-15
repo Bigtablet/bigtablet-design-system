@@ -59,7 +59,8 @@ describe("Popover", () => {
 		fireEvent.click(trigger);
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-		fireEvent.keyDown(document, { key: "Escape" });
+		// Escape 는 wrapper 의 React onKeyDown(버블)으로 처리되므로 팝오버 내부 요소에서 발사
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 		await waitFor(() => {
 			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 		});

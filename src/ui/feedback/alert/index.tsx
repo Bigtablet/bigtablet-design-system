@@ -220,7 +220,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
 			style={overlayStyle}
 			role="presentation"
 			onClick={() => closeOnOverlay && dismiss()}
-			onKeyDown={(e) => e.key === "Escape" && dismiss()}
+			onKeyDown={(e) => {
+				// Escape 전파 차단 - 상위 오버레이/전역 단축키가 함께 닫히지 않도록 (최상단만 닫힘)
+				if (e.key === "Escape") {
+					e.stopPropagation();
+					dismiss();
+				}
+			}}
 		>
 			<animated.div
 				ref={panelRef}
