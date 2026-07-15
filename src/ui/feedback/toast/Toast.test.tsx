@@ -597,29 +597,40 @@ describe("Toast stack & ids", () => {
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
 	});
 
-	it("auto-closes via setTimeout under prefers-reduced-motion (progress animation disabled)", async () => {
-		// reduced-motion 에서는 progress CSS 애니메이션이 꺼져 onAnimationEnd 가 발화하지
-		// 않으므로 setTimeout 분기가 자동 닫힘을 대신해야 한다 (없으면 토스트가 영구히 남음)
-		const originalMatchMedia = window.matchMedia;
-		window.matchMedia = vi.fn().mockReturnValue({
-			matches: true,
-			addEventListener: vi.fn(),
-			removeEventListener: vi.fn(),
-		}) as unknown as typeof window.matchMedia;
-
-		try {
-			render(
-				<ToastProvider>
-					<ToastTrigger fn={(t) => t.info("잠깐 표시", 30)} label="quick" />
-				</ToastProvider>,
+	it("hands focus to an adjacent toast when a focused toast is closed (WCAG 2.4.3)", async () => {
+		function MultiTrigger() {
+			const t = useToast();
+			return (
+				<button
+					type="button"
+					onClick={() => {
+						t.success("첫 번째");
+						t.success("두 번째");
+					}}
+				>
+					two
+				</button>
 			);
-			fireEvent.click(screen.getByRole("button", { name: "quick" }));
-			expect(screen.getByText("잠깐 표시")).toBeInTheDocument();
-
-			// setTimeout(30ms) → visible=false → spring 퇴출(immediate) 후 unmount
-			await waitFor(() => expect(screen.queryByText("잠깐 표시")).not.toBeInTheDocument());
-		} finally {
-			window.matchMedia = originalMatchMedia;
 		}
+
+		render(
+			<ToastProvider>
+				<MultiTrigger />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "two" }));
+
+		const closeButtons = screen.getAllByRole("button", { name: "Close" });
+		expect(closeButtons).toHaveLength(2);
+
+		// 첫 번째(맨 위) 토스트의 닫기 버튼에 포커스를 두고 닫으면,
+		// 포커스가 body 로 유실되지 않고 인접 토스트의 닫기 버튼으로 이관되어야 한다.
+		closeButtons[0].focus();
+		fireEvent.click(closeButtons[0]);
+
+		await waitFor(() => {
+			expect(document.activeElement).toBe(closeButtons[1]);
+		});
 	});
 });

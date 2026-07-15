@@ -10,6 +10,14 @@
   to   { width: 0%; }
 }
 
+// reduced-motion 용 정적 keyframe - 폭 변화(시각 모션) 없이 동일 duration 동안 진행.
+// onAnimationEnd(자동 닫힘 트리거)와 animation-play-state:paused(hover/focus 일시정지)를
+// 그대로 살리기 위해 animation 을 끄지 않고 정적 keyframe 로 교체한다.
+@keyframes toast_progress_reduced {
+  from { width: 0; }
+  to   { width: 0; }
+}
+
 // ── Container ────────────────────────────────────────────────────────────────
 
 .toast_container {
@@ -157,10 +165,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  // progress 시각 모션 제거. 자동 닫힘은 컴포넌트의 reduced-motion 분기(setTimeout)가
-  // 대신 처리한다 - animation 만 없애면 onAnimationEnd 가 발화하지 않아 영구히 남기 때문.
+  // 시각 모션만 제거 - animation-name 만 정적 keyframe 로 바꿔 duration/타이밍/play-state 는
+  // 유지한다. 이렇게 하면 onAnimationEnd 로 자동 닫힘이 그대로 발화하고, hover/focus 시
+  // animation-play-state:paused 로 타이머가 함께 멈춰 WCAG 2.2.1 이 reduced-motion 에서도 지켜진다.
+  // (animation:none 이면 onAnimationEnd 가 안 나 토스트가 영구히 남고 pause 도 무력화됨.)
   .toast_progress {
-    animation: none;
+    animation-name: toast_progress_reduced;
     width: 0;
   }
 }

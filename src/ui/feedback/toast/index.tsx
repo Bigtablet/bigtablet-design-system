@@ -5,7 +5,7 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useReducedMotion, useSpringPresence } from "../../../utils";
+import { cn, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -58,23 +58,27 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	const [visible, setVisible] = React.useState(true);
 	const closingRef = React.useRef(false);
 	const rootRef = React.useRef<HTMLDivElement>(null);
-	const reduced = useReducedMotion();
 
 	const style = useSpringPresence({
 		visible,
 		from: "translateX(20px)", // 우측에서 슬라이드 인
 		onExitComplete: () => {
 			// 포커스가 이 토스트 안에 있었으면(닫기 버튼 Enter 등) unmount 로 포커스가
-			// body 로 유실되지 않게 다음 토스트의 닫기 버튼으로 넘긴다 (WCAG 2.4.3).
+			// body 로 유실되지 않게 인접 토스트의 닫기 버튼으로 넘긴다 (WCAG 2.4.3).
+			// onRemove(=state 갱신) 전에 포커스를 옮겨 배치 flush 타이밍에 의존하지 않는다.
 			const hadFocus = rootRef.current?.contains(document.activeElement) ?? false;
-			onRemove(item.id);
 			if (hadFocus) {
-				// onRemove 의 상태 갱신이 아직 flush 전이라 자기 자신도 DOM 에 남아 있음 - 제외하고 탐색
-				const next = Array.from(
+				const closeButtons = Array.from(
 					document.querySelectorAll<HTMLElement>(".toast_item .toast_close"),
-				).find((el) => !rootRef.current?.contains(el));
-				next?.focus();
+				);
+				const currentIndex = closeButtons.findIndex((el) => rootRef.current?.contains(el));
+				if (currentIndex !== -1) {
+					// 다음(아래) 우선, 없으면 이전(위) 토스트로 - 논리적 인접 이동
+					const next = closeButtons[currentIndex + 1] || closeButtons[currentIndex - 1];
+					next?.focus();
+				}
 			}
+			onRemove(item.id);
 		},
 	});
 
@@ -87,14 +91,6 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 		closingRef.current = true;
 		setVisible(false);
 	}, []);
-
-	// reduced-motion: progress CSS 애니메이션이 꺼져 onAnimationEnd 가 발화하지 않으므로
-	// setTimeout 으로 자동 닫힘을 대신한다 (없으면 토스트가 영구히 남음).
-	React.useEffect(() => {
-		if (!reduced) return;
-		const timer = setTimeout(close, item.duration);
-		return () => clearTimeout(timer);
-	}, [reduced, item.duration, close]);
 
 	return (
 		<animated.div
