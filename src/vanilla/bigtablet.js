@@ -88,13 +88,6 @@
 			options: [],
 		};
 
-		// Parse options from data attributes or config
-		const optionsData = wrapper.dataset.options
-			? JSON.parse(wrapper.dataset.options)
-			: config.options || [];
-
-		state.options = optionsData;
-
 		// Create DOM structure
 		const controlId = wrapper.id || generateId("select");
 		const _listId = `${controlId}_listbox`;
@@ -107,10 +100,42 @@
 			return null;
 		}
 
+		// Parse options: data-options JSON > JS config > 서버 렌더링된 <li data-value> 마크업.
+		// Thymeleaf/JSP 처럼 서버가 옵션 li 를 직접 렌더링하는 경우(문서화된 기본 마크업)를
+		// 지원해야 하므로 DOM 파싱이 반드시 필요하다.
+		const optionsData = wrapper.dataset.options
+			? JSON.parse(wrapper.dataset.options)
+			: (config.options && config.options.length
+				? config.options
+				: $$(".bt-select__option", list).map((el) => ({
+						value: el.dataset.value !== undefined ? el.dataset.value : el.textContent.trim(),
+						label: el.textContent.trim(),
+						disabled: el.classList.contains("is-disabled"),
+					})));
+
+		state.options = optionsData;
+
+		// 폼 제출 참여: name(설정 또는 data-name)이 있으면 hidden input 으로 값을 노출한다.
+		// 서버 템플릿(th:field 등)이 미리 렌더링한 hidden input 이 있으면 그대로 재사용 -
+		// name/초기값을 서버 바인딩에서 이어받는다.
+		let hiddenInput = wrapper.querySelector('input[type="hidden"]');
+		const fieldName = config.name || wrapper.dataset.name || null;
+		if (!hiddenInput && fieldName) {
+			hiddenInput = document.createElement("input");
+			hiddenInput.type = "hidden";
+			hiddenInput.name = fieldName;
+			wrapper.appendChild(hiddenInput);
+		}
+
 		// State management
 		function setValue(newValue) {
 			state.value = newValue;
 			const option = state.options.find((o) => o.value === newValue);
+
+			// 폼 제출용 hidden input 동기화
+			if (hiddenInput) {
+				hiddenInput.value = newValue == null ? "" : newValue;
+			}
 
 			const valueEl = control.querySelector(".bt-select__value, .bt-select__placeholder");
 			if (valueEl) {
@@ -310,6 +335,9 @@
 		list.style.display = "none";
 		if (config.defaultValue) {
 			setValue(config.defaultValue);
+		} else if (hiddenInput && hiddenInput.value) {
+			// 서버 바인딩(th:field 등)이 넣어 둔 초기값을 표시에 반영
+			setValue(hiddenInput.value);
 		}
 
 		// Public API
@@ -532,9 +560,32 @@
 			checked: config.defaultChecked || toggleEl.classList.contains("bt-toggle--on"),
 		};
 
+		// Switch 시맨틱 (React Toggle 과 패리티): role + aria-checked 를 항상 유지
+		if (!toggleEl.hasAttribute("role")) toggleEl.setAttribute("role", "switch");
+		// 폼 안에서 클릭이 submit 으로 새지 않도록 (button 기본 type=submit)
+		if (toggleEl.tagName === "BUTTON" && !toggleEl.hasAttribute("type")) {
+			toggleEl.setAttribute("type", "button");
+		}
+
+		// 폼 제출 참여: name(설정 또는 data-name)이 있으면 hidden input 으로 on/off 를 노출.
+		// 서버 템플릿이 미리 렌더링한 hidden input 이 있으면 재사용한다.
+		let hiddenInput = toggleEl.querySelector('input[type="hidden"]');
+		const fieldName = config.name || toggleEl.dataset.name || null;
+		if (!hiddenInput && fieldName) {
+			hiddenInput = document.createElement("input");
+			hiddenInput.type = "hidden";
+			hiddenInput.name = fieldName;
+			toggleEl.appendChild(hiddenInput);
+		}
+
 		function setChecked(checked) {
 			state.checked = checked;
 			toggleEl.classList.toggle("bt-toggle--on", checked);
+			toggleEl.setAttribute("aria-checked", checked ? "true" : "false");
+
+			if (hiddenInput) {
+				hiddenInput.value = checked ? "true" : "false";
+			}
 
 			if (config.onChange) {
 				config.onChange(checked);
@@ -549,10 +600,14 @@
 
 		const cleanup = on(toggleEl, "click", toggle);
 
-		// Initialize
-		if (config.defaultChecked) {
-			setChecked(true);
+		// Initialize - aria-checked/hidden input 을 초기 상태와 동기화
+		if (hiddenInput && hiddenInput.value === "true" && !state.checked) {
+			// 서버 바인딩 초기값(on)을 표시에 반영
+			state.checked = true;
 		}
+		toggleEl.classList.toggle("bt-toggle--on", state.checked);
+		toggleEl.setAttribute("aria-checked", state.checked ? "true" : "false");
+		if (hiddenInput) hiddenInput.value = state.checked ? "true" : "false";
 
 		return {
 			isChecked: () => state.checked,
