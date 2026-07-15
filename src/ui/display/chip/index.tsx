@@ -159,8 +159,10 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
-				// selected 는 시각(체크 아이콘)만으로는 AT 에 전달되지 않으므로 aria-pressed 로 노출
-				aria-pressed={selected !== undefined ? selected : undefined}
+				// selected 는 시각(체크 아이콘)만으로는 AT 에 전달되지 않으므로 aria-pressed 로 노출.
+				// 단 filter 타입은 aria-haspopup+aria-expanded(팝업 트리거)라 aria-pressed 와 공존
+				// 시 AT 가 역할을 혼동하므로 제외한다.
+				aria-pressed={type !== "filter" && selected !== undefined ? selected : undefined}
 				{...(type === "filter"
 					? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open }
 					: {})}

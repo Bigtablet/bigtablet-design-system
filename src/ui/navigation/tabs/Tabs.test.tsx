@@ -61,8 +61,9 @@ describe("Tabs", () => {
 		expect(screen.getByRole("tablist")).toHaveAttribute("aria-label", "Test tabs");
 	});
 
-	it("keeps tabs keyboard-reachable when no tab is selected", () => {
-		// 회귀: 선택 탭이 없으면 전부 tabIndex=-1 이 되어 tablist 진입 자체가 불가능했음
+	it("keeps only the first tab as the tab stop when no tab is selected (roving tabindex)", () => {
+		// 회귀: 선택 탭이 없으면 전부 tabIndex=-1 이 되어 tablist 진입 불가였음.
+		// 수정 후엔 첫 탭만 tab stop(0), 나머지는 -1 (WAI-ARIA roving tabindex).
 		render(
 			<Tabs>
 				<TabList ariaLabel="t">
@@ -72,7 +73,7 @@ describe("Tabs", () => {
 			</Tabs>,
 		);
 		expect(screen.getByRole("tab", { name: "A" })).toHaveAttribute("tabindex", "0");
-		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("tabindex", "0");
+		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("tabindex", "-1");
 	});
 
 	it("runs consumer onKeyDown AND keeps arrow navigation ({...props} must not replace it)", () => {
