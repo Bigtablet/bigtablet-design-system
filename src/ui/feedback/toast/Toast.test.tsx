@@ -596,4 +596,30 @@ describe("Toast stack & ids", () => {
 		expect(screen.getAllByText("같은 메시지")).toHaveLength(3);
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
 	});
+
+	it("auto-closes via setTimeout under prefers-reduced-motion (progress animation disabled)", async () => {
+		// reduced-motion 에서는 progress CSS 애니메이션이 꺼져 onAnimationEnd 가 발화하지
+		// 않으므로 setTimeout 분기가 자동 닫힘을 대신해야 한다 (없으면 토스트가 영구히 남음)
+		const originalMatchMedia = window.matchMedia;
+		window.matchMedia = vi.fn().mockReturnValue({
+			matches: true,
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+		}) as unknown as typeof window.matchMedia;
+
+		try {
+			render(
+				<ToastProvider>
+					<ToastTrigger fn={(t) => t.info("잠깐 표시", 30)} label="quick" />
+				</ToastProvider>,
+			);
+			fireEvent.click(screen.getByRole("button", { name: "quick" }));
+			expect(screen.getByText("잠깐 표시")).toBeInTheDocument();
+
+			// setTimeout(30ms) → visible=false → spring 퇴출(immediate) 후 unmount
+			await waitFor(() => expect(screen.queryByText("잠깐 표시")).not.toBeInTheDocument());
+		} finally {
+			window.matchMedia = originalMatchMedia;
+		}
+	});
 });
