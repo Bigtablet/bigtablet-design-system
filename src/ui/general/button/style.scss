@@ -35,6 +35,14 @@
     cursor: not-allowed;
   }
 
+  // anchor(as="a")는 native :disabled 가 없으므로 클래스로 비활성 처리.
+  // pointer-events: none 으로 hover/active state layer 도 함께 차단(=:not(:disabled) 가드와 동일 효과).
+  &_disabled {
+    cursor: not-allowed;
+    opacity: token.$opacity_38;
+    pointer-events: none;
+  }
+
   // ── Sizes ────────────────────────────────────────────────────────────────
 
   &_size_sm {

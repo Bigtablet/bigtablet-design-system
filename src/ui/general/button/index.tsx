@@ -26,6 +26,11 @@ interface ButtonBaseProps {
 	 * filled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash.
 	 */
 	danger?: boolean;
+	/**
+	 * 비활성화. button 은 native `disabled`, anchor 는 `aria-disabled`+`tabIndex=-1`+
+	 * 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로).
+	 */
+	disabled?: boolean;
 }
 
 /** `<button>` 으로 렌더링 (기본) */
@@ -34,6 +39,8 @@ export interface ButtonAsButton
 		Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> {
 	/** 렌더링할 요소 (기본값: "button") */
 	as?: "button";
+	/** button 렌더 시엔 href 를 허용하지 않음 (href 만 주면 anchor 로 분기되도록) */
+	href?: never;
 	/** 루트 button 요소 ref (React 19 ref-as-prop) */
 	ref?: React.Ref<HTMLButtonElement>;
 }
@@ -42,8 +49,8 @@ export interface ButtonAsButton
 export interface ButtonAsAnchor
 	extends ButtonBaseProps,
 		Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> {
-	/** anchor 로 렌더링 */
-	as: "a";
+	/** anchor 로 렌더링 - 생략 가능(href 만 줘도 anchor 로 분기) */
+	as?: "a";
 	/** 링크 대상 (anchor 필수) */
 	href: string;
 	/** 루트 anchor 요소 ref (React 19 ref-as-prop) */
@@ -72,6 +79,7 @@ export const Button = (props: ButtonProps) => {
 		fullWidth = false,
 		radius,
 		danger = false,
+		disabled = false,
 		as,
 		className,
 		children,
@@ -86,6 +94,8 @@ export const Button = (props: ButtonProps) => {
 		fullWidth && "button_full_width",
 		radius && `button_radius_${radius}`,
 		danger && "button_danger",
+		// anchor 엔 native :disabled 가 안 먹으므로 클래스로 비활성 스타일 적용 (button 도 무해)
+		disabled && "button_disabled",
 		className,
 	);
 
@@ -110,8 +120,23 @@ export const Button = (props: ButtonProps) => {
 	const renderAnchor = as === "a" || (as === undefined && anchorRest.href != null);
 
 	if (renderAnchor) {
+		// anchor 엔 native disabled 가 없어 aria-disabled + tabIndex=-1 + 클릭 차단으로 비활성
+		// 처리 (BottomNavItem 과 동일 패턴). href 는 유지해 link 시맨틱을 보존하되 클릭 내비게이션은
+		// preventDefault 로 막고, pointer-events:none(.button_disabled) 로 hover/포인터도 차단.
+		const { onClick, tabIndex, ...anchorProps } = anchorRest;
 		return (
-			<a ref={ref as React.Ref<HTMLAnchorElement>} className={buttonClassName} {...anchorRest}>
+			<a
+				{...anchorProps}
+				ref={ref as React.Ref<HTMLAnchorElement>}
+				className={buttonClassName}
+				aria-disabled={disabled || undefined}
+				tabIndex={disabled ? -1 : tabIndex}
+				onClick={
+					disabled
+						? (e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()
+						: onClick
+				}
+			>
 				{content}
 			</a>
 		);
@@ -123,6 +148,7 @@ export const Button = (props: ButtonProps) => {
 		<button
 			ref={ref as React.Ref<HTMLButtonElement>}
 			type={type}
+			disabled={disabled}
 			className={buttonClassName}
 			{...buttonRest}
 		>

@@ -190,5 +190,30 @@ describe("Button", () => {
 			);
 			expect(node).toBeInstanceOf(HTMLAnchorElement);
 		});
+
+		it("renders as an anchor when only href is given (no as)", () => {
+			render(<Button href="/only-href">Link</Button>);
+			const link = screen.getByRole("link", { name: "Link" });
+			expect(link).toHaveAttribute("href", "/only-href");
+			expect(link).toHaveClass("button");
+		});
+
+		it("disables the anchor via aria-disabled + tabIndex and blocks click (BottomNavItem pattern)", () => {
+			const handleClick = vi.fn();
+			render(
+				<Button as="a" href="/x" disabled onClick={handleClick}>
+					Go
+				</Button>,
+			);
+			const link = screen.getByRole("link", { name: "Go" });
+			expect(link).toHaveAttribute("aria-disabled", "true");
+			expect(link).toHaveAttribute("tabindex", "-1");
+			expect(link).toHaveClass("button_disabled");
+			// href 는 유지(link 시맨틱)하되 클릭 내비게이션은 preventDefault 로 차단
+			const clickEvent = new MouseEvent("click", { bubbles: true, cancelable: true });
+			link.dispatchEvent(clickEvent);
+			expect(handleClick).not.toHaveBeenCalled();
+			expect(clickEvent.defaultPrevented).toBe(true);
+		});
 	});
 });
