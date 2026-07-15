@@ -51,14 +51,14 @@ describe("NavBar", () => {
 			render(<NavBar locale={makeLocale()} />);
 			fireEvent.click(screen.getByRole("button"));
 			expect(screen.getByRole("menu")).toBeInTheDocument();
-			expect(screen.getAllByRole("menuitem")).toHaveLength(2);
+			expect(screen.getAllByRole("menuitemradio")).toHaveLength(2);
 		});
 
 		it("calls onChange and closes on option select", () => {
 			const onChange = vi.fn();
 			render(<NavBar locale={makeLocale(onChange)} />);
 			fireEvent.click(screen.getByRole("button"));
-			fireEvent.click(screen.getByRole("menuitem", { name: "English" }));
+			fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
 			expect(onChange).toHaveBeenCalledWith("en");
 			expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 		});
@@ -66,7 +66,7 @@ describe("NavBar", () => {
 		it("focuses first item on open and moves with ArrowDown", () => {
 			render(<NavBar locale={makeLocale()} />);
 			fireEvent.click(screen.getByRole("button"));
-			const items = screen.getAllByRole("menuitem");
+			const items = screen.getAllByRole("menuitemradio");
 			expect(items[0]).toHaveFocus();
 			fireEvent.keyDown(screen.getByRole("menu"), { key: "ArrowDown" });
 			expect(items[1]).toHaveFocus();
@@ -98,7 +98,7 @@ describe("NavBar", () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole("button"));
-		fireEvent.click(screen.getByRole("menuitem", { name: "English" }));
+		fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
 		expect(onValueChange).toHaveBeenCalledWith("en");
 	});
 

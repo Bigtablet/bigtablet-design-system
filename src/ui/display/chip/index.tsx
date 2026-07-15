@@ -32,6 +32,8 @@ export interface ChipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
 	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 	/** 삭제 버튼 클릭 시 콜백 */
 	onRemove?: () => void;
+	/** 삭제 버튼 접근성 레이블 (기본값: "{label} 제거") - 칩이 여러 개일 때 대상 구분용 */
+	removeLabel?: string;
 }
 
 const CheckIcon = () => (
@@ -92,9 +94,11 @@ export const Chip = ({
 	leadingIcon,
 	onClick,
 	onRemove,
+	removeLabel,
 	className,
 	...props
 }: ChipProps) => {
+	const removeAriaLabel = removeLabel ?? `${label} 제거`;
 	const [iconHovered, setIconHovered] = useState(false);
 
 	const isStatic = type === "static";
@@ -137,7 +141,7 @@ export const Chip = ({
 						className="chip_trailing"
 						disabled={disabled}
 						onClick={onRemove}
-						aria-label="Remove"
+						aria-label={removeAriaLabel}
 					>
 						<span className="chip_icon" aria-hidden="true">
 							<CloseIcon />
@@ -155,6 +159,10 @@ export const Chip = ({
 				className="chip_content"
 				disabled={disabled}
 				onClick={onClick}
+				// selected 는 시각(체크 아이콘)만으로는 AT 에 전달되지 않으므로 aria-pressed 로 노출.
+				// 단 filter 타입은 aria-haspopup+aria-expanded(팝업 트리거)라 aria-pressed 와 공존
+				// 시 AT 가 역할을 혼동하므로 제외한다.
+				aria-pressed={type !== "filter" && selected !== undefined ? selected : undefined}
 				{...(type === "filter"
 					? { "aria-haspopup": "listbox" as const, "aria-expanded": !!open }
 					: {})}
@@ -187,7 +195,7 @@ export const Chip = ({
 					className="chip_trailing"
 					disabled={disabled}
 					onClick={onRemove}
-					aria-label="Remove"
+					aria-label={removeAriaLabel}
 				>
 					<span
 						className="chip_icon"

@@ -17,10 +17,15 @@ describe("Accordion", () => {
 		panels.forEach((p) => expect(p).toHaveAttribute("aria-hidden", "true"));
 	});
 
+	// id 는 useId 접두사로 인스턴스 격리되므로 트리거의 aria-controls 로 패널을 찾는다
+	const getPanelFor = (title: string) => {
+		const trigger = screen.getByText(title).closest("button") as HTMLButtonElement;
+		return document.getElementById(trigger.getAttribute("aria-controls") as string) as HTMLElement;
+	};
+
 	it("toggles panel open state on click", () => {
 		render(<Accordion items={items} />);
-		const panelA = document
-			.getElementById("a-panel") as HTMLElement;
+		const panelA = getPanelFor("Title A");
 		expect(panelA).toHaveAttribute("aria-hidden", "true");
 
 		fireEvent.click(screen.getByText("Title A"));
@@ -35,8 +40,8 @@ describe("Accordion", () => {
 		render(<Accordion items={items} />);
 		fireEvent.click(screen.getByText("Title A"));
 		fireEvent.click(screen.getByText("Title B"));
-		const panelA = document.getElementById("a-panel") as HTMLElement;
-		const panelB = document.getElementById("b-panel") as HTMLElement;
+		const panelA = getPanelFor("Title A");
+		const panelB = getPanelFor("Title B");
 		expect(panelA).toHaveAttribute("aria-hidden", "true");
 		expect(panelB).toHaveAttribute("aria-hidden", "false");
 	});

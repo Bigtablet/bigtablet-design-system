@@ -169,7 +169,8 @@ export const Table = <T extends object>({
 
 	return (
 		<div className={wrapperClassName}>
-			<table className="table" aria-label={ariaLabel}>
+			{/* aria-busy - 스켈레톤 로딩 중임을 AT 에 전달 (시각 전용이던 문제 수정) */}
+			<table className="table" aria-label={ariaLabel} aria-busy={isLoading || undefined}>
 				<thead className="table_thead">
 					<tr>
 						{selectable && (
