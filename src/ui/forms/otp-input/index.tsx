@@ -136,6 +136,7 @@ export const OtpInput = ({
 	};
 
 	const rootClassName = cn("otp_input", className);
+	const supportingId = React.useId();
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <fieldset> would force border/legend styles; role=group is the WAI-ARIA equivalent for OTP grouping
@@ -152,6 +153,8 @@ export const OtpInput = ({
 						inputMode="numeric"
 						pattern="\d*"
 						maxLength={1}
+						// SMS/키체인의 OTP 자동입력 - 첫 입력에만 지정 (paste 핸들러가 전 자리 분배)
+						autoComplete={i === 0 ? "one-time-code" : "off"}
 						value={digit}
 						onChange={(e) => handleChange(i, e)}
 						onFocus={() => handleFocus(i)}
@@ -159,6 +162,9 @@ export const OtpInput = ({
 						onPaste={handlePaste}
 						disabled={disabled}
 						aria-label={`${i + 1}번째 자리`}
+						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
+						aria-invalid={error || undefined}
+						aria-describedby={supportingText ? supportingId : undefined}
 						className={cn(
 							"otp_input_box",
 							error && "otp_input_box_error",
@@ -168,7 +174,10 @@ export const OtpInput = ({
 				))}
 			</div>
 			{supportingText && (
-				<span className={cn("otp_input_supporting", error && "otp_input_supporting_error")}>
+				<span
+					id={supportingId}
+					className={cn("otp_input_supporting", error && "otp_input_supporting_error")}
+				>
 					{supportingText}
 				</span>
 			)}

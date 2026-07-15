@@ -63,6 +63,11 @@ interface DropdownCommonProps {
 	emptyText?: string;
 	/** 멀티 선택 요약 텍스트 (기본값: "N개 선택") */
 	selectedSummary?: (count: number) => string;
+	/**
+	 * 네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어
+	 * `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복).
+	 */
+	name?: string;
 }
 
 /** 단일 선택 (기본) */
@@ -118,6 +123,7 @@ export const Dropdown = (props: DropdownProps) => {
 		searchPlaceholder = "검색…",
 		emptyText = "결과 없음",
 		selectedSummary = (count: number) => `${count}개 선택`,
+		name,
 	} = props;
 
 	const multiple = props.multiple === true;
@@ -295,6 +301,10 @@ export const Dropdown = (props: DropdownProps) => {
 				e.preventDefault();
 				setIsOpen(false);
 				break;
+			case "Tab":
+				// APG Combobox: Tab 은 리스트를 닫고 자연스러운 포커스 이동을 허용 (preventDefault 안 함)
+				setIsOpen(false);
+				break;
 		}
 	};
 
@@ -317,6 +327,11 @@ export const Dropdown = (props: DropdownProps) => {
 				break;
 			case "Escape":
 				e.preventDefault();
+				closePanel();
+				break;
+			case "Tab":
+				// APG Combobox: Tab 은 리스트를 닫는다. closePanel 이 트리거로 포커스를
+				// 되돌린 뒤 브라우저 기본 Tab 이동이 이어진다 (preventDefault 안 함).
 				closePanel();
 				break;
 		}
@@ -405,7 +420,8 @@ export const Dropdown = (props: DropdownProps) => {
 					className={cn("dropdown_control", { is_disabled: disabled })}
 					aria-haspopup="listbox"
 					aria-expanded={isOpen}
-					aria-controls={`${dropdownId}_listbox`}
+					// 닫힌 상태에서는 listbox 가 unmount 라 dangling IDREF 방지 위해 열렸을 때만 지정
+					aria-controls={isOpen ? `${dropdownId}_listbox` : undefined}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
 					onKeyDown={onControlKeyDown}
 					disabled={disabled}
@@ -418,6 +434,14 @@ export const Dropdown = (props: DropdownProps) => {
 					</span>
 				</button>
 			</div>
+
+			{/* 네이티브 폼 제출 참여 - name 지정 시 선택 값을 hidden input 으로 노출 */}
+			{name &&
+				(multiple ? (
+					selectedValues.map((v) => <input key={v} type="hidden" name={name} value={v} />)
+				) : (
+					<input type="hidden" name={name} value={selectedValues[0] ?? ""} />
+				))}
 
 			{isOpen && (
 				<animated.div className={listClassName} style={listStyle}>

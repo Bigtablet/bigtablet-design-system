@@ -146,4 +146,17 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		fireEvent.click(screen.getByRole("radio"));
 		expect(onChange).toHaveBeenCalled();
 	});
+
+	it("does not mark value-less radios checked while the group is unselected", () => {
+		// 회귀: group.value(undefined) === value(undefined) 가 true 로 평가되어
+		// value 없는 라디오가 전부 checked 렌더되던 버그
+		render(
+			<RadioGroup label="g">
+				<Radio label="A" />
+				<Radio label="B" />
+			</RadioGroup>,
+		);
+		expect(screen.getByRole("radio", { name: "A" })).not.toBeChecked();
+		expect(screen.getByRole("radio", { name: "B" })).not.toBeChecked();
+	});
 });

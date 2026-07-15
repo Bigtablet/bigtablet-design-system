@@ -50,7 +50,14 @@ export const Checkbox = ({
 
 	return (
 		<label className={rootClassName}>
-			<input ref={inputRef} type="checkbox" className="checkbox_input" {...props} />
+			{/* error 는 시각 표시만으로는 AT 에 전달되지 않으므로 aria-invalid 로 노출 (WCAG 4.1.2) */}
+			<input
+				ref={inputRef}
+				type="checkbox"
+				className="checkbox_input"
+				aria-invalid={error || undefined}
+				{...props}
+			/>
 			<span className="checkbox_state_layer" aria-hidden="true">
 				<span className="checkbox_icon" />
 			</span>
