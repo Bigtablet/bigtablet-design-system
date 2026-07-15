@@ -10,6 +10,7 @@
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none; // anchor(as="a")로 렌더링될 때 링크 기본 밑줄 제거 (button 요소엔 무해)
   @include token.body_small_medium;
   transition:
     color token.$transition_base,

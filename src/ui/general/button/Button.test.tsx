@@ -84,4 +84,111 @@ describe("Button", () => {
 		expect(node).toBeInstanceOf(HTMLButtonElement);
 	});
 
+	it("renders a button element (not anchor) by default", () => {
+		const { container } = render(<Button>Button</Button>);
+		expect(container.querySelector("button")).toBeInTheDocument();
+		expect(container.querySelector("a")).not.toBeInTheDocument();
+	});
+
+	describe("as anchor", () => {
+		it("renders an <a href> with role=link when as='a'", () => {
+			render(
+				<Button as="a" href="/next">
+					Go
+				</Button>,
+			);
+			const link = screen.getByRole("link", { name: "Go" });
+			expect(link).toBeInstanceOf(HTMLAnchorElement);
+			expect(link).toHaveAttribute("href", "/next");
+			expect(link).toHaveClass("button", "button_variant_filled", "button_size_md");
+		});
+
+		it("does not set a type attribute on the anchor", () => {
+			render(
+				<Button as="a" href="/x">
+					Go
+				</Button>,
+			);
+			expect(screen.getByRole("link")).not.toHaveAttribute("type");
+		});
+
+		it("applies variant/size/danger/fullWidth/radius classes to the anchor", () => {
+			render(
+				<Button as="a" href="/x" variant="outline" size="lg" danger fullWidth radius="sm">
+					Go
+				</Button>,
+			);
+			expect(screen.getByRole("link")).toHaveClass(
+				"button",
+				"button_variant_outline",
+				"button_size_lg",
+				"button_danger",
+				"button_full_width",
+				"button_radius_sm",
+			);
+		});
+
+		it("renders leading and trailing icons in the anchor", () => {
+			render(
+				<Button
+					as="a"
+					href="/x"
+					leadingIcon={<svg data-testid="lead" />}
+					trailingIcon={<svg data-testid="trail" />}
+				>
+					Go
+				</Button>,
+			);
+			expect(screen.getByTestId("lead")).toBeInTheDocument();
+			expect(screen.getByTestId("trail")).toBeInTheDocument();
+			expect(screen.getByRole("link").querySelector(".button_label")).toHaveTextContent("Go");
+		});
+
+		it("passes target and rel through to the anchor", () => {
+			render(
+				<Button as="a" href="https://x.com" target="_blank" rel="noopener noreferrer">
+					Go
+				</Button>,
+			);
+			const link = screen.getByRole("link");
+			expect(link).toHaveAttribute("target", "_blank");
+			expect(link).toHaveAttribute("rel", "noopener noreferrer");
+		});
+
+		it("applies custom className alongside base classes on the anchor", () => {
+			render(
+				<Button as="a" href="/x" className="custom-class">
+					Go
+				</Button>,
+			);
+			expect(screen.getByRole("link")).toHaveClass("button", "custom-class");
+		});
+
+		it("handles click events on the anchor", () => {
+			const handleClick = vi.fn();
+			render(
+				<Button as="a" href="/x" onClick={handleClick}>
+					Go
+				</Button>,
+			);
+			fireEvent.click(screen.getByRole("link"));
+			expect(handleClick).toHaveBeenCalledTimes(1);
+		});
+
+		it("forwards ref to the anchor element", () => {
+			let node: HTMLAnchorElement | null = null;
+			render(
+				<Button
+					as="a"
+					href="/x"
+					ref={(el) => {
+						node = el;
+					}}
+				>
+					Go
+				</Button>,
+			);
+			expect(node).toBeInstanceOf(HTMLAnchorElement);
+		});
+	});
 });

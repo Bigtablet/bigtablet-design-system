@@ -50,8 +50,8 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 }
 
 /**
- * Hero CTA 버튼. `href` 지정 시 링크 시맨틱(우클릭 새 탭·미들클릭·SR 링크 안내)을 위해
- * Button 클래스를 입힌 실제 anchor 로 렌더링한다 — href 가 문서화만 되고 무시되던 문제 수정.
+ * Hero CTA 버튼. `href` 지정 시 Button 을 anchor(`as="a"`) 로 렌더링해 링크 시맨틱
+ * (우클릭 새 탭·미들클릭·SR 링크 안내)을 얻는다 — href 가 문서화만 되고 무시되던 문제 수정.
  */
 const HeroActionButton = ({
 	action,
@@ -61,13 +61,9 @@ const HeroActionButton = ({
 	variant: "filled" | "outline";
 }) =>
 	action.href ? (
-		<a
-			href={action.href}
-			onClick={action.onClick}
-			className={cn("button", `button_variant_${variant}`, "button_size_lg")}
-		>
-			<span className="button_label">{action.label}</span>
-		</a>
+		<Button as="a" href={action.href} size="lg" variant={variant} onClick={action.onClick}>
+			{action.label}
+		</Button>
 	) : (
 		<Button size="lg" variant={variant} onClick={action.onClick}>
 			{action.label}
