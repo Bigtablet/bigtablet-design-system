@@ -10,6 +10,14 @@
   to   { width: 0%; }
 }
 
+// reduced-motion 용 정적 keyframe - 폭 변화(시각 모션) 없이 동일 duration 동안 진행.
+// onAnimationEnd(자동 닫힘 트리거)와 animation-play-state:paused(hover/focus 일시정지)를
+// 그대로 살리기 위해 animation 을 끄지 않고 정적 keyframe 로 교체한다.
+@keyframes toast_progress_reduced {
+  from { width: 0; }
+  to   { width: 0; }
+}
+
 // ── Container ────────────────────────────────────────────────────────────────
 
 .toast_container {
@@ -146,4 +154,23 @@
   &_warning { background: token.$color_status_warning; }
   &_info    { background: token.$color_status_info; }
   &_default { background: token.$color_text_body; }
+}
+
+// WCAG 2.2.1 Timing Adjustable - 포인터를 올리거나 닫기 버튼에 포커스가 있는 동안
+// 자동 닫힘 타이머(progress 애니메이션)를 일시정지해 읽기/조작 시간을 연장한다.
+// onAnimationEnd 가 닫힘 트리거라 play-state 정지만으로 타이머까지 함께 멈춘다.
+.toast_item:hover .toast_progress,
+.toast_item:focus-within .toast_progress {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // 시각 모션만 제거 - animation-name 만 정적 keyframe 로 바꿔 duration/타이밍/play-state 는
+  // 유지한다. 이렇게 하면 onAnimationEnd 로 자동 닫힘이 그대로 발화하고, hover/focus 시
+  // animation-play-state:paused 로 타이머가 함께 멈춰 WCAG 2.2.1 이 reduced-motion 에서도 지켜진다.
+  // (animation:none 이면 onAnimationEnd 가 안 나 토스트가 영구히 남고 pause 도 무력화됨.)
+  .toast_progress {
+    animation-name: toast_progress_reduced;
+    width: 0;
+  }
 }
