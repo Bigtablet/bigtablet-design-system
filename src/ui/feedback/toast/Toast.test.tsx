@@ -596,4 +596,41 @@ describe("Toast stack & ids", () => {
 		expect(screen.getAllByText("같은 메시지")).toHaveLength(3);
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
 	});
+
+	it("hands focus to an adjacent toast when a focused toast is closed (WCAG 2.4.3)", async () => {
+		function MultiTrigger() {
+			const t = useToast();
+			return (
+				<button
+					type="button"
+					onClick={() => {
+						t.success("첫 번째");
+						t.success("두 번째");
+					}}
+				>
+					two
+				</button>
+			);
+		}
+
+		render(
+			<ToastProvider>
+				<MultiTrigger />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "two" }));
+
+		const closeButtons = screen.getAllByRole("button", { name: "Close" });
+		expect(closeButtons).toHaveLength(2);
+
+		// 첫 번째(맨 위) 토스트의 닫기 버튼에 포커스를 두고 닫으면,
+		// 포커스가 body 로 유실되지 않고 인접 토스트의 닫기 버튼으로 이관되어야 한다.
+		closeButtons[0].focus();
+		fireEvent.click(closeButtons[0]);
+
+		await waitFor(() => {
+			expect(document.activeElement).toBe(closeButtons[1]);
+		});
+	});
 });

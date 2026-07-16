@@ -50,6 +50,31 @@ export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "titl
 }
 
 /**
+ * Hero CTA 버튼. `href` 지정 시 링크 시맨틱(우클릭 새 탭·미들클릭·SR 링크 안내)을 위해
+ * Button 클래스를 입힌 실제 anchor 로 렌더링한다 — href 가 문서화만 되고 무시되던 문제 수정.
+ */
+const HeroActionButton = ({
+	action,
+	variant,
+}: {
+	action: HeroAction;
+	variant: "filled" | "outline";
+}) =>
+	action.href ? (
+		<a
+			href={action.href}
+			onClick={action.onClick}
+			className={cn("button", `button_variant_${variant}`, "button_size_lg")}
+		>
+			<span className="button_label">{action.label}</span>
+		</a>
+	) : (
+		<Button size="lg" variant={variant} onClick={action.onClick}>
+			{action.label}
+		</Button>
+	);
+
+/**
  * 페이지 상단 히어로 섹션을 렌더링한다.
  * 배경 이미지/색상 + 오버레이 + 제목/부제목 + CTA 슬롯으로 구성.
  * @param props 히어로 속성
@@ -103,16 +128,8 @@ export const Hero = ({
 				{subtitle && <p className="hero_subtitle">{subtitle}</p>}
 				{(primaryAction || secondaryAction || children) && (
 					<div className="hero_actions">
-						{primaryAction && (
-							<Button size="lg" variant="filled" onClick={primaryAction.onClick}>
-								{primaryAction.label}
-							</Button>
-						)}
-						{secondaryAction && (
-							<Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
-								{secondaryAction.label}
-							</Button>
-						)}
+						{primaryAction && <HeroActionButton action={primaryAction} variant="filled" />}
+						{secondaryAction && <HeroActionButton action={secondaryAction} variant="outline" />}
 						{children}
 					</div>
 				)}

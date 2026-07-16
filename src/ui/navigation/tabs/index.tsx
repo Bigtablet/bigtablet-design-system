@@ -13,6 +13,10 @@ interface TabsContextValue {
 	variant: TabsVariant;
 	size: TabsSize;
 	idPrefix: string;
+	/** Tab 이 마운트 순서대로 자신을 등록 - 미선택 시 어느 탭이 유일한 tab stop 인지 판별용 */
+	registerTab: (value: string) => () => void;
+	/** 마운트 순서상 첫 번째 탭의 value (미선택 시 roving tabindex 진입점) */
+	firstTabValue: string | undefined;
 }
 
 const TabsContext = React.createContext<TabsContextValue | null>(null);
@@ -75,10 +79,26 @@ export const Tabs = ({
 		[isControlled, onValueChange],
 	);
 
+	// 마운트 순서대로 탭 value 를 등록해 "첫 번째 탭"을 판별한다. 선택된 탭이 없을 때
+	// roving tabindex 를 유지(첫 탭만 tabIndex=0)하기 위함 - 전부 0 이면 Tab 키가 모든
+	// 탭을 순회해 리스트 건너뛰기가 불편해지는 WAI-ARIA 위반이 된다.
+	const orderRef = React.useRef<string[]>([]);
+	const [firstTabValue, setFirstTabValue] = React.useState<string>();
+	const registerTab = React.useCallback((v: string) => {
+		if (!orderRef.current.includes(v)) {
+			orderRef.current = [...orderRef.current, v];
+			setFirstTabValue(orderRef.current[0]);
+		}
+		return () => {
+			orderRef.current = orderRef.current.filter((x) => x !== v);
+			setFirstTabValue(orderRef.current[0]);
+		};
+	}, []);
+
 	const idPrefix = React.useId();
 	const ctx = React.useMemo<TabsContextValue>(
-		() => ({ value, setValue, variant, size, idPrefix }),
-		[value, setValue, variant, size, idPrefix],
+		() => ({ value, setValue, variant, size, idPrefix, registerTab, firstTabValue }),
+		[value, setValue, variant, size, idPrefix, registerTab, firstTabValue],
 	);
 	return (
 		<TabsContext.Provider value={ctx}>
@@ -167,11 +187,15 @@ export interface TabProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElem
 	value: string;
 }
 
-export const Tab = ({ value, className, children, onClick, ...props }: TabProps) => {
+export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }: TabProps) => {
 	const ctx = useTabsContext();
 	const isActive = ctx.value === value;
 	const panelId = `${ctx.idPrefix}-panel-${value}`;
 	const tabId = `${ctx.idPrefix}-tab-${value}`;
+
+	// 마운트 순서 등록 (미선택 시 첫 탭만 tab stop 이 되도록 firstTabValue 판별용)
+	const { registerTab } = ctx;
+	React.useEffect(() => registerTab(value), [registerTab, value]);
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		ctx.setValue(value);
@@ -179,6 +203,10 @@ export const Tab = ({ value, className, children, onClick, ...props }: TabProps)
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+		// 소비자 onKeyDown 을 먼저 실행하고 화살표 내비게이션을 이어간다
+		// ({...props} 로 넘어온 onKeyDown 이 내비게이션을 통째로 제거하지 않도록 합성).
+		onKeyDown?.(e);
+		if (e.defaultPrevented) return;
 		if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
 		const list = (e.currentTarget as HTMLElement).closest('[role="tablist"]');
 		if (!list) return;
@@ -200,17 +228,25 @@ export const Tab = ({ value, className, children, onClick, ...props }: TabProps)
 
 	return (
 		<button
+			// {...props} 를 먼저 펼쳐 data-*/aria-* 는 통과시키되, tab 패턴에 필수인
+			// role/aria-selected/tabIndex/onClick·onKeyDown(소비자 핸들러는 내부에서 합성)은
+			// 컴포넌트가 항상 이긴다.
+			{...props}
 			type="button"
 			role="tab"
 			id={tabId}
 			data-value={value}
 			aria-selected={isActive}
+			// aria-controls 는 항상 유지한다. unmountInactive={false} 로 비활성 패널이 DOM 에
+			// 남는 용례에서도 탭↔패널 연결이 끊기지 않아야 하고, Radix 등도 SR 탐색 편의를 위해
+			// 패널 마운트 여부와 무관하게 항상 지정한다(dangling IDREF 경고보다 SR 정보가 우선).
 			aria-controls={panelId}
-			tabIndex={isActive ? 0 : -1}
+			// 로빙 tabindex - 선택된 탭이 없으면(비제어 + defaultValue 없음, value="") 마운트 순서상
+			// 첫 탭만 tab stop 으로 두어 Tab 키 1회로 tablist 에 진입, 내부 이동은 화살표 키로.
+			tabIndex={isActive || (!ctx.value && value === ctx.firstTabValue) ? 0 : -1}
 			className={cn("tabs_tab", isActive && "tabs_tab_active", className)}
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
-			{...props}
 		>
 			{children}
 		</button>

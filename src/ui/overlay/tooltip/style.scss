@@ -11,7 +11,8 @@
 .tooltip_position {
   position: absolute;
   z-index: token.$z_level5;
-  pointer-events: none;
+  // pointer-events 를 살려 둔다 - WCAG 1.4.13 Hoverable: 포인터를 툴팁 위로
+  // 옮겨 내용을 읽을 수 있어야 함 (none 이면 mouseenter 가 발화하지 않아 즉시 닫힘)
   display: block;
   width: max-content; // 내부 .tooltip 의 max-content 와 일치 - translateX(-50%) 정확
 

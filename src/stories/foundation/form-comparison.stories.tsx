@@ -30,7 +30,7 @@ export const SideBySide: Story = {
 				<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 					<TextField label="이메일" placeholder="placeholder@example.com" />
 					<TextField label="비밀번호" placeholder="••••••••" type="password" />
-					<TextField label="값 있음" value="user@example.com" onChange={() => {}} />
+					<TextField label="값 있음" value="user@example.com" onValueChange={() => {}} />
 				</div>
 			</div>
 			<div>

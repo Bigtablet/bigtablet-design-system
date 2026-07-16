@@ -393,7 +393,7 @@ export const AdminDashboard: Story = {
 								<path d="M16 10a4 4 0 0 1-8 0" />
 							</svg>
 						}
-						badge={<Badge shape="count" variant="danger">5</Badge>}
+						trailing={<Badge shape="count" variant="error">5</Badge>}
 					>
 						주문
 					</SidebarItem>

@@ -292,7 +292,10 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 									itemRefs.current[index] = el;
 								}}
 								type="button"
-								role="menuitem"
+								// 상호 배타적 locale 선택이므로 menuitemradio + aria-checked 로
+								// 현재 locale 을 AT 에 노출 (시각적 active 클래스만으로는 전달 안 됨)
+								role="menuitemradio"
+								aria-checked={opt.value === locale.current}
 								tabIndex={-1}
 								className={cn(
 									"nav_bar_locale_item",

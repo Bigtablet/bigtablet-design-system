@@ -141,15 +141,27 @@
 		// Parse options: data-options JSON > JS config > 서버 렌더링된 <li data-value> 마크업.
 		// Thymeleaf/JSP 처럼 서버가 옵션 li 를 직접 렌더링하는 경우(문서화된 기본 마크업)를
 		// 지원해야 하므로 DOM 파싱이 반드시 필요하다.
-		const optionsData = wrapper.dataset.options
-			? JSON.parse(wrapper.dataset.options)
-			: (config.options && config.options.length
-				? config.options
-				: $$(".bt-select__option", list).map((el) => ({
-						value: el.dataset.value !== undefined ? el.dataset.value : el.textContent.trim(),
-						label: el.textContent.trim(),
-						disabled: el.classList.contains("is-disabled"),
-					})));
+		// data-options 는 잘못된 JSON(작은따옴표 등)이면 스크립트 전체가 크래시하므로 방어적 파싱.
+		const parseDomOptions = () =>
+			$$(".bt-select__option", list).map((el) => ({
+				value: el.dataset.value !== undefined ? el.dataset.value : el.textContent.trim(),
+				label: el.textContent.trim(),
+				disabled: el.classList.contains("is-disabled"),
+			}));
+
+		let optionsData;
+		if (wrapper.dataset.options) {
+			try {
+				const parsed = JSON.parse(wrapper.dataset.options);
+				optionsData = Array.isArray(parsed) ? parsed : (console.warn("Select: data-options is not a JSON array"), []);
+			} catch (e) {
+				console.warn("Select: invalid JSON in data-options", e);
+				optionsData = [];
+			}
+		}
+		if (!optionsData || optionsData.length === 0) {
+			optionsData = config.options && config.options.length ? config.options : parseDomOptions();
+		}
 
 		state.options = optionsData;
 
@@ -182,7 +194,9 @@
 		// State management
 		function setValue(newValue) {
 			state.value = newValue;
-			const option = state.options.find((o) => o.value === newValue);
+			// String 비교 - 서버 hidden input 초기값(항상 문자열)과 JS config 의 숫자 value 가
+			// 섞여도 매칭되도록 (엄격 === 이면 조용히 placeholder 로 남던 문제 방지).
+			const option = state.options.find((o) => String(o.value) === String(newValue));
 
 			// 폼 제출용 hidden input 동기화
 			if (hiddenInput) {
@@ -204,7 +218,8 @@
 
 			// Update selected state in list
 			$$(".bt-select__option", list).forEach((el, i) => {
-				const selected = state.options[i]?.value === newValue;
+				// String 비교(#374: 숫자 value vs 문자열 hidden 초기값) + aria-selected(#379: AT 노출)
+				const selected = String(state.options[i]?.value) === String(newValue);
 				el.classList.toggle("is-selected", selected);
 				el.setAttribute("aria-selected", selected ? "true" : "false");
 			});
@@ -750,14 +765,24 @@
 		}
 
 		// 폼 제출 참여: name(설정 또는 data-name)이 있으면 hidden input 으로 on/off 를 노출.
-		// 서버 템플릿이 미리 렌더링한 hidden input 이 있으면 재사용한다.
-		let hiddenInput = toggleEl.querySelector('input[type="hidden"]');
+		// toggleEl 이 <button> 이면 그 안에 대화형 콘텐츠/폼 요소를 자식으로 둘 수 없어(invalid
+		// HTML) hidden input 을 형제(sibling)로 삽입한다. 서버 템플릿이 미리 렌더링해둔 hidden
+		// input(자식이든 형제든)이 있으면 재사용한다.
 		const fieldName = config.name || toggleEl.dataset.name || null;
+		let hiddenInput =
+			toggleEl.querySelector('input[type="hidden"]') ||
+			(fieldName && toggleEl.parentNode
+				? toggleEl.parentNode.querySelector(`input[type="hidden"][name="${fieldName}"]`)
+				: null);
 		if (!hiddenInput && fieldName) {
 			hiddenInput = document.createElement("input");
 			hiddenInput.type = "hidden";
 			hiddenInput.name = fieldName;
-			toggleEl.appendChild(hiddenInput);
+			if (toggleEl.tagName === "BUTTON" && toggleEl.parentNode) {
+				toggleEl.parentNode.insertBefore(hiddenInput, toggleEl.nextSibling);
+			} else {
+				toggleEl.appendChild(hiddenInput);
+			}
 		}
 
 		function setChecked(checked) {
@@ -782,10 +807,14 @@
 
 		const cleanup = on(toggleEl, "click", toggle);
 
-		// Initialize - aria-checked/hidden input 을 초기 상태와 동기화
-		if (hiddenInput && hiddenInput.value === "true" && !state.checked) {
-			// 서버 바인딩 초기값(on)을 표시에 반영
-			state.checked = true;
+		// Initialize - aria-checked/hidden input 을 초기 상태와 동기화.
+		// 서버 템플릿이 boolean 을 "true" 외 표현("1"/"on"/"y"/"yes")으로 렌더링해도
+		// 켜짐으로 인식하도록 관대하게 파싱 (Thymeleaf/JSP 등 표현 차이 흡수).
+		if (hiddenInput && !state.checked) {
+			const raw = String(hiddenInput.value).trim().toLowerCase();
+			if (raw === "true" || raw === "1" || raw === "on" || raw === "y" || raw === "yes") {
+				state.checked = true;
+			}
 		}
 		toggleEl.classList.toggle("bt-toggle--on", state.checked);
 		toggleEl.setAttribute("aria-checked", state.checked ? "true" : "false");

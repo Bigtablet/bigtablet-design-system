@@ -49,6 +49,9 @@ export const Accordion = ({
 	const isControlled = controlledKeys !== undefined;
 	const [internalKeys, setInternalKeys] = React.useState<string[]>(defaultOpenKeys);
 	const open = isControlled ? (controlledKeys ?? []) : internalKeys;
+	// item.key 로 직접 id 를 만들면 같은 키를 쓰는 인스턴스 간 중복/공백 등 무효 id 로
+	// aria-controls/aria-labelledby 연결이 깨질 수 있어 useId 접두사로 격리한다.
+	const idPrefix = React.useId();
 
 	const toggle = (key: string) => {
 		const isOpen = open.includes(key);
@@ -65,8 +68,8 @@ export const Accordion = ({
 		<div className={cn("accordion", className)} {...props}>
 			{items.map((item) => {
 				const isOpen = open.includes(item.key);
-				const headerId = `${item.key}-header`;
-				const panelId = `${item.key}-panel`;
+				const headerId = `${idPrefix}-${item.key}-header`;
+				const panelId = `${idPrefix}-${item.key}-panel`;
 
 				return (
 					<div key={item.key} className={cn("accordion_item", isOpen && "accordion_item_open")}>

@@ -113,25 +113,28 @@ export const Popover = ({
 		(focusable ?? node).focus();
 	}, [open]);
 
-	// 외부 클릭 / Esc 로 닫기 (Esc 는 trigger 로 포커스 복귀)
+	// 외부 클릭으로 닫기. Escape 는 아래 wrapper 의 React onKeyDown 에서 처리한다.
 	React.useEffect(() => {
 		if (!open) return;
 		const handleClick = (e: MouseEvent) => {
 			if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
 		};
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				setOpen(false);
-				previousFocusRef.current?.focus();
-			}
-		};
 		document.addEventListener("mousedown", handleClick);
-		document.addEventListener("keydown", handleKeyDown);
-		return () => {
-			document.removeEventListener("mousedown", handleClick);
-			document.removeEventListener("keydown", handleKeyDown);
-		};
+		return () => document.removeEventListener("mousedown", handleClick);
 	}, [open, setOpen]);
+
+	// Escape 닫기 - document capture 리스너 대신 wrapper 의 React onKeyDown(버블) 로 처리한다.
+	// capture+stopPropagation 은 이벤트가 타겟(Popover 내부 input/select 등)에 닿기도 전에
+	// 최상단에서 끊어 자식 요소의 자체 Escape 처리를 마비시킨다(치명적). 버블 단계에서 잡으면
+	// 자식이 먼저 처리할 기회를 갖고, 여기서 stopPropagation 하면 상위 Modal 의 onKeyDown 으로도
+	// 전파되지 않아 "최상단만 닫힘"(APG)이 지켜진다.
+	const handleWrapperKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (open && e.key === "Escape") {
+			e.stopPropagation();
+			setOpen(false);
+			previousFocusRef.current?.focus();
+		}
+	};
 
 	const triggerWithProps = React.cloneElement(
 		trigger as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
@@ -148,7 +151,8 @@ export const Popover = ({
 	);
 
 	return (
-		<div className="popover_wrapper" ref={wrapperRef}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: keyboard handler for Escape dismissal; interactive children carry their own roles
+		<div className="popover_wrapper" ref={wrapperRef} onKeyDown={handleWrapperKeyDown}>
 			{triggerWithProps}
 			{shouldRender && (
 				<div className={cn("popover_position", `popover_placement_${placement}`)}>

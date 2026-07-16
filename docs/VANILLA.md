@@ -300,13 +300,24 @@ npm install @bigtablet/design-system
 
 **폼 제출 참여 (Thymeleaf/JSP):**
 
-`data-name` 을 지정하면 hidden input 이 생성되어 on/off(`"true"`/`"false"`)가
-폼 POST 에 포함됩니다. `role="switch"` + `aria-checked` 는 자동으로 관리됩니다.
+`data-name` 을 지정하면 hidden input 이 생성되어 on/off 가 폼 POST 에 포함됩니다.
+전송 값은 `"true"`/`"false"` 이며, `role="switch"` + `aria-checked` 는 자동으로 관리됩니다.
+`<button>` 은 내부에 폼 요소를 자식으로 둘 수 없어 hidden input 은 버튼의 **형제**로 삽입됩니다.
+
+서버 템플릿이 초기값 hidden input 을 미리 렌더링한 경우 그 값을 읽어 초기 상태를 맞추며,
+`"true"` 외에 `"1"`/`"on"`/`"y"`/`"yes"`(대소문자 무시)도 켜짐으로 인식합니다.
 
 ```html
+<!-- data-name 으로 자동 생성 -->
 <button type="button" class="bt-toggle" data-bt-toggle data-name="notifications">
   <span class="bt-toggle__thumb"></span>
 </button>
+
+<!-- 또는 서버 렌더링 초기값(형제 hidden input) -->
+<button type="button" class="bt-toggle" data-bt-toggle>
+  <span class="bt-toggle__thumb"></span>
+</button>
+<input type="hidden" name="notifications" th:value="${enabled}">
 ```
 
 ---

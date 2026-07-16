@@ -172,10 +172,11 @@ describe("Drawer", () => {
 			</Drawer>,
 		);
 
-		// getAllByRole("document") in DOM order: [outer panel, inner panel]
+		// 포털 렌더라 DOM 순서가 React 트리 순서와 다를 수 있음 - 내용으로 inner 패널을 찾는다
 		const panels = screen.getAllByRole("document");
 		expect(panels).toHaveLength(2);
-		fireEvent.keyDown(panels[1], { key: "Escape" });
+		const innerPanel = screen.getByText("Inner content").closest('[role="document"]') as HTMLElement;
+		fireEvent.keyDown(innerPanel, { key: "Escape" });
 
 		expect(innerClose).toHaveBeenCalledTimes(1);
 		expect(outerClose).not.toHaveBeenCalled();
@@ -333,7 +334,7 @@ describe("Drawer", () => {
 
 	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
 		const consumerClick = vi.fn();
-		const { container } = render(
+		render(
 			<Drawer
 				open
 				onClose={() => {}}
@@ -344,7 +345,8 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		const panel = container.querySelector(".drawer_panel") as HTMLElement;
+		// 포털 렌더라 render container 밖(document.body)에 붙는다
+		const panel = document.querySelector(".drawer_panel") as HTMLElement;
 		// data-* 등은 통과
 		expect(panel).toHaveAttribute("data-testid", "panel-x");
 		// role/onClick 은 컴포넌트가 전유 - 소비자 값 무시(스프레드 순서 회귀 시 깨짐)
