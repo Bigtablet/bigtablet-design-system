@@ -44,7 +44,7 @@ export const Radio = ({
 	// 넘기므로, 숫자 value 를 그대로 비교하면(예: "1" === 1) 클릭 직후 선택 해제되는 버그가 있어
 	// 양쪽 String() 으로 강제 비교한다.
 	const resolvedChecked = group
-		? value !== undefined && group.value !== undefined && String(group.value) === String(value)
+		? value !== undefined && group.value != null && String(group.value) === String(value)
 		: checked;
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -5,7 +5,7 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, useIsMounted, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -133,11 +133,8 @@ export const ToastProvider = ({
 	closeAriaLabel = "Close",
 }: ToastProviderProps) => {
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
-	const [isMounted, setIsMounted] = React.useState(false);
-
-	React.useEffect(() => {
-		setIsMounted(true);
-	}, []);
+	// 포털은 클라이언트 마운트 후에만 렌더 (SSR/hydration 안전) - 공유 훅
+	const isMounted = useIsMounted();
 
 	/**
 	 * 토스트를 큐에 추가한다. maxCount를 초과하면 가장 오래된 항목을 제거한다.

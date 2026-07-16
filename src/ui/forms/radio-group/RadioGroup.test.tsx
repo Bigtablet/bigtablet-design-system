@@ -173,4 +173,17 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		expect(screen.getByRole("radio", { name: "One" })).toBeChecked();
 		expect(screen.getByRole("radio", { name: "Two" })).not.toBeChecked();
 	});
+
+	it("does not check a value=\"null\" radio when the group value is null", () => {
+		// 회귀: group.value 가 null 이면 String(null)==="null" 이라 value=\"null\" Radio 가 선택되던
+		// 문제 - group.value != null 로 null/undefined 모두 방어
+		render(
+			<RadioGroup label="g" value={null as unknown as string}>
+				<Radio value="null" label="Null" />
+				<Radio value="a" label="A" />
+			</RadioGroup>,
+		);
+		expect(screen.getByRole("radio", { name: "Null" })).not.toBeChecked();
+		expect(screen.getByRole("radio", { name: "A" })).not.toBeChecked();
+	});
 });
