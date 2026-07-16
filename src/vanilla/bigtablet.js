@@ -162,7 +162,9 @@
 			}
 		}
 		if (optionsData === undefined) {
-			optionsData = config.options && config.options.length ? config.options : parseDomOptions();
+			// config.options 도 배열이면(빈 배열 포함) 존중 - data-options 와 동일하게 명시적 빈
+			// 배열을 "옵션 없음"으로 처리하고 DOM 파싱으로 덮지 않는다.
+			optionsData = Array.isArray(config.options) ? config.options : parseDomOptions();
 		}
 
 		state.options = optionsData;
