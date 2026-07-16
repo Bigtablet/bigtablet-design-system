@@ -2,7 +2,7 @@
 
 import { animated } from "@react-spring/web";
 import * as React from "react";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, useOverlayEscape, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type TooltipPlacement = "top" | "bottom" | "left" | "right";
@@ -71,20 +71,11 @@ export const Tooltip = ({
 	}, []);
 
 	// WCAG 1.4.13 Dismissable - 포인터/포커스를 옮기지 않고 Escape 로 닫기.
-	// capture 단계 document 리스너라 아래층 오버레이(Modal 등)의 Escape 핸들러보다
-	// 먼저 실행되고, 닫을 때 전파를 끊어 최상단(툴팁)만 닫는다.
-	React.useEffect(() => {
-		if (!open) return;
-		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.key !== "Escape") return;
-			// stopImmediatePropagation - 같은 document 노드에 등록된 다른 오버레이 리스너의
-			// 실행까지 막아(stopPropagation 은 못 막음) 툴팁만 닫히고 하위 오버레이는 유지.
-			e.stopImmediatePropagation();
-			hideNow();
-		};
-		document.addEventListener("keydown", onKeyDown, true);
-		return () => document.removeEventListener("keydown", onKeyDown, true);
-	}, [open, hideNow]);
+	// 공유 오버레이 스택에 등록 - 열려 있는 동안 최상단일 때만 Escape 로 닫혀
+	// 다른 오버레이나 소비자 앱 핸들러를 삼키지 않는다 (overlay-stack.ts 참고).
+	// 툴팁은 hover 로 열려 포커스가 trigger 밖에 있을 수 있으므로 document 레벨 처리가 필요한데,
+	// 레지스트리가 그 역할을 대신한다.
+	useOverlayEscape(open, hideNow);
 
 	const fromTransform = (() => {
 		switch (placement) {

@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap, useReducedMotion } from "../../../utils";
+import { cn, useFocusTrap, useOverlayEscape, useReducedMotion } from "../../../utils";
 import "./style.scss";
 
 export type ModalFooterAlign = "end" | "between" | "start";
@@ -66,6 +66,10 @@ export const Modal = ({
 
 	// 포커스 트랩
 	useFocusTrap(panelRef, open);
+
+	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
+	// Tooltip/Popover 등 다른 오버레이와 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
+	useOverlayEscape(open, () => onClose?.());
 
 	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
 	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
@@ -145,21 +149,13 @@ export const Modal = ({
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
-			// Escape 는 여기서 단독 처리 + stopPropagation — 중첩 모달에서 가장 안쪽만 닫히도록
-			// (document 전역 리스너로 처리하면 열린 모든 모달이 동시에 닫힘). panel onKeyDown 이
-			// Escape 는 막지 않으므로 focus 가 panel 안에 있어도 여기까지 버블됨.
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					e.stopPropagation();
-					onClose?.();
-				}
-			}}
 		>
 			<animated.div
 				ref={panelRef}
 				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
-				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
-				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown 은 컴포넌트가 항상
+				// 이기도록 뒤에 배치한다 (오버레이 동작 보호). Escape 는 공유 스택(useOverlayEscape)이
+				// 처리하고, 여기서는 그 외 키가 모달 밖으로 새어 소비자 단축키를 건드리지 않게 막는다.
 				{...props}
 				className={cn("modal_panel", className)}
 				style={{ ...props.style, ...panelStyle, width }}
