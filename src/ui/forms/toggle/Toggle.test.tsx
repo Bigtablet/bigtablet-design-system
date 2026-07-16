@@ -89,4 +89,31 @@ describe("Toggle", () => {
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 	});
 
+	it("runs consumer onClick AND still toggles ({...props} spread must not replace toggle handler)", () => {
+		const onClick = vi.fn();
+		const onCheckedChange = vi.fn();
+		render(<Toggle ariaLabel="Toggle" onClick={onClick} onCheckedChange={onCheckedChange} />);
+
+		fireEvent.click(screen.getByRole("switch"));
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
+	});
+
+	it("skips toggling when consumer onClick calls preventDefault", () => {
+		const onCheckedChange = vi.fn();
+		render(
+			<Toggle
+				ariaLabel="Toggle"
+				onClick={(e) => e.preventDefault()}
+				onCheckedChange={onCheckedChange}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("switch"));
+
+		expect(onCheckedChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "false");
+	});
 });

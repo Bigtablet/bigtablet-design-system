@@ -161,10 +161,20 @@ describe("Drawer", () => {
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
-	it("Escape closes only the topmost drawer when nested (stopPropagation)", () => {
+	it("Escape closes only the topmost drawer when nested (shared overlay stack)", () => {
 		const outerClose = vi.fn();
 		const innerClose = vi.fn();
-		render(
+		// 공유 스택은 LIFO - 최상단 = 가장 최근에 열린 오버레이다. 실제 앱에서 중첩 오버레이는
+		// 순차적으로 열리므로(바깥을 연 뒤 안쪽을 연다) 열린 순서 = stacking 순서가 된다.
+		// 그 순서를 재현하기 위해 바깥을 먼저 연 뒤 rerender 로 안쪽을 연다.
+		const { rerender } = render(
+			<Drawer open onClose={outerClose} title="Outer">
+				<Drawer open={false} onClose={innerClose} title="Inner">
+					<button type="button">Inner content</button>
+				</Drawer>
+			</Drawer>,
+		);
+		rerender(
 			<Drawer open onClose={outerClose} title="Outer">
 				<Drawer open onClose={innerClose} title="Inner">
 					<button type="button">Inner content</button>
@@ -172,11 +182,13 @@ describe("Drawer", () => {
 			</Drawer>,
 		);
 
-		// getAllByRole("document") in DOM order: [outer panel, inner panel]
+		// 포털 렌더라 DOM 순서가 React 트리 순서와 다를 수 있음 - 내용으로 inner 패널을 찾는다
 		const panels = screen.getAllByRole("document");
 		expect(panels).toHaveLength(2);
-		fireEvent.keyDown(panels[1], { key: "Escape" });
+		const innerPanel = screen.getByText("Inner content").closest('[role="document"]') as HTMLElement;
+		fireEvent.keyDown(innerPanel, { key: "Escape" });
 
+		// 최상단(나중에 연 inner)만 닫히고 outer 는 유지된다 (APG)
 		expect(innerClose).toHaveBeenCalledTimes(1);
 		expect(outerClose).not.toHaveBeenCalled();
 	});
@@ -207,6 +219,18 @@ describe("Drawer", () => {
 			</Drawer>,
 		);
 		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+		expect(panel?.contains(document.activeElement)).toBe(true);
+	});
+
+	it("renders the portal and traps focus when mounted already open (isMounted gate)", () => {
+		// 마운트 시점부터 open=true - isMounted 게이트가 걸려도 mount effect 이후 포털+트랩 활성화
+		render(
+			<Drawer open onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Drawer>,
+		);
+		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+		expect(panel).not.toBeNull();
 		expect(panel?.contains(document.activeElement)).toBe(true);
 	});
 
@@ -333,7 +357,7 @@ describe("Drawer", () => {
 
 	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
 		const consumerClick = vi.fn();
-		const { container } = render(
+		render(
 			<Drawer
 				open
 				onClose={() => {}}
@@ -344,7 +368,8 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		const panel = container.querySelector(".drawer_panel") as HTMLElement;
+		// 포털 렌더라 render container 밖(document.body)에 붙는다
+		const panel = document.querySelector(".drawer_panel") as HTMLElement;
 		// data-* 등은 통과
 		expect(panel).toHaveAttribute("data-testid", "panel-x");
 		// role/onClick 은 컴포넌트가 전유 - 소비자 값 무시(스프레드 순서 회귀 시 깨짐)

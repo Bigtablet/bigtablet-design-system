@@ -3,8 +3,9 @@
 import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap } from "../../../utils";
+import { cn, useFocusTrap, useIsMounted, useOverlayEscape, useReducedMotion } from "../../../utils";
 import "./style.scss";
 
 export type ModalFooterAlign = "end" | "between" | "start";
@@ -62,9 +63,17 @@ export const Modal = ({
 	const panelRef = React.useRef<HTMLDivElement>(null);
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
+	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
+	// mismatch(서버 null vs 클라 포털)를 피한다. Toast/Alert 와 동일한 패턴을 훅으로 공유.
+	const isMounted = useIsMounted();
 
-	// 포커스 트랩
-	useFocusTrap(panelRef, open);
+	// 포커스 트랩 - 포털이 실제로 마운트된 뒤(isMounted) 활성화해야 panelRef 가 붙어 있다.
+	useFocusTrap(panelRef, open && isMounted);
+
+	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
+	// Tooltip/Popover 등 다른 오버레이와 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
+	// 마운트 전(하이드레이션)엔 등록하지 않아 화면에 없는 모달이 Escape 스택 순서를 교란하지 않게 한다.
+	useOverlayEscape(open && isMounted, () => onClose?.());
 
 	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
 	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
@@ -72,9 +81,13 @@ export const Modal = ({
 	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
 	if (open && !shouldRender) setShouldRender(true);
 
+	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
+	const reduced = useReducedMotion();
+
 	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
 		opacity: open ? 1 : 0,
+		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 		onRest: (result) => {
 			if (!open && result.finished) setShouldRender(false);
@@ -85,6 +98,7 @@ export const Modal = ({
 	const panelStyle = useSpring({
 		opacity: open ? 1 : 0,
 		transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 	});
 
@@ -121,9 +135,17 @@ export const Modal = ({
 	// 마운트가 한 렌더 늦어 트랩이 걸리지 않는다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.
 	if (!open && !shouldRender) return null;
 
+	// SSR/하이드레이션 가드 - 서버(document 없음) 및 클라이언트 첫 렌더(isMounted=false)에서는
+	// null 을 반환해 서버/클라 출력을 일치시킨다(hydration mismatch 방지). 마운트 후 open&&isMounted
+	// 가 되는 렌더에서 패널이 붙고 useFocusTrap 이 그 시점에 활성화된다.
+	if (typeof document === "undefined" || !isMounted) return null;
+
 	const hasTitle = !!title;
 
-	return (
+	// 포털로 body 끝에 렌더 - 트리거 위치 인라인 렌더는 transform/filter 조상 아래서
+	// position: fixed 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다
+	// (이 DS 자체가 useSpringHover 등 transform 을 광범위하게 사용). Alert/Toast 와 동일 패턴.
+	return createPortal(
 		<animated.div
 			className="modal"
 			style={overlayStyle}
@@ -132,21 +154,13 @@ export const Modal = ({
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
-			// Escape 는 여기서 단독 처리 + stopPropagation — 중첩 모달에서 가장 안쪽만 닫히도록
-			// (document 전역 리스너로 처리하면 열린 모든 모달이 동시에 닫힘). panel onKeyDown 이
-			// Escape 는 막지 않으므로 focus 가 panel 안에 있어도 여기까지 버블됨.
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					e.stopPropagation();
-					onClose?.();
-				}
-			}}
 		>
 			<animated.div
 				ref={panelRef}
 				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
-				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
-				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown 은 컴포넌트가 항상
+				// 이기도록 뒤에 배치한다 (오버레이 동작 보호). Escape 는 공유 스택(useOverlayEscape)이
+				// 처리하고, 여기서는 그 외 키가 모달 밖으로 새어 소비자 단축키를 건드리지 않게 막는다.
 				{...props}
 				className={cn("modal_panel", className)}
 				style={{ ...props.style, ...panelStyle, width }}
@@ -177,6 +191,7 @@ export const Modal = ({
 					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{footer}</div>
 				)}
 			</animated.div>
-		</animated.div>
+		</animated.div>,
+		document.body,
 	);
 };

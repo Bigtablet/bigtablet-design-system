@@ -5,7 +5,7 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, useIsMounted, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -57,11 +57,29 @@ interface ToastItemComponentProps {
 const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemComponentProps) => {
 	const [visible, setVisible] = React.useState(true);
 	const closingRef = React.useRef(false);
+	const rootRef = React.useRef<HTMLDivElement>(null);
 
 	const style = useSpringPresence({
 		visible,
 		from: "translateX(20px)", // 우측에서 슬라이드 인
-		onExitComplete: () => onRemove(item.id),
+		onExitComplete: () => {
+			// 포커스가 이 토스트 안에 있었으면(닫기 버튼 Enter 등) unmount 로 포커스가
+			// body 로 유실되지 않게 인접 토스트의 닫기 버튼으로 넘긴다 (WCAG 2.4.3).
+			// onRemove(=state 갱신) 전에 포커스를 옮겨 배치 flush 타이밍에 의존하지 않는다.
+			const hadFocus = rootRef.current?.contains(document.activeElement) ?? false;
+			if (hadFocus) {
+				const closeButtons = Array.from(
+					document.querySelectorAll<HTMLElement>(".toast_item .toast_close"),
+				);
+				const currentIndex = closeButtons.findIndex((el) => rootRef.current?.contains(el));
+				if (currentIndex !== -1) {
+					// 다음(아래) 우선, 없으면 이전(위) 토스트로 - 논리적 인접 이동
+					const next = closeButtons[currentIndex + 1] || closeButtons[currentIndex - 1];
+					next?.focus();
+				}
+			}
+			onRemove(item.id);
+		},
 	});
 
 	/**
@@ -76,6 +94,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 	return (
 		<animated.div
+			ref={rootRef}
 			className="toast_item"
 			style={style}
 			role={item.variant === "error" ? "alert" : "status"}
@@ -114,11 +133,8 @@ export const ToastProvider = ({
 	closeAriaLabel = "Close",
 }: ToastProviderProps) => {
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
-	const [isMounted, setIsMounted] = React.useState(false);
-
-	React.useEffect(() => {
-		setIsMounted(true);
-	}, []);
+	// 포털은 클라이언트 마운트 후에만 렌더 (SSR/hydration 안전) - 공유 훅
+	const isMounted = useIsMounted();
 
 	/**
 	 * 토스트를 큐에 추가한다. maxCount를 초과하면 가장 오래된 항목을 제거한다.

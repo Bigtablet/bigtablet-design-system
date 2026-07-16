@@ -422,10 +422,12 @@ describe("Dropdown", () => {
 		const button = screen.getByRole("button");
 		expect(button).toHaveAttribute("aria-haspopup", "listbox");
 		expect(button).toHaveAttribute("aria-expanded", "false");
-		expect(button).toHaveAttribute("aria-controls", "dd-1_listbox");
+		// 닫힌 상태에서는 listbox 가 unmount 라 aria-controls 를 달지 않는다 (dangling IDREF 방지)
+		expect(button).not.toHaveAttribute("aria-controls");
 
 		fireEvent.click(button);
 		expect(button).toHaveAttribute("aria-expanded", "true");
+		expect(button).toHaveAttribute("aria-controls", "dd-1_listbox");
 
 		const listbox = screen.getByRole("listbox");
 		expect(listbox).toHaveAttribute("id", "dd-1_listbox");
@@ -700,5 +702,45 @@ describe("Dropdown", () => {
 		const activeId = input.getAttribute("aria-activedescendant");
 		expect(activeId).toBeTruthy();
 		expect(document.getElementById(activeId as string)).toHaveAttribute("role", "option");
+	});
+
+	it("closes the listbox on Tab from the control (APG combobox)", () => {
+		render(<Dropdown options={options} />);
+		const control = screen.getByRole("button");
+		fireEvent.click(control);
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+		fireEvent.keyDown(control, { key: "Tab" });
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
+	it("omits aria-controls while closed (no dangling IDREF)", () => {
+		render(<Dropdown options={options} />);
+		const control = screen.getByRole("button");
+		expect(control).not.toHaveAttribute("aria-controls");
+
+		fireEvent.click(control);
+		expect(control).toHaveAttribute("aria-controls");
+	});
+
+	it("renders hidden input(s) for native form submission when name is given", () => {
+		const { container, rerender } = render(
+			<Dropdown options={options} name="fruit" value="1" onValueChange={() => {}} />,
+		);
+		const hidden = container.querySelector('input[type="hidden"][name="fruit"]');
+		expect(hidden).toHaveValue("1");
+
+		// multiple: 같은 name 의 hidden input 반복
+		rerender(
+			<Dropdown
+				options={options}
+				name="fruit"
+				multiple
+				value={["1", "2"]}
+				onValueChange={() => {}}
+			/>,
+		);
+		const hiddens = container.querySelectorAll('input[type="hidden"][name="fruit"]');
+		expect(Array.from(hiddens).map((el) => (el as HTMLInputElement).value)).toEqual(["1", "2"]);
 	});
 });

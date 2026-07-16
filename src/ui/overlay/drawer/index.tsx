@@ -3,8 +3,16 @@
 import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap, useReducedMotion, useSpringPresence } from "../../../utils";
+import {
+	cn,
+	useFocusTrap,
+	useIsMounted,
+	useOverlayEscape,
+	useReducedMotion,
+	useSpringPresence,
+} from "../../../utils";
 import "./style.scss";
 
 /** Drawer 가 미끄러져 들어오는 방향 (top 은 범위 외) */
@@ -70,9 +78,17 @@ export const Drawer = ({
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
 	const reduced = useReducedMotion();
+	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
+	// mismatch(서버 null vs 클라 포털)를 피한다 (Modal/Toast/Alert 와 동일 패턴을 훅으로 공유).
+	const isMounted = useIsMounted();
 
-	// 포커스 트랩
-	useFocusTrap(panelRef, open);
+	// 포커스 트랩 - 포털이 실제로 마운트된 뒤(isMounted) 활성화해야 panelRef 가 붙어 있다.
+	useFocusTrap(panelRef, open && isMounted);
+
+	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
+	// Modal/Popover/Tooltip 등과 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
+	// 마운트 전(하이드레이션)엔 등록하지 않아 화면에 없는 드로어가 Escape 스택 순서를 교란하지 않게 한다.
+	useOverlayEscape(open && isMounted, () => onClose?.());
 
 	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
 	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
@@ -134,11 +150,17 @@ export const Drawer = ({
 	// 동안 마운트 유지용.
 	if (!open && !shouldRender) return null;
 
+	// SSR/하이드레이션 가드 - 서버(document 없음) 및 클라이언트 첫 렌더(isMounted=false)에서는
+	// null 을 반환해 서버/클라 출력을 일치시킨다(hydration mismatch 방지).
+	if (typeof document === "undefined" || !isMounted) return null;
+
 	const hasTitle = !!title;
 	const sizeValue = typeof size === "number" ? `${size}px` : size;
 	const panelSizeStyle = placement === "bottom" ? { height: sizeValue } : { width: sizeValue };
 
-	return (
+	// 포털로 body 끝에 렌더 - transform/filter 조상 아래서 position: fixed 가 깨지는 문제 방지
+	// (Modal/Alert/Toast 와 동일 패턴).
+	return createPortal(
 		<animated.div
 			className={cn("drawer", `drawer_placement_${placement}`)}
 			style={overlayStyle}
@@ -147,21 +169,13 @@ export const Drawer = ({
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
 			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
 			onClick={() => closeOnOverlay && onClose?.()}
-			// Escape 는 여기서 단독 처리 + stopPropagation - 중첩 오버레이에서 가장 위(topmost)만
-			// 닫히도록 (document 전역 리스너로 처리하면 열린 모든 오버레이가 동시에 닫힘).
-			// panel onKeyDown 이 Escape 는 막지 않으므로 focus 가 panel 안에 있어도 여기까지 버블됨.
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					e.stopPropagation();
-					onClose?.();
-				}
-			}}
 		>
 			<animated.div
 				ref={panelRef}
 				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
-				// 아래 className/style(애니메이션)/role/onClick·onKeyDown(stopPropagation·Escape) 은
-				// 컴포넌트가 항상 이기도록 뒤에 배치한다 (오버레이 동작 보호).
+				// 아래 className/style(애니메이션)/role/onClick·onKeyDown 은 컴포넌트가 항상
+				// 이기도록 뒤에 배치한다 (오버레이 동작 보호). Escape 는 공유 스택(useOverlayEscape)이
+				// 처리하고, 여기서는 그 외 키가 드로어 밖으로 새어 소비자 단축키를 건드리지 않게 막는다.
 				{...props}
 				className={cn("drawer_panel", className)}
 				style={{ ...props.style, ...panelStyle, ...panelSizeStyle }}
@@ -191,7 +205,8 @@ export const Drawer = ({
 				{children && <div className="drawer_body">{children}</div>}
 				{footer && <div className="drawer_footer">{footer}</div>}
 			</animated.div>
-		</animated.div>
+		</animated.div>,
+		document.body,
 	);
 };
 

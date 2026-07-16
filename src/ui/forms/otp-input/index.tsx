@@ -69,6 +69,21 @@ export const OtpInput = ({
 
 	const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
 		const nextDigit = e.target.value;
+
+		// SMS/키체인 자동입력(autocomplete="one-time-code")은 첫 박스의 onChange 로 전체 코드가
+		// 한 번에 들어온다. 단일 숫자 정규식에 걸려 무시되지 않도록 handlePaste 처럼 각 자리에 분배.
+		// index 0 에서만 처리 - 분배가 항상 0번부터 채우므로, 다른 박스에서 멀티문자 change 가
+		// 발생해도(브라우저별 자동완성 차이 등) 기존 자릿수를 밀지 않도록 트리거 위치를 명시 가드.
+		if (index === 0 && nextDigit.length > 1) {
+			const filled = nextDigit.replace(/\D/g, "").slice(0, length);
+			if (!filled) return;
+			const newDigits = [...digits];
+			for (let i = 0; i < filled.length; i++) newDigits[i] = filled[i];
+			updateValue(newDigits);
+			focusInput(Math.min(filled.length, length - 1));
+			return;
+		}
+
 		if (nextDigit && !/^\d$/.test(nextDigit)) return;
 
 		const newDigits = [...digits];
@@ -136,6 +151,7 @@ export const OtpInput = ({
 	};
 
 	const rootClassName = cn("otp_input", className);
+	const supportingId = React.useId();
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <fieldset> would force border/legend styles; role=group is the WAI-ARIA equivalent for OTP grouping
@@ -152,6 +168,8 @@ export const OtpInput = ({
 						inputMode="numeric"
 						pattern="\d*"
 						maxLength={1}
+						// SMS/키체인의 OTP 자동입력 - 첫 입력에만 지정 (paste 핸들러가 전 자리 분배)
+						autoComplete={i === 0 ? "one-time-code" : "off"}
 						value={digit}
 						onChange={(e) => handleChange(i, e)}
 						onFocus={() => handleFocus(i)}
@@ -159,6 +177,9 @@ export const OtpInput = ({
 						onPaste={handlePaste}
 						disabled={disabled}
 						aria-label={`${i + 1}번째 자리`}
+						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
+						aria-invalid={error || undefined}
+						aria-describedby={supportingText ? supportingId : undefined}
 						className={cn(
 							"otp_input_box",
 							error && "otp_input_box_error",
@@ -168,7 +189,10 @@ export const OtpInput = ({
 				))}
 			</div>
 			{supportingText && (
-				<span className={cn("otp_input_supporting", error && "otp_input_supporting_error")}>
+				<span
+					id={supportingId}
+					className={cn("otp_input_supporting", error && "otp_input_supporting_error")}
+				>
 					{supportingText}
 				</span>
 			)}

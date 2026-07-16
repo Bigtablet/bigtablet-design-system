@@ -2,7 +2,7 @@
 
 import { animated } from "@react-spring/web";
 import * as React from "react";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, useOverlayEscape, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type TooltipPlacement = "top" | "bottom" | "left" | "right";
@@ -40,14 +40,28 @@ export const Tooltip = ({
 	const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const tooltipId = React.useId();
 
+	// 포인터가 trigger→tooltip 사이 갭(6px)을 건널 시간 (WCAG 1.4.13 Hoverable)
+	const HIDE_DELAY = 120;
+
 	const show = React.useCallback(() => {
 		if (timerRef.current) clearTimeout(timerRef.current);
 		timerRef.current = setTimeout(() => setOpen(true), delay);
 	}, [delay]);
 
-	const hide = React.useCallback(() => {
+	// blur/Escape 는 즉시, mouseleave 는 지연 닫힘 - 포인터가 툴팁 위로 이동할 수 있도록
+	const hideNow = React.useCallback(() => {
 		if (timerRef.current) clearTimeout(timerRef.current);
 		setOpen(false);
+	}, []);
+
+	const hide = React.useCallback(() => {
+		if (timerRef.current) clearTimeout(timerRef.current);
+		timerRef.current = setTimeout(() => setOpen(false), HIDE_DELAY);
+	}, []);
+
+	// 툴팁 자체에 포인터가 올라오면 지연 닫힘 취소 (WCAG 1.4.13 Hoverable)
+	const cancelHide = React.useCallback(() => {
+		if (timerRef.current) clearTimeout(timerRef.current);
 	}, []);
 
 	React.useEffect(() => {
@@ -55,6 +69,13 @@ export const Tooltip = ({
 			if (timerRef.current) clearTimeout(timerRef.current);
 		};
 	}, []);
+
+	// WCAG 1.4.13 Dismissable - 포인터/포커스를 옮기지 않고 Escape 로 닫기.
+	// 공유 오버레이 스택에 등록 - 열려 있는 동안 최상단일 때만 Escape 로 닫혀
+	// 다른 오버레이나 소비자 앱 핸들러를 삼키지 않는다 (overlay-stack.ts 참고).
+	// 툴팁은 hover 로 열려 포커스가 trigger 밖에 있을 수 있으므로 document 레벨 처리가 필요한데,
+	// 레지스트리가 그 역할을 대신한다.
+	useOverlayEscape(open, hideNow);
 
 	const fromTransform = (() => {
 		switch (placement) {
@@ -89,7 +110,7 @@ export const Tooltip = ({
 		},
 		onBlur: (e: React.FocusEvent<HTMLElement>) => {
 			childProps.onBlur?.(e);
-			hide();
+			hideNow();
 		},
 		// 자식의 기존 aria-describedby 보존 + tooltip id 합성 (폼 설명/에러 연결 끊김 방지)
 		"aria-describedby": open
@@ -103,7 +124,12 @@ export const Tooltip = ({
 		<span className="tooltip_wrapper">
 			{trigger}
 			{open && (
-				<span className={cn("tooltip_position", `tooltip_placement_${placement}`)}>
+				<span
+					className={cn("tooltip_position", `tooltip_placement_${placement}`)}
+					// WCAG 1.4.13 Hoverable - 툴팁 위로 포인터가 오면 열림 유지
+					onMouseEnter={cancelHide}
+					onMouseLeave={hide}
+				>
 					<animated.span
 						id={tooltipId}
 						role="tooltip"

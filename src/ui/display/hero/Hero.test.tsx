@@ -61,4 +61,17 @@ describe("Hero", () => {
 		expect(container.querySelector(".hero_eyebrow")).not.toBeInTheDocument();
 		expect(container.querySelector(".hero_actions")).not.toBeInTheDocument();
 	});
+
+	it("renders primaryAction with href as an anchor (Button as='a')", () => {
+		render(<Hero title="제목" primaryAction={{ label: "자세히", href: "/detail" }} />);
+		const link = screen.getByRole("link", { name: "자세히" });
+		expect(link).toBeInstanceOf(HTMLAnchorElement);
+		expect(link).toHaveAttribute("href", "/detail");
+		expect(link).toHaveClass("button", "button_variant_filled", "button_size_lg");
+	});
+
+	it("renders primaryAction without href as a button", () => {
+		render(<Hero title="제목" primaryAction={{ label: "클릭", onClick: () => {} }} />);
+		expect(screen.getByRole("button", { name: "클릭" })).toBeInTheDocument();
+	});
 });

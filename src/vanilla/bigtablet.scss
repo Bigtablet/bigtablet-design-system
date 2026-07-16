@@ -5,6 +5,12 @@
 
 @use "../styles/token" as token;
 
+// theme.scss 를 반드시 포함한다. 색상 SCSS 토큰(token.$color_*)은 리터럴이 아니라
+// `var(--bt-color-*)` 간접 참조라, 그 var 정의(:root light + dark 테마)가 theme 에 있다.
+// 없으면 아래 :root 의 색 토큰이 전부 미정의 var 로 무효화된다 (자기참조 순환 포함).
+// 포함하면 [data-theme="dark"] / prefers-color-scheme 다크 테마도 함께 동작한다.
+@use "../styles/theme";
+
 /* ========================================
    CSS Custom Properties (Design Tokens)
    ======================================== */
@@ -15,24 +21,19 @@
 
   /* Colors - Accent (light=검정/dark=흰 자동 반전 - indicator/checked/focus 강조) */
   --bt-color-accent: #{token.$color_accent_default};
-  --bt-color-accent-on-surface: #{token.$color_accent_on_surface};
 
   /* Colors - Background */
   --bt-color-background: #{token.$color_bg_solid};
   --bt-color-background-dim: #{token.$color_bg_solid_dim};
   --bt-color-background-overlay: #{token.$color_bg_overlay};
 
-  /* Colors - Text */
-  --bt-color-text-heading: #{token.$color_text_heading};
-  --bt-color-text-body: #{token.$color_text_body};
-  --bt-color-text-caption: #{token.$color_text_caption};
-  --bt-color-text-inverse: #{token.$color_text_inverse};
-  --bt-color-text-disabled: #{token.$color_text_disabled};
+  /* Colors - Text/Border 원 토큰(--bt-color-text-heading, --bt-color-border-subtle 등)은
+     theme.scss 가 정의한다. 여기서 같은 이름으로 재선언하면
+     `--bt-color-text-heading: var(--bt-color-text-heading)` 자기참조 순환이 되어
+     theme 정의까지 덮어 무효화되므로 재선언 금지 (아래 Semantic alias 로만 노출). */
 
   /* Colors - Border */
   --bt-color-border: #{token.$color_border_default};
-  --bt-color-border-subtle: #{token.$color_border_subtle};
-  --bt-color-border-focus: #{token.$color_border_focus};
 
   /* Colors - Text Semantic */
   --bt-color-text-primary: var(--bt-color-text-heading);
@@ -725,6 +726,9 @@
   }
 
   &__list {
+    // 기본 숨김 - JS 초기화 전/JS 비활성 시 드롭다운이 펼쳐진 채 렌더링(FOUC)되지 않게.
+    // 열림/닫힘은 JS 가 inline display 로 토글한다.
+    display: none;
     position: absolute;
     z-index: var(--bt-z-modal);
     top: 100%;
