@@ -63,9 +63,15 @@ export const Modal = ({
 	const panelRef = React.useRef<HTMLDivElement>(null);
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
+	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
+	// mismatch(서버 null vs 클라 포털)를 피한다. Toast/Alert 와 동일한 isMounted 패턴.
+	const [isMounted, setIsMounted] = React.useState(false);
+	React.useEffect(() => {
+		setIsMounted(true);
+	}, []);
 
-	// 포커스 트랩
-	useFocusTrap(panelRef, open);
+	// 포커스 트랩 - 포털이 실제로 마운트된 뒤(isMounted) 활성화해야 panelRef 가 붙어 있다.
+	useFocusTrap(panelRef, open && isMounted);
 
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Tooltip/Popover 등 다른 오버레이와 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
@@ -131,9 +137,10 @@ export const Modal = ({
 	// 마운트가 한 렌더 늦어 트랩이 걸리지 않는다. shouldRender 는 퇴출 애니메이션 동안 마운트 유지용.
 	if (!open && !shouldRender) return null;
 
-	// SSR 가드 - 포털 대상(document.body)이 서버에는 없다. 클라이언트 하이드레이션 후
-	// 첫 렌더부터 포털이 붙으므로(commit 시점, effect 이전) 포커스 트랩 타이밍은 유지된다.
-	if (typeof document === "undefined") return null;
+	// SSR/하이드레이션 가드 - 서버(document 없음) 및 클라이언트 첫 렌더(isMounted=false)에서는
+	// null 을 반환해 서버/클라 출력을 일치시킨다(hydration mismatch 방지). 마운트 후 open&&isMounted
+	// 가 되는 렌더에서 패널이 붙고 useFocusTrap 이 그 시점에 활성화된다.
+	if (typeof document === "undefined" || !isMounted) return null;
 
 	const hasTitle = !!title;
 

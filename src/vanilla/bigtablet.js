@@ -769,10 +769,14 @@
 		// HTML) hidden input 을 형제(sibling)로 삽입한다. 서버 템플릿이 미리 렌더링해둔 hidden
 		// input(자식이든 형제든)이 있으면 재사용한다.
 		const fieldName = config.name || toggleEl.dataset.name || null;
+		// 직계 형제만 탐색 - parentNode.querySelector 는 하위 트리 전체를 뒤져 같은 부모를 공유하는
+		// 다른 토글(예: 테이블 행 안 여러 토글)의 hidden input 을 잘못 집을 수 있다.
 		let hiddenInput =
 			toggleEl.querySelector('input[type="hidden"]') ||
 			(fieldName && toggleEl.parentNode
-				? toggleEl.parentNode.querySelector(`input[type="hidden"][name="${fieldName}"]`)
+				? Array.from(toggleEl.parentNode.children).find(
+						(el) => el.tagName === "INPUT" && el.type === "hidden" && el.name === fieldName,
+					)
 				: null);
 		if (!hiddenInput && fieldName) {
 			hiddenInput = document.createElement("input");
