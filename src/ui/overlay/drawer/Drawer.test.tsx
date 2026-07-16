@@ -161,10 +161,20 @@ describe("Drawer", () => {
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
-	it("Escape closes only the topmost drawer when nested (stopPropagation)", () => {
+	it("Escape closes only the topmost drawer when nested (shared overlay stack)", () => {
 		const outerClose = vi.fn();
 		const innerClose = vi.fn();
-		render(
+		// 공유 스택은 LIFO - 최상단 = 가장 최근에 열린 오버레이다. 실제 앱에서 중첩 오버레이는
+		// 순차적으로 열리므로(바깥을 연 뒤 안쪽을 연다) 열린 순서 = stacking 순서가 된다.
+		// 그 순서를 재현하기 위해 바깥을 먼저 연 뒤 rerender 로 안쪽을 연다.
+		const { rerender } = render(
+			<Drawer open onClose={outerClose} title="Outer">
+				<Drawer open={false} onClose={innerClose} title="Inner">
+					<button type="button">Inner content</button>
+				</Drawer>
+			</Drawer>,
+		);
+		rerender(
 			<Drawer open onClose={outerClose} title="Outer">
 				<Drawer open onClose={innerClose} title="Inner">
 					<button type="button">Inner content</button>
@@ -178,6 +188,7 @@ describe("Drawer", () => {
 		const innerPanel = screen.getByText("Inner content").closest('[role="document"]') as HTMLElement;
 		fireEvent.keyDown(innerPanel, { key: "Escape" });
 
+		// 최상단(나중에 연 inner)만 닫히고 outer 는 유지된다 (APG)
 		expect(innerClose).toHaveBeenCalledTimes(1);
 		expect(outerClose).not.toHaveBeenCalled();
 	});

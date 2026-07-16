@@ -2,7 +2,7 @@
 
 import { animated } from "@react-spring/web";
 import * as React from "react";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, useOverlayEscape, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type PopoverPlacement = "top" | "bottom" | "left" | "right";
@@ -123,18 +123,16 @@ export const Popover = ({
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, [open, setOpen]);
 
-	// Escape 닫기 - document capture 리스너 대신 wrapper 의 React onKeyDown(버블) 로 처리한다.
-	// capture+stopPropagation 은 이벤트가 타겟(Popover 내부 input/select 등)에 닿기도 전에
-	// 최상단에서 끊어 자식 요소의 자체 Escape 처리를 마비시킨다(치명적). 버블 단계에서 잡으면
-	// 자식이 먼저 처리할 기회를 갖고, 여기서 stopPropagation 하면 상위 Modal 의 onKeyDown 으로도
-	// 전파되지 않아 "최상단만 닫힘"(APG)이 지켜진다.
-	const handleWrapperKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (open && e.key === "Escape") {
-			e.stopPropagation();
-			setOpen(false);
-			previousFocusRef.current?.focus();
-		}
-	};
+	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
+	// 레지스트리 리스너는 document 의 bubble 단계라 이벤트가 target(Popover 내부 input/select 등)에서
+	// 위로 올라오며 자식이 먼저 처리할 기회를 갖는다. 자식이 자체 Escape 를 처리하고 stopPropagation
+	// 하면 이벤트가 document 까지 오지 않아 Popover 는 닫히지 않는다(자식 우선 - 이전 리뷰 critical).
+	// 아무도 소비하지 않고 document 까지 오면 최상단(=이 Popover)만 닫고, 상위 Modal 이나 소비자
+	// 앱으로의 전파를 끊어 "최상단만 닫힘"(APG)을 지킨다.
+	useOverlayEscape(open, () => {
+		setOpen(false);
+		previousFocusRef.current?.focus();
+	});
 
 	const triggerWithProps = React.cloneElement(
 		trigger as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
@@ -151,8 +149,7 @@ export const Popover = ({
 	);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: keyboard handler for Escape dismissal; interactive children carry their own roles
-		<div className="popover_wrapper" ref={wrapperRef} onKeyDown={handleWrapperKeyDown}>
+		<div className="popover_wrapper" ref={wrapperRef}>
 			{triggerWithProps}
 			{shouldRender && (
 				<div className={cn("popover_position", `popover_placement_${placement}`)}>

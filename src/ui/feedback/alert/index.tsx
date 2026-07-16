@@ -6,7 +6,7 @@ import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap, useReducedMotion } from "../../../utils";
+import { cn, useFocusTrap, useOverlayEscape, useReducedMotion } from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
 import "./style.scss";
 
@@ -145,6 +145,11 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
 	useFocusTrap(panelRef, isOpen);
 
+	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
+	// dismiss = onCancel ?? onClose 로 라우팅해 취소 정리 로직이 우회되지 않게 한다 (APG alertdialog).
+	// Modal 위에 confirm Alert 를 띄우는 조합에서도 Alert(최상단)만 닫히고 Modal 은 유지된다.
+	useOverlayEscape(isOpen, () => dismiss());
+
 	// isOpen 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다 (Modal 과 동일한
 	// React "render 중 상태 조정" 패턴). effect 로 미루면 패널 마운트가 한 렌더 늦어져
 	// useFocusTrap effect 실행 시점에 panelRef.current 가 null 이라 트랩(초기 포커스 이동·
@@ -220,19 +225,14 @@ const AlertModal: React.FC<AlertModalProps> = ({
 			style={overlayStyle}
 			role="presentation"
 			onClick={() => closeOnOverlay && dismiss()}
-			onKeyDown={(e) => {
-				// Escape 전파 차단 - 상위 오버레이/전역 단축키가 함께 닫히지 않도록 (최상단만 닫힘)
-				if (e.key === "Escape") {
-					e.stopPropagation();
-					dismiss();
-				}
-			}}
 		>
 			<animated.div
 				ref={panelRef}
 				className={modalClassName}
 				style={panelStyle}
 				onClick={(e) => e.stopPropagation()}
+				// Escape 는 공유 스택(useOverlayEscape)이 처리하고, 여기서는 그 외 키가 알림 밖으로
+				// 새어 상위 오버레이/소비자 단축키를 건드리지 않게 막는다.
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
