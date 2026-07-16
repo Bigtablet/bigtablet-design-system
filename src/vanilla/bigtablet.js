@@ -149,18 +149,22 @@
 				disabled: el.classList.contains("is-disabled"),
 			}));
 
+		// data-options 가 유효한 배열이면(빈 배열 포함) 그대로 존중 - 명시적 빈 배열은 "옵션 없음"
+		// 의도이므로 DOM 파싱으로 덮지 않는다. undefined(속성 없음/파싱 실패)일 때만 폴백.
 		let optionsData;
 		if (wrapper.dataset.options) {
 			try {
 				const parsed = JSON.parse(wrapper.dataset.options);
-				optionsData = Array.isArray(parsed) ? parsed : (console.warn("Select: data-options is not a JSON array"), []);
+				if (Array.isArray(parsed)) optionsData = parsed;
+				else console.warn("Select: data-options is not a JSON array");
 			} catch (e) {
 				console.warn("Select: invalid JSON in data-options", e);
-				optionsData = [];
 			}
 		}
-		if (!optionsData || optionsData.length === 0) {
-			optionsData = config.options && config.options.length ? config.options : parseDomOptions();
+		if (optionsData === undefined) {
+			// config.options 도 배열이면(빈 배열 포함) 존중 - data-options 와 동일하게 명시적 빈
+			// 배열을 "옵션 없음"으로 처리하고 DOM 파싱으로 덮지 않는다.
+			optionsData = Array.isArray(config.options) ? config.options : parseDomOptions();
 		}
 
 		state.options = optionsData;
@@ -769,10 +773,14 @@
 		// HTML) hidden input 을 형제(sibling)로 삽입한다. 서버 템플릿이 미리 렌더링해둔 hidden
 		// input(자식이든 형제든)이 있으면 재사용한다.
 		const fieldName = config.name || toggleEl.dataset.name || null;
+		// 직계 형제만 탐색 - parentNode.querySelector 는 하위 트리 전체를 뒤져 같은 부모를 공유하는
+		// 다른 토글(예: 테이블 행 안 여러 토글)의 hidden input 을 잘못 집을 수 있다.
 		let hiddenInput =
 			toggleEl.querySelector('input[type="hidden"]') ||
 			(fieldName && toggleEl.parentNode
-				? toggleEl.parentNode.querySelector(`input[type="hidden"][name="${fieldName}"]`)
+				? Array.from(toggleEl.parentNode.children).find(
+						(el) => el.tagName === "INPUT" && el.type === "hidden" && el.name === fieldName,
+					)
 				: null);
 		if (!hiddenInput && fieldName) {
 			hiddenInput = document.createElement("input");

@@ -222,6 +222,18 @@ describe("Drawer", () => {
 		expect(panel?.contains(document.activeElement)).toBe(true);
 	});
 
+	it("renders the portal and traps focus when mounted already open (isMounted gate)", () => {
+		// 마운트 시점부터 open=true - isMounted 게이트가 걸려도 mount effect 이후 포털+트랩 활성화
+		render(
+			<Drawer open onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Drawer>,
+		);
+		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+		expect(panel).not.toBeNull();
+		expect(panel?.contains(document.activeElement)).toBe(true);
+	});
+
 	// ── Accessibility ────────────────────────────────────────────────────────
 
 	it("has dialog role and modal accessibility attributes", () => {

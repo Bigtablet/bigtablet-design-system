@@ -72,7 +72,9 @@ export const OtpInput = ({
 
 		// SMS/키체인 자동입력(autocomplete="one-time-code")은 첫 박스의 onChange 로 전체 코드가
 		// 한 번에 들어온다. 단일 숫자 정규식에 걸려 무시되지 않도록 handlePaste 처럼 각 자리에 분배.
-		if (nextDigit.length > 1) {
+		// index 0 에서만 처리 - 분배가 항상 0번부터 채우므로, 다른 박스에서 멀티문자 change 가
+		// 발생해도(브라우저별 자동완성 차이 등) 기존 자릿수를 밀지 않도록 트리거 위치를 명시 가드.
+		if (index === 0 && nextDigit.length > 1) {
 			const filled = nextDigit.replace(/\D/g, "").slice(0, length);
 			if (!filled) return;
 			const newDigits = [...digits];

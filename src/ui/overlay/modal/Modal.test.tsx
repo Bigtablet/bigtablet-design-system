@@ -190,6 +190,20 @@ describe("Modal", () => {
 		expect(panel?.contains(document.activeElement)).toBe(true);
 	});
 
+	it("renders the portal and traps focus when mounted already open (isMounted gate)", () => {
+		// 마운트 시점부터 open=true - isMounted 게이트가 걸려 서버/첫 렌더엔 null 이지만,
+		// mount effect 이후 포털이 붙고 focus trap 이 활성화되어야 한다. (가드가 영구 null 로
+		// 깨지면 dialog 가 안 뜨고 이 테스트가 실패한다.)
+		render(
+			<Modal open onClose={() => {}} title="Trap">
+				<button type="button">First action</button>
+			</Modal>,
+		);
+		const panel = screen.getByRole("dialog").querySelector(".modal_panel");
+		expect(panel).not.toBeNull();
+		expect(panel?.contains(document.activeElement)).toBe(true);
+	});
+
 	it("calls onClose once on Escape from inside the modal (no duplicate handler)", () => {
 		const handleClose = vi.fn();
 		render(

@@ -159,4 +159,31 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		expect(screen.getByRole("radio", { name: "A" })).not.toBeChecked();
 		expect(screen.getByRole("radio", { name: "B" })).not.toBeChecked();
 	});
+
+	it("keeps a numeric-value radio checked after selecting it", () => {
+		// 회귀: handleChange 가 group.onChange(String(value)) 로 문자열을 넘기는데 비교가
+		// group.value === value 이면 "1" === 1 → false 라 클릭 직후 선택 해제되던 버그
+		render(
+			<RadioGroup label="g">
+				<Radio value={1} label="One" />
+				<Radio value={2} label="Two" />
+			</RadioGroup>,
+		);
+		fireEvent.click(screen.getByRole("radio", { name: "One" }));
+		expect(screen.getByRole("radio", { name: "One" })).toBeChecked();
+		expect(screen.getByRole("radio", { name: "Two" })).not.toBeChecked();
+	});
+
+	it("does not check a value=\"null\" radio when the group value is null", () => {
+		// 회귀: group.value 가 null 이면 String(null)==="null" 이라 value=\"null\" Radio 가 선택되던
+		// 문제 - group.value != null 로 null/undefined 모두 방어
+		render(
+			<RadioGroup label="g" value={null as unknown as string}>
+				<Radio value="null" label="Null" />
+				<Radio value="a" label="A" />
+			</RadioGroup>,
+		);
+		expect(screen.getByRole("radio", { name: "Null" })).not.toBeChecked();
+		expect(screen.getByRole("radio", { name: "A" })).not.toBeChecked();
+	});
 });
