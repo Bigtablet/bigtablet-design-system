@@ -39,9 +39,13 @@ export const Radio = ({
 	const size = sizeProp ?? group?.size ?? "md";
 	const name = nameProp ?? group?.name;
 	const disabled = disabledProp ?? group?.disabled;
-	// value 없는 Radio 가 그룹 미선택 상태(group.value === undefined)에서
-	// undefined === undefined 로 전부 checked 렌더되지 않도록 value 존재를 먼저 확인.
-	const resolvedChecked = group ? value !== undefined && group.value === value : checked;
+	// value 없는 Radio 가 그룹 미선택 상태(group.value === undefined)에서 전부 checked 되지 않도록
+	// value 존재를 먼저 확인. 또 handleChange 가 group.onChange(String(value)) 로 항상 문자열을
+	// 넘기므로, 숫자 value 를 그대로 비교하면(예: "1" === 1) 클릭 직후 선택 해제되는 버그가 있어
+	// 양쪽 String() 으로 강제 비교한다.
+	const resolvedChecked = group
+		? value !== undefined && group.value != null && String(group.value) === String(value)
+		: checked;
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (group && value !== undefined) group.onChange(String(value));
