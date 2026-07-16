@@ -149,17 +149,19 @@
 				disabled: el.classList.contains("is-disabled"),
 			}));
 
+		// data-options 가 유효한 배열이면(빈 배열 포함) 그대로 존중 - 명시적 빈 배열은 "옵션 없음"
+		// 의도이므로 DOM 파싱으로 덮지 않는다. undefined(속성 없음/파싱 실패)일 때만 폴백.
 		let optionsData;
 		if (wrapper.dataset.options) {
 			try {
 				const parsed = JSON.parse(wrapper.dataset.options);
-				optionsData = Array.isArray(parsed) ? parsed : (console.warn("Select: data-options is not a JSON array"), []);
+				if (Array.isArray(parsed)) optionsData = parsed;
+				else console.warn("Select: data-options is not a JSON array");
 			} catch (e) {
 				console.warn("Select: invalid JSON in data-options", e);
-				optionsData = [];
 			}
 		}
-		if (!optionsData || optionsData.length === 0) {
+		if (optionsData === undefined) {
 			optionsData = config.options && config.options.length ? config.options : parseDomOptions();
 		}
 
