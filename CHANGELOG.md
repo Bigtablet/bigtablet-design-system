@@ -4,6 +4,23 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.5.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.1) - 2026-07-23
+
+- v3.5.0 마이그레이션 가이드(`docs/MIGRATION.md`) 추가 - Modal/Drawer 포털 렌더링, `ButtonProps` discriminated union 대응 안내
+- 의존성 업데이트 - lucide-react 1.25(신규 아이콘), react-spring/web 10.1.2
+- 테스트 격리 안정화 - 오버레이(Modal/Drawer/Alert) 스크롤락 공유 전역이 테스트 간 누수되던 flake 수정(내부, 런타임 무영향)
+
+## [3.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.0) - 2026-07-16
+
+- 접근성(a11y) 대규모 개선 - 전체 컴포넌트 감사 후 WAI-ARIA/WCAG 위반 수정: Alert 포커스 트랩, Tooltip dismissable·hoverable(WCAG 1.4.13), Toast 자동 닫힘 hover/focus 일시정지(WCAG 2.2.1), Tabs 로빙 tabindex, Checkbox·OTP `aria-invalid`, Chip·ListItem 선택 상태 노출, NavBar locale `menuitemradio`, Table `aria-busy`
+- Button `as`/`href` 지원 - `<Button as="a" href="...">` 로 동일 스타일의 anchor 렌더링(링크 시맨틱), `disabled` anchor 대응. Hero CTA 가 이를 재사용
+- 폼 참여 prop 추가 - Dropdown `name`(hidden input 으로 네이티브 폼 제출), Alert `closeOnOverlay`, Chip `removeLabel`(삭제 버튼 레이블 커스터마이즈)
+- 오버레이 Escape 통일 - `useOverlayEscape`/`registerOverlay` 공유 스택으로 "최상단 오버레이만 닫힘"(APG) 보장, 자식 요소 Escape 우선 처리
+- Modal · Drawer 포털 렌더링 - `createPortal(document.body)` 로 transform/filter 조상 아래에서도 `position: fixed` 정상 동작 (기존 인라인 렌더 → body 포털; 후손 선택자 스타일링 시 영향 가능)
+- Vanilla 번들 대폭 수정 - 색상 토큰 자기참조/미정의 해소(+다크 테마), Select `<li data-value>` 서버 마크업 파싱, Select/Toggle 폼 제출 참여(`data-name`)·combobox ARIA·Modal 포커스 트랩·스크롤 잠금 카운터·FOUC 방지
+- reduced-motion(WCAG 2.3.3) - Modal/Alert 진입·퇴출, Toast progress 를 `prefers-reduced-motion` 대응
+- (주의) `ButtonProps` 가 discriminated union(`ButtonAsButton | ButtonAsAnchor`)으로 변경 - 런타임/공개 prop 은 100% 호환이나, 타입 레벨에서 `interface X extends ButtonProps` 확장은 불가(union 확장 불가). 확장이 필요하면 `ButtonBaseProps` 또는 `ComponentProps<typeof Button>` 사용
+
 ## [3.4.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.4.1) - 2026-07-10
 
 - Modal · Drawer: 소비자 `style`/`className`/`data-*` 는 반영하되 컴포넌트의 애니메이션 style · `onClick`/`onKeyDown`(stopPropagation·Escape) · `role` 이 항상 우선하도록 정리 (소비자 style 이 오버레이 동작을 덮던 문제 수정)
