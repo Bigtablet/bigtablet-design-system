@@ -4,12 +4,6 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
-## [3.5.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.1) - 2026-07-23
-
-- v3.5.0 마이그레이션 가이드(`docs/MIGRATION.md`) 추가 - Modal/Drawer 포털 렌더링, `ButtonProps` discriminated union 대응 안내
-- 의존성 업데이트 - lucide-react 1.25(신규 아이콘), react-spring/web 10.1.2
-- 테스트 격리 안정화 - 오버레이(Modal/Drawer/Alert) 스크롤락 공유 전역이 테스트 간 누수되던 flake 수정(내부, 런타임 무영향)
-
 ## [3.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.0) - 2026-07-16
 
 - 접근성(a11y) 대규모 개선 - 전체 컴포넌트 감사 후 WAI-ARIA/WCAG 위반 수정: Alert 포커스 트랩, Tooltip dismissable·hoverable(WCAG 1.4.13), Toast 자동 닫힘 hover/focus 일시정지(WCAG 2.2.1), Tabs 로빙 tabindex, Checkbox·OTP `aria-invalid`, Chip·ListItem 선택 상태 노출, NavBar locale `menuitemradio`, Table `aria-busy`
