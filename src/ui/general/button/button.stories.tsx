@@ -102,6 +102,10 @@ export const IconSizes: Story = {
 주지 않은 아이콘(뷰박스만 있는 커스텀 svg)은 기본 24px 로 렌더된다.
 
 라벨 옆 아이콘은 라벨 글자 크기에 맞추는 편이 무게가 맞는다 — \`sm\`/\`md\` 버튼이면 14~16 이 보통이다.
+
+The icon decides its own size — the slot only aligns. An icon given \`width\`/\`height\` renders at that size;
+one without (a viewBox-only custom svg) falls back to 24px. Match a leading icon to the label's font size
+(14–16 for \`sm\`/\`md\` buttons) so their visual weight lines up.
 				`,
 			},
 		},
