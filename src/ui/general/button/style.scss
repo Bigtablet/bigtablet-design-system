@@ -181,17 +181,24 @@
 
   // ── Elements ─────────────────────────────────────────────────────────────
 
+  // 아이콘 슬롯은 정렬만 맡고 크기는 아이콘 자신이 정한다.
+  //
+  // 예전에는 슬롯이 24x24 로 고정되고 `svg { width: 100%; height: 100% }` 가 그 크기로 늘렸다.
+  // svg 의 width/height 는 presentation attribute 라 어떤 CSS 규칙에도 지므로, 소비자가
+  // `<Icon size={14} />` 를 넘겨도 화면에서는 24px 로 렌더됐다 — `size` 가 라벨 옆 아이콘에서만
+  // 조용히 무시되어, 버튼 라벨(13~14px)과 아이콘의 무게를 맞출 방법이 없었다.
+  //
+  // width/height 속성이 없는 svg(뷰박스만 있는 커스텀 아이콘)는 부모를 채우려 하므로 그 경우에만
+  // 예전 기본값을 유지한다.
   &_icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
     flex-shrink: 0;
 
-    svg {
-      width: 100%;
-      height: 100%;
+    svg:not([width]):not([height]) {
+      width: 24px;
+      height: 24px;
     }
   }
 
