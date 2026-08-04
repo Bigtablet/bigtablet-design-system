@@ -9,7 +9,6 @@
 
   &:hover .file_input_label {
     border-color: token.$color_border_hover;
-    cursor: pointer;
   }
 
   &_control {
@@ -24,6 +23,9 @@
   }
 
   &_label {
+    // <label> 은 부모 cursor 를 상속하지 않아(브라우저 기본 default) 직접 지정해야 라벨 위에서
+    // 포인터가 뜬다. 예전엔 &:hover 규칙으로만 걸어 hover 밖/특정 상태에서 default 로 샜다.
+    cursor: pointer;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_md;
     background: token.$color_bg_solid;
