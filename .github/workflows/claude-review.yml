@@ -9,7 +9,7 @@ name: Claude PR Review
 #    커밋 SHA 를 남겨 staleness 를 추적한다
 # GitHub App 없이 레포 secret(CLAUDE_CODE_REVIEW_API_KEY)으로 직접 인증한다.
 # 코멘트 트리거는 author_association(OWNER/MEMBER/COLLABORATOR)로 제한해 외부 트리거를 막는다.
-# CodeRabbit(.coderabbit.yaml) / Gemini Code Assist 는 그대로 병행한다 (중복 리뷰 허용).
+# CodeRabbit(.coderabbit.yaml) 는 그대로 병행한다 (중복 리뷰 허용).
 on:
   pull_request:
     types: [opened, reopened, ready_for_review]
