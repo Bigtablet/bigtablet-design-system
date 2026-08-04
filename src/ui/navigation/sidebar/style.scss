@@ -118,8 +118,8 @@
 
     // active - 검정 fill + 흰 텍스트 (brand 강조)
     &_active {
-      background: token.$color_brand_primary;
-      color: token.$color_brand_on_primary;
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
     }
 
     &_icon {
@@ -175,9 +175,9 @@
       transform token.$transition_fast;
 
     &:hover {
-      background: token.$color_brand_primary;
-      color: token.$color_brand_on_primary;
-      border-color: token.$color_brand_primary;
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+      border-color: token.$color_accent_default;
       transform: scale(1.05);
     }
 
@@ -311,8 +311,8 @@
         color: token.$color_text_heading;
 
         .sidebar_item_icon {
-          background: token.$color_brand_primary;
-          color: token.$color_brand_on_primary;
+          background: token.$color_accent_default;
+          color: token.$color_accent_on_surface;
           border-radius: token.$radius_full;  // 완전한 pill
           padding: 0 token.$spacing_16;
           width: auto;                        // rail 24px 고정 width override
