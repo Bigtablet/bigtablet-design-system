@@ -170,3 +170,11 @@
     height: 24px;
   }
 }
+
+// WCAG 2.1 SC 2.3.3 - 감속 모션 요청 시 상태 전환(bg/color/border, state layer) 정지
+@media (prefers-reduced-motion: reduce) {
+  .icon_button,
+  .icon_button::before {
+    transition: none;
+  }
+}
