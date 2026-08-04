@@ -11,7 +11,6 @@ import {
 	useImperativeHandle,
 	useRef,
 	useState,
-	type WheelEvent,
 } from "react";
 import { cn } from "../../../utils";
 import {
@@ -109,6 +108,8 @@ export function ImageCropper({
 	label = "이미지 위치와 배율 조정",
 }: ImageCropperProps) {
 	const imageRef = useRef<HTMLImageElement>(null);
+	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
+	const viewportRef = useRef<HTMLDivElement>(null);
 	// pointerdown 시점의 좌표/이동량을 담아 두고 move 에서 차이만 더한다.
 	const dragRef = useRef<{ pointerId: number; x: number; y: number; offset: CropOffset } | null>(
 		null,
@@ -131,6 +132,8 @@ export function ImageCropper({
 
 	const [imageSize, setImageSize] = useState<CropImageSize | null>(null);
 	const [zoom, setZoom] = useState(minZoom);
+	// 휠 핸들러가 최신 배율을 읽되, 배율이 바뀔 때마다 리스너를 다시 붙이지는 않게 한다.
+	const zoomRef = useRef(zoom);
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
@@ -199,11 +202,26 @@ export function ImageCropper({
 		}
 	};
 
-	const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
-		if (!imageSize) return;
-		event.preventDefault();
-		applyZoom(zoom - event.deltaY * WHEEL_ZOOM_FACTOR * zoom);
-	};
+	useEffect(() => {
+		zoomRef.current = zoom;
+	}, [zoom]);
+
+	// 휠 줌은 React 의 onWheel 이 아니라 네이티브 리스너로 붙인다 — React 는 wheel 을 루트에
+	// `passive: true` 로 위임하므로 핸들러 안의 preventDefault 가 무시되고("Unable to
+	// preventDefault inside passive event listener invocation") 확대하는 동안 뒤 페이지가 함께
+	// 스크롤된다. `passive: false` 로 직접 등록해야 기본 스크롤을 막을 수 있다.
+	useEffect(() => {
+		const viewport = viewportRef.current;
+		if (!viewport || !imageSize) return;
+
+		const handleWheel = (event: globalThis.WheelEvent) => {
+			event.preventDefault();
+			applyZoom(zoomRef.current - event.deltaY * WHEEL_ZOOM_FACTOR * zoomRef.current);
+		};
+
+		viewport.addEventListener("wheel", handleWheel, { passive: false });
+		return () => viewport.removeEventListener("wheel", handleWheel);
+	}, [imageSize, applyZoom]);
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (!imageSize) return;
@@ -297,6 +315,7 @@ export function ImageCropper({
 		<div className={cn("image_cropper", className)}>
 			{/* biome-ignore lint/a11y/useSemanticElements: 드래그+방향키 조작 표면이라 role=group + 안내 텍스트로 처리 */}
 			<div
+				ref={viewportRef}
 				className={cn("image_cropper_viewport", dragging && "image_cropper_viewport_dragging")}
 				style={viewportStyle}
 				role="group"
@@ -307,7 +326,6 @@ export function ImageCropper({
 				onPointerMove={handlePointerMove}
 				onPointerUp={handlePointerEnd}
 				onPointerCancel={handlePointerEnd}
-				onWheel={handleWheel}
 				onKeyDown={handleKeyDown}
 			>
 				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - local blob preview needs natural size + canvas access, next/image doesn't apply */}
