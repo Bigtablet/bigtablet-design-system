@@ -67,8 +67,9 @@
   // ── Variant: Filled ─────────────────────────────────────────────────────
 
   &_variant_filled {
-    background: token.$color_brand_primary;
-    color: token.$color_brand_on_primary;
+    // 다크에서 채움이 페이지에 묻히지 않게 테마 분기 accent 사용(#415, 라이트 값은 brand 와 동일)
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
 
     &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_dark;
@@ -84,7 +85,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }
@@ -109,7 +110,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }
@@ -135,7 +136,7 @@
 
     &:disabled {
       border-color: token.$color_border_default;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }

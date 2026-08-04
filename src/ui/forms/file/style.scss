@@ -39,7 +39,7 @@
 
   &_control:focus-visible + .file_input_label {
     box-shadow: token.$focus_ring;
-    border-color: token.$color_brand_primary;
+    border-color: token.$color_accent_default;
   }
 
   &_helper {

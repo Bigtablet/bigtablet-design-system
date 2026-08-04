@@ -72,8 +72,10 @@
   // ── Variant: Filled ──────────────────────────────────────────────────────
 
   &_variant_filled {
-    background: token.$color_brand_primary;
-    color: token.$color_brand_on_primary;
+    // accent 계열: light #121212(brand 와 동일) / dark #FFFFFF - 다크에서 채움이 페이지에 묻히지
+    // 않게 테마 분기 토큰 사용(#415). 라이트 렌더는 brand 와 값이 같아 변화 없음.
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
 
     &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_dark;
