@@ -1,0 +1,159 @@
+@use "src/styles/token" as token;
+
+.image_cropper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: token.$spacing_16;
+
+	// ── 뷰포트 (드래그 표면 = 크롭 영역) ──────────────────────────────────
+	&_viewport {
+		position: relative;
+		overflow: hidden;
+		border-radius: token.$radius_lg;
+		background-color: token.$color_bg_inverse_surface;
+		cursor: grab;
+		touch-action: none; // 브라우저 팬/줌 제스처가 드래그를 가로채지 않게
+		user-select: none;
+
+		&_dragging {
+			cursor: grabbing;
+		}
+
+		&:focus-visible {
+			outline: token.$border_width_thick solid token.$color_border_focus;
+			outline-offset: token.$spacing_2;
+		}
+	}
+
+	&_image {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		max-width: none;
+		user-select: none;
+		-webkit-user-drag: none;
+		// transform 은 이동량이 실시간으로 바뀌므로 컴포넌트가 inline 으로 지정한다.
+	}
+
+	// ── 마스크 (크롭 경계 안내) ──────────────────────────────────────────
+	// 아래 깔리는 건 사용자 이미지라 테마별 표면색이 아니라 고정 알파(base) 토큰을 쓴다 -
+	// 라이트/다크 어느 쪽에서도 같은 대비로 보여야 한다.
+	&_mask {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		border-radius: token.$radius_lg;
+		// 사각(기본): 안쪽 테두리만. 전체 뷰포트가 크롭이라 바깥을 어둡게 하지 않는다.
+		box-shadow: inset 0 0 0 token.$border_width_standard token.$color_base_alpha_white_38;
+
+		// 격자(3분할) - 조작 중에만 살짝 보여 구도 잡기 도움
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background-image:
+				linear-gradient(to right, token.$color_base_alpha_white_38 token.$border_width_standard, transparent token.$border_width_standard),
+				linear-gradient(to bottom, token.$color_base_alpha_white_38 token.$border_width_standard, transparent token.$border_width_standard);
+			background-size: 33.333% 33.333%;
+			background-position: 33.333% 33.333%;
+			background-repeat: no-repeat;
+			opacity: 0;
+			transition: opacity token.$transition_base;
+		}
+
+		// 원형(아바타): 원 바깥 코너를 큰 spread box-shadow 로 덮는다
+		&_circular {
+			border-radius: token.$radius_full;
+			box-shadow:
+				0 0 0 token.$radius_full token.$color_base_alpha_black_50,
+				inset 0 0 0 token.$border_width_standard token.$color_base_alpha_white_38;
+
+			&::before {
+				border-radius: token.$radius_full;
+			}
+		}
+
+		&_active::before {
+			opacity: 1;
+		}
+	}
+
+	// ── 안내 문구 ────────────────────────────────────────────────────────
+	&_hint {
+		margin: 0;
+		font-size: token.$font_size_12;
+		line-height: token.$line_height_16;
+		color: token.$color_text_caption;
+		text-align: center;
+	}
+
+	// ── 배율 조작 (− 슬라이더 +) ─────────────────────────────────────────
+	&_zoom {
+		display: flex;
+		align-items: center;
+		gap: token.$spacing_12;
+		width: 100%;
+	}
+
+	&_zoom_button {
+		flex-shrink: 0;
+		width: token.$spacing_32;
+		height: token.$spacing_32;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: token.$border_width_standard solid token.$color_border_default;
+		border-radius: token.$radius_full;
+		background: token.$color_bg_solid;
+		color: token.$color_text_heading;
+		font-size: token.$font_size_18;
+		line-height: 1;
+		cursor: pointer;
+		transition: background token.$transition_fast, border-color token.$transition_fast;
+
+		&:hover:not(:disabled) {
+			background: token.$color_state_hover_on_light;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: token.$focus_ring;
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: token.$opacity_38;
+		}
+	}
+
+	&_zoom_slider {
+		flex: 1;
+		min-width: 0;
+		accent-color: token.$color_accent_default;
+		cursor: pointer;
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: token.$opacity_38;
+		}
+	}
+
+	&_sr_only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.image_cropper_mask::before {
+		transition: none;
+	}
+}
