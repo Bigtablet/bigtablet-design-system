@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.6.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.6.0) - 2026-08-04
+
+- ImageCropper 신규 컴포넌트 - 드래그 이동·휠/슬라이더/버튼/키보드 줌·원형·사각 마스크·rule-of-thirds 그리드로 이미지 크롭. `crop()` 로 `Blob` 반환, `outputSize`/`outputType`/`quality`/`circular` 등 지원 (React 19 ref-as-prop)
+- 다크 모드 대비 개선 - TextField·Textarea·Dropdown placeholder 를 caption 토큰으로 낮춰 다크 모드에서 hint 로 읽히도록, FileInput 빈 미리보기 텍스트를 WCAG AA(4.5:1) 충족하게 진하게
+- 테마 인식 색상 - Button·IconButton·Sidebar·Pagination brand fill 을 accent 토큰으로 교체해 다크 모드에서 안 보이던 문제 해소 (nav-bar accent variant 는 brand 유지)
+- FileInput 정리 - hover 시 파일명 기본 툴팁 억제(투명 input `pointer-events: none`), 라벨에 pointer 커서 직접 지정
+- Button·IconButton 아이콘 크기 - 전달한 아이콘 사이즈를 늘리지 않도록 수정
+- (개발) dependabot dev 의존성 버전·보안 업데이트 (react/storybook/playwright/lucide/next 그룹)
+
 ## [3.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.0) - 2026-07-16
 
 - 접근성(a11y) 대규모 개선 - 전체 컴포넌트 감사 후 WAI-ARIA/WCAG 위반 수정: Alert 포커스 트랩, Tooltip dismissable·hoverable(WCAG 1.4.13), Toast 자동 닫힘 hover/focus 일시정지(WCAG 2.2.1), Tabs 로빙 tabindex, Checkbox·OTP `aria-invalid`, Chip·ListItem 선택 상태 노출, NavBar locale `menuitemradio`, Table `aria-busy`
