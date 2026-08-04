@@ -12,5 +12,5 @@ overrides:
   undici: ^7.28.0
   esbuild: ^0.28.1
   rollup: ^4.59.0
-  postcss: ^8.5.10
+  postcss: ^8.5.22
   minimatch: ^10.2.4
