@@ -151,10 +151,9 @@ export function ImageCropper({
 	const [imageSize, setImageSize] = useState<CropImageSize | null>(null);
 	const [zoom, setZoom] = useState(minZoom);
 	// 휠 핸들러가 최신 배율을 읽되, 배율이 바뀔 때마다 리스너를 다시 붙이지는 않게 한다.
-	// 렌더 중 직접 동기화 — useEffect 는 커밋 후 실행돼 트랙패드 플릭처럼 wheel 이 연달아
-	// 들어오면 한 틱 뒤처진 배율로 계산돼 줌 델타가 유실될 수 있다.
+	// zoom 을 바꾸는 곳(applyZoom·리셋)에서 setZoom 과 함께 즉시 동기화한다 — 렌더 중 대입은
+	// (중단된 렌더가 커밋 안 되는 값을 남길 수 있어) 피하고, useEffect(커밋 후)의 한 틱 지연도 없앤다.
 	const zoomRef = useRef(zoom);
-	zoomRef.current = zoom;
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
@@ -165,6 +164,7 @@ export function ImageCropper({
 	useEffect(() => {
 		setImageSize(null);
 		setZoom(minZoom);
+		zoomRef.current = minZoom;
 		setOffset({ x: 0, y: 0 });
 	}, [src, minZoom]);
 
@@ -181,6 +181,7 @@ export function ImageCropper({
 		(next: number) => {
 			const clampedZoom = Math.min(maxZoom, Math.max(minZoom, next));
 			setZoom(clampedZoom);
+			zoomRef.current = clampedZoom;
 			if (imageSize) {
 				setOffset((prev) => clampCropOffset(prev, imageSize, viewportSize, clampedZoom));
 			}
@@ -274,6 +275,7 @@ export function ImageCropper({
 		() => ({
 			reset: () => {
 				setZoom(minZoom);
+				zoomRef.current = minZoom;
 				setOffset({ x: 0, y: 0 });
 			},
 			crop: () =>
