@@ -115,7 +115,9 @@
     color: token.$color_text_heading;
 
     &::placeholder {
-      color: token.$color_text_body; // Dropdown placeholder와 동일 (#666 - 더 진함)
+      // caption: 라이트는 body 와 거의 동일(#666→#6F6F6F)이나 다크에서 body(#B3B3B3)와 달리
+      // #808080 로 입력값(text-heading 95% 흰색)과 확실히 구분된다(#420). AA 5:1 충족.
+      color: token.$color_text_caption;
     }
 
     &:disabled {
