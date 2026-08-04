@@ -59,11 +59,8 @@
     @include token.responsive_height(token.$tap_target_compact); // 40 → 48
   }
 
-  &_size_sm &_input_wrap {
-    padding: token.$spacing_4 token.$spacing_16;
-  }
-
   &_size_sm &_input {
+    padding: token.$spacing_4 token.$spacing_16;
     font-size: token.$font_size_14;
     line-height: token.$line_height_20;
   }
@@ -72,36 +69,43 @@
     @include token.responsive_height(token.$tap_target_comfortable); // 48 → 56
   }
 
-  &_size_lg &_input_wrap {
-    padding: token.$spacing_8 token.$spacing_20;
-  }
-
   &_size_lg &_input {
+    padding: token.$spacing_8 token.$spacing_20;
     font-size: token.$font_size_16;
     line-height: token.$line_height_24;
   }
 
   // ── Input ──────────────────────────────────────────────────────────────
 
+  // 패딩은 wrap 이 아니라 input 이 가진다 — wrap 이 여백을 쥐고 있으면 그 띠(좌우 16px, 위아래로는
+  // input line-height 와 상자 높이 차이만큼)가 클릭해도 아무 일 없는 죽은 영역이 된다. hover 는
+  // 상자 전체에 걸리므로 반응한 자리를 눌렀는데 커서가 안 잡히고 "더 안쪽을 눌러야" 하게 된다.
+  // 패딩이 input 에 있으면 상자 안쪽 전체가 input 이라 native 로 포커스가 잡힌다.
   &_input_wrap {
     flex: 1;
     display: flex;
     align-items: center;
     min-width: 0;
-    padding: token.$spacing_4 token.$spacing_16; // Dropdown control과 동일 (4px 16px)
+    // inner 의 align-items: center 를 이 칸만 해제한다 — 늘어나지 않으면 wrap 높이가 텍스트
+    // 높이(24px)에 머물러 위아래 9px 이 여전히 클릭해도 안 잡히는 띠로 남는다.
+    align-self: stretch;
   }
 
   // 아이콘이 있으면 해당 쪽 패딩 제거 (아이콘 자체 padding이 여백 역할)
-  &_icon + .text_field_input_wrap {
+  &_icon + .text_field_input_wrap &_input {
     padding-left: 0;
   }
 
-  &_input_wrap_no_pad_right {
+  &_input_wrap_no_pad_right &_input {
     padding-right: 0;
   }
 
   &_input {
     width: 100%;
+    // 상자 높이를 그대로 채워 위아래 여백까지 클릭 대상이 되게 한다(텍스트는 input 이 세로 중앙 정렬).
+    height: 100%;
+    padding: token.$spacing_4 token.$spacing_16; // Dropdown control과 동일 (4px 16px)
+    box-sizing: border-box;
     border: none;
     outline: none;
     background: transparent;
