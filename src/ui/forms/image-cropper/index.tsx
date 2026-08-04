@@ -67,6 +67,16 @@ export interface ImageCropperProps {
 	className?: string;
 	/** 뷰포트 접근성 레이블. 기본 "이미지 위치와 배율 조정". */
 	label?: string;
+	/** 뷰포트 아래 조작 안내 문구. 기본 "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요." */
+	hint?: string;
+	/** 축소 버튼 접근성 레이블. 기본 "축소". */
+	zoomOutLabel?: string;
+	/** 배율 슬라이더 접근성 레이블. 기본 "배율". */
+	zoomLabel?: string;
+	/** 확대 버튼 접근성 레이블. 기본 "확대". */
+	zoomInLabel?: string;
+	/** 이동 여유가 없을 때 스크린리더로 알리는 문구. 기본 "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다." */
+	noPanHint?: string;
 }
 
 const resolveOutputType = (
@@ -106,6 +116,11 @@ export function ImageCropper({
 	onError,
 	className,
 	label = "이미지 위치와 배율 조정",
+	hint = "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
+	zoomOutLabel = "축소",
+	zoomLabel = "배율",
+	zoomInLabel = "확대",
+	noPanHint = "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
 }: ImageCropperProps) {
 	const imageRef = useRef<HTMLImageElement>(null);
 	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
@@ -351,14 +366,14 @@ export function ImageCropper({
 			</div>
 
 			<p id="image_cropper_hint" className="image_cropper_hint">
-				드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.
+				{hint}
 			</p>
 
 			<div className="image_cropper_zoom">
 				<button
 					type="button"
 					className="image_cropper_zoom_button"
-					aria-label="축소"
+					aria-label={zoomOutLabel}
 					disabled={!imageSize || zoom <= minZoom}
 					onClick={() => applyZoom(zoom - ZOOM_KEY_STEP)}
 				>
@@ -367,7 +382,7 @@ export function ImageCropper({
 				<input
 					type="range"
 					className="image_cropper_zoom_slider"
-					aria-label="배율"
+					aria-label={zoomLabel}
 					min={minZoom}
 					max={maxZoom}
 					step={ZOOM_STEP}
@@ -378,7 +393,7 @@ export function ImageCropper({
 				<button
 					type="button"
 					className="image_cropper_zoom_button"
-					aria-label="확대"
+					aria-label={zoomInLabel}
 					disabled={!imageSize || zoom >= maxZoom}
 					onClick={() => applyZoom(zoom + ZOOM_KEY_STEP)}
 				>
@@ -387,7 +402,7 @@ export function ImageCropper({
 			</div>
 			{/* 위치 슬라이더가 없어도 미세 조정이 가능하도록 상태만 노출(스크린리더에 여유 안내) */}
 			<span className="image_cropper_sr_only" aria-live="polite">
-				{imageSize && !canPan ? "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다." : ""}
+				{imageSize && !canPan ? noPanHint : ""}
 			</span>
 		</div>
 	);

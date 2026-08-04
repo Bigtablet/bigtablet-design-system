@@ -54,3 +54,42 @@ describe("ImageCropper wheel zoom", () => {
 		expect(wheelOverViewport()).toBe(true);
 	});
 });
+
+describe("ImageCropper labels", () => {
+	it("기본 문구는 한국어다", () => {
+		render(<ImageCropper src={file()} />);
+
+		expect(screen.getByRole("group", { name: "이미지 위치와 배율 조정" })).toBeInTheDocument();
+		expect(screen.getByLabelText("확대")).toBeInTheDocument();
+	});
+
+	it("모든 문구를 소비자 로케일로 갈아 끼울 수 있다", () => {
+		// 다국어 앱에서 한국어가 그대로 낭독되던 자리들 — 전부 prop 으로 열려 있어야 한다.
+		render(
+			<ImageCropper
+				src={file()}
+				label="Adjust image position and zoom"
+				hint="Drag to move, scroll to zoom."
+				zoomOutLabel="Zoom out"
+				zoomLabel="Zoom"
+				zoomInLabel="Zoom in"
+			/>,
+		);
+
+		expect(
+			screen.getByRole("group", { name: "Adjust image position and zoom" }),
+		).toBeInTheDocument();
+		expect(screen.getByText("Drag to move, scroll to zoom.")).toBeInTheDocument();
+		expect(screen.getByLabelText("Zoom out")).toBeInTheDocument();
+		expect(screen.getByLabelText("Zoom")).toBeInTheDocument();
+		expect(screen.getByLabelText("Zoom in")).toBeInTheDocument();
+	});
+
+	it("이동 여유가 없다는 안내도 갈아 끼울 수 있다", () => {
+		render(<ImageCropper src={file()} noPanHint="No room to pan." />);
+		// 정사각 원본은 뷰포트를 꽉 채워 이동 여유가 없다.
+		loadImage(400, 400);
+
+		expect(screen.getByText("No room to pan.")).toBeInTheDocument();
+	});
+});
