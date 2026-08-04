@@ -67,7 +67,8 @@ const meta = {
 		},
 		quality: {
 			control: { type: "number", min: 0.5, max: 1, step: 0.02 },
-			description: "JPEG/WebP 품질(0~1). / JPEG/WebP quality.",
+			description:
+				"JPEG/WebP 품질 (컨트롤 0.5~1, prop 자체는 0~1 허용). / JPEG/WebP quality (control 0.5–1; the prop accepts 0–1).",
 		},
 		minZoom: {
 			control: { type: "number", min: 1, max: 3, step: 0.5 },
@@ -100,7 +101,12 @@ export const Circular: Story = { args: { circular: true } };
 export const LandscapeSource: Story = {
 	args: { src: LANDSCAPE },
 	parameters: {
-		docs: { description: { story: "cover 배율이라 세로는 꽉 차고 가로만 여유가 생긴다." } },
+		docs: {
+			description: {
+				story:
+					"cover 배율이라 세로는 꽉 차고 가로만 여유가 생긴다. / With cover scaling, height fills the viewport while only width has room to pan.",
+			},
+		},
 	},
 };
 
