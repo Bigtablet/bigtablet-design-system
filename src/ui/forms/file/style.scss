@@ -17,6 +17,10 @@
     top: 0; right: 0; bottom: 0; left: 0;
     opacity: 0;
     cursor: pointer;
+    // 포인터는 label 이 받는다 — 투명 input 이 위를 덮고 있으면 브라우저가 파일 input 기본 툴팁
+    // (선택한 파일명)을 hover 시 띄운다. label 에 htmlFor 가 있어 클릭은 그대로 열리고,
+    // 키보드 포커스·Space 는 pointer-events 와 무관하게 유지된다.
+    pointer-events: none;
   }
 
   &_label {
