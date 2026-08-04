@@ -2,6 +2,7 @@
 
 import {
 	type CSSProperties,
+	type HTMLAttributes,
 	type KeyboardEvent,
 	type PointerEvent,
 	type Ref,
@@ -42,7 +43,11 @@ export interface ImageCropperHandle {
 	reset: () => void;
 }
 
-export interface ImageCropperProps {
+// 소비자가 붙이는 표준 div 속성(id·data-*·aria-*·style 등)을 루트로 전달한다.
+// onError 는 이미지 디코드 실패 콜백(공개 API)이라 div 의 onError 와 충돌하지 않게 Omit,
+// children 은 컴포넌트가 자체 렌더하므로 Omit 한다.
+export interface ImageCropperProps
+	extends Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children"> {
 	/** 크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop). */
 	ref?: Ref<ImageCropperHandle>;
 	/** 크롭할 이미지. `File`/`Blob`(로컬) 또는 이미지 URL 문자열. */
@@ -122,6 +127,7 @@ export function ImageCropper({
 	zoomLabel = "배율",
 	zoomInLabel = "확대",
 	noPanHint = "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
+	...rest
 }: ImageCropperProps) {
 	const imageRef = useRef<HTMLImageElement>(null);
 	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
@@ -331,7 +337,8 @@ export function ImageCropper({
 		: { visibility: "hidden" };
 
 	return (
-		<div className={cn("image_cropper", className)}>
+		// 내부 className 이 항상 이기도록 spread 뒤에 지정한다.
+		<div {...rest} className={cn("image_cropper", className)}>
 			{/* biome-ignore lint/a11y/useSemanticElements: 드래그+방향키 조작 표면이라 role=group + 안내 텍스트로 처리 */}
 			<div
 				ref={viewportRef}
