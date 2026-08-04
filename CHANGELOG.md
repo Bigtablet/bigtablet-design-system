@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.5.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.1) - 2026-08-04
+
+- Button · IconButton 아이콘 크기 수정 - 아이콘 슬롯이 아이콘 크기를 강제하지 않도록 변경. `<Icon size={14} />` 처럼 지정한 크기가 이제 실제로 반영된다(기존엔 슬롯 크기로 늘어나 `size` 가 조용히 무시됨). ⚠️ **시각 변화**: 지금까지 작게 지정하고도 크게 보이던 아이콘이 준 크기로 줄어드니, 업그레이드 후 아이콘이 있는 버튼을 한 번 확인 권장
+- 의존성 업데이트 - lucide-react 1.27(신규 아이콘), (dev) next 16.2.12 · react 19.2.8 · storybook · playwright 1.62
+- Gemini Code Assist 리뷰 트리거·문서 제거(CodeRabbit + Claude 리뷰로 일원화)
+
 ## [3.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.5.0) - 2026-07-16
 
 - 접근성(a11y) 대규모 개선 - 전체 컴포넌트 감사 후 WAI-ARIA/WCAG 위반 수정: Alert 포커스 트랩, Tooltip dismissable·hoverable(WCAG 1.4.13), Toast 자동 닫힘 hover/focus 일시정지(WCAG 2.2.1), Tabs 로빙 tabindex, Checkbox·OTP `aria-invalid`, Chip·ListItem 선택 상태 노출, NavBar locale `menuitemradio`, Table `aria-busy`
