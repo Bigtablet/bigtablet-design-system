@@ -41,6 +41,21 @@ export const Tonal: Story = { args: { variant: "tonal" } };
 export const Outline: Story = { args: { variant: "outline" } };
 export const Text: Story = { args: { variant: "text" } };
 
+/** 크기를 명시한 아이콘 — 슬롯이 크기를 강제하지 않으므로 넘긴 값이 그대로 렌더된다. */
+const SizedPlusIcon = ({ size }: { size: number }) => (
+	<svg
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		aria-hidden="true"
+	>
+		<path d="M12 5v14M5 12h14" />
+	</svg>
+);
+
 export const WithIcons: Story = {
 	render: (args) => (
 		<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -59,3 +74,40 @@ export const WithIcons: Story = {
 };
 
 export const Disabled: Story = { args: { disabled: true } };
+
+export const IconSizes: Story = {
+	name: "Icon sizes / 아이콘 크기",
+	render: (args) => (
+		<div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+			<Button {...args} leadingIcon={<SizedPlusIcon size={14} />}>
+				14
+			</Button>
+			<Button {...args} leadingIcon={<SizedPlusIcon size={16} />}>
+				16
+			</Button>
+			<Button {...args} leadingIcon={<SizedPlusIcon size={20} />}>
+				20
+			</Button>
+			<Button {...args} leadingIcon={<PlusIcon />}>
+				크기 미지정 (24)
+			</Button>
+		</div>
+	),
+	args: { variant: "filled" },
+	parameters: {
+		docs: {
+			description: {
+				story: `
+아이콘 크기는 아이콘이 정한다 — 슬롯은 정렬만 맡는다. \`width\`/\`height\` 를 준 아이콘은 그 크기로,
+주지 않은 아이콘(뷰박스만 있는 커스텀 svg)은 기본 24px 로 렌더된다.
+
+라벨 옆 아이콘은 라벨 글자 크기에 맞추는 편이 무게가 맞는다 — \`sm\`/\`md\` 버튼이면 14~16 이 보통이다.
+
+The icon decides its own size — the slot only aligns. An icon given \`width\`/\`height\` renders at that size;
+one without (a viewBox-only custom svg) falls back to 24px. Match a leading icon to the label's font size
+(14–16 for \`sm\`/\`md\` buttons) so their visual weight lines up.
+				`,
+			},
+		},
+	},
+};
