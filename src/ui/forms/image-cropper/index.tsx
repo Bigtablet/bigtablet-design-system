@@ -2,9 +2,9 @@
 
 import {
 	type CSSProperties,
-	forwardRef,
 	type KeyboardEvent,
 	type PointerEvent,
+	type Ref,
 	type SyntheticEvent,
 	useCallback,
 	useEffect,
@@ -43,6 +43,8 @@ export interface ImageCropperHandle {
 }
 
 export interface ImageCropperProps {
+	/** 크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop). */
+	ref?: Ref<ImageCropperHandle>;
 	/** 크롭할 이미지. `File`/`Blob`(로컬) 또는 이미지 URL 문자열. */
 	src: File | Blob | string;
 	/** 결과물 한 변 길이(px). 기본 512. */
@@ -91,23 +93,21 @@ const resolveOutputType = (
  * 원격 URL 을 넘기면 `canvas.drawImage` 가 서버의 CORS(`Access-Control-Allow-Origin`)에
  * 의존한다 — 확실히 자르려면 로컬 `File`/`Blob` 을 권장한다.
  */
-export const ImageCropper = forwardRef<ImageCropperHandle, ImageCropperProps>(function ImageCropper(
-	{
-		src,
-		outputSize = 512,
-		outputType = "auto",
-		quality = 0.92,
-		circular = false,
-		viewportSize = 240,
-		minZoom = 1,
-		maxZoom = 3,
-		onReady,
-		onError,
-		className,
-		label = "이미지 위치와 배율 조정",
-	},
+export function ImageCropper({
 	ref,
-) {
+	src,
+	outputSize = 512,
+	outputType = "auto",
+	quality = 0.92,
+	circular = false,
+	viewportSize = 240,
+	minZoom = 1,
+	maxZoom = 3,
+	onReady,
+	onError,
+	className,
+	label = "이미지 위치와 배율 조정",
+}: ImageCropperProps) {
 	const imageRef = useRef<HTMLImageElement>(null);
 	// pointerdown 시점의 좌표/이동량을 담아 두고 move 에서 차이만 더한다.
 	const dragRef = useRef<{ pointerId: number; x: number; y: number; offset: CropOffset } | null>(
@@ -134,12 +134,15 @@ export const ImageCropper = forwardRef<ImageCropperHandle, ImageCropperProps>(fu
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
-	// src 가 바뀌면 조작 상태를 리셋한다.
+	// src(또는 minZoom)가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의
+	// onLoad 에서 다시 기록된다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: src 는 body 에서 읽지 않지만 새
+	// 이미지로 교체 시 리셋을 걸기 위한 의도적 트리거 의존성이다.
 	useEffect(() => {
 		setImageSize(null);
 		setZoom(minZoom);
 		setOffset({ x: 0, y: 0 });
-	}, [minZoom]);
+	}, [src, minZoom]);
 
 	const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
 		const size = {
@@ -370,4 +373,4 @@ export const ImageCropper = forwardRef<ImageCropperHandle, ImageCropperProps>(fu
 			</span>
 		</div>
 	);
-});
+}
