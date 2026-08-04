@@ -4,7 +4,7 @@
 GitHub App 없이 레포 secret 으로 Claude(OAuth 토큰)를 호출해 요약 + 라인별 인라인 코멘트를 남기고,
 심각도에 따라 approve / request-changes 정식 리뷰를 제출한다.
 
-CodeRabbit(`.coderabbit.yaml`) / Gemini Code Assist 는 그대로 병행한다 (중복 리뷰 허용).
+CodeRabbit(`.coderabbit.yaml`) 는 그대로 병행한다 (중복 리뷰 허용).
 중복이 부담되면 나중에 하나로 정리한다.
 
 ## 사전 준비 (1회, 사람 작업)

@@ -67,8 +67,9 @@
   // ── Variant: Filled ─────────────────────────────────────────────────────
 
   &_variant_filled {
-    background: token.$color_brand_primary;
-    color: token.$color_brand_on_primary;
+    // 다크에서 채움이 페이지에 묻히지 않게 테마 분기 accent 사용(#415, 라이트 값은 brand 와 동일)
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
 
     &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_dark;
@@ -84,7 +85,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }
@@ -109,7 +110,7 @@
 
     &:disabled {
       background: token.$color_bg_disabled;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }
@@ -135,13 +136,19 @@
 
     &:disabled {
       border-color: token.$color_border_default;
-      color: token.$color_brand_primary;
+      color: token.$color_accent_default;
       opacity: token.$opacity_38;
     }
   }
 
   // ── Icon Element ────────────────────────────────────────────────────────
 
+  // 슬롯은 버튼 크기가 정하고(sm 20 / md 24) 아이콘은 그 안을 넘지 않는다.
+  //
+  // `width: 100%` 로 늘리던 동안에는 소비자가 `<Icon size={16} />` 을 넘겨도 슬롯 크기로 커져
+  // `size` 가 조용히 무시됐다. `max-*` 로 바꾸면 작게 준 아이콘은 준 크기대로 그려지고, 크기를
+  // 지정하지 않은 아이콘(lucide 기본 24)은 예전처럼 슬롯 안으로 줄어든다 — sm 버튼에서 24px
+  // 아이콘이 상자를 넘치는 일이 생기지 않는다.
   &_icon {
     display: inline-flex;
     align-items: center;
@@ -149,8 +156,8 @@
     flex-shrink: 0;
 
     svg {
-      width: 100%;
-      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
     }
   }
 
@@ -162,5 +169,13 @@
   &_size_md &_icon {
     width: 24px;
     height: 24px;
+  }
+}
+
+// WCAG 2.1 SC 2.3.3 - 감속 모션 요청 시 상태 전환(bg/color/border, state layer) 정지
+@media (prefers-reduced-motion: reduce) {
+  .icon_button,
+  .icon_button::before {
+    transition: none;
   }
 }

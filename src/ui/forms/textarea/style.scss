@@ -68,7 +68,7 @@
     resize: vertical;
 
     &::placeholder {
-      color: token.$color_text_body;
+      color: token.$color_text_caption; // #420 - placeholder 통일(다크에서 입력값과 구분)
     }
 
     &:disabled {

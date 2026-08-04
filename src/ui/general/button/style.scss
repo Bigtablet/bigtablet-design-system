@@ -72,8 +72,10 @@
   // ── Variant: Filled ──────────────────────────────────────────────────────
 
   &_variant_filled {
-    background: token.$color_brand_primary;
-    color: token.$color_brand_on_primary;
+    // accent 계열: light #121212(brand 와 동일) / dark #FFFFFF - 다크에서 채움이 페이지에 묻히지
+    // 않게 테마 분기 토큰 사용(#415). 라이트 렌더는 brand 와 값이 같아 변화 없음.
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
 
     &:hover:not(:disabled)::before {
       background: token.$color_state_hover_on_dark;
@@ -181,17 +183,26 @@
 
   // ── Elements ─────────────────────────────────────────────────────────────
 
+  // 아이콘 슬롯은 정렬만 맡고 크기는 아이콘 자신이 정한다.
+  //
+  // 예전에는 슬롯이 24x24 로 고정되고 `svg { width: 100%; height: 100% }` 가 그 크기로 늘렸다.
+  // svg 의 width/height 는 presentation attribute 라 어떤 CSS 규칙에도 지므로, 소비자가
+  // `<Icon size={14} />` 를 넘겨도 화면에서는 24px 로 렌더됐다 — `size` 가 라벨 옆 아이콘에서만
+  // 조용히 무시되어, 버튼 라벨(13~14px)과 아이콘의 무게를 맞출 방법이 없었다.
+  //
+  // width/height 속성이 없는 svg(뷰박스만 있는 커스텀 아이콘)는 부모를 채우려 하므로 그 경우에만
+  // 예전 기본값(24px)을 유지한다. 24 는 디자인 스케일 토큰($icon_size_* = 14/16/18/20/32)에
+  // 없는 lucide-react 기본 아이콘 size 라, 커스텀 무치수 svg 를 기본 아이콘과 같은 크기로
+  // 맞추기 위한 lib 기본값이다(의도적으로 토큰화하지 않음 - 토큰 스케일에 없는 값).
   &_icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
     flex-shrink: 0;
 
-    svg {
-      width: 100%;
-      height: 100%;
+    svg:not([width]):not([height]) {
+      width: 24px;
+      height: 24px;
     }
   }
 
