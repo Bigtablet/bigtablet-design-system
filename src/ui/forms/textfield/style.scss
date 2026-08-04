@@ -59,11 +59,8 @@
     @include token.responsive_height(token.$tap_target_compact); // 40 → 48
   }
 
-  &_size_sm &_input {
-    padding: token.$spacing_4 token.$spacing_16;
-    font-size: token.$font_size_14;
-    line-height: token.$line_height_20;
-  }
+  // sm 은 기본 &_input(padding 4/16 · 14 · 20)과 값이 동일해 별도 override 불필요 -
+  // 사이즈 구분은 &_inner 높이(tap_target_compact)로만 준다.
 
   &_size_lg &_inner {
     @include token.responsive_height(token.$tap_target_comfortable); // 48 → 56
@@ -84,7 +81,6 @@
   &_input_wrap {
     flex: 1;
     display: flex;
-    align-items: center;
     min-width: 0;
     // inner 의 align-items: center 를 이 칸만 해제한다 — 늘어나지 않으면 wrap 높이가 텍스트
     // 높이(24px)에 머물러 위아래 9px 이 여전히 클릭해도 안 잡히는 띠로 남는다.
@@ -96,6 +92,9 @@
     padding-left: 0;
   }
 
+  // 특이도가 사이즈별 padding override(&_size_lg &_input 등, 둘 다 클래스 2개 = 0,2,0)와 같아
+  // 선언 순서로 tie-break 된다 - 반드시 사이즈 블록보다 뒤에 둬야 padding-right:0 이 이긴다.
+  // 이 규칙을 위로 옮기면 클릭 데드존(우측 패딩 부활) 버그가 조용히 재발하니 순서 유지할 것.
   &_input_wrap_no_pad_right &_input {
     padding-right: 0;
   }
