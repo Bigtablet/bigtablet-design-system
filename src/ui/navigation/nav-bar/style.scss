@@ -239,9 +239,8 @@
   // (accent_default 는 light=검정/dark=흰 반전 토큰이라 navbar 에 부적합)
 
   &_variant_accent {
-    // 다크에서 채움이 페이지에 묻히지 않게 테마 분기 accent 사용(#415, 라이트 값은 brand 와 동일)
-    background: token.$color_accent_default;
-    color: token.$color_accent_on_surface;
+    background: token.$color_brand_primary;
+    color: token.$color_brand_on_primary;
 
     .nav_bar_link {
       color: rgba(255, 255, 255, 0.7);
