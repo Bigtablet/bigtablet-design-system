@@ -8,6 +8,7 @@ import {
 	type SyntheticEvent,
 	useCallback,
 	useEffect,
+	useId,
 	useImperativeHandle,
 	useRef,
 	useState,
@@ -129,6 +130,8 @@ export function ImageCropper({
 	const dragRef = useRef<{ pointerId: number; x: number; y: number; offset: CropOffset } | null>(
 		null,
 	);
+	// 한 화면에 크로퍼가 여러 개여도 aria-describedby 가 충돌하지 않도록 인스턴스별 고유 id.
+	const hintId = useId();
 
 	// File/Blob 은 objectURL 로, 문자열은 그대로. objectURL 은 언마운트 시 해제한다.
 	const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -335,7 +338,7 @@ export function ImageCropper({
 				style={viewportStyle}
 				role="group"
 				aria-label={label}
-				aria-describedby="image_cropper_hint"
+				aria-describedby={hintId}
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}
@@ -365,7 +368,7 @@ export function ImageCropper({
 				/>
 			</div>
 
-			<p id="image_cropper_hint" className="image_cropper_hint">
+			<p id={hintId} className="image_cropper_hint">
 				{hint}
 			</p>
 
