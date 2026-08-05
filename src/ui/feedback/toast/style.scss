@@ -147,7 +147,7 @@
   left: 0;
   height: token.$spacing_3;
   border-radius: 0 0 0 token.$radius_lg;
-  animation: toast_progress var(--toast-duration, 3000ms) linear forwards;
+  animation: toast_progress var(--toast-duration, #{token.$duration_progress_default}) token.$easing_linear forwards;
 
   &_success { background: token.$color_status_success; }
   &_error   { background: token.$color_status_error; }
