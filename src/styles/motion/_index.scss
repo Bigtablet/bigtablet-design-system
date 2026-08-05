@@ -53,4 +53,4 @@ $transition_lift: transform 0.25s $ease_out_expo, box-shadow 0.25s $ease_out_exp
 // ($skeleton_animation_duration / _timing 과 같은 역할의 컴포넌트 스코프 토큰)
 $duration_loading_spinner:  1.2s;    // Spinner spoke fade 1 cycle
 $duration_loading_bar:      1.5s;    // TopLoading indeterminate sweep 1 cycle
-$duration_progress_default: 3000ms;  // Toast progress bar 기본값 (--toast-duration fallback)
+$duration_progress_default: 3s;      // Toast progress bar 기본값 (--toast-duration fallback)
