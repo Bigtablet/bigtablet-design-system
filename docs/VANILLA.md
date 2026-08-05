@@ -818,4 +818,4 @@ cleanup();  // 리스너 제거
 
 ## 라이센스
 
-[MIT License](../LICENSE)
+[Bigtablet Inc. Open Source License](../LICENSE)

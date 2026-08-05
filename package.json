@@ -62,7 +62,7 @@
 		"css"
 	],
 	"author": "sangmin",
-	"license": "MIT",
+	"license": "SEE LICENSE IN LICENSE",
 	"packageManager": "pnpm@10.20.0",
 	"peerDependencies": {
 		"lucide-react": ">=0.552.0",
@@ -120,7 +120,7 @@
 		{
 			"path": "dist/index.js",
 			"limit": "60 kB",
-			"message": "Raised 50 kB -> 60 kB on 2026-08-05: measured baseline was 49.34 kB (1.3% headroom), so the next component addition would have failed CI. Re-measure before raising again."
+			"message": "Raised 50 kB -> 60 kB on 2026-08-05: baseline was 49.34 kB, leaving 0.66 kB (1.3%) under the old 50 kB limit. The current limit leaves 10.66 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
