@@ -1,5 +1,5 @@
-import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { ImageCropper } from "./index";
 
 /**
@@ -26,10 +26,14 @@ describe("ImageCropper native attribute forwarding", () => {
 		expect(root).toHaveClass("image_cropper", "custom");
 	});
 
-	it("keeps onError as the image-decode callback, not a div handler", () => {
-		// 타입/런타임 모두 () => void 이미지 콜백으로 통과해야 한다(div onError 로 치환되지 않음).
-		const onError = () => {};
+	it("wires onError to the image element's error event, not a div handler", () => {
+		const onError = vi.fn();
 		const { container } = render(<ImageCropper src="data:image/png;base64," onError={onError} />);
-		expect(container.querySelector(".image_cropper")).not.toBeNull();
+		const img = container.querySelector(".image_cropper_image");
+		expect(img).not.toBeNull();
+		// 이미지 디코드 실패 시에만 불려야 한다 — 렌더만으로는 호출되지 않음.
+		expect(onError).not.toHaveBeenCalled();
+		fireEvent.error(img as HTMLImageElement);
+		expect(onError).toHaveBeenCalledTimes(1);
 	});
 });

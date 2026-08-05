@@ -44,10 +44,11 @@ export interface ImageCropperHandle {
 }
 
 // 소비자가 붙이는 표준 div 속성(id·data-*·aria-*·style 등)을 루트로 전달한다.
-// onError 는 이미지 디코드 실패 콜백(공개 API)이라 div 의 onError 와 충돌하지 않게 Omit,
-// children 은 컴포넌트가 자체 렌더하므로 Omit 한다.
+// onError 는 이미지 디코드 실패 콜백(공개 API)이라 div 의 onError 와 충돌하지 않게 Omit.
+// children·dangerouslySetInnerHTML 은 루트가 항상 자체 JSX 자식(뷰포트/힌트/줌)을 렌더하므로
+// 넘어오면 "Can only set one of children or dangerouslySetInnerHTML" 런타임 에러 → 둘 다 Omit.
 export interface ImageCropperProps
-	extends Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children"> {
+	extends Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML"> {
 	/** 크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop). */
 	ref?: Ref<ImageCropperHandle>;
 	/** 크롭할 이미지. `File`/`Blob`(로컬) 또는 이미지 URL 문자열. */
