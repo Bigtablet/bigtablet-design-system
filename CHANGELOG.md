@@ -4,6 +4,14 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.7.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.7.0) - 2026-08-05
+
+- ImageCropper 문구 다국어 대응 - 조작 안내·줌 버튼/슬라이더 접근성 레이블·이동 여유 안내를 `hint`/`zoomOutLabel`/`zoomLabel`/`zoomInLabel`/`noPanHint` prop 으로 개방(각 기본값 동일 → 기존 호출부 무영향). 다국어 앱에서 스크린리더에 한국어가 고정 낭독되던 문제 해소
+- ImageCropper 네이티브 div 속성 forwarding - `ImageCropperProps` 가 `Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML">` 를 확장해 `id`·`data-*`·`aria-*`·`style` 등을 루트로 전달(폼/오버레이 식별·라벨 연결). `onError`(이미지 디코드 콜백)는 그대로 유지
+- ImageCropper 다중 인스턴스 접근성 - hint id 를 `useId()` 로 인스턴스별 고유화해 한 화면에 크로퍼가 여럿일 때 `aria-describedby` 가 충돌하지 않도록 수정
+- ImageCropper 휠 줌 정리 - 휠 확대 시 뒤 페이지가 함께 스크롤되던 문제를 네이티브 `passive: false` 리스너로 해결하고, 최신 배율 ref 를 상태 변경 지점에서 동기화해 트랙패드 연타 시 줌 델타가 유실되지 않도록 수정
+- (개발) 의존성 보안 패치 - undici `^7.29.0`·fast-uri `^3.1.5`·postcss `^8.5.23` override floor 상향(Dependabot dev-scope 알림 #100-106, 배포 패키지 무관)
+
 ## [3.6.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.6.0) - 2026-08-04
 
 - ImageCropper 신규 컴포넌트 - 드래그 이동·휠/슬라이더/버튼/키보드 줌·원형·사각 마스크·rule-of-thirds 그리드로 이미지 크롭. `crop()` 로 `Blob` 반환, `outputSize`/`outputType`/`quality`/`circular` 등 지원 (React 19 ref-as-prop)

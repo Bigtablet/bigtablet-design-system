@@ -78,6 +78,31 @@ const meta = {
 			control: { type: "number", min: 1, max: 6, step: 0.5 },
 			description: "최대 배율. / Max zoom.",
 		},
+		label: {
+			control: "text",
+			description: "뷰포트 접근성 레이블. / Viewport accessibility label.",
+		},
+		hint: {
+			control: "text",
+			description: "뷰포트 아래 조작 안내 문구. / Operation hint under the viewport.",
+		},
+		zoomOutLabel: {
+			control: "text",
+			description: "축소 버튼 레이블. / Zoom-out button label.",
+		},
+		zoomLabel: {
+			control: "text",
+			description: "배율 슬라이더 레이블. / Zoom slider label.",
+		},
+		zoomInLabel: {
+			control: "text",
+			description: "확대 버튼 레이블. / Zoom-in button label.",
+		},
+		noPanHint: {
+			control: "text",
+			description:
+				"이동 여유가 없을 때 스크린리더로 알리는 문구. / Announced when the image has no room to pan.",
+		},
 		ref: { table: { disable: true } },
 		onReady: { table: { disable: true } },
 		onError: { table: { disable: true } },
@@ -112,6 +137,28 @@ export const LandscapeSource: Story = {
 
 /** 세로가 긴 원본 — 위아래로만 드래그. / Portrait source: pan vertically. */
 export const PortraitSource: Story = { args: { src: PORTRAIT } };
+
+/** 모든 문구를 소비자 로케일로 교체한 예. / Every string replaced with the consumer's locale. */
+export const Localized: Story = {
+	args: {
+		src: SQUARE,
+		circular: true,
+		label: "Adjust image position and zoom",
+		hint: "Drag (or use arrow keys) to move, scroll or use the slider to zoom.",
+		zoomOutLabel: "Zoom out",
+		zoomLabel: "Zoom",
+		zoomInLabel: "Zoom in",
+		noPanHint: "The image fills the viewport, so there is no room to pan.",
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"기본값은 한국어라, 다국어 앱은 이 prop 들로 갈아 끼운다. / Defaults are Korean, so multilingual apps swap them through these props.",
+			},
+		},
+	},
+};
 
 /** 적용/초기화 버튼과 함께 쓰는 실제 패턴 — `ref.crop()` 결과를 원형으로 미리본다. */
 export const WithApply: Story = {
@@ -153,6 +200,24 @@ export const WithApply: Story = {
 			description: {
 				story:
 					"소비 앱 패턴: 크로퍼 + 적용 버튼에서 `ref.crop()` → `Blob`. / Real pattern: apply button calls `ref.crop()`.",
+			},
+		},
+	},
+};
+
+export const WithForwardedAttributes: Story = {
+	args: { src: SQUARE },
+	render: (args) => (
+		<ImageCropper {...args} id="avatar-cropper" data-section="profile" aria-label="프로필 이미지" />
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: [
+					'`ImageCropperProps` 는 `Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML">` 를 확장해 표준 div 속성(`id`·`data-*`·`aria-*`·`style` 등)을 **루트 요소**로 전달합니다. 폼/오버레이가 크로퍼를 식별하거나 라벨을 연결할 때 씁니다. `onError` 는 이미지 디코드 실패 콜백으로 유지되고, `children`·`dangerouslySetInnerHTML` 은 컴포넌트가 자체 렌더하므로 제외됩니다.',
+					"",
+					'`ImageCropperProps` extends `Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML">`, forwarding standard div attributes (`id`, `data-*`, `aria-*`, `style`, …) onto the **root element**. `onError` stays the image-decode callback; `children`/`dangerouslySetInnerHTML` are excluded since the component renders its own content.',
+				].join("\n"),
 			},
 		},
 	},

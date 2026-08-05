@@ -2,16 +2,17 @@
 
 import {
 	type CSSProperties,
+	type HTMLAttributes,
 	type KeyboardEvent,
 	type PointerEvent,
 	type Ref,
 	type SyntheticEvent,
 	useCallback,
 	useEffect,
+	useId,
 	useImperativeHandle,
 	useRef,
 	useState,
-	type WheelEvent,
 } from "react";
 import { cn } from "../../../utils";
 import {
@@ -42,7 +43,12 @@ export interface ImageCropperHandle {
 	reset: () => void;
 }
 
-export interface ImageCropperProps {
+// 소비자가 붙이는 표준 div 속성(id·data-*·aria-*·style 등)을 루트로 전달한다.
+// onError 는 이미지 디코드 실패 콜백(공개 API)이라 div 의 onError 와 충돌하지 않게 Omit.
+// children·dangerouslySetInnerHTML 은 루트가 항상 자체 JSX 자식(뷰포트/힌트/줌)을 렌더하므로
+// 넘어오면 "Can only set one of children or dangerouslySetInnerHTML" 런타임 에러 → 둘 다 Omit.
+export interface ImageCropperProps
+	extends Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML"> {
 	/** 크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop). */
 	ref?: Ref<ImageCropperHandle>;
 	/** 크롭할 이미지. `File`/`Blob`(로컬) 또는 이미지 URL 문자열. */
@@ -68,6 +74,16 @@ export interface ImageCropperProps {
 	className?: string;
 	/** 뷰포트 접근성 레이블. 기본 "이미지 위치와 배율 조정". */
 	label?: string;
+	/** 뷰포트 아래 조작 안내 문구. 기본 "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요." */
+	hint?: string;
+	/** 축소 버튼 접근성 레이블. 기본 "축소". */
+	zoomOutLabel?: string;
+	/** 배율 슬라이더 접근성 레이블. 기본 "배율". */
+	zoomLabel?: string;
+	/** 확대 버튼 접근성 레이블. 기본 "확대". */
+	zoomInLabel?: string;
+	/** 이동 여유가 없을 때 스크린리더로 알리는 문구. 기본 "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다." */
+	noPanHint?: string;
 }
 
 const resolveOutputType = (
@@ -107,12 +123,22 @@ export function ImageCropper({
 	onError,
 	className,
 	label = "이미지 위치와 배율 조정",
+	hint = "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
+	zoomOutLabel = "축소",
+	zoomLabel = "배율",
+	zoomInLabel = "확대",
+	noPanHint = "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
+	...rest
 }: ImageCropperProps) {
 	const imageRef = useRef<HTMLImageElement>(null);
+	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
+	const viewportRef = useRef<HTMLDivElement>(null);
 	// pointerdown 시점의 좌표/이동량을 담아 두고 move 에서 차이만 더한다.
 	const dragRef = useRef<{ pointerId: number; x: number; y: number; offset: CropOffset } | null>(
 		null,
 	);
+	// 한 화면에 크로퍼가 여러 개여도 aria-describedby 가 충돌하지 않도록 인스턴스별 고유 id.
+	const hintId = useId();
 
 	// File/Blob 은 objectURL 로, 문자열은 그대로. objectURL 은 언마운트 시 해제한다.
 	const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -131,6 +157,10 @@ export function ImageCropper({
 
 	const [imageSize, setImageSize] = useState<CropImageSize | null>(null);
 	const [zoom, setZoom] = useState(minZoom);
+	// 휠 핸들러가 최신 배율을 읽되, 배율이 바뀔 때마다 리스너를 다시 붙이지는 않게 한다.
+	// zoom 을 바꾸는 곳(applyZoom·리셋)에서 setZoom 과 함께 즉시 동기화한다 — 렌더 중 대입은
+	// (중단된 렌더가 커밋 안 되는 값을 남길 수 있어) 피하고, useEffect(커밋 후)의 한 틱 지연도 없앤다.
+	const zoomRef = useRef(zoom);
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
@@ -141,6 +171,7 @@ export function ImageCropper({
 	useEffect(() => {
 		setImageSize(null);
 		setZoom(minZoom);
+		zoomRef.current = minZoom;
 		setOffset({ x: 0, y: 0 });
 	}, [src, minZoom]);
 
@@ -157,6 +188,7 @@ export function ImageCropper({
 		(next: number) => {
 			const clampedZoom = Math.min(maxZoom, Math.max(minZoom, next));
 			setZoom(clampedZoom);
+			zoomRef.current = clampedZoom;
 			if (imageSize) {
 				setOffset((prev) => clampCropOffset(prev, imageSize, viewportSize, clampedZoom));
 			}
@@ -199,11 +231,22 @@ export function ImageCropper({
 		}
 	};
 
-	const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
-		if (!imageSize) return;
-		event.preventDefault();
-		applyZoom(zoom - event.deltaY * WHEEL_ZOOM_FACTOR * zoom);
-	};
+	// 휠 줌은 React 의 onWheel 이 아니라 네이티브 리스너로 붙인다 — React 는 wheel 을 루트에
+	// `passive: true` 로 위임하므로 핸들러 안의 preventDefault 가 무시되고("Unable to
+	// preventDefault inside passive event listener invocation") 확대하는 동안 뒤 페이지가 함께
+	// 스크롤된다. `passive: false` 로 직접 등록해야 기본 스크롤을 막을 수 있다.
+	useEffect(() => {
+		const viewport = viewportRef.current;
+		if (!viewport || !imageSize) return;
+
+		const handleWheel = (event: globalThis.WheelEvent) => {
+			event.preventDefault();
+			applyZoom(zoomRef.current - event.deltaY * WHEEL_ZOOM_FACTOR * zoomRef.current);
+		};
+
+		viewport.addEventListener("wheel", handleWheel, { passive: false });
+		return () => viewport.removeEventListener("wheel", handleWheel);
+	}, [imageSize, applyZoom]);
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (!imageSize) return;
@@ -239,6 +282,7 @@ export function ImageCropper({
 		() => ({
 			reset: () => {
 				setZoom(minZoom);
+				zoomRef.current = minZoom;
 				setOffset({ x: 0, y: 0 });
 			},
 			crop: () =>
@@ -294,20 +338,21 @@ export function ImageCropper({
 		: { visibility: "hidden" };
 
 	return (
-		<div className={cn("image_cropper", className)}>
+		// className 은 위에서 별도 구조분해되어 rest 에 없으므로 spread 순서와 무관하게 충돌하지 않는다.
+		<div {...rest} className={cn("image_cropper", className)}>
 			{/* biome-ignore lint/a11y/useSemanticElements: 드래그+방향키 조작 표면이라 role=group + 안내 텍스트로 처리 */}
 			<div
+				ref={viewportRef}
 				className={cn("image_cropper_viewport", dragging && "image_cropper_viewport_dragging")}
 				style={viewportStyle}
 				role="group"
 				aria-label={label}
-				aria-describedby="image_cropper_hint"
+				aria-describedby={hintId}
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}
 				onPointerUp={handlePointerEnd}
 				onPointerCancel={handlePointerEnd}
-				onWheel={handleWheel}
 				onKeyDown={handleKeyDown}
 			>
 				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - local blob preview needs natural size + canvas access, next/image doesn't apply */}
@@ -332,15 +377,15 @@ export function ImageCropper({
 				/>
 			</div>
 
-			<p id="image_cropper_hint" className="image_cropper_hint">
-				드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.
+			<p id={hintId} className="image_cropper_hint">
+				{hint}
 			</p>
 
 			<div className="image_cropper_zoom">
 				<button
 					type="button"
 					className="image_cropper_zoom_button"
-					aria-label="축소"
+					aria-label={zoomOutLabel}
 					disabled={!imageSize || zoom <= minZoom}
 					onClick={() => applyZoom(zoom - ZOOM_KEY_STEP)}
 				>
@@ -349,7 +394,7 @@ export function ImageCropper({
 				<input
 					type="range"
 					className="image_cropper_zoom_slider"
-					aria-label="배율"
+					aria-label={zoomLabel}
 					min={minZoom}
 					max={maxZoom}
 					step={ZOOM_STEP}
@@ -360,7 +405,7 @@ export function ImageCropper({
 				<button
 					type="button"
 					className="image_cropper_zoom_button"
-					aria-label="확대"
+					aria-label={zoomInLabel}
 					disabled={!imageSize || zoom >= maxZoom}
 					onClick={() => applyZoom(zoom + ZOOM_KEY_STEP)}
 				>
@@ -369,7 +414,7 @@ export function ImageCropper({
 			</div>
 			{/* 위치 슬라이더가 없어도 미세 조정이 가능하도록 상태만 노출(스크린리더에 여유 안내) */}
 			<span className="image_cropper_sr_only" aria-live="polite">
-				{imageSize && !canPan ? "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다." : ""}
+				{imageSize && !canPan ? noPanHint : ""}
 			</span>
 		</div>
 	);
