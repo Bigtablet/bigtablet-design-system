@@ -116,6 +116,8 @@
 		const config = {
 			placeholder: "Select...",
 			disabled: false,
+			// React Dropdown 과 동일하게 onValueChange 가 canonical, onChange 는 @deprecated 별칭.
+			onValueChange: null,
 			onChange: null,
 			...options,
 		};
@@ -229,8 +231,9 @@
 				el.setAttribute("aria-selected", selected ? "true" : "false");
 			});
 
-			if (config.onChange) {
-				config.onChange(newValue, option);
+			const emit = config.onValueChange ?? config.onChange;
+			if (emit) {
+				emit(newValue, option);
 			}
 		}
 
@@ -766,6 +769,8 @@
 		const config = {
 			defaultChecked: false,
 			disabled: false,
+			// React Toggle 과 동일하게 onCheckedChange 가 canonical, onChange 는 @deprecated 별칭.
+			onCheckedChange: null,
 			onChange: null,
 			...options,
 		};
@@ -815,8 +820,9 @@
 				hiddenInput.value = checked ? "true" : "false";
 			}
 
-			if (config.onChange) {
-				config.onChange(checked);
+			const emit = config.onCheckedChange ?? config.onChange;
+			if (emit) {
+				emit(checked);
 			}
 		}
 
@@ -870,6 +876,8 @@
 			page: 1,
 			totalPages: 1,
 			sibling: 2,
+			// React Pagination 과 동일하게 onPageChange 가 canonical, onChange 는 @deprecated 별칭.
+			onPageChange: null,
 			onChange: null,
 			...options,
 		};
@@ -971,8 +979,9 @@
 			config.page = page;
 			render();
 
-			if (config.onChange) {
-				config.onChange(page);
+			const emit = config.onPageChange ?? config.onChange;
+			if (emit) {
+				emit(page);
 			}
 		}
 

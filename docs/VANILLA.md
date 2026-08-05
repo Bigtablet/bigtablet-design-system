@@ -302,7 +302,7 @@ npm install @bigtablet/design-system
   const toggleEl = document.getElementById('my-toggle');
   const myToggle = Bigtablet.Toggle(toggleEl, {
     defaultChecked: false,
-    onChange: (checked) => {
+    onCheckedChange: (checked) => {
       console.log('Toggle:', checked);
     }
   });
@@ -401,7 +401,7 @@ npm install @bigtablet/design-system
       { value: 'banana', label: '바나나' },
       { value: 'mango', label: '망고', disabled: true },
     ],
-    onChange: (value, option) => {
+    onValueChange: (value, option) => {
       console.log('Selected:', value, option);
     }
   });
@@ -586,7 +586,7 @@ Alert는 JavaScript로만 사용합니다.
   const pagination = Bigtablet.Pagination(paginationEl, {
     page: 1,
     totalPages: 20,
-    onChange: (page) => {
+    onPageChange: (page) => {
       console.log('Page:', page);
       // 데이터 로드 등
     }
@@ -778,6 +778,17 @@ document.addEventListener('DOMContentLoaded', function() {
 // 전체 재초기화
 Bigtablet.init();
 ```
+
+### 콜백 이름 (React 와 동일)
+
+값 변경 콜백은 React 컴포넌트와 같은 이름을 사용합니다. 구 `onChange` 도 계속 동작하지만
+**deprecated** 이며 v4.0.0 에서 제거됩니다. 둘 다 주면 canonical 쪽만 호출됩니다.
+
+| 컴포넌트 | canonical | deprecated |
+|---|---|---|
+| `Bigtablet.Select` | `onValueChange(value, option)` | `onChange` |
+| `Bigtablet.Toggle` | `onCheckedChange(checked)` | `onChange` |
+| `Bigtablet.Pagination` | `onPageChange(page)` | `onChange` |
 
 ### 유틸리티
 

@@ -424,7 +424,7 @@ deprecated 별칭으로 남겨 두고(제거 예정 버전 명시), 새 마크�
 // Manual initialization
 const select = Bigtablet.Select('#my-select', {
   options: [{ value: '1', label: 'One' }],
-  onChange: (value, option) => console.log(value)
+  onValueChange: (value, option) => console.log(value)
 });
 select.getValue();
 select.setValue('1');
@@ -440,7 +440,7 @@ modal.open();
 modal.close();
 
 const sw = Bigtablet.Toggle('#my-toggle', {
-  onChange: (checked) => console.log(checked)
+  onCheckedChange: (checked) => console.log(checked)
 });
 sw.toggle();
 sw.setChecked(true);
@@ -448,7 +448,7 @@ sw.setChecked(true);
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
-  onChange: (page) => console.log(page)
+  onPageChange: (page) => console.log(page)
 });
 pagination.setPage(5);
 
