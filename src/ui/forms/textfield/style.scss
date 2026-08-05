@@ -232,3 +232,13 @@
     }
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .text_field_label,
+  .text_field_container,
+  .text_field_clear,
+  .text_field_helper {
+    transition: none;
+  }
+}

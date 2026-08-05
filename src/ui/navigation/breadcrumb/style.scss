@@ -50,3 +50,8 @@
     color: token.$color_text_caption;
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumb_link { transition: none; }
+}

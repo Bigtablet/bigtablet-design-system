@@ -100,3 +100,8 @@
   }
 
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .modal_close { transition: none; }
+}

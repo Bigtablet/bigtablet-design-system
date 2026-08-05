@@ -85,3 +85,8 @@
     color: token.$color_status_error_on_surface;
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .otp_input_box { transition: none; }
+}
