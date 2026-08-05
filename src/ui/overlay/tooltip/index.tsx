@@ -32,7 +32,7 @@ export interface TooltipProps {
  * @example
  * ```tsx
  * <Tooltip content="저장하기">
- *   <IconButton icon={<SaveIcon />} />
+ *   <IconButton icon={<SaveIcon />} aria-label="저장" />
  * </Tooltip>
  * ```
  */

@@ -32,7 +32,7 @@ export interface MenuProps {
  * @example
  * ```tsx
  * <Menu
- *   trigger={<IconButton icon={<MoreIcon />} />}
+ *   trigger={<IconButton icon={<MoreIcon />} aria-label="더보기" />}
  *   items={[
  *     { key: "edit", label: "편집", onSelect: handleEdit },
  *     { key: "del", label: "삭제", onSelect: handleDel, destructive: true },
