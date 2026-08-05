@@ -153,7 +153,7 @@ For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
 <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
 
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
 
 →&nbsp;Full guide · [`docs/VANILLA.md`](./docs/VANILLA.md)

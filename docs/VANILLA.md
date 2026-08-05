@@ -15,7 +15,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Checkbox](#checkbox)
   - [Radio](#radio)
   - [Toggle](#toggle)
-  - [Select](#select)
+  - [Dropdown](#dropdown)
   - [Modal](#modal)
   - [Alert](#alert)
   - [Card](#card)
@@ -142,16 +142,17 @@ npm install @bigtablet/design-system
 - `.bt-button--{size}`: `sm`, `md`, `lg`, `xl`
 - `.bt-button--{variant}`: `filled`, `tonal`, `outline`, `text`
 - `.bt-button--danger` (선택) - variant 와 함께 조합
+- `.bt-button--radius-{none|xs|sm|md|lg|xl|full}` (선택) - React `radius` prop 과 동일. 기본값은 `full`(pill)
 - `.bt-button--full-width` (선택)
 
-> **Deprecated 별칭** - 구 variant 이름은 계속 동작하지만 **v4.0.0 에서 제거**됩니다.
-> 새 마크업에는 오른쪽 이름을 사용하세요.
->
-> | 구 이름 (deprecated) | 대체 |
-> |---|---|
-> | `.bt-button--primary` | `.bt-button--filled` |
-> | `.bt-button--secondary` | `.bt-button--outline` |
-> | `.bt-button--ghost` | `.bt-button--text` |
+```html
+<!-- radius 는 기본이 pill - 사각형에 가깝게 하려면 modifier 로 -->
+<button class="bt-button bt-button--md bt-button--filled bt-button--radius-md">Radius md</button>
+```
+
+> `--filled` 는 React `variant="filled"` 와 동일하게 accent 색을 씁니다 - 라이트에선 검정,
+> 다크에선 흰색으로 자동 반전되어 다크 테마에서 버튼이 배경에 묻히지 않습니다.
+> 양 테마 고정색이 필요하면 `--bt-color-primary` 를 직접 적용하세요.
 
 ---
 
@@ -341,25 +342,28 @@ npm install @bigtablet/design-system
 
 ---
 
-### Select
+### Dropdown
+
+React `<Dropdown>` 의 Vanilla 대응입니다. 단일 선택 전용이며,
+React 의 `multiple` / `searchable` 은 아직 지원하지 않습니다.
 
 ```html
-<div class="bt-select" data-bt-select style="width: 300px;">
-  <label class="bt-select__label">과일 선택</label>
-  <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
-    <span class="bt-select__placeholder">선택하세요...</span>
-    <span class="bt-select__icon">
+<div class="bt-dropdown" data-bt-dropdown style="width: 300px;">
+  <label class="bt-dropdown__label">과일 선택</label>
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">선택하세요...</span>
+    <span class="bt-dropdown__icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M6 9l6 6 6-6"/>
       </svg>
     </span>
   </button>
-  <ul class="bt-select__list">
-    <li class="bt-select__option" data-value="apple">사과</li>
-    <li class="bt-select__option" data-value="banana">바나나</li>
-    <li class="bt-select__option" data-value="cherry">체리</li>
-    <li class="bt-select__option is-disabled" data-value="mango">망고 (품절)</li>
-    <li class="bt-select__option" data-value="orange">오렌지</li>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="apple">사과</li>
+    <li class="bt-dropdown__option" data-value="banana">바나나</li>
+    <li class="bt-dropdown__option" data-value="cherry">체리</li>
+    <li class="bt-dropdown__option is-disabled" data-value="mango">망고 (품절)</li>
+    <li class="bt-dropdown__option" data-value="orange">오렌지</li>
   </ul>
 </div>
 ```
@@ -370,31 +374,31 @@ npm install @bigtablet/design-system
 **폼 제출 참여 (Thymeleaf/JSP):**
 
 `data-name` 을 지정하면 hidden input 이 생성되어 선택 값이 폼 POST 에 포함됩니다.
-서버 템플릿이 `.bt-select` 안에 hidden input 을 미리 렌더링해 두면 (예: `th:field`)
+서버 템플릿이 `.bt-dropdown` 안에 hidden input 을 미리 렌더링해 두면 (예: `th:field`)
 그 input 의 name/초기값을 그대로 이어받아 표시·동기화합니다.
 
 ```html
-<div class="bt-select" data-bt-select data-name="fruit">
+<div class="bt-dropdown" data-bt-dropdown data-name="fruit">
   <!-- 또는 서버 바인딩: <input type="hidden" th:field="*{fruit}"> -->
   ...
 </div>
 ```
 
 **Variants:**
-- `.bt-select__control--outline` (기본)
-- `.bt-select__control--filled`
+- `.bt-dropdown__control--outline` (기본) - React `Dropdown` 과 동등한 스타일
+- `.bt-dropdown__control--filled` - Vanilla 전용 (React `Dropdown` 에는 대응 prop 없음)
 
 **Sizes:**
-- `.bt-select__control--sm`
-- `.bt-select__control--md`
-- `.bt-select__control--lg`
+- `.bt-dropdown__control--sm`
+- `.bt-dropdown__control--md`
+- `.bt-dropdown__control--lg`
 
 **JavaScript 연동:**
 
 ```html
 <script>
-  const selectEl = document.querySelector('[data-bt-select]');
-  const mySelect = Bigtablet.Select(selectEl, {
+  const dropdownEl = document.querySelector('[data-bt-dropdown]');
+  const myDropdown = Bigtablet.Dropdown(dropdownEl, {
     placeholder: '선택하세요',
     options: [
       { value: 'apple', label: '사과' },
@@ -407,11 +411,11 @@ npm install @bigtablet/design-system
   });
 
   // API
-  mySelect.getValue();       // 현재 값
-  mySelect.setValue('apple'); // 값 설정
-  mySelect.open();           // 드롭다운 열기
-  mySelect.close();          // 드롭다운 닫기
-  mySelect.setDisabled(true); // 비활성화
+  myDropdown.getValue();       // 현재 값
+  myDropdown.setValue('apple'); // 값 설정
+  myDropdown.open();           // 드롭다운 열기
+  myDropdown.close();          // 드롭다운 닫기
+  myDropdown.setDisabled(true); // 비활성화
 </script>
 ```
 
@@ -544,29 +548,49 @@ Alert는 JavaScript로만 사용합니다.
 <div class="bt-card bt-card--bordered bt-card--p-sm">Small padding</div>
 <div class="bt-card bt-card--bordered bt-card--p-md">Medium padding</div>
 <div class="bt-card bt-card--bordered bt-card--p-lg">Large padding</div>
+
+<!-- Variant (React Card variant prop 과 동일) -->
+<div class="bt-card bt-card--accent bt-card--p-md">Accent</div>
+<div class="bt-card bt-card--outlined bt-card--p-md">Outlined (shadow 무시)</div>
+<div class="bt-card bt-card--glass bt-card--p-md">Glass (컬러/이미지 배경 위에서)</div>
+
+<!-- interactive - hover 시 살짝 떠오름 (React interactive prop) -->
+<div class="bt-card bt-card--interactive bt-card--p-md">클릭 가능한 카드</div>
 ```
 
-> **Deprecated 별칭** - **v4.0.0 에서 제거** 예정.
->
-> | 구 이름 (deprecated) | 대체 |
-> |---|---|
-> | `.bt-card--elevation-1` | `.bt-card--shadow-sm` |
-> | `.bt-card--elevation-2` | `.bt-card--shadow-md` |
-> | `.bt-card--elevation-3` | `.bt-card--shadow-lg` |
->
-> React `Card` 는 `shadow` 기본값이 `sm` 이지만, Vanilla `.bt-card` 는 기존 동작대로
-> shadow 클래스를 붙이지 않으면 그림자가 없습니다.
+**클래스 조합:**
+- `.bt-card` (필수) - 기본값은 React 와 동일하게 `shadow=sm` / `padding=md`
+- `.bt-card--shadow-{none|sm|md|lg}` (선택)
+- `.bt-card--p-{none|sm|md|lg}` (선택)
+- `.bt-card--bordered` (선택)
+- `.bt-card--{accent|outlined|glass}` (선택) - variant. 미지정 시 `default`
+- `.bt-card--interactive` (선택)
+
+> `.bt-card` 는 클래스를 하나도 더 붙이지 않아도 React `<Card>` 기본값과 같은
+> 그림자(sm)·여백(md)을 갖습니다. 없애려면 `--shadow-none` / `--p-none` 을 명시하세요.
 
 ---
 
 ### Spinner
 
+React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기는 size enum 클래스가 아니라
+`--bt-spinner-size` CSS 커스텀 프로퍼티로 지정합니다. 기본값은 React 와 같은 **24px** 입니다.
+
 ```html
-<div class="bt-spinner bt-spinner--sm"></div>  <!-- 16px -->
-<div class="bt-spinner bt-spinner--md"></div>  <!-- 24px -->
-<div class="bt-spinner bt-spinner--lg"></div>  <!-- 32px -->
-<div class="bt-spinner bt-spinner--xl"></div>  <!-- 48px -->
+<!-- 기본 24px -->
+<span class="bt-spinner" role="status" aria-label="Loading"></span>
+
+<!-- 임의 크기 -->
+<span class="bt-spinner" style="--bt-spinner-size: 16px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 48px" role="status" aria-label="Loading"></span>
 ```
+
+> `role="status"` + `aria-label` 을 직접 붙이세요 - React `<Spinner>` 는 이 둘을 자동으로
+> 렌더링하지만 Vanilla 는 CSS 만 제공하므로 마크업에서 지정해야 스크린리더에 로딩 상태가 전달됩니다.
+>
+> 회전 모양은 React 와 다릅니다 - React 는 12개 bar 가 페이드하는 iOS 스타일이고
+> Vanilla 는 단일 border spinner 입니다 (CSS 만으로 동일 렌더 불가 - 의도된 차이).
 
 ---
 
@@ -701,10 +725,14 @@ Alert는 JavaScript로만 사용합니다.
   --bt-font-size-md: 1rem;
   --bt-font-size-lg: 1.125rem;
 
-  /* Radius */
+  /* Radius (React `radius` prop 스케일과 동일) */
+  --bt-radius-none: 0px;
+  --bt-radius-xs: 4px;
   --bt-radius-sm: 6px;
   --bt-radius-md: 8px;
   --bt-radius-lg: 12px;
+  --bt-radius-xl: 16px;
+  --bt-radius-full: 9999px;
 
   /* Elevation (구 --bt-shadow-* 는 존재하지 않음) */
   --bt-elevation-1: var(--bt-elevation-level1);
@@ -748,7 +776,7 @@ Alert는 JavaScript로만 사용합니다.
 `data-bt-*` 속성이 있는 요소는 페이지 로드 시 자동으로 초기화됩니다.
 
 ```html
-<div data-bt-select>...</div>     <!-- Select 자동 초기화 -->
+<div data-bt-dropdown>...</div>   <!-- Dropdown 자동 초기화 -->
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
 <button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
@@ -759,8 +787,8 @@ Alert는 JavaScript로만 사용합니다.
 ```javascript
 // 페이지 로드 후 수동 초기화
 document.addEventListener('DOMContentLoaded', function() {
-  // Select
-  const select = Bigtablet.Select('#my-select', options);
+  // Dropdown
+  const dropdown = Bigtablet.Dropdown('#my-dropdown', options);
 
   // Modal
   const modal = Bigtablet.Modal('#my-modal', options);
@@ -781,14 +809,14 @@ Bigtablet.init();
 
 ### 콜백 이름 (React 와 동일)
 
-값 변경 콜백은 React 컴포넌트와 같은 이름을 사용합니다. 구 `onChange` 도 계속 동작하지만
-**deprecated** 이며 v4.0.0 에서 제거됩니다. 둘 다 주면 canonical 쪽만 호출됩니다.
+값 변경 콜백은 React 컴포넌트와 같은 이름을 사용합니다. 구 `onChange` 는 **더 이상 호출되지
+않습니다** (v3.8.0 제거 - [마이그레이션 가이드](./MIGRATION.md#v380-vanilla-패키지-정리) 참고).
 
-| 컴포넌트 | canonical | deprecated |
-|---|---|---|
-| `Bigtablet.Select` | `onValueChange(value, option)` | `onChange` |
-| `Bigtablet.Toggle` | `onCheckedChange(checked)` | `onChange` |
-| `Bigtablet.Pagination` | `onPageChange(page)` | `onChange` |
+| 컴포넌트 | 콜백 |
+|---|---|
+| `Bigtablet.Dropdown` | `onValueChange(value, option)` |
+| `Bigtablet.Toggle` | `onCheckedChange(checked)` |
+| `Bigtablet.Pagination` | `onPageChange(page)` |
 
 ### 유틸리티
 

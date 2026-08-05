@@ -255,39 +255,39 @@
 &lt;/button&gt;</code></pre>
     </div>
 
-    <!-- Select -->
+    <!-- Dropdown -->
     <div class="section">
-      <h2>Select</h2>
+      <h2>Dropdown</h2>
       <div class="demo-row">
-        <div class="bt-select" data-bt-select style="width: 300px;">
-          <label class="bt-select__label">Select Option</label>
-          <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
-            <span class="bt-select__placeholder">Select...</span>
-            <span class="bt-select__icon">
+        <div class="bt-dropdown" data-bt-dropdown style="width: 300px;">
+          <label class="bt-dropdown__label">Select Option</label>
+          <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+            <span class="bt-dropdown__placeholder">Select...</span>
+            <span class="bt-dropdown__icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 9l6 6 6-6"/>
               </svg>
             </span>
           </button>
-          <ul class="bt-select__list" style="display: none;">
-            <li class="bt-select__option" data-value="apple">Apple</li>
-            <li class="bt-select__option" data-value="banana">Banana</li>
-            <li class="bt-select__option" data-value="cherry">Cherry</li>
-            <li class="bt-select__option is-disabled" data-value="disabled">Disabled Option</li>
-            <li class="bt-select__option" data-value="elderberry">Elderberry</li>
+          <ul class="bt-dropdown__list" style="display: none;">
+            <li class="bt-dropdown__option" data-value="apple">Apple</li>
+            <li class="bt-dropdown__option" data-value="banana">Banana</li>
+            <li class="bt-dropdown__option" data-value="cherry">Cherry</li>
+            <li class="bt-dropdown__option is-disabled" data-value="disabled">Disabled Option</li>
+            <li class="bt-dropdown__option" data-value="elderberry">Elderberry</li>
           </ul>
         </div>
       </div>
 
-      <pre><code>&lt;div class="bt-select" data-bt-select&gt;
-  &lt;label class="bt-select__label"&gt;Select Option&lt;/label&gt;
-  &lt;button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md"&gt;
-    &lt;span class="bt-select__placeholder"&gt;Select...&lt;/span&gt;
-    &lt;span class="bt-select__icon"&gt;▼&lt;/span&gt;
+      <pre><code>&lt;div class="bt-dropdown" data-bt-dropdown&gt;
+  &lt;label class="bt-dropdown__label"&gt;Select Option&lt;/label&gt;
+  &lt;button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
+    &lt;span class="bt-dropdown__placeholder"&gt;Select...&lt;/span&gt;
+    &lt;span class="bt-dropdown__icon"&gt;▼&lt;/span&gt;
   &lt;/button&gt;
-  &lt;ul class="bt-select__list"&gt;
-    &lt;li class="bt-select__option" data-value="apple"&gt;Apple&lt;/li&gt;
-    &lt;li class="bt-select__option" data-value="banana"&gt;Banana&lt;/li&gt;
+  &lt;ul class="bt-dropdown__list"&gt;
+    &lt;li class="bt-dropdown__option" data-value="apple"&gt;Apple&lt;/li&gt;
+    &lt;li class="bt-dropdown__option" data-value="banana"&gt;Banana&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
     </div>
@@ -316,13 +316,17 @@
     <div class="section">
       <h2>Spinner</h2>
       <div class="demo-row">
-        <div class="bt-spinner bt-spinner--sm"></div>
-        <div class="bt-spinner bt-spinner--md"></div>
-        <div class="bt-spinner bt-spinner--lg"></div>
-        <div class="bt-spinner bt-spinner--xl"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 16px" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 48px" role="status" aria-label="Loading"></div>
       </div>
 
-      <pre><code>&lt;div class="bt-spinner bt-spinner--md"&gt;&lt;/div&gt;</code></pre>
+      <pre><code>&lt;!-- 기본 24px (React &lt;Spinner /&gt; 기본값) --&gt;
+&lt;span class="bt-spinner" role="status" aria-label="Loading"&gt;&lt;/span&gt;
+
+&lt;!-- 임의 크기 --&gt;
+&lt;span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"&gt;&lt;/span&gt;</code></pre>
     </div>
 
     <!-- Pagination -->
@@ -520,12 +524,12 @@ Bigtablet.Alert({
       });
     }
 
-    // Select example with options
+    // Dropdown example with options
     document.addEventListener('DOMContentLoaded', () => {
-      const selectEl = document.querySelector('[data-bt-select]');
-      if (selectEl?._btSelect) {
+      const dropdownEl = document.querySelector('[data-bt-dropdown]');
+      if (dropdownEl?._btDropdown) {
         // Already initialized by auto-init
-      } else if (selectEl) {
+      } else if (dropdownEl) {
         const options = [
           { value: 'apple', label: 'Apple' },
           { value: 'banana', label: 'Banana' },
@@ -534,10 +538,10 @@ Bigtablet.Alert({
           { value: 'elderberry', label: 'Elderberry' }
         ];
 
-        Bigtablet.Select(selectEl, {
+        Bigtablet.Dropdown(dropdownEl, {
           options,
           placeholder: 'Select a fruit...',
-          onChange: (value, option) => {
+          onValueChange: (value, option) => {
             console.log('Selected:', value, option);
           }
         });
@@ -546,7 +550,7 @@ Bigtablet.Alert({
       // Pagination change handler
       const paginationEl = document.querySelector('[data-bt-pagination]');
       if (paginationEl?._btPagination) {
-        // You can set onChange after init if needed
+        // You can set onPageChange after init if needed
       }
     });
   </script>
