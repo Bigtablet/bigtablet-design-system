@@ -270,32 +270,46 @@ dist/vanilla/
 
 ### Component Classes Reference
 
+클래스 이름은 대응하는 React 컴포넌트의 prop 값과 같게 맞춘다. 이름이 갈라진 구 클래스는
+deprecated 별칭으로 남겨 두고(제거 예정 버전 명시), 새 마크업/문서에는 canonical 이름만 쓴다.
+
 | Component | Base Class | Modifiers | States |
 |-----------|------------|-----------|--------|
-| Button | `.bt-button` | `--sm/md/lg`, `--primary/secondary/ghost/danger` | `:disabled` |
+| Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--full-width` | `:disabled` |
 | TextField | `.bt-text-field` | `--full-width` | |
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
-| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `.bt-toggle--disabled` |
+| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `.bt-toggle--disabled` / `:disabled` |
 | Select | `.bt-select` | | |
 | Select Control | `.bt-select__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Select List | `.bt-select__list` | `--up` (opens upward) | |
 | Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--elevation-1/2/3`, `--p-sm/md/lg` | |
+| Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`, `--p-none/sm/md/lg` | |
 | Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
 
+**Deprecated 별칭** (계속 동작 - v4.0.0 제거 예정):
+
+| 구 클래스 | 대체 |
+|---|---|
+| `.bt-button--primary` | `.bt-button--filled` |
+| `.bt-button--secondary` | `.bt-button--outline` |
+| `.bt-button--ghost` | `.bt-button--text` |
+| `.bt-card--elevation-1/2/3` | `.bt-card--shadow-sm/md/lg` |
+
 ### HTML Examples
 
 #### Button
 ```html
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
-<button class="bt-button bt-button--md bt-button--secondary">Secondary</button>
-<button class="bt-button bt-button--md bt-button--danger">Danger</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
+<button class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+<button class="bt-button bt-button--md bt-button--outline">Outline</button>
+<button class="bt-button bt-button--md bt-button--text">Text</button>
+<button class="bt-button bt-button--md bt-button--outline bt-button--danger">Delete</button>
 ```
 
 #### TextField
@@ -371,8 +385,8 @@ dist/vanilla/
     <div class="bt-modal__header">Title</div>
     <div class="bt-modal__body">Content</div>
     <div class="bt-modal__footer">
-      <button class="bt-button bt-button--md bt-button--secondary" data-modal-close>Cancel</button>
-      <button class="bt-button bt-button--md bt-button--primary" data-modal-close>Confirm</button>
+      <button class="bt-button bt-button--md bt-button--outline" data-modal-close>Cancel</button>
+      <button class="bt-button bt-button--md bt-button--filled" data-modal-close>Confirm</button>
     </div>
   </div>
 </div>
@@ -385,7 +399,7 @@ dist/vanilla/
   <p>Content</p>
 </div>
 
-<div class="bt-card bt-card--elevation-2 bt-card--p-lg">
+<div class="bt-card bt-card--shadow-md bt-card--p-lg">
   Elevation card
 </div>
 ```
@@ -486,7 +500,7 @@ All design tokens available as CSS variables:
           th:errors="*{name}"></span>
   </div>
 
-  <button type="submit" class="bt-button bt-button--md bt-button--primary">Submit</button>
+  <button type="submit" class="bt-button bt-button--md bt-button--filled">Submit</button>
 </form>
 ```
 

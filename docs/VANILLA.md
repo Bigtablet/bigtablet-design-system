@@ -85,7 +85,7 @@ npm install @bigtablet/design-system
   <div style="padding: 2rem;">
     <h1>Hello Bigtablet</h1>
 
-    <button class="bt-button bt-button--md bt-button--primary">
+    <button class="bt-button bt-button--md bt-button--filled">
       버튼
     </button>
 
@@ -111,31 +111,47 @@ npm install @bigtablet/design-system
 
 ```html
 <!-- 기본 -->
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
 
-<!-- Variants -->
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
-<button class="bt-button bt-button--md bt-button--secondary">Secondary</button>
-<button class="bt-button bt-button--md bt-button--ghost">Ghost</button>
-<button class="bt-button bt-button--md bt-button--danger">Danger</button>
+<!-- Variants (React <Button variant> 와 동일) -->
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
+<button class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+<button class="bt-button bt-button--md bt-button--outline">Outline</button>
+<button class="bt-button bt-button--md bt-button--text">Text</button>
+
+<!-- danger 는 variant 와 직교하는 modifier (React <Button danger /> 와 동일) -->
+<button class="bt-button bt-button--md bt-button--filled bt-button--danger">Delete</button>
+<button class="bt-button bt-button--md bt-button--outline bt-button--danger">Delete</button>
+<button class="bt-button bt-button--md bt-button--danger">Delete</button> <!-- variant 생략 시 filled -->
 
 <!-- Sizes -->
-<button class="bt-button bt-button--sm bt-button--primary">Small</button>
-<button class="bt-button bt-button--md bt-button--primary">Medium</button>
-<button class="bt-button bt-button--lg bt-button--primary">Large</button>
+<button class="bt-button bt-button--sm bt-button--filled">Small</button>
+<button class="bt-button bt-button--md bt-button--filled">Medium</button>
+<button class="bt-button bt-button--lg bt-button--filled">Large</button>
+<button class="bt-button bt-button--xl bt-button--filled">XLarge</button>
 
 <!-- 전체 너비 -->
-<button class="bt-button bt-button--md bt-button--primary bt-button--full-width">전체 너비</button>
+<button class="bt-button bt-button--md bt-button--filled bt-button--full-width">전체 너비</button>
 
 <!-- 비활성화 -->
-<button class="bt-button bt-button--md bt-button--primary" disabled>Disabled</button>
+<button class="bt-button bt-button--md bt-button--filled" disabled>Disabled</button>
 ```
 
 **클래스 조합:**
 - `.bt-button` (필수)
-- `.bt-button--{size}`: `sm`, `md`, `lg`
-- `.bt-button--{variant}`: `primary`, `secondary`, `ghost`, `danger`
+- `.bt-button--{size}`: `sm`, `md`, `lg`, `xl`
+- `.bt-button--{variant}`: `filled`, `tonal`, `outline`, `text`
+- `.bt-button--danger` (선택) - variant 와 함께 조합
 - `.bt-button--full-width` (선택)
+
+> **Deprecated 별칭** - 구 variant 이름은 계속 동작하지만 **v4.0.0 에서 제거**됩니다.
+> 새 마크업에는 오른쪽 이름을 사용하세요.
+>
+> | 구 이름 (deprecated) | 대체 |
+> |---|---|
+> | `.bt-button--primary` | `.bt-button--filled` |
+> | `.bt-button--secondary` | `.bt-button--outline` |
+> | `.bt-button--ghost` | `.bt-button--text` |
 
 ---
 
@@ -259,11 +275,14 @@ npm install @bigtablet/design-system
   <span class="bt-toggle__thumb"></span>
 </button>
 
-<!-- Sizes -->
-<button type="button" class="bt-toggle" data-bt-toggle>...</button>  <!-- 기본 sm -->
+<!-- Sizes (React ToggleSize 와 동일) -->
+<button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle>...</button>  <!-- 기본값 -->
 <button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle>...</button>
 
-<!-- 비활성화 -->
+<!-- 비활성화 - native disabled 또는 --disabled 클래스 -->
+<button type="button" class="bt-toggle" data-bt-toggle disabled>
+  <span class="bt-toggle__thumb"></span>
+</button>
 <button type="button" class="bt-toggle bt-toggle--disabled" data-bt-toggle>
   <span class="bt-toggle__thumb"></span>
 </button>
@@ -402,7 +421,7 @@ npm install @bigtablet/design-system
 
 ```html
 <!-- 트리거 버튼 -->
-<button class="bt-button bt-button--md bt-button--primary" data-bt-modal-open="my-modal">
+<button class="bt-button bt-button--md bt-button--filled" data-bt-modal-open="my-modal">
   모달 열기
 </button>
 
@@ -418,8 +437,8 @@ npm install @bigtablet/design-system
       <p>여러 줄의 콘텐츠도 가능합니다.</p>
     </div>
     <div class="bt-modal__footer">
-      <button class="bt-button bt-button--md bt-button--secondary" data-modal-close>취소</button>
-      <button class="bt-button bt-button--md bt-button--primary" data-modal-close>확인</button>
+      <button class="bt-button bt-button--md bt-button--outline" data-modal-close>취소</button>
+      <button class="bt-button bt-button--md bt-button--filled" data-modal-close>확인</button>
     </div>
   </div>
 </div>
@@ -452,7 +471,7 @@ npm install @bigtablet/design-system
 Alert는 JavaScript로만 사용합니다.
 
 ```html
-<button class="bt-button bt-button--md bt-button--primary" onclick="showAlert()">
+<button class="bt-button bt-button--md bt-button--filled" onclick="showAlert()">
   알림 표시
 </button>
 
@@ -497,7 +516,9 @@ Alert는 JavaScript로만 사용합니다.
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
 | `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
+| `destructive` | `boolean` | `false` | 확인 버튼을 danger(빨강)로 강조 (React `AlertOptions.destructive` 와 동일) |
 | `actionsAlign` | `string` | `'right'` | 버튼 정렬 |
+| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭으로 닫기 허용 (React `AlertOptions.closeOnOverlay` 와 동일) |
 | `onConfirm` | `function` | - | 확인 콜백 |
 | `onCancel` | `function` | - | 취소 콜백 |
 
@@ -512,16 +533,29 @@ Alert는 JavaScript로만 사용합니다.
   <p>카드 내용입니다.</p>
 </div>
 
-<!-- Shadow -->
+<!-- Shadow (React Card shadow prop 과 동일) -->
+<div class="bt-card bt-card--shadow-none bt-card--p-md">내용</div>
 <div class="bt-card bt-card--shadow-sm bt-card--p-md">내용</div>
 <div class="bt-card bt-card--shadow-md bt-card--p-md">내용</div>
 <div class="bt-card bt-card--shadow-lg bt-card--p-md">내용</div>
 
-<!-- Padding -->
+<!-- Padding (React Card padding prop 과 동일) -->
+<div class="bt-card bt-card--bordered bt-card--p-none">No padding</div>
 <div class="bt-card bt-card--bordered bt-card--p-sm">Small padding</div>
 <div class="bt-card bt-card--bordered bt-card--p-md">Medium padding</div>
 <div class="bt-card bt-card--bordered bt-card--p-lg">Large padding</div>
 ```
+
+> **Deprecated 별칭** - **v4.0.0 에서 제거** 예정.
+>
+> | 구 이름 (deprecated) | 대체 |
+> |---|---|
+> | `.bt-card--elevation-1` | `.bt-card--shadow-sm` |
+> | `.bt-card--elevation-2` | `.bt-card--shadow-md` |
+> | `.bt-card--elevation-3` | `.bt-card--shadow-lg` |
+>
+> React `Card` 는 `shadow` 기본값이 `sm` 이지만, Vanilla `.bt-card` 는 기존 동작대로
+> shadow 클래스를 붙이지 않으면 그림자가 없습니다.
 
 ---
 
@@ -640,6 +674,7 @@ Alert는 JavaScript로만 사용합니다.
   /* Colors */
   --bt-color-primary: #000000;
   --bt-color-primary-hover: #333333;
+  --bt-color-primary-container: rgba(0, 0, 0, 0.05);  /* .bt-button--tonal 채움색 */
   --bt-color-background: #ffffff;
   --bt-color-background-secondary: #fafafa;
   --bt-color-text-primary: #1a1a1a;
@@ -797,7 +832,7 @@ cleanup();  // 리스너 제거
     </div>
 
     <!-- Button -->
-    <button type="submit" class="bt-button bt-button--md bt-button--primary">
+    <button type="submit" class="bt-button bt-button--md bt-button--filled">
       제출
     </button>
   </form>
