@@ -53,6 +53,10 @@ export default defineConfig([
 			// about the CommonJS `module` variable. Suppress this — the IIFE format handles
 			// the global export and the UMD check is irrelevant at runtime.
 			options.logOverride = { "commonjs-variable-in-esm": "silent" };
+			// min.js 는 files 에서 비minified bigtablet.js 를 제외해 실제로 배포되는 유일한 vanilla JS 다.
+			// esbuild 는 minify 시 legalComments 기본값이 "none" 이라 소스의 @license 배너를 떼버리는데,
+			// 그러면 배포물에 라이선스 표기가 하나도 남지 않는다. 원위치에 보존한다.
+			options.legalComments = "inline";
 		},
 	},
 ]);
