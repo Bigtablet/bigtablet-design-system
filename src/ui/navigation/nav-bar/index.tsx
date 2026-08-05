@@ -26,6 +26,15 @@ export interface NavBarLocaleConfig {
 	onChange?: (next: string) => void;
 	/** 표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시 */
 	hideLabel?: boolean;
+	/**
+	 * locale 트리거 버튼의 접근성 이름 (기본값: 현재 옵션의 label, 없으면 `current` 대문자).
+	 * `hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.
+	 *
+	 * ⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로,
+	 * 보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가
+	 * 보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반).
+	 */
+	ariaLabel?: string;
 }
 
 export interface NavBarProps extends React.HTMLAttributes<HTMLElement> {
@@ -181,6 +190,8 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	const menuId = useId();
 
 	const currentOption = locale.options.find((o) => o.value === locale.current);
+	// 트리거에 보이는 라벨. hideLabel 이면 렌더되지 않으므로 aria-label 로만 노출된다.
+	const currentLabel = currentOption?.label ?? locale.current.toUpperCase();
 
 	useEffect(() => {
 		if (!open) return;
@@ -264,14 +275,13 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				aria-haspopup="menu"
 				aria-expanded={open}
 				aria-controls={menuId}
+				// Globe/Chevron 은 aria-hidden 이라 hideLabel 이면 버튼에 접근성 이름이 전혀 없다.
+				// 보이는 라벨과 동일한 문자열을 쓰므로 label-in-name(WCAG 2.5.3)도 유지된다.
+				aria-label={locale.ariaLabel ?? currentLabel}
 				onClick={() => setOpen((p) => !p)}
 			>
 				<Globe size={iconSize.sm} aria-hidden="true" />
-				{!locale.hideLabel && (
-					<span className="nav_bar_locale_label">
-						{currentOption?.label ?? locale.current.toUpperCase()}
-					</span>
-				)}
+				{!locale.hideLabel && <span className="nav_bar_locale_label">{currentLabel}</span>}
 				<ChevronDown
 					size={iconSize.xs}
 					aria-hidden="true"
