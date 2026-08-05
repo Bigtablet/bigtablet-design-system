@@ -204,3 +204,21 @@ export const WithApply: Story = {
 		},
 	},
 };
+
+export const WithForwardedAttributes: Story = {
+	args: { src: SQUARE },
+	render: (args) => (
+		<ImageCropper {...args} id="avatar-cropper" data-section="profile" aria-label="프로필 이미지" />
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: [
+					'`ImageCropperProps` 는 `Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML">` 를 확장해 표준 div 속성(`id`·`data-*`·`aria-*`·`style` 등)을 **루트 요소**로 전달합니다. 폼/오버레이가 크로퍼를 식별하거나 라벨을 연결할 때 씁니다. `onError` 는 이미지 디코드 실패 콜백으로 유지되고, `children`·`dangerouslySetInnerHTML` 은 컴포넌트가 자체 렌더하므로 제외됩니다.',
+					"",
+					'`ImageCropperProps` extends `Omit<HTMLAttributes<HTMLDivElement>, "onError" | "children" | "dangerouslySetInnerHTML">`, forwarding standard div attributes (`id`, `data-*`, `aria-*`, `style`, …) onto the **root element**. `onError` stays the image-decode callback; `children`/`dangerouslySetInnerHTML` are excluded since the component renders its own content.',
+				].join("\n"),
+			},
+		},
+	},
+};
