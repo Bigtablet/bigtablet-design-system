@@ -44,6 +44,9 @@ export const Tooltip = ({
 	children,
 }: TooltipProps) => {
 	const [open, setOpen] = React.useState(false);
+	// 퇴장 스프링이 끝난 뒤 언마운트 - open&& 로 바로 지우면 fade+slide 퇴장 모션이 잘린다 (Popover 와 동일).
+	const [shouldRender, setShouldRender] = React.useState(false);
+	if (open && !shouldRender) setShouldRender(true);
 	const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const tooltipId = React.useId();
 	// wrapper = 앵커(트리거) 측정 대상, position = 플로팅(뷰포트 fixed 배치) 측정 대상.
@@ -88,8 +91,9 @@ export const Tooltip = ({
 	useOverlayEscape(open, hideNow);
 
 	// 열릴 때 트리거 rect + 뷰포트로 flip/shift/shrink 를 계산해 body 로 포탈(fixed).
+	// shouldRender 로 게이트해 퇴장 애니메이션 동안에도 위치를 유지한다.
 	const pos = useAnchoredPosition({
-		open,
+		open: shouldRender,
 		anchorRef: wrapperRef,
 		floatingRef: positionRef,
 		placement,
@@ -110,7 +114,11 @@ export const Tooltip = ({
 		}
 	})();
 
-	const style = useSpringPresence({ visible: open, from: fromTransform });
+	const style = useSpringPresence({
+		visible: open,
+		from: fromTransform,
+		onExitComplete: () => setShouldRender(false),
+	});
 
 	const child = children as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
 	const childProps = child.props;
@@ -143,7 +151,7 @@ export const Tooltip = ({
 	return (
 		<span className="tooltip_wrapper" ref={wrapperRef}>
 			{trigger}
-			{open &&
+			{shouldRender &&
 				typeof document !== "undefined" &&
 				createPortal(
 					<span

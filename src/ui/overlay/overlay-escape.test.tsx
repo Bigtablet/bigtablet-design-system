@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Modal } from "./modal";
 import { Popover } from "./popover";
@@ -9,44 +9,37 @@ import { Tooltip } from "./tooltip";
  * 컴포넌트 조합에서도 보장하는지, 그리고 자식 요소의 자체 Escape 처리(critical)를 막지 않는지 검증.
  */
 describe("overlay Escape composition (shared stack)", () => {
-	it("Tooltip over Popover: Escape closes only the topmost (Tooltip), Popover stays; next Escape closes Popover", () => {
-		vi.useFakeTimers();
-		try {
-			const onOpenChange = vi.fn();
-			render(
-				<Popover
-					defaultOpen
-					onOpenChange={onOpenChange}
-					trigger={<button type="button">trigger</button>}
-					aria-label="pop"
-					content={
-						<Tooltip content="tip" delay={0}>
-							<button type="button">inner</button>
-						</Tooltip>
-					}
-				/>,
-			);
+	it("Tooltip over Popover: Escape closes only the topmost (Tooltip), Popover stays; next Escape closes Popover", async () => {
+		// Tooltip 은 퇴장 애니메이션 후 언마운트하므로 real timer + waitFor 로 검증한다.
+		const onOpenChange = vi.fn();
+		render(
+			<Popover
+				defaultOpen
+				onOpenChange={onOpenChange}
+				trigger={<button type="button">trigger</button>}
+				aria-label="pop"
+				content={
+					<Tooltip content="tip" delay={0}>
+						<button type="button">inner</button>
+					</Tooltip>
+				}
+			/>,
+		);
 
-			// Popover 는 이미 열림. inner 버튼에 hover 해 Tooltip 을 나중에 연다 → Tooltip 이 최상단.
-			expect(screen.getByRole("dialog")).toBeInTheDocument();
-			fireEvent.mouseEnter(screen.getByRole("button", { name: "inner" }));
-			act(() => {
-				vi.advanceTimersByTime(10);
-			});
-			expect(screen.getByRole("tooltip")).toBeInTheDocument();
+		// Popover 는 이미 열림. inner 버튼에 hover 해 Tooltip 을 나중에 연다 → Tooltip 이 최상단.
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		fireEvent.mouseEnter(screen.getByRole("button", { name: "inner" }));
+		await waitFor(() => expect(screen.getByRole("tooltip")).toBeInTheDocument());
 
-			// 1차 Escape - 최상단(Tooltip)만 닫히고 Popover 는 유지, onOpenChange 도 안 불림
-			fireEvent.keyDown(document.body, { key: "Escape" });
-			expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
-			expect(screen.getByRole("dialog")).toBeInTheDocument();
-			expect(onOpenChange).not.toHaveBeenCalled();
+		// 1차 Escape - 최상단(Tooltip)만 닫히고 Popover 는 유지, onOpenChange 도 안 불림
+		fireEvent.keyDown(document.body, { key: "Escape" });
+		await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		expect(onOpenChange).not.toHaveBeenCalled();
 
-			// 2차 Escape - 이제 최상단이 된 Popover 가 닫힌다
-			fireEvent.keyDown(document.body, { key: "Escape" });
-			expect(onOpenChange).toHaveBeenCalledWith(false);
-		} finally {
-			vi.useRealTimers();
-		}
+		// 2차 Escape - 이제 최상단이 된 Popover 가 닫힌다
+		fireEvent.keyDown(document.body, { key: "Escape" });
+		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 
 	it("Popover inside Modal: Escape closes only the Popover, Modal stays (topmost)", () => {
