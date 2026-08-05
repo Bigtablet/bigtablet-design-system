@@ -1555,7 +1555,7 @@ span.tooltip_wrapper           ← position: relative; display: inline-flex
     └── span.tooltip           ← role="tooltip", spring transform
 ```
 
-Portal을 **쓰지 않음** → 트리거의 `position: relative` 조상 기준으로 absolute 배치. `overflow: hidden`인 컨테이너 안에서는 잘릴 수 있으니 주의 (필요 시 컨테이너의 overflow를 풀거나 Popover 사용).
+`document.body`로 **포탈**되고 `position: fixed` + `useAnchoredPosition`이 계산한 좌표로 배치되므로, 트리거의 `overflow: hidden`/`transform` 조상에 갇히거나 잘리지 않는다. `z-index`는 `z_level5`.
 
 **Usage**
 
@@ -1698,7 +1698,7 @@ span.menu_wrapper                  ← position: relative; ref 부착 (외부 �
         └── span.menu_item_label   ← ellipsis
 ```
 
-Portal을 **쓰지 않음** → trigger의 `position: relative` 조상 기준 absolute. `overflow: hidden` 컨테이너 안에서 잘릴 수 있으니 주의. `z-index`는 `z_level5` 사용.
+`document.body`로 **포탈**되고 `position: fixed` + `useAnchoredPosition` 좌표로 배치되므로 trigger의 `overflow: hidden`/`transform` 조상에 갇히거나 잘리지 않는다. `z-index`는 `z_level5` 사용.
 
 **Usage**
 
@@ -1835,7 +1835,7 @@ span.popover_wrapper               ← position: relative; ref 부착 (외부 �
     └── div.popover                ← role="dialog", spring transform
 ```
 
-Portal을 **쓰지 않음** → trigger의 `position: relative` 조상 기준 absolute. `overflow: hidden` 컨테이너 안에서 잘릴 수 있으니 주의. `z-index`는 `z_level5` 사용.
+`document.body`로 **포탈**되고 `position: fixed` + `useAnchoredPosition` 좌표로 배치되므로 trigger의 `overflow: hidden`/`transform` 조상에 갇히거나 잘리지 않는다. `z-index`는 `z_level5` 사용.
 
 **Usage**
 

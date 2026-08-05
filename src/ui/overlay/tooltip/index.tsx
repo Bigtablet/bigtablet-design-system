@@ -149,23 +149,20 @@ export const Tooltip = ({
 					<span
 						ref={positionRef}
 						className="tooltip_position"
+						// 측정 대상(이 컨테이너)에 max-width 상한을 걸어 자식이 좁아져도 측정값이 진동하지 않게 한다.
 						// 최초 측정 전에는 숨겨 (0,0) 깜빡임을 막는다.
 						style={{
 							position: "fixed",
 							left: pos.x,
 							top: pos.y,
+							maxWidth: pos.maxWidth,
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 						// WCAG 1.4.13 Hoverable - 툴팁 위로 포인터가 오면 열림 유지
 						onMouseEnter={cancelHide}
 						onMouseLeave={hide}
 					>
-						<animated.span
-							id={tooltipId}
-							role="tooltip"
-							style={{ ...style, maxWidth: pos.maxWidth ?? undefined }}
-							className="tooltip"
-						>
+						<animated.span id={tooltipId} role="tooltip" style={style} className="tooltip">
 							{content}
 						</animated.span>
 					</span>,

@@ -40,8 +40,8 @@ export interface AnchoredResult {
 	y: number;
 	/** flip 반영된 실제 배치. */
 	placement: AnchoredSide;
-	/** 가용 폭보다 넓어 줄여야 하면 그 값, 아니면 null. */
-	maxWidth: number | null;
+	/** 뷰포트 가용 폭(px) - max-width 상한. 컴포넌트 기본 max-width 안에서만 의미. */
+	maxWidth: number;
 }
 
 const OPPOSITE: Record<AnchoredSide, AnchoredSide> = {
@@ -116,15 +116,16 @@ export function computeAnchoredPosition(
 	const gap = options.gap ?? 8;
 	const padding = options.padding ?? 8;
 
-	// 1. shrink — 가용 폭 초과 시 max-width 축소
+	// 1. shrink — max-width 는 항상 가용 폭(available)으로 돌려준다. 상수(뷰포트만 의존)라 idempotent:
+	// 측정된 폭을 임계값과 비교하면(축소 → 재측정 축소 → …) max-content 컨테이너에서 진동/무한 루프가
+	// 난다. available 을 max-width **상한**으로 걸면 컴포넌트 기본 max-width(예: 240) 안에서 콘텐츠
+	// 폭은 그대로고, 좁은 뷰포트에서만 실제로 좁아진다.
 	const available = viewport.width - padding * 2;
-	let maxWidth: number | null = null;
-	let width = floating.width;
-	if (width > available) {
-		width = available;
-		maxWidth = available;
-	}
-	const sized: FloatingSize = { width, height: floating.height };
+	const maxWidth = available;
+	const sized: FloatingSize = {
+		width: Math.min(floating.width, available),
+		height: floating.height,
+	};
 
 	// 2. flip — 선호가 안 맞고 반대편이 맞으면 뒤집기
 	let side = options.placement;
@@ -181,7 +182,7 @@ export function useAnchoredPosition({
 		x: 0,
 		y: 0,
 		placement,
-		maxWidth: null,
+		maxWidth: 0,
 		ready: false,
 	});
 
@@ -206,16 +207,29 @@ export function useAnchoredPosition({
 			setState({ ...result, ready: true });
 		};
 
-		update();
+		// scroll/resize/observer 는 rAF 로 배칭 - 잦은 스크롤에도 프레임당 한 번만 재계산.
+		let frame = 0;
+		const schedule = () => {
+			if (frame) return;
+			frame = requestAnimationFrame(() => {
+				frame = 0;
+				update();
+			});
+		};
+
+		update(); // 최초는 페인트 전 동기 배치.
 		// capture=true 로 스크롤 조상까지 잡는다(스크롤 이벤트는 버블링하지 않음).
-		window.addEventListener("scroll", update, true);
-		window.addEventListener("resize", update);
-		const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+		window.addEventListener("scroll", schedule, true);
+		window.addEventListener("resize", schedule);
+		// 앵커·플로팅 둘 다 관찰 - 트리거 자체 크기 변화(폰트 로드·리플로우)도 반영.
+		const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
 		observer?.observe(floating);
+		observer?.observe(anchor);
 
 		return () => {
-			window.removeEventListener("scroll", update, true);
-			window.removeEventListener("resize", update);
+			if (frame) cancelAnimationFrame(frame);
+			window.removeEventListener("scroll", schedule, true);
+			window.removeEventListener("resize", schedule);
 			observer?.disconnect();
 		};
 	}, [open, placement, gap, padding, anchorRef, floatingRef]);

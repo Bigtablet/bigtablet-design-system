@@ -89,7 +89,9 @@ export const Placements: Story = {
 					placement={placement}
 					aria-label={`${placement} 팝오버`}
 					trigger={<Button variant="outline">{placement}</Button>}
-					content={<div style={{ color: "var(--bt-color-text-body)" }}>{}</div>}
+					content={
+						<div style={{ color: "var(--bt-color-text-body)" }}>{`placement="${placement}"`}</div>
+					}
 				/>
 			))}
 		</div>

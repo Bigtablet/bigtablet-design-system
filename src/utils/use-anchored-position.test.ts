@@ -14,7 +14,24 @@ describe("computeAnchoredPosition", () => {
 		expect(r.placement).toBe("top");
 		expect(r.y).toBe(300 - 8 - 40); // anchor.top - gap - height
 		expect(r.x).toBe(400 + 20 - 60); // 중앙정렬: center(420) - width/2(60)
-		expect(r.maxWidth).toBeNull();
+		expect(r.maxWidth).toBe(1024 - 16); // 항상 가용 폭(상한). 240 등 컴포넌트 max-width 안에서만 의미.
+	});
+
+	it("is idempotent — feeding the already-capped width back yields the same maxWidth (no oscillation)", () => {
+		// 측정폭이 available 로 줄어든 뒤 다시 계산해도 maxWidth 가 null 로 튀지 않아야 RO 루프가 안 생긴다.
+		const anchor: AnchorRect = { top: 300, left: 90, width: 20, height: 20 };
+		const first = computeAnchoredPosition(anchor, { width: 240, height: 40 }, vp(200, 800), {
+			placement: "top",
+			padding: 8,
+		});
+		const second = computeAnchoredPosition(
+			anchor,
+			{ width: first.maxWidth, height: 40 },
+			vp(200, 800),
+			{ placement: "top", padding: 8 },
+		);
+		expect(second.maxWidth).toBe(first.maxWidth);
+		expect(second.x).toBe(first.x);
 	});
 
 	it("flips left → right when the preferred side overflows the viewport (issue #429 repro)", () => {

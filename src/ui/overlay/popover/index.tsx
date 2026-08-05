@@ -3,7 +3,13 @@
 import { animated } from "@react-spring/web";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { cn, useAnchoredPosition, useOverlayEscape, useSpringPresence } from "../../../utils";
+import {
+	cn,
+	useAnchoredPosition,
+	useFocusTrap,
+	useOverlayEscape,
+	useSpringPresence,
+} from "../../../utils";
 import "./style.scss";
 
 /** 트리거와 팝오버 사이 간격(px). */
@@ -34,15 +40,6 @@ export interface PopoverProps {
 	/** 추가 className - 팝오버 패널에 적용 */
 	className?: string;
 }
-
-const FOCUSABLE_SELECTORS = [
-	"a[href]",
-	"button:not([disabled])",
-	"input:not([disabled])",
-	"select:not([disabled])",
-	"textarea:not([disabled])",
-	'[tabindex]:not([tabindex="-1"])',
-].join(", ");
 
 /**
  * 클릭 트리거로 임의의 interactive content 를 띄우는 범용 non-modal 팝오버.
@@ -84,8 +81,6 @@ export const Popover = ({
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const positionRef = React.useRef<HTMLDivElement>(null);
 	const popoverRef = React.useRef<HTMLDivElement>(null);
-	/** 팝오버 열기 직전의 포커스 요소 (보통 trigger) - Esc 닫힘 시 복귀 대상 */
-	const previousFocusRef = React.useRef<HTMLElement | null>(null);
 	const popoverId = React.useId();
 
 	const setOpen = React.useCallback(
@@ -126,15 +121,9 @@ export const Popover = ({
 		onExitComplete: () => setShouldRender(false),
 	});
 
-	// 열릴 때 content 첫 focusable(없으면 패널 자체)로 포커스 이동
-	React.useEffect(() => {
-		if (!open) return;
-		previousFocusRef.current = document.activeElement as HTMLElement | null;
-		const node = popoverRef.current;
-		if (!node) return;
-		const focusable = node.querySelector<HTMLElement>(FOCUSABLE_SELECTORS);
-		(focusable ?? node).focus();
-	}, [open]);
+	// body 로 포탈되면 트리거 뒤 tab 순서가 끊기므로 다른 포탈 오버레이(Modal/Drawer/Alert)와 동일하게
+	// 포커스를 패널 안에 트랩한다 - 열릴 때 첫 focusable 로 이동, Tab 순환, 닫힐 때 트리거로 복귀.
+	useFocusTrap(popoverRef, open);
 
 	// 외부 클릭으로 닫기. Escape 는 아래 wrapper 의 React onKeyDown 에서 처리한다.
 	React.useEffect(() => {
@@ -156,9 +145,9 @@ export const Popover = ({
 	// 하면 이벤트가 document 까지 오지 않아 Popover 는 닫히지 않는다(자식 우선 - 이전 리뷰 critical).
 	// 아무도 소비하지 않고 document 까지 오면 최상단(=이 Popover)만 닫고, 상위 Modal 이나 소비자
 	// 앱으로의 전파를 끊어 "최상단만 닫힘"(APG)을 지킨다.
+	// 포커스 복귀(트리거로)는 useFocusTrap 의 cleanup 이 담당한다.
 	useOverlayEscape(open, () => {
 		setOpen(false);
-		previousFocusRef.current?.focus();
 	});
 
 	const triggerWithProps = React.cloneElement(
@@ -184,11 +173,13 @@ export const Popover = ({
 					<div
 						ref={positionRef}
 						className="popover_position"
+						// 측정 대상(이 컨테이너)에 max-width 상한을 걸어 자식이 좁아져도 측정값이 진동하지 않게 한다.
 						// 최초 측정 전에는 숨겨 (0,0) 깜빡임을 막는다.
 						style={{
 							position: "fixed",
 							left: pos.x,
 							top: pos.y,
+							maxWidth: pos.maxWidth,
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 					>
@@ -199,7 +190,7 @@ export const Popover = ({
 							tabIndex={-1}
 							aria-label={ariaLabel}
 							aria-labelledby={ariaLabelledby}
-							style={{ ...style, maxWidth: pos.maxWidth ?? undefined }}
+							style={style}
 							className={cn("popover", className)}
 						>
 							{content}
