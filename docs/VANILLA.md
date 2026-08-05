@@ -671,10 +671,12 @@ Alert는 JavaScript로만 사용합니다.
   --bt-radius-md: 8px;
   --bt-radius-lg: 12px;
 
-  /* Shadows */
-  --bt-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-  --bt-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --bt-shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+  /* Elevation (구 --bt-shadow-* 는 존재하지 않음) */
+  --bt-elevation-1: var(--bt-elevation-level1);
+  --bt-elevation-2: var(--bt-elevation-level2);
+  --bt-elevation-3: var(--bt-elevation-level3);
+  --bt-elevation-4: var(--bt-elevation-level4);
+  --bt-elevation-5: var(--bt-elevation-level5);
 
   /* Transitions */
   --bt-transition-fast: 0.1s ease-in-out;

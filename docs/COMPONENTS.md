@@ -360,7 +360,19 @@ import { Settings } from 'lucide-react';
 | `variant` | `'standard' \| 'filled' \| 'tonal' \| 'outlined'` | `'standard'` | 스타일 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 |
 | `icon` | `ReactNode` | required | 표시할 아이콘 |
+| `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
+| `aria-labelledby` | `string` | **둘 중 하나 필수** | 접근성 이름을 제공하는 외부 요소의 id |
 | `disabled` | `boolean` | `false` | 비활성화 |
+
+> ⚠️ **접근성 이름은 타입 레벨에서 필수다.** `icon` 은 항상 `aria-hidden="true"` span 으로 감싸지므로, `aria-label` / `aria-labelledby` 중 하나를 주지 않으면 버튼에 접근성 이름이 전혀 없다 (WCAG 2.1 SC 4.1.2 Name, Role, Value). `IconButtonProps` 는 이를 강제하는 `IconButtonWithAriaLabel | IconButtonWithAriaLabelledBy` union 이라 `<IconButton icon={<X />} />` 는 **컴파일되지 않는다**.
+>
+> ```tsx
+> // ❌ 타입 에러 - 접근성 이름 없음
+> <IconButton icon={<X />} />
+> // ✅
+> <IconButton icon={<X />} aria-label="닫기" />
+> <IconButton icon={<X />} aria-labelledby="dialog-title" />
+> ```
 
 ---
 

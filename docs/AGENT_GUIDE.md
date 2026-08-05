@@ -52,7 +52,11 @@ Providers needed:
 
 ## Design Tokens
 
-All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing-*`, etc. Always reference them - never inline a hex value.
+Always reference tokens - never inline a hex value.
+
+Two surfaces, and they are **not** interchangeable:
+- **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
+- **CSS custom properties** (`var(--bt-color-bg-solid)`) - the React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`. Spacing / radius / typography CSS vars exist only in the Vanilla bundle.
 
 ### Color tokens
 
@@ -81,11 +85,15 @@ All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing
 
 ### Spacing
 
-`--bt-spacing-4` (4px) through `--bt-spacing-48` (48px). Standard scale: 4, 8, 12, 16, 20, 24, 32, 40, 48.
+SCSS: `$spacing_4` (4px) through `$spacing_48` (48px). Standard scale: 4, 8, 12, 16, 20, 24, 32, 40, 48.
+
+CSS vars (`--bt-spacing-4` … `--bt-spacing-48`) exist **only in the Vanilla bundle** - the React entry's `style.css` does not emit them. In React/Next code use the SCSS token.
 
 ### Radius
 
-`--bt-radius-xs` (2px), `-sm` (6px), `-md` (8px), `-lg` (12px), `-xl` (16px), `-full` (9999px).
+SCSS: `$radius_none` (0), `$radius_xs` (4px), `$radius_sm` (6px), `$radius_md` (8px), `$radius_lg` (12px), `$radius_xl` (16px), `$radius_full` (9999px).
+
+CSS vars exist **only in the Vanilla bundle**, and only for a subset: `--bt-radius-sm` / `-md` / `-lg` / `-full`. There is no `--bt-radius-xs` or `-xl`.
 
 ### Elevation
 
@@ -108,12 +116,17 @@ Composite shorthands `$transition_enter_*` / `$transition_exit_*` already includ
 ### Inline style usage
 
 ```tsx
-// ✓ Correct
-<div style={{ background: "var(--bt-color-bg-solid-dim)", padding: "var(--bt-spacing-16)" }} />
+// ✓ Correct - --bt-color-* IS emitted by the React entry's style.css
+<div style={{ background: "var(--bt-color-bg-solid-dim)", padding: 16 }} />
 
-// ✗ Never
+// ✗ Never - hardcoded hex breaks dark mode
 <div style={{ background: "#F2F5F8", padding: 16 }} />
+
+// ✗ Never - --bt-spacing-* is Vanilla-only, resolves to nothing in a React app
+<div style={{ padding: "var(--bt-spacing-16)" }} />
 ```
+
+Spacing in inline styles has no CSS var to reference on the React entry - prefer moving the rule into a `style.scss` and using `token.$spacing_16`.
 
 ---
 
