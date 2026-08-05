@@ -115,18 +115,30 @@ Composite shorthands `$transition_enter_*` / `$transition_exit_*` already includ
 
 ### Inline style usage
 
+**Prefer a `style.scss` rule with SCSS tokens.** It is the only place where every token - colour *and* spacing - is available by name:
+
+```scss
+// ✓ Best - both colour and spacing come from tokens
+.my-panel {
+  background: token.$color_bg_solid_dim;
+  padding: token.$spacing_16;
+}
+```
+
+Reach for an inline style only when the value is genuinely dynamic (computed at runtime). Then:
+
 ```tsx
-// ✓ Correct - --bt-color-* IS emitted by the React entry's style.css
-<div style={{ background: "var(--bt-color-bg-solid-dim)", padding: 16 }} />
+// ✓ OK - --bt-color-* IS emitted by the React entry's style.css
+<div style={{ background: "var(--bt-color-bg-solid-dim)" }} />
 
 // ✗ Never - hardcoded hex breaks dark mode
-<div style={{ background: "#F2F5F8", padding: 16 }} />
+<div style={{ background: "#F2F5F8" }} />
 
 // ✗ Never - --bt-spacing-* is Vanilla-only, resolves to nothing in a React app
 <div style={{ padding: "var(--bt-spacing-16)" }} />
 ```
 
-Spacing in inline styles has no CSS var to reference on the React entry - prefer moving the rule into a `style.scss` and using `token.$spacing_16`.
+Spacing has no CSS var to reference on the React entry, so an inline `padding` has to be a bare number (`padding: 16`). That is a last resort - it is an untokenised literal. If you find yourself writing one, move the rule into `style.scss` and use `token.$spacing_16` instead.
 
 ---
 
