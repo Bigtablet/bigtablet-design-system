@@ -2,8 +2,12 @@
 
 import { animated } from "@react-spring/web";
 import * as React from "react";
-import { cn, useOverlayEscape, useSpringPresence } from "../../../utils";
+import { createPortal } from "react-dom";
+import { cn, useAnchoredPosition, useOverlayEscape, useSpringPresence } from "../../../utils";
 import "./style.scss";
+
+/** 트리거와 팝오버 사이 간격(px). */
+const POPOVER_GAP = 8;
 
 export type PopoverPlacement = "top" | "bottom" | "left" | "right";
 
@@ -12,7 +16,10 @@ export interface PopoverProps {
 	trigger: React.ReactElement;
 	/** 팝오버 내부 콘텐츠 - 임의 ReactNode (폼/설명/액션 조합) */
 	content: React.ReactNode;
-	/** 위치 (기본값: "bottom") */
+	/**
+	 * 선호 위치 (기본값: "bottom"). 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로
+	 * 실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다.
+	 */
 	placement?: PopoverPlacement;
 	/** 제어 모드 - 열림 상태 */
 	open?: boolean;
@@ -75,6 +82,7 @@ export const Popover = ({
 	if (open && !shouldRender) setShouldRender(true);
 
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
+	const positionRef = React.useRef<HTMLDivElement>(null);
 	const popoverRef = React.useRef<HTMLDivElement>(null);
 	/** 팝오버 열기 직전의 포커스 요소 (보통 trigger) - Esc 닫힘 시 복귀 대상 */
 	const previousFocusRef = React.useRef<HTMLElement | null>(null);
@@ -88,8 +96,19 @@ export const Popover = ({
 		[isControlled, onOpenChange],
 	);
 
+	// 열릴 때 트리거 rect + 뷰포트로 flip/shift/shrink 를 계산해 body 로 포탈(fixed).
+	// shouldRender 로 게이트해 퇴장 애니메이션 동안에도 위치를 유지한다.
+	const pos = useAnchoredPosition({
+		open: shouldRender,
+		anchorRef: wrapperRef,
+		floatingRef: positionRef,
+		placement,
+		gap: POPOVER_GAP,
+		padding: 8,
+	});
+
 	const fromTransform = (() => {
-		switch (placement) {
+		switch (pos.placement) {
 			case "top":
 				return "translateY(4px)";
 			case "bottom":
@@ -101,7 +120,11 @@ export const Popover = ({
 		}
 	})();
 
-	const style = useSpringPresence({ visible: open, from: fromTransform, onExitComplete: () => setShouldRender(false) });
+	const style = useSpringPresence({
+		visible: open,
+		from: fromTransform,
+		onExitComplete: () => setShouldRender(false),
+	});
 
 	// 열릴 때 content 첫 focusable(없으면 패널 자체)로 포커스 이동
 	React.useEffect(() => {
@@ -117,7 +140,11 @@ export const Popover = ({
 	React.useEffect(() => {
 		if (!open) return;
 		const handleClick = (e: MouseEvent) => {
-			if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+			const target = e.target as Node;
+			// 팝오버가 body 로 포탈되므로 wrapper(트리거) + popover 패널 둘 다 "내부"로 본다.
+			if (!wrapperRef.current?.contains(target) && !popoverRef.current?.contains(target)) {
+				setOpen(false);
+			}
 		};
 		document.addEventListener("mousedown", handleClick);
 		return () => document.removeEventListener("mousedown", handleClick);
@@ -151,22 +178,35 @@ export const Popover = ({
 	return (
 		<div className="popover_wrapper" ref={wrapperRef}>
 			{triggerWithProps}
-			{shouldRender && (
-				<div className={cn("popover_position", `popover_placement_${placement}`)}>
-					<animated.div
-						id={popoverId}
-						ref={popoverRef}
-						role="dialog"
-						tabIndex={-1}
-						aria-label={ariaLabel}
-						aria-labelledby={ariaLabelledby}
-						style={style}
-						className={cn("popover", className)}
+			{shouldRender &&
+				typeof document !== "undefined" &&
+				createPortal(
+					<div
+						ref={positionRef}
+						className="popover_position"
+						// 최초 측정 전에는 숨겨 (0,0) 깜빡임을 막는다.
+						style={{
+							position: "fixed",
+							left: pos.x,
+							top: pos.y,
+							visibility: pos.ready ? undefined : "hidden",
+						}}
 					>
-						{content}
-					</animated.div>
-				</div>
-			)}
+						<animated.div
+							id={popoverId}
+							ref={popoverRef}
+							role="dialog"
+							tabIndex={-1}
+							aria-label={ariaLabel}
+							aria-labelledby={ariaLabelledby}
+							style={{ ...style, maxWidth: pos.maxWidth ?? undefined }}
+							className={cn("popover", className)}
+						>
+							{content}
+						</animated.div>
+					</div>,
+					document.body,
+				)}
 		</div>
 	);
 };

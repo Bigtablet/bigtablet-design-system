@@ -1,5 +1,12 @@
 export { cn } from "./cn";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
+export {
+	type AnchoredResult,
+	type AnchoredSide,
+	type AnchoredState,
+	computeAnchoredPosition,
+	useAnchoredPosition,
+} from "./use-anchored-position";
 export { useFocusTrap } from "./use-focus-trap";
 export { useIsMounted } from "./use-is-mounted";
 export { useReducedMotion } from "./use-reduced-motion";

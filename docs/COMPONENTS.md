@@ -1499,7 +1499,7 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 - `"bottom"` - 트리거가 화면 상단에 가깝거나, 위에 다른 패널이 있을 때.
 - `"left"` / `"right"` - 가로 리스트(아이콘 툴바)에서 항목별 라벨, 또는 위/아래 공간이 부족할 때.
 
-> ℹ️ 현재 구현은 **자동 flipping이 없으니** 뷰포트 경계 근처라면 placement를 직접 지정하라.
+> ℹ️ `placement`는 **선호값**이다. 뷰포트를 벗어나면 반대편으로 **flip**, 교차축으로 **shift**, 그래도 넘치면 `max-width` 축소가 자동 적용되고 `body`로 포탈된다(Radix `side` + `collisionPadding` 계약). 경계 근처라도 직접 조정할 필요가 없다.
 
 **delay 가이드**
 - 200ms (기본) - 마우스가 잠깐 머무를 때만 노출, 빠른 휙휙 이동에는 안 뜸
@@ -1551,8 +1551,8 @@ Tooltip은 **dismissable 오버레이가 아님**:
 ```
 span.tooltip_wrapper           ← position: relative; display: inline-flex
 ├── {children}                 ← cloneElement로 핸들러/aria 주입된 trigger
-└── span.tooltip               ← position: absolute, role="tooltip"
-    └── tooltip_placement_*    ← top|bottom|left|right
+└── span.tooltip_position      ← createPortal(body), position: fixed (좌표는 useAnchoredPosition)
+    └── span.tooltip           ← role="tooltip", spring transform
 ```
 
 Portal을 **쓰지 않음** → 트리거의 `position: relative` 조상 기준으로 absolute 배치. `overflow: hidden`인 컨테이너 안에서는 잘릴 수 있으니 주의 (필요 시 컨테이너의 overflow를 풀거나 Popover 사용).
@@ -1776,7 +1776,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - `"top"` - trigger가 화면 하단에 가까울 때.
 - `"left"` / `"right"` - 가로 공간이 충분하고 위/아래가 막혔을 때.
 
-> ℹ️ 현재 구현은 **자동 flipping이 없으니** 뷰포트 경계 근처라면 placement를 직접 지정하라.
+> ℹ️ `placement`는 **선호값**이다. 뷰포트를 벗어나면 반대편으로 **flip**, 교차축으로 **shift**, 그래도 넘치면 `max-width` 축소가 자동 적용되고 `body`로 포탈된다(Radix `side` + `collisionPadding` 계약). 경계 근처라도 직접 조정할 필요가 없다.
 
 **제어 / 비제어**
 - 비제어 (기본) - `defaultOpen`만 주고 내부 state로 토글. 가장 간단.
@@ -1831,9 +1831,8 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 ```
 span.popover_wrapper               ← position: relative; ref 부착 (외부 클릭 판정)
 ├── {trigger}                      ← cloneElement로 onClick/aria 주입
-└── span.popover_position          ← position: absolute, placement별 정렬
-    └── popover_placement_*        ← top|bottom|left|right
-        └── div.popover            ← role="dialog", spring transform
+└── div.popover_position           ← createPortal(body), position: fixed (좌표는 useAnchoredPosition)
+    └── div.popover                ← role="dialog", spring transform
 ```
 
 Portal을 **쓰지 않음** → trigger의 `position: relative` 조상 기준 absolute. `overflow: hidden` 컨테이너 안에서 잘릴 수 있으니 주의. `z-index`는 `z_level5` 사용.

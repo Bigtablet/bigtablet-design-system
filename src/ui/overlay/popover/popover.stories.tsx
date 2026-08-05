@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Button } from "../../general/button";
 import { Checkbox } from "../../forms/checkbox";
+import { Button } from "../../general/button";
 import { Stack } from "../../layout/stack";
 import { Popover } from ".";
 
@@ -13,7 +13,8 @@ const meta: Meta<typeof Popover> = {
 		placement: {
 			control: "select",
 			options: ["top", "bottom", "left", "right"],
-			description: "trigger 기준 위치. / Position relative to the trigger.",
+			description:
+				"선호 위치. 뷰포트를 벗어나면 자동 flip/shift, body 로 포탈. / Preferred side — auto flip/shift on viewport overflow, portaled to body.",
 		},
 		trigger: {
 			control: false,
@@ -88,11 +89,7 @@ export const Placements: Story = {
 					placement={placement}
 					aria-label={`${placement} 팝오버`}
 					trigger={<Button variant="outline">{placement}</Button>}
-					content={
-						<div style={{ color: "var(--bt-color-text-body)" }}>
-							{}
-						</div>
-					}
+					content={<div style={{ color: "var(--bt-color-text-body)" }}>{}</div>}
 				/>
 			))}
 		</div>
@@ -112,9 +109,7 @@ export const RichContent: Story = {
 						<strong id="pop-title" style={{ color: "var(--bt-color-text-heading)" }}>
 							박상민
 						</strong>
-						<span style={{ color: "var(--bt-color-text-caption)" }}>
-							sangmin@bigtablet.com
-						</span>
+						<span style={{ color: "var(--bt-color-text-caption)" }}>sangmin@bigtablet.com</span>
 						<Stack direction="horizontal" gap={8}>
 							<Button size="sm" variant="outline">
 								메시지

@@ -13,7 +13,8 @@ const meta: Meta<typeof Tooltip> = {
 		placement: {
 			control: "select",
 			options: ["top", "bottom", "left", "right"],
-			description: "trigger 기준 툴팁 위치. 자동 flipping 없음.",
+			description:
+				"선호 위치. 뷰포트를 벗어나면 반대편으로 flip + 교차축 shift 되어 실제 위치는 계산 결과를 따른다.",
 		},
 		delay: {
 			control: "number",
@@ -40,7 +41,7 @@ const meta: Meta<typeof Tooltip> = {
 				component: `
 **Tooltip** - Non-blocking supplementary description on hover/focus. For click interactions use Popover. / hover/focus 시 비차단 보조 설명. 클릭 상호작용은 Popover.
 
-Key props: \`content\`, \`placement\` (\`top\`/\`bottom\`/\`left\`/\`right\`, no auto-flip), \`delay\` (default 200ms), \`disabled\`. / 주요 prop: \`content\`, \`placement\` (\`top\`/\`bottom\`/\`left\`/\`right\`, 자동 flip 없음), \`delay\` (기본 200ms), \`disabled\`.
+Key props: \`content\`, \`placement\` (preferred side — auto flip/shift when it would overflow the viewport; portaled to \`body\`), \`delay\` (default 200ms), \`disabled\`. / 주요 prop: \`content\`, \`placement\` (선호 위치 — 뷰포트를 벗어나면 자동 flip/shift, \`body\` 로 포탈), \`delay\` (기본 200ms), \`disabled\`.
 \`role="tooltip"\` + \`aria-describedby\` set automatically. / \`role="tooltip"\` + \`aria-describedby\` 자동.
 				`.trim(),
 			},
@@ -97,6 +98,37 @@ export const Placements: Story = {
 					</Tooltip>
 				</div>
 			))}
+		</div>
+	),
+};
+
+export const ViewportCollision: Story = {
+	name: "뷰포트 경계 (flip/shift)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'화면 왼쪽 끝 트리거에 `placement="left"`. left 로 두면 화면 밖이라 자동으로 right 로 flip 되어 온전히 보인다. 좁은 뷰포트(모바일 프리뷰)에서 확인. / Trigger at the left edge with `placement="left"` auto-flips to `right` so it stays fully visible.',
+			},
+		},
+	},
+	render: () => (
+		<div style={{ display: "flex", justifyContent: "flex-start", padding: "80px 0 0 4px" }}>
+			<Tooltip content="왼쪽 끝이라 right 로 flip 됩니다" placement="left">
+				<button
+					type="button"
+					style={{
+						padding: "8px 16px",
+						background: "var(--bt-color-bg-solid-dim)",
+						border: "1px solid var(--bt-color-border-default)",
+						color: "var(--bt-color-text-heading)",
+						borderRadius: 8,
+						cursor: "pointer",
+					}}
+				>
+					왼쪽 끝
+				</button>
+			</Tooltip>
 		</div>
 	),
 };

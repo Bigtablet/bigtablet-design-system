@@ -109,8 +109,9 @@ describe("Tooltip", () => {
 		expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 	});
 
-	it("applies placement class", () => {
-		render(
+	it("portals the tooltip to the body and positions it fixed", () => {
+		// placement 는 이제 CSS 클래스가 아니라 useAnchoredPosition 이 계산한 fixed 좌표로 적용된다.
+		const { container } = render(
 			<Tooltip content="hint" delay={0} placement="bottom">
 				<button type="button">btn</button>
 			</Tooltip>,
@@ -119,6 +120,11 @@ describe("Tooltip", () => {
 		act(() => {
 			vi.advanceTimersByTime(10);
 		});
-		expect(screen.getByRole("tooltip")).toHaveClass("tooltip_placement_bottom");
+		const tip = screen.getByRole("tooltip");
+		// 포탈 - 트리거 wrapper 밖(body)으로 렌더된다.
+		expect(container.querySelector(".tooltip_wrapper")?.contains(tip)).toBe(false);
+		// 위치 컨테이너는 fixed 로 배치된다.
+		const position = tip.closest(".tooltip_position") as HTMLElement;
+		expect(position.style.position).toBe("fixed");
 	});
 });
