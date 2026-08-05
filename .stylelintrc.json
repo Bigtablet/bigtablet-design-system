@@ -8,6 +8,10 @@
     "color-named": ["never", {
       "severity": "error",
       "message": "named color (white, black, red 등) 금지 — DS 토큰 사용."
+    }],
+    "function-disallowed-list": [["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color"], {
+      "severity": "error",
+      "message": "DS 컴포넌트 SCSS 에 raw 컬러 함수(rgb/rgba/hsl/hsla/hwb/lab/lch/oklab/oklch/color) 금지 — alpha 컬러도 token (token.$color_text_on_dark_* / $color_scrim_* 등) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
     }]
   },
   "overrides": [
@@ -15,14 +19,16 @@
       "files": ["src/styles/**/*.scss"],
       "rules": {
         "color-no-hex": null,
-        "color-named": null
+        "color-named": null,
+        "function-disallowed-list": null
       }
     },
     {
       "files": ["src/vanilla/**/*.scss"],
       "rules": {
         "color-no-hex": null,
-        "color-named": null
+        "color-named": null,
+        "function-disallowed-list": null
       }
     }
   ]

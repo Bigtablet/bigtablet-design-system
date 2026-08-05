@@ -52,7 +52,11 @@ Providers needed:
 
 ## Design Tokens
 
-All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing-*`, etc. Always reference them - never inline a hex value.
+Always reference tokens - never inline a hex value.
+
+Two surfaces, and they are **not** interchangeable:
+- **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
+- **CSS custom properties** (`var(--bt-color-bg-solid)`) - the React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`. Spacing / radius / typography CSS vars exist only in the Vanilla bundle.
 
 ### Color tokens
 
@@ -81,11 +85,15 @@ All tokens are CSS custom properties prefixed with `--bt-color-*`, `--bt-spacing
 
 ### Spacing
 
-`--bt-spacing-4` (4px) through `--bt-spacing-48` (48px). Standard scale: 4, 8, 12, 16, 20, 24, 32, 40, 48.
+SCSS: `$spacing_4` (4px) through `$spacing_48` (48px). Standard scale: 4, 8, 12, 16, 20, 24, 32, 40, 48.
+
+CSS vars (`--bt-spacing-4` … `--bt-spacing-48`) exist **only in the Vanilla bundle** - the React entry's `style.css` does not emit them. In React/Next code use the SCSS token.
 
 ### Radius
 
-`--bt-radius-xs` (2px), `-sm` (6px), `-md` (8px), `-lg` (12px), `-xl` (16px), `-full` (9999px).
+SCSS: `$radius_none` (0), `$radius_xs` (4px), `$radius_sm` (6px), `$radius_md` (8px), `$radius_lg` (12px), `$radius_xl` (16px), `$radius_full` (9999px).
+
+CSS vars exist **only in the Vanilla bundle**, and only for a subset: `--bt-radius-sm` / `-md` / `-lg` / `-full`. There is no `--bt-radius-xs` or `-xl`.
 
 ### Elevation
 
@@ -107,13 +115,30 @@ Composite shorthands `$transition_enter_*` / `$transition_exit_*` already includ
 
 ### Inline style usage
 
-```tsx
-// ✓ Correct
-<div style={{ background: "var(--bt-color-bg-solid-dim)", padding: "var(--bt-spacing-16)" }} />
+**Prefer a `style.scss` rule with SCSS tokens.** It is the only place where every token - colour *and* spacing - is available by name:
 
-// ✗ Never
-<div style={{ background: "#F2F5F8", padding: 16 }} />
+```scss
+// ✓ Best - both colour and spacing come from tokens
+.my-panel {
+  background: token.$color_bg_solid_dim;
+  padding: token.$spacing_16;
+}
 ```
+
+Reach for an inline style only when the value is genuinely dynamic (computed at runtime). Then:
+
+```tsx
+// ✓ OK - --bt-color-* IS emitted by the React entry's style.css
+<div style={{ background: "var(--bt-color-bg-solid-dim)" }} />
+
+// ✗ Never - hardcoded hex breaks dark mode
+<div style={{ background: "#F2F5F8" }} />
+
+// ✗ Never - --bt-spacing-* is Vanilla-only, resolves to nothing in a React app
+<div style={{ padding: "var(--bt-spacing-16)" }} />
+```
+
+Spacing has no CSS var to reference on the React entry, so an inline `padding` has to be a bare number (`padding: 16`). That is a last resort - it is an untokenised literal. If you find yourself writing one, move the rule into `style.scss` and use `token.$spacing_16` instead.
 
 ---
 
@@ -440,16 +465,18 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
 <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
 
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Select, Modal, Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Card, Spinner, Pagination, DatePicker, FileInput.
+
+Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
 JS API (auto-init on DOMContentLoaded, or manual):
 ```js
-const select = Bigtablet.Select("#my-select", { options, onChange });
+const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
 const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 ```

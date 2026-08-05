@@ -181,17 +181,24 @@ export const Button = ({
     display: inline-flex;
     align-items: center;
     border-radius: token.$radius_md;
-    transition: all token.$transition_base;
+    // `transition: all` 금지 - 바뀌는 속성만 명시한다
+    transition: background-color token.$transition_fast, color token.$transition_fast;
+
+    &_variant_filled {
+        background-color: token.$color_brand_primary;
+        color: token.$color_brand_on_primary;
+    }
+
+    &_size_md {
+        height: 40px;
+        padding: 0 token.$spacing_16;
+    }
 }
 
-.variant_primary {
-    background-color: token.$color_primary;
-    color: token.$color_white;
-}
-
-.size_md {
-    height: 40px;
-    padding: 0 token.$spacing_lg;
+@media (prefers-reduced-motion: reduce) {
+    .button {
+        transition: none;
+    }
 }
 ```
 

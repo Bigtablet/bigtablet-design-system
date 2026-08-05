@@ -5,37 +5,13 @@
   display: inline-flex;
 }
 
-// 위치 정렬 wrapper - placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// body 로 포탈된 위치 컨테이너 - left/top 은 useAnchoredPosition 이 inline(fixed)으로 지정.
 // 안의 .popover 는 spring 으로 entrance transform 사용 - 두 transform context 분리해서 충돌 X.
 // Tooltip 과 달리 interactive content 라 pointer-events 유지.
 .popover_position {
-  position: absolute;
+  // position/left/top 은 컴포넌트에서 inline 으로 지정(fixed). 여기선 나머지만.
   z-index: token.$z_level5;
   width: max-content;
-
-  &.popover_placement_top {
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &.popover_placement_bottom {
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &.popover_placement_left {
-    right: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  &.popover_placement_right {
-    left: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
 
 .popover {
@@ -45,8 +21,12 @@
   border-radius: token.$radius_lg;
   box-shadow: token.$elevation_level2;
   padding: token.$spacing_16;
-  min-width: 200px;
-  max-width: 320px;
+  // 위치 컨테이너(.popover_position)는 useAnchoredPosition 의 maxWidth(가용 폭) 로 제한된다.
+  // 패널이 그보다 넓으면 좁은 뷰포트에서 오른쪽으로 다시 넘치므로, border-box + 부모 폭(100%)
+  // 이하로 min/max 를 묶어 위치 컨테이너 밖으로 새지 않게 한다.
+  box-sizing: border-box;
+  min-width: min(200px, 100%);
+  max-width: min(320px, 100%);
   color: token.$color_text_body;
   @include token.body_small;
   will-change: transform, opacity;

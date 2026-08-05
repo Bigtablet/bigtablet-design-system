@@ -134,3 +134,8 @@
     pointer-events: none;
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .list_item_interactive .list_item_state_layer::before { transition: none; }
+}

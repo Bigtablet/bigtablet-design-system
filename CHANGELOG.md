@@ -4,6 +4,17 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.8.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.8.0) - 2026-08-05
+
+- Tooltip·Popover 뷰포트 충돌 회피 + 진입/퇴출 애니메이션 - `body` 포탈 + `position: fixed` 로 조상의 `overflow`/`transform` 을 벗어나 잘리지 않게 하고, flip→shift→shrink 로 화면 안에 맞추도록 재배치. Tooltip 은 언마운트 전에 퇴출 애니메이션을 재생 (#429, #431). **(주의: 오버레이가 `body` 로 포탈됨 - z-index/스타일 상속을 부모 트리 기준으로 가정하던 코드는 확인 필요)**
+- IconButton 접근 이름 필수화 - `aria-label` 또는 `aria-labelledby` 중 하나를 반드시 받도록 판별 유니온 타입으로 강제. **(주의: 접근 이름 없이 쓰던 호출부는 타입 에러 - 하나를 추가해야 함)**
+- 접근성 accessible name 보강 - NavBar 로케일 트리거·IconButton·Popover dialog 에 접근 이름 부여
+- 공개 컴포넌트 타입 16종 barrel re-export - `import type { ButtonProps } from "@bigtablet/design-system"` 형태로 직접 임포트 가능
+- Vanilla 번들 React API 정합 - 클래스명·JS 콜백을 React 쪽 canonical 이름으로 통일하고 레거시 alias 제거. **(주의: 구 Vanilla 클래스명/콜백명 제거 - `docs/MIGRATION.md` 의 v3.8.0 가이드 참고)**
+- 라이선스 통일 - MIT → Bigtablet Inc. Open Source License. **(주의: 배포 패키지 라이선스 변경)**
+- reduced-motion 준수 확대 - 컴포넌트 SCSS·Vanilla 번들·layout hover mixin 에 `prefers-reduced-motion` 가드 추가 (WCAG 2.1 SC 2.3.3)
+- (개발) 토큰 규율·문서 정비 - stylelint 로 컴포넌트 SCSS 의 raw `rgb/rgba/hsl/hsla` 차단, 죽은 토큰 정리, PR 라벨 자동화 워크플로우 추가, 컴포넌트/아키텍처 문서 실 API 와 동기화
+
 ## [3.7.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.7.0) - 2026-08-05
 
 - ImageCropper 문구 다국어 대응 - 조작 안내·줌 버튼/슬라이더 접근성 레이블·이동 여유 안내를 `hint`/`zoomOutLabel`/`zoomLabel`/`zoomInLabel`/`noPanHint` prop 으로 개방(각 기본값 동일 → 기존 호출부 무영향). 다국어 앱에서 스크린리더에 한국어가 고정 낭독되던 문제 해소

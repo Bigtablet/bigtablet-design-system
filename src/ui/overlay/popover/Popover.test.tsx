@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Popover } from "./index";
 
@@ -149,8 +148,9 @@ describe("Popover", () => {
 		expect(trigger).not.toHaveAttribute("aria-controls");
 	});
 
-	it("applies placement class (default bottom)", () => {
-		const { rerender } = render(
+	it("portals the panel to the body and positions it fixed", () => {
+		// placement 는 이제 CSS 클래스가 아니라 useAnchoredPosition 이 계산한 fixed 좌표로 적용된다.
+		const { container } = render(
 			<Popover
 				trigger={<button type="button">Open</button>}
 				content={<span>Panel content</span>}
@@ -158,19 +158,12 @@ describe("Popover", () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("dialog").parentElement).toHaveClass("popover_placement_bottom");
-
-		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		rerender(
-			<Popover
-				trigger={<button type="button">Open</button>}
-				content={<span>Panel content</span>}
-				placement="right"
-				aria-label="popover"
-			/>,
-		);
-		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("dialog").parentElement).toHaveClass("popover_placement_right");
+		const dialog = screen.getByRole("dialog");
+		// 포탈 - 트리거 wrapper 밖(body)으로 렌더된다.
+		expect(container.querySelector(".popover_wrapper")?.contains(dialog)).toBe(false);
+		// 위치 컨테이너는 fixed.
+		const position = dialog.closest(".popover_position") as HTMLElement;
+		expect(position.style.position).toBe("fixed");
 	});
 
 	it("propagates aria-label to the dialog", () => {
@@ -183,6 +176,33 @@ describe("Popover", () => {
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
 		expect(screen.getByRole("dialog", { name: "필터 옵션" })).toBeInTheDocument();
+	});
+
+	it('falls back to a "Dialog" accessible name when no label is given', () => {
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel content</span>}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		expect(screen.getByRole("dialog", { name: "Dialog" })).toBeInTheDocument();
+	});
+
+	it("does not add the fallback label when aria-labelledby is provided", () => {
+		render(
+			<>
+				<h2 id="popover-title">필터</h2>
+				<Popover
+					trigger={<button type="button">Open</button>}
+					content={<span>Panel content</span>}
+					aria-labelledby="popover-title"
+				/>
+			</>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const dialog = screen.getByRole("dialog", { name: "필터" });
+		expect(dialog).not.toHaveAttribute("aria-label");
 	});
 
 	it("preserves the trigger's own onClick handler", () => {

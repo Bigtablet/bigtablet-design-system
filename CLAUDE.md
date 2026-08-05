@@ -235,7 +235,7 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 86%
+- **Coverage**: 90% (stmts 90.02 / branch 85.69 / funcs 90.07 / lines 91.97 - 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지))
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
@@ -253,10 +253,10 @@ For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
 ### Build Output
 ```
 dist/vanilla/
-├── bigtablet.css       # Full CSS (27KB)
-├── bigtablet.min.css   # Minified CSS (21KB)
-├── bigtablet.js        # Full JS (20KB)
-├── bigtablet.min.js    # Minified JS (9KB)
+├── bigtablet.css       # Full CSS (~40KB)
+├── bigtablet.min.css   # Minified CSS (~31KB)
+├── bigtablet.js        # Full JS (~30KB)
+├── bigtablet.min.js    # Minified JS (~13KB)
 └── examples/           # HTML examples
 ```
 
@@ -270,21 +270,25 @@ dist/vanilla/
 
 ### Component Classes Reference
 
+클래스 이름·JS 옵션 이름은 대응하는 React 컴포넌트의 prop 값과 **같게 맞춘다**. deprecated 별칭은
+두지 않는다 - 이름이 갈라지면 별칭을 추가하는 대신 구 이름을 제거하고
+[docs/MIGRATION.md](./docs/MIGRATION.md) 에 old → new 표를 남긴다 (v3.8.0 에서 정리 완료).
+
 | Component | Base Class | Modifiers | States |
 |-----------|------------|-----------|--------|
-| Button | `.bt-button` | `--sm/md/lg`, `--primary/secondary/ghost/danger` | `:disabled` |
+| Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width` | `:disabled` |
 | TextField | `.bt-text-field` | `--full-width` | |
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
-| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `.bt-toggle--disabled` |
-| Select | `.bt-select` | | |
-| Select Control | `.bt-select__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
-| Select List | `.bt-select__list` | `--up` (opens upward) | |
-| Select Option | `.bt-select__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
+| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
+| Dropdown | `.bt-dropdown` | | |
+| Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
+| Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
+| Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--elevation-1/2/3`, `--p-sm/md/lg` | |
-| Spinner | `.bt-spinner` | `--sm/md/lg/xl` | |
+| Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outlined`, `--interactive` | |
+| Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
@@ -293,9 +297,11 @@ dist/vanilla/
 
 #### Button
 ```html
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
-<button class="bt-button bt-button--md bt-button--secondary">Secondary</button>
-<button class="bt-button bt-button--md bt-button--danger">Danger</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
+<button class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+<button class="bt-button bt-button--md bt-button--outline">Outline</button>
+<button class="bt-button bt-button--md bt-button--text">Text</button>
+<button class="bt-button bt-button--md bt-button--outline bt-button--danger">Delete</button>
 ```
 
 #### TextField
@@ -343,18 +349,18 @@ dist/vanilla/
 </button>
 ```
 
-#### Select
+#### Dropdown
 ```html
-<div class="bt-select" data-bt-select>
-  <label class="bt-select__label">Label</label>
-  <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
-    <span class="bt-select__placeholder">Select...</span>
-    <span class="bt-select__icon">▼</span>
+<div class="bt-dropdown" data-bt-dropdown>
+  <label class="bt-dropdown__label">Label</label>
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">Select...</span>
+    <span class="bt-dropdown__icon">▼</span>
   </button>
-  <ul class="bt-select__list">
-    <li class="bt-select__option" data-value="1">Option 1</li>
-    <li class="bt-select__option" data-value="2">Option 2</li>
-    <li class="bt-select__option is-disabled" data-value="3">Disabled</li>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="1">Option 1</li>
+    <li class="bt-dropdown__option" data-value="2">Option 2</li>
+    <li class="bt-dropdown__option is-disabled" data-value="3">Disabled</li>
   </ul>
 </div>
 ```
@@ -371,8 +377,8 @@ dist/vanilla/
     <div class="bt-modal__header">Title</div>
     <div class="bt-modal__body">Content</div>
     <div class="bt-modal__footer">
-      <button class="bt-button bt-button--md bt-button--secondary" data-modal-close>Cancel</button>
-      <button class="bt-button bt-button--md bt-button--primary" data-modal-close>Confirm</button>
+      <button class="bt-button bt-button--md bt-button--outline" data-modal-close>Cancel</button>
+      <button class="bt-button bt-button--md bt-button--filled" data-modal-close>Confirm</button>
     </div>
   </div>
 </div>
@@ -385,14 +391,21 @@ dist/vanilla/
   <p>Content</p>
 </div>
 
-<div class="bt-card bt-card--elevation-2 bt-card--p-lg">
-  Elevation card
+<div class="bt-card bt-card--shadow-md bt-card--p-lg">
+  Shadow card
+</div>
+
+<div class="bt-card bt-card--accent bt-card--interactive">
+  Accent + interactive card
 </div>
 ```
 
 #### Spinner
 ```html
-<div class="bt-spinner bt-spinner--md"></div>
+<!-- 기본 24px (React <Spinner /> 기본값) -->
+<span class="bt-spinner" role="status" aria-label="Loading"></span>
+<!-- 임의 크기 -->
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
 ```
 
 #### Pagination
@@ -408,14 +421,14 @@ dist/vanilla/
 // Auto-init: elements with data-bt-* are initialized on DOMContentLoaded
 
 // Manual initialization
-const select = Bigtablet.Select('#my-select', {
+const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   options: [{ value: '1', label: 'One' }],
-  onChange: (value, option) => console.log(value)
+  onValueChange: (value, option) => console.log(value)
 });
-select.getValue();
-select.setValue('1');
-select.open();
-select.close();
+dropdown.getValue();
+dropdown.setValue('1');
+dropdown.open();
+dropdown.close();
 
 const modal = Bigtablet.Modal('#my-modal', {
   closeOnOverlay: true,
@@ -426,7 +439,7 @@ modal.open();
 modal.close();
 
 const sw = Bigtablet.Toggle('#my-toggle', {
-  onChange: (checked) => console.log(checked)
+  onCheckedChange: (checked) => console.log(checked)
 });
 sw.toggle();
 sw.setChecked(true);
@@ -434,7 +447,7 @@ sw.setChecked(true);
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
-  onChange: (page) => console.log(page)
+  onPageChange: (page) => console.log(page)
 });
 pagination.setPage(5);
 
@@ -467,6 +480,7 @@ All design tokens available as CSS variables:
   --bt-spacing-lg: 1rem;
   --bt-radius-sm: 6px;
   --bt-radius-md: 8px;
+  --bt-radius-full: 9999px;
   --bt-elevation-1: 0 1px 1px -1px rgba(0,0,0,0.20), 0 3px 3px 0 rgba(0,0,0,0.12);
   --bt-transition-base: 0.2s ease-in-out;
 }
@@ -486,7 +500,7 @@ All design tokens available as CSS variables:
           th:errors="*{name}"></span>
   </div>
 
-  <button type="submit" class="bt-button bt-button--md bt-button--primary">Submit</button>
+  <button type="submit" class="bt-button bt-button--md bt-button--filled">Submit</button>
 </form>
 ```
 
@@ -600,10 +614,29 @@ EOF
 - **Base branch**: `develop` (NOT main!)
 - **PR title**: Same as branch name
 - **PR body**: Write in Korean
+- **Label**: 브랜치 접두사에 대응하는 라벨 1개 (아래 표)
+- **Assignee**: PR 작성자 본인 (`@me`)
+
+#### 브랜치 접두사 → PR 라벨 매핑
+
+| 브랜치 접두사 | 라벨 |
+|--------------|------|
+| `feat` | `Feature` |
+| `fix`, `style`, `refactor`, `config`, `delete`, `note`, `ci`, `etc` | `Fix` |
+| `bug` | `Bug` |
+| `docs` | `Docs` |
+| `release`, `deploy`, `develop`, `sync` | `Deploy` |
+
+> `.github/workflows/pr-labeler.yml` 이 PR open/reopen/edit 시 위 매핑을 **자동 적용**하고,
+> 담당자가 비어 있으면 작성자를 자동 지정한다. 아래 `--label` / `--assignee @me` 는
+> 워크플로가 안 돌거나(예: 워크플로 자체를 바꾸는 PR) 늦게 붙는 경우를 위한 이중 안전장치다.
+> 이미 붙은 라벨은 워크플로가 제거하지 않으니 수동 지정과 충돌하지 않는다.
+> 봇(dependabot 등) PR 은 assignee 가 될 수 없어 담당자 지정 대상에서 제외된다.
 
 ```bash
-gh pr create --base develop --title "label/domain" --body "$(cat <<'EOF'
-## 작업 개요
+gh pr create --base develop --title "label/domain" \
+  --label "Feature" --assignee @me --body "$(cat <<'EOF'
+## 제목
 
 ## 작업한 내용
 - [x] 작업1
@@ -621,6 +654,7 @@ EOF
 ### Important Notes
 - Always create PRs targeting `develop` branch
 - Write PR body in Korean
+- 라벨/담당자를 항상 확인 - 워크플로가 자동으로 붙이지만 누락 시 수동 보정
 - Create issues first if needed and link them to PR
 - Requires team review before merging
 

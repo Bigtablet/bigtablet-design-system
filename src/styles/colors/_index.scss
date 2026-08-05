@@ -163,3 +163,33 @@ $color_accent_light:          var(--bt-color-accent-light);
 $color_accent_default:        var(--bt-color-accent-default);
 $color_accent_strong:         var(--bt-color-accent-strong);
 $color_accent_on_surface:     var(--bt-color-accent-on-surface);
+
+// ── Fixed-surface semantics (raw alpha, theme 무관) ────────────────────
+// hero scrim / media-card overlay / accent·transparent nav bar 처럼 표면 명암이
+// 테마와 무관하게 고정된 자리의 콘텐츠용 어휘.
+// `$color_state_*_on_dark` 와 이름 규칙(`_on_dark`)은 공유하지만 구조는 다르다:
+// state 계열은 [data-theme="dark"] 에서 black alpha 로 뒤집히는 반면, 여기 값들은
+// 배경이 항상 어둡거나(밝거나) 하므로 뒤집히면 안 된다. 그래서 var() 가 아닌
+// raw alpha 로 두고 SCSS 컴파일 시점에 그대로 박힌다.
+
+// Text on a permanently dark surface (강조 → 캡션 순 램프)
+$color_text_on_dark_strong:   rgba(255, 255, 255, 0.9);   // 인터랙티브 라벨 (text button)
+$color_text_on_dark_body:     rgba(255, 255, 255, 0.85);  // 본문 / 설명문
+$color_text_on_dark_label:    rgba(255, 255, 255, 0.75);  // eyebrow / 오버레이 라벨
+$color_text_on_dark_muted:    rgba(255, 255, 255, 0.7);   // 비활성 nav link / 보조 라벨
+$color_text_on_dark_caption:  rgba(255, 255, 255, 0.6);   // meta / 캡션
+
+// Text on a permanently light surface (light scrim 위 forced dark text)
+$color_text_on_light_body:    rgba(0, 0, 0, 0.85);
+$color_text_on_light_muted:   rgba(0, 0, 0, 0.6);
+
+// Border on a permanently dark surface (outline button 등 hairline)
+$color_border_on_dark:        rgba(255, 255, 255, 0.55);
+
+// Scrim - 이미지 위 텍스트 가독성 확보용 gradient stop (clear → heavy 세기 램프)
+$color_scrim_dark_clear:      rgba(0, 0, 0, 0);
+$color_scrim_dark_soft:       rgba(0, 0, 0, 0.1);
+$color_scrim_dark_strong:     rgba(0, 0, 0, 0.55);
+$color_scrim_dark_heavy:      rgba(0, 0, 0, 0.85);
+$color_scrim_light_soft:      rgba(255, 255, 255, 0.1);
+$color_scrim_light_strong:    rgba(255, 255, 255, 0.7);

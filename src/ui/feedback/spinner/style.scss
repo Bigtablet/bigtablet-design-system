@@ -1,3 +1,4 @@
+@use "sass:math";
 @use "src/styles/token" as token;
 
 @keyframes spinner_fade {
@@ -21,13 +22,15 @@
     border-radius: 5px;
     background: currentColor;
     transform-origin: 250% 50%; // bar 의 우측 (= 컨테이너 정중앙) 기준 회전
-    animation: spinner_fade 1.2s linear infinite;
+    animation: spinner_fade token.$duration_loading_spinner token.$easing_linear infinite;
   }
 
+  // 12개 bar 를 한 사이클에 균등 분산 - 음수 delay 로 시작부터 서로 다른 위상.
   @for $i from 0 through 11 {
     &_bar:nth-child(#{$i + 1}) {
       transform: rotate(#{$i * 30}deg);
-      animation-delay: #{-1.2 + $i * 0.1}s;
+      // 12개 spoke 를 한 주기에 균등 분산 - 간격을 duration/12 로 계산해 토큰 값이 바뀌어도 유지.
+      animation-delay: math.div(token.$duration_loading_spinner, 12) * ($i - 12);
     }
   }
 }

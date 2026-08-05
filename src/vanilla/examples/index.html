@@ -94,24 +94,36 @@
     <div class="section">
       <h2>Button</h2>
       <div class="demo-row">
-        <button type="button" class="bt-button bt-button--md bt-button--primary">Primary</button>
-        <button type="button" class="bt-button bt-button--md bt-button--secondary">Secondary</button>
-        <button type="button" class="bt-button bt-button--md bt-button--ghost">Ghost</button>
-        <button type="button" class="bt-button bt-button--md bt-button--danger">Danger</button>
+        <button type="button" class="bt-button bt-button--md bt-button--filled">Filled</button>
+        <button type="button" class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline">Outline</button>
+        <button type="button" class="bt-button bt-button--md bt-button--text">Text</button>
       </div>
       <div class="demo-row">
-        <button type="button" class="bt-button bt-button--sm bt-button--primary">Small</button>
-        <button type="button" class="bt-button bt-button--md bt-button--primary">Medium</button>
-        <button type="button" class="bt-button bt-button--lg bt-button--primary">Large</button>
+        <button type="button" class="bt-button bt-button--md bt-button--filled bt-button--danger">Filled danger</button>
+        <button type="button" class="bt-button bt-button--md bt-button--tonal bt-button--danger">Tonal danger</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline bt-button--danger">Outline danger</button>
+        <button type="button" class="bt-button bt-button--md bt-button--text bt-button--danger">Text danger</button>
       </div>
       <div class="demo-row">
-        <button type="button" class="bt-button bt-button--md bt-button--primary" disabled>Disabled</button>
+        <button type="button" class="bt-button bt-button--sm bt-button--filled">Small</button>
+        <button type="button" class="bt-button bt-button--md bt-button--filled">Medium</button>
+        <button type="button" class="bt-button bt-button--lg bt-button--filled">Large</button>
+        <button type="button" class="bt-button bt-button--xl bt-button--filled">XLarge</button>
+      </div>
+      <div class="demo-row">
+        <button type="button" class="bt-button bt-button--md bt-button--filled" disabled>Disabled</button>
       </div>
 
-      <pre><code>&lt;button class="bt-button bt-button--md bt-button--primary"&gt;Primary&lt;/button&gt;
-&lt;button class="bt-button bt-button--md bt-button--secondary"&gt;Secondary&lt;/button&gt;
-&lt;button class="bt-button bt-button--md bt-button--ghost"&gt;Ghost&lt;/button&gt;
-&lt;button class="bt-button bt-button--md bt-button--danger"&gt;Danger&lt;/button&gt;</code></pre>
+      <pre><code>&lt;button class="bt-button bt-button--md bt-button--filled"&gt;Filled&lt;/button&gt;
+&lt;button class="bt-button bt-button--md bt-button--tonal"&gt;Tonal&lt;/button&gt;
+&lt;button class="bt-button bt-button--md bt-button--outline"&gt;Outline&lt;/button&gt;
+&lt;button class="bt-button bt-button--md bt-button--text"&gt;Text&lt;/button&gt;
+
+&lt;!-- danger 는 variant 와 직교 --&gt;
+&lt;button class="bt-button bt-button--md bt-button--outline bt-button--danger"&gt;Delete&lt;/button&gt;
+
+&lt;!-- 구 이름(--primary / --secondary / --ghost)은 v3.8.0 에서 제거되었습니다. docs/MIGRATION.md 참고 --&gt;</code></pre>
     </div>
 
     <!-- TextField -->
@@ -243,39 +255,39 @@
 &lt;/button&gt;</code></pre>
     </div>
 
-    <!-- Select -->
+    <!-- Dropdown -->
     <div class="section">
-      <h2>Select</h2>
+      <h2>Dropdown</h2>
       <div class="demo-row">
-        <div class="bt-select" data-bt-select style="width: 300px;">
-          <label class="bt-select__label">Select Option</label>
-          <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
-            <span class="bt-select__placeholder">Select...</span>
-            <span class="bt-select__icon">
+        <div class="bt-dropdown" data-bt-dropdown style="width: 300px;">
+          <label class="bt-dropdown__label">Select Option</label>
+          <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+            <span class="bt-dropdown__placeholder">Select...</span>
+            <span class="bt-dropdown__icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M6 9l6 6 6-6"/>
               </svg>
             </span>
           </button>
-          <ul class="bt-select__list" style="display: none;">
-            <li class="bt-select__option" data-value="apple">Apple</li>
-            <li class="bt-select__option" data-value="banana">Banana</li>
-            <li class="bt-select__option" data-value="cherry">Cherry</li>
-            <li class="bt-select__option is-disabled" data-value="disabled">Disabled Option</li>
-            <li class="bt-select__option" data-value="elderberry">Elderberry</li>
+          <ul class="bt-dropdown__list" style="display: none;">
+            <li class="bt-dropdown__option" data-value="apple">Apple</li>
+            <li class="bt-dropdown__option" data-value="banana">Banana</li>
+            <li class="bt-dropdown__option" data-value="cherry">Cherry</li>
+            <li class="bt-dropdown__option is-disabled" data-value="disabled">Disabled Option</li>
+            <li class="bt-dropdown__option" data-value="elderberry">Elderberry</li>
           </ul>
         </div>
       </div>
 
-      <pre><code>&lt;div class="bt-select" data-bt-select&gt;
-  &lt;label class="bt-select__label"&gt;Select Option&lt;/label&gt;
-  &lt;button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md"&gt;
-    &lt;span class="bt-select__placeholder"&gt;Select...&lt;/span&gt;
-    &lt;span class="bt-select__icon"&gt;▼&lt;/span&gt;
+      <pre><code>&lt;div class="bt-dropdown" data-bt-dropdown&gt;
+  &lt;label class="bt-dropdown__label"&gt;Select Option&lt;/label&gt;
+  &lt;button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
+    &lt;span class="bt-dropdown__placeholder"&gt;Select...&lt;/span&gt;
+    &lt;span class="bt-dropdown__icon"&gt;▼&lt;/span&gt;
   &lt;/button&gt;
-  &lt;ul class="bt-select__list"&gt;
-    &lt;li class="bt-select__option" data-value="apple"&gt;Apple&lt;/li&gt;
-    &lt;li class="bt-select__option" data-value="banana"&gt;Banana&lt;/li&gt;
+  &lt;ul class="bt-dropdown__list"&gt;
+    &lt;li class="bt-dropdown__option" data-value="apple"&gt;Apple&lt;/li&gt;
+    &lt;li class="bt-dropdown__option" data-value="banana"&gt;Banana&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
     </div>
@@ -288,7 +300,7 @@
           <div class="bt-card__title">Card Title</div>
           <p>This is a card component with bordered style and medium padding.</p>
         </div>
-        <div class="bt-card bt-card--elevation-2 bt-card--p-md" style="width: 300px;">
+        <div class="bt-card bt-card--shadow-md bt-card--p-md" style="width: 300px;">
           <div class="bt-card__title">Shadow Card</div>
           <p>This card uses shadow instead of border.</p>
         </div>
@@ -304,13 +316,17 @@
     <div class="section">
       <h2>Spinner</h2>
       <div class="demo-row">
-        <div class="bt-spinner bt-spinner--sm"></div>
-        <div class="bt-spinner bt-spinner--md"></div>
-        <div class="bt-spinner bt-spinner--lg"></div>
-        <div class="bt-spinner bt-spinner--xl"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 16px" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></div>
+        <div class="bt-spinner" style="--bt-spinner-size: 48px" role="status" aria-label="Loading"></div>
       </div>
 
-      <pre><code>&lt;div class="bt-spinner bt-spinner--md"&gt;&lt;/div&gt;</code></pre>
+      <pre><code>&lt;!-- 기본 24px (React &lt;Spinner /&gt; 기본값) --&gt;
+&lt;span class="bt-spinner" role="status" aria-label="Loading"&gt;&lt;/span&gt;
+
+&lt;!-- 임의 크기 --&gt;
+&lt;span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"&gt;&lt;/span&gt;</code></pre>
     </div>
 
     <!-- Pagination -->
@@ -338,7 +354,7 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
     <div class="section">
       <h2>Modal</h2>
       <div class="demo-row">
-        <button type="button" class="bt-button bt-button--md bt-button--primary" data-bt-modal-open="demo-modal">
+        <button type="button" class="bt-button bt-button--md bt-button--filled" data-bt-modal-open="demo-modal">
           Open Modal
         </button>
       </div>
@@ -350,8 +366,8 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
             <p>This is the modal content. You can put any HTML here.</p>
           </div>
           <div class="bt-modal__footer">
-            <button type="button" class="bt-button bt-button--md bt-button--secondary" data-modal-close>Cancel</button>
-            <button type="button" class="bt-button bt-button--md bt-button--primary" data-modal-close>Confirm</button>
+            <button type="button" class="bt-button bt-button--md bt-button--outline" data-modal-close>Cancel</button>
+            <button type="button" class="bt-button bt-button--md bt-button--filled" data-modal-close>Confirm</button>
           </div>
         </div>
       </div>
@@ -373,8 +389,8 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
     <div class="section">
       <h2>Alert (JavaScript)</h2>
       <div class="demo-row">
-        <button type="button" class="bt-button bt-button--md bt-button--primary" onclick="showInfoAlert()">Info Alert</button>
-        <button type="button" class="bt-button bt-button--md bt-button--secondary" onclick="showConfirmAlert()">Confirm Alert</button>
+        <button type="button" class="bt-button bt-button--md bt-button--filled" onclick="showInfoAlert()">Info Alert</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline" onclick="showConfirmAlert()">Confirm Alert</button>
         <button type="button" class="bt-button bt-button--md bt-button--danger" onclick="showErrorAlert()">Error Alert</button>
       </div>
 
@@ -508,12 +524,12 @@ Bigtablet.Alert({
       });
     }
 
-    // Select example with options
+    // Dropdown example with options
     document.addEventListener('DOMContentLoaded', () => {
-      const selectEl = document.querySelector('[data-bt-select]');
-      if (selectEl?._btSelect) {
+      const dropdownEl = document.querySelector('[data-bt-dropdown]');
+      if (dropdownEl?._btDropdown) {
         // Already initialized by auto-init
-      } else if (selectEl) {
+      } else if (dropdownEl) {
         const options = [
           { value: 'apple', label: 'Apple' },
           { value: 'banana', label: 'Banana' },
@@ -522,10 +538,10 @@ Bigtablet.Alert({
           { value: 'elderberry', label: 'Elderberry' }
         ];
 
-        Bigtablet.Select(selectEl, {
+        Bigtablet.Dropdown(dropdownEl, {
           options,
           placeholder: 'Select a fruit...',
-          onChange: (value, option) => {
+          onValueChange: (value, option) => {
             console.log('Selected:', value, option);
           }
         });
@@ -534,7 +550,7 @@ Bigtablet.Alert({
       // Pagination change handler
       const paginationEl = document.querySelector('[data-bt-pagination]');
       if (paginationEl?._btPagination) {
-        // You can set onChange after init if needed
+        // You can set onPageChange after init if needed
       }
     });
   </script>

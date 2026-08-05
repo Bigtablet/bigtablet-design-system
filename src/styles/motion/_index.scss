@@ -8,6 +8,12 @@ $transition_fast: $duration_fast ease-in-out;   // hover, icon
 $transition_base: $duration_base ease-in-out;   // 메뉴 열림
 $transition_slow: $duration_slow ease-in-out;   // 레이아웃 변화
 
+// Keyword easing - animation shorthand 에서 duration 과 조합할 때.
+// ($transition_* composite 는 easing 이 이미 들어있어 animation 에 쓰면 중복된다)
+// `//` 주석 사용 - `/* */` 는 vanilla CSS 번들에 그대로 실려 나간다.
+$easing_linear:   linear;
+$easing_standard: ease-in-out;
+
 /* Easing Curves */
 $ease_out_expo: cubic-bezier(0.16, 1, 0.3, 1);
 $ease_out_quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -41,3 +47,10 @@ $transition_dramatic: 0.6s $ease_out_quart;
 
 /* Hover Lift */
 $transition_lift: transform 0.25s $ease_out_expo, box-shadow 0.25s $ease_out_expo;
+
+// Loading & progress indicators
+// 무한 반복(`infinite`) 이 허용되는 유일한 자리 - loading affordance 전용.
+// ($skeleton_animation_duration / _timing 과 같은 역할의 컴포넌트 스코프 토큰)
+$duration_loading_spinner:  1.2s;    // Spinner spoke fade 1 cycle
+$duration_loading_bar:      1.5s;    // TopLoading indeterminate sweep 1 cycle
+$duration_progress_default: 3s;      // Toast progress bar 기본값 (--toast-duration fallback)

@@ -45,7 +45,7 @@ Bigtablet 인하우스 React + TypeScript 디자인 시스템. 커뮤니티 참�
 ## 구성
 
 - **40+ 컴포넌트** - forms, display, feedback, navigation, overlay, layout<br />
-- **11 개 토큰 도메인** - colors, typography, spacing, motion, radius, elevation 등. SCSS 변수 + CSS custom property 양쪽 제공<br />
+- **13 개 토큰 도메인** - colors, typography, spacing, motion, radius, elevation 등. SCSS 변수 + CSS custom property 양쪽 제공 (SCSS 전용 `layout` 도메인 별도)<br />
 - **라이트 + 다크 모드** 기본 내장. `[data-theme="dark"]` 또는 `prefers-color-scheme` 만으로 동작. 런타임 토글이 필요하면 `ThemeProvider`<br />
 - **Vanilla JS 번들** - Thymeleaf, JSP, PHP, Django 등 서버 템플릿 환경 지원<br />
 - **접근성 테스트** - CI 에서 axe-core 자동 검증. 키보드 네비 + ARIA 속성 완비
@@ -58,7 +58,7 @@ Bigtablet 인하우스 React + TypeScript 디자인 시스템. 커뮤니티 참�
 pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
-React 19 + lucide-react ≥ 0.552 필요. Next.js 13+ 호환.
+React 19 + lucide-react ≥ 0.552 필요. Next.js 는 optional peer dependency 로 `>=15`.
 
 <details>
 <summary><b>한 줄 설치</b> - 패키지 매니저 + 프레임워크 자동 감지</summary>
@@ -102,12 +102,13 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 ## 컴포넌트
 
 <table>
-<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Checkbox · Radio · Toggle · Dropdown · DatePicker · FileInput · OTPInput</td></tr>
+<tr><td><b>Forms</b></td><td>Button · IconButton · TextField · Textarea · Checkbox · Radio · RadioGroup · Toggle · Dropdown · DatePicker · FileInput · ImageCropper · OtpInput</td></tr>
 <tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
-<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState</td></tr>
-<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · NavBar · Breadcrumb · Menu · Pagination</td></tr>
-<tr><td><b>Overlay</b></td><td>Modal · Tooltip</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert · Toast · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState · ErrorState</td></tr>
+<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · BottomNav · NavBar · Breadcrumb · Menu · Pagination</td></tr>
+<tr><td><b>Overlay</b></td><td>Modal · Drawer · Tooltip · Popover</td></tr>
 <tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
+<tr><td><b>System</b></td><td>ThemeProvider</td></tr>
 </table>
 
 →&nbsp;전체 API · [`docs/COMPONENTS.md`](./docs/COMPONENTS.md)
@@ -117,7 +118,7 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 ## 디자인 토큰
 
 ```scss
-@use "src/styles/token" as token;
+@use "@bigtablet/design-system/scss/token" as token;
 
 .card {
   background: token.$color_bg_solid;
@@ -129,16 +130,18 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 ```
 
 ```css
+/* @bigtablet/design-system/style.css 에서 제공 */
 .card {
   background: var(--bt-color-bg-solid);
   color: var(--bt-color-text-heading);
-  padding: var(--bt-spacing-16);
-  border-radius: var(--bt-radius-md);
+  border: 1px solid var(--bt-color-border-default);
   box-shadow: var(--bt-elevation-level1);
 }
 ```
 
-`colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`a11y`
+> React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*` 뿐이다. spacing / radius / typography 는 이 entry 에선 **SCSS 전용**이라 `scss/token` 을 써야 한다 (`--bt-spacing-*` / `--bt-radius-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
+
+`colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS 전용</sup>
 
 <br />
 
@@ -150,7 +153,7 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
 <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
 
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
 
 →&nbsp;자세히 · [`docs/VANILLA.md`](./docs/VANILLA.md)

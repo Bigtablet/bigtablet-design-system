@@ -270,7 +270,13 @@ describe("Alert", () => {
 		expect(document.body.dataset.openModals).toBe("1");
 
 		fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
-		await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
-		expect(document.body.style.overflow).toBe("");
+		// 퇴출 spring 은 act 밖에서 setState 하므로 portal 이 DOM 에서 빠진 커밋 시점과
+		// useEffect cleanup(스크롤락 해제) flush 시점이 한 tick 벌어진다. DOM 제거만 기다리면
+		// 부하가 걸린 러너에서 cleanup 전에 단언이 실행돼 flaky - 잠금 해제까지 함께 기다린다.
+		await waitFor(() => {
+			expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+			expect(document.body.style.overflow).toBe("");
+			expect(document.body.dataset.openModals).toBeUndefined();
+		});
 	});
 });

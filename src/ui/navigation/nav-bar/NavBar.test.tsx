@@ -72,6 +72,29 @@ describe("NavBar", () => {
 			expect(items[1]).toHaveFocus();
 		});
 
+		it("trigger has an accessible name matching the visible label", () => {
+			render(<NavBar locale={makeLocale()} />);
+			expect(screen.getByRole("button", { name: "한국어" })).toBeInTheDocument();
+		});
+
+		it("trigger keeps an accessible name when hideLabel hides the text", () => {
+			render(<NavBar locale={{ ...makeLocale(), hideLabel: true }} />);
+			const trigger = screen.getByRole("button", { name: "한국어" });
+			// 라벨 텍스트는 렌더되지 않지만 접근성 이름은 남아 있어야 한다.
+			expect(trigger).toHaveTextContent("");
+			expect(trigger).toHaveAttribute("aria-label", "한국어");
+		});
+
+		it("falls back to the uppercased current code when no option matches", () => {
+			render(<NavBar locale={{ current: "ja", options: [], hideLabel: true }} />);
+			expect(screen.getByRole("button", { name: "JA" })).toBeInTheDocument();
+		});
+
+		it("ariaLabel overrides the derived accessible name", () => {
+			render(<NavBar locale={{ ...makeLocale(), hideLabel: true, ariaLabel: "언어 선택" }} />);
+			expect(screen.getByRole("button", { name: "언어 선택" })).toBeInTheDocument();
+		});
+
 		it("Escape closes and returns focus to the trigger", () => {
 			render(<NavBar locale={makeLocale()} />);
 			const trigger = screen.getByRole("button");

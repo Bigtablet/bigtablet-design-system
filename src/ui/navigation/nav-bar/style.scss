@@ -243,7 +243,7 @@
     color: token.$color_brand_on_primary;
 
     .nav_bar_link {
-      color: rgba(255, 255, 255, 0.7);
+      color: token.$color_text_on_dark_muted;
 
       &:hover:not(.nav_bar_link_active) {
         color: token.$color_brand_on_primary;
@@ -261,7 +261,7 @@
 
     // dark accent bg 위 button - outline/text variant 강제 흰 텍스트 + 흰 border
     .button_variant_outline {
-      border-color: rgba(255, 255, 255, 0.55);
+      border-color: token.$color_border_on_dark;
       color: token.$color_brand_on_primary;
 
       &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
@@ -270,7 +270,7 @@
     }
 
     .button_variant_text {
-      color: rgba(255, 255, 255, 0.9);
+      color: token.$color_text_on_dark_strong;
 
       &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
       &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }
@@ -282,7 +282,7 @@
 
   &_variant_transparent {
     .nav_bar_link {
-      color: rgba(255, 255, 255, 0.7);
+      color: token.$color_text_on_dark_muted;
 
       &:hover:not(.nav_bar_link_active) {
         color: token.$color_brand_on_primary;

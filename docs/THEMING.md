@@ -167,7 +167,7 @@ SCSS 변수/믹스인(spacing, radius, typography, motion 등)이 필요하면 �
 @use "@bigtablet/design-system/scss/token" as token;
 
 .my-component {
-  padding: token.$spacing_md;
+  padding: token.$spacing_16;
   border-radius: token.$radius_md;
 }
 ```

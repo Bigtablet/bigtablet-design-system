@@ -1,3 +1,5 @@
+@use "../motion" as motion;
+
 /* Flex Utilities */
 @mixin flex_center { display: flex; align-items: center; justify-content: center; }
 @mixin flex_left { display: flex; align-items: center; justify-content: flex-start; }
@@ -32,22 +34,34 @@
 }
 
 /* Hover Lift Effect */
+// motion.$transition_lift = transform/box-shadow 0.25s $ease_out_expo (= $easing_enter) -
+// 기존 하드코딩 값과 동일한 전용 토큰.
 @mixin hover_lift($y: -4px, $shadow: 0 12px 24px rgba(0, 0, 0, 0.15)) {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: motion.$transition_lift;
 
   &:hover {
     transform: translateY($y);
     box-shadow: $shadow;
   }
+
+  // WCAG 2.1 SC 2.3.3 - mixin 은 호출 지점을 모르므로 guard 를 body 안에 둔다.
+  // Sass 가 @media 를 호출 선택자와 함께 밖으로 빼주어 소비처마다 자동 적용된다.
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 /* Glow on Hover */
 @mixin hover_glow($color: rgba(59, 130, 246, 0.4)) {
-  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: box-shadow motion.$duration_slow motion.$easing_enter;
 
   &:hover {
     box-shadow: 0 0 30px $color;
+  }
+
+  // WCAG 2.1 SC 2.3.3 - hover_lift 와 동일하게 mixin body 안에서 guard.
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 }
 
