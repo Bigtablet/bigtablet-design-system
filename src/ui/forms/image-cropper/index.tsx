@@ -338,7 +338,7 @@ export function ImageCropper({
 		: { visibility: "hidden" };
 
 	return (
-		// 내부 className 이 항상 이기도록 spread 뒤에 지정한다.
+		// className 은 위에서 별도 구조분해되어 rest 에 없으므로 spread 순서와 무관하게 충돌하지 않는다.
 		<div {...rest} className={cn("image_cropper", className)}>
 			{/* biome-ignore lint/a11y/useSemanticElements: 드래그+방향키 조작 표면이라 role=group + 안내 텍스트로 처리 */}
 			<div
