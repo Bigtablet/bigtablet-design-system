@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
 - [v3.5.0](#v350)
 - [v3.3.0](#v330)
 - [v3.0.0](#v300)
@@ -21,8 +22,148 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - `@deprecated` 로 표시된 prop 은 삭제되지 않고 계속 동작합니다. 실제 제거는 다음 major 릴리즈에서 이루어집니다.
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
 - 변경 콜백(`onChange` 계열) 은 신규(canonical) prop 과 구(deprecated) prop 을 동시에 넘겨도 안전합니다. 컴포넌트 내부는 `canonical ?? deprecated` 순서로 우선 적용하므로, 신규 prop 을 넘기면 그 값만 호출되고 신규 prop 이 없을 때만 구 prop 이 fallback 으로 호출됩니다.
-- 이 문서는 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다 (React 컴포넌트 공개 prop 기준 - Vanilla JS 패키지는 별도).
+- React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
+- **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.8.0 (Vanilla 패키지 정리)
+
+> ⚠️ **Vanilla 패키지(`@bigtablet/design-system/vanilla`, `dist/vanilla/*`)의 파괴적 변경입니다.**
+> React export 는 영향이 없습니다.
+
+Vanilla 번들의 클래스·JS API 이름이 React 컴포넌트 API 와 갈라져 있어, 같은 디자인 시스템인데도 두 벌의 이름을 외워야 했습니다. v3.8.0 에서 **구 이름을 별칭으로 남기지 않고 전부 제거**하고 React 쪽 이름으로 통일했습니다. 처음부터 React API 를 보고 설계한 것처럼 보이게 하는 것이 목표라, deprecated 별칭은 두지 않았습니다.
+
+**타입 검사가 잡아주지 않습니다.** 구 클래스를 쓰면 에러 없이 스타일만 조용히 사라지므로, 아래 표와 치환 스크립트로 마크업 전체를 한 번에 훑으세요.
+
+### 1. Button - variant 이름
+
+React `<Button variant>` 값과 동일하게 맞췄습니다.
+
+| 구 클래스 (제거됨) | 대체 |
+|---|---|
+| `.bt-button--primary` | `.bt-button--filled` |
+| `.bt-button--secondary` | `.bt-button--outline` |
+| `.bt-button--ghost` | `.bt-button--text` |
+
+`.bt-button--danger` 는 그대로입니다. React 의 `danger` boolean 처럼 variant 와 **직교**하므로 `--outline --danger` 같이 조합해 쓸 수 있고, variant 없이 단독으로 쓰면 React `<Button danger />`(기본 variant `filled`)와 같은 red filled 입니다.
+
+### 2. Button - 기본 radius 와 filled 채움색 (클래스 이름은 그대로, 렌더링이 바뀜)
+
+| 항목 | 구 동작 | 신 동작 (React 와 동일) |
+|---|---|---|
+| 기본 `border-radius` | `--bt-radius-md` (8px) | `--bt-radius-full` (pill) |
+| `--filled` 배경 | `--bt-color-primary` (양 테마 검정 고정) | `--bt-color-accent` (light 검정 / dark 흰색 자동 반전) |
+
+- **각진 버튼을 유지하려면** 새로 추가된 `.bt-button--radius-md` 를 명시하세요 (React `radius` prop 과 같은 `none/xs/sm/md/lg/xl/full` 스케일 전체 제공).
+- filled 색 변경은 **다크 테마에서만** 눈에 띕니다. 구 동작은 다크에서도 검정 채움이라 페이지 배경에 묻혔습니다. 양 테마 고정색이 꼭 필요하면 `--bt-color-primary` 를 직접 적용하세요.
+
+### 3. Card - elevation → shadow, 기본값 도입
+
+| 구 클래스 (제거됨) | 대체 |
+|---|---|
+| `.bt-card--elevation-1` | `.bt-card--shadow-sm` |
+| `.bt-card--elevation-2` | `.bt-card--shadow-md` |
+| `.bt-card--elevation-3` | `.bt-card--shadow-lg` |
+
+`.bt-card` 의 **기본값도 React `<Card>` 와 같아졌습니다** - shadow 클래스를 안 붙이면 `shadow=sm`, padding 클래스를 안 붙이면 `padding=md` 가 적용됩니다 (구 Vanilla 는 둘 다 없음). 그림자·여백이 없는 맨 카드가 필요하면 `.bt-card--shadow-none .bt-card--p-none` 을 명시하세요.
+
+React 의 `variant`(`accent` / `glass` / `outlined`)와 `interactive` 도 새로 추가됐습니다 (`.bt-card--accent` / `--glass` / `--outlined` / `--interactive`) - 추가라 마이그레이션은 불필요합니다.
+
+### 4. Select → Dropdown 전면 개명
+
+React 컴포넌트 이름이 `Dropdown` 이므로 블록 이름·data 속성·JS 팩토리를 모두 맞췄습니다. **CSS 만의 변경이 아니라 JS 런타임까지 걸쳐 있습니다.**
+
+| 구 이름 (제거됨) | 대체 |
+|---|---|
+| `.bt-select` | `.bt-dropdown` |
+| `.bt-select__label` | `.bt-dropdown__label` |
+| `.bt-select__control` | `.bt-dropdown__control` |
+| `.bt-select__control--outline` / `--filled` | `.bt-dropdown__control--outline` / `--filled` |
+| `.bt-select__control--sm` / `--md` / `--lg` | `.bt-dropdown__control--sm` / `--md` / `--lg` |
+| `.bt-select__value` | `.bt-dropdown__value` |
+| `.bt-select__placeholder` | `.bt-dropdown__placeholder` |
+| `.bt-select__icon` | `.bt-dropdown__icon` |
+| `.bt-select__list` | `.bt-dropdown__list` |
+| `.bt-select__list--up` | `.bt-dropdown__list--up` |
+| `.bt-select__option` | `.bt-dropdown__option` |
+| `data-bt-select` (자동 초기화 속성) | `data-bt-dropdown` |
+| `Bigtablet.Select(el, options)` | `Bigtablet.Dropdown(el, options)` |
+| `el._btSelect` (자동 초기화 인스턴스) | `el._btDropdown` |
+
+`.is-open` / `.is-selected` / `.is-active` / `.is-disabled` 상태 클래스와 인스턴스 API(`getValue` / `setValue` / `open` / `close` / `toggle` / `setDisabled` / `destroy`)는 그대로입니다.
+
+> **남은 격차**: React `Dropdown` 의 `multiple`(다중 선택)·`searchable`(검색 필터)은 Vanilla 에 아직 없습니다. 이름만 맞췄을 뿐 기능까지 동등하지는 않으니, 두 기능이 필요하면 React 쪽을 쓰세요.
+
+### 5. Spinner - size enum → px 커스텀 프로퍼티
+
+React `<Spinner size>` 는 enum 이 아니라 px 숫자(기본 24)를 받습니다. Vanilla 도 자유 스케일로 맞췄습니다.
+
+| 구 클래스 (제거됨) | 대체 |
+|---|---|
+| `.bt-spinner--sm` | `style="--bt-spinner-size: 16px"` |
+| `.bt-spinner--md` | (기본값 24px - 아무것도 안 붙이면 됨) |
+| `.bt-spinner--lg` | `style="--bt-spinner-size: 32px"` |
+| `.bt-spinner--xl` | `style="--bt-spinner-size: 48px"` |
+
+React `<Spinner>` 가 자동으로 붙이는 `role="status"` + `aria-label` 은 Vanilla 에선 마크업에서 직접 지정해야 합니다.
+
+### 6. JS 변경 콜백 - `onChange` 제거
+
+v3.3.0 에서 React 가 `on*Change` 패밀리로 통일된 것에 맞춰 Vanilla 도 canonical 이름만 남겼습니다. `onChange` 를 계속 넘기면 **조용히 무시**됩니다(에러 없음).
+
+| 팩토리 | 구 옵션 (제거됨) | 대체 |
+|---|---|---|
+| `Bigtablet.Dropdown` | `onChange(value, option)` | `onValueChange(value, option)` |
+| `Bigtablet.Toggle` | `onChange(checked)` | `onCheckedChange(checked)` |
+| `Bigtablet.Pagination` | `onChange(page)` | `onPageChange(page)` |
+
+### 7. Alert - 오버레이·Escape 닫힘이 `onCancel` 을 경유
+
+구 동작에서는 오버레이 클릭이나 Escape 로 닫으면 `onCancel` 이 호출되지 않아, 취소 정리 로직(롤백 등)이 조용히 우회됐습니다. React `Alert`(`dismiss = onCancel ?? onClose`)와 동일하게 두 경로 모두 `onCancel` 을 먼저 호출한 뒤 닫습니다 (WAI-ARIA APG alertdialog).
+
+- **영향**: `onCancel` 안에서 "취소 버튼을 눌렀다"고 가정하고 로그를 남기거나 카운트를 올리던 코드는 이제 오버레이/Escape 에서도 실행됩니다.
+- 오버레이 닫힘 자체를 막고 싶으면 `closeOnOverlay: false` 를 쓰세요.
+
+또한 `Bigtablet.Alert` 가 생성하는 확인/취소 버튼의 클래스가 `bt-button--primary` / `bt-button--secondary` → `bt-button--filled` / `bt-button--outline` 로 바뀝니다. 생성된 마크업의 클래스를 셀렉터로 잡아 스타일을 덮어쓰던 CSS 가 있다면 함께 수정하세요.
+
+### 치환 스크립트
+
+기계적으로 바꿀 수 있는 항목만 모았습니다. **순서대로** 실행하세요 (`bt-select` → `bt-dropdown` 을 먼저 돌려야 다른 규칙과 겹치지 않습니다).
+
+```bash
+# 대상 디렉터리로 이동 후 실행. 확장자는 프로젝트에 맞게 조정하세요.
+# macOS(BSD sed)는 -i '' , GNU sed 는 -i 를 사용합니다.
+FILES=$(grep -rl -E 'bt-select|bt-button--(primary|secondary|ghost)|bt-card--elevation|bt-spinner--|Bigtablet\.Select|_btSelect' \
+  --include='*.html' --include='*.jsp' --include='*.php' --include='*.js' --include='*.css' --include='*.scss' .)
+
+# 1) Select → Dropdown (클래스 / data 속성 / JS 팩토리 / 인스턴스 프로퍼티)
+sed -i '' -e 's/bt-select/bt-dropdown/g' \
+          -e 's/Bigtablet\.Select/Bigtablet.Dropdown/g' \
+          -e 's/_btSelect/_btDropdown/g' $FILES
+
+# 2) Button variant
+sed -i '' -e 's/bt-button--primary/bt-button--filled/g' \
+          -e 's/bt-button--secondary/bt-button--outline/g' \
+          -e 's/bt-button--ghost/bt-button--text/g' $FILES
+
+# 3) Card elevation → shadow
+sed -i '' -e 's/bt-card--elevation-1/bt-card--shadow-sm/g' \
+          -e 's/bt-card--elevation-2/bt-card--shadow-md/g' \
+          -e 's/bt-card--elevation-3/bt-card--shadow-lg/g' $FILES
+
+# 4) 확인 - 남은 구 이름이 없어야 합니다
+grep -rn -E 'bt-select|bt-button--(primary|secondary|ghost)|bt-card--elevation|bt-spinner--|Bigtablet\.Select|_btSelect|data-bt-select' . || echo "clean"
+```
+
+기계적으로 치환할 수 없어 **손으로 확인해야 하는 항목**:
+
+- `.bt-spinner--*` → `--bt-spinner-size` 인라인 스타일 (클래스 삭제 + `style` 추가라 1:1 치환 불가)
+- JS 옵션의 `onChange:` → `onValueChange:` / `onCheckedChange:` / `onPageChange:` (같은 이름이 다른 팩토리에서 다른 이름으로 바뀌므로 호출부별 판단 필요)
+- 각진 버튼을 유지할지(`.bt-button--radius-md` 추가) 아니면 pill 기본값을 받아들일지
+- 그림자·여백 없는 `.bt-card` 를 유지할지(`--shadow-none --p-none` 추가) 아니면 React 기본값을 받아들일지
+- `onCancel` 이 오버레이/Escape 에서도 불리게 된 것에 대한 영향
 
 ---
 
