@@ -29,6 +29,10 @@ export interface NavBarLocaleConfig {
 	/**
 	 * locale 트리거 버튼의 접근성 이름 (기본값: 현재 옵션의 label, 없으면 `current` 대문자).
 	 * `hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.
+	 *
+	 * ⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로,
+	 * 보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가
+	 * 보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반).
 	 */
 	ariaLabel?: string;
 }

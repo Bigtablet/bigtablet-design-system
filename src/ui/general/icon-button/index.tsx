@@ -41,7 +41,7 @@ export interface IconButtonWithAriaLabelledBy extends IconButtonBaseProps {
  * `icon` 은 항상 `aria-hidden` 으로 감싸지므로 `aria-label` 또는 `aria-labelledby` 중
  * 최소 하나를 반드시 지정해야 한다 (WCAG 2.1 SC 4.1.2 Name, Role, Value).
  *
- * @deprecated 형태의 주의 - v3.7.0 이하에서는 두 속성 모두 optional 이었다.
+ * @remarks **Breaking change (타입 레벨)** - v3.7.0 이하에서는 두 속성 모두 optional 이었다.
  * 접근성 이름 없이 `<IconButton icon={<X />} />` 로 사용하던 코드는 이제 **타입 에러**가 난다.
  * 런타임 렌더링은 바뀌지 않았으므로 `aria-label`(또는 `aria-labelledby`)만 추가하면 된다.
  * ```tsx
