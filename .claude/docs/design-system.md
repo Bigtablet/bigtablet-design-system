@@ -611,22 +611,35 @@ const items = [
 @use "@bigtablet/design-system/scss/token" as token;
 
 .my-class {
-  padding: token.$spacing_md;       // 0.75rem
-  color: token.$color_primary;      // #000000
-  border-radius: token.$radius_md;  // 8px
-  box-shadow: token.$shadow_sm;
+  padding: token.$spacing_16;            // 16px
+  color: token.$color_text_heading;
+  background: token.$color_bg_solid;
+  border-radius: token.$radius_md;       // 8px
+  box-shadow: token.$elevation_level1;
 }
 ```
 
 ### Token Reference
 
-**Spacing:** `$spacing_xs` (4px), `$spacing_sm` (8px), `$spacing_md` (12px), `$spacing_lg` (16px), `$spacing_xl` (20px), `$spacing_2xl` (24px)
+토큰 이름은 **숫자 스케일 + semantic** 이다. `xs/sm/md/lg` 같은 t-shirt spacing, `$color_primary` 같은 원시 색상, `$shadow_*` 는 **존재하지 않는다**.
 
-**Colors:** `$color_primary`, `$color_primary_hover`, `$color_error`, `$color_success`, `$color_warning`, `$color_info`, `$color_text_primary`, `$color_text_secondary`, `$color_border`, `$color_background`
+**Spacing** (숫자 = px): `$spacing_0` `$spacing_1` `$spacing_2` `$spacing_3` `$spacing_4` `$spacing_6` `$spacing_8` `$spacing_12` `$spacing_16` `$spacing_20` `$spacing_24` `$spacing_32` `$spacing_40` `$spacing_48`
 
-**Radius:** `$radius_sm` (6px), `$radius_md` (8px), `$radius_lg` (12px)
+**Colors** (semantic, `var(--bt-*)` 참조라 다크 모드 자동 대응):
+- brand: `$color_brand_primary`, `$color_brand_on_primary`, `$color_brand_primary_container`
+- text: `$color_text_heading`, `$color_text_body`, `$color_text_caption`, `$color_text_brand`, `$color_text_inverse`, `$color_text_disabled`
+- bg: `$color_bg_solid`, `$color_bg_solid_dim`, `$color_bg_additive`, `$color_bg_disabled`, `$color_bg_overlay`, `$color_bg_inverse_surface`
+- border: `$color_border_default`, `$color_border_hover`, `$color_border_subtle`, `$color_border_focus`, `$color_border_disabled`
+- status: `$color_status_error` / `_success` / `_warning` / `_info` (+ `_on_default`, `_container`, `_on_container`, `_on_surface` 변형)
+- state: `$color_state_hover_on_light` / `_pressed_on_light` / `_focus_on_light` (+ `_on_dark` 변형)
 
-**Shadows:** `$shadow_sm`, `$shadow_md`, `$shadow_lg`
+**Radius:** `$radius_none` (0), `$radius_xs` (4px), `$radius_sm` (6px), `$radius_md` (8px), `$radius_lg` (12px), `$radius_xl` (16px), `$radius_full` (9999px)
+
+**Elevation** (구 `$shadow_*` 아님): `$elevation_level1` ~ `$elevation_level5`
+
+**Typography** (숫자 = px): `$font_size_12` ~ `$font_size_48`, `$font_weight_regular` / `_medium` / `_semi_bold` / `_bold`
+
+**Motion:** `$duration_fast|base|slow`, `$transition_fast|base|slow`, `$easing_enter`, `$easing_exit`, `$transition_enter_*` / `$transition_exit_*` (composite - easing 포함되어 있으니 easing 을 또 붙이지 말 것)
 
 ### Layout Mixins
 
@@ -646,17 +659,25 @@ const items = [
 @use "@bigtablet/design-system/scss/token" as token;
 
 .component {
-  padding: token.$spacing_lg;
+  padding: token.$spacing_24;
 
-  @include token.mobile {
-    padding: token.$spacing_sm;
+  // 구간 지정 (compact 0~599 / medium 600~839 / expanded 840~1199 / large 1200~)
+  @include token.compact {
+    padding: token.$spacing_12;
   }
 
-  @include token.tablet {
-    padding: token.$spacing_md;
+  @include token.medium {
+    padding: token.$spacing_16;
+  }
+
+  // min-width 단축 mixin - from_medium / from_expanded / from_large
+  @include token.from_large {
+    padding: token.$spacing_32;
   }
 }
 ```
+
+> `token.mobile` / `token.tablet` 같은 mixin 은 없다. 구간은 `compact` / `medium` / `expanded` / `large`, min-width 단축은 `from_medium` / `from_expanded` / `from_large` 를 쓴다.
 
 ---
 

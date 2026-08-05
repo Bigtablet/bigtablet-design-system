@@ -338,11 +338,11 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 55 test files / 779 passed · 9 skipped.
+`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 55 test files / 788 passed · 9 skipped.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **90.01%** | **85.59%** | **90.07%** | **91.97%** |
+| **All files** | **90.02%** | **85.69%** | **90.07%** | **91.97%** |
 
 아래는 **100% 미만**인 파일만 나열한 것이다 (미표기 컴포넌트 = 전 지표 100%: Button · Card · Radio · Spinner · Pagination · TopLoading · Badge · Divider · Skeleton · Toggle · Breadcrumb · EmptyState · ErrorState · IconButton · Container/Section/Stack/Grid 등).
 
@@ -370,12 +370,12 @@ it("calls callback with correct arguments", () => {
 | ui/forms/textfield | 90.47% | 82.75% | 77.77% | 92.68% |
 | ui/navigation/bottom-nav | 94.73% | 95% | 100% | 94.73% |
 | ui/navigation/menu | 97.29% | 89.13% | 100% | 100% |
-| ui/navigation/nav-bar | 80.19% | 69.23% | 81.81% | 85.39% |
+| ui/navigation/nav-bar | 80.39% | 71.25% | 81.81% | 85.55% |
 | ui/navigation/sidebar | 83.33% | 88.63% | 75% | 86.95% |
 | ui/navigation/tabs | 91.42% | 78.18% | 88.88% | 100% |
 | ui/overlay/drawer | 97.91% | 95.16% | 100% | 100% |
 | ui/overlay/modal | 97.67% | 93.93% | 100% | 100% |
-| ui/overlay/popover | 91.3% | 83.87% | 100% | 92.68% |
+| ui/overlay/popover | 91.3% | 85.71% | 100% | 92.68% |
 | ui/overlay/tooltip | 92.98% | 83.33% | 93.33% | 91.66% |
 | ui/system/theme-provider | 93.87% | 85.71% | 100% | 100% |
 | utils | 90.14% | 83.18% | 78.57% | 91.93% |
@@ -387,7 +387,7 @@ it("calls callback with correct arguments", () => {
 ### 커버리지 목표
 
 - 새 컴포넌트: 최소 80% 커버리지
-- 전체 목표: 85% 이상 유지 (현재 90.01%)
+- 전체 목표: 85% 이상 유지 (현재 90.02%)
 
 ### 커버리지 리포트 확인
 
