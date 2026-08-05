@@ -58,10 +58,10 @@ npm install @bigtablet/design-system
 
 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases)에서 다운로드:
 
-- `bigtablet.css` - 비압축 CSS (27KB)
-- `bigtablet.min.css` - 압축 CSS (21KB)
-- `bigtablet.js` - 비압축 JS (20KB)
-- `bigtablet.min.js` - 압축 JS (9KB)
+- `bigtablet.css` - 비압축 CSS (~40KB)
+- `bigtablet.min.css` - 압축 CSS (~31KB)
+- `bigtablet.js` - 비압축 JS (~30KB)
+- `bigtablet.min.js` - 압축 JS (~13KB)
 
 ---
 
