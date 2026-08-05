@@ -1214,3 +1214,36 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* ========================================
+   Reduced Motion (WCAG 2.1 SC 2.3.3)
+   ======================================== */
+/* 이 번들은 컴포넌트별 파일이 아닌 단일 플랫 스타일시트라 마지막에 한 블록으로 모아 처리한다.
+   Button / TextField / Checkbox / Radio / Toggle / Select / Modal / Pagination /
+   DatePicker / FileInput 의 transition 은 전부 --bt-transition-* 를 경유하므로,
+   선택자를 나열하는 대신 토큰 자체를 0s 로 눌러 일괄 무효화한다.
+   (이후 추가되는 규칙과, 같은 var 를 쓰는 소비자 커스텀 스타일까지 자동으로 커버된다.) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bt-transition-fast: 0s;
+    --bt-transition-base: 0s;
+    --bt-transition-slow: 0s;
+  }
+
+  /* Alert 진입 모션 - 장식 목적이고 bigtablet.js 가 animationend 에 의존하지 않는다.
+     keyframe 종료 상태(opacity:1 / translateY(0))가 요소의 기본값이라
+     animation 을 제거해도 최종 표시 상태는 동일하다. */
+  .bt-alert__overlay,
+  .bt-alert__modal {
+    animation: none;
+  }
+
+  /* Spinner 는 끄지 않는다 - 회전 자체가 "로딩 중"이라는 상태 정보라
+     animation:none 이면 멈춘 위젯처럼 보여 의미를 잃는다.
+     회전을 크게 늦춰(0.8s → 2.4s) 전정기관 자극만 줄인다.
+     (Toast progress 를 정적 keyframe 으로 바꿔 타이머를 살려두는 React 쪽과 같은 판단 -
+      모션만 줄이고 기능은 유지) */
+  .bt-spinner {
+    animation-duration: 2.4s;
+  }
+}
