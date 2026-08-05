@@ -18,11 +18,11 @@
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-  /* Colors - Brand (양 테마 검정/흰 고정 - Button --primary 등 의도된 다크 fill) */
+  /* Colors - Brand (양 테마 검정/흰 고정 - 의도적으로 반전되지 않아야 하는 표면용) */
   --bt-color-primary: #{token.$color_brand_primary};
   --bt-color-on-primary: #{token.$color_brand_on_primary};
 
-  /* Colors - Accent (light=검정/dark=흰 자동 반전 - indicator/checked/focus 강조) */
+  /* Colors - Accent (light=검정/dark=흰 자동 반전 - Button --filled / indicator / checked / focus) */
   --bt-color-accent: #{token.$color_accent_default};
 
   /* Colors - Primary container (React Button variant="tonal" 의 채움색) */
@@ -108,10 +108,13 @@
   --bt-font-size-xl:   var(--bt-font-size-20);
   --bt-line-height-normal: 1.5;
 
-  /* Radius */
+  /* Radius - React `radius` prop 스케일과 동일 */
+  --bt-radius-none: #{token.$radius_none};
+  --bt-radius-xs: #{token.$radius_xs};
   --bt-radius-sm: #{token.$radius_sm};
   --bt-radius-md: #{token.$radius_md};
   --bt-radius-lg: #{token.$radius_lg};
+  --bt-radius-xl: #{token.$radius_xl};
   --bt-radius-full: #{token.$radius_full};
 
   /* Elevation */
@@ -134,20 +137,18 @@
 /* ========================================
    Button
    ========================================
-   variant 이름은 React `<Button variant>` 와 동일한 filled / tonal / outline / text 가 정식이다.
-   구 이름은 @deprecated 별칭으로 계속 동작하며 v4.0.0 에서 제거 예정:
-     --primary   → --filled
-     --secondary → --outline
-     --ghost     → --text
+   variant 는 React `<Button variant>` 와 동일한 filled / tonal / outline / text 4종.
    danger 는 React 의 `danger` boolean 처럼 variant 와 직교(orthogonal)한 modifier 다.
-   `--danger` 단독은 기존과 동일하게 red filled 로 렌더링되고, variant 클래스와 함께 쓰면
-   해당 variant 의 red 표현(outline=빨간 테두리, tonal=빨간 wash, text=빨간 텍스트)이 된다. */
+   `--danger` 단독은 React `<Button danger />`(variant 기본값 filled)와 같이 red filled 이고,
+   variant 클래스와 함께 쓰면 해당 variant 의 red 표현(outline=빨간 테두리, tonal=빨간 wash,
+   text=빨간 텍스트)이 된다.
+   기본 radius 는 React `radius` 기본값과 동일한 full(pill) - `--radius-*` 로 덮어쓴다. */
 .bt-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--bt-spacing-sm);
-  border-radius: var(--bt-radius-md);
+  border-radius: var(--bt-radius-full);
   border: none;
   cursor: pointer;
   font-family: var(--bt-font-family);
@@ -184,14 +185,15 @@
   }
 
   /* Variants */
-  /* --primary 는 @deprecated 별칭 (→ --filled, v4.0.0 제거 예정) */
-  &--filled,
-  &--primary {
-    background: var(--bt-color-primary);
-    color: var(--bt-color-background);
+  /* React `variant="filled"` 와 동일하게 accent 계열을 쓴다 - light 는 검정(brand 와 같은 값),
+     dark 는 흰색으로 자동 반전되어 다크 테마에서 채움이 페이지 배경에 묻히지 않는다.
+     (구 Vanilla 는 양 테마 고정인 --bt-color-primary 를 써서 다크에서 React 와 갈라졌다.) */
+  &--filled {
+    background: var(--bt-color-accent);
+    color: var(--bt-color-accent-on-surface);
 
     &:hover:not(:disabled) {
-      background: var(--bt-color-primary-hover);
+      background: color-mix(in srgb, var(--bt-color-accent) 88%, var(--bt-color-accent-on-surface));
     }
 
     &:active:not(:disabled) {
@@ -199,7 +201,7 @@
     }
   }
 
-  /* React Button variant="tonal" - 구 Vanilla 에는 없던 variant */
+  /* React Button variant="tonal" */
   &--tonal {
     background: var(--bt-color-primary-container);
     color: var(--bt-color-text-primary);
@@ -213,9 +215,7 @@
     }
   }
 
-  /* --secondary 는 @deprecated 별칭 (→ --outline, v4.0.0 제거 예정) */
-  &--outline,
-  &--secondary {
+  &--outline {
     background: transparent;
     border: 1px solid var(--bt-color-border);
     color: var(--bt-color-text-primary);
@@ -229,9 +229,7 @@
     }
   }
 
-  /* --ghost 는 @deprecated 별칭 (→ --text, v4.0.0 제거 예정) */
-  &--text,
-  &--ghost {
+  &--text {
     background: transparent;
     color: var(--bt-color-text-primary);
 
@@ -244,19 +242,28 @@
     }
   }
 
-  /* --danger 단독 = React `<Button variant="filled" danger />` (하위 호환 유지) */
+  /* --danger 단독 = React `<Button danger />` (variant 기본값 filled) */
   &--danger {
     background: var(--bt-color-error);
-    color: var(--bt-color-background);
+    color: var(--bt-color-on-primary);
 
     &:hover:not(:disabled) {
-      background: color-mix(in srgb, var(--bt-color-error) 92%, #000);
+      background: color-mix(in srgb, var(--bt-color-error) 88%, #000);
     }
 
     &:active:not(:disabled) {
       transform: scale(0.98);
     }
   }
+
+  /* Radius overrides - React `radius` prop 과 동일 (기본값 full) */
+  &--radius-none { border-radius: var(--bt-radius-none); }
+  &--radius-xs   { border-radius: var(--bt-radius-xs); }
+  &--radius-sm   { border-radius: var(--bt-radius-sm); }
+  &--radius-md   { border-radius: var(--bt-radius-md); }
+  &--radius-lg   { border-radius: var(--bt-radius-lg); }
+  &--radius-xl   { border-radius: var(--bt-radius-xl); }
+  &--radius-full { border-radius: var(--bt-radius-full); }
 
   &--full-width {
     width: 100%;
@@ -265,8 +272,7 @@
 
 /* danger × variant - React 의 `variant` + `danger` 조합과 동일한 렌더링.
    클래스 2개라 단독 `--danger`(클래스 1개)보다 우선순위가 높다. */
-.bt-button--danger.bt-button--outline,
-.bt-button--danger.bt-button--secondary {
+.bt-button--danger.bt-button--outline {
   background: transparent;
   border-color: var(--bt-color-error);
   color: var(--bt-color-error);
@@ -285,8 +291,7 @@
   }
 }
 
-.bt-button--danger.bt-button--text,
-.bt-button--danger.bt-button--ghost {
+.bt-button--danger.bt-button--text {
   background: transparent;
   color: var(--bt-color-error);
 
@@ -693,9 +698,11 @@
 }
 
 /* ========================================
-   Select
-   ======================================== */
-.bt-select {
+   Dropdown
+   ========================================
+   React `<Dropdown>` 과 같은 블록 이름을 쓴다 (구 Vanilla 이름은 Select 였다).
+   React 의 `multiple` / `searchable` 은 Vanilla 에 아직 없다 - 단일 선택 전용. */
+.bt-dropdown {
   position: relative;
   display: inline-flex;
   flex-direction: column;
@@ -1016,33 +1023,82 @@
 
 /* ========================================
    Card
-   ======================================== */
+   ========================================
+   React `<Card>` 는 shadow / padding / bordered(조합형)와 variant(enum)를 모두 노출한다.
+   Vanilla 도 같은 모델을 그대로 따른다 - shadow·padding·bordered 는 서로 직교하는 modifier 고,
+   variant(accent / glass / outlined)는 그 위에 얹는 표면 스타일이다(기본 = default).
+   기본값도 React 와 동일하게 shadow=sm / padding=md - 끄려면 --shadow-none / --p-none. */
 .bt-card {
   background: var(--bt-color-background);
   border-radius: var(--bt-radius-lg);
+  box-shadow: var(--bt-elevation-1);
+  padding: var(--bt-spacing-lg);
+  transition: transform var(--bt-transition-base),
+              box-shadow var(--bt-transition-base);
 
   &--bordered {
     border: 1px solid var(--bt-color-border);
   }
 
-  /* Shadow - React Card `shadow` prop(none/sm/md/lg) 과 이름·토큰이 동일한 쪽이 정식.
-     --elevation-1/2/3 은 @deprecated 별칭 (v4.0.0 제거 예정). */
+  /* Shadow - React Card `shadow` prop(none/sm/md/lg) 과 동일 (기본값 sm) */
   &--shadow-none { box-shadow: none; }
+  &--shadow-sm { box-shadow: var(--bt-elevation-1); }
+  &--shadow-md { box-shadow: var(--bt-elevation-2); }
+  &--shadow-lg { box-shadow: var(--bt-elevation-3); }
 
-  &--shadow-sm,
-  &--elevation-1 { box-shadow: var(--bt-elevation-1); }
-
-  &--shadow-md,
-  &--elevation-2 { box-shadow: var(--bt-elevation-2); }
-
-  &--shadow-lg,
-  &--elevation-3 { box-shadow: var(--bt-elevation-3); }
-
-  /* Padding - React Card `padding` prop(none/sm/md/lg) 과 동일 */
+  /* Padding - React Card `padding` prop(none/sm/md/lg) 과 동일 (기본값 md) */
   &--p-none { padding: 0; }
   &--p-sm { padding: var(--bt-spacing-sm); }
   &--p-md { padding: var(--bt-spacing-lg); }
   &--p-lg { padding: var(--bt-spacing-2xl); }
+
+  /* Variant: accent - 반전 배경 + 대비 텍스트 (React card_variant_accent) */
+  &--accent {
+    background: var(--bt-color-accent);
+    color: var(--bt-color-accent-on-surface);
+
+    .bt-card__title {
+      color: var(--bt-color-accent-on-surface);
+    }
+  }
+
+  /* Variant: outlined - 투명 배경 + 테두리만, shadow 무시 (React card_variant_outlined) */
+  &--outlined {
+    background: transparent;
+    border: 1px solid var(--bt-color-border);
+    box-shadow: none;
+  }
+
+  /* Variant: glass - 반투명 frosted + backdrop blur (React card_variant_glass).
+     컬러/이미지 배경 위에서 쓴다. 흰 텍스트로 가독성 확보. */
+  &--glass {
+    @include token.glass_dark;
+    color: var(--bt-color-on-primary);
+
+    .bt-card__title {
+      color: var(--bt-color-on-primary);
+    }
+
+    /* 다크 표면 위에서는 밝은 frosted 로 뒤집는다 (React 와 동일) */
+    [data-theme="dark"] & {
+      @include token.glass_card;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) & {
+        @include token.glass_card;
+      }
+    }
+  }
+
+  /* React `interactive` prop - hover 시 살짝 떠오른다 */
+  &--interactive {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--bt-elevation-2);
+    }
+  }
 
   &__title {
     font-size: var(--bt-font-size-xl);
@@ -1060,18 +1116,18 @@
   to { transform: rotate(360deg); }
 }
 
+/* React `<Spinner size>` 는 px 숫자를 그대로 받는 자유 스케일이라(기본 24) Vanilla 도
+   size enum 대신 --bt-spinner-size 커스텀 프로퍼티로 임의 px 을 받는다.
+   예) <span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span> */
 .bt-spinner {
   display: inline-block;
   box-sizing: border-box;
+  width: var(--bt-spinner-size, 24px);
+  height: var(--bt-spinner-size, 24px);
   border-radius: 50%;
   border: 2px solid var(--bt-color-border);
   border-top-color: var(--bt-color-accent);
   animation: bt-spinner-spin 0.8s linear infinite;
-
-  &--sm { width: 16px; height: 16px; }
-  &--md { width: 24px; height: 24px; }
-  &--lg { width: 32px; height: 32px; }
-  &--xl { width: 48px; height: 48px; }
 }
 
 /* ========================================
@@ -1313,7 +1369,7 @@
    Reduced Motion (WCAG 2.1 SC 2.3.3)
    ======================================== */
 /* 이 번들은 컴포넌트별 파일이 아닌 단일 플랫 스타일시트라 마지막에 한 블록으로 모아 처리한다.
-   Button / TextField / Checkbox / Radio / Toggle / Select / Modal / Pagination /
+   Button / TextField / Checkbox / Radio / Toggle / Dropdown / Card / Modal / Pagination /
    DatePicker / FileInput 의 transition 은 전부 --bt-transition-* 를 경유하므로,
    선택자를 나열하는 대신 토큰 자체를 0s 로 눌러 일괄 무효화한다.
    (이후 추가되는 규칙과, 같은 var 를 쓰는 소비자 커스텀 스타일까지 자동으로 커버된다.) */
@@ -1330,6 +1386,12 @@
   .bt-alert__overlay,
   .bt-alert__modal {
     animation: none;
+  }
+
+  /* Card --interactive 의 hover lift 는 transform 이라 토큰 무효화만으로는 안 사라진다
+     (transition 만 사라지고 이동은 즉시 일어남) - React Card 와 동일하게 아예 끈다. */
+  .bt-card--interactive:hover {
+    transform: none;
   }
 
   /* Spinner 는 끄지 않는다 - 회전 자체가 "로딩 중"이라는 상태 정보라

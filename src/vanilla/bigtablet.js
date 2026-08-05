@@ -101,24 +101,25 @@
 	}
 
 	/* ========================================
-     Select Component
+     Dropdown Component
      ======================================== */
 
 	/**
-	 * Initialize Select component
-	 * @param {HTMLElement|string} element - Select wrapper element or selector
+	 * Initialize Dropdown component (React `<Dropdown>` 의 Vanilla 대응)
+	 *
+	 * React 의 `multiple` / `searchable` 은 아직 지원하지 않는다 - 단일 선택 전용.
+	 * @param {HTMLElement|string} element - Dropdown wrapper element or selector
 	 * @param {Object} options - Configuration options
 	 */
-	function Select(element, options = {}) {
+	function Dropdown(element, options = {}) {
 		const wrapper = typeof element === "string" ? $(element) : element;
 		if (!wrapper) return null;
 
 		const config = {
 			placeholder: "Select...",
 			disabled: false,
-			// React Dropdown 과 동일하게 onValueChange 가 canonical, onChange 는 @deprecated 별칭.
+			// React Dropdown 과 동일한 값 변경 콜백.
 			onValueChange: null,
-			onChange: null,
 			...options,
 		};
 
@@ -130,14 +131,16 @@
 		};
 
 		// Create DOM structure
-		const controlId = wrapper.id || generateId("select");
+		const controlId = wrapper.id || generateId("dropdown");
 		const _listId = `${controlId}_listbox`;
 
-		const control = wrapper.querySelector(".bt-select__control");
-		const list = wrapper.querySelector(".bt-select__list");
+		const control = wrapper.querySelector(".bt-dropdown__control");
+		const list = wrapper.querySelector(".bt-dropdown__list");
 
 		if (!control || !list) {
-			console.warn("Select: Missing required elements (.bt-select__control, .bt-select__list)");
+			console.warn(
+				"Dropdown: Missing required elements (.bt-dropdown__control, .bt-dropdown__list)",
+			);
 			return null;
 		}
 
@@ -146,7 +149,7 @@
 		// 지원해야 하므로 DOM 파싱이 반드시 필요하다.
 		// data-options 는 잘못된 JSON(작은따옴표 등)이면 스크립트 전체가 크래시하므로 방어적 파싱.
 		const parseDomOptions = () =>
-			$$(".bt-select__option", list).map((el) => ({
+			$$(".bt-dropdown__option", list).map((el) => ({
 				value: el.dataset.value !== undefined ? el.dataset.value : el.textContent.trim(),
 				label: el.textContent.trim(),
 				disabled: el.classList.contains("is-disabled"),
@@ -159,9 +162,9 @@
 			try {
 				const parsed = JSON.parse(wrapper.dataset.options);
 				if (Array.isArray(parsed)) optionsData = parsed;
-				else console.warn("Select: data-options is not a JSON array");
+				else console.warn("Dropdown: data-options is not a JSON array");
 			} catch (e) {
-				console.warn("Select: invalid JSON in data-options", e);
+				console.warn("Dropdown: invalid JSON in data-options", e);
 			}
 		}
 		if (optionsData === undefined) {
@@ -179,7 +182,7 @@
 		control.setAttribute("aria-haspopup", "listbox");
 		control.setAttribute("aria-expanded", "false");
 		control.setAttribute("aria-controls", list.id);
-		$$(".bt-select__option", list).forEach((el, i) => {
+		$$(".bt-dropdown__option", list).forEach((el, i) => {
 			el.id = el.id || `${controlId}_option_${i}`;
 			el.setAttribute("role", "option");
 			el.setAttribute("aria-selected", "false");
@@ -210,30 +213,29 @@
 				hiddenInput.value = newValue == null ? "" : newValue;
 			}
 
-			const valueEl = control.querySelector(".bt-select__value, .bt-select__placeholder");
+			const valueEl = control.querySelector(".bt-dropdown__value, .bt-dropdown__placeholder");
 			if (valueEl) {
 				if (option) {
 					valueEl.textContent = option.label;
-					valueEl.classList.remove("bt-select__placeholder");
-					valueEl.classList.add("bt-select__value");
+					valueEl.classList.remove("bt-dropdown__placeholder");
+					valueEl.classList.add("bt-dropdown__value");
 				} else {
 					valueEl.textContent = config.placeholder;
-					valueEl.classList.remove("bt-select__value");
-					valueEl.classList.add("bt-select__placeholder");
+					valueEl.classList.remove("bt-dropdown__value");
+					valueEl.classList.add("bt-dropdown__placeholder");
 				}
 			}
 
 			// Update selected state in list
-			$$(".bt-select__option", list).forEach((el, i) => {
+			$$(".bt-dropdown__option", list).forEach((el, i) => {
 				// String 비교(#374: 숫자 value vs 문자열 hidden 초기값) + aria-selected(#379: AT 노출)
 				const selected = String(state.options[i]?.value) === String(newValue);
 				el.classList.toggle("is-selected", selected);
 				el.setAttribute("aria-selected", selected ? "true" : "false");
 			});
 
-			const emit = config.onValueChange ?? config.onChange;
-			if (emit) {
-				emit(newValue, option);
+			if (config.onValueChange) {
+				config.onValueChange(newValue, option);
 			}
 		}
 
@@ -252,9 +254,9 @@
 			const spaceAbove = rect.top;
 
 			if (spaceBelow < listHeight && spaceAbove > spaceBelow) {
-				list.classList.add("bt-select__list--up");
+				list.classList.add("bt-dropdown__list--up");
 			} else {
-				list.classList.remove("bt-select__list--up");
+				list.classList.remove("bt-dropdown__list--up");
 			}
 
 			// Set active index
@@ -263,7 +265,7 @@
 			updateActiveOption();
 
 			// Rotate icon
-			const icon = control.querySelector(".bt-select__icon");
+			const icon = control.querySelector(".bt-dropdown__icon");
 			if (icon) icon.classList.add("is-open");
 		}
 
@@ -274,7 +276,7 @@
 			control.removeAttribute("aria-activedescendant");
 			list.style.display = "none";
 
-			const icon = control.querySelector(".bt-select__icon");
+			const icon = control.querySelector(".bt-dropdown__icon");
 			if (icon) icon.classList.remove("is-open");
 		}
 
@@ -288,7 +290,7 @@
 
 		function updateActiveOption() {
 			let activeId = null;
-			$$(".bt-select__option", list).forEach((el, i) => {
+			$$(".bt-dropdown__option", list).forEach((el, i) => {
 				const active = i === state.activeIndex;
 				el.classList.toggle("is-active", active);
 				if (active) activeId = el.id;
@@ -416,7 +418,7 @@
 			on(document, "mousedown", onDocumentClick),
 		];
 
-		$$(".bt-select__option", list).forEach((el, i) => {
+		$$(".bt-dropdown__option", list).forEach((el, i) => {
 			cleanups.push(on(el, "click", onOptionClick(i)));
 			cleanups.push(on(el, "mouseenter", onOptionMouseEnter(i)));
 		});
@@ -601,10 +603,8 @@
      ======================================== */
 
 	// React Alert 와 동일한 버튼 variant (confirm=filled / cancel=outline).
-	// canonical 이름과 함께 구 이름(--primary / --secondary)도 붙여 둔다 - 생성된 마크업의
-	// 클래스를 기준으로 스타일을 덮어쓰던 소비자 CSS 가 깨지지 않도록. 구 이름은 v4.0.0 에서 제거.
-	const CONFIRM_BUTTON_VARIANT = "bt-button--filled bt-button--primary";
-	const CANCEL_BUTTON_VARIANT = "bt-button--outline bt-button--secondary";
+	const CONFIRM_BUTTON_VARIANT = "bt-button--filled";
+	const CANCEL_BUTTON_VARIANT = "bt-button--outline";
 
 	/**
 	 * Show Alert dialog
@@ -697,6 +697,15 @@
 			}, 200);
 		}
 
+		// 오버레이 클릭 / Escape 는 "취소"와 동등한 동작이어야 한다 (WAI-ARIA APG alertdialog).
+		// React Alert 의 `dismiss = onCancel ?? onClose` 와 동일하게 onCancel 경로로 보내
+		// 소비자의 취소 정리 로직(롤백 등)이 조용히 우회되지 않게 한다.
+		function dismiss() {
+			if (!isOpen) return;
+			if (config.onCancel) config.onCancel();
+			close();
+		}
+
 		// Event handlers
 		const confirmBtn = overlay.querySelector("[data-alert-confirm]");
 		const cancelBtn = overlay.querySelector("[data-alert-cancel]");
@@ -718,14 +727,14 @@
 		// Close on overlay click (React Alert 와 동일하게 closeOnOverlay 로 끌 수 있다)
 		overlay.addEventListener("click", (e) => {
 			if (config.closeOnOverlay && e.target === overlay) {
-				close();
+				dismiss();
 			}
 		});
 
 		// Close on Escape + Tab 포커스 트랩 (WAI-ARIA APG Dialog) - Modal 과 동일 패턴
 		function onKeyDown(e) {
 			if (e.key === "Escape") {
-				close();
+				dismiss();
 				return;
 			}
 			if (e.key === "Tab" && alertPanel) {
@@ -769,9 +778,8 @@
 		const config = {
 			defaultChecked: false,
 			disabled: false,
-			// React Toggle 과 동일하게 onCheckedChange 가 canonical, onChange 는 @deprecated 별칭.
+			// React Toggle 과 동일한 체크 변경 콜백.
 			onCheckedChange: null,
-			onChange: null,
 			...options,
 		};
 
@@ -820,9 +828,8 @@
 				hiddenInput.value = checked ? "true" : "false";
 			}
 
-			const emit = config.onCheckedChange ?? config.onChange;
-			if (emit) {
-				emit(checked);
+			if (config.onCheckedChange) {
+				config.onCheckedChange(checked);
 			}
 		}
 
@@ -876,9 +883,8 @@
 			page: 1,
 			totalPages: 1,
 			sibling: 2,
-			// React Pagination 과 동일하게 onPageChange 가 canonical, onChange 는 @deprecated 별칭.
+			// React Pagination 과 동일한 페이지 변경 콜백.
 			onPageChange: null,
-			onChange: null,
 			...options,
 		};
 
@@ -979,9 +985,8 @@
 			config.page = page;
 			render();
 
-			const emit = config.onPageChange ?? config.onChange;
-			if (emit) {
-				emit(page);
+			if (config.onPageChange) {
+				config.onPageChange(page);
 			}
 		}
 
@@ -1012,10 +1017,10 @@
 	 * Auto-initialize all components with data-bt attribute
 	 */
 	function init() {
-		// Select
-		$$("[data-bt-select]").forEach((el) => {
-			if (!el._btSelect) {
-				el._btSelect = Select(el);
+		// Dropdown
+		$$("[data-bt-dropdown]").forEach((el) => {
+			if (!el._btDropdown) {
+				el._btDropdown = Dropdown(el);
 			}
 		});
 
@@ -1069,7 +1074,7 @@
 
 	return {
 		// Components
-		Select,
+		Dropdown,
 		Modal,
 		Alert,
 		Toggle,
