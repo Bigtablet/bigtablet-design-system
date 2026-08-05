@@ -834,7 +834,8 @@
 		}
 
 		function toggle() {
-			if (!config.disabled && !toggleEl.classList.contains("bt-toggle--disabled")) {
+			// React Toggle 과 동일하게 native `disabled` 만 본다 (구 --disabled 클래스는 v3.8.0 에서 제거).
+			if (!config.disabled && !toggleEl.disabled) {
 				setChecked(!state.checked);
 			}
 		}
@@ -860,7 +861,7 @@
 			toggle,
 			setDisabled: (disabled) => {
 				config.disabled = disabled;
-				toggleEl.classList.toggle("bt-toggle--disabled", disabled);
+				toggleEl.disabled = disabled;
 			},
 			destroy: () => cleanup(),
 		};

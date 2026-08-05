@@ -280,11 +280,8 @@ npm install @bigtablet/design-system
 <button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle>...</button>  <!-- 기본값 -->
 <button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle>...</button>
 
-<!-- 비활성화 - native disabled 또는 --disabled 클래스 -->
+<!-- 비활성화 - React Toggle 과 동일하게 native disabled 속성을 쓴다 -->
 <button type="button" class="bt-toggle" data-bt-toggle disabled>
-  <span class="bt-toggle__thumb"></span>
-</button>
-<button type="button" class="bt-toggle bt-toggle--disabled" data-bt-toggle>
   <span class="bt-toggle__thumb"></span>
 </button>
 ```
@@ -397,8 +394,11 @@ React 의 `multiple` / `searchable` 은 아직 지원하지 않습니다.
 
 ```html
 <script>
-  const dropdownEl = document.querySelector('[data-bt-dropdown]');
-  const myDropdown = Bigtablet.Dropdown(dropdownEl, {
+  // 옵션을 직접 넘겨 수동 초기화할 때는 `data-bt-dropdown` 을 붙이지 않는다.
+  // 그 속성이 있으면 DOMContentLoaded 에 자동 초기화되어 인스턴스가 두 개 생기고
+  // (각각 리스너·상태를 갖는다) 클릭 처리와 상태 동기화가 어긋난다.
+  // 자동 초기화된 요소를 다루려면 새로 만들지 말고 `el._btDropdown` 을 재사용할 것.
+  const myDropdown = Bigtablet.Dropdown('#fruit-dropdown', {
     placeholder: '선택하세요',
     options: [
       { value: 'apple', label: '사과' },
@@ -606,8 +606,9 @@ React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기�
 
 ```html
 <script>
-  const paginationEl = document.querySelector('[data-bt-pagination]');
-  const pagination = Bigtablet.Pagination(paginationEl, {
+  // Dropdown 과 마찬가지로, 수동 초기화 대상에는 `data-bt-pagination` 을 붙이지 않는다
+  // (붙이면 자동 초기화와 인스턴스가 겹친다).
+  const pagination = Bigtablet.Pagination('#article-pagination', {
     page: 1,
     totalPages: 20,
     onPageChange: (page) => {

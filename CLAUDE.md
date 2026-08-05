@@ -281,7 +281,7 @@ dist/vanilla/
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
-| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `.bt-toggle--disabled` / `:disabled` |
+| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |

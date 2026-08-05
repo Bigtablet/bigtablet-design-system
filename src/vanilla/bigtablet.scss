@@ -202,15 +202,19 @@
   }
 
   /* React Button variant="tonal" */
+  /* state 토큰(--bt-color-hover/pressed)은 반투명 alpha 라 background 를 교체하면 컨테이너 색이
+     사라진다. React 는 ::before 오버레이로 겹치는데 여기엔 그 레이어가 없으므로,
+     background-image 로 같은 알파를 컨테이너 위에 덧칠해 동일한 결과를 낸다. */
   &--tonal {
     background: var(--bt-color-primary-container);
     color: var(--bt-color-text-primary);
 
     &:hover:not(:disabled) {
-      background: var(--bt-color-pressed);
+      background-image: linear-gradient(var(--bt-color-hover), var(--bt-color-hover));
     }
 
     &:active:not(:disabled) {
+      background-image: linear-gradient(var(--bt-color-pressed), var(--bt-color-pressed));
       transform: scale(0.98);
     }
   }
@@ -684,9 +688,8 @@
     }
   }
 
-  /* React Toggle 은 native `disabled` 를 쓰는 <button> 이라 :disabled 도 함께 받는다.
-     (--disabled 는 JS 가 토글하는 기존 클래스 - 계속 지원) */
-  &--disabled,
+  /* React Toggle 과 동일하게 native `disabled` 속성만 지원한다.
+     (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
   &:disabled {
     cursor: not-allowed;
     background: var(--bt-color-border-light);

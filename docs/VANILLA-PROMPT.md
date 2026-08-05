@@ -25,7 +25,7 @@ JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
 - TextField: .bt-text-field, .bt-text-field__input --outline/filled --sm/md/lg --error/success
 - Checkbox: .bt-checkbox --sm/md/lg
 - Radio: .bt-radio --sm/md/lg
-- Toggle: .bt-toggle --sm/md --on --disabled
+- Toggle: .bt-toggle --sm/md --on (비활성화는 native disabled 속성)
 - Dropdown: .bt-dropdown, .bt-dropdown__control --outline/filled --sm/md/lg
 - Modal: .bt-modal .is-open
 - Card: .bt-card --bordered --shadow-none/sm/md/lg(기본 sm) --p-none/sm/md/lg(기본 md) --accent/glass/outlined --interactive
