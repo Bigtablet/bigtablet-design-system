@@ -597,6 +597,12 @@
      Alert Component
      ======================================== */
 
+	// React Alert 와 동일한 버튼 variant (confirm=filled / cancel=outline).
+	// canonical 이름과 함께 구 이름(--primary / --secondary)도 붙여 둔다 - 생성된 마크업의
+	// 클래스를 기준으로 스타일을 덮어쓰던 소비자 CSS 가 깨지지 않도록. 구 이름은 v4.0.0 에서 제거.
+	const CONFIRM_BUTTON_VARIANT = "bt-button--filled bt-button--primary";
+	const CANCEL_BUTTON_VARIANT = "bt-button--outline bt-button--secondary";
+
 	/**
 	 * Show Alert dialog
 	 * @param {Object} options - Alert configuration
@@ -609,7 +615,11 @@
 			confirmText: "확인",
 			cancelText: "취소",
 			showCancel: false,
+			// React AlertOptions.destructive 와 동일 - true 면 확인 버튼이 danger(빨강)로 강조된다.
+			destructive: false,
 			actionsAlign: "right", // left, center, right
+			// React AlertOptions.closeOnOverlay 와 동일 - false 면 오버레이 클릭으로 닫히지 않는다.
+			closeOnOverlay: true,
 			onConfirm: null,
 			onCancel: null,
 			...options,
@@ -632,10 +642,12 @@
 				}">
           ${
 						config.showCancel
-							? `<button class="bt-button bt-button--md bt-button--secondary" data-alert-cancel>${escapeHtml(config.cancelText)}</button>`
+							? `<button class="bt-button bt-button--md ${CANCEL_BUTTON_VARIANT}" data-alert-cancel>${escapeHtml(config.cancelText)}</button>`
 							: ""
 					}
-          <button class="bt-button bt-button--md bt-button--primary" data-alert-confirm>${escapeHtml(config.confirmText)}</button>
+          <button class="bt-button bt-button--md ${CONFIRM_BUTTON_VARIANT}${
+						config.destructive ? " bt-button--danger" : ""
+					}" data-alert-confirm>${escapeHtml(config.confirmText)}</button>
         </div>
       </div>
     `;
@@ -700,9 +712,9 @@
 			});
 		}
 
-		// Close on overlay click
+		// Close on overlay click (React Alert 와 동일하게 closeOnOverlay 로 끌 수 있다)
 		overlay.addEventListener("click", (e) => {
-			if (e.target === overlay) {
+			if (config.closeOnOverlay && e.target === overlay) {
 				close();
 			}
 		});
