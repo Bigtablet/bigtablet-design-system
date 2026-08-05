@@ -3,7 +3,8 @@
  * For use with plain HTML/CSS/JS, Thymeleaf, JSP, etc.
  *
  * @version 1.0.0
- * @license MIT
+ * @license Bigtablet Inc. Open Source License - see LICENSE at the repo root
+ *          (https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md)
  */
 
 ((global, factory) => {
