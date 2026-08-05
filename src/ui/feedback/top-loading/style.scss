@@ -18,7 +18,7 @@
 
   &_indeterminate {
     width: 30%;
-    animation: top_loading_indeterminate 1.5s ease-in-out infinite;
+    animation: top_loading_indeterminate token.$duration_loading_bar token.$easing_standard infinite;
   }
 }
 

@@ -34,24 +34,24 @@
   &_overlay_dark .hero_overlay {
     background: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.55) 100%
+      token.$color_scrim_dark_soft 0%,
+      token.$color_scrim_dark_strong 100%
     );
   }
 
   &_overlay_light .hero_overlay {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.7) 100%
+      token.$color_scrim_light_soft 0%,
+      token.$color_scrim_light_strong 100%
     );
   }
 
   // Light overlay 는 항상 흰색계 표면 - 텍스트는 theme 무관 forced dark.
   &_overlay_light.hero_text_default {
-    .hero_eyebrow  { color: rgba(0, 0, 0, 0.6); }
+    .hero_eyebrow  { color: token.$color_text_on_light_muted; }
     .hero_title    { color: token.$color_brand_primary; }
-    .hero_subtitle { color: rgba(0, 0, 0, 0.85); }
+    .hero_subtitle { color: token.$color_text_on_light_body; }
   }
 
   // ── Content area ──────────────────────────────────────────────────────
@@ -89,14 +89,14 @@
   }
 
   &_text_inverse {
-    .hero_eyebrow  { color: rgba(255, 255, 255, 0.7); }
+    .hero_eyebrow  { color: token.$color_text_on_dark_muted; }
     .hero_title    { color: token.$color_brand_on_primary; }
-    .hero_subtitle { color: rgba(255, 255, 255, 0.85); }
+    .hero_subtitle { color: token.$color_text_on_dark_body; }
 
     // 어두운 배경 위 버튼 - outline/text 를 흰색 계열로 강제
     .hero_actions {
       .button_variant_outline {
-        border-color: rgba(255, 255, 255, 0.55);
+        border-color: token.$color_border_on_dark;
         color: token.$color_brand_on_primary;
 
         &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
@@ -105,7 +105,7 @@
       }
 
       .button_variant_text {
-        color: rgba(255, 255, 255, 0.9);
+        color: token.$color_text_on_dark_strong;
 
         &:hover:not(:disabled)::before  { background: token.$color_state_hover_on_dark; }
         &:focus-visible:not(:disabled)::before { background: token.$color_state_focus_on_dark; }
