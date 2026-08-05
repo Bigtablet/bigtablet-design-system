@@ -622,7 +622,7 @@ EOF
 ```bash
 gh pr create --base develop --title "label/domain" \
   --label "Feature" --assignee @me --body "$(cat <<'EOF'
-## 작업 개요
+## 제목
 
 ## 작업한 내용
 - [x] 작업1
