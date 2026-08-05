@@ -25,6 +25,9 @@
   /* Colors - Accent (light=검정/dark=흰 자동 반전 - indicator/checked/focus 강조) */
   --bt-color-accent: #{token.$color_accent_default};
 
+  /* Colors - Primary container (React Button variant="tonal" 의 채움색) */
+  --bt-color-primary-container: #{token.$color_brand_primary_container};
+
   /* Colors - Background */
   --bt-color-background: #{token.$color_bg_solid};
   --bt-color-background-dim: #{token.$color_bg_solid_dim};
@@ -130,7 +133,15 @@
 
 /* ========================================
    Button
-   ======================================== */
+   ========================================
+   variant 이름은 React `<Button variant>` 와 동일한 filled / tonal / outline / text 가 정식이다.
+   구 이름은 @deprecated 별칭으로 계속 동작하며 v4.0.0 에서 제거 예정:
+     --primary   → --filled
+     --secondary → --outline
+     --ghost     → --text
+   danger 는 React 의 `danger` boolean 처럼 variant 와 직교(orthogonal)한 modifier 다.
+   `--danger` 단독은 기존과 동일하게 red filled 로 렌더링되고, variant 클래스와 함께 쓰면
+   해당 variant 의 red 표현(outline=빨간 테두리, tonal=빨간 wash, text=빨간 텍스트)이 된다. */
 .bt-button {
   display: inline-flex;
   align-items: center;
@@ -151,7 +162,7 @@
     opacity: 0.6;
   }
 
-  /* Sizes */
+  /* Sizes - React ButtonSize(sm/md/lg/xl) 와 동일 */
   &--sm {
     padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
     font-size: var(--bt-font-size-sm);
@@ -167,7 +178,14 @@
     font-size: var(--bt-font-size-md);
   }
 
+  &--xl {
+    padding: var(--bt-spacing-xl) var(--bt-spacing-3xl);
+    font-size: var(--bt-font-size-lg);
+  }
+
   /* Variants */
+  /* --primary 는 @deprecated 별칭 (→ --filled, v4.0.0 제거 예정) */
+  &--filled,
   &--primary {
     background: var(--bt-color-primary);
     color: var(--bt-color-background);
@@ -181,6 +199,22 @@
     }
   }
 
+  /* React Button variant="tonal" - 구 Vanilla 에는 없던 variant */
+  &--tonal {
+    background: var(--bt-color-primary-container);
+    color: var(--bt-color-text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--bt-color-pressed);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  /* --secondary 는 @deprecated 별칭 (→ --outline, v4.0.0 제거 예정) */
+  &--outline,
   &--secondary {
     background: transparent;
     border: 1px solid var(--bt-color-border);
@@ -195,6 +229,8 @@
     }
   }
 
+  /* --ghost 는 @deprecated 별칭 (→ --text, v4.0.0 제거 예정) */
+  &--text,
   &--ghost {
     background: transparent;
     color: var(--bt-color-text-primary);
@@ -208,6 +244,7 @@
     }
   }
 
+  /* --danger 단독 = React `<Button variant="filled" danger />` (하위 호환 유지) */
   &--danger {
     background: var(--bt-color-error);
     color: var(--bt-color-background);
@@ -223,6 +260,38 @@
 
   &--full-width {
     width: 100%;
+  }
+}
+
+/* danger × variant - React 의 `variant` + `danger` 조합과 동일한 렌더링.
+   클래스 2개라 단독 `--danger`(클래스 1개)보다 우선순위가 높다. */
+.bt-button--danger.bt-button--outline,
+.bt-button--danger.bt-button--secondary {
+  background: transparent;
+  border-color: var(--bt-color-error);
+  color: var(--bt-color-error);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 8%, transparent);
+  }
+}
+
+.bt-button--danger.bt-button--tonal {
+  background: color-mix(in srgb, var(--bt-color-error) 12%, transparent);
+  color: var(--bt-color-error);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 18%, transparent);
+  }
+}
+
+.bt-button--danger.bt-button--text,
+.bt-button--danger.bt-button--ghost {
+  background: transparent;
+  color: var(--bt-color-error);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 8%, transparent);
   }
 }
 
@@ -275,7 +344,8 @@
       opacity: 0.7;
     }
 
-    /* Variants */
+    /* Variants - React TextField 에는 variant prop 이 없고 outline 스타일만 있다.
+       --outline 이 React 와 동등한 기본값이고, --filled 는 Vanilla 전용이다. */
     &--outline {
       border: 1px solid var(--bt-color-border);
 
@@ -586,7 +656,13 @@
     }
   }
 
-  /* Sizes */
+  /* Sizes - React ToggleSize(sm/md) 와 동일. sm 은 기본값이라 클래스 없이도 같게 렌더링되지만,
+     React 의 `size="sm"` 를 그대로 옮겨 적을 수 있도록 명시적 클래스를 제공한다. */
+  &--sm {
+    width: 40px;
+    height: 24px;
+  }
+
   &--md {
     width: 48px;
     height: 28px;
@@ -603,7 +679,10 @@
     }
   }
 
-  &--disabled {
+  /* React Toggle 은 native `disabled` 를 쓰는 <button> 이라 :disabled 도 함께 받는다.
+     (--disabled 는 JS 가 토글하는 기존 클래스 - 계속 지원) */
+  &--disabled,
+  &:disabled {
     cursor: not-allowed;
     background: var(--bt-color-border-light);
 
@@ -657,7 +736,8 @@
       color: var(--bt-color-text-tertiary);
     }
 
-    /* Variants */
+    /* Variants - React Dropdown 은 variant prop 을 @deprecated 처리하고 outline 만 쓴다.
+       --outline 이 React 와 동등한 기본값이고, --filled 는 Vanilla 전용이다. */
     &--outline {
       border: 1px solid var(--bt-color-border);
 
@@ -945,10 +1025,21 @@
     border: 1px solid var(--bt-color-border);
   }
 
+  /* Shadow - React Card `shadow` prop(none/sm/md/lg) 과 이름·토큰이 동일한 쪽이 정식.
+     --elevation-1/2/3 은 @deprecated 별칭 (v4.0.0 제거 예정). */
+  &--shadow-none { box-shadow: none; }
+
+  &--shadow-sm,
   &--elevation-1 { box-shadow: var(--bt-elevation-1); }
+
+  &--shadow-md,
   &--elevation-2 { box-shadow: var(--bt-elevation-2); }
+
+  &--shadow-lg,
   &--elevation-3 { box-shadow: var(--bt-elevation-3); }
 
+  /* Padding - React Card `padding` prop(none/sm/md/lg) 과 동일 */
+  &--p-none { padding: 0; }
   &--p-sm { padding: var(--bt-spacing-sm); }
   &--p-md { padding: var(--bt-spacing-lg); }
   &--p-lg { padding: var(--bt-spacing-2xl); }
