@@ -139,7 +139,8 @@ export const Button = (props: ButtonProps) => {
         className
     );
 
-    // as="a" 또는 (as 미지정 + href 존재) 시 anchor 로 렌더링 (생략)
+    // 지면상 button 분기만 표시한 부분 예시. 실제 구현은 as="a" 또는 (as 미지정 + href 존재) 시
+    // <a href={href} {...rest}>{children}</a> 로 렌더링해야 한다 - 그대로 복사하면 링크가 동작하지 않음.
     return (
         <button ref={ref as React.Ref<HTMLButtonElement>} disabled={disabled} className={buttonClassName} {...rest}>
             {children}
@@ -326,6 +327,7 @@ $elevation_level1: var(--bt-elevation-level1);
 $elevation_level2: var(--bt-elevation-level2);
 
 // src/styles/motion/_index.scss
+$duration_fast:   0.1s;
 $duration_base:   0.2s;
 $transition_fast: $duration_fast ease-in-out;
 $transition_base: $duration_base ease-in-out;

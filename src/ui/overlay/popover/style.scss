@@ -21,8 +21,12 @@
   border-radius: token.$radius_lg;
   box-shadow: token.$elevation_level2;
   padding: token.$spacing_16;
-  min-width: 200px;
-  max-width: 320px;
+  // 위치 컨테이너(.popover_position)는 useAnchoredPosition 의 maxWidth(가용 폭) 로 제한된다.
+  // 패널이 그보다 넓으면 좁은 뷰포트에서 오른쪽으로 다시 넘치므로, border-box + 부모 폭(100%)
+  // 이하로 min/max 를 묶어 위치 컨테이너 밖으로 새지 않게 한다.
+  box-sizing: border-box;
+  min-width: min(200px, 100%);
+  max-width: min(320px, 100%);
   color: token.$color_text_body;
   @include token.body_small;
   will-change: transform, opacity;

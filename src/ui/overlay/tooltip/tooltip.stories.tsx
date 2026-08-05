@@ -14,7 +14,7 @@ const meta: Meta<typeof Tooltip> = {
 			control: "select",
 			options: ["top", "bottom", "left", "right"],
 			description:
-				"선호 위치. 뷰포트를 벗어나면 반대편으로 flip + 교차축 shift 되어 실제 위치는 계산 결과를 따른다.",
+				"선호 위치. 뷰포트를 벗어나면 반대편으로 flip + 교차축 shift 되어 실제 위치는 계산 결과를 따른다. / Preferred side. On viewport overflow it flips to the opposite side and shifts on the cross axis, so the final position follows the computed result.",
 		},
 		delay: {
 			control: "number",

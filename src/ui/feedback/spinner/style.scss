@@ -1,3 +1,4 @@
+@use "sass:math";
 @use "src/styles/token" as token;
 
 @keyframes spinner_fade {
@@ -28,7 +29,8 @@
   @for $i from 0 through 11 {
     &_bar:nth-child(#{$i + 1}) {
       transform: rotate(#{$i * 30}deg);
-      animation-delay: (-1 * token.$duration_loading_spinner) + ($i * 0.1s);
+      // 12개 spoke 를 한 주기에 균등 분산 - 간격을 duration/12 로 계산해 토큰 값이 바뀌어도 유지.
+      animation-delay: math.div(token.$duration_loading_spinner, 12) * ($i - 12);
     }
   }
 }

@@ -144,6 +144,13 @@
 			return null;
 		}
 
+		// 초기 비활성 상태 흡수 - 서버가 native `disabled` 또는 `is-disabled` 로 렌더링했으면 config 에 반영.
+		// 이후 native disabled / aria-disabled / 스타일 클래스를 함께 동기화한다 (React 는 native disabled 사용).
+		if (control.disabled || control.classList.contains("is-disabled")) config.disabled = true;
+		control.disabled = config.disabled;
+		control.setAttribute("aria-disabled", config.disabled ? "true" : "false");
+		control.classList.toggle("is-disabled", config.disabled);
+
 		// Parse options: data-options JSON > JS config > 서버 렌더링된 <li data-value> 마크업.
 		// Thymeleaf/JSP 처럼 서버가 옵션 li 를 직접 렌더링하는 경우(문서화된 기본 마크업)를
 		// 지원해야 하므로 DOM 파싱이 반드시 필요하다.
@@ -240,7 +247,7 @@
 		}
 
 		function open() {
-			if (config.disabled) return;
+			if (config.disabled || control.disabled) return;
 
 			state.isOpen = true;
 			control.classList.add("is-open");
@@ -441,6 +448,8 @@
 			toggle,
 			setDisabled: (disabled) => {
 				config.disabled = disabled;
+				control.disabled = disabled;
+				control.setAttribute("aria-disabled", disabled ? "true" : "false");
 				control.classList.toggle("is-disabled", disabled);
 			},
 			destroy: () => {
@@ -786,6 +795,11 @@
 		const state = {
 			checked: config.defaultChecked || toggleEl.classList.contains("bt-toggle--on"),
 		};
+
+		// 초기 비활성 상태 흡수 - config.disabled 또는 native disabled 를 native `disabled` 로 통일
+		// (React Toggle 과 동일하게 native disabled 사용 → 포커스 제외·:disabled 스타일 적용).
+		if (toggleEl.disabled) config.disabled = true;
+		toggleEl.disabled = config.disabled;
 
 		// Switch 시맨틱 (React Toggle 과 패리티): role + aria-checked 를 항상 유지
 		if (!toggleEl.hasAttribute("role")) toggleEl.setAttribute("role", "switch");

@@ -135,26 +135,31 @@ v3.3.0 에서 React 가 `on*Change` 패밀리로 통일된 것에 맞춰 Vanilla
 ```bash
 # 대상 디렉터리로 이동 후 실행. 확장자는 프로젝트에 맞게 조정하세요.
 # macOS(BSD sed)는 -i '' , GNU sed 는 -i 를 사용합니다.
-FILES=$(grep -rl -E 'bt-select|bt-button--(primary|secondary|ghost)|bt-card--elevation|bt-spinner--|Bigtablet\.Select|_btSelect' \
-  --include='*.html' --include='*.jsp' --include='*.php' --include='*.js' --include='*.css' --include='*.scss' .)
+# 소스만 대상으로 하고 의존성/빌드 산출물은 제외. 경로에 공백이 있어도 안전하도록 NUL 구분 사용.
+INCLUDES=(--include='*.html' --include='*.jsp' --include='*.php' --include='*.js' --include='*.css' --include='*.scss')
+EXCLUDES=(--exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git)
 
 # 1) Select → Dropdown (클래스 / data 속성 / JS 팩토리 / 인스턴스 프로퍼티)
-sed -i '' -e 's/bt-select/bt-dropdown/g' \
-          -e 's/Bigtablet\.Select/Bigtablet.Dropdown/g' \
-          -e 's/_btSelect/_btDropdown/g' $FILES
+grep -rlZ -E 'bt-select|Bigtablet\.Select|_btSelect' "${INCLUDES[@]}" "${EXCLUDES[@]}" . \
+  | xargs -0 sed -i '' -e 's/bt-select/bt-dropdown/g' \
+                       -e 's/Bigtablet\.Select/Bigtablet.Dropdown/g' \
+                       -e 's/_btSelect/_btDropdown/g'
 
 # 2) Button variant
-sed -i '' -e 's/bt-button--primary/bt-button--filled/g' \
-          -e 's/bt-button--secondary/bt-button--outline/g' \
-          -e 's/bt-button--ghost/bt-button--text/g' $FILES
+grep -rlZ -E 'bt-button--(primary|secondary|ghost)' "${INCLUDES[@]}" "${EXCLUDES[@]}" . \
+  | xargs -0 sed -i '' -e 's/bt-button--primary/bt-button--filled/g' \
+                       -e 's/bt-button--secondary/bt-button--outline/g' \
+                       -e 's/bt-button--ghost/bt-button--text/g'
 
 # 3) Card elevation → shadow
-sed -i '' -e 's/bt-card--elevation-1/bt-card--shadow-sm/g' \
-          -e 's/bt-card--elevation-2/bt-card--shadow-md/g' \
-          -e 's/bt-card--elevation-3/bt-card--shadow-lg/g' $FILES
+grep -rlZ -E 'bt-card--elevation' "${INCLUDES[@]}" "${EXCLUDES[@]}" . \
+  | xargs -0 sed -i '' -e 's/bt-card--elevation-1/bt-card--shadow-sm/g' \
+                       -e 's/bt-card--elevation-2/bt-card--shadow-md/g' \
+                       -e 's/bt-card--elevation-3/bt-card--shadow-lg/g'
 
-# 4) 확인 - 남은 구 이름이 없어야 합니다
-grep -rn -E 'bt-select|bt-button--(primary|secondary|ghost)|bt-card--elevation|bt-spinner--|Bigtablet\.Select|_btSelect|data-bt-select' . || echo "clean"
+# 4) 확인 - 남은 구 이름이 없어야 합니다 (동일 --include 로 이 문서(.md) 는 대상에서 제외됨)
+grep -rn -E 'bt-select|bt-button--(primary|secondary|ghost)|bt-card--elevation|bt-spinner--|Bigtablet\.Select|_btSelect|data-bt-select' \
+  "${INCLUDES[@]}" "${EXCLUDES[@]}" . || echo "clean"
 ```
 
 기계적으로 치환할 수 없어 **손으로 확인해야 하는 항목**:

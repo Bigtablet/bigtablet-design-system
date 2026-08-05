@@ -422,9 +422,9 @@ import { Search, Eye } from 'lucide-react';
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
 
 > TextField 에는 `variant` · `success` prop 이 없다. outline 스타일 하나만 제공하며, 성공 상태는 별도 표현이 없다 (에러만 `error` 로 표시).
-
+>
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
-
+>
 > **v3.1 추가**: `imeStrategy` prop - 한글 IME 조합 중 콜백 전략. 기본 `"delayed"` (조합 완료 후 `onValueChange`), 실시간 검색/필터엔 `"immediate"` (조합 중에도 즉시 호출).
 
 ---
@@ -1817,11 +1817,13 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 
 #### DOM 구조 (SCSS override 시 참고)
 
-```
+```text
 span.tooltip_wrapper           ← position: relative; display: inline-block
-├── {children}                 ← cloneElement로 핸들러/aria 주입된 trigger
-└── span.tooltip_position      ← createPortal(body), position: fixed (좌표는 useAnchoredPosition)
-    │                            pointer-events 유지 + onMouseEnter/onMouseLeave (WCAG 1.4.13 Hoverable)
+└── {children}                 ← cloneElement로 핸들러/aria 주입된 trigger
+
+document.body (createPortal)   ← wrapper 밖으로 포탈됨 (DOM 상 트리거의 자식이 아님)
+└── span.tooltip_position      ← position: fixed (좌표는 useAnchoredPosition)
+        pointer-events 유지 + onMouseEnter/onMouseLeave (WCAG 1.4.13 Hoverable)
     └── span.tooltip           ← role="tooltip", spring transform, max-width 240px
 ```
 
@@ -1968,7 +1970,7 @@ span.menu_wrapper                  ← position: relative; ref 부착 (외부 �
         └── span.menu_item_label   ← ellipsis
 ```
 
-`document.body`로 **포탈**되고 `position: fixed` + `useAnchoredPosition` 좌표로 배치되므로 trigger의 `overflow: hidden`/`transform` 조상에 갇히거나 잘리지 않는다. `z-index`는 `z_level5` 사용.
+Menu 는 Tooltip/Popover 와 달리 **포탈하지 않는다** - `.menu_wrapper` 안에서 `position: absolute` 로 배치되고 `z-index`는 `z_level5` 를 쓴다. 따라서 트리거에 `overflow: hidden` 이나 `transform` 조상이 있으면 메뉴가 잘릴 수 있으니, 그런 컨테이너 안에서 쓸 때는 오버플로를 열어두거나 Popover 를 사용한다.
 
 **Usage**
 
