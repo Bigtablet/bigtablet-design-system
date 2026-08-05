@@ -235,7 +235,7 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 86%
+- **Coverage**: 90% (stmts 90.01 / branch 85.59 / funcs 90.07 / lines 91.97 - 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지))
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
@@ -253,10 +253,10 @@ For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
 ### Build Output
 ```
 dist/vanilla/
-├── bigtablet.css       # Full CSS (27KB)
-├── bigtablet.min.css   # Minified CSS (21KB)
-├── bigtablet.js        # Full JS (20KB)
-├── bigtablet.min.js    # Minified JS (9KB)
+├── bigtablet.css       # Full CSS (~38KB)
+├── bigtablet.min.css   # Minified CSS (~31KB)
+├── bigtablet.js        # Full JS (~30KB)
+├── bigtablet.min.js    # Minified JS (~13KB)
 └── examples/           # HTML examples
 ```
 

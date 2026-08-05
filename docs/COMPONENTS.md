@@ -23,12 +23,15 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
+  - [ImageCropper](#imagecropper)
+  - [OtpInput](#otpinput)
 - [Feedback](#feedback)
   - [Alert](#alert)
   - [Toast](#toast)
   - [Spinner](#spinner)
   - [TopLoading](#toploading)
   - [LinearProgress](#linearprogress)
+  - [Skeleton](#skeleton)
 - [Navigation](#navigation)
   - [Pagination](#pagination)
   - [Tabs](#tabs)
@@ -53,6 +56,8 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [EmptyState](#emptystate)
   - [ErrorState](#errorstate)
   - [Accordion](#accordion)
+  - [Table](#table)
+  - [Icon](#icon)
 - [Layout](#layout)
   - [Container](#container)
   - [Section](#section)
@@ -155,28 +160,47 @@ import { Button } from '@bigtablet/design-system';
 <Button>클릭</Button>
 
 // Variants
-<Button variant="primary">Primary</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="danger">Danger</Button>
+<Button variant="filled">Filled</Button>
+<Button variant="tonal">Tonal</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="text">Text</Button>
+
+// 위험한 액션 - variant 와 조합하는 boolean prop (variant="danger" 는 존재하지 않음)
+<Button danger>삭제</Button>
+<Button variant="outline" danger>삭제</Button>
 
 // Sizes
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
+<Button size="xl">XLarge</Button>
+
+// 아이콘
+import { Plus } from 'lucide-react';
+<Button leadingIcon={<Plus size={16} />}>추가</Button>
 
 // 너비 조절
-<Button width="200px">고정 너비</Button>
 <Button fullWidth>전체 너비</Button>
+
+// anchor 로 렌더링 - href 만 줘도 자동 분기
+<Button href="/pricing">요금제 보기</Button>
+<Button as="a" href="https://example.com" target="_blank" rel="noreferrer">외부 링크</Button>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | 버튼 스타일 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 버튼 크기 |
-| `width` | `string` | - | 버튼 너비 |
+| `variant` | `'filled' \| 'tonal' \| 'outline' \| 'text'` | `'filled'` | 버튼 스타일 |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 버튼 크기 |
+| `danger` | `boolean` | `false` | 위험한 액션(삭제/취소) 빨간 강조. `variant` 와 조합해서 사용 |
+| `leadingIcon` | `ReactNode` | - | 버튼 앞에 표시할 아이콘 |
+| `trailingIcon` | `ReactNode` | - | 버튼 뒤에 표시할 아이콘 |
+| `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `disabled` | `boolean` | `false` | 비활성화 |
+| `as` | `'button' \| 'a'` | `'button'` | 렌더링할 요소. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 대상 (`as="a"` 일 때 필수) |
+| `disabled` | `boolean` | `false` | 비활성화. anchor 는 `aria-disabled` + 클릭 차단으로 처리 |
+
+> `ButtonProps` 는 `ButtonAsButton | ButtonAsAnchor` discriminated union 이라 `interface X extends ButtonProps` 로 확장할 수 없다. 확장이 필요하면 `React.ComponentProps<typeof Button>` 을 쓴다 ([MIGRATION.md](./MIGRATION.md) 참고).
 
 ---
 
@@ -220,18 +244,47 @@ const [fruit, setFruit] = useState<string | null>(null);
     { value: 'nyc', label: '뉴욕', supportingText: '미국' },
   ]}
 />
+
+// 검색 가능 (label 부분 일치 필터)
+<Dropdown options={options} searchable searchPlaceholder="과일 검색…" emptyText="일치하는 과일 없음" />
+
+// 다중 선택
+const [fruits, setFruits] = useState<string[]>([]);
+<Dropdown
+  multiple
+  options={options}
+  value={fruits}
+  onValueChange={(values, opts) => setFruits(values)}
+  selectedSummary={(count) => `${count}개 담김`}
+/>
+
+// 네이티브 폼 제출 참여 - 선택 값이 hidden input 으로 렌더됨
+<form action="/submit" method="post">
+  <Dropdown name="fruit" options={options} />
+</form>
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `options` | `DropdownOption[]` | required | 옵션 목록 |
-| `value` | `string \| null` | - | 선택된 값 (controlled) |
-| `defaultValue` | `string \| null` | `null` | 기본 선택값 |
-| `onValueChange` | `(value, option) => void` | - | 변경 핸들러 |
+| `value` | `string \| null` (single) · `string[]` (multiple) | - | 선택된 값 (controlled) |
+| `defaultValue` | `string \| null` (single) · `string[]` (multiple) | - | 기본 선택값 |
+| `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
+| ~~`onChange`~~ | `onValueChange` 와 동일 시그니처 | - | **deprecated** (v3.3.0, `onValueChange` 의 alias). [MIGRATION.md](./MIGRATION.md) 참고 |
+| `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
+| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터) |
+| `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
+| `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
+| `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
 | `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
+| `id` | `string` | 자동 생성 | 드롭다운 요소 id |
+| `className` | `string` | - | 루트 요소에 추가할 className |
 | ~~`fullWidth`~~ | `boolean` | - | **deprecated** (v3.0.0, no-op - 항상 부모 너비를 채움). [MIGRATION.md](./MIGRATION.md) 참고 |
+| ~~`variant`~~ | `'outline' \| 'filled' \| 'ghost'` | - | **deprecated** (no-op - outline 스타일만 사용) |
+| ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
 **DropdownOption:**
@@ -323,17 +376,14 @@ import { TextField } from '@bigtablet/design-system';
 
 // 상태 표시
 <TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
-<TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 
 // 아이콘
 import { Search, Eye } from 'lucide-react';
-<TextField leftIcon={<Search size={16} />} placeholder="검색..." />
-<TextField rightIcon={<Eye size={16} />} type="password" />
+<TextField leadingIcon={<Search size={16} />} placeholder="검색..." />
+<TextField trailingIcon={<Eye size={16} />} type="password" />
 
-// Variants
-<TextField variant="outline" label="Outline" />
-<TextField variant="filled" label="Filled" />
-<TextField variant="ghost" label="Ghost" />
+// 지우기 버튼
+<TextField label="검색어" clearable onValueChange={(v) => setQuery(v)} />
 
 // 값 변환 (자동 포맷팅)
 <TextField
@@ -346,17 +396,20 @@ import { Search, Eye } from 'lucide-react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `string` | - | 라벨 |
+| `showLabel` | `boolean` | `true` | 라벨 표시 여부 (false 면 SR 전용) |
 | `supportingText` | `string` | - | 도움말 텍스트 |
 | `error` | `boolean` | `false` | 에러 상태 |
-| `success` | `boolean` | `false` | 성공 상태 |
-| `variant` | `'outline' \| 'filled' \| 'ghost'` | `'outline'` | 스타일 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `leftIcon` | `ReactNode` | - | 왼쪽 아이콘 |
-| `rightIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 |
+| `trailingIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
+| ~~`onChangeAction`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). Next 서버 액션 전달용 `Action` 접미사가 필요하면 계속 사용 가능 |
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 (v3.1). `immediate` = 조합 중에도 즉시 호출 |
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
+
+> TextField 에는 `variant` · `success` prop 이 없다. outline 스타일 하나만 제공하며, 성공 상태는 별도 표현이 없다 (에러만 `error` 로 표시).
 
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
 
@@ -675,22 +728,180 @@ import { FileInput } from '@bigtablet/design-system';
   onFiles={(files) => console.log(files)}
 />
 
-// 여러 파일
+// 여러 파일 + 도움말
 <FileInput
   label="이미지 업로드"
   accept="image/*"
   multiple
+  supportingText="PNG, JPG 파일만 업로드 가능합니다"
+  onFiles={(files) => console.log(files)}
+/>
+
+// 썸네일 미리보기 (variant="button" + preview)
+<FileInput label="사진 첨부" accept="image/*" multiple preview />
+
+// 큰 박스 이미지 업로더 (아바타 패턴) - 단일 이미지
+<FileInput
+  variant="preview"
+  previewSize={120}
+  label="프로필 사진 선택"
+  accept="image/*"
   onFiles={(files) => console.log(files)}
 />
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | `'파일 선택'` | 버튼 라벨 |
+| `label` | `string` | `'Choose file'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
+| `variant` | `'button' \| 'preview'` | `'button'` | 표시 형태. `preview` 는 큰 박스에 이미지를 채우는 단일 이미지 업로더 |
+| `previewSize` | `number` | `160` | `variant="preview"` 박스 한 변 크기 (px) |
+| `preview` | `boolean` | `false` | 이미지 선택 시 64×64 썸네일을 버튼 아래 나열 (`variant="button"` 전용) |
+| `supportingText` | `string` | - | 입력 아래 도움말 텍스트 |
 | `accept` | `string` | - | 허용 파일 타입 |
-| `onFiles` | `(files: FileList \| null) => void` | - | 파일 선택 핸들러 |
-| `multiple` | `boolean` | `false` | 다중 선택 |
+| `onFiles` | `(files: FileList \| null) => void` | - | 파일 선택 핸들러. 미리보기 제거 시 `null` 로 호출 |
+| `multiple` | `boolean` | `false` | 다중 선택 (`variant="preview"` 는 항상 단일 이미지) |
 | `disabled` | `boolean` | `false` | 비활성화 |
+
+> 나머지 `input[type=file]` 네이티브 속성(`name`, `required`, `onChange` 등)은 그대로 전달된다. `onChange` 를 함께 넘기면 `onFiles` 뒤에 이어서 호출된다.
+
+---
+
+### ImageCropper
+
+업로드 전에 이미지에서 **보일 정사각 영역**을 정하는 크로퍼 (v3.7.0). 뷰포트 안에서 드래그(또는 방향키)로 위치를, 휠·슬라이더·＋/－ 버튼(또는 <kbd>+</kbd>/<kbd>-</kbd> 키)으로 배율을 맞춘다.
+
+모달을 포함하지 않으므로 소비자가 [`Modal`](#modal) 등으로 감싸고, "적용" 버튼에서 `ref.crop()` 을 호출해 `Blob` 을 받는다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 프로필/아바타 이미지 업로드 전 원형 크롭 | ✅ ImageCropper (`circular`) |
+| 썸네일·커버 이미지의 정사각 영역 지정 | ✅ ImageCropper |
+| 자유 비율(16:9 등) 크롭 | ❌ 미지원 - 결과는 항상 정사각 |
+| 크롭 없이 단순 파일 선택 + 미리보기 | ❌ [FileInput](#fileinput) `variant="preview"` 권장 |
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `File \| Blob \| string` | required | 크롭할 이미지. 로컬 `File`/`Blob` 또는 이미지 URL |
+| `ref` | `Ref<ImageCropperHandle>` | - | `crop()` / `reset()` 을 호출할 imperative 핸들 (React 19 ref-as-prop) |
+| `outputSize` | `number` | `512` | 결과물 한 변 길이 (px) |
+| `outputType` | `'auto' \| 'image/jpeg' \| 'image/png' \| 'image/webp'` | `'auto'` | 결과 MIME. `auto` 는 PNG 만 PNG 로, 나머지는 JPEG |
+| `quality` | `number` | `0.92` | JPEG/WebP 인코딩 품질 (0~1) |
+| `circular` | `boolean` | `false` | 원형 가이드 (아바타용). false 면 둥근 사각형 |
+| `viewportSize` | `number` | `240` | 뷰포트 한 변 길이 (px) |
+| `minZoom` | `number` | `1` | 최소 배율 (1 = 이미지가 뷰포트를 딱 덮음) |
+| `maxZoom` | `number` | `3` | 최대 배율 |
+| `onReady` | `(size: CropImageSize) => void` | - | 이미지 로드 완료 콜백 |
+| `onError` | `() => void` | - | 이미지 디코딩 실패 콜백 (손상 파일 등) |
+| `label` | `string` | `'이미지 위치와 배율 조정'` | 뷰포트 접근성 레이블 |
+| `hint` | `string` | `'드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.'` | 뷰포트 아래 조작 안내 문구 |
+| `zoomOutLabel` | `string` | `'축소'` | 축소 버튼 접근성 레이블 |
+| `zoomLabel` | `string` | `'배율'` | 배율 슬라이더 접근성 레이블 |
+| `zoomInLabel` | `string` | `'확대'` | 확대 버튼 접근성 레이블 |
+| `noPanHint` | `string` | `'이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.'` | 이동 여유가 없을 때 SR 안내 문구 |
+| `className` | `string` | - | 루트 요소에 추가할 className |
+
+> 루트는 표준 `div` 속성(`id` / `data-*` / `aria-*` / `style` 등)을 그대로 전달받는다. 단 `onError` 는 이미지 디코드 실패 콜백으로 재정의되어 있고, `children` / `dangerouslySetInnerHTML` 은 루트가 항상 자체 자식을 렌더하므로 받지 않는다.
+
+**`ImageCropperHandle` (ref)**
+
+| 메서드 | Type | Description |
+|------|------|-------------|
+| `crop` | `() => Promise<Blob>` | 현재 보이는 정사각 영역을 잘라 `Blob` 반환. 소비자의 "적용" 버튼에서 호출 |
+| `reset` | `() => void` | 배율·위치를 초기 상태(zoom=min, 중앙)로 되돌림 |
+
+**Usage**
+
+```tsx
+import { useRef, useState } from "react";
+import { ImageCropper, Modal, Button, FileInput } from "@bigtablet/design-system";
+import type { ImageCropperHandle } from "@bigtablet/design-system";
+
+function AvatarUploader() {
+  const cropperRef = useRef<ImageCropperHandle>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleApply = async () => {
+    const blob = await cropperRef.current!.crop();
+    const form = new FormData();
+    form.append("avatar", blob, "avatar.jpg");
+    await fetch("/api/avatar", { method: "POST", body: form });
+    setFile(null);
+  };
+
+  return (
+    <>
+      <FileInput
+        accept="image/*"
+        label="프로필 사진 선택"
+        onFiles={(files) => setFile(files?.[0] ?? null)}
+      />
+
+      <Modal open={!!file} onClose={() => setFile(null)} title="사진 자르기">
+        {file && <ImageCropper ref={cropperRef} src={file} circular outputSize={256} />}
+        <Button variant="text" onClick={() => cropperRef.current?.reset()}>초기화</Button>
+        <Button onClick={handleApply}>적용</Button>
+      </Modal>
+    </>
+  );
+}
+```
+
+#### 키보드 / 포인터 조작
+
+| 입력 | 동작 |
+|------|------|
+| 드래그 (pointer) | 이미지 위치 이동 |
+| 방향키 | 8px 단위 위치 이동 |
+| <kbd>+</kbd> / <kbd>-</kbd> | 0.1 단위 배율 변경 |
+| 마우스 휠 | 연속 배율 변경 |
+| 슬라이더 / ＋·－ 버튼 | 배율 변경 |
+
+> ⚠️ 원격 URL 을 넘기면 `canvas.drawImage` 결과가 서버의 CORS(`Access-Control-Allow-Origin`) 설정에 의존한다. 확실하게 자르려면 로컬 `File`/`Blob` 을 넘겨라.
+
+---
+
+### OtpInput
+
+인증 코드(OTP) 입력. 각 자리를 개별 `input` 으로 분리하고 자동 포커스 이동·붙여넣기·SMS 자동완성(`autocomplete="one-time-code"`)을 지원한다.
+
+```tsx
+import { OtpInput } from '@bigtablet/design-system';
+
+const [code, setCode] = useState('');
+
+// 기본 (6자리)
+<OtpInput value={code} onValueChange={setCode} />
+
+// 4자리 + 자동 포커스
+<OtpInput length={4} value={code} onValueChange={setCode} autoFocus />
+
+// 에러 상태 + 도움말
+<OtpInput
+  value={code}
+  onValueChange={setCode}
+  error
+  supportingText="인증번호가 일치하지 않습니다"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `length` | `4 \| 6` | `6` | OTP 자릿수 |
+| `value` | `string` | `''` | 제어형 값 (controlled 전용) |
+| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (canonical) |
+| ~~`onChange`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). [MIGRATION.md](./MIGRATION.md) 참고 |
+| `error` | `boolean` | `false` | 에러 상태 |
+| `disabled` | `boolean` | `false` | 비활성화 |
+| `supportingText` | `string` | - | 하단 도움말 텍스트 |
+| `autoFocus` | `boolean` | `false` | 첫 번째 입력에 자동 포커스 |
+| `ariaLabel` | `string` | `'OTP 입력'` | 그룹 접근성 레이블 |
+| `className` | `string` | - | 루트 요소에 추가할 className |
+
+> **제어형 전용**: `value` + `onValueChange` 를 항상 함께 넘겨야 한다 (비제어 모드 없음). 전체 코드를 한 번에 붙여넣거나 SMS 자동완성으로 받으면 각 자리에 자동 분배된다.
 
 ---
 
@@ -839,6 +1050,46 @@ import { LinearProgress } from '@bigtablet/design-system';
 | `totalSteps` | `number` | required | 전체 단계 수 |
 | `currentStep` | `number` | required | 현재 단계 (0~totalSteps) |
 | `aria-label` | `string` | required | 접근성 라벨 (필수) |
+
+---
+
+### Skeleton
+
+콘텐츠가 로드되기 전 자리를 잡아 두는 플레이스홀더. 실제 콘텐츠와 **같은 크기·모양**으로 맞춰야 로드 후 레이아웃이 흔들리지 않는다.
+
+```tsx
+import { Skeleton } from '@bigtablet/design-system';
+
+// 텍스트 한 줄
+<Skeleton />
+<Skeleton width="60%" />
+
+// 제목
+<Skeleton variant="title" width={240} />
+
+// 아바타 (width 만 주면 height 자동 동일)
+<Skeleton variant="avatar" width={40} />
+
+// 임의 블록
+<Skeleton variant="rect" width="100%" height={180} radius="md" />
+
+// 카드 스켈레톤 조합
+<Stack gap={12}>
+  <Skeleton variant="rect" height={160} radius="md" />
+  <Skeleton variant="title" width="70%" />
+  <Skeleton width="100%" />
+  <Skeleton width="85%" />
+</Stack>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'text' \| 'title' \| 'avatar' \| 'rect'` | `'text'` | 스켈레톤 모양 |
+| `width` | `number \| string` | - | CSS width (`200` → `200px`, `'100%'`, `'16rem'`). `variant="avatar"` 는 height 미지정 시 width 와 동일하게 적용 |
+| `height` | `number \| string` | - | CSS height |
+| `radius` | `'sm' \| 'md' \| 'lg' \| 'full' \| string` | - | border-radius 토큰 또는 임의 CSS 값 |
+
+> 루트는 `div` 이고 `aria-hidden="true"` 가 자동으로 붙는다 (스크린리더 노이즈 방지). 로딩 상태 자체를 알려야 하면 부모에 `aria-busy` / `role="status"` 를 직접 걸어라. `children` 은 받지 않으며, 그 외 `div` 속성은 그대로 전달된다.
 
 ---
 
@@ -1281,7 +1532,7 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 // default - 일반 마케팅 헤더
 <NavBar
   brand={<Logo />}
-  actions={<Button variant="primary">로그인</Button>}
+  actions={<Button variant="filled">로그인</Button>}
   sticky
 >
   <NavLink href="/about">소개</NavLink>
@@ -1484,13 +1735,13 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 | 아이콘 버튼의 의미를 짧게 설명 (Save / Delete 등) | ✅ Tooltip |
 | 잘린(ellipsis) 텍스트의 전체 내용 노출 | ✅ Tooltip |
 | 단축키 안내 (`Cmd+S`) | ✅ Tooltip |
-| 클릭/포커스가 필요한 상호작용 요소 (링크, 버튼) 포함 | ❌ Popover 권장 - tooltip은 `pointer-events: none` |
+| 클릭/포커스가 필요한 상호작용 요소 (링크, 버튼) 포함 | ❌ Popover 권장 - tooltip은 포커스를 받지 않는 보조 설명 |
 | 폼 필드 도움말 (상시 표시) | ❌ helper text 권장 |
 | 모바일 주 트리거 | ⚠️ hover가 없으므로 focus/long-press 시나리오 검토 |
 
 **Tooltip vs Popover**
-- **Tooltip**: hover/focus로 짧은 텍스트만, dismissable 아님, `pointer-events: none`
-- **Popover**: 클릭으로 열고 외부 클릭/Esc로 닫음, 상호작용 가능한 콘텐츠 (버튼/링크/입력) 포함 가능
+- **Tooltip**: hover/focus로 뜨는 **짧은 텍스트**. `role="tooltip"`, 포커스를 옮기지 않음. 포인터를 툴팁 위로 올려 읽을 수 있고 <kbd>Esc</kbd>로 닫힌다 (WCAG 1.4.13).
+- **Popover**: 클릭으로 열고 외부 클릭/Esc로 닫음. `role="dialog"`, 열릴 때 포커스가 패널로 이동. 상호작용 가능한 콘텐츠 (버튼/링크/입력) 포함 가능.
 
 #### 선택 가이드
 
@@ -1524,9 +1775,10 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 
 - 툴팁 노드: `role="tooltip"`, `id={useId()}`
 - 트리거: 열렸을 때 `aria-describedby={tooltipId}` 자동 주입 → 스크린리더가 보조 설명으로 읽음
-- **키보드**: <kbd>Tab</kbd>으로 트리거 포커스 → 자동 노출, <kbd>Tab</kbd>으로 벗어나면 닫힘
+- **키보드**: <kbd>Tab</kbd>으로 트리거 포커스 → 자동 노출, <kbd>Tab</kbd>으로 벗어나면 닫힘, <kbd>Esc</kbd>로 즉시 닫힘
 - focus / blur 모두 핸들링 - 키보드 전용 사용자도 동일하게 접근 가능
-- 툴팁 자체는 `pointer-events: none` → 마우스로 잡을 수 없음 (포커스 트랩 / 상호작용 요소 금지)
+- **WCAG 1.4.13 Hoverable**: 툴팁에 `pointer-events` 가 살아 있어 포인터를 툴팁 위로 옮겨도 닫히지 않는다 (`onMouseEnter` 로 지연 닫힘 취소). 다만 툴팁 안에 포커스 가능한 요소를 넣는 것은 여전히 금지 - `role="tooltip"` 은 포커스를 받지 않는다.
+- **WCAG 1.4.13 Dismissable**: 공유 오버레이 스택(`useOverlayEscape`)에 등록되어 최상단일 때만 <kbd>Esc</kbd>를 소비한다. 다른 오버레이나 소비자 앱의 Escape 핸들러를 삼키지 않는다.
 
 > 📌 트리거 자체에도 라벨이 필요하다. IconButton에는 `aria-label`을 따로 줘야 SR-only 환경에서도 의미가 전달된다 (tooltip은 보조이므로 시각 비의존 라벨이 우선).
 
@@ -1539,20 +1791,26 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 - **퇴출**: `clamp: true`로 진동 없이 빠르게 사라짐 (비대칭)
 - spring config: `tension: 280, friction: 28` (Vercel/Linear 톤)
 
-#### 외부 클릭/Esc 처리
+#### 닫힘 처리
 
-Tooltip은 **dismissable 오버레이가 아님**:
-- blur(focus 잃음) / mouseleave 시 즉시 닫힘
-- 외부 클릭 / Esc로 따로 닫는 로직 없음 (필요 없음 - pointer-events가 차단되어 있어 트랩 안 됨)
-- unmount 시 timer cleanup 자동 처리
+| 트리거 | 동작 |
+|------|------|
+| blur (트리거가 focus 잃음) | **즉시** 닫힘 |
+| <kbd>Esc</kbd> | **즉시** 닫힘 (`useOverlayEscape` - 스택 최상단일 때만) |
+| mouseleave (트리거 또는 툴팁) | **120ms 지연** 후 닫힘 (`HIDE_DELAY`) - 포인터가 트리거↔툴팁 사이 6px 갭을 건널 시간 |
+| 툴팁 위로 mouseenter | 지연 닫힘 **취소** (열림 유지) |
+
+- 외부 클릭으로 닫는 로직은 없다 (hover/focus 기반이라 불필요).
+- unmount 시 timer cleanup 자동 처리.
 
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-span.tooltip_wrapper           ← position: relative; display: inline-flex
+span.tooltip_wrapper           ← position: relative; display: inline-block
 ├── {children}                 ← cloneElement로 핸들러/aria 주입된 trigger
 └── span.tooltip_position      ← createPortal(body), position: fixed (좌표는 useAnchoredPosition)
-    └── span.tooltip           ← role="tooltip", spring transform
+    │                            pointer-events 유지 + onMouseEnter/onMouseLeave (WCAG 1.4.13 Hoverable)
+    └── span.tooltip           ← role="tooltip", spring transform, max-width 240px
 ```
 
 `document.body`로 **포탈**되고 `position: fixed` + `useAnchoredPosition`이 계산한 좌표로 배치되므로, 트리거의 `overflow: hidden`/`transform` 조상에 갇히거나 잘리지 않는다. `z-index`는 `z_level5`.
@@ -1580,7 +1838,7 @@ import { Save, Trash } from "lucide-react";
 
 // 4) 긴 텍스트 (max-width 240px에서 자동 줄바꿈)
 <Tooltip content="버튼을 누르면 데이터가 영구 삭제됩니다. 되돌릴 수 없습니다.">
-  <Button variant="danger">삭제</Button>
+  <Button danger>삭제</Button>
 </Tooltip>
 
 // 5) 지연 조정 - 빈번하게 hover되는 영역
@@ -1739,7 +1997,7 @@ import { MoreVertical, Edit, Copy, Trash, Share, Archive } from "lucide-react";
 
 // 4) 명시적 액션 그룹 - Button trigger
 <Menu
-  trigger={<Button variant="secondary">Actions ▾</Button>}
+  trigger={<Button variant="outline">Actions ▾</Button>}
   items={[
     { key: "export", label: "내보내기", onSelect: handleExport },
     { key: "import", label: "가져오기", onSelect: handleImport },
@@ -1760,14 +2018,14 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 | 클릭으로 여는 작은 폼/필터 (체크박스, 입력, 적용 버튼) | ✅ Popover |
 | 프로필 카드, 미리보기, 부가 설명 + 액션 버튼 | ✅ Popover |
 | 단순 액션 리스트 (Edit / Duplicate / Delete) | ❌ Menu 권장 |
-| hover로 뜨는 짧은 텍스트 라벨 | ❌ Tooltip 권장 (`pointer-events: none`) |
+| hover로 뜨는 짧은 텍스트 라벨 | ❌ Tooltip 권장 (포커스를 옮기지 않는 보조 설명) |
 | 화면 중앙 차단(modal) 다이얼로그 / 확인창 | ❌ Modal · `useAlert()` 권장 |
 | 폼 필드 상시 도움말 | ❌ helper text 권장 |
 
 **Popover vs Menu vs Tooltip**
 - **Popover**: 클릭으로 열고 외부 클릭/Esc로 닫음. `role="dialog"` (non-modal). 임의의 상호작용 콘텐츠. 열릴 때 포커스가 패널로 이동.
 - **Menu**: 클릭으로 열리는 **액션 리스트**. `role="menu"` + `menuitem`. 선택 시 사이드 이펙트.
-- **Tooltip**: hover/focus로 뜨는 **짧은 정보**. `pointer-events: none`, dismissable 아님.
+- **Tooltip**: hover/focus로 뜨는 **짧은 정보**. `role="tooltip"`, 포커스를 옮기지 않음. Esc 로 닫히고 툴팁 위 hover 도 가능하지만, 안에 상호작용 요소를 넣을 수는 없음.
 
 #### 선택 가이드
 
@@ -1829,7 +2087,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-span.popover_wrapper               ← position: relative; ref 부착 (외부 클릭 판정)
+div.popover_wrapper                ← position: relative; display: inline-flex; ref 부착 (외부 클릭 판정)
 ├── {trigger}                      ← cloneElement로 onClick/aria 주입
 └── div.popover_position           ← createPortal(body), position: fixed (좌표는 useAnchoredPosition)
     └── div.popover                ← role="dialog", spring transform
@@ -2840,6 +3098,142 @@ const [open, setOpen] = useState<string[]>(initialFromUrl);
 
 ---
 
+### Table
+
+컬럼 정의 기반 데이터 테이블. 로딩 중에는 헤더를 유지한 채 바디만 [Skeleton](#skeleton) 행으로 대체하고, 정렬·행 선택·행 클릭을 지원한다.
+
+> DS 는 데이터를 **직접 정렬하지 않는다**. `sortable` 헤더 클릭 시 `onSortChange` 만 발화하므로, 소비자가 정렬된 `data` 를 다시 내려줘야 한다.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `columns` | `TableColumn<T>[]` | required | 컬럼 정의 |
+| `data` | `T[]` | required | 표시할 데이터 배열 |
+| `keyExtractor` | `(item: T, index: number) => string \| number` | required | 행의 고유 key 추출 함수 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 테이블 크기 |
+| `emptyMessage` | `ReactNode` | `'데이터가 없습니다'` | 데이터가 없을 때 표시 |
+| `isLoading` | `boolean` | `false` | 로딩 상태 - 헤더 유지, 바디만 스켈레톤 |
+| `skeletonRows` | `number` | `5` | 로딩 시 스켈레톤 행 개수 |
+| `hoverable` | `boolean` | `true` | 행 hover 강조 |
+| `stickyHeader` | `boolean` | `false` | thead sticky 고정 |
+| `ariaLabel` | `string` | - | 스크린리더용 테이블 레이블 |
+| `onRowClick` | `(item: T, index: number) => void` | - | 행 클릭 콜백 |
+| `rowClickHint` | `string` | `'클릭 가능한 행'` | clickable 행에 `aria-describedby` 로 연결되는 동작 설명. `''` 면 힌트 미부착 |
+| `sort` | `TableSort` | - | 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 |
+| `onSortChange` | `(sort: TableSort \| undefined) => void` | - | 정렬 헤더 클릭 시 발화 (none→asc→desc→none 순환) |
+| `selectable` | `boolean` | `false` | 행 선택(체크박스 컬럼) 활성화. `true` 면 `rowKey` **필수** |
+| `rowKey` | `(row: T) => string` | - | 행 고유 key 추출 함수 (`selectable` 시 필수) |
+| `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
+| `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
+| `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
+| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label |
+| `className` | `string` | - | 루트 wrapper 에 추가할 className |
+
+**`TableColumn<T>`**
+
+| 필드 | Type | Default | Description |
+|------|------|---------|-------------|
+| `key` | `string` | required | 컬럼 식별자. `render` 가 없으면 `item[key]` 를 자동 렌더 |
+| `header` | `ReactNode` | required | thead 에 표시할 헤더 |
+| `render` | `(item: T, index: number) => ReactNode` | - | 셀 렌더 함수 |
+| `width` | `string` | - | CSS width 값 (예: `"120px"`, `"20%"`) |
+| `align` | `'left' \| 'center' \| 'right'` | `'left'` | 정렬 |
+| `sortable` | `boolean` | `false` | 정렬 가능 여부. 클릭 시 `onSortChange` 발화 |
+
+**`TableSort`**
+
+| 필드 | Type | Description |
+|------|------|-------------|
+| `key` | `string` | 정렬 중인 컬럼의 `TableColumn.key` |
+| `direction` | `'asc' \| 'desc'` | 정렬 방향 |
+
+**Usage**
+
+```tsx
+import { useMemo, useState } from "react";
+import { Table, Chip } from "@bigtablet/design-system";
+import type { TableColumn, TableSort } from "@bigtablet/design-system";
+
+type User = { id: string; name: string; email: string; active: boolean };
+
+const columns: TableColumn<User>[] = [
+  { key: "name", header: "이름", sortable: true, width: "180px" },
+  { key: "email", header: "이메일" },
+  {
+    key: "active",
+    header: "상태",
+    align: "center",
+    render: (u) => <Chip type="static" tone={u.active ? "success" : "default"} label={u.active ? "활성" : "휴면"} />,
+  },
+];
+
+function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) {
+  const [sort, setSort] = useState<TableSort | undefined>();
+  const [selected, setSelected] = useState<string[]>([]);
+
+  // 정렬은 소비자 책임 - DS 는 상태만 알려준다
+  const rows = useMemo(() => (sort ? sortBy(users, sort) : users), [users, sort]);
+
+  return (
+    <Table
+      ariaLabel="사용자 목록"
+      columns={columns}
+      data={rows}
+      keyExtractor={(u) => u.id}
+      isLoading={isLoading}
+      stickyHeader
+      sort={sort}
+      onSortChange={setSort}
+      selectable
+      rowKey={(u) => u.id}
+      selectedKeys={selected}
+      onSelectionChange={setSelected}
+      onRowClick={(u) => router.push(`/users/${u.id}`)}
+      rowClickHint="선택하면 상세 화면으로 이동"
+    />
+  );
+}
+```
+
+#### 접근성
+
+- 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출된다.
+- `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결된다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 쓴다.
+- 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈한다.
+
+---
+
+### Icon
+
+[lucide-react](https://lucide.dev/icons/) 아이콘 래퍼. `aria-label` 이 없으면 `aria-hidden` + `focusable={false}` 를 자동 적용해 스크린리더 노이즈를 막는다.
+
+```tsx
+import { Icon } from '@bigtablet/design-system';
+import { Search, X } from 'lucide-react';
+
+// 장식용 - aria-hidden 자동
+<Icon icon={Search} size={20} />
+
+// 의미 있는 아이콘 - aria-label 을 주면 aria-hidden 이 붙지 않음
+<Icon icon={X} size={16} strokeWidth={2.5} aria-label="닫기" />
+
+// 토큰 사이즈와 함께
+import { iconSize } from '@bigtablet/design-system';
+<Icon icon={Search} size={iconSize.md} />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `LucideIcon` | required | lucide-react 아이콘 컴포넌트 |
+| `size` | `number \| string` | `24` (lucide 기본) | 아이콘 크기 (px). `iconSize` 토큰 사용 권장 |
+| `strokeWidth` | `number \| string` | `2` (lucide 기본) | 선 두께 |
+| `color` | `string` | `currentColor` | 색상 |
+
+> 나머지 `LucideProps`(= SVG 속성)는 그대로 전달된다 (`ref` 제외). `iconSize` 토큰: `xs` 14 · `sm` 16 · `md` 18 · `lg` 20 · `xl` 32.
+
+---
+
 ## Layout
 
 페이지 레이아웃을 구성하는 4가지 프리미티브. 모두 토큰 기반의 일관된 spacing/breakpoint(compact 600 · expanded 840 · large 1200)를 사용합니다.
@@ -3162,8 +3556,8 @@ export function LandingPage() {
             <h1>가장 빠른 결제 솔루션</h1>
             <p>3분 안에 결제 시스템을 구축하세요.</p>
             <Stack direction="horizontal" gap={12}>
-              <Button variant="primary">시작하기</Button>
-              <Button variant="secondary">데모 보기</Button>
+              <Button variant="filled">시작하기</Button>
+              <Button variant="outline">데모 보기</Button>
             </Stack>
           </Stack>
         </Container>
@@ -3203,7 +3597,7 @@ export function LandingPage() {
         <Container size="md">
           <Stack gap={24} align="center">
             <h2>지금 시작하세요</h2>
-            <Button variant="primary">무료로 시작하기</Button>
+            <Button variant="filled">무료로 시작하기</Button>
           </Stack>
         </Container>
       </Section>

@@ -56,7 +56,7 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 
 - **런타임·공개 prop 은 100% 호환** — 기존 `<Button variant size onClick disabled>` 사용은 그대로 동작합니다.
 - **타입 레벨만 영향**: TS interface 는 union 을 확장할 수 없어 `interface X extends ButtonProps {}` 형태가 깨집니다.
-- **해결**: 스타일 props 만 확장하려면 공통 베이스 `ButtonBaseProps` 를, 전체 prop 을 참조하려면 `React.ComponentProps<typeof Button>` 을 쓰세요.
+- **해결**: `React.ComponentProps<typeof Button>` 로 참조한 뒤 교차 타입(`&`) 으로 확장하세요. (내부 공통 베이스 `ButtonBaseProps` 는 export 되지 않으므로 소비자가 쓸 수 없습니다.)
   ```tsx
   // ❌ An interface can only extend an object type...
   interface MyButtonProps extends ButtonProps { extra?: string }
@@ -72,7 +72,6 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 | Dropdown | `name` | hidden input 으로 네이티브 폼 제출 참여 |
 | Alert | `closeOnOverlay` | 오버레이 클릭 닫힘 on/off (기본 true) |
 | Chip | `removeLabel` | 삭제 버튼 접근성 레이블 커스터마이즈 (기본 `"{label} 제거"`) |
-| utils | `useOverlayEscape` / `registerOverlay` / `useIsMounted` | 공유 오버레이 Escape 스택, 클라이언트 마운트 훅 |
 
 > Vanilla JS 패키지도 폼 참여(`data-name` on Select/Toggle)·combobox ARIA 등이 추가됐습니다. HTML/CSS/JS 환경 사용법은 [docs/VANILLA.md](./VANILLA.md) 참고.
 
