@@ -465,16 +465,18 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
 <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
 
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Select, Modal, Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Card, Spinner, Pagination, DatePicker, FileInput.
+
+Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
 JS API (auto-init on DOMContentLoaded, or manual):
 ```js
-const select = Bigtablet.Select("#my-select", { options, onChange });
+const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
 const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 ```

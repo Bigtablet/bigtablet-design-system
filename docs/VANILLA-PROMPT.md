@@ -21,15 +21,15 @@ JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
 - .is-{state} (상태)
 
 사용 가능한 컴포넌트:
-- Button: .bt-button --sm/md/lg --primary/secondary/ghost/danger
+- Button: .bt-button --sm/md/lg/xl --filled/tonal/outline/text (+ --danger 조합, --radius-* 기본 full)
 - TextField: .bt-text-field, .bt-text-field__input --outline/filled --sm/md/lg --error/success
 - Checkbox: .bt-checkbox --sm/md/lg
 - Radio: .bt-radio --sm/md/lg
-- Toggle: .bt-toggle --sm/md --on --disabled
-- Select: .bt-select, .bt-select__control --outline/filled --sm/md/lg
+- Toggle: .bt-toggle --sm/md --on (비활성화는 native disabled 속성)
+- Dropdown: .bt-dropdown, .bt-dropdown__control --outline/filled --sm/md/lg
 - Modal: .bt-modal .is-open
-- Card: .bt-card --bordered --shadow-sm/md/lg --p-sm/md/lg
-- Spinner: .bt-spinner --sm/md/lg/xl
+- Card: .bt-card --bordered --shadow-none/sm/md/lg(기본 sm) --p-none/sm/md/lg(기본 md) --accent/glass/outlined --interactive
+- Spinner: .bt-spinner (크기는 --bt-spinner-size 커스텀 프로퍼티, 기본 24px)
 - Pagination: .bt-pagination
 - DatePicker: .bt-date-picker --full-width
 - FileInput: .bt-file-input --disabled
@@ -155,7 +155,7 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
 
 ### Button
 ```html
-<button class="bt-button bt-button--md bt-button--primary">버튼</button>
+<button class="bt-button bt-button--md bt-button--filled">버튼</button>
 ```
 
 ### TextField
@@ -194,15 +194,15 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
 </button>
 ```
 
-### Select
+### Dropdown
 ```html
-<div class="bt-select" data-bt-select>
-  <button type="button" class="bt-select__control bt-select__control--outline bt-select__control--md">
-    <span class="bt-select__placeholder">선택...</span>
-    <span class="bt-select__icon">▼</span>
+<div class="bt-dropdown" data-bt-dropdown>
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">선택...</span>
+    <span class="bt-dropdown__icon">▼</span>
   </button>
-  <ul class="bt-select__list">
-    <li class="bt-select__option" data-value="1">옵션 1</li>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="1">옵션 1</li>
   </ul>
 </div>
 ```
@@ -215,8 +215,8 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
     <div class="bt-modal__header">제목</div>
     <div class="bt-modal__body">내용</div>
     <div class="bt-modal__footer">
-      <button class="bt-button bt-button--md bt-button--secondary" data-modal-close>취소</button>
-      <button class="bt-button bt-button--md bt-button--primary" data-modal-close>확인</button>
+      <button class="bt-button bt-button--md bt-button--outline" data-modal-close>취소</button>
+      <button class="bt-button bt-button--md bt-button--filled" data-modal-close>확인</button>
     </div>
   </div>
 </div>
@@ -232,7 +232,8 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
 
 ### Spinner
 ```html
-<div class="bt-spinner bt-spinner--md"></div>
+<span class="bt-spinner" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
 ```
 
 ### Pagination

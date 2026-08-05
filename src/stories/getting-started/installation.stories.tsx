@@ -101,7 +101,7 @@ export const Vanilla: Story = {
 						description="BEM-like 클래스 네이밍. data-bt-* 속성으로 컴포넌트 식별."
 						lang="html"
 						code={`<!-- 버튼 -->
-<button class="bt-button bt-button--md bt-button--primary">
+<button class="bt-button bt-button--md bt-button--filled">
   저장
 </button>
 
@@ -119,13 +119,13 @@ export const Vanilla: Story = {
 						description="data-bt-* 속성 가진 요소는 DOMContentLoaded 에 자동 동작. 수동 init 도 가능."
 						lang="html"
 						code={`<!-- 자동 -->
-<div class="bt-select" data-bt-select>...</div>
+<div class="bt-dropdown" data-bt-dropdown>...</div>
 <div class="bt-modal" data-bt-modal>...</div>
 
 <!-- 수동 -->
 <script>
-  const select = Bigtablet.Select('#my-select', {
-    onChange: (value) => console.log(value)
+  const dropdown = Bigtablet.Dropdown('#my-dropdown', {
+    onValueChange: (value) => console.log(value)
   });
 </script>`}
 					/>

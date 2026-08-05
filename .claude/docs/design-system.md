@@ -704,8 +704,10 @@ For server templates (Thymeleaf, JSP, PHP, Django):
 
 ```html
 <!-- Button -->
-<button class="bt-button bt-button--md bt-button--primary">Primary</button>
-<button class="bt-button bt-button--md bt-button--secondary">Secondary</button>
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
+<button class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+<button class="bt-button bt-button--md bt-button--outline">Outline</button>
+<button class="bt-button bt-button--md bt-button--text">Text</button>
 <button class="bt-button bt-button--lg bt-button--danger">Danger</button>
 
 <!-- TextField -->
@@ -746,20 +748,35 @@ For server templates (Thymeleaf, JSP, PHP, Django):
   <p>Content</p>
 </div>
 
-<!-- Spinner -->
-<div class="bt-spinner bt-spinner--md"></div>
+<!-- Dropdown -->
+<div class="bt-dropdown" data-bt-dropdown>
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">Select...</span>
+    <span class="bt-dropdown__icon">▼</span>
+  </button>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="1">Option 1</li>
+  </ul>
+</div>
+
+<!-- Spinner (크기는 --bt-spinner-size, 기본 24px) -->
+<span class="bt-spinner" role="status" aria-label="Loading"></span>
 ```
+
+> Vanilla 클래스·JS 옵션 이름은 React API 와 1:1 로 맞춰져 있고 deprecated 별칭은 없다.
+> React 와 갈라져 있던 구 이름은 v3.8.0 에서 전부 제거됐다 - old → new 매핑은
+> `docs/MIGRATION.md` 의 "v3.8.0 (Vanilla 패키지 정리)" 섹션 참고.
 
 ### JavaScript API
 
 ```javascript
-// Select
-const select = Bigtablet.Select('#my-select', {
+// Dropdown
+const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   options: [{ value: '1', label: 'One' }],
-  onChange: (value) => console.log(value)
+  onValueChange: (value) => console.log(value)
 });
-select.getValue();
-select.setValue('1');
+dropdown.getValue();
+dropdown.setValue('1');
 
 // Modal
 const modal = Bigtablet.Modal('#my-modal', {
@@ -772,7 +789,7 @@ modal.close();
 
 // Toggle
 const tg = Bigtablet.Toggle('#my-toggle', {
-  onChange: (checked) => console.log(checked)
+  onCheckedChange: (checked) => console.log(checked)
 });
 tg.toggle();
 tg.setChecked(true);
@@ -791,7 +808,7 @@ Bigtablet.Alert({
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
-  onChange: (page) => console.log(page)
+  onPageChange: (page) => console.log(page)
 });
 ```
 
