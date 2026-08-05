@@ -33,7 +33,7 @@ export interface PopoverProps {
 	defaultOpen?: boolean;
 	/** 열림 상태 변경 콜백 */
 	onOpenChange?: (open: boolean) => void;
-	/** dialog 의 접근성 라벨 - content 에 제목이 없을 때 권장 */
+	/** 팝오버 접근성 레이블(기본값: "Dialog") - content 에 제목이 없을 때 권장 */
 	"aria-label"?: string;
 	/** dialog 의 접근성 라벨 요소 id */
 	"aria-labelledby"?: string;
@@ -188,7 +188,9 @@ export const Popover = ({
 							ref={popoverRef}
 							role="dialog"
 							tabIndex={-1}
-							aria-label={ariaLabel}
+							// aria-labelledby 가 없으면 이름 없는 dialog 가 되므로 Modal/Drawer 와 동일하게
+							// "Dialog" 로 폴백한다 (WCAG 2.1 SC 4.1.2).
+							aria-label={ariaLabelledby ? ariaLabel : (ariaLabel ?? "Dialog")}
 							aria-labelledby={ariaLabelledby}
 							style={style}
 							className={cn("popover", className)}

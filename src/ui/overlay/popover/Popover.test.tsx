@@ -178,6 +178,33 @@ describe("Popover", () => {
 		expect(screen.getByRole("dialog", { name: "필터 옵션" })).toBeInTheDocument();
 	});
 
+	it('falls back to a "Dialog" accessible name when no label is given', () => {
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel content</span>}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		expect(screen.getByRole("dialog", { name: "Dialog" })).toBeInTheDocument();
+	});
+
+	it("does not add the fallback label when aria-labelledby is provided", () => {
+		render(
+			<>
+				<h2 id="popover-title">필터</h2>
+				<Popover
+					trigger={<button type="button">Open</button>}
+					content={<span>Panel content</span>}
+					aria-labelledby="popover-title"
+				/>
+			</>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const dialog = screen.getByRole("dialog", { name: "필터" });
+		expect(dialog).not.toHaveAttribute("aria-label");
+	});
+
 	it("preserves the trigger's own onClick handler", () => {
 		const onClick = vi.fn();
 		render(

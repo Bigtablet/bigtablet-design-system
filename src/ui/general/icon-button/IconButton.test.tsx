@@ -75,4 +75,28 @@ describe("IconButton", () => {
 		expect(node).toBeInstanceOf(HTMLButtonElement);
 	});
 
+	describe("accessible name", () => {
+		it("accepts aria-labelledby instead of aria-label", () => {
+			render(
+				<>
+					<span id="icon-button-label">저장</span>
+					<IconButton icon={<TestIcon />} aria-labelledby="icon-button-label" />
+				</>,
+			);
+			expect(screen.getByRole("button", { name: "저장" })).toBeInTheDocument();
+		});
+
+		it("keeps the icon hidden from the accessibility tree", () => {
+			render(<IconButton icon={<TestIcon />} aria-label="action" />);
+			expect(screen.getByTestId("test-icon").parentElement).toHaveAttribute("aria-hidden", "true");
+		});
+
+		// 타입 레벨 회귀 방지 - 접근성 이름 없는 IconButton 은 컴파일되면 안 된다.
+		// 아래 무시 지시자가 "불필요"로 판정되면 tsc 가 실패하므로 이 단언은 tsc 가 검증한다.
+		it("requires aria-label or aria-labelledby at the type level", () => {
+			// @ts-expect-error - aria-label / aria-labelledby 둘 다 없으면 타입 에러여야 한다.
+			const nameless = <IconButton icon={<TestIcon />} />;
+			expect(nameless).toBeTruthy();
+		});
+	});
 });
