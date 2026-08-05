@@ -600,10 +600,29 @@ EOF
 - **Base branch**: `develop` (NOT main!)
 - **PR title**: Same as branch name
 - **PR body**: Write in Korean
+- **Label**: 브랜치 접두사에 대응하는 라벨 1개 (아래 표)
+- **Assignee**: PR 작성자 본인 (`@me`)
+
+#### 브랜치 접두사 → PR 라벨 매핑
+
+| 브랜치 접두사 | 라벨 |
+|--------------|------|
+| `feat` | `Feature` |
+| `fix`, `style`, `refactor`, `config`, `delete`, `note`, `ci`, `etc` | `Fix` |
+| `bug` | `Bug` |
+| `docs` | `Docs` |
+| `release`, `deploy`, `develop`, `sync` | `Deploy` |
+
+> `.github/workflows/pr-labeler.yml` 이 PR open/reopen/edit 시 위 매핑을 **자동 적용**하고,
+> 담당자가 비어 있으면 작성자를 자동 지정한다. 아래 `--label` / `--assignee @me` 는
+> 워크플로가 안 돌거나(예: 워크플로 자체를 바꾸는 PR) 늦게 붙는 경우를 위한 이중 안전장치다.
+> 이미 붙은 라벨은 워크플로가 제거하지 않으니 수동 지정과 충돌하지 않는다.
+> 봇(dependabot 등) PR 은 assignee 가 될 수 없어 담당자 지정 대상에서 제외된다.
 
 ```bash
-gh pr create --base develop --title "label/domain" --body "$(cat <<'EOF'
-## 작업 개요
+gh pr create --base develop --title "label/domain" \
+  --label "Feature" --assignee @me --body "$(cat <<'EOF'
+## 제목
 
 ## 작업한 내용
 - [x] 작업1
@@ -621,6 +640,7 @@ EOF
 ### Important Notes
 - Always create PRs targeting `develop` branch
 - Write PR body in Korean
+- 라벨/담당자를 항상 확인 - 워크플로가 자동으로 붙이지만 누락 시 수동 보정
 - Create issues first if needed and link them to PR
 - Requires team review before merging
 
