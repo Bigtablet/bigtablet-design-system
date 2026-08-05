@@ -249,3 +249,13 @@
         }
     }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+    .chip,
+    .chip::before,
+    .chip_content::before,
+    .chip_icon {
+        transition: none;
+    }
+}

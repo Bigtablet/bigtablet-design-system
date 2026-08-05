@@ -88,3 +88,11 @@
     color: token.$color_text_caption;
   }
 }
+
+// ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .pagination_item,
+  .pagination_page_button {
+    transition: none;
+  }
+}
