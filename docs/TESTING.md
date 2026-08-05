@@ -338,30 +338,56 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-| 카테고리 | 커버리지 |
-|----------|----------|
-| **전체** | 86% |
-| Button | 100% |
-| Card | 100% |
-| Radio | 100% |
-| Alert | 100% |
-| Spinner | 100% |
-| Pagination | 100% |
-| TopLoading | 100% |
-| FileInput | 100% |
-| Chip | 95% |
-| Modal | 97% |
-| Toggle | 93% |
-| Checkbox | 91% |
-| DatePicker | 90% |
-| Toast | 90% |
-| TextField | 74% |
-| Dropdown | 89% |
+`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 55 test files / 779 passed · 9 skipped.
+
+| 전체 | Stmts | Branch | Funcs | Lines |
+|------|-------|--------|-------|-------|
+| **All files** | **90.01%** | **85.59%** | **90.07%** | **91.97%** |
+
+아래는 **100% 미만**인 파일만 나열한 것이다 (미표기 컴포넌트 = 전 지표 100%: Button · Card · Radio · Spinner · Pagination · TopLoading · Badge · Divider · Skeleton · Toggle · Breadcrumb · EmptyState · ErrorState · IconButton · Container/Section/Stack/Grid 등).
+
+| 파일 | Stmts | Branch | Funcs | Lines |
+|------|-------|--------|-------|-------|
+| ui/display/accordion | 100% | 80% | 100% | 100% |
+| ui/display/avatar | 84.61% | 88% | 66.66% | 90.9% |
+| ui/display/chip | 86.95% | 80.43% | 66.66% | 95.23% |
+| ui/display/hero | 92.85% | 88.88% | 100% | 100% |
+| **ui/display/icon** | **0%** | **0%** | **0%** | **0%** |
+| ui/display/list-item | 100% | 93.33% | 100% | 100% |
+| ui/display/media-card | 100% | 96.29% | 100% | 100% |
+| ui/display/table | 98.07% | 92.79% | 95.65% | 97.77% |
+| ui/feedback/alert | 96.92% | 93.44% | 100% | 98.27% |
+| ui/feedback/linear-progress | 100% | 66.66% | 100% | 100% |
+| ui/feedback/toast | 100% | 84.21% | 100% | 100% |
+| ui/forms/checkbox | 91.66% | 90% | 100% | 100% |
+| ui/forms/date-picker | 91.86% | 80.16% | 100% | 97.1% |
+| ui/forms/dropdown | 96.42% | 90.64% | 100% | 96.49% |
+| ui/forms/file | 80.43% | 65% | 83.33% | 80% |
+| **ui/forms/image-cropper** | **57.04%** | **55.29%** | **50%** | **58.33%** |
+| ui/forms/otp-input | 89.28% | 91.66% | 100% | 89.33% |
+| ui/forms/radio-group | 100% | 95.45% | 100% | 100% |
+| ui/forms/textarea | 88.33% | 74.69% | 100% | 92.85% |
+| ui/forms/textfield | 90.47% | 82.75% | 77.77% | 92.68% |
+| ui/navigation/bottom-nav | 94.73% | 95% | 100% | 94.73% |
+| ui/navigation/menu | 97.29% | 89.13% | 100% | 100% |
+| ui/navigation/nav-bar | 80.19% | 69.23% | 81.81% | 85.39% |
+| ui/navigation/sidebar | 83.33% | 88.63% | 75% | 86.95% |
+| ui/navigation/tabs | 91.42% | 78.18% | 88.88% | 100% |
+| ui/overlay/drawer | 97.91% | 95.16% | 100% | 100% |
+| ui/overlay/modal | 97.67% | 93.93% | 100% | 100% |
+| ui/overlay/popover | 91.3% | 83.87% | 100% | 92.68% |
+| ui/overlay/tooltip | 92.98% | 83.33% | 93.33% | 91.66% |
+| ui/system/theme-provider | 93.87% | 85.71% | 100% | 100% |
+| utils | 90.14% | 83.18% | 78.57% | 91.93% |
+
+> ⚠️ **80% 기준선 미달 (개선 필요)**
+> - **`ui/display/icon` — 0%**: 단위 테스트가 아예 없다. `aria-hidden` 자동 적용 / `aria-label` 지정 시 미적용 두 분기만이라도 커버해야 한다.
+> - **`ui/forms/image-cropper` — 57.04%**: canvas·pointer 조작 경로(`crop()`, 드래그, 휠 줌)가 jsdom 에서 대부분 미커버. `utils/use-spring-hover.ts` 도 10% 로 낮다.
 
 ### 커버리지 목표
 
 - 새 컴포넌트: 최소 80% 커버리지
-- 전체 목표: 85% 이상 유지
+- 전체 목표: 85% 이상 유지 (현재 90.01%)
 
 ### 커버리지 리포트 확인
 
@@ -395,19 +421,25 @@ describe("Button", () => {
     });
 
     it("applies variant classes", () => {
-        const { container, rerender } = render(<Button variant="primary">Test</Button>);
-        expect(container.firstChild).toHaveClass("variant_primary");
+        const { container, rerender } = render(<Button variant="filled">Test</Button>);
+        expect(container.firstChild).toHaveClass("button_variant_filled");
 
-        rerender(<Button variant="danger">Test</Button>);
-        expect(container.firstChild).toHaveClass("variant_danger");
+        rerender(<Button variant="outline">Test</Button>);
+        expect(container.firstChild).toHaveClass("button_variant_outline");
+    });
+
+    it("applies the danger modifier independently of variant", () => {
+        const { container } = render(<Button variant="outline" danger>Delete</Button>);
+        expect(container.firstChild).toHaveClass("button_variant_outline");
+        expect(container.firstChild).toHaveClass("button_danger");
     });
 
     it("applies size classes", () => {
         const { container, rerender } = render(<Button size="sm">Test</Button>);
-        expect(container.firstChild).toHaveClass("size_sm");
+        expect(container.firstChild).toHaveClass("button_size_sm");
 
-        rerender(<Button size="lg">Test</Button>);
-        expect(container.firstChild).toHaveClass("size_lg");
+        rerender(<Button size="xl">Test</Button>);
+        expect(container.firstChild).toHaveClass("button_size_xl");
     });
 
     it("calls onClick when clicked", () => {
