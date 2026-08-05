@@ -134,8 +134,8 @@
       inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(0, 0, 0, 0) 30%,
-        rgba(0, 0, 0, 0.85) 100%
+        token.$color_scrim_dark_clear 30%,
+        token.$color_scrim_dark_heavy 100%
       );
       pointer-events: none;
       z-index: 1;
@@ -150,13 +150,13 @@
       justify-content: flex-end;
     }
 
-    .media_card_eyebrow  { color: rgba(255, 255, 255, 0.75); }
+    .media_card_eyebrow  { color: token.$color_text_on_dark_label; }
     .media_card_heading  { color: token.$color_brand_on_primary; }
     .media_card_content  {
-      color: rgba(255, 255, 255, 0.85);
+      color: token.$color_text_on_dark_body;
       flex: 0 0 auto; // overlay에선 늘어나지 않음 - 텍스트 블록이 하단에 모이도록
     }
-    .media_card_meta     { color: rgba(255, 255, 255, 0.6); }
+    .media_card_meta     { color: token.$color_text_on_dark_caption; }
   }
 }
 
