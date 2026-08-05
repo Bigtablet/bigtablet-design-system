@@ -6,39 +6,15 @@
   vertical-align: middle; // baseline 정렬로 인한 미세 offset 제거
 }
 
-// 위치 정렬 wrapper - placement 별 translateX/Y 로 trigger 기준 중앙 잡음.
+// body 로 포탈된 위치 컨테이너 - left/top 은 useAnchoredPosition 이 inline(fixed)으로 지정.
 // 안의 .tooltip 은 spring 으로 entrance transform 사용 - 두 transform context 분리해서 충돌 X.
 .tooltip_position {
-  position: absolute;
+  // position/left/top 은 컴포넌트에서 inline 으로 지정(fixed). 여기선 나머지만.
   z-index: token.$z_level5;
   // pointer-events 를 살려 둔다 - WCAG 1.4.13 Hoverable: 포인터를 툴팁 위로
   // 옮겨 내용을 읽을 수 있어야 함 (none 이면 mouseenter 가 발화하지 않아 즉시 닫힘)
   display: block;
-  width: max-content; // 내부 .tooltip 의 max-content 와 일치 - translateX(-50%) 정확
-
-  &.tooltip_placement_top {
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &.tooltip_placement_bottom {
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  &.tooltip_placement_left {
-    right: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  &.tooltip_placement_right {
-    left: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-  }
+  width: max-content; // 내부 .tooltip 의 max-content 와 일치
 }
 
 .tooltip {

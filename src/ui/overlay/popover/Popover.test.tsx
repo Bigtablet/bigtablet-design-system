@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Popover } from "./index";
 
@@ -149,8 +148,9 @@ describe("Popover", () => {
 		expect(trigger).not.toHaveAttribute("aria-controls");
 	});
 
-	it("applies placement class (default bottom)", () => {
-		const { rerender } = render(
+	it("portals the panel to the body and positions it fixed", () => {
+		// placement 는 이제 CSS 클래스가 아니라 useAnchoredPosition 이 계산한 fixed 좌표로 적용된다.
+		const { container } = render(
 			<Popover
 				trigger={<button type="button">Open</button>}
 				content={<span>Panel content</span>}
@@ -158,19 +158,12 @@ describe("Popover", () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("dialog").parentElement).toHaveClass("popover_placement_bottom");
-
-		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		rerender(
-			<Popover
-				trigger={<button type="button">Open</button>}
-				content={<span>Panel content</span>}
-				placement="right"
-				aria-label="popover"
-			/>,
-		);
-		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("dialog").parentElement).toHaveClass("popover_placement_right");
+		const dialog = screen.getByRole("dialog");
+		// 포탈 - 트리거 wrapper 밖(body)으로 렌더된다.
+		expect(container.querySelector(".popover_wrapper")?.contains(dialog)).toBe(false);
+		// 위치 컨테이너는 fixed.
+		const position = dialog.closest(".popover_position") as HTMLElement;
+		expect(position.style.position).toBe("fixed");
 	});
 
 	it("propagates aria-label to the dialog", () => {
