@@ -180,4 +180,26 @@ describe("DatePicker", () => {
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
 	});
 
+	it("prefers onValueChange over the deprecated onChange when both are given", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(
+			<DatePicker
+				mode="year-month"
+				startYear={2020}
+				endYear={2025}
+				onValueChange={onValueChange}
+				onChange={onChange}
+			/>,
+		);
+
+		const buttons = screen.getAllByRole("button");
+		fireEvent.click(buttons[0]);
+		fireEvent.click(screen.getByText("2024"));
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("2024-01");
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 });

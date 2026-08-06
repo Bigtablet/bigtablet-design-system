@@ -411,6 +411,26 @@ describe("OtpInput", () => {
 		});
 	});
 
+	it("prefers onValueChange over the deprecated onChange when both are given", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(
+			<OtpInput
+				length={6}
+				value=""
+				onValueChange={onValueChange}
+				onChange={onChange}
+				ariaLabel="OTP"
+			/>,
+		);
+		const inputs = screen.getAllByRole("textbox");
+		fireEvent.change(inputs[0], { target: { value: "5" } });
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("5");
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	it("calls onValueChange (canonical) when digit entered", () => {
 		const onValueChange = vi.fn();
 		render(<OtpInput length={6} value="" onValueChange={onValueChange} ariaLabel="OTP" />);

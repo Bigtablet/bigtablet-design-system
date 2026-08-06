@@ -157,6 +157,24 @@ describe("FileInput", () => {
 			fireEvent.change(input);
 			expect(onFiles).toHaveBeenCalledWith(null);
 		});
+
+		it("calls BOTH onFiles and onChange when both are given (back-compat, not a precedence pair)", () => {
+			// 다른 컴포넌트의 canonical/deprecated 쌍과 달리 FileInput 은 의도적으로 둘 다 호출한다.
+			const onFiles = vi.fn();
+			const onChange = vi.fn();
+			render(<FileInput onFiles={onFiles} onChange={onChange} />);
+
+			const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+			const file = new File(["hello"], "hello.txt", { type: "text/plain" });
+			Object.defineProperty(input, "files", { value: [file], configurable: true });
+
+			fireEvent.change(input);
+
+			expect(onFiles).toHaveBeenCalledTimes(1);
+			expect(onFiles.mock.calls[0][0][0]).toBe(file);
+			expect(onChange).toHaveBeenCalledTimes(1);
+			expect(onChange.mock.calls[0][0].target).toBe(input);
+		});
 	});
 
 	describe("accept attribute", () => {
