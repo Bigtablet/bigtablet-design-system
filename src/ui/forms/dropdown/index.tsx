@@ -10,6 +10,13 @@ import "./style.scss";
 
 export type DropdownSize = "sm" | "md" | "lg";
 
+/**
+ * 컨트롤 시각 변형. TextField 의 `variant` 와 같은 어휘를 쓴다.
+ * - `outline`: 테두리로 컨트롤을 구분 (기본).
+ * - `filled`: 테두리 대신 채워진 배경으로 구분, 열리면 배경이 solid 로 돌아오며 테두리가 드러남.
+ */
+export type DropdownVariant = "outline" | "filled";
+
 export interface DropdownOption {
 	value: string;
 	label: string;
@@ -44,10 +51,8 @@ interface DropdownCommonProps {
 	fullWidth?: boolean;
 	/** 루트 요소에 추가할 className */
 	className?: string;
-	/**
-	 * @deprecated variant는 더 이상 지원되지 않습니다. Dropdown은 outline 스타일만 사용합니다.
-	 */
-	variant?: "outline" | "filled" | "ghost";
+	/** 컨트롤 시각 변형 (기본값: "outline") */
+	variant?: DropdownVariant;
 	/**
 	 * @deprecated textAlign은 더 이상 지원되지 않습니다.
 	 */
@@ -118,6 +123,7 @@ export const Dropdown = (props: DropdownProps) => {
 		options,
 		disabled,
 		size = "md",
+		variant = "outline",
 		className,
 		searchable = false,
 		searchPlaceholder = "검색…",
@@ -391,7 +397,12 @@ export const Dropdown = (props: DropdownProps) => {
 			? currentOption.label
 			: placeholder;
 
-	const rootClassName = cn("dropdown", `dropdown_size_${size}`, className);
+	const rootClassName = cn(
+		"dropdown",
+		`dropdown_size_${size}`,
+		`dropdown_variant_${variant}`,
+		className,
+	);
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 

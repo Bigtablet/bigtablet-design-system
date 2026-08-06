@@ -184,6 +184,42 @@
     transition: color token.$transition_base;
   }
 
+  // ── Variant: filled ────────────────────────────────────────────────────
+  // Vanilla `.bt-text-field__input--filled` 대응. 테두리를 지우고 dim 배경으로 입력 영역을
+  // 구분하다가, 포커스가 들어오면 배경을 solid 로 되돌리며 테두리를 드러낸다.
+  // outline(기본)은 base 규칙 그대로라 `_variant_outline` 은 스타일을 갖지 않는다 -
+  // variant 를 생략했을 때의 렌더링이 이 PR 이전과 완전히 동일해야 하기 때문.
+  //
+  // Vanilla 는 focus 에 `0 0 0 3px` 링을 더하지만 여기서는 옮기지 않는다. React 폼 컨트롤은
+  // 컨테이너에 링을 쓰지 않고 border-color 로만 포커스를 표현하며(outline variant·Dropdown
+  // 동일), filled 에만 링을 붙이면 같은 컴포넌트의 두 variant 가 서로 다른 포커스 언어를 쓴다.
+  //
+  // 순서 주의: error/success/disabled 블록보다 앞에 둬야 한다. 특이도가 같아(0,2,0)
+  // 선언 순서로 tie-break 되므로, 뒤로 옮기면 filled 가 상태 색을 덮는다.
+  &_variant_filled &_container {
+    border-color: transparent;
+    background-color: token.$color_bg_solid_dim;
+
+    &:hover {
+      border-color: token.$color_border_hover;
+    }
+  }
+
+  &_variant_filled &_container:focus-within {
+    border-color: token.$color_border_focus;
+    background-color: token.$color_bg_solid;
+  }
+
+  // filled 는 테두리가 없는 게 정체성이라 disabled 에서도 되살리지 않는다 (Dropdown 의
+  // `_variant_filled &_fieldset.is_disabled` 와 동일한 판단). 비활성 신호는 dim 배경 +
+  // input 의 색으로 준다.
+  //
+  // 루트 클래스 2개를 겹쳐 (0,3,0) 으로 만들어, 뒤에 오는 disabled 블록(0,2,0)을 선언
+  // 순서와 무관하게 이긴다. 두 번째 `&` 는 compound 중간에 못 오므로 `#{&}` 로 보간한다.
+  &_disabled#{&}_variant_filled &_container {
+    border-color: transparent;
+  }
+
   // ── Error state ────────────────────────────────────────────────────────
 
   &_error {
@@ -203,6 +239,30 @@
 
     .text_field_helper {
       color: token.$color_status_error_on_surface;
+    }
+  }
+
+  // ── Success state ──────────────────────────────────────────────────────
+  // error 와 완전히 대칭 구조. 컴포넌트가 error 우선으로 둘 중 하나만 붙이므로
+  // 두 클래스가 동시에 존재하는 경우는 없다 (index.tsx 의 isError/isSuccess).
+
+  &_success {
+    .text_field_container {
+      border-color: token.$color_status_success;
+    }
+
+    .text_field_container:hover,
+    .text_field_container:focus-within {
+      border-color: token.$color_status_success;
+    }
+
+    .text_field_label {
+      // surface 위 직접 텍스트 - light/dark 자동 swap (다크 모드 가독성 보장)
+      color: token.$color_status_success_on_surface;
+    }
+
+    .text_field_helper {
+      color: token.$color_status_success_on_surface;
     }
   }
 

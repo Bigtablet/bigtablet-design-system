@@ -403,6 +403,21 @@ describe("Dropdown", () => {
 		expect(container.querySelector(".dropdown")).toHaveClass("dropdown_size_md");
 	});
 
+	it("defaults to the outline variant", () => {
+		const { container } = render(<Dropdown options={options} />);
+		const root = container.querySelector(".dropdown");
+		expect(root).toHaveClass("dropdown_variant_outline");
+		expect(root).not.toHaveClass("dropdown_variant_filled");
+	});
+
+	it("applies variant class based on variant prop", () => {
+		const { container, rerender } = render(<Dropdown options={options} variant="filled" />);
+		expect(container.querySelector(".dropdown")).toHaveClass("dropdown_variant_filled");
+
+		rerender(<Dropdown options={options} variant="outline" />);
+		expect(container.querySelector(".dropdown")).toHaveClass("dropdown_variant_outline");
+	});
+
 	it("forwards className to root", () => {
 		const { container } = render(<Dropdown options={options} className="my-extra" />);
 		expect(container.querySelector(".dropdown")).toHaveClass("my-extra");

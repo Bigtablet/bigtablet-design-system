@@ -167,7 +167,7 @@ npm install @bigtablet/design-system
   </div>
 </div>
 
-<!-- Variants -->
+<!-- Variants (React <TextField variant="outline" /> · variant="filled" 와 동등) -->
 <input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md">
 <input class="bt-text-field__input bt-text-field__input--filled bt-text-field__input--md">
 
@@ -384,7 +384,7 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 
 **Variants:**
 - `.bt-dropdown__control--outline` (기본) - React `Dropdown` 과 동등한 스타일
-- `.bt-dropdown__control--filled` - Vanilla 전용 (React `Dropdown` 에는 대응 prop 없음)
+- `.bt-dropdown__control--filled` - React `<Dropdown variant="filled" />` 와 동등
 
 **Sizes:**
 - `.bt-dropdown__control--sm`
