@@ -385,4 +385,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dropdown_icon { transition: none; }
   .dropdown_search_input { transition: none; }
+  // fieldset 은 border-color + background-color 를 트랜지션한다 (filled variant 의 열림 전환 포함).
+  .dropdown_fieldset { transition: none; }
 }

@@ -12,7 +12,7 @@
 - Vanilla Card body·footer 구획 추가 - React Card 의 `heading` / `children` / `footer` 3단 구성에 맞춰 `.bt-card__body` · `.bt-card__footer`(`--start/between/end`) 추가, 예시의 `__title` 을 시맨틱 헤딩으로 교체. **(주의: `.bt-dropdown__option` 이 `space-between` → `flex-start` 로 변경 - 우측 정렬 요소를 두던 마크업은 `.bt-dropdown__option-content` 로 감싸야 함)**
 - Vanilla Dropdown 초기화 버그 수정 - 마크업의 placeholder 문구를 라이브러리 기본값이 덮어쓰던 문제, 다중 모드에서 서버 렌더링된 hidden input 을 값 읽기 전에 지우던 문제 수정 (Thymeleaf `th:field` 영향)
 - TextField filled × disabled 테두리 수정 - 특이도 동률로 disabled 규칙이 이겨 filled 에 회색 테두리가 되살아나던 문제 수정
-- (개발) 콜백 우선순위·danger×variant 테스트 커버리지 - canonical/deprecated 콜백 쌍 10종의 우선순위와 FileInput 의 both-call 예외, Button `danger` × 4 variant 조합을 자동 검증 (788 → 816)
+- (개발) 콜백 우선순위·danger×variant 테스트 커버리지 - canonical/deprecated 콜백 쌍 10종의 우선순위와 FileInput 의 both-call 예외, Button `danger` × 4 variant 조합을 자동 검증
 
 ## [3.8.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.8.0) - 2026-08-05
 

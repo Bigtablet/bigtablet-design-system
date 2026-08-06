@@ -791,7 +791,9 @@
 					? [config.defaultValue]
 					: serverValues;
 			if (initial.length > 0) setValue(initial);
-		} else if (config.defaultValue) {
+			// `!= null` 로 판단 - truthy 검사면 빈 문자열("")도 유효한 값인데 미지정으로 보고
+			// 서버 값/placeholder 로 넘어간다. 위 multiple 분기와 같은 기준.
+		} else if (config.defaultValue != null) {
 			setValue(config.defaultValue);
 		} else if (serverValues[0]) {
 			setValue(serverValues[0]);

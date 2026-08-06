@@ -27,7 +27,7 @@ dist/vanilla/
 
 클래스 이름·JS 옵션 이름은 대응하는 React 컴포넌트의 prop 값과 **같게 맞춘다**. deprecated 별칭은
 두지 않는다 - 이름이 갈라지면 별칭을 추가하는 대신 구 이름을 제거하고
-[docs/MIGRATION.md](./docs/MIGRATION.md) 에 old → new 표를 남긴다 (v3.8.0 에서 정리 완료).
+[docs/MIGRATION.md](../../docs/MIGRATION.md) 에 old → new 표를 남긴다 (v3.8.0 에서 정리 완료).
 
 | Component | Base Class | Modifiers | States |
 |-----------|------------|-----------|--------|
@@ -113,8 +113,8 @@ dist/vanilla/
 #### Dropdown
 ```html
 <div class="bt-dropdown" data-bt-dropdown>
-  <label class="bt-dropdown__label">Label</label>
-  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+  <label class="bt-dropdown__label" for="my-dropdown-control">Label</label>
+  <button type="button" id="my-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
     <span class="bt-dropdown__placeholder">Select...</span>
     <span class="bt-dropdown__icon">▼</span>
   </button>

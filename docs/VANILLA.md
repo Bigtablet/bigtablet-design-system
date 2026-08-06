@@ -408,8 +408,8 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 
 ```html
 <div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping">
-  <label class="bt-dropdown__label">토핑</label>
-  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+  <label class="bt-dropdown__label" for="topping-control">토핑</label>
+  <button type="button" id="topping-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
     <span class="bt-dropdown__placeholder">토핑을 고르세요...</span>
     <span class="bt-dropdown__icon">▼</span>
   </button>
