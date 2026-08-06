@@ -452,6 +452,22 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 </div>
 ```
 
+> **`__list` 에 커스텀 클래스를 붙였다면 주의**
+> 평면 `<ul class="bt-dropdown__list">` 마크업 + `searchable` 조합이면, `<ul>` 안에는 `<li>`
+> 밖에 못 오므로 JS 가 새 `<div class="bt-dropdown__list">` 를 만들어 그 `<ul>` 을 감싸 올리고,
+> 원래 `<ul>` 은 `.bt-dropdown__options`(스크롤 컨테이너)가 됩니다. 이때 `bt-dropdown__list`
+> 로 시작하지 않는 커스텀 클래스는 **원래 붙어 있던 `<ul>` 에 그대로 남습니다** — 즉 패널
+> wrapper 가 아니라 안쪽 스크롤 컨테이너를 가리키게 됩니다.
+>
+> 패널 wrapper 를 직접 스타일링해야 하면 승격에 맡기지 말고 최종 구조를 그대로 렌더링하세요.
+> `__options` 컨테이너가 이미 있으면 JS 는 승격을 건너뛰므로 클래스가 의도한 자리에 남습니다:
+>
+> ```html
+> <div class="bt-dropdown__list my-panel">
+>   <ul class="bt-dropdown__options" role="listbox">…</ul>
+> </div>
+> ```
+
 `searchable` 일 때는 React 와 동일하게 **`role="combobox"` 가 검색 입력으로 옮겨가고**
 (`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함),
 트리거 버튼에는 `aria-haspopup="listbox"` + `aria-expanded` 만 남습니다.

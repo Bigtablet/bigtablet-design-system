@@ -223,6 +223,11 @@
 		if (!listbox) {
 			if (searchable) {
 				const inner = panel;
+				// `bt-dropdown__list*` 만 새 패널로 옮긴다. 소비자가 붙인 커스텀 클래스는 원래
+				// 붙어 있던 요소(= 이제 `__options` 스크롤 컨테이너)에 그대로 둔다 - 클래스가
+				// 노드를 따라가야 리스트 내부를 겨냥한 셀렉터가 유지된다. 패널 wrapper 를
+				// 직접 스타일링하려면 `__options` 를 포함한 최종 구조를 마크업에 직접 쓰면
+				// 이 승격 자체를 건너뛴다 (docs/VANILLA.md 의 주의 박스 참고).
 				const listClasses = Array.from(inner.classList).filter((c) =>
 					c.startsWith("bt-dropdown__list"),
 				);
