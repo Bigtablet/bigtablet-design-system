@@ -40,9 +40,15 @@ dist/vanilla/
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
-| Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled` |
+| Dropdown Search | `.bt-dropdown__search` (+ `__search-icon`, `__search-input`) | | |
+| Dropdown Options | `.bt-dropdown__options` (role=listbox 스크롤 컨테이너) | | |
+| Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled`, `[hidden]`(필터로 숨김) |
+| Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
+| Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
 | Modal | `.bt-modal` | | `.is-open` |
 | Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outlined`, `--interactive` | |
+| Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
+| Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
 | Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
@@ -120,6 +126,30 @@ dist/vanilla/
 </div>
 ```
 
+React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 그대로 두고
+`data-multiple` / `data-searchable` 만 붙이면 되고, 검색 행(`__search`)·스크롤 컨테이너
+(`__options`)·빈 결과(`__empty`)·체크 슬롯(`__option-check`)은 JS 가 만들어 넣는다.
+
+```html
+<!-- 다중 선택 - 옵션 토글 시 패널 유지, 트리거는 "N개 선택" 요약, hidden input 은 같은 name 반복 -->
+<div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping">
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">토핑을 고르세요...</span>
+    <span class="bt-dropdown__icon">▼</span>
+  </button>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="cheese">치즈</li>
+    <li class="bt-dropdown__option" data-value="bacon">베이컨</li>
+  </ul>
+</div>
+
+<!-- 검색 - 대소문자·공백 무시 부분 일치. 한글 IME 조합 중에는 필터를 보류한다. -->
+<div class="bt-dropdown" data-bt-dropdown data-searchable
+     data-search-placeholder="검색…" data-empty-text="결과 없음">
+  ...
+</div>
+```
+
 #### Modal
 ```html
 <button data-bt-modal-open="my-modal">Open</button>
@@ -141,9 +171,17 @@ dist/vanilla/
 
 #### Card
 ```html
+<!-- title / body / footer 3단 구성 (React Card 의 heading / children / footer 와 동일).
+     제목은 React `headingAs`(기본 h3)와 맞춰 시맨틱 헤딩 태그를 쓴다. -->
 <div class="bt-card bt-card--bordered bt-card--p-md">
-  <div class="bt-card__title">Title</div>
-  <p>Content</p>
+  <h3 class="bt-card__title">Title</h3>
+  <div class="bt-card__body">
+    <p>Content</p>
+  </div>
+  <div class="bt-card__footer">  <!-- --start / --between / --end (기본 end) -->
+    <button class="bt-button bt-button--sm bt-button--text">Cancel</button>
+    <button class="bt-button bt-button--sm bt-button--filled">Save</button>
+  </div>
 </div>
 
 <div class="bt-card bt-card--shadow-md bt-card--p-lg">
@@ -175,15 +213,26 @@ dist/vanilla/
 ```javascript
 // Auto-init: elements with data-bt-* are initialized on DOMContentLoaded
 
-// Manual initialization
+// Manual initialization - 옵션 이름은 React Dropdown prop 과 동일 (별칭 없음)
 const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   options: [{ value: '1', label: 'One' }],
+  placeholder: 'Select...',
+  name: 'field',            // hidden input 으로 폼 제출 참여 (multiple 은 같은 name 반복)
+  multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
+  searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, IME 조합 중 필터 보류)
+  searchPlaceholder: '검색…',
+  emptyText: '결과 없음',
+  selectedSummary: (count) => `${count}개 선택`,  // multiple 트리거 요약 문구
   onValueChange: (value, option) => console.log(value)
+  // multiple 이면 (values: string[], options: Option[]) 로 호출된다
 });
-dropdown.getValue();
-dropdown.setValue('1');
+dropdown.getValue();        // 단일 → string | null / 다중 → string[]
+dropdown.setValue('1');     // 다중 모드는 배열도 받는다: setValue(['1', '2'])
 dropdown.open();
 dropdown.close();
+dropdown.toggle();
+dropdown.setDisabled(true);
+dropdown.destroy();         // 바인딩한 리스너 해제
 
 const modal = Bigtablet.Modal('#my-modal', {
   closeOnOverlay: true,
