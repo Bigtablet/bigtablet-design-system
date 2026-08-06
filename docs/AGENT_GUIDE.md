@@ -477,6 +477,8 @@ Class names and JS option names mirror the React API exactly - there are no depr
 JS API (auto-init on DOMContentLoaded, or manual):
 ```js
 const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
+// React 와 동일한 이름의 multiple / searchable 도 지원 (data-multiple / data-searchable 로도 가능)
+Bigtablet.Dropdown("#multi", { multiple: true, searchable: true, selectedSummary: (n) => `${n}개 선택` });
 const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 ```

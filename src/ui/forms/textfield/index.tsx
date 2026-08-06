@@ -10,6 +10,13 @@ import "./style.scss";
 export type TextFieldSize = "sm" | "md" | "lg";
 
 /**
+ * 입력 필드 시각 변형.
+ * - `outline`: 테두리로 입력 영역을 구분 (기본).
+ * - `filled`: 테두리 대신 채워진 배경으로 구분, 포커스 시 배경이 solid 로 돌아오며 테두리가 드러남.
+ */
+export type TextFieldVariant = "outline" | "filled";
+
+/**
  * IME 조합(한글/일본어/중국어) 중 외부 콜백 처리 전략.
  * - `delayed`: 조합 완료 후에만 `onChangeAction` 호출 (기본 - 폼 제출/검증용).
  * - `immediate`: 조합 중에도 매 입력마다 즉시 호출 (실시간 검색/필터/미리보기용).
@@ -23,14 +30,18 @@ export interface TextFieldProps
 	> {
 	/** 입력 필드 크기 (기본값: "md") */
 	size?: TextFieldSize;
+	/** 입력 필드 시각 변형 (기본값: "outline") */
+	variant?: TextFieldVariant;
 	/** 입력 필드 위에 표시할 라벨 텍스트 */
 	label?: string;
 	/** 라벨 표시 여부 (기본값: true) */
 	showLabel?: boolean;
 	/** 입력 필드 아래에 표시할 도움말 텍스트 */
 	supportingText?: string;
-	/** 에러 상태 여부 */
+	/** 에러 상태 여부. `success` 와 동시에 지정되면 `error` 가 우선한다. */
 	error?: boolean;
+	/** 성공(검증 통과) 상태 여부. `error` 가 true 면 무시된다. */
+	success?: boolean;
 	/** 입력 필드 왼쪽에 표시할 아이콘 */
 	leadingIcon?: React.ReactNode;
 	/** 입력 필드 오른쪽에 표시할 아이콘 */
@@ -74,11 +85,13 @@ export const TextField = ({
 	showLabel = true,
 	supportingText,
 	error,
+	success,
 	leadingIcon,
 	trailingIcon,
 	clearable,
 	fullWidth,
 	size = "md",
+	variant = "outline",
 	className,
 	onValueChange,
 	onChangeAction,
@@ -133,12 +146,19 @@ export const TextField = ({
 		emit("");
 	}, [emit]);
 
+	// error 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
+	// 그때 실패를 성공처럼 보여주면 사용자가 잘못된 값을 그대로 제출하게 된다.
+	const isError = !!error;
+	const isSuccess = !!success && !isError;
+
 	const rootClassName = cn(
 		"text_field",
+		`text_field_variant_${variant}`,
 		size === "sm" && "text_field_size_sm",
 		size === "lg" && "text_field_size_lg",
 		fullWidth && "text_field_full_width",
-		error && "text_field_error",
+		isError && "text_field_error",
+		isSuccess && "text_field_success",
 		props.disabled && "text_field_disabled",
 		className,
 	);
@@ -181,7 +201,7 @@ export const TextField = ({
 							id={inputId}
 							ref={ref}
 							className="text_field_input"
-							aria-invalid={!!error}
+							aria-invalid={isError}
 							aria-describedby={helperId}
 							aria-label={!showLabel ? label : undefined}
 							{...props}

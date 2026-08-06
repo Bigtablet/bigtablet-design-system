@@ -260,8 +260,8 @@
       <h2>Dropdown</h2>
       <div class="demo-row">
         <div class="bt-dropdown" data-bt-dropdown style="width: 300px;">
-          <label class="bt-dropdown__label">Select Option</label>
-          <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+          <label class="bt-dropdown__label" for="basic-dropdown-control">Select Option</label>
+          <button type="button" id="basic-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
             <span class="bt-dropdown__placeholder">Select...</span>
             <span class="bt-dropdown__icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -280,8 +280,8 @@
       </div>
 
       <pre><code>&lt;div class="bt-dropdown" data-bt-dropdown&gt;
-  &lt;label class="bt-dropdown__label"&gt;Select Option&lt;/label&gt;
-  &lt;button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
+  &lt;label class="bt-dropdown__label" for="basic-dropdown-control"&gt;Select Option&lt;/label&gt;
+  &lt;button type="button" id="basic-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
     &lt;span class="bt-dropdown__placeholder"&gt;Select...&lt;/span&gt;
     &lt;span class="bt-dropdown__icon"&gt;▼&lt;/span&gt;
   &lt;/button&gt;
@@ -292,23 +292,180 @@
 &lt;/div&gt;</code></pre>
     </div>
 
+    <!-- Dropdown - searchable -->
+    <div class="section">
+      <h2>Dropdown - searchable</h2>
+      <p style="margin-bottom: 1rem; color: var(--bt-color-text-secondary);">
+        <code>data-searchable</code> 를 붙이면 패널 상단에 검색 입력이 생깁니다.
+        대소문자·공백 무시 부분 일치이고, 한글 IME 조합 중에는 필터를 보류합니다.
+      </p>
+      <div class="demo-row">
+        <div class="bt-dropdown" data-bt-dropdown data-searchable data-search-placeholder="과일 검색…"
+             id="fruit-searchable" style="width: 300px;">
+          <label class="bt-dropdown__label" for="fruit-searchable-control">과일 (검색)</label>
+          <button type="button" id="fruit-searchable-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+            <span class="bt-dropdown__placeholder">선택하세요...</span>
+            <span class="bt-dropdown__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </button>
+          <ul class="bt-dropdown__list" style="display: none;">
+            <li class="bt-dropdown__option" data-value="apple">사과 Apple</li>
+            <li class="bt-dropdown__option" data-value="banana">바나나 Banana</li>
+            <li class="bt-dropdown__option" data-value="cherry">체리 Cherry</li>
+            <li class="bt-dropdown__option is-disabled" data-value="mango">망고 Mango (품절)</li>
+            <li class="bt-dropdown__option" data-value="orange">오렌지 Orange</li>
+            <li class="bt-dropdown__option" data-value="grape">포도 Grape</li>
+          </ul>
+        </div>
+      </div>
+
+      <pre><code>&lt;div class="bt-dropdown" data-bt-dropdown data-searchable data-search-placeholder="과일 검색…"&gt;
+  &lt;label class="bt-dropdown__label" for="fruit-searchable-control"&gt;과일 (검색)&lt;/label&gt;
+  &lt;button type="button" id="fruit-searchable-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
+    &lt;span class="bt-dropdown__placeholder"&gt;선택하세요...&lt;/span&gt;
+    &lt;span class="bt-dropdown__icon"&gt;▼&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;ul class="bt-dropdown__list"&gt;
+    &lt;li class="bt-dropdown__option" data-value="apple"&gt;사과 Apple&lt;/li&gt;
+    &lt;li class="bt-dropdown__option" data-value="banana"&gt;바나나 Banana&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <!-- Dropdown - multiple -->
+    <div class="section">
+      <h2>Dropdown - multiple</h2>
+      <p style="margin-bottom: 1rem; color: var(--bt-color-text-secondary);">
+        <code>data-multiple</code> 는 옵션을 토글하고 패널을 열어 둡니다. 트리거에는
+        <code>N개 선택</code> 요약이 표시되고, <code>data-name</code> 이 있으면 같은 name 의
+        hidden input 이 선택 개수만큼 반복 생성되어 폼 POST 에 담깁니다.
+      </p>
+      <form class="demo-row" id="topping-form" onsubmit="return false;">
+        <div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping"
+             id="topping-dropdown" style="width: 300px;">
+          <label class="bt-dropdown__label" for="topping-dropdown-control">토핑 (다중)</label>
+          <button type="button" id="topping-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+            <span class="bt-dropdown__placeholder">토핑을 고르세요...</span>
+            <span class="bt-dropdown__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </button>
+          <ul class="bt-dropdown__list" style="display: none;">
+            <li class="bt-dropdown__option" data-value="cheese">치즈</li>
+            <li class="bt-dropdown__option" data-value="bacon">베이컨</li>
+            <li class="bt-dropdown__option" data-value="olive">올리브</li>
+            <li class="bt-dropdown__option is-disabled" data-value="pineapple">파인애플 (품절)</li>
+            <li class="bt-dropdown__option" data-value="mushroom">버섯</li>
+          </ul>
+        </div>
+        <output id="topping-output" style="color: var(--bt-color-text-secondary);">선택 없음</output>
+      </form>
+
+      <pre><code>&lt;div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping"&gt;
+  &lt;label class="bt-dropdown__label" for="topping-dropdown-control"&gt;토핑 (다중)&lt;/label&gt;
+  &lt;button type="button" id="topping-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"&gt;
+    &lt;span class="bt-dropdown__placeholder"&gt;토핑을 고르세요...&lt;/span&gt;
+    &lt;span class="bt-dropdown__icon"&gt;▼&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;ul class="bt-dropdown__list"&gt;
+    &lt;li class="bt-dropdown__option" data-value="cheese"&gt;치즈&lt;/li&gt;
+    &lt;li class="bt-dropdown__option" data-value="bacon"&gt;베이컨&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <!-- Dropdown - multiple + searchable (JS) -->
+    <div class="section">
+      <h2>Dropdown - multiple + searchable (JS)</h2>
+      <p style="margin-bottom: 1rem; color: var(--bt-color-text-secondary);">
+        옵션을 JS 로 넘기고 <code>selectedSummary</code> 로 요약 문구를 바꾼 예시입니다.
+        수동 초기화라 <code>data-bt-dropdown</code> 은 붙이지 않습니다.
+      </p>
+      <div class="demo-row">
+        <div class="bt-dropdown" id="city-dropdown" style="width: 300px;">
+          <label class="bt-dropdown__label" for="city-dropdown-control">도시 (다중 + 검색)</label>
+          <button type="button" id="city-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+            <span class="bt-dropdown__placeholder">도시를 고르세요...</span>
+            <span class="bt-dropdown__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </button>
+          <ul class="bt-dropdown__list" style="display: none;"></ul>
+        </div>
+        <output id="city-output" style="color: var(--bt-color-text-secondary);">선택 없음</output>
+      </div>
+
+      <pre><code>Bigtablet.Dropdown('#city-dropdown', {
+  multiple: true,
+  searchable: true,
+  searchPlaceholder: '도시 검색…',
+  emptyText: '일치하는 도시가 없습니다',
+  selectedSummary: (count) =&gt; `도시 ${count}곳`,
+  options: [
+    { value: 'seoul', label: '서울 Seoul' },
+    { value: 'busan', label: '부산 Busan' },
+  ],
+  onValueChange: (values, options) =&gt; console.log(values, options),
+});</code></pre>
+    </div>
+
     <!-- Card -->
     <div class="section">
       <h2>Card</h2>
       <div class="demo-row">
         <div class="bt-card bt-card--bordered bt-card--p-md" style="width: 300px;">
-          <div class="bt-card__title">Card Title</div>
-          <p>This is a card component with bordered style and medium padding.</p>
+          <h3 class="bt-card__title">Card Title</h3>
+          <div class="bt-card__body">
+            <p>This is a card component with bordered style and medium padding.</p>
+          </div>
         </div>
         <div class="bt-card bt-card--shadow-md bt-card--p-md" style="width: 300px;">
-          <div class="bt-card__title">Shadow Card</div>
-          <p>This card uses shadow instead of border.</p>
+          <h3 class="bt-card__title">Shadow Card</h3>
+          <div class="bt-card__body">
+            <p>This card uses shadow instead of border.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-row">
+        <div class="bt-card bt-card--bordered bt-card--p-md" style="width: 300px;">
+          <h3 class="bt-card__title">title / body / footer</h3>
+          <div class="bt-card__body">
+            <p>footer 는 구분선과 함께 하단에 붙습니다 (React <code>footer</code> prop 과 동일).</p>
+          </div>
+          <div class="bt-card__footer">
+            <button type="button" class="bt-button bt-button--sm bt-button--text">취소</button>
+            <button type="button" class="bt-button bt-button--sm bt-button--filled">저장</button>
+          </div>
+        </div>
+        <div class="bt-card bt-card--accent bt-card--p-md" style="width: 300px;">
+          <h3 class="bt-card__title">footer--between</h3>
+          <div class="bt-card__body">
+            <p>accent 카드에서는 구분선이 반투명 흰색으로 바뀝니다.</p>
+          </div>
+          <div class="bt-card__footer bt-card__footer--between">
+            <span>2026-08-06</span>
+            <button type="button" class="bt-button bt-button--sm bt-button--outline">자세히</button>
+          </div>
         </div>
       </div>
 
       <pre><code>&lt;div class="bt-card bt-card--bordered bt-card--p-md"&gt;
-  &lt;div class="bt-card__title"&gt;Card Title&lt;/div&gt;
-  &lt;p&gt;Card content goes here.&lt;/p&gt;
+  &lt;h3 class="bt-card__title"&gt;Card Title&lt;/h3&gt;
+  &lt;div class="bt-card__body"&gt;
+    &lt;p&gt;Card content goes here.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="bt-card__footer"&gt;  &lt;!-- --start / --between / --end (기본 end) --&gt;
+    &lt;button class="bt-button bt-button--sm bt-button--text"&gt;취소&lt;/button&gt;
+    &lt;button class="bt-button bt-button--sm bt-button--filled"&gt;저장&lt;/button&gt;
+  &lt;/div&gt;
 &lt;/div&gt;</code></pre>
     </div>
 
@@ -546,6 +703,47 @@ Bigtablet.Alert({
           }
         });
       }
+
+      // Dropdown - multiple (auto-init). 자동 초기화된 인스턴스는 _btDropdown 으로 재사용한다.
+      const toppingEl = document.getElementById('topping-dropdown');
+      const toppingOutput = document.getElementById('topping-output');
+      if (toppingEl?._btDropdown) {
+        const render = () => {
+          const values = toppingEl._btDropdown.getValue();
+          const hidden = document.querySelectorAll('#topping-form input[name="topping"]');
+          toppingOutput.textContent = values.length
+            ? `getValue() → [${values.join(', ')}] / hidden input ${hidden.length}개`
+            : '선택 없음';
+        };
+        // 자동 초기화라 onValueChange 를 못 넘기므로, 데모에서는 상호작용 후 값을 다시 읽는다.
+        toppingEl.addEventListener('click', () => requestAnimationFrame(render));
+        toppingEl.addEventListener('keyup', () => requestAnimationFrame(render));
+      }
+
+      // Dropdown - multiple + searchable (수동 초기화 + JS options)
+      const cityOutput = document.getElementById('city-output');
+      Bigtablet.Dropdown('#city-dropdown', {
+        multiple: true,
+        searchable: true,
+        searchPlaceholder: '도시 검색…',
+        emptyText: '일치하는 도시가 없습니다',
+        selectedSummary: (count) => `도시 ${count}곳`,
+        options: [
+          { value: 'seoul', label: '서울 Seoul' },
+          { value: 'busan', label: '부산 Busan' },
+          { value: 'incheon', label: '인천 Incheon' },
+          { value: 'daegu', label: '대구 Daegu' },
+          { value: 'daejeon', label: '대전 Daejeon' },
+          { value: 'gwangju', label: '광주 Gwangju', disabled: true },
+          { value: 'ulsan', label: '울산 Ulsan' },
+          { value: 'jeju', label: '제주 Jeju' }
+        ],
+        onValueChange: (values, options) => {
+          cityOutput.textContent = values.length
+            ? `${values.join(', ')} (${options.map((o) => o.label).join(' / ')})`
+            : '선택 없음';
+        }
+      });
 
       // Pagination change handler
       const paginationEl = document.querySelector('[data-bt-pagination]');

@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
 - [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
 - [v3.5.0](#v350)
 - [v3.3.0](#v330)
@@ -25,6 +26,42 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.9.0 (React variant/success)
+
+### Dropdown - `variant="ghost"` 제거 (타입 레벨 파괴적 변경)
+
+`Dropdown` 의 `variant` 는 v2.4.0 부터 `@deprecated` no-op 이었습니다. 이번 릴리즈에서 **다시 동작하게 되살리면서** Vanilla 번들과 같은 두 값만 남겼습니다.
+
+| 컴포넌트 | 구 타입 | 신 타입 | 비고 |
+|------|------|------|------|
+| Dropdown | `'outline' \| 'filled' \| 'ghost'` (no-op) | `'outline' \| 'filled'` (동작함, 기본 `'outline'`) | `'ghost'` 는 어떤 스타일도 구현된 적이 없고 대응하는 Vanilla 클래스도 없어 제거 |
+
+- **런타임 영향 없음** - `'ghost'` 는 no-op 이었으므로 지우면 렌더링이 그대로입니다. 다만 `variant="ghost"` 를 넘기던 호출부는 **타입 에러**가 납니다.
+- `variant` 를 아예 넘기지 않던 코드는 영향이 없습니다 (`'outline'` 이 기본값이고 기존 렌더링과 동일).
+
+Before:
+```tsx
+<Dropdown options={options} variant="ghost" />
+```
+
+After:
+```tsx
+{/* 기본(테두리) */}
+<Dropdown options={options} />
+{/* 채움 배경 */}
+<Dropdown options={options} variant="filled" />
+```
+
+### 신규 추가 (비파괴 — 마이그레이션 불필요, 참고용)
+
+| 컴포넌트 | 추가 | 설명 |
+|------|------|------|
+| TextField | `variant` | `'outline'`(기본) / `'filled'`. Vanilla `.bt-text-field__input--outline/--filled` 와 1:1 |
+| TextField | `success` | 검증 통과 상태. `error` 와 동시에 주면 `error` 우선, `aria-invalid` 는 켜지 않음. Vanilla `.bt-text-field__input--success` 와 1:1 |
+| Dropdown | `variant` | `'outline'`(기본) / `'filled'`. Vanilla `.bt-dropdown__control--outline/--filled` 와 1:1 |
 
 ---
 
@@ -94,7 +131,7 @@ React 컴포넌트 이름이 `Dropdown` 이므로 블록 이름·data 속성·JS
 
 `.is-open` / `.is-selected` / `.is-active` / `.is-disabled` 상태 클래스와 인스턴스 API(`getValue` / `setValue` / `open` / `close` / `toggle` / `setDisabled` / `destroy`)는 그대로입니다.
 
-> **남은 격차**: React `Dropdown` 의 `multiple`(다중 선택)·`searchable`(검색 필터)은 Vanilla 에 아직 없습니다. 이름만 맞췄을 뿐 기능까지 동등하지는 않으니, 두 기능이 필요하면 React 쪽을 쓰세요.
+> React `Dropdown` 의 `multiple`(다중 선택)·`searchable`(검색 필터)도 Vanilla 에서 지원합니다 (JS 옵션 또는 `data-multiple` / `data-searchable`). 사용법은 [VANILLA.md#dropdown](./VANILLA.md#dropdown) 참고.
 
 ### 5. Spinner - size enum → px 커스텀 프로퍼티
 
@@ -255,7 +292,7 @@ Figma 스펙 기반으로 Dropdown 이 전면 재설계되면서 아래 prop 이
 
 | 컴포넌트 | 구 prop | 신 prop | 도입 버전 | 비고 |
 |------|------|------|------|------|
-| Dropdown | `variant` | 없음 | v2.4.0 | Dropdown 은 outline 스타일만 지원합니다 |
+| Dropdown | `variant` | 없음 | v2.4.0 | Dropdown 은 outline 스타일만 지원합니다. **v3.9.0 에서 `'outline' \| 'filled'` 로 부활** - [v3.9.0 섹션](#v390-react-variantsuccess) 참고 |
 | Dropdown | `textAlign` | 없음 | v2.4.0 | 더 이상 지원되지 않습니다 |
 
 ---
@@ -314,13 +351,15 @@ After:
 
 > Next.js 서버 액션에 값을 바로 넘겨야 해서 `Action` 접미사가 필요하다면 `onChangeAction` 을 그대로 사용해도 됩니다 - 두 prop 은 시그니처가 동일합니다.
 
-### 3. Dropdown - fullWidth / variant / textAlign 제거
+### 3. Dropdown - fullWidth / textAlign 제거
 
-`fullWidth`/`variant`/`textAlign` 은 넘겨도 에러가 나지는 않지만 아무 효과가 없습니다(no-op). Dropdown 은 항상 부모 너비를 채우고 outline 스타일만 지원합니다.
+`fullWidth`/`textAlign` 은 넘겨도 에러가 나지는 않지만 아무 효과가 없습니다(no-op). Dropdown 은 항상 부모 너비를 채웁니다.
+
+> `variant` 는 v2.4.0~v3.8.0 동안 no-op 이었지만 v3.9.0 에서 `'outline' | 'filled'` 로 되살아났습니다 - [v3.9.0 섹션](#v390-react-variantsuccess) 참고.
 
 Before:
 ```tsx
-<Dropdown options={options} fullWidth variant="outline" textAlign="left" />
+<Dropdown options={options} fullWidth textAlign="left" />
 ```
 
 After:

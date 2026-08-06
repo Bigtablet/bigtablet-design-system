@@ -87,4 +87,16 @@ describe("Accordion", () => {
 		expect(onValueChange).toHaveBeenCalledWith(["a"]);
 	});
 
+	it("prefers onValueChange over the deprecated onChange when both are given", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(<Accordion items={items} onValueChange={onValueChange} onChange={onChange} />);
+
+		fireEvent.click(screen.getByText("Title A"));
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith(["a"]);
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 });

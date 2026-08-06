@@ -75,6 +75,40 @@ export const WithIcons: Story = {
 
 export const Disabled: Story = { args: { disabled: true } };
 
+export const Danger: Story = {
+	name: "Danger / 위험 액션",
+	render: (args) => (
+		<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+			<Button {...args} variant="filled" danger>
+				Filled
+			</Button>
+			<Button {...args} variant="tonal" danger>
+				Tonal
+			</Button>
+			<Button {...args} variant="outline" danger>
+				Outline
+			</Button>
+			<Button {...args} variant="text" danger>
+				Text
+			</Button>
+		</div>
+	),
+	args: { danger: true },
+	parameters: {
+		docs: {
+			description: {
+				story: `
+\`danger\` 는 \`variant\` 와 **직교**하는 modifier 다 — variant 를 대체하지 않고 색만 위험(빨강) 계열로 바꾼다.
+네 variant 어디에나 붙일 수 있고, 생략하면 \`filled\` 위에 적용된다. 삭제·탈퇴처럼 되돌리기 어려운 액션에만 쓴다.
+
+\`danger\` is a modifier **orthogonal** to \`variant\` — it recolors rather than replaces, so it composes with all
+four variants (defaulting to \`filled\`). Reserve it for destructive, hard-to-undo actions such as delete or leave.
+				`,
+			},
+		},
+	},
+};
+
 export const IconSizes: Story = {
 	name: "Icon sizes / 아이콘 크기",
 	render: (args) => (

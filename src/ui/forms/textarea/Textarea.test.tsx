@@ -129,4 +129,40 @@ describe("Textarea", () => {
 		expect(onValueChange).toHaveBeenCalledWith("hello");
 	});
 
+	it("prefers onValueChange over the deprecated onChangeAction when both are given", () => {
+		const onValueChange = vi.fn();
+		const onChangeAction = vi.fn();
+		render(
+			<Textarea label="내용" onValueChange={onValueChange} onChangeAction={onChangeAction} />,
+		);
+
+		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("hello");
+		expect(onChangeAction).not.toHaveBeenCalled();
+	});
+
+	it("prefers onValueChange over onChangeAction on the mid-composition (immediate) path", () => {
+		// imeStrategy="immediate" 는 emit() 을 거치지 않는 별도 방출 경로 - 여기서도 canonical 우선
+		const onValueChange = vi.fn();
+		const onChangeAction = vi.fn();
+		render(
+			<Textarea
+				label="내용"
+				imeStrategy="immediate"
+				onValueChange={onValueChange}
+				onChangeAction={onChangeAction}
+			/>,
+		);
+
+		const ta = screen.getByRole("textbox");
+		fireEvent.compositionStart(ta);
+		fireEvent.change(ta, { target: { value: "ㅎ" } });
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("ㅎ");
+		expect(onChangeAction).not.toHaveBeenCalled();
+	});
+
 });

@@ -283,7 +283,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
 | `className` | `string` | - | 루트 요소에 추가할 className |
 | ~~`fullWidth`~~ | `boolean` | - | **deprecated** (v3.0.0, no-op - 항상 부모 너비를 채움). [MIGRATION.md](./MIGRATION.md) 참고 |
-| ~~`variant`~~ | `'outline' \| 'filled' \| 'ghost'` | - | **deprecated** (no-op - outline 스타일만 사용) |
+| `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
 | ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
@@ -403,6 +403,12 @@ import { Search, Eye } from 'lucide-react';
   transformValue={(v) => v.replace(/\D/g, '').slice(0, 11)}
   onValueChange={(value) => console.log(value)}
 />
+
+// filled variant - 테두리 대신 dim 배경, 포커스 시 테두리가 드러남
+<TextField label="검색" variant="filled" placeholder="검색어를 입력하세요" />
+
+// 성공 상태 - error 와 같은 구조지만 aria-invalid 는 켜지 않음
+<TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 ```
 
 | Prop | Type | Default | Description |
@@ -410,8 +416,10 @@ import { Search, Eye } from 'lucide-react';
 | `label` | `string` | - | 라벨 |
 | `showLabel` | `boolean` | `true` | 라벨 표시 여부 (false 면 SR 전용) |
 | `supportingText` | `string` | - | 도움말 텍스트 |
-| `error` | `boolean` | `false` | 에러 상태 |
+| `error` | `boolean` | `false` | 에러 상태 (`success` 보다 우선) |
+| `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
 | `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 |
 | `trailingIcon` | `ReactNode` | - | 오른쪽 아이콘 |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
@@ -421,7 +429,9 @@ import { Search, Eye } from 'lucide-react';
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 (v3.1). `immediate` = 조합 중에도 즉시 호출 |
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
 
-> TextField 에는 `variant` · `success` prop 이 없다. outline 스타일 하나만 제공하며, 성공 상태는 별도 표현이 없다 (에러만 `error` 로 표시).
+> **`error` vs `success` 우선순위**: 둘 다 `true` 면 `error` 가 이긴다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문이다. `success` 는 `aria-invalid` 를 켜지 않는다 (`error` 만 `aria-invalid="true"`).
+>
+> `variant` · `success` 는 Vanilla 의 `.bt-text-field__input--filled` / `--success` 와 1:1 대응한다.
 >
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
 >
@@ -1014,6 +1024,8 @@ import { Spinner } from '@bigtablet/design-system';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `number` | `24` | 스피너 크기 (px) |
+
+> ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시킨다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춘다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
 
 ---
 

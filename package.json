@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "3.8.0",
+	"version": "3.9.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -124,7 +124,8 @@
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
-			"limit": "5 kB"
+			"limit": "7 kB",
+			"message": "Raised 5 kB -> 7 kB on 2026-08-06: Dropdown multiple/searchable pushed the baseline from 4.13 kB to 5.6 kB, 0.6 kB over the old limit. The current limit leaves 1.4 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/index.css",

@@ -71,6 +71,32 @@
     }
   }
 
+  // ── Variant: filled ───────────────────────────────────────────────────────────
+  // Vanilla `.bt-dropdown__control--filled` 대응. TextField 의 filled 와 같은 어휘지만
+  // 상태 훅이 다르다 - TextField 는 `:focus-within`, Dropdown 은 열림 상태(`.is_open`).
+  // outline(기본)은 base 규칙 그대로라 `_variant_outline` 은 스타일을 갖지 않는다.
+  // Vanilla 의 `0 0 0 3px` 링은 옮기지 않는다 (React 컨트롤은 border-color 로만 표현).
+
+  &_variant_filled &_fieldset {
+    border-color: transparent;
+    background-color: token.$color_bg_solid_dim;
+
+    &:hover:not(.is_open):not(.is_disabled) {
+      border-color: token.$color_border_hover;
+    }
+
+    &.is_open {
+      border-color: token.$color_border_focus;
+      background-color: token.$color_bg_solid;
+    }
+
+    // filled 는 테두리가 없는 게 정체성이라 disabled 에서도 되살리지 않는다.
+    // 비활성 신호는 dim 배경 + control 의 opacity 로 준다.
+    &.is_disabled {
+      border-color: transparent;
+    }
+  }
+
   // ── Standalone label (above control) - modern 패턴, 어떤 배경에서도 작동 ──
 
   &_label {
@@ -359,4 +385,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dropdown_icon { transition: none; }
   .dropdown_search_input { transition: none; }
+  // fieldset 은 border-color + background-color 를 트랜지션한다 (filled variant 의 열림 전환 포함).
+  .dropdown_fieldset { transition: none; }
 }
