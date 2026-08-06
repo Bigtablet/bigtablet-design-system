@@ -7,7 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [Unreleased (다음 릴리즈)](#unreleased-다음-릴리즈)
+- [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
 - [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
 - [v3.5.0](#v350)
 - [v3.3.0](#v330)
@@ -29,9 +29,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
-## Unreleased (다음 릴리즈)
-
-> 릴리즈 PR 에서 이 제목을 확정 버전으로 바꿔주세요.
+## v3.9.0 (React variant/success)
 
 ### Dropdown - `variant="ghost"` 제거 (타입 레벨 파괴적 변경)
 
@@ -294,7 +292,7 @@ Figma 스펙 기반으로 Dropdown 이 전면 재설계되면서 아래 prop 이
 
 | 컴포넌트 | 구 prop | 신 prop | 도입 버전 | 비고 |
 |------|------|------|------|------|
-| Dropdown | `variant` | 없음 | v2.4.0 | Dropdown 은 outline 스타일만 지원합니다. **다음 릴리즈에서 `'outline' \| 'filled'` 로 부활** - [Unreleased 섹션](#unreleased-다음-릴리즈) 참고 |
+| Dropdown | `variant` | 없음 | v2.4.0 | Dropdown 은 outline 스타일만 지원합니다. **v3.9.0 에서 `'outline' \| 'filled'` 로 부활** - [v3.9.0 섹션](#v390-react-variantsuccess) 참고 |
 | Dropdown | `textAlign` | 없음 | v2.4.0 | 더 이상 지원되지 않습니다 |
 
 ---
@@ -357,7 +355,7 @@ After:
 
 `fullWidth`/`textAlign` 은 넘겨도 에러가 나지는 않지만 아무 효과가 없습니다(no-op). Dropdown 은 항상 부모 너비를 채웁니다.
 
-> `variant` 는 v2.4.0~v3.8.0 동안 no-op 이었지만 다음 릴리즈에서 `'outline' | 'filled'` 로 되살아납니다 - [Unreleased 섹션](#unreleased-다음-릴리즈) 참고.
+> `variant` 는 v2.4.0~v3.8.0 동안 no-op 이었지만 v3.9.0 에서 `'outline' | 'filled'` 로 되살아났습니다 - [v3.9.0 섹션](#v390-react-variantsuccess) 참고.
 
 Before:
 ```tsx

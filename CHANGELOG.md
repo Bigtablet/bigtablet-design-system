@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.9.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.9.0) - 2026-08-06
+
+- Vanilla Dropdown 다중 선택·검색 지원 - React `<Dropdown multiple searchable>` 과 동등하게 `data-multiple` / `data-searchable`(또는 JS 옵션) 지원. 선택 시 패널 유지·"N개 선택" 요약·좌측 체크 슬롯·같은 `name` 반복 hidden input, 한글 IME 조합 중 필터 보류, 필터된 목록 기준 방향키·`role="combobox"` 이동 등 WAI-ARIA APG Combobox 정합. 기존 평면 `<ul>` 마크업은 그대로 동작
+- TextField `variant` · `success` prop 추가 - `variant="outline"`(기본, 기존 렌더링과 동일) / `"filled"`, 검증 통과 상태 `success`(`error` 와 동시 지정 시 `error` 우선, `aria-invalid` 는 켜지 않음). Vanilla `--filled` / `--success` 와 1:1 대응
+- Dropdown `variant` prop 복원 - v2.4.0 부터 no-op 이던 `@deprecated variant` 를 `"outline"`(기본) / `"filled"` 로 실제 동작하게 되살림. **(주의: 구현된 적 없는 `variant="ghost"` 제거 - 넘기던 호출부는 타입 에러, 런타임 렌더링은 불변)**
+- Vanilla Card body·footer 구획 추가 - React Card 의 `heading` / `children` / `footer` 3단 구성에 맞춰 `.bt-card__body` · `.bt-card__footer`(`--start/between/end`) 추가, 예시의 `__title` 을 시맨틱 헤딩으로 교체. **(주의: `.bt-dropdown__option` 이 `space-between` → `flex-start` 로 변경 - 우측 정렬 요소를 두던 마크업은 `.bt-dropdown__option-content` 로 감싸야 함)**
+- Vanilla Dropdown 초기화 버그 수정 - 마크업의 placeholder 문구를 라이브러리 기본값이 덮어쓰던 문제, 다중 모드에서 서버 렌더링된 hidden input 을 값 읽기 전에 지우던 문제 수정 (Thymeleaf `th:field` 영향)
+- TextField filled × disabled 테두리 수정 - 특이도 동률로 disabled 규칙이 이겨 filled 에 회색 테두리가 되살아나던 문제 수정
+- (개발) 콜백 우선순위·danger×variant 테스트 커버리지 - canonical/deprecated 콜백 쌍 10종의 우선순위와 FileInput 의 both-call 예외, Button `danger` × 4 variant 조합을 자동 검증 (788 → 816)
+
 ## [3.8.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.8.0) - 2026-08-05
 
 - Tooltip·Popover 뷰포트 충돌 회피 + 진입/퇴출 애니메이션 - `body` 포탈 + `position: fixed` 로 조상의 `overflow`/`transform` 을 벗어나 잘리지 않게 하고, flip→shift→shrink 로 화면 안에 맞추도록 재배치. Tooltip 은 언마운트 전에 퇴출 애니메이션을 재생 (#429, #431). **(주의: 오버레이가 `body` 로 포탈됨 - z-index/스타일 상속을 부모 트리 기준으로 가정하던 코드는 확인 필요)**
