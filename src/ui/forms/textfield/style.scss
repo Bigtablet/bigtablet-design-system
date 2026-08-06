@@ -210,6 +210,16 @@
     background-color: token.$color_bg_solid;
   }
 
+  // filled 는 테두리가 없는 게 정체성이라 disabled 에서도 되살리지 않는다 (Dropdown 의
+  // `_variant_filled &_fieldset.is_disabled` 와 동일한 판단). 비활성 신호는 dim 배경 +
+  // input 의 색으로 준다.
+  //
+  // 루트 클래스 2개를 겹쳐 (0,3,0) 으로 만들어, 뒤에 오는 disabled 블록(0,2,0)을 선언
+  // 순서와 무관하게 이긴다. 두 번째 `&` 는 compound 중간에 못 오므로 `#{&}` 로 보간한다.
+  &_disabled#{&}_variant_filled &_container {
+    border-color: transparent;
+  }
+
   // ── Error state ────────────────────────────────────────────────────────
 
   &_error {

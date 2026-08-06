@@ -180,4 +180,13 @@ describe("TextField", () => {
 		const root = screen.getByRole("textbox").closest(".text_field");
 		expect(root).toHaveClass("text_field_variant_filled", "text_field_success");
 	});
+
+	// filled 는 disabled 에서도 테두리를 되살리지 않는다. jsdom 은 스타일시트를 적용하지
+	// 않으므로 계산된 border-color 대신, 특이도 오버라이드가 겨냥하는 두 루트 클래스가
+	// 함께 붙는지를 확인한다 (`.text_field_disabled.text_field_variant_filled`).
+	it("keeps the filled variant class alongside disabled", () => {
+		render(<TextField variant="filled" disabled />);
+		const root = screen.getByRole("textbox").closest(".text_field");
+		expect(root).toHaveClass("text_field_variant_filled", "text_field_disabled");
+	});
 });
