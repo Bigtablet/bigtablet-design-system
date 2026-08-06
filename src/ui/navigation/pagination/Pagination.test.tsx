@@ -85,4 +85,18 @@ describe("Pagination", () => {
 		expect(onPageChange).toHaveBeenCalledWith(4);
 	});
 
+	it("prefers onPageChange over the deprecated onChange when both are given", () => {
+		const onPageChange = vi.fn();
+		const onChange = vi.fn();
+		render(
+			<Pagination page={5} totalPages={10} onPageChange={onPageChange} onChange={onChange} />,
+		);
+
+		fireEvent.click(screen.getByLabelText("Previous page"));
+
+		expect(onPageChange).toHaveBeenCalledTimes(1);
+		expect(onPageChange).toHaveBeenCalledWith(4);
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 });

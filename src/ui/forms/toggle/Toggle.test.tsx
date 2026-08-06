@@ -89,6 +89,18 @@ describe("Toggle", () => {
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 	});
 
+	it("prefers onCheckedChange over the deprecated onChange when both are given", () => {
+		const onCheckedChange = vi.fn();
+		const onChange = vi.fn();
+		render(<Toggle ariaLabel="Toggle" onCheckedChange={onCheckedChange} onChange={onChange} />);
+
+		fireEvent.click(screen.getByRole("switch"));
+
+		expect(onCheckedChange).toHaveBeenCalledTimes(1);
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	it("runs consumer onClick AND still toggles ({...props} spread must not replace toggle handler)", () => {
 		const onClick = vi.fn();
 		const onCheckedChange = vi.fn();
