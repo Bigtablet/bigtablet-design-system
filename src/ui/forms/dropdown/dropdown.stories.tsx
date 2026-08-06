@@ -34,6 +34,7 @@ const meta: Meta<typeof Dropdown> = {
 	tags: ["autodocs"],
 	argTypes: {
 		size: { control: "select", options: ["sm", "md", "lg"] },
+		variant: { control: "inline-radio", options: ["outline", "filled"] },
 		disabled: { control: "boolean" },
 		fullWidth: { control: "boolean" },
 		searchable: { control: "boolean" },
@@ -58,6 +59,7 @@ const meta: Meta<typeof Dropdown> = {
 **Dropdown** - Single-select dropdown. Floating label (shows when a value is selected/opened). / **Dropdown** - 단일 선택 드롭다운. 플로팅 라벨 (값 선택/열림 시 표시).
 
 Sizes: \`sm\` / \`md\` (default) / \`lg\`. / Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
+Variants: \`outline\` (default, bordered) / \`filled\` (dim fill, no border — the border appears while open). Same vocabulary as \`TextField\`. / Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테두리 없음 — 열려 있는 동안 테두리가 드러남). \`TextField\` 와 같은 어휘입니다.
 \`DropdownOption\` fields: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`. / \`DropdownOption\` 필드: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`.
 Keyboard: ↑↓/Enter/Esc/Home/End. / 키보드: ↑↓/Enter/Esc/Home/End.
 
@@ -79,6 +81,34 @@ export const WithValue: Story = {
 
 export const Disabled: Story = {
 	args: { disabled: true, defaultValue: "apple" },
+};
+
+export const Filled: Story = {
+	args: { variant: "filled", defaultValue: "banana" },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`variant="filled"` swaps the border for a dim fill; opening the panel restores the solid background and reveals the border. Mirrors Vanilla `.bt-dropdown__control--filled`. / `variant="filled"` 는 테두리 대신 dim 배경으로 채웁니다. 패널을 열면 배경이 solid 로 돌아오며 테두리가 드러납니다. Vanilla `.bt-dropdown__control--filled` 와 동일합니다.',
+			},
+		},
+	},
+};
+
+export const Variants: Story = {
+	render: (args) => (
+		<div style={{ display: "flex", flexDirection: "column", gap: 16, width: 280 }}>
+			<Dropdown {...(args as DropdownSingleProps)} variant="outline" label="Outline (기본)" />
+			<Dropdown {...(args as DropdownSingleProps)} variant="filled" label="Filled" />
+		</div>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story: "Side-by-side comparison of the two variants. / 두 variant 를 나란히 비교합니다.",
+			},
+		},
+	},
 };
 
 export const FullWidth: Story = {

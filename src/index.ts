@@ -129,6 +129,7 @@ export type {
 	DropdownProps,
 	DropdownSingleProps,
 	DropdownSize,
+	DropdownVariant,
 } from "./ui/forms/dropdown";
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
@@ -158,7 +159,12 @@ export type {
 	TextareaSize,
 } from "./ui/forms/textarea";
 export { Textarea } from "./ui/forms/textarea";
-export type { ImeStrategy, TextFieldProps, TextFieldSize } from "./ui/forms/textfield";
+export type {
+	ImeStrategy,
+	TextFieldProps,
+	TextFieldSize,
+	TextFieldVariant,
+} from "./ui/forms/textfield";
 export { TextField } from "./ui/forms/textfield";
 export type { ToggleProps } from "./ui/forms/toggle";
 export { Toggle } from "./ui/forms/toggle";

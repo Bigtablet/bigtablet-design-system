@@ -133,4 +133,51 @@ describe("TextField", () => {
 		expect(handleChange).toHaveBeenCalledWith("test@example.com");
 	});
 
+	// ── variant ────────────────────────────────────────────────────────────
+
+	it("defaults to the outline variant and emits no filled class", () => {
+		render(<TextField />);
+		const root = screen.getByRole("textbox").closest(".text_field");
+		expect(root).toHaveClass("text_field_variant_outline");
+		expect(root).not.toHaveClass("text_field_variant_filled");
+	});
+
+	it("emits the filled variant class", () => {
+		render(<TextField variant="filled" />);
+		const root = screen.getByRole("textbox").closest(".text_field");
+		expect(root).toHaveClass("text_field_variant_filled");
+		expect(root).not.toHaveClass("text_field_variant_outline");
+	});
+
+	// ── success ────────────────────────────────────────────────────────────
+
+	it("shows success state without marking the input invalid", () => {
+		render(<TextField success supportingText="사용 가능한 이메일입니다" />);
+		const input = screen.getByRole("textbox");
+		expect(input.closest(".text_field")).toHaveClass("text_field_success");
+		expect(input).toHaveAttribute("aria-invalid", "false");
+	});
+
+	it("links success helper text with aria-describedby", () => {
+		render(<TextField success label="Email" supportingText="Looks good" />);
+		const input = screen.getByRole("textbox");
+		const helperId = input.getAttribute("aria-describedby");
+		expect(helperId).toBeTruthy();
+		expect(document.getElementById(helperId!)).toHaveTextContent("Looks good");
+	});
+
+	it("lets error win over success when both are set", () => {
+		render(<TextField error success supportingText="Invalid email" />);
+		const input = screen.getByRole("textbox");
+		const root = input.closest(".text_field");
+		expect(root).toHaveClass("text_field_error");
+		expect(root).not.toHaveClass("text_field_success");
+		expect(input).toHaveAttribute("aria-invalid", "true");
+	});
+
+	it("combines the filled variant with the success state", () => {
+		render(<TextField variant="filled" success />);
+		const root = screen.getByRole("textbox").closest(".text_field");
+		expect(root).toHaveClass("text_field_variant_filled", "text_field_success");
+	});
 });

@@ -353,8 +353,8 @@
       opacity: 0.7;
     }
 
-    /* Variants - React TextField 에는 variant prop 이 없고 outline 스타일만 있다.
-       --outline 이 React 와 동등한 기본값이고, --filled 는 Vanilla 전용이다. */
+    /* Variants - React `<TextField variant>` 와 1:1 대응.
+       --outline 이 기본값(React `variant="outline"`), --filled 는 `variant="filled"` 다. */
     &--outline {
       border: 1px solid var(--bt-color-border);
 
@@ -746,8 +746,8 @@
       color: var(--bt-color-text-tertiary);
     }
 
-    /* Variants - React Dropdown 은 variant prop 을 @deprecated 처리하고 outline 만 쓴다.
-       --outline 이 React 와 동등한 기본값이고, --filled 는 Vanilla 전용이다. */
+    /* Variants - React `<Dropdown variant>` 와 1:1 대응.
+       --outline 이 기본값(React `variant="outline"`), --filled 는 `variant="filled"` 다. */
     &--outline {
       border: 1px solid var(--bt-color-border);
 
