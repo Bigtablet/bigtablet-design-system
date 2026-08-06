@@ -341,13 +341,14 @@ npm install @bigtablet/design-system
 
 ### Dropdown
 
-React `<Dropdown>` 의 Vanilla 대응입니다. 단일 선택 전용이며,
-React 의 `multiple` / `searchable` 은 아직 지원하지 않습니다.
+React `<Dropdown>` 의 Vanilla 대응입니다. 기본은 단일 선택이고,
+React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지원합니다.
 
 ```html
 <div class="bt-dropdown" data-bt-dropdown style="width: 300px;">
-  <label class="bt-dropdown__label">과일 선택</label>
-  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+  <!-- 라벨은 React 처럼 트리거 버튼과 연결하세요 (button 은 labelable 요소입니다) -->
+  <label class="bt-dropdown__label" for="fruit-control">과일 선택</label>
+  <button type="button" id="fruit-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
     <span class="bt-dropdown__placeholder">선택하세요...</span>
     <span class="bt-dropdown__icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -390,6 +391,112 @@ React 의 `multiple` / `searchable` 은 아직 지원하지 않습니다.
 - `.bt-dropdown__control--md`
 - `.bt-dropdown__control--lg`
 
+**다중 선택 (`multiple`):**
+
+`data-multiple` 또는 JS `multiple: true` 를 주면 React `<Dropdown multiple>` 과 같게 동작합니다.
+옵션을 클릭하면 **토글되고 패널은 열린 채로 유지**되며, 선택된 옵션 왼쪽에 체크
+슬롯(`.bt-dropdown__option-check`)이 표시됩니다. 트리거에는 chip 이 아니라
+`N개 선택` 요약 문자열이 들어가고(`selectedSummary` 로 변경), listbox 에는
+`aria-multiselectable="true"` 가 붙습니다.
+
+값 타입도 React `value` prop 규칙 그대로입니다 - 단일은 `string | null`, 다중은 `string[]`.
+`getValue()` / `setValue()` / `onValueChange` 가 모두 이 규칙을 따릅니다.
+
+폼 제출은 **같은 `name` 의 hidden input 을 선택 개수만큼 반복**해 담습니다
+(React 가 `selectedValues.map(...)` 로 hidden input 을 반복 렌더하는 것과 동일).
+선택이 0개면 hidden input 도 0개입니다.
+
+```html
+<div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping">
+  <label class="bt-dropdown__label">토핑</label>
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">토핑을 고르세요...</span>
+    <span class="bt-dropdown__icon">▼</span>
+  </button>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="cheese">치즈</li>
+    <li class="bt-dropdown__option" data-value="bacon">베이컨</li>
+    <li class="bt-dropdown__option is-disabled" data-value="pineapple">파인애플 (품절)</li>
+  </ul>
+</div>
+
+<!-- 선택 2개 → 서버에는 topping=cheese&topping=bacon 으로 전송됩니다.
+     Spring MVC 라면 List<String> topping 으로 바인딩됩니다. -->
+```
+
+**검색 (`searchable`):**
+
+`data-searchable` 또는 JS `searchable: true` 를 주면 패널 상단에 검색 행이 생깁니다.
+필터는 옵션 `label` 부분 일치이고 **대소문자·공백을 무시**합니다 (React `normalizeForSearch` 와 동일).
+패널을 열면 검색 입력에 포커스가 가고, 닫으면 검색어가 초기화됩니다.
+결과가 0개면 `emptyText`(기본 `결과 없음`)가 표시됩니다.
+
+> **한글 IME**: 조합 중(`compositionstart` ~ `compositionend`)에는 필터를 갱신하지 않습니다.
+> 입력 표시는 즉시 반영되지만 중간 자모(`ㅍ`, `포`)로 목록이 튀지 않고, 조합이 확정된 뒤에만
+> 필터가 적용됩니다. 조합 중 Enter 도 조합 확정용이라 선택/닫기를 트리거하지 않습니다.
+> (React 가 `searchText` / `committedQuery` 를 분리한 것과 같은 동작)
+
+검색 행·스크롤 컨테이너·빈 결과 안내는 JS 가 자동으로 만들어 넣으므로 마크업은 그대로 둡니다.
+결과 DOM 은 React 와 같은 구조입니다:
+
+```html
+<div class="bt-dropdown__list">          <!-- 패널 (스크롤 없음) -->
+  <div class="bt-dropdown__search">
+    <span class="bt-dropdown__search-icon">…</span>
+    <input class="bt-dropdown__search-input" role="combobox" aria-autocomplete="list" …>
+  </div>
+  <ul class="bt-dropdown__options" role="listbox">   <!-- 스크롤 컨테이너 -->
+    <li class="bt-dropdown__option" …>…</li>
+    <li class="bt-dropdown__empty" hidden>결과 없음</li>
+  </ul>
+</div>
+```
+
+> **`__list` 에 커스텀 클래스를 붙였다면 주의**
+> 평면 `<ul class="bt-dropdown__list">` 마크업 + `searchable` 조합이면, `<ul>` 안에는 `<li>`
+> 밖에 못 오므로 JS 가 새 `<div class="bt-dropdown__list">` 를 만들어 그 `<ul>` 을 감싸 올리고,
+> 원래 `<ul>` 은 `.bt-dropdown__options`(스크롤 컨테이너)가 됩니다. 이때 `bt-dropdown__list`
+> 로 시작하지 않는 커스텀 클래스는 **원래 붙어 있던 `<ul>` 에 그대로 남습니다** — 즉 패널
+> wrapper 가 아니라 안쪽 스크롤 컨테이너를 가리키게 됩니다.
+>
+> 패널 wrapper 를 직접 스타일링해야 하면 승격에 맡기지 말고 최종 구조를 그대로 렌더링하세요.
+> `__options` 컨테이너가 이미 있으면 JS 는 승격을 건너뛰므로 클래스가 의도한 자리에 남습니다:
+>
+> ```html
+> <div class="bt-dropdown__list my-panel">
+>   <ul class="bt-dropdown__options" role="listbox">…</ul>
+> </div>
+> ```
+
+`searchable` 일 때는 React 와 동일하게 **`role="combobox"` 가 검색 입력으로 옮겨가고**
+(`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함),
+트리거 버튼에는 `aria-haspopup="listbox"` + `aria-expanded` 만 남습니다.
+
+**키보드 (WAI-ARIA APG Combobox):**
+
+| 키 | 동작 |
+|----|------|
+| `Enter` / `Space` | 닫힘이면 열기, 열림이면 활성 옵션 확정 (다중은 토글 후 유지) |
+| `↑` / `↓` | **검색 필터를 통과한 옵션 목록** 위에서 이동 (비활성 건너뜀, 순환) |
+| `Home` / `End` | 첫/마지막 활성 가능 옵션 (검색 입력 안에서는 커서 이동에 양보) |
+| `Esc` | 닫기 (searchable 이면 트리거로 포커스 복귀) |
+| `Tab` | 리스트를 닫고 기본 포커스 이동을 그대로 진행 |
+
+**data-\* 속성:**
+
+| 속성 | 대응 JS 옵션 |
+|------|-------------|
+| `data-multiple` | `multiple` |
+| `data-searchable` | `searchable` |
+| `data-search-placeholder` | `searchPlaceholder` |
+| `data-empty-text` | `emptyText` |
+| `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
+| `data-options` | `options` (JSON 배열) |
+| `data-name` | `name` |
+
+> boolean 속성은 값을 생략해도 되고(`data-multiple`), 끄려면 `data-multiple="false"` 로 명시합니다.
+> `selectedSummary` 는 함수라 JS 옵션으로만 지정할 수 있습니다.
+
 **JavaScript 연동:**
 
 ```html
@@ -410,14 +517,35 @@ React 의 `multiple` / `searchable` 은 아직 지원하지 않습니다.
     }
   });
 
+  // 다중 + 검색 (옵션 이름은 React Dropdown prop 과 동일)
+  const cityDropdown = Bigtablet.Dropdown('#city-dropdown', {
+    multiple: true,
+    searchable: true,
+    searchPlaceholder: '도시 검색…',
+    emptyText: '일치하는 도시가 없습니다',
+    selectedSummary: (count) => `도시 ${count}곳`,
+    options: [
+      { value: 'seoul', label: '서울 Seoul' },
+      { value: 'busan', label: '부산 Busan' },
+    ],
+    // multiple 이면 (values, options) 로 호출됩니다
+    onValueChange: (values, options) => console.log(values, options),
+  });
+
   // API
-  myDropdown.getValue();       // 현재 값
-  myDropdown.setValue('apple'); // 값 설정
+  myDropdown.getValue();       // 단일 → string | null / 다중 → string[]
+  myDropdown.setValue('apple'); // 값 설정 (다중은 배열도 가능: setValue(['a', 'b']))
   myDropdown.open();           // 드롭다운 열기
   myDropdown.close();          // 드롭다운 닫기
+  myDropdown.toggle();         // 열림/닫힘 토글
   myDropdown.setDisabled(true); // 비활성화
+  myDropdown.destroy();        // 바인딩한 이벤트 리스너 해제
 </script>
 ```
+
+> `options` / `data-options` 만 주고 `<li class="bt-dropdown__option">` 마크업을 두지 않으면
+> 옵션 DOM 을 JS 가 대신 생성합니다 (라벨은 `textContent` 로 넣으므로 XSS 위험 없음).
+> 서버가 `<li>` 를 렌더링한 경우에는 그 DOM 을 그대로 씁니다.
 
 ---
 
@@ -531,11 +659,22 @@ Alert는 JavaScript로만 사용합니다.
 ### Card
 
 ```html
-<!-- 기본 -->
+<!-- 기본 - title / body / footer 3단 구성 (React Card 의 heading / children / footer 와 동일) -->
 <div class="bt-card bt-card--bordered bt-card--p-md">
-  <div class="bt-card__title">카드 제목</div>
-  <p>카드 내용입니다.</p>
+  <h3 class="bt-card__title">카드 제목</h3>
+  <div class="bt-card__body">
+    <p>카드 내용입니다.</p>
+  </div>
+  <div class="bt-card__footer">
+    <button class="bt-button bt-button--sm bt-button--text">취소</button>
+    <button class="bt-button bt-button--sm bt-button--filled">저장</button>
+  </div>
 </div>
+
+<!-- Footer 정렬 (React footerAlign prop 과 동일, 기본 end) -->
+<div class="bt-card__footer bt-card__footer--start">...</div>
+<div class="bt-card__footer bt-card__footer--between">...</div>
+<div class="bt-card__footer bt-card__footer--end">...</div>
 
 <!-- Shadow (React Card shadow prop 과 동일) -->
 <div class="bt-card bt-card--shadow-none bt-card--p-md">내용</div>
@@ -566,6 +705,14 @@ Alert는 JavaScript로만 사용합니다.
 - `.bt-card--{accent|outlined|glass}` (선택) - variant. 미지정 시 `default`
 - `.bt-card--interactive` (선택)
 
+**내부 요소:**
+- `.bt-card__title` - 제목. React `headingAs`(기본 `h3`)와 맞춰 **`<h2>`~`<h6>` 시맨틱 헤딩**을 쓰세요
+  (`<div>` 로 쓰면 스크린리더 문서 개요에서 빠집니다)
+- `.bt-card__body` - 본문 영역
+- `.bt-card__footer` - 하단 액션 영역. 위에 구분선(`border-top`)이 붙고,
+  `--start` / `--between` / `--end`(기본) 로 정렬을 바꿉니다.
+  `--accent` / `--glass` 카드에서는 구분선이 반투명 흰색으로 자동 전환됩니다 (React 와 동일)
+
 > `.bt-card` 는 클래스를 하나도 더 붙이지 않아도 React `<Card>` 기본값과 같은
 > 그림자(sm)·여백(md)을 갖습니다. 없애려면 `--shadow-none` / `--p-none` 을 명시하세요.
 
@@ -589,8 +736,19 @@ React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기�
 > `role="status"` + `aria-label` 을 직접 붙이세요 - React `<Spinner>` 는 이 둘을 자동으로
 > 렌더링하지만 Vanilla 는 CSS 만 제공하므로 마크업에서 지정해야 스크린리더에 로딩 상태가 전달됩니다.
 >
-> 회전 모양은 React 와 다릅니다 - React 는 12개 bar 가 페이드하는 iOS 스타일이고
-> Vanilla 는 단일 border spinner 입니다 (CSS 만으로 동일 렌더 불가 - 의도된 차이).
+> **회전 모양은 React 와 다릅니다 (의도된 차이, 통일 계획 없음).**
+> React `<Spinner>` 는 12개 bar 가 순차적으로 페이드하는 iOS 스타일이고, Vanilla 는 단일 border ring 입니다.
+> React 는 컴포넌트가 12개 `<span>` 을 직접 렌더링하지만, Vanilla 는 Thymeleaf/JSP 같은
+> 서버 템플릿에서 **빈 요소 하나(`<span class="bt-spinner">`)만 찍으면 되는 마크업 단순성**을
+> 우선했습니다. 12개 bar 를 CSS 만으로(추가 DOM 없이) 만들 수 없으므로 형태를 맞추려면
+> 템플릿마다 12개 자식을 반복해야 하고, 그 비용이 시각적 일치보다 크다고 판단했습니다.
+>
+> **reduced motion 대응도 이 형태 차이 때문에 갈립니다 (역시 의도된 차이).**
+> React 는 `prefers-reduced-motion: reduce` 에서 애니메이션을 완전히 정지시킵니다
+> (`animation: none; opacity: .5`) - 12개 spoke 는 멈춰 있어도 "로딩 위젯"으로 읽히기 때문입니다.
+> Vanilla 의 단일 ring 은 멈추면 그냥 원 하나라 상태 정보가 사라지므로, 정지 대신
+> 회전을 크게 늦춥니다(0.8s → 2.4s). 둘 다 "모션은 줄이되 로딩 상태는 유지"라는 같은 원칙의
+> 서로 다른 구현입니다.
 
 ---
 

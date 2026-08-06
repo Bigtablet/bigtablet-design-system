@@ -125,4 +125,29 @@ describe("NavBar", () => {
 		expect(onValueChange).toHaveBeenCalledWith("en");
 	});
 
+	it("LocaleSwitcher prefers onValueChange over the deprecated onChange when both are given", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(
+			<NavBar
+				locale={{
+					current: "ko",
+					options: [
+						{ value: "ko", label: "한국어" },
+						{ value: "en", label: "English" },
+					],
+					onValueChange,
+					onChange,
+				}}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("en");
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 });

@@ -507,6 +507,19 @@ describe("Dropdown", () => {
 		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
 	});
 
+	it("prefers onValueChange over the deprecated onChange when both are given (single)", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(<Dropdown options={options} onValueChange={onValueChange} onChange={onChange} />);
+
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(screen.getByText("Option 1"));
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	// ── searchable ──────────────────────────────────────────────────────────────
 
 	it("renders a search input at the top of the panel when searchable", () => {
@@ -632,6 +645,21 @@ describe("Dropdown", () => {
 		// 다시 클릭하면 토글 해제
 		fireEvent.click(screen.getByText("Option 1"));
 		expect(onValueChange).toHaveBeenLastCalledWith(["2"], [options[1]]);
+	});
+
+	it("prefers onValueChange over the deprecated onChange when both are given (multiple)", () => {
+		const onValueChange = vi.fn();
+		const onChange = vi.fn();
+		render(
+			<Dropdown multiple options={options} onValueChange={onValueChange} onChange={onChange} />,
+		);
+
+		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(screen.getByText("Option 1"));
+
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).toHaveBeenCalledWith(["1"], [options[0]]);
+		expect(onChange).not.toHaveBeenCalled();
 	});
 
 	it("shows N개 선택 summary in multiple mode", () => {

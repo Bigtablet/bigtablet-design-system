@@ -84,6 +84,29 @@ describe("Button", () => {
 		expect(node).toBeInstanceOf(HTMLButtonElement);
 	});
 
+	describe("danger × variant (orthogonal)", () => {
+		const variants = ["filled", "tonal", "outline", "text"] as const;
+
+		it.each(variants)("emits button_danger alongside button_variant_%s", (variant) => {
+			render(
+				<Button variant={variant} danger>
+					Delete
+				</Button>,
+			);
+			expect(screen.getByRole("button")).toHaveClass(`button_variant_${variant}`, "button_danger");
+		});
+
+		it("falls back to the filled variant when danger is set without a variant", () => {
+			render(<Button danger>Delete</Button>);
+			expect(screen.getByRole("button")).toHaveClass("button_variant_filled", "button_danger");
+		});
+
+		it("does not emit button_danger by default", () => {
+			render(<Button variant="outline">Button</Button>);
+			expect(screen.getByRole("button")).not.toHaveClass("button_danger");
+		});
+	});
+
 	it("renders a button element (not anchor) by default", () => {
 		const { container } = render(<Button>Button</Button>);
 		expect(container.querySelector("button")).toBeInTheDocument();

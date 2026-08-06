@@ -133,7 +133,7 @@ React 컴포넌트 이름이 `Dropdown` 이므로 블록 이름·data 속성·JS
 
 `.is-open` / `.is-selected` / `.is-active` / `.is-disabled` 상태 클래스와 인스턴스 API(`getValue` / `setValue` / `open` / `close` / `toggle` / `setDisabled` / `destroy`)는 그대로입니다.
 
-> **남은 격차**: React `Dropdown` 의 `multiple`(다중 선택)·`searchable`(검색 필터)은 Vanilla 에 아직 없습니다. 이름만 맞췄을 뿐 기능까지 동등하지는 않으니, 두 기능이 필요하면 React 쪽을 쓰세요.
+> React `Dropdown` 의 `multiple`(다중 선택)·`searchable`(검색 필터)도 Vanilla 에서 지원합니다 (JS 옵션 또는 `data-multiple` / `data-searchable`). 사용법은 [VANILLA.md#dropdown](./VANILLA.md#dropdown) 참고.
 
 ### 5. Spinner - size enum → px 커스텀 프로퍼티
 

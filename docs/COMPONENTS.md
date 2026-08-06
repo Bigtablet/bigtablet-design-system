@@ -1025,6 +1025,8 @@ import { Spinner } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `size` | `number` | `24` | 스피너 크기 (px) |
 
+> ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시킨다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춘다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
+
 ---
 
 ### TopLoading
