@@ -18,7 +18,7 @@ Bigtablet 제품을 떠받치는 UI 라이브러리.<br />
   <a href="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Bigtablet/bigtablet-design-system/ci.yml?style=for-the-badge&color=10b981&labelColor=000" alt="ci" /></a>
 </p>
 
-[**문서**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Storybook](#개발)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇺🇸 English](./README.md)
+[**문서**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Storybook](https://bigtablet.github.io/bigtablet-design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇺🇸 English](./README.md)
 
 </div>
 
@@ -169,6 +169,8 @@ pnpm test             # Vitest unit
 pnpm test:storybook   # a11y + Playwright
 pnpm build            # tsup + SCSS copy
 ```
+
+배포된 Storybook 은 **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system)** 에 있고 `main` 기준으로 재배포됩니다.
 
 <br />
 
