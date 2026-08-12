@@ -7,6 +7,7 @@ name: Claude PR Review
 #    필요하면 그 PR 에 `@claude review` 를 남겨 수동으로 돌린다.
 #  - `reopened` 는 트리거에서 뺐다 - 닫았다 다시 열 때마다 풀 리뷰가 재실행돼 같은 diff 를
 #    중복 과금한다. 재오픈 후 리뷰가 필요하면 `@claude review` 로 부른다.
+#  - dependabot PR 도 자동 리뷰에서 제외한다 - secret 이 안 넘어와 애초에 리뷰가 불가능하다.
 #  - 이후 재리뷰는 PR 코멘트에 `@claude review` / `@claude re-review` 를 남길 때만 실행 [리뷰 모드]
 #  - 인라인 리뷰 스레드에 `@claude` 를 멘션하면 그 스레드 맥락(파일/라인/diff)으로 답글만 단다
 #    [대화형 답글 모드] - 전체 리뷰/판정은 다시 돌리지 않는다
@@ -43,8 +44,13 @@ concurrency:
 jobs:
   review:
     # 실행 조건:
-    #  - pull_request: 같은 저장소(포크 아님) + draft 아님 + 릴리즈/싱크 PR(develop -> main) 아님
-    #    -> 최초/ready 자동 리뷰
+    #  - pull_request: 같은 저장소(포크 아님) + draft 아님 + dependabot 아님
+    #    + 릴리즈/싱크 PR(develop -> main) 아님 -> 최초/ready 자동 리뷰
+    #    dependabot 을 빼는 이유: GitHub 이 dependabot 트리거 run 에는 레포 secret 을 넘기지
+    #    않아 CLAUDE_CODE_REVIEW_API_KEY 가 빈 값이 된다. 이 레포는 "Check review token"
+    #    가드가 그걸 잡아 리뷰 스텝을 skip 하므로 실패로 찍히진 않지만(2026-08-10 실측 5건 모두
+    #    ~10초 success), 어차피 리뷰가 불가능한 run 이라 job 진입 자체를 막아 러너 시간을 아낀다.
+    #    (가드가 없는 레포에서는 같은 상황이 그냥 실패로 쌓인다 - insight-app 실패 24건 중 19건)
     #  - issue_comment: PR 에 달린 코멘트 + 봇 아님 + author_association 신뢰 + 본문에 트리거 문구
     #    (`@claude review` / `@claude re-review`) 포함 -> 재리뷰 [리뷰 모드]
     #  - pull_request_review_comment: 인라인 리뷰 스레드 답글 + 봇 아님 + author_association 신뢰
@@ -53,6 +59,7 @@ jobs:
       (github.event_name == 'pull_request' &&
        github.event.pull_request.head.repo.full_name == github.repository &&
        !github.event.pull_request.draft &&
+       github.event.pull_request.user.login != 'dependabot[bot]' &&
        !(github.event.pull_request.head.ref == 'develop' &&
          github.event.pull_request.base.ref == 'main'))
       ||
