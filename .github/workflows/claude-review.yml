@@ -255,7 +255,10 @@ jobs:
           # 요약/보조 코멘트(gh pr comment) + 인라인 코멘트 MCP 툴.
           # gh api 는 아예 주지 않는다 - 리뷰는 위 도구로 충분하고, 프롬프트 인젝션 시
           # 임의 REST 호출로 번지는 경로를 원천 차단한다. Edit/Write 계열도 없어 파일 수정 불가.
+          # 구독 시트 OAuth 토큰은 Opus/Sonnet 요청이 플랜 게이트에 즉시 거부된다
+          # (1턴 · cost $0 · is_error:true). 이 토큰으로 성립하는 모델은 Haiku 뿐이라 명시 고정.
           claude_args: |
+            --model claude-haiku-4-5-20251001
             --max-turns 50
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(git show:*),Bash(git log:*)"
 
@@ -294,6 +297,7 @@ jobs:
           # 읽기 전용 도구만. 게시/gh/gh api/Write 전부 없음 -> 부작용 원천 차단.
           # 답변은 --json-schema 로 structured_output 에 담고, 게시는 다음 고정 단계가 수행.
           claude_args: |
+            --model claude-haiku-4-5-20251001
             --max-turns 20
             --json-schema '{"type":"object","additionalProperties":false,"properties":{"answered":{"type":"boolean"},"reply":{"type":"string"}},"required":["answered","reply"]}'
             --allowedTools "Read,Grep,Glob,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git log:*)"
