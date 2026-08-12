@@ -1,7 +1,12 @@
 name: Claude PR Review
 
 # 트리거 모델 (비용 절감):
-#  - PR 최초 열림/재오픈/ready 전환 시 1회 자동 리뷰
+#  - PR 최초 열림/ready 전환 시 1회 자동 리뷰
+#  - 릴리즈/싱크 PR(develop -> main)은 자동 리뷰에서 제외한다. 그 diff 는 이미 피처 PR 단계에서
+#    리뷰된 것의 누적본이라 같은 코드를 두 번 보는 셈이고, 누적이라 건당 토큰도 가장 크다.
+#    필요하면 그 PR 에 `@claude review` 를 남겨 수동으로 돌린다.
+#  - `reopened` 는 트리거에서 뺐다 - 닫았다 다시 열 때마다 풀 리뷰가 재실행돼 같은 diff 를
+#    중복 과금한다. 재오픈 후 리뷰가 필요하면 `@claude review` 로 부른다.
 #  - 이후 재리뷰는 PR 코멘트에 `@claude review` / `@claude re-review` 를 남길 때만 실행 [리뷰 모드]
 #  - 인라인 리뷰 스레드에 `@claude` 를 멘션하면 그 스레드 맥락(파일/라인/diff)으로 답글만 단다
 #    [대화형 답글 모드] - 전체 리뷰/판정은 다시 돌리지 않는다
@@ -12,7 +17,7 @@ name: Claude PR Review
 # CodeRabbit(.coderabbit.yaml) 는 그대로 병행한다 (중복 리뷰 허용).
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, ready_for_review]
   issue_comment:
     types: [created]
   pull_request_review_comment:
@@ -38,7 +43,8 @@ concurrency:
 jobs:
   review:
     # 실행 조건:
-    #  - pull_request: 같은 저장소(포크 아님) + draft 아님 -> 최초/재오픈/ready 자동 리뷰
+    #  - pull_request: 같은 저장소(포크 아님) + draft 아님 + 릴리즈/싱크 PR(develop -> main) 아님
+    #    -> 최초/ready 자동 리뷰
     #  - issue_comment: PR 에 달린 코멘트 + 봇 아님 + author_association 신뢰 + 본문에 트리거 문구
     #    (`@claude review` / `@claude re-review`) 포함 -> 재리뷰 [리뷰 모드]
     #  - pull_request_review_comment: 인라인 리뷰 스레드 답글 + 봇 아님 + author_association 신뢰
@@ -46,7 +52,9 @@ jobs:
     if: >-
       (github.event_name == 'pull_request' &&
        github.event.pull_request.head.repo.full_name == github.repository &&
-       !github.event.pull_request.draft)
+       !github.event.pull_request.draft &&
+       !(github.event.pull_request.head.ref == 'develop' &&
+         github.event.pull_request.base.ref == 'main'))
       ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request &&

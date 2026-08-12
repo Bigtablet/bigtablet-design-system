@@ -29,12 +29,16 @@ CodeRabbit(`.coderabbit.yaml`) 는 그대로 병행한다 (중복 리뷰 허용)
 
 | 상황 | 동작 |
 | --- | --- |
-| PR 열림 / 재오픈 / draft->ready | 자동 리뷰 1회 |
+| PR 열림 / draft->ready | 자동 리뷰 1회 |
 | PR 코멘트에 `@claude review` / `@claude re-review` | 재리뷰 |
 | 인라인 리뷰 스레드에 `@claude` 멘션 | 그 스레드에만 답글 (전체 리뷰 X) |
 | 푸시(synchronize) | **자동 리뷰 안 함**(비용) - 재리뷰는 코멘트로 |
+| PR 재오픈(reopened) | **자동 리뷰 안 함**(비용) - 필요하면 `@claude review` |
+| 릴리즈/싱크 PR(`develop` -> `main`) | **자동 리뷰 안 함**(비용) - 필요하면 `@claude review` |
 
 - draft PR / 포크 PR 은 자동 경로에서 제외.
+- 릴리즈 PR 을 빼는 이유: 그 diff 는 피처 PR 단계에서 이미 리뷰한 것의 누적본이라 같은 코드를
+  두 번 보는 셈이고, 누적이라 건당 토큰 소모도 가장 크다. 재오픈도 같은 diff 를 다시 과금한다.
 - 코멘트 트리거는 author_association(OWNER/MEMBER/COLLABORATOR) 로 제한 - 외부 트리거 차단.
 - `issue_comment`(멘션 재리뷰)는 GitHub 제약상 **워크플로가 기본 브랜치(main)에 올라간 뒤**부터 동작한다.
   PR-open 자동 리뷰는 워크플로가 그 PR 브랜치에 있으면 바로 동작.
