@@ -35,10 +35,14 @@ CodeRabbit(`.coderabbit.yaml`) 는 그대로 병행한다 (중복 리뷰 허용)
 | 푸시(synchronize) | **자동 리뷰 안 함**(비용) - 재리뷰는 코멘트로 |
 | PR 재오픈(reopened) | **자동 리뷰 안 함**(비용) - 필요하면 `@claude review` |
 | 릴리즈/싱크 PR(`develop` -> `main`) | **자동 리뷰 안 함**(비용) - 필요하면 `@claude review` |
+| dependabot PR | **자동 리뷰 안 함** - secret 이 안 넘어와 리뷰 자체가 불가 |
 
 - draft PR / 포크 PR 은 자동 경로에서 제외.
 - 릴리즈 PR 을 빼는 이유: 그 diff 는 피처 PR 단계에서 이미 리뷰한 것의 누적본이라 같은 코드를
   두 번 보는 셈이고, 누적이라 건당 토큰 소모도 가장 크다. 재오픈도 같은 diff 를 다시 과금한다.
+- dependabot 을 빼는 이유: GitHub 이 dependabot 트리거 run 에 레포 secret 을 넘기지 않아
+  `CLAUDE_CODE_REVIEW_API_KEY` 가 빈 값이 된다. "Check review token" 가드가 이를 잡아 실패로
+  찍히진 않지만(실측 ~10초 success), 어차피 리뷰가 불가능하니 job 진입 자체를 막는다.
 - 코멘트 트리거는 author_association(OWNER/MEMBER/COLLABORATOR) 로 제한 - 외부 트리거 차단.
 - `issue_comment`(멘션 재리뷰)는 GitHub 제약상 **워크플로가 기본 브랜치(main)에 올라간 뒤**부터 동작한다.
   PR-open 자동 리뷰는 워크플로가 그 PR 브랜치에 있으면 바로 동작.
