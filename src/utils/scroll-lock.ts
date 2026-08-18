@@ -30,6 +30,9 @@ const COUNTER = "openModals";
 const PREV_OVERFLOW = "originalOverflow";
 const PREV_GUTTER = "originalScrollbarGutter";
 const PREV_PADDING_RIGHT = "originalPaddingRight";
+/** 소비자가 이 변수를 직접 인라인으로 잡아둔 경우가 있으므로 그 값도 스냅샷한다 - 잠금 한 번에
+ *  조용히 지워지면 안 된다. 미설정이면 `""` 이고, 그때만 해제 시 `removeProperty` 로 제거한다. */
+const PREV_SCROLLBAR_WIDTH_VAR = "originalScrollbarWidthVar";
 
 const SCROLLBAR_WIDTH_VAR = "--bt-scrollbar-width";
 
@@ -51,6 +54,7 @@ export function lockBodyScroll(): void {
 		body.dataset[PREV_OVERFLOW] = body.style.overflow;
 		body.dataset[PREV_GUTTER] = html.style.scrollbarGutter;
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
+		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
 
 		if (scrollbarWidth > 0) {
 			html.style.setProperty(SCROLLBAR_WIDTH_VAR, `${scrollbarWidth}px`);
@@ -80,13 +84,20 @@ export function unlockBodyScroll(): void {
 		body.style.overflow = body.dataset[PREV_OVERFLOW] || "";
 		body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
 		html.style.scrollbarGutter = body.dataset[PREV_GUTTER] || "";
-		// 인라인 override 만 지운다 - theme.scss 의 기본값 `0px` 으로 되돌아간다.
-		html.style.removeProperty(SCROLLBAR_WIDTH_VAR);
+		// 소비자가 잡아둔 인라인 값이 있었으면 그대로 되돌리고, 없었으면 인라인 override 만 지워
+		// theme.scss 의 기본값 `0px` 으로 되돌아가게 한다.
+		const prevVar = body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
+		if (prevVar) {
+			html.style.setProperty(SCROLLBAR_WIDTH_VAR, prevVar);
+		} else {
+			html.style.removeProperty(SCROLLBAR_WIDTH_VAR);
+		}
 
 		delete body.dataset[COUNTER];
 		delete body.dataset[PREV_OVERFLOW];
 		delete body.dataset[PREV_GUTTER];
 		delete body.dataset[PREV_PADDING_RIGHT];
+		delete body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
 	} else {
 		body.dataset[COUNTER] = String(remaining);
 	}

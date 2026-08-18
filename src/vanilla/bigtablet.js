@@ -89,16 +89,19 @@
 			body.dataset.btOriginalOverflow = body.style.overflow;
 			body.dataset.btOriginalGutter = html.style.scrollbarGutter;
 			body.dataset.btOriginalPaddingRight = body.style.paddingRight;
+			// 소비자가 이 변수를 직접 인라인으로 잡아둔 경우 잠금 한 번에 지워지지 않도록 함께 스냅샷.
+			body.dataset.btOriginalScrollbarWidthVar =
+				html.style.getPropertyValue("--bt-scrollbar-width");
 
 			if (scrollbarWidth > 0) {
 				// 잰 폭을 노출 - 앱의 `right: 0` 고정 요소가 이 변수로 자체 보정할 수 있다.
-				html.style.setProperty("--bt-scrollbar-width", scrollbarWidth + "px");
+				html.style.setProperty("--bt-scrollbar-width", `${scrollbarWidth}px`);
 				// `scrollbar-gutter: stable` 을 쓰는 앱은 잠금 중에도 거터가 남고, `position: fixed`
 				// 의 컨테이닝 블록이 거터를 제외한 콘텐츠 영역이라 오버레이가 그 폭에 닿지 못한다
 				// (dim 옆에 밝은 띠). 거터를 놓아 전폭으로 만들고 그만큼 padding 으로 되돌린다.
 				html.style.scrollbarGutter = "auto";
 				const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
-				body.style.paddingRight = current + scrollbarWidth + "px";
+				body.style.paddingRight = `${current + scrollbarWidth}px`;
 			}
 
 			body.style.overflow = "hidden";
@@ -114,11 +117,16 @@
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
-			html.style.removeProperty("--bt-scrollbar-width");
+			if (body.dataset.btOriginalScrollbarWidthVar) {
+				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
+			} else {
+				html.style.removeProperty("--bt-scrollbar-width");
+			}
 			delete body.dataset.btOpenModals;
 			delete body.dataset.btOriginalOverflow;
 			delete body.dataset.btOriginalGutter;
 			delete body.dataset.btOriginalPaddingRight;
+			delete body.dataset.btOriginalScrollbarWidthVar;
 		} else {
 			body.dataset.btOpenModals = String(n);
 		}

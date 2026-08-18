@@ -23,6 +23,7 @@ function resetBodyScrollLock() {
 	delete document.body.dataset.originalOverflow;
 	delete document.body.dataset.originalScrollbarGutter;
 	delete document.body.dataset.originalPaddingRight;
+	delete document.body.dataset.originalScrollbarWidthVar;
 }
 
 beforeEach(resetBodyScrollLock);

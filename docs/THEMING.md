@@ -248,7 +248,8 @@ Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다(`body { ove
   모달이 열려 있는 내내 보이는 7.5px 비대칭을 사는 거래가 된다 (Radix · MUI · Bootstrap 도 같은 선택)
 
 > 이 처리는 React(`style.css`)와 Vanilla(`/vanilla` CSS·JS) 양쪽에 동일하게 들어 있다. 중첩 오버레이는
-> `body.dataset.openModals` 카운터로 조율해 첫 잠금만 스타일을 바꾸고 마지막 해제만 원복한다.
+> 카운터로 조율해 첫 잠금만 스타일을 바꾸고 마지막 해제만 원복한다 - 카운터 이름은 번들마다
+> 다르다 (React `body.dataset.openModals` / Vanilla `body.dataset.btOpenModals`).
 
 ## 자동완성(autofill) 입력칸
 

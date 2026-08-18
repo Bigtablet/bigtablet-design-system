@@ -116,6 +116,18 @@ describe("scroll-lock", () => {
 		expect(document.body.style.overflow).toBe("");
 	});
 
+	it("restores an inline --bt-scrollbar-width the consumer had set", () => {
+		// 소비자가 이 변수를 직접 잡아둔 경우 - 오버레이 한 번 열고 닫았다고 지워지면 안 된다.
+		document.documentElement.style.setProperty("--bt-scrollbar-width", "10px");
+		setScrollbarWidth(15);
+
+		lockBodyScroll();
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+
+		unlockBodyScroll();
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("10px");
+	});
+
 	it("restores an inline overflow the consumer had set", () => {
 		document.body.style.overflow = "auto";
 		setScrollbarWidth(0);
