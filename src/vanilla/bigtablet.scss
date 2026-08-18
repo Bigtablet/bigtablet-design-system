@@ -1511,6 +1511,39 @@
    DatePicker / FileInput 의 transition 은 전부 --bt-transition-* 를 경유하므로,
    선택자를 나열하는 대신 토큰 자체를 0s 로 눌러 일괄 무효화한다.
    (이후 추가되는 규칙과, 같은 var 를 쓰는 소비자 커스텀 스타일까지 자동으로 커버된다.) */
+/* ========================================
+   Autofill (자동완성) 입력칸 - UA 스타일 무력화
+   ======================================== */
+
+/* 크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로
+   강제한다. 일반 `background-color` 로는 못 이기므로 칸을 덮을 만큼 큰 inset 그림자로 가리고
+   글자색은 `-webkit-text-fill-color` 로 되돌린다.
+
+   React 쪽(`style.css`)과 달리 컨테이너 클리핑 규칙이 없어도 된다 - Vanilla 는
+   `.bt-text-field__input` 자체가 배경과 `border-radius` 를 갖고 있어 inset 그림자가
+   input 자신의 반경으로 잘린다. React 는 배경이 컨테이너에 있어 별도 클리핑이 필요하다. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+  -webkit-text-fill-color: var(--bt-color-text-primary);
+  caret-color: var(--bt-color-text-primary);
+}
+
+/* 비활성 + 자동완성 - 인증 후 칸을 잠그는 흐름에서 값이 남는다. 위 규칙만 두면
+   `-webkit-text-fill-color` 가 disabled 글자색을 이겨 잠긴 칸이 활성처럼 진해진다. */
+input:-webkit-autofill:disabled,
+textarea:-webkit-autofill:disabled,
+select:-webkit-autofill:disabled {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background-secondary) inset;
+  box-shadow: 0 0 0 1000px var(--bt-color-background-secondary) inset;
+  -webkit-text-fill-color: var(--bt-color-text-tertiary);
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --bt-transition-fast: 0s;
