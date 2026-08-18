@@ -1,5 +1,6 @@
 export { cn } from "./cn";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
+export { lockBodyScroll, unlockBodyScroll } from "./scroll-lock";
 export {
 	type AnchoredOptions,
 	type AnchoredResult,

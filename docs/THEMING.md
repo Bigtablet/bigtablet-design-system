@@ -13,6 +13,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
   - [React](#react)
   - [SCSS 소비자](#scss-소비자)
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
+- [오버레이 스크롤 잠금과 `--bt-scrollbar-width`](#오버레이-스크롤-잠금과---bt-scrollbar-width)
 - [자동완성(autofill) 입력칸](#자동완성autofill-입력칸)
 - [Storybook](#storybook)
 
@@ -200,6 +201,39 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 > 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)는 `src/vanilla/bigtablet.scss` 에서 동일 토큰을 기반으로 하지만 이름이 다른 자체 `--bt-color-*` 변수 세트를 사용하며(예: `--bt-color-primary`, `--bt-color-background`), 현재 `data-theme`/`prefers-color-scheme` 다크 모드 오버라이드가 없습니다. Vanilla 환경과 React 환경의 CSS 변수는 서로 호환되지 않으니 섞어 쓰지 마세요.
 
 ---
+
+## 오버레이 스크롤 잠금과 `--bt-scrollbar-width`
+
+Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다(`body { overflow: hidden }`). 이때 스크롤바가
+사라지면서 콘텐츠가 그 폭만큼 넓어져 배경이 튀므로, DS 가 잠금 직전에 스크롤바 폭을 재서 같은 크기의
+`body` `padding-right` 로 되돌린다. 소비자가 이미 준 `padding-right` 에 **더하므로** 기존 여백은 유지된다.
+
+잰 폭은 `:root` 의 `--bt-scrollbar-width` 로 노출된다. 잠금 밖에서는 `0px` 이라 `var()` 가 항상 유효하다.
+
+```css
+/* 잠금 중 15px 오른쪽으로 밀리는 right: 0 고정 요소를 제자리에 두려면 */
+.my-fab {
+  position: fixed;
+  right: var(--bt-scrollbar-width);
+}
+```
+
+### `scrollbar-gutter: stable` 을 쓰는 앱
+
+라우트 전환 시 가로 시프트를 막으려고 `html { scrollbar-gutter: stable }` 을 쓰면, 잠금 중에도 거터가
+예약된 채 남는다. `position: fixed` 의 컨테이닝 블록은 그 거터를 제외한 콘텐츠 영역이라 **오버레이가
+거터에 닿지 못하고 dim 옆에 밝은 띠가 남는다** - `100vw` · `100dvw` · `100lvw` 로도 넘을 수 없다.
+
+그래서 잠금 동안에는 DS 가 `html` 의 `scrollbar-gutter` 를 `auto` 로 두어 거터를 놓고, 놓은 만큼을
+위의 `padding-right` 가 대신 잡는다. 해제 시 인라인 값을 지워 앱의 `stable` 로 돌아간다.
+
+- 오버레이는 전폭(1280 뷰포트에서 1280)을 덮는다
+- 콘텐츠 폭은 유지돼 배경이 튀지 않는다
+- 중앙 정렬 패널은 스크롤바가 없는 실제 화면 중앙을 기준으로 잡히므로, 잠금 전 대비
+  `스크롤바폭 / 2`(위 예에서 7.5px) 만큼 이동한다. 잠금 중에는 그 위치가 시각적 중앙이다
+
+> 이 처리는 React(`style.css`)와 Vanilla(`/vanilla` CSS·JS) 양쪽에 동일하게 들어 있다. 중첩 오버레이는
+> `body.dataset.openModals` 카운터로 조율해 첫 잠금만 스타일을 바꾸고 마지막 해제만 원복한다.
 
 ## 자동완성(autofill) 입력칸
 

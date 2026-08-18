@@ -199,6 +199,14 @@
   --bt-elevation-level5: 0 8px 16px 0 rgba(0, 0, 0, 0.60), 0 20px 40px 0 rgba(0, 0, 0, 0.45);
 }
 
+// ── 런타임 측정값 (테마 무관) ─────────────────────────────────────────────
+// 오버레이 스크롤 잠금이 잰 스크롤바 폭. 잠금 중에만 `documentElement` 인라인으로 덮어써지고
+// 해제되면 이 기본값으로 돌아온다 - 소비자의 `var()` 가 항상 유효하도록 0px 을 깔아둔다.
+// 앱의 `right: 0` 계열 고정 요소는 잠금 중 이 폭만큼 밀리므로 이 변수로 보정하면 된다.
+:root {
+  --bt-scrollbar-width: 0px;
+}
+
 // 명시 토글 (ThemeProvider mode="dark" 또는 <html data-theme="dark">)
 [data-theme="dark"] {
   @include dark-theme;

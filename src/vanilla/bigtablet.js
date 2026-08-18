@@ -78,11 +78,29 @@
 	 */
 	function lockScroll() {
 		const body = document.body;
+		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "0", 10);
 		if (n === 0) {
-			// 소비자가 인라인으로 지정해둔 overflow 를 저장했다가 마지막 unlock 때 복원
-			// (React Modal 의 dataset.originalOverflow 와 동일 동작).
+			// overflow 를 건드리기 전에 스크롤바 폭을 잰다 - 잠근 뒤엔 clientWidth 가 이미 넓어져 0 이 된다.
+			const scrollbarWidth = window.innerWidth - html.clientWidth;
+
+			// 소비자가 인라인으로 지정해둔 값들을 저장했다가 마지막 unlock 때 복원
+			// (React 쪽 utils/scroll-lock.ts 와 동일 동작).
 			body.dataset.btOriginalOverflow = body.style.overflow;
+			body.dataset.btOriginalGutter = html.style.scrollbarGutter;
+			body.dataset.btOriginalPaddingRight = body.style.paddingRight;
+
+			if (scrollbarWidth > 0) {
+				// 잰 폭을 노출 - 앱의 `right: 0` 고정 요소가 이 변수로 자체 보정할 수 있다.
+				html.style.setProperty("--bt-scrollbar-width", scrollbarWidth + "px");
+				// `scrollbar-gutter: stable` 을 쓰는 앱은 잠금 중에도 거터가 남고, `position: fixed`
+				// 의 컨테이닝 블록이 거터를 제외한 콘텐츠 영역이라 오버레이가 그 폭에 닿지 못한다
+				// (dim 옆에 밝은 띠). 거터를 놓아 전폭으로 만들고 그만큼 padding 으로 되돌린다.
+				html.style.scrollbarGutter = "auto";
+				const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+				body.style.paddingRight = current + scrollbarWidth + "px";
+			}
+
 			body.style.overflow = "hidden";
 		}
 		body.dataset.btOpenModals = String(n + 1);
@@ -90,11 +108,17 @@
 
 	function unlockScroll() {
 		const body = document.body;
+		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
 		if (n <= 0) {
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
+			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
+			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
+			html.style.removeProperty("--bt-scrollbar-width");
 			delete body.dataset.btOpenModals;
 			delete body.dataset.btOriginalOverflow;
+			delete body.dataset.btOriginalGutter;
+			delete body.dataset.btOriginalPaddingRight;
 		} else {
 			body.dataset.btOpenModals = String(n);
 		}

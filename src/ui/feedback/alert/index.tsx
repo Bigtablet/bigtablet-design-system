@@ -6,7 +6,14 @@ import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useFocusTrap, useOverlayEscape, useReducedMotion } from "../../../utils";
+import {
+	cn,
+	lockBodyScroll,
+	unlockBodyScroll,
+	useFocusTrap,
+	useOverlayEscape,
+	useReducedMotion,
+} from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
 import "./style.scss";
 
@@ -183,28 +190,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	React.useEffect(() => {
 		if (!shouldRender) return;
 
-		const body = document.body;
-		const openModals = parseInt(body.dataset.openModals || "0", 10);
-
-		if (openModals === 0) {
-			body.dataset.originalOverflow = window.getComputedStyle(body).overflow;
-			body.style.overflow = "hidden";
-		}
-
-		body.dataset.openModals = String(openModals + 1);
-
-		return () => {
-			const currentOpenModals = parseInt(body.dataset.openModals || "1", 10);
-			const nextOpenModals = currentOpenModals - 1;
-
-			if (nextOpenModals === 0) {
-				body.style.overflow = body.dataset.originalOverflow || "";
-				delete body.dataset.openModals;
-				delete body.dataset.originalOverflow;
-			} else {
-				body.dataset.openModals = String(nextOpenModals);
-			}
-		};
+		lockBodyScroll();
+		return unlockBodyScroll;
 	}, [shouldRender]);
 
 	// isOpen 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
