@@ -7,6 +7,8 @@ import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import {
 	cn,
+	lockBodyScroll,
+	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
@@ -120,28 +122,8 @@ export const Drawer = ({
 	React.useEffect(() => {
 		if (!open) return;
 
-		const body = document.body;
-		const openModals = parseInt(body.dataset.openModals || "0", 10);
-
-		if (openModals === 0) {
-			body.dataset.originalOverflow = window.getComputedStyle(body).overflow;
-			body.style.overflow = "hidden";
-		}
-
-		body.dataset.openModals = String(openModals + 1);
-
-		return () => {
-			const currentOpenModals = parseInt(body.dataset.openModals || "1", 10);
-			const nextOpenModals = currentOpenModals - 1;
-
-			if (nextOpenModals === 0) {
-				body.style.overflow = body.dataset.originalOverflow || "";
-				delete body.dataset.openModals;
-				delete body.dataset.originalOverflow;
-			} else {
-				body.dataset.openModals = String(nextOpenModals);
-			}
-		};
+		lockBodyScroll();
+		return unlockBodyScroll;
 	}, [open]);
 
 	// open 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
