@@ -18,6 +18,14 @@ dist/vanilla/
 "배포 제외" 는 `package.json` `files` 의 `!dist/vanilla/...` 로 npm tarball 에서 빠진다는 뜻이다
 (로컬 빌드에는 생성된다). 소비자에게 안내할 경로는 압축본 2개뿐 - `docs/VANILLA.md#설치` 참고.
 
+### 테스트
+
+`bigtablet.test.ts` 가 이 번들을 덮는다 (`pnpm test` 에 포함). 소스를 직접 import 하므로
+여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을 추가하면 같은 파일에 케이스를 더한다.
+
+jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접 세워야 한다. 자세한 주의점은
+[docs/TESTING.md](../../docs/TESTING.md#vanilla-번들-테스트) 참고.
+
 ### Class Naming Convention (BEM-like)
 ```
 .bt-{component}
