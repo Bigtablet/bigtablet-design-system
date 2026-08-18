@@ -54,14 +54,10 @@ npm install @bigtablet/design-system
 @import '@bigtablet/design-system/vanilla/style.min.css';
 ```
 
-### 직접 다운로드
-
-[GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases)에서 다운로드:
-
-- `bigtablet.css` - 비압축 CSS (~40KB)
-- `bigtablet.min.css` - 압축 CSS (~31KB)
-- `bigtablet.js` - 비압축 JS (~30KB)
-- `bigtablet.min.js` - 압축 JS (~13KB)
+> 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
+> `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
+> `files` 에서 제외돼 npm·CDN 어느 쪽에도 없습니다. 소스를 읽어야 하면 저장소의
+> `src/vanilla/bigtablet.scss` · `src/vanilla/bigtablet.js` 를 보세요.
 
 ---
 

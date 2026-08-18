@@ -8,12 +8,15 @@ For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
 ### Build Output
 ```
 dist/vanilla/
-├── bigtablet.css       # Full CSS (~40KB)
-├── bigtablet.min.css   # Minified CSS (~31KB)
-├── bigtablet.js        # Full JS (~30KB)
-├── bigtablet.min.js    # Minified JS (~13KB)
-└── examples/           # HTML examples
+├── bigtablet.css       # Full CSS (~55KB)      - 배포 제외
+├── bigtablet.min.css   # Minified CSS (~38KB)  - 배포됨
+├── bigtablet.js        # Full JS (~48KB)       - 배포 제외
+├── bigtablet.min.js    # Minified JS (~19KB)   - 배포됨
+└── examples/           # HTML examples         - 배포 제외
 ```
+
+"배포 제외" 는 `package.json` `files` 의 `!dist/vanilla/...` 로 npm tarball 에서 빠진다는 뜻이다
+(로컬 빌드에는 생성된다). 소비자에게 안내할 경로는 압축본 2개뿐 - `docs/VANILLA.md#설치` 참고.
 
 ### Class Naming Convention (BEM-like)
 ```
