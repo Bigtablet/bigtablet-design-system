@@ -80,7 +80,7 @@ describe("Dropdown - 초기화", () => {
 		expect(control.classList.contains("is-disabled")).toBe(true);
 
 		dd?.open();
-		expect(wrap.querySelector(".bt-dropdown__list")?.getAttribute("style")).not.toContain("block");
+		expect((wrap.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe("none");
 	});
 
 	it("setDisabled 가 native disabled 까지 반영한다", () => {
@@ -317,12 +317,30 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		m?.open();
 
 		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		// 반드시 닫는다. Modal 은 `document` 에 keydown 리스너를 걸고 close() 에서만 떼므로,
+		// 열어둔 채 끝내면 이후 테스트의 Escape 가 이 좀비 모달까지 깨워 그쪽 close() ->
+		// unlockScroll() 이 남의 스크롤 잠금 카운터를 소비해버린다.
+		m?.close();
 	});
 });
 
+// Alert 의 close() 는 퇴출 애니메이션을 기다려 `setTimeout(..., 200)` 안에서 overlay 제거와
+// unlockScroll() 을 한다. 실제 타이머로 두면 그 콜백이 이 테스트가 끝난 뒤 **다른 테스트가 도는
+// 중에** 발화해 남의 스크롤 잠금 상태를 건드린다. fake timer 로 시점을 직접 통제한다.
 describe("Alert", () => {
-	it("Escape 로 닫으면 onCancel 을 경유한다", () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
 		setScrollbarWidth(0);
+	});
+
+	afterEach(() => {
+		// 남은 지연 콜백(overlay 제거 + unlockScroll)을 이 테스트 안에서 소진시킨 뒤 되돌린다.
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
+	});
+
+	it("Escape 로 닫으면 onCancel 을 경유한다", () => {
 		const onCancel = vi.fn();
 		Alert({ title: "삭제", message: "정말?", showCancel: true, onCancel });
 
@@ -332,23 +350,38 @@ describe("Alert", () => {
 	});
 
 	it("오버레이 클릭으로 닫아도 onCancel 을 경유한다", () => {
-		setScrollbarWidth(0);
 		const onCancel = vi.fn();
 		Alert({ title: "삭제", message: "정말?", showCancel: true, onCancel });
 
-		const overlay = document.querySelector(".bt-alert__overlay") as HTMLElement;
-		overlay.click();
+		(document.querySelector(".bt-alert__overlay") as HTMLElement).click();
 
 		expect(onCancel).toHaveBeenCalledTimes(1);
 	});
 
+	it("닫으면 스크롤 잠금이 풀린다", () => {
+		Alert({ title: "삭제", message: "정말?", showCancel: true });
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		pressEscape();
+		// 잠금 해제는 200ms 뒤 - 그 전에는 아직 잠겨 있다.
+		expect(document.body.style.overflow).toBe("hidden");
+
+		vi.advanceTimersByTime(200);
+
+		expect(document.body.style.overflow).toBe("");
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+	});
+
 	it("closeOnOverlay: false 면 오버레이 클릭으로 닫히지 않는다", () => {
-		setScrollbarWidth(0);
 		const onCancel = vi.fn();
-		Alert({ title: "삭제", message: "정말?", closeOnOverlay: false, onCancel });
+		const alert = Alert({ title: "삭제", message: "정말?", closeOnOverlay: false, onCancel });
 
 		(document.querySelector(".bt-alert__overlay") as HTMLElement).click();
 
 		expect(onCancel).not.toHaveBeenCalled();
+
+		// 이 케이스는 끝까지 열려 있으므로 직접 닫는다 - 안 닫으면 Alert 가 `document` 에 건
+		// keydown 리스너와 스크롤 잠금이 파일 끝까지 남는다.
+		alert?.close();
 	});
 });
