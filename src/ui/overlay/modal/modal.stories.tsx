@@ -49,8 +49,12 @@ export const CreateToken: Story = {
 			},
 		},
 	},
-	render: () => {
-		const [open, setOpen] = useState(true);
+	// Docs 뷰는 모든 스토리를 한 페이지에 렌더하고 첫 스토리를 primary 프리뷰로 한 번 더 그린다.
+	// 그래서 마운트 즉시 열면 모달이 겹쳐 쌓이고, 스크롤 잠금 카운터가 그 수만큼 올라가
+	// Docs 페이지 자체가 `overflow: hidden` 으로 잠긴다. 격리된 story 뷰(Chromatic 스냅샷 포함)
+	// 에서만 자동으로 열고, Docs 에서는 버튼으로 연다.
+	render: (_args, { viewMode }) => {
+		const [open, setOpen] = useState(viewMode === "story");
 		return (
 			<div style={{ padding: 24 }}>
 				<Button onClick={() => setOpen(true)}>모달 열기</Button>
@@ -88,8 +92,12 @@ export const DestructiveAction: Story = {
 			},
 		},
 	},
-	render: () => {
-		const [open, setOpen] = useState(true);
+	// Docs 뷰는 모든 스토리를 한 페이지에 렌더하고 첫 스토리를 primary 프리뷰로 한 번 더 그린다.
+	// 그래서 마운트 즉시 열면 모달이 겹쳐 쌓이고, 스크롤 잠금 카운터가 그 수만큼 올라가
+	// Docs 페이지 자체가 `overflow: hidden` 으로 잠긴다. 격리된 story 뷰(Chromatic 스냅샷 포함)
+	// 에서만 자동으로 열고, Docs 에서는 버튼으로 연다.
+	render: (_args, { viewMode }) => {
+		const [open, setOpen] = useState(viewMode === "story");
 		return (
 			<div style={{ padding: 24 }}>
 				<Button danger onClick={() => setOpen(true)}>

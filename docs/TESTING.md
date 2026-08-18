@@ -108,6 +108,30 @@ src/ui/general/button/
 └── Button.test.tsx    # 테스트 파일
 ```
 
+### Vanilla 번들 테스트
+
+`src/vanilla/bigtablet.test.ts` 가 Vanilla 번들(`Dropdown` / `Modal` / `Toggle` / `Alert`)을 덮는다.
+React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
+
+```ts
+// UMD 번들이지만 Vite 가 named export 로 노출해준다. 소비자는 `<script>` + 전역 `Bigtablet`
+// 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
+// 소스 변경이 곧 테스트에 걸리게 한다.
+import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
+```
+
+주의할 점:
+
+- **jsdom 은 레이아웃을 하지 않는다.** 스크롤바 폭(`innerWidth - documentElement.clientWidth`)은 항상 0
+  이므로, 스크롤 잠금 보정을 검사하려면 두 값을 직접 세워야 한다 (`setScrollbarWidth` 헬퍼 참고).
+- **내부 함수는 export 되지 않는다.** `lockScroll` / `unlockScroll` 는 `Modal` · `Alert` 를 열고
+  닫으며 간접 검사한다 - 통합 경로를 함께 보게 되어 오히려 낫다.
+- **문서화된 마크업으로 시작한다.** 서버 템플릿이 렌더하는 형태(평면 `<ul>`, 서버가 심어둔 hidden
+  input 등)를 그대로 세워야 실제 회귀를 잡는다 - 실제로 그 두 경로에서 버그가 나왔다.
+
+> 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` 만
+> 본다. Vanilla 를 넣으면 전체 수치가 크게 떨어지므로 별건으로 다룬다 - 테스트 자체는 이미 돈다.
+
 ### 기본 구조
 
 ```tsx
