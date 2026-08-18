@@ -1534,6 +1534,20 @@ select:-webkit-autofill {
   caret-color: var(--bt-color-text-primary);
 }
 
+/* filled variant - `.bt-text-field__input--filled` 는 평상시 배경이 dim 이라, 위 규칙(기본 표면)만
+   두면 자동완성된 filled 칸만 outline 칸처럼 밝아진다. 그 variant 자신의 배경 전환을 따라간다:
+   평상시 dim, `:focus-visible` 에서 solid (`&--filled` 블록과 같은 훅).
+   React 쪽은 배경이 컨테이너에 있어 `.text_field_variant_filled` + `:focus-within` 을 쓴다. */
+.bt-text-field__input--filled:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background-secondary) inset;
+  box-shadow: 0 0 0 1000px var(--bt-color-background-secondary) inset;
+}
+
+.bt-text-field__input--filled:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+}
+
 /* 비활성 + 자동완성 - 인증 후 칸을 잠그는 흐름에서 값이 남는다. 위 규칙만 두면
    `-webkit-text-fill-color` 가 disabled 글자색을 이겨 잠긴 칸이 활성처럼 진해진다. */
 input:-webkit-autofill:disabled,
