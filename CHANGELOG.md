@@ -4,6 +4,14 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.10.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.10.0) - 2026-08-18
+
+- 자동완성(autofill) 입력칸을 DS 가 소유 - 크롬/사파리가 `!important` 로 강제하는 UA 배경(연한 라벤더)·글자색을 DS 표면 토큰으로 덮는다. DS 폼 컨트롤은 배경을 컨테이너가 갖고 입력 요소가 투명해서, 자동완성된 칸만 옆 칸과 다른 색이 되고 다크 테마에선 밝은 상자로 튀던 문제 해소. `style.css` 만 import 하고 있으면 자동 적용되고 소비자가 따로 할 일은 없다
+- 상태별 표면 유지 - `variant="filled"` 는 dim 채움(포커스 시 solid)을, `disabled` 는 비활성 표면·글자색을 그대로 유지한다. 에러 칸은 배경이 아니라 테두리로만 구분된다
+- 둥근 모서리 유지 - UA 배경을 덮는 inset 그림자가 네모라서 컨테이너 모서리를 각지게 만들던 문제를, 자동완성된 칸에서만 컨테이너를 `:has()` 로 클리핑해 해결
+- DS 컴포넌트 밖 native 입력도 커버 - 규칙이 `input`/`textarea`/`select` 요소 셀렉터라 `TextField` 로 감싸지 않은 native 입력에도 적용된다
+- Vanilla 번들에도 동일 적용 - `/vanilla` CSS 는 별도 번들이라 Thymeleaf/JSP 폼도 같은 문제를 겪었다 (입력 요소가 배경·반경을 직접 가져 클리핑 규칙은 불필요)
+
 ## [3.9.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.9.0) - 2026-08-06
 
 - Vanilla Dropdown 다중 선택·검색 지원 - React `<Dropdown multiple searchable>` 과 동등하게 `data-multiple` / `data-searchable`(또는 JS 옵션) 지원. 선택 시 패널 유지·"N개 선택" 요약·좌측 체크 슬롯·같은 `name` 반복 hidden input, 한글 IME 조합 중 필터 보류, 필터된 목록 기준 방향키·`role="combobox"` 이동 등 WAI-ARIA APG Combobox 정합. 기존 평면 `<ul>` 마크업은 그대로 동작
