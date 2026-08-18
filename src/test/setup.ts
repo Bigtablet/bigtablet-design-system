@@ -16,8 +16,14 @@ Globals.assign({ skipAnimation: true });
 // 한 tick 벌어진다 - 잠금 해제를 단언하려면 waitFor 안에서 함께 기다릴 것.
 function resetBodyScrollLock() {
 	document.body.style.overflow = "";
+	document.body.style.paddingRight = "";
+	document.documentElement.style.scrollbarGutter = "";
+	document.documentElement.style.removeProperty("--bt-scrollbar-width");
 	delete document.body.dataset.openModals;
 	delete document.body.dataset.originalOverflow;
+	delete document.body.dataset.originalScrollbarGutter;
+	delete document.body.dataset.originalPaddingRight;
+	delete document.body.dataset.originalScrollbarWidthVar;
 }
 
 beforeEach(resetBodyScrollLock);
