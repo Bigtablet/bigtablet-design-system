@@ -232,6 +232,7 @@ cn(styles.button, styles[`size_${size}`], className);
 // src/index.ts - 컴포넌트·타입·토큰을 명시적 named export 로 나열한다.
 // `export *` 는 쓰지 않는다 - 공개 API 표면이 파일 구조에 따라 조용히 늘어나는 걸 막기 위해서다.
 import "./styles/theme.scss"; // :root / [data-theme="dark"] CSS 변수 (dist/index.css 에 1회 포함)
+import "./styles/autofill.scss"; // 자동완성 칸의 UA 배경/글자색 무력화 (전역 요소 규칙)
 
 export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
 
@@ -441,12 +442,13 @@ describe("Button", () => {
 - `pull_request` → `develop`, `main`
 - `push` → `develop`
 - 양쪽 모두 `paths-ignore` 로 `**.md` · `docs/**` · `.github/ISSUE_TEMPLATE/**` · `LICENSE` 는 제외 (docs-only PR 은 CI 를 돌리지 않는다)
+- **릴리즈/싱크 PR(`develop` → `main`)은 `changes` job 의 `if:` 로 제외** - `push: develop` 이 이미 같은 트리를 검사했다. main 은 develop 의 과거 상태라 머지 결과 트리가 develop tip 과 같아서, develop 에 푸시하면 `push` 실행과 열린 릴리즈 PR 의 `pull_request(synchronize)` 실행이 같은 SHA 를 두 번 돌게 된다. head 가 `develop` 인 경우만 빼므로 hotfix 브랜치 → `main` PR 은 그대로 돈다
 
 **job 구성**
 
 | Job | 역할 |
 |------|------|
-| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 step 의 조건으로 넘긴다 |
+| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 step 의 조건으로 넘긴다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, `test` 도 `needs: changes` 라 함께 skip 된다 |
 | `test` | 위 4개 중 하나라도 변경됐을 때만 실행 |
 
 **`test` job 의 step (실행 조건 포함)**

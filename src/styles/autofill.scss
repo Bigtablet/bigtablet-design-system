@@ -1,0 +1,86 @@
+// ════════════════════════════════════════════════════════════════════════
+// 자동완성(autofill) 입력칸 - UA 스타일 무력화.
+//
+// 크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을
+// `!important` 로 강제한다. DS 폼 컨트롤은 배경을 *컨테이너*가 갖고 입력 요소는
+// 투명하므로, 자동완성이 걸린 칸만 UA 배경으로 칠해져 옆 칸과 달라 보인다
+// (다크 테마에선 그 칸만 밝은 상자로 튄다).
+//
+// 이 파일은 컴포넌트 번들(src/index.ts)이 1회 import → dist/index.css
+// (= `@bigtablet/design-system/style.css`) 에 포함된다. 테마 CSS 변수 정의는
+// `theme.scss` 가 담당하고 여기는 전역 요소 규칙만 둔다 (파일 역할 분리).
+//
+// 요소 셀렉터를 쓰는 이유: DS 컴포넌트로 감싸지 않은 native `<input>`(숫자
+// 스테퍼 등)도 같은 UA 스타일을 받으므로, 컴포넌트 스코프 셀렉터만 두면 그 칸은
+// 여전히 라벤더로 남는다. 컨테이너 클리핑(3번)만 DS 컴포넌트 스코프다.
+// ════════════════════════════════════════════════════════════════════════
+
+@use "./colors/index" as colors;
+
+// ── 1. 색 ───────────────────────────────────────────────────────────────
+// UA 배경은 `!important` 라 일반 `background-color` 로 못 이긴다. 대신 칸을 덮을
+// 만큼 큰 inset 그림자로 가리고, 글자색은 `-webkit-text-fill-color` 로 되돌린다
+// (autofill 상태에서는 `color` 보다 이 속성이 우선한다).
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px colors.$color_bg_solid inset;
+  box-shadow: 0 0 0 1000px colors.$color_bg_solid inset;
+  -webkit-text-fill-color: colors.$color_text_heading;
+  caret-color: colors.$color_text_heading;
+}
+
+// ── 1b. filled variant ──────────────────────────────────────────────────
+// TextField `variant="filled"` 은 컨테이너 배경이 dim 이라, 1번(기본 표면)을 그대로 두면
+// 자동완성된 filled 칸만 outline 칸처럼 밝아진다. 컨테이너의 배경 전환을 그대로 따라간다:
+// 평상시 dim, 포커스 시 solid (`_variant_filled &_container:focus-within` 와 동일).
+// Textarea 에는 variant 가 없어 대응 규칙이 필요 없다.
+.text_field_variant_filled input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px colors.$color_bg_solid_dim inset;
+  box-shadow: 0 0 0 1000px colors.$color_bg_solid_dim inset;
+}
+
+.text_field_variant_filled input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px colors.$color_bg_solid inset;
+  box-shadow: 0 0 0 1000px colors.$color_bg_solid inset;
+}
+
+// ── 2. 비활성 + 자동완성 ─────────────────────────────────────────────────
+// 인증 후 칸을 `disabled` 로 잠그는 흐름에서 자동완성 값이 남는다. 1번만 두면
+// `-webkit-text-fill-color` 가 DS 의 disabled 글자색을 이겨 잠긴 칸이 활성처럼
+// 진해지고, 배경도 비활성 표면이 아니라 기본 표면이 된다.
+input:-webkit-autofill:disabled,
+textarea:-webkit-autofill:disabled,
+select:-webkit-autofill:disabled {
+  -webkit-box-shadow: 0 0 0 1000px colors.$color_bg_solid_dim inset;
+  box-shadow: 0 0 0 1000px colors.$color_bg_solid_dim inset;
+  -webkit-text-fill-color: colors.$color_text_disabled;
+}
+
+// ── 3. 둥근 모서리 유지 ──────────────────────────────────────────────────
+// 1·2번 그림자는 네모라서 그대로 두면 컨테이너의 둥근 모서리를 덮어 자동완성된
+// 칸만 각져 보인다 (자식은 부모 배경/테두리 위에 그려지고 부모 border-radius 로
+// 잘리지 않는다). 자동완성된 칸에서만 컨테이너를 클리핑 컨텍스트로 만들어
+// 컨테이너 자신의 반경으로 자른다.
+//
+// 입력 요소에 직접 `border-radius` 를 주는 방식은 쓰지 않는다: 앞/뒤 아이콘이
+// 있으면 input 상자가 컨테이너 가장자리에서 밀려 있어(`_inner` flex row) 어떤
+// 반경을 줘도 컨테이너 코너와 맞지 않는다. 클리핑은 아이콘 유무와 무관하게 맞다.
+//
+// `:has()` 지원은 문제되지 않는다 - `:-webkit-autofill` 자체가 Chromium/WebKit
+// 전용이고 두 엔진 모두 `:has()` 를 오래전부터 지원한다.
+//
+// 클리핑 안전성 확인: 포커스는 outset 그림자가 아니라 컨테이너 `border-color` 로
+// 표현하고, 아이콘·clear 버튼은 컨테이너 안쪽이며 Textarea 카운터는 컨테이너를
+// 닫은 뒤의 형제(`textarea_footer`)다. 오버레이(Tooltip/Popover/Menu)는 v3.8.0
+// 부터 `body` 로 포탈되므로 컨테이너 overflow 와 무관하다.
+// (`select` 는 여기 없다 - TextField 는 항상 `<input>` 만 렌더하고 `.text_field_container` 안에
+// native select 가 들어가는 곳이 없다. 위 1·2번의 `select` 요소 셀렉터는 컨슈머의 native select
+// 를 덮기 위한 것이라 그대로 남긴다.)
+.text_field_container:has(input:-webkit-autofill),
+.textarea_container:has(textarea:-webkit-autofill) {
+  overflow: hidden;
+}
