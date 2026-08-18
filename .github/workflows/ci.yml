@@ -23,6 +23,16 @@ permissions:
 jobs:
   # 무엇이 바뀌었는지 한 번만 검사해서 후속 step의 조건으로 사용한다
   changes:
+    # 릴리즈/싱크 PR(develop -> main)은 건너뛴다 - `push: [develop]` 이 이미 같은 트리를 돌렸다.
+    # main 은 develop 의 과거 상태(직전 릴리즈 시점)라 develop 을 main 에 머지한 결과의 트리는
+    # develop tip 과 동일하다. 그래서 develop 에 푸시할 때의 push 실행과 열린 릴리즈 PR 의
+    # pull_request(synchronize) 실행이 같은 SHA·같은 트리를 두 번 검사하게 된다.
+    # 이 조건은 head 가 develop 인 경우만 빼므로, 긴급 hotfix 브랜치 -> main PR 은 그대로 돈다.
+    # `test` 는 `needs: changes` 라 이 job 이 skip 되면 함께 skip 된다.
+    if: >-
+      !(github.event_name == 'pull_request' &&
+        github.event.pull_request.head.ref == 'develop' &&
+        github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.filter.outputs.code }}
