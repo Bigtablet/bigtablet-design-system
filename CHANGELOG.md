@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.11.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.11.0) - 2026-08-18
+
+- 오버레이 스크롤 잠금이 스크롤바 폭을 보정 - Modal · Drawer · Alert 가 열릴 때 사라지는 스크롤바 폭을 재서 `body` `padding-right` 로 되돌린다. 잠금 시 배경 콘텐츠가 그 폭만큼 튀던 문제 해소. 소비자가 이미 준 `padding-right` 에 더하므로 기존 여백은 유지된다
+- `--bt-scrollbar-width` CSS 변수 신설 - 잰 스크롤바 폭을 `:root` 로 노출한다(잠금 밖에서는 `0px`). `right` 기준 고정 요소는 잠금 중 그만큼 밀리므로 `right: calc(16px + var(--bt-scrollbar-width))` 처럼 자체 보정할 수 있다
+- `scrollbar-gutter: stable` 앱에서 오버레이가 전폭을 덮도록 수정 - 거터가 예약된 채 남으면 `position: fixed` 의 컨테이닝 블록이 콘텐츠 영역이라 dim 옆에 밝은 띠가 남았다(`100vw`·`100dvw`·`100lvw` 로도 넘을 수 없음). 잠금 동안 거터를 놓고 그만큼을 위의 `padding-right` 가 대신 잡는다. 해제 시 원복
+- 잠금 해제 시 인라인 스타일 복원 정확도 개선 - 기존에는 `overflow` 를 계산값으로 저장해 되써서 원래 없던 인라인 선언이 생기고 소비자 스타일시트 규칙을 덮을 수 있었다. 인라인 값만 스냅샷해 되돌린다
+- Vanilla 번들에도 동일 적용 - `/vanilla` CSS·JS 는 별도 번들이라 Thymeleaf/JSP 폼도 같은 문제를 겪었다
+- (개발) 3중 복제였던 잠금 로직을 `utils/scroll-lock.ts` 로 통합 (Modal · Drawer · Alert). 내부 유틸이라 공개 export 는 변화 없음
+
 ## [3.10.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.10.0) - 2026-08-18
 
 - 자동완성(autofill) 입력칸을 DS 가 소유 - 크롬/사파리가 `!important` 로 강제하는 UA 배경(연한 라벤더)·글자색을 DS 표면 토큰으로 덮는다. DS 폼 컨트롤은 배경을 컨테이너가 갖고 입력 요소가 투명해서, 자동완성된 칸만 옆 칸과 다른 색이 되고 다크 테마에선 밝은 상자로 튀던 문제 해소. `style.css` 만 import 하고 있으면 자동 적용되고 소비자가 따로 할 일은 없다
