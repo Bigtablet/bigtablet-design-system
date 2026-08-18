@@ -51,7 +51,7 @@ npm install @bigtablet/design-system
 <link rel="stylesheet" href="node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
 
 <!-- 또는 빌드 도구 사용 시 -->
-@import '@bigtablet/design-system/dist/vanilla/bigtablet.css';
+@import '@bigtablet/design-system/vanilla/style.min.css';
 ```
 
 ### 직접 다운로드
@@ -157,6 +157,11 @@ npm install @bigtablet/design-system
 ---
 
 ### TextField
+
+> 자동완성(autofill)으로 채운 칸은 크롬/사파리가 UA 배경(연한 라벤더)을 `!important` 로
+> 강제하는데, Vanilla CSS(`@bigtablet/design-system/vanilla/style.min.css`)가 이를 DS 표면색으로 덮는다. `input`/`textarea`/`select`
+> 요소 셀렉터라 DS 클래스를 안 붙인 native 입력에도 적용되고, 비활성 칸은 비활성 표면·
+> 글자색을 유지한다. 소비자가 따로 할 일은 없다.
 
 ```html
 <!-- 기본 -->

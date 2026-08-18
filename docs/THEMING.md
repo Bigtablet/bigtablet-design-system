@@ -13,6 +13,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
   - [React](#react)
   - [SCSS 소비자](#scss-소비자)
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
+- [자동완성(autofill) 입력칸](#자동완성autofill-입력칸)
 - [Storybook](#storybook)
 
 ---
@@ -199,6 +200,28 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 > 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)는 `src/vanilla/bigtablet.scss` 에서 동일 토큰을 기반으로 하지만 이름이 다른 자체 `--bt-color-*` 변수 세트를 사용하며(예: `--bt-color-primary`, `--bt-color-background`), 현재 `data-theme`/`prefers-color-scheme` 다크 모드 오버라이드가 없습니다. Vanilla 환경과 React 환경의 CSS 변수는 서로 호환되지 않으니 섞어 쓰지 마세요.
 
 ---
+
+## 자동완성(autofill) 입력칸
+
+크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로 강제한다.
+그대로 두면 그 칸만 옆 칸과 다른 색이 되고, 다크 테마에서는 밝은 상자로 튄다.
+
+`style.css` 가 이걸 대신 막는다 (`src/styles/autofill.scss`). **소비자가 따로 할 일은 없다** -
+`@bigtablet/design-system/style.css` 를 이미 import 하고 있으면 자동 적용된다.
+
+| 상태 | 배경 | 글자 |
+|---|---|---|
+| 기본 | `--bt-color-bg-solid` | `--bt-color-text-heading` |
+| `variant="filled"` | `--bt-color-bg-solid-dim` (포커스 시 `bg-solid`) | 동일 |
+| `disabled` | `--bt-color-bg-solid-dim` | `--bt-color-text-disabled` |
+
+전부 테마 CSS 변수라 라이트/다크가 자동으로 따라온다. 규칙이 `input` / `textarea` / `select`
+요소 셀렉터라 **DS 컴포넌트로 감싸지 않은 native 입력에도 적용된다**.
+
+> UA 배경은 일반 `background-color` 로 이길 수 없어 큰 inset `box-shadow` 로 덮는다. 그 그림자는
+> 네모라서 TextField/Textarea 는 자동완성된 칸에서만 컨테이너에 `overflow: hidden` 을 걸어
+> 컨테이너 반경으로 자른다(`:has()`). Vanilla(`@bigtablet/design-system/vanilla/style.min.css`)는 입력 요소가 배경과
+> `border-radius` 를 직접 갖고 있어 클리핑이 필요 없고, 색 규칙만 동일하게 적용된다.
 
 ## Storybook
 
