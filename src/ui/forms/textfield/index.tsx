@@ -1,7 +1,7 @@
 "use client";
 
-import { X } from "lucide-react";
-import * as React from "react";
+import { Eye, EyeOff, X } from "lucide-react";
+import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
@@ -42,10 +42,33 @@ export interface TextFieldProps
 	error?: boolean;
 	/** 성공(검증 통과) 상태 여부. `error` 가 true 면 무시된다. */
 	success?: boolean;
-	/** 입력 필드 왼쪽에 표시할 아이콘 */
+	/**
+	 * 입력 필드 왼쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다.
+	 * 포커스 가능한 요소(버튼 등)를 넣어야 하면 `leadingAction` 을 쓸 것.
+	 */
 	leadingIcon?: React.ReactNode;
-	/** 입력 필드 오른쪽에 표시할 아이콘 */
+	/**
+	 * 입력 필드 오른쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다.
+	 * 포커스 가능한 요소(버튼 등)를 넣어야 하면 `trailingAction` 을 쓸 것.
+	 */
 	trailingIcon?: React.ReactNode;
+	/**
+	 * 입력 필드 왼쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다.
+	 * 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8).
+	 */
+	leadingAction?: React.ReactNode;
+	/**
+	 * 입력 필드 오른쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다.
+	 * 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8).
+	 */
+	trailingAction?: React.ReactNode;
+	/**
+	 * 비밀번호 표시/숨기기 토글 버튼을 오른쪽에 내장한다.
+	 * 켜면 `type` 을 토글이 직접 관리한다 - 숨김 상태는 넘긴 `type`(보통 `"password"`), 표시 상태는 `"text"`.
+	 */
+	showPasswordToggle?: boolean;
+	/** 토글 버튼의 `aria-label`. i18n 은 앱이 주입한다 (기본값: 영문). */
+	passwordToggleLabels?: { show: string; hide: string };
 	/** 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 여부 */
 	clearable?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
@@ -72,6 +95,8 @@ export interface TextFieldProps
 // X 아이콘 - lucide-react
 const ClearIcon = () => <X size={iconSize.lg} aria-hidden="true" />;
 
+const DEFAULT_PASSWORD_TOGGLE_LABELS = { show: "Show password", hide: "Hide password" } as const;
+
 /**
  * 텍스트 필드를 렌더링한다.
  * Figma DS 기준 outlined 스타일 + floating label을 지원한다.
@@ -88,7 +113,12 @@ export const TextField = ({
 	success,
 	leadingIcon,
 	trailingIcon,
+	leadingAction,
+	trailingAction,
+	showPasswordToggle,
+	passwordToggleLabels,
 	clearable,
+	type,
 	fullWidth,
 	size = "md",
 	variant = "outline",
@@ -110,9 +140,7 @@ export const TextField = ({
 	const applyTransform = (nextValue: string) =>
 		transformValue ? transformValue(nextValue) : nextValue;
 
-	const [innerValue, setInnerValue] = useState(() =>
-		applyTransform(value ?? defaultValue ?? ""),
-	);
+	const [innerValue, setInnerValue] = useState(() => applyTransform(value ?? defaultValue ?? ""));
 
 	const isComposingRef = useRef(false);
 	// 마지막으로 onChangeAction 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
@@ -146,6 +174,17 @@ export const TextField = ({
 		emit("");
 	}, [emit]);
 
+	const [passwordRevealed, setPasswordRevealed] = useState(false);
+	const togglePassword = useCallback(() => {
+		setPasswordRevealed((revealed) => !revealed);
+	}, []);
+	// showPasswordToggle 과 type 은 별개 prop 이라 type 을 빠뜨리기 쉽다. 보정이 없으면 값이 이미
+	// 평문인데 눈 아이콘만 달린, 아무 효과 없는 버튼이 된다 - 토글을 켰으면 password 가 기본이다.
+	let resolvedType = type;
+	if (showPasswordToggle) {
+		resolvedType = passwordRevealed ? "text" : (type ?? "password");
+	}
+
 	// error 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
 	// 그때 실패를 성공처럼 보여주면 사용자가 잘못된 값을 그대로 제출하게 된다.
 	const isError = !!error;
@@ -163,17 +202,56 @@ export const TextField = ({
 		className,
 	);
 
-	// clearable이 켜져 있고 값이 있으면 X 버튼, 없으면 trailingIcon
-	const resolvedTrailing =
-		clearable && innerValue ? (
-			<button type="button" className="text_field_clear" onClick={handleClear} aria-label="Clear">
-				<ClearIcon />
+	// 내장 버튼(토글·clear)에는 disabled 를 직접 넘긴다 - `_disabled` 스타일은 컨테이너 자식에
+	// opacity 만 걸고 pointer-events 는 건드리지 않아, 없으면 비활성 필드에서도 포커스·클릭이 된다.
+	// leadingAction/trailingAction 은 앱이 넘긴 임의 요소라 강제하지 않는다(앱 책임).
+	// 오른쪽 칸은 하나뿐이라 우선순위가 필요하다. 토글이 최우선 - 켠 쪽은 값이 있을 때도 계속 보여야 하고,
+	// 비밀번호 칸의 clear 는 잃어도 무해하다. 그 아래는 clear > trailingAction > trailingIcon.
+	const passwordToggleLabel = passwordRevealed
+		? (passwordToggleLabels?.hide ?? DEFAULT_PASSWORD_TOGGLE_LABELS.hide)
+		: (passwordToggleLabels?.show ?? DEFAULT_PASSWORD_TOGGLE_LABELS.show);
+
+	const resolvedTrailing = showPasswordToggle ? (
+		<span className="text_field_icon text_field_action">
+			<button
+				type="button"
+				onClick={togglePassword}
+				aria-label={passwordToggleLabel}
+				disabled={props.disabled}
+			>
+				{passwordRevealed ? (
+					<EyeOff size={iconSize.lg} aria-hidden="true" />
+				) : (
+					<Eye size={iconSize.lg} aria-hidden="true" />
+				)}
 			</button>
-		) : trailingIcon ? (
-			<span className="text_field_icon" aria-hidden="true">
-				{trailingIcon}
-			</span>
-		) : null;
+		</span>
+	) : clearable && innerValue ? (
+		<button
+			type="button"
+			className="text_field_clear"
+			onClick={handleClear}
+			aria-label="Clear"
+			disabled={props.disabled}
+		>
+			<ClearIcon />
+		</button>
+	) : trailingAction ? (
+		<span className="text_field_icon text_field_action">{trailingAction}</span>
+	) : trailingIcon ? (
+		<span className="text_field_icon" aria-hidden="true">
+			{trailingIcon}
+		</span>
+	) : null;
+
+	// 왼쪽 칸도 같은 규칙 - action 이 icon 을 이긴다.
+	const resolvedLeading = leadingAction ? (
+		<span className="text_field_icon text_field_action">{leadingAction}</span>
+	) : leadingIcon ? (
+		<span className="text_field_icon" aria-hidden="true">
+			{leadingIcon}
+		</span>
+	) : null;
 
 	return (
 		<div className={rootClassName}>
@@ -185,11 +263,7 @@ export const TextField = ({
 
 			<div className="text_field_container">
 				<div className="text_field_inner">
-					{leadingIcon && (
-						<span className="text_field_icon" aria-hidden="true">
-							{leadingIcon}
-						</span>
-					)}
+					{resolvedLeading}
 
 					<div
 						className={cn(
@@ -205,6 +279,7 @@ export const TextField = ({
 							aria-describedby={helperId}
 							aria-label={!showLabel ? label : undefined}
 							{...props}
+							type={resolvedType}
 							value={innerValue}
 							onCompositionStart={() => {
 								isComposingRef.current = true;

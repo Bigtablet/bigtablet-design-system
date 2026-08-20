@@ -12,9 +12,14 @@ export interface ErrorStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 	title?: React.ReactNode;
 	/** 보조 설명 */
 	description?: React.ReactNode;
-	/** 아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김) */
+	/**
+	 * 아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). **장식 전용** -
+	 * `aria-hidden="true"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이
+	 * 이름 없는 bare lucide svg 라서, 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽는다.
+	 * 포커스 가능한 요소는 `action` 을 쓸 것 (WCAG 4.1.2).
+	 */
 	icon?: React.ReactNode;
-	/** 액션 영역 (재시도 버튼 등) */
+	/** 액션 영역 (재시도 버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. */
 	action?: React.ReactNode;
 	/**
 	 * 레이아웃 모드 (기본 "page").

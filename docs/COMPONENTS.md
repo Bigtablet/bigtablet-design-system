@@ -389,10 +389,27 @@ import { TextField } from '@bigtablet/design-system';
 // 상태 표시
 <TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
 
-// 아이콘
-import { Search, Eye } from 'lucide-react';
+// 장식 아이콘 - aria-hidden 으로 접근성 트리에서 제외된다
+import { Search, X } from 'lucide-react';
 <TextField leadingIcon={<Search size={16} />} placeholder="검색..." />
-<TextField trailingIcon={<Eye size={16} />} type="password" />
+
+// 조작 요소 - aria-hidden 을 붙이지 않는다. 버튼은 반드시 이 슬롯에
+<TextField
+  label="검색"
+  trailingAction={
+    <button type="button" aria-label="검색어 지우기" onClick={reset}>
+      <X size={20} aria-hidden="true" />
+    </button>
+  }
+/>
+
+// 비밀번호 표시/숨기기 - 내장 토글 (문구는 i18n 때문에 앱이 주입)
+<TextField
+  label="비밀번호"
+  type="password"
+  showPasswordToggle
+  passwordToggleLabels={{ show: '비밀번호 보기', hide: '비밀번호 숨기기' }}
+/>
 
 // 지우기 버튼
 <TextField label="검색어" clearable onValueChange={(v) => setQuery(v)} />
@@ -420,8 +437,12 @@ import { Search, Eye } from 'lucide-react';
 | `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
-| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 |
-| `trailingIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `leadingIcon` | `ReactNode` | - | 왼쪽 **장식** 아이콘 (`aria-hidden`) |
+| `trailingIcon` | `ReactNode` | - | 오른쪽 **장식** 아이콘 (`aria-hidden`) |
+| `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
+| `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
+| `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 (v3.11) |
+| `passwordToggleLabels` | `{ show: string; hide: string }` | 영문 | 토글 버튼 `aria-label` |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
@@ -436,6 +457,10 @@ import { Search, Eye } from 'lucide-react';
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
 >
 > **v3.1 추가**: `imeStrategy` prop - 한글 IME 조합 중 콜백 전략. 기본 `"delayed"` (조합 완료 후 `onValueChange`), 실시간 검색/필터엔 `"immediate"` (조합 중에도 즉시 호출).
+>
+> **v3.11 추가 - 아이콘 슬롯 vs 조작 슬롯**: `leadingIcon` · `trailingIcon` 은 장식 전용이라 `aria-hidden="true"` 래퍼를 유지한다. 여기에 `<button>` 같은 포커스 가능한 요소를 넣으면 **포커스는 가는데 보조기기에는 존재하지 않는 요소**가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부한다. 조작 요소는 `leadingAction` · `trailingAction` 에 넣을 것 - 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 `aria-hidden` 만 빠지며, 넘긴 요소가 40x40 히트 영역을 채운다 (WCAG 2.5.8).
+>
+> 오른쪽 칸은 하나뿐이라 우선순위가 있다: `showPasswordToggle` > `clearable`(값 있을 때) > `trailingAction` > `trailingIcon`. 토글을 켜면 값이 차 있어도 계속 보인다 - 비밀번호 칸에서 토글이 사라지면 쓸 수 없기 때문. 왼쪽은 `leadingAction` > `leadingIcon`.
 
 ---
 
@@ -2868,7 +2893,7 @@ action={
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `illustration` | `ReactNode` | - | 일러스트 영역 (Lucide 아이콘, SVG, 이미지). 내부에 `aria-hidden="true"` 자동 적용 |
+| `illustration` | `ReactNode` | - | 일러스트 영역 (Lucide 아이콘, SVG, 이미지). **장식 전용** - 내부에 `aria-hidden="true"` 자동 적용 |
 | `title` | `ReactNode` | - | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 (p, max-width 480) |
 | `action` | `ReactNode` | - | 액션 영역 (Button 등) |
@@ -2881,6 +2906,7 @@ action={
   - 검색 결과가 동적으로 바뀐다면 `role="status"`로 SR이 변경을 announce하도록
 - 제목은 `<h3>` 고정 - 페이지 위계와 다르면 wrap해서 시각만 가져가거나, 향후 `titleAs` prop 추가 검토
 - `illustration`은 `aria-hidden="true"` 자동 적용 - 일러스트가 의미 전달용이면 title/description에 텍스트로 동일 의미 포함시키세요
+- **`illustration` 에 포커스 가능한 요소(버튼/링크 등)를 넣지 마세요.** `aria-hidden` 조상 때문에 포커스는 가는데 보조기기엔 존재하지 않는 요소가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부합니다. 조작 요소는 `action` 슬롯으로 - 여기엔 `aria-hidden` 이 붙지 않습니다
 - 색상은 caption tone - 너무 흐리지 않도록 description 길이는 1-2줄로 유지
 
 #### DOM 구조 (SCSS override 시 참고)
@@ -2968,13 +2994,15 @@ import { Inbox, Search } from "lucide-react";
 
 미지정 시 기본 경고 아이콘(`TriangleAlert`). `icon` prop 으로 교체, `icon={null}` 로 숨김.
 
+> **`icon` 은 장식 전용입니다.** 래퍼의 `aria-hidden="true"` 는 필수입니다 - 기본 아이콘이 이름 없는 bare lucide svg 라서 래퍼를 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽습니다. 포커스 가능한 요소는 `action` 슬롯으로 (WCAG 4.1.2). `EmptyState.illustration` 과 같은 계약입니다.
+
 **Props**
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 |
-| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. `null` 로 숨김 |
+| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
 | `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
 | `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |
