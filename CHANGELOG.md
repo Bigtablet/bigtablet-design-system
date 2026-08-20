@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.11.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.11.0) - 2026-08-20
+
+- `TextField` 에 조작 슬롯 `leadingAction` · `trailingAction` 추가 - 아이콘 슬롯(`leadingIcon`·`trailingIcon`)은 장식 전용이라 `aria-hidden` 을 유지하고, 포커스 가능한 요소는 이 새 슬롯에 넣는다. 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 넘긴 요소가 40x40 히트 영역을 채운다
+- 아이콘 슬롯에 버튼을 넣으면 발생하던 접근성 위반 해소 - `aria-hidden` 조상 때문에 포커스는 가는데 보조기기엔 존재하지 않는 요소가 되어 WCAG 4.1.2(Name/Role/Value) 위반이었고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부했다
+- `TextField` 에 비밀번호 표시/숨기기 토글 내장 - `showPasswordToggle` 로 켜고, 문구는 i18n 때문에 `passwordToggleLabels` 로 앱이 주입한다(기본값 영문). 오른쪽 칸 우선순위는 `showPasswordToggle` > `clearable` > `trailingAction` > `trailingIcon`
+- `TextField` 내장 버튼이 `disabled` 를 따르도록 수정 - 비밀번호 토글과 지우기(X) 버튼이 비활성 필드에서도 포커스·클릭됐다(비활성 입력의 비밀번호를 드러낼 수 있었음). 비활성 스타일은 `opacity` 만 걸고 `pointer-events` 는 건드리지 않는다
+- `EmptyState.illustration` · `ErrorState.icon` 의 장식 슬롯 계약 명시 - 두 슬롯은 `aria-hidden` 으로 접근성 트리에서 제외되고, 조작 요소는 기존 `action` 슬롯을 쓴다. `ErrorState` 의 래퍼는 필수다(기본 아이콘이 이름 없는 svg 라서 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽는다)
+- `TextField` 아이콘·조작 칸 치수를 `$tap_target_compact` 토큰으로 교체 (하드코딩 40px 제거, 값 동일)
+
 ## [3.10.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.10.1) - 2026-08-18
 
 - 오버레이 스크롤 잠금이 스크롤바 폭을 보정 - Modal · Drawer · Alert 가 열릴 때 사라지는 스크롤바 폭을 재서 `body` `padding-right` 로 되돌린다. 잠금 시 배경 콘텐츠가 그 폭만큼 튀던 문제 해소. 소비자가 이미 준 `padding-right` 에 더하므로 기존 여백은 유지된다
