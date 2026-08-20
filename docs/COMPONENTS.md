@@ -2893,7 +2893,7 @@ action={
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `illustration` | `ReactNode` | - | 일러스트 영역 (Lucide 아이콘, SVG, 이미지). 내부에 `aria-hidden="true"` 자동 적용 |
+| `illustration` | `ReactNode` | - | 일러스트 영역 (Lucide 아이콘, SVG, 이미지). **장식 전용** - 내부에 `aria-hidden="true"` 자동 적용 |
 | `title` | `ReactNode` | - | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 (p, max-width 480) |
 | `action` | `ReactNode` | - | 액션 영역 (Button 등) |
@@ -2906,6 +2906,7 @@ action={
   - 검색 결과가 동적으로 바뀐다면 `role="status"`로 SR이 변경을 announce하도록
 - 제목은 `<h3>` 고정 - 페이지 위계와 다르면 wrap해서 시각만 가져가거나, 향후 `titleAs` prop 추가 검토
 - `illustration`은 `aria-hidden="true"` 자동 적용 - 일러스트가 의미 전달용이면 title/description에 텍스트로 동일 의미 포함시키세요
+- **`illustration` 에 포커스 가능한 요소(버튼/링크 등)를 넣지 마세요.** `aria-hidden` 조상 때문에 포커스는 가는데 보조기기엔 존재하지 않는 요소가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부합니다. 조작 요소는 `action` 슬롯으로 - 여기엔 `aria-hidden` 이 붙지 않습니다
 - 색상은 caption tone - 너무 흐리지 않도록 description 길이는 1-2줄로 유지
 
 #### DOM 구조 (SCSS override 시 참고)
@@ -2993,13 +2994,15 @@ import { Inbox, Search } from "lucide-react";
 
 미지정 시 기본 경고 아이콘(`TriangleAlert`). `icon` prop 으로 교체, `icon={null}` 로 숨김.
 
+> **`icon` 은 장식 전용입니다.** 래퍼의 `aria-hidden="true"` 는 필수입니다 - 기본 아이콘이 이름 없는 bare lucide svg 라서 래퍼를 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽습니다. 포커스 가능한 요소는 `action` 슬롯으로 (WCAG 4.1.2). `EmptyState.illustration` 과 같은 계약입니다.
+
 **Props**
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 |
-| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. `null` 로 숨김 |
+| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
 | `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
 | `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |

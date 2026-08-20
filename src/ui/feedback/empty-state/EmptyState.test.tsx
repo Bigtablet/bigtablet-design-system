@@ -28,4 +28,22 @@ describe("EmptyState", () => {
 		const { container } = render(<EmptyState size="lg" title="t" />);
 		expect(container.firstChild).toHaveClass("empty_state_size_lg");
 	});
+
+	// ── 슬롯 접근성 계약 ────────────────────────────────────────────────────
+	// illustration 은 장식 전용이라 aria-hidden 을 유지하고, action 은 노출한다.
+	// 이 짝을 고정해 두는 이유는 두 방향 모두 조용히 깨지기 때문이다.
+	//  - illustration 에서 aria-hidden 이 빠지면 이름 없는 그래픽이 트리에 노출된다 (axe 는 못 잡는다).
+	//  - action 에 aria-hidden 이 붙으면 포커스는 가는데 보조기기엔 없는 버튼이 된다 (WCAG 4.1.2).
+	it("keeps the illustration slot out of the accessibility tree", () => {
+		render(<EmptyState illustration={<svg data-testid="ill" />} title="t" />);
+		expect(screen.getByTestId("ill").closest("[aria-hidden]")).toHaveAttribute(
+			"aria-hidden",
+			"true",
+		);
+	});
+
+	it("exposes the action slot to the accessibility tree", () => {
+		render(<EmptyState title="t" action={<button type="button">Add</button>} />);
+		expect(screen.getByRole("button", { name: "Add" }).closest("[aria-hidden]")).toBeNull();
+	});
 });
