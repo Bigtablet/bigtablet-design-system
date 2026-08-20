@@ -5,13 +5,17 @@ import { cn } from "../../../utils";
 import "./style.scss";
 
 export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-	/** 일러스트 영역 (아이콘/이미지 등) */
+	/**
+	 * 일러스트 영역 (아이콘/이미지 등). **장식 전용** - `aria-hidden="true"` 래퍼로 접근성 트리에서
+	 * 제외된다. 포커스 가능한 요소(버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가
+	 * 되므로(WCAG 4.1.2) `action` 을 쓸 것.
+	 */
 	illustration?: React.ReactNode;
 	/** 제목 */
 	title?: React.ReactNode;
 	/** 보조 설명 */
 	description?: React.ReactNode;
-	/** 액션 영역 (Button 등) */
+	/** 액션 영역 (Button 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. */
 	action?: React.ReactNode;
 	/** 크기 (기본 "md") */
 	size?: "sm" | "md" | "lg";

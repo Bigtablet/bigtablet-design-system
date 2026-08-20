@@ -170,3 +170,42 @@ export const Clearable: Story = {
 		clearable: true,
 	},
 };
+
+export const PasswordToggle: Story = {
+	args: {
+		label: "비밀번호",
+		type: "password",
+		defaultValue: "hunter2",
+		showPasswordToggle: true,
+		passwordToggleLabels: { show: "비밀번호 보기", hide: "비밀번호 숨기기" },
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`showPasswordToggle` renders a built-in reveal button. Labels are injected by the app so i18n stays app-side. / `showPasswordToggle` 는 표시/숨기기 버튼을 내장합니다. i18n 은 앱이 담당하므로 문구는 `passwordToggleLabels` 로 주입합니다.",
+			},
+		},
+	},
+};
+
+export const ActionSlot: Story = {
+	args: {
+		label: "Search",
+		placeholder: "Search…",
+		leadingIcon: <SearchIcon />,
+		trailingAction: (
+			<button type="button" aria-label="검색어 지우기">
+				<CloseIcon />
+			</button>
+		),
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`trailingIcon` / `leadingIcon` stay `aria-hidden` for decoration; put focusable content in `trailingAction` / `leadingAction`, which are exposed to assistive tech. Putting a button in the icon slot breaks WCAG 4.1.2 and Chrome refuses the `aria-hidden`. / `trailingIcon`·`leadingIcon` 은 장식용이라 `aria-hidden` 을 유지합니다. 포커스 가능한 요소는 `trailingAction`·`leadingAction` 에 넣으세요 - 아이콘 슬롯에 버튼을 넣으면 WCAG 4.1.2 위반이고 Chrome 이 `aria-hidden` 적용을 거부합니다.",
+			},
+		},
+	},
+};

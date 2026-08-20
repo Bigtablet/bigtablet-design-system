@@ -222,4 +222,151 @@ describe("TextField", () => {
 		const root = screen.getByRole("textbox").closest(".text_field");
 		expect(root).toHaveClass("text_field_variant_filled", "text_field_disabled");
 	});
+
+	// ── Action slots (aria-hidden 회귀 방지) ─────────────────────────────────
+	// 장식 슬롯은 aria-hidden 을 유지하고 조작 슬롯은 붙이지 않는다. 이 두 짝이 어긋나면
+	// 포커스는 가는데 보조기기에 없는 요소(WCAG 4.1.2 위반)가 되고 Chrome 이 aria-hidden 적용을
+	// 거부한다 — 조작 요소를 trailingIcon 에 넣던 앱들이 실제로 밟은 버그.
+	it("keeps decorative icon slots hidden from the accessibility tree", () => {
+		render(
+			<TextField
+				leadingIcon={<span data-testid="lead">Q</span>}
+				trailingIcon={<span data-testid="trail">X</span>}
+			/>,
+		);
+		expect(screen.getByTestId("lead").closest("[aria-hidden]")).toHaveAttribute(
+			"aria-hidden",
+			"true",
+		);
+		expect(screen.getByTestId("trail").closest("[aria-hidden]")).toHaveAttribute(
+			"aria-hidden",
+			"true",
+		);
+	});
+
+	it("exposes action slots to the accessibility tree", () => {
+		render(
+			<TextField
+				leadingAction={
+					<button type="button" aria-label="Search">
+						Q
+					</button>
+				}
+				trailingAction={
+					<button type="button" aria-label="Toggle">
+						X
+					</button>
+				}
+			/>,
+		);
+		const search = screen.getByRole("button", { name: "Search" });
+		const toggle = screen.getByRole("button", { name: "Toggle" });
+		expect(search.closest("[aria-hidden]")).toBeNull();
+		expect(toggle.closest("[aria-hidden]")).toBeNull();
+		expect(search.parentElement).toHaveClass("text_field_icon", "text_field_action");
+		expect(toggle.parentElement).toHaveClass("text_field_icon", "text_field_action");
+	});
+
+	it("lets the action slot win over the icon slot on the same side", () => {
+		render(
+			<TextField
+				leadingIcon={<span data-testid="lead">Q</span>}
+				leadingAction={
+					<button type="button" aria-label="Search">
+						Q
+					</button>
+				}
+				trailingIcon={<span data-testid="trail">X</span>}
+				trailingAction={
+					<button type="button" aria-label="Toggle">
+						X
+					</button>
+				}
+			/>,
+		);
+		expect(screen.queryByTestId("lead")).not.toBeInTheDocument();
+		expect(screen.queryByTestId("trail")).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Toggle" })).toBeInTheDocument();
+	});
+
+	// ── Password toggle ────────────────────────────────────────────────────
+	it("toggles the password input type and swaps the accessible label", () => {
+		render(<TextField label="Password" type="password" showPasswordToggle />);
+		const input = screen.getByLabelText("Password");
+		expect(input).toHaveAttribute("type", "password");
+
+		const toggle = screen.getByRole("button", { name: "Show password" });
+		expect(toggle.closest("[aria-hidden]")).toBeNull();
+
+		fireEvent.click(toggle);
+		expect(input).toHaveAttribute("type", "text");
+		expect(screen.getByRole("button", { name: "Hide password" })).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole("button", { name: "Hide password" }));
+		expect(input).toHaveAttribute("type", "password");
+	});
+
+	it("uses injected password toggle labels", () => {
+		render(
+			<TextField
+				type="password"
+				showPasswordToggle
+				passwordToggleLabels={{ show: "비밀번호 보기", hide: "비밀번호 숨기기" }}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "비밀번호 보기" }));
+		expect(screen.getByRole("button", { name: "비밀번호 숨기기" })).toBeInTheDocument();
+	});
+
+	// 토글은 clear 를 이긴다 - 값이 찬 비밀번호 칸에서 토글이 사라지면 쓸 수 없다.
+	it("keeps the password toggle visible when clearable also has a value", () => {
+		render(<TextField type="password" showPasswordToggle clearable defaultValue="secret" />);
+		expect(screen.getByRole("button", { name: "Show password" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeInTheDocument();
+	});
+
+	it("leaves the input type untouched when the toggle is off", () => {
+		render(<TextField label="Password" type="password" />);
+		expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+		expect(screen.queryByRole("button")).not.toBeInTheDocument();
+	});
+
+	// disabled 는 컨테이너 자식에 opacity 0.38 만 걸고 pointer-events 는 건드리지 않으므로,
+	// 내장 버튼은 disabled 속성을 직접 받아야 한다. 없으면 비활성 필드의 비밀번호가 드러난다.
+	it("disables the built-in password toggle with the field", () => {
+		render(<TextField label="Password" type="password" showPasswordToggle disabled />);
+		const toggle = screen.getByRole("button", { name: "Show password" });
+		expect(toggle).toBeDisabled();
+
+		fireEvent.click(toggle);
+		expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+	});
+
+	it("disables the built-in clear button with the field", () => {
+		const handleChange = vi.fn();
+		render(<TextField clearable defaultValue="text" disabled onValueChange={handleChange} />);
+		const clear = screen.getByRole("button", { name: "Clear" });
+		expect(clear).toBeDisabled();
+
+		fireEvent.click(clear);
+		expect(handleChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("textbox")).toHaveValue("text");
+	});
+
+	// showPasswordToggle 과 type 은 별개 prop 이라 type 을 빠뜨리기 쉽다. 보정이 없으면
+	// 값이 이미 평문인데 눈 아이콘만 달린, 아무 효과 없는 버튼이 된다.
+	it("falls back to a password input when the toggle is on without a type", () => {
+		render(<TextField label="Password" showPasswordToggle />);
+		const input = screen.getByLabelText("Password");
+		expect(input).toHaveAttribute("type", "password");
+
+		fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+		expect(input).toHaveAttribute("type", "text");
+	});
+
+	it("does not force a password type when the toggle is off", () => {
+		render(<TextField label="Name" />);
+		expect(screen.getByLabelText("Name")).not.toHaveAttribute("type", "password");
+	});
 });
