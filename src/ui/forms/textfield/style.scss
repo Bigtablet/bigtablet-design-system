@@ -133,8 +133,9 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    // `&_action > *` 가 이 칸을 그대로 채우므로 두 치수는 같은 토큰이어야 한다 - 갈라지면 자식이 넘친다.
+    width: token.$tap_target_compact;
+    height: token.$tap_target_compact;
     border-radius: token.$radius_full;
     color: token.$color_text_heading;
 
@@ -154,8 +155,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: token.$tap_target_compact;
+    height: token.$tap_target_compact;
     border: none;
     background: transparent;
     cursor: pointer;

@@ -331,4 +331,42 @@ describe("TextField", () => {
 		expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
 		expect(screen.queryByRole("button")).not.toBeInTheDocument();
 	});
+
+	// disabled 는 컨테이너 자식에 opacity 0.38 만 걸고 pointer-events 는 건드리지 않으므로,
+	// 내장 버튼은 disabled 속성을 직접 받아야 한다. 없으면 비활성 필드의 비밀번호가 드러난다.
+	it("disables the built-in password toggle with the field", () => {
+		render(<TextField label="Password" type="password" showPasswordToggle disabled />);
+		const toggle = screen.getByRole("button", { name: "Show password" });
+		expect(toggle).toBeDisabled();
+
+		fireEvent.click(toggle);
+		expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+	});
+
+	it("disables the built-in clear button with the field", () => {
+		const handleChange = vi.fn();
+		render(<TextField clearable defaultValue="text" disabled onValueChange={handleChange} />);
+		const clear = screen.getByRole("button", { name: "Clear" });
+		expect(clear).toBeDisabled();
+
+		fireEvent.click(clear);
+		expect(handleChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("textbox")).toHaveValue("text");
+	});
+
+	// showPasswordToggle 과 type 은 별개 prop 이라 type 을 빠뜨리기 쉽다. 보정이 없으면
+	// 값이 이미 평문인데 눈 아이콘만 달린, 아무 효과 없는 버튼이 된다.
+	it("falls back to a password input when the toggle is on without a type", () => {
+		render(<TextField label="Password" showPasswordToggle />);
+		const input = screen.getByLabelText("Password");
+		expect(input).toHaveAttribute("type", "password");
+
+		fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+		expect(input).toHaveAttribute("type", "text");
+	});
+
+	it("does not force a password type when the toggle is off", () => {
+		render(<TextField label="Name" />);
+		expect(screen.getByLabelText("Name")).not.toHaveAttribute("type", "password");
+	});
 });

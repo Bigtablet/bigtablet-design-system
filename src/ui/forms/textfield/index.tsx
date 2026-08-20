@@ -178,7 +178,12 @@ export const TextField = ({
 	const togglePassword = useCallback(() => {
 		setPasswordRevealed((revealed) => !revealed);
 	}, []);
-	const resolvedType = showPasswordToggle && passwordRevealed ? "text" : type;
+	// showPasswordToggle 과 type 은 별개 prop 이라 type 을 빠뜨리기 쉽다. 보정이 없으면 값이 이미
+	// 평문인데 눈 아이콘만 달린, 아무 효과 없는 버튼이 된다 - 토글을 켰으면 password 가 기본이다.
+	let resolvedType = type;
+	if (showPasswordToggle) {
+		resolvedType = passwordRevealed ? "text" : (type ?? "password");
+	}
 
 	// error 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
 	// 그때 실패를 성공처럼 보여주면 사용자가 잘못된 값을 그대로 제출하게 된다.
@@ -197,6 +202,9 @@ export const TextField = ({
 		className,
 	);
 
+	// 내장 버튼(토글·clear)에는 disabled 를 직접 넘긴다 - `_disabled` 스타일은 컨테이너 자식에
+	// opacity 만 걸고 pointer-events 는 건드리지 않아, 없으면 비활성 필드에서도 포커스·클릭이 된다.
+	// leadingAction/trailingAction 은 앱이 넘긴 임의 요소라 강제하지 않는다(앱 책임).
 	// 오른쪽 칸은 하나뿐이라 우선순위가 필요하다. 토글이 최우선 - 켠 쪽은 값이 있을 때도 계속 보여야 하고,
 	// 비밀번호 칸의 clear 는 잃어도 무해하다. 그 아래는 clear > trailingAction > trailingIcon.
 	const passwordToggleLabel = passwordRevealed
@@ -205,7 +213,12 @@ export const TextField = ({
 
 	const resolvedTrailing = showPasswordToggle ? (
 		<span className="text_field_icon text_field_action">
-			<button type="button" onClick={togglePassword} aria-label={passwordToggleLabel}>
+			<button
+				type="button"
+				onClick={togglePassword}
+				aria-label={passwordToggleLabel}
+				disabled={props.disabled}
+			>
 				{passwordRevealed ? (
 					<EyeOff size={iconSize.lg} aria-hidden="true" />
 				) : (
@@ -214,7 +227,13 @@ export const TextField = ({
 			</button>
 		</span>
 	) : clearable && innerValue ? (
-		<button type="button" className="text_field_clear" onClick={handleClear} aria-label="Clear">
+		<button
+			type="button"
+			className="text_field_clear"
+			onClick={handleClear}
+			aria-label="Clear"
+			disabled={props.disabled}
+		>
 			<ClearIcon />
 		</button>
 	) : trailingAction ? (
