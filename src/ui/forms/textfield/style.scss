@@ -144,9 +144,12 @@
     }
   }
 
-  // ── Clear button ───────────────────────────────────────────────────────
+  // ── Clear button / action slot ──────────────────────────────────────────
 
-  &_clear {
+  // `&_action > *` — 앱이 넘긴 조작 요소가 아이콘 칸(40x40)을 그대로 히트 영역으로 쓰게 한다
+  // (WCAG 2.5.8). 내장 clear 버튼과 hover/focus 처리를 공유해 두 슬롯의 시각이 갈리지 않는다.
+  &_clear,
+  &_action > * {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -298,6 +301,7 @@
   .text_field_label,
   .text_field_container,
   .text_field_clear,
+  .text_field_action > *,
   .text_field_helper {
     transition: none;
   }

@@ -194,7 +194,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
 | `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
-| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`, `clearable`, `onChangeAction` (value callback), `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
+| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle`, `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
 | `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |

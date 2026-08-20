@@ -389,10 +389,27 @@ import { TextField } from '@bigtablet/design-system';
 // 상태 표시
 <TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
 
-// 아이콘
-import { Search, Eye } from 'lucide-react';
+// 장식 아이콘 - aria-hidden 으로 접근성 트리에서 제외된다
+import { Search, X } from 'lucide-react';
 <TextField leadingIcon={<Search size={16} />} placeholder="검색..." />
-<TextField trailingIcon={<Eye size={16} />} type="password" />
+
+// 조작 요소 - aria-hidden 을 붙이지 않는다. 버튼은 반드시 이 슬롯에
+<TextField
+  label="검색"
+  trailingAction={
+    <button type="button" aria-label="검색어 지우기" onClick={reset}>
+      <X size={20} aria-hidden="true" />
+    </button>
+  }
+/>
+
+// 비밀번호 표시/숨기기 - 내장 토글 (문구는 i18n 때문에 앱이 주입)
+<TextField
+  label="비밀번호"
+  type="password"
+  showPasswordToggle
+  passwordToggleLabels={{ show: '비밀번호 보기', hide: '비밀번호 숨기기' }}
+/>
 
 // 지우기 버튼
 <TextField label="검색어" clearable onValueChange={(v) => setQuery(v)} />
@@ -420,8 +437,12 @@ import { Search, Eye } from 'lucide-react';
 | `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
-| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 |
-| `trailingIcon` | `ReactNode` | - | 오른쪽 아이콘 |
+| `leadingIcon` | `ReactNode` | - | 왼쪽 **장식** 아이콘 (`aria-hidden`) |
+| `trailingIcon` | `ReactNode` | - | 오른쪽 **장식** 아이콘 (`aria-hidden`) |
+| `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
+| `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
+| `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 (v3.11) |
+| `passwordToggleLabels` | `{ show: string; hide: string }` | 영문 | 토글 버튼 `aria-label` |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
@@ -436,6 +457,10 @@ import { Search, Eye } from 'lucide-react';
 > **v3.0 변경**: 내부 마크업이 `<fieldset>` + `<legend>` 구조에서 standalone `<label htmlFor>` 구조로 변경되었습니다. 공개 props는 동일하지만, 커스텀 SCSS에서 `.text_field_legend` 같은 내부 셀렉터를 오버라이드했다면 점검이 필요합니다.
 >
 > **v3.1 추가**: `imeStrategy` prop - 한글 IME 조합 중 콜백 전략. 기본 `"delayed"` (조합 완료 후 `onValueChange`), 실시간 검색/필터엔 `"immediate"` (조합 중에도 즉시 호출).
+>
+> **v3.11 추가 - 아이콘 슬롯 vs 조작 슬롯**: `leadingIcon` · `trailingIcon` 은 장식 전용이라 `aria-hidden="true"` 래퍼를 유지한다. 여기에 `<button>` 같은 포커스 가능한 요소를 넣으면 **포커스는 가는데 보조기기에는 존재하지 않는 요소**가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부한다. 조작 요소는 `leadingAction` · `trailingAction` 에 넣을 것 - 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 `aria-hidden` 만 빠지며, 넘긴 요소가 40x40 히트 영역을 채운다 (WCAG 2.5.8).
+>
+> 오른쪽 칸은 하나뿐이라 우선순위가 있다: `showPasswordToggle` > `clearable`(값 있을 때) > `trailingAction` > `trailingIcon`. 토글을 켜면 값이 차 있어도 계속 보인다 - 비밀번호 칸에서 토글이 사라지면 쓸 수 없기 때문. 왼쪽은 `leadingAction` > `leadingIcon`.
 
 ---
 
