@@ -1728,8 +1728,53 @@ const [isOpen, setIsOpen] = useState(false);
 | `open` | `boolean` | required | 열림 상태 |
 | `onClose` | `() => void` | - | 닫기 핸들러 |
 | `title` | `ReactNode` | - | 제목 |
-| `width` | `number \| string` | `520` | 모달 너비 |
+| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
+| `description` | `ReactNode` | - | 제목 아래 설명 |
+| `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 영역 자체가 없음 |
+| `footerAlign` | `'end' \| 'between' \| 'start'` | `'end'` | footer 정렬. `between` 은 좌우 분리(destructive 패턴) |
+| `width` | `number \| string` | `480` | 모달 너비 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
+| `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
+| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+
+#### 접근성 이름은 필수다
+
+`title` 이나 `ariaLabel` 중 **하나는 반드시** 줘야 한다. 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고, axe 의 `aria-dialog-name`(serious)이 잡는다.
+
+> 이전에는 이름이 없으면 영어 `"Dialog"` 로 조용히 채워졌다. 한국어 제품의 유일한 영어 문자열이었고, 이름을 빼먹은 사실을 감추기만 했다.
+
+#### 스크롤 — 내용이 길 때
+
+패널은 뷰포트 높이(`100dvh` - 여백)를 넘지 않고, **제목·푸터는 고정된 채 `children` 영역만 스크롤**된다. 앱이 따로 `max-height` 를 줄 필요가 없다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤된다.
+
+#### 오버레이 클릭 — 폼 모달에서는 끌 것
+
+`closeOnOverlay` 기본값은 `true` 다. 읽기 전용 상세 모달에는 맞지만, **입력 요소를 담은 모달에서는 바깥 클릭 한 번에 작성 중인 내용이 사라진다.** 폼·확인창에는 명시적으로 끈다.
+
+```tsx
+<Modal open={open} onClose={close} closeOnOverlay={false} title="변경사항 저장">
+```
+
+패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 **닫히지 않는다** — 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다.
+
+#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). 그래서 `children` 을 `open` 과 같은 값으로 감싸면 **본문만 먼저 사라지고 제목만 남은 빈 패널이 페이드아웃**된다 — 두 단계로 닫히는 것이 눈에 보인다.
+
+```tsx
+// ❌ item 이 null 되는 순간 본문만 사라진다
+<Modal open={!!item} onClose={close} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+
+// ✅ onExited 에서 비운다
+<Modal open={open} onClose={() => setOpen(false)} onExited={() => setItem(null)} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+```
+
+`Drawer` 도 같은 수명을 갖는다 (`onExited` 는 현재 `Modal` 만 제공 — Drawer 는 후속).
 
 ---
 
