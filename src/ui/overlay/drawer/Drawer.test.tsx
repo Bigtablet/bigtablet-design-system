@@ -552,4 +552,41 @@ describe("Drawer", () => {
 		expect(screen.getByText("바뀐 내용")).toBeInTheDocument();
 		expect(screen.queryByText("첫 내용")).not.toBeInTheDocument();
 	});
+
+	it("consumes Escape instead of letting it reach the overlay beneath", () => {
+		const outerClose = vi.fn();
+		const innerClose = vi.fn();
+		const { rerender } = render(
+			<Drawer open onClose={outerClose} title="아래">
+				<Drawer open={false} onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Drawer>
+			</Drawer>,
+		);
+		rerender(
+			<Drawer open onClose={outerClose} title="아래">
+				<Drawer open onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Drawer>
+			</Drawer>,
+		);
+
+		fireEvent.keyDown(screen.getByText("보호된 폼"), { key: "Escape" });
+
+		expect(innerClose).not.toHaveBeenCalled();
+		expect(outerClose).not.toHaveBeenCalled();
+	});
+
+	it("freezes title and footer along with children", () => {
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} title="항목 제목" footer={<button type="button">삭제</button>}>
+				<p>항목 본문</p>
+			</Drawer>,
+		);
+		rerender(<Drawer open={false} onClose={() => {}} />);
+
+		expect(screen.getByText("항목 제목")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
+		expect(screen.getByText("항목 본문")).toBeInTheDocument();
+	});
 });

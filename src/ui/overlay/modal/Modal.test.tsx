@@ -458,4 +458,53 @@ describe("Modal", () => {
 		expect(screen.getByText("바뀐 내용")).toBeInTheDocument();
 		expect(screen.queryByText("첫 내용")).not.toBeInTheDocument();
 	});
+
+	// dismissible={false} 라도 Escape 스택에는 등록돼야 한다. 등록하지 않으면 최상단 자리를
+	// 비워, Escape 가 아래에 있는 오버레이로 내려가 사용자가 보고 있지 않은 것이 닫힌다.
+	it("consumes Escape instead of letting it reach the overlay beneath", () => {
+		const outerClose = vi.fn();
+		const innerClose = vi.fn();
+		const { rerender } = render(
+			<Modal open onClose={outerClose} title="아래">
+				<Modal open={false} onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Modal>
+			</Modal>,
+		);
+		// 아래 모달이 먼저, 위 모달을 나중에 연다 → 위 모달이 스택 최상단
+		rerender(
+			<Modal open onClose={outerClose} title="아래">
+				<Modal open onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Modal>
+			</Modal>,
+		);
+
+		fireEvent.keyDown(screen.getByText("보호된 폼"), { key: "Escape" });
+
+		// 위 모달은 dismissible={false} 라 닫히지 않고, 아래 모달도 닫히지 않는다
+		expect(innerClose).not.toHaveBeenCalled();
+		expect(outerClose).not.toHaveBeenCalled();
+	});
+
+	// children 만 얼리면 같은 데이터에 묶인 footer/title 이 먼저 사라져 같은 버그가 재현된다.
+	it("freezes title, description and footer along with children", () => {
+		const { rerender } = render(
+			<Modal
+				open
+				onClose={() => {}}
+				title="항목 제목"
+				description="항목 설명"
+				footer={<button type="button">삭제</button>}
+			>
+				<p>항목 본문</p>
+			</Modal>,
+		);
+		rerender(<Modal open={false} onClose={() => {}} />);
+
+		expect(screen.getByText("항목 제목")).toBeInTheDocument();
+		expect(screen.getByText("항목 설명")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
+		expect(screen.getByText("항목 본문")).toBeInTheDocument();
+	});
 });
