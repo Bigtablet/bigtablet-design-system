@@ -214,6 +214,9 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-bottom-nav-height` | `BottomNav` 스타일시트 | `56px` | 고정 |
 | `--bt-bottom-nav-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 기기·방향 |
 | `--bt-bottom-nav-total-height` | 〃 | 위 둘의 합 | 〃 |
+| `--bt-bottom-nav-inset` | 〃 | `0px` | **DS 몫** — BottomNav 가 DOM 에 있을 때만 total-height. 앱은 쓰지 않습니다 |
+| `--bt-bottom-inset-app` | **앱** | `0px` | **앱 몫** — 앱이 소유한 하단 크롬(플로팅 바·고정 액션 바) 높이 |
+| `--bt-bottom-inset` | `theme.scss` (`body`) | 위 두 몫의 합 | 읽기 전용으로 쓰세요 — 쓰는 변수는 위 두 개입니다 |
 | `--bt-sidebar-height` | `Sidebar` 스타일시트 | `56px` | **뷰포트 폭 <600px 에서만 정의** (아래 주의) |
 | `--bt-sidebar-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 〃 |
 | `--bt-sidebar-total-height` | 〃 | 위 둘의 합 | 〃 |
@@ -222,7 +225,7 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 
 `--bt-bottom-nav-*` 세 변수는 `:root` 에 선언돼 있고 라이브러리 CSS 는 한 파일이므로, **BottomNav 를 렌더하지 않는 화면에서도 항상 정의돼 있습니다.** 하단 고정 요소에서 그대로 더하면 BottomNav 가 없는 페이지에서도 그만큼 밀립니다.
 
-실제로 하단이 가려진 높이는 `--bt-bottom-inset` 입니다 — 기본 `0px` 이고, `BottomNav` 가 DOM 에 있을 때만 값이 생깁니다.
+실제로 하단이 가려진 높이는 `--bt-bottom-inset` 입니다 — 기본 `0px` 이고, **BottomNav 가 DOM 에 있거나 앱이 `--bt-bottom-inset-app` 을 설정했을 때** 값이 생깁니다 (둘 다면 합).
 
 ```css
 /* ✅ BottomNav 유무에 따라 알아서 맞는다 */
@@ -231,6 +234,46 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 /* ❌ BottomNav 없는 페이지에서도 56px 밀린다 */
 .my_floating_bar { bottom: calc(16px + var(--bt-bottom-nav-total-height)); }
 ```
+
+#### 앱이 소유한 하단 크롬은 `--bt-bottom-inset-app` 에 씁니다
+
+플로팅 액션 바, 고정 하단 CTA 처럼 **앱이 소유한** 하단 크롬도 하단을 가립니다. 그 높이는 `--bt-bottom-inset-app` 에 쓰세요.
+
+```scss
+// ✅ 앱 몫에 쓴다 - DS 몫과 합쳐져 --bt-bottom-inset 이 된다
+body:has(.floating_bar) { --bt-bottom-inset-app: 96px; }
+
+// ❌ --bt-bottom-inset 을 직접 쓰지 마세요
+body:has(.floating_bar) { --bt-bottom-inset: 96px; }
+```
+
+직접 쓰면 안 되는 이유가 두 개입니다.
+
+1. **특이도가 같습니다.** `:has()` 의 특이도는 인자를 따르므로 DS 의 `body:has(.bottom_nav)` 와 앱의 `body:has(.floating_bar)` 가 둘 다 `(0,1,1)` 입니다. 그러면 CSS **로드 순서**가 승자를 정합니다
+2. **합성이 안 됩니다.** 둘이 동시에 떠 있으면 필요한 값은 둘 중 하나가 아니라 합인데, 한쪽이 다른 쪽을 덮습니다
+
+`--bt-bottom-inset` 은 두 몫의 **합**입니다. 앱 하단 바가 BottomNav 위에 쌓이는 배치를 기본으로 봤습니다.
+
+**기본(합) 동작 기준 결과** — 앱 하단 바가 96px 일 때:
+
+| BottomNav | 앱 하단 바 96px | `--bt-bottom-inset` |
+|---|---|---|
+| 있음 | 없음 | `56px` |
+| 있음 | 있음 | `152px` |
+| 없음 | 있음 | `96px` |
+| 없음 | 없음 | `0px` |
+
+**겹치는 배치**라면 — 앱 하단 바가 BottomNav 위에 쌓이지 않고 그 자리를 덮는다면 — 앱 몫에 `max()` 를 직접 쓰세요.
+
+```scss
+body:has(.floating_bar) {
+  --bt-bottom-inset-app: max(0px, 96px - var(--bt-bottom-nav-inset, 0px));
+}
+```
+
+이때 `있음 / 있음` 행은 `152px` 대신 `96px` 가 됩니다 (`56px + max(0, 96 - 56) = 56 + 40`). 나머지 행은 위 표와 같습니다.
+
+> z-index 는 이 계약과 별개입니다. DS 내부 순서는 `.modal`(100) < `.toast_container`(200) 로 맞아 있지만, 앱 레이어가 자기 스케일에서 더 높은 값을 쓰면 DS 요소를 덮습니다. 그 경우는 앱이 z-index 를 직접 조정해야 합니다.
 
 #### `--bt-sidebar-*` 는 컴포넌트가 아니라 뷰포트에 달려 있습니다
 
