@@ -41,6 +41,15 @@ export interface DrawerProps
 	footer?: React.ReactNode;
 	/** 오버레이 클릭 시 닫기 여부 (기본값: true) */
 	closeOnOverlay?: boolean;
+	/**
+	 * Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 "실수로 닫기" 축이라
+	 * 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.
+	 *
+	 * 주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다 - 오버레이는
+	 * `closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐.
+	 */
+	dismissible?: boolean;
+
 	/** 우상단 X 닫기 아이콘 표시 여부 (기본값: true) */
 	showCloseIcon?: boolean;
 	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
@@ -80,6 +89,7 @@ export const Drawer = ({
 	title,
 	footer,
 	closeOnOverlay = true,
+	dismissible,
 	showCloseIcon = true,
 	closeLabel = "닫기",
 	ariaLabel,
@@ -88,6 +98,17 @@ export const Drawer = ({
 	className,
 	...props
 }: DrawerProps) => {
+	// 퇴출 애니메이션 동안 본문을 붙잡는다. 부모가 `open` 과 `children` 을 같은 값에 묶으면
+	// 닫는 tick 에 본문이 먼저 비어, 제목만 남은 빈 패널이 페이드아웃한다 - 두 단계로 닫히는
+	// 것이 눈에 보인다. 마지막으로 열려 있던 children 을 기억해 그 동안 그대로 그린다.
+	// 다시 열리면 `open` 이 true 라 새 children 이 즉시 이긴다.
+	const lastChildrenRef = React.useRef(children);
+	if (open) lastChildrenRef.current = children;
+	const renderedChildren = open ? children : lastChildrenRef.current;
+	// Escape·오버레이를 한 축으로 - dismissible 을 주면 그것이 이긴다.
+	const overlayDismissible = dismissible ?? closeOnOverlay;
+	const escapeDismissible = dismissible ?? true;
+
 	const panelRef = React.useRef<HTMLDivElement>(null);
 	// 오버레이 닫기 판정용 - pointerdown 이 오버레이에서 시작했는지 기억한다.
 	const pressedOverlayRef = React.useRef(false);
@@ -104,7 +125,7 @@ export const Drawer = ({
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Modal/Popover/Tooltip 등과 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
 	// 마운트 전(하이드레이션)엔 등록하지 않아 화면에 없는 드로어가 Escape 스택 순서를 교란하지 않게 한다.
-	useOverlayEscape(open && isMounted, () => onClose?.());
+	useOverlayEscape(open && isMounted && escapeDismissible, () => onClose?.());
 
 	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
 	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
@@ -175,7 +196,7 @@ export const Drawer = ({
 			onClick={(e) => {
 				// 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다. 패널에서 시작한 드래그(텍스트 선택 등)를
 				// 오버레이에서 놓아도 닫히지 않는다 - 폼 드로어에서 입력이 사라지던 원인.
-				if (!closeOnOverlay) return;
+				if (!overlayDismissible) return;
 				if (e.target !== e.currentTarget) return;
 				if (!pressedOverlayRef.current) return;
 				onClose?.();
@@ -213,12 +234,12 @@ export const Drawer = ({
 						</h2>
 					</div>
 				)}
-				{children && (
+				{renderedChildren && (
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 다만 초기 포커스 대상에서는 제외한다 - 안쪽에
 					// 첫 입력이 있는데 빈 wrapper 에 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
 					<div className="drawer_body" tabIndex={0} data-focus-trap-skip-autofocus="">
-						{children}
+						{renderedChildren}
 					</div>
 				)}
 				{footer && <div className="drawer_footer">{footer}</div>}
