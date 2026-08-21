@@ -364,4 +364,98 @@ describe("Modal", () => {
 		expect(document.querySelector(".modal_panel")).toBeNull();
 		vi.unstubAllGlobals();
 	});
+
+	// ── children freeze ──────────────────────────────────────────────────────
+	// 부모가 open 과 본문을 같은 값에 묶는 것은 흔한 형태다. 그때 본문이 먼저 사라지면
+	// 제목만 남은 빈 패널이 페이드아웃해 두 단계로 닫히는 것이 보인다.
+	it("keeps the last children through the exit animation", () => {
+		const { rerender } = render(
+			<Modal open onClose={() => {}} title="상세">
+				<p>상세 내용</p>
+			</Modal>,
+		);
+		expect(screen.getByText("상세 내용")).toBeInTheDocument();
+
+		// 닫는 tick 에 부모가 데이터를 비운다
+		rerender(
+			<Modal open={false} onClose={() => {}} title="상세" />,
+		);
+		expect(screen.getByText("상세 내용")).toBeInTheDocument();
+	});
+
+	it("lets new children win when reopened during the exit animation", () => {
+		const { rerender } = render(
+			<Modal open onClose={() => {}} title="상세">
+				<p>첫 번째</p>
+			</Modal>,
+		);
+		rerender(<Modal open={false} onClose={() => {}} title="상세" />);
+		expect(screen.getByText("첫 번째")).toBeInTheDocument();
+
+		rerender(
+			<Modal open onClose={() => {}} title="상세">
+				<p>두 번째</p>
+			</Modal>,
+		);
+		expect(screen.getByText("두 번째")).toBeInTheDocument();
+		expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
+	});
+
+	// ── dismissible ──────────────────────────────────────────────────────────
+	it("blocks both Escape and overlay click when dismissible is false", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose} dismissible={false}>
+				Content
+			</Modal>,
+		);
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		fireEvent.keyDown(document.querySelector(".modal_panel") as HTMLElement, { key: "Escape" });
+		expect(handleClose).not.toHaveBeenCalled();
+	});
+
+	it("wins over closeOnOverlay when both are given", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose} closeOnOverlay={false} dismissible>
+				Content
+			</Modal>,
+		);
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		expect(handleClose).toHaveBeenCalledTimes(1);
+	});
+
+	it("leaves Escape working when only closeOnOverlay is off", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose} closeOnOverlay={false}>
+				Content
+			</Modal>,
+		);
+		fireEvent.keyDown(document.querySelector(".modal_panel") as HTMLElement, { key: "Escape" });
+		expect(handleClose).toHaveBeenCalledTimes(1);
+	});
+
+	// 열려 있는 동안 children 이 바뀌면 기억도 따라가야 한다. 초기값만 붙잡으면 닫을 때
+	// 처음 열었을 때의 본문으로 되돌아간다.
+	it("freezes the children it had when it closed, not the ones it opened with", () => {
+		const { rerender } = render(
+			<Modal open onClose={() => {}} title="상세">
+				<p>첫 내용</p>
+			</Modal>,
+		);
+		rerender(
+			<Modal open onClose={() => {}} title="상세">
+				<p>바뀐 내용</p>
+			</Modal>,
+		);
+		rerender(<Modal open={false} onClose={() => {}} title="상세" />);
+
+		expect(screen.getByText("바뀐 내용")).toBeInTheDocument();
+		expect(screen.queryByText("첫 내용")).not.toBeInTheDocument();
+	});
 });
