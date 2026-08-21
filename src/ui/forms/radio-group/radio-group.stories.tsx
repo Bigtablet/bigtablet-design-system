@@ -16,7 +16,7 @@ const meta: Meta<typeof RadioGroup> = {
 		orientation: {
 			control: "select",
 			options: ["vertical", "horizontal"],
-			description: "Layout direction. / 배치 방향.",
+			description: "배치 방향.",
 		},
 		error: {
 			control: "boolean",

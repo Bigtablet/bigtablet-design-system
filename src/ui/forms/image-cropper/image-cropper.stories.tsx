@@ -46,7 +46,7 @@ const meta = {
 	},
 	tags: ["autodocs"],
 	argTypes: {
-		src: { control: false, description: "크롭할 이미지 (`File`/`Blob`/URL). / Image to crop." },
+		src: { control: false, description: "크롭할 이미지 (`File`/`Blob`/URL)." },
 		circular: {
 			control: "boolean",
 			description: "원형 가이드(아바타용).",
@@ -70,11 +70,11 @@ const meta = {
 		},
 		minZoom: {
 			control: { type: "number", min: 1, max: 3, step: 0.5 },
-			description: "최소 배율. / Min zoom.",
+			description: "최소 배율.",
 		},
 		maxZoom: {
 			control: { type: "number", min: 1, max: 6, step: 0.5 },
-			description: "최대 배율. / Max zoom.",
+			description: "최대 배율.",
 		},
 		label: {
 			control: "text",

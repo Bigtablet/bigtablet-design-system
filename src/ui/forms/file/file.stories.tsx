@@ -26,7 +26,7 @@ const meta: Meta<typeof FileInput> = {
 		},
 		disabled: {
 			control: "boolean",
-			description: "Disabled state. / 비활성화 상태.",
+			description: "비활성화 상태.",
 		},
 		onFiles: { control: false },
 	},

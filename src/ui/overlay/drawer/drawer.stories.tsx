@@ -11,7 +11,7 @@ const meta: Meta<typeof Drawer> = {
 		placement: {
 			control: "radio",
 			options: ["left", "right", "bottom"],
-			description: "슬라이드 방향 / Slide direction",
+			description: "슬라이드 방향",
 		},
 		size: {
 			control: "text",

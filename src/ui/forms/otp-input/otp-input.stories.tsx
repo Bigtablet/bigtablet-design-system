@@ -14,11 +14,11 @@ const meta: Meta<typeof OtpInput> = {
 		},
 		error: {
 			control: "boolean",
-			description: "Error state. / 에러 상태입니다.",
+			description: "에러 상태입니다.",
 		},
 		disabled: {
 			control: "boolean",
-			description: "Disabled state. / 비활성화 상태입니다.",
+			description: "비활성화 상태입니다.",
 		},
 		supportingText: {
 			control: "text",
