@@ -28,8 +28,7 @@
   font-weight: token.$font_weight_medium;
   // 긴 텍스트 wrap 허용 + 다중 라인 중앙 정렬
   white-space: normal;
-  overflow-wrap: break-word;
-  word-break: keep-all; // 한글 어절 단위 줄바꿈
+  @include token.wrap_keep_all;
   text-align: center;
   box-shadow: token.$elevation_level2;
   width: max-content; // 짧은 텍스트는 폭 자동, 긴 텍스트는 max-width 까지
