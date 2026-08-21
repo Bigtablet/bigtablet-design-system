@@ -27,7 +27,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    translate: -50% -50%;
+    transform: translate(-50%, -50%);
     width: 100%; // 트랙 폭이 40/48 이라 이미 하한 이상
     height: token.$tap_target_dense;
 
