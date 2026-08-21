@@ -43,6 +43,11 @@ export interface TextFieldProps
 	/** 성공(검증 통과) 상태 여부. `error` 가 true 면 무시된다. */
 	success?: boolean;
 	/**
+	 * 식별자(아이디·인증코드·시리얼·사업자번호)를 담는 칸인지. 켜면 `l`/`I`/`1` 과 `0`/`O` 를
+	 * 구분되게 렌더한다 — 사용자가 한 글자씩 옮겨 적는 값의 오탈자를 줄인다.
+	 */
+	identifier?: boolean;
+	/**
 	 * 입력 필드 왼쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다.
 	 * 포커스 가능한 요소(버튼 등)를 넣어야 하면 `leadingAction` 을 쓸 것.
 	 */
@@ -111,6 +116,7 @@ export const TextField = ({
 	supportingText,
 	error,
 	success,
+	identifier,
 	leadingIcon,
 	trailingIcon,
 	leadingAction,
@@ -274,7 +280,7 @@ export const TextField = ({
 						<input
 							id={inputId}
 							ref={ref}
-							className="text_field_input"
+							className={cn("text_field_input", identifier && "text_field_input_identifier")}
 							aria-invalid={isError}
 							aria-describedby={helperId}
 							aria-label={!showLabel ? label : undefined}

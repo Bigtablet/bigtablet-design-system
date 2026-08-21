@@ -369,4 +369,16 @@ describe("TextField", () => {
 		render(<TextField label="Name" />);
 		expect(screen.getByLabelText("Name")).not.toHaveAttribute("type", "password");
 	});
+
+	// 식별자 칸 - 글자 판독을 위한 클래스만 붙인다. 실제 글꼴 효과는 SCSS 쪽이라
+	// 여기서는 클래스가 붙는지/안 붙는지만 본다 (jsdom 은 font-feature-settings 를 계산하지 않는다).
+	it("marks the input as an identifier field when identifier is on", () => {
+		render(<TextField label="사업자등록번호" identifier />);
+		expect(screen.getByLabelText("사업자등록번호")).toHaveClass("text_field_input_identifier");
+	});
+
+	it("leaves the input unmarked when identifier is off", () => {
+		render(<TextField label="이름" />);
+		expect(screen.getByLabelText("이름")).not.toHaveClass("text_field_input_identifier");
+	});
 });
