@@ -3229,6 +3229,45 @@ const [open, setOpen] = useState<string[]>(initialFromUrl);
 
 ---
 
+### Prose
+
+마크다운 등으로 렌더된 본문에 조판을 입힌다. **파서를 포함하지 않는다** — 앱이 `react-markdown` 같은 렌더러로 만든 결과를 감싸면 자손 셀렉터로 토큰 기반 타이포·간격·색이 적용된다(다크 모드 자동).
+
+```tsx
+import { Prose } from '@bigtablet/design-system';
+import ReactMarkdown from 'react-markdown';
+
+<Prose size="lg">
+  <ReactMarkdown>{policy}</ReactMarkdown>
+</Prose>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'md' \| 'lg'` | `'md'` | 본문 스케일 |
+| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | 루트 `div` 로 전달 |
+
+#### `size` 선택
+
+| | h1 / h2 / h3 | 제목 위 여백 | 쓰는 곳 |
+|---|---|---|---|
+| `md` (기본) | 24 / 20 / 18 | 20px | 공지 · FAQ · 이메일 프리뷰처럼 좁은 폭 |
+| `lg` | 28 / 24 / 20 | 32px | 약관 · 정책처럼 페이지를 채우는 긴 본문 |
+
+#### 다루는 요소
+
+`h1`~`h6` · `p` · `ul`/`ol`/`li`(중첩 포함) · `a` · `code` · `pre` · `blockquote`(중첩 포함) · `table`/`th`/`td` · `hr` · `img` · `strong` · `em` · `del`.
+
+#### 넓은 표·코드 블록
+
+`table` 과 `pre` 는 페이지를 가로로 밀지 않고 **자기 안에서 스크롤**된다. 스크롤이 실제로 생기는 경우에만 `tabindex="0"` 이 붙어 키보드로도 움직일 수 있다(axe `scrollable-region-focusable`). 폭이 넉넉해져 스크롤이 사라지면 떨어진다 — 불필요한 탭 정지가 남지 않는다.
+
+#### 본문 속 링크는 밑줄이 유지된다
+
+색만으로 구분하면 주변 텍스트와의 대비가 3:1 에 못 미쳐 WCAG 1.4.1(Use of Color) 위반이다. `text-decoration: none` 으로 덮어쓰지 말 것.
+
+---
+
 ### Table
 
 컬럼 정의 기반 데이터 테이블. 로딩 중에는 헤더를 유지한 채 바디만 [Skeleton](#skeleton) 행으로 대체하고, 정렬·행 선택·행 클릭을 지원한다.
