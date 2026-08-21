@@ -10,3 +10,26 @@ $border_width_none:      $border_width_0;
 $border_width_standard:  $border_width_1;
 $border_width_thick:     $border_width_2;
 $border_width_indicator: $border_width_2;
+
+// ── Hairline mixin ───────────────────────────────────────────────────────────
+//
+// 1px 경계선용 단축. `border: $border_width_standard solid $color_border_default` 는
+// `border: 1px solid #E5E5E5` 보다 길어서, 실측상 소비 앱 SCSS 에 `1px` 하드코딩이
+// 232 건 남아 있었다. 짧게 쓸 수 있어야 실제로 토큰을 쓴다.
+//
+// @example
+// ```scss
+// .card   { @include token.hairline; }              // 사방
+// .header { @include token.hairline(bottom); }      // 한 면
+// .active { @include token.hairline(left, token.$color_border_hover); }
+// ```
+
+@use "../colors" as colors;
+
+@mixin hairline($side: all, $color: colors.$color_border_default) {
+  @if $side == all {
+    border: $border_width_standard solid $color;
+  } @else {
+    border-#{$side}: $border_width_standard solid $color;
+  }
+}
