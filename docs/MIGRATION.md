@@ -36,6 +36,8 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ### 기본값이 바뀐 prop
 
+`Dropdown` 은 형제 prop 이 이미 한글이었습니다 (`searchPlaceholder = "검색…"`, `emptyText = "결과 없음"`) — `placeholder` 만 영문이라 한 컴포넌트 안에서 갈려 있었습니다.
+
 | 컴포넌트 | prop | 이전 | 이후 |
 |---|---|---|---|
 | `FileInput` | `label` | `"Choose file"` | `"파일 선택"` |
@@ -45,6 +47,9 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 | `ToastProvider` | `closeAriaLabel` | `"Close"` | `"닫기"` |
 | `Spinner` | `ariaLabel` | `"Loading"` | `"로딩 중"` |
 | `TextField` | `passwordToggleLabels` | `"Show password"` / `"Hide password"` | `"비밀번호 표시"` / `"비밀번호 숨기기"` |
+| `Dropdown` | `placeholder` | `"Select…"` | `"선택…"` |
+| `DatePicker` | `minDateSrFormat` | `"Minimum date: {date}"` | `"최소 날짜: {date}"` |
+| `DatePicker` | `selectableRangeUntilTodaySrText` | `"Selectable up to today"` | `"오늘까지 선택 가능"` |
 
 `FileInput` 의 `label` 은 `aria-label` 이 아니라 **화면에 보이는 버튼 텍스트**입니다 - 영어 화면에서 가장 눈에 띕니다.
 

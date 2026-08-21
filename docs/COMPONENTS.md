@@ -277,7 +277,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
 | `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
-| `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
+| `placeholder` | `string` | `'선택…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
@@ -443,7 +443,7 @@ import { Search, X } from 'lucide-react';
 | `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 (v3.11) |
-| `passwordToggleLabels` | `{ show: string; hide: string }` | 영문 | 토글 버튼 `aria-label` |
+| `passwordToggleLabels` | `{ show: string; hide: string }` | `{ show: '비밀번호 표시', hide: '비밀번호 숨기기' }` | 토글 버튼 `aria-label` |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
 | `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
