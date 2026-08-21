@@ -463,13 +463,7 @@
   position: relative;
 
   &__input {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
+    @include token.visually_hidden;
   }
 
   &__box {
@@ -1520,16 +1514,14 @@
    Utility Classes
    ======================================== */
 .bt-hidden { display: none !important; }
+/* React 의 token.visually_hidden 과 같은 믹스인에서 생성 - 두 번들이 갈라지지 않게 */
 .bt-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  @include token.visually_hidden;
+}
+
+/* 포커스되면 드러난다 - 스킵 링크 패턴 */
+.bt-sr-only-focusable {
+  @include token.visually_hidden_focusable;
 }
 
 /* ========================================
