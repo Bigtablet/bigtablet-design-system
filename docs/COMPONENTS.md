@@ -435,6 +435,7 @@ import { Search, X } from 'lucide-react';
 | `supportingText` | `string` | - | 도움말 텍스트 |
 | `error` | `boolean` | `false` | 에러 상태 (`success` 보다 우선) |
 | `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
+| `identifier` | `boolean` | `false` | 식별자 칸 - `l`/`I`/`1`, `0`/`O` 를 구분되게 렌더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
 | `leadingIcon` | `ReactNode` | - | 왼쪽 **장식** 아이콘 (`aria-hidden`) |
@@ -461,6 +462,19 @@ import { Search, X } from 'lucide-react';
 > **v3.11 추가 - 아이콘 슬롯 vs 조작 슬롯**: `leadingIcon` · `trailingIcon` 은 장식 전용이라 `aria-hidden="true"` 래퍼를 유지한다. 여기에 `<button>` 같은 포커스 가능한 요소를 넣으면 **포커스는 가는데 보조기기에는 존재하지 않는 요소**가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부한다. 조작 요소는 `leadingAction` · `trailingAction` 에 넣을 것 - 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 `aria-hidden` 만 빠지며, 넘긴 요소가 40x40 히트 영역을 채운다 (WCAG 2.5.8).
 >
 > 오른쪽 칸은 하나뿐이라 우선순위가 있다: `showPasswordToggle` > `clearable`(값 있을 때) > `trailingAction` > `trailingIcon`. 토글을 켜면 값이 차 있어도 계속 보인다 - 비밀번호 칸에서 토글이 사라지면 쓸 수 없기 때문. 왼쪽은 `leadingAction` > `leadingIcon`.
+
+#### `identifier` — 옮겨 적는 값의 오탈자 줄이기
+
+Pretendard 기본 글자꼴은 `l` · `I` · `1` 이 거의 같고 `0` 과 `O` 도 헷갈린다. 아이디·인증코드·시리얼·사업자번호처럼 **사용자가 화면을 보고 한 글자씩 옮겨 적는 값**에는 켠다.
+
+```tsx
+<TextField label="사업자등록번호" identifier />
+<TextField label="인증코드" identifier inputMode="numeric" />
+```
+
+Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero` 를 적용한다. Pretendard 가 아닌 폴백 폰트는 두 feature 를 무시하므로 안전하다.
+
+앱이 `.text_field_input` 을 직접 뚫어 `font-feature-settings` 를 주지 않아도 된다. SCSS 에서 같은 처리가 필요하면 `@include token.legible_identifiers` 를 쓴다 — `tabular_nums` · `slashed_zero` 와 겹쳐 쓰면 안 되는 함정은 [THEMING.md](./THEMING.md#하드코딩-대신-쓸-토큰) 참고.
 
 ---
 
@@ -715,6 +729,15 @@ const [isOn, setIsOn] = useState(false);
 | `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
 | `ariaLabel` | `string` | required | 접근성 라벨 (필수) |
 | `disabled` | `boolean` | `false` | 비활성화 |
+
+#### 히트 영역은 트랙보다 넓습니다
+
+트랙은 sm 40×24 · md 48×28 이지만, 스위치는 시각적으로 작은 것이 정상이라 크기를 키우는 대신 **히트 영역만** 넓혔습니다 — 데스크탑 32px, 모바일(<600px) 40px. 절대배치 `::after` 라서 레이아웃 공간은 차지하지 않습니다.
+
+> **세로로 쌓을 때는 16px 이상 띄우세요.** 모바일에서 sm 은 트랙 위아래로 8px 씩 넓어지므로, 간격이 그보다 좁으면 인접 토글의 히트 영역이 겹쳐 잘못된 토글이 눌릴 수 있습니다.
+
+Vanilla 번들의 `.bt-toggle` 도 동일하게 동작합니다.
+
 
 ---
 
@@ -1300,6 +1323,16 @@ const [filter, setFilter] = useState("all");
 
 Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** 고정. `SidebarItem` 자식과 함께 사용하며, 선택적으로 `SidebarSection`으로 그룹화. `collapsed` 모드로 아이콘만 표시되는 축소 상태 지원.
 
+#### CSS 변수 (layout 계산용)
+
+```css
+--bt-sidebar-height        /* 56px */
+--bt-sidebar-safe-area     /* env(safe-area-inset-bottom) */
+--bt-sidebar-total-height  /* 합산 */
+```
+
+> **뷰포트 폭 <600px 에서만 정의됩니다.** `@media (max-width: 599px)` 안의 `:root` 선언이라 **Sidebar 를 렌더하지 않는 페이지나 `mode="static"` Sidebar 에서도 값이 존재**하고, 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다. `var(--bt-sidebar-total-height, 0px)` 처럼 폴백을 두세요. 전체 계약은 [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수) 참고.
+
 #### 언제 쓰는가
 
 | 상황 | 선택 |
@@ -1448,7 +1481,16 @@ const [collapsed, setCollapsed] = useState(false);
 --bt-bottom-nav-height        /* 56px */
 --bt-bottom-nav-safe-area     /* env(safe-area-inset-bottom) */
 --bt-bottom-nav-total-height  /* 합산 - BottomNavSpacer 가 자동 사용 */
+--bt-bottom-inset             /* 하단이 실제로 가려진 높이. BottomNav 가 없으면 0px */
 ```
+
+> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** 위의 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 만 BottomNav 가 DOM 에 있을 때 값이 생깁니다.
+>
+> ```css
+> .my_floating_bar { bottom: calc(16px + var(--bt-bottom-inset)); }
+> ```
+>
+> `Toast` 는 모바일에서 이 값을 이미 반영합니다 - 앱이 `.toast_container` 를 보정하던 CSS 는 지우면 됩니다.
 
 **Props - BottomNav**
 
@@ -1728,8 +1770,67 @@ const [isOpen, setIsOpen] = useState(false);
 | `open` | `boolean` | required | 열림 상태 |
 | `onClose` | `() => void` | - | 닫기 핸들러 |
 | `title` | `ReactNode` | - | 제목 |
-| `width` | `number \| string` | `520` | 모달 너비 |
+| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
+| `description` | `ReactNode` | - | 제목 아래 설명 |
+| `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 영역 자체가 없음 |
+| `footerAlign` | `'end' \| 'between' \| 'start'` | `'end'` | footer 정렬. `between` 은 좌우 분리(destructive 패턴) |
+| `width` | `number \| string` | `480` | 모달 너비 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
+| `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
+| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+
+#### 접근성 이름은 필수다
+
+`title` 이나 `ariaLabel` 중 **하나는 반드시** 줘야 한다. 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고, axe 의 `aria-dialog-name`(serious)이 잡는다.
+
+> 이전에는 이름이 없으면 영어 `"Dialog"` 로 조용히 채워졌다. 한국어 제품의 유일한 영어 문자열이었고, 이름을 빼먹은 사실을 감추기만 했다.
+
+#### 스크롤 — 내용이 길 때
+
+패널은 뷰포트 높이(`100dvh` - 여백)를 넘지 않고, **제목·푸터는 고정된 채 `children` 영역만 스크롤**된다. 앱이 따로 `max-height` 를 줄 필요가 없다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤된다.
+
+#### 오버레이 클릭 — 폼 모달에서는 끌 것
+
+`closeOnOverlay` 기본값은 `true` 다. 읽기 전용 상세 모달에는 맞지만, **입력 요소를 담은 모달에서는 바깥 클릭 한 번에 작성 중인 내용이 사라진다.** 폼·확인창에는 명시적으로 끈다.
+
+```tsx
+<Modal open={open} onClose={close} closeOnOverlay={false} title="변경사항 저장">
+```
+
+패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 **닫히지 않는다** — 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다.
+
+#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). 그래서 `children` 을 `open` 과 같은 값으로 감싸면 **본문만 먼저 사라지고 제목만 남은 빈 패널이 페이드아웃**된다 — 두 단계로 닫히는 것이 눈에 보인다.
+
+```tsx
+// ❌ item 이 null 되는 순간 본문만 사라진다
+<Modal open={!!item} onClose={close} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+
+// ✅ onExited 에서 비운다
+<Modal open={open} onClose={() => setOpen(false)} onExited={() => setItem(null)} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+```
+
+`Drawer` 도 같은 수명을 갖고 `onExited` 를 제공한다.
+
+#### 포털 — `document.body` 로 렌더된다
+
+Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 이 DS 는 `transform` 을 광범위하게 쓰는데(`useSpringHover` 등), `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
+
+```tsx
+// ❌ 이중 포털 - 사이드바의 스태킹 컨텍스트를 벗어나려고 감쌀 필요가 없다
+createPortal(<Modal open={open}>…</Modal>, document.body)
+
+// ✅ 그대로 쓴다
+<Modal open={open}>…</Modal>
+```
+
+`Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast` 도 같은 계약이다.
 
 ---
 
@@ -1763,13 +1864,38 @@ const [isOpen, setIsOpen] = useState(false);
 | `placement` | `'left' \| 'right' \| 'bottom'` | `'right'` | 슬라이드 방향 |
 | `size` | `number \| string` | `360` | 패널 크기 - left/right 는 너비, bottom 은 높이 (number ⇒ px) |
 | `title` | `ReactNode` | - | 헤더 제목 (있으면 `aria-labelledby` 자동 연결) |
+| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
 | `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
-| `ariaLabel` | `string` | `'Dialog'` | `title` 없을 때 dialog 접근성 레이블 |
+| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
+
+**계약은 Modal 과 같다** — 아래 네 가지는 [Modal](#modal) 절의 설명과 동일하게 적용된다.
+
+#### 접근성 이름은 필수다
+
+`title` 이나 `ariaLabel` 중 **하나는 반드시** 줘야 한다. 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고, axe 의 `aria-dialog-name`(serious)이 잡는다.
+
+> 이전에는 이름이 없으면 영어 `"Dialog"` 로 조용히 채워졌다. Modal 과 같은 이유로 제거했다.
+
+#### 스크롤 — 내용이 길 때
+
+제목·푸터는 고정된 채 `children` 영역만 스크롤된다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤되고, 초기 포커스는 그 wrapper 가 아니라 안쪽 첫 컨트롤로 간다.
+
+#### 오버레이 클릭 — 폼 드로어에서는 끌 것
+
+`closeOnOverlay` 기본값은 `true` 다. **입력 요소를 담은 드로어에서는 바깥 클릭 한 번에 작성 중인 내용이 사라진다** — 폼에는 명시적으로 끈다. 패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 닫히지 않는다.
+
+#### 마운트 수명
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다. `children` 을 `open` 과 같은 값에 묶으면 본문만 먼저 사라지므로, 데이터는 `onExited` 에서 비운다.
+
+#### 포털
+
+`document.body` 로 포털된다. 앱이 다시 감쌀 필요가 없다.
 
 ---
 
@@ -2117,7 +2243,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - **키보드**: <kbd>Tab</kbd> trigger 포커스 → Enter/Space로 토글 / <kbd>Esc</kbd> 닫음 (+ trigger 복귀)
 - non-modal이므로 Tab을 트랩하지 않음 (Modal과 차이). 페이지 나머지와 상호작용 가능
 
-> 📌 `dialog`는 접근성 이름이 필요하다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줘라.
+> 📌 `dialog`는 접근성 이름이 필요하다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줘라. **폴백이 없다** — 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다 (Modal · Drawer 와 같은 계약).
 
 #### 애니메이션
 
@@ -2898,6 +3024,7 @@ action={
 | `description` | `ReactNode` | - | 보조 설명 (p, max-width 480) |
 | `action` | `ReactNode` | - | 액션 영역 (Button 등) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `fillHeight` | `boolean` | `false` | 부모 높이를 채우고 세로 중앙 정렬 (`flex: 1` + `justify-content: center`) |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `role`, `aria-*` 등 |
 
 #### 접근성
@@ -2908,6 +3035,18 @@ action={
 - `illustration`은 `aria-hidden="true"` 자동 적용 - 일러스트가 의미 전달용이면 title/description에 텍스트로 동일 의미 포함시키세요
 - **`illustration` 에 포커스 가능한 요소(버튼/링크 등)를 넣지 마세요.** `aria-hidden` 조상 때문에 포커스는 가는데 보조기기엔 존재하지 않는 요소가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부합니다. 조작 요소는 `action` 슬롯으로 - 여기엔 `aria-hidden` 이 붙지 않습니다
 - 색상은 caption tone - 너무 흐리지 않도록 description 길이는 1-2줄로 유지
+
+#### 화면 가운데 놓기 — `fillHeight`
+
+기본값은 가로 정렬만 하므로, 높이가 큰 영역에 두면 콘텐츠가 상단에 붙고 아래가 비어 보입니다. 404 · 검색 결과 없음 · 빈 목록처럼 영역 한가운데가 필요하면 `fillHeight` 를 켜세요 — 앱마다 `margin: auto` 래퍼를 만들 필요가 없습니다.
+
+```tsx
+<div style={{ display: "flex", flexDirection: "column", minHeight: "60vh" }}>
+  <EmptyState fillHeight title="검색 결과가 없습니다" />
+</div>
+```
+
+`flex: 1` 을 쓰므로 **부모가 세로 flex 컨테이너여야** 합니다 — 부모에 `display: flex; flex-direction: column` 과 높이(`min-height` 등)를 주세요. 부모에 높이만 주고 flex 를 안 걸면 `flex: 1` 이 무시되어 아무 변화가 없습니다. 미지정 시 동작은 기존과 동일합니다.
 
 #### DOM 구조 (SCSS override 시 참고)
 
@@ -3149,6 +3288,46 @@ import { Accordion } from "@bigtablet/design-system";
 const [open, setOpen] = useState<string[]>(initialFromUrl);
 <Accordion items={items} openKeys={open} onValueChange={(keys) => { setOpen(keys); syncToUrl(keys); }} />
 ```
+
+---
+
+### Prose
+
+마크다운 등으로 렌더된 본문에 조판을 입힌다. **파서를 포함하지 않는다** — 앱이 `react-markdown` 같은 렌더러로 만든 결과를 감싸면 자손 셀렉터로 토큰 기반 타이포·간격·색이 적용된다(다크 모드 자동).
+
+```tsx
+import { Prose } from '@bigtablet/design-system';
+import ReactMarkdown from 'react-markdown';
+
+<Prose size="lg">
+  <ReactMarkdown>{policy}</ReactMarkdown>
+</Prose>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'md' \| 'lg'` | `'md'` | 본문 스케일 |
+| `ref` | `Ref<HTMLDivElement>` | - | 루트 `div` ref (React 19 ref-as-prop) |
+| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | 루트 `div` 로 전달 |
+
+#### `size` 선택
+
+| | h1 / h2 / h3 | 제목 위 여백 | 쓰는 곳 |
+|---|---|---|---|
+| `md` (기본) | 24 / 20 / 18 | 20px | 공지 · FAQ · 이메일 프리뷰처럼 좁은 폭 |
+| `lg` | 28 / 24 / 20 | 32px | 약관 · 정책처럼 페이지를 채우는 긴 본문 |
+
+#### 다루는 요소
+
+`h1`~`h6` · `p` · `ul`/`ol`/`li`(중첩 포함) · `a` · `code` · `pre` · `blockquote`(중첩 포함) · `table`/`th`/`td` · `hr` · `img` · `strong` · `em` · `del`.
+
+#### 넓은 표·코드 블록
+
+`table` 과 `pre` 는 페이지를 가로로 밀지 않고 **자기 안에서 스크롤**된다. 스크롤이 실제로 생기는 경우에만 `tabindex="0"` 이 붙어 키보드로도 움직일 수 있다(axe `scrollable-region-focusable`). 폭이 넉넉해져 스크롤이 사라지면 떨어진다 — 불필요한 탭 정지가 남지 않는다.
+
+#### 본문 속 링크는 밑줄이 유지된다
+
+WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 본문의 대비가 3:1 이상이면** 허용되지만, DS 의 accent 색은 그 문턱을 넘지 못해 axe 가 `link-in-text-block` 으로 잡습니다. 밑줄은 색 대비와 무관하게 성립하므로 `text-decoration: none` 으로 덮어쓰지 마세요.
 
 ---
 

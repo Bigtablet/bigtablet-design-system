@@ -111,6 +111,13 @@
   --bt-elevation-level3: 0 3px 3px -3px rgba(0, 0, 0, 0.20), 0 9px 9px 0px rgba(0, 0, 0, 0.12);
   --bt-elevation-level4: 0 5px 5px -5px rgba(0, 0, 0, 0.20), 0 15px 15px 0px rgba(0, 0, 0, 0.12);
   --bt-elevation-level5: 0 8px 10px -5px rgba(0, 0, 0, 0.20), 0 20px 20px 0px rgba(0, 0, 0, 0.12);
+
+  // 뷰포트 하단을 DS 고정 요소(현재 BottomNav)가 실제로 차지하는 높이. 기본 0 이고,
+  // BottomNav 가 DOM 에 있으면 그 스타일시트가 body 에서 덮어쓴다. 하단 고정 요소를 두는
+  // 소비처는 `bottom: calc(16px + var(--bt-bottom-inset))` 처럼 더해 겹침을 피한다.
+  // 기본값을 여기 두는 이유: bottom-nav 스타일시트에 두면 그 컴포넌트를 안 쓰는 화면에서
+  // 변수가 아예 없어, 이 값을 참조하는 다른 컴포넌트가 암묵적으로 그 파일에 의존하게 된다.
+  --bt-bottom-inset: 0px;
 }
 
 // ── Dark overrides (mixin - 두 셀렉터에서 공유) ──────────────────────────

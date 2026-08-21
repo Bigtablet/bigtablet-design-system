@@ -8,6 +8,13 @@
   width: 100%;
   gap: token.$spacing_12;
 
+  // 부모 높이를 채우고 세로 중앙 정렬. 없을 때는 콘텐츠가 긴 래퍼 상단에 붙어 아래가 비어 보여
+  // 앱마다 `margin: auto` 래퍼를 따로 만들고 있었다. 미지정 시 위 기본값과 동일하게 동작한다.
+  &_fill_height {
+    flex: 1;
+    justify-content: center;
+  }
+
   &_illustration {
     color: token.$color_text_caption;
     display: inline-flex;

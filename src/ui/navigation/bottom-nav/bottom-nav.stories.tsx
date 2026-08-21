@@ -14,11 +14,11 @@ const meta: Meta<typeof BottomNav> = {
 		docs: {
 			description: {
 				component: `
-**BottomNav** - Mobile bottom navigation, composed of 2–5 \`BottomNavItem\`s. / **BottomNav** - 모바일 하단 네비게이션. 2–5개 \`BottomNavItem\` 으로 구성.
+**BottomNav** - 모바일 하단 내비게이션. 2–5개 \`BottomNavItem\` 으로 구성한다.
 
-Pinned to the bottom of the viewport via \`position: fixed; bottom: 0\`. Auto-padding for the iOS home-indicator area (\`env(safe-area-inset-bottom)\`). To keep content from being hidden, add a \`<BottomNavSpacer />\` at the end of the page or use the \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS variables for layout calculation. / \`position: fixed; bottom: 0\` 으로 viewport 하단 고정. iOS 홈 인디케이터 영역 (\`env(safe-area-inset-bottom)\`) 자동 패딩. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 깔거나 \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 layout 계산.
+\`position: fixed; bottom: 0\` 으로 viewport 하단에 고정된다. iOS 홈 인디케이터 영역(\`env(safe-area-inset-bottom)\`)에 패딩이 자동으로 붙는다. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 를 깔거나, \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 레이아웃을 계산한다.
 
-\`<BottomNavItem icon label active badge as href />\` - \`aria-current="page"\` is set automatically when \`active\`. / \`<BottomNavItem icon label active badge as href />\` - \`active\` 시 \`aria-current="page"\` 자동.
+\`<BottomNavItem icon label active badge as href />\` - \`active\` 면 \`aria-current="page"\` 가 자동으로 붙는다.
 				`,
 			},
 		},
@@ -87,7 +87,7 @@ export const WithBadge: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "Show a notification dot/count at the top-right of the icon via the `badge` prop, using the `<Badge>` component. / 아이콘 우상단에 `badge` prop 으로 알림 dot/카운트 표시. `<Badge>` 컴포넌트 활용.",
+				story: "아이콘 우상단에 `badge` prop 으로 알림 dot 이나 카운트를 표시한다. `<Badge>` 컴포넌트를 쓴다.",
 			},
 		},
 	},
@@ -131,7 +131,7 @@ export const FiveItems: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "Recommended up to 5 items with even distribution. More than that causes label truncation / insufficient tap area. / 5개까지 균등 분할 권장. 그 이상은 라벨 잘림 / 탭 영역 부족.",
+				story: "5개까지 균등 분할을 권장한다. 그 이상은 라벨이 잘리고 탭 영역이 부족해진다.",
 			},
 		},
 	},

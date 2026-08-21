@@ -89,11 +89,11 @@ const meta: Meta<typeof AlertDemo> = {
 		docs: {
 			description: {
 				component: `
-**Alert** - Modal dialog for actions that need immediate confirmation. / **Alert** - 즉각 확인이 필요한 모달 알림.
+**Alert** - 즉각 확인이 필요한 동작을 위한 모달 알림.
 
 Variants: \`info\` / \`success\` / \`warning\` / \`error\`.
-Key props / 주요 prop: \`title\`, \`message\`, \`showCancel\`, \`actionsAlign\`, \`destructive\` (red confirm emphasis / confirm 빨간 강조), \`showIcon\`.
-Usage / 사용: \`useAlert().showAlert({...})\` - inside \`AlertProvider\`. / \`AlertProvider\` 하위에서.
+주요 prop: \`title\`, \`message\`, \`showCancel\`, \`actionsAlign\`, \`destructive\` (confirm 을 빨간색으로 강조), \`showIcon\`.
+사용: \`AlertProvider\` 하위에서 \`useAlert().showAlert({...})\`.
 				`,
 			},
 		},

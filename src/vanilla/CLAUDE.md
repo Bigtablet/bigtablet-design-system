@@ -44,7 +44,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 |-----------|------------|-----------|--------|
 | Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width` | `:disabled` |
 | TextField | `.bt-text-field` | `--full-width` | |
-| TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success` | `:disabled` |
+| TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
 | Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
@@ -89,6 +89,9 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 <!-- Error state -->
 <input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error">
 <span class="bt-text-field__helper bt-text-field__helper--error">Error message</span>
+
+<!-- 식별자 칸 - l/I/1 과 0/O 를 구분되게 렌더 (아이디·인증코드·시리얼·사업자번호) -->
+<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--identifier">
 ```
 
 #### Checkbox

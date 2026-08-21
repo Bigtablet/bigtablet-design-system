@@ -1,0 +1,220 @@
+@use "src/styles/token" as token;
+
+.prose {
+  font-family: token.$font_family_primary;
+  color: token.$color_text_heading;
+  @include token.body_medium;
+
+  // 블록 요소는 아래로만 분리한다 - 상단 margin 을 쓰면 형제끼리 상쇄(collapse) 규칙에
+  // 기대게 되어 첫 블록의 여백이 컨테이너 밖으로 새는 등 예측이 어려워진다.
+  p,
+  ul,
+  ol,
+  blockquote,
+  table,
+  pre {
+    margin: 0 0 token.$spacing_16;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  // 소비처가 전역 `white-space: pre-line` 을 쓰는 경우, 마크다운 렌더러가 블록 사이에 넣는
+  // 개행 텍스트 노드가 빈 줄로 보인다. 산문 블록은 normal 이 옳은 값이라 여기서 못박는다.
+  // `pre` · `code` 는 개행이 의미를 갖는 자리라 제외한다.
+  &,
+  p,
+  li,
+  blockquote,
+  h1, h2, h3, h4, h5, h6,
+  dl, dd, ul, ol {
+    white-space: normal;
+  }
+
+  // ── 제목 ────────────────────────────────────────────────────────────────
+
+  h1, h2, h3, h4, h5, h6 {
+    color: token.$color_text_heading;
+    margin: token.$spacing_20 0 token.$spacing_8;
+
+    // 첫 요소가 제목이면 위 여백이 컨테이너 상단에 붙어 정렬이 어긋난다.
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    @include token.heading_medium;
+    padding-bottom: token.$spacing_8;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  h2 { @include token.heading_small; }
+  h3 { @include token.title_large_bold; }
+
+  h4, h5, h6 { @include token.title_medium_bold; }
+
+  // ── 목록 ────────────────────────────────────────────────────────────────
+
+  ul, ol {
+    // 전역 reset(`list-style: none`)을 쓰는 앱에서도 마커가 보이도록 명시한다.
+    padding-left: token.$spacing_24;
+  }
+
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+
+  li {
+    margin-bottom: token.$spacing_4;
+
+    // 마크다운 렌더러가 loose list 의 li 안에 p 를 넣는다 - 여백이 두 번 붙지 않게 한다.
+    > p {
+      margin-bottom: 0;
+    }
+
+    ul, ol {
+      margin: token.$spacing_4 0 0;
+    }
+  }
+
+  // ── 코드 ────────────────────────────────────────────────────────────────
+
+  code {
+    @include token.code;
+    background: token.$color_bg_solid_dim;
+    color: token.$color_text_heading;
+    border-radius: token.$radius_xs;
+    // em 단위 유지 - spacing 토큰은 px 라, 부모 글자 크기가 다른 자리(제목 안의 인라인 코드 등)
+    // 에서 여백 비율이 깨진다. 글자 크기에 따라가야 하는 값이다.
+    padding: 0.2em 0.45em;
+  }
+
+  pre {
+    background: token.$color_bg_inverse_surface;
+    border-radius: token.$radius_md;
+    padding: token.$spacing_20;
+    // 긴 코드 줄이 레이아웃을 밀지 않고 자기 안에서 스크롤된다.
+    overflow-x: auto;
+
+    code {
+      background: transparent;
+      color: token.$color_text_inverse;
+      padding: 0;
+      border-radius: 0;
+    }
+  }
+
+  // ── 인용 ────────────────────────────────────────────────────────────────
+
+  blockquote {
+    // border-width 토큰은 0/1/2px 뿐이라 4px 에 대응하는 값이 없다. 인용 표시줄은 1~2px 로는
+    // 눈에 안 띄어 앱 구현들도 4px 을 썼다 - 토큰을 추가할지는 별도 판단이 필요하다.
+    border-left: 4px solid token.$color_accent_default;
+    background: color-mix(in srgb, token.$color_accent_default #{token.$opacity_5 * 100%}, transparent);
+    border-radius: 0 token.$radius_sm token.$radius_sm 0;
+    padding: token.$spacing_8 token.$spacing_12;
+    color: token.$color_text_body;
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    // 중첩 인용까지 테두리·배경을 겹치면 층이 두꺼워져 읽기 어렵다.
+    blockquote {
+      border-left: none;
+      padding-left: 0;
+      background: transparent;
+      margin-bottom: 0;
+    }
+  }
+
+  // ── 인라인 ──────────────────────────────────────────────────────────────
+
+  a {
+    color: token.$color_accent_default;
+    // 본문 속 링크는 밑줄을 유지한다. WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도
+    // 링크와 주변 본문의 대비가 3:1 이상이면 허용되지만, accent 는 그 문턱을 넘지 못해
+    // axe 가 `link-in-text-block` 으로 잡았다. 밑줄은 색 대비와 무관하게 성립하는 수단이다.
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    &:hover { text-decoration-thickness: 2px; }
+
+    &:focus-visible {
+      outline: none;
+      border-radius: token.$radius_xs;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  strong { font-weight: token.$font_weight_semi_bold; }
+  em { font-style: italic; }
+
+  del {
+    text-decoration: line-through;
+    color: token.$color_text_caption;
+  }
+
+  hr {
+    border: none;
+    border-top: token.$border_width_thick solid token.$color_border_default;
+    margin: token.$spacing_24 0;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: token.$radius_sm;
+    display: block;
+    margin: token.$spacing_16 auto;
+  }
+
+  // ── 표 ──────────────────────────────────────────────────────────────────
+
+  // display: block 이라야 overflow-x 가 먹는다(table 은 overflow 를 무시한다).
+  // 넓은 표가 페이지를 가로로 밀지 않고 자기 안에서 스크롤된다.
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+
+  // 넘칠 때만 tabindex 가 붙는다(index.tsx). 포커스를 받으면 표시가 있어야 한다(WCAG 2.4.7).
+  pre[tabindex],
+  table[tabindex] {
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  th, td {
+    padding: token.$spacing_4 token.$spacing_12;
+    border: token.$border_width_standard solid token.$color_border_default;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    background: token.$color_bg_solid_dim;
+    font-weight: token.$font_weight_semi_bold;
+  }
+
+  // ── Size: lg (약관·정책 등 긴 본문) ──────────────────────────────────────
+  // 제목을 한 단계 키우고 위 여백을 넓혀, 스크롤이 긴 문서에서 절 경계가 눈에 띄게 한다.
+
+  &_size_lg {
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: token.$spacing_32;
+    }
+
+    h1 { font-size: token.$font_size_28; line-height: token.$line_height_36; }
+    h2 { font-size: token.$font_size_24; line-height: token.$line_height_32; }
+    h3 { font-size: token.$font_size_20; line-height: token.$line_height_28; }
+    h4, h5, h6 { font-size: token.$font_size_16; line-height: token.$line_height_24; }
+
+    li { margin-bottom: token.$spacing_8; }
+  }
+}

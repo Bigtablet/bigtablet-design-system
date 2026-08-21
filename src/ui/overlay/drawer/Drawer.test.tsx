@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Drawer } from "./index";
 
@@ -102,7 +102,9 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		fireEvent.click(screen.getByRole("dialog"));
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -113,7 +115,26 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		fireEvent.click(screen.getByRole("dialog"));
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		expect(handleClose).not.toHaveBeenCalled();
+	});
+
+	// 패널에서 누르고 오버레이에서 놓으면 `click` 은 공통 조상인 오버레이에 디스패치된다.
+	// 텍스트 선택 같은 정상 조작이 닫기로 이어져 폼 입력이 사라지던 버그 (Modal 과 동일 계약).
+	it("does not close when a drag starts in the panel and ends on the overlay", () => {
+		const handleClose = vi.fn();
+		render(
+			<Drawer open onClose={handleClose}>
+				Content
+			</Drawer>,
+		);
+		const overlay = screen.getByRole("dialog");
+		const panel = document.querySelector(".drawer_panel") as HTMLElement;
+
+		fireEvent.pointerDown(panel);
+		fireEvent.click(overlay);
 		expect(handleClose).not.toHaveBeenCalled();
 	});
 
@@ -157,7 +178,7 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
+		fireEvent.keyDown(document.querySelector(".drawer_panel") as HTMLElement, { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -183,9 +204,9 @@ describe("Drawer", () => {
 		);
 
 		// 포털 렌더라 DOM 순서가 React 트리 순서와 다를 수 있음 - 내용으로 inner 패널을 찾는다
-		const panels = screen.getAllByRole("document");
+		const panels = document.querySelectorAll(".drawer_panel");
 		expect(panels).toHaveLength(2);
-		const innerPanel = screen.getByText("Inner content").closest('[role="document"]') as HTMLElement;
+		const innerPanel = screen.getByText("Inner content").closest(".drawer_panel") as HTMLElement;
 		fireEvent.keyDown(innerPanel, { key: "Escape" });
 
 		// 최상단(나중에 연 inner)만 닫히고 outer 는 유지된다 (APG)
@@ -244,8 +265,50 @@ describe("Drawer", () => {
 		);
 		const dialog = screen.getByRole("dialog");
 		expect(dialog).toHaveAttribute("aria-modal", "true");
-		// title 이 없으면 aria-label fallback
-		expect(dialog).toHaveAttribute("aria-label", "Dialog");
+	});
+
+	// 폴백("Dialog")을 없앴다 - 이름을 빼먹으면 조용히 영어로 채워지는 대신 이름 없는
+	// 대화상자가 되어 axe `aria-dialog-name` 이 잡는다 (Modal 과 동일 계약).
+	it("leaves the dialog unnamed when neither title nor ariaLabel is given", () => {
+		render(
+			<Drawer open onClose={() => {}}>
+				Content
+			</Drawer>,
+		);
+		const dialog = screen.getByRole("dialog");
+		expect(dialog).not.toHaveAttribute("aria-label");
+		expect(dialog).not.toHaveAttribute("aria-labelledby");
+	});
+
+	// role="document" 제거 - ARIA 1.0 시절 워크어라운드였고 현대 스크린리더엔 불필요하다.
+	it("does not nest a document role inside the dialog", () => {
+		render(
+			<Drawer open onClose={() => {}} title="제목">
+				Content
+			</Drawer>,
+		);
+		expect(document.querySelector(".drawer_panel")).not.toHaveAttribute("role");
+	});
+
+	// 본문 wrapper 는 스크롤을 위해 tabIndex=0 을 갖지만, 초기 포커스는 그 빈 div 가 아니라
+	// 안쪽의 첫 상호작용 요소로 가야 한다. close 버튼이 없으면 wrapper 가 DOM 상 첫 매치가 된다.
+	it("focuses the first control inside the body, not the scroll wrapper", () => {
+		render(
+			<Drawer open onClose={() => {}} showCloseIcon={false} title="폼">
+				<input aria-label="이름" />
+			</Drawer>,
+		);
+		expect(document.activeElement).toBe(screen.getByLabelText("이름"));
+	});
+
+	it("still keeps the scroll wrapper in the tab cycle", () => {
+		render(
+			<Drawer open onClose={() => {}} showCloseIcon={false} title="폼">
+				<input aria-label="이름" />
+			</Drawer>,
+		);
+		const body = document.querySelector(".drawer_body") as HTMLElement;
+		expect(body.tabIndex).toBe(0);
 	});
 
 	it("uses ariaLabel for the dialog when provided without a title", () => {
@@ -355,28 +418,62 @@ describe("Drawer", () => {
 		expect(panel).toHaveClass("custom-drawer");
 	});
 
-	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
-		const consumerClick = vi.fn();
+	it("forwards data props and merges consumer style", () => {
 		render(
 			<Drawer
 				open
 				onClose={() => {}}
 				data-testid="panel-x"
 				style={{ backgroundColor: "rgb(255, 0, 0)" }}
-				{...({ role: "menu", onClick: consumerClick } as Record<string, unknown>)}
 			>
 				Content
 			</Drawer>,
 		);
 		// 포털 렌더라 render container 밖(document.body)에 붙는다
 		const panel = document.querySelector(".drawer_panel") as HTMLElement;
-		// data-* 등은 통과
 		expect(panel).toHaveAttribute("data-testid", "panel-x");
-		// role/onClick 은 컴포넌트가 전유 - 소비자 값 무시(스프레드 순서 회귀 시 깨짐)
-		expect(panel).toHaveAttribute("role", "document");
-		fireEvent.click(panel);
-		expect(consumerClick).not.toHaveBeenCalled();
-		// style 은 병합 - 소비자 값 적용
 		expect(panel.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
+	// ── 퇴출 수명 ────────────────────────────────────────────────────────────
+	it("does not fire onExited for a drawer that was never opened", () => {
+		const onExited = vi.fn();
+		render(
+			<Drawer open={false} onClose={() => {}} onExited={onExited}>
+				Content
+			</Drawer>,
+		);
+		expect(onExited).not.toHaveBeenCalled();
+	});
+
+	it("fires onExited after the panel unmounts", async () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+		const onExited = vi.fn();
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} onExited={onExited} title="상세">
+				Content
+			</Drawer>,
+		);
+		expect(onExited).not.toHaveBeenCalled();
+
+		rerender(
+			<Drawer open={false} onClose={() => {}} onExited={onExited} title="상세">
+				Content
+			</Drawer>,
+		);
+		await waitFor(() => expect(onExited).toHaveBeenCalledTimes(1));
+		expect(document.querySelector(".drawer_panel")).toBeNull();
+		vi.unstubAllGlobals();
 	});
 });

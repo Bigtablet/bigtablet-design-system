@@ -125,7 +125,7 @@
 
   &_variant_outline {
     background: transparent;
-    border: 1px solid token.$color_border_default;
+    @include token.hairline;
     color: token.$color_text_heading;
 
     &:hover:not(:disabled)::before {
@@ -209,7 +209,7 @@
   &_label {
     position: relative;
     white-space: normal;
-    word-break: break-word;
+    @include token.wrap_keep_all;
     text-align: center;
   }
 

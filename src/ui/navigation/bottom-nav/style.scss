@@ -9,6 +9,13 @@
   );
 }
 
+// 위 세 변수는 BottomNav 를 쓰지 않는 페이지에서도 항상 정의된다(:root + 단일 CSS 번들).
+// 그래서 하단 고정 요소가 그대로 더하면 BottomNav 가 없는 화면에서도 56px 밀린다.
+// 실제로 있을 때만 --bt-bottom-inset(기본 0, theme.scss) 에 값을 넣는다.
+body:has(.bottom_nav) {
+  --bt-bottom-inset: var(--bt-bottom-nav-total-height);
+}
+
 .bottom_nav {
   position: fixed;
   left: 0;
@@ -20,6 +27,10 @@
   align-items: stretch;
   justify-content: space-around;
 
+  // height 가 safe-area 를 이미 포함하므로 border-box 여야 한다. content-box 면 padding-bottom
+  // 의 safe-area 가 한 번 더 더해지고 border-top 1px 까지 밖으로 나가, 실제 높이가
+  // --bt-bottom-nav-total-height(= --bt-bottom-inset) 보다 커져 하단 고정 요소가 겹친다.
+  box-sizing: border-box;
   height: var(--bt-bottom-nav-total-height);
   padding-bottom: var(--bt-bottom-nav-safe-area); // iOS 홈 인디케이터 영역 회피
   background: token.$color_bg_solid;

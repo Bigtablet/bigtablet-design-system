@@ -12,10 +12,10 @@ const meta: Meta<typeof NavBar> = {
 		docs: {
 			description: {
 				component: `
-**NavBar** - Top page navigation. Slots: \`brand\` / \`children (NavLink)\` / \`actions\`. / **NavBar** - 페이지 상단 네비게이션. \`brand\` / \`children (NavLink)\` / \`actions\` 슬롯.
+**NavBar** - 페이지 상단 내비게이션. \`brand\` / \`children (NavLink)\` / \`actions\` 슬롯으로 구성한다.
 
-Variants: \`default\` (white bg + border), \`accent\` (dark bg), \`transparent\` (over a hero). / Variants: \`default\` (흰 bg + border), \`accent\` (검정 bg), \`transparent\` (hero 위).
-\`active={true}\` → \`aria-current="page"\` set automatically. / \`active={true}\` → \`aria-current="page"\` 자동.
+Variants: \`default\` (흰 bg + border) / \`accent\` (검정 bg) / \`transparent\` (hero 위).
+\`active={true}\` 면 \`aria-current="page"\` 가 자동으로 붙는다.
 				`,
 			},
 		},
@@ -27,8 +27,10 @@ type Story = StoryObj<typeof NavBar>;
 
 function Brand({ invert = false }: { invert?: boolean }) {
 	return (
+		// GH Pages 는 `/bigtablet-design-system/` 하위에 배포되므로 절대경로(`/images/…`)는
+		// 그 접두사를 건너뛰어 404 가 난다. iframe 기준 상대경로여야 로컬·배포 양쪽에서 맞는다.
 		<img
-			src="/images/logo/bigtablet.png"
+			src="images/logo/bigtablet.png"
 			alt="Bigtablet"
 			height={28}
 			style={{ display: "block", filter: invert ? "brightness(0) invert(1)" : undefined }}
@@ -93,7 +95,7 @@ export const Interactive: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "The active underline slides smoothly on click. / 클릭 시 active underline 부드럽게 이동.",
+				story: "클릭하면 active underline 이 부드럽게 이동한다.",
 			},
 		},
 	},

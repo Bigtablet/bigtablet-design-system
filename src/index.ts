@@ -100,6 +100,8 @@ export type {
 	MediaCardShadow,
 } from "./ui/display/media-card";
 export { MediaCard } from "./ui/display/media-card";
+export type { ProseProps, ProseSize } from "./ui/display/prose";
+export { Prose } from "./ui/display/prose";
 export type {
 	TableColumn,
 	TableProps,

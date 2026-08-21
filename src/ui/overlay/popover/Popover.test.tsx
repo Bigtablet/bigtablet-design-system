@@ -178,7 +178,9 @@ describe("Popover", () => {
 		expect(screen.getByRole("dialog", { name: "필터 옵션" })).toBeInTheDocument();
 	});
 
-	it('falls back to a "Dialog" accessible name when no label is given', () => {
+	// 폴백("Dialog")을 없앴다 - 이름을 빼먹으면 조용히 영어로 채워지는 대신 이름 없는
+	// 대화상자가 되어 axe `aria-dialog-name` 이 잡는다 (Modal/Drawer 와 동일 계약).
+	it("leaves the dialog unnamed when no label is given", () => {
 		render(
 			<Popover
 				trigger={<button type="button">Open</button>}
@@ -186,10 +188,12 @@ describe("Popover", () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("dialog", { name: "Dialog" })).toBeInTheDocument();
+		const dialog = screen.getByRole("dialog");
+		expect(dialog).not.toHaveAttribute("aria-label");
+		expect(dialog).not.toHaveAttribute("aria-labelledby");
 	});
 
-	it("does not add the fallback label when aria-labelledby is provided", () => {
+	it("names the dialog from aria-labelledby when provided", () => {
 		render(
 			<>
 				<h2 id="popover-title">필터</h2>

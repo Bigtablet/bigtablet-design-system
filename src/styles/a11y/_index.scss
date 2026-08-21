@@ -12,7 +12,9 @@ $focus_ring_success: var(--bt-focus-ring-success);
 // WCAG 2.1 SC 2.5.5 권장 최소: 44×44
 
 $tap_min_size:           44px;  // a11y 최소 권장
-$tap_target_dense:       32px;  // 데스크탑 인라인 폼, 컴팩트 UI
+$tap_target_dense:       32px;  // 데스크탑 인라인 폼, 컴팩트 UI. 인터랙티브 컨트롤의 하한이다
+                                //   - 터치 입력이 있는 화면에서는 responsive_height 로 승급할 것
+                                //   - 예외: 마우스 전용 내부 도구(admin 등)는 28px 까지 허용
 $tap_target_compact:     40px;  // 데스크탑 기본
 $tap_target_comfortable: 48px;  // 모바일/터치 기본 (44 초과)
 $tap_target_spacious:    56px;  // 강조 CTA, 풀스크린 액션

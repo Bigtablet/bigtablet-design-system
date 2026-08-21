@@ -49,12 +49,12 @@ const meta: Meta<typeof TextField> = {
 		docs: {
 			description: {
 				component: `
-**TextField** - Single-line text input. Floating label + leading/trailing icon + supporting text. / **TextField** - 한 줄 텍스트 입력. 플로팅 라벨 + leading/trailing 아이콘 + supporting text.
+**TextField** - 한 줄 텍스트 입력. 플로팅 라벨 + leading/trailing 아이콘 + supporting text.
 
-Sizes: \`sm\` / \`md\` (default) / \`lg\`. / Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
-Variants: \`outline\` (default, bordered) / \`filled\` (dim fill, no border — the border appears on hover or focus). / Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테두리 없음 — hover 또는 포커스 시 테두리가 드러남).
-\`error\` sets \`aria-invalid\`; \`aria-describedby\` is wired only when \`supportingText\` is given. / \`error\` 는 \`aria-invalid\` 를 설정하고, \`aria-describedby\` 는 \`supportingText\` 가 있을 때만 연결됩니다.
-\`success\` marks a passing validation and never sets \`aria-invalid\`. When \`error\` and \`success\` are both set, \`error\` wins. / \`success\` 는 검증 통과 표시이며 \`aria-invalid\` 를 켜지 않습니다. \`error\` 와 \`success\` 를 동시에 주면 \`error\` 가 우선합니다.
+크기: \`sm\` / \`md\` (기본) / \`lg\`.
+Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테두리 없음 — hover 또는 포커스 시 테두리가 드러남).
+\`error\` 는 \`aria-invalid\` 를 설정하고, \`aria-describedby\` 는 \`supportingText\` 가 있을 때만 연결된다.
+\`success\` 는 검증 통과 표시이며 \`aria-invalid\` 를 켜지 않는다. \`error\` 와 \`success\` 를 동시에 주면 \`error\` 가 우선한다.
 				`,
 			},
 		},
@@ -103,7 +103,7 @@ export const Variants: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "Side-by-side comparison of the two variants. / 두 variant 를 나란히 비교합니다.",
+				story: "두 variant 를 나란히 비교한다.",
 			},
 		},
 	},
@@ -141,7 +141,7 @@ export const ErrorWinsOverSuccess: Story = {
 		docs: {
 			description: {
 				story:
-					"With both `error` and `success` set, `error` wins — a failed validation must never be painted as a pass. / `error` 와 `success` 가 동시에 켜지면 `error` 가 이깁니다 - 검증 실패를 성공처럼 보여주면 안 되기 때문입니다.",
+					"`error` 와 `success` 가 동시에 켜지면 `error` 가 이긴다 - 검증 실패를 성공처럼 보여주면 안 되기 때문이다.",
 			},
 		},
 	},
@@ -183,7 +183,7 @@ export const PasswordToggle: Story = {
 		docs: {
 			description: {
 				story:
-					"`showPasswordToggle` renders a built-in reveal button. Labels are injected by the app so i18n stays app-side. / `showPasswordToggle` 는 표시/숨기기 버튼을 내장합니다. i18n 은 앱이 담당하므로 문구는 `passwordToggleLabels` 로 주입합니다.",
+					"`showPasswordToggle` 는 표시/숨기기 버튼을 내장한다. i18n 은 앱이 담당하므로 문구는 `passwordToggleLabels` 로 주입한다.",
 			},
 		},
 	},
@@ -204,7 +204,24 @@ export const ActionSlot: Story = {
 		docs: {
 			description: {
 				story:
-					"`trailingIcon` / `leadingIcon` stay `aria-hidden` for decoration; put focusable content in `trailingAction` / `leadingAction`, which are exposed to assistive tech. Putting a button in the icon slot breaks WCAG 4.1.2 and Chrome refuses the `aria-hidden`. / `trailingIcon`·`leadingIcon` 은 장식용이라 `aria-hidden` 을 유지합니다. 포커스 가능한 요소는 `trailingAction`·`leadingAction` 에 넣으세요 - 아이콘 슬롯에 버튼을 넣으면 WCAG 4.1.2 위반이고 Chrome 이 `aria-hidden` 적용을 거부합니다.",
+					"`trailingIcon`·`leadingIcon` 은 장식용이라 `aria-hidden` 을 유지한다. 포커스 가능한 요소는 `trailingAction`·`leadingAction` 에 넣을 것 - 아이콘 슬롯에 버튼을 넣으면 WCAG 4.1.2 위반이고 Chrome 이 `aria-hidden` 적용을 거부한다.",
+			},
+		},
+	},
+};
+
+export const IdentifierField: Story = {
+	render: () => (
+		<div style={{ display: "grid", gap: 16, width: 320 }}>
+			<TextField label="기본" defaultValue="Il1 O0 lIl0O" />
+			<TextField label="identifier" identifier defaultValue="Il1 O0 lIl0O" />
+		</div>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`identifier` 는 `l`·`I`·`1` 과 `0`·`O` 를 구분되게 렌더한다 (Pretendard `cv05`·`cv08` + `slashed-zero`). 아이디·인증코드·시리얼처럼 사용자가 한 글자씩 옮겨 적는 값에 쓴다. 두 칸의 값이 같으니 글자꼴만 비교하면 된다.",
 			},
 		},
 	},

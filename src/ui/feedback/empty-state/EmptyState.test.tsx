@@ -42,6 +42,17 @@ describe("EmptyState", () => {
 		);
 	});
 
+	// 미지정 시 기존과 동일해야 한다 - 옵션이 기본 동작을 바꾸면 모든 사용처가 회귀한다.
+	it("does not fill height unless asked", () => {
+		const { container } = render(<EmptyState title="t" />);
+		expect(container.firstChild).not.toHaveClass("empty_state_fill_height");
+	});
+
+	it("fills the parent height when fillHeight is set", () => {
+		const { container } = render(<EmptyState title="t" fillHeight />);
+		expect(container.firstChild).toHaveClass("empty_state_fill_height");
+	});
+
 	it("exposes the action slot to the accessibility tree", () => {
 		render(<EmptyState title="t" action={<button type="button">Add</button>} />);
 		expect(screen.getByRole("button", { name: "Add" }).closest("[aria-hidden]")).toBeNull();

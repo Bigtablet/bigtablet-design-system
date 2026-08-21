@@ -12,11 +12,11 @@ const meta: Meta<typeof Sidebar> = {
 		docs: {
 			description: {
 				component: `
-**Sidebar** - Left navigation for admin/dashboard. Combine \`SidebarItem\` + \`SidebarSection\`. / **Sidebar** - admin/dashboard 좌측 네비게이션. \`SidebarItem\` + \`SidebarSection\` 조합.
+**Sidebar** - admin·dashboard 의 좌측 내비게이션. \`SidebarItem\` + \`SidebarSection\` 을 조합한다.
 
-\`collapsed\` (240→64px) - icons only, with a favicon node via \`headerCollapsed\`. \`collapsible\` (default true) → floating chevron toggle. \`active={true}\` → \`aria-current="page"\` set automatically. / \`collapsed\` (240→64px) - 아이콘만 표시, \`headerCollapsed\` 로 favicon 노드. \`collapsible\` (기본 true) → floating chevron 토글. \`active={true}\` → \`aria-current="page"\` 자동.
+\`collapsed\` (240→64px) - 아이콘만 표시하고 \`headerCollapsed\` 로 favicon 노드를 준다. \`collapsible\` (기본 true) → floating chevron 토글. \`active={true}\` → \`aria-current="page"\` 자동.
 
-**Responsive** - default \`mode="auto"\`: below viewport \`< 600px\` it automatically transforms into a bottom bar (BottomNav style). Header/footer/section labels are hidden and items become a horizontal stack. Use \`mode="static"\` to disable the transform (admin desktop-only cases). / **Responsive** - 기본 \`mode="auto"\`: viewport \`< 600px\` 에서 자동으로 하단 bar (BottomNav 형태) 로 변신. header/footer/섹션 라벨 hide, 아이템은 horizontal stack. \`mode="static"\` 으로 변신 끄기 (admin desktop-only 케이스).
+**반응형** - 기본 \`mode="auto"\`: viewport \`< 600px\` 에서 자동으로 하단 bar (BottomNav 형태) 로 변신한다. header/footer/섹션 라벨은 숨고 아이템은 horizontal stack 이 된다. \`mode="static"\` 으로 변신을 끌 수 있다 (admin desktop 전용 케이스).
 				`,
 			},
 		},
@@ -35,8 +35,10 @@ const SAMPLE_ITEMS = [
 
 function BrandHeader() {
 	return (
+		// GH Pages 는 `/bigtablet-design-system/` 하위에 배포되므로 절대경로(`/images/…`)는
+		// 그 접두사를 건너뛰어 404 가 난다. iframe 기준 상대경로여야 로컬·배포 양쪽에서 맞는다.
 		<img
-			src="/images/logo/bigtablet.png"
+			src="images/logo/bigtablet.png"
 			alt="Bigtablet"
 			height={28}
 			style={{ display: "block" }}
@@ -48,7 +50,7 @@ function FaviconHeader() {
 	// collapsed 시 표시되는 favicon (작은 정사각형 마크)
 	return (
 		<img
-			src="/images/logo/favicon.png"
+			src="images/logo/favicon.png"
 			alt="Bigtablet"
 			width={28}
 			height={28}

@@ -14,7 +14,7 @@ const meta: Meta<typeof Tooltip> = {
 			control: "select",
 			options: ["top", "bottom", "left", "right"],
 			description:
-				"선호 위치. 뷰포트를 벗어나면 반대편으로 flip + 교차축 shift 되어 실제 위치는 계산 결과를 따른다. / Preferred side. On viewport overflow it flips to the opposite side and shifts on the cross axis, so the final position follows the computed result.",
+				"선호 위치. 뷰포트를 벗어나면 반대편으로 flip + 교차축 shift 되어 실제 위치는 계산 결과를 따른다.",
 		},
 		delay: {
 			control: "number",
@@ -39,10 +39,10 @@ const meta: Meta<typeof Tooltip> = {
 		docs: {
 			description: {
 				component: `
-**Tooltip** - Non-blocking supplementary description on hover/focus. For click interactions use Popover. / hover/focus 시 비차단 보조 설명. 클릭 상호작용은 Popover.
+**Tooltip** - hover·focus 시 화면을 막지 않고 보조 설명을 띄운다. 클릭 상호작용은 Popover 를 쓴다.
 
-Key props: \`content\`, \`placement\` (preferred side — auto flip/shift when it would overflow the viewport; portaled to \`body\`), \`delay\` (default 200ms), \`disabled\`. / 주요 prop: \`content\`, \`placement\` (선호 위치 — 뷰포트를 벗어나면 자동 flip/shift, \`body\` 로 포탈), \`delay\` (기본 200ms), \`disabled\`.
-\`role="tooltip"\` + \`aria-describedby\` set automatically. / \`role="tooltip"\` + \`aria-describedby\` 자동.
+주요 prop: \`content\`, \`placement\` (선호 위치 — 뷰포트를 벗어나면 자동 flip/shift, \`body\` 로 포탈), \`delay\` (기본 200ms), \`disabled\`.
+\`role="tooltip"\` + \`aria-describedby\` 가 자동으로 설정된다.
 				`.trim(),
 			},
 		},

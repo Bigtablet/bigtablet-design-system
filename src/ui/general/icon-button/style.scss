@@ -119,7 +119,7 @@
 
   &_variant_outlined {
     background: transparent;
-    border: 1px solid token.$color_border_default;
+    @include token.hairline;
     color: token.$color_text_heading;
 
     &:hover:not(:disabled)::before {

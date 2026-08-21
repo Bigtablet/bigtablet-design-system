@@ -17,11 +17,11 @@ const meta: Meta<typeof Avatar> = {
 		docs: {
 			description: {
 				component: `
-**Avatar** - User profile display. Image takes priority; falls back to \`name\` initials when missing or on load failure. / **Avatar** - 사용자 프로필. 이미지 우선, 실패/없으면 \`name\` initials fallback.
+**Avatar** - 사용자 프로필 표시. 이미지가 우선이고, 없거나 로드에 실패하면 \`name\` 의 initials 로 대체한다.
 
-Sizes: \`xs\` 24 / \`sm\` 32 / \`md\` 40 / \`lg\` 48 / \`xl\` 64.
-Shapes: \`circle\` (people) / \`square\` (brand). - **Shapes**: \`circle\` (사람) / \`square\` (브랜드).
-Initials rule: 1 word → first letter, 2+ words → first letter of first + last word. / initials 규칙: 1단어 → 첫 글자, 2+단어 → 첫+마지막 단어 첫 글자.
+크기: \`xs\` 24 / \`sm\` 32 / \`md\` 40 / \`lg\` 48 / \`xl\` 64.
+모양: \`circle\` (사람) / \`square\` (브랜드).
+initials 규칙: 1단어면 첫 글자, 2단어 이상이면 첫 단어와 마지막 단어의 첫 글자.
 				`,
 			},
 		},

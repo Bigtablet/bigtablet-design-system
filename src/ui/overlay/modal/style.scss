@@ -18,7 +18,14 @@
     border-radius: token.$radius_lg;
     box-shadow: token.$elevation_level3;
     max-width: calc(100% - #{token.$spacing_32 * 2});
+    // 뷰포트보다 긴 내용이 위아래로 잘려 접근 불가가 되던 것을 막는다. body 스크롤이 잠긴 상태라
+    // 페이지 스크롤로도 닿을 수 없었다. 제목·푸터는 고정되고 본문만 스크롤된다(&_body).
+    // dvh 는 모바일 사파리 주소창을 따라가고, 미지원 브라우저는 위의 vh 선언을 쓴다.
+    max-height: calc(100vh - #{token.$spacing_32 * 2});
+    max-height: calc(100dvh - #{token.$spacing_32 * 2});
     padding: token.$spacing_24;
+    // visible 유지 - hidden 으로 바꾸면 우상단 close 버튼의 focus ring(box-shadow)이 잘린다.
+    // 넘치는 내용은 &_body 가 자기 안에서 처리한다.
     overflow: visible;
     will-change: transform, opacity;
 
@@ -63,7 +70,9 @@
     margin: 0;
     padding-right: token.$spacing_32; // 우상단 close 버튼과 겹침 방지
     color: token.$color_text_heading;
-    @include token.heading_large_bold;
+    // 28px 고정이면 360px 화면에서 제목 가용 폭이 280px(패널 패딩 48 + close 자리 32 차감)뿐이라
+    // 열 자 남짓에서 두 줄로 접혔다. compact 에서 24px 로 한 단계 내린다.
+    @include token.heading_large_responsive;
   }
 
   // ── Description (title 아래 paragraph) ─────────────────────────────────
@@ -83,8 +92,19 @@
   // ── Body (자유 children - 폼/리스트 등) ────────────────────────────────
 
   &_body {
+    // 패널 max-height 를 넘는 분량은 여기서만 스크롤한다. min-height: 0 이 없으면 flex item 의
+    // 기본 min-content 때문에 축소되지 않아 스크롤이 생기지 않고 패널이 그대로 넘친다.
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     color: token.$color_text_body;
     @include token.body_medium;
+
+    // tabIndex=0 으로 포커스를 받으므로 표시가 있어야 한다 (WCAG 2.4.7).
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
   }
 
   // ── Footer (액션 영역) ─────────────────────────────────────────────────
