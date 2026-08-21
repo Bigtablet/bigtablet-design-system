@@ -190,9 +190,9 @@ export const Popover = ({
 							ref={popoverRef}
 							role="dialog"
 							tabIndex={-1}
-							// aria-labelledby 가 없으면 이름 없는 dialog 가 되므로 Modal/Drawer 와 동일하게
-							// "Dialog" 로 폴백한다 (WCAG 2.1 SC 4.1.2).
-							aria-label={ariaLabelledby ? ariaLabel : (ariaLabel ?? "Dialog")}
+							// 이름을 폴백하지 않는다 - Modal/Drawer 와 같은 계약이다. 영문 폴백은 한국어 UI 에서
+							// 그대로 낭독되고, 무엇보다 이름 누락을 가려 axe `aria-dialog-name` 이 거짓 통과한다.
+							aria-label={ariaLabel}
 							aria-labelledby={ariaLabelledby}
 							style={style}
 							className={cn("popover", className)}
