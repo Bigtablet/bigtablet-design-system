@@ -23,7 +23,7 @@ body:has(.bottom_nav) {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: token.$z_level2;
+  z-index: token.$z_chrome;
 
   display: flex;
   align-items: stretch;

@@ -28,7 +28,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: token.$z_level1;
+    z-index: token.$z_content;
   }
 
   &_overlay_dark .hero_overlay {
@@ -58,7 +58,7 @@
 
   &_content {
     position: relative;
-    z-index: token.$z_level2;
+    z-index: token.$z_chrome;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;

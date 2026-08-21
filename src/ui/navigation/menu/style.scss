@@ -8,7 +8,7 @@
 .menu {
   position: absolute;
   top: calc(100% + 4px);
-  z-index: token.$z_level5;
+  z-index: token.$z_popup;
   min-width: 180px;
   // 라이트: 흰색 / 다크: bg_solid_dim (neutral_925, canvas 보다 한 톤 밝음 → elevation)
   background: token.$color_bg_solid;

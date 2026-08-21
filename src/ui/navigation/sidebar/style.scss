@@ -155,7 +155,7 @@
     position: absolute;
     top: token.$spacing_24;
     right: -12px; // 절반 sidebar 밖으로
-    z-index: token.$z_level1;
+    z-index: token.$z_content;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -253,7 +253,7 @@
     border-right: none;
     border-top: token.$border_width_standard solid token.$color_border_default;
     box-shadow: token.$elevation_level2;
-    z-index: token.$z_level2;
+    z-index: token.$z_chrome;
     padding-bottom: var(--bt-sidebar-safe-area); // iOS 홈 인디케이터
 
     // 변신 시 숨겨질 영역들 - header / footer / 섹션 라벨 / collapse btn
