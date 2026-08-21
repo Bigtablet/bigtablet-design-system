@@ -24,7 +24,7 @@ describe("TopLoading", () => {
 
 		expect(progressbar).toHaveAttribute("aria-valuemin", "0");
 		expect(progressbar).toHaveAttribute("aria-valuemax", "100");
-		expect(progressbar).toHaveAttribute("aria-label", "Page loading");
+		expect(progressbar).toHaveAttribute("aria-label", "페이지 로딩 중");
 	});
 
 	it("uses custom aria-label", () => {

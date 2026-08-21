@@ -277,7 +277,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
 | `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
-| `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
+| `placeholder` | `string` | `'선택…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
@@ -443,8 +443,9 @@ import { Search, X } from 'lucide-react';
 | `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 (v3.11) |
-| `passwordToggleLabels` | `{ show: string; hide: string }` | 영문 | 토글 버튼 `aria-label` |
+| `passwordToggleLabels` | `{ show: string; hide: string }` | `{ show: '비밀번호 표시', hide: '비밀번호 숨기기' }` | 토글 버튼 `aria-label` |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
+| `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
 | ~~`onChangeAction`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). Next 서버 액션 전달용 `Action` 접미사가 필요하면 계속 사용 가능 |
@@ -822,7 +823,7 @@ import { FileInput } from '@bigtablet/design-system';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | `'Choose file'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
+| `label` | `string` | `'파일 선택'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
 | `variant` | `'button' \| 'preview'` | `'button'` | 표시 형태. `preview` 는 큰 박스에 이미지를 채우는 단일 이미지 업로더 |
 | `previewSize` | `number` | `160` | `variant="preview"` 박스 한 변 크기 (px) |
 | `preview` | `boolean` | `false` | 이미지 선택 시 64×64 썸네일을 버튼 아래 나열 (`variant="button"` 전용) |
@@ -1057,6 +1058,15 @@ function YourComponent() {
 }
 ```
 
+#### `ToastProvider` props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `closeAriaLabel` | `string` | `'닫기'` | 각 토스트의 X 버튼 `aria-label` |
+| `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜬다 |
+
+> **다국어(ko/en) 앱은 두 값을 주입하세요.** DS 기본값은 한글입니다 — [MIGRATION.md](./MIGRATION.md#v3130-a11y-문자열-기본값-한글화) 참고.
+
 ---
 
 ### Spinner
@@ -1072,6 +1082,7 @@ import { Spinner } from '@bigtablet/design-system';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `number` | `24` | 스피너 크기 (px) |
+| `ariaLabel` | `string` | `'로딩 중'` | `role="status"` 의 접근성 이름 |
 
 > ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시킨다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춘다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
 
@@ -1101,7 +1112,7 @@ import { TopLoading } from '@bigtablet/design-system';
 | `progress` | `number` | - | 진행률 (0-100), 없으면 indeterminate |
 | `color` | `string` | primary | 로딩바 색상 |
 | `height` | `number` | `3` | 로딩바 높이 (px) |
-| `ariaLabel` | `string` | `'Page loading'` | 접근성 라벨 |
+| `ariaLabel` | `string` | `'페이지 로딩 중'` | 접근성 라벨 |
 
 ---
 
@@ -1186,6 +1197,9 @@ const [page, setPage] = useState(1);
 | `page` | `number` | required | 현재 페이지 |
 | `totalPages` | `number` | required | 전체 페이지 수 |
 | `onPageChange` | `(page: number) => void` | required | 페이지 변경 핸들러 |
+| `prevLabel` | `string` | `'이전 페이지'` | 이전 버튼 `aria-label` |
+| `nextLabel` | `string` | `'다음 페이지'` | 다음 버튼 `aria-label` |
+| `navLabel` | `string` | `'페이지 이동'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
 
 ---
 
@@ -1676,6 +1690,7 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 |------|------|---------|-------------|
 | `items` | `BreadcrumbItem[]` | required | 경로 아이템 배열. 마지막은 현재 페이지로 자동 처리 |
 | `separator` | `ReactNode` | `<ChevronRight size={14} />` | 아이템 사이 구분자. `/`, `>`, 커스텀 아이콘 등 가능 |
+| `navLabel` | `string` | `'현재 위치'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
 
 **BreadcrumbItem**
 

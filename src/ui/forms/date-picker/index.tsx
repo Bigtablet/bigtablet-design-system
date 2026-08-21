@@ -32,20 +32,20 @@ interface DatePickerBaseProps {
 	 * @deprecated `fullWidth` 사용 또는 CSS로 처리
 	 */
 	width?: number | string;
-	/** 연도 select의 라벨/플레이스홀더 (기본값: "Year") */
+	/** 연도 select의 라벨/플레이스홀더 (기본값: "년") */
 	yearLabel?: string;
-	/** 월 select의 라벨/플레이스홀더 (기본값: "Month") */
+	/** 월 select의 라벨/플레이스홀더 (기본값: "월") */
 	monthLabel?: string;
-	/** 일 select의 라벨/플레이스홀더 (기본값: "Day") */
+	/** 일 select의 라벨/플레이스홀더 (기본값: "일") */
 	dayLabel?: string;
 	/**
 	 * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
-	 * `{date}` 자리에 minDate 값이 치환됩니다. (기본값: "Minimum date: {date}")
+	 * `{date}` 자리에 minDate 값이 치환됩니다. (기본값: "최소 날짜: {date}")
 	 */
 	minDateSrFormat?: string;
 	/**
 	 * selectableRange="until-today" 설정 시 스크린리더에 전달할 안내 문구.
-	 * (기본값: "Selectable up to today")
+	 * (기본값: "오늘까지 선택 가능")
 	 */
 	selectableRangeUntilTodaySrText?: string;
 }
@@ -88,11 +88,11 @@ export const DatePicker = ({
 	disabled,
 	fullWidth = true,
 	width,
-	yearLabel = "Year",
-	monthLabel = "Month",
-	dayLabel = "Day",
-	minDateSrFormat = "Minimum date: {date}",
-	selectableRangeUntilTodaySrText = "Selectable up to today",
+	yearLabel = "년",
+	monthLabel = "월",
+	dayLabel = "일",
+	minDateSrFormat = "최소 날짜: {date}",
+	selectableRangeUntilTodaySrText = "오늘까지 선택 가능",
 }: DatePickerProps) => {
 	const groupId = React.useId();
 	const constraintId = React.useId();

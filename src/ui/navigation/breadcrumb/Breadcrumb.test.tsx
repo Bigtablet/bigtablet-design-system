@@ -59,6 +59,12 @@ describe("Breadcrumb", () => {
 
 	it("uses nav with aria-label", () => {
 		render(<Breadcrumb items={[{ label: "Home" }]} />);
+		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "현재 위치");
+	});
+
+	// <nav> 랜드마크 이름은 스크린리더의 리전 목록에 그대로 뜬다. 이전엔 영문 하드코딩이었다.
+	it("lets the app override the nav landmark name", () => {
+		render(<Breadcrumb items={[{ label: "홈", href: "/" }, { label: "상세" }]} navLabel="Breadcrumb" />);
 		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Breadcrumb");
 	});
 });

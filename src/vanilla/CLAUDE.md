@@ -181,7 +181,7 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 
 <div id="my-modal" class="bt-modal" data-bt-modal>
   <div class="bt-modal__panel" style="width: 480px;">
-    <button class="bt-modal__close" data-modal-close aria-label="Close">
+    <button class="bt-modal__close" data-modal-close aria-label="닫기">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
     <div class="bt-modal__header">Title</div>
@@ -221,9 +221,9 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 #### Spinner
 ```html
 <!-- 기본 24px (React <Spinner /> 기본값) -->
-<span class="bt-spinner" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" role="status" aria-label="로딩 중"></span>
 <!-- 임의 크기 -->
-<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="로딩 중"></span>
 ```
 
 #### Pagination

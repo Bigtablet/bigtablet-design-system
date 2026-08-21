@@ -37,7 +37,7 @@ interface DropdownCommonProps {
 	id?: string;
 	/** 드롭다운 위에 표시할 플로팅 라벨 텍스트 */
 	label?: string;
-	/** 선택 전 표시할 플레이스홀더 (기본값: "Select…") */
+	/** 선택 전 표시할 플레이스홀더 (기본값: "선택…") */
 	placeholder?: string;
 	/** 표시할 옵션 목록 */
 	options: DropdownOption[];
@@ -119,7 +119,7 @@ export const Dropdown = (props: DropdownProps) => {
 	const {
 		id,
 		label,
-		placeholder = "Select…",
+		placeholder = "선택…",
 		options,
 		disabled,
 		size = "md",
