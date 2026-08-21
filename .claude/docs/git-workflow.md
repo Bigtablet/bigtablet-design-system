@@ -153,20 +153,26 @@ EOF
 
 - **Base branch**: `develop` (main 아님!)
 - **PR title**: 브랜치 이름과 동일
-- **PR body**: 한글로 작성
+- **PR body**: 한글로 작성. 섹션 제목은 아래 네 개를 그대로 쓴다 (자세한 규칙은 [CLAUDE.md](../../CLAUDE.md#pr-본문-섹션-규칙))
 
 ```bash
 gh pr create --base develop --title "feat/domain-name" --body "$(cat <<'EOF'
-## 제목
-feat/domain-name
+## 작업 개요
+
+이슈 #000 - 무엇을 왜 했는지 한두 문단.
 
 ## 작업한 내용
+
 - [x] 작업1
 - [x] 작업2
-- [x] 작업3
+
+## 검증
+
+- 테스트/빌드/실측 결과
 
 ## 전달할 추가 이슈
-- 이슈1 (없으면 "없음")
+
+- 이슈1 (없으면 생략)
 EOF
 )"
 ```
