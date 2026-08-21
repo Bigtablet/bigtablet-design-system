@@ -1776,6 +1776,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `footerAlign` | `'end' \| 'between' \| 'start'` | `'end'` | footer 정렬. `between` 은 좌우 분리(destructive 패턴) |
 | `width` | `number \| string` | `480` | 모달 너비 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이긴다 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
@@ -1800,23 +1801,42 @@ const [isOpen, setIsOpen] = useState(false);
 
 패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 **닫히지 않는다** — 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다.
 
-#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
-
-패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). 그래서 `children` 을 `open` 과 같은 값으로 감싸면 **본문만 먼저 사라지고 제목만 남은 빈 패널이 페이드아웃**된다 — 두 단계로 닫히는 것이 눈에 보인다.
+사용자 입장에서 Escape 와 오버레이 클릭은 같은 "실수로 닫기" 축이다. 따로 다루면 한쪽만 막는 실수가 나온다 — `closeOnOverlay={false}` 만 주면 Escape 로는 여전히 닫힌다. 둘을 함께 막으려면 `dismissible` 을 쓴다.
 
 ```tsx
-// ❌ item 이 null 되는 순간 본문만 사라진다
+// 오버레이만 막는다 - Escape 로는 닫힌다
+<Modal open={open} onClose={close} closeOnOverlay={false} />
+
+// 두 경로 모두 막는다 - X 버튼과 명시적 액션으로만 닫힌다
+<Modal open={open} onClose={close} dismissible={false} />
+```
+
+`dismissible` 을 주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다.
+
+#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). **DS 가 닫히는 순간의 `children` 을 붙잡으므로**, 부모가 같은 tick 에 데이터를 비워도 본문이 먼저 사라지지 않는다.
+
+```tsx
+// ✅ 이대로 써도 된다 - 퇴출 동안 마지막 본문이 그대로 보인다
 <Modal open={!!item} onClose={close} title="상세">
   {item && <Body item={item} />}
 </Modal>
+```
 
-// ✅ onExited 에서 비운다
+앱이 마지막 값을 붙잡는 shim(`useState` + `useEffect`)을 두고 있었다면 지울 수 있다.
+
+다시 열리면 **새** `children` 이 즉시 이긴다. 붙잡는 값은 열려 있는 동안 계속 갱신되므로, 닫을 때 보이는 것은 처음 열었을 때가 아니라 **닫히는 순간**의 본문이다.
+
+데이터 자체를 정리할 시점이 필요하면 `onExited` 를 쓴다 — 화면 때문이 아니라 메모리·구독 정리 목적이다.
+
+```tsx
 <Modal open={open} onClose={() => setOpen(false)} onExited={() => setItem(null)} title="상세">
   {item && <Body item={item} />}
 </Modal>
 ```
 
-`Drawer` 도 같은 수명을 갖고 `onExited` 를 제공한다.
+`Drawer` 도 같은 수명·freeze 동작을 갖고 `onExited` · `dismissible` 을 제공한다.
 
 #### 포털 — `document.body` 로 렌더된다
 
@@ -1867,6 +1887,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
 | `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이긴다 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
