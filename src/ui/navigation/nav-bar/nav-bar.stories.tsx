@@ -27,8 +27,10 @@ type Story = StoryObj<typeof NavBar>;
 
 function Brand({ invert = false }: { invert?: boolean }) {
 	return (
+		// GH Pages 는 `/bigtablet-design-system/` 하위에 배포되므로 절대경로(`/images/…`)는
+		// 그 접두사를 건너뛰어 404 가 난다. iframe 기준 상대경로여야 로컬·배포 양쪽에서 맞는다.
 		<img
-			src="/images/logo/bigtablet.png"
+			src="images/logo/bigtablet.png"
 			alt="Bigtablet"
 			height={28}
 			style={{ display: "block", filter: invert ? "brightness(0) invert(1)" : undefined }}

@@ -332,10 +332,12 @@ export const AdminDashboard: Story = {
 			{/* Sidebar */}
 			<Sidebar
 				header={
-					<img src="/images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
+					// 로고 경로는 iframe 기준 상대경로다 — 절대경로(`/images/…`)로 되돌리면 GH Pages
+					// 하위 경로(`/bigtablet-design-system/`)를 건너뛰어 404 가 난다. 로컬은 루트 서빙이라 안 드러난다.
+					<img src="images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
 				}
 				headerCollapsed={
-					<img src="/images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
+					<img src="images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
 				}
 				footer={
 					<div
