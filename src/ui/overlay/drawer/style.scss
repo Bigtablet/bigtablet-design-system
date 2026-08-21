@@ -94,6 +94,12 @@
     padding: token.$spacing_24;
     color: token.$color_text_body;
     @include token.body_medium;
+
+    // tabIndex=0 으로 포커스를 받으므로 표시가 있어야 한다 (WCAG 2.4.7).
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
   }
 
   // ── Footer (액션 영역) ─────────────────────────────────────────────────
