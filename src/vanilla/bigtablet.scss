@@ -411,6 +411,11 @@
       border-color: var(--bt-color-success) !important;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
     }
+
+    /* 식별자 칸 - React TextField 의 `identifier` prop 과 같은 처리 */
+    &--identifier {
+      @include token.legible_identifiers;
+    }
   }
 
   &__helper {
