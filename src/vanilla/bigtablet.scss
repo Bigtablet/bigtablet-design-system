@@ -149,6 +149,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  // React 의 .button_label 과 동일한 한글 줄바꿈 (vanilla 는 label span 이 없어 여기에 준다)
+  @include token.wrap_keep_all;
   gap: var(--bt-spacing-sm);
   border-radius: var(--bt-radius-full);
   border: none;
@@ -408,6 +410,11 @@
     &--success {
       border-color: var(--bt-color-success) !important;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    /* 식별자 칸 - React TextField 의 `identifier` prop 과 같은 처리 */
+    &--identifier {
+      @include token.legible_identifiers;
     }
   }
 
@@ -1503,6 +1510,8 @@
 .bt-toast {
   font-family: var(--bt-font-family);
   font-size: var(--bt-font-size-base);
+  // React 의 .toast_message 와 동일한 한글 줄바꿈
+  @include token.wrap_keep_all;
   border-radius: var(--bt-radius-md);
   box-shadow: var(--bt-elevation-3);
 }

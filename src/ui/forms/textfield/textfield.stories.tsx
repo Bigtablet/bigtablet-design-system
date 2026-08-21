@@ -209,3 +209,20 @@ export const ActionSlot: Story = {
 		},
 	},
 };
+
+export const IdentifierField: Story = {
+	render: () => (
+		<div style={{ display: "grid", gap: 16, width: 320 }}>
+			<TextField label="기본" defaultValue="Il1 O0 lIl0O" />
+			<TextField label="identifier" identifier defaultValue="Il1 O0 lIl0O" />
+		</div>
+	),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`identifier` 는 `l`·`I`·`1` 과 `0`·`O` 를 구분되게 렌더한다 (Pretendard `cv05`·`cv08` + `slashed-zero`). 아이디·인증코드·시리얼처럼 사용자가 한 글자씩 옮겨 적는 값에 쓴다. 두 칸의 값이 같으니 글자꼴만 비교하면 된다.",
+			},
+		},
+	},
+};

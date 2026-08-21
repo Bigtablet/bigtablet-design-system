@@ -209,7 +209,7 @@
   &_label {
     position: relative;
     white-space: normal;
-    word-break: break-word;
+    @include token.wrap_keep_all;
     text-align: center;
   }
 
