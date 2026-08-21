@@ -10,19 +10,19 @@ describe("DatePicker", () => {
 
 	it("renders year/month selects by default", () => {
 		render(<DatePicker onChange={() => {}} />);
-		// label + placeholder 로 각 Dropdown 에 두 번씩 "Year"/"Month" 나타남
-		expect(screen.getAllByText("Year").length).toBeGreaterThan(0);
-		expect(screen.getAllByText("Month").length).toBeGreaterThan(0);
+		// label + placeholder 로 각 Dropdown 에 두 번씩 "년"/"월" 나타남
+		expect(screen.getAllByText("년").length).toBeGreaterThan(0);
+		expect(screen.getAllByText("월").length).toBeGreaterThan(0);
 	});
 
 	it("renders day select in year-month-day mode", () => {
 		render(<DatePicker mode="year-month-day" onChange={() => {}} />);
-		expect(screen.getAllByText("Day").length).toBeGreaterThan(0);
+		expect(screen.getAllByText("일").length).toBeGreaterThan(0);
 	});
 
 	it("does not render day select in year-month mode", () => {
 		render(<DatePicker mode="year-month" onChange={() => {}} />);
-		expect(screen.queryByText("Day")).not.toBeInTheDocument();
+		expect(screen.queryByText("일")).not.toBeInTheDocument();
 	});
 
 	it("renders 3 select buttons in year-month-day mode", () => {

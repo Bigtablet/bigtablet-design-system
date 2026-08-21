@@ -2,39 +2,39 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Pagination } from "./index";
 
-describe("Pagination", () => {
+describe("페이지 이동", () => {
 	it("renders pagination navigation", () => {
 		render(<Pagination page={1} totalPages={10} onChange={() => {}} />);
-		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Pagination");
+		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "페이지 이동");
 	});
 
 	it("renders previous and next buttons", () => {
 		render(<Pagination page={5} totalPages={10} onChange={() => {}} />);
-		expect(screen.getByLabelText("Previous page")).toBeInTheDocument();
-		expect(screen.getByLabelText("Next page")).toBeInTheDocument();
+		expect(screen.getByLabelText("이전 페이지")).toBeInTheDocument();
+		expect(screen.getByLabelText("다음 페이지")).toBeInTheDocument();
 	});
 
 	it("disables previous button on first page", () => {
 		render(<Pagination page={1} totalPages={10} onChange={() => {}} />);
-		expect(screen.getByLabelText("Previous page")).toBeDisabled();
+		expect(screen.getByLabelText("이전 페이지")).toBeDisabled();
 	});
 
 	it("disables next button on last page", () => {
 		render(<Pagination page={10} totalPages={10} onChange={() => {}} />);
-		expect(screen.getByLabelText("Next page")).toBeDisabled();
+		expect(screen.getByLabelText("다음 페이지")).toBeDisabled();
 	});
 
 	it("enables both buttons on middle page", () => {
 		render(<Pagination page={5} totalPages={10} onChange={() => {}} />);
-		expect(screen.getByLabelText("Previous page")).not.toBeDisabled();
-		expect(screen.getByLabelText("Next page")).not.toBeDisabled();
+		expect(screen.getByLabelText("이전 페이지")).not.toBeDisabled();
+		expect(screen.getByLabelText("다음 페이지")).not.toBeDisabled();
 	});
 
 	it("calls onChange with previous page when clicking previous", () => {
 		const onChange = vi.fn();
 		render(<Pagination page={5} totalPages={10} onChange={onChange} />);
 
-		fireEvent.click(screen.getByLabelText("Previous page"));
+		fireEvent.click(screen.getByLabelText("이전 페이지"));
 		expect(onChange).toHaveBeenCalledWith(4);
 	});
 
@@ -42,7 +42,7 @@ describe("Pagination", () => {
 		const onChange = vi.fn();
 		render(<Pagination page={5} totalPages={10} onChange={onChange} />);
 
-		fireEvent.click(screen.getByLabelText("Next page"));
+		fireEvent.click(screen.getByLabelText("다음 페이지"));
 		expect(onChange).toHaveBeenCalledWith(6);
 	});
 
@@ -81,7 +81,7 @@ describe("Pagination", () => {
 	it("calls onPageChange (canonical) when clicking previous", () => {
 		const onPageChange = vi.fn();
 		render(<Pagination page={5} totalPages={10} onPageChange={onPageChange} />);
-		fireEvent.click(screen.getByLabelText("Previous page"));
+		fireEvent.click(screen.getByLabelText("이전 페이지"));
 		expect(onPageChange).toHaveBeenCalledWith(4);
 	});
 
@@ -92,11 +92,17 @@ describe("Pagination", () => {
 			<Pagination page={5} totalPages={10} onPageChange={onPageChange} onChange={onChange} />,
 		);
 
-		fireEvent.click(screen.getByLabelText("Previous page"));
+		fireEvent.click(screen.getByLabelText("이전 페이지"));
 
 		expect(onPageChange).toHaveBeenCalledTimes(1);
 		expect(onPageChange).toHaveBeenCalledWith(4);
 		expect(onChange).not.toHaveBeenCalled();
 	});
 
+
+	// <nav> 랜드마크 이름은 스크린리더의 리전 목록에 그대로 뜬다. 이전엔 영문 하드코딩이었다.
+	it("lets the app override the nav landmark name", () => {
+		render(<Pagination page={2} totalPages={5} onPageChange={() => {}} navLabel="Pagination" />);
+		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Pagination");
+	});
 });
