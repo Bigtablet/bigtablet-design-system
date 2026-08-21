@@ -16,6 +16,7 @@
 // ════════════════════════════════════════════════════════════════════════
 
 @use "./colors/index" as *;
+@use "./z-index/index" as zindex;
 
 // ── Light (기본) ────────────────────────────────────────────────────────
 :root {
@@ -121,6 +122,18 @@
   // 둘이 동시에 있을 때 한쪽이 다른 쪽을 덮는다. 그래서 분리한다.
   --bt-bottom-nav-inset: 0px; // DS 몫 - BottomNav 가 있으면 그 스타일시트가 채운다
   --bt-bottom-inset-app: 0px; // 앱 몫 - 플로팅 바·고정 액션 바 등 앱이 소유한 하단 크롬
+
+  // 쌓임 순서. 값이 결정되는 곳은 CSS 라서, SCSS 를 쓰지 않는 소비자(인라인 스타일, 런타임
+  // 계산)도 DS 레이어를 참조할 수 있어야 한다. SCSS 쪽은 token.$z_* 로 같은 값이 나온다.
+  //
+  // 앱 레이어를 DS 사이에 놓을 때는 값을 베끼지 말고 이 변수로 계산한다.
+  //   .floating_bar { z-index: calc(var(--bt-z-notification) - 1); }
+  --bt-z-content: #{zindex.$z_content};           //   10
+  --bt-z-chrome: #{zindex.$z_chrome};             //  100
+  --bt-z-app-chrome: #{zindex.$z_app_chrome};     //  150 - 앱 크롬용 대역
+  --bt-z-notification: #{zindex.$z_notification}; //  200
+  --bt-z-loading: #{zindex.$z_loading};           //  500
+  --bt-z-popup: #{zindex.$z_popup};               // 1000
 }
 
 // 합성은 body 에서 한다. DS 몫을 `body:has(.bottom_nav)` 가 채우므로 :root 에서 계산하면
