@@ -206,6 +206,12 @@
   // 제목을 한 단계 키우고 위 여백을 넓혀, 스크롤이 긴 문서에서 절 경계가 눈에 띄게 한다.
 
   &_size_lg {
+    // 본문 스케일. 루트에 줘서 p · li · blockquote · 표 셀처럼 자기 font-size 가 없는 요소가
+    // 함께 커지게 한다 (`code` 는 자기 mixin 으로 13px 고정폭을 유지한다).
+    // 행간 1.75 - 약관·정책처럼 한 화면을 채우는 한국어 장문은 1.5 로는 줄을 놓친다.
+    font-size: token.$font_size_16;
+    line-height: token.$line_height_28;
+
     h1, h2, h3, h4, h5, h6 {
       margin-top: token.$spacing_32;
     }
@@ -213,7 +219,9 @@
     h1 { font-size: token.$font_size_28; line-height: token.$line_height_36; }
     h2 { font-size: token.$font_size_24; line-height: token.$line_height_32; }
     h3 { font-size: token.$font_size_20; line-height: token.$line_height_28; }
-    h4, h5, h6 { font-size: token.$font_size_16; line-height: token.$line_height_24; }
+    // 본문이 16px 이 되었으므로 h4~h6 도 한 단계 올린다. 16px 로 두면 본문과 같은 크기가 되어
+    // (굵기만 다른) 위계가 무너진다. 28/24/20/18 사다리에 본문 16 이 붙는다.
+    h4, h5, h6 { font-size: token.$font_size_18; line-height: token.$line_height_28; }
 
     li { margin-bottom: token.$spacing_8; }
   }
