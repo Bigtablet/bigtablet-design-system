@@ -173,7 +173,7 @@ export const SidebarLayout: Story = {
 			<Sidebar
 				header={
 					<img
-						src="/images/logo/bigtablet.png"
+						src="images/logo/bigtablet.png"
 						alt="Bigtablet"
 						height={28}
 						style={{ display: "block" }}
@@ -181,7 +181,7 @@ export const SidebarLayout: Story = {
 				}
 				headerCollapsed={
 					<img
-						src="/images/logo/favicon.png"
+						src="images/logo/favicon.png"
 						alt="Bigtablet"
 						width={28}
 						height={28}

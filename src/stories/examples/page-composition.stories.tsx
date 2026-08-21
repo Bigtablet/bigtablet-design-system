@@ -332,10 +332,10 @@ export const AdminDashboard: Story = {
 			{/* Sidebar */}
 			<Sidebar
 				header={
-					<img src="/images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
+					<img src="images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
 				}
 				headerCollapsed={
-					<img src="/images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
+					<img src="images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
 				}
 				footer={
 					<div
