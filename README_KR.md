@@ -139,7 +139,8 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 }
 ```
 
-> React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset`, `--bt-scrollbar-width` 뿐이다. spacing / radius / typography 는 이 entry 에선 **SCSS 전용**이라 `scss/token` 을 써야 한다 (`--bt-spacing-*` / `--bt-radius-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
+<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
+> React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width` 뿐이다. spacing / radius / typography 는 이 entry 에선 **SCSS 전용**이라 `scss/token` 을 써야 한다 (`--bt-spacing-*` / `--bt-radius-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
 
 `colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS 전용</sup>
 
