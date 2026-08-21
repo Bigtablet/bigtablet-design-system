@@ -27,6 +27,10 @@ body:has(.bottom_nav) {
   align-items: stretch;
   justify-content: space-around;
 
+  // height 가 safe-area 를 이미 포함하므로 border-box 여야 한다. content-box 면 padding-bottom
+  // 의 safe-area 가 한 번 더 더해지고 border-top 1px 까지 밖으로 나가, 실제 높이가
+  // --bt-bottom-nav-total-height(= --bt-bottom-inset) 보다 커져 하단 고정 요소가 겹친다.
+  box-sizing: border-box;
   height: var(--bt-bottom-nav-total-height);
   padding-bottom: var(--bt-bottom-nav-safe-area); // iOS 홈 인디케이터 영역 회피
   background: token.$color_bg_solid;

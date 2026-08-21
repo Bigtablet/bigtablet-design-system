@@ -2929,7 +2929,7 @@ action={
 </div>
 ```
 
-`flex: 1` 을 쓰므로 **부모가 세로 flex 컨테이너여야** 합니다. 아니라면 부모에 `display: flex; flex-direction: column` 을 주거나 `height: 100%` 로 높이를 확정하세요. 미지정 시 동작은 기존과 동일합니다.
+`flex: 1` 을 쓰므로 **부모가 세로 flex 컨테이너여야** 합니다 — 부모에 `display: flex; flex-direction: column` 과 높이(`min-height` 등)를 주세요. 부모에 높이만 주고 flex 를 안 걸면 `flex: 1` 이 무시되어 아무 변화가 없습니다. 미지정 시 동작은 기존과 동일합니다.
 
 #### DOM 구조 (SCSS override 시 참고)
 
