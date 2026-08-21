@@ -145,12 +145,20 @@ $letter_spacing_tight:  0.32px;
   white-space: nowrap;
 }
 
-// 한글 줄바꿈. `word-break: break-word` 는 어절 중간에서 끊어 "안녕하세 / 요" 를 만들고,
-// 애초에 표준값이 아니라 `overflow-wrap: break-word` 로 매핑되는 레거시 값이다.
-// keep-all 로 어절을 지키고, 끊을 수 없는 긴 영문·URL 만 overflow-wrap 이 처리한다.
+// 한글 줄바꿈. `word-break: break-word` 는 어절 중간에서 끊어 "안녕하세 / 요" 를 만든다.
+// 표준값이 아니고, 명세상 `word-break: normal` + `overflow-wrap: anywhere` 와 같게 동작한다.
+// keep-all 이 어절을 지키고, 끊을 수 없는 긴 영문·URL 만 overflow-wrap 이 처리한다.
 // 텍스트를 줄바꿈하는 모든 컴포넌트는 이 믹스인을 쓴다 (Button·Toast·Tooltip).
+//
+// `break-word` 가 아니라 `anywhere` 를 쓴다. 눈에 보이는 줄바꿈 지점은 둘이 완전히 같지만
+// (120·60px 폭에서 한글·혼합 문자열 실측 결과 동일), min-content 폭이 다르다 —
+// break-word 는 최장 단어(122px), anywhere 는 한 글자(13px). flex item 의 기본
+// min-width: auto 는 min-content 아래로 줄지 못하므로 break-word 면 좁은 컨테이너를 넘친다
+// (실측: 120px 컨테이너에서 98px 초과). anywhere 는 min-width: 0 없이도 넘치지 않고,
+// 텍스트가 inline-flex 의 직접 자식인 vanilla `.bt-button` 처럼 익명 flex item 이라
+// min-width 를 줄 선택자조차 없는 경우까지 함께 해결한다.
 @mixin wrap_keep_all {
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: keep-all;
 }
 

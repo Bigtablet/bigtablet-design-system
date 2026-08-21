@@ -324,13 +324,15 @@ Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 �
 
 #### 한글 줄바꿈 — `wrap_keep_all`
 
-`word-break: break-word` 는 한글을 **어절 중간에서** 끊습니다 (`안녕하세` / `요`). 게다가 표준값이 아니라 `overflow-wrap: break-word` 로 매핑되는 레거시 값이어서, 쓰는 사람이 의도한 `word-break` 를 사실상 지정하지 못합니다.
+`word-break: break-word` 는 한글을 **어절 중간에서** 끊습니다 (`안녕하세` / `요`). 게다가 표준값이 아니라 `word-break: normal` + `overflow-wrap: anywhere` 와 같게 동작하는 레거시 값이어서, 쓰는 사람이 의도한 `word-break` 를 사실상 지정하지 못합니다.
 
 ```scss
 .notice { @include token.wrap_keep_all; }
 ```
 
-`overflow-wrap: break-word` + `word-break: keep-all` 을 함께 냅니다 — 어절은 지키고, 끊을 수 없는 긴 영문·URL 만 강제로 끊습니다. **텍스트를 줄바꿈하는 모든 자리에서 이것을 쓰세요.** DS 내부의 `Button` · `Toast` · `Tooltip` 도 같은 믹스인을 씁니다.
+`overflow-wrap: anywhere` + `word-break: keep-all` 을 함께 냅니다 — 어절은 지키고, 끊을 수 없는 긴 영문·URL 만 강제로 끊습니다. **텍스트를 줄바꿈하는 모든 자리에서 이것을 쓰세요.** DS 내부의 `Button` · `Toast` · `Tooltip` 도 같은 믹스인을 씁니다.
+
+> `break-word` 가 아니라 `anywhere` 인 이유: 눈에 보이는 줄바꿈 지점은 둘이 같지만 min-content 폭이 다릅니다 — `break-word` 는 최장 단어(실측 122px), `anywhere` 는 한 글자(13px). flex item 의 기본값 `min-width: auto` 는 min-content 아래로 줄지 못하므로 `break-word` 를 쓰면 긴 URL 이 좁은 컨테이너를 넘칩니다(실측 120px 컨테이너에서 98px 초과). `anywhere` 는 `min-width: 0` 을 따로 주지 않아도 넘치지 않습니다.
 
 #### 식별자 판독 — `legible_identifiers`
 
