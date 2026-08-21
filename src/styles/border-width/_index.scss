@@ -1,3 +1,6 @@
+@use "sass:list";
+@use "../colors" as colors;
+
 // ── Base border-width ────────────────────────────────────────────────────────
 
 $border_width_0: 0px;
@@ -24,12 +27,15 @@ $border_width_indicator: $border_width_2;
 // .active { @include token.hairline(left, token.$color_border_hover); }
 // ```
 
-@use "../colors" as colors;
 
 @mixin hairline($side: all, $color: colors.$color_border_default) {
   @if $side == all {
     border: $border_width_standard solid $color;
-  } @else {
+  } @else if list.index(top right bottom left, $side) {
     border-#{$side}: $border_width_standard solid $color;
+  } @else {
+    // 검증이 없으면 `hairline(letf)` 같은 오타가 컴파일을 통과해 `border-letf` 라는
+    // 무효 속성을 조용히 만든다. 소비 앱에 권장하는 공개 API 라 여기서 끊는다.
+    @error "token.hairline: $side 는 all · top · right · bottom · left 중 하나여야 합니다 (받은 값: #{$side})";
   }
 }
