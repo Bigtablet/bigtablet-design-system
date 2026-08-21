@@ -33,7 +33,11 @@ export interface PopoverProps {
 	defaultOpen?: boolean;
 	/** 열림 상태 변경 콜백 */
 	onOpenChange?: (open: boolean) => void;
-	/** 팝오버 접근성 레이블(기본값: "Dialog") - content 에 제목이 없을 때 권장 */
+	/**
+	 * 팝오버 접근성 레이블. `content` 에 제목이 없으면 이 값이 접근성 이름이 된다.
+	 * 폴백이 없으므로 `aria-labelledby` 와 함께 비우면 이름 없는 대화상자가 되고
+	 * axe `aria-dialog-name` 이 잡는다.
+	 */
 	"aria-label"?: string;
 	/** dialog 의 접근성 라벨 요소 id */
 	"aria-labelledby"?: string;
