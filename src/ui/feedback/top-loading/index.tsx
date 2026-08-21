@@ -12,7 +12,7 @@ export interface TopLoadingProps {
 	height?: number;
 	/** 표시 여부 */
 	isLoading?: boolean;
-	/** 프로그레스 바의 접근성 레이블 (기본값: "Page loading") */
+	/** 프로그레스 바의 접근성 레이블 (기본값: "페이지 로딩 중") */
 	ariaLabel?: string;
 }
 

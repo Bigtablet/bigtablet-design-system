@@ -9,7 +9,7 @@ import "./style.scss";
 export type FileInputVariant = "button" | "preview";
 
 export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 (기본값: "Choose file") */
+	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 (기본값: "파일 선택") */
 	label?: string;
 	/** 파일 선택 시 호출되는 콜백 */
 	onFiles?: (files: FileList | null) => void;

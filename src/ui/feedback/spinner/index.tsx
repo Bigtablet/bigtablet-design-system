@@ -5,7 +5,7 @@ import "./style.scss";
 export interface SpinnerProps {
 	/** 스피너 크기(px) (기본값: 24) */
 	size?: number;
-	/** 스피너 접근성 레이블 (기본값: "Loading") */
+	/** 스피너 접근성 레이블 (기본값: "로딩 중") */
 	ariaLabel?: string;
 }
 

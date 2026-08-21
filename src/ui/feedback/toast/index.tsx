@@ -28,7 +28,7 @@ export interface ToastProviderProps {
 	children: React.ReactNode;
 	/** 최대 동시 표시 토스트 수 (기본값: 5) */
 	maxCount?: number;
-	/** 토스트 닫기 버튼의 aria-label (기본값: "Close") */
+	/** 토스트 닫기 버튼의 aria-label (기본값: "닫기") */
 	closeAriaLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
