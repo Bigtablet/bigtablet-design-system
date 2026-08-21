@@ -300,6 +300,27 @@ describe("Modal", () => {
 		expect(document.querySelector(".modal_panel")).not.toHaveAttribute("role");
 	});
 
+	// 본문 wrapper 는 스크롤을 위해 tabIndex=0 을 갖지만, 초기 포커스는 그 빈 div 가 아니라
+	// 안쪽의 첫 상호작용 요소로 가야 한다. close 버튼이 없으면 wrapper 가 DOM 상 첫 매치가 된다.
+	it("focuses the first control inside the body, not the scroll wrapper", () => {
+		render(
+			<Modal open onClose={() => {}} showCloseIcon={false} title="폼">
+				<input aria-label="이름" />
+			</Modal>,
+		);
+		expect(document.activeElement).toBe(screen.getByLabelText("이름"));
+	});
+
+	it("still keeps the scroll wrapper in the tab cycle", () => {
+		render(
+			<Modal open onClose={() => {}} showCloseIcon={false} title="폼">
+				<input aria-label="이름" />
+			</Modal>,
+		);
+		const body = document.querySelector(".modal_body") as HTMLElement;
+		expect(body.tabIndex).toBe(0);
+	});
+
 	// ── 퇴출 수명 ────────────────────────────────────────────────────────────
 	it("does not fire onExited for a modal that was never opened", () => {
 		const onExited = vi.fn();

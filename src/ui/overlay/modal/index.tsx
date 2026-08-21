@@ -203,7 +203,9 @@ export const Modal = ({
 					// `scrollable-region-focusable`). 넘치는지 여부를 측정해 조건부로 주는 방법도 있지만
 					// ResizeObserver 를 들일 만큼의 이득이 없고, 포커스 트랩 안에서 탭 정지 하나가
 					// 늘어나는 정도의 비용이다.
-					<div className="modal_body" tabIndex={0}>
+					// 다만 초기 포커스 대상에서는 제외한다 - 안쪽에 첫 입력이 있는데 빈 wrapper 에
+					// 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
+					<div className="modal_body" tabIndex={0} data-focus-trap-skip-autofocus="">
 						{children}
 					</div>
 				)}
