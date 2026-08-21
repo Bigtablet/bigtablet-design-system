@@ -49,7 +49,7 @@ export const Controlled: Story = {
 		const [isOn, setIsOn] = React.useState(true);
 
 		return (
-			<div style={{ display: "grid", gap: 10, padding: 20 }}>
+			<div style={{ display: "grid", gap: 16, padding: 20 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 					<Toggle
 						size={size}
@@ -58,7 +58,9 @@ export const Controlled: Story = {
 						onChange={setIsOn}
 						ariaLabel="토글"
 					/>
-					<span style={{ fontSize: 14, color: "var(--bt-color-text-body)" }}>현재 상태: {isOn ? "ON" : "OFF"}</span>
+					<span style={{ fontSize: 14, color: "var(--bt-color-text-body)" }}>
+						현재 상태: {isOn ? "ON" : "OFF"}
+					</span>
 				</div>
 
 				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
@@ -76,7 +78,7 @@ export const Uncontrolled: Story = {
 
 	name: "비제어형",
 	render: ({ size, disabled }) => (
-		<div style={{ display: "grid", gap: 10, padding: 20 }}>
+		<div style={{ display: "grid", gap: 16, padding: 20 }}>
 			<Toggle size={size} disabled={disabled} defaultChecked ariaLabel="토글" />
 			<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
 				이 예시는 처음에만 ON으로 시작하고, 이후에는 컴포넌트 내부에서 켜짐/꺼짐을 관리합니다.
@@ -88,7 +90,9 @@ export const Uncontrolled: Story = {
 export const Sizes: Story = {
 	name: "크기 비교",
 	render: () => (
-		<div style={{ display: "grid", gap: 10, padding: 20 }}>
+		// 토글을 세로로 쌓을 때 16px 이상 - 히트 영역이 트랙보다 넓어(모바일 40px)
+		// 그보다 좁으면 인접 토글끼리 겹친다.
+		<div style={{ display: "grid", gap: 16, padding: 20 }}>
 			<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
 				<Toggle size="sm" defaultChecked ariaLabel="sm 토글" />
 				<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>sm (기본)</span>
@@ -105,7 +109,7 @@ export const Sizes: Story = {
 export const Disabled: Story = {
 	name: "비활성화",
 	render: () => (
-		<div style={{ display: "grid", gap: 10, padding: 20 }}>
+		<div style={{ display: "grid", gap: 16, padding: 20 }}>
 			<Toggle disabled defaultChecked ariaLabel="토글" />
 			<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)", lineHeight: 1.5 }}>
 				비활성화 상태에서는 토글을 눌러도 상태가 바뀌지 않습니다.
