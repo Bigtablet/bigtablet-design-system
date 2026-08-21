@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.13.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.13.0) - 2026-08-21
+
+- **a11y 문자열 정책 통일 (동작 변경)** — 기본값은 한글, 모든 문자열은 prop 으로 교체 가능. 이전엔 절반이 한글·절반이 영문이라 컴포넌트마다 말하는 언어가 달랐다. `Dropdown` 은 형제 prop 이 이미 한글인데 `placeholder` 만 영문이라 한 컴포넌트 안에서도 갈려 있었다
+- 교체 수단이 아예 없던 4곳에 prop 신설 — `TextField.clearLabel`(`"지우기"`), `Pagination.navLabel`(`"페이지 이동"`), `Breadcrumb.navLabel`(`"현재 위치"`), `ToastProvider.regionLabel`(`"알림"`). 랜드마크·리전 이름은 스크린리더의 리전 목록에 그대로 뜬다
+- 영문 기본값 10건을 한글로 — `FileInput.label`(화면에 보이는 버튼 텍스트), `DatePicker` 의 `yearLabel`·`monthLabel`·`dayLabel`·`minDateSrFormat`·`selectableRangeUntilTodaySrText`, `Pagination` 의 `prevLabel`·`nextLabel`, `TopLoading.ariaLabel`, `ToastProvider.closeAriaLabel`, `Spinner.ariaLabel`, `TextField.passwordToggleLabels`, `Dropdown.placeholder`. **다국어(ko/en) 앱은 업그레이드 전에 라벨을 주입할 것** — `docs/MIGRATION.md` 참고
+- `Modal`·`Drawer` 가 닫히는 순간의 내용을 붙잡는다 — `children`·`title`·`description`·`footer` 를 함께 얼려, 부모가 `open` 과 같은 값에 데이터를 묶어도 내용이 패널보다 먼저 사라지지 않는다. 앱이 두던 shim(`useState` + `useEffect`)이 불필요해진다
+- `Modal`·`Drawer` 에 `dismissible` 추가 — Escape 와 오버레이 클릭을 한 축으로 묶는다. `closeOnOverlay={false}` 만으로는 Escape 로 여전히 닫혀 폼 입력을 지키지 못했다. `dismissible={false}` 여도 Escape 스택에는 등록되어 아래 오버레이가 대신 닫히지 않는다
+- `token.visually_hidden` · `visually_hidden_reset` · `visually_hidden_focusable` 믹스인 추가 — 스크린리더 전용 숨김 레시피가 손으로 7곳에 복제돼 있었고 4곳은 deprecated `clip: rect()` 만 써서 `clip-path` 가 없었다. Vanilla 에 `.bt-sr-only-focusable`(스킵 링크) 신설
+- `--bt-bottom-inset` 을 DS 몫(`--bt-bottom-nav-inset`)과 앱 몫(`--bt-bottom-inset-app`)의 합으로 분리 — 앱이 소유한 하단 크롬(플로팅 바·고정 액션 바)을 표현할 수단이 없었다. 같은 변수를 양쪽이 쓰면 `:has()` 특이도가 같아 CSS 로드 순서가 승자를 정하고 둘이 동시에 있을 때 합성되지 않았다. 읽는 쪽은 `--bt-bottom-inset` 하나만 그대로 쓰면 된다
+
 ## [3.12.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.12.0) - 2026-08-21
 
 - `Prose` 컴포넌트 추가 - 마크다운·리치텍스트 본문을 DS 타이포로 조판한다. `size="md" | "lg"`, 루트 ref forwarding, 넘치는 `pre`·`table` 에만 `tabindex="0"` 를 붙여 키보드로 스크롤되게 하고 `ResizeObserver` + `MutationObserver` 로 다시 계산한다

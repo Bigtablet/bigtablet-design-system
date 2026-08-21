@@ -476,4 +476,117 @@ describe("Drawer", () => {
 		expect(document.querySelector(".drawer_panel")).toBeNull();
 		vi.unstubAllGlobals();
 	});
+
+	// ── children freeze ──────────────────────────────────────────────────────
+	it("keeps the last children through the exit animation", () => {
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} title="상세">
+				<p>상세 내용</p>
+			</Drawer>,
+		);
+		expect(screen.getByText("상세 내용")).toBeInTheDocument();
+
+		rerender(<Drawer open={false} onClose={() => {}} title="상세" />);
+		expect(screen.getByText("상세 내용")).toBeInTheDocument();
+	});
+
+	it("lets new children win when reopened during the exit animation", () => {
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} title="상세">
+				<p>첫 번째</p>
+			</Drawer>,
+		);
+		rerender(<Drawer open={false} onClose={() => {}} title="상세" />);
+		rerender(
+			<Drawer open onClose={() => {}} title="상세">
+				<p>두 번째</p>
+			</Drawer>,
+		);
+		expect(screen.getByText("두 번째")).toBeInTheDocument();
+		expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
+	});
+
+	// ── dismissible ──────────────────────────────────────────────────────────
+	it("blocks both Escape and overlay click when dismissible is false", () => {
+		const handleClose = vi.fn();
+		render(
+			<Drawer open onClose={handleClose} dismissible={false}>
+				Content
+			</Drawer>,
+		);
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		fireEvent.keyDown(document.querySelector(".drawer_panel") as HTMLElement, { key: "Escape" });
+		expect(handleClose).not.toHaveBeenCalled();
+	});
+
+	it("wins over closeOnOverlay when both are given", () => {
+		const handleClose = vi.fn();
+		render(
+			<Drawer open onClose={handleClose} closeOnOverlay={false} dismissible>
+				Content
+			</Drawer>,
+		);
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		expect(handleClose).toHaveBeenCalledTimes(1);
+	});
+
+	// 열려 있는 동안 children 이 바뀌면 기억도 따라가야 한다. 초기값만 붙잡으면 닫을 때
+	// 처음 열었을 때의 본문으로 되돌아간다.
+	it("freezes the children it had when it closed, not the ones it opened with", () => {
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} title="상세">
+				<p>첫 내용</p>
+			</Drawer>,
+		);
+		rerender(
+			<Drawer open onClose={() => {}} title="상세">
+				<p>바뀐 내용</p>
+			</Drawer>,
+		);
+		rerender(<Drawer open={false} onClose={() => {}} title="상세" />);
+
+		expect(screen.getByText("바뀐 내용")).toBeInTheDocument();
+		expect(screen.queryByText("첫 내용")).not.toBeInTheDocument();
+	});
+
+	it("consumes Escape instead of letting it reach the overlay beneath", () => {
+		const outerClose = vi.fn();
+		const innerClose = vi.fn();
+		const { rerender } = render(
+			<Drawer open onClose={outerClose} title="아래">
+				<Drawer open={false} onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Drawer>
+			</Drawer>,
+		);
+		rerender(
+			<Drawer open onClose={outerClose} title="아래">
+				<Drawer open onClose={innerClose} dismissible={false} title="위">
+					<button type="button">보호된 폼</button>
+				</Drawer>
+			</Drawer>,
+		);
+
+		fireEvent.keyDown(screen.getByText("보호된 폼"), { key: "Escape" });
+
+		expect(innerClose).not.toHaveBeenCalled();
+		expect(outerClose).not.toHaveBeenCalled();
+	});
+
+	it("freezes title and footer along with children", () => {
+		const { rerender } = render(
+			<Drawer open onClose={() => {}} title="항목 제목" footer={<button type="button">삭제</button>}>
+				<p>항목 본문</p>
+			</Drawer>,
+		);
+		rerender(<Drawer open={false} onClose={() => {}} />);
+
+		expect(screen.getByText("항목 제목")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
+		expect(screen.getByText("항목 본문")).toBeInTheDocument();
+	});
 });

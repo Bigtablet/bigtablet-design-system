@@ -28,8 +28,10 @@ export interface ToastProviderProps {
 	children: React.ReactNode;
 	/** 최대 동시 표시 토스트 수 (기본값: 5) */
 	maxCount?: number;
-	/** 토스트 닫기 버튼의 aria-label (기본값: "Close") */
+	/** 토스트 닫기 버튼의 aria-label (기본값: "닫기") */
 	closeAriaLabel?: string;
+	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
+	regionLabel?: string;
 }
 
 const VARIANT_ICONS: Record<ToastVariant, React.ReactElement> = {
@@ -130,7 +132,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 export const ToastProvider = ({
 	children,
 	maxCount = 5,
-	closeAriaLabel = "Close",
+	closeAriaLabel = "닫기",
+	regionLabel = "알림",
 }: ToastProviderProps) => {
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
 	// 포털은 클라이언트 마운트 후에만 렌더 (SSR/hydration 안전) - 공유 훅
@@ -174,7 +177,7 @@ export const ToastProvider = ({
 						role="region"
 						aria-live="polite"
 						aria-atomic="false"
-						aria-label="Notifications"
+						aria-label={regionLabel}
 					>
 						{toasts.map((item) => (
 							<ToastItemComponent

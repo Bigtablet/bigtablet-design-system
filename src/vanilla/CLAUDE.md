@@ -64,6 +64,17 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
+| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남 - 스킵 링크) | | |
+
+`.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.
+
+```html
+<!-- 라이브 리전: 화면에는 안 보이고 스크린리더만 읽는다 -->
+<span class="bt-sr-only" role="status" aria-live="polite">저장되었습니다</span>
+
+<!-- 스킵 링크: Tab 을 누르면 나타난다 -->
+<a href="#main" class="bt-sr-only-focusable">본문으로 건너뛰기</a>
+```
 
 ### HTML Examples
 
@@ -170,7 +181,7 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 
 <div id="my-modal" class="bt-modal" data-bt-modal>
   <div class="bt-modal__panel" style="width: 480px;">
-    <button class="bt-modal__close" data-modal-close aria-label="Close">
+    <button class="bt-modal__close" data-modal-close aria-label="닫기">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
     <div class="bt-modal__header">Title</div>
@@ -210,9 +221,9 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 #### Spinner
 ```html
 <!-- 기본 24px (React <Spinner /> 기본값) -->
-<span class="bt-spinner" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" role="status" aria-label="로딩 중"></span>
 <!-- 임의 크기 -->
-<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="로딩 중"></span>
 ```
 
 #### Pagination

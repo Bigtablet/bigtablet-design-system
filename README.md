@@ -139,7 +139,8 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 }
 ```
 
-> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, and `--bt-bottom-nav-*`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
+<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
+> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
 
 `colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS only</sup>
 

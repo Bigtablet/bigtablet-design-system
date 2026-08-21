@@ -726,12 +726,12 @@ React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기�
 
 ```html
 <!-- 기본 24px -->
-<span class="bt-spinner" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" role="status" aria-label="로딩 중"></span>
 
 <!-- 임의 크기 -->
-<span class="bt-spinner" style="--bt-spinner-size: 16px" role="status" aria-label="Loading"></span>
-<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
-<span class="bt-spinner" style="--bt-spinner-size: 48px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 16px" role="status" aria-label="로딩 중"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="로딩 중"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 48px" role="status" aria-label="로딩 중"></span>
 ```
 
 > `role="status"` + `aria-label` 을 직접 붙이세요 - React `<Spinner>` 는 이 둘을 자동으로

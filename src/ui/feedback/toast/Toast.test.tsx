@@ -213,7 +213,7 @@ describe("Toast close", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 		expect(screen.getByText("닫기 테스트")).toBeInTheDocument();
 
-		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
 
 		// spring exit 완료 후 unmount (실제 RAF 진행 대기)
 		await waitFor(
@@ -233,7 +233,7 @@ describe("Toast close", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-		const closeBtn = screen.getByRole("button", { name: "Close" });
+		const closeBtn = screen.getByRole("button", { name: "닫기" });
 		// 빠르게 두 번 클릭 - closingRef 가 두 번째 호출 무시
 		fireEvent.click(closeBtn);
 		fireEvent.click(closeBtn);
@@ -316,7 +316,7 @@ describe("Toast portal & a11y", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-		const region = screen.getByRole("region", { name: "Notifications" });
+		const region = screen.getByRole("region", { name: "알림" });
 		expect(region).toHaveAttribute("aria-live", "polite");
 		expect(region).toHaveAttribute("aria-atomic", "false");
 	});
@@ -365,15 +365,34 @@ describe("Toast portal & a11y", () => {
 
 	it("respects custom closeAriaLabel prop", () => {
 		render(
-			<ToastProvider closeAriaLabel="닫기">
+			// 기본값이 "닫기" 이므로 커스텀 값은 그와 달라야 주입이 실제로 먹었는지 알 수 있다
+			<ToastProvider closeAriaLabel="Dismiss">
 				<ToastTrigger fn={(t) => t.success("커스텀 라벨")} />
 			</ToastProvider>,
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-		expect(screen.getByRole("button", { name: "닫기" })).toBeInTheDocument();
-		expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Dismiss" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "닫기" })).not.toBeInTheDocument();
+	});
+
+	it("names the toast region in Korean by default and lets the app override it", () => {
+		const { unmount } = render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.success("기본 리전 이름")} />
+			</ToastProvider>,
+		);
+		expect(screen.getByRole("region", { name: "알림" })).toBeInTheDocument();
+		unmount();
+
+		render(
+			<ToastProvider regionLabel="Notifications">
+				<ToastTrigger fn={(t) => t.success("커스텀 리전 이름")} />
+			</ToastProvider>,
+		);
+		expect(screen.getByRole("region", { name: "Notifications" })).toBeInTheDocument();
+		expect(screen.queryByRole("region", { name: "알림" })).not.toBeInTheDocument();
 	});
 });
 
@@ -480,7 +499,7 @@ describe("Toast auto-dismiss", () => {
 		const item = document.querySelector(".toast_item");
 		expect(item).not.toBeNull();
 
-		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
 
 		// spring exit 진행 중 - 잠시 DOM 유지
 		expect(document.querySelector(".toast_item")).not.toBeNull();
@@ -621,7 +640,7 @@ describe("Toast stack & ids", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "two" }));
 
-		const closeButtons = screen.getAllByRole("button", { name: "Close" });
+		const closeButtons = screen.getAllByRole("button", { name: "닫기" });
 		expect(closeButtons).toHaveLength(2);
 
 		// 첫 번째(맨 위) 토스트의 닫기 버튼에 포커스를 두고 닫으면,

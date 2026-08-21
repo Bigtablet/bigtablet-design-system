@@ -232,8 +232,8 @@ Bigtablet Design System + Thymeleaf로 카테고리 Select HTML 만들어줘.
 
 ### Spinner
 ```html
-<span class="bt-spinner" role="status" aria-label="Loading"></span>
-<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span>
+<span class="bt-spinner" role="status" aria-label="로딩 중"></span>
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="로딩 중"></span>
 ```
 
 ### Pagination

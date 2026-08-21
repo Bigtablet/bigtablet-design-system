@@ -296,14 +296,14 @@ describe("TextField", () => {
 		const input = screen.getByLabelText("Password");
 		expect(input).toHaveAttribute("type", "password");
 
-		const toggle = screen.getByRole("button", { name: "Show password" });
+		const toggle = screen.getByRole("button", { name: "비밀번호 표시" });
 		expect(toggle.closest("[aria-hidden]")).toBeNull();
 
 		fireEvent.click(toggle);
 		expect(input).toHaveAttribute("type", "text");
-		expect(screen.getByRole("button", { name: "Hide password" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "비밀번호 숨기기" })).toBeInTheDocument();
 
-		fireEvent.click(screen.getByRole("button", { name: "Hide password" }));
+		fireEvent.click(screen.getByRole("button", { name: "비밀번호 숨기기" }));
 		expect(input).toHaveAttribute("type", "password");
 	});
 
@@ -322,8 +322,8 @@ describe("TextField", () => {
 	// 토글은 clear 를 이긴다 - 값이 찬 비밀번호 칸에서 토글이 사라지면 쓸 수 없다.
 	it("keeps the password toggle visible when clearable also has a value", () => {
 		render(<TextField type="password" showPasswordToggle clearable defaultValue="secret" />);
-		expect(screen.getByRole("button", { name: "Show password" })).toBeInTheDocument();
-		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "비밀번호 표시" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "지우기" })).not.toBeInTheDocument();
 	});
 
 	it("leaves the input type untouched when the toggle is off", () => {
@@ -336,7 +336,7 @@ describe("TextField", () => {
 	// 내장 버튼은 disabled 속성을 직접 받아야 한다. 없으면 비활성 필드의 비밀번호가 드러난다.
 	it("disables the built-in password toggle with the field", () => {
 		render(<TextField label="Password" type="password" showPasswordToggle disabled />);
-		const toggle = screen.getByRole("button", { name: "Show password" });
+		const toggle = screen.getByRole("button", { name: "비밀번호 표시" });
 		expect(toggle).toBeDisabled();
 
 		fireEvent.click(toggle);
@@ -346,7 +346,7 @@ describe("TextField", () => {
 	it("disables the built-in clear button with the field", () => {
 		const handleChange = vi.fn();
 		render(<TextField clearable defaultValue="text" disabled onValueChange={handleChange} />);
-		const clear = screen.getByRole("button", { name: "Clear" });
+		const clear = screen.getByRole("button", { name: "지우기" });
 		expect(clear).toBeDisabled();
 
 		fireEvent.click(clear);
@@ -361,7 +361,7 @@ describe("TextField", () => {
 		const input = screen.getByLabelText("Password");
 		expect(input).toHaveAttribute("type", "password");
 
-		fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+		fireEvent.click(screen.getByRole("button", { name: "비밀번호 표시" }));
 		expect(input).toHaveAttribute("type", "text");
 	});
 
@@ -380,5 +380,17 @@ describe("TextField", () => {
 	it("leaves the input unmarked when identifier is off", () => {
 		render(<TextField label="이름" />);
 		expect(screen.getByLabelText("이름")).not.toHaveClass("text_field_input_identifier");
+	});
+
+	// 지우기 버튼의 라벨은 이전엔 영문 "Clear" 하드코딩이라 앱이 고칠 수단이 없었다.
+	it("names the clear button in Korean by default", () => {
+		render(<TextField label="이름" clearable defaultValue="값" />);
+		expect(screen.getByRole("button", { name: "지우기" })).toBeInTheDocument();
+	});
+
+	it("lets the app override the clear button label", () => {
+		render(<TextField label="이름" clearable defaultValue="값" clearLabel="Clear" />);
+		expect(screen.getByRole("button", { name: "Clear" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "지우기" })).not.toBeInTheDocument();
 	});
 });

@@ -72,10 +72,12 @@ export interface TextFieldProps
 	 * 켜면 `type` 을 토글이 직접 관리한다 - 숨김 상태는 넘긴 `type`(보통 `"password"`), 표시 상태는 `"text"`.
 	 */
 	showPasswordToggle?: boolean;
-	/** 토글 버튼의 `aria-label`. i18n 은 앱이 주입한다 (기본값: 영문). */
+	/** 토글 버튼의 `aria-label` (기본값: "비밀번호 표시" / "비밀번호 숨기기"). 다국어 앱은 주입할 것 */
 	passwordToggleLabels?: { show: string; hide: string };
 	/** 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 여부 */
 	clearable?: boolean;
+	/** 지우기(X) 버튼의 `aria-label` (기본값: "지우기") */
+	clearLabel?: string;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
 	/** 값 변경 콜백 (canonical). 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
@@ -100,7 +102,7 @@ export interface TextFieldProps
 // X 아이콘 - lucide-react
 const ClearIcon = () => <X size={iconSize.lg} aria-hidden="true" />;
 
-const DEFAULT_PASSWORD_TOGGLE_LABELS = { show: "Show password", hide: "Hide password" } as const;
+const DEFAULT_PASSWORD_TOGGLE_LABELS = { show: "비밀번호 표시", hide: "비밀번호 숨기기" } as const;
 
 /**
  * 텍스트 필드를 렌더링한다.
@@ -124,6 +126,7 @@ export const TextField = ({
 	showPasswordToggle,
 	passwordToggleLabels,
 	clearable,
+	clearLabel = "지우기",
 	type,
 	fullWidth,
 	size = "md",
@@ -237,7 +240,7 @@ export const TextField = ({
 			type="button"
 			className="text_field_clear"
 			onClick={handleClear}
-			aria-label="Clear"
+			aria-label={clearLabel}
 			disabled={props.disabled}
 		>
 			<ClearIcon />

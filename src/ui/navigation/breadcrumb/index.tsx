@@ -20,6 +20,8 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
 	items: BreadcrumbItem[];
 	/** 구분자 (기본값: ChevronRight 아이콘) */
 	separator?: React.ReactNode;
+	/** `<nav>` 랜드마크 이름 (기본값: "현재 위치"). 스크린리더의 리전 목록에 그대로 뜬다 */
+	navLabel?: string;
 }
 
 /**
@@ -37,13 +39,14 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
 export const Breadcrumb = ({
 	items,
 	separator,
+	navLabel = "현재 위치",
 	className,
 	...props
 }: BreadcrumbProps) => {
 	const sep = separator ?? <ChevronRight size={iconSize.xs} aria-hidden="true" />;
 
 	return (
-		<nav aria-label="Breadcrumb" className={cn("breadcrumb", className)} {...props}>
+		<nav aria-label={navLabel} className={cn("breadcrumb", className)} {...props}>
 			<ol className="breadcrumb_list">
 				{items.map((item, idx) => {
 					const isLast = idx === items.length - 1;

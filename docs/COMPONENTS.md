@@ -277,7 +277,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
 | `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
-| `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
+| `placeholder` | `string` | `'선택…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
@@ -443,8 +443,9 @@ import { Search, X } from 'lucide-react';
 | `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (v3.11, `aria-hidden` 없음) |
 | `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 (v3.11) |
-| `passwordToggleLabels` | `{ show: string; hide: string }` | 영문 | 토글 버튼 `aria-label` |
+| `passwordToggleLabels` | `{ show: string; hide: string }` | `{ show: '비밀번호 표시', hide: '비밀번호 숨기기' }` | 토글 버튼 `aria-label` |
 | `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
+| `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
 | ~~`onChangeAction`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). Next 서버 액션 전달용 `Action` 접미사가 필요하면 계속 사용 가능 |
@@ -822,7 +823,7 @@ import { FileInput } from '@bigtablet/design-system';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | `'Choose file'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
+| `label` | `string` | `'파일 선택'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
 | `variant` | `'button' \| 'preview'` | `'button'` | 표시 형태. `preview` 는 큰 박스에 이미지를 채우는 단일 이미지 업로더 |
 | `previewSize` | `number` | `160` | `variant="preview"` 박스 한 변 크기 (px) |
 | `preview` | `boolean` | `false` | 이미지 선택 시 64×64 썸네일을 버튼 아래 나열 (`variant="button"` 전용) |
@@ -1057,6 +1058,15 @@ function YourComponent() {
 }
 ```
 
+#### `ToastProvider` props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `closeAriaLabel` | `string` | `'닫기'` | 각 토스트의 X 버튼 `aria-label` |
+| `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜬다 |
+
+> **다국어(ko/en) 앱은 두 값을 주입하세요.** DS 기본값은 한글입니다 — [MIGRATION.md](./MIGRATION.md#v3130-a11y-문자열-기본값-한글화) 참고.
+
 ---
 
 ### Spinner
@@ -1072,6 +1082,7 @@ import { Spinner } from '@bigtablet/design-system';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `number` | `24` | 스피너 크기 (px) |
+| `ariaLabel` | `string` | `'로딩 중'` | `role="status"` 의 접근성 이름 |
 
 > ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시킨다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춘다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
 
@@ -1101,7 +1112,7 @@ import { TopLoading } from '@bigtablet/design-system';
 | `progress` | `number` | - | 진행률 (0-100), 없으면 indeterminate |
 | `color` | `string` | primary | 로딩바 색상 |
 | `height` | `number` | `3` | 로딩바 높이 (px) |
-| `ariaLabel` | `string` | `'Page loading'` | 접근성 라벨 |
+| `ariaLabel` | `string` | `'페이지 로딩 중'` | 접근성 라벨 |
 
 ---
 
@@ -1186,6 +1197,9 @@ const [page, setPage] = useState(1);
 | `page` | `number` | required | 현재 페이지 |
 | `totalPages` | `number` | required | 전체 페이지 수 |
 | `onPageChange` | `(page: number) => void` | required | 페이지 변경 핸들러 |
+| `prevLabel` | `string` | `'이전 페이지'` | 이전 버튼 `aria-label` |
+| `nextLabel` | `string` | `'다음 페이지'` | 다음 버튼 `aria-label` |
+| `navLabel` | `string` | `'페이지 이동'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
 
 ---
 
@@ -1481,13 +1495,21 @@ const [collapsed, setCollapsed] = useState(false);
 --bt-bottom-nav-height        /* 56px */
 --bt-bottom-nav-safe-area     /* env(safe-area-inset-bottom) */
 --bt-bottom-nav-total-height  /* 합산 - BottomNavSpacer 가 자동 사용 */
---bt-bottom-inset             /* 하단이 실제로 가려진 높이. BottomNav 가 없으면 0px */
+--bt-bottom-nav-inset         /* DS 몫 - BottomNav 가 DOM 에 있을 때만 total-height */
+--bt-bottom-inset-app         /* 앱 몫 - 앱이 소유한 하단 크롬 높이 (앱이 쓴다) */
+--bt-bottom-inset             /* 위 두 몫의 합. 읽기 전용으로 쓴다 */
 ```
 
-> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** 위의 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 만 BottomNav 가 DOM 에 있을 때 값이 생깁니다.
+> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** `--bt-bottom-nav-height` · `-safe-area` · `-total-height` 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 은 **실제로 가려진 만큼만** 값을 갖습니다 — BottomNav 가 DOM 에 있거나, 앱이 `--bt-bottom-inset-app` 을 설정했거나, 둘 다일 때입니다.
 >
 > ```css
 > .my_floating_bar { bottom: calc(16px + var(--bt-bottom-inset)); }
+> ```
+>
+> **앱이 소유한 하단 크롬(플로팅 바 등)은 `--bt-bottom-inset-app` 에 쓰세요.** `--bt-bottom-inset` 을 직접 쓰면 DS 규칙과 특이도가 같아 로드 순서 싸움이 되고, 둘이 동시에 있을 때 합성되지 않습니다. 자세한 내용은 [THEMING.md](./THEMING.md#앱이-소유한-하단-크롬은---bt-bottom-inset-app-에-씁니다).
+>
+> ```scss
+> body:has(.floating_bar) { --bt-bottom-inset-app: 96px; }
 > ```
 >
 > `Toast` 는 모바일에서 이 값을 이미 반영합니다 - 앱이 `.toast_container` 를 보정하던 CSS 는 지우면 됩니다.
@@ -1676,6 +1698,7 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 |------|------|---------|-------------|
 | `items` | `BreadcrumbItem[]` | required | 경로 아이템 배열. 마지막은 현재 페이지로 자동 처리 |
 | `separator` | `ReactNode` | `<ChevronRight size={14} />` | 아이템 사이 구분자. `/`, `>`, 커스텀 아이콘 등 가능 |
+| `navLabel` | `string` | `'현재 위치'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
 
 **BreadcrumbItem**
 
@@ -1776,6 +1799,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `footerAlign` | `'end' \| 'between' \| 'start'` | `'end'` | footer 정렬. `between` 은 좌우 분리(destructive 패턴) |
 | `width` | `number \| string` | `480` | 모달 너비 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이긴다 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
@@ -1800,23 +1824,46 @@ const [isOpen, setIsOpen] = useState(false);
 
 패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 **닫히지 않는다** — 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다.
 
-#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
-
-패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). 그래서 `children` 을 `open` 과 같은 값으로 감싸면 **본문만 먼저 사라지고 제목만 남은 빈 패널이 페이드아웃**된다 — 두 단계로 닫히는 것이 눈에 보인다.
+사용자 입장에서 Escape 와 오버레이 클릭은 같은 "실수로 닫기" 축이다. 따로 다루면 한쪽만 막는 실수가 나온다 — `closeOnOverlay={false}` 만 주면 Escape 로는 여전히 닫힌다. 둘을 함께 막으려면 `dismissible` 을 쓴다.
 
 ```tsx
-// ❌ item 이 null 되는 순간 본문만 사라진다
+// 오버레이만 막는다 - Escape 로는 닫힌다
+<Modal open={open} onClose={close} closeOnOverlay={false} />
+
+// 두 경로 모두 막는다 - X 버튼과 명시적 액션으로만 닫힌다
+<Modal open={open} onClose={close} dismissible={false} />
+```
+
+`dismissible` 을 주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다.
+
+`dismissible={false}` 여도 Escape 스택에는 **등록된다.** 최상단 자리를 차지해 Escape 를 소비하므로, 아래에 열려 있는 다른 오버레이가 대신 닫히지 않는다 — 사용자가 보고 있지 않은 것이 닫히는 게 더 나쁜 결과다.
+
+#### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). **DS 가 닫히는 순간의 `children` 을 붙잡으므로**, 부모가 같은 tick 에 데이터를 비워도 본문이 먼저 사라지지 않는다.
+
+```tsx
+// ✅ 이대로 써도 된다 - 퇴출 동안 마지막 본문이 그대로 보인다
 <Modal open={!!item} onClose={close} title="상세">
   {item && <Body item={item} />}
 </Modal>
+```
 
-// ✅ onExited 에서 비운다
+앱이 마지막 값을 붙잡는 shim(`useState` + `useEffect`)을 두고 있었다면 지울 수 있다.
+
+붙잡는 대상은 `children` 뿐이 아니다 — `title` · `description` · `footer` 도 함께 얼린다. `footer` 는 선택된 항목에 종속된 액션(삭제 등)을 담는 일이 흔해서, 본문만 얼리면 footer 만 먼저 사라져 같은 버그가 그쪽에서 재현된다. (`Drawer` 는 `title` · `footer`.)
+
+다시 열리면 **새** 값이 즉시 이긴다. 붙잡는 값은 열려 있는 동안 계속 갱신되므로, 닫을 때 보이는 것은 처음 열었을 때가 아니라 **닫히는 순간**의 내용이다.
+
+데이터 자체를 정리할 시점이 필요하면 `onExited` 를 쓴다 — 화면 때문이 아니라 메모리·구독 정리 목적이다.
+
+```tsx
 <Modal open={open} onClose={() => setOpen(false)} onExited={() => setItem(null)} title="상세">
   {item && <Body item={item} />}
 </Modal>
 ```
 
-`Drawer` 도 같은 수명을 갖고 `onExited` 를 제공한다.
+`Drawer` 도 같은 수명·freeze 동작을 갖고 `onExited` · `dismissible` 을 제공한다.
 
 #### 포털 — `document.body` 로 렌더된다
 
@@ -1867,6 +1914,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
 | `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
+| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이긴다 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
