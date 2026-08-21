@@ -210,15 +210,7 @@
     .sidebar_item_label,
     .sidebar_item_trailing,
     .sidebar_section_label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+      @include token.visually_hidden;
     }
 
     .sidebar_section {
@@ -351,14 +343,9 @@
   // collapsed 상태 + mobile + auto → collapsed 무효 (BottomBar 가 우선)
   .sidebar:not(.sidebar_static).sidebar_collapsed {
     .sidebar_item_label {
-      // collapsed 가 적용한 visually-hidden 해제 - BottomBar 에선 label 보여야 함
-      position: static;
-      width: auto;
-      height: auto;
-      padding: 0;
-      margin: 0;
-      overflow: visible;
-      clip: auto;
+      // collapsed 가 적용한 visually-hidden 해제 - BottomBar 에선 label 보여야 함.
+      // 짝 믹스인을 쓴다 - 손으로 쓰면 clip-path 처럼 한쪽에만 있는 속성을 빠뜨린다.
+      @include token.visually_hidden_reset;
     }
   }
 }

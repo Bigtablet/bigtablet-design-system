@@ -281,6 +281,27 @@ scripts/check-css-vars.sh
 
 Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 있습니다.
 
+#### 시각적으로만 숨기기 — `visually_hidden`
+
+라이브 리전, 아이콘 버튼의 텍스트 라벨, 스크린리더 전용 표 헤더처럼 **보이지 않되 보조기기에는 남아야** 하는 내용에 씁니다. `display: none` 과 `visibility: hidden` 은 접근성 트리에서도 빠지므로 쓸 수 없습니다.
+
+```scss
+.live_region { @include token.visually_hidden; }
+.skip_link   { @include token.visually_hidden_focusable; } // 포커스되면 드러남
+```
+
+| 믹스인 | 용도 |
+|---|---|
+| `visually_hidden` | 항상 숨김 |
+| `visually_hidden_focusable` | 평소 숨김, `:focus-visible` 에서 드러남 (스킵 링크) |
+| `visually_hidden_reset` | 조건부로 숨긴 것을 되돌림 (브레이크포인트·상태에 따라 다시 보여야 할 때) |
+
+> **조건부로 숨겼다면 되돌릴 때 `visually_hidden_reset` 을 쓰세요.** 손으로 되돌리면 속성을 빠뜨립니다 — DS 안에서 실제로 `clip-path` 를 되돌리지 않아 라벨이 계속 잘려 있던 자리가 있었습니다(Sidebar 의 모바일 BottomBar 모드). 짝을 믹스인으로 묶어야 한쪽에 속성이 추가될 때 같이 따라옵니다.
+
+`clip: rect()` 는 deprecated 지만 구형 폴백으로 함께 나갑니다 — `clip-path` 단독은 일부 조합에서 요소가 잘리지 않습니다.
+
+Vanilla 번들은 같은 믹스인으로 만든 `.bt-sr-only` · `.bt-sr-only-focusable` 유틸리티 클래스를 제공합니다.
+
 ### 하드코딩 대신 쓸 토큰
 
 소비 앱 SCSS 를 실측한 결과, 토큰이 이미 있는데도 값을 직접 쓴 곳이 많았습니다. 대부분 **토큰의 존재를 몰라서**입니다.
