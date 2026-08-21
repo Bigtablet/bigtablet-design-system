@@ -279,7 +279,6 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
 | `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `fillHeight` | `boolean` | `false` | 부모 높이를 채우고 세로 중앙 정렬 (`flex: 1` + `justify-content: center`) |
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
 | `className` | `string` | - | 루트 요소에 추가할 className |
@@ -2908,6 +2907,7 @@ action={
 | `description` | `ReactNode` | - | 보조 설명 (p, max-width 480) |
 | `action` | `ReactNode` | - | 액션 영역 (Button 등) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `fillHeight` | `boolean` | `false` | 부모 높이를 채우고 세로 중앙 정렬 (`flex: 1` + `justify-content: center`) |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `role`, `aria-*` 등 |
 
 #### 접근성
