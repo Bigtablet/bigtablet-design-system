@@ -9,10 +9,12 @@ interface PaginationBaseProps {
 	page: number;
 	/** 전체 페이지 수 */
 	totalPages: number;
-	/** 이전 페이지 버튼 aria-label (기본값: "Previous page") */
+	/** 이전 페이지 버튼 aria-label (기본값: "이전 페이지") */
 	prevLabel?: string;
-	/** 다음 페이지 버튼 aria-label (기본값: "Next page") */
+	/** 다음 페이지 버튼 aria-label (기본값: "다음 페이지") */
 	nextLabel?: string;
+	/** `<nav>` 랜드마크 이름 (기본값: "페이지 이동"). 스크린리더의 리전 목록에 그대로 뜬다 */
+	navLabel?: string;
 }
 
 // Pagination 은 controlled 전용 → 콜백 최소 하나 필수. canonical `onPageChange` 권장, 구 `onChange` 허용(@deprecated).
@@ -84,8 +86,9 @@ export const Pagination = ({
 	totalPages,
 	onPageChange,
 	onChange,
-	prevLabel = "Previous page",
-	nextLabel = "Next page",
+	prevLabel = "이전 페이지",
+	nextLabel = "다음 페이지",
+	navLabel = "페이지 이동",
 }: PaginationProps) => {
 	const emit = onPageChange ?? onChange;
 	const prevDisabled = page <= 1;
@@ -94,7 +97,7 @@ export const Pagination = ({
 	const items = React.useMemo(() => getPaginationItems(page, totalPages), [page, totalPages]);
 
 	return (
-		<nav className="pagination" aria-label="Pagination">
+		<nav className="pagination" aria-label={navLabel}>
 			<button
 				type="button"
 				className="pagination_item"
