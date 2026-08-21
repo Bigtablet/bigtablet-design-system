@@ -33,7 +33,11 @@ export interface PopoverProps {
 	defaultOpen?: boolean;
 	/** 열림 상태 변경 콜백 */
 	onOpenChange?: (open: boolean) => void;
-	/** 팝오버 접근성 레이블(기본값: "Dialog") - content 에 제목이 없을 때 권장 */
+	/**
+	 * 팝오버 접근성 레이블. `content` 에 제목이 없으면 이 값이 접근성 이름이 된다.
+	 * 폴백이 없으므로 `aria-labelledby` 와 함께 비우면 이름 없는 대화상자가 되고
+	 * axe `aria-dialog-name` 이 잡는다.
+	 */
 	"aria-label"?: string;
 	/** dialog 의 접근성 라벨 요소 id */
 	"aria-labelledby"?: string;
@@ -190,9 +194,9 @@ export const Popover = ({
 							ref={popoverRef}
 							role="dialog"
 							tabIndex={-1}
-							// aria-labelledby 가 없으면 이름 없는 dialog 가 되므로 Modal/Drawer 와 동일하게
-							// "Dialog" 로 폴백한다 (WCAG 2.1 SC 4.1.2).
-							aria-label={ariaLabelledby ? ariaLabel : (ariaLabel ?? "Dialog")}
+							// 이름을 폴백하지 않는다 - Modal/Drawer 와 같은 계약이다. 영문 폴백은 한국어 UI 에서
+							// 그대로 낭독되고, 무엇보다 이름 누락을 가려 axe `aria-dialog-name` 이 거짓 통과한다.
+							aria-label={ariaLabel}
 							aria-labelledby={ariaLabelledby}
 							style={style}
 							className={cn("popover", className)}

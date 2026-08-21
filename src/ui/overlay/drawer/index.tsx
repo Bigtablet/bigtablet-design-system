@@ -20,10 +20,13 @@ import "./style.scss";
 /** Drawer 가 미끄러져 들어오는 방향 (top 은 범위 외) */
 export type DrawerPlacement = "left" | "right" | "bottom";
 
-// onClick/onKeyDown/role 은 오버레이 동작(stopPropagation·Escape·role="document")을 위해
+// onClick/onKeyDown/onPointerDown 은 오버레이 동작(오버레이 닫기 판정·Escape 격리)을 위해
 // 컴포넌트가 전유하므로 타입에서 제외한다. style/className 은 병합되어 소비자 값도 반영된다.
 export interface DrawerProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "title" | "onClick" | "onKeyDown" | "role"> {
+	extends Omit<
+		React.HTMLAttributes<HTMLDivElement>,
+		"title" | "onClick" | "onKeyDown" | "onPointerDown"
+	> {
 	/** 드로어 열림 여부 */
 	open: boolean;
 	/** 드로어 닫기 콜백 */
@@ -42,8 +45,16 @@ export interface DrawerProps
 	showCloseIcon?: boolean;
 	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
 	closeLabel?: string;
-	/** 드로어 접근성 레이블 (title 없을 때 사용, 기본값: "Dialog") */
+	/**
+	 * 드로어 접근성 레이블. `title` 이 없을 때 이 값이 접근성 이름이 된다.
+	 * 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다.
+	 */
 	ariaLabel?: string;
+	/**
+	 * 퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다.
+	 * `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다.
+	 */
+	onExited?: () => void;
 }
 
 // placement 별 진입 시작(=퇴출 도착) transform. 방향 축과 단위(%)를 진입/퇴출 양쪽에서
@@ -72,11 +83,14 @@ export const Drawer = ({
 	showCloseIcon = true,
 	closeLabel = "닫기",
 	ariaLabel,
+	onExited,
 	children,
 	className,
 	...props
 }: DrawerProps) => {
 	const panelRef = React.useRef<HTMLDivElement>(null);
+	// 오버레이 닫기 판정용 - pointerdown 이 오버레이에서 시작했는지 기억한다.
+	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
 	const reduced = useReducedMotion();
@@ -103,7 +117,12 @@ export const Drawer = ({
 	const overlayStyle = useSpringPresence({
 		visible: open,
 		from: "translateY(0px)",
-		onExitComplete: () => setShouldRender(false),
+		onExitComplete: () => {
+			setShouldRender(false);
+			// 열린 적 없는 드로어의 스프링은 from 과 to 가 같아 onRest 가 발화하지 않으므로 별도
+			// 가드를 두지 않는다. 그 가정은 "열린 적 없으면 onExited 없음" 테스트가 지킨다.
+			onExited?.();
+		},
 	});
 
 	// 패널 슬라이드 - 진입/퇴출 모두 placement 축을 따라 동일 template 로 보간(정확한 reverse).
@@ -149,20 +168,30 @@ export const Drawer = ({
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
-			aria-label={!hasTitle ? (ariaLabel ?? "Dialog") : ariaLabel}
-			onClick={() => closeOnOverlay && onClose?.()}
+			aria-label={ariaLabel}
+			onPointerDown={(e) => {
+				pressedOverlayRef.current = e.target === e.currentTarget;
+			}}
+			onClick={(e) => {
+				// 누른 곳과 놓은 곳이 모두 오버레이여야 닫는다. 패널에서 시작한 드래그(텍스트 선택 등)를
+				// 오버레이에서 놓아도 닫히지 않는다 - 폼 드로어에서 입력이 사라지던 원인.
+				if (!closeOnOverlay) return;
+				if (e.target !== e.currentTarget) return;
+				if (!pressedOverlayRef.current) return;
+				onClose?.();
+			}}
 		>
 			<animated.div
 				ref={panelRef}
-				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id 등은 통과시키되,
-				// 아래 className/style(애니메이션)/role/onClick·onKeyDown 은 컴포넌트가 항상
-				// 이기도록 뒤에 배치한다 (오버레이 동작 보호). Escape 는 공유 스택(useOverlayEscape)이
-				// 처리하고, 여기서는 그 외 키가 드로어 밖으로 새어 소비자 단축키를 건드리지 않게 막는다.
+				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id/role 등은 통과시키되,
+				// 아래 className/style(애니메이션)/onKeyDown 은 컴포넌트가 항상 이기도록 뒤에 배치한다.
+				// Escape 는 공유 스택(useOverlayEscape)이 처리하고, 여기서는 그 외 키가 드로어 밖으로
+				// 새어 소비자 단축키를 건드리지 않게 막는다.
+				// 패널 클릭을 stopPropagation 하지 않는다 - 오버레이가 target 으로 판정하므로 불필요하고,
+				// 소비자 핸들러가 상위에서 이벤트를 못 받는 부작용만 남는다.
 				{...props}
 				className={cn("drawer_panel", className)}
 				style={{ ...props.style, ...panelStyle, ...panelSizeStyle }}
-				role="document"
-				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
@@ -184,7 +213,14 @@ export const Drawer = ({
 						</h2>
 					</div>
 				)}
-				{children && <div className="drawer_body">{children}</div>}
+				{children && (
+					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
+					// `scrollable-region-focusable`). 다만 초기 포커스 대상에서는 제외한다 - 안쪽에
+					// 첫 입력이 있는데 빈 wrapper 에 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
+					<div className="drawer_body" tabIndex={0} data-focus-trap-skip-autofocus="">
+						{children}
+					</div>
+				)}
 				{footer && <div className="drawer_footer">{footer}</div>}
 			</animated.div>
 		</animated.div>,
