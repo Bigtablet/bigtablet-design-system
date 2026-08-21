@@ -1802,7 +1802,21 @@ const [isOpen, setIsOpen] = useState(false);
 </Modal>
 ```
 
-`Drawer` 도 같은 수명을 갖는다 (`onExited` 는 현재 `Modal` 만 제공 — Drawer 는 후속).
+`Drawer` 도 같은 수명을 갖고 `onExited` 를 제공한다.
+
+#### 포털 — `document.body` 로 렌더된다
+
+Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 이 DS 는 `transform` 을 광범위하게 쓰는데(`useSpringHover` 등), `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
+
+```tsx
+// ❌ 이중 포털 - 사이드바의 스태킹 컨텍스트를 벗어나려고 감쌀 필요가 없다
+createPortal(<Modal open={open}>…</Modal>, document.body)
+
+// ✅ 그대로 쓴다
+<Modal open={open}>…</Modal>
+```
+
+`Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast` 도 같은 계약이다.
 
 ---
 
@@ -1836,13 +1850,38 @@ const [isOpen, setIsOpen] = useState(false);
 | `placement` | `'left' \| 'right' \| 'bottom'` | `'right'` | 슬라이드 방향 |
 | `size` | `number \| string` | `360` | 패널 크기 - left/right 는 너비, bottom 은 높이 (number ⇒ px) |
 | `title` | `ReactNode` | - | 헤더 제목 (있으면 `aria-labelledby` 자동 연결) |
+| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
 | `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
-| `ariaLabel` | `string` | `'Dialog'` | `title` 없을 때 dialog 접근성 레이블 |
+| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
+
+**계약은 Modal 과 같다** — 아래 네 가지는 [Modal](#modal) 절의 설명과 동일하게 적용된다.
+
+#### 접근성 이름은 필수다
+
+`title` 이나 `ariaLabel` 중 **하나는 반드시** 줘야 한다. 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고, axe 의 `aria-dialog-name`(serious)이 잡는다.
+
+> 이전에는 이름이 없으면 영어 `"Dialog"` 로 조용히 채워졌다. Modal 과 같은 이유로 제거했다.
+
+#### 스크롤 — 내용이 길 때
+
+제목·푸터는 고정된 채 `children` 영역만 스크롤된다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤되고, 초기 포커스는 그 wrapper 가 아니라 안쪽 첫 컨트롤로 간다.
+
+#### 오버레이 클릭 — 폼 드로어에서는 끌 것
+
+`closeOnOverlay` 기본값은 `true` 다. **입력 요소를 담은 드로어에서는 바깥 클릭 한 번에 작성 중인 내용이 사라진다** — 폼에는 명시적으로 끈다. 패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 닫히지 않는다.
+
+#### 마운트 수명
+
+패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다. `children` 을 `open` 과 같은 값에 묶으면 본문만 먼저 사라지므로, 데이터는 `onExited` 에서 비운다.
+
+#### 포털
+
+`document.body` 로 포털된다. 앱이 다시 감쌀 필요가 없다.
 
 ---
 
@@ -2190,7 +2229,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - **키보드**: <kbd>Tab</kbd> trigger 포커스 → Enter/Space로 토글 / <kbd>Esc</kbd> 닫음 (+ trigger 복귀)
 - non-modal이므로 Tab을 트랩하지 않음 (Modal과 차이). 페이지 나머지와 상호작용 가능
 
-> 📌 `dialog`는 접근성 이름이 필요하다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줘라.
+> 📌 `dialog`는 접근성 이름이 필요하다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줘라. **폴백이 없다** — 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다 (Modal · Drawer 와 같은 계약).
 
 #### 애니메이션
 
