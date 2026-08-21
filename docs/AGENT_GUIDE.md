@@ -59,7 +59,7 @@ Two surfaces, and they are **not** interchangeable:
 - **CSS custom properties** - read them with `var()` in consumer CSS. Spacing / radius / typography CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
-The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`.
+The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`.
 
 ### Color tokens
 
