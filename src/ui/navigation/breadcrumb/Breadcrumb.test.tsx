@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Breadcrumb } from "./index";
 
-describe("현재 위치", () => {
+describe("Breadcrumb", () => {
 	it("renders all items", () => {
 		render(
 			<Breadcrumb

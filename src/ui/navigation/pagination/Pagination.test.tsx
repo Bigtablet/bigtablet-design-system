@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Pagination } from "./index";
 
-describe("페이지 이동", () => {
+describe("Pagination", () => {
 	it("renders pagination navigation", () => {
 		render(<Pagination page={1} totalPages={10} onChange={() => {}} />);
 		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "페이지 이동");

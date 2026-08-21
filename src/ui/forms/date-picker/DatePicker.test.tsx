@@ -130,12 +130,12 @@ describe("DatePicker", () => {
 
 	it("renders sr-only constraint description when minDate is set", () => {
 		render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
-		expect(screen.getByText(/Minimum date: 2020-01-01/)).toBeInTheDocument();
+		expect(screen.getByText(/최소 날짜: 2020-01-01/)).toBeInTheDocument();
 	});
 
 	it("renders sr-only constraint description when selectableRange is until-today", () => {
 		render(<DatePicker selectableRange="until-today" onChange={() => {}} />);
-		expect(screen.getByText(/Selectable up to today/)).toBeInTheDocument();
+		expect(screen.getByText(/오늘까지 선택 가능/)).toBeInTheDocument();
 	});
 
 	it("links group to constraint description via aria-describedby", () => {

@@ -235,7 +235,7 @@ describe("Dropdown", () => {
 
 	it("uses default placeholder when none is provided", () => {
 		render(<Dropdown options={options} />);
-		expect(screen.getByText("Select…")).toBeInTheDocument();
+		expect(screen.getByText("선택…")).toBeInTheDocument();
 	});
 
 	it("renders defaultValue in uncontrolled mode", () => {
@@ -348,7 +348,7 @@ describe("Dropdown", () => {
 				</button>
 			</div>,
 		);
-		fireEvent.click(screen.getByRole("button", { name: /Select/ }));
+		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 
 		fireEvent.mouseDown(screen.getByTestId("outside"));
@@ -496,7 +496,7 @@ describe("Dropdown", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onChange={onChange} value="999" />);
 		// value="999" 는 옵션에 없음 - placeholder가 보여야 함
-		expect(screen.getByText("Select…")).toBeInTheDocument();
+		expect(screen.getByText("선택…")).toBeInTheDocument();
 	});
 
 	it("calls onValueChange (canonical) on select", () => {
