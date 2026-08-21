@@ -15,7 +15,7 @@
   }
 
   &_bordered {
-    border: 1px solid token.$color_border_default;
+    @include token.hairline;
   }
 
   &_shadow_none {

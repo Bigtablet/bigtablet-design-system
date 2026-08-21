@@ -15,6 +15,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
   - [레이아웃·런타임 계약 변수](#레이아웃런타임-계약-변수)
   - [접근성 토큰 — 하드코딩하지 마세요](#접근성-토큰--하드코딩하지-마세요)
+  - [하드코딩 대신 쓸 토큰](#하드코딩-대신-쓸-토큰)
 - [컴포넌트 마운트 수명](#컴포넌트-마운트-수명)
 - [오버레이 스크롤 잠금과 `--bt-scrollbar-width`](#오버레이-스크롤-잠금과---bt-scrollbar-width)
 - [자동완성(autofill) 입력칸](#자동완성autofill-입력칸)
@@ -279,6 +280,53 @@ scripts/check-css-vars.sh
 ```
 
 Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 있습니다.
+
+### 하드코딩 대신 쓸 토큰
+
+소비 앱 SCSS 를 실측한 결과, 토큰이 이미 있는데도 값을 직접 쓴 곳이 많았습니다. 대부분 **토큰의 존재를 몰라서**입니다.
+
+| 하드코딩 | 실측 건수 | 대신 쓸 것 |
+|---|---|---|
+| `1px` 경계선 | 232 | `@include token.hairline;` (아래) |
+| `font-size: 13px` | 29 | `@include token.label_medium;` (또는 `_medium` / `_bold` 변형) |
+| hex 색상 | 55 | `token.$color_*` — 목업 일러스트를 제외하면 대부분 위반 |
+| `2px` / `6px` 간격 | 61 / 28 | `token.$spacing_2` / `token.$spacing_6` |
+
+#### `hairline` — 1px 경계선
+
+`border: token.$border_width_standard solid token.$color_border_default` 는 `border: 1px solid #E5E5E5` 보다 길어서 실제로 쓰이지 않았습니다. 짧게 쓸 수 있어야 토큰이 채택됩니다.
+
+```scss
+.card   { @include token.hairline; }                            // 사방
+.header { @include token.hairline(bottom); }                    // 한 면
+.active { @include token.hairline(left, token.$color_border_hover); }
+```
+
+두 번째 인자로 색을 바꿀 수 있고, 기본값은 `$color_border_default` 입니다. 두께가 2px 이어야 하는 자리(포커스·선택 인디케이터)는 `token.$border_width_indicator` 를 직접 쓰세요.
+
+#### 타이포는 크기가 아니라 역할로
+
+`font-size` 를 직접 쓰지 말고 semantic mixin 을 쓰면 굵기·행간·자간이 함께 따라옵니다.
+
+| 크기 | mixin |
+|---|---|
+| 28px | `heading_large` · `heading_large_bold` |
+| 24px | `heading_medium` · `heading_medium_bold` |
+| 20px | `heading_small` · `heading_small_bold` |
+| 18px | `title_large` · `title_large_bold` |
+| 16px | `body_large` · `title_medium_bold` |
+| 15px | `body_medium` |
+| 14px | `body_small` · `label_large` |
+| **13px** | **`label_medium`** · `label_medium_medium` · `label_medium_bold` |
+| 12px | `label_small` |
+
+`@include token.code` 는 13px 고정폭 조합입니다.
+
+#### 스켈레톤
+
+`Skeleton` 의 높이도 토큰입니다 — `token.$skeleton_height_xs`(4px) · `_sm`(8) · `_md`(12) · `_lg`(16) · `_xl`(20). 반경은 `$skeleton_radius_sm/md/lg`.
+
+> 스케일이 20px 에서 끝나므로 그보다 큰 블록(카드·썸네일 자리)은 스켈레톤 높이 토큰이 아니라 해당 요소의 실제 크기를 쓰세요.
 
 ---
 
