@@ -89,13 +89,15 @@ export const Modal = ({
 	onExited,
 	...props
 }: ModalProps) => {
-	// 퇴출 애니메이션 동안 본문을 붙잡는다. 부모가 `open` 과 `children` 을 같은 값에 묶으면
-	// 닫는 tick 에 본문이 먼저 비어, 제목만 남은 빈 패널이 페이드아웃한다 - 두 단계로 닫히는
-	// 것이 눈에 보인다. 마지막으로 열려 있던 children 을 기억해 그 동안 그대로 그린다.
-	// 다시 열리면 `open` 이 true 라 새 children 이 즉시 이긴다.
-	const lastChildrenRef = React.useRef(children);
-	if (open) lastChildrenRef.current = children;
-	const renderedChildren = open ? children : lastChildrenRef.current;
+	// 퇴출 애니메이션 동안 내용을 붙잡는다. 부모가 `open` 과 내용을 같은 값에 묶으면 닫는 tick 에
+	// 내용이 먼저 비어, 빈 패널이 페이드아웃한다 - 두 단계로 닫히는 것이 눈에 보인다. 마지막으로
+	// 열려 있던 값을 기억해 그 동안 그대로 그린다. 다시 열리면 `open` 이 true 라 새 값이 즉시 이긴다.
+	//
+	// 네 슬롯을 함께 얼린다. `children` 만 얼리면 같은 데이터에 묶인 `footer`(선택 항목에 종속된
+	// 삭제 버튼 등)나 `title` 만 먼저 사라져 같은 버그가 다른 슬롯에서 재현된다.
+	const lastContentRef = React.useRef({ children, title, description, footer });
+	if (open) lastContentRef.current = { children, title, description, footer };
+	const content = open ? { children, title, description, footer } : lastContentRef.current;
 
 	// Escape·오버레이를 한 축으로 - dismissible 을 주면 그것이 이긴다.
 	const overlayDismissible = dismissible ?? closeOnOverlay;
@@ -117,7 +119,12 @@ export const Modal = ({
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Tooltip/Popover 등 다른 오버레이와 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
 	// 마운트 전(하이드레이션)엔 등록하지 않아 화면에 없는 모달이 Escape 스택 순서를 교란하지 않게 한다.
-	useOverlayEscape(open && isMounted && escapeDismissible, () => onClose?.());
+	// 등록 조건에 escapeDismissible 을 넣지 않는다. 등록하지 않으면 이 오버레이가 스택 최상단
+	// 자리를 비워, Escape 가 아래에 있는 다른 오버레이로 내려가 그것이 대신 닫힌다. 등록해서
+	// 최상단을 차지하고 - 스택이 stopImmediatePropagation 으로 전파를 끊는다 - 닫을지만 여기서 판정한다.
+	useOverlayEscape(open && isMounted, () => {
+		if (escapeDismissible) onClose?.();
+	});
 
 	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
 	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
@@ -168,7 +175,7 @@ export const Modal = ({
 	// 가 되는 렌더에서 패널이 붙고 useFocusTrap 이 그 시점에 활성화된다.
 	if (typeof document === "undefined" || !isMounted) return null;
 
-	const hasTitle = !!title;
+	const hasTitle = !!content.title;
 
 	// 포털로 body 끝에 렌더 - 트리거 위치 인라인 렌더는 transform/filter 조상 아래서
 	// position: fixed 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다
@@ -213,13 +220,15 @@ export const Modal = ({
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}
-				{title && (
+				{content.title && (
 					<h2 id={titleId} className="modal_title">
-						{title}
+						{content.title}
 					</h2>
 				)}
-				{description && <div className="modal_description">{description}</div>}
-				{renderedChildren && (
+				{content.description && (
+					<div className="modal_description">{content.description}</div>
+				)}
+				{content.children && (
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 넘치는지 여부를 측정해 조건부로 주는 방법도 있지만
 					// ResizeObserver 를 들일 만큼의 이득이 없고, 포커스 트랩 안에서 탭 정지 하나가
@@ -227,11 +236,13 @@ export const Modal = ({
 					// 다만 초기 포커스 대상에서는 제외한다 - 안쪽에 첫 입력이 있는데 빈 wrapper 에
 					// 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
 					<div className="modal_body" tabIndex={0} data-focus-trap-skip-autofocus="">
-						{renderedChildren}
+						{content.children}
 					</div>
 				)}
-				{footer && (
-					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{footer}</div>
+				{content.footer && (
+					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>
+						{content.footer}
+					</div>
 				)}
 			</animated.div>
 		</animated.div>,
