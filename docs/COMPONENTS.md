@@ -435,6 +435,7 @@ import { Search, X } from 'lucide-react';
 | `supportingText` | `string` | - | 도움말 텍스트 |
 | `error` | `boolean` | `false` | 에러 상태 (`success` 보다 우선) |
 | `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
+| `identifier` | `boolean` | `false` | 식별자 칸 - `l`/`I`/`1`, `0`/`O` 를 구분되게 렌더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
 | `leadingIcon` | `ReactNode` | - | 왼쪽 **장식** 아이콘 (`aria-hidden`) |
@@ -461,6 +462,19 @@ import { Search, X } from 'lucide-react';
 > **v3.11 추가 - 아이콘 슬롯 vs 조작 슬롯**: `leadingIcon` · `trailingIcon` 은 장식 전용이라 `aria-hidden="true"` 래퍼를 유지한다. 여기에 `<button>` 같은 포커스 가능한 요소를 넣으면 **포커스는 가는데 보조기기에는 존재하지 않는 요소**가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부한다. 조작 요소는 `leadingAction` · `trailingAction` 에 넣을 것 - 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 `aria-hidden` 만 빠지며, 넘긴 요소가 40x40 히트 영역을 채운다 (WCAG 2.5.8).
 >
 > 오른쪽 칸은 하나뿐이라 우선순위가 있다: `showPasswordToggle` > `clearable`(값 있을 때) > `trailingAction` > `trailingIcon`. 토글을 켜면 값이 차 있어도 계속 보인다 - 비밀번호 칸에서 토글이 사라지면 쓸 수 없기 때문. 왼쪽은 `leadingAction` > `leadingIcon`.
+
+#### `identifier` — 옮겨 적는 값의 오탈자 줄이기
+
+Pretendard 기본 글자꼴은 `l` · `I` · `1` 이 거의 같고 `0` 과 `O` 도 헷갈린다. 아이디·인증코드·시리얼·사업자번호처럼 **사용자가 화면을 보고 한 글자씩 옮겨 적는 값**에는 켠다.
+
+```tsx
+<TextField label="사업자등록번호" identifier />
+<TextField label="인증코드" identifier inputMode="numeric" />
+```
+
+Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero` 를 적용한다. Pretendard 가 아닌 폴백 폰트는 두 feature 를 무시하므로 안전하다.
+
+앱이 `.text_field_input` 을 직접 뚫어 `font-feature-settings` 를 주지 않아도 된다. SCSS 에서 같은 처리가 필요하면 `@include token.legible_identifiers` 를 쓴다 — `tabular_nums` · `slashed_zero` 와 겹쳐 쓰면 안 되는 함정은 [THEMING.md](./THEMING.md#하드코딩-대신-쓸-토큰) 참고.
 
 ---
 

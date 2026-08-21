@@ -287,7 +287,7 @@ Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 �
 
 | 하드코딩 | 실측 건수 | 대신 쓸 것 |
 |---|---|---|
-| `1px` 경계선 | 232 | `@include token.hairline;` (아래) |
+| `1px` 경계선 | 190 | `@include token.hairline;` (아래) |
 | `font-size: 13px` | 29 | `@include token.label_medium;` (또는 `_medium` / `_bold` 변형) |
 | hex 색상 | 55 | `token.$color_*` — 목업 일러스트를 제외하면 대부분 위반 |
 | `2px` / `6px` 간격 | 61 / 28 | `token.$spacing_2` / `token.$spacing_6` |
@@ -321,6 +321,28 @@ Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 �
 | 12px | `label_small` |
 
 `@include token.code` 는 13px 고정폭 조합입니다.
+
+#### 한글 줄바꿈 — `wrap_keep_all`
+
+`word-break: break-word` 는 한글을 **어절 중간에서** 끊습니다 (`안녕하세` / `요`). 게다가 표준값이 아니라 `overflow-wrap: break-word` 로 매핑되는 레거시 값이어서, 쓰는 사람이 의도한 `word-break` 를 사실상 지정하지 못합니다.
+
+```scss
+.notice { @include token.wrap_keep_all; }
+```
+
+`overflow-wrap: break-word` + `word-break: keep-all` 을 함께 냅니다 — 어절은 지키고, 끊을 수 없는 긴 영문·URL 만 강제로 끊습니다. **텍스트를 줄바꿈하는 모든 자리에서 이것을 쓰세요.** DS 내부의 `Button` · `Toast` · `Tooltip` 도 같은 믹스인을 씁니다.
+
+#### 식별자 판독 — `legible_identifiers`
+
+Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이고 `0` 과 `O` 도 헷갈립니다. 사용자가 한 글자씩 옮겨 적는 값(아이디·인증코드·시리얼·사업자번호)에는 켜세요.
+
+```scss
+.serial { @include token.legible_identifiers; }
+```
+
+`TextField` 는 `identifier` prop 으로 같은 처리를 합니다 — 앱이 `.text_field_input` 을 직접 뚫을 필요가 없습니다.
+
+> ⚠️ `legible_identifiers` · `tabular_nums` · `slashed_zero` 는 **셋 다 `font-variant-numeric` 를 건드립니다.** 같은 선택자에 두 개를 쓰면 뒤에 온 것만 적용됩니다. `legible_identifiers` 에는 `slashed-zero` 가 이미 포함되어 있으니 함께 쓰지 마세요. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero` 를 직접 쓰고 `font-feature-settings` 만 따로 주세요.
 
 #### 스켈레톤
 
