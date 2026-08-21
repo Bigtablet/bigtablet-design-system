@@ -38,3 +38,40 @@ if [ -n "$missing" ]; then
 fi
 
 echo "문서의 CSS 변수 $(wc -l < "$tmp/documented" | tr -d ' ')개 - 모두 빌드 산출물에 존재합니다."
+
+# ── 2단계: "React entry 는 이것만 내보낸다" 주장을 검증한다 ─────────────────────
+#
+# 1단계는 문서→빌드 한 방향만 본다. 그래서 새 변수를 추가하고 THEMING 에만 적으면 통과하는데,
+# 아래 세 파일은 목록을 **전부**라고 주장하므로 조용히 거짓이 된다. 실제로
+# --bt-bottom-inset-app 을 추가했을 때 세 파일 모두 낡은 채로 1단계를 통과했다.
+#
+# React 번들의 최상위 변수 계열을 뽑아, 각 파일이 전부 언급하는지 본다.
+# 계열 추출을 awk 로 하는 이유: sed 의 `t` 분기는 BSD(macOS)와 GNU 에서 동작이 갈린다.
+CLAIM_FILES="docs/AGENT_GUIDE.md README.md README_KR.md"
+
+families_of() {
+	grep -o -- '--bt-[a-z0-9-]*' "$1" | awk '{
+		sub(/^--bt-/, "")
+		# bottom-nav 와 bottom-inset 은 별개 계약이라 한 단어로 합치면 안 된다
+		if ($0 ~ /^bottom-nav/)        { print "bottom-nav";   next }
+		if ($0 ~ /^bottom-inset/)      { print "bottom-inset"; next }
+		sub(/-.*/, "")
+		if ($0 != "") print
+	}' | LC_ALL=C sort -u
+}
+
+families_of "$REACT_CSS" > "$tmp/families"
+
+fail=0
+for f in $CLAIM_FILES; do
+	families_of "$f" > "$tmp/claimed"
+	gap=$(comm -23 "$tmp/families" "$tmp/claimed")
+	if [ -n "$gap" ]; then
+		echo "$f 의 CSS 변수 목록에 빠진 계열:" >&2
+		echo "$gap" | sed 's/^/  --bt-/' >&2
+		fail=1
+	fi
+done
+
+[ "$fail" -eq 0 ] || exit 1
+echo "React entry 변수 계열 $(wc -l < "$tmp/families" | tr -d ' ')개 - 세 요약 목록이 모두 언급합니다."

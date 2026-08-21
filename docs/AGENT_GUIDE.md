@@ -56,7 +56,7 @@ Always reference tokens - never inline a hex value.
 
 Two surfaces, and they are **not** interchangeable:
 - **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
-- **CSS custom properties** (`var(--bt-color-bg-solid)`) - the React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset`, `--bt-scrollbar-width`. Spacing / radius / typography CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
+- **CSS custom properties** (`var(--bt-color-bg-solid)`) - the React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`. Spacing / radius / typography CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
 
 ### Color tokens
 

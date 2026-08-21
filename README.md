@@ -139,7 +139,7 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 }
 ```
 
-> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, and `--bt-bottom-nav-*`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
+> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
 
 `colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS only</sup>
 
