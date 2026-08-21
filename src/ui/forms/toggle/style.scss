@@ -29,11 +29,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%; // 트랙 폭이 40/48 이라 이미 하한 이상
-    height: token.$tap_target_dense;
-
-    @include token.compact {
-      height: token.$tap_target_compact;
-    }
+    // dense → compact 승급 규칙을 mixin 이 갖고 있다. 여기서 직접 조합하면 토큰 매핑이
+    // 바뀔 때 Toggle 만 따로 남는다. (min-height 를 내보내지만 빈 pseudo-element 라 결과 동일)
+    @include token.responsive_height(token.$tap_target_dense);
   }
 
   // ── Thumb ──────────────────────────────────────────────────────────────
