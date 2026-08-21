@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "./index";
 
@@ -69,7 +69,9 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.click(screen.getByRole("dialog"));
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -81,7 +83,9 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.click(screen.getByRole("dialog"));
+		const overlay = screen.getByRole("dialog");
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
 		expect(handleClose).not.toHaveBeenCalled();
 	});
 
@@ -105,7 +109,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
+		fireEvent.keyDown(document.querySelector(".modal_panel") as HTMLElement, { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -211,19 +215,17 @@ describe("Modal", () => {
 				Content
 			</Modal>,
 		);
-		fireEvent.keyDown(screen.getByRole("document"), { key: "Escape" });
+		fireEvent.keyDown(document.querySelector(".modal_panel") as HTMLElement, { key: "Escape" });
 		expect(handleClose).toHaveBeenCalledTimes(1);
 	});
 
-	it("forwards data props, protects overlay-critical props, and merges consumer style", () => {
-		const consumerClick = vi.fn();
+	it("forwards data props and merges consumer style", () => {
 		render(
 			<Modal
 				open
 				onClose={() => {}}
 				data-testid="panel-x"
 				style={{ backgroundColor: "rgb(255, 0, 0)" }}
-				{...({ role: "menu", onClick: consumerClick } as Record<string, unknown>)}
 			>
 				Content
 			</Modal>,
@@ -231,9 +233,114 @@ describe("Modal", () => {
 		// 포털 렌더라 render container 밖(document.body)에 붙는다
 		const panel = document.querySelector(".modal_panel") as HTMLElement;
 		expect(panel).toHaveAttribute("data-testid", "panel-x");
-		expect(panel).toHaveAttribute("role", "document");
-		fireEvent.click(panel);
-		expect(consumerClick).not.toHaveBeenCalled();
 		expect(panel.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
+	// ── 오버레이 닫기 판정 ───────────────────────────────────────────────────
+	// 패널에서 누르고 오버레이에서 놓으면 `click` 은 공통 조상인 오버레이에 디스패치된다.
+	// 텍스트 선택 같은 정상 조작이 닫기로 이어져 폼 입력이 사라지던 버그.
+	it("does not close when a drag starts in the panel and ends on the overlay", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose}>
+				Content
+			</Modal>,
+		);
+		const overlay = screen.getByRole("dialog");
+		const panel = document.querySelector(".modal_panel") as HTMLElement;
+
+		fireEvent.pointerDown(panel);
+		fireEvent.click(overlay);
+		expect(handleClose).not.toHaveBeenCalled();
+	});
+
+	it("does not close when a click lands on the panel", () => {
+		const handleClose = vi.fn();
+		render(
+			<Modal open onClose={handleClose}>
+				Content
+			</Modal>,
+		);
+		const panel = document.querySelector(".modal_panel") as HTMLElement;
+		fireEvent.pointerDown(panel);
+		fireEvent.click(panel);
+		expect(handleClose).not.toHaveBeenCalled();
+	});
+
+	// ── 접근성 이름 ──────────────────────────────────────────────────────────
+	// 폴백("Dialog")을 없앴다 - 이름을 빼먹으면 조용히 영어로 채워지는 대신
+	// 이름 없는 대화상자가 되어 axe `aria-dialog-name` 이 잡는다.
+	it("leaves the dialog unnamed when neither title nor ariaLabel is given", () => {
+		render(
+			<Modal open onClose={() => {}}>
+				Content
+			</Modal>,
+		);
+		const overlay = screen.getByRole("dialog");
+		expect(overlay).not.toHaveAttribute("aria-label");
+		expect(overlay).not.toHaveAttribute("aria-labelledby");
+	});
+
+	it("names the dialog from ariaLabel when there is no title", () => {
+		render(
+			<Modal open onClose={() => {}} ariaLabel="설정">
+				Content
+			</Modal>,
+		);
+		expect(screen.getByRole("dialog", { name: "설정" })).toBeInTheDocument();
+	});
+
+	// role="document" 제거 - ARIA 1.0 시절 워크어라운드였고 현대 스크린리더엔 불필요하다.
+	it("does not nest a document role inside the dialog", () => {
+		render(
+			<Modal open onClose={() => {}} title="제목">
+				Content
+			</Modal>,
+		);
+		expect(document.querySelector(".modal_panel")).not.toHaveAttribute("role");
+	});
+
+	// ── 퇴출 수명 ────────────────────────────────────────────────────────────
+	it("does not fire onExited for a modal that was never opened", () => {
+		const onExited = vi.fn();
+		render(
+			<Modal open={false} onClose={() => {}} onExited={onExited}>
+				Content
+			</Modal>,
+		);
+		expect(onExited).not.toHaveBeenCalled();
+	});
+
+	// reduced-motion 에서 spring 이 immediate 라 퇴출이 한 틱에 끝난다 - 실제 타이밍을 기다리지
+	// 않고 "언마운트된 뒤에 발화한다" 는 계약만 확인한다.
+	it("fires onExited after the panel unmounts", async () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+		const onExited = vi.fn();
+		const { rerender } = render(
+			<Modal open onClose={() => {}} onExited={onExited} title="상세">
+				Content
+			</Modal>,
+		);
+		expect(onExited).not.toHaveBeenCalled();
+
+		rerender(
+			<Modal open={false} onClose={() => {}} onExited={onExited} title="상세">
+				Content
+			</Modal>,
+		);
+		await waitFor(() => expect(onExited).toHaveBeenCalledTimes(1));
+		expect(document.querySelector(".modal_panel")).toBeNull();
+		vi.unstubAllGlobals();
 	});
 });
