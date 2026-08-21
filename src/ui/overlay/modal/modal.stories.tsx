@@ -25,9 +25,9 @@ const meta: Meta<typeof Modal> = {
 		docs: {
 			description: {
 				component: `
-**Modal** - Centered popup layer. Automatic focus trap + Esc to close + background scroll lock. / 화면 중앙 팝업 레이어. 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금 자동.
+**Modal** - 화면 중앙 팝업 레이어. 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금이 자동으로 적용된다.
 
-Key props: \`open\`, \`onClose\`, \`width\`, \`closeOnOverlay\`, \`title\` (auto \`aria-labelledby\`). / 주요 prop: \`open\`, \`onClose\`, \`width\`, \`closeOnOverlay\`, \`title\` (자동 \`aria-labelledby\`).
+주요 prop: \`open\`, \`onClose\`, \`width\`, \`closeOnOverlay\`, \`title\` (\`aria-labelledby\` 자동).
         `,
 			},
 		},
@@ -45,7 +45,7 @@ export const CreateToken: Story = {
 		docs: {
 			description: {
 				story:
-					"New design - large title, paragraph description, right-aligned footer actions. The most common confirm/form modal pattern. / 새 디자인 - 큰 title, paragraph description, 우측 정렬 footer 액션. 가장 일반적인 confirm/form 모달 패턴.",
+					"새 디자인 - 큰 title, paragraph description, 우측 정렬 footer 액션. 가장 일반적인 confirm·form 모달 패턴.",
 			},
 		},
 	},
@@ -88,7 +88,7 @@ export const DestructiveAction: Story = {
 		docs: {
 			description: {
 				story:
-					"`footerAlign=\"between\"` - destructive (Delete) on the left, safe (Cancel) on the right. Visualizes the risk. / `footerAlign=\"between\"` - 좌측에 destructive (Delete), 우측에 safe (Cancel). 위험성 시각화.",
+					"`footerAlign=\"between\"` - 좌측에 destructive (Delete), 우측에 safe (Cancel). 위험성을 시각화한다.",
 			},
 		},
 	},

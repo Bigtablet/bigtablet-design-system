@@ -13,20 +13,19 @@ const meta: Meta<typeof Popover> = {
 		placement: {
 			control: "select",
 			options: ["top", "bottom", "left", "right"],
-			description:
-				"선호 위치. 뷰포트를 벗어나면 자동 flip/shift, body 로 포탈. / Preferred side — auto flip/shift on viewport overflow, portaled to body.",
+			description: "선호 위치. 뷰포트를 벗어나면 자동 flip/shift, body 로 포탈.",
 		},
 		trigger: {
 			control: false,
-			description: "팝오버를 여는 트리거 ReactElement. / Trigger element that opens the popover.",
+			description: "팝오버를 여는 트리거 ReactElement.",
 		},
 		content: {
 			control: false,
-			description: "임의의 interactive 콘텐츠. / Arbitrary interactive content.",
+			description: "임의의 interactive 콘텐츠.",
 		},
 		open: {
 			control: false,
-			description: "제어 모드 열림 상태. / Controlled open state.",
+			description: "제어 모드 열림 상태.",
 		},
 	},
 	args: {
@@ -36,11 +35,11 @@ const meta: Meta<typeof Popover> = {
 		docs: {
 			description: {
 				component: `
-**Popover** - Click-triggered, non-modal panel for arbitrary interactive content (form / explanation / actions). For an action list use \`Menu\`; for hover info use \`Tooltip\`. / **Popover** - 클릭으로 여는 non-modal 패널. 임의의 interactive 콘텐츠(폼/설명/액션)를 담는다. 액션 리스트는 \`Menu\`, hover 정보는 \`Tooltip\`.
+**Popover** - 클릭으로 여는 non-modal 패널. 임의의 interactive 콘텐츠(폼·설명·액션)를 담는다. 액션 리스트는 \`Menu\`, hover 정보는 \`Tooltip\` 을 쓴다.
 
-Closes on outside click / \`Esc\`. Moves focus into the panel on open; \`Esc\` returns focus to the trigger. / 외부 클릭·\`Esc\`로 닫힘. 열릴 때 패널로 포커스 이동, \`Esc\`로 닫으면 trigger 로 복귀.
+외부 클릭이나 \`Esc\` 로 닫힌다. 열릴 때 패널로 포커스가 이동하고, \`Esc\` 로 닫으면 trigger 로 복귀한다.
 
-\`role="dialog"\` (non-modal) - pass \`aria-label\` or \`aria-labelledby\` for an accessible name. / \`role="dialog"\`(non-modal) - 접근성 이름을 위해 \`aria-label\` 또는 \`aria-labelledby\` 전달.
+\`role="dialog"\` (non-modal) - 접근성 이름을 위해 \`aria-label\` 또는 \`aria-labelledby\` 를 전달한다.
 				`.trim(),
 			},
 		},

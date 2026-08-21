@@ -11,8 +11,6 @@ const meta: Meta = {
 				component: `
 ### Spacing (여백)
 
-**Spacing** - the baseline that creates the screen's **breathing room (gaps)**. Use these tokens for all margin / padding / gap "distances".
-
 Spacing은 화면의 **호흡(간격)** 을 만드는 기준입니다.
 margin / padding / gap 같은 "거리"는 가능한 한 **이 토큰만** 사용합니다.
 
@@ -114,7 +112,9 @@ export const LayoutExample: Story = {
 						}}
 					>
 						<span style={{ fontSize: 13, fontWeight: 600 }}>이름</span>
-						<span style={{ fontSize: 11, color: "var(--bt-color-status-error-on-surface)" }}>*</span>
+						<span style={{ fontSize: 11, color: "var(--bt-color-status-error-on-surface)" }}>
+							*
+						</span>
 					</div>
 					<div style={{ position: "relative" }}>
 						<div

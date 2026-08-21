@@ -19,12 +19,11 @@ const meta: Meta<typeof Badge> = {
 		docs: {
 			description: {
 				component: `
-**Badge** - Small status/count indicator. Static display only (no click/remove - see Chip).
-작은 상태/카운트 표시. 정적 표시 전용 (클릭/삭제 X - Chip 참고).
+**Badge** - 작은 상태·카운트 표시. 정적 표시 전용이다 (클릭·삭제는 Chip 참고).
 
 - **Shapes** - \`dot\` / \`count\` / \`label\`
 - **Variants** - \`accent\` / \`neutral\` / \`info\` / \`success\` / \`warning\` / \`error\`
-- **Appearance** - \`solid\` (strong fill) / \`soft\` (tint bg + dark text), both WCAG AA. / 강한 fill / tint 배경 + 진한 글자
+- **Appearance** - \`solid\` (강한 fill) / \`soft\` (tint 배경 + 진한 글자). 둘 다 WCAG AA 통과
 - \`count > max\` → \`{max}+\`
 				`,
 			},
@@ -77,7 +76,7 @@ export const SolidVsSoft: Story = {
 		docs: {
 			description: {
 				story:
-					"`appearance=\"solid\"` (default) - strong fill, for notification / status emphasis. `appearance=\"soft\"` - tint bg + dark text, for info labels. Both pass WCAG AA (5~7:1). / 강한 fill (기본) vs tint 배경 + 진한 글자. 둘 다 AA 통과.",
+					"`appearance=\"solid\"` (기본) - 강한 fill. 알림·상태 강조용. `appearance=\"soft\"` - tint 배경 + 진한 글자. 정보 라벨용. 둘 다 WCAG AA (5~7:1) 를 통과한다.",
 			},
 		},
 	},

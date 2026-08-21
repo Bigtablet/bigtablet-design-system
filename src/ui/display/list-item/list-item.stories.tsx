@@ -23,11 +23,11 @@ const meta: Meta<typeof ListItem> = {
 		docs: {
 			description: {
 				component: `
-**ListItem** - A single row in a list. Slot-based (\`leadingElement\` / \`trailingElement\`). / **ListItem** - 목록 한 항목. 슬롯형.
+**ListItem** - 목록의 한 항목. \`leadingElement\` / \`trailingElement\` 슬롯 기반.
 
-Key props: \`label\`, \`overline\` (small text above), \`supportingText\` (secondary text below), \`metadata\` (bottom meta), \`alignment\` (\`top\` multi-line / \`middle\` single line + icon), \`onClick\` (interactive). / 주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄+아이콘), \`onClick\` (인터랙티브).
+주요 prop: \`label\`, \`overline\` (위 작은 텍스트), \`supportingText\` (아래 보조 텍스트), \`metadata\` (하단 메타), \`alignment\` (\`top\` 멀티라인 / \`middle\` 한 줄 + 아이콘), \`onClick\` (인터랙티브).
 
-The four text slots accept **string or ReactNode** — inline \`<strong>\`, \`<a>\`, or a \`Badge\`. / 텍스트 4종 슬롯은 **string·ReactNode 모두 허용** — 인라인 \`<strong>\`, \`<a>\`, \`Badge\` 등.
+텍스트 4종 슬롯은 **string 과 ReactNode 를 모두 허용**한다 — 인라인 \`<strong>\`, \`<a>\`, \`Badge\` 등.
 				`,
 			},
 		},

@@ -23,10 +23,10 @@ const meta: Meta<typeof Button> = {
 		docs: {
 			description: {
 				component: `
-**Button** - Triggers a user action. / **Button** - 사용자 액션 트리거.
+**Button** - 사용자 액션을 트리거한다.
 
-Variants: \`filled\` (primary action / 주 액션) / \`tonal\` (soft emphasis / 부드러운 강조) / \`outline\` (secondary / 보조) / \`text\` (inline / 인라인).
-Sizes: \`sm\` 32 / \`md\` 40 / \`lg\` 48 / \`xl\` 56 (auto-bumps one step up on mobile / 모바일 자동 한 단계 ↑).
+Variants: \`filled\` (주 액션) / \`tonal\` (부드러운 강조) / \`outline\` (보조) / \`text\` (인라인).
+크기: \`sm\` 32 / \`md\` 40 / \`lg\` 48 / \`xl\` 56 (모바일에서 한 단계 자동 상승).
 				`,
 			},
 		},
@@ -100,9 +100,6 @@ export const Danger: Story = {
 				story: `
 \`danger\` 는 \`variant\` 와 **직교**하는 modifier 다 — variant 를 대체하지 않고 색만 위험(빨강) 계열로 바꾼다.
 네 variant 어디에나 붙일 수 있고, 생략하면 \`filled\` 위에 적용된다. 삭제·탈퇴처럼 되돌리기 어려운 액션에만 쓴다.
-
-\`danger\` is a modifier **orthogonal** to \`variant\` — it recolors rather than replaces, so it composes with all
-four variants (defaulting to \`filled\`). Reserve it for destructive, hard-to-undo actions such as delete or leave.
 				`,
 			},
 		},
@@ -136,10 +133,6 @@ export const IconSizes: Story = {
 주지 않은 아이콘(뷰박스만 있는 커스텀 svg)은 기본 24px 로 렌더된다.
 
 라벨 옆 아이콘은 라벨 글자 크기에 맞추는 편이 무게가 맞는다 — \`sm\`/\`md\` 버튼이면 14~16 이 보통이다.
-
-The icon decides its own size — the slot only aligns. An icon given \`width\`/\`height\` renders at that size;
-one without (a viewBox-only custom svg) falls back to 24px. Match a leading icon to the label's font size
-(14–16 for \`sm\`/\`md\` buttons) so their visual weight lines up.
 				`,
 			},
 		},

@@ -10,7 +10,7 @@ const meta: Meta<typeof OtpInput> = {
 		length: {
 			control: "select",
 			options: [4, 6],
-			description: "Number of OTP digits. / OTP 자릿수입니다.",
+			description: "OTP 자릿수입니다.",
 		},
 		error: {
 			control: "boolean",
@@ -22,7 +22,7 @@ const meta: Meta<typeof OtpInput> = {
 		},
 		supportingText: {
 			control: "text",
-			description: "Helper text shown below. / 하단 도움말 텍스트입니다.",
+			description: "하단 도움말 텍스트입니다.",
 		},
 	},
 	args: {
@@ -34,9 +34,9 @@ const meta: Meta<typeof OtpInput> = {
 		docs: {
 			description: {
 				component: `
-**OtpInput** - OTP/2FA code entry. Auto focus advance, backspace/arrow/paste support. / **OtpInput** - OTP/2FA 코드 입력. 자동 포커스 이동, 백스페이스/화살표/붙여넣기 지원.
+**OtpInput** - OTP/2FA 코드 입력. 자동 포커스 이동, 백스페이스·화살표·붙여넣기를 지원한다.
 
-Key props: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`. / 주요 prop: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`.
+주요 prop: \`length\`, \`value\`, \`onChange\`, \`error\`, \`supportingText\`, \`disabled\`.
         `,
 			},
 		},

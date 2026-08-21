@@ -10,9 +10,9 @@ const meta: Meta<typeof Breadcrumb> = {
 		docs: {
 			description: {
 				component: `
-**Breadcrumb** - Page hierarchy navigation. The last item automatically gets \`aria-current="page"\`. / **Breadcrumb** - 페이지 위계 네비게이션. 마지막 아이템 자동 \`aria-current="page"\`.
+**Breadcrumb** - 페이지 위계 내비게이션. 마지막 항목에 \`aria-current="page"\` 가 자동으로 붙는다.
 
-\`items\` behavior: \`href\` → \`<a>\` / \`onClick\` → \`<button>\` / last → \`<span>\`. The \`separator\` prop is customizable. / \`items\` 동작: \`href\` → \`<a>\` / \`onClick\` → \`<button>\` / 마지막 → \`<span>\`. \`separator\` prop 커스텀 가능.
+\`items\` 동작: \`href\` → \`<a>\` / \`onClick\` → \`<button>\` / 마지막 → \`<span>\`. \`separator\` prop 으로 구분자를 바꿀 수 있다.
 				`,
 			},
 		},

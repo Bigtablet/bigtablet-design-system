@@ -15,15 +15,15 @@ const meta: Meta<typeof Drawer> = {
 		},
 		size: {
 			control: "text",
-			description: "패널 크기 - left/right 는 너비, bottom 은 높이 / Panel size (width for left/right, height for bottom)",
+			description: "패널 크기 - left/right 는 너비, bottom 은 높이",
 		},
 		closeOnOverlay: {
 			control: "boolean",
-			description: "배경(오버레이)을 클릭했을 때 닫을지 여부 / Close on overlay click",
+			description: "배경(오버레이)을 클릭했을 때 닫을지 여부",
 		},
 		showCloseIcon: {
 			control: "boolean",
-			description: "우상단 X 닫기 아이콘 표시 여부 / Show close icon",
+			description: "우상단 X 닫기 아이콘 표시 여부",
 		},
 	},
 	args: {
@@ -36,9 +36,9 @@ const meta: Meta<typeof Drawer> = {
 		docs: {
 			description: {
 				component: `
-**Drawer** - Panel that slides in from a screen edge. Automatic focus trap + Esc to close + background scroll lock. / 화면 가장자리에서 미끄러져 들어오는 패널. 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금 자동.
+**Drawer** - 화면 가장자리에서 미끄러져 들어오는 패널. 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금이 자동으로 적용된다.
 
-Key props: \`open\`, \`onClose\`, \`placement\` ("left" | "right" | "bottom"), \`size\`, \`title\`, \`footer\`, \`closeOnOverlay\`. / 주요 prop: \`open\`, \`onClose\`, \`placement\`, \`size\`, \`title\`, \`footer\`, \`closeOnOverlay\`.
+주요 prop: \`open\`, \`onClose\`, \`placement\` ("left" | "right" | "bottom"), \`size\`, \`title\`, \`footer\`, \`closeOnOverlay\`.
         `,
 			},
 		},
@@ -54,7 +54,7 @@ export const Right: Story = {
 		docs: {
 			description: {
 				story:
-					"Default drawer sliding in from the right - the most common side-panel pattern for filters, details, or settings. / 우측에서 들어오는 기본 드로어 - 필터/상세/설정에 가장 흔한 사이드 패널 패턴.",
+					"우측에서 들어오는 기본 드로어 - 필터·상세·설정에 가장 흔한 사이드 패널 패턴.",
 			},
 		},
 	},
@@ -80,7 +80,7 @@ export const Left: Story = {
 		docs: {
 			description: {
 				story:
-					"Left drawer - typical for mobile navigation menus. / 좌측 드로어 - 모바일 내비게이션 메뉴에 자주 쓰입니다.",
+					"좌측 드로어 - 모바일 내비게이션 메뉴에 자주 쓰인다.",
 			},
 		},
 	},
@@ -108,7 +108,7 @@ export const Bottom: Story = {
 		docs: {
 			description: {
 				story:
-					"Bottom sheet - slides up from the bottom, common on touch devices. / 하단 시트 - 아래에서 위로 올라오며 터치 기기에서 흔합니다.",
+					"하단 시트 - 아래에서 위로 올라오며 터치 기기에서 흔하다.",
 			},
 		},
 	},
@@ -133,7 +133,7 @@ export const WithFooter: Story = {
 		docs: {
 			description: {
 				story:
-					"Drawer with a footer action area - confirm/cancel or save patterns. / footer 액션 영역이 있는 드로어 - 확인/취소 또는 저장 패턴.",
+					"footer 액션 영역이 있는 드로어 - 확인·취소 또는 저장 패턴.",
 			},
 		},
 	},
