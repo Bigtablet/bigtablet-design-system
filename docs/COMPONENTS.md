@@ -1486,13 +1486,13 @@ const [collapsed, setCollapsed] = useState(false);
 --bt-bottom-inset             /* 위 두 몫의 합. 읽기 전용으로 쓴다 */
 ```
 
-> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** 위의 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 만 BottomNav 가 DOM 에 있을 때 값이 생깁니다.
+> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** `--bt-bottom-nav-height` · `-safe-area` · `-total-height` 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 은 **실제로 가려진 만큼만** 값을 갖습니다 — BottomNav 가 DOM 에 있거나, 앱이 `--bt-bottom-inset-app` 을 설정했거나, 둘 다일 때입니다.
 >
 > ```css
 > .my_floating_bar { bottom: calc(16px + var(--bt-bottom-inset)); }
 > ```
 >
-> **앱이 소유한 하단 크롬(플로팅 바 등)은 `--bt-bottom-inset-app` 에 쓰세요.** `--bt-bottom-inset` 을 직접 쓰면 DS 규칙과 특이도가 같아 로드 순서 싸움이 되고, 둘이 동시에 있을 때 합성되지 않습니다. 자세한 내용은 [THEMING.md](../docs/THEMING.md#앱이-소유한-하단-크롬은---bt-bottom-inset-app-에-씁니다).
+> **앱이 소유한 하단 크롬(플로팅 바 등)은 `--bt-bottom-inset-app` 에 쓰세요.** `--bt-bottom-inset` 을 직접 쓰면 DS 규칙과 특이도가 같아 로드 순서 싸움이 되고, 둘이 동시에 있을 때 합성되지 않습니다. 자세한 내용은 [THEMING.md](./THEMING.md#앱이-소유한-하단-크롬은---bt-bottom-inset-app-에-씁니다).
 >
 > ```scss
 > body:has(.floating_bar) { --bt-bottom-inset-app: 96px; }
