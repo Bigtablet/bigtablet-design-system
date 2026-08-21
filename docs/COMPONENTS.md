@@ -1300,6 +1300,16 @@ const [filter, setFilter] = useState("all");
 
 Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** 고정. `SidebarItem` 자식과 함께 사용하며, 선택적으로 `SidebarSection`으로 그룹화. `collapsed` 모드로 아이콘만 표시되는 축소 상태 지원.
 
+#### CSS 변수 (layout 계산용)
+
+```css
+--bt-sidebar-height        /* 56px */
+--bt-sidebar-safe-area     /* env(safe-area-inset-bottom) */
+--bt-sidebar-total-height  /* 합산 */
+```
+
+> **뷰포트 폭 <600px 에서만 정의됩니다.** `@media (max-width: 599px)` 안의 `:root` 선언이라 **Sidebar 를 렌더하지 않는 페이지나 `mode="static"` Sidebar 에서도 값이 존재**하고, 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다. `var(--bt-sidebar-total-height, 0px)` 처럼 폴백을 두세요. 전체 계약은 [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수) 참고.
+
 #### 언제 쓰는가
 
 | 상황 | 선택 |

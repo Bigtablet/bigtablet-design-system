@@ -13,6 +13,9 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
   - [React](#react)
   - [SCSS 소비자](#scss-소비자)
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
+  - [레이아웃·런타임 계약 변수](#레이아웃런타임-계약-변수)
+  - [접근성 토큰 — 하드코딩하지 마세요](#접근성-토큰--하드코딩하지-마세요)
+- [컴포넌트 마운트 수명](#컴포넌트-마운트-수명)
 - [오버레이 스크롤 잠금과 `--bt-scrollbar-width`](#오버레이-스크롤-잠금과---bt-scrollbar-width)
 - [자동완성(autofill) 입력칸](#자동완성autofill-입력칸)
 - [Storybook](#storybook)
@@ -199,6 +202,107 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-elevation-level1` ~ `-level5` | elevation shadow |
 
 > 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)는 `src/vanilla/bigtablet.scss` 에서 동일 토큰을 기반으로 하지만 이름이 다른 자체 `--bt-color-*` 변수 세트를 사용하며(예: `--bt-color-primary`, `--bt-color-background`), 현재 `data-theme`/`prefers-color-scheme` 다크 모드 오버라이드가 없습니다. Vanilla 환경과 React 환경의 CSS 변수는 서로 호환되지 않으니 섞어 쓰지 마세요.
+
+### 레이아웃·런타임 계약 변수
+
+위 표는 **테마 토큰**(색·elevation·focus)입니다. 그 외에 컴포넌트가 **레이아웃 계산용으로 내보내는 변수**가 따로 있습니다. 값이 런타임에 바뀌거나 컴포넌트 존재 여부에 따라 달라지므로, SCSS 토큰이 아니라 CSS 변수로만 제공됩니다.
+
+| 변수 | 정의 주체 | 기본값 | 언제 바뀌나 |
+|------|----------|--------|------------|
+| `--bt-scrollbar-width` | `theme.scss` + 오버레이 잠금 JS | `0px` | Modal·Drawer·Alert 가 열려 body 스크롤이 잠긴 동안 실측 폭. 닫히면 원복 |
+| `--bt-bottom-nav-height` | `BottomNav` 스타일시트 | `56px` | 고정 |
+| `--bt-bottom-nav-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 기기·방향 |
+| `--bt-bottom-nav-total-height` | 〃 | 위 둘의 합 | 〃 |
+| `--bt-sidebar-height` | `Sidebar` 스타일시트 | `56px` | **뷰포트 폭 <600px 에서만 정의** (아래 주의) |
+| `--bt-sidebar-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 〃 |
+| `--bt-sidebar-total-height` | 〃 | 위 둘의 합 | 〃 |
+
+#### 존재 여부와 값을 혼동하지 마세요
+
+`--bt-bottom-nav-*` 세 변수는 `:root` 에 선언돼 있고 라이브러리 CSS 는 한 파일이므로, **BottomNav 를 렌더하지 않는 화면에서도 항상 정의돼 있습니다.** 하단 고정 요소에서 그대로 더하면 BottomNav 가 없는 페이지에서도 그만큼 밀립니다.
+
+실제로 하단이 가려진 높이는 `--bt-bottom-inset` 입니다 — 기본 `0px` 이고, `BottomNav` 가 DOM 에 있을 때만 값이 생깁니다.
+
+```css
+/* ✅ BottomNav 유무에 따라 알아서 맞는다 */
+.my_floating_bar { bottom: calc(16px + var(--bt-bottom-inset)); }
+
+/* ❌ BottomNav 없는 페이지에서도 56px 밀린다 */
+.my_floating_bar { bottom: calc(16px + var(--bt-bottom-nav-total-height)); }
+```
+
+#### `--bt-sidebar-*` 는 컴포넌트가 아니라 뷰포트에 달려 있습니다
+
+세 변수는 `@media (max-width: 599px)` 안의 `:root` 에서만 정의됩니다. **Sidebar 를 렌더하지 않는 페이지도, `mode="static"`(하단 bar 로 변신하지 않음) Sidebar 도, 폭이 600px 미만이면 값이 존재합니다.** 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다.
+
+`--bt-bottom-inset` 같은 "실제로 가려진 높이" 대응 변수가 Sidebar 쪽에는 없으므로, 데스크탑에서 미정의인 것에 대비해 폴백을 두세요.
+
+```css
+padding-bottom: var(--bt-sidebar-total-height, 0px);
+```
+
+#### 번들에 따라 변수 집합이 다릅니다
+
+React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-scrollbar-width` · `--bt-bottom-nav-*` · `--bt-bottom-inset` · `--bt-sidebar-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
+
+#### 문서와 실제가 갈리지 않게 하려면
+
+이 목록은 손으로 관리하면 반드시 낡습니다. 빌드 산출물과 대조하는 절차:
+
+```bash
+pnpm build
+scripts/check-css-vars.sh
+```
+
+문서에 적혔지만 어느 번들에도 없는 변수를 찾아냅니다. 현재는 수동 실행이며 CI 에는 연결돼 있지 않습니다.
+
+### 접근성 토큰 — 하드코딩하지 마세요
+
+포커스 표시와 최소 터치 영역에도 토큰이 있습니다. 존재를 몰라 하드코딩하면 다크 모드에서 포커스 링이 보이지 않는 등의 문제가 실제로 생깁니다.
+
+| 토큰 (SCSS) | CSS 변수 | 값 |
+|---|---|---|
+| `token.$focus_ring` | `--bt-focus-ring` | 포커스 링 box-shadow (light/dark 각각 대비 확보) |
+| `token.$focus_ring_error` | `--bt-focus-ring-error` | 에러 상태 포커스 링 |
+| `token.$focus_ring_success` | `--bt-focus-ring-success` | 성공 상태 포커스 링 |
+| `token.$tap_target_dense` | — | 32px (데스크탑 인라인 폼) |
+| `token.$tap_target_compact` | — | 40px (데스크탑 기본) |
+| `token.$tap_target_comfortable` | — | 48px (모바일/터치 기본) |
+| `token.$tap_target_spacious` | — | 56px (강조 CTA) |
+
+```scss
+// ✅
+&:focus-visible { outline: none; box-shadow: token.$focus_ring; }
+
+// ❌ 다크 테마에서 검정 배경 위 검정 아웃라인 - 보이지 않는다
+&:focus-visible { outline: 2px solid #000; }
+```
+
+Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 있습니다.
+
+---
+
+## 컴포넌트 마운트 수명
+
+애니메이션이 있는 컴포넌트는 **퇴출 스프링이 끝날 때까지 DOM 에 남습니다.** 그래야 페이드아웃이 보입니다. 이 사실이 앱 코드에 영향을 주는 지점이 있습니다.
+
+해당 컴포넌트: `Modal` · `Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast` · `Menu` · `Dropdown`.
+
+**children 을 열림 상태와 같은 값으로 감싸지 마세요.** 감싸면 본문만 먼저 사라지고 껍데기가 페이드아웃되어, 닫힘이 두 단계로 보입니다.
+
+```tsx
+// ❌ item 이 null 되는 순간 본문만 사라진다
+<Modal open={!!item} onClose={close} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+
+// ✅ 언마운트가 끝난 뒤 비운다
+<Modal open={open} onClose={() => setOpen(false)} onExited={() => setItem(null)} title="상세">
+  {item && <Body item={item} />}
+</Modal>
+```
+
+`onExited` 는 현재 `Modal` 만 제공합니다. 다른 컴포넌트에서는 열림 상태와 데이터를 분리해 두고, 데이터는 다음 열림 때 덮어쓰는 편이 안전합니다.
 
 ---
 
