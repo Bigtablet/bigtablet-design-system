@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Prose } from "./index";
 
@@ -35,6 +36,13 @@ describe("Prose", () => {
 		);
 		expect(container.firstChild).toHaveAttribute("data-testid", "p");
 		expect(container.firstChild).toHaveAttribute("aria-label", "정책");
+	});
+
+	// 내부에서 측정용 ref 를 쓰면서도 소비자 ref 가 살아 있어야 한다(React 19 ref-as-prop).
+	it("forwards a consumer ref to the root element", () => {
+		const ref = createRef<HTMLDivElement>();
+		const { container } = render(<Prose ref={ref}>x</Prose>);
+		expect(ref.current).toBe(container.firstChild);
 	});
 
 	// ── 스크롤 컨테이너 키보드 접근 ────────────────────────────────────────
@@ -86,16 +94,21 @@ describe("Prose", () => {
 		const original = globalThis.ResizeObserver;
 		// @ts-expect-error - 미지원 환경 재현
 		globalThis.ResizeObserver = undefined;
-		stubMetrics(500, 200);
-		const { container } = render(
-			<Prose>
-				<pre>
-					<code>long</code>
-				</pre>
-			</Prose>,
-		);
-		expect(container.querySelector("pre")).toHaveAttribute("tabindex", "0");
-		globalThis.ResizeObserver = original;
+		// render 나 단언이 실패해도 전역을 되돌려야 뒤 테스트가 미지원 환경을 물려받지 않는다.
+		// vi.restoreAllMocks 는 직접 대입한 전역은 복원하지 않는다.
+		try {
+			stubMetrics(500, 200);
+			const { container } = render(
+				<Prose>
+					<pre>
+						<code>long</code>
+					</pre>
+				</Prose>,
+			);
+			expect(container.querySelector("pre")).toHaveAttribute("tabindex", "0");
+		} finally {
+			globalThis.ResizeObserver = original;
+		}
 	});
 
 	// 조판만 담당한다 - 파서를 물지 않는다는 계약. children 을 그대로 통과시켜야

@@ -3245,6 +3245,7 @@ import ReactMarkdown from 'react-markdown';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `'md' \| 'lg'` | `'md'` | 본문 스케일 |
+| `ref` | `Ref<HTMLDivElement>` | - | 루트 `div` ref (React 19 ref-as-prop) |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | 루트 `div` 로 전달 |
 
 #### `size` 선택
@@ -3264,7 +3265,7 @@ import ReactMarkdown from 'react-markdown';
 
 #### 본문 속 링크는 밑줄이 유지된다
 
-색만으로 구분하면 주변 텍스트와의 대비가 3:1 에 못 미쳐 WCAG 1.4.1(Use of Color) 위반이다. `text-decoration: none` 으로 덮어쓰지 말 것.
+WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 본문의 대비가 3:1 이상이면** 허용되지만, DS 의 accent 색은 그 문턱을 넘지 못해 axe 가 `link-in-text-block` 으로 잡습니다. 밑줄은 색 대비와 무관하게 성립하므로 `text-decoration: none` 으로 덮어쓰지 마세요.
 
 ---
 

@@ -85,6 +85,8 @@
     background: token.$color_bg_solid_dim;
     color: token.$color_text_heading;
     border-radius: token.$radius_xs;
+    // em 단위 유지 - spacing 토큰은 px 라, 부모 글자 크기가 다른 자리(제목 안의 인라인 코드 등)
+    // 에서 여백 비율이 깨진다. 글자 크기에 따라가야 하는 값이다.
     padding: 0.2em 0.45em;
   }
 
@@ -106,8 +108,10 @@
   // ── 인용 ────────────────────────────────────────────────────────────────
 
   blockquote {
+    // border-width 토큰은 0/1/2px 뿐이라 4px 에 대응하는 값이 없다. 인용 표시줄은 1~2px 로는
+    // 눈에 안 띄어 앱 구현들도 4px 을 썼다 - 토큰을 추가할지는 별도 판단이 필요하다.
     border-left: 4px solid token.$color_accent_default;
-    background: color-mix(in srgb, token.$color_accent_default 5%, transparent);
+    background: color-mix(in srgb, token.$color_accent_default #{token.$opacity_5 * 100%}, transparent);
     border-radius: 0 token.$radius_sm token.$radius_sm 0;
     padding: token.$spacing_8 token.$spacing_12;
     color: token.$color_text_body;
@@ -129,8 +133,9 @@
 
   a {
     color: token.$color_accent_default;
-    // 본문 속 링크는 밑줄을 유지한다. 색만으로 구분하면 주변 텍스트와의 대비가 3:1 에 못 미쳐
-    // WCAG 1.4.1(Use of Color) 위반이고 axe 가 `link-in-text-block` 으로 잡는다.
+    // 본문 속 링크는 밑줄을 유지한다. WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도
+    // 링크와 주변 본문의 대비가 3:1 이상이면 허용되지만, accent 는 그 문턱을 넘지 못해
+    // axe 가 `link-in-text-block` 으로 잡았다. 밑줄은 색 대비와 무관하게 성립하는 수단이다.
     text-decoration: underline;
     text-underline-offset: 0.15em;
 
