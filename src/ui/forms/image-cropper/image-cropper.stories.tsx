@@ -46,62 +46,59 @@ const meta = {
 	},
 	tags: ["autodocs"],
 	argTypes: {
-		src: { control: false, description: "크롭할 이미지 (`File`/`Blob`/URL). / Image to crop." },
+		src: { control: false, description: "크롭할 이미지 (`File`/`Blob`/URL)." },
 		circular: {
 			control: "boolean",
-			description: "원형 가이드(아바타용). / Circular guide for avatars.",
+			description: "원형 가이드(아바타용).",
 		},
 		viewportSize: {
 			control: { type: "number", min: 160, max: 320, step: 8 },
-			description: "뷰포트 한 변(px). / Viewport side length (px).",
+			description: "뷰포트 한 변(px).",
 		},
 		outputSize: {
 			control: { type: "number", min: 128, max: 1024, step: 64 },
-			description: "결과물 한 변(px). / Output side length (px).",
+			description: "결과물 한 변(px).",
 		},
 		outputType: {
 			control: "select",
 			options: ["auto", "image/jpeg", "image/png", "image/webp"],
-			description:
-				"결과 MIME. `auto` 는 PNG 만 유지, 나머지는 JPEG. / Output MIME; `auto` keeps PNG else JPEG.",
+			description: "결과 MIME. `auto` 는 PNG 만 유지, 나머지는 JPEG.",
 		},
 		quality: {
 			control: { type: "number", min: 0.5, max: 1, step: 0.02 },
-			description:
-				"JPEG/WebP 품질 (컨트롤 0.5~1, prop 자체는 0~1 허용). / JPEG/WebP quality (control 0.5–1; the prop accepts 0–1).",
+			description: "JPEG/WebP 품질 (컨트롤 0.5~1, prop 자체는 0~1 허용).",
 		},
 		minZoom: {
 			control: { type: "number", min: 1, max: 3, step: 0.5 },
-			description: "최소 배율. / Min zoom.",
+			description: "최소 배율.",
 		},
 		maxZoom: {
 			control: { type: "number", min: 1, max: 6, step: 0.5 },
-			description: "최대 배율. / Max zoom.",
+			description: "최대 배율.",
 		},
 		label: {
 			control: "text",
-			description: "뷰포트 접근성 레이블. / Viewport accessibility label.",
+			description: "뷰포트 접근성 레이블.",
 		},
 		hint: {
 			control: "text",
-			description: "뷰포트 아래 조작 안내 문구. / Operation hint under the viewport.",
+			description: "뷰포트 아래 조작 안내 문구.",
 		},
 		zoomOutLabel: {
 			control: "text",
-			description: "축소 버튼 레이블. / Zoom-out button label.",
+			description: "축소 버튼 레이블.",
 		},
 		zoomLabel: {
 			control: "text",
-			description: "배율 슬라이더 레이블. / Zoom slider label.",
+			description: "배율 슬라이더 레이블.",
 		},
 		zoomInLabel: {
 			control: "text",
-			description: "확대 버튼 레이블. / Zoom-in button label.",
+			description: "확대 버튼 레이블.",
 		},
 		noPanHint: {
 			control: "text",
-			description:
-				"이동 여유가 없을 때 스크린리더로 알리는 문구. / Announced when the image has no room to pan.",
+			description: "이동 여유가 없을 때 스크린리더로 알리는 문구.",
 		},
 		ref: { table: { disable: true } },
 		onReady: { table: { disable: true } },
@@ -128,8 +125,7 @@ export const LandscapeSource: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					"cover 배율이라 세로는 꽉 차고 가로만 여유가 생긴다. / With cover scaling, height fills the viewport while only width has room to pan.",
+				story: "cover 배율이라 세로는 꽉 차고 가로만 여유가 생긴다.",
 			},
 		},
 	},
@@ -153,8 +149,7 @@ export const Localized: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					"기본값은 한국어라, 다국어 앱은 이 prop 들로 갈아 끼운다. / Defaults are Korean, so multilingual apps swap them through these props.",
+				story: "기본값은 한국어라, 다국어 앱은 이 prop 들로 갈아 끼운다.",
 			},
 		},
 	},
@@ -198,8 +193,7 @@ export const WithApply: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story:
-					"소비 앱 패턴: 크로퍼 + 적용 버튼에서 `ref.crop()` → `Blob`. / Real pattern: apply button calls `ref.crop()`.",
+				story: "소비 앱 패턴: 크로퍼 + 적용 버튼에서 `ref.crop()` → `Blob`.",
 			},
 		},
 	},

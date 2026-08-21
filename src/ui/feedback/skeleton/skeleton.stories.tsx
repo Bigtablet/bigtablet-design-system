@@ -16,7 +16,7 @@ const meta: Meta<typeof Skeleton> = {
 		docs: {
 			description: {
 				component: `
-**Skeleton** - Loading placeholder. / **Skeleton** - 로딩 플레이스홀더. \`aria-hidden\` applied automatically. / \`aria-hidden\` 자동.
+**Skeleton** - 로딩 중 자리를 잡아 두는 플레이스홀더. \`aria-hidden\` 이 자동으로 적용된다.
 
 Variants: \`text\` (12px) / \`title\` (20px) / \`avatar\` (40×40 circle / 원형) / \`rect\` (card/image / 카드·이미지).
 				`,

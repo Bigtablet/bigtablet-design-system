@@ -12,10 +12,10 @@ const meta: Meta<typeof NavBar> = {
 		docs: {
 			description: {
 				component: `
-**NavBar** - Top page navigation. Slots: \`brand\` / \`children (NavLink)\` / \`actions\`. / **NavBar** - 페이지 상단 네비게이션. \`brand\` / \`children (NavLink)\` / \`actions\` 슬롯.
+**NavBar** - 페이지 상단 내비게이션. \`brand\` / \`children (NavLink)\` / \`actions\` 슬롯으로 구성한다.
 
-Variants: \`default\` (white bg + border), \`accent\` (dark bg), \`transparent\` (over a hero). / Variants: \`default\` (흰 bg + border), \`accent\` (검정 bg), \`transparent\` (hero 위).
-\`active={true}\` → \`aria-current="page"\` set automatically. / \`active={true}\` → \`aria-current="page"\` 자동.
+Variants: \`default\` (흰 bg + border) / \`accent\` (검정 bg) / \`transparent\` (hero 위).
+\`active={true}\` 면 \`aria-current="page"\` 가 자동으로 붙는다.
 				`,
 			},
 		},
@@ -95,7 +95,7 @@ export const Interactive: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "The active underline slides smoothly on click. / 클릭 시 active underline 부드럽게 이동.",
+				story: "클릭하면 active underline 이 부드럽게 이동한다.",
 			},
 		},
 	},

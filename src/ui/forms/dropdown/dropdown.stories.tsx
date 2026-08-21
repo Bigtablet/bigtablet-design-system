@@ -56,14 +56,14 @@ const meta: Meta<typeof Dropdown> = {
 		docs: {
 			description: {
 				component: `
-**Dropdown** - Single-select dropdown. Floating label (shows when a value is selected/opened). / **Dropdown** - 단일 선택 드롭다운. 플로팅 라벨 (값 선택/열림 시 표시).
+**Dropdown** - 단일 선택 드롭다운. 값이 선택되거나 열릴 때 플로팅 라벨이 표시된다.
 
-Sizes: \`sm\` / \`md\` (default) / \`lg\`. / Sizes: \`sm\` / \`md\` (기본) / \`lg\`.
-Variants: \`outline\` (default, bordered) / \`filled\` (dim fill, no border — the border appears while open). Same vocabulary as \`TextField\`. / Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테두리 없음 — 열려 있는 동안 테두리가 드러남). \`TextField\` 와 같은 어휘입니다.
-\`DropdownOption\` fields: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`. / \`DropdownOption\` 필드: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`.
-Keyboard: ↑↓/Enter/Esc/Home/End. / 키보드: ↑↓/Enter/Esc/Home/End.
+크기: \`sm\` / \`md\` (기본) / \`lg\`.
+Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테두리 없음 — 열려 있는 동안 테두리가 드러남). \`TextField\` 와 같은 어휘를 쓴다.
+\`DropdownOption\` 필드: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`.
+키보드: ↑↓/Enter/Esc/Home/End.
 
-Opt-in: \`searchable\` adds a label filter (case/whitespace-insensitive, Korean IME safe), \`multiple\` enables multi-select (toggle, list stays open, "N개 선택" summary). / opt-in: \`searchable\` 은 라벨 필터(대소문자·공백 무시, 한글 IME 안전), \`multiple\` 은 다중 선택(토글, 리스트 유지, "N개 선택" 요약)을 켭니다.
+opt-in: \`searchable\` 은 라벨 필터(대소문자·공백 무시, 한글 IME 안전), \`multiple\` 은 다중 선택(토글, 리스트 유지, "N개 선택" 요약)을 켠다.
 				`,
 			},
 		},
@@ -105,7 +105,7 @@ export const Variants: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "Side-by-side comparison of the two variants. / 두 variant 를 나란히 비교합니다.",
+				story: "두 variant 를 나란히 비교한다.",
 			},
 		},
 	},
@@ -172,7 +172,7 @@ export const Searchable: Story = {
 		docs: {
 			description: {
 				story:
-					"Type to filter options by label (case- and whitespace-insensitive). Korean IME composition is committed on composition end so the list does not thrash mid-typing. / 라벨로 옵션을 필터링합니다(대소문자·공백 무시). 한글 IME 는 조합 완료 시점에 반영되어 조합 중 리스트가 흔들리지 않습니다.",
+					"라벨로 옵션을 필터링한다(대소문자·공백 무시). 한글 IME 는 조합 완료 시점에 반영되어 조합 중 리스트가 흔들리지 않는다.",
 			},
 		},
 	},
@@ -217,7 +217,7 @@ export const SearchableMultiple: Story = {
 		docs: {
 			description: {
 				story:
-					"Search and multi-select combine: selecting an option while a filter is active keeps the filter so you can keep picking from the narrowed list. / 검색과 다중 선택 조합: 필터가 걸린 상태에서 항목을 선택해도 필터가 유지되어 좁혀진 목록에서 계속 고를 수 있습니다.",
+					"검색과 다중 선택 조합: 필터가 걸린 상태에서 항목을 선택해도 필터가 유지되어 좁혀진 목록에서 계속 고를 수 있다.",
 			},
 		},
 	},

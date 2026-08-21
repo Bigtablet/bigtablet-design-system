@@ -39,9 +39,9 @@ const meta: Meta<typeof EmptyState> = {
 		docs: {
 			description: {
 				component: `
-**EmptyState** - Placeholder for areas with no data. / **EmptyState** - 데이터 없는 영역 placeholder. Slots / 슬롯: \`illustration\` + \`title\` + \`description\` + \`action\`.
+**EmptyState** - 데이터가 없는 영역을 채우는 placeholder. 슬롯: \`illustration\` + \`title\` + \`description\` + \`action\`.
 
-Sizes: \`sm\` (modal/sidebar / 모달·사이드바) / \`md\` (content area, default / 콘텐츠 영역, 기본) / \`lg\` (page main / 페이지 메인).
+크기: \`sm\` (모달·사이드바) / \`md\` (콘텐츠 영역, 기본) / \`lg\` (페이지 메인).
 				`,
 			},
 		},

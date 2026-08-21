@@ -106,7 +106,7 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 ### Storybook
 - Component stories: `Components/{Category}/{ComponentName}`
 - Foundation stories: `foundation/{token-name}`
-- Include bilingual descriptions (Korean/English)
+- Write descriptions in Korean. 컴포넌트/prop 이름, 코드, `variant` 값 같은 식별자는 원문 그대로 둔다
 
 ### Animation (Required for Interactive Components)
 

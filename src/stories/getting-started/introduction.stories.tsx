@@ -10,7 +10,7 @@ const meta: Meta = {
 				component: `
 ### Bigtablet Design System
 
-A design system that manages the **UI components and design tokens** used across the service. / 서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
+서비스 전반에 사용되는 **UI 컴포넌트와 디자인 토큰**을 관리하는 디자인 시스템입니다.
 
 ---
 
@@ -150,7 +150,9 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 				border: "1px solid var(--bt-color-border-default)",
 			}}
 		>
-			<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 4 }}>{label}</div>
+			<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 4 }}>
+				{label}
+			</div>
 			<div style={{ fontSize: 13, fontWeight: 600 }}>{value}</div>
 		</div>
 	);

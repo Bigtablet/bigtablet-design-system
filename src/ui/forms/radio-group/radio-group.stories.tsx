@@ -11,21 +11,20 @@ const meta: Meta<typeof RadioGroup> = {
 		size: {
 			control: "select",
 			options: ["sm", "md", "lg"],
-			description:
-				"Group size, propagated to child Radios. / 그룹 사이즈. 자식 Radio 에 전파됩니다.",
+			description: "그룹 사이즈. 자식 Radio 에 전파됩니다.",
 		},
 		orientation: {
 			control: "select",
 			options: ["vertical", "horizontal"],
-			description: "Layout direction. / 배치 방향.",
+			description: "배치 방향.",
 		},
 		error: {
 			control: "boolean",
-			description: "Error state (label/helper turn red). / 에러 상태 (라벨/보조 텍스트가 빨간색).",
+			description: "에러 상태 (라벨·보조 텍스트가 빨간색으로 바뀐다).",
 		},
 		disabled: {
 			control: "boolean",
-			description: "Disable the whole group. / 그룹 전체 비활성화.",
+			description: "그룹 전체 비활성화.",
 		},
 		label: { control: "text" },
 		supportingText: { control: "text" },
@@ -41,11 +40,11 @@ const meta: Meta<typeof RadioGroup> = {
 		docs: {
 			description: {
 				component: `
-**RadioGroup** - Composite wrapper that groups \`Radio\`s via Context (name/value/size/disabled). / Context 로 \`Radio\` 들을 묶는 합성 래퍼 (name/value/size/disabled 공유).
+**RadioGroup** - Context 로 \`Radio\` 들을 묶는 합성 래퍼 (name/value/size/disabled 공유).
 
-- Controlled (\`value\` + \`onValueChange\`) or uncontrolled (\`defaultValue\`). / 제어형 또는 비제어형.
-- \`role="radiogroup"\` + label/supportingText/error. native radio 라 방향키 이동 기본 지원. / 방향키 이동 기본 지원.
-- Child \`Radio\` needs a \`value\` prop; size/name/disabled are inherited. / 자식 Radio 는 \`value\` 필요, 나머지는 상속.
+- 제어형(\`value\` + \`onValueChange\`) 또는 비제어형(\`defaultValue\`).
+- \`role="radiogroup"\` + label/supportingText/error. 네이티브 radio 라 방향키 이동을 기본 지원한다.
+- 자식 \`Radio\` 는 \`value\` 가 필요하고 size/name/disabled 는 상속받는다.
 				`,
 			},
 		},
