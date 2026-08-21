@@ -27,7 +27,7 @@ export const TopLoading = ({
 	color,
 	height = 3,
 	isLoading = true,
-	ariaLabel = "Page loading",
+	ariaLabel = "페이지 로딩 중",
 }: TopLoadingProps) => {
 	if (!isLoading) return null;
 

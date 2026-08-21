@@ -34,7 +34,7 @@ export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputEleme
  * @returns 렌더링된 파일 입력 UI
  */
 export const FileInput = ({
-	label = "Choose file",
+	label = "파일 선택",
 	onFiles,
 	supportingText,
 	preview = false,

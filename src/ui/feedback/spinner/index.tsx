@@ -15,7 +15,7 @@ export interface SpinnerProps {
  * @param props 스피너 속성
  * @returns 렌더링된 스피너 요소
  */
-export const Spinner = ({ size = 24, ariaLabel = "Loading" }: SpinnerProps) => {
+export const Spinner = ({ size = 24, ariaLabel = "로딩 중" }: SpinnerProps) => {
 	return (
 		<span
 			className="spinner"

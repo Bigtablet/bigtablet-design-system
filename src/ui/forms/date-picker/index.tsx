@@ -88,9 +88,9 @@ export const DatePicker = ({
 	disabled,
 	fullWidth = true,
 	width,
-	yearLabel = "Year",
-	monthLabel = "Month",
-	dayLabel = "Day",
+	yearLabel = "년",
+	monthLabel = "월",
+	dayLabel = "일",
 	minDateSrFormat = "Minimum date: {date}",
 	selectableRangeUntilTodaySrText = "Selectable up to today",
 }: DatePickerProps) => {
