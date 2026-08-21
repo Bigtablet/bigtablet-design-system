@@ -645,6 +645,26 @@
   cursor: pointer;
   border: none;
 
+  /* 트랙은 24~28px 이라 그대로는 터치 하한(32px)에 못 미친다. 스위치는 시각적으로 작은 것이
+     정상이므로 크기를 키우는 대신 히트 영역만 넓힌다 - 절대배치라 레이아웃에 영향이 없다.
+     React `Toggle` 과 동일한 처리 (src/ui/forms/toggle/style.scss).
+     세로로 쌓을 때는 16px 이상 띄울 것 - 그보다 좁으면 인접 토글끼리 히트 영역이 겹친다. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 32px;
+  }
+
+  @media (max-width: 599px) {
+    &::after {
+      height: 40px;
+    }
+  }
+
   &__thumb {
     width: 12px;
     height: 12px;

@@ -18,6 +18,22 @@
     border-color token.$transition_base;
   cursor: pointer;
 
+  // 트랙은 24~28px 이라 그대로는 $tap_target_dense(32) 에 못 미친다. 스위치는 시각적으로 작은
+  // 것이 정상이므로(Material 트랙 32x20 / 타깃 48) 크기를 키우는 대신 히트 영역만 넓힌다.
+  // Checkbox 처럼 padding 으로 넓히면 레이아웃 공간을 차지하는데, Toggle 은 설정 행에 인라인으로
+  // 놓여 행 높이를 밀면 안 된다. 절대배치 ::after 는 흐름에 영향을 주지 않는다.
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; // 트랙 폭이 40/48 이라 이미 하한 이상
+    // dense → compact 승급 규칙을 mixin 이 갖고 있다. 여기서 직접 조합하면 토큰 매핑이
+    // 바뀔 때 Toggle 만 따로 남는다. (min-height 를 내보내지만 빈 pseudo-element 라 결과 동일)
+    @include token.responsive_height(token.$tap_target_dense);
+  }
+
   // ── Thumb ──────────────────────────────────────────────────────────────
 
   &_thumb {
