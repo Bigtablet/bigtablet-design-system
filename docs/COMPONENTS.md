@@ -1308,7 +1308,7 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 --bt-sidebar-total-height  /* 합산 */
 ```
 
-> **`compact`(<600px)에서만 정의됩니다.** Sidebar 가 하단 bar 로 변신할 때만 의미가 있기 때문입니다(`mode="auto"` 기본값). 데스크탑 폭에서는 세 변수 모두 존재하지 않으므로 `var(--bt-sidebar-total-height, 0px)` 처럼 폴백을 두세요. 전체 계약은 [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수) 참고.
+> **뷰포트 폭 <600px 에서만 정의됩니다.** `@media (max-width: 599px)` 안의 `:root` 선언이라 **Sidebar 를 렌더하지 않는 페이지나 `mode="static"` Sidebar 에서도 값이 존재**하고, 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다. `var(--bt-sidebar-total-height, 0px)` 처럼 폴백을 두세요. 전체 계약은 [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수) 참고.
 
 #### 언제 쓰는가
 

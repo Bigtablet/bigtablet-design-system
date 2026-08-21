@@ -213,7 +213,9 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-bottom-nav-height` | `BottomNav` 스타일시트 | `56px` | 고정 |
 | `--bt-bottom-nav-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 기기·방향 |
 | `--bt-bottom-nav-total-height` | 〃 | 위 둘의 합 | 〃 |
-| `--bt-sidebar-height` / `-safe-area` / `-total-height` | `Sidebar` 스타일시트 | `56px` 기준, BottomNav 와 동일 구조 | **`compact`(<600px)에서만 정의됩니다** — Sidebar 가 하단 bar 로 변신할 때만 의미가 있기 때문 |
+| `--bt-sidebar-height` | `Sidebar` 스타일시트 | `56px` | **뷰포트 폭 <600px 에서만 정의** (아래 주의) |
+| `--bt-sidebar-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 〃 |
+| `--bt-sidebar-total-height` | 〃 | 위 둘의 합 | 〃 |
 
 #### 존재 여부와 값을 혼동하지 마세요
 
@@ -227,6 +229,16 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 
 /* ❌ BottomNav 없는 페이지에서도 56px 밀린다 */
 .my_floating_bar { bottom: calc(16px + var(--bt-bottom-nav-total-height)); }
+```
+
+#### `--bt-sidebar-*` 는 컴포넌트가 아니라 뷰포트에 달려 있습니다
+
+세 변수는 `@media (max-width: 599px)` 안의 `:root` 에서만 정의됩니다. **Sidebar 를 렌더하지 않는 페이지도, `mode="static"`(하단 bar 로 변신하지 않음) Sidebar 도, 폭이 600px 미만이면 값이 존재합니다.** 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다.
+
+`--bt-bottom-inset` 같은 "실제로 가려진 높이" 대응 변수가 Sidebar 쪽에는 없으므로, 데스크탑에서 미정의인 것에 대비해 폴백을 두세요.
+
+```css
+padding-bottom: var(--bt-sidebar-total-height, 0px);
 ```
 
 #### 번들에 따라 변수 집합이 다릅니다
@@ -251,7 +263,8 @@ scripts/check-css-vars.sh
 | 토큰 (SCSS) | CSS 변수 | 값 |
 |---|---|---|
 | `token.$focus_ring` | `--bt-focus-ring` | 포커스 링 box-shadow (light/dark 각각 대비 확보) |
-| `token.$focus_ring_error` / `_success` | `--bt-focus-ring-error` / `-success` | 상태별 포커스 링 |
+| `token.$focus_ring_error` | `--bt-focus-ring-error` | 에러 상태 포커스 링 |
+| `token.$focus_ring_success` | `--bt-focus-ring-success` | 성공 상태 포커스 링 |
 | `token.$tap_target_dense` | — | 32px (데스크탑 인라인 폼) |
 | `token.$tap_target_compact` | — | 40px (데스크탑 기본) |
 | `token.$tap_target_comfortable` | — | 48px (모바일/터치 기본) |

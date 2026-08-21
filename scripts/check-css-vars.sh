@@ -18,9 +18,16 @@ done
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
+# 루트 README 도 같은 변수 목록을 싣고 있어 함께 본다 - 한쪽만 갱신하면 문서끼리 갈린다.
+#
 # 이름이 잘린 조각(`--bt-`, `--bt-color-` 같은 접두사 표기)은 대조 대상이 아니다.
-grep -rho -- '--bt-[a-z0-9-]*' docs/*.md | grep -v -- '-$' | sort -u > "$tmp/documented"
-cat "$REACT_CSS" "$VANILLA_CSS" | grep -o -- '--bt-[a-z0-9-]*' | sort -u > "$tmp/built"
+# 반대로 `--bt-focus-ring-error` / `-success` 같은 축약 표기의 뒷부분은 `--bt-` 로 시작하지
+# 않아 여기 걸리지 않는다. 문서에서는 풀네임으로 적어야 검증 대상이 된다.
+#
+# comm 은 두 입력이 같은 바이트 순서라고 가정하므로 로케일을 C 로 고정한다.
+grep -rho -- '--bt-[a-z0-9-]*' docs/*.md README.md README_KR.md \
+	| grep -v -- '-$' | LC_ALL=C sort -u > "$tmp/documented"
+cat "$REACT_CSS" "$VANILLA_CSS" | grep -o -- '--bt-[a-z0-9-]*' | LC_ALL=C sort -u > "$tmp/built"
 
 missing=$(comm -23 "$tmp/documented" "$tmp/built")
 
