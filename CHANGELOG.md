@@ -4,6 +4,22 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.12.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.12.0) - 2026-08-21
+
+- `Prose` 컴포넌트 추가 - 마크다운·리치텍스트 본문을 DS 타이포로 조판한다. `size="md" | "lg"`, 루트 ref forwarding, 넘치는 `pre`·`table` 에만 `tabindex="0"` 를 붙여 키보드로 스크롤되게 하고 `ResizeObserver` + `MutationObserver` 로 다시 계산한다
+- `Modal` 6건 수정 - 패널에서 시작한 드래그를 오버레이에서 놓아도 닫히지 않고(누른 곳과 놓은 곳이 모두 오버레이여야 닫는다), 내용이 길면 제목·푸터는 고정된 채 본문만 스크롤하며(`100dvh` 기준), 제목이 `heading_large_responsive` 로 좁은 화면에서 접히지 않는다. 패널의 `role="document"` 제거, 퇴출 완료 후 발화하는 `onExited` 추가
+- `Drawer` 를 `Modal` 과 같은 오버레이·dialog 계약으로 - 위 수정 중 5건이 `Drawer` 에는 빠져 있었다. 오버레이 닫힘 판정, `role="document"` 제거, `onExited`, 키보드로 스크롤되는 본문, 접근성 이름 폴백 제거
+- **접근성 이름 폴백 제거 (동작 변경)** - `Modal` · `Drawer` · `Popover` 가 이름이 없을 때 영문 `"Dialog"` 로 채우던 것을 없앴다. 한국어 제품에서 그대로 낭독됐고, 무엇보다 이름 누락을 가려 axe `aria-dialog-name` 이 거짓 통과했다. `title` · `ariaLabel` 중 하나는 반드시 줘야 한다
+- `Toast` × `BottomNav` 겹침 해소 - `--bt-bottom-inset` 계약 신설. `body:has(.bottom_nav)` 에서 BottomNav 높이로 설정되고 `Toast` 가 스스로 비켜난다. 앱 CSS 보정이 필요 없다. `.bottom_nav` 를 `border-box` 로 바꿔 실제 높이와 값이 일치한다(safe-area 이중 계산으로 1px 틀어졌음)
+- `EmptyState` 에 `fillHeight` 추가 - 부모 높이를 채우고 세로 중앙 정렬한다. 앱마다 만들던 래퍼가 필요 없다
+- `TextField` 에 `identifier` 추가 - `l`·`I`·`1` 과 `0`·`O` 를 구분되게 렌더한다(Pretendard `cv05`·`cv08` + `slashed-zero`). 아이디·인증코드·시리얼처럼 화면을 보고 한 글자씩 옮겨 적는 값에 쓴다. Vanilla 는 `.bt-text-field__input--identifier`
+- **한글 줄바꿈 수정 (동작 변경)** - `Button` · `Toast` 가 `word-break: break-word` 로 어절 중간에서 끊었다(`안녕하세` / `요`). 새 믹스인 `token.wrap_keep_all`(`overflow-wrap: anywhere` + `word-break: keep-all`)로 통일했고 Vanilla `.bt-button` · `.bt-toast` 도 같다. 줄바꿈 위치가 바뀐다
+- `Toggle` 히트 영역이 tap target 하한을 충족 - 트랙 모양은 그대로 두고 `::after` 로 넓혔다. 데스크탑 32px / 좁은 화면 40px. Vanilla 도 미러링
+- SCSS 믹스인 3개 추가 - `token.hairline($side, $color)`(1px 경계선), `token.wrap_keep_all`(한글 줄바꿈), `token.legible_identifiers`(식별자 판독)
+- `a11y` 토큰에 `$tap_target_dense` 가 인터랙티브 컨트롤의 하한이라는 것과 마우스 전용 내부 도구(admin 등)의 예외를 명시
+- 문서 - 컴포넌트가 노출하는 CSS 변수·마운트 수명·포털 계약(`Modal`·`Drawer` 도 `document.body` 로 포털한다), React/Vanilla 번들별 변수 차이, 하드코딩 대신 쓸 토큰 매핑. 드리프트 감지용 `scripts/check-css-vars.sh` 추가
+- Storybook - 설명을 한글 단독으로 정리, GitHub Pages 하위 경로에서 깨졌던 로고·파비콘 경로 수정
+
 ## [3.11.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.11.0) - 2026-08-20
 
 - `TextField` 에 조작 슬롯 `leadingAction` · `trailingAction` 추가 - 아이콘 슬롯(`leadingIcon`·`trailingIcon`)은 장식 전용이라 `aria-hidden` 을 유지하고, 포커스 가능한 요소는 이 새 슬롯에 넣는다. 아이콘 칸의 위치·크기 CSS 를 그대로 재사용하고 넘긴 요소가 40x40 히트 영역을 채운다
