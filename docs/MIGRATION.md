@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.13.0 (a11y 문자열 기본값 한글화)](#v3130-a11y-문자열-기본값-한글화)
 - [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
 - [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
 - [v3.5.0](#v350)
@@ -26,6 +27,62 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.13.0 (a11y 문자열 기본값 한글화)
+
+> **다국어(ko/en) 앱은 업그레이드 전에 라벨을 주입하세요.** 지금까지 영문 기본값이 영어 UI 에서는 **우연히 맞는 동작**이었습니다. 이번 변경으로 라벨을 주입하지 않은 자리에 한글이 낭독됩니다. deprecated 가 아니라 **기본값 변경**이므로 컴파일러가 잡아주지 않습니다.
+
+### 기본값이 바뀐 prop
+
+| 컴포넌트 | prop | 이전 | 이후 |
+|---|---|---|---|
+| `FileInput` | `label` | `"Choose file"` | `"파일 선택"` |
+| `DatePicker` | `yearLabel` / `monthLabel` / `dayLabel` | `"Year"` / `"Month"` / `"Day"` | `"년"` / `"월"` / `"일"` |
+| `Pagination` | `prevLabel` / `nextLabel` | `"Previous page"` / `"Next page"` | `"이전 페이지"` / `"다음 페이지"` |
+| `TopLoading` | `ariaLabel` | `"Page loading"` | `"페이지 로딩 중"` |
+| `ToastProvider` | `closeAriaLabel` | `"Close"` | `"닫기"` |
+| `Spinner` | `ariaLabel` | `"Loading"` | `"로딩 중"` |
+| `TextField` | `passwordToggleLabels` | `"Show password"` / `"Hide password"` | `"비밀번호 표시"` / `"비밀번호 숨기기"` |
+
+`FileInput` 의 `label` 은 `aria-label` 이 아니라 **화면에 보이는 버튼 텍스트**입니다 - 영어 화면에서 가장 눈에 띕니다.
+
+### 신설된 prop — 이전엔 교체 수단이 아예 없었습니다
+
+아래 4곳은 문자열이 하드코딩돼 있어 앱이 고칠 방법이 없었습니다. 랜드마크·리전 이름은 스크린리더의 리전 목록에 그대로 뜹니다.
+
+| 컴포넌트 | 신규 prop | 기본값 | 이전 |
+|---|---|---|---|
+| `TextField` | `clearLabel` | `"지우기"` | `aria-label="Clear"` 하드코딩 |
+| `Pagination` | `navLabel` | `"페이지 이동"` | `aria-label="Pagination"` 하드코딩 |
+| `Breadcrumb` | `navLabel` | `"현재 위치"` | `aria-label="Breadcrumb"` 하드코딩 |
+| `ToastProvider` | `regionLabel` | `"알림"` | `aria-label="Notifications"` 하드코딩 |
+
+### 다국어 앱의 업그레이드 절차
+
+1. 위 두 표의 prop 을 **전부** 자기 i18n 사전에서 주입하도록 바꿉니다 (기본값에 의존하지 않게)
+2. 그 다음 버전을 올립니다
+
+```tsx
+// ✅ 언어에 관계없이 앱이 결정한다
+<Pagination
+  page={page}
+  totalPages={total}
+  onPageChange={setPage}
+  navLabel={t("pagination.nav")}
+  prevLabel={t("pagination.prev")}
+  nextLabel={t("pagination.next")}
+/>
+<Spinner ariaLabel={t("common.loading")} />
+<ToastProvider closeAriaLabel={t("common.close")} regionLabel={t("common.notifications")}>
+```
+
+### 왜 기본값을 영어로 두지 않았나
+
+랜드마크·리전 이름은 반드시 어떤 문자열이어야 하고 언어 중립인 값이 없습니다. DS 는 이미 절반이 한글 기본값이었습니다(`closeLabel "닫기"`, `BottomNav "주요 메뉴"`, `Table "전체 선택"`, `Sidebar "사이드바 토글"`, `OtpInput "OTP 입력"`, `ImageCropper`, `FileInput` 의 이미지 제거). 한쪽으로 통일하는 것이 신규 컴포넌트가 같은 실수를 반복하지 않는 유일한 방법입니다.
+
+**다국어 앱에서는 DS 기본값이 항상 틀린 값**이라는 것을 계약으로 인정하고, 대신 모든 문자열에 주입 수단을 보장합니다 - 위 신설 prop 4개가 그 마지막 구멍을 막습니다.
 
 ---
 
