@@ -279,6 +279,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
 | `placeholder` | `string` | `'Select…'` | 플레이스홀더 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
+| `fillHeight` | `boolean` | `false` | 부모 높이를 채우고 세로 중앙 정렬 (`flex: 1` + `justify-content: center`) |
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
 | `className` | `string` | - | 루트 요소에 추가할 className |
@@ -1448,7 +1449,16 @@ const [collapsed, setCollapsed] = useState(false);
 --bt-bottom-nav-height        /* 56px */
 --bt-bottom-nav-safe-area     /* env(safe-area-inset-bottom) */
 --bt-bottom-nav-total-height  /* 합산 - BottomNavSpacer 가 자동 사용 */
+--bt-bottom-inset             /* 하단이 실제로 가려진 높이. BottomNav 가 없으면 0px */
 ```
+
+> **하단 고정 요소를 둔다면 `--bt-bottom-inset` 을 쓰세요.** 위의 세 변수는 BottomNav 를 쓰지 않는 화면에서도 항상 정의됩니다(`:root` + 단일 CSS 번들). 그대로 더하면 BottomNav 가 없는 페이지에서도 56px 밀립니다. `--bt-bottom-inset` 만 BottomNav 가 DOM 에 있을 때 값이 생깁니다.
+>
+> ```css
+> .my_floating_bar { bottom: calc(16px + var(--bt-bottom-inset)); }
+> ```
+>
+> `Toast` 는 모바일에서 이 값을 이미 반영합니다 - 앱이 `.toast_container` 를 보정하던 CSS 는 지우면 됩니다.
 
 **Props - BottomNav**
 
@@ -2908,6 +2918,18 @@ action={
 - `illustration`은 `aria-hidden="true"` 자동 적용 - 일러스트가 의미 전달용이면 title/description에 텍스트로 동일 의미 포함시키세요
 - **`illustration` 에 포커스 가능한 요소(버튼/링크 등)를 넣지 마세요.** `aria-hidden` 조상 때문에 포커스는 가는데 보조기기엔 존재하지 않는 요소가 되어 WCAG 4.1.2 (Name/Role/Value) 위반이고, Chrome 은 `Blocked aria-hidden on an element because its descendant retained focus` 를 남기며 `aria-hidden` 적용을 거부합니다. 조작 요소는 `action` 슬롯으로 - 여기엔 `aria-hidden` 이 붙지 않습니다
 - 색상은 caption tone - 너무 흐리지 않도록 description 길이는 1-2줄로 유지
+
+#### 화면 가운데 놓기 — `fillHeight`
+
+기본값은 가로 정렬만 하므로, 높이가 큰 영역에 두면 콘텐츠가 상단에 붙고 아래가 비어 보입니다. 404 · 검색 결과 없음 · 빈 목록처럼 영역 한가운데가 필요하면 `fillHeight` 를 켜세요 — 앱마다 `margin: auto` 래퍼를 만들 필요가 없습니다.
+
+```tsx
+<div style={{ display: "flex", flexDirection: "column", minHeight: "60vh" }}>
+  <EmptyState fillHeight title="검색 결과가 없습니다" />
+</div>
+```
+
+`flex: 1` 을 쓰므로 **부모가 세로 flex 컨테이너여야** 합니다. 아니라면 부모에 `display: flex; flex-direction: column` 을 주거나 `height: 100%` 로 높이를 확정하세요. 미지정 시 동작은 기존과 동일합니다.
 
 #### DOM 구조 (SCSS override 시 참고)
 

@@ -9,6 +9,13 @@
   );
 }
 
+// 위 세 변수는 BottomNav 를 쓰지 않는 페이지에서도 항상 정의된다(:root + 단일 CSS 번들).
+// 그래서 하단 고정 요소가 그대로 더하면 BottomNav 가 없는 화면에서도 56px 밀린다.
+// 실제로 있을 때만 --bt-bottom-inset(기본 0, theme.scss) 에 값을 넣는다.
+body:has(.bottom_nav) {
+  --bt-bottom-inset: var(--bt-bottom-nav-total-height);
+}
+
 .bottom_nav {
   position: fixed;
   left: 0;

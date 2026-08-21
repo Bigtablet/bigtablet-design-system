@@ -34,7 +34,9 @@
 
   @include breakpoint.compact {
     top: auto;
-    bottom: token.$spacing_16;
+    // BottomNav 뒤에 깔려 읽을 수 없던 문제 - 하단을 차지하는 만큼 밀어 올린다.
+    // BottomNav 가 없으면 --bt-bottom-inset 이 0px 이라 여백만 남는다.
+    bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
     left: token.$spacing_16;
     right: token.$spacing_16;
     width: auto;
