@@ -49,7 +49,9 @@ echo "문서의 CSS 변수 $(wc -l < "$tmp/documented" | tr -d ' ')개 - 모두 
 # --bt-color-* / --bt-elevation-* 가 "언급됨"으로 잡혀, 정작 그 계열을 주장 문장에서 지워도
 # 통과한다. 그래서 각 파일의 주장 문장 바로 앞에 sentinel 주석을 두고 그 다음 줄만 본다.
 CLAIM_MARK='css-var-claim'
-CLAIM_FILES="docs/AGENT_GUIDE.md README.md README_KR.md"
+# 네 번째 주장 파일(THEMING)이 실제로 나타났다 - #511 이 예고한 한계다. 같은 주장을 하는
+# 파일이 늘면 여기에 추가한다. sentinel 이 없는 파일은 검사가 실패로 알려준다.
+CLAIM_FILES="docs/AGENT_GUIDE.md docs/THEMING.md README.md README_KR.md"
 
 # 계열 추출을 awk 로 하는 이유: sed 의 `t` 분기는 BSD(macOS)와 GNU 에서 동작이 갈린다.
 families_of() {
@@ -88,4 +90,4 @@ for f in $CLAIM_FILES; do
 done
 
 [ "$fail" -eq 0 ] || exit 1
-echo "React entry 변수 계열 $(wc -l < "$tmp/families" | tr -d ' ')개 - 세 주장 문장이 모두 언급합니다."
+echo "React entry 변수 계열 $(wc -l < "$tmp/families" | tr -d ' ')개 - 주장 문장 $(echo $CLAIM_FILES | wc -w | tr -d ' ')곳이 모두 언급합니다."

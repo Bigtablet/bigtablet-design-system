@@ -313,7 +313,7 @@ body:has(.floating_bar) {
 Vanilla 번들도 같은 `--bt-z-*` 를 쓰고, 기존 이름 `--bt-z-modal` · `--bt-z-toast` 는 각각 `--bt-z-chrome`(100) · `--bt-z-notification`(200) 의 별칭으로 남습니다. 이전에는 둘 다 `1000` 이라 Vanilla 에서 모달과 토스트의 순서를 정할 수 없었고 React 와도 어긋났습니다.
 
 > **Vanilla 소비자 주의**: 모달이 `1000` → `100` 으로 내려갑니다. 페이지에 `101`~`999` 사이의 자기 레이어가 있으면 그 요소가 모달 위로 올라옵니다. 점검 절차와 되돌리는 방법은 [MIGRATION.md](./MIGRATION.md#v3140-vanilla-z-index-정렬) 에 있습니다.
-
+>
 > `NavBar` 가 `Toast` 와 같은 `notification`(200) 레이어인 것은 기존 값입니다. 의도가 불분명하지만 값을 바꾸면 동작 변경이라 현재 상태를 그대로 노출했습니다.
 
 #### `--bt-sidebar-*` 는 컴포넌트가 아니라 뷰포트에 달려 있습니다
@@ -328,7 +328,8 @@ padding-bottom: var(--bt-sidebar-total-height, 0px);
 
 #### 번들에 따라 변수 집합이 다릅니다
 
-React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-scrollbar-width` · `--bt-bottom-nav-*` · `--bt-bottom-inset` · `--bt-sidebar-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
+<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
+React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-sidebar-*` · `--bt-bottom-nav-*` · `--bt-bottom-inset*` · `--bt-scrollbar-width` · `--bt-z-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
 
 #### 문서와 실제가 갈리지 않게 하려면
 
