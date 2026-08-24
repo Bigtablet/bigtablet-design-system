@@ -4,6 +4,9 @@ $font_family_primary: "Pretendard", sans-serif;
 
 // ── Base: Font size ───────────────────────────────────────────────────────────
 
+// 10px - 본문에는 쓰지 않는다. avatar xs(24px 원) 이니셜과 badge count 처럼 장식적인 숫자·글자
+// 전용이다. 그 자리에 12px 을 넣으면 16px 카운트 뱃지를 넘친다.
+$font_size_10: 10px;
 $font_size_12: 12px;
 $font_size_13: 13px;
 $font_size_14: 14px;

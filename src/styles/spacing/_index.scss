@@ -5,6 +5,7 @@ $spacing_3:  3px;
 $spacing_4:  4px;
 $spacing_6:  6px;
 $spacing_8:  8px;
+$spacing_10: 10px;
 $spacing_12: 12px;
 $spacing_16: 16px;
 $spacing_20: 20px;
@@ -12,3 +13,8 @@ $spacing_24: 24px;
 $spacing_32: 32px;
 $spacing_40: 40px;
 $spacing_48: 48px;
+// 레이아웃 리듬 - 컴포넌트 내부 여백이 아니라 Section 처럼 화면 단위 블록의 상하 여백에 쓴다.
+// 48 에서 스케일이 끝나 Section 이 raw 64/96/128 을 적고 있었다.
+$spacing_64: 64px;
+$spacing_96: 96px;
+$spacing_128: 128px;

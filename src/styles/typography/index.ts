@@ -6,6 +6,7 @@ export const baseTypography = {
 	},
 
 	fontSize: {
+		"10": "10px",
 		"12": "12px",
 		"13": "13px",
 		"14": "14px",

@@ -11,7 +11,7 @@
     border: token.$border_width_standard solid token.$color_border_default;
     background: token.$color_bg_solid;
     border-radius: token.$radius_md;
-    padding: 6px 10px;
+    padding: token.$spacing_6 token.$spacing_10;
     min-width: 36px;
     cursor: pointer;
 
@@ -39,7 +39,7 @@
   &_pages {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: token.$spacing_6;
     list-style: none;
     padding: 0;
     margin: 0;

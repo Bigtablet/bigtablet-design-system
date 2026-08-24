@@ -31,22 +31,22 @@
   // sm - 아이콘 위 알림 dot, 모바일 카운트
   &_size_sm {
     &.badge_shape_dot     { width: 6px; height: 6px; }
-    &.badge_shape_count   { min-width: 16px; height: 16px; padding: 0 5px; font-size: 10px; }
-    &.badge_shape_label   { padding: 2px 6px; font-size: 10px; }
+    &.badge_shape_count   { min-width: 16px; height: 16px; padding: 0 5px; font-size: token.$font_size_10; }
+    &.badge_shape_label   { padding: 2px 6px; font-size: token.$font_size_10; }
   }
 
   // md - 웹 기본 (admin/marketing)
   &_size_md {
     &.badge_shape_dot     { width: 8px; height: 8px; }
-    &.badge_shape_count   { min-width: 20px; height: 20px; padding: 0 6px; font-size: 12px; }
-    &.badge_shape_label   { padding: 3px 10px; font-size: 12px; }
+    &.badge_shape_count   { min-width: 20px; height: 20px; padding: 0 6px; font-size: token.$font_size_12; }
+    &.badge_shape_label   { padding: 3px 10px; font-size: token.$font_size_12; }
   }
 
   // lg - Hero/카테고리 강조
   &_size_lg {
     &.badge_shape_dot     { width: 10px; height: 10px; }
-    &.badge_shape_count   { min-width: 24px; height: 24px; padding: 0 8px; font-size: 13px; }
-    &.badge_shape_label   { padding: 5px 12px; font-size: 13px; }
+    &.badge_shape_count   { min-width: 24px; height: 24px; padding: 0 8px; font-size: token.$font_size_13; }
+    &.badge_shape_label   { padding: 5px 12px; font-size: token.$font_size_13; }
   }
 
   // ── Variant × appearance ────────────────────────────────────────────

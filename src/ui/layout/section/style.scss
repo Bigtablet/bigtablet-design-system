@@ -9,20 +9,20 @@
   &_spacing_md {
     padding-block: token.$spacing_40;
     @include token.from_medium   { padding-block: token.$spacing_48; }
-    @include token.from_expanded { padding-block: 64px; }
-    @include token.from_large    { padding-block: 64px; }
+    @include token.from_expanded { padding-block: token.$spacing_64; }
+    @include token.from_large    { padding-block: token.$spacing_64; }
   }
   &_spacing_lg {
     padding-block: token.$spacing_48;
-    @include token.from_medium   { padding-block: 64px; }
-    @include token.from_expanded { padding-block: 96px; }
-    @include token.from_large    { padding-block: 96px; }
+    @include token.from_medium   { padding-block: token.$spacing_64; }
+    @include token.from_expanded { padding-block: token.$spacing_96; }
+    @include token.from_large    { padding-block: token.$spacing_96; }
   }
   &_spacing_xl {
-    padding-block: 64px;
-    @include token.from_medium   { padding-block: 96px; }
-    @include token.from_expanded { padding-block: 128px; }
-    @include token.from_large    { padding-block: 128px; }
+    padding-block: token.$spacing_64;
+    @include token.from_medium   { padding-block: token.$spacing_96; }
+    @include token.from_expanded { padding-block: token.$spacing_128; }
+    @include token.from_large    { padding-block: token.$spacing_128; }
   }
 
   // background variants
