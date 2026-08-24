@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -51,7 +51,12 @@ export const Section = ({
 	return (
 		<Tag
 			ref={ref}
-			className={cn("section", `section_spacing_${spacing}`, `section_bg_${bg}`, className)}
+			className={cn(
+				"section",
+				`section_spacing_${spacing}`,
+				`section_bg_${bg}`,
+				className,
+			)}
 			{...props}
 		>
 			{children}

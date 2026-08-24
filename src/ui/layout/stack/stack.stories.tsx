@@ -69,9 +69,7 @@ export const GapScale: Story = {
 		<Stack gap={32}>
 			{([4, 8, 16, 24, 32] as const).map((gap) => (
 				<div key={gap}>
-					<p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-						gap={gap}
-					</p>
+					<p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--bt-color-text-caption)" }}>gap={gap}</p>
 					<Stack direction="horizontal" gap={gap} align="center">
 						<Item label="1" />
 						<Item label="2" />

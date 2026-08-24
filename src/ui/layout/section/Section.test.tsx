@@ -10,7 +10,11 @@ describe("Section", () => {
 
 	it("applies default classes (md spacing, default bg)", () => {
 		const { container } = render(<Section />);
-		expect(container.firstChild).toHaveClass("section", "section_spacing_md", "section_bg_default");
+		expect(container.firstChild).toHaveClass(
+			"section",
+			"section_spacing_md",
+			"section_bg_default",
+		);
 	});
 
 	it("applies spacing class", () => {
@@ -36,15 +40,8 @@ describe("Section", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLElement | null = null;
-		render(
-			<Section
-				ref={(el) => {
-					node = el;
-				}}
-			>
-				X
-			</Section>,
-		);
+		render(<Section ref={(el) => { node = el; }}>X</Section>);
 		expect(node).toBeInstanceOf(HTMLElement);
 	});
+
 });

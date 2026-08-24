@@ -102,10 +102,7 @@ export const Tabs = ({
 	);
 	return (
 		<TabsContext.Provider value={ctx}>
-			<div
-				className={cn("tabs", `tabs_variant_${variant}`, `tabs_size_${size}`, className)}
-				{...props}
-			>
+			<div className={cn("tabs", `tabs_variant_${variant}`, `tabs_size_${size}`, className)} {...props}>
 				{children}
 			</div>
 		</TabsContext.Provider>
@@ -147,7 +144,8 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 			attributeFilter: ["aria-selected"],
 		});
 
-		const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+		const ro =
+			typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
 		ro?.observe(list);
 		const handleResize = () => update();
 		window.addEventListener("resize", handleResize);
@@ -209,13 +207,10 @@ export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }
 		// ({...props} 로 넘어온 onKeyDown 이 내비게이션을 통째로 제거하지 않도록 합성).
 		onKeyDown?.(e);
 		if (e.defaultPrevented) return;
-		if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End")
-			return;
+		if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
 		const list = (e.currentTarget as HTMLElement).closest('[role="tablist"]');
 		if (!list) return;
-		const tabs = Array.from(
-			list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'),
-		);
+		const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
 		const currentIndex = tabs.indexOf(e.currentTarget);
 		if (currentIndex < 0) return;
 		e.preventDefault();

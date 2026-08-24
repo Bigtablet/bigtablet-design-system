@@ -7,10 +7,7 @@ const meta: Meta<typeof Badge> = {
 	tags: ["autodocs"],
 	argTypes: {
 		shape: { control: "select", options: ["dot", "count", "label"] },
-		variant: {
-			control: "select",
-			options: ["accent", "neutral", "info", "success", "warning", "error"],
-		},
+		variant: { control: "select", options: ["accent", "neutral", "info", "success", "warning", "error"] },
 		appearance: { control: "select", options: ["solid", "soft"] },
 		size: { control: "select", options: ["sm", "md", "lg"] },
 		count: { control: "number" },
@@ -79,60 +76,32 @@ export const SolidVsSoft: Story = {
 		docs: {
 			description: {
 				story:
-					'`appearance="solid"` (기본) - 강한 fill. 알림·상태 강조용. `appearance="soft"` - tint 배경 + 진한 글자. 정보 라벨용. 둘 다 WCAG AA (5~7:1) 를 통과한다.',
+					"`appearance=\"solid\"` (기본) - 강한 fill. 알림·상태 강조용. `appearance=\"soft\"` - tint 배경 + 진한 글자. 정보 라벨용. 둘 다 WCAG AA (5~7:1) 를 통과한다.",
 			},
 		},
 	},
 	render: () => (
 		<div style={{ display: "grid", gap: 24 }}>
 			<div>
-				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
-					solid
-				</div>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>solid</div>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-					<Badge variant="accent" appearance="solid">
-						New
-					</Badge>
-					<Badge variant="neutral" appearance="solid">
-						Beta
-					</Badge>
-					<Badge variant="info" appearance="solid">
-						Info
-					</Badge>
-					<Badge variant="success" appearance="solid">
-						Active
-					</Badge>
-					<Badge variant="warning" appearance="solid">
-						Pending
-					</Badge>
-					<Badge variant="error" appearance="solid">
-						Error
-					</Badge>
+					<Badge variant="accent" appearance="solid">New</Badge>
+					<Badge variant="neutral" appearance="solid">Beta</Badge>
+					<Badge variant="info" appearance="solid">Info</Badge>
+					<Badge variant="success" appearance="solid">Active</Badge>
+					<Badge variant="warning" appearance="solid">Pending</Badge>
+					<Badge variant="error" appearance="solid">Error</Badge>
 				</div>
 			</div>
 			<div>
-				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
-					soft
-				</div>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>soft</div>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-					<Badge variant="accent" appearance="soft">
-						New
-					</Badge>
-					<Badge variant="neutral" appearance="soft">
-						Beta
-					</Badge>
-					<Badge variant="info" appearance="soft">
-						Info
-					</Badge>
-					<Badge variant="success" appearance="soft">
-						+5%
-					</Badge>
-					<Badge variant="warning" appearance="soft">
-						Review
-					</Badge>
-					<Badge variant="error" appearance="soft">
-						Failed
-					</Badge>
+					<Badge variant="accent" appearance="soft">New</Badge>
+					<Badge variant="neutral" appearance="soft">Beta</Badge>
+					<Badge variant="info" appearance="soft">Info</Badge>
+					<Badge variant="success" appearance="soft">+5%</Badge>
+					<Badge variant="warning" appearance="soft">Review</Badge>
+					<Badge variant="error" appearance="soft">Failed</Badge>
 				</div>
 			</div>
 		</div>

@@ -84,11 +84,7 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 		if (dir === "last") return void itemRefs.current[enabled[enabled.length - 1]]?.focus();
 		const pos = enabled.findIndex((i) => itemRefs.current[i] === document.activeElement);
 		const next =
-			pos < 0
-				? dir === 1
-					? 0
-					: enabled.length - 1
-				: (pos + dir + enabled.length) % enabled.length;
+			pos < 0 ? (dir === 1 ? 0 : enabled.length - 1) : (pos + dir + enabled.length) % enabled.length;
 		itemRefs.current[enabled[next]]?.focus();
 	};
 

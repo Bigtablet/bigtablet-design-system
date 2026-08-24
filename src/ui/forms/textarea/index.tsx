@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { cn, useSafeLayoutEffect } from "../../../utils";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
@@ -106,7 +106,9 @@ export const Textarea = ({
 	const applyTransform = (nextValue: string) =>
 		transformValue ? transformValue(nextValue) : nextValue;
 
-	const [innerValue, setInnerValue] = useState(() => applyTransform(value ?? defaultValue ?? ""));
+	const [innerValue, setInnerValue] = useState(() =>
+		applyTransform(value ?? defaultValue ?? ""),
+	);
 
 	const isComposingRef = useRef(false);
 	const innerRef = useRef<HTMLTextAreaElement | null>(null);

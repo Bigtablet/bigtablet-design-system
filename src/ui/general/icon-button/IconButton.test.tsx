@@ -71,15 +71,7 @@ describe("IconButton", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLButtonElement | null = null;
-		render(
-			<IconButton
-				icon={<i />}
-				aria-label="x"
-				ref={(el) => {
-					node = el;
-				}}
-			/>,
-		);
+		render(<IconButton icon={<i />} aria-label="x" ref={(el) => { node = el; }} />);
 		expect(node).toBeInstanceOf(HTMLButtonElement);
 	});
 

@@ -52,15 +52,8 @@ describe("Stack", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLElement | null = null;
-		render(
-			<Stack
-				ref={(el) => {
-					node = el;
-				}}
-			>
-				X
-			</Stack>,
-		);
+		render(<Stack ref={(el) => { node = el; }}>X</Stack>);
 		expect(node).toBeInstanceOf(HTMLDivElement);
 	});
+
 });

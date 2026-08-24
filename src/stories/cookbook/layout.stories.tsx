@@ -14,18 +14,18 @@ import {
 } from "lucide-react";
 import { Avatar } from "../../ui/display/avatar";
 import { Badge } from "../../ui/display/badge";
+import { Breadcrumb } from "../../ui/navigation/breadcrumb";
+import { Button } from "../../ui/general/button";
 import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
-import { Hero } from "../../ui/display/hero";
-import { Table } from "../../ui/display/table";
-import { Button } from "../../ui/general/button";
 import { Container } from "../../ui/layout/container";
 import { Grid } from "../../ui/layout/grid";
+import { Hero } from "../../ui/display/hero";
 import { Section } from "../../ui/layout/section";
-import { Stack } from "../../ui/layout/stack";
-import { Breadcrumb } from "../../ui/navigation/breadcrumb";
 import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
+import { Stack } from "../../ui/layout/stack";
 import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
+import { Table } from "../../ui/display/table";
 
 const meta: Meta = {
 	title: "Cookbook/Layout Patterns",
@@ -133,7 +133,8 @@ export const MarketingHeroFeatureGrid: Story = {
 												width: 44,
 												height: 44,
 												borderRadius: 12,
-												background: "linear-gradient(135deg, #47555E 0%, #303841 100%)",
+												background:
+													"linear-gradient(135deg, #47555E 0%, #303841 100%)",
 												color: "#fff",
 											}}
 										>
@@ -149,14 +150,7 @@ export const MarketingHeroFeatureGrid: Story = {
 										>
 											{feature.title}
 										</h3>
-										<p
-											style={{
-												margin: 0,
-												fontSize: 14,
-												color: "var(--bt-color-text-body)",
-												lineHeight: 1.55,
-											}}
-										>
+										<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.55 }}>
 											{feature.desc}
 										</p>
 									</Stack>
@@ -175,9 +169,7 @@ export const MarketingHeroFeatureGrid: Story = {
 export const SidebarLayout: Story = {
 	name: "사이드바 레이아웃",
 	render: () => (
-		<div
-			style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}
-		>
+		<div style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}>
 			<Sidebar
 				header={
 					// 로고 경로는 iframe 기준 상대경로다 — 절대경로(`/images/…`)로 되돌리면 GH Pages
@@ -272,30 +264,16 @@ export const SidebarLayout: Story = {
 					<Card bordered padding="lg" shadow="sm">
 						<Stack gap={12}>
 							<Stack direction="horizontal" justify="between" align="center">
-								<h2
-									style={{
-										margin: 0,
-										fontSize: 16,
-										fontWeight: 700,
-										color: "var(--bt-color-text-heading)",
-									}}
-								>
+								<h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 									최근 활동
 								</h2>
 								<Button variant="text" size="sm">
 									모두 보기
 								</Button>
 							</Stack>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 14,
-									color: "var(--bt-color-text-body)",
-									lineHeight: 1.6,
-								}}
-							>
-								사이드바 + main content 영역의 기본 골격입니다. Sidebar 컴포넌트와 우측 Stack 기반
-								레이아웃을 조합해 어드민·관리자 페이지를 빠르게 시작할 수 있습니다.
+							<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.6 }}>
+								사이드바 + main content 영역의 기본 골격입니다. Sidebar 컴포넌트와 우측 Stack
+								기반 레이아웃을 조합해 어드민·관리자 페이지를 빠르게 시작할 수 있습니다.
 							</p>
 						</Stack>
 					</Card>
@@ -377,14 +355,10 @@ export const TwoColumnDashboard: Story = {
 							<Card key={stat.label} bordered padding="md" shadow="sm">
 								<Stack gap={12}>
 									<Stack direction="horizontal" justify="between" align="center">
-										<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)" }}>
-											{stat.label}
-										</span>
+										<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)" }}>{stat.label}</span>
 										<span style={{ color: "var(--bt-color-text-body)" }}>{stat.icon}</span>
 									</Stack>
-									<span
-										style={{ fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}
-									>
+									<span style={{ fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 										{stat.value}
 									</span>
 									<span
@@ -407,14 +381,7 @@ export const TwoColumnDashboard: Story = {
 							<Card bordered padding="lg" shadow="sm">
 								<Stack gap={16}>
 									<Stack direction="horizontal" justify="between" align="center">
-										<h2
-											style={{
-												margin: 0,
-												fontSize: 16,
-												fontWeight: 700,
-												color: "var(--bt-color-text-heading)",
-											}}
-										>
+										<h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 											시간대별 매출
 										</h2>
 										<Chip type="static" size="sm" tone="success" label="실시간" />
@@ -441,14 +408,7 @@ export const TwoColumnDashboard: Story = {
 						</div>
 						<Card bordered padding="lg" shadow="sm">
 							<Stack gap={16}>
-								<h2
-									style={{
-										margin: 0,
-										fontSize: 16,
-										fontWeight: 700,
-										color: "var(--bt-color-text-heading)",
-									}}
-								>
+								<h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
 									Best 메뉴
 								</h2>
 								<Stack gap={12}>
@@ -458,7 +418,12 @@ export const TwoColumnDashboard: Story = {
 										{ name: "샌드위치", count: 15 },
 										{ name: "쿠키", count: 12 },
 									].map((item, idx) => (
-										<Stack key={item.name} direction="horizontal" justify="between" align="center">
+										<Stack
+											key={item.name}
+											direction="horizontal"
+											justify="between"
+											align="center"
+										>
 											<Stack direction="horizontal" gap={12} align="center">
 												<span
 													style={{
@@ -476,23 +441,11 @@ export const TwoColumnDashboard: Story = {
 												>
 													{idx + 1}
 												</span>
-												<span
-													style={{
-														fontSize: 14,
-														fontWeight: 500,
-														color: "var(--bt-color-text-heading)",
-													}}
-												>
+												<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 													{item.name}
 												</span>
 											</Stack>
-											<span
-												style={{
-													fontSize: 13,
-													color: "var(--bt-color-text-body)",
-													fontWeight: 600,
-												}}
-											>
+											<span style={{ fontSize: 13, color: "var(--bt-color-text-body)", fontWeight: 600 }}>
 												{item.count}건
 											</span>
 										</Stack>
@@ -547,10 +500,7 @@ const ORDERS = [
 	},
 ];
 
-const STATUS_LABELS: Record<
-	string,
-	{ label: string; tone: "success" | "accent" | "warning" | "error" }
-> = {
+const STATUS_LABELS: Record<string, { label: string; tone: "success" | "accent" | "warning" | "error" }> = {
 	completed: { label: "완료", tone: "success" },
 	processing: { label: "처리중", tone: "accent" },
 	pending: { label: "대기", tone: "warning" },
@@ -612,7 +562,9 @@ export const ListPage: Story = {
 												render: (row) => (
 													<Stack direction="horizontal" gap={8} align="center">
 														<Avatar name={row.customer} size="sm" />
-														<span style={{ fontSize: 14, fontWeight: 500 }}>{row.customer}</span>
+														<span style={{ fontSize: 14, fontWeight: 500 }}>
+															{row.customer}
+														</span>
 													</Stack>
 												),
 											},

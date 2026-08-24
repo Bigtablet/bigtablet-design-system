@@ -610,12 +610,7 @@ export const BoldVariants: Story = {
 	name: "Extras - Bold weights (강조용)",
 	render: () => (
 		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				gap: 12,
-				color: "var(--bt-color-text-heading)",
-			}}
+			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
 		>
 			<ExtrasRow label="@include display_large_bold" desc="48px / 700 / -0.02em letter-spacing">
 				<div style={inlineDisplayLargeBold}>매장 운영을 더 스마트하게</div>
@@ -637,18 +632,15 @@ export const SemanticAliases: Story = {
 	name: "Extras - 의미적 alias",
 	render: () => (
 		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				gap: 12,
-				color: "var(--bt-color-text-heading)",
-			}}
+			style={{ display: "flex", flexDirection: "column", gap: 12, color: "var(--bt-color-text-heading)" }}
 		>
 			<ExtrasRow label="@include subtitle" desc="제목 아래 보조 설명 - 15/500/22.5">
 				<div style={inlineSubtitle}>14일 무료 체험 · 신용카드 불필요</div>
 			</ExtrasRow>
 			<ExtrasRow label="@include overline" desc="섹션 위 작은 라벨 - 12/600/uppercase">
-				<div style={{ ...inlineOverline, color: "var(--bt-color-accent-default)" }}>핵심 기능</div>
+				<div style={{ ...inlineOverline, color: "var(--bt-color-accent-default)" }}>
+					핵심 기능
+				</div>
 			</ExtrasRow>
 			<ExtrasRow label="@include caption" desc="이미지/카드 캡션 - 12/400/tight">
 				<div style={{ ...inlineCaption, color: "var(--bt-color-text-caption)" }}>
@@ -666,16 +658,13 @@ export const TextWrapHelpers: Story = {
 	name: "Extras - Text wrap helpers",
 	render: () => (
 		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				gap: 16,
-				color: "var(--bt-color-text-heading)",
-			}}
+			style={{ display: "flex", flexDirection: "column", gap: 16, color: "var(--bt-color-text-heading)" }}
 		>
 			<div>
 				<code style={{ fontSize: 12 }}>@include text_balance</code>
-				<p style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}>
+				<p
+					style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}
+				>
 					줄바꿈 자연스럽게 - 마지막 줄 한두 단어 외톨이 방지. 헤딩에 유용.
 				</p>
 				<h2
@@ -691,7 +680,9 @@ export const TextWrapHelpers: Story = {
 			</div>
 			<div>
 				<code style={{ fontSize: 12 }}>@include text_truncate</code>
-				<p style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}>
+				<p
+					style={{ fontSize: 11, color: "var(--bt-color-text-caption)", margin: "2px 0 8px" }}
+				>
 					한 줄 ellipsis (...).
 				</p>
 				<div
@@ -718,7 +709,9 @@ export const NumericFeatures: Story = {
 			</p>
 			<div style={{ display: "flex", gap: 32 }}>
 				<div>
-					<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}>
+					<div
+						style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}
+					>
 						기본 (proportional)
 					</div>
 					<div style={{ ...inlineHeadingLargeBold, fontVariantNumeric: "normal" }}>
@@ -730,7 +723,9 @@ export const NumericFeatures: Story = {
 					</div>
 				</div>
 				<div>
-					<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}>
+					<div
+						style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 6 }}
+					>
 						tabular-nums (정렬)
 					</div>
 					<div

@@ -60,11 +60,7 @@ export const Widget: Story = {
 				<ErrorState
 					variant="widget"
 					title="데이터를 불러오지 못했어요"
-					action={
-						<Button variant="outline" size="sm">
-							재시도
-						</Button>
-					}
+					action={<Button variant="outline" size="sm">재시도</Button>}
 				/>
 			</div>
 		</div>

@@ -128,7 +128,9 @@ export const WithFooter: Story = {
 				footerAlign="between"
 				footer={
 					<>
-						<span style={{ color: "var(--bt-color-text-caption)", fontSize: 13 }}>2026-06-16</span>
+						<span style={{ color: "var(--bt-color-text-caption)", fontSize: 13 }}>
+							2026-06-16
+						</span>
 						<Button size="sm" variant="outline">
 							자세히
 						</Button>

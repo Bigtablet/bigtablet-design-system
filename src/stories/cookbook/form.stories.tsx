@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Filter, Lock, Mail, Search, User } from "lucide-react";
 import { useState } from "react";
+import { Button } from "../../ui/general/button";
+import { Checkbox } from "../../ui/forms/checkbox";
 import { Chip } from "../../ui/display/chip";
 import { Divider } from "../../ui/display/divider";
-import { Checkbox } from "../../ui/forms/checkbox";
 import { Dropdown } from "../../ui/forms/dropdown";
 import { Radio } from "../../ui/forms/radio";
+import { Stack } from "../../ui/layout/stack";
 import { TextField } from "../../ui/forms/textfield";
 import { Toggle } from "../../ui/forms/toggle";
-import { Button } from "../../ui/general/button";
-import { Stack } from "../../ui/layout/stack";
 
 const meta: Meta = {
 	title: "Cookbook/Form Patterns",
@@ -123,9 +123,7 @@ export const LoginForm: Story = {
 					<Divider />
 
 					<Stack direction="horizontal" justify="center" gap={4} align="center">
-						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>
-							아직 계정이 없으신가요?
-						</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>아직 계정이 없으신가요?</span>
 						<button
 							type="button"
 							style={{
@@ -232,7 +230,12 @@ export const SignUpForm: Story = {
 						onChange={(e) => setAgreed(e.target.checked)}
 					/>
 
-					<Button variant="filled" size="lg" fullWidth disabled={!agreed || passwordMismatch}>
+					<Button
+						variant="filled"
+						size="lg"
+						fullWidth
+						disabled={!agreed || passwordMismatch}
+					>
 						가입 완료
 					</Button>
 				</Stack>
@@ -248,7 +251,10 @@ export const SearchWithFilter: Story = {
 	render: () => {
 		const [keyword, setKeyword] = useState("");
 		const [sort, setSort] = useState<string | null>("newest");
-		const [activeFilters, setActiveFilters] = useState<string[]>(["카페", "서울"]);
+		const [activeFilters, setActiveFilters] = useState<string[]>([
+			"카페",
+			"서울",
+		]);
 
 		const removeFilter = (label: string) =>
 			setActiveFilters((prev) => prev.filter((item) => item !== label));
@@ -261,7 +267,8 @@ export const SearchWithFilter: Story = {
 					borderRadius: 16,
 					border: "1px solid var(--bt-color-border-default)",
 					padding: "24px",
-					boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
+					boxShadow:
+						"0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
 				}}
 			>
 				<Stack gap={16}>
@@ -399,9 +406,7 @@ export const SettingsSection: Story = {
 						</p>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
-								>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									이메일 알림
 								</span>
 								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
@@ -417,9 +422,7 @@ export const SettingsSection: Story = {
 						</Stack>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
-								>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									푸시 알림
 								</span>
 								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
@@ -435,16 +438,19 @@ export const SettingsSection: Story = {
 						</Stack>
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
-								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
-								>
+								<span style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}>
 									SMS 알림
 								</span>
 								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 									긴급 알림만 SMS로 발송
 								</span>
 							</Stack>
-							<Toggle ariaLabel="SMS 알림" checked={notifySms} onChange={setNotifySms} size="md" />
+							<Toggle
+								ariaLabel="SMS 알림"
+								checked={notifySms}
+								onChange={setNotifySms}
+								size="md"
+							/>
 						</Stack>
 					</Stack>
 
