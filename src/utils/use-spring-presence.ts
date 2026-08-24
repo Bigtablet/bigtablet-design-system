@@ -1,6 +1,7 @@
 "use client";
 
 import { useSpring } from "@react-spring/web";
+import { springEnterFrom } from "./spring-motion";
 import { useReducedMotion } from "./use-reduced-motion";
 
 /**
@@ -28,7 +29,10 @@ export function useSpringPresence({
 	const reduced = useReducedMotion();
 
 	return useSpring({
-		from: { opacity: 0, transform: from },
+		// reduced-motion 에서는 `from` 을 생략한다 - 주면 첫 프레임에 from 이 DOM 에 커밋된 뒤
+		// immediate 가 목표값으로 점프해 모션 대신 한 프레임 깜빡임이 남는다. Toast 는 항상
+		// visible=true 로 마운트하므로 이 경로를 무조건 탄다. 자세한 근거는 springEnterFrom JSDoc.
+		...springEnterFrom(reduced, from),
 		to: {
 			opacity: visible ? 1 : 0,
 			transform: visible ? "translateY(0px)" : from,

@@ -115,12 +115,7 @@ export const Success: Story = {
 
 export const Warning: Story = {
 	render: () => (
-		<AlertDemo
-			variant="warning"
-			title="경고"
-			message="이 작업을 진행하시겠습니까?"
-			showCancel
-		/>
+		<AlertDemo variant="warning" title="경고" message="이 작업을 진행하시겠습니까?" showCancel />
 	),
 };
 

@@ -2,6 +2,12 @@ export { cn } from "./cn";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export { lockBodyScroll, unlockBodyScroll } from "./scroll-lock";
 export {
+	OVERLAY_PANEL_CLOSED_TRANSFORM,
+	OVERLAY_PANEL_OPEN_TRANSFORM,
+	OVERLAY_SPRING_CONFIG,
+	springEnterFrom,
+} from "./spring-motion";
+export {
 	type AnchoredOptions,
 	type AnchoredResult,
 	type AnchoredSide,

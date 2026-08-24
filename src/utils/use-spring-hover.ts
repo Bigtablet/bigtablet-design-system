@@ -26,9 +26,7 @@ export function useSpringHover({
 	const reduced = useReducedMotion();
 
 	const style = useSpring({
-		transform: hovered
-			? `translateY(${lift}px) scale(${scale})`
-			: "translateY(0px) scale(1)",
+		transform: hovered ? `translateY(${lift}px) scale(${scale})` : "translateY(0px) scale(1)",
 		// reduced-motion: lift/scale 모션 제거 (WCAG 2.3.3)
 		immediate: reduced,
 		config: { tension: 320, friction: 22 },
