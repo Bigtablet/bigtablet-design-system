@@ -154,15 +154,8 @@ describe("Card", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLDivElement | null = null;
-		render(
-			<Card
-				ref={(el) => {
-					node = el;
-				}}
-			>
-				X
-			</Card>,
-		);
+		render(<Card ref={(el) => { node = el; }}>X</Card>);
 		expect(node).toBeInstanceOf(HTMLDivElement);
 	});
+
 });

@@ -123,9 +123,7 @@ describe("ListItem", () => {
 			<ListItem label={<strong data-testid="rich-label">Rich</strong>} />,
 		);
 		expect(screen.getByTestId("rich-label")).toBeInTheDocument();
-		expect(
-			container.querySelector(".list_item_label")?.querySelector("strong"),
-		).toBeInTheDocument();
+		expect(container.querySelector(".list_item_label")?.querySelector("strong")).toBeInTheDocument();
 	});
 
 	it("renders ReactNode in overline / supportingText / metadata slots", () => {
@@ -133,11 +131,7 @@ describe("ListItem", () => {
 			<ListItem
 				overline={<span data-testid="ov">OV</span>}
 				label="Label"
-				supportingText={
-					<a href="#x" data-testid="sup-link">
-						link
-					</a>
-				}
+				supportingText={<a href="#x" data-testid="sup-link">link</a>}
 				metadata={<em data-testid="meta">meta</em>}
 			/>,
 		);

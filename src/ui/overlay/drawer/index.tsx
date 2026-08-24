@@ -225,7 +225,12 @@ export const Drawer = ({
 				}}
 			>
 				{showCloseIcon && onClose && (
-					<button type="button" className="drawer_close" onClick={onClose} aria-label={closeLabel}>
+					<button
+						type="button"
+						className="drawer_close"
+						onClick={onClose}
+						aria-label={closeLabel}
+					>
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}

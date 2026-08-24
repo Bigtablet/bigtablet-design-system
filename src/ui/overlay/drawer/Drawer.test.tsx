@@ -579,12 +579,7 @@ describe("Drawer", () => {
 
 	it("freezes title and footer along with children", () => {
 		const { rerender } = render(
-			<Drawer
-				open
-				onClose={() => {}}
-				title="항목 제목"
-				footer={<button type="button">삭제</button>}
-			>
+			<Drawer open onClose={() => {}} title="항목 제목" footer={<button type="button">삭제</button>}>
 				<p>항목 본문</p>
 			</Drawer>,
 		);

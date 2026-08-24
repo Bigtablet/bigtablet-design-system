@@ -71,9 +71,7 @@ describe("Table", () => {
 
 	it("renders dash for null/undefined/empty values", () => {
 		const data = [{ id: 1, name: "", score: 0 }] as Row[];
-		const { container } = render(
-			<Table columns={columns} data={data} keyExtractor={(r) => r.id} />,
-		);
+		const { container } = render(<Table columns={columns} data={data} keyExtractor={(r) => r.id} />);
 		// First td (name) is empty string → "-"
 		const tds = container.querySelectorAll("td");
 		expect(tds[0].textContent).toBe("-");
@@ -84,7 +82,12 @@ describe("Table", () => {
 	it("calls onRowClick with item and index", () => {
 		const onRowClick = vi.fn();
 		render(
-			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={onRowClick} />,
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
 		);
 		fireEvent.click(screen.getByText("Alpha"));
 		expect(onRowClick).toHaveBeenCalledWith(rows[0], 0);
@@ -106,7 +109,12 @@ describe("Table", () => {
 
 	it("applies aria-label on table", () => {
 		render(
-			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} ariaLabel="결과 목록" />,
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				ariaLabel="결과 목록"
+			/>,
 		);
 		expect(screen.getByRole("table")).toHaveAttribute("aria-label", "결과 목록");
 	});
@@ -120,7 +128,10 @@ describe("Table sort", () => {
 
 	it("renders aria-sort='none' on sortable headers when unsorted", () => {
 		render(<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} />);
-		expect(screen.getByRole("columnheader", { name: "Name" })).toHaveAttribute("aria-sort", "none");
+		expect(screen.getByRole("columnheader", { name: "Name" })).toHaveAttribute(
+			"aria-sort",
+			"none",
+		);
 		expect(screen.getByRole("columnheader", { name: "Score" })).toHaveAttribute(
 			"aria-sort",
 			"none",
@@ -416,7 +427,9 @@ describe("Table isLoading guards", () => {
 	const sortableColumns: TableColumn<Row>[] = [{ key: "name", header: "Name", sortable: true }];
 
 	it("disables sortable header buttons while isLoading", () => {
-		render(<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} isLoading />);
+		render(
+			<Table columns={sortableColumns} data={rows} keyExtractor={(r) => r.id} isLoading />,
+		);
 		expect(screen.getByRole("button", { name: "Name" })).toBeDisabled();
 	});
 

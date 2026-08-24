@@ -42,7 +42,10 @@ export const LinearProgress = ({
 			{Array.from({ length: dotCount }, (_, i) => (
 				<span
 					key={i}
-					className={cn("linear_progress_step", i <= clampedStep && "linear_progress_step_done")}
+					className={cn(
+						"linear_progress_step",
+						i <= clampedStep && "linear_progress_step_done",
+					)}
 					aria-hidden="true"
 				/>
 			))}

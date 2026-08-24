@@ -53,7 +53,8 @@ export const Right: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "우측에서 들어오는 기본 드로어 - 필터·상세·설정에 가장 흔한 사이드 패널 패턴.",
+				story:
+					"우측에서 들어오는 기본 드로어 - 필터·상세·설정에 가장 흔한 사이드 패널 패턴.",
 			},
 		},
 	},
@@ -64,8 +65,7 @@ export const Right: Story = {
 				<Button onClick={() => setOpen(true)}>드로어 열기</Button>
 				<Drawer {...args} open={open} onClose={() => setOpen(false)} title="설정 / Settings">
 					<p style={{ margin: 0 }}>
-						오른쪽에서 미끄러져 들어오는 패널입니다. 폼, 목록, 상세 정보를 자유롭게 배치할 수
-						있습니다.
+						오른쪽에서 미끄러져 들어오는 패널입니다. 폼, 목록, 상세 정보를 자유롭게 배치할 수 있습니다.
 					</p>
 				</Drawer>
 			</div>
@@ -79,7 +79,8 @@ export const Left: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "좌측 드로어 - 모바일 내비게이션 메뉴에 자주 쓰인다.",
+				story:
+					"좌측 드로어 - 모바일 내비게이션 메뉴에 자주 쓰인다.",
 			},
 		},
 	},
@@ -106,7 +107,8 @@ export const Bottom: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "하단 시트 - 아래에서 위로 올라오며 터치 기기에서 흔하다.",
+				story:
+					"하단 시트 - 아래에서 위로 올라오며 터치 기기에서 흔하다.",
 			},
 		},
 	},
@@ -130,7 +132,8 @@ export const WithFooter: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "footer 액션 영역이 있는 드로어 - 확인·취소 또는 저장 패턴.",
+				story:
+					"footer 액션 영역이 있는 드로어 - 확인·취소 또는 저장 패턴.",
 			},
 		},
 	},

@@ -80,15 +80,7 @@ describe("Button", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLButtonElement | null = null;
-		render(
-			<Button
-				ref={(el) => {
-					node = el;
-				}}
-			>
-				X
-			</Button>,
-		);
+		render(<Button ref={(el) => { node = el; }}>X</Button>);
 		expect(node).toBeInstanceOf(HTMLButtonElement);
 	});
 

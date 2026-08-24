@@ -31,18 +31,10 @@ function ToastDemoButtons() {
 			<button type="button" style={demo_btn_style} onClick={() => t.message("기본 메시지입니다.")}>
 				Default
 			</button>
-			<button
-				type="button"
-				style={demo_btn_style}
-				onClick={() => t.success("성공적으로 완료되었습니다.")}
-			>
+			<button type="button" style={demo_btn_style} onClick={() => t.success("성공적으로 완료되었습니다.")}>
 				Success
 			</button>
-			<button
-				type="button"
-				style={demo_btn_style}
-				onClick={() => t.warning("주의가 필요한 상황입니다.")}
-			>
+			<button type="button" style={demo_btn_style} onClick={() => t.warning("주의가 필요한 상황입니다.")}>
 				Warning
 			</button>
 			<button
@@ -52,11 +44,7 @@ function ToastDemoButtons() {
 			>
 				Error
 			</button>
-			<button
-				type="button"
-				style={demo_btn_style}
-				onClick={() => t.info("참고용 안내 메시지입니다.")}
-			>
+			<button type="button" style={demo_btn_style} onClick={() => t.info("참고용 안내 메시지입니다.")}>
 				Info
 			</button>
 		</div>

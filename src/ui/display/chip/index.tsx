@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { useState } from "react";
 import { cn } from "../../../utils";
 import "./style.scss";

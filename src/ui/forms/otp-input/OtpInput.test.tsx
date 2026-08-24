@@ -356,7 +356,9 @@ describe("OtpInput", () => {
 
 	describe("Supporting text", () => {
 		it("applies error class to supporting text when error is true", () => {
-			render(<OtpInput length={6} error supportingText="잘못된 코드입니다" ariaLabel="OTP" />);
+			render(
+				<OtpInput length={6} error supportingText="잘못된 코드입니다" ariaLabel="OTP" />,
+			);
 			const helper = screen.getByText("잘못된 코드입니다");
 			expect(helper.className).toContain("otp_input_supporting_error");
 		});
@@ -369,7 +371,9 @@ describe("OtpInput", () => {
 
 	describe("Class names", () => {
 		it("applies custom className to root", () => {
-			const { container } = render(<OtpInput length={6} className="custom-otp" ariaLabel="OTP" />);
+			const { container } = render(
+				<OtpInput length={6} className="custom-otp" ariaLabel="OTP" />,
+			);
 			expect((container.firstChild as HTMLElement).className).toContain("custom-otp");
 		});
 
@@ -433,4 +437,5 @@ describe("OtpInput", () => {
 		fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "5" } });
 		expect(onValueChange).toHaveBeenCalledWith("5");
 	});
+
 });

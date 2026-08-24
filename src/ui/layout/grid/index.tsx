@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -67,7 +67,9 @@ export const Grid = ({
 	...props
 }: GridProps) => {
 	const gridTemplateColumns =
-		cols === "auto" ? `repeat(auto-fill, minmax(${minColWidth}, 1fr))` : `repeat(${cols}, 1fr)`;
+		cols === "auto"
+			? `repeat(auto-fill, minmax(${minColWidth}, 1fr))`
+			: `repeat(${cols}, 1fr)`;
 
 	return (
 		<Tag
