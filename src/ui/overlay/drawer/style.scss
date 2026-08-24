@@ -1,5 +1,14 @@
 @use "src/styles/token" as token;
 
+// ── Close 버튼 기하 ─────────────────────────────────────────────────────────
+// Modal 과 같은 규칙 - inset 은 내용 열 패딩에서 파생된다. 32px 박스에 18px 아이콘이라 내부
+// 여백이 7px 이므로 패딩 - 7 이 정확하지만 스케일에 17 이 없어 8 을 뺀다(아이콘이 1px 안쪽).
+// Drawer 는 패딩이 반응형이 아니라 한 값으로 끝난다.
+$close_inset: token.$spacing_16; // 헤더/본문 패딩 24 - 8
+
+// 제목이 close 를 비켜갈 폭 = inset + 박스(32). 헤더는 자체 padding-right 로 이 폭을 낸다.
+$close_clearance: $close_inset + token.$tap_target_dense;
+
 .drawer {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -43,8 +52,8 @@
   // ── Close (우상단 X 아이콘 버튼) ───────────────────────────────────────
   &_close {
     position: absolute;
-    top: token.$spacing_12;
-    right: token.$spacing_12;
+    top: $close_inset;
+    right: $close_inset;
     width: token.$tap_target_dense;
     height: token.$tap_target_dense;
     display: inline-flex;
@@ -76,7 +85,7 @@
     display: flex;
     align-items: center;
     padding: token.$spacing_20 token.$spacing_24;
-    padding-right: token.$spacing_48; // 우상단 close 버튼과 겹침 방지
+    padding-right: $close_clearance; // 우상단 close 버튼과 겹침 방지 (= inset + 박스)
     border-bottom: token.$border_width_standard solid token.$color_border_subtle;
   }
 
