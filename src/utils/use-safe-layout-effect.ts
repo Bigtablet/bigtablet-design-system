@@ -10,5 +10,4 @@ import { useEffect, useLayoutEffect } from "react";
  * `useLayoutEffect`(paint 전 동기 실행 - 레이아웃 측정/조정용), 서버에선
  * `useEffect` 로 안전하게 대체한다.
  */
-export const useSafeLayoutEffect =
-	typeof window !== "undefined" ? useLayoutEffect : useEffect;
+export const useSafeLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;

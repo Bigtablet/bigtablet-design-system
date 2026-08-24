@@ -227,9 +227,7 @@ describe("Alert", () => {
 
 	it("closeOnOverlay=false ignores overlay clicks", () => {
 		const onCancel = vi.fn();
-		renderWithProvider(
-			<TestComponent options={{ title: "C", onCancel, closeOnOverlay: false }} />,
-		);
+		renderWithProvider(<TestComponent options={{ title: "C", onCancel, closeOnOverlay: false }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		const overlay = screen.getByRole("alertdialog").parentElement as HTMLElement;
