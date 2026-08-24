@@ -99,9 +99,14 @@ jobs:
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.base_ref == 'develop'
         run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
-      # SCSS lint — raw hex / named color 금지 (DS 토큰 강제)
+      # SCSS lint — raw hex / named color / raw 값 금지 (DS 토큰 강제)
+      #
+      # 조건을 두지 않는다. 이전 조건(`code || stories`)은 `code` 필터에 src/vanilla/** 가
+      # 없어서 vanilla 만 바뀐 PR 에서 스킵됐고, `deps` 만 바뀐 PR 도 스킵됐다 - 그런데
+      # package.json 이 lint:css 의 글롭 자체를 담고 있다. 조건을 열거하면 이런 구멍이 계속
+      # 생기고, 이 job 이 도는 모든 경우(code/stories/deps/vanilla)에 SCSS 를 봐서 손해가 없다.
+      # Build · size · dist 검사들과 같은 방식이다.
       - name: Lint SCSS (Stylelint)
-        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
         run: pnpm lint:css
 
       # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
@@ -126,6 +131,15 @@ jobs:
       # size-limit은 dist 산출물 기반 — 빌드 직후 항상
       - name: Check bundle size
         run: pnpm size
+
+      # 아래 두 검사도 dist 산출물을 읽는다 — 반드시 Build 이후여야 한다.
+      # 단위 테스트로는 잡을 수 없는 종류다: jsdom 은 스타일시트를 계산하지 않고,
+      # 문서와 빌드 산출물의 어긋남은 어떤 테스트도 보지 않는다.
+      - name: Check documented CSS variables
+        run: pnpm check:css-vars
+
+      - name: Check Prose heading weights
+        run: pnpm check:prose
 
       - name: Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2

@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.14.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.1) - 2026-08-24
+
+- **`Prose` 제목 굵기 계층 수정 (렌더 변경)** - `h1`·`h2` 가 접미사 없는 타이포 변형(regular 400)을 써서 본문과 같은 굵기였고, `h3`~`h6` 만 700 이라 **`h1` 이 `h3` 보다 가늘게** 보였다. 제목 전부 bold 변형으로 교체했다. 스케일이 24px 이상 bold 에서 자간을 조이므로(`-0.01em`) `h1` 은 `md`·`lg` 양쪽에서, `h2` 는 `lg` 에서 자간도 함께 복원된다
+- `Prose` `size="lg"` 가 크기·행간을 손으로 적는 대신 한 단계 위 믹스인을 쓴다 - 값은 이전과 같고(28/36 · 24/32 · 20/28) 빠져 있던 자간만 따라온다
+- `docs/COMPONENTS.md` `Prose` 절에 **굵기·자간 표**(md/lg × h1~h6 + 본문) 추가 - 이전 `size` 표에는 크기만 있어 굵기가 어디서 오는지 알 수 없었다. `h1` 밑줄이 문서 제목일 때 장식 중복이라는 점과 opt-out 도 명시
+- 회귀 방지 - `scripts/check-prose-headings.sh` 가 빌드 CSS 에서 md·lg × h1~h6 열두 제목이 전부 700 인지 확인한다. jsdom 은 스타일시트를 계산하지 않아 단위 테스트로는 잡을 수 없는 종류다
+- **stylelint 에 raw 값 금지 4개** - `word-break: break-word`(한글 어절 중간 끊김) · `clip: rect()`(sr-only 복제) · 두 자리 이상 `z-index`(DS 레이어를 손으로 적음) · 숫자 `font-weight`(스케일·자간 램프 이탈). 컴포넌트 내부 겹침용 `z-index: 0/1/2` 는 허용. 이 규칙이 잡은 실제 이탈 2건(`sidebar`·`bottom-nav` 의 `600`)을 `$font_weight_semi_bold` 로 교체했고 산출 CSS 는 동일하다
+- CI - `check:css-vars` · `check:prose` 를 빌드 뒤 스텝으로 편입했다(둘 다 지금까지 수동 실행 전용). `lint:css` 가 `src/vanilla/**` 를 보지 않아 `.stylelintrc.json` 의 vanilla override 가 도달하지 못하던 것도 고쳤다
+
 ## [3.14.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.0) - 2026-08-24
 
 - **`Prose` `size="lg"` 가 본문까지 키운다 (동작 변경)** - 이전까지 제목만 키우고 본문은 `md` 와 같은 15px/22.5px 였다. 약관·정책처럼 페이지를 채우는 긴 본문이 오히려 작아져서 그 용도에 쓸 수 없었다. 이제 16px/28px(1.75)이고 `p`·`li`·`blockquote`·표 셀이 함께 커진다(`code` 는 13px 고정폭 유지). `h4`~`h6` 은 본문과 같은 크기가 되지 않도록 16 → 18px. **`md` 는 영향 없음**
