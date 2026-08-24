@@ -44,13 +44,19 @@
     }
   }
 
+  // 제목은 전부 bold 변형을 쓴다. 접미사 없는 변형(regular 400)을 쓰면 h1·h2 가 본문과 같은
+  // 굵기가 되고, 그 아래 h3~h6 만 700 이라 굵기 계층이 뒤집힌다.
+  //
+  // bold 변형은 24px 이상에서 자간을 조인다(48/40 -0.02em · 32 -0.015em · 28/24 -0.01em ·
+  // 20px 이하 0). 큰 한국어 제목의 광학 보정이고, 스케일이 이미 그 램프를 갖고 있으므로
+  // font-weight 를 손으로 덮는 대신 변형을 고른다.
   h1 {
-    @include token.heading_medium;
+    @include token.heading_medium_bold;
     padding-bottom: token.$spacing_8;
     border-bottom: token.$border_width_standard solid token.$color_border_default;
   }
 
-  h2 { @include token.heading_small; }
+  h2 { @include token.heading_small_bold; }
   h3 { @include token.title_large_bold; }
 
   h4, h5, h6 { @include token.title_medium_bold; }
@@ -216,12 +222,18 @@
       margin-top: token.$spacing_32;
     }
 
-    h1 { font-size: token.$font_size_28; line-height: token.$line_height_36; }
-    h2 { font-size: token.$font_size_24; line-height: token.$line_height_32; }
-    h3 { font-size: token.$font_size_20; line-height: token.$line_height_28; }
-    // 본문이 16px 이 되었으므로 h4~h6 도 한 단계 올린다. 16px 로 두면 본문과 같은 크기가 되어
-    // (굵기만 다른) 위계가 무너진다. 28/24/20/18 사다리에 본문 16 이 붙는다.
-    h4, h5, h6 { font-size: token.$font_size_18; line-height: token.$line_height_28; }
+    // lg 는 md 의 한 단계 위 믹스인을 쓴다. 크기·행간을 손으로 적으면 굵기와 자간이 md 것에
+    // 남아, 28px 제목이 24px 용 자간(0)을 쓰는 어긋남이 생긴다. 값은 이전과 같고
+    // (28/36 · 24/32 · 20/28) 자간만 스케일 램프를 따라온다.
+    h1 { @include token.heading_large_bold; }
+    h2 { @include token.heading_medium_bold; }
+    h3 { @include token.heading_small_bold; }
+
+    // h4~h6 만 행간을 덮는다. 본문이 16/28(1.75)이라 24 로 두면 짧은 제목이 본문보다 촘촘해진다.
+    h4, h5, h6 {
+      @include token.title_large_bold;
+      line-height: token.$line_height_28;
+    }
 
     li { margin-bottom: token.$spacing_8; }
   }
