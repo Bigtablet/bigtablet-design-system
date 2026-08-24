@@ -109,6 +109,16 @@ jobs:
       - name: Lint SCSS (Stylelint)
         run: pnpm lint:css
 
+      # prop 기본값 3축 (노출 문자열 한글 / JSDoc @default / docs 표 Default 열).
+      # 소스와 문서만 읽으므로 Build 앞에 두어 빨리 실패한다. Stylelint 와 같은 이유로 step
+      # 조건은 두지 않는다 - 이 job 이 도는 모든 경우에 검사해서 손해가 없다.
+      #
+      # 다만 워크플로 `paths-ignore` 가 `docs/**` 와 `**.md` 를 빼므로, 문서만 고친 PR 에서는
+      # CI 자체가 돌지 않는다. 즉 3축 중 docs 표 축은 "소스를 바꾸고 문서를 안 고친" 방향만
+      # 잡는다. 반대 방향(문서에 잘못된 기본값을 새로 적는 것)은 리뷰 diff 에서 본다.
+      - name: Check prop defaults
+        run: pnpm check:defaults
+
       # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
       - name: Run tests with coverage
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'

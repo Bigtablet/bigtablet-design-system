@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.14.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.2) - 2026-08-24
+- Modal 이 처음부터 열린 상태로 마운트돼도(전역 모달 스택·조건부 렌더) 등장 애니메이션이 나옵니다
+- `prefers-reduced-motion` 에서 Toast·Drawer·Popover·Tooltip·Menu·Dropdown 의 한 프레임 깜빡임을 없앴습니다
+- Modal·Alert 의 진입/퇴출 스프링 값을 공용화하고 진입에도 오버슈트를 없앴습니다
+- prop 기본값 3축(노출 문자열 한글 · JSDoc `@default` · `docs/COMPONENTS.md` 표)을 CI 에서 검사합니다
+
 ## [3.14.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.1) - 2026-08-24
 
 - **`Prose` 제목 굵기 계층 수정 (렌더 변경)** - `h1`·`h2` 가 접미사 없는 타이포 변형(regular 400)을 써서 본문과 같은 굵기였고, `h3`~`h6` 만 700 이라 **`h1` 이 `h3` 보다 가늘게** 보였다. 제목 전부 bold 변형으로 교체했다. 스케일이 24px 이상 bold 에서 자간을 조이므로(`-0.01em`) `h1` 은 `md`·`lg` 양쪽에서, `h2` 는 `lg` 에서 자간도 함께 복원된다

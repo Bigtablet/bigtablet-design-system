@@ -9,6 +9,10 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
+	OVERLAY_PANEL_CLOSED_TRANSFORM,
+	OVERLAY_PANEL_OPEN_TRANSFORM,
+	OVERLAY_SPRING_CONFIG,
+	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useOverlayEscape,
@@ -167,20 +171,29 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
 	const reduced = useReducedMotion();
 
+	// `from` 을 명시한다. 없으면 첫 렌더의 `to` 가 초기값이 되어, isOpen=true 로 처음
+	// 마운트되면 등장 모션이 없다(Modal 이 그 버그였다). AlertProvider 는 항상 isOpen=false 로
+	// 마운트하므로 지금 동작은 바뀌지 않지만, 그 성질에 기대지 않게 못박는다.
+	// reduced-motion 예외는 springEnterFrom 안에 있다.
+
 	const overlayStyle = useSpring({
-		opacity: isOpen ? 1 : 0,
+		...springEnterFrom(reduced),
+		to: { opacity: isOpen ? 1 : 0 },
 		immediate: reduced,
-		config: { tension: 280, friction: 28, clamp: !isOpen },
+		config: OVERLAY_SPRING_CONFIG,
 		onRest: (result) => {
 			if (!isOpen && result.finished) setShouldRender(false);
 		},
 	});
 
 	const panelStyle = useSpring({
-		opacity: isOpen ? 1 : 0,
-		transform: isOpen ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		...springEnterFrom(reduced, OVERLAY_PANEL_CLOSED_TRANSFORM),
+		to: {
+			opacity: isOpen ? 1 : 0,
+			transform: isOpen ? OVERLAY_PANEL_OPEN_TRANSFORM : OVERLAY_PANEL_CLOSED_TRANSFORM,
+		},
 		immediate: reduced,
-		config: { tension: 280, friction: 28, clamp: !isOpen },
+		config: OVERLAY_SPRING_CONFIG,
 	});
 
 	// 바디 스크롤 잠금 - Modal/Drawer 와 동일한 data-open-modals 카운터 공유
@@ -206,7 +219,6 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const modalClassName = cn("alert_modal", `alert_variant_${variant}`);
 
 	return createPortal(
-		// biome-ignore lint/a11y/noStaticElementInteractions: modal overlay pattern
 		<animated.div
 			className="alert_overlay"
 			style={overlayStyle}
