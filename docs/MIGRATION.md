@@ -7,7 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [v3.14.0 (Vanilla z-index 정렬)](#v3140-vanilla-z-index-정렬)
+- [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
 - [v3.13.0 (a11y 문자열 기본값 한글화)](#v3130-a11y-문자열-기본값-한글화)
 - [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
 - [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
@@ -31,11 +31,32 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
-## v3.14.0 (Vanilla z-index 정렬)
+## v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)
+
+동작 변경이 두 건입니다. 하나는 React(`Prose size="lg"`), 하나는 Vanilla(z-index)입니다.
+
+### `Prose size="lg"` 의 본문이 커집니다
+
+`size="lg"` 는 이전까지 제목만 키우고 본문은 `md` 와 같은 15px 였습니다. prop 문서는 `lg` 를 "약관·정책처럼 페이지를 채우는 긴 본문" 이라고 설명하는데 정작 그 용도에 쓸 수 없는 상태였습니다.
+
+| | 이전 | 이후 |
+|---|---|---|
+| 본문 (`p` · `li` · `blockquote` · 표 셀) | 15px / 22.5px (1.5) | **16px / 28px (1.75)** |
+| `h4` ~ `h6` | 16px / 24px | **18px / 28px** |
+| `h1` · `h2` · `h3` | 28 / 24 / 20 | 그대로 |
+| `code` | 13px 고정폭 | 그대로 |
+
+`h4`~`h6` 을 올린 이유: 16px 로 두면 새 본문과 같은 크기가 되어 굵기만 다른 상태가 됩니다. 28/24/20/18 사다리에 본문 16 이 붙습니다.
+
+**`size="md"`(기본값)는 영향이 없습니다.** `lg` 를 쓰는 곳만 확인하세요 — 대개 의도에 가까워지는 방향입니다. 이전 크기를 유지해야 하면 `md` 로 바꾸거나 소비처에서 덮으세요.
+
+> 표를 별도 래퍼로 감싸고 그 래퍼에 세로 여백을 둔 경우, `.prose table` 의 `margin-bottom: 16px` 과 더해집니다. `Prose` 로 옮길 때 함께 확인하세요.
+
+### Vanilla z-index 정렬
 
 > **Vanilla 번들만 영향받습니다.** React 번들의 z-index 값은 하나도 바뀌지 않았습니다.
 
-### 무엇이 바뀌었나
+#### 무엇이 바뀌었나
 
 | CSS 변수 | 이전 | 이후 |
 |---|---|---|
@@ -46,7 +67,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 `.bt-dropdown__list` · `.bt-alert__overlay` 는 `--bt-z-popup`(1000)으로 옮겼습니다 — **값은 그대로입니다.** `.bt-toast` 는 이전에 `z-index` 가 아예 없어 모달 위에 뜨는지가 DOM 순서에 달려 있었고, 이제 `200` 을 갖습니다.
 
-### 점검이 필요한 경우
+#### 점검이 필요한 경우
 
 **Vanilla 페이지에 `101`~`999` 사이의 자기 레이어가 있다면**, 그 요소가 이제 모달 위로 올라옵니다. 이전에는 모달이 `1000` 이라 아래에 있었습니다.
 
@@ -70,7 +91,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 **방법 1 을 권합니다.** 값을 베끼면 DS 가 스케일을 조정할 때 조용히 어긋납니다 — 역할 이름으로 계산하면 상대 순서가 유지됩니다. 전체 레이어 표와 사용법은 [THEMING.md](./THEMING.md#쌓임-순서-z-index)를 참고하세요.
 
-### 새로 쓸 수 있는 것 (React · Vanilla 공통)
+#### 새로 쓸 수 있는 것 (React · Vanilla 공통)
 
 레벨 이름 대신 역할 이름으로 DS 레이어를 참조할 수 있습니다. `$z_level0`~`$z_level5` 는 그대로 남아 있어 기존 코드는 손댈 필요가 없습니다.
 
