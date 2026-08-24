@@ -49,6 +49,7 @@
 		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss' 'src/vanilla/**/*.scss'",
 		"check:css-vars": "scripts/check-css-vars.sh",
 		"check:prose": "scripts/check-prose-headings.sh",
+		"check:defaults": "python3 scripts/check-prop-defaults.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
