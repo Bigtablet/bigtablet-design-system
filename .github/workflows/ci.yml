@@ -151,6 +151,10 @@ jobs:
       - name: Check Prose heading weights
         run: pnpm check:prose
 
+      # 오버레이 close 기하가 패널 패딩에서 파생되는지 - 이것도 dist 를 읽으므로 Build 이후다.
+      - name: Check overlay close geometry
+        run: pnpm check:geometry
+
       - name: Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2
         if: github.event_name == 'pull_request' && (needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true')

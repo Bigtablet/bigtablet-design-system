@@ -86,9 +86,9 @@ npm install @bigtablet/design-system
     </button>
 
     <div class="bt-text-field" style="margin-top: 1rem; max-width: 300px;">
-      <label class="bt-text-field__label">이메일</label>
+      <label class="bt-text-field__label" for="email">이메일</label>
       <div class="bt-text-field__wrap">
-        <input type="email" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="email@example.com">
+        <input id="email" type="email" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="email@example.com">
       </div>
     </div>
   </div>
@@ -162,9 +162,9 @@ npm install @bigtablet/design-system
 ```html
 <!-- 기본 -->
 <div class="bt-text-field">
-  <label class="bt-text-field__label">라벨</label>
+  <label class="bt-text-field__label" for="field-basic">라벨</label>
   <div class="bt-text-field__wrap">
-    <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="입력하세요">
+    <input id="field-basic" type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="입력하세요">
   </div>
 </div>
 
@@ -179,20 +179,20 @@ npm install @bigtablet/design-system
 
 <!-- 에러 상태 -->
 <div class="bt-text-field">
-  <label class="bt-text-field__label">이메일</label>
+  <label class="bt-text-field__label" for="field-email">이메일</label>
   <div class="bt-text-field__wrap">
-    <input type="email" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error" value="invalid">
+    <input id="field-email" type="email" aria-describedby="field-email-helper" aria-invalid="true" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error" value="invalid">
   </div>
-  <span class="bt-text-field__helper bt-text-field__helper--error">유효하지 않은 이메일입니다</span>
+  <span id="field-email-helper" class="bt-text-field__helper bt-text-field__helper--error">유효하지 않은 이메일입니다</span>
 </div>
 
 <!-- 성공 상태 -->
 <div class="bt-text-field">
-  <label class="bt-text-field__label">닉네임</label>
+  <label class="bt-text-field__label" for="field-nickname">닉네임</label>
   <div class="bt-text-field__wrap">
-    <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--success" value="bigtablet">
+    <input id="field-nickname" type="text" aria-describedby="field-nickname-helper" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--success" value="bigtablet">
   </div>
-  <span class="bt-text-field__helper bt-text-field__helper--success">사용 가능한 닉네임입니다</span>
+  <span id="field-nickname-helper" class="bt-text-field__helper bt-text-field__helper--success">사용 가능한 닉네임입니다</span>
 </div>
 
 <!-- 전체 너비 -->
@@ -789,12 +789,12 @@ React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기�
 
 ```html
 <div class="bt-date-picker">
-  <label class="bt-date-picker__label">
+  <span class="bt-date-picker__label" id="birth-label">
     생년월일
     <span class="bt-date-picker__label-required">*</span>
-  </label>
-  <div class="bt-date-picker__fields">
-    <select class="bt-date-picker__select" name="year">
+  </span>
+  <div class="bt-date-picker__fields" role="group" aria-labelledby="birth-label">
+    <select class="bt-date-picker__select" name="year" aria-label="연도">
       <option value="">연도</option>
       <option value="2024">2024</option>
       <option value="2023">2023</option>
@@ -1007,9 +1007,10 @@ cleanup();  // 리스너 제거
   <form th:action="@{/submit}" method="post">
     <!-- TextField -->
     <div class="bt-text-field">
-      <label class="bt-text-field__label">이름</label>
+      <label class="bt-text-field__label" for="name">이름</label>
       <div class="bt-text-field__wrap">
         <input type="text"
+               id="name"
                th:field="*{name}"
                class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md"
                th:classappend="${#fields.hasErrors('name')} ? 'bt-text-field__input--error' : ''">
@@ -1021,8 +1022,8 @@ cleanup();  // 리스너 제거
 
     <!-- Select -->
     <div class="bt-text-field">
-      <label class="bt-text-field__label">카테고리</label>
-      <select th:field="*{category}" class="bt-date-picker__select">
+      <label class="bt-text-field__label" for="category">카테고리</label>
+      <select id="category" th:field="*{category}" class="bt-date-picker__select">
         <option value="">선택하세요</option>
         <option th:each="cat : ${categories}"
                 th:value="${cat.id}"

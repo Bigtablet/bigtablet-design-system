@@ -38,14 +38,20 @@ describe("Badge", () => {
 
 	it("applies appearance=soft class when specified", () => {
 		const { container } = render(
-			<Badge variant="success" appearance="soft">+5%</Badge>,
+			<Badge variant="success" appearance="soft">
+				+5%
+			</Badge>,
 		);
 		expect(container.firstChild).toHaveClass("badge_appearance_soft");
 		expect(container.firstChild).toHaveClass("badge_variant_success");
 	});
 
 	it("soft + accent variant uses accent_subtle bg via class", () => {
-		const { container } = render(<Badge variant="accent" appearance="soft">New</Badge>);
+		const { container } = render(
+			<Badge variant="accent" appearance="soft">
+				New
+			</Badge>,
+		);
 		expect(container.firstChild).toHaveClass("badge_appearance_soft");
 		expect(container.firstChild).toHaveClass("badge_variant_accent");
 	});

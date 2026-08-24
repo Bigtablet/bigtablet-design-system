@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.15.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.15.0) - 2026-08-24
+- `Modal` 이 좁은 화면에서 잘리고 우상단 닫기 버튼이 화면 밖으로 나가던 문제를 고쳤습니다 (기본 `width` 만으로도 375px 화면에서 재현됐습니다)
+- `Modal`·`Drawer` 닫기 버튼 여백이 패널 패딩에서 파생됩니다 - 데스크톱에서 X 가 내용 열 밖으로 20px 튀어나가던 어긋남이 사라집니다
+- spacing 스케일에 10·64·96·128, 타이포에 `font_size_10` 을 추가했습니다 (`Section` 의 화면 단위 여백과 조밀한 컨트롤 여백이 raw 값이었습니다)
+- vanilla 예제·문서의 라벨이 실제 입력과 연결됩니다 (`for`/`id`, 날짜 선택은 `role="group"`)
+- 회귀 검사 추가 - 오버레이 닫기 버튼 기하, prop 기본값 3축(노출 문자열 한글·JSDoc·문서 표)
+
 ## [3.14.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.2) - 2026-08-24
 - Modal 이 처음부터 열린 상태로 마운트돼도(전역 모달 스택·조건부 렌더) 등장 애니메이션이 나옵니다
 - `prefers-reduced-motion` 에서 Toast·Drawer·Popover·Tooltip·Menu·Dropdown 의 한 프레임 깜빡임을 없앴습니다

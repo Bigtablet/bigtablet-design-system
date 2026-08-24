@@ -131,27 +131,27 @@
       <h2>TextField</h2>
       <div class="demo-row">
         <div class="bt-text-field" style="width: 300px;">
-          <label class="bt-text-field__label">Label</label>
+          <label class="bt-text-field__label" for="demo-field-basic">Label</label>
           <div class="bt-text-field__wrap">
-            <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter text...">
+            <input id="demo-field-basic" type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter text...">
           </div>
         </div>
       </div>
       <div class="demo-row">
         <div class="bt-text-field" style="width: 300px;">
-          <label class="bt-text-field__label">Filled Variant</label>
+          <label class="bt-text-field__label" for="demo-field-filled">Filled Variant</label>
           <div class="bt-text-field__wrap">
-            <input type="text" class="bt-text-field__input bt-text-field__input--filled bt-text-field__input--md" placeholder="Enter text...">
+            <input id="demo-field-filled" type="text" class="bt-text-field__input bt-text-field__input--filled bt-text-field__input--md" placeholder="Enter text...">
           </div>
         </div>
       </div>
       <div class="demo-row">
         <div class="bt-text-field" style="width: 300px;">
-          <label class="bt-text-field__label">With Error</label>
+          <label class="bt-text-field__label" for="demo-field-error">With Error</label>
           <div class="bt-text-field__wrap">
-            <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error" value="Invalid value">
+            <input id="demo-field-error" type="text" aria-describedby="demo-field-error-helper" aria-invalid="true" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error" value="Invalid value">
           </div>
-          <span class="bt-text-field__helper bt-text-field__helper--error">This field is required</span>
+          <span id="demo-field-error-helper" class="bt-text-field__helper bt-text-field__helper--error">This field is required</span>
         </div>
       </div>
 
@@ -574,12 +574,13 @@ Bigtablet.Alert({
       <h2>DatePicker</h2>
       <div class="demo-row">
         <div class="bt-date-picker" style="width: 300px;">
-          <label class="bt-date-picker__label">
+          <span class="bt-date-picker__label" id="demo-date-label">
             Date
             <span class="bt-date-picker__label-required">*</span>
-          </label>
-          <div class="bt-date-picker__fields">
-            <select class="bt-date-picker__select">
+          </span>
+          <!-- biome-ignore lint/a11y/useSemanticElements: React 구현과 같은 패턴 - fieldset 은 부모 label 규약과 충돌하고 role=group 이 WAI-ARIA 등가물이다 -->
+          <div class="bt-date-picker__fields" role="group" aria-labelledby="demo-date-label">
+            <select class="bt-date-picker__select" aria-label="Year">
               <option value="">Year</option>
               <option value="2024">2024</option>
               <option value="2025">2025</option>

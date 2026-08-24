@@ -14,7 +14,9 @@ describe("Accordion", () => {
 		expect(screen.getByText("Title A")).toBeInTheDocument();
 		// panel은 항상 DOM에 있으나 aria-hidden + closed class로 시각적 숨김 (애니메이션 지원)
 		const panels = document.querySelectorAll(".accordion_panel");
-		panels.forEach((p) => expect(p).toHaveAttribute("aria-hidden", "true"));
+		panels.forEach((p) => {
+			expect(p).toHaveAttribute("aria-hidden", "true");
+		});
 	});
 
 	// id 는 useId 접두사로 인스턴스 격리되므로 트리거의 aria-controls 로 패널을 찾는다
@@ -98,5 +100,4 @@ describe("Accordion", () => {
 		expect(onValueChange).toHaveBeenCalledWith(["a"]);
 		expect(onChange).not.toHaveBeenCalled();
 	});
-
 });

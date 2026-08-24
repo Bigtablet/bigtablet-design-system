@@ -117,7 +117,7 @@
       display: inline-flex;
       align-items: center;
       gap: token.$spacing_4;
-      padding: 6px 10px;
+      padding: token.$spacing_6 token.$spacing_10;
       border: none;
       background: transparent;
       cursor: pointer;

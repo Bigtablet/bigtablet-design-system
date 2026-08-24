@@ -1,8 +1,8 @@
 "use client";
 
 import { ChevronDown, Globe } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
 import type * as React from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
@@ -126,8 +126,7 @@ export const NavBar = ({
 		});
 
 		// jsdom 등 ResizeObserver 미지원 환경 안전 처리
-		const ro =
-			typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+		const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
 		ro?.observe(links);
 
 		const handleResize = () => update();
@@ -160,10 +159,7 @@ export const NavBar = ({
 						{indicator && (
 							<span
 								aria-hidden="true"
-								className={cn(
-									"nav_bar_indicator",
-									hasMounted && "nav_bar_indicator_animated",
-								)}
+								className={cn("nav_bar_indicator", hasMounted && "nav_bar_indicator_animated")}
 								style={{ left: indicator.left, width: indicator.width }}
 							/>
 						)}
@@ -282,19 +278,10 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 			>
 				<Globe size={iconSize.sm} aria-hidden="true" />
 				{!locale.hideLabel && <span className="nav_bar_locale_label">{currentLabel}</span>}
-				<ChevronDown
-					size={iconSize.xs}
-					aria-hidden="true"
-					className="nav_bar_locale_chevron"
-				/>
+				<ChevronDown size={iconSize.xs} aria-hidden="true" className="nav_bar_locale_chevron" />
 			</button>
 			{open && (
-				<ul
-					id={menuId}
-					role="menu"
-					className="nav_bar_locale_menu"
-					onKeyDown={handleMenuKeyDown}
-				>
+				<ul id={menuId} role="menu" className="nav_bar_locale_menu" onKeyDown={handleMenuKeyDown}>
 					{locale.options.map((opt, index) => (
 						<li key={opt.value} role="none">
 							<button
@@ -330,7 +317,6 @@ export interface NavLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorEleme
 
 export const NavLink = ({ active, className, children, ...props }: NavLinkProps) => {
 	return (
-		// biome-ignore lint/a11y/useValidAnchor: navigation link
 		<a
 			className={cn("nav_bar_link", active && "nav_bar_link_active")}
 			aria-current={active ? "page" : undefined}

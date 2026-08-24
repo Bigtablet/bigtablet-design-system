@@ -88,9 +88,7 @@ describe("Pagination", () => {
 	it("prefers onPageChange over the deprecated onChange when both are given", () => {
 		const onPageChange = vi.fn();
 		const onChange = vi.fn();
-		render(
-			<Pagination page={5} totalPages={10} onPageChange={onPageChange} onChange={onChange} />,
-		);
+		render(<Pagination page={5} totalPages={10} onPageChange={onPageChange} onChange={onChange} />);
 
 		fireEvent.click(screen.getByLabelText("이전 페이지"));
 
@@ -98,7 +96,6 @@ describe("Pagination", () => {
 		expect(onPageChange).toHaveBeenCalledWith(4);
 		expect(onChange).not.toHaveBeenCalled();
 	});
-
 
 	// <nav> 랜드마크 이름은 스크린리더의 리전 목록에 그대로 뜬다. 이전엔 영문 하드코딩이었다.
 	it("lets the app override the nav landmark name", () => {

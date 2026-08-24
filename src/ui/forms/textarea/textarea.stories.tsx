@@ -48,7 +48,11 @@ type Story = StoryObj<typeof Textarea>;
 export const Default: Story = {
 	render: (args) => {
 		const [v, setV] = React.useState("");
-		return <div style={{ width: 420 }}><Textarea {...args} value={v} onChangeAction={setV} /></div>;
+		return (
+			<div style={{ width: 420 }}>
+				<Textarea {...args} value={v} onChangeAction={setV} />
+			</div>
+		);
 	},
 };
 
@@ -57,7 +61,8 @@ export const AutoGrow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "`minRows={2}` `maxRows={6}` - 입력할수록 늘어나다 6행 초과 시 스크롤. resize 핸들 자동 비활성.",
+				story:
+					"`minRows={2}` `maxRows={6}` - 입력할수록 늘어나다 6행 초과 시 스크롤. resize 핸들 자동 비활성.",
 			},
 		},
 	},

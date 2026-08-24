@@ -46,11 +46,14 @@
         ],
         "clip": [
           "/rect/"
+        ],
+        "font-size": [
+          "/^[0-9.]+px$/"
         ]
       },
       {
         "severity": "error",
-        "message": "raw 값 금지 — word-break 는 token.wrap_keep_all, font-weight 는 token.$font_weight_*, z-index(10 이상)는 token.$z_*(역할 이름), clip 은 token.visually_hidden 을 쓰세요. 컴포넌트 내부 겹침용 z-index 0/1/2 는 허용됩니다. 토큰·믹스인 정의 자체는 src/styles/** 에 한정."
+        "message": "raw 값 금지 — word-break 는 token.wrap_keep_all, font-weight 는 token.$font_weight_*, font-size 는 token.$font_size_*, z-index(10 이상)는 token.$z_*(역할 이름), clip 은 token.visually_hidden 을 쓰세요. 컴포넌트 내부 겹침용 z-index 0/1/2 는 허용됩니다. 토큰·믹스인 정의 자체는 src/styles/** 에 한정."
       }
     ]
   },

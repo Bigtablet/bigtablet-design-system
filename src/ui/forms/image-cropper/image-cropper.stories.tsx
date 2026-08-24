@@ -178,7 +178,6 @@ export const WithApply: Story = {
 					</Button>
 				</div>
 				{result && (
-					// biome-ignore lint/performance/noImgElement: 데모 결과 미리보기
 					<img
 						src={result}
 						alt="크롭 결과"

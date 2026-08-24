@@ -24,11 +24,11 @@
 
   // ── Size ─────────────────────────────────────────────────────────────
 
-  &_size_xs { width: 24px; height: 24px; font-size: 10px; }
-  &_size_sm { width: 32px; height: 32px; font-size: 12px; }
-  &_size_md { width: 40px; height: 40px; font-size: 14px; }
-  &_size_lg { width: 48px; height: 48px; font-size: 16px; }
-  &_size_xl { width: 64px; height: 64px; font-size: 20px; }
+  &_size_xs { width: 24px; height: 24px; font-size: token.$font_size_10; }
+  &_size_sm { width: 32px; height: 32px; font-size: token.$font_size_12; }
+  &_size_md { width: 40px; height: 40px; font-size: token.$font_size_14; }
+  &_size_lg { width: 48px; height: 48px; font-size: token.$font_size_16; }
+  &_size_xl { width: 64px; height: 64px; font-size: token.$font_size_20; }
 
   // ── Shape ────────────────────────────────────────────────────────────
 

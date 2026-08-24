@@ -38,12 +38,7 @@ export const Default: Story = {
 export const ShortPath: Story = {
 	name: "2단계",
 	render: () => (
-		<Breadcrumb
-			items={[
-				{ label: "Settings", href: "/settings" },
-				{ label: "Profile" },
-			]}
-		/>
+		<Breadcrumb items={[{ label: "Settings", href: "/settings" }, { label: "Profile" }]} />
 	),
 };
 

@@ -1,16 +1,10 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
-export type BadgeVariant =
-	| "accent"
-	| "neutral"
-	| "info"
-	| "success"
-	| "warning"
-	| "error";
+export type BadgeVariant = "accent" | "neutral" | "info" | "success" | "warning" | "error";
 export type BadgeShape = "dot" | "count" | "label";
 export type BadgeSize = "sm" | "md" | "lg";
 export type BadgeAppearance = "solid" | "soft";

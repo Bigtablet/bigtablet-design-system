@@ -21,9 +21,9 @@
   display: block; // 정렬 quirk 제거
   background: token.$color_accent_strong;
   color: token.$color_accent_on_surface;
-  padding: 6px 10px;
+  padding: token.$spacing_6 token.$spacing_10;
   border-radius: token.$radius_sm;
-  font-size: 12px;
+  font-size: token.$font_size_12;
   line-height: 1.4;
   font-weight: token.$font_weight_medium;
   // 긴 텍스트 wrap 허용 + 다중 라인 중앙 정렬

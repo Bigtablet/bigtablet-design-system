@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -35,11 +35,7 @@ export const BottomNav = ({
 	...props
 }: BottomNavProps) => {
 	return (
-		<nav
-			className={cn("bottom_nav", className)}
-			aria-label={ariaLabel}
-			{...props}
-		>
+		<nav className={cn("bottom_nav", className)} aria-label={ariaLabel} {...props}>
 			{children}
 		</nav>
 	);
@@ -77,16 +73,7 @@ export type BottomNavItemProps = BottomNavItemButton | BottomNavItemAnchor;
  * active 시 `aria-current="page"` 자동 부여.
  */
 export const BottomNavItem = (props: BottomNavItemProps) => {
-	const {
-		icon,
-		label,
-		active,
-		badge,
-		as = "button",
-		className,
-		disabled,
-		...rest
-	} = props;
+	const { icon, label, active, badge, as = "button", className, disabled, ...rest } = props;
 
 	const classes = cn(
 		"bottom_nav_item",
@@ -113,7 +100,6 @@ export const BottomNavItem = (props: BottomNavItemProps) => {
 			"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"
 		>;
 		return (
-			// biome-ignore lint/a11y/useValidAnchor: navigation link with optional active state
 			<a
 				className={classes}
 				href={href}
