@@ -87,7 +87,7 @@ body:has(.bottom_nav) {
       color: token.$color_accent_default;
 
       .bottom_nav_item_label {
-        font-weight: 600;
+        font-weight: token.$font_weight_semi_bold;
       }
     }
   }

@@ -1,30 +1,75 @@
 {
   "customSyntax": "postcss-scss",
   "rules": {
-    "color-no-hex": [true, {
-      "severity": "error",
-      "message": "DS 컴포넌트 SCSS 에 raw hex 금지 — token (var(--bt-color-*) / token.$color_*) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
-    }],
-    "color-named": ["never", {
-      "severity": "error",
-      "message": "named color (white, black, red 등) 금지 — DS 토큰 사용."
-    }],
-    "function-disallowed-list": [["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color"], {
-      "severity": "error",
-      "message": "DS 컴포넌트 SCSS 에 raw 컬러 함수(rgb/rgba/hsl/hsla/hwb/lab/lch/oklab/oklch/color) 금지 — alpha 컬러도 token (token.$color_text_on_dark_* / $color_scrim_* 등) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
-    }]
+    "color-no-hex": [
+      true,
+      {
+        "severity": "error",
+        "message": "DS 컴포넌트 SCSS 에 raw hex 금지 — token (var(--bt-color-*) / token.$color_*) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
+      }
+    ],
+    "color-named": [
+      "never",
+      {
+        "severity": "error",
+        "message": "named color (white, black, red 등) 금지 — DS 토큰 사용."
+      }
+    ],
+    "function-disallowed-list": [
+      [
+        "rgb",
+        "rgba",
+        "hsl",
+        "hsla",
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch",
+        "color"
+      ],
+      {
+        "severity": "error",
+        "message": "DS 컴포넌트 SCSS 에 raw 컬러 함수(rgb/rgba/hsl/hsla/hwb/lab/lch/oklab/oklch/color) 금지 — alpha 컬러도 token (token.$color_text_on_dark_* / $color_scrim_* 등) 사용. 토큰 정의 자체는 src/styles/** 에 한정."
+      }
+    ],
+    "declaration-property-value-disallowed-list": [
+      {
+        "word-break": [
+          "/break-word/"
+        ],
+        "font-weight": [
+          "/^[0-9]+$/"
+        ],
+        "z-index": [
+          "/^[0-9]{2,}$/"
+        ],
+        "clip": [
+          "/rect/"
+        ]
+      },
+      {
+        "severity": "error",
+        "message": "raw 값 금지 — word-break 는 token.wrap_keep_all, font-weight 는 token.$font_weight_*, z-index(10 이상)는 token.$z_*(역할 이름), clip 은 token.visually_hidden 을 쓰세요. 컴포넌트 내부 겹침용 z-index 0/1/2 는 허용됩니다. 토큰·믹스인 정의 자체는 src/styles/** 에 한정."
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["src/styles/**/*.scss"],
+      "files": [
+        "src/styles/**/*.scss"
+      ],
       "rules": {
         "color-no-hex": null,
         "color-named": null,
-        "function-disallowed-list": null
+        "function-disallowed-list": null,
+        "declaration-property-value-disallowed-list": null
       }
     },
     {
-      "files": ["src/vanilla/**/*.scss"],
+      "files": [
+        "src/vanilla/**/*.scss"
+      ],
       "rules": {
         "color-no-hex": null,
         "color-named": null,
