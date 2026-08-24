@@ -254,9 +254,7 @@ describe("useToast error message", () => {
 	it("throws with the full Korean guidance message when used outside ToastProvider", () => {
 		const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-		expect(() => renderHook(() => useToast())).toThrow(
-			"[Bigtablet DS] useToast는 <ToastProvider>",
-		);
+		expect(() => renderHook(() => useToast())).toThrow("[Bigtablet DS] useToast는 <ToastProvider>");
 
 		spy.mockRestore();
 	});

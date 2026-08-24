@@ -11,7 +11,7 @@ const meta: Meta<typeof Grid> = {
 				component: [
 					"**Grid** - CSS Grid 2D 레이아웃. 1D 흐름은 `Stack`.",
 					"",
-					"주요 prop: `cols` (1~6 또는 `\"auto\"` = minmax auto-fill), `gap`/`rowGap`/`colGap`, `singleColOnMobile` (<600 1열 축소, 기본 true).",
+					'주요 prop: `cols` (1~6 또는 `"auto"` = minmax auto-fill), `gap`/`rowGap`/`colGap`, `singleColOnMobile` (<600 1열 축소, 기본 true).',
 				].join("\n"),
 			},
 		},
@@ -66,7 +66,14 @@ export const ColVariants: Story = {
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 			{([1, 2, 3, 4] as const).map((cols) => (
 				<div key={cols}>
-					<p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--bt-color-text-caption)", fontWeight: 600 }}>
+					<p
+						style={{
+							margin: "0 0 8px",
+							fontSize: 12,
+							color: "var(--bt-color-text-caption)",
+							fontWeight: 600,
+						}}
+					>
 						cols={cols}
 					</p>
 					<Grid cols={cols} gap={12}>

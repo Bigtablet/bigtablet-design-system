@@ -80,7 +80,11 @@ export const Transparent: Story = {
 				color: "#fff",
 			}}
 		>
-			<NavBar variant="transparent" brand={<Brand invert />} actions={<Button size="sm">시작</Button>}>
+			<NavBar
+				variant="transparent"
+				brand={<Brand invert />}
+				actions={<Button size="sm">시작</Button>}
+			>
 				<NavLink href="#" active>
 					소개
 				</NavLink>

@@ -144,11 +144,7 @@ export const FileInput = ({
 				>
 					{hasImage ? (
 						// biome-ignore lint/performance/noImgElement: framework-agnostic DS - host app should swap with next/image if needed
-						<img
-							src={previewUrls[0]}
-							alt=""
-							className="file_input_preview_image"
-						/>
+						<img src={previewUrls[0]} alt="" className="file_input_preview_image" />
 					) : (
 						<span className="file_input_preview_empty">
 							<ImageIcon size={iconSize.xl} aria-hidden="true" />
@@ -184,12 +180,7 @@ export const FileInput = ({
 				<div className="file_input_preview">
 					{previewUrls.map((url) => (
 						// biome-ignore lint/performance/noImgElement: framework-agnostic DS - host app should swap with next/image if needed
-						<img
-							key={url}
-							src={url}
-							alt=""
-							className="file_input_preview_img"
-						/>
+						<img key={url} src={url} alt="" className="file_input_preview_img" />
 					))}
 				</div>
 			)}
