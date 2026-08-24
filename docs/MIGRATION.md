@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.14.0 (Vanilla z-index 정렬)](#v3140-vanilla-z-index-정렬)
 - [v3.13.0 (a11y 문자열 기본값 한글화)](#v3130-a11y-문자열-기본값-한글화)
 - [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
 - [v3.8.0 (Vanilla 패키지 정리)](#v380-vanilla-패키지-정리)
@@ -27,6 +28,60 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.14.0 (Vanilla z-index 정렬)
+
+> **Vanilla 번들만 영향받습니다.** React 번들의 z-index 값은 하나도 바뀌지 않았습니다.
+
+### 무엇이 바뀌었나
+
+| CSS 변수 | 이전 | 이후 |
+|---|---|---|
+| `--bt-z-modal` | `1000` | **`100`** (`var(--bt-z-chrome)`) |
+| `--bt-z-toast` | `1000` (미사용) | **`200`** (`var(--bt-z-notification)`) |
+
+이전에는 둘 다 `1000` 이라 Vanilla 에서 **모달과 토스트의 순서를 정할 수 없었고**, React 번들(모달 100 · 토스트 200)과도 어긋났습니다. 두 번들이 같은 값을 쓰도록 맞췄습니다.
+
+`.bt-dropdown__list` · `.bt-alert__overlay` 는 `--bt-z-popup`(1000)으로 옮겼습니다 — **값은 그대로입니다.** `.bt-toast` 는 이전에 `z-index` 가 아예 없어 모달 위에 뜨는지가 DOM 순서에 달려 있었고, 이제 `200` 을 갖습니다.
+
+### 점검이 필요한 경우
+
+**Vanilla 페이지에 `101`~`999` 사이의 자기 레이어가 있다면**, 그 요소가 이제 모달 위로 올라옵니다. 이전에는 모달이 `1000` 이라 아래에 있었습니다.
+
+```
+확인 순서
+1. 페이지 CSS 에서 z-index 값을 전부 찾는다
+2. 101 ~ 999 범위의 값이 있는지 본다
+3. 그 요소가 `.bt-modal` 과 동시에 화면에 뜰 수 있는지 확인한다
+```
+
+해당하면 두 방법 중 하나를 씁니다.
+
+```css
+/* 방법 1 (권장) - 자기 레이어를 역할 이름 기준으로 다시 놓는다 */
+.my_floating_bar { z-index: var(--bt-z-app-chrome); }        /* 150 - 모달 위, 토스트 아래 */
+.my_sticky_panel { z-index: calc(var(--bt-z-chrome) - 1); }  /*  99 - 모달 아래 */
+
+/* 방법 2 - 이전 동작을 유지한다 (변수가 공개 오버라이드 지점이다) */
+:root { --bt-z-modal: 1000; }
+```
+
+**방법 1 을 권합니다.** 값을 베끼면 DS 가 스케일을 조정할 때 조용히 어긋납니다 — 역할 이름으로 계산하면 상대 순서가 유지됩니다. 전체 레이어 표와 사용법은 [THEMING.md](./THEMING.md#쌓임-순서-z-index)를 참고하세요.
+
+### 새로 쓸 수 있는 것 (React · Vanilla 공통)
+
+레벨 이름 대신 역할 이름으로 DS 레이어를 참조할 수 있습니다. `$z_level0`~`$z_level5` 는 그대로 남아 있어 기존 코드는 손댈 필요가 없습니다.
+
+| 역할 | 값 | SCSS | CSS 변수 |
+|---|---|---|---|
+| content | 10 | `token.$z_content` | `--bt-z-content` |
+| chrome | 100 | `token.$z_chrome` | `--bt-z-chrome` |
+| app-chrome | 150 | `token.$z_app_chrome` | `--bt-z-app-chrome` |
+| notification | 200 | `token.$z_notification` | `--bt-z-notification` |
+| loading | 500 | `token.$z_loading` | `--bt-z-loading` |
+| popup | 1000 | `token.$z_popup` | `--bt-z-popup` |
 
 ---
 

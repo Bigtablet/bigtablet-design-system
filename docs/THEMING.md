@@ -276,7 +276,7 @@ body:has(.floating_bar) {
 
 > z-index 는 이 계약과 별개입니다. DS 내부 순서는 `.modal`(100) < `.toast_container`(200) 로 맞아 있지만, 앱 레이어가 자기 스케일에서 더 높은 값을 쓰면 DS 요소를 덮습니다. 그 경우는 앱이 z-index 를 직접 조정해야 합니다.
 
-#### 쌓임 순서 — `--bt-z-*` · `token.$z_*`
+#### 쌓임 순서 (z-index)
 
 어떤 컴포넌트가 어느 레이어에 있는지 알아내려고 배포 CSS 를 grep 할 필요가 없습니다. 역할 이름으로 노출합니다 — SCSS 는 `token.$z_chrome`, CSS 변수는 `var(--bt-z-chrome)` 로 같은 값입니다.
 
@@ -311,6 +311,8 @@ body:has(.floating_bar) {
 ##### 두 번들이 같은 값을 씁니다
 
 Vanilla 번들도 같은 `--bt-z-*` 를 쓰고, 기존 이름 `--bt-z-modal` · `--bt-z-toast` 는 각각 `--bt-z-chrome`(100) · `--bt-z-notification`(200) 의 별칭으로 남습니다. 이전에는 둘 다 `1000` 이라 Vanilla 에서 모달과 토스트의 순서를 정할 수 없었고 React 와도 어긋났습니다.
+
+> **Vanilla 소비자 주의**: 모달이 `1000` → `100` 으로 내려갑니다. 페이지에 `101`~`999` 사이의 자기 레이어가 있으면 그 요소가 모달 위로 올라옵니다. 점검 절차와 되돌리는 방법은 [MIGRATION.md](./MIGRATION.md#v3140-vanilla-z-index-정렬) 에 있습니다.
 
 > `NavBar` 가 `Toast` 와 같은 `notification`(200) 레이어인 것은 기존 값입니다. 의도가 불분명하지만 값을 바꾸면 동작 변경이라 현재 상태를 그대로 노출했습니다.
 
