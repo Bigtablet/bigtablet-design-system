@@ -2,7 +2,7 @@
 
 .nav_bar {
   width: 100%;
-  z-index: token.$z_level3;
+  z-index: token.$z_notification; // NavBar 가 Toast 와 같은 레이어인 것은 기존 값 - 별건으로 재검토
 
   &_sticky {
     position: sticky;
@@ -163,7 +163,7 @@
       border: token.$border_width_standard solid token.$color_border_default;
       border-radius: token.$radius_md;
       box-shadow: token.$elevation_level2;
-      z-index: token.$z_level5;
+      z-index: token.$z_popup;
     }
 
     &_item {

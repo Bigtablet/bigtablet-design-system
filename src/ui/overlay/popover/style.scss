@@ -10,7 +10,7 @@
 // Tooltip 과 달리 interactive content 라 pointer-events 유지.
 .popover_position {
   // position/left/top 은 컴포넌트에서 inline 으로 지정(fixed). 여기선 나머지만.
-  z-index: token.$z_level5;
+  z-index: token.$z_popup;
   width: max-content;
 }
 
