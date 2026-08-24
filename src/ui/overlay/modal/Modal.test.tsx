@@ -378,9 +378,7 @@ describe("Modal", () => {
 		expect(screen.getByText("상세 내용")).toBeInTheDocument();
 
 		// 닫는 tick 에 부모가 데이터를 비운다
-		rerender(
-			<Modal open={false} onClose={() => {}} title="상세" />,
-		);
+		rerender(<Modal open={false} onClose={() => {}} title="상세" />);
 		expect(screen.getByText("상세 내용")).toBeInTheDocument();
 	});
 
