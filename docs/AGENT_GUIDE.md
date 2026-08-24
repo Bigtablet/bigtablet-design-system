@@ -88,9 +88,11 @@ The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--
 
 ### Spacing
 
-SCSS: `$spacing_4` (4px) through `$spacing_48` (48px). Standard scale: 4, 8, 12, 16, 20, 24, 32, 40, 48.
+SCSS: `$spacing_0` … `$spacing_128`. Scale: 0, 1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 96, 128.
 
-CSS vars (`--bt-spacing-4` … `--bt-spacing-48`) exist **only in the Vanilla bundle** - the React entry's `style.css` does not emit them. In React/Next code use the SCSS token.
+`$spacing_64` / `_96` / `_128` are layout rhythm - screen-level block padding (`Section`), not padding inside a component. `$spacing_10` exists because dense controls (pagination, nav-bar, tooltip) share a `6px 10px` pair.
+
+CSS vars exist **only in the Vanilla bundle**, and only for `--bt-spacing-4` / `-8` / `-12` / `-16` / `-20` / `-24` / `-32` / `-40` / `-48`. There is no CSS var for 0, 1, 2, 3, 6, 10, 64, 96 or 128, and the React entry's `style.css` emits none of them. In React/Next code use the SCSS token.
 
 ### Radius
 
