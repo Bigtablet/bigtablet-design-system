@@ -183,7 +183,7 @@
 
   &_list {
     position: absolute;
-    z-index: token.$z_level5;
+    z-index: token.$z_popup;
     top: 100%;
     left: 0;
     // 트리거 폭과 동일. 옵션 텍스트가 길어도 패널이 넓어지지 않음 (label 에 ellipsis 처리됨).

@@ -131,9 +131,11 @@
   --bt-transition-base: #{token.$transition_base};
   --bt-transition-slow: #{token.$transition_slow};
 
-  /* Z-index */
-  --bt-z-modal: #{token.$z_level5};
-  --bt-z-toast: #{token.$z_level5};
+  /* Z-index - 역할 변수(--bt-z-*)는 theme.scss 가 정의한다. 아래 둘은 기존 이름 호환용
+     별칭이며, 값은 React 번들과 정렬했다. 이전에는 둘 다 1000 이라 모달과 토스트의 순서를
+     정할 수 없었고 React(모달 100 · 토스트 200)와도 어긋났다. */
+  --bt-z-modal: var(--bt-z-chrome);
+  --bt-z-toast: var(--bt-z-notification);
 }
 
 /* ========================================
@@ -848,7 +850,7 @@
     // 열림/닫힘은 JS 가 inline display 로 토글한다.
     display: none;
     position: absolute;
-    z-index: var(--bt-z-modal);
+    z-index: var(--bt-z-popup);
     top: 100%;
     left: 0;
     width: 100%;
@@ -1101,7 +1103,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: var(--bt-z-modal);
+    z-index: var(--bt-z-popup);
     animation: bt-alert-fade-in var(--bt-transition-base);
 
     &.is-open {
@@ -1502,6 +1504,8 @@
    Toast (react-toastify compatible)
    ======================================== */
 .bt-toast {
+  // 이전에는 z-index 가 없어 모달 위에 뜨는지가 DOM 순서에 달려 있었다.
+  z-index: var(--bt-z-toast);
   font-family: var(--bt-font-family);
   font-size: var(--bt-font-size-base);
   // React 의 .toast_message 와 동일한 한글 줄바꿈

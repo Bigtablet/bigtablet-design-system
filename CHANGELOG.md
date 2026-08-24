@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.14.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.14.0) - 2026-08-24
+
+- **`Prose` `size="lg"` 가 본문까지 키운다 (동작 변경)** - 이전까지 제목만 키우고 본문은 `md` 와 같은 15px/22.5px 였다. 약관·정책처럼 페이지를 채우는 긴 본문이 오히려 작아져서 그 용도에 쓸 수 없었다. 이제 16px/28px(1.75)이고 `p`·`li`·`blockquote`·표 셀이 함께 커진다(`code` 는 13px 고정폭 유지). `h4`~`h6` 은 본문과 같은 크기가 되지 않도록 16 → 18px. **`md` 는 영향 없음**
+- **z-index 를 역할 이름으로 노출** - `token.$z_content`(10) · `$z_chrome`(100) · `$z_app_chrome`(150) · `$z_notification`(200) · `$z_loading`(500) · `$z_popup`(1000) 과 같은 이름의 CSS 변수 `--bt-z-*`, TS `zIndex` 키. 이전에는 레벨 이름(`$z_level2`)뿐이라 어떤 컴포넌트가 어느 레이어에 있는지 알려면 배포 CSS 를 grep 해야 했다. `$z_level*` 은 그대로 유지된다
+- `--bt-z-app-chrome`(150) - 앱이 소유한 하단·상단 크롬을 DS 크롬(100) 위, 알림(200) 아래에 놓기 위한 대역. `calc(var(--bt-z-notification) - 1)` 처럼 역할 이름 기준으로 계산해도 된다
+- DS 컴포넌트 14파일 17선택자를 역할 토큰으로 교체 - **z-index 값은 하나도 바뀌지 않았다**
+- **Vanilla z-index 정렬 (동작 변경)** - `--bt-z-modal` 1000 → 100, `--bt-z-toast` 1000 → 200(이전엔 미사용). 둘 다 1000 이라 Vanilla 에서 모달과 토스트의 순서를 정할 수 없었고 React(100/200)와도 어긋났다. `.bt-toast` 는 이전에 `z-index` 가 없어 DOM 순서에 의존했다. 두 이름은 역할 변수의 별칭으로 남아 오버라이드 가능하다 - **`101`~`999` 사이 자기 레이어가 있는 Vanilla 페이지는 점검 필요** (`docs/MIGRATION.md`)
+- 문서 - `docs/THEMING.md` 에 레이어 표와 "DS 레이어 사이에 앱 레이어 놓는 법", `docs/COMPONENTS.md` `Prose` `size` 표에 본문 열 추가. `scripts/check-css-vars.sh` 가 "이것만 내보낸다" 고 주장하는 문서 4곳(THEMING 포함)을 모두 검사한다
+
 ## [3.13.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.13.0) - 2026-08-21
 
 - **a11y 문자열 정책 통일 (동작 변경)** — 기본값은 한글, 모든 문자열은 prop 으로 교체 가능. 이전엔 절반이 한글·절반이 영문이라 컴포넌트마다 말하는 언어가 달랐다. `Dropdown` 은 형제 prop 이 이미 한글인데 `placeholder` 만 영문이라 한 컴포넌트 안에서도 갈려 있었다

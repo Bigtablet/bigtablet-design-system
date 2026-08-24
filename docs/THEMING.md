@@ -217,6 +217,7 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-bottom-nav-inset` | 〃 | `0px` | **DS 몫** — BottomNav 가 DOM 에 있을 때만 total-height. 앱은 쓰지 않습니다 |
 | `--bt-bottom-inset-app` | **앱** | `0px` | **앱 몫** — 앱이 소유한 하단 크롬(플로팅 바·고정 액션 바) 높이 |
 | `--bt-bottom-inset` | `theme.scss` (`body`) | 위 두 몫의 합 | 읽기 전용으로 쓰세요 — 쓰는 변수는 위 두 개입니다 |
+| `--bt-z-*` | `theme.scss` | 고정 (아래 표) | 쌓임 순서. `content`·`chrome`·`app-chrome`·`notification`·`loading`·`popup` |
 | `--bt-sidebar-height` | `Sidebar` 스타일시트 | `56px` | **뷰포트 폭 <600px 에서만 정의** (아래 주의) |
 | `--bt-sidebar-safe-area` | 〃 | `env(safe-area-inset-bottom, 0px)` | 〃 |
 | `--bt-sidebar-total-height` | 〃 | 위 둘의 합 | 〃 |
@@ -275,6 +276,46 @@ body:has(.floating_bar) {
 
 > z-index 는 이 계약과 별개입니다. DS 내부 순서는 `.modal`(100) < `.toast_container`(200) 로 맞아 있지만, 앱 레이어가 자기 스케일에서 더 높은 값을 쓰면 DS 요소를 덮습니다. 그 경우는 앱이 z-index 를 직접 조정해야 합니다.
 
+#### 쌓임 순서 (z-index)
+
+어떤 컴포넌트가 어느 레이어에 있는지 알아내려고 배포 CSS 를 grep 할 필요가 없습니다. 역할 이름으로 노출합니다 — SCSS 는 `token.$z_chrome`, CSS 변수는 `var(--bt-z-chrome)` 로 같은 값입니다.
+
+| 역할 | 값 | 담는 것 |
+|---|---|---|
+| `content` | `10` | sticky 표 헤더, Sidebar 접기 버튼, Hero 오버레이 |
+| `chrome` | `100` | Modal · Drawer · Sidebar · BottomNav · Hero 본문 |
+| `app-chrome` | `150` | **앱이 소유한 크롬용 대역** — DS 크롬 위, 알림 아래 |
+| `notification` | `200` | Toast · NavBar |
+| `loading` | `500` | TopLoading |
+| `popup` | `1000` | Tooltip · Popover · Menu · Dropdown 목록 · Alert |
+
+레벨 이름 토큰(`$z_level0`~`$z_level5`)도 그대로 남아 있습니다. 값의 원천이고 하위 호환을 위해 유지하지만, **새로 쓰는 코드는 역할 이름을 쓰세요** — `$z_level2` 를 보고 "모달" 을 알 방법이 없습니다.
+
+##### 앱 레이어를 DS 사이에 놓기
+
+값을 베끼지 말고 역할 이름으로 계산하세요. DS 가 값을 조정해도 상대 순서가 유지됩니다.
+
+```scss
+// ✅ "토스트보다 아래, 모달보다 위"
+.floating_bar { z-index: calc(var(--bt-z-notification) - 1); }
+
+// ✅ 앱 크롬 대역을 그대로 써도 된다 (같은 자리)
+.floating_bar { z-index: var(--bt-z-app-chrome); }
+
+// ❌ 값을 베끼면 DS 가 스케일을 조정할 때 조용히 어긋난다
+.floating_bar { z-index: 900; }
+```
+
+> `900` 처럼 자기 스케일에서 고른 값이 DS 토스트(200)를 덮어, 앱이 `body .toast_container { z-index: 10001 }` 로 DS 선택자를 특이도로 이겨야 하는 상태가 실제로 있었습니다. **앱이 DS 선택자를 이겨야 한다면 계약이 없다는 신호입니다.**
+
+##### 두 번들이 같은 값을 씁니다
+
+Vanilla 번들도 같은 `--bt-z-*` 를 쓰고, 기존 이름 `--bt-z-modal` · `--bt-z-toast` 는 각각 `--bt-z-chrome`(100) · `--bt-z-notification`(200) 의 별칭으로 남습니다. 이전에는 둘 다 `1000` 이라 Vanilla 에서 모달과 토스트의 순서를 정할 수 없었고 React 와도 어긋났습니다.
+
+> **Vanilla 소비자 주의**: 모달이 `1000` → `100` 으로 내려갑니다. 페이지에 `101`~`999` 사이의 자기 레이어가 있으면 그 요소가 모달 위로 올라옵니다. 점검 절차와 되돌리는 방법은 [MIGRATION.md](./MIGRATION.md#v3140-vanilla-z-index-정렬) 에 있습니다.
+>
+> `NavBar` 가 `Toast` 와 같은 `notification`(200) 레이어인 것은 기존 값입니다. 의도가 불분명하지만 값을 바꾸면 동작 변경이라 현재 상태를 그대로 노출했습니다.
+
 #### `--bt-sidebar-*` 는 컴포넌트가 아니라 뷰포트에 달려 있습니다
 
 세 변수는 `@media (max-width: 599px)` 안의 `:root` 에서만 정의됩니다. **Sidebar 를 렌더하지 않는 페이지도, `mode="static"`(하단 bar 로 변신하지 않음) Sidebar 도, 폭이 600px 미만이면 값이 존재합니다.** 반대로 데스크탑 폭에서는 Sidebar 가 떠 있어도 정의되지 않습니다.
@@ -287,7 +328,8 @@ padding-bottom: var(--bt-sidebar-total-height, 0px);
 
 #### 번들에 따라 변수 집합이 다릅니다
 
-React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-scrollbar-width` · `--bt-bottom-nav-*` · `--bt-bottom-inset` · `--bt-sidebar-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
+<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
+React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-sidebar-*` · `--bt-bottom-nav-*` · `--bt-bottom-inset*` · `--bt-scrollbar-width` · `--bt-z-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
 
 #### 문서와 실제가 갈리지 않게 하려면
 
