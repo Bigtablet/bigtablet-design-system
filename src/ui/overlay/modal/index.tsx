@@ -8,6 +8,10 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
+	OVERLAY_PANEL_CLOSED_TRANSFORM,
+	OVERLAY_PANEL_OPEN_TRANSFORM,
+	OVERLAY_SPRING_CONFIG,
+	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
@@ -140,20 +144,15 @@ export const Modal = ({
 	// 전역 모달 스택이나 조건부 렌더(`{isOpen && <Modal open />}`)가 정확히 그 형태다.
 	// `from` 은 첫 렌더에만 쓰이므로 재열림·퇴출 동작은 그대로다.
 	//
-	// 단 reduced-motion 에서는 `from` 을 주지 않는다. 주면 첫 프레임에 from 값이 DOM 에 커밋된
-	// 뒤 immediate 가 목표값으로 점프해, 모션 대신 **한 프레임 깜빡임**이 남는다(실측 확인).
-	// 없으면 첫 렌더의 to 가 초기값이 되어 보간 구간 자체가 생기지 않는다 - 원하는 동작이다.
-	const enterFrom = reduced ? {} : { from: { opacity: 0 } };
-	const panelEnterFrom = reduced
-		? {}
-		: { from: { opacity: 0, transform: "scale(0.96) translateY(-4px)" } };
+	// reduced-motion 예외 처리는 springEnterFrom 안에 있다(주면 한 프레임 깜빡임이 남는다).
+	// 오버레이에 transform 을 주지 않는 이유도 그 JSDoc 에 있다.
 
 	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
-		...enterFrom,
+		...springEnterFrom(reduced),
 		to: { opacity: open ? 1 : 0 },
 		immediate: reduced,
-		config: { tension: 280, friction: 28, clamp: !open },
+		config: OVERLAY_SPRING_CONFIG,
 		onRest: (result) => {
 			if (open || !result.finished) return;
 			setShouldRender(false);
@@ -165,13 +164,13 @@ export const Modal = ({
 
 	// Spring: panel (opacity + scale + translateY) - overlay 와 같은 규칙.
 	const panelStyle = useSpring({
-		...panelEnterFrom,
+		...springEnterFrom(reduced, OVERLAY_PANEL_CLOSED_TRANSFORM),
 		to: {
 			opacity: open ? 1 : 0,
-			transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+			transform: open ? OVERLAY_PANEL_OPEN_TRANSFORM : OVERLAY_PANEL_CLOSED_TRANSFORM,
 		},
 		immediate: reduced,
-		config: { tension: 280, friction: 28, clamp: !open },
+		config: OVERLAY_SPRING_CONFIG,
 	});
 
 	// 바디 스크롤 잠금(중첩 모달 지원)
@@ -242,9 +241,7 @@ export const Modal = ({
 						{content.title}
 					</h2>
 				)}
-				{content.description && (
-					<div className="modal_description">{content.description}</div>
-				)}
+				{content.description && <div className="modal_description">{content.description}</div>}
 				{content.children && (
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 넘치는지 여부를 측정해 조건부로 주는 방법도 있지만
@@ -252,14 +249,15 @@ export const Modal = ({
 					// 늘어나는 정도의 비용이다.
 					// 다만 초기 포커스 대상에서는 제외한다 - 안쪽에 첫 입력이 있는데 빈 wrapper 에
 					// 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
+					// 스크롤 가능한 영역은 키보드로도 스크롤할 수 있어야 한다 (WCAG 2.1.1) - 포커스
+					// 가능해야 화살표 키가 먹는다.
+					// biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region needs keyboard scroll
 					<div className="modal_body" tabIndex={0} data-focus-trap-skip-autofocus="">
 						{content.children}
 					</div>
 				)}
 				{content.footer && (
-					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>
-						{content.footer}
-					</div>
+					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{content.footer}</div>
 				)}
 			</animated.div>
 		</animated.div>,
