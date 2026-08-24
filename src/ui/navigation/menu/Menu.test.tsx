@@ -5,10 +5,7 @@ import { Menu } from "./index";
 describe("Menu", () => {
 	it("does not render menu items initially", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 	});
@@ -68,10 +65,7 @@ describe("Menu", () => {
 
 	it("aria-haspopup and aria-expanded on trigger", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		const trigger = screen.getByRole("button", { name: "Open" });
 		expect(trigger).toHaveAttribute("aria-haspopup", "menu");
@@ -148,10 +142,7 @@ describe("Menu", () => {
 
 	it("applies align=start class by default", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
 		expect(screen.getByRole("menu")).toHaveClass("menu_align_start");
@@ -171,10 +162,7 @@ describe("Menu", () => {
 
 	it("sets aria-controls on trigger when open and clears when closed", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		const trigger = screen.getByRole("button", { name: "Open" });
 		expect(trigger).not.toHaveAttribute("aria-controls");
@@ -208,9 +196,7 @@ describe("Menu", () => {
 		render(
 			<Menu
 				trigger={<button type="button">Open</button>}
-				items={[
-					{ key: "a", label: "A", icon: <svg data-testid="ic" /> },
-				]}
+				items={[{ key: "a", label: "A", icon: <svg data-testid="ic" /> }]}
 			/>,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
@@ -235,15 +221,10 @@ describe("Menu", () => {
 
 	it("does not apply destructive class on regular items", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
-		expect(screen.getByRole("menuitem", { name: "A" })).not.toHaveClass(
-			"menu_item_destructive",
-		);
+		expect(screen.getByRole("menuitem", { name: "A" })).not.toHaveClass("menu_item_destructive");
 	});
 
 	it("calls correct onSelect when multiple items exist", () => {
@@ -294,10 +275,7 @@ describe("Menu", () => {
 
 	it("Escape only triggers close while open (no listener leak)", () => {
 		const { unmount } = render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		// 닫힌 상태에서 Escape를 눌러도 throw 없이 동작
 		expect(() => fireEvent.keyDown(document, { key: "Escape" })).not.toThrow();
@@ -382,10 +360,7 @@ describe("Menu", () => {
 
 	it("Escape closes and returns focus to the trigger", () => {
 		render(
-			<Menu
-				trigger={<button type="button">Open</button>}
-				items={[{ key: "a", label: "A" }]}
-			/>,
+			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,
 		);
 		const trigger = screen.getByRole("button", { name: "Open" });
 		fireEvent.click(trigger);
@@ -393,7 +368,6 @@ describe("Menu", () => {
 		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 		expect(trigger).toHaveFocus();
 	});
-
 
 	it("does not bubble handled keys to parent (stopPropagation)", () => {
 		const parentKeyDown = vi.fn();
@@ -407,7 +381,6 @@ describe("Menu", () => {
 		expect(parentKeyDown).not.toHaveBeenCalled();
 	});
 
-
 	it("lets Tab bubble to parent (focus-trap compatibility)", () => {
 		const parentKeyDown = vi.fn();
 		render(
@@ -419,7 +392,6 @@ describe("Menu", () => {
 		fireEvent.keyDown(screen.getByRole("menu"), { key: "Tab" });
 		expect(parentKeyDown).toHaveBeenCalled();
 	});
-
 
 	it("focuses first item even when the trigger had focus before opening", () => {
 		render(
@@ -437,5 +409,4 @@ describe("Menu", () => {
 		fireEvent.click(trigger);
 		expect(screen.getAllByRole("menuitem")[0]).toHaveFocus();
 	});
-
 });

@@ -82,11 +82,7 @@ describe("Textarea", () => {
 	it("transformValue applied (non-composition)", () => {
 		const onChange = vi.fn();
 		render(
-			<Textarea
-				label="내용"
-				transformValue={(v) => v.toUpperCase()}
-				onChangeAction={onChange}
-			/>,
+			<Textarea label="내용" transformValue={(v) => v.toUpperCase()} onChangeAction={onChange} />,
 		);
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "abc" } });
 		expect(onChange).toHaveBeenCalledWith("ABC");
@@ -121,7 +117,6 @@ describe("Textarea", () => {
 		expect(onChange).toHaveBeenLastCalledWith("한");
 	});
 
-
 	it("calls onValueChange (canonical) on input", () => {
 		const onValueChange = vi.fn();
 		render(<Textarea label="내용" onValueChange={onValueChange} />);
@@ -132,9 +127,7 @@ describe("Textarea", () => {
 	it("prefers onValueChange over the deprecated onChangeAction when both are given", () => {
 		const onValueChange = vi.fn();
 		const onChangeAction = vi.fn();
-		render(
-			<Textarea label="내용" onValueChange={onValueChange} onChangeAction={onChangeAction} />,
-		);
+		render(<Textarea label="내용" onValueChange={onValueChange} onChangeAction={onChangeAction} />);
 
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
 
@@ -164,5 +157,4 @@ describe("Textarea", () => {
 		expect(onValueChange).toHaveBeenCalledWith("ㅎ");
 		expect(onChangeAction).not.toHaveBeenCalled();
 	});
-
 });

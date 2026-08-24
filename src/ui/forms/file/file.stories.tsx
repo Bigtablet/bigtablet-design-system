@@ -18,7 +18,7 @@ const meta: Meta<typeof FileInput> = {
 		},
 		previewSize: {
 			control: { type: "number", min: 80, max: 400, step: 8 },
-			description: "variant=\"preview\" 박스 크기 (px).",
+			description: 'variant="preview" 박스 크기 (px).',
 		},
 		multiple: {
 			control: "boolean",
@@ -100,9 +100,7 @@ export const Multiple: Story = {
 						setFileNames(names);
 					}}
 				/>
-				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>
-					{fileNames}
-				</p>
+				<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>{fileNames}</p>
 			</div>
 		);
 	},

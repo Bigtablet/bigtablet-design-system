@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../ui/general/button";
 import { Card } from "../../ui/display/card";
 import { EmptyState } from "../../ui/feedback/empty-state";
-import { Grid } from "../../ui/layout/grid";
-import { Modal } from "../../ui/overlay/modal";
 import { Skeleton } from "../../ui/feedback/skeleton";
-import { Stack } from "../../ui/layout/stack";
 import { ToastProvider } from "../../ui/feedback/toast";
 import { useToast } from "../../ui/feedback/toast/use-toast";
+import { Button } from "../../ui/general/button";
+import { Grid } from "../../ui/layout/grid";
+import { Stack } from "../../ui/layout/stack";
+import { Modal } from "../../ui/overlay/modal";
 
 const meta: Meta = {
 	title: "Cookbook/Feedback Patterns",
@@ -102,10 +102,22 @@ export const LoadingSkeleton: Story = {
 											{post.name.charAt(0)}
 										</div>
 										<Stack gap={4} style={{ flex: 1 }}>
-											<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}>
+											<span
+												style={{
+													fontSize: 13,
+													color: "var(--bt-color-text-caption)",
+													fontWeight: 500,
+												}}
+											>
 												{post.name}
 											</span>
-											<span style={{ fontSize: 15, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
+											<span
+												style={{
+													fontSize: 15,
+													fontWeight: 700,
+													color: "var(--bt-color-text-heading)",
+												}}
+											>
 												{post.title}
 											</span>
 											<p
@@ -199,16 +211,24 @@ export const ConfirmationModal: Story = {
 					width={440}
 				>
 					<Stack gap={20}>
-						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.6 }}>
-							계정을 삭제하면 모든 매장 데이터·정산 기록·연동 정보가 영구적으로
-							제거되며, 이 작업은 되돌릴 수 없습니다.
+						<p
+							style={{
+								margin: 0,
+								fontSize: 14,
+								color: "var(--bt-color-text-body)",
+								lineHeight: 1.6,
+							}}
+						>
+							계정을 삭제하면 모든 매장 데이터·정산 기록·연동 정보가 영구적으로 제거되며, 이 작업은
+							되돌릴 수 없습니다.
 						</p>
 						<div
 							style={{
 								padding: 12,
 								borderRadius: 8,
 								background: "color-mix(in srgb, var(--bt-color-status-error) 12%, transparent)",
-								border: "1px solid color-mix(in srgb, var(--bt-color-status-error) 35%, transparent)",
+								border:
+									"1px solid color-mix(in srgb, var(--bt-color-status-error) 35%, transparent)",
 								fontSize: 13,
 								color: "var(--bt-color-status-error)",
 							}}
@@ -246,7 +266,14 @@ const ToastDemo = () => {
 		<Card bordered padding="lg" shadow="sm">
 			<Stack gap={16} style={{ width: 360 }}>
 				<Stack gap={4}>
-					<h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
+					<h3
+						style={{
+							margin: 0,
+							fontSize: 16,
+							fontWeight: 700,
+							color: "var(--bt-color-text-heading)",
+						}}
+					>
 						토스트 메시지
 					</h3>
 					<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>

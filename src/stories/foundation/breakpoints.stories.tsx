@@ -91,7 +91,9 @@ export const LayoutTransition: Story = {
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>compact</strong>
-					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>~ 599px (모바일)</span>
+					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+						~ 599px (모바일)
+					</span>
 				</div>
 				<div style={{ display: "grid", gap: 8, maxWidth: 200 }}>
 					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
@@ -107,7 +109,9 @@ export const LayoutTransition: Story = {
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>medium</strong>
-					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>600px ~ 839px (태블릿)</span>
+					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+						600px ~ 839px (태블릿)
+					</span>
 				</div>
 				<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 320 }}>
 					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
@@ -124,7 +128,9 @@ export const LayoutTransition: Story = {
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>expanded</strong>
-					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>840px+ (데스크탑)</span>
+					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+						840px+ (데스크탑)
+					</span>
 				</div>
 				<div style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: 8, maxWidth: 400 }}>
 					<div style={{ height: 80, background: "#d4d4d4", borderRadius: 6 }} />

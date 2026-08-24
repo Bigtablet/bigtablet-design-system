@@ -5,7 +5,7 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useIsMounted, useSpringPresence } from "../../../utils";
+import { useIsMounted, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";

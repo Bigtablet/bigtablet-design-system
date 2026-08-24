@@ -50,7 +50,5 @@ export const Skeleton = ({
 		inlineStyle.height = inlineStyle.width;
 	}
 
-	return (
-		<div className={skeletonClassName} style={inlineStyle} aria-hidden="true" {...props} />
-	);
+	return <div className={skeletonClassName} style={inlineStyle} aria-hidden="true" {...props} />;
 };

@@ -24,7 +24,15 @@ const sampleOptions = [
 export const SideBySide: Story = {
 	name: "나란히 비교",
 	render: () => (
-		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, padding: 24, maxWidth: 800 }}>
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr",
+				gap: 32,
+				padding: 24,
+				maxWidth: 800,
+			}}
+		>
 			<div>
 				<h3 style={{ marginBottom: 16 }}>TextField</h3>
 				<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

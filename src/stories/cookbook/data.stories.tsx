@@ -14,10 +14,10 @@ import { Badge } from "../../ui/display/badge";
 import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
 import { Divider } from "../../ui/display/divider";
-import { Grid } from "../../ui/layout/grid";
 import { IconButton } from "../../ui/general/icon-button";
-import { Menu } from "../../ui/navigation/menu";
+import { Grid } from "../../ui/layout/grid";
 import { Stack } from "../../ui/layout/stack";
+import { Menu } from "../../ui/navigation/menu";
 
 const meta: Meta = {
 	title: "Cookbook/Data Display",
@@ -136,7 +136,13 @@ export const UserList: Story = {
 									</span>
 									<Stack gap={2}>
 										<Stack direction="horizontal" gap={8} align="center">
-											<span style={{ fontSize: 14, fontWeight: 600, color: "var(--bt-color-text-heading)" }}>
+											<span
+												style={{
+													fontSize: 14,
+													fontWeight: 600,
+													color: "var(--bt-color-text-heading)",
+												}}
+											>
 												{user.name}
 											</span>
 											<Badge variant={STATUS_VARIANT[user.status]} shape="label">
@@ -297,7 +303,9 @@ export const StatCards: Story = {
 				<Card key={stat.label} bordered padding="lg" shadow="sm">
 					<Stack gap={12}>
 						<Stack direction="horizontal" justify="between" align="center">
-							<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}>
+							<span
+								style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}
+							>
 								{stat.label}
 							</span>
 							<span
@@ -346,7 +354,9 @@ export const StatCards: Story = {
 								{stat.positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
 								{stat.delta}
 							</span>
-							<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{stat.caption}</span>
+							<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+								{stat.caption}
+							</span>
 						</Stack>
 					</Stack>
 				</Card>
@@ -489,7 +499,9 @@ export const OrderTimeline: Story = {
 										</span>
 										<Chip type="static" size="sm" tone={item.statusTone} label={item.statusLabel} />
 									</Stack>
-									<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{item.time}</span>
+									<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+										{item.time}
+									</span>
 									<p
 										style={{
 											margin: 0,

@@ -327,10 +327,10 @@ export const Density: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 반응형 밀도인가요?</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					웹과 앱은 입력 방식이 다릅니다. 데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만, 모바일은
-					손가락이라 더 큰 영역이 필요합니다. Bigtablet DS는 동일한 사이즈 prop이 viewport에 따라
-					자동으로 한 단계 키워지도록 설계됩니다 - 데스크탑 <code>compact(40)</code> → 모바일{" "}
-					<code>comfortable(48)</code>.
+					웹과 앱은 입력 방식이 다릅니다. 데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만,
+					모바일은 손가락이라 더 큰 영역이 필요합니다. Bigtablet DS는 동일한 사이즈 prop이
+					viewport에 따라 자동으로 한 단계 키워지도록 설계됩니다 - 데스크탑 <code>compact(40)</code>{" "}
+					→ 모바일 <code>comfortable(48)</code>.
 				</p>
 			</section>
 
@@ -416,8 +416,8 @@ export const Density: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>실사용 예시</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					Storybook 뷰포트 툴(▼)에서 모바일로 전환하면 같은 <code>size="md"</code> Button이
-					자동으로 키워지는 걸 확인할 수 있습니다.
+					Storybook 뷰포트 툴(▼)에서 모바일로 전환하면 같은 <code>size="md"</code> Button이 자동으로
+					키워지는 걸 확인할 수 있습니다.
 				</p>
 				<p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>
 					적용: Button, TextField, Dropdown. Chip은 인라인 컴포넌트라 제외.

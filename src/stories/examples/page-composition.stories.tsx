@@ -1,24 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-	Award,
-	BarChart3,
-	Building2,
-	CalendarClock,
-	Package,
-	Receipt,
-} from "lucide-react";
+import { Award, BarChart3, Building2, CalendarClock, Package, Receipt } from "lucide-react";
 import { Avatar } from "../../ui/display/avatar";
 import { Badge } from "../../ui/display/badge";
-import { Button } from "../../ui/general/button";
 import { Chip } from "../../ui/display/chip";
-import { Container } from "../../ui/layout/container";
-import { EmptyState } from "../../ui/feedback/empty-state";
-import { Grid } from "../../ui/layout/grid";
 import { Hero } from "../../ui/display/hero";
 import { MediaCard } from "../../ui/display/media-card";
+import { EmptyState } from "../../ui/feedback/empty-state";
+import { Button } from "../../ui/general/button";
+import { Container } from "../../ui/layout/container";
+import { Grid } from "../../ui/layout/grid";
 import { Section } from "../../ui/layout/section";
-import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
 import { Stack } from "../../ui/layout/stack";
+import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
 import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
 
 const meta: Meta = {
@@ -72,7 +65,14 @@ export const MarketingPage: Story = {
 							>
 								왜 Bigtablet인가요?
 							</h2>
-							<p style={{ margin: 0, color: "var(--bt-color-text-body)", textAlign: "center", maxWidth: 480 }}>
+							<p
+								style={{
+									margin: 0,
+									color: "var(--bt-color-text-body)",
+									textAlign: "center",
+									maxWidth: 480,
+								}}
+							>
 								수천 개의 매장이 신뢰하는 올인원 솔루션
 							</p>
 						</Stack>
@@ -146,8 +146,7 @@ export const MarketingPage: Story = {
 											width: 44,
 											height: 44,
 											borderRadius: 12,
-											background:
-												"linear-gradient(135deg, #47555E 0%, #303841 100%)",
+											background: "linear-gradient(135deg, #47555E 0%, #303841 100%)",
 											color: "#fff",
 											marginBottom: 14,
 											boxShadow:
@@ -167,7 +166,14 @@ export const MarketingPage: Story = {
 									>
 										{f.title}
 									</h3>
-									<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)", lineHeight: 1.55 }}>
+									<p
+										style={{
+											margin: 0,
+											fontSize: 14,
+											color: "var(--bt-color-text-body)",
+											lineHeight: 1.55,
+										}}
+									>
 										{f.desc}
 									</p>
 								</div>
@@ -244,11 +250,9 @@ export const MarketingPage: Story = {
 					style={{
 						position: "absolute",
 						inset: 0,
-						backgroundImage:
-							"radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
+						backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
 						backgroundSize: "24px 24px",
-						maskImage:
-							"radial-gradient(ellipse at center, black 0%, transparent 70%)",
+						maskImage: "radial-gradient(ellipse at center, black 0%, transparent 70%)",
 						pointerEvents: "none",
 					}}
 				/>
@@ -262,8 +266,7 @@ export const MarketingPage: Story = {
 						width: 600,
 						height: 1,
 						transform: "translateX(-50%)",
-						background:
-							"linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+						background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
 						pointerEvents: "none",
 					}}
 				/>
@@ -328,16 +331,29 @@ export const MarketingPage: Story = {
 export const AdminDashboard: Story = {
 	name: "어드민 대시보드",
 	render: () => (
-		<div style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}>
+		<div
+			style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}
+		>
 			{/* Sidebar */}
 			<Sidebar
 				header={
 					// 로고 경로는 iframe 기준 상대경로다 — 절대경로(`/images/…`)로 되돌리면 GH Pages
 					// 하위 경로(`/bigtablet-design-system/`)를 건너뛰어 404 가 난다. 로컬은 루트 서빙이라 안 드러난다.
-					<img src="images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
+					<img
+						src="images/logo/bigtablet.png"
+						alt="Bigtablet"
+						height={28}
+						style={{ display: "block" }}
+					/>
 				}
 				headerCollapsed={
-					<img src="images/logo/favicon.png" alt="Bigtablet" width={28} height={28} style={{ display: "block", borderRadius: 6 }} />
+					<img
+						src="images/logo/favicon.png"
+						alt="Bigtablet"
+						width={28}
+						height={28}
+						style={{ display: "block", borderRadius: 6 }}
+					/>
 				}
 				footer={
 					<div
@@ -376,7 +392,14 @@ export const AdminDashboard: Story = {
 				<SidebarSection label="메인">
 					<SidebarItem
 						icon={
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
 								<rect x="3" y="3" width="7" height="7" />
 								<rect x="14" y="3" width="7" height="7" />
 								<rect x="14" y="14" width="7" height="7" />
@@ -389,19 +412,37 @@ export const AdminDashboard: Story = {
 					</SidebarItem>
 					<SidebarItem
 						icon={
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
 								<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
 								<line x1="3" y1="6" x2="21" y2="6" />
 								<path d="M16 10a4 4 0 0 1-8 0" />
 							</svg>
 						}
-						trailing={<Badge shape="count" variant="error">5</Badge>}
+						trailing={
+							<Badge shape="count" variant="error">
+								5
+							</Badge>
+						}
 					>
 						주문
 					</SidebarItem>
 					<SidebarItem
 						icon={
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
 								<line x1="12" y1="1" x2="12" y2="23" />
 								<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
 							</svg>
@@ -413,7 +454,14 @@ export const AdminDashboard: Story = {
 				<SidebarSection label="관리">
 					<SidebarItem
 						icon={
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
 								<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
 								<circle cx="9" cy="7" r="4" />
 								<path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -425,7 +473,14 @@ export const AdminDashboard: Story = {
 					</SidebarItem>
 					<SidebarItem
 						icon={
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
 								<circle cx="12" cy="12" r="3" />
 								<path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
 							</svg>
@@ -439,10 +494,27 @@ export const AdminDashboard: Story = {
 			{/* Main content */}
 			<div style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
 				{/* Header */}
-				<Stack direction="horizontal" justify="between" align="center" gap={0} style={{ marginBottom: 24 }}>
+				<Stack
+					direction="horizontal"
+					justify="between"
+					align="center"
+					gap={0}
+					style={{ marginBottom: 24 }}
+				>
 					<Stack gap={4}>
-						<h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>대시보드</h1>
-						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-caption)" }}>2026년 5월 20일 화요일</p>
+						<h1
+							style={{
+								margin: 0,
+								fontSize: 24,
+								fontWeight: 700,
+								color: "var(--bt-color-text-heading)",
+							}}
+						>
+							대시보드
+						</h1>
+						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-caption)" }}>
+							2026년 5월 20일 화요일
+						</p>
 					</Stack>
 					<Stack direction="horizontal" gap={12} align="center">
 						<Badge shape="dot" variant="success" />
@@ -467,11 +539,27 @@ export const AdminDashboard: Story = {
 								border: "1px solid var(--bt-color-border-default)",
 							}}
 						>
-							<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>{stat.label}</p>
-							<p style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}>
+							<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
+								{stat.label}
+							</p>
+							<p
+								style={{
+									margin: "0 0 4px",
+									fontSize: 24,
+									fontWeight: 700,
+									color: "var(--bt-color-text-heading)",
+								}}
+							>
 								{stat.value}
 							</p>
-							<p style={{ margin: 0, fontSize: 12, color: "var(--bt-color-accent-default)", fontWeight: 600 }}>
+							<p
+								style={{
+									margin: 0,
+									fontSize: 12,
+									color: "var(--bt-color-accent-default)",
+									fontWeight: 600,
+								}}
+							>
 								{stat.delta}
 							</p>
 						</div>
@@ -516,7 +604,9 @@ export const AdminDashboard: Story = {
 											<Avatar name={order.customer} size="sm" />
 											<Stack gap={2}>
 												<span style={{ fontSize: 14, fontWeight: 600 }}>{order.customer}</span>
-												<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>{order.id}</span>
+												<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+													{order.id}
+												</span>
 											</Stack>
 										</Stack>
 										<Stack direction="horizontal" gap={12} align="center">

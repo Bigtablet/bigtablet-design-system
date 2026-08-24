@@ -173,7 +173,14 @@ describe("DatePicker", () => {
 
 	it("calls onValueChange (canonical) when year is selected", () => {
 		const onValueChange = vi.fn();
-		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onValueChange={onValueChange} />);
+		render(
+			<DatePicker
+				mode="year-month"
+				startYear={2020}
+				endYear={2025}
+				onValueChange={onValueChange}
+			/>,
+		);
 		const buttons = screen.getAllByRole("button");
 		fireEvent.click(buttons[0]);
 		fireEvent.click(screen.getByText("2024"));
@@ -201,5 +208,4 @@ describe("DatePicker", () => {
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
 		expect(onChange).not.toHaveBeenCalled();
 	});
-
 });

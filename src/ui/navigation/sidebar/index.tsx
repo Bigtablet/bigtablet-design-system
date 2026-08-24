@@ -98,9 +98,7 @@ export const Sidebar = ({
 				<div className="sidebar_header">
 					<div className="sidebar_header_layers">
 						{header && (
-							<div className="sidebar_header_layer sidebar_header_layer_full">
-								{header}
-							</div>
+							<div className="sidebar_header_layer sidebar_header_layer_full">{header}</div>
 						)}
 						{headerCollapsed && (
 							<div className="sidebar_header_layer sidebar_header_layer_mark">
@@ -120,11 +118,7 @@ export const Sidebar = ({
 					aria-label={toggleLabel}
 					aria-expanded={!collapsed}
 				>
-					{collapsed ? (
-						<ChevronRight size={iconSize.xs} />
-					) : (
-						<ChevronLeft size={iconSize.xs} />
-					)}
+					{collapsed ? <ChevronRight size={iconSize.xs} /> : <ChevronLeft size={iconSize.xs} />}
 				</button>
 			)}
 		</aside>
@@ -177,7 +171,6 @@ export const SidebarItem = (props: SidebarItemProps) => {
 			"icon" | "active" | "trailing" | "as" | "className" | "children"
 		>;
 		return (
-			// biome-ignore lint/a11y/useValidAnchor: navigation link with optional active state
 			<a className={classes} href={href} aria-current={ariaCurrent} {...anchorRest}>
 				{inner}
 			</a>
@@ -189,12 +182,7 @@ export const SidebarItem = (props: SidebarItemProps) => {
 		"icon" | "active" | "trailing" | "as" | "className" | "children"
 	>;
 	return (
-		<button
-			type={type ?? "button"}
-			className={classes}
-			aria-current={ariaCurrent}
-			{...buttonRest}
-		>
+		<button type={type ?? "button"} className={classes} aria-current={ariaCurrent} {...buttonRest}>
 			{inner}
 		</button>
 	);
