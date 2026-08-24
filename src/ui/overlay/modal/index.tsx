@@ -135,9 +135,23 @@ export const Modal = ({
 	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
 	const reduced = useReducedMotion();
 
+	// `from` 을 명시해야 한다. 없으면 react-spring 이 **첫 렌더의 `to`** 를 초기값으로 잡으므로,
+	// 처음부터 open=true 로 마운트된 모달은 초기값 = 목표값이 되어 등장 모션이 아예 없다.
+	// 전역 모달 스택이나 조건부 렌더(`{isOpen && <Modal open />}`)가 정확히 그 형태다.
+	// `from` 은 첫 렌더에만 쓰이므로 재열림·퇴출 동작은 그대로다.
+	//
+	// 단 reduced-motion 에서는 `from` 을 주지 않는다. 주면 첫 프레임에 from 값이 DOM 에 커밋된
+	// 뒤 immediate 가 목표값으로 점프해, 모션 대신 **한 프레임 깜빡임**이 남는다(실측 확인).
+	// 없으면 첫 렌더의 to 가 초기값이 되어 보간 구간 자체가 생기지 않는다 - 원하는 동작이다.
+	const enterFrom = reduced ? {} : { from: { opacity: 0 } };
+	const panelEnterFrom = reduced
+		? {}
+		: { from: { opacity: 0, transform: "scale(0.96) translateY(-4px)" } };
+
 	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
-		opacity: open ? 1 : 0,
+		...enterFrom,
+		to: { opacity: open ? 1 : 0 },
 		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 		onRest: (result) => {
@@ -149,10 +163,13 @@ export const Modal = ({
 		},
 	});
 
-	// Spring: panel (opacity + scale + translateY)
+	// Spring: panel (opacity + scale + translateY) - overlay 와 같은 규칙.
 	const panelStyle = useSpring({
-		opacity: open ? 1 : 0,
-		transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		...panelEnterFrom,
+		to: {
+			opacity: open ? 1 : 0,
+			transform: open ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		},
 		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !open },
 	});

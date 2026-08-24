@@ -1,5 +1,6 @@
+import { Globals } from "@react-spring/web";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "./index";
 
 describe("Modal", () => {
@@ -377,9 +378,7 @@ describe("Modal", () => {
 		expect(screen.getByText("상세 내용")).toBeInTheDocument();
 
 		// 닫는 tick 에 부모가 데이터를 비운다
-		rerender(
-			<Modal open={false} onClose={() => {}} title="상세" />,
-		);
+		rerender(<Modal open={false} onClose={() => {}} title="상세" />);
 		expect(screen.getByText("상세 내용")).toBeInTheDocument();
 	});
 
@@ -506,5 +505,110 @@ describe("Modal", () => {
 		expect(screen.getByText("항목 설명")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
 		expect(screen.getByText("항목 본문")).toBeInTheDocument();
+	});
+
+	// ── 등장 애니메이션 ─────────────────────────────────────────────────────
+	// react-spring 은 `from` 이 없으면 첫 렌더의 `to` 를 초기값으로 잡는다. 처음부터
+	// open=true 로 마운트되면 초기값 = 목표값이 되어 등장 모션이 사라지던 버그(#522).
+	// 전역 모달 스택과 조건부 렌더가 정확히 그 형태다.
+	// src/test/setup.ts 가 전 테스트에 skipAnimation 을 걸어 스프링을 목표값으로 즉시 점프시킨다
+	// (퇴출 unmount 타이밍 테스트가 rAF 없이 돌게 하려고). 등장 보간을 보려면 이 두 테스트에서만
+	// 끈다 - afterEach 가 다시 켜므로 다른 테스트에 새지 않는다.
+	describe("enter animation (skipAnimation off)", () => {
+		beforeEach(() => Globals.assign({ skipAnimation: false }));
+		afterEach(() => Globals.assign({ skipAnimation: true }));
+
+		it("starts the panel away from its resting state when mounted already open", () => {
+			render(
+				<Modal open onClose={() => {}} title="상세">
+					본문
+				</Modal>,
+			);
+			const panel = document.querySelector(".modal_panel") as HTMLElement;
+			const overlay = screen.getByRole("dialog");
+
+			// 마운트 직후 프레임 - 아직 목표값에 도달하지 않았어야 한다
+			expect(Number(panel.style.opacity)).toBeLessThan(1);
+			expect(panel.style.transform).not.toBe("scale(1) translateY(0px)");
+			expect(Number(overlay.style.opacity)).toBeLessThan(1);
+		});
+
+		// 기존 reduced-motion 테스트는 skipAnimation 이 켜진 상태에서 돌아, `immediate: reduced` 를
+		// 지워도 통과한다(뮤테이션으로 확인). skipAnimation 을 끈 여기서는 `from` 을 reduced 에서
+		// 빼는 처리가 실제로 물린다.
+		//
+		// 한계: false→true 플립 경로에서 `immediate` 자체가 일하는지는 여기서 못 본다. react-spring
+		// 은 React 커밋 밖에서 스타일을 쓰므로 rerender 직후 동기 시점에는 아직 값이 반영되지 않고,
+		// waitFor 로 기다리면 immediate 든 일반 스프링이든 결국 목표값에 도달해 구분이 안 된다.
+		it("skips the enter interpolation entirely under prefers-reduced-motion (WCAG 2.3.3)", () => {
+			vi.stubGlobal(
+				"matchMedia",
+				vi.fn().mockImplementation((query: string) => ({
+					matches: query.includes("prefers-reduced-motion"),
+					media: query,
+					addEventListener: vi.fn(),
+					removeEventListener: vi.fn(),
+					addListener: vi.fn(),
+					removeListener: vi.fn(),
+					dispatchEvent: vi.fn(),
+				})),
+			);
+			render(
+				<Modal open onClose={() => {}} title="Reduced">
+					본문
+				</Modal>,
+			);
+			const panel = document.querySelector(".modal_panel") as HTMLElement;
+			const overlay = screen.getByRole("dialog");
+
+			// 보간 없이 첫 프레임부터 휴지 상태여야 한다 - overlay·panel 양쪽
+			expect(Number(panel.style.opacity)).toBe(1);
+			expect(panel.style.transform).toBe("scale(1) translateY(0px)");
+			expect(Number(overlay.style.opacity)).toBe(1);
+			vi.unstubAllGlobals();
+		});
+
+		it("animates to the resting state after mounting already open", async () => {
+			render(
+				<Modal open onClose={() => {}} title="상세">
+					본문
+				</Modal>,
+			);
+			const panel = document.querySelector(".modal_panel") as HTMLElement;
+
+			await waitFor(() => expect(Number(panel.style.opacity)).toBe(1));
+			expect(panel.style.transform).toBe("scale(1) translateY(0px)");
+		});
+	});
+
+	// `from` 은 첫 렌더에만 적용된다 - 닫았다 다시 열면 그때의 현재값에서 이어져야 하고,
+	// 퇴출 수명(onExited)도 영향받지 않아야 한다.
+	it("keeps the exit lifecycle intact after mounting already open", async () => {
+		vi.stubGlobal(
+			"matchMedia",
+			vi.fn().mockImplementation((query: string) => ({
+				matches: query.includes("prefers-reduced-motion"),
+				media: query,
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				dispatchEvent: vi.fn(),
+			})),
+		);
+		const onExited = vi.fn();
+		const { rerender } = render(
+			<Modal open onClose={() => {}} onExited={onExited} title="상세">
+				본문
+			</Modal>,
+		);
+		rerender(
+			<Modal open={false} onClose={() => {}} onExited={onExited} title="상세">
+				본문
+			</Modal>,
+		);
+		await waitFor(() => expect(onExited).toHaveBeenCalledTimes(1));
+		expect(document.querySelector(".modal_panel")).toBeNull();
+		vi.unstubAllGlobals();
 	});
 });

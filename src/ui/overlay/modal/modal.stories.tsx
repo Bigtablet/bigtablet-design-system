@@ -91,7 +91,7 @@ export const DestructiveAction: Story = {
 		docs: {
 			description: {
 				story:
-					"`footerAlign=\"between\"` - 좌측에 destructive (Delete), 우측에 safe (Cancel). 위험성을 시각화한다.",
+					'`footerAlign="between"` - 좌측에 destructive (Delete), 우측에 safe (Cancel). 위험성을 시각화한다.',
 			},
 		},
 	},
@@ -220,6 +220,32 @@ export const LongContent: Story = {
 					</div>
 				</Modal>
 			</>
+		);
+	},
+};
+
+export const ConditionalMount: Story = {
+	name: "조건부 마운트 (등장 애니메이션)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"전역 모달 스택은 보통 열림 상태와 렌더할 content 를 같은 상태 업데이트로 넣는다. 그러면 첫 마운트 시점에 이미 `open=true` 다. 이 패턴에서도 등장 애니메이션이 나와야 한다 — react-spring 은 `from` 이 없으면 첫 렌더의 목표값을 초기값으로 잡아 보간 구간이 0 이 된다.",
+			},
+		},
+	},
+	render: () => {
+		const [mounted, setMounted] = useState(false);
+		return (
+			<div>
+				<Button onClick={() => setMounted(true)}>모달 열기 (조건부 마운트)</Button>
+				{mounted && (
+					<Modal open onClose={() => setMounted(false)} title="조건부 마운트">
+						처음부터 <code>open=true</code> 로 마운트된 모달입니다. 페이드인 + scale 이 보여야
+						합니다.
+					</Modal>
+				)}
+			</div>
 		);
 	},
 };

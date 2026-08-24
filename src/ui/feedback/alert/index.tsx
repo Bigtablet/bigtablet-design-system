@@ -167,8 +167,19 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
 	const reduced = useReducedMotion();
 
+	// `from` 을 명시한다. 없으면 첫 렌더의 `to` 가 초기값이 되어, isOpen=true 로 처음
+	// 마운트되면 등장 모션이 없다(Modal 이 그 버그였다). AlertProvider 는 항상 isOpen=false 로
+	// 마운트하므로 지금 동작은 바뀌지 않지만, 그 성질에 기대지 않게 못박는다.
+	//
+	// reduced-motion 에서 `from` 을 빼는 이유는 Modal 과 같다 - 주면 한 프레임 깜빡임이 남는다.
+	const enterFrom = reduced ? {} : { from: { opacity: 0 } };
+	const panelEnterFrom = reduced
+		? {}
+		: { from: { opacity: 0, transform: "scale(0.96) translateY(-4px)" } };
+
 	const overlayStyle = useSpring({
-		opacity: isOpen ? 1 : 0,
+		...enterFrom,
+		to: { opacity: isOpen ? 1 : 0 },
 		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !isOpen },
 		onRest: (result) => {
@@ -177,8 +188,11 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	});
 
 	const panelStyle = useSpring({
-		opacity: isOpen ? 1 : 0,
-		transform: isOpen ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		...panelEnterFrom,
+		to: {
+			opacity: isOpen ? 1 : 0,
+			transform: isOpen ? "scale(1) translateY(0px)" : "scale(0.96) translateY(-4px)",
+		},
 		immediate: reduced,
 		config: { tension: 280, friction: 28, clamp: !isOpen },
 	});
