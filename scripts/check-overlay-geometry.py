@@ -22,7 +22,6 @@ from pathlib import Path
 
 CSS = Path("dist/index.css")
 ICON_INSET = 8  # (32 - 18) / 2 = 7 이지만 토큰 스케일에 맞춰 8 을 뺀다
-CLOSE_BOX = 32
 
 
 def rules(css: str) -> list[tuple[str, str, dict[str, str]]]:
@@ -134,6 +133,12 @@ def main() -> int:
 
         if clear_sel is None:
             continue
+        # 박스 크기는 CSS 에서 읽는다 - 상수로 박아두면 $tap_target_dense 가 바뀔 때 검사가
+        # 조용히 틀린 기준을 쓴다.
+        box = px(find(parsed, close_sel, "width")) or px(find(parsed, close_sel, "width", media))
+        if box is None:
+            problems.append(f"{label}: {close_sel} 의 width 를 읽지 못했다")
+            continue
         inset = px(find(parsed, close_sel, "right", media))
         clearance = px(shorthand_side(find(parsed, clear_sel, "padding-right", media), "right"))
         if inset is None or clearance is None:
@@ -141,11 +146,11 @@ def main() -> int:
             continue
         checked += 1
         # 헤더가 자체 패딩을 갖는 Drawer 는 패널 패딩만큼 이미 안쪽이라 그만큼 뺄 필요가 없다.
-        expected = inset + CLOSE_BOX - (padding if clear_sel == ".modal_title" else 0)
+        expected = inset + box - (padding if clear_sel == ".modal_title" else 0)
         if clearance != expected:
             problems.append(
                 f"{label}: {clear_sel} padding-right={clearance}px 인데 close 기하"
-                f"(inset {inset} + 박스 {CLOSE_BOX}) 기준이면 {expected}px 이어야 한다"
+                f"(inset {inset} + 박스 {box}) 기준이면 {expected}px 이어야 한다"
             )
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라

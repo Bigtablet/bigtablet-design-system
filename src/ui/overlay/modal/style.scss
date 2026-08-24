@@ -7,7 +7,7 @@
 // 32px 박스에 18px 아이콘(iconSize.md)이라 내부 여백이 (32-18)/2 = 7px. 아이콘 광학 우측을
 // 내용 열 우측에 맞추려면 inset = 패딩 - 7 이지만, spacing 스케일에 17/25 가 없다. 8 을 빼면
 // 아이콘이 내용 열보다 1px 안쪽에 놓인다 - 눈에 보이지 않는 차이이고 값이 토큰에 남는다.
-$close_size: 32px;
+$close_size: token.$tap_target_dense; // 32px - Drawer 의 close 버튼과 같은 토큰
 $close_inset_compact: token.$spacing_16; // 패널 패딩 24 - 8
 $close_inset_medium: token.$spacing_24; // 패널 패딩 32 - 8
 
