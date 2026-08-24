@@ -27,9 +27,7 @@ describe("Grid", () => {
 	it("sets auto-fill template for cols=auto", () => {
 		const { container } = render(<Grid cols="auto" minColWidth="200px" />);
 		const el = container.firstChild as HTMLElement;
-		expect(el.style.getPropertyValue("--grid-cols")).toBe(
-			"repeat(auto-fill, minmax(200px, 1fr))",
-		);
+		expect(el.style.getPropertyValue("--grid-cols")).toBe("repeat(auto-fill, minmax(200px, 1fr))");
 	});
 
 	it("sets gap as CSS variable", () => {
@@ -57,8 +55,15 @@ describe("Grid", () => {
 
 	it("forwards ref to the root element", () => {
 		let node: HTMLElement | null = null;
-		render(<Grid ref={(el) => { node = el; }}>X</Grid>);
+		render(
+			<Grid
+				ref={(el) => {
+					node = el;
+				}}
+			>
+				X
+			</Grid>,
+		);
 		expect(node).toBeInstanceOf(HTMLDivElement);
 	});
-
 });

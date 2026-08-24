@@ -37,12 +37,7 @@ function BrandHeader() {
 	return (
 		// GH Pages 는 `/bigtablet-design-system/` 하위에 배포되므로 절대경로(`/images/…`)는
 		// 그 접두사를 건너뛰어 404 가 난다. iframe 기준 상대경로여야 로컬·배포 양쪽에서 맞는다.
-		<img
-			src="images/logo/bigtablet.png"
-			alt="Bigtablet"
-			height={28}
-			style={{ display: "block" }}
-		/>
+		<img src="images/logo/bigtablet.png" alt="Bigtablet" height={28} style={{ display: "block" }} />
 	);
 }
 
@@ -89,7 +84,9 @@ function ProfileFooter({ collapsed = false }: { collapsed?: boolean }) {
 			{!collapsed && (
 				<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
 					<strong>sangmin</strong>
-					<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>sangmin@bigtablet.com</span>
+					<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>
+						sangmin@bigtablet.com
+					</span>
 				</div>
 			)}
 		</div>

@@ -132,9 +132,7 @@ export const Button = (props: ButtonProps) => {
 				aria-disabled={disabled || undefined}
 				tabIndex={disabled ? -1 : tabIndex}
 				onClick={
-					disabled
-						? (e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault()
-						: onClick
+					disabled ? (e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault() : onClick
 				}
 			>
 				{content}

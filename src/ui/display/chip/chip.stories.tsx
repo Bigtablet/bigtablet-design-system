@@ -8,7 +8,10 @@ const meta: Meta<typeof Chip> = {
 	tags: ["autodocs"],
 	argTypes: {
 		type: { control: "select", options: ["basic", "input", "filter", "static"] },
-		tone: { control: "select", options: ["default", "accent", "info", "success", "warning", "error"] },
+		tone: {
+			control: "select",
+			options: ["default", "accent", "info", "success", "warning", "error"],
+		},
 		size: { control: "select", options: [undefined, "sm", "md"] },
 		label: { control: "text" },
 		selected: { control: "boolean" },

@@ -42,9 +42,7 @@ describe("MediaCard", () => {
 	});
 
 	it("applies imagePosition class", () => {
-		const { container } = render(
-			<MediaCard image={IMG} imagePosition="overlay" heading="제목" />,
-		);
+		const { container } = render(<MediaCard image={IMG} imagePosition="overlay" heading="제목" />);
 		expect(container.firstChild).toHaveClass("media_card_image_overlay");
 	});
 
@@ -54,9 +52,7 @@ describe("MediaCard", () => {
 	});
 
 	it("applies aspectRatio inline style on image wrap", () => {
-		const { container } = render(
-			<MediaCard image={IMG} heading="제목" aspectRatio="16/9" />,
-		);
+		const { container } = render(<MediaCard image={IMG} heading="제목" aspectRatio="16/9" />);
 		const wrap = container.querySelector(".media_card_image_wrap") as HTMLElement;
 		expect(wrap.style.aspectRatio).toBe("16/9");
 	});

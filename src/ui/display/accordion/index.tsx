@@ -55,11 +55,7 @@ export const Accordion = ({
 
 	const toggle = (key: string) => {
 		const isOpen = open.includes(key);
-		const next = isOpen
-			? open.filter((k) => k !== key)
-			: multiple
-				? [...open, key]
-				: [key];
+		const next = isOpen ? open.filter((k) => k !== key) : multiple ? [...open, key] : [key];
 		if (!isControlled) setInternalKeys(next);
 		(onValueChange ?? onChange)?.(next);
 	};

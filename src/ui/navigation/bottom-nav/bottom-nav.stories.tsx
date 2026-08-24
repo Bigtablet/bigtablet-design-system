@@ -87,7 +87,8 @@ export const WithBadge: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: "아이콘 우상단에 `badge` prop 으로 알림 dot 이나 카운트를 표시한다. `<Badge>` 컴포넌트를 쓴다.",
+				story:
+					"아이콘 우상단에 `badge` prop 으로 알림 dot 이나 카운트를 표시한다. `<Badge>` 컴포넌트를 쓴다.",
 			},
 		},
 	},
@@ -96,7 +97,9 @@ export const WithBadge: Story = {
 		return (
 			<PageShell>
 				<main style={{ flex: 1, padding: 24 }}>
-					<p style={{ color: "var(--bt-color-text-body)", margin: 0 }}>알림 매장 - badge 표시 예.</p>
+					<p style={{ color: "var(--bt-color-text-body)", margin: 0 }}>
+						알림 매장 - badge 표시 예.
+					</p>
 				</main>
 				<BottomNavSpacer />
 				<BottomNav>
