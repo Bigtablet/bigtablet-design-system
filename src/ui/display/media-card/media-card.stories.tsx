@@ -129,10 +129,15 @@ export const Grid: Story = {
 	name: "그리드 레이아웃",
 	parameters: { chromatic: { disableSnapshot: true } },
 	render: () => (
-		<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+				gap: 16,
+			}}
+		>
 			{Array.from({ length: 6 }).map((_, i) => (
 				<MediaCard
-					// biome-ignore lint/suspicious/noArrayIndexKey: demo
 					key={i}
 					image={{ src: [SAMPLE_IMAGE, SAMPLE_IMAGE_2, SAMPLE_IMAGE_3][i % 3], alt: "" }}
 					heading={`아이템 ${i + 1}`}

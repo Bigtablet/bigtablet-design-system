@@ -166,8 +166,8 @@ export function ImageCropper({
 
 	// src(또는 minZoom)가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의
 	// onLoad 에서 다시 기록된다.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: src 는 body 에서 읽지 않지만 새
-	// 이미지로 교체 시 리셋을 걸기 위한 의도적 트리거 의존성이다.
+	// src 는 body 에서 읽지 않지만 새 이미지로 교체될 때 리셋을 걸기 위한 의도적 트리거 의존성이다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional trigger dependency
 	useEffect(() => {
 		setImageSize(null);
 		setZoom(minZoom);

@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import "./style.scss";
@@ -58,16 +58,11 @@ export const Breadcrumb = ({
 									{item.label}
 								</span>
 							) : item.href ? (
-								// biome-ignore lint/a11y/useValidAnchor: navigation link
 								<a className="breadcrumb_link" href={item.href} onClick={item.onClick}>
 									{item.label}
 								</a>
 							) : (
-								<button
-									type="button"
-									className="breadcrumb_link"
-									onClick={item.onClick}
-								>
+								<button type="button" className="breadcrumb_link" onClick={item.onClick}>
 									{item.label}
 								</button>
 							)}
