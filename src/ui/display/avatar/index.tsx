@@ -65,12 +65,7 @@ export const Avatar = ({
 		>
 			{showImage ? (
 				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image
-				<img
-					src={src}
-					alt={name}
-					onError={() => setImgFailed(true)}
-					className="avatar_image"
-				/>
+				<img src={src} alt={name} onError={() => setImgFailed(true)} className="avatar_image" />
 			) : (
 				<span className="avatar_initials" aria-hidden="true">
 					{initials}

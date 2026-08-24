@@ -31,7 +31,12 @@ export const React: Story = {
 					subtitle="React 19, Next.js App Router 호환. pnpm/npm/yarn 모두 가능."
 				/>
 				<div style={{ display: "grid", gap: 20 }}>
-					<Step number={1} title="패키지 설치" lang="bash" code="pnpm add @bigtablet/design-system" />
+					<Step
+						number={1}
+						title="패키지 설치"
+						lang="bash"
+						code="pnpm add @bigtablet/design-system"
+					/>
 					<Step
 						number={2}
 						title="스타일 import"
@@ -147,7 +152,9 @@ function Card({
 	variant?: "default" | "subtle";
 }) {
 	const bg =
-		variant === "subtle" ? "var(--bt-color-bg-solid-dim, #F4F4F4)" : "var(--bt-color-bg-solid, #fff)";
+		variant === "subtle"
+			? "var(--bt-color-bg-solid-dim, #F4F4F4)"
+			: "var(--bt-color-bg-solid, #fff)";
 	return (
 		<section
 			style={{

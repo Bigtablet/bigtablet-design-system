@@ -55,7 +55,13 @@ const ChevronTrailing = (
 		onClick={(e) => e.stopPropagation()}
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-			<path d="M8 4L14 10L8 16" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+			<path
+				d="M8 4L14 10L8 16"
+				stroke="#666"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
 		</svg>
 	</button>
 );
@@ -143,7 +149,13 @@ export const RichContent: Story = {
 		supportingText: (
 			<span>
 				자세한 내용은{" "}
-				<a href="#changelog" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+				<a
+					href="#changelog"
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+					}}
+				>
 					체인지로그
 				</a>
 				를 확인하세요.

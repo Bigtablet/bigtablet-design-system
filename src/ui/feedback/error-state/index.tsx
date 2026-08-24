@@ -1,7 +1,7 @@
 "use client";
 
 import { TriangleAlert } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
 
@@ -62,7 +62,9 @@ export const ErrorState = ({
 }: ErrorStateProps) => {
 	// icon === null → 숨김, undefined → 기본 아이콘
 	const resolvedIcon =
-		icon === null ? null : (icon ?? <TriangleAlert size={DEFAULT_ICON_SIZE[variant]} strokeWidth={1.5} />);
+		icon === null
+			? null
+			: (icon ?? <TriangleAlert size={DEFAULT_ICON_SIZE[variant]} strokeWidth={1.5} />);
 
 	return (
 		<div

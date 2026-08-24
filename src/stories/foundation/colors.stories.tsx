@@ -340,7 +340,8 @@ export const NeutralDarkPalette: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
 			<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-				<strong>Dark mode 표면 컬러</strong> - Vercel-style 순수 중성 그레이. 925/950은 dark mode 전용 추가 단계.
+				<strong>Dark mode 표면 컬러</strong> - Vercel-style 순수 중성 그레이. 925/950은 dark mode
+				전용 추가 단계.
 			</p>
 			{NEUTRAL_DARK_SCALE.map(({ key, value }) => (
 				<div

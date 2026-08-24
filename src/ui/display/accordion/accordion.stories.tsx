@@ -32,8 +32,16 @@ export default meta;
 type Story = StoryObj<typeof Accordion>;
 
 const FAQ = [
-	{ key: "1", title: "Bigtablet은 무엇인가요?", content: "B2B 매장 운영을 위한 통합 관리 솔루션입니다." },
-	{ key: "2", title: "어떻게 시작하나요?", content: "무료 체험을 신청하시면 영업팀이 연락드립니다." },
+	{
+		key: "1",
+		title: "Bigtablet은 무엇인가요?",
+		content: "B2B 매장 운영을 위한 통합 관리 솔루션입니다.",
+	},
+	{
+		key: "2",
+		title: "어떻게 시작하나요?",
+		content: "무료 체험을 신청하시면 영업팀이 연락드립니다.",
+	},
 	{ key: "3", title: "결제 방식은요?", content: "월간 / 연간 구독 방식입니다." },
 ];
 

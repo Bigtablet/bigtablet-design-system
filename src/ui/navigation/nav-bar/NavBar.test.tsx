@@ -105,7 +105,6 @@ describe("NavBar", () => {
 		});
 	});
 
-
 	it("LocaleSwitcher calls onValueChange (canonical) on select", () => {
 		const onValueChange = vi.fn();
 		render(
@@ -149,5 +148,4 @@ describe("NavBar", () => {
 		expect(onValueChange).toHaveBeenCalledWith("en");
 		expect(onChange).not.toHaveBeenCalled();
 	});
-
 });

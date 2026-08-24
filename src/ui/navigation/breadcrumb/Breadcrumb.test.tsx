@@ -19,40 +19,19 @@ describe("Breadcrumb", () => {
 	});
 
 	it("marks last item with aria-current=page", () => {
-		render(
-			<Breadcrumb
-				items={[
-					{ label: "홈", href: "/" },
-					{ label: "현재" },
-				]}
-			/>,
-		);
+		render(<Breadcrumb items={[{ label: "홈", href: "/" }, { label: "현재" }]} />);
 		expect(screen.getByText("현재")).toHaveAttribute("aria-current", "page");
 	});
 
 	it("renders link for non-last items with href", () => {
-		render(
-			<Breadcrumb
-				items={[
-					{ label: "홈", href: "/home" },
-					{ label: "current" },
-				]}
-			/>,
-		);
+		render(<Breadcrumb items={[{ label: "홈", href: "/home" }, { label: "current" }]} />);
 		const link = screen.getByText("홈").closest("a");
 		expect(link).toHaveAttribute("href", "/home");
 	});
 
 	it("calls onClick", () => {
 		const onClick = vi.fn();
-		render(
-			<Breadcrumb
-				items={[
-					{ label: "Click me", onClick },
-					{ label: "current" },
-				]}
-			/>,
-		);
+		render(<Breadcrumb items={[{ label: "Click me", onClick }, { label: "current" }]} />);
 		fireEvent.click(screen.getByText("Click me"));
 		expect(onClick).toHaveBeenCalled();
 	});
@@ -64,7 +43,9 @@ describe("Breadcrumb", () => {
 
 	// <nav> 랜드마크 이름은 스크린리더의 리전 목록에 그대로 뜬다. 이전엔 영문 하드코딩이었다.
 	it("lets the app override the nav landmark name", () => {
-		render(<Breadcrumb items={[{ label: "홈", href: "/" }, { label: "상세" }]} navLabel="Breadcrumb" />);
+		render(
+			<Breadcrumb items={[{ label: "홈", href: "/" }, { label: "상세" }]} navLabel="Breadcrumb" />,
+		);
 		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Breadcrumb");
 	});
 });
