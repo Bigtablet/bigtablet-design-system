@@ -2,6 +2,21 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Drawer } from "./index";
 
+const stubReducedMotion = () => {
+	vi.stubGlobal(
+		"matchMedia",
+		vi.fn().mockImplementation((query: string) => ({
+			matches: query.includes("prefers-reduced-motion"),
+			media: query,
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			addListener: vi.fn(),
+			removeListener: vi.fn(),
+			dispatchEvent: vi.fn(),
+		})),
+	);
+};
+
 describe("Drawer", () => {
 	afterEach(() => {
 		vi.unstubAllGlobals();
@@ -322,7 +337,7 @@ describe("Drawer", () => {
 
 	// ── Body scroll lock ───────────────────────────────────────────────────
 
-	it("locks body scroll while open and restores on close", () => {
+	it("locks body scroll while open and restores after the exit finishes", async () => {
 		const { rerender } = render(
 			<Drawer open onClose={() => {}}>
 				Content
@@ -335,10 +350,38 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		expect(document.body.style.overflow).not.toBe("hidden");
+		// 닫기 시작 시점에는 아직 잠겨 있어야 한다 - 퇴출 애니메이션 동안 오버레이가 계속
+		// 렌더되므로, 여기서 풀면 `scrollbar-gutter` 보정이 사라져 거터에 빈 띠가 보이고
+		// 배경 콘텐츠가 그만큼 튄다.
+		expect(document.body.style.overflow).toBe("hidden");
+
+		// 퇴출이 끝나(shouldRender false) 완전히 unmount 되면 풀린다.
+		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 	});
 
-	it("keeps body scroll locked until the last overlay closes (shared counter)", () => {
+	it("releases the scroll lock under reduced motion", async () => {
+		// Drawer 는 useSpringPresence 의 onExitComplete 로 shouldRender 를 내린다.
+		// reduced-motion(`immediate: true`)에서도 그 콜백이 도는지 확인한다 - 안 돌면
+		// 잠금이 영구히 남는다.
+		stubReducedMotion();
+		const { rerender } = render(
+			<Drawer open onClose={() => {}}>
+				Content
+			</Drawer>,
+		);
+		expect(document.body.style.overflow).toBe("hidden");
+
+		rerender(
+			<Drawer open={false} onClose={() => {}}>
+				Content
+			</Drawer>,
+		);
+
+		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		expect(document.body.dataset.openModals).toBeUndefined();
+	});
+
+	it("keeps body scroll locked until the last overlay closes (shared counter)", async () => {
 		const { rerender } = render(
 			<>
 				<Drawer open onClose={() => {}}>
@@ -375,7 +418,7 @@ describe("Drawer", () => {
 				</Drawer>
 			</>,
 		);
-		expect(document.body.style.overflow).not.toBe("hidden");
+		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 	});
 
 	// ── Reduced motion ───────────────────────────────────────────────────────
