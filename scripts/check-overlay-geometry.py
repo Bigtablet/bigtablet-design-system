@@ -110,25 +110,34 @@ def shorthand_side(value: str | None, side: str) -> str | None:
 
 # ── 스크롤 잠금 수명 (소스) ───────────────────────────────────────────────────
 
-LOCK_OWNERS = [
-    Path("src/ui/overlay/modal/index.tsx"),
-    Path("src/ui/overlay/drawer/index.tsx"),
-    Path("src/ui/feedback/alert/index.tsx"),
-]
+# 잠금 소비처는 하드코딩하지 않고 소스에서 찾는다. 목록으로 두면 새 오버레이가 같은 패턴을
+# 쓰기 시작했을 때 검사가 조용히 놓친다 - 이 검사가 막으려는 바로 그 재발이 검사 자체에 남는다.
+UI = Path("src/ui")
+LOCK_CALL = "lockBodyScroll()"
+# 소비처가 이 수 아래로 떨어지면 탐색이 깨진 것으로 본다 (현재 Modal·Drawer·AlertModal).
+MIN_LOCK_OWNERS = 3
 
-# `lockBodyScroll()` 을 부르는 effect 의 deps 배열
+
+# `lockBodyScroll()` 을 부르는 effect 의 본문과 deps 배열
 LOCK_EFFECT = re.compile(
     r"useEffect\(\(\)\s*=>\s*\{(?P<body>[^}]*?lockBodyScroll\(\)[^}]*?)\}\s*,\s*\[(?P<deps>[^\]]*)\]\)",
     re.DOTALL,
 )
 
 
-def check_lock_lifecycle() -> list[str]:
+def lock_owners() -> list[Path]:
+    return sorted(p for p in UI.rglob("index.tsx") if LOCK_CALL in p.read_text(encoding="utf-8"))
+
+
+def check_lock_lifecycle() -> tuple[list[str], int]:
     problems: list[str] = []
-    for path in LOCK_OWNERS:
-        if not path.exists():
-            problems.append(f"{path} 가 없다 - LOCK_OWNERS 목록이 소스와 어긋났다")
-            continue
+    owners = lock_owners()
+    if len(owners) < MIN_LOCK_OWNERS:
+        problems.append(
+            f"잠금 소비처를 {len(owners)}개만 찾았다 (최소 {MIN_LOCK_OWNERS}) -"
+            f" `{LOCK_CALL}` 탐색이 소스와 어긋났는지 보라"
+        )
+    for path in owners:
         source = path.read_text(encoding="utf-8")
         matches = LOCK_EFFECT.findall(source)
         if len(matches) != 1:
@@ -144,10 +153,13 @@ def check_lock_lifecycle() -> list[str]:
                 " open/isOpen 에 묶으면 퇴출 애니메이션 동안 보정이 풀려 거터에 빈 띠가 보인다"
             )
         if "if (!shouldRender) return" not in body:
+            problems.append(f"{path}: 잠금 effect 의 가드가 shouldRender 기준이 아니다")
+        # cleanup 이 없으면 unmount·shouldRender=false 후에도 잠금이 남아 페이지가 잠긴다.
+        if not re.search(r"\breturn\s+unlockBodyScroll\s*;", body):
             problems.append(
-                f"{path}: 잠금 effect 의 가드가 shouldRender 기준이 아니다"
+                f"{path}: 잠금 effect 가 unlockBodyScroll cleanup 을 반환하지 않는다"
             )
-    return problems
+    return problems, len(owners)
 
 
 def main() -> int:
@@ -206,8 +218,9 @@ def main() -> int:
                 f"(inset {inset} + 박스 {box}) 기준이면 {expected}px 이어야 한다"
             )
 
-    problems += check_lock_lifecycle()
-    checked += 3
+    lock_problems, owner_count = check_lock_lifecycle()
+    problems += lock_problems
+    checked += owner_count
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
@@ -240,8 +253,8 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    print(f"오버레이 close 기하 {checked - 3}건 - 전부 패널 패딩에서 파생됩니다.")
-    print(f"스크롤 잠금 수명 {len(LOCK_OWNERS)}건 - 전부 shouldRender 에 묶여 있습니다.")
+    print(f"오버레이 close 기하 {checked - owner_count}건 - 전부 패널 패딩에서 파생됩니다.")
+    print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     return 0
 
 

@@ -220,6 +220,11 @@ describe("Modal", () => {
 		// 잠금이 `shouldRender` 에 묶여 있으므로, 퇴출 완료 콜백이 발화하지 않으면 페이지가
 		// 영구히 잠긴다. reduced-motion 은 `immediate: true` 로 스프링을 점프시키는 경로라
 		// onRest 가 도는지 따로 확인한다.
+		// setup.ts 가 스위트 전체에 skipAnimation 을 걸어 두면 어떤 스프링이든 즉시 끝나
+		// 일반 종료 테스트와 같은 경로가 된다. 여기서만 끄고 `immediate: reduced` 가 실제로
+		// 도는 경로를 태운다. (그 플래그를 지우는 뮤테이션까지 잡지는 못한다 - 스프링이
+		// 애니메이션으로 끝나도 waitFor 안에 들어오기 때문이다.)
+		Globals.assign({ skipAnimation: false });
 		stubReducedMotion();
 		const { rerender } = render(
 			<Modal open onClose={() => {}}>
@@ -236,6 +241,8 @@ describe("Modal", () => {
 
 		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 		expect(document.body.dataset.openModals).toBeUndefined();
+
+		Globals.assign({ skipAnimation: true });
 	});
 
 	it("activates the focus trap when toggled open after mounting closed", () => {
