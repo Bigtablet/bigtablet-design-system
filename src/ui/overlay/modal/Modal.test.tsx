@@ -3,6 +3,21 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "./index";
 
+const stubReducedMotion = () => {
+	vi.stubGlobal(
+		"matchMedia",
+		vi.fn().mockImplementation((query: string) => ({
+			matches: query.includes("prefers-reduced-motion"),
+			media: query,
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			addListener: vi.fn(),
+			removeListener: vi.fn(),
+			dispatchEvent: vi.fn(),
+		})),
+	);
+};
+
 describe("Modal", () => {
 	afterEach(() => {
 		vi.unstubAllGlobals();
@@ -147,7 +162,7 @@ describe("Modal", () => {
 		expect(panel).toHaveClass("custom-modal");
 	});
 
-	it("keeps scroll locked when one of multiple open modals is closed", () => {
+	it("keeps scroll locked when one of multiple open modals is closed", async () => {
 		const { rerender } = render(
 			<>
 				<Modal open onClose={() => {}}>
@@ -176,7 +191,58 @@ describe("Modal", () => {
 
 		// First modal still open - scroll must remain locked
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.body.dataset.openModals).toBe("1");
+		// 닫힌 모달도 퇴출 애니메이션 동안 계속 렌더되므로 그 잠금이 아직 살아 있다.
+		// 닫기 시작 즉시 풀면 `scrollbar-gutter` 보정이 사라져 거터에 빈 띠가 보인다.
+		expect(document.body.dataset.openModals).toBe("2");
+
+		// 두 번째의 퇴출이 끝나면 카운터가 내려가고, 첫 번째 잠금은 그대로 남는다.
+		await waitFor(() => expect(document.body.dataset.openModals).toBe("1"));
+		expect(document.body.style.overflow).toBe("hidden");
+	});
+
+	it("releases the scroll lock when unmounted while still open", () => {
+		// 전역 스택은 `{mounted && <Modal open />}` 로 붙였다 떼는 경우가 있다. 잠금이
+		// `shouldRender` 에 묶여 있어도 unmount 시 effect cleanup 이 돌아야 풀린다.
+		const { unmount } = render(
+			<Modal open onClose={() => {}}>
+				Body
+			</Modal>,
+		);
+		expect(document.body.style.overflow).toBe("hidden");
+
+		unmount();
+
+		expect(document.body.style.overflow).not.toBe("hidden");
+		expect(document.body.dataset.openModals).toBeUndefined();
+	});
+
+	it("releases the scroll lock under reduced motion", async () => {
+		// 잠금이 `shouldRender` 에 묶여 있으므로, 퇴출 완료 콜백이 발화하지 않으면 페이지가
+		// 영구히 잠긴다. reduced-motion 은 `immediate: true` 로 스프링을 점프시키는 경로라
+		// onRest 가 도는지 따로 확인한다.
+		// setup.ts 가 스위트 전체에 skipAnimation 을 걸어 두면 어떤 스프링이든 즉시 끝나
+		// 일반 종료 테스트와 같은 경로가 된다. 여기서만 끄고 `immediate: reduced` 가 실제로
+		// 도는 경로를 태운다. (그 플래그를 지우는 뮤테이션까지 잡지는 못한다 - 스프링이
+		// 애니메이션으로 끝나도 waitFor 안에 들어오기 때문이다.)
+		Globals.assign({ skipAnimation: false });
+		stubReducedMotion();
+		const { rerender } = render(
+			<Modal open onClose={() => {}}>
+				Body
+			</Modal>,
+		);
+		expect(document.body.style.overflow).toBe("hidden");
+
+		rerender(
+			<Modal open={false} onClose={() => {}}>
+				Body
+			</Modal>,
+		);
+
+		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		expect(document.body.dataset.openModals).toBeUndefined();
+
+		Globals.assign({ skipAnimation: true });
 	});
 
 	it("activates the focus trap when toggled open after mounting closed", () => {
