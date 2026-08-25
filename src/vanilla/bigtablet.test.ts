@@ -4,10 +4,24 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
 import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
 
-/** jsdom 은 레이아웃을 하지 않아 스크롤바 폭이 항상 0 이다. 있는 상황을 직접 세운다. */
-const setScrollbarWidth = (width: number) => {
+/**
+ * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 폭이 0 이다. 스크롤바나 예약된 거터가 있는
+ * 상황을 만들려면 프로브가 재는 ICB 폭을 직접 세운다. `clientWidth` 가 아니라 프로브를 세우는
+ * 것이 핵심 - `scrollbar-gutter: stable` 에서는 `clientWidth` 가 거터를 포함해 보고한다.
+ */
+const setViewportInset = (inset: number) => {
 	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true, writable: true });
-	vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280 - width);
+	vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+		width: 1280 - inset,
+		height: 0,
+		top: 0,
+		left: 0,
+		right: 1280 - inset,
+		bottom: 0,
+		x: 0,
+		y: 0,
+		toJSON: () => ({}),
+	} as DOMRect);
 };
 
 const pressEscape = () =>
@@ -262,7 +276,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 	};
 
 	it("열면 잠그고 닫으면 푼다", () => {
-		setScrollbarWidth(0);
+		setViewportInset(0);
 		const m = Modal(modalMarkup());
 
 		m?.open();
@@ -276,7 +290,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 	it("스크롤바 폭을 보정하고 stable 거터를 놓는다", () => {
 		document.documentElement.style.scrollbarGutter = "stable";
-		setScrollbarWidth(15);
+		setViewportInset(15);
 
 		const m = Modal(modalMarkup());
 		m?.open();
@@ -292,8 +306,25 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
 	});
 
+	it("clientWidth 가 거터를 감춰도 거터를 놓는다", () => {
+		// `scrollbar-gutter: stable` 에서 Chromium 은 clientWidth 를 innerWidth 와 같게 보고한다.
+		// React 쪽과 같은 회귀 - 옛 측정식은 0 을 내고 보정이 한 번도 걸리지 않았다.
+		document.documentElement.style.scrollbarGutter = "stable";
+		setViewportInset(15);
+		vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280);
+		expect(window.innerWidth - document.documentElement.clientWidth).toBe(0);
+
+		const m = Modal(modalMarkup());
+		m?.open();
+
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
+
+		m?.close();
+	});
+
 	it("중첩 오버레이는 마지막 해제까지 잠금을 유지한다", () => {
-		setScrollbarWidth(15);
+		setViewportInset(15);
 		const a = Modal(modalMarkup("m1"));
 		const b = Modal(modalMarkup("m2"));
 
@@ -310,7 +341,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 	});
 
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
-		setScrollbarWidth(0);
+		setViewportInset(0);
 		const m = Modal(modalMarkup());
 
 		m?.open();
@@ -331,7 +362,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 describe("Alert", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
-		setScrollbarWidth(0);
+		setViewportInset(0);
 	});
 
 	afterEach(() => {

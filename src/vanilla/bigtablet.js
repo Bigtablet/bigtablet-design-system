@@ -73,6 +73,33 @@
 	].join(", ");
 
 	/**
+	 * 잠금으로 회수되는 오른쪽 폭(px). 오버레이 스크롤바(macOS 기본)에서는 0.
+	 *
+	 * `window.innerWidth - html.clientWidth` 로는 안 된다. 그 값은 "지금 스크롤바가 떠 있는가"
+	 * 만 재고 `scrollbar-gutter: stable` 이 **예약해 둔** 거터는 잡지 못한다. Chromium 실측 -
+	 * 거터 15px 이 예약된 상태에서 `innerWidth` 와 `clientWidth` 가 똑같이 1600 을 보고하고
+	 * (스크롤이 있든 없든), 같은 상황에서 `position: fixed` 박스는 1585px 로 잡힌다.
+	 *
+	 * 필요한 값은 "ICB 가 뷰포트보다 몇 px 좁은가" 다. fixed 박스를 하나 띄워 직접 잰다 -
+	 * 클래식 스크롤바든 예약된 거터든 같은 값으로 잡힌다.
+	 * (React 쪽 `utils/scroll-lock.ts` 의 `measureViewportInset` 과 동일 동작.)
+	 */
+	function measureViewportInset() {
+		const probe = document.createElement("div");
+		probe.style.cssText =
+			"position:fixed;top:0;left:0;right:0;height:0;visibility:hidden;pointer-events:none";
+		// body 가 아니라 html 에 붙인다 - 소비자가 body 에 transform/filter/contain 을 걸면
+		// 그것이 fixed 의 컨테이닝 블록이 되어 뷰포트가 아닌 값을 재게 된다.
+		document.documentElement.appendChild(probe);
+		const width = probe.getBoundingClientRect().width;
+		probe.remove();
+
+		if (width <= 0) return 0;
+
+		return Math.max(0, window.innerWidth - width);
+	}
+
+	/**
 	 * 바디 스크롤 잠금 카운터 - Modal 위 Alert 처럼 오버레이가 겹칠 때
 	 * 하나만 닫혀도 배경 스크롤이 풀리던 문제 방지 (React 쪽 data-open-modals 와 동일 패턴)
 	 */
@@ -81,8 +108,8 @@
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "0", 10);
 		if (n === 0) {
-			// overflow 를 건드리기 전에 스크롤바 폭을 잰다 - 잠근 뒤엔 clientWidth 가 이미 넓어져 0 이 된다.
-			const scrollbarWidth = window.innerWidth - html.clientWidth;
+			// overflow 를 건드리기 전에 재야 한다 - 잠근 뒤엔 스크롤바가 사라져 0 이 나온다.
+			const scrollbarWidth = measureViewportInset();
 
 			// 소비자가 인라인으로 지정해둔 값들을 저장했다가 마지막 unlock 때 복원
 			// (React 쪽 utils/scroll-lock.ts 와 동일 동작).
