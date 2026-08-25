@@ -55,17 +55,20 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 	});
 
-	it("releases a reserved gutter even when clientWidth hides it", () => {
+	it("measures the gutter from the ICB, not from clientWidth", () => {
 		// `scrollbar-gutter: stable` 의 정의가 이 상황이다 - 거터 15px 이 예약돼 있는데
-		// clientWidth 는 innerWidth 와 같게 보고한다(Chromium 실측). 이전 구현은
-		// `innerWidth - clientWidth` 를 써서 0 을 얻고 거터를 놓지 못했고, 그래서 오버레이
-		// 옆에 거터 폭만큼 배경색 띠가 남았다.
+		// clientWidth 는 innerWidth 와 같게 보고한다(Chromium 실측).
 		document.documentElement.style.scrollbarGutter = "stable";
 		setViewportInset(15);
 		vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280);
 
+		// 옛 측정식은 이 상황에서 0 을 낸다 - 그래서 보정이 한 번도 걸리지 않았다.
+		// 이 단정이 위 clientWidth 스텁을 의미 있게 만든다.
+		expect(window.innerWidth - document.documentElement.clientWidth).toBe(0);
+
 		lockBodyScroll();
 
+		// 그런데도 거터를 놓고 그 폭을 보정한다 - 측정이 clientWidth 와 무관하다는 뜻이다.
 		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
 		expect(document.body.style.paddingRight).toBe("15px");
 	});
