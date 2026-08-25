@@ -1020,6 +1020,11 @@
 
   &.is-open {
     display: grid;
+    // 암묵 트랙은 auto - 즉 패널의 max-content 로 커진다. 그러면 패널의
+    // `max-width: calc(100% - 32px)` 가 뷰포트가 아니라 그 트랙 기준으로 풀려 전혀 clamp 되지
+    // 않는다. 실측 - 375px 화면에서 `width: 480px` 를 준 패널이 우측으로 89px 잘렸다.
+    // React 쪽 `.modal` 과 같은 수정이다.
+    grid-template-columns: minmax(0, 1fr);
   }
 
   &__panel {
