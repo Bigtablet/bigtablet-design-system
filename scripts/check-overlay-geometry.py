@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""오버레이(Modal·Drawer)의 close 버튼 기하가 패널 패딩에서 파생되는지 빌드 CSS 로 검사한다.
+"""오버레이(Modal·Drawer·AlertModal)의 두 가지 불변식을 검사한다.
+
+## 1. close 버튼 기하 (빌드 CSS)
 
 close 버튼은 `position: absolute` 로 패널 모서리에 붙는데, 그 inset 은 패널 패딩과 **합의해야
 하는 값**이다. 손으로 고정하면 패딩만 바뀌었을 때(Modal 은 `from_medium` 에서 24 -> 32) close 가
@@ -11,6 +13,14 @@ close 버튼은 `position: absolute` 로 패널 모서리에 붙는데, 그 inse
 
 jsdom 은 스타일시트를 계산하지 않아 단위 테스트로는 잡을 수 없다. 그래서 빌드 산출물을 읽는다.
 
+## 2. 스크롤 잠금 수명 (소스)
+
+잠금 effect 는 **마운트 게이트와 같은 값**(`shouldRender`)에 묶여야 한다. `open` / `isOpen` 에
+묶으면 닫기 시작 즉시 cleanup 이 돌아 `scrollbar-gutter` 와 `padding-right` 보정이 풀리는데,
+오버레이는 퇴출 애니메이션이 끝날 때까지 계속 렌더된다 - 그 구간에 거터가 빈 띠로 보이고 배경이
+튄다. AlertModal 만 처음부터 `shouldRender` 를 썼고 Modal·Drawer 가 `open` 을 써서 같은 증상이
+두 번 재발했다.
+
 exit 1 이면 위반이 있다.
 """
 
@@ -21,6 +31,7 @@ import sys
 from pathlib import Path
 
 CSS = Path("dist/index.css")
+VANILLA_CSS = Path("dist/vanilla/bigtablet.css")
 ICON_INSET = 8  # (32 - 18) / 2 = 7 이지만 토큰 스케일에 맞춰 8 을 뺀다
 
 
@@ -97,6 +108,60 @@ def shorthand_side(value: str | None, side: str) -> str | None:
     return None
 
 
+# ── 스크롤 잠금 수명 (소스) ───────────────────────────────────────────────────
+
+# 잠금 소비처는 하드코딩하지 않고 소스에서 찾는다. 목록으로 두면 새 오버레이가 같은 패턴을
+# 쓰기 시작했을 때 검사가 조용히 놓친다 - 이 검사가 막으려는 바로 그 재발이 검사 자체에 남는다.
+UI = Path("src/ui")
+LOCK_CALL = "lockBodyScroll()"
+# 소비처가 이 수 아래로 떨어지면 탐색이 깨진 것으로 본다 (현재 Modal·Drawer·AlertModal).
+MIN_LOCK_OWNERS = 3
+
+
+# `lockBodyScroll()` 을 부르는 effect 의 본문과 deps 배열
+LOCK_EFFECT = re.compile(
+    r"useEffect\(\(\)\s*=>\s*\{(?P<body>[^}]*?lockBodyScroll\(\)[^}]*?)\}\s*,\s*\[(?P<deps>[^\]]*)\]\)",
+    re.DOTALL,
+)
+
+
+def lock_owners() -> list[Path]:
+    return sorted(p for p in UI.rglob("index.tsx") if LOCK_CALL in p.read_text(encoding="utf-8"))
+
+
+def check_lock_lifecycle() -> tuple[list[str], int]:
+    problems: list[str] = []
+    owners = lock_owners()
+    if len(owners) < MIN_LOCK_OWNERS:
+        problems.append(
+            f"잠금 소비처를 {len(owners)}개만 찾았다 (최소 {MIN_LOCK_OWNERS}) -"
+            f" `{LOCK_CALL}` 탐색이 소스와 어긋났는지 보라"
+        )
+    for path in owners:
+        source = path.read_text(encoding="utf-8")
+        matches = LOCK_EFFECT.findall(source)
+        if len(matches) != 1:
+            problems.append(
+                f"{path}: lockBodyScroll effect 를 {len(matches)}개 찾았다 - 1개여야 한다"
+            )
+            continue
+        body, deps = matches[0]
+        deps = deps.strip()
+        if deps != "shouldRender":
+            problems.append(
+                f"{path}: 잠금 effect 의 deps 가 [{deps}] 다 - [shouldRender] 여야 한다."
+                " open/isOpen 에 묶으면 퇴출 애니메이션 동안 보정이 풀려 거터에 빈 띠가 보인다"
+            )
+        if "if (!shouldRender) return" not in body:
+            problems.append(f"{path}: 잠금 effect 의 가드가 shouldRender 기준이 아니다")
+        # cleanup 이 없으면 unmount·shouldRender=false 후에도 잠금이 남아 페이지가 잠긴다.
+        if not re.search(r"\breturn\s+unlockBodyScroll\s*;", body):
+            problems.append(
+                f"{path}: 잠금 effect 가 unlockBodyScroll cleanup 을 반환하지 않는다"
+            )
+    return problems, len(owners)
+
+
 def main() -> int:
     if not CSS.exists():
         print(f"{CSS} 가 없다 - `pnpm build` 를 먼저 실행하라", file=sys.stderr)
@@ -153,18 +218,29 @@ def main() -> int:
                 f"(inset {inset} + 박스 {box}) 기준이면 {expected}px 이어야 한다"
             )
 
+    lock_problems, owner_count = check_lock_lifecycle()
+    problems += lock_problems
+    checked += owner_count
+
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
     # 잘리고 close 가 화면 밖으로 나갔다).
-    track = find(parsed, ".modal", "grid-template-columns")
-    checked += 1
-    if track is None or "minmax(0" not in track:
-        problems.append(
-            f".modal 의 grid-template-columns 가 {track!r} - minmax(0, ...) 로 트랙을"
-            " 컨테이너에 묶어야 패널 max-width 의 100% 가 뷰포트 폭이 된다"
-        )
+    for label, css_path, selector in (
+        ("React", CSS, ".modal"),
+        ("Vanilla", VANILLA_CSS, ".bt-modal.is-open"),
+    ):
+        checked += 1
+        if not css_path.exists():
+            problems.append(f"{label}: {css_path} 가 없다 - `pnpm build` 를 먼저 실행하라")
+            continue
+        track = find(rules(css_path.read_text(encoding="utf-8")), selector, "grid-template-columns")
+        if track is None or "minmax(0" not in track:
+            problems.append(
+                f"{label}: {selector} 의 grid-template-columns 가 {track!r} - minmax(0, ...) 로"
+                " 트랙을 컨테이너에 묶어야 패널 max-width 의 100% 가 뷰포트 폭이 된다"
+            )
 
-    if checked < 8:
+    if checked < 9:
         print(
             f"검사 대상이 사라졌다 (확인 {checked}건) - 선택자나 빌드 구조가 바뀌었는지 보라",
             file=sys.stderr,
@@ -177,7 +253,8 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    print(f"오버레이 close 기하 {checked}건 - 전부 패널 패딩에서 파생됩니다.")
+    print(f"오버레이 close 기하 {checked - owner_count}건 - 전부 패널 패딩에서 파생됩니다.")
+    print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     return 0
 
 

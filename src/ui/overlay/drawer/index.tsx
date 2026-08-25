@@ -167,11 +167,15 @@ export const Drawer = ({
 	// Modal/Drawer 를 동시에 열거나 중첩해도 카운터가 0 이 될 때만 원래 overflow 를 복원해
 	// 스크롤 잠금 오작동/원래 스타일 유실을 막는다.
 	React.useEffect(() => {
-		if (!open) return;
+		// `open` 이 아니라 `shouldRender` 에 묶는다. `open` 기준이면 닫기 시작 즉시 cleanup 이
+		// 돌아 `scrollbar-gutter` 와 `padding-right` 보정이 풀리는데, 오버레이는 퇴출
+		// 애니메이션이 끝날 때까지(= shouldRender false) 계속 렌더된다. 그 구간에서 ICB 가
+		// 거터만큼 줄어 오버레이가 거터를 못 덮고(빈 띠) 배경 콘텐츠가 그만큼 튄다.
+		if (!shouldRender) return;
 
 		lockBodyScroll();
 		return unlockBodyScroll;
-	}, [open]);
+	}, [shouldRender]);
 
 	// open 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
 	// panelRef.current 가 이미 붙어 있어 포커스 트랩이 정상 활성화된다. shouldRender 만 보면

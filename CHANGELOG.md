@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.15.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.15.2) - 2026-08-25
+- 오버레이가 닫히는 동안 스크롤 잠금이 먼저 풀려, `scrollbar-gutter: stable` 환경에서 오른쪽에 빈 띠가 보이고 배경 콘텐츠가 튀던 문제를 고쳤습니다 (`Modal`·`Drawer`)
+- Vanilla 모달이 좁은 화면에서 잘리던 문제를 고쳤습니다 (375px 에서 우측 89px 잘림 — React 는 3.15.0 에서 이미 수정)
+
 ## [3.15.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.15.1) - 2026-08-25
 - `scrollbar-gutter: stable` 을 쓰는 앱에서 오버레이(Modal·Alert·Drawer) 오른쪽에 배경색 띠가 남던 문제를 고쳤습니다. 스크롤 잠금이 예약된 거터를 재지 못해 보정이 걸리지 않았습니다 — React 와 Vanilla 양쪽 다 적용됩니다
 
