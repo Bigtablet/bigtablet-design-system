@@ -54,6 +54,12 @@ export interface TextareaProps
 	showCounter?: boolean;
 	/** resize 핸들 제어 (기본 "vertical") */
 	resize?: TextareaResize;
+	/**
+	 * 입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는
+	 * 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와
+	 * 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다.
+	 */
+	toolbar?: React.ReactNode;
 	/** textarea 요소 참조 */
 	ref?: React.Ref<HTMLTextAreaElement>;
 }
@@ -94,6 +100,7 @@ export const Textarea = ({
 	maxRows,
 	showCounter,
 	resize = "vertical",
+	toolbar,
 	maxLength,
 	ref,
 	...props
@@ -188,6 +195,15 @@ export const Textarea = ({
 			)}
 
 			<div className="textarea_container">
+				{/* 비활성 필드의 툴바는 상호작용도 막는다 - `_disabled` 스타일은 컨테이너 자식에
+				    opacity 만 걸고 pointer-events 는 건드리지 않아(TextField 와 동일), 없으면
+				    비활성 상태에서도 툴바 버튼이 포커스·클릭된다. `toolbar` 는 임의 ReactNode 라
+				    개별 컨트롤에 disabled 를 주입할 수 없으므로 서브트리를 inert 로 막는다. */}
+				{toolbar && (
+					<div className="textarea_toolbar" inert={props.disabled || undefined}>
+						{toolbar}
+					</div>
+				)}
 				<div className="textarea_input_wrap">
 					<textarea
 						id={inputId}

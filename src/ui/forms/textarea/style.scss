@@ -46,6 +46,22 @@
     }
   }
 
+  // ── Toolbar (toolbar prop 이 있을 때만) ────────────────────────────────
+  //
+  // 컨테이너 **안**, 입력 위에 놓인다. 그래야 `:focus-within` 테두리가 툴바까지 감싸고
+  // 소비자가 모서리를 손으로 맞출 필요가 없다.
+  //
+  // 배경을 주지 않는다. 배경을 주면 컨테이너의 12px 모서리를 사각으로 덮어 `overflow: hidden`
+  // 이 필요해지는데, 그러면 textarea 의 resize 핸들이 잘린다. 구분선 하나로 충분하다.
+  &_toolbar {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    flex-wrap: wrap;
+    padding: token.$spacing_8 token.$spacing_16; // md 기본 - input wrap 과 좌우를 맞춘다
+    @include token.hairline(bottom);
+  }
+
   // ── Input wrap ─────────────────────────────────────────────────────────
 
   &_input_wrap {
@@ -79,7 +95,8 @@
 
   // ── Size variants ──────────────────────────────────────────────────────
 
-  &_size_sm &_input_wrap {
+  &_size_sm &_input_wrap,
+  &_size_sm &_toolbar {
     padding: token.$spacing_8 token.$spacing_16;
   }
 
@@ -88,7 +105,8 @@
     line-height: token.$line_height_20;
   }
 
-  &_size_lg &_input_wrap {
+  &_size_lg &_input_wrap,
+  &_size_lg &_toolbar {
     padding: token.$spacing_12 token.$spacing_20;
   }
 
