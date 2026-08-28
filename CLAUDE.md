@@ -295,9 +295,12 @@ label/domain
 ### Release & Changelog
 **태그 기반 배포** - semantic-release / changeset 미사용. 절차:
 
-1. **dev→main 릴리즈 PR(`merge: release`)에 아래 둘을 반드시 함께 포함** (별도 커밋으로 미루지 말 것):
+1. **dev→main 릴리즈 PR(`merge: release`)에 아래 셋을 반드시 함께 포함** (별도 커밋으로 미루지 말 것):
    - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
+     - **렌더 결과가 바뀌면 API 변화가 없어도 minor** - 기존 컴포넌트의 굵기·간격·위치·기본 크기가 달라지는 변경. 버그 수정이라도 소비자 화면이 바뀌면 patch 로 내보내지 않는다(`~3.14.0` 같은 범위로 받는 앱이 자동으로 끌어간다). CHANGELOG 항목 앞에 `(렌더 변경)` 을 붙인다.
+       예 - Prose 제목 굵기 400→700(3.14.1), Modal close 버튼 위치 20px 이동(3.15.0), Vanilla 모달 폭 clamp(3.15.2). 셋 다 API 는 그대로였다.
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
+   - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
 2. 리뷰어 approve 후 머지.
 3. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 4. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
@@ -309,6 +312,7 @@ label/domain
 - 핵심 변경 2
 ```
 - 주요 업데이트 불릿만 - 커밋 본문/Co-Authored-By/이슈 링크 덤프 금지.
+- 렌더 결과가 바뀐 항목은 `- (렌더 변경) ...` 로 시작한다 - 소비자가 화면 확인이 필요한 줄을 한눈에 찾게.
 - 롤백한 버전은 CHANGELOG·Release 양쪽에서 제외.
 
 **GitHub Release 노트는 조직 공통 양식 필수** - 모든 릴리즈 노트는 한글 작성, title = 버전명만(예: `v3.3.0`). CHANGELOG의 해당 버전 주요 업데이트를 그대로 사용. `--generate-notes` 자동 PR 목록은 양식에 안 맞으니 아래로 교체 (제목 = `Design System of Bigtablet, Inc.`, `##` 제목과 `####` 사이 빈 줄 없음):
