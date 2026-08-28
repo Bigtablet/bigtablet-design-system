@@ -157,4 +157,44 @@ describe("Textarea", () => {
 		expect(onValueChange).toHaveBeenCalledWith("ㅎ");
 		expect(onChangeAction).not.toHaveBeenCalled();
 	});
+
+	// ── toolbar 슬롯 ────────────────────────────────────────────────────────
+
+	describe("toolbar", () => {
+		it("renders nothing extra when no toolbar is given", () => {
+			const { container } = render(<Textarea label="설명" />);
+
+			expect(container.querySelector(".textarea_toolbar")).toBeNull();
+			// 컨테이너의 자식은 입력 wrap 하나뿐 - 기존 DOM 과 동일하다.
+			const box = container.querySelector(".textarea_container");
+			expect(box?.children).toHaveLength(1);
+			expect(box?.firstElementChild).toHaveClass("textarea_input_wrap");
+		});
+
+		it("puts the toolbar inside the container, above the input", () => {
+			// 컨테이너가 품어야 :focus-within 테두리가 툴바까지 감싼다. 밖에 두면 소비자가
+			// 모서리와 포커스 링을 직접 맞춰야 했다.
+			const { container } = render(
+				<Textarea label="설명" toolbar={<button type="button">굵게</button>} />,
+			);
+
+			const box = container.querySelector(".textarea_container");
+			expect(box?.children).toHaveLength(2);
+			expect(box?.firstElementChild).toHaveClass("textarea_toolbar");
+			expect(box?.lastElementChild).toHaveClass("textarea_input_wrap");
+			expect(screen.getByRole("button", { name: "굵게" })).toBeInTheDocument();
+		});
+
+		it("keeps the toolbar inside the disabled dimming", () => {
+			// `.textarea_disabled .textarea_container > *` 가 직접 자식만 흐리게 한다.
+			// 툴바가 컨테이너 직계여야 입력과 같이 흐려진다.
+			const { container } = render(
+				<Textarea label="설명" disabled toolbar={<button type="button">굵게</button>} />,
+			);
+
+			const toolbar = container.querySelector(".textarea_toolbar");
+			expect(toolbar?.parentElement).toHaveClass("textarea_container");
+			expect(container.querySelector(".textarea")).toHaveClass("textarea_disabled");
+		});
+	});
 });

@@ -54,6 +54,12 @@ export interface TextareaProps
 	showCounter?: boolean;
 	/** resize 핸들 제어 (기본 "vertical") */
 	resize?: TextareaResize;
+	/**
+	 * 입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는
+	 * 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와
+	 * 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다.
+	 */
+	toolbar?: React.ReactNode;
 	/** textarea 요소 참조 */
 	ref?: React.Ref<HTMLTextAreaElement>;
 }
@@ -94,6 +100,7 @@ export const Textarea = ({
 	maxRows,
 	showCounter,
 	resize = "vertical",
+	toolbar,
 	maxLength,
 	ref,
 	...props
@@ -188,6 +195,7 @@ export const Textarea = ({
 			)}
 
 			<div className="textarea_container">
+				{toolbar && <div className="textarea_toolbar">{toolbar}</div>}
 				<div className="textarea_input_wrap">
 					<textarea
 						id={inputId}
