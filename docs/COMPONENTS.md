@@ -524,6 +524,7 @@ Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero
 | `maxLength` | `number` | - | 최대 글자 수 |
 | `showCounter` | `boolean` | `false` | 글자 수 카운터 표시 (`maxLength` 와 함께 권장) |
 | `resize` | `'none' \| 'vertical' \| 'both'` | `'vertical'` | resize 핸들 (auto-grow 시 무시) |
+| `toolbar` | `ReactNode` | - | 입력 위, **테두리 안쪽** 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤용. 포커스 테두리가 툴바까지 감싸고 하단 구분선은 DS 가 긋는다 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 |
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 |

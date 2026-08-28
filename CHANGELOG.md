@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.16.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.16.0) - 2026-08-25
+- `Textarea` 에 `toolbar` 슬롯을 추가했습니다. 서식 툴바를 테두리 안쪽에 넣어 포커스 표시·모서리·구분선을 DS 가 처리합니다 — 소비자가 내부 클래스를 건드리던 3곳이 사라집니다
+- 비활성 `Textarea` 의 툴바는 흐려질 뿐 아니라 상호작용도 막힙니다
+
 ## [3.15.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.15.2) - 2026-08-25
 - 오버레이가 닫히는 동안 스크롤 잠금이 먼저 풀려, `scrollbar-gutter: stable` 환경에서 오른쪽에 빈 띠가 보이고 배경 콘텐츠가 튀던 문제를 고쳤습니다 (`Modal`·`Drawer`)
 - Vanilla 모달이 좁은 화면에서 잘리던 문제를 고쳤습니다 (375px 에서 우측 89px 잘림 — React 는 3.15.0 에서 이미 수정)

@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Bold, Italic, Underline } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
+import { IconButton } from "../../general/icon-button";
 import { Textarea } from ".";
 
 const meta: Meta<typeof Textarea> = {
@@ -128,6 +131,82 @@ export const Sizes: Story = {
 			<Textarea label="Small" size="sm" rows={2} fullWidth placeholder="sm" />
 			<Textarea label="Medium" size="md" rows={2} fullWidth placeholder="md" />
 			<Textarea label="Large" size="lg" rows={2} fullWidth placeholder="lg" />
+		</div>
+	),
+};
+
+export const ToolbarDisabled: Story = {
+	name: "서식 툴바 - 비활성",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"필드가 `disabled` 면 툴바도 흐려지고 **상호작용이 막힌다**(`inert`). 흐려지기만 하면 비활성 필드에서도 버튼이 포커스·클릭돼 보이는 상태와 동작이 어긋난다.",
+			},
+		},
+	},
+	render: () => (
+		<div style={{ width: 420 }}>
+			<Textarea
+				label="공지 내용"
+				fullWidth
+				disabled
+				rows={3}
+				placeholder="비활성"
+				toolbar={
+					<IconButton
+						aria-label="굵게"
+						size="sm"
+						variant="standard"
+						icon={<Bold size={iconSize.sm} />}
+					/>
+				}
+			/>
+		</div>
+	),
+};
+
+export const WithToolbar: Story = {
+	name: "서식 툴바 (toolbar 슬롯)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`toolbar` 는 테두리 **안쪽**, 입력 위에 렌더된다. 컨테이너가 품으므로 포커스 테두리가 툴바까지 감싸고 모서리·구분선을 DS 가 처리한다. 밖에 두면 소비자가 컨테이너 모서리를 깎고 포커스 링을 따로 걸어야 했다.",
+			},
+		},
+	},
+	render: () => (
+		<div style={{ width: 420 }}>
+			<Textarea
+				label="공지 내용"
+				fullWidth
+				minRows={4}
+				maxRows={10}
+				placeholder="내용을 입력하세요"
+				toolbar={
+					<>
+						<IconButton
+							aria-label="굵게"
+							size="sm"
+							variant="standard"
+							icon={<Bold size={iconSize.sm} />}
+						/>
+						<IconButton
+							aria-label="기울임"
+							size="sm"
+							variant="standard"
+							icon={<Italic size={iconSize.sm} />}
+						/>
+						<IconButton
+							aria-label="밑줄"
+							size="sm"
+							variant="standard"
+							icon={<Underline size={iconSize.sm} />}
+						/>
+					</>
+				}
+			/>
 		</div>
 	),
 };

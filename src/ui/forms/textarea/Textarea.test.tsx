@@ -157,4 +157,58 @@ describe("Textarea", () => {
 		expect(onValueChange).toHaveBeenCalledWith("ㅎ");
 		expect(onChangeAction).not.toHaveBeenCalled();
 	});
+
+	// ── toolbar 슬롯 ────────────────────────────────────────────────────────
+
+	describe("toolbar", () => {
+		it("renders nothing extra when no toolbar is given", () => {
+			const { container } = render(<Textarea label="설명" />);
+
+			expect(container.querySelector(".textarea_toolbar")).toBeNull();
+			// 컨테이너의 자식은 입력 wrap 하나뿐 - 기존 DOM 과 동일하다.
+			const box = container.querySelector(".textarea_container");
+			expect(box?.children).toHaveLength(1);
+			expect(box?.firstElementChild).toHaveClass("textarea_input_wrap");
+		});
+
+		it("puts the toolbar inside the container, above the input", () => {
+			// 컨테이너가 품어야 :focus-within 테두리가 툴바까지 감싼다. 밖에 두면 소비자가
+			// 모서리와 포커스 링을 직접 맞춰야 했다.
+			const { container } = render(
+				<Textarea label="설명" toolbar={<button type="button">굵게</button>} />,
+			);
+
+			const box = container.querySelector(".textarea_container");
+			expect(box?.children).toHaveLength(2);
+			expect(box?.firstElementChild).toHaveClass("textarea_toolbar");
+			expect(box?.lastElementChild).toHaveClass("textarea_input_wrap");
+			expect(screen.getByRole("button", { name: "굵게" })).toBeInTheDocument();
+		});
+
+		it("blocks interaction with the toolbar while disabled", () => {
+			// `_disabled` 스타일은 opacity 만 걸고 pointer-events 는 건드리지 않는다. inert 가
+			// 없으면 비활성 필드의 툴바 버튼이 계속 포커스·클릭된다.
+			// (jsdom 은 inert 의 포커스 차단을 구현하지 않아 속성 존재로 고정한다 - 실제 차단은
+			//  Chromium 실측으로 확인했다.)
+			const { container, rerender } = render(
+				<Textarea label="설명" disabled toolbar={<button type="button">굵게</button>} />,
+			);
+			expect(container.querySelector(".textarea_toolbar")).toHaveAttribute("inert");
+
+			rerender(<Textarea label="설명" toolbar={<button type="button">굵게</button>} />);
+			expect(container.querySelector(".textarea_toolbar")).not.toHaveAttribute("inert");
+		});
+
+		it("keeps the toolbar inside the disabled dimming", () => {
+			// `.textarea_disabled .textarea_container > *` 가 직접 자식만 흐리게 한다.
+			// 툴바가 컨테이너 직계여야 입력과 같이 흐려진다.
+			const { container } = render(
+				<Textarea label="설명" disabled toolbar={<button type="button">굵게</button>} />,
+			);
+
+			const toolbar = container.querySelector(".textarea_toolbar");
+			expect(toolbar?.parentElement).toHaveClass("textarea_container");
+			expect(container.querySelector(".textarea")).toHaveClass("textarea_disabled");
+		});
+	});
 });
