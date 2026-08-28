@@ -135,6 +135,37 @@ export const Sizes: Story = {
 	),
 };
 
+export const ToolbarDisabled: Story = {
+	name: "서식 툴바 - 비활성",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"필드가 `disabled` 면 툴바도 흐려지고 **상호작용이 막힌다**(`inert`). 흐려지기만 하면 비활성 필드에서도 버튼이 포커스·클릭돼 보이는 상태와 동작이 어긋난다.",
+			},
+		},
+	},
+	render: () => (
+		<div style={{ width: 420 }}>
+			<Textarea
+				label="공지 내용"
+				fullWidth
+				disabled
+				rows={3}
+				placeholder="비활성"
+				toolbar={
+					<IconButton
+						aria-label="굵게"
+						size="sm"
+						variant="standard"
+						icon={<Bold size={iconSize.sm} />}
+					/>
+				}
+			/>
+		</div>
+	),
+};
+
 export const WithToolbar: Story = {
 	name: "서식 툴바 (toolbar 슬롯)",
 	parameters: {

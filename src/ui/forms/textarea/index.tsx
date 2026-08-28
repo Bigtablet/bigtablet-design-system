@@ -195,7 +195,15 @@ export const Textarea = ({
 			)}
 
 			<div className="textarea_container">
-				{toolbar && <div className="textarea_toolbar">{toolbar}</div>}
+				{/* 비활성 필드의 툴바는 상호작용도 막는다 - `_disabled` 스타일은 컨테이너 자식에
+				    opacity 만 걸고 pointer-events 는 건드리지 않아(TextField 와 동일), 없으면
+				    비활성 상태에서도 툴바 버튼이 포커스·클릭된다. `toolbar` 는 임의 ReactNode 라
+				    개별 컨트롤에 disabled 를 주입할 수 없으므로 서브트리를 inert 로 막는다. */}
+				{toolbar && (
+					<div className="textarea_toolbar" inert={props.disabled || undefined}>
+						{toolbar}
+					</div>
+				)}
 				<div className="textarea_input_wrap">
 					<textarea
 						id={inputId}
