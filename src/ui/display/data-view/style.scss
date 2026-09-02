@@ -1,0 +1,69 @@
+@use "src/styles/token" as token;
+
+// DataView - 목록 화면의 세로 리듬과 툴바·선택 액션 줄의 배치를 소유한다.
+// 이 값이 컴포넌트에 없으면 화면마다 표 위 여백과 검색창 폭이 갈린다.
+
+.data_view {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_12;
+  width: 100%;
+
+  // ── Toolbar (검색 + 필터) ────────────────────────────────────────────────
+
+  &_toolbar {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    // 좁은 화면에서 필터가 여러 개면 접힌다. 가로 스크롤보다 줄바꿈이 낫다.
+    flex-wrap: wrap;
+  }
+
+  &_search {
+    // 검색창이 남는 폭을 먹되 너무 길어지지 않게. 필터가 없으면 이 상한이 폭을 정한다.
+    flex: 1 1 200px;
+    max-width: 320px;
+  }
+
+  &_filters {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    flex-wrap: wrap;
+  }
+
+  // ── Selection action bar ─────────────────────────────────────────────────
+  // 선택이 있을 때만 나타난다. 표 위에 놓아 "무엇에 대한 액션인지"가 가까이 있게 한다.
+
+  &_selection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_12;
+    flex-wrap: wrap;
+    padding: token.$spacing_8 token.$spacing_12;
+    border-radius: token.$radius_md;
+    background: token.$color_bg_solid_dim;
+  }
+
+  &_selection_count {
+    @include token.label_medium_medium;
+    color: token.$color_text_heading;
+  }
+
+  &_selection_actions {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    flex-wrap: wrap;
+  }
+
+  // ── Pagination ───────────────────────────────────────────────────────────
+
+  &_pagination {
+    display: flex;
+    justify-content: center;
+    // 표와 페이지네이션 사이는 툴바 간격보다 넓다 - 표의 일부로 보이지 않게.
+    margin-top: token.$spacing_4;
+  }
+}

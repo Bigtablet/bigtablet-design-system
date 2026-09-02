@@ -378,6 +378,46 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### DataView
+
+목록 화면 한 벌 — 검색·필터, 표, 선택 액션, 페이지네이션, 그리고 **네 상태 분기**
+(loading / error / empty / data)를 한 곳에 둔다.
+
+`Table` 은 정렬·선택·스켈레톤을 이미 처리한다. `DataView` 가 파는 것은 **그 위아래를 매번
+다시 만들지 않는 것**이다 — 특히 에러 상태를 빠뜨린 목록이 생기지 않게.
+
+```tsx
+<DataView
+  query={usersQuery}                       // {data, isLoading, error, refetch}
+  columns={columns}
+  rowKey={(u) => u.id}
+  toolbar={{ search: true, searchValue: q, onSearchChange: setQ, filters: <Dropdown … /> }}
+  selectionActions={[
+    { label: "내보내기", onRun: exportRows },
+    { label: "삭제", danger: true, onRun: removeRows },
+  ]}
+  pagination={{ page, totalPages, onPageChange: setPage }}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `query` | `DataViewQuery<T>` | - | `{data, isLoading, error, refetch}`. 필드 이름을 TanStack Query 에 맞췄지만 어떤 라이브러리도 import 하지 않는다 |
+| `columns` | `TableColumn<T>[]` | - | `Table` 과 같은 정의 |
+| `rowKey` | `(row: T) => string` | - | 행 고유 key |
+| `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
+| `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
+| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다 |
+| `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
+| `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
+| `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
+
+동작 규칙 세 가지:
+
+- **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
+- **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
+- **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
+
 ### 문장 속 링크 (`.text_link`)
 
 `Prose` 는 마크다운 렌더 결과에만 조판을 입힌다. 그 밖의 UI 텍스트 — 체크박스 라벨의 약관 링크,

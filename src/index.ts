@@ -88,6 +88,14 @@ export type { CardFooterAlign, CardProps, CardVariant } from "./ui/display/card"
 export { Card } from "./ui/display/card";
 export type { ChipProps, ChipSize, ChipTone, ChipType } from "./ui/display/chip";
 export { Chip } from "./ui/display/chip";
+export type {
+	DataViewPagination,
+	DataViewProps,
+	DataViewQuery,
+	DataViewSelectionAction,
+	DataViewToolbar,
+} from "./ui/display/data-view";
+export { DataView } from "./ui/display/data-view";
 export type { DividerProps } from "./ui/display/divider";
 export { Divider } from "./ui/display/divider";
 export type { HeroAction, HeroAlign, HeroHeight, HeroOverlay, HeroProps } from "./ui/display/hero";

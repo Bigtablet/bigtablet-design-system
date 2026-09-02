@@ -9,11 +9,14 @@ import {
 	TrendingUp,
 	Truck,
 } from "lucide-react";
+import { useState } from "react";
 import { Avatar } from "../../ui/display/avatar";
 import { Badge } from "../../ui/display/badge";
 import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
+import { DataView } from "../../ui/display/data-view";
 import { Divider } from "../../ui/display/divider";
+import type { TableColumn } from "../../ui/display/table";
 import { IconButton } from "../../ui/general/icon-button";
 import { Grid } from "../../ui/layout/grid";
 import { Stack } from "../../ui/layout/stack";
@@ -84,108 +87,76 @@ const STATUS_LABEL = {
 
 export const UserList: Story = {
 	name: "사용자 목록",
-	render: () => (
-		<Card bordered padding="none" shadow="sm" style={{ width: 520 }}>
-			<Stack gap={0}>
-				<div style={{ padding: "16px 20px" }}>
-					<Stack direction="horizontal" justify="between" align="center">
-						<h3
-							style={{
-								margin: 0,
-								fontSize: 16,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-							}}
-						>
-							팀 멤버
-						</h3>
-						<Chip type="static" size="sm" tone="default" label={`${USERS.length}명`} />
-					</Stack>
-				</div>
-				<Divider />
-				<Stack gap={0}>
-					{USERS.map((user, idx) => (
-						<div key={user.email}>
-							<Stack
-								direction="horizontal"
-								align="center"
-								justify="between"
-								gap={12}
-								style={{ padding: "12px 20px" }}
-							>
-								<Stack direction="horizontal" gap={12} align="center">
-									<span style={{ position: "relative", display: "inline-block" }}>
-										<Avatar name={user.name} size="md" />
-										<span
-											style={{
-												position: "absolute",
-												right: -2,
-												bottom: -2,
-												width: 12,
-												height: 12,
-												borderRadius: "50%",
-												background:
-													user.status === "online"
-														? "var(--bt-color-status-success)"
-														: user.status === "away"
-															? "var(--bt-color-status-warning)"
-															: "var(--bt-color-text-caption)",
-												border: "2px solid var(--bt-color-bg-solid)",
-											}}
-										/>
-									</span>
-									<Stack gap={2}>
-										<Stack direction="horizontal" gap={8} align="center">
-											<span
-												style={{
-													fontSize: 14,
-													fontWeight: 600,
-													color: "var(--bt-color-text-heading)",
-												}}
-											>
-												{user.name}
-											</span>
-											<Badge variant={STATUS_VARIANT[user.status]} shape="label">
-												{STATUS_LABEL[user.status]}
-											</Badge>
-										</Stack>
-										<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-											{user.role} · {user.email}
-										</span>
-									</Stack>
-								</Stack>
-								<Menu
-									align="end"
-									trigger={
-										<IconButton
-											icon={<MoreHorizontal size={18} />}
-											variant="standard"
-											size="sm"
-											aria-label={`${user.name} 메뉴 열기`}
-										/>
-									}
-									items={[
-										{ key: "view", label: "프로필 보기" },
-										{ key: "message", label: "메시지 보내기" },
-										{ key: "role", label: "역할 변경" },
-										{
-											key: "remove",
-											label: "팀에서 제외",
-											destructive: true,
-										},
-									]}
-								/>
-							</Stack>
-							{idx < USERS.length - 1 && <Divider />}
-						</div>
-					))}
-				</Stack>
-			</Stack>
-		</Card>
-	),
-};
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`DataView` 한 줄로 검색·표·선택 액션·페이지네이션과 네 상태 분기(loading / error / empty / data)를 얻는다. 이전에는 `Card` + `Stack` + `div` 로 목록을 손으로 조립하며 padding·fontSize·fontWeight 를 직접 적었다.",
+			},
+		},
+	},
+	render: () => {
+		const [search, setSearch] = useState("");
+		const [page, setPage] = useState(1);
 
-// ─── Status Badges Row ──────────────────────────────────────────────────────
+		const rows = USERS.filter(
+			(u) => !search || u.name.includes(search) || u.email.includes(search),
+		);
+
+		const columns: TableColumn<(typeof USERS)[number]>[] = [
+			{
+				key: "name",
+				header: "이름",
+				sortable: true,
+				render: (u) => (
+					<Stack direction="horizontal" gap={12} align="center">
+						<Avatar name={u.name} size="sm" />
+						{u.name}
+					</Stack>
+				),
+			},
+			{ key: "email", header: "이메일", render: (u) => u.email },
+			{
+				key: "status",
+				header: "상태",
+				width: "110px",
+				render: (u) => (
+					<Chip
+						type="static"
+						size="sm"
+						tone={u.status === "online" ? "accent" : "default"}
+						label={STATUS_LABEL[u.status]}
+					/>
+				),
+			},
+		];
+
+		return (
+			<div style={{ width: 640 }}>
+				<DataView
+					query={{ data: rows }}
+					columns={columns}
+					rowKey={(u) => u.email}
+					ariaLabel="팀 멤버"
+					toolbar={{
+						search: true,
+						searchValue: search,
+						onSearchChange: (v) => {
+							setSearch(v);
+							setPage(1);
+						},
+						searchPlaceholder: "이름 · 이메일 검색",
+					}}
+					selectionActions={[
+						{ label: "내보내기", onRun: () => {} },
+						{ label: "삭제", danger: true, onRun: () => {} },
+					]}
+					pagination={{ page, totalPages: 2, onPageChange: setPage }}
+				/>
+			</div>
+		);
+	},
+};
 
 export const StatusBadgesRow: Story = {
 	name: "상태 칩 모음",
