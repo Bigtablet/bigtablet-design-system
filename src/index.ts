@@ -11,6 +11,12 @@ import "./styles/link.scss";
 // Hooks / Utils
 
 export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
+export type {
+	ListboxItem,
+	UseListboxPopupArgs,
+	UseListboxPopupResult,
+} from "./utils/use-listbox-popup";
+export { useListboxPopup } from "./utils/use-listbox-popup";
 
 // New primitives (v3.0)
 
@@ -136,6 +142,8 @@ export type { TopLoadingProps } from "./ui/feedback/top-loading";
 export { TopLoading } from "./ui/feedback/top-loading";
 export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
+export type { ComboboxOption, ComboboxProps, ComboboxSize } from "./ui/forms/combobox";
+export { Combobox } from "./ui/forms/combobox";
 export type { DatePickerProps } from "./ui/forms/date-picker";
 export type { FieldControl, FieldProps } from "./ui/forms/field";
 export { Field, useFieldControl } from "./ui/forms/field";

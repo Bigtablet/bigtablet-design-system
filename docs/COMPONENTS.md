@@ -378,6 +378,47 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### Combobox
+
+후보를 **서버에서** 가져오는 선택 입력. `Dropdown` 도 `searchable` 로 타이핑 검색을 지원하지만
+이미 받아 둔 옵션 배열 안에서만 거른다 — 담당자·회사·상품처럼 후보가 수백 개인 필드는 그 목록을
+통째로 내려받을 수 없다.
+
+```tsx
+<Combobox
+  value={owner}
+  onValueChange={setOwner}
+  onSearch={(q) => api.searchUsers(q)}   // Promise<ComboboxOption[]>
+  emptyMessage="일치하는 담당자가 없습니다"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onSearch` | `(q: string) => Promise<ComboboxOption[]>` | - | 검색어가 바뀌면 디바운스 후 호출. **필수** |
+| `value` | `ComboboxOption \| null` | `null` | 선택된 값 (제어형) |
+| `onValueChange` | `(o: ComboboxOption \| null) => void` | - | 선택 변경 |
+| `defaultOptions` | `ComboboxOption[]` | `[]` | 검색 전 보여줄 초기 후보 |
+| `debounceMs` | `number` | `250` | 검색 호출 간격 |
+| `placeholder` | `string` | `'검색해서 선택'` | |
+| `emptyMessage` | `string` | `'일치하는 항목이 없습니다'` | 결과 없음 |
+| `idleMessage` | `string` | `'검색어를 입력하세요'` | 검색 전 |
+| `renderOption` | `(o: ComboboxOption) => ReactNode` | - | 목록 항목 커스터마이즈 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
+
+비동기에서 갈리는 네 가지를 DS 가 처리한다.
+
+- **디바운스** — 타이핑마다 요청하지 않는다
+- **로딩 표시** — 조회 중 스피너
+- **응답 경합 차단** — 늦게 도착한 이전 쿼리의 결과가 최신 목록을 덮지 않는다. 타이핑이 빠르면 순서가 뒤집히고, 그러면 방금 친 글자와 무관한 후보가 남는다
+- **"검색 전" 과 "결과 없음" 구분** — 같은 문구로 묶으면 검색 전 빈 목록이 실패처럼 읽힌다
+
+`Dropdown` 과 언제 갈리나 — 옵션을 이미 다 갖고 있으면 `Dropdown`(+`searchable`), 서버에서 가져와야
+하면 `Combobox`.
+
+> 팝업의 거동(개폐·활성 항목·키보드·바깥 클릭·열림 방향)은 `useListboxPopup` 을 `Dropdown` 과
+> 공유한다. 소비자도 이 훅으로 자기 목록 팝업을 만들 수 있다.
+
 ### DataView
 
 목록 화면 한 벌 — 검색·필터, 표, 선택 액션, 페이지네이션, 그리고 **네 상태 분기**
