@@ -159,7 +159,7 @@ import CustomSuspense from "src/shared/ui/custom-suspense";
 
 ## Best Practices Reference
 
-더 자세한 React/Next.js 최적화 패턴은 `.agents/skills/vercel-react-best-practices/` 참조:
+더 자세한 React/Next.js 최적화 패턴은 `.claude/skills/vercel-react-best-practices/` 참조:
 
 - `async-suspense-boundaries` - Suspense 경계 전략
 - `rendering-hoist-jsx` - Static JSX 호이스팅
