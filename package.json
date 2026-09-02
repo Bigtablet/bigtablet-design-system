@@ -29,7 +29,8 @@
 		"!dist/vanilla/bigtablet.js",
 		"!dist/vanilla/examples",
 		"README.md",
-		"LICENSE"
+		"LICENSE",
+		"docs/AGENT_GUIDE.md"
 	],
 	"sideEffects": [
 		"**/*.css",
