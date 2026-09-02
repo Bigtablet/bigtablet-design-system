@@ -32,6 +32,16 @@ export type {
 	BadgeVariant,
 } from "./ui/display/badge";
 export { Badge } from "./ui/display/badge";
+export type {
+	DescriptionListItem,
+	DescriptionListLayout,
+	DescriptionListProps,
+} from "./ui/display/description-list";
+export { DescriptionList } from "./ui/display/description-list";
+export type { StatDeltaTone, StatProps } from "./ui/display/stat";
+export { Stat } from "./ui/display/stat";
+export type { TimelineItem, TimelineProps, TimelineStatus } from "./ui/display/timeline";
+export { Timeline } from "./ui/display/timeline";
 export type { EmptyStateProps } from "./ui/feedback/empty-state";
 export { EmptyState } from "./ui/feedback/empty-state";
 export type { ErrorStateProps, ErrorStateVariant } from "./ui/feedback/error-state";

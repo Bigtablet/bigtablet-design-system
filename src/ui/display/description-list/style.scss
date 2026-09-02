@@ -1,0 +1,57 @@
+@use "src/styles/token" as token;
+
+// DescriptionList - 이름·값 쌍. `<dl>/<dt>/<dd>` 로 관계를 남긴다.
+
+.description_list {
+  margin: 0;
+  font-family: token.$font_family_primary;
+
+  &_item {
+    display: grid;
+    gap: token.$spacing_4;
+    padding: token.$spacing_8 0;
+  }
+
+  &_label {
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  &_value {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.body_medium;
+    // 값에 숫자(금액·수량·전화번호)가 오는 일이 많아 자리를 고정한다.
+    @include token.tabular_nums;
+    // 끊을 곳이 없는 긴 값(주문번호·URL)이 컨테이너를 밀어내지 않게.
+    overflow-wrap: anywhere;
+  }
+
+  // ── layout: row - 이름 왼쪽, 값 오른쪽 ──────────────────────────────────
+
+  &_layout_row &_item {
+    grid-template-columns: minmax(6rem, 10rem) minmax(0, 1fr);
+    gap: token.$spacing_16;
+    align-items: baseline;
+  }
+
+  // `full` 항목은 값이 한 줄을 다 쓴다.
+  &_layout_row &_item_full {
+    grid-template-columns: minmax(0, 1fr);
+    gap: token.$spacing_4;
+  }
+
+  // 좁은 화면에서는 쌓는다 - 두 열을 유지하면 값이 잘린다.
+  @media (max-width: 599px) {
+    &_layout_row &_item {
+      grid-template-columns: minmax(0, 1fr);
+      gap: token.$spacing_4;
+    }
+  }
+
+  // ── divided ─────────────────────────────────────────────────────────────
+
+  &_divided &_item + &_item {
+    border-top: token.$border_width_standard solid token.$color_border_default;
+  }
+}

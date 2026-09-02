@@ -1,0 +1,121 @@
+@use "src/styles/token" as token;
+
+// Timeline - 시간 순서로 흐르는 진행 상황.
+//
+// 연결선은 인디케이터의 `::before` 로 그린다. 별도 요소로 두면 마지막 항목에서 끊기 위해
+// 소비자가 `isLast` 를 계산해 넘겨야 한다.
+
+$indicator: 28px;
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: token.$font_family_primary;
+
+  &_item {
+    position: relative;
+    display: grid;
+    grid-template-columns: $indicator minmax(0, 1fr);
+    gap: token.$spacing_16;
+    padding-bottom: token.$spacing_20;
+
+    // 마지막 항목은 아래 여백과 연결선을 함께 없앤다 - 점 밑으로 선이 흘러나오지 않게.
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &:not(:last-child) .timeline_indicator::before {
+      content: "";
+      position: absolute;
+      top: $indicator;
+      bottom: calc(-1 * token.$spacing_4);
+      left: calc($indicator / 2);
+      width: token.$border_width_standard;
+      background: token.$color_border_default;
+      transform: translateX(-50%);
+    }
+  }
+
+  &_indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: $indicator;
+    height: $indicator;
+    border-radius: token.$radius_full;
+    background: token.$color_bg_solid_dim;
+    color: token.$color_text_caption;
+  }
+
+  &_dot {
+    box-sizing: border-box;
+    width: token.$spacing_8;
+    height: token.$spacing_8;
+    border-radius: token.$radius_full;
+    background: currentcolor;
+
+    // 아직 오지 않은 단계는 빈 원 - 지나간 단계(체크)와 진행 중(꽉 찬 점)과 모양으로 갈린다.
+    &_hollow {
+      background: transparent;
+      border: token.$border_width_thick solid currentcolor;
+    }
+  }
+
+  &_glyph {
+    width: token.$icon_size_sm;
+    height: token.$icon_size_sm;
+  }
+
+  &_body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_4;
+  }
+
+  &_head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+  }
+
+  &_title {
+    color: token.$color_text_heading;
+    @include token.body_medium_medium;
+  }
+
+  &_time {
+    flex-shrink: 0;
+    color: token.$color_text_caption;
+    @include token.body_small;
+    @include token.tabular_nums;
+  }
+
+  &_description {
+    margin: 0;
+    color: token.$color_text_caption;
+    @include token.body_small;
+    overflow-wrap: anywhere;
+  }
+
+  // ── 상태 ────────────────────────────────────────────────────────────────
+
+  &_item_done &_indicator {
+    background: token.$color_status_success_container;
+    color: token.$color_status_success_on_container;
+  }
+
+  &_item_active &_indicator {
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+  }
+
+  // 아직 오지 않은 단계는 제목까지 약하게 - 지나간 것과 구분이 색 하나로만 남으면 못 읽는다.
+  &_item_pending &_title {
+    color: token.$color_text_caption;
+  }
+}

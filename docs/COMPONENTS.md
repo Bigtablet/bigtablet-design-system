@@ -2666,6 +2666,92 @@ import { Card, Button } from '@bigtablet/design-system';
 
 ---
 
+### Stat
+
+대시보드의 지표 한 칸. 이름 · 값 · 변화량. 화면마다 `<p style={{ fontSize: 24, fontWeight: 700 }}>`
+로 다시 만들던 층이다.
+
+```tsx
+<Card bordered padding="lg">
+  <Stat label="오늘 매출" value="₩1,284,000" delta="+12%" deltaTone="positive" />
+</Card>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode` | - | 지표 이름. **필수** |
+| `value` | `ReactNode` | - | 지표 값. **필수** |
+| `delta` | `ReactNode` | - | 값 아래 변화량 |
+| `deltaTone` | `'positive' \| 'negative' \| 'neutral'` | `'neutral'` | 변화량 색 |
+| `icon` | `ReactNode` | - | 라벨 왼쪽 장식 아이콘 |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref |
+
+**값은 `tabular-nums` 다.** 비례 숫자는 자릿수마다 폭이 달라 값이 갱신될 때 숫자가 좌우로
+흔들리고, 여러 지표를 나란히 두면 자리가 맞지 않는다. 화면마다 정하게 두면 대부분 빠진다.
+
+`deltaTone` 은 **방향이 아니라 좋음/나쁨**이다 — "재고 부족 +2" 는 오르지만 `negative` 다.
+
+표면(테두리·여백)은 `Card` 가 소유한다. 실측 대비 — positive 5.48:1, neutral 5.02:1,
+negative 6.47:1 (흰 카드 위).
+
+### DescriptionList
+
+이름·값 쌍의 목록. 상세 보기 화면의 기본 골격.
+
+```tsx
+<DescriptionList
+  divided
+  items={[
+    { label: "주문번호", value: "#1024" },
+    { label: "배송지", value: "서울시 …", full: true },
+  ]}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `DescriptionListItem[]` | - | 이름·값 쌍. **필수** |
+| `layout` | `'row' \| 'stack'` | `'row'` | `row` 는 이름 왼쪽·값 오른쪽, `stack` 은 이름 위 |
+| `divided` | `boolean` | `false` | 항목 사이 구분선 |
+| `ref` | `React.Ref<HTMLDListElement>` | - | 루트 요소 ref |
+
+`DescriptionListItem` — `{ label, value, full? }`. `full: true` 면 값이 한 줄을 다 쓴다
+(주소·메모).
+
+`<dl>` · `<dt>` · `<dd>` 로 렌더한다. 손으로 만들면 거의 항상 `<div>` 두 개가 되고, 그러면
+스크린리더에 **이름과 값의 관계가 남지 않는다** — 이름만 읽고 값을 따로 읽어 주는 목록이 된다.
+
+`row` 는 600px 아래에서 스스로 쌓인다. 두 열을 유지하면 값이 잘린다.
+
+### Timeline
+
+시간 순서로 흐르는 진행 상황. 주문 추적, 승인 단계, 활동 기록.
+
+```tsx
+<Timeline
+  items={[
+    { id: 1, title: "주문 접수", time: "오후 1:32", status: "done" },
+    { id: 2, title: "배송 출발", time: "오후 1:48", status: "active", icon: <Truck size={16} /> },
+    { id: 3, title: "배송 완료", time: "예상 오후 2:05" },
+  ]}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `TimelineItem[]` | - | 위에서 아래로 흐르는 순서. **필수** |
+| `ref` | `React.Ref<HTMLOListElement>` | - | 루트 요소 ref |
+
+`TimelineItem` — `{ id, title, time?, description?, status?, icon?, children? }`.
+`status` 는 `'done' \| 'active' \| 'pending'` (기본 `pending`). `icon` 이 없어도 상태가 **모양**으로
+갈린다 — `done` 은 체크, `active` 는 꽉 찬 점, `pending` 은 빈 원. 배경색만 다르면 색을 구분하지
+못하는 사용자에게 `done` 과 `active` 가 같아 보인다(WCAG 1.4.1).
+`children` 으로 항목 아래에 첨부·액션을 붙인다.
+
+`<ol>` 로 렌더한다 — 순서가 있는 목록이라 스크린리더가 "3개 중 2번째" 를 읽어 준다.
+연결선은 인디케이터의 `::before` 로 그려 **마지막 항목에서 끊는다** — 별도 요소로 두면
+`isLast` 판정을 화면마다 다시 써야 한다. 인디케이터는 장식이라 `aria-hidden` 이다.
+
 ### Divider
 
 ```tsx
