@@ -1,0 +1,37 @@
+@use "src/styles/token" as token;
+
+// Form - 필드 간 세로 간격과 액션 줄 정렬을 소유한다.
+// 이 값이 컴포넌트에 없으면 화면마다 gap 이 20 · 24 · 32 로 갈린다.
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_20;
+  width: 100%;
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+
+  &_actions {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    // 마지막 필드와 액션 줄 사이는 필드 간격보다 넓다 - 제출이 필드의 일부로 보이지 않게.
+    margin-top: token.$spacing_4;
+
+    &_start {
+      justify-content: flex-start;
+    }
+
+    &_center {
+      justify-content: center;
+    }
+
+    &_end {
+      justify-content: flex-end;
+    }
+
+    &_between {
+      justify-content: space-between;
+    }
+  }
+}

@@ -4,6 +4,10 @@ import { createElement as h, Fragment } from "react";
 // theme.scss 는 scss/token 진입점에서 분리돼 있어(소비자는 style.css 로 받음),
 // Storybook preview 에도 직접 import 해줘야 컴포넌트 색/다크모드가 적용된다.
 import "../src/styles/theme.scss";
+// 전역 규칙도 같은 이유로 직접 import 한다 - 소비자는 `style.css`(= src/index.ts) 로 함께 받지만
+// Storybook 은 그 진입점을 거치지 않아, 없으면 `.text_link` 가 브라우저 기본 링크색으로 나온다.
+import "../src/styles/autofill.scss";
+import "../src/styles/link.scss";
 
 /**
  * Theme decorator — globals.theme 값에 따라 document.documentElement에 data-theme 적용.

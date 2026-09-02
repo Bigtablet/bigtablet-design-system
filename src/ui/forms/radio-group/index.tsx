@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type RadioGroupSize = "sm" | "md" | "lg";
@@ -93,6 +94,8 @@ export const RadioGroup = ({
 	const generatedName = React.useId();
 	const name = nameProp ?? generatedName;
 	const idPrefix = React.useId();
+	// Field 가 감싸면 Field 라벨이 그룹 이름이 되고 설명도 그쪽을 가리킨다.
+	const field = useFieldControl();
 	const labelId = label ? `${idPrefix}-label` : undefined;
 	const helperId = supportingText ? `${idPrefix}-help` : undefined;
 
@@ -127,9 +130,10 @@ export const RadioGroup = ({
 				)}
 				<div
 					role="radiogroup"
-					aria-labelledby={labelId}
-					aria-describedby={helperId}
-					aria-invalid={error || undefined}
+					aria-labelledby={field?.labelId ?? labelId}
+					aria-describedby={field?.describedBy ?? helperId}
+					aria-invalid={error || field?.invalid || undefined}
+					aria-required={field?.required || undefined}
 					className="radio_group_options"
 				>
 					{children}

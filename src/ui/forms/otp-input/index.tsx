@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export interface OtpInputProps {
@@ -152,10 +153,18 @@ export const OtpInput = ({
 
 	const rootClassName = cn("otp_input", className);
 	const supportingId = React.useId();
+	// Field 가 감싸면 그 설명(help/error)을 그룹이 가리킨다.
+	const field = useFieldControl();
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <fieldset> would force border/legend styles; role=group is the WAI-ARIA equivalent for OTP grouping
-		<div className={rootClassName} role="group" aria-label={ariaLabel}>
+		<div
+			className={rootClassName}
+			role="group"
+			// Field 가 감싸면 그 라벨이 그룹 이름이 된다. 밖에서는 기존 ariaLabel.
+			aria-labelledby={field?.labelId}
+			aria-label={field?.labelId ? undefined : ariaLabel}
+		>
 			<div className="otp_input_boxes">
 				{digits.map((digit, i) => (
 					<input
@@ -178,8 +187,8 @@ export const OtpInput = ({
 						disabled={disabled}
 						aria-label={`${i + 1}번째 자리`}
 						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
-						aria-invalid={error || undefined}
-						aria-describedby={supportingText ? supportingId : undefined}
+						aria-invalid={error || field?.invalid || undefined}
+						aria-describedby={field?.describedBy ?? (supportingText ? supportingId : undefined)}
 						className={cn(
 							"otp_input_box",
 							error && "otp_input_box_error",

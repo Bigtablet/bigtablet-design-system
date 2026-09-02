@@ -1,0 +1,69 @@
+@use "src/styles/token" as token;
+
+// Field - 라벨·도움말·에러의 배치와 간격을 소유한다.
+// 값(gap · 라벨 타이포 · helper 타이포 · 에러 색)은 TextField 가 쓰던 것을 그대로 옮겼다.
+// 두 벌이 되면 Field 를 쓴 화면과 안 쓴 화면의 간격이 갈린다.
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: token.$spacing_6;
+  width: 100%;
+  font-family: token.$font_family_primary;
+
+  // ── Label ────────────────────────────────────────────────────────────────
+
+  &_label {
+    display: block;
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_heading;
+    cursor: pointer;
+    transition: color token.$transition_base;
+  }
+
+  &_required {
+    margin-left: token.$spacing_2;
+    color: token.$color_status_error_on_surface;
+  }
+
+  // ── Help / error ─────────────────────────────────────────────────────────
+  // 같은 자리에 번갈아 놓이므로 타이포와 패딩이 같아야 한다. 다르면 에러가 뜰 때
+  // 아래 필드가 밀린다.
+
+  &_help,
+  &_message {
+    padding: 0 token.$spacing_4;
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_12;
+    font-weight: token.$font_weight_regular;
+    line-height: token.$line_height_16;
+    transition: color token.$transition_base;
+  }
+
+  &_help {
+    color: token.$color_text_caption;
+  }
+
+  &_message {
+    // surface 위 직접 텍스트 - light/dark 자동 swap
+    color: token.$color_status_error_on_surface;
+  }
+
+  // ── Error state ──────────────────────────────────────────────────────────
+
+  &_error {
+    .field_label {
+      color: token.$color_status_error_on_surface;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field_label,
+  .field_help,
+  .field_message {
+    transition: none;
+  }
+}

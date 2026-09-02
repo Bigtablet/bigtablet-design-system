@@ -5,6 +5,7 @@ import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type TextFieldSize = "sm" | "md" | "lg";
@@ -142,8 +143,11 @@ export const TextField = ({
 	...props
 }: TextFieldProps) => {
 	const generatedId = useId();
-	const inputId = id ?? generatedId;
+	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
+	const field = useFieldControl();
+	const inputId = id ?? field?.inputId ?? generatedId;
 	const helperId = supportingText ? `${inputId}-help` : undefined;
+	const describedBy = field?.describedBy ?? helperId;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>
@@ -196,7 +200,7 @@ export const TextField = ({
 
 	// error 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
 	// 그때 실패를 성공처럼 보여주면 사용자가 잘못된 값을 그대로 제출하게 된다.
-	const isError = !!error;
+	const isError = !!error || !!field?.invalid;
 	const isSuccess = !!success && !isError;
 
 	const rootClassName = cn(
@@ -285,7 +289,8 @@ export const TextField = ({
 							ref={ref}
 							className={cn("text_field_input", identifier && "text_field_input_identifier")}
 							aria-invalid={isError}
-							aria-describedby={helperId}
+							aria-describedby={describedBy}
+							aria-required={field?.required || undefined}
 							aria-label={!showLabel ? label : undefined}
 							{...props}
 							type={resolvedType}

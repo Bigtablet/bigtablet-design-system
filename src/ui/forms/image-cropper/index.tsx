@@ -15,6 +15,7 @@ import {
 	useState,
 } from "react";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import {
 	type CropImageSize,
 	type CropOffset,
@@ -139,6 +140,8 @@ export function ImageCropper({
 	);
 	// 한 화면에 크로퍼가 여러 개여도 aria-describedby 가 충돌하지 않도록 인스턴스별 고유 id.
 	const hintId = useId();
+	// Field 가 감싸면 그 라벨·설명이 뷰포트 그룹의 이름과 설명이 된다.
+	const field = useFieldControl();
 
 	// File/Blob 은 objectURL 로, 문자열은 그대로. objectURL 은 언마운트 시 해제한다.
 	const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -346,8 +349,9 @@ export function ImageCropper({
 				className={cn("image_cropper_viewport", dragging && "image_cropper_viewport_dragging")}
 				style={viewportStyle}
 				role="group"
-				aria-label={label}
-				aria-describedby={hintId}
+				aria-labelledby={field?.labelId}
+				aria-label={field?.labelId ? undefined : label}
+				aria-describedby={[field?.describedBy, hintId].filter(Boolean).join(" ")}
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}

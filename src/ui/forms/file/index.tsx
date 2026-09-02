@@ -4,6 +4,7 @@ import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type FileInputVariant = "button" | "preview";
@@ -46,8 +47,11 @@ export const FileInput = ({
 	onChange,
 	...props
 }: FileInputProps) => {
-	const inputId = React.useId();
+	const generatedInputId = React.useId();
 	const helperId = React.useId();
+	// Field 가 감싸면 그쪽 id 로 라벨이 연결된다.
+	const field = useFieldControl();
+	const inputId = field?.inputId ?? generatedInputId;
 	const inputRef = React.useRef<HTMLInputElement>(null);
 	const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
 	// 최신 objectURL 목록을 동기적으로 추적 — unmount(특히 onFiles 안에서 부모가 동기 unmount 하는
@@ -132,7 +136,8 @@ export const FileInput = ({
 				className="file_input_control"
 				disabled={disabled}
 				accept={isPreviewVariant ? (accept ?? "image/*") : accept}
-				aria-describedby={supportingText ? helperId : undefined}
+				aria-describedby={field?.describedBy ?? (supportingText ? helperId : undefined)}
+				aria-invalid={field?.invalid || undefined}
 				onChange={handleChange}
 			/>
 

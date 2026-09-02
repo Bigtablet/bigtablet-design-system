@@ -4,6 +4,9 @@
 import "./styles/theme.scss";
 // 자동완성(autofill) 칸의 UA 배경/글자색 무력화 - 전역 요소 규칙이라 theme.scss 와 분리.
 import "./styles/autofill.scss";
+// 문장 속 링크(`.text_link`) - UI 텍스트용. Prose 는 마크다운 본문에만 적용되므로 그 밖의
+// 라벨·설명 안 링크가 갈 곳이 없었다. 값은 Prose 와 같은 믹스인을 공유한다.
+import "./styles/link.scss";
 
 // Hooks / Utils
 
@@ -126,6 +129,8 @@ export { TopLoading } from "./ui/feedback/top-loading";
 export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
 export type { DatePickerProps } from "./ui/forms/date-picker";
+export type { FieldControl, FieldProps } from "./ui/forms/field";
+export { Field, useFieldControl } from "./ui/forms/field";
 export { DatePicker } from "./ui/forms/date-picker";
 export type {
 	DropdownMultipleProps,
@@ -138,6 +143,8 @@ export type {
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
 export { FileInput } from "./ui/forms/file";
+export type { FormActionsProps, FormProps } from "./ui/forms/form";
+export { Form } from "./ui/forms/form";
 export type {
 	CropImageSize,
 	CropOffset,

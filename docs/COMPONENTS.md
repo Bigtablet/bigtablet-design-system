@@ -378,6 +378,91 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### 문장 속 링크 (`.text_link`)
+
+`Prose` 는 마크다운 렌더 결과에만 조판을 입힌다. 그 밖의 UI 텍스트 — 체크박스 라벨의 약관 링크,
+`EmptyState` 설명 안의 도움말 링크 — 안에 링크를 넣을 자리가 없어 화면마다 색·밑줄을 손으로
+정하고 있었다. `.text_link` 가 그 규칙을 소유한다.
+
+```tsx
+<a href="/terms" className="text_link">이용약관</a>
+
+// 라우터 링크에도 그대로 붙는다
+<Link href="/terms" className="text_link">이용약관</Link>
+```
+
+| | 값 | 이유 |
+|---|-----|------|
+| 색 | `--bt-color-accent-default` | `Prose a` 와 같은 값. 본문 링크와 UI 링크가 갈리면 사용자가 어포던스를 두 벌 배운다 |
+| 밑줄 | 항상 | WCAG 1.4.1 — 색만으로 구분하려면 주변 본문과 3:1 이 필요한데 accent 는 넘지 못한다 (axe `link-in-text-block`) |
+| 포커스 | `--bt-focus-ring` + `radius_xs` | |
+
+컴포넌트가 아니라 클래스인 이유는 라우터 링크(`next/link`, `react-router`)에 그대로 붙이기
+위해서다. 컴포넌트로 만들면 `as` 다형성을 먼저 풀어야 한다.
+
+> `style.css` 에 포함된다. SCSS 를 직접 쓰는 곳에서는 `@include token.inline_link` 로 같은 값을 쓴다.
+
+### Field / Form
+
+`Field` 가 라벨·필수 표시·도움말·에러와 그 접근성 연결을 소유한다. 입력 11종은 이 셋을 서로 다르게
+갖고 있어(라벨 9종, 에러 5종) 폼 화면이 입력 밖에 문구를 직접 그려 왔다. `Field` 를 쓰면 어떤 입력을
+넣어도 라벨 위치·간격·에러 문구·`aria-describedby` 가 같아진다.
+
+입력의 기존 prop 은 그대로 살아 있다. **`Field` 없이 쓰면 지금과 동일하게 동작한다.**
+
+```tsx
+<Form onSubmit={save} errors={serverErrors}>
+  <Field name="email" label="이메일" required help="로그인 ID 로 사용됩니다">
+    <TextField />
+  </Field>
+  <Field name="role" label="권한">
+    <Dropdown options={roles} />
+  </Field>
+  <Form.Actions>
+    <Button type="submit">저장</Button>
+  </Form.Actions>
+</Form>
+```
+
+`Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
+
+#### 언제 `Field` 를 쓰고 언제 입력의 prop 을 쓰나
+
+`TextField` 처럼 자체 `label`·`supportingText` 를 가진 입력이 9종 있다. 둘은 대체재가 아니라 쓰임이 다르다.
+
+| 상황 | 쓸 것 |
+|------|-------|
+| 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않는다 |
+| 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않는다 |
+
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **11종 간 균일성**이다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈린다.
+
+#### Field
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
+| `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결된다 |
+| `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
+| `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |
+| `children` | `ReactNode` | - | 입력 하나 |
+
+#### Form
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣는다 |
+| `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다 |
+
+#### Form.Actions
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
+
+> 폼 라이브러리에 의존하지 않는다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙인다.
+
 ### TextField
 
 ```tsx
