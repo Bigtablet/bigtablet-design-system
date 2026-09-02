@@ -402,6 +402,17 @@ import { Settings } from 'lucide-react';
 
 `Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
 
+#### 언제 `Field` 를 쓰고 언제 입력의 prop 을 쓰나
+
+`TextField` 처럼 자체 `label`·`supportingText` 를 가진 입력이 9종 있다. 둘은 대체재가 아니라 쓰임이 다르다.
+
+| 상황 | 쓸 것 |
+|------|-------|
+| 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않는다 |
+| 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않는다 |
+
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **11종 간 균일성**이다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈린다.
+
 #### Field
 
 | Prop | Type | Default | Description |
