@@ -305,4 +305,12 @@ describe("Button", () => {
 
 		expect(screen.getByRole("button", { name: "주문" })).not.toHaveAttribute("href");
 	});
+
+	// 타입 레벨 회귀 방지 - `as="a"` 는 `href` 를 요구해야 한다(판별 유니온 시절 계약).
+	// 아래 무시 지시자가 "불필요"로 판정되면 tsc 가 실패하므로 이 단언은 tsc 가 검증한다.
+	it("requires href when as is a at the type level", () => {
+		// @ts-expect-error - `as="a"` 에 href 가 없으면 타입 에러여야 한다.
+		const hrefless = <Button as="a">주문</Button>;
+		expect(hrefless).toBeTruthy();
+	});
 });

@@ -143,12 +143,16 @@ interface SidebarItemCommon {
  *
  * 리터럴 유니온(`"button" | "a"`)이었을 때는 Next 앱에서 사이드바 항목을 라우터 링크로 만들
  * 방법이 없어, 소비자가 DS 를 우회해 자기 항목을 만들었다.
+ *
+ * `as="a"` 면 `href` 는 **필수**다 - 판별 유니온 시절 계약이고, `href` 없는 `<a>` 는 링크
+ * 시맨틱이 없다(`AnchorHTMLAttributes.href` 가 옵션이라 그대로 두면 느슨해진다).
  */
 export type SidebarItemProps<T extends React.ElementType = "button"> = PolymorphicProps<
 	T,
 	SidebarItemCommon
 > &
-	("button" extends T ? { href?: string } : Record<never, never>);
+	("button" extends T ? { href?: string } : Record<never, never>) &
+	("a" extends T ? { href: string } : Record<never, never>);
 
 export const SidebarItem = <T extends React.ElementType = "button">(props: SidebarItemProps<T>) => {
 	const { icon, active, trailing, as, className, children, ref, ...rest } = props;

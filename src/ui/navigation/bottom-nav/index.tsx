@@ -61,12 +61,16 @@ interface BottomNavItemCommon {
  *
  * `disabled` 는 여기 남는다 - anchor·커스텀 컴포넌트에는 native `disabled` 가 없어
  * `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리해야 하기 때문이다.
+ *
+ * `as="a"` 면 `href` 는 **필수**다 - 판별 유니온 시절 계약이고, `href` 없는 `<a>` 는 링크
+ * 시맨틱이 없다(`AnchorHTMLAttributes.href` 가 옵션이라 그대로 두면 느슨해진다).
  */
 export type BottomNavItemProps<T extends React.ElementType = "button"> = PolymorphicProps<
 	T,
 	BottomNavItemCommon & { disabled?: boolean }
 > &
-	("button" extends T ? { href?: string } : Record<never, never>);
+	("button" extends T ? { href?: string } : Record<never, never>) &
+	("a" extends T ? { href: string } : Record<never, never>);
 
 /**
  * `BottomNav` 의 항목. icon + label 수직 스택.

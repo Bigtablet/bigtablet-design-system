@@ -40,12 +40,17 @@ interface ButtonBaseProps {
  * `as` 를 주지 않으면 `<button>` 이고, `href` 만 주면 `<a>` 로 간다(예전부터 지원한 경로다).
  * 그 경로를 유니온으로 만들면 `ref={(el) => …}` 의 파라미터 추론이 깨진다 - 기본 케이스에만
  * `href` 를 더하는 조건부 교차로 두면 타입이 하나로 남아 추론이 유지된다.
+ *
+ * `as="a"` 면 `href` 는 **필수**다 - 판별 유니온 시절 `ButtonAsAnchor` 의 계약이고, `href` 없는
+ * `<a>` 는 링크 시맨틱(클릭·포커스)이 없어 접근성 트리에서 링크로 잡히지도 않는다. `React` 의
+ * `AnchorHTMLAttributes` 는 `href?` 라 그대로 두면 옵션으로 느슨해진다.
  */
 export type ButtonProps<T extends React.ElementType = "button"> = PolymorphicProps<
 	T,
 	ButtonBaseProps
 > &
-	("button" extends T ? { href?: string } : Record<never, never>);
+	("button" extends T ? { href?: string } : Record<never, never>) &
+	("a" extends T ? { href: string } : Record<never, never>);
 
 /**
  * @deprecated `ButtonProps<"button">` 을 쓰세요. 리터럴 유니온 시절의 이름입니다.

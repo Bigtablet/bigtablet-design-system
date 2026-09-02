@@ -249,7 +249,7 @@ import { Plus } from 'lucide-react';
 | `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 대상. `as` 를 안 주고 이것만 주면 anchor 로 렌더된다 |
+| `href` | `string` | - | 링크 대상. `as` 를 안 주고 이것만 주면 anchor 로 렌더된다. `as='a'` 면 필수 |
 | `disabled` | `boolean` | `false` | 비활성화. anchor 는 `aria-disabled` + 클릭 차단으로 처리 |
 
 **`as` 는 어떤 요소·컴포넌트든 받는다.** 리터럴 유니온(`'button' | 'a'`)이었을 때는 Next.js
@@ -1723,8 +1723,8 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 | `icon` | `ReactNode` | - | 왼쪽 아이콘 (collapsed 모드의 유일한 시각 단서) |
 | `active` | `boolean` | `false` | 현재 활성 상태 (`aria-current="page"` 자동) |
 | `trailing` | `ReactNode` | - | 오른쪽 trailing - Badge, count, 화살표 등 |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더 태그. SPA 라우팅이면 `'a'` + `href` |
-| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
 
 **SidebarSection Props**
 
@@ -1862,8 +1862,8 @@ const [collapsed, setCollapsed] = useState(false);
 | `active` | `boolean` | `false` | 활성 상태 (`aria-current="page"` 자동) |
 | `badge` | `ReactNode` | - | 아이콘 우상단 dot/카운트 (`Badge` 등) |
 | `disabled` | `boolean` | `false` | 비활성 (anchor 는 `aria-disabled`+`tabIndex=-1`) |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더 요소 |
-| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
 
 #### 접근성
 
