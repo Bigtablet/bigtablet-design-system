@@ -171,13 +171,18 @@ export const DatePicker = ({
 
 	// ── DropdownOption[] 변환 ──────────────────────────────────────────────
 
+	// minDate 는 연 목록도 좁힌다. 월·일만 좁히면 minDate 보다 이전 **연도**가 그대로 남아
+	// (minDate="2020-01-01" 인데 1950 이 목록 첫 항목이었다) 그 해를 고르는 순간 제약이
+	// 무의미해진다 - 월·일 제한은 `year === min.year` 일 때만 걸리기 때문이다.
+	const minYear = min.year > 0 ? Math.max(startYear, min.year) : startYear;
+
 	const yearOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(startYear, maxYear).map((y) => ({
+			range(minYear, Math.max(minYear, maxYear)).map((y) => ({
 				value: String(y),
 				label: String(y),
 			})),
-		[startYear, maxYear],
+		[minYear, maxYear],
 	);
 
 	const monthOptions = React.useMemo<DropdownOption[]>(

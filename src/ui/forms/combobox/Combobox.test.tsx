@@ -209,6 +209,16 @@ describe("Combobox", () => {
 		await waitFor(() => expect(screen.getByText("박상민")).toBeInTheDocument());
 
 		const input = screen.getByRole("combobox");
+
+		// 목록이 도착하면 훅이 활성 인덱스를 첫 항목으로 되돌린다. 그 effect 가 흐르기 전에
+		// ArrowDown 을 보내면 -1 에서 출발해 첫 항목이 활성이 된다 - 실제로 이 테스트가
+		// 그렇게 한 번 깜빡였다. 출발점을 먼저 확정하고 나서 이동을 검사한다.
+		await waitFor(() =>
+			expect(
+				document.getElementById(input.getAttribute("aria-activedescendant") ?? ""),
+			).toHaveTextContent("박상민"),
+		);
+
 		fireEvent.keyDown(input, { key: "ArrowDown" });
 
 		const active = input.getAttribute("aria-activedescendant");

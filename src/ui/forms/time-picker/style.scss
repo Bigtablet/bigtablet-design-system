@@ -1,0 +1,52 @@
+@use "src/styles/token" as token;
+@use "src/styles/breakpoints" as breakpoint;
+
+// TimePicker - DatePicker 와 같은 배치·간격을 쓴다. 한 폼에 날짜와 시각이 나란히 놓이므로
+// 둘의 라벨 위치나 간격이 갈리면 바로 눈에 띈다.
+
+.time_picker {
+  @include token.flex_column;
+  gap: token.$spacing_4;
+
+  &_label {
+    color: token.$color_text_heading;
+    margin-bottom: token.$spacing_4;
+    font-weight: token.$font_weight_medium;
+    font-size: token.$font_size_14;
+    line-height: token.$line_height_24;
+  }
+
+  &_fields {
+    display: flex;
+    gap: token.$spacing_8;
+    align-items: flex-end;
+
+    @include breakpoint.compact {
+      gap: token.$spacing_4;
+    }
+  }
+
+  &_full_width {
+    width: 100%;
+
+    .time_picker_fields {
+      width: 100%;
+
+      > * {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+
+  &_disabled {
+    // DatePicker 와 같은 이유 - `text_disabled` 는 흰 배경에서 2.38:1 이라 읽히지 않는다.
+    .time_picker_label {
+      color: token.$color_text_caption;
+    }
+  }
+
+  &_sr_only {
+    @include token.visually_hidden;
+  }
+}

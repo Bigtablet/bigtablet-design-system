@@ -9,7 +9,11 @@
    그 패턴을 벗어난 `rowClickHint`·`hint`·`label`·`searchPlaceholder` 여섯 개가 그대로 새어
    나갔다. 이제 `src/ui` 안의 **한글이 든 문자열 전부**를 본다 - 기본값이든 JSX 안이든.
 
-4. 카탈로그 키와 `t("...")` 호출이 양방향으로 맞아야 한다. 키만 추가하고 배선을 잊으면 그
+4. 카탈로그 키는 섹션 안에서 알파벳순이어야 한다. 새 키를 아무 데나 끼우면 다음 사람이
+   이 파일에서 위치를 예측할 수 없다 - 실제로 `dateRange`·`timePicker`·`rowClickHint`·
+   `noPanHint` 네 개가 어긋난 채 들어갔다.
+
+5. 카탈로그 키와 `t("...")` 호출이 양방향으로 맞아야 한다. 키만 추가하고 배선을 잊으면 그
    문구는 아무도 쓰지 않고, 없는 키를 부르면 `undefined` 가 화면에 나간다. 이관을 스크립트로
    돌리다 절반만 적용되는 사고가 실제로 났다 - 그걸 사람이 눈으로 확인하지 않게 한다.
 2. JSDoc `@default` 가 실제 destructuring 기본값과 일치해야 한다. 값을 바꾸고 JSDoc 을 잊으면
@@ -240,6 +244,29 @@ def check_catalog_wiring(files: list[Path], catalog: dict[str, str]) -> list[str
     return problems
 
 
+def check_catalog_order() -> list[str]:
+    """섹션(빈 줄로 나뉜 묶음) 안에서 키가 알파벳순인지.
+
+    전체를 한 번에 정렬할 수는 없다 - 섹션 구분(display/feedback/forms/...)이 먼저다.
+    interface·ko·en 세 블록을 각각 본다.
+    """
+    text = CATALOG.read_text(encoding="utf-8")
+    problems: list[str] = []
+    for chunk in text.split("\n\n"):
+        keys = re.findall(r'^\t"([^"]+)"', chunk, re.M)
+        if len(keys) < 2 or keys == sorted(keys):
+            continue
+        first_bad = next(
+            (b for a, b in zip(keys, keys[1:]) if b < a),
+            keys[0],
+        )
+        problems.append(
+            f"{CATALOG}  {first_bad} - 섹션 안에서 알파벳순이 아니다"
+            " (새 키는 제자리에 넣는다)"
+        )
+    return problems
+
+
 def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], int]:
     by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
     problems: list[str] = []
@@ -301,6 +328,7 @@ def main() -> int:
         for key, value in catalog.items()
         if not HANGUL.search(value)
     ]
+    problems += check_catalog_order()
     problems += check_catalog_wiring(files, catalog)
     doc_problems, doc_compared = check_docs(files, catalog)
     problems += doc_problems
@@ -331,7 +359,7 @@ def main() -> int:
     print(f"로케일 카탈로그 {exposed}개 - 전부 한글입니다.")
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
     print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
-    print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있습니다.")
+    print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있고 섹션 안에서 정렬돼 있습니다.")
     return 0
 
 
