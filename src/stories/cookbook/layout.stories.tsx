@@ -419,7 +419,10 @@ export const TwoColumnDashboard: Story = {
 										</h2>
 										<Chip type="static" size="sm" tone="success" label="실시간" />
 									</Stack>
+									{/* 차트 자리 표시자. `aria-label` 은 이름을 가질 수 있는 role 에서만 유효하다 -
+									    그냥 div 에 붙이면 이름이 어디에도 노출되지 않는다. */}
 									<div
+										role="img"
 										aria-label="매출 차트 영역"
 										style={{
 											height: 240,

@@ -2,9 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Award, BarChart3, Building2, CalendarClock, Package, Receipt } from "lucide-react";
 import { Avatar } from "../../ui/display/avatar";
 import { Badge } from "../../ui/display/badge";
+import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
 import { Hero } from "../../ui/display/hero";
 import { MediaCard } from "../../ui/display/media-card";
+import { Stat } from "../../ui/display/stat";
 import { EmptyState } from "../../ui/feedback/empty-state";
 import { Button } from "../../ui/general/button";
 import { AppShell } from "../../ui/layout/app-shell";
@@ -503,47 +505,16 @@ export const AdminDashboard: Story = {
 				}
 			/>
 
-			{/* Stats */}
 			<Grid cols={4} gap={16} style={{ marginBottom: 24 }}>
 				{[
-					{ label: "오늘 매출", value: "₩1,284,000", delta: "+12%" },
-					{ label: "신규 주문", value: "47", delta: "+8%" },
-					{ label: "활성 직원", value: "12", delta: "0%" },
-					{ label: "재고 부족", value: "3", delta: "-2개" },
+					{ label: "오늘 매출", value: "₩1,284,000", delta: "+12%", tone: "positive" as const },
+					{ label: "신규 주문", value: "47", delta: "+8%", tone: "positive" as const },
+					{ label: "활성 직원", value: "12", delta: "0%", tone: "neutral" as const },
+					{ label: "재고 부족", value: "3", delta: "-2개", tone: "negative" as const },
 				].map((stat) => (
-					<div
-						key={stat.label}
-						style={{
-							background: "var(--bt-color-bg-solid)",
-							borderRadius: 12,
-							padding: "20px 24px",
-							border: "1px solid var(--bt-color-border-default)",
-						}}
-					>
-						<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
-							{stat.label}
-						</p>
-						<p
-							style={{
-								margin: "0 0 4px",
-								fontSize: 24,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-							}}
-						>
-							{stat.value}
-						</p>
-						<p
-							style={{
-								margin: 0,
-								fontSize: 12,
-								color: "var(--bt-color-accent-default)",
-								fontWeight: 600,
-							}}
-						>
-							{stat.delta}
-						</p>
-					</div>
+					<Card key={stat.label} bordered padding="lg">
+						<Stat label={stat.label} value={stat.value} delta={stat.delta} deltaTone={stat.tone} />
+					</Card>
 				))}
 			</Grid>
 
