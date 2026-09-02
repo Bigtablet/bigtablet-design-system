@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Stack } from "./index";
 
@@ -62,5 +62,17 @@ describe("Stack", () => {
 			</Stack>,
 		);
 		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
+	it("passes the target element's props through as", () => {
+		render(
+			<Stack as="ol" aria-label="순서">
+				<li>항목</li>
+			</Stack>,
+		);
+
+		const list = screen.getByRole("list", { name: "순서" });
+		expect(list.tagName).toBe("OL");
+		expect(list).toHaveClass("stack");
 	});
 });

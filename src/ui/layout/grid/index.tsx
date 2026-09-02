@@ -2,12 +2,13 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type GridCols = 1 | 2 | 3 | 4 | 5 | 6 | "auto";
 export type GridGap = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48;
 
-export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+interface GridOwnProps {
 	/**
 	 * 열 수. "auto" = auto-fill (minColWidth 사용)
 	 * @default 3
@@ -29,11 +30,16 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
 	colGap?: GridGap;
 	/** 반응형 - compact(< 600px)에서 강제 1열 (기본 true) */
 	singleColOnMobile?: boolean;
-	/** 렌더링할 HTML 요소 */
-	as?: React.ElementType;
-	/** 루트 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLElement>;
 }
+
+/**
+ * Grid props. `as` 로 렌더 요소를 바꾼다 - `"main"`·`"ul"` 같은 태그든 `Link` 같은
+ * 컴포넌트든, 그 요소의 props 가 타입에 그대로 따라온다.
+ *
+ * 예전에는 `as?: React.ElementType` 이라 요소만 갈리고 props 는 `div` 기준으로 고정돼,
+ * `as="a"` 로 바꿔도 `href` 가 타입에 없었다.
+ */
+export type GridProps<T extends React.ElementType = "div"> = PolymorphicProps<T, GridOwnProps>;
 
 /**
  * CSS Grid 기반 2D 레이아웃 컨테이너.
@@ -52,22 +58,24 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Grid>
  * ```
  */
-export const Grid = ({
+export const Grid = <T extends React.ElementType = "div">({
 	cols = 3,
 	minColWidth = "280px",
 	gap = 24,
 	rowGap,
 	colGap,
 	singleColOnMobile = true,
-	as: Tag = "div",
+	as,
 	ref,
 	className,
 	children,
 	style,
 	...props
-}: GridProps) => {
+}: GridProps<T>) => {
 	const gridTemplateColumns =
 		cols === "auto" ? `repeat(auto-fill, minmax(${minColWidth}, 1fr))` : `repeat(${cols}, 1fr)`;
+
+	const Tag = (as ?? "div") as React.ElementType;
 
 	return (
 		<Tag

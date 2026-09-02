@@ -2,12 +2,13 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type SectionSpacing = "xs" | "sm" | "md" | "lg" | "xl";
 export type SectionBg = "default" | "dim" | "accent" | "inverted" | "transparent";
 
-export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+interface SectionOwnProps {
 	/**
 	 * 수직 패딩 크기
 	 * - xs: 32px | sm: 48px | md: 64px | lg: 96px | xl: 128px
@@ -20,11 +21,19 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 	 * @default "default"
 	 */
 	bg?: SectionBg;
-	/** 렌더링할 HTML 요소 */
-	as?: React.ElementType;
-	/** 루트 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLElement>;
 }
+
+/**
+ * Section props. `as` 로 렌더 요소를 바꾼다 - `"main"`·`"ul"` 같은 태그든 `Link` 같은
+ * 컴포넌트든, 그 요소의 props 가 타입에 그대로 따라온다.
+ *
+ * 예전에는 `as?: React.ElementType` 이라 요소만 갈리고 props 는 `div` 기준으로 고정돼,
+ * `as="a"` 로 바꿔도 `href` 가 타입에 없었다.
+ */
+export type SectionProps<T extends React.ElementType = "section"> = PolymorphicProps<
+	T,
+	SectionOwnProps
+>;
 
 /**
  * 마케팅 페이지의 섹션 단위. 수직 여백 + 배경색 variants.
@@ -39,15 +48,17 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
  * </Section>
  * ```
  */
-export const Section = ({
+export const Section = <T extends React.ElementType = "section">({
 	spacing = "md",
 	bg = "default",
-	as: Tag = "section",
+	as,
 	ref,
 	className,
 	children,
 	...props
-}: SectionProps) => {
+}: SectionProps<T>) => {
+	const Tag = (as ?? "section") as React.ElementType;
+
 	return (
 		<Tag
 			ref={ref}

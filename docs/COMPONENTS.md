@@ -248,11 +248,30 @@ import { Plus } from 'lucide-react';
 | `trailingIcon` | `ReactNode` | - | 버튼 뒤에 표시할 아이콘 |
 | `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더링할 요소. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 대상 (`as="a"` 일 때 필수) |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 대상. `as` 를 안 주고 이것만 주면 anchor 로 렌더된다 |
 | `disabled` | `boolean` | `false` | 비활성화. anchor 는 `aria-disabled` + 클릭 차단으로 처리 |
 
-> `ButtonProps` 는 `ButtonAsButton | ButtonAsAnchor` discriminated union 이라 `interface X extends ButtonProps` 로 확장할 수 없다. 확장이 필요하면 `React.ComponentProps<typeof Button>` 을 쓴다 ([MIGRATION.md](./MIGRATION.md) 참고).
+**`as` 는 어떤 요소·컴포넌트든 받는다.** 리터럴 유니온(`'button' | 'a'`)이었을 때는 Next.js
+`Link` 를 넘길 수 없어, 소비자가 DS 를 우회해 자기 버튼을 만들었다.
+
+```tsx
+import Link from "next/link";
+
+<Button as={Link} href="/orders">주문 보기</Button>
+```
+
+`as` 에 준 요소의 props 가 타입에 그대로 따라온다 — `as="a"` 면 `target`·`rel`, `as={Link}` 면
+`Link` 의 props.
+
+**`disabled` 는 `<button>` 에만 native 로 준다.** anchor 와 커스텀 컴포넌트에는 native `disabled`
+가 없어 그냥 넘기면 조용히 무시되고 비활성 버튼이 눌린다 — 그쪽은 `aria-disabled` +
+`tabIndex={-1}` + 클릭 차단으로 막는다. `as="button"` 과 `href` 를 함께 주면 href 는 버려진다
+(`<button href>` 는 유효하지 않다).
+
+> `ButtonProps` 는 `ButtonProps<T>` 제네릭이다. `ButtonProps` 그대로 쓰면 `T = "button"` 이다.
+> `ButtonAsButton`·`ButtonAsAnchor` 는 `ButtonProps<"button">`·`ButtonProps<"a">` 의 deprecated
+> 별칭으로 남겨 뒀다.
 
 ---
 
@@ -1705,7 +1724,7 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 | `active` | `boolean` | `false` | 현재 활성 상태 (`aria-current="page"` 자동) |
 | `trailing` | `ReactNode` | - | 오른쪽 trailing - Badge, count, 화살표 등 |
 | `as` | `'button' \| 'a'` | `'button'` | 렌더 태그. SPA 라우팅이면 `'a'` + `href` |
-| `href` | `string` | - | `as="a"`일 때 링크 URL |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor |
 
 **SidebarSection Props**
 
@@ -1772,8 +1791,8 @@ const [collapsed, setCollapsed] = useState(false);
   <SidebarItem icon={<Home />} onClick={() => setCollapsed(c => !c)}>홈</SidebarItem>
 </Sidebar>
 
-// Next.js Link와 통합 - as="a" + href 사용
-<SidebarItem icon={<Home />} as="a" href="/dashboard">대시보드</SidebarItem>
+// Next.js Link 와 통합 - 컴포넌트를 그대로 넘긴다
+<SidebarItem icon={<Home />} as={Link} href="/dashboard">대시보드</SidebarItem>
 ```
 
 > **v3.1 추가**: `mode` prop - `"auto"` (기본) 시 viewport `< 600px` 에서 자동으로 하단 bar 형태로 변신 (CSS-only, SSR 안전). `"static"` 으로 끄기 (admin 등 desktop-only). 모바일 우선 앱이라면 별도 [BottomNav](#bottomnav) 컴포넌트를 직접 쓰는 것도 고려.
@@ -1844,7 +1863,7 @@ const [collapsed, setCollapsed] = useState(false);
 | `badge` | `ReactNode` | - | 아이콘 우상단 dot/카운트 (`Badge` 등) |
 | `disabled` | `boolean` | `false` | 비활성 (anchor 는 `aria-disabled`+`tabIndex=-1`) |
 | `as` | `'button' \| 'a'` | `'button'` | 렌더 요소 |
-| `href` | `string` | - | `as="a"` 일 때 |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor |
 
 #### 접근성
 
