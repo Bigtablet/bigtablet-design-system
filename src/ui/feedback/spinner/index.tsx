@@ -1,11 +1,12 @@
 "use client";
 
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export interface SpinnerProps {
 	/** 스피너 크기(px) (기본값: 24) */
 	size?: number;
-	/** 스피너 접근성 레이블 (기본값: "로딩 중") */
+	/** 스피너 접근성 레이블 */
 	ariaLabel?: string;
 }
 
@@ -15,7 +16,9 @@ export interface SpinnerProps {
  * @param props 스피너 속성
  * @returns 렌더링된 스피너 요소
  */
-export const Spinner = ({ size = 24, ariaLabel = "로딩 중" }: SpinnerProps) => {
+export const Spinner = ({ size = 24, ariaLabel: ariaLabelProp }: SpinnerProps) => {
+	const t = useLocaleText();
+	const ariaLabel = ariaLabelProp ?? t("spinner.label");
 	return (
 		<span
 			className="spinner"

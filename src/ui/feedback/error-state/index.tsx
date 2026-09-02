@@ -3,6 +3,7 @@
 import { TriangleAlert } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ErrorStateVariant = "page" | "widget";
@@ -52,7 +53,7 @@ const DEFAULT_ICON_SIZE: Record<ErrorStateVariant, number> = {
  * ```
  */
 export const ErrorState = ({
-	title = "문제가 발생했습니다",
+	title: titleProp,
 	description,
 	icon,
 	action,
@@ -60,6 +61,8 @@ export const ErrorState = ({
 	className,
 	...props
 }: ErrorStateProps) => {
+	const t = useLocaleText();
+	const title = titleProp ?? t("errorState.title");
 	// icon === null → 숨김, undefined → 기본 아이콘
 	const resolvedIcon =
 		icon === null

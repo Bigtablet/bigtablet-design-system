@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -43,9 +44,11 @@ export const OtpInput = ({
 	disabled = false,
 	supportingText,
 	autoFocus = false,
-	ariaLabel = "OTP 입력",
+	ariaLabel: ariaLabelProp,
 	className,
 }: OtpInputProps) => {
+	const t = useLocaleText();
+	const ariaLabel = ariaLabelProp ?? t("otpInput.label");
 	const inputsRef = React.useRef<(HTMLInputElement | null)[]>([]);
 	// typing 직후 next box로 이동할 때 onFocus의 redirect 로직 잠시 비활성
 	const isTypingRef = React.useRef(false);
@@ -185,7 +188,7 @@ export const OtpInput = ({
 						onKeyDown={(e) => handleKeyDown(i, e)}
 						onPaste={handlePaste}
 						disabled={disabled}
-						aria-label={`${i + 1}번째 자리`}
+						aria-label={t("otpInput.digit", { index: i + 1 })}
 						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
 						aria-invalid={error || field?.invalid || undefined}
 						aria-describedby={field?.describedBy ?? (supportingText ? supportingId : undefined)}

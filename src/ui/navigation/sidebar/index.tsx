@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type SidebarMode = "auto" | "static";
@@ -60,7 +61,7 @@ export const Sidebar = ({
 	defaultCollapsed = false,
 	onCollapsedChange,
 	collapsible = true,
-	toggleLabel = "사이드바 토글",
+	toggleLabel: toggleLabelProp,
 	width = 240,
 	collapsedWidth = 64,
 	mode = "auto",
@@ -69,6 +70,8 @@ export const Sidebar = ({
 	style,
 	...props
 }: SidebarProps) => {
+	const t = useLocaleText();
+	const toggleLabel = toggleLabelProp ?? t("sidebar.toggle");
 	const isControlled = collapsedProp !== undefined;
 	const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
 	const collapsed = isControlled ? (collapsedProp as boolean) : internalCollapsed;

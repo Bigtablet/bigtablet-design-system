@@ -104,6 +104,58 @@ import { ThemeProvider } from "@bigtablet/design-system";
 
 ## Foundation
 
+### LocaleProvider
+
+DS 가 **스스로 렌더하는 문구**를 한곳에서 정한다. 소비자가 넘기지 않은 문구가 58개 있다 —
+`Modal` 의 닫기 버튼, `Table` 의 빈 목록, `Pagination` 의 이전/다음, `TagInput` 의 라이브 영역
+안내 등. 지금까지는 인스턴스마다 prop 을 넘겨야 했고, `Modal` 을 40번 쓰는 앱이면 `closeLabel`
+을 40번 적어야 했다 — 하나 빠지면 그 화면만 한국어로 남는다.
+
+```tsx
+// 영어 화면
+<LocaleProvider locale="en">
+  <App />
+</LocaleProvider>
+
+// 한 줄만 바꾸기 (기준 카탈로그 위에 병합)
+<LocaleProvider messages={{ "table.empty": "등록된 담당자가 없습니다" }}>
+  <App />
+</LocaleProvider>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `locale` | `'ko' \| 'en'` | `'ko'` | 기준 카탈로그 |
+| `messages` | `Partial<LocaleMessages>` | - | 기준 위에 덮어쓸 문구 |
+
+**우선순위** — 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본. Provider 를 감싸지
+않으면 한국어라 기존 화면은 바뀌지 않는다.
+
+```tsx
+<LocaleProvider locale="en">
+  <Modal closeLabel="Dismiss" … />   {/* prop 이 이긴다 */}
+</LocaleProvider>
+```
+
+**훅**
+
+| 훅 | 반환 | 용도 |
+|----|------|------|
+| `useLocaleText()` | `(key, vars?) => string` | 문구 조회. `{name}` 자리표시자를 `vars` 로 채운다 |
+| `useLocaleName()` | `'ko' \| 'en'` | 소비자가 날짜·숫자 포맷을 맞출 때 |
+
+`ko` · `en` 카탈로그와 `LocaleMessages` 타입도 export 한다 — 소비자가 자기 언어 카탈로그를 만들 때
+키 목록을 타입으로 받는다.
+
+```tsx
+import { ko, type LocaleMessages } from "@bigtablet/design-system";
+
+const ja: LocaleMessages = { ...ko, "modal.close": "閉じる" /* … */ };
+```
+
+> 채우지 못한 자리표시자는 `{index}` 처럼 **그대로 남는다**. 조용히 빈 칸이 되면 화면에서 무엇이
+> 빠졌는지 알 수 없다.
+
 ### ThemeProvider
 
 Bigtablet DS의 테마 컨텍스트를 제공합니다. `data-theme` attribute를 root element에 적용해서 CSS 변수 레이어를 전환합니다.

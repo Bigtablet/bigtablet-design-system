@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export interface BottomNavProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
@@ -29,11 +30,13 @@ export interface BottomNavProps extends Omit<React.HTMLAttributes<HTMLElement>, 
  * ```
  */
 export const BottomNav = ({
-	ariaLabel = "주요 메뉴",
+	ariaLabel: ariaLabelProp,
 	className,
 	children,
 	...props
 }: BottomNavProps) => {
+	const t = useLocaleText();
+	const ariaLabel = ariaLabelProp ?? t("bottomNav.label");
 	return (
 		<nav className={cn("bottom_nav", className)} aria-label={ariaLabel} {...props}>
 			{children}

@@ -6,6 +6,7 @@ import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import { Skeleton } from "../../feedback/skeleton";
 import { Checkbox } from "../../forms/checkbox";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type TableSize = "sm" | "md" | "lg";
@@ -28,7 +29,7 @@ export interface TableColumn<T extends object> {
 	render?: (item: T, index: number) => React.ReactNode;
 	/** CSS width 값 (예: "120px", "20%") */
 	width?: string;
-	/** 정렬 (기본값: "left") */
+	/** 정렬 */
 	align?: "left" | "center" | "right";
 	/** 정렬 가능한 컬럼 여부 (기본값: false). 클릭 시 `onSortChange` 발화 - 실제 정렬은 소비자가 수행 */
 	sortable?: boolean;
@@ -60,13 +61,13 @@ export type TableProps<T extends object> = {
 	data: T[];
 	/** 행의 고유 key 추출 함수 */
 	keyExtractor: (item: T, index: number) => string | number;
-	/** 데이터 없을 때 표시 (기본값: "데이터가 없습니다") */
+	/** 데이터 없을 때 표시 */
 	emptyMessage?: React.ReactNode;
 	/** 로딩 상태 - 헤더 유지, 바디만 스켈레톤 */
 	isLoading?: boolean;
 	/** 로딩 시 스켈레톤 행 개수 (기본값: 5) */
 	skeletonRows?: number;
-	/** 테이블 크기 (기본값: "md") */
+	/** 테이블 크기 */
 	size?: TableSize;
 	/** 행 hover 강조 (기본값: true) */
 	hoverable?: boolean;
@@ -90,7 +91,7 @@ export type TableProps<T extends object> = {
 	sort?: TableSort;
 	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
 	onSortChange?: (sort: TableSort | undefined) => void;
-	/** 전체 선택 체크박스 aria-label (기본값: "전체 선택") */
+	/** 전체 선택 체크박스 aria-label */
 	selectAllAriaLabel?: string;
 	/** 개별 행 선택 체크박스 aria-label (기본값: (i) => `${i+1}번째 행 선택`) */
 	selectRowAriaLabel?: (index: number) => string;
@@ -105,7 +106,7 @@ export const Table = <T extends object>({
 	columns,
 	data,
 	keyExtractor,
-	emptyMessage = "데이터가 없습니다",
+	emptyMessage: emptyMessageProp,
 	isLoading = false,
 	skeletonRows = 5,
 	size = "md",
@@ -114,16 +115,22 @@ export const Table = <T extends object>({
 	ariaLabel,
 	className,
 	onRowClick,
-	rowClickHint = "클릭 가능한 행",
+	rowClickHint: rowClickHintProp,
 	sort,
 	onSortChange,
-	selectAllAriaLabel = "전체 선택",
-	selectRowAriaLabel = (index: number) => `${index + 1}번째 행 선택`,
+	selectAllAriaLabel: selectAllAriaLabelProp,
+	selectRowAriaLabel: selectRowAriaLabelProp,
 	selectable = false,
 	rowKey,
 	selectedKeys,
 	onSelectionChange,
 }: TableProps<T>) => {
+	const t = useLocaleText();
+	const rowClickHint = rowClickHintProp ?? t("table.rowClickHint");
+	const emptyMessage = emptyMessageProp ?? t("table.empty");
+	const selectAllAriaLabel = selectAllAriaLabelProp ?? t("table.selectAll");
+	const selectRowAriaLabel =
+		selectRowAriaLabelProp ?? ((index: number) => t("table.selectRow", { index: index + 1 }));
 	const wrapperClassName = cn(
 		"table_wrapper",
 		`table_size_${size}`,

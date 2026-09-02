@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import { Dropdown, type DropdownOption } from "../dropdown";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -14,7 +15,7 @@ interface DatePickerBaseProps {
 	label?: string;
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
 	value?: string;
-	/** 선택 모드 (기본값: "year-month-day") */
+	/** 선택 모드 */
 	mode?: DatePickerMode;
 	/** 연도 선택 범위 시작 (기본값: 1950) */
 	startYear?: number;
@@ -33,11 +34,11 @@ interface DatePickerBaseProps {
 	 * @deprecated `fullWidth` 사용 또는 CSS로 처리
 	 */
 	width?: number | string;
-	/** 연도 select의 라벨/플레이스홀더 (기본값: "년") */
+	/** 연도 select의 라벨/플레이스홀더 */
 	yearLabel?: string;
-	/** 월 select의 라벨/플레이스홀더 (기본값: "월") */
+	/** 월 select의 라벨/플레이스홀더 */
 	monthLabel?: string;
-	/** 일 select의 라벨/플레이스홀더 (기본값: "일") */
+	/** 일 select의 라벨/플레이스홀더 */
 	dayLabel?: string;
 	/**
 	 * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
@@ -89,12 +90,19 @@ export const DatePicker = ({
 	disabled,
 	fullWidth = true,
 	width,
-	yearLabel = "년",
-	monthLabel = "월",
-	dayLabel = "일",
-	minDateSrFormat = "최소 날짜: {date}",
-	selectableRangeUntilTodaySrText = "오늘까지 선택 가능",
+	yearLabel: yearLabelProp,
+	monthLabel: monthLabelProp,
+	dayLabel: dayLabelProp,
+	minDateSrFormat: minDateSrFormatProp,
+	selectableRangeUntilTodaySrText: selectableRangeUntilTodaySrTextProp,
 }: DatePickerProps) => {
+	const t = useLocaleText();
+	const yearLabel = yearLabelProp ?? t("datePicker.year");
+	const monthLabel = monthLabelProp ?? t("datePicker.month");
+	const dayLabel = dayLabelProp ?? t("datePicker.day");
+	const minDateSrFormat = minDateSrFormatProp ?? t("datePicker.minDateSr");
+	const selectableRangeUntilTodaySrText =
+		selectableRangeUntilTodaySrTextProp ?? t("datePicker.rangeUntilTodaySr");
 	// Field 가 감싸면 Field 라벨이 그룹 이름이 된다.
 	const field = useFieldControl();
 	const groupId = React.useId();
