@@ -41,6 +41,15 @@ describe("AppShell", () => {
 		expect(container.querySelector(".app_shell_main_padded")).toBeNull();
 	});
 
+	it("hands the root element to a ref", () => {
+		// 형제 layout 프리미티브(Container·Grid·Section·Stack)가 모두 지원하는 규약이다.
+		// 셸은 스크롤 계측·포털 기준점으로 루트가 필요할 수 있다.
+		const ref = { current: null as HTMLDivElement | null };
+		render(<AppShell ref={ref}>본문</AppShell>);
+
+		expect(ref.current).toHaveClass("app_shell");
+	});
+
 	it("keeps the caller's className and attributes", () => {
 		const { container } = render(
 			<AppShell className="custom" data-testid="shell">

@@ -11,6 +11,8 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
 	header?: React.ReactNode;
 	/** 본문 여백 (기본값: true). 자체 여백을 가진 화면은 false */
 	padded?: boolean;
+	/** 루트 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -46,9 +48,14 @@ export const AppShell = ({
 	padded = true,
 	className,
 	children,
+	ref,
 	...props
 }: AppShellProps) => (
-	<div className={cn("app_shell", { app_shell_with_sidebar: !!sidebar }, className)} {...props}>
+	<div
+		ref={ref}
+		className={cn("app_shell", { app_shell_with_sidebar: !!sidebar }, className)}
+		{...props}
+	>
 		{sidebar && <div className="app_shell_sidebar">{sidebar}</div>}
 		<div className="app_shell_body">
 			{header && <div className="app_shell_header">{header}</div>}

@@ -17,6 +17,8 @@ export interface PageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 	actions?: React.ReactNode;
 	/** 제목 줄 아래에 붙는 영역. 보통 `TabList` */
 	tabs?: React.ReactNode;
+	/** 루트 요소 ref (React 19 ref-as-prop) */
+	ref?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -48,9 +50,10 @@ export const PageHeader = ({
 	actions,
 	tabs,
 	className,
+	ref,
 	...props
 }: PageHeaderProps) => (
-	<div className={cn("page_header", className)} {...props}>
+	<div ref={ref} className={cn("page_header", className)} {...props}>
 		{breadcrumb && <div className="page_header_breadcrumb">{breadcrumb}</div>}
 		<div className="page_header_bar">
 			<div className="page_header_titles">

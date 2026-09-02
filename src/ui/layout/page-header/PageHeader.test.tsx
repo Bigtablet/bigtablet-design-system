@@ -47,6 +47,13 @@ describe("PageHeader", () => {
 		expect(screen.getByRole("tablist")).toBeInTheDocument();
 	});
 
+	it("hands the root element to a ref", () => {
+		const ref = { current: null as HTMLDivElement | null };
+		render(<PageHeader title="주문" ref={ref} />);
+
+		expect(ref.current).toHaveClass("page_header");
+	});
+
 	it("keeps the caller's className", () => {
 		const { container } = render(<PageHeader title="주문" className="custom" />);
 

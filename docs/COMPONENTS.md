@@ -3794,6 +3794,7 @@ Section (수직 패딩 + 배경)
 | `sidebar` | `ReactNode` | - | 좌측 네비게이션. 보통 `Sidebar`. 주지 않으면 열을 만들지 않는다 |
 | `header` | `ReactNode` | - | 콘텐츠 열 위에 `sticky` 로 붙는 헤더. 보통 `NavBar` |
 | `padded` | `boolean` | `true` | 본문 여백. 자체 여백을 가진 화면은 `false` |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
 
 손으로 조립할 때 조용히 빠지던 셋을 DS 가 소유한다.
 
@@ -3829,6 +3830,7 @@ Section (수직 패딩 + 배경)
 | `breadcrumb` | `ReactNode` | - | 제목 위 경로. 보통 `Breadcrumb` |
 | `actions` | `ReactNode` | - | 우측 액션. 보통 `Button` |
 | `tabs` | `ReactNode` | - | 제목 줄 아래 영역. 보통 `TabList` |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
 
 제목은 `h1` 이다 — 화면의 제목이므로 문서에 하나만 있어야 한다. 겉은 `<header>` 가 아니라 `<div>`
 인데, `<header>` 는 `<main>` 안에 있어도 banner landmark 로 계산돼(`main` 은 sectioning content 가

@@ -69,12 +69,6 @@ const USERS = [
 	},
 ];
 
-const _STATUS_VARIANT = {
-	online: "success" as const,
-	away: "warning" as const,
-	offline: "neutral" as const,
-};
-
 const STATUS_LABEL = {
 	online: "활동 중",
 	away: "자리 비움",
