@@ -71,6 +71,9 @@ export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
  * />
  * ```
  */
+/** 렌더할 값이 있는지. 숫자 0 은 값이고, 빈 문자열은 값이 아니다 */
+const isPresent = (value: React.ReactNode) => value !== undefined && value !== null && value !== "";
+
 export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => (
 	<ol ref={ref} className={cn("timeline", className)} {...props}>
 		{items.map((item) => {
@@ -91,11 +94,16 @@ export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => 
 							))}
 					</span>
 					<div className="timeline_body">
+						{/* span·p 가 아니라 div 다. title·time·description 은 ReactNode 라 소비자가
+						    Chip·Badge 같은 block 요소를 넣을 수 있는데, span 안의 div 나 p 안의 div 는
+						    유효하지 않은 HTML 이라 브라우저 파서가 구조를 바꾸고 SSR hydration 이 어긋난다. */}
 						<div className="timeline_head">
-							<span className="timeline_title">{item.title}</span>
-							{item.time && <span className="timeline_time">{item.time}</span>}
+							<div className="timeline_title">{item.title}</div>
+							{isPresent(item.time) && <div className="timeline_time">{item.time}</div>}
 						</div>
-						{item.description && <p className="timeline_description">{item.description}</p>}
+						{isPresent(item.description) && (
+							<div className="timeline_description">{item.description}</div>
+						)}
 						{item.children}
 					</div>
 				</li>

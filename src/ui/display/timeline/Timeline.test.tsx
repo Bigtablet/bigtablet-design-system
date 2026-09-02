@@ -65,6 +65,32 @@ describe("Timeline", () => {
 		expect(indicators[1]).toHaveTextContent("★");
 	});
 
+	it("wraps ReactNode fields in block containers", () => {
+		// title·time·description 은 ReactNode 다. span 안의 div 나 p 안의 div 는 유효하지 않은
+		// HTML 이라 브라우저가 구조를 바꾸고 SSR hydration 이 어긋난다.
+		const { container } = render(
+			<Timeline
+				items={[
+					{
+						id: 1,
+						title: <div data-testid="t">제목</div>,
+						time: <div data-testid="m">시각</div>,
+						description: <div data-testid="d">설명</div>,
+					},
+				]}
+			/>,
+		);
+
+		expect(container.querySelector(".timeline_title")?.tagName).toBe("DIV");
+		expect(container.querySelector(".timeline_time")?.tagName).toBe("DIV");
+		expect(container.querySelector(".timeline_description")?.tagName).toBe("DIV");
+		// 넘긴 block 요소가 래퍼 안에 그대로 남는다 - 파서가 끌어내지 않았다.
+		expect(container.querySelector(".timeline_title")?.firstElementChild).toHaveAttribute(
+			"data-testid",
+			"t",
+		);
+	});
+
 	it("keeps the indicator out of the accessibility tree", () => {
 		// 점과 연결선은 장식이다 - 읽히면 항목마다 의미 없는 소리가 하나씩 늘어난다.
 		const { container } = render(<Timeline items={ITEMS} />);

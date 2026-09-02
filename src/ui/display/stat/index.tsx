@@ -7,7 +7,7 @@ import "./style.scss";
 /** 변화량의 색. 방향(↑↓)과 좋음/나쁨은 다르다 - "재고 부족 +2" 는 오르지만 나쁘다 */
 export type StatDeltaTone = "positive" | "negative" | "neutral";
 
-export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface StatProps extends React.HTMLAttributes<HTMLDivElement> {
 	/** 지표 이름 */
 	label: React.ReactNode;
 	/** 지표 값. 숫자는 `tabular-nums` 로 폭이 고정된다 */
@@ -43,6 +43,9 @@ export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
  * </Card>
  * ```
  */
+/** 렌더할 값이 있는지. 숫자 0 은 값이고, 빈 문자열은 값이 아니다 */
+const isPresent = (value: React.ReactNode) => value !== undefined && value !== null && value !== "";
+
 export const Stat = ({
 	label,
 	value,
@@ -63,6 +66,8 @@ export const Stat = ({
 			{label}
 		</div>
 		<div className="stat_value">{value}</div>
-		{delta && <div className={cn("stat_delta", `stat_delta_${deltaTone}`)}>{delta}</div>}
+		{/* 값이 0 이어도 "변화 없음" 은 보여줘야 한다. `delta &&` 는 숫자 0 을 falsy 로 보고
+		    줄을 지운다 - delta 는 ReactNode 라 0 이 유효한 값이다. */}
+		{isPresent(delta) && <div className={cn("stat_delta", `stat_delta_${deltaTone}`)}>{delta}</div>}
 	</div>
 );

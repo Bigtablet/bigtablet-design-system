@@ -29,6 +29,27 @@ describe("Stat", () => {
 		expect(container.querySelector(".stat_delta")).toHaveClass("stat_delta_positive");
 	});
 
+	it("omits the delta row for an empty string", () => {
+		// `delta={x || ""}` 로 계산해 넘기는 경우 - 빈 줄이 남으면 지표 높이가 어긋난다.
+		const { container } = render(<Stat label="활성 직원" value="12" delta="" />);
+
+		expect(container.querySelector(".stat_delta")).toBeNull();
+	});
+
+	it("shows a numeric zero delta", () => {
+		// `delta &&` 는 숫자 0 을 falsy 로 보고 줄을 지운다 - "변화 없음" 은 보여줘야 한다.
+		const { container } = render(<Stat label="활성 직원" value="12" delta={0} />);
+
+		expect(container.querySelector(".stat_delta")).toHaveTextContent("0");
+	});
+
+	it("takes a standard title attribute", () => {
+		// Stat 에는 title prop 이 없다 - HTML 속성 전달 계약을 막을 이유가 없었다.
+		const { container } = render(<Stat label="매출" value="1" title="최근 30일 합계" />);
+
+		expect(container.firstElementChild).toHaveAttribute("title", "최근 30일 합계");
+	});
+
 	it("defaults the delta tone to neutral", () => {
 		const { container } = render(<Stat label="활성 직원" value="12" delta="0%" />);
 
