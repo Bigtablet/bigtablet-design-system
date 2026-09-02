@@ -50,10 +50,22 @@ $indicator: 28px;
   }
 
   &_dot {
+    box-sizing: border-box;
     width: token.$spacing_8;
     height: token.$spacing_8;
     border-radius: token.$radius_full;
     background: currentcolor;
+
+    // 아직 오지 않은 단계는 빈 원 - 지나간 단계(체크)와 진행 중(꽉 찬 점)과 모양으로 갈린다.
+    &_hollow {
+      background: transparent;
+      border: token.$border_width_thick solid currentcolor;
+    }
+  }
+
+  &_glyph {
+    width: token.$icon_size_sm;
+    height: token.$icon_size_sm;
   }
 
   &_body {

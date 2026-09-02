@@ -26,6 +26,29 @@ describe("Timeline", () => {
 		expect(items[2]).toHaveClass("timeline_item_pending");
 	});
 
+	it("tells the statuses apart by shape, not only by colour", () => {
+		// 배경색만 다르면 색을 구분하지 못하는 사용자에게 done 과 active 가 같아 보인다
+		// (WCAG 1.4.1). 아이콘을 주지 않은 경우가 그 상태였다.
+		const { container } = render(
+			<Timeline
+				items={[
+					{ id: 1, title: "done", status: "done" },
+					{ id: 2, title: "active", status: "active" },
+					{ id: 3, title: "pending" },
+				]}
+			/>,
+		);
+
+		const indicators = container.querySelectorAll(".timeline_indicator");
+		// done - 체크 글리프
+		expect(indicators[0].querySelector(".timeline_glyph")).not.toBeNull();
+		// active - 꽉 찬 점
+		expect(indicators[1].querySelector(".timeline_dot")).not.toBeNull();
+		expect(indicators[1].querySelector(".timeline_dot")).not.toHaveClass("timeline_dot_hollow");
+		// pending - 빈 원
+		expect(indicators[2].querySelector(".timeline_dot")).toHaveClass("timeline_dot_hollow");
+	});
+
 	it("falls back to a dot when an item has no icon", () => {
 		const { container } = render(
 			<Timeline

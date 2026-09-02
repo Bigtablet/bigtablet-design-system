@@ -75,10 +75,13 @@ export const OrderTracking: Story = {
 };
 
 export const Minimal: Story = {
-	name: "점만 (아이콘 없이)",
+	name: "아이콘 없이 (기본 글리프)",
 	parameters: {
 		docs: {
-			description: { story: "`icon` 을 주지 않으면 점이 들어간다." },
+			description: {
+				story:
+					"`icon` 을 주지 않아도 상태가 **모양**으로 갈린다 — `done` 은 체크, `active` 는 꽉 찬 점, `pending` 은 빈 원. 배경색만 다르면 색을 구분하지 못하는 사용자에게 `done` 과 `active` 가 같아 보인다(WCAG 1.4.1). 흑백으로 보아도 셋이 구분된다.",
+			},
 		},
 	},
 	render: () => (

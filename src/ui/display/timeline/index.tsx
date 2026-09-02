@@ -24,6 +24,23 @@ export interface TimelineItem {
 	children?: React.ReactNode;
 }
 
+/** 완료 표시. Chip 의 체크와 같은 모양을 쓴다 - 같은 뜻에 다른 그림을 주지 않게 */
+const CheckGlyph = () => (
+	<svg
+		viewBox="0 0 20 20"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth={2}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		aria-hidden="true"
+		focusable="false"
+		className="timeline_glyph"
+	>
+		<polyline points="4 10 8 14 16 6" />
+	</svg>
+);
+
 export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
 	/** 위에서 아래로 흐르는 순서대로 */
 	items: TimelineItem[];
@@ -36,6 +53,9 @@ export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
  *
  * `<ol>` 로 렌더한다 - 순서가 있는 목록이고, 스크린리더가 "N개 중 3번째" 를 읽어 준다.
  * `<div>` 로 만들면 그 순서 정보가 남지 않는다.
+ *
+ * `icon` 을 주지 않아도 상태가 모양으로 갈린다 - `done` 은 체크, `active` 는 꽉 찬 점,
+ * `pending` 은 빈 원. 색만 다르면 색을 구분하지 못하는 사용자에게 done 과 active 가 같아 보인다.
  *
  * 연결선은 마지막 항목에서 끊는다. 손으로 만들면 마지막 점 아래로 선이 흘러나오거나,
  * `isLast` 판정을 소비자가 매번 다시 쓴다.
@@ -58,7 +78,17 @@ export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => 
 			return (
 				<li key={item.id} className={cn("timeline_item", `timeline_item_${status}`)}>
 					<span className="timeline_indicator" aria-hidden="true">
-						{item.icon ?? <span className="timeline_dot" />}
+						{/* 아이콘을 주지 않아도 상태가 **모양**으로 구분돼야 한다 - 배경색만 다르면
+						    색을 구분하지 못하는 사용자에게 done 과 active 가 같아 보인다
+						    (WCAG 1.4.1). done 은 체크, active 는 꽉 찬 점, pending 은 빈 원. */}
+						{item.icon ??
+							(status === "done" ? (
+								<CheckGlyph />
+							) : (
+								<span
+									className={cn("timeline_dot", { timeline_dot_hollow: status === "pending" })}
+								/>
+							))}
 					</span>
 					<div className="timeline_body">
 						<div className="timeline_head">

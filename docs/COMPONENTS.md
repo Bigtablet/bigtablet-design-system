@@ -2743,7 +2743,9 @@ negative 6.47:1 (흰 카드 위).
 | `ref` | `React.Ref<HTMLOListElement>` | - | 루트 요소 ref |
 
 `TimelineItem` — `{ id, title, time?, description?, status?, icon?, children? }`.
-`status` 는 `'done' \| 'active' \| 'pending'` (기본 `pending`), `icon` 이 없으면 점이 들어간다.
+`status` 는 `'done' \| 'active' \| 'pending'` (기본 `pending`). `icon` 이 없어도 상태가 **모양**으로
+갈린다 — `done` 은 체크, `active` 는 꽉 찬 점, `pending` 은 빈 원. 배경색만 다르면 색을 구분하지
+못하는 사용자에게 `done` 과 `active` 가 같아 보인다(WCAG 1.4.1).
 `children` 으로 항목 아래에 첨부·액션을 붙인다.
 
 `<ol>` 로 렌더한다 — 순서가 있는 목록이라 스크린리더가 "3개 중 2번째" 를 읽어 준다.
