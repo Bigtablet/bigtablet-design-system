@@ -7,8 +7,10 @@ import { Hero } from "../../ui/display/hero";
 import { MediaCard } from "../../ui/display/media-card";
 import { EmptyState } from "../../ui/feedback/empty-state";
 import { Button } from "../../ui/general/button";
+import { AppShell } from "../../ui/layout/app-shell";
 import { Container } from "../../ui/layout/container";
 import { Grid } from "../../ui/layout/grid";
+import { PageHeader } from "../../ui/layout/page-header";
 import { Section } from "../../ui/layout/section";
 import { Stack } from "../../ui/layout/stack";
 import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
@@ -331,326 +333,304 @@ export const MarketingPage: Story = {
 export const AdminDashboard: Story = {
 	name: "어드민 대시보드",
 	render: () => (
-		<div
-			style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}
-		>
-			{/* Sidebar */}
-			<Sidebar
-				header={
-					// 로고 경로는 iframe 기준 상대경로다 — 절대경로(`/images/…`)로 되돌리면 GH Pages
-					// 하위 경로(`/bigtablet-design-system/`)를 건너뛰어 404 가 난다. 로컬은 루트 서빙이라 안 드러난다.
-					<img
-						src="images/logo/bigtablet.png"
-						alt="Bigtablet"
-						height={28}
-						style={{ display: "block" }}
-					/>
-				}
-				headerCollapsed={
-					<img
-						src="images/logo/favicon.png"
-						alt="Bigtablet"
-						width={28}
-						height={28}
-						style={{ display: "block", borderRadius: 6 }}
-					/>
-				}
-				footer={
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 8,
-							padding: "8px 12px",
-						}}
-					>
+		<AppShell
+			sidebar={
+				<Sidebar
+					header={
+						// 로고 경로는 iframe 기준 상대경로다 — 절대경로(`/images/…`)로 되돌리면 GH Pages
+						// 하위 경로(`/bigtablet-design-system/`)를 건너뛰어 404 가 난다. 로컬은 루트 서빙이라 안 드러난다.
+						<img
+							src="images/logo/bigtablet.png"
+							alt="Bigtablet"
+							height={28}
+							style={{ display: "block" }}
+						/>
+					}
+					headerCollapsed={
+						<img
+							src="images/logo/favicon.png"
+							alt="Bigtablet"
+							width={28}
+							height={28}
+							style={{ display: "block", borderRadius: 6 }}
+						/>
+					}
+					footer={
 						<div
 							style={{
-								width: 32,
-								height: 32,
-								borderRadius: 999,
-								background: "var(--bt-color-bg-solid-dim)",
-								color: "var(--bt-color-text-heading)",
 								display: "flex",
 								alignItems: "center",
-								justifyContent: "center",
-								fontWeight: 600,
-								flexShrink: 0,
+								gap: 8,
+								padding: "8px 12px",
 							}}
 						>
-							S
+							<div
+								style={{
+									width: 32,
+									height: 32,
+									borderRadius: 999,
+									background: "var(--bt-color-bg-solid-dim)",
+									color: "var(--bt-color-text-heading)",
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									fontWeight: 600,
+									flexShrink: 0,
+								}}
+							>
+								S
+							</div>
+							<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
+								<strong style={{ color: "var(--bt-color-text-heading)" }}>sangmin</strong>
+								<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>
+									sangmin@bigtablet.com
+								</span>
+							</div>
 						</div>
-						<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
-							<strong style={{ color: "var(--bt-color-text-heading)" }}>sangmin</strong>
-							<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>
-								sangmin@bigtablet.com
-							</span>
-						</div>
-					</div>
-				}
-			>
-				<SidebarSection label="메인">
-					<SidebarItem
-						icon={
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<rect x="3" y="3" width="7" height="7" />
-								<rect x="14" y="3" width="7" height="7" />
-								<rect x="14" y="14" width="7" height="7" />
-								<rect x="3" y="14" width="7" height="7" />
-							</svg>
-						}
-						active
-					>
-						대시보드
-					</SidebarItem>
-					<SidebarItem
-						icon={
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-								<line x1="3" y1="6" x2="21" y2="6" />
-								<path d="M16 10a4 4 0 0 1-8 0" />
-							</svg>
-						}
-						trailing={
-							<Badge shape="count" variant="error">
-								5
-							</Badge>
-						}
-					>
-						주문
-					</SidebarItem>
-					<SidebarItem
-						icon={
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<line x1="12" y1="1" x2="12" y2="23" />
-								<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-							</svg>
-						}
-					>
-						매출
-					</SidebarItem>
-				</SidebarSection>
-				<SidebarSection label="관리">
-					<SidebarItem
-						icon={
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-								<circle cx="9" cy="7" r="4" />
-								<path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-								<path d="M16 3.13a4 4 0 0 1 0 7.75" />
-							</svg>
-						}
-					>
-						직원
-					</SidebarItem>
-					<SidebarItem
-						icon={
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-							>
-								<circle cx="12" cy="12" r="3" />
-								<path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
-							</svg>
-						}
-					>
-						설정
-					</SidebarItem>
-				</SidebarSection>
-			</Sidebar>
-
-			{/* Main content */}
-			<div style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
-				{/* Header */}
-				<Stack
-					direction="horizontal"
-					justify="between"
-					align="center"
-					gap={0}
-					style={{ marginBottom: 24 }}
+					}
 				>
-					<Stack gap={4}>
-						<h1
+					<SidebarSection label="메인">
+						<SidebarItem
+							icon={
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<rect x="3" y="3" width="7" height="7" />
+									<rect x="14" y="3" width="7" height="7" />
+									<rect x="14" y="14" width="7" height="7" />
+									<rect x="3" y="14" width="7" height="7" />
+								</svg>
+							}
+							active
+						>
+							대시보드
+						</SidebarItem>
+						<SidebarItem
+							icon={
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+									<line x1="3" y1="6" x2="21" y2="6" />
+									<path d="M16 10a4 4 0 0 1-8 0" />
+								</svg>
+							}
+							trailing={
+								<Badge shape="count" variant="error">
+									5
+								</Badge>
+							}
+						>
+							주문
+						</SidebarItem>
+						<SidebarItem
+							icon={
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<line x1="12" y1="1" x2="12" y2="23" />
+									<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+								</svg>
+							}
+						>
+							매출
+						</SidebarItem>
+					</SidebarSection>
+					<SidebarSection label="관리">
+						<SidebarItem
+							icon={
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+									<circle cx="9" cy="7" r="4" />
+									<path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+									<path d="M16 3.13a4 4 0 0 1 0 7.75" />
+								</svg>
+							}
+						>
+							직원
+						</SidebarItem>
+						<SidebarItem
+							icon={
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<circle cx="12" cy="12" r="3" />
+									<path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+								</svg>
+							}
+						>
+							설정
+						</SidebarItem>
+					</SidebarSection>
+				</Sidebar>
+			}
+		>
+			<PageHeader
+				title="대시보드"
+				description="2026년 5월 20일 화요일"
+				actions={
+					<>
+						<Badge shape="dot" variant="success" />
+						<Avatar name="박상민" size="md" />
+					</>
+				}
+			/>
+
+			{/* Stats */}
+			<Grid cols={4} gap={16} style={{ marginBottom: 24 }}>
+				{[
+					{ label: "오늘 매출", value: "₩1,284,000", delta: "+12%" },
+					{ label: "신규 주문", value: "47", delta: "+8%" },
+					{ label: "활성 직원", value: "12", delta: "0%" },
+					{ label: "재고 부족", value: "3", delta: "-2개" },
+				].map((stat) => (
+					<div
+						key={stat.label}
+						style={{
+							background: "var(--bt-color-bg-solid)",
+							borderRadius: 12,
+							padding: "20px 24px",
+							border: "1px solid var(--bt-color-border-default)",
+						}}
+					>
+						<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
+							{stat.label}
+						</p>
+						<p
 							style={{
-								margin: 0,
+								margin: "0 0 4px",
 								fontSize: 24,
 								fontWeight: 700,
 								color: "var(--bt-color-text-heading)",
 							}}
 						>
-							대시보드
-						</h1>
-						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-caption)" }}>
-							2026년 5월 20일 화요일
+							{stat.value}
 						</p>
-					</Stack>
-					<Stack direction="horizontal" gap={12} align="center">
-						<Badge shape="dot" variant="success" />
-						<Avatar name="박상민" size="md" />
-					</Stack>
-				</Stack>
-
-				{/* Stats */}
-				<Grid cols={4} gap={16} style={{ marginBottom: 24 }}>
-					{[
-						{ label: "오늘 매출", value: "₩1,284,000", delta: "+12%" },
-						{ label: "신규 주문", value: "47", delta: "+8%" },
-						{ label: "활성 직원", value: "12", delta: "0%" },
-						{ label: "재고 부족", value: "3", delta: "-2개" },
-					].map((stat) => (
-						<div
-							key={stat.label}
+						<p
 							style={{
-								background: "var(--bt-color-bg-solid)",
-								borderRadius: 12,
-								padding: "20px 24px",
-								border: "1px solid var(--bt-color-border-default)",
+								margin: 0,
+								fontSize: 12,
+								color: "var(--bt-color-accent-default)",
+								fontWeight: 600,
 							}}
 						>
-							<p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
-								{stat.label}
-							</p>
-							<p
-								style={{
-									margin: "0 0 4px",
-									fontSize: 24,
-									fontWeight: 700,
-									color: "var(--bt-color-text-heading)",
-								}}
-							>
-								{stat.value}
-							</p>
-							<p
-								style={{
-									margin: 0,
-									fontSize: 12,
-									color: "var(--bt-color-accent-default)",
-									fontWeight: 600,
-								}}
-							>
-								{stat.delta}
-							</p>
-						</div>
-					))}
-				</Grid>
+							{stat.delta}
+						</p>
+					</div>
+				))}
+			</Grid>
 
-				{/* Tabs section */}
-				<div
-					style={{
-						background: "var(--bt-color-bg-solid)",
-						borderRadius: 12,
-						border: "1px solid var(--bt-color-border-default)",
-						padding: "24px",
-					}}
-				>
-					<Tabs defaultValue="recent">
-						<TabList>
-							<Tab value="recent">최근 주문</Tab>
-							<Tab value="pending">처리 대기</Tab>
-							<Tab value="completed">완료</Tab>
-						</TabList>
-						<TabPanel value="recent">
-							<Stack gap={12} style={{ marginTop: 16 }}>
-								{[
-									{ id: "#1024", customer: "김민준", amount: "₩42,000", status: "processing" },
-									{ id: "#1023", customer: "이서연", amount: "₩18,500", status: "completed" },
-									{ id: "#1022", customer: "박지훈", amount: "₩67,000", status: "pending" },
-								].map((order) => (
-									<Stack
-										key={order.id}
-										direction="horizontal"
-										align="center"
-										justify="between"
-										gap={0}
-										style={{
-											padding: "12px 16px",
-											background: "var(--bt-color-bg-solid-dim)",
-											borderRadius: 8,
-										}}
-									>
-										<Stack direction="horizontal" gap={12} align="center">
-											<Avatar name={order.customer} size="sm" />
-											<Stack gap={2}>
-												<span style={{ fontSize: 14, fontWeight: 600 }}>{order.customer}</span>
-												<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-													{order.id}
-												</span>
-											</Stack>
-										</Stack>
-										<Stack direction="horizontal" gap={12} align="center">
-											<span style={{ fontSize: 14, fontWeight: 600 }}>{order.amount}</span>
-											<Chip
-												type="static"
-												size="sm"
-												tone={
-													order.status === "completed"
-														? "success"
-														: order.status === "processing"
-															? "accent"
-															: "warning"
-												}
-												label={
-													order.status === "completed"
-														? "완료"
-														: order.status === "processing"
-															? "처리중"
-															: "대기"
-												}
-											/>
+			{/* Tabs section */}
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid)",
+					borderRadius: 12,
+					border: "1px solid var(--bt-color-border-default)",
+					padding: "24px",
+				}}
+			>
+				<Tabs defaultValue="recent">
+					<TabList>
+						<Tab value="recent">최근 주문</Tab>
+						<Tab value="pending">처리 대기</Tab>
+						<Tab value="completed">완료</Tab>
+					</TabList>
+					<TabPanel value="recent">
+						<Stack gap={12} style={{ marginTop: 16 }}>
+							{[
+								{ id: "#1024", customer: "김민준", amount: "₩42,000", status: "processing" },
+								{ id: "#1023", customer: "이서연", amount: "₩18,500", status: "completed" },
+								{ id: "#1022", customer: "박지훈", amount: "₩67,000", status: "pending" },
+							].map((order) => (
+								<Stack
+									key={order.id}
+									direction="horizontal"
+									align="center"
+									justify="between"
+									gap={0}
+									style={{
+										padding: "12px 16px",
+										background: "var(--bt-color-bg-solid-dim)",
+										borderRadius: 8,
+									}}
+								>
+									<Stack direction="horizontal" gap={12} align="center">
+										<Avatar name={order.customer} size="sm" />
+										<Stack gap={2}>
+											<span style={{ fontSize: 14, fontWeight: 600 }}>{order.customer}</span>
+											<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+												{order.id}
+											</span>
 										</Stack>
 									</Stack>
-								))}
-							</Stack>
-						</TabPanel>
-						<TabPanel value="pending">
-							<EmptyState
-								title="처리 대기 주문 없음"
-								description="모든 주문이 처리되었습니다."
-								style={{ padding: "32px 0" }}
-							/>
-						</TabPanel>
-						<TabPanel value="completed">
-							<EmptyState
-								title="완료된 주문"
-								description="오늘 완료된 주문이 없습니다."
-								style={{ padding: "32px 0" }}
-							/>
-						</TabPanel>
-					</Tabs>
-				</div>
+									<Stack direction="horizontal" gap={12} align="center">
+										<span style={{ fontSize: 14, fontWeight: 600 }}>{order.amount}</span>
+										<Chip
+											type="static"
+											size="sm"
+											tone={
+												order.status === "completed"
+													? "success"
+													: order.status === "processing"
+														? "accent"
+														: "warning"
+											}
+											label={
+												order.status === "completed"
+													? "완료"
+													: order.status === "processing"
+														? "처리중"
+														: "대기"
+											}
+										/>
+									</Stack>
+								</Stack>
+							))}
+						</Stack>
+					</TabPanel>
+					<TabPanel value="pending">
+						<EmptyState
+							title="처리 대기 주문 없음"
+							description="모든 주문이 처리되었습니다."
+							style={{ padding: "32px 0" }}
+						/>
+					</TabPanel>
+					<TabPanel value="completed">
+						<EmptyState
+							title="완료된 주문"
+							description="오늘 완료된 주문이 없습니다."
+							style={{ padding: "32px 0" }}
+						/>
+					</TabPanel>
+				</Tabs>
 			</div>
-		</div>
+		</AppShell>
 	),
 };

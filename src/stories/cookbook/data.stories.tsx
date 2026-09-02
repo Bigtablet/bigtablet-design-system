@@ -3,7 +3,6 @@ import {
 	CheckCircle2,
 	Circle,
 	Clock,
-	MoreHorizontal,
 	Package,
 	TrendingDown,
 	TrendingUp,
@@ -11,16 +10,13 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Avatar } from "../../ui/display/avatar";
-import { Badge } from "../../ui/display/badge";
 import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
 import { DataView } from "../../ui/display/data-view";
 import { Divider } from "../../ui/display/divider";
 import type { TableColumn } from "../../ui/display/table";
-import { IconButton } from "../../ui/general/icon-button";
 import { Grid } from "../../ui/layout/grid";
 import { Stack } from "../../ui/layout/stack";
-import { Menu } from "../../ui/navigation/menu";
 
 const meta: Meta = {
 	title: "Cookbook/Data Display",
@@ -73,7 +69,7 @@ const USERS = [
 	},
 ];
 
-const STATUS_VARIANT = {
+const _STATUS_VARIANT = {
 	online: "success" as const,
 	away: "warning" as const,
 	offline: "neutral" as const,
