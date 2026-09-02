@@ -17,6 +17,40 @@
 
 ---
 
+## Public surface — what you may rely on
+
+| Surface | Stable? | Notes |
+| --- | --- | --- |
+| Exported components and their props | **Yes** | TypeScript types are the contract. A removed or renamed prop is a major |
+| SCSS tokens (`@bigtablet/design-system/scss/token`) | **Yes** | Added in minors, removed only in majors |
+| CSS variables (`--bt-*`) from `style.css` | **Yes** | The Vanilla bundle defines a subset — see the Spacing section |
+| Vanilla `bt-*` classes (`/vanilla`) | **Yes** | That bundle's whole API is its classes |
+| **React DOM structure and `component_part` classes** | **No** | `.modal_panel`, `.textarea_container`, `.text_field_input` … internal. They move in patches |
+
+### Do not style DS internals from your app
+
+Reaching into a React component's DOM — overriding `.textarea_container`, shaving a
+radius, wrapping the component to add a focus ring — breaks silently. There is no type
+error when a class is renamed; only the screen changes. Three of these were live in one
+consumer app at once (Bigtablet/bigtablet-design-system#544).
+
+**If you have to reach inside, the component is missing a prop.** File an issue with the
+markup you had to write. `Textarea`'s `toolbar` slot exists because a formatting bar
+needed the border, radius, and `:focus-within` that only the internal container had.
+
+### Checking what a version gives you
+
+```bash
+# props your installed version actually has
+grep -A30 "interface TextareaProps" node_modules/@bigtablet/design-system/dist/index.d.ts
+
+# what changed, and which lines need a visual check
+#   entries starting with "(렌더 변경)" alter rendering with no API change
+cat node_modules/@bigtablet/design-system/CHANGELOG.md   # or the GitHub releases page
+```
+
+---
+
 ## Install & Bootstrap
 
 ```bash
