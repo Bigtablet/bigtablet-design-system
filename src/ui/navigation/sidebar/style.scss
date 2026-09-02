@@ -242,6 +242,13 @@
     );
   }
 
+  // BottomBar 로 변신했을 때만 DS 하단 inset 채널을 채운다 - BottomNav 와 같은 방식.
+  // 이게 없으면 하단 고정 크롬이 있는데도 `--bt-bottom-inset` 이 0 이라, 소비처의 플로팅
+  // 요소와 본문 끝이 BottomBar 아래로 가린다. static 모드는 변신하지 않으니 제외한다.
+  body:has(.sidebar:not(.sidebar_static)) {
+    --bt-sidebar-inset: var(--bt-sidebar-total-height);
+  }
+
   .sidebar:not(.sidebar_static) {
     // BottomBar 본체 - fixed bottom, 가로 flex
     position: fixed;

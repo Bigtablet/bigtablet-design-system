@@ -121,6 +121,7 @@
   // `body:has(.floating_bar)` 가 특이도 (0,1,1) 로 동일해져 CSS 로드 순서가 승자를 정하고,
   // 둘이 동시에 있을 때 한쪽이 다른 쪽을 덮는다. 그래서 분리한다.
   --bt-bottom-nav-inset: 0px; // DS 몫 - BottomNav 가 있으면 그 스타일시트가 채운다
+  --bt-sidebar-inset: 0px;    // DS 몫 - Sidebar 가 BottomBar 로 변신하면 그 스타일시트가 채운다
   --bt-bottom-inset-app: 0px; // 앱 몫 - 플로팅 바·고정 액션 바 등 앱이 소유한 하단 크롬
 
   // 쌓임 순서. 값이 결정되는 곳은 CSS 라서, SCSS 를 쓰지 않는 소비자(인라인 스타일, 런타임
@@ -141,7 +142,8 @@
 // 일반적이다. 겹치는 배치라면 앱이 자기 몫에 `max()` 를 직접 쓰면 된다.
 body {
   --bt-bottom-inset: calc(
-    var(--bt-bottom-nav-inset, 0px) + var(--bt-bottom-inset-app, 0px)
+    var(--bt-bottom-nav-inset, 0px) + var(--bt-sidebar-inset, 0px) +
+      var(--bt-bottom-inset-app, 0px)
   );
 }
 
