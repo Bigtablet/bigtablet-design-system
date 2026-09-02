@@ -3,6 +3,20 @@ import { Bell, Home, ShoppingCart } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 import { BottomNav, BottomNavItem, BottomNavSpacer } from "./index";
 
+/** Next.js `Link` 대역. 라우터 링크는 결국 `<a>` 를 렌더하는 컴포넌트다. */
+const RouterLink = ({
+	href,
+	children,
+	...rest
+}: {
+	href: string;
+	children?: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+	<a data-router="true" href={href} {...rest}>
+		{children}
+	</a>
+);
+
 describe("BottomNav", () => {
 	it("renders nav with aria-label", () => {
 		render(
@@ -148,5 +162,34 @@ describe("BottomNavSpacer", () => {
 	it("accepts className", () => {
 		const { container } = render(<BottomNavSpacer className="extra" />);
 		expect(container.firstChild).toHaveClass("bottom_nav_spacer", "extra");
+	});
+
+	it("renders a component given to as", () => {
+		render(<BottomNavItem as={RouterLink} href="/home" icon={<span />} label="홈" active />);
+
+		const link = screen.getByRole("link", { name: /홈/ });
+		expect(link).toHaveAttribute("data-router", "true");
+		expect(link).toHaveAttribute("aria-current", "page");
+	});
+
+	it("blocks a disabled component link without native disabled", () => {
+		const onClick = vi.fn();
+		render(
+			<BottomNavItem
+				as={RouterLink}
+				href="/home"
+				icon={<span />}
+				label="홈"
+				disabled
+				onClick={onClick}
+			/>,
+		);
+
+		const link = screen.getByRole("link", { name: /홈/ });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).not.toHaveAttribute("disabled");
+
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
 	});
 });

@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type ButtonVariant = "filled" | "tonal" | "outline" | "text";
@@ -33,44 +34,45 @@ interface ButtonBaseProps {
 	disabled?: boolean;
 }
 
-/** `<button>` 으로 렌더링 (기본) */
-export interface ButtonAsButton
-	extends ButtonBaseProps,
-		Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> {
-	/** 렌더링할 요소 (기본값: "button") */
-	as?: "button";
-	/** button 렌더 시엔 href 를 허용하지 않음 (href 만 주면 anchor 로 분기되도록) */
-	href?: never;
-	/** 루트 button 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLButtonElement>;
-}
-
-/** `<a>` 로 렌더링 - 링크 시맨틱(우클릭 새 탭·미들클릭·SR 링크 안내) */
-export interface ButtonAsAnchor
-	extends ButtonBaseProps,
-		Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> {
-	/** anchor 로 렌더링 - 생략 가능(href 만 줘도 anchor 로 분기) */
-	as?: "a";
-	/** 링크 대상 (anchor 필수) */
-	href: string;
-	/** 루트 anchor 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLAnchorElement>;
-}
+/**
+ * Button props. `as` 로 렌더 요소를 바꾼다 - `"a"`, `Link`(Next.js) 등 무엇이든.
+ *
+ * `as` 를 주지 않으면 `<button>` 이고, `href` 만 주면 `<a>` 로 간다(예전부터 지원한 경로다).
+ * 그 경로를 유니온으로 만들면 `ref={(el) => …}` 의 파라미터 추론이 깨진다 - 기본 케이스에만
+ * `href` 를 더하는 조건부 교차로 두면 타입이 하나로 남아 추론이 유지된다.
+ */
+export type ButtonProps<T extends React.ElementType = "button"> = PolymorphicProps<
+	T,
+	ButtonBaseProps
+> &
+	("button" extends T ? { href?: string } : Record<never, never>);
 
 /**
- * Button props - `as`/`href` 에 따라 button 또는 anchor 로 렌더링되는 discriminated union.
- * `as` 미지정 시 기본 `<button>` (기존 동작과 100% 호환).
+ * @deprecated `ButtonProps<"button">` 을 쓰세요. 리터럴 유니온 시절의 이름입니다.
  */
-export type ButtonProps = ButtonAsButton | ButtonAsAnchor;
+export type ButtonAsButton = ButtonProps<"button">;
+
+/**
+ * @deprecated `ButtonProps<"a">` 을 쓰세요. 리터럴 유니온 시절의 이름입니다.
+ */
+export type ButtonAsAnchor = ButtonProps<"a">;
 
 /**
  * 버튼을 렌더링한다.
  * Figma DS 기준 4가지 variant(filled/tonal/outline/text)와 4가지 size(sm/md/lg/xl)를 지원한다.
- * `as="a"` (또는 `href` 지정) 시 동일 스타일의 anchor 로 렌더링한다.
- * @param props 버튼 속성
- * @returns 렌더링된 button 또는 anchor 요소
+ *
+ * `as` 로 렌더 요소를 바꾼다 - `as="a"`(또는 `href` 만 지정)는 anchor, `as={Link}` 는 라우터 링크.
+ *
+ * **native `disabled` 는 `<button>` 에만 준다.** 그 밖의 요소에는 `aria-disabled` +
+ * `tabIndex={-1}` + 클릭 차단으로 처리한다 - anchor 와 커스텀 컴포넌트에는 native disabled 가
+ * 없어서 그냥 넘기면 조용히 무시되고 비활성 버튼이 눌린다.
+ *
+ * @example
+ * ```tsx
+ * <Button as={Link} href="/orders">주문 보기</Button>
+ * ```
  */
-export const Button = (props: ButtonProps) => {
+export const Button = <T extends React.ElementType = "button">(props: ButtonProps<T>) => {
 	const {
 		variant = "filled",
 		size = "md",
@@ -115,42 +117,44 @@ export const Button = (props: ButtonProps) => {
 		</>
 	);
 
-	// as="a" 또는 (as 미지정 + href 존재) 시 anchor 로 렌더링
+	// 렌더할 요소를 정한다. `as` 가 없고 `href` 만 있으면 anchor - 기존 동작 그대로.
 	const anchorRest = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
-	const renderAnchor = as === "a" || (as === undefined && anchorRest.href != null);
+	const Tag = (as ?? (anchorRest.href != null ? "a" : "button")) as React.ElementType;
 
-	if (renderAnchor) {
-		// anchor 엔 native disabled 가 없어 aria-disabled + tabIndex=-1 + 클릭 차단으로 비활성
-		// 처리 (BottomNavItem 과 동일 패턴). href 는 유지해 link 시맨틱을 보존하되 클릭 내비게이션은
-		// preventDefault 로 막고, pointer-events:none(.button_disabled) 로 hover/포인터도 차단.
-		const { onClick, tabIndex, ...anchorProps } = anchorRest;
+	// native `disabled` 는 `<button>` 만 이해한다. anchor 나 커스텀 컴포넌트에 넘기면 조용히
+	// 무시되고 비활성 버튼이 눌린다 - 그쪽은 aria-disabled + tabIndex=-1 + 클릭 차단으로 막는다.
+	if (Tag === "button") {
+		// `as="button"` 과 `href` 를 함께 준 경우 href 를 버린다 - `<button href>` 는 유효하지
+		// 않은 HTML 이다. 렌더 요소는 `as` 가 정하므로 href 는 여기서 의미가 없다.
+		const {
+			type = "button",
+			href: _href,
+			...buttonRest
+		} = rest as React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string };
 		return (
-			<a
-				{...anchorProps}
-				ref={ref as React.Ref<HTMLAnchorElement>}
+			<button
+				ref={ref as React.Ref<HTMLButtonElement>}
+				type={type}
+				disabled={disabled}
 				className={buttonClassName}
-				aria-disabled={disabled || undefined}
-				tabIndex={disabled ? -1 : tabIndex}
-				onClick={
-					disabled ? (e: React.MouseEvent<HTMLAnchorElement>) => e.preventDefault() : onClick
-				}
+				{...buttonRest}
 			>
 				{content}
-			</a>
+			</button>
 		);
 	}
 
-	const { type = "button", ...buttonRest } = rest as React.ButtonHTMLAttributes<HTMLButtonElement>;
-
+	const { onClick, tabIndex, ...tagProps } = anchorRest;
 	return (
-		<button
-			ref={ref as React.Ref<HTMLButtonElement>}
-			type={type}
-			disabled={disabled}
+		<Tag
+			{...tagProps}
+			ref={ref}
 			className={buttonClassName}
-			{...buttonRest}
+			aria-disabled={disabled || undefined}
+			tabIndex={disabled ? -1 : tabIndex}
+			onClick={disabled ? (event: React.MouseEvent) => event.preventDefault() : onClick}
 		>
 			{content}
-		</button>
+		</Tag>
 	);
 };

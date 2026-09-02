@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -137,24 +138,26 @@ interface SidebarItemCommon {
 	trailing?: React.ReactNode;
 }
 
-// Discriminated union - `as` 값에 따라 허용되는 HTML attribute 동적 결정.
-// `target` / `rel` / `download` 는 anchor 만, `type` / `form` 등은 button 만.
-type SidebarItemButton = SidebarItemCommon & {
-	as?: "button";
-	href?: never;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+/**
+ * SidebarItem props. `as` 로 렌더 요소를 바꾼다 - `"a"`, `Link`(Next.js) 등 무엇이든.
+ *
+ * 리터럴 유니온(`"button" | "a"`)이었을 때는 Next 앱에서 사이드바 항목을 라우터 링크로 만들
+ * 방법이 없어, 소비자가 DS 를 우회해 자기 항목을 만들었다.
+ */
+export type SidebarItemProps<T extends React.ElementType = "button"> = PolymorphicProps<
+	T,
+	SidebarItemCommon
+> &
+	("button" extends T ? { href?: string } : Record<never, never>);
 
-type SidebarItemAnchor = SidebarItemCommon & {
-	as: "a";
-	href: string;
-} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type">;
-
-export type SidebarItemProps = SidebarItemButton | SidebarItemAnchor;
-
-export const SidebarItem = (props: SidebarItemProps) => {
-	const { icon, active, trailing, as = "button", className, children, ...rest } = props;
+export const SidebarItem = <T extends React.ElementType = "button">(props: SidebarItemProps<T>) => {
+	const { icon, active, trailing, as, className, children, ref, ...rest } = props;
 	const classes = cn("sidebar_item", active && "sidebar_item_active", className);
 	const ariaCurrent = active ? "page" : undefined;
+
+	// `as` 가 없고 `href` 만 있으면 anchor - 예전 판별 유니온과 같은 추론이다.
+	const anchorRest = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+	const Tag = (as ?? (anchorRest.href != null ? "a" : "button")) as React.ElementType;
 
 	const inner = (
 		<>
@@ -168,26 +171,30 @@ export const SidebarItem = (props: SidebarItemProps) => {
 		</>
 	);
 
-	if (as === "a") {
-		const { href, ...anchorRest } = rest as Omit<
-			SidebarItemAnchor,
-			"icon" | "active" | "trailing" | "as" | "className" | "children"
-		>;
+	if (Tag === "button") {
+		// `<button href>` 는 유효하지 않다 - 렌더 요소는 `as` 가 정하므로 여기서 href 는 버린다.
+		const {
+			type,
+			href: _href,
+			...buttonRest
+		} = rest as React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string };
 		return (
-			<a className={classes} href={href} aria-current={ariaCurrent} {...anchorRest}>
+			<button
+				ref={ref as React.Ref<HTMLButtonElement>}
+				type={type ?? "button"}
+				className={classes}
+				aria-current={ariaCurrent}
+				{...buttonRest}
+			>
 				{inner}
-			</a>
+			</button>
 		);
 	}
 
-	const { type, ...buttonRest } = rest as Omit<
-		SidebarItemButton,
-		"icon" | "active" | "trailing" | "as" | "className" | "children"
-	>;
 	return (
-		<button type={type ?? "button"} className={classes} aria-current={ariaCurrent} {...buttonRest}>
+		<Tag ref={ref} className={classes} aria-current={ariaCurrent} {...anchorRest}>
 			{inner}
-		</button>
+		</Tag>
 	);
 };
 

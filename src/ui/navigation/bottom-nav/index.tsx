@@ -4,6 +4,7 @@ import type * as React from "react";
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 
 export interface BottomNavProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
 	/** 스크린 리더 레이블 (기본 "주요 메뉴") */
@@ -55,28 +56,26 @@ interface BottomNavItemCommon {
 	badge?: React.ReactNode;
 }
 
-// Discriminated union - `as` 값에 따라 허용되는 HTML attribute 가 동적으로 결정됨.
-// `target` / `rel` / `download` 는 anchor 에만, `type` / `form` 등은 button 에만 허용.
-type BottomNavItemButton = BottomNavItemCommon & {
-	as?: "button";
-	href?: never;
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">;
-
-type BottomNavItemAnchor = BottomNavItemCommon & {
-	as: "a";
-	href: string;
-	/** anchor 에 native `disabled` 없음 - `aria-disabled` + `preventDefault` 로 처리. */
-	disabled?: boolean;
-} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "type">;
-
-export type BottomNavItemProps = BottomNavItemButton | BottomNavItemAnchor;
+/**
+ * BottomNavItem props. `as` 로 렌더 요소를 바꾼다 - `"a"`, `Link`(Next.js) 등 무엇이든.
+ *
+ * `disabled` 는 여기 남는다 - anchor·커스텀 컴포넌트에는 native `disabled` 가 없어
+ * `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리해야 하기 때문이다.
+ */
+export type BottomNavItemProps<T extends React.ElementType = "button"> = PolymorphicProps<
+	T,
+	BottomNavItemCommon & { disabled?: boolean }
+> &
+	("button" extends T ? { href?: string } : Record<never, never>);
 
 /**
  * `BottomNav` 의 항목. icon + label 수직 스택.
  * active 시 `aria-current="page"` 자동 부여.
  */
-export const BottomNavItem = (props: BottomNavItemProps) => {
-	const { icon, label, active, badge, as = "button", className, disabled, ...rest } = props;
+export const BottomNavItem = <T extends React.ElementType = "button">(
+	props: BottomNavItemProps<T>,
+) => {
+	const { icon, label, active, badge, as, className, disabled, ref, ...rest } = props;
 
 	const classes = cn(
 		"bottom_nav_item",
@@ -85,6 +84,10 @@ export const BottomNavItem = (props: BottomNavItemProps) => {
 		className,
 	);
 	const ariaCurrent = active ? "page" : undefined;
+
+	// `as` 가 없고 `href` 만 있으면 anchor - 예전 판별 유니온과 같은 추론이다.
+	const anchorRest = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+	const Tag = (as ?? (anchorRest.href != null ? "a" : "button")) as React.ElementType;
 
 	const content = (
 		<>
@@ -96,48 +99,49 @@ export const BottomNavItem = (props: BottomNavItemProps) => {
 		</>
 	);
 
-	if (as === "a") {
-		// HTML 의 `<a disabled>` 는 무효 - `aria-disabled` + `tabIndex={-1}` + `preventDefault` 로 접근성 있게 비활성화.
-		const { href, onClick, ...anchorRest } = rest as Omit<
-			BottomNavItemAnchor,
-			"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"
-		>;
+	if (Tag === "button") {
+		// `<button href>` 는 유효하지 않다 - 렌더 요소는 `as` 가 정하므로 여기서 href 는 버린다.
+		const {
+			type,
+			onClick,
+			href: _href,
+			...buttonRest
+		} = rest as React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string };
 		return (
-			<a
+			<button
+				ref={ref as React.Ref<HTMLButtonElement>}
+				type={type ?? "button"}
 				className={classes}
-				href={href}
+				disabled={disabled}
 				aria-current={ariaCurrent}
-				aria-disabled={disabled ? "true" : undefined}
-				tabIndex={disabled ? -1 : undefined}
-				onClick={(e) => {
-					if (disabled) {
-						e.preventDefault();
-						return;
-					}
-					onClick?.(e);
-				}}
-				{...anchorRest}
+				onClick={onClick}
+				{...buttonRest}
 			>
 				{content}
-			</a>
+			</button>
 		);
 	}
 
-	const { type, onClick, ...buttonRest } = rest as Omit<
-		BottomNavItemButton,
-		"icon" | "label" | "active" | "badge" | "as" | "className" | "disabled"
-	>;
+	// native `disabled` 가 없는 요소 - aria-disabled + tabIndex=-1 + 클릭 차단으로 비활성화한다.
+	const { onClick, tabIndex, ...tagProps } = anchorRest;
 	return (
-		<button
-			type={type ?? "button"}
+		<Tag
+			{...tagProps}
+			ref={ref}
 			className={classes}
-			disabled={disabled}
 			aria-current={ariaCurrent}
-			onClick={onClick}
-			{...buttonRest}
+			aria-disabled={disabled ? "true" : undefined}
+			tabIndex={disabled ? -1 : tabIndex}
+			onClick={(event: React.MouseEvent) => {
+				if (disabled) {
+					event.preventDefault();
+					return;
+				}
+				onClick?.(event as React.MouseEvent<HTMLAnchorElement>);
+			}}
 		>
 			{content}
-		</button>
+		</Tag>
 	);
 };
 

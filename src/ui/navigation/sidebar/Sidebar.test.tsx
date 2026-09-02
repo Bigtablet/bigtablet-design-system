@@ -2,6 +2,20 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Sidebar, SidebarItem, SidebarSection } from "./index";
 
+/** Next.js `Link` 대역. 라우터 링크는 결국 `<a>` 를 렌더하는 컴포넌트다. */
+const RouterLink = ({
+	href,
+	children,
+	...rest
+}: {
+	href: string;
+	children?: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+	<a data-router="true" href={href} {...rest}>
+		{children}
+	</a>
+);
+
 describe("Sidebar", () => {
 	it("renders header, items, and footer", () => {
 		render(
@@ -84,5 +98,25 @@ describe("Sidebar", () => {
 			</Sidebar>,
 		);
 		expect(container.firstChild).not.toHaveClass("sidebar_static");
+	});
+
+	it("renders a component given to as", () => {
+		// 리터럴 유니온이었을 때는 Next 앱에서 사이드바 항목을 라우터 링크로 만들 수 없었다.
+		render(
+			<SidebarItem as={RouterLink} href="/orders" active>
+				주문
+			</SidebarItem>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("data-router", "true");
+		expect(link).toHaveClass("sidebar_item", "sidebar_item_active");
+		expect(link).toHaveAttribute("aria-current", "page");
+	});
+
+	it("still infers an anchor from href alone", () => {
+		render(<SidebarItem href="/orders">주문</SidebarItem>);
+
+		expect(screen.getByRole("link", { name: "주문" })).toHaveAttribute("href", "/orders");
 	});
 });

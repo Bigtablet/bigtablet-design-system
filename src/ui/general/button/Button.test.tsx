@@ -2,6 +2,20 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "./index";
 
+/** Next.js `Link` 대역. 라우터 링크는 결국 `<a>` 를 렌더하는 컴포넌트다. */
+const RouterLink = ({
+	href,
+	children,
+	...rest
+}: {
+	href: string;
+	children?: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+	<a data-router="true" href={href} {...rest}>
+		{children}
+	</a>
+);
+
 describe("Button", () => {
 	it("renders with default props", () => {
 		render(<Button>Click me</Button>);
@@ -246,5 +260,49 @@ describe("Button", () => {
 			expect(handleClick).not.toHaveBeenCalled();
 			expect(clickEvent.defaultPrevented).toBe(true);
 		});
+	});
+
+	it("renders a component given to as", () => {
+		// 리터럴 유니온이었을 때는 이게 불가능해, Next 앱이 DS 를 우회해 자기 버튼을 만들었다.
+		render(
+			<Button as={RouterLink} href="/orders">
+				주문
+			</Button>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("data-router", "true");
+		expect(link).toHaveAttribute("href", "/orders");
+		expect(link).toHaveClass("button");
+	});
+
+	it("does not hand native disabled to a non-button element", () => {
+		// anchor·커스텀 컴포넌트에는 native disabled 가 없다. 그냥 넘기면 조용히 무시되고
+		// 비활성 버튼이 눌린다.
+		const onClick = vi.fn();
+		render(
+			<Button as={RouterLink} href="/orders" disabled onClick={onClick}>
+				주문
+			</Button>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).toHaveAttribute("tabindex", "-1");
+		expect(link).not.toHaveAttribute("disabled");
+
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("drops href when as says button", () => {
+		// `<button href>` 는 유효하지 않은 HTML 이다.
+		render(
+			<Button as="button" href="/orders">
+				주문
+			</Button>,
+		);
+
+		expect(screen.getByRole("button", { name: "주문" })).not.toHaveAttribute("href");
 	});
 });
