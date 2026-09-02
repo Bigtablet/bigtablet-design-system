@@ -37,6 +37,19 @@ describe("TagInput", () => {
 		expect(onSubmit).not.toHaveBeenCalled();
 	});
 
+	it("commits on a comma keystroke as well as Enter", () => {
+		// 쉼표는 문자로 남지 않고 태그가 된다. 남으면 draft 안에 구분자가 섞여
+		// 화면상 태그가 안 만들어진 것처럼 보인다.
+		render(<TagInput />);
+
+		type("react");
+		const event = fireEvent.keyDown(field(), { key: "," });
+
+		expect(event).toBe(false); // preventDefault - 쉼표 문자가 입력에 남지 않는다
+		expect(tagLabels()).toEqual(["react"]);
+		expect(field()).toHaveValue("");
+	});
+
 	it("does not build a tag while the IME is composing", () => {
 		// 한글 입력에서 Enter 는 조합 확정용이다. 여기서 태그를 만들면 '한' 이 태그가 되고
 		// 사용자가 치려던 '한글' 은 사라진다.
@@ -98,6 +111,55 @@ describe("TagInput", () => {
 		fireEvent.paste(field(), { clipboardData: { getData: () => "c,d" } });
 		expect(tagLabels()).toEqual(["a", "b"]);
 		expect(screen.getByRole("status")).toHaveTextContent("최대 2개까지 추가할 수 있습니다");
+	});
+
+	it("says the cap is reached at the moment it fills up", () => {
+		// 한도를 채운 뒤 입력이 readOnly 로 바뀐다. 그 시점에 이유를 말하지 않으면
+		// 다음에 타이핑을 시도할 때까지 고장으로 읽힌다.
+		render(<TagInput defaultValue={["a"]} maxTags={2} />);
+
+		type("b");
+		enter();
+
+		expect(screen.getByRole("status")).toHaveTextContent(
+			"b 추가됨 (최대 2개까지 추가할 수 있습니다)",
+		);
+		expect(field()).toHaveAttribute("readonly");
+	});
+
+	it("says which pasted values were dropped at the cap", () => {
+		// 일부만 들어가면 화면에는 성공처럼 보인다. 버려진 후보를 알려야 한다.
+		render(<TagInput defaultValue={["a"]} maxTags={3} />);
+
+		fireEvent.paste(field(), { clipboardData: { getData: () => "b,c,d,e" } });
+
+		expect(tagLabels()).toEqual(["a", "b", "c"]);
+		expect(screen.getByRole("status")).toHaveTextContent(
+			"b, c 추가됨 (최대 3개까지 추가할 수 있습니다)",
+		);
+	});
+
+	it("says a rejected value was already there", () => {
+		// 중복은 조용히 버려지고 draft 도 남는다. 화면상 Enter 가 먹지 않은 것처럼 보인다.
+		render(<TagInput defaultValue={["a"]} />);
+
+		type("a");
+		enter();
+
+		expect(tagLabels()).toEqual(["a"]);
+		expect(screen.getByRole("status")).toHaveTextContent("a 이미 있음");
+	});
+
+	it("pastes at the caret instead of appending to the draft", () => {
+		// draft "ab" 의 a|b 사이에 "x,y" 를 붙여넣으면 ax / yb 가 되어야 한다.
+		render(<TagInput />);
+
+		const input = field() as HTMLInputElement;
+		type("ab");
+		input.setSelectionRange(1, 1);
+		fireEvent.paste(input, { clipboardData: { getData: () => "x,y" } });
+
+		expect(tagLabels()).toEqual(["ax", "yb"]);
 	});
 
 	it("commits a leftover draft on blur", () => {

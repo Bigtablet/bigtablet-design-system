@@ -99,24 +99,43 @@ export const TagInput = ({
 
 		const next = [...tags];
 		const added: string[] = [];
+		const duplicates: string[] = [];
 		for (const candidate of candidates) {
 			if (maxTags !== undefined && next.length >= maxTags) break;
-			// 중복은 조용히 버린다 - 이미 화면에 같은 칩이 있어 사용자가 결과를 볼 수 있다.
-			if (!allowDuplicates && next.includes(candidate)) continue;
+			if (!allowDuplicates && next.includes(candidate)) {
+				duplicates.push(candidate);
+				continue;
+			}
 			next.push(candidate);
 			added.push(candidate);
 		}
 
+		const isAtCap = maxTags !== undefined && next.length >= maxTags;
+
 		if (added.length === 0) {
-			// 개수 제한에 막혀 하나도 못 넣은 경우. 입력이 readOnly 로 바뀌는 것만으로는
-			// 이유를 알 수 없어, 왜 안 들어갔는지 알려 준다.
-			if (maxTags !== undefined && next.length >= maxTags) {
+			// 아무것도 안 들어간 두 경로 모두 화면에 아무 변화가 없다. 왜 안 들어갔는지
+			// 말해 주지 않으면 사용자는 Enter 가 먹지 않은 것으로 읽는다.
+			if (isAtCap) {
 				setAnnouncement(`최대 ${maxTags}개까지 추가할 수 있습니다`);
+			} else if (duplicates.length > 0) {
+				setAnnouncement(`${duplicates.join(", ")} 이미 있음`);
 			}
 			return 0;
 		}
+
 		setTags(next);
-		setAnnouncement(`${added.join(", ")} 추가됨`);
+		// 한도를 채운 순간에 그 사실을 함께 알린다. 채운 뒤 입력이 readOnly 로 바뀌는데,
+		// 나중에 다시 시도할 때까지 이유를 모르면 고장으로 읽힌다. 붙여넣기가 중간에서
+		// 잘린 경우도 여기 걸린다 - 남은 후보는 조용히 버려지기 때문이다.
+		const notes = [
+			duplicates.length > 0 ? `${duplicates.join(", ")} 이미 있음` : "",
+			isAtCap ? `최대 ${maxTags}개까지 추가할 수 있습니다` : "",
+		].filter(Boolean);
+		setAnnouncement(
+			notes.length > 0
+				? `${added.join(", ")} 추가됨 (${notes.join(", ")})`
+				: `${added.join(", ")} 추가됨`,
+		);
 		return added.length;
 	};
 
@@ -148,7 +167,13 @@ export const TagInput = ({
 		// 구분자가 없으면 그냥 타이핑처럼 두고, 있을 때만 가로채 여러 태그로 나눈다.
 		if (!SEPARATORS.test(text)) return;
 		event.preventDefault();
-		if (addTags(`${draft}${text}`) > 0) setDraft("");
+		// 캐럿 위치와 선택 영역을 그대로 존중한다. 항상 뒤에 이어붙이면 draft 중간에
+		// 붙여넣었을 때 사용자가 만들려던 것과 다른 태그가 나온다.
+		const input = event.currentTarget;
+		const start = input.selectionStart ?? draft.length;
+		const end = input.selectionEnd ?? draft.length;
+		const merged = `${draft.slice(0, start)}${text}${draft.slice(end)}`;
+		if (addTags(merged) > 0) setDraft("");
 	};
 
 	const rootClassName = cn(

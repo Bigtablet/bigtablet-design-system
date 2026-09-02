@@ -38,8 +38,14 @@
     }
   }
 
+  // `display: contents` 로 칩을 컨트롤의 flex 줄에 직접 올리지 않는다 - 일부
+  // 브라우저·스크린리더 조합에서 ul 박스가 사라지며 "N개 목록" 안내까지 함께 사라진다.
+  // 자체 flex 로 감싸면 시맨틱을 지키면서 같은 줄 배치가 된다.
   &_tags {
-    display: contents;
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_4;
+    min-width: 0;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -51,7 +57,7 @@
 
   &_field {
     // 태그가 줄을 채우면 입력이 다음 줄로 내려간다. 그때도 누를 만한 폭은 남겨 둔다.
-    flex: 1 1 6rem;
+    flex: 1 1 token.$spacing_96;
     min-width: 0;
     border: none;
     background: transparent;
