@@ -104,13 +104,17 @@ const Foo = ({ hint: hintProp }: FooProps) => {
   const hint = hintProp ?? t("foo.hint");
 ```
 
-`pnpm check:defaults` 가 네 가지를 막는다.
+키는 **섹션 안에서 알파벳순**으로 넣는다 (`combobox` → `datePicker` → `dateRange` → `dropdown` …).
+아무 데나 끼우면 다음 사람이 위치를 예측할 수 없다.
+
+`pnpm check:defaults` 가 다섯 가지를 막는다.
 
 1. 컴포넌트에 박아 넣은 한글 문구 — prop 기본값이든 JSX 안이든. **prop 이름으로 고르지 않는다**
    (`*Label`/`*Text` 패턴만 보던 시절 `rowClickHint`·`hint`·`label` 여섯 개가 그대로 새어 나갔다)
 2. 카탈로그 문구에 한글이 있는지
 3. 카탈로그 키 ↔ `t("...")` 호출 양방향 — 키만 넣고 배선을 잊거나, 없는 키를 부르는 것
-4. `docs/COMPONENTS.md` prop 표의 Default 열이 실제 기본값과 같은지
+4. 카탈로그 키가 섹션 안에서 알파벳순인지
+5. `docs/COMPONENTS.md` prop 표의 Default 열이 실제 기본값과 같은지
 
 개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아니다 — 사용자가 아니라 개발자가 읽는다.
 

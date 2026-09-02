@@ -17,8 +17,8 @@ export interface LocaleMessages {
 	"dataView.search": string;
 	"dataView.selectionSummary": string; // {count}
 	"table.empty": string;
-	"table.selectAll": string;
 	"table.rowClickHint": string;
+	"table.selectAll": string;
 	"table.selectRow": string; // {index}
 
 	// ── feedback ────────────────────────────────────────────────────────────
@@ -35,13 +35,13 @@ export interface LocaleMessages {
 	"combobox.idle": string;
 	"combobox.loading": string;
 	"combobox.placeholder": string;
-	"dateRange.end": string;
-	"dateRange.start": string;
 	"datePicker.day": string;
 	"datePicker.minDateSr": string; // {date}
 	"datePicker.month": string;
 	"datePicker.rangeUntilTodaySr": string;
 	"datePicker.year": string;
+	"dateRange.end": string;
+	"dateRange.start": string;
 	"dropdown.empty": string;
 	"dropdown.placeholder": string;
 	"dropdown.searchPlaceholder": string;
@@ -49,8 +49,8 @@ export interface LocaleMessages {
 	"fileInput.label": string;
 	"fileInput.removeImage": string;
 	"imageCropper.hint": string;
-	"imageCropper.noPanHint": string;
 	"imageCropper.label": string;
+	"imageCropper.noPanHint": string;
 	"imageCropper.zoom": string;
 	"imageCropper.zoomIn": string;
 	"imageCropper.zoomOut": string;
@@ -62,12 +62,12 @@ export interface LocaleMessages {
 	"tagInput.duplicate": string; // {names}
 	"tagInput.placeholder": string;
 	"tagInput.removed": string; // {name}
-	"timePicker.hour": string;
-	"timePicker.minute": string;
-	"timePicker.rangeSr": string;
 	"textField.clear": string;
 	"textField.passwordHide": string;
 	"textField.passwordShow": string;
+	"timePicker.hour": string;
+	"timePicker.minute": string;
+	"timePicker.rangeSr": string;
 
 	// ── navigation ──────────────────────────────────────────────────────────
 	"bottomNav.label": string;
@@ -94,8 +94,8 @@ export const ko: LocaleMessages = {
 	"dataView.search": "검색",
 	"dataView.selectionSummary": "{count}개 선택됨",
 	"table.empty": "데이터가 없습니다",
-	"table.selectAll": "전체 선택",
 	"table.rowClickHint": "클릭 가능한 행",
+	"table.selectAll": "전체 선택",
 	"table.selectRow": "{index}번째 행 선택",
 
 	"alert.cancel": "취소",
@@ -110,13 +110,13 @@ export const ko: LocaleMessages = {
 	"combobox.idle": "검색어를 입력하세요",
 	"combobox.loading": "검색 중",
 	"combobox.placeholder": "검색해서 선택",
-	"dateRange.end": "종료일",
-	"dateRange.start": "시작일",
 	"datePicker.day": "일",
 	"datePicker.minDateSr": "최소 날짜: {date}",
 	"datePicker.month": "월",
 	"datePicker.rangeUntilTodaySr": "오늘까지 선택 가능",
 	"datePicker.year": "년",
+	"dateRange.end": "종료일",
+	"dateRange.start": "시작일",
 	"dropdown.empty": "결과 없음",
 	"dropdown.placeholder": "선택…",
 	"dropdown.searchPlaceholder": "검색…",
@@ -124,8 +124,8 @@ export const ko: LocaleMessages = {
 	"fileInput.label": "파일 선택",
 	"fileInput.removeImage": "이미지 제거",
 	"imageCropper.hint": "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
-	"imageCropper.noPanHint": "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
 	"imageCropper.label": "이미지 위치와 배율 조정",
+	"imageCropper.noPanHint": "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
 	"imageCropper.zoom": "배율",
 	"imageCropper.zoomIn": "확대",
 	"imageCropper.zoomOut": "축소",
@@ -137,12 +137,12 @@ export const ko: LocaleMessages = {
 	"tagInput.duplicate": "{names} 이미 있음",
 	"tagInput.placeholder": "입력 후 Enter",
 	"tagInput.removed": "{name} 제거됨",
-	"timePicker.hour": "시",
-	"timePicker.minute": "분",
-	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
 	"textField.clear": "지우기",
 	"textField.passwordHide": "비밀번호 숨기기",
 	"textField.passwordShow": "비밀번호 표시",
+	"timePicker.hour": "시",
+	"timePicker.minute": "분",
+	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
 
 	"bottomNav.label": "주요 메뉴",
 	"breadcrumb.label": "현재 위치",
@@ -165,8 +165,8 @@ export const en: LocaleMessages = {
 	"dataView.search": "Search",
 	"dataView.selectionSummary": "{count} selected",
 	"table.empty": "No data",
-	"table.selectAll": "Select all",
 	"table.rowClickHint": "Clickable row",
+	"table.selectAll": "Select all",
 	"table.selectRow": "Select row {index}",
 
 	"alert.cancel": "Cancel",
@@ -181,13 +181,13 @@ export const en: LocaleMessages = {
 	"combobox.idle": "Type to search",
 	"combobox.loading": "Searching",
 	"combobox.placeholder": "Search to select",
-	"dateRange.end": "End date",
-	"dateRange.start": "Start date",
 	"datePicker.day": "Day",
 	"datePicker.minDateSr": "Earliest date: {date}",
 	"datePicker.month": "Month",
 	"datePicker.rangeUntilTodaySr": "Selectable up to today",
 	"datePicker.year": "Year",
+	"dateRange.end": "End date",
+	"dateRange.start": "Start date",
 	"dropdown.empty": "No results",
 	"dropdown.placeholder": "Select…",
 	"dropdown.searchPlaceholder": "Search…",
@@ -195,8 +195,8 @@ export const en: LocaleMessages = {
 	"fileInput.label": "Choose file",
 	"fileInput.removeImage": "Remove image",
 	"imageCropper.hint": "Drag (or use arrow keys) to move, wheel or slider to zoom.",
-	"imageCropper.noPanHint": "The image fills the viewport exactly, so there is no room to move it.",
 	"imageCropper.label": "Adjust image position and zoom",
+	"imageCropper.noPanHint": "The image fills the viewport exactly, so there is no room to move it.",
 	"imageCropper.zoom": "Zoom",
 	"imageCropper.zoomIn": "Zoom in",
 	"imageCropper.zoomOut": "Zoom out",
@@ -208,12 +208,12 @@ export const en: LocaleMessages = {
 	"tagInput.duplicate": "{names} already added",
 	"tagInput.placeholder": "Type and press Enter",
 	"tagInput.removed": "{name} removed",
-	"timePicker.hour": "Hour",
-	"timePicker.minute": "Minute",
-	"timePicker.rangeSr": "Selectable from {min} to {max}",
 	"textField.clear": "Clear",
 	"textField.passwordHide": "Hide password",
 	"textField.passwordShow": "Show password",
+	"timePicker.hour": "Hour",
+	"timePicker.minute": "Minute",
+	"timePicker.rangeSr": "Selectable from {min} to {max}",
 
 	"bottomNav.label": "Main menu",
 	"breadcrumb.label": "Breadcrumb",
