@@ -115,7 +115,7 @@
   }
 
   &_list {
-    max-height: 280px;
+    max-height: token.$overlay_list_max_height;
     overflow-y: auto;
     margin: 0;
     padding: 0;

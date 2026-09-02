@@ -135,6 +135,50 @@ describe("Combobox", () => {
 
 		fireEvent.click(screen.getByText("박상민"));
 		expect(onValueChange).toHaveBeenCalledWith(OPTIONS[0]);
+
+		// 닫지 않으면 검색어가 비워지면서 effect 가 idle 로 되돌려, 방금 고른 라벨 대신
+		// "검색어를 입력하세요" 가 열린 채로 남는다. onValueChange 만 보면 안 잡힌다.
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+	});
+
+	it("keeps focus on the input when the panel closes", async () => {
+		// chevron 토글은 tabIndex=-1 인 장식이다. 거기로 포커스를 되돌리면 사용자는
+		// 보이지 않는 곳에 서게 되고 이어지는 Tab 이 엉뚱한 데서 출발한다.
+		render(<Combobox onSearch={vi.fn().mockResolvedValue(OPTIONS)} debounceMs={10} />);
+
+		const input = screen.getByRole("combobox");
+		input.focus();
+		fireEvent.focus(input);
+		type("박");
+		await vi.advanceTimersByTimeAsync(10);
+		await waitFor(() => expect(screen.getByText("박상민")).toBeInTheDocument());
+
+		fireEvent.keyDown(input, { key: "Escape" });
+
+		expect(document.activeElement).toBe(input);
+	});
+
+	it("drops an in-flight response when the query is cleared", async () => {
+		// 지워서 빈 문자열로 가는 경로도 경합 대상이다. seq 를 올리지 않으면 나중에 도착한
+		// 응답이 가드를 통과해 방금 리셋한 idle 상태를 낡은 결과로 덮는다.
+		const pending = deferred<ComboboxOption[]>();
+		render(<Combobox onSearch={() => pending.promise} debounceMs={10} />);
+
+		open();
+		type("박");
+		await vi.advanceTimersByTimeAsync(10);
+
+		type("");
+		await vi.advanceTimersByTimeAsync(10);
+		expect(screen.getByText("검색어를 입력하세요")).toBeInTheDocument();
+
+		await act(async () => {
+			pending.resolve(OPTIONS);
+		});
+
+		expect(screen.getByText("검색어를 입력하세요")).toBeInTheDocument();
+		expect(screen.queryAllByRole("option")).toHaveLength(0);
 	});
 
 	it("points aria-activedescendant at the keyboard-active option", async () => {

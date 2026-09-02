@@ -115,10 +115,16 @@ export const Combobox = ({
 	const defaultOptionsRef = useRef(defaultOptions);
 	defaultOptionsRef.current = defaultOptions;
 
+	// 선택하면 패널을 닫는다. 닫지 않으면 검색어가 비워지면서 effect 가 idle 로 되돌려,
+	// 방금 고른 라벨 대신 "검색어를 입력하세요" 가 열린 채로 남는다.
+	// close 는 아래 훅의 반환값이라 여기서 직접 참조할 수 없어 ref 를 거친다.
+	const closeRef = useRef<() => void>(() => {});
+
 	const commit = useCallback(
 		(option: ComboboxOption) => {
 			onValueChange?.(option);
 			setQuery("");
+			closeRef.current();
 		},
 		[onValueChange],
 	);
@@ -127,14 +133,20 @@ export const Combobox = ({
 		items: options,
 		onCommit: commit,
 		disabled,
-		returnFocusOnClose: true,
+		// 상시 컨트롤이 입력창이라 포커스를 되돌릴 필요가 없다. triggerRef 는 장식용
+		// chevron 버튼(tabIndex=-1)에 붙어 있어, 켜면 Escape 가 포커스를 그 숨은 버튼으로 던진다.
+		returnFocusOnClose: false,
 	});
 	const { isOpen, setIsOpen, close, activeIndex, setActiveIndex } = popup;
+	closeRef.current = close;
 
 	// 검색어가 바뀌면 디바운스 후 한 번만 조회한다.
 	useEffect(() => {
 		if (!isOpen) return;
 		if (query === "") {
+			// 진행 중인 요청을 무효화한다. 안 올리면 나중에 도착한 응답이 가드를 통과해
+			// 방금 리셋한 상태를 낡은 검색 결과로 덮는다.
+			requestSeq.current++;
 			setOptions(defaultOptionsRef.current);
 			setHasSearched(false);
 			setIsLoading(false);
