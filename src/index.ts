@@ -218,10 +218,14 @@ export { ThemeProvider, useTheme } from "./ui/system/theme-provider";
 
 // Layout Primitives (v3.0)
 
+export type { AppShellProps } from "./ui/layout/app-shell";
+export { AppShell } from "./ui/layout/app-shell";
 export type { ContainerProps, ContainerSize } from "./ui/layout/container";
 export { Container } from "./ui/layout/container";
 export type { GridCols, GridGap, GridProps } from "./ui/layout/grid";
 export { Grid } from "./ui/layout/grid";
+export type { PageHeaderProps } from "./ui/layout/page-header";
+export { PageHeader } from "./ui/layout/page-header";
 export type { SectionBg, SectionProps, SectionSpacing } from "./ui/layout/section";
 export { Section } from "./ui/layout/section";
 export type {

@@ -3777,6 +3777,75 @@ Section (수직 패딩 + 배경)
             └── Card / MediaCard …
 ```
 
+### AppShell
+
+관리자·대시보드 화면의 껍데기. 사이드바 열 + 고정 헤더 + 본문을 한 곳에서 잡는다. 화면마다
+`<div style={{ display: "flex", minHeight: "100vh" }}>` 로 다시 만들던 층이다.
+
+```tsx
+<AppShell sidebar={<Sidebar … />} header={<NavBar layout="fluid" sticky … />}>
+  <PageHeader title="대시보드" actions={<Button>추가</Button>} />
+  <DataView … />
+</AppShell>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sidebar` | `ReactNode` | - | 좌측 네비게이션. 보통 `Sidebar`. 주지 않으면 열을 만들지 않는다 |
+| `header` | `ReactNode` | - | 콘텐츠 열 위에 `sticky` 로 붙는 헤더. 보통 `NavBar` |
+| `padded` | `boolean` | `true` | 본문 여백. 자체 여백을 가진 화면은 `false` |
+
+손으로 조립할 때 조용히 빠지던 셋을 DS 가 소유한다.
+
+- **문서가 스크롤한다** — 본문을 `overflow-y: auto` 로 만들면 `Modal`·`Drawer` 의 스크롤 잠금
+  (`body { overflow: hidden }`)이 본문에 닿지 않아 모달 뒤 배경이 계속 스크롤된다. 사이드바와
+  헤더는 `sticky` 다
+- **콘텐츠 열은 `minmax(0, 1fr)`** — 자기 넘침을 스스로 처리하지 않는 자식(줄바꿈 없는 긴 문자열
+  등)이 열 자체를 늘리는 것을 막는다. 실측 - 1800px 자식을 넣으면 열이 1024px → 1869px 로 늘어나
+  고정 헤더와 모든 행이 화면보다 넓어진다
+- **하단 크롬 여백** — `Sidebar` 는 600px 아래에서 fixed BottomBar 로 변신하고 `BottomNav` 도
+  fixed 다. 본문 끝이 그 아래로 가리지 않게 `--bt-bottom-inset` 만큼 띄운다
+
+헤더를 사이드바 위까지 꽉 채우려면 `AppShell` 밖에 두면 된다.
+
+### PageHeader
+
+화면 제목 줄. 경로 · 제목 · 설명 · 액션 · 탭을 한 규약으로 묶는다. 화면마다
+`<h1 style={{ fontSize: 20, fontWeight: 600 }}>` 로 다시 만들던 층이다.
+
+```tsx
+<PageHeader
+  breadcrumb={<Breadcrumb items={…} />}
+  title="주문 관리"
+  description="결제 완료된 주문만 보입니다"
+  actions={<Button>주문 추가</Button>}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `ReactNode` | - | 화면 제목. `h1` 로 렌더된다. **필수** |
+| `description` | `ReactNode` | - | 제목 아래 한 줄 설명 |
+| `breadcrumb` | `ReactNode` | - | 제목 위 경로. 보통 `Breadcrumb` |
+| `actions` | `ReactNode` | - | 우측 액션. 보통 `Button` |
+| `tabs` | `ReactNode` | - | 제목 줄 아래 영역. 보통 `TabList` |
+
+제목은 `h1` 이다 — 화면의 제목이므로 문서에 하나만 있어야 한다. 겉은 `<header>` 가 아니라 `<div>`
+인데, `<header>` 는 `<main>` 안에 있어도 banner landmark 로 계산돼(`main` 은 sectioning content 가
+아니다) `NavBar` 와 banner 가 둘이 되기 때문이다.
+
+`tabs` 에는 `TabList` 만 넣고, `Tabs` 는 `PageHeader` 와 본문을 **함께** 감싼다. 패널을 `Tabs` 밖에
+두면 탭의 `aria-controls` 가 존재하지 않는 요소를 가리킨다.
+
+```tsx
+<Tabs defaultValue="all">
+  <PageHeader title="주문 관리" tabs={<TabList>…</TabList>} />
+  <TabPanel value="all">…</TabPanel>
+</Tabs>
+```
+
+HTML 의 `title` 속성(툴팁)은 prop 에서 제외했다 — 화면 제목이 `ReactNode` 를 받아야 하기 때문이다.
+
 ### Container
 
 max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서비스 페이지의 기본 wrapper.
