@@ -193,15 +193,15 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 								>
 									<div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
 										<strong>{group.primary}</strong>
-										{group.alias && (
-											<span style={{ fontSize: 11, color: "rgba(255,255,255,0.75)" }}>
-												· {group.alias}
-											</span>
-										)}
+										{/* 반투명 흰색은 카드 위에서 대비가 4.5 아래로 떨어진다 (0.75 → 3.25:1).
+										    글자는 불투명하게 두고 크기로만 위계를 준다. */}
+										{group.alias && <span style={{ fontSize: 11 }}>· {group.alias}</span>}
 										<span
 											style={{
 												marginLeft: "auto",
-												background: "rgba(255,255,255,0.22)",
+												// 흰색을 얹으면 배경이 밝아져 흰 글자 대비가 3.41:1 까지 떨어진다.
+												// 검정으로 누르면 같은 카드에서 7.55:1 이 된다.
+												background: "rgba(0,0,0,0.25)",
 												padding: "1px 6px",
 												borderRadius: 4,
 												fontSize: 11,
@@ -292,7 +292,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 										<strong>{group.primary}</strong>
 										<span
 											style={{
-												background: "rgba(255,255,255,0.22)",
+												background: "rgba(0,0,0,0.25)",
 												padding: "2px 6px",
 												borderRadius: 4,
 												fontSize: 11,
@@ -301,7 +301,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 											{group.value}
 										</span>
 									</div>
-									<span style={{ fontSize: 11, opacity: 0.9 }}>{group.use}</span>
+									<span style={{ fontSize: 11 }}>{group.use}</span>
 								</div>
 							))}
 						</div>
@@ -378,16 +378,20 @@ function describeLayer(value: number) {
 /**
  * 레이어 수보다 색이 적으면 `index % length` 가 되돌아와 서로 다른 레이어가 같은 색으로 보인다
  * (7장에 6색이었을 때 `popup` 이 `level0` 과 같은 회색이었다). 색은 레이어 수 이상으로 둔다.
+ *
+ * 카드 글자는 흰색이라 색은 전부 흰 글자와 **4.5:1 이상**이어야 한다. 처음 쓰던 400 계열은
+ * 여덟 색 전부 미달이었다 (최악 `#fbbf24` 1.67:1). 아래는 600~700 계열로, 최저가 4.83:1 이다.
+ * 색을 바꿀 때는 대비를 다시 재고 넣는다.
  */
 const LAYER_COLORS = [
-	"#9ca3af",
-	"#60a5fa",
-	"#34d399",
-	"#fbbf24",
-	"#f87171",
-	"#a78bfa",
-	"#22d3ee",
-	"#f472b6",
+	"#4b5563", // 7.56:1
+	"#2563eb", // 5.17:1
+	"#047857", // 5.48:1
+	"#b45309", // 5.02:1
+	"#dc2626", // 4.83:1
+	"#7c3aed", // 5.70:1
+	"#0e7490", // 5.36:1
+	"#be185d", // 6.04:1
 ];
 
 function layerColor(index: number) {
