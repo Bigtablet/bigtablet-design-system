@@ -1,4 +1,7 @@
+@use "../a11y" as a11y;
 @use "../breakpoints" as breakpoint;
+@use "../colors" as colors;
+@use "../radius" as radius;
 
 $font_family_primary: "Pretendard", sans-serif;
 
@@ -178,6 +181,26 @@ $letter_spacing_tight:  0.32px;
 // 그냥 무시하므로 안전하다.
 // 주의: slashed-zero 를 포함하므로 tabular_nums / slashed_zero 와 같은 선택자에서
 // 겹쳐 쓰면 안 된다 - 셋 다 font-variant-numeric 이라 뒤에 온 것만 남는다.
+// 문장 속 링크. `Prose`(마크다운 본문)와 UI 텍스트가 같은 규칙을 쓴다 - 사용자가 링크
+// 어포던스를 두 벌 배우지 않게.
+//
+// 밑줄은 선택이 아니라 요구다. WCAG 1.4.1(Use of Color)은 색만으로 구분하는 것을 링크와
+// 주변 본문의 대비가 3:1 이상일 때만 허용하는데, accent 는 그 문턱을 넘지 못한다
+// (axe 가 `link-in-text-block` 으로 잡았던 이력이 Prose 에 남아 있다).
+@mixin inline_link {
+  color: colors.$color_accent_default;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+
+  &:hover { text-decoration-thickness: 2px; }
+
+  &:focus-visible {
+    outline: none;
+    border-radius: radius.$radius_xs;
+    box-shadow: a11y.$focus_ring;
+  }
+}
+
 @mixin legible_identifiers {
   font-feature-settings: "cv05" 1, "cv08" 1;
   font-variant-numeric: slashed-zero;

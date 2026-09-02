@@ -378,6 +378,30 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### 문장 속 링크 (`.text_link`)
+
+`Prose` 는 마크다운 렌더 결과에만 조판을 입힌다. 그 밖의 UI 텍스트 — 체크박스 라벨의 약관 링크,
+`EmptyState` 설명 안의 도움말 링크 — 안에 링크를 넣을 자리가 없어 화면마다 색·밑줄을 손으로
+정하고 있었다. `.text_link` 가 그 규칙을 소유한다.
+
+```tsx
+<a href="/terms" className="text_link">이용약관</a>
+
+// 라우터 링크에도 그대로 붙는다
+<Link href="/terms" className="text_link">이용약관</Link>
+```
+
+| | 값 | 이유 |
+|---|-----|------|
+| 색 | `--bt-color-accent-default` | `Prose a` 와 같은 값. 본문 링크와 UI 링크가 갈리면 사용자가 어포던스를 두 벌 배운다 |
+| 밑줄 | 항상 | WCAG 1.4.1 — 색만으로 구분하려면 주변 본문과 3:1 이 필요한데 accent 는 넘지 못한다 (axe `link-in-text-block`) |
+| 포커스 | `--bt-focus-ring` + `radius_xs` | |
+
+컴포넌트가 아니라 클래스인 이유는 라우터 링크(`next/link`, `react-router`)에 그대로 붙이기
+위해서다. 컴포넌트로 만들면 `as` 다형성을 먼저 풀어야 한다.
+
+> `style.css` 에 포함된다. SCSS 를 직접 쓰는 곳에서는 `@include token.inline_link` 로 같은 값을 쓴다.
+
 ### Field / Form
 
 `Field` 가 라벨·필수 표시·도움말·에러와 그 접근성 연결을 소유한다. 입력 11종은 이 셋을 서로 다르게

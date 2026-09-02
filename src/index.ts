@@ -4,6 +4,9 @@
 import "./styles/theme.scss";
 // 자동완성(autofill) 칸의 UA 배경/글자색 무력화 - 전역 요소 규칙이라 theme.scss 와 분리.
 import "./styles/autofill.scss";
+// 문장 속 링크(`.text_link`) - UI 텍스트용. Prose 는 마크다운 본문에만 적용되므로 그 밖의
+// 라벨·설명 안 링크가 갈 곳이 없었다. 값은 Prose 와 같은 믹스인을 공유한다.
+import "./styles/link.scss";
 
 // Hooks / Utils
 
