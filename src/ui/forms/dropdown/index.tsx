@@ -6,6 +6,7 @@ import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
+import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -150,17 +151,12 @@ export const Dropdown = (props: DropdownProps) => {
 		props.multiple === true ? ((props.defaultValue as string[] | undefined) ?? []) : [],
 	);
 
-	const [isOpen, setIsOpen] = useState(false);
-	const [activeIndex, setActiveIndex] = useState(-1);
-	const [dropUp, setDropUp] = useState(false);
 
 	// 검색 상태 - searchText 는 표시용(IME 조합 중에도 즉시 반영), committedQuery 는 필터용(조합 완료 시 반영)
 	const [searchText, setSearchText] = useState("");
 	const [committedQuery, setCommittedQuery] = useState("");
 	const isComposingRef = useRef(false);
 
-	const wrapperRef = useRef<HTMLDivElement>(null);
-	const controlRef = useRef<HTMLButtonElement>(null);
 	const searchRef = useRef<HTMLInputElement>(null);
 
 	// 현재 선택값 - 항상 배열로 정규화 (single 은 길이 0~1)
@@ -211,12 +207,6 @@ export const Dropdown = (props: DropdownProps) => {
 		[selectedValues, options, isControlled, props.multiple, props.onValueChange, props.onChange],
 	);
 
-	const closePanel = useCallback(() => {
-		setIsOpen(false);
-		// searchable 은 포커스가 검색 입력에 있으므로 닫을 때 트리거로 되돌린다.
-		if (searchable) controlRef.current?.focus();
-	}, [searchable]);
-
 	const selectOption = useCallback(
 		(opt: DropdownOption) => {
 			if (opt.disabled) return;
@@ -228,134 +218,34 @@ export const Dropdown = (props: DropdownProps) => {
 				closePanel();
 			}
 		},
-		[multiple, toggleMultiple, selectSingle, closePanel],
+		// closePanel 은 아래 훅에서 오므로 선언 순서상 참조만 한다 (렌더마다 동일 참조).
+		// biome-ignore lint/correctness/useExhaustiveDependencies: closePanel 은 훅 결과라 아래에서 정의된다
+		[multiple, toggleMultiple, selectSingle],
 	);
 
-	useEffect(() => {
-		const handleOutsideClick = (e: MouseEvent) => {
-			if (!wrapperRef.current?.contains(e.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", handleOutsideClick);
-		return () => document.removeEventListener("mousedown", handleOutsideClick);
-	}, []);
-
-	// ── 키보드 네비게이션 (visibleOptions 기준) ─────────────────────────────
-
-	const moveActive = useCallback(
-		(dir: 1 | -1) => {
-			if (visibleOptions.length === 0) return;
-			if (!isOpen) {
-				setIsOpen(true);
-				return;
-			}
-			let i = activeIndex;
-			if (i === -1) {
-				// 활성 없음에서 첫 입력: 아래(dir=1)면 -1 유지 → 첫 step 이 0(첫 항목),
-				// 위(dir=-1)면 0 으로 두어 → 첫 step 이 len-1(마지막 항목).
-				// 보정하지 않으면 위 방향에서 (-1-1+len)%len = len-2 로 마지막을 건너뛴다.
-				i = dir === 1 ? -1 : 0;
-			}
-			const len = visibleOptions.length;
-			for (let step = 0; step < len; step++) {
-				i = (i + dir + len) % len;
-				if (!visibleOptions[i].disabled) {
-					setActiveIndex(i);
-					break;
-				}
-			}
-		},
-		[visibleOptions, isOpen, activeIndex],
-	);
-
-	const commitActive = useCallback(() => {
-		if (activeIndex < 0 || activeIndex >= visibleOptions.length) return;
-		selectOption(visibleOptions[activeIndex]);
-	}, [activeIndex, visibleOptions, selectOption]);
-
-	const onControlKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-		if (disabled) return;
-		switch (e.key) {
-			case " ":
-			case "Enter":
-				e.preventDefault();
-				if (!isOpen) setIsOpen(true);
-				else commitActive();
-				break;
-			case "ArrowDown":
-				e.preventDefault();
-				moveActive(1);
-				break;
-			case "ArrowUp":
-				e.preventDefault();
-				moveActive(-1);
-				break;
-			case "Home":
-				e.preventDefault();
-				setIsOpen(true);
-				setActiveIndex(visibleOptions.findIndex((o) => !o.disabled));
-				break;
-			case "End":
-				e.preventDefault();
-				setIsOpen(true);
-				for (let i = visibleOptions.length - 1; i >= 0; i--) {
-					if (!visibleOptions[i].disabled) {
-						setActiveIndex(i);
-						break;
-					}
-				}
-				break;
-			case "Escape":
-				e.preventDefault();
-				setIsOpen(false);
-				break;
-			case "Tab":
-				// APG Combobox: Tab 은 리스트를 닫고 자연스러운 포커스 이동을 허용 (preventDefault 안 함)
-				setIsOpen(false);
-				break;
-		}
-	};
-
-	// 검색 입력 내 키보드 - ↑/↓ 이동, Enter 선택/토글, Esc 닫기. Home/End 는 커서 이동에 양보.
-	const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		// IME 조합 중 Enter 는 조합 확정용 - 선택/토글·네비게이션·닫기 트리거 금지
-		if (e.nativeEvent.isComposing) return;
-		switch (e.key) {
-			case "ArrowDown":
-				e.preventDefault();
-				moveActive(1);
-				break;
-			case "ArrowUp":
-				e.preventDefault();
-				moveActive(-1);
-				break;
-			case "Enter":
-				e.preventDefault();
-				commitActive();
-				break;
-			case "Escape":
-				e.preventDefault();
-				closePanel();
-				break;
-			case "Tab":
-				// APG Combobox: Tab 은 리스트를 닫는다. closePanel 이 트리거로 포커스를
-				// 되돌린 뒤 브라우저 기본 Tab 이동이 이어진다 (preventDefault 안 함).
-				closePanel();
-				break;
-		}
-	};
-
-	// open / 필터 변경 / options 변경 시 activeIndex 재계산해 범위 내로 유지.
-	// selectedValues 는 의도적으로 제외 - 다중 토글마다 active 가 리셋되지 않게.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: selectedValues 제외는 의도적 (다중 토글 시 active 유지)
-	useEffect(() => {
-		if (!isOpen) return;
-		const selectedIdx = visibleOptions.findIndex(
-			(o) => selectedValues.includes(o.value) && !o.disabled,
-		);
-		setActiveIndex(selectedIdx >= 0 ? selectedIdx : visibleOptions.findIndex((o) => !o.disabled));
-	}, [isOpen, visibleOptions]);
+	// 팝업의 거동(개폐·활성 항목·키보드·바깥 클릭·열림 방향)은 훅이 갖는다.
+	// 목록의 내용(검색·다중 선택)만 여기 남는다 - Combobox 와 같은 거동을 공유하기 위함이다.
+	const {
+		isOpen,
+		setIsOpen,
+		dropUp,
+		activeIndex,
+		setActiveIndex,
+		wrapperRef,
+		triggerRef: controlRef,
+		close: closePanel,
+		onTriggerKeyDown: onControlKeyDown,
+		onInputKeyDown: onSearchKeyDown,
+	} = useListboxPopup<DropdownOption>({
+		items: visibleOptions,
+		onCommit: selectOption,
+		disabled,
+		// searchable 은 포커스가 검색 입력에 있으므로 닫을 때 트리거로 되돌린다.
+		returnFocusOnClose: searchable,
+		// 열릴 때는 선택된 항목을 활성으로. 없으면 훅이 첫 활성 항목을 고른다.
+		initialActiveIndex: (opts) =>
+			opts.findIndex((o) => selectedValues.includes(o.value) && !o.disabled),
+	});
 
 	// 패널을 닫으면 검색 상태 초기화 (다음 열림 시 fresh)
 	useEffect(() => {
@@ -372,17 +262,6 @@ export const Dropdown = (props: DropdownProps) => {
 			searchRef.current?.focus();
 		}
 	}, [isOpen, searchable]);
-
-	useEffect(() => {
-		if (!isOpen || !controlRef.current) return;
-		const rect = controlRef.current.getBoundingClientRect();
-		const spaceBelow = window.innerHeight - rect.bottom;
-		const spaceAbove = rect.top;
-		// dropUp 보수적 - 아래 최소 공간 (120px) 부족하고 위가 더 넓을 때만.
-		// 작은 viewport (Storybook Docs iframe 등) 에서 무분별한 dropUp 방지.
-		const MIN_BELOW = 120;
-		setDropUp(spaceBelow < MIN_BELOW && spaceAbove > spaceBelow);
-	}, [isOpen]);
 
 	// ── 표시 값 계산 ────────────────────────────────────────────────────────
 

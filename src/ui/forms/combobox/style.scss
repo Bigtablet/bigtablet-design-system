@@ -1,0 +1,184 @@
+@use "src/styles/token" as token;
+
+// Combobox - Dropdown 과 같은 시각 언어를 쓴다. 두 선택 입력이 한 폼에 나란히 놓이므로
+// 테두리·radius·패널 표면·옵션 상태색이 갈리면 바로 눈에 띈다.
+
+.combobox {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  font-family: token.$font_family_primary;
+
+  &_full_width {
+    width: 100%;
+  }
+
+  // ── Control (입력 + 로딩 + 토글) ─────────────────────────────────────────
+
+  &_control {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    box-sizing: border-box;
+    width: 100%;
+    padding: token.$spacing_8 token.$spacing_12;
+    background: token.$color_bg_solid;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
+
+    &:hover {
+      border-color: token.$color_border_hover;
+    }
+
+    // 포커스 표현은 컨테이너 테두리로 - TextField·Dropdown 과 같은 언어.
+    &:focus-within {
+      border-color: token.$color_border_focus;
+    }
+  }
+
+  &_input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    color: token.$color_text_heading;
+    @include token.body_medium;
+
+    &::placeholder {
+      color: token.$color_text_caption;
+    }
+  }
+
+  &_spinner {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  &_toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: token.$color_text_caption;
+    cursor: pointer;
+  }
+
+  // ── Size ─────────────────────────────────────────────────────────────────
+
+  &_size_sm &_control {
+    padding: token.$spacing_4 token.$spacing_8;
+  }
+
+  &_size_lg &_control {
+    padding: token.$spacing_12 token.$spacing_16;
+  }
+
+  // ── Panel ────────────────────────────────────────────────────────────────
+
+  &_panel {
+    position: absolute;
+    z-index: token.$z_popup;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: token.$spacing_4;
+    background: token.$color_bg_solid;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    box-shadow: token.$elevation_level1;
+    overflow: hidden;
+
+    // 다크에서는 canvas 보다 한 톤 밝아 elevation 이 읽힌다 - Dropdown 과 동일.
+    [data-theme="dark"] & {
+      background: token.$color_bg_solid_dim;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) & {
+        background: token.$color_bg_solid_dim;
+      }
+    }
+
+    &_up {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: token.$spacing_4;
+    }
+  }
+
+  &_list {
+    max-height: token.$overlay_list_max_height;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_option {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 40px;
+    padding: token.$spacing_8 token.$spacing_12;
+    cursor: pointer;
+    color: token.$color_text_heading;
+    @include token.body_medium;
+
+    &:hover {
+      background: token.$color_state_hover_on_light;
+    }
+
+    // 키보드 활성 - 마우스 hover 와 구분되는 상태색 (Dropdown 과 동일)
+    &.is_active {
+      background: token.$color_state_focus_on_light;
+    }
+
+    &[aria-selected="true"] {
+      background: token.$color_accent_subtle;
+      color: token.$color_accent_default;
+    }
+
+    &.is_disabled {
+      cursor: not-allowed;
+      color: token.$color_text_caption;
+    }
+  }
+
+  // ── 안내 문구 (검색 전 / 결과 없음) ──────────────────────────────────────
+
+  &_message {
+    margin: 0;
+    padding: token.$spacing_12;
+    color: token.$color_text_caption;
+    @include token.body_medium;
+  }
+
+  // ── Disabled ─────────────────────────────────────────────────────────────
+
+  &_disabled &_control {
+    border-color: token.$color_bg_disabled;
+    background-color: token.$color_bg_solid_dim;
+  }
+
+  &_disabled &_input,
+  &_disabled &_toggle {
+    cursor: not-allowed;
+    color: token.$color_text_disabled;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combobox_control {
+    transition: none;
+  }
+}
