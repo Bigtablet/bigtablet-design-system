@@ -145,8 +145,6 @@ export { Checkbox } from "./ui/forms/checkbox";
 export type { ComboboxOption, ComboboxProps, ComboboxSize } from "./ui/forms/combobox";
 export { Combobox } from "./ui/forms/combobox";
 export type { DatePickerProps } from "./ui/forms/date-picker";
-export type { FieldControl, FieldProps } from "./ui/forms/field";
-export { Field, useFieldControl } from "./ui/forms/field";
 export { DatePicker } from "./ui/forms/date-picker";
 export type {
 	DropdownMultipleProps,
@@ -157,6 +155,8 @@ export type {
 	DropdownVariant,
 } from "./ui/forms/dropdown";
 export { Dropdown } from "./ui/forms/dropdown";
+export type { FieldControl, FieldProps } from "./ui/forms/field";
+export { Field, useFieldControl } from "./ui/forms/field";
 export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
 export { FileInput } from "./ui/forms/file";
 export type { FormActionsProps, FormProps } from "./ui/forms/form";
@@ -180,6 +180,8 @@ export type {
 	RadioGroupSize,
 } from "./ui/forms/radio-group";
 export { RadioGroup, useRadioGroupContext } from "./ui/forms/radio-group";
+export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
+export { TagInput } from "./ui/forms/tag-input";
 export type {
 	TextareaProps,
 	TextareaResize,

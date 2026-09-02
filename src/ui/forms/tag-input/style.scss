@@ -1,0 +1,99 @@
+@use "src/styles/token" as token;
+
+// TagInput - 컨트롤 겉모습은 TextField·Combobox 와 같은 언어를 쓴다. 한 폼에 나란히 놓이므로
+// 테두리·radius·포커스 표현이 갈리면 바로 눈에 띈다.
+
+.tag_input {
+  display: inline-flex;
+  flex-direction: column;
+  font-family: token.$font_family_primary;
+
+  &_full_width {
+    width: 100%;
+  }
+
+  &_control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: token.$spacing_4;
+    box-sizing: border-box;
+    width: 100%;
+    padding: token.$spacing_8 token.$spacing_12;
+    background: token.$color_bg_solid;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    cursor: text;
+    transition:
+      border-color token.$transition_base,
+      background-color token.$transition_base;
+
+    &:hover {
+      border-color: token.$color_border_hover;
+    }
+
+    // 포커스 표현은 컨테이너 테두리로 - TextField·Combobox 와 같은 언어.
+    &:focus-within {
+      border-color: token.$color_border_focus;
+    }
+  }
+
+  &_tags {
+    display: contents;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &_tag {
+    display: inline-flex;
+  }
+
+  &_field {
+    // 태그가 줄을 채우면 입력이 다음 줄로 내려간다. 그때도 누를 만한 폭은 남겨 둔다.
+    flex: 1 1 6rem;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    color: token.$color_text_heading;
+    @include token.body_medium;
+
+    &::placeholder {
+      color: token.$color_text_caption;
+    }
+  }
+
+  &_live {
+    @include token.visually_hidden;
+  }
+
+  // ── Size ─────────────────────────────────────────────────────────────────
+
+  &_size_sm &_control {
+    padding: token.$spacing_4 token.$spacing_8;
+  }
+
+  &_size_lg &_control {
+    padding: token.$spacing_12 token.$spacing_16;
+  }
+
+  // ── Disabled ─────────────────────────────────────────────────────────────
+
+  &_disabled &_control {
+    border-color: token.$color_bg_disabled;
+    background-color: token.$color_bg_solid_dim;
+    cursor: not-allowed;
+  }
+
+  &_disabled &_field {
+    cursor: not-allowed;
+    color: token.$color_text_disabled;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag_input_control {
+    transition: none;
+  }
+}
