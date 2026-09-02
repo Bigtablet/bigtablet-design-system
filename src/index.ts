@@ -10,6 +10,7 @@ import "./styles/link.scss";
 
 // Hooks / Utils
 
+export type { PolymorphicProps, PolymorphicRef } from "./utils";
 export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
 export type {
 	ListboxItem,
