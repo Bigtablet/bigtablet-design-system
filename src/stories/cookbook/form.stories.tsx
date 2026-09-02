@@ -236,7 +236,9 @@ export const SignUpForm: Story = {
 					<Checkbox
 						label={
 							<>
-								{/* 스토리 장식용 링크 - DS 에 Link 컴포넌트가 없어 인라인으로 둔다 */}
+								{/* DS 에 UI 텍스트용 인라인 링크 규약이 없다. `Prose a` 는 마크다운 본문
+								    전용이라 여기 끌어다 쓰면 적용 범위가 어긋난다. 규약이 생기기 전까지
+								    기존 스토리 값을 그대로 둔다 - 임의로 정하면 비공식 기준이 하나 더 생긴다. */}
 								<a
 									href="#terms"
 									style={{ color: "var(--bt-color-text-heading)", textDecoration: "underline" }}
