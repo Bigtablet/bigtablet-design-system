@@ -35,6 +35,8 @@ export interface LocaleMessages {
 	"combobox.idle": string;
 	"combobox.loading": string;
 	"combobox.placeholder": string;
+	"dateRange.end": string;
+	"dateRange.start": string;
 	"datePicker.day": string;
 	"datePicker.minDateSr": string; // {date}
 	"datePicker.month": string;
@@ -60,6 +62,9 @@ export interface LocaleMessages {
 	"tagInput.duplicate": string; // {names}
 	"tagInput.placeholder": string;
 	"tagInput.removed": string; // {name}
+	"timePicker.hour": string;
+	"timePicker.minute": string;
+	"timePicker.rangeSr": string;
 	"textField.clear": string;
 	"textField.passwordHide": string;
 	"textField.passwordShow": string;
@@ -105,6 +110,8 @@ export const ko: LocaleMessages = {
 	"combobox.idle": "검색어를 입력하세요",
 	"combobox.loading": "검색 중",
 	"combobox.placeholder": "검색해서 선택",
+	"dateRange.end": "종료일",
+	"dateRange.start": "시작일",
 	"datePicker.day": "일",
 	"datePicker.minDateSr": "최소 날짜: {date}",
 	"datePicker.month": "월",
@@ -130,6 +137,9 @@ export const ko: LocaleMessages = {
 	"tagInput.duplicate": "{names} 이미 있음",
 	"tagInput.placeholder": "입력 후 Enter",
 	"tagInput.removed": "{name} 제거됨",
+	"timePicker.hour": "시",
+	"timePicker.minute": "분",
+	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
 	"textField.clear": "지우기",
 	"textField.passwordHide": "비밀번호 숨기기",
 	"textField.passwordShow": "비밀번호 표시",
@@ -171,6 +181,8 @@ export const en: LocaleMessages = {
 	"combobox.idle": "Type to search",
 	"combobox.loading": "Searching",
 	"combobox.placeholder": "Search to select",
+	"dateRange.end": "End date",
+	"dateRange.start": "Start date",
 	"datePicker.day": "Day",
 	"datePicker.minDateSr": "Earliest date: {date}",
 	"datePicker.month": "Month",
@@ -196,6 +208,9 @@ export const en: LocaleMessages = {
 	"tagInput.duplicate": "{names} already added",
 	"tagInput.placeholder": "Type and press Enter",
 	"tagInput.removed": "{name} removed",
+	"timePicker.hour": "Hour",
+	"timePicker.minute": "Minute",
+	"timePicker.rangeSr": "Selectable from {min} to {max}",
 	"textField.clear": "Clear",
 	"textField.passwordHide": "Hide password",
 	"textField.passwordShow": "Show password",

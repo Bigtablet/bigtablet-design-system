@@ -156,6 +156,8 @@ export type { ComboboxOption, ComboboxProps, ComboboxSize } from "./ui/forms/com
 export { Combobox } from "./ui/forms/combobox";
 export type { DatePickerProps } from "./ui/forms/date-picker";
 export { DatePicker } from "./ui/forms/date-picker";
+export type { DateRange, DateRangePickerProps } from "./ui/forms/date-range-picker";
+export { DateRangePicker } from "./ui/forms/date-range-picker";
 export type {
 	DropdownMultipleProps,
 	DropdownOption,
@@ -205,6 +207,8 @@ export type {
 	TextFieldVariant,
 } from "./ui/forms/textfield";
 export { TextField } from "./ui/forms/textfield";
+export type { TimePickerProps } from "./ui/forms/time-picker";
+export { TimePicker } from "./ui/forms/time-picker";
 export type { ToggleProps } from "./ui/forms/toggle";
 export { Toggle } from "./ui/forms/toggle";
 export type {

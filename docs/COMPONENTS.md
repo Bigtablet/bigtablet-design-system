@@ -256,6 +256,64 @@ import { Plus } from 'lucide-react';
 
 ---
 
+### DateRangePicker
+
+시작일·종료일 한 쌍. `DatePicker` 둘을 묶는다.
+
+```tsx
+<Field name="period" label="조회 기간">
+  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `DateRange` | - | `{ start?, end? }` (`"YYYY-MM-DD"`) |
+| `onValueChange` | `(value: DateRange) => void` | - | 범위 변경. **필수** |
+| `startLabel` | `string` | `'시작일'` | 시작일 묶음 라벨 |
+| `endLabel` | `string` | `'종료일'` | 종료일 묶음 라벨 |
+| `startYear` | `number` | `1950` | 연도 범위 시작 |
+| `endYear` | `number` | - | 미지정 시 현재 연도 + 10 |
+| `minDate` | `string` | - | 가장 이른 날짜 |
+| `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
+| `disabled` | `boolean` | - | |
+| `fullWidth` | `boolean` | `true` | |
+
+**거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
+시작일을 종료일보다 뒤로 옮기면 **종료일이 비워진다**(`{ start, end: undefined }`). 조용히
+시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장된다.
+
+시작일을 고르기 전에는 종료일이 잠긴다. 순서가 뒤집힌 입력을 애초에 막는다.
+
+### TimePicker
+
+시·분 선택. `DatePicker` 와 같은 방식으로 `Dropdown` 두 개를 조합한다.
+
+```tsx
+<Field name="pickupAt" label="픽업 시각">
+  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | `"HH:mm"` (24시간) |
+| `onValueChange` | `(value: string) => void` | - | 선택 변경. **필수** |
+| `label` | `string` | - | 위에 표시할 라벨 |
+| `minuteStep` | `number` | `5` | 분 간격. 60 의 약수를 준다 |
+| `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
+| `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
+| `disabled` | `boolean` | - | |
+| `fullWidth` | `boolean` | `true` | |
+| `hourLabel` | `string` | `'시'` | |
+| `minuteLabel` | `string` | `'분'` | |
+
+`minTime`/`maxTime` 은 **시 목록까지** 좁힌다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
+있고, 그때 분 목록이 비어 막힌 화면이 된다. 경계 시각에서는 분도 좁힌다 — 최소가 09:30 이면
+09시의 분은 30분부터다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮긴다.
+
+값은 24시간 `"HH:mm"` 이다. 12시간 표기는 화면 표시의 문제라 소비자가 포맷한다.
+
 ### Dropdown
 
 ```tsx
