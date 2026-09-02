@@ -378,6 +378,56 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### Field / Form
+
+`Field` 가 라벨·필수 표시·도움말·에러와 그 접근성 연결을 소유한다. 입력 11종은 이 셋을 서로 다르게
+갖고 있어(라벨 9종, 에러 5종) 폼 화면이 입력 밖에 문구를 직접 그려 왔다. `Field` 를 쓰면 어떤 입력을
+넣어도 라벨 위치·간격·에러 문구·`aria-describedby` 가 같아진다.
+
+입력의 기존 prop 은 그대로 살아 있다. **`Field` 없이 쓰면 지금과 동일하게 동작한다.**
+
+```tsx
+<Form onSubmit={save} errors={serverErrors}>
+  <Field name="email" label="이메일" required help="로그인 ID 로 사용됩니다">
+    <TextField />
+  </Field>
+  <Field name="role" label="권한">
+    <Dropdown options={roles} />
+  </Field>
+  <Form.Actions>
+    <Button type="submit">저장</Button>
+  </Form.Actions>
+</Form>
+```
+
+`Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
+
+#### Field
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
+| `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결된다 |
+| `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
+| `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |
+| `children` | `ReactNode` | - | 입력 하나 |
+
+#### Form
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣는다 |
+| `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다 |
+
+#### Form.Actions
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
+
+> 폼 라이브러리에 의존하지 않는다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙인다.
+
 ### TextField
 
 ```tsx

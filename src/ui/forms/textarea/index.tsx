@@ -3,6 +3,7 @@
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { cn, useSafeLayoutEffect } from "../../../utils";
+import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";
 
@@ -106,8 +107,11 @@ export const Textarea = ({
 	...props
 }: TextareaProps) => {
 	const generatedId = useId();
-	const inputId = id ?? generatedId;
+	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
+	const field = useFieldControl();
+	const inputId = id ?? field?.inputId ?? generatedId;
 	const helperId = supportingText ? `${inputId}-help` : undefined;
+	const describedBy = field?.describedBy ?? helperId;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>
@@ -212,8 +216,9 @@ export const Textarea = ({
 						style={{ resize: autoGrow ? "none" : resize }}
 						rows={autoGrow ? (minRows ?? rows) : rows}
 						maxLength={maxLength}
-						aria-invalid={!!error}
-						aria-describedby={helperId}
+						aria-invalid={!!error || !!field?.invalid}
+						aria-describedby={describedBy}
+						aria-required={field?.required || undefined}
 						aria-label={!showLabel ? label : undefined}
 						{...props}
 						value={innerValue}

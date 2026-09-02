@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "../../../utils";
 import "./style.scss";
+import { useFieldControl } from "../field";
 
 export interface ToggleProps
 	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
@@ -59,6 +60,9 @@ export const Toggle = ({
 		(onCheckedChange ?? onChange)?.(next);
 	};
 
+	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.
+	const field = useFieldControl();
+
 	const rootClassName = cn(
 		"toggle",
 		`toggle_size_${size}`,
@@ -76,7 +80,11 @@ export const Toggle = ({
 			type="button"
 			role="switch"
 			aria-checked={isOn}
-			aria-label={ariaLabel}
+			id={field?.inputId ?? props.id}
+			aria-describedby={field?.describedBy ?? props["aria-describedby"]}
+			// Field 가 감싸면 그 라벨이 이름이 된다 - ariaLabel 과 겹치면 라벨이 두 번 읽힌다.
+			aria-labelledby={field?.labelId}
+			aria-label={field?.labelId ? undefined : ariaLabel}
 			disabled={disabled}
 			onClick={handleToggle}
 			className={rootClassName}

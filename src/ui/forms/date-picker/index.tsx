@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "../../../utils";
 import { Dropdown, type DropdownOption } from "../dropdown";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -94,6 +95,8 @@ export const DatePicker = ({
 	minDateSrFormat = "최소 날짜: {date}",
 	selectableRangeUntilTodaySrText = "오늘까지 선택 가능",
 }: DatePickerProps) => {
+	// Field 가 감싸면 Field 라벨이 그룹 이름이 된다.
+	const field = useFieldControl();
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
@@ -269,8 +272,13 @@ export const DatePicker = ({
 			<div
 				className="date_picker_fields"
 				role="group"
-				aria-labelledby={label ? groupId : undefined}
-				aria-describedby={constraintDesc ? constraintId : undefined}
+				aria-labelledby={field?.labelId ?? (label ? groupId : undefined)}
+				aria-describedby={
+					[field?.describedBy, constraintDesc ? constraintId : undefined]
+						.filter(Boolean)
+						.join(" ") || undefined
+				}
+				aria-invalid={field?.invalid || undefined}
 			>
 				<Dropdown
 					size="sm"

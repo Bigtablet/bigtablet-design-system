@@ -5,6 +5,8 @@ import { Chip } from "../../ui/display/chip";
 import { Divider } from "../../ui/display/divider";
 import { Checkbox } from "../../ui/forms/checkbox";
 import { Dropdown } from "../../ui/forms/dropdown";
+import { Field } from "../../ui/forms/field";
+import { Form } from "../../ui/forms/form";
 import { Radio } from "../../ui/forms/radio";
 import { TextField } from "../../ui/forms/textfield";
 import { Toggle } from "../../ui/forms/toggle";
@@ -151,6 +153,14 @@ export const LoginForm: Story = {
 
 export const SignUpForm: Story = {
 	name: "회원가입 폼",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`Form` + `Field` 조합. 필드 간 간격·라벨 위치·에러 문구 자리를 DS 가 소유하므로 화면은 값과 검증만 다룬다. 이전에는 `Stack gap` 과 입력별 `supportingText`/`error` 를 손으로 배선했다.",
+			},
+		},
+	},
 	render: () => {
 		const [form, setForm] = useState({
 			name: "",
@@ -167,51 +177,66 @@ export const SignUpForm: Story = {
 
 		return (
 			<FormCard title="회원가입" width={440}>
-				<Stack gap={16}>
-					<TextField
-						label="이름"
-						placeholder="홍길동"
-						leadingIcon={<User size={18} />}
-						value={form.name}
-						onChangeAction={(v) => setForm({ ...form, name: v })}
-						fullWidth
-					/>
-					<TextField
-						label="이메일"
-						type="email"
-						placeholder="you@example.com"
-						leadingIcon={<Mail size={18} />}
-						value={form.email}
-						onChangeAction={(v) => setForm({ ...form, email: v })}
-						fullWidth
-					/>
-					<TextField
+				<Form>
+					<Field name="name" label="이름" required>
+						<TextField
+							placeholder="홍길동"
+							leadingIcon={<User size={18} />}
+							value={form.name}
+							onValueChange={(v) => setForm({ ...form, name: v })}
+							fullWidth
+						/>
+					</Field>
+
+					<Field name="email" label="이메일" required>
+						<TextField
+							type="email"
+							placeholder="you@example.com"
+							leadingIcon={<Mail size={18} />}
+							value={form.email}
+							onValueChange={(v) => setForm({ ...form, email: v })}
+							fullWidth
+						/>
+					</Field>
+
+					<Field
+						name="password"
 						label="비밀번호"
-						type="password"
-						placeholder="8자 이상 영문·숫자 포함"
-						leadingIcon={<Lock size={18} />}
-						supportingText="영문, 숫자, 특수문자 조합 8자 이상"
-						value={form.password}
-						onChangeAction={(v) => setForm({ ...form, password: v })}
-						fullWidth
-					/>
-					<TextField
+						required
+						help="영문, 숫자, 특수문자 조합 8자 이상"
+					>
+						<TextField
+							type="password"
+							placeholder="8자 이상 영문·숫자 포함"
+							leadingIcon={<Lock size={18} />}
+							value={form.password}
+							onValueChange={(v) => setForm({ ...form, password: v })}
+							fullWidth
+						/>
+					</Field>
+
+					<Field
+						name="passwordConfirm"
 						label="비밀번호 확인"
-						type="password"
-						placeholder="비밀번호 재입력"
-						leadingIcon={<Lock size={18} />}
-						value={form.passwordConfirm}
-						onChangeAction={(v) => setForm({ ...form, passwordConfirm: v })}
-						error={passwordMismatch}
-						supportingText={passwordMismatch ? "비밀번호가 일치하지 않습니다" : undefined}
-						fullWidth
-					/>
+						required
+						error={passwordMismatch ? "비밀번호가 일치하지 않습니다" : undefined}
+					>
+						<TextField
+							type="password"
+							placeholder="비밀번호 재입력"
+							leadingIcon={<Lock size={18} />}
+							value={form.passwordConfirm}
+							onValueChange={(v) => setForm({ ...form, passwordConfirm: v })}
+							fullWidth
+						/>
+					</Field>
 
 					<Divider />
 
 					<Checkbox
 						label={
-							<span style={{ fontSize: 13 }}>
+							<>
+								{/* 스토리 장식용 링크 - DS 에 Link 컴포넌트가 없어 인라인으로 둔다 */}
 								<a
 									href="#terms"
 									style={{ color: "var(--bt-color-text-heading)", textDecoration: "underline" }}
@@ -226,16 +251,24 @@ export const SignUpForm: Story = {
 									개인정보처리방침
 								</a>
 								에 동의합니다
-							</span>
+							</>
 						}
 						checked={agreed}
 						onChange={(e) => setAgreed(e.target.checked)}
 					/>
 
-					<Button variant="filled" size="lg" fullWidth disabled={!agreed || passwordMismatch}>
-						가입 완료
-					</Button>
-				</Stack>
+					<Form.Actions align="between">
+						<Button
+							type="submit"
+							variant="filled"
+							size="lg"
+							fullWidth
+							disabled={!agreed || passwordMismatch}
+						>
+							가입 완료
+						</Button>
+					</Form.Actions>
+				</Form>
 			</FormCard>
 		);
 	},

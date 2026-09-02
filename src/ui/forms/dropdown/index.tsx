@@ -6,6 +6,7 @@ import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type DropdownSize = "sm" | "md" | "lg";
@@ -135,7 +136,9 @@ export const Dropdown = (props: DropdownProps) => {
 	const multiple = props.multiple === true;
 
 	const internalId = useId();
-	const dropdownId = id ?? internalId;
+	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
+	const field = useFieldControl();
+	const dropdownId = id ?? field?.inputId ?? internalId;
 
 	const isControlled = props.value !== undefined;
 
@@ -431,6 +434,8 @@ export const Dropdown = (props: DropdownProps) => {
 					className={cn("dropdown_control", { is_disabled: disabled })}
 					aria-haspopup="listbox"
 					aria-expanded={isOpen}
+					aria-describedby={field?.describedBy}
+					aria-invalid={field?.invalid || undefined}
 					// 닫힌 상태에서는 listbox 가 unmount 라 dangling IDREF 방지 위해 열렸을 때만 지정
 					aria-controls={isOpen ? `${dropdownId}_listbox` : undefined}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
