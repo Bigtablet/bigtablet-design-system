@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { catalogs, ko, type LocaleKey, type LocaleMessages, type LocaleName } from "./messages";
 
 export type { LocaleKey, LocaleMessages, LocaleName } from "./messages";
@@ -58,15 +58,41 @@ const LocaleContext = createContext<LocaleContextValue | undefined>(undefined);
  * ```
  */
 export const LocaleProvider = ({ locale = "ko", messages, children }: LocaleProviderProps) => {
+	// 소비자는 보통 `messages={{ "table.empty": … }}` 처럼 JSX 안에서 객체 리터럴을 넘긴다.
+	// 그러면 참조가 매 렌더 바뀌어 `t` 도 매번 새로 만들어지고, 앱 루트에 놓인 Provider 라
+	// 트리 전체의 `useLocaleText()` 소비자가 함께 리렌더된다. 내용이 같으면 같은 값을 유지해
+	// 소비자가 상수를 밖으로 끌어올리지 않아도 되게 한다.
+	const stableMessages = useStableMessages(messages);
+
 	const value = useMemo<LocaleContextValue>(() => {
 		const base = catalogs[locale];
-		// 덮어쓸 게 없으면 기준 카탈로그를 그대로 쓴다 - 매 렌더 객체를 새로 만들지 않게.
-		const merged = messages ? { ...base, ...messages } : base;
+		const merged = stableMessages ? { ...base, ...stableMessages } : base;
 		return { locale, t: makeText(merged) };
-	}, [locale, messages]);
+	}, [locale, stableMessages]);
 
 	return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 };
+
+/** 내용이 같으면 이전 객체를 그대로 돌려준다 (얕은 비교 - 값이 전부 문자열이라 충분하다). */
+function useStableMessages(messages: Partial<LocaleMessages> | undefined) {
+	const ref = useRef(messages);
+	const previous = ref.current;
+
+	const same =
+		previous === messages ||
+		(!!previous &&
+			!!messages &&
+			Object.keys(previous).length === Object.keys(messages).length &&
+			(Object.keys(messages) as LocaleKey[]).every((key) => previous[key] === messages[key]));
+
+	// 렌더 중에 ref 를 쓰지 않는다 - React 가 버린 렌더의 값이 남을 수 있다 (#556 에서 같은
+	// 지적을 받았다). 비교는 렌더에서 하고 갱신만 커밋 후로 미룬다.
+	useEffect(() => {
+		if (!same) ref.current = messages;
+	}, [same, messages]);
+
+	return same ? previous : messages;
+}
 
 /**
  * 컴포넌트가 자기 기본 문구를 꺼내는 통로. Provider 밖에서는 한국어 카탈로그를 돌려준다.

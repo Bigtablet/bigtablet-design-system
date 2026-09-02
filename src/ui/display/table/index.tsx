@@ -127,7 +127,9 @@ export const Table = <T extends object>({
 }: TableProps<T>) => {
 	const t = useLocaleText();
 	const rowClickHint = rowClickHintProp ?? t("table.rowClickHint");
-	const emptyMessage = emptyMessageProp ?? t("table.empty");
+	// ReactNode 라 `null` 이 유효하다 - `emptyMessage={null}` 로 빈 상태 문구를 숨긴 소비자의
+	// 화면이 `??` 로는 기본 문구로 되돌아간다. undefined 만 카탈로그에서 받는다.
+	const emptyMessage = emptyMessageProp === undefined ? t("table.empty") : emptyMessageProp;
 	const selectAllAriaLabel = selectAllAriaLabelProp ?? t("table.selectAll");
 	const selectRowAriaLabel =
 		selectRowAriaLabelProp ?? ((index: number) => t("table.selectRow", { index: index + 1 }));

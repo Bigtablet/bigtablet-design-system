@@ -27,9 +27,15 @@ from pathlib import Path
 UI = Path("src/ui")
 CATALOG = Path("src/ui/system/locale-provider/messages.ts")
 
-# `	const placeholder = placeholderProp ?? t("combobox.placeholder");`
+# `const placeholder = placeholderProp ?? t("combobox.placeholder");`
+# 포매터가 긴 줄을 `=` 뒤에서 자르므로 줄바꿈된 형태도 받아야 한다. 한 줄만 보던 정규식은
+# `datePicker.rangeUntilTodaySr` 처럼 잘린 항목을 조용히 건너뛰어 문서 표 대조에서 빠뜨렸다.
+# ReactNode prop 은 `null` 을 보존하려고 `undefined` 검사를 쓰므로 그 형태도 함께 받는다.
 LOCALE_BACKED = re.compile(
-    r'^\s*const ([a-z][A-Za-z0-9]*) =\s*[a-zA-Z0-9]*Prop \?\? t\("([^"]+)"\)'
+    r"const ([a-z][A-Za-z0-9]*) =\s*(?:"
+    r'[a-zA-Z0-9]*Prop \?\? t\("([^"]+)"\)'
+    r'|[a-zA-Z0-9]*Prop === undefined \? t\("([^"]+)"\)'
+    r")"
 )
 
 
@@ -41,12 +47,15 @@ def catalog_ko() -> dict[str, str]:
 
 
 def locale_defaults(path: Path, catalog: dict[str, str]) -> dict[str, str]:
-    """컴포넌트가 카탈로그에서 받는 기본값. `prop ?? t("key")` 를 카탈로그 문구로 바꾼다."""
+    """컴포넌트가 카탈로그에서 받는 기본값. `prop ?? t("key")` 를 카탈로그 문구로 바꾼다.
+
+    줄 단위가 아니라 파일 전체에서 찾는다 - 포매터가 `=` 뒤에서 줄을 자르기 때문이다.
+    """
     out: dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        m = LOCALE_BACKED.match(line)
-        if m and m.group(2) in catalog:
-            out.setdefault(m.group(1), catalog[m.group(2)])
+    for m in LOCALE_BACKED.finditer(path.read_text(encoding="utf-8")):
+        key = m.group(2) or m.group(3)
+        if key in catalog:
+            out.setdefault(m.group(1), catalog[key])
     return out
 
 HANGUL = re.compile(r"[가-힣]")

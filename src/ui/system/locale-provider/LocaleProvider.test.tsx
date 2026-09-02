@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Table } from "../../display/table";
+import { ErrorState } from "../../feedback/error-state";
 import { Modal } from "../../overlay/modal";
 import { en, ko, LocaleProvider, useLocaleName, useLocaleText } from "./index";
 import type { LocaleKey } from "./messages";
@@ -143,5 +144,78 @@ describe("LocaleProvider와 컴포넌트", () => {
 		);
 
 		expect(screen.getByText("No data")).toBeInTheDocument();
+	});
+});
+
+describe("null 과 참조 안정성", () => {
+	it("keeps a null message hidden instead of restoring the default", () => {
+		// `??` 를 쓰면 null 도 카탈로그로 되돌아간다. ReactNode prop 에서 null 은
+		// "이 문구를 숨긴다" 는 뜻이라, 숨겨 뒀던 문구가 되살아난다.
+		render(
+			<Table
+				columns={[{ key: "a", header: "A" }]}
+				data={[]}
+				keyExtractor={() => "k"}
+				emptyMessage={null}
+			/>,
+		);
+
+		expect(screen.queryByText("데이터가 없습니다")).not.toBeInTheDocument();
+	});
+
+	it("still uses the catalog when the prop is absent", () => {
+		render(<Table columns={[{ key: "a", header: "A" }]} data={[]} keyExtractor={() => "k"} />);
+
+		expect(screen.getByText("데이터가 없습니다")).toBeInTheDocument();
+	});
+
+	it("keeps ErrorState's title hidden when it is null", () => {
+		render(<ErrorState title={null} description="설명" />);
+
+		expect(screen.queryByText("문제가 발생했습니다")).not.toBeInTheDocument();
+		expect(screen.getByText("설명")).toBeInTheDocument();
+	});
+
+	it("keeps the same t identity when messages is an equal inline object", () => {
+		// 소비자는 JSX 에서 객체 리터럴을 넘긴다. 참조가 매 렌더 바뀌면 앱 루트의 Provider 가
+		// 트리 전체를 리렌더시킨다.
+		const seen: unknown[] = [];
+		const Capture = () => {
+			seen.push(useLocaleText());
+			return null;
+		};
+		const Tree = () => (
+			<LocaleProvider messages={{ "table.empty": "없음" }}>
+				<Capture />
+			</LocaleProvider>
+		);
+
+		const { rerender } = render(<Tree />);
+		rerender(<Tree />);
+		rerender(<Tree />);
+
+		expect(seen.length).toBeGreaterThan(1);
+		expect(new Set(seen).size).toBe(1);
+	});
+
+	it("makes a new t when the messages content actually changes", () => {
+		const seen: string[] = [];
+		const Capture = () => {
+			seen.push(useLocaleText()("table.empty"));
+			return null;
+		};
+
+		const { rerender } = render(
+			<LocaleProvider messages={{ "table.empty": "없음" }}>
+				<Capture />
+			</LocaleProvider>,
+		);
+		rerender(
+			<LocaleProvider messages={{ "table.empty": "하나도 없음" }}>
+				<Capture />
+			</LocaleProvider>,
+		);
+
+		expect(seen.at(-1)).toBe("하나도 없음");
 	});
 });
