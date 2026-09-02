@@ -10,6 +10,7 @@ import { ErrorState } from "../../feedback/error-state";
 import { TextField } from "../../forms/textfield";
 import { Button } from "../../general/button";
 import { Pagination } from "../../navigation/pagination";
+import { useLocaleText } from "../../system/locale-provider";
 import { Table, type TableColumn, type TableSort } from "../table";
 import "./style.scss";
 
@@ -37,7 +38,7 @@ export interface DataViewToolbar {
 	searchValue?: string;
 	/** 검색어 변경 콜백 */
 	onSearchChange?: (value: string) => void;
-	/** 검색 입력 placeholder (기본값: "검색") */
+	/** 검색 입력 placeholder */
 	searchPlaceholder?: string;
 	/** 검색 왼쪽에 놓을 필터 컨트롤 (`Dropdown` 등) */
 	filters?: React.ReactNode;
@@ -90,11 +91,11 @@ export interface DataViewProps<T extends object>
 	ariaLabel?: string;
 	/** 선택 액션 줄의 안내 문구 (기본값: (n) => `${n}개 선택됨`) */
 	selectionSummary?: (count: number) => string;
-	/** 선택 해제 버튼 라벨 (기본값: "선택 해제") */
+	/** 선택 해제 버튼 라벨 */
 	clearSelectionLabel?: string;
-	/** 실패 상태 제목 (기본값: "불러오지 못했습니다") */
+	/** 실패 상태 제목 */
 	errorTitle?: string;
-	/** 재시도 버튼 라벨 (기본값: "다시 시도") */
+	/** 재시도 버튼 라벨 */
 	retryLabel?: string;
 }
 
@@ -132,13 +133,20 @@ export const DataView = <T extends object>({
 	onSortChange,
 	onRowClick,
 	ariaLabel,
-	selectionSummary = (count) => `${count}개 선택됨`,
-	clearSelectionLabel = "선택 해제",
-	errorTitle = "불러오지 못했습니다",
-	retryLabel = "다시 시도",
+	selectionSummary: selectionSummaryProp,
+	clearSelectionLabel: clearSelectionLabelProp,
+	errorTitle: errorTitleProp,
+	retryLabel: retryLabelProp,
 	className,
 	...props
 }: DataViewProps<T>) => {
+	const t = useLocaleText();
+	const selectionSummary =
+		selectionSummaryProp ?? ((count: number) => t("dataView.selectionSummary", { count }));
+	const clearSelectionLabel = clearSelectionLabelProp ?? t("dataView.clearSelection");
+	const errorTitle = errorTitleProp ?? t("dataView.errorTitle");
+	const retryLabel = retryLabelProp ?? t("dataView.retry");
+	const searchLabel = toolbar?.searchPlaceholder ?? t("dataView.search");
 	const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 	const selectionBarId = useId();
 
@@ -178,8 +186,8 @@ export const DataView = <T extends object>({
 								type="search"
 								value={toolbar.searchValue}
 								onValueChange={toolbar.onSearchChange}
-								placeholder={toolbar.searchPlaceholder ?? "검색"}
-								aria-label={toolbar.searchPlaceholder ?? "검색"}
+								placeholder={searchLabel}
+								aria-label={searchLabel}
 								leadingIcon={<Search size={iconSize.sm} />}
 							/>
 						</div>
@@ -213,7 +221,7 @@ export const DataView = <T extends object>({
 			)}
 
 			{showEmpty ? (
-				(empty ?? <EmptyState title="데이터가 없습니다" />)
+				(empty ?? <EmptyState title={t("dataView.empty")} />)
 			) : selectable ? (
 				// 판별 union 이라 조건부 스프레드로는 좁혀지지 않는다 - 분기를 명시한다.
 				<Table

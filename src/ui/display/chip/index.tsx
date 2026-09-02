@@ -3,6 +3,7 @@
 import type * as React from "react";
 import { useState } from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ChipType = "basic" | "input" | "filter" | "static";
@@ -98,7 +99,8 @@ export const Chip = ({
 	className,
 	...props
 }: ChipProps) => {
-	const removeAriaLabel = removeLabel ?? `${label} 제거`;
+	const t = useLocaleText();
+	const removeAriaLabel = removeLabel ?? t("chip.remove", { label: String(label) });
 	const [iconHovered, setIconHovered] = useState(false);
 
 	const isStatic = type === "static";

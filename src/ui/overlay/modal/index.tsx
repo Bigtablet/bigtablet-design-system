@@ -18,6 +18,7 @@ import {
 	useOverlayEscape,
 	useReducedMotion,
 } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ModalFooterAlign = "end" | "between" | "start";
@@ -55,7 +56,7 @@ export interface ModalProps
 	footerAlign?: ModalFooterAlign;
 	/** 우상단 X 닫기 아이콘 표시 여부 (기본값: true) */
 	showCloseIcon?: boolean;
-	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
+	/** X 닫기 버튼 접근성 레이블 */
 	closeLabel?: string;
 	/**
 	 * 모달 접근성 레이블. `title` 이 없으면 이 값이 유일한 접근성 이름이다 - 폴백이 없으므로
@@ -86,13 +87,15 @@ export const Modal = ({
 	footer,
 	footerAlign = "end",
 	showCloseIcon = true,
-	closeLabel = "닫기",
+	closeLabel: closeLabelProp,
 	children,
 	className,
 	ariaLabel,
 	onExited,
 	...props
 }: ModalProps) => {
+	const t = useLocaleText();
+	const closeLabel = closeLabelProp ?? t("modal.close");
 	// 퇴출 애니메이션 동안 내용을 붙잡는다. 부모가 `open` 과 내용을 같은 값에 묶으면 닫는 tick 에
 	// 내용이 먼저 비어, 빈 패널이 페이드아웃한다 - 두 단계로 닫히는 것이 눈에 보인다. 마지막으로
 	// 열려 있던 값을 기억해 그 동안 그대로 그린다. 다시 열리면 `open` 이 true 라 새 값이 즉시 이긴다.

@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export interface BreadcrumbItem {
@@ -39,10 +40,12 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
 export const Breadcrumb = ({
 	items,
 	separator,
-	navLabel = "현재 위치",
+	navLabel: navLabelProp,
 	className,
 	...props
 }: BreadcrumbProps) => {
+	const t = useLocaleText();
+	const navLabel = navLabelProp ?? t("breadcrumb.label");
 	const sep = separator ?? <ChevronRight size={iconSize.xs} aria-hidden="true" />;
 
 	return (

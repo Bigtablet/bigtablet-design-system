@@ -6,6 +6,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import { useIsMounted, useSpringPresence } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
@@ -28,7 +29,7 @@ export interface ToastProviderProps {
 	children: React.ReactNode;
 	/** 최대 동시 표시 토스트 수 (기본값: 5) */
 	maxCount?: number;
-	/** 토스트 닫기 버튼의 aria-label (기본값: "닫기") */
+	/** 토스트 닫기 버튼의 aria-label */
 	closeAriaLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
@@ -132,9 +133,12 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 export const ToastProvider = ({
 	children,
 	maxCount = 5,
-	closeAriaLabel = "닫기",
-	regionLabel = "알림",
+	closeAriaLabel: closeAriaLabelProp,
+	regionLabel: regionLabelProp,
 }: ToastProviderProps) => {
+	const t = useLocaleText();
+	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");
+	const regionLabel = regionLabelProp ?? t("toast.region");
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
 	// 포털은 클라이언트 마운트 후에만 렌더 (SSR/hydration 안전) - 공유 훅
 	const isMounted = useIsMounted();

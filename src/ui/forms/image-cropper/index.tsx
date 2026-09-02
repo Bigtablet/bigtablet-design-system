@@ -15,6 +15,7 @@ import {
 	useState,
 } from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import {
 	type CropImageSize,
@@ -123,14 +124,21 @@ export function ImageCropper({
 	onReady,
 	onError,
 	className,
-	label = "이미지 위치와 배율 조정",
-	hint = "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
-	zoomOutLabel = "축소",
-	zoomLabel = "배율",
-	zoomInLabel = "확대",
-	noPanHint = "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
+	label: labelProp,
+	hint: hintProp,
+	zoomOutLabel: zoomOutLabelProp,
+	zoomLabel: zoomLabelProp,
+	zoomInLabel: zoomInLabelProp,
+	noPanHint: noPanHintProp,
 	...rest
 }: ImageCropperProps) {
+	const t = useLocaleText();
+	const hint = hintProp ?? t("imageCropper.hint");
+	const noPanHint = noPanHintProp ?? t("imageCropper.noPanHint");
+	const label = labelProp ?? t("imageCropper.label");
+	const zoomOutLabel = zoomOutLabelProp ?? t("imageCropper.zoomOut");
+	const zoomLabel = zoomLabelProp ?? t("imageCropper.zoom");
+	const zoomInLabel = zoomInLabelProp ?? t("imageCropper.zoomIn");
 	const imageRef = useRef<HTMLImageElement>(null);
 	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
 	const viewportRef = useRef<HTMLDivElement>(null);

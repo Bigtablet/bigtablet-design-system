@@ -89,6 +89,31 @@ src/ui/{category}/{ComponentName}/
 └── ComponentName.stories.tsx # Storybook (선택)
 ```
 
+#### 사용자에게 보이는 문구를 추가할 때
+
+컴포넌트 안에 문구를 박지 말고 **로케일 카탈로그**에 키를 만든다
+(`src/ui/system/locale-provider/messages.ts` — `ko` 와 `en` 양쪽).
+
+```tsx
+// ❌ 이렇게 두면 <LocaleProvider> 로 바꿀 수 없다
+const Foo = ({ hint = "드래그해서 옮기세요" }: FooProps) => …
+
+// ✅ prop 은 그대로 두고 기본값만 카탈로그에서 받는다
+const Foo = ({ hint: hintProp }: FooProps) => {
+  const t = useLocaleText();
+  const hint = hintProp ?? t("foo.hint");
+```
+
+`pnpm check:defaults` 가 네 가지를 막는다.
+
+1. 컴포넌트에 박아 넣은 한글 문구 — prop 기본값이든 JSX 안이든. **prop 이름으로 고르지 않는다**
+   (`*Label`/`*Text` 패턴만 보던 시절 `rowClickHint`·`hint`·`label` 여섯 개가 그대로 새어 나갔다)
+2. 카탈로그 문구에 한글이 있는지
+3. 카탈로그 키 ↔ `t("...")` 호출 양방향 — 키만 넣고 배선을 잊거나, 없는 키를 부르는 것
+4. `docs/COMPONENTS.md` prop 표의 Default 열이 실제 기본값과 같은지
+
+개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아니다 — 사용자가 아니라 개발자가 읽는다.
+
 ### 4. 테스트 작성
 
 모든 컴포넌트는 테스트가 필요합니다:

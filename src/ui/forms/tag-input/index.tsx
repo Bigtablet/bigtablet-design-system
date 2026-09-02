@@ -4,6 +4,7 @@ import type * as React from "react";
 import { useId, useRef, useState } from "react";
 import { cn } from "../../../utils";
 import { Chip } from "../../display/chip";
+import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -17,13 +18,13 @@ export interface TagInputProps
 	defaultValue?: string[];
 	/** 태그가 추가·제거될 때 */
 	onValueChange?: (tags: string[]) => void;
-	/** 입력 placeholder (기본값: "입력 후 Enter") */
+	/** 입력 placeholder */
 	placeholder?: string;
 	/** 최대 개수. 도달하면 더 추가되지 않는다 */
 	maxTags?: number;
 	/** 같은 값을 여러 번 넣도록 허용 (기본값: false) */
 	allowDuplicates?: boolean;
-	/** 크기 (기본값: "md") */
+	/** 크기 */
 	size?: TagInputSize;
 	/** 비활성 여부 */
 	disabled?: boolean;
@@ -62,7 +63,7 @@ export const TagInput = ({
 	value,
 	defaultValue = [],
 	onValueChange,
-	placeholder = "입력 후 Enter",
+	placeholder: placeholderProp,
 	maxTags,
 	allowDuplicates = false,
 	size = "md",
@@ -72,6 +73,8 @@ export const TagInput = ({
 	className,
 	...props
 }: TagInputProps) => {
+	const t = useLocaleText();
+	const placeholder = placeholderProp ?? t("tagInput.placeholder");
 	const generatedId = useId();
 	const field = useFieldControl();
 	const inputId = field?.inputId ?? generatedId;
@@ -116,9 +119,9 @@ export const TagInput = ({
 			// 아무것도 안 들어간 두 경로 모두 화면에 아무 변화가 없다. 왜 안 들어갔는지
 			// 말해 주지 않으면 사용자는 Enter 가 먹지 않은 것으로 읽는다.
 			if (isAtCap) {
-				setAnnouncement(`최대 ${maxTags}개까지 추가할 수 있습니다`);
+				setAnnouncement(t("tagInput.atCap", { max: maxTags }));
 			} else if (duplicates.length > 0) {
-				setAnnouncement(`${duplicates.join(", ")} 이미 있음`);
+				setAnnouncement(t("tagInput.duplicate", { names: duplicates.join(", ") }));
 			}
 			return 0;
 		}
@@ -128,13 +131,13 @@ export const TagInput = ({
 		// 나중에 다시 시도할 때까지 이유를 모르면 고장으로 읽힌다. 붙여넣기가 중간에서
 		// 잘린 경우도 여기 걸린다 - 남은 후보는 조용히 버려지기 때문이다.
 		const notes = [
-			duplicates.length > 0 ? `${duplicates.join(", ")} 이미 있음` : "",
-			isAtCap ? `최대 ${maxTags}개까지 추가할 수 있습니다` : "",
+			duplicates.length > 0 ? t("tagInput.duplicate", { names: duplicates.join(", ") }) : "",
+			isAtCap && maxTags !== undefined ? t("tagInput.atCap", { max: maxTags }) : "",
 		].filter(Boolean);
 		setAnnouncement(
 			notes.length > 0
-				? `${added.join(", ")} 추가됨 (${notes.join(", ")})`
-				: `${added.join(", ")} 추가됨`,
+				? t("tagInput.addedWithNotes", { names: added.join(", "), notes: notes.join(", ") })
+				: t("tagInput.added", { names: added.join(", ") }),
 		);
 		return added.length;
 	};
@@ -142,7 +145,7 @@ export const TagInput = ({
 	const removeAt = (index: number) => {
 		const removed = tags[index];
 		setTags(tags.filter((_, i) => i !== index));
-		setAnnouncement(`${removed} 제거됨`);
+		setAnnouncement(t("tagInput.removed", { name: removed }));
 	};
 
 	const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

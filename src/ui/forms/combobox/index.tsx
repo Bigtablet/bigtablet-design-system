@@ -8,6 +8,7 @@ import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
+import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -37,13 +38,13 @@ export interface ComboboxProps
 	defaultOptions?: ComboboxOption[];
 	/** 검색 호출 간격 (기본값: 250ms) */
 	debounceMs?: number;
-	/** 입력 placeholder (기본값: "검색해서 선택") */
+	/** 입력 placeholder */
 	placeholder?: string;
-	/** 결과 없음 문구 (기본값: "일치하는 항목이 없습니다") */
+	/** 결과 없음 문구 */
 	emptyMessage?: string;
-	/** 검색 전 안내 문구 (기본값: "검색어를 입력하세요") */
+	/** 검색 전 안내 문구 */
 	idleMessage?: string;
-	/** 크기 (기본값: "md") */
+	/** 크기 */
 	size?: ComboboxSize;
 	/** 비활성 여부 */
 	disabled?: boolean;
@@ -53,7 +54,7 @@ export interface ComboboxProps
 	renderOption?: (option: ComboboxOption) => React.ReactNode;
 	/** 접근성 이름 - `Field` 로 감싸면 그쪽 라벨이 우선한다 */
 	ariaLabel?: string;
-	/** 로딩 안내 (기본값: "검색 중") */
+	/** 로딩 안내 */
 	loadingLabel?: string;
 }
 
@@ -84,18 +85,23 @@ export const Combobox = ({
 	onSearch,
 	defaultOptions = [],
 	debounceMs = 250,
-	placeholder = "검색해서 선택",
-	emptyMessage = "일치하는 항목이 없습니다",
-	idleMessage = "검색어를 입력하세요",
+	placeholder: placeholderProp,
+	emptyMessage: emptyMessageProp,
+	idleMessage: idleMessageProp,
 	size = "md",
 	disabled = false,
 	fullWidth = false,
 	renderOption,
 	ariaLabel,
-	loadingLabel = "검색 중",
+	loadingLabel: loadingLabelProp,
 	className,
 	...props
 }: ComboboxProps) => {
+	const t = useLocaleText();
+	const placeholder = placeholderProp ?? t("combobox.placeholder");
+	const emptyMessage = emptyMessageProp ?? t("combobox.empty");
+	const idleMessage = idleMessageProp ?? t("combobox.idle");
+	const loadingLabel = loadingLabelProp ?? t("combobox.loading");
 	const generatedId = useId();
 	const field = useFieldControl();
 	const inputId = field?.inputId ?? generatedId;

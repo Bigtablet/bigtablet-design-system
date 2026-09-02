@@ -3,6 +3,7 @@
 import { TriangleAlert } from "lucide-react";
 import type * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ErrorStateVariant = "page" | "widget";
@@ -52,7 +53,7 @@ const DEFAULT_ICON_SIZE: Record<ErrorStateVariant, number> = {
  * ```
  */
 export const ErrorState = ({
-	title = "문제가 발생했습니다",
+	title: titleProp,
 	description,
 	icon,
 	action,
@@ -60,6 +61,11 @@ export const ErrorState = ({
 	className,
 	...props
 }: ErrorStateProps) => {
+	const t = useLocaleText();
+	// `??` 가 아니라 undefined 검사다. `title` 은 ReactNode 라 `null` 이 유효한 값이고,
+	// 렌더가 `{title && …}` 이라 `null` 은 "제목 숨김" 으로 쓰인다 (같은 컴포넌트의 `icon` 이
+	// 그 용법을 공식 지원한다). `??` 로 두면 숨겨 뒀던 제목이 기본 문구로 되살아난다.
+	const title = titleProp === undefined ? t("errorState.title") : titleProp;
 	// icon === null → 숨김, undefined → 기본 아이콘
 	const resolvedIcon =
 		icon === null

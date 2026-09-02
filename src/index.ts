@@ -213,6 +213,21 @@ export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
 export { Drawer } from "./ui/overlay/drawer";
 export type { ModalFooterAlign, ModalProps } from "./ui/overlay/modal";
 export { Modal } from "./ui/overlay/modal";
+export type {
+	LocaleKey,
+	LocaleMessages,
+	LocaleName,
+	LocaleProviderProps,
+	LocaleText,
+} from "./ui/system/locale-provider";
+export {
+	catalogs,
+	en,
+	ko,
+	LocaleProvider,
+	useLocaleName,
+	useLocaleText,
+} from "./ui/system/locale-provider";
 export type { ResolvedTheme, ThemeMode, ThemeProviderProps } from "./ui/system/theme-provider";
 export { ThemeProvider, useTheme } from "./ui/system/theme-provider";
 

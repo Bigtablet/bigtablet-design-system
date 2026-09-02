@@ -7,6 +7,7 @@ import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } fr
 import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
+import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -39,13 +40,13 @@ interface DropdownCommonProps {
 	id?: string;
 	/** 드롭다운 위에 표시할 플로팅 라벨 텍스트 */
 	label?: string;
-	/** 선택 전 표시할 플레이스홀더 (기본값: "선택…") */
+	/** 선택 전 표시할 플레이스홀더 */
 	placeholder?: string;
 	/** 표시할 옵션 목록 */
 	options: DropdownOption[];
 	/** 비활성화 여부 */
 	disabled?: boolean;
-	/** 드롭다운 크기 (기본값: "md") */
+	/** 드롭다운 크기 */
 	size?: DropdownSize;
 	/**
 	 * @deprecated Dropdown 은 이제 항상 부모 너비를 채웁니다. 인라인 사용 시 부모를 `inline-block + width` 로 감싸세요.
@@ -53,7 +54,7 @@ interface DropdownCommonProps {
 	fullWidth?: boolean;
 	/** 루트 요소에 추가할 className */
 	className?: string;
-	/** 컨트롤 시각 변형 (기본값: "outline") */
+	/** 컨트롤 시각 변형 */
 	variant?: DropdownVariant;
 	/**
 	 * @deprecated textAlign은 더 이상 지원되지 않습니다.
@@ -64,11 +65,11 @@ interface DropdownCommonProps {
 	 * (기본값: false)
 	 */
 	searchable?: boolean;
-	/** 검색 입력의 placeholder (기본값: "검색…") */
+	/** 검색 입력의 placeholder */
 	searchPlaceholder?: string;
-	/** 필터 결과가 0개일 때 표시할 텍스트 (기본값: "결과 없음") */
+	/** 필터 결과가 0개일 때 표시할 텍스트 */
 	emptyText?: string;
-	/** 멀티 선택 요약 텍스트 (기본값: "N개 선택") */
+	/** 멀티 선택 요약 텍스트 */
 	selectedSummary?: (count: number) => string;
 	/**
 	 * 네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어
@@ -118,21 +119,27 @@ const normalizeForSearch = (s: string) => s.toLowerCase().replace(/\s+/g, "");
  * @returns 렌더링된 드롭다운 UI
  */
 export const Dropdown = (props: DropdownProps) => {
+	const t = useLocaleText();
 	const {
 		id,
 		label,
-		placeholder = "선택…",
+		placeholder: placeholderProp,
 		options,
 		disabled,
 		size = "md",
 		variant = "outline",
 		className,
 		searchable = false,
-		searchPlaceholder = "검색…",
-		emptyText = "결과 없음",
-		selectedSummary = (count: number) => `${count}개 선택`,
+		searchPlaceholder: searchPlaceholderProp,
+		emptyText: emptyTextProp,
+		selectedSummary: selectedSummaryProp,
 		name,
 	} = props;
+	const placeholder = placeholderProp ?? t("dropdown.placeholder");
+	const searchPlaceholder = searchPlaceholderProp ?? t("dropdown.searchPlaceholder");
+	const emptyText = emptyTextProp ?? t("dropdown.empty");
+	const selectedSummary =
+		selectedSummaryProp ?? ((count: number) => t("dropdown.selectedSummary", { count }));
 
 	const multiple = props.multiple === true;
 
@@ -150,7 +157,6 @@ export const Dropdown = (props: DropdownProps) => {
 	const [internalMulti, setInternalMulti] = useState<string[]>(() =>
 		props.multiple === true ? ((props.defaultValue as string[] | undefined) ?? []) : [],
 	);
-
 
 	// 검색 상태 - searchText 는 표시용(IME 조합 중에도 즉시 반영), committedQuery 는 필터용(조합 완료 시 반영)
 	const [searchText, setSearchText] = useState("");
