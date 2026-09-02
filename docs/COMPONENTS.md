@@ -645,6 +645,41 @@ Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero
 
 ---
 
+### TagInput
+
+후보 목록에 **없는** 값을 사용자가 직접 만들어 넣는 다중 입력. 후보가 정해져 있으면 `Dropdown`
+의 `multiple`, 후보를 서버에서 가져와야 하면 `Combobox` 를 쓴다. `TagInput` 이 맡는 것은 목록
+자체가 없는 경우다 — 자유 키워드, 사내 라벨, 검색 필터.
+
+```tsx
+<Field name="keywords" label="키워드" help="Enter 또는 쉼표로 구분합니다">
+  <TagInput value={tags} onValueChange={setTags} maxTags={10} />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string[]` | - | 태그 목록 (제어형). 주지 않으면 내부 상태로 동작 |
+| `defaultValue` | `string[]` | `[]` | 비제어형 초기 태그 |
+| `onValueChange` | `(tags: string[]) => void` | - | 추가·제거 시 |
+| `placeholder` | `string` | `'입력 후 Enter'` | |
+| `maxTags` | `number` | - | 최대 개수. 도달하면 입력이 읽기 전용 |
+| `allowDuplicates` | `boolean` | `false` | 같은 값 중복 허용 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
+| `disabled` | `boolean` | `false` | |
+| `fullWidth` | `boolean` | `false` | |
+| `ariaLabel` | `string` | - | `Field` 로 감싸면 그쪽 라벨이 우선 |
+
+키보드·붙여넣기 규약:
+
+- **Enter / 쉼표** — 태그 확정. Enter 는 `preventDefault` 하므로 폼이 제출되지 않는다
+- **Backspace (빈 입력)** — 마지막 태그 제거. 마우스 없이 되돌리는 유일한 경로
+- **붙여넣기** — 쉼표·줄바꿈·탭이 섞인 목록을 여러 태그로 나눈다
+- **blur** — 남은 입력을 확정한다. Enter 를 잊고 넘어가도 값이 사라지지 않는다
+- IME 조합 중 Enter 는 조합 확정용이라 태그를 만들지 않는다
+
+태그 칩은 `Chip` 의 `static` + `removable` 이다. 칩을 지우면 포커스가 입력으로 돌아온다.
+
 ### Textarea
 
 멀티라인 텍스트 입력. `TextField` 와 **동일한 시각/토큰** (border / focus / error / label / helper / disabled) + textarea 특화 기능 (auto-grow, 글자 수 카운터, resize 제어, 한글 IME 정책).
