@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import { useEffect } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { useListboxPopup } from "./use-listbox-popup";
 
@@ -14,16 +15,21 @@ const Probe = ({
 	items = ITEMS,
 	onCommit = vi.fn(),
 	returnFocusOnClose = false,
+	disabled = false,
 	expose,
 }: {
 	items?: Item[];
 	onCommit?: (item: Item) => void;
 	returnFocusOnClose?: boolean;
+	disabled?: boolean;
 	/** 공개 API 를 직접 부르는 테스트용 - Dropdown 경로로는 닿지 않는 분기를 덮는다 */
 	expose?: (popup: ReturnType<typeof useListboxPopup<Item>>) => void;
 }) => {
-	const popup = useListboxPopup<Item>({ items, onCommit, returnFocusOnClose });
-	expose?.(popup);
+	const popup = useListboxPopup<Item>({ items, onCommit, returnFocusOnClose, disabled });
+	// 렌더 중에 부르면 React 가 버린 렌더의 popup 이 테스트로 새어 나간다.
+	useEffect(() => {
+		expose?.(popup);
+	}, [expose, popup]);
 	return (
 		<div ref={popup.wrapperRef}>
 			<button
@@ -184,5 +190,21 @@ describe("useListboxPopup", () => {
 
 		fireEvent.mouseDown(document.body);
 		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+	});
+
+	it("stops handling input keys once disabled", () => {
+		// 열린 채로 런타임에 비활성화될 수 있다(예: 저장 중). 그때 Enter 가 통과하면
+		// 사용자가 볼 수 없는 목록의 활성 항목이 커밋된다.
+		const onCommit = vi.fn();
+		const { rerender } = render(<Probe onCommit={onCommit} />);
+
+		fireEvent.click(screen.getByText("trigger"));
+		const input = screen.getByRole("textbox");
+		fireEvent.keyDown(input, { key: "ArrowDown" });
+
+		rerender(<Probe onCommit={onCommit} disabled />);
+		fireEvent.keyDown(input, { key: "Enter" });
+
+		expect(onCommit).not.toHaveBeenCalled();
 	});
 });

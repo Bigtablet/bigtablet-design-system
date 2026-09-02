@@ -173,6 +173,8 @@ export function useListboxPopup<T extends ListboxItem>({
 
 	const onInputKeyDown = useCallback(
 		(event: React.KeyboardEvent<HTMLElement>) => {
+			// 열린 채로 런타임에 비활성화될 수 있다. 그때 Enter 가 통과하면 값이 바뀐다.
+			if (disabled) return;
 			// IME 조합 중 Enter 는 조합 확정용 - 선택·이동·닫기를 트리거하지 않는다.
 			if (event.nativeEvent.isComposing) return;
 			switch (event.key) {
@@ -199,7 +201,7 @@ export function useListboxPopup<T extends ListboxItem>({
 			}
 			// Home/End 는 커서 이동에 양보한다 - 입력 안에서는 텍스트 조작이 우선이다.
 		},
-		[moveActive, commitActive, close],
+		[disabled, moveActive, commitActive, close],
 	);
 
 	// 열림·목록 변경 시 활성 인덱스를 범위 안으로 되돌린다.

@@ -20,6 +20,13 @@ const searchPeople = (query: string, delay = 400) =>
 		setTimeout(() => resolve(PEOPLE.filter((p) => p.label.includes(query))), delay);
 	});
 
+/**
+ * 순서가 뒤집히는 네트워크. 짧은 검색어일수록 느리게 답하므로, 한 글자 치고 이어서 두 글자를
+ * 치면 **먼저 보낸 요청이 나중에 도착한다** - 고정 지연으로는 이 경합이 재현되지 않는다.
+ */
+const searchPeopleOutOfOrder = (query: string) =>
+	searchPeople(query, Math.max(400, 2400 - query.length * 800));
+
 const meta: Meta<typeof Combobox> = {
 	title: "Components/Forms/Combobox",
 	component: Combobox,
@@ -134,7 +141,7 @@ export const SlowNetwork: Story = {
 		docs: {
 			description: {
 				story:
-					"응답이 1.5초 걸린다. 빠르게 여러 글자를 치면 이전 요청이 늦게 도착하는데, 그 결과는 버려지고 최신 검색어의 후보만 남는다.",
+					"짧은 검색어일수록 응답이 느리다. '박' 을 치고 디바운스가 지난 뒤 '상' 을 이어 치면 첫 요청이 두 번째보다 늦게 도착하는데, 그 결과는 버려지고 최신 검색어의 후보만 남는다.",
 			},
 		},
 	},
@@ -147,7 +154,7 @@ export const SlowNetwork: Story = {
 					ariaLabel="담당자"
 					value={value}
 					onValueChange={setValue}
-					onSearch={(q) => searchPeople(q, 1500)}
+					onSearch={searchPeopleOutOfOrder}
 				/>
 			</div>
 		);

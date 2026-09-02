@@ -1,10 +1,11 @@
 "use client";
 
+import { animated } from "@react-spring/web";
 import { ChevronDown } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
 import { useFieldControl } from "../field";
@@ -112,8 +113,12 @@ export const Combobox = ({
 
 	// defaultOptions 는 소비자가 인라인 배열로 넘기는 일이 많다. 의존성에 넣으면 매 렌더
 	// 조회가 다시 걸리고, 빼고 suppress 하면 값이 낡는다. ref 로 최신값만 읽는다.
+	// 대입은 렌더가 아니라 커밋 후에 한다 - 렌더 중 쓰면 React 가 버린 렌더의 값이
+	// ref 에 남아 이후 effect 가 그것을 읽을 수 있다.
 	const defaultOptionsRef = useRef(defaultOptions);
-	defaultOptionsRef.current = defaultOptions;
+	useEffect(() => {
+		defaultOptionsRef.current = defaultOptions;
+	}, [defaultOptions]);
 
 	// 선택하면 패널을 닫는다. 닫지 않으면 검색어가 비워지면서 effect 가 idle 로 되돌려,
 	// 방금 고른 라벨 대신 "검색어를 입력하세요" 가 열린 채로 남는다.
@@ -186,6 +191,15 @@ export const Combobox = ({
 
 	const showIdle = !isLoading && !hasSearched && options.length === 0;
 	const showEmpty = !isLoading && hasSearched && options.length === 0;
+	// 안내 문구만 있는 동안에는 listbox 를 렌더하지 않는다. 그때 aria-controls 를 남기면
+	// 보조기술이 존재하지 않는 요소를 가리킨다.
+	const hasList = !showIdle && !showEmpty;
+
+	// 패널 진입 모션 - Dropdown 목록과 같은 값. 퇴출은 즉시 unmount (Dropdown 주석 참고).
+	const panelStyle = useSpringPresence({
+		visible: isOpen,
+		from: popup.dropUp ? "translateY(4px)" : "translateY(-4px)",
+	});
 
 	return (
 		<div ref={popup.wrapperRef} className={rootClassName} {...props}>
@@ -200,7 +214,7 @@ export const Combobox = ({
 					value={isOpen ? query : (value?.label ?? "")}
 					placeholder={value ? value.label : placeholder}
 					aria-expanded={isOpen}
-					aria-controls={isOpen ? listId : undefined}
+					aria-controls={isOpen && hasList ? listId : undefined}
 					aria-autocomplete="list"
 					aria-activedescendant={
 						isOpen && activeIndex >= 0 && options[activeIndex]
@@ -221,7 +235,7 @@ export const Combobox = ({
 				/>
 				{isLoading && (
 					<span className="combobox_spinner">
-						<Spinner size={16} ariaLabel={loadingLabel} />
+						<Spinner size={iconSize.sm} ariaLabel={loadingLabel} />
 					</span>
 				)}
 				<button
@@ -238,9 +252,14 @@ export const Combobox = ({
 			</div>
 
 			{isOpen && (
-				<div className={cn("combobox_panel", { combobox_panel_up: popup.dropUp })}>
-					{showIdle || showEmpty ? (
-						<p className="combobox_message">{showIdle ? idleMessage : emptyMessage}</p>
+				<animated.div
+					className={cn("combobox_panel", { combobox_panel_up: popup.dropUp })}
+					style={panelStyle}
+				>
+					{!hasList ? (
+						<p className="combobox_message" role="status">
+							{showIdle ? idleMessage : emptyMessage}
+						</p>
 					) : (
 						<div id={listId} className="combobox_list" role="listbox">
 							{options.map((option, index) => (
@@ -266,7 +285,7 @@ export const Combobox = ({
 							))}
 						</div>
 					)}
-				</div>
+				</animated.div>
 			)}
 		</div>
 	);

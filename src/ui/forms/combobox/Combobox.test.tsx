@@ -181,6 +181,24 @@ describe("Combobox", () => {
 		expect(screen.queryAllByRole("option")).toHaveLength(0);
 	});
 
+	it("only points aria-controls at a listbox that exists", async () => {
+		// 안내 문구만 있는 동안에는 listbox 를 렌더하지 않는다. aria-controls 를 남겨두면
+		// 보조기술이 없는 요소를 가리킨다.
+		render(<Combobox onSearch={vi.fn().mockResolvedValue(OPTIONS)} debounceMs={10} />);
+
+		open();
+		const input = screen.getByRole("combobox");
+		expect(screen.getByText("검색어를 입력하세요")).toBeInTheDocument();
+		expect(input).not.toHaveAttribute("aria-controls");
+
+		type("박");
+		await vi.advanceTimersByTimeAsync(10);
+		await waitFor(() => expect(screen.getByRole("listbox")).toBeInTheDocument());
+		expect(document.getElementById(input.getAttribute("aria-controls") as string)).toBe(
+			screen.getByRole("listbox"),
+		);
+	});
+
 	it("points aria-activedescendant at the keyboard-active option", async () => {
 		// 포커스는 입력에 남으므로, 스크린리더가 현재 항목을 알 방법은 이것뿐이다.
 		render(<Combobox onSearch={vi.fn().mockResolvedValue(OPTIONS)} debounceMs={10} />);
