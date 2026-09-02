@@ -208,4 +208,16 @@ describe("DatePicker", () => {
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
 		expect(onChange).not.toHaveBeenCalled();
 	});
+
+	it("keeps years before minDate out of the list", () => {
+		// 월·일만 좁히면 minDate 이전 연도가 남는다 - 그 해를 고르는 순간 제약이 무의미해진다
+		// (월·일 제한은 `year === min.year` 일 때만 걸린다). 실제로 1950 이 첫 항목이었다.
+		render(<DatePicker value="2026-05-01" minDate="2020-01-01" onValueChange={vi.fn()} />);
+
+		fireEvent.click(screen.getAllByRole("button")[0]);
+		const years = screen.getAllByRole("option").map((o) => o.textContent);
+
+		expect(years[0]).toBe("2020");
+		expect(years).not.toContain("1950");
+	});
 });
