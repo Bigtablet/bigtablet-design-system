@@ -4,6 +4,14 @@
 1. 화면·스크린리더에 노출되는 기본 문구는 로케일 카탈로그(`ko`)에 있고 한글이어야 한다.
    컴포넌트 안에 문구를 다시 박으면 `<LocaleProvider>` 로 바꿀 수 없는 문구가 생긴다 -
    영어 화면을 만드는 소비자에게 그 자리만 한국어로 남는다.
+
+   **prop 이름으로 고르지 않는다.** 예전에는 `*Label`/`*Text`/`placeholder` 이름만 봤는데,
+   그 패턴을 벗어난 `rowClickHint`·`hint`·`label`·`searchPlaceholder` 여섯 개가 그대로 새어
+   나갔다. 이제 `src/ui` 안의 **한글이 든 문자열 전부**를 본다 - 기본값이든 JSX 안이든.
+
+4. 카탈로그 키와 `t("...")` 호출이 양방향으로 맞아야 한다. 키만 추가하고 배선을 잊으면 그
+   문구는 아무도 쓰지 않고, 없는 키를 부르면 `undefined` 가 화면에 나간다. 이관을 스크립트로
+   돌리다 절반만 적용되는 사고가 실제로 났다 - 그걸 사람이 눈으로 확인하지 않게 한다.
 2. JSDoc `@default` 가 실제 destructuring 기본값과 일치해야 한다. 값을 바꾸고 JSDoc 을 잊으면
    Storybook autodocs 와 소비자 문서가 조용히 거짓말을 한다.
 3. `docs/COMPONENTS.md` prop 표의 Default 열이 소스 기본값과 일치해야 한다. 소비자가 읽는
@@ -41,9 +49,11 @@ def locale_defaults(path: Path, catalog: dict[str, str]) -> dict[str, str]:
             out.setdefault(m.group(1), catalog[m.group(2)])
     return out
 
-# 화면/스크린리더 노출 문자열로 취급하는 prop 이름
-EXPOSED = re.compile(r"^(?:[a-z][A-Za-z]*(?:Label|Text|Format|Message|Title)|placeholder)$")
 HANGUL = re.compile(r"[가-힣]")
+
+# 개발자 콘솔로만 나가는 문구. 사용자가 아니라 이 저장소를 쓰는 개발자가 읽으므로 로케일 대상이
+# 아니다. 표식으로 고르는 이유 - 파일 단위로 빼면 그 파일의 실제 노출 문구까지 놓친다.
+DEV_MESSAGE_MARKERS = ("[Bigtablet DS]", "올바른 사용 예", "앱 최상단에", "  <")
 
 # `  someLabel = "값",` 형태의 destructuring 기본값
 DEFAULT_STR = re.compile(r'^\s*([a-z][A-Za-z0-9]*)\s*=\s*"([^"]*)"\s*,?\s*$')
@@ -52,6 +62,48 @@ DEFAULT_ANY = re.compile(r'^\s*([a-z][A-Za-z0-9]*)\s*=\s*([^,=][^,]*?)\s*,?\s*$'
 
 JSDOC_DEFAULT = re.compile(r"^\s*\*\s*@default\s+(.+?)\s*$")
 PROP_DECL = re.compile(r"^\s*([a-z][A-Za-z0-9]*)\??\s*:")
+
+
+def string_literals(line: str, in_block: bool) -> tuple[list[str], bool]:
+    """한 줄에서 문자열 리터럴만 뽑고, 블록 주석이 이어지는지 함께 돌려준다.
+
+    정규식 한 방으로는 안 된다 - 닫는 따옴표에서 시작해 뒤에 붙은 `// 주석` 까지 물고,
+    JSX 블록 주석(`{/* ... */}`)의 둘째 줄은 `//` 로 시작하지 않아 걸러지지 않는다.
+    두 실수를 실제로 했다.
+    """
+    out: list[str] = []
+    i, n = 0, len(line)
+    while i < n:
+        if in_block:
+            end = line.find("*/", i)
+            if end == -1:
+                return out, True
+            i, in_block = end + 2, False
+            continue
+        ch = line[i]
+        if line.startswith("//", i):
+            break
+        if line.startswith("/*", i):
+            in_block = True
+            i += 2
+            continue
+        if ch in "\"'`":
+            j = i + 1
+            buf = []
+            while j < n:
+                if line[j] == "\\":
+                    j += 2
+                    continue
+                if line[j] == ch:
+                    break
+                buf.append(line[j])
+                j += 1
+            out.append("".join(buf))
+            # 여는 따옴표가 이 줄에서 닫히지 않으면(여러 줄 문자열) 나머지는 포기한다
+            i = j + 1 if j < n else n
+            continue
+        i += 1
+    return out, in_block
 
 
 def normalize(value: str) -> str:
@@ -68,18 +120,27 @@ def check_file(path: Path) -> list[str]:
     lines = path.read_text(encoding="utf-8").splitlines()
     problems: list[str] = []
 
-    # ── 1. 노출 문구를 컴포넌트에 다시 박지 않았는지
+    # ── 1. 컴포넌트에 한글 문구를 박지 않았는지 (prop 이름과 무관하게)
+    in_block = False
     for i, line in enumerate(lines, start=1):
+        literals, in_block = string_literals(line, in_block)
+        if not any(HANGUL.search(v) for v in literals):
+            continue
+        stripped = line.strip()
+        if any(allowed in line for allowed in DEV_MESSAGE_MARKERS):
+            continue
         m = DEFAULT_STR.match(line)
-        if not m:
-            continue
-        name, value = m.group(1), m.group(2)
-        if not EXPOSED.match(name) or value == "":
-            continue
-        problems.append(
-            f'{path}:{i}  {name} = "{value}" - 노출 문구는 로케일 카탈로그에 두고'
-            f' `{name}Prop ?? t("...")` 로 받아야 한다'
-        )
+        if m:
+            name = m.group(1)
+            problems.append(
+                f'{path}:{i}  {name} = "{m.group(2)}" - 노출 문구는 로케일 카탈로그에 두고'
+                f' `{name}Prop ?? t("...")` 로 받아야 한다'
+            )
+        else:
+            problems.append(
+                f"{path}:{i}  {stripped[:70]} - 박아 넣은 한글 문구다."
+                ' 카탈로그에 키를 만들고 `t("...")` 로 받아야 한다'
+            )
 
     # ── 2. JSDoc @default vs 실제 기본값
     actual: dict[str, str] = {}
@@ -143,6 +204,33 @@ def cells_of(line: str) -> list[str]:
     return [c.strip() for c in parts]
 
 
+# `t("modal.close")` - `it("...")` 같은 테스트 함수에 걸리지 않게 앞 문자를 막는다
+T_CALL = re.compile(r'(?<![A-Za-z0-9_])t\(\s*"([^"]+)"')
+
+
+def check_catalog_wiring(files: list[Path], catalog: dict[str, str]) -> list[str]:
+    """카탈로그 키와 `t("...")` 호출을 양방향으로 대조한다.
+
+    한쪽만 맞으면 조용히 깨진다 - 키만 넣고 배선을 잊으면 그 문구는 아무도 안 쓰고, 없는 키를
+    부르면 `undefined` 가 화면에 나간다. 이관을 스크립트로 돌리다 절반만 적용된 적이 있어
+    사람 눈으로 확인하지 않게 한다.
+    """
+    used: dict[str, Path] = {}
+    for f in files:
+        for key in T_CALL.findall(f.read_text(encoding="utf-8")):
+            used.setdefault(key, f)
+
+    problems = [
+        f"{CATALOG}  {key} - 카탈로그에만 있고 컴포넌트가 쓰지 않는다 (배선 누락)"
+        for key in sorted(set(catalog) - set(used))
+    ]
+    problems += [
+        f'{used[key]}  t("{key}") - 카탈로그에 없는 키다 (화면에 undefined 가 나간다)'
+        for key in sorted(set(used) - set(catalog))
+    ]
+    return problems
+
+
 def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], int]:
     by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
     problems: list[str] = []
@@ -204,6 +292,7 @@ def main() -> int:
         for key, value in catalog.items()
         if not HANGUL.search(value)
     ]
+    problems += check_catalog_wiring(files, catalog)
     doc_problems, doc_compared = check_docs(files, catalog)
     problems += doc_problems
 
@@ -233,6 +322,7 @@ def main() -> int:
     print(f"로케일 카탈로그 {exposed}개 - 전부 한글입니다.")
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
     print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
+    print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있습니다.")
     return 0
 
 
