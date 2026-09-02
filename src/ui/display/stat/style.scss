@@ -1,0 +1,46 @@
+@use "src/styles/token" as token;
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_4;
+  font-family: token.$font_family_primary;
+
+  &_label {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_4;
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  &_icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  &_value {
+    color: token.$color_text_heading;
+    @include token.heading_medium_bold;
+    // 비례 숫자는 자릿수마다 폭이 달라, 값이 갱신될 때 숫자가 좌우로 흔들리고 여러 지표를
+    // 나란히 두면 자리가 맞지 않는다.
+    @include token.tabular_nums;
+  }
+
+  &_delta {
+    @include token.body_small_medium;
+    @include token.tabular_nums;
+
+    &_positive {
+      color: token.$color_status_success_on_surface;
+    }
+
+    &_negative {
+      color: token.$color_status_error_on_surface;
+    }
+
+    &_neutral {
+      color: token.$color_text_caption;
+    }
+  }
+}
