@@ -267,7 +267,14 @@
 		}
 	}
 
-	function unlockScroll() {
+	/**
+	 * @param {boolean} [dimFades] 닫히는 오버레이의 딤이 페이드 아웃하는가.
+	 *
+	 * 중첩이 남아 있으면 거터를 남은 두께로 다시 칠하는데, 그 전환은 **사라지는 딤**의 커브를
+	 * 따라야 한다. Modal 은 `.is-open` 을 떼면 즉시 사라지므로 transition 을 걸면 거터만 0.2s
+	 * 늦게 밝아진다.
+	 */
+	function unlockScroll(dimFades) {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
@@ -295,7 +302,7 @@
 		} else {
 			body.dataset.btOpenModals = String(n);
 			// 위에 있던 오버레이가 닫혔으니 겹침이 하나 줄었다.
-			paintCanvas(html, n, true);
+			paintCanvas(html, n, dimFades);
 		}
 	}
 
@@ -1101,7 +1108,8 @@
 			if (!state.isOpen) return; // 이미 닫힘 - 중복 unlockScroll 방지
 			state.isOpen = false;
 			modal.classList.remove("is-open");
-			unlockScroll();
+			// 이 딤은 `display` 토글로 즉시 사라진다 - 남은 거터도 즉시 밝아져야 한다.
+			unlockScroll(false);
 
 			// 우리가 추가한 tabindex 정리 (React useFocusTrap 의 wasTabIndexAdded 와 동일)
 			if (panelTabindexAdded && panel) {
@@ -1271,7 +1279,8 @@
 			}
 			setTimeout(() => {
 				overlay.remove();
-				unlockScroll();
+				// 이 딤은 페이드 아웃한다 - 남은 거터도 같은 커브로 밝아진다.
+				unlockScroll(true);
 			}, 200);
 		}
 

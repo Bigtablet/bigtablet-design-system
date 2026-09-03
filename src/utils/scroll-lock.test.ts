@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { lockBodyScroll, reportOverlayDim, unlockBodyScroll } from "./scroll-lock";
+import {
+	lockBodyScroll,
+	reportOverlayDim,
+	unlockBodyScroll,
+	unregisterOverlayDim,
+} from "./scroll-lock";
 
 /**
  * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 `getBoundingClientRect().width` 가 0 이다.
@@ -213,6 +218,30 @@ describe("scroll-lock", () => {
 		// 위 오버레이가 닫히면 겹침이 풀린다.
 		reportOverlayDim(alert, 0);
 		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+	});
+
+	it("drops a nested overlay's report when it unmounts under a parent lock", () => {
+		// 부모 잠금이 남아 있으면 마지막 해제의 `clear()` 가 돌지 않는다 - 닫힌 자식이 스스로
+		// 빠지지 않으면 죽은 항목이 쌓이고 합성이 매번 그것까지 순회한다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const parent = {};
+
+		reportOverlayDim(parent, 1);
+		lockBodyScroll();
+
+		// 자식을 열고 닫기를 반복해도 부모 한 겹으로 돌아와야 한다.
+		for (let i = 0; i < 3; i++) {
+			const child = {};
+			reportOverlayDim(child, 1);
+			lockBodyScroll();
+			expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+			unlockBodyScroll();
+			unregisterOverlayDim(child);
+			expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		}
 	});
 
 	it("forgets reported progress once the lock is released", () => {

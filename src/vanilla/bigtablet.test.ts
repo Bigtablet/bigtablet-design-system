@@ -403,6 +403,8 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		second?.close();
 
 		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		// 닫힌 쪽이 Modal 이라 딤이 즉시 사라진다 - 거터도 즉시 밝아져야 한다.
+		expect(document.documentElement.style.transition).toBe("");
 
 		first?.close();
 

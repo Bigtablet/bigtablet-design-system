@@ -196,6 +196,19 @@ export function reportOverlayDim(owner: object, progress: number): void {
 	paintCanvas(document.documentElement);
 }
 
+/**
+ * 오버레이가 사라질 때 자기 보고를 뺀다. 부모 잠금이 남아 있으면 `dimProgress.clear()` 가 돌지
+ * 않아 닫힌 자식의 키가 남는데, 부모 잠금 아래서 자식을 반복해 열고 닫으면 그만큼 쌓이고
+ * 합성이 매번 그 죽은 항목까지 순회한다.
+ */
+export function unregisterOverlayDim(owner: object): void {
+	if (typeof document === "undefined") return;
+	if (!dimProgress.delete(owner)) return;
+
+	// 남은 오버레이만의 두께로 다시 칠한다 - 마지막 해제 뒤라면 측정값이 없어 no-op 다.
+	paintCanvas(document.documentElement);
+}
+
 /** 오버레이 하나가 열릴 때 호출. 중첩되면 카운터만 올린다. */
 export function lockBodyScroll(): void {
 	if (typeof document === "undefined") return;

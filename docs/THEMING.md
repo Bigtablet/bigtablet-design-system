@@ -539,7 +539,8 @@ elementFromPoint(1266, 250)            null   ← 여기부터 아무것도 없�
   맞춰 조정해야 하면 이 선택자를 쓴다
 - **거터는 딤과 같이 어두워진다.** 딤이 진입 애니메이션 중이면 거터도 같은 진행도를 따른다 -
   잠금 순간 최종색으로 점프하면 페이드 동안 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
-  React 오버레이는 자기 딤 스프링의 진행도를 잠금에 보고하고(`reportOverlayDim`), Vanilla 는
+  React 오버레이는 자기 딤 스프링의 진행도를 잠금에 보고하고(`reportOverlayDim`, 사라질 때
+  `unregisterOverlayDim`), Vanilla 는
   딤과 같은 길이·easing 의 `transition` 을 루트에 건다(`.bt-alert__overlay` 만 페이드하고
   `.bt-modal` 은 `display` 토글이라 즉시다). `prefers-reduced-motion` 에서는 스프링이 즉시
   목표값이라 거터도 즉시 어두워진다

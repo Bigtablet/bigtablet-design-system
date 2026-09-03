@@ -1,7 +1,12 @@
 export { cn } from "./cn";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
-export { lockBodyScroll, reportOverlayDim, unlockBodyScroll } from "./scroll-lock";
+export {
+	lockBodyScroll,
+	reportOverlayDim,
+	unlockBodyScroll,
+	unregisterOverlayDim,
+} from "./scroll-lock";
 export {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,

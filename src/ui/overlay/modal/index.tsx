@@ -14,6 +14,7 @@ import {
 	reportOverlayDim,
 	springEnterFrom,
 	unlockBodyScroll,
+	unregisterOverlayDim,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
@@ -196,7 +197,11 @@ export const Modal = ({
 		// 즉시 목표값이라 1 로 시작한다.
 		reportOverlayDim(dimOwner, reduced ? 1 : 0);
 		lockBodyScroll();
-		return unlockBodyScroll;
+		return () => {
+			unlockBodyScroll();
+			// 부모 잠금이 남아 있으면 위 호출이 레지스트리를 비우지 않는다 - 자기 것만 뺀다.
+			unregisterOverlayDim(dimOwner);
+		};
 	}, [shouldRender]);
 
 	// open 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에
