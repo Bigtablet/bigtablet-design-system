@@ -11,6 +11,22 @@ const options = [
 ];
 
 describe("Dropdown", () => {
+	it("renders the list outside the trigger's clipping ancestor", async () => {
+		// 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표 래퍼)이 목록을 잘라내고 `z-index`
+		// 로는 넘지 못한다 - 실측으로 카드 안에서 170px 목록 중 46px 만 보였다(#586).
+		render(
+			<div data-testid="card" style={{ overflow: "hidden" }}>
+				<Dropdown options={options} placeholder="선택" />
+			</div>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+
+		const list = await screen.findByRole("listbox");
+		expect(screen.getByTestId("card")).not.toContainElement(list);
+		expect(document.body).toContainElement(list);
+	});
+
 	it("renders with placeholder", () => {
 		render(<Dropdown options={options} placeholder="Select an option" />);
 		expect(screen.getByText("Select an option")).toBeInTheDocument();

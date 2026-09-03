@@ -4,6 +4,7 @@ import { animated } from "@react-spring/web";
 import { Check, ChevronDown, Search } from "lucide-react";
 import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
@@ -240,6 +241,8 @@ export const Dropdown = (props: DropdownProps) => {
 		wrapperRef,
 		triggerRef: controlRef,
 		listRef,
+		panelRef,
+		position,
 		close: closePanel,
 		onTriggerKeyDown: onControlKeyDown,
 		onInputKeyDown: onSearchKeyDown,
@@ -348,108 +351,130 @@ export const Dropdown = (props: DropdownProps) => {
 					<input type="hidden" name={name} value={selectedValues[0] ?? ""} disabled={disabled} />
 				))}
 
-			{isOpen && (
-				<animated.div className={listClassName} style={listStyle}>
-					{searchable && (
-						<div className="dropdown_search">
-							<span className="dropdown_search_icon" aria-hidden="true">
-								<Search size={iconSize.sm} />
-							</span>
-							<input
-								ref={searchRef}
-								type="text"
-								className="dropdown_search_input"
-								placeholder={searchPlaceholder}
-								aria-label={searchPlaceholder}
-								autoComplete="off"
-								role="combobox"
-								aria-autocomplete="list"
-								aria-expanded={isOpen}
-								aria-controls={`${dropdownId}_listbox`}
-								aria-activedescendant={
-									activeIndex >= 0 && visibleOptions[activeIndex]
-										? `${dropdownId}_option_${activeIndex}`
-										: undefined
-								}
-								value={searchText}
-								onChange={(e) => {
-									const v = e.target.value;
-									setSearchText(v);
-									// 조합 중에는 필터 갱신 보류 (mid-composition 리스트 thrash 방지)
-									if (!isComposingRef.current) setCommittedQuery(v);
-								}}
-								onCompositionStart={() => {
-									isComposingRef.current = true;
-								}}
-								onCompositionEnd={(e) => {
-									isComposingRef.current = false;
-									const v = e.currentTarget.value;
-									setSearchText(v);
-									setCommittedQuery(v);
-								}}
-								onKeyDown={onSearchKeyDown}
-							/>
-						</div>
-					)}
-
-					<div
-						// 스크롤 컨테이너이자 listbox - 방향키로 옮긴 활성 항목을 훅이 따라 스크롤한다.
-						ref={listRef}
-						id={`${dropdownId}_listbox`}
-						role="listbox"
-						className="dropdown_options"
-						aria-multiselectable={multiple || undefined}
+			{isOpen &&
+				typeof document !== "undefined" &&
+				createPortal(
+					// 포탈로 body 에 띄운다. 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표
+					// 래퍼)이 목록을 잘라내고 `z-index` 로는 넘지 못한다(#586 - 170px 중 46px 만
+					// 보였다). 좌표·폭은 훅이 트리거를 재서 준다.
+					<animated.div
+						ref={panelRef}
+						className={listClassName}
+						style={{
+							...listStyle,
+							position: "fixed",
+							left: position.x,
+							top: position.y,
+							width: position.width || undefined,
+							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
+							maxWidth: position.ready ? position.maxWidth : undefined,
+							// 최초 측정 전에는 숨긴다 - (0,0) 에서 한 프레임 깜빡이는 것을 막는다.
+							visibility: position.ready ? undefined : "hidden",
+						}}
 					>
-						{visibleOptions.length === 0
-							? searchable && <div className="dropdown_empty">{emptyText}</div>
-							: visibleOptions.map((opt, i) => {
-									const selected = selectedValues.includes(opt.value);
-									const active = i === activeIndex;
+						{searchable && (
+							<div className="dropdown_search">
+								<span className="dropdown_search_icon" aria-hidden="true">
+									<Search size={iconSize.sm} />
+								</span>
+								<input
+									ref={searchRef}
+									type="text"
+									className="dropdown_search_input"
+									placeholder={searchPlaceholder}
+									aria-label={searchPlaceholder}
+									autoComplete="off"
+									role="combobox"
+									aria-autocomplete="list"
+									aria-expanded={isOpen}
+									aria-controls={`${dropdownId}_listbox`}
+									aria-activedescendant={
+										activeIndex >= 0 && visibleOptions[activeIndex]
+											? `${dropdownId}_option_${activeIndex}`
+											: undefined
+									}
+									value={searchText}
+									onChange={(e) => {
+										const v = e.target.value;
+										setSearchText(v);
+										// 조합 중에는 필터 갱신 보류 (mid-composition 리스트 thrash 방지)
+										if (!isComposingRef.current) setCommittedQuery(v);
+									}}
+									onCompositionStart={() => {
+										isComposingRef.current = true;
+									}}
+									onCompositionEnd={(e) => {
+										isComposingRef.current = false;
+										const v = e.currentTarget.value;
+										setSearchText(v);
+										setCommittedQuery(v);
+									}}
+									onKeyDown={onSearchKeyDown}
+								/>
+							</div>
+						)}
 
-									return (
-										<Fragment key={opt.value}>
-											{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button - options are non-focusable role=option per WAI-ARIA listbox pattern */}
-											<div
-												id={`${dropdownId}_option_${i}`}
-												role="option"
-												tabIndex={-1}
-												aria-selected={selected}
-												aria-disabled={opt.disabled ? true : undefined}
-												className={cn("dropdown_option", {
-													is_selected: selected,
-													is_active: active,
-													is_disabled: opt.disabled,
-												})}
-												onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
-												onClick={() => selectOption(opt)}
-											>
-												{multiple && (
-													<span className="dropdown_option_check" aria-hidden="true">
-														{selected && <Check size={iconSize.sm} />}
-													</span>
-												)}
-												{opt.leadingIcon && (
-													<span className="dropdown_option_icon">{opt.leadingIcon}</span>
-												)}
-												<span className="dropdown_option_content">
-													<span className="dropdown_option_label">{opt.label}</span>
-													{opt.supportingText && (
-														<span className="dropdown_option_supporting">{opt.supportingText}</span>
+						<div
+							// 스크롤 컨테이너이자 listbox - 방향키로 옮긴 활성 항목을 훅이 따라 스크롤한다.
+							ref={listRef}
+							id={`${dropdownId}_listbox`}
+							role="listbox"
+							className="dropdown_options"
+							aria-multiselectable={multiple || undefined}
+						>
+							{visibleOptions.length === 0
+								? searchable && <div className="dropdown_empty">{emptyText}</div>
+								: visibleOptions.map((opt, i) => {
+										const selected = selectedValues.includes(opt.value);
+										const active = i === activeIndex;
+
+										return (
+											<Fragment key={opt.value}>
+												{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by parent listbox button - options are non-focusable role=option per WAI-ARIA listbox pattern */}
+												<div
+													id={`${dropdownId}_option_${i}`}
+													role="option"
+													tabIndex={-1}
+													aria-selected={selected}
+													aria-disabled={opt.disabled ? true : undefined}
+													className={cn("dropdown_option", {
+														is_selected: selected,
+														is_active: active,
+														is_disabled: opt.disabled,
+													})}
+													onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
+													onClick={() => selectOption(opt)}
+												>
+													{multiple && (
+														<span className="dropdown_option_check" aria-hidden="true">
+															{selected && <Check size={iconSize.sm} />}
+														</span>
 													)}
-												</span>
-												{(opt.trailingIcon || (!multiple && selected)) && (
-													<span className="dropdown_option_trailing">
-														{opt.trailingIcon ?? <Check size={iconSize.sm} aria-hidden="true" />}
+													{opt.leadingIcon && (
+														<span className="dropdown_option_icon">{opt.leadingIcon}</span>
+													)}
+													<span className="dropdown_option_content">
+														<span className="dropdown_option_label">{opt.label}</span>
+														{opt.supportingText && (
+															<span className="dropdown_option_supporting">
+																{opt.supportingText}
+															</span>
+														)}
 													</span>
-												)}
-											</div>
-											{opt.showDivider && <hr className="dropdown_option_divider" />}
-										</Fragment>
-									);
-								})}
-					</div>
-				</animated.div>
-			)}
+													{(opt.trailingIcon || (!multiple && selected)) && (
+														<span className="dropdown_option_trailing">
+															{opt.trailingIcon ?? <Check size={iconSize.sm} aria-hidden="true" />}
+														</span>
+													)}
+												</div>
+												{opt.showDivider && <hr className="dropdown_option_divider" />}
+											</Fragment>
+										);
+									})}
+						</div>
+					</animated.div>,
+					document.body,
+				)}
 		</div>
 	);
 };

@@ -855,14 +855,12 @@
     // 기본 숨김 - JS 초기화 전/JS 비활성 시 드롭다운이 펼쳐진 채 렌더링(FOUC)되지 않게.
     // 열림/닫힘은 JS 가 inline display 로 토글한다.
     display: none;
-    position: absolute;
+    // 좌표·폭은 JS 가 인라인으로 준다 - 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표
+    // 래퍼)이 목록을 잘라내고 `z-index` 로는 넘지 못한다(#586). React 번들과 같은 처리로
+    // body 로 옮겨 fixed 로 띄운다.
+    position: fixed;
     z-index: var(--bt-z-popup);
-    top: 100%;
-    left: 0;
-    width: 100%;
-    min-width: 100%;
     box-sizing: border-box;
-    margin-top: var(--bt-spacing-xs);
     background: var(--bt-color-background);
     border: 1px solid var(--bt-color-border);
     border-radius: var(--bt-radius-md);
@@ -875,14 +873,10 @@
     scrollbar-color: var(--bt-color-border-light) transparent;
     padding: var(--bt-spacing-xs) 0;
     list-style: none;
-    margin: var(--bt-spacing-xs) 0 0 0;
+    // 간격은 JS 가 좌표에 넣는다 - margin 을 남기면 그만큼 더 벌어진다(실측 4px 초과).
+    margin: 0;
 
-    &--up {
-      top: auto;
-      bottom: 100%;
-      margin-top: 0;
-      margin-bottom: var(--bt-spacing-xs);
-    }
+    // `--up` 은 좌표를 바꾸지 않는다 - 위/아래 모두 JS 가 fixed 좌표를 준다(React 와 동일).
 
     /* __options 를 품은 패널은 스크롤/여백을 그쪽에 넘긴다 -
        그래야 검색 행이 옵션과 함께 스크롤되지 않고 상단에 고정된다. */

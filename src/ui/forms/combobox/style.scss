@@ -83,13 +83,11 @@
   // ── Panel ────────────────────────────────────────────────────────────────
 
   &_panel {
-    position: absolute;
+    // 좌표·폭은 컴포넌트가 인라인으로 준다 - 포탈로 body 에 붙어 조상의 `overflow: hidden` 을
+    // 벗어난다(#586). Dropdown 과 같은 처리.
+    position: fixed;
     z-index: token.$z_popup;
-    top: 100%;
-    left: 0;
-    width: 100%;
     box-sizing: border-box;
-    margin-top: token.$spacing_4;
     background: token.$color_bg_solid;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
@@ -106,12 +104,7 @@
       }
     }
 
-    &_up {
-      top: auto;
-      bottom: 100%;
-      margin-top: 0;
-      margin-bottom: token.$spacing_4;
-    }
+    // `_up` 은 좌표를 바꾸지 않는다 - 진입 모션 방향과 소비자 훅으로만 남긴다(Dropdown 과 동일).
   }
 
   &_list {

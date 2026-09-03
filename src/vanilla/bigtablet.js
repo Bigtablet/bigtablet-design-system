@@ -738,6 +738,89 @@
 			updateActiveOption();
 		}
 
+		/** 목록의 원래 자리 - 닫을 때 되돌리려고 기억해 둔다. */
+		let panelHome = null;
+		/** 열려 있는 동안 좌표를 따라가는 리스너 해제 함수. */
+		let untrackPanel = null;
+
+		/**
+		 * 목록을 body 로 옮기고 트리거 기준 fixed 좌표를 준다.
+		 *
+		 * 조상의 `overflow: hidden` 은 `z-index` 로 넘을 수 없어서(#586 - 카드 안에서 170px 목록
+		 * 중 46px 만 보였다) 위치만 fixed 로 바꾸는 것으로는 부족하다 - transform 이 걸린 조상이
+		 * 있으면 그것이 fixed 의 컨테이닝 블록이 되기 때문이다. 그래서 body 로 옮긴다.
+		 * 아래 공간이 모자라고 위가 더 넓으면 위로 띄운다(React 배치 훅의 flip 과 같은 판정).
+		 */
+		function placePanel() {
+			if (!panelHome) {
+				panelHome = { parent: panel.parentNode, next: panel.nextSibling };
+				document.body.appendChild(panel);
+			}
+
+			const rect = control.getBoundingClientRect();
+			const gap = 4;
+			const padding = 8;
+
+			// 폭은 트리거를 따르되 뷰포트 가용 폭을 넘지 않는다 - 넘으면 오른쪽 옵션이 잘린다.
+			// 폭을 먼저 확정해야 높이가 실제 줄바꿈 기준으로 잡힌다.
+			const width = Math.min(rect.width, window.innerWidth - padding * 2);
+			panel.style.width = `${width}px`;
+
+			// 높이도 가용 높이로 제한한다 - 목록이 뷰포트보다 길면 위/아래 어느 쪽으로도 다 안 들어간다.
+			const available = window.innerHeight - padding * 2;
+			panel.style.maxHeight = "";
+			const natural = panel.offsetHeight;
+			const height = Math.min(natural, available);
+			if (natural > available) panel.style.maxHeight = `${available}px`;
+
+			const below = window.innerHeight - rect.bottom - gap - padding;
+			const above = rect.top - gap - padding;
+			const up = height > below && above > below;
+
+			panel.classList.toggle("bt-dropdown__list--up", up);
+			panel.style.left = `${clampToViewport(rect.left, width, window.innerWidth, padding)}px`;
+			const top = up ? rect.top - gap - height : rect.bottom + gap;
+			panel.style.top = `${clampToViewport(top, height, window.innerHeight, padding)}px`;
+		}
+
+		/** 여백을 남기고 뷰포트 안으로 민다. 가용 공간이 팝업보다 작으면 여백에 고정한다. */
+		function clampToViewport(start, size, viewport, padding) {
+			return Math.max(padding, Math.min(start, viewport - padding - size));
+		}
+
+		/** 스크롤·리사이즈에 좌표를 갱신한다. capture=true - 스크롤 이벤트는 버블링하지 않는다. */
+		function trackPanel() {
+			if (untrackPanel) return;
+			let frame = 0;
+			const schedule = () => {
+				if (frame) return;
+				frame = requestAnimationFrame(() => {
+					frame = 0;
+					if (state.isOpen) placePanel();
+				});
+			};
+			window.addEventListener("scroll", schedule, true);
+			window.addEventListener("resize", schedule);
+			untrackPanel = () => {
+				if (frame) cancelAnimationFrame(frame);
+				window.removeEventListener("scroll", schedule, true);
+				window.removeEventListener("resize", schedule);
+				untrackPanel = null;
+			};
+		}
+
+		/** 목록을 원래 자리로 되돌린다 - 소비자가 컨테이너를 지울 때 body 에 남지 않게. */
+		function restorePanel() {
+			untrackPanel?.();
+			if (!panelHome) return;
+			panelHome.parent?.insertBefore(panel, panelHome.next);
+			panelHome = null;
+			panel.style.left = "";
+			panel.style.top = "";
+			panel.style.width = "";
+			panel.style.maxHeight = "";
+		}
+
 		function open() {
 			if (config.disabled || control.disabled) return;
 
@@ -747,17 +830,10 @@
 			panel.style.display = "block";
 			if (searchInput) searchInput.setAttribute("aria-expanded", "true");
 
-			// Calculate position (auto-flip)
-			const rect = control.getBoundingClientRect();
-			const listHeight = Math.min(state.options.length * 40, 288);
-			const spaceBelow = window.innerHeight - rect.bottom;
-			const spaceAbove = rect.top;
-
-			if (spaceBelow < listHeight && spaceAbove > spaceBelow) {
-				panel.classList.add("bt-dropdown__list--up");
-			} else {
-				panel.classList.remove("bt-dropdown__list--up");
-			}
+			// 목록을 body 로 옮겨 fixed 로 띄운다 - 트리거 옆에 두면 `overflow: hidden` 인
+			// 조상이 잘라낸다(#586, React 번들과 같은 처리). 원래 자리는 닫을 때 되돌린다.
+			placePanel();
+			trackPanel();
 
 			// Set active index - 선택된 항목이 있으면 그쪽, 없으면 첫 후보 (React 와 동일).
 			// applyFilter 가 필터 밖(=-1 포함)이면 첫 후보로 보정한다.
@@ -777,6 +853,7 @@
 			control.setAttribute("aria-expanded", "false");
 			control.removeAttribute("aria-activedescendant");
 			panel.style.display = "none";
+			restorePanel();
 
 			// 패널을 닫으면 검색 상태 초기화 (다음 열림 시 fresh - React 와 동일)
 			if (searchInput) {
@@ -933,7 +1010,10 @@
 		}
 
 		function onDocumentClick(e) {
-			if (!wrapper.contains(e.target)) {
+			// 목록은 열려 있는 동안 `body` 로 옮겨져 wrapper 의 자손이 아니다(#586). 함께 보지
+			// 않으면 옵션의 `mousedown` 이 바깥 클릭으로 오인돼 - `mousedown` 은 `click` 보다
+			// 먼저다 - 패널이 닫히고 원래 자리로 돌아간 뒤에 `click` 이 도착해 선택이 무산된다.
+			if (!wrapper.contains(e.target) && !panel.contains(e.target)) {
 				close();
 			}
 		}
@@ -1028,6 +1108,8 @@
 				control.classList.toggle("is-disabled", disabled);
 			},
 			destroy: () => {
+				// 열린 채 destroy 되면 목록이 body 에 남는다 - 리스너까지 함께 떼어낸다.
+				restorePanel();
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
