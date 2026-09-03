@@ -155,6 +155,11 @@ jobs:
       - name: Check overlay close geometry
         run: pnpm check:geometry
 
+      # 다크에서 재정의되지 않는 표면 색을 텍스트로 쓰는지 - a11y 스토리 러너는 라이트 테마만
+      # 렌더해 axe 가 이 대비 결함을 못 잡는다(실측 3.06:1 · 2.85:1).
+      - name: Check dark-theme text tokens
+        run: pnpm check:dark-text
+
       - name: Coverage Report
         uses: davelosert/vitest-coverage-report-action@v2
         if: github.event_name == 'pull_request' && (needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true')
