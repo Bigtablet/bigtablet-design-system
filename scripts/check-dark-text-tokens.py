@@ -35,6 +35,19 @@ PAIRED_SUFFIXES = ("-on-primary", "-on-dark", "-on-default", "-on-container", "-
 PAIRED_MARKERS = ("-on-dark",)
 
 
+# `color:` 선언. 줄 시작에 고정하지 않는다 - 한 줄 룰(`.sel { color: ... }`)이 실재하고,
+# 그걸 놓쳐서 Vanilla Alert 의 variant 제목 4줄이 이 검사를 통과했다.
+# `border-color`·`background-color`·`outline-color` 등을 잡지 않도록 앞에 하이픈/문자가 붙은
+# 경우는 제외한다.
+# 예외 표식. 표면이 테마와 무관해서(고정 스크림·glass 처럼) 검사기가 판단할 수 없을 때만 쓴다 -
+# 같은 줄이나 바로 윗줄에 `dark-text-ok: <이유>` 를 적는다. 이유를 강제해 예외가 조용히 늘지 않게
+# 한다(개수를 성공 출력에 찍는다).
+OPT_OUT = re.compile(r"dark-text-ok:\s*\S")
+
+TEXT_COLOR_SCSS = re.compile(r"(?<![-\w])color:\s*token\.(\$[a-z0-9_]+)\s*;")
+TEXT_COLOR_CSS = re.compile(r"(?<![-\w])color:\s*var\((--bt-[a-z0-9-]+)\)\s*;")
+
+
 def theme_token_sets() -> tuple[set[str], set[str]]:
     """(라이트에서 선언된 CSS 변수, 다크 mixin 에서 재정의되는 변수)."""
     text = THEME.read_text(encoding="utf-8")
@@ -70,6 +83,12 @@ def is_paired(name: str) -> bool:
     return name.endswith(PAIRED_SUFFIXES) or any(m in name for m in PAIRED_MARKERS)
 
 
+def exempted(lines: list[str], line_no: int) -> bool:
+    """같은 줄 또는 바로 윗줄에 이유가 붙은 예외 표식이 있는가."""
+    window = lines[max(0, line_no - 2) : line_no]
+    return any(OPT_OUT.search(line) for line in window)
+
+
 def main() -> int:
     light, dark = theme_token_sets()
     if not light or not dark:
@@ -81,29 +100,40 @@ def main() -> int:
 
     problems: list[str] = []
     checked = 0
+    exemptions = 0
 
     for path in REACT_SCSS:
-        for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            match = re.match(r"\s*color:\s*token\.(\$[a-z0-9_]+)\s*;", line)
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for line_no, line in enumerate(lines, 1):
+            match = TEXT_COLOR_SCSS.search(line)
             if not match:
                 continue
             checked += 1
-            if css_var_of(match.group(1)) in surface_only:
+            if css_var_of(match.group(1)) not in surface_only:
+                continue
+            if exempted(lines, line_no):
+                exemptions += 1
+            else:
                 problems.append(
                     f"{path}:{line_no}: `{match.group(1)}` 은 표면 색이고 다크에서 재정의되지"
                     " 않는다 - 텍스트로 쓰면 다크에서 AA 미달이다. `_on_surface` 쪽을 써라"
                 )
 
     vanilla = VANILLA_SCSS.read_text(encoding="utf-8")
-    for line_no, line in enumerate(vanilla.splitlines(), 1):
-        match = re.match(r"\s*color:\s*var\((--bt-[a-z0-9-]+)\)\s*;", line)
+    vanilla_lines = vanilla.splitlines()
+    for line_no, line in enumerate(vanilla_lines, 1):
+        match = TEXT_COLOR_CSS.search(line)
         if not match:
             continue
         checked += 1
         # Vanilla 는 자기 이름의 별칭을 둔다 - 그 별칭이 가리키는 토큰까지 따라간다.
         alias = re.search(rf"{re.escape(match.group(1))}:\s*#\{{token\.(\$[a-z0-9_]+)\}}", vanilla)
         target = css_var_of(alias.group(1)) if alias else match.group(1)
-        if target in surface_only and not is_paired(match.group(1)):
+        if target not in surface_only or is_paired(match.group(1)):
+            continue
+        if exempted(vanilla_lines, line_no):
+            exemptions += 1
+        else:
             problems.append(
                 f"{VANILLA_SCSS}:{line_no}: `{match.group(1)}` 이 가리키는 `{target}` 은 표면"
                 " 색이고 다크에서 재정의되지 않는다 - 텍스트로 쓰면 다크에서 AA 미달이다"
@@ -119,6 +149,8 @@ def main() -> int:
         return 1
 
     print(f"텍스트 색 선언 {checked}건 - 표면 전용 색 토큰을 텍스트로 쓰지 않습니다.")
+    if exemptions:
+        print(f"이유를 적은 예외 {exemptions}건 (`dark-text-ok:`) - 고정 표면 위 텍스트")
     print(f"(양 테마 고정 표면 색 {len(surface_only)}개는 배경·테두리 전용)")
     return 0
 

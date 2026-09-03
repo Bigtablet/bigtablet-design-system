@@ -1166,10 +1166,10 @@
   }
 
   /* Variants */
-  &--info .bt-alert__title { color: var(--bt-color-info); }
-  &--success .bt-alert__title { color: var(--bt-color-success); }
-  &--warning .bt-alert__title { color: var(--bt-color-warning); }
-  &--error .bt-alert__title { color: var(--bt-color-error); }
+  &--info .bt-alert__title { color: var(--bt-color-info-text); }
+  &--success .bt-alert__title { color: var(--bt-color-success-text); }
+  &--warning .bt-alert__title { color: var(--bt-color-warning-text); }
+  &--error .bt-alert__title { color: var(--bt-color-error-text); }
 }
 
 /* ========================================
