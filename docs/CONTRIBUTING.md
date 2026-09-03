@@ -89,6 +89,52 @@ src/ui/{category}/{ComponentName}/
 └── ComponentName.stories.tsx # Storybook (선택)
 ```
 
+#### 스크롤되는 영역을 만들 때
+
+`overflow-y: auto` 를 쓰는 곳에는 `@include token.scrollable;` 을 함께 넣는다 — 스크롤바가
+얇고 브랜드색이 된다. **네이티브 스크롤을 그대로 쓴다**(커스텀 스크롤 컴포넌트는 두지 않는다).
+
+```scss
+.panel_list {
+  max-height: token.$overlay_list_max_height;
+  overflow-y: auto;
+  @include token.scrollable;
+}
+```
+
+목록에서 방향키로 활성 항목을 옮긴다면 `useListboxPopup` 의 `listRef` 를 스크롤 컨테이너에
+붙인다 — 활성 항목이 화면 밖으로 나갈 때만 따라 스크롤한다. 포커스가 입력에 남는 APG 패턴에서는
+브라우저가 알아서 스크롤해 주지 않는다.
+
+#### 사용자에게 보이는 문구를 추가할 때
+
+컴포넌트 안에 문구를 박지 말고 **로케일 카탈로그**에 키를 만든다
+(`src/ui/system/locale-provider/messages.ts` — `ko` 와 `en` 양쪽).
+
+```tsx
+// ❌ 이렇게 두면 <LocaleProvider> 로 바꿀 수 없다
+const Foo = ({ hint = "드래그해서 옮기세요" }: FooProps) => …
+
+// ✅ prop 은 그대로 두고 기본값만 카탈로그에서 받는다
+const Foo = ({ hint: hintProp }: FooProps) => {
+  const t = useLocaleText();
+  const hint = hintProp ?? t("foo.hint");
+```
+
+키는 **섹션 안에서 알파벳순**으로 넣는다 (`combobox` → `datePicker` → `dateRange` → `dropdown` …).
+아무 데나 끼우면 다음 사람이 위치를 예측할 수 없다.
+
+`pnpm check:defaults` 가 다섯 가지를 막는다.
+
+1. 컴포넌트에 박아 넣은 한글 문구 — prop 기본값이든 JSX 안이든. **prop 이름으로 고르지 않는다**
+   (`*Label`/`*Text` 패턴만 보던 시절 `rowClickHint`·`hint`·`label` 여섯 개가 그대로 새어 나갔다)
+2. 카탈로그 문구에 한글이 있는지
+3. 카탈로그 키 ↔ `t("...")` 호출 양방향 — 키만 넣고 배선을 잊거나, 없는 키를 부르는 것
+4. 카탈로그 키가 섹션 안에서 알파벳순인지
+5. `docs/COMPONENTS.md` prop 표의 Default 열이 실제 기본값과 같은지
+
+개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아니다 — 사용자가 아니라 개발자가 읽는다.
+
 ### 4. 테스트 작성
 
 모든 컴포넌트는 테스트가 필요합니다:

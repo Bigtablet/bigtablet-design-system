@@ -39,12 +39,21 @@
         flex: 1;
         min-width: 0;
       }
+
+      // 연도는 네 자리, 월·일은 두 자리다. 균등 3분할하면 좁은 열에서 연도만 "20…" 으로
+      // 잘린다 - 폼 한 열(560px)에 두 벌을 놓으면 한 칸이 85px 이 되고 거기서 실제로 잘렸다.
+      > *:first-child {
+        flex: 1.5;
+      }
     }
   }
 
   &_disabled {
+    // `text_disabled` 는 흰 배경에서 2.38:1 로 읽히지 않는다 (axe 도 잡는다). 라벨은
+    // 비활성 컨트롤이 아니라 그 묶음이 무엇인지 알려 주는 글자라, 흐리게 하더라도 읽혀야
+    // 한다 - 특히 DateRangePicker 의 종료일처럼 잠깐 잠긴 상태에서.
     .date_picker_label {
-      color: token.$color_text_disabled;
+      color: token.$color_text_caption;
     }
   }
 

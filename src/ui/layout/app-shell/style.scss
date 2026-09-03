@@ -1,0 +1,73 @@
+@use "src/styles/token" as token;
+
+// AppShell - 관리자 화면 껍데기.
+//
+// 스크롤은 문서가 갖는다. 본문을 스크롤 컨테이너로 만들면 Modal·Drawer 의
+// `body { overflow: hidden }` 잠금이 본문에 닿지 않아 모달 뒤가 계속 스크롤된다.
+
+.app_shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+  background: token.$color_bg_solid_dim;
+
+  &_with_sidebar {
+    // 첫 열은 Sidebar 가 자기 너비를 갖는다 (collapsed 전환 포함).
+    // 콘텐츠 열의 `minmax(0, ...)` 가 열을 뷰포트 폭에 묶는다 - `1fr` 만 쓰면 자기 넘침을
+    // 처리하지 않는 자식이 열을 자기 폭까지 늘려(실측 1024px → 1869px) 고정 헤더와 모든
+    // 행이 화면보다 넓어진다.
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  &_sidebar {
+    display: flex;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    // 뷰포트 높이만 차지한다. Sidebar 자체가 height: 100% 로 채운다.
+    height: 100vh;
+  }
+
+  &_body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &_header {
+    position: sticky;
+    top: 0;
+    z-index: token.$z_content;
+  }
+
+  &_main {
+    flex: 1;
+    // flex column 안에서도 자식이 이 칸을 늘리지 못하게 한다 (grid 열과 같은 이유).
+    min-width: 0;
+  }
+
+  &_main_padded {
+    padding: token.$spacing_32;
+    // 하단 고정 크롬(BottomNav, BottomBar 로 변신한 Sidebar)에 마지막 콘텐츠가 가리지 않게.
+    padding-bottom: calc(#{token.$spacing_32} + var(--bt-bottom-inset, 0px));
+  }
+}
+
+@media (max-width: 599px) {
+  .app_shell_with_sidebar {
+    // Sidebar 가 fixed BottomBar 로 변신하면 열을 차지하지 않는다.
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app_shell_sidebar {
+    // 상자를 없앤다. Sidebar 가 fixed BottomBar 로 빠져도 이 래퍼가 남아 있으면 grid 가
+    // min-content 로 유령 행을 만든다 (실측 75.5px - 본문 전체가 그만큼 아래로 밀렸다).
+    // `height: 0` 으로는 사라지지 않는다 - 행을 만드는 것은 상자의 존재 자체다.
+    // 래퍼는 역할 없는 div 라 `display: contents` 로 지워도 잃을 시맨틱이 없다.
+    display: contents;
+  }
+
+  .app_shell_main_padded {
+    padding: token.$spacing_16;
+    padding-bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+  }
+}

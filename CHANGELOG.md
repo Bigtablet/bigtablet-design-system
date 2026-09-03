@@ -4,6 +4,23 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.17.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.0) - 2026-09-03
+- 폼 계층을 DS 가 소유합니다. `Field` 가 라벨·필수 표시·도움말·에러와 `aria-describedby`·`aria-invalid` 연결을 갖고, `Form` 이 `errors` 맵을 각 필드로 흘립니다 — 입력 11종이 여기에 연결됩니다
+- `DataView` 를 추가했습니다. 목록 화면의 네 상태(로딩·에러·빈 목록·데이터)와 툴바·선택 액션·페이지네이션을 한 곳에서 처리합니다
+- `Combobox` — 후보를 서버에서 가져오는 선택 입력. 디바운스·로딩 표시·응답 경합 차단·"검색 전"과 "결과 없음" 구분을 DS 가 처리합니다
+- `TagInput` — 후보 목록에 없는 값을 사용자가 만들어 넣는 다중 입력. Enter 가 폼을 제출하지 않고, 빈 입력에서 Backspace 로 마지막 태그를 지우고, 붙여넣은 목록을 쉼표·줄바꿈으로 나눕니다
+- `AppShell` · `PageHeader` — 관리자 화면의 껍데기와 제목 줄. 스크롤은 문서가 갖습니다(본문을 스크롤 컨테이너로 만들면 `Modal`·`Drawer` 의 스크롤 잠금이 닿지 않습니다)
+- `LocaleProvider` 를 추가했습니다. DS 가 스스로 렌더하는 문구 63개를 카탈로그로 옮겨, `locale="en"` 하나로 전환하거나 `messages` 로 한 줄만 덮어쓸 수 있습니다. Provider 를 감싸지 않으면 지금과 똑같습니다
+- `Stat` · `DescriptionList` · `Timeline` — 지표 한 칸, 이름·값 목록(`<dl>`), 진행 상황(`<ol>`)
+- `DateRangePicker` · `TimePicker` — 거꾸로 된 기간을 만들 수 없고(종료일의 최소값이 시작일), 시각은 `minTime`/`maxTime` 이 시 목록까지 좁힙니다
+- `as` prop 이 어떤 요소·컴포넌트든 받습니다. `Button`·`SidebarItem`·`BottomNavItem`·`Container`·`Grid`·`Section`·`Stack` 에서 `as={Link}`(Next.js) 가 됩니다. 기존 타입 이름은 deprecated 별칭으로 남겨 두었습니다
+- (렌더 변경) 스크롤 컨테이너 10곳(React 8 · Vanilla 2)의 스크롤바가 얇아지고 DS 색을 씁니다. 소비자는 `@include token.scrollable;` 로 같은 모양을 얻습니다
+- (렌더 변경) `Dropdown`·`Combobox` 에서 방향키로 옮긴 활성 항목이 화면 밖에 있으면 따라 스크롤합니다 — 포커스가 입력에 남는 패턴이라 브라우저가 해 주지 않던 부분입니다
+- (렌더 변경) `DatePicker` 의 `minDate` 가 연 목록도 좁힙니다. 이전에는 월·일만 제한돼 `minDate` 보다 이전 연도를 고를 수 있었습니다. 연 칸 너비와 비활성 라벨 대비(2.38:1 → 5.0:1)도 함께 고쳤습니다
+- (렌더 변경) `Sidebar` 가 하단 BottomBar 로 변신할 때 `--bt-bottom-inset` 을 채웁니다. 그 값을 읽는 플로팅 요소가 이제 BottomBar 를 비켜 갑니다
+- 문장 속 링크 규약(`.text_link`)과 `Prose` 밖에서 쓰는 인라인 링크 스타일을 추가했습니다
+- `Foundation/Z-Index` 스토리가 실제 레이어 7개를 그립니다. 이름 12개를 레이어 12개로 그려 라벨이 겹치던 문제와, 의미 이름이 전부 "공통 레이어" 로 표시되던 문제를 고쳤습니다
+
 ## [3.16.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.16.0) - 2026-08-25
 - `Textarea` 에 `toolbar` 슬롯을 추가했습니다. 서식 툴바를 테두리 안쪽에 넣어 포커스 표시·모서리·구분선을 DS 가 처리합니다 — 소비자가 내부 클래스를 건드리던 3곳이 사라집니다
 - 비활성 `Textarea` 의 툴바는 흐려질 뿐 아니라 상호작용도 막힙니다

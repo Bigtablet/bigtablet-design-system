@@ -15,6 +15,8 @@ import {
 	useState,
 } from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
+import { useFieldControl } from "../field";
 import {
 	type CropImageSize,
 	type CropOffset,
@@ -122,14 +124,21 @@ export function ImageCropper({
 	onReady,
 	onError,
 	className,
-	label = "이미지 위치와 배율 조정",
-	hint = "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
-	zoomOutLabel = "축소",
-	zoomLabel = "배율",
-	zoomInLabel = "확대",
-	noPanHint = "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
+	label: labelProp,
+	hint: hintProp,
+	zoomOutLabel: zoomOutLabelProp,
+	zoomLabel: zoomLabelProp,
+	zoomInLabel: zoomInLabelProp,
+	noPanHint: noPanHintProp,
 	...rest
 }: ImageCropperProps) {
+	const t = useLocaleText();
+	const hint = hintProp ?? t("imageCropper.hint");
+	const noPanHint = noPanHintProp ?? t("imageCropper.noPanHint");
+	const label = labelProp ?? t("imageCropper.label");
+	const zoomOutLabel = zoomOutLabelProp ?? t("imageCropper.zoomOut");
+	const zoomLabel = zoomLabelProp ?? t("imageCropper.zoom");
+	const zoomInLabel = zoomInLabelProp ?? t("imageCropper.zoomIn");
 	const imageRef = useRef<HTMLImageElement>(null);
 	// 휠 리스너를 네이티브로 붙일 대상 — 아래 wheel effect 참고.
 	const viewportRef = useRef<HTMLDivElement>(null);
@@ -139,6 +148,8 @@ export function ImageCropper({
 	);
 	// 한 화면에 크로퍼가 여러 개여도 aria-describedby 가 충돌하지 않도록 인스턴스별 고유 id.
 	const hintId = useId();
+	// Field 가 감싸면 그 라벨·설명이 뷰포트 그룹의 이름과 설명이 된다.
+	const field = useFieldControl();
 
 	// File/Blob 은 objectURL 로, 문자열은 그대로. objectURL 은 언마운트 시 해제한다.
 	const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -346,8 +357,9 @@ export function ImageCropper({
 				className={cn("image_cropper_viewport", dragging && "image_cropper_viewport_dragging")}
 				style={viewportStyle}
 				role="group"
-				aria-label={label}
-				aria-describedby={hintId}
+				aria-labelledby={field?.labelId}
+				aria-label={field?.labelId ? undefined : label}
+				aria-describedby={[field?.describedBy, hintId].filter(Boolean).join(" ")}
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}

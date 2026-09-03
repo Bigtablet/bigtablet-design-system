@@ -4,12 +4,14 @@ import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type FileInputVariant = "button" | "preview";
 
 export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 (기본값: "파일 선택") */
+	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 */
 	label?: string;
 	/** 파일 선택 시 호출되는 콜백 */
 	onFiles?: (files: FileList | null) => void;
@@ -34,7 +36,7 @@ export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputEleme
  * @returns 렌더링된 파일 입력 UI
  */
 export const FileInput = ({
-	label = "파일 선택",
+	label: labelProp,
 	onFiles,
 	supportingText,
 	preview = false,
@@ -46,8 +48,13 @@ export const FileInput = ({
 	onChange,
 	...props
 }: FileInputProps) => {
-	const inputId = React.useId();
+	const t = useLocaleText();
+	const label = labelProp ?? t("fileInput.label");
+	const generatedInputId = React.useId();
 	const helperId = React.useId();
+	// Field 가 감싸면 그쪽 id 로 라벨이 연결된다.
+	const field = useFieldControl();
+	const inputId = field?.inputId ?? generatedInputId;
 	const inputRef = React.useRef<HTMLInputElement>(null);
 	const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
 	// 최신 objectURL 목록을 동기적으로 추적 — unmount(특히 onFiles 안에서 부모가 동기 unmount 하는
@@ -132,7 +139,8 @@ export const FileInput = ({
 				className="file_input_control"
 				disabled={disabled}
 				accept={isPreviewVariant ? (accept ?? "image/*") : accept}
-				aria-describedby={supportingText ? helperId : undefined}
+				aria-describedby={field?.describedBy ?? (supportingText ? helperId : undefined)}
+				aria-invalid={field?.invalid || undefined}
 				onChange={handleChange}
 			/>
 
@@ -163,7 +171,7 @@ export const FileInput = ({
 					type="button"
 					className="file_input_preview_remove"
 					onClick={handleRemove}
-					aria-label="이미지 제거"
+					aria-label={t("fileInput.removeImage")}
 				>
 					<X size={iconSize.xs} aria-hidden="true" />
 				</button>

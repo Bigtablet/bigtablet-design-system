@@ -6,6 +6,14 @@ import { afterEach, beforeEach } from "vitest";
 // - 진입/퇴출 unmount 타이밍 의존 테스트가 RAF 없이 동작
 Globals.assign({ skipAnimation: true });
 
+// jsdom 에는 `Element.prototype.scrollIntoView` 가 없다 - 호출하면 TypeError 다. 실제
+// 구현은 옵셔널 호출(`?.`)로 방어하지만, 테스트에서 "호출됐는지" 를 볼 수 있게 스텁을 둔다.
+if (!Element.prototype.scrollIntoView) {
+	Element.prototype.scrollIntoView = function scrollIntoViewStub() {
+		/* jsdom 은 레이아웃이 없어 실제 스크롤이 없다 */
+	};
+}
+
 // Modal/Drawer/Alert 는 document.body 에 스크롤락 카운터(dataset.openModals)와
 // overflow 를 공유한다(여러 오버레이 동시 오픈 조율용 - production 의도된 설계).
 // 이 전역이 테스트 간 누수되면 오버레이가 originalOverflow 를 오염된 값으로 저장한다.

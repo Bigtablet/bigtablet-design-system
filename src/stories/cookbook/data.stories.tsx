@@ -3,21 +3,22 @@ import {
 	CheckCircle2,
 	Circle,
 	Clock,
-	MoreHorizontal,
 	Package,
 	TrendingDown,
 	TrendingUp,
 	Truck,
 } from "lucide-react";
+import { useState } from "react";
 import { Avatar } from "../../ui/display/avatar";
-import { Badge } from "../../ui/display/badge";
 import { Card } from "../../ui/display/card";
 import { Chip } from "../../ui/display/chip";
+import { DataView } from "../../ui/display/data-view";
 import { Divider } from "../../ui/display/divider";
-import { IconButton } from "../../ui/general/icon-button";
+import type { TableColumn } from "../../ui/display/table";
+import { Timeline, type TimelineItem } from "../../ui/display/timeline";
 import { Grid } from "../../ui/layout/grid";
+import { PageHeader } from "../../ui/layout/page-header";
 import { Stack } from "../../ui/layout/stack";
-import { Menu } from "../../ui/navigation/menu";
 
 const meta: Meta = {
 	title: "Cookbook/Data Display",
@@ -70,12 +71,6 @@ const USERS = [
 	},
 ];
 
-const STATUS_VARIANT = {
-	online: "success" as const,
-	away: "warning" as const,
-	offline: "neutral" as const,
-};
-
 const STATUS_LABEL = {
 	online: "활동 중",
 	away: "자리 비움",
@@ -84,108 +79,76 @@ const STATUS_LABEL = {
 
 export const UserList: Story = {
 	name: "사용자 목록",
-	render: () => (
-		<Card bordered padding="none" shadow="sm" style={{ width: 520 }}>
-			<Stack gap={0}>
-				<div style={{ padding: "16px 20px" }}>
-					<Stack direction="horizontal" justify="between" align="center">
-						<h3
-							style={{
-								margin: 0,
-								fontSize: 16,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-							}}
-						>
-							팀 멤버
-						</h3>
-						<Chip type="static" size="sm" tone="default" label={`${USERS.length}명`} />
-					</Stack>
-				</div>
-				<Divider />
-				<Stack gap={0}>
-					{USERS.map((user, idx) => (
-						<div key={user.email}>
-							<Stack
-								direction="horizontal"
-								align="center"
-								justify="between"
-								gap={12}
-								style={{ padding: "12px 20px" }}
-							>
-								<Stack direction="horizontal" gap={12} align="center">
-									<span style={{ position: "relative", display: "inline-block" }}>
-										<Avatar name={user.name} size="md" />
-										<span
-											style={{
-												position: "absolute",
-												right: -2,
-												bottom: -2,
-												width: 12,
-												height: 12,
-												borderRadius: "50%",
-												background:
-													user.status === "online"
-														? "var(--bt-color-status-success)"
-														: user.status === "away"
-															? "var(--bt-color-status-warning)"
-															: "var(--bt-color-text-caption)",
-												border: "2px solid var(--bt-color-bg-solid)",
-											}}
-										/>
-									</span>
-									<Stack gap={2}>
-										<Stack direction="horizontal" gap={8} align="center">
-											<span
-												style={{
-													fontSize: 14,
-													fontWeight: 600,
-													color: "var(--bt-color-text-heading)",
-												}}
-											>
-												{user.name}
-											</span>
-											<Badge variant={STATUS_VARIANT[user.status]} shape="label">
-												{STATUS_LABEL[user.status]}
-											</Badge>
-										</Stack>
-										<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-											{user.role} · {user.email}
-										</span>
-									</Stack>
-								</Stack>
-								<Menu
-									align="end"
-									trigger={
-										<IconButton
-											icon={<MoreHorizontal size={18} />}
-											variant="standard"
-											size="sm"
-											aria-label={`${user.name} 메뉴 열기`}
-										/>
-									}
-									items={[
-										{ key: "view", label: "프로필 보기" },
-										{ key: "message", label: "메시지 보내기" },
-										{ key: "role", label: "역할 변경" },
-										{
-											key: "remove",
-											label: "팀에서 제외",
-											destructive: true,
-										},
-									]}
-								/>
-							</Stack>
-							{idx < USERS.length - 1 && <Divider />}
-						</div>
-					))}
-				</Stack>
-			</Stack>
-		</Card>
-	),
-};
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`DataView` 한 줄로 검색·표·선택 액션·페이지네이션과 네 상태 분기(loading / error / empty / data)를 얻는다. 이전에는 `Card` + `Stack` + `div` 로 목록을 손으로 조립하며 padding·fontSize·fontWeight 를 직접 적었다.",
+			},
+		},
+	},
+	render: () => {
+		const [search, setSearch] = useState("");
+		const [page, setPage] = useState(1);
 
-// ─── Status Badges Row ──────────────────────────────────────────────────────
+		const rows = USERS.filter(
+			(u) => !search || u.name.includes(search) || u.email.includes(search),
+		);
+
+		const columns: TableColumn<(typeof USERS)[number]>[] = [
+			{
+				key: "name",
+				header: "이름",
+				sortable: true,
+				render: (u) => (
+					<Stack direction="horizontal" gap={12} align="center">
+						<Avatar name={u.name} size="sm" />
+						{u.name}
+					</Stack>
+				),
+			},
+			{ key: "email", header: "이메일", render: (u) => u.email },
+			{
+				key: "status",
+				header: "상태",
+				width: "110px",
+				render: (u) => (
+					<Chip
+						type="static"
+						size="sm"
+						tone={u.status === "online" ? "accent" : "default"}
+						label={STATUS_LABEL[u.status]}
+					/>
+				),
+			},
+		];
+
+		return (
+			<div style={{ width: 640 }}>
+				<DataView
+					query={{ data: rows }}
+					columns={columns}
+					rowKey={(u) => u.email}
+					ariaLabel="팀 멤버"
+					toolbar={{
+						search: true,
+						searchValue: search,
+						onSearchChange: (v) => {
+							setSearch(v);
+							setPage(1);
+						},
+						searchPlaceholder: "이름 · 이메일 검색",
+					}}
+					selectionActions={[
+						{ label: "내보내기", onRun: () => {} },
+						{ label: "삭제", danger: true, onRun: () => {} },
+					]}
+					pagination={{ page, totalPages: 2, onPageChange: setPage }}
+				/>
+			</div>
+		);
+	},
+};
 
 export const StatusBadgesRow: Story = {
 	name: "상태 칩 모음",
@@ -367,158 +330,65 @@ export const StatCards: Story = {
 
 // ─── Order Timeline ─────────────────────────────────────────────────────────
 
-const TIMELINE = [
+const TIMELINE: TimelineItem[] = [
 	{
 		id: 1,
 		title: "주문 접수",
 		time: "오후 1:32",
-		desc: "고객이 #1024 주문을 결제했습니다.",
-		status: "done" as const,
-		statusLabel: "완료",
-		statusTone: "success" as const,
+		description: "고객이 #1024 주문을 결제했습니다.",
+		status: "done",
 		icon: <CheckCircle2 size={16} />,
 	},
 	{
 		id: 2,
 		title: "픽업 준비",
 		time: "오후 1:35",
-		desc: "주방에서 메뉴 준비를 시작했어요.",
-		status: "done" as const,
-		statusLabel: "완료",
-		statusTone: "success" as const,
+		description: "주방에서 메뉴 준비를 시작했어요.",
+		status: "done",
 		icon: <CheckCircle2 size={16} />,
 	},
 	{
 		id: 3,
 		title: "배송 출발",
 		time: "오후 1:48",
-		desc: "라이더가 매장에서 픽업 후 이동 중입니다.",
-		status: "active" as const,
-		statusLabel: "진행 중",
-		statusTone: "accent" as const,
+		description: "라이더가 매장에서 픽업 후 이동 중입니다.",
+		status: "active",
 		icon: <Truck size={16} />,
 	},
 	{
 		id: 4,
 		title: "배송 완료",
 		time: "예상 오후 2:05",
-		desc: "고객 주소지에 도착 예정.",
-		status: "pending" as const,
-		statusLabel: "대기",
-		statusTone: "default" as const,
+		description: "고객 주소지에 도착 예정.",
 		icon: <Circle size={16} />,
 	},
 ];
 
 export const OrderTimeline: Story = {
 	name: "주문 타임라인",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`Timeline` 이 연결선·상태색·순서(`<ol>`)를 소유한다. 예전에는 이 화면이 `color-mix` 를 포함한 인라인 스타일 40여 줄로 인디케이터를 직접 그렸다.",
+			},
+		},
+	},
 	render: () => (
-		<Card bordered padding="lg" shadow="sm" style={{ width: 480 }}>
+		<Card bordered padding="lg" shadow="sm" style={{ maxWidth: 480 }}>
 			<Stack gap={16}>
 				<Stack direction="horizontal" justify="between" align="center">
-					<Stack gap={2}>
-						<h3
-							style={{
-								margin: 0,
-								fontSize: 16,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-							}}
-						>
-							주문 #1024
-						</h3>
-						<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-							2026.05.20 · 김민준 고객
-						</span>
-					</Stack>
+					<PageHeader
+						title="주문 #1024"
+						description="2026.05.20 · 김민준 고객"
+						style={{ marginBottom: 0 }}
+					/>
 					<Chip type="static" tone="accent" label="배송 중" />
 				</Stack>
 
 				<Divider />
 
-				<Stack gap={20}>
-					{TIMELINE.map((item, idx) => {
-						const isLast = idx === TIMELINE.length - 1;
-						const isPending = item.status === "pending";
-						return (
-							<Stack key={item.id} direction="horizontal" gap={16} align="start">
-								{/* 좌측 인디케이터 */}
-								<Stack gap={0} align="center" style={{ width: 28, flexShrink: 0 }}>
-									<span
-										style={{
-											width: 28,
-											height: 28,
-											borderRadius: "50%",
-											background:
-												item.status === "active"
-													? "var(--bt-color-accent-default)"
-													: item.status === "done"
-														? "color-mix(in srgb, var(--bt-color-status-success) 18%, transparent)"
-														: "var(--bt-color-bg-solid-dim)",
-											color:
-												item.status === "active"
-													? "var(--bt-color-accent-on-surface)"
-													: item.status === "done"
-														? "var(--bt-color-status-success)"
-														: "var(--bt-color-text-caption)",
-											display: "inline-flex",
-											alignItems: "center",
-											justifyContent: "center",
-										}}
-									>
-										{item.icon}
-									</span>
-									{!isLast && (
-										<span
-											style={{
-												width: 2,
-												flex: 1,
-												minHeight: 32,
-												background: isPending
-													? "var(--bt-color-border-default)"
-													: "var(--bt-color-border-hover)",
-												marginTop: 4,
-												marginBottom: 4,
-											}}
-										/>
-									)}
-								</Stack>
-
-								<Stack gap={4} style={{ flex: 1, paddingBottom: isLast ? 0 : 8 }}>
-									<Stack direction="horizontal" justify="between" align="center">
-										<span
-											style={{
-												fontSize: 14,
-												fontWeight: 600,
-												color: isPending
-													? "var(--bt-color-text-caption)"
-													: "var(--bt-color-text-heading)",
-											}}
-										>
-											{item.title}
-										</span>
-										<Chip type="static" size="sm" tone={item.statusTone} label={item.statusLabel} />
-									</Stack>
-									<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-										{item.time}
-									</span>
-									<p
-										style={{
-											margin: 0,
-											fontSize: 13,
-											color: isPending
-												? "var(--bt-color-text-caption)"
-												: "var(--bt-color-text-body)",
-											lineHeight: 1.55,
-										}}
-									>
-										{item.desc}
-									</p>
-								</Stack>
-							</Stack>
-						);
-					})}
-				</Stack>
+				<Timeline items={TIMELINE} />
 			</Stack>
 		</Card>
 	),

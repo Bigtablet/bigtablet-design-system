@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import { useRadioGroupContext } from "../radio-group";
 import "./style.scss";
 
@@ -54,12 +55,17 @@ export const Radio = ({
 
 	const rootClassName = cn("radio", `radio_size_${size}`, disabled && "radio_disabled", className);
 
+	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.
+	const field = useFieldControl();
+
 	return (
 		<label className={rootClassName}>
 			<input
 				ref={ref}
 				type="radio"
 				className="radio_input"
+				id={field?.inputId ?? props.id}
+				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
 				value={value}
 				name={name}
 				disabled={disabled}

@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type StackDirection = "vertical" | "horizontal";
@@ -10,7 +11,7 @@ export type StackJustify = "start" | "center" | "end" | "between" | "around" | "
 export type StackGap = 0 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48;
 export type StackWrap = "nowrap" | "wrap" | "wrap-reverse";
 
-export interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
+interface StackOwnProps {
 	/**
 	 * flex 방향
 	 * @default "vertical"
@@ -27,11 +28,16 @@ export interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
 	justify?: StackJustify;
 	/** flex-wrap */
 	wrap?: StackWrap;
-	/** 렌더링할 HTML 요소 */
-	as?: React.ElementType;
-	/** 루트 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLElement>;
 }
+
+/**
+ * Stack props. `as` 로 렌더 요소를 바꾼다 - `"main"`·`"ul"` 같은 태그든 `Link` 같은
+ * 컴포넌트든, 그 요소의 props 가 타입에 그대로 따라온다.
+ *
+ * 예전에는 `as?: React.ElementType` 이라 요소만 갈리고 props 는 `div` 기준으로 고정돼,
+ * `as="a"` 로 바꿔도 `href` 가 타입에 없었다.
+ */
+export type StackProps<T extends React.ElementType = "div"> = PolymorphicProps<T, StackOwnProps>;
 
 /**
  * Flex 기반 1D 레이아웃 컨테이너.
@@ -50,19 +56,21 @@ export interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Stack>
  * ```
  */
-export const Stack = ({
+export const Stack = <T extends React.ElementType = "div">({
 	direction = "vertical",
 	gap = 16,
 	align,
 	justify,
 	wrap,
-	as: Tag = "div",
+	as,
 	ref,
 	className,
 	children,
 	style,
 	...props
-}: StackProps) => {
+}: StackProps<T>) => {
+	const Tag = (as ?? "div") as React.ElementType;
+
 	return (
 		<Tag
 			ref={ref}

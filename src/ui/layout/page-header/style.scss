@@ -1,0 +1,46 @@
+@use "src/styles/token" as token;
+
+// PageHeader - 화면 제목 줄. 제목 크기·설명 색을 화면마다 정하지 않게 여기서 소유한다.
+
+.page_header {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_8;
+  margin-bottom: token.$spacing_24;
+  font-family: token.$font_family_primary;
+
+  &_bar {
+    display: flex;
+    // 액션이 길면 다음 줄로 내려간다. 좁은 화면에서 제목을 밀어내지 않게.
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: token.$spacing_16;
+  }
+
+  &_titles {
+    // 제목이 길어도 액션 자리를 침범하지 않고 줄바꿈한다.
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &_title {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.heading_small_medium;
+  }
+
+  &_description {
+    margin: token.$spacing_4 0 0;
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  &_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: token.$spacing_8;
+    flex-shrink: 0;
+  }
+}

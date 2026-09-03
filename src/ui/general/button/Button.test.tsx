@@ -2,6 +2,20 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "./index";
 
+/** Next.js `Link` 대역. 라우터 링크는 결국 `<a>` 를 렌더하는 컴포넌트다. */
+const RouterLink = ({
+	href,
+	children,
+	...rest
+}: {
+	href: string;
+	children?: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+	<a data-router="true" href={href} {...rest}>
+		{children}
+	</a>
+);
+
 describe("Button", () => {
 	it("renders with default props", () => {
 		render(<Button>Click me</Button>);
@@ -246,5 +260,74 @@ describe("Button", () => {
 			expect(handleClick).not.toHaveBeenCalled();
 			expect(clickEvent.defaultPrevented).toBe(true);
 		});
+	});
+
+	it("renders a component given to as", () => {
+		// 리터럴 유니온이었을 때는 이게 불가능해, Next 앱이 DS 를 우회해 자기 버튼을 만들었다.
+		render(
+			<Button as={RouterLink} href="/orders">
+				주문
+			</Button>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("data-router", "true");
+		expect(link).toHaveAttribute("href", "/orders");
+		expect(link).toHaveClass("button");
+	});
+
+	it("does not hand native disabled to a non-button element", () => {
+		// anchor·커스텀 컴포넌트에는 native disabled 가 없다. 그냥 넘기면 조용히 무시되고
+		// 비활성 버튼이 눌린다.
+		const onClick = vi.fn();
+		render(
+			<Button as={RouterLink} href="/orders" disabled onClick={onClick}>
+				주문
+			</Button>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).toHaveAttribute("tabindex", "-1");
+		expect(link).not.toHaveAttribute("disabled");
+
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("drops href when as says button", () => {
+		// `<button href>` 는 유효하지 않은 HTML 이다.
+		render(
+			<Button as="button" href="/orders">
+				주문
+			</Button>,
+		);
+
+		expect(screen.getByRole("button", { name: "주문" })).not.toHaveAttribute("href");
+	});
+
+	// 타입 레벨 회귀 방지 - `as="a"` 는 `href` 를 요구해야 한다(판별 유니온 시절 계약).
+	// 아래 무시 지시자가 "불필요"로 판정되면 tsc 가 실패하므로 이 단언은 tsc 가 검증한다.
+	it("requires href when as is a at the type level", () => {
+		// @ts-expect-error - `as="a"` 에 href 가 없으면 타입 에러여야 한다.
+		const hrefless = <Button as="a">주문</Button>;
+		expect(hrefless).toBeTruthy();
+	});
+
+	it("stops a disabled click from reaching an ancestor", () => {
+		// native disabled button 은 click 이 아예 발생하지 않는다. 기본 동작만 막으면 이벤트가
+		// 위로 올라가, 클릭 가능한 Card 안의 비활성 버튼이 카드를 누른다.
+		const onAncestorClick = vi.fn();
+		render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 전파를 보려면 상위 클릭 대상이 필요하다
+			<div onClick={onAncestorClick}>
+				<Button as={RouterLink} href="/orders" disabled>
+					주문
+				</Button>
+			</div>,
+		);
+
+		fireEvent.click(screen.getByRole("link", { name: "주문" }));
+		expect(onAncestorClick).not.toHaveBeenCalled();
 	});
 });

@@ -102,6 +102,7 @@
     padding: token.$spacing_20;
     // 긴 코드 줄이 레이아웃을 밀지 않고 자기 안에서 스크롤된다.
     overflow-x: auto;
+    @include token.scrollable;
 
     code {
       background: transparent;
@@ -137,21 +138,10 @@
 
   // ── 인라인 ──────────────────────────────────────────────────────────────
 
+  // 규칙은 token.inline_link 가 소유한다 - UI 텍스트의 `.text_link` 와 같은 값이라야
+  // 사용자가 링크 어포던스를 두 벌 배우지 않는다. 근거(WCAG 1.4.1)는 그 믹스인 주석에.
   a {
-    color: token.$color_accent_default;
-    // 본문 속 링크는 밑줄을 유지한다. WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도
-    // 링크와 주변 본문의 대비가 3:1 이상이면 허용되지만, accent 는 그 문턱을 넘지 못해
-    // axe 가 `link-in-text-block` 으로 잡았다. 밑줄은 색 대비와 무관하게 성립하는 수단이다.
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-
-    &:hover { text-decoration-thickness: 2px; }
-
-    &:focus-visible {
-      outline: none;
-      border-radius: token.$radius_xs;
-      box-shadow: token.$focus_ring;
-    }
+    @include token.inline_link;
   }
 
   strong { font-weight: token.$font_weight_semi_bold; }
@@ -184,6 +174,7 @@
     display: block;
     width: 100%;
     overflow-x: auto;
+    @include token.scrollable;
     border-collapse: collapse;
   }
 

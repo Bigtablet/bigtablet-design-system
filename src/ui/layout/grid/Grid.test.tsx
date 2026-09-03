@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Grid } from "./index";
 
@@ -65,5 +65,17 @@ describe("Grid", () => {
 			</Grid>,
 		);
 		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
+	it("passes the target element's props through as", () => {
+		render(
+			<Grid as="ul" cols={2} aria-label="목록">
+				<li>항목</li>
+			</Grid>,
+		);
+
+		const list = screen.getByRole("list", { name: "목록" });
+		expect(list.tagName).toBe("UL");
+		expect(list).toHaveClass("grid_layout");
 	});
 });

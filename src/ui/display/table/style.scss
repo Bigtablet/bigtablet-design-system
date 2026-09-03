@@ -3,6 +3,7 @@
 .table_wrapper {
   width: 100%;
   overflow-x: auto;
+  @include token.scrollable;
   border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_md;
   background: token.$color_bg_solid;

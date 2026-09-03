@@ -1,0 +1,35 @@
+@use "src/styles/token" as token;
+
+// DateRangePicker - DatePicker 두 벌.
+//
+// 구분자("~")를 두지 않는다. 라벨(시작일/종료일)이 이미 어느 쪽인지 말하고, 좁은 칸에서 두 벌이
+// 줄바꿈될 때 구분자만 어중간한 자리에 남는다.
+
+.date_range_picker {
+  @include token.flex_column;
+
+  &_fields {
+    display: flex;
+    // 뷰포트가 아니라 **칸**이 좁을 때 갈라져야 한다 - 폼 한 열(560px)에 Y/M/D 두 벌이
+    // 들어가지 않아 연도가 "2..." 로 잘렸다. 미디어쿼리는 이 경우를 못 잡는다.
+    flex-wrap: wrap;
+    gap: token.$spacing_16;
+    align-items: flex-end;
+  }
+
+  &_full_width {
+    width: 100%;
+
+    .date_range_picker_fields {
+      width: 100%;
+    }
+  }
+
+  // 연·월·일 세 칸이 눌리지 않는 최소 폭. Dropdown 트리거는 값 + chevron 에 70px 안팎이
+  // 필요해 세 칸이면 300px 이 하한이다 - 이보다 좁으면 나란히 두지 않고 다음 줄로 내린다.
+  // 15rem(240px)로 뒀을 때 폼 한 열(560px)에서 두 벌이 같은 줄에 눌려 월이 "0…" 이 됐다.
+  .date_picker {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+}

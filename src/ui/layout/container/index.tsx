@@ -2,11 +2,12 @@
 
 import type * as React from "react";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type ContainerSize = "sm" | "md" | "lg" | "xl" | "full";
 
-export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ContainerOwnProps {
 	/**
 	 * max-width 크기
 	 * - sm: 640px | md: 768px | lg: 1024px | xl: 1200px | full: 100%
@@ -15,11 +16,19 @@ export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 	size?: ContainerSize;
 	/** 가운데 정렬 (기본 true) */
 	center?: boolean;
-	/** 렌더링할 HTML 요소 */
-	as?: React.ElementType;
-	/** 루트 요소 ref (React 19 ref-as-prop) */
-	ref?: React.Ref<HTMLElement>;
 }
+
+/**
+ * Container props. `as` 로 렌더 요소를 바꾼다 - `"main"`·`"ul"` 같은 태그든 `Link` 같은
+ * 컴포넌트든, 그 요소의 props 가 타입에 그대로 따라온다.
+ *
+ * 예전에는 `as?: React.ElementType` 이라 요소만 갈리고 props 는 `div` 기준으로 고정돼,
+ * `as="a"` 로 바꿔도 `href` 가 타입에 없었다.
+ */
+export type ContainerProps<T extends React.ElementType = "div"> = PolymorphicProps<
+	T,
+	ContainerOwnProps
+>;
 
 /**
  * max-width 제한 + 반응형 수평 패딩을 가진 컨테이너.
@@ -33,15 +42,17 @@ export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Container>
  * ```
  */
-export const Container = ({
+export const Container = <T extends React.ElementType = "div">({
 	size = "xl",
 	center = true,
-	as: Tag = "div",
+	as,
 	ref,
 	className,
 	children,
 	...props
-}: ContainerProps) => {
+}: ContainerProps<T>) => {
+	const Tag = (as ?? "div") as React.ElementType;
+
 	return (
 		<Tag
 			ref={ref}

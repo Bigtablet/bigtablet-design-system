@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useFieldControl } from "../field";
 import "./style.scss";
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -48,6 +49,9 @@ export const Checkbox = ({
 		className,
 	);
 
+	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.
+	const field = useFieldControl();
+
 	return (
 		<label className={rootClassName}>
 			{/* {...props} 를 먼저 펼쳐 소비자 값은 통과시키되 type/className/aria-invalid 는
@@ -58,6 +62,9 @@ export const Checkbox = ({
 				ref={inputRef}
 				type="checkbox"
 				className="checkbox_input"
+				id={field?.inputId ?? props.id}
+				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
+				aria-required={field?.required || undefined}
 				aria-invalid={error || undefined}
 			/>
 			<span className="checkbox_state_layer" aria-hidden="true">

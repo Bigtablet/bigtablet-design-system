@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export interface TopLoadingProps {
@@ -12,7 +13,7 @@ export interface TopLoadingProps {
 	height?: number;
 	/** 표시 여부 */
 	isLoading?: boolean;
-	/** 프로그레스 바의 접근성 레이블 (기본값: "페이지 로딩 중") */
+	/** 프로그레스 바의 접근성 레이블 */
 	ariaLabel?: string;
 }
 
@@ -27,8 +28,10 @@ export const TopLoading = ({
 	color,
 	height = 3,
 	isLoading = true,
-	ariaLabel = "페이지 로딩 중",
+	ariaLabel: ariaLabelProp,
 }: TopLoadingProps) => {
+	const t = useLocaleText();
+	const ariaLabel = ariaLabelProp ?? t("topLoading.label");
 	if (!isLoading) return null;
 
 	const isIndeterminate = progress === undefined;

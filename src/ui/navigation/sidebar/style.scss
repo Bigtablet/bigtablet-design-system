@@ -55,6 +55,7 @@
   &_nav {
     flex: 1;
     overflow-y: auto;
+    @include token.scrollable;
     overflow-x: hidden;
     padding: token.$spacing_12 token.$spacing_8;
     display: flex;
@@ -114,6 +115,19 @@
     &:focus-visible {
       outline: none;
       box-shadow: token.$focus_ring;
+    }
+
+    // 비활성 - 클릭 차단은 컴포넌트가 하고(native disabled 가 없는 요소도 있으므로),
+    // 여기서는 눌릴 것처럼 보이지 않게만 한다. 라벨은 읽혀야 해 caption 색을 쓴다
+    // (`text_disabled` 는 흰 배경에서 2.38:1 로 읽히지 않는다 - DatePicker 에서 같은 판단).
+    &_disabled {
+      cursor: not-allowed;
+      color: token.$color_text_caption;
+
+      &:hover {
+        background: transparent;
+        color: token.$color_text_caption;
+      }
     }
 
     // active - 검정 fill + 흰 텍스트 (brand 강조)
@@ -240,6 +254,13 @@
     --bt-sidebar-total-height: calc(
       var(--bt-sidebar-height) + var(--bt-sidebar-safe-area)
     );
+  }
+
+  // BottomBar 로 변신했을 때만 DS 하단 inset 채널을 채운다 - BottomNav 와 같은 방식.
+  // 이게 없으면 하단 고정 크롬이 있는데도 `--bt-bottom-inset` 이 0 이라, 소비처의 플로팅
+  // 요소와 본문 끝이 BottomBar 아래로 가린다. static 모드는 변신하지 않으니 제외한다.
+  body:has(.sidebar:not(.sidebar_static)) {
+    --bt-sidebar-inset: var(--bt-sidebar-total-height);
   }
 
   .sidebar:not(.sidebar_static) {

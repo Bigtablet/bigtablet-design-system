@@ -19,6 +19,7 @@ import {
 	useReducedMotion,
 } from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
@@ -32,15 +33,15 @@ const ICONS: Record<AlertVariant, React.ReactNode> = {
 };
 
 export interface AlertOptions {
-	/** 알림 스타일 변형 (기본값: "info") */
+	/** 알림 스타일 변형 */
 	variant?: AlertVariant;
 	/** 알림 제목 */
 	title?: React.ReactNode;
 	/** 알림 본문 메시지 */
 	message?: React.ReactNode;
-	/** 확인 버튼 텍스트 (기본값: "확인") */
+	/** 확인 버튼 텍스트 */
 	confirmText?: string;
-	/** 취소 버튼 텍스트 (기본값: "취소") */
+	/** 취소 버튼 텍스트 */
 	cancelText?: string;
 	/** 취소 버튼 표시 여부 (기본값: false) */
 	showCancel?: boolean;
@@ -51,7 +52,7 @@ export interface AlertOptions {
 	 * @default false
 	 */
 	destructive?: boolean;
-	/** 액션 버튼 정렬 (기본값: "right") */
+	/** 액션 버튼 정렬 */
 	actionsAlign?: AlertActionsAlign;
 	/** 변형 아이콘 표시 여부 (기본값: false). 원하면 명시적으로 켜기 */
 	showIcon?: boolean;
@@ -134,8 +135,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	variant = "info",
 	title,
 	message,
-	confirmText = "확인",
-	cancelText = "취소",
+	confirmText: confirmTextProp,
+	cancelText: cancelTextProp,
 	showCancel = false,
 	destructive = false,
 	actionsAlign = "right",
@@ -145,6 +146,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onCancel,
 	onClose,
 }) => {
+	const t = useLocaleText();
+	const confirmText = confirmTextProp ?? t("alert.confirm");
+	const cancelText = cancelTextProp ?? t("alert.cancel");
 	// Escape/overlay 닫힘은 취소 동작과 동등해야 한다 (APG alertdialog) - onCancel 경로로
 	// 보내 소비자의 취소 정리 로직(롤백 등)이 우회되지 않게 한다.
 	const dismiss = onCancel ?? onClose;

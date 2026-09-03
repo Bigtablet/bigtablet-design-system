@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "3.16.0",
+	"version": "3.17.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -29,7 +29,8 @@
 		"!dist/vanilla/bigtablet.js",
 		"!dist/vanilla/examples",
 		"README.md",
-		"LICENSE"
+		"LICENSE",
+		"docs/AGENT_GUIDE.md"
 	],
 	"sideEffects": [
 		"**/*.css",

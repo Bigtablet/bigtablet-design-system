@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 interface PaginationBaseProps {
@@ -9,9 +10,9 @@ interface PaginationBaseProps {
 	page: number;
 	/** 전체 페이지 수 */
 	totalPages: number;
-	/** 이전 페이지 버튼 aria-label (기본값: "이전 페이지") */
+	/** 이전 페이지 버튼 aria-label */
 	prevLabel?: string;
-	/** 다음 페이지 버튼 aria-label (기본값: "다음 페이지") */
+	/** 다음 페이지 버튼 aria-label */
 	nextLabel?: string;
 	/** `<nav>` 랜드마크 이름 (기본값: "페이지 이동"). 스크린리더의 리전 목록에 그대로 뜬다 */
 	navLabel?: string;
@@ -86,10 +87,14 @@ export const Pagination = ({
 	totalPages,
 	onPageChange,
 	onChange,
-	prevLabel = "이전 페이지",
-	nextLabel = "다음 페이지",
-	navLabel = "페이지 이동",
+	prevLabel: prevLabelProp,
+	nextLabel: nextLabelProp,
+	navLabel: navLabelProp,
 }: PaginationProps) => {
+	const t = useLocaleText();
+	const prevLabel = prevLabelProp ?? t("pagination.prev");
+	const nextLabel = nextLabelProp ?? t("pagination.next");
+	const navLabel = navLabelProp ?? t("pagination.label");
 	const emit = onPageChange ?? onChange;
 	const prevDisabled = page <= 1;
 	const nextDisabled = page >= totalPages;

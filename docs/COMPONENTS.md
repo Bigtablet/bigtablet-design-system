@@ -104,6 +104,58 @@ import { ThemeProvider } from "@bigtablet/design-system";
 
 ## Foundation
 
+### LocaleProvider
+
+DS 가 **스스로 렌더하는 문구**를 한곳에서 정한다. 소비자가 넘기지 않은 문구가 58개 있다 —
+`Modal` 의 닫기 버튼, `Table` 의 빈 목록, `Pagination` 의 이전/다음, `TagInput` 의 라이브 영역
+안내 등. 지금까지는 인스턴스마다 prop 을 넘겨야 했고, `Modal` 을 40번 쓰는 앱이면 `closeLabel`
+을 40번 적어야 했다 — 하나 빠지면 그 화면만 한국어로 남는다.
+
+```tsx
+// 영어 화면
+<LocaleProvider locale="en">
+  <App />
+</LocaleProvider>
+
+// 한 줄만 바꾸기 (기준 카탈로그 위에 병합)
+<LocaleProvider messages={{ "table.empty": "등록된 담당자가 없습니다" }}>
+  <App />
+</LocaleProvider>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `locale` | `'ko' \| 'en'` | `'ko'` | 기준 카탈로그 |
+| `messages` | `Partial<LocaleMessages>` | - | 기준 위에 덮어쓸 문구 |
+
+**우선순위** — 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본. Provider 를 감싸지
+않으면 한국어라 기존 화면은 바뀌지 않는다.
+
+```tsx
+<LocaleProvider locale="en">
+  <Modal closeLabel="Dismiss" … />   {/* prop 이 이긴다 */}
+</LocaleProvider>
+```
+
+**훅**
+
+| 훅 | 반환 | 용도 |
+|----|------|------|
+| `useLocaleText()` | `(key, vars?) => string` | 문구 조회. `{name}` 자리표시자를 `vars` 로 채운다 |
+| `useLocaleName()` | `'ko' \| 'en'` | 소비자가 날짜·숫자 포맷을 맞출 때 |
+
+`ko` · `en` 카탈로그와 `LocaleMessages` 타입도 export 한다 — 소비자가 자기 언어 카탈로그를 만들 때
+키 목록을 타입으로 받는다.
+
+```tsx
+import { ko, type LocaleMessages } from "@bigtablet/design-system";
+
+const ja: LocaleMessages = { ...ko, "modal.close": "閉じる" /* … */ };
+```
+
+> 채우지 못한 자리표시자는 `{index}` 처럼 **그대로 남는다**. 조용히 빈 칸이 되면 화면에서 무엇이
+> 빠졌는지 알 수 없다.
+
 ### ThemeProvider
 
 Bigtablet DS의 테마 컨텍스트를 제공합니다. `data-theme` attribute를 root element에 적용해서 CSS 변수 레이어를 전환합니다.
@@ -196,13 +248,90 @@ import { Plus } from 'lucide-react';
 | `trailingIcon` | `ReactNode` | - | 버튼 뒤에 표시할 아이콘 |
 | `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더링할 요소. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 대상 (`as="a"` 일 때 필수) |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 대상. `as` 를 안 주고 이것만 주면 anchor 로 렌더된다. `as='a'` 면 필수 |
 | `disabled` | `boolean` | `false` | 비활성화. anchor 는 `aria-disabled` + 클릭 차단으로 처리 |
 
-> `ButtonProps` 는 `ButtonAsButton | ButtonAsAnchor` discriminated union 이라 `interface X extends ButtonProps` 로 확장할 수 없다. 확장이 필요하면 `React.ComponentProps<typeof Button>` 을 쓴다 ([MIGRATION.md](./MIGRATION.md) 참고).
+**`as` 는 어떤 요소·컴포넌트든 받는다.** 리터럴 유니온(`'button' | 'a'`)이었을 때는 Next.js
+`Link` 를 넘길 수 없어, 소비자가 DS 를 우회해 자기 버튼을 만들었다.
+
+```tsx
+import Link from "next/link";
+
+<Button as={Link} href="/orders">주문 보기</Button>
+```
+
+`as` 에 준 요소의 props 가 타입에 그대로 따라온다 — `as="a"` 면 `target`·`rel`, `as={Link}` 면
+`Link` 의 props.
+
+**`disabled` 는 `<button>` 에만 native 로 준다.** anchor 와 커스텀 컴포넌트에는 native `disabled`
+가 없어 그냥 넘기면 조용히 무시되고 비활성 버튼이 눌린다 — 그쪽은 `aria-disabled` +
+`tabIndex={-1}` + 클릭 차단으로 막는다. `as="button"` 과 `href` 를 함께 주면 href 는 버려진다
+(`<button href>` 는 유효하지 않다).
+
+> `ButtonProps` 는 `ButtonProps<T>` 제네릭이다. `ButtonProps` 그대로 쓰면 `T = "button"` 이다.
+> `ButtonAsButton`·`ButtonAsAnchor` 는 `ButtonProps<"button">`·`ButtonProps<"a">` 의 deprecated
+> 별칭으로 남겨 뒀다.
 
 ---
+
+### DateRangePicker
+
+시작일·종료일 한 쌍. `DatePicker` 둘을 묶는다.
+
+```tsx
+<Field name="period" label="조회 기간">
+  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `DateRange` | - | `{ start?, end? }` (`"YYYY-MM-DD"`) |
+| `onValueChange` | `(value: DateRange) => void` | - | 범위 변경. **필수** |
+| `startLabel` | `string` | `'시작일'` | 시작일 묶음 라벨 |
+| `endLabel` | `string` | `'종료일'` | 종료일 묶음 라벨 |
+| `startYear` | `number` | `1950` | 연도 범위 시작 |
+| `endYear` | `number` | - | 미지정 시 현재 연도 + 10 |
+| `minDate` | `string` | - | 가장 이른 날짜 |
+| `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
+| `disabled` | `boolean` | - | |
+| `fullWidth` | `boolean` | `true` | |
+
+**거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
+시작일을 종료일보다 뒤로 옮기면 **종료일이 비워진다**(`{ start, end: undefined }`). 조용히
+시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장된다.
+
+시작일을 고르기 전에는 종료일이 잠긴다. 순서가 뒤집힌 입력을 애초에 막는다.
+
+### TimePicker
+
+시·분 선택. `DatePicker` 와 같은 방식으로 `Dropdown` 두 개를 조합한다.
+
+```tsx
+<Field name="pickupAt" label="픽업 시각">
+  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | `"HH:mm"` (24시간) |
+| `onValueChange` | `(value: string) => void` | - | 선택 변경. **필수** |
+| `label` | `string` | - | 위에 표시할 라벨 |
+| `minuteStep` | `number` | `5` | 분 간격. 60 의 약수를 준다 |
+| `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
+| `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
+| `disabled` | `boolean` | - | |
+| `fullWidth` | `boolean` | `true` | |
+| `hourLabel` | `string` | `'시'` | |
+| `minuteLabel` | `string` | `'분'` | |
+
+`minTime`/`maxTime` 은 **시 목록까지** 좁힌다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
+있고, 그때 분 목록이 비어 막힌 화면이 된다. 경계 시각에서는 분도 좁힌다 — 최소가 09:30 이면
+09시의 분은 30분부터다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮긴다.
+
+값은 24시간 `"HH:mm"` 이다. 12시간 표기는 화면 표시의 문제라 소비자가 포맷한다.
 
 ### Dropdown
 
@@ -378,6 +507,182 @@ import { Settings } from 'lucide-react';
 
 ## Form
 
+### Combobox
+
+후보를 **서버에서** 가져오는 선택 입력. `Dropdown` 도 `searchable` 로 타이핑 검색을 지원하지만
+이미 받아 둔 옵션 배열 안에서만 거른다 — 담당자·회사·상품처럼 후보가 수백 개인 필드는 그 목록을
+통째로 내려받을 수 없다.
+
+```tsx
+<Combobox
+  value={owner}
+  onValueChange={setOwner}
+  onSearch={(q) => api.searchUsers(q)}   // Promise<ComboboxOption[]>
+  emptyMessage="일치하는 담당자가 없습니다"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onSearch` | `(q: string) => Promise<ComboboxOption[]>` | - | 검색어가 바뀌면 디바운스 후 호출. **필수** |
+| `value` | `ComboboxOption \| null` | `null` | 선택된 값 (제어형) |
+| `onValueChange` | `(o: ComboboxOption \| null) => void` | - | 선택 변경 |
+| `defaultOptions` | `ComboboxOption[]` | `[]` | 검색 전 보여줄 초기 후보 |
+| `debounceMs` | `number` | `250` | 검색 호출 간격 |
+| `placeholder` | `string` | `'검색해서 선택'` | |
+| `emptyMessage` | `string` | `'일치하는 항목이 없습니다'` | 결과 없음 |
+| `idleMessage` | `string` | `'검색어를 입력하세요'` | 검색 전 |
+| `renderOption` | `(o: ComboboxOption) => ReactNode` | - | 목록 항목 커스터마이즈 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
+
+비동기에서 갈리는 네 가지를 DS 가 처리한다.
+
+- **디바운스** — 타이핑마다 요청하지 않는다
+- **로딩 표시** — 조회 중 스피너
+- **응답 경합 차단** — 늦게 도착한 이전 쿼리의 결과가 최신 목록을 덮지 않는다. 타이핑이 빠르면 순서가 뒤집히고, 그러면 방금 친 글자와 무관한 후보가 남는다
+- **"검색 전" 과 "결과 없음" 구분** — 같은 문구로 묶으면 검색 전 빈 목록이 실패처럼 읽힌다
+
+`Dropdown` 과 언제 갈리나 — 옵션을 이미 다 갖고 있으면 `Dropdown`(+`searchable`), 서버에서 가져와야
+하면 `Combobox`.
+
+> 팝업의 거동(개폐·활성 항목·키보드·바깥 클릭·열림 방향)은 `useListboxPopup` 을 `Dropdown` 과
+> 공유한다. 소비자도 이 훅으로 자기 목록 팝업을 만들 수 있다.
+
+> **스크롤은 네이티브다.** DS 는 커스텀 스크롤 컴포넌트(ScrollArea 류)를 두지 않는다 — 네이티브
+> 스크롤바를 감추면 키보드 스크롤·iOS 관성·오버스크롤·`scrollIntoView`·가상 키보드 대응을 전부
+> JS 로 다시 만들어야 하고, 얻는 것은 스크롤바 모양 하나다. 모양은 `scrollbar-width`/
+> `scrollbar-color`(표준 CSS)로 얇게·브랜드색으로 맞춘다. 스크롤 컨테이너를 직접 만드는
+> 소비자는 `@include token.scrollable;` 을 쓰면 같은 모양이 된다.
+>
+> 방향키로 옮긴 활성 항목은 `Dropdown`·`Combobox` 가 따라 스크롤한다(`block: "nearest"` — 필요한
+> 만큼만 움직이고 페이지는 건드리지 않는다). 포커스는 트리거·입력에 남으므로(APG) 브라우저가
+> 알아서 해 주지 않는다.
+
+### DataView
+
+목록 화면 한 벌 — 검색·필터, 표, 선택 액션, 페이지네이션, 그리고 **네 상태 분기**
+(loading / error / empty / data)를 한 곳에 둔다.
+
+`Table` 은 정렬·선택·스켈레톤을 이미 처리한다. `DataView` 가 파는 것은 **그 위아래를 매번
+다시 만들지 않는 것**이다 — 특히 에러 상태를 빠뜨린 목록이 생기지 않게.
+
+```tsx
+<DataView
+  query={usersQuery}                       // {data, isLoading, error, refetch}
+  columns={columns}
+  rowKey={(u) => u.id}
+  toolbar={{ search: true, searchValue: q, onSearchChange: setQ, filters: <Dropdown … /> }}
+  selectionActions={[
+    { label: "내보내기", onRun: exportRows },
+    { label: "삭제", danger: true, onRun: removeRows },
+  ]}
+  pagination={{ page, totalPages, onPageChange: setPage }}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `query` | `DataViewQuery<T>` | - | `{data, isLoading, error, refetch}`. 필드 이름을 TanStack Query 에 맞췄지만 어떤 라이브러리도 import 하지 않는다 |
+| `columns` | `TableColumn<T>[]` | - | `Table` 과 같은 정의 |
+| `rowKey` | `(row: T) => string` | - | 행 고유 key |
+| `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
+| `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
+| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다 |
+| `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
+| `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
+| `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
+
+동작 규칙 세 가지:
+
+- **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
+- **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
+- **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
+
+### 문장 속 링크 (`.text_link`)
+
+`Prose` 는 마크다운 렌더 결과에만 조판을 입힌다. 그 밖의 UI 텍스트 — 체크박스 라벨의 약관 링크,
+`EmptyState` 설명 안의 도움말 링크 — 안에 링크를 넣을 자리가 없어 화면마다 색·밑줄을 손으로
+정하고 있었다. `.text_link` 가 그 규칙을 소유한다.
+
+```tsx
+<a href="/terms" className="text_link">이용약관</a>
+
+// 라우터 링크에도 그대로 붙는다
+<Link href="/terms" className="text_link">이용약관</Link>
+```
+
+| | 값 | 이유 |
+|---|-----|------|
+| 색 | `--bt-color-accent-default` | `Prose a` 와 같은 값. 본문 링크와 UI 링크가 갈리면 사용자가 어포던스를 두 벌 배운다 |
+| 밑줄 | 항상 | WCAG 1.4.1 — 색만으로 구분하려면 주변 본문과 3:1 이 필요한데 accent 는 넘지 못한다 (axe `link-in-text-block`) |
+| 포커스 | `--bt-focus-ring` + `radius_xs` | |
+
+컴포넌트가 아니라 클래스인 이유는 라우터 링크(`next/link`, `react-router`)에 그대로 붙이기
+위해서다. 컴포넌트로 만들면 `as` 다형성을 먼저 풀어야 한다.
+
+> `style.css` 에 포함된다. SCSS 를 직접 쓰는 곳에서는 `@include token.inline_link` 로 같은 값을 쓴다.
+
+### Field / Form
+
+`Field` 가 라벨·필수 표시·도움말·에러와 그 접근성 연결을 소유한다. 입력 11종은 이 셋을 서로 다르게
+갖고 있어(라벨 9종, 에러 5종) 폼 화면이 입력 밖에 문구를 직접 그려 왔다. `Field` 를 쓰면 어떤 입력을
+넣어도 라벨 위치·간격·에러 문구·`aria-describedby` 가 같아진다.
+
+입력의 기존 prop 은 그대로 살아 있다. **`Field` 없이 쓰면 지금과 동일하게 동작한다.**
+
+```tsx
+<Form onSubmit={save} errors={serverErrors}>
+  <Field name="email" label="이메일" required help="로그인 ID 로 사용됩니다">
+    <TextField />
+  </Field>
+  <Field name="role" label="권한">
+    <Dropdown options={roles} />
+  </Field>
+  <Form.Actions>
+    <Button type="submit">저장</Button>
+  </Form.Actions>
+</Form>
+```
+
+`Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
+
+#### 언제 `Field` 를 쓰고 언제 입력의 prop 을 쓰나
+
+`TextField` 처럼 자체 `label`·`supportingText` 를 가진 입력이 9종 있다. 둘은 대체재가 아니라 쓰임이 다르다.
+
+| 상황 | 쓸 것 |
+|------|-------|
+| 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않는다 |
+| 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않는다 |
+
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **11종 간 균일성**이다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈린다.
+
+#### Field
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
+| `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결된다 |
+| `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
+| `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |
+| `children` | `ReactNode` | - | 입력 하나 |
+
+#### Form
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣는다 |
+| `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다 |
+
+#### Form.Actions
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
+
+> 폼 라이브러리에 의존하지 않는다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙인다.
+
 ### TextField
 
 ```tsx
@@ -478,6 +783,41 @@ Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero
 앱이 `.text_field_input` 을 직접 뚫어 `font-feature-settings` 를 주지 않아도 된다. SCSS 에서 같은 처리가 필요하면 `@include token.legible_identifiers` 를 쓴다 — `tabular_nums` · `slashed_zero` 와 겹쳐 쓰면 안 되는 함정은 [THEMING.md](./THEMING.md#하드코딩-대신-쓸-토큰) 참고.
 
 ---
+
+### TagInput
+
+후보 목록에 **없는** 값을 사용자가 직접 만들어 넣는 다중 입력. 후보가 정해져 있으면 `Dropdown`
+의 `multiple`, 후보를 서버에서 가져와야 하면 `Combobox` 를 쓴다. `TagInput` 이 맡는 것은 목록
+자체가 없는 경우다 — 자유 키워드, 사내 라벨, 검색 필터.
+
+```tsx
+<Field name="keywords" label="키워드" help="Enter 또는 쉼표로 구분합니다">
+  <TagInput value={tags} onValueChange={setTags} maxTags={10} />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string[]` | - | 태그 목록 (제어형). 주지 않으면 내부 상태로 동작 |
+| `defaultValue` | `string[]` | `[]` | 비제어형 초기 태그 |
+| `onValueChange` | `(tags: string[]) => void` | - | 추가·제거 시 |
+| `placeholder` | `string` | `'입력 후 Enter'` | |
+| `maxTags` | `number` | - | 최대 개수. 도달하면 입력이 읽기 전용 |
+| `allowDuplicates` | `boolean` | `false` | 같은 값 중복 허용 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
+| `disabled` | `boolean` | `false` | |
+| `fullWidth` | `boolean` | `false` | |
+| `ariaLabel` | `string` | - | `Field` 로 감싸면 그쪽 라벨이 우선 |
+
+키보드·붙여넣기 규약:
+
+- **Enter / 쉼표** — 태그 확정. Enter 는 `preventDefault` 하므로 폼이 제출되지 않는다
+- **Backspace (빈 입력)** — 마지막 태그 제거. 마우스 없이 되돌리는 유일한 경로
+- **붙여넣기** — 쉼표·줄바꿈·탭이 섞인 목록을 여러 태그로 나눈다
+- **blur** — 남은 입력을 확정한다. Enter 를 잊고 넘어가도 값이 사라지지 않는다
+- IME 조합 중 Enter 는 조합 확정용이라 태그를 만들지 않는다
+
+태그 칩은 `Chip` 의 `static` + `removable` 이다. 칩을 지우면 포커스가 입력으로 돌아온다.
 
 ### Textarea
 
@@ -1393,8 +1733,8 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 | `icon` | `ReactNode` | - | 왼쪽 아이콘 (collapsed 모드의 유일한 시각 단서) |
 | `active` | `boolean` | `false` | 현재 활성 상태 (`aria-current="page"` 자동) |
 | `trailing` | `ReactNode` | - | 오른쪽 trailing - Badge, count, 화살표 등 |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더 태그. SPA 라우팅이면 `'a'` + `href` |
-| `href` | `string` | - | `as="a"`일 때 링크 URL |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
 
 **SidebarSection Props**
 
@@ -1461,8 +1801,10 @@ const [collapsed, setCollapsed] = useState(false);
   <SidebarItem icon={<Home />} onClick={() => setCollapsed(c => !c)}>홈</SidebarItem>
 </Sidebar>
 
-// Next.js Link와 통합 - as="a" + href 사용
-<SidebarItem icon={<Home />} as="a" href="/dashboard">대시보드</SidebarItem>
+// Next.js Link 와 통합 - 컴포넌트를 그대로 넘긴다
+import Link from "next/link";
+
+<SidebarItem icon={<Home />} as={Link} href="/dashboard">대시보드</SidebarItem>
 ```
 
 > **v3.1 추가**: `mode` prop - `"auto"` (기본) 시 viewport `< 600px` 에서 자동으로 하단 bar 형태로 변신 (CSS-only, SSR 안전). `"static"` 으로 끄기 (admin 등 desktop-only). 모바일 우선 앱이라면 별도 [BottomNav](#bottomnav) 컴포넌트를 직접 쓰는 것도 고려.
@@ -1532,8 +1874,8 @@ const [collapsed, setCollapsed] = useState(false);
 | `active` | `boolean` | `false` | 활성 상태 (`aria-current="page"` 자동) |
 | `badge` | `ReactNode` | - | 아이콘 우상단 dot/카운트 (`Badge` 등) |
 | `disabled` | `boolean` | `false` | 비활성 (anchor 는 `aria-disabled`+`tabIndex=-1`) |
-| `as` | `'button' \| 'a'` | `'button'` | 렌더 요소 |
-| `href` | `string` | - | `as="a"` 일 때 |
+| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
+| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
 
 #### 접근성
 
@@ -2412,6 +2754,92 @@ import { Card, Button } from '@bigtablet/design-system';
 > ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 실제 클릭/키보드 처리는 `onClick` 이나 래핑 요소로 직접 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
 
 ---
+
+### Stat
+
+대시보드의 지표 한 칸. 이름 · 값 · 변화량. 화면마다 `<p style={{ fontSize: 24, fontWeight: 700 }}>`
+로 다시 만들던 층이다.
+
+```tsx
+<Card bordered padding="lg">
+  <Stat label="오늘 매출" value="₩1,284,000" delta="+12%" deltaTone="positive" />
+</Card>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode` | - | 지표 이름. **필수** |
+| `value` | `ReactNode` | - | 지표 값. **필수** |
+| `delta` | `ReactNode` | - | 값 아래 변화량 |
+| `deltaTone` | `'positive' \| 'negative' \| 'neutral'` | `'neutral'` | 변화량 색 |
+| `icon` | `ReactNode` | - | 라벨 왼쪽 장식 아이콘 |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref |
+
+**값은 `tabular-nums` 다.** 비례 숫자는 자릿수마다 폭이 달라 값이 갱신될 때 숫자가 좌우로
+흔들리고, 여러 지표를 나란히 두면 자리가 맞지 않는다. 화면마다 정하게 두면 대부분 빠진다.
+
+`deltaTone` 은 **방향이 아니라 좋음/나쁨**이다 — "재고 부족 +2" 는 오르지만 `negative` 다.
+
+표면(테두리·여백)은 `Card` 가 소유한다. 실측 대비 — positive 5.48:1, neutral 5.02:1,
+negative 6.47:1 (흰 카드 위).
+
+### DescriptionList
+
+이름·값 쌍의 목록. 상세 보기 화면의 기본 골격.
+
+```tsx
+<DescriptionList
+  divided
+  items={[
+    { label: "주문번호", value: "#1024" },
+    { label: "배송지", value: "서울시 …", full: true },
+  ]}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `DescriptionListItem[]` | - | 이름·값 쌍. **필수** |
+| `layout` | `'row' \| 'stack'` | `'row'` | `row` 는 이름 왼쪽·값 오른쪽, `stack` 은 이름 위 |
+| `divided` | `boolean` | `false` | 항목 사이 구분선 |
+| `ref` | `React.Ref<HTMLDListElement>` | - | 루트 요소 ref |
+
+`DescriptionListItem` — `{ label, value, full? }`. `full: true` 면 값이 한 줄을 다 쓴다
+(주소·메모).
+
+`<dl>` · `<dt>` · `<dd>` 로 렌더한다. 손으로 만들면 거의 항상 `<div>` 두 개가 되고, 그러면
+스크린리더에 **이름과 값의 관계가 남지 않는다** — 이름만 읽고 값을 따로 읽어 주는 목록이 된다.
+
+`row` 는 600px 아래에서 스스로 쌓인다. 두 열을 유지하면 값이 잘린다.
+
+### Timeline
+
+시간 순서로 흐르는 진행 상황. 주문 추적, 승인 단계, 활동 기록.
+
+```tsx
+<Timeline
+  items={[
+    { id: 1, title: "주문 접수", time: "오후 1:32", status: "done" },
+    { id: 2, title: "배송 출발", time: "오후 1:48", status: "active", icon: <Truck size={16} /> },
+    { id: 3, title: "배송 완료", time: "예상 오후 2:05" },
+  ]}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `TimelineItem[]` | - | 위에서 아래로 흐르는 순서. **필수** |
+| `ref` | `React.Ref<HTMLOListElement>` | - | 루트 요소 ref |
+
+`TimelineItem` — `{ id, title, time?, description?, status?, icon?, children? }`.
+`status` 는 `'done' \| 'active' \| 'pending'` (기본 `pending`). `icon` 이 없어도 상태가 **모양**으로
+갈린다 — `done` 은 체크, `active` 는 꽉 찬 점, `pending` 은 빈 원. 배경색만 다르면 색을 구분하지
+못하는 사용자에게 `done` 과 `active` 가 같아 보인다(WCAG 1.4.1).
+`children` 으로 항목 아래에 첨부·액션을 붙인다.
+
+`<ol>` 로 렌더한다 — 순서가 있는 목록이라 스크린리더가 "3개 중 2번째" 를 읽어 준다.
+연결선은 인디케이터의 `::before` 로 그려 **마지막 항목에서 끊는다** — 별도 요소로 두면
+`isLast` 판정을 화면마다 다시 써야 한다. 인디케이터는 장식이라 `aria-hidden` 이다.
 
 ### Divider
 
@@ -3576,6 +4004,77 @@ Section (수직 패딩 + 배경)
             └── Card / MediaCard …
 ```
 
+### AppShell
+
+관리자·대시보드 화면의 껍데기. 사이드바 열 + 고정 헤더 + 본문을 한 곳에서 잡는다. 화면마다
+`<div style={{ display: "flex", minHeight: "100vh" }}>` 로 다시 만들던 층이다.
+
+```tsx
+<AppShell sidebar={<Sidebar … />} header={<NavBar layout="fluid" sticky … />}>
+  <PageHeader title="대시보드" actions={<Button>추가</Button>} />
+  <DataView … />
+</AppShell>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sidebar` | `ReactNode` | - | 좌측 네비게이션. 보통 `Sidebar`. 주지 않으면 열을 만들지 않는다 |
+| `header` | `ReactNode` | - | 콘텐츠 열 위에 `sticky` 로 붙는 헤더. 보통 `NavBar` |
+| `padded` | `boolean` | `true` | 본문 여백. 자체 여백을 가진 화면은 `false` |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
+
+손으로 조립할 때 조용히 빠지던 셋을 DS 가 소유한다.
+
+- **문서가 스크롤한다** — 본문을 `overflow-y: auto` 로 만들면 `Modal`·`Drawer` 의 스크롤 잠금
+  (`body { overflow: hidden }`)이 본문에 닿지 않아 모달 뒤 배경이 계속 스크롤된다. 사이드바와
+  헤더는 `sticky` 다
+- **콘텐츠 열은 `minmax(0, 1fr)`** — 자기 넘침을 스스로 처리하지 않는 자식(줄바꿈 없는 긴 문자열
+  등)이 열 자체를 늘리는 것을 막는다. 실측 - 1800px 자식을 넣으면 열이 1024px → 1869px 로 늘어나
+  고정 헤더와 모든 행이 화면보다 넓어진다
+- **하단 크롬 여백** — `Sidebar` 는 600px 아래에서 fixed BottomBar 로 변신하고 `BottomNav` 도
+  fixed 다. 본문 끝이 그 아래로 가리지 않게 `--bt-bottom-inset` 만큼 띄운다
+
+헤더를 사이드바 위까지 꽉 채우려면 `AppShell` 밖에 두면 된다.
+
+### PageHeader
+
+화면 제목 줄. 경로 · 제목 · 설명 · 액션 · 탭을 한 규약으로 묶는다. 화면마다
+`<h1 style={{ fontSize: 20, fontWeight: 600 }}>` 로 다시 만들던 층이다.
+
+```tsx
+<PageHeader
+  breadcrumb={<Breadcrumb items={…} />}
+  title="주문 관리"
+  description="결제 완료된 주문만 보입니다"
+  actions={<Button>주문 추가</Button>}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `ReactNode` | - | 화면 제목. `h1` 로 렌더된다. **필수** |
+| `description` | `ReactNode` | - | 제목 아래 한 줄 설명 |
+| `breadcrumb` | `ReactNode` | - | 제목 위 경로. 보통 `Breadcrumb` |
+| `actions` | `ReactNode` | - | 우측 액션. 보통 `Button` |
+| `tabs` | `ReactNode` | - | 제목 줄 아래 영역. 보통 `TabList` |
+| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
+
+제목은 `h1` 이다 — 화면의 제목이므로 문서에 하나만 있어야 한다. 겉은 `<header>` 가 아니라 `<div>`
+인데, `<header>` 는 `<main>` 안에 있어도 banner landmark 로 계산돼(`main` 은 sectioning content 가
+아니다) `NavBar` 와 banner 가 둘이 되기 때문이다.
+
+`tabs` 에는 `TabList` 만 넣고, `Tabs` 는 `PageHeader` 와 본문을 **함께** 감싼다. 패널을 `Tabs` 밖에
+두면 탭의 `aria-controls` 가 존재하지 않는 요소를 가리킨다.
+
+```tsx
+<Tabs defaultValue="all">
+  <PageHeader title="주문 관리" tabs={<TabList>…</TabList>} />
+  <TabPanel value="all">…</TabPanel>
+</Tabs>
+```
+
+HTML 의 `title` 속성(툴팁)은 prop 에서 제외했다 — 화면 제목이 `ReactNode` 를 받아야 하기 때문이다.
+
 ### Container
 
 max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서비스 페이지의 기본 wrapper.
@@ -3605,7 +4104,7 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 |------|------|---------|-------------|
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'xl'` | max-width (sm=640 / md=768 / lg=1024 / xl=1200 / full=100%) |
 | `center` | `boolean` | `true` | 가운데 정렬 (`margin-inline: auto`) |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -3674,7 +4173,7 @@ import { Container } from "@bigtablet/design-system";
 |------|------|---------|-------------|
 | `spacing` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 수직 패딩 (반응형 - 아래 표 참고) |
 | `bg` | `'default' \| 'dim' \| 'accent' \| 'navy' \| 'transparent'` | `'default'` | 배경색 변형 |
-| `as` | `ElementType` | `'section'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'section'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -3751,7 +4250,7 @@ Flex 기반 1D 레이아웃. 수직(column) 또는 수평(row) 스택 + 간격/�
 | `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | - | 교차축 정렬 (`align-items`) |
 | `justify` | `'start' \| 'center' \| 'end' \| 'between' \| 'around' \| 'evenly'` | - | 주축 정렬 (`justify-content`) |
 | `wrap` | `'nowrap' \| 'wrap' \| 'wrap-reverse'` | - | `flex-wrap` |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -3823,7 +4322,7 @@ CSS Grid 기반 2D 레이아웃. 고정 열 수 또는 `auto-fill` 반응형 그
 | `rowGap` | 위와 동일 | - | 행 간격 (gap을 override) |
 | `colGap` | 위와 동일 | - | 열 간격 (gap을 override) |
 | `singleColOnMobile` | `boolean` | `true` | 모바일(< 600px, compact)에서 강제 1열 |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 

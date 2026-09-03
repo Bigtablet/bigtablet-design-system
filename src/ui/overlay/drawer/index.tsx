@@ -15,6 +15,7 @@ import {
 	useReducedMotion,
 	useSpringPresence,
 } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 /** Drawer 가 미끄러져 들어오는 방향 (top 은 범위 외) */
@@ -31,7 +32,7 @@ export interface DrawerProps
 	open: boolean;
 	/** 드로어 닫기 콜백 */
 	onClose?: () => void;
-	/** 슬라이드 방향 (기본값: "right") */
+	/** 슬라이드 방향 */
 	placement?: DrawerPlacement;
 	/** 패널 크기 - left/right 는 너비, bottom 은 높이 (기본값: 360). number ⇒ px */
 	size?: number | string;
@@ -52,7 +53,7 @@ export interface DrawerProps
 
 	/** 우상단 X 닫기 아이콘 표시 여부 (기본값: true) */
 	showCloseIcon?: boolean;
-	/** X 닫기 버튼 접근성 레이블 (기본값: "닫기") */
+	/** X 닫기 버튼 접근성 레이블 */
 	closeLabel?: string;
 	/**
 	 * 드로어 접근성 레이블. `title` 이 없을 때 이 값이 접근성 이름이 된다.
@@ -91,13 +92,15 @@ export const Drawer = ({
 	closeOnOverlay = true,
 	dismissible,
 	showCloseIcon = true,
-	closeLabel = "닫기",
+	closeLabel: closeLabelProp,
 	ariaLabel,
 	onExited,
 	children,
 	className,
 	...props
 }: DrawerProps) => {
+	const t = useLocaleText();
+	const closeLabel = closeLabelProp ?? t("drawer.close");
 	// 퇴출 애니메이션 동안 내용을 붙잡는다. 부모가 `open` 과 내용을 같은 값에 묶으면 닫는 tick 에
 	// 내용이 먼저 비어, 빈 패널이 슬라이드아웃한다 - 두 단계로 닫히는 것이 눈에 보인다. 마지막으로
 	// 열려 있던 값을 기억해 그 동안 그대로 그린다. 다시 열리면 `open` 이 true 라 새 값이 즉시 이긴다.
