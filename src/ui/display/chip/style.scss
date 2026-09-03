@@ -154,6 +154,17 @@
         }
     }
 
+    // static 은 컨트롤이 아니라 텍스트 라벨이다(`<span>`). 전체를 흐리면 WCAG 1.4.3 의
+    // "비활성 UI 컴포넌트" 예외가 적용되지 않아 라벨 대비가 1.68:1 까지 떨어진다.
+    // 실제로 비활성인 것 - remove 버튼 - 만 흐린다.
+    &_type_static.chip_disabled {
+        opacity: 1;
+
+        .chip_trailing {
+            opacity: token.$opacity_38;
+        }
+    }
+
     // ── Static type: non-interactive label (구 Tag 대체) ──────────────────
     &_type_static {
         cursor: default;
