@@ -4,9 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
-## [3.17.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.4) - 2026-09-03
+## [3.18.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.0) - 2026-09-03
+- (렌더 변경) `Dropdown`·`Combobox`·`Menu` 팝업이 포탈로 렌더돼 `overflow: hidden` 인 조상(카드·표 래퍼)에 잘리지 않습니다. 뷰포트를 벗어나면 위로 뒤집고 폭·높이를 뷰포트 안으로 제한합니다 (React·Vanilla 양쪽). `DatePicker`·`TimePicker`·`DateRangePicker` 도 내부가 `Dropdown` 이라 함께 해결됩니다
+  - **소비자 확인 필요**: 팝업이 `body` 로 이동하므로 트리거 기준 하위 선택자(`.my-card .dropdown_list`)로 스타일링한 규칙은 더 이상 적용되지 않습니다 - 클래스만으로 선택해야 합니다
 - (렌더 변경) 오버레이가 열리는 동안 예약된 거터만 먼저 어두워지던 문제를 고칩니다. 거터 색이 딤의 진입 애니메이션과 같은 진행도를 따라가고, 중첩 오버레이에서는 겹친 딤 두께를 씁니다 (React·Vanilla 양쪽)
-- (렌더 변경·다크 전용) 다크 테마에서 상태색 텍스트의 대비를 고칩니다. `danger` Button 의 outline·tonal·text 라벨과 Vanilla 의 TextField helper·Alert 제목(variant 포함)·필수 표시가 다크에서 2.85~3.94:1 로 AA 미달이었습니다 - 다크 대응 토큰으로 바꿔 6.66:1 이상이 됩니다. **라이트 렌더는 바뀌지 않습니다**
+- (렌더 변경·다크 전용) 다크 테마에서 상태색 텍스트의 대비를 고칩니다. `danger` Button 의 outline·tonal·text 라벨과 Vanilla 의 TextField helper·Alert 제목(variant 포함)·필수 표시가 2.85~3.94:1 로 AA 미달이었습니다 - 다크 대응 토큰으로 바꿔 6.66:1 이상이 됩니다. **라이트 렌더는 바뀌지 않습니다**
+- `BreadcrumbItem.as` 를 추가해 라우터 `Link`(`next/link` 등)로 렌더할 수 있습니다. `NavLink` 도 `Button`·`SidebarItem` 과 같은 `as` 계약으로 열었습니다(기본값 `"a"`)
 - Vanilla 에 텍스트용 상태색 토큰 4종을 추가합니다 - `--bt-color-{error,success,warning,info}-text`. 기존 `--bt-color-{...}` 는 배경·테두리 전용입니다
 - `useSpringPresence` 에 `onProgress` 옵션이 추가됩니다 - 진입/퇴출 진행도를 프레임마다 받습니다
 
