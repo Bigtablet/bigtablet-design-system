@@ -200,4 +200,17 @@ describe("BottomNavSpacer", () => {
 		const hrefless = <BottomNavItem as="a" icon={<Home />} label="주문" />;
 		expect(hrefless).toBeTruthy();
 	});
+
+	it("stops a disabled click from reaching an ancestor", () => {
+		const onAncestorClick = vi.fn();
+		render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 전파를 보려면 상위 클릭 대상이 필요하다
+			<div onClick={onAncestorClick}>
+				<BottomNavItem as={RouterLink} href="/home" icon={<span />} label="홈" disabled />
+			</div>,
+		);
+
+		fireEvent.click(screen.getByRole("link", { name: /홈/ }));
+		expect(onAncestorClick).not.toHaveBeenCalled();
+	});
 });

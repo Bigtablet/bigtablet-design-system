@@ -127,4 +127,35 @@ describe("Sidebar", () => {
 		const hrefless = <SidebarItem as="a">주문</SidebarItem>;
 		expect(hrefless).toBeTruthy();
 	});
+
+	it("uses native disabled on a button item", () => {
+		render(<SidebarItem disabled>주문</SidebarItem>);
+
+		expect(screen.getByRole("button", { name: "주문" })).toBeDisabled();
+	});
+
+	it("blocks a disabled link item without native disabled", () => {
+		// anchor·커스텀 컴포넌트에는 native disabled 가 없다 - 그냥 넘기면 조용히 무시되고
+		// 비활성 항목이 눌린다. Button·BottomNavItem 과 같은 규칙으로 막는다.
+		const onClick = vi.fn();
+		const onAncestorClick = vi.fn();
+		render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 전파 차단을 보려면 상위 클릭 대상이 필요하다
+			<div onClick={onAncestorClick}>
+				<SidebarItem as={RouterLink} href="/orders" disabled onClick={onClick}>
+					주문
+				</SidebarItem>
+			</div>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).toHaveAttribute("tabindex", "-1");
+		expect(link).not.toHaveAttribute("disabled");
+
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
+		// native disabled button 은 click 이 아예 안 난다 - 상위 핸들러도 실행되지 않아야 한다.
+		expect(onAncestorClick).not.toHaveBeenCalled();
+	});
 });

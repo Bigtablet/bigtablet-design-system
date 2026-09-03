@@ -138,7 +138,10 @@ export const BottomNavItem = <T extends React.ElementType = "button">(
 			tabIndex={disabled ? -1 : tabIndex}
 			onClick={(event: React.MouseEvent) => {
 				if (disabled) {
+					// native disabled button 은 click 이 아예 발생하지 않는다. 전파를 막지 않으면
+					// 비활성 항목 클릭이 상위 핸들러(행 클릭 등)를 실행한다.
 					event.preventDefault();
+					event.stopPropagation();
 					return;
 				}
 				onClick?.(event as React.MouseEvent<HTMLAnchorElement>);

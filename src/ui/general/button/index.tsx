@@ -157,7 +157,16 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 			className={buttonClassName}
 			aria-disabled={disabled || undefined}
 			tabIndex={disabled ? -1 : tabIndex}
-			onClick={disabled ? (event: React.MouseEvent) => event.preventDefault() : onClick}
+			onClick={
+				disabled
+					? (event: React.MouseEvent) => {
+							// native disabled button 은 click 이 아예 발생하지 않는다. 기본 동작만 막으면
+							// 이벤트가 위로 계속 올라가, 클릭 가능한 Card 안의 비활성 버튼이 카드를 누른다.
+							event.preventDefault();
+							event.stopPropagation();
+						}
+					: onClick
+			}
 		>
 			{content}
 		</Tag>

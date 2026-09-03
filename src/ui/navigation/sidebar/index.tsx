@@ -130,6 +130,12 @@ export const Sidebar = ({
 };
 
 interface SidebarItemCommon {
+	/**
+	 * 비활성. `<button>` 은 native `disabled`, 그 밖의 요소(anchor·`Link` 등)는
+	 * `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리한다 - native `disabled` 가 없는
+	 * 요소에 그냥 넘기면 조용히 무시되고 비활성 항목이 눌린다.
+	 */
+	disabled?: boolean;
 	/** 왼쪽 아이콘 */
 	icon?: React.ReactNode;
 	/** 현재 활성 상태 */
@@ -155,8 +161,13 @@ export type SidebarItemProps<T extends React.ElementType = "button"> = Polymorph
 	("a" extends T ? { href: string } : Record<never, never>);
 
 export const SidebarItem = <T extends React.ElementType = "button">(props: SidebarItemProps<T>) => {
-	const { icon, active, trailing, as, className, children, ref, ...rest } = props;
-	const classes = cn("sidebar_item", active && "sidebar_item_active", className);
+	const { icon, active, trailing, as, className, children, disabled, ref, ...rest } = props;
+	const classes = cn(
+		"sidebar_item",
+		active && "sidebar_item_active",
+		disabled && "sidebar_item_disabled",
+		className,
+	);
 	const ariaCurrent = active ? "page" : undefined;
 
 	// `as` 가 없고 `href` 만 있으면 anchor - 예전 판별 유니온과 같은 추론이다.
@@ -187,6 +198,7 @@ export const SidebarItem = <T extends React.ElementType = "button">(props: Sideb
 				ref={ref as React.Ref<HTMLButtonElement>}
 				type={type ?? "button"}
 				className={classes}
+				disabled={disabled}
 				aria-current={ariaCurrent}
 				{...buttonRest}
 			>
@@ -195,8 +207,25 @@ export const SidebarItem = <T extends React.ElementType = "button">(props: Sideb
 		);
 	}
 
+	// native `disabled` 가 없는 요소 - Button 과 같은 규칙으로 막는다.
+	const { onClick, tabIndex, ...tagProps } = anchorRest;
 	return (
-		<Tag ref={ref} className={classes} aria-current={ariaCurrent} {...anchorRest}>
+		<Tag
+			{...tagProps}
+			ref={ref}
+			className={classes}
+			aria-current={ariaCurrent}
+			aria-disabled={disabled || undefined}
+			tabIndex={disabled ? -1 : tabIndex}
+			onClick={(event: React.MouseEvent) => {
+				if (disabled) {
+					event.preventDefault();
+					event.stopPropagation();
+					return;
+				}
+				onClick?.(event as React.MouseEvent<HTMLAnchorElement>);
+			}}
+		>
 			{inner}
 		</Tag>
 	);

@@ -313,4 +313,21 @@ describe("Button", () => {
 		const hrefless = <Button as="a">주문</Button>;
 		expect(hrefless).toBeTruthy();
 	});
+
+	it("stops a disabled click from reaching an ancestor", () => {
+		// native disabled button 은 click 이 아예 발생하지 않는다. 기본 동작만 막으면 이벤트가
+		// 위로 올라가, 클릭 가능한 Card 안의 비활성 버튼이 카드를 누른다.
+		const onAncestorClick = vi.fn();
+		render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 전파를 보려면 상위 클릭 대상이 필요하다
+			<div onClick={onAncestorClick}>
+				<Button as={RouterLink} href="/orders" disabled>
+					주문
+				</Button>
+			</div>,
+		);
+
+		fireEvent.click(screen.getByRole("link", { name: "주문" }));
+		expect(onAncestorClick).not.toHaveBeenCalled();
+	});
 });

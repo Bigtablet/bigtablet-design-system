@@ -1792,6 +1792,8 @@ const [collapsed, setCollapsed] = useState(false);
 </Sidebar>
 
 // Next.js Link 와 통합 - 컴포넌트를 그대로 넘긴다
+import Link from "next/link";
+
 <SidebarItem icon={<Home />} as={Link} href="/dashboard">대시보드</SidebarItem>
 ```
 
@@ -4092,7 +4094,7 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 |------|------|---------|-------------|
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'xl'` | max-width (sm=640 / md=768 / lg=1024 / xl=1200 / full=100%) |
 | `center` | `boolean` | `true` | 가운데 정렬 (`margin-inline: auto`) |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -4161,7 +4163,7 @@ import { Container } from "@bigtablet/design-system";
 |------|------|---------|-------------|
 | `spacing` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 수직 패딩 (반응형 - 아래 표 참고) |
 | `bg` | `'default' \| 'dim' \| 'accent' \| 'navy' \| 'transparent'` | `'default'` | 배경색 변형 |
-| `as` | `ElementType` | `'section'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'section'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -4238,7 +4240,7 @@ Flex 기반 1D 레이아웃. 수직(column) 또는 수평(row) 스택 + 간격/�
 | `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | - | 교차축 정렬 (`align-items`) |
 | `justify` | `'start' \| 'center' \| 'end' \| 'between' \| 'around' \| 'evenly'` | - | 주축 정렬 (`justify-content`) |
 | `wrap` | `'nowrap' \| 'wrap' \| 'wrap-reverse'` | - | `flex-wrap` |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
@@ -4310,7 +4312,7 @@ CSS Grid 기반 2D 레이아웃. 고정 열 수 또는 `auto-fill` 반응형 그
 | `rowGap` | 위와 동일 | - | 행 간격 (gap을 override) |
 | `colGap` | 위와 동일 | - | 열 간격 (gap을 override) |
 | `singleColOnMobile` | `boolean` | `true` | 모바일(< 600px, compact)에서 강제 1열 |
-| `as` | `ElementType` | `'div'` | 렌더링할 태그 |
+| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
 
