@@ -8,7 +8,9 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
+	reportOverlayDim,
 	unlockBodyScroll,
+	unregisterOverlayDim,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
@@ -145,9 +147,13 @@ export const Drawer = ({
 
 	// 오버레이 opacity 페이드 + presence 라이프사이클(퇴출 완료 후 unmount).
 	// 오버레이는 이동하지 않으므로 transform 을 translateY(0px) 로 고정한다.
+	// 거터 색은 이 딤과 같은 진행도를 따른다 (#583) - Modal·Alert 과 동일한 배선.
+	const dimOwner = React.useRef({}).current;
+
 	const overlayStyle = useSpringPresence({
 		visible: open,
 		from: "translateY(0px)",
+		onProgress: (progress) => reportOverlayDim(dimOwner, progress),
 		onExitComplete: () => {
 			setShouldRender(false);
 			// 열린 적 없는 드로어의 스프링은 from 과 to 가 같아 onRest 가 발화하지 않으므로 별도
@@ -176,8 +182,13 @@ export const Drawer = ({
 		// 거터만큼 줄어 오버레이가 거터를 못 덮고(빈 띠) 배경 콘텐츠가 그만큼 튄다.
 		if (!shouldRender) return;
 
+		reportOverlayDim(dimOwner, reduced ? 1 : 0);
 		lockBodyScroll();
-		return unlockBodyScroll;
+		return () => {
+			unlockBodyScroll();
+			// 부모 잠금이 남아 있으면 위 호출이 레지스트리를 비우지 않는다 - 자기 것만 뺀다.
+			unregisterOverlayDim(dimOwner);
+		};
 	}, [shouldRender]);
 
 	// open 이 true 로 바뀌는 렌더에서 패널을 즉시 마운트해야 useFocusTrap effect 실행 시점에

@@ -356,6 +356,61 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
 	});
 
+	it("딤이 페이드하는 오버레이에서는 거터도 같은 커브로 어두워진다", () => {
+		// `.bt-alert__overlay` 는 `bt-alert-fade-in`(= --bt-transition-base)으로 페이드한다.
+		// 잠금이 최종색으로 점프하면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
+		// `.bt-modal` 은 display 토글이라 즉시 나타나므로 transition 을 걸지 않는다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+
+		const m = Modal(modalMarkup());
+		m?.open();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		expect(document.documentElement.style.transition).toBe("");
+
+		m?.close();
+
+		// Alert 는 딤이 페이드하므로 루트에 같은 길이·easing 의 transition 이 걸려야 한다.
+		const alert = Alert({ title: "삭제", message: "정말?" });
+
+		expect(document.documentElement.style.transition).toBe(
+			"background-color var(--bt-transition-base)",
+		);
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		alert?.close();
+	});
+
+	it("중첩되면 겹친 딤 두께로 거터를 칠한다 (React 번들과 같은 계산)", () => {
+		setDocumentScrolls(true);
+		setGutterSupport(true);
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+
+		const first = Modal(modalMarkup());
+		const second = Modal(modalMarkup());
+		first?.open();
+		second?.open();
+
+		// 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+		second?.close();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		// 닫힌 쪽이 Modal 이라 딤이 즉시 사라진다 - 거터도 즉시 밝아져야 한다.
+		expect(document.documentElement.style.transition).toBe("");
+
+		first?.close();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
+	});
+
 	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {
 		setDocumentScrolls(false);
 		setGutterSupport(true);
