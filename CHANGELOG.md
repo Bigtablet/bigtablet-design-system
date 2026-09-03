@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.17.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.2) - 2026-09-03
+- (렌더 변경) `disabled` 를 준 `type="static"` Chip 의 라벨이 더 이상 흐려지지 않습니다. static 은 컨트롤이 아닌 텍스트 라벨이라 흐리면 대비가 1.68:1 로 AA 미달이었습니다 - remove 버튼만 흐려집니다
+- `fast-uri` 오버라이드를 `^3.1.6` 으로 올려 dev 전용 의존성의 high 경보 4건을 닫습니다 (배포 패키지에는 영향 없음)
+
 ## [3.17.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.1) - 2026-09-03
 - (렌더 변경) 오버레이가 열릴 때 `position: fixed` 요소가 스크롤바 폭의 절반만큼 움직이던 문제를 고칩니다. 스크롤 잠금이 거터를 놓지 않고 예약해 ICB 폭을 유지하고, dim 은 예약된 거터를 넘어가 덮습니다 (React·Vanilla 양쪽)
 - (렌더 변경) `--bt-scrollbar-width` 로 고정 요소를 직접 보정하던 앱은 **그 보정을 지워야 합니다** - 잠금이 더 이상 폭을 바꾸지 않으므로 보정이 이중으로 걸립니다
