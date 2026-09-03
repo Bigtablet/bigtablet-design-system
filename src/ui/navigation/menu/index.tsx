@@ -2,7 +2,8 @@
 
 import { animated } from "@react-spring/web";
 import * as React from "react";
-import { cn, useSpringPresence } from "../../../utils";
+import { createPortal } from "react-dom";
+import { cn, useAnchoredPosition, useSpringPresence } from "../../../utils";
 import "./style.scss";
 
 export interface MenuItem {
@@ -40,18 +41,43 @@ export interface MenuProps {
  * />
  * ```
  */
+/** 트리거와 메뉴 사이 간격(px). 기존 `top: calc(100% + 4px)` 와 같은 값. */
+const MENU_GAP = 4;
+
 export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	const [open, setOpen] = React.useState(false);
 	const wrapperRef = React.useRef<HTMLSpanElement>(null);
+	const menuRef = React.useRef<HTMLDivElement>(null);
 	const itemRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 	const menuId = React.useId();
 
-	const style = useSpringPresence({ visible: open, from: "translateY(-4px)" });
+	// 트리거 옆에 `position: absolute` 로 두면 `overflow: hidden` 인 조상(카드·표 래퍼)이
+	// 메뉴를 잘라낸다 - Dropdown 에서 실측한 것과 같은 결함이다(#586). Popover 와 같은 배치
+	// 훅으로 포탈에 띄운다. `align` 은 그대로 교차축 정렬로 넘긴다.
+	const pos = useAnchoredPosition({
+		open,
+		anchorRef: wrapperRef,
+		floatingRef: menuRef,
+		placement: "bottom",
+		align,
+		gap: MENU_GAP,
+		padding: 8,
+	});
+
+	// 진입 방향은 실제 배치를 따라야 한다 - 위로 flip 됐는데 아래에서 올라오면 거꾸로 보인다
+	// (Dropdown·Combobox 는 `dropUp` 으로 같은 처리를 한다).
+	const style = useSpringPresence({
+		visible: open,
+		from: pos.placement === "top" ? `translateY(${MENU_GAP}px)` : `translateY(-${MENU_GAP}px)`,
+	});
 
 	React.useEffect(() => {
 		if (!open) return;
 		const handleClick = (e: MouseEvent) => {
-			if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+			const target = e.target as Node;
+			// 메뉴는 포탈로 body 에 붙으므로 wrapper 밖이다 - 함께 봐야 항목 클릭이 닫기로 먹히지 않는다.
+			if (wrapperRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+			setOpen(false);
 		};
 		const handleEsc = (e: KeyboardEvent) => {
 			if (e.key === "Escape") setOpen(false);
@@ -122,6 +148,11 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				break;
 			case "Tab":
+				// 트리거로 포커스를 되돌린 뒤 닫는다. 포탈된 항목에서 그냥 닫으면 포커스가 body 로
+				// 떨어지고, Modal 안에 있을 때 부모 focus trap 이 그것을 잡지 못해 Tab 이 모달
+				// 밖으로 나간다. 되돌리면 이어지는 기본 Tab 이동이 트리거(=모달 안)에서 시작한다.
+				// Dropdown 의 `returnFocusOnClose` 와 같은 계약이다.
+				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				setOpen(false);
 				break;
 		}
@@ -140,45 +171,55 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	return (
 		<span className="menu_wrapper" ref={wrapperRef}>
 			{triggerWithProps}
-			{open && (
-				<animated.div
-					id={menuId}
-					role="menu"
-					style={style}
-					className={cn("menu", `menu_align_${align}`)}
-					onKeyDown={handleMenuKeyDown}
-				>
-					{items.map((item, index) => (
-						<button
-							key={item.key}
-							ref={(el) => {
-								itemRefs.current[index] = el;
-							}}
-							type="button"
-							role="menuitem"
-							tabIndex={-1}
-							disabled={item.disabled}
-							className={cn(
-								"menu_item",
-								item.destructive && "menu_item_destructive",
-								item.disabled && "menu_item_disabled",
-							)}
-							onClick={() => {
-								if (item.disabled) return;
-								item.onSelect?.();
-								setOpen(false);
-							}}
-						>
-							{item.icon && (
-								<span className="menu_item_icon" aria-hidden="true">
-									{item.icon}
-								</span>
-							)}
-							<span className="menu_item_label">{item.label}</span>
-						</button>
-					))}
-				</animated.div>
-			)}
+			{open &&
+				typeof document !== "undefined" &&
+				createPortal(
+					<animated.div
+						id={menuId}
+						ref={menuRef}
+						role="menu"
+						style={{
+							...style,
+							position: "fixed",
+							left: pos.x,
+							top: pos.y,
+							visibility: pos.ready ? undefined : "hidden",
+						}}
+						className={cn("menu", `menu_align_${align}`)}
+						onKeyDown={handleMenuKeyDown}
+					>
+						{items.map((item, index) => (
+							<button
+								key={item.key}
+								ref={(el) => {
+									itemRefs.current[index] = el;
+								}}
+								type="button"
+								role="menuitem"
+								tabIndex={-1}
+								disabled={item.disabled}
+								className={cn(
+									"menu_item",
+									item.destructive && "menu_item_destructive",
+									item.disabled && "menu_item_disabled",
+								)}
+								onClick={() => {
+									if (item.disabled) return;
+									item.onSelect?.();
+									setOpen(false);
+								}}
+							>
+								{item.icon && (
+									<span className="menu_item_icon" aria-hidden="true">
+										{item.icon}
+									</span>
+								)}
+								<span className="menu_item_label">{item.label}</span>
+							</button>
+						))}
+					</animated.div>,
+					document.body,
+				)}
 		</span>
 	);
 };

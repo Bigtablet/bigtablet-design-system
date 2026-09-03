@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.17.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.4) - 2026-09-03
+- (렌더 변경) 오버레이가 열리는 동안 예약된 거터만 먼저 어두워지던 문제를 고칩니다. 거터 색이 딤의 진입 애니메이션과 같은 진행도를 따라가고, 중첩 오버레이에서는 겹친 딤 두께를 씁니다 (React·Vanilla 양쪽)
+- (렌더 변경·다크 전용) 다크 테마에서 상태색 텍스트의 대비를 고칩니다. `danger` Button 의 outline·tonal·text 라벨과 Vanilla 의 TextField helper·Alert 제목(variant 포함)·필수 표시가 다크에서 2.85~3.94:1 로 AA 미달이었습니다 - 다크 대응 토큰으로 바꿔 6.66:1 이상이 됩니다. **라이트 렌더는 바뀌지 않습니다**
+- Vanilla 에 텍스트용 상태색 토큰 4종을 추가합니다 - `--bt-color-{error,success,warning,info}-text`. 기존 `--bt-color-{...}` 는 배경·테두리 전용입니다
+- `useSpringPresence` 에 `onProgress` 옵션이 추가됩니다 - 진입/퇴출 진행도를 프레임마다 받습니다
+
 ## [3.17.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.3) - 2026-09-03
 - (렌더 변경) 오버레이가 열릴 때 예약된 스크롤바 거터에 밝은 띠가 남던 문제를 고칩니다. 그 띠는 캔버스(루트 배경)가 칠하는 영역이라 dim 이 닿지 못했습니다 - 잠금이 딤을 캔버스 색 위에 합성해 루트 배경색으로 심습니다 (React·Vanilla 양쪽)
 - 잠금 중 루트에 `data-bt-scroll-locked` 가 붙습니다. 고정 요소나 자체 오버레이를 잠금 상태에 맞춰 조정할 때 쓸 수 있습니다

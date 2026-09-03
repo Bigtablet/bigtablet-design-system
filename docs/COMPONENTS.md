@@ -335,6 +335,19 @@ import Link from "next/link";
 
 ### Dropdown
 
+> **목록은 포탈로 `body` 에 렌더된다.** 트리거 옆에 `position: absolute` 로 두면
+> `overflow: hidden` 인 조상(카드·표 래퍼)이 잘라내고 `z-index` 로는 넘지 못한다 - 실측으로
+> 카드 안에서 170px 목록 중 46px 만 보였다(#586). 좌표·폭은 트리거를 재서 인라인으로 주고,
+> 스크롤·리사이즈에 따라간다. 뷰포트 아래가 모자라면 위로 뒤집는다.
+>
+> 소비자 영향: `.dropdown_list` 를 트리거 기준 선택자(`.my-card .dropdown_list`)로 스타일링하면
+> 더 이상 걸리지 않는다 - 클래스만으로 선택해야 한다. `Combobox`·`Menu` 도 같은 처리다.
+>
+> **Modal 안에서**: 포탈된 팝업은 모달 패널 서브트리 밖이라 `useFocusTrap` 의 Tab 경계에
+> 들어가지 않는다. 대신 세 팝업 모두 **Tab 에서 트리거로 포커스를 되돌리고 닫는다** - 이어지는
+> 기본 Tab 이동이 모달 안에서 시작하므로 포커스가 모달을 벗어나지 않는다. `Popover`·`Tooltip`
+> 도 같은 포탈 패턴이다.
+
 ```tsx
 import { Dropdown } from '@bigtablet/design-system';
 
@@ -2050,6 +2063,25 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 | `label` | `ReactNode` | 표시 텍스트 (또는 아이콘+텍스트) |
 | `href` | `string` | 클릭 시 이동할 URL. 있으면 `<a>` 렌더 |
 | `onClick` | `(e) => void` | 클릭 콜백. `href` 없이 사용하면 `<button>` 렌더 (SPA 라우터 호출 등) |
+| `as` | `ElementType` | `href` 항목을 렌더할 요소. 라우터 `Link` 를 끼울 때 쓴다 (마지막 항목·`href` 없는 항목에는 적용 안 됨) |
+
+라우터 링크가 필요하면 `onClick` 우회 대신 `as` 를 쓴다 - `preventDefault` + `push` 로는
+수정자 클릭(`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽고, 프리페치·이동 가드처럼 `Link` 만 아는
+것들은 표현할 수 없다.
+
+```tsx
+import Link from "next/link";
+
+<Breadcrumb
+  items={[
+    { label: "홈", href: "/", as: Link },
+    { label: "FAQ 관리", href: "/faq", as: Link },
+    { label: "상세" }, // 마지막 = 현재 페이지, 링크 아님
+  ]}
+/>
+```
+
+`NavLink` 도 같은 계약이다 - `<NavLink as={Link} href="/faq" active>`.
 
 #### 접근성
 

@@ -135,6 +135,16 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 
 개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아니다 — 사용자가 아니라 개발자가 읽는다.
 
+### 색 토큰: 텍스트에 표면 색을 쓰지 않는다
+
+`pnpm check:dark-text` 가 막는다. `--bt-color-status-*`(bare)·`--bt-color-brand-primary` 처럼
+**양 테마에서 같은 값**인 색을 테마 표면 위의 텍스트로 쓰면 다크에서 AA 미달이다 - 실측으로
+`danger` Button 이 다크에서 3.06:1(페이지)·2.85:1(패널) 이었다. 텍스트에는 `_on_surface`
+(Vanilla `-text`) 쪽을 쓴다. 고정 표면 위 텍스트(`_on_primary`·`_on_dark`·`_on_default`·
+`_on_container`)는 이름으로 예외 처리된다. 자세한 표는 [THEMING](./THEMING.md#status-색-배경용과-텍스트용을-구분한다).
+
+a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡는다 - 그래서 정적 검사가 필요하다.
+
 ### 4. 테스트 작성
 
 모든 컴포넌트는 테스트가 필요합니다:

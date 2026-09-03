@@ -50,6 +50,8 @@
   // Light overlay 는 항상 흰색계 표면 - 텍스트는 theme 무관 forced dark.
   &_overlay_light.hero_text_default {
     .hero_eyebrow  { color: token.$color_text_on_light_muted; }
+    // 이 스크림은 두 테마에서 항상 흰색계라 brand-primary(#121212)의 대비가 일정하다.
+    // dark-text-ok: 고정 밝은 스크림 위 - 검사기는 표면을 볼 수 없어 판단하지 못한다
     .hero_title    { color: token.$color_brand_primary; }
     .hero_subtitle { color: token.$color_text_on_light_body; }
   }

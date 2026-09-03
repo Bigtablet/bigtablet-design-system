@@ -3,6 +3,25 @@ import { describe, expect, it, vi } from "vitest";
 import { Menu } from "./index";
 
 describe("Menu", () => {
+	it("returns focus to the trigger on Tab so a parent focus trap keeps it", () => {
+		// 포탈된 항목에서 그냥 닫으면 포커스가 body 로 떨어져 Modal 의 focus trap 이 잡지 못한다
+		// - Tab 이 모달 밖으로 나간다(#590 리뷰).
+		render(
+			<Menu
+				trigger={<button type="button">열기</button>}
+				items={[{ key: "a", label: "항목 A" }]}
+			/>,
+		);
+		const trigger = screen.getByRole("button", { name: "열기" });
+		fireEvent.click(trigger);
+
+		const item = screen.getByRole("menuitem", { name: "항목 A" });
+		fireEvent.keyDown(item, { key: "Tab" });
+
+		expect(document.activeElement).toBe(trigger);
+		expect(screen.queryByRole("menu")).toBeNull();
+	});
+
 	it("does not render menu items initially", () => {
 		render(
 			<Menu trigger={<button type="button">Open</button>} items={[{ key: "a", label: "A" }]} />,

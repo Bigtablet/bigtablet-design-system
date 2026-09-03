@@ -115,7 +115,9 @@ describe("Dropdown - 초기화", () => {
 		expect(control.classList.contains("is-disabled")).toBe(true);
 
 		dd?.open();
-		expect((wrap.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe("none");
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"none",
+		);
 	});
 
 	it("setDisabled 가 native disabled 까지 반영한다", () => {
@@ -138,7 +140,7 @@ describe("Dropdown - 다중 선택", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		(wrap.querySelector('[data-value="apple"]') as HTMLElement).click();
+		(document.querySelector('[data-value="apple"]') as HTMLElement).click();
 
 		expect(dd?.getValue()).toEqual(["apple"]);
 		expect(wrap.querySelector(".bt-dropdown__control")?.getAttribute("aria-expanded")).toBe("true");
@@ -175,7 +177,7 @@ describe("Dropdown - 다중 선택", () => {
 		const wrap = dropdownMarkup({ multiple: true });
 		Dropdown(wrap);
 
-		expect(wrap.querySelector('[role="listbox"]')?.getAttribute("aria-multiselectable")).toBe(
+		expect(document.querySelector('[role="listbox"]')?.getAttribute("aria-multiselectable")).toBe(
 			"true",
 		);
 	});
@@ -189,7 +191,7 @@ describe("Dropdown - 검색", () => {
 	};
 
 	const visibleLabels = (wrap: HTMLElement) =>
-		[...wrap.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
+		[...document.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
 			.filter((el) => !el.hidden)
 			.map((el) => el.textContent?.trim());
 
@@ -197,9 +199,11 @@ describe("Dropdown - 검색", () => {
 		const wrap = searchableMarkup();
 		Dropdown(wrap);
 
-		expect(wrap.querySelector(".bt-dropdown__search-input")).not.toBeNull();
+		expect(document.querySelector(".bt-dropdown__search-input")).not.toBeNull();
 		// 원래 `<ul>` 은 스크롤 컨테이너(`__options`)가 되고 새 `<div>` 패널이 그것을 감싼다.
-		expect(wrap.querySelector("div.bt-dropdown__list > ul.bt-dropdown__options")).not.toBeNull();
+		expect(
+			document.querySelector("div.bt-dropdown__list > ul.bt-dropdown__options"),
+		).not.toBeNull();
 	});
 
 	it("대소문자·공백을 무시하고 부분 일치로 걸러낸다", () => {
@@ -207,7 +211,7 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.value = "  aPP le ";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
@@ -219,11 +223,11 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.value = "존재하지않는과일";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
-		const empty = wrap.querySelector(".bt-dropdown__empty") as HTMLElement;
+		const empty = document.querySelector(".bt-dropdown__empty") as HTMLElement;
 		expect(empty.hidden).toBe(false);
 		expect(empty.textContent).toBe("결과 없음");
 	});
@@ -233,7 +237,7 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
 		input.value = "포";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -354,6 +358,61 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
 		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
+	});
+
+	it("딤이 페이드하는 오버레이에서는 거터도 같은 커브로 어두워진다", () => {
+		// `.bt-alert__overlay` 는 `bt-alert-fade-in`(= --bt-transition-base)으로 페이드한다.
+		// 잠금이 최종색으로 점프하면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
+		// `.bt-modal` 은 display 토글이라 즉시 나타나므로 transition 을 걸지 않는다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+
+		const m = Modal(modalMarkup());
+		m?.open();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		expect(document.documentElement.style.transition).toBe("");
+
+		m?.close();
+
+		// Alert 는 딤이 페이드하므로 루트에 같은 길이·easing 의 transition 이 걸려야 한다.
+		const alert = Alert({ title: "삭제", message: "정말?" });
+
+		expect(document.documentElement.style.transition).toBe(
+			"background-color var(--bt-transition-base)",
+		);
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		alert?.close();
+	});
+
+	it("중첩되면 겹친 딤 두께로 거터를 칠한다 (React 번들과 같은 계산)", () => {
+		setDocumentScrolls(true);
+		setGutterSupport(true);
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+
+		const first = Modal(modalMarkup());
+		const second = Modal(modalMarkup());
+		first?.open();
+		second?.open();
+
+		// 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+		second?.close();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		// 닫힌 쪽이 Modal 이라 딤이 즉시 사라진다 - 거터도 즉시 밝아져야 한다.
+		expect(document.documentElement.style.transition).toBe("");
+
+		first?.close();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
 	});
 
 	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {
@@ -488,6 +547,78 @@ describe("Alert", () => {
 		alert?.close();
 	});
 
+	it("body 로 옮긴 목록의 mousedown 을 바깥 클릭으로 오인하지 않는다", () => {
+		// `mousedown` 은 `click` 보다 먼저다. 목록이 `body` 로 옮겨진 뒤 wrapper 만 보면 옵션의
+		// mousedown 이 바깥 클릭이 되어 패널이 닫히고, 원래 자리로 돌아간 뒤 click 이 도착해
+		// 선택이 무산된다. 앞선 테스트가 `.click()` 만 써서 이 경로를 놓쳤다.
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		dd?.open();
+
+		const option = document.querySelector('[data-value="apple"]') as HTMLElement;
+		option.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+		// 패널이 열린 채여야 한다 - 닫혔다면 아래 click 이 아무 효과도 못 낸다.
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"block",
+		);
+
+		option.click();
+
+		expect(dd?.getValue()).toBe("apple");
+	});
+
+	it("검색 입력의 mousedown 도 바깥 클릭이 아니다", () => {
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		const dd = Dropdown(wrap);
+		dd?.open();
+
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		input.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"block",
+		);
+	});
+
+	it("열면 목록을 body 로 옮기고 닫으면 되돌린다 (조상 클리핑 회피)", () => {
+		// 트리거 옆에 두면 `overflow: hidden` 인 조상이 잘라내고 `z-index` 로는 넘지 못한다
+		// (#586 - 카드 안에서 170px 목록 중 46px 만 보였다). React 번들은 포탈로 같은 처리를 한다.
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		const panel = wrap.querySelector(".bt-dropdown__list") as HTMLElement;
+		const home = panel.parentElement;
+
+		dd?.open();
+
+		expect(panel.parentElement).toBe(document.body);
+		expect(panel.style.position).toBe("");
+		// 폭은 트리거를 재서 인라인으로 준다 - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다.
+		expect(panel.style.width).not.toBe("");
+
+		dd?.close();
+
+		expect(panel.parentElement).toBe(home);
+		expect(panel.style.width).toBe("");
+		expect(panel.style.left).toBe("");
+		expect(panel.style.top).toBe("");
+	});
+
+	it("열린 채 destroy 되면 목록을 body 에 남기지 않는다", () => {
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		const panel = wrap.querySelector(".bt-dropdown__list") as HTMLElement;
+		const home = panel.parentElement;
+
+		dd?.open();
+		expect(panel.parentElement).toBe(document.body);
+
+		dd?.destroy();
+
+		expect(panel.parentElement).toBe(home);
+	});
+
 	it("활성 옵션을 화면 안으로 스크롤한다 (React 번들과 같은 처리)", () => {
 		// 포커스가 컨트롤에 남는 APG 패턴이라 브라우저가 알아서 스크롤해 주지 않는다.
 		// React 쪽만 고치면 두 번들이 갈린다 - 이 저장소에서 네 번 난 결함군이다.
@@ -504,7 +635,7 @@ describe("Alert", () => {
 
 		// 열면 첫 항목이 활성이 되고(사과), ArrowDown 이 다음으로 옮긴다(포도).
 		// 스크롤은 **활성이 된 그 요소**에 대해 불려야 한다.
-		const active = wrap.querySelector(".bt-dropdown__option.is-active");
+		const active = document.querySelector(".bt-dropdown__option.is-active");
 		expect(active?.textContent).toBe("포도");
 		// `nearest` - 필요한 만큼만 움직이고 페이지 스크롤은 건드리지 않는다.
 		expect(scrolled.at(-1)).toEqual({ text: "포도", arg: { block: "nearest" } });

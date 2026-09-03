@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { lockBodyScroll, unlockBodyScroll } from "./scroll-lock";
+import {
+	lockBodyScroll,
+	reportOverlayDim,
+	unlockBodyScroll,
+	unregisterOverlayDim,
+} from "./scroll-lock";
 
 /**
  * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 `getBoundingClientRect().width` 가 0 이다.
@@ -60,6 +65,11 @@ describe("scroll-lock", () => {
 	});
 
 	afterEach(() => {
+		// 잠금과 진행도 보고는 모듈 상태다 - 남기면 다음 테스트가 남의 진행도로 시작한다.
+		// (실사용에서는 오버레이가 열린 만큼 해제되므로 마지막 해제에서 전부 비워진다.)
+		let guard = 0;
+		while (document.body.dataset.openModals && guard++ < 10) unlockBodyScroll();
+		document.body.removeAttribute("data-open-modals");
 		vi.restoreAllMocks();
 	});
 
@@ -166,6 +176,89 @@ describe("scroll-lock", () => {
 
 		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
 		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
+	});
+
+	it("tracks the dim fade instead of jumping to the final color", () => {
+		// 잠금 순간 최종색으로 점프하면 딤이 페이드 인하는 동안 거터만 먼저 어두워져 오른쪽에
+		// 어두운 띠가 보인다(#583). 거터 색은 보고된 진행도를 따라야 한다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const owner = {};
+
+		reportOverlayDim(owner, 0);
+		lockBodyScroll();
+
+		// 진행도 0 - 딤이 아직 투명하니 거터도 원래 색이다.
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
+
+		reportOverlayDim(owner, 0.5);
+		// 244 * (1 - 0.5 * 0.5) = 183
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(183, 183, 183)");
+
+		reportOverlayDim(owner, 1);
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+	});
+
+	it("stacks the dim of nested overlays", () => {
+		// Modal 위 Alert 는 딤이 실제로 겹쳐 페이지가 더 어두워진다 - 거터도 같아야 한다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const modal = {};
+		const alert = {};
+
+		reportOverlayDim(modal, 1);
+		lockBodyScroll();
+		reportOverlayDim(alert, 1);
+
+		// 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+		// 위 오버레이가 닫히면 겹침이 풀린다.
+		reportOverlayDim(alert, 0);
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+	});
+
+	it("drops a nested overlay's report when it unmounts under a parent lock", () => {
+		// 부모 잠금이 남아 있으면 마지막 해제의 `clear()` 가 돌지 않는다 - 닫힌 자식이 스스로
+		// 빠지지 않으면 죽은 항목이 쌓이고 합성이 매번 그것까지 순회한다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const parent = {};
+
+		reportOverlayDim(parent, 1);
+		lockBodyScroll();
+
+		// 자식을 열고 닫기를 반복해도 부모 한 겹으로 돌아와야 한다.
+		for (let i = 0; i < 3; i++) {
+			const child = {};
+			reportOverlayDim(child, 1);
+			lockBodyScroll();
+			expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+			unlockBodyScroll();
+			unregisterOverlayDim(child);
+			expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+		}
+	});
+
+	it("forgets reported progress once the lock is released", () => {
+		// 남겨두면 다음 잠금이 남의 진행도로 시작한다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const first = {};
+
+		reportOverlayDim(first, 1);
+		lockBodyScroll();
+		unlockBodyScroll();
+
+		// 보고자가 없는 두 번째 잠금은 진행도 1 로 본다 - `lockBodyScroll` 을 직접 부르는 소비자.
+		lockBodyScroll();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
 	});
 
 	it("falls back to the body background when the root is transparent", () => {

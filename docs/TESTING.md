@@ -362,71 +362,62 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 55 test files / 788 passed · 9 skipped.
+`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 76 test files / 1120 passed · 9 skipped.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **90.02%** | **85.69%** | **90.07%** | **91.97%** |
+| **All files** | **91.96%** | **89.01%** | **92.78%** | **94.02%** |
 
-아래는 **100% 미만**인 파일만 나열한 것이다 (미표기 컴포넌트 = 전 지표 100%: Button · Card · Radio · Spinner · Pagination · TopLoading · Badge · Divider · Skeleton · Toggle · Breadcrumb · EmptyState · ErrorState · IconButton · Container/Section/Stack/Grid 등).
+아래는 **100% 미만**인 파일만 나열한 것이다 (36개 파일은 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
 | ui/display/accordion | 100% | 80% | 100% | 100% |
-| ui/display/avatar | 84.61% | 88% | 66.66% | 90.9% |
-| ui/display/chip | 86.95% | 80.43% | 66.66% | 95.23% |
+| ui/display/avatar | 84.61% | 88% | 66.66% | 90.90% |
+| ui/display/chip | 91.66% | 95.65% | 66.66% | 100% |
+| ui/display/data-view | 100% | 97.29% | 100% | 100% |
 | ui/display/hero | 92.85% | 88.88% | 100% | 100% |
-| **ui/display/icon** | **0%** | **0%** | **0%** | **0%** |
 | ui/display/list-item | 100% | 93.33% | 100% | 100% |
 | ui/display/media-card | 100% | 96.29% | 100% | 100% |
-| ui/display/table | 98.07% | 92.79% | 95.65% | 97.77% |
-| ui/feedback/alert | 96.92% | 93.44% | 100% | 98.27% |
+| ui/display/prose | 73.07% | 71.42% | 80% | 80% |
+| ui/display/table | 98.24% | 93.04% | 95.65% | 97.95% |
+| ui/feedback/alert | 98.36% | 96.36% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.66% | 100% | 100% |
-| ui/feedback/toast | 100% | 84.21% | 100% | 100% |
-| ui/forms/checkbox | 91.66% | 90% | 100% | 100% |
-| ui/forms/date-picker | 91.86% | 80.16% | 100% | 97.1% |
-| ui/forms/dropdown | 96.42% | 90.64% | 100% | 96.49% |
-| ui/forms/file | 80.43% | 65% | 83.33% | 80% |
-| **ui/forms/image-cropper** | **57.04%** | **55.29%** | **50%** | **58.33%** |
-| ui/forms/otp-input | 89.28% | 91.66% | 100% | 89.33% |
-| ui/forms/radio-group | 100% | 95.45% | 100% | 100% |
-| ui/forms/textarea | 88.33% | 74.69% | 100% | 92.85% |
-| ui/forms/textfield | 90.47% | 82.75% | 77.77% | 92.68% |
-| ui/navigation/bottom-nav | 94.73% | 95% | 100% | 94.73% |
+| ui/feedback/toast | 100% | 85% | 100% | 100% |
+| ui/forms/checkbox | 92.30% | 93.75% | 100% | 100% |
+| ui/forms/combobox | 94.02% | 88.60% | 81.25% | 96.72% |
+| ui/forms/date-picker | 92.55% | 84.32% | 100% | 97.40% |
+| ui/forms/dropdown | 100% | 93.07% | 100% | 100% |
+| ui/forms/field | 100% | 96% | 100% | 100% |
+| ui/forms/file | 82% | 70.21% | 83.33% | 81.63% |
+| ui/forms/image-cropper | 54.47% | 57.14% | 40% | 55.20% |
+| ui/forms/otp-input | 89.65% | 89.39% | 100% | 89.74% |
+| ui/forms/tag-input | 97.59% | 90.54% | 100% | 100% |
+| ui/forms/textarea | 88.70% | 77.65% | 100% | 92.98% |
+| ui/forms/textfield | 98.24% | 95.74% | 90.90% | 98.14% |
+| ui/forms/time-picker | 93.22% | 90.41% | 100% | 100% |
+| ui/forms/toggle | 100% | 94.11% | 100% | 100% |
+| ui/navigation/bottom-nav | 95.83% | 91.66% | 100% | 95.83% |
 | ui/navigation/menu | 97.29% | 89.13% | 100% | 100% |
 | ui/navigation/nav-bar | 80.39% | 71.25% | 81.81% | 85.55% |
-| ui/navigation/sidebar | 83.33% | 88.63% | 75% | 86.95% |
-| ui/navigation/tabs | 91.42% | 78.18% | 88.88% | 100% |
-| ui/overlay/drawer | 97.91% | 95.16% | 100% | 100% |
-| ui/overlay/modal | 97.67% | 93.93% | 100% | 100% |
-| ui/overlay/popover | 91.3% | 85.71% | 100% | 92.68% |
-| ui/overlay/tooltip | 92.98% | 83.33% | 93.33% | 91.66% |
+| ui/navigation/sidebar | 84.84% | 89.28% | 80% | 87.50% |
+| ui/navigation/tabs | 91.42% | 78.18% | 88.88% | 98.90% |
+| ui/overlay/drawer | 98.27% | 98.46% | 100% | 100% |
+| ui/overlay/modal | 98.14% | 98.55% | 100% | 100% |
+| ui/overlay/popover | 91.30% | 84.84% | 100% | 92.68% |
+| ui/overlay/tooltip | 92.98% | 84.37% | 93.33% | 91.66% |
 | ui/system/theme-provider | 93.87% | 85.71% | 100% | 100% |
-| utils | 90.14% | 83.18% | 78.57% | 91.93% |
+| utils/cn.ts | 100% | 87.50% | 100% | 100% |
+| utils/overlay-stack.ts | 93.93% | 81.25% | 87.50% | 96.29% |
+| utils/scroll-lock.ts | 89.31% | 88.31% | 100% | 94.01% |
+| utils/use-anchored-position.ts | 90% | 85.29% | 83.33% | 93.84% |
+| utils/use-focus-trap.ts | 97.72% | 85% | 100% | 100% |
+| utils/use-listbox-popup.ts | 94.21% | 92.06% | 100% | 94.05% |
+| utils/use-reduced-motion.ts | 95.23% | 100% | 85.71% | 94.73% |
+| utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 
-> ⚠️ **80% 기준선 미달 (개선 필요)**
-> - **`ui/display/icon` — 0%**: 단위 테스트가 아예 없다. `aria-hidden` 자동 적용 / `aria-label` 지정 시 미적용 두 분기만이라도 커버해야 한다.
-> - **`ui/forms/image-cropper` — 57.04%**: canvas·pointer 조작 경로(`crop()`, 드래그, 휠 줌)가 jsdom 에서 대부분 미커버. `utils/use-spring-hover.ts` 도 10% 로 낮다.
-
-### 커버리지 목표
-
-- 새 컴포넌트: 최소 80% 커버리지
-- 전체 목표: 85% 이상 유지 (현재 90.02%)
-
-### 커버리지 리포트 확인
-
-```bash
-# 터미널에서 확인
-pnpm test:coverage
-
-# HTML 리포트 생성
-pnpm vitest run --coverage
-
-# coverage/index.html 파일 열기
-open coverage/index.html
-```
-
----
+> 이 표는 `coverage/coverage-summary.json` 에서 뜬 실측이다. 손으로 고치지 말고 `pnpm test:coverage`
+> 를 돌린 뒤 그 파일 기준으로 갱신한다 - 예전에 이 표가 788 tests 시절 수치로 굳어 있었다.
 
 ## 컴포넌트별 테스트 예시
 

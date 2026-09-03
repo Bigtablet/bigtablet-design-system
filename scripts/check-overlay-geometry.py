@@ -128,11 +128,32 @@ LOCK_CALL = "lockBodyScroll()"
 MIN_LOCK_OWNERS = 3
 
 
-# `lockBodyScroll()` 을 부르는 effect 의 본문과 deps 배열
-LOCK_EFFECT = re.compile(
-    r"useEffect\(\(\)\s*=>\s*\{(?P<body>[^}]*?lockBodyScroll\(\)[^}]*?)\}\s*,\s*\[(?P<deps>[^\]]*)\]\)",
-    re.DOTALL,
-)
+def _balanced_block(source: str, open_index: int) -> tuple[str, int]:
+    """`{` 위치에서 시작해 짝이 맞는 `}` 까지의 본문과 그 닫는 괄호의 인덱스를 돌려준다.
+
+    정규식으로는 안 된다 - effect cleanup 이 `return () => { ... }` 블록이면 `[^}]*` 가
+    첫 `}` 에서 끊긴다(그래서 소비처를 0개로 세고 검사가 조용히 사라졌다).
+    """
+    depth = 0
+    for i in range(open_index, len(source)):
+        if source[i] == "{":
+            depth += 1
+        elif source[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return source[open_index + 1 : i], i
+    return "", -1
+
+
+def lock_effect(source: str) -> tuple[str, str] | None:
+    """`lockBodyScroll()` 을 부르는 `useEffect` 의 (본문, deps). 없으면 None."""
+    for match in re.finditer(r"useEffect\(\(\)\s*=>\s*\{", source):
+        body, end = _balanced_block(source, match.end() - 1)
+        if end == -1 or LOCK_CALL not in body:
+            continue
+        deps = re.match(r"\s*,\s*\[([^\]]*)\]", source[end + 1 :])
+        return body, (deps.group(1).strip() if deps else "(deps 를 못 찾았다)")
+    return None
 
 
 def lock_owners() -> list[Path]:
@@ -149,14 +170,11 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
         )
     for path in owners:
         source = path.read_text(encoding="utf-8")
-        matches = LOCK_EFFECT.findall(source)
-        if len(matches) != 1:
-            problems.append(
-                f"{path}: lockBodyScroll effect 를 {len(matches)}개 찾았다 - 1개여야 한다"
-            )
+        found = lock_effect(source)
+        if found is None:
+            problems.append(f"{path}: lockBodyScroll 을 부르는 useEffect 를 못 찾았다")
             continue
-        body, deps = matches[0]
-        deps = deps.strip()
+        body, deps = found
         if deps != "shouldRender":
             problems.append(
                 f"{path}: 잠금 effect 의 deps 가 [{deps}] 다 - [shouldRender] 여야 한다."
@@ -165,11 +183,67 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
         if "if (!shouldRender) return" not in body:
             problems.append(f"{path}: 잠금 effect 의 가드가 shouldRender 기준이 아니다")
         # cleanup 이 없으면 unmount·shouldRender=false 후에도 잠금이 남아 페이지가 잠긴다.
-        if not re.search(r"\breturn\s+unlockBodyScroll\s*;", body):
+        if "unlockBodyScroll" not in body:
             problems.append(
                 f"{path}: 잠금 effect 가 unlockBodyScroll cleanup 을 반환하지 않는다"
             )
+        # 부모 잠금이 남아 있으면 unlock 이 레지스트리를 비우지 않는다 - 자기 것을 빼야 한다.
+        if "unregisterOverlayDim" not in body:
+            problems.append(
+                f"{path}: cleanup 이 자기 딤 보고를 빼지 않는다 - 부모 잠금 아래서 자식을"
+                " 반복해 열고 닫으면 죽은 항목이 쌓인다"
+            )
+        # 거터 색이 이 오버레이의 딤 페이드를 따라가려면 (a) 잠긴 첫 프레임의 초기값과
+        # (b) 프레임마다의 보고, 둘 다 필요하다. 파일 전체에서 이름만 세면 둘이 같은 자리에
+        # 있어도 통과하므로 실행 경로별로 본다 (#583).
+        if "reportOverlayDim(" not in body:
+            problems.append(f"{path}: 잠금 effect 가 진행도 초기값을 등록하지 않는다 (#583)")
+        animation = [
+            line
+            for line in source.splitlines()
+            if re.search(r"\b(onChange|onProgress)\s*:", line) and "reportOverlayDim(" in line
+        ]
+        if not animation:
+            problems.append(
+                f"{path}: 딤 스프링의 onChange/onProgress 에서 진행도를 보고하지 않는다 -"
+                " 잠금 순간 최종색으로 점프해 페이드 동안 거터만 어두워진다 (#583)"
+            )
     return problems, len(owners)
+
+
+# 트리거에 붙는 팝업들. 조상의 `overflow: hidden` 은 `z-index` 로 넘을 수 없어서(#586 - 카드
+# 안에서 170px 목록 중 46px 만 보였다) 포탈로 띄우고 fixed 좌표를 받아야 한다.
+ANCHORED_POPUPS = (
+    (Path("src/ui/forms/dropdown/index.tsx"), Path("src/ui/forms/dropdown/style.scss"), "dropdown_list"),
+    (Path("src/ui/forms/combobox/index.tsx"), Path("src/ui/forms/combobox/style.scss"), "combobox_panel"),
+    (Path("src/ui/navigation/menu/index.tsx"), Path("src/ui/navigation/menu/style.scss"), "menu"),
+)
+
+
+def check_popups_escape_clipping() -> list[str]:
+    """트리거 옆 팝업이 포탈 + fixed 인지. `position: absolute` 로 돌아가면 조상이 자른다."""
+    problems: list[str] = []
+    for component, styles, block in ANCHORED_POPUPS:
+        source = component.read_text(encoding="utf-8")
+        if "createPortal(" not in source:
+            problems.append(
+                f"{component}: 팝업을 포탈로 띄우지 않는다 - 조상의 `overflow: hidden` 이"
+                " 잘라내고 `z-index` 로는 넘지 못한다 (#586)"
+            )
+        css = styles.read_text(encoding="utf-8")
+        # 팝업 블록만 본다 - 같은 파일의 다른 절대 배치(아이콘 등)는 대상이 아니다.
+        marker = f"&_{block.split('_', 1)[1]} {{" if "_" in block else ".menu {"
+        index = css.find(marker)
+        if index == -1:
+            problems.append(f"{styles}: `{marker}` 블록을 못 찾았다 - 클래스가 바뀌었는지 보라")
+            continue
+        body, _ = _balanced_block(css, css.index("{", index))
+        if "position: absolute" in body:
+            problems.append(
+                f"{styles}: `{block}` 이 `position: absolute` 다 - 포탈에서는 좌표가 body"
+                " 기준이 되고 조상 클리핑도 그대로 남는다. `fixed` + 인라인 좌표여야 한다"
+            )
+    return problems
 
 
 SCROLL_LOCK_SOURCES = (
@@ -230,10 +304,32 @@ def check_lock_width_invariants() -> list[str]:
                 f"{path}: 딤 색을 `{dim_var}` 에서 읽지 않는다 - 오버레이가 페인트에 쓰는"
                 " 프로퍼티와 달라지면 거터 색이 실제 딤을 따라가지 못한다"
             )
-        if "compositeCanvasDim" not in code:
+        # 정의만 있고 잠금 경로에서 부르지 않으면 거터는 그대로 밝다 - 잠금 함수 본문 안에서
+        # 실제로 부르는지 본다(이름이 파일 어딘가에 있는지가 아니라).
+        lock_body = ""
+        for name in ("lockBodyScroll", "lockScroll"):
+            found = re.search(rf"function {name}\s*\([^)]*\)\s*(?::\s*\w+\s*)?\{{", source)
+            if found:
+                lock_body, _ = _balanced_block(source, found.end() - 1)
+                break
+        if not lock_body:
+            problems.append(f"{path}: 잠금 함수를 못 찾았다 - 이름이 바뀌었는지 보라")
+        elif "measureCanvasColors(" not in lock_body or "paintCanvas(" not in lock_body:
             problems.append(
                 f"{path}: 예약된 거터를 어둡게 하지 않는다 - 캔버스(루트 배경색)에 딤을"
                 " 합성해야 dim 옆에 밝은 띠가 남지 않는다 (#580)"
+            )
+        # 색을 잠금 시점에 한 번만 재야 한다. 중첩될 때 다시 재면 이미 어두워진 루트 배경을
+        # 바닥으로 잡아 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
+        if "canvasBase" not in code:
+            problems.append(f"{path}: 잰 캔버스 색을 캐시하지 않는다 - 중첩마다 다시 재면 검어진다")
+        # 거터 색은 딤이 페이드하는 동안 함께 어두워져야 한다 (#583). React 는 스프링 진행도를
+        # 보고받고, Vanilla 는 딤과 같은 CSS transition 을 루트에 건다.
+        marker = "--bt-transition-base" if path.name.endswith(".js") else "dimProgress"
+        if marker not in code:
+            problems.append(
+                f"{path}: 거터가 딤 페이드를 따라가지 않는다 - 잠금 순간 최종색으로 점프하면"
+                " 페이드 동안 거터만 먼저 어두워져 어두운 띠가 보인다 (#583)"
             )
         if "data-bt-scroll-locked" not in code:
             problems.append(
@@ -310,7 +406,8 @@ def main() -> int:
 
     problems += check_lock_width_invariants()
     problems += check_dim_does_not_chase_the_gutter()
-    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES)
+    problems += check_popups_escape_clipping()
+    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES) + len(ANCHORED_POPUPS)
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
@@ -343,11 +440,18 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    close_checks = checked - owner_count - len(SCROLL_LOCK_SOURCES) - len(DIM_SOURCES)
+    close_checks = (
+        checked
+        - owner_count
+        - len(SCROLL_LOCK_SOURCES)
+        - len(DIM_SOURCES)
+        - len(ANCHORED_POPUPS)
+    )
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 칠하고 표식을 남깁니다.")
     print(f"dim {len(DIM_SOURCES)}개 파일 - 예약된 거터를 쫓지 않습니다(캔버스 합성에 맡김).")
+    print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
     return 0
 
 

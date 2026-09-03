@@ -18,6 +18,7 @@ export function useSpringPresence({
 	visible,
 	from = "translateY(8px)",
 	onExitComplete,
+	onProgress,
 }: {
 	/** 보이는 상태인지 - false면 사라짐 모션 */
 	visible: boolean;
@@ -25,6 +26,8 @@ export function useSpringPresence({
 	from?: string;
 	/** exit 모션 완료 시 호출 - 부모에서 unmount 트리거용 */
 	onExitComplete?: () => void;
+	/** 프레임마다 현재 opacity(0~1). 오버레이가 잠금에 딤 진행도를 보고할 때 쓴다(#583). */
+	onProgress?: (progress: number) => void;
 }) {
 	const reduced = useReducedMotion();
 
@@ -44,6 +47,7 @@ export function useSpringPresence({
 			friction: 28,
 			clamp: !visible, // 사라질 땐 진동 없이 빠르게
 		},
+		onChange: (result) => onProgress?.(Number(result.value.opacity)),
 		onRest: (result) => {
 			if (!visible && result.finished && onExitComplete) {
 				onExitComplete();

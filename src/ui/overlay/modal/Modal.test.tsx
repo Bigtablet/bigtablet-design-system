@@ -1,6 +1,7 @@
 import { Globals } from "@react-spring/web";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { lockBodyScroll, reportOverlayDim, unlockBodyScroll } from "../../../utils";
 import { Modal } from "./index";
 
 const stubReducedMotion = () => {
@@ -18,9 +19,88 @@ const stubReducedMotion = () => {
 	);
 };
 
+/** 잠금이 거터를 예약하는 조건을 세운다 (jsdom 은 레이아웃을 하지 않아 프로브가 0 을 잰다). */
+const stubGutter = () => {
+	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true });
+	Object.defineProperty(document.documentElement, "scrollHeight", {
+		value: 4000,
+		configurable: true,
+	});
+	Object.defineProperty(document.documentElement, "clientHeight", {
+		value: 800,
+		configurable: true,
+	});
+	Object.defineProperty(globalThis.CSS, "supports", { value: () => true, configurable: true });
+	vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+		width: 1265,
+		height: 0,
+		top: 0,
+		left: 0,
+		right: 1265,
+		bottom: 0,
+		x: 0,
+		y: 0,
+		toJSON: () => ({}),
+	} as DOMRect);
+	document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+	document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+};
+
 describe("Modal", () => {
 	afterEach(() => {
+		// 잠금과 진행도 보고는 모듈 상태다 - 테스트가 중간에 실패해도 다음 테스트로 새지 않게.
+		let guard = 0;
+		while (document.body.dataset.openModals && guard++ < 10) unlockBodyScroll();
+		document.body.removeAttribute("data-open-modals");
+		document.documentElement.style.cssText = "";
 		vi.unstubAllGlobals();
+	});
+
+	it("drops its dim report when force-unmounted while still open", () => {
+		// 라우트 전환처럼 `open=true` 인 채 트리가 통째로 unmount 되면 퇴출 스프링이 끝까지
+		// 돌지 않아 마지막 진행도(최대 1)가 레지스트리에 남는다. 부모 잠금이 살아 있으면
+		// 그 유령 항목이 계속 합성돼 거터만 과하게 어두워진다.
+		// reduced-motion 으로 스프링을 즉시 목표값에 두어 "두 겹" 상태를 프레임 없이 만든다.
+		stubReducedMotion();
+		stubGutter();
+		const parent = {};
+		reportOverlayDim(parent, 1);
+		lockBodyScroll();
+
+		const { unmount } = render(
+			<Modal open onClose={() => {}} title="Ghost">
+				Content
+			</Modal>,
+		);
+
+		// 두 겹 - 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+		unmount();
+
+		// 부모 한 겹으로 돌아와야 한다 - cleanup 이 자기 보고를 뺐다는 뜻이다.
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		unlockBodyScroll();
+		document.documentElement.style.cssText = "";
+	});
+
+	it("dims the gutter immediately when prefers-reduced-motion is set", () => {
+		// 거터 색은 딤 스프링의 진행도를 따르는데(#583), reduced-motion 에서는 스프링이 즉시
+		// 목표값이라 진행도를 1 로 시작해야 한다 - 0 으로 두면 거터만 밝게 남는다.
+		stubReducedMotion();
+		stubGutter();
+
+		const { unmount } = render(
+			<Modal open onClose={() => {}} title="Reduced">
+				Content
+			</Modal>,
+		);
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		unmount();
+		document.documentElement.style.cssText = "";
 	});
 
 	it("renders without motion when prefers-reduced-motion is set", () => {

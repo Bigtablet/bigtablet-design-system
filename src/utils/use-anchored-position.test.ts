@@ -4,6 +4,58 @@ import { type AnchorRect, computeAnchoredPosition } from "./use-anchored-positio
 const vp = (width: number, height: number) => ({ width, height });
 
 describe("computeAnchoredPosition", () => {
+	it("aligns the cross axis to the anchor start when asked", () => {
+		// 리스트박스 팝업은 트리거 왼쪽 변에 맞아야 한다 - 중앙 정렬하면 목록이 트리거보다
+		// 좁거나 넓을 때 좌우로 어긋난다(#586 수정 중 실측 - 트리거 left 42 에 목록 left 233).
+		const anchor: AnchorRect = { top: 200, left: 42, width: 446, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 446, height: 170 }, vp(1024, 768), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+		});
+
+		expect(r.x).toBe(42);
+		expect(r.y).toBe(244);
+		expect(r.placement).toBe("bottom");
+	});
+
+	it("aligns to the anchor end for right-aligned menus", () => {
+		const anchor: AnchorRect = { top: 100, left: 400, width: 40, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 180, height: 120 }, vp(1024, 768), {
+			placement: "bottom",
+			align: "end",
+			gap: 4,
+		});
+
+		// 앵커 오른쪽 변(440)에 목록 오른쪽 변을 맞춘다.
+		expect(r.x).toBe(260);
+	});
+
+	it("keeps centering by default - Popover and Tooltip depend on it", () => {
+		const anchor: AnchorRect = { top: 100, left: 400, width: 40, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 180, height: 120 }, vp(1024, 768), {
+			placement: "bottom",
+			gap: 4,
+		});
+
+		expect(r.x).toBe(330);
+	});
+
+	it("flips a start-aligned popup upward when it does not fit below", () => {
+		// 뷰포트 아래가 모자라면 위로 뒤집는다 - 조상이 아니라 뷰포트 기준이다(포탈이라 조상은
+		// 더 이상 자르지 않는다).
+		const anchor: AnchorRect = { top: 700, left: 42, width: 200, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 170 }, vp(1024, 768), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+		});
+
+		expect(r.placement).toBe("top");
+		expect(r.y).toBe(700 - 4 - 170);
+		expect(r.x).toBe(42);
+	});
+
 	it("keeps the preferred side when it fits", () => {
 		// 넉넉한 뷰포트 중앙 트리거 — top 선호가 그대로 유지된다.
 		const anchor: AnchorRect = { top: 300, left: 400, width: 40, height: 40 };

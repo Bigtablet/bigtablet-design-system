@@ -142,12 +142,20 @@
 		];
 	}
 
-	/** 딤을 지금 보이는 캔버스 색 위에 합성한 값. 루트가 투명하면 body 배경이 전파된다.
-	 *  딤 색은 **오버레이가 실제로 페인트에 쓰는** 프로퍼티에서 읽어야 한다 - Vanilla 는
-	 *  `--bt-color-overlay`(`.bt-modal` · `.bt-alert__overlay` 가 쓰는 것). 선언만 있고 아무도
-	 *  참조하지 않는 `--bt-color-background-overlay` 를 읽으면 소비자가 딤을 오버라이드했을 때
-	 *  거터 색이 따라가지 못한다. */
-	function compositeCanvasDim(html, body) {
+	/** 열린 오버레이 수만큼 딤을 겹친 실효 알파. 중첩되면 딤이 실제로 겹쳐 보인다. */
+	function stackedAlpha(alpha, count) {
+		return 1 - (1 - alpha) ** Math.max(1, count);
+	}
+
+	/**
+	 * 잠금 시점에 잰 [딤, 바닥] 색. 중첩될 때 다시 재지 않는다 - 이미 어두워진 루트 배경을
+	 * 바닥으로 잡으면 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
+	 */
+	let canvasDim = null;
+	let canvasBase = null;
+
+	/** 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽는다 - `--bt-color-overlay`. */
+	function measureCanvasColors(html, body) {
 		const white = [255, 255, 255, 1];
 		const raw =
 			window.getComputedStyle(html).getPropertyValue("--bt-color-overlay").trim() ||
@@ -161,15 +169,35 @@
 		];
 		const base = candidates.find((color) => color !== null && color[3] > 0) || white;
 
-		const mixed = over(dim, over(base, white));
-		return `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
+		return [dim, over(base, white)];
 	}
 
 	/**
-	 * 바디 스크롤 잠금 카운터 - Modal 위 Alert 처럼 오버레이가 겹칠 때
-	 * 하나만 닫혀도 배경 스크롤이 풀리던 문제 방지 (React 쪽 data-open-modals 와 동일 패턴)
+	 * 거터를 열린 오버레이 수에 맞는 색으로 칠한다. 순수 계산이라 스타일을 읽지 않는다.
+	 *
+	 * `dimFades` 면 루트에 딤과 같은 길이·easing 의 transition 을 걸어 커브를 맞춘다.
+	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
+	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다.
 	 */
-	function lockScroll() {
+	function paintCanvas(html, count, dimFades) {
+		if (!canvasDim || !canvasBase) return;
+
+		const alpha = stackedAlpha(canvasDim[3], count);
+		const mixed = over([canvasDim[0], canvasDim[1], canvasDim[2], alpha], canvasBase);
+		html.style.transition = dimFades ? "background-color var(--bt-transition-base)" : "";
+		html.style.backgroundColor = `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
+	}
+
+	/**
+	 * @param {boolean} [dimFades] 이 오버레이의 딤이 페이드 인하는가.
+	 *
+	 * 거터는 캔버스가 칠하므로 잠금이 루트 배경색으로 칠하는데(#580), 딤이 페이드 인하는
+	 * 오버레이에서 그 색을 즉시 최종값으로 바꾸면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
+	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
+	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다. 페이드하는
+	 * 쪽에는 루트에 같은 길이·같은 easing 의 `transition` 을 걸어 커브를 맞춘다.
+	 */
+	function lockScroll(dimFades) {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "0", 10);
@@ -186,6 +214,7 @@
 			body.dataset.btOriginalScrollbarWidthVar =
 				html.style.getPropertyValue("--bt-scrollbar-width");
 			body.dataset.btOriginalBackgroundColor = html.style.backgroundColor;
+			body.dataset.btOriginalTransition = html.style.transition;
 
 			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
 			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
@@ -217,9 +246,11 @@
 			// 잠금 중 거터가 남는 모든 경로에서 그 띠를 어둡게 한다 (#580) - 방금 예약한 경우든
 			// 앱이 이미 예약해 둔 경우든. padding 폴백은 거터가 없으므로 제외된다.
 			if (scrollbarWidth > 0 && canReserveGutter) {
-				const dimmed = compositeCanvasDim(html, body);
-				if (dimmed) {
-					html.style.backgroundColor = dimmed;
+				const measured = measureCanvasColors(html, body);
+				if (measured) {
+					canvasDim = measured[0];
+					canvasBase = measured[1];
+					paintCanvas(html, 1, dimFades);
 				}
 			}
 
@@ -229,9 +260,21 @@
 			body.style.overflow = "hidden";
 		}
 		body.dataset.btOpenModals = String(n + 1);
+
+		// 중첩 - 딤이 하나 더 겹쳤으니 거터도 그만큼 더 어두워져야 한다 (React 쪽과 같은 계산).
+		if (n > 0) {
+			paintCanvas(html, n + 1, dimFades);
+		}
 	}
 
-	function unlockScroll() {
+	/**
+	 * @param {boolean} [dimFades] 닫히는 오버레이의 딤이 페이드 아웃하는가.
+	 *
+	 * 중첩이 남아 있으면 거터를 남은 두께로 다시 칠하는데, 그 전환은 **사라지는 딤**의 커브를
+	 * 따라야 한다. Modal 은 `.is-open` 을 떼면 즉시 사라지므로 transition 을 걸면 거터만 0.2s
+	 * 늦게 밝아진다.
+	 */
+	function unlockScroll(dimFades) {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
@@ -240,6 +283,7 @@
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
 			html.style.backgroundColor = body.dataset.btOriginalBackgroundColor || "";
+			html.style.transition = body.dataset.btOriginalTransition || "";
 			html.removeAttribute("data-bt-scroll-locked");
 			if (body.dataset.btOriginalScrollbarWidthVar) {
 				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
@@ -252,8 +296,13 @@
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
 			delete body.dataset.btOriginalBackgroundColor;
+			delete body.dataset.btOriginalTransition;
+			canvasDim = null;
+			canvasBase = null;
 		} else {
 			body.dataset.btOpenModals = String(n);
+			// 위에 있던 오버레이가 닫혔으니 겹침이 하나 줄었다.
+			paintCanvas(html, n, dimFades);
 		}
 	}
 
@@ -689,6 +738,89 @@
 			updateActiveOption();
 		}
 
+		/** 목록의 원래 자리 - 닫을 때 되돌리려고 기억해 둔다. */
+		let panelHome = null;
+		/** 열려 있는 동안 좌표를 따라가는 리스너 해제 함수. */
+		let untrackPanel = null;
+
+		/**
+		 * 목록을 body 로 옮기고 트리거 기준 fixed 좌표를 준다.
+		 *
+		 * 조상의 `overflow: hidden` 은 `z-index` 로 넘을 수 없어서(#586 - 카드 안에서 170px 목록
+		 * 중 46px 만 보였다) 위치만 fixed 로 바꾸는 것으로는 부족하다 - transform 이 걸린 조상이
+		 * 있으면 그것이 fixed 의 컨테이닝 블록이 되기 때문이다. 그래서 body 로 옮긴다.
+		 * 아래 공간이 모자라고 위가 더 넓으면 위로 띄운다(React 배치 훅의 flip 과 같은 판정).
+		 */
+		function placePanel() {
+			if (!panelHome) {
+				panelHome = { parent: panel.parentNode, next: panel.nextSibling };
+				document.body.appendChild(panel);
+			}
+
+			const rect = control.getBoundingClientRect();
+			const gap = 4;
+			const padding = 8;
+
+			// 폭은 트리거를 따르되 뷰포트 가용 폭을 넘지 않는다 - 넘으면 오른쪽 옵션이 잘린다.
+			// 폭을 먼저 확정해야 높이가 실제 줄바꿈 기준으로 잡힌다.
+			const width = Math.min(rect.width, window.innerWidth - padding * 2);
+			panel.style.width = `${width}px`;
+
+			// 높이도 가용 높이로 제한한다 - 목록이 뷰포트보다 길면 위/아래 어느 쪽으로도 다 안 들어간다.
+			const available = window.innerHeight - padding * 2;
+			panel.style.maxHeight = "";
+			const natural = panel.offsetHeight;
+			const height = Math.min(natural, available);
+			if (natural > available) panel.style.maxHeight = `${available}px`;
+
+			const below = window.innerHeight - rect.bottom - gap - padding;
+			const above = rect.top - gap - padding;
+			const up = height > below && above > below;
+
+			panel.classList.toggle("bt-dropdown__list--up", up);
+			panel.style.left = `${clampToViewport(rect.left, width, window.innerWidth, padding)}px`;
+			const top = up ? rect.top - gap - height : rect.bottom + gap;
+			panel.style.top = `${clampToViewport(top, height, window.innerHeight, padding)}px`;
+		}
+
+		/** 여백을 남기고 뷰포트 안으로 민다. 가용 공간이 팝업보다 작으면 여백에 고정한다. */
+		function clampToViewport(start, size, viewport, padding) {
+			return Math.max(padding, Math.min(start, viewport - padding - size));
+		}
+
+		/** 스크롤·리사이즈에 좌표를 갱신한다. capture=true - 스크롤 이벤트는 버블링하지 않는다. */
+		function trackPanel() {
+			if (untrackPanel) return;
+			let frame = 0;
+			const schedule = () => {
+				if (frame) return;
+				frame = requestAnimationFrame(() => {
+					frame = 0;
+					if (state.isOpen) placePanel();
+				});
+			};
+			window.addEventListener("scroll", schedule, true);
+			window.addEventListener("resize", schedule);
+			untrackPanel = () => {
+				if (frame) cancelAnimationFrame(frame);
+				window.removeEventListener("scroll", schedule, true);
+				window.removeEventListener("resize", schedule);
+				untrackPanel = null;
+			};
+		}
+
+		/** 목록을 원래 자리로 되돌린다 - 소비자가 컨테이너를 지울 때 body 에 남지 않게. */
+		function restorePanel() {
+			untrackPanel?.();
+			if (!panelHome) return;
+			panelHome.parent?.insertBefore(panel, panelHome.next);
+			panelHome = null;
+			panel.style.left = "";
+			panel.style.top = "";
+			panel.style.width = "";
+			panel.style.maxHeight = "";
+		}
+
 		function open() {
 			if (config.disabled || control.disabled) return;
 
@@ -698,17 +830,10 @@
 			panel.style.display = "block";
 			if (searchInput) searchInput.setAttribute("aria-expanded", "true");
 
-			// Calculate position (auto-flip)
-			const rect = control.getBoundingClientRect();
-			const listHeight = Math.min(state.options.length * 40, 288);
-			const spaceBelow = window.innerHeight - rect.bottom;
-			const spaceAbove = rect.top;
-
-			if (spaceBelow < listHeight && spaceAbove > spaceBelow) {
-				panel.classList.add("bt-dropdown__list--up");
-			} else {
-				panel.classList.remove("bt-dropdown__list--up");
-			}
+			// 목록을 body 로 옮겨 fixed 로 띄운다 - 트리거 옆에 두면 `overflow: hidden` 인
+			// 조상이 잘라낸다(#586, React 번들과 같은 처리). 원래 자리는 닫을 때 되돌린다.
+			placePanel();
+			trackPanel();
 
 			// Set active index - 선택된 항목이 있으면 그쪽, 없으면 첫 후보 (React 와 동일).
 			// applyFilter 가 필터 밖(=-1 포함)이면 첫 후보로 보정한다.
@@ -728,6 +853,7 @@
 			control.setAttribute("aria-expanded", "false");
 			control.removeAttribute("aria-activedescendant");
 			panel.style.display = "none";
+			restorePanel();
 
 			// 패널을 닫으면 검색 상태 초기화 (다음 열림 시 fresh - React 와 동일)
 			if (searchInput) {
@@ -884,7 +1010,10 @@
 		}
 
 		function onDocumentClick(e) {
-			if (!wrapper.contains(e.target)) {
+			// 목록은 열려 있는 동안 `body` 로 옮겨져 wrapper 의 자손이 아니다(#586). 함께 보지
+			// 않으면 옵션의 `mousedown` 이 바깥 클릭으로 오인돼 - `mousedown` 은 `click` 보다
+			// 먼저다 - 패널이 닫히고 원래 자리로 돌아간 뒤에 `click` 이 도착해 선택이 무산된다.
+			if (!wrapper.contains(e.target) && !panel.contains(e.target)) {
 				close();
 			}
 		}
@@ -979,6 +1108,8 @@
 				control.classList.toggle("is-disabled", disabled);
 			},
 			destroy: () => {
+				// 열린 채 destroy 되면 목록이 body 에 남는다 - 리스너까지 함께 떼어낸다.
+				restorePanel();
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
@@ -1059,7 +1190,8 @@
 			if (!state.isOpen) return; // 이미 닫힘 - 중복 unlockScroll 방지
 			state.isOpen = false;
 			modal.classList.remove("is-open");
-			unlockScroll();
+			// 이 딤은 `display` 토글로 즉시 사라진다 - 남은 거터도 즉시 밝아져야 한다.
+			unlockScroll(false);
 
 			// 우리가 추가한 tabindex 정리 (React useFocusTrap 의 wasTabIndexAdded 와 동일)
 			if (panelTabindexAdded && panel) {
@@ -1210,7 +1342,8 @@
 		const previousFocus = document.activeElement;
 
 		document.body.appendChild(overlay);
-		lockScroll();
+		// 이 오버레이의 딤은 `bt-alert-fade-in` 으로 페이드한다 - 거터도 같은 길이로 따라가야 한다.
+		lockScroll(true);
 
 		let isOpen = true;
 
@@ -1228,7 +1361,8 @@
 			}
 			setTimeout(() => {
 				overlay.remove();
-				unlockScroll();
+				// 이 딤은 페이드 아웃한다 - 남은 거터도 같은 커브로 밝아진다.
+				unlockScroll(true);
 			}, 200);
 		}
 

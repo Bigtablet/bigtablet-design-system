@@ -14,6 +14,17 @@ export interface BreadcrumbItem {
 	href?: string;
 	/** 클릭 콜백 (href 없이 사용 가능) */
 	onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+	/**
+	 * 링크를 렌더할 요소. 라우터 `Link`(`next/link` 등)를 끼울 때 쓴다.
+	 *
+	 * `onClick` 에서 `preventDefault` + `router.push` 로도 되지만, 그러면 수정자 클릭
+	 * (`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽어 소비처마다 그 검사를 다시 써야 하고
+	 * 프리페치·이동 가드처럼 `Link` 만 아는 것들은 표현할 수 없다.
+	 *
+	 * 마지막 항목(현재 페이지)에는 적용되지 않는다 - 그건 링크가 아니라 `aria-current` 텍스트다.
+	 * `href` 없이 주면 무시된다(그 항목은 `<button>` 이다).
+	 */
+	as?: React.ElementType;
 }
 
 export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
@@ -53,6 +64,8 @@ export const Breadcrumb = ({
 			<ol className="breadcrumb_list">
 				{items.map((item, idx) => {
 					const isLast = idx === items.length - 1;
+					// `as` 가 있으면 그 요소로 렌더한다 - NavLink 와 같은 `const Tag` 패턴.
+					const Tag = item.as ?? "a";
 					return (
 						// biome-ignore lint/suspicious/noArrayIndexKey: breadcrumb items have stable order
 						<li key={idx} className="breadcrumb_item">
@@ -61,9 +74,11 @@ export const Breadcrumb = ({
 									{item.label}
 								</span>
 							) : item.href ? (
-								<a className="breadcrumb_link" href={item.href} onClick={item.onClick}>
+								// `href`·`className`·`onClick` 을 그대로 넘긴다 - 라우터 `Link` 가 수정자
+								// 클릭·프리페치를 자기 방식대로 처리한다.
+								<Tag className="breadcrumb_link" href={item.href} onClick={item.onClick}>
 									{item.label}
-								</a>
+								</Tag>
 							) : (
 								<button type="button" className="breadcrumb_link" onClick={item.onClick}>
 									{item.label}

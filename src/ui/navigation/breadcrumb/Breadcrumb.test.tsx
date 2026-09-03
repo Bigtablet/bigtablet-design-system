@@ -3,6 +3,39 @@ import { describe, expect, it, vi } from "vitest";
 import { Breadcrumb } from "./index";
 
 describe("Breadcrumb", () => {
+	it("renders a link item through `as` so a router Link can take over", () => {
+		// `onClick` 우회로는 수정자 클릭(cmd/ctrl/shift)과 새 탭 열기가 죽는다 - 소비처가
+		// 라우터 Link 를 그대로 끼울 수 있어야 한다(#588).
+		const Link = ({ href, children, ...rest }: { href?: string; children?: React.ReactNode }) => (
+			<a data-testid="router-link" href={href} {...rest}>
+				{children}
+			</a>
+		);
+
+		render(<Breadcrumb items={[{ label: "홈", href: "/", as: Link }, { label: "현재" }]} />);
+
+		const link = screen.getByTestId("router-link");
+		expect(link).toHaveAttribute("href", "/");
+		expect(link).toHaveClass("breadcrumb_link");
+		expect(link).toHaveTextContent("홈");
+	});
+
+	it("ignores `as` on the current page - it is not a link", () => {
+		const Link = () => <a data-testid="router-link" href="/x" />;
+
+		render(
+			<Breadcrumb
+				items={[
+					{ label: "홈", href: "/" },
+					{ label: "현재", as: Link },
+				]}
+			/>,
+		);
+
+		expect(screen.queryByTestId("router-link")).toBeNull();
+		expect(screen.getByText("현재")).toHaveAttribute("aria-current", "page");
+	});
+
 	it("renders all items", () => {
 		render(
 			<Breadcrumb

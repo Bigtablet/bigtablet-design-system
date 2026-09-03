@@ -6,8 +6,9 @@
 }
 
 .menu {
-  position: absolute;
-  top: calc(100% + 4px);
+  // 좌표는 컴포넌트가 인라인으로 준다 - 포탈로 body 에 붙어 조상의 `overflow: hidden` 을
+  // 벗어난다(#586). 간격은 배치 훅의 gap 이 담당한다.
+  position: fixed;
   z-index: token.$z_popup;
   min-width: 180px;
   // 라이트: 흰색 / 다크: bg_solid_dim (neutral_925, canvas 보다 한 톤 밝음 → elevation)
@@ -27,8 +28,7 @@
     }
   }
 
-  &_align_start { left: 0; }
-  &_align_end   { right: 0; }
+  // 정렬도 인라인 좌표가 담당한다(배치 훅의 `align`). 클래스는 소비자 스타일 훅으로 남긴다.
 
   &_item {
     display: flex;

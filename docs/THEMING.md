@@ -537,8 +537,15 @@ elementFromPoint(1266, 250)            null   ← 여기부터 아무것도 없�
 - 소비자가 할 일은 없다. **자기 오버레이에 음수 오프셋을 주지 마라** - 안 닿는다
 - 잠금 중에는 루트에 `data-bt-scroll-locked` 가 붙는다. 고정 요소나 자기 오버레이를 잠금 상태에
   맞춰 조정해야 하면 이 선택자를 쓴다
-- 잠금 직후 거터는 즉시 어두워지지만 dim 은 진입 애니메이션(0.2s)으로 서서히 어두워진다 -
-  그 사이에는 띠가 페이지보다 조금 더 어둡다
+- **거터는 딤과 같이 어두워진다.** 딤이 진입 애니메이션 중이면 거터도 같은 진행도를 따른다 -
+  잠금 순간 최종색으로 점프하면 페이드 동안 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
+  React 오버레이는 자기 딤 스프링의 진행도를 잠금에 보고하고(`reportOverlayDim`, 사라질 때
+  `unregisterOverlayDim`), Vanilla 는
+  딤과 같은 길이·easing 의 `transition` 을 루트에 건다(`.bt-alert__overlay` 만 페이드하고
+  `.bt-modal` 은 `display` 토글이라 즉시다). `prefers-reduced-motion` 에서는 스프링이 즉시
+  목표값이라 거터도 즉시 어두워진다
+- **중첩되면 겹친 만큼 어두워진다.** Modal 위 Alert 처럼 딤이 겹치면 페이지는
+  `1 - (1 - a)^n` 만큼 어두워지는데 거터도 같은 값을 쓴다 - 한 겹으로 두면 띠만 밝게 남는다
 
 ```css
 /* 소비자 예: 잠금 중 자기 고정 툴바를 숨긴다 */
@@ -559,6 +566,35 @@ dim 은 ICB 를 채우고, 패널은 그 안에서 중앙 정렬된다. 스크�
 > 카운터로 조율해 첫 잠금만 스타일을 바꾸고 마지막 해제만 원복한다 - 카운터 이름은 번들마다
 > 다르다 (React `body.dataset.openModals` / Vanilla `body.dataset.btOpenModals`).
 
+
+## status 색: 배경용과 텍스트용을 구분한다
+
+`--bt-color-status-{error,success,warning,info}` 는 **양 테마에서 같은 값**이다(red-700 계열).
+배경과 테두리에는 그대로 쓰지만, **테마에 따라 바뀌는 표면 위의 텍스트로는 쓰지 않는다** -
+다크 표면에서 대비가 무너진다. 실측(Chromium, `data-theme="dark"`):
+
+| 토큰 | 다크 페이지(#0A0A0A) | 다크 패널(#141414) | `_on_surface` (페이지) |
+| --- | --- | --- | --- |
+| error | 3.06:1 | 2.85:1 | **7.16:1** |
+| success | 3.61:1 | 3.36:1 | **11.36:1** |
+| warning | 3.94:1 | 3.67:1 | **11.86:1** |
+| info | 2.95:1 | 2.75:1 | **7.79:1** |
+
+그래서 텍스트에는 `--bt-color-status-*-on-surface`(Vanilla `--bt-color-{error,success,warning,info}-text`)
+를 쓴다 - 다크에서 400 계열로 바뀐다. 라이트에서는 두 토큰의 값이 같아 **라이트 렌더는 바뀌지 않는다.**
+
+| 용도 | 토큰 |
+| --- | --- |
+| 배경 (filled 버튼, 배지 표면) | `--bt-color-status-error` |
+| 테두리 (입력 error 상태) | `--bt-color-status-error` - 비텍스트는 3:1 기준이라 다크에서도 통과 |
+| 텍스트 (helper, 제목, outline·text 버튼 라벨) | `--bt-color-status-error-on-surface` |
+
+**고정 표면 위의 텍스트는 예외다.** brand 표면 위 `--bt-color-brand-on-primary`, 스크림·glass 위
+`--bt-color-text-on-dark-*`, status 표면 위 `-on-default`·`-on-container` 는 표면 자체가 테마와
+무관하므로 대비가 일정하다 - 이름이 그 짝을 밝힌다.
+
+> `pnpm check:dark-text` 가 이 규약을 지킨다 - 표면 전용 색 토큰이 `color:` 로 쓰이면 실패한다.
+> a11y 스토리 러너는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 본다.
 
 ## 자동완성(autofill) 입력칸
 
