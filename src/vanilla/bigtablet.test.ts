@@ -322,13 +322,38 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 		expect(document.body.style.paddingRight).toBe("");
-		// 오버레이가 예약된 거터를 넘어가 덮도록 폭은 노출한다.
+		// 소비자가 거터 폭을 알 수 있게 폭은 노출한다.
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
 		m?.close();
 
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
+	});
+
+	it("예약된 거터를 캔버스 합성으로 어둡게 한다 (React 번들과 같은 처리)", () => {
+		// 예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 dim 이 덮을 수 없다(#580).
+		// 두 번들 중 한쪽만 고치면 갈린다 - 이 저장소에서 다섯 번 난 결함군이다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
+		setViewportInset(15);
+		// 오버레이가 실제로 페인트에 쓰는 프로퍼티다 (`.bt-modal { background: var(--bt-color-overlay) }`).
+		// 기본값(검정 50%)이 아닌 색을 일부러 넣는다 - 선언만 있고 아무도 참조하지 않는
+		// `--bt-color-background-overlay` 를 읽으면 폴백 기본값과 같아져 드러나지 않는다.
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 255, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
+
+		const m = Modal(modalMarkup());
+		m?.open();
+
+		// rgba(0,0,255,.5) over rgb(255,233,168) = (127.5, 116.5, 211.5) → 반올림
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 212)");
+		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
+
+		m?.close();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
+		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
 	});
 
 	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {

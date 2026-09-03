@@ -185,22 +185,22 @@ DIM_SOURCES = (
     Path("src/vanilla/bigtablet.scss"),
 )
 NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
-GUTTER_SUPPORTS = "@supports (scrollbar-gutter: stable)"
 
 
-def check_dim_offset_gating() -> list[str]:
-    """dim 의 음수 오프셋이 전부 `@supports` 안에 있는지 - 미지원 브라우저에서는
-    잠금이 padding 으로 보정해 ICB 가 전폭이고, 그때 음수 오프셋은 dim 과 패널을
-    오른쪽으로 밀어낸다 (오른쪽 Drawer 는 화면 밖으로)."""
+def check_dim_does_not_chase_the_gutter() -> list[str]:
+    """dim 이 음수 오프셋으로 예약된 거터를 쫓지 않는지.
+
+    예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 `html` 의 자손은 거기에 페인트할 수
+    없다. 음수 오프셋은 박스만 넓히고 페인트는 거터 앞에서 잘린다 - 실측으로
+    `getBoundingClientRect().right` 는 1280 인데 `elementFromPoint(1266, 250)` 이 `null`
+    이었다(#580). 그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다.
+    """
     problems: list[str] = []
     for path in DIM_SOURCES:
-        source = path.read_text(encoding="utf-8")
-        offsets = source.count(NEGATIVE_OFFSET)
-        gates = source.count(GUTTER_SUPPORTS)
-        if offsets and offsets != gates:
+        if NEGATIVE_OFFSET in path.read_text(encoding="utf-8"):
             problems.append(
-                f"{path}: 음수 오프셋 {offsets}개 중 {gates}개만 `@supports` 안에 있다"
-                " - 미지원 브라우저에서 오버레이가 오른쪽으로 밀린다"
+                f"{path}: dim 이 음수 오프셋으로 거터를 쫓는다 - 박스만 넓어지고 페인트는"
+                " 거터 앞에서 잘린다(#580). 잠금의 캔버스 합성에 맡겨라"
             )
     return problems
 
@@ -221,6 +221,25 @@ def check_lock_width_invariants() -> list[str]:
             )
         if 'scrollbarGutter = "stable"' not in code:
             problems.append(f"{path}: 잠금이 거터를 예약하지 않는다 - `stable` 이 없다")
+        # 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽어야 한다. 번들마다 이름이
+        # 다르고, 선언만 있고 아무도 참조하지 않는 유사 이름이 양쪽에 있다 - 그걸 읽으면
+        # 소비자가 딤을 오버라이드했을 때 거터 색만 옛 값에 남는다.
+        dim_var = "--bt-color-overlay" if path.name.endswith(".js") else "--bt-color-bg-overlay"
+        if dim_var not in code:
+            problems.append(
+                f"{path}: 딤 색을 `{dim_var}` 에서 읽지 않는다 - 오버레이가 페인트에 쓰는"
+                " 프로퍼티와 달라지면 거터 색이 실제 딤을 따라가지 못한다"
+            )
+        if "compositeCanvasDim" not in code:
+            problems.append(
+                f"{path}: 예약된 거터를 어둡게 하지 않는다 - 캔버스(루트 배경색)에 딤을"
+                " 합성해야 dim 옆에 밝은 띠가 남지 않는다 (#580)"
+            )
+        if "data-bt-scroll-locked" not in code:
+            problems.append(
+                f"{path}: 잠금 표식(`data-bt-scroll-locked`)을 남기지 않는다 - 소비자가 잠금"
+                " 상태를 CSS 로 알 수단이 사라진다"
+            )
         if "scrollHeight > " not in code:
             problems.append(
                 f"{path}: 문서가 스크롤되는지 보지 않는다 - 예약된 거터만 있는 앱에서"
@@ -290,7 +309,7 @@ def main() -> int:
     checked += owner_count
 
     problems += check_lock_width_invariants()
-    problems += check_dim_offset_gating()
+    problems += check_dim_does_not_chase_the_gutter()
     checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES)
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
@@ -327,8 +346,8 @@ def main() -> int:
     close_checks = checked - owner_count - len(SCROLL_LOCK_SOURCES) - len(DIM_SOURCES)
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
-    print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 스크롤 여부로 분기합니다.")
-    print(f"dim 음수 오프셋 {len(DIM_SOURCES)}개 파일 - 전부 `@supports` 안에 있습니다.")
+    print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 칠하고 표식을 남깁니다.")
+    print(f"dim {len(DIM_SOURCES)}개 파일 - 예약된 거터를 쫓지 않습니다(캔버스 합성에 맡김).")
     return 0
 
 

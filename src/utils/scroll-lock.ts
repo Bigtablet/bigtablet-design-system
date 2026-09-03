@@ -22,10 +22,19 @@
  * 요소를 스크롤바 폭의 **절반**만큼 이동시켰다(#574). 실측 - 뷰포트 1200·스크롤바 15px 에서
  * ICB 1185 → 1200, `left: 50%` 배지 중심 592.5 → 600.
  *
- * 띠는 오버레이가 넘어가서 덮는다. 예약된 거터는 fixed 의 컨테이닝 블록 밖이라 `inset: 0` 이나
- * `100vw` 로는 닿지 않지만(둘 다 1185 로 잼) **음수 오프셋은 닿는다**(`right: -15px` → 1200).
- * 그래서 잰 폭을 `:root` 의 `--bt-scrollbar-width` 로 노출하고, 오버레이 dim 이
- * `right: calc(-1 * var(--bt-scrollbar-width, 0px))` 로 그만큼 넘어간다.
+ * ## 예약된 거터를 어둡게 하는 방법
+ *
+ * 예약된 거터는 **캔버스**(루트 요소의 배경)가 칠하는 영역이라 `html` 의 자손은 거기에 페인트할
+ * 수 없다. 오버레이 dim 에 음수 오프셋을 줘 봤지만(3.17.1) 박스만 넓어지고 페인트는 거터 앞에서
+ * 잘렸다 - 실측으로 `getBoundingClientRect().right` 는 1280 인데
+ * `elementFromPoint(1266, 250)` 이 `null` 이었다(#580).
+ *
+ * 루트의 `background-image` 도 거터로 전파되지 않는다(실측). 전파되는 것은 **background-color
+ * 하나뿐**이다. 그래서 잠금 동안 딤을 미리 합성해 루트 배경색으로 심는다 - 거터에는 "딤이 덮인
+ * 페이지 배경"과 같은 색이 나타난다. 해제 시 인라인 스냅샷으로 원복한다.
+ *
+ * 잰 폭은 `:root` 의 `--bt-scrollbar-width` 로 계속 노출한다. 소비자가 자기 오버레이를 만들 때
+ * 거터 폭을 알아야 하고, 잠금 여부는 `html[data-bt-scroll-locked]` 로 알 수 있다.
  *
  * `scrollbar-gutter` 미지원(Safari 18.2 미만)에서는 예약이 불가능하므로 기존 `padding-right`
  * 보정을 폴백으로 쓴다. 그 브라우저에서는 fixed 요소의 이동이 남는다 - 브라우저가 주는 한계다.
@@ -47,6 +56,75 @@ const PREV_PADDING_RIGHT = "originalPaddingRight";
 const PREV_SCROLLBAR_WIDTH_VAR = "originalScrollbarWidthVar";
 
 const SCROLLBAR_WIDTH_VAR = "--bt-scrollbar-width";
+
+/** 잠금 중 루트에 남기는 표식. 소비자가 잠금 상태를 CSS 로 알 수 있게 공개한다. */
+const LOCKED_ATTR = "data-bt-scroll-locked";
+/** 딤 색 토큰. 커스텀 프로퍼티라 계산값이 아닌 저작 텍스트로 읽히므로 정규화가 필요하다. */
+const DIM_VAR = "--bt-color-bg-overlay";
+/** 소비자가 `style.css` 를 넣지 않은 경우의 기본값 - light 테마 딤과 같다. */
+const DIM_FALLBACK = "rgba(0, 0, 0, 0.5)";
+/** 원복용 인라인 스냅샷 - 거터를 칠하려고 루트 배경색을 건드리므로 함께 저장한다. */
+const PREV_BACKGROUND_COLOR = "originalBackgroundColor";
+
+type Rgba = [number, number, number, number];
+
+const WHITE: Rgba = [255, 255, 255, 1];
+
+const parseRgb = (value: string): Rgba | null => {
+	const match = value.trim().match(/^rgba?\(([^)]+)\)$/i);
+	if (!match) return null;
+	const parts = match[1]
+		.split(/[\s,/]+/)
+		.filter(Boolean)
+		.map(Number);
+	if (parts.length < 3 || parts.some(Number.isNaN)) return null;
+	return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
+};
+
+/** 커스텀 프로퍼티 값은 정규화되지 않은 저작 텍스트(`#000`, `hsl(...)`, `oklch(...)`)일 수
+ *  있으므로 요소에 한 번 태워 브라우저가 계산한 `rgb()` 로 받는다. */
+const normalizeColor = (value: string): Rgba | null => {
+	const direct = parseRgb(value);
+	if (direct) return direct;
+
+	const probe = document.createElement("div");
+	probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden";
+	probe.style.color = value;
+	document.documentElement.appendChild(probe);
+	const computed = window.getComputedStyle(probe).color;
+	probe.remove();
+
+	return parseRgb(computed);
+};
+
+/** `top` 을 `bottom` 위에 알파 합성한다. 결과는 항상 불투명하다. */
+const over = (top: Rgba, bottom: Rgba): Rgba => [
+	Math.round(top[0] * top[3] + bottom[0] * (1 - top[3])),
+	Math.round(top[1] * top[3] + bottom[1] * (1 - top[3])),
+	Math.round(top[2] * top[3] + bottom[2] * (1 - top[3])),
+	1,
+];
+
+/**
+ * 거터에 심을 루트 배경색. 딤을 지금 보이는 캔버스 색 위에 합성한 값이다.
+ *
+ * 캔버스 색은 루트 배경색이고, 루트가 투명하면 `body` 배경색이 전파된다 - 그 순서로 찾는다.
+ * 둘 다 투명하면 브라우저 기본 배경(흰색)이 바닥이다.
+ */
+const compositeCanvasDim = (html: HTMLElement, body: HTMLElement): string | null => {
+	const raw = window.getComputedStyle(html).getPropertyValue(DIM_VAR).trim() || DIM_FALLBACK;
+	const dim = normalizeColor(raw);
+	if (!dim || dim[3] <= 0) return null;
+
+	const candidates = [
+		parseRgb(window.getComputedStyle(html).backgroundColor),
+		parseRgb(window.getComputedStyle(body).backgroundColor),
+	];
+	const base = candidates.find((color): color is Rgba => color !== null && color[3] > 0) ?? WHITE;
+
+	const [r, g, b] = over(dim, over(base, WHITE));
+	return `rgb(${r}, ${g}, ${b})`;
+};
 
 /**
  * 잠금으로 회수되는 오른쪽 폭(px). 오버레이 스크롤바(macOS 기본)에서는 0.
@@ -103,6 +181,7 @@ export function lockBodyScroll(): void {
 		body.dataset[PREV_GUTTER] = html.style.scrollbarGutter;
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
 		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
+		body.dataset[PREV_BACKGROUND_COLOR] = html.style.backgroundColor;
 
 		// 폭 노출은 스크롤 여부와 무관하다. 앱이 이미 거터를 예약해 둔 채 문서가 스크롤되지
 		// 않는 구성에서도 그 거터는 화면에 남아 있고, 오버레이가 넘어가 덮어야 한다 - 이 값이
@@ -122,6 +201,20 @@ export function lockBodyScroll(): void {
 				body.style.paddingRight = `${current + scrollbarWidth}px`;
 			}
 		}
+
+		// 잠금 중 거터가 남는 모든 경로에서 그 띠를 어둡게 한다 (#580) - 우리가 방금 예약한
+		// 경우든, 앱이 이미 예약해 둔 경우(문서가 스크롤되지 않아 위 분기를 타지 않는다)든.
+		// padding 폴백 경로는 거터가 아예 없으므로 제외된다.
+		if (scrollbarWidth > 0 && canReserveGutter) {
+			const dimmed = compositeCanvasDim(html, body);
+			if (dimmed) {
+				html.style.backgroundColor = dimmed;
+			}
+		}
+
+		// 잠금 여부를 CSS 로 알 수 있게 표식을 남긴다 - 소비자가 자기 고정 요소나 자기 오버레이를
+		// 이 선택자로 조정할 수 있다.
+		html.setAttribute(LOCKED_ATTR, "");
 
 		body.style.overflow = "hidden";
 	}
@@ -143,6 +236,8 @@ export function unlockBodyScroll(): void {
 		body.style.overflow = body.dataset[PREV_OVERFLOW] || "";
 		body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
 		html.style.scrollbarGutter = body.dataset[PREV_GUTTER] || "";
+		html.style.backgroundColor = body.dataset[PREV_BACKGROUND_COLOR] || "";
+		html.removeAttribute(LOCKED_ATTR);
 		// 소비자가 잡아둔 인라인 값이 있었으면 그대로 되돌리고, 없었으면 인라인 override 만 지워
 		// theme.scss 의 기본값 `0px` 으로 되돌아가게 한다.
 		const prevVar = body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
@@ -157,6 +252,7 @@ export function unlockBodyScroll(): void {
 		delete body.dataset[PREV_GUTTER];
 		delete body.dataset[PREV_PADDING_RIGHT];
 		delete body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
+		delete body.dataset[PREV_BACKGROUND_COLOR];
 	} else {
 		body.dataset[COUNTER] = String(remaining);
 	}

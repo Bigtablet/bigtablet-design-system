@@ -12,15 +12,9 @@ $close_clearance: $close_inset + token.$tap_target_dense;
 .drawer {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  // 예약된 거터를 넘어가 덮는다. 거터는 fixed 의 컨테이닝 블록 밖이라 `inset: 0` 이나
-  // `100vw` 로는 닿지 않는다(둘 다 ICB 폭으로 잼) - 음수 오프셋만 닿는다.
-  //
-  // `@supports` 안에서만 준다. 미지원 브라우저에서는 잠금이 거터를 예약하지 못해
-  // padding 으로 보정하는데, 그때 ICB 는 전폭이라 이 오프셋이 dim 과 그 안의 패널을
-  // 오른쪽으로 밀어낸다(오른쪽 Drawer 는 화면 밖으로).
-  @supports (scrollbar-gutter: stable) {
-    right: calc(-1 * var(--bt-scrollbar-width, 0px));
-  }
+  // 예약된 거터는 dim 이 덮지 않는다 - 캔버스(루트 배경)가 칠하는 영역이라 자손은 거기에
+  // 페인트할 수 없다. 음수 오프셋으로 박스만 넓혀 봤지만(3.17.1) 페인트는 거터 앞에서
+  // 잘렸다(#580). 그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 - `scroll-lock`.
   display: flex;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome; // Modal 과 동일 레이어
