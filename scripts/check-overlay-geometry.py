@@ -178,6 +178,33 @@ SCROLL_LOCK_SOURCES = (
 )
 
 
+DIM_SOURCES = (
+    Path("src/ui/overlay/modal/style.scss"),
+    Path("src/ui/overlay/drawer/style.scss"),
+    Path("src/ui/feedback/alert/style.scss"),
+    Path("src/vanilla/bigtablet.scss"),
+)
+NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
+GUTTER_SUPPORTS = "@supports (scrollbar-gutter: stable)"
+
+
+def check_dim_offset_gating() -> list[str]:
+    """dim 의 음수 오프셋이 전부 `@supports` 안에 있는지 - 미지원 브라우저에서는
+    잠금이 padding 으로 보정해 ICB 가 전폭이고, 그때 음수 오프셋은 dim 과 패널을
+    오른쪽으로 밀어낸다 (오른쪽 Drawer 는 화면 밖으로)."""
+    problems: list[str] = []
+    for path in DIM_SOURCES:
+        source = path.read_text(encoding="utf-8")
+        offsets = source.count(NEGATIVE_OFFSET)
+        gates = source.count(GUTTER_SUPPORTS)
+        if offsets and offsets != gates:
+            problems.append(
+                f"{path}: 음수 오프셋 {offsets}개 중 {gates}개만 `@supports` 안에 있다"
+                " - 미지원 브라우저에서 오버레이가 오른쪽으로 밀린다"
+            )
+    return problems
+
+
 def check_lock_width_invariants() -> list[str]:
     """잠금이 거터를 놓지 않고 예약하는지, 스크롤 여부로 분기하는지."""
     problems: list[str] = []
@@ -263,7 +290,8 @@ def main() -> int:
     checked += owner_count
 
     problems += check_lock_width_invariants()
-    checked += len(SCROLL_LOCK_SOURCES)
+    problems += check_dim_offset_gating()
+    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES)
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
@@ -296,9 +324,11 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    print(f"오버레이 close 기하 {checked - owner_count}건 - 전부 패널 패딩에서 파생됩니다.")
+    close_checks = checked - owner_count - len(SCROLL_LOCK_SOURCES) - len(DIM_SOURCES)
+    print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 스크롤 여부로 분기합니다.")
+    print(f"dim 음수 오프셋 {len(DIM_SOURCES)}개 파일 - 전부 `@supports` 안에 있습니다.")
     return 0
 
 

@@ -142,7 +142,27 @@ describe("scroll-lock", () => {
 		expect(document.body.style.overflow).toBe("hidden");
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 		expect(document.body.style.paddingRight).toBe("");
-		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
+		// 폭은 노출한다 - 앱이 예약해 둔 거터는 화면에 남아 있고 오버레이가 넘어가 덮어야 한다.
+		// 노출하지 않으면 dim 옆에 밝은 띠가 그대로 남는다.
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+	});
+
+	it("uses the browser's scrolling element, not documentElement", () => {
+		// 앱이 `html` 에 overflow 를 걸면 `body` 가 실제 스크롤 요소가 된다. documentElement 를
+		// 하드코딩하면 그 구성에서 판정이 어긋난다.
+		Object.defineProperty(document, "scrollingElement", {
+			value: document.body,
+			configurable: true,
+		});
+		Object.defineProperty(document.body, "scrollHeight", { value: 4000, configurable: true });
+		Object.defineProperty(document.body, "clientHeight", { value: 800, configurable: true });
+		// documentElement 쪽은 스크롤되지 않는 것처럼 세운다.
+		setDocumentScrolls(false);
+		setViewportInset(15);
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 	});
 
 	it("skips compensation when there is no scrollbar to hide", () => {

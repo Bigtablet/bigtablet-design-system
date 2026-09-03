@@ -90,7 +90,10 @@ export function lockBodyScroll(): void {
 		const scrollbarWidth = measureViewportInset();
 		// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다. 예약된 거터만 있는 앱이 이 경로로
 		// 들어와 레이아웃이 흔들렸다.
-		const documentScrolls = html.scrollHeight > html.clientHeight;
+		// 스크롤 요소는 보통 `documentElement` 지만, 앱이 `html` 에 overflow 를 걸면 `body` 가
+		// 실제 스크롤 요소가 된다. 브라우저가 알려주는 값을 쓴다.
+		const scroller = document.scrollingElement ?? html;
+		const documentScrolls = scroller.scrollHeight > scroller.clientHeight;
 		const canReserveGutter =
 			typeof CSS !== "undefined" &&
 			typeof CSS.supports === "function" &&
@@ -101,10 +104,15 @@ export function lockBodyScroll(): void {
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
 		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
 
-		if (documentScrolls && scrollbarWidth > 0) {
-			// 오버레이가 거터를 넘어가 덮을 수 있게 잰 폭을 노출한다.
+		// 폭 노출은 스크롤 여부와 무관하다. 앱이 이미 거터를 예약해 둔 채 문서가 스크롤되지
+		// 않는 구성에서도 그 거터는 화면에 남아 있고, 오버레이가 넘어가 덮어야 한다 - 이 값이
+		// 없으면 dim 옆에 밝은 띠가 그대로 남는다.
+		if (scrollbarWidth > 0) {
 			html.style.setProperty(SCROLLBAR_WIDTH_VAR, `${scrollbarWidth}px`);
+		}
 
+		// 폭 보정(거터 예약·padding)은 실제로 스크롤바가 사라질 때만 필요하다.
+		if (documentScrolls && scrollbarWidth > 0) {
 			if (canReserveGutter) {
 				// 거터를 예약해 ICB 폭을 유지한다 - padding 보정이 필요 없다.
 				html.style.scrollbarGutter = "stable";

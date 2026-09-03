@@ -122,16 +122,20 @@
 
 			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
 			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
-			const documentScrolls = html.scrollHeight > html.clientHeight;
+			const scroller = document.scrollingElement || html;
+			const documentScrolls = scroller.scrollHeight > scroller.clientHeight;
 			const canReserveGutter =
 				typeof CSS !== "undefined" &&
 				typeof CSS.supports === "function" &&
 				CSS.supports("scrollbar-gutter: stable");
 
-			if (documentScrolls && scrollbarWidth > 0) {
-				// 오버레이가 예약된 거터를 넘어가 덮을 수 있게 잰 폭을 노출한다.
+			// 폭 노출은 스크롤 여부와 무관하다 - 예약된 거터는 문서가 스크롤되지 않아도
+			// 화면에 남고, 오버레이가 넘어가 덮어야 한다 (React 쪽과 동일).
+			if (scrollbarWidth > 0) {
 				html.style.setProperty("--bt-scrollbar-width", `${scrollbarWidth}px`);
+			}
 
+			if (documentScrolls && scrollbarWidth > 0) {
 				if (canReserveGutter) {
 					// 거터를 **예약**해 ICB 폭을 유지한다. 놓으면(`auto`) 폭이 변해
 					// `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼 움직인다.

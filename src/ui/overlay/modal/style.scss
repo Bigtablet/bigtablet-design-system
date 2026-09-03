@@ -18,10 +18,15 @@ $close_clearance: token.$spacing_24;
 .modal {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  // 잠금이 예약한 거터를 넘어가 덮는다. 예약된 거터는 fixed 의 컨테이닝 블록 밖이라
-  // `inset: 0` 이나 `100vw` 로는 닿지 않는다(둘 다 ICB 폭으로 잼) - 음수 오프셋만 닿는다.
-  // 잠금 밖에서는 `--bt-scrollbar-width` 가 `0px` 이라 아무 효과가 없다.
-  right: calc(-1 * var(--bt-scrollbar-width, 0px));
+  // 예약된 거터를 넘어가 덮는다. 거터는 fixed 의 컨테이닝 블록 밖이라 `inset: 0` 이나
+  // `100vw` 로는 닿지 않는다(둘 다 ICB 폭으로 잼) - 음수 오프셋만 닿는다.
+  //
+  // `@supports` 안에서만 준다. 미지원 브라우저에서는 잠금이 거터를 예약하지 못해
+  // padding 으로 보정하는데, 그때 ICB 는 전폭이라 이 오프셋이 dim 과 그 안의 패널을
+  // 오른쪽으로 밀어낸다(오른쪽 Drawer 는 화면 밖으로).
+  @supports (scrollbar-gutter: stable) {
+    right: calc(-1 * var(--bt-scrollbar-width, 0px));
+  }
   display: grid;
   // 암묵 트랙은 auto - 즉 패널의 max-content(width prop + 패딩)로 커진다. 그러면 패널의
   // `max-width: calc(100% - ...)` 가 뷰포트가 아니라 그 트랙을 기준으로 풀려서 전혀 clamp 되지
