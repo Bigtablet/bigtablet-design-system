@@ -55,6 +55,7 @@
   &_nav {
     flex: 1;
     overflow-y: auto;
+    @include token.scrollable;
     overflow-x: hidden;
     padding: token.$spacing_12 token.$spacing_8;
     display: flex;
