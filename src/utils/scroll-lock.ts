@@ -9,18 +9,30 @@
  *
  * ## 스크롤바 폭 보정
  *
- * `overflow: hidden` 만 걸면 스크롤바가 사라지면서 콘텐츠가 그 폭만큼 넓어져 배경이 튄다.
- * 그래서 잠글 때 스크롤바 폭을 재서 `body` 의 `padding-right` 로 되돌려준다.
+ * `overflow: hidden` 만 걸면 스크롤바가 사라지고 그만큼 콘텐츠 영역이 넓어져 배경이 튄다.
+ * 넓어지는 것은 콘텐츠만이 아니다 - **ICB(초기 컨테이닝 블록) 폭이 함께 변해서**
+ * `position: fixed; left: 50%` 처럼 폭에 비례하는 값을 쓰는 요소가 절반만큼 움직인다.
  *
- * 앱이 `html { scrollbar-gutter: stable }`(라우트 전환 시 가로 시프트 방지)을 쓰면 문제가 하나 더
- * 있다. 잠금 중에도 거터가 예약된 채 남고, `position: fixed` 의 컨테이닝 블록은 그 거터를 제외한
- * 콘텐츠 영역이라 오버레이가 거터에 닿지 못한다 - dim 옆에 밝은 띠가 남고 `100vw`/`100dvw`/`100lvw`
- * 로도 넘을 수 없다. 그래서 잠금 동안에는 `scrollbar-gutter: auto` 로 거터를 놓아 컨테이닝 블록을
- * 전폭으로 만들고, 놓은 만큼을 위의 `padding-right` 가 대신 잡아 콘텐츠 폭을 유지한다.
+ * 그래서 잠금 동안 거터를 **예약**한다(`scrollbar-gutter: stable`). 스크롤바가 사라져도 그 자리가
+ * 남아 ICB 폭이 변하지 않으므로, 흐름 안 콘텐츠도 fixed 요소도 움직이지 않고 `padding-right`
+ * 보정 자체가 필요 없다.
  *
- * 잰 폭은 `:root` 의 `--bt-scrollbar-width` 로도 노출한다. 앱의 `right: 0` 계열 고정 요소는
- * 잠금 중 그만큼 오른쪽으로 밀리므로, 그 변수로 자체 보정할 수 있다. 잠금 밖에서는 `theme.scss`
- * 의 기본값 `0px` 이라 `var()` 가 항상 유효하다.
+ * 예전에는 반대로 거터를 놓았다(`auto`). 앱이 `html { scrollbar-gutter: stable }` 을 쓰면 잠금
+ * 중에도 거터가 남아 오버레이가 그 띠를 덮지 못했기 때문인데, 그 방법은 ICB 폭을 바꿔 fixed
+ * 요소를 스크롤바 폭의 **절반**만큼 이동시켰다(#574). 실측 - 뷰포트 1200·스크롤바 15px 에서
+ * ICB 1185 → 1200, `left: 50%` 배지 중심 592.5 → 600.
+ *
+ * 띠는 오버레이가 넘어가서 덮는다. 예약된 거터는 fixed 의 컨테이닝 블록 밖이라 `inset: 0` 이나
+ * `100vw` 로는 닿지 않지만(둘 다 1185 로 잼) **음수 오프셋은 닿는다**(`right: -15px` → 1200).
+ * 그래서 잰 폭을 `:root` 의 `--bt-scrollbar-width` 로 노출하고, 오버레이 dim 이
+ * `right: calc(-1 * var(--bt-scrollbar-width, 0px))` 로 그만큼 넘어간다.
+ *
+ * `scrollbar-gutter` 미지원(Safari 18.2 미만)에서는 예약이 불가능하므로 기존 `padding-right`
+ * 보정을 폴백으로 쓴다. 그 브라우저에서는 fixed 요소의 이동이 남는다 - 브라우저가 주는 한계다.
+ *
+ * **문서가 스크롤되지 않으면 아무것도 하지 않는다.** 앱 셸이 내부 컨테이너를 스크롤 컨테이너로
+ * 삼으면 문서에는 애초에 스크롤바가 없다. 그때 폭 보정을 하면 없는 스크롤바를 없애느라 레이아웃을
+ * 흔든다 - 예약된 거터를 스크롤바로 오인해 실제로 그렇게 됐다(#574).
  */
 
 /** 중첩 카운터. 기존 공개 동작이라 이름 유지 (`body.dataset.openModals`). */
@@ -76,18 +88,31 @@ export function lockBodyScroll(): void {
 	if (open === 0) {
 		// overflow 를 건드리기 전에 재야 한다 - 잠근 뒤엔 스크롤바가 사라져 0 이 나온다.
 		const scrollbarWidth = measureViewportInset();
+		// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다. 예약된 거터만 있는 앱이 이 경로로
+		// 들어와 레이아웃이 흔들렸다.
+		const documentScrolls = html.scrollHeight > html.clientHeight;
+		const canReserveGutter =
+			typeof CSS !== "undefined" &&
+			typeof CSS.supports === "function" &&
+			CSS.supports("scrollbar-gutter: stable");
 
 		body.dataset[PREV_OVERFLOW] = body.style.overflow;
 		body.dataset[PREV_GUTTER] = html.style.scrollbarGutter;
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
 		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
 
-		if (scrollbarWidth > 0) {
+		if (documentScrolls && scrollbarWidth > 0) {
+			// 오버레이가 거터를 넘어가 덮을 수 있게 잰 폭을 노출한다.
 			html.style.setProperty(SCROLLBAR_WIDTH_VAR, `${scrollbarWidth}px`);
-			html.style.scrollbarGutter = "auto";
-			// 소비자가 이미 준 padding-right 에 더한다 - 덮어쓰면 그만큼 콘텐츠가 되레 움직인다.
-			const current = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
-			body.style.paddingRight = `${current + scrollbarWidth}px`;
+
+			if (canReserveGutter) {
+				// 거터를 예약해 ICB 폭을 유지한다 - padding 보정이 필요 없다.
+				html.style.scrollbarGutter = "stable";
+			} else {
+				// 폴백 - 소비자가 이미 준 padding-right 에 더한다. 덮어쓰면 그만큼 콘텐츠가 되레 움직인다.
+				const current = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+				body.style.paddingRight = `${current + scrollbarWidth}px`;
+			}
 		}
 
 		body.style.overflow = "hidden";

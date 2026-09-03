@@ -1019,6 +1019,9 @@
 .bt-modal {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
+  /* 잠금이 예약한 거터를 넘어가 덮는다 - 예약된 거터는 fixed 의 컨테이닝 블록 밖이라
+  `inset: 0` 이나 `100vw` 로는 닿지 않는다. 잠금 밖에서는 이 변수가 0px 이라 무효과. */
+  right: calc(-1 * var(--bt-scrollbar-width, 0px));
   display: none;
   place-items: center;
   background: var(--bt-color-overlay);
@@ -1110,6 +1113,9 @@
   &__overlay {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
+    /* 잠금이 예약한 거터를 넘어가 덮는다 - 예약된 거터는 fixed 의 컨테이닝 블록 밖이라
+    `inset: 0` 이나 `100vw` 로는 닿지 않는다. 잠금 밖에서는 이 변수가 0px 이라 무효과. */
+    right: calc(-1 * var(--bt-scrollbar-width, 0px));
     background: var(--bt-color-overlay);
     display: none;
     align-items: center;

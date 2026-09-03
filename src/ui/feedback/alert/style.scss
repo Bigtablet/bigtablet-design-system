@@ -4,6 +4,10 @@
   &_overlay {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
+    // 잠금이 예약한 거터를 넘어가 덮는다. 예약된 거터는 fixed 의 컨테이닝 블록 밖이라
+    // `inset: 0` 이나 `100vw` 로는 닿지 않는다(둘 다 ICB 폭으로 잼) - 음수 오프셋만 닿는다.
+    // 잠금 밖에서는 `--bt-scrollbar-width` 가 `0px` 이라 아무 효과가 없다.
+    right: calc(-1 * var(--bt-scrollbar-width, 0px));
     background: token.$color_bg_overlay;
     display: flex;
     align-items: center;

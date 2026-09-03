@@ -120,15 +120,27 @@
 			body.dataset.btOriginalScrollbarWidthVar =
 				html.style.getPropertyValue("--bt-scrollbar-width");
 
-			if (scrollbarWidth > 0) {
-				// 잰 폭을 노출 - 앱의 `right: 0` 고정 요소가 이 변수로 자체 보정할 수 있다.
+			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
+			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
+			const documentScrolls = html.scrollHeight > html.clientHeight;
+			const canReserveGutter =
+				typeof CSS !== "undefined" &&
+				typeof CSS.supports === "function" &&
+				CSS.supports("scrollbar-gutter: stable");
+
+			if (documentScrolls && scrollbarWidth > 0) {
+				// 오버레이가 예약된 거터를 넘어가 덮을 수 있게 잰 폭을 노출한다.
 				html.style.setProperty("--bt-scrollbar-width", `${scrollbarWidth}px`);
-				// `scrollbar-gutter: stable` 을 쓰는 앱은 잠금 중에도 거터가 남고, `position: fixed`
-				// 의 컨테이닝 블록이 거터를 제외한 콘텐츠 영역이라 오버레이가 그 폭에 닿지 못한다
-				// (dim 옆에 밝은 띠). 거터를 놓아 전폭으로 만들고 그만큼 padding 으로 되돌린다.
-				html.style.scrollbarGutter = "auto";
-				const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
-				body.style.paddingRight = `${current + scrollbarWidth}px`;
+
+				if (canReserveGutter) {
+					// 거터를 **예약**해 ICB 폭을 유지한다. 놓으면(`auto`) 폭이 변해
+					// `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼 움직인다.
+					html.style.scrollbarGutter = "stable";
+				} else {
+					// 폴백(scrollbar-gutter 미지원) - 기존 padding 보정.
+					const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+					body.style.paddingRight = `${current + scrollbarWidth}px`;
+				}
 			}
 
 			body.style.overflow = "hidden";
