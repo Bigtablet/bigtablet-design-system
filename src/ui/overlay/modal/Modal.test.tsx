@@ -2,6 +2,7 @@ import { Globals } from "@react-spring/web";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { lockBodyScroll, reportOverlayDim, unlockBodyScroll } from "../../../utils";
+import { Drawer } from "../drawer";
 import { Modal } from "./index";
 
 const stubReducedMotion = () => {
@@ -54,6 +55,37 @@ describe("Modal", () => {
 		document.body.removeAttribute("data-open-modals");
 		document.documentElement.style.cssText = "";
 		vi.unstubAllGlobals();
+	});
+
+	it("recovers the gutter when a nested overlay is force-unmounted", () => {
+		// 앞 테스트는 부모가 수동 잠금이었다. 실제 DS 오버레이가 부모일 때도 같은지 - 즉
+		// `unlockBodyScroll` 의 중첩 분기가 재도색하지 않아도 색이 돌아오는지 - 를 본다.
+		stubReducedMotion();
+		stubGutter();
+
+		const Tree = ({ withDrawer }: { withDrawer: boolean }) => (
+			<>
+				<Modal open onClose={() => {}} title="Parent">
+					Content
+				</Modal>
+				{withDrawer && <Drawer open title="Child" onClose={() => {}} />}
+			</>
+		);
+
+		const { rerender, unmount } = render(<Tree withDrawer />);
+
+		// 두 겹 - 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
+
+		// `open` 을 false 로 바꾸지 않고 트리에서 떼어낸다 (라우트 전환과 같은 모양).
+		rerender(<Tree withDrawer={false} />);
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		unmount();
+
+		// 마지막 해제 - 인라인 스냅샷으로 원복된다.
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
 	});
 
 	it("drops its dim report when force-unmounted while still open", () => {

@@ -315,6 +315,18 @@ export function unlockBodyScroll(): void {
 		canvasBase = null;
 		canvasDim = null;
 	} else {
+		// 중첩 해제 - 카운터만 내린다. **여기서 다시 칠하지 않는 것이 맞다**: 딤 두께는 카운터가
+		// 아니라 보고된 진행도에서 나오고, 그 진행도는 이 함수가 건드리지 않으므로 재계산해도
+		// 같은 색이다. 닫히는 오버레이의 몫은 두 곳에서 빠진다 - 퇴출 스프링이 0 까지 보고하고
+		// (컨트롤드 경로), cleanup 이 `unregisterOverlayDim` 으로 항목을 지운다(강제 unmount
+		// 포함). 그래서 Vanilla 의 대응 분기와 달라 보이는데, 그쪽은 두께를 **카운터로** 세므로
+		// 카운터가 줄면 반드시 다시 칠해야 한다 - 같은 목적의 다른 구현이다.
+		//
+		// 이 판단은 단정이 아니라 테스트로 고정돼 있다 - "keeps the gutter color when a
+		// non-reporting lock is released mid-chain"(보고 없는 잠금이 풀려도 색 불변),
+		// "recovers the gutter when a nested overlay is force-unmounted"(실제 중첩
+		// 컴포넌트를 열린 채 떼어내도 색 복귀). 잠금 API 는 공개 표면이 아니라 이 저장소의
+		// 오버레이 3종만 쓰고, 셋 다 보고와 해제를 짝지었는지 `check:geometry` 가 지킨다.
 		body.dataset[COUNTER] = String(remaining);
 	}
 }

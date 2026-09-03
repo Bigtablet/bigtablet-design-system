@@ -244,6 +244,28 @@ describe("scroll-lock", () => {
 		}
 	});
 
+	it("keeps the gutter color when a non-reporting lock is released mid-chain", () => {
+		// `unlockBodyScroll` 의 중첩 분기는 카운터만 내리고 다시 칠하지 않는다. 그 판단이
+		// 맞는지 - 즉 보고하지 않는 잠금(소비자가 직접 부르는 경우)이 풀릴 때 딤 두께가
+		// 변하지 않는지 - 를 단정으로 못박는다. 변한다면 그 분기에 재도색이 필요하다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+		const overlay = {};
+
+		reportOverlayDim(overlay, 1);
+		lockBodyScroll();
+		// 소비자가 자기 오버레이(딤 없음)를 위해 직접 잠근다 - 보고자는 늘지 않는다.
+		lockBodyScroll();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		unlockBodyScroll();
+
+		// 딤 한 겹은 그대로다 - 소비자 잠금은 딤을 그리지 않으므로 두께에 기여하지 않았다.
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+	});
+
 	it("forgets reported progress once the lock is released", () => {
 		// 남겨두면 다음 잠금이 남의 진행도로 시작한다.
 		setViewportInset(15);
