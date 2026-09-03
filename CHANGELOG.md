@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.17.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.3) - 2026-09-03
+- (렌더 변경) 오버레이가 열릴 때 예약된 스크롤바 거터에 밝은 띠가 남던 문제를 고칩니다. 그 띠는 캔버스(루트 배경)가 칠하는 영역이라 dim 이 닿지 못했습니다 - 잠금이 딤을 캔버스 색 위에 합성해 루트 배경색으로 심습니다 (React·Vanilla 양쪽)
+- 잠금 중 루트에 `data-bt-scroll-locked` 가 붙습니다. 고정 요소나 자체 오버레이를 잠금 상태에 맞춰 조정할 때 쓸 수 있습니다
+- 3.17.1 이 넣었던 오버레이의 음수 `right` 오프셋은 제거됐습니다 - 페인트되지 않는 죽은 코드였습니다. 같은 오프셋을 자체 오버레이에 넣어 둔 앱은 걷어내면 됩니다
+
 ## [3.17.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.2) - 2026-09-03
 - (렌더 변경) `disabled` 를 준 `type="static"` Chip 의 라벨이 더 이상 흐려지지 않습니다. static 은 컨트롤이 아닌 텍스트 라벨이라 흐리면 대비가 1.68:1 로 AA 미달이었습니다 - remove 버튼만 흐려집니다
 - `fast-uri` 오버라이드를 `^3.1.6` 으로 올려 dev 전용 의존성의 high 경보 4건을 닫습니다 (배포 패키지에는 영향 없음)
