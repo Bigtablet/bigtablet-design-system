@@ -2063,6 +2063,25 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 | `label` | `ReactNode` | 표시 텍스트 (또는 아이콘+텍스트) |
 | `href` | `string` | 클릭 시 이동할 URL. 있으면 `<a>` 렌더 |
 | `onClick` | `(e) => void` | 클릭 콜백. `href` 없이 사용하면 `<button>` 렌더 (SPA 라우터 호출 등) |
+| `as` | `ElementType` | `href` 항목을 렌더할 요소. 라우터 `Link` 를 끼울 때 쓴다 (마지막 항목·`href` 없는 항목에는 적용 안 됨) |
+
+라우터 링크가 필요하면 `onClick` 우회 대신 `as` 를 쓴다 - `preventDefault` + `push` 로는
+수정자 클릭(`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽고, 프리페치·이동 가드처럼 `Link` 만 아는
+것들은 표현할 수 없다.
+
+```tsx
+import Link from "next/link";
+
+<Breadcrumb
+  items={[
+    { label: "홈", href: "/", as: Link },
+    { label: "FAQ 관리", href: "/faq", as: Link },
+    { label: "상세" }, // 마지막 = 현재 페이지, 링크 아님
+  ]}
+/>
+```
+
+`NavLink` 도 같은 계약이다 - `<NavLink as={Link} href="/faq" active>`.
 
 #### 접근성
 
