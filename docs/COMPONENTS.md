@@ -256,16 +256,6 @@ import { Plus } from 'lucide-react';
 
 ---
 
-> **스크롤은 네이티브다.** DS 는 커스텀 스크롤 컴포넌트(ScrollArea 류)를 두지 않는다 — 네이티브
-> 스크롤바를 감추면 키보드 스크롤·iOS 관성·오버스크롤·`scrollIntoView`·가상 키보드 대응을 전부
-> JS 로 다시 만들어야 하고, 얻는 것은 스크롤바 모양 하나다. 모양은 `scrollbar-width`/
-> `scrollbar-color`(표준 CSS)로 얇게·브랜드색으로 맞춘다. 스크롤 컨테이너를 직접 만드는
-> 소비자는 `@include token.scrollable;` 을 쓰면 같은 모양이 된다.
->
-> 방향키로 옮긴 활성 항목은 `Dropdown`·`Combobox` 가 따라 스크롤한다(`block: "nearest"` — 필요한
-> 만큼만 움직이고 페이지는 건드리지 않는다). 포커스는 트리거·입력에 남으므로(APG) 브라우저가
-> 알아서 해 주지 않는다.
-
 ### DateRangePicker
 
 시작일·종료일 한 쌍. `DatePicker` 둘을 묶는다.
@@ -538,6 +528,16 @@ import { Settings } from 'lucide-react';
 
 > 팝업의 거동(개폐·활성 항목·키보드·바깥 클릭·열림 방향)은 `useListboxPopup` 을 `Dropdown` 과
 > 공유한다. 소비자도 이 훅으로 자기 목록 팝업을 만들 수 있다.
+
+> **스크롤은 네이티브다.** DS 는 커스텀 스크롤 컴포넌트(ScrollArea 류)를 두지 않는다 — 네이티브
+> 스크롤바를 감추면 키보드 스크롤·iOS 관성·오버스크롤·`scrollIntoView`·가상 키보드 대응을 전부
+> JS 로 다시 만들어야 하고, 얻는 것은 스크롤바 모양 하나다. 모양은 `scrollbar-width`/
+> `scrollbar-color`(표준 CSS)로 얇게·브랜드색으로 맞춘다. 스크롤 컨테이너를 직접 만드는
+> 소비자는 `@include token.scrollable;` 을 쓰면 같은 모양이 된다.
+>
+> 방향키로 옮긴 활성 항목은 `Dropdown`·`Combobox` 가 따라 스크롤한다(`block: "nearest"` — 필요한
+> 만큼만 움직이고 페이지는 건드리지 않는다). 포커스는 트리거·입력에 남으므로(APG) 브라우저가
+> 알아서 해 주지 않는다.
 
 ### DataView
 

@@ -269,7 +269,7 @@ export const Combobox = ({
 					) : (
 						<div
 							// 스크롤 컨테이너이자 listbox - 활성 항목을 훅이 따라 스크롤한다.
-							ref={popup.listRef as React.RefObject<HTMLDivElement>}
+							ref={popup.listRef}
 							id={listId}
 							className="combobox_list"
 							role="listbox"

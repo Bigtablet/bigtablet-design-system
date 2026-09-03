@@ -44,18 +44,19 @@ const Probe = ({
 				<div>
 					<input aria-label="filter" onKeyDown={popup.onInputKeyDown} />
 					{/* 실제 소비자(Dropdown·Combobox)와 같은 모양 - 스크롤 컨테이너 = listbox */}
-					<ul ref={popup.listRef as React.RefObject<HTMLUListElement>} role="listbox">
+					<div ref={popup.listRef} role="listbox">
 						{items.map((item, i) => (
-							<li
+							/* biome-ignore lint/a11y/useFocusableInteractive: aria-activedescendant 패턴 - option 은 포커스를 받지 않는다 */
+							<div
 								key={item.value}
 								role="option"
 								aria-selected={i === popup.activeIndex}
 								data-active={i === popup.activeIndex ? "true" : "false"}
 							>
 								{item.value}
-							</li>
+							</div>
 						))}
-					</ul>
+					</div>
 				</div>
 			)}
 		</div>
@@ -254,5 +255,27 @@ describe("useListboxPopup", () => {
 		fireEvent.keyDown(screen.getByRole("textbox"), { key: "ArrowDown" });
 
 		expect(screen.getByTestId("active").textContent).toBe("2");
+	});
+
+	it("rescrolls when the item at the active index is replaced", () => {
+		// 검색 필터·비동기 검색은 **같은 인덱스에 다른 항목**을 그린다. `items` 를 의존성에서
+		// 빼면 인덱스 숫자가 그대로라 effect 가 다시 돌지 않고, 새 활성 항목이 화면 밖에 남는다.
+		const calls: string[] = [];
+		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
+			this: Element,
+		) {
+			calls.push(this.textContent ?? "");
+		});
+
+		const { rerender } = render(<Probe items={[{ value: "a" }, { value: "b" }]} />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		// 열면 훅이 첫 항목을 활성으로 잡는다 (인덱스 0)
+		expect(calls.at(-1)).toBe("a");
+
+		// 인덱스 0 의 항목만 바꾼다 - 활성 인덱스는 계속 0 이다
+		rerender(<Probe items={[{ value: "바뀐항목" }, { value: "b" }]} />);
+
+		expect(calls.at(-1)).toBe("바뀐항목");
+		spy.mockRestore();
 	});
 });
