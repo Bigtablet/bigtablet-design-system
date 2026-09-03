@@ -1019,12 +1019,8 @@
 .bt-modal {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  /* 예약된 거터를 넘어가 덮는다 - `inset: 0`·`100vw` 로는 닿지 않는다.
-     `@supports` 안에서만: 미지원 브라우저는 padding 보정이라 ICB 가 전폭이고,
-     그때 이 오프셋은 dim 과 패널을 오른쪽으로 밀어낸다. */
-  @supports (scrollbar-gutter: stable) {
-    right: calc(-1 * var(--bt-scrollbar-width, 0px));
-  }
+  /* 예약된 거터는 dim 이 덮지 않는다 - 캔버스가 칠하는 영역이라 자손은 페인트할 수 없다.
+     그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 (#580). */
   display: none;
   place-items: center;
   background: var(--bt-color-overlay);
@@ -1116,12 +1112,8 @@
   &__overlay {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
-    /* 예약된 거터를 넘어가 덮는다 - `inset: 0`·`100vw` 로는 닿지 않는다.
-       `@supports` 안에서만: 미지원 브라우저는 padding 보정이라 ICB 가 전폭이고,
-       그때 이 오프셋은 dim 과 패널을 오른쪽으로 밀어낸다. */
-    @supports (scrollbar-gutter: stable) {
-      right: calc(-1 * var(--bt-scrollbar-width, 0px));
-    }
+    /* 예약된 거터는 dim 이 덮지 않는다 - 캔버스가 칠하는 영역이라 자손은 페인트할 수 없다.
+       그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 (#580). */
     background: var(--bt-color-overlay);
     display: none;
     align-items: center;
