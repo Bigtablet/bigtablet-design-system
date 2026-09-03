@@ -111,7 +111,7 @@ const over = (top: Rgba, bottom: Rgba): Rgba => [
  * 캔버스 색은 루트 배경색이고, 루트가 투명하면 `body` 배경색이 전파된다 - 그 순서로 찾는다.
  * 둘 다 투명하면 브라우저 기본 배경(흰색)이 바닥이다.
  */
-const compositeCanvasDim = (html: HTMLElement, body: HTMLElement): string | null => {
+const measureCanvasColors = (html: HTMLElement, body: HTMLElement): [Rgba, Rgba] | null => {
 	const raw = window.getComputedStyle(html).getPropertyValue(DIM_VAR).trim() || DIM_FALLBACK;
 	const dim = normalizeColor(raw);
 	if (!dim || dim[3] <= 0) return null;
@@ -122,8 +122,7 @@ const compositeCanvasDim = (html: HTMLElement, body: HTMLElement): string | null
 	];
 	const base = candidates.find((color): color is Rgba => color !== null && color[3] > 0) ?? WHITE;
 
-	const [r, g, b] = over(dim, over(base, WHITE));
-	return `rgb(${r}, ${g}, ${b})`;
+	return [dim, over(base, WHITE)];
 };
 
 /**
@@ -154,6 +153,48 @@ const measureViewportInset = () => {
 
 	return Math.max(0, window.innerWidth - width);
 };
+
+/**
+ * 딤 진행도 보고자들. 오버레이의 딤 스프링이 프레임마다 자기 opacity 를 보고하고, 거터 색은
+ * 그 합성값을 따른다 - 잠금 순간 최종색으로 점프하면 딤이 페이드 인하는 동안(~350ms) 거터만
+ * 먼저 어두워져 오른쪽에 어두운 띠가 보인다(#583).
+ *
+ * 아무도 보고하지 않으면(`lockBodyScroll` 을 직접 부르는 소비자) 진행도 1 로 본다 - 예전 동작.
+ */
+const dimProgress = new Map<object, number>();
+/** 잠금 시점에 잰 값들. 프레임마다 다시 재지 않는다 - 잠금 중에는 변하지 않고, 재면 비싸다. */
+let canvasBase: Rgba | null = null;
+let canvasDim: Rgba | null = null;
+
+/** 보고된 진행도들을 겹쳐 실제 딤 두께를 만든다. 중첩 오버레이는 딤이 실제로 겹쳐 보인다. */
+const combinedDimAlpha = (alpha: number): number => {
+	if (dimProgress.size === 0) return alpha;
+	let transmitted = 1;
+	for (const progress of dimProgress.values()) {
+		transmitted *= 1 - alpha * progress;
+	}
+	return 1 - transmitted;
+};
+
+const paintCanvas = (html: HTMLElement): void => {
+	if (!canvasBase || !canvasDim) return;
+	const alpha = combinedDimAlpha(canvasDim[3]);
+	const [r, g, b] = over([canvasDim[0], canvasDim[1], canvasDim[2], alpha], canvasBase);
+	html.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+};
+
+/**
+ * 딤의 현재 진행도(0~1)를 보고한다. 오버레이가 자기 딤 스프링의 `onChange` 에서 부른다.
+ *
+ * `owner` 는 오버레이 인스턴스마다 고유한 아무 객체면 된다(보통 `useRef({}).current`) - 중첩
+ * 오버레이의 진행도를 각각 추적하기 위한 키다. 잠금이 완전히 풀릴 때 전부 비워진다.
+ */
+export function reportOverlayDim(owner: object, progress: number): void {
+	if (typeof document === "undefined") return;
+
+	dimProgress.set(owner, Math.min(1, Math.max(0, progress)));
+	paintCanvas(document.documentElement);
+}
 
 /** 오버레이 하나가 열릴 때 호출. 중첩되면 카운터만 올린다. */
 export function lockBodyScroll(): void {
@@ -206,9 +247,10 @@ export function lockBodyScroll(): void {
 		// 경우든, 앱이 이미 예약해 둔 경우(문서가 스크롤되지 않아 위 분기를 타지 않는다)든.
 		// padding 폴백 경로는 거터가 아예 없으므로 제외된다.
 		if (scrollbarWidth > 0 && canReserveGutter) {
-			const dimmed = compositeCanvasDim(html, body);
-			if (dimmed) {
-				html.style.backgroundColor = dimmed;
+			const measured = measureCanvasColors(html, body);
+			if (measured) {
+				[canvasDim, canvasBase] = measured;
+				paintCanvas(html);
 			}
 		}
 
@@ -253,6 +295,12 @@ export function unlockBodyScroll(): void {
 		delete body.dataset[PREV_PADDING_RIGHT];
 		delete body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
 		delete body.dataset[PREV_BACKGROUND_COLOR];
+
+		// 다음 잠금은 그 시점의 색으로 다시 잰다. 보고자도 전부 비운다 - 남겨두면 다음 잠금이
+		// 남의 진행도로 시작한다.
+		dimProgress.clear();
+		canvasBase = null;
+		canvasDim = null;
 	} else {
 		body.dataset[COUNTER] = String(remaining);
 	}

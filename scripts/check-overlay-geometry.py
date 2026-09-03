@@ -164,6 +164,16 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
             )
         if "if (!shouldRender) return" not in body:
             problems.append(f"{path}: 잠금 effect 의 가드가 shouldRender 기준이 아니다")
+        # 거터 색이 이 오버레이의 딤 페이드를 따라가도록 진행도를 보고해야 한다 (#583).
+        # 애니메이션(onChange/onProgress) 과 잠금 effect 양쪽에서 불러야 한다 - effect 쪽이
+        # 없으면 잠긴 첫 프레임에 거터가 최종색으로 점프한다.
+        if source.count("reportOverlayDim(") < 2:
+            problems.append(
+                f"{path}: 딤 진행도를 보고하지 않는다 - 스프링 onChange 와 잠금 effect 양쪽에서"
+                " reportOverlayDim 을 불러야 거터가 딤과 같이 어두워진다 (#583)"
+            )
+        if "reportOverlayDim(" not in body:
+            problems.append(f"{path}: 잠금 effect 가 진행도 초기값을 등록하지 않는다 (#583)")
         # cleanup 이 없으면 unmount·shouldRender=false 후에도 잠금이 남아 페이지가 잠긴다.
         if not re.search(r"\breturn\s+unlockBodyScroll\s*;", body):
             problems.append(
@@ -230,10 +240,22 @@ def check_lock_width_invariants() -> list[str]:
                 f"{path}: 딤 색을 `{dim_var}` 에서 읽지 않는다 - 오버레이가 페인트에 쓰는"
                 " 프로퍼티와 달라지면 거터 색이 실제 딤을 따라가지 못한다"
             )
-        if "compositeCanvasDim" not in code:
+        if "measureCanvasColors" not in code or "paintCanvas" not in code:
             problems.append(
                 f"{path}: 예약된 거터를 어둡게 하지 않는다 - 캔버스(루트 배경색)에 딤을"
                 " 합성해야 dim 옆에 밝은 띠가 남지 않는다 (#580)"
+            )
+        # 색을 잠금 시점에 한 번만 재야 한다. 중첩될 때 다시 재면 이미 어두워진 루트 배경을
+        # 바닥으로 잡아 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
+        if "canvasBase" not in code:
+            problems.append(f"{path}: 잰 캔버스 색을 캐시하지 않는다 - 중첩마다 다시 재면 검어진다")
+        # 거터 색은 딤이 페이드하는 동안 함께 어두워져야 한다 (#583). React 는 스프링 진행도를
+        # 보고받고, Vanilla 는 딤과 같은 CSS transition 을 루트에 건다.
+        marker = "--bt-transition-base" if path.name.endswith(".js") else "dimProgress"
+        if marker not in code:
+            problems.append(
+                f"{path}: 거터가 딤 페이드를 따라가지 않는다 - 잠금 순간 최종색으로 점프하면"
+                " 페이드 동안 거터만 먼저 어두워져 어두운 띠가 보인다 (#583)"
             )
         if "data-bt-scroll-locked" not in code:
             problems.append(

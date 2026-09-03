@@ -142,12 +142,20 @@
 		];
 	}
 
-	/** 딤을 지금 보이는 캔버스 색 위에 합성한 값. 루트가 투명하면 body 배경이 전파된다.
-	 *  딤 색은 **오버레이가 실제로 페인트에 쓰는** 프로퍼티에서 읽어야 한다 - Vanilla 는
-	 *  `--bt-color-overlay`(`.bt-modal` · `.bt-alert__overlay` 가 쓰는 것). 선언만 있고 아무도
-	 *  참조하지 않는 `--bt-color-background-overlay` 를 읽으면 소비자가 딤을 오버라이드했을 때
-	 *  거터 색이 따라가지 못한다. */
-	function compositeCanvasDim(html, body) {
+	/** 열린 오버레이 수만큼 딤을 겹친 실효 알파. 중첩되면 딤이 실제로 겹쳐 보인다. */
+	function stackedAlpha(alpha, count) {
+		return 1 - (1 - alpha) ** Math.max(1, count);
+	}
+
+	/**
+	 * 잠금 시점에 잰 [딤, 바닥] 색. 중첩될 때 다시 재지 않는다 - 이미 어두워진 루트 배경을
+	 * 바닥으로 잡으면 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
+	 */
+	let canvasDim = null;
+	let canvasBase = null;
+
+	/** 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽는다 - `--bt-color-overlay`. */
+	function measureCanvasColors(html, body) {
 		const white = [255, 255, 255, 1];
 		const raw =
 			window.getComputedStyle(html).getPropertyValue("--bt-color-overlay").trim() ||
@@ -161,15 +169,35 @@
 		];
 		const base = candidates.find((color) => color !== null && color[3] > 0) || white;
 
-		const mixed = over(dim, over(base, white));
-		return `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
+		return [dim, over(base, white)];
 	}
 
 	/**
-	 * 바디 스크롤 잠금 카운터 - Modal 위 Alert 처럼 오버레이가 겹칠 때
-	 * 하나만 닫혀도 배경 스크롤이 풀리던 문제 방지 (React 쪽 data-open-modals 와 동일 패턴)
+	 * 거터를 열린 오버레이 수에 맞는 색으로 칠한다. 순수 계산이라 스타일을 읽지 않는다.
+	 *
+	 * `dimFades` 면 루트에 딤과 같은 길이·easing 의 transition 을 걸어 커브를 맞춘다.
+	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
+	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다.
 	 */
-	function lockScroll() {
+	function paintCanvas(html, count, dimFades) {
+		if (!canvasDim || !canvasBase) return;
+
+		const alpha = stackedAlpha(canvasDim[3], count);
+		const mixed = over([canvasDim[0], canvasDim[1], canvasDim[2], alpha], canvasBase);
+		html.style.transition = dimFades ? "background-color var(--bt-transition-base)" : "";
+		html.style.backgroundColor = `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
+	}
+
+	/**
+	 * @param {boolean} [dimFades] 이 오버레이의 딤이 페이드 인하는가.
+	 *
+	 * 거터는 캔버스가 칠하므로 잠금이 루트 배경색으로 칠하는데(#580), 딤이 페이드 인하는
+	 * 오버레이에서 그 색을 즉시 최종값으로 바꾸면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
+	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
+	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다. 페이드하는
+	 * 쪽에는 루트에 같은 길이·같은 easing 의 `transition` 을 걸어 커브를 맞춘다.
+	 */
+	function lockScroll(dimFades) {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "0", 10);
@@ -186,6 +214,7 @@
 			body.dataset.btOriginalScrollbarWidthVar =
 				html.style.getPropertyValue("--bt-scrollbar-width");
 			body.dataset.btOriginalBackgroundColor = html.style.backgroundColor;
+			body.dataset.btOriginalTransition = html.style.transition;
 
 			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
 			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
@@ -217,9 +246,11 @@
 			// 잠금 중 거터가 남는 모든 경로에서 그 띠를 어둡게 한다 (#580) - 방금 예약한 경우든
 			// 앱이 이미 예약해 둔 경우든. padding 폴백은 거터가 없으므로 제외된다.
 			if (scrollbarWidth > 0 && canReserveGutter) {
-				const dimmed = compositeCanvasDim(html, body);
-				if (dimmed) {
-					html.style.backgroundColor = dimmed;
+				const measured = measureCanvasColors(html, body);
+				if (measured) {
+					canvasDim = measured[0];
+					canvasBase = measured[1];
+					paintCanvas(html, 1, dimFades);
 				}
 			}
 
@@ -229,6 +260,11 @@
 			body.style.overflow = "hidden";
 		}
 		body.dataset.btOpenModals = String(n + 1);
+
+		// 중첩 - 딤이 하나 더 겹쳤으니 거터도 그만큼 더 어두워져야 한다 (React 쪽과 같은 계산).
+		if (n > 0) {
+			paintCanvas(html, n + 1, dimFades);
+		}
 	}
 
 	function unlockScroll() {
@@ -240,6 +276,7 @@
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
 			html.style.backgroundColor = body.dataset.btOriginalBackgroundColor || "";
+			html.style.transition = body.dataset.btOriginalTransition || "";
 			html.removeAttribute("data-bt-scroll-locked");
 			if (body.dataset.btOriginalScrollbarWidthVar) {
 				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
@@ -252,8 +289,13 @@
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
 			delete body.dataset.btOriginalBackgroundColor;
+			delete body.dataset.btOriginalTransition;
+			canvasDim = null;
+			canvasBase = null;
 		} else {
 			body.dataset.btOpenModals = String(n);
+			// 위에 있던 오버레이가 닫혔으니 겹침이 하나 줄었다.
+			paintCanvas(html, n, true);
 		}
 	}
 
@@ -1210,7 +1252,8 @@
 		const previousFocus = document.activeElement;
 
 		document.body.appendChild(overlay);
-		lockScroll();
+		// 이 오버레이의 딤은 `bt-alert-fade-in` 으로 페이드한다 - 거터도 같은 길이로 따라가야 한다.
+		lockScroll(true);
 
 		let isOpen = true;
 

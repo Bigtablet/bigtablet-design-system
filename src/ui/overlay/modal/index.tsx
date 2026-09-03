@@ -11,6 +11,7 @@ import {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,
 	OVERLAY_SPRING_CONFIG,
+	reportOverlayDim,
 	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
@@ -150,12 +151,18 @@ export const Modal = ({
 	// reduced-motion 예외 처리는 springEnterFrom 안에 있다(주면 한 프레임 깜빡임이 남는다).
 	// 오버레이에 transform 을 주지 않는 이유도 그 JSDoc 에 있다.
 
+	// 예약된 거터는 캔버스가 칠해 딤이 닿지 않으므로(#580) 잠금이 루트 배경색으로 칠한다.
+	// 그 색은 이 딤과 **같은 진행도**를 따라야 한다 - 잠금 순간 최종색으로 점프하면 페이드 인
+	// 동안 거터만 먼저 어두워져 오른쪽에 어두운 띠가 보인다(#583).
+	const dimOwner = React.useRef({}).current;
+
 	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
 	const overlayStyle = useSpring({
 		...springEnterFrom(reduced),
 		to: { opacity: open ? 1 : 0 },
 		immediate: reduced,
 		config: OVERLAY_SPRING_CONFIG,
+		onChange: (result) => reportOverlayDim(dimOwner, Number(result.value.opacity)),
 		onRest: (result) => {
 			if (open || !result.finished) return;
 			setShouldRender(false);
@@ -184,6 +191,10 @@ export const Modal = ({
 		// 거터만큼 줄어 오버레이가 거터를 못 덮고(빈 띠) 배경 콘텐츠가 그만큼 튄다.
 		if (!shouldRender) return;
 
+		// 잠금 전에 진행도를 등록해 둔다 - 등록 없이 잠그면 그 프레임에 거터가 최종색으로
+		// 점프한 뒤 스프링 첫 보고에 되돌아와 한 프레임 깜빡인다. reduced-motion 은 스프링이
+		// 즉시 목표값이라 1 로 시작한다.
+		reportOverlayDim(dimOwner, reduced ? 1 : 0);
 		lockBodyScroll();
 		return unlockBodyScroll;
 	}, [shouldRender]);

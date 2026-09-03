@@ -23,6 +23,47 @@ describe("Modal", () => {
 		vi.unstubAllGlobals();
 	});
 
+	it("dims the gutter immediately when prefers-reduced-motion is set", () => {
+		// 거터 색은 딤 스프링의 진행도를 따르는데(#583), reduced-motion 에서는 스프링이 즉시
+		// 목표값이라 진행도를 1 로 시작해야 한다 - 0 으로 두면 거터만 밝게 남는다.
+		stubReducedMotion();
+		// 잠금이 거터를 예약하는 조건을 세운다 (jsdom 은 레이아웃을 하지 않는다).
+		Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true });
+		Object.defineProperty(document.documentElement, "scrollHeight", {
+			value: 4000,
+			configurable: true,
+		});
+		Object.defineProperty(document.documentElement, "clientHeight", {
+			value: 800,
+			configurable: true,
+		});
+		Object.defineProperty(globalThis.CSS, "supports", { value: () => true, configurable: true });
+		vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+			width: 1265,
+			height: 0,
+			top: 0,
+			left: 0,
+			right: 1265,
+			bottom: 0,
+			x: 0,
+			y: 0,
+			toJSON: () => ({}),
+		} as DOMRect);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
+
+		const { unmount } = render(
+			<Modal open onClose={() => {}} title="Reduced">
+				Content
+			</Modal>,
+		);
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
+
+		unmount();
+		document.documentElement.style.cssText = "";
+	});
+
 	it("renders without motion when prefers-reduced-motion is set", () => {
 		vi.stubGlobal(
 			"matchMedia",
