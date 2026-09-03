@@ -147,6 +147,53 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 	});
 
+	it("dims the reserved gutter by compositing the dim onto the canvas", () => {
+		// 예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 오버레이가 덮을 수 없다(#580).
+		// 딤을 지금 보이는 캔버스 색 위에 합성해 루트 배경색으로 심는 것이 유일한 방법이다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
+
+		lockBodyScroll();
+
+		// rgba(0,0,0,.5) over rgb(255,233,168) = (127.5, 116.5, 84) → 반올림
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 84)");
+		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
+
+		unlockBodyScroll();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
+		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
+	});
+
+	it("falls back to the body background when the root is transparent", () => {
+		// 루트가 투명하면 `body` 배경이 캔버스로 전파된다 - 거터에 보이는 색도 그것이다.
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.body.style.backgroundColor = "rgb(0, 0, 200)";
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(0, 0, 100)");
+
+		unlockBodyScroll();
+
+		// 원래 인라인 배경이 없었으므로 인라인 값도 남지 않아야 한다.
+		expect(document.documentElement.style.backgroundColor).toBe("");
+	});
+
+	it("does not paint the canvas on the padding fallback - there is no gutter there", () => {
+		setGutterSupport(false);
+		setViewportInset(15);
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
+
+		lockBodyScroll();
+
+		expect(document.body.style.paddingRight).toBe("15px");
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
+	});
+
 	it("uses the browser's scrolling element, not documentElement", () => {
 		// 앱이 `html` 에 overflow 를 걸면 `body` 가 실제 스크롤 요소가 된다. documentElement 를
 		// 하드코딩하면 그 구성에서 판정이 어긋난다.

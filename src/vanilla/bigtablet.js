@@ -100,6 +100,68 @@
 	}
 
 	/**
+	 * 예약된 거터는 캔버스(루트 요소 배경)가 칠하는 영역이라 자손이 페인트할 수 없고
+	 * 루트의 background-image 도 전파되지 않는다 - background-color 만 전파된다.
+	 * 그래서 잠금 동안 딤을 미리 합성해 루트 배경색으로 심는다 (#580, React 쪽과 동일).
+	 */
+	function parseRgb(value) {
+		const match = String(value)
+			.trim()
+			.match(/^rgba?\(([^)]+)\)$/i);
+		if (!match) return null;
+		const parts = match[1]
+			.split(/[\s,/]+/)
+			.filter(Boolean)
+			.map(Number);
+		if (parts.length < 3 || parts.some(Number.isNaN)) return null;
+		return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
+	}
+
+	/** 커스텀 프로퍼티 값은 정규화되지 않은 저작 텍스트일 수 있어 요소에 태워 계산값으로 받는다. */
+	function normalizeColor(value) {
+		const direct = parseRgb(value);
+		if (direct) return direct;
+
+		const probe = document.createElement("div");
+		probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden";
+		probe.style.color = value;
+		document.documentElement.appendChild(probe);
+		const computed = window.getComputedStyle(probe).color;
+		probe.remove();
+
+		return parseRgb(computed);
+	}
+
+	/** `top` 을 `bottom` 위에 알파 합성한다. 결과는 항상 불투명하다. */
+	function over(top, bottom) {
+		return [
+			Math.round(top[0] * top[3] + bottom[0] * (1 - top[3])),
+			Math.round(top[1] * top[3] + bottom[1] * (1 - top[3])),
+			Math.round(top[2] * top[3] + bottom[2] * (1 - top[3])),
+			1,
+		];
+	}
+
+	/** 딤을 지금 보이는 캔버스 색 위에 합성한 값. 루트가 투명하면 body 배경이 전파된다. */
+	function compositeCanvasDim(html, body) {
+		const white = [255, 255, 255, 1];
+		const raw =
+			window.getComputedStyle(html).getPropertyValue("--bt-color-background-overlay").trim() ||
+			"rgba(0, 0, 0, 0.5)";
+		const dim = normalizeColor(raw);
+		if (!dim || dim[3] <= 0) return null;
+
+		const candidates = [
+			parseRgb(window.getComputedStyle(html).backgroundColor),
+			parseRgb(window.getComputedStyle(body).backgroundColor),
+		];
+		const base = candidates.find((color) => color !== null && color[3] > 0) || white;
+
+		const mixed = over(dim, over(base, white));
+		return `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
+	}
+
+	/**
 	 * 바디 스크롤 잠금 카운터 - Modal 위 Alert 처럼 오버레이가 겹칠 때
 	 * 하나만 닫혀도 배경 스크롤이 풀리던 문제 방지 (React 쪽 data-open-modals 와 동일 패턴)
 	 */
@@ -119,6 +181,7 @@
 			// 소비자가 이 변수를 직접 인라인으로 잡아둔 경우 잠금 한 번에 지워지지 않도록 함께 스냅샷.
 			body.dataset.btOriginalScrollbarWidthVar =
 				html.style.getPropertyValue("--bt-scrollbar-width");
+			body.dataset.btOriginalBackgroundColor = html.style.backgroundColor;
 
 			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
 			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
@@ -147,6 +210,18 @@
 				}
 			}
 
+			// 잠금 중 거터가 남는 모든 경로에서 그 띠를 어둡게 한다 (#580) - 방금 예약한 경우든
+			// 앱이 이미 예약해 둔 경우든. padding 폴백은 거터가 없으므로 제외된다.
+			if (scrollbarWidth > 0 && canReserveGutter) {
+				const dimmed = compositeCanvasDim(html, body);
+				if (dimmed) {
+					html.style.backgroundColor = dimmed;
+				}
+			}
+
+			// 잠금 여부를 CSS 로 알 수 있게 표식을 남긴다 (React 쪽과 같은 속성).
+			html.setAttribute("data-bt-scroll-locked", "");
+
 			body.style.overflow = "hidden";
 		}
 		body.dataset.btOpenModals = String(n + 1);
@@ -160,6 +235,8 @@
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
+			html.style.backgroundColor = body.dataset.btOriginalBackgroundColor || "";
+			html.removeAttribute("data-bt-scroll-locked");
 			if (body.dataset.btOriginalScrollbarWidthVar) {
 				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
 			} else {
@@ -170,6 +247,7 @@
 			delete body.dataset.btOriginalGutter;
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
+			delete body.dataset.btOriginalBackgroundColor;
 		} else {
 			body.dataset.btOpenModals = String(n);
 		}
