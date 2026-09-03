@@ -335,6 +335,14 @@ import Link from "next/link";
 
 ### Dropdown
 
+> **목록은 포탈로 `body` 에 렌더된다.** 트리거 옆에 `position: absolute` 로 두면
+> `overflow: hidden` 인 조상(카드·표 래퍼)이 잘라내고 `z-index` 로는 넘지 못한다 - 실측으로
+> 카드 안에서 170px 목록 중 46px 만 보였다(#586). 좌표·폭은 트리거를 재서 인라인으로 주고,
+> 스크롤·리사이즈에 따라간다. 뷰포트 아래가 모자라면 위로 뒤집는다.
+>
+> 소비자 영향: `.dropdown_list` 를 트리거 기준 선택자(`.my-card .dropdown_list`)로 스타일링하면
+> 더 이상 걸리지 않는다 - 클래스만으로 선택해야 한다. `Combobox`·`Menu` 도 같은 처리다.
+
 ```tsx
 import { Dropdown } from '@bigtablet/design-system';
 

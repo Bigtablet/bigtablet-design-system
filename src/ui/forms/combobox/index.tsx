@@ -4,6 +4,7 @@ import { animated } from "@react-spring/web";
 import { ChevronDown } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
@@ -257,48 +258,61 @@ export const Combobox = ({
 				</button>
 			</div>
 
-			{isOpen && (
-				<animated.div
-					className={cn("combobox_panel", { combobox_panel_up: popup.dropUp })}
-					style={panelStyle}
-				>
-					{!hasList ? (
-						<p className="combobox_message" role="status">
-							{showIdle ? idleMessage : emptyMessage}
-						</p>
-					) : (
-						<div
-							// 스크롤 컨테이너이자 listbox - 활성 항목을 훅이 따라 스크롤한다.
-							ref={popup.listRef}
-							id={listId}
-							className="combobox_list"
-							role="listbox"
-						>
-							{options.map((option, index) => (
-								/* biome-ignore lint/a11y/useKeyWithClickEvents: 키보드는 입력의 onKeyDown 이 담당한다 - option 은 aria-activedescendant 로 가리키는 비포커스 요소다 (APG Combobox) */
-								<div
-									key={option.value}
-									id={`${listId}-${option.value}`}
-									role="option"
-									// 포커스는 입력에 남는다. tabIndex 는 role=option 요소가 요구하는 형식일 뿐
-									// 탭 순서에 들어가지 않는다 (Dropdown 과 동일).
-									tabIndex={-1}
-									aria-selected={value?.value === option.value}
-									aria-disabled={option.disabled || undefined}
-									className={cn("combobox_option", {
-										is_active: index === activeIndex,
-										is_disabled: option.disabled,
-									})}
-									onMouseEnter={() => !option.disabled && setActiveIndex(index)}
-									onClick={() => !option.disabled && commit(option)}
-								>
-									{renderOption ? renderOption(option) : option.label}
-								</div>
-							))}
-						</div>
-					)}
-				</animated.div>
-			)}
+			{isOpen &&
+				typeof document !== "undefined" &&
+				createPortal(
+					// Dropdown 과 같은 이유로 포탈이다 - 트리거 옆에 두면 `overflow: hidden` 조상이
+					// 잘라낸다(#586). 좌표·폭은 배치 훅이 트리거를 재서 준다.
+					<animated.div
+						ref={popup.panelRef}
+						className={cn("combobox_panel", { combobox_panel_up: popup.dropUp })}
+						style={{
+							...panelStyle,
+							position: "fixed",
+							left: popup.position.x,
+							top: popup.position.y,
+							width: popup.position.width || undefined,
+							visibility: popup.position.ready ? undefined : "hidden",
+						}}
+					>
+						{!hasList ? (
+							<p className="combobox_message" role="status">
+								{showIdle ? idleMessage : emptyMessage}
+							</p>
+						) : (
+							<div
+								// 스크롤 컨테이너이자 listbox - 활성 항목을 훅이 따라 스크롤한다.
+								ref={popup.listRef}
+								id={listId}
+								className="combobox_list"
+								role="listbox"
+							>
+								{options.map((option, index) => (
+									/* biome-ignore lint/a11y/useKeyWithClickEvents: 키보드는 입력의 onKeyDown 이 담당한다 - option 은 aria-activedescendant 로 가리키는 비포커스 요소다 (APG Combobox) */
+									<div
+										key={option.value}
+										id={`${listId}-${option.value}`}
+										role="option"
+										// 포커스는 입력에 남는다. tabIndex 는 role=option 요소가 요구하는 형식일 뿐
+										// 탭 순서에 들어가지 않는다 (Dropdown 과 동일).
+										tabIndex={-1}
+										aria-selected={value?.value === option.value}
+										aria-disabled={option.disabled || undefined}
+										className={cn("combobox_option", {
+											is_active: index === activeIndex,
+											is_disabled: option.disabled,
+										})}
+										onMouseEnter={() => !option.disabled && setActiveIndex(index)}
+										onClick={() => !option.disabled && commit(option)}
+									>
+										{renderOption ? renderOption(option) : option.label}
+									</div>
+								))}
+							</div>
+						)}
+					</animated.div>,
+					document.body,
+				)}
 		</div>
 	);
 };

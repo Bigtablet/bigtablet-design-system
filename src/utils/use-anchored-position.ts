@@ -24,9 +24,22 @@ export interface Viewport {
 	height: number;
 }
 
+/**
+ * 교차축 정렬. `center` 는 앵커 중앙(Popover·Tooltip), `start`·`end` 는 앵커의 시작/끝 변에
+ * 맞춘다(리스트박스는 `start`, 오른쪽 정렬 메뉴는 `end`).
+ */
+export type AnchoredAlign = "center" | "start" | "end";
+
 export interface AnchoredOptions {
 	/** 선호 배치. 넘치면 반대편으로 뒤집힐 수 있다. */
 	placement: AnchoredSide;
+	/**
+	 * 교차축 정렬 (기본 `center`).
+	 *
+	 * 리스트박스 팝업은 `start` 다 - 트리거와 같은 폭·같은 왼쪽 변이어야 목록이 컨트롤의
+	 * 연장으로 읽힌다. 중앙 정렬하면 트리거보다 좁거나 넓을 때 좌우로 어긋난다.
+	 */
+	align?: AnchoredAlign;
 	/** 앵커와 플로팅 사이 간격(px). 기본 8. */
 	gap?: number;
 	/** 뷰포트 가장자리 최소 여백(px, collisionPadding). 기본 8. */
@@ -136,16 +149,27 @@ export function computeAnchoredPosition(
 		side = OPPOSITE[side];
 	}
 
-	// 3. 주축 좌표 + 교차축 중앙정렬 후 shift(clamp)
+	// 3. 주축 좌표 + 교차축 정렬 후 shift(clamp)
+	const align = options.align ?? "center";
 	let x: number;
 	let y: number;
 	if (isVertical(side)) {
 		y = mainAxisStart(side, anchor, sized, gap);
-		x = anchor.left + anchor.width / 2 - sized.width / 2;
+		x =
+			align === "start"
+				? anchor.left
+				: align === "end"
+					? anchor.left + anchor.width - sized.width
+					: anchor.left + anchor.width / 2 - sized.width / 2;
 		x = clamp(x, padding, viewport.width - padding - sized.width);
 	} else {
 		x = mainAxisStart(side, anchor, sized, gap);
-		y = anchor.top + anchor.height / 2 - sized.height / 2;
+		y =
+			align === "start"
+				? anchor.top
+				: align === "end"
+					? anchor.top + anchor.height - sized.height
+					: anchor.top + anchor.height / 2 - sized.height / 2;
 		y = clamp(y, padding, viewport.height - padding - sized.height);
 	}
 
@@ -164,6 +188,13 @@ export interface UseAnchoredPositionArgs extends AnchoredOptions {
 export interface AnchoredState extends AnchoredResult {
 	/** 최초 측정 전에는 false — 이때 플로팅을 숨겨 (0,0) 깜빡임을 막는다. */
 	ready: boolean;
+	/**
+	 * 앵커의 현재 폭(px). 리스트박스 팝업이 트리거 폭에 맞춰야 하는데, 포탈로 띄우면
+	 * `width: 100%` 가 트리거가 아니라 body 를 가리키므로 이 값을 인라인으로 준다.
+	 * 이 훅이 이미 앵커를 재고 scroll·resize·ResizeObserver 로 갱신하므로 소비처가 같은
+	 * 리스너를 또 달 필요가 없다.
+	 */
+	anchorWidth: number;
 }
 
 /**
@@ -175,6 +206,7 @@ export function useAnchoredPosition({
 	anchorRef,
 	floatingRef,
 	placement,
+	align,
 	gap,
 	padding,
 }: UseAnchoredPositionArgs): AnchoredState {
@@ -184,6 +216,7 @@ export function useAnchoredPosition({
 		placement,
 		maxWidth: 0,
 		ready: false,
+		anchorWidth: 0,
 	});
 
 	useSafeLayoutEffect(() => {
@@ -202,9 +235,9 @@ export function useAnchoredPosition({
 				{ top: a.top, left: a.left, width: a.width, height: a.height },
 				{ width: f.width, height: f.height },
 				{ width: window.innerWidth, height: window.innerHeight },
-				{ placement, gap, padding },
+				{ placement, align, gap, padding },
 			);
-			setState({ ...result, ready: true });
+			setState({ ...result, ready: true, anchorWidth: a.width });
 		};
 
 		// scroll/resize/observer 는 rAF 로 배칭 - 잦은 스크롤에도 프레임당 한 번만 재계산.
@@ -232,7 +265,7 @@ export function useAnchoredPosition({
 			window.removeEventListener("resize", schedule);
 			observer?.disconnect();
 		};
-	}, [open, placement, gap, padding, anchorRef, floatingRef]);
+	}, [open, placement, align, gap, padding, anchorRef, floatingRef]);
 
 	return state;
 }

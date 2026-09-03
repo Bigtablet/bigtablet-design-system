@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAnchoredPosition } from "./use-anchored-position";
 
 /** 팝업 목록의 한 항목이 최소한 갖춰야 하는 모양. 라벨·값 등 나머지는 소비자 몫이다. */
 export interface ListboxItem {
@@ -28,12 +29,32 @@ export interface UseListboxPopupArgs<T extends ListboxItem> {
 export interface UseListboxPopupResult {
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	/** 위로 열릴지 - 아래 공간이 모자랄 때만 true */
+	/** 위로 열릴지 - 배치가 `top` 으로 flip 됐을 때 true */
 	dropUp: boolean;
+	/**
+	 * 팝업을 **포탈로** 띄울 때 쓰는 fixed 좌표·폭. 목록을 트리거 옆에 `position: absolute` 로
+	 * 두면 `overflow: hidden` 인 조상(카드·표 래퍼)이 잘라낸다 - `z-index` 로는 넘지 못한다.
+	 * 실측(#586) - `overflow: hidden` 카드 안에서 170px 목록 중 46px 만 보였다.
+	 */
+	position: {
+		/** fixed left(px) */
+		x: number;
+		/** fixed top(px) */
+		y: number;
+		/** 트리거 폭(px) - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다 */
+		width: number;
+		/** 최초 측정 전에는 false - 이때 숨겨 (0,0) 깜빡임을 막는다 */
+		ready: boolean;
+	};
 	activeIndex: number;
 	setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
 	/** 바깥 클릭 감지 기준. 트리거와 패널을 함께 감싸는 요소에 붙인다 */
 	wrapperRef: React.RefObject<HTMLDivElement | null>;
+	/**
+	 * 팝업 패널 전체. 배치 계산이 이 요소를 잰다 - `listRef` 는 스크롤 컨테이너라 검색바를
+	 * 빼고 재게 되고, 그러면 flip 판정과 `top` 배치가 그만큼 어긋난다.
+	 */
+	panelRef: React.RefObject<HTMLDivElement | null>;
 	/** 트리거 요소. 닫을 때 포커스를 되돌릴 대상 */
 	triggerRef: React.RefObject<HTMLButtonElement | null>;
 	/**
@@ -54,7 +75,10 @@ export interface UseListboxPopupResult {
 }
 
 /** 아래 공간이 이보다 좁고 위가 더 넓을 때만 위로 연다. 작은 iframe 에서 무분별한 dropUp 방지. */
-const MIN_SPACE_BELOW = 120;
+/** 트리거와 목록 사이 간격(px). 기존 `margin-top: 4px` 와 같은 값. */
+const LIST_GAP = 4;
+/** 뷰포트 가장자리 최소 여백(px). Popover 와 같은 값. */
+const LIST_PADDING = 8;
 
 /**
  * 트리거 + 팝업 목록의 개폐·활성 항목·키보드·바깥 클릭·열림 방향을 담당한다.
@@ -74,11 +98,11 @@ export function useListboxPopup<T extends ListboxItem>({
 }: UseListboxPopupArgs<T>): UseListboxPopupResult {
 	const [isOpen, setIsOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
-	const [dropUp, setDropUp] = useState(false);
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
 	const listRef = useRef<HTMLDivElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
 
 	const close = useCallback(() => {
 		setIsOpen(false);
@@ -88,7 +112,11 @@ export function useListboxPopup<T extends ListboxItem>({
 	// 바깥 클릭으로 닫기. 트리거로 포커스를 되돌리지 않는다 - 사용자가 다른 곳을 눌렀다.
 	useEffect(() => {
 		const handleOutsideClick = (event: MouseEvent) => {
-			if (!wrapperRef.current?.contains(event.target as Node)) setIsOpen(false);
+			const target = event.target as Node;
+			// 목록은 포탈로 body 에 붙으므로 wrapper 밖이다 - 함께 봐야 옵션 클릭이 닫기로
+			// 먹히지 않는다.
+			if (wrapperRef.current?.contains(target) || panelRef.current?.contains(target)) return;
+			setIsOpen(false);
 		};
 		document.addEventListener("mousedown", handleOutsideClick);
 		return () => document.removeEventListener("mousedown", handleOutsideClick);
@@ -233,24 +261,35 @@ export function useListboxPopup<T extends ListboxItem>({
 		// 필터, Combobox 비동기 검색). 그때 스크롤 위치를 그대로 두면 새 활성 항목이 화면 밖에 남는다.
 	}, [isOpen, activeIndex, items]);
 
-	// 열릴 때 방향 결정.
-	useEffect(() => {
-		if (!isOpen || !triggerRef.current) return;
-		const rect = triggerRef.current.getBoundingClientRect();
-		const spaceBelow = window.innerHeight - rect.bottom;
-		const spaceAbove = rect.top;
-		setDropUp(spaceBelow < MIN_SPACE_BELOW && spaceAbove > spaceBelow);
-	}, [isOpen]);
+	// 배치는 Popover·Tooltip 과 같은 훅에 맡긴다 - flip·shift·scroll/resize 재계산을 이미 갖고
+	// 있고, 포탈로 띄우므로 조상의 `overflow: hidden` 이 잘라내지 못한다(#586).
+	const anchored = useAnchoredPosition({
+		open: isOpen,
+		anchorRef: wrapperRef,
+		floatingRef: panelRef,
+		placement: "bottom",
+		// 트리거 왼쪽 변에 맞춘다 - 목록이 컨트롤의 연장으로 읽혀야 한다.
+		align: "start",
+		gap: LIST_GAP,
+		padding: LIST_PADDING,
+	});
 
 	return {
 		isOpen,
 		setIsOpen,
-		dropUp,
+		dropUp: anchored.placement === "top",
+		position: {
+			x: anchored.x,
+			y: anchored.y,
+			width: anchored.anchorWidth,
+			ready: anchored.ready,
+		},
 		activeIndex,
 		setActiveIndex,
 		wrapperRef,
 		triggerRef,
 		listRef,
+		panelRef,
 		close,
 		moveActive,
 		commitActive,

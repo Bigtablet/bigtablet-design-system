@@ -211,6 +211,41 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
     return problems, len(owners)
 
 
+# 트리거에 붙는 팝업들. 조상의 `overflow: hidden` 은 `z-index` 로 넘을 수 없어서(#586 - 카드
+# 안에서 170px 목록 중 46px 만 보였다) 포탈로 띄우고 fixed 좌표를 받아야 한다.
+ANCHORED_POPUPS = (
+    (Path("src/ui/forms/dropdown/index.tsx"), Path("src/ui/forms/dropdown/style.scss"), "dropdown_list"),
+    (Path("src/ui/forms/combobox/index.tsx"), Path("src/ui/forms/combobox/style.scss"), "combobox_panel"),
+    (Path("src/ui/navigation/menu/index.tsx"), Path("src/ui/navigation/menu/style.scss"), "menu"),
+)
+
+
+def check_popups_escape_clipping() -> list[str]:
+    """트리거 옆 팝업이 포탈 + fixed 인지. `position: absolute` 로 돌아가면 조상이 자른다."""
+    problems: list[str] = []
+    for component, styles, block in ANCHORED_POPUPS:
+        source = component.read_text(encoding="utf-8")
+        if "createPortal(" not in source:
+            problems.append(
+                f"{component}: 팝업을 포탈로 띄우지 않는다 - 조상의 `overflow: hidden` 이"
+                " 잘라내고 `z-index` 로는 넘지 못한다 (#586)"
+            )
+        css = styles.read_text(encoding="utf-8")
+        # 팝업 블록만 본다 - 같은 파일의 다른 절대 배치(아이콘 등)는 대상이 아니다.
+        marker = f"&_{block.split('_', 1)[1]} {{" if "_" in block else ".menu {"
+        index = css.find(marker)
+        if index == -1:
+            problems.append(f"{styles}: `{marker}` 블록을 못 찾았다 - 클래스가 바뀌었는지 보라")
+            continue
+        body, _ = _balanced_block(css, css.index("{", index))
+        if "position: absolute" in body:
+            problems.append(
+                f"{styles}: `{block}` 이 `position: absolute` 다 - 포탈에서는 좌표가 body"
+                " 기준이 되고 조상 클리핑도 그대로 남는다. `fixed` + 인라인 좌표여야 한다"
+            )
+    return problems
+
+
 SCROLL_LOCK_SOURCES = (
     Path("src/utils/scroll-lock.ts"),
     Path("src/vanilla/bigtablet.js"),
@@ -371,7 +406,8 @@ def main() -> int:
 
     problems += check_lock_width_invariants()
     problems += check_dim_does_not_chase_the_gutter()
-    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES)
+    problems += check_popups_escape_clipping()
+    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES) + len(ANCHORED_POPUPS)
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
@@ -404,11 +440,18 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    close_checks = checked - owner_count - len(SCROLL_LOCK_SOURCES) - len(DIM_SOURCES)
+    close_checks = (
+        checked
+        - owner_count
+        - len(SCROLL_LOCK_SOURCES)
+        - len(DIM_SOURCES)
+        - len(ANCHORED_POPUPS)
+    )
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 칠하고 표식을 남깁니다.")
     print(f"dim {len(DIM_SOURCES)}개 파일 - 예약된 거터를 쫓지 않습니다(캔버스 합성에 맡김).")
+    print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
     return 0
 
 

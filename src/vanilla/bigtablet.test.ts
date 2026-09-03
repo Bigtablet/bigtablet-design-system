@@ -115,7 +115,9 @@ describe("Dropdown - 초기화", () => {
 		expect(control.classList.contains("is-disabled")).toBe(true);
 
 		dd?.open();
-		expect((wrap.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe("none");
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"none",
+		);
 	});
 
 	it("setDisabled 가 native disabled 까지 반영한다", () => {
@@ -138,7 +140,7 @@ describe("Dropdown - 다중 선택", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		(wrap.querySelector('[data-value="apple"]') as HTMLElement).click();
+		(document.querySelector('[data-value="apple"]') as HTMLElement).click();
 
 		expect(dd?.getValue()).toEqual(["apple"]);
 		expect(wrap.querySelector(".bt-dropdown__control")?.getAttribute("aria-expanded")).toBe("true");
@@ -175,7 +177,7 @@ describe("Dropdown - 다중 선택", () => {
 		const wrap = dropdownMarkup({ multiple: true });
 		Dropdown(wrap);
 
-		expect(wrap.querySelector('[role="listbox"]')?.getAttribute("aria-multiselectable")).toBe(
+		expect(document.querySelector('[role="listbox"]')?.getAttribute("aria-multiselectable")).toBe(
 			"true",
 		);
 	});
@@ -189,7 +191,7 @@ describe("Dropdown - 검색", () => {
 	};
 
 	const visibleLabels = (wrap: HTMLElement) =>
-		[...wrap.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
+		[...document.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
 			.filter((el) => !el.hidden)
 			.map((el) => el.textContent?.trim());
 
@@ -197,9 +199,11 @@ describe("Dropdown - 검색", () => {
 		const wrap = searchableMarkup();
 		Dropdown(wrap);
 
-		expect(wrap.querySelector(".bt-dropdown__search-input")).not.toBeNull();
+		expect(document.querySelector(".bt-dropdown__search-input")).not.toBeNull();
 		// 원래 `<ul>` 은 스크롤 컨테이너(`__options`)가 되고 새 `<div>` 패널이 그것을 감싼다.
-		expect(wrap.querySelector("div.bt-dropdown__list > ul.bt-dropdown__options")).not.toBeNull();
+		expect(
+			document.querySelector("div.bt-dropdown__list > ul.bt-dropdown__options"),
+		).not.toBeNull();
 	});
 
 	it("대소문자·공백을 무시하고 부분 일치로 걸러낸다", () => {
@@ -207,7 +211,7 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.value = "  aPP le ";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
@@ -219,11 +223,11 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.value = "존재하지않는과일";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
-		const empty = wrap.querySelector(".bt-dropdown__empty") as HTMLElement;
+		const empty = document.querySelector(".bt-dropdown__empty") as HTMLElement;
 		expect(empty.hidden).toBe(false);
 		expect(empty.textContent).toBe("결과 없음");
 	});
@@ -233,7 +237,7 @@ describe("Dropdown - 검색", () => {
 		const dd = Dropdown(wrap);
 		dd?.open();
 
-		const input = wrap.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
 		input.value = "포";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -543,6 +547,43 @@ describe("Alert", () => {
 		alert?.close();
 	});
 
+	it("열면 목록을 body 로 옮기고 닫으면 되돌린다 (조상 클리핑 회피)", () => {
+		// 트리거 옆에 두면 `overflow: hidden` 인 조상이 잘라내고 `z-index` 로는 넘지 못한다
+		// (#586 - 카드 안에서 170px 목록 중 46px 만 보였다). React 번들은 포탈로 같은 처리를 한다.
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		const panel = wrap.querySelector(".bt-dropdown__list") as HTMLElement;
+		const home = panel.parentElement;
+
+		dd?.open();
+
+		expect(panel.parentElement).toBe(document.body);
+		expect(panel.style.position).toBe("");
+		// 폭은 트리거를 재서 인라인으로 준다 - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다.
+		expect(panel.style.width).not.toBe("");
+
+		dd?.close();
+
+		expect(panel.parentElement).toBe(home);
+		expect(panel.style.width).toBe("");
+		expect(panel.style.left).toBe("");
+		expect(panel.style.top).toBe("");
+	});
+
+	it("열린 채 destroy 되면 목록을 body 에 남기지 않는다", () => {
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		const panel = wrap.querySelector(".bt-dropdown__list") as HTMLElement;
+		const home = panel.parentElement;
+
+		dd?.open();
+		expect(panel.parentElement).toBe(document.body);
+
+		dd?.destroy();
+
+		expect(panel.parentElement).toBe(home);
+	});
+
 	it("활성 옵션을 화면 안으로 스크롤한다 (React 번들과 같은 처리)", () => {
 		// 포커스가 컨트롤에 남는 APG 패턴이라 브라우저가 알아서 스크롤해 주지 않는다.
 		// React 쪽만 고치면 두 번들이 갈린다 - 이 저장소에서 네 번 난 결함군이다.
@@ -559,7 +600,7 @@ describe("Alert", () => {
 
 		// 열면 첫 항목이 활성이 되고(사과), ArrowDown 이 다음으로 옮긴다(포도).
 		// 스크롤은 **활성이 된 그 요소**에 대해 불려야 한다.
-		const active = wrap.querySelector(".bt-dropdown__option.is-active");
+		const active = document.querySelector(".bt-dropdown__option.is-active");
 		expect(active?.textContent).toBe("포도");
 		// `nearest` - 필요한 만큼만 움직이고 페이지 스크롤은 건드리지 않는다.
 		expect(scrolled.at(-1)).toEqual({ text: "포도", arg: { block: "nearest" } });
