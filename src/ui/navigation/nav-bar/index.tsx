@@ -5,6 +5,7 @@ import type * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, useSafeLayoutEffect } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
 export type NavBarVariant = "default" | "transparent" | "accent";
@@ -310,19 +311,29 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	);
 };
 
-export interface NavLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface NavLinkCommon {
 	/** 현재 활성 페이지 여부 */
 	active?: boolean;
 }
 
-export const NavLink = ({ active, className, children, ...props }: NavLinkProps) => {
+/**
+ * `AnchorHTMLAttributes` 고정이던 것을 다형성으로 열었다 - 라우터 `Link`(`next/link` 등)를
+ * 끼우려면 `onClick` 우회로는 부족하다(수정자 클릭·프리페치·이동 가드). Button·SidebarItem 과
+ * 같은 `as` 계약이다. 기본값은 `"a"` 라 기존 사용처는 그대로다.
+ */
+export type NavLinkProps<T extends React.ElementType = "a"> = PolymorphicProps<T, NavLinkCommon>;
+
+export const NavLink = <T extends React.ElementType = "a">(props: NavLinkProps<T>) => {
+	const { active, className, children, as, ref, ...rest } = props;
+	const Tag = as ?? "a";
 	return (
-		<a
-			className={cn("nav_bar_link", active && "nav_bar_link_active")}
+		<Tag
+			ref={ref}
+			className={cn("nav_bar_link", active && "nav_bar_link_active", className)}
 			aria-current={active ? "page" : undefined}
-			{...props}
+			{...rest}
 		>
 			{children}
-		</a>
+		</Tag>
 	);
 };

@@ -3,6 +3,34 @@ import { describe, expect, it, vi } from "vitest";
 import { NavBar, NavLink } from "./index";
 
 describe("NavBar", () => {
+	it("renders through `as` so a router Link can take over", () => {
+		// `AnchorHTMLAttributes` 고정이던 것을 열었다(#588) - Button·SidebarItem 과 같은 계약.
+		const Link = ({ href, children, ...rest }: { href?: string; children?: React.ReactNode }) => (
+			<a data-testid="router-link" href={href} {...rest}>
+				{children}
+			</a>
+		);
+
+		render(
+			<NavLink as={Link} href="/faq" active>
+				FAQ
+			</NavLink>,
+		);
+
+		const link = screen.getByTestId("router-link");
+		expect(link).toHaveAttribute("href", "/faq");
+		expect(link).toHaveClass("nav_bar_link", "nav_bar_link_active");
+		expect(link).toHaveAttribute("aria-current", "page");
+	});
+
+	it("stays an anchor by default", () => {
+		render(<NavLink href="/plain">기본</NavLink>);
+
+		const link = screen.getByRole("link", { name: "기본" });
+		expect(link.tagName).toBe("A");
+		expect(link).not.toHaveAttribute("aria-current");
+	});
+
 	it("renders brand, links, and actions", () => {
 		render(
 			<NavBar brand={<div>Bigtablet</div>} actions={<button type="button">Sign in</button>}>
