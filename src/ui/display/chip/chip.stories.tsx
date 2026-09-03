@@ -65,6 +65,28 @@ export const Static: Story = {
 	),
 };
 
+export const Disabled: Story = {
+	name: "Disabled (type별)",
+	render: () => (
+		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+				<Chip type="basic" label="Basic" disabled />
+				<Chip type="input" label="Input" removable disabled />
+				<Chip type="filter" label="Filter" disabled />
+			</div>
+			{/* static 은 컨트롤이 아니라 텍스트 라벨이라 흐려지지 않는다 - 흐리면 대비가 AA 미달. */}
+			<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+				<Chip type="static" tone="default" label="Default" disabled />
+				<Chip type="static" tone="accent" label="Accent" disabled />
+				<Chip type="static" tone="info" label="Info" disabled />
+				<Chip type="static" tone="success" label="Success" disabled />
+				<Chip type="static" tone="warning" label="Warning" disabled />
+				<Chip type="static" tone="error" label="Error" removable disabled />
+			</div>
+		</div>
+	),
+};
+
 export const InteractiveSelect: Story = {
 	parameters: { chromatic: { disableSnapshot: true } },
 	name: "Interactive - basic 다중 선택",
