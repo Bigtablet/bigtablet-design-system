@@ -89,6 +89,23 @@ src/ui/{category}/{ComponentName}/
 └── ComponentName.stories.tsx # Storybook (선택)
 ```
 
+#### 스크롤되는 영역을 만들 때
+
+`overflow-y: auto` 를 쓰는 곳에는 `@include token.scrollable;` 을 함께 넣는다 — 스크롤바가
+얇고 브랜드색이 된다. **네이티브 스크롤을 그대로 쓴다**(커스텀 스크롤 컴포넌트는 두지 않는다).
+
+```scss
+.panel_list {
+  max-height: token.$overlay_list_max_height;
+  overflow-y: auto;
+  @include token.scrollable;
+}
+```
+
+목록에서 방향키로 활성 항목을 옮긴다면 `useListboxPopup` 의 `listRef` 를 스크롤 컨테이너에
+붙인다 — 활성 항목이 화면 밖으로 나갈 때만 따라 스크롤한다. 포커스가 입력에 남는 APG 패턴에서는
+브라우저가 알아서 스크롤해 주지 않는다.
+
 #### 사용자에게 보이는 문구를 추가할 때
 
 컴포넌트 안에 문구를 박지 말고 **로케일 카탈로그**에 키를 만든다

@@ -415,4 +415,29 @@ describe("Alert", () => {
 		// keydown 리스너와 스크롤 잠금이 파일 끝까지 남는다.
 		alert?.close();
 	});
+
+	it("활성 옵션을 화면 안으로 스크롤한다 (React 번들과 같은 처리)", () => {
+		// 포커스가 컨트롤에 남는 APG 패턴이라 브라우저가 알아서 스크롤해 주지 않는다.
+		// React 쪽만 고치면 두 번들이 갈린다 - 이 저장소에서 네 번 난 결함군이다.
+		const scrolled: { text: string; arg: unknown }[] = [];
+		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
+			this: Element,
+			arg,
+		) {
+			scrolled.push({ text: this.textContent?.trim() ?? "", arg });
+		});
+
+		const wrap = dropdownMarkup();
+		Dropdown(wrap);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLButtonElement;
+		control.click();
+		control.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+
+		// 열면 첫 항목이 활성이 되고(사과), ArrowDown 이 다음으로 옮긴다(포도).
+		// 스크롤은 **활성이 된 그 요소**에 대해 불려야 한다.
+		const active = wrap.querySelector(".bt-dropdown__option.is-active");
+		expect(active?.textContent).toBe("포도");
+		// `nearest` - 필요한 만큼만 움직이고 페이지 스크롤은 건드리지 않는다.
+		expect(scrolled.at(-1)).toEqual({ text: "포도", arg: { block: "nearest" } });
+	});
 });

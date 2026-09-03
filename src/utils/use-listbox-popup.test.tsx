@@ -43,13 +43,20 @@ const Probe = ({
 			{popup.isOpen && (
 				<div>
 					<input aria-label="filter" onKeyDown={popup.onInputKeyDown} />
-					<ul>
+					{/* 실제 소비자(Dropdown·Combobox)와 같은 모양 - 스크롤 컨테이너 = listbox */}
+					<div ref={popup.listRef} role="listbox">
 						{items.map((item, i) => (
-							<li key={item.value} data-active={i === popup.activeIndex ? "true" : "false"}>
+							/* biome-ignore lint/a11y/useFocusableInteractive: aria-activedescendant 패턴 - option 은 포커스를 받지 않는다 */
+							<div
+								key={item.value}
+								role="option"
+								aria-selected={i === popup.activeIndex}
+								data-active={i === popup.activeIndex ? "true" : "false"}
+							>
 								{item.value}
-							</li>
+							</div>
 						))}
-					</ul>
+					</div>
 				</div>
 			)}
 		</div>
@@ -57,7 +64,7 @@ const Probe = ({
 };
 
 const activeValue = () =>
-	screen.queryAllByRole("listitem").find((li) => li.dataset.active === "true")?.textContent;
+	screen.queryAllByRole("option").find((li) => li.dataset.active === "true")?.textContent;
 
 describe("useListboxPopup", () => {
 	it("opens on ArrowDown and lands on the first enabled item", () => {
@@ -206,5 +213,69 @@ describe("useListboxPopup", () => {
 		fireEvent.keyDown(input, { key: "Enter" });
 
 		expect(onCommit).not.toHaveBeenCalled();
+	});
+
+	it("scrolls the active item into view", () => {
+		// 포커스는 트리거·입력에 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다.
+		// 옵션이 많은 목록에서 아래로 내려가면 활성 표시가 보이지 않는 채로 움직였다.
+		const calls: unknown[] = [];
+		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
+			this: Element,
+			arg,
+		) {
+			calls.push({ text: this.textContent, arg });
+		});
+
+		render(<Probe />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.keyDown(screen.getByRole("textbox"), { key: "ArrowDown" });
+
+		// 마지막 호출이 지금 활성인 항목이어야 한다 (b 는 disabled 라 건너뛰고 c)
+		expect(calls.at(-1)).toEqual({ text: "c", arg: { block: "nearest" } });
+		spy.mockRestore();
+	});
+
+	it("does not require listRef to work", () => {
+		// ref 를 붙이지 않은 소비자(스크롤이 없는 짧은 목록)에서도 이동은 그대로다.
+		const Bare = () => {
+			const popup = useListboxPopup<Item>({ items: ITEMS, onCommit: vi.fn() });
+			return (
+				<div ref={popup.wrapperRef}>
+					<button type="button" ref={popup.triggerRef} onClick={() => popup.setIsOpen(true)}>
+						trigger
+					</button>
+					{popup.isOpen && <input aria-label="filter" onKeyDown={popup.onInputKeyDown} />}
+					<span data-testid="active">{popup.activeIndex}</span>
+				</div>
+			);
+		};
+
+		render(<Bare />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.keyDown(screen.getByRole("textbox"), { key: "ArrowDown" });
+
+		expect(screen.getByTestId("active").textContent).toBe("2");
+	});
+
+	it("rescrolls when the item at the active index is replaced", () => {
+		// 검색 필터·비동기 검색은 **같은 인덱스에 다른 항목**을 그린다. `items` 를 의존성에서
+		// 빼면 인덱스 숫자가 그대로라 effect 가 다시 돌지 않고, 새 활성 항목이 화면 밖에 남는다.
+		const calls: string[] = [];
+		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
+			this: Element,
+		) {
+			calls.push(this.textContent ?? "");
+		});
+
+		const { rerender } = render(<Probe items={[{ value: "a" }, { value: "b" }]} />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		// 열면 훅이 첫 항목을 활성으로 잡는다 (인덱스 0)
+		expect(calls.at(-1)).toBe("a");
+
+		// 인덱스 0 의 항목만 바꾼다 - 활성 인덱스는 계속 0 이다
+		rerender(<Probe items={[{ value: "바뀐항목" }, { value: "b" }]} />);
+
+		expect(calls.at(-1)).toBe("바뀐항목");
+		spy.mockRestore();
 	});
 });

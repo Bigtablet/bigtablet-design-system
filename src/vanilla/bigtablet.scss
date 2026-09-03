@@ -864,6 +864,9 @@
     max-height: 18rem;
     overflow-y: auto;
     overflow-x: hidden;
+    /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--bt-color-border-light) transparent;
     padding: var(--bt-spacing-xs) 0;
     list-style: none;
     margin: var(--bt-spacing-xs) 0 0 0;
@@ -928,6 +931,9 @@
     max-height: 18rem;
     overflow-y: auto;
     overflow-x: hidden;
+    /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--bt-color-border-light) transparent;
     padding: var(--bt-spacing-xs) 0;
     margin: 0;
     list-style: none;

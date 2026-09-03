@@ -262,6 +262,7 @@
   &_options {
     max-height: token.$overlay_list_max_height;
     overflow-y: auto;
+    @include token.scrollable;
     overflow-x: hidden;
     padding: token.$spacing_4 0;
   }

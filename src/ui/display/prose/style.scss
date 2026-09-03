@@ -102,6 +102,7 @@
     padding: token.$spacing_20;
     // 긴 코드 줄이 레이아웃을 밀지 않고 자기 안에서 스크롤된다.
     overflow-x: auto;
+    @include token.scrollable;
 
     code {
       background: transparent;
@@ -173,6 +174,7 @@
     display: block;
     width: 100%;
     overflow-x: auto;
+    @include token.scrollable;
     border-collapse: collapse;
   }
 

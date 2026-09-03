@@ -239,6 +239,7 @@ export const Dropdown = (props: DropdownProps) => {
 		setActiveIndex,
 		wrapperRef,
 		triggerRef: controlRef,
+		listRef,
 		close: closePanel,
 		onTriggerKeyDown: onControlKeyDown,
 		onInputKeyDown: onSearchKeyDown,
@@ -392,6 +393,8 @@ export const Dropdown = (props: DropdownProps) => {
 					)}
 
 					<div
+						// 스크롤 컨테이너이자 listbox - 방향키로 옮긴 활성 항목을 훅이 따라 스크롤한다.
+						ref={listRef}
 						id={`${dropdownId}_listbox`}
 						role="listbox"
 						className="dropdown_options"

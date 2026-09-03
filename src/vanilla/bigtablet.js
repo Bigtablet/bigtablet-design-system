@@ -539,11 +539,19 @@
 
 		function updateActiveOption() {
 			let activeId = null;
+			let activeEl = null;
 			optionEls.forEach((el, i) => {
 				const active = i === state.activeIndex;
 				el.classList.toggle("is-active", active);
-				if (active) activeId = el.id;
+				if (active) {
+					activeId = el.id;
+					activeEl = el;
+				}
 			});
+			// 활성 항목이 스크롤 밖에 있으면 따라 스크롤한다. 포커스는 컨트롤·검색 입력에 남으므로
+			// (APG) 브라우저가 알아서 해 주지 않는다 - React 번들과 같은 처리다(`block: "nearest"`
+			// 로 필요한 만큼만 움직이고 페이지는 건드리지 않는다).
+			activeEl?.scrollIntoView?.({ block: "nearest" });
 			// 키보드 탐색 중 활성 옵션을 AT 에 전달 (없으면 화살표 탐색이 스크린리더에 무음).
 			// 활성 옵션이 없으면(activeIndex=-1 등) 잘못된 참조가 남지 않게 속성을 제거.
 			const host = activeDescendantHost();

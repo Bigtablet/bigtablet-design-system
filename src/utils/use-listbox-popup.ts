@@ -36,6 +36,11 @@ export interface UseListboxPopupResult {
 	wrapperRef: React.RefObject<HTMLDivElement | null>;
 	/** 트리거 요소. 닫을 때 포커스를 되돌릴 대상 */
 	triggerRef: React.RefObject<HTMLButtonElement | null>;
+	/**
+	 * 스크롤되는 목록 요소(`role="listbox"`). 붙이면 방향키로 옮긴 활성 항목을 따라 스크롤한다.
+	 * 안 붙여도 나머지 동작은 그대로다 - 목록이 짧아 스크롤이 없는 경우.
+	 */
+	listRef: React.RefObject<HTMLDivElement | null>;
 	/** 닫고 필요하면 트리거로 포커스를 되돌린다 */
 	close: () => void;
 	/** 방향키 이동 - 비활성 항목을 건너뛰고 양끝에서 순환한다 */
@@ -73,6 +78,7 @@ export function useListboxPopup<T extends ListboxItem>({
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
+	const listRef = useRef<HTMLDivElement>(null);
 
 	const close = useCallback(() => {
 		setIsOpen(false);
@@ -213,6 +219,20 @@ export function useListboxPopup<T extends ListboxItem>({
 		setActiveIndex(preferred >= 0 ? preferred : items.findIndex((o) => !o.disabled));
 	}, [isOpen, items]);
 
+	// 방향키로 옮긴 활성 항목이 스크롤 밖에 있으면 따라 스크롤한다. 포커스는 트리거·입력에
+	// 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다 - 옵션 20개 목록에서 아래로 내려가면
+	// 활성 표시가 보이지 않는 채로 움직였다.
+	useEffect(() => {
+		if (!isOpen || activeIndex < 0) return;
+		const list = listRef.current;
+		if (!list) return;
+		const option = list.querySelectorAll<HTMLElement>('[role="option"]')[activeIndex];
+		// `block: "nearest"` - 필요한 만큼만 움직이고 페이지 스크롤은 건드리지 않는다.
+		option?.scrollIntoView?.({ block: "nearest" });
+		// items 도 의존성이다 - 인덱스가 그대로여도 그 자리의 항목이 바뀔 수 있다(Dropdown 검색
+		// 필터, Combobox 비동기 검색). 그때 스크롤 위치를 그대로 두면 새 활성 항목이 화면 밖에 남는다.
+	}, [isOpen, activeIndex, items]);
+
 	// 열릴 때 방향 결정.
 	useEffect(() => {
 		if (!isOpen || !triggerRef.current) return;
@@ -230,6 +250,7 @@ export function useListboxPopup<T extends ListboxItem>({
 		setActiveIndex,
 		wrapperRef,
 		triggerRef,
+		listRef,
 		close,
 		moveActive,
 		commitActive,
