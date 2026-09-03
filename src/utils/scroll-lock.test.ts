@@ -23,8 +23,38 @@ const setViewportInset = (inset: number) => {
 	} as DOMRect);
 };
 
+/**
+ * jsdom 의 `scrollHeight`/`clientHeight` 는 0 이라 "문서가 스크롤된다" 를 만들 수 없다.
+ * 새 로직이 그 판정으로 분기하므로 직접 세운다.
+ */
+const setDocumentScrolls = (scrolls: boolean) => {
+	Object.defineProperty(document.documentElement, "scrollHeight", {
+		value: scrolls ? 4000 : 800,
+		configurable: true,
+	});
+	Object.defineProperty(document.documentElement, "clientHeight", {
+		value: 800,
+		configurable: true,
+	});
+};
+
+/**
+ * `scrollbar-gutter` 지원 여부. jsdom 의 `CSS` 에는 `supports` 가 아예 없어서 - 그래서
+ * 구현 쪽에 `typeof CSS.supports === "function"` 가드가 있다 - 스텁을 직접 심는다.
+ * 지원을 끄면 Safari 18.2 미만의 padding 폴백 경로가 재현된다.
+ */
+const setGutterSupport = (supported: boolean) => {
+	Object.defineProperty(globalThis.CSS, "supports", {
+		value: (condition: string) => (condition.includes("scrollbar-gutter") ? supported : false),
+		configurable: true,
+		writable: true,
+	});
+};
+
 describe("scroll-lock", () => {
 	beforeEach(() => {
+		setDocumentScrolls(true);
+		setGutterSupport(true);
 		document.body.style.cssText = "";
 		document.documentElement.style.cssText = "";
 	});
@@ -41,36 +71,33 @@ describe("scroll-lock", () => {
 		expect(document.body.dataset.openModals).toBe("1");
 	});
 
-	it("compensates the scrollbar width and releases the stable gutter", () => {
+	it("reserves the gutter instead of releasing it, and adds no padding", () => {
+		// 놓으면(`auto`) ICB 폭이 변해 `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼
+		// 움직인다(#574 - 실측 592.5 → 600). 예약하면 폭이 그대로라 padding 보정도 불필요하다.
 		document.documentElement.style.scrollbarGutter = "stable";
 		setViewportInset(15);
 
 		lockBodyScroll();
 
-		// 거터를 놓아 fixed 오버레이의 컨테이닝 블록을 전폭으로 만든다.
-		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
-		// 놓은 폭은 body padding 이 대신 잡아 콘텐츠가 안 움직인다.
-		expect(document.body.style.paddingRight).toBe("15px");
-		// 앱의 `right: 0` 고정 요소가 쓸 수 있도록 폭을 노출한다.
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.body.style.paddingRight).toBe("");
+		// 오버레이가 예약된 거터를 넘어가 덮을 수 있도록 폭은 계속 노출한다.
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 	});
 
 	it("measures the gutter from the ICB, not from clientWidth", () => {
-		// `scrollbar-gutter: stable` 의 정의가 이 상황이다 - 거터 15px 이 예약돼 있는데
-		// clientWidth 는 innerWidth 와 같게 보고한다(Chromium 실측).
+		// `scrollbar-gutter: stable` 에서는 clientWidth 가 innerWidth 와 같게 보고한다(Chromium
+		// 실측). 그래서 폭은 fixed 프로브로 잰다.
 		document.documentElement.style.scrollbarGutter = "stable";
+		Object.defineProperty(document.documentElement, "clientWidth", {
+			value: 1280,
+			configurable: true,
+		});
 		setViewportInset(15);
-		vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280);
-
-		// 옛 측정식은 이 상황에서 0 을 낸다 - 그래서 보정이 한 번도 걸리지 않았다.
-		// 이 단정이 위 clientWidth 스텁을 의미 있게 만든다.
-		expect(window.innerWidth - document.documentElement.clientWidth).toBe(0);
 
 		lockBodyScroll();
 
-		// 그런데도 거터를 놓고 그 폭을 보정한다 - 측정이 clientWidth 와 무관하다는 뜻이다.
-		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
-		expect(document.body.style.paddingRight).toBe("15px");
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 	});
 
 	it("skips compensation when the environment does not lay out", () => {
@@ -88,13 +115,54 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.scrollbarGutter).toBe("");
 	});
 
-	it("adds to the consumer's existing body padding instead of replacing it", () => {
+	it("adds to the consumer's existing body padding in the fallback path", () => {
+		// `scrollbar-gutter` 미지원(Safari 18.2 미만)에서만 padding 을 쓴다. 덮어쓰면 소비자가
+		// 준 여백만큼 콘텐츠가 되레 움직인다.
+		setGutterSupport(false);
 		document.body.style.paddingRight = "20px";
 		setViewportInset(15);
 
 		lockBodyScroll();
 
 		expect(document.body.style.paddingRight).toBe("35px");
+		// 폴백에서는 거터를 건드리지 않는다.
+		expect(document.documentElement.style.scrollbarGutter).toBe("");
+	});
+
+	it("does nothing when the document does not scroll", () => {
+		// 앱 셸이 내부 컨테이너를 스크롤 컨테이너로 삼으면 문서에는 스크롤바가 없다. 그때
+		// 보정하면 없는 스크롤바를 없애느라 레이아웃이 흔들린다 - 예약된 거터를 스크롤바로
+		// 오인해 실제로 그렇게 됐다(#574).
+		setDocumentScrolls(false);
+		document.documentElement.style.scrollbarGutter = "stable";
+		setViewportInset(15);
+
+		lockBodyScroll();
+
+		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.body.style.paddingRight).toBe("");
+		// 폭은 노출한다 - 앱이 예약해 둔 거터는 화면에 남아 있고 오버레이가 넘어가 덮어야 한다.
+		// 노출하지 않으면 dim 옆에 밝은 띠가 그대로 남는다.
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+	});
+
+	it("uses the browser's scrolling element, not documentElement", () => {
+		// 앱이 `html` 에 overflow 를 걸면 `body` 가 실제 스크롤 요소가 된다. documentElement 를
+		// 하드코딩하면 그 구성에서 판정이 어긋난다.
+		Object.defineProperty(document, "scrollingElement", {
+			value: document.body,
+			configurable: true,
+		});
+		Object.defineProperty(document.body, "scrollHeight", { value: 4000, configurable: true });
+		Object.defineProperty(document.body, "clientHeight", { value: 800, configurable: true });
+		// documentElement 쪽은 스크롤되지 않는 것처럼 세운다.
+		setDocumentScrolls(false);
+		setViewportInset(15);
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 	});
 
 	it("skips compensation when there is no scrollbar to hide", () => {
@@ -123,30 +191,22 @@ describe("scroll-lock", () => {
 	});
 
 	it("keeps the lock while a nested overlay is still open", () => {
-		document.documentElement.style.scrollbarGutter = "stable";
 		setViewportInset(15);
+		lockBodyScroll();
+		lockBodyScroll();
 
-		lockBodyScroll(); // Modal
-		lockBodyScroll(); // Modal 위 Alert
-		unlockBodyScroll(); // Alert 만 닫힘
+		unlockBodyScroll();
 
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.body.style.paddingRight).toBe("15px");
-		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
-		expect(document.body.dataset.openModals).toBe("1");
-
-		unlockBodyScroll(); // 마지막까지 닫힘
-
-		expect(document.body.style.overflow).toBe("");
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.body.dataset.openModals).toBe("1");
 	});
 
-	it("measures only once so a nested lock cannot double the padding", () => {
+	it("measures only once so a nested lock cannot double the compensation", () => {
+		setGutterSupport(false);
 		setViewportInset(15);
 
 		lockBodyScroll();
-		// 첫 잠금 뒤에는 스크롤바가 사라져 실제 브라우저에서도 0 이 잰다.
-		setViewportInset(0);
 		lockBodyScroll();
 
 		expect(document.body.style.paddingRight).toBe("15px");

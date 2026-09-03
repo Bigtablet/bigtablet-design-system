@@ -9,6 +9,27 @@ import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
  * 상황을 만들려면 프로브가 재는 ICB 폭을 직접 세운다. `clientWidth` 가 아니라 프로브를 세우는
  * 것이 핵심 - `scrollbar-gutter: stable` 에서는 `clientWidth` 가 거터를 포함해 보고한다.
  */
+/** jsdom 은 scrollHeight/clientHeight 가 0 이라 "문서가 스크롤된다" 를 세워야 한다. */
+const setDocumentScrolls = (scrolls: boolean) => {
+	Object.defineProperty(document.documentElement, "scrollHeight", {
+		value: scrolls ? 4000 : 800,
+		configurable: true,
+	});
+	Object.defineProperty(document.documentElement, "clientHeight", {
+		value: 800,
+		configurable: true,
+	});
+};
+
+/** jsdom 의 `CSS` 에는 `supports` 가 없다 - 구현의 가드가 그래서 필요하다. */
+const setGutterSupport = (supported: boolean) => {
+	Object.defineProperty(globalThis.CSS, "supports", {
+		value: (condition: string) => (condition.includes("scrollbar-gutter") ? supported : false),
+		configurable: true,
+		writable: true,
+	});
+};
+
 const setViewportInset = (inset: number) => {
 	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true, writable: true });
 	vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
@@ -288,27 +309,49 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
 
-	it("스크롤바 폭을 보정하고 stable 거터를 놓는다", () => {
+	it("거터를 놓지 않고 예약한다 - fixed 요소가 움직이지 않게", () => {
+		// 놓으면(`auto`) ICB 폭이 변해 `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼
+		// 움직인다(#574). React 번들과 같은 판정·같은 결과여야 한다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
 		document.documentElement.style.scrollbarGutter = "stable";
 		setViewportInset(15);
 
 		const m = Modal(modalMarkup());
 		m?.open();
 
-		expect(document.body.style.paddingRight).toBe("15px");
-		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.body.style.paddingRight).toBe("");
+		// 오버레이가 예약된 거터를 넘어가 덮도록 폭은 노출한다.
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
 		m?.close();
 
-		expect(document.body.style.paddingRight).toBe("");
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
 	});
 
-	it("clientWidth 가 거터를 감춰도 거터를 놓는다", () => {
+	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {
+		setDocumentScrolls(false);
+		setGutterSupport(true);
+		setViewportInset(15);
+
+		const m = Modal(modalMarkup());
+		m?.open();
+
+		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.body.style.paddingRight).toBe("");
+		// 폭은 노출한다 - 예약된 거터를 오버레이가 넘어가 덮어야 한다 (React 쪽과 동일).
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+
+		m?.close();
+	});
+
+	it("clientWidth 가 거터를 감춰도 폭을 잰다", () => {
 		// `scrollbar-gutter: stable` 에서 Chromium 은 clientWidth 를 innerWidth 와 같게 보고한다.
-		// React 쪽과 같은 회귀 - 옛 측정식은 0 을 내고 보정이 한 번도 걸리지 않았다.
+		// 옛 측정식은 0 을 내고 보정이 한 번도 걸리지 않았다 - 폭은 fixed 프로브로 잰다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
 		document.documentElement.style.scrollbarGutter = "stable";
 		setViewportInset(15);
 		vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280);
@@ -317,13 +360,16 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		const m = Modal(modalMarkup());
 		m?.open();
 
-		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
-		expect(document.body.style.paddingRight).toBe("15px");
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
 		m?.close();
 	});
 
 	it("중첩 오버레이는 마지막 해제까지 잠금을 유지한다", () => {
+		// 폭 보정 방식이 아니라 "마지막 해제까지 유지" 자체를 보는 테스트다. 지원 환경에서는
+		// 거터 예약이라 padding 이 비어 있으므로, 보정이 남아 있는지는 거터로 확인한다.
+		setDocumentScrolls(true);
+		setGutterSupport(true);
 		setViewportInset(15);
 		const a = Modal(modalMarkup("m1"));
 		const b = Modal(modalMarkup("m2"));
@@ -334,10 +380,11 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 		b?.close();
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.body.style.paddingRight).toBe("15px");
+		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
 
 		a?.close();
 		expect(document.body.style.overflow).toBe("");
+		expect(document.documentElement.style.scrollbarGutter).toBe("");
 	});
 
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
@@ -420,10 +467,7 @@ describe("Alert", () => {
 		// 포커스가 컨트롤에 남는 APG 패턴이라 브라우저가 알아서 스크롤해 주지 않는다.
 		// React 쪽만 고치면 두 번들이 갈린다 - 이 저장소에서 네 번 난 결함군이다.
 		const scrolled: { text: string; arg: unknown }[] = [];
-		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
-			this: Element,
-			arg,
-		) {
+		vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (this: Element, arg) {
 			scrolled.push({ text: this.textContent?.trim() ?? "", arg });
 		});
 
@@ -439,5 +483,7 @@ describe("Alert", () => {
 		expect(active?.textContent).toBe("포도");
 		// `nearest` - 필요한 만큼만 움직이고 페이지 스크롤은 건드리지 않는다.
 		expect(scrolled.at(-1)).toEqual({ text: "포도", arg: { block: "nearest" } });
+
+		vi.restoreAllMocks();
 	});
 });
