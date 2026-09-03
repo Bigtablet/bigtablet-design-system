@@ -235,7 +235,11 @@
     }
 
     &.button_variant_outline {
-      color: token.$color_status_error;
+      // 텍스트만 dark-aware 토큰을 쓴다. bare `$color_status_error` 는 다크에서 재정의되지
+      // 않아 #B91C1C 가 그대로 남고, 다크 표면(#0A0A0A/#141414)에서 3.06:1 · 2.85:1 로
+      // AA(4.5:1) 미달이었다. `_on_surface` 는 다크에서 #F87171 로 바뀌어 7.16:1 · 6.66:1.
+      // 테두리는 bare 를 유지한다 - 비텍스트는 3:1 기준이고 TextField 도 같은 조합이다.
+      color: token.$color_status_error_on_surface;
       border-color: token.$color_status_error;
 
       &:hover:not(:disabled) {
@@ -249,7 +253,7 @@
 
     &.button_variant_tonal {
       background: color-mix(in srgb, token.$color_status_error 12%, transparent);
-      color: token.$color_status_error;
+      color: token.$color_status_error_on_surface;
 
       &:hover:not(:disabled) {
         background: color-mix(in srgb, token.$color_status_error 18%, transparent);
@@ -257,7 +261,7 @@
     }
 
     &.button_variant_text {
-      color: token.$color_status_error;
+      color: token.$color_status_error_on_surface;
 
       &:hover:not(:disabled) {
         background: color-mix(in srgb, token.$color_status_error 8%, transparent);

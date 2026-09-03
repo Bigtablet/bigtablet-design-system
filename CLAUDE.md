@@ -235,12 +235,13 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 90% (stmts 90.02 / branch 85.69 / funcs 90.07 / lines 91.97 - 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지))
+- **Coverage**: 91.96% stmts / 89.01% branch / 92.78% funcs / 94.02% lines - 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
+  pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 
