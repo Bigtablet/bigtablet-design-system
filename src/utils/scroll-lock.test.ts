@@ -151,13 +151,15 @@ describe("scroll-lock", () => {
 		// 예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 오버레이가 덮을 수 없다(#580).
 		// 딤을 지금 보이는 캔버스 색 위에 합성해 루트 배경색으로 심는 것이 유일한 방법이다.
 		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
+		// 기본값(검정 50%)이 아닌 색을 일부러 넣는다 - 폴백 기본값과 같으면 딤 색을 엉뚱한
+		// 프로퍼티에서 읽어도 드러나지 않는다.
+		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 255, 0.5)");
 		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
 
 		lockBodyScroll();
 
-		// rgba(0,0,0,.5) over rgb(255,233,168) = (127.5, 116.5, 84) → 반올림
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 84)");
+		// rgba(0,0,255,.5) over rgb(255,233,168) = (127.5, 116.5, 211.5) → 반올림
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 212)");
 		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
 
 		unlockBodyScroll();

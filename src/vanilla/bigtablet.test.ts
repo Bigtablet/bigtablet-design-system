@@ -337,16 +337,17 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		setDocumentScrolls(true);
 		setGutterSupport(true);
 		setViewportInset(15);
-		document.documentElement.style.setProperty(
-			"--bt-color-background-overlay",
-			"rgba(0, 0, 0, 0.5)",
-		);
+		// 오버레이가 실제로 페인트에 쓰는 프로퍼티다 (`.bt-modal { background: var(--bt-color-overlay) }`).
+		// 기본값(검정 50%)이 아닌 색을 일부러 넣는다 - 선언만 있고 아무도 참조하지 않는
+		// `--bt-color-background-overlay` 를 읽으면 폴백 기본값과 같아져 드러나지 않는다.
+		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 255, 0.5)");
 		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
 
 		const m = Modal(modalMarkup());
 		m?.open();
 
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 84)");
+		// rgba(0,0,255,.5) over rgb(255,233,168) = (127.5, 116.5, 211.5) → 반올림
+		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 212)");
 		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
 
 		m?.close();

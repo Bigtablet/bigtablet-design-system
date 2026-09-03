@@ -511,7 +511,7 @@ Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다(`body { ove
 없다. 3.17.1 은 dim 에 음수 오프셋(`right: calc(-1 * var(--bt-scrollbar-width))`)을 줘서 넘어가게
 했지만 **박스만 넓어지고 페인트는 거터 앞에서 잘렸다** (#580). Chromium 실측:
 
-```
+```text
 window.innerWidth                      1280
 documentElement.getBoundingClientRect  1265   ← ICB
 .modal getBoundingClientRect           left 0 → right 1280   (계산상 전체를 덮는다)
@@ -523,7 +523,7 @@ elementFromPoint(1266, 250)            null   ← 여기부터 아무것도 없�
 `background-color` 하나뿐이다.** 그래서 잠금은 딤을 지금 보이는 캔버스 색 위에 합성해 루트
 배경색으로 심는다 - 거터에는 "딤이 덮인 페이지 배경"과 같은 색이 나타난다.
 
-```
+```text
 잠금 전: html background-color  rgb(255, 233, 168)
 잠금 중: html background-color  rgb(128, 117, 84)   = rgba(0,0,0,0.5) over 위 색
 해제:    인라인 스냅샷으로 원복

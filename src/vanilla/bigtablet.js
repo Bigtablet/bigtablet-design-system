@@ -142,11 +142,15 @@
 		];
 	}
 
-	/** 딤을 지금 보이는 캔버스 색 위에 합성한 값. 루트가 투명하면 body 배경이 전파된다. */
+	/** 딤을 지금 보이는 캔버스 색 위에 합성한 값. 루트가 투명하면 body 배경이 전파된다.
+	 *  딤 색은 **오버레이가 실제로 페인트에 쓰는** 프로퍼티에서 읽어야 한다 - Vanilla 는
+	 *  `--bt-color-overlay`(`.bt-modal` · `.bt-alert__overlay` 가 쓰는 것). 선언만 있고 아무도
+	 *  참조하지 않는 `--bt-color-background-overlay` 를 읽으면 소비자가 딤을 오버라이드했을 때
+	 *  거터 색이 따라가지 못한다. */
 	function compositeCanvasDim(html, body) {
 		const white = [255, 255, 255, 1];
 		const raw =
-			window.getComputedStyle(html).getPropertyValue("--bt-color-background-overlay").trim() ||
+			window.getComputedStyle(html).getPropertyValue("--bt-color-overlay").trim() ||
 			"rgba(0, 0, 0, 0.5)";
 		const dim = normalizeColor(raw);
 		if (!dim || dim[3] <= 0) return null;

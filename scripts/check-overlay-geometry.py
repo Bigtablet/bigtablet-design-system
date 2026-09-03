@@ -221,6 +221,15 @@ def check_lock_width_invariants() -> list[str]:
             )
         if 'scrollbarGutter = "stable"' not in code:
             problems.append(f"{path}: 잠금이 거터를 예약하지 않는다 - `stable` 이 없다")
+        # 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽어야 한다. 번들마다 이름이
+        # 다르고, 선언만 있고 아무도 참조하지 않는 유사 이름이 양쪽에 있다 - 그걸 읽으면
+        # 소비자가 딤을 오버라이드했을 때 거터 색만 옛 값에 남는다.
+        dim_var = "--bt-color-overlay" if path.name.endswith(".js") else "--bt-color-bg-overlay"
+        if dim_var not in code:
+            problems.append(
+                f"{path}: 딤 색을 `{dim_var}` 에서 읽지 않는다 - 오버레이가 페인트에 쓰는"
+                " 프로퍼티와 달라지면 거터 색이 실제 딤을 따라가지 못한다"
+            )
         if "compositeCanvasDim" not in code:
             problems.append(
                 f"{path}: 예약된 거터를 어둡게 하지 않는다 - 캔버스(루트 배경색)에 딤을"
