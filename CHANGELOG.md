@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.17.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.1) - 2026-09-03
+- (렌더 변경) 오버레이가 열릴 때 `position: fixed` 요소가 스크롤바 폭의 절반만큼 움직이던 문제를 고칩니다. 스크롤 잠금이 거터를 놓지 않고 예약해 ICB 폭을 유지하고, dim 은 예약된 거터를 넘어가 덮습니다 (React·Vanilla 양쪽)
+- (렌더 변경) `--bt-scrollbar-width` 로 고정 요소를 직접 보정하던 앱은 **그 보정을 지워야 합니다** - 잠금이 더 이상 폭을 바꾸지 않으므로 보정이 이중으로 걸립니다
+
 ## [3.17.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.17.0) - 2026-09-03
 - 폼 계층을 DS 가 소유합니다. `Field` 가 라벨·필수 표시·도움말·에러와 `aria-describedby`·`aria-invalid` 연결을 갖고, `Form` 이 `errors` 맵을 각 필드로 흘립니다 — 입력 11종이 여기에 연결됩니다
 - `DataView` 를 추가했습니다. 목록 화면의 네 상태(로딩·에러·빈 목록·데이터)와 툴바·선택 액션·페이지네이션을 한 곳에서 처리합니다
