@@ -43,9 +43,15 @@ const Probe = ({
 			{popup.isOpen && (
 				<div>
 					<input aria-label="filter" onKeyDown={popup.onInputKeyDown} />
-					<ul>
+					{/* 실제 소비자(Dropdown·Combobox)와 같은 모양 - 스크롤 컨테이너 = listbox */}
+					<ul ref={popup.listRef as React.RefObject<HTMLUListElement>} role="listbox">
 						{items.map((item, i) => (
-							<li key={item.value} data-active={i === popup.activeIndex ? "true" : "false"}>
+							<li
+								key={item.value}
+								role="option"
+								aria-selected={i === popup.activeIndex}
+								data-active={i === popup.activeIndex ? "true" : "false"}
+							>
 								{item.value}
 							</li>
 						))}
@@ -57,7 +63,7 @@ const Probe = ({
 };
 
 const activeValue = () =>
-	screen.queryAllByRole("listitem").find((li) => li.dataset.active === "true")?.textContent;
+	screen.queryAllByRole("option").find((li) => li.dataset.active === "true")?.textContent;
 
 describe("useListboxPopup", () => {
 	it("opens on ArrowDown and lands on the first enabled item", () => {
@@ -206,5 +212,47 @@ describe("useListboxPopup", () => {
 		fireEvent.keyDown(input, { key: "Enter" });
 
 		expect(onCommit).not.toHaveBeenCalled();
+	});
+
+	it("scrolls the active item into view", () => {
+		// 포커스는 트리거·입력에 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다.
+		// 옵션이 많은 목록에서 아래로 내려가면 활성 표시가 보이지 않는 채로 움직였다.
+		const calls: unknown[] = [];
+		const spy = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (
+			this: Element,
+			arg,
+		) {
+			calls.push({ text: this.textContent, arg });
+		});
+
+		render(<Probe />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.keyDown(screen.getByRole("textbox"), { key: "ArrowDown" });
+
+		// 마지막 호출이 지금 활성인 항목이어야 한다 (b 는 disabled 라 건너뛰고 c)
+		expect(calls.at(-1)).toEqual({ text: "c", arg: { block: "nearest" } });
+		spy.mockRestore();
+	});
+
+	it("does not require listRef to work", () => {
+		// ref 를 붙이지 않은 소비자(스크롤이 없는 짧은 목록)에서도 이동은 그대로다.
+		const Bare = () => {
+			const popup = useListboxPopup<Item>({ items: ITEMS, onCommit: vi.fn() });
+			return (
+				<div ref={popup.wrapperRef}>
+					<button type="button" ref={popup.triggerRef} onClick={() => popup.setIsOpen(true)}>
+						trigger
+					</button>
+					{popup.isOpen && <input aria-label="filter" onKeyDown={popup.onInputKeyDown} />}
+					<span data-testid="active">{popup.activeIndex}</span>
+				</div>
+			);
+		};
+
+		render(<Bare />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.keyDown(screen.getByRole("textbox"), { key: "ArrowDown" });
+
+		expect(screen.getByTestId("active").textContent).toBe("2");
 	});
 });
