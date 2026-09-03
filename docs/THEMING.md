@@ -567,6 +567,35 @@ dim 은 ICB 를 채우고, 패널은 그 안에서 중앙 정렬된다. 스크�
 > 다르다 (React `body.dataset.openModals` / Vanilla `body.dataset.btOpenModals`).
 
 
+## status 색: 배경용과 텍스트용을 구분한다
+
+`--bt-color-status-{error,success,warning,info}` 는 **양 테마에서 같은 값**이다(red-700 계열).
+배경과 테두리에는 그대로 쓰지만, **테마에 따라 바뀌는 표면 위의 텍스트로는 쓰지 않는다** -
+다크 표면에서 대비가 무너진다. 실측(Chromium, `data-theme="dark"`):
+
+| 토큰 | 다크 페이지(#0A0A0A) | 다크 패널(#141414) | `_on_surface` (페이지) |
+| --- | --- | --- | --- |
+| error | 3.06:1 | 2.85:1 | **7.16:1** |
+| success | 3.61:1 | 3.36:1 | **11.36:1** |
+| warning | 3.94:1 | 3.67:1 | **11.86:1** |
+| info | 2.95:1 | 2.75:1 | **7.79:1** |
+
+그래서 텍스트에는 `--bt-color-status-*-on-surface`(Vanilla `--bt-color-{error,success,warning,info}-text`)
+를 쓴다 - 다크에서 400 계열로 바뀐다. 라이트에서는 두 토큰의 값이 같아 **라이트 렌더는 바뀌지 않는다.**
+
+| 용도 | 토큰 |
+| --- | --- |
+| 배경 (filled 버튼, 배지 표면) | `--bt-color-status-error` |
+| 테두리 (입력 error 상태) | `--bt-color-status-error` - 비텍스트는 3:1 기준이라 다크에서도 통과 |
+| 텍스트 (helper, 제목, outline·text 버튼 라벨) | `--bt-color-status-error-on-surface` |
+
+**고정 표면 위의 텍스트는 예외다.** brand 표면 위 `--bt-color-brand-on-primary`, 스크림·glass 위
+`--bt-color-text-on-dark-*`, status 표면 위 `-on-default`·`-on-container` 는 표면 자체가 테마와
+무관하므로 대비가 일정하다 - 이름이 그 짝을 밝힌다.
+
+> `pnpm check:dark-text` 가 이 규약을 지킨다 - 표면 전용 색 토큰이 `color:` 로 쓰이면 실패한다.
+> a11y 스토리 러너는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 본다.
+
 ## 자동완성(autofill) 입력칸
 
 크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로 강제한다.

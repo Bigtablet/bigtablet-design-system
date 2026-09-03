@@ -52,6 +52,7 @@
 		"check:prose": "scripts/check-prose-headings.sh",
 		"check:defaults": "python3 scripts/check-prop-defaults.py",
 		"check:geometry": "python3 scripts/check-overlay-geometry.py",
+		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
