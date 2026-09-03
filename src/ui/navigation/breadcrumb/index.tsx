@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
@@ -64,6 +64,8 @@ export const Breadcrumb = ({
 			<ol className="breadcrumb_list">
 				{items.map((item, idx) => {
 					const isLast = idx === items.length - 1;
+					// `as` 가 있으면 그 요소로 렌더한다 - NavLink 와 같은 `const Tag` 패턴.
+					const Tag = item.as ?? "a";
 					return (
 						// biome-ignore lint/suspicious/noArrayIndexKey: breadcrumb items have stable order
 						<li key={idx} className="breadcrumb_item">
@@ -72,13 +74,11 @@ export const Breadcrumb = ({
 									{item.label}
 								</span>
 							) : item.href ? (
-								// `as` 가 있으면 그 요소로 렌더한다 - `href`·`className`·`onClick` 은 그대로
-								// 넘어가므로 라우터 `Link` 가 수정자 클릭·프리페치를 자기 방식대로 처리한다.
-								React.createElement(
-									item.as ?? "a",
-									{ className: "breadcrumb_link", href: item.href, onClick: item.onClick },
-									item.label,
-								)
+								// `href`·`className`·`onClick` 을 그대로 넘긴다 - 라우터 `Link` 가 수정자
+								// 클릭·프리페치를 자기 방식대로 처리한다.
+								<Tag className="breadcrumb_link" href={item.href} onClick={item.onClick}>
+									{item.label}
+								</Tag>
 							) : (
 								<button type="button" className="breadcrumb_link" onClick={item.onClick}>
 									{item.label}
