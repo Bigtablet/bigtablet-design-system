@@ -342,6 +342,11 @@ import Link from "next/link";
 >
 > 소비자 영향: `.dropdown_list` 를 트리거 기준 선택자(`.my-card .dropdown_list`)로 스타일링하면
 > 더 이상 걸리지 않는다 - 클래스만으로 선택해야 한다. `Combobox`·`Menu` 도 같은 처리다.
+>
+> **Modal 안에서**: 포탈된 팝업은 모달 패널 서브트리 밖이라 `useFocusTrap` 의 Tab 경계에
+> 들어가지 않는다. 대신 세 팝업 모두 **Tab 에서 트리거로 포커스를 되돌리고 닫는다** - 이어지는
+> 기본 Tab 이동이 모달 안에서 시작하므로 포커스가 모달을 벗어나지 않는다. `Popover`·`Tooltip`
+> 도 같은 포탈 패턴이다.
 
 ```tsx
 import { Dropdown } from '@bigtablet/design-system';

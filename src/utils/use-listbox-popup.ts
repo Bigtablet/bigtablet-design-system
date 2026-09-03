@@ -43,6 +43,11 @@ export interface UseListboxPopupResult {
 		y: number;
 		/** 트리거 폭(px) - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다 */
 		width: number;
+		/**
+		 * 뷰포트 가용 폭 상한(px). 트리거가 뷰포트보다 넓으면(좁은 화면의 넓은 폼) 배치는
+		 * 이 값으로 좌표를 잡는데 패널 폭을 트리거 폭으로 두면 오른쪽이 잘린다.
+		 */
+		maxWidth: number;
 		/** 최초 측정 전에는 false - 이때 숨겨 (0,0) 깜빡임을 막는다 */
 		ready: boolean;
 	};
@@ -282,6 +287,7 @@ export function useListboxPopup<T extends ListboxItem>({
 			x: anchored.x,
 			y: anchored.y,
 			width: anchored.anchorWidth,
+			maxWidth: anchored.maxWidth,
 			ready: anchored.ready,
 		},
 		activeIndex,

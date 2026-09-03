@@ -758,18 +758,34 @@
 			}
 
 			const rect = control.getBoundingClientRect();
-			// 폭을 먼저 확정해야 높이가 실제 줄바꿈 기준으로 잡힌다.
-			panel.style.width = `${rect.width}px`;
-			const height = panel.offsetHeight;
 			const gap = 4;
 			const padding = 8;
+
+			// 폭은 트리거를 따르되 뷰포트 가용 폭을 넘지 않는다 - 넘으면 오른쪽 옵션이 잘린다.
+			// 폭을 먼저 확정해야 높이가 실제 줄바꿈 기준으로 잡힌다.
+			const width = Math.min(rect.width, window.innerWidth - padding * 2);
+			panel.style.width = `${width}px`;
+
+			// 높이도 가용 높이로 제한한다 - 목록이 뷰포트보다 길면 위/아래 어느 쪽으로도 다 안 들어간다.
+			const available = window.innerHeight - padding * 2;
+			panel.style.maxHeight = "";
+			const natural = panel.offsetHeight;
+			const height = Math.min(natural, available);
+			if (natural > available) panel.style.maxHeight = `${available}px`;
+
 			const below = window.innerHeight - rect.bottom - gap - padding;
 			const above = rect.top - gap - padding;
 			const up = height > below && above > below;
 
 			panel.classList.toggle("bt-dropdown__list--up", up);
-			panel.style.left = `${Math.max(padding, Math.min(rect.left, window.innerWidth - padding - rect.width))}px`;
-			panel.style.top = up ? `${rect.top - gap - height}px` : `${rect.bottom + gap}px`;
+			panel.style.left = `${clampToViewport(rect.left, width, window.innerWidth, padding)}px`;
+			const top = up ? rect.top - gap - height : rect.bottom + gap;
+			panel.style.top = `${clampToViewport(top, height, window.innerHeight, padding)}px`;
+		}
+
+		/** 여백을 남기고 뷰포트 안으로 민다. 가용 공간이 팝업보다 작으면 여백에 고정한다. */
+		function clampToViewport(start, size, viewport, padding) {
+			return Math.max(padding, Math.min(start, viewport - padding - size));
 		}
 
 		/** 스크롤·리사이즈에 좌표를 갱신한다. capture=true - 스크롤 이벤트는 버블링하지 않는다. */
@@ -802,6 +818,7 @@
 			panel.style.left = "";
 			panel.style.top = "";
 			panel.style.width = "";
+			panel.style.maxHeight = "";
 		}
 
 		function open() {
@@ -993,7 +1010,10 @@
 		}
 
 		function onDocumentClick(e) {
-			if (!wrapper.contains(e.target)) {
+			// 목록은 열려 있는 동안 `body` 로 옮겨져 wrapper 의 자손이 아니다(#586). 함께 보지
+			// 않으면 옵션의 `mousedown` 이 바깥 클릭으로 오인돼 - `mousedown` 은 `click` 보다
+			// 먼저다 - 패널이 닫히고 원래 자리로 돌아간 뒤에 `click` 이 도착해 선택이 무산된다.
+			if (!wrapper.contains(e.target) && !panel.contains(e.target)) {
 				close();
 			}
 		}

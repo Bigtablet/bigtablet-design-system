@@ -547,6 +547,41 @@ describe("Alert", () => {
 		alert?.close();
 	});
 
+	it("body 로 옮긴 목록의 mousedown 을 바깥 클릭으로 오인하지 않는다", () => {
+		// `mousedown` 은 `click` 보다 먼저다. 목록이 `body` 로 옮겨진 뒤 wrapper 만 보면 옵션의
+		// mousedown 이 바깥 클릭이 되어 패널이 닫히고, 원래 자리로 돌아간 뒤 click 이 도착해
+		// 선택이 무산된다. 앞선 테스트가 `.click()` 만 써서 이 경로를 놓쳤다.
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		dd?.open();
+
+		const option = document.querySelector('[data-value="apple"]') as HTMLElement;
+		option.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+		// 패널이 열린 채여야 한다 - 닫혔다면 아래 click 이 아무 효과도 못 낸다.
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"block",
+		);
+
+		option.click();
+
+		expect(dd?.getValue()).toBe("apple");
+	});
+
+	it("검색 입력의 mousedown 도 바깥 클릭이 아니다", () => {
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		const dd = Dropdown(wrap);
+		dd?.open();
+
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		input.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
+			"block",
+		);
+	});
+
 	it("열면 목록을 body 로 옮기고 닫으면 되돌린다 (조상 클리핑 회피)", () => {
 		// 트리거 옆에 두면 `overflow: hidden` 인 조상이 잘라내고 `z-index` 로는 넘지 못한다
 		// (#586 - 카드 안에서 170px 목록 중 46px 만 보였다). React 번들은 포탈로 같은 처리를 한다.

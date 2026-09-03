@@ -272,6 +272,8 @@ export const Combobox = ({
 							left: popup.position.x,
 							top: popup.position.y,
 							width: popup.position.width || undefined,
+							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
+							maxWidth: popup.position.ready ? popup.position.maxWidth : undefined,
 							visibility: popup.position.ready ? undefined : "hidden",
 						}}
 					>

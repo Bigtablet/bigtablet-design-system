@@ -366,6 +366,8 @@ export const Dropdown = (props: DropdownProps) => {
 							left: position.x,
 							top: position.y,
 							width: position.width || undefined,
+							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
+							maxWidth: position.ready ? position.maxWidth : undefined,
 							// 최초 측정 전에는 숨긴다 - (0,0) 에서 한 프레임 깜빡이는 것을 막는다.
 							visibility: position.ready ? undefined : "hidden",
 						}}

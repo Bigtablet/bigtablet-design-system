@@ -51,8 +51,6 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	const itemRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
 	const menuId = React.useId();
 
-	const style = useSpringPresence({ visible: open, from: "translateY(-4px)" });
-
 	// 트리거 옆에 `position: absolute` 로 두면 `overflow: hidden` 인 조상(카드·표 래퍼)이
 	// 메뉴를 잘라낸다 - Dropdown 에서 실측한 것과 같은 결함이다(#586). Popover 와 같은 배치
 	// 훅으로 포탈에 띄운다. `align` 은 그대로 교차축 정렬로 넘긴다.
@@ -64,6 +62,13 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 		align,
 		gap: MENU_GAP,
 		padding: 8,
+	});
+
+	// 진입 방향은 실제 배치를 따라야 한다 - 위로 flip 됐는데 아래에서 올라오면 거꾸로 보인다
+	// (Dropdown·Combobox 는 `dropUp` 으로 같은 처리를 한다).
+	const style = useSpringPresence({
+		visible: open,
+		from: pos.placement === "top" ? `translateY(${MENU_GAP}px)` : `translateY(-${MENU_GAP}px)`,
 	});
 
 	React.useEffect(() => {
@@ -143,6 +148,11 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				break;
 			case "Tab":
+				// 트리거로 포커스를 되돌린 뒤 닫는다. 포탈된 항목에서 그냥 닫으면 포커스가 body 로
+				// 떨어지고, Modal 안에 있을 때 부모 focus trap 이 그것을 잡지 못해 Tab 이 모달
+				// 밖으로 나간다. 되돌리면 이어지는 기본 Tab 이동이 트리거(=모달 안)에서 시작한다.
+				// Dropdown 의 `returnFocusOnClose` 와 같은 계약이다.
+				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				setOpen(false);
 				break;
 		}
