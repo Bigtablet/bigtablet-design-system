@@ -21,6 +21,16 @@ jsdom 은 스타일시트를 계산하지 않아 단위 테스트로는 잡을 �
 튄다. AlertModal 만 처음부터 `shouldRender` 를 썼고 Modal·Drawer 가 `open` 을 써서 같은 증상이
 두 번 재발했다.
 
+## 3. 잠금이 ICB 폭을 바꾸지 않는지 (두 번들 소스)
+
+잠금은 거터를 **예약**해야 한다(`scrollbar-gutter: stable`). 놓으면(`auto`) ICB 폭이 변해
+`position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼 움직인다 - 실측 592.5 → 600 (#574).
+그리고 문서가 스크롤되지 않을 때는 아무것도 하지 않아야 한다 - 예약된 거터를 스크롤바로 오인해
+없는 스크롤바를 없애느라 레이아웃이 흔들렸다.
+
+React 와 Vanilla 두 번들이 같은 판정을 해야 한다. 이 저장소에서 "형제 구현 한쪽만 고침" 이
+다섯 번 났다.
+
 exit 1 이면 위반이 있다.
 """
 
@@ -162,6 +172,63 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
     return problems, len(owners)
 
 
+SCROLL_LOCK_SOURCES = (
+    Path("src/utils/scroll-lock.ts"),
+    Path("src/vanilla/bigtablet.js"),
+)
+
+
+DIM_SOURCES = (
+    Path("src/ui/overlay/modal/style.scss"),
+    Path("src/ui/overlay/drawer/style.scss"),
+    Path("src/ui/feedback/alert/style.scss"),
+    Path("src/vanilla/bigtablet.scss"),
+)
+NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
+GUTTER_SUPPORTS = "@supports (scrollbar-gutter: stable)"
+
+
+def check_dim_offset_gating() -> list[str]:
+    """dim 의 음수 오프셋이 전부 `@supports` 안에 있는지 - 미지원 브라우저에서는
+    잠금이 padding 으로 보정해 ICB 가 전폭이고, 그때 음수 오프셋은 dim 과 패널을
+    오른쪽으로 밀어낸다 (오른쪽 Drawer 는 화면 밖으로)."""
+    problems: list[str] = []
+    for path in DIM_SOURCES:
+        source = path.read_text(encoding="utf-8")
+        offsets = source.count(NEGATIVE_OFFSET)
+        gates = source.count(GUTTER_SUPPORTS)
+        if offsets and offsets != gates:
+            problems.append(
+                f"{path}: 음수 오프셋 {offsets}개 중 {gates}개만 `@supports` 안에 있다"
+                " - 미지원 브라우저에서 오버레이가 오른쪽으로 밀린다"
+            )
+    return problems
+
+
+def check_lock_width_invariants() -> list[str]:
+    """잠금이 거터를 놓지 않고 예약하는지, 스크롤 여부로 분기하는지."""
+    problems: list[str] = []
+    for path in SCROLL_LOCK_SOURCES:
+        source = path.read_text(encoding="utf-8")
+        # 주석에는 옛 방식을 설명해 두므로 코드 줄만 본다.
+        code = "\n".join(
+            line for line in source.splitlines() if not line.strip().startswith(("//", "*", "/*"))
+        )
+        if 'scrollbarGutter = "auto"' in code:
+            problems.append(
+                f"{path}: 잠금이 거터를 놓는다(`auto`) - ICB 폭이 변해 fixed 요소가"
+                " 스크롤바 폭의 절반만큼 움직인다 (#574). `stable` 로 예약하라"
+            )
+        if 'scrollbarGutter = "stable"' not in code:
+            problems.append(f"{path}: 잠금이 거터를 예약하지 않는다 - `stable` 이 없다")
+        if "scrollHeight > " not in code:
+            problems.append(
+                f"{path}: 문서가 스크롤되는지 보지 않는다 - 예약된 거터만 있는 앱에서"
+                " 없는 스크롤바를 없애느라 레이아웃이 흔들린다"
+            )
+    return problems
+
+
 def main() -> int:
     if not CSS.exists():
         print(f"{CSS} 가 없다 - `pnpm build` 를 먼저 실행하라", file=sys.stderr)
@@ -222,6 +289,10 @@ def main() -> int:
     problems += lock_problems
     checked += owner_count
 
+    problems += check_lock_width_invariants()
+    problems += check_dim_offset_gating()
+    checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES)
+
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
     # 잘리고 close 가 화면 밖으로 나갔다).
@@ -253,8 +324,11 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    print(f"오버레이 close 기하 {checked - owner_count}건 - 전부 패널 패딩에서 파생됩니다.")
+    close_checks = checked - owner_count - len(SCROLL_LOCK_SOURCES) - len(DIM_SOURCES)
+    print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
+    print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 스크롤 여부로 분기합니다.")
+    print(f"dim 음수 오프셋 {len(DIM_SOURCES)}개 파일 - 전부 `@supports` 안에 있습니다.")
     return 0
 
 
