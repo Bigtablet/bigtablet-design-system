@@ -2,6 +2,20 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Sidebar, SidebarItem, SidebarSection } from "./index";
 
+/** Next.js `Link` 대역. 라우터 링크는 결국 `<a>` 를 렌더하는 컴포넌트다. */
+const RouterLink = ({
+	href,
+	children,
+	...rest
+}: {
+	href: string;
+	children?: React.ReactNode;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+	<a data-router="true" href={href} {...rest}>
+		{children}
+	</a>
+);
+
 describe("Sidebar", () => {
 	it("renders header, items, and footer", () => {
 		render(
@@ -84,5 +98,64 @@ describe("Sidebar", () => {
 			</Sidebar>,
 		);
 		expect(container.firstChild).not.toHaveClass("sidebar_static");
+	});
+
+	it("renders a component given to as", () => {
+		// 리터럴 유니온이었을 때는 Next 앱에서 사이드바 항목을 라우터 링크로 만들 수 없었다.
+		render(
+			<SidebarItem as={RouterLink} href="/orders" active>
+				주문
+			</SidebarItem>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("data-router", "true");
+		expect(link).toHaveClass("sidebar_item", "sidebar_item_active");
+		expect(link).toHaveAttribute("aria-current", "page");
+	});
+
+	it("still infers an anchor from href alone", () => {
+		render(<SidebarItem href="/orders">주문</SidebarItem>);
+
+		expect(screen.getByRole("link", { name: "주문" })).toHaveAttribute("href", "/orders");
+	});
+
+	// 타입 레벨 회귀 방지 - `as="a"` 는 `href` 를 요구해야 한다(판별 유니온 시절 계약).
+	// 아래 무시 지시자가 "불필요"로 판정되면 tsc 가 실패하므로 이 단언은 tsc 가 검증한다.
+	it("requires href when as is a at the type level", () => {
+		// @ts-expect-error - `as="a"` 에 href 가 없으면 타입 에러여야 한다.
+		const hrefless = <SidebarItem as="a">주문</SidebarItem>;
+		expect(hrefless).toBeTruthy();
+	});
+
+	it("uses native disabled on a button item", () => {
+		render(<SidebarItem disabled>주문</SidebarItem>);
+
+		expect(screen.getByRole("button", { name: "주문" })).toBeDisabled();
+	});
+
+	it("blocks a disabled link item without native disabled", () => {
+		// anchor·커스텀 컴포넌트에는 native disabled 가 없다 - 그냥 넘기면 조용히 무시되고
+		// 비활성 항목이 눌린다. Button·BottomNavItem 과 같은 규칙으로 막는다.
+		const onClick = vi.fn();
+		const onAncestorClick = vi.fn();
+		render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 전파 차단을 보려면 상위 클릭 대상이 필요하다
+			<div onClick={onAncestorClick}>
+				<SidebarItem as={RouterLink} href="/orders" disabled onClick={onClick}>
+					주문
+				</SidebarItem>
+			</div>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		expect(link).toHaveAttribute("tabindex", "-1");
+		expect(link).not.toHaveAttribute("disabled");
+
+		fireEvent.click(link);
+		expect(onClick).not.toHaveBeenCalled();
+		// native disabled button 은 click 이 아예 안 난다 - 상위 핸들러도 실행되지 않아야 한다.
+		expect(onAncestorClick).not.toHaveBeenCalled();
 	});
 });

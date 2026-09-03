@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import type { PolymorphicProps } from "../../../utils/polymorphic";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -129,6 +130,12 @@ export const Sidebar = ({
 };
 
 interface SidebarItemCommon {
+	/**
+	 * 비활성. `<button>` 은 native `disabled`, 그 밖의 요소(anchor·`Link` 등)는
+	 * `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리한다 - native `disabled` 가 없는
+	 * 요소에 그냥 넘기면 조용히 무시되고 비활성 항목이 눌린다.
+	 */
+	disabled?: boolean;
 	/** 왼쪽 아이콘 */
 	icon?: React.ReactNode;
 	/** 현재 활성 상태 */
@@ -137,24 +144,35 @@ interface SidebarItemCommon {
 	trailing?: React.ReactNode;
 }
 
-// Discriminated union - `as` 값에 따라 허용되는 HTML attribute 동적 결정.
-// `target` / `rel` / `download` 는 anchor 만, `type` / `form` 등은 button 만.
-type SidebarItemButton = SidebarItemCommon & {
-	as?: "button";
-	href?: never;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+/**
+ * SidebarItem props. `as` 로 렌더 요소를 바꾼다 - `"a"`, `Link`(Next.js) 등 무엇이든.
+ *
+ * 리터럴 유니온(`"button" | "a"`)이었을 때는 Next 앱에서 사이드바 항목을 라우터 링크로 만들
+ * 방법이 없어, 소비자가 DS 를 우회해 자기 항목을 만들었다.
+ *
+ * `as="a"` 면 `href` 는 **필수**다 - 판별 유니온 시절 계약이고, `href` 없는 `<a>` 는 링크
+ * 시맨틱이 없다(`AnchorHTMLAttributes.href` 가 옵션이라 그대로 두면 느슨해진다).
+ */
+export type SidebarItemProps<T extends React.ElementType = "button"> = PolymorphicProps<
+	T,
+	SidebarItemCommon
+> &
+	("button" extends T ? { href?: string } : Record<never, never>) &
+	("a" extends T ? { href: string } : Record<never, never>);
 
-type SidebarItemAnchor = SidebarItemCommon & {
-	as: "a";
-	href: string;
-} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "type">;
-
-export type SidebarItemProps = SidebarItemButton | SidebarItemAnchor;
-
-export const SidebarItem = (props: SidebarItemProps) => {
-	const { icon, active, trailing, as = "button", className, children, ...rest } = props;
-	const classes = cn("sidebar_item", active && "sidebar_item_active", className);
+export const SidebarItem = <T extends React.ElementType = "button">(props: SidebarItemProps<T>) => {
+	const { icon, active, trailing, as, className, children, disabled, ref, ...rest } = props;
+	const classes = cn(
+		"sidebar_item",
+		active && "sidebar_item_active",
+		disabled && "sidebar_item_disabled",
+		className,
+	);
 	const ariaCurrent = active ? "page" : undefined;
+
+	// `as` 가 없고 `href` 만 있으면 anchor - 예전 판별 유니온과 같은 추론이다.
+	const anchorRest = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+	const Tag = (as ?? (anchorRest.href != null ? "a" : "button")) as React.ElementType;
 
 	const inner = (
 		<>
@@ -168,26 +186,48 @@ export const SidebarItem = (props: SidebarItemProps) => {
 		</>
 	);
 
-	if (as === "a") {
-		const { href, ...anchorRest } = rest as Omit<
-			SidebarItemAnchor,
-			"icon" | "active" | "trailing" | "as" | "className" | "children"
-		>;
+	if (Tag === "button") {
+		// `<button href>` 는 유효하지 않다 - 렌더 요소는 `as` 가 정하므로 여기서 href 는 버린다.
+		const {
+			type,
+			href: _href,
+			...buttonRest
+		} = rest as React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string };
 		return (
-			<a className={classes} href={href} aria-current={ariaCurrent} {...anchorRest}>
+			<button
+				ref={ref as React.Ref<HTMLButtonElement>}
+				type={type ?? "button"}
+				className={classes}
+				disabled={disabled}
+				aria-current={ariaCurrent}
+				{...buttonRest}
+			>
 				{inner}
-			</a>
+			</button>
 		);
 	}
 
-	const { type, ...buttonRest } = rest as Omit<
-		SidebarItemButton,
-		"icon" | "active" | "trailing" | "as" | "className" | "children"
-	>;
+	// native `disabled` 가 없는 요소 - Button 과 같은 규칙으로 막는다.
+	const { onClick, tabIndex, ...tagProps } = anchorRest;
 	return (
-		<button type={type ?? "button"} className={classes} aria-current={ariaCurrent} {...buttonRest}>
+		<Tag
+			{...tagProps}
+			ref={ref}
+			className={classes}
+			aria-current={ariaCurrent}
+			aria-disabled={disabled || undefined}
+			tabIndex={disabled ? -1 : tabIndex}
+			onClick={(event: React.MouseEvent) => {
+				if (disabled) {
+					event.preventDefault();
+					event.stopPropagation();
+					return;
+				}
+				onClick?.(event as React.MouseEvent<HTMLAnchorElement>);
+			}}
+		>
 			{inner}
-		</button>
+		</Tag>
 	);
 };
 

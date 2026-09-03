@@ -1,5 +1,6 @@
 export { cn } from "./cn";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
+export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
 export { lockBodyScroll, unlockBodyScroll } from "./scroll-lock";
 export {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,

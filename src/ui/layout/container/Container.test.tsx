@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Container } from "./index";
 
@@ -45,5 +45,19 @@ describe("Container", () => {
 			</Container>,
 		);
 		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+
+	it("passes the target element's props through as", () => {
+		// 예전에는 `as?: React.ElementType` 이라 요소만 갈리고 props 는 div 기준으로 고정돼,
+		// `as="a"` 로 바꿔도 `href` 가 타입에 없었다.
+		render(
+			<Container as="a" href="/orders">
+				주문
+			</Container>,
+		);
+
+		const link = screen.getByRole("link", { name: "주문" });
+		expect(link).toHaveAttribute("href", "/orders");
+		expect(link).toHaveClass("container");
 	});
 });
