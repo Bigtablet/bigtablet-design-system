@@ -23,7 +23,7 @@ export interface ChipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
 	selected?: boolean;
 	/** 삭제 가능 여부 (input / static 타입에서 사용) */
 	removable?: boolean;
-	/** 비활성화 상태 */
+	/** 비활성화 상태. `static` 은 컨트롤이 아닌 텍스트 라벨이라 라벨은 흐려지지 않고 remove 버튼만 흐려진다 */
 	disabled?: boolean;
 	/** 팝업 열림 상태 (filter 타입에서 aria-expanded로 사용) */
 	open?: boolean;
