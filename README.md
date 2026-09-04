@@ -139,6 +139,37 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 }
 ```
 
+### CSS: whole bundle or per component
+
+`style.css` carries every component (153KB). An app that uses a handful of
+components can import only what it renders instead - `base.css` plus one file per
+component:
+
+```tsx
+import "@bigtablet/design-system/css/base.css";   // tokens + global rules (always)
+import "@bigtablet/design-system/css/button.css";
+import "@bigtablet/design-system/css/modal.css";
+```
+
+| App | CSS |
+| --- | --- |
+| Uses most of the DS | `style.css` - one import, no bookkeeping |
+| Uses a handful | `base.css` + the parts it renders |
+
+Measured: `base.css` (11.8KB) + Button + Modal is **19KB, 12% of `style.css`**;
+five components come to 19%. Past roughly twenty components the bundle is smaller.
+
+Two rules:
+
+- **Do not import both.** The rules would load twice.
+- **A composed component needs its parts.** `DataView` renders `Table`,
+  `Pagination`, `TextField`, `Dropdown`, `Button`, `Chip`, `EmptyState` and
+  `ErrorState` - import each. If a component looks unstyled, that is the cause.
+  `DatePicker`, `TimePicker` and `DateRangePicker` each need `dropdown.css`.
+
+The parts are compressed; `style.css` is not, so its size is not directly
+comparable to their sum.
+
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
 > The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
 

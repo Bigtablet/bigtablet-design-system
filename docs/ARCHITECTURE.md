@@ -4,6 +4,7 @@ Bigtablet Design System의 프로젝트 구조 및 아키텍처 문서입니다.
 
 ---
 
+
 ## 프로젝트 구조
 
 ```
@@ -382,6 +383,24 @@ dist/
 ```
 
 ---
+
+## CSS 산출물 두 갈래
+
+`tsup` 이 컴포넌트의 `import "./style.scss"` 를 모아 `dist/index.css`(= `./style.css`) 하나로
+낸다. 그것과 별개로 `scripts/build-css-parts.sh` 가 같은 SCSS 를 컴포넌트별로 컴파일해
+`dist/css/<component>.css` 를 만들고, 토큰·전역 규칙은 `dist/css/base.css` 로 모은다.
+
+```
+dist/index.css        전체 묶음 (tsup, 확장)      → ./style.css
+dist/css/base.css     토큰 + 전역 (sass, 압축)    → ./css/base.css
+dist/css/<name>.css   컴포넌트 하나 (sass, 압축)  → ./css/<name>.css
+dist/styles/**        SCSS 토큰 원본              → ./scss/token
+```
+
+조각을 `dist/styles/` 가 아니라 `dist/css/` 에 두는 이유는 그 자리가 SCSS 원본(`./scss/token`)
+소유이기 때문이다. exports 는 와일드카드 하나(`"./css/*": "./dist/css/*"`)라 컴포넌트를 추가해도
+매핑을 손대지 않는다 - 대신 빌드 스크립트가 `src/ui/<카테고리>/<컴포넌트>/style.scss` 규약을
+벗어난 파일을 발견하면 멈춘다(조각이 조용히 빠지는 것을 막는다).
 
 ## 테스트 구조
 

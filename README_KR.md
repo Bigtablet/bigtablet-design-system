@@ -139,6 +139,35 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 }
 ```
 
+### CSS: 전체 묶음이냐 컴포넌트별이냐
+
+`style.css` 는 모든 컴포넌트를 담는다(153KB). 몇 개만 쓰는 앱은 렌더하는 것만 골라 실을 수 있다 -
+`base.css` 와 컴포넌트별 파일이다.
+
+```tsx
+import "@bigtablet/design-system/css/base.css";   // 토큰 + 전역 규칙 (항상 필요)
+import "@bigtablet/design-system/css/button.css";
+import "@bigtablet/design-system/css/modal.css";
+```
+
+| 앱 | CSS |
+| --- | --- |
+| DS 를 두루 쓴다 | `style.css` - import 한 줄, 관리 부담 없음 |
+| 몇 개만 쓴다 | `base.css` + 렌더하는 컴포넌트 |
+
+실측 - `base.css`(11.8KB) + Button + Modal 은 **19KB, `style.css` 의 12%** 다. 다섯 개면 19%.
+스무 개쯤부터는 전체 묶음이 더 작다.
+
+두 가지 규칙:
+
+- **둘을 함께 import 하지 않는다.** 규칙이 두 번 실린다
+- **조합 컴포넌트는 부품이 필요하다.** `DataView` 는 `Table`·`Pagination`·`TextField`·`Dropdown`·
+  `Button`·`Chip`·`EmptyState`·`ErrorState` 를 렌더하므로 각각 import 한다. 컴포넌트가 스타일
+  없이 보이면 이것이 원인이다. `DatePicker`·`TimePicker`·`DateRangePicker` 는 `dropdown.css` 가
+  필요하다
+
+조각은 압축 출력이고 `style.css` 는 아니라, 조각 합계와 크기를 직접 비교하면 안 된다.
+
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
 > React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*` 뿐이다. spacing / radius / typography 는 이 entry 에선 **SCSS 전용**이라 `scss/token` 을 써야 한다 (`--bt-spacing-*` / `--bt-radius-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
 

@@ -15,6 +15,7 @@
 			"import": "./dist/index.js"
 		},
 		"./style.css": "./dist/index.css",
+		"./css/*": "./dist/css/*",
 		"./scss/token": "./dist/styles/token.scss",
 		"./vanilla": {
 			"style": "./dist/vanilla/bigtablet.min.css",
@@ -37,7 +38,7 @@
 		"**/*.scss"
 	],
 	"scripts": {
-		"build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
+		"build": "tsup && pnpm run copy:scss && pnpm run build:css-parts && pnpm run build:vanilla",
 		"build:vanilla": "sh scripts/build-vanilla.sh",
 		"copy:scss": "sh scripts/copy-scss.sh",
 		"dev": "tsup --watch",
@@ -54,7 +55,8 @@
 		"check:geometry": "python3 scripts/check-overlay-geometry.py",
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
 		"size": "size-limit",
-		"prepare": "husky"
+		"prepare": "husky",
+		"build:css-parts": "sh scripts/build-css-parts.sh"
 	},
 	"keywords": [
 		"design-system",
