@@ -37,6 +37,14 @@ export const SimpleText: Story = {
 };
 
 export const WithBackgroundImage: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`backgroundImage` 는 `<h1>` 이 있는 `<section>` 의 배경이라 **의미를 담지 않습니다.** 사진 자체가 정보를 담고 있다면 배경이 아니라 본문 `<img>` 로 두고 `alt` 를 주세요.",
+			},
+		},
+	},
 	render: () => (
 		<Hero
 			title="오늘의 메뉴"
@@ -77,6 +85,14 @@ export const CenteredCallToAction: Story = {
 
 export const LightOverlay: Story = {
 	name: "Light overlay (밝은 이미지)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'밝은 사진 위에서는 `overlay="light"` 로 바꿉니다. 어두운 오버레이는 밝은 이미지에서 텍스트를 오히려 읽기 어렵게 만듭니다.\n\n오버레이는 장식이 아니라 **텍스트 대비를 만드는 장치**입니다 - 배경 이미지를 쓰면서 오버레이를 끄지 마세요.',
+			},
+		},
+	},
 	render: () => (
 		<Hero
 			title="블로그"

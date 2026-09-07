@@ -89,6 +89,14 @@ export const Medium: Story = {
 
 export const Large: Story = {
 	name: "lg (약관·정책)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"약관·정책처럼 페이지를 가득 채우는 긴 본문용입니다. 본문 글자와 제목이 함께 커집니다.\n\n공지나 FAQ 처럼 좁은 폭에 들어가는 글은 `md` 가 맞습니다 - `lg` 를 좁은 컨테이너에 두면 한 줄에 담기는 글자가 너무 적어집니다.",
+			},
+		},
+	},
 	args: { size: "lg" },
 	render: (args) => (
 		<Prose {...args}>

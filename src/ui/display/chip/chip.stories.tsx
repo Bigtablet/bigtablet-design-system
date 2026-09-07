@@ -29,6 +29,9 @@ const meta: Meta<typeof Chip> = {
 
 **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
 주요 prop: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / 기본 32), \`selected\`, \`removable\`.
+
+누를 수도 지울 수도 없는 **표시 전용**이면 \`Badge\` 입니다. 카운트(\`3\`)나 점 표시도 \`Badge\` 쪽입니다.
+반대로 사용자가 고르거나 떼어낼 수 있으면 Chip 입니다 - \`type="static"\` 은 그 사이에 있는 라벨 전용입니다.
 				`,
 			},
 		},
@@ -48,6 +51,14 @@ export const InputChip: Story = {
 };
 
 export const Filter: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'목록 위에 얹는 조건 칩입니다. 눌러서 펼치는 형태라 뒤에 `Dropdown` 이나 `Menu` 를 붙이는 것이 보통입니다.\n\n이미 적용된 조건을 보여 주는 쪽은 `type="input"` + `removable` 이 맞습니다 - 하나씩 뗄 수 있어야 하니까요.',
+			},
+		},
+	},
 	args: { type: "filter", label: "Filter", selected: true },
 };
 
@@ -67,6 +78,14 @@ export const Static: Story = {
 
 export const Disabled: Story = {
 	name: "Disabled (type별)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"type 별로 잠긴 모습입니다. `static` 은 컨트롤이 아니라 라벨이라 **라벨 글자가 흐려지지 않습니다** - 흐리면 대비가 1.68:1 로 AA 에 못 미쳤습니다(3.17.2). `input` 은 삭제 버튼만 흐려집니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 			<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>

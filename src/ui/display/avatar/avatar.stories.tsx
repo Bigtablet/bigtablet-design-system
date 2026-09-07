@@ -55,6 +55,14 @@ export const Sizes: Story = {
 };
 
 export const Shapes: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`circle` 은 사람, `square` 는 브랜드·조직입니다. 한 화면에서 둘을 섞으면 "사람인지 회사인지"가 모양으로 읽히므로, 목록 안에서는 한쪽으로 통일하세요.',
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", gap: 12 }}>
 			<Avatar name="C" shape="circle" size="lg" />
@@ -65,5 +73,13 @@ export const Shapes: Story = {
 
 export const Fallback: Story = {
 	name: "Fallback (이미지 실패)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"이미지 URL 이 깨졌을 때의 모습입니다. `name` 을 함께 넘겨 두면 이니셜로 대체되어 **빈 회색 원이 남지 않습니다.**\n\n이미지를 쓰든 안 쓰든 `name` 은 항상 넘기세요 - 대체 표시와 접근성 이름을 같이 담당합니다.",
+			},
+		},
+	},
 	args: { src: "/broken-path.jpg", name: "박상민" },
 };

@@ -37,6 +37,14 @@ const meta: Meta<typeof Card> = {
 **구성**: \`heading\` (헤더) + children (본문) + \`footer\` (\`footerAlign\` start/between/end) 3단. \`interactive\` 를 켜면 클릭 가능한 카드에 hover lift 가 붙는다.
 
 그 밖의 prop: \`shadow\` (none/sm/md/lg), \`padding\` (none/sm/md/lg), \`bordered\`.
+
+#### 콘텐츠 담는 그릇 셋 중 무엇을 쓰나
+
+| 상황 | 컴포넌트 |
+| --- | --- |
+| 자유로운 내용을 한 덩어리로 묶을 때 | \`Card\` |
+| **이미지가 주인공**일 때 (블로그·제품·메뉴) | \`MediaCard\` |
+| **목록의 한 줄**일 때 (아이콘 + 제목 + 보조 텍스트) | \`ListItem\` |
 				`,
 			},
 		},
@@ -68,7 +76,15 @@ export const LargeShadow: Story = {
 
 export const Variants: Story = {
 	name: "Variants 비교",
-	parameters: { controls: { disable: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"네 가지를 나란히 둔 비교입니다. `glass` 는 **컬러나 이미지 배경 위에서만** 값을 합니다 - 흰 배경에 두면 반투명이 드러나지 않아 `default` 와 구분되지 않습니다.",
+			},
+		},
+		controls: { disable: true },
+	},
 	render: () => (
 		<div
 			style={{
@@ -99,6 +115,14 @@ export const Variants: Story = {
 
 export const Interactive: Story = {
 	name: "Interactive (hover-lift)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"카드 전체가 클릭 대상일 때 켭니다. hover 시 살짝 떠오르는 반응이 붙어 **누를 수 있다는 사실**이 보입니다.\n\n카드 안에 버튼이 따로 있으면 켜지 마세요 - 클릭 대상이 겹쳐 어디를 눌러야 하는지 모호해집니다.",
+			},
+		},
+	},
 	args: {
 		interactive: true,
 		heading: "클릭 가능한 카드",
@@ -108,6 +132,14 @@ export const Interactive: Story = {
 
 export const WithFooter: Story = {
 	name: "Footer 슬롯",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"본문과 액션을 나누는 3단 구성입니다. 버튼을 본문 안에 두지 말고 `footer` 로 내리면, 카드를 여러 개 나열했을 때 **버튼 줄이 서로 맞습니다.**\n\n`footerAlign` 으로 정렬을 고릅니다 - `between` 은 보조 텍스트와 버튼을 양끝으로 밉니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 360 }}>
 			<Card

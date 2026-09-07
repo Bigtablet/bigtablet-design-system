@@ -55,6 +55,14 @@ export const Default: Story = {
 };
 
 export const Multiple: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`multiple` 을 켜면 패널이 서로 독립적으로 열립니다. FAQ 처럼 **여러 항목을 나란히 펼쳐 두고 비교**할 때 씁니다.\n\n기본값(`false`)은 하나를 열면 나머지가 닫히는 형태로, 화면이 길어지는 것을 막고 싶을 때 씁니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ width: 560 }}>
 			<Accordion items={FAQ} multiple defaultOpenKeys={["1", "2"]} />
@@ -63,6 +71,14 @@ export const Multiple: Story = {
 };
 
 export const WithDisabled: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"아직 열 수 없는 패널을 잠근 상태입니다. 조건이 안 갖춰졌을 때 항목을 **숨기는 대신 잠그면**, 무엇이 남았는지 사용자가 볼 수 있습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ width: 560 }}>
 			<Accordion
@@ -77,7 +93,15 @@ export const WithDisabled: Story = {
 };
 
 export const Controlled: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'열림 상태를 화면이 직접 들고 있는 형태입니다. "다음 단계로 넘어가면 이전 패널을 접는다" 처럼 **다른 동작과 연동해야 할 때만** 제어형으로 가세요.\n\n단순 펼침/접힘이라면 제어하지 않는 편이 코드가 짧습니다.',
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	render: () => {
 		const [openKeys, setOpenKeys] = useState<string[]>(["1"]);
 		return (
