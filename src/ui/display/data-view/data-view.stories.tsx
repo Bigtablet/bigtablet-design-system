@@ -138,6 +138,14 @@ export const FullScreen: Story = {
 
 export const Loading: Story = {
 	name: "로딩 (스켈레톤)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`query.isLoading` 이 true 일 때입니다. 표 안에 스켈레톤 행이 서고 툴바는 그대로 남아, 로딩이 끝날 때 **레이아웃이 튀지 않습니다.**",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ width: 720 }}>
 			<DataView
@@ -152,6 +160,14 @@ export const Loading: Story = {
 
 export const Empty: Story = {
 	name: "빈 상태",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'조건에 맞는 데이터가 없을 때입니다. `DataView` 가 `EmptyState` 를 자동으로 세우므로 화면에서 `rows.length === 0` 을 분기하지 않아도 됩니다.\n\n검색 결과 0건과 "아직 아무것도 없음"은 문구가 달라야 합니다 - `empty` 슬롯으로 갈아 끼우세요.',
+			},
+		},
+	},
 	render: () => (
 		<div style={{ width: 720 }}>
 			<DataView query={{ data: [] }} columns={COLUMNS} rowKey={rowKey} ariaLabel="사용자 목록" />

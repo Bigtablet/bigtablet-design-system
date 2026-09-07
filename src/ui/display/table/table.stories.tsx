@@ -61,6 +61,10 @@ const meta: Meta<typeof Table> = {
 **Table** - 정형 데이터를 행/열로 표시한다. 제네릭 row 타입 안전. 제어형 정렬(\`sort\`/\`onSortChange\`)과 행 선택(\`selectable\`/\`rowKey\`/\`selectedKeys\`/\`onSelectionChange\`)을 지원한다 - DS는 UI 상태만 그리고, 실제 \`data\` 정렬과 선택 목록 관리는 소비자가 담당한다.
 
 주요 prop: \`columns\`, \`rows\`, \`size\` (sm/md/lg), \`isLoading\` (Skeleton 행 자동), \`stickyHeader\`, \`onRowClick\`, \`emptyMessage\`.
+
+검색·필터·페이지네이션·빈 상태·에러까지 **목록 화면 한 벌**이 필요하면 Table 위에 직접 짜지 말고
+\`DataView\` 를 쓰세요 - 그쪽이 이 Table 을 안에 두고 위아래를 채웁니다. Table 만 쓰는 것은
+이미 화면 골격이 있고 표 하나만 끼울 때입니다.
         `,
 			},
 		},
@@ -84,6 +88,14 @@ export const Default: Story = {
 
 export const Loading: Story = {
 	name: "로딩",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`isLoading` 만 켜면 컬럼 수에 맞는 스켈레톤 행이 자동으로 깔립니다. 표 위에 `Spinner` 를 따로 얹지 마세요 - 행 자리를 잡아 두는 편이 레이아웃이 튀지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<Table<User>
 			columns={columns}
@@ -132,6 +144,14 @@ export const Sizes: Story = {
 
 export const Clickable: Story = {
 	name: "행 클릭",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"행을 눌러 상세로 넘어가는 패턴입니다. 행 안에 버튼이나 링크가 있으면 그쪽 클릭이 행 클릭과 겹치므로 전파를 막아야 합니다.\n\n선택(`selectable`)과 함께 쓸 때는 체크박스 열을 눌렀을 때 상세로 넘어가지 않도록 주의하세요.",
+			},
+		},
+	},
 	render: () => (
 		<Table<User>
 			columns={columns}
@@ -144,7 +164,15 @@ export const Clickable: Story = {
 
 export const StickyHeader: Story = {
 	name: "Sticky Header",
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"행이 많아 세로로 스크롤될 때 켭니다. 헤더가 붙어 있어야 아래로 내려가도 **어느 열인지** 알 수 있습니다.\n\n표를 감싼 요소에 높이 제한이 있어야 동작합니다 - 페이지 전체가 스크롤되는 구조에서는 효과가 없습니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	render: () => (
 		<div
 			tabIndex={0}

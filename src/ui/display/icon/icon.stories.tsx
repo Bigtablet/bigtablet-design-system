@@ -84,6 +84,14 @@ export const StrokeWidths: Story = {
 
 export const Colors: Story = {
 	name: "색상 (currentColor 상속)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"아이콘 색은 `currentColor` 를 물려받습니다. 아이콘에 색을 직접 주는 대신 **감싼 요소의 `color` 를 정하면** 글자와 아이콘이 항상 같은 색으로 움직입니다 - 다크 모드 전환도 따라옵니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", gap: 16, alignItems: "center" }}>
 			{["#121212", "#47555E", "#7AA5D2", "#EF4444", "#10B981"].map((c) => (
@@ -153,6 +161,14 @@ export const CommonIconCatalog: Story = {
 
 export const WithAriaLabel: Story = {
 	name: "Aria label (스크린리더용)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"아이콘이 **혼자서 뜻을 전달할 때만** `aria-label` 을 줍니다 - 라벨 없는 아이콘 버튼 같은 경우.\n\n옆에 글자가 있으면 주지 마세요. 기본값인 `aria-hidden` 이 맞습니다 - 이름을 주면 스크린리더가 같은 뜻을 두 번 읽습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", gap: 16, alignItems: "center" }}>
 			<button

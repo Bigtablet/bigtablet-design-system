@@ -97,6 +97,14 @@ export const TwoLine: Story = {
 
 export const WithOverlineAndMetadata: Story = {
 	name: "Overline + Metadata",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"텍스트 슬롯 네 개를 모두 쓴 모습입니다 - `overline`(위 작은 글자) · `label` · `supportingText` · `metadata`.\n\n**넷을 다 채우는 것이 목표가 아닙니다.** 목록의 모든 행이 같은 슬롯만 쓰도록 맞추는 편이 훑어보기 쉽습니다.",
+			},
+		},
+	},
 	args: {
 		overline: "카테고리",
 		label: "오버라인이 있는 리스트 아이템",
@@ -122,7 +130,15 @@ export const WithTrailing: Story = {
 };
 
 export const Interactive: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`onClick` 을 주면 행 전체가 눌립니다. 행 안에 버튼을 또 두면 클릭이 겹치므로, 보조 동작은 `trailingElement` 의 버튼 하나로 모으고 이벤트 전파를 막으세요.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	args: {
 		label: "클릭 가능한 리스트 아이템",
 		supportingText: "hover/focus/pressed 상태.",
@@ -132,6 +148,14 @@ export const Interactive: Story = {
 
 export const RichContent: Story = {
 	name: "Rich content (ReactNode)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"텍스트 슬롯은 string 뿐 아니라 ReactNode 도 받습니다. 인라인 `<strong>` 이나 `Badge` 를 라벨 안에 섞을 때 쓰세요.\n\n다만 슬롯 안에 레이아웃을 짜기 시작하면 `ListItem` 이 아니라 `Card` 를 봐야 할 신호입니다.",
+			},
+		},
+	},
 	args: {
 		overline: (
 			<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
