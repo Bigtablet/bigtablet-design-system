@@ -59,7 +59,7 @@ export const Controlled: Story = {
 				<OtpInput
 					length={length}
 					value={val}
-					onChange={setVal}
+					onValueChange={setVal}
 					error={error}
 					disabled={disabled}
 					supportingText="인증 코드를 입력하세요"
@@ -87,13 +87,13 @@ export const Lengths: Story = {
 					<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>
 						4자리
 					</p>
-					<OtpInput length={4} value={val4} onChange={setVal4} supportingText="4자리 코드" />
+					<OtpInput length={4} value={val4} onValueChange={setVal4} supportingText="4자리 코드" />
 				</div>
 				<div>
 					<p style={{ margin: "0 0 8px", fontSize: 13, color: "var(--bt-color-text-body)" }}>
 						6자리
 					</p>
-					<OtpInput length={6} value={val6} onChange={setVal6} supportingText="6자리 코드" />
+					<OtpInput length={6} value={val6} onValueChange={setVal6} supportingText="6자리 코드" />
 				</div>
 			</div>
 		);

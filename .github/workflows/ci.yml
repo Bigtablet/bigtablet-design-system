@@ -119,6 +119,15 @@ jobs:
       - name: Check prop defaults
         run: pnpm check:defaults
 
+      # 스토리가 `@deprecated` prop 을 쓰고 있는지. 소스만 읽으므로 여기(Build 앞)에 둔다.
+      # 스토리는 소비자가 복사해 가는 자리라, 폐기된 prop 을 시연하면 그대로 퍼진다.
+      # 타입은 아직 살아 있어서 tsc 가 잡지 못하고, 렌더 결과도 같아서 a11y 러너도 못 잡는다.
+      # 실제로 문서 작업 중 손으로 넷을 찾았고, 이 검사를 붙이자 못 찾은 넷이 더 나왔다
+      # (Accordion·OtpInput 의 `onChange`). `paths-ignore` 는 `docs/**` 와 `**.md` 만 빼므로
+      # 스토리 파일(`src/**`)을 고친 PR 에서는 반드시 돈다.
+      - name: Check deprecated props in stories
+        run: pnpm check:deprecated
+
       # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
       - name: Run tests with coverage
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'
