@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Filter, Lock, Mail, Search, User } from "lucide-react";
 import { useState } from "react";
-import { Chip } from "../../ui/display/chip";
-import { Divider } from "../../ui/display/divider";
-import { Checkbox } from "../../ui/forms/checkbox";
-import { Dropdown } from "../../ui/forms/dropdown";
-import { Field } from "../../ui/forms/field";
-import { Form } from "../../ui/forms/form";
-import { Radio } from "../../ui/forms/radio";
-import { TextField } from "../../ui/forms/textfield";
-import { Toggle } from "../../ui/forms/toggle";
-import { Button } from "../../ui/general/button";
-import { Stack } from "../../ui/layout/stack";
+import { Chip } from "src/ui/display/chip";
+import { Divider } from "src/ui/display/divider";
+import { Checkbox } from "src/ui/forms/checkbox";
+import { Dropdown } from "src/ui/forms/dropdown";
+import { Field } from "src/ui/forms/field";
+import { Form } from "src/ui/forms/form";
+import { Radio } from "src/ui/forms/radio";
+import { TextField } from "src/ui/forms/textfield";
+import { Toggle } from "src/ui/forms/toggle";
+import { Button } from "src/ui/general/button";
+import { Stack } from "src/ui/layout/stack";
 
 const meta: Meta = {
 	title: "Cookbook/Form Patterns",
@@ -20,7 +20,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**폼 패턴 cookbook** - 로그인·가입·검색·설정 등 실제 화면에서 자주 쓰는 폼 조합을 그대로 복사해 사용할 수 있도록 정리한 레시피 모음입니다.\n\n각 예시는 Stack 레이아웃 프리미티브와 입력 컴포넌트만으로 self-contained되어 있어 import 후 바로 붙여 넣을 수 있습니다.",
+					"로그인, 회원가입, 검색, 설정 등 **자주 만드는 폼 네 가지**입니다.\n\n모든 예시는 DS 컴포넌트만으로 완결되어 있어 다른 파일을 만들지 않고 그대로 붙여 넣을 수 있습니다. 폼이 커질수록 `Stack` → `Form` + `Field` 로 올라가는 순서를 같이 보여 줍니다.",
 			},
 		},
 	},
@@ -68,6 +68,14 @@ const FormCard = ({
 
 export const LoginForm: Story = {
 	name: "로그인 폼",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"가장 짧은 폼입니다. `TextField` 의 `leadingIcon` 으로 입력의 종류를 알리고, `Stack gap` 하나로 필드 간격을 맞춥니다.\n\n필드가 늘어나 라벨·도움말·에러 자리가 필요해지면 아래 회원가입 폼처럼 `Form` + `Field` 로 올라가세요.",
+			},
+		},
+	},
 	render: () => {
 		const [email, setEmail] = useState("");
 		const [password, setPassword] = useState("");
@@ -157,7 +165,7 @@ export const SignUpForm: Story = {
 		docs: {
 			description: {
 				story:
-					"`Form` + `Field` 조합. 필드 간 간격·라벨 위치·에러 문구 자리를 DS 가 소유하므로 화면은 값과 검증만 다룬다. 이전에는 `Stack gap` 과 입력별 `supportingText`/`error` 를 손으로 배선했다.",
+					"필드가 여러 개인 폼은 `Form` + `Field` 로 만듭니다. 라벨 위치, 필수 표시, 도움말과 에러 문구가 놓이는 자리, 필드 사이 간격을 DS 가 갖습니다.\n\n화면이 정하는 것은 **값과 검증 규칙뿐**입니다. `Form` 에 `errors` 맵을 넘기면 각 `Field` 가 자기 이름의 에러를 찾아 그립니다.",
 			},
 		},
 	},
@@ -271,6 +279,14 @@ export const SignUpForm: Story = {
 
 export const SearchWithFilter: Story = {
 	name: "검색 + 필터",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"목록 화면 위에 얹는 **검색 줄**입니다. 검색어는 `TextField`, 조건은 `Dropdown`, 적용된 조건은 `Chip` 으로 보여 주어 지금 무엇으로 걸러졌는지 드러냅니다.\n\n`Chip` 에 `onRemove` 를 주면 조건을 하나씩 뗄 수 있습니다.",
+			},
+		},
+	},
 	render: () => {
 		const [keyword, setKeyword] = useState("");
 		const [sort, setSort] = useState<string | null>("newest");
@@ -367,6 +383,14 @@ export const SearchWithFilter: Story = {
 
 export const SettingsSection: Story = {
 	name: "설정 섹션",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"설정 화면처럼 **성격이 다른 항목을 한 페이지에 늘어놓을 때** 씁니다. 즉시 반영되는 항목은 `Toggle`, 하나만 고르는 항목은 `Radio`, 저장 버튼이 필요한 항목은 `TextField` 로 나눕니다.\n\n항목 묶음 사이는 `Divider` 로 끊습니다 - 제목만으로는 어디까지가 한 묶음인지 읽히지 않습니다.",
+			},
+		},
+	},
 	render: () => {
 		const [displayName, setDisplayName] = useState("박상민");
 		const [contactEmail, setContactEmail] = useState("sangmin@bigtablet.com");

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { a11y } from "src/styles/a11y";
 import { baseColors, colors } from "src/styles/colors";
+import { Grid } from "src/ui/layout/grid";
 
 const meta: Meta = {
 	title: "Foundation/A11y",
@@ -12,14 +13,14 @@ const meta: Meta = {
 				component: `
 ### 접근성 (Accessibility) 토큰
 
-**키보드 사용자, 저시력 사용자, 터치 사용자**를 고려해
+**키보드 사용자, 저시력 사용자, 모바일 사용자** 등, 다양한 환경에서 사용하는 유저들을 고려하여
 모든 인터랙션이 명확하고 안전하게 인식되도록 돕는 기준값입니다.
 
 이 페이지에서는 다음 세 가지를 다룹니다:
 
-1. **포커스 링** - 키보드 탐색 시 현재 위치를 표시하는 시각적 표시
-2. **최소 터치 영역** - 모바일에서 손가락으로 누르기 충분한 최소 크기
-3. **색상 대비** - 텍스트와 배경 간 충분한 명도 차이 (WCAG AA 기준)
+1. **포커스 링**: 키보드 탐색 시 현재 위치를 표시하는 시각적 표시
+2. **최소 터치 영역**: 모바일에서 손가락으로 누르기 충분한 최소 크기
+3. **색상 대비**: 텍스트와 배경 간 충분한 명도 차이 (WCAG AA 기준)
         `,
 			},
 		},
@@ -41,7 +42,7 @@ export const FocusRing: Story = {
 					키보드(Tab)로 이동할 때, 현재 위치를 명확히 보여주는 시각적 표시입니다.
 				</p>
 
-				<div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+				<Grid cols={3} gap={16}>
 					{(
 						[
 							["기본", a11y.focusRing, "focusRing"],
@@ -69,7 +70,7 @@ export const FocusRing: Story = {
 							</div>
 						</div>
 					))}
-				</div>
+				</Grid>
 			</section>
 
 			<section>
@@ -242,16 +243,18 @@ export const TapTarget: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 44px인가요?</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					성인 손가락 끝 평균 크기가 약 44px입니다. 이보다 작으면 탭 실수가 잦아지고, 특히 이동
-					중이거나 손이 큰 사용자에게 불편합니다. WCAG 2.2 / Apple HIG / Material Design 모두 최소
-					44px을 권장합니다.
+					성인 엄지손가락 끝의 평균 크기가 약 44px입니다.
+					<br />
+					이보다 작으면 탭 실수가 잦아집니다 - 특히 이동 중이거나 손이 큰 사용자에게 불편합니다.
+					<br />
+					WCAG 2.2 / Apple HIG / Material Design 모두 최소 44px을 권장합니다.
 				</p>
 			</section>
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>크기 비교</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					아래 버튼을 직접 눌러보면 체감할 수 있습니다.
+					아래 버튼에 직접 손가락을 대보면 체감하실 수 있습니다.
 				</p>
 
 				<div style={{ display: "flex", alignItems: "end", gap: 24, marginTop: 16 }}>
@@ -327,10 +330,13 @@ export const Density: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 반응형 밀도인가요?</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					웹과 앱은 입력 방식이 다릅니다. 데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만,
-					모바일은 손가락이라 더 큰 영역이 필요합니다. Bigtablet DS는 동일한 사이즈 prop이
-					viewport에 따라 자동으로 한 단계 키워지도록 설계됩니다 - 데스크탑 <code>compact(40)</code>{" "}
-					→ 모바일 <code>comfortable(48)</code>.
+					웹과 앱은 입력 방식이 다릅니다.
+					<br />
+					데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만, 모바일은 손가락이라 더 큰 영역이
+					필요합니다.
+					<br />
+					그래서 같은 사이즈 prop 이 viewport 에 따라 자동으로 한 단계 커집니다 - 데스크탑{" "}
+					<code>compact(40)</code> → 모바일 <code>comfortable(48)</code>.
 				</p>
 			</section>
 
@@ -416,11 +422,29 @@ export const Density: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>실사용 예시</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					Storybook 뷰포트 툴(▼)에서 모바일로 전환하면 같은 <code>size="md"</code> Button이 자동으로
-					키워지는 걸 확인할 수 있습니다.
+					Storybook 상단 툴바의 <strong>뷰포트 변경</strong> 버튼에서 모바일을 고르면, 같은{" "}
+					<code>size="md"</code> Button 이 자동으로 한 단계 커집니다.
 				</p>
-				<p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>
-					적용: Button, TextField, Dropdown. Chip은 인라인 컴포넌트라 제외.
+
+				<figure style={{ margin: "12px 0 0" }}>
+					<img
+						src="/images/storybook/view-port.png"
+						alt="Storybook 화면 상단 툴바에서 뷰포트 변경 버튼(Change viewport)이 빨간 원으로 표시된 스크린샷"
+						style={{
+							display: "block",
+							maxWidth: "100%",
+							border: "1px solid #e5e5e5",
+							borderRadius: 8,
+						}}
+					/>
+					<figcaption style={{ marginTop: 6, fontSize: 12, color: "#555" }}>
+						툴바가 안 보이면 Docs 탭이 아니라 스토리 페이지로 들어와야 합니다 - 왼쪽 트리에서{" "}
+						<strong>A11y → 밀도 / 반응형 사이즈 (Density)</strong>.
+					</figcaption>
+				</figure>
+
+				<p style={{ color: "#555", fontSize: 12, marginTop: 12 }}>
+					적용 대상은 Button, TextField, Dropdown 입니다. Chip은 인라인 컴포넌트라 제외합니다.
 				</p>
 			</section>
 		</div>

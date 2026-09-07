@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Card } from "../../ui/display/card";
-import { TextField } from "../../ui/forms/textfield";
-import { Button } from "../../ui/general/button";
-import { ThemeProvider, useTheme } from "../../ui/system/theme-provider";
+import { Card } from "src/ui/display/card";
+import { TextField } from "src/ui/forms/textfield";
+import { Button } from "src/ui/general/button";
+import { ThemeProvider, useTheme } from "src/ui/system/theme-provider";
 
 const meta: Meta = {
 	title: "Foundation/Dark Mode",
@@ -58,8 +58,8 @@ import { ThemeProvider } from "@bigtablet/design-system";
 \`brand_primary\`, \`accent.*\`, \`status.*\` 는 라이트/다크 동일 (브랜드 일관성).
 
 #### Storybook toolbar
-
-상단 툴바의 ☼/🌙 아이콘으로 light/dark/system 전환. 모든 스토리에서 작동.
+상단 툴바의 테마 버튼에서 light / dark / system 을 고릅니다. 모든 스토리에 함께 적용됩니다.
+![Storybook 상단 툴바의 테마 전환 버튼 - light / dark / system 세 항목](/images/storybook/theme-provider.png)
         `,
 			},
 		},

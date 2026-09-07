@@ -12,20 +12,20 @@ import {
 	Users,
 	Zap,
 } from "lucide-react";
-import { Avatar } from "../../ui/display/avatar";
-import { Badge } from "../../ui/display/badge";
-import { Card } from "../../ui/display/card";
-import { Chip } from "../../ui/display/chip";
-import { Hero } from "../../ui/display/hero";
-import { Table } from "../../ui/display/table";
-import { Button } from "../../ui/general/button";
-import { Container } from "../../ui/layout/container";
-import { Grid } from "../../ui/layout/grid";
-import { Section } from "../../ui/layout/section";
-import { Stack } from "../../ui/layout/stack";
-import { Breadcrumb } from "../../ui/navigation/breadcrumb";
-import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
-import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
+import { Avatar } from "src/ui/display/avatar";
+import { Badge } from "src/ui/display/badge";
+import { Card } from "src/ui/display/card";
+import { Chip } from "src/ui/display/chip";
+import { Hero } from "src/ui/display/hero";
+import { Table } from "src/ui/display/table";
+import { Button } from "src/ui/general/button";
+import { Container } from "src/ui/layout/container";
+import { Grid } from "src/ui/layout/grid";
+import { Section } from "src/ui/layout/section";
+import { Stack } from "src/ui/layout/stack";
+import { Breadcrumb } from "src/ui/navigation/breadcrumb";
+import { Sidebar, SidebarItem, SidebarSection } from "src/ui/navigation/sidebar";
+import { Tab, TabList, TabPanel, Tabs } from "src/ui/navigation/tabs";
 
 const meta: Meta = {
 	title: "Cookbook/Layout Patterns",
@@ -34,7 +34,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**레이아웃 패턴 cookbook** - 마케팅 페이지·대시보드·관리자 목록 등 자주 쓰는 페이지 골격을 Section / Container / Grid / Stack 조합으로 정리했습니다.\n\n페이지 단위로 복붙해 시작점으로 사용하세요.",
+					"**페이지의 골격**을 만드는 방법입니다. 마케팅 페이지, 사이드바 화면, 대시보드, 목록 페이지 네 가지를 다룹니다.\n\n네 개 모두 `Section`(위아래 여백) → `Container`(최대 폭) → `Grid`/`Stack`(내부 배치) 순서로 감싼 같은 구조입니다. 이 역할 분담만 익히면 나머지는 변형입니다.",
 			},
 		},
 	},
@@ -47,6 +47,14 @@ type Story = StoryObj;
 
 export const MarketingHeroFeatureGrid: Story = {
 	name: "마케팅: 히어로 + 기능 그리드",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"랜딩·소개 페이지의 첫 화면입니다. `Hero` 가 큰 제목과 배경을, `Section` 이 위아래 여백을, `Container` 가 최대 폭을, `Grid` 가 기능 카드의 열 수를 갖습니다.\n\n이 네 개의 역할 분담이 레이아웃 패턴의 기본형입니다 - 나머지 스토리도 같은 조합을 변형한 것입니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ minHeight: "100vh", background: "var(--bt-color-bg-solid)" }}>
 			<Hero
@@ -174,6 +182,14 @@ export const MarketingHeroFeatureGrid: Story = {
 
 export const SidebarLayout: Story = {
 	name: "사이드바 레이아웃",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"로그인 뒤의 관리 화면 골격입니다. `Sidebar` 가 접힘 상태를 스스로 갖고 있어 화면은 메뉴 목록과 선택된 항목만 정합니다.\n\n`SidebarSection` 으로 메뉴를 묶고, 알림 개수 같은 숫자는 `Badge` 로 붙입니다.",
+			},
+		},
+	},
 	render: () => (
 		<div
 			style={{ display: "flex", minHeight: "100vh", background: "var(--bt-color-bg-solid-dim)" }}
@@ -339,7 +355,15 @@ const STAT_CARDS = [
 ];
 
 export const TwoColumnDashboard: Story = {
-	name: "투-컬럼 대시보드",
+	name: "Two Column 대시보드",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"넓은 주 영역과 좁은 보조 영역으로 나눈 대시보드입니다. `Grid` 대신 `Container` + `Stack` 조합을 쓴 이유는 두 열의 폭이 서로 다르기 때문입니다.\n\n열 폭이 같다면 `Grid cols={2}` 가 더 짧습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 32, background: "var(--bt-color-bg-solid-dim)", minHeight: "100vh" }}>
 			<Container size="xl">
@@ -562,6 +586,14 @@ const STATUS_LABELS: Record<
 
 export const ListPage: Story = {
 	name: "리스트 페이지",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"관리자 목록 화면입니다. `Breadcrumb` 으로 현재 위치를, `Tabs` 로 상태별 묶음을, `Table` 로 데이터를 보여 줍니다.\n\n검색·선택 액션·페이지네이션까지 필요하면 이 조합을 직접 짜는 대신 `DataView` 를 쓰세요 - Cookbook/Data Display 의 사용자 목록 예시에 있습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 32, background: "var(--bt-color-bg-solid-dim)", minHeight: "100vh" }}>
 			<Container size="xl">

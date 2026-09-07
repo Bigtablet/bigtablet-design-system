@@ -1,22 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Award, BarChart3, Building2, CalendarClock, Package, Receipt } from "lucide-react";
-import { Avatar } from "../../ui/display/avatar";
-import { Badge } from "../../ui/display/badge";
-import { Card } from "../../ui/display/card";
-import { Chip } from "../../ui/display/chip";
-import { Hero } from "../../ui/display/hero";
-import { MediaCard } from "../../ui/display/media-card";
-import { Stat } from "../../ui/display/stat";
-import { EmptyState } from "../../ui/feedback/empty-state";
-import { Button } from "../../ui/general/button";
-import { AppShell } from "../../ui/layout/app-shell";
-import { Container } from "../../ui/layout/container";
-import { Grid } from "../../ui/layout/grid";
-import { PageHeader } from "../../ui/layout/page-header";
-import { Section } from "../../ui/layout/section";
-import { Stack } from "../../ui/layout/stack";
-import { Sidebar, SidebarItem, SidebarSection } from "../../ui/navigation/sidebar";
-import { Tab, TabList, TabPanel, Tabs } from "../../ui/navigation/tabs";
+import { Avatar } from "src/ui/display/avatar";
+import { Badge } from "src/ui/display/badge";
+import { Card } from "src/ui/display/card";
+import { Chip } from "src/ui/display/chip";
+import { Hero } from "src/ui/display/hero";
+import { MediaCard } from "src/ui/display/media-card";
+import { Stat } from "src/ui/display/stat";
+import { EmptyState } from "src/ui/feedback/empty-state";
+import { Button } from "src/ui/general/button";
+import { AppShell } from "src/ui/layout/app-shell";
+import { Container } from "src/ui/layout/container";
+import { Grid } from "src/ui/layout/grid";
+import { PageHeader } from "src/ui/layout/page-header";
+import { Section } from "src/ui/layout/section";
+import { Stack } from "src/ui/layout/stack";
+import { Sidebar, SidebarItem, SidebarSection } from "src/ui/navigation/sidebar";
+import { Tab, TabList, TabPanel, Tabs } from "src/ui/navigation/tabs";
 
 const meta: Meta = {
 	title: "Examples/Page Composition",
@@ -25,7 +25,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**Page Composition** - DS v3.0 컴포넌트를 합성한 실제 페이지 패턴 예시.\n\nSection + Container + Grid + Hero + Sidebar + Tabs + Avatar + Badge + Tag 조합.",
+					"Cookbook 의 조각들을 이어 붙인 **완성된 페이지 두 개**입니다 - 서비스 소개 페이지와 어드민 대시보드.\n\nCookbook 이 '이 부분은 이렇게 만든다'라면 여기는 '다 붙이면 이렇게 된다'입니다. 처음 보신다면 Foundation → Cookbook → 이 페이지 순서로 읽는 것을 권합니다.",
 			},
 		},
 	},
@@ -38,6 +38,14 @@ type Story = StoryObj;
 
 export const MarketingPage: Story = {
 	name: "마케팅 페이지",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"위 Cookbook 조각들을 이어 붙인 **완성된 한 페이지**입니다. 히어로 → 기능 → 사례 → CTA 순서로, 실제 서비스 소개 페이지에 가까운 길이입니다.\n\n조각 단위로 배우려면 Cookbook/Layout Patterns 를, 페이지 전체를 복사해 시작하려면 여기를 보세요.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ minHeight: "100vh", background: "var(--bt-color-bg-solid)" }}>
 			{/* Hero */}
@@ -54,9 +62,9 @@ export const MarketingPage: Story = {
 
 			{/* Feature Grid */}
 			<Section spacing="lg" bg="default">
-				<Container size="xl">
-					<Stack gap={32}>
-						<Stack gap={8} align="center">
+				<Container size="md">
+					<Stack gap={16}>
+						<Stack gap={4} align="center">
 							<Chip type="static" tone="accent" label="핵심 기능" />
 							<h2
 								style={{
@@ -81,7 +89,7 @@ export const MarketingPage: Story = {
 							</p>
 						</Stack>
 
-						<Grid cols="auto" minColWidth="260px" gap={24}>
+						<Grid cols={3} gap={16}>
 							{[
 								{
 									icon: <Receipt size={22} strokeWidth={1.8} />,
@@ -189,7 +197,7 @@ export const MarketingPage: Story = {
 
 			{/* Case Studies */}
 			<Section spacing="lg" bg="dim">
-				<Container size="xl">
+				<Container size="md">
 					<Stack gap={32}>
 						<h2
 							style={{
@@ -210,12 +218,12 @@ export const MarketingPage: Story = {
 									tag: "카페",
 								},
 								{
-									title: "편의점 체인 재고 로스 절반으로",
+									title: "CCTV 기술로 도난범 잡아",
 									img: "https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=600&q=80",
-									tag: "편의점",
+									tag: "카페",
 								},
 								{
-									title: "레스토랑 홀 회전율 1.4배 증가",
+									title: "레스토랑 회전율 1.4배 증가",
 									img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
 									tag: "레스토랑",
 								},
@@ -334,6 +342,14 @@ export const MarketingPage: Story = {
 
 export const AdminDashboard: Story = {
 	name: "어드민 대시보드",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`AppShell` 이 사이드바와 본문 영역의 배치를 갖고, `PageHeader` 가 제목 줄과 액션 버튼 자리를 갖습니다. 화면은 그 안에 무엇을 넣을지만 정합니다.\n\n데이터가 아직 없는 영역은 빈 카드로 남기지 않고 `EmptyState` 로 채웁니다.",
+			},
+		},
+	},
 	render: () => (
 		<AppShell
 			sidebar={
