@@ -271,7 +271,9 @@ export const Combobox = ({
 							position: "fixed",
 							left: popup.position.x,
 							top: popup.position.y,
-							width: popup.position.width || undefined,
+							// 트리거 폭은 하한 - 못박으면 좁은 트리거에서 옵션 라벨이 잘린다(#596).
+							// 실제 폭은 `width: max-content`(style.scss)가 내용 기준으로 정한다.
+							minWidth: popup.position.width || undefined,
 							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
 							maxWidth: popup.position.ready ? popup.position.maxWidth : undefined,
 							visibility: popup.position.ready ? undefined : "hidden",

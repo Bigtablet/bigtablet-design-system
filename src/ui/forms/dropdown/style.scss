@@ -189,6 +189,11 @@
     z-index: token.$z_popup;
     box-sizing: border-box;
 
+    // 폭은 내용 기준 - 컴포넌트가 주는 인라인 `min-width`(트리거 폭)와 `max-width`(뷰포트 가용
+    // 폭) 사이에서 옵션 라벨이 필요한 만큼 넓어진다. 트리거 폭을 `width` 로 못박으면 좁은
+    // 트리거에서 목록이 자기 라벨을 ellipsis 로 접는다(#596).
+    width: max-content;
+
     // 라이트: 흰색 (canvas 와 동일하지만 border + shadow 로 분리)
     // 다크: bg_solid_dim (neutral_925) - canvas (neutral_950) 보다 한 톤 밝아 elevation
     background: token.$color_bg_solid;
@@ -216,6 +221,11 @@
   // 패널 상단 고정. 옵션 스크롤과 분리되도록 &_options 에만 스크롤을 둔다.
 
   &_search {
+    // 검색 행은 폭 계산에서 빼둔다 - `<input>` 의 기본 내재 폭(약 154px)이 패널의
+    // max-content 를 끌어올려, 짧은 라벨만 있는 좁은 목록이 두 배로 벌어진다(실측 108 → 204px).
+    // 미지원 브라우저에서는 그 벌어짐만 남고 잘림은 없다.
+    contain: inline-size;
+
     display: flex;
     align-items: center;
     gap: token.$spacing_8;

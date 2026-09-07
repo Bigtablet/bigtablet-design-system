@@ -365,7 +365,10 @@ export const Dropdown = (props: DropdownProps) => {
 							position: "fixed",
 							left: position.x,
 							top: position.y,
-							width: position.width || undefined,
+							// 트리거 폭은 **하한**이다 - 못박으면 트리거가 좁을 때 목록이 자기 옵션
+							// 라벨을 ellipsis 로 접는다(#596 - 48px 트리거에서 `02` 가 `0.`). 실제 폭은
+							// `width: max-content`(style.scss)가 내용 기준으로 정하고 maxWidth 가 막는다.
+							minWidth: position.width || undefined,
 							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
 							maxWidth: position.ready ? position.maxWidth : undefined,
 							// 최초 측정 전에는 숨긴다 - (0,0) 에서 한 프레임 깜빡이는 것을 막는다.
