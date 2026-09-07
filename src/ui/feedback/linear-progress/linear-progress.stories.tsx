@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { LinearProgress } from ".";
+import { LOADING_COMPARISON } from "../loading-comparison.docs";
 
 const meta: Meta<typeof LinearProgress> = {
 	title: "Components/Feedback/LinearProgress",
@@ -18,6 +19,9 @@ const meta: Meta<typeof LinearProgress> = {
 
 주요 prop: \`totalSteps\`, \`currentStep\` (0 ~ totalSteps).
 비동기 로딩은 \`Spinner\`, 페이지 전환은 \`TopLoading\` 을 참고.
+
+${LOADING_COMPARISON}
+
 				`,
 			},
 		},
@@ -32,6 +36,14 @@ export const Default: Story = {
 };
 
 export const AllSteps: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`currentStep` 을 0부터 끝까지 늘려 본 모습입니다. 단계 수를 미리 알 때만 쓰세요 - 언제 끝날지 모르는 로딩에 진행률 바를 두면 멈춘 것처럼 보입니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 			{[0, 1, 2, 3, 4].map((step) => (

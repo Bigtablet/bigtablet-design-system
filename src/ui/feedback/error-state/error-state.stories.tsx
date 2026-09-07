@@ -47,6 +47,14 @@ export const Page: Story = {
 
 export const Widget: Story = {
 	name: "Widget (인라인)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'카드나 위젯 하나만 실패했을 때 그 자리에 넣는 컴팩트 형태입니다. 화면 전체를 에러로 덮지 않아 나머지 영역은 계속 쓸 수 있습니다.\n\n화면 전체가 실패했다면 `variant="page"` 를 씁니다.',
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 24 }}>
 			<div

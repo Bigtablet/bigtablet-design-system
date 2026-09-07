@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
 import { TopLoading } from ".";
+import { LOADING_COMPARISON } from "../loading-comparison.docs";
 
 const meta: Meta<typeof TopLoading> = {
 	title: "Components/Feedback/TopLoading",
@@ -41,6 +42,9 @@ const meta: Meta<typeof TopLoading> = {
 
 \`progress\` 미지정 → indeterminate 무한 애니메이션, 지정 → determinate 퍼센트 fill.
 인라인 로딩은 \`Spinner\` 를 참고.
+
+${LOADING_COMPARISON}
+
         `,
 			},
 		},
@@ -60,8 +64,15 @@ export const Indeterminate: Story = {
 };
 
 export const WithProgress: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`progress` 를 주면 퍼센트만큼 채워지는 determinate 모드입니다. 업로드처럼 **전체 크기를 아는 작업**에 씁니다.\n\n진행률을 모르면 값을 주지 마세요 - 값이 없으면 끝을 약속하지 않는 무한 애니메이션이 됩니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "진행률 표시",
 	args: {
 		progress: 60,
@@ -86,8 +97,15 @@ export const CustomHeight: Story = {
 };
 
 export const Animated: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"라우팅 전환을 흉내낸 예시입니다. 페이지 이동이 시작될 때 띄우고 끝나면 내리는 것이 기본 사용법입니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "진행률 애니메이션 예시",
 	render: () => {
 		const [progress, setProgress] = useState(0);

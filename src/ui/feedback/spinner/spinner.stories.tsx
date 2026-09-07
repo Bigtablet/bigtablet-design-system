@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Spinner } from ".";
+import { LOADING_COMPARISON } from "../loading-comparison.docs";
 
 const meta: Meta<typeof Spinner> = {
 	title: "Components/Feedback/Spinner",
@@ -21,6 +22,8 @@ const meta: Meta<typeof Spinner> = {
 **Spinner** - 인라인 회전 로딩 표시. 버튼·카드 내부용.
 
 크기: 버튼 16–24, 카드 24–32, 강조 40 이상. 페이지 전환은 \`TopLoading\` 을 참고.
+
+${LOADING_COMPARISON}
 
 > ⚠️ **Docs 뷰 안내** - 이 페이지의 미리보기는 정적 캡처라 spinner 가 멈춰 있거나 한 프레임만 보일 수 있다. 실제 회전은 좌측 사이드바에서 개별 스토리(Basic 등)를 열면 확인할 수 있다.
         `,
@@ -49,8 +52,15 @@ export const Sizes: Story = {
 };
 
 export const InButton: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"제출 중 버튼 안에 넣는 형태입니다. 버튼을 함께 `disabled` 로 잠가 두 번 눌리는 것을 막고, 라벨은 남겨 두어 무엇을 하는 중인지 읽히게 합니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "버튼 내부 사용 예",
 	render: () => (
 		<button
