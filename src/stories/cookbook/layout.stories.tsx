@@ -34,7 +34,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**페이지의 골격**을 만드는 방법입니다. 마케팅 페이지, 사이드바 화면, 대시보드, 목록 페이지 네 가지를 다룹니다.\n\n네 개 모두 `Section`(위아래 여백) → `Container`(최대 폭) → `Grid`/`Stack`(내부 배치) 순서로 감싼 같은 구조입니다. 이 역할 분담만 익히면 나머지는 변형입니다.",
+					"**페이지의 골격**을 만드는 방법입니다. 마케팅 페이지, 사이드바 화면, 대시보드, 목록 페이지 네 가지를 다룹니다.\n\n공통 재료는 `Container`(최대 폭) · `Grid`/`Stack`(내부 배치) 셋이고, 화면 유형에 따라 바깥이 달라집니다 - 마케팅 페이지만 `Section` 으로 위아래 여백을 잡고, 사이드바 화면은 `Sidebar` 로 시작하며, 대시보드·목록은 `Container` 부터 엽니다.",
 			},
 		},
 	},
@@ -360,7 +360,7 @@ export const TwoColumnDashboard: Story = {
 		docs: {
 			description: {
 				story:
-					"넓은 주 영역과 좁은 보조 영역으로 나눈 대시보드입니다. `Grid` 대신 `Container` + `Stack` 조합을 쓴 이유는 두 열의 폭이 서로 다르기 때문입니다.\n\n열 폭이 같다면 `Grid cols={2}` 가 더 짧습니다.",
+					'넓은 주 영역과 좁은 보조 영역으로 나눈 대시보드입니다. 폭이 다른 두 열은 `Grid cols={3}` 을 깔고 주 영역에만 `gridColumn: "span 2"` 를 줘서 2:1 로 만듭니다.\n\n열 폭이 같다면 `Grid cols={2}` 로 충분합니다 - span 을 쓸 필요가 없습니다.',
 			},
 		},
 	},

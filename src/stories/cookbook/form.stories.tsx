@@ -20,7 +20,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"로그인, 회원가입, 검색, 설정 등 **자주 만드는 폼 네 가지**입니다.\n\n모든 예시는 DS 컴포넌트만으로 완결되어 있어 다른 파일을 만들지 않고 그대로 붙여 넣을 수 있습니다. 폼이 커질수록 `Stack` → `Form` + `Field` 로 올라가는 순서를 같이 보여 줍니다.",
+					"로그인, 회원가입, 검색, 설정 등 **자주 만드는 폼 네 가지**입니다.\n\n모든 예시가 DS 컴포넌트로 완결되어 있어 다른 파일을 만들지 않고 그대로 붙여 넣을 수 있습니다. 약관 링크처럼 컴포넌트가 없는 인라인 링크만 `text_link` 클래스를 씁니다. 폼이 커질수록 `Stack` → `Form` + `Field` 로 올라가는 순서를 같이 보여 줍니다.",
 			},
 		},
 	},
@@ -109,21 +109,9 @@ export const LoginForm: Story = {
 							checked={remember}
 							onChange={(e) => setRemember(e.target.checked)}
 						/>
-						<button
-							type="button"
-							style={{
-								background: "none",
-								border: "none",
-								padding: 0,
-								color: "var(--bt-color-text-body)",
-								fontSize: 13,
-								fontWeight: 500,
-								cursor: "pointer",
-								textDecoration: "underline",
-							}}
-						>
+						<Button variant="text" size="sm">
 							비밀번호 찾기
-						</button>
+						</Button>
 					</Stack>
 
 					<Button variant="filled" size="lg" fullWidth>
@@ -136,20 +124,9 @@ export const LoginForm: Story = {
 						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>
 							아직 계정이 없으신가요?
 						</span>
-						<button
-							type="button"
-							style={{
-								background: "none",
-								border: "none",
-								padding: 0,
-								color: "var(--bt-color-text-heading)",
-								fontSize: 13,
-								fontWeight: 600,
-								cursor: "pointer",
-							}}
-						>
+						<Button variant="text" size="sm">
 							회원가입
-						</button>
+						</Button>
 					</Stack>
 				</Stack>
 			</FormCard>
@@ -354,23 +331,9 @@ export const SearchWithFilter: Story = {
 							/>
 						))}
 						{activeFilters.length > 0 && (
-							<button
-								type="button"
-								onClick={() => setActiveFilters([])}
-								style={{
-									background: "none",
-									border: "none",
-									padding: 0,
-									marginLeft: 4,
-									color: "var(--bt-color-text-body)",
-									fontSize: 12,
-									fontWeight: 500,
-									cursor: "pointer",
-									textDecoration: "underline",
-								}}
-							>
+							<Button variant="text" size="sm" onClick={() => setActiveFilters([])}>
 								모두 지우기
-							</button>
+							</Button>
 						)}
 					</Stack>
 				</Stack>

@@ -220,7 +220,7 @@ export const MarketingPage: Story = {
 								{
 									title: "CCTV 기술로 도난범 잡아",
 									img: "https://images.unsplash.com/photo-1601933973783-43cf8a7d4c5f?w=600&q=80",
-									tag: "카페",
+									tag: "편의점",
 								},
 								{
 									title: "레스토랑 회전율 1.4배 증가",

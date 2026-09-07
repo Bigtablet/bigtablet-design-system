@@ -196,7 +196,7 @@ export const ConfirmationModal: Story = {
 		docs: {
 			description: {
 				story:
-					'삭제처럼 **되돌릴 수 없는 동작** 앞에 한 번 멈추게 합니다. 제목에 대상 이름을 넣고, 확인 버튼은 `variant="danger"` 로 두어 실수를 줄입니다.\n\n되돌릴 수 있는 동작에는 쓰지 마세요 - 매번 확인을 물으면 사용자가 읽지 않고 누르게 됩니다.',
+					"삭제처럼 **되돌릴 수 없는 동작** 앞에 한 번 멈추게 합니다. 제목에 대상 이름을 넣고, 확인 버튼에는 `danger` 를 주어 실수를 줄입니다.\n\n되돌릴 수 있는 동작에는 쓰지 마세요 - 매번 확인을 물으면 사용자가 읽지 않고 누르게 됩니다.",
 			},
 		},
 	},
@@ -264,12 +264,11 @@ export const ConfirmationModal: Story = {
 								취소
 							</Button>
 							<Button
-								variant="filled"
+								danger
 								onClick={() => {
 									setCompleted(true);
 									setOpen(false);
 								}}
-								style={{ background: "var(--bt-color-status-error)", color: "#fff" }}
 							>
 								삭제하기
 							</Button>
@@ -309,7 +308,7 @@ const ToastDemo = () => {
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => toast.message("빅태블릿 디자인 시스템에 오신것을 환영합니다!")}
+						onClick={() => toast.message("빅태블릿 디자인 시스템에 오신 것을 환영합니다!")}
 					>
 						기본
 					</Button>

@@ -243,11 +243,15 @@ export const TapTarget: Story = {
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 44px인가요?</h3>
 				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
-					성인 엄지손가락 끝의 평균 크기가 약 44px입니다.
+					DS 의 하한은 <strong>44×44px</strong> 입니다 - 손끝이 닿는 면적이 이보다 작으면 탭 실수가
+					잦아집니다. 특히 이동 중이거나 손이 큰 사용자에게 불편합니다.
 					<br />
-					이보다 작으면 탭 실수가 잦아집니다 - 특히 이동 중이거나 손이 큰 사용자에게 불편합니다.
+					외부 기준은 값과 단위가 서로 다릅니다. WCAG 2.2 의 AA 최소는 <strong>24×24 CSS px</strong>
+					(SC 2.5.8)이고 <strong>44×44 CSS px</strong> 는 AAA(SC 2.5.5), Apple HIG 는{" "}
+					<strong>44×44 pt</strong>, Material Design 은 <strong>48×48 dp</strong> 를 권장합니다.
 					<br />
-					WCAG 2.2 / Apple HIG / Material Design 모두 최소 44px을 권장합니다.
+					DS 는 AAA 쪽(44)을 하한으로 잡고, 모바일 기본값 <code>comfortable(48)</code> 로 셋을 모두
+					넘깁니다.
 				</p>
 			</section>
 
