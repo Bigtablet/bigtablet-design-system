@@ -189,10 +189,15 @@ export interface AnchoredState extends AnchoredResult {
 	/** 최초 측정 전에는 false — 이때 플로팅을 숨겨 (0,0) 깜빡임을 막는다. */
 	ready: boolean;
 	/**
-	 * 앵커의 현재 폭(px). 리스트박스 팝업이 트리거 폭에 맞춰야 하는데, 포탈로 띄우면
-	 * `width: 100%` 가 트리거가 아니라 body 를 가리키므로 이 값을 인라인으로 준다.
-	 * 소비처는 `width` 가 아니라 `min-width` 로 쓴다 - 폭을 못박으면 좁은 트리거에서
-	 * 목록이 자기 옵션 라벨을 잘라낸다(#596).
+	 * 앵커의 현재 폭(px), **뷰포트 가용 폭({@link AnchoredResult.maxWidth})으로 캡**.
+	 * 리스트박스 팝업이 트리거 폭에 맞춰야 하는데, 포탈로 띄우면 `width: 100%` 가 트리거가
+	 * 아니라 body 를 가리키므로 이 값을 인라인으로 준다.
+	 *
+	 * 소비처는 `width` 가 아니라 `min-width` 로 쓴다 - 폭을 못박으면 좁은 트리거에서 목록이
+	 * 자기 옵션 라벨을 잘라낸다(#596). 그래서 여기서 캡이 필요하다: `min-width` 와
+	 * `max-width` 가 충돌하면 CSS 는 `min-width` 를 택하므로(CSS2.1 §10.4), 원값을 그대로
+	 * 주면 풀폭 트리거(트리거 폭 = 뷰포트)에서 `max-width` 가 무시되고 패널이 뷰포트를
+	 * 넘는다 - 375px 화면에서 오른쪽으로 8px 삐져나갔다.
 	 * 이 훅이 이미 앵커를 재고 scroll·resize·ResizeObserver 로 갱신하므로 소비처가 같은
 	 * 리스너를 또 달 필요가 없다.
 	 */
@@ -239,7 +244,13 @@ export function useAnchoredPosition({
 				{ width: window.innerWidth, height: window.innerHeight },
 				{ placement, align, gap, padding },
 			);
-			setState({ ...result, ready: true, anchorWidth: a.width });
+			// maxWidth 로 캡 - min-width 가 max-width 를 이기는 CSS 규칙 때문에 소비처가
+			// 그대로 min-width 에 넣으면 상한이 무력화된다(위 anchorWidth 주석).
+			setState({
+				...result,
+				ready: true,
+				anchorWidth: Math.min(a.width, result.maxWidth),
+			});
 		};
 
 		// scroll/resize/observer 는 rAF 로 배칭 - 잦은 스크롤에도 프레임당 한 번만 재계산.

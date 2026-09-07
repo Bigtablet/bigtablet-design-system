@@ -49,6 +49,27 @@ describe("Dropdown", () => {
 		rect.mockRestore();
 	});
 
+	it("caps the width floor at the viewport so the ceiling still holds", async () => {
+		// `min-width` 와 `max-width` 가 충돌하면 CSS 는 min 을 택한다(CSS2.1 §10.4). 트리거가
+		// 뷰포트만큼 넓으면(풀폭 컨트롤) 캡 없이는 상한이 무력화돼 패널이 화면을 넘었다 -
+		// 375px 화면에서 오른쪽으로 8px 삐져나갔다.
+		const rect = vi
+			.spyOn(Element.prototype, "getBoundingClientRect")
+			.mockReturnValue({ width: window.innerWidth, height: 32, top: 10, left: 0 } as DOMRect);
+
+		render(<Dropdown options={options} placeholder="선택" />);
+		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+
+		await screen.findByRole("listbox");
+		const list = document.querySelector<HTMLElement>(".dropdown_list");
+		if (!list) throw new Error("패널을 못 찾았다 - .dropdown_list 클래스가 바뀌었는지 보라");
+		// 가용 폭 = 뷰포트 - 가장자리 여백(8px) 양쪽.
+		expect(list.style.minWidth).toBe(`${window.innerWidth - 16}px`);
+		expect(list.style.minWidth).toBe(list.style.maxWidth);
+
+		rect.mockRestore();
+	});
+
 	it("renders with placeholder", () => {
 		render(<Dropdown options={options} placeholder="Select an option" />);
 		expect(screen.getByText("Select an option")).toBeInTheDocument();

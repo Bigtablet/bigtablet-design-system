@@ -40,6 +40,11 @@ describe("Combobox", () => {
 		});
 		expect(panel.style.minWidth).toBe("60px");
 		expect(panel.style.width).toBe("");
+		// 하한은 뷰포트 가용 폭으로 캡된다 - `min-width` 가 `max-width` 를 이기므로, 풀폭
+		// 트리거에서 캡이 없으면 상한이 무력화된다(useAnchoredPosition 이 캡한다).
+		expect(Number.parseFloat(panel.style.minWidth)).toBeLessThanOrEqual(
+			Number.parseFloat(panel.style.maxWidth),
+		);
 
 		rect.mockRestore();
 	});
