@@ -132,6 +132,14 @@ export const ErrorAlert: Story = {
 };
 
 export const Destructive: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"삭제·탈퇴처럼 **되돌릴 수 없는 확인**입니다. `destructive` 를 주면 confirm 버튼이 빨간색이 되어, 습관적으로 누르던 손을 한 번 멈추게 합니다.\n\n제목에는 대상 이름을 넣으세요 - '정말 삭제할까요?' 보다 '주문 #1024 를 삭제할까요?' 가 실수를 줄입니다.",
+			},
+		},
+	},
 	render: () => (
 		<AlertDemo
 			variant="error"

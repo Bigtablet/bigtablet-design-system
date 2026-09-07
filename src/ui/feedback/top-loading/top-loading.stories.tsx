@@ -41,6 +41,18 @@ const meta: Meta<typeof TopLoading> = {
 
 \`progress\` 미지정 → indeterminate 무한 애니메이션, 지정 → determinate 퍼센트 fill.
 인라인 로딩은 \`Spinner\` 를 참고.
+
+#### 로딩 표시 4종 중 무엇을 쓰나
+
+| 상황 | 컴포넌트 |
+| --- | --- |
+| 목록·카드가 뜨기 전, 들어올 내용의 **모양을 알 때** | \`Skeleton\` |
+| 버튼·카드 안에서 **작게 돌려야 할 때** | \`Spinner\` |
+| 페이지 전환처럼 **화면 전체가 바뀔 때** | \`TopLoading\` |
+| 회원가입 3단계처럼 **끝이 정해진 진행률** | \`LinearProgress\` |
+
+기다림이 아니라 결과를 알릴 때는 \`Toast\`(막지 않음)나 \`Alert\`(막음)입니다.
+
         `,
 			},
 		},
@@ -60,8 +72,15 @@ export const Indeterminate: Story = {
 };
 
 export const WithProgress: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`progress` 를 주면 퍼센트만큼 채워지는 determinate 모드입니다. 업로드처럼 **전체 크기를 아는 작업**에 씁니다.\n\n진행률을 모르면 값을 주지 마세요 - 값이 없으면 끝을 약속하지 않는 무한 애니메이션이 됩니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "진행률 표시",
 	args: {
 		progress: 60,
@@ -86,8 +105,15 @@ export const CustomHeight: Story = {
 };
 
 export const Animated: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"라우팅 전환을 흉내낸 예시입니다. 페이지 이동이 시작될 때 띄우고 끝나면 내리는 것이 기본 사용법입니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "진행률 애니메이션 예시",
 	render: () => {
 		const [progress, setProgress] = useState(0);

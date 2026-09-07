@@ -65,6 +65,14 @@ export const Default: Story = {
 
 export const SearchNoResults: Story = {
 	name: "검색 결과 없음",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"검색 결과 0건은 **오류가 아닙니다.** 무엇으로 찾았는지 문구에 담고, 조건을 지우는 버튼을 함께 둡니다.\n\n데이터를 못 불러온 실패라면 `EmptyState` 가 아니라 `ErrorState` 입니다.",
+			},
+		},
+	},
 	render: () => (
 		<EmptyState
 			illustration={<Search size={40} />}
@@ -95,5 +103,13 @@ export const Onboarding: Story = {
 
 export const Minimal: Story = {
 	name: "최소 (title만)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"설명과 버튼을 뺀 형태입니다. 사이드바나 작은 카드처럼 **자리가 좁고 사용자가 할 수 있는 일이 따로 없을 때** 씁니다.\n\n할 수 있는 일이 있으면 `action` 을 주는 편이 낫습니다 - 빈 화면만 보여 주면 막힌 것처럼 읽힙니다.",
+			},
+		},
+	},
 	render: () => <EmptyState title="아직 데이터가 없습니다" size="sm" />,
 };

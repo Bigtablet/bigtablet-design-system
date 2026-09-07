@@ -22,6 +22,18 @@ const meta: Meta<typeof Spinner> = {
 
 크기: 버튼 16–24, 카드 24–32, 강조 40 이상. 페이지 전환은 \`TopLoading\` 을 참고.
 
+#### 로딩 표시 4종 중 무엇을 쓰나
+
+| 상황 | 컴포넌트 |
+| --- | --- |
+| 목록·카드가 뜨기 전, 들어올 내용의 **모양을 알 때** | \`Skeleton\` |
+| 버튼·카드 안에서 **작게 돌려야 할 때** | \`Spinner\` |
+| 페이지 전환처럼 **화면 전체가 바뀔 때** | \`TopLoading\` |
+| 회원가입 3단계처럼 **끝이 정해진 진행률** | \`LinearProgress\` |
+
+기다림이 아니라 결과를 알릴 때는 \`Toast\`(막지 않음)나 \`Alert\`(막음)입니다.
+
+
 > ⚠️ **Docs 뷰 안내** - 이 페이지의 미리보기는 정적 캡처라 spinner 가 멈춰 있거나 한 프레임만 보일 수 있다. 실제 회전은 좌측 사이드바에서 개별 스토리(Basic 등)를 열면 확인할 수 있다.
         `,
 			},
@@ -49,8 +61,15 @@ export const Sizes: Story = {
 };
 
 export const InButton: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
-
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"제출 중 버튼 안에 넣는 형태입니다. 버튼을 함께 `disabled` 로 잠가 두 번 눌리는 것을 막고, 라벨은 남겨 두어 무엇을 하는 중인지 읽히게 합니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "버튼 내부 사용 예",
 	render: () => (
 		<button
