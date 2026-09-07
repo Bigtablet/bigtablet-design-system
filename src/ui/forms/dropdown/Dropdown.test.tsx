@@ -27,6 +27,49 @@ describe("Dropdown", () => {
 		expect(document.body).toContainElement(list);
 	});
 
+	it("uses the trigger width as a floor, not a fixed width", async () => {
+		// 트리거 폭을 `width` 로 못박으면 좁은 트리거에서 목록이 자기 옵션 라벨을 ellipsis 로
+		// 접는다 - 48px 트리거에서 `02` 가 `0.` 로 보였다(#596). 실제 폭은 `max-content` 가
+		// 정하므로 인라인은 하한(min-width)과 상한(max-width)만 준다.
+		const rect = vi
+			.spyOn(Element.prototype, "getBoundingClientRect")
+			.mockReturnValue({ width: 48, height: 32, top: 10, left: 5 } as DOMRect);
+
+		render(<Dropdown options={options} placeholder="선택" />);
+		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+
+		await screen.findByRole("listbox");
+		const list = document.querySelector<HTMLElement>(".dropdown_list");
+		if (!list) throw new Error("패널을 못 찾았다 - .dropdown_list 클래스가 바뀌었는지 보라");
+		expect(list.style.minWidth).toBe("48px");
+		expect(list.style.width).toBe("");
+		// 상한은 남는다 - 트리거가 뷰포트보다 넓으면 패널이 그대로 넘친다.
+		expect(list.style.maxWidth).not.toBe("");
+
+		rect.mockRestore();
+	});
+
+	it("caps the width floor at the viewport so the ceiling still holds", async () => {
+		// `min-width` 와 `max-width` 가 충돌하면 CSS 는 min 을 택한다(CSS2.1 §10.4). 트리거가
+		// 뷰포트만큼 넓으면(풀폭 컨트롤) 캡 없이는 상한이 무력화돼 패널이 화면을 넘었다 -
+		// 375px 화면에서 오른쪽으로 8px 삐져나갔다.
+		const rect = vi
+			.spyOn(Element.prototype, "getBoundingClientRect")
+			.mockReturnValue({ width: window.innerWidth, height: 32, top: 10, left: 0 } as DOMRect);
+
+		render(<Dropdown options={options} placeholder="선택" />);
+		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+
+		await screen.findByRole("listbox");
+		const list = document.querySelector<HTMLElement>(".dropdown_list");
+		if (!list) throw new Error("패널을 못 찾았다 - .dropdown_list 클래스가 바뀌었는지 보라");
+		// 가용 폭 = 뷰포트 - 가장자리 여백(8px) 양쪽.
+		expect(list.style.minWidth).toBe(`${window.innerWidth - 16}px`);
+		expect(list.style.minWidth).toBe(list.style.maxWidth);
+
+		rect.mockRestore();
+	});
+
 	it("renders with placeholder", () => {
 		render(<Dropdown options={options} placeholder="Select an option" />);
 		expect(screen.getByText("Select an option")).toBeInTheDocument();

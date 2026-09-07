@@ -246,6 +246,58 @@ def check_popups_escape_clipping() -> list[str]:
     return problems
 
 
+# 트리거 폭을 물려받는 팝업들 - (컴포넌트, 스타일, 블록, 인라인에 쓰는 표현식).
+# Menu 는 트리거 폭과 무관하게 내용 폭으로 열리므로 대상이 아니다.
+ANCHOR_WIDTH_POPUPS = (
+    (
+        Path("src/ui/forms/dropdown/index.tsx"),
+        Path("src/ui/forms/dropdown/style.scss"),
+        "dropdown_list",
+        "position.width",
+    ),
+    (
+        Path("src/ui/forms/combobox/index.tsx"),
+        Path("src/ui/forms/combobox/style.scss"),
+        "combobox_panel",
+        "popup.position.width",
+    ),
+)
+
+ANCHOR_WIDTH_PINNED = re.compile(r"(?<![\w.])width:\s*(?:popup\.)?position\.width")
+
+
+def check_popup_width_has_a_floor() -> list[str]:
+    """트리거 폭이 팝업의 하한이어야 한다. `width` 로 못박으면 좁은 트리거에서 목록이
+    자기 옵션 라벨을 ellipsis 로 접는다(#596 - 48px 트리거에서 `02` 가 `0.` 로 보였다)."""
+    problems: list[str] = []
+    for component, styles, block, expression in ANCHOR_WIDTH_POPUPS:
+        source = component.read_text(encoding="utf-8")
+        if ANCHOR_WIDTH_PINNED.search(source):
+            problems.append(
+                f"{component}: 팝업 폭을 `width: {expression}` 로 못박았다 - 트리거가 좁으면"
+                " 목록이 자기 옵션 라벨을 잘라낸다(#596). `minWidth` 로 하한만 줘야 한다"
+            )
+        elif f"minWidth: {expression}" not in source:
+            problems.append(
+                f"{component}: 팝업에 `minWidth: {expression}` 이 없다 - 트리거보다 좁게"
+                " 열리면 목록이 컨트롤의 연장으로 읽히지 않는다"
+            )
+
+        css = styles.read_text(encoding="utf-8")
+        marker = f"&_{block.split('_', 1)[1]} {{"
+        index = css.find(marker)
+        if index == -1:
+            problems.append(f"{styles}: `{marker}` 블록을 못 찾았다 - 클래스가 바뀌었는지 보라")
+            continue
+        body, _ = _balanced_block(css, css.index("{", index))
+        if "width: max-content" not in body:
+            problems.append(
+                f"{styles}: `{block}` 에 `width: max-content` 가 없다 - 인라인 min/max-width"
+                " 사이에서 내용 기준으로 넓어질 근거가 사라진다(#596)"
+            )
+    return problems
+
+
 SCROLL_LOCK_SOURCES = (
     Path("src/utils/scroll-lock.ts"),
     Path("src/vanilla/bigtablet.js"),
@@ -407,7 +459,9 @@ def main() -> int:
     problems += check_lock_width_invariants()
     problems += check_dim_does_not_chase_the_gutter()
     problems += check_popups_escape_clipping()
+    problems += check_popup_width_has_a_floor()
     checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES) + len(ANCHORED_POPUPS)
+    checked += len(ANCHOR_WIDTH_POPUPS)
 
     # 오버플로 가드 - 암묵 grid 트랙(auto)이면 패널의 max-width 백분율이 뷰포트가 아니라
     # 패널 자신의 max-content 로 풀려 clamp 가 전혀 걸리지 않는다(기본 width=480 이 375 화면에서
@@ -446,12 +500,16 @@ def main() -> int:
         - len(SCROLL_LOCK_SOURCES)
         - len(DIM_SOURCES)
         - len(ANCHORED_POPUPS)
+        - len(ANCHOR_WIDTH_POPUPS)
     )
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
     print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 칠하고 표식을 남깁니다.")
     print(f"dim {len(DIM_SOURCES)}개 파일 - 예약된 거터를 쫓지 않습니다(캔버스 합성에 맡김).")
     print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
+    print(
+        f"팝업 폭 {len(ANCHOR_WIDTH_POPUPS)}개 - 트리거 폭은 하한이고 내용 기준으로 넓어집니다."
+    )
     return 0
 
 

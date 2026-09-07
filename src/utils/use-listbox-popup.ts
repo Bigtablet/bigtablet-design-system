@@ -41,7 +41,11 @@ export interface UseListboxPopupResult {
 		x: number;
 		/** fixed top(px) */
 		y: number;
-		/** 트리거 폭(px) - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다 */
+		/**
+		 * 트리거 폭(px) - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다.
+		 * 소비처는 이 값을 `width` 가 아니라 `min-width` 로 준다(#596): 못박으면 좁은
+		 * 트리거에서 목록이 자기 옵션 라벨을 잘라낸다.
+		 */
 		width: number;
 		/**
 		 * 뷰포트 가용 폭 상한(px). 트리거가 뷰포트보다 넓으면(좁은 화면의 넓은 폼) 배치는

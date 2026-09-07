@@ -861,6 +861,12 @@
     position: fixed;
     z-index: var(--bt-z-popup);
     box-sizing: border-box;
+
+    /* 폭은 내용 기준 - JS 가 주는 min-width(트리거 폭)와 max-width(뷰포트 가용 폭) 사이에서
+       옵션 라벨이 필요한 만큼 넓어진다. 트리거 폭을 못박으면 좁은 트리거에서 목록이 자기
+       라벨을 ellipsis 로 접는다(#596). React 번들과 같은 처리. */
+    width: max-content;
+
     background: var(--bt-color-background);
     border: 1px solid var(--bt-color-border);
     border-radius: var(--bt-radius-md);
@@ -889,6 +895,10 @@
 
   /* Search (searchable) - React `.dropdown_search` 와 동일 구조: 패널 상단 고정 행 */
   &__search {
+    /* 검색 행은 폭 계산에서 빼둔다 - `<input>` 의 기본 내재 폭이 패널의 max-content 를
+       끌어올려 짧은 라벨만 있는 목록이 두 배로 벌어진다(React 번들과 동일). */
+    contain: inline-size;
+
     display: flex;
     align-items: center;
     gap: var(--bt-spacing-sm);

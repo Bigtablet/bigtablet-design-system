@@ -337,8 +337,14 @@ import Link from "next/link";
 
 > **목록은 포탈로 `body` 에 렌더된다.** 트리거 옆에 `position: absolute` 로 두면
 > `overflow: hidden` 인 조상(카드·표 래퍼)이 잘라내고 `z-index` 로는 넘지 못한다 - 실측으로
-> 카드 안에서 170px 목록 중 46px 만 보였다(#586). 좌표·폭은 트리거를 재서 인라인으로 주고,
+> 카드 안에서 170px 목록 중 46px 만 보였다(#586). 좌표는 트리거를 재서 인라인으로 주고,
 > 스크롤·리사이즈에 따라간다. 뷰포트 아래가 모자라면 위로 뒤집는다.
+>
+> **폭은 `clamp(트리거 폭, 내용 폭, 뷰포트 가용 폭)`.** 트리거 폭은 하한이라 목록이 트리거보다
+> 좁아지지 않고, 그보다 넓은 라벨이 있으면 내용만큼 넓어진다 - 폭을 트리거로 못박았을 때
+> 48px 컨트롤에서 `02` 가 `0.` 로 접혔다(#596). 포탈이라 넓어져도 주변 레이아웃을 밀지 않는다.
+> 검색 행(`searchable`)은 폭 계산에서 빠진다 - `<input>` 의 기본 내재 폭이 목록을 필요 이상으로
+> 벌린다. `Combobox` 도 같은 계약이다.
 >
 > 소비자 영향: `.dropdown_list` 를 트리거 기준 선택자(`.my-card .dropdown_list`)로 스타일링하면
 > 더 이상 걸리지 않는다 - 클래스만으로 선택해야 한다. `Combobox`·`Menu` 도 같은 처리다.
@@ -2556,7 +2562,7 @@ span.menu_wrapper                  ← position: relative; ref 부착 (외부 �
         └── span.menu_item_label   ← ellipsis
 ```
 
-Menu 는 Tooltip/Popover 와 달리 **포탈하지 않는다** - `.menu_wrapper` 안에서 `position: absolute` 로 배치되고 `z-index`는 `z_level5` 를 쓴다. 따라서 트리거에 `overflow: hidden` 이나 `transform` 조상이 있으면 메뉴가 잘릴 수 있으니, 그런 컨테이너 안에서 쓸 때는 오버플로를 열어두거나 Popover 를 사용한다.
+Menu 도 Dropdown·Tooltip·Popover 와 같이 **`body` 로 포탈**된다(#586) - `position: fixed` + `useAnchoredPosition` 좌표로 배치되고 `z-index`는 `z_popup` 을 쓴다. 트리거에 `overflow: hidden` 이나 `transform` 조상이 있어도 잘리지 않는다. 대신 `.menu_wrapper` 기준 선택자(`.my-card .menu`)로 스타일링하면 걸리지 않으니 클래스만으로 선택한다. 폭은 트리거와 무관하게 내용 기준이다.
 
 **Usage**
 

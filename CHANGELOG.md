@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.18.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.1) - 2026-09-07
+- (렌더 변경) `Dropdown`·`Combobox` 목록이 트리거보다 좁을 때 옵션 라벨을 자르던 문제를 고칩니다. 트리거 폭은 이제 **하한**이라 목록이 내용만큼 넓어집니다 - 48px 컨트롤에서 `02` 가 `0.` 로 접혔습니다. 뷰포트 가용 폭은 그대로 상한이고, `DateRangePicker`·`DatePicker`·`TimePicker` 도 내부가 `Dropdown` 이라 함께 해결됩니다 (React·Vanilla 양쪽)
+- `Menu` 는 3.18.0 부터 `body` 로 포탈되는데 문서에는 "포탈하지 않는다"가 남아 있었습니다 - `docs/COMPONENTS.md` 를 정정했습니다
+
 ## [3.18.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.0) - 2026-09-03
 - (렌더 변경) `Dropdown`·`Combobox`·`Menu` 팝업이 포탈로 렌더돼 `overflow: hidden` 인 조상(카드·표 래퍼)에 잘리지 않습니다. 뷰포트를 벗어나면 위로 뒤집고 폭·높이를 뷰포트 안으로 제한합니다 (React·Vanilla 양쪽). `DatePicker`·`TimePicker`·`DateRangePicker` 도 내부가 `Dropdown` 이라 함께 해결됩니다
   - **소비자 확인 필요**: 팝업이 `body` 로 이동하므로 트리거 기준 하위 선택자(`.my-card .dropdown_list`)로 스타일링한 규칙은 더 이상 적용되지 않습니다 - 클래스만으로 선택해야 합니다
