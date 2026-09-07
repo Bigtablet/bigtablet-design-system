@@ -42,7 +42,12 @@ const meta: Meta<typeof TextField> = {
 		success: { control: "boolean" },
 		disabled: { control: "boolean" },
 		fullWidth: { control: "boolean" },
-		onChangeAction: { control: false },
+		onValueChange: { control: false },
+		onChangeAction: {
+			control: false,
+			description:
+				"**deprecated** - `onValueChange` 를 쓰세요. Next 서버액션 전달용으로 `Action` 접미사가 필요한 경우만 그대로 씁니다.",
+		},
 	},
 	args: { label: "Label", placeholder: "Input" },
 	parameters: {

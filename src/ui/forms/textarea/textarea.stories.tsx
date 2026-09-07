@@ -53,7 +53,7 @@ export const Default: Story = {
 		const [v, setV] = React.useState("");
 		return (
 			<div style={{ width: 420 }}>
-				<Textarea {...args} value={v} onChangeAction={setV} />
+				<Textarea {...args} value={v} onValueChange={setV} />
 			</div>
 		);
 	},
@@ -80,7 +80,7 @@ export const AutoGrow: Story = {
 					maxRows={6}
 					fullWidth
 					value={v}
-					onChangeAction={setV}
+					onValueChange={setV}
 				/>
 			</div>
 		);
@@ -110,7 +110,7 @@ export const WithCounter: Story = {
 					maxRows={8}
 					fullWidth
 					value={v}
-					onChangeAction={setV}
+					onValueChange={setV}
 				/>
 			</div>
 		);

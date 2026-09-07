@@ -19,7 +19,16 @@ const meta: Meta<typeof Toggle> = {
 		},
 		checked: { control: false },
 		defaultChecked: { control: false },
-		onChange: { control: false },
+		onCheckedChange: { control: false },
+		onChange: {
+			control: false,
+			description: "**deprecated** - `onCheckedChange` 를 쓰세요.",
+		},
+		ariaLabel: {
+			control: "text",
+			description:
+				"스크린리더가 읽을 이름입니다. **필수** 입니다 - Toggle 은 화면에 텍스트 라벨을 그리지 않습니다. `Field` 로 감싸면 그 라벨이 대신 이름이 되고 이 값은 무시됩니다.",
+		},
 	},
 	args: {
 		size: "sm",
@@ -32,7 +41,10 @@ const meta: Meta<typeof Toggle> = {
 				component: `
 **Toggle** - ON/OFF 를 즉시 전환하는 스위치. 다중 선택은 Checkbox 를 쓴다.
 
-제어형: \`checked\` + \`onChange\` / 비제어형: \`defaultChecked\`.
+제어형: \`checked\` + \`onCheckedChange\` / 비제어형: \`defaultChecked\`.
+(\`onChange\` 는 deprecated 다 - 구현은 \`onCheckedChange ?? onChange\` 순으로 읽는다.)
+
+접근성 이름은 \`ariaLabel\` **필수** prop 으로 준다 - 화면에 텍스트 라벨을 그리지 않기 때문이다.
 
 ${SELECTION_COMPARISON}
         `,
@@ -49,7 +61,7 @@ export const Controlled: Story = {
 		docs: {
 			description: {
 				story:
-					"`checked` + `onChange` 로 화면이 상태를 듭니다. 서버 반영이 실패했을 때 되돌려야 하므로, **저장이 비동기면 제어형이 맞습니다.**",
+					"`checked` + `onCheckedChange` 로 화면이 상태를 듭니다. 서버 반영이 실패했을 때 되돌려야 하므로, **저장이 비동기면 제어형이 맞습니다.**\n\n`onChange` 도 아직 동작하지만 deprecated 입니다 - 구현이 `onCheckedChange ?? onChange` 순으로 읽습니다.",
 			},
 		},
 		chromatic: { disableSnapshot: true },
@@ -66,7 +78,7 @@ export const Controlled: Story = {
 						size={size}
 						disabled={disabled}
 						checked={isOn}
-						onChange={setIsOn}
+						onCheckedChange={setIsOn}
 						ariaLabel="토글"
 					/>
 					<span style={{ fontSize: 14, color: "var(--bt-color-text-body)" }}>
@@ -89,7 +101,7 @@ export const Uncontrolled: Story = {
 		docs: {
 			description: {
 				story:
-					"`defaultChecked` 만 주고 이후는 DOM 에 맡깁니다. 폼 제출 때 값만 읽는 설정 화면에 씁니다.\n\n`Toggle` 은 라벨 prop 이 없습니다 - 무엇을 켜는지 알리려면 `Field` 로 감싸거나 옆에 라벨을 두고 `aria-label` 을 주세요.",
+					"`defaultChecked` 만 주고 이후는 DOM 에 맡깁니다. 폼 제출 때 값만 읽는 설정 화면에 씁니다.\n\n`Toggle` 은 화면에 텍스트 라벨을 그리지 않으므로 **필수** `ariaLabel` prop 으로 접근성 이름을 줍니다. `Field` 로 감싸면 그 라벨이 대신 이름이 되고 `ariaLabel` 은 무시됩니다 - 둘 다 읽히면 이름이 두 번 나옵니다.",
 			},
 		},
 		chromatic: { disableSnapshot: true },
