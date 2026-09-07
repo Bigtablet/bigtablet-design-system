@@ -29,9 +29,9 @@ const meta: Meta = {
 
 - **Base**: raw 값 (직접 사용 지양)
 - **Semantic**: 역할 기반 (brand / text / bg / state / border / status)
-- **Brand Accent**: 검정(\`brand_primary\`) 기반 accent 토큰 - 페이지 하단 "Accent 토큰 / Spring 모션" 참고
+- **Brand Accent**: 검정(\`brand_primary\`) 기반 accent 토큰 - 페이지 하단 "Accent 토큰 / React-Spring 모션" 참고
 
-❗️직접 HEX / RGB 값을 쓰지 말고 **반드시 Semantic 토큰**을 사용하세요.
+❗HEX / RGB 값을 하드코딩 하지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,
 			},
 		},
@@ -163,9 +163,12 @@ export const Base: Story = {
 	name: "Base Colors (raw)",
 	render: () => (
 		<div style={{ display: "grid", gap: 8, maxWidth: 760 }}>
-			<p style={{ margin: "0 0 8px", fontSize: 13, color: "#555" }}>
-				⚠️ Base 토큰은 직접 사용을 지양하고 Semantic 토큰을 통해 사용하세요.
-			</p>
+			<div>
+				<strong style={{ fontSize: 15 }}>Semantic Color의 베이스가 되는 팔레트입니다.</strong>
+				<p style={{ margin: "2px 0 0", fontSize: 13, color: "#555" }}>
+					⚠️ Base 토큰은 직접 사용을 지양하고 Semantic 토큰을 통해 사용하세요.
+				</p>
+			</div>
 			{Object.entries(baseColors as Record<string, string>).map(([key, value]) => (
 				<ColorRow key={key} group="baseColors" token={key} value={value} />
 			))}
@@ -264,7 +267,7 @@ export const Comparison: Story = {
 					같은 UI인데, 상태 색상만 다릅니다.
 				</p>
 				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
-					색 하나만 바꿔도 "에러인지 성공인지" 즉시 전달됩니다. 색상이 가진 의미를 느껴보세요.
+					색 하나만 바꿔도 "에러인지 성공인지" 사용자에게 보다 정확히 전달됩니다.
 				</p>
 
 				<div

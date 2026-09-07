@@ -18,7 +18,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**피드백 패턴 cookbook** - 로딩·빈 상태·확인 모달·토스트 등 사용자 상호작용에 대한 시스템 반응을 표현하는 레시피 모음입니다.\n\n각 패턴은 사용 시점과 함께 그대로 복붙해 쓸 수 있는 형태로 정리되어 있습니다.",
+					"**사용자의 동작에 화면이 응답하는 방법** 모음입니다. 기다리게 할 때(로딩), 보여줄 것이 없을 때(빈 상태), 멈춰 세울 때(확인 모달), 알려만 줄 때(토스트) 네 가지입니다.\n\n각 스토리 설명에 '언제 쓰는지'를 적어 두었습니다. 고르는 기준이 되는 문장이니 먼저 읽어 보세요.",
 			},
 		},
 	},
@@ -31,6 +31,14 @@ type Story = StoryObj;
 
 export const LoadingSkeleton: Story = {
 	name: "로딩 스켈레톤",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"목록·카드가 **로딩되는 동안 빈 화면을 보여주지 않기 위해** 씁니다. 스피너 하나보다 실제 레이아웃과 같은 모양의 자리를 잡아 주는 편이 체감 대기 시간이 짧습니다.\n\n`variant` 로 avatar / title / text 자리를 고르고, 실제 콘텐츠와 **같은 크기**로 맞추는 것이 요령입니다. 버튼을 눌러 두 상태를 비교해 보세요.",
+			},
+		},
+	},
 	render: () => {
 		const [loading, setLoading] = useState(true);
 
@@ -144,6 +152,14 @@ export const LoadingSkeleton: Story = {
 
 export const EmptyStatePattern: Story = {
 	name: "빈 상태 + CTA",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"검색 결과가 없거나 아직 아무것도 만들지 않았을 때 씁니다. **왜 비었는지**와 **다음에 무엇을 할 수 있는지**를 같이 주는 것이 핵심입니다.\n\n`EmptyState` 가 아이콘·제목·설명의 간격과 정렬을 갖고, 화면은 문구와 CTA만 정합니다.",
+			},
+		},
+	},
 	render: () => (
 		<div
 			style={{
@@ -176,6 +192,14 @@ export const EmptyStatePattern: Story = {
 
 export const ConfirmationModal: Story = {
 	name: "확인 모달 (위험 액션)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"삭제처럼 **되돌릴 수 없는 동작** 앞에 한 번 멈추게 합니다. 제목에 대상 이름을 넣고, 확인 버튼에는 `danger` 를 주어 실수를 줄입니다.\n\n되돌릴 수 있는 동작에는 쓰지 마세요 - 매번 확인을 물으면 사용자가 읽지 않고 누르게 됩니다.",
+			},
+		},
+	},
 	render: () => {
 		const [open, setOpen] = useState(false);
 		const [completed, setCompleted] = useState(false);
@@ -240,12 +264,11 @@ export const ConfirmationModal: Story = {
 								취소
 							</Button>
 							<Button
-								variant="filled"
+								danger
 								onClick={() => {
 									setCompleted(true);
 									setOpen(false);
 								}}
-								style={{ background: "var(--bt-color-status-error)", color: "#fff" }}
 							>
 								삭제하기
 							</Button>
@@ -281,7 +304,14 @@ const ToastDemo = () => {
 					</p>
 				</Stack>
 
-				<Grid cols={2} gap={8}>
+				<Grid cols={3} gap={8}>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => toast.message("빅태블릿 디자인 시스템에 오신 것을 환영합니다!")}
+					>
+						기본
+					</Button>
 					<Button
 						variant="outline"
 						size="sm"
@@ -318,6 +348,14 @@ const ToastDemo = () => {
 
 export const ToastUsage: Story = {
 	name: "토스트 사용 예",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"저장 완료처럼 **화면을 막지 않아도 되는 알림**에 씁니다. 앱 최상위에 `ToastProvider` 를 한 번 두고, 어디서든 `useToast()` 로 띄웁니다.\n\n`success` / `error` / `warning` / `info` 중 의미에 맞는 것을 고르면 색과 아이콘이 따라옵니다. 사용자의 확인이 필요한 내용이면 Toast 가 아니라 Modal 입니다.",
+			},
+		},
+	},
 	render: () => (
 		<ToastProvider>
 			<ToastDemo />
