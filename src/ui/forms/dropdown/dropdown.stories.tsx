@@ -36,7 +36,11 @@ const meta: Meta<typeof Dropdown> = {
 		size: { control: "select", options: ["sm", "md", "lg"] },
 		variant: { control: "inline-radio", options: ["outline", "filled"] },
 		disabled: { control: "boolean" },
-		fullWidth: { control: "boolean" },
+		fullWidth: {
+			control: false,
+			description:
+				"**deprecated (v3.0.0)** - no-op 입니다. Dropdown 은 항상 부모 폭을 채웁니다. 인라인 폭은 부모를 `inline-block` + `width` 로 감싸세요.",
+		},
 		searchable: { control: "boolean" },
 		multiple: { control: "boolean" },
 		searchPlaceholder: { control: "text" },
@@ -76,6 +80,14 @@ type Story = StoryObj<typeof Dropdown>;
 export const Default: Story = {};
 
 export const WithValue: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"값이 있으면 플로팅 라벨이 위로 올라갑니다. 값이 없을 때는 `placeholder` 가 그 자리를 쓰므로, **라벨과 placeholder 에 같은 말을 넣지 마세요** - 선택 후 라벨만 남습니다.",
+			},
+		},
+	},
 	args: { defaultValue: "banana" },
 };
 
@@ -112,12 +124,27 @@ export const Variants: Story = {
 };
 
 export const FullWidth: Story = {
-	args: { fullWidth: true },
-	parameters: { layout: "padded" },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"Dropdown 은 **언제나 부모 폭을 채웁니다.** 이 스토리에 특별한 prop 은 없습니다 - 아래 padded 레이아웃이 부모이고, 컨트롤이 그 폭을 그대로 씁니다.\n\n`fullWidth` prop 은 v3.0.0 부터 no-op 입니다(타입만 남아 있고 구현이 읽지 않습니다). 인라인 폭이 필요하면 부모를 `inline-block` + `width` 로 감싸세요.",
+			},
+		},
+		layout: "padded",
+	},
 };
 
 export const RichOptions: Story = {
 	name: "Rich options (icon + supporting + divider)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"옵션 하나에 아이콘·보조 텍스트·구분선을 붙입니다. `showDivider` 는 항목을 묶는 용도라 마지막 항목에는 주지 마세요.\n\n목록 폭은 트리거 폭이 **하한**이라 라벨이 길면 내용만큼 넓어집니다(3.18.1) - 긴 보조 텍스트를 넣어도 잘리지 않습니다.",
+			},
+		},
+	},
 	args: {
 		label: "지역",
 		options: [
@@ -137,7 +164,15 @@ export const RichOptions: Story = {
 };
 
 export const Controlled: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`value` + `onValueChange` 로 화면이 상태를 듭니다. 선택에 따라 다른 필드를 바꿔야 할 때 필요합니다.\n\n라벨·필수 표시·에러 문구가 필요하면 `Dropdown` 에는 `error` prop 이 없으므로 `Field` 로 감싸세요.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	render: (args) => {
 		const [value, setValue] = React.useState<string | null>("banana");
 		return (

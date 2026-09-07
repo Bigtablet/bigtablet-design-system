@@ -67,6 +67,14 @@ type Story = StoryObj<typeof TextField>;
 export const Default: Story = {};
 
 export const WithIcons: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`leadingIcon` 은 입력의 **종류**를 알립니다(메일·검색·자물쇠). `trailingIcon` 은 상태나 동작 쪽입니다.\n\n아이콘은 장식이라 접근성 이름을 갖지 않습니다 - 아이콘만으로 뜻을 전달하지 말고 `label` 이나 `placeholder` 로 같은 정보를 주세요.",
+			},
+		},
+	},
 	args: {
 		label: "Search",
 		placeholder: "Search…",
@@ -149,6 +157,14 @@ export const ErrorWinsOverSuccess: Story = {
 
 export const ErrorState: Story = {
 	name: "Error",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`error` 는 `aria-invalid` 를 켭니다. `supportingText` 가 함께 있을 때만 `aria-describedby` 가 연결되므로, **에러 문구 없이 빨간 테두리만 두지 마세요** - 무엇이 틀렸는지 전달되지 않습니다.",
+			},
+		},
+	},
 	args: {
 		label: "Email",
 		placeholder: "name@example.com",
@@ -163,6 +179,14 @@ export const DisabledState: Story = {
 };
 
 export const Clearable: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"오른쪽에 지우기 버튼이 붙습니다. 검색창처럼 **다시 입력하는 일이 잦은 곳**에 값을 합니다.\n\n짧은 폼 필드에는 두지 마세요 - 실수로 눌러 입력이 사라지는 쪽이 손해입니다.",
+			},
+		},
+	},
 	args: {
 		label: "Search",
 		placeholder: "검색어를 입력하세요",

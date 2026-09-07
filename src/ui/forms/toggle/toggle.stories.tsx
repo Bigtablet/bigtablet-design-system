@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { Toggle } from ".";
+import { SELECTION_COMPARISON } from "../selection-comparison.docs";
 
 const meta: Meta<typeof Toggle> = {
 	title: "Components/Forms/Toggle",
@@ -32,6 +33,8 @@ const meta: Meta<typeof Toggle> = {
 **Toggle** - ON/OFF 를 즉시 전환하는 스위치. 다중 선택은 Checkbox 를 쓴다.
 
 제어형: \`checked\` + \`onChange\` / 비제어형: \`defaultChecked\`.
+
+${SELECTION_COMPARISON}
         `,
 			},
 		},
@@ -42,7 +45,15 @@ export default meta;
 type Story = StoryObj<typeof Toggle>;
 
 export const Controlled: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`checked` + `onChange` 로 화면이 상태를 듭니다. 서버 반영이 실패했을 때 되돌려야 하므로, **저장이 비동기면 제어형이 맞습니다.**",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 
 	name: "제어형",
 	render: ({ size, disabled }) => {
@@ -74,7 +85,15 @@ export const Controlled: Story = {
 };
 
 export const Uncontrolled: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`defaultChecked` 만 주고 이후는 DOM 에 맡깁니다. 폼 제출 때 값만 읽는 설정 화면에 씁니다.\n\n`Toggle` 은 라벨 prop 이 없습니다 - 무엇을 켜는지 알리려면 `Field` 로 감싸거나 옆에 라벨을 두고 `aria-label` 을 주세요.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 
 	name: "비제어형",
 	render: ({ size, disabled }) => (
