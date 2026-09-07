@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
 import { TopLoading } from ".";
+import { LOADING_COMPARISON } from "../loading-comparison.docs";
 
 const meta: Meta<typeof TopLoading> = {
 	title: "Components/Feedback/TopLoading",
@@ -42,16 +43,7 @@ const meta: Meta<typeof TopLoading> = {
 \`progress\` 미지정 → indeterminate 무한 애니메이션, 지정 → determinate 퍼센트 fill.
 인라인 로딩은 \`Spinner\` 를 참고.
 
-#### 로딩 표시 4종 중 무엇을 쓰나
-
-| 상황 | 컴포넌트 |
-| --- | --- |
-| 목록·카드가 뜨기 전, 들어올 내용의 **모양을 알 때** | \`Skeleton\` |
-| 버튼·카드 안에서 **작게 돌려야 할 때** | \`Spinner\` |
-| 페이지 전환처럼 **화면 전체가 바뀔 때** | \`TopLoading\` |
-| 회원가입 3단계처럼 **끝이 정해진 진행률** | \`LinearProgress\` |
-
-기다림이 아니라 결과를 알릴 때는 \`Toast\`(막지 않음)나 \`Alert\`(막음)입니다.
+${LOADING_COMPARISON}
 
         `,
 			},
