@@ -761,10 +761,14 @@
 			const gap = 4;
 			const padding = 8;
 
-			// 폭은 트리거를 따르되 뷰포트 가용 폭을 넘지 않는다 - 넘으면 오른쪽 옵션이 잘린다.
+			// 트리거 폭은 **하한**이다 - 못박으면 트리거가 좁을 때 목록이 자기 옵션 라벨을
+			// ellipsis 로 접는다(#596). 상한은 뷰포트 가용 폭이고, 실제 폭은 CSS 의
+			// `width: max-content` 가 내용 기준으로 정한다.
 			// 폭을 먼저 확정해야 높이가 실제 줄바꿈 기준으로 잡힌다.
-			const width = Math.min(rect.width, window.innerWidth - padding * 2);
-			panel.style.width = `${width}px`;
+			const room = window.innerWidth - padding * 2;
+			panel.style.minWidth = `${Math.min(rect.width, room)}px`;
+			panel.style.maxWidth = `${room}px`;
+			const width = panel.offsetWidth;
 
 			// 높이도 가용 높이로 제한한다 - 목록이 뷰포트보다 길면 위/아래 어느 쪽으로도 다 안 들어간다.
 			const available = window.innerHeight - padding * 2;
@@ -817,7 +821,10 @@
 			panelHome = null;
 			panel.style.left = "";
 			panel.style.top = "";
-			panel.style.width = "";
+			// 폭 하한·상한 둘 다 지운다 - 하나만 남으면 제자리로 돌아간 목록에 좁은 트리거의
+			// 하한이 그대로 붙어 있다(#596).
+			panel.style.minWidth = "";
+			panel.style.maxWidth = "";
 			panel.style.maxHeight = "";
 		}
 

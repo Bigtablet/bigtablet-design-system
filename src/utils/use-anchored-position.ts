@@ -191,6 +191,8 @@ export interface AnchoredState extends AnchoredResult {
 	/**
 	 * 앵커의 현재 폭(px). 리스트박스 팝업이 트리거 폭에 맞춰야 하는데, 포탈로 띄우면
 	 * `width: 100%` 가 트리거가 아니라 body 를 가리키므로 이 값을 인라인으로 준다.
+	 * 소비처는 `width` 가 아니라 `min-width` 로 쓴다 - 폭을 못박으면 좁은 트리거에서
+	 * 목록이 자기 옵션 라벨을 잘라낸다(#596).
 	 * 이 훅이 이미 앵커를 재고 scroll·resize·ResizeObserver 로 갱신하므로 소비처가 같은
 	 * 리스너를 또 달 필요가 없다.
 	 */

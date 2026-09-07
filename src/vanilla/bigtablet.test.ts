@@ -104,6 +104,24 @@ describe("Dropdown - 초기화", () => {
 		expect(dd?.getValue()).toEqual(["apple", "grape"]);
 	});
 
+	it("트리거 폭을 하한으로만 쓴다 - 못박으면 옵션 라벨이 잘린다", () => {
+		// 좁은 트리거에서 목록이 자기 옵션 라벨을 ellipsis 로 접었다(#596). 실제 폭은 CSS 의
+		// `width: max-content` 가 정하므로 JS 는 하한·상한만 준다.
+		const wrap = dropdownMarkup();
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLButtonElement;
+		control.getBoundingClientRect = () =>
+			({ width: 48, height: 32, top: 10, left: 5, bottom: 42, right: 53 }) as DOMRect;
+
+		const dd = Dropdown(wrap);
+		dd?.open();
+
+		const panel = document.querySelector(".bt-dropdown__list") as HTMLElement;
+		expect(panel.style.minWidth).toBe("48px");
+		expect(panel.style.width).toBe("");
+		// 상한은 남는다 - 트리거가 뷰포트보다 넓으면 오른쪽 옵션이 잘린다.
+		expect(panel.style.maxWidth).toBe(`${window.innerWidth - 16}px`);
+	});
+
 	it("native disabled 를 config·aria·클래스와 함께 동기화한다", () => {
 		const wrap = dropdownMarkup();
 		const control = wrap.querySelector(".bt-dropdown__control") as HTMLButtonElement;
@@ -594,13 +612,16 @@ describe("Alert", () => {
 
 		expect(panel.parentElement).toBe(document.body);
 		expect(panel.style.position).toBe("");
-		// 폭은 트리거를 재서 인라인으로 준다 - 포탈에서는 `width: 100%` 가 트리거를 가리키지 않는다.
-		expect(panel.style.width).not.toBe("");
+		// 폭 하한은 트리거를 재서 인라인으로 준다 - 포탈에서는 `min-width: 100%` 가 트리거를
+		// 가리키지 않는다. `width` 로 못박지는 않는다(#596).
+		expect(panel.style.minWidth).not.toBe("");
+		expect(panel.style.width).toBe("");
 
 		dd?.close();
 
 		expect(panel.parentElement).toBe(home);
-		expect(panel.style.width).toBe("");
+		expect(panel.style.minWidth).toBe("");
+		expect(panel.style.maxWidth).toBe("");
 		expect(panel.style.left).toBe("");
 		expect(panel.style.top).toBe("");
 	});

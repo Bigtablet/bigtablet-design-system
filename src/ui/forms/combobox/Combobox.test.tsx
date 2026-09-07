@@ -24,6 +24,26 @@ describe("Combobox", () => {
 	const type = (value: string) =>
 		fireEvent.change(screen.getByRole("combobox"), { target: { value } });
 
+	it("uses the trigger width as a floor, not a fixed width", async () => {
+		// 폭을 못박으면 좁은 트리거에서 패널이 자기 옵션 라벨을 잘라낸다(#596, Dropdown 과 동일).
+		const rect = vi
+			.spyOn(Element.prototype, "getBoundingClientRect")
+			.mockReturnValue({ width: 60, height: 32, top: 10, left: 5 } as DOMRect);
+
+		render(<Combobox onSearch={vi.fn().mockResolvedValue(OPTIONS)} defaultOptions={OPTIONS} />);
+		open();
+
+		const panel = await waitFor(() => {
+			const found = document.querySelector<HTMLElement>(".combobox_panel");
+			if (!found) throw new Error("패널을 못 찾았다 - .combobox_panel 클래스가 바뀌었는지 보라");
+			return found;
+		});
+		expect(panel.style.minWidth).toBe("60px");
+		expect(panel.style.width).toBe("");
+
+		rect.mockRestore();
+	});
+
 	it("distinguishes not-yet-searched from no-results", async () => {
 		// 둘을 같은 문구로 묶으면 검색 전 빈 목록이 실패처럼 읽힌다.
 		const onSearch = vi.fn().mockResolvedValue([]);
