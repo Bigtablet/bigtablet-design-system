@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { Radio } from "../radio";
 import { RadioGroup } from ".";
+import { SELECTION_COMPARISON } from "../selection-comparison.docs";
 
 const meta: Meta<typeof RadioGroup> = {
 	title: "Components/Forms/RadioGroup",
@@ -45,6 +46,8 @@ const meta: Meta<typeof RadioGroup> = {
 - 제어형(\`value\` + \`onValueChange\`) 또는 비제어형(\`defaultValue\`).
 - \`role="radiogroup"\` + label/supportingText/error. 네이티브 radio 라 방향키 이동을 기본 지원한다.
 - 자식 \`Radio\` 는 \`value\` 가 필요하고 size/name/disabled 는 상속받는다.
+
+${SELECTION_COMPARISON}
 				`,
 			},
 		},
@@ -62,6 +65,14 @@ const SIZE_OPTIONS = [
 
 export const Default: Story = {
 	name: "기본 (비제어) / Uncontrolled",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`defaultValue` 만 주고 상태를 DS 에 맡기는 비제어형입니다. 폼 제출 때 값만 읽으면 되는 경우 이쪽이 짧습니다.\n\n선택에 따라 다른 필드를 보이거나 숨겨야 하면 제어형(아래)으로 가세요.",
+			},
+		},
+	},
 	render: (args) => (
 		<RadioGroup {...args} defaultValue="md">
 			{SIZE_OPTIONS.map((o) => (
@@ -73,6 +84,14 @@ export const Default: Story = {
 
 export const Controlled: Story = {
 	name: "제어형 / Controlled",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`value` + `onValueChange` 로 화면이 상태를 듭니다. **선택이 다른 UI 를 바꿔야 할 때만** 필요합니다 - 그렇지 않으면 비제어형이 코드가 적습니다.",
+			},
+		},
+	},
 	render: (args) => {
 		const [value, setValue] = React.useState("md");
 		return (
@@ -92,6 +111,14 @@ export const Controlled: Story = {
 
 export const Horizontal: Story = {
 	name: "가로 배치 / Horizontal",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"항목이 둘~셋이고 라벨이 짧을 때만 가로로 두세요. 넷 이상이거나 라벨이 길면 세로가 훑어보기 쉽고, 좁은 화면에서 줄바꿈이 어긋나지 않습니다.",
+			},
+		},
+	},
 	args: { orientation: "horizontal", label: "정렬 / Alignment" },
 	render: (args) => (
 		<RadioGroup {...args} defaultValue="left">
@@ -104,6 +131,14 @@ export const Horizontal: Story = {
 
 export const WithError: Story = {
 	name: "에러 + 보조 텍스트 / Error",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`error` 와 `supportingText` 를 같이 둔 모습입니다. 에러가 있으면 `aria-invalid` 가 붙고 스크린리더가 문구를 그룹 설명으로 읽습니다.\n\n둘을 동시에 주면 화면에는 에러가 우선합니다 - 도움말은 평상시, 에러는 실패 시로 나눠 쓰세요.",
+			},
+		},
+	},
 	args: {
 		error: true,
 		label: "결제 수단 / Payment",

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { Radio } from ".";
+import { SELECTION_COMPARISON } from "../selection-comparison.docs";
 
 const meta: Meta<typeof Radio> = {
 	title: "Components/Forms/Radio",
@@ -28,6 +29,8 @@ const meta: Meta<typeof Radio> = {
 **Radio** - 단일 선택 (다중 선택은 Checkbox 를 쓴다).
 
 같은 그룹은 \`name\` 을 공유하고 항목마다 \`value\` 를 가진다. \`checked\` / \`onChange\` 로 제어한다.
+
+${SELECTION_COMPARISON}
         `,
 			},
 		},
@@ -39,6 +42,14 @@ type Story = StoryObj<typeof Radio>;
 
 export const Group: Story = {
 	name: "그룹 선택 예시",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`Radio` 를 손으로 묶은 형태입니다. 같은 `name` 을 세 곳에 직접 적어야 하고, `checked` 도 항목마다 비교해야 합니다.\n\n실제 화면에서는 `RadioGroup` 을 쓰세요 - `name`·`value`·`size`·`disabled` 를 대신 흘려 주고 `role="radiogroup"` 과 라벨·에러 자리까지 갖습니다. 이 스토리는 그 아래에서 무엇이 일어나는지 보여 주는 용도입니다.',
+			},
+		},
+	},
 	render: (args) => {
 		const groupId = React.useId();
 		const groupName = `radio_group_${groupId}`;

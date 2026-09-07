@@ -53,7 +53,7 @@ export const Default: Story = {
 		const [v, setV] = React.useState("");
 		return (
 			<div style={{ width: 420 }}>
-				<Textarea {...args} value={v} onChangeAction={setV} />
+				<Textarea {...args} value={v} onValueChange={setV} />
 			</div>
 		);
 	},
@@ -80,7 +80,7 @@ export const AutoGrow: Story = {
 					maxRows={6}
 					fullWidth
 					value={v}
-					onChangeAction={setV}
+					onValueChange={setV}
 				/>
 			</div>
 		);
@@ -89,6 +89,14 @@ export const AutoGrow: Story = {
 
 export const WithCounter: Story = {
 	name: "글자 수 카운터",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`showCounter` 는 `maxLength` 와 함께 써야 의미가 있습니다 - 상한이 없으면 세는 숫자가 기준을 갖지 않습니다.\n\n한글은 조합 중 글자 수가 흔들립니다. 실시간 카운트가 필요하면 `imeStrategy="immediate"` 를 같이 보세요.',
+			},
+		},
+	},
 	render: () => {
 		const [v, setV] = React.useState("");
 		return (
@@ -102,7 +110,7 @@ export const WithCounter: Story = {
 					maxRows={8}
 					fullWidth
 					value={v}
-					onChangeAction={setV}
+					onValueChange={setV}
 				/>
 			</div>
 		);
@@ -111,6 +119,14 @@ export const WithCounter: Story = {
 
 export const ErrorState: Story = {
 	name: "에러 상태",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`TextField` 와 같은 규칙입니다 - `error` 가 `aria-invalid` 를 켜고, 문구는 `supportingText` 자리에 놓입니다.\n\n`maxLength` 초과를 에러로 알리려면 카운터와 함께 두세요. 테두리만 붉어지면 이유가 보이지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ width: 420 }}>
 			<Textarea
