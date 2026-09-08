@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LinearProgress } from ".";
 import { LOADING_COMPARISON } from "../loading-comparison.docs";
+import { LinearProgress } from ".";
 
 const meta: Meta<typeof LinearProgress> = {
 	title: "Components/Feedback/LinearProgress",
