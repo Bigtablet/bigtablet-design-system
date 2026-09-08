@@ -37,7 +37,9 @@ const meta: Meta<typeof Popover> = {
 				component: `
 **Popover** - 클릭으로 여는 non-modal 패널. 임의의 interactive 콘텐츠(폼·설명·액션)를 담는다. 액션 리스트는 \`Menu\`, hover 정보는 \`Tooltip\` 을 쓴다.
 
-외부 클릭이나 \`Esc\` 로 닫힌다. 열려 있는 동안 포커스는 **패널 안에 트랩된다** - 첫 focusable 로 이동하고 Tab 이 순환하며, 닫히면 trigger 로 복귀한다. \`body\` 로 포탈돼 트리거 뒤 tab 순서가 끊기기 때문이고, Modal·Drawer·Alert 와 같은 처리다.
+외부 클릭이나 \`Esc\` 로 닫힌다. 열려 있는 동안 **Tab 은 패널 안에서 순환한다** - \`body\` 로 포탈돼 트리거 뒤 tab 순서가 끊기므로 Modal·Drawer·Alert 와 같은 포커스 트랩을 쓴다. 닫히면 trigger 로 복귀한다.
+
+실측(Chromium): 마우스로 열면 포커스가 트리거에 남아 있고 **첫 Tab 이 패널로 들어간다.**
 
 \`role="dialog"\` (non-modal) - 접근성 이름을 위해 \`aria-label\` 또는 \`aria-labelledby\` 를 전달한다.
 				`.trim(),
@@ -54,7 +56,7 @@ export const Default: Story = {
 		docs: {
 			description: {
 				story:
-					'클릭으로 여는 non-modal 패널입니다. **`role="dialog"` 인데 접근성 이름은 자동으로 붙지 않습니다** - `aria-label` 이나 `aria-labelledby` 를 반드시 주세요. 둘 다 비우면 이름 없는 대화상자가 됩니다.\n\n열려 있는 동안 Tab 은 패널 안에서만 돕니다(포커스 트랩) - 배경을 막지는 않지만 키보드로는 나갈 수 없으니, 오래 열어 두는 패널에는 맞지 않습니다.',
+					'클릭으로 여는 non-modal 패널입니다. **`role="dialog"` 인데 접근성 이름은 자동으로 붙지 않습니다** - `aria-label` 이나 `aria-labelledby` 를 반드시 주세요. 둘 다 비우면 이름 없는 대화상자가 됩니다.\n\n열려 있는 동안 **Tab 은 패널 안에서 순환합니다** - 실측으로 두 버튼 사이를 돌고 패널을 벗어나지 않았습니다. 배경을 막지는 않지만 키보드로는 나갈 수 없으니 오래 열어 두는 패널에는 맞지 않습니다.',
 			},
 		},
 	},
