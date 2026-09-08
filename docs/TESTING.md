@@ -81,7 +81,7 @@ pnpm test
 pnpm test:watch
 
 # 특정 파일만 테스트
-pnpm vitest run src/ui/general/button/Button.test.tsx
+pnpm vitest run src/ui/general/button/button.test.tsx
 
 # 커버리지 리포트
 pnpm test:coverage
@@ -105,7 +105,7 @@ pnpm vitest --ui
 src/ui/general/button/
 ├── index.tsx
 ├── style.scss
-└── Button.test.tsx    # 테스트 파일
+└── button.test.tsx    # 테스트 파일 (폴더명과 같게)
 ```
 
 ### Vanilla 번들 테스트
@@ -424,7 +424,7 @@ it("calls callback with correct arguments", () => {
 ### Button 테스트
 
 ```tsx
-// src/ui/general/button/Button.test.tsx
+// src/ui/general/button/button.test.tsx
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Button } from "./index";
@@ -486,7 +486,7 @@ describe("Button", () => {
 ### Modal 테스트
 
 ```tsx
-// src/ui/overlay/modal/Modal.test.tsx
+// src/ui/overlay/modal/modal.test.tsx
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Modal } from "./index";
