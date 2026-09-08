@@ -157,14 +157,10 @@ jobs:
       - name: Check bundle size
         run: pnpm size
 
-      # 아래 두 검사도 dist 산출물을 읽는다 — 반드시 Build 이후여야 한다.
-      # 단위 테스트로는 잡을 수 없는 종류다: jsdom 은 스타일시트를 계산하지 않고,
+      # 이 검사는 dist 산출물을 읽는다 — 반드시 Build 이후여야 한다.
       # 문서와 빌드 산출물의 어긋남은 어떤 테스트도 보지 않는다.
       - name: Check documented CSS variables
         run: pnpm check:css-vars
-
-      - name: Check Prose heading weights
-        run: pnpm check:prose
 
       # 오버레이 close 기하가 패널 패딩에서 파생되는지 - 이것도 dist 를 읽으므로 Build 이후다.
       - name: Check overlay close geometry

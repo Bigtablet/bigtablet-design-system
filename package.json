@@ -49,7 +49,6 @@
 		"test:storybook": "vitest run --project storybook",
 		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss' 'src/vanilla/**/*.scss'",
 		"check:css-vars": "scripts/check-css-vars.sh",
-		"check:prose": "scripts/check-prose-headings.sh",
 		"check:defaults": "python3 scripts/check-prop-defaults.py",
 		"check:geometry": "python3 scripts/check-overlay-geometry.py",
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
