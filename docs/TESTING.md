@@ -362,58 +362,67 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, `unit` 프로젝트) 기준 - 76 test files / 1120 passed · 9 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 76 test files / 1136 passed · 9 skipped.
+
+> **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
+> 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
+> `src/utils/**` 는 스토리북 48.4% · unit 93.3% 다 - 훅과 유틸은 스토리가 거의 건드리지 않는다.
+> **스토리북 커버리지는 목표 지표가 아니다** - 그 러너의 목적은 axe a11y 검증이고 커버리지는 부산물이다.
+> 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준이다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **91.96%** | **89.01%** | **92.78%** | **94.02%** |
+| **All files** | **91.83%** | **89.1%** | **92.77%** | **93.83%** |
 
-아래는 **100% 미만**인 파일만 나열한 것이다 (36개 파일은 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것이다 (33개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
 | ui/display/accordion | 100% | 80% | 100% | 100% |
-| ui/display/avatar | 84.61% | 88% | 66.66% | 90.90% |
-| ui/display/chip | 91.66% | 95.65% | 66.66% | 100% |
-| ui/display/data-view | 100% | 97.29% | 100% | 100% |
-| ui/display/hero | 92.85% | 88.88% | 100% | 100% |
+| ui/display/avatar | 84.62% | 88% | 66.67% | 90.91% |
+| ui/display/chip | 91.67% | 95.65% | 66.67% | 100% |
+| ui/display/data-view | 100% | 97.3% | 100% | 100% |
+| ui/display/hero | 92.86% | 88.89% | 100% | 100% |
 | ui/display/list-item | 100% | 93.33% | 100% | 100% |
-| ui/display/media-card | 100% | 96.29% | 100% | 100% |
-| ui/display/prose | 73.07% | 71.42% | 80% | 80% |
-| ui/display/table | 98.24% | 93.04% | 95.65% | 97.95% |
+| ui/display/media-card | 100% | 96.3% | 100% | 100% |
+| ui/display/prose | 73.08% | 71.43% | 80% | 80% |
+| ui/display/table | 98.25% | 93.04% | 95.65% | 97.96% |
+| ui/feedback | 0% | 100% | 100% | 0% |
 | ui/feedback/alert | 98.36% | 96.36% | 100% | 100% |
-| ui/feedback/linear-progress | 100% | 66.66% | 100% | 100% |
-| ui/feedback/toast | 100% | 85% | 100% | 100% |
-| ui/forms/checkbox | 92.30% | 93.75% | 100% | 100% |
-| ui/forms/combobox | 94.02% | 88.60% | 81.25% | 96.72% |
-| ui/forms/date-picker | 92.55% | 84.32% | 100% | 97.40% |
-| ui/forms/dropdown | 100% | 93.07% | 100% | 100% |
+| ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
+| ui/feedback/toast | 100% | 86.36% | 100% | 100% |
+| ui/forms | 0% | 100% | 100% | 0% |
+| ui/forms/checkbox | 92.31% | 93.75% | 100% | 100% |
+| ui/forms/combobox | 94.03% | 89.53% | 81.25% | 96.72% |
+| ui/forms/date-picker | 92.55% | 84.33% | 100% | 97.4% |
+| ui/forms/dropdown | 100% | 93.43% | 100% | 100% |
 | ui/forms/field | 100% | 96% | 100% | 100% |
 | ui/forms/file | 82% | 70.21% | 83.33% | 81.63% |
-| ui/forms/image-cropper | 54.47% | 57.14% | 40% | 55.20% |
-| ui/forms/otp-input | 89.65% | 89.39% | 100% | 89.74% |
+| ui/forms/image-cropper | 59.33% | 58.06% | 50% | 60.28% |
+| ui/forms/otp-input | 89.66% | 89.39% | 100% | 89.74% |
 | ui/forms/tag-input | 97.59% | 90.54% | 100% | 100% |
-| ui/forms/textarea | 88.70% | 77.65% | 100% | 92.98% |
-| ui/forms/textfield | 98.24% | 95.74% | 90.90% | 98.14% |
+| ui/forms/textarea | 88.71% | 77.66% | 100% | 92.98% |
+| ui/forms/textfield | 98.25% | 95.74% | 90.91% | 98.15% |
 | ui/forms/time-picker | 93.22% | 90.41% | 100% | 100% |
-| ui/forms/toggle | 100% | 94.11% | 100% | 100% |
-| ui/navigation/bottom-nav | 95.83% | 91.66% | 100% | 95.83% |
-| ui/navigation/menu | 97.29% | 89.13% | 100% | 100% |
-| ui/navigation/nav-bar | 80.39% | 71.25% | 81.81% | 85.55% |
-| ui/navigation/sidebar | 84.84% | 89.28% | 80% | 87.50% |
-| ui/navigation/tabs | 91.42% | 78.18% | 88.88% | 98.90% |
-| ui/overlay/drawer | 98.27% | 98.46% | 100% | 100% |
-| ui/overlay/modal | 98.14% | 98.55% | 100% | 100% |
-| ui/overlay/popover | 91.30% | 84.84% | 100% | 92.68% |
-| ui/overlay/tooltip | 92.98% | 84.37% | 93.33% | 91.66% |
-| ui/system/theme-provider | 93.87% | 85.71% | 100% | 100% |
-| utils/cn.ts | 100% | 87.50% | 100% | 100% |
-| utils/overlay-stack.ts | 93.93% | 81.25% | 87.50% | 96.29% |
-| utils/scroll-lock.ts | 89.31% | 88.31% | 100% | 94.01% |
-| utils/use-anchored-position.ts | 90% | 85.29% | 83.33% | 93.84% |
-| utils/use-focus-trap.ts | 97.72% | 85% | 100% | 100% |
-| utils/use-listbox-popup.ts | 94.21% | 92.06% | 100% | 94.05% |
-| utils/use-reduced-motion.ts | 95.23% | 100% | 85.71% | 94.73% |
+| ui/forms/toggle | 100% | 94.12% | 100% | 100% |
+| ui/navigation | 0% | 100% | 100% | 0% |
+| ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
+| ui/navigation/menu | 97.5% | 88.68% | 100% | 100% |
+| ui/navigation/nav-bar | 80.77% | 71.95% | 81.82% | 85.87% |
+| ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
+| ui/navigation/tabs | 91.43% | 78.18% | 88.89% | 98.9% |
+| ui/overlay/drawer | 98.28% | 98.46% | 100% | 100% |
+| ui/overlay/modal | 98.15% | 98.55% | 100% | 100% |
+| ui/overlay/popover | 91.3% | 84.85% | 100% | 92.68% |
+| ui/overlay/tooltip | 92.98% | 84.38% | 93.33% | 91.67% |
+| ui/system/theme-provider | 93.88% | 85.71% | 100% | 100% |
+| utils/cn.ts | 100% | 87.5% | 100% | 100% |
+| utils/overlay-stack.ts | 93.94% | 81.25% | 87.5% | 96.3% |
+| utils/scroll-lock.ts | 89.31% | 88.31% | 100% | 94.02% |
+| utils/use-anchored-position.ts | 91.55% | 86.36% | 83.33% | 93.94% |
+| utils/use-focus-trap.ts | 97.73% | 85% | 100% | 100% |
+| utils/use-listbox-popup.ts | 94.07% | 93.22% | 100% | 93.94% |
+| utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 
 > 이 표는 `coverage/coverage-summary.json` 에서 뜬 실측이다. 손으로 고치지 말고 `pnpm test:coverage`
