@@ -13,14 +13,14 @@ const meta: Meta = {
 				component: `
 ### Border Width (테두리 두께)
 
-테두리 두께는 **요소의 경계와 강조 수준**을 표현합니다.
+Border Width는 **요소의 경계와 강조 수준**을 표현합니다.
 
 - **none (0px)**: 테두리 없음
 - **standard (1px)**: 기본 테두리 (카드, 인풋, 구분선)
 - **thick (2px)**: 두꺼운 테두리 (강조 입력 필드, OTP, 포커스 강조)
 - **indicator (2px)**: 강조 테두리 (포커스 링, 선택 상태, 탭 인디케이터)
 
-> \`thick\`과 \`indicator\`는 동일한 2px 값을 공유하지만 의미가 다릅니다 - \`thick\`은 시각적 두께, \`indicator\`는 상태 표시.
+> \`thick\`과 \`indicator\`는 동일한 2px 값을 공유하지만 의미가 다릅니다. \`thick\`은 시각적 두께, \`indicator\`는 상태 표시.
 `,
 			},
 		},

@@ -23,6 +23,10 @@ const meta: Meta<typeof Divider> = {
 **Divider** - 콘텐츠 영역을 나누는 수평 구분선.
 
 \`weight\`: \`standard\` (1px, 기본) / \`heavy\` (2px, 섹션 강조).
+
+**간격만으로 구분이 되면 넣지 마세요.** 선은 "여기까지가 한 묶음"을 말해야 할 때만 값을 합니다 -
+설정 화면의 성격이 다른 항목 사이, 카드 안의 본문과 푸터 사이처럼.
+여백을 벌리는 것이 목적이라면 \`Stack\` 의 \`gap\` 이나 \`Section\` 의 \`spacing\` 이 맞습니다.
         `,
 			},
 		},
@@ -41,6 +45,14 @@ export const Standard: Story = {
 
 export const Heavy: Story = {
 	name: "Heavy (2px)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"2px 입니다. 같은 화면에서 1px 과 섞어 **위계를 만들 때만** 쓰세요 - 큰 묶음은 `heavy`, 그 안의 항목 사이는 `standard`. 전부 `heavy` 로 두면 위계가 사라집니다.",
+			},
+		},
+	},
 	args: {
 		weight: "heavy",
 	},

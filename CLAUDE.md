@@ -53,13 +53,17 @@ src/
 ### Component Files
 - All components use `"use client"` directive
 - Props interfaces extend HTML element attributes
-- Standard structure:
+- Standard structure - **폴더 이름은 kebab-case** 로 짓고, 테스트·스토리 파일은 그 폴더명을 그대로 쓴다:
   ```
-  src/ui/{category}/{ComponentName}/
-  ├── index.tsx            # Component implementation
-  ├── style.scss           # Global SCSS styles
-  └── *.stories.tsx        # Storybook stories (optional)
+  src/ui/{category}/{component-name}/
+  ├── index.tsx                       # Component implementation
+  ├── style.scss                      # Global SCSS styles
+  ├── {component-name}.test.tsx       # Unit tests
+  └── {component-name}.stories.tsx    # Storybook stories (optional)
   ```
+  예: `src/ui/display/data-view/` → `data-view.test.tsx` · `data-view.stories.tsx`.
+  컴포넌트 이름(`DataView`)이 아니라 **폴더 이름**을 쓴다 - 한 폴더 안의 세 파일이 같은 이름을
+  공유하면 목록에서 짝이 바로 보이고, 폴더를 옮길 때 파일명을 따로 고칠 일이 없다.
 
 ### Styling (Global SCSS)
 - **Global SCSS**: All styles use `style.scss` files (not CSS Modules)
@@ -235,13 +239,15 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 91.96% stmts / 89.01% branch / 92.78% funcs / 94.02% lines - 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 92.02% stmts / 89.1% branch / 92.77% funcs / 94.04% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
+  pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
+  pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 

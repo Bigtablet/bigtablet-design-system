@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { LOADING_COMPARISON } from "../loading-comparison.docs";
 import { Skeleton } from ".";
 
 const meta: Meta<typeof Skeleton> = {
@@ -19,6 +20,9 @@ const meta: Meta<typeof Skeleton> = {
 **Skeleton** - 로딩 중 자리를 잡아 두는 플레이스홀더. \`aria-hidden\` 이 자동으로 적용된다.
 
 Variants: \`text\` (12px) / \`title\` (20px) / \`avatar\` (40×40 circle / 원형) / \`rect\` (card/image / 카드·이미지).
+
+${LOADING_COMPARISON}
+
 				`,
 			},
 		},
@@ -35,6 +39,14 @@ export const Rect: Story = { args: { variant: "rect", width: 320, height: 120 } 
 
 export const CardLoading: Story = {
 	name: "Card loading 예시",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"실제로 쓰는 방식입니다. 큰 `Skeleton` 하나를 두지 말고 **들어올 콘텐츠와 같은 구조**로 조합하세요 - 아바타 자리, 제목 자리, 본문 두 줄.\n\n너비를 `60%`·`90%` 처럼 서로 다르게 주면 실제 텍스트처럼 읽힙니다.",
+			},
+		},
+	},
 	render: () => (
 		<div
 			style={{

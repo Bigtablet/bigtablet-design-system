@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { DATETIME_COMPARISON } from "../datetime-comparison.docs";
 import { Field } from "../field";
 import { type DateRange, DateRangePicker } from ".";
 
@@ -19,6 +20,8 @@ const meta: Meta<typeof DateRangePicker> = {
 
 종료일을 조용히 시작일로 맞추지 않고 **비운다** — 사용자가 고르지 않은 날짜를 고른 것처럼
 만들면 그대로 조회·저장된다.
+
+${DATETIME_COMPARISON}
         `,
 			},
 		},
@@ -30,6 +33,14 @@ type Story = StoryObj<typeof DateRangePicker>;
 
 export const Basic: Story = {
 	name: "기본",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"시작일을 고르면 종료일의 최소값이 그날로 올라갑니다 - **거꾸로 된 범위를 만들 수 없습니다.**\n\n시작일을 종료일보다 뒤로 옮기면 종료일이 조용히 맞춰지지 않고 **비워집니다.** 고르지 않은 날짜를 고른 것처럼 두면 그대로 조회·저장되기 때문입니다.",
+			},
+		},
+	},
 	render: () => {
 		const [range, setRange] = useState<DateRange>({});
 		return (

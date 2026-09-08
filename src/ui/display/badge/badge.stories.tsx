@@ -51,6 +51,14 @@ export const Labels: Story = {
 };
 
 export const Counts: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"읽지 않은 개수처럼 **숫자 자체가 정보**일 때 씁니다. `max` 를 주면 넘는 값이 `99+` 로 접혀 뱃지 폭이 들쭉날쭉해지지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
 			<Badge shape="count" count={1} />
@@ -63,6 +71,14 @@ export const Counts: Story = {
 };
 
 export const Dots: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"숫자 없이 **있다/없다만** 알리는 형태입니다. 새 알림이 있다는 사실만 중요하고 개수는 중요하지 않을 때, 또는 자리가 좁을 때 씁니다.\n\n점만으로는 스크린리더에 아무것도 남지 않으니 옆 요소의 접근성 이름에 상태를 담으세요.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
 			<Badge shape="dot" variant="success" />

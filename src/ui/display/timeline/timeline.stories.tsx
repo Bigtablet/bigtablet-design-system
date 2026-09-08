@@ -33,6 +33,14 @@ type Story = StoryObj<typeof Timeline>;
 
 export const OrderTracking: Story = {
 	name: "주문 추적",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"가장 흔한 형태입니다. `done` · `active` · `pending` 세 상태로 **지금 어디까지 왔는지**를 보여 줍니다.\n\n`active` 는 하나만 두세요 - 여러 개가 활성이면 현재 위치가 읽히지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<Card bordered padding="lg" style={{ maxWidth: 420 }}>
 			<Timeline

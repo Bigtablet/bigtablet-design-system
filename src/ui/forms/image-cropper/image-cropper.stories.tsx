@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useRef, useState } from "react";
 import { Button } from "../../general/button";
+import { UPLOAD_COMPARISON } from "../upload-comparison.docs";
 import { ImageCropper, type ImageCropperHandle } from "./index";
 
 /** 데모용 샘플 이미지 (외부 네트워크 없이 렌더되도록 인라인 SVG data URL). */
@@ -30,8 +31,6 @@ const meta = {
 				component: [
 					"업로드 전에 이미지에서 보일 **정사각 영역**을 정하는 크로퍼입니다. 뷰포트 안에서 **드래그(또는 방향키)** 로 위치를, **마우스 휠 · 슬라이더 · ＋/－ 버튼(또는 `+`/`-` 키)** 으로 배율을 맞춥니다. 모달을 포함하지 않으므로 소비자가 `Modal` 등으로 감싸고, 적용 버튼에서 `ref.crop()` 을 호출해 잘린 `Blob` 을 받습니다.",
 					"",
-					"An image cropper for choosing a **square region** before upload. **Drag (or arrow keys)** to reposition, **wheel · slider · ±buttons (or `+`/`-`)** to zoom. It renders no modal — wrap it yourself and call `ref.crop()` from your apply button to get the cropped `Blob`.",
-					"",
 					"```tsx",
 					"const cropperRef = useRef<ImageCropperHandle>(null);",
 					"<ImageCropper ref={cropperRef} src={file} circular />;",
@@ -39,7 +38,9 @@ const meta = {
 					"const blob = await cropperRef.current!.crop();",
 					"```",
 					"",
-					"> 원격 URL 은 `canvas.drawImage` 가 서버 CORS 에 의존합니다 — 확실히 자르려면 로컬 `File`/`Blob` 을 권장합니다. / Remote URLs depend on server CORS; prefer a local `File`/`Blob`.",
+					"> 원격 URL 은 `canvas.drawImage` 가 서버 CORS 에 의존합니다 - 확실히 자르려면 로컬 `File`/`Blob` 을 권장합니다.",
+					"",
+					UPLOAD_COMPARISON,
 				].join("\n"),
 			},
 		},
@@ -110,16 +111,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** 모든 컨트롤을 만져볼 수 있는 기본 놀이터. / Interactive playground. */
+/**
+ * 모든 prop 을 직접 바꿔 보는 자리. `viewportSize` 는 화면에 보이는 크기,
+ * `outputSize` 는 **잘려 나오는 이미지의 픽셀 크기**로 서로 다르다 -
+ * 작게 보여 주면서 큰 결과를 받을 수 있다.
+ */
 export const Playground: Story = {};
 
-/** 둥근 사각 가이드(기본). / Rounded-square guide (default). */
+/** 기본 정사각 가이드. 잘린 결과도 정사각이라 목록·카드 썸네일에 바로 쓴다. */
 export const Square: Story = { args: { src: SQUARE } };
 
-/** 아바타용 원형 가이드. / Circular guide for avatars. */
+/**
+ * `circular` 는 **가이드 모양만** 원형으로 바꾼다 - 돌려주는 `Blob` 은 여전히 정사각이다.
+ * 원형은 CSS(`border-radius: 50%`)로 표시한다. 이미지를 원형으로 잘라 두면
+ * 배경이 다른 화면에서 재사용할 수 없다.
+ */
 export const Circular: Story = { args: { circular: true } };
 
-/** 가로가 긴 원본 — 좌우로만 드래그해 보이는 부분을 고른다. / Landscape source: pan horizontally. */
+/** 가로가 긴 원본 - 짧은 변이 뷰포트를 채우므로 좌우로만 드래그해 보일 부분을 고른다. */
 export const LandscapeSource: Story = {
 	args: { src: LANDSCAPE },
 	parameters: {
@@ -131,10 +140,16 @@ export const LandscapeSource: Story = {
 	},
 };
 
-/** 세로가 긴 원본 — 위아래로만 드래그. / Portrait source: pan vertically. */
+/**
+ * 세로가 긴 원본 - 같은 규칙이 반대 축으로 걸려 위아래로만 드래그한다.
+ * 어느 비율이 와도 **빈 여백 없이** 시작한다.
+ */
 export const PortraitSource: Story = { args: { src: PORTRAIT } };
 
-/** 모든 문구를 소비자 로케일로 교체한 예. / Every string replaced with the consumer's locale. */
+/**
+ * 노출 문구를 전부 prop 으로 교체한 예. DS 기본값은 한글이라,
+ * 다른 로케일에서는 `hint`·`zoomInLabel` 등을 넘겨야 화면 언어가 섞이지 않는다.
+ */
 export const Localized: Story = {
 	args: {
 		src: SQUARE,

@@ -18,10 +18,20 @@ interface PaginationBaseProps {
 	navLabel?: string;
 }
 
-// Pagination 은 controlled 전용 → 콜백 최소 하나 필수. canonical `onPageChange` 권장, 구 `onChange` 허용(@deprecated).
+// Pagination 은 controlled 전용 → 콜백 최소 하나 필수. canonical 은 `onPageChange` 이고
+// 구 `onChange` 도 아직 받는다. 폐기 표시는 멤버마다 인라인 JSDoc 으로 둔다 - 산문에만
+// 적으면 IDE 취소선도, 정적 검사도 걸리지 않는다(#603).
 type PaginationCallbacks =
-	| { onPageChange: (page: number) => void; onChange?: (page: number) => void }
-	| { onPageChange?: (page: number) => void; onChange: (page: number) => void };
+	| {
+			onPageChange: (page: number) => void;
+			/** @deprecated `onPageChange` 를 사용하세요. */
+			onChange?: (page: number) => void;
+	  }
+	| {
+			onPageChange?: (page: number) => void;
+			/** @deprecated `onPageChange` 를 사용하세요. */
+			onChange: (page: number) => void;
+	  };
 
 export type PaginationProps = PaginationBaseProps & PaginationCallbacks;
 

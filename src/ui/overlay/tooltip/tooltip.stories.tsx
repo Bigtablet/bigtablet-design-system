@@ -54,6 +54,14 @@ type Story = StoryObj<typeof Tooltip>;
 
 export const Default: Story = {
 	name: "기본",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'hover 와 focus 에서 뜹니다(기본 `delay` 200ms). `role="tooltip"` + `aria-describedby` 가 자동으로 붙어 스크린리더가 설명으로 읽습니다.\n\n**터치 기기에서는 뜨지 않습니다** - 컴포넌트가 다루는 이벤트는 마우스와 포커스뿐입니다. 모바일에서도 필요한 정보라면 Tooltip 이 아니라 화면에 적거나 `Popover` 로 만드세요.',
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 80, display: "flex", justifyContent: "center" }}>
 			<Tooltip content="저장하기 (Cmd+S)">
@@ -77,6 +85,14 @@ export const Default: Story = {
 
 export const Placements: Story = {
 	name: "위치 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`placement` 는 선호값이고 넘치면 자동으로 flip·shift 됩니다. `body` 로 포탈되므로 표 셀이나 카드의 `overflow: hidden` 에 잘리지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 100, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 60 }}>
 			{(["top", "bottom", "left", "right"] as const).map((p) => (
@@ -135,6 +151,14 @@ export const ViewportCollision: Story = {
 
 export const LongText: Story = {
 	name: "긴 텍스트",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"긴 문장도 들어가지만 **Tooltip 은 짧은 보조 설명 자리**입니다. 읽는 데 시간이 걸리는 내용은 마우스를 치우면 사라져 다시 읽을 수 없습니다.\n\n한 문장을 넘어가면 `Popover`(클릭으로 열고 고정) 쪽이 맞습니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ padding: 80, textAlign: "center" }}>
 			<Tooltip content="버튼을 누르면 데이터가 영구 삭제됩니다. 되돌릴 수 없습니다.">

@@ -44,6 +44,14 @@ export const ImageTop: Story = {
 
 export const ImageLeft: Story = {
 	name: "이미지 왼쪽 (리스트)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"목록형 배치입니다. 좁은 화면에서는 자동으로 이미지가 위로 올라가므로(`top` 과 같은 모습) 모바일용 분기를 따로 쓰지 않아도 됩니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "grid", gap: 16, maxWidth: 720 }}>
 			{[
@@ -69,6 +77,14 @@ export const ImageLeft: Story = {
 
 export const ImageOverlay: Story = {
 	name: "이미지 위 텍스트 오버레이 (강조)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"이미지 위에 텍스트를 얹는 형태라 **사진에 따라 글자가 안 읽힐 수 있습니다.** 밝고 복잡한 사진에는 쓰지 말고 `top` 이나 `left` 를 고르세요.\n\n강조가 필요한 한두 장에만 쓰는 것이 보통입니다.",
+			},
+		},
+	},
 	render: () => (
 		<div style={{ maxWidth: 360 }}>
 			<MediaCard
@@ -127,7 +143,15 @@ export const Bordered: Story = {
 
 export const Grid: Story = {
 	name: "그리드 레이아웃",
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`Grid` 안에 여러 장을 깔았을 때입니다. `aspectRatio` 를 카드마다 다르게 주지 마세요 - 이미지 높이가 어긋나면 제목 줄이 서로 맞지 않습니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	render: () => (
 		<div
 			style={{

@@ -14,7 +14,9 @@ export default defineConfig({
 			provider: "v8",
 			reporter: ["text", "json", "json-summary", "html"],
 			include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
-			exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}"],
+			// `.docs.ts` 는 Storybook meta 설명 전용 문자열이다 - 런타임 import 도, 번들 포함도
+			// 없으므로 테스트 대상이 아니다. `*.test.*`·`*.stories.*` 와 같은 이유로 뺀다.
+			exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}", "**/*.docs.{ts,tsx}"],
 		},
 		projects: [
 			// Unit tests with jsdom

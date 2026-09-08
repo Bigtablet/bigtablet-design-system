@@ -57,6 +57,14 @@ const SizedPlusIcon = ({ size }: { size: number }) => (
 );
 
 export const WithIcons: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`leadingIcon`·`trailingIcon` 슬롯입니다. 아이콘 span 에 **`aria-hidden="true"` 가 자동으로 붙으므로** 아이콘은 접근성 이름에 들어가지 않습니다 - 라벨 텍스트가 뜻을 다 담아야 합니다.\n\n라벨 없이 아이콘만 두려면 `Button` 이 아니라 `IconButton` 을 쓰세요. `aria-label` 이 타입상 필수라 이름을 빠뜨릴 수 없습니다.',
+			},
+		},
+	},
 	render: (args) => (
 		<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 			<Button {...args} leadingIcon={<PlusIcon />}>

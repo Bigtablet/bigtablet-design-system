@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
+import { UPLOAD_COMPARISON } from "../upload-comparison.docs";
 import { FileInput } from ".";
 
 const meta: Meta<typeof FileInput> = {
@@ -47,6 +48,8 @@ const meta: Meta<typeof FileInput> = {
 - \`variant="preview"\`: 큰 박스 안에 단일 이미지 미리보기 (avatar / 이미지 업로더 패턴). \`previewSize\` 로 박스 크기를 조정한다.
 
 주요 prop: \`accept\`, \`multiple\`, \`onFiles(files)\`. 업로드는 별도 API 로 처리한다.
+
+${UPLOAD_COMPARISON}
         `,
 			},
 		},
@@ -58,6 +61,14 @@ type Story = StoryObj<typeof FileInput>;
 
 export const Basic: Story = {
 	name: "기본",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`variant="button"`(기본)입니다. **업로드하지 않습니다** - `onFiles(files)` 로 `File` 을 넘겨 주고 전송은 화면의 API 호출입니다.\n\n선택한 파일 이름을 보여 주려면 `preview` 를 켜거나 직접 그립니다.',
+			},
+		},
+	},
 	render: (args) => {
 		const [fileNames, setFileNames] = React.useState<string>("선택된 파일 없음");
 
@@ -116,6 +127,14 @@ export const Multiple: Story = {
 
 export const AcceptFilter: Story = {
 	name: "파일 형식 제한",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`accept` 는 파일 선택창의 **필터일 뿐 검증이 아닙니다.** 사용자가 "모든 파일" 로 바꿔 고를 수 있고 드래그 앤 드롭도 통과합니다.\n\n확장자·용량·MIME 검사는 `onFiles` 에서, 최종 검증은 서버에서 해야 합니다.',
+			},
+		},
+	},
 	render: (args) => {
 		const [fileNames, setFileNames] = React.useState<string>("선택된 파일 없음");
 
@@ -165,6 +184,14 @@ export const Preview: Story = {
 
 export const PreviewLarge: Story = {
 	name: "Preview 크기 240",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`previewSize` 로 박스 한 변을 키웁니다. 아바타는 작게, 배너·표지처럼 **비율을 확인해야 하는 이미지**는 크게 두는 편이 낫습니다.",
+			},
+		},
+	},
 	args: {
 		variant: "preview",
 		previewSize: 240,
@@ -174,6 +201,14 @@ export const PreviewLarge: Story = {
 
 export const PreviewDisabled: Story = {
 	name: "Preview 비활성화",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"미리보기 형태에서 잠긴 상태입니다. 이미 올린 이미지를 **바꿀 수 없는 화면**(승인 대기 등)에서 값을 보여 주면서 조작만 막을 때 씁니다.",
+			},
+		},
+	},
 	args: {
 		variant: "preview",
 		disabled: true,

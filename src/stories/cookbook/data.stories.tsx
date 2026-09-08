@@ -9,16 +9,16 @@ import {
 	Truck,
 } from "lucide-react";
 import { useState } from "react";
-import { Avatar } from "../../ui/display/avatar";
-import { Card } from "../../ui/display/card";
-import { Chip } from "../../ui/display/chip";
-import { DataView } from "../../ui/display/data-view";
-import { Divider } from "../../ui/display/divider";
-import type { TableColumn } from "../../ui/display/table";
-import { Timeline, type TimelineItem } from "../../ui/display/timeline";
-import { Grid } from "../../ui/layout/grid";
-import { PageHeader } from "../../ui/layout/page-header";
-import { Stack } from "../../ui/layout/stack";
+import { Avatar } from "src/ui/display/avatar";
+import { Card } from "src/ui/display/card";
+import { Chip } from "src/ui/display/chip";
+import { DataView } from "src/ui/display/data-view";
+import { Divider } from "src/ui/display/divider";
+import type { TableColumn } from "src/ui/display/table";
+import { Timeline, type TimelineItem } from "src/ui/display/timeline";
+import { Grid } from "src/ui/layout/grid";
+import { PageHeader } from "src/ui/layout/page-header";
+import { Stack } from "src/ui/layout/stack";
 
 const meta: Meta = {
 	title: "Cookbook/Data Display",
@@ -27,7 +27,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**데이터 디스플레이 cookbook** - 사용자 목록·상태 칩·통계 카드·타임라인 등 데이터를 보여주는 패턴 모음입니다.\n\nAvatar + Badge + Chip + Menu 조합으로 흔히 쓰는 디스플레이 구조를 빠르게 복붙해 시작할 수 있도록 정리했습니다.",
+					"**데이터를 보여주는 화면 모음**입니다. 사용자 목록, 상태 칩, 통계 카드, 주문 타임라인 네 가지를 다룹니다.\n\n각 스토리의 코드는 그대로 복사해 시작점으로 쓸 수 있습니다. 아래 Show code 를 열어 보세요.",
 			},
 		},
 	},
@@ -40,9 +40,9 @@ type Story = StoryObj;
 
 const USERS = [
 	{
-		name: "박상민",
+		name: "나최강",
 		role: "Designer",
-		email: "sangmin@bigtablet.com",
+		email: "choigang@bigtablet.com",
 		status: "online" as const,
 	},
 	{
@@ -83,7 +83,7 @@ export const UserList: Story = {
 		docs: {
 			description: {
 				story:
-					"`DataView` 한 줄로 검색·표·선택 액션·페이지네이션과 네 상태 분기(loading / error / empty / data)를 얻는다. 이전에는 `Card` + `Stack` + `div` 로 목록을 손으로 조립하며 padding·fontSize·fontWeight 를 직접 적었다.",
+					"목록 화면 하나를 `DataView` 한 컴포넌트로 만듭니다. 검색, 표, 선택 액션, 페이지네이션과 네 가지 상태(로딩 / 오류 / 빈 목록 / 데이터)를 모두 갖고 있습니다.\n\n화면이 정하는 것은 `columns` 와 데이터뿐입니다 - 상태별로 무엇을 그릴지 분기하지 않아도 됩니다.",
 			},
 		},
 	},
@@ -116,7 +116,7 @@ export const UserList: Story = {
 					<Chip
 						type="static"
 						size="sm"
-						tone={u.status === "online" ? "accent" : "default"}
+						tone={u.status === "online" ? "success" : "accent"}
 						label={STATUS_LABEL[u.status]}
 					/>
 				),
@@ -152,6 +152,14 @@ export const UserList: Story = {
 
 export const StatusBadgesRow: Story = {
 	name: "상태 칩 모음",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'주문·결제·재고처럼 **상태를 한 눈에 구분해야 할 때** 씁니다. 색은 직접 고르지 말고 의미로 고르세요 - `tone` 이 성공/경고/오류의 색을 이미 갖고 있습니다.\n\n조작할 수 없는 표시용 칩이라 `type="static"` 입니다. 누르거나 지울 수 있어야 하면 `type` 을 바꿉니다.',
+			},
+		},
+	},
 	render: () => (
 		<Card bordered padding="lg" shadow="sm" style={{ width: 560 }}>
 			<Stack gap={24}>
@@ -260,6 +268,14 @@ const STATS = [
 
 export const StatCards: Story = {
 	name: "통계 카드",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"대시보드 첫 화면의 **숫자 요약 줄**입니다. `Grid` 가 열 수를, `Card` 가 테두리와 여백을 갖고, 증감 화살표만 화면이 정합니다.\n\n모바일에서는 `Grid` 가 자동으로 1열로 접힙니다(`singleColOnMobile` 기본값).",
+			},
+		},
+	},
 	render: () => (
 		<Grid cols={2} gap={16} style={{ width: 640 }}>
 			{STATS.map((stat) => (
@@ -370,7 +386,7 @@ export const OrderTimeline: Story = {
 		docs: {
 			description: {
 				story:
-					"`Timeline` 이 연결선·상태색·순서(`<ol>`)를 소유한다. 예전에는 이 화면이 `color-mix` 를 포함한 인라인 스타일 40여 줄로 인디케이터를 직접 그렸다.",
+					"주문 처리처럼 **시간 순서가 의미를 갖는 데이터**에 씁니다. 항목을 잇는 선, 단계별 상태색, 순서 있는 목록(`<ol>`) 마크업을 `Timeline` 이 갖습니다.\n\n화면은 항목 배열만 넘깁니다.",
 			},
 		},
 	},

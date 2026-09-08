@@ -54,6 +54,10 @@ describe("Modal", () => {
 		document.body.removeAttribute("data-open-modals");
 		document.documentElement.style.cssText = "";
 		vi.unstubAllGlobals();
+		// `unstubAllGlobals` 는 `vi.stubGlobal` 만 되돌린다 - `stubGutter` 가 건 프로토타입
+		// 스파이(`Element.prototype.getBoundingClientRect`)는 남아 이후 테스트에서 모든
+		// 요소가 1265x0 을 돌려준다. 설정에 `restoreMocks` 가 없어 여기서 직접 되돌린다.
+		vi.restoreAllMocks();
 	});
 
 	it("drops its dim report when force-unmounted while still open", () => {

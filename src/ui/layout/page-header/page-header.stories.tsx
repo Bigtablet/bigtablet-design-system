@@ -31,11 +31,27 @@ type Story = StoryObj<typeof PageHeader>;
 
 export const Basic: Story = {
 	name: "기본",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"제목은 `h1` 입니다 - **문서에 하나만** 있어야 하므로 한 화면에 `PageHeader` 를 둘 두지 마세요.\n\n겉은 `<header>` 가 아니라 `<div>` 입니다. `<header>` 는 `<main>` 안에서도 banner landmark 로 계산돼 `NavBar` 와 landmark 가 둘이 됩니다.",
+			},
+		},
+	},
 	render: () => <PageHeader title="대시보드" description="최근 30일 지표를 봅니다" />,
 };
 
 export const WithActions: Story = {
 	name: "액션과 함께",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"오른쪽 액션 슬롯입니다. 주 액션 하나 + 보조 하나 정도가 적당하고, 셋 이상이면 `Menu` 로 묶으세요 - 제목 줄이 버튼 띠가 되면 무엇이 주 액션인지 읽히지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<PageHeader
 			title="주문 관리"

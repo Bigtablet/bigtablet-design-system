@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { BarChart3, Bell, Home, UtensilsCrossed } from "lucide-react";
 import * as React from "react";
 import { Badge } from "../../display/badge";
+import { SHELL_COMPARISON } from "../shell-comparison.docs";
 import { BottomNav, BottomNavItem, BottomNavSpacer } from ".";
 
 const meta: Meta<typeof BottomNav> = {
@@ -19,6 +20,8 @@ const meta: Meta<typeof BottomNav> = {
 \`position: fixed; bottom: 0\` 으로 viewport 하단에 고정된다. iOS 홈 인디케이터 영역(\`env(safe-area-inset-bottom)\`)에 패딩이 자동으로 붙는다. 본문이 가려지지 않게 페이지 끝에 \`<BottomNavSpacer />\` 를 깔거나, \`--bt-bottom-nav-height\` / \`--bt-bottom-nav-total-height\` CSS 변수로 레이아웃을 계산한다.
 
 \`<BottomNavItem icon label active badge as href />\` - \`active\` 면 \`aria-current="page"\` 가 자동으로 붙는다.
+
+${SHELL_COMPARISON}
 				`,
 			},
 		},
@@ -79,6 +82,14 @@ function Demo() {
 
 export const Default: Story = {
 	name: "기본 (3 항목)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"권장 범위는 **2~5개**입니다(`BottomNavItem` JSDoc). 하나면 내비게이션이 아니고, 늘어날수록 항목이 `flex: 1` 로 균등 분배돼 칸이 좁아집니다 - 라벨이 사라지지는 않고 말줄임(`…`)으로 잘리므로, **짧은 라벨**이 실질적인 상한을 정합니다.\n\n`position: fixed; bottom: 0` 이라 본문 끝을 가립니다 - 페이지 끝에 `<BottomNavSpacer />` 를 깔거나 `--bt-bottom-nav-total-height` 로 여백을 계산하세요. iOS 홈 인디케이터 영역은 `env(safe-area-inset-bottom)` 으로 자동 처리됩니다.",
+			},
+		},
+	},
 	render: () => <Demo />,
 };
 

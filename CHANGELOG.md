@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.18.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.2) - 2026-09-08
+- `DatePicker` 와 `Pagination` 의 구 `onChange` 가 이제 편집기에서 폐기로 표시됩니다. 지금까지는 주석 산문에만 "deprecated" 라고 적혀 있어 타입에 실리지 않았고, 그래서 IDE 취소선도 경고도 없었습니다. 동작은 그대로이며 권장 prop 은 각각 `onValueChange` · `onPageChange` 입니다
+- Storybook 문서를 컴포넌트 전 범위로 보강했습니다. "여럿 중 무엇을 쓰나" 를 답하는 비교표 네 개가 새로 들어갑니다 - 로딩 표시 4종, 선택 컨트롤 4종, 날짜·시간 3종, 내비게이션 셸 3종. 각 표는 관련 컴포넌트 어디로 들어와도 같은 자리에 보입니다
+- 문서가 코드와 어긋나 있던 곳들을 바로잡았습니다 - `Dropdown` 의 `fullWidth` 가 no-op 이라는 점, `Toggle` 의 `ariaLabel` 이 필수라는 점, `Menu` 가 3.18.0 부터 포탈된다는 점, `DatePicker` 반환 형식이 `mode` 에 따라 갈린다는 점
+
 ## [3.18.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.1) - 2026-09-07
 - (렌더 변경) `Dropdown`·`Combobox` 목록이 트리거보다 좁을 때 옵션 라벨을 자르던 문제를 고칩니다. 트리거 폭은 이제 **하한**이라 목록이 내용만큼 넓어집니다 - 48px 컨트롤에서 `02` 가 `0.` 로 접혔습니다. 뷰포트 가용 폭은 그대로 상한이고, `DateRangePicker`·`DatePicker`·`TimePicker` 도 내부가 `Dropdown` 이라 함께 해결됩니다 (React·Vanilla 양쪽)
 - `Menu` 는 3.18.0 부터 `body` 로 포탈되는데 문서에는 "포탈하지 않는다"가 남아 있었습니다 - `docs/COMPONENTS.md` 를 정정했습니다

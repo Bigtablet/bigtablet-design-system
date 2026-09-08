@@ -53,10 +53,20 @@ interface DatePickerBaseProps {
 }
 
 // DatePicker 는 controlled 전용(내부 value 상태 없음) → 콜백이 최소 하나는 필요.
-// canonical `onValueChange` 권장, 구 `onChange` 도 허용(@deprecated). 둘 중 하나는 필수.
+// canonical 은 `onValueChange` 이고 구 `onChange` 도 아직 받는다. 둘 중 하나는 필수.
+// 폐기 표시는 **멤버마다 인라인 JSDoc** 으로 둔다 - 주석 산문에만 적으면 IDE 가 취소선을
+// 그리지 못하고 정적 검사도 어느 멤버가 폐기됐는지 알 수 없다(#603).
 type DatePickerCallbacks =
-	| { onValueChange: (value: string) => void; onChange?: (value: string) => void }
-	| { onValueChange?: (value: string) => void; onChange: (value: string) => void };
+	| {
+			onValueChange: (value: string) => void;
+			/** @deprecated `onValueChange` 를 사용하세요. */
+			onChange?: (value: string) => void;
+	  }
+	| {
+			onValueChange?: (value: string) => void;
+			/** @deprecated `onValueChange` 를 사용하세요. */
+			onChange: (value: string) => void;
+	  };
 
 export type DatePickerProps = DatePickerBaseProps & DatePickerCallbacks;
 
