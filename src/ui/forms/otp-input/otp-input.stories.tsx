@@ -49,7 +49,15 @@ type Story = StoryObj<typeof OtpInput>;
 // ── Controlled ───────────────────────────────────────────────────────────────
 
 export const Controlled: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"값을 화면이 듭니다. 자동 포커스 이동·백스페이스·화살표·**붙여넣기**를 컴포넌트가 처리하므로, 화면은 `onValueChange` 로 받은 문자열만 다룹니다.\n\n코드를 문자 배열이 아니라 **문자열 하나**로 돌려줍니다 - 길이가 `length` 에 닿았는지로 제출 시점을 판단하면 됩니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 	name: "제어형",
 	render: ({ length, error, disabled }) => {
 		const [val, setVal] = React.useState("");
@@ -77,6 +85,14 @@ export const Controlled: Story = {
 
 export const Lengths: Story = {
 	name: "자릿수 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"4자리와 6자리입니다. 자릿수는 보내는 코드에 맞추세요 - 화면이 6칸인데 4자리를 보내면 사용자가 남은 칸을 기다립니다.\n\n`supportingText` 로 몇 자리인지 알려 주면 붙여넣기 실패를 줄입니다.",
+			},
+		},
+	},
 	render: () => {
 		const [val4, setVal4] = React.useState("");
 		const [val6, setVal6] = React.useState("");
@@ -104,6 +120,14 @@ export const Lengths: Story = {
 
 export const States: Story = {
 	name: "상태별 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'기본·에러·비활성 비교입니다. `error` 는 칸 테두리를 바꾸지만 **왜 틀렸는지는 말하지 못합니다** - "코드가 일치하지 않습니다" 같은 문구를 `supportingText` 에 같이 주세요.\n\n재전송 대기 중에는 `disabled` 로 잠가 중복 시도를 막습니다.',
+			},
+		},
+	},
 	render: () => (
 		<div style={{ display: "grid", gap: 24, padding: 20 }}>
 			<div>

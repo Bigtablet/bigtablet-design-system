@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { Radio } from ".";
 import { SELECTION_COMPARISON } from "../selection-comparison.docs";
+import { Radio } from ".";
 
 const meta: Meta<typeof Radio> = {
 	title: "Components/Forms/Radio",

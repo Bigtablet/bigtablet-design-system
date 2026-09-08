@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { DATETIME_COMPARISON } from "../datetime-comparison.docs";
 import { Field } from "../field";
 import { TimePicker } from ".";
 
@@ -22,6 +23,8 @@ const meta: Meta<typeof TimePicker> = {
   범위 밖이면 가장 이른 분으로 옮긴다
 
 값은 24시간 \`"HH:mm"\` 이다 — 12시간 표기는 화면 표시의 문제라 소비자가 포맷한다.
+
+${DATETIME_COMPARISON}
         `,
 			},
 		},
@@ -33,6 +36,14 @@ type Story = StoryObj<typeof TimePicker>;
 
 export const Basic: Story = {
 	name: "기본 (5분 간격)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"기본 분 간격은 5분입니다. 60개를 다 그리면 고르기 어려워, 예약·근무 시간에 맞는 간격을 `minuteStep` 으로 정합니다.\n\n값은 24시간 `HH:mm` 입니다 - 오전/오후 표기는 화면이 포맷합니다.",
+			},
+		},
+	},
 	render: () => {
 		const [time, setTime] = useState("");
 		return (
