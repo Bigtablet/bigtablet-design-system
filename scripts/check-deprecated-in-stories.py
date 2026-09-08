@@ -38,42 +38,88 @@ OPT_OUT = re.compile(r"deprecated-ok:\s*\S")
 
 # `@deprecated` JSDoc 바로 뒤의 prop 선언. 인터페이스 멤버라 들여쓰기가 있다.
 PROP_DECL = re.compile(r"^\s+(\w+)\??\s*:")
+# prop 이 아닌 선언 - 여기 붙은 `@deprecated` 는 별칭·함수·상수의 폐기다.
+TYPE_DECL = re.compile(r"^\s*(?:export\s+)?(?:type|interface|function|const|let|class|enum)\b")
 
 
 def strip_strings_and_comments(source: str) -> str:
-    """문자열·템플릿·주석을 같은 길이의 공백으로 바꾼다(줄 번호 보존)."""
-    out = []
+    """문자열·템플릿·주석을 같은 길이의 공백으로 바꾼다(줄 번호 보존).
+
+    템플릿 리터럴의 `${...}` 안은 **코드**다 - 거기서 다시 백틱이 열릴 수 있다
+    (`` `outer ${`inner`} rest` ``). 같은 종류의 따옴표를 만나면 무조건 닫혔다고 보면
+    안쪽 백틱에서 잘못 닫혀 그 뒤 코드와 문자열이 뒤바뀐다. 그래서 백틱 안에서는
+    `${` 를 만날 때마다 중괄호 깊이를 세며 코드 모드로 돌아간다.
+    """
+    out: list[str] = []
+    # 스택의 각 항목: ("code", 0) 또는 ("str", quote) 또는 ("tpl", brace_depth)
+    stack: list[tuple[str, object]] = [("code", 0)]
     i = 0
     n = len(source)
+
+    def blank(text: str) -> str:
+        return "".join(ch if ch == "\n" else " " for ch in text)
+
     while i < n:
+        mode, extra = stack[-1]
         c = source[i]
-        if c == "/" and i + 1 < n and source[i + 1] == "/":
-            j = source.find("\n", i)
-            j = n if j == -1 else j
-            out.append(" " * (j - i))
-            i = j
+
+        if mode == "code":
+            if c == "/" and i + 1 < n and source[i + 1] == "/":
+                j = source.find("\n", i)
+                j = n if j == -1 else j
+                out.append(blank(source[i:j]))
+                i = j
+                continue
+            if c == "/" and i + 1 < n and source[i + 1] == "*":
+                j = source.find("*/", i + 2)
+                j = n if j == -1 else j + 2
+                out.append(blank(source[i:j]))
+                i = j
+                continue
+            if c in "\"'":
+                stack.append(("str", c))
+                out.append(" ")
+                i += 1
+                continue
+            if c == "`":
+                stack.append(("tpl", 0))
+                out.append(" ")
+                i += 1
+                continue
+            # `${` 로 들어온 코드 구간의 끝
+            if c == "}" and len(stack) > 1:
+                stack.pop()
+                out.append(" ")
+                i += 1
+                continue
+            out.append(c)
+            i += 1
             continue
-        if c == "/" and i + 1 < n and source[i + 1] == "*":
-            j = source.find("*/", i + 2)
-            j = n if j == -1 else j + 2
-            out.append("".join(ch if ch == "\n" else " " for ch in source[i:j]))
-            i = j
+
+        if mode == "str":
+            if c == "\\":
+                out.append(blank(source[i : i + 2]))
+                i += 2
+                continue
+            out.append(" " if c != "\n" else "\n")
+            if c == extra:
+                stack.pop()
+            i += 1
             continue
-        if c in "\"'`":
-            quote = c
-            j = i + 1
-            while j < n:
-                if source[j] == "\\":
-                    j += 2
-                    continue
-                if source[j] == quote:
-                    j += 1
-                    break
-                j += 1
-            out.append("".join(ch if ch == "\n" else " " for ch in source[i:j]))
-            i = j
+
+        # mode == "tpl"
+        if c == "\\":
+            out.append(blank(source[i : i + 2]))
+            i += 2
             continue
-        out.append(c)
+        if c == "$" and i + 1 < n and source[i + 1] == "{":
+            stack.append(("code", 0))
+            out.append("  ")
+            i += 2
+            continue
+        out.append(" " if c != "\n" else "\n")
+        if c == "`":
+            stack.pop()
         i += 1
     return "".join(out)
 
@@ -101,15 +147,38 @@ def strip_block(source: str, key: str) -> str:
         result = result[:start] + "".join(c if c == "\n" else " " for c in segment) + result[i:]
 
 
-def deprecated_props(component: Path) -> dict[str, str]:
-    """{prop 이름: 권장 대안 문장} - `@deprecated` JSDoc 뒤에 오는 prop 선언만."""
+def deprecated_props(component: Path) -> tuple[dict[str, str], list[str]]:
+    """({prop: 권장 대안}, 해결하지 못한 `@deprecated` 위치) 를 돌려준다.
+
+    두 가지 선언 형태를 본다.
+
+        /** @deprecated `onCheckedChange` 를 쓰세요. */
+        onChange?: (checked: boolean) => void;          ← 다음 줄
+
+        | { onValueChange: (v: string) => void; /** @deprecated */ onChange?: (v: string) => void }
+                                                          ← 같은 줄, `*/` 뒤
+
+    **해결하지 못하면 조용히 넘기지 않는다.** 초판이 그렇게 만들어져서, union 타입으로
+    선언된 `DatePicker`·`Pagination` 의 deprecated `onChange` 를 통째로 놓쳤고
+    스토리 5곳의 실사용을 통과시켰다(#603 리뷰). 못 읽은 자리는 실패로 알린다.
+    """
     lines = component.read_text(encoding="utf-8").splitlines()
     found: dict[str, str] = {}
+    unresolved: list[str] = []
     for index, line in enumerate(lines):
         if "@deprecated" not in line:
             continue
         note = line.split("@deprecated", 1)[1].strip(" */")
-        # 뒤따르는 주석 줄을 건너뛰고 첫 코드 줄을 본다.
+
+        # (a) 같은 줄의 `*/` 뒤에 prop 선언이 있는가 - union 멤버의 인라인 JSDoc
+        tail = line.split("@deprecated", 1)[1]
+        if "*/" in tail:
+            inline = re.search(r"\*/\s*(\w+)\??\s*:", tail)
+            if inline:
+                found[inline.group(1)] = note.split("*/")[0].strip() or "대안 prop 을 쓰세요."
+                continue
+
+        # (b) 뒤따르는 주석 줄을 건너뛰고 첫 코드 줄
         for follow in lines[index + 1 : index + 6]:
             stripped = follow.strip()
             if not stripped or stripped.startswith(("*", "//", "/*")):
@@ -117,8 +186,23 @@ def deprecated_props(component: Path) -> dict[str, str]:
             decl = PROP_DECL.match(follow)
             if decl:
                 found[decl.group(1)] = note
+            elif TYPE_DECL.match(follow):
+                # 타입 선언이다. 두 경우로 갈린다.
+                #   `export type ButtonAsButton = ButtonProps<"button">;`
+                #       → prop 이 아니라 **별칭** 의 폐기다. tsc 가 직접 알려주니 넘긴다.
+                #   `type DatePickerCallbacks = | { …; onChange?: … }`
+                #       → 본문이 멤버를 선언한다. 어느 멤버가 폐기됐는지 산문으로는 알 수 없다.
+                #         멤버에 인라인 JSDoc 이 없으면 검사가 통째로 비므로 실패로 알린다.
+                body = "\n".join(lines[index + 1 : index + 12])
+                declares_members = bool(re.search(r"\{[^}]*\w+\??\s*:", body))
+                if declares_members and "@deprecated" not in body:
+                    unresolved.append(f"{component}:{index + 1}")
+            else:
+                unresolved.append(f"{component}:{index + 1}")
             break
-    return found
+        else:
+            unresolved.append(f"{component}:{index + 1}")
+    return found, unresolved
 
 
 def violations() -> tuple[list[str], int, int]:
@@ -129,7 +213,13 @@ def violations() -> tuple[list[str], int, int]:
         component = story.parent / "index.tsx"
         if not component.exists():
             continue
-        props = deprecated_props(component)
+        props, unresolved = deprecated_props(component)
+        for where in unresolved:
+            problems.append(
+                f"{where}: `@deprecated` 를 prop 선언에 연결하지 못했다 - 이 컴포넌트의"
+                " deprecated prop 이 검사에서 통째로 빠진다. 주석 안에서만 폐기를 말하지 말고"
+                " 선언에 JSDoc `@deprecated` 를 붙여라 (union 멤버면 그 멤버에 인라인으로)"
+            )
         checked_files += 1
         if not props:
             continue

@@ -25,7 +25,7 @@ const DateFieldDemo = ({
 		<div style={{ padding: 20, display: "grid", gap: 12, maxWidth: 520 }}>
 			<DatePicker
 				value={value}
-				onChange={setValue}
+				onValueChange={setValue}
 				mode={mode}
 				startYear={startYear}
 				endYear={endYear}
@@ -62,7 +62,7 @@ const meta: Meta<typeof DateFieldDemo> = {
 		docs: {
 			description: {
 				component: `
-**DatePicker** - 연/월/일 Dropdown 조합. \`onChange\` 는 항상 \`YYYY-MM-DD\` 를 반환한다.
+**DatePicker** - 연/월/일 Dropdown 조합. \`onValueChange\` 는 항상 \`YYYY-MM-DD\` 를 반환한다(구 \`onChange\` 는 deprecated).
 
 \`mode\`: \`year-month\` (정규화 → YYYY-MM-01) / \`year-month-day\`.
 주요 prop: \`startYear\`, \`endYear\`, \`selectableRange\` (\`all\` / \`until-today\`), \`disabled\`.
