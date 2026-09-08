@@ -12,8 +12,12 @@
   white-space: nowrap;
   text-decoration: none; // anchor(as="a")로 렌더링될 때 링크 기본 밑줄 제거 (button 요소엔 무해)
   @include token.body_small_medium;
+  // background/opacity 도 함께 - disabled 토글은 배경·불투명도·글자색이 한꺼번에 바뀌므로,
+  // 목록에서 빠진 속성은 0ms 로 튀고 color 만 뒤늦게 따라와 글자가 배경보다 늦게 도착한다.
   transition:
     color token.$transition_base,
+    background token.$transition_base,
+    opacity token.$transition_base,
     border-color token.$transition_base,
     transform token.$transition_fast;
 
