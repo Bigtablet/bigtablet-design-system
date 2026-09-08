@@ -106,7 +106,7 @@ export const Controlled: Story = {
 		const [openKeys, setOpenKeys] = useState<string[]>(["1"]);
 		return (
 			<div style={{ width: 560 }}>
-				<Accordion items={FAQ} openKeys={openKeys} onChange={setOpenKeys} multiple />
+				<Accordion items={FAQ} openKeys={openKeys} onValueChange={setOpenKeys} multiple />
 			</div>
 		);
 	},

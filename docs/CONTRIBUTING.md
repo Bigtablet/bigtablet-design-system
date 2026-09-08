@@ -145,6 +145,46 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 
 a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡는다 - 그래서 정적 검사가 필요하다.
 
+### 스토리: deprecated prop 을 시연하지 않는다
+
+`pnpm check:deprecated` 가 막는다. 스토리는 소비자가 **복사해 가는 자리**라, 폐기된 prop 을
+쓰면 그대로 퍼진다. 타입은 아직 살아 있어 `tsc` 가 잡지 못하고, 대체 prop 과 렌더 결과가 같아
+a11y 러너도 잡지 못한다.
+
+검사 방식은 문자열·주석을 지우고 `argTypes` 블록을 떼어낸 뒤 남은 곳에서 `prop=`(JSX 속성)과
+`prop:`(`args` 값)을 찾는다. 그래서 **`argTypes` 에 deprecated 임을 적어 두는 것은 위반이 아니다** -
+props 표에 이유를 남기는 쪽이 오히려 옳다.
+
+일부러 시연해야 하면(구 prop 이 아직 동작함을 보이는 마이그레이션 스토리 등) 그 줄이나 윗줄에
+이유를 적는다:
+
+```tsx
+// deprecated-ok: 구 prop 이 아직 동작함을 보이는 스토리
+<Toggle onChange={setOn} ariaLabel="알림" />
+```
+
+문서 작업 중 손으로 넷을 찾았는데(`Dropdown.fullWidth`·`Toggle.onChange`·`Textarea.onChangeAction`),
+이 검사를 붙이자 못 찾은 넷이 더 나왔다 - `Accordion`·`OtpInput` 의 `onChange`.
+
+**폐기 표시는 산문이 아니라 선언에 붙인다.** 주석에 "구 `onChange` 도 허용(@deprecated)" 처럼
+적어 두면 IDE 가 취소선을 그리지 못하고 이 검사도 어느 멤버가 폐기됐는지 알 수 없다.
+union 타입이면 **멤버마다 인라인 JSDoc** 을 둔다:
+
+```ts
+type PaginationCallbacks =
+	| {
+			onPageChange: (page: number) => void;
+			/** @deprecated `onPageChange` 를 사용하세요. */
+			onChange?: (page: number) => void;
+	  }
+	| { … };
+```
+
+검사는 `@deprecated` 를 prop 선언에 연결하지 못하면 **실패한다** - 조용히 넘기면 그 컴포넌트가
+검사에서 통째로 빠진다. 초판이 그렇게 만들어져서 `DatePicker`·`Pagination` 의 스토리 5곳
+실사용을 통과시켰다. 타입 별칭·함수의 폐기(`export type ButtonAsButton = …`)는 prop 이 아니므로
+대상이 아니다 - `tsc` 가 직접 알려준다.
+
 ### 4. 테스트 작성
 
 모든 컴포넌트는 테스트가 필요합니다:

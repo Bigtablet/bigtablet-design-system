@@ -15,9 +15,14 @@ const meta: Meta<typeof Pagination> = {
 			control: { type: "number", min: 1 },
 			description: "전체 페이지 수입니다.",
 		},
-		onChange: {
+		onPageChange: {
 			action: "changed",
 			description: "페이지 변경 시 호출되는 콜백입니다.",
+		},
+		onChange: {
+			action: "changed",
+			description:
+				"**deprecated** - `onPageChange` 를 쓰세요. 구현이 `onPageChange ?? onChange` 순으로 읽습니다.",
 		},
 	},
 	parameters: {
@@ -40,7 +45,7 @@ export const FewPages: Story = {
 	render: () => {
 		const [page, setPage] = useState(1);
 
-		return <Pagination page={page} totalPages={5} onChange={setPage} />;
+		return <Pagination page={page} totalPages={5} onPageChange={setPage} />;
 	},
 };
 
@@ -50,7 +55,7 @@ export const ManyPages: Story = {
 	render: () => {
 		const [page, setPage] = useState(7);
 
-		return <Pagination page={page} totalPages={64} onChange={setPage} />;
+		return <Pagination page={page} totalPages={64} onPageChange={setPage} />;
 	},
 };
 
@@ -60,7 +65,7 @@ export const FirstPage: Story = {
 	render: () => {
 		const [page, setPage] = useState(1);
 
-		return <Pagination page={page} totalPages={20} onChange={setPage} />;
+		return <Pagination page={page} totalPages={20} onPageChange={setPage} />;
 	},
 };
 
@@ -70,6 +75,6 @@ export const LastPage: Story = {
 	render: () => {
 		const [page, setPage] = useState(20);
 
-		return <Pagination page={page} totalPages={20} onChange={setPage} />;
+		return <Pagination page={page} totalPages={20} onPageChange={setPage} />;
 	},
 };

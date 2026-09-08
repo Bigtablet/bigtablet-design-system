@@ -53,6 +53,7 @@
 		"check:defaults": "python3 scripts/check-prop-defaults.py",
 		"check:geometry": "python3 scripts/check-overlay-geometry.py",
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
+		"check:deprecated": "python3 scripts/check-deprecated-in-stories.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},

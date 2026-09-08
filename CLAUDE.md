@@ -242,6 +242,7 @@ return <animated.div style={style}>...</animated.div>;
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
+  pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 
