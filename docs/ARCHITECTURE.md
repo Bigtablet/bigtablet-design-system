@@ -407,7 +407,7 @@ export default defineConfig({
 ### 테스트 파일 예시
 
 ```tsx
-// src/ui/general/button/Button.test.tsx
+// src/ui/general/button/button.test.tsx
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Button } from "./index";

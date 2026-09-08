@@ -190,7 +190,7 @@ type PaginationCallbacks =
 모든 컴포넌트는 테스트가 필요합니다:
 
 ```tsx
-// ComponentName.test.tsx
+// {component-name}.test.tsx
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ComponentName } from "./index";
