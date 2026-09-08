@@ -77,6 +77,14 @@ def strip_strings_and_comments(source: str) -> str:
                 i = j
                 continue
             if c in "\"'":
+                # 객체 키(`"onChange": handler`)는 남긴다 - 지우면 `args: { "onChange": h }`
+                # 나 `{...{ "onChange": h }}` 형태의 실제 전달을 놓친다(#603 리뷰).
+                # 식별자 하나이고 닫는 따옴표 뒤가 `:` 인 것만 - 그 밖의 문자열은 그대로 지운다.
+                key = re.match(rf"{c}(\w+){c}\s*:", source[i:])
+                if key:
+                    out.append(" " + key.group(1) + " ")
+                    i += len(c) + len(key.group(1)) + len(c)
+                    continue
                 stack.append(("str", c))
                 out.append(" ")
                 i += 1
@@ -86,10 +94,21 @@ def strip_strings_and_comments(source: str) -> str:
                 out.append(" ")
                 i += 1
                 continue
-            # `${` 로 들어온 코드 구간의 끝
-            if c == "}" and len(stack) > 1:
-                stack.pop()
-                out.append(" ")
+            # `${` 로 들어온 코드 구간. 그 안의 중괄호 깊이를 세야 한다 - 화살표 함수
+            # 본문이나 JSX 표현식의 `}` 에서 보간을 끝내 버리면 그 뒤 코드가 문자열로
+            # 삼켜진다: `${(() => {})() || <Toggle onChange={fn} />}` (#603 리뷰).
+            if len(stack) > 1 and c == "{":
+                stack[-1] = ("code", int(extra) + 1)
+                out.append(c)
+                i += 1
+                continue
+            if len(stack) > 1 and c == "}":
+                if extra:
+                    stack[-1] = ("code", int(extra) - 1)
+                    out.append(c)
+                else:
+                    stack.pop()
+                    out.append(" ")
                 i += 1
                 continue
             out.append(c)
@@ -247,7 +266,41 @@ def violations() -> tuple[list[str], int, int]:
     return problems, checked_props, checked_files
 
 
+# 스트리퍼는 상태 기계다. 리뷰에서 두 번 버그가 나왔다 - 중첩 템플릿 리터럴과 보간 안
+# 중괄호 깊이(#603). 그래서 매 실행마다 스스로 확인한다: 마이크로초라 비용이 없고,
+# 회귀하면 게이트가 그 자리에서 실패한다.
+STRIPPER_CASES = (
+    ("보간 안 화살표 함수 뒤 코드", "const a = `x ${(() => {})() || <T onChange={fn} />}`;", "onChange="),
+    ("중첩 템플릿 리터럴", "const a = `outer ${`inner`} rest`;\nonChange={x}", "onChange="),
+    ("따옴표 객체 키", 'args: { "onChange": handler }', "onChange"),
+    ("스프레드 안 따옴표 키", '<P {...{ "onChange": h }} />', "onChange"),
+)
+STRIPPER_MUST_STRIP = ('story: "`onChange` 는 deprecated 입니다",', "onChange")
+
+
+def self_test() -> list[str]:
+    """스트리퍼가 코드는 남기고 문자열·주석만 지우는지."""
+    failures = []
+    for label, source, expected in STRIPPER_CASES:
+        stripped = strip_strings_and_comments(source)
+        if expected not in stripped:
+            failures.append(f"스트리퍼 자기검사 실패({label}) - `{expected}` 가 지워졌다")
+        if len(stripped) != len(source):
+            failures.append(f"스트리퍼 자기검사 실패({label}) - 길이가 달라져 줄 번호가 어긋난다")
+    source, forbidden = STRIPPER_MUST_STRIP
+    if forbidden in strip_strings_and_comments(source):
+        failures.append(f"스트리퍼 자기검사 실패(설명 문자열) - `{forbidden}` 이 남아 오탐이 된다")
+    return failures
+
+
 def main() -> int:
+    broken = self_test()
+    if broken:
+        print("검사기 자체가 고장났다:\n", file=sys.stderr)
+        for line in broken:
+            print(f"  {line}", file=sys.stderr)
+        return 1
+
     problems, checked_props, checked_files = violations()
     if checked_files == 0:
         print("검사 대상 스토리가 없다 - 디렉터리 구조가 바뀌었는지 보라", file=sys.stderr)
