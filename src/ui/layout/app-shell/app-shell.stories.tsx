@@ -51,6 +51,14 @@ const nav = (
 
 export const Admin: Story = {
 	name: "관리자 (사이드바 + 헤더)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`sidebar` + `header` + 본문 세 슬롯입니다. 화면은 무엇을 넣을지만 정하고 배치는 `AppShell` 이 갖습니다.\n\n**본문에 `overflow-y: auto` 를 주지 마세요** - `Modal`·`Drawer` 의 스크롤 잠금은 `body` 에 걸리므로, 본문이 자기 스크롤을 가지면 모달 뒤 배경이 계속 스크롤됩니다.",
+			},
+		},
+	},
 	render: () => (
 		<AppShell sidebar={nav} header={<NavBar layout="fluid" sticky brand={<span>관리자</span>} />}>
 			<PageHeader
