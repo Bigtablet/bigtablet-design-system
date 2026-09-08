@@ -67,6 +67,8 @@ Variants: \`outline\` (기본, 테두리) / \`filled\` (dim 배경 채움, 테�
 \`DropdownOption\` 필드: \`label\`, \`value\`, \`disabled\`, \`supportingText\`, \`leadingIcon\`, \`showDivider\`.
 키보드: ↑↓/Enter/Esc/Home/End.
 
+고르는 것이 **값**이 아니라 **동작**이면(수정·복제·삭제) \`Menu\` 입니다 - Dropdown 은 폼 값을, Menu 는 액션을 담당합니다.
+
 opt-in: \`searchable\` 은 라벨 필터(대소문자·공백 무시, 한글 IME 안전), \`multiple\` 은 다중 선택(토글, 리스트 유지, "N개 선택" 요약)을 켠다.
 				`,
 			},

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
-import { TopLoading } from ".";
 import { LOADING_COMPARISON } from "../loading-comparison.docs";
+import { TopLoading } from ".";
 
 const meta: Meta<typeof TopLoading> = {
 	title: "Components/Feedback/TopLoading",

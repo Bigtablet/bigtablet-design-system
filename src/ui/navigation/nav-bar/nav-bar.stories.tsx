@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Button } from "../../general/button";
+import { SHELL_COMPARISON } from "../shell-comparison.docs";
 import { NavBar, NavLink } from ".";
 
 const meta: Meta<typeof NavBar> = {
@@ -16,6 +17,8 @@ const meta: Meta<typeof NavBar> = {
 
 Variants: \`default\` (흰 bg + border) / \`accent\` (검정 bg) / \`transparent\` (hero 위).
 \`active={true}\` 면 \`aria-current="page"\` 가 자동으로 붙는다.
+
+${SHELL_COMPARISON}
 				`,
 			},
 		},
@@ -39,6 +42,14 @@ function Brand({ invert = false }: { invert?: boolean }) {
 }
 
 export const Default: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"흰 배경 + 아래 테두리입니다. `brand`(로고) · `children`(`NavLink`) · `actions`(로그인·프로필) 세 슬롯으로 나뉘어, 가운데 정렬이나 양끝 배치를 직접 짜지 않습니다.",
+			},
+		},
+	},
 	render: () => (
 		<NavBar brand={<Brand />} actions={<Button size="sm">로그인</Button>}>
 			<NavLink href="#" active>
@@ -52,6 +63,14 @@ export const Default: Story = {
 };
 
 export const Accent: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"검정 배경입니다. 링크와 아이콘 색이 함께 반전되므로 `actions` 에 넣는 `Button` 도 그 위에서 읽히는 variant 를 고르세요 - 흰 배경용 `outline` 을 그대로 두면 테두리가 묻힙니다.",
+			},
+		},
+	},
 	render: () => (
 		<NavBar
 			variant="accent"
@@ -72,6 +91,14 @@ export const Accent: Story = {
 };
 
 export const Transparent: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"배경 없이 **`Hero` 위에 겹치는** 용도입니다. 배경 이미지가 밝으면 링크가 읽히지 않으므로 `Hero` 의 `overlay` 와 함께 씁니다.\n\n스크롤하면 본문 위에 남아 배경과 섞입니다 - 스크롤 후 색을 바꾸려면 `variant` 를 화면이 갈아 끼웁니다.",
+			},
+		},
+	},
 	render: () => (
 		<div
 			style={{

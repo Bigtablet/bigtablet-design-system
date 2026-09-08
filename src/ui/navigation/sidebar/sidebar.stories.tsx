@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Bell, Home, Settings, ShoppingCart, Users } from "lucide-react";
 import * as React from "react";
+import { SHELL_COMPARISON } from "../shell-comparison.docs";
 import { Sidebar, SidebarItem, SidebarSection } from ".";
 
 const meta: Meta<typeof Sidebar> = {
@@ -17,6 +18,8 @@ const meta: Meta<typeof Sidebar> = {
 \`collapsed\` (240→64px) - 아이콘만 표시하고 \`headerCollapsed\` 로 favicon 노드를 준다. \`collapsible\` (기본 true) → floating chevron 토글. \`active={true}\` → \`aria-current="page"\` 자동.
 
 **반응형** - 기본 \`mode="auto"\`: viewport \`< 600px\` 에서 자동으로 하단 bar (BottomNav 형태) 로 변신한다. header/footer/섹션 라벨은 숨고 아이템은 horizontal stack 이 된다. \`mode="static"\` 으로 변신을 끌 수 있다 (admin desktop 전용 케이스).
+
+${SHELL_COMPARISON}
 				`,
 			},
 		},
@@ -141,10 +144,26 @@ function FullDemo({ defaultCollapsed = false }: { defaultCollapsed?: boolean }) 
 
 export const Default: Story = {
 	name: "기본 (펼침)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'펼친 상태(240px)입니다. **600px 밑에서는 스스로 하단 bar 가 됩니다**(기본 `mode="auto"`) - Storybook 뷰포트를 모바일로 바꿔 확인하세요.\n\n하단 bar 는 fixed 라 본문 끝을 가립니다. `--bt-sidebar-total-height` 로 여백을 확보하거나 `AppShell` 을 쓰면 그 계산을 대신해 줍니다.',
+			},
+		},
+	},
 	render: () => <FullDemo />,
 };
 
 export const Collapsed: Story = {
 	name: "Collapsed (아이콘만)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"64px 로 접혀 아이콘만 남습니다. 라벨이 사라지므로 **아이콘만으로 뜻이 전달되는 항목**이어야 하고, `headerCollapsed` 로 favicon 같은 축약 노드를 따로 줍니다.\n\n접힘 상태는 `Sidebar` 가 스스로 들고 있어 화면이 관리하지 않습니다. `collapsible={false}` 로 토글을 없앨 수 있습니다.",
+			},
+		},
+	},
 	render: () => <FullDemo defaultCollapsed />,
 };
