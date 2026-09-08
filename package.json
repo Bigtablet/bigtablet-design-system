@@ -54,6 +54,7 @@
 		"check:geometry": "python3 scripts/check-overlay-geometry.py",
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
 		"check:deprecated": "python3 scripts/check-deprecated-in-stories.py",
+		"check:filenames": "python3 scripts/check-story-test-filenames.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},

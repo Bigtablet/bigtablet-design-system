@@ -128,6 +128,12 @@ jobs:
       - name: Check deprecated props in stories
         run: pnpm check:deprecated
 
+      # 테스트·스토리 파일 이름이 폴더명과 같은 kebab-case 인지. 한동안 테스트가 PascalCase 62개와
+      # kebab-case 14개로 갈려 있었다. 파일명 규약은 리뷰 diff 에서 눈에 잘 안 띄어 조용히
+      # 다시 갈라진다 - 그래서 정적으로 본다. 소스만 읽으므로 여기(Build 앞)에 둔다.
+      - name: Check test and story filenames
+        run: pnpm check:filenames
+
       # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
       - name: Run tests with coverage
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'

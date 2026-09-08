@@ -145,6 +145,28 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 
 a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡는다 - 그래서 정적 검사가 필요하다.
 
+### 파일명: 테스트·스토리는 폴더명을 따른다
+
+`pnpm check:filenames` 가 막는다. 컴포넌트 폴더 안의 세 파일이 같은 이름을 공유해야 한다:
+
+```
+src/ui/display/data-view/
+├── index.tsx
+├── data-view.test.tsx
+└── data-view.stories.tsx
+```
+
+컴포넌트 이름(`DataView`)이 아니라 **폴더 이름**이다. 목록에서 짝이 바로 보이고, 폴더를 옮길 때
+파일명을 따로 고칠 일이 없다.
+
+두 가지만 예외다 - 옆에 같은 이름의 소스가 있는 테스트(`crop.util.ts` ↔ `crop.util.test.ts`)와
+카테고리 폴더에 바로 놓인 공용 테스트(`src/ui/overlay/overlay-escape.test.tsx`). `src/utils/**` 는
+폴더가 아니라 모듈 단위라 대상이 아니다.
+
+이름을 바꿀 때는 `git mv` 를 쓴다. **대소문자만 다른 경우**(`Card.test.tsx` → `card.test.tsx`)는
+이 저장소가 `core.ignorecase=true` 이고 macOS 파일시스템이 대소문자를 구분하지 않아, 임시 이름을
+거친 2단계 `git mv` 가 필요하다 - 한 번에 옮기면 git 이 같은 파일로 본다.
+
 ### 스토리: deprecated prop 을 시연하지 않는다
 
 `pnpm check:deprecated` 가 막는다. 스토리는 소비자가 **복사해 가는 자리**라, 폐기된 prop 을
