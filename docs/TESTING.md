@@ -372,7 +372,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **91.83%** | **89.1%** | **92.77%** | **93.83%** |
+| **All files** | **92.02%** | **89.1%** | **92.77%** | **94.04%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (33개는 전 지표 100% 라 빠져 있다).
 
@@ -387,11 +387,9 @@ it("calls callback with correct arguments", () => {
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 73.08% | 71.43% | 80% | 80% |
 | ui/display/table | 98.25% | 93.04% | 95.65% | 97.96% |
-| ui/feedback | 0% | 100% | 100% | 0% |
 | ui/feedback/alert | 98.36% | 96.36% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 100% | 86.36% | 100% | 100% |
-| ui/forms | 0% | 100% | 100% | 0% |
 | ui/forms/checkbox | 92.31% | 93.75% | 100% | 100% |
 | ui/forms/combobox | 94.03% | 89.53% | 81.25% | 96.72% |
 | ui/forms/date-picker | 92.55% | 84.33% | 100% | 97.4% |
@@ -405,7 +403,6 @@ it("calls callback with correct arguments", () => {
 | ui/forms/textfield | 98.25% | 95.74% | 90.91% | 98.15% |
 | ui/forms/time-picker | 93.22% | 90.41% | 100% | 100% |
 | ui/forms/toggle | 100% | 94.12% | 100% | 100% |
-| ui/navigation | 0% | 100% | 100% | 0% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
 | ui/navigation/menu | 97.5% | 88.68% | 100% | 100% |
 | ui/navigation/nav-bar | 80.77% | 71.95% | 81.82% | 85.87% |
