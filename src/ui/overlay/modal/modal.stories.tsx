@@ -129,7 +129,15 @@ export const DestructiveAction: Story = {
 };
 
 export const LongText: Story = {
-	parameters: { chromatic: { disableSnapshot: true } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"패널 높이는 `calc(100dvh - 64px)` 로 제한되고 **본문만 스크롤됩니다** - 제목과 푸터는 고정입니다.\n\n이 제한이 없으면 긴 내용이 뷰포트 밖으로 잘리고, 배경 스크롤이 잠긴 상태라 페이지 스크롤로도 닿을 수 없습니다. `dvh` 를 쓰는 이유는 모바일 주소창이 접힐 때 높이가 바뀌기 때문입니다.",
+			},
+		},
+		chromatic: { disableSnapshot: true },
+	},
 
 	name: "긴 텍스트",
 	render: (args) => {
@@ -174,6 +182,14 @@ export const LongText: Story = {
 };
 
 export const Basic: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`title` 을 주면 `aria-labelledby` 가 자동으로 연결됩니다. 포커스 트랩·`Esc` 닫기·배경 스크롤 잠금도 자동입니다.\n\n제목이 없으면 이름 없는 대화상자가 되므로, 시각적 제목을 두지 않는 경우에도 `aria-label` 은 주세요.",
+			},
+		},
+	},
 	render: (args) => {
 		const [open, setOpen] = useState(false);
 		return (

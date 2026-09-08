@@ -59,6 +59,14 @@ const Content = ({ label }: { label: string }) => (
 
 export const Default: Story = {
 	name: "배경색 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"배경 다섯 가지 비교입니다. `dim` 은 섹션을 번갈아 칠하는 zebra 용, `accent` 는 옅은 강조, `inverted` 는 반전입니다.\n\n`inverted` 는 텍스트 색까지 함께 정해집니다(`accent-on-surface`). **다크 테마에서는 반전이 뒤집혀** 흰 배경 + 검정 텍스트가 되므로, 그 안에 색을 직접 박아 두지 마세요.",
+			},
+		},
+	},
 	render: () => (
 		<div>
 			<Section bg="default" spacing="sm">
@@ -87,6 +95,14 @@ export const Default: Story = {
 
 export const SpacingScale: Story = {
 	name: "간격 비교",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`md`·`lg`·`xl` 은 뷰포트에 따라 값이 달라집니다 - 데스크탑 기준으로 고르고 모바일에서 확인하세요.\n\n섹션 사이 여백은 각 `Section` 이 자기 위아래를 갖는 구조라, 인접한 두 섹션 사이는 두 값이 더해집니다.",
+			},
+		},
+	},
 	render: () => (
 		<div>
 			{(["xs", "sm", "md", "lg", "xl"] as const).map((spacing, i) => (
