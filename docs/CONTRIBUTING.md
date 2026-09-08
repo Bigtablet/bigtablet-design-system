@@ -79,7 +79,7 @@ git checkout -b feat/new-component
 
 ### 3. 개발
 
-컴포넌트 개발 시 다음 구조를 따릅니다. **폴더와 파일 이름은 kebab-case** 이고 파일명은 폴더명과 같습니다(`pnpm check:filenames`):
+컴포넌트 개발 시 다음 구조를 따릅니다. **폴더 이름은 kebab-case** 로 짓고, 테스트·스토리 파일은 그 폴더명을 그대로 씁니다:
 
 ```
 src/ui/{category}/{component-name}/
@@ -147,7 +147,7 @@ a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡는다
 
 ### 파일명: 테스트·스토리는 폴더명을 따른다
 
-`pnpm check:filenames` 가 막는다. 컴포넌트 폴더 안의 세 파일이 같은 이름을 공유해야 한다:
+컴포넌트 폴더 안의 세 파일이 같은 이름을 공유해야 한다. `pnpm check:filenames` 가 **테스트·스토리 파일명**을 그 폴더명(또는 같은 폴더의 소스 파일명)과 대조한다 - 폴더 이름 자체는 검사하지 않으므로 kebab-case 로 짓는 것은 규약으로 지킨다:
 
 ```
 src/ui/display/data-view/
