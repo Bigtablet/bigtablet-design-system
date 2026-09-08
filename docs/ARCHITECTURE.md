@@ -63,14 +63,14 @@ bigtablet-design-system/
 
 ## 컴포넌트 구조
 
-각 컴포넌트는 다음 구조를 따릅니다:
+각 컴포넌트는 다음 구조를 따릅니다. **폴더와 파일 이름은 kebab-case** 이고 파일명은 폴더명과 같습니다:
 
 ```
-src/ui/{category}/{ComponentName}/
-├── index.tsx              # 컴포넌트 구현
-├── style.scss             # Global SCSS 스타일
-├── {ComponentName}.test.tsx  # 단위 테스트
-└── *.stories.tsx          # Storybook 스토리 (선택)
+src/ui/{category}/{component-name}/
+├── index.tsx                       # 컴포넌트 구현
+├── style.scss                      # Global SCSS 스타일
+├── {component-name}.test.tsx       # 단위 테스트
+└── {component-name}.stories.tsx    # Storybook (선택)
 ```
 
 ### 컴포넌트 파일 예시
