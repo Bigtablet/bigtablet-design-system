@@ -670,7 +670,16 @@ import { Settings } from 'lucide-react';
 `aria-label` 을 그대로 유지한다.
 
 ```tsx
-<Field name="companyName" label="소속" required labelAction={<Toggle ariaLabel="소속 없음" … />}>
+const [noAffiliation, setNoAffiliation] = useState(false);
+
+<Field
+  name="companyName"
+  label="소속"
+  required
+  labelAction={
+    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onChange={setNoAffiliation} />
+  }
+>
   <TextField disabled={noAffiliation} />
 </Field>
 ```

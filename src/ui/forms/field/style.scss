@@ -23,11 +23,13 @@
     transition: color token.$transition_base;
   }
 
-  // 라벨 줄에 조작 요소가 붙을 때만 생기는 행. 라벨이 남은 폭을 먹어 조작 요소를 오른쪽
-  // 끝으로 민다(`space-between` 대신 - 라벨 없이 조작 요소만 있어도 오른쪽에 붙는다).
+  // 라벨 줄에 조작 요소가 붙을 때만 생기는 행. 조작 요소는 항상 오른쪽 끝이다.
+  // `justify-content` 는 라벨이 없을 때(조작 요소가 유일한 flex item)를 담당하고,
+  // 라벨의 `margin-right: auto` 는 라벨이 있을 때 그보다 우선해 라벨만 왼쪽에 남긴다.
   &_label_row {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: token.$spacing_8;
     width: 100%;
 
