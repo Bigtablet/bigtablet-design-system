@@ -4,7 +4,7 @@
 overrides:
   # 보안 패치 (Dependabot open alert 대응 - first_patched_version 기준)
   immutable: ^5.1.9 # was 5.1.5 - hash-collision DoS + List 32bit overflow (GHSA #83/#84)
-  js-yaml: ^4.3.0 # was 4.2.0 - merge-key quadratic CPU DoS (GHSA #82)
+  js-yaml: ^4.3.2 # was 4.3.1 - empty merge source escapes maxTotalMergeKeys CPU limit (high #116)
   "@vitest/browser": ^4.1.10 # was 4.1.9 - provider commands bypass file-access gate (critical #86)
   fast-uri: ^3.1.6 # was 3.1.5 - IDN/percent-encoded scheme host confusion + IPv6/repeated-host SSRF (high x4)
   sharp: ^0.35.3 # was 0.34.5 - libvips CVE-2026-33327/33328/35590/35591 (#87)
