@@ -669,6 +669,10 @@ import { Settings } from 'lucide-react';
 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기
 `aria-label` 을 그대로 유지한다.
 
+슬롯 높이는 **라벨 한 줄**로 고정돼 있다. 조작 요소가 그보다 높으면(Toggle `sm` 24px vs 라벨 18px)
+위아래로 넘치게 두고 라벨 줄은 자라지 않는다 — 자라게 두면 아래 입력이 내려가 같은 그리드 행의
+`labelAction` 없는 칸과 어긋난다.
+
 ```tsx
 const [noAffiliation, setNoAffiliation] = useState(false);
 
@@ -701,7 +705,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 |------|------|---------|-------------|
 | `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
 | `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결된다 |
-| `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖에 렌더된다 |
+| `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖, 라벨 한 줄 높이로 고정된 슬롯에 렌더된다 |
 | `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
 | `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
 | `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |

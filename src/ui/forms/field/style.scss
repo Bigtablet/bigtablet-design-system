@@ -38,6 +38,17 @@
     }
   }
 
+  // 조작 요소 슬롯. 높이를 **라벨 한 줄**(`label_medium_medium` 의 line-height)로 못박는다.
+  // 조작 요소(Toggle sm 은 24px)가 라벨(18px)보다 높은 것이 일반적인데, 그대로 두면 라벨 줄이
+  // 그 높이로 자라고 아래 입력이 같이 내려가 같은 그리드 행의 옆 칸과 어긋난다(#618).
+  // 넘치는 만큼은 위아래로 삐져나오게 둔다 - 잘라내면 조작 요소가 눌린다.
+  &_label_action {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: token.$line_height_18;
+  }
+
   &_required {
     margin-left: token.$spacing_2;
     color: token.$color_status_error_on_surface;

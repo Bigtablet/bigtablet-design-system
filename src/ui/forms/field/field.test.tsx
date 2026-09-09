@@ -91,6 +91,10 @@ describe("Field", () => {
 
 		const toggle = screen.getByRole("switch");
 		expect(toggle.closest("label")).toBeNull();
+		// 조작 요소는 높이가 라벨 한 줄로 고정된 슬롯 안에 있어야 한다 - 없으면 라벨 줄이
+		// 조작 요소 높이로 자라 아래 입력이 내려간다(#618). 높이는 jsdom 이 계산하지 않아
+		// 구조만 지킨다.
+		expect(toggle.parentElement).toHaveClass("field_label_action");
 		// 라벨 줄은 FieldContext 밖이다 - 안이면 Toggle 이 자기 ariaLabel 을 버리고
 		// Field 라벨("소속")을 자기 이름으로 삼아 이름 없는 토글이 된다.
 		expect(toggle).toHaveAccessibleName("소속 없음");

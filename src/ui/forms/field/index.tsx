@@ -136,7 +136,7 @@ export const Field = ({
 			{labelAction ? (
 				<div className="field_label_row">
 					{labelElement}
-					{labelAction}
+					<span className="field_label_action">{labelAction}</span>
 				</div>
 			) : (
 				labelElement
