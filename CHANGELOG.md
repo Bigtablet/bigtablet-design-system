@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.19.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.0) - 2026-09-09
+- `Field` 에 `labelAction` 슬롯이 추가됐습니다. 라벨과 같은 줄 오른쪽에 토글·링크 버튼 같은 조작 요소를 놓을 수 있습니다. 조작 요소는 `<label>` 밖에 렌더되므로 라벨 클릭(입력 포커스)과 겹치지 않고, `Field` 의 context 밖이라 자기 `aria-label` 을 그대로 유지합니다. 라벨 옆 토글이 있어 `Field` 로 옮기지 못했던 폼이 이제 옮겨집니다
+
 ## [3.18.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.18.3) - 2026-09-09
 - (렌더 변경) `Button` 을 disabled 로 토글할 때 배경과 불투명도가 글자 색보다 먼저 바뀌던 문제를 고쳤습니다. transition 목록에 `background` 와 `opacity` 가 빠져 있어 두 속성만 즉시 튀고 글자 색만 뒤따라 흐려졌습니다. Vanilla 의 `.bt-button` 도 같이 맞췄습니다
 

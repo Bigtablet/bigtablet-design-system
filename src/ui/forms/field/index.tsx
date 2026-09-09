@@ -51,6 +51,14 @@ export interface FieldProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 	name: string;
 	/** 라벨 텍스트. `Field` 가 소유하므로 자식 입력에는 `label` 을 주지 않는다 */
 	label?: string;
+	/**
+	 * 라벨과 **같은 줄 오른쪽**에 놓는 조작 요소(토글·링크 버튼 등).
+	 *
+	 * `<label>` 안이 아니라 형제로 렌더된다 - 라벨 클릭이 입력 포커스로 가는 동작과
+	 * 조작 요소 클릭이 겹치지 않아야 한다(`TextField` 의 `leadingIcon` 은 `aria-hidden`,
+	 * `leadingAction` 은 아닌 것과 같은 구분).
+	 */
+	labelAction?: React.ReactNode;
 	/** 필수 표시(*). 자식 입력에 `aria-required` 로도 전달된다 */
 	required?: boolean;
 	/** 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 */
@@ -83,6 +91,7 @@ export interface FieldProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 export const Field = ({
 	name,
 	label,
+	labelAction,
 	required = false,
 	help,
 	error: errorProp,
@@ -111,17 +120,26 @@ export const Field = ({
 		required,
 	};
 
+	const labelElement = label ? (
+		<label id={labelId} htmlFor={inputId} className="field_label">
+			{label}
+			{required && (
+				<span className="field_required" aria-hidden="true">
+					*
+				</span>
+			)}
+		</label>
+	) : null;
+
 	return (
 		<div className={cn("field", !!error && "field_error", className)} {...props}>
-			{label && (
-				<label id={labelId} htmlFor={inputId} className="field_label">
-					{label}
-					{required && (
-						<span className="field_required" aria-hidden="true">
-							*
-						</span>
-					)}
-				</label>
+			{labelAction ? (
+				<div className="field_label_row">
+					{labelElement}
+					{labelAction}
+				</div>
+			) : (
+				labelElement
 			)}
 
 			<FieldContext.Provider value={control}>{children}</FieldContext.Provider>
