@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Radio } from "../radio";
 import { RadioGroup } from "../radio-group";
 import { TextField } from "../textfield";
+import { Toggle } from "../toggle";
 import { Field } from "./index";
 
 describe("Field", () => {
@@ -78,6 +79,35 @@ describe("Field", () => {
 		expect(
 			document.getElementById(group.getAttribute("aria-describedby") as string),
 		).toHaveTextContent("언제든 변경할 수 있습니다");
+	});
+
+	it("puts labelAction on the label row, outside the label element", () => {
+		// `<label>` 안에 넣으면 라벨 클릭 → 입력 포커스 동작과 토글 클릭이 겹친다.
+		render(
+			<Field name="companyName" label="소속" labelAction={<Toggle ariaLabel="소속 없음" />}>
+				<TextField />
+			</Field>,
+		);
+
+		const toggle = screen.getByRole("switch");
+		expect(toggle.closest("label")).toBeNull();
+		// 라벨 줄은 FieldContext 밖이다 - 안이면 Toggle 이 자기 ariaLabel 을 버리고
+		// Field 라벨("소속")을 자기 이름으로 삼아 이름 없는 토글이 된다.
+		expect(toggle).toHaveAccessibleName("소속 없음");
+		expect(toggle.closest(".field_label_row")).not.toBeNull();
+		// 라벨은 그대로 입력을 가리킨다.
+		expect(screen.getByLabelText("소속")).toBe(screen.getByRole("textbox"));
+	});
+
+	it("keeps the label row out of the DOM when there is no labelAction", () => {
+		// 슬롯이 비면 지금까지의 마크업 그대로 - 기존 화면의 조판이 바뀌면 안 된다.
+		const { container } = render(
+			<Field name="email" label="이메일">
+				<TextField />
+			</Field>,
+		);
+
+		expect(container.querySelector(".field_label_row")).toBeNull();
 	});
 
 	it("leaves the input alone when there is no Field", () => {

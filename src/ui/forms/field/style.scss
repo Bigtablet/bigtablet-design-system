@@ -23,6 +23,19 @@
     transition: color token.$transition_base;
   }
 
+  // 라벨 줄에 조작 요소가 붙을 때만 생기는 행. 라벨이 남은 폭을 먹어 조작 요소를 오른쪽
+  // 끝으로 민다(`space-between` 대신 - 라벨 없이 조작 요소만 있어도 오른쪽에 붙는다).
+  &_label_row {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    width: 100%;
+
+    .field_label {
+      margin-right: auto;
+    }
+  }
+
   &_required {
     margin-left: token.$spacing_2;
     color: token.$color_status_error_on_surface;

@@ -665,6 +665,16 @@ import { Settings } from 'lucide-react';
 
 `Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
 
+라벨과 같은 줄에 토글·링크 버튼이 필요하면 `labelAction` 슬롯에 넣는다. `<label>` **밖**에 렌더되므로
+라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기
+`aria-label` 을 그대로 유지한다.
+
+```tsx
+<Field name="companyName" label="소속" required labelAction={<Toggle ariaLabel="소속 없음" … />}>
+  <TextField disabled={noAffiliation} />
+</Field>
+```
+
 #### 언제 `Field` 를 쓰고 언제 입력의 prop 을 쓰나
 
 `TextField` 처럼 자체 `label`·`supportingText` 를 가진 입력이 9종 있다. 둘은 대체재가 아니라 쓰임이 다르다.
@@ -682,6 +692,7 @@ import { Settings } from 'lucide-react';
 |------|------|---------|-------------|
 | `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
 | `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결된다 |
+| `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖에 렌더된다 |
 | `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
 | `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
 | `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |

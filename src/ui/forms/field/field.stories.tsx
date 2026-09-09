@@ -8,6 +8,7 @@ import { Radio } from "../radio";
 import { RadioGroup } from "../radio-group";
 import { Textarea } from "../textarea";
 import { TextField } from "../textfield";
+import { Toggle } from "../toggle";
 import { Field } from ".";
 
 const meta: Meta<typeof Field> = {
@@ -111,6 +112,37 @@ export const AnyInput: Story = {
 			</Field>
 		</div>
 	),
+};
+
+export const LabelAction: Story = {
+	name: "라벨 줄 조작 요소 (labelAction)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`labelAction` 은 라벨과 같은 줄 오른쪽에 놓인다. `<label>` 안이 아니라 형제로 렌더되므로 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않는다. 이 칸처럼 토글이 입력의 활성/비활성을 정하는 경우, 토글이 그 칸에 속한다는 것이 위치로 읽혀야 한다.",
+			},
+		},
+	},
+	render: function LabelActionStory() {
+		const [none, setNone] = useState(false);
+
+		return (
+			<div style={{ width: 360 }}>
+				<Field
+					name="companyName"
+					label="소속"
+					required
+					labelAction={
+						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />
+					}
+					help="소속이 없으면 오른쪽 토글을 켜세요"
+				>
+					<TextField fullWidth placeholder="회사명" disabled={none} />
+				</Field>
+			</div>
+		);
+	},
 };
 
 export const ServerErrors: Story = {
