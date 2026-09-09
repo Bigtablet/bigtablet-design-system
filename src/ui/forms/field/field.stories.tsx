@@ -145,6 +145,39 @@ export const LabelAction: Story = {
 	},
 };
 
+export const GridAlignment: Story = {
+	name: "그리드 정렬 (labelAction 유무 혼재)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`labelAction` 슬롯의 높이는 라벨 한 줄로 고정돼 있다. 조작 요소가 그보다 높아도(Toggle `sm` 은 24px, 라벨은 18px) 라벨 줄이 자라지 않으므로, 같은 행에서 `labelAction` 이 있는 칸과 없는 칸의 입력 위치가 어긋나지 않는다.",
+			},
+		},
+	},
+	render: function GridAlignmentStory() {
+		const [none, setNone] = useState(false);
+
+		return (
+			<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, width: 560 }}>
+				<Field
+					name="companyName"
+					label="소속"
+					required
+					labelAction={
+						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />
+					}
+				>
+					<TextField fullWidth placeholder="회사명" disabled={none} />
+				</Field>
+				<Field name="phone" label="전화번호" required>
+					<TextField fullWidth placeholder="010-0000-0000" />
+				</Field>
+			</div>
+		);
+	},
+};
+
 export const ServerErrors: Story = {
 	name: "서버 검증 결과 배분 (Form)",
 	parameters: {
