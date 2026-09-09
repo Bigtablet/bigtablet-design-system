@@ -56,6 +56,9 @@ jobs:
               - 'tsconfig.json'
               - 'biome.json'
               - 'scripts/**'
+              # 워크플로를 바꾼 PR 도 돌려야 한다 - 그러지 않으면 CI 변경이
+              # 검증되지 않은 채 머지된다(이 축이 없어서 그동안 test job 이 스킵됐다)
+              - '.github/workflows/**'
             stories:
               - 'src/**/*.stories.tsx'
               - 'src/stories/**'
@@ -141,6 +144,21 @@ jobs:
 
       # Storybook a11y는 무겁다 (Playwright + Chromium 다운로드 ~200MB)
       # 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다
+      #
+      # 브라우저 바이너리는 캐시한다. 실측으로 이 스텝은 apt(`--with-deps`, 폰트 9개 설치)
+      # 11s + 다운로드 8.7s 로 갈리는데, 캐시가 잡는 것은 뒤쪽이다. 폰트는 a11y 렌더에
+      # 영향을 주므로 `--with-deps` 는 유지한다. `playwright install` 이 idempotent 해서
+      # 캐시가 맞으면 다운로드만 건너뛰므로 hit/miss 분기는 두지 않는다.
+      # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
+      - name: Cache Playwright browsers
+        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
       - name: Install Playwright browsers
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
         run: pnpm exec playwright install --with-deps chromium
