@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.19.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.1) - 2026-09-09
+- (렌더 변경) `Field` 에 `labelAction` 을 넣으면 입력이 아래로 밀려, 같은 그리드 행의 `labelAction` 없는 칸과 입력 높이가 어긋나던 문제를 고쳤습니다. 조작 요소가 라벨 한 줄 높이로 고정된 슬롯에 담기므로 라벨 줄이 조작 요소 높이로 자라지 않습니다. 조작 요소가 라벨보다 높으면 위아래로 넘치게 둡니다
+
 ## [3.19.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.0) - 2026-09-09
 - `Field` 에 `labelAction` 슬롯이 추가됐습니다. 라벨과 같은 줄 오른쪽에 토글·링크 버튼 같은 조작 요소를 놓을 수 있습니다. 조작 요소는 `<label>` 밖에 렌더되므로 라벨 클릭(입력 포커스)과 겹치지 않고, `Field` 의 context 밖이라 자기 `aria-label` 을 그대로 유지합니다. 라벨 옆 토글이 있어 `Field` 로 옮기지 못했던 폼이 이제 옮겨집니다
 
