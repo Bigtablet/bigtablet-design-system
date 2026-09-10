@@ -132,6 +132,33 @@ import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
 > 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` 만
 > 본다. Vanilla 를 넣으면 전체 수치가 크게 떨어지므로 별건으로 다룬다 - 테스트 자체는 이미 돈다.
 
+### 앵커 팝업(Dropdown·Combobox·Menu·Popover·Tooltip) 테스트
+
+배치·닫힘이 `getBoundingClientRect()` 에 달려 있어 jsdom 에서 두 가지가 걸린다.
+
+- **jsdom 의 rect 는 전부 0 이다.** 그래서 "앵커가 뷰포트 밖" 판정(`bottom <= 0`)이 아무것도 안
+  했는데 참이 된다. `useAnchoredPosition` 이 **앵커 크기가 0 이면 `anchorHidden` 을 false 로
+  두는** 것은 이 때문이다(#624). 이 가드를 빼면 열자마자 닫혀 기존 테스트 6개가 무너진다 -
+  뮤테이션으로 확인된 수치다. 위치·가시성을 검사하려면 rect 를 직접 세운다:
+
+  ```ts
+  vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue({
+    top: -80, bottom: -40, left: 0, right: 200, width: 200, height: 40,
+  } as DOMRect);
+  await act(async () => {
+    fireEvent.scroll(window);              // 훅은 scroll(capture) 로 재계산하고
+    await new Promise((r) => requestAnimationFrame(() => r(null))); // rAF 로 배칭한다
+  });
+  ```
+
+- **포커스 복귀는 `focus({ preventScroll: true })` 로 단언한다.** 트리거가 화면 밖이라 닫는
+  경로에서 그냥 `focus()` 하면 브라우저가 방금 벗어난 트리거로 화면을 되감는다. jsdom 은
+  스크롤을 하지 않아 증상이 안 보이므로, 인자까지 단언해야 회귀가 잡힌다:
+  `expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })`.
+
+레이아웃 자체(높이 상한·정렬)는 jsdom 이 계산하지 않는다 - 실제 브라우저(Storybook)에서 재고
+그 수치를 PR 에 남긴다.
+
 ### 기본 구조
 
 ```tsx
