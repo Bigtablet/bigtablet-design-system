@@ -126,7 +126,7 @@
 		{
 			"path": "dist/index.js",
 			"limit": "70 kB",
-			"message": "Raised 60 kB -> 70 kB on 2026-09-10: baseline was 59.91 kB, leaving 0.09 kB (0.2%) under the old 60 kB limit. Of that baseline, 18.48 kB is @react-spring/web (a runtime dependency, so size-limit bundles it) and 40.55 kB is this package - measure `dist/index.js` alone before blaming the dependency. The current limit leaves 10.09 kB. Re-measure before raising again."
+			"message": "Raised 60 kB -> 70 kB on 2026-09-10: baseline was 59.82 kB on develop (59.91 kB with PR #625), leaving 0.09-0.18 kB (0.3%) under the old 60 kB limit. Of that baseline, 18.48 kB is @react-spring/web (a runtime dependency, so size-limit bundles it) and 40.55 kB is this package - measure `dist/index.js` alone before blaming the dependency. The current limit leaves 10.09 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
