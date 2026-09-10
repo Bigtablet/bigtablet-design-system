@@ -288,6 +288,17 @@ export function useListboxPopup<T extends ListboxItem>({
 		padding: LIST_PADDING,
 	});
 
+	// 트리거가 스크롤로 화면 밖에 나가면 닫는다 - 가리킬 대상 없이 떠 있는 목록은 어느
+	// 컨트롤의 것인지 읽히지 않는다(#624). 목록엔 잃을 상태가 없어 닫아도 무해하다.
+	// 포커스가 패널 안(검색 입력)에 있었으면 트리거로 되돌리되 `preventScroll` 로 되돌린다 -
+	// 그냥 focus 하면 브라우저가 방금 벗어난 트리거로 화면을 되감는다.
+	useEffect(() => {
+		if (!isOpen || !anchored.anchorHidden) return;
+		const focusInPanel = !!panelRef.current?.contains(document.activeElement);
+		setIsOpen(false);
+		if (focusInPanel) triggerRef.current?.focus({ preventScroll: true });
+	}, [isOpen, anchored.anchorHidden]);
+
 	return {
 		isOpen,
 		setIsOpen,

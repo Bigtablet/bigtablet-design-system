@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Menu } from "./index";
 
@@ -20,6 +20,35 @@ describe("Menu", () => {
 
 		expect(document.activeElement).toBe(trigger);
 		expect(screen.queryByRole("menu")).toBeNull();
+	});
+
+	it("closes when the trigger scrolls out of the viewport (#624)", async () => {
+		// 가리킬 버튼 없이 떠 있는 메뉴는 어느 컨트롤의 것인지 읽히지 않는다.
+		const { container } = render(
+			<Menu trigger={<button type="button">열기</button>} items={[{ key: "a", label: "항목 A" }]} />,
+		);
+		const trigger = screen.getByRole("button", { name: "열기" });
+		fireEvent.click(trigger);
+		expect(screen.getByRole("menu")).toBeInTheDocument();
+
+		const wrapper = container.firstChild as HTMLElement;
+		vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue({
+			top: -80,
+			bottom: -40,
+			left: 0,
+			right: 120,
+			width: 120,
+			height: 40,
+		} as DOMRect);
+		const focusSpy = vi.spyOn(trigger, "focus");
+		await act(async () => {
+			fireEvent.scroll(window);
+			await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+		});
+
+		expect(screen.queryByRole("menu")).toBeNull();
+		// 포커스는 첫 항목에 있었다 - 트리거로 되돌리되 화면을 되감지 않는다.
+		expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
 	});
 
 	it("does not render menu items initially", () => {

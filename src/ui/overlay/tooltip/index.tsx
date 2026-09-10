@@ -101,6 +101,13 @@ export const Tooltip = ({
 		padding: 8,
 	});
 
+	// 트리거가 스크롤로 화면 밖에 나가면 즉시 닫는다 - 툴팁은 트리거를 설명하는 것이라
+	// 대상 없이 떠 있으면 의미가 없다(#624). 지연 닫힘(`hide`)이 아니라 `hideNow` 다:
+	// 포인터가 갭을 건널 상황이 아니다.
+	React.useEffect(() => {
+		if (open && pos.anchorHidden) hideNow();
+	}, [open, pos.anchorHidden, hideNow]);
+
 	const fromTransform = (() => {
 		switch (pos.placement) {
 			case "top":

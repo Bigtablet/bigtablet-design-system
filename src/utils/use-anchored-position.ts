@@ -261,6 +261,17 @@ export interface AnchoredState extends AnchoredResult {
 	 * 리스너를 또 달 필요가 없다.
 	 */
 	anchorWidth: number;
+	/**
+	 * 앵커가 뷰포트와 전혀 겹치지 않는 상태(스크롤로 트리거가 화면 밖으로 나감).
+	 *
+	 * **사실만 돌려준다 - 닫을지는 소비처가 정한다.** 컴포넌트마다 옳은 동작이 다르다:
+	 * Tooltip·Dropdown·Menu 는 잃을 상태가 없어 닫는 게 맞지만, Popover 는 안에 폼을 담을
+	 * 수 있어 스크롤로 닫으면 입력이 사라진다(#624).
+	 *
+	 * 앵커 크기가 0 이면 false 다 - 최초 측정 전이나 숨겨진 트리거를 "화면 밖" 으로 읽어
+	 * 열자마자 닫는 것을 막는다.
+	 */
+	anchorHidden: boolean;
 }
 
 /**
@@ -284,6 +295,7 @@ export function useAnchoredPosition({
 		maxHeight: 0,
 		ready: false,
 		anchorWidth: 0,
+		anchorHidden: false,
 	});
 
 	useSafeLayoutEffect(() => {
@@ -304,12 +316,22 @@ export function useAnchoredPosition({
 				{ width: window.innerWidth, height: window.innerHeight },
 				{ placement, align, gap, padding },
 			);
+			// 앵커가 뷰포트 밖으로 완전히 나갔는지 - 이미 잰 rect 라 추가 측정 비용이 없고,
+			// scroll 리스너도 이미 달려 있어 IntersectionObserver 가 필요 없다(#624).
+			const anchorHidden =
+				(a.width > 0 || a.height > 0) &&
+				(a.bottom <= 0 ||
+					a.top >= window.innerHeight ||
+					a.right <= 0 ||
+					a.left >= window.innerWidth);
+
 			// maxWidth 로 캡 - min-width 가 max-width 를 이기는 CSS 규칙 때문에 소비처가
 			// 그대로 min-width 에 넣으면 상한이 무력화된다(위 anchorWidth 주석).
 			setState({
 				...result,
 				ready: true,
 				anchorWidth: Math.min(a.width, result.maxWidth),
+				anchorHidden,
 			});
 		};
 
