@@ -268,8 +268,8 @@ export interface AnchoredState extends AnchoredResult {
 	 * Tooltip·Dropdown·Menu 는 잃을 상태가 없어 닫는 게 맞지만, Popover 는 안에 폼을 담을
 	 * 수 있어 스크롤로 닫으면 입력이 사라진다(#624).
 	 *
-	 * 앵커 크기가 0 이면 false 다 - 최초 측정 전이나 숨겨진 트리거를 "화면 밖" 으로 읽어
-	 * 열자마자 닫는 것을 막는다.
+	 * 두 축 중 하나라도 0 이면 false 다 - 최초 측정 전(jsdom 처럼 rect 가 전부 0)이나 보이는
+	 * 영역이 없는 앵커를 "화면 밖" 으로 읽어 열자마자 닫는 것을 막는다.
 	 */
 	anchorHidden: boolean;
 }
@@ -300,7 +300,11 @@ export function useAnchoredPosition({
 
 	useSafeLayoutEffect(() => {
 		if (!open) {
-			setState((prev) => (prev.ready ? { ...prev, ready: false } : prev));
+			// `anchorHidden` 도 함께 내린다 - 닫힌 동안 남겨 두면 다시 열 때 소비처의 이펙트가
+			// 새 측정 전에 그 낡은 true 를 읽고 즉시 닫는다(#624 리뷰에서 재현).
+			setState((prev) =>
+				prev.ready || prev.anchorHidden ? { ...prev, ready: false, anchorHidden: false } : prev,
+			);
 			return;
 		}
 		const anchor = anchorRef.current;
@@ -319,7 +323,8 @@ export function useAnchoredPosition({
 			// 앵커가 뷰포트 밖으로 완전히 나갔는지 - 이미 잰 rect 라 추가 측정 비용이 없고,
 			// scroll 리스너도 이미 달려 있어 IntersectionObserver 가 필요 없다(#624).
 			const anchorHidden =
-				(a.width > 0 || a.height > 0) &&
+				a.width > 0 &&
+				a.height > 0 &&
 				(a.bottom <= 0 ||
 					a.top >= window.innerHeight ||
 					a.right <= 0 ||

@@ -68,7 +68,7 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	// 버튼의 것인지 읽히지 않는다(#624). 포커스가 메뉴 안(항목)에 있으면 트리거로 되돌리되
 	// `preventScroll` - 그냥 focus 하면 방금 벗어난 트리거로 화면이 되감긴다.
 	React.useEffect(() => {
-		if (!open || !pos.anchorHidden) return;
+		if (!open || !pos.ready || !pos.anchorHidden) return;
 		const focusInMenu = !!menuRef.current?.contains(document.activeElement);
 		setOpen(false);
 		if (focusInMenu) {
@@ -76,7 +76,7 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 				?.querySelector<HTMLElement>("[aria-haspopup]")
 				?.focus({ preventScroll: true });
 		}
-	}, [open, pos.anchorHidden]);
+	}, [open, pos.ready, pos.anchorHidden]);
 
 	// 진입 방향은 실제 배치를 따라야 한다 - 위로 flip 됐는데 아래에서 올라오면 거꾸로 보인다
 	// (Dropdown·Combobox 는 `dropUp` 으로 같은 처리를 한다).

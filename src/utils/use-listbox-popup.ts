@@ -293,11 +293,14 @@ export function useListboxPopup<T extends ListboxItem>({
 	// 포커스가 패널 안(검색 입력)에 있었으면 트리거로 되돌리되 `preventScroll` 로 되돌린다 -
 	// 그냥 focus 하면 브라우저가 방금 벗어난 트리거로 화면을 되감는다.
 	useEffect(() => {
-		if (!isOpen || !anchored.anchorHidden) return;
+		// `ready` 를 기다린다 - 측정 전 상태로 닫으면 방금 연 팝업이 즉시 닫힌다.
+		if (!isOpen || !anchored.ready || !anchored.anchorHidden) return;
+		// 포커스 복귀는 `close()` 와 같은 계약을 따른다 - 옵션을 무시하고 되돌리면 이 훅의
+		// 닫힘 경로 둘이 서로 다르게 동작한다(#624 리뷰).
 		const focusInPanel = !!panelRef.current?.contains(document.activeElement);
 		setIsOpen(false);
-		if (focusInPanel) triggerRef.current?.focus({ preventScroll: true });
-	}, [isOpen, anchored.anchorHidden]);
+		if (focusInPanel && returnFocusOnClose) triggerRef.current?.focus({ preventScroll: true });
+	}, [isOpen, anchored.ready, anchored.anchorHidden, returnFocusOnClose]);
 
 	return {
 		isOpen,

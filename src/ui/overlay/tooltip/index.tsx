@@ -105,8 +105,8 @@ export const Tooltip = ({
 	// 대상 없이 떠 있으면 의미가 없다(#624). 지연 닫힘(`hide`)이 아니라 `hideNow` 다:
 	// 포인터가 갭을 건널 상황이 아니다.
 	React.useEffect(() => {
-		if (open && pos.anchorHidden) hideNow();
-	}, [open, pos.anchorHidden, hideNow]);
+		if (open && pos.ready && pos.anchorHidden) hideNow();
+	}, [open, pos.ready, pos.anchorHidden, hideNow]);
 
 	const fromTransform = (() => {
 		switch (pos.placement) {

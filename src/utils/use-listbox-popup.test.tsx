@@ -252,7 +252,7 @@ describe("useListboxPopup", () => {
 	it("returns focus to the trigger without scrolling back to it", async () => {
 		// 포커스가 패널 안(검색 입력)에 있으면 닫을 때 트리거로 되돌려야 포커스가 body 로
 		// 떨어지지 않는다. 다만 그냥 focus() 하면 브라우저가 방금 벗어난 트리거로 화면을 되감는다.
-		const { container } = render(<Probe />);
+		const { container } = render(<Probe returnFocusOnClose />);
 		const trigger = screen.getByRole("button", { name: "trigger" });
 		fireEvent.click(trigger);
 		screen.getByLabelText("filter").focus();
@@ -265,6 +265,58 @@ describe("useListboxPopup", () => {
 		await flushScroll();
 
 		expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+	});
+
+	it("reopens after the trigger scrolls back into view", async () => {
+		// 닫힐 때 `anchorHidden` 이 true 로 남으면, 다시 열자마자 그 낡은 값으로 또 닫힌다.
+		const { container } = render(<Probe />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		const wrapper = container.firstChild as HTMLElement;
+		const rectSpy = vi.spyOn(wrapper, "getBoundingClientRect");
+
+		fireEvent.click(trigger);
+		rectSpy.mockReturnValue(rect({ top: -80, bottom: -40, right: 200, width: 200, height: 40 }));
+		await flushScroll();
+		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+
+		// 트리거가 화면 안으로 돌아온 뒤 다시 연다.
+		rectSpy.mockReturnValue(rect({ top: 100, bottom: 140, right: 200, width: 200, height: 40 }));
+		fireEvent.click(trigger);
+		await flushScroll();
+
+		expect(screen.getByLabelText("filter")).toBeInTheDocument();
+	});
+
+	it("honors returnFocusOnClose on the scroll-away close, like close() does", async () => {
+		// 닫힘 경로가 둘로 갈리면 안 된다 - `close()` 가 옵션을 존중하므로 여기서도 존중한다.
+		const { container } = render(<Probe returnFocusOnClose={false} />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		fireEvent.click(trigger);
+		screen.getByLabelText("filter").focus();
+		const focusSpy = vi.spyOn(trigger, "focus");
+
+		const wrapper = container.firstChild as HTMLElement;
+		vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue(
+			rect({ top: -80, bottom: -40, right: 200, width: 200, height: 40 }),
+		);
+		await flushScroll();
+
+		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+		expect(focusSpy).not.toHaveBeenCalled();
+	});
+
+	it("keeps an anchor with no visible area from reading as off screen", async () => {
+		// 한 축이 0 이면 보이는 영역이 없다 - 측정 실패와 구분되지 않으므로 닫지 않는다.
+		const { container } = render(<Probe />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		const wrapper = container.firstChild as HTMLElement;
+		vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue(
+			rect({ top: -40, bottom: -40, right: 200, width: 200, height: 0 }),
+		);
+		await flushScroll();
+
+		expect(screen.getByLabelText("filter")).toBeInTheDocument();
 	});
 
 	it("stops handling input keys once disabled", () => {
