@@ -166,6 +166,8 @@ export const Tooltip = ({
 							// 최초 측정 전(ready=false)에는 maxWidth(=0)를 걸지 않는다 - 걸면 자연 폭 대신
 							// 0px 로 측정돼 첫 프레임 좌표가 어긋난다. ready 후에만 상한 적용.
 							maxWidth: pos.ready ? pos.maxWidth : undefined,
+							// 폭과 같은 처리 - 긴 툴팁이 낮은 뷰포트를 넘지 않게 한다(#621).
+							maxHeight: pos.ready ? pos.maxHeight : undefined,
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 						// WCAG 1.4.13 Hoverable - 툴팁 위로 포인터가 오면 열림 유지

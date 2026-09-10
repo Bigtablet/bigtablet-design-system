@@ -12,6 +12,10 @@
   // position/left/top 은 컴포넌트에서 inline 으로 지정(fixed). 여기선 나머지만.
   z-index: token.$z_popup;
   width: max-content;
+  // 인라인 max-height(배치 방향에 남은 공간)를 받으면 내용이 그 안에서 스크롤해야 한다 -
+  // 없으면 긴 내용이 잘린 채 닿을 방법이 없다(#621).
+  overflow-y: auto;
+  @include token.scrollable;
 }
 
 .popover {

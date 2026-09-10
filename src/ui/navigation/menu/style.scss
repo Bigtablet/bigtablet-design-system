@@ -17,6 +17,10 @@
   border-radius: token.$radius_lg;
   box-shadow: token.$elevation_level2;
   padding: token.$spacing_4 0;
+  // 컴포넌트가 인라인 `max-height`(배치 방향에 남은 공간)를 줄 때 넘치는 항목을 스크롤로
+  // 볼 수 있어야 한다 - 없으면 잘린 항목에 닿을 방법이 없다(#621).
+  overflow-y: auto;
+  @include token.scrollable;
   will-change: transform, opacity;
 
   [data-theme="dark"] & {

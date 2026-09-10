@@ -89,6 +89,10 @@
     z-index: token.$z_popup;
     box-sizing: border-box;
 
+    // 세로 flex - 인라인 `max-height` 안에서 목록만 줄고 스크롤한다(#621, Dropdown 과 동일).
+    display: flex;
+    flex-direction: column;
+
     // 폭은 내용 기준 - 인라인 `min-width`(트리거 폭)와 `max-width`(뷰포트 가용 폭) 사이에서
     // 옵션 라벨이 필요한 만큼 넓어진다(#596, Dropdown 과 동일).
     width: max-content;
@@ -114,6 +118,8 @@
 
   &_list {
     max-height: token.$overlay_list_max_height;
+    // flex 자식이 내용 높이로 버티지 않도록 - Dropdown 과 같은 이유(#621).
+    min-height: 0;
     overflow-y: auto;
     @include token.scrollable;
     margin: 0;
