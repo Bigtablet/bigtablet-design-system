@@ -55,6 +55,14 @@ export interface AnchoredResult {
 	placement: AnchoredSide;
 	/** 뷰포트 가용 폭(px) - max-width 상한. 컴포넌트 기본 max-width 안에서만 의미. */
 	maxWidth: number;
+	/**
+	 * 배치된 방향의 가용 높이(px) - max-height 상한.
+	 *
+	 * 세로 배치(`top`·`bottom`)는 **그 방향에 남은 공간**, 가로 배치는 뷰포트 가용 높이다.
+	 * 소비처가 이 값을 상한으로 걸어야 긴 목록이 화면 밖으로 나가지 않는다(#621). 폭과 같은
+	 * 이유로 앵커·뷰포트에만 의존해 idempotent 하다 - 측정된 높이와 비교하면 진동한다.
+	 */
+	maxHeight: number;
 }
 
 const OPPOSITE: Record<AnchoredSide, AnchoredSide> = {
@@ -89,6 +97,35 @@ const mainAxisStart = (
 	}
 };
 
+/**
+ * 해당 side 에 남은 주축 공간(px) — 앵커와 뷰포트 가장자리 사이에서 gap·padding 을 뺀 값.
+ *
+ * 앵커 좌표는 뷰포트 안으로 clamp 해서 센다. 스크롤로 트리거가 화면 밖으로 나가면(그래도
+ * 팝업은 열린 채 남는다) 뷰포트보다 큰 공간이 나와 상한이 무의미해진다.
+ */
+const mainAxisSpace = (
+	side: AnchoredSide,
+	anchor: AnchorRect,
+	viewport: Viewport,
+	gap: number,
+	padding: number,
+): number => {
+	const top = clamp(anchor.top, 0, viewport.height);
+	const bottom = clamp(anchor.top + anchor.height, 0, viewport.height);
+	const left = clamp(anchor.left, 0, viewport.width);
+	const right = clamp(anchor.left + anchor.width, 0, viewport.width);
+	switch (side) {
+		case "top":
+			return top - gap - padding;
+		case "bottom":
+			return viewport.height - bottom - gap - padding;
+		case "left":
+			return left - gap - padding;
+		case "right":
+			return viewport.width - right - gap - padding;
+	}
+};
+
 /** 해당 side 로 뒀을 때 주축이 뷰포트(여백 포함) 안에 들어오는가. */
 const fitsMainAxis = (
 	side: AnchoredSide,
@@ -114,9 +151,10 @@ const fitsMainAxis = (
 /**
  * 순수 배치 계산 — 앵커/플로팅/뷰포트 rect 로 fixed 좌표를 낸다. DOM·React 의존 없음(테스트 용이).
  *
- * 1. **shrink** — 플로팅이 뷰포트 가용 폭보다 넓으면 `maxWidth` 로 줄인다.
- * 2. **flip** — 선호 side 가 주축으로 넘치고 반대편은 맞으면 반대편으로 뒤집는다.
- * 3. **shift** — 교차축(중앙 정렬)이 뷰포트를 벗어나면 여백 안으로 민다.
+ * 1. **shrink** — 플로팅이 뷰포트 가용 폭보다 넓으면 `maxWidth` 로, 배치 방향에 남은 공간보다
+ *    높으면 `maxHeight` 로 줄인다.
+ * 2. **flip** — 선호 side 가 주축으로 넘치면 반대편으로. 양쪽 다 안 맞으면 공간이 더 넓은 쪽.
+ * 3. **shift** — 두 축 모두 뷰포트를 벗어나면 여백 안으로 민다.
  *
  * `placement` 는 선호값이고 결과의 `placement` 가 실제 적용된 방향(Radix `side` + `collisionPadding` 계약).
  */
@@ -140,14 +178,28 @@ export function computeAnchoredPosition(
 		height: floating.height,
 	};
 
-	// 2. flip — 선호가 안 맞고 반대편이 맞으면 뒤집기
+	// 2. flip — 선호가 안 맞으면 반대편으로. 반대편도 안 맞으면 **공간이 더 넓은 쪽**을 고른다.
+	// 예전에는 이 경우 선호를 유지했는데, 주축 clamp 도 max-height 도 없어서 "선호 유지" 가
+	// 곧 "화면 밖" 이었다(#621 - 뷰포트 461px 에서 목록이 130px 넘쳤다). 이제 넓은 쪽을 고르고
+	// 그 공간으로 높이를 깎으므로 어느 쪽을 골라도 화면 안이다.
 	let side = options.placement;
-	if (
-		!fitsMainAxis(side, anchor, sized, viewport, gap, padding) &&
-		fitsMainAxis(OPPOSITE[side], anchor, sized, viewport, gap, padding)
-	) {
-		side = OPPOSITE[side];
+	if (!fitsMainAxis(side, anchor, sized, viewport, gap, padding)) {
+		const opposite = OPPOSITE[side];
+		if (
+			fitsMainAxis(opposite, anchor, sized, viewport, gap, padding) ||
+			mainAxisSpace(opposite, anchor, viewport, gap, padding) >
+				mainAxisSpace(side, anchor, viewport, gap, padding)
+		) {
+			side = opposite;
+		}
 	}
+
+	// 배치된 방향의 가용 높이. 세로 배치는 그 방향에 남은 공간, 가로 배치는 뷰포트 전체다
+	// (가로 배치에서 높이는 교차축이라 아래 clamp 가 민다).
+	const maxHeight = isVertical(side)
+		? Math.max(mainAxisSpace(side, anchor, viewport, gap, padding), 0)
+		: viewport.height - padding * 2;
+	sized.height = Math.min(sized.height, maxHeight);
 
 	// 3. 주축 좌표 + 교차축 정렬 후 shift(clamp)
 	const align = options.align ?? "center";
@@ -162,6 +214,11 @@ export function computeAnchoredPosition(
 					? anchor.left + anchor.width - sized.width
 					: anchor.left + anchor.width / 2 - sized.width / 2;
 		x = clamp(x, padding, viewport.width - padding - sized.width);
+		// 주축도 clamp - `maxHeight` 를 소비처가 안 쓰거나 콘텐츠가 그보다 커도 화면 밖으로
+		// 나가지 않게 하는 마지막 방어선이다. 기준은 **측정된** 높이다(깎인 높이로 재면
+		// 상한을 무시한 소비처를 못 잡는다). 이 경우 앵커를 덮게 되지만, 앵커 옆에서 안
+		// 보이는 것보다 낫다.
+		y = clamp(y, padding, viewport.height - padding - floating.height);
 	} else {
 		x = mainAxisStart(side, anchor, sized, gap);
 		y =
@@ -171,9 +228,11 @@ export function computeAnchoredPosition(
 					? anchor.top + anchor.height - sized.height
 					: anchor.top + anchor.height / 2 - sized.height / 2;
 		y = clamp(y, padding, viewport.height - padding - sized.height);
+		// 세로 배치와 같은 이유의 주축 방어선 - 가로 배치도 주축(x)에 clamp 가 없었다.
+		x = clamp(x, padding, viewport.width - padding - floating.width);
 	}
 
-	return { x, y, placement: side, maxWidth };
+	return { x, y, placement: side, maxWidth, maxHeight };
 }
 
 export interface UseAnchoredPositionArgs extends AnchoredOptions {
@@ -222,6 +281,7 @@ export function useAnchoredPosition({
 		y: 0,
 		placement,
 		maxWidth: 0,
+		maxHeight: 0,
 		ready: false,
 		anchorWidth: 0,
 	});

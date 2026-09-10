@@ -198,7 +198,9 @@ export const Popover = ({
 							// 그대로 낭독되고, 무엇보다 이름 누락을 가려 axe `aria-dialog-name` 이 거짓 통과한다.
 							aria-label={ariaLabel}
 							aria-labelledby={ariaLabelledby}
-							style={style}
+							// 높이 상한은 **패널 자신**에 건다(#621). 위치 컨테이너에 걸면 그 `overflow` 가
+							// 자식의 `box-shadow`·focus ring 을 스크롤이 필요 없을 때도 잘라낸다.
+							style={{ ...style, maxHeight: pos.ready ? pos.maxHeight : undefined }}
 							className={cn("popover", className)}
 						>
 							{content}

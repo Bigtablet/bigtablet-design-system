@@ -141,13 +141,106 @@ describe("computeAnchoredPosition", () => {
 		expect(r.x).toBe(8); // 줄인 폭으로도 왼쪽 여백에 고정
 	});
 
-	it("keeps the preferred side when neither side fits (no worse than before)", () => {
-		// 좌우 모두 넘치는 경우 flip 하지 않고 선호 유지.
+	it("takes the roomier side when neither side fits, and stays on screen (#621)", () => {
+		// 예전에는 선호를 유지하고 주축 clamp 도 없어서 화면 밖으로 나갔다. 이제 공간이 더
+		// 넓은 쪽(오른쪽 204px > 왼쪽 84px)을 고르고, 그래도 안 맞으면 여백 안으로 민다.
 		const anchor: AnchorRect = { top: 300, left: 100, width: 40, height: 40 };
 		const r = computeAnchoredPosition(anchor, { width: 300, height: 40 }, vp(360, 800), {
 			placement: "left",
 			gap: 8,
 		});
-		expect(r.placement).toBe("left");
+		expect(r.placement).toBe("right");
+		expect(r.x).toBeGreaterThanOrEqual(8);
+		expect(r.x + 300).toBeLessThanOrEqual(360 - 8);
+	});
+
+	// ── #621 세로 축 ────────────────────────────────────────────────────────────
+
+	it("caps max-height to the space on the placed side", () => {
+		const anchor: AnchorRect = { top: 100, left: 40, width: 200, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 290 }, vp(1024, 461), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+			padding: 8,
+		});
+		// 아래 공간 461 - 140 - 4 - 8 = 309 → 목록(290)이 들어가므로 선호 유지
+		expect(r.placement).toBe("bottom");
+		expect(r.maxHeight).toBe(309);
+	});
+
+	it("keeps a tall list inside a short viewport instead of overflowing it (#621 repro)", () => {
+		// 실측: 뷰포트 461, 트리거 258~296, 목록 290 → 아래 153 / 위 246, 양쪽 다 안 맞는다.
+		// 예전에는 아래를 유지해 301~591 로 130px 넘쳤다.
+		const anchor: AnchorRect = { top: 258, left: 40, width: 200, height: 38 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 290 }, vp(1024, 461), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+			padding: 8,
+		});
+
+		expect(r.placement).toBe("top"); // 위 246 > 아래 153
+		expect(r.maxHeight).toBe(246);
+		expect(r.y).toBe(8); // 258 - 4 - 246
+		expect(r.y + r.maxHeight).toBeLessThanOrEqual(461 - 8);
+	});
+
+	it("is idempotent — feeding the capped height back yields the same placement and y", () => {
+		// 폭과 같은 성질이 높이에도 필요하다. 측정 높이로 상한을 정하면 (깎임 → 재측정 →
+		// 다시 깎임) 진동한다.
+		const anchor: AnchorRect = { top: 258, left: 40, width: 200, height: 38 };
+		const opts = { placement: "bottom", align: "start", gap: 4, padding: 8 } as const;
+		const first = computeAnchoredPosition(anchor, { width: 200, height: 290 }, vp(1024, 461), opts);
+		const second = computeAnchoredPosition(
+			anchor,
+			{ width: 200, height: first.maxHeight },
+			vp(1024, 461),
+			opts,
+		);
+
+		expect(second.maxHeight).toBe(first.maxHeight);
+		expect(second.placement).toBe(first.placement);
+		expect(second.y).toBe(first.y);
+	});
+
+	it("shifts a too-tall popup back inside when the consumer ignores max-height", () => {
+		// 마지막 방어선 - 소비처가 상한을 안 걸어도 화면 밖으로는 안 나간다(앵커를 덮더라도).
+		const anchor: AnchorRect = { top: 258, left: 40, width: 200, height: 38 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 400 }, vp(1024, 461), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+			padding: 8,
+		});
+
+		expect(r.y).toBeGreaterThanOrEqual(8);
+		expect(r.y + 400).toBeLessThanOrEqual(461 - 8 + 1); // 400 > 445 가용분은 상단 여백에 고정
+	});
+
+	it("measures space from the visible part of an anchor scrolled off screen", () => {
+		// 트리거가 뷰포트 아래로 벗어나도 팝업은 열린 채 남는다. 앵커 좌표를 그대로 쓰면
+		// 위쪽 공간이 뷰포트보다 커져(300 - 4 - 8 = 288 > 250) 상한이 무의미해진다.
+		const anchor: AnchorRect = { top: 300, left: 40, width: 200, height: 38 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 288 }, vp(900, 250), {
+			placement: "bottom",
+			align: "start",
+			gap: 4,
+			padding: 8,
+		});
+
+		expect(r.maxHeight).toBeLessThanOrEqual(250 - 8);
+		expect(r.maxHeight).toBe(250 - 4 - 8);
+		expect(r.y).toBeGreaterThanOrEqual(8);
+	});
+
+	it("gives horizontal placements the full viewport height as the cap", () => {
+		const anchor: AnchorRect = { top: 300, left: 100, width: 40, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 100, height: 40 }, vp(1024, 768), {
+			placement: "right",
+			gap: 8,
+			padding: 8,
+		});
+		expect(r.maxHeight).toBe(768 - 16);
 	});
 });

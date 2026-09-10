@@ -189,6 +189,12 @@
     z-index: token.$z_popup;
     box-sizing: border-box;
 
+    // 세로 flex - 컴포넌트가 인라인 `max-height`(배치 방향에 남은 공간)를 주면 검색바는
+    // 그대로 두고 옵션 목록만 그 안에서 줄어야 한다(#621). 블록 레이아웃이면 목록이
+    // 자기 max-height 로 버텨 패널이 잘린다.
+    display: flex;
+    flex-direction: column;
+
     // 폭은 내용 기준 - 컴포넌트가 주는 인라인 `min-width`(트리거 폭)와 `max-width`(뷰포트 가용
     // 폭) 사이에서 옵션 라벨이 필요한 만큼 넓어진다. 트리거 폭을 `width` 로 못박으면 좁은
     // 트리거에서 목록이 자기 라벨을 ellipsis 로 접는다(#596).
@@ -265,6 +271,9 @@
 
   &_options {
     max-height: token.$overlay_list_max_height;
+    // 세로 flex 안에서 줄어들 수 있어야 한다 - 기본 `min-height: min-content` 면 항목 수만큼
+    // 버텨 패널의 인라인 max-height 를 넘는다(#621).
+    min-height: 0;
     overflow-y: auto;
     @include token.scrollable;
     overflow-x: hidden;

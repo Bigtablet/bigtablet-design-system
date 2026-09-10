@@ -183,6 +183,9 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 							position: "fixed",
 							left: pos.x,
 							top: pos.y,
+							// 배치된 방향에 남은 높이. 항목이 많은 메뉴가 낮은 뷰포트에서 화면 밖으로
+							// 나가지 않게 한다(#621). 넘치는 만큼은 메뉴 안에서 스크롤한다.
+							maxHeight: pos.ready ? pos.maxHeight : undefined,
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 						className={cn("menu", `menu_align_${align}`)}

@@ -371,6 +371,9 @@ export const Dropdown = (props: DropdownProps) => {
 							minWidth: position.width || undefined,
 							// 트리거가 뷰포트보다 넓으면 좌표만 줄어들고 패널은 그대로 넘친다.
 							maxWidth: position.ready ? position.maxWidth : undefined,
+							// 배치된 방향에 남은 높이. 안 걸면 긴 목록이 낮은 뷰포트에서 화면 밖으로
+							// 나간다(#621). 패널이 세로 flex 라 목록이 이 안에서 줄고 스크롤한다.
+							maxHeight: position.ready ? position.maxHeight : undefined,
 							// 최초 측정 전에는 숨긴다 - (0,0) 에서 한 프레임 깜빡이는 것을 막는다.
 							visibility: position.ready ? undefined : "hidden",
 						}}

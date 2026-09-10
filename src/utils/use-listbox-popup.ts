@@ -52,6 +52,11 @@ export interface UseListboxPopupResult {
 		 * 이 값으로 좌표를 잡는데 패널 폭을 트리거 폭으로 두면 오른쪽이 잘린다.
 		 */
 		maxWidth: number;
+		/**
+		 * 배치된 방향의 가용 높이 상한(px). 목록이 길고 뷰포트가 낮으면 이걸 안 걸었을 때
+		 * 패널이 화면 밖으로 나간다(#621).
+		 */
+		maxHeight: number;
 		/** 최초 측정 전에는 false - 이때 숨겨 (0,0) 깜빡임을 막는다 */
 		ready: boolean;
 	};
@@ -292,6 +297,7 @@ export function useListboxPopup<T extends ListboxItem>({
 			y: anchored.y,
 			width: anchored.anchorWidth,
 			maxWidth: anchored.maxWidth,
+			maxHeight: anchored.maxHeight,
 			ready: anchored.ready,
 		},
 		activeIndex,
