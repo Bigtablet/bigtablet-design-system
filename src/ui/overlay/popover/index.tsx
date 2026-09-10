@@ -186,8 +186,6 @@ export const Popover = ({
 							// 최초 측정 전(ready=false)에는 maxWidth(=0)를 걸지 않는다 - 걸면 자연 폭 대신
 							// 0px 로 측정돼 첫 프레임 좌표가 어긋난다. ready 후에만 상한 적용.
 							maxWidth: pos.ready ? pos.maxWidth : undefined,
-							// 폭과 같은 처리 - 배치 방향에 남은 높이를 상한으로 건다(#621).
-							maxHeight: pos.ready ? pos.maxHeight : undefined,
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 					>
@@ -200,7 +198,9 @@ export const Popover = ({
 							// 그대로 낭독되고, 무엇보다 이름 누락을 가려 axe `aria-dialog-name` 이 거짓 통과한다.
 							aria-label={ariaLabel}
 							aria-labelledby={ariaLabelledby}
-							style={style}
+							// 높이 상한은 **패널 자신**에 건다(#621). 위치 컨테이너에 걸면 그 `overflow` 가
+							// 자식의 `box-shadow`·focus ring 을 스크롤이 필요 없을 때도 잘라낸다.
+							style={{ ...style, maxHeight: pos.ready ? pos.maxHeight : undefined }}
 							className={cn("popover", className)}
 						>
 							{content}

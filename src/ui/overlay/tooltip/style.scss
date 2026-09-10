@@ -15,14 +15,15 @@
   // 옮겨 내용을 읽을 수 있어야 함 (none 이면 mouseenter 가 발화하지 않아 즉시 닫힘)
   display: block;
   width: max-content; // 내부 .tooltip 의 max-content 와 일치
-  // 인라인 max-height(배치 방향에 남은 공간)를 받으면 넘치는 만큼 스크롤한다 - 낮은
-  // 뷰포트에서 긴 툴팁이 화면 밖으로 나가는 것을 막는다(#621).
-  overflow-y: auto;
-  @include token.scrollable;
 }
 
 .tooltip {
   display: block; // 정렬 quirk 제거
+  // 인라인 `max-height` 는 바깥 높이여야 하고(padding 포함), 넘치는 만큼은 여기서 스크롤한다.
+  // 위치 컨테이너에 두면 그 `overflow` 가 이 요소의 `box-shadow` 를 항상 잘라낸다(#621 리뷰).
+  box-sizing: border-box;
+  overflow-y: auto;
+  @include token.scrollable;
   background: token.$color_accent_strong;
   color: token.$color_accent_on_surface;
   padding: token.$spacing_6 token.$spacing_10;

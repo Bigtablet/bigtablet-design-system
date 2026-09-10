@@ -12,10 +12,6 @@
   // position/left/top 은 컴포넌트에서 inline 으로 지정(fixed). 여기선 나머지만.
   z-index: token.$z_popup;
   width: max-content;
-  // 인라인 max-height(배치 방향에 남은 공간)를 받으면 내용이 그 안에서 스크롤해야 한다 -
-  // 없으면 긴 내용이 잘린 채 닿을 방법이 없다(#621).
-  overflow-y: auto;
-  @include token.scrollable;
 }
 
 .popover {
@@ -31,6 +27,11 @@
   box-sizing: border-box;
   min-width: min(200px, 100%);
   max-width: min(320px, 100%);
+  // 인라인 `max-height`(배치 방향에 남은 공간)를 받으면 넘치는 만큼 여기서 스크롤한다.
+  // 위치 컨테이너가 아니라 이 요소에 두는 이유: 자기 `overflow` 는 자기 `box-shadow` 를
+  // 자르지 않지만, 부모의 `overflow` 는 자식의 그림자를 항상 자른다(#621 리뷰).
+  overflow-y: auto;
+  @include token.scrollable;
   color: token.$color_text_body;
   @include token.body_small;
   will-change: transform, opacity;
