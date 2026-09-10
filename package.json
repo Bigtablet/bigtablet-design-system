@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "3.19.2",
+	"version": "3.19.3",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -125,17 +125,18 @@
 	"size-limit": [
 		{
 			"path": "dist/index.js",
-			"limit": "60 kB",
-			"message": "Raised 50 kB -> 60 kB on 2026-08-05: baseline was 49.34 kB, leaving 0.66 kB (1.3%) under the old 50 kB limit. The current limit leaves 10.66 kB. Re-measure before raising again."
+			"limit": "70 kB",
+			"message": "Raised 60 kB -> 70 kB on 2026-09-10: baseline was 59.82 kB on develop (59.91 kB with PR #625), leaving 0.09-0.18 kB (0.3%) under the old 60 kB limit. Of that baseline, 18.48 kB is @react-spring/web (a runtime dependency, so size-limit bundles it) and 40.55 kB is this package - measure `dist/index.js` alone before blaming the dependency. The current limit leaves 10.09 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
-			"limit": "7 kB",
-			"message": "Raised 5 kB -> 7 kB on 2026-08-06: Dropdown multiple/searchable pushed the baseline from 4.13 kB to 5.6 kB, 0.6 kB over the old limit. The current limit leaves 1.4 kB. Re-measure before raising again."
+			"limit": "8 kB",
+			"message": "Raised 7 kB -> 8 kB on 2026-09-10: baseline was 6.83 kB, leaving 0.17 kB (2.4%) under the old 7 kB limit. The current limit leaves 1.17 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/index.css",
-			"limit": "130 kB"
+			"limit": "18 kB",
+			"message": "Lowered 130 kB -> 18 kB on 2026-09-10: baseline is 14.56 kB brotlied, so the old limit sat 9x above reality and could never fire. The current limit leaves 3.44 kB. Raise it with a measurement, not to make a build pass."
 		}
 	],
 	"dependencies": {

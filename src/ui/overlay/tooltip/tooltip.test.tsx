@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { Tooltip } from "./index";
 
 // react-spring 은 setup.ts 에서 skipAnimation 이지만 퇴장 언마운트(onExitComplete)는 한 tick 늦게
@@ -72,6 +72,34 @@ describe("Tooltip", () => {
 		await waitFor(() => expect(screen.getByRole("tooltip")).toBeInTheDocument());
 
 		fireEvent.keyDown(document.body, { key: "Escape" });
+		await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+	});
+
+	it("hides when the trigger scrolls out of the viewport (#624)", async () => {
+		// 툴팁은 트리거를 설명하는 것이라 대상이 화면에 없으면 남을 이유가 없다.
+		const { container } = render(
+			<Tooltip content="hint" delay={0}>
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		fireEvent.mouseEnter(screen.getByRole("button"));
+		await waitFor(() => expect(screen.getByRole("tooltip")).toBeInTheDocument());
+
+		const wrapper = container.firstChild as HTMLElement;
+		vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue({
+			top: -60,
+			bottom: -20,
+			left: 0,
+			right: 80,
+			width: 80,
+			height: 40,
+		} as DOMRect);
+		await act(async () => {
+			fireEvent.scroll(window);
+			await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+		});
+
+		// 지연(HIDE_DELAY) 없이 즉시 - 포인터가 갭을 건널 상황이 아니다.
 		await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
 	});
 

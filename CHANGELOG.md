@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.19.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.3) - 2026-09-10
+- (렌더 변경) 트리거가 스크롤로 화면 밖에 나가면 `Dropdown`·`Combobox`·`Menu`·`Tooltip` 이 닫힙니다. 가리킬 대상 없이 떠 있는 팝업이 어느 컨트롤의 것인지 읽히지 않던 문제입니다. 트리거가 조금이라도 보이는 동안에는 열려 있고, 포커스가 팝업 안에 있었으면 트리거로 되돌리되 화면을 되감지 않습니다. `Popover` 는 안에 폼을 담을 수 있어 그대로 열린 채 남습니다
+
 ## [3.19.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.2) - 2026-09-10
 - (렌더 변경) 낮은 뷰포트에서 팝업이 화면 밖으로 나가고 스크롤 중 위아래로 순간이동하던 문제를 고쳤습니다. `Dropdown`·`Combobox`·`Menu`·`Popover`·`Tooltip` 이 배치된 방향에 남은 공간까지만 자라고 그 안에서 스크롤합니다. 위아래 어느 쪽도 다 들어가지 않으면 공간이 더 넓은 쪽으로 열립니다 - 뷰포트 250px 실측에서 목록이 495px 넘치던 것이 여백 안으로 들어옵니다
 - (렌더 변경) `Menu`·`Tooltip` 의 높이 상한이 이제 세로 padding 과 border 를 포함합니다. `Popover`·`Tooltip` 은 그림자가 잘리지 않도록 상한을 패널 자신에 겁니다
