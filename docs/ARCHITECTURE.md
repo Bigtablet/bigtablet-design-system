@@ -466,6 +466,11 @@ describe("Button", () => {
 | `pnpm size` (size-limit - dist 산출물 기반) | 항상 |
 | `davelosert/vitest-coverage-report-action@v2` | PR 이면서 `code` 또는 `deps` 변경 |
 
+**size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막
+조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. `dist/index.js` 는
+런타임 의존성인 `@react-spring/web` 까지 번들해서 잰다(2026-09-10 기준 59.91 kB 중 18.48 kB).
+이 패키지 코드만 보려면 `dist/index.js` 를 직접 brotli 로 재면 된다(같은 시점 40.55 kB).
+
 배포는 별도 워크플로다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리한다.
 
 ---
