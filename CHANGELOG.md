@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.19.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.2) - 2026-09-10
+- (렌더 변경) 낮은 뷰포트에서 팝업이 화면 밖으로 나가고 스크롤 중 위아래로 순간이동하던 문제를 고쳤습니다. `Dropdown`·`Combobox`·`Menu`·`Popover`·`Tooltip` 이 배치된 방향에 남은 공간까지만 자라고 그 안에서 스크롤합니다. 위아래 어느 쪽도 다 들어가지 않으면 공간이 더 넓은 쪽으로 열립니다 - 뷰포트 250px 실측에서 목록이 495px 넘치던 것이 여백 안으로 들어옵니다
+- (렌더 변경) `Menu`·`Tooltip` 의 높이 상한이 이제 세로 padding 과 border 를 포함합니다. `Popover`·`Tooltip` 은 그림자가 잘리지 않도록 상한을 패널 자신에 겁니다
+
 ## [3.19.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.1) - 2026-09-09
 - (렌더 변경) `Field` 에 `labelAction` 을 넣으면 입력이 아래로 밀려, 같은 그리드 행의 `labelAction` 없는 칸과 입력 높이가 어긋나던 문제를 고쳤습니다. 조작 요소가 라벨 한 줄 높이로 고정된 슬롯에 담기므로 라벨 줄이 조작 요소 높이로 자라지 않습니다. 조작 요소가 라벨보다 높으면 위아래로 넘치게 둡니다
 

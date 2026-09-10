@@ -19,6 +19,11 @@
 
 .tooltip {
   display: block; // 정렬 quirk 제거
+  // 인라인 `max-height` 는 바깥 높이여야 하고(padding 포함), 넘치는 만큼은 여기서 스크롤한다.
+  // 위치 컨테이너에 두면 그 `overflow` 가 이 요소의 `box-shadow` 를 항상 잘라낸다(#621 리뷰).
+  box-sizing: border-box;
+  overflow-y: auto;
+  @include token.scrollable;
   background: token.$color_accent_strong;
   color: token.$color_accent_on_surface;
   padding: token.$spacing_6 token.$spacing_10;

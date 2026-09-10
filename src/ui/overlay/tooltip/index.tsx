@@ -172,7 +172,14 @@ export const Tooltip = ({
 						onMouseEnter={cancelHide}
 						onMouseLeave={hide}
 					>
-						<animated.span id={tooltipId} role="tooltip" style={style} className="tooltip">
+						<animated.span
+							id={tooltipId}
+							role="tooltip"
+							// 높이 상한은 툴팁 자신에 - 위치 컨테이너에 걸면 그 `overflow` 가 툴팁의
+							// `box-shadow` 를 스크롤이 필요 없을 때도 잘라낸다(#621).
+							style={{ ...style, maxHeight: pos.ready ? pos.maxHeight : undefined }}
+							className="tooltip"
+						>
 							{content}
 						</animated.span>
 					</span>,
