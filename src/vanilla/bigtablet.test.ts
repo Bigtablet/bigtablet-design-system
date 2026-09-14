@@ -435,6 +435,50 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(m?.isOpen()).toBe(false);
 	});
 
+	it("closeOnEscape: false 인 모달도 Escape 를 소비한다", () => {
+		// 모달은 아래 오버레이를 비활성으로 덮는다. 스택에 등록하지 않으면 최상단이 아래 모달이
+		// 되어, 위 모달을 열어 둔 채 Escape 한 번에 **뒤쪽**이 닫힌다.
+		setViewportInset(0);
+		const below = Modal(modalMarkup("below"));
+		const above = Modal(modalMarkup("above"), { closeOnEscape: false });
+
+		below?.open();
+		above?.open();
+
+		pressEscape();
+		expect(above?.isOpen()).toBe(true);
+		expect(below?.isOpen()).toBe(true);
+
+		above?.close();
+		pressEscape();
+		expect(below?.isOpen()).toBe(false);
+	});
+
+	it("열린 채 destroy 하면 Escape 등록도 함께 빠진다", () => {
+		// 등록이 남으면 스택 최상단이 파괴된 모달의 close 라 다음 Escape 에 그게 다시 돌고,
+		// state.isOpen 이 true 라 가드를 통과해 unlockScroll 이 한 번 더 불린다 - 그 시점에
+		// 진짜로 열려 있는 오버레이의 배경 스크롤이 조기에 풀린다.
+		setViewportInset(0);
+		const below = Modal(modalMarkup("below"));
+		const zombie = Modal(modalMarkup("zombie"));
+
+		below?.open();
+		zombie?.open();
+		zombie?.destroy();
+
+		// destroy 가 자기 몫의 잠금만 반납한 상태 - below 는 아직 열려 있다.
+		expect(document.body.dataset.btOpenModals).toBe("1");
+		expect(document.body.style.overflow).toBe("hidden");
+
+		// 등록이 남아 있으면 최상단이 파괴된 모달의 close 라, Escape 가 그것을 깨워 below 는
+		// 열린 채로 두고 below 몫의 잠금만 반납한다. 등록이 빠졌으면 below 가 최상단이라 닫힌다.
+		pressEscape();
+
+		expect(below?.isOpen()).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		expect(document.body.style.overflow).toBe("");
+	});
+
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
 		setViewportInset(0);
 		const m = Modal(modalMarkup());

@@ -129,6 +129,9 @@
 		top();
 	}
 
+	/** Escape 를 소비만 하고 아무것도 닫지 않는 핸들러. `closeOnEscape: false` 인 모달용. */
+	function noop() {}
+
 	/** 최상단에 등록하고 해제 함수를 돌려준다. 마지막 항목이 빠지면 리스너도 뗀다. */
 	function pushEscape(handler) {
 		if (escapeStack.length === 0) document.addEventListener("keydown", onEscapeKeyDown);
@@ -166,8 +169,16 @@
 
 			// 소비자가 인라인으로 지정해둔 값들을 저장했다가 마지막 unlock 때 복원
 			// (React 쪽 utils/scroll-lock.ts 와 동일 동작).
+			// shorthand 와 축을 **함께** 저장한다. 브라우저 CSSOM 은 두 축이 모두 인라인일 때만
+			// shorthand(`style.overflow`)를 되읽어 주므로 `html.style.overflowX` 만 잡아 둔 앱은
+			// shorthand 가 `""` 로 읽히고, 그것만 되쓰면 그 축이 사라진다. jsdom 은 반대로
+			// shorthand 와 축이 독립 슬롯이라 축만으로는 부족하다 (React 쪽과 같은 처리).
 			body.dataset.btOriginalOverflow = body.style.overflow;
+			body.dataset.btOriginalOverflowX = body.style.overflowX;
+			body.dataset.btOriginalOverflowY = body.style.overflowY;
 			body.dataset.btOriginalHtmlOverflow = html.style.overflow;
+			body.dataset.btOriginalHtmlOverflowX = html.style.overflowX;
+			body.dataset.btOriginalHtmlOverflowY = html.style.overflowY;
 			body.dataset.btOriginalGutter = html.style.scrollbarGutter;
 			body.dataset.btOriginalPaddingRight = body.style.paddingRight;
 			// 소비자가 이 변수를 직접 인라인으로 잡아둔 경우 잠금 한 번에 지워지지 않도록 함께 스냅샷.
@@ -213,15 +224,24 @@
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
 		if (n <= 0) {
+			// shorthand → 축 순서로 되쓴다 (React 쪽과 동일).
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
+			body.style.overflowX = body.dataset.btOriginalOverflowX || "";
+			body.style.overflowY = body.dataset.btOriginalOverflowY || "";
 			html.style.overflow = body.dataset.btOriginalHtmlOverflow || "";
+			html.style.overflowX = body.dataset.btOriginalHtmlOverflowX || "";
+			html.style.overflowY = body.dataset.btOriginalHtmlOverflowY || "";
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
 			html.removeAttribute("data-bt-scroll-locked");
 			restoreScrollbarWidthVar(html, body);
 			delete body.dataset.btOpenModals;
 			delete body.dataset.btOriginalOverflow;
+			delete body.dataset.btOriginalOverflowX;
+			delete body.dataset.btOriginalOverflowY;
 			delete body.dataset.btOriginalHtmlOverflow;
+			delete body.dataset.btOriginalHtmlOverflowX;
+			delete body.dataset.btOriginalHtmlOverflowY;
 			delete body.dataset.btOriginalGutter;
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
@@ -1099,8 +1119,10 @@
 			state.isOpen = true;
 			modal.classList.add("is-open");
 			lockScroll();
-			// Escape 는 공유 스택에 - 최상단일 때만 닫힌다.
-			if (config.closeOnEscape) popEscape = pushEscape(close);
+			// Escape 는 공유 스택에 - 최상단일 때만 닫힌다. `closeOnEscape: false` 여도
+			// **등록은 한다**: 모달은 아래 오버레이를 비활성으로 덮으므로, 등록을 건너뛰면
+			// 최상단 항목이 아래 오버레이가 되어 Escape 한 번에 뒤쪽이 닫힌다.
+			popEscape = pushEscape(config.closeOnEscape ? close : noop);
 
 			// 포커스 이동 - 이전 포커스 저장 후 패널 첫 focusable(없으면 패널 자체)로 (WCAG 2.4.3)
 			previousFocus = document.activeElement;
@@ -1193,8 +1215,18 @@
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
-				// 열린 채 destroy 되면 카운터 정합 유지를 위해 잠금 해제
-				if (state.isOpen) unlockScroll();
+				// 열린 채 destroy 되면: Escape 등록을 먼저 뺀다. 남겨 두면 스택이 파괴된 모달의
+				// `close` 를 붙들어(누수) 다음 Escape 에 그게 다시 돌고, `state.isOpen` 이
+				// `true` 라 가드를 통과해 `unlockScroll` 이 한 번 더 불린다 - 그 시점에 진짜로
+				// 열려 있는 오버레이의 배경 스크롤이 조기에 풀린다.
+				if (state.isOpen) {
+					state.isOpen = false;
+					if (popEscape) {
+						popEscape();
+						popEscape = null;
+					}
+					unlockScroll();
+				}
 			},
 		};
 	}

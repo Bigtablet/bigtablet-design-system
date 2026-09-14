@@ -43,9 +43,19 @@
 const COUNTER = "openModals";
 /** 원복용 스냅샷 - 전부 **인라인** 값을 저장한다. 계산값을 저장해 되쓰면 원래 없던 인라인
  *  스타일이 생겨 소비자 스타일시트 규칙을 덮어버린다. */
+/** shorthand 와 **축별 longhand 를 함께** 저장한다. 셋 다 필요하다 - 브라우저 CSSOM 은 두 축이
+ *  모두 인라인일 때만 shorthand 를 되읽어 주므로, 앱이 흔한 리셋 `html { overflow-x: hidden }`
+ *  을 인라인으로 걸어 두면 `style.overflow` 가 `""` 로 읽힌다. 그 `""` 만 저장해 되쓰면 원래
+ *  있던 축이 사라진다 (Chromium 실측 - 해제 후 `overflowX` 가 `""`, 계산값 `visible`).
+ *  반대로 축만 저장하면 jsdom 이 깨진다 - jsdom 은 shorthand 와 longhand 를 독립 슬롯으로 둬서
+ *  shorthand 로 지정한 값이 축 게터에 안 잡힌다. 셋을 모두 스냅샷하면 두 엔진에서 같이 맞는다. */
 const PREV_OVERFLOW = "originalOverflow";
-/** `html` 의 인라인 overflow 스냅샷 - 아래 lock 주석 참고. */
+const PREV_OVERFLOW_X = "originalOverflowX";
+const PREV_OVERFLOW_Y = "originalOverflowY";
+/** `html` 의 인라인 overflow 스냅샷 - 아래 lock 주석 참고. 같은 이유로 셋 다 저장한다. */
 const PREV_HTML_OVERFLOW = "originalHtmlOverflow";
+const PREV_HTML_OVERFLOW_X = "originalHtmlOverflowX";
+const PREV_HTML_OVERFLOW_Y = "originalHtmlOverflowY";
 const PREV_GUTTER = "originalScrollbarGutter";
 const PREV_PADDING_RIGHT = "originalPaddingRight";
 /** 소비자가 이 변수를 직접 인라인으로 잡아둔 경우가 있으므로 그 값도 스냅샷한다 - 잠금 한 번에
@@ -113,7 +123,11 @@ export function lockBodyScroll(): void {
 		const inset = measureViewportInset();
 
 		body.dataset[PREV_OVERFLOW] = body.style.overflow;
+		body.dataset[PREV_OVERFLOW_X] = body.style.overflowX;
+		body.dataset[PREV_OVERFLOW_Y] = body.style.overflowY;
 		body.dataset[PREV_HTML_OVERFLOW] = html.style.overflow;
+		body.dataset[PREV_HTML_OVERFLOW_X] = html.style.overflowX;
+		body.dataset[PREV_HTML_OVERFLOW_Y] = html.style.overflowY;
 		body.dataset[PREV_GUTTER] = html.style.scrollbarGutter;
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
 		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
@@ -127,8 +141,10 @@ export function lockBodyScroll(): void {
 		body.style.overflow = "hidden";
 		// `html` 에도 건다. `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로,
 		// 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을
-		// `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가 그대로 스크롤된다 - 실측으로 잠금 뒤
-		// `scrollTo(900)` 이 먹혔다. html 이 `hidden` 이면 어느 쪽이 스크롤러든 뷰포트가 잠긴다.
+		// `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가 그대로 스크롤된다 - 실측으로 잠금 중
+		// 휠이 먹었다(300 → 300 이어야 하는데 움직였고, 해제 뒤 같은 휠은 300 → 800). `scrollTo`
+		// 는 `overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없다. html 이 `hidden` 이면
+		// 어느 쪽이 스크롤러든 뷰포트가 잠긴다.
 		html.style.overflow = "hidden";
 
 		if (inset > 0) {
@@ -170,8 +186,15 @@ export function unlockBodyScroll(): void {
 	// `<= 0` - 중복 해제(퇴출 애니메이션 중 unmount 가 두 번 도는 경우 등)에도 카운터가
 	// 음수로 새지 않게 한다.
 	if (remaining <= 0) {
+		// shorthand → 축 순서로 되쓴다. shorthand 를 먼저 쓰면 우리가 건 `hidden` 이 지워지고
+		// (브라우저는 두 축을 함께 비우고, jsdom 은 shorthand 슬롯을 비운다), 이어서 축을 되쓰면
+		// 한 축만 인라인이던 경우도 정확히 복원된다.
 		body.style.overflow = body.dataset[PREV_OVERFLOW] || "";
+		body.style.overflowX = body.dataset[PREV_OVERFLOW_X] || "";
+		body.style.overflowY = body.dataset[PREV_OVERFLOW_Y] || "";
 		html.style.overflow = body.dataset[PREV_HTML_OVERFLOW] || "";
+		html.style.overflowX = body.dataset[PREV_HTML_OVERFLOW_X] || "";
+		html.style.overflowY = body.dataset[PREV_HTML_OVERFLOW_Y] || "";
 		body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
 		html.style.scrollbarGutter = body.dataset[PREV_GUTTER] || "";
 		html.removeAttribute(LOCKED_ATTR);
@@ -179,7 +202,11 @@ export function unlockBodyScroll(): void {
 
 		delete body.dataset[COUNTER];
 		delete body.dataset[PREV_OVERFLOW];
+		delete body.dataset[PREV_OVERFLOW_X];
+		delete body.dataset[PREV_OVERFLOW_Y];
 		delete body.dataset[PREV_HTML_OVERFLOW];
+		delete body.dataset[PREV_HTML_OVERFLOW_X];
+		delete body.dataset[PREV_HTML_OVERFLOW_Y];
 		delete body.dataset[PREV_GUTTER];
 		delete body.dataset[PREV_PADDING_RIGHT];
 		delete body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
