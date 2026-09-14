@@ -346,6 +346,12 @@ import Link from "next/link";
 > 검색 행(`searchable`)은 폭 계산에서 빠진다 - `<input>` 의 기본 내재 폭이 목록을 필요 이상으로
 > 벌린다. `Combobox` 도 같은 계약이다.
 >
+> **트리거는 `role="combobox"`.** APG select-only combobox 패턴이다 - `aria-haspopup="listbox"` +
+> `aria-expanded` + 열렸을 때의 `aria-controls`. `button` role 로는 `aria-required` 를 붙일 수
+> 없어 `Field` 의 필수 여부가 보조기술에 닿지 않았다(#632). `combobox` 는 내용으로 이름이 붙지
+> 않으므로, 라벨이 없으면 `placeholder` 가 `aria-label` 로 들어간다. `searchable` 을 열면 패널의
+> 검색 입력도 `combobox` 라 둘이 된다 - 테스트에서는 이름으로 가른다.
+>
 > **높이는 `min(288px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
 > 자라고 그 안에서 스크롤한다 - 상한이 없던 3.19.1 까지는 뷰포트 461px 에서 목록이 130px
 > 넘쳤다(#621). 위아래 어느 쪽도 목록이 다 들어가지 않으면 **공간이 더 넓은 쪽**으로 열린다.

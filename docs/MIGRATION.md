@@ -31,6 +31,33 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
+## v3.20.0 (Dropdown 트리거 role = combobox)
+
+타입·prop 변경은 없습니다. 바뀌는 것은 **접근성 트리**이고, 그래서 `getByRole` 로 트리거를 찾는 테스트가 깨집니다.
+
+### 무엇이 바뀌나
+
+`Dropdown` 의 트리거가 `role="combobox"` 를 갖습니다(APG select-only combobox). `DatePicker`·`TimePicker`·`DateRangePicker` 는 내부가 `Dropdown` 이라 함께 바뀝니다.
+
+이유는 `aria-required` 입니다. `button` role 은 이 속성을 지원하지 않아, `Field` 에 `required` 를 줘도 필수 여부가 보조기술에 **전혀 닿지 않았습니다** — 화면의 `*` 는 `aria-hidden` 입니다. `combobox` 는 지원하는 role 이고, 이미 `aria-expanded`·`aria-controls`·`aria-haspopup="listbox"` 를 그 패턴대로 쓰고 있었습니다.
+
+### 테스트 수정
+
+```diff
+- screen.getByRole("button", { name: "권한" })
++ screen.getByRole("combobox", { name: "권한" })
+```
+
+`searchable` Dropdown 을 **연 상태**에서는 combobox 가 둘입니다 — 트리거와 패널의 검색 입력. 이름으로 가르거나(`{ name: "검색…" }`) `getAllByRole("combobox")[0]` 로 트리거를 집으세요.
+
+### 라벨 없는 Dropdown 의 이름
+
+`button` 은 내용으로 이름이 붙지만 `combobox` 는 붙지 않습니다. 라벨(`label` prop 이나 `Field` 의 라벨)이 없으면 컴포넌트가 `placeholder` 를 `aria-label` 로 씁니다 — 이름 없는 컨트롤이 되지 않게 하는 fallback 이고, 라벨이 있으면 그쪽이 이름입니다.
+
+placeholder 가 `"선택…"` 같은 기본값이면 이름도 그것이 됩니다. 이 기회에 `label` 이나 `Field` 를 붙이는 편이 낫습니다.
+
+---
+
 ## v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)
 
 동작 변경이 두 건입니다. 하나는 React(`Prose size="lg"`), 하나는 Vanilla(z-index)입니다.

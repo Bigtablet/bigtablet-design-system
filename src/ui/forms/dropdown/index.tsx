@@ -321,10 +321,21 @@ export const Dropdown = (props: DropdownProps) => {
 					id={dropdownId}
 					type="button"
 					className={cn("dropdown_control", { is_disabled: disabled })}
+					// APG select-only combobox - `button` role 로는 `aria-required` 를 붙일 수 없어
+					// `Field` 의 필수 여부가 보조기술에 전혀 닿지 않았다(#632. 화면의 `*` 는
+					// `aria-hidden` 이다). `combobox` 는 그 속성을 지원하는 role 이고, 이미 열림
+					// 상태(`aria-expanded`)와 팝업(`aria-controls`)을 그 패턴대로 쓰고 있었다.
+					// `Combobox` 컴포넌트의 입력과도 같은 role 로 맞춰진다.
+					role="combobox"
+					// `combobox` 는 `button` 과 달리 **내용으로 이름이 붙지 않는다**. 라벨이 없으면
+					// 이름 없는 컨트롤이 되므로 placeholder 로 채운다 - 라벨이 있으면(직접 준
+					// `label` 이든 `Field` 의 라벨이든) 그쪽이 이름이라 덮어쓰지 않는다.
+					aria-label={!label && !field?.labelId ? placeholder : undefined}
 					aria-haspopup="listbox"
 					aria-expanded={isOpen}
 					aria-describedby={field?.describedBy}
 					aria-invalid={field?.invalid || undefined}
+					aria-required={field?.required || undefined}
 					// 닫힌 상태에서는 listbox 가 unmount 라 dangling IDREF 방지 위해 열렸을 때만 지정
 					aria-controls={isOpen ? `${dropdownId}_listbox` : undefined}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
@@ -393,6 +404,9 @@ export const Dropdown = (props: DropdownProps) => {
 									role="combobox"
 									aria-autocomplete="list"
 									aria-expanded={isOpen}
+									// 검색 모드에서는 포커스가 이 입력에 있다 - 트리거에만 붙이면
+									// 여기 서 있는 사용자에게 필수 여부가 안 들린다(#632).
+									aria-required={field?.required || undefined}
 									aria-controls={`${dropdownId}_listbox`}
 									aria-activedescendant={
 										activeIndex >= 0 && visibleOptions[activeIndex]

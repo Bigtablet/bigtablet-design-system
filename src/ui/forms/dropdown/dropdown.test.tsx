@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { Dropdown } from "./index";
 
 const options = [
@@ -9,6 +10,12 @@ const options = [
 	{ value: "2", label: "Option 2" },
 	{ value: "3", label: "Option 3", disabled: true },
 ];
+
+/**
+ * 트리거. searchable 이면 열린 뒤 패널의 검색 입력도 `combobox` 라 둘이 잡히므로,
+ * 항상 첫 번째(=트리거)를 고른다 - 트리거는 패널보다 앞에 있다.
+ */
+const trigger = () => screen.getAllByRole("combobox")[0];
 
 describe("Dropdown", () => {
 	it("renders the list outside the trigger's clipping ancestor", async () => {
@@ -20,7 +27,7 @@ describe("Dropdown", () => {
 			</div>,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+		fireEvent.click(screen.getByRole("combobox", { name: /선택/ }));
 
 		const list = await screen.findByRole("listbox");
 		expect(screen.getByTestId("card")).not.toContainElement(list);
@@ -36,7 +43,7 @@ describe("Dropdown", () => {
 			.mockReturnValue({ width: 48, height: 32, top: 10, left: 5 } as DOMRect);
 
 		render(<Dropdown options={options} placeholder="선택" />);
-		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+		fireEvent.click(screen.getByRole("combobox", { name: /선택/ }));
 
 		await screen.findByRole("listbox");
 		const list = document.querySelector<HTMLElement>(".dropdown_list");
@@ -58,7 +65,7 @@ describe("Dropdown", () => {
 			.mockReturnValue({ width: window.innerWidth, height: 32, top: 10, left: 0 } as DOMRect);
 
 		render(<Dropdown options={options} placeholder="선택" />);
-		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+		fireEvent.click(screen.getByRole("combobox", { name: /선택/ }));
 
 		await screen.findByRole("listbox");
 		const list = document.querySelector<HTMLElement>(".dropdown_list");
@@ -83,7 +90,7 @@ describe("Dropdown", () => {
 
 	it("keeps label visible when open", () => {
 		render(<Dropdown options={options} label="Choose" />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByText("Choose")).toBeInTheDocument();
 	});
 
@@ -94,14 +101,14 @@ describe("Dropdown", () => {
 
 	it("opens dropdown on click", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 		fireEvent.click(button);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 	});
 
 	it("rotates ChevronDown icon when open", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 		const icon = button.querySelector(".dropdown_icon");
 
 		// 닫힌 상태: rotation 없음
@@ -117,7 +124,7 @@ describe("Dropdown", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onChange={onChange} />);
 
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 1"));
 
 		expect(onChange).toHaveBeenCalledWith("1", options[0]);
@@ -132,7 +139,7 @@ describe("Dropdown", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onChange={onChange} />);
 
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 3"));
 
 		expect(onChange).not.toHaveBeenCalled();
@@ -140,7 +147,7 @@ describe("Dropdown", () => {
 
 	it("closes on Escape key", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -151,7 +158,7 @@ describe("Dropdown", () => {
 
 	it("navigates with arrow keys", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "ArrowDown" });
@@ -162,23 +169,23 @@ describe("Dropdown", () => {
 
 	it("is disabled when disabled prop is true", () => {
 		render(<Dropdown options={options} disabled />);
-		expect(screen.getByRole("button")).toBeDisabled();
+		expect(trigger()).toBeDisabled();
 	});
 
 	it("renders root with .dropdown class (block-level, fills parent width)", () => {
 		render(<Dropdown options={options} />);
-		const wrapper = screen.getByRole("button").closest(".dropdown");
+		const wrapper = trigger().closest(".dropdown");
 		expect(wrapper).toHaveClass("dropdown");
 	});
 
 	it("fullWidth prop is accepted but no-op (back-compat)", () => {
 		render(<Dropdown options={options} fullWidth />);
-		expect(screen.getByRole("button")).toBeInTheDocument();
+		expect(trigger()).toBeInTheDocument();
 	});
 
 	it("opens on Space key when closed", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.keyDown(button, { key: " " });
 
@@ -188,7 +195,7 @@ describe("Dropdown", () => {
 	it("commits active option on Enter key when open", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onChange={onChange} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "Enter" });
@@ -199,7 +206,7 @@ describe("Dropdown", () => {
 
 	it("navigates to first non-disabled option with Home key", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "Home" });
@@ -215,7 +222,7 @@ describe("Dropdown", () => {
 			{ value: "3", label: "Option 3" },
 		];
 		render(<Dropdown options={allEnabled} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "End" });
@@ -231,7 +238,7 @@ describe("Dropdown", () => {
 			{ value: "3", label: "Opt 3", disabled: true },
 		];
 		render(<Dropdown options={endDisabled} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "End" });
@@ -242,7 +249,7 @@ describe("Dropdown", () => {
 
 	it("does not change active index on mouse enter over disabled option", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 
@@ -258,7 +265,7 @@ describe("Dropdown", () => {
 	it("renders supportingText in option", () => {
 		const withSub = [{ value: "1", label: "Option 1", supportingText: "Sub text" }];
 		render(<Dropdown options={withSub} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByText("Sub text")).toBeInTheDocument();
 	});
 
@@ -267,7 +274,7 @@ describe("Dropdown", () => {
 			{ value: "1", label: "Option 1", leadingIcon: <Star data-testid="lead-icon" /> },
 		];
 		render(<Dropdown options={withIcon} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByTestId("lead-icon")).toBeInTheDocument();
 	});
 
@@ -277,7 +284,7 @@ describe("Dropdown", () => {
 			{ value: "2", label: "Option 2" },
 		];
 		render(<Dropdown options={withDivider} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(document.querySelector(".dropdown_option_divider")).toBeInTheDocument();
 	});
 
@@ -286,7 +293,7 @@ describe("Dropdown", () => {
 			{ value: "1", label: "Option 1", trailingIcon: <Star data-testid="trail-icon" /> },
 		];
 		render(<Dropdown options={withTrail} value="1" />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByTestId("trail-icon")).toBeInTheDocument();
 	});
 
@@ -308,7 +315,7 @@ describe("Dropdown", () => {
 		// 선택값이 우선 표시
 		expect(screen.getByText("Option 1")).toBeInTheDocument();
 
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 2"));
 
 		expect(onChange).toHaveBeenCalledWith("2", options[1]);
@@ -319,7 +326,7 @@ describe("Dropdown", () => {
 	it("does not update internal value in controlled mode without prop change", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} value="1" onChange={onChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 2"));
 
 		expect(onChange).toHaveBeenCalledWith("2", options[1]);
@@ -352,7 +359,7 @@ describe("Dropdown", () => {
 			{ value: "3", label: "Option 3" },
 		];
 		render(<Dropdown options={allEnabled} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		// 열렸을 때 activeIndex가 0이므로 ArrowUp 시 마지막으로 wrap
@@ -364,7 +371,7 @@ describe("Dropdown", () => {
 
 	it("ArrowDown opens dropdown when closed", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 		fireEvent.keyDown(button, { key: "ArrowDown" });
@@ -373,7 +380,7 @@ describe("Dropdown", () => {
 
 	it("ArrowUp opens dropdown when closed", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 		fireEvent.keyDown(button, { key: "ArrowUp" });
@@ -387,7 +394,7 @@ describe("Dropdown", () => {
 			{ value: "3", label: "Opt 3" },
 		];
 		render(<Dropdown options={middleDisabled} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		// 열린 직후 activeIndex는 첫 번째 enabled = 0
@@ -407,7 +414,7 @@ describe("Dropdown", () => {
 				</button>
 			</div>,
 		);
-		fireEvent.click(screen.getByRole("button", { name: /선택/ }));
+		fireEvent.click(screen.getByRole("combobox", { name: /선택/ }));
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 
 		fireEvent.mouseDown(screen.getByTestId("outside"));
@@ -416,7 +423,7 @@ describe("Dropdown", () => {
 
 	it("does not close when clicking inside the wrapper", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 		fireEvent.click(button);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 
@@ -427,7 +434,7 @@ describe("Dropdown", () => {
 
 	it("toggles open/closed on repeated button clicks", () => {
 		render(<Dropdown options={options} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -437,7 +444,7 @@ describe("Dropdown", () => {
 
 	it("does not respond to keydown when disabled", () => {
 		render(<Dropdown options={options} disabled />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.keyDown(button, { key: "ArrowDown" });
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
@@ -445,7 +452,7 @@ describe("Dropdown", () => {
 
 	it("does not open on click when disabled", () => {
 		render(<Dropdown options={options} disabled />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
 
@@ -484,7 +491,7 @@ describe("Dropdown", () => {
 
 	it("uses provided id for the control button", () => {
 		render(<Dropdown options={options} id="my-dropdown" label="L" />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 		expect(button).toHaveAttribute("id", "my-dropdown");
 
 		const label = screen.getByText("L");
@@ -493,7 +500,7 @@ describe("Dropdown", () => {
 
 	it("sets aria-haspopup, aria-expanded, aria-controls correctly", () => {
 		render(<Dropdown options={options} id="dd-1" />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 		expect(button).toHaveAttribute("aria-haspopup", "listbox");
 		expect(button).toHaveAttribute("aria-expanded", "false");
 		// 닫힌 상태에서는 listbox 가 unmount 라 aria-controls 를 달지 않는다 (dangling IDREF 방지)
@@ -509,7 +516,7 @@ describe("Dropdown", () => {
 
 	it.skip("sets aria-selected on the currently selected option", () => {
 		render(<Dropdown options={options} value="2" />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 
 		const selected = screen.getByText("Option 2").closest("[role='option']");
 		expect(selected).toHaveAttribute("aria-selected", "true");
@@ -520,7 +527,7 @@ describe("Dropdown", () => {
 
 	it("sets aria-disabled on disabled options", () => {
 		render(<Dropdown options={options} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 
 		const disabledOption = screen.getByText("Option 3").closest("[role='option']");
 		expect(disabledOption).toHaveAttribute("aria-disabled", "true");
@@ -537,7 +544,7 @@ describe("Dropdown", () => {
 		];
 		const onChange = vi.fn();
 		render(<Dropdown options={allDisabled} onChange={onChange} />);
-		const button = screen.getByRole("button");
+		const button = trigger();
 
 		fireEvent.click(button);
 		fireEvent.keyDown(button, { key: "Enter" });
@@ -547,7 +554,7 @@ describe("Dropdown", () => {
 
 	it("does not apply fullWidth style when prop is absent", () => {
 		render(<Dropdown options={options} />);
-		const wrapper = screen.getByRole("button").closest(".dropdown");
+		const wrapper = trigger().closest(".dropdown");
 		expect(wrapper).not.toHaveStyle({ width: "100%" });
 	});
 
@@ -561,7 +568,7 @@ describe("Dropdown", () => {
 	it("calls onValueChange (canonical) on select", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown options={options} onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 1"));
 		expect(onValueChange).toHaveBeenCalledWith("1", options[0]);
 	});
@@ -571,7 +578,7 @@ describe("Dropdown", () => {
 		const onChange = vi.fn();
 		render(<Dropdown options={options} onValueChange={onValueChange} onChange={onChange} />);
 
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 1"));
 
 		expect(onValueChange).toHaveBeenCalledTimes(1);
@@ -583,19 +590,19 @@ describe("Dropdown", () => {
 
 	it("renders a search input at the top of the panel when searchable", () => {
 		render(<Dropdown options={options} searchable searchPlaceholder="Find…" />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByPlaceholderText("Find…")).toBeInTheDocument();
 	});
 
 	it("does not render a search input when not searchable", () => {
 		render(<Dropdown options={options} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.queryByPlaceholderText("검색…")).not.toBeInTheDocument();
 	});
 
 	it("filters options case- and whitespace-insensitively by label", () => {
 		render(<Dropdown options={options} searchable />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "  OPTION2 " } });
 		expect(screen.getByText("Option 2")).toBeInTheDocument();
 		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
@@ -604,7 +611,7 @@ describe("Dropdown", () => {
 
 	it("shows emptyText when the filter yields no options", () => {
 		render(<Dropdown options={options} searchable emptyText="No results" />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "zzz" } });
 		expect(screen.getByText("No results")).toBeInTheDocument();
 		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
@@ -616,7 +623,7 @@ describe("Dropdown", () => {
 			{ value: "busan", label: "부산" },
 		];
 		render(<Dropdown options={imeOptions} searchable />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 
 		fireEvent.compositionStart(search);
@@ -638,7 +645,7 @@ describe("Dropdown", () => {
 			{ value: "c", label: "Charlie" },
 		];
 		render(<Dropdown options={searchOptions} searchable />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 
 		fireEvent.keyDown(search, { key: "ArrowDown" }); // active -> Bravo
@@ -652,7 +659,7 @@ describe("Dropdown", () => {
 	it("selects active option with Enter from the search input (single)", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown options={options} searchable onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 		fireEvent.change(search, { target: { value: "Option 2" } });
 		fireEvent.keyDown(search, { key: "Enter" });
@@ -662,7 +669,7 @@ describe("Dropdown", () => {
 
 	it("closes on Escape from the search input", () => {
 		render(<Dropdown options={options} searchable />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 		fireEvent.keyDown(search, { key: "Escape" });
@@ -672,7 +679,7 @@ describe("Dropdown", () => {
 	it("ignores Enter during IME composition, then selects on a normal Enter", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown options={options} searchable onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 
 		// 조합 중 Enter (한글 확정) - 선택/토글·닫기 발생하지 않아야 함
@@ -691,7 +698,7 @@ describe("Dropdown", () => {
 	it("toggles selection and keeps the list open in multiple mode", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown multiple options={options} onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 
 		fireEvent.click(screen.getByText("Option 1"));
 		expect(onValueChange).toHaveBeenLastCalledWith(["1"], [options[0]]);
@@ -713,7 +720,7 @@ describe("Dropdown", () => {
 			<Dropdown multiple options={options} onValueChange={onValueChange} onChange={onChange} />,
 		);
 
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		fireEvent.click(screen.getByText("Option 1"));
 
 		expect(onValueChange).toHaveBeenCalledTimes(1);
@@ -745,7 +752,7 @@ describe("Dropdown", () => {
 
 	it("renders a left check mark on selected options in multiple mode", () => {
 		render(<Dropdown multiple options={options} defaultValue={["1"]} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const opt1 = screen.getByText("Option 1").closest("[role='option']");
 		expect(opt1?.querySelector(".dropdown_option_check svg")).toBeInTheDocument();
 		const opt2 = screen.getByText("Option 2").closest("[role='option']");
@@ -754,20 +761,20 @@ describe("Dropdown", () => {
 
 	it("sets aria-multiselectable on the listbox in multiple mode", () => {
 		render(<Dropdown multiple options={options} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByRole("listbox")).toHaveAttribute("aria-multiselectable", "true");
 	});
 
 	it("does not set aria-multiselectable in single mode", () => {
 		render(<Dropdown options={options} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		expect(screen.getByRole("listbox")).not.toHaveAttribute("aria-multiselectable");
 	});
 
 	it("toggles with Enter from the search input in multiple mode (stays open)", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown multiple searchable options={options} onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 		fireEvent.change(search, { target: { value: "Option 1" } });
 		fireEvent.keyDown(search, { key: "Enter" });
@@ -780,7 +787,7 @@ describe("Dropdown", () => {
 	it("keeps the active filter after selecting in searchable + multiple mode", () => {
 		const onValueChange = vi.fn();
 		render(<Dropdown multiple searchable options={options} onValueChange={onValueChange} />);
-		fireEvent.click(screen.getByRole("button"));
+		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 
 		fireEvent.change(search, { target: { value: "Option 2" } });
@@ -795,10 +802,66 @@ describe("Dropdown", () => {
 		expect(screen.getByText("Option 2")).toBeInTheDocument();
 	});
 
+	// ── 트리거 role 과 이름 (#632) ───────────────────────────────────────────────
+
+	it("exposes the trigger as a combobox so required can be announced", () => {
+		// `button` role 은 `aria-required` 를 지원하지 않아, Field 의 필수 여부가 보조기술에
+		// 전혀 닿지 않았다 - 화면의 `*` 는 aria-hidden 이다.
+		render(
+			<Field name="role" label="권한" required>
+				<Dropdown options={options} />
+			</Field>,
+		);
+
+		const control = screen.getByRole("combobox", { name: /권한/ });
+		expect(control).toHaveAttribute("aria-required", "true");
+		expect(control).toHaveAttribute("aria-haspopup", "listbox");
+	});
+
+	it("does not claim required when the Field is optional", () => {
+		render(
+			<Field name="role" label="권한">
+				<Dropdown options={options} />
+			</Field>,
+		);
+
+		expect(screen.getByRole("combobox", { name: "권한" })).not.toHaveAttribute("aria-required");
+	});
+
+	it("names the trigger even without a label - combobox takes no name from content", () => {
+		// `button` 은 내용으로 이름이 붙지만 `combobox` 는 아니다. 라벨 없는 Dropdown 이
+		// 이름 없는 컨트롤이 되면 role 을 바꾼 것이 오히려 손해다.
+		render(<Dropdown options={options} placeholder="상태" />);
+
+		expect(screen.getByRole("combobox", { name: "상태" })).toBeInTheDocument();
+	});
+
+	it("lets a real label win over the placeholder fallback", () => {
+		render(<Dropdown options={options} label="권한" placeholder="선택하세요" />);
+
+		expect(screen.getByRole("combobox", { name: "권한" })).toBeInTheDocument();
+	});
+
+	it("marks the search input required too - that is where focus sits", () => {
+		render(
+			<Field name="role" label="권한" required>
+				<Dropdown options={options} searchable />
+			</Field>,
+		);
+		fireEvent.click(trigger());
+
+		expect(screen.getByRole("combobox", { name: "검색…" })).toHaveAttribute(
+			"aria-required",
+			"true",
+		);
+	});
+
 	it("exposes combobox a11y on the search input pointing at the active option", () => {
 		render(<Dropdown options={options} searchable />);
-		fireEvent.click(screen.getByRole("button"));
-		const input = screen.getByRole("combobox");
+		fireEvent.click(trigger());
+		// 열린 searchable 패널에는 combobox 가 둘이다 - 트리거(닫기/열기)와 검색 입력.
+		// 검색 규약(`aria-autocomplete`·`aria-activedescendant`)은 입력 쪽이 갖는다.
+		const input = screen.getByRole("combobox", { name: "검색…" });
 		expect(input).toHaveAttribute("aria-autocomplete", "list");
 		expect(input).toHaveAttribute("aria-expanded", "true");
 		const activeId = input.getAttribute("aria-activedescendant");
@@ -808,7 +871,7 @@ describe("Dropdown", () => {
 
 	it("closes the listbox on Tab from the control (APG combobox)", () => {
 		render(<Dropdown options={options} />);
-		const control = screen.getByRole("button");
+		const control = trigger();
 		fireEvent.click(control);
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
 
@@ -818,7 +881,7 @@ describe("Dropdown", () => {
 
 	it("omits aria-controls while closed (no dangling IDREF)", () => {
 		render(<Dropdown options={options} />);
-		const control = screen.getByRole("button");
+		const control = trigger();
 		expect(control).not.toHaveAttribute("aria-controls");
 
 		fireEvent.click(control);

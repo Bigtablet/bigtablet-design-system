@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import { TimePicker } from "./index";
 
 // Dropdown 트리거는 button 이다 (role=combobox 는 searchable 입력 쪽). 순서로 고른다 - 시, 분.
-const hourTrigger = () => screen.getAllByRole("button")[0];
-const minuteTrigger = () => screen.getAllByRole("button")[1];
+const hourTrigger = () => screen.getAllByRole("combobox")[0];
+const minuteTrigger = () => screen.getAllByRole("combobox")[1];
 
 /** Dropdown 을 열고 보이는 옵션 라벨을 읽는다 */
 const openAndRead = (trigger: HTMLElement) => {
