@@ -102,6 +102,13 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		setAlertState((prev) => ({ ...prev, isOpen: false }));
 	}, []);
 
+	// 퇴출 애니메이션이 끝나면 페이로드를 버린다. `isOpen: false` 만 두면 `title`·`message`·
+	// `onConfirm` 클로저(가 붙잡은 행 데이터 등)가 다음 showAlert 까지 살아 있다.
+	// 퇴출 도중에는 내용이 보여야 하므로 그 전에 비우면 빈 패널이 페이드아웃한다.
+	const handleExited = useCallback(() => {
+		setAlertState((prev) => (prev.isOpen ? prev : { isOpen: false }));
+	}, []);
+
 	const handleConfirm = useCallback(() => {
 		alertState.onConfirm?.();
 		handleClose();
@@ -120,6 +127,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 				onConfirm={handleConfirm}
 				onCancel={handleCancel}
 				onClose={handleClose}
+				onExited={handleExited}
 			/>
 		</AlertContext.Provider>
 	);
@@ -128,6 +136,8 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 interface AlertModalProps extends AlertOptions {
 	isOpen: boolean;
 	onClose: () => void;
+	/** 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 - Provider 가 페이로드를 비우는 시점 */
+	onExited?: () => void;
 }
 
 const AlertModal: React.FC<AlertModalProps> = ({
@@ -145,6 +155,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onConfirm,
 	onCancel,
 	onClose,
+	onExited,
 }) => {
 	const t = useLocaleText();
 	const confirmText = confirmTextProp ?? t("alert.confirm");
@@ -153,6 +164,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	// 보내 소비자의 취소 정리 로직(롤백 등)이 우회되지 않게 한다.
 	const dismiss = onCancel ?? onClose;
 	const panelRef = React.useRef<HTMLDivElement>(null);
+	// 오버레이에서 누르기 시작했는지 - 패널에서 시작한 드래그를 오버레이에서 놓으면 `click` 이
+	// 공통 조상(오버레이)에 디스패치되므로 target 검사만으로는 구분되지 않는다(Modal 과 동일).
+	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
 	const messageId = React.useId();
 
@@ -186,7 +200,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 		immediate: reduced,
 		config: OVERLAY_SPRING_CONFIG,
 		onRest: (result) => {
-			if (!isOpen && result.finished) setShouldRender(false);
+			if (isOpen || !result.finished) return;
+			setShouldRender(false);
+			onExited?.();
 		},
 	});
 
@@ -229,7 +245,17 @@ const AlertModal: React.FC<AlertModalProps> = ({
 			className="alert_overlay"
 			style={overlayStyle}
 			role="presentation"
-			onClick={() => closeOnOverlay && dismiss()}
+			onPointerDown={(e) => {
+				pressedOverlayRef.current = e.target === e.currentTarget;
+			}}
+			onClick={(e) => {
+				// 누른 곳과 놓은 곳이 모두 오버레이여야 취소다 - 메시지를 드래그로 선택하다
+				// 오버레이에서 놓았다고 확인 대화상자가 취소되면 안 된다.
+				if (!closeOnOverlay) return;
+				if (e.target !== e.currentTarget) return;
+				if (!pressedOverlayRef.current) return;
+				dismiss();
+			}}
 		>
 			<animated.div
 				ref={panelRef}

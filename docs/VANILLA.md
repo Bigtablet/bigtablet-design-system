@@ -597,6 +597,11 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 </script>
 ```
 
+> Escape 는 열린 오버레이들이 **공유하는 스택**이 처리한다 - Modal 위에 `Alert` 를 띄우면 Escape 한 번에
+> 최상단(Alert)만 닫히고 Modal 은 남는다. React 쪽 `useOverlayEscape` 와 같은 규약이다. 이전에는 오버레이마다
+> 자기 document 리스너를 걸어 둘이 함께 닫혔다. `closeOnEscape: false` 인 Modal 도 스택에는 등록되어
+> Escape 를 **소비**한다 - 닫히지는 않지만 아래 오버레이로 내려가지도 않는다.
+
 ---
 
 ### Alert

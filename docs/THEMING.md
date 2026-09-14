@@ -486,7 +486,13 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 
 ## 오버레이 스크롤 잠금과 `--bt-scrollbar-width`
 
-Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다(`body { overflow: hidden }`). 이때 오른쪽에
+Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다 - `body` 와 **`html` 양쪽에** `overflow: hidden`.
+`body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로, 앱이 `html { overflow-y: auto }`
+나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을 `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가
+그대로 스크롤됐다(실측 - 잠금 중 휠로 300 → 300, 해제 뒤 같은 휠로 300 → 800. `scrollTo` 는
+`overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없다). 잠금 전 인라인 `overflow` 는
+**축까지 그대로 되살린다** - `html.style.overflowX` 만 잡아둔 앱도 해제 뒤 그 축이 남는다.
+이때 오른쪽에
 **스크롤바도 예약된 거터도 남기지 않는다** - 남으면 그 자리는 캔버스(루트 요소의 배경)가 칠하는
 영역이라 오버레이 딤이 덮지 못하고 밝은 띠가 된다.
 
