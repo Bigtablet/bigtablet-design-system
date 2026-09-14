@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { DatePicker } from "../date-picker";
+import { DateRangePicker } from "../date-range-picker";
 import { Radio } from "../radio";
 import { RadioGroup } from "../radio-group";
 import { TextField } from "../textfield";
+import { TimePicker } from "../time-picker";
 import { Toggle } from "../toggle";
 import { Field } from "./index";
 
@@ -112,6 +115,81 @@ describe("Field", () => {
 		);
 
 		expect(container.querySelector(".field_label_row")).toBeNull();
+	});
+
+	// ── 복합 컨트롤 (#629) ──────────────────────────────────────────────────────
+
+	/** 문서 안에서 두 번 이상 쓰인 id. `<label for>` 는 첫 번째 것만 잡는다. */
+	const duplicateIds = (root: HTMLElement) => {
+		const ids = [...root.querySelectorAll("[id]")].map((el) => el.id);
+		return [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+	};
+
+	it("gives each control inside a composite input its own id", () => {
+		// Field 는 컨트롤 하나를 전제로 inputId 를 서브트리에 내린다. DatePicker(Dropdown 3개)
+		// 처럼 여럿을 담은 컨트롤이 그 하나를 나눠 쓰면 id 가 겹쳐, 종료일의 "년" 라벨이
+		// 시작일 목록을 연다.
+		const { container } = render(
+			<Field name="period" label="표시 기간">
+				<DateRangePicker
+					startLabel="표시 시작일"
+					endLabel="표시 종료일"
+					value={{ start: "", end: "" }}
+					onValueChange={() => {}}
+				/>
+			</Field>,
+		);
+
+		expect(duplicateIds(container)).toEqual([]);
+	});
+
+	it("points each inner label at the control next to it", () => {
+		const { container } = render(
+			<Field name="when" label="날짜">
+				<DatePicker value="" onValueChange={() => {}} />
+			</Field>,
+		);
+
+		// 연·월·일 라벨이 각각 자기 옆 버튼을 가리켜야 한다 - 하나라도 남의 것을 가리키면
+		// 라벨 클릭이 엉뚱한 목록을 연다.
+		const labels = [...container.querySelectorAll("label[for]")].filter(
+			(el) => el.getAttribute("for") !== null && el.className.includes("dropdown"),
+		);
+		expect(labels.length).toBeGreaterThan(0);
+		for (const label of labels) {
+			const target = document.getElementById(label.getAttribute("for") as string);
+			expect(target).not.toBeNull();
+			// 라벨과 버튼은 같은 Dropdown 안에 있다.
+			expect(label.closest(".dropdown")).toBe(target?.closest(".dropdown"));
+		}
+	});
+
+	it("names the halves of a range by their own labels, not the Field label", () => {
+		// 안쪽 DatePicker 가 Field 라벨을 물려받으면 시작·종료 그룹이 둘 다 "표시 기간" 이 된다.
+		render(
+			<Field name="period" label="표시 기간">
+				<DateRangePicker
+					startLabel="표시 시작일"
+					endLabel="표시 종료일"
+					value={{ start: "", end: "" }}
+					onValueChange={() => {}}
+				/>
+			</Field>,
+		);
+
+		expect(screen.getByRole("group", { name: "표시 시작일" })).toBeInTheDocument();
+		expect(screen.getByRole("group", { name: "표시 종료일" })).toBeInTheDocument();
+		expect(screen.getByRole("group", { name: "표시 기간" })).toBeInTheDocument();
+	});
+
+	it("keeps the ids apart inside TimePicker too", () => {
+		const { container } = render(
+			<Field name="at" label="시간">
+				<TimePicker value="" onValueChange={() => {}} />
+			</Field>,
+		);
+
+		expect(duplicateIds(container)).toEqual([]);
 	});
 
 	it("leaves the input alone when there is no Field", () => {
