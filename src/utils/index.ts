@@ -3,9 +3,7 @@ export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
 export {
 	lockBodyScroll,
-	reportOverlayDim,
 	unlockBodyScroll,
-	unregisterOverlayDim,
 } from "./scroll-lock";
 export {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,

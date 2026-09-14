@@ -21,12 +21,14 @@ jsdom 은 스타일시트를 계산하지 않아 단위 테스트로는 잡을 �
 튄다. AlertModal 만 처음부터 `shouldRender` 를 썼고 Modal·Drawer 가 `open` 을 써서 같은 증상이
 두 번 재발했다.
 
-## 3. 잠금이 ICB 폭을 바꾸지 않는지 (두 번들 소스)
+## 3. 잠금이 오른쪽에 띠를 남기지 않는지 (두 번들 소스)
 
-잠금은 거터를 **예약**해야 한다(`scrollbar-gutter: stable`). 놓으면(`auto`) ICB 폭이 변해
-`position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼 움직인다 - 실측 592.5 → 600 (#574).
-그리고 문서가 스크롤되지 않을 때는 아무것도 하지 않아야 한다 - 예약된 거터를 스크롤바로 오인해
-없는 스크롤바를 없애느라 레이아웃이 흔들렸다.
+잠금은 스크롤바 자리(또는 앱이 예약해 둔 거터)를 **회수해야** 한다 - `scrollbar-gutter: auto` 로
+풀고 그 폭만큼 `body` 에 `padding-right`. 남기면 그 자리는 캔버스가 칠하는 영역이라 딤이 덮지
+못하고, 색으로 흉내내면 배경이 단색일 때만 맞아 표·카드 경계에 세로선이 남는다(#635).
+
+회수로 ICB 가 넓어지는 만큼은 오버레이 CSS 가 `padding-right: var(--bt-scrollbar-width)` 로
+상쇄한다(#574). 루트 배경색은 건드리지 않는다.
 
 React 와 Vanilla 두 번들이 같은 판정을 해야 한다. 이 저장소에서 "형제 구현 한쪽만 고침" 이
 다섯 번 났다.
@@ -187,26 +189,12 @@ def check_lock_lifecycle() -> tuple[list[str], int]:
             problems.append(
                 f"{path}: 잠금 effect 가 unlockBodyScroll cleanup 을 반환하지 않는다"
             )
-        # 부모 잠금이 남아 있으면 unlock 이 레지스트리를 비우지 않는다 - 자기 것을 빼야 한다.
-        if "unregisterOverlayDim" not in body:
+        # 거터를 색으로 칠하던 배선이 돌아오지 않게 한다 - 잠금이 오버레이로 덮으므로 오버레이가
+        # 자기 딤 진행도를 보고할 이유가 없다(#635).
+        if "reportOverlayDim" in source or "unregisterOverlayDim" in source:
             problems.append(
-                f"{path}: cleanup 이 자기 딤 보고를 빼지 않는다 - 부모 잠금 아래서 자식을"
-                " 반복해 열고 닫으면 죽은 항목이 쌓인다"
-            )
-        # 거터 색이 이 오버레이의 딤 페이드를 따라가려면 (a) 잠긴 첫 프레임의 초기값과
-        # (b) 프레임마다의 보고, 둘 다 필요하다. 파일 전체에서 이름만 세면 둘이 같은 자리에
-        # 있어도 통과하므로 실행 경로별로 본다 (#583).
-        if "reportOverlayDim(" not in body:
-            problems.append(f"{path}: 잠금 effect 가 진행도 초기값을 등록하지 않는다 (#583)")
-        animation = [
-            line
-            for line in source.splitlines()
-            if re.search(r"\b(onChange|onProgress)\s*:", line) and "reportOverlayDim(" in line
-        ]
-        if not animation:
-            problems.append(
-                f"{path}: 딤 스프링의 onChange/onProgress 에서 진행도를 보고하지 않는다 -"
-                " 잠금 순간 최종색으로 점프해 페이드 동안 거터만 어두워진다 (#583)"
+                f"{path}: 딤 진행도를 잠금에 보고한다 - 거터를 색으로 칠하던 배선이다(#635)."
+                " 지금은 오버레이가 그 자리를 직접 덮는다"
             )
     return problems, len(owners)
 
@@ -312,6 +300,14 @@ DIM_SOURCES = (
 )
 NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
 
+# 가운데 정렬 오버레이 - 회수된 폭을 상쇄해야 패널이 제자리에 남는다. Drawer 는 가장자리에
+# 붙으므로 빠진다.
+CENTERED_OVERLAY_STYLES = (
+    Path("src/ui/overlay/modal/style.scss"),
+    Path("src/ui/feedback/alert/style.scss"),
+    Path("src/vanilla/bigtablet.scss"),
+)
+
 
 def check_dim_does_not_chase_the_gutter() -> list[str]:
     """dim 이 음수 오프셋으로 예약된 거터를 쫓지 않는지.
@@ -332,7 +328,7 @@ def check_dim_does_not_chase_the_gutter() -> list[str]:
 
 
 def check_lock_width_invariants() -> list[str]:
-    """잠금이 거터를 놓지 않고 예약하는지, 스크롤 여부로 분기하는지."""
+    """잠금이 거터를 회수하는지, 회수 실패를 되돌리는지, 루트 배경을 건드리지 않는지."""
     problems: list[str] = []
     for path in SCROLL_LOCK_SOURCES:
         source = path.read_text(encoding="utf-8")
@@ -340,24 +336,6 @@ def check_lock_width_invariants() -> list[str]:
         code = "\n".join(
             line for line in source.splitlines() if not line.strip().startswith(("//", "*", "/*"))
         )
-        if 'scrollbarGutter = "auto"' in code:
-            problems.append(
-                f"{path}: 잠금이 거터를 놓는다(`auto`) - ICB 폭이 변해 fixed 요소가"
-                " 스크롤바 폭의 절반만큼 움직인다 (#574). `stable` 로 예약하라"
-            )
-        if 'scrollbarGutter = "stable"' not in code:
-            problems.append(f"{path}: 잠금이 거터를 예약하지 않는다 - `stable` 이 없다")
-        # 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽어야 한다. 번들마다 이름이
-        # 다르고, 선언만 있고 아무도 참조하지 않는 유사 이름이 양쪽에 있다 - 그걸 읽으면
-        # 소비자가 딤을 오버라이드했을 때 거터 색만 옛 값에 남는다.
-        dim_var = "--bt-color-overlay" if path.name.endswith(".js") else "--bt-color-bg-overlay"
-        if dim_var not in code:
-            problems.append(
-                f"{path}: 딤 색을 `{dim_var}` 에서 읽지 않는다 - 오버레이가 페인트에 쓰는"
-                " 프로퍼티와 달라지면 거터 색이 실제 딤을 따라가지 못한다"
-            )
-        # 정의만 있고 잠금 경로에서 부르지 않으면 거터는 그대로 밝다 - 잠금 함수 본문 안에서
-        # 실제로 부르는지 본다(이름이 파일 어딘가에 있는지가 아니라).
         lock_body = ""
         for name in ("lockBodyScroll", "lockScroll"):
             found = re.search(rf"function {name}\s*\([^)]*\)\s*(?::\s*\w+\s*)?\{{", source)
@@ -366,32 +344,51 @@ def check_lock_width_invariants() -> list[str]:
                 break
         if not lock_body:
             problems.append(f"{path}: 잠금 함수를 못 찾았다 - 이름이 바뀌었는지 보라")
-        elif "measureCanvasColors(" not in lock_body or "paintCanvas(" not in lock_body:
+            continue
+
+        if 'scrollbarGutter = "auto"' not in lock_body:
             problems.append(
-                f"{path}: 예약된 거터를 어둡게 하지 않는다 - 캔버스(루트 배경색)에 딤을"
-                " 합성해야 dim 옆에 밝은 띠가 남지 않는다 (#580)"
+                f"{path}: 잠금이 거터를 회수하지 않는다 - 남기면 그 띠를 딤이 덮지 못한다(#635)."
+                ' `scrollbarGutter = "auto"` 로 풀어라'
             )
-        # 색을 잠금 시점에 한 번만 재야 한다. 중첩될 때 다시 재면 이미 어두워진 루트 배경을
-        # 바닥으로 잡아 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
-        if "canvasBase" not in code:
-            problems.append(f"{path}: 잰 캔버스 색을 캐시하지 않는다 - 중첩마다 다시 재면 검어진다")
-        # 거터 색은 딤이 페이드하는 동안 함께 어두워져야 한다 (#583). React 는 스프링 진행도를
-        # 보고받고, Vanilla 는 딤과 같은 CSS transition 을 루트에 건다.
-        marker = "--bt-transition-base" if path.name.endswith(".js") else "dimProgress"
-        if marker not in code:
+        if "paddingRight" not in lock_body:
             problems.append(
-                f"{path}: 거터가 딤 페이드를 따라가지 않는다 - 잠금 순간 최종색으로 점프하면"
-                " 페이드 동안 거터만 먼저 어두워져 어두운 띠가 보인다 (#583)"
+                f"{path}: 회수한 폭을 `body` padding 으로 지키지 않는다 - 콘텐츠가 그만큼 움직인다"
+            )
+        # 회수됐는지 다시 재야 한다. 앱이 `html { overflow-y: scroll }` 로 스크롤바를 못박아
+        # 두면 자리가 그대로 남는데, 그때 padding 까지 주면 콘텐츠만 안쪽으로 밀린다.
+        if lock_body.count("measureViewportInset(") < 2:
+            problems.append(
+                f"{path}: 잠금 뒤에 다시 재지 않는다 - 스크롤바가 못박힌 앱에서 회수되지 않은 채"
+                " padding 만 남아 콘텐츠가 밀린다"
+            )
+        # 루트 배경색을 칠하던 옛 방식이 돌아오지 않게 한다. 배경이 단색일 때만 맞는다(#635).
+        if "backgroundColor" in code:
+            problems.append(
+                f"{path}: 루트 배경색을 건드린다 - 띠를 색으로 흉내내는 방식은 배경이 단색일 때만"
+                " 맞아 표·카드 경계에 세로선이 남는다(#635). 오버레이가 덮게 하라"
             )
         if "data-bt-scroll-locked" not in code:
             problems.append(
                 f"{path}: 잠금 표식(`data-bt-scroll-locked`)을 남기지 않는다 - 소비자가 잠금"
                 " 상태를 CSS 로 알 수단이 사라진다"
             )
-        if "scrollHeight > " not in code:
+    return problems
+
+
+def check_overlays_offset_the_reclaimed_width() -> list[str]:
+    """가운데 정렬 오버레이가 회수된 폭을 상쇄하는지.
+
+    회수로 ICB 가 스크롤바 폭만큼 넓어지므로, 상쇄하지 않으면 패널이 그 절반만큼 움직인다(#574).
+    Drawer 는 화면 가장자리에 붙어 상쇄할 것이 없으므로 제외한다.
+    """
+    problems: list[str] = []
+    offset = "padding-right: var(--bt-scrollbar-width"
+    for path in CENTERED_OVERLAY_STYLES:
+        if offset not in path.read_text(encoding="utf-8"):
             problems.append(
-                f"{path}: 문서가 스크롤되는지 보지 않는다 - 예약된 거터만 있는 앱에서"
-                " 없는 스크롤바를 없애느라 레이아웃이 흔들린다"
+                f"{path}: 회수된 폭을 상쇄하지 않는다 - 패널이 스크롤바 폭의 절반만큼 움직인다"
+                f" (#574). `{offset})` 를 줘라"
             )
     return problems
 
@@ -458,6 +455,7 @@ def main() -> int:
 
     problems += check_lock_width_invariants()
     problems += check_dim_does_not_chase_the_gutter()
+    problems += check_overlays_offset_the_reclaimed_width()
     problems += check_popups_escape_clipping()
     problems += check_popup_width_has_a_floor()
     checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES) + len(ANCHORED_POPUPS)
@@ -504,8 +502,14 @@ def main() -> int:
     )
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
-    print(f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 예약하고 칠하고 표식을 남깁니다.")
-    print(f"dim {len(DIM_SOURCES)}개 파일 - 예약된 거터를 쫓지 않습니다(캔버스 합성에 맡김).")
+    print(
+        f"잠금 폭 불변식 {len(SCROLL_LOCK_SOURCES)}개 번들 - 거터를 회수하고"
+        " 회수 실패를 되돌리고 표식을 남깁니다."
+    )
+    print(f"dim {len(DIM_SOURCES)}개 파일 - 음수 오프셋으로 거터를 쫓지 않습니다.")
+    print(
+        f"가운데 정렬 오버레이 {len(CENTERED_OVERLAY_STYLES)}개 - 회수된 스크롤바 폭을 상쇄합니다."
+    )
     print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
     print(
         f"팝업 폭 {len(ANCHOR_WIDTH_POPUPS)}개 - 트리거 폭은 하한이고 내용 기준으로 넓어집니다."

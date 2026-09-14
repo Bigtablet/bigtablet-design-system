@@ -1032,8 +1032,9 @@
 .bt-modal {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  /* 예약된 거터는 dim 이 덮지 않는다 - 캔버스가 칠하는 영역이라 자손은 페인트할 수 없다.
-     그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 (#580). */
+  /* 잠금이 거터를 회수해 ICB 가 스크롤바 폭만큼 넓어진다(#635). 그만큼 오른쪽에 padding 을 줘
+     패널 중심이 잠금 전후로 같은 자리에 남게 한다 - React 의 `.modal` 과 같은 처리다. */
+  padding-right: var(--bt-scrollbar-width, 0px);
   display: none;
   place-items: center;
   background: var(--bt-color-overlay);
@@ -1125,8 +1126,8 @@
   &__overlay {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
-    /* 예약된 거터는 dim 이 덮지 않는다 - 캔버스가 칠하는 영역이라 자손은 페인트할 수 없다.
-       그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 (#580). */
+    /* 잠금이 회수한 폭만큼 상쇄한다 - React 의 `.alert_overlay` 와 같은 처리다(#635). */
+    padding-right: var(--bt-scrollbar-width, 0px);
     background: var(--bt-color-overlay);
     display: none;
     align-items: center;

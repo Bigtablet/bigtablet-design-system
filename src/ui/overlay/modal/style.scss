@@ -18,9 +18,10 @@ $close_clearance: token.$spacing_24;
 .modal {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  // 예약된 거터는 dim 이 덮지 않는다 - 캔버스(루트 배경)가 칠하는 영역이라 자손은 거기에
-  // 페인트할 수 없다. 음수 오프셋으로 박스만 넓혀 봤지만(3.17.1) 페인트는 거터 앞에서
-  // 잘렸다(#580). 그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 - `scroll-lock`.
+  // 잠금 동안 거터를 풀어 ICB 가 스크롤바 폭만큼 넓어진다(#635). 그만큼 오른쪽에 padding 을
+  // 줘 패널 중심이 잠금 전후로 같은 자리에 남게 한다 - 안 주면 가운데 정렬이 절반만큼
+  // 움직인다(#574). 잠금 밖에서는 `--bt-scrollbar-width` 가 `0px` 이라 무해하다.
+  padding-right: var(--bt-scrollbar-width, 0px);
   display: grid;
   // 암묵 트랙은 auto - 즉 패널의 max-content(width prop + 패딩)로 커진다. 그러면 패널의
   // `max-width: calc(100% - ...)` 가 뷰포트가 아니라 그 트랙을 기준으로 풀려서 전혀 clamp 되지
