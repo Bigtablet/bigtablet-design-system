@@ -347,10 +347,15 @@ import Link from "next/link";
 > 벌린다. `Combobox` 도 같은 계약이다.
 >
 > **트리거는 `role="combobox"`.** APG select-only combobox 패턴이다 - `aria-haspopup="listbox"` +
-> `aria-expanded` + 열렸을 때의 `aria-controls`. `button` role 로는 `aria-required` 를 붙일 수
-> 없어 `Field` 의 필수 여부가 보조기술에 닿지 않았다(#632). `combobox` 는 내용으로 이름이 붙지
-> 않으므로, 라벨이 없으면 `placeholder` 가 `aria-label` 로 들어간다. `searchable` 을 열면 패널의
-> 검색 입력도 `combobox` 라 둘이 된다 - 테스트에서는 이름으로 가른다.
+> `aria-expanded` + 열렸을 때의 `aria-controls`·`aria-activedescendant`. `button` role 로는
+> `aria-required` 를 붙일 수 없어 `Field` 의 필수 여부가 보조기술에 닿지 않았다(#632).
+>
+> **이름은 `라벨 + 현재 값`.** `combobox` 는 `button` 과 달리 내용으로 이름이 붙지 않아, 값을
+> `aria-labelledby` 로 직접 가리킨다 - 안 그러면 "2024" 를 골라도 계속 "년" 으로만 읽힌다.
+> 라벨이 없으면 값만 이름이 된다(`button` 이던 때와 같다).
+>
+> `searchable` 을 열면 패널의 검색 입력도 `combobox` 라 둘이 된다 - 테스트에서는 이름으로
+> 가른다. 활성 옵션 추적(`aria-activedescendant`)은 그때 입력 쪽이 갖는다.
 >
 > **높이는 `min(288px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
 > 자라고 그 안에서 스크롤한다 - 상한이 없던 3.19.1 까지는 뷰포트 461px 에서 목록이 130px

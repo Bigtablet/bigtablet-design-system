@@ -50,11 +50,22 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 `searchable` Dropdown 을 **연 상태**에서는 combobox 가 둘입니다 — 트리거와 패널의 검색 입력. 이름으로 가르거나(`{ name: "검색…" }`) `getAllByRole("combobox")[0]` 로 트리거를 집으세요.
 
-### 라벨 없는 Dropdown 의 이름
+### 트리거의 접근 가능한 이름이 `라벨 + 현재 값` 이 됩니다
 
-`button` 은 내용으로 이름이 붙지만 `combobox` 는 붙지 않습니다. 라벨(`label` prop 이나 `Field` 의 라벨)이 없으면 컴포넌트가 `placeholder` 를 `aria-label` 로 씁니다 — 이름 없는 컨트롤이 되지 않게 하는 fallback 이고, 라벨이 있으면 그쪽이 이름입니다.
+`button` 은 내용으로 이름이 붙지만 `combobox` 는 붙지 않습니다. 그대로 두면 값을 골라도 이름에 반영되지 않으므로, 컴포넌트가 값 요소를 `aria-labelledby` 로 함께 가리킵니다.
 
-placeholder 가 `"선택…"` 같은 기본값이면 이름도 그것이 됩니다. 이 기회에 `label` 이나 `Field` 를 붙이는 편이 낫습니다.
+```
+label="권한", 미선택         → "권한 선택…"
+label="권한", "관리자" 선택   → "권한 관리자"
+라벨 없음, 미선택            → "선택…"        (button 이던 때와 같음)
+```
+
+이름으로 조회하는 테스트는 값이 이름에 들어온다는 점을 반영해야 합니다.
+
+```diff
+- screen.getByRole("button", { name: "권한" })
++ screen.getByRole("combobox", { name: /권한/ })
+```
 
 ---
 

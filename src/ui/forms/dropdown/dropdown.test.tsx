@@ -825,21 +825,40 @@ describe("Dropdown", () => {
 			</Field>,
 		);
 
-		expect(screen.getByRole("combobox", { name: "권한" })).not.toHaveAttribute("aria-required");
+		expect(trigger()).not.toHaveAttribute("aria-required");
 	});
 
-	it("names the trigger even without a label - combobox takes no name from content", () => {
-		// `button` 은 내용으로 이름이 붙지만 `combobox` 는 아니다. 라벨 없는 Dropdown 이
-		// 이름 없는 컨트롤이 되면 role 을 바꾼 것이 오히려 손해다.
+	it("names a label-less trigger by its value alone, as the button did", () => {
+		// 라벨 없는 Dropdown 이 이름 없는 컨트롤이 되면 role 을 바꾼 것이 오히려 손해다.
 		render(<Dropdown options={options} placeholder="상태" />);
 
 		expect(screen.getByRole("combobox", { name: "상태" })).toBeInTheDocument();
 	});
 
-	it("lets a real label win over the placeholder fallback", () => {
-		render(<Dropdown options={options} label="권한" placeholder="선택하세요" />);
+	it("names the trigger with its label and its current value", () => {
+		// `combobox` 는 내용으로 이름이 붙지 않는다 - 값 span 을 직접 가리키지 않으면 무엇을
+		// 골랐는지가 이름에서 통째로 빠진다(APG select-only combobox 는 라벨 + 값을 함께 읽는다).
+		const { rerender } = render(
+			<Dropdown options={options} label="권한" placeholder="선택하세요" />,
+		);
+		expect(screen.getByRole("combobox", { name: "권한 선택하세요" })).toBeInTheDocument();
 
-		expect(screen.getByRole("combobox", { name: "권한" })).toBeInTheDocument();
+		rerender(<Dropdown options={options} label="권한" placeholder="선택하세요" value="2" />);
+		expect(screen.getByRole("combobox", { name: /권한/ })).toHaveAccessibleName(
+			`권한 ${options[1].label}`,
+		);
+	});
+
+	it("points at the active option while the list is open", () => {
+		// 검색 모드가 아니면 포커스가 트리거에 남는다 - 활성 옵션을 트리거가 가리켜야 한다.
+		render(<Dropdown options={options} label="권한" />);
+		const control = trigger();
+		fireEvent.click(control);
+		fireEvent.keyDown(control, { key: "ArrowDown" });
+
+		const activeId = control.getAttribute("aria-activedescendant");
+		expect(activeId).toBeTruthy();
+		expect(document.getElementById(activeId as string)).toHaveAttribute("role", "option");
 	});
 
 	it("marks the search input required too - that is where focus sits", () => {
