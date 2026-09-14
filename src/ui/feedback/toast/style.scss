@@ -23,7 +23,9 @@
 .toast_container {
   position: fixed;
   top: token.$spacing_16;
-  right: token.$spacing_16;
+  // 오버레이 잠금이 거터를 회수하면 ICB 가 넓어져 오른쪽 고정 요소가 그만큼 튄다(#635).
+  // 회수된 폭을 더해 제자리에 남긴다 - 잠금 밖에서는 `0px` 이다.
+  right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
   z-index: token.$z_notification;
   display: flex;
   flex-direction: column;

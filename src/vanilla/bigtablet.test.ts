@@ -30,19 +30,25 @@ const setGutterSupport = (supported: boolean) => {
 	});
 };
 
-const setViewportInset = (inset: number) => {
+const setViewportInset = (inset: number, options: { afterLock?: number } = {}) => {
 	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true, writable: true });
-	vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
-		width: 1280 - inset,
-		height: 0,
-		top: 0,
-		left: 0,
-		right: 1280 - inset,
-		bottom: 0,
-		x: 0,
-		y: 0,
-		toJSON: () => ({}),
-	} as DOMRect);
+	// 잠금은 두 번 잰다 - 걸기 전(회수할 폭)과 건 뒤(실제로 회수됐는지).
+	const widths = [1280 - inset, 1280 - (options.afterLock ?? inset)];
+	let call = 0;
+	vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(() => {
+		const width = widths[Math.min(call++, widths.length - 1)];
+		return {
+			width,
+			height: 0,
+			top: 0,
+			left: 0,
+			right: width,
+			bottom: 0,
+			x: 0,
+			y: 0,
+			toJSON: () => ({}),
+		} as DOMRect;
+	});
 };
 
 const pressEscape = () =>
@@ -331,106 +337,27 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
 
-	it("거터를 놓지 않고 예약한다 - fixed 요소가 움직이지 않게", () => {
-		// 놓으면(`auto`) ICB 폭이 변해 `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼
-		// 움직인다(#574). React 번들과 같은 판정·같은 결과여야 한다.
+	it("거터를 풀고 그 폭을 body padding 으로 지킨다 - 오버레이가 그 자리를 덮게", () => {
+		// 거터가 남으면 그 자리는 캔버스가 칠해 딤이 못 덮는다. 색으로 흉내내던 방식은 배경이
+		// 단색일 때만 맞았다(#635). React 번들과 같은 판정·같은 결과여야 한다.
 		setDocumentScrolls(true);
 		setGutterSupport(true);
 		document.documentElement.style.scrollbarGutter = "stable";
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		const m = Modal(modalMarkup());
 		m?.open();
 
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
-		expect(document.body.style.paddingRight).toBe("");
-		// 소비자가 거터 폭을 알 수 있게 폭은 노출한다.
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
+		// 오버레이가 자기 정렬을 상쇄하는 데 쓴다.
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
 		m?.close();
 
 		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.body.style.paddingRight).toBe("");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
-	});
-
-	it("예약된 거터를 캔버스 합성으로 어둡게 한다 (React 번들과 같은 처리)", () => {
-		// 예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 dim 이 덮을 수 없다(#580).
-		// 두 번들 중 한쪽만 고치면 갈린다 - 이 저장소에서 다섯 번 난 결함군이다.
-		setDocumentScrolls(true);
-		setGutterSupport(true);
-		setViewportInset(15);
-		// 오버레이가 실제로 페인트에 쓰는 프로퍼티다 (`.bt-modal { background: var(--bt-color-overlay) }`).
-		// 기본값(검정 50%)이 아닌 색을 일부러 넣는다 - 선언만 있고 아무도 참조하지 않는
-		// `--bt-color-background-overlay` 를 읽으면 폴백 기본값과 같아져 드러나지 않는다.
-		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 255, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
-
-		const m = Modal(modalMarkup());
-		m?.open();
-
-		// rgba(0,0,255,.5) over rgb(255,233,168) = (127.5, 116.5, 211.5) → 반올림
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 212)");
-		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
-
-		m?.close();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
-		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
-	});
-
-	it("딤이 페이드하는 오버레이에서는 거터도 같은 커브로 어두워진다", () => {
-		// `.bt-alert__overlay` 는 `bt-alert-fade-in`(= --bt-transition-base)으로 페이드한다.
-		// 잠금이 최종색으로 점프하면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
-		// `.bt-modal` 은 display 토글이라 즉시 나타나므로 transition 을 걸지 않는다.
-		setDocumentScrolls(true);
-		setGutterSupport(true);
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-
-		const m = Modal(modalMarkup());
-		m?.open();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-		expect(document.documentElement.style.transition).toBe("");
-
-		m?.close();
-
-		// Alert 는 딤이 페이드하므로 루트에 같은 길이·easing 의 transition 이 걸려야 한다.
-		const alert = Alert({ title: "삭제", message: "정말?" });
-
-		expect(document.documentElement.style.transition).toBe(
-			"background-color var(--bt-transition-base)",
-		);
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-
-		alert?.close();
-	});
-
-	it("중첩되면 겹친 딤 두께로 거터를 칠한다 (React 번들과 같은 계산)", () => {
-		setDocumentScrolls(true);
-		setGutterSupport(true);
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-
-		const first = Modal(modalMarkup());
-		const second = Modal(modalMarkup());
-		first?.open();
-		second?.open();
-
-		// 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
-
-		second?.close();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-		// 닫힌 쪽이 Modal 이라 딤이 즉시 사라진다 - 거터도 즉시 밝아져야 한다.
-		expect(document.documentElement.style.transition).toBe("");
-
-		first?.close();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
 	});
 
 	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {
@@ -468,11 +395,11 @@ describe("Modal - 바디 스크롤 잠금", () => {
 	});
 
 	it("중첩 오버레이는 마지막 해제까지 잠금을 유지한다", () => {
-		// 폭 보정 방식이 아니라 "마지막 해제까지 유지" 자체를 보는 테스트다. 지원 환경에서는
-		// 거터 예약이라 padding 이 비어 있으므로, 보정이 남아 있는지는 거터로 확인한다.
+		// 폭 보정 방식이 아니라 "마지막 해제까지 유지" 자체를 보는 테스트다. 보정이 남아 있는지는
+		// 거터와 padding 으로 확인한다.
 		setDocumentScrolls(true);
 		setGutterSupport(true);
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 		const a = Modal(modalMarkup("m1"));
 		const b = Modal(modalMarkup("m2"));
 
@@ -482,11 +409,13 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 		b?.close();
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
 
 		a?.close();
 		expect(document.body.style.overflow).toBe("");
 		expect(document.documentElement.style.scrollbarGutter).toBe("");
+		expect(document.body.style.paddingRight).toBe("");
 	});
 
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {

@@ -100,110 +100,23 @@
 	}
 
 	/**
-	 * 예약된 거터는 캔버스(루트 요소 배경)가 칠하는 영역이라 자손이 페인트할 수 없고
-	 * 루트의 background-image 도 전파되지 않는다 - background-color 만 전파된다.
-	 * 그래서 잠금 동안 딤을 미리 합성해 루트 배경색으로 심는다 (#580, React 쪽과 동일).
-	 */
-	function parseRgb(value) {
-		const match = String(value)
-			.trim()
-			.match(/^rgba?\(([^)]+)\)$/i);
-		if (!match) return null;
-		const parts = match[1]
-			.split(/[\s,/]+/)
-			.filter(Boolean)
-			.map(Number);
-		if (parts.length < 3 || parts.some(Number.isNaN)) return null;
-		return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
-	}
-
-	/** 커스텀 프로퍼티 값은 정규화되지 않은 저작 텍스트일 수 있어 요소에 태워 계산값으로 받는다. */
-	function normalizeColor(value) {
-		const direct = parseRgb(value);
-		if (direct) return direct;
-
-		const probe = document.createElement("div");
-		probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden";
-		probe.style.color = value;
-		document.documentElement.appendChild(probe);
-		const computed = window.getComputedStyle(probe).color;
-		probe.remove();
-
-		return parseRgb(computed);
-	}
-
-	/** `top` 을 `bottom` 위에 알파 합성한다. 결과는 항상 불투명하다. */
-	function over(top, bottom) {
-		return [
-			Math.round(top[0] * top[3] + bottom[0] * (1 - top[3])),
-			Math.round(top[1] * top[3] + bottom[1] * (1 - top[3])),
-			Math.round(top[2] * top[3] + bottom[2] * (1 - top[3])),
-			1,
-		];
-	}
-
-	/** 열린 오버레이 수만큼 딤을 겹친 실효 알파. 중첩되면 딤이 실제로 겹쳐 보인다. */
-	function stackedAlpha(alpha, count) {
-		return 1 - (1 - alpha) ** Math.max(1, count);
-	}
-
-	/**
-	 * 잠금 시점에 잰 [딤, 바닥] 색. 중첩될 때 다시 재지 않는다 - 이미 어두워진 루트 배경을
-	 * 바닥으로 잡으면 점점 검어지고, 재느라 스타일을 읽으면 진행 중인 transition 이 끊긴다.
-	 */
-	let canvasDim = null;
-	let canvasBase = null;
-
-	/** 딤 색은 오버레이가 실제로 페인트에 쓰는 프로퍼티에서 읽는다 - `--bt-color-overlay`. */
-	function measureCanvasColors(html, body) {
-		const white = [255, 255, 255, 1];
-		const raw =
-			window.getComputedStyle(html).getPropertyValue("--bt-color-overlay").trim() ||
-			"rgba(0, 0, 0, 0.5)";
-		const dim = normalizeColor(raw);
-		if (!dim || dim[3] <= 0) return null;
-
-		const candidates = [
-			parseRgb(window.getComputedStyle(html).backgroundColor),
-			parseRgb(window.getComputedStyle(body).backgroundColor),
-		];
-		const base = candidates.find((color) => color !== null && color[3] > 0) || white;
-
-		return [dim, over(base, white)];
-	}
-
-	/**
-	 * 거터를 열린 오버레이 수에 맞는 색으로 칠한다. 순수 계산이라 스타일을 읽지 않는다.
+	 * 오버레이가 열려 있는 동안 오른쪽에 스크롤바도 예약된 거터도 남기지 않는다.
 	 *
-	 * `dimFades` 면 루트에 딤과 같은 길이·easing 의 transition 을 걸어 커브를 맞춘다.
-	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
-	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다.
-	 */
-	function paintCanvas(html, count, dimFades) {
-		if (!canvasDim || !canvasBase) return;
-
-		const alpha = stackedAlpha(canvasDim[3], count);
-		const mixed = over([canvasDim[0], canvasDim[1], canvasDim[2], alpha], canvasBase);
-		html.style.transition = dimFades ? "background-color var(--bt-transition-base)" : "";
-		html.style.backgroundColor = `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
-	}
-
-	/**
-	 * @param {boolean} [dimFades] 이 오버레이의 딤이 페이드 인하는가.
+	 * 남으면 그 자리는 캔버스(루트 배경)가 칠하는 영역이라 오버레이 딤이 덮지 못한다. 3.17~3.20
+	 * 은 루트 배경색에 딤을 합성해 그 띠를 칠했는데, **문서 배경이 단색일 때만** 맞는 방법이라
+	 * 표·카드가 띠 옆에 닿으면 경계에 세로선이 남았다(#635). 그래서 거터를 풀고 그만큼 `body`
+	 * 에 `padding-right` 를 준다 - ICB 가 뷰포트 폭이 되어 오버레이가 그 자리까지 덮는다.
 	 *
-	 * 거터는 캔버스가 칠하므로 잠금이 루트 배경색으로 칠하는데(#580), 딤이 페이드 인하는
-	 * 오버레이에서 그 색을 즉시 최종값으로 바꾸면 거터만 먼저 어두워져 어두운 띠가 보인다(#583).
-	 * `.bt-alert__overlay` 는 `bt-alert-fade-in`(= `--bt-transition-base`)으로 페이드하고
-	 * `.bt-modal` 은 `display` 토글이라 즉시 나타난다 - 그래서 호출부가 알려준다. 페이드하는
-	 * 쪽에는 루트에 같은 길이·같은 easing 의 `transition` 을 걸어 커브를 맞춘다.
+	 * ICB 가 넓어지면 가운데 정렬한 fixed 요소가 절반만큼 움직이므로(#574), 오버레이 CSS 가
+	 * `padding-right: var(--bt-scrollbar-width)` 로 상쇄한다 - React 쪽과 같은 처리다.
 	 */
-	function lockScroll(dimFades) {
+	function lockScroll() {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "0", 10);
 		if (n === 0) {
 			// overflow 를 건드리기 전에 재야 한다 - 잠근 뒤엔 스크롤바가 사라져 0 이 나온다.
-			const scrollbarWidth = measureViewportInset();
+			const inset = measureViewportInset();
 
 			// 소비자가 인라인으로 지정해둔 값들을 저장했다가 마지막 unlock 때 복원
 			// (React 쪽 utils/scroll-lock.ts 와 동일 동작).
@@ -213,68 +126,35 @@
 			// 소비자가 이 변수를 직접 인라인으로 잡아둔 경우 잠금 한 번에 지워지지 않도록 함께 스냅샷.
 			body.dataset.btOriginalScrollbarWidthVar =
 				html.style.getPropertyValue("--bt-scrollbar-width");
-			body.dataset.btOriginalBackgroundColor = html.style.backgroundColor;
-			body.dataset.btOriginalTransition = html.style.transition;
 
-			// 문서가 스크롤되지 않으면 없앨 스크롤바도 없다 - 예약된 거터만 있는 앱이 이 경로로
-			// 들어와 레이아웃이 흔들렸다 (React 쪽과 동일 판정).
-			const scroller = document.scrollingElement || html;
-			const documentScrolls = scroller.scrollHeight > scroller.clientHeight;
-			const canReserveGutter =
-				typeof CSS !== "undefined" &&
-				typeof CSS.supports === "function" &&
-				CSS.supports("scrollbar-gutter: stable");
-
-			// 폭 노출은 스크롤 여부와 무관하다 - 예약된 거터는 문서가 스크롤되지 않아도
-			// 화면에 남고, 오버레이가 넘어가 덮어야 한다 (React 쪽과 동일).
-			if (scrollbarWidth > 0) {
-				html.style.setProperty("--bt-scrollbar-width", `${scrollbarWidth}px`);
+			// 폭은 스크롤 여부와 무관하게 노출한다 - 오버레이가 자기 정렬을 상쇄하는 데 쓰고,
+			// 소비자도 자기 fixed 요소에 같은 보정을 건다 (React 쪽과 동일).
+			if (inset > 0) {
+				html.style.setProperty("--bt-scrollbar-width", `${inset}px`);
 			}
 
-			if (documentScrolls && scrollbarWidth > 0) {
-				if (canReserveGutter) {
-					// 거터를 **예약**해 ICB 폭을 유지한다. 놓으면(`auto`) 폭이 변해
-					// `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼 움직인다.
-					html.style.scrollbarGutter = "stable";
-				} else {
-					// 폴백(scrollbar-gutter 미지원) - 기존 padding 보정.
-					const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
-					body.style.paddingRight = `${current + scrollbarWidth}px`;
-				}
-			}
+			body.style.overflow = "hidden";
 
-			// 잠금 중 거터가 남는 모든 경로에서 그 띠를 어둡게 한다 (#580) - 방금 예약한 경우든
-			// 앱이 이미 예약해 둔 경우든. padding 폴백은 거터가 없으므로 제외된다.
-			if (scrollbarWidth > 0 && canReserveGutter) {
-				const measured = measureCanvasColors(html, body);
-				if (measured) {
-					canvasDim = measured[0];
-					canvasBase = measured[1];
-					paintCanvas(html, 1, dimFades);
+			if (inset > 0) {
+				// 앱이 예약해 둔 거터까지 풀어야 오버레이가 그 자리를 덮는다.
+				html.style.scrollbarGutter = "auto";
+				const current = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+				body.style.paddingRight = `${current + inset}px`;
+
+				// 실제로 회수됐는지 확인한다. 앱이 `html { overflow-y: scroll }` 로 스크롤바를
+				// 못박아 두면 그 자리가 남는데, 그때 padding 까지 주면 콘텐츠만 밀린다.
+				if (measureViewportInset() > 0) {
+					body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 				}
 			}
 
 			// 잠금 여부를 CSS 로 알 수 있게 표식을 남긴다 (React 쪽과 같은 속성).
 			html.setAttribute("data-bt-scroll-locked", "");
-
-			body.style.overflow = "hidden";
 		}
 		body.dataset.btOpenModals = String(n + 1);
-
-		// 중첩 - 딤이 하나 더 겹쳤으니 거터도 그만큼 더 어두워져야 한다 (React 쪽과 같은 계산).
-		if (n > 0) {
-			paintCanvas(html, n + 1, dimFades);
-		}
 	}
 
-	/**
-	 * @param {boolean} [dimFades] 닫히는 오버레이의 딤이 페이드 아웃하는가.
-	 *
-	 * 중첩이 남아 있으면 거터를 남은 두께로 다시 칠하는데, 그 전환은 **사라지는 딤**의 커브를
-	 * 따라야 한다. Modal 은 `.is-open` 을 떼면 즉시 사라지므로 transition 을 걸면 거터만 0.2s
-	 * 늦게 밝아진다.
-	 */
-	function unlockScroll(dimFades) {
+	function unlockScroll() {
 		const body = document.body;
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
@@ -282,8 +162,6 @@
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
-			html.style.backgroundColor = body.dataset.btOriginalBackgroundColor || "";
-			html.style.transition = body.dataset.btOriginalTransition || "";
 			html.removeAttribute("data-bt-scroll-locked");
 			if (body.dataset.btOriginalScrollbarWidthVar) {
 				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
@@ -295,14 +173,8 @@
 			delete body.dataset.btOriginalGutter;
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
-			delete body.dataset.btOriginalBackgroundColor;
-			delete body.dataset.btOriginalTransition;
-			canvasDim = null;
-			canvasBase = null;
 		} else {
 			body.dataset.btOpenModals = String(n);
-			// 위에 있던 오버레이가 닫혔으니 겹침이 하나 줄었다.
-			paintCanvas(html, n, dimFades);
 		}
 	}
 
@@ -1198,7 +1070,7 @@
 			state.isOpen = false;
 			modal.classList.remove("is-open");
 			// 이 딤은 `display` 토글로 즉시 사라진다 - 남은 거터도 즉시 밝아져야 한다.
-			unlockScroll(false);
+			unlockScroll();
 
 			// 우리가 추가한 tabindex 정리 (React useFocusTrap 의 wasTabIndexAdded 와 동일)
 			if (panelTabindexAdded && panel) {
@@ -1350,7 +1222,7 @@
 
 		document.body.appendChild(overlay);
 		// 이 오버레이의 딤은 `bt-alert-fade-in` 으로 페이드한다 - 거터도 같은 길이로 따라가야 한다.
-		lockScroll(true);
+		lockScroll();
 
 		let isOpen = true;
 
@@ -1369,7 +1241,7 @@
 			setTimeout(() => {
 				overlay.remove();
 				// 이 딤은 페이드 아웃한다 - 남은 거터도 같은 커브로 밝아진다.
-				unlockScroll(true);
+				unlockScroll();
 			}, 200);
 		}
 
