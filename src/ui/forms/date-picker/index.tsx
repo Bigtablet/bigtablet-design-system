@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { Dropdown, type DropdownOption } from "../dropdown";
-import { useFieldControl } from "../field";
+import { FieldControlBoundary, useFieldControl } from "../field";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
@@ -303,40 +303,45 @@ export const DatePicker = ({
 				}
 				aria-invalid={field?.invalid || undefined}
 			>
-				<Dropdown
-					size="sm"
-					fullWidth
-					label={yearLabel}
-					placeholder={yearLabel}
-					options={yearOptions}
-					value={year ? String(year) : null}
-					onValueChange={handleYearChange}
-					disabled={disabled}
-				/>
-
-				<Dropdown
-					size="sm"
-					fullWidth
-					label={monthLabel}
-					placeholder={monthLabel}
-					options={monthOptions}
-					value={month ? String(month) : null}
-					onValueChange={handleMonthChange}
-					disabled={disabled || !year}
-				/>
-
-				{mode === "year-month-day" && (
+				{/* 내부 Dropdown 들은 Field 의 `inputId` 를 물려받으면 안 된다 - 셋이 같은 id 가
+				    되어 `<label for>` 가 전부 첫 번째 목록을 가리킨다(#629). 라벨·에러 연결은
+				    바로 위 `role="group"` 이 이미 담당한다. */}
+				<FieldControlBoundary>
 					<Dropdown
 						size="sm"
 						fullWidth
-						label={dayLabel}
-						placeholder={dayLabel}
-						options={dayOptions}
-						value={day ? String(day) : null}
-						onValueChange={handleDayChange}
-						disabled={disabled || !month}
+						label={yearLabel}
+						placeholder={yearLabel}
+						options={yearOptions}
+						value={year ? String(year) : null}
+						onValueChange={handleYearChange}
+						disabled={disabled}
 					/>
-				)}
+
+					<Dropdown
+						size="sm"
+						fullWidth
+						label={monthLabel}
+						placeholder={monthLabel}
+						options={monthOptions}
+						value={month ? String(month) : null}
+						onValueChange={handleMonthChange}
+						disabled={disabled || !year}
+					/>
+
+					{mode === "year-month-day" && (
+						<Dropdown
+							size="sm"
+							fullWidth
+							label={dayLabel}
+							placeholder={dayLabel}
+							options={dayOptions}
+							value={day ? String(day) : null}
+							onValueChange={handleDayChange}
+							disabled={disabled || !month}
+						/>
+					)}
+				</FieldControlBoundary>
 			</div>
 		</div>
 	);

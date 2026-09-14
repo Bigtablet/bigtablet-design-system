@@ -3,7 +3,7 @@
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { DatePicker } from "../date-picker";
-import { useFieldControl } from "../field";
+import { FieldControlBoundary, useFieldControl } from "../field";
 import "./style.scss";
 
 export interface DateRange {
@@ -104,29 +104,34 @@ export const DateRangePicker = ({
 				aria-describedby={field?.describedBy}
 				aria-invalid={field?.invalid || undefined}
 			>
-				<DatePicker
-					label={startLabel}
-					value={start}
-					onValueChange={handleStartChange}
-					startYear={startYear}
-					endYear={endYear}
-					minDate={minDate}
-					selectableRange={selectableRange}
-					disabled={disabled}
-					fullWidth
-				/>
-				<DatePicker
-					label={endLabel}
-					value={end}
-					onValueChange={handleEndChange}
-					startYear={startYear}
-					endYear={endYear}
-					minDate={endMinDate}
-					selectableRange={selectableRange}
-					// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.
-					disabled={disabled || !start}
-					fullWidth
-				/>
+				{/* 안쪽 DatePicker 둘은 Field 연결을 물려받으면 안 된다 - 물려받으면 둘 다 바깥
+				    라벨("표시 기간")로 이름이 붙어 시작·종료를 구분할 수 없고, 더 안쪽 Dropdown
+				    들의 id 까지 겹친다(#629). 끊으면 각자 `startLabel`·`endLabel` 로 돌아간다. */}
+				<FieldControlBoundary>
+					<DatePicker
+						label={startLabel}
+						value={start}
+						onValueChange={handleStartChange}
+						startYear={startYear}
+						endYear={endYear}
+						minDate={minDate}
+						selectableRange={selectableRange}
+						disabled={disabled}
+						fullWidth
+					/>
+					<DatePicker
+						label={endLabel}
+						value={end}
+						onValueChange={handleEndChange}
+						startYear={startYear}
+						endYear={endYear}
+						minDate={endMinDate}
+						selectableRange={selectableRange}
+						// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.
+						disabled={disabled || !start}
+						fullWidth
+					/>
+				</FieldControlBoundary>
 			</div>
 		</div>
 	);

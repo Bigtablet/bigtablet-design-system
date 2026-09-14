@@ -46,6 +46,21 @@ export function useFieldControl(): FieldControl | undefined {
 	return useContext(FieldContext);
 }
 
+/**
+ * 복합 컨트롤(`DatePicker`·`TimePicker`·`DateRangePicker`)이 **자기 내부** 컨트롤에게서
+ * `Field` 연결을 끊는 경계.
+ *
+ * `Field` 는 컨트롤 하나를 전제로 `inputId` 를 서브트리 전체에 내린다. 내부에 `Dropdown` 을
+ * 여럿 두는 복합 컨트롤에서는 그 하나가 여러 번 소비돼 **id 가 겹친다** - `<label for>` 는
+ * 문서에서 첫 번째 id 를 잡으므로 종료일의 "년" 라벨이 시작일 목록을 연다(#629).
+ *
+ * 라벨·에러·필수 연결은 복합 컨트롤이 자기 `role="group"` 요소에서 이미 처리한다. 내부
+ * 컨트롤은 각자 생성한 id 와 각자의 라벨로 돌아간다.
+ */
+export const FieldControlBoundary = ({ children }: { children: React.ReactNode }) => (
+	<FieldContext.Provider value={undefined}>{children}</FieldContext.Provider>
+);
+
 export interface FieldProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
 	/** 필드 이름. `Form` 의 `errors[name]` 을 찾는 키이자 입력 id 의 접두사 */
 	name: string;

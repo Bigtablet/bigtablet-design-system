@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.19.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.4) - 2026-09-14
+- `Field` 안에 `DatePicker`·`DateRangePicker`·`TimePicker` 를 넣으면 내부 선택 컨트롤들이 같은 `id` 를 나눠 갖던 문제를 고쳤습니다. 라벨이 전부 첫 번째 컨트롤을 가리켜, 종료일의 "년" 라벨을 눌러도 시작일 목록이 열렸습니다. 이제 각 컨트롤이 고유한 id 와 자기 라벨을 갖습니다
+- `Field` 안의 `DateRangePicker` 에서 시작·종료 그룹이 둘 다 바깥 `Field` 라벨로 이름 붙던 것을 고쳤습니다. 각각 `startLabel`·`endLabel` 로 읽힙니다
+
 ## [3.19.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.3) - 2026-09-10
 - (렌더 변경) 트리거가 스크롤로 화면 밖에 나가면 `Dropdown`·`Combobox`·`Menu`·`Tooltip` 이 닫힙니다. 가리킬 대상 없이 떠 있는 팝업이 어느 컨트롤의 것인지 읽히지 않던 문제입니다. 트리거가 조금이라도 보이는 동안에는 열려 있고, 포커스가 팝업 안에 있었으면 트리거로 되돌리되 화면을 되감지 않습니다. `Popover` 는 안에 폼을 담을 수 있어 그대로 열린 채 남습니다
 

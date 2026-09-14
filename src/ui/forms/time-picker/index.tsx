@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { Dropdown, type DropdownOption } from "../dropdown";
-import { useFieldControl } from "../field";
+import { FieldControlBoundary, useFieldControl } from "../field";
 import "./style.scss";
 
 export interface TimePickerProps {
@@ -162,26 +162,30 @@ export const TimePicker = ({
 				}
 				aria-invalid={field?.invalid || undefined}
 			>
-				<Dropdown
-					size="sm"
-					fullWidth
-					label={hourLabel}
-					placeholder={hourLabel}
-					options={hourOptions}
-					value={hour === null ? null : String(hour)}
-					onValueChange={handleHourChange}
-					disabled={disabled}
-				/>
-				<Dropdown
-					size="sm"
-					fullWidth
-					label={minuteLabel}
-					placeholder={minuteLabel}
-					options={minuteOptions}
-					value={minute === null ? null : String(minute)}
-					onValueChange={handleMinuteChange}
-					disabled={disabled || hour === null}
-				/>
+				{/* 시·분 Dropdown 이 Field 의 `inputId` 를 나눠 가지면 둘의 id 가 같아진다(#629).
+				    라벨·에러 연결은 바로 위 `role="group"` 이 담당한다. */}
+				<FieldControlBoundary>
+					<Dropdown
+						size="sm"
+						fullWidth
+						label={hourLabel}
+						placeholder={hourLabel}
+						options={hourOptions}
+						value={hour === null ? null : String(hour)}
+						onValueChange={handleHourChange}
+						disabled={disabled}
+					/>
+					<Dropdown
+						size="sm"
+						fullWidth
+						label={minuteLabel}
+						placeholder={minuteLabel}
+						options={minuteOptions}
+						value={minute === null ? null : String(minute)}
+						onValueChange={handleMinuteChange}
+						disabled={disabled || hour === null}
+					/>
+				</FieldControlBoundary>
 			</div>
 		</div>
 	);
