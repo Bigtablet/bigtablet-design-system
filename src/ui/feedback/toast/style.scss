@@ -40,7 +40,8 @@
     // BottomNav 가 없으면 --bt-bottom-inset 이 0px 이라 여백만 남는다.
     bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
     left: token.$spacing_16;
-    right: token.$spacing_16;
+    // 좁은 화면에서도 같은 보정 - 이 블록이 위 `right` 를 덮는다.
+    right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
     width: auto;
   }
 }

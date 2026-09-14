@@ -110,6 +110,19 @@
 	 * ICB 가 넓어지면 가운데 정렬한 fixed 요소가 절반만큼 움직이므로(#574), 오버레이 CSS 가
 	 * `padding-right: var(--bt-scrollbar-width)` 로 상쇄한다 - React 쪽과 같은 처리다.
 	 */
+	/**
+	 * 잠금 전 인라인 값으로 `--bt-scrollbar-width` 를 되돌린다 (React 쪽과 같은 규칙).
+	 * 소비자가 잡아둔 값이 있었으면 살리고, 없었으면 인라인 override 만 지운다.
+	 */
+	function restoreScrollbarWidthVar(html, body) {
+		const prev = body.dataset.btOriginalScrollbarWidthVar;
+		if (prev) {
+			html.style.setProperty("--bt-scrollbar-width", prev);
+		} else {
+			html.style.removeProperty("--bt-scrollbar-width");
+		}
+	}
+
 	function lockScroll() {
 		const body = document.body;
 		const html = document.documentElement;
@@ -143,8 +156,11 @@
 
 				// 실제로 회수됐는지 확인한다. 앱이 `html { overflow-y: scroll }` 로 스크롤바를
 				// 못박아 두면 그 자리가 남는데, 그때 padding 까지 주면 콘텐츠만 밀린다.
+				// 회수되지 않았으면 **변수까지** 되돌린다 - 오버레이·Toast·소비자 고정 요소가
+				// 그 값을 읽어 보정하므로, 남겨 두면 ICB 가 그대로인데 그것들만 밀린다.
 				if (measureViewportInset() > 0) {
 					body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
+					restoreScrollbarWidthVar(html, body);
 				}
 			}
 
@@ -163,11 +179,7 @@
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
 			html.removeAttribute("data-bt-scroll-locked");
-			if (body.dataset.btOriginalScrollbarWidthVar) {
-				html.style.setProperty("--bt-scrollbar-width", body.dataset.btOriginalScrollbarWidthVar);
-			} else {
-				html.style.removeProperty("--bt-scrollbar-width");
-			}
+			restoreScrollbarWidthVar(html, body);
 			delete body.dataset.btOpenModals;
 			delete body.dataset.btOriginalOverflow;
 			delete body.dataset.btOriginalGutter;

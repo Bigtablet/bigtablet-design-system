@@ -360,17 +360,18 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
 	});
 
-	it("문서가 스크롤되지 않으면 아무것도 하지 않는다", () => {
+	it("문서가 스크롤되지 않아도 예약된 거터는 회수한다", () => {
+		// 스크롤 여부가 아니라 ICB 가 좁은지로 판단한다 - 앱이 예약해 둔 거터는 문서가
+		// 스크롤되지 않아도 화면에 남고, 그대로면 오버레이가 그 자리를 못 덮는다 (React 쪽과 동일).
 		setDocumentScrolls(false);
 		setGutterSupport(true);
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		const m = Modal(modalMarkup());
 		m?.open();
 
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.body.style.paddingRight).toBe("");
-		// 폭은 노출한다 - 예약된 거터를 오버레이가 넘어가 덮어야 한다 (React 쪽과 동일).
+		expect(document.body.style.paddingRight).toBe("15px");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
 		m?.close();
@@ -382,7 +383,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		setDocumentScrolls(true);
 		setGutterSupport(true);
 		document.documentElement.style.scrollbarGutter = "stable";
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 		vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(1280);
 		expect(window.innerWidth - document.documentElement.clientWidth).toBe(0);
 

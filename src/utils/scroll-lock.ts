@@ -83,6 +83,21 @@ const measureViewportInset = () => {
 	return Math.max(0, window.innerWidth - width);
 };
 
+/**
+ * 잠금 전 인라인 값으로 `--bt-scrollbar-width` 를 되돌린다.
+ *
+ * 소비자가 직접 잡아둔 값이 있었으면 그대로 살리고, 없었으면 인라인 override 만 지워
+ * `theme.scss` 의 기본값 `0px` 으로 돌아가게 한다. 회수 실패 경로와 해제가 같은 규칙을 쓴다.
+ */
+const restoreScrollbarWidthVar = (html: HTMLElement, body: HTMLElement): void => {
+	const prev = body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
+	if (prev) {
+		html.style.setProperty(SCROLLBAR_WIDTH_VAR, prev);
+	} else {
+		html.style.removeProperty(SCROLLBAR_WIDTH_VAR);
+	}
+};
+
 /** 오버레이 하나가 열릴 때 호출. 중첩되면 카운터만 올린다. */
 export function lockBodyScroll(): void {
 	if (typeof document === "undefined") return;
@@ -119,9 +134,12 @@ export function lockBodyScroll(): void {
 
 			// 실제로 회수됐는지 확인한다. 앱이 `html { overflow-y: scroll }` 로 스크롤바를
 			// 못박아 두면 잠금 뒤에도 그 자리가 남는데, 그때 padding 까지 주면 콘텐츠만 안쪽으로
-			// 밀린다. 회수되지 않았으면 보정을 되돌린다.
+			// 밀린다. 회수되지 않았으면 보정을 통째로 되돌린다 - **변수까지**. 이 변수는
+			// "회수된 폭" 이라 오버레이·Toast·소비자 고정 요소가 전부 읽는다. 남겨 두면 ICB 가
+			// 그대로인데 그것들만 스크롤바 폭만큼 밀린다.
 			if (measureViewportInset() > 0) {
 				body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
+				restoreScrollbarWidthVar(html, body);
 			}
 		}
 
@@ -148,14 +166,7 @@ export function unlockBodyScroll(): void {
 		body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
 		html.style.scrollbarGutter = body.dataset[PREV_GUTTER] || "";
 		html.removeAttribute(LOCKED_ATTR);
-		// 소비자가 잡아둔 인라인 값이 있었으면 그대로 되돌리고, 없었으면 인라인 override 만 지워
-		// theme.scss 의 기본값 `0px` 으로 되돌아가게 한다.
-		const prevVar = body.dataset[PREV_SCROLLBAR_WIDTH_VAR];
-		if (prevVar) {
-			html.style.setProperty(SCROLLBAR_WIDTH_VAR, prevVar);
-		} else {
-			html.style.removeProperty(SCROLLBAR_WIDTH_VAR);
-		}
+		restoreScrollbarWidthVar(html, body);
 
 		delete body.dataset[COUNTER];
 		delete body.dataset[PREV_OVERFLOW];

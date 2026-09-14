@@ -92,7 +92,19 @@ describe("scroll-lock", () => {
 
 		// 스텁이 잠금 뒤에도 같은 inset 을 돌려주므로 회수 실패 경로가 그대로 재현된다.
 		expect(document.body.style.paddingRight).toBe("");
-		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+		// 변수도 남기지 않는다 - 오버레이·Toast·소비자 고정 요소가 이 값을 읽어 보정하므로,
+		// 회수하지 못했는데 노출하면 ICB 는 그대로인 채 그것들만 밀린다.
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
+	});
+
+	it("keeps the consumer's own scrollbar-width value when the reclaim fails", () => {
+		// 소비자가 직접 잡아둔 값은 회수 실패로 되돌릴 때도 살아야 한다 - 우리 보정만 걷는다.
+		document.documentElement.style.setProperty("--bt-scrollbar-width", "10px");
+		setViewportInset(15);
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("10px");
 	});
 
 	it("measures the gutter from the ICB, not from clientWidth", () => {
@@ -103,7 +115,7 @@ describe("scroll-lock", () => {
 			value: 1280,
 			configurable: true,
 		});
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 
@@ -225,7 +237,7 @@ describe("scroll-lock", () => {
 	it("restores an inline --bt-scrollbar-width the consumer had set", () => {
 		// 소비자가 이 변수를 직접 잡아둔 경우 - 오버레이 한 번 열고 닫았다고 지워지면 안 된다.
 		document.documentElement.style.setProperty("--bt-scrollbar-width", "10px");
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
