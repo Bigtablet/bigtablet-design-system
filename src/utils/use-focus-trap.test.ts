@@ -68,7 +68,7 @@ describe("useFocusTrap", () => {
 		const preventDefault = vi.spyOn(tabEvent, "preventDefault");
 
 		act(() => {
-			document.dispatchEvent(tabEvent);
+			(document.activeElement as HTMLElement).dispatchEvent(tabEvent);
 		});
 
 		expect(preventDefault).toHaveBeenCalled();
@@ -95,7 +95,7 @@ describe("useFocusTrap", () => {
 		const preventDefault = vi.spyOn(shiftTabEvent, "preventDefault");
 
 		act(() => {
-			document.dispatchEvent(shiftTabEvent);
+			(document.activeElement as HTMLElement).dispatchEvent(shiftTabEvent);
 		});
 
 		expect(preventDefault).toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe("useFocusTrap", () => {
 		const preventDefault = vi.spyOn(tabEvent, "preventDefault");
 
 		act(() => {
-			document.dispatchEvent(tabEvent);
+			(document.activeElement as HTMLElement).dispatchEvent(tabEvent);
 		});
 
 		expect(preventDefault).toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe("useFocusTrap", () => {
 		const preventDefault = vi.spyOn(enterEvent, "preventDefault");
 
 		act(() => {
-			document.dispatchEvent(enterEvent);
+			(document.activeElement as HTMLElement).dispatchEvent(enterEvent);
 		});
 
 		expect(preventDefault).not.toHaveBeenCalled();

@@ -589,6 +589,10 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
     onClose: () => console.log('Modal closed')
   });
 
+> Escape 는 열린 오버레이들이 **공유하는 스택**이 처리한다 - Modal 위에 `Alert` 를 띄우면 Escape 한 번에
+> 최상단(Alert)만 닫히고 Modal 은 남는다. React 쪽 `useOverlayEscape` 와 같은 규약이다. 이전에는 오버레이마다
+> 자기 document 리스너를 걸어 둘이 함께 닫혔다.
+
   // API
   myModal.open();   // 열기
   myModal.close();  // 닫기

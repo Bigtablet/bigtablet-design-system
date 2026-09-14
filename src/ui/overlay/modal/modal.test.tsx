@@ -59,6 +59,26 @@ describe("Modal", () => {
 		expect(panel).toHaveStyle({ transform: "scale(1) translateY(0px)" });
 	});
 
+	it("keeps Tab inside the panel even though the panel stops other keys from bubbling", () => {
+		// 패널은 Escape 외의 키를 stopPropagation 으로 막는다(소비자 단축키 격리). React 는 그 호출을
+		// 포탈 컨테이너(body)에서 네이티브 이벤트에 전달하므로 document 에 건 트랩은 Tab 을 못 받았다 -
+		// 실측으로 마지막 탭 정지에서 Tab 을 치면 포커스가 딤 뒤 트리거로 나갔다. 트랩은 컨테이너에 건다.
+		render(
+			<Modal open onClose={() => {}} title="T" showCloseIcon={false}>
+				<button type="button">first</button>
+				<button type="button">last</button>
+			</Modal>,
+		);
+		const last = screen.getByRole("button", { name: "last" });
+		last.focus();
+		fireEvent.keyDown(last, { key: "Tab" });
+		// 첫 탭 정지는 스크롤 wrapper(.modal_body, tabIndex 0)다.
+		expect(document.activeElement).toHaveClass("modal_body");
+
+		fireEvent.keyDown(document.activeElement as HTMLElement, { key: "Tab", shiftKey: true });
+		expect(document.activeElement).toBe(last);
+	});
+
 	it("renders when open", () => {
 		render(
 			<Modal open onClose={() => {}}>

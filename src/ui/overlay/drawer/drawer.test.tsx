@@ -23,6 +23,20 @@ describe("Drawer", () => {
 		vi.unstubAllGlobals();
 	});
 
+	it("keeps Tab inside the panel even though the panel stops other keys from bubbling", () => {
+		// Modal 과 같은 결함 - 트랩이 document 에 있으면 패널의 stopPropagation 이 Tab 을 먹는다.
+		render(
+			<Drawer open onClose={() => {}} title="T" showCloseIcon={false}>
+				<button type="button">first</button>
+				<button type="button">last</button>
+			</Drawer>,
+		);
+		const last = screen.getByRole("button", { name: "last" });
+		last.focus();
+		fireEvent.keyDown(last, { key: "Tab" });
+		expect(document.activeElement).toHaveClass("drawer_body");
+	});
+
 	it("renders when open", () => {
 		render(
 			<Drawer open onClose={() => {}}>

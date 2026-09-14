@@ -419,6 +419,22 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.style.paddingRight).toBe("");
 	});
 
+	it("Escape 는 최상단 오버레이만 닫는다 - Modal 위의 Alert", () => {
+		// 오버레이마다 document 리스너를 걸면 Escape 한 번에 둘이 같이 닫혔다(실측). React 의
+		// overlay-stack 과 같은 규약으로, 공유 스택의 최상단만 닫는다.
+		setViewportInset(0);
+		const m = Modal(modalMarkup("stack"));
+		m?.open();
+		Alert({ title: "confirm?" });
+		expect(document.body.dataset.btOpenModals).toBe("2");
+
+		pressEscape();
+		expect(m?.isOpen()).toBe(true);
+
+		pressEscape();
+		expect(m?.isOpen()).toBe(false);
+	});
+
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
 		setViewportInset(0);
 		const m = Modal(modalMarkup());

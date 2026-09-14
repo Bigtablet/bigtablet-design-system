@@ -107,6 +107,19 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("10px");
 	});
 
+	it("locks the root element too, so an app with html overflow set still stops scrolling", () => {
+		// body 의 overflow 는 html 이 visible 일 때만 뷰포트로 전파된다. `html { overflow-x: hidden }`
+		// 같은 리셋이 있으면 body 만 잠가도 문서가 스크롤됐다(실측: 잠금 뒤 scrollTo 가 먹힘).
+		document.documentElement.style.overflow = "auto";
+		setViewportInset(0);
+
+		lockBodyScroll();
+		expect(document.documentElement.style.overflow).toBe("hidden");
+
+		unlockBodyScroll();
+		expect(document.documentElement.style.overflow).toBe("auto");
+	});
+
 	it("measures the gutter from the ICB, not from clientWidth", () => {
 		// `scrollbar-gutter: stable` 에서는 clientWidth 가 innerWidth 와 같게 보고한다(Chromium
 		// 실측). 그래서 폭은 fixed 프로브로 잰다.

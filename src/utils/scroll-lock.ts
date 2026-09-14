@@ -44,6 +44,8 @@ const COUNTER = "openModals";
 /** 원복용 스냅샷 - 전부 **인라인** 값을 저장한다. 계산값을 저장해 되쓰면 원래 없던 인라인
  *  스타일이 생겨 소비자 스타일시트 규칙을 덮어버린다. */
 const PREV_OVERFLOW = "originalOverflow";
+/** `html` 의 인라인 overflow 스냅샷 - 아래 lock 주석 참고. */
+const PREV_HTML_OVERFLOW = "originalHtmlOverflow";
 const PREV_GUTTER = "originalScrollbarGutter";
 const PREV_PADDING_RIGHT = "originalPaddingRight";
 /** 소비자가 이 변수를 직접 인라인으로 잡아둔 경우가 있으므로 그 값도 스냅샷한다 - 잠금 한 번에
@@ -111,6 +113,7 @@ export function lockBodyScroll(): void {
 		const inset = measureViewportInset();
 
 		body.dataset[PREV_OVERFLOW] = body.style.overflow;
+		body.dataset[PREV_HTML_OVERFLOW] = html.style.overflow;
 		body.dataset[PREV_GUTTER] = html.style.scrollbarGutter;
 		body.dataset[PREV_PADDING_RIGHT] = body.style.paddingRight;
 		body.dataset[PREV_SCROLLBAR_WIDTH_VAR] = html.style.getPropertyValue(SCROLLBAR_WIDTH_VAR);
@@ -122,6 +125,11 @@ export function lockBodyScroll(): void {
 		}
 
 		body.style.overflow = "hidden";
+		// `html` 에도 건다. `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로,
+		// 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을
+		// `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가 그대로 스크롤된다 - 실측으로 잠금 뒤
+		// `scrollTo(900)` 이 먹혔다. html 이 `hidden` 이면 어느 쪽이 스크롤러든 뷰포트가 잠긴다.
+		html.style.overflow = "hidden";
 
 		if (inset > 0) {
 			// 앱이 예약해 둔 거터까지 풀어야 오버레이가 그 자리를 덮는다. 인라인이라
@@ -163,6 +171,7 @@ export function unlockBodyScroll(): void {
 	// 음수로 새지 않게 한다.
 	if (remaining <= 0) {
 		body.style.overflow = body.dataset[PREV_OVERFLOW] || "";
+		html.style.overflow = body.dataset[PREV_HTML_OVERFLOW] || "";
 		body.style.paddingRight = body.dataset[PREV_PADDING_RIGHT] || "";
 		html.style.scrollbarGutter = body.dataset[PREV_GUTTER] || "";
 		html.removeAttribute(LOCKED_ATTR);
@@ -170,6 +179,7 @@ export function unlockBodyScroll(): void {
 
 		delete body.dataset[COUNTER];
 		delete body.dataset[PREV_OVERFLOW];
+		delete body.dataset[PREV_HTML_OVERFLOW];
 		delete body.dataset[PREV_GUTTER];
 		delete body.dataset[PREV_PADDING_RIGHT];
 		delete body.dataset[PREV_SCROLLBAR_WIDTH_VAR];

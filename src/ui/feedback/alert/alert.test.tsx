@@ -20,6 +20,57 @@ const renderWithProvider = (ui: React.ReactElement) => {
 };
 
 describe("Alert", () => {
+	it("keeps Tab inside the alert even though the panel stops other keys from bubbling", () => {
+		const T = () => {
+			const { showAlert } = useAlert();
+			return (
+				<button type="button" onClick={() => showAlert({ title: "A", message: "m", showCancel: true })}>
+					open
+				</button>
+			);
+		};
+		render(
+			<AlertProvider>
+				<T />
+			</AlertProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "open" }));
+		const confirm = screen.getByRole("button", { name: "확인" });
+		confirm.focus();
+		fireEvent.keyDown(confirm, { key: "Tab" });
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "취소" }));
+	});
+
+	it("does not cancel when a drag that started on the panel is released on the overlay", () => {
+		// 메시지를 드래그로 선택하다 오버레이에서 놓으면 `click` 이 공통 조상(오버레이)에 디스패치된다.
+		// target 검사만으로는 진짜 오버레이 클릭과 구분되지 않는다 - Modal 과 같은 pointerdown 판정.
+		const onCancel = vi.fn();
+		const T = () => {
+			const { showAlert } = useAlert();
+			return (
+				<button type="button" onClick={() => showAlert({ title: "A", onCancel })}>
+					open
+				</button>
+			);
+		};
+		render(
+			<AlertProvider>
+				<T />
+			</AlertProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "open" }));
+		const panel = screen.getByRole("alertdialog");
+		const overlay = panel.parentElement as HTMLElement;
+		fireEvent.pointerDown(panel);
+		fireEvent.click(overlay);
+		expect(onCancel).not.toHaveBeenCalled();
+
+		// 진짜 오버레이 클릭(누름·놓음 모두 오버레이)은 취소다.
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		expect(onCancel).toHaveBeenCalledTimes(1);
+	});
+
 	it("throws error when useAlert is used outside provider", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -221,6 +272,8 @@ describe("Alert", () => {
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		const overlay = screen.getByRole("alertdialog").parentElement as HTMLElement;
+		// 진짜 오버레이 클릭 = 누름·놓음 모두 오버레이. 패널에서 시작한 드래그와 구분한다.
+		fireEvent.pointerDown(overlay);
 		fireEvent.click(overlay);
 		expect(onCancel).toHaveBeenCalledTimes(2);
 	});
@@ -231,6 +284,8 @@ describe("Alert", () => {
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		const overlay = screen.getByRole("alertdialog").parentElement as HTMLElement;
+		// 진짜 오버레이 클릭 = 누름·놓음 모두 오버레이. 패널에서 시작한 드래그와 구분한다.
+		fireEvent.pointerDown(overlay);
 		fireEvent.click(overlay);
 
 		expect(onCancel).not.toHaveBeenCalled();
