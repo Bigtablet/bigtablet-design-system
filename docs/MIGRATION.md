@@ -31,6 +31,44 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
+## v3.20.0 (Dropdown 트리거 role = combobox)
+
+타입·prop 변경은 없습니다. 바뀌는 것은 **접근성 트리**이고, 그래서 `getByRole` 로 트리거를 찾는 테스트가 깨집니다.
+
+### 무엇이 바뀌나
+
+`Dropdown` 의 트리거가 `role="combobox"` 를 갖습니다(APG select-only combobox). `DatePicker`·`TimePicker`·`DateRangePicker` 는 내부가 `Dropdown` 이라 함께 바뀝니다.
+
+이유는 `aria-required` 입니다. `button` role 은 이 속성을 지원하지 않아, `Field` 에 `required` 를 줘도 필수 여부가 보조기술에 **전혀 닿지 않았습니다** — 화면의 `*` 는 `aria-hidden` 입니다. `combobox` 는 지원하는 role 이고, 이미 `aria-expanded`·`aria-controls`·`aria-haspopup="listbox"` 를 그 패턴대로 쓰고 있었습니다.
+
+### 테스트 수정
+
+```diff
+- screen.getByRole("button", { name: "권한" })
++ screen.getByRole("combobox", { name: "권한" })
+```
+
+`searchable` Dropdown 을 **연 상태**에서는 combobox 가 둘입니다 — 트리거와 패널의 검색 입력. 이름으로 가르거나(`{ name: "검색…" }`) `getAllByRole("combobox")[0]` 로 트리거를 집으세요.
+
+### 트리거의 접근 가능한 이름이 `라벨 + 현재 값` 이 됩니다
+
+`button` 은 내용으로 이름이 붙지만 `combobox` 는 붙지 않습니다. 그대로 두면 값을 골라도 이름에 반영되지 않으므로, 컴포넌트가 값 요소를 `aria-labelledby` 로 함께 가리킵니다.
+
+```
+label="권한", 미선택         → "권한 선택…"
+label="권한", "관리자" 선택   → "권한 관리자"
+라벨 없음, 미선택            → "선택…"        (button 이던 때와 같음)
+```
+
+이름으로 조회하는 테스트는 값이 이름에 들어온다는 점을 반영해야 합니다.
+
+```diff
+- screen.getByRole("button", { name: "권한" })
++ screen.getByRole("combobox", { name: /권한/ })
+```
+
+---
+
 ## v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)
 
 동작 변경이 두 건입니다. 하나는 React(`Prose size="lg"`), 하나는 Vanilla(z-index)입니다.

@@ -302,6 +302,10 @@ export const Dropdown = (props: DropdownProps) => {
 	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
 	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
 	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
+	// 이름의 앞부분. 직접 준 `label` 이 있으면 그 요소, `Field` 안이면 Field 의 라벨.
+	// 둘 다 없으면 값만으로 이름이 만들어진다.
+	const labelledBy = label ? `${dropdownId}_label` : field?.labelId;
+
 	const listStyle = useSpringPresence({
 		visible: isOpen,
 		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
@@ -310,7 +314,7 @@ export const Dropdown = (props: DropdownProps) => {
 	return (
 		<div ref={wrapperRef} className={rootClassName}>
 			{label && (
-				<label htmlFor={dropdownId} className="dropdown_label">
+				<label id={`${dropdownId}_label`} htmlFor={dropdownId} className="dropdown_label">
 					{label}
 				</label>
 			)}
@@ -321,17 +325,39 @@ export const Dropdown = (props: DropdownProps) => {
 					id={dropdownId}
 					type="button"
 					className={cn("dropdown_control", { is_disabled: disabled })}
+					// APG select-only combobox - `button` role 로는 `aria-required` 를 붙일 수 없어
+					// `Field` 의 필수 여부가 보조기술에 전혀 닿지 않았다(#632. 화면의 `*` 는
+					// `aria-hidden` 이다). `combobox` 는 그 속성을 지원하는 role 이고, 이미 열림
+					// 상태(`aria-expanded`)와 팝업(`aria-controls`)을 그 패턴대로 쓰고 있었다.
+					// `Combobox` 컴포넌트의 입력과도 같은 role 로 맞춰진다.
+					role="combobox"
+					// 이름 = **라벨 + 현재 값**. `combobox` 는 `button` 과 달리 내용으로 이름이 붙지
+					// 않아서, 값 span 을 `aria-labelledby` 로 직접 가리키지 않으면 "2024" 를 골라도
+					// 계속 "년" 으로만 읽힌다(APG select-only combobox 예제와 같은 구성). 라벨이
+					// 없으면 값만 남아 `button` 이던 때와 같은 이름이 된다.
+					aria-labelledby={[labelledBy, `${dropdownId}_value`].filter(Boolean).join(" ")}
 					aria-haspopup="listbox"
 					aria-expanded={isOpen}
+					// 열린 동안 포커스는 트리거에 남고 활성 옵션만 바뀐다(검색 모드는 입력이 대신
+					// 갖는다). 안 붙이면 화살표로 옮긴 활성 옵션이 시각적으로만 강조된다.
+					aria-activedescendant={
+						!searchable && isOpen && activeIndex >= 0 && visibleOptions[activeIndex]
+							? `${dropdownId}_option_${activeIndex}`
+							: undefined
+					}
 					aria-describedby={field?.describedBy}
 					aria-invalid={field?.invalid || undefined}
+					aria-required={field?.required || undefined}
 					// 닫힌 상태에서는 listbox 가 unmount 라 dangling IDREF 방지 위해 열렸을 때만 지정
 					aria-controls={isOpen ? `${dropdownId}_listbox` : undefined}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
 					onKeyDown={onControlKeyDown}
 					disabled={disabled}
 				>
-					<span className={showValue ? "dropdown_value" : "dropdown_placeholder"}>
+					<span
+						id={`${dropdownId}_value`}
+						className={showValue ? "dropdown_value" : "dropdown_placeholder"}
+					>
 						{controlText}
 					</span>
 					<span className={cn("dropdown_icon", { dropdown_icon_open: isOpen })} aria-hidden="true">
@@ -393,6 +419,9 @@ export const Dropdown = (props: DropdownProps) => {
 									role="combobox"
 									aria-autocomplete="list"
 									aria-expanded={isOpen}
+									// 검색 모드에서는 포커스가 이 입력에 있다 - 트리거에만 붙이면
+									// 여기 서 있는 사용자에게 필수 여부가 안 들린다(#632).
+									aria-required={field?.required || undefined}
 									aria-controls={`${dropdownId}_listbox`}
 									aria-activedescendant={
 										activeIndex >= 0 && visibleOptions[activeIndex]
