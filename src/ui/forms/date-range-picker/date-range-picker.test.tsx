@@ -4,7 +4,7 @@ import { Field } from "../field";
 import { DateRangePicker } from "./index";
 
 // DatePicker 는 Dropdown 3개(연·월·일)를 그린다. 두 벌이니 버튼 6개.
-const triggers = () => screen.getAllByRole("button");
+const triggers = () => screen.getAllByRole("combobox");
 const pick = (index: number, label: string) => {
 	fireEvent.click(triggers()[index]);
 	fireEvent.click(screen.getByRole("option", { name: label }));

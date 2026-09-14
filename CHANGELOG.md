@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.20.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.20.0) - 2026-09-14
+- `Dropdown` 이 이제 필수 여부를 보조기술에 알립니다. `Field` 에 `required` 를 줘도 스크린리더에는 그 정보가 전혀 닿지 않았습니다 - 화면의 `*` 는 낭독되지 않고, 트리거의 `button` role 은 `aria-required` 를 지원하지 않습니다. 트리거를 APG select-only combobox(`role="combobox"`)로 옮겨 해결했고, `DatePicker`·`TimePicker`·`DateRangePicker` 도 내부가 `Dropdown` 이라 함께 적용됩니다
+- 목록을 화살표 키로 훑을 때 활성 항목이 보조기술에 전달됩니다(`aria-activedescendant`). 지금까지는 시각적으로만 강조됐습니다
+- 트리거의 접근 가능한 이름이 `라벨 + 현재 값` 이 됩니다(예: "권한 관리자"). **`getByRole("button")` 으로 트리거를 찾는 테스트는 `getByRole("combobox")` 로 바꿔야 합니다** - 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.20.0 섹션에 있습니다
+
 ## [3.19.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.19.4) - 2026-09-14
 - `Field` 안에 `DatePicker`·`DateRangePicker`·`TimePicker` 를 넣으면 내부 선택 컨트롤들이 같은 `id` 를 나눠 갖던 문제를 고쳤습니다. 라벨이 전부 첫 번째 컨트롤을 가리켜, 종료일의 "년" 라벨을 눌러도 시작일 목록이 열렸습니다. 이제 각 컨트롤이 고유한 id 와 자기 라벨을 갖습니다
 - `Field` 안의 `DateRangePicker` 에서 시작·종료 그룹이 둘 다 바깥 `Field` 라벨로 이름 붙던 것을 고쳤습니다. 각각 `startLabel`·`endLabel` 로 읽힙니다

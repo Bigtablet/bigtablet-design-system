@@ -27,12 +27,12 @@ describe("DatePicker", () => {
 
 	it("renders 3 select buttons in year-month-day mode", () => {
 		render(<DatePicker mode="year-month-day" onChange={() => {}} />);
-		expect(screen.getAllByRole("button")).toHaveLength(3);
+		expect(screen.getAllByRole("combobox")).toHaveLength(3);
 	});
 
 	it("renders 2 select buttons in year-month mode", () => {
 		render(<DatePicker mode="year-month" onChange={() => {}} />);
-		expect(screen.getAllByRole("button")).toHaveLength(2);
+		expect(screen.getAllByRole("combobox")).toHaveLength(2);
 	});
 
 	it("calls onChange when year is selected (year-month mode)", () => {
@@ -40,7 +40,7 @@ describe("DatePicker", () => {
 		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
 
 		// 첫 Select 버튼(연도) 열고 "2024" 클릭
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[0]);
 		fireEvent.click(screen.getByText("2024"));
 
@@ -51,7 +51,7 @@ describe("DatePicker", () => {
 		const onChange = vi.fn();
 		render(<DatePicker value="2024" onChange={onChange} />);
 
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		// month = buttons[1]
 		fireEvent.click(buttons[1]);
 		fireEvent.click(screen.getByText("06"));
@@ -63,7 +63,7 @@ describe("DatePicker", () => {
 		const onChange = vi.fn();
 		render(<DatePicker value="2024-06" onChange={onChange} />);
 
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[2]);
 		fireEvent.click(screen.getByText("15"));
 
@@ -72,25 +72,25 @@ describe("DatePicker", () => {
 
 	it("shows selected year in button label", () => {
 		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[0]).toHaveTextContent("2024");
 	});
 
 	it("shows selected month in button label", () => {
 		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[1]).toHaveTextContent("06");
 	});
 
 	it("shows selected day in button label", () => {
 		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[2]).toHaveTextContent("15");
 	});
 
 	it("disables all selects when disabled", () => {
 		render(<DatePicker disabled onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		buttons.forEach((btn) => {
 			expect(btn).toBeDisabled();
 		});
@@ -98,13 +98,13 @@ describe("DatePicker", () => {
 
 	it("disables month select when year is not selected", () => {
 		render(<DatePicker onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[1]).toBeDisabled();
 	});
 
 	it("disables day select when month is not selected", () => {
 		render(<DatePicker value="2024" onChange={() => {}} />);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[2]).toBeDisabled();
 	});
 
@@ -181,7 +181,7 @@ describe("DatePicker", () => {
 				onValueChange={onValueChange}
 			/>,
 		);
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[0]);
 		fireEvent.click(screen.getByText("2024"));
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
@@ -200,7 +200,7 @@ describe("DatePicker", () => {
 			/>,
 		);
 
-		const buttons = screen.getAllByRole("button");
+		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[0]);
 		fireEvent.click(screen.getByText("2024"));
 
@@ -214,7 +214,7 @@ describe("DatePicker", () => {
 		// (월·일 제한은 `year === min.year` 일 때만 걸린다). 실제로 1950 이 첫 항목이었다.
 		render(<DatePicker value="2026-05-01" minDate="2020-01-01" onValueChange={vi.fn()} />);
 
-		fireEvent.click(screen.getAllByRole("button")[0]);
+		fireEvent.click(screen.getAllByRole("combobox")[0]);
 		const years = screen.getAllByRole("option").map((o) => o.textContent);
 
 		expect(years[0]).toBe("2020");

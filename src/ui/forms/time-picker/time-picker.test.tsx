@@ -2,9 +2,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TimePicker } from "./index";
 
-// Dropdown 트리거는 button 이다 (role=combobox 는 searchable 입력 쪽). 순서로 고른다 - 시, 분.
-const hourTrigger = () => screen.getAllByRole("button")[0];
-const minuteTrigger = () => screen.getAllByRole("button")[1];
+// Dropdown 트리거는 `combobox` 다(#632 - `button` role 로는 aria-required 를 못 붙인다).
+// 이름이 라벨 + 현재 값이라 값에 따라 바뀌므로, 순서로 고른다 - 시, 분.
+const hourTrigger = () => screen.getAllByRole("combobox")[0];
+const minuteTrigger = () => screen.getAllByRole("combobox")[1];
 
 /** Dropdown 을 열고 보이는 옵션 라벨을 읽는다 */
 const openAndRead = (trigger: HTMLElement) => {
