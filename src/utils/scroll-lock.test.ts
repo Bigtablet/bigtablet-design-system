@@ -1,10 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-	lockBodyScroll,
-	reportOverlayDim,
-	unlockBodyScroll,
-	unregisterOverlayDim,
-} from "./scroll-lock";
+import { lockBodyScroll, unlockBodyScroll } from "./scroll-lock";
 
 /**
  * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 `getBoundingClientRect().width` 가 0 이다.
@@ -13,19 +8,26 @@ import {
  * 이 스텁이 `clientWidth` 가 아니라 프로브를 세우는 것이 핵심이다 - `scrollbar-gutter: stable`
  * 에서는 `clientWidth` 가 거터를 포함해 보고하므로(Chromium 실측) 거기서는 잴 수 없다.
  */
-const setViewportInset = (inset: number) => {
+const setViewportInset = (inset: number, options: { afterLock?: number } = {}) => {
 	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true, writable: true });
-	vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
-		width: 1280 - inset,
-		height: 0,
-		top: 0,
-		left: 0,
-		right: 1280 - inset,
-		bottom: 0,
-		x: 0,
-		y: 0,
-		toJSON: () => ({}),
-	} as DOMRect);
+	// 잠금은 두 번 잰다 - 걸기 전(회수할 폭)과 건 뒤(실제로 회수됐는지). `afterLock` 으로 두
+	// 번째 값을 따로 세운다. 기본은 "그대로 남았다" - 브라우저가 스크롤바를 못박은 경우다.
+	const widths = [1280 - inset, 1280 - (options.afterLock ?? inset)];
+	let call = 0;
+	vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(() => {
+		const width = widths[Math.min(call++, widths.length - 1)];
+		return {
+			width,
+			height: 0,
+			top: 0,
+			left: 0,
+			right: width,
+			bottom: 0,
+			x: 0,
+			y: 0,
+			toJSON: () => ({}),
+		} as DOMRect;
+	});
 };
 
 /**
@@ -43,23 +45,9 @@ const setDocumentScrolls = (scrolls: boolean) => {
 	});
 };
 
-/**
- * `scrollbar-gutter` 지원 여부. jsdom 의 `CSS` 에는 `supports` 가 아예 없어서 - 그래서
- * 구현 쪽에 `typeof CSS.supports === "function"` 가드가 있다 - 스텁을 직접 심는다.
- * 지원을 끄면 Safari 18.2 미만의 padding 폴백 경로가 재현된다.
- */
-const setGutterSupport = (supported: boolean) => {
-	Object.defineProperty(globalThis.CSS, "supports", {
-		value: (condition: string) => (condition.includes("scrollbar-gutter") ? supported : false),
-		configurable: true,
-		writable: true,
-	});
-};
-
 describe("scroll-lock", () => {
 	beforeEach(() => {
 		setDocumentScrolls(true);
-		setGutterSupport(true);
 		document.body.style.cssText = "";
 		document.documentElement.style.cssText = "";
 	});
@@ -81,18 +69,42 @@ describe("scroll-lock", () => {
 		expect(document.body.dataset.openModals).toBe("1");
 	});
 
-	it("reserves the gutter instead of releasing it, and adds no padding", () => {
-		// 놓으면(`auto`) ICB 폭이 변해 `position: fixed; left: 50%` 요소가 스크롤바 폭의 절반만큼
-		// 움직인다(#574 - 실측 592.5 → 600). 예약하면 폭이 그대로라 padding 보정도 불필요하다.
+	it("releases the reserved gutter and keeps the width as body padding", () => {
+		// 거터가 남으면 그 자리는 캔버스가 칠하는 영역이라 오버레이가 덮지 못한다 - 단색 배경
+		// 에서만 색으로 흉내낼 수 있었고 표·카드가 닿으면 세로선이 남았다(#635).
 		document.documentElement.style.scrollbarGutter = "stable";
+		setViewportInset(15, { afterLock: 0 });
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
+		// 오버레이가 자기 정렬을 상쇄하는 데 쓰고, 소비자도 자기 fixed 요소에 같은 보정을 건다.
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+	});
+
+	it("reverts the padding when the space was not actually reclaimed", () => {
+		// 앱이 `html { overflow-y: scroll }` 로 스크롤바를 못박아 두면 잠금 뒤에도 그 자리가
+		// 남는다. 그때까지 padding 을 주면 콘텐츠만 안쪽으로 밀린다.
 		setViewportInset(15);
 
 		lockBodyScroll();
 
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		// 스텁이 잠금 뒤에도 같은 inset 을 돌려주므로 회수 실패 경로가 그대로 재현된다.
 		expect(document.body.style.paddingRight).toBe("");
-		// 오버레이가 예약된 거터를 넘어가 덮을 수 있도록 폭은 계속 노출한다.
-		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
+		// 변수도 남기지 않는다 - 오버레이·Toast·소비자 고정 요소가 이 값을 읽어 보정하므로,
+		// 회수하지 못했는데 노출하면 ICB 는 그대로인 채 그것들만 밀린다.
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("");
+	});
+
+	it("keeps the consumer's own scrollbar-width value when the reclaim fails", () => {
+		// 소비자가 직접 잡아둔 값은 회수 실패로 되돌릴 때도 살아야 한다 - 우리 보정만 걷는다.
+		document.documentElement.style.setProperty("--bt-scrollbar-width", "10px");
+		setViewportInset(15);
+
+		lockBodyScroll();
+
+		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("10px");
 	});
 
 	it("measures the gutter from the ICB, not from clientWidth", () => {
@@ -103,7 +115,7 @@ describe("scroll-lock", () => {
 			value: 1280,
 			configurable: true,
 		});
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 
@@ -125,186 +137,45 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.scrollbarGutter).toBe("");
 	});
 
-	it("adds to the consumer's existing body padding in the fallback path", () => {
-		// `scrollbar-gutter` 미지원(Safari 18.2 미만)에서만 padding 을 쓴다. 덮어쓰면 소비자가
-		// 준 여백만큼 콘텐츠가 되레 움직인다.
-		setGutterSupport(false);
+	it("adds to the consumer's existing body padding", () => {
+		// 덮어쓰면 소비자가 준 여백만큼 콘텐츠가 되레 움직인다.
 		document.body.style.paddingRight = "20px";
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 
 		expect(document.body.style.paddingRight).toBe("35px");
-		// 폴백에서는 거터를 건드리지 않는다.
-		expect(document.documentElement.style.scrollbarGutter).toBe("");
 	});
 
-	it("does nothing when the document does not scroll", () => {
-		// 앱 셸이 내부 컨테이너를 스크롤 컨테이너로 삼으면 문서에는 스크롤바가 없다. 그때
-		// 보정하면 없는 스크롤바를 없애느라 레이아웃이 흔들린다 - 예약된 거터를 스크롤바로
-		// 오인해 실제로 그렇게 됐다(#574).
+	it("reclaims a reserved gutter even when the document does not scroll", () => {
+		// 앱 셸이 내부 컨테이너를 스크롤 컨테이너로 삼아도 앱이 예약해 둔 거터는 화면에 남아
+		// 있다. 스크롤 여부가 아니라 **ICB 가 좁은가**로 판단한다 - 좁으면 오버레이가 못 덮는다.
 		setDocumentScrolls(false);
 		document.documentElement.style.scrollbarGutter = "stable";
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
-		expect(document.body.style.paddingRight).toBe("");
-		// 폭은 노출한다 - 앱이 예약해 둔 거터는 화면에 남아 있고 오버레이가 넘어가 덮어야 한다.
-		// 노출하지 않으면 dim 옆에 밝은 띠가 그대로 남는다.
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 	});
 
-	it("dims the reserved gutter by compositing the dim onto the canvas", () => {
-		// 예약된 거터는 캔버스(루트 배경)가 칠하는 영역이라 오버레이가 덮을 수 없다(#580).
-		// 딤을 지금 보이는 캔버스 색 위에 합성해 루트 배경색으로 심는 것이 유일한 방법이다.
-		setViewportInset(15);
-		// 기본값(검정 50%)이 아닌 색을 일부러 넣는다 - 폴백 기본값과 같으면 딤 색을 엉뚱한
-		// 프로퍼티에서 읽어도 드러나지 않는다.
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 255, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
-
-		lockBodyScroll();
-
-		// rgba(0,0,255,.5) over rgb(255,233,168) = (127.5, 116.5, 211.5) → 반올림
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(128, 117, 212)");
-		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(true);
-
-		unlockBodyScroll();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
-		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
-	});
-
-	it("tracks the dim fade instead of jumping to the final color", () => {
-		// 잠금 순간 최종색으로 점프하면 딤이 페이드 인하는 동안 거터만 먼저 어두워져 오른쪽에
-		// 어두운 띠가 보인다(#583). 거터 색은 보고된 진행도를 따라야 한다.
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-		const owner = {};
-
-		reportOverlayDim(owner, 0);
-		lockBodyScroll();
-
-		// 진행도 0 - 딤이 아직 투명하니 거터도 원래 색이다.
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(244, 244, 244)");
-
-		reportOverlayDim(owner, 0.5);
-		// 244 * (1 - 0.5 * 0.5) = 183
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(183, 183, 183)");
-
-		reportOverlayDim(owner, 1);
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-	});
-
-	it("stacks the dim of nested overlays", () => {
-		// Modal 위 Alert 는 딤이 실제로 겹쳐 페이지가 더 어두워진다 - 거터도 같아야 한다.
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-		const modal = {};
-		const alert = {};
-
-		reportOverlayDim(modal, 1);
-		lockBodyScroll();
-		reportOverlayDim(alert, 1);
-
-		// 1 - (1 - 0.5)^2 = 0.75 → 244 * 0.25 = 61
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
-
-		// 위 오버레이가 닫히면 겹침이 풀린다.
-		reportOverlayDim(alert, 0);
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-	});
-
-	it("drops a nested overlay's report when it unmounts under a parent lock", () => {
-		// 부모 잠금이 남아 있으면 마지막 해제의 `clear()` 가 돌지 않는다 - 닫힌 자식이 스스로
-		// 빠지지 않으면 죽은 항목이 쌓이고 합성이 매번 그것까지 순회한다.
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-		const parent = {};
-
-		reportOverlayDim(parent, 1);
-		lockBodyScroll();
-
-		// 자식을 열고 닫기를 반복해도 부모 한 겹으로 돌아와야 한다.
-		for (let i = 0; i < 3; i++) {
-			const child = {};
-			reportOverlayDim(child, 1);
-			lockBodyScroll();
-			expect(document.documentElement.style.backgroundColor).toBe("rgb(61, 61, 61)");
-
-			unlockBodyScroll();
-			unregisterOverlayDim(child);
-			expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-		}
-	});
-
-	it("forgets reported progress once the lock is released", () => {
-		// 남겨두면 다음 잠금이 남의 진행도로 시작한다.
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(244, 244, 244)";
-		const first = {};
-
-		reportOverlayDim(first, 1);
-		lockBodyScroll();
-		unlockBodyScroll();
-
-		// 보고자가 없는 두 번째 잠금은 진행도 1 로 본다 - `lockBodyScroll` 을 직접 부르는 소비자.
-		lockBodyScroll();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(122, 122, 122)");
-	});
-
-	it("falls back to the body background when the root is transparent", () => {
-		// 루트가 투명하면 `body` 배경이 캔버스로 전파된다 - 거터에 보이는 색도 그것이다.
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.body.style.backgroundColor = "rgb(0, 0, 200)";
-
-		lockBodyScroll();
-
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(0, 0, 100)");
-
-		unlockBodyScroll();
-
-		// 원래 인라인 배경이 없었으므로 인라인 값도 남지 않아야 한다.
-		expect(document.documentElement.style.backgroundColor).toBe("");
-	});
-
-	it("does not paint the canvas on the padding fallback - there is no gutter there", () => {
-		setGutterSupport(false);
-		setViewportInset(15);
-		document.documentElement.style.setProperty("--bt-color-bg-overlay", "rgba(0, 0, 0, 0.5)");
-		document.documentElement.style.backgroundColor = "rgb(255, 233, 168)";
-
-		lockBodyScroll();
-
-		expect(document.body.style.paddingRight).toBe("15px");
-		expect(document.documentElement.style.backgroundColor).toBe("rgb(255, 233, 168)");
-	});
-
-	it("uses the browser's scrolling element, not documentElement", () => {
-		// 앱이 `html` 에 overflow 를 걸면 `body` 가 실제 스크롤 요소가 된다. documentElement 를
-		// 하드코딩하면 그 구성에서 판정이 어긋난다.
+	it("works when the app scrolls body instead of documentElement", () => {
+		// 앱이 `html` 에 overflow 를 걸면 `body` 가 실제 스크롤 요소가 된다. 폭 판정은 ICB 만
+		// 보므로 그 구성에서도 같은 경로를 탄다.
 		Object.defineProperty(document, "scrollingElement", {
 			value: document.body,
 			configurable: true,
 		});
-		Object.defineProperty(document.body, "scrollHeight", { value: 4000, configurable: true });
-		Object.defineProperty(document.body, "clientHeight", { value: 800, configurable: true });
-		// documentElement 쪽은 스크롤되지 않는 것처럼 세운다.
 		setDocumentScrolls(false);
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("15px");
 	});
 
 	it("skips compensation when there is no scrollbar to hide", () => {
@@ -333,20 +204,19 @@ describe("scroll-lock", () => {
 	});
 
 	it("keeps the lock while a nested overlay is still open", () => {
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 		lockBodyScroll();
 		lockBodyScroll();
 
 		unlockBodyScroll();
 
 		expect(document.body.style.overflow).toBe("hidden");
-		expect(document.documentElement.style.scrollbarGutter).toBe("stable");
+		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
 		expect(document.body.dataset.openModals).toBe("1");
 	});
 
 	it("measures only once so a nested lock cannot double the compensation", () => {
-		setGutterSupport(false);
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 		lockBodyScroll();
@@ -367,7 +237,7 @@ describe("scroll-lock", () => {
 	it("restores an inline --bt-scrollbar-width the consumer had set", () => {
 		// 소비자가 이 변수를 직접 잡아둔 경우 - 오버레이 한 번 열고 닫았다고 지워지면 안 된다.
 		document.documentElement.style.setProperty("--bt-scrollbar-width", "10px");
-		setViewportInset(15);
+		setViewportInset(15, { afterLock: 0 });
 
 		lockBodyScroll();
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");

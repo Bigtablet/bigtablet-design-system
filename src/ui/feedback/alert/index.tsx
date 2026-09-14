@@ -12,10 +12,8 @@ import {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,
 	OVERLAY_SPRING_CONFIG,
-	reportOverlayDim,
 	springEnterFrom,
 	unlockBodyScroll,
-	unregisterOverlayDim,
 	useFocusTrap,
 	useOverlayEscape,
 	useReducedMotion,
@@ -182,15 +180,11 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	// 마운트하므로 지금 동작은 바뀌지 않지만, 그 성질에 기대지 않게 못박는다.
 	// reduced-motion 예외는 springEnterFrom 안에 있다.
 
-	// 거터 색은 이 딤과 같은 진행도를 따른다 (#583) - Modal 과 동일한 배선.
-	const dimOwner = React.useRef({}).current;
-
 	const overlayStyle = useSpring({
 		...springEnterFrom(reduced),
 		to: { opacity: isOpen ? 1 : 0 },
 		immediate: reduced,
 		config: OVERLAY_SPRING_CONFIG,
-		onChange: (result) => reportOverlayDim(dimOwner, Number(result.value.opacity)),
 		onRest: (result) => {
 			if (!isOpen && result.finished) setShouldRender(false);
 		},
@@ -213,12 +207,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	React.useEffect(() => {
 		if (!shouldRender) return;
 
-		reportOverlayDim(dimOwner, reduced ? 1 : 0);
 		lockBodyScroll();
 		return () => {
 			unlockBodyScroll();
-			// 부모 잠금이 남아 있으면 위 호출이 레지스트리를 비우지 않는다 - 자기 것만 뺀다.
-			unregisterOverlayDim(dimOwner);
 		};
 	}, [shouldRender]);
 

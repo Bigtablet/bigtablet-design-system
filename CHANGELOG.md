@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.21.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.0) - 2026-09-14
+- (렌더 변경) `scrollbar-gutter: stable` 을 쓰는 앱에서 Modal·Drawer·Alert 오른쪽에 딤이 닿지 않는 15px 띠가 남고, 그 옆에 표나 카드가 닿으면 경계에 세로선이 보이던 문제를 고쳤습니다. 잠금이 그 자리를 회수해 오버레이가 실제로 덮습니다 - 색으로 흉내내던 이전 방식은 문서 배경이 단색일 때만 맞았습니다
+- (렌더 변경) 잠금 중 회수된 폭은 `--bt-scrollbar-width` 로 계속 노출되고, DS 오버레이와 `Toast` 가 그 값으로 자기 위치를 상쇄합니다. **오른쪽에 고정된 앱 요소(FAB·플로팅 툴바·자체 토스트)는 같은 보정이 필요합니다** - `right: calc(16px + var(--bt-scrollbar-width, 0px))`. 3.17~3.20 안내를 따라 보정을 걷어냈던 앱은 다시 넣어야 합니다. 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.21.0 섹션
+- 잠금이 스크롤바 자리를 실제로 회수하지 못하는 앱(`html { overflow-y: scroll }` 로 스크롤바를 못박은 경우)에서는 보정을 걸지 않습니다 - 걸면 콘텐츠만 안쪽으로 밀립니다
+
 ## [3.20.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.20.0) - 2026-09-14
 - `Dropdown` 이 이제 필수 여부를 보조기술에 알립니다. `Field` 에 `required` 를 줘도 스크린리더에는 그 정보가 전혀 닿지 않았습니다 - 화면의 `*` 는 낭독되지 않고, 트리거의 `button` role 은 `aria-required` 를 지원하지 않습니다. 트리거를 APG select-only combobox(`role="combobox"`)로 옮겨 해결했고, `DatePicker`·`TimePicker`·`DateRangePicker` 도 내부가 `Dropdown` 이라 함께 적용됩니다
 - 목록을 화살표 키로 훑을 때 활성 항목이 보조기술에 전달됩니다(`aria-activedescendant`). 지금까지는 시각적으로만 강조됐습니다

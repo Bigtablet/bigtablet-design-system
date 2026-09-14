@@ -12,9 +12,8 @@ $close_clearance: $close_inset + token.$tap_target_dense;
 .drawer {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
-  // 예약된 거터는 dim 이 덮지 않는다 - 캔버스(루트 배경)가 칠하는 영역이라 자손은 거기에
-  // 페인트할 수 없다. 음수 오프셋으로 박스만 넓혀 봤지만(3.17.1) 페인트는 거터 앞에서
-  // 잘렸다(#580). 그 띠는 잠금이 루트 배경색에 딤을 합성해 어둡게 한다 - `scroll-lock`.
+  // 패널이 화면 가장자리에 붙는다 - 잠금으로 넓어진 ICB 는 그대로 쓴다(가운데 정렬이 아니라
+  // 상쇄할 것이 없고, 회수된 스크롤바 자리까지 패널이 덮는 편이 맞다). #635
   display: flex;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome; // Modal 과 동일 레이어
