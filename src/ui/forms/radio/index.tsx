@@ -60,18 +60,22 @@ export const Radio = ({
 
 	return (
 		<label className={rootClassName}>
+			{/* {...props} 를 **먼저** 펼친다. 뒤에 두면 소비자가 준 id·aria-describedby 가
+			    Field 의 값을 덮어써, Field 의 `<label for>` 이 문서에 없는 id 를 가리키게 된다
+			    (Checkbox·Toggle 과 같은 순서). */}
 			<input
+				{...props}
 				ref={ref}
 				type="radio"
 				className="radio_input"
 				id={field?.inputId ?? props.id}
 				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
+				aria-invalid={field?.invalid || undefined}
 				value={value}
 				name={name}
 				disabled={disabled}
 				checked={resolvedChecked}
 				onChange={handleChange}
-				{...props}
 			/>
 			<span className="radio_state_layer" aria-hidden="true">
 				<span className="radio_dot" />

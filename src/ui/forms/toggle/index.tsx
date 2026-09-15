@@ -82,6 +82,7 @@ export const Toggle = ({
 			aria-checked={isOn}
 			id={field?.inputId ?? props.id}
 			aria-describedby={field?.describedBy ?? props["aria-describedby"]}
+			aria-invalid={field?.invalid || undefined}
 			// Field 가 감싸면 그 라벨이 이름이 된다 - ariaLabel 과 겹치면 라벨이 두 번 읽힌다.
 			aria-labelledby={field?.labelId}
 			aria-label={field?.labelId ? undefined : ariaLabel}

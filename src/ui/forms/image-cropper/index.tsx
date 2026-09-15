@@ -360,6 +360,7 @@ export function ImageCropper({
 				aria-labelledby={field?.labelId}
 				aria-label={field?.labelId ? undefined : label}
 				aria-describedby={[field?.describedBy, hintId].filter(Boolean).join(" ")}
+				aria-invalid={field?.invalid || undefined}
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}

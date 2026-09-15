@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { Checkbox } from "../checkbox";
 import { DatePicker } from "../date-picker";
 import { DateRangePicker } from "../date-range-picker";
 import { Radio } from "../radio";
@@ -213,5 +214,43 @@ describe("Field", () => {
 		);
 
 		expect(screen.getAllByText("이메일")).toHaveLength(1);
+	});
+	it("keeps its own id and description when the child input also got them from a consumer", () => {
+		// Radio 만 `{...props}` 를 뒤에 펼쳐, 소비자가 준 id 가 Field 의 id 를 덮어썼다.
+		// 그러면 Field 의 `<label for>` 이 문서에 없는 id 를 가리켜 라벨 클릭이 죽는다.
+		render(
+			<Field name="plan" label="요금제">
+				<Radio id="basic" name="plan" value="b" />
+			</Field>,
+		);
+
+		const radio = screen.getByRole("radio");
+		const label = screen.getByText("요금제");
+		expect(radio.id).toBe(label.getAttribute("for"));
+	});
+
+	it("marks every wrapped input invalid when the field has an error", () => {
+		// 에러 문구를 그리고 aria-describedby 로 연결해도, 입력이 aria-invalid 를 안 내면
+		// 스크린리더·검증 요약 도구에는 정상 입력으로 보인다 (WCAG 4.1.2).
+		const { rerender } = render(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Checkbox />
+			</Field>,
+		);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
+
+		rerender(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Toggle ariaLabel="동의" />
+			</Field>,
+		);
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-invalid", "true");
+
+		rerender(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Radio name="agree" value="y" />
+			</Field>,
+		);
+		expect(screen.getByRole("radio")).toHaveAttribute("aria-invalid", "true");
 	});
 });

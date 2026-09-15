@@ -65,7 +65,7 @@ export const Checkbox = ({
 				id={field?.inputId ?? props.id}
 				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
 				aria-required={field?.required || undefined}
-				aria-invalid={error || undefined}
+				aria-invalid={error || field?.invalid || undefined}
 			/>
 			<span className="checkbox_state_layer" aria-hidden="true">
 				<span className="checkbox_icon" />
