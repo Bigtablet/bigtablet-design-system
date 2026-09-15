@@ -71,6 +71,10 @@ export const MediaCard = ({
 	const cardStyle = isOverlay && aspectRatio ? { aspectRatio } : undefined;
 	const wrapStyle = !isOverlay && aspectRatio ? { aspectRatio } : undefined;
 
+	// 소비자가 준 role 이 이긴다. 키 처리도 그 값을 따라야 한다 - link 로 덮었는데 Space 로
+	// 눌리면 안 된다.
+	const resolvedRole = props.role ?? (props.onClick ? "button" : undefined);
+
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: onClick 이 있을 때만 role=button + tabIndex 를 붙인다 (ListItem 과 같은 규칙)
 		<div
@@ -79,7 +83,7 @@ export const MediaCard = ({
 			// 눌리는 표면을 만든 쪽이 DS 이므로 키보드로 누를 수단도 DS 가 준다 (WCAG 2.1.1).
 			// 판정 기준은 `clickable` 이 아니라 `onClick` 이다 - `clickable` 은 겉모습만 바꾸고,
 			// 실제로 동작하는 카드만 탭 순서에 들어가야 한다. ListItem 과 같은 규칙.
-			role={props.onClick ? "button" : undefined}
+			role={resolvedRole}
 			tabIndex={props.onClick ? 0 : undefined}
 			{...props}
 			// 소비자 핸들러를 **먼저** 부른다. 그래야 `preventDefault()` 로 활성화를 막을 수 있다.
@@ -89,7 +93,10 @@ export const MediaCard = ({
 			onKeyDown={(e) => {
 				props.onKeyDown?.(e);
 				if (!props.onClick || e.defaultPrevented || e.repeat) return;
-				if (e.key === "Enter" || e.key === " ") {
+				// Space 는 button 일 때만 활성화한다. 소비자가 `role="link"` 로 덮어썼다면 링크
+				// 규약을 따라야 하고, 링크는 Space 로 눌리지 않는다(스크롤이다).
+				const activates = e.key === "Enter" || (e.key === " " && resolvedRole === "button");
+				if (activates) {
 					e.preventDefault();
 					// 진짜 click 을 쏜다 - onClick 이 가짜 캐스팅 없이 MouseEvent 로 불린다.
 					e.currentTarget.click();

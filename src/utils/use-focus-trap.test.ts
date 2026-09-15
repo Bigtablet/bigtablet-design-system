@@ -161,4 +161,28 @@ describe("useFocusTrap", () => {
 
 		expect(document.activeElement).toBe(triggerBtn);
 	});
+	it("skips a marked element inside preferWithin", () => {
+		// 우선 영역 안에서도 skip 표시는 폴백과 같은 규칙으로 걸러져야 한다. 안 그러면 중첩된
+		// 스크롤 wrapper 가 초기 포커스를 가로챈다.
+		const container = document.createElement("div");
+		const body = document.createElement("div");
+		const wrapper = document.createElement("div");
+		wrapper.tabIndex = 0;
+		wrapper.setAttribute("data-focus-trap-skip-autofocus", "");
+		const input = document.createElement("button");
+		input.textContent = "안쪽 버튼";
+		wrapper.appendChild(input);
+		body.appendChild(wrapper);
+		container.appendChild(body);
+		document.body.appendChild(container);
+
+		try {
+			renderHook(() =>
+				useFocusTrap({ current: container }, true, { preferWithin: { current: body } }),
+			);
+			expect(document.activeElement).toBe(input);
+		} finally {
+			container.remove();
+		}
+	});
 });
