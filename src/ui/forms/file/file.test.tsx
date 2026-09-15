@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { FileInput } from "./index";
 
 describe("FileInput", () => {
@@ -344,5 +345,26 @@ describe("FileInput", () => {
 			expect(helperB.id).not.toBe("");
 			expect(helperA.id).not.toBe(helperB.id);
 		});
+	});
+
+	it("marks the native input required from a surrounding Field", () => {
+		// 네이티브 input 이라 aria-required 대신 required - 폼 제출 검증까지 함께 붙는다.
+		render(
+			<Field name="resume" label="이력서" required>
+				<FileInput />
+			</Field>,
+		);
+
+		expect(document.querySelector('input[type="file"]')).toBeRequired();
+	});
+
+	it("does not mark the input required when the Field is optional", () => {
+		render(
+			<Field name="resume" label="이력서">
+				<FileInput />
+			</Field>,
+		);
+
+		expect(document.querySelector('input[type="file"]')).not.toBeRequired();
 	});
 });

@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { OtpInput } from "./index";
 
 function ControlledOtp(props: Partial<React.ComponentProps<typeof OtpInput>>) {
@@ -438,5 +439,22 @@ describe("OtpInput", () => {
 		render(<OtpInput length={6} value="" onValueChange={onValueChange} ariaLabel="OTP" />);
 		fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "5" } });
 		expect(onValueChange).toHaveBeenCalledWith("5");
+	});
+
+	it("marks every digit required from a surrounding Field", () => {
+		// role="group" 은 aria-required 를 허용하지 않는다(axe aria-allowed-attr). 한 자리만
+		// 비어도 코드가 완성되지 않으므로 자리마다 붙인다.
+		render(
+			<Field name="code" label="인증번호" required>
+				<OtpInput length={4} />
+			</Field>,
+		);
+
+		const inputs = screen.getAllByRole("textbox");
+		expect(inputs).toHaveLength(4);
+		for (const input of inputs) {
+			expect(input).toHaveAttribute("aria-required", "true");
+		}
+		expect(screen.getByRole("group")).not.toHaveAttribute("aria-required");
 	});
 });

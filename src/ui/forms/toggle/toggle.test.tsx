@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { Toggle } from "./index";
 
 describe("Toggle", () => {
@@ -127,5 +128,27 @@ describe("Toggle", () => {
 
 		expect(onCheckedChange).not.toHaveBeenCalled();
 		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "false");
+	});
+
+	it("announces the Field's required state", () => {
+		// role="switch" 는 checkbox 의 하위 role 이라 aria-required 를 받는다
+		// (axe 4.13 ariaRoles.switch.allowedAttrs).
+		render(
+			<Field name="alerts" label="알림" required>
+				<Toggle ariaLabel="알림" />
+			</Field>,
+		);
+
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-required", "true");
+	});
+
+	it("does not claim required when the Field is optional", () => {
+		render(
+			<Field name="alerts" label="알림">
+				<Toggle ariaLabel="알림" />
+			</Field>,
+		);
+
+		expect(screen.getByRole("switch")).not.toHaveAttribute("aria-required");
 	});
 });

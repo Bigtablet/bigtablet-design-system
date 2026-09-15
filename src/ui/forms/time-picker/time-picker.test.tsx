@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { TimePicker } from "./index";
 
 // Dropdown 트리거는 `combobox` 다(#632 - `button` role 로는 aria-required 를 못 붙인다).
@@ -92,5 +93,20 @@ describe("TimePicker", () => {
 			"aria-describedby",
 			expect.stringContaining(sr?.id ?? ""),
 		);
+	});
+
+	it("passes the Field's required state down to the hour and minute dropdowns", () => {
+		render(
+			<Field name="start" label="시작 시각" required>
+				<TimePicker onValueChange={vi.fn()} />
+			</Field>,
+		);
+
+		const controls = screen.getAllByRole("combobox");
+		expect(controls).toHaveLength(2);
+		for (const control of controls) {
+			expect(control).toHaveAttribute("aria-required", "true");
+		}
+		expect(screen.getByRole("group")).not.toHaveAttribute("aria-required");
 	});
 });

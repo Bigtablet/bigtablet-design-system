@@ -27,6 +27,11 @@ interface DatePickerBaseProps {
 	selectableRange?: SelectableRange;
 	/** 비활성화 여부 */
 	disabled?: boolean;
+	/**
+	 * 필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.
+	 * `role="group"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다.
+	 */
+	required?: boolean;
 	/** 데이트 피커가 컨테이너의 전체 너비를 차지할지 여부 */
 	fullWidth?: boolean;
 	/**
@@ -98,6 +103,7 @@ export const DatePicker = ({
 	minDate,
 	selectableRange = "all",
 	disabled,
+	required,
 	fullWidth = true,
 	width,
 	yearLabel: yearLabelProp,
@@ -115,6 +121,9 @@ export const DatePicker = ({
 		selectableRangeUntilTodaySrTextProp ?? t("datePicker.rangeUntilTodaySr");
 	// Field 가 감싸면 Field 라벨이 그룹 이름이 된다.
 	const field = useFieldControl();
+	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
+	// 안쪽 컨트롤마다 내려보낸다. Field 가 감싸면 Field 가 출처다.
+	const isRequired = field?.required || required || undefined;
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
@@ -373,6 +382,7 @@ export const DatePicker = ({
 						options={yearOptions}
 						value={year ? String(year) : null}
 						onValueChange={handleYearChange}
+						required={isRequired}
 						disabled={disabled}
 					/>
 
@@ -384,6 +394,7 @@ export const DatePicker = ({
 						options={monthOptions}
 						value={month ? String(month) : null}
 						onValueChange={handleMonthChange}
+						required={isRequired}
 						disabled={disabled || !year}
 					/>
 
@@ -396,6 +407,7 @@ export const DatePicker = ({
 							options={dayOptions}
 							value={day ? String(day) : null}
 							onValueChange={handleDayChange}
+							required={isRequired}
 							disabled={disabled || !month}
 						/>
 					)}

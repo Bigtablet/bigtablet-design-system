@@ -111,4 +111,18 @@ describe("DateRangePicker", () => {
 
 		expect(screen.getAllByRole("group")[0]).toHaveAccessibleName("조회 기간");
 	});
+
+	it("passes the Field's required state down through both date pickers", () => {
+		render(
+			<Field name="period" label="표시 기간" required>
+				<DateRangePicker onValueChange={vi.fn()} />
+			</Field>,
+		);
+
+		const controls = screen.getAllByRole("combobox");
+		expect(controls.length).toBeGreaterThan(0);
+		for (const control of controls) {
+			expect(control).toHaveAttribute("aria-required", "true");
+		}
+	});
 });
