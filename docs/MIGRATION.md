@@ -40,16 +40,24 @@ prop 이 사라지지도, 시그니처가 바뀌지도 않습니다. 바뀌는 �
 
 ### 무엇이 바뀌나
 
-`Field` 가 감싼 입력은 `id`·`aria-describedby`·`aria-invalid`·`aria-required` 를 **`Field` 에서** 받습니다. 예전에는 `Radio`·`TextField`·`Textarea` 가 소비자 값을 뒤에 덮어써서, `Field` 가 만든 `<label for>` 이 문서에 없는 id 를 가리켰습니다 - 라벨을 눌러도 아무 일이 없었습니다.
+바뀐 컴포넌트는 **`Radio`·`TextField`·`Textarea`** 셋입니다. `Field` 안에서 이들이 소비자 값을 뒤에 덮어써, `Field` 가 만든 `<label for>` 이 문서에 없는 id 를 가리켰습니다 - 라벨을 눌러도 아무 일이 없었습니다.
 
 `Checkbox`·`Toggle` 은 처음부터 `Field` 가 이기는 순서였습니다. 이번에 나머지 셋이 거기에 맞춰졌습니다.
 
-| | 3.21.0 이하 | 3.22.0 |
-| --- | --- | --- |
-| `Field` 안, 소비자 `id` | 소비자 값이 이김 (라벨 연결이 끊김) | **`Field` 값이 이김** |
-| `Field` 밖, 소비자 `id`·`aria-*` | 그대로 남음 | 그대로 남음 (변화 없음) |
+`Field` 에서 받는 속성은 컴포넌트마다 다릅니다.
 
-`Field` **밖에서** 쓰는 입력은 아무것도 달라지지 않습니다. 각 속성이 `Field` 가 없을 때 소비자 값으로 되돌아갑니다.
+| 컴포넌트 | `Field` 에서 받는 속성 |
+| --- | --- |
+| `TextField` · `Textarea` | `id` · `aria-describedby` · `aria-invalid` · `aria-required` |
+| `Radio` | `id` · `aria-describedby` · `aria-invalid` |
+
+| `Field` 안, `Radio`·`TextField`·`Textarea` 에 준 `id` | 3.21.0 이하 | 3.21.1 · 3.22.0 |
+| --- | --- | --- |
+| 누가 이기나 | 소비자 값 (라벨 연결이 끊김) | **`Field` 값** |
+
+`Field` **밖에서** 쓰는 입력은 달라지지 않습니다. 각 속성이 `Field` 가 없을 때 소비자 값으로 되돌아갑니다.
+
+> 예외가 하나 있습니다. `Checkbox` 는 `Field` 밖에서도 소비자가 준 `aria-required` 를 무시합니다(`aria-required={field?.required || undefined}` 가 `{...props}` 뒤에 옵니다). 이번 변경이 만든 것이 아니라 그 전부터 그랬고, [#649](https://github.com/Bigtablet/bigtablet-design-system/issues/649) 에서 따로 다룹니다.
 
 ### 앱 쪽에서 할 일
 
