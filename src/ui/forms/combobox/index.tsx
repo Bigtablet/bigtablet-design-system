@@ -228,6 +228,10 @@ export const Combobox = ({
 					id={inputId}
 					className="combobox_input"
 					role="combobox"
+					// 소비자 aria-* 를 **먼저** 펼친다. 뒤에 두면 아래 위젯 계산값
+					// (aria-expanded·aria-controls·aria-activedescendant)을 덮어써 패널이 열려
+					// 있는데 닫힌 것으로 읽히는 식이 된다. Radio 의 `{...props}` 선례와 같은 이유다.
+					{...ariaProps}
 					type="text"
 					autoComplete="off"
 					disabled={disabled}
@@ -241,7 +245,6 @@ export const Combobox = ({
 							? `${listId}-${options[activeIndex].value}`
 							: undefined
 					}
-					{...ariaProps}
 					aria-labelledby={labelledBy}
 					aria-label={labelledBy ? undefined : (ariaLabel ?? ariaProps["aria-label"])}
 					aria-describedby={field?.describedBy ?? ariaProps["aria-describedby"]}

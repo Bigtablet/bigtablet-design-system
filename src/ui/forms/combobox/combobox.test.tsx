@@ -296,6 +296,23 @@ describe("Combobox", () => {
 		expect(container.firstElementChild).not.toHaveAttribute("aria-label");
 	});
 
+	it("keeps the widget's own aria values when the consumer passes them", () => {
+		// 소비자가 aria-expanded 를 덮으면 패널이 열려 있어도 닫힌 것으로 읽힌다.
+		render(
+			<Combobox
+				onSearch={vi.fn()}
+				aria-expanded
+				aria-activedescendant="consumer-option"
+				aria-autocomplete="both"
+			/>,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAttribute("aria-expanded", "false");
+		expect(input).not.toHaveAttribute("aria-activedescendant");
+		expect(input).toHaveAttribute("aria-autocomplete", "list");
+	});
+
 	it("lets Field win over consumer aria-*", () => {
 		render(
 			<Field name="owner" label="담당자" help="이름으로 검색">
