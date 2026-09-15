@@ -1,4 +1,9 @@
 export { cn } from "./cn";
+export {
+	keyActivationProps,
+	type KeyActivationOptions,
+	type KeyActivationProps,
+} from "./key-activation";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
 export {
@@ -11,6 +16,7 @@ export {
 	OVERLAY_SPRING_CONFIG,
 	springEnterFrom,
 } from "./spring-motion";
+export { splitAriaProps } from "./split-aria-props";
 export {
 	type AnchoredOptions,
 	type AnchoredResult,

@@ -47,6 +47,12 @@ interface DropdownCommonProps {
 	options: DropdownOption[];
 	/** 비활성화 여부 */
 	disabled?: boolean;
+	/**
+	 * 필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.
+	 * `role="group"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽
+	 * Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다.
+	 */
+	required?: boolean;
 	/** 드롭다운 크기 */
 	size?: DropdownSize;
 	/**
@@ -127,6 +133,7 @@ export const Dropdown = (props: DropdownProps) => {
 		placeholder: placeholderProp,
 		options,
 		disabled,
+		required,
 		size = "md",
 		variant = "outline",
 		className,
@@ -347,7 +354,7 @@ export const Dropdown = (props: DropdownProps) => {
 					}
 					aria-describedby={field?.describedBy}
 					aria-invalid={field?.invalid || undefined}
-					aria-required={field?.required || undefined}
+					aria-required={field ? field.required || undefined : required || undefined}
 					// 닫힌 상태에서는 listbox 가 unmount 라 dangling IDREF 방지 위해 열렸을 때만 지정
 					aria-controls={isOpen ? `${dropdownId}_listbox` : undefined}
 					onClick={() => !disabled && setIsOpen((o) => !o)}
@@ -421,7 +428,7 @@ export const Dropdown = (props: DropdownProps) => {
 									aria-expanded={isOpen}
 									// 검색 모드에서는 포커스가 이 입력에 있다 - 트리거에만 붙이면
 									// 여기 서 있는 사용자에게 필수 여부가 안 들린다(#632).
-									aria-required={field?.required || undefined}
+									aria-required={field ? field.required || undefined : required || undefined}
 									aria-controls={`${dropdownId}_listbox`}
 									aria-activedescendant={
 										activeIndex >= 0 && visibleOptions[activeIndex]

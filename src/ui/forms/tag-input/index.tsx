@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useId, useRef, useState } from "react";
-import { cn } from "../../../utils";
+import { cn, splitAriaProps } from "../../../utils";
 import { Chip } from "../../display/chip";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
@@ -78,6 +78,9 @@ export const TagInput = ({
 	const generatedId = useId();
 	const field = useFieldControl();
 	const inputId = field?.inputId ?? generatedId;
+	// 소비자 aria-* 는 래퍼가 아니라 실제 컨트롤(안쪽 입력)로 간다.
+	const { ariaProps, restProps } = splitAriaProps(props);
+	const labelledBy = field?.labelId ?? ariaProps["aria-labelledby"];
 
 	const isControlled = value !== undefined;
 	const [innerTags, setInnerTags] = useState<string[]>(defaultValue);
@@ -187,7 +190,7 @@ export const TagInput = ({
 	);
 
 	return (
-		<div className={rootClassName} {...props}>
+		<div className={rootClassName} {...restProps}>
 			{/* 칩을 클릭해도 입력으로 들어가야 한다 - 컨트롤 전체가 하나의 입력으로 읽힌다.
 			    칩 제거 클릭도 여기까지 버블하므로, 칩이 사라진 뒤 포커스가 입력으로 돌아온다.
 			    이게 없으면 포커스가 body 로 떨어져 다음 Tab 이 문서 처음부터 시작한다. */}
@@ -222,11 +225,12 @@ export const TagInput = ({
 					disabled={disabled}
 					readOnly={isFull}
 					placeholder={isFull ? "" : placeholder}
-					aria-labelledby={field?.labelId}
-					aria-label={field?.labelId ? undefined : ariaLabel}
-					aria-describedby={field?.describedBy}
-					aria-invalid={field?.invalid || undefined}
-					aria-required={field?.required || undefined}
+					{...ariaProps}
+					aria-labelledby={labelledBy}
+					aria-label={labelledBy ? undefined : (ariaLabel ?? ariaProps["aria-label"])}
+					aria-describedby={field?.describedBy ?? ariaProps["aria-describedby"]}
+					aria-invalid={field ? field.invalid || undefined : ariaProps["aria-invalid"]}
+					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					onChange={(event) => setDraft(event.target.value)}
 					onKeyDown={onKeyDown}
 					onPaste={onPaste}

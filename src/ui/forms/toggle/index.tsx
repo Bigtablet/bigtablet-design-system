@@ -83,6 +83,8 @@ export const Toggle = ({
 			id={field?.inputId ?? props.id}
 			aria-describedby={field?.describedBy ?? props["aria-describedby"]}
 			aria-invalid={field ? field.invalid || undefined : props["aria-invalid"]}
+			// switch 는 checkbox 의 하위 role 이라 aria-required 를 받는다.
+			aria-required={field ? field.required || undefined : props["aria-required"]}
 			// Field 가 감싸면 그 라벨이 이름이 된다 - ariaLabel 과 겹치면 라벨이 두 번 읽힌다.
 			aria-labelledby={field?.labelId}
 			aria-label={field?.labelId ? undefined : ariaLabel}

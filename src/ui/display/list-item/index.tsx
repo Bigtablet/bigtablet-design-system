@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, keyActivationProps } from "../../../utils";
 import "./style.scss";
 
 export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
@@ -60,28 +60,30 @@ export const ListItem = ({
 		className,
 	);
 
+	const activation = keyActivationProps<HTMLDivElement>({
+		onClick,
+		role: props.role,
+		disabled,
+		onKeyDown: props.onKeyDown,
+	});
+
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: optional interactive list item - role=button + tabIndex set conditionally based on onClick
+		// biome-ignore lint/a11y/useAriaPropsSupportedByRole: role 은 keyActivationProps 가 주므로 정적 분석이 못 본다 - onClick 이 있으면 role=button 이고 aria-pressed 는 그때만 붙는다
 		<div
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}
-			onKeyDown={(e) => {
-				// e.repeat - 키를 누르고 있으면 keydown 이 반복돼 부수효과가 여러 번 실행된다.
-				// 네이티브 `<button>` 은 Space 를 눌러도 keyup 에 한 번만 click 을 낸다.
-				if (disabled || !onClick || e.repeat) return;
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					// 실제 click 디스패치 → onClick 이 진짜 MouseEvent 로 호출됨 (가짜 캐스팅 제거)
-					e.currentTarget.click();
-				}
-			}}
-			role={onClick ? "button" : undefined}
-			tabIndex={onClick && !disabled ? 0 : undefined}
+			// 키보드 활성화 규칙은 Card·MediaCard 와 같은 곳에서 온다 (`keyActivationProps`).
+			role={activation.role}
+			tabIndex={activation.tabIndex}
 			aria-disabled={disabled || undefined}
 			// aria-selected 는 option/tab/row 등 특정 role 전용이라 button/일반 div 에선 무효
 			// (axe aria-allowed-attr 위반). 인터랙티브 항목의 선택 상태는 aria-pressed 로 노출한다.
 			aria-pressed={onClick && selected !== undefined ? selected : undefined}
 			{...props}
+			// 소비자 onKeyDown 은 activation 안에서 먼저 실행되므로 스프레드 뒤에 덮어쓴다.
+			// 스프레드가 이기면 활성화 핸들러가 통째로 사라진다.
+			onKeyDown={activation.onKeyDown}
 		>
 			<div className="list_item_state_layer">
 				{leadingElement && <div className="list_item_leading">{leadingElement}</div>}

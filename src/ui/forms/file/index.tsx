@@ -144,6 +144,8 @@ export const FileInput = ({
 					undefined
 				}
 				aria-invalid={field?.invalid || undefined}
+				// 네이티브 input 이라 aria-required 대신 required 를 쓴다 - 폼 제출 검증까지 붙는다.
+				required={field ? field.required || undefined : props.required}
 				onChange={handleChange}
 			/>
 

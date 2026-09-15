@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, splitAriaProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -98,6 +98,9 @@ export const RadioGroup = ({
 	const field = useFieldControl();
 	const labelId = label ? `${idPrefix}-label` : undefined;
 	const helperId = supportingText ? `${idPrefix}-help` : undefined;
+	// 소비자 aria-* 는 래퍼가 아니라 role="radiogroup" 요소로 간다 - 래퍼에 붙으면 이름 없는
+	// 그룹이 남는다. 이 컴포넌트에는 ariaLabel 같은 탈출구도 없다.
+	const { ariaProps, restProps } = splitAriaProps(props);
 
 	const onChange = React.useCallback(
 		(next: string) => {
@@ -121,7 +124,7 @@ export const RadioGroup = ({
 					error && "radio_group_error",
 					className,
 				)}
-				{...props}
+				{...restProps}
 			>
 				{label && (
 					<span id={labelId} className="radio_group_label">
@@ -130,10 +133,11 @@ export const RadioGroup = ({
 				)}
 				<div
 					role="radiogroup"
-					aria-labelledby={field?.labelId ?? labelId}
-					aria-describedby={field?.describedBy ?? helperId}
-					aria-invalid={error || field?.invalid || undefined}
-					aria-required={field?.required || undefined}
+					{...ariaProps}
+					aria-labelledby={field?.labelId ?? labelId ?? ariaProps["aria-labelledby"]}
+					aria-describedby={field?.describedBy ?? helperId ?? ariaProps["aria-describedby"]}
+					aria-invalid={error || (field ? field.invalid || undefined : ariaProps["aria-invalid"])}
+					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					className="radio_group_options"
 				>
 					{children}

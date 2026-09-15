@@ -6,7 +6,7 @@ import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn, splitAriaProps, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
 import { useLocaleText } from "../../system/locale-provider";
@@ -106,6 +106,9 @@ export const Combobox = ({
 	const generatedId = useId();
 	const field = useFieldControl();
 	const inputId = field?.inputId ?? generatedId;
+	// 소비자 aria-* 는 래퍼가 아니라 실제 컨트롤(role=combobox 입력)로 간다.
+	const { ariaProps, restProps } = splitAriaProps(props);
+	const labelledBy = field?.labelId ?? ariaProps["aria-labelledby"];
 	const listId = `${inputId}-listbox`;
 
 	const [query, setQuery] = useState("");
@@ -219,12 +222,16 @@ export const Combobox = ({
 	});
 
 	return (
-		<div ref={popup.wrapperRef} className={rootClassName} {...props}>
+		<div ref={popup.wrapperRef} className={rootClassName} {...restProps}>
 			<div className="combobox_control">
 				<input
 					id={inputId}
 					className="combobox_input"
 					role="combobox"
+					// 소비자 aria-* 를 **먼저** 펼친다. 뒤에 두면 아래 위젯 계산값
+					// (aria-expanded·aria-controls·aria-activedescendant)을 덮어써 패널이 열려
+					// 있는데 닫힌 것으로 읽히는 식이 된다. Radio 의 `{...props}` 선례와 같은 이유다.
+					{...ariaProps}
 					type="text"
 					autoComplete="off"
 					disabled={disabled}
@@ -238,11 +245,11 @@ export const Combobox = ({
 							? `${listId}-${options[activeIndex].value}`
 							: undefined
 					}
-					aria-labelledby={field?.labelId}
-					aria-label={field?.labelId ? undefined : ariaLabel}
-					aria-describedby={field?.describedBy}
-					aria-invalid={field?.invalid || undefined}
-					aria-required={field?.required || undefined}
+					aria-labelledby={labelledBy}
+					aria-label={labelledBy ? undefined : (ariaLabel ?? ariaProps["aria-label"])}
+					aria-describedby={field?.describedBy ?? ariaProps["aria-describedby"]}
+					aria-invalid={field ? field.invalid || undefined : ariaProps["aria-invalid"]}
+					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					onChange={(event) => {
 						setQuery(event.target.value);
 						if (!isOpen) setIsOpen(true);

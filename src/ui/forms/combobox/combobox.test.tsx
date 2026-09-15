@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { Combobox, type ComboboxOption } from "./index";
 
 const OPTIONS: ComboboxOption[] = [
@@ -282,5 +283,59 @@ describe("Combobox", () => {
 
 		expect(search).toHaveBeenCalledTimes(1);
 		expect(search).toHaveBeenCalledWith("박상민");
+	});
+
+	it("puts consumer aria-* on the input, not on the wrapper", () => {
+		const { container } = render(
+			<Combobox onSearch={vi.fn()} aria-label="담당자" aria-describedby="owner-help" />,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAccessibleName("담당자");
+		expect(input).toHaveAttribute("aria-describedby", "owner-help");
+		expect(container.firstElementChild).not.toHaveAttribute("aria-label");
+	});
+
+	it("keeps the widget's own aria values when the consumer passes them", () => {
+		// 소비자가 aria-expanded 를 덮으면 패널이 열려 있어도 닫힌 것으로 읽힌다.
+		render(
+			<Combobox
+				onSearch={vi.fn()}
+				aria-expanded
+				aria-activedescendant="consumer-option"
+				aria-autocomplete="both"
+			/>,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAttribute("aria-expanded", "false");
+		expect(input).not.toHaveAttribute("aria-activedescendant");
+		expect(input).toHaveAttribute("aria-autocomplete", "list");
+	});
+
+	it("lets Field win over consumer aria-*", () => {
+		render(
+			<Field name="owner" label="담당자" help="이름으로 검색">
+				<Combobox onSearch={vi.fn()} aria-label="무시됨" aria-describedby="무시됨" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAccessibleName("담당자");
+		expect(input).toHaveAccessibleDescription("이름으로 검색");
+	});
+
+	it("lets an optional, valid Field override consumer aria state", () => {
+		// field.invalid·field.required 는 기본값이 false 다. OR 로 합치면 그 false 뒤로 소비자의
+		// true 가 새어 나가 화면과 보조기술이 갈린다.
+		render(
+			<Field name="owner" label="담당자">
+				<Combobox onSearch={vi.fn()} aria-required="true" aria-invalid="true" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).not.toHaveAttribute("aria-required");
+		expect(input).not.toHaveAttribute("aria-invalid");
 	});
 });

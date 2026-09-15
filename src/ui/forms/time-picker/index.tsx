@@ -22,6 +22,11 @@ export interface TimePickerProps {
 	maxTime?: string;
 	/** 비활성 여부 */
 	disabled?: boolean;
+	/**
+	 * 필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.
+	 * `role="group"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다.
+	 */
+	required?: boolean;
 	/** 전체 너비 차지 (기본값: true) */
 	fullWidth?: boolean;
 	/** 시 select 의 라벨/placeholder */
@@ -68,6 +73,7 @@ export const TimePicker = ({
 	minTime,
 	maxTime,
 	disabled,
+	required,
 	fullWidth = true,
 	hourLabel: hourLabelProp,
 	minuteLabel: minuteLabelProp,
@@ -78,6 +84,9 @@ export const TimePicker = ({
 
 	// Field 가 감싸면 Field 라벨이 그룹 이름이 된다.
 	const field = useFieldControl();
+	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
+	// 안쪽 컨트롤마다 내려보낸다. Field 가 감싸면 Field 가 출처다.
+	const isRequired = field ? field.required || undefined : required || undefined;
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
@@ -173,6 +182,7 @@ export const TimePicker = ({
 						options={hourOptions}
 						value={hour === null ? null : String(hour)}
 						onValueChange={handleHourChange}
+						required={isRequired}
 						disabled={disabled}
 					/>
 					<Dropdown
@@ -183,6 +193,7 @@ export const TimePicker = ({
 						options={minuteOptions}
 						value={minute === null ? null : String(minute)}
 						onValueChange={handleMinuteChange}
+						required={isRequired}
 						disabled={disabled || hour === null}
 					/>
 				</FieldControlBoundary>

@@ -218,10 +218,40 @@ describe("TagInput", () => {
 		expect(input).toHaveAttribute("aria-required", "true");
 	});
 
+	it("puts consumer aria-* on the input, not on the wrapper", () => {
+		const { container } = render(<TagInput aria-label="키워드" aria-describedby="kw-help" />);
+
+		expect(field()).toHaveAccessibleName("키워드");
+		expect(field()).toHaveAttribute("aria-describedby", "kw-help");
+		expect(container.firstElementChild).not.toHaveAttribute("aria-label");
+	});
+
+	it("lets Field win over consumer aria-*", () => {
+		render(
+			<Field name="keywords" label="키워드" help="쉼표로 여러 개">
+				<TagInput aria-label="무시됨" aria-describedby="무시됨" />
+			</Field>,
+		);
+
+		expect(field()).toHaveAccessibleName("키워드");
+		expect(field()).toHaveAccessibleDescription("쉼표로 여러 개");
+	});
+
 	it("cannot be edited while disabled", () => {
 		render(<TagInput defaultValue={["a"]} disabled />);
 
 		expect(field()).toBeDisabled();
 		expect(screen.queryByRole("button", { name: "a 제거" })).not.toBeInTheDocument();
+	});
+
+	it("lets an optional, valid Field override consumer aria state", () => {
+		render(
+			<Field name="keywords" label="키워드">
+				<TagInput aria-required="true" aria-invalid="true" />
+			</Field>,
+		);
+
+		expect(field()).not.toHaveAttribute("aria-required");
+		expect(field()).not.toHaveAttribute("aria-invalid");
 	});
 });

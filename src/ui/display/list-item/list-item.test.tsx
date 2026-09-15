@@ -169,4 +169,40 @@ describe("ListItem", () => {
 
 		expect(onClick).toHaveBeenCalledTimes(1);
 	});
+
+	it("runs the consumer onKeyDown without losing key activation", () => {
+		// `{...props}` 가 내부 핸들러 뒤에 펼쳐지면 소비자 onKeyDown 이 활성화를 통째로 덮었다.
+		const onClick = vi.fn();
+		const onKeyDown = vi.fn();
+		render(<ListItem label="항목" onClick={onClick} onKeyDown={onKeyDown} />);
+
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+
+		expect(onKeyDown).toHaveBeenCalledTimes(1);
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
+
+	it("lets the consumer cancel activation with preventDefault", () => {
+		const onClick = vi.fn();
+		render(
+			<ListItem label="항목" onClick={onClick} onKeyDown={(event) => event.preventDefault()} />,
+		);
+
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("does not activate on Space when the consumer set role=link", () => {
+		// 링크에서 Space 는 스크롤이다. Card·MediaCard 와 같은 규칙.
+		const onClick = vi.fn();
+		render(<ListItem label="항목" onClick={onClick} role="link" />);
+
+		const item = screen.getByRole("link");
+		fireEvent.keyDown(item, { key: " " });
+		expect(onClick).not.toHaveBeenCalled();
+
+		fireEvent.keyDown(item, { key: "Enter" });
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
 });

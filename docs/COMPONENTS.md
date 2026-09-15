@@ -296,6 +296,7 @@ import Link from "next/link";
 | `minDate` | `string` | - | 가장 이른 날짜 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
 | `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 | `fullWidth` | `boolean` | `true` | |
 
 **거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
@@ -323,6 +324,7 @@ import Link from "next/link";
 | `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
 | `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
 | `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 | `fullWidth` | `boolean` | `true` | |
 | `hourLabel` | `string` | `'시'` | |
 | `minuteLabel` | `string` | `'분'` | |
@@ -457,6 +459,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
 | ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
 **DropdownOption:**
 
@@ -633,12 +636,27 @@ import { Settings } from 'lucide-react';
 | `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
+| `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
+| `selectRowAriaLabel` | `(index: number) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. 인자는 `pagination.pageSize` 를 반영한 전체 순번 |
 
 동작 규칙 세 가지:
 
 - **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
 - **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
 - **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
+
+> **선택 체크박스 라벨은 순번만 읽는다.** 기본값이 `"13번째 행 선택"` 이라 스크린리더 사용자는
+> 어떤 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 에 바깥
+> `rows` 를 닫아 넘긴다 — 인자는 `Table` 과 같은 **전체 순번**이라, 페이지가 있으면
+> `pagination.pageSize` 만큼 빼서 그 쪽의 행을 찾는다.
+>
+> ```tsx
+> const offset = (page - 1) * SIZE;
+> <DataView
+>   pagination={{ page, totalPages, pageSize: SIZE, onPageChange: setPage }}
+>   selectRowAriaLabel={(index) => `${rows[index - offset].name} 선택`}
+> />
+> ```
 
 ### 문장 속 링크 (`.text_link`)
 
@@ -689,10 +707,14 @@ import { Settings } from 'lucide-react';
 `Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
 
 **복합 컨트롤**(`DatePicker`·`TimePicker`·`DateRangePicker`)은 안에 `Dropdown` 을 여럿 둔다. 이들은
-`Field` 연결을 자기 `role="group"` 요소에서만 받고 **내부 컨트롤에는 물려주지 않는다** — 물려주면
-`Field` 가 내려준 id 하나를 여럿이 나눠 써서 `<label for>` 가 전부 첫 번째 컨트롤을 가리킨다
-(#629 - 종료일의 "년" 라벨이 시작일 목록을 열었다). 내부 컨트롤은 각자 생성한 id 와 각자의
-라벨을 쓴다. 소비처가 할 일은 없다.
+`Field` 의 **id 와 라벨·설명 연결**을 자기 `role="group"` 요소에서만 받고 **내부 컨트롤에는
+물려주지 않는다** — 물려주면 `Field` 가 내려준 id 하나를 여럿이 나눠 써서 `<label for>` 가 전부
+첫 번째 컨트롤을 가리킨다 (#629 - 종료일의 "년" 라벨이 시작일 목록을 열었다). 내부 컨트롤은
+각자 생성한 id 와 각자의 라벨을 쓴다.
+
+**필수 여부만은 예외로 내부까지 내려간다.** `role="group"` 은 `aria-required` 를 허용하지 않아
+(axe `aria-allowed-attr`) 묶음에 붙일 수 없기 때문이다 — 안쪽 `Dropdown` 마다 `required` 로
+전달된다. 어느 쪽이든 소비처가 할 일은 없다.
 
 라벨과 같은 줄에 토글·링크 버튼이 필요하면 `labelAction` 슬롯에 넣는다. `<label>` **밖**에 렌더되므로
 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기
@@ -754,6 +776,18 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
 
 > 폼 라이브러리에 의존하지 않는다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙인다.
+
+> **`required` 가 닿는 자리는 컨트롤이지 묶음이 아니다.** 화면의 `*` 는 `aria-hidden` 이라
+> 보조기술에는 `aria-required` 만 들린다. 그런데 `role="group"` 은 그 속성을 허용하지 않아
+> (axe `aria-allowed-attr`) 묶음 입력 — `DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput` —
+> 은 **안쪽 컨트롤마다** 필수 여부를 붙인다. 연·월·일 세 목록, 여섯 자리 입력 모두가 필수이므로
+> 읽히는 내용도 사실과 맞다. `FileInput` 은 네이티브 `<input type="file">` 이라 `aria-required`
+> 대신 `required` 를 쓴다(폼 제출 검증까지 함께 붙는다). `Toggle` 은 `role="switch"` 가
+> `checkbox` 의 하위 role 이라 `aria-required` 를 그대로 받는다.
+>
+> 개별 `Radio` 는 대상이 아니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당한다.
+> `ImageCropper` 는 값에 해당하는 컨트롤이 없어(뷰포트는 조작 표면, 슬라이더는 확대율) 붙일
+> 자리가 없다.
 
 ### TextField
 
@@ -1198,6 +1232,7 @@ const [date, setDate] = useState('');
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
 ---
 
