@@ -229,8 +229,8 @@ export const TagInput = ({
 					aria-labelledby={labelledBy}
 					aria-label={labelledBy ? undefined : (ariaLabel ?? ariaProps["aria-label"])}
 					aria-describedby={field?.describedBy ?? ariaProps["aria-describedby"]}
-					aria-invalid={field?.invalid || ariaProps["aria-invalid"] || undefined}
-					aria-required={field?.required || ariaProps["aria-required"] || undefined}
+					aria-invalid={field ? field.invalid || undefined : ariaProps["aria-invalid"]}
+					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					onChange={(event) => setDraft(event.target.value)}
 					onKeyDown={onKeyDown}
 					onPaste={onPaste}

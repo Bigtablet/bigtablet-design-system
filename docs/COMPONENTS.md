@@ -707,10 +707,14 @@ import { Settings } from 'lucide-react';
 `Field` 안에서는 입력에 `label` 을 주지 않는다 — 라벨이 두 번 보인다.
 
 **복합 컨트롤**(`DatePicker`·`TimePicker`·`DateRangePicker`)은 안에 `Dropdown` 을 여럿 둔다. 이들은
-`Field` 연결을 자기 `role="group"` 요소에서만 받고 **내부 컨트롤에는 물려주지 않는다** — 물려주면
-`Field` 가 내려준 id 하나를 여럿이 나눠 써서 `<label for>` 가 전부 첫 번째 컨트롤을 가리킨다
-(#629 - 종료일의 "년" 라벨이 시작일 목록을 열었다). 내부 컨트롤은 각자 생성한 id 와 각자의
-라벨을 쓴다. 소비처가 할 일은 없다.
+`Field` 의 **id 와 라벨·설명 연결**을 자기 `role="group"` 요소에서만 받고 **내부 컨트롤에는
+물려주지 않는다** — 물려주면 `Field` 가 내려준 id 하나를 여럿이 나눠 써서 `<label for>` 가 전부
+첫 번째 컨트롤을 가리킨다 (#629 - 종료일의 "년" 라벨이 시작일 목록을 열었다). 내부 컨트롤은
+각자 생성한 id 와 각자의 라벨을 쓴다.
+
+**필수 여부만은 예외로 내부까지 내려간다.** `role="group"` 은 `aria-required` 를 허용하지 않아
+(axe `aria-allowed-attr`) 묶음에 붙일 수 없기 때문이다 — 안쪽 `Dropdown` 마다 `required` 로
+전달된다. 어느 쪽이든 소비처가 할 일은 없다.
 
 라벨과 같은 줄에 토글·링크 버튼이 필요하면 `labelAction` 슬롯에 넣는다. `<label>` **밖**에 렌더되므로
 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기

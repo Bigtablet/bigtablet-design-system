@@ -216,4 +216,31 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		expect(group).toHaveAccessibleName("배송");
 		expect(group).toHaveAccessibleDescription("영업일 기준");
 	});
+
+	it("lets an optional, valid Field override consumer aria state", () => {
+		render(
+			<Field name="ship" label="배송">
+				<RadioGroup aria-required="true" aria-invalid="true">
+					<Radio value="a" label="A" />
+				</RadioGroup>
+			</Field>,
+		);
+
+		const group = screen.getByRole("radiogroup");
+		expect(group).not.toHaveAttribute("aria-required");
+		expect(group).not.toHaveAttribute("aria-invalid");
+	});
+
+	it("keeps its own error prop ahead of a valid Field", () => {
+		// error 는 이 컴포넌트에 직접 준 신호다 - Checkbox 와 같은 순서를 쓴다.
+		render(
+			<Field name="ship" label="배송">
+				<RadioGroup error>
+					<Radio value="a" label="A" />
+				</RadioGroup>
+			</Field>,
+		);
+
+		expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-invalid", "true");
+	});
 });

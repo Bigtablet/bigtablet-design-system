@@ -243,4 +243,15 @@ describe("TagInput", () => {
 		expect(field()).toBeDisabled();
 		expect(screen.queryByRole("button", { name: "a 제거" })).not.toBeInTheDocument();
 	});
+
+	it("lets an optional, valid Field override consumer aria state", () => {
+		render(
+			<Field name="keywords" label="키워드">
+				<TagInput aria-required="true" aria-invalid="true" />
+			</Field>,
+		);
+
+		expect(field()).not.toHaveAttribute("aria-required");
+		expect(field()).not.toHaveAttribute("aria-invalid");
+	});
 });
