@@ -1,4 +1,9 @@
 export { cn } from "./cn";
+export {
+	keyActivationProps,
+	type KeyActivationOptions,
+	type KeyActivationProps,
+} from "./key-activation";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
 export {
