@@ -67,7 +67,28 @@ export const Card = ({
 	);
 
 	return (
-		<div ref={ref} className={cardClassName} {...props}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: onClick 이 있을 때만 role=button + tabIndex 를 붙인다 (ListItem 과 같은 규칙)
+		<div
+			ref={ref}
+			className={cardClassName}
+			{...props}
+			// MediaCard·ListItem 과 같은 규칙 - `interactive` 는 겉모습만 바꾸고, 키보드 조작은
+			// 실제 `onClick` 이 있을 때만 붙는다 (WCAG 2.1.1).
+			role={props.onClick ? "button" : undefined}
+			tabIndex={props.onClick ? 0 : undefined}
+			onKeyDown={(e) => {
+				if (!props.onClick) {
+					props.onKeyDown?.(e);
+					return;
+				}
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					// 진짜 click 을 쏜다 - onClick 이 가짜 캐스팅 없이 MouseEvent 로 불린다.
+					e.currentTarget.click();
+				}
+				props.onKeyDown?.(e);
+			}}
+		>
 			{heading ? <HeadingTag className="card_title">{heading}</HeadingTag> : null}
 			<div className="card_body">{children}</div>
 			{footer ? (

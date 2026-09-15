@@ -72,7 +72,29 @@ export const MediaCard = ({
 	const wrapStyle = !isOverlay && aspectRatio ? { aspectRatio } : undefined;
 
 	return (
-		<div className={cardClassName} style={cardStyle} {...props}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: onClick 이 있을 때만 role=button + tabIndex 를 붙인다 (ListItem 과 같은 규칙)
+		<div
+			className={cardClassName}
+			style={cardStyle}
+			{...props}
+			// 눌리는 표면을 만든 쪽이 DS 이므로 키보드로 누를 수단도 DS 가 준다 (WCAG 2.1.1).
+			// 판정 기준은 `clickable` 이 아니라 `onClick` 이다 - `clickable` 은 겉모습만 바꾸고,
+			// 실제로 동작하는 카드만 탭 순서에 들어가야 한다. ListItem 과 같은 규칙.
+			role={props.onClick ? "button" : undefined}
+			tabIndex={props.onClick ? 0 : undefined}
+			onKeyDown={(e) => {
+				if (!props.onClick) {
+					props.onKeyDown?.(e);
+					return;
+				}
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					// 진짜 click 을 쏜다 - onClick 이 가짜 캐스팅 없이 MouseEvent 로 불린다.
+					e.currentTarget.click();
+				}
+				props.onKeyDown?.(e);
+			}}
+		>
 			<div className="media_card_image_wrap" style={wrapStyle}>
 				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image if needed */}
 				<img className="media_card_image" src={image.src} alt={image.alt} loading="lazy" />

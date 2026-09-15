@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { Card } from "./index";
 
 describe("Card", () => {
@@ -164,5 +164,30 @@ describe("Card", () => {
 			</Card>,
 		);
 		expect(node).toBeInstanceOf(HTMLDivElement);
+	});
+	it("is keyboard operable when it has an onClick", () => {
+		// 커서와 hover 만 바꾸고 role·tabIndex·키 핸들러가 없으면, 마우스로는 눌리고
+		// 키보드로는 도달조차 못 하는 컨트롤이 된다 (WCAG 2.1.1).
+		const onClick = vi.fn();
+		render(
+			<Card interactive onClick={onClick}>
+				내용
+			</Card>,
+		);
+
+		const card = screen.getByRole("button");
+		expect(card).toHaveAttribute("tabindex", "0");
+
+		fireEvent.keyDown(card, { key: "Enter" });
+		expect(onClick).toHaveBeenCalledTimes(1);
+
+		fireEvent.keyDown(card, { key: " " });
+		expect(onClick).toHaveBeenCalledTimes(2);
+	});
+
+	it("stays out of the tab order without an onClick", () => {
+		// 겉모습만 바꾸는 prop 이 탭 정지를 만들면 아무 일도 안 하는 자리에 포커스가 선다.
+		render(<Card interactive>내용</Card>);
+		expect(screen.queryByRole("button")).not.toBeInTheDocument();
 	});
 });
