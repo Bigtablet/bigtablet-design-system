@@ -98,8 +98,12 @@ export interface DataViewProps<T extends object>
 	selectAllAriaLabel?: string;
 	/**
 	 * 행 선택 체크박스의 라벨. 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based)이다.
-	 * 기본값은 순번만 읽어 주므로, 행을 이름으로 구분하려면 바깥 `rows` 를 닫아 넘긴다 -
-	 * `(index) => `${rows[index - offset].name} 선택``.
+	 * 기본값은 순번만 읽어 주므로, 행을 이름으로 구분하려면 바깥 `rows` 를 닫아 넘긴다.
+	 * @example
+	 * ```tsx
+	 * const offset = (page - 1) * SIZE;
+	 * selectRowAriaLabel={(index) => `${rows[index - offset].name} 선택`}
+	 * ```
 	 */
 	selectRowAriaLabel?: (index: number) => string;
 	/** 선택 액션 줄의 안내 문구 (기본값: (n) => `${n}개 선택됨`) */
