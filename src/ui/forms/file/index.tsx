@@ -139,7 +139,10 @@ export const FileInput = ({
 				className="file_input_control"
 				disabled={disabled}
 				accept={isPreviewVariant ? (accept ?? "image/*") : accept}
-				aria-describedby={field?.describedBy ?? (supportingText ? helperId : undefined)}
+				aria-describedby={
+					[field?.describedBy, supportingText ? helperId : undefined].filter(Boolean).join(" ") ||
+					undefined
+				}
 				aria-invalid={field?.invalid || undefined}
 				onChange={handleChange}
 			/>

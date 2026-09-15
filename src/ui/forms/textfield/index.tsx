@@ -147,8 +147,13 @@ export const TextField = ({
 	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
 	const field = useFieldControl();
 	const inputId = id ?? field?.inputId ?? generatedId;
-	const helperId = supportingText ? `${inputId}-help` : undefined;
-	const describedBy = field?.describedBy ?? helperId;
+	// 자체 도움말 id 는 **자기 useId** 에서 만든다. `inputId` 는 Field 안에서 Field 가 준 값이라
+	// `${inputId}-help` 로 만들면 Field 의 도움말 id 와 **글자까지 같아진다** - 한 문서에 같은
+	// id 가 둘이 되고 aria-describedby 가 둘 다 같은 요소로 풀린다.
+	const helperId = supportingText ? `${generatedId}-help` : undefined;
+	// 둘 다 있으면 **둘 다** 가리킨다. Field 의 도움말·에러만 가리키면 입력이 화면에 그린
+	// supportingText 를 스크린리더 사용자가 못 듣는다 - 눈으로 보이는 제약이 귀로는 안 온다.
+	const describedBy = [field?.describedBy, helperId].filter(Boolean).join(" ") || undefined;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>

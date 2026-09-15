@@ -196,7 +196,11 @@ export const OtpInput = ({
 						aria-label={t("otpInput.digit", { index: i + 1 })}
 						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
 						aria-invalid={error || field?.invalid || undefined}
-						aria-describedby={field?.describedBy ?? (supportingText ? supportingId : undefined)}
+						aria-describedby={
+							[field?.describedBy, supportingText ? supportingId : undefined]
+								.filter(Boolean)
+								.join(" ") || undefined
+						}
 						className={cn(
 							"otp_input_box",
 							error && "otp_input_box_error",

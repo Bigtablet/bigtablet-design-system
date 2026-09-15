@@ -253,4 +253,22 @@ describe("Field", () => {
 		);
 		expect(screen.getByRole("radio")).toHaveAttribute("aria-invalid", "true");
 	});
+	it("describes the input with both the field help and the input's own supporting text", () => {
+		// 입력이 화면에 그린 supportingText 를 aria-describedby 가 안 가리키면, 눈으로 보이는
+		// 제약이 스크린리더에는 전달되지 않는다.
+		render(
+			<Field name="email" label="이메일" help="로그인 ID 로 사용됩니다">
+				<TextField supportingText="회사 이메일만 사용하세요" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("textbox");
+		const ids = (input.getAttribute("aria-describedby") ?? "").split(" ").filter(Boolean);
+		const described = ids.map((id) => document.getElementById(id)?.textContent);
+
+		expect(described).toContain("로그인 ID 로 사용됩니다");
+		expect(described).toContain("회사 이메일만 사용하세요");
+		// 두 id 는 서로 달라야 한다 - 같으면 문서에 중복 id 가 생기고 둘 다 같은 요소로 풀린다.
+		expect(new Set(ids).size).toBe(ids.length);
+	});
 });
