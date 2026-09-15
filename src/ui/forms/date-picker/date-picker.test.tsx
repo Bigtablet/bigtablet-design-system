@@ -307,4 +307,29 @@ describe("DatePicker", () => {
 			vi.useRealTimers();
 		}
 	});
+	it("hides a month whose days are all out of range in year-month mode", () => {
+		// `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 면 9월에 고를 수 있는 날이
+		// 하나도 없다. 월 목록은 일을 보지 않으므로 9월이 그대로 떴고, 고르면 emit 이 조용히
+		// 막혀 드롭다운이 반응 없이 멈췄다 - 목록과 emit 이 다른 계산을 쓴 자리다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					mode="year-month"
+					value="2026-09"
+					minDate="2026-09-20"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[1]);
+			expect(screen.queryAllByRole("option")).toHaveLength(0);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
 });

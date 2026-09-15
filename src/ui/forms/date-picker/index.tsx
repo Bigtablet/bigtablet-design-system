@@ -211,13 +211,22 @@ export const DatePicker = ({
 		[minYear, maxYear],
 	);
 
+	// 그 달에 고를 수 있는 날이 하나도 없으면 월 목록에서도 뺀다. `minMonth`/`maxMonth` 는 일을
+	// 보지 않으므로, `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 처럼 같은 달 안에서
+	// 교집합이 비는 경우를 잡지 못한다. 목록에만 남겨 두면 골라도 아무 일이 없는 항목이 된다 -
+	// 이 파일이 세운 "목록과 emit 이 같은 계산을 쓴다" 원칙이 깨지는 자리다.
 	const monthOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minMonth, maxMonth).map((m) => ({
-				value: String(m),
-				label: pad(m),
-			})),
-		[minMonth, maxMonth],
+			range(minMonth, maxMonth)
+				.filter((m) => {
+					const bounds = dayBoundsFor(year, m);
+					return bounds.max >= bounds.min;
+				})
+				.map((m) => ({
+					value: String(m),
+					label: pad(m),
+				})),
+		[minMonth, maxMonth, dayBoundsFor, year],
 	);
 
 	const dayOptions = React.useMemo<DropdownOption[]>(
@@ -260,9 +269,10 @@ export const DatePicker = ({
 		(yy: number, mm: number, dd?: number) => {
 			const cb = onValueChange ?? onChange;
 			if (mode === "year-month") {
-				// 월 단위 모드는 그 달의 첫날을 대표값으로 본다.
-				if (!withinRange(yy, mm, min.year === yy && min.month === mm ? Math.max(1, min.day) : 1))
-					return;
+				// 목록과 **같은 계산**을 쓴다. 대표일을 하나 골라 검사하면 목록에는 있는데 고르면
+				// 아무 반응이 없는 달이 생긴다.
+				const monthBounds = dayBoundsFor(yy, mm);
+				if (monthBounds.max < monthBounds.min) return;
 				cb?.(`${yy}-${pad(mm)}`);
 				return;
 			}
@@ -273,7 +283,7 @@ export const DatePicker = ({
 			if (!withinRange(yy, mm, safeDay)) return;
 			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, onChange, dayBoundsFor, withinRange, min.year, min.month, min.day],
+		[mode, onValueChange, onChange, dayBoundsFor, withinRange],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
