@@ -11,6 +11,7 @@
 - (렌더 변경) `Card`·`MediaCard`·`ListItem` 에서 Enter·Space 를 누르고 있어도 `onClick` 이 한 번만 실행됩니다. keydown 이 반복돼 삭제 같은 동작이 여러 번 나갔습니다
 - `Table` 에 `rowIndexOffset` 이 생겼습니다. 한 쪽만 받아 그리는 표에서 행 선택 체크박스가 쪽마다 "1번째 행 선택" 으로 되돌아가, 3쪽인지 1쪽인지 스크린리더로는 구분할 수 없었습니다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산합니다
 - `Checkbox` 가 `Field` 밖에서 소비자가 준 `aria-required` 를 지우지 않습니다. 필수 동의 체크박스를 `Field` 없이 쓰면 그 정보가 보조기술에 전혀 닿지 않았습니다
+- `FocusTrapOptions` 타입을 함께 내보냅니다. `useFocusTrap` 은 공개 export 인데 새 옵션 타입은 이름을 쓸 수 없었습니다
 
 ## [3.21.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.1) - 2026-09-15
 - (렌더 변경) `Table` 의 `stickyHeader` 가 실제로 붙습니다. 표 래퍼가 `overflow-x: auto` 라 자기 자신이 스크롤 영역인데 높이 제한은 바깥에 있어, 헤더가 행과 함께 밀려 나갔습니다. **감싼 요소에 확정된 높이**(`height: 240px` 등)를 주면 래퍼가 그것을 물려받습니다
