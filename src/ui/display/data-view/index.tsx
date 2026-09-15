@@ -94,6 +94,14 @@ export interface DataViewProps<T extends object>
 	onRowClick?: (row: T, index: number) => void;
 	/** 표의 접근성 이름 */
 	ariaLabel?: string;
+	/** 전체 선택 체크박스의 라벨 (기본값: `Table` 의 기본 라벨) */
+	selectAllAriaLabel?: string;
+	/**
+	 * 행 선택 체크박스의 라벨. 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based)이다.
+	 * 기본값은 순번만 읽어 주므로, 행을 이름으로 구분하려면 바깥 `rows` 를 닫아 넘긴다 -
+	 * `(index) => `${rows[index - offset].name} 선택``.
+	 */
+	selectRowAriaLabel?: (index: number) => string;
 	/** 선택 액션 줄의 안내 문구 (기본값: (n) => `${n}개 선택됨`) */
 	selectionSummary?: (count: number) => string;
 	/** 선택 해제 버튼 라벨 */
@@ -138,6 +146,8 @@ export const DataView = <T extends object>({
 	onSortChange,
 	onRowClick,
 	ariaLabel,
+	selectAllAriaLabel,
+	selectRowAriaLabel,
 	selectionSummary: selectionSummaryProp,
 	clearSelectionLabel: clearSelectionLabelProp,
 	errorTitle: errorTitleProp,
@@ -270,6 +280,8 @@ export const DataView = <T extends object>({
 					onRowClick={onRowClick}
 					ariaLabel={ariaLabel}
 					selectable
+					selectAllAriaLabel={selectAllAriaLabel}
+					selectRowAriaLabel={selectRowAriaLabel}
 					rowKey={rowKey}
 					selectedKeys={selectedKeys}
 					onSelectionChange={setSelectedKeys}
