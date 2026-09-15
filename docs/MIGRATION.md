@@ -59,7 +59,7 @@ prop 이 사라지지도, 시그니처가 바뀌지도 않습니다. 바뀌는 �
 
 `Field` **밖에서** 쓰는 입력은 달라지지 않습니다. 각 속성이 `Field` 가 없을 때 소비자 값으로 되돌아갑니다.
 
-> 예외가 하나 있습니다. `Checkbox` 는 `Field` 밖에서도 소비자가 준 `aria-required` 를 무시합니다(`aria-required={field?.required || undefined}` 가 `{...props}` 뒤에 옵니다). 이번 변경이 만든 것이 아니라 그 전부터 그랬고, [#649](https://github.com/Bigtablet/bigtablet-design-system/issues/649) 에서 따로 다룹니다.
+> `Checkbox` 는 `Field` 밖에서도 소비자가 준 `aria-required` 를 지우는 결함이 따로 있었습니다(그 한 줄만 `{...props}` 뒤에서 fallback 없이 계산됐습니다). 이 변경이 만든 것이 아니라 그 전부터였고, **3.22.0 에서 함께 고쳤습니다**([#649](https://github.com/Bigtablet/bigtablet-design-system/issues/649)). 앱 쪽에서 할 일은 없습니다.
 
 ### 앱 쪽에서 할 일
 

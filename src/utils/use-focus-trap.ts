@@ -36,6 +36,7 @@ export function useFocusTrap(
 ) {
 	const previousActiveElement = React.useRef<HTMLElement | null>(null);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: preferWithin 은 ref 라 정체가 바뀌지 않는다 - 의존성에 넣으면 소비자가 인라인으로 준 객체에 매번 트랩이 재설치된다
 	React.useEffect(() => {
 		if (!isActive) return;
 
@@ -56,8 +57,14 @@ export function useFocusTrap(
 		// 스크롤 wrapper 는 건너뛴다 - 안쪽에 실제 컨트롤이 있는데 빈 div 에 포커스가 놓이면
 		// 사용자는 자기가 어디 있는지 알 수 없다. 건너뛸 대상뿐이면 그냥 그것을 쓴다.
 		const focusableElements = getFocusableElements();
-		const preferred =
-			options?.preferWithin?.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTORS) ?? null;
+		// 우선 영역 안에서도 skip 표시가 붙은 요소는 건너뛴다 - 아래 폴백과 같은 규칙이어야
+		// 중첩된 스크롤 wrapper 같은 것이 초기 포커스를 가로채지 않는다.
+		const preferredRoot = options?.preferWithin?.current;
+		const preferred = preferredRoot
+			? (Array.from(preferredRoot.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).find(
+					(el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR),
+				) ?? null)
+			: null;
 		const initialTarget =
 			preferred ??
 			Array.from(focusableElements).find((el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR)) ??
@@ -116,6 +123,5 @@ export function useFocusTrap(
 			// Restore focus to the previously focused element
 			previousActiveElement.current?.focus();
 		};
-		// biome-ignore lint/correctness/useExhaustiveDependencies: preferWithin 은 ref 라 정체가 바뀌지 않는다 - 의존성에 넣으면 소비자가 인라인으로 준 객체에 매번 트랩이 재설치된다
 	}, [isActive, containerRef]);
 }
