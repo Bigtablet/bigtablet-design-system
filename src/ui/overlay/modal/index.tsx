@@ -241,7 +241,16 @@ export const Modal = ({
 				}}
 			>
 				{showCloseIcon && onClose && (
-					<button type="button" className="modal_close" onClick={onClose} aria-label={closeLabel}>
+					<button
+						type="button"
+						className="modal_close"
+						onClick={onClose}
+						aria-label={closeLabel}
+						// 열자마자 포커스가 여기 놓이지 않게 한다. 첫 조작이 "닫기" 가 되면 Space/Enter
+						// 한 번에 모달이 사라지고, 폼 모달에서는 사용자가 Tab 을 한 번 더 쳐야 한다.
+						// 탭 순환에는 그대로 남고, 안에 다른 컨트롤이 없으면 여전히 여기로 온다.
+						data-focus-trap-skip-autofocus=""
+					>
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}

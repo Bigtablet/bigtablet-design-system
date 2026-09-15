@@ -241,7 +241,14 @@ export const Drawer = ({
 				}}
 			>
 				{showCloseIcon && onClose && (
-					<button type="button" className="drawer_close" onClick={onClose} aria-label={closeLabel}>
+					<button
+						type="button"
+						className="drawer_close"
+						onClick={onClose}
+						aria-label={closeLabel}
+						// Modal 과 같은 규칙 - 초기 포커스 대상에서만 빠진다.
+						data-focus-trap-skip-autofocus=""
+					>
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}

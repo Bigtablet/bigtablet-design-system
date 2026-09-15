@@ -707,4 +707,26 @@ describe("Modal", () => {
 		expect(document.querySelector(".modal_panel")).toBeNull();
 		vi.unstubAllGlobals();
 	});
+	it("puts initial focus on the first control in the body, not the close button", () => {
+		// 첫 조작이 "닫기" 가 되면 Space/Enter 한 번에 모달이 사라지고, 폼 모달에서는 사용자가
+		// Tab 을 한 번 더 쳐야 첫 입력에 닿는다.
+		render(
+			<Modal open onClose={() => {}} title="가입">
+				<input aria-label="이메일" />
+				<button type="button">보내기</button>
+			</Modal>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "이메일" }));
+	});
+
+	it("still focuses the close button when the body has no control", () => {
+		render(
+			<Modal open onClose={() => {}} title="안내">
+				읽고 닫으세요
+			</Modal>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "닫기" }));
+	});
 });
