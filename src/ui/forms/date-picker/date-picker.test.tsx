@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { DatePicker } from "./index";
 
 describe("DatePicker", () => {
@@ -330,6 +331,31 @@ describe("DatePicker", () => {
 			expect(screen.queryAllByRole("option")).toHaveLength(0);
 		} finally {
 			vi.useRealTimers();
+		}
+	});
+
+	it("passes the Field's required state down to every dropdown", () => {
+		// role="group" 에는 aria-required 를 붙일 수 없다(axe aria-allowed-attr) - 안쪽
+		// Dropdown 마다 내려보낸다.
+		render(
+			<Field name="birth" label="생년월일" required>
+				<DatePicker onValueChange={vi.fn()} />
+			</Field>,
+		);
+
+		const controls = screen.getAllByRole("combobox");
+		expect(controls.length).toBeGreaterThan(0);
+		for (const control of controls) {
+			expect(control).toHaveAttribute("aria-required", "true");
+		}
+		expect(screen.getByRole("group")).not.toHaveAttribute("aria-required");
+	});
+
+	it("does not claim required without a Field or the prop", () => {
+		render(<DatePicker onValueChange={vi.fn()} />);
+
+		for (const control of screen.getAllByRole("combobox")) {
+			expect(control).not.toHaveAttribute("aria-required");
 		}
 	});
 });

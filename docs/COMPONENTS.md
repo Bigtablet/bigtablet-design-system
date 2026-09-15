@@ -296,6 +296,7 @@ import Link from "next/link";
 | `minDate` | `string` | - | 가장 이른 날짜 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
 | `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 | `fullWidth` | `boolean` | `true` | |
 
 **거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
@@ -323,6 +324,7 @@ import Link from "next/link";
 | `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
 | `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
 | `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 | `fullWidth` | `boolean` | `true` | |
 | `hourLabel` | `string` | `'시'` | |
 | `minuteLabel` | `string` | `'분'` | |
@@ -457,6 +459,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
 | ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
 **DropdownOption:**
 
@@ -754,6 +757,18 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
 
 > 폼 라이브러리에 의존하지 않는다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙인다.
+
+> **`required` 가 닿는 자리는 컨트롤이지 묶음이 아니다.** 화면의 `*` 는 `aria-hidden` 이라
+> 보조기술에는 `aria-required` 만 들린다. 그런데 `role="group"` 은 그 속성을 허용하지 않아
+> (axe `aria-allowed-attr`) 묶음 입력 — `DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput` —
+> 은 **안쪽 컨트롤마다** 필수 여부를 붙인다. 연·월·일 세 목록, 여섯 자리 입력 모두가 필수이므로
+> 읽히는 내용도 사실과 맞다. `FileInput` 은 네이티브 `<input type="file">` 이라 `aria-required`
+> 대신 `required` 를 쓴다(폼 제출 검증까지 함께 붙는다). `Toggle` 은 `role="switch"` 가
+> `checkbox` 의 하위 role 이라 `aria-required` 를 그대로 받는다.
+>
+> 개별 `Radio` 는 대상이 아니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당한다.
+> `ImageCropper` 는 값에 해당하는 컨트롤이 없어(뷰포트는 조작 표면, 슬라이더는 확대율) 붙일
+> 자리가 없다.
 
 ### TextField
 
@@ -1198,6 +1213,7 @@ const [date, setDate] = useState('');
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
 ---
 

@@ -196,6 +196,9 @@ export const OtpInput = ({
 						aria-label={t("otpInput.digit", { index: i + 1 })}
 						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
 						aria-invalid={error || field?.invalid || undefined}
+						// 자리마다 붙인다 - role="group" 은 aria-required 를 허용하지 않고(axe
+						// aria-allowed-attr), 여섯 자리는 하나만 비어도 코드가 완성되지 않는다.
+						aria-required={field?.required || undefined}
 						aria-describedby={
 							[field?.describedBy, supportingText ? supportingId : undefined]
 								.filter(Boolean)

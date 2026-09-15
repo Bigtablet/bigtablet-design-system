@@ -32,6 +32,11 @@ export interface DateRangePickerProps {
 	selectableRange?: "all" | "until-today";
 	/** 비활성 여부 */
 	disabled?: boolean;
+	/**
+	 * 필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.
+	 * `role="group"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다.
+	 */
+	required?: boolean;
 	/** 전체 너비 차지 (기본값: true) */
 	fullWidth?: boolean;
 }
@@ -63,6 +68,7 @@ export const DateRangePicker = ({
 	minDate,
 	selectableRange = "all",
 	disabled,
+	required,
 	fullWidth = true,
 }: DateRangePickerProps) => {
 	const t = useLocaleText();
@@ -70,6 +76,9 @@ export const DateRangePicker = ({
 	const endLabel = endLabelProp ?? t("dateRange.end");
 
 	const field = useFieldControl();
+	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
+	// 안쪽 컨트롤마다 내려보낸다. Field 가 감싸면 Field 가 출처다.
+	const isRequired = field?.required || required || undefined;
 
 	const start = value?.start;
 	const end = value?.end;
@@ -116,6 +125,7 @@ export const DateRangePicker = ({
 						endYear={endYear}
 						minDate={minDate}
 						selectableRange={selectableRange}
+						required={isRequired}
 						disabled={disabled}
 						fullWidth
 					/>
@@ -127,6 +137,7 @@ export const DateRangePicker = ({
 						endYear={endYear}
 						minDate={endMinDate}
 						selectableRange={selectableRange}
+						required={isRequired}
 						// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.
 						disabled={disabled || !start}
 						fullWidth
