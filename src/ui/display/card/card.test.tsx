@@ -228,4 +228,20 @@ describe("Card", () => {
 		);
 		expect(screen.getByRole("link")).toBeInTheDocument();
 	});
+	it("does not activate on Space when the consumer set role=link", () => {
+		// 링크는 Space 로 눌리지 않는다(스크롤이다). role 을 덮어썼으면 그 규약을 따라야 한다.
+		const onClick = vi.fn();
+		render(
+			<Card interactive onClick={onClick} role="link">
+				내용
+			</Card>,
+		);
+
+		const card = screen.getByRole("link");
+		fireEvent.keyDown(card, { key: " " });
+		expect(onClick).not.toHaveBeenCalled();
+
+		fireEvent.keyDown(card, { key: "Enter" });
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
 });
