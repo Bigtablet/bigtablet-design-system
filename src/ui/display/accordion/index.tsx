@@ -49,8 +49,10 @@ export const Accordion = ({
 	const isControlled = controlledKeys !== undefined;
 	const [internalKeys, setInternalKeys] = React.useState<string[]>(defaultOpenKeys);
 	const open = isControlled ? (controlledKeys ?? []) : internalKeys;
-	// item.key 로 직접 id 를 만들면 같은 키를 쓰는 인스턴스 간 중복/공백 등 무효 id 로
-	// aria-controls/aria-labelledby 연결이 깨질 수 있어 useId 접두사로 격리한다.
+	// id 는 `useId` 접두사 + **인덱스**로 만든다. 접두사는 인스턴스끼리만 갈라 주고, key 자체는
+	// 소비자 값이라 공백이 들어갈 수 있다(`"배송 정보"`). aria-controls·aria-labelledby 는
+	// IDREF **목록**이라 공백이 있으면 두 개의 참조로 쪼개져 아무것도 가리키지 않는다. 같은 key
+	// 가 두 번 오는 경우의 중복 id 도 인덱스면 생기지 않는다.
 	const idPrefix = React.useId();
 
 	const toggle = (key: string) => {
@@ -62,10 +64,10 @@ export const Accordion = ({
 
 	return (
 		<div className={cn("accordion", className)} {...props}>
-			{items.map((item) => {
+			{items.map((item, index) => {
 				const isOpen = open.includes(item.key);
-				const headerId = `${idPrefix}-${item.key}-header`;
-				const panelId = `${idPrefix}-${item.key}-panel`;
+				const headerId = `${idPrefix}-${index}-header`;
+				const panelId = `${idPrefix}-${index}-panel`;
 
 				return (
 					<div key={item.key} className={cn("accordion_item", isOpen && "accordion_item_open")}>

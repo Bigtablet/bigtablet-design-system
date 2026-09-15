@@ -100,4 +100,21 @@ describe("Accordion", () => {
 		expect(onValueChange).toHaveBeenCalledWith(["a"]);
 		expect(onChange).not.toHaveBeenCalled();
 	});
+	it("builds valid ids even when a key contains whitespace", () => {
+		// aria-controls·aria-labelledby 는 IDREF 목록이라 공백이 있으면 두 참조로 쪼개진다.
+		// key 는 소비자 값이므로 "배송 정보" 같은 값이 그대로 들어온다.
+		render(
+			<Accordion items={[{ key: "배송 정보", title: "배송", content: "3일" }]} defaultOpenKeys={["배송 정보"]} />,
+		);
+
+		const trigger = screen.getByRole("button", { name: "배송" });
+		const panelId = trigger.getAttribute("aria-controls") as string;
+		expect(panelId).not.toContain(" ");
+		expect(document.getElementById(panelId)).not.toBeNull();
+
+		const region = screen.getByRole("region");
+		const labelId = region.getAttribute("aria-labelledby") as string;
+		expect(labelId).not.toContain(" ");
+		expect(document.getElementById(labelId)).not.toBeNull();
+	});
 });

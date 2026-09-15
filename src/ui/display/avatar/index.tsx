@@ -47,8 +47,11 @@ export const Avatar = ({
 	style,
 	...props
 }: AvatarProps) => {
-	const [imgFailed, setImgFailed] = React.useState(false);
-	const showImage = src && !imgFailed;
+	// **어떤 src 가 실패했는지**를 담는다. boolean 으로 두면 한 번 실패한 뒤 새 src 를 줘도
+	// 계속 이니셜만 나온다 - 사진을 다시 올린 사용자, 그리고 목록에서 같은 자리를 재사용하는
+	// 행(React 가 위치로 재조정한다)이 그대로 걸린다.
+	const [failedSrc, setFailedSrc] = React.useState<string | null>(null);
+	const showImage = src && failedSrc !== src;
 	const initials = getInitials(name);
 
 	return (
@@ -65,7 +68,7 @@ export const Avatar = ({
 		>
 			{showImage ? (
 				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image
-				<img src={src} alt={name} onError={() => setImgFailed(true)} className="avatar_image" />
+				<img src={src} alt={name} onError={() => setFailedSrc(src ?? null)} className="avatar_image" />
 			) : (
 				<span className="avatar_initials" aria-hidden="true">
 					{initials}
