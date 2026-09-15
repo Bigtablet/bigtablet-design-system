@@ -828,6 +828,24 @@ describe("Dropdown", () => {
 		expect(trigger()).not.toHaveAttribute("aria-required");
 	});
 
+	it("announces required from the prop outside a Field", () => {
+		render(<Dropdown options={options} label="권한" required />);
+
+		expect(trigger()).toHaveAttribute("aria-required", "true");
+	});
+
+	it("lets an optional Field override the required prop", () => {
+		// 문서가 못박은 우선순위는 "Field 가 이긴다" 다. OR 로 합치면 Field 가 optional 인데도
+		// prop 이 true 면 화면엔 * 가 없는 채로 보조기술만 필수라고 읽는다.
+		render(
+			<Field name="role" label="권한">
+				<Dropdown options={options} required />
+			</Field>,
+		);
+
+		expect(trigger()).not.toHaveAttribute("aria-required");
+	});
+
 	it("names a label-less trigger by its value alone, as the button did", () => {
 		// 라벨 없는 Dropdown 이 이름 없는 컨트롤이 되면 role 을 바꾼 것이 오히려 손해다.
 		render(<Dropdown options={options} placeholder="상태" />);
