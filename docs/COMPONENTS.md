@@ -629,7 +629,7 @@ import { Settings } from 'lucide-react';
 | `rowKey` | `(row: T) => string` | - | 행 고유 key |
 | `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
 | `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
-| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다 |
+| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다. `pageSize` 를 함께 주면 행 선택 체크박스 라벨이 전체 순번을 쓴다 |
 | `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
@@ -2371,6 +2371,10 @@ const [isOpen, setIsOpen] = useState(false);
 
 제목·푸터는 고정된 채 `children` 영역만 스크롤된다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤되고, 초기 포커스는 그 wrapper 가 아니라 안쪽 첫 컨트롤로 간다.
 
+초기 포커스 순서는 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 이다. 첫 조작이 "닫기" 가 되면 Space/Enter 한 번에 모달이 사라지고 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 하므로, 본문에 컨트롤이 있으면 그쪽이 이긴다.
+
+**footer 는 초기 포커스 대상이 아니다.** `children` 없이 `footer` 만 쓰는 확인 모달에서 footer 첫 자리가 destructive 액션인 패턴이 흔해, 그리로 포커스가 가면 열자마자 Enter 한 번에 삭제가 실행된다. 그런 모달은 닫기 버튼으로 간다. 탭 순환에는 모두 남는다. `Drawer` 도 같다.
+
 #### 오버레이 클릭 — 폼 드로어에서는 끌 것
 
 `closeOnOverlay` 기본값은 `true` 다. **입력 요소를 담은 드로어에서는 바깥 클릭 한 번에 작성 중인 내용이 사라진다** — 폼에는 명시적으로 끈다. 패널 안에서 드래그를 시작해 오버레이에서 놓는 경우(텍스트 선택 등)는 닫히지 않는다.
@@ -2846,7 +2850,7 @@ import { Card, Button } from '@bigtablet/design-system';
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
 
-> ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 실제 클릭/키보드 처리는 `onClick` 이나 래핑 요소로 직접 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
+> ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 조작은 `onClick` 으로 붙인다 - `onClick` 을 주면 카드가 `role="button"` + 탭 정지가 되고 Enter·Space 로도 눌린다(WCAG 2.1.1). `onClick` 이 없으면 탭 순서에 들어가지 않는다. `ListItem` 과 같은 규칙이다. **`onClick` 을 줄 때는 `interactive`(MediaCard 는 `clickable`)도 함께 켜라** - 안 켜면 키보드·스크린리더에는 버튼인데 마우스 사용자에게는 눌린다는 단서가 전혀 없는 카드가 된다. 카드 **안에** 링크나 버튼을 또 두면 조작 표면이 겹치므로, 그때는 카드에 `onClick` 을 주지 말고 안쪽 요소에 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
 
 ---
 
@@ -3969,7 +3973,8 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
 | `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
 | `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
-| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label |
+| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. 인자는 `rowIndexOffset` 이 더해진 전체 순번 |
+| `rowIndexOffset` | `number` | `0` | 이 표의 첫 행이 전체에서 몇 번째인지(0-based). 서버 페이지네이션에서 행 번호가 쪽마다 1 로 되돌아가지 않게 한다 |
 | `className` | `string` | - | 루트 wrapper 에 추가할 className |
 
 **`TableColumn<T>`**
@@ -4046,6 +4051,7 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 - 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출된다.
 - `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결된다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 쓴다.
 - 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈한다.
+- 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 준다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힌다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산한다.
 
 ---
 

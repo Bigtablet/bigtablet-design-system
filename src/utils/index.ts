@@ -23,7 +23,7 @@ export {
 	useAnchoredPosition,
 	type Viewport,
 } from "./use-anchored-position";
-export { useFocusTrap } from "./use-focus-trap";
+export { type FocusTrapOptions, useFocusTrap } from "./use-focus-trap";
 export { useIsMounted } from "./use-is-mounted";
 export { useReducedMotion } from "./use-reduced-motion";
 export { useSafeLayoutEffect } from "./use-safe-layout-effect";

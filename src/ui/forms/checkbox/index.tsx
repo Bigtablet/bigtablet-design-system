@@ -64,7 +64,8 @@ export const Checkbox = ({
 				className="checkbox_input"
 				id={field?.inputId ?? props.id}
 				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
-				aria-required={field?.required || undefined}
+				// Field 안에서는 Field 가 필수 여부를 소유하고, 밖에서는 소비자가 준 값이 남는다.
+				aria-required={field ? field.required || undefined : props["aria-required"]}
 				// Field 안에서는 Field 가 에러를 소유하고, 밖에서는 소비자가 준 값이 남는다.
 				aria-invalid={error || (field ? field.invalid || undefined : props["aria-invalid"])}
 			/>

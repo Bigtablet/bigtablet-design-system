@@ -158,4 +158,15 @@ describe("ListItem", () => {
 		expect(screen.getByText("S")).toBeInTheDocument();
 		expect(screen.getByText("M")).toBeInTheDocument();
 	});
+	it("fires once while the key is held down", () => {
+		// Card·MediaCard 와 같은 규칙 - keydown 반복으로 부수효과가 중복 실행되면 안 된다.
+		const onClick = vi.fn();
+		render(<ListItem label="항목" onClick={onClick} />);
+
+		const item = screen.getByRole("button");
+		fireEvent.keyDown(item, { key: "Enter" });
+		fireEvent.keyDown(item, { key: "Enter", repeat: true });
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
 });

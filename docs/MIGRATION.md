@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
 - [v3.13.0 (a11y 문자열 기본값 한글화)](#v3130-a11y-문자열-기본값-한글화)
 - [v3.9.0 (React variant/success)](#v390-react-variantsuccess)
@@ -28,6 +29,63 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)
+
+prop 이 사라지지도, 시그니처가 바뀌지도 않습니다. 바뀌는 것은 **`Field` 안에서 누가 이기는가** 이고, 그래서 `Field` 안의 입력에 `id` 를 직접 주던 코드가 조용히 무시됩니다.
+
+> **이 절의 변경은 3.21.1 에 먼저 실려 나갔습니다.** 소비자 코드가 깨지는 변경이라 patch 가 아니라 minor 가 맞아, 3.22.0 에서 이 문서를 붙였습니다. 3.21.1 을 이미 받았다면 **여기 적힌 id·ARIA 우선순위는** 그때 이미 적용됐습니다 - 아래 "앱 쪽에서 할 일" 은 그대로 해당합니다.
+>
+> 다만 3.22.0 은 그 뒤에 머지된 수정들(오버레이 초기 포커스, 카드 키보드 조작, 표 행 번호)도 함께 담고 있어 **3.21.1 과 내용이 같지 않습니다.** 전체 목록은 [CHANGELOG](https://github.com/Bigtablet/bigtablet-design-system/blob/main/CHANGELOG.md) 를 보세요.
+
+### 무엇이 바뀌나
+
+바뀐 컴포넌트는 **`Radio`·`TextField`·`Textarea`** 셋입니다. `Field` 안에서 이들이 소비자 값을 뒤에 덮어써, `Field` 가 만든 `<label for>` 이 문서에 없는 id 를 가리켰습니다 - 라벨을 눌러도 아무 일이 없었습니다.
+
+`Checkbox`·`Toggle` 은 처음부터 `Field` 가 이기는 순서였습니다. 이번에 나머지 셋이 거기에 맞춰졌습니다.
+
+`Field` 에서 받는 속성은 컴포넌트마다 다릅니다.
+
+| 컴포넌트 | `Field` 에서 받는 속성 |
+| --- | --- |
+| `TextField` · `Textarea` | `id` · `aria-describedby` · `aria-invalid` · `aria-required` |
+| `Radio` | `id` · `aria-describedby` · `aria-invalid` |
+
+| `Field` 안, `Radio`·`TextField`·`Textarea` 에 준 `id` | 3.21.0 이하 | 3.21.1 · 3.22.0 |
+| --- | --- | --- |
+| 누가 이기나 | 소비자 값 (라벨 연결이 끊김) | **`Field` 값** |
+
+`Field` **밖에서** 쓰는 입력은 달라지지 않습니다. 각 속성이 `Field` 가 없을 때 소비자 값으로 되돌아갑니다.
+
+> `Checkbox` 는 `Field` 밖에서도 소비자가 준 `aria-required` 를 지우는 결함이 따로 있었습니다(그 한 줄만 `{...props}` 뒤에서 fallback 없이 계산됐습니다). 이 변경이 만든 것이 아니라 그 전부터였고, **3.22.0 에서 함께 고쳤습니다**([#649](https://github.com/Bigtablet/bigtablet-design-system/issues/649)). 앱 쪽에서 할 일은 없습니다.
+
+### 앱 쪽에서 할 일
+
+`Field` 안의 입력에 `id` 를 주고 그 값을 어딘가에서 쓰고 있었다면 그 참조를 끊어야 합니다.
+
+```diff
+- <Field name="email" label="이메일">
+-   <TextField id="email-input" />
+- </Field>
++ <Field name="email" label="이메일">
++   <TextField />
++ </Field>
+```
+
+테스트에서 그 id 로 요소를 찾고 있었다면 라벨이나 role 로 바꾸세요. `Field` 가 라벨을 연결해 두므로 이제 이름으로 찾을 수 있습니다.
+
+```diff
+- container.querySelector("#email-input")
++ screen.getByRole("textbox", { name: "이메일" })
+```
+
+`Field` 밖에서 id 가 필요하면 그대로 주면 됩니다 - 그 경로는 바뀌지 않았습니다.
+
+### 함께 들어간 것
+
+같은 릴리즈에서 `Checkbox`·`Toggle`·`Radio`·`ImageCropper` 가 `Field` 의 에러 상태를 `aria-invalid` 로 전달하기 시작했습니다. 화면에는 빨간 문구가 있는데 보조기술에는 정상 입력으로 보이던 문제입니다. 앱 쪽에서 할 일은 없습니다.
 
 ---
 

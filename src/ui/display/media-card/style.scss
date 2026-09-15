@@ -6,6 +6,17 @@
   background: token.$color_bg_solid;
   border-radius: token.$radius_lg;
   overflow: hidden;
+
+  // onClick 이 있으면 role="button" + 탭 정지가 붙는다. 브라우저 기본 아웃라인에 맡기면
+  // 이미지 위에서 대비가 보장되지 않고 DS 의 다른 포커스 가능 요소와도 어긋난다.
+  // `:hover` 규칙과 특이도가 같으면 소스상 뒤에 오는 hover 가 이겨, 키보드로 포커스한 카드에
+  // 마우스를 올리는 순간 포커스 링이 사라진다(WCAG 2.4.7). `:focus-visible:hover` 를 함께
+  // 적어 특이도로 이긴다 - 규칙 순서에 기대지 않는다.
+  &:focus-visible,
+  &:focus-visible:hover {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
   transition:
     transform token.$transition_base,
     box-shadow token.$transition_base;

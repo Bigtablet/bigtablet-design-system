@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.22.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.22.0) - 2026-09-15
+- (렌더 변경) `Field` 안에서는 **Field 가 준 `id`·설명·에러가 소비자 값보다 우선합니다.** `Radio`·`TextField`·`Textarea` 는 소비자가 직접 준 `id` 나 `aria-*` 가 뒤에 덮여, 라벨이 문서에 없는 id 를 가리키고 라벨 클릭이 죽었습니다. **`Field` 안의 입력에 `id` 를 직접 주던 코드는 그 값이 더 이상 쓰이지 않습니다** - 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.22.0 섹션. 이 항목은 3.21.1 에 먼저 나갔고, 소비자 코드가 깨지는 변경이라 minor 로 다시 올립니다
+- (렌더 변경) `Modal`·`Drawer` 의 초기 포커스가 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 순서가 됩니다. 지금까지는 닫기 버튼이 첫 후보라 열자마자 Space/Enter 한 번에 모달이 사라지고, 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 했습니다. footer 는 초기 포커스 대상이 아닙니다 - 확인 모달의 footer 첫 자리가 destructive 인 패턴이 흔합니다
+- (렌더 변경) `onClick` 을 준 `Card`·`MediaCard` 가 키보드로 조작됩니다. 마우스로는 눌리는데 탭 순서에 없어 키보드로는 도달조차 못 하던 문제입니다(WCAG 2.1.1). 포커스 링이 새로 보입니다. `clickable`·`interactive` 는 겉모습 전용 그대로이고, **`onClick` 을 줄 때 함께 켜야** 마우스 사용자에게도 단서가 남습니다
+- (렌더 변경) `Card`·`MediaCard`·`ListItem` 에서 Enter·Space 를 누르고 있어도 `onClick` 이 한 번만 실행됩니다. keydown 이 반복돼 삭제 같은 동작이 여러 번 나갔습니다
+- `Table` 에 `rowIndexOffset` 이 생겼습니다. 한 쪽만 받아 그리는 표에서 행 선택 체크박스가 쪽마다 "1번째 행 선택" 으로 되돌아가, 3쪽인지 1쪽인지 스크린리더로는 구분할 수 없었습니다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산합니다
+- `Checkbox` 가 `Field` 밖에서 소비자가 준 `aria-required` 를 지우지 않습니다. 필수 동의 체크박스를 `Field` 없이 쓰면 그 정보가 보조기술에 전혀 닿지 않았습니다
+- `FocusTrapOptions` 타입을 함께 내보냅니다. `useFocusTrap` 은 공개 export 인데 새 옵션 타입은 이름을 쓸 수 없었습니다
+
 ## [3.21.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.1) - 2026-09-15
 - (렌더 변경) `Table` 의 `stickyHeader` 가 실제로 붙습니다. 표 래퍼가 `overflow-x: auto` 라 자기 자신이 스크롤 영역인데 높이 제한은 바깥에 있어, 헤더가 행과 함께 밀려 나갔습니다. **감싼 요소에 확정된 높이**(`height: 240px` 등)를 주면 래퍼가 그것을 물려받습니다
 - (렌더 변경) controlled 로 쓴 `TextField`·`Textarea` 가 부모가 준 `value` 를 따릅니다. 부모가 입력을 거절하면(길이 제한·검증 실패) 화면엔 거절된 글자가 남고 부모 상태는 예전 값이라 둘이 갈렸습니다. **`value` 를 비동기로 갱신하는 화면에서는 그 사이 입력이 되돌아가 보입니다** - 평범한 controlled input 과 같은 동작입니다

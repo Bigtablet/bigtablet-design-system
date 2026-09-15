@@ -66,7 +66,9 @@ export const ListItem = ({
 			className={rootClassName}
 			onClick={disabled ? undefined : onClick}
 			onKeyDown={(e) => {
-				if (disabled || !onClick) return;
+				// e.repeat - 키를 누르고 있으면 keydown 이 반복돼 부수효과가 여러 번 실행된다.
+				// 네이티브 `<button>` 은 Space 를 눌러도 keyup 에 한 번만 click 을 낸다.
+				if (disabled || !onClick || e.repeat) return;
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
 					// 실제 click 디스패치 → onClick 이 진짜 MouseEvent 로 호출됨 (가짜 캐스팅 제거)

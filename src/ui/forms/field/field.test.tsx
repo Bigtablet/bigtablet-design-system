@@ -311,4 +311,19 @@ describe("Field", () => {
 		);
 		expect(screen.getByRole("textbox")).toHaveAttribute("aria-required", "true");
 	});
+	it("keeps a consumer's aria-required on a Checkbox used outside a Field", () => {
+		// `aria-required` 한 줄만 `{...props}` 뒤에서 fallback 없이 계산돼, Field 없이 쓰면
+		// 소비자가 준 값이 undefined 로 덮였다. 필수 동의 체크박스가 그 정보를 잃는다.
+		render(<Checkbox label="약관 동의" aria-required={true} />);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-required", "true");
+	});
+
+	it("still lets the Field own required on a wrapped Checkbox", () => {
+		render(
+			<Field name="agree" label="약관" required>
+				<Checkbox label="동의" />
+			</Field>,
+		);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-required", "true");
+	});
 });
