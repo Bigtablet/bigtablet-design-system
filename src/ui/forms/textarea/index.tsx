@@ -229,8 +229,10 @@ export const Textarea = ({
 						maxLength={maxLength}
 						aria-invalid={field ? !!error || field.invalid : (props["aria-invalid"] ?? !!error)}
 						aria-describedby={describedBy}
-						aria-required={field?.required || undefined}
-						aria-label={!showLabel ? label : undefined}
+						// Field 밖에서는 소비자 값이 남는다 - `{...props}` 를 앞으로 옮긴 뒤로는 계산값이
+						// undefined 여도 뒤에서 덮으므로 각 속성이 직접 되돌려 줘야 한다.
+						aria-required={field ? field.required || undefined : props["aria-required"]}
+						aria-label={(!showLabel ? label : undefined) ?? props["aria-label"]}
 						value={innerValue}
 						onCompositionStart={() => {
 							isComposingRef.current = true;

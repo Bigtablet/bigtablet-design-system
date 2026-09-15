@@ -294,4 +294,21 @@ describe("Field", () => {
 		render(<Checkbox label="동의" aria-invalid={true} />);
 		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
 	});
+	it("keeps a consumer's aria-required and aria-label outside a Field", () => {
+		// `{...props}` 를 계산값 앞으로 옮기면서, 계산값이 undefined 인 속성이 소비자 값을
+		// 덮어쓰게 됐다. Field 밖에서는 소비자가 준 값이 그대로 남아야 한다.
+		render(<TextField aria-required={true} aria-label="이름" />);
+
+		const input = screen.getByRole("textbox", { name: "이름" });
+		expect(input).toHaveAttribute("aria-required", "true");
+	});
+
+	it("still lets the Field own required inside it", () => {
+		render(
+			<Field name="email" label="이메일" required>
+				<TextField />
+			</Field>,
+		);
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-required", "true");
+	});
 });
