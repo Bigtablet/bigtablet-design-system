@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { TextField } from "./index";
 
@@ -392,5 +393,60 @@ describe("TextField", () => {
 		render(<TextField label="이름" clearable defaultValue="값" clearLabel="Clear" />);
 		expect(screen.getByRole("button", { name: "Clear" })).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "지우기" })).not.toBeInTheDocument();
+	});
+	it("snaps back when the parent rejects the change", () => {
+		// controlled 인데 부모가 값을 받아 주지 않으면(길이 제한·검증 실패) 화면엔 거절된 글자가
+		// 남고 부모 상태는 예전 값이라 둘이 영영 갈렸다. 폼은 화면과 다른 값을 제출하게 된다.
+		const Parent = () => {
+			const [v, setV] = React.useState("abc");
+			return (
+				<>
+					<TextField
+						value={v}
+						onValueChange={(next) => {
+							if (next.length <= 3) setV(next);
+						}}
+					/>
+					<span data-testid="parent-state">{v}</span>
+				</>
+			);
+		};
+		render(<Parent />);
+		const input = screen.getByRole("textbox") as HTMLInputElement;
+
+		fireEvent.change(input, { target: { value: "abcd" } });
+
+		expect(input.value).toBe("abc");
+		expect(screen.getByTestId("parent-state")).toHaveTextContent("abc");
+	});
+
+	it("is not editable when a value is given with no handler", () => {
+		// 평범한 controlled input 과 같은 계약 - 되돌려 주는 쪽이 없으면 글자가 남지 않는다.
+		render(<TextField value="fixed" />);
+		const input = screen.getByRole("textbox") as HTMLInputElement;
+
+		fireEvent.change(input, { target: { value: "edited" } });
+
+		expect(input.value).toBe("fixed");
+	});
+
+	it("does not snap back while an IME composition is in flight", () => {
+		// 되돌리기가 조합 중에도 돌면 한글을 칠 수 없다 - 조합 중 DOM 값은 부모 value 와 다르다.
+		const Parent = () => {
+			const [v, setV] = React.useState("");
+			return <TextField value={v} onValueChange={setV} />;
+		};
+		render(<Parent />);
+		const input = screen.getByRole("textbox") as HTMLInputElement;
+
+		fireEvent.compositionStart(input);
+		fireEvent.change(input, { target: { value: "ㅈ" } });
+		expect(input.value).toBe("ㅈ");
+
+		fireEvent.change(input, { target: { value: "주" } });
+		expect(input.value).toBe("주");
+
+		fireEvent.compositionEnd(input, { target: { value: "중" } });
+		expect(input.value).toBe("중");
 	});
 });

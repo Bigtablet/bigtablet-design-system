@@ -135,14 +135,17 @@ export const Textarea = ({
 
 	// Controlled value 동기화 - useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
 	// paint 전 즉시 반영해 flicker 방지.
-	// 조합 중에는 prevValue 까지 함께 보류 - 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
-	// 조합 종료 후 value===prevValue 가 되어 외부 value 가 영영 반영되지 않는 버그 발생.
-	const [prevValue, setPrevValue] = useState(value);
-	if (isControlled && value !== prevValue && !isComposingRef.current) {
-		setPrevValue(value);
-		const nextValue = applyTransform(value ?? "");
-		setInnerValue(nextValue);
-		lastEmittedValueRef.current = nextValue;
+	// 비교 대상은 **현재 화면 값(innerValue)** 이다. 예전처럼 "value 가 직전 value 와 달라졌는가"
+	// 로 보면, 부모가 입력을 **거절**했을 때(길이 제한·검증 실패로 setState 를 안 하는 경우)
+	// value 가 그대로라 아무도 화면을 되돌리지 않는다. 화면엔 거절된 글자가 남고 부모 상태는
+	// 예전 값이라 둘이 영영 갈린다. 내부 버퍼는 조합(IME)을 살리기 위한 것이지 controlled 계약을
+	// 느슨하게 하려는 것이 아니다 - 조합 중이 아니면 화면은 언제나 value 를 따른다.
+	const nextControlledValue = applyTransform(value ?? "");
+	if (isControlled && !isComposingRef.current && nextControlledValue !== innerValue) {
+		setInnerValue(nextControlledValue);
+		// 되돌린 값을 "마지막으로 방출한 값" 으로도 기록한다. 안 하면 사용자가 같은 글자를 다시
+		// 쳤을 때 중복 방출 가드에 걸려 콜백이 아예 불리지 않는다.
+		lastEmittedValueRef.current = nextControlledValue;
 	}
 
 	// 외부 ref + 내부 ref 병합 (auto-grow 측정용)
