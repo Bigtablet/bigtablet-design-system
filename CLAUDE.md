@@ -314,6 +314,14 @@ label/domain
 3. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 4. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
 
+> **미결 항목은 릴리즈를 시작하기 전에 꺼낸다.** 보류한 것·설계 판단이 필요한 것·리뷰가 남긴
+> 후속 항목이 있으면 **릴리즈 PR 을 올리기 전에** 대화로 먼저 알리고, 이번 릴리즈에 넣을지
+> 확인하거나 이슈로 등록해 둔다. 그 시점에는 "이번에 넣자 / 다음에" 를 고를 수 있다.
+>
+> **태그를 푸시한 뒤의 보고에는 검증 결과와 이번 릴리즈로 닫힌 이슈만 쓴다.** 남은 후속 항목·열린
+> 이슈 번호·다음 작업 제안은 한 줄도 넣지 않는다. 배포가 끝난 뒤 꺼내면 소비자가 이미 받은
+> 뒤라 고를 여지가 없고, 그 보고는 정보가 아니라 뒤늦은 통보가 된다.
+
 **CHANGELOG.md 양식** - 릴리즈 노트와 동일한 주요 업데이트를 미러링:
 ```text
 ## [X.Y.Z](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/vX.Y.Z) - YYYY-MM-DD
