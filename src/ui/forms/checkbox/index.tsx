@@ -65,8 +65,6 @@ export const Checkbox = ({
 				id={field?.inputId ?? props.id}
 				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
 				// Field 안에서는 Field 가 필수 여부를 소유하고, 밖에서는 소비자가 준 값이 남는다.
-				// 바로 아래 aria-invalid 와 같은 규칙이다 - 이 줄만 fallback 이 빠져 있어
-				// `<Checkbox aria-required />` 를 Field 없이 쓰면 그 속성이 사라졌다.
 				aria-required={field ? field.required || undefined : props["aria-required"]}
 				// Field 안에서는 Field 가 에러를 소유하고, 밖에서는 소비자가 준 값이 남는다.
 				aria-invalid={error || (field ? field.invalid || undefined : props["aria-invalid"])}
