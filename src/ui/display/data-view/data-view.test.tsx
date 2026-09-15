@@ -232,4 +232,38 @@ describe("DataView", () => {
 
 		expect(screen.getByRole("checkbox", { name: "1번째 행 선택" })).toBeInTheDocument();
 	});
+
+	it("passes custom selection labels through to the table", () => {
+		// 기본 라벨은 순번만 읽는다 - 행을 이름으로 구분하려면 소비자가 바깥 rows 를 닫아 넘긴다.
+		render(
+			<DataView
+				query={{ data: USERS }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				selectAllAriaLabel="사용자 전체 선택"
+				selectRowAriaLabel={(index) => `${USERS[index].name} 선택`}
+			/>,
+		);
+
+		expect(screen.getByRole("checkbox", { name: "사용자 전체 선택" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "박상민 선택" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "김민준 선택" })).toBeInTheDocument();
+	});
+
+	it("offsets the custom row label by the page when pageSize is given", () => {
+		// 커스텀 라벨도 전체 순번을 받아야 3쪽의 첫 행이 1번으로 읽히지 않는다.
+		render(
+			<DataView
+				query={{ data: USERS }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				pagination={{ page: 3, totalPages: 5, pageSize: 10, onPageChange: vi.fn() }}
+				selectRowAriaLabel={(index) => `${index + 1}행 선택`}
+			/>,
+		);
+
+		expect(screen.getByRole("checkbox", { name: "21행 선택" })).toBeInTheDocument();
+	});
 });

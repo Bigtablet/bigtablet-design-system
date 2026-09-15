@@ -636,12 +636,27 @@ import { Settings } from 'lucide-react';
 | `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
+| `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
+| `selectRowAriaLabel` | `(index: number) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. 인자는 `pagination.pageSize` 를 반영한 전체 순번 |
 
 동작 규칙 세 가지:
 
 - **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
 - **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
 - **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
+
+> **선택 체크박스 라벨은 순번만 읽는다.** 기본값이 `"13번째 행 선택"` 이라 스크린리더 사용자는
+> 어떤 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 에 바깥
+> `rows` 를 닫아 넘긴다 — 인자는 `Table` 과 같은 **전체 순번**이라, 페이지가 있으면
+> `pagination.pageSize` 만큼 빼서 그 쪽의 행을 찾는다.
+>
+> ```tsx
+> const offset = (page - 1) * SIZE;
+> <DataView
+>   pagination={{ page, totalPages, pageSize: SIZE, onPageChange: setPage }}
+>   selectRowAriaLabel={(index) => `${rows[index - offset].name} 선택`}
+> />
+> ```
 
 ### 문장 속 링크 (`.text_link`)
 
