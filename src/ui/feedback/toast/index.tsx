@@ -122,6 +122,14 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	);
 };
 
+/**
+ * 토스트 id 시퀀스. `crypto.randomUUID()` 를 쓰면 **보안 컨텍스트에서만** 정의되는 API 에
+ * 묶인다 - `http://192.168.x.x:3000` 같은 사내망·기기 테스트 주소에서 첫 토스트가
+ * `TypeError: crypto.randomUUID is not a function` 으로 죽는다. id 는 React key 와 제거에만
+ * 쓰이므로 페이지 안에서 겹치지 않기만 하면 된다.
+ */
+let toastSeq = 0;
+
 // ── ToastProvider ────────────────────────────────────────────────────────────
 
 /**
@@ -152,7 +160,7 @@ export const ToastProvider = ({
 	 */
 	const addToast = React.useCallback(
 		(message: string, variant: ToastVariant, duration = 3000) => {
-			const id = crypto.randomUUID();
+			const id = `toast_${++toastSeq}`;
 			setToasts((prev) => [{ id, message, variant, duration }, ...prev].slice(0, maxCount));
 		},
 		[maxCount],
