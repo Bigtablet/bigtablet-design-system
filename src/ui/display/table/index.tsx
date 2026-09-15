@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, useSafeLayoutEffect } from "../../../utils";
 import { Skeleton } from "../../feedback/skeleton";
 import { Checkbox } from "../../forms/checkbox";
 import { useLocaleText } from "../../system/locale-provider";
@@ -140,6 +140,39 @@ export const Table = <T extends object>({
 		className,
 	);
 
+	// 래퍼는 `overflow-x: auto` 이고 stickyHeader 면 세로로도 스크롤된다. 실제로 스크롤될 때만
+	// 탭 정지를 붙인다 - 스크롤 영역을 만든 쪽이 DS 이므로 키보드로 그 안을 움직일 수단도 DS 가
+	// 준다(axe scrollable-region-focusable). 안 넘칠 때 떼는 이유는 쓸모없는 탭 정지를 남기지
+	// 않기 위해서다. Prose 가 넘치는 `pre`·`table` 에 쓰는 것과 같은 규칙이다.
+	const wrapperRef = React.useRef<HTMLDivElement>(null);
+	useSafeLayoutEffect(() => {
+		const el = wrapperRef.current;
+		if (!el) return;
+
+		const sync = () => {
+			const scrolls = el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
+			if (scrolls) el.setAttribute("tabindex", "0");
+			else el.removeAttribute("tabindex");
+		};
+
+		sync();
+
+		const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(sync);
+		resizeObserver?.observe(el);
+		const mutationObserver =
+			typeof MutationObserver === "undefined"
+				? null
+				: new MutationObserver(() => {
+						sync();
+					});
+		mutationObserver?.observe(el, { childList: true, subtree: true, characterData: true });
+
+		return () => {
+			resizeObserver?.disconnect();
+			mutationObserver?.disconnect();
+		};
+	}, []);
+
 	const isEmpty = !isLoading && data.length === 0;
 
 	// ── Row selection ──────────────────────────────────────────────────────
@@ -177,7 +210,7 @@ export const Table = <T extends object>({
 	};
 
 	return (
-		<div className={wrapperClassName}>
+		<div ref={wrapperRef} className={wrapperClassName}>
 			{/* aria-busy - 스켈레톤 로딩 중임을 AT 에 전달 (시각 전용이던 문제 수정) */}
 			<table className="table" aria-label={ariaLabel} aria-busy={isLoading || undefined}>
 				<thead className="table_thead">

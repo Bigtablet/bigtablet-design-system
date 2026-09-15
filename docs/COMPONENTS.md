@@ -3958,7 +3958,7 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `isLoading` | `boolean` | `false` | 로딩 상태 - 헤더 유지, 바디만 스켈레톤 |
 | `skeletonRows` | `number` | `5` | 로딩 시 스켈레톤 행 개수 |
 | `hoverable` | `boolean` | `true` | 행 hover 강조 |
-| `stickyHeader` | `boolean` | `false` | thead sticky 고정 |
+| `stickyHeader` | `boolean` | `false` | thead sticky 고정. **표를 감싼 요소에 확정된 높이**(`height: 240px` 등)를 줘야 동작한다 - 표 래퍼가 그 높이를 물려받아 스스로 스크롤 컨테이너가 된다. 높이가 확정이 아니면(`max-height` 만, 또는 페이지 전체 스크롤) 아무 일도 하지 않는다 |
 | `ariaLabel` | `string` | - | 스크린리더용 테이블 레이블 |
 | `onRowClick` | `(item: T, index: number) => void` | - | 행 클릭 콜백 |
 | `rowClickHint` | `string` | `'클릭 가능한 행'` | clickable 행에 `aria-describedby` 로 연결되는 동작 설명. `''` 면 힌트 미부착 |
