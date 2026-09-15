@@ -281,4 +281,30 @@ describe("DatePicker", () => {
 			vi.useRealTimers();
 		}
 	});
+	it("offers no month when the whole window is empty", () => {
+		// 일 목록을 비우는 것만으로는 부족하다 - `minDate="2026-12-01"` + `until-today` 면
+		// 월 목록에 12 가 남고, 그것을 고르면 그 달의 일수만 보고 미래 날짜가 그대로 나갔다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					value="2026-09-10"
+					minDate="2026-12-01"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			// 월 목록 자체가 비어야 한다. `Math.max` 로 넓히면 12 가 남고, 그것을 고르는 순간
+			// `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나갔다.
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[1]);
+			expect(screen.queryAllByRole("option")).toHaveLength(0);
+			expect(onValueChange).not.toHaveBeenCalled();
+		} finally {
+			vi.useRealTimers();
+		}
+	});
 });

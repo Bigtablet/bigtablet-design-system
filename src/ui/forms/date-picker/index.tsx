@@ -204,7 +204,7 @@ export const DatePicker = ({
 
 	const yearOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minYear, Math.max(minYear, maxYear)).map((y) => ({
+			range(minYear, maxYear).map((y) => ({
 				value: String(y),
 				label: String(y),
 			})),
@@ -213,7 +213,7 @@ export const DatePicker = ({
 
 	const monthOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minMonth, Math.max(minMonth, maxMonth)).map((m) => ({
+			range(minMonth, maxMonth).map((m) => ({
 				value: String(m),
 				label: pad(m),
 			})),
@@ -233,18 +233,47 @@ export const DatePicker = ({
 
 	// ── emit: 선택 값을 포맷팅해 onChange로 전달 ─────────────────────────
 
+	/**
+	 * 마지막 관문. 목록을 아무리 좁혀도 **월 단위로 넘어가는 경로**가 남는다 -
+	 * `minDate="2026-12-01"` + `until-today`(오늘 2026-09-15) 처럼 교집합이 비면 월 목록에 12 가
+	 * 남고, 그것을 고르면 `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나간다.
+	 * 여기서 한 번 더 확인해 범위 밖이면 **아무것도 내보내지 않는다** - 잘못된 값을 소비자 상태에
+	 * 넣는 것보다 낫고, 화면에는 빈 일 목록으로 충돌 상태가 드러난다.
+	 */
+	const withinRange = React.useCallback(
+		(yy: number, mm: number, dd: number) => {
+			const point = yy * 10000 + mm * 100 + dd;
+			if (min.year > 0) {
+				const floor = min.year * 10000 + Math.max(1, min.month) * 100 + Math.max(1, min.day);
+				if (point < floor) return false;
+			}
+			if (selectableRange === "until-today") {
+				const ceiling = todayYear * 10000 + todayMonth * 100 + todayDay;
+				if (point > ceiling) return false;
+			}
+			return true;
+		},
+		[min.year, min.month, min.day, selectableRange, todayYear, todayMonth, todayDay],
+	);
+
 	const emit = React.useCallback(
 		(yy: number, mm: number, dd?: number) => {
 			const cb = onValueChange ?? onChange;
 			if (mode === "year-month") {
+				// 월 단위 모드는 그 달의 첫날을 대표값으로 본다.
+				if (!withinRange(yy, mm, min.year === yy && min.month === mm ? Math.max(1, min.day) : 1))
+					return;
 				cb?.(`${yy}-${pad(mm)}`);
 				return;
 			}
 			const bounds = dayBoundsFor(yy, mm);
+			// 교집합이 비면 내보낼 날이 없다.
+			if (bounds.max < bounds.min) return;
 			const safeDay = Math.min(Math.max(dd ?? bounds.min, bounds.min), bounds.max);
+			if (!withinRange(yy, mm, safeDay)) return;
 			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, onChange, dayBoundsFor],
+		[mode, onValueChange, onChange, dayBoundsFor, withinRange, min.year, min.month, min.day],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
