@@ -16,16 +16,24 @@ const Probe = ({
 	onCommit = vi.fn(),
 	returnFocusOnClose = false,
 	disabled = false,
+	initialActiveIndex,
 	expose,
 }: {
 	items?: Item[];
 	onCommit?: (item: Item) => void;
 	returnFocusOnClose?: boolean;
 	disabled?: boolean;
+	initialActiveIndex?: (items: Item[]) => number;
 	/** 공개 API 를 직접 부르는 테스트용 - Dropdown 경로로는 닿지 않는 분기를 덮는다 */
 	expose?: (popup: ReturnType<typeof useListboxPopup<Item>>) => void;
 }) => {
-	const popup = useListboxPopup<Item>({ items, onCommit, returnFocusOnClose, disabled });
+	const popup = useListboxPopup<Item>({
+		items,
+		onCommit,
+		returnFocusOnClose,
+		disabled,
+		initialActiveIndex,
+	});
 	// 렌더 중에 부르면 React 가 버린 렌더의 popup 이 테스트로 새어 나간다.
 	useEffect(() => {
 		expose?.(popup);
@@ -447,6 +455,22 @@ describe("useListboxPopup", () => {
 
 		rerender(<Probe items={[...ITEMS]} onCommit={onCommit} />);
 		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
+	it("does not carry a Home/End position into the next open", () => {
+		// 열려 있을 때 누른 Home/End 는 "열릴 때" 효과를 다시 돌리지 못해 ref 가 비워지지 않는다.
+		// 그 상태로 닫았다가 클릭으로 열면 남은 값이 initialActiveIndex 를 덮어쓴다.
+		const onCommit = vi.fn();
+		render(<Probe onCommit={onCommit} initialActiveIndex={() => 2} />);
+
+		const trigger = screen.getByRole("button");
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Home" });
+		fireEvent.keyDown(trigger, { key: "Escape" });
+
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Enter" });
 
 		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
 	});

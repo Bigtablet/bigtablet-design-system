@@ -54,11 +54,20 @@ export const Prose = ({ size = "md", className, children, ref, ...props }: Prose
 		if (!root) return;
 
 		const hasResizeObserver = typeof ResizeObserver !== "undefined";
-		const observed = new WeakSet<Element>();
+		// Set 이다(WeakSet 아님) - 사라진 대상을 **순회해서** 관찰 해제해야 한다. `observe` 는
+		// 대상이 DOM 에서 빠져도 자동으로 풀리지 않으므로, 내용이 반복 교체되는 오래 떠 있는
+		// Prose 에서는 관찰 엔트리가 계속 쌓인다.
+		const observed = new Set<HTMLElement>();
 		let resizeObserver: ResizeObserver | null = null;
 
 		const sync = () => {
-			for (const el of root.querySelectorAll<HTMLElement>("pre, table")) {
+			const targets = new Set(root.querySelectorAll<HTMLElement>("pre, table"));
+			for (const el of observed) {
+				if (targets.has(el)) continue;
+				resizeObserver?.unobserve(el);
+				observed.delete(el);
+			}
+			for (const el of targets) {
 				if (el.scrollWidth > el.clientWidth) el.setAttribute("tabindex", "0");
 				else el.removeAttribute("tabindex");
 				if (resizeObserver && !observed.has(el)) {

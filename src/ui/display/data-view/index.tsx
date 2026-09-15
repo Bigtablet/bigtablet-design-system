@@ -162,17 +162,20 @@ export const DataView = <T extends object>({
 	// 사라지면 기능 자체가 없어진다.
 	const hasPagination = !!pagination;
 	// 문자열로 비교한다 - rows·rowKey 를 그대로 의존성에 두면 인라인 배열·화살표 때문에
-	// 매 렌더 새 정체가 되어 효과가 계속 돈다.
-	const visibleKeySignature = rows.map(rowKey).join("\u0000");
+	// 매 렌더 새 정체가 되어 효과가 계속 돈다. 구분자를 끼워 잇는 방식은 key 안에 그 문자가
+	// 들어가면 서로 다른 목록이 같은 서명이 되므로 길이까지 보존하는 JSON 으로 만든다.
+	// 정리가 필요 없는 경우에는 아예 계산하지 않는다 - 행이 많은 표에서 매 렌더 O(n) 이다.
+	const needsSelectionPrune = selectable && !hasPagination;
+	const visibleKeySignature = needsSelectionPrune ? JSON.stringify(rows.map(rowKey)) : "";
 	// biome-ignore lint/correctness/useExhaustiveDependencies: rows·rowKey 대신 위 signature 로 내용 변화만 본다
 	useEffect(() => {
-		if (hasPagination || !selectable) return;
+		if (!needsSelectionPrune) return;
 		const visible = new Set(rows.map(rowKey));
 		setSelectedKeys((prev) => {
 			const next = prev.filter((key) => visible.has(key));
 			return next.length === prev.length ? prev : next;
 		});
-	}, [visibleKeySignature, hasPagination, selectable]);
+	}, [visibleKeySignature, needsSelectionPrune]);
 	// 로딩 중에는 Table 이 스켈레톤을 그리므로 빈 상태로 넘기지 않는다. 셋을 동시에 보면
 	// 화면이 "없음 -> 스켈레톤 -> 데이터" 로 두 번 깜빡인다.
 	const showEmpty = !query.isLoading && !query.error && rows.length === 0;

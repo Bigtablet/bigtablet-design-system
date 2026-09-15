@@ -271,4 +271,27 @@ describe("Field", () => {
 		// 두 id 는 서로 달라야 한다 - 같으면 문서에 중복 id 가 생기고 둘 다 같은 요소로 풀린다.
 		expect(new Set(ids).size).toBe(ids.length);
 	});
+	it("keeps its own id and wiring when the wrapped TextField also got them from a consumer", () => {
+		// TextField 는 `{...props}` 를 계산값 뒤에 펼치고 `id ?? field.inputId` 순서를 써서,
+		// 소비자가 id 나 aria-describedby 를 주면 Field 의 배선이 통째로 덮였다.
+		render(
+			<Field name="email" label="이메일" error="형식이 올바르지 않습니다">
+				<TextField id="consumer-id" aria-describedby="consumer-desc" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("textbox");
+		const label = screen.getByText("이메일");
+		expect(input.id).toBe(label.getAttribute("for"));
+		expect(input).toHaveAttribute("aria-invalid", "true");
+
+		const ids = (input.getAttribute("aria-describedby") ?? "").split(" ");
+		const described = ids.map((id) => document.getElementById(id)?.textContent).filter(Boolean);
+		expect(described).toContain("형식이 올바르지 않습니다");
+	});
+
+	it("leaves a consumer's own aria-invalid alone outside a Field", () => {
+		render(<Checkbox label="동의" aria-invalid={true} />);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
+	});
 });

@@ -175,6 +175,16 @@
   animation-play-state: paused;
 }
 
+// `:has()` 를 모르는 브라우저는 위 규칙 **전체**를 버린다 - 그러면 hover 정지까지 사라져
+// WCAG 2.2.1 보호가 통째로 없어진다. 그쪽에서는 예전 규칙을 그대로 쓴다. 이웃 토스트가 고정되는
+// 문제는 남지만, 보호가 아예 없는 것보다는 낫다.
+@supports not selector(:has(*)) {
+  .toast_item:hover .toast_progress,
+  .toast_item:focus-within .toast_progress {
+    animation-play-state: paused;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   // 시각 모션만 제거 - animation-name 만 정적 keyframe 로 바꿔 duration/타이밍/play-state 는
   // 유지한다. 이렇게 하면 onAnimationEnd 로 자동 닫힘이 그대로 발화하고, hover/focus 시

@@ -256,4 +256,29 @@ describe("DatePicker", () => {
 			vi.useRealTimers();
 		}
 	});
+	it("offers no day and never emits a future date when minDate and until-today conflict", () => {
+		// minDate 가 오늘보다 뒤면 두 제약의 교집합이 비어 있다. 넓은 쪽으로 풀면 미래 날짜가
+		// 선택 가능해진다 - 이 컴포넌트가 막으려는 바로 그 값이다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					value="2026-09-10"
+					minDate="2026-09-20"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			// 일 목록이 비어 고를 수 있는 날이 없다 - 넓은 쪽으로 풀었다면 20일이 떴을 자리다.
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[2]);
+			expect(screen.queryAllByRole("option")).toHaveLength(0);
+			expect(onValueChange).not.toHaveBeenCalled();
+		} finally {
+			vi.useRealTimers();
+		}
+	});
 });

@@ -165,7 +165,16 @@ export const Table = <T extends object>({
 				: new MutationObserver(() => {
 						sync();
 					});
-		mutationObserver?.observe(el, { childList: true, subtree: true, characterData: true });
+		// 속성도 본다 - 열 정의가 바뀌면 같은 셀의 `style.width`·`class` 만 달라져 자식도 글자도
+		// 래퍼 크기도 그대로인 채 `scrollWidth` 만 늘어날 수 있다. 필터를 두는 이유는 우리가 거는
+		// `tabindex` 까지 관찰하면 sync 가 자기 자신을 다시 부르기 때문이다.
+		mutationObserver?.observe(el, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+			attributes: true,
+			attributeFilter: ["style", "class"],
+		});
 
 		return () => {
 			resizeObserver?.disconnect();

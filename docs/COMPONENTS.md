@@ -4018,22 +4018,25 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
   const rows = useMemo(() => (sort ? sortBy(users, sort) : users), [users, sort]);
 
   return (
-    <Table
-      ariaLabel="사용자 목록"
-      columns={columns}
-      data={rows}
-      keyExtractor={(u) => u.id}
-      isLoading={isLoading}
-      stickyHeader
-      sort={sort}
-      onSortChange={setSort}
-      selectable
-      rowKey={(u) => u.id}
-      selectedKeys={selected}
-      onSelectionChange={setSelected}
-      onRowClick={(u) => router.push(`/users/${u.id}`)}
-      rowClickHint="선택하면 상세 화면으로 이동"
-    />
+    // stickyHeader 는 감싼 요소의 확정된 높이를 표 래퍼가 물려받아 동작한다
+    <div style={{ height: 240 }}>
+      <Table
+        ariaLabel="사용자 목록"
+        columns={columns}
+        data={rows}
+        keyExtractor={(u) => u.id}
+        isLoading={isLoading}
+        stickyHeader
+        sort={sort}
+        onSortChange={setSort}
+        selectable
+        rowKey={(u) => u.id}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onRowClick={(u) => router.push(`/users/${u.id}`)}
+        rowClickHint="선택하면 상세 화면으로 이동"
+      />
+    </div>
   );
 }
 ```

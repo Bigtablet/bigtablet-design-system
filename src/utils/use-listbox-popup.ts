@@ -205,14 +205,16 @@ export function useListboxPopup<T extends ListboxItem>({
 					event.preventDefault();
 					// 닫힌 상태에서 누르면 열기와 활성 지정이 같은 배치에 들어가는데, 아래 "열릴 때"
 					// 효과가 `isOpen` 변화에 반응해 그 값을 덮어쓴다. 의도를 ref 로 넘겨 효과가
-					// 그것을 먼저 쓰게 한다.
-					pendingActiveRef.current = firstEnabled();
+					// 그것을 먼저 쓰게 한다. **닫혀 있을 때만** 채운다 - 이미 열려 있으면 그 효과가
+					// 다시 돌지 않아 ref 를 비울 기회가 없고, 다음에 클릭으로 열 때 남아 있던 값이
+					// initialActiveIndex(현재 선택값 등)를 덮어쓴다.
+					if (!isOpen) pendingActiveRef.current = firstEnabled();
 					setIsOpen(true);
 					setActiveIndex(firstEnabled());
 					break;
 				case "End":
 					event.preventDefault();
-					pendingActiveRef.current = lastEnabled();
+					if (!isOpen) pendingActiveRef.current = lastEnabled();
 					setIsOpen(true);
 					setActiveIndex(lastEnabled());
 					break;
