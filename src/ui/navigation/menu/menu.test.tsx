@@ -457,4 +457,21 @@ describe("Menu", () => {
 		fireEvent.click(trigger);
 		expect(screen.getAllByRole("menuitem")[0]).toHaveFocus();
 	});
+	it("returns focus to the trigger when an item is selected", () => {
+		// Escape·Tab 경로는 트리거로 되돌리는데 선택 경로만 빠져 있었다. 항목은 포탈 안이라
+		// 그냥 닫으면 포커스가 body 로 떨어지고 다음 Tab 이 문서 맨 앞에서 다시 시작한다.
+		const onSelect = vi.fn();
+		render(
+			<Menu
+				trigger={<button type="button">열기</button>}
+				items={[{ key: "a", label: "항목 A", onSelect }]}
+			/>,
+		);
+		const trigger = screen.getByRole("button", { name: "열기" });
+		fireEvent.click(trigger);
+		fireEvent.click(screen.getByRole("menuitem", { name: "항목 A" }));
+
+		expect(onSelect).toHaveBeenCalledOnce();
+		expect(document.activeElement).toBe(trigger);
+	});
 });

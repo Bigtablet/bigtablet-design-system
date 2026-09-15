@@ -162,22 +162,38 @@ export const DatePicker = ({
 
 	const maxMonth = selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
 
-	const minDay = Math.min(
-		31,
-		Math.max(
-			1,
-			min.year > 0 && min.month > 0 && year === min.year && month === min.month ? min.day : 1,
-		),
+	/**
+	 * 주어진 연·월에서 고를 수 있는 일의 범위. **목록과 emit 이 같은 계산을 써야 한다** -
+	 * 목록만 좁히면 연·월을 바꿀 때 예전 일이 그대로 emit 되어, 소비자 상태에는 범위 밖 날짜가
+	 * 들어가고 화면의 일 Dropdown 은 그 값을 목록에서 못 찾아 빈 칸으로 보인다.
+	 */
+	const dayBoundsFor = React.useCallback(
+		(yy: number, mm: number) => {
+			if (!yy || !mm) return { min: 1, max: 31 };
+			const daysInMonth = getDaysInMonth(yy, mm);
+			const lo =
+				min.year > 0 && min.month > 0 && yy === min.year && mm === min.month
+					? Math.min(daysInMonth, Math.max(1, min.day))
+					: 1;
+			const hi =
+				selectableRange === "until-today" && yy === todayYear && mm === todayMonth
+					? Math.min(daysInMonth, todayDay)
+					: daysInMonth;
+			// `lo > hi` 는 두 제약의 교집합이 빈 경우다 - `minDate="2026-09-20"` 과
+			// `selectableRange="until-today"`(오늘 2026-09-15) 를 함께 주면 그렇게 된다.
+			// `Math.max` 로 넓히면 **미래 날짜가 선택 가능해진다** - 이 컴포넌트가 막으려는
+			// 바로 그 값이다. 좁은 쪽(hi)을 그대로 두어 일 목록이 비고, emit 은 hi 를 넘지 않는다.
+			return { min: lo, max: hi };
+		},
+		[min.year, min.month, min.day, selectableRange, todayYear, todayMonth, todayDay],
 	);
 
-	const maxDay = React.useMemo(() => {
-		if (!year || !month) return 31;
-		const daysInMonth = getDaysInMonth(year, month);
-		if (selectableRange === "until-today" && year === todayYear && month === todayMonth) {
-			return Math.min(daysInMonth, todayDay);
-		}
-		return daysInMonth;
-	}, [year, month, selectableRange, todayYear, todayMonth, todayDay]);
+	const { min: minDay, max: maxDay } = React.useMemo(
+		() => dayBoundsFor(year, month),
+		[dayBoundsFor, year, month],
+	);
+	/** 교집합이 비면 고를 수 있는 일이 없다 - 목록을 비워 그 상태를 화면에도 드러낸다. */
+	const hasSelectableDay = maxDay >= minDay;
 
 	// ── DropdownOption[] 변환 ──────────────────────────────────────────────
 
@@ -206,11 +222,13 @@ export const DatePicker = ({
 
 	const dayOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minDay, Math.max(minDay, maxDay)).map((d) => ({
-				value: String(d),
-				label: pad(d),
-			})),
-		[minDay, maxDay],
+			hasSelectableDay
+				? range(minDay, maxDay).map((d) => ({
+						value: String(d),
+						label: pad(d),
+					}))
+				: [],
+		[minDay, maxDay, hasSelectableDay],
 	);
 
 	// ── emit: 선택 값을 포맷팅해 onChange로 전달 ─────────────────────────
@@ -222,10 +240,11 @@ export const DatePicker = ({
 				cb?.(`${yy}-${pad(mm)}`);
 				return;
 			}
-			const safeDay = Math.min(dd ?? 1, getDaysInMonth(yy, mm));
+			const bounds = dayBoundsFor(yy, mm);
+			const safeDay = Math.min(Math.max(dd ?? bounds.min, bounds.min), bounds.max);
 			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, onChange],
+		[mode, onValueChange, onChange, dayBoundsFor],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────

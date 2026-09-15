@@ -508,4 +508,29 @@ describe("Table isLoading guards", () => {
 		expect(row).not.toHaveAttribute("aria-label");
 		expect(row.textContent).toContain("Alpha");
 	});
+	it("gives the wrapper a tab stop only while it actually scrolls", () => {
+		// 스크롤 영역을 만든 쪽이 DS 다 - 키보드로 그 안을 움직일 수단도 DS 가 줘야 한다
+		// (axe scrollable-region-focusable). stickyHeader 를 켜면 래퍼가 세로 스크롤
+		// 컨테이너가 되므로 특히 필요하다.
+		const scrollWidth = vi
+			.spyOn(HTMLElement.prototype, "scrollWidth", "get")
+			.mockReturnValue(800);
+		const clientWidth = vi
+			.spyOn(HTMLElement.prototype, "clientWidth", "get")
+			.mockReturnValue(400);
+		try {
+			const { container } = render(
+				<Table<Row> ariaLabel="넓은 표" columns={columns} data={rows} keyExtractor={(r: Row) => r.id} />,
+			);
+			expect(container.querySelector(".table_wrapper")).toHaveAttribute("tabindex", "0");
+		} finally {
+			scrollWidth.mockRestore();
+			clientWidth.mockRestore();
+		}
+
+		const { container } = render(
+			<Table<Row> ariaLabel="좁은 표" columns={columns} data={rows} keyExtractor={(r: Row) => r.id} />,
+		);
+		expect(container.querySelector(".table_wrapper")).not.toHaveAttribute("tabindex");
+	});
 });

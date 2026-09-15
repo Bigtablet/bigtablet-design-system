@@ -171,6 +171,18 @@
 // ── Sticky header ─────────────────────────────────────────────────────────
 
 .table_sticky_header {
+  // 높이 제한을 **래퍼 자신**이 받아야 한다. 래퍼는 `overflow-x: auto` 라 computed
+  // `overflow-y` 도 `auto` 가 되어(CSS Overflow 3) 자기 자신이 스크롤포트다. 높이 제한이
+  // 바깥 요소에만 있으면 래퍼 높이는 내용 높이 그대로라 **한 번도 스크롤되지 않고**, sticky
+  // 는 그 스크롤포트를 기준으로 붙으므로 바깥이 스크롤될 때 헤더가 같이 밀려 나간다.
+  // 실측 - 바깥 div(height 240, overflow auto)를 120px 내리면 thead 의 뷰포트 top 이
+  // 바깥 top(16) 보다 위인 -102 로 올라갔다. `max-height: 100%` 를 주면 래퍼가 스크롤
+  // 컨테이너가 되어 헤더가 붙는다(같은 조작에서 thead 가 래퍼 top + 1 에 고정).
+  //
+  // 부모 높이가 확정이 아니면 퍼센트 max-height 는 `none` 으로 풀려 예전과 같아진다 -
+  // 회귀가 아니라 무동작이다.
+  max-height: 100%;
+
   .table_thead {
     position: sticky;
     top: 0;

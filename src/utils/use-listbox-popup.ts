@@ -112,6 +112,8 @@ export function useListboxPopup<T extends ListboxItem>({
 }: UseListboxPopupArgs<T>): UseListboxPopupResult {
 	const [isOpen, setIsOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
+	/** Home/End 가 "열면서 이 자리로" 라고 지정한 인덱스. 열림 효과가 한 번 쓰고 비운다. */
+	const pendingActiveRef = useRef<number | null>(null);
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
@@ -124,7 +126,11 @@ export function useListboxPopup<T extends ListboxItem>({
 	}, [returnFocusOnClose]);
 
 	// 바깥 클릭으로 닫기. 트리거로 포커스를 되돌리지 않는다 - 사용자가 다른 곳을 눌렀다.
+	// 열려 있을 때만 건다 - Menu·Popover 와 같은 규칙이다. 상시 등록하면 화면에 있는 닫힌
+	// 팝업 수만큼 document mousedown 리스너가 쌓여, 목록 화면(행마다 Dropdown)에서 클릭 한 번에
+	// 수십 개의 핸들러가 돈다.
 	useEffect(() => {
+		if (!isOpen) return;
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as Node;
 			// 목록은 포탈로 body 에 붙으므로 wrapper 밖이다 - 함께 봐야 옵션 클릭이 닫기로
@@ -134,7 +140,7 @@ export function useListboxPopup<T extends ListboxItem>({
 		};
 		document.addEventListener("mousedown", handleOutsideClick);
 		return () => document.removeEventListener("mousedown", handleOutsideClick);
-	}, []);
+	}, [isOpen]);
 
 	const moveActive = useCallback(
 		(dir: 1 | -1) => {
@@ -197,11 +203,18 @@ export function useListboxPopup<T extends ListboxItem>({
 					break;
 				case "Home":
 					event.preventDefault();
+					// 닫힌 상태에서 누르면 열기와 활성 지정이 같은 배치에 들어가는데, 아래 "열릴 때"
+					// 효과가 `isOpen` 변화에 반응해 그 값을 덮어쓴다. 의도를 ref 로 넘겨 효과가
+					// 그것을 먼저 쓰게 한다. **닫혀 있을 때만** 채운다 - 이미 열려 있으면 그 효과가
+					// 다시 돌지 않아 ref 를 비울 기회가 없고, 다음에 클릭으로 열 때 남아 있던 값이
+					// initialActiveIndex(현재 선택값 등)를 덮어쓴다.
+					if (!isOpen) pendingActiveRef.current = firstEnabled();
 					setIsOpen(true);
 					setActiveIndex(firstEnabled());
 					break;
 				case "End":
 					event.preventDefault();
+					if (!isOpen) pendingActiveRef.current = lastEnabled();
 					setIsOpen(true);
 					setActiveIndex(lastEnabled());
 					break;
@@ -252,14 +265,32 @@ export function useListboxPopup<T extends ListboxItem>({
 		[disabled, moveActive, commitActive, close],
 	);
 
-	// 열림·목록 변경 시 활성 인덱스를 범위 안으로 되돌린다.
-	// 소비자가 준 initialActiveIndex 가 있으면 그것을, 없으면 첫 활성 항목을 쓴다.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: initialActiveIndex 는 매 렌더 새 함수일 수 있어 의존성에서 뺀다 - isOpen/items 변화에만 반응하면 된다
+	// 열릴 때 활성 인덱스를 정한다. 소비자가 준 initialActiveIndex 가 있으면 그것을, 없으면
+	// 첫 활성 항목을 쓴다. Home/End 로 연 경우에는 그 키가 지정한 자리가 이긴다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: initialActiveIndex 와 items 는 매 렌더 새 값일 수 있어 의존성에서 뺀다 - 이 효과는 "열리는 순간" 에만 돌아야 한다
 	useEffect(() => {
 		if (!isOpen) return;
+		const pending = pendingActiveRef.current;
+		pendingActiveRef.current = null;
+		if (pending !== null && pending >= 0) {
+			setActiveIndex(pending);
+			return;
+		}
 		const preferred = initialActiveIndex?.(items) ?? -1;
 		setActiveIndex(preferred >= 0 ? preferred : items.findIndex((o) => !o.disabled));
-	}, [isOpen, items]);
+	}, [isOpen]);
+
+	// 열려 있는 동안 목록이 바뀌면 **범위를 벗어났을 때만** 되돌린다. 무조건 되돌리면 소비자가
+	// `options={[...]}` 를 인라인으로 주는 흔한 경우에 부모가 리렌더할 때마다 방향키로 옮겨 둔
+	// 활성 표시가 첫 항목으로 튀고, 그 상태에서 Enter 를 치면 엉뚱한 항목이 커밋된다.
+	useEffect(() => {
+		if (!isOpen) return;
+		setActiveIndex((current) => {
+			if (current >= 0 && current < items.length && !items[current]?.disabled) return current;
+			const preferred = initialActiveIndex?.(items) ?? -1;
+			return preferred >= 0 ? preferred : items.findIndex((o) => !o.disabled);
+		});
+	}, [isOpen, items, initialActiveIndex]);
 
 	// 방향키로 옮긴 활성 항목이 스크롤 밖에 있으면 따라 스크롤한다. 포커스는 트리거·입력에
 	// 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다 - 옵션 20개 목록에서 아래로 내려가면

@@ -146,9 +146,19 @@ export const TextField = ({
 	const generatedId = useId();
 	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
 	const field = useFieldControl();
-	const inputId = id ?? field?.inputId ?? generatedId;
-	const helperId = supportingText ? `${inputId}-help` : undefined;
-	const describedBy = field?.describedBy ?? helperId;
+	// Field 안에서는 **Field 의 id 가 이긴다.** 소비자 `id` 를 앞에 두면 Field 의
+	// `<label for>` 이 문서에 없는 id 를 가리켜 라벨 클릭이 죽는다 - Field 가 컨트롤 하나의
+	// id 를 소유한다는 계약이 먼저다.
+	const inputId = field?.inputId ?? id ?? generatedId;
+	// 자체 도움말 id 는 **자기 useId** 에서 만든다. `inputId` 는 Field 안에서 Field 가 준 값이라
+	// `${inputId}-help` 로 만들면 Field 의 도움말 id 와 **글자까지 같아진다** - 한 문서에 같은
+	// id 가 둘이 되고 aria-describedby 가 둘 다 같은 요소로 풀린다.
+	const helperId = supportingText ? `${generatedId}-help` : undefined;
+	// 둘 다 있으면 **둘 다** 가리킨다. Field 의 도움말·에러만 가리키면 입력이 화면에 그린
+	// supportingText 를 스크린리더 사용자가 못 듣는다 - 눈으로 보이는 제약이 귀로는 안 온다.
+	const describedBy =
+		[field?.describedBy, helperId, props["aria-describedby"]].filter(Boolean).join(" ") ||
+		undefined;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>
@@ -285,15 +295,21 @@ export const TextField = ({
 							resolvedTrailing && "text_field_input_wrap_no_pad_right",
 						)}
 					>
+						{/* `{...props}` 를 **먼저** 펼친다. 뒤에 두면 소비자가 준 id·aria-* 가 Field 의
+						    배선을 덮어써, Field 의 `<label for>` 이 문서에 없는 id 를 가리키고 에러
+						    상태도 AT 에 전달되지 않는다. Field 밖에서는 아래 계산값이 비어 있으면
+						    소비자 값이 그대로 남도록 각 속성에서 fallback 한다. */}
 						<input
+							{...props}
 							id={inputId}
 							ref={ref}
 							className={cn("text_field_input", identifier && "text_field_input_identifier")}
-							aria-invalid={isError}
+							aria-invalid={field ? isError : (props["aria-invalid"] ?? isError)}
 							aria-describedby={describedBy}
-							aria-required={field?.required || undefined}
-							aria-label={!showLabel ? label : undefined}
-							{...props}
+							// Field 밖에서는 소비자 값이 남는다 - `{...props}` 를 앞으로 옮긴 뒤로는 계산값이
+							// undefined 여도 뒤에서 덮으므로 각 속성이 직접 되돌려 줘야 한다.
+							aria-required={field ? field.required || undefined : props["aria-required"]}
+							aria-label={(!showLabel ? label : undefined) ?? props["aria-label"]}
 							type={resolvedType}
 							value={innerValue}
 							onCompositionStart={() => {

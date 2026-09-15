@@ -33,8 +33,11 @@ beforeEach(() => {
 		addEventListener: (_: string, cb: (e: MediaQueryListEvent) => void) => {
 			mqListeners.push(cb);
 		},
-		removeEventListener: () => {
-			mqListeners = [];
+		// **넘어온 콜백만** 뺀다. 통째로 비우면 cleanup 을 아예 안 돌려주는 구현이나 핸들러를
+		// 두 번 거는 구현에서도 아래 단정이 그대로 통과한다 - 실패할 수 없는 검사가 된다.
+		removeEventListener: (_: string, cb: (e: MediaQueryListEvent) => void) => {
+			const index = mqListeners.indexOf(cb);
+			if (index !== -1) mqListeners.splice(index, 1);
 		},
 		dispatchEvent: () => true,
 		onchange: null,
@@ -148,5 +151,17 @@ describe("ThemeProvider", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 		expect(() => render(<TestConsumer />)).toThrow("[Bigtablet DS]");
 		consoleError.mockRestore();
+	});
+	it("removes its matchMedia listener on unmount", () => {
+		// 구독을 정리하지 않으면 언마운트된 Provider 가 OS 테마 변경마다 계속 깨어난다.
+		const { unmount } = render(
+			<ThemeProvider>
+				<span>child</span>
+			</ThemeProvider>,
+		);
+		expect(mqListeners.length).toBe(1);
+
+		unmount();
+		expect(mqListeners.length).toBe(0);
 	});
 });

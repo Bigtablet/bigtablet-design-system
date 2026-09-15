@@ -140,11 +140,17 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 		update();
 		const mountTimer = setTimeout(() => setHasMounted(true), 50);
 
+		// childList·characterData 도 본다. 선택 표시만 보면 **탭이 늘거나 줄 때**와 라벨 글자가
+		// 바뀔 때(`전체 (9)` → `전체 (137)`) 인디케이터가 옛 자리에 남는다. `line` variant 의
+		// `.tabs_list` 는 폭이 100% 로 늘어난 flex 아이템이라 박스가 그대로여서 ResizeObserver
+		// 도 발화하지 않는다 - 그래서 여기서 잡아야 한다.
 		const mo = new MutationObserver(update);
 		mo.observe(list, {
 			subtree: true,
 			attributes: true,
 			attributeFilter: ["aria-selected"],
+			childList: true,
+			characterData: true,
 		});
 
 		const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;

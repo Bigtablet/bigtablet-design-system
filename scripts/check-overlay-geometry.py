@@ -440,6 +440,30 @@ def check_overlay_has_no_transform() -> list[str]:
     return problems
 
 
+def check_sticky_header_owns_its_scrollport() -> list[str]:
+    """sticky 헤더를 켠 표의 래퍼가 높이 제한을 받는지.
+
+    `.table_wrapper` 는 `overflow-x: auto` 라 computed `overflow-y` 도 `auto` 가 되어 자기
+    자신이 스크롤포트다. 높이 제한이 바깥 요소에만 있으면 래퍼는 내용 높이 그대로여서 한 번도
+    스크롤되지 않고, `position: sticky` 헤더는 그 스크롤포트에 붙으므로 바깥이 스크롤될 때
+    함께 밀려 나간다(실측 - 바깥을 120px 내리면 thead 가 화면 위로 사라졌다).
+    """
+    problems: list[str] = []
+    parsed = rules(CSS.read_text(encoding="utf-8"))
+
+    if find(parsed, ".table_wrapper", "overflow-x") != "auto":
+        problems.append(
+            ".table_wrapper 의 overflow-x 가 auto 가 아니다 - 이 검사의 전제가 바뀌었다."
+            " sticky 헤더 기준을 다시 확인하라"
+        )
+    if find(parsed, ".table_sticky_header", "max-height") is None:
+        problems.append(
+            ".table_sticky_header 에 max-height 가 없다 - 래퍼가 높이 제한을 받지 못해"
+            " 스크롤포트가 되지 않고, sticky 헤더가 바깥 스크롤에 같이 밀려 나간다"
+        )
+    return problems
+
+
 def main() -> int:
     if not CSS.exists():
         print(f"{CSS} 가 없다 - `pnpm build` 를 먼저 실행하라", file=sys.stderr)
@@ -504,6 +528,7 @@ def main() -> int:
     problems += check_dim_does_not_chase_the_gutter()
     problems += check_overlays_offset_the_reclaimed_width()
     problems += check_overlay_has_no_transform()
+    problems += check_sticky_header_owns_its_scrollport()
     checked += len(FULLSCREEN_OVERLAY_SOURCES)
     problems += check_popups_escape_clipping()
     problems += check_popup_width_has_a_floor()
@@ -563,6 +588,7 @@ def main() -> int:
     print(
         f"전면 오버레이 {len(FULLSCREEN_OVERLAY_SOURCES)}개 - 딤에 transform 을 주지 않습니다."
     )
+    print("sticky 헤더 1건 - 래퍼가 높이 제한을 받아 스스로 스크롤포트가 됩니다.")
     print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
     print(
         f"팝업 폭 {len(ANCHOR_WIDTH_POPUPS)}개 - 트리거 폭은 하한이고 내용 기준으로 넓어집니다."

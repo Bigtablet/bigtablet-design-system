@@ -119,11 +119,16 @@ export const NavBar = ({
 		// 첫 mount는 transition 없이 즉시 위치 (깜빡임 방지)
 		const mountTimer = setTimeout(() => setHasMounted(true), 50);
 
+		// childList·characterData 도 본다. 링크가 나중에 끼어들면(권한 확인 후 Admin 추가 등)
+		// 활성 링크가 옆으로 밀리는데 class 도 aria-current 도 바뀌지 않고, `.nav_bar_links` 는
+		// `flex: 1` 이라 박스도 그대로여서 ResizeObserver 가 발화하지 않는다.
 		const mo = new MutationObserver(update);
 		mo.observe(links, {
 			subtree: true,
 			attributes: true,
 			attributeFilter: ["class", "aria-current"],
+			childList: true,
+			characterData: true,
 		});
 
 		// jsdom 등 ResizeObserver 미지원 환경 안전 처리
@@ -254,12 +259,16 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				break;
 			case "Tab":
+				// 트리거로 되돌린 뒤 닫는다 - 이어지는 기본 Tab 이동이 트리거에서 시작한다.
+				wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 				setOpen(false);
 				break;
 		}
 	};
 
 	const handleSelect = (value: string) => {
+		// Menu 와 같은 규칙 - 포탈된 항목에서 그냥 닫으면 포커스가 body 로 떨어진다.
+		wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 		(locale.onValueChange ?? locale.onChange)?.(value);
 		setOpen(false);
 	};

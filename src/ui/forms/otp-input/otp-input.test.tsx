@@ -144,11 +144,17 @@ describe("OtpInput", () => {
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[0].focus();
 			fireEvent.change(inputs[0], { target: { value: "1" } });
-			// timeout 경과
+			// 타이핑 자동 이동으로 이미 2번 칸에 있다.
+			expect(document.activeElement).toBe(inputs[1]);
+
 			act(() => {
 				vi.advanceTimersByTime(100);
 			});
-			// 이제 빈 칸 redirect가 다시 동작해야 함
+
+			// 뒷칸을 실제로 눌러 포커스를 옮긴 뒤에야 redirect 가 도는지 알 수 있다.
+			// fireEvent.focus 만 쏘면 activeElement 는 그대로 2번 칸이라, redirect 가 죽어도
+			// 단정이 통과한다(이전 판이 그랬다).
+			inputs[5].focus();
 			fireEvent.focus(inputs[5]);
 			expect(document.activeElement).toBe(inputs[1]);
 		});

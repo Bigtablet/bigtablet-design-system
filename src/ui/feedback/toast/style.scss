@@ -161,12 +161,28 @@
   &_default { background: token.$color_text_body; }
 }
 
-// WCAG 2.2.1 Timing Adjustable - 포인터를 올리거나 닫기 버튼에 포커스가 있는 동안
+// WCAG 2.2.1 Timing Adjustable - 포인터를 올리거나 키보드 포커스가 안에 있는 동안
 // 자동 닫힘 타이머(progress 애니메이션)를 일시정지해 읽기/조작 시간을 연장한다.
 // onAnimationEnd 가 닫힘 트리거라 play-state 정지만으로 타이머까지 함께 멈춘다.
+//
+// `:focus-within` 이 아니라 `:has(:focus-visible)` 이다. 토스트를 마우스로 닫으면 컴포넌트가
+// 포커스를 **인접 토스트**의 닫기 버튼으로 넘기는데(unmount 로 포커스가 body 로 떨어지지 않게),
+// `:focus-within` 이면 그 토스트의 타이머가 그대로 멈춰 영영 닫히지 않는다 - 실측으로 마우스
+// 클릭 뒤 이웃 토스트가 `paused` 로 남아 5초 뒤에도 화면에 있었다. 프로그램 포커스는
+// `:focus-visible` 이 아니므로 키보드 사용자만 정지가 걸린다.
 .toast_item:hover .toast_progress,
-.toast_item:focus-within .toast_progress {
+.toast_item:has(:focus-visible) .toast_progress {
   animation-play-state: paused;
+}
+
+// `:has()` 를 모르는 브라우저는 위 규칙 **전체**를 버린다 - 그러면 hover 정지까지 사라져
+// WCAG 2.2.1 보호가 통째로 없어진다. 그쪽에서는 예전 규칙을 그대로 쓴다. 이웃 토스트가 고정되는
+// 문제는 남지만, 보호가 아예 없는 것보다는 낫다.
+@supports not selector(:has(*)) {
+  .toast_item:hover .toast_progress,
+  .toast_item:focus-within .toast_progress {
+    animation-play-state: paused;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
