@@ -375,7 +375,7 @@ describe("Drawer", () => {
 	});
 
 	it("releases the scroll lock under reduced motion", async () => {
-		// Drawer 는 useSpringPresence 의 onExitComplete 로 shouldRender 를 내린다.
+		// Drawer 는 오버레이 스프링의 onRest 로 shouldRender 를 내린다.
 		// reduced-motion(`immediate: true`)에서도 그 콜백이 도는지 확인한다 - 안 돌면
 		// 잠금이 영구히 남는다.
 		// setup.ts 가 스위트 전체에 skipAnimation 을 걸어 두면 어떤 스프링이든 즉시 끝나
