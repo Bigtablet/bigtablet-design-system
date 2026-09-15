@@ -629,7 +629,7 @@ import { Settings } from 'lucide-react';
 | `rowKey` | `(row: T) => string` | - | 행 고유 key |
 | `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
 | `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
-| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다 |
+| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다. `pageSize` 를 함께 주면 행 선택 체크박스 라벨이 전체 순번을 쓴다 |
 | `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
@@ -3973,7 +3973,8 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
 | `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
 | `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
-| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label |
+| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. 인자는 `rowIndexOffset` 이 더해진 전체 순번 |
+| `rowIndexOffset` | `number` | `0` | 이 표의 첫 행이 전체에서 몇 번째인지(0-based). 서버 페이지네이션에서 행 번호가 쪽마다 1 로 되돌아가지 않게 한다 |
 | `className` | `string` | - | 루트 wrapper 에 추가할 className |
 
 **`TableColumn<T>`**
@@ -4050,6 +4051,7 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 - 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출된다.
 - `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결된다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 쓴다.
 - 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈한다.
+- 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 준다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힌다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산한다.
 
 ---
 

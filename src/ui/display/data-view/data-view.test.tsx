@@ -203,4 +203,33 @@ describe("DataView", () => {
 		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "삭제" })).not.toBeInTheDocument();
 	});
+	it("numbers row checkboxes across pages when pageSize is given", () => {
+		// 쪽을 넘겨도 라벨이 "1번째 행 선택" 으로 되돌아가면 어느 쪽인지 알 수 없다.
+		render(
+			<DataView
+				query={{ data: USERS }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				pagination={{ page: 3, totalPages: 5, pageSize: 10, onPageChange: vi.fn() }}
+			/>,
+		);
+
+		expect(screen.getByRole("checkbox", { name: "21번째 행 선택" })).toBeInTheDocument();
+	});
+
+	it("keeps page-local numbering when pageSize is absent", () => {
+		// pageSize 없이는 전체 순번을 계산할 수 없다 - 예전 동작을 유지한다.
+		render(
+			<DataView
+				query={{ data: USERS }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				pagination={{ page: 3, totalPages: 5, onPageChange: vi.fn() }}
+			/>,
+		);
+
+		expect(screen.getByRole("checkbox", { name: "1번째 행 선택" })).toBeInTheDocument();
+	});
 });
