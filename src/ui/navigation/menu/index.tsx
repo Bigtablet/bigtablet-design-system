@@ -222,6 +222,12 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 								)}
 								onClick={() => {
 									if (item.disabled) return;
+									// 포커스를 먼저 트리거로 되돌린 뒤 실행한다. 항목은 포탈 안에 있어
+									// 그냥 닫으면 포커스가 body 로 떨어지고 다음 Tab 이 문서 맨 앞에서
+									// 다시 시작한다 (WCAG 2.4.3). Escape·Tab 경로는 이미 되돌리고
+									// 있었고 선택 경로만 빠져 있었다. onSelect 보다 **먼저** 옮겨야
+									// onSelect 가 연 모달이 포커스를 가져가는 것을 덮지 않는다.
+									wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
 									item.onSelect?.();
 									setOpen(false);
 								}}

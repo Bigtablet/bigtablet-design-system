@@ -1440,6 +1440,10 @@ function YourComponent() {
 
 ---
 
+> 오버레이 클릭은 **누른 곳과 놓은 곳이 모두 오버레이**일 때만 취소로 본다. 메시지를 드래그로
+> 선택하다 오버레이에서 놓으면 `click` 이 공통 조상(오버레이)에 디스패치되는데, 그걸 취소로 처리하면
+> 확인 대화상자가 실수로 닫힌다 - Modal·Drawer 와 같은 판정이다.
+
 ### Toast
 
 ```tsx
@@ -3954,7 +3958,7 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `isLoading` | `boolean` | `false` | 로딩 상태 - 헤더 유지, 바디만 스켈레톤 |
 | `skeletonRows` | `number` | `5` | 로딩 시 스켈레톤 행 개수 |
 | `hoverable` | `boolean` | `true` | 행 hover 강조 |
-| `stickyHeader` | `boolean` | `false` | thead sticky 고정 |
+| `stickyHeader` | `boolean` | `false` | thead sticky 고정. **표를 감싼 요소에 확정된 높이**(`height: 240px` 등)를 줘야 동작한다 - 표 래퍼가 그 높이를 물려받아 스스로 스크롤 컨테이너가 된다. 높이가 확정이 아니면(`max-height` 만, 또는 페이지 전체 스크롤) 아무 일도 하지 않는다 |
 | `ariaLabel` | `string` | - | 스크린리더용 테이블 레이블 |
 | `onRowClick` | `(item: T, index: number) => void` | - | 행 클릭 콜백 |
 | `rowClickHint` | `string` | `'클릭 가능한 행'` | clickable 행에 `aria-describedby` 로 연결되는 동작 설명. `''` 면 힌트 미부착 |
@@ -4014,22 +4018,25 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
   const rows = useMemo(() => (sort ? sortBy(users, sort) : users), [users, sort]);
 
   return (
-    <Table
-      ariaLabel="사용자 목록"
-      columns={columns}
-      data={rows}
-      keyExtractor={(u) => u.id}
-      isLoading={isLoading}
-      stickyHeader
-      sort={sort}
-      onSortChange={setSort}
-      selectable
-      rowKey={(u) => u.id}
-      selectedKeys={selected}
-      onSelectionChange={setSelected}
-      onRowClick={(u) => router.push(`/users/${u.id}`)}
-      rowClickHint="선택하면 상세 화면으로 이동"
-    />
+    // stickyHeader 는 감싼 요소의 확정된 높이를 표 래퍼가 물려받아 동작한다
+    <div style={{ height: 240 }}>
+      <Table
+        ariaLabel="사용자 목록"
+        columns={columns}
+        data={rows}
+        keyExtractor={(u) => u.id}
+        isLoading={isLoading}
+        stickyHeader
+        sort={sort}
+        onSortChange={setSort}
+        selectable
+        rowKey={(u) => u.id}
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onRowClick={(u) => router.push(`/users/${u.id}`)}
+        rowClickHint="선택하면 상세 화면으로 이동"
+      />
+    </div>
   );
 }
 ```

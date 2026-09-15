@@ -41,29 +41,64 @@ export const Prose = ({ size = "md", className, children, ref, ...props }: Prose
 	// 추가하고, 넘치지 않으면 떼어 불필요한 정지가 남지 않게 한다.
 	// 레이아웃 측정이라 paint 전에 끝나야 한다 - useEffect 로 미루면 이미 넘치는 표·코드가
 	// 한 프레임 동안 tabindex 없이 노출된다. tabs · nav-bar · textarea 와 같은 패턴.
-	// children 은 콜백 안에서 쓰지 않지만, 내용이 바뀌면 DOM 을 다시 조회해야 하므로 의존성에 둔다.
+	// 대상 목록은 **sync 안에서 매번 다시 조회한다.** 한 번 잡아 두면 나중에 들어온 내용을
+	// 놓친다 - `<Prose><AsyncMarkdown /></Prose>` 는 효과가 돌 때 서브트리가 비어 있고,
+	// fetch 가 끝나도 `children` 의 정체는 그대로라 효과가 다시 돌지 않는다. 늦게 그려진 넓은
+	// 표에 탭 정지가 영영 안 붙는다(axe scrollable-region-focusable).
+	//
+	// 그래서 의존성도 비운다. `children` 을 넣으면 부모가 리렌더할 때마다(옆 칸에 입력이 하나만
+	// 있어도) 옵저버를 헐고 다시 만들고 레이아웃을 동기로 읽는다. DOM 변화는 아래
+	// MutationObserver 가 알려준다.
 	useSafeLayoutEffect(() => {
 		const root = rootRef.current;
 		if (!root) return;
 
-		const targets = Array.from(root.querySelectorAll<HTMLElement>("pre, table"));
+		const hasResizeObserver = typeof ResizeObserver !== "undefined";
+		// Set 이다(WeakSet 아님) - 사라진 대상을 **순회해서** 관찰 해제해야 한다. `observe` 는
+		// 대상이 DOM 에서 빠져도 자동으로 풀리지 않으므로, 내용이 반복 교체되는 오래 떠 있는
+		// Prose 에서는 관찰 엔트리가 계속 쌓인다.
+		const observed = new Set<HTMLElement>();
+		let resizeObserver: ResizeObserver | null = null;
+
 		const sync = () => {
+			const targets = new Set(root.querySelectorAll<HTMLElement>("pre, table"));
+			for (const el of observed) {
+				if (targets.has(el)) continue;
+				resizeObserver?.unobserve(el);
+				observed.delete(el);
+			}
 			for (const el of targets) {
 				if (el.scrollWidth > el.clientWidth) el.setAttribute("tabindex", "0");
 				else el.removeAttribute("tabindex");
+				if (resizeObserver && !observed.has(el)) {
+					resizeObserver.observe(el);
+					observed.add(el);
+				}
 			}
 		};
+
+		if (hasResizeObserver) {
+			resizeObserver = new ResizeObserver(sync);
+			resizeObserver.observe(root);
+		}
 
 		// 최초 동기화는 ResizeObserver 유무와 무관하게 한다 - 없다고 건너뛰면 그 환경에서는
 		// 넘치는 표·코드에 탭 정지가 아예 붙지 않는다. 관찰은 폭이 바뀔 때 따라가기 위한 것뿐이다.
 		sync();
-		if (typeof ResizeObserver === "undefined") return;
 
-		const observer = new ResizeObserver(sync);
-		observer.observe(root);
-		for (const el of targets) observer.observe(el);
-		return () => observer.disconnect();
-	}, [children]);
+		const mutationObserver =
+			typeof MutationObserver === "undefined"
+				? null
+				: new MutationObserver(() => {
+						sync();
+					});
+		mutationObserver?.observe(root, { childList: true, subtree: true, characterData: true });
+
+		return () => {
+			resizeObserver?.disconnect();
+			mutationObserver?.disconnect();
+		};
+	}, []);
 
 	return (
 		<div ref={rootRef} className={cn("prose", `prose_size_${size}`, className)} {...props}>

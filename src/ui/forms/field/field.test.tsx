@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { Checkbox } from "../checkbox";
 import { DatePicker } from "../date-picker";
 import { DateRangePicker } from "../date-range-picker";
 import { Radio } from "../radio";
@@ -213,5 +214,101 @@ describe("Field", () => {
 		);
 
 		expect(screen.getAllByText("이메일")).toHaveLength(1);
+	});
+	it("keeps its own id and description when the child input also got them from a consumer", () => {
+		// Radio 만 `{...props}` 를 뒤에 펼쳐, 소비자가 준 id 가 Field 의 id 를 덮어썼다.
+		// 그러면 Field 의 `<label for>` 이 문서에 없는 id 를 가리켜 라벨 클릭이 죽는다.
+		render(
+			<Field name="plan" label="요금제">
+				<Radio id="basic" name="plan" value="b" />
+			</Field>,
+		);
+
+		const radio = screen.getByRole("radio");
+		const label = screen.getByText("요금제");
+		expect(radio.id).toBe(label.getAttribute("for"));
+	});
+
+	it("marks every wrapped input invalid when the field has an error", () => {
+		// 에러 문구를 그리고 aria-describedby 로 연결해도, 입력이 aria-invalid 를 안 내면
+		// 스크린리더·검증 요약 도구에는 정상 입력으로 보인다 (WCAG 4.1.2).
+		const { rerender } = render(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Checkbox />
+			</Field>,
+		);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
+
+		rerender(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Toggle ariaLabel="동의" />
+			</Field>,
+		);
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-invalid", "true");
+
+		rerender(
+			<Field name="agree" error="약관에 동의해야 합니다">
+				<Radio name="agree" value="y" />
+			</Field>,
+		);
+		expect(screen.getByRole("radio")).toHaveAttribute("aria-invalid", "true");
+	});
+	it("describes the input with both the field help and the input's own supporting text", () => {
+		// 입력이 화면에 그린 supportingText 를 aria-describedby 가 안 가리키면, 눈으로 보이는
+		// 제약이 스크린리더에는 전달되지 않는다.
+		render(
+			<Field name="email" label="이메일" help="로그인 ID 로 사용됩니다">
+				<TextField supportingText="회사 이메일만 사용하세요" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("textbox");
+		const ids = (input.getAttribute("aria-describedby") ?? "").split(" ").filter(Boolean);
+		const described = ids.map((id) => document.getElementById(id)?.textContent);
+
+		expect(described).toContain("로그인 ID 로 사용됩니다");
+		expect(described).toContain("회사 이메일만 사용하세요");
+		// 두 id 는 서로 달라야 한다 - 같으면 문서에 중복 id 가 생기고 둘 다 같은 요소로 풀린다.
+		expect(new Set(ids).size).toBe(ids.length);
+	});
+	it("keeps its own id and wiring when the wrapped TextField also got them from a consumer", () => {
+		// TextField 는 `{...props}` 를 계산값 뒤에 펼치고 `id ?? field.inputId` 순서를 써서,
+		// 소비자가 id 나 aria-describedby 를 주면 Field 의 배선이 통째로 덮였다.
+		render(
+			<Field name="email" label="이메일" error="형식이 올바르지 않습니다">
+				<TextField id="consumer-id" aria-describedby="consumer-desc" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("textbox");
+		const label = screen.getByText("이메일");
+		expect(input.id).toBe(label.getAttribute("for"));
+		expect(input).toHaveAttribute("aria-invalid", "true");
+
+		const ids = (input.getAttribute("aria-describedby") ?? "").split(" ");
+		const described = ids.map((id) => document.getElementById(id)?.textContent).filter(Boolean);
+		expect(described).toContain("형식이 올바르지 않습니다");
+	});
+
+	it("leaves a consumer's own aria-invalid alone outside a Field", () => {
+		render(<Checkbox label="동의" aria-invalid={true} />);
+		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
+	});
+	it("keeps a consumer's aria-required and aria-label outside a Field", () => {
+		// `{...props}` 를 계산값 앞으로 옮기면서, 계산값이 undefined 인 속성이 소비자 값을
+		// 덮어쓰게 됐다. Field 밖에서는 소비자가 준 값이 그대로 남아야 한다.
+		render(<TextField aria-required={true} aria-label="이름" />);
+
+		const input = screen.getByRole("textbox", { name: "이름" });
+		expect(input).toHaveAttribute("aria-required", "true");
+	});
+
+	it("still lets the Field own required inside it", () => {
+		render(
+			<Field name="email" label="이메일" required>
+				<TextField />
+			</Field>,
+		);
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-required", "true");
 	});
 });

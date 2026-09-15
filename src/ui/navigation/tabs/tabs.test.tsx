@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Tab, TabList, TabPanel, Tabs } from "./index";
@@ -94,5 +94,44 @@ describe("Tabs", () => {
 
 		expect(onKeyDown).toHaveBeenCalledTimes(1);
 		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("aria-selected", "true");
+	});
+	it("moves the indicator when a tab is inserted before the active one", async () => {
+		// 인디케이터는 활성 탭의 offsetLeft 를 따라간다. 선택 표시(aria-selected)만 관찰하면
+		// 탭이 나중에 끼어들 때(권한·조건부 탭) 활성 탭이 옆으로 밀려도 아무 옵저버가 안 돈다.
+		// `line` variant 의 목록은 폭이 100% 라 ResizeObserver 도 발화하지 않는다.
+		const offsetLeft = vi
+			.spyOn(HTMLElement.prototype, "offsetLeft", "get")
+			.mockImplementation(function (this: HTMLElement) {
+				const siblings = Array.from(this.parentElement?.querySelectorAll('[role="tab"]') ?? []);
+				const index = siblings.indexOf(this);
+				return index < 0 ? 0 : index * 100;
+			});
+		const offsetWidth = vi
+			.spyOn(HTMLElement.prototype, "offsetWidth", "get")
+			.mockReturnValue(100);
+
+		try {
+			const Variable = ({ withDraft }: { withDraft: boolean }) => (
+				<Tabs value="done" onValueChange={() => {}}>
+					<TabList ariaLabel="상태">
+						<Tab value="all">전체</Tab>
+						{withDraft ? <Tab value="draft">임시저장</Tab> : null}
+						<Tab value="done">완료</Tab>
+					</TabList>
+					<TabPanel value="done">완료 패널</TabPanel>
+				</Tabs>
+			);
+
+			const { container, rerender } = render(<Variable withDraft={false} />);
+			const indicator = () => container.querySelector<HTMLElement>(".tabs_indicator");
+			expect(indicator()?.style.left).toBe("100px");
+
+			rerender(<Variable withDraft={true} />);
+
+			await waitFor(() => expect(indicator()?.style.left).toBe("200px"));
+		} finally {
+			offsetLeft.mockRestore();
+			offsetWidth.mockRestore();
+		}
 	});
 });

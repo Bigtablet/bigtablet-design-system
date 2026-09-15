@@ -38,12 +38,16 @@ describe("LinearProgress", () => {
 		const { rerender } = render(
 			<LinearProgress totalSteps={4} currentStep={-1} aria-label="Progress" />,
 		);
-		let indicator = screen.getByRole("progressbar").querySelector(".linear_progress_indicator");
-		expect(indicator).toHaveStyle({ width: "0%" });
+		let bar = screen.getByRole("progressbar");
+		expect(bar.querySelector(".linear_progress_indicator")).toHaveStyle({ width: "0%" });
+		// 막대만 보고 "clamps" 라고 부르면 안 된다 - 스크린리더가 읽는 값은 aria-valuenow 다.
+		// 범위 밖 값이 그대로 나가면 "-1 / 4" 로 읽힌다.
+		expect(bar).toHaveAttribute("aria-valuenow", "0");
 
 		rerender(<LinearProgress totalSteps={4} currentStep={10} aria-label="Progress" />);
-		indicator = screen.getByRole("progressbar").querySelector(".linear_progress_indicator");
-		expect(indicator).toHaveStyle({ width: "100%" });
+		bar = screen.getByRole("progressbar");
+		expect(bar.querySelector(".linear_progress_indicator")).toHaveStyle({ width: "100%" });
+		expect(bar).toHaveAttribute("aria-valuenow", "4");
 	});
 
 	it("accepts custom className", () => {

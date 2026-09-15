@@ -16,7 +16,7 @@ if (!Element.prototype.scrollIntoView) {
 
 // Modal/Drawer/Alert 는 document.body 에 스크롤락 카운터(dataset.openModals)와
 // overflow 를 공유한다(여러 오버레이 동시 오픈 조율용 - production 의도된 설계).
-// 이 전역이 테스트 간 누수되면 오버레이가 originalOverflow 를 오염된 값으로 저장한다.
+// 이 전역이 테스트 간 누수되면 오버레이가 원복용 스냅샷을 오염된 값으로 저장한다.
 // beforeEach 로 각 테스트 렌더 직전 초기화, afterEach 는 teardown 위생용.
 //
 // 주의: 이건 테스트 간 격리용일 뿐, 한 테스트 안의 비동기 unmount 를 대신 처리하지 않는다.
@@ -25,10 +25,16 @@ if (!Element.prototype.scrollIntoView) {
 function resetBodyScrollLock() {
 	document.body.style.overflow = "";
 	document.body.style.paddingRight = "";
+	document.documentElement.style.overflow = "";
 	document.documentElement.style.scrollbarGutter = "";
 	document.documentElement.style.removeProperty("--bt-scrollbar-width");
 	delete document.body.dataset.openModals;
 	delete document.body.dataset.originalOverflow;
+	delete document.body.dataset.originalOverflowX;
+	delete document.body.dataset.originalOverflowY;
+	delete document.body.dataset.originalHtmlOverflow;
+	delete document.body.dataset.originalHtmlOverflowX;
+	delete document.body.dataset.originalHtmlOverflowY;
 	delete document.body.dataset.originalScrollbarGutter;
 	delete document.body.dataset.originalPaddingRight;
 	delete document.body.dataset.originalScrollbarWidthVar;

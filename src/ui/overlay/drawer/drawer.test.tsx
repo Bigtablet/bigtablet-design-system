@@ -23,6 +23,20 @@ describe("Drawer", () => {
 		vi.unstubAllGlobals();
 	});
 
+	it("keeps Tab inside the panel even though the panel stops other keys from bubbling", () => {
+		// Modal 과 같은 결함 - 트랩이 document 에 있으면 패널의 stopPropagation 이 Tab 을 먹는다.
+		render(
+			<Drawer open onClose={() => {}} title="T" showCloseIcon={false}>
+				<button type="button">first</button>
+				<button type="button">last</button>
+			</Drawer>,
+		);
+		const last = screen.getByRole("button", { name: "last" });
+		last.focus();
+		fireEvent.keyDown(last, { key: "Tab" });
+		expect(document.activeElement).toHaveClass("drawer_body");
+	});
+
 	it("renders when open", () => {
 		render(
 			<Drawer open onClose={() => {}}>
@@ -361,7 +375,7 @@ describe("Drawer", () => {
 	});
 
 	it("releases the scroll lock under reduced motion", async () => {
-		// Drawer 는 useSpringPresence 의 onExitComplete 로 shouldRender 를 내린다.
+		// Drawer 는 오버레이 스프링의 onRest 로 shouldRender 를 내린다.
 		// reduced-motion(`immediate: true`)에서도 그 콜백이 도는지 확인한다 - 안 돌면
 		// 잠금이 영구히 남는다.
 		// setup.ts 가 스위트 전체에 skipAnimation 을 걸어 두면 어떤 스프링이든 즉시 끝나

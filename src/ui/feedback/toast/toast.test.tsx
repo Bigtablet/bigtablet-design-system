@@ -457,34 +457,16 @@ describe("Toast variant classes", () => {
 // ── Toast auto-dismiss ──────────────────────────────────────────────────────
 
 describe("Toast auto-dismiss", () => {
-	it.skip("auto-closes the toast when the progress animation ends", async () => {
-		vi.useFakeTimers();
-
-		render(
-			<ToastProvider>
-				<ToastTrigger fn={(t) => t.success("자동 닫힘")} />
-			</ToastProvider>,
-		);
-
-		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
-		expect(screen.getByText("자동 닫힘")).toBeInTheDocument();
-
-		const progress = document.querySelector(".toast_progress") as HTMLElement;
-
-		// 진행 바 애니메이션 종료 이벤트가 close()를 트리거
-		await act(async () => {
-			fireEvent.animationEnd(progress);
-		});
-
-		// 슬라이드 아웃 setTimeout(260ms) 완료 대기
-		await act(async () => {
-			vi.advanceTimersByTime(300);
-		});
-
-		expect(screen.queryByText("자동 닫힘")).not.toBeInTheDocument();
-
-		vi.useRealTimers();
-	});
+	// 자동 닫힘(progress 애니메이션의 animationend → close)은 **jsdom 에서 구동할 수 없다**.
+	// jsdom 에 `AnimationEvent` 생성자가 없어서 React 가 `onAnimationEnd` 를 아예 배선하지
+	// 않는다 - 포탈 안이든 밖이든 핸들러가 한 번도 불리지 않는 것을 격리 실험으로 확인했다.
+	// 여기 오래 skip 돼 있던 테스트는 그 이유로 통과할 수 없었고, 본문도 지금은 없는 260ms
+	// 슬라이드아웃 setTimeout 을 기다리고 있었다. 지웠다.
+	//
+	// 대신 Chromium 실측으로 확인한다 - 토스트 3개를 띄우고 첫 번째를 마우스로 닫으면 포커스가
+	// 이웃 토스트로 넘어가는데, 그 토스트의 progress 가 `running` 으로 남고 5초 뒤 전부
+	// 사라진다. 키보드 Tab 으로 닫기 버튼에 가면 `:focus-visible` 이라 `paused` 가 된다
+	// (WCAG 2.2.1). 그 대비가 style.scss 의 일시정지 규칙이 지키는 계약이다.
 
 	it("toast remains in DOM during spring exit then unmounts", async () => {
 		render(

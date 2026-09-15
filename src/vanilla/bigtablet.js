@@ -110,6 +110,42 @@
 	 * ICB 가 넓어지면 가운데 정렬한 fixed 요소가 절반만큼 움직이므로(#574), 오버레이 CSS 가
 	 * `padding-right: var(--bt-scrollbar-width)` 로 상쇄한다 - React 쪽과 같은 처리다.
 	 */
+	/* ========================================
+     Escape 스택 (React overlay-stack 과 같은 규약)
+     ======================================== */
+
+	/**
+	 * 열린 오버레이들이 공유하는 Escape 스택. document 리스너는 하나만 두고 **최상단**의
+	 * 핸들러만 부른다. 오버레이마다 document 에 자기 리스너를 걸면 Modal 위에 Alert 를 띄운 뒤
+	 * Escape 한 번에 둘이 같이 닫힌다 - 실측으로 그랬다. APG 는 최상단만 닫히길 요구한다.
+	 */
+	const escapeStack = [];
+
+	function onEscapeKeyDown(e) {
+		if (e.key !== "Escape") return;
+		const top = escapeStack[escapeStack.length - 1];
+		if (!top) return;
+		e.stopImmediatePropagation();
+		top();
+	}
+
+	/** Escape 를 소비만 하고 아무것도 닫지 않는 핸들러. `closeOnEscape: false` 인 모달용. */
+	function noop() {}
+
+	/** 최상단에 등록하고 해제 함수를 돌려준다. 마지막 항목이 빠지면 리스너도 뗀다. */
+	function pushEscape(handler) {
+		if (escapeStack.length === 0) document.addEventListener("keydown", onEscapeKeyDown);
+		escapeStack.push(handler);
+		let done = false;
+		return () => {
+			if (done) return;
+			done = true;
+			const i = escapeStack.lastIndexOf(handler);
+			if (i !== -1) escapeStack.splice(i, 1);
+			if (escapeStack.length === 0) document.removeEventListener("keydown", onEscapeKeyDown);
+		};
+	}
+
 	/**
 	 * 잠금 전 인라인 값으로 `--bt-scrollbar-width` 를 되돌린다 (React 쪽과 같은 규칙).
 	 * 소비자가 잡아둔 값이 있었으면 살리고, 없었으면 인라인 override 만 지운다.
@@ -133,7 +169,16 @@
 
 			// 소비자가 인라인으로 지정해둔 값들을 저장했다가 마지막 unlock 때 복원
 			// (React 쪽 utils/scroll-lock.ts 와 동일 동작).
+			// shorthand 와 축을 **함께** 저장한다. 브라우저 CSSOM 은 두 축이 모두 인라인일 때만
+			// shorthand(`style.overflow`)를 되읽어 주므로 `html.style.overflowX` 만 잡아 둔 앱은
+			// shorthand 가 `""` 로 읽히고, 그것만 되쓰면 그 축이 사라진다. jsdom 은 반대로
+			// shorthand 와 축이 독립 슬롯이라 축만으로는 부족하다 (React 쪽과 같은 처리).
 			body.dataset.btOriginalOverflow = body.style.overflow;
+			body.dataset.btOriginalOverflowX = body.style.overflowX;
+			body.dataset.btOriginalOverflowY = body.style.overflowY;
+			body.dataset.btOriginalHtmlOverflow = html.style.overflow;
+			body.dataset.btOriginalHtmlOverflowX = html.style.overflowX;
+			body.dataset.btOriginalHtmlOverflowY = html.style.overflowY;
 			body.dataset.btOriginalGutter = html.style.scrollbarGutter;
 			body.dataset.btOriginalPaddingRight = body.style.paddingRight;
 			// 소비자가 이 변수를 직접 인라인으로 잡아둔 경우 잠금 한 번에 지워지지 않도록 함께 스냅샷.
@@ -147,6 +192,10 @@
 			}
 
 			body.style.overflow = "hidden";
+			// `html` 에도 건다 - body 의 overflow 는 html 이 `visible` 일 때만 뷰포트로 전파된다.
+			// `html { overflow-x: hidden }` 같은 리셋이 있으면 body 만 잠가도 문서가 스크롤된다
+			// (React 쪽과 같은 실측).
+			html.style.overflow = "hidden";
 
 			if (inset > 0) {
 				// 앱이 예약해 둔 거터까지 풀어야 오버레이가 그 자리를 덮는다.
@@ -175,13 +224,24 @@
 		const html = document.documentElement;
 		const n = parseInt(body.dataset.btOpenModals || "1", 10) - 1;
 		if (n <= 0) {
+			// shorthand → 축 순서로 되쓴다 (React 쪽과 동일).
 			body.style.overflow = body.dataset.btOriginalOverflow || "";
+			body.style.overflowX = body.dataset.btOriginalOverflowX || "";
+			body.style.overflowY = body.dataset.btOriginalOverflowY || "";
+			html.style.overflow = body.dataset.btOriginalHtmlOverflow || "";
+			html.style.overflowX = body.dataset.btOriginalHtmlOverflowX || "";
+			html.style.overflowY = body.dataset.btOriginalHtmlOverflowY || "";
 			body.style.paddingRight = body.dataset.btOriginalPaddingRight || "";
 			html.style.scrollbarGutter = body.dataset.btOriginalGutter || "";
 			html.removeAttribute("data-bt-scroll-locked");
 			restoreScrollbarWidthVar(html, body);
 			delete body.dataset.btOpenModals;
 			delete body.dataset.btOriginalOverflow;
+			delete body.dataset.btOriginalOverflowX;
+			delete body.dataset.btOriginalOverflowY;
+			delete body.dataset.btOriginalHtmlOverflow;
+			delete body.dataset.btOriginalHtmlOverflowX;
+			delete body.dataset.btOriginalHtmlOverflowY;
 			delete body.dataset.btOriginalGutter;
 			delete body.dataset.btOriginalPaddingRight;
 			delete body.dataset.btOriginalScrollbarWidthVar;
@@ -1036,6 +1096,7 @@
 		const panel = modal.querySelector(".bt-modal__panel");
 		let previousFocus = null;
 		let panelTabindexAdded = false;
+		let popEscape = null;
 
 		// Dialog ARIA - React Modal 과 패리티. 접근 가능한 이름(aria-labelledby/label)도 연결한다
 		// (없으면 axe aria-dialog-name 실패). 헤더가 있으면 그 id 로, 없으면 aria-label fallback.
@@ -1058,6 +1119,10 @@
 			state.isOpen = true;
 			modal.classList.add("is-open");
 			lockScroll();
+			// Escape 는 공유 스택에 - 최상단일 때만 닫힌다. `closeOnEscape: false` 여도
+			// **등록은 한다**: 모달은 아래 오버레이를 비활성으로 덮으므로, 등록을 건너뛰면
+			// 최상단 항목이 아래 오버레이가 되어 Escape 한 번에 뒤쪽이 닫힌다.
+			popEscape = pushEscape(config.closeOnEscape ? close : noop);
 
 			// 포커스 이동 - 이전 포커스 저장 후 패널 첫 focusable(없으면 패널 자체)로 (WCAG 2.4.3)
 			previousFocus = document.activeElement;
@@ -1081,7 +1146,10 @@
 			if (!state.isOpen) return; // 이미 닫힘 - 중복 unlockScroll 방지
 			state.isOpen = false;
 			modal.classList.remove("is-open");
-			// 이 딤은 `display` 토글로 즉시 사라진다 - 남은 거터도 즉시 밝아져야 한다.
+			if (popEscape) {
+				popEscape();
+				popEscape = null;
+			}
 			unlockScroll();
 
 			// 우리가 추가한 tabindex 정리 (React useFocusTrap 의 wasTabIndexAdded 와 동일)
@@ -1109,10 +1177,7 @@
 
 		function onKeyDown(e) {
 			if (!state.isOpen) return;
-			if (config.closeOnEscape && e.key === "Escape") {
-				close();
-				return;
-			}
+			// Escape 는 위 스택이 처리한다.
 			// Tab 트랩 - 포커스가 패널 밖으로 빠지지 않게 순환 (WAI-ARIA APG Dialog)
 			if (e.key === "Tab" && panel) {
 				const focusables = $$(FOCUSABLE_SELECTORS, panel);
@@ -1150,8 +1215,18 @@
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
-				// 열린 채 destroy 되면 카운터 정합 유지를 위해 잠금 해제
-				if (state.isOpen) unlockScroll();
+				// 열린 채 destroy 되면: Escape 등록을 먼저 뺀다. 남겨 두면 스택이 파괴된 모달의
+				// `close` 를 붙들어(누수) 다음 Escape 에 그게 다시 돌고, `state.isOpen` 이
+				// `true` 라 가드를 통과해 `unlockScroll` 이 한 번 더 불린다 - 그 시점에 진짜로
+				// 열려 있는 오버레이의 배경 스크롤이 조기에 풀린다.
+				if (state.isOpen) {
+					state.isOpen = false;
+					if (popEscape) {
+						popEscape();
+						popEscape = null;
+					}
+					unlockScroll();
+				}
 			},
 		};
 	}
@@ -1233,18 +1308,19 @@
 		const previousFocus = document.activeElement;
 
 		document.body.appendChild(overlay);
-		// 이 오버레이의 딤은 `bt-alert-fade-in` 으로 페이드한다 - 거터도 같은 길이로 따라가야 한다.
 		lockScroll();
 
 		let isOpen = true;
+		// Escape 는 공유 스택에 - Modal 위에 떠 있으면 이 Alert 만 닫힌다.
+		const popEscape = pushEscape(dismiss);
 
 		function close() {
 			// 중복 호출 방지 - 버튼/오버레이/Escape 연타 시 unlockScroll 이 여러 번 불려
 			// 스크롤 잠금 카운터가 오동작하지 않도록 최초 1회만 실행.
 			if (!isOpen) return;
 			isOpen = false;
-			// Escape 리스너를 닫힘 경로 공통에서 해제 - 버튼/오버레이로 닫을 때
-			// 리스너가 남아 누수되던 문제 방지
+			// 리스너를 닫힘 경로 공통에서 해제 - 버튼/오버레이로 닫을 때 남아 누수되지 않게.
+			popEscape();
 			document.removeEventListener("keydown", onKeyDown);
 			overlay.classList.remove("is-open");
 			if (previousFocus && typeof previousFocus.focus === "function") {
@@ -1293,10 +1369,7 @@
 
 		// Close on Escape + Tab 포커스 트랩 (WAI-ARIA APG Dialog) - Modal 과 동일 패턴
 		function onKeyDown(e) {
-			if (e.key === "Escape") {
-				dismiss();
-				return;
-			}
+			// Escape 는 위 스택이 처리한다. 여기는 Tab 트랩만.
 			if (e.key === "Tab" && alertPanel) {
 				const focusables = $$(FOCUSABLE_SELECTORS, alertPanel);
 				if (focusables.length === 0) {

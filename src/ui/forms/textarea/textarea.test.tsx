@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Textarea } from "./index";
 
@@ -210,5 +211,51 @@ describe("Textarea", () => {
 			expect(toolbar?.parentElement).toHaveClass("textarea_container");
 			expect(container.querySelector(".textarea")).toHaveClass("textarea_disabled");
 		});
+	});
+	it("snaps back when the parent rejects the change", () => {
+		// TextField 와 같은 계약 - 부모가 받아 주지 않으면 화면도 예전 값으로 돌아간다.
+		const Parent = () => {
+			const [v, setV] = React.useState("abc");
+			return (
+				<Textarea
+					value={v}
+					onValueChange={(next) => {
+						if (next.length <= 3) setV(next);
+					}}
+				/>
+			);
+		};
+		render(<Parent />);
+		const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+
+		fireEvent.change(input, { target: { value: "abcd" } });
+
+		expect(input.value).toBe("abc");
+	});
+
+	it("is not editable when a value is given with no handler", () => {
+		// TextField 와 대칭 - 되돌려 주는 쪽이 없으면 글자가 남지 않는다.
+		render(<Textarea value="fixed" />);
+		const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+
+		fireEvent.change(input, { target: { value: "edited" } });
+
+		expect(input.value).toBe("fixed");
+	});
+
+	it("does not snap back while an IME composition is in flight", () => {
+		const Parent = () => {
+			const [v, setV] = React.useState("");
+			return <Textarea value={v} onValueChange={setV} />;
+		};
+		render(<Parent />);
+		const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+
+		fireEvent.compositionStart(input);
+		fireEvent.change(input, { target: { value: "ㅈ" } });
+		expect(input.value).toBe("ㅈ");
+
+		fireEvent.compositionEnd(input, { target: { value: "중" } });
+		expect(input.value).toBe("중");
 	});
 });

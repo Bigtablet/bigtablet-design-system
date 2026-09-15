@@ -8,12 +8,13 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
+	OVERLAY_SPRING_CONFIG,
+	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
 	useReducedMotion,
-	useSpringPresence,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -143,15 +144,21 @@ export const Drawer = ({
 	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
 	if (open && !shouldRender) setShouldRender(true);
 
-	// 오버레이 opacity 페이드 + presence 라이프사이클(퇴출 완료 후 unmount).
-	// 오버레이는 이동하지 않으므로 transform 을 translateY(0px) 로 고정한다.
-	const overlayStyle = useSpringPresence({
-		visible: open,
-		from: "translateY(0px)",
-		onExitComplete: () => {
+	// 오버레이 opacity 페이드 - Modal·Alert 와 같은 규칙으로 **transform 을 주지 않는다**.
+	// 항등 transform(`translateY(0px)`)이라도 붙으면 그 요소가 `position: fixed` 자손의
+	// containing block 이 되고 전체 화면 합성 레이어가 하나 생긴다 (springEnterFrom JSDoc).
+	// 퇴출 완료(onRest)에서 unmount 와 onExited 를 처리한다.
+	const overlayStyle = useSpring({
+		...springEnterFrom(reduced),
+		to: { opacity: open ? 1 : 0 },
+		immediate: reduced,
+		config: OVERLAY_SPRING_CONFIG,
+		onRest: (result) => {
+			// 열린 적 없는 드로어의 스프링은 이미 목표값(opacity 0)에 있어 onRest 가 발화하지
+			// 않으므로 별도 가드를 두지 않는다. 그 가정은 "열린 적 없으면 onExited 없음" 테스트가
+			// 지킨다.
+			if (open || !result.finished) return;
 			setShouldRender(false);
-			// 열린 적 없는 드로어의 스프링은 from 과 to 가 같아 onRest 가 발화하지 않으므로 별도
-			// 가드를 두지 않는다. 그 가정은 "열린 적 없으면 onExited 없음" 테스트가 지킨다.
 			onExited?.();
 		},
 	});

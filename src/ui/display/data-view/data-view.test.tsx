@@ -181,4 +181,26 @@ describe("DataView", () => {
 		);
 		expect(screen.getByRole("navigation")).toBeInTheDocument();
 	});
+	it("drops selections that the new data no longer contains", () => {
+		// 검색어를 바꾸면 박상민은 목록에서 사라지는데 선택은 남았다. 화면에는 체크된 칸이
+		// 하나도 없는데 액션 줄이 "1개 선택됨" 이고, 삭제를 누르면 보이지 않는 그 행이 지워진다.
+		const onRun = vi.fn();
+		const View = ({ data }: { data: User[] }) => (
+			<DataView
+				query={{ data }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", danger: true, onRun }]}
+			/>
+		);
+
+		const { rerender } = render(<View data={USERS} />);
+		fireEvent.click(screen.getAllByRole("checkbox")[1]);
+		expect(screen.getByRole("status")).toHaveTextContent("1개 선택됨");
+
+		rerender(<View data={USERS.filter((u) => u.id !== "1")} />);
+
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "삭제" })).not.toBeInTheDocument();
+	});
 });

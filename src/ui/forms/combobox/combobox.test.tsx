@@ -258,4 +258,29 @@ describe("Combobox", () => {
 
 		expect(screen.getByRole("combobox")).toHaveValue("박상민");
 	});
+	it("still searches when the parent re-renders faster than the debounce", async () => {
+		// 문서에 적힌 사용법이 인라인 화살표라 부모가 리렌더할 때마다 onSearch 의 정체가 바뀐다.
+		// 그것을 의존성에 두면 리렌더마다 디바운스가 되감겨, 부모가 debounceMs 보다 자주
+		// 리렌더하는 화면에서는 조회가 영영 발화하지 않고 스피너만 남는다.
+		const search = vi.fn().mockResolvedValue(OPTIONS);
+		const Parent = ({ tick }: { tick: number }) => (
+			<>
+				<span data-testid="tick">{tick}</span>
+				<Combobox onSearch={(q) => search(q)} debounceMs={200} />
+			</>
+		);
+
+		const { rerender } = render(<Parent tick={0} />);
+		open();
+		type("박상민");
+
+		// 조용해지는 구간을 주지 않는다 - 디바운스 경계를 한참 지나도록 계속 리렌더한다.
+		for (let i = 1; i <= 8; i++) {
+			await vi.advanceTimersByTimeAsync(50);
+			rerender(<Parent tick={i} />);
+		}
+
+		expect(search).toHaveBeenCalledTimes(1);
+		expect(search).toHaveBeenCalledWith("박상민");
+	});
 });

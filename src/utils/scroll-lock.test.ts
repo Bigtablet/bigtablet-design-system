@@ -107,6 +107,19 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("10px");
 	});
 
+	it("locks the root element too, so an app with html overflow set still stops scrolling", () => {
+		// body 의 overflow 는 html 이 visible 일 때만 뷰포트로 전파된다. `html { overflow-x: hidden }`
+		// 같은 리셋이 있으면 body 만 잠가도 문서가 스크롤됐다(실측: 잠금 뒤 scrollTo 가 먹힘).
+		document.documentElement.style.overflow = "auto";
+		setViewportInset(0);
+
+		lockBodyScroll();
+		expect(document.documentElement.style.overflow).toBe("hidden");
+
+		unlockBodyScroll();
+		expect(document.documentElement.style.overflow).toBe("auto");
+	});
+
 	it("measures the gutter from the ICB, not from clientWidth", () => {
 		// `scrollbar-gutter: stable` 에서는 clientWidth 가 innerWidth 와 같게 보고한다(Chromium
 		// 실측). 그래서 폭은 fixed 프로브로 잰다.
@@ -255,5 +268,27 @@ describe("scroll-lock", () => {
 
 		unlockBodyScroll();
 		expect(document.body.style.overflow).toBe("auto");
+	});
+
+	it("restores an axis-only inline overflow and leaves no shorthand behind", () => {
+		// 앱이 흔한 리셋 `html { overflow-x: hidden }` 을 **인라인**으로 걸어 두면 shorthand
+		// (`style.overflow`)는 `""` 로 읽힌다 - CSSOM 은 두 축이 다 인라인일 때만 합쳐 준다.
+		// 그 `""` 를 스냅샷으로 저장하고 해제 때 되쓰면 원래 있던 축이 사라진다
+		// (Chromium 실측 - 해제 후 `overflowX` 가 `""`, 계산값 `visible`). jsdom 은 그 손실을
+		// 재현하지 않으므로 여기서는 **축이 살아남는지**와 우리가 건 shorthand 가 남지 않는지를
+		// 고정한다. 후자는 longhand 만 비우는 구현에서 실제로 깨진다.
+		document.documentElement.style.overflowX = "hidden";
+		document.body.style.overflowY = "scroll";
+		setViewportInset(0);
+
+		lockBodyScroll();
+		unlockBodyScroll();
+
+		expect(document.documentElement.style.overflowX).toBe("hidden");
+		expect(document.documentElement.style.overflowY).toBe("");
+		expect(document.body.style.overflowY).toBe("scroll");
+		expect(document.body.style.overflowX).toBe("");
+		expect(document.documentElement.style.getPropertyValue("overflow")).toBe("");
+		expect(document.body.style.getPropertyValue("overflow")).toBe("");
 	});
 });

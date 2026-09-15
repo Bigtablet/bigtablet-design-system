@@ -76,10 +76,16 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, 
 			}
 		};
 
-		document.addEventListener("keydown", handleKeyDown);
+		// **컨테이너**에 건다 - document 가 아니다. 오버레이 패널은 Escape 이외의 키를
+		// `stopPropagation` 으로 막는데(소비자 단축키 격리), React 는 포탈 컨테이너(body)에서
+		// 그 호출을 네이티브 이벤트에 그대로 전달하므로 document 리스너는 Tab 을 받지 못했다 -
+		// 실측으로 Modal 마지막 탭 정지에서 Tab 을 치면 포커스가 딤 뒤의 트리거로 나갔다.
+		// 컨테이너는 body 보다 안쪽이라 그 호출보다 먼저 받는다. 다른 오버레이의 Tab 을 건드리지
+		// 않게 범위도 좁아진다.
+		container.addEventListener("keydown", handleKeyDown);
 
 		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
+			container.removeEventListener("keydown", handleKeyDown);
 
 			// Remove tabindex if it was added by us
 			if (wasTabIndexAdded) {

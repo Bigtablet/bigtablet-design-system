@@ -146,9 +146,19 @@ export const TextField = ({
 	const generatedId = useId();
 	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
 	const field = useFieldControl();
-	const inputId = id ?? field?.inputId ?? generatedId;
-	const helperId = supportingText ? `${inputId}-help` : undefined;
-	const describedBy = field?.describedBy ?? helperId;
+	// Field 안에서는 **Field 의 id 가 이긴다.** 소비자 `id` 를 앞에 두면 Field 의
+	// `<label for>` 이 문서에 없는 id 를 가리켜 라벨 클릭이 죽는다 - Field 가 컨트롤 하나의
+	// id 를 소유한다는 계약이 먼저다.
+	const inputId = field?.inputId ?? id ?? generatedId;
+	// 자체 도움말 id 는 **자기 useId** 에서 만든다. `inputId` 는 Field 안에서 Field 가 준 값이라
+	// `${inputId}-help` 로 만들면 Field 의 도움말 id 와 **글자까지 같아진다** - 한 문서에 같은
+	// id 가 둘이 되고 aria-describedby 가 둘 다 같은 요소로 풀린다.
+	const helperId = supportingText ? `${generatedId}-help` : undefined;
+	// 둘 다 있으면 **둘 다** 가리킨다. Field 의 도움말·에러만 가리키면 입력이 화면에 그린
+	// supportingText 를 스크린리더 사용자가 못 듣는다 - 눈으로 보이는 제약이 귀로는 안 온다.
+	const describedBy =
+		[field?.describedBy, helperId, props["aria-describedby"]].filter(Boolean).join(" ") ||
+		undefined;
 
 	const isControlled = value !== undefined;
 	const applyTransform = (nextValue: string) =>
@@ -162,14 +172,18 @@ export const TextField = ({
 
 	// Controlled value 동기화 - useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
 	// paint 전 즉시 반영해 flicker 방지.
-	// 조합 중에는 prevValue 까지 함께 보류 - 안 그러면 조합 중 value 변경 시 prevValue 만 갱신돼
-	// 조합 종료 후 value===prevValue 가 되어 외부 value 가 영영 반영되지 않는 버그 발생.
-	const [prevValue, setPrevValue] = useState(value);
-	if (isControlled && value !== prevValue && !isComposingRef.current) {
-		setPrevValue(value);
-		const nextValue = applyTransform(value ?? "");
-		setInnerValue(nextValue);
-		lastEmittedValueRef.current = nextValue;
+	//
+	// 비교 대상은 **현재 화면 값(innerValue)** 이다. 예전처럼 "value 가 직전 value 와 달라졌는가"
+	// 로 보면, 부모가 입력을 **거절**했을 때(길이 제한·검증 실패로 setState 를 안 하는 경우)
+	// value 가 그대로라 아무도 화면을 되돌리지 않는다. 화면엔 거절된 글자가 남고 부모 상태는
+	// 예전 값이라 둘이 영영 갈린다. 내부 버퍼는 조합(IME)을 살리기 위한 것이지 controlled 계약을
+	// 느슨하게 하려는 것이 아니다 - 조합 중이 아니면 화면은 언제나 value 를 따른다.
+	const nextControlledValue = applyTransform(value ?? "");
+	if (isControlled && !isComposingRef.current && nextControlledValue !== innerValue) {
+		setInnerValue(nextControlledValue);
+		// 되돌린 값을 "마지막으로 방출한 값" 으로도 기록한다. 안 하면 사용자가 같은 글자를 다시
+		// 쳤을 때 중복 방출 가드에 걸려 콜백이 아예 불리지 않는다.
+		lastEmittedValueRef.current = nextControlledValue;
 	}
 
 	// 비조합 입력 / 조합 종료 / clear 공통 - 중복 방출 차단 후 방출.
@@ -285,15 +299,21 @@ export const TextField = ({
 							resolvedTrailing && "text_field_input_wrap_no_pad_right",
 						)}
 					>
+						{/* `{...props}` 를 **먼저** 펼친다. 뒤에 두면 소비자가 준 id·aria-* 가 Field 의
+						    배선을 덮어써, Field 의 `<label for>` 이 문서에 없는 id 를 가리키고 에러
+						    상태도 AT 에 전달되지 않는다. Field 밖에서는 아래 계산값이 비어 있으면
+						    소비자 값이 그대로 남도록 각 속성에서 fallback 한다. */}
 						<input
+							{...props}
 							id={inputId}
 							ref={ref}
 							className={cn("text_field_input", identifier && "text_field_input_identifier")}
-							aria-invalid={isError}
+							aria-invalid={field ? isError : (props["aria-invalid"] ?? isError)}
 							aria-describedby={describedBy}
-							aria-required={field?.required || undefined}
-							aria-label={!showLabel ? label : undefined}
-							{...props}
+							// Field 밖에서는 소비자 값이 남는다 - `{...props}` 를 앞으로 옮긴 뒤로는 계산값이
+							// undefined 여도 뒤에서 덮으므로 각 속성이 직접 되돌려 줘야 한다.
+							aria-required={field ? field.required || undefined : props["aria-required"]}
+							aria-label={(!showLabel ? label : undefined) ?? props["aria-label"]}
 							type={resolvedType}
 							value={innerValue}
 							onCompositionStart={() => {

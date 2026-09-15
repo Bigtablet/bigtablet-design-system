@@ -32,7 +32,9 @@ export const LinearProgress = ({
 		<div
 			className={cn("linear_progress", className)}
 			role="progressbar"
-			aria-valuenow={currentStep}
+			// 범위를 벗어난 값을 그대로 노출하면 스크린리더가 "5 / 3" 처럼 읽는다. 막대와 같은
+			// 클램프 값을 쓴다.
+			aria-valuenow={clampedStep}
 			aria-valuemin={0}
 			aria-valuemax={totalSteps}
 			{...props}

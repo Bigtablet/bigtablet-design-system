@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Prose } from "./index";
@@ -124,5 +124,21 @@ describe("Prose", () => {
 		);
 		expect(container.querySelector(".prose > h2")).toBeInTheDocument();
 		expect(container.querySelector(".prose > pre > code")).toHaveTextContent("const a = 1;");
+	});
+	it("marks content that arrives after the first render", async () => {
+		// `<Prose><AsyncMarkdown /></Prose>` 는 효과가 돌 때 서브트리가 비어 있다. fetch 가
+		// 끝나 넓은 표가 그려져도 children 의 정체는 그대로라 효과는 다시 돌지 않는다 - 대상
+		// 목록을 한 번만 잡아 두면 그 표에 탭 정지가 영영 안 붙는다.
+		stubMetrics(500, 200);
+		const Async = ({ loaded }: { loaded: boolean }) => (
+			<Prose>{loaded ? <pre>late</pre> : null}</Prose>
+		);
+
+		const { container, rerender } = render(<Async loaded={false} />);
+		expect(container.querySelector("pre")).toBeNull();
+
+		rerender(<Async loaded={true} />);
+
+		await waitFor(() => expect(container.querySelector("pre")).toHaveAttribute("tabindex", "0"));
 	});
 });

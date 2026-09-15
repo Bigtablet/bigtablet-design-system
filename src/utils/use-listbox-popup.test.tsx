@@ -16,16 +16,24 @@ const Probe = ({
 	onCommit = vi.fn(),
 	returnFocusOnClose = false,
 	disabled = false,
+	initialActiveIndex,
 	expose,
 }: {
 	items?: Item[];
 	onCommit?: (item: Item) => void;
 	returnFocusOnClose?: boolean;
 	disabled?: boolean;
+	initialActiveIndex?: (items: Item[]) => number;
 	/** 공개 API 를 직접 부르는 테스트용 - Dropdown 경로로는 닿지 않는 분기를 덮는다 */
 	expose?: (popup: ReturnType<typeof useListboxPopup<Item>>) => void;
 }) => {
-	const popup = useListboxPopup<Item>({ items, onCommit, returnFocusOnClose, disabled });
+	const popup = useListboxPopup<Item>({
+		items,
+		onCommit,
+		returnFocusOnClose,
+		disabled,
+		initialActiveIndex,
+	});
 	// 렌더 중에 부르면 React 가 버린 렌더의 popup 이 테스트로 새어 나간다.
 	useEffect(() => {
 		expose?.(popup);
@@ -397,5 +405,73 @@ describe("useListboxPopup", () => {
 
 		expect(calls.at(-1)).toBe("바뀐항목");
 		spy.mockRestore();
+	});
+	it("only listens for outside clicks while the popup is open", () => {
+		// 목록 화면은 행마다 Dropdown 을 둔다. 닫힌 팝업까지 상시 등록하면 클릭 한 번에 화면에
+		// 있는 팝업 수만큼 핸들러가 돈다. Menu·Popover 와 같은 규칙으로 열렸을 때만 건다.
+		const add = vi.spyOn(document, "addEventListener");
+		const remove = vi.spyOn(document, "removeEventListener");
+		const mousedownAdds = () => add.mock.calls.filter(([type]) => type === "mousedown").length;
+		const mousedownRemoves = () =>
+			remove.mock.calls.filter(([type]) => type === "mousedown").length;
+
+		try {
+			render(<Probe />);
+			expect(mousedownAdds()).toBe(0);
+
+			fireEvent.click(screen.getByRole("button"));
+			expect(mousedownAdds()).toBe(1);
+
+			fireEvent.mouseDown(document.body);
+			expect(mousedownRemoves()).toBe(1);
+		} finally {
+			add.mockRestore();
+			remove.mockRestore();
+		}
+	});
+	it("honors End pressed on a closed popup", () => {
+		// 닫힌 상태의 Home/End 는 열기와 활성 지정을 한 배치에 담는데, "열릴 때" 효과가
+		// isOpen 변화에 반응해 그 값을 첫 항목으로 덮어썼다. 그대로 Enter 를 치면 APG 가
+		// 요구하는 마지막 항목이 아니라 첫 항목이 커밋된다.
+		const onCommit = vi.fn();
+		render(<Probe onCommit={onCommit} />);
+
+		const trigger = screen.getByRole("button");
+		fireEvent.keyDown(trigger, { key: "End" });
+		fireEvent.keyDown(trigger, { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
+
+	it("keeps the active option when the items array is a new identity with the same content", () => {
+		// options 를 인라인 배열로 주는 소비자가 흔하다. 부모가 리렌더할 때마다 활성 표시가
+		// 첫 항목으로 튀면, 방향키로 골라 둔 자리에서 Enter 가 엉뚱한 항목을 커밋한다.
+		const onCommit = vi.fn();
+		const { rerender } = render(<Probe items={[...ITEMS]} onCommit={onCommit} />);
+
+		fireEvent.click(screen.getByRole("button"));
+		// a(활성) → ArrowDown → b 는 disabled 라 건너뛰고 c
+		fireEvent.keyDown(screen.getByRole("button"), { key: "ArrowDown" });
+
+		rerender(<Probe items={[...ITEMS]} onCommit={onCommit} />);
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
+	it("does not carry a Home/End position into the next open", () => {
+		// 열려 있을 때 누른 Home/End 는 "열릴 때" 효과를 다시 돌리지 못해 ref 가 비워지지 않는다.
+		// 그 상태로 닫았다가 클릭으로 열면 남은 값이 initialActiveIndex 를 덮어쓴다.
+		const onCommit = vi.fn();
+		render(<Probe onCommit={onCommit} initialActiveIndex={() => 2} />);
+
+		const trigger = screen.getByRole("button");
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Home" });
+		fireEvent.keyDown(trigger, { key: "Escape" });
+
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
 	});
 });
