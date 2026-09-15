@@ -58,6 +58,11 @@ export interface DataViewPagination {
 	page: number;
 	/** 전체 페이지 수 */
 	totalPages: number;
+	/**
+	 * 한 쪽에 몇 행인지. 주면 행 선택 체크박스의 기본 라벨이 쪽마다 1 부터 다시 시작하지 않고
+	 * 전체 순번을 쓴다 - 없으면 3쪽의 체크박스도 1쪽과 같은 "1번째 행 선택" 으로 읽힌다.
+	 */
+	pageSize?: number;
 	/** 페이지 변경 콜백 */
 	onPageChange: (page: number) => void;
 }
@@ -161,6 +166,12 @@ export const DataView = <T extends object>({
 	// 여러 쪽에 걸쳐 고르는 것이 Table 이 의도적으로 지원하는 동작이다) 쪽을 넘길 때마다 선택이
 	// 사라지면 기능 자체가 없어진다.
 	const hasPagination = !!pagination;
+	// 쪽 정보가 있으면 행 번호를 전체 순번으로 옮긴다. `pageSize` 없이는 계산할 수 없으므로
+	// 그때는 예전처럼 쪽마다 1 부터 시작한다.
+	const rowIndexOffset =
+		pagination?.pageSize !== undefined
+			? Math.max(0, (pagination.page - 1) * pagination.pageSize)
+			: 0;
 	// 문자열로 비교한다 - rows·rowKey 를 그대로 의존성에 두면 인라인 배열·화살표 때문에
 	// 매 렌더 새 정체가 되어 효과가 계속 돈다. 구분자를 끼워 잇는 방식은 key 안에 그 문자가
 	// 들어가면 서로 다른 목록이 같은 서명이 되므로 길이까지 보존하는 JSON 으로 만든다.
@@ -252,6 +263,7 @@ export const DataView = <T extends object>({
 					columns={columns}
 					data={rows}
 					keyExtractor={rowKey}
+					rowIndexOffset={rowIndexOffset}
 					isLoading={query.isLoading}
 					sort={sort}
 					onSortChange={onSortChange}
@@ -267,6 +279,7 @@ export const DataView = <T extends object>({
 					columns={columns}
 					data={rows}
 					keyExtractor={rowKey}
+					rowIndexOffset={rowIndexOffset}
 					isLoading={query.isLoading}
 					sort={sort}
 					onSortChange={onSortChange}

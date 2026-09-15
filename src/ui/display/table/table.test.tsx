@@ -533,4 +533,24 @@ describe("Table isLoading guards", () => {
 		);
 		expect(container.querySelector(".table_wrapper")).not.toHaveAttribute("tabindex");
 	});
+	it("numbers row checkboxes from rowIndexOffset", () => {
+		// 오프셋이 없으면 3쪽의 체크박스도 1쪽과 글자까지 같은 "1번째 행 선택" 으로 읽힌다.
+		// 스크린리더 사용자는 쪽이 넘어갔는지도, 어느 행인지도 이름만으로 구분할 수 없다.
+		render(
+			<Table<Row>
+				ariaLabel="목록"
+				columns={columns}
+				data={rows}
+				keyExtractor={(r: Row) => r.id}
+				selectable
+				rowKey={(r: Row) => String(r.id)}
+				selectedKeys={[]}
+				onSelectionChange={() => {}}
+				rowIndexOffset={20}
+			/>,
+		);
+
+		expect(screen.getByRole("checkbox", { name: "21번째 행 선택" })).toBeInTheDocument();
+		expect(screen.queryByRole("checkbox", { name: "1번째 행 선택" })).not.toBeInTheDocument();
+	});
 });
