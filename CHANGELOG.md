@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.23.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.0) - 2026-09-15
+- `Field` 의 필수 표시가 보조기술에 닿습니다. 지금까지 `aria-required` 를 내보내던 입력은 16종 중 7종뿐이라, 나머지에서는 라벨 옆 `*`(`aria-hidden` 입니다)만 있고 스크린리더에는 필수 여부가 전혀 들리지 않았습니다. `Toggle` 은 `role="switch"` 에 직접, `FileInput` 은 네이티브 `required` 로, 묶음 입력(`DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput`)은 **안쪽 컨트롤마다** 붙습니다 - `role="group"` 은 그 속성을 허용하지 않습니다
+- `Dropdown`·`DatePicker`·`TimePicker`·`DateRangePicker` 에 `required` prop 이 생겼습니다. `Field` 밖에서 쓰거나 묶음 안쪽으로 필수 여부를 내려보낼 때 씁니다 - `Field` 안에서는 `Field` 가 이깁니다
+- `DataView` 에 `selectAllAriaLabel`·`selectRowAriaLabel` 이 생겼습니다. 선택 체크박스 라벨이 `"13번째 행 선택"` 에 고정돼 있어, 스크린리더 사용자는 어떤 행을 고르는지 번호로만 들었습니다. 인자는 `Table` 과 같은 전체 순번입니다
+- `Combobox`·`TagInput`·`RadioGroup` 에 준 `aria-label`·`aria-describedby` 가 실제 컨트롤에 붙습니다. 지금까지는 role 없는 바깥 래퍼에 붙어 보조기술에 닿지 않았습니다 - 특히 `RadioGroup` 은 `label` prop 을 쓰지 않으면 그룹에 이름을 붙일 방법이 아예 없었습니다
+- `ListItem` 에 `onKeyDown` 을 함께 주면 Enter·Space 활성화가 사라지던 문제를 고쳤습니다. 소비자 핸들러가 내부 핸들러를 통째로 덮었습니다. `role="link"` 로 덮어쓴 `ListItem` 이 Space 로 눌리던 것도 함께 고쳤습니다(링크에서 Space 는 스크롤입니다) - `Card`·`MediaCard` 와 같은 규칙입니다
+
 ## [3.22.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.22.0) - 2026-09-15
 - (렌더 변경) `Field` 안에서는 **Field 가 준 `id`·설명·에러가 소비자 값보다 우선합니다.** `Radio`·`TextField`·`Textarea` 는 소비자가 직접 준 `id` 나 `aria-*` 가 뒤에 덮여, 라벨이 문서에 없는 id 를 가리키고 라벨 클릭이 죽었습니다. **`Field` 안의 입력에 `id` 를 직접 주던 코드는 그 값이 더 이상 쓰이지 않습니다** - 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.22.0 섹션. 이 항목은 3.21.1 에 먼저 나갔고, 소비자 코드가 깨지는 변경이라 minor 로 다시 올립니다
 - (렌더 변경) `Modal`·`Drawer` 의 초기 포커스가 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 순서가 됩니다. 지금까지는 닫기 버튼이 첫 후보라 열자마자 Space/Enter 한 번에 모달이 사라지고, 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 했습니다. footer 는 초기 포커스 대상이 아닙니다 - 확인 모달의 footer 첫 자리가 destructive 인 패턴이 흔합니다
