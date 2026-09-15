@@ -52,6 +52,8 @@ export const OtpInput = ({
 	const inputsRef = React.useRef<(HTMLInputElement | null)[]>([]);
 	// typing 직후 next box로 이동할 때 onFocus의 redirect 로직 잠시 비활성
 	const isTypingRef = React.useRef(false);
+	/** isTypingRef 를 되돌리는 타이머. 겹치면 앞의 것을 지우고, unmount 때도 지운다. */
+	const typingTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
 	React.useEffect(() => {
 		if (autoFocus) inputsRef.current[0]?.focus();
@@ -99,11 +101,14 @@ export const OtpInput = ({
 			isTypingRef.current = true;
 			focusInput(index + 1);
 			// 부모의 controlled value 업데이트 + onFocus 사이클 완료 후 해제
-			setTimeout(() => {
+			clearTimeout(typingTimerRef.current);
+			typingTimerRef.current = setTimeout(() => {
 				isTypingRef.current = false;
 			}, 50);
 		}
 	};
+
+	React.useEffect(() => () => clearTimeout(typingTimerRef.current), []);
 
 	const handleFocus = (index: number) => {
 		// typing 자동 이동 중엔 redirect 안 함

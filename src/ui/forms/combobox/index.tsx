@@ -152,7 +152,17 @@ export const Combobox = ({
 	const { isOpen, setIsOpen, close, activeIndex, setActiveIndex } = popup;
 	closeRef.current = close;
 
+	// onSearch 는 ref 로 잡는다. 문서에 적힌 사용법이 인라인 화살표 함수라 부모가 리렌더할
+	// 때마다 정체가 바뀌는데, 그것을 의존성에 두면 리렌더마다 cleanup 이 디바운스 타이머를 지우고
+	// requestSeq 를 올려 이미 날아간 요청까지 버린다. 부모가 debounceMs 보다 자주 리렌더하면
+	// (형제 입력이 상태를 끌어올리는 폼, 타이머, 구독) 조회가 **영영 발화하지 않고** 스피너만 돈다.
+	const onSearchRef = useRef(onSearch);
+	useEffect(() => {
+		onSearchRef.current = onSearch;
+	});
+
 	// 검색어가 바뀌면 디바운스 후 한 번만 조회한다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: onSearch 는 위 ref 로 최신값을 읽는다 - 의존성에 두면 부모 리렌더마다 디바운스가 되감긴다
 	useEffect(() => {
 		if (!isOpen) return;
 		if (query === "") {
@@ -168,7 +178,7 @@ export const Combobox = ({
 		const seq = ++requestSeq.current;
 		setIsLoading(true);
 		const timer = setTimeout(() => {
-			onSearch(query)
+			onSearchRef.current(query)
 				.then((result) => {
 					// 최신 요청이 아니면 버린다.
 					if (seq !== requestSeq.current) return;
@@ -187,7 +197,7 @@ export const Combobox = ({
 		}, debounceMs);
 
 		return () => clearTimeout(timer);
-	}, [query, isOpen, debounceMs, onSearch]);
+	}, [query, isOpen, debounceMs]);
 
 	const rootClassName = cn(
 		"combobox",

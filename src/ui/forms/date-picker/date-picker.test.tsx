@@ -220,4 +220,40 @@ describe("DatePicker", () => {
 		expect(years[0]).toBe("2020");
 		expect(years).not.toContain("1950");
 	});
+	it("keeps the emitted day inside minDate when the year changes", () => {
+		// 연도를 바꾸면 월은 minDate 로 당겨지는데 일은 그대로 나갔다. 결과가 minDate 보다
+		// 앞선 날짜인데도 onValueChange 로 흘러나간다 - 이 컴포넌트가 막으려는 바로 그 값이다.
+		const onValueChange = vi.fn();
+		render(<DatePicker value="2030-01-01" minDate="2020-06-15" onValueChange={onValueChange} />);
+
+		const buttons = screen.getAllByRole("combobox");
+		fireEvent.click(buttons[0]);
+		fireEvent.click(screen.getByText("2020"));
+
+		expect(onValueChange).toHaveBeenCalledWith("2020-06-15");
+	});
+	it("keeps the emitted day inside until-today when the year changes", () => {
+		// 같은 결함의 반대쪽 - 연도를 올해로 바꾸면 월은 이번 달로 당겨지는데 일이 그대로
+		// 나가 미래 날짜가 emit 됐다. 게다가 그 값은 일 목록에 없어 화면은 빈 칸으로 보인다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					value="2025-12-31"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[0]);
+			fireEvent.click(screen.getByText("2026"));
+
+			expect(onValueChange).toHaveBeenCalledWith("2026-09-15");
+		} finally {
+			vi.useRealTimers();
+		}
+	});
 });

@@ -421,4 +421,33 @@ describe("useListboxPopup", () => {
 			remove.mockRestore();
 		}
 	});
+	it("honors End pressed on a closed popup", () => {
+		// 닫힌 상태의 Home/End 는 열기와 활성 지정을 한 배치에 담는데, "열릴 때" 효과가
+		// isOpen 변화에 반응해 그 값을 첫 항목으로 덮어썼다. 그대로 Enter 를 치면 APG 가
+		// 요구하는 마지막 항목이 아니라 첫 항목이 커밋된다.
+		const onCommit = vi.fn();
+		render(<Probe onCommit={onCommit} />);
+
+		const trigger = screen.getByRole("button");
+		fireEvent.keyDown(trigger, { key: "End" });
+		fireEvent.keyDown(trigger, { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
+
+	it("keeps the active option when the items array is a new identity with the same content", () => {
+		// options 를 인라인 배열로 주는 소비자가 흔하다. 부모가 리렌더할 때마다 활성 표시가
+		// 첫 항목으로 튀면, 방향키로 골라 둔 자리에서 Enter 가 엉뚱한 항목을 커밋한다.
+		const onCommit = vi.fn();
+		const { rerender } = render(<Probe items={[...ITEMS]} onCommit={onCommit} />);
+
+		fireEvent.click(screen.getByRole("button"));
+		// a(활성) → ArrowDown → b 는 disabled 라 건너뛰고 c
+		fireEvent.keyDown(screen.getByRole("button"), { key: "ArrowDown" });
+
+		rerender(<Probe items={[...ITEMS]} onCommit={onCommit} />);
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
 });
