@@ -393,6 +393,53 @@ def check_overlays_offset_the_reclaimed_width() -> list[str]:
     return problems
 
 
+# 전면 오버레이(딤) 컴포넌트 - 오버레이 요소에 transform 이 붙으면 안 된다.
+FULLSCREEN_OVERLAY_SOURCES = (
+    Path("src/ui/overlay/modal/index.tsx"),
+    Path("src/ui/overlay/drawer/index.tsx"),
+    Path("src/ui/feedback/alert/index.tsx"),
+)
+
+
+def check_overlay_has_no_transform() -> list[str]:
+    """전면 오버레이의 스프링이 transform 을 쓰지 않는지.
+
+    항등값(`translateY(0px)`)이라도 transform 이 붙으면 그 요소가 `position: fixed` 자손의
+    containing block 이 되고, 뷰포트 전체 크기의 합성 레이어가 하나 생긴다. 이 규칙은
+    `springEnterFrom` JSDoc 에 적혀 있었는데도 Drawer 가 `useSpringPresence` 를 쓰면서
+    다시 깨졌다 - 그래서 검사로 고정한다. 패널(`panelStyle`)은 실제로 움직이므로 대상이 아니다.
+    """
+    problems: list[str] = []
+    for path in FULLSCREEN_OVERLAY_SOURCES:
+        source = path.read_text(encoding="utf-8")
+        match = re.search(r"const overlayStyle = (\w+)\(\{", source)
+        if match is None:
+            problems.append(f"{path}: `const overlayStyle = ...({{` 를 찾지 못했다 - 검사가 조용히 비었다")
+            continue
+        if match.group(1) == "useSpringPresence":
+            problems.append(
+                f"{path}: 오버레이에 useSpringPresence 를 쓰면 `to.transform` 이 항상 붙는다"
+                " - opacity 만 보간하는 useSpring 을 써라"
+            )
+            continue
+        body, end = _balanced_block(source, match.end() - 1)
+        if end == -1:
+            problems.append(f"{path}: overlayStyle 블록의 짝이 맞는 `}}` 를 못 찾았다")
+            continue
+        # 주석은 걷어낸다 - "왜 transform 을 안 쓰는지" 설명이 블록 안에 들어오면 그 단어
+        # 때문에 오탐한다.
+        code = re.sub(r"//[^\n]*", "", body)
+        # `springEnterFrom(reduced, "...")` 의 **두 번째 인수**도 transform 이다. 그 경로는
+        # `from` 에만 값을 넣어 블록에 "transform" 이라는 단어가 남지 않는다.
+        enter_transform = re.search(r"springEnterFrom\s*\([^)]*,", code)
+        if "transform" in code or enter_transform:
+            problems.append(
+                f"{path}: 오버레이 스프링에 transform 이 있다 - 항등값이어도 `position: fixed`"
+                " 자손의 containing block 이 되고 전체 화면 합성 레이어가 생긴다"
+            )
+    return problems
+
+
 def main() -> int:
     if not CSS.exists():
         print(f"{CSS} 가 없다 - `pnpm build` 를 먼저 실행하라", file=sys.stderr)
@@ -456,6 +503,8 @@ def main() -> int:
     problems += check_lock_width_invariants()
     problems += check_dim_does_not_chase_the_gutter()
     problems += check_overlays_offset_the_reclaimed_width()
+    problems += check_overlay_has_no_transform()
+    checked += len(FULLSCREEN_OVERLAY_SOURCES)
     problems += check_popups_escape_clipping()
     problems += check_popup_width_has_a_floor()
     checked += len(SCROLL_LOCK_SOURCES) + len(DIM_SOURCES) + len(ANCHORED_POPUPS)
@@ -499,6 +548,7 @@ def main() -> int:
         - len(DIM_SOURCES)
         - len(ANCHORED_POPUPS)
         - len(ANCHOR_WIDTH_POPUPS)
+        - len(FULLSCREEN_OVERLAY_SOURCES)
     )
     print(f"오버레이 close 기하 {close_checks}건 - 전부 패널 패딩에서 파생됩니다.")
     print(f"스크롤 잠금 수명 {owner_count}건 - shouldRender 에 묶이고 cleanup 을 반환합니다.")
@@ -509,6 +559,9 @@ def main() -> int:
     print(f"dim {len(DIM_SOURCES)}개 파일 - 음수 오프셋으로 거터를 쫓지 않습니다.")
     print(
         f"가운데 정렬 오버레이 {len(CENTERED_OVERLAY_STYLES)}개 - 회수된 스크롤바 폭을 상쇄합니다."
+    )
+    print(
+        f"전면 오버레이 {len(FULLSCREEN_OVERLAY_SOURCES)}개 - 딤에 transform 을 주지 않습니다."
     )
     print(f"트리거 팝업 {len(ANCHORED_POPUPS)}개 - 포탈 + fixed 로 조상 클리핑을 벗어납니다.")
     print(
