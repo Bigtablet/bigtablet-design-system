@@ -281,4 +281,55 @@ describe("DatePicker", () => {
 			vi.useRealTimers();
 		}
 	});
+	it("offers no month when the whole window is empty", () => {
+		// 일 목록을 비우는 것만으로는 부족하다 - `minDate="2026-12-01"` + `until-today` 면
+		// 월 목록에 12 가 남고, 그것을 고르면 그 달의 일수만 보고 미래 날짜가 그대로 나갔다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					value="2026-09-10"
+					minDate="2026-12-01"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			// 월 목록 자체가 비어야 한다. `Math.max` 로 넓히면 12 가 남고, 그것을 고르는 순간
+			// `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나갔다.
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[1]);
+			expect(screen.queryAllByRole("option")).toHaveLength(0);
+			expect(onValueChange).not.toHaveBeenCalled();
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+	it("hides a month whose days are all out of range in year-month mode", () => {
+		// `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 면 9월에 고를 수 있는 날이
+		// 하나도 없다. 월 목록은 일을 보지 않으므로 9월이 그대로 떴고, 고르면 emit 이 조용히
+		// 막혀 드롭다운이 반응 없이 멈췄다 - 목록과 emit 이 다른 계산을 쓴 자리다.
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(2026, 8, 15));
+		try {
+			const onValueChange = vi.fn();
+			render(
+				<DatePicker
+					mode="year-month"
+					value="2026-09"
+					minDate="2026-09-20"
+					selectableRange="until-today"
+					onValueChange={onValueChange}
+				/>,
+			);
+
+			const buttons = screen.getAllByRole("combobox");
+			fireEvent.click(buttons[1]);
+			expect(screen.queryAllByRole("option")).toHaveLength(0);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
 });

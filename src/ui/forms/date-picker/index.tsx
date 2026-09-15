@@ -204,20 +204,29 @@ export const DatePicker = ({
 
 	const yearOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minYear, Math.max(minYear, maxYear)).map((y) => ({
+			range(minYear, maxYear).map((y) => ({
 				value: String(y),
 				label: String(y),
 			})),
 		[minYear, maxYear],
 	);
 
+	// 그 달에 고를 수 있는 날이 하나도 없으면 월 목록에서도 뺀다. `minMonth`/`maxMonth` 는 일을
+	// 보지 않으므로, `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 처럼 같은 달 안에서
+	// 교집합이 비는 경우를 잡지 못한다. 목록에만 남겨 두면 골라도 아무 일이 없는 항목이 된다 -
+	// 이 파일이 세운 "목록과 emit 이 같은 계산을 쓴다" 원칙이 깨지는 자리다.
 	const monthOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			range(minMonth, Math.max(minMonth, maxMonth)).map((m) => ({
-				value: String(m),
-				label: pad(m),
-			})),
-		[minMonth, maxMonth],
+			range(minMonth, maxMonth)
+				.filter((m) => {
+					const bounds = dayBoundsFor(year, m);
+					return bounds.max >= bounds.min;
+				})
+				.map((m) => ({
+					value: String(m),
+					label: pad(m),
+				})),
+		[minMonth, maxMonth, dayBoundsFor, year],
 	);
 
 	const dayOptions = React.useMemo<DropdownOption[]>(
@@ -233,18 +242,48 @@ export const DatePicker = ({
 
 	// ── emit: 선택 값을 포맷팅해 onChange로 전달 ─────────────────────────
 
+	/**
+	 * 마지막 관문. 목록을 아무리 좁혀도 **월 단위로 넘어가는 경로**가 남는다 -
+	 * `minDate="2026-12-01"` + `until-today`(오늘 2026-09-15) 처럼 교집합이 비면 월 목록에 12 가
+	 * 남고, 그것을 고르면 `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나간다.
+	 * 여기서 한 번 더 확인해 범위 밖이면 **아무것도 내보내지 않는다** - 잘못된 값을 소비자 상태에
+	 * 넣는 것보다 낫고, 화면에는 빈 일 목록으로 충돌 상태가 드러난다.
+	 */
+	const withinRange = React.useCallback(
+		(yy: number, mm: number, dd: number) => {
+			const point = yy * 10000 + mm * 100 + dd;
+			if (min.year > 0) {
+				const floor = min.year * 10000 + Math.max(1, min.month) * 100 + Math.max(1, min.day);
+				if (point < floor) return false;
+			}
+			if (selectableRange === "until-today") {
+				const ceiling = todayYear * 10000 + todayMonth * 100 + todayDay;
+				if (point > ceiling) return false;
+			}
+			return true;
+		},
+		[min.year, min.month, min.day, selectableRange, todayYear, todayMonth, todayDay],
+	);
+
 	const emit = React.useCallback(
 		(yy: number, mm: number, dd?: number) => {
 			const cb = onValueChange ?? onChange;
 			if (mode === "year-month") {
+				// 목록과 **같은 계산**을 쓴다. 대표일을 하나 골라 검사하면 목록에는 있는데 고르면
+				// 아무 반응이 없는 달이 생긴다.
+				const monthBounds = dayBoundsFor(yy, mm);
+				if (monthBounds.max < monthBounds.min) return;
 				cb?.(`${yy}-${pad(mm)}`);
 				return;
 			}
 			const bounds = dayBoundsFor(yy, mm);
+			// 교집합이 비면 내보낼 날이 없다.
+			if (bounds.max < bounds.min) return;
 			const safeDay = Math.min(Math.max(dd ?? bounds.min, bounds.min), bounds.max);
+			if (!withinRange(yy, mm, safeDay)) return;
 			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, onChange, dayBoundsFor],
+		[mode, onValueChange, onChange, dayBoundsFor, withinRange],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
