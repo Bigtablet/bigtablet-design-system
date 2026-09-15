@@ -67,7 +67,29 @@ export const Card = ({
 	);
 
 	return (
-		<div ref={ref} className={cardClassName} {...props}>
+		// biome-ignore lint/a11y/noStaticElementInteractions: onClick 이 있을 때만 role=button + tabIndex 를 붙인다 (ListItem 과 같은 규칙)
+		<div
+			ref={ref}
+			className={cardClassName}
+			// MediaCard·ListItem 과 같은 규칙 - `interactive` 는 겉모습만 바꾸고, 키보드 조작은
+			// 실제 `onClick` 이 있을 때만 붙는다 (WCAG 2.1.1).
+			role={props.onClick ? "button" : undefined}
+			tabIndex={props.onClick ? 0 : undefined}
+			{...props}
+			// 소비자 핸들러를 **먼저** 부른다. 그래야 `preventDefault()` 로 활성화를 막을 수 있다.
+			// `e.repeat` 를 거르는 이유는 키를 누르고 있으면 keydown 이 반복되어 삭제·이동 같은
+			// 부수효과가 여러 번 실행되기 때문이다. 네이티브 `<button>` 은 Space 를 눌러도
+			// keyup 에 한 번만 click 을 낸다.
+			onKeyDown={(e) => {
+				props.onKeyDown?.(e);
+				if (!props.onClick || e.defaultPrevented || e.repeat) return;
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					// 진짜 click 을 쏜다 - onClick 이 가짜 캐스팅 없이 MouseEvent 로 불린다.
+					e.currentTarget.click();
+				}
+			}}
+		>
 			{heading ? <HeadingTag className="card_title">{heading}</HeadingTag> : null}
 			<div className="card_body">{children}</div>
 			{footer ? (

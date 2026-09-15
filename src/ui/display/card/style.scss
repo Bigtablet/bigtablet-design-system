@@ -5,6 +5,13 @@
   border-radius: token.$radius_lg;
   transition: token.$transition_lift;
 
+  // onClick 이 있으면 role="button" + 탭 정지가 붙는다. 브라우저 기본 아웃라인에 맡기면
+  // accent·glass 배경에서 대비가 보장되지 않고 DS 의 다른 포커스 가능 요소와도 어긋난다.
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
   &_interactive {
     cursor: pointer;
 

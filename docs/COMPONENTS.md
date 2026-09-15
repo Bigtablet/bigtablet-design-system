@@ -2850,7 +2850,7 @@ import { Card, Button } from '@bigtablet/design-system';
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
 
-> ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 실제 클릭/키보드 처리는 `onClick` 이나 래핑 요소로 직접 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
+> ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공한다 (MediaCard `clickable` 과 동일 범위). 조작은 `onClick` 으로 붙인다 - `onClick` 을 주면 카드가 `role="button"` + 탭 정지가 되고 Enter·Space 로도 눌린다(WCAG 2.1.1). `onClick` 이 없으면 탭 순서에 들어가지 않는다. `ListItem` 과 같은 규칙이다. **`onClick` 을 줄 때는 `interactive`(MediaCard 는 `clickable`)도 함께 켜라** - 안 켜면 키보드·스크린리더에는 버튼인데 마우스 사용자에게는 눌린다는 단서가 전혀 없는 카드가 된다. 카드 **안에** 링크나 버튼을 또 두면 조작 표면이 겹치므로, 그때는 카드에 `onClick` 을 주지 말고 안쪽 요소에 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용한다.
 
 ---
 
