@@ -4,6 +4,25 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.21.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.1) - 2026-09-15
+- (렌더 변경) `Table` 의 `stickyHeader` 가 실제로 붙습니다. 표 래퍼가 `overflow-x: auto` 라 자기 자신이 스크롤 영역인데 높이 제한은 바깥에 있어, 헤더가 행과 함께 밀려 나갔습니다. **감싼 요소에 확정된 높이**(`height: 240px` 등)를 주면 래퍼가 그것을 물려받습니다
+- (렌더 변경) controlled 로 쓴 `TextField`·`Textarea` 가 부모가 준 `value` 를 따릅니다. 부모가 입력을 거절하면(길이 제한·검증 실패) 화면엔 거절된 글자가 남고 부모 상태는 예전 값이라 둘이 갈렸습니다. **`value` 를 비동기로 갱신하는 화면에서는 그 사이 입력이 되돌아가 보입니다** - 평범한 controlled input 과 같은 동작입니다
+- (렌더 변경) 토스트를 마우스로 닫아도 옆 토스트가 그대로 남던 문제를 고쳤습니다. 닫을 때 포커스를 옆 토스트로 넘기는데 그것이 자동 닫힘 타이머를 멈춰 세웠습니다. 이제 키보드로 옮겨 갔을 때만 멈춥니다
+- (렌더 변경) `Tabs`·`NavBar` 의 밑줄이 탭·링크가 나중에 추가되거나 라벨 글자가 바뀔 때 따라옵니다
+- (렌더 변경) `DataView` 가 목록에서 사라진 선택을 정리합니다. 검색어를 바꾼 뒤에도 "N개 선택됨" 이 남아 보이지 않는 행에 삭제가 실행됐습니다. 페이지네이션을 쓰면 화면 밖 선택은 그대로 둡니다
+- (렌더 변경) `Avatar` 가 깨진 `src` 뒤에 새 사진을 받으면 다시 보여 줍니다. 한 번 실패하면 계속 이니셜만 나왔습니다
+- `DatePicker` 가 자기 범위 밖 날짜를 내보내지 않습니다. 연·월을 바꿀 때 일이 그대로 따라가 `minDate` 이전이나 미래 날짜가 나갔고, 제약이 충돌하면 고를 수 없는 달·일이 목록에 남아 있었습니다
+- `Field` 가 감싼 모든 입력이 에러 상태를 보조기술에 전달합니다. 화면엔 빨간 문구가 있는데 `Checkbox`·`Toggle`·`Radio`·`ImageCropper` 는 정상 입력으로 보였습니다. 입력이 자체 도움말을 그릴 때 그것도 함께 읽힙니다
+- 닫힌 `Dropdown`·`Combobox` 에서 `End` 키가 마지막 항목을 고릅니다. 목록만 열리고 첫 항목이 활성화됐습니다. `options` 를 인라인 배열로 주는 화면에서 부모가 리렌더할 때 활성 표시가 첫 항목으로 튀던 것도 고쳤습니다
+- `Combobox` 가 부모 리렌더에 디바운스를 되감지 않습니다. 부모가 자주 리렌더하는 화면에서는 검색이 아예 실행되지 않고 스피너만 돌았습니다
+- `Menu` 항목을 고르면 포커스가 트리거로 돌아옵니다. 문서 맨 앞으로 떨어져 다음 `Tab` 이 처음부터 시작했습니다
+- 오버레이 안에서 `Tab` 이 밖으로 나가지 않습니다. 패널이 키 이벤트를 막아 `Modal`·`Drawer`·`Alert` 의 포커스 트랩이 동작하지 않았습니다
+- Vanilla JS 에서 `Escape` 가 최상단 오버레이만 닫습니다. `Modal` 위의 `Alert` 에서 한 번에 둘 다 닫혔습니다
+- `html` 에 `overflow` 를 지정한 앱에서도 배경 스크롤이 잠깁니다. 잠금 전 인라인 `overflow` 는 축까지 그대로 복원합니다
+- 닫힌 `Dropdown`·`Combobox` 가 `document` 리스너를 물고 있지 않습니다. 행마다 팝업을 두는 목록 화면에서 클릭 한 번에 행 수만큼 핸들러가 돌았습니다
+- `Toast` id 가 보안 컨텍스트에 의존하지 않습니다. `http` 사내망 주소에서 첫 토스트가 예외로 죽었습니다
+- `Accordion` 의 `key` 에 공백이 있으면 ARIA 참조가 깨지던 문제와, `Prose` 가 나중에 그려진 넓은 표에 탭 정지를 붙이지 못하던 문제를 고쳤습니다
+
 ## [3.21.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.0) - 2026-09-14
 - (렌더 변경) `scrollbar-gutter: stable` 을 쓰는 앱에서 Modal·Drawer·Alert 오른쪽에 딤이 닿지 않는 15px 띠가 남고, 그 옆에 표나 카드가 닿으면 경계에 세로선이 보이던 문제를 고쳤습니다. 잠금이 그 자리를 회수해 오버레이가 실제로 덮습니다 - 색으로 흉내내던 이전 방식은 문서 배경이 단색일 때만 맞았습니다
 - (렌더 변경) 잠금 중 회수된 폭은 `--bt-scrollbar-width` 로 계속 노출되고, DS 오버레이와 `Toast` 가 그 값으로 자기 위치를 상쇄합니다. **오른쪽에 고정된 앱 요소(FAB·플로팅 툴바·자체 토스트)는 같은 보정이 필요합니다** - `right: calc(16px + var(--bt-scrollbar-width, 0px))`. 3.17~3.20 안내를 따라 보정을 걷어냈던 앱은 다시 넣어야 합니다. 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.21.0 섹션
