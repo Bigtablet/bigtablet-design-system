@@ -111,6 +111,8 @@ export const Modal = ({
 	const escapeDismissible = dismissible ?? true;
 
 	const panelRef = React.useRef<HTMLDivElement>(null);
+	/** 초기 포커스를 먼저 찾을 영역. 본문에 컨트롤이 있으면 그쪽이 이긴다. */
+	const bodyRef = React.useRef<HTMLDivElement>(null);
 	// 오버레이에서 누르기 시작했는지 - 패널에서 시작한 드래그를 오버레이에서 놓으면 `click` 이
 	// 공통 조상인 오버레이에 디스패치되므로, target 검사만으로는 진짜 오버레이 클릭과 구분되지 않는다.
 	const pressedOverlayRef = React.useRef(false);
@@ -121,7 +123,10 @@ export const Modal = ({
 	const isMounted = useIsMounted();
 
 	// 포커스 트랩 - 포털이 실제로 마운트된 뒤(isMounted) 활성화해야 panelRef 가 붙어 있다.
-	useFocusTrap(panelRef, open && isMounted);
+	// 초기 포커스는 본문 첫 컨트롤 → 닫기 버튼 → 패널 순서다. 본문 없이 footer 만 있는
+	// 확인 모달에서 footer 의 destructive 버튼으로 포커스가 가지 않도록, 우선 영역을
+	// 본문으로 못박는다.
+	useFocusTrap(panelRef, open && isMounted, { preferWithin: bodyRef });
 
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Tooltip/Popover 등 다른 오버레이와 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
@@ -241,16 +246,7 @@ export const Modal = ({
 				}}
 			>
 				{showCloseIcon && onClose && (
-					<button
-						type="button"
-						className="modal_close"
-						onClick={onClose}
-						aria-label={closeLabel}
-						// 열자마자 포커스가 여기 놓이지 않게 한다. 첫 조작이 "닫기" 가 되면 Space/Enter
-						// 한 번에 모달이 사라지고, 폼 모달에서는 사용자가 Tab 을 한 번 더 쳐야 한다.
-						// 탭 순환에는 그대로 남고, 안에 다른 컨트롤이 없으면 여전히 여기로 온다.
-						data-focus-trap-skip-autofocus=""
-					>
+					<button type="button" className="modal_close" onClick={onClose} aria-label={closeLabel}>
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}
@@ -270,7 +266,7 @@ export const Modal = ({
 					// 스크롤 가능한 영역은 키보드로도 스크롤할 수 있어야 한다 (WCAG 2.1.1) - 포커스
 					// 가능해야 화살표 키가 먹는다.
 					// biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region needs keyboard scroll
-					<div className="modal_body" tabIndex={0} data-focus-trap-skip-autofocus="">
+					<div ref={bodyRef} className="modal_body" tabIndex={0} data-focus-trap-skip-autofocus="">
 						{content.children}
 					</div>
 				)}

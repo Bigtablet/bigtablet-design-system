@@ -720,6 +720,28 @@ describe("Modal", () => {
 		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "이메일" }));
 	});
 
+	it("focuses the close button, not a footer action, when there is no body", () => {
+		// 확인 모달은 children 없이 description + footer 만 쓰는 모양이 흔하다. 그때 본문이
+		// 아예 그려지지 않아, 닫기 버튼만 건너뛰게 만들면 다음 후보가 footer 의 첫 버튼이 된다 -
+		// 그 자리가 destructive 인 패턴이라 열자마자 삭제에 포커스가 놓인다.
+		render(
+			<Modal
+				open
+				onClose={() => {}}
+				title="프로젝트 삭제"
+				description="되돌릴 수 없습니다"
+				footer={
+					<>
+						<button type="button">삭제</button>
+						<button type="button">취소</button>
+					</>
+				}
+			/>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "닫기" }));
+	});
+
 	it("still focuses the close button when the body has no control", () => {
 		render(
 			<Modal open onClose={() => {}} title="안내">

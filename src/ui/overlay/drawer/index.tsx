@@ -116,6 +116,8 @@ export const Drawer = ({
 	const escapeDismissible = dismissible ?? true;
 
 	const panelRef = React.useRef<HTMLDivElement>(null);
+	/** 초기 포커스를 먼저 찾을 영역. 본문에 컨트롤이 있으면 그쪽이 이긴다. */
+	const bodyRef = React.useRef<HTMLDivElement>(null);
 	// 오버레이 닫기 판정용 - pointerdown 이 오버레이에서 시작했는지 기억한다.
 	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
@@ -126,7 +128,10 @@ export const Drawer = ({
 	const isMounted = useIsMounted();
 
 	// 포커스 트랩 - 포털이 실제로 마운트된 뒤(isMounted) 활성화해야 panelRef 가 붙어 있다.
-	useFocusTrap(panelRef, open && isMounted);
+	// 초기 포커스는 본문 첫 컨트롤 → 닫기 버튼 → 패널 순서다. 본문 없이 footer 만 있는
+	// 확인 모달에서 footer 의 destructive 버튼으로 포커스가 가지 않도록, 우선 영역을
+	// 본문으로 못박는다.
+	useFocusTrap(panelRef, open && isMounted, { preferWithin: bodyRef });
 
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Modal/Popover/Tooltip 등과 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.
@@ -241,14 +246,7 @@ export const Drawer = ({
 				}}
 			>
 				{showCloseIcon && onClose && (
-					<button
-						type="button"
-						className="drawer_close"
-						onClick={onClose}
-						aria-label={closeLabel}
-						// Modal 과 같은 규칙 - 초기 포커스 대상에서만 빠진다.
-						data-focus-trap-skip-autofocus=""
-					>
+					<button type="button" className="drawer_close" onClick={onClose} aria-label={closeLabel}>
 						<X size={iconSize.md} aria-hidden="true" />
 					</button>
 				)}
@@ -263,7 +261,7 @@ export const Drawer = ({
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 다만 초기 포커스 대상에서는 제외한다 - 안쪽에
 					// 첫 입력이 있는데 빈 wrapper 에 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
-					<div className="drawer_body" tabIndex={0} data-focus-trap-skip-autofocus="">
+					<div ref={bodyRef} className="drawer_body" tabIndex={0} data-focus-trap-skip-autofocus="">
 						{content.children}
 					</div>
 				)}
