@@ -351,6 +351,26 @@ describe("DatePicker", () => {
 		expect(screen.getByRole("group")).not.toHaveAttribute("aria-required");
 	});
 
+	it("lets an optional Field override the required prop", () => {
+		render(
+			<Field name="birth" label="생년월일">
+				<DatePicker onValueChange={vi.fn()} required />
+			</Field>,
+		);
+
+		for (const control of screen.getAllByRole("combobox")) {
+			expect(control).not.toHaveAttribute("aria-required");
+		}
+	});
+
+	it("announces required from the prop outside a Field", () => {
+		render(<DatePicker onValueChange={vi.fn()} required />);
+
+		for (const control of screen.getAllByRole("combobox")) {
+			expect(control).toHaveAttribute("aria-required", "true");
+		}
+	});
+
 	it("does not claim required without a Field or the prop", () => {
 		render(<DatePicker onValueChange={vi.fn()} />);
 

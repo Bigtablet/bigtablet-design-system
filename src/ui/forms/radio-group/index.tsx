@@ -136,8 +136,8 @@ export const RadioGroup = ({
 					{...ariaProps}
 					aria-labelledby={field?.labelId ?? labelId ?? ariaProps["aria-labelledby"]}
 					aria-describedby={field?.describedBy ?? helperId ?? ariaProps["aria-describedby"]}
-					aria-invalid={error || field?.invalid || ariaProps["aria-invalid"] || undefined}
-					aria-required={field?.required || ariaProps["aria-required"] || undefined}
+					aria-invalid={error || (field ? field.invalid || undefined : ariaProps["aria-invalid"])}
+					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					className="radio_group_options"
 				>
 					{children}

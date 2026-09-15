@@ -324,4 +324,18 @@ describe("Combobox", () => {
 		expect(input).toHaveAccessibleName("담당자");
 		expect(input).toHaveAccessibleDescription("이름으로 검색");
 	});
+
+	it("lets an optional, valid Field override consumer aria state", () => {
+		// field.invalid·field.required 는 기본값이 false 다. OR 로 합치면 그 false 뒤로 소비자의
+		// true 가 새어 나가 화면과 보조기술이 갈린다.
+		render(
+			<Field name="owner" label="담당자">
+				<Combobox onSearch={vi.fn()} aria-required="true" aria-invalid="true" />
+			</Field>,
+		);
+
+		const input = screen.getByRole("combobox");
+		expect(input).not.toHaveAttribute("aria-required");
+		expect(input).not.toHaveAttribute("aria-invalid");
+	});
 });

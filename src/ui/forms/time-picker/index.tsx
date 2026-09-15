@@ -86,7 +86,7 @@ export const TimePicker = ({
 	const field = useFieldControl();
 	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
 	// 안쪽 컨트롤마다 내려보낸다. Field 가 감싸면 Field 가 출처다.
-	const isRequired = field?.required || required || undefined;
+	const isRequired = field ? field.required || undefined : required || undefined;
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
