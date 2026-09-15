@@ -15,7 +15,25 @@ const FOCUSABLE_SELECTORS = [
 	'[tabindex]:not([tabindex="-1"])',
 ].join(", ");
 
-export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, isActive: boolean) {
+export interface FocusTrapOptions {
+	/**
+	 * 초기 포커스를 **먼저 찾을** 영역. 여기 안에 포커스 가능한 컨트롤이 있으면 그 첫 번째로
+	 * 간다. 없으면 기존 순서(skip 표시가 없는 첫 요소 → 첫 요소 → 컨테이너)로 떨어진다.
+	 *
+	 * 오버레이의 초기 포커스 규칙이 세 갈래("본문 첫 컨트롤 → 닫기 버튼 → 패널")라 표시
+	 * 속성만으로는 표현되지 않는다. 닫기 버튼에 skip 을 붙여 본문을 우선하게 만들면, 본문이
+	 * 없는 확인 모달에서는 그다음 후보가 **footer 의 첫 버튼**이 된다 - 그 자리가 destructive
+	 * 액션인 패턴이 흔해서 열자마자 삭제에 포커스가 놓인다. 우선 영역을 직접 지정하면 그런
+	 * 우회 없이 세 갈래가 그대로 표현된다.
+	 */
+	preferWithin?: React.RefObject<HTMLElement | null>;
+}
+
+export function useFocusTrap(
+	containerRef: React.RefObject<HTMLElement | null>,
+	isActive: boolean,
+	options?: FocusTrapOptions,
+) {
 	const previousActiveElement = React.useRef<HTMLElement | null>(null);
 
 	React.useEffect(() => {
@@ -38,7 +56,10 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, 
 		// 스크롤 wrapper 는 건너뛴다 - 안쪽에 실제 컨트롤이 있는데 빈 div 에 포커스가 놓이면
 		// 사용자는 자기가 어디 있는지 알 수 없다. 건너뛸 대상뿐이면 그냥 그것을 쓴다.
 		const focusableElements = getFocusableElements();
+		const preferred =
+			options?.preferWithin?.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTORS) ?? null;
 		const initialTarget =
+			preferred ??
 			Array.from(focusableElements).find((el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR)) ??
 			focusableElements[0];
 		if (initialTarget) {
@@ -95,5 +116,6 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, 
 			// Restore focus to the previously focused element
 			previousActiveElement.current?.focus();
 		};
+		// biome-ignore lint/correctness/useExhaustiveDependencies: preferWithin 은 ref 라 정체가 바뀌지 않는다 - 의존성에 넣으면 소비자가 인라인으로 준 객체에 매번 트랩이 재설치된다
 	}, [isActive, containerRef]);
 }

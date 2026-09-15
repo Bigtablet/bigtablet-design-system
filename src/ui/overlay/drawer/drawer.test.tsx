@@ -659,4 +659,32 @@ describe("Drawer", () => {
 		expect(screen.getByRole("button", { name: "삭제" })).toBeInTheDocument();
 		expect(screen.getByText("항목 본문")).toBeInTheDocument();
 	});
+	it("puts initial focus on the first control in the body, not the close button", () => {
+		render(
+			<Drawer open onClose={() => {}} title="필터">
+				<input aria-label="검색어" />
+				<button type="button">적용</button>
+			</Drawer>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "검색어" }));
+	});
+
+	it("focuses the close button, not a footer action, when there is no body", () => {
+		render(
+			<Drawer
+				open
+				onClose={() => {}}
+				title="삭제"
+				footer={
+					<>
+						<button type="button">삭제</button>
+						<button type="button">취소</button>
+					</>
+				}
+			/>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "닫기" }));
+	});
 });
