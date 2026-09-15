@@ -233,6 +233,16 @@ describe("Textarea", () => {
 		expect(input.value).toBe("abc");
 	});
 
+	it("is not editable when a value is given with no handler", () => {
+		// TextField 와 대칭 - 되돌려 주는 쪽이 없으면 글자가 남지 않는다.
+		render(<Textarea value="fixed" />);
+		const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+
+		fireEvent.change(input, { target: { value: "edited" } });
+
+		expect(input.value).toBe("fixed");
+	});
+
 	it("does not snap back while an IME composition is in flight", () => {
 		const Parent = () => {
 			const [v, setV] = React.useState("");
