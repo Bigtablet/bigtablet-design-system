@@ -398,4 +398,27 @@ describe("useListboxPopup", () => {
 		expect(calls.at(-1)).toBe("바뀐항목");
 		spy.mockRestore();
 	});
+	it("only listens for outside clicks while the popup is open", () => {
+		// 목록 화면은 행마다 Dropdown 을 둔다. 닫힌 팝업까지 상시 등록하면 클릭 한 번에 화면에
+		// 있는 팝업 수만큼 핸들러가 돈다. Menu·Popover 와 같은 규칙으로 열렸을 때만 건다.
+		const add = vi.spyOn(document, "addEventListener");
+		const remove = vi.spyOn(document, "removeEventListener");
+		const mousedownAdds = () => add.mock.calls.filter(([type]) => type === "mousedown").length;
+		const mousedownRemoves = () =>
+			remove.mock.calls.filter(([type]) => type === "mousedown").length;
+
+		try {
+			render(<Probe />);
+			expect(mousedownAdds()).toBe(0);
+
+			fireEvent.click(screen.getByRole("button"));
+			expect(mousedownAdds()).toBe(1);
+
+			fireEvent.mouseDown(document.body);
+			expect(mousedownRemoves()).toBe(1);
+		} finally {
+			add.mockRestore();
+			remove.mockRestore();
+		}
+	});
 });

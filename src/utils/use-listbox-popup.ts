@@ -124,7 +124,11 @@ export function useListboxPopup<T extends ListboxItem>({
 	}, [returnFocusOnClose]);
 
 	// 바깥 클릭으로 닫기. 트리거로 포커스를 되돌리지 않는다 - 사용자가 다른 곳을 눌렀다.
+	// 열려 있을 때만 건다 - Menu·Popover 와 같은 규칙이다. 상시 등록하면 화면에 있는 닫힌
+	// 팝업 수만큼 document mousedown 리스너가 쌓여, 목록 화면(행마다 Dropdown)에서 클릭 한 번에
+	// 수십 개의 핸들러가 돈다.
 	useEffect(() => {
+		if (!isOpen) return;
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as Node;
 			// 목록은 포탈로 body 에 붙으므로 wrapper 밖이다 - 함께 봐야 옵션 클릭이 닫기로
@@ -134,7 +138,7 @@ export function useListboxPopup<T extends ListboxItem>({
 		};
 		document.addEventListener("mousedown", handleOutsideClick);
 		return () => document.removeEventListener("mousedown", handleOutsideClick);
-	}, []);
+	}, [isOpen]);
 
 	const moveActive = useCallback(
 		(dir: 1 | -1) => {
