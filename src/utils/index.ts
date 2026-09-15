@@ -16,6 +16,7 @@ export {
 	OVERLAY_SPRING_CONFIG,
 	springEnterFrom,
 } from "./spring-motion";
+export { splitAriaProps } from "./split-aria-props";
 export {
 	type AnchoredOptions,
 	type AnchoredResult,

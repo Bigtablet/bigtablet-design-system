@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Field } from "../field";
 import { Radio } from "../radio";
 import { RadioGroup } from "./index";
 
@@ -185,5 +186,34 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		);
 		expect(screen.getByRole("radio", { name: "Null" })).not.toBeChecked();
 		expect(screen.getByRole("radio", { name: "A" })).not.toBeChecked();
+	});
+
+	it("puts consumer aria-* on the radiogroup, not on the wrapper", () => {
+		// `{...props}` 가 래퍼에 펼쳐지면 이름 없는 라디오 그룹이 남는다. RadioGroup 에는
+		// ariaLabel 같은 탈출구도 없어서 라벨을 붙일 방법이 아예 사라진다.
+		const { container } = render(
+			<RadioGroup aria-label="배송 방법" aria-describedby="ship-help">
+				<Radio value="a" label="A" />
+			</RadioGroup>,
+		);
+
+		const group = screen.getByRole("radiogroup");
+		expect(group).toHaveAccessibleName("배송 방법");
+		expect(group).toHaveAttribute("aria-describedby", "ship-help");
+		expect(container.firstElementChild).not.toHaveAttribute("aria-label");
+	});
+
+	it("lets the group label and Field win over consumer aria-*", () => {
+		render(
+			<Field name="ship" label="배송" help="영업일 기준">
+				<RadioGroup aria-label="무시됨" aria-describedby="무시됨">
+					<Radio value="a" label="A" />
+				</RadioGroup>
+			</Field>,
+		);
+
+		const group = screen.getByRole("radiogroup");
+		expect(group).toHaveAccessibleName("배송");
+		expect(group).toHaveAccessibleDescription("영업일 기준");
 	});
 });
