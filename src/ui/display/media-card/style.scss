@@ -6,6 +6,13 @@
   background: token.$color_bg_solid;
   border-radius: token.$radius_lg;
   overflow: hidden;
+
+  // onClick 이 있으면 role="button" + 탭 정지가 붙는다. 브라우저 기본 아웃라인에 맡기면
+  // 이미지 위에서 대비가 보장되지 않고 DS 의 다른 포커스 가능 요소와도 어긋난다.
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
   transition:
     transform token.$transition_base,
     box-shadow token.$transition_base;

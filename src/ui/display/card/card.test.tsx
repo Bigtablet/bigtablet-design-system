@@ -190,4 +190,42 @@ describe("Card", () => {
 		render(<Card interactive>내용</Card>);
 		expect(screen.queryByRole("button")).not.toBeInTheDocument();
 	});
+	it("lets a consumer cancel keyboard activation", () => {
+		// onKeyDown 을 나중에 부르면 preventDefault() 로 막을 방법이 없다.
+		const onClick = vi.fn();
+		render(
+			<Card interactive onClick={onClick} onKeyDown={(e) => e.preventDefault()}>
+				내용
+			</Card>,
+		);
+
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("fires once while the key is held down", () => {
+		// keydown 은 누르고 있으면 반복된다. 삭제·이동처럼 부수효과가 있으면 중복 실행된다.
+		const onClick = vi.fn();
+		render(
+			<Card interactive onClick={onClick}>
+				내용
+			</Card>,
+		);
+
+		const card = screen.getByRole("button");
+		fireEvent.keyDown(card, { key: "Enter" });
+		fireEvent.keyDown(card, { key: "Enter", repeat: true });
+		fireEvent.keyDown(card, { key: "Enter", repeat: true });
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
+
+	it("lets a consumer override the computed role", () => {
+		render(
+			<Card interactive onClick={() => {}} role="link">
+				내용
+			</Card>,
+		);
+		expect(screen.getByRole("link")).toBeInTheDocument();
+	});
 });

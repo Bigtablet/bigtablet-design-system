@@ -84,4 +84,48 @@ describe("MediaCard", () => {
 		render(<MediaCard clickable image={{ src: "/a.png", alt: "" }} heading="공지" />);
 		expect(screen.queryByRole("button")).not.toBeInTheDocument();
 	});
+	it("lets a consumer cancel keyboard activation", () => {
+		// onKeyDown 을 나중에 부르면 preventDefault() 로 막을 방법이 없다.
+		const onClick = vi.fn();
+		render(
+			<MediaCard
+				clickable
+				image={{ src: "/a.png", alt: "" }}
+				heading="공지"
+				onClick={onClick}
+				onKeyDown={(e) => e.preventDefault()}
+			/>,
+		);
+
+		fireEvent.keyDown(screen.getByRole("button"), { key: "Enter" });
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("fires once while the key is held down", () => {
+		// keydown 은 누르고 있으면 반복된다. 삭제·이동처럼 부수효과가 있으면 중복 실행된다.
+		const onClick = vi.fn();
+		render(
+			<MediaCard clickable image={{ src: "/a.png", alt: "" }} heading="공지" onClick={onClick} />,
+		);
+
+		const card = screen.getByRole("button");
+		fireEvent.keyDown(card, { key: "Enter" });
+		fireEvent.keyDown(card, { key: "Enter", repeat: true });
+		fireEvent.keyDown(card, { key: "Enter", repeat: true });
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+	});
+
+	it("lets a consumer override the computed role", () => {
+		render(
+			<MediaCard
+				clickable
+				image={{ src: "/a.png", alt: "" }}
+				heading="공지"
+				onClick={() => {}}
+				role="link"
+			/>,
+		);
+		expect(screen.getByRole("link")).toBeInTheDocument();
+	});
 });
