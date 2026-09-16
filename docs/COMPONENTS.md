@@ -1514,6 +1514,7 @@ function YourComponent() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `maxCount` | `number` | `5` | 동시 표시 상한. 넘치면 가장 오래된 토스트가 **닫기 버튼과 같은 퇴출 모션**으로 나간다 - 즉시 잘라내지 않으므로 그 안에 있던 포커스도 인접 토스트로 넘어간다 |
 | `closeAriaLabel` | `string` | `'닫기'` | 각 토스트의 X 버튼 `aria-label` |
 | `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜬다 |
 
