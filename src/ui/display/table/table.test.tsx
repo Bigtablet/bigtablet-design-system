@@ -317,6 +317,16 @@ describe("Table selection", () => {
 		expect(onSelectionChange).toHaveBeenLastCalledWith([]);
 	});
 
+	it("does not mark rows selectable when the table is not selectable", () => {
+		// aria-selected 는 세 상태다. 선택 개념이 없는 표에 "false" 를 붙이면 반대로
+		// "고를 수 있는데 안 고른 것" 으로 읽힌다.
+		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+
+		for (const row of screen.getAllByRole("row").slice(1)) {
+			expect(row).not.toHaveAttribute("aria-selected");
+		}
+	});
+
 	it("toggles an individual row via rowKey mapping and marks it aria-selected", () => {
 		const onSelectionChange = vi.fn();
 		render(
@@ -334,7 +344,8 @@ describe("Table selection", () => {
 		const rowsInTable = screen.getAllByRole("row");
 		// rowsInTable[0] is header row; body rows follow
 		expect(rowsInTable[1]).toHaveAttribute("aria-selected", "true");
-		expect(rowsInTable[2]).not.toHaveAttribute("aria-selected");
+		// 미선택 행도 "false" 를 명시한다 - 없으면 선택 가능 여부를 읽을 수 없다.
+		expect(rowsInTable[2]).toHaveAttribute("aria-selected", "false");
 
 		const betaCheckbox = screen.getByRole("checkbox", { name: "2번째 행 선택" });
 		fireEvent.click(betaCheckbox);
