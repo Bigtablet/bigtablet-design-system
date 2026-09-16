@@ -170,6 +170,9 @@ export const ToastProvider = ({
 	 */
 	const addToast = React.useCallback(
 		(message: string, variant: ToastVariant, duration = 3000) => {
+			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
+			// 표시만 하는 지금 방식이면 새 토스트가 진입과 동시에 퇴출 모션을 타며 깜빡인다.
+			if (maxCount <= 0) return;
 			const id = `toast_${++toastSeq}`;
 			setToasts((prev) => {
 				const next = [{ id, message, variant, duration }, ...prev];

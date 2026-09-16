@@ -580,6 +580,19 @@ describe("Toast stack & ids", () => {
 		expect(screen.getByText("new")).toBeInTheDocument();
 	});
 
+	it("shows nothing for maxCount <= 0 instead of flashing a toast in and out", () => {
+		// 지원 범위 밖이지만 타입은 막지 않는다. 예전 slice 동작(아무것도 렌더 안 함)을 유지한다.
+		render(
+			<ToastProvider maxCount={0}>
+				<ToastTrigger fn={(t) => t.success("보이면 안 됨")} />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		expect(screen.queryByText("보이면 안 됨")).not.toBeInTheDocument();
+	});
+
 	it("hands focus to an adjacent toast when the focused toast is evicted by maxCount", async () => {
 		function StepTrigger() {
 			const t = useToast();
@@ -610,9 +623,12 @@ describe("Toast stack & ids", () => {
 		// 남아 있는 토스트의 닫기 버튼으로 가야 한다.
 		fireEvent.click(screen.getByRole("button", { name: "two" }));
 
-		await waitFor(() => {
-			expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
-		});
+		await waitFor(
+			() => {
+				expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
 		const remainingClose = screen.getByRole("button", { name: "닫기" });
 		expect(document.activeElement).toBe(remainingClose);
 	});
