@@ -594,6 +594,7 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
   myModal.close();  // 닫기
   myModal.toggle(); // 토글
   myModal.isOpen(); // 상태 확인
+  myModal.destroy(); // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리(Escape·스크롤 잠금·포커스 복원)를 하되 onClose 는 부르지 않는다
 </script>
 ```
 

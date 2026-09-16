@@ -266,6 +266,7 @@ const modal = Bigtablet.Modal('#my-modal', {
 });
 modal.open();
 modal.close();
+modal.destroy();            // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리를 하되 onClose 는 안 부름
 
 const sw = Bigtablet.Toggle('#my-toggle', {
   onCheckedChange: (checked) => console.log(checked)
