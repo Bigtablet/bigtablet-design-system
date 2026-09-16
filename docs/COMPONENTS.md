@@ -4086,6 +4086,7 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 - 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출된다.
 - `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결된다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 쓴다.
 - 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈한다.
+- `selectable` 이면 **미선택 행도 `aria-selected="false"`** 를 갖는다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없다(APG grid). 선택 개념이 없는 표에는 붙이지 않는다.
 - 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 준다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힌다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산한다.
 
 ---
