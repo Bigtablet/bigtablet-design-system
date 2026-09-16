@@ -168,7 +168,7 @@ describe("Toast display", () => {
 		expect(screen.getByText("두 번째")).toBeInTheDocument();
 	});
 
-	it("respects maxCount option", () => {
+	it("respects maxCount option", async () => {
 		function SpamTrigger() {
 			const t = useToast();
 			return (
@@ -194,9 +194,13 @@ describe("Toast display", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "spam" }));
 
-		// maxCount=3 이므로 최대 3개만 표시됨 (success는 role="status")
-		const statuses = screen.getAllByRole("status");
-		expect(statuses.length).toBeLessThanOrEqual(3);
+		// maxCount=3 - 밀려난 하나는 퇴출 모션 동안 잠깐 남아 있다가 사라진다 (success 는 role="status")
+		await waitFor(
+			() => {
+				expect(screen.getAllByRole("status")).toHaveLength(3);
+			},
+			{ timeout: 1500 },
+		);
 	});
 });
 
@@ -535,7 +539,7 @@ describe("Toast stack & ids", () => {
 		expect(items[2]).toBe("첫째");
 	});
 
-	it("removes the oldest toast when maxCount is exceeded", () => {
+	it("removes the oldest toast when maxCount is exceeded", async () => {
 		function SpamTrigger() {
 			const t = useToast();
 			return (
@@ -560,10 +564,57 @@ describe("Toast stack & ids", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "spam" }));
 
-		// maxCount=2, prepend 후 slice(0,2)이므로 가장 오래된 "old"가 잘려나감
-		expect(screen.queryByText("old")).not.toBeInTheDocument();
+		// maxCount=2 에 밀린 "old" 는 즉시 잘리지 않고 닫기 버튼과 같은 퇴출 모션을 탄다 -
+		// 한 프레임에 사라지면 그 안의 포커스가 body 로 떨어진다.
+		expect(screen.getByText("old")).toBeInTheDocument();
 		expect(screen.getByText("mid")).toBeInTheDocument();
 		expect(screen.getByText("new")).toBeInTheDocument();
+
+		await waitFor(
+			() => {
+				expect(screen.queryByText("old")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
+		expect(screen.getByText("mid")).toBeInTheDocument();
+		expect(screen.getByText("new")).toBeInTheDocument();
+	});
+
+	it("hands focus to an adjacent toast when the focused toast is evicted by maxCount", async () => {
+		function StepTrigger() {
+			const t = useToast();
+			return (
+				<>
+					<button type="button" onClick={() => t.success("첫 번째")}>
+						one
+					</button>
+					<button type="button" onClick={() => t.success("두 번째")}>
+						two
+					</button>
+				</>
+			);
+		}
+
+		render(
+			<ToastProvider maxCount={1}>
+				<StepTrigger />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "one" }));
+		const firstClose = screen.getByRole("button", { name: "닫기" });
+		firstClose.focus();
+		expect(document.activeElement).toBe(firstClose);
+
+		// 새 토스트가 첫 토스트를 밀어낸다. 밀려난 쪽에 있던 포커스는 body 가 아니라
+		// 남아 있는 토스트의 닫기 버튼으로 가야 한다.
+		fireEvent.click(screen.getByRole("button", { name: "two" }));
+
+		await waitFor(() => {
+			expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
+		});
+		const remainingClose = screen.getByRole("button", { name: "닫기" });
+		expect(document.activeElement).toBe(remainingClose);
 	});
 
 	it("assigns a unique id to every toast (separate DOM nodes)", () => {

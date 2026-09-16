@@ -16,6 +16,8 @@ interface ToastItem {
 	message: string;
 	variant: ToastVariant;
 	duration: number;
+	/** maxCount 에 밀려 퇴출 중. 잘라내지 않고 표시만 해서 수동 닫기와 같은 경로로 사라지게 한다 */
+	dismissing?: boolean;
 }
 
 interface ToastContextValue {
@@ -95,6 +97,13 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 		setVisible(false);
 	}, []);
 
+	// maxCount 에 밀린 토스트도 닫기 버튼과 같은 경로로 나간다 - 퇴출 모션이 끝나면
+	// onExitComplete 가 포커스를 인접 토스트로 넘기고 onRemove 를 부른다. 상태에서 바로
+	// 잘라내면 한 프레임에 사라지고, 그 안에 있던 포커스는 body 로 떨어진다(WCAG 2.4.3).
+	React.useEffect(() => {
+		if (item.dismissing) close();
+	}, [item.dismissing, close]);
+
 	return (
 		<animated.div
 			ref={rootRef}
@@ -152,7 +161,8 @@ export const ToastProvider = ({
 	const isMounted = useIsMounted();
 
 	/**
-	 * 토스트를 큐에 추가한다. maxCount를 초과하면 가장 오래된 항목을 제거한다.
+	 * 토스트를 큐에 추가한다. maxCount 를 넘는 가장 오래된 항목은 퇴출 표시만 한다 - 실제 제거는
+	 * 그 토스트의 퇴출 모션이 끝난 뒤 `removeToast` 가 한다.
 	 * @param message 표시할 메시지
 	 * @param variant 토스트 변형
 	 * @param duration 자동 닫힘 시간(ms), 기본값 3000
@@ -161,7 +171,14 @@ export const ToastProvider = ({
 	const addToast = React.useCallback(
 		(message: string, variant: ToastVariant, duration = 3000) => {
 			const id = `toast_${++toastSeq}`;
-			setToasts((prev) => [{ id, message, variant, duration }, ...prev].slice(0, maxCount));
+			setToasts((prev) => {
+				const next = [{ id, message, variant, duration }, ...prev];
+				// 최신이 앞이라 maxCount 뒤는 항상 가장 오래된 것들이다. 이미 퇴출 중인 항목은
+				// 그대로 두고, 새로 밀려난 것만 표시한다.
+				return next.map((toast, index) =>
+					index >= maxCount && !toast.dismissing ? { ...toast, dismissing: true } : toast,
+				);
+			});
 		},
 		[maxCount],
 	);
