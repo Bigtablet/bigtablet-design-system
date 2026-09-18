@@ -2306,6 +2306,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 #### 접근성 이름은 필수다
 
@@ -2421,6 +2422,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
@@ -2439,6 +2441,14 @@ const [isOpen, setIsOpen] = useState(false);
 초기 포커스 순서는 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 이다. 첫 조작이 "닫기" 가 되면 Space/Enter 한 번에 모달이 사라지고 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 하므로, 본문에 컨트롤이 있으면 그쪽이 이긴다.
 
 **footer 는 초기 포커스 대상이 아니다.** `children` 없이 `footer` 만 쓰는 확인 모달에서 footer 첫 자리가 destructive 액션인 패턴이 흔해, 그리로 포커스가 가면 열자마자 Enter 한 번에 삭제가 실행된다. 그런 모달은 닫기 버튼으로 간다. 탭 순환에는 모두 남는다. `Drawer` 도 같다.
+
+기본 순서가 틀린 자리로 가는 화면은 `initialFocusRef` 로 자리를 지정한다 - 본문 첫 컨트롤이 필터 토글인 검색 모달은 검색 입력으로, 위험 확인 모달은 footer 의 **취소**로. 지정한 요소는 패널 안에 붙어 있어야 하고, 아니면 기본 순서로 떨어진다.
+
+```tsx
+const cancelRef = useRef<HTMLButtonElement>(null);
+<Modal open title="프로젝트 삭제" initialFocusRef={cancelRef}
+  footer={<><Button danger onClick={remove}>삭제</Button><Button ref={cancelRef} onClick={close}>취소</Button></>} />
+```
 
 #### 오버레이 클릭 — 폼 드로어에서는 끌 것
 

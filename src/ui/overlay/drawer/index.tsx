@@ -62,6 +62,12 @@ export interface DrawerProps
 	 */
 	ariaLabel?: string;
 	/**
+	 * 열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는
+	 * 화면에서 쓴다 - 검색 드로어의 검색 입력, 위험 확인 드로어의 "취소" 버튼. 패널 안에 붙어
+	 * 있는 요소여야 하고, 아니면 기본 순서로 떨어진다.
+	 */
+	initialFocusRef?: React.RefObject<HTMLElement | null>;
+	/**
 	 * 퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다.
 	 * `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다.
 	 */
@@ -95,6 +101,7 @@ export const Drawer = ({
 	showCloseIcon = true,
 	closeLabel: closeLabelProp,
 	ariaLabel,
+	initialFocusRef,
 	onExited,
 	children,
 	className,
@@ -131,7 +138,10 @@ export const Drawer = ({
 	// 초기 포커스는 본문 첫 컨트롤 → 닫기 버튼 → 패널 순서다. 본문 없이 footer 만 있는
 	// 확인 모달에서 footer 의 destructive 버튼으로 포커스가 가지 않도록, 우선 영역을
 	// 본문으로 못박는다.
-	useFocusTrap(panelRef, open && isMounted, { preferWithin: bodyRef });
+	useFocusTrap(panelRef, open && isMounted, {
+		preferWithin: bodyRef,
+		initialFocus: initialFocusRef,
+	});
 
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).
 	// Modal/Popover/Tooltip 등과 조합될 때도 "최상단만 닫힘"(APG)이 일관되게 지켜진다.

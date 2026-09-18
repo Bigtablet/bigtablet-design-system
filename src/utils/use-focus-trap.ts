@@ -27,6 +27,13 @@ export interface FocusTrapOptions {
 	 * 우회 없이 세 갈래가 그대로 표현된다.
 	 */
 	preferWithin?: React.RefObject<HTMLElement | null>;
+	/**
+	 * 초기 포커스를 **이 요소**에 둔다. `preferWithin` 보다 먼저 본다. 컨테이너 안에 붙어 있어야
+	 * 하고, 아직 없거나 밖이면 기존 순서(`preferWithin` → skip 없는 첫 요소 → 첫 요소 → 컨테이너)
+	 * 로 떨어진다. 기본 순서가 틀린 자리로 가는 화면 - 검색 모달의 검색 입력, 위험 확인 모달의
+	 * "취소" - 에서 쓴다.
+	 */
+	initialFocus?: React.RefObject<HTMLElement | null>;
 }
 
 export function useFocusTrap(
@@ -36,7 +43,7 @@ export function useFocusTrap(
 ) {
 	const previousActiveElement = React.useRef<HTMLElement | null>(null);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: preferWithin 은 ref 라 정체가 바뀌지 않는다 - 의존성에 넣으면 소비자가 인라인으로 준 객체에 매번 트랩이 재설치된다
+	// biome-ignore lint/correctness/useExhaustiveDependencies: preferWithin·initialFocus 는 ref 라 정체가 바뀌지 않는다 - 의존성에 넣으면 소비자가 인라인으로 준 객체에 매번 트랩이 재설치된다
 	React.useEffect(() => {
 		if (!isActive) return;
 
@@ -65,7 +72,17 @@ export function useFocusTrap(
 					(el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR),
 				) ?? null)
 			: null;
+		// 소비자가 자리를 지정했으면 그것이 이긴다 - 단, 이 컨테이너 안에 붙어 있고 지금 포커스
+		// 가능할 때만. 밖의 요소로 보내면 트랩이 첫 Tab 에 그것을 못 잡고, disabled 요소는
+		// focus() 가 조용히 무시돼 포커스가 트리거(컨테이너 밖)에 남는다 - 둘 다 열리는 순간부터
+		// 트랩이 깨진다. 폴백 후보들과 같은 FOCUSABLE_SELECTORS 기준을 적용한다.
+		const explicit = options?.initialFocus?.current;
+		const explicitTarget =
+			explicit && container.contains(explicit) && explicit.matches(FOCUSABLE_SELECTORS)
+				? explicit
+				: null;
 		const initialTarget =
+			explicitTarget ??
 			preferred ??
 			Array.from(focusableElements).find((el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR)) ??
 			focusableElements[0];

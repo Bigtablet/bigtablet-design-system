@@ -1,5 +1,6 @@
 import { Globals } from "@react-spring/web";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Drawer } from "./index";
 
@@ -686,5 +687,41 @@ describe("Drawer", () => {
 		);
 
 		expect(document.activeElement).toBe(screen.getByRole("button", { name: "닫기" }));
+	});
+
+	it("puts initial focus on initialFocusRef instead of the first body control", () => {
+		const searchRef = React.createRef<HTMLInputElement>();
+		render(
+			<Drawer open onClose={() => {}} title="검색" initialFocusRef={searchRef}>
+				<button type="button">고급 필터</button>
+				<input ref={searchRef} aria-label="검색어" />
+			</Drawer>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "검색어" }));
+	});
+
+	it("lets initialFocusRef pick a footer button the default order would skip", () => {
+		// 위험 확인 Drawer - 기본 순서는 footer 를 건너뛰어 닫기 버튼으로 가지만, 소비자가 "취소" 를
+		// 지정하면 그리로 간다.
+		const cancelRef = React.createRef<HTMLButtonElement>();
+		render(
+			<Drawer
+				open
+				onClose={() => {}}
+				title="삭제"
+				initialFocusRef={cancelRef}
+				footer={
+					<>
+						<button type="button">삭제</button>
+						<button type="button" ref={cancelRef}>
+							취소
+						</button>
+					</>
+				}
+			/>,
+		);
+
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "취소" }));
 	});
 });
