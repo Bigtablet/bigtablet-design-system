@@ -102,6 +102,15 @@
 
 // ── Message ───────────────────────────────────────────────────────────────────
 
+// 라이브 리전 - 아이콘 + 메시지만. 버튼은 밖에 둔다 (index.tsx 주석 참고).
+.toast_live {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: token.$spacing_8;
+}
+
 .toast_message {
   flex: 1;
   @include token.wrap_keep_all;
@@ -141,6 +150,36 @@
     width: 18px;
     height: 18px;
     margin-top: 0;
+  }
+}
+
+// ── Action button ─────────────────────────────────────────────────────────────
+// 메시지 옆 텍스트 버튼("실행 취소"). 닫기 버튼과 같은 포커스 링·전환을 쓴다.
+
+.toast_action {
+  flex-shrink: 0;
+  margin-top: -1px;
+  padding: token.$spacing_2 token.$spacing_8;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: token.$color_accent_default;
+  font-size: token.$font_size_13;
+  font-weight: token.$font_weight_semi_bold;
+  line-height: token.$line_height_20;
+  border-radius: token.$radius_sm;
+  transition:
+    color token.$transition_fast,
+    background-color token.$transition_fast;
+
+  &:hover {
+    color: token.$color_accent_strong;
+    background-color: token.$color_bg_solid_dim;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
   }
 }
 

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "./index";
@@ -698,5 +698,262 @@ describe("Toast stack & ids", () => {
 		await waitFor(() => {
 			expect(document.activeElement).toBe(closeButtons[1]);
 		});
+	});
+});
+
+// ── dismiss / update / action ────────────────────────────────────────────────
+
+describe("Toast programmatic control", () => {
+	it("returns an id from every show method", () => {
+		let ids: unknown[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						ids = [t.success("a"), t.error("b"), t.warning("c"), t.info("d"), t.message("e")];
+					}}
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		expect(ids).toHaveLength(5);
+		for (const id of ids) expect(id).toMatch(/^toast_\d+$/);
+		expect(new Set(ids).size).toBe(5);
+	});
+
+	it("dismiss(id) leaves through the same exit path as the close button", async () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => (id = t.info("닫힐 것"))} label="show" />
+				<ToastTrigger fn={(t) => t.dismiss(id)} label="dismiss" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		fireEvent.click(screen.getByRole("button", { name: "dismiss" }));
+
+		// 즉시 잘라내지 않는다 - 퇴출 모션 동안 남아 있다가 사라진다.
+		expect(screen.getByText("닫힐 것")).toBeInTheDocument();
+		await waitFor(
+			() => {
+				expect(screen.queryByText("닫힐 것")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
+	});
+
+	it("dismiss ignores unknown ids", async () => {
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						t.info("남는다");
+						t.dismiss("toast_nope");
+					}}
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(screen.getByText("남는다")).toBeInTheDocument();
+	});
+
+	it("update(id, patch) changes message and variant in place", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => (id = t.info("업로드 중…", { duration: Infinity }))}
+					label="show"
+				/>
+				<ToastTrigger
+					fn={(t) => t.update(id, { message: "업로드 완료", variant: "error" })}
+					label="update"
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		expect(screen.getByRole("status")).toHaveTextContent("업로드 중…");
+
+		fireEvent.click(screen.getByRole("button", { name: "update" }));
+		// 같은 토스트 하나가 바뀐다 - 새로 뜨지 않는다.
+		expect(screen.queryByText("업로드 중…")).not.toBeInTheDocument();
+		expect(screen.getByRole("alert")).toHaveTextContent("업로드 완료");
+		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
+	});
+
+	it("does not auto-dismiss when duration is Infinity", () => {
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.info("계속 떠 있음", { duration: Infinity })} />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		// 진행 바가 없으면 onAnimationEnd 도 없다 - 자동 닫힘 경로 자체가 빠진다.
+		expect(document.querySelector(".toast_progress")).toBeNull();
+		expect(screen.getByText("계속 떠 있음")).toBeInTheDocument();
+	});
+
+	it("restarts the progress bar when update changes duration", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => (id = t.info("진행", { duration: 9000 }))} label="show" />
+				<ToastTrigger fn={(t) => t.update(id, { duration: 4000 })} label="finish" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		const before = document.querySelector<HTMLElement>(".toast_progress");
+		expect(before?.style.getPropertyValue("--toast-duration")).toBe("9000ms");
+
+		fireEvent.click(screen.getByRole("button", { name: "finish" }));
+		const after = document.querySelector<HTMLElement>(".toast_progress");
+		expect(after?.style.getPropertyValue("--toast-duration")).toBe("4000ms");
+		// CSS 애니메이션은 같은 요소에서 값만 바꾸면 이어서 돈다 - 새 duration 으로 처음부터
+		// 다시 돌려면 요소가 다시 마운트돼야 한다. key 가 그 일을 한다.
+		expect(after).not.toBe(before);
+	});
+
+	it("shows a persistent toast without a progress bar, then gives it one on update", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => (id = t.info("진행", { duration: Infinity }))} label="show" />
+				<ToastTrigger fn={(t) => t.update(id, { duration: 4000 })} label="finish" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		expect(document.querySelector(".toast_progress")).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "finish" }));
+		const bar = document.querySelector<HTMLElement>(".toast_progress");
+		expect(bar?.style.getPropertyValue("--toast-duration")).toBe("4000ms");
+	});
+
+	it("runs the action then closes the toast", async () => {
+		const onClick = vi.fn();
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => t.message("삭제됨", { action: { label: "실행 취소", onClick } })}
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.click(screen.getByRole("button", { name: "실행 취소" }));
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+		await waitFor(
+			() => {
+				expect(screen.queryByText("삭제됨")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
+	});
+
+	it("runs the action only once when the button is hit again during the exit", async () => {
+		const onClick = vi.fn();
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => t.message("삭제됨", { action: { label: "실행 취소", onClick } })}
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		const action = screen.getByRole("button", { name: "실행 취소" });
+		// 퇴출 모션 동안 버튼은 DOM 에 남아 있다 - 더블클릭·연속 Enter 를 흉내낸다.
+		fireEvent.click(action);
+		fireEvent.click(action);
+		fireEvent.keyDown(action, { key: "Enter" });
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+		await waitFor(
+			() => {
+				expect(screen.queryByText("삭제됨")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
+	});
+
+	it("re-inserts the live region when update crosses status↔alert, keeping the item node", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => (id = t.info("업로드 중…", { duration: Infinity }))}
+					label="show"
+				/>
+				<ToastTrigger
+					fn={(t) => t.update(id, { variant: "error", message: "실패" })}
+					label="fail"
+				/>
+				<ToastTrigger fn={(t) => t.update(id, { message: "재시도 중" })} label="retry" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		const itemBefore = document.querySelector(".toast_item");
+		const statusNode = screen.getByRole("status");
+
+		// 보조기술은 라이브 리전의 긴급도를 삽입 시점에 정한다 - role 속성만 바뀌면 assertive 로
+		// 재공지되지 않는다. 노드가 새로 삽입돼야 한다.
+		fireEvent.click(screen.getByRole("button", { name: "fail" }));
+		const alertNode = screen.getByRole("alert");
+		expect(alertNode).not.toBe(statusNode);
+		expect(alertNode).toHaveTextContent("실패");
+		// 바깥 토스트 노드는 그대로다 - 진입 모션이 다시 돌지 않고 버튼 포커스도 살아 있다.
+		expect(document.querySelector(".toast_item")).toBe(itemBefore);
+
+		// role 이 안 바뀌는 갱신은 같은 노드에서 내용만 바뀐다 (라이브 리전이 변경을 읽는다).
+		fireEvent.click(screen.getByRole("button", { name: "retry" }));
+		expect(screen.getByRole("alert")).toBe(alertNode);
+		expect(alertNode).toHaveTextContent("재시도 중");
+	});
+
+	it("update(id, { action: null }) removes the action button", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						id = t.message("삭제됨", {
+							duration: Infinity,
+							action: { label: "실행 취소", onClick: vi.fn() },
+						});
+					}}
+					label="show"
+				/>
+				<ToastTrigger fn={(t) => t.update(id, { action: null })} label="strip" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		expect(screen.getByRole("button", { name: "실행 취소" })).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole("button", { name: "strip" }));
+		expect(screen.queryByRole("button", { name: "실행 취소" })).not.toBeInTheDocument();
+	});
+
+	it("still accepts a bare duration number as the second argument", () => {
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.success("옛 호출", 7000)} />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		const bar = document.querySelector<HTMLElement>(".toast_progress");
+		expect(bar?.style.getPropertyValue("--toast-duration")).toBe("7000ms");
 	});
 });

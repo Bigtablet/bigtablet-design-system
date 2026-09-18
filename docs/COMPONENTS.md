@@ -1508,7 +1508,36 @@ function YourComponent() {
     </div>
   );
 }
+
+// 진행 토스트 - 띄운 뒤 같은 토스트를 바꾼다
+const id = toast.info('업로드 중…', { duration: Infinity });
+await upload();
+toast.update(id, { variant: 'success', message: '업로드 완료', duration: 3000 });
+
+// 실행 취소 - 버튼을 누르면 onClick 뒤 토스트가 닫힌다
+toast.message('항목이 삭제되었습니다', {
+  duration: 6000, // 기본 3초는 누르기에 짧다
+  action: { label: '실행 취소', onClick: restore },
+});
+
+// 프로그램으로 닫기
+toast.dismiss(id);
 ```
+
+#### `useToast()` 반환
+
+| 함수 | 시그니처 | 설명 |
+|------|---------|------|
+| `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환한다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions` |
+| `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫는다. 없는 id·퇴출 중인 id 는 무시 |
+| `update` | `(id, patch) => void` | `message`·`variant`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
+
+**`ToastOptions`**
+
+| 필드 | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `3000` | 자동 닫힘까지의 ms. **`Infinity`** 면 진행 바가 없고 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 |
+| `action` | `{ label: string; onClick: () => void }` | - | 메시지 옆 텍스트 버튼. 누르면 `onClick` 뒤 토스트가 닫힌다 |
 
 #### `ToastProvider` props
 
