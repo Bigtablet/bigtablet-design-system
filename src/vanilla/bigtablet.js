@@ -1147,10 +1147,14 @@
 		}
 
 		/**
-		 * open() 이 잡아 둔 것을 전부 되돌린다 - Escape 등록, 스크롤 잠금, 우리가 붙인 tabindex,
-		 * 포커스. close() 와 destroy() 가 같은 함수를 부르므로 두 경로가 갈라질 수 없다.
+		 * open() 이 잡아 둔 것을 전부 되돌린다 - is-open 클래스, Escape 등록, 스크롤 잠금, 우리가
+		 * 붙인 tabindex, 포커스. close() 와 destroy() 가 같은 함수를 부르므로 두 경로가 갈라질 수
+		 * 없다. 둘의 차이는 onClose 콜백 하나다 - destroy 는 닫기가 아니라 바인딩 해제다.
 		 *
-		 * 넷 중 하나라도 빠지면 열린 채 destroy 된 모달이 흔적을 남긴다:
+		 * 다섯 중 하나라도 빠지면 열린 채 destroy 된 모달이 흔적을 남긴다:
+		 * - is-open - `.bt-modal` 은 display: none 이고 이 클래스만이 grid 로 뒤집는다. 남으면 모달이
+		 *   화면에 열린 채 고정되고, 리스너는 이미 해제돼 닫을 길이 없다. 같은 DOM 으로 다시 만든
+		 *   인스턴스도 isOpen 이 false 로 시작해 close() 가드에 막힌다
 		 * - Escape 등록 - 스택이 파괴된 모달의 close 를 붙들어(누수) 다음 Escape 에 그게 다시 돌고,
 		 *   isOpen 이 true 라 가드를 통과해 unlockScroll 이 한 번 더 불린다. 진짜로 열려 있는
 		 *   오버레이의 배경 스크롤이 조기에 풀린다
@@ -1160,6 +1164,7 @@
 		 */
 		function release() {
 			state.isOpen = false;
+			modal.classList.remove("is-open");
 			if (popEscape) {
 				popEscape();
 				popEscape = null;
@@ -1181,7 +1186,6 @@
 
 		function close() {
 			if (!state.isOpen) return; // 이미 닫힘 - 중복 unlockScroll 방지
-			modal.classList.remove("is-open");
 			release();
 
 			if (config.onClose) {
@@ -1235,8 +1239,8 @@
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
-				// 열려 있으면 release() 로 되돌린다 - 왜 넷을 전부 되돌려야 하는지는 그쪽 JSDoc.
-				// destroy 는 닫기가 아니라 바인딩 해제라 `is-open` 과 `onClose` 는 건드리지 않는다.
+				// 열려 있으면 release() 로 되돌린다 - 왜 다섯을 전부 되돌려야 하는지는 그쪽 JSDoc.
+				// close() 와 다른 점은 `onClose` 를 부르지 않는 것 하나다.
 				if (state.isOpen) release();
 			},
 		};
