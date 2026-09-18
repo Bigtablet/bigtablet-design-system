@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Stepper, type StepperStep } from "./index";
 
@@ -55,17 +56,44 @@ describe("Stepper", () => {
 		expect(indicators[2]).toHaveTextContent("3");
 	});
 
-	it("makes only past steps clickable when onStepClick is given", () => {
+	it("makes only past steps actionable when onStepClick is given", () => {
 		// 아직 오지 않은 단계로 건너뛰면 그 사이 폼 검증을 우회한다 - 되돌아가기만 연다.
 		const onStepClick = vi.fn();
 		render(<Stepper steps={STEPS} current={1} onStepClick={onStepClick} />);
 
 		const buttons = screen.getAllByRole("button");
-		expect(buttons).toHaveLength(1);
-		expect(buttons[0]).toHaveTextContent("계정");
+		expect(buttons).toHaveLength(3);
+		const [past, active, pending] = buttons;
+		expect(past).not.toHaveAttribute("aria-disabled");
+		expect(active).toHaveAttribute("aria-disabled", "true");
+		expect(pending).toHaveAttribute("aria-disabled", "true");
+		// 누를 수 없는 단계는 탭 순서에서도 뺀다 - 아무 일도 안 하는 정지점을 늘리지 않는다.
+		expect(pending).toHaveAttribute("tabindex", "-1");
 
-		fireEvent.click(buttons[0]);
+		fireEvent.click(pending);
+		fireEvent.click(active);
+		expect(onStepClick).not.toHaveBeenCalled();
+
+		fireEvent.click(past);
 		expect(onStepClick).toHaveBeenCalledWith(0, STEPS[0]);
+	});
+
+	it("keeps focus on the step you clicked to go back to", () => {
+		// 클릭 가능 여부로 button/span 을 갈랐다면 되돌아간 순간 그 단계가 active 가 되어 태그가
+		// 바뀌고, 포커스를 갖고 있던 button 이 언마운트돼 포커스가 body 로 떨어진다.
+		function Wizard() {
+			const [current, setCurrent] = useState(2);
+			return <Stepper steps={STEPS} current={current} onStepClick={setCurrent} />;
+		}
+		render(<Wizard />);
+
+		const first = screen.getAllByRole("button")[0];
+		first.focus();
+		fireEvent.click(first);
+
+		expect(screen.getAllByRole("listitem")[0]).toHaveAttribute("aria-current", "step");
+		expect(document.activeElement).toBe(first);
+		expect(first).toHaveAttribute("aria-disabled", "true");
 	});
 
 	it("renders no buttons at all without onStepClick", () => {

@@ -28,8 +28,8 @@ export interface StepperProps extends Omit<React.HTMLAttributes<HTMLOListElement
 	/** 배치 방향 (기본값: "horizontal") */
 	orientation?: StepperOrientation;
 	/**
-	 * 주면 **지나간 단계만** 버튼이 된다. 현재·이후 단계는 그대로 텍스트다 - 아직 오지 않은
-	 * 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하는 일이라 컴포넌트가 열지 않는다.
+	 * 주면 모든 단계가 버튼이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` 다 -
+	 * 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하는 일이라 컴포넌트가 열지 않는다.
 	 */
 	onStepClick?: (index: number, step: StepperStep) => void;
 	/** 루트 요소 ref (React 19 ref-as-prop) */
@@ -105,11 +105,18 @@ export const Stepper = ({
 						className={cn("stepper_step", `stepper_step_${status}`)}
 						aria-current={status === "active" ? "step" : undefined}
 					>
-						{clickable ? (
+						{/* onStepClick 이 있으면 모든 단계가 <button> 이다 - 클릭 가능 여부로 태그를 가르면
+						    지나간 단계를 눌러 되돌아간 순간 그 단계가 active 가 되어 button → span 으로
+						    교체되고, 방금 포커스를 받은 요소가 언마운트돼 포커스가 body 로 떨어진다.
+						    누를 수 없는 단계는 aria-disabled + tabIndex=-1 - `disabled` 는 포커스를
+						    빼앗아 같은 문제를 다시 만든다. Pagination 의 현재 페이지 버튼과 같은 규칙. */}
+						{onStepClick ? (
 							<button
 								type="button"
 								className="stepper_content stepper_button"
-								onClick={() => onStepClick?.(index, step)}
+								aria-disabled={clickable ? undefined : true}
+								tabIndex={clickable ? undefined : -1}
+								onClick={clickable ? () => onStepClick(index, step) : undefined}
 							>
 								{inner}
 							</button>

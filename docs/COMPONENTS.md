@@ -2299,7 +2299,7 @@ import { Stepper } from '@bigtablet/design-system';
 - 상태는 `current` 인덱스 하나에서 파생된다 - 앞은 `done`, 지금은 `active`, 뒤는 `pending`. 단계마다 상태를 따로 관리하지 않는다
 - `<ol>` 로 렌더한다. 현재 단계 `<li>` 에 `aria-current="step"`, 지나간 단계에는 시각 숨김 텍스트 **"완료"**, 현재 단계에는 **"현재 단계"** 가 붙는다 - 색·체크 모양만으로 상태를 전하지 않는다 (WCAG 1.4.1)
 - 모양으로도 갈린다 - `done` 체크, `active` 번호(강조), `pending` 빈 원에 번호
-- `onStepClick` 을 주면 **지나간 단계만** `<button>` 이 된다. 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 컴포넌트가 열지 않는다 - 앞으로 가는 길은 화면의 "다음" 버튼이 담당한다
+- `onStepClick` 을 주면 모든 단계가 `<button>` 이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` + `tabindex="-1"` 이다 - 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 컴포넌트가 열지 않고, 앞으로 가는 길은 화면의 "다음" 버튼이 담당한다. 태그를 클릭 가능 여부로 가르지 않는 이유는 되돌아간 순간 그 단계의 요소가 바뀌어 포커스가 유실되기 때문이다
 - 연결선은 마지막 단계에서 끊긴다. `isLast` 계산은 소비자 몫이 아니다
 
 **Stepper Props** (`<ol>` 속성 상속, `onClick` 제외)
@@ -2309,7 +2309,7 @@ import { Stepper } from '@bigtablet/design-system';
 | `steps` | `StepperStep[]` | required | 순서대로 |
 | `current` | `number` | required | 현재 단계 인덱스 (0-based) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 배치 방향. 세로는 좁은 패널이나 설명이 긴 단계에 |
-| `onStepClick` | `(index: number, step: StepperStep) => void` | - | 지나간 단계를 눌렀을 때. 주면 그 단계들만 버튼이 된다 |
+| `onStepClick` | `(index: number, step: StepperStep) => void` | - | 지나간 단계를 눌렀을 때. 주면 모든 단계가 버튼이 되고 지나간 단계만 눌린다 |
 
 **StepperStep**
 

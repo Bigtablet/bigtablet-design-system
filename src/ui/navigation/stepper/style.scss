@@ -40,8 +40,13 @@ $indicator: 28px;
     border-radius: token.$radius_sm;
     transition: background-color token.$transition_fast;
 
-    &:hover {
+    &:hover:not([aria-disabled="true"]) {
       background-color: token.$color_bg_solid_dim;
+    }
+
+    // 현재·이후 단계 - 태그는 button 으로 유지하되 눌리는 표면처럼 보이지 않게
+    &[aria-disabled="true"] {
+      cursor: default;
     }
 
     &:focus-visible {
