@@ -130,8 +130,9 @@
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
+			"disablePlugins": ["@size-limit/esbuild"],
 			"limit": "8 kB",
-			"message": "Raised 7 kB -> 8 kB on 2026-09-10: baseline was 6.83 kB, leaving 0.17 kB (2.4%) under the old 7 kB limit. The current limit leaves 1.17 kB. Re-measure before raising again."
+			"message": "Raised 7 kB -> 8 kB on 2026-09-10: baseline was 6.83 kB, leaving 0.17 kB (2.4%) under the old 7 kB limit. Re-measured 2026-09-18 without esbuild: 6.54 kB raw brotli, leaving 1.46 kB. esbuild is disabled for this entry: the file is a pre-minified UMD script loaded via <script>, and bundling it as ESM (package.json type=module) only produced a commonjs-variable-in-esm warning - the raw file size is the number consumers actually download."
 		},
 		{
 			"path": "dist/index.css",
