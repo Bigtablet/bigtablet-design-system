@@ -2306,7 +2306,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
-| `initialFocusRef` | `RefObject<HTMLElement>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 #### 접근성 이름은 필수다
 
@@ -2422,7 +2422,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
-| `initialFocusRef` | `RefObject<HTMLElement>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
