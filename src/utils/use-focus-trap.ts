@@ -72,10 +72,15 @@ export function useFocusTrap(
 					(el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR),
 				) ?? null)
 			: null;
-		// 소비자가 자리를 지정했으면 그것이 이긴다 - 단, 이 컨테이너 안에 실제로 붙어 있을 때만.
-		// 밖의 요소로 포커스를 보내면 트랩이 첫 Tab 에 그것을 못 잡는다.
+		// 소비자가 자리를 지정했으면 그것이 이긴다 - 단, 이 컨테이너 안에 붙어 있고 지금 포커스
+		// 가능할 때만. 밖의 요소로 보내면 트랩이 첫 Tab 에 그것을 못 잡고, disabled 요소는
+		// focus() 가 조용히 무시돼 포커스가 트리거(컨테이너 밖)에 남는다 - 둘 다 열리는 순간부터
+		// 트랩이 깨진다. 폴백 후보들과 같은 FOCUSABLE_SELECTORS 기준을 적용한다.
 		const explicit = options?.initialFocus?.current;
-		const explicitTarget = explicit && container.contains(explicit) ? explicit : null;
+		const explicitTarget =
+			explicit && container.contains(explicit) && explicit.matches(FOCUSABLE_SELECTORS)
+				? explicit
+				: null;
 		const initialTarget =
 			explicitTarget ??
 			preferred ??

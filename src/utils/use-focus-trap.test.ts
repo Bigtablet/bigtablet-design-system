@@ -227,6 +227,22 @@ describe("useFocusTrap", () => {
 		}
 	});
 
+	it("falls back to the default order when initialFocus is not focusable right now", () => {
+		// disabled 요소에 focus() 를 불러도 조용히 무시된다 - 포커스가 트리거(컨테이너 밖)에 남아
+		// 첫 Tab 이 트랩에 잡히지 않는다. 폴백 후보와 같은 기준(FOCUSABLE_SELECTORS)을 적용한다.
+		const container = createContainer(1);
+		tracked(container);
+		const disabled = document.createElement("button");
+		disabled.textContent = "로딩 중";
+		disabled.disabled = true;
+		container.appendChild(disabled);
+
+		renderHook(() =>
+			useFocusTrap({ current: container }, true, { initialFocus: { current: disabled } }),
+		);
+		expect(document.activeElement).toBe(container.querySelector("button"));
+	});
+
 	it("falls back to the default order when initialFocus points outside the container", () => {
 		// 밖의 요소로 보내면 트랩이 첫 Tab 에 그것을 못 잡는다 - 무시하고 기본 순서.
 		const container = createContainer(2);
