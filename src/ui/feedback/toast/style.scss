@@ -102,6 +102,15 @@
 
 // ── Message ───────────────────────────────────────────────────────────────────
 
+// 라이브 리전 - 아이콘 + 메시지만. 버튼은 밖에 둔다 (index.tsx 주석 참고).
+.toast_live {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: token.$spacing_8;
+}
+
 .toast_message {
   flex: 1;
   @include token.wrap_keep_all;

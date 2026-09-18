@@ -131,25 +131,30 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
 	const autoDismisses = Number.isFinite(item.duration);
+	const liveRole = item.variant === "error" ? "alert" : "status";
 
 	return (
-		<animated.div
-			ref={rootRef}
-			className="toast_item"
-			style={style}
-			role={item.variant === "error" ? "alert" : "status"}
-		>
-			<span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
-				{VARIANT_ICONS[item.variant]}
-			</span>
-
-			<span className="toast_message">{item.message}</span>
+		<animated.div ref={rootRef} className="toast_item" style={style}>
+			{/* 라이브 리전은 메시지만 감싼다 - 버튼까지 읽히면 소음이다. role 을 key 로 두어
+			    update 로 status↔alert 가 바뀌면 이 노드만 다시 삽입된다. 보조기술은 라이브 리전의
+			    긴급도를 노드 삽입 시점에 정하므로, 속성만 바꾸면 "진행 중 → 실패" 가 assertive 로
+			    재공지되지 않는다. 바깥 animated.div 는 그대로라 진입 모션이 다시 돌지 않고 닫기·액션
+			    버튼의 포커스도 유지된다. */}
+			<div key={liveRole} className="toast_live" role={liveRole}>
+				<span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
+					{VARIANT_ICONS[item.variant]}
+				</span>
+				<span className="toast_message">{item.message}</span>
+			</div>
 
 			{item.action && (
 				<button
 					type="button"
 					className="toast_action"
 					onClick={() => {
+						// 퇴출 모션 동안(수백 ms) 버튼이 DOM 에 남아 있다. 가드가 없으면 더블클릭·연속
+						// Enter 로 소비자의 되돌리기가 두 번 실행된다.
+						if (closingRef.current) return;
 						item.action?.onClick();
 						close();
 					}}

@@ -1516,6 +1516,7 @@ toast.update(id, { variant: 'success', message: '업로드 완료', duration: 30
 
 // 실행 취소 - 버튼을 누르면 onClick 뒤 토스트가 닫힌다
 toast.message('항목이 삭제되었습니다', {
+  duration: 6000, // 기본 3초는 누르기에 짧다
   action: { label: '실행 취소', onClick: restore },
 });
 

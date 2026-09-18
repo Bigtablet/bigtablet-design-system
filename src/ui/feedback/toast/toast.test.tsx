@@ -860,6 +860,67 @@ describe("Toast programmatic control", () => {
 		);
 	});
 
+	it("runs the action only once when the button is hit again during the exit", async () => {
+		const onClick = vi.fn();
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => t.message("삭제됨", { action: { label: "실행 취소", onClick } })}
+				/>
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		const action = screen.getByRole("button", { name: "실행 취소" });
+		// 퇴출 모션 동안 버튼은 DOM 에 남아 있다 - 더블클릭·연속 Enter 를 흉내낸다.
+		fireEvent.click(action);
+		fireEvent.click(action);
+		fireEvent.keyDown(action, { key: "Enter" });
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+		await waitFor(
+			() => {
+				expect(screen.queryByText("삭제됨")).not.toBeInTheDocument();
+			},
+			{ timeout: 1500 },
+		);
+	});
+
+	it("re-inserts the live region when update crosses status↔alert, keeping the item node", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => (id = t.info("업로드 중…", { duration: Infinity }))}
+					label="show"
+				/>
+				<ToastTrigger
+					fn={(t) => t.update(id, { variant: "error", message: "실패" })}
+					label="fail"
+				/>
+				<ToastTrigger fn={(t) => t.update(id, { message: "재시도 중" })} label="retry" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		const itemBefore = document.querySelector(".toast_item");
+		const statusNode = screen.getByRole("status");
+
+		// 보조기술은 라이브 리전의 긴급도를 삽입 시점에 정한다 - role 속성만 바뀌면 assertive 로
+		// 재공지되지 않는다. 노드가 새로 삽입돼야 한다.
+		fireEvent.click(screen.getByRole("button", { name: "fail" }));
+		const alertNode = screen.getByRole("alert");
+		expect(alertNode).not.toBe(statusNode);
+		expect(alertNode).toHaveTextContent("실패");
+		// 바깥 토스트 노드는 그대로다 - 진입 모션이 다시 돌지 않고 버튼 포커스도 살아 있다.
+		expect(document.querySelector(".toast_item")).toBe(itemBefore);
+
+		// role 이 안 바뀌는 갱신은 같은 노드에서 내용만 바뀐다 (라이브 리전이 변경을 읽는다).
+		fireEvent.click(screen.getByRole("button", { name: "retry" }));
+		expect(screen.getByRole("alert")).toBe(alertNode);
+		expect(alertNode).toHaveTextContent("재시도 중");
+	});
+
 	it("update(id, { action: null }) removes the action button", () => {
 		let id = "";
 		render(
