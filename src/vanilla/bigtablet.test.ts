@@ -496,6 +496,24 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.activeElement).toBe(opener);
 	});
 
+	it("패널에 소비자가 준 tabindex 는 열고 닫아도 그대로다", () => {
+		// 덮어쓰고 "우리가 붙였다" 로 표시하면 close()·destroy() 가 소비자 속성을 지운다.
+		setViewportInset(0);
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = '<div class="bt-modal__panel" tabindex="0"><p>본문만</p></div>';
+		document.body.appendChild(el);
+		const panel = el.querySelector(".bt-modal__panel");
+
+		const m = Modal(el);
+		m?.open();
+		expect(panel?.getAttribute("tabindex")).toBe("0");
+		expect(document.activeElement).toBe(panel);
+
+		m?.close();
+		expect(panel?.getAttribute("tabindex")).toBe("0");
+	});
+
 	it("focusable 없는 패널을 열고 destroy 하면 우리가 붙인 tabindex 를 남기지 않는다", () => {
 		// 남으면 같은 DOM 으로 다시 만든 Modal 이 "원래 있던 tabindex" 로 오인해 close() 도
 		// 지우지 않는다.
