@@ -479,6 +479,82 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.style.overflow).toBe("");
 	});
 
+	it("열린 채 destroy 하면 포커스가 열기 전 요소로 돌아온다", () => {
+		// close() 와 같은 정리를 타야 한다. 빠지면 포커스가 파괴된 패널 안에 남고, 소비자가
+		// 그 DOM 을 지우는 순간 body 로 떨어져 다음 Tab 이 문서 처음부터 시작한다(WCAG 2.4.3).
+		setViewportInset(0);
+		const opener = document.createElement("button");
+		opener.textContent = "열기";
+		document.body.appendChild(opener);
+		opener.focus();
+
+		const m = Modal(modalMarkup());
+		m?.open();
+		expect(document.activeElement).not.toBe(opener);
+
+		m?.destroy();
+		expect(document.activeElement).toBe(opener);
+	});
+
+	it("열린 채 destroy 하면 is-open 도 걷어내고, 같은 DOM 으로 다시 만든 인스턴스가 정상 동작한다", () => {
+		// is-open 이 남으면 모달이 화면에 열린 채 고정된다 - 리스너는 해제됐고, 새 인스턴스는
+		// isOpen 이 false 로 시작해 close() 가드에 막혀 지울 길이 없다.
+		setViewportInset(0);
+		const el = modalMarkup();
+		const onClose = vi.fn();
+
+		const first = Modal(el, { onClose });
+		first?.open();
+		expect(el.classList.contains("is-open")).toBe(true);
+
+		first?.destroy();
+		expect(el.classList.contains("is-open")).toBe(false);
+		// 바인딩 해제일 뿐 닫기가 아니다.
+		expect(onClose).not.toHaveBeenCalled();
+
+		const second = Modal(el);
+		second?.open();
+		expect(el.classList.contains("is-open")).toBe(true);
+		second?.close();
+		expect(el.classList.contains("is-open")).toBe(false);
+	});
+
+	it("패널에 소비자가 준 tabindex 는 열고 닫아도 그대로다", () => {
+		// 덮어쓰고 "우리가 붙였다" 로 표시하면 close()·destroy() 가 소비자 속성을 지운다.
+		setViewportInset(0);
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = '<div class="bt-modal__panel" tabindex="0"><p>본문만</p></div>';
+		document.body.appendChild(el);
+		const panel = el.querySelector(".bt-modal__panel");
+
+		const m = Modal(el);
+		m?.open();
+		expect(panel?.getAttribute("tabindex")).toBe("0");
+		expect(document.activeElement).toBe(panel);
+
+		m?.close();
+		expect(panel?.getAttribute("tabindex")).toBe("0");
+	});
+
+	it("focusable 없는 패널을 열고 destroy 하면 우리가 붙인 tabindex 를 남기지 않는다", () => {
+		// 남으면 같은 DOM 으로 다시 만든 Modal 이 "원래 있던 tabindex" 로 오인해 close() 도
+		// 지우지 않는다.
+		setViewportInset(0);
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = '<div class="bt-modal__panel"><p>본문만</p></div>';
+		document.body.appendChild(el);
+		const panel = el.querySelector(".bt-modal__panel");
+
+		const m = Modal(el);
+		m?.open();
+		expect(panel?.getAttribute("tabindex")).toBe("-1");
+
+		m?.destroy();
+		expect(panel?.hasAttribute("tabindex")).toBe(false);
+	});
+
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
 		setViewportInset(0);
 		const m = Modal(modalMarkup());

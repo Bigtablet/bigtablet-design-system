@@ -336,7 +336,10 @@ export const Table = <T extends object>({
 											onRowClick && "table_row_clickable",
 											isSelected && "table_row_selected",
 										)}
-										aria-selected={isSelected ? "true" : undefined}
+										// 선택 가능한 표에서는 미선택 행도 "false" 를 명시한다. 속성이 없으면 보조기술은
+										// "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없다(APG grid). 선택 개념이
+										// 없는 표에는 붙이지 않는다 - 붙이면 반대로 고를 수 있다고 읽힌다.
+										aria-selected={selectable ? (isSelected ? "true" : "false") : undefined}
 										// clickable 행은 role/aria-label 을 tr 에 붙이지 않는다 (role="button" 은 셀을
 										// presentational 로, aria-label 은 셀 이름을 덮어써 스크린리더가 데이터를 못 읽음).
 										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작하고, 동작 설명은 rowClickHint 를

@@ -72,8 +72,12 @@ export function useFocusTrap(
 		if (initialTarget) {
 			initialTarget.focus();
 		} else {
-			container.setAttribute("tabindex", "-1");
-			wasTabIndexAdded = true;
+			// 소비자가 이미 tabindex 를 줬으면 그대로 둔다 - 덮어쓰고 "우리가 붙였다" 로 표시하면
+			// cleanup 이 소비자 속성을 지운다. 이미 포커스 가능하니 focus 만.
+			if (!container.hasAttribute("tabindex")) {
+				container.setAttribute("tabindex", "-1");
+				wasTabIndexAdded = true;
+			}
 			container.focus();
 		}
 

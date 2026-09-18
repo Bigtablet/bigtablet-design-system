@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.23.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.1) - 2026-09-18
+- (렌더 변경) `Toast` 가 `maxCount` 를 넘겨 밀어내는 가장 오래된 토스트도 닫기 버튼과 같은 퇴출 모션으로 사라집니다. 지금까지는 한 프레임에 잘려 나갔고, 그 안에 포커스가 있었으면 `body` 로 떨어져 다음 Tab 이 문서 처음부터 시작했습니다(WCAG 2.4.3). 이제 인접 토스트로 넘어갑니다. `maxCount` 가 0 이하면 예전처럼 아무것도 그리지 않습니다
+- `selectable` 인 `Table` 의 미선택 행에 `aria-selected="false"` 가 붙습니다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없었습니다. 선택 개념이 없는 표는 그대로 속성이 없습니다. `DataView` 도 함께 고쳐집니다
+- (렌더 변경) Vanilla `Modal` 을 열린 채 `destroy()` 하면 `close()` 와 같은 정리를 합니다 - Escape 등록·스크롤 잠금에 더해 **`is-open` 클래스 제거, 포커스 복원, 우리가 붙인 `tabindex` 제거**까지. 지금까지는 모달이 화면에 열린 채 고정되고(리스너는 해제돼 닫을 길이 없었습니다), 포커스가 파괴된 패널 안에 남고, 같은 DOM 으로 다시 만든 `Modal` 이 남은 `tabindex` 를 "원래 있던 것" 으로 오인했습니다. `destroy()` 는 바인딩 해제라 `onClose` 만 부르지 않습니다
+- `Modal`(React·Vanilla 모두) 이 패널에 소비자가 미리 준 `tabindex` 를 보존합니다. focusable 자식이 없는 패널을 열 때 기존 값을 `-1` 로 덮고 닫을 때 지워 버려, `tabindex="0"` 을 준 패널이 한 번 열고 닫히면 탭 순서에서 영구히 빠졌습니다
+
 ## [3.23.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.0) - 2026-09-15
 - `Field` 의 필수 표시가 보조기술에 닿습니다. 지금까지 `aria-required` 를 내보내던 입력은 16종 중 7종뿐이라, 나머지에서는 라벨 옆 `*`(`aria-hidden` 입니다)만 있고 스크린리더에는 필수 여부가 전혀 들리지 않았습니다. `Toggle` 은 `role="switch"` 에 직접, `FileInput` 은 네이티브 `required` 로, 묶음 입력(`DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput`)은 **안쪽 컨트롤마다** 붙습니다 - `role="group"` 은 그 속성을 허용하지 않습니다
 - `Dropdown`·`DatePicker`·`TimePicker`·`DateRangePicker` 에 `required` prop 이 생겼습니다. `Field` 밖에서 쓰거나 묶음 안쪽으로 필수 여부를 내려보낼 때 씁니다 - `Field` 안에서는 `Field` 가 이깁니다
