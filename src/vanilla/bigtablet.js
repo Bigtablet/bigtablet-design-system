@@ -1145,8 +1145,14 @@
 		/**
 		 * open() 이 잡아 둔 것을 전부 되돌린다 - Escape 등록, 스크롤 잠금, 우리가 붙인 tabindex,
 		 * 포커스. close() 와 destroy() 가 같은 함수를 부르므로 두 경로가 갈라질 수 없다.
-		 * 열린 채 destroy 되면 포커스가 파괴된 패널 안에 남아 다음 Tab 이 문서 처음부터 시작하고,
-		 * 우리가 붙인 tabindex 는 같은 DOM 으로 다시 만든 Modal 이 "원래 있던 것" 으로 오인한다.
+		 *
+		 * 넷 중 하나라도 빠지면 열린 채 destroy 된 모달이 흔적을 남긴다:
+		 * - Escape 등록 - 스택이 파괴된 모달의 close 를 붙들어(누수) 다음 Escape 에 그게 다시 돌고,
+		 *   isOpen 이 true 라 가드를 통과해 unlockScroll 이 한 번 더 불린다. 진짜로 열려 있는
+		 *   오버레이의 배경 스크롤이 조기에 풀린다
+		 * - 포커스 - 파괴된 패널 안에 남아, 소비자가 그 DOM 을 지우는 순간 body 로 떨어지고 다음
+		 *   Tab 이 문서 처음부터 시작한다
+		 * - tabindex - 같은 DOM 으로 다시 만든 Modal 이 "원래 있던 것" 으로 오인해 지우지 않는다
 		 */
 		function release() {
 			state.isOpen = false;
@@ -1225,10 +1231,7 @@
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
-				// 열린 채 destroy 되면 open() 이 잡아 둔 것을 close() 와 같은 함수로 되돌린다.
-				// Escape 등록이 남으면 스택이 파괴된 모달의 `close` 를 붙들어(누수) 다음 Escape 에
-				// 그게 다시 돌고, `state.isOpen` 이 `true` 라 가드를 통과해 `unlockScroll` 이 한 번
-				// 더 불린다 - 그 시점에 진짜로 열려 있는 오버레이의 배경 스크롤이 조기에 풀린다.
+				// 열려 있으면 release() 로 되돌린다 - 왜 넷을 전부 되돌려야 하는지는 그쪽 JSDoc.
 				// destroy 는 닫기가 아니라 바인딩 해제라 `is-open` 과 `onClose` 는 건드리지 않는다.
 				if (state.isOpen) release();
 			},
