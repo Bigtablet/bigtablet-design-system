@@ -637,7 +637,7 @@ import { Settings } from 'lucide-react';
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
 | `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
-| `selectRowAriaLabel` | `(index: number) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. 인자는 `pagination.pageSize` 를 반영한 전체 순번 |
+| `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
 
 동작 규칙 세 가지:
 
@@ -645,17 +645,13 @@ import { Settings } from 'lucide-react';
 - **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
 - **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
 
-> **선택 체크박스 라벨은 순번만 읽는다.** 기본값이 `"13번째 행 선택"` 이라 스크린리더 사용자는
-> 어떤 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 에 바깥
-> `rows` 를 닫아 넘긴다 — 인자는 `Table` 과 같은 **전체 순번**이라, 페이지가 있으면
-> `pagination.pageSize` 만큼 빼서 그 쪽의 행을 찾는다.
+> **선택 체크박스 라벨은 기본값이 순번이다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
+> 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
+> 쓴다 - 그 행의 데이터가 그대로 온다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
+> 오프셋 계산이 필요 없다.
 >
 > ```tsx
-> const offset = (page - 1) * SIZE;
-> <DataView
->   pagination={{ page, totalPages, pageSize: SIZE, onPageChange: setPage }}
->   selectRowAriaLabel={(index) => `${rows[index - offset].name} 선택`}
-> />
+> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
 > ```
 
 ### 문장 속 링크 (`.text_link`)
@@ -4048,7 +4044,7 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
 | `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
 | `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
-| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. 인자는 `rowIndexOffset` 이 더해진 전체 순번 |
+| `selectRowAriaLabel` | `(index: number, row: T) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. `index` 는 `rowIndexOffset` 이 더해진 전체 순번, `row` 는 그 행의 데이터 - 번호 대신 이름으로 읽히게 할 때 |
 | `rowIndexOffset` | `number` | `0` | 이 표의 첫 행이 전체에서 몇 번째인지(0-based). 서버 페이지네이션에서 행 번호가 쪽마다 1 로 되돌아가지 않게 한다 |
 | `className` | `string` | - | 루트 wrapper 에 추가할 className |
 

@@ -93,8 +93,15 @@ export type TableProps<T extends object> = {
 	onSortChange?: (sort: TableSort | undefined) => void;
 	/** 전체 선택 체크박스 aria-label */
 	selectAllAriaLabel?: string;
-	/** 개별 행 선택 체크박스 aria-label. 인자는 `rowIndexOffset` 이 더해진 **전체 순번**이다 (기본값: (i) => `${i+1}번째 행 선택`) */
-	selectRowAriaLabel?: (index: number) => string;
+	/**
+	 * 개별 행 선택 체크박스 aria-label. 첫 인자는 `rowIndexOffset` 이 더해진 **전체 순번**, 둘째는
+	 * 그 행의 데이터 - 번호 대신 이름으로 읽히게 할 때 쓴다 (기본값: (i) => `${i+1}번째 행 선택`)
+	 * @example
+	 * ```tsx
+	 * selectRowAriaLabel={(_, row) => `${row.name} 선택`}
+	 * ```
+	 */
+	selectRowAriaLabel?: (index: number, row: T) => string;
 	/**
 	 * 이 표의 첫 행이 전체에서 몇 번째인지 (0-based, 기본 0). 서버 페이지네이션처럼 한 쪽만
 	 * 받아 그릴 때 준다.
@@ -142,7 +149,8 @@ export const Table = <T extends object>({
 	const emptyMessage = emptyMessageProp === undefined ? t("table.empty") : emptyMessageProp;
 	const selectAllAriaLabel = selectAllAriaLabelProp ?? t("table.selectAll");
 	const selectRowAriaLabel =
-		selectRowAriaLabelProp ?? ((index: number) => t("table.selectRow", { index: index + 1 }));
+		selectRowAriaLabelProp ??
+		((index: number, _row: T) => t("table.selectRow", { index: index + 1 }));
 	/** 쪽 안의 인덱스를 전체 순번으로 옮긴다. 기본 오프셋 0 이면 지금까지와 같은 값이다. */
 	const toGlobalIndex = (rowIndex: number) => rowIndex + rowIndexOffset;
 	const wrapperClassName = cn(
@@ -365,7 +373,7 @@ export const Table = <T extends object>({
 												onKeyDown={(e) => e.stopPropagation()}
 											>
 												<Checkbox
-													aria-label={selectRowAriaLabel(toGlobalIndex(rowIndex))}
+													aria-label={selectRowAriaLabel(toGlobalIndex(rowIndex), item)}
 													checked={isSelected}
 													onChange={() => handleToggleRow(rowIdentity)}
 												/>
