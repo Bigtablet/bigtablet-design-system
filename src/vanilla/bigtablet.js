@@ -1131,8 +1131,12 @@
 				if (first) {
 					first.focus();
 				} else {
-					panel.setAttribute("tabindex", "-1");
-					panelTabindexAdded = true;
+					// 소비자가 이미 tabindex 를 줬으면 그대로 둔다 - 덮어쓰고 "우리가 붙였다" 로
+					// 표시하면 release() 가 소비자 속성을 지운다. 이미 포커스 가능하니 focus 만.
+					if (!panel.hasAttribute("tabindex")) {
+						panel.setAttribute("tabindex", "-1");
+						panelTabindexAdded = true;
+					}
 					panel.focus();
 				}
 			}

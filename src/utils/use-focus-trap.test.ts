@@ -125,6 +125,24 @@ describe("useFocusTrap", () => {
 		expect(preventDefault).toHaveBeenCalled();
 	});
 
+	it("keeps a consumer-provided tabindex on the container across activation", () => {
+		// 덮어쓰고 "우리가 붙였다" 로 표시하면 cleanup 이 소비자 속성을 지운다.
+		const container = document.createElement("div");
+		container.textContent = "No focusable content";
+		container.setAttribute("tabindex", "0");
+		document.body.appendChild(container);
+		tracked(container);
+
+		const containerRef = { current: container };
+		const { unmount } = renderHook(() => useFocusTrap(containerRef, true));
+
+		expect(container.getAttribute("tabindex")).toBe("0");
+		expect(document.activeElement).toBe(container);
+
+		unmount();
+		expect(container.getAttribute("tabindex")).toBe("0");
+	});
+
 	it("does not intercept non-Tab keys", () => {
 		const container = tracked(createContainer(2));
 
