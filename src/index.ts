@@ -153,7 +153,13 @@ export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
 export { Spinner } from "./ui/feedback/spinner";
-export type { ToastProviderProps, ToastVariant } from "./ui/feedback/toast";
+export type {
+	ToastAction,
+	ToastOptions,
+	ToastPatch,
+	ToastProviderProps,
+	ToastVariant,
+} from "./ui/feedback/toast";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/use-toast";
 export type { TopLoadingProps } from "./ui/feedback/top-loading";

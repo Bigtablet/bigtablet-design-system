@@ -11,17 +11,42 @@ import "./style.scss";
 
 export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
 
+export interface ToastAction {
+	/** 버튼 라벨 - "실행 취소" 등 */
+	label: string;
+	/** 누르면 실행되고, 이어서 토스트가 닫힌다 */
+	onClick: () => void;
+}
+
+export interface ToastOptions {
+	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity` 면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
+	duration?: number;
+	/** 메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다 */
+	action?: ToastAction;
+}
+
+/** `update` 로 바꿀 수 있는 필드. `action: null` 이면 버튼을 뗀다 */
+export type ToastPatch = Partial<{
+	message: string;
+	variant: ToastVariant;
+	duration: number;
+	action: ToastAction | null;
+}>;
+
 interface ToastItem {
 	id: string;
 	message: string;
 	variant: ToastVariant;
 	duration: number;
-	/** maxCount 에 밀려 퇴출 중. 잘라내지 않고 표시만 해서 수동 닫기와 같은 경로로 사라지게 한다 */
+	action?: ToastAction;
+	/** 퇴출 중(maxCount 에 밀렸거나 dismiss 됨). 잘라내지 않고 표시만 해서 수동 닫기와 같은 경로로 사라지게 한다 */
 	dismissing?: boolean;
 }
 
 interface ToastContextValue {
-	addToast: (message: string, variant: ToastVariant, duration?: number) => void;
+	addToast: (message: string, variant: ToastVariant, options?: ToastOptions) => string;
+	dismissToast: (id: string) => void;
+	updateToast: (id: string, patch: ToastPatch) => void;
 }
 
 export const ToastContext = React.createContext<ToastContextValue | null>(null);
@@ -104,6 +129,9 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 		if (item.dismissing) close();
 	}, [item.dismissing, close]);
 
+	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
+	const autoDismisses = Number.isFinite(item.duration);
+
 	return (
 		<animated.div
 			ref={rootRef}
@@ -117,16 +145,33 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 			<span className="toast_message">{item.message}</span>
 
+			{item.action && (
+				<button
+					type="button"
+					className="toast_action"
+					onClick={() => {
+						item.action?.onClick();
+						close();
+					}}
+				>
+					{item.action.label}
+				</button>
+			)}
+
 			<button type="button" className="toast_close" onClick={close} aria-label={closeAriaLabel}>
 				<X size={iconSize.xs} />
 			</button>
 
-			<div
-				className={`toast_progress toast_progress_${item.variant}`}
-				style={{ "--toast-duration": `${item.duration}ms` } as React.CSSProperties}
-				onAnimationEnd={close}
-				aria-hidden="true"
-			/>
+			{autoDismisses && (
+				<div
+					// duration 이 update 로 바뀌면 key 가 바뀌어 애니메이션이 새 값으로 다시 시작한다.
+					key={item.duration}
+					className={`toast_progress toast_progress_${item.variant}`}
+					style={{ "--toast-duration": `${item.duration}ms` } as React.CSSProperties}
+					onAnimationEnd={close}
+					aria-hidden="true"
+				/>
+			)}
 		</animated.div>
 	);
 };
@@ -165,26 +210,59 @@ export const ToastProvider = ({
 	 * 그 토스트의 퇴출 모션이 끝난 뒤 `removeToast` 가 한다.
 	 * @param message 표시할 메시지
 	 * @param variant 토스트 변형
-	 * @param duration 자동 닫힘 시간(ms), 기본값 3000
-	 * @returns void
+	 * @param options 자동 닫힘 시간(기본값 3000ms)·액션 버튼
+	 * @returns 토스트 id - `dismiss`·`update` 에 넘긴다
 	 */
 	const addToast = React.useCallback(
-		(message: string, variant: ToastVariant, duration = 3000) => {
+		(message: string, variant: ToastVariant, options: ToastOptions = {}) => {
+			const { duration = 3000, action } = options;
+			const id = `toast_${++toastSeq}`;
 			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
 			// 표시만 하는 지금 방식이면 새 토스트가 진입과 동시에 퇴출 모션을 타며 깜빡인다.
-			if (maxCount <= 0) return;
-			const id = `toast_${++toastSeq}`;
+			if (maxCount <= 0) return id;
 			setToasts((prev) => {
-				const next = [{ id, message, variant, duration }, ...prev];
+				const next = [{ id, message, variant, duration, action }, ...prev];
 				// 최신이 앞이라 maxCount 뒤는 항상 가장 오래된 것들이다. 이미 퇴출 중인 항목은
 				// 그대로 두고, 새로 밀려난 것만 표시한다.
 				return next.map((toast, index) =>
 					index >= maxCount && !toast.dismissing ? { ...toast, dismissing: true } : toast,
 				);
 			});
+			return id;
 		},
 		[maxCount],
 	);
+
+	/**
+	 * 토스트를 프로그램으로 닫는다. maxCount 초과·닫기 버튼과 같은 퇴출 경로를 탄다.
+	 * @param id `addToast` 가 반환한 id. 없거나 이미 퇴출 중이면 아무 일도 하지 않는다
+	 */
+	const dismissToast = React.useCallback((id: string) => {
+		setToasts((prev) =>
+			prev.map((toast) =>
+				toast.id === id && !toast.dismissing ? { ...toast, dismissing: true } : toast,
+			),
+		);
+	}, []);
+
+	/**
+	 * 떠 있는 토스트의 내용을 바꾼다 - "업로드 중…" 을 "완료" 로. 퇴출 중인 것은 건드리지 않는다.
+	 * @param id `addToast` 가 반환한 id
+	 * @param patch 바꿀 필드. `action: null` 이면 버튼을 뗀다
+	 */
+	const updateToast = React.useCallback((id: string, patch: ToastPatch) => {
+		setToasts((prev) =>
+			prev.map((toast) => {
+				if (toast.id !== id || toast.dismissing) return toast;
+				const { action, ...rest } = patch;
+				return {
+					...toast,
+					...rest,
+					action: action === null ? undefined : (action ?? toast.action),
+				};
+			}),
+		);
+	}, []);
 
 	/**
 	 * 특정 id의 토스트를 큐에서 제거한다.
@@ -195,8 +273,11 @@ export const ToastProvider = ({
 		setToasts((prev) => prev.filter((t) => t.id !== id));
 	}, []);
 
-	// addToast 는 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
-	const contextValue = React.useMemo(() => ({ addToast }), [addToast]);
+	// 셋 다 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
+	const contextValue = React.useMemo(
+		() => ({ addToast, dismissToast, updateToast }),
+		[addToast, dismissToast, updateToast],
+	);
 
 	return (
 		<ToastContext.Provider value={contextValue}>
