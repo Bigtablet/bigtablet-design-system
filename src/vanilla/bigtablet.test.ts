@@ -479,6 +479,41 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.style.overflow).toBe("");
 	});
 
+	it("열린 채 destroy 하면 포커스가 열기 전 요소로 돌아온다", () => {
+		// close() 와 같은 정리를 타야 한다. 빠지면 포커스가 파괴된 패널 안에 남고, 소비자가
+		// 그 DOM 을 지우는 순간 body 로 떨어져 다음 Tab 이 문서 처음부터 시작한다(WCAG 2.4.3).
+		setViewportInset(0);
+		const opener = document.createElement("button");
+		opener.textContent = "열기";
+		document.body.appendChild(opener);
+		opener.focus();
+
+		const m = Modal(modalMarkup());
+		m?.open();
+		expect(document.activeElement).not.toBe(opener);
+
+		m?.destroy();
+		expect(document.activeElement).toBe(opener);
+	});
+
+	it("focusable 없는 패널을 열고 destroy 하면 우리가 붙인 tabindex 를 남기지 않는다", () => {
+		// 남으면 같은 DOM 으로 다시 만든 Modal 이 "원래 있던 tabindex" 로 오인해 close() 도
+		// 지우지 않는다.
+		setViewportInset(0);
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = '<div class="bt-modal__panel"><p>본문만</p></div>';
+		document.body.appendChild(el);
+		const panel = el.querySelector(".bt-modal__panel");
+
+		const m = Modal(el);
+		m?.open();
+		expect(panel?.getAttribute("tabindex")).toBe("-1");
+
+		m?.destroy();
+		expect(panel?.hasAttribute("tabindex")).toBe(false);
+	});
+
 	it("이미 열린 모달을 다시 열어도 카운터가 중복 증가하지 않는다", () => {
 		setViewportInset(0);
 		const m = Modal(modalMarkup());
