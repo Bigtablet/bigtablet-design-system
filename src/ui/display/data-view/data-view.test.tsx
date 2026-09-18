@@ -234,7 +234,7 @@ describe("DataView", () => {
 	});
 
 	it("passes custom selection labels through to the table", () => {
-		// 기본 라벨은 순번만 읽는다 - 행을 이름으로 구분하려면 소비자가 바깥 rows 를 닫아 넘긴다.
+		// 기본 라벨은 순번만 읽는다 - 행을 이름으로 구분하려면 둘째 인자로 오는 행 데이터를 쓴다.
 		render(
 			<DataView
 				query={{ data: USERS }}
