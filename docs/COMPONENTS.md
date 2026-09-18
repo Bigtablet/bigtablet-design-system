@@ -39,6 +39,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [BottomNav](#bottomnav)
   - [NavBar](#navbar)
   - [Breadcrumb](#breadcrumb)
+  - [Stepper](#stepper)
 - [Overlay](#overlay)
   - [Modal](#modal)
   - [Drawer](#drawer)
@@ -2161,7 +2162,7 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 | 깊은 위계(3단 이상)의 페이지에서 현재 위치 표시 | ✅ Breadcrumb |
 | 글로벌 페이지 네비게이션 | ❌ **NavBar / Sidebar** |
 | 같은 페이지 내 섹션 전환 | ❌ **Tabs** |
-| 순서가 있는 step indicator (체크아웃 등) | ❌ Stepper (별도 컴포넌트) |
+| 순서가 있는 step indicator (체크아웃 등) | ❌ **[Stepper](#stepper)** |
 | 평탄한 페이지 구조 (위계 1단) | ❌ 사용 안 함 |
 
 #### items 동작
@@ -2263,6 +2264,62 @@ const router = useRouter();
   { label: "프로필" },
 ]} />
 ```
+
+---
+
+### Stepper
+
+다단계 폼의 진행 표시. 가입·온보딩·결제처럼 **몇 단계 중 어디**를 보여 준다.
+
+```tsx
+import { Stepper } from '@bigtablet/design-system';
+
+<Stepper
+  steps={[
+    { id: 'account', label: '계정' },
+    { id: 'profile', label: '프로필', description: '이름과 소속' },
+    { id: 'done', label: '완료' },
+  ]}
+  current={1}
+  onStepClick={setStep}
+/>
+```
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 사용자가 순서대로 밟아 가는 절차 (가입·결제·온보딩) | ✅ Stepper |
+| 시간 순 **기록** (주문 추적, 승인 이력, 활동 로그) | ❌ **Timeline** |
+| 같은 페이지 안 섹션 전환 | ❌ **Tabs** |
+| 페이지 위계 표시 | ❌ **Breadcrumb** |
+
+#### 동작
+
+- 상태는 `current` 인덱스 하나에서 파생된다 - 앞은 `done`, 지금은 `active`, 뒤는 `pending`. 단계마다 상태를 따로 관리하지 않는다
+- `<ol>` 로 렌더한다. 현재 단계 `<li>` 에 `aria-current="step"`, 지나간 단계에는 시각 숨김 텍스트 **"완료"**, 현재 단계에는 **"현재 단계"** 가 붙는다 - 색·체크 모양만으로 상태를 전하지 않는다 (WCAG 1.4.1)
+- 모양으로도 갈린다 - `done` 체크, `active` 번호(강조), `pending` 빈 원에 번호
+- `onStepClick` 을 주면 모든 단계가 `<button>` 이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` + `tabindex="-1"` 이다 - 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 컴포넌트가 열지 않고, 앞으로 가는 길은 화면의 "다음" 버튼이 담당한다. 태그를 클릭 가능 여부로 가르지 않는 이유는 되돌아간 순간 그 단계의 요소가 바뀌어 포커스가 유실되기 때문이다
+- 연결선은 마지막 단계에서 끊긴다. `isLast` 계산은 소비자 몫이 아니다
+
+**Stepper Props** (`<ol>` 속성 상속, `onClick` 제외)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `StepperStep[]` | required | 순서대로 |
+| `current` | `number` | required | 현재 단계 인덱스 (0-based) |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 배치 방향. 세로는 좁은 패널이나 설명이 긴 단계에 |
+| `onStepClick` | `(index: number, step: StepperStep) => void` | - | 지나간 단계를 눌렀을 때. 주면 모든 단계가 버튼이 되고 지나간 단계만 눌린다 |
+
+**StepperStep**
+
+| 필드 | Type | Description |
+|------|------|-------------|
+| `id` | `string \| number` | 목록 키 |
+| `label` | `ReactNode` | 단계 이름. **인라인 내용만** - 클릭 가능한 단계는 `<button>` 안에 그려진다 |
+| `description` | `ReactNode` | 이름 아래 짧은 설명. 인라인 내용만 |
+
+> 숨김 상태 텍스트("완료"·"현재 단계")는 [LocaleProvider](#localeprovider) 의 `stepper.done`·`stepper.current` 로 바꾼다.
 
 ---
 
