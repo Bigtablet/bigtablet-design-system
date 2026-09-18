@@ -389,7 +389,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 76 test files / 1246 passed · 8 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 76 test files / 1254 passed · 8 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -399,7 +399,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **92.86%** | **90.13%** | **93.75%** | **94.73%** |
+| **All files** | **92.88%** | **90.21%** | **93.77%** | **94.75%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (38개는 전 지표 100% 라 빠져 있다).
 
@@ -413,10 +413,10 @@ it("calls callback with correct arguments", () => {
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 76.32% | 53.33% | 100% | 79.41% |
-| ui/display/table | 97.44% | 91.27% | 96.43% | 98.51% |
+| ui/display/table | 97.44% | 91.41% | 96.43% | 98.51% |
 | ui/feedback/alert | 98.57% | 94.92% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
-| ui/feedback/toast | 100% | 86.36% | 100% | 100% |
+| ui/feedback/toast | 100% | 93.33% | 100% | 100% |
 | ui/forms/checkbox | 92.31% | 95.45% | 100% | 100% |
 | ui/forms/combobox | 94.44% | 91.84% | 82.35% | 96.97% |
 | ui/forms/date-picker | 93.22% | 91.67% | 100% | 100% |
@@ -441,7 +441,7 @@ it("calls callback with correct arguments", () => {
 | utils/scroll-lock.ts | 97.59% | 95.23% | 100% | 100% |
 | utils/split-aria-props.ts | 100% | 50% | 100% | 100% |
 | utils/use-anchored-position.ts | 97.72% | 90% | 100% | 100% |
-| utils/use-focus-trap.ts | 97.82% | 88% | 100% | 100% |
+| utils/use-focus-trap.ts | 97.87% | 88.88% | 100% | 100% |
 | utils/use-listbox-popup.ts | 94.52% | 93.25% | 100% | 94.95% |
 | utils/use-reduced-motion.ts | 95.23% | 100% | 85.71% | 94.73% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
