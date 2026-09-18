@@ -76,6 +76,8 @@ export interface LocaleMessages {
 	"pagination.next": string;
 	"pagination.prev": string;
 	"sidebar.toggle": string;
+	"stepper.current": string;
+	"stepper.done": string;
 
 	// ── overlay ─────────────────────────────────────────────────────────────
 	"drawer.close": string;
@@ -150,6 +152,8 @@ export const ko: LocaleMessages = {
 	"pagination.next": "다음 페이지",
 	"pagination.prev": "이전 페이지",
 	"sidebar.toggle": "사이드바 토글",
+	"stepper.current": "현재 단계",
+	"stepper.done": "완료",
 
 	"drawer.close": "닫기",
 	"modal.close": "닫기",
@@ -221,6 +225,8 @@ export const en: LocaleMessages = {
 	"pagination.next": "Next page",
 	"pagination.prev": "Previous page",
 	"sidebar.toggle": "Toggle sidebar",
+	"stepper.current": "Current step",
+	"stepper.done": "Completed",
 
 	"drawer.close": "Close",
 	"modal.close": "Close",

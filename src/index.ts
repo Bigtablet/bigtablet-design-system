@@ -77,6 +77,13 @@ export type {
 } from "./ui/navigation/sidebar";
 export { Sidebar, SidebarItem, SidebarSection } from "./ui/navigation/sidebar";
 export type {
+	StepperOrientation,
+	StepperProps,
+	StepperStatus,
+	StepperStep,
+} from "./ui/navigation/stepper";
+export { Stepper } from "./ui/navigation/stepper";
+export type {
 	TabListProps,
 	TabPanelProps,
 	TabProps,
