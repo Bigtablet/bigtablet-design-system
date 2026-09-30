@@ -135,7 +135,7 @@ describe("ListItem", () => {
 				label="Label"
 				supportingText={
 					<a href="#x" data-testid="sup-link">
-						link
+						지원 문서
 					</a>
 				}
 				metadata={<em data-testid="meta">meta</em>}

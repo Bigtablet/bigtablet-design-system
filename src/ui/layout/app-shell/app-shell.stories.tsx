@@ -106,7 +106,11 @@ export const WideContent: Story = {
 			<PageHeader title="감사 로그" />
 			{/* 스크롤 영역은 키보드로도 닿아야 한다 - tabIndex 가 없으면 axe 가 잡는다
 			    (scrollable-region-focusable) */}
-			<pre tabIndex={0} style={{ margin: 0, overflowX: "auto" }}>
+			<pre
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: 위 주석 - 스크롤 영역
+				tabIndex={0}
+				style={{ margin: 0, overflowX: "auto" }}
+			>
 				2026-09-02T04:00:00Z order_id=01JQ7F3K2M9XV4B8ZC6H1TDWRS actor=sangmin@bigtablet.com
 				action=refund.approve amount=1290000 reason=customer_request trace=7f3a91c0e2
 			</pre>

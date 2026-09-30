@@ -55,6 +55,7 @@ export const Avatar = ({
 	const initials = getInitials(name);
 
 	return (
+		// biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label 은 role="img" 일 때만 붙는다 - 삼항을 린터가 따라가지 못한다
 		<span
 			className={cn("avatar", `avatar_size_${size}`, `avatar_shape_${shape}`, className)}
 			style={{ background: !showImage ? bgColor : undefined, ...style }}
@@ -68,7 +69,12 @@ export const Avatar = ({
 		>
 			{showImage ? (
 				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image
-				<img src={src} alt={name} onError={() => setFailedSrc(src ?? null)} className="avatar_image" />
+				<img
+					src={src}
+					alt={name}
+					onError={() => setFailedSrc(src ?? null)}
+					className="avatar_image"
+				/>
 			) : (
 				<span className="avatar_initials" aria-hidden="true">
 					{initials}

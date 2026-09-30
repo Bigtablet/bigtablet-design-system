@@ -271,7 +271,13 @@ export const Drawer = ({
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 다만 초기 포커스 대상에서는 제외한다 - 안쪽에
 					// 첫 입력이 있는데 빈 wrapper 에 포커스가 놓이면 열자마자 어디에 있는지 알 수 없다.
-					<div ref={bodyRef} className="drawer_body" tabIndex={0} data-focus-trap-skip-autofocus="">
+					<div
+						ref={bodyRef}
+						className="drawer_body"
+						// biome-ignore lint/a11y/noNoninteractiveTabindex: 위 주석 - 스크롤 컨테이너는 키보드로 닿아야 한다
+						tabIndex={0}
+						data-focus-trap-skip-autofocus=""
+					>
 						{content.children}
 					</div>
 				)}

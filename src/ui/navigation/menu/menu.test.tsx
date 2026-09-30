@@ -25,7 +25,10 @@ describe("Menu", () => {
 	it("closes when the trigger scrolls out of the viewport (#624)", async () => {
 		// 가리킬 버튼 없이 떠 있는 메뉴는 어느 컨트롤의 것인지 읽히지 않는다.
 		const { container } = render(
-			<Menu trigger={<button type="button">열기</button>} items={[{ key: "a", label: "항목 A" }]} />,
+			<Menu
+				trigger={<button type="button">열기</button>}
+				items={[{ key: "a", label: "항목 A" }]}
+			/>,
 		);
 		const trigger = screen.getByRole("button", { name: "열기" });
 		fireEvent.click(trigger);

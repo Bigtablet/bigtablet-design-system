@@ -133,9 +133,7 @@ export const LabelAction: Story = {
 					name="companyName"
 					label="소속"
 					required
-					labelAction={
-						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />
-					}
+					labelAction={<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />}
 					help="소속이 없으면 오른쪽 토글을 켜세요"
 				>
 					<TextField fullWidth placeholder="회사명" disabled={none} />
@@ -164,9 +162,7 @@ export const GridAlignment: Story = {
 					name="companyName"
 					label="소속"
 					required
-					labelAction={
-						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />
-					}
+					labelAction={<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />}
 				>
 					<TextField fullWidth placeholder="회사명" disabled={none} />
 				</Field>

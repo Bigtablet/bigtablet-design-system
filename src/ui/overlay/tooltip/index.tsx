@@ -161,6 +161,7 @@ export const Tooltip = ({
 			{shouldRender &&
 				typeof document !== "undefined" &&
 				createPortal(
+					// biome-ignore lint/a11y/noStaticElementInteractions: 포인터 호버로 열림을 유지할 뿐인 WCAG 1.4.13 처리 - 조작 대상이 아니다
 					<span
 						ref={positionRef}
 						className="tooltip_position"
