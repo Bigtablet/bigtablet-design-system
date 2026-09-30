@@ -1,10 +1,10 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface DividerProps extends React.HTMLAttributes<HTMLHRElement> {
+export interface DividerProps extends SafeHTMLProps<React.HTMLAttributes<HTMLHRElement>> {
 	/** 구분선 두께 (기본값: "standard") */
 	weight?: "standard" | "heavy";
 }

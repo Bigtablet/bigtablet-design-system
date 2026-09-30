@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type BadgeVariant = "accent" | "neutral" | "info" | "success" | "warning" | "error";
@@ -9,7 +9,7 @@ export type BadgeShape = "dot" | "count" | "label";
 export type BadgeSize = "sm" | "md" | "lg";
 export type BadgeAppearance = "solid" | "soft";
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface BadgeProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
 	/** 색상 variant (기본값: "accent") */
 	variant?: BadgeVariant;
 	/** 모양 (기본값: "label"). dot=점만 / count=숫자 / label=텍스트 */

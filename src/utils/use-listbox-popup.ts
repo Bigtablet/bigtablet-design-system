@@ -302,6 +302,7 @@ export function useListboxPopup<T extends ListboxItem>({
 	// 방향키로 옮긴 활성 항목이 스크롤 밖에 있으면 따라 스크롤한다. 포커스는 트리거·입력에
 	// 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다 - 옵션 20개 목록에서 아래로 내려가면
 	// 활성 표시가 보이지 않는 채로 움직였다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: items 는 본문에서 읽지 않는 재실행 트리거다 - 아래 주석
 	useEffect(() => {
 		if (!isOpen || activeIndex < 0) return;
 		const list = listRef.current;

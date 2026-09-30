@@ -1,12 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 
-export interface BottomNavProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
+export interface BottomNavProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLElement>>, "onChange"> {
 	/** 스크린 리더 레이블 (기본 "주요 메뉴") */
 	ariaLabel?: string;
 	/** 2–5 개의 `BottomNavItem` */
@@ -156,6 +157,9 @@ export const BottomNavItem = <T extends React.ElementType = "button">(
  * 페이지 본문 끝에 두면 `BottomNav` 가 콘텐츠를 가리지 않게 빈 공간 확보.
  * `--bt-bottom-nav-height` (+ safe-area) 만큼 height.
  */
-export const BottomNavSpacer = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+export const BottomNavSpacer = ({
+	className,
+	...props
+}: SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>) => {
 	return <div className={cn("bottom_nav_spacer", className)} aria-hidden="true" {...props} />;
 };

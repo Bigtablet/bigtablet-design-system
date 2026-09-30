@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -20,7 +20,8 @@ export interface StepperStep {
 	description?: React.ReactNode;
 }
 
-export interface StepperProps extends Omit<React.HTMLAttributes<HTMLOListElement>, "onClick"> {
+export interface StepperProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLOListElement>>, "onClick"> {
 	/** 순서대로 */
 	steps: StepperStep[];
 	/** 현재 단계 인덱스 (0-based). 앞은 `done`, 뒤는 `pending` 이 된다 */

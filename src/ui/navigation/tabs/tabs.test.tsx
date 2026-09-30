@@ -106,9 +106,7 @@ describe("Tabs", () => {
 				const index = siblings.indexOf(this);
 				return index < 0 ? 0 : index * 100;
 			});
-		const offsetWidth = vi
-			.spyOn(HTMLElement.prototype, "offsetWidth", "get")
-			.mockReturnValue(100);
+		const offsetWidth = vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100);
 
 		try {
 			const Variable = ({ withDraft }: { withDraft: boolean }) => (

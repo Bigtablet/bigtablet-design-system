@@ -4,7 +4,7 @@ import { Eye, EyeOff, X } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -27,7 +27,7 @@ export type ImeStrategy = "delayed" | "immediate";
 
 export interface TextFieldProps
 	extends Omit<
-		React.InputHTMLAttributes<HTMLInputElement>,
+		SafeHTMLProps<React.InputHTMLAttributes<HTMLInputElement>>,
 		"size" | "onChange" | "value" | "defaultValue"
 	> {
 	/** 입력 필드 크기 */

@@ -1,14 +1,14 @@
 "use client";
 
 import type * as React from "react";
-import { cn, keyActivationProps } from "../../../utils";
+import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type CardVariant = "default" | "accent" | "glass" | "outlined";
 
 export type CardFooterAlign = "start" | "between" | "end";
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface CardProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 카드 상단에 표시할 제목 */
 	heading?: React.ReactNode;
 	/** 제목에 사용할 시맨틱 헤딩 태그 (기본값: "h3"). 스크린리더 outline에 반영됩니다. */

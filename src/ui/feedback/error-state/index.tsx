@@ -2,13 +2,14 @@
 
 import { TriangleAlert } from "lucide-react";
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ErrorStateVariant = "page" | "widget";
 
-export interface ErrorStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface ErrorStateProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "title"> {
 	/** 제목 (기본 "문제가 발생했습니다") */
 	title?: React.ReactNode;
 	/** 보조 설명 */

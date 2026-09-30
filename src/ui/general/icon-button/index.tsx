@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type IconButtonVariant = "standard" | "filled" | "tonal" | "outlined";
@@ -9,7 +9,10 @@ export type IconButtonSize = "sm" | "md";
 
 /** 접근성 이름을 제외한 IconButton 공통 props */
 interface IconButtonBaseProps
-	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "aria-label" | "aria-labelledby"> {
+	extends Omit<
+		SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>,
+		"aria-label" | "aria-labelledby"
+	> {
 	/** 아이콘 버튼 스타일 변형 (기본값: "standard") */
 	variant?: IconButtonVariant;
 	/** 아이콘 버튼 크기 (기본값: "md") */

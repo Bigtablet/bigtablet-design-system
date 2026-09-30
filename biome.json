@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -32,7 +32,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"correctness": {
 				"noUnusedImports": "error",
 				"useExhaustiveDependencies": "warn",
@@ -44,12 +44,21 @@
 				"noExportedImports": "error"
 			},
 			"suspicious": {
-				"noExplicitAny": "warn",
+				"noExplicitAny": "error",
 				"noArrayIndexKey": "warn",
 				"noImplicitAnyLet": "warn"
 			},
 			"a11y": {
 				"useButtonType": "error"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error",
+				"noDangerouslySetInnerHtmlWithChildren": "error",
+				"noGlobalEval": "error",
+				"noBlankTarget": "error"
+			},
+			"nursery": {
+				"noFloatingPromises": "error"
 			}
 		}
 	},
@@ -109,6 +118,9 @@
 					},
 					"suspicious": {
 						"noExplicitAny": "off"
+					},
+					"complexity": {
+						"noImportantStyles": "off"
 					}
 				}
 			}
@@ -120,6 +132,16 @@
 					"correctness": {
 						"noUnusedVariables": "off",
 						"noUnusedFunctionParameters": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["public/**/*.svg"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noSvgWithoutTitle": "off"
 					}
 				}
 			}

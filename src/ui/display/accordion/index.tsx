@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export interface AccordionItem {
@@ -13,7 +13,8 @@ export interface AccordionItem {
 	disabled?: boolean;
 }
 
-export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface AccordionProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange"> {
 	/** 아이템 목록 */
 	items: AccordionItem[];
 	/** 여러 개 동시에 펼침 허용 (기본 false - 한 번에 하나) */
@@ -89,9 +90,8 @@ export const Accordion = ({
 								/>
 							</button>
 						</h3>
-						<div
+						<section
 							id={panelId}
-							role="region"
 							aria-labelledby={headerId}
 							aria-hidden={!isOpen}
 							// 닫힌 패널은 grid 애니메이션이라 display:none 이 아님 → inert 로 내부 포커스 차단 (WCAG 4.1.2)
@@ -101,7 +101,7 @@ export const Accordion = ({
 							<div className="accordion_panel_wrap">
 								<div className="accordion_content">{item.content}</div>
 							</div>
-						</div>
+						</section>
 					</div>
 				);
 			})}

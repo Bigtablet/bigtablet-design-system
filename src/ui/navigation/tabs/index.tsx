@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn, useSafeLayoutEffect } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type TabsVariant = "line" | "fills";
@@ -38,7 +38,8 @@ function useTabsContext() {
 	return ctx;
 }
 
-export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface TabsProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange"> {
 	/** 제어형: 현재 활성 tab의 value */
 	value?: string;
 	/** 비제어형: 초기 활성 tab의 value */
@@ -112,7 +113,7 @@ export const Tabs = ({
 	);
 };
 
-export interface TabListProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TabListProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 스크린리더 라벨 */
 	ariaLabel?: string;
 }
@@ -190,7 +191,8 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 	);
 };
 
-export interface TabProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
+export interface TabProps
+	extends Omit<SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>, "value"> {
 	/** 이 tab의 value */
 	value: string;
 }
@@ -264,7 +266,7 @@ export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }
 	);
 };
 
-export interface TabPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TabPanelProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 이 panel을 활성화할 tab의 value */
 	value: string;
 	/** 비활성 panel을 unmount 할지 (기본 true). false면 display: none으로 유지 */
@@ -291,6 +293,7 @@ export const TabPanel = ({
 			id={panelId}
 			aria-labelledby={tabId}
 			hidden={!isActive}
+			// biome-ignore lint/a11y/noNoninteractiveTabindex: APG Tabs - 포커스 가능한 요소가 없는 패널도 Tab 으로 닿아야 한다
 			tabIndex={0}
 			className={cn("tabs_panel", className)}
 			{...props}

@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useId, useRef, useState } from "react";
-import { cn, splitAriaProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
 import { Chip } from "../../display/chip";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
@@ -11,7 +11,7 @@ import "./style.scss";
 export type TagInputSize = "sm" | "md" | "lg";
 
 export interface TagInputProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue"> {
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange" | "defaultValue"> {
 	/** 태그 목록 (제어형). 주지 않으면 내부 상태로 동작한다 */
 	value?: string[];
 	/** 비제어형 초기 태그 */

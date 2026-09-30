@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type AvatarShape = "circle" | "square";
 
-export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface AvatarProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
 	/** 이미지 URL */
 	src?: string;
 	/** alt 텍스트 (이미지일 때) 또는 initials 추출용 이름 */
@@ -55,6 +55,7 @@ export const Avatar = ({
 	const initials = getInitials(name);
 
 	return (
+		// biome-ignore lint/a11y/useAriaPropsSupportedByRole: aria-label 은 role="img" 일 때만 붙는다 - 삼항을 린터가 따라가지 못한다
 		<span
 			className={cn("avatar", `avatar_size_${size}`, `avatar_shape_${shape}`, className)}
 			style={{ background: !showImage ? bgColor : undefined, ...style }}
@@ -68,7 +69,12 @@ export const Avatar = ({
 		>
 			{showImage ? (
 				// biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image
-				<img src={src} alt={name} onError={() => setFailedSrc(src ?? null)} className="avatar_image" />
+				<img
+					src={src}
+					alt={name}
+					onError={() => setFailedSrc(src ?? null)}
+					className="avatar_image"
+				/>
 			) : (
 				<span className="avatar_initials" aria-hidden="true">
 					{initials}

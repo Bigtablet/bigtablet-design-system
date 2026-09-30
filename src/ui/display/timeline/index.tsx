@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 /** 항목의 진행 상태. 색과 연결선의 진하기를 정한다 */
@@ -41,7 +41,7 @@ const CheckGlyph = () => (
 	</svg>
 );
 
-export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
+export interface TimelineProps extends SafeHTMLProps<React.HTMLAttributes<HTMLOListElement>> {
 	/** 위에서 아래로 흐르는 순서대로 */
 	items: TimelineItem[];
 	/** 루트 요소 ref (React 19 ref-as-prop) */

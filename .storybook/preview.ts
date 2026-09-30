@@ -1,5 +1,5 @@
 import type { Decorator, Preview } from "@storybook/react";
-import { createElement as h, Fragment } from "react";
+import { Fragment, createElement as h } from "react";
 // 컴포넌트가 참조하는 --bt-color-* / focus-ring / elevation CSS 변수 정의.
 // theme.scss 는 scss/token 진입점에서 분리돼 있어(소비자는 style.css 로 받음),
 // Storybook preview 에도 직접 import 해줘야 컴포넌트 색/다크모드가 적용된다.
@@ -35,7 +35,8 @@ const withTheme: Decorator = (Story, context) => {
 const withStoryCaption: Decorator = (Story, context) => {
 	if (context.viewMode === "docs") return Story();
 
-	const storyDesc = (context.parameters?.docs?.description as { story?: string } | undefined)?.story;
+	const storyDesc = (context.parameters?.docs?.description as { story?: string } | undefined)
+		?.story;
 	if (!storyDesc) return Story();
 
 	const captionStyle = {
@@ -53,10 +54,24 @@ const withStoryCaption: Decorator = (Story, context) => {
 		clear: "both" as const,
 	} as const;
 
-	return h(Fragment, null,
+	return h(
+		Fragment,
+		null,
 		Story(),
-		h("div", { style: captionStyle, "aria-label": "스토리 설명" },
-			h("span", { style: { color: "var(--bt-color-accent-default, #47555E)", fontWeight: 600, marginRight: 6 } }, "ℹ"),
+		h(
+			"div",
+			{ style: captionStyle, "aria-label": "스토리 설명" },
+			h(
+				"span",
+				{
+					style: {
+						color: "var(--bt-color-accent-default, #47555E)",
+						fontWeight: 600,
+						marginRight: 6,
+					},
+				},
+				"ℹ",
+			),
 			storyDesc,
 		),
 	);

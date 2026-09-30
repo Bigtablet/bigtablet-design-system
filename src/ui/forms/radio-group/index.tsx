@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn, splitAriaProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -31,7 +31,8 @@ export function useRadioGroupContext(): RadioGroupContextValue | null {
 	return React.useContext(RadioGroupContext);
 }
 
-export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface RadioGroupProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange"> {
 	/** 제어형: 선택된 value */
 	value?: string;
 	/** 비제어형: 초기 선택 value */

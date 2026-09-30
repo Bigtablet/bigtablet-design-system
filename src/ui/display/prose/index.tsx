@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { cn, useSafeLayoutEffect } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type ProseSize = "md" | "lg";
 
-export interface ProseProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ProseProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/**
 	 * 본문 스케일 (기본값: "md").
 	 * - `md`: 공지·FAQ·이메일 프리뷰처럼 좁은 폭에 들어가는 본문 (h1 24 / h2 20 / h3 18)

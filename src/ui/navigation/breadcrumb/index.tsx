@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -27,7 +27,7 @@ export interface BreadcrumbItem {
 	as?: React.ElementType;
 }
 
-export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
+export interface BreadcrumbProps extends SafeHTMLProps<React.HTMLAttributes<HTMLElement>> {
 	/** 경로 아이템 배열. 마지막은 현재 페이지로 간주 */
 	items: BreadcrumbItem[];
 	/** 구분자 (기본값: ChevronRight 아이콘) */
