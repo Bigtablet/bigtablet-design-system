@@ -519,6 +519,33 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(el.classList.contains("is-open")).toBe(false);
 	});
 
+	it("안의 Dropdown 목록이 열려 있으면 Esc 는 목록만 닫고, 다음 Esc 가 모달을 닫는다", () => {
+		// 목록은 preventDefault 로 "처리했다" 를 알린다 - 스택이 그 신호를 읽어야 한다(#697).
+		// 닫힌 목록은 Escape 에 손대지 않아야 두 번째 Esc 가 모달에 닿는다.
+		setViewportInset(0);
+		const el = modalMarkup();
+		const wrap = dropdownMarkup();
+		el.querySelector(".bt-modal__panel")?.appendChild(wrap);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLButtonElement;
+		const dd = Dropdown(wrap);
+		const m = Modal(el);
+
+		m?.open();
+		dd?.open();
+		expect(control.getAttribute("aria-expanded")).toBe("true");
+
+		control.dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+		);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+		expect(m?.isOpen()).toBe(true);
+
+		control.dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+		);
+		expect(m?.isOpen()).toBe(false);
+	});
+
 	it("패널에 소비자가 준 tabindex 는 열고 닫아도 그대로다", () => {
 		// 덮어쓰고 "우리가 붙였다" 로 표시하면 close()·destroy() 가 소비자 속성을 지운다.
 		setViewportInset(0);
