@@ -155,6 +155,14 @@ export const Combobox = ({
 	const { isOpen, setIsOpen, close, activeIndex, setActiveIndex } = popup;
 	closeRef.current = close;
 
+	// 고르지 않고 닫으면 검색어를 버린다. 남기면 닫힌 동안은 value.label 이 가려 주다가 다시
+	// 여는 순간 예전 검색어가 되살아나고, 검색 effect 가 isOpen 에 걸려 있어 같은 조회를 또
+	// 보낸다(#694 - 열고 닫기만으로 같은 요청이 6번). 닫히는 경로(Esc·바깥 클릭·토글)가 훅 안에
+	// 흩어져 있어 isOpen 을 보고 한 곳에서 처리한다.
+	useEffect(() => {
+		if (!isOpen) setQuery("");
+	}, [isOpen]);
+
 	// onSearch 는 ref 로 잡는다. 문서에 적힌 사용법이 인라인 화살표 함수라 부모가 리렌더할
 	// 때마다 정체가 바뀌는데, 그것을 의존성에 두면 리렌더마다 cleanup 이 디바운스 타이머를 지우고
 	// requestSeq 를 올려 이미 날아간 요청까지 버린다. 부모가 debounceMs 보다 자주 리렌더하면
