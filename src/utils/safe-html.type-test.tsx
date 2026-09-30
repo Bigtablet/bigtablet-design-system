@@ -4,6 +4,7 @@ import type { PolymorphicProps } from "./polymorphic";
 
 // 공개 export 전체에서 props 로 `dangerouslySetInnerHTML` 을 받는 컴포넌트가 있으면 tsc 가 실패한다
 // (W-1-4-6). 새 컴포넌트가 `React.*HTMLAttributes` 를 `SafeHTMLProps` 없이 확장하면 여기서 걸린다.
+// `memo`·`forwardRef` 로 감싼 export 도 걸린다 - ExoticComponent 에 `(props: P)` call signature 가 있다(프로브로 확인).
 // 문자열 인덱스 시그니처가 있는 인자(`cn` 의 ClassValue)는 모든 키를 받아 오탐이라 제외한다.
 // ponytail: 그 필터에 `as` 제네릭 컴포넌트도 걸린다(T 가 ElementType 으로 풀려 키가 string) - 8개 모두
 // PolymorphicProps 를 거치므로 아래에서 그 타입을 직접 단정한다. 다른 제네릭 props 가 생기면 여기에 추가.

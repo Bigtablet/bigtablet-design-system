@@ -6,6 +6,6 @@
  * 닿는다. 마크업이 필요하면 `children` 으로 넘긴다.
  *
  * 새 컴포넌트는 `React.*HTMLAttributes<…>` 를 직접 확장하지 말고 이 타입으로 감싼다 -
- * `safe-html.type-test.ts` 가 공개 export 전체를 검사해 빠진 곳을 tsc 에러로 잡는다.
+ * `safe-html.type-test.tsx` 가 공개 export 전체를 검사해 빠진 곳을 tsc 에러로 잡는다.
  */
 export type SafeHTMLProps<P> = Omit<P, "dangerouslySetInnerHTML">;
