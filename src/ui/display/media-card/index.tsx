@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn, keyActivationProps } from "../../../utils";
+import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type MediaCardImagePosition = "top" | "left" | "overlay";
@@ -12,7 +12,8 @@ export interface MediaCardImage {
 	alt: string;
 }
 
-export interface MediaCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface MediaCardProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "title"> {
 	/** 이미지 정보 (src + alt). alt=""는 장식 이미지로 처리됨 */
 	image: MediaCardImage;
 	/** 이미지 위치 (기본값: "top"). overlay = 이미지 위에 텍스트가 얹힘 */

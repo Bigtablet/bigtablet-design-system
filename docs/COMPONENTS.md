@@ -67,6 +67,10 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ---
 
+> **모든 컴포넌트는 `dangerouslySetInnerHTML` 을 받지 않습니다** (v3.25.0~). 마크업은 `children` 으로 넘깁니다. 새 컴포넌트는 props 를 `SafeHTMLProps<React.*HTMLAttributes<…>>` 로 선언하고, `src/utils/safe-html.type-test.tsx` 가 공개 export 전체를 `tsc` 로 검사합니다.
+
+---
+
 ## v3.0 주요 변경사항
 
 v3.0에서 다크 모드 지원, B2C 마케팅용 컴포넌트, 레이아웃 프리미티브가 추가되었습니다.

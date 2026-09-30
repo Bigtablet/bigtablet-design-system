@@ -1,10 +1,11 @@
 "use client";
 
 import type * as React from "react";
-import { cn, keyActivationProps } from "../../../utils";
+import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
+export interface ListItemProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onClick"> {
 	/** 오버라인 (상단 작은 글씨). 문자열 또는 노드(강조/링크/아이콘) */
 	overline?: React.ReactNode;
 	/** 라벨 (주요 텍스트). 문자열 또는 노드(강조/링크/Badge 등) */

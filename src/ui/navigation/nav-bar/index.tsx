@@ -4,7 +4,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSafeLayoutEffect } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
@@ -38,7 +38,7 @@ export interface NavBarLocaleConfig {
 	ariaLabel?: string;
 }
 
-export interface NavBarProps extends React.HTMLAttributes<HTMLElement> {
+export interface NavBarProps extends SafeHTMLProps<React.HTMLAttributes<HTMLElement>> {
 	/** 왼쪽 brand/로고 영역 */
 	brand?: React.ReactNode;
 	/** 중앙 또는 우측의 검색 영역 (TextField 등) */

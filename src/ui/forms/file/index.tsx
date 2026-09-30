@@ -3,14 +3,14 @@
 import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
 export type FileInputVariant = "button" | "preview";
 
-export interface FileInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface FileInputProps extends SafeHTMLProps<React.InputHTMLAttributes<HTMLInputElement>> {
 	/** 파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트 */
 	label?: string;
 	/** 파일 선택 시 호출되는 콜백 */

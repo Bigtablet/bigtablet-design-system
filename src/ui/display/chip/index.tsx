@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useState } from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -10,7 +10,8 @@ export type ChipType = "basic" | "input" | "filter" | "static";
 export type ChipSize = "sm" | "md";
 export type ChipTone = "default" | "accent" | "info" | "success" | "warning" | "error";
 
-export interface ChipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onClick"> {
+export interface ChipProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onClick"> {
 	/** 칩 유형 (기본값: "basic"). `static`은 비인터랙티브 라벨 (구 Tag 대체) */
 	type?: ChipType;
 	/** 칩 크기 (미지정 시 기본 32px). "sm"=24px, "md"=28px */

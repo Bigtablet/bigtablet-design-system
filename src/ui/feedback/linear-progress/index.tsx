@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface LinearProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface LinearProgressProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 전체 단계 수 */
 	totalSteps: number;
 	/** 현재 단계 (0부터 totalSteps까지) */

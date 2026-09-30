@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type AvatarShape = "circle" | "square";
 
-export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface AvatarProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
 	/** 이미지 URL */
 	src?: string;
 	/** alt 텍스트 (이미지일 때) 또는 initials 추출용 이름 */

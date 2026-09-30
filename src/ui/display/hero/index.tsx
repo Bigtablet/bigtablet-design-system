@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { Button } from "../../general/button";
 import "./style.scss";
 
@@ -18,7 +18,7 @@ export type HeroHeight = "sm" | "md" | "lg" | "full";
 export type HeroAlign = "left" | "center" | "right";
 export type HeroOverlay = boolean | "dark" | "light";
 
-export interface HeroProps extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
+export interface HeroProps extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLElement>>, "title"> {
 	/** 히어로 높이 (기본값: "md"). sm=320 / md=480 / lg=640 / full=100vh */
 	height?: HeroHeight;
 	/** 텍스트 정렬 (기본값: "left") */

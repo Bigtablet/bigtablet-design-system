@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { createContext, useContext } from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 /** `Form` 이 자식 `Field` 에게 내리는 값. 폼 밖의 `Field` 는 undefined 를 받는다. */
@@ -22,7 +22,8 @@ export function useFormError(name: string): React.ReactNode | undefined {
 	return useContext(FormContext)?.errors?.[name];
 }
 
-export interface FormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
+export interface FormProps
+	extends Omit<SafeHTMLProps<React.FormHTMLAttributes<HTMLFormElement>>, "onSubmit"> {
 	/**
 	 * 필드 이름 → 에러 메시지. 해당 `Field` 가 자기 이름으로 찾아 표시한다.
 	 * 서버 검증 실패(422) 응답을 필드에 꽂는 표준 경로다.
@@ -68,7 +69,7 @@ export const Form = ({ errors, onSubmit, children, className, ...props }: FormPr
 	</FormContext.Provider>
 );
 
-export interface FormActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FormActionsProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 버튼 정렬 (기본값: "end") */
 	align?: "start" | "center" | "end" | "between";
 	children: React.ReactNode;

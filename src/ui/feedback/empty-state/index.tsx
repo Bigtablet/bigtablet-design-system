@@ -1,10 +1,11 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface EmptyStateProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "title"> {
 	/**
 	 * 일러스트 영역 (아이콘/이미지 등). **장식 전용** - `aria-hidden="true"` 래퍼로 접근성 트리에서
 	 * 제외된다. 포커스 가능한 요소(버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가

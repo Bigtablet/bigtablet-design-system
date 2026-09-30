@@ -9,6 +9,7 @@ import {
 	cn,
 	lockBodyScroll,
 	OVERLAY_SPRING_CONFIG,
+	type SafeHTMLProps,
 	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
@@ -26,7 +27,7 @@ export type DrawerPlacement = "left" | "right" | "bottom";
 // 컴포넌트가 전유하므로 타입에서 제외한다. style/className 은 병합되어 소비자 값도 반영된다.
 export interface DrawerProps
 	extends Omit<
-		React.HTMLAttributes<HTMLDivElement>,
+		SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>,
 		"title" | "onClick" | "onKeyDown" | "onPointerDown"
 	> {
 	/** 드로어 열림 여부 */

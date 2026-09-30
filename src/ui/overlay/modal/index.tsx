@@ -11,6 +11,7 @@ import {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,
 	OVERLAY_SPRING_CONFIG,
+	type SafeHTMLProps,
 	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
@@ -27,7 +28,7 @@ export type ModalFooterAlign = "end" | "between" | "start";
 // 컴포넌트가 전유하므로 타입에서 제외한다. style/className 은 병합되어 소비자 값도 반영된다.
 export interface ModalProps
 	extends Omit<
-		React.HTMLAttributes<HTMLDivElement>,
+		SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>,
 		"title" | "onClick" | "onKeyDown" | "onPointerDown"
 	> {
 	/** 모달 열림 여부 */

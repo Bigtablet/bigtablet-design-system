@@ -3,14 +3,15 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type SidebarMode = "auto" | "static";
 
-export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
+export interface SidebarProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLElement>>, "onChange"> {
 	/** 상단 brand 영역 (펼친 상태 로고) */
 	header?: React.ReactNode;
 	/** collapsed 상태 헤더 (보통 favicon). 미지정 시 collapsed 에서도 `header` 사용. */
@@ -231,7 +232,7 @@ export const SidebarItem = <T extends React.ElementType = "button">(props: Sideb
 	);
 };
 
-export interface SidebarSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface SidebarSectionProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 섹션 라벨 (collapsed 상태에선 hidden) */
 	label?: string;
 }
