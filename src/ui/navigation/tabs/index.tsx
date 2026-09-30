@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn, useSafeLayoutEffect, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
 export type TabsVariant = "line" | "fills";

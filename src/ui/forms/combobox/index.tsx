@@ -6,7 +6,7 @@ import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, splitAriaProps, useSpringPresence, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps, useSpringPresence } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
 import { useLocaleText } from "../../system/locale-provider";

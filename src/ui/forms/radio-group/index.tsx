@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn, splitAriaProps, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import "./style.scss";
 

@@ -1,3 +1,4 @@
+// biome-ignore-all lint/security/noDangerouslySetInnerHtml: 타입이 이 prop 을 거절하는지 보는 검사 파일 - 아무것도 렌더되지 않는다
 import * as DS from "../index";
 import type { PolymorphicProps } from "./polymorphic";
 
@@ -29,14 +30,12 @@ export type _PolymorphicOmitsInnerHTML = AssertNever<
 const html = { __html: "<b>x</b>" };
 export const _button = (
 	<DS.Button
-		// biome-ignore lint/security/noDangerouslySetInnerHtml: 타입이 거절하는지만 보는 검사 - 렌더되지 않는다
 		// @ts-expect-error - dangerouslySetInnerHTML 은 DS 컴포넌트 props 가 아니다
 		dangerouslySetInnerHTML={html}
 	/>
 );
 export const _card = (
 	<DS.Card
-		// biome-ignore lint/security/noDangerouslySetInnerHtml: 타입이 거절하는지만 보는 검사 - 렌더되지 않는다
 		// @ts-expect-error - dangerouslySetInnerHTML 은 DS 컴포넌트 props 가 아니다
 		dangerouslySetInnerHTML={html}
 	/>

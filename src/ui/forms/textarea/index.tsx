@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
-import { cn, useSafeLayoutEffect, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";

@@ -11,13 +11,13 @@ import {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,
 	OVERLAY_SPRING_CONFIG,
+	type SafeHTMLProps,
 	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
 	useReducedMotion,
-	type SafeHTMLProps,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";

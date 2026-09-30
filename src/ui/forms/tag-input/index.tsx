@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useId, useRef, useState } from "react";
-import { cn, splitAriaProps, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
 import { Chip } from "../../display/chip";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";

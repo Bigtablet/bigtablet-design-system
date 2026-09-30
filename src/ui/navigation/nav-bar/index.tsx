@@ -4,7 +4,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSafeLayoutEffect, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 import "./style.scss";
 
