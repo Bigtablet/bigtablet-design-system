@@ -6,7 +6,7 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 
 - **Package**: `@bigtablet/design-system` (버전은 `package.json` 참조)
 - **Type**: React 19 component library with TypeScript + Vanilla JS
-- **Package Manager**: pnpm@10.20.0 (enforced)
+- **Package Manager**: pnpm@10.34.6 (enforced)
 - **Exports** (`package.json` `exports`):
   - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
   - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.

@@ -69,7 +69,7 @@
 	],
 	"author": "sangmin",
 	"license": "SEE LICENSE IN LICENSE",
-	"packageManager": "pnpm@10.20.0",
+	"packageManager": "pnpm@10.34.6",
 	"peerDependencies": {
 		"lucide-react": ">=0.552.0",
 		"next": ">=15",
