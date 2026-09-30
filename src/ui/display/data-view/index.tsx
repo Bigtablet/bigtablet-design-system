@@ -137,6 +137,7 @@ export interface DataViewProps<T extends object>
  * />
  * ```
  */
+// biome-ignore lint/suspicious/noShadowRestrictedNames: 공개 export 이름이라 바꾸면 breaking - 모듈 스코프라 전역 DataView 를 가리지 않는다
 export const DataView = <T extends object>({
 	query,
 	columns,

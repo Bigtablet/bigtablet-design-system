@@ -221,6 +221,7 @@ export const Dropdown = (props: DropdownProps) => {
 		[selectedValues, options, isControlled, props.multiple, props.onValueChange, props.onChange],
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: closePanel 은 아래 훅 결과라 선언 순서상 참조만 한다 (렌더마다 동일 참조)
 	const selectOption = useCallback(
 		(opt: DropdownOption) => {
 			if (opt.disabled) return;
@@ -232,8 +233,6 @@ export const Dropdown = (props: DropdownProps) => {
 				closePanel();
 			}
 		},
-		// closePanel 은 아래 훅에서 오므로 선언 순서상 참조만 한다 (렌더마다 동일 참조).
-		// biome-ignore lint/correctness/useExhaustiveDependencies: closePanel 은 훅 결과라 아래에서 정의된다
 		[multiple, toggleMultiple, selectSingle],
 	);
 

@@ -173,7 +173,6 @@ export const Combobox = ({
 	});
 
 	// 검색어가 바뀌면 디바운스 후 한 번만 조회한다.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: onSearch 는 위 ref 로 최신값을 읽는다 - 의존성에 두면 부모 리렌더마다 디바운스가 되감긴다
 	useEffect(() => {
 		if (!isOpen) return;
 		if (query === "") {

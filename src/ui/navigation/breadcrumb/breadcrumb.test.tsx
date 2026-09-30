@@ -21,7 +21,11 @@ describe("Breadcrumb", () => {
 	});
 
 	it("ignores `as` on the current page - it is not a link", () => {
-		const Link = () => <a data-testid="router-link" href="/x" />;
+		const Link = () => (
+			<a data-testid="router-link" href="/x">
+				링크
+			</a>
+		);
 
 		render(
 			<Breadcrumb

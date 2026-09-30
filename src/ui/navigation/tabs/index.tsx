@@ -293,6 +293,7 @@ export const TabPanel = ({
 			id={panelId}
 			aria-labelledby={tabId}
 			hidden={!isActive}
+			// biome-ignore lint/a11y/noNoninteractiveTabindex: APG Tabs - 포커스 가능한 요소가 없는 패널도 Tab 으로 닿아야 한다
 			tabIndex={0}
 			className={cn("tabs_panel", className)}
 			{...props}

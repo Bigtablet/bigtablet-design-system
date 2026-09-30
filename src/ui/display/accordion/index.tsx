@@ -90,9 +90,8 @@ export const Accordion = ({
 								/>
 							</button>
 						</h3>
-						<div
+						<section
 							id={panelId}
-							role="region"
 							aria-labelledby={headerId}
 							aria-hidden={!isOpen}
 							// 닫힌 패널은 grid 애니메이션이라 display:none 이 아님 → inert 로 내부 포커스 차단 (WCAG 4.1.2)
@@ -102,7 +101,7 @@ export const Accordion = ({
 							<div className="accordion_panel_wrap">
 								<div className="accordion_content">{item.content}</div>
 							</div>
-						</div>
+						</section>
 					</div>
 				);
 			})}

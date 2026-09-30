@@ -43,6 +43,7 @@ export const LinearProgress = ({
 			<div className="linear_progress_indicator" style={{ width: `${percent}%` }} />
 			{Array.from({ length: dotCount }, (_, i) => (
 				<span
+					// biome-ignore lint/suspicious/noArrayIndexKey: 길이만 있는 고정 점 목록이라 순서가 바뀌지 않는다
 					key={i}
 					className={cn("linear_progress_step", i <= clampedStep && "linear_progress_step_done")}
 					aria-hidden="true"
