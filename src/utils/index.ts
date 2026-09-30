@@ -1,8 +1,8 @@
 export { cn } from "./cn";
 export {
-	keyActivationProps,
 	type KeyActivationOptions,
 	type KeyActivationProps,
+	keyActivationProps,
 } from "./key-activation";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
@@ -10,13 +10,13 @@ export {
 	lockBodyScroll,
 	unlockBodyScroll,
 } from "./scroll-lock";
+export { splitAriaProps } from "./split-aria-props";
 export {
 	OVERLAY_PANEL_CLOSED_TRANSFORM,
 	OVERLAY_PANEL_OPEN_TRANSFORM,
 	OVERLAY_SPRING_CONFIG,
 	springEnterFrom,
 } from "./spring-motion";
-export { splitAriaProps } from "./split-aria-props";
 export {
 	type AnchoredOptions,
 	type AnchoredResult,

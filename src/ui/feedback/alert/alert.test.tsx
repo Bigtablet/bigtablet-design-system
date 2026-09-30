@@ -24,7 +24,10 @@ describe("Alert", () => {
 		const T = () => {
 			const { showAlert } = useAlert();
 			return (
-				<button type="button" onClick={() => showAlert({ title: "A", message: "m", showCancel: true })}>
+				<button
+					type="button"
+					onClick={() => showAlert({ title: "A", message: "m", showCancel: true })}
+				>
 					open
 				</button>
 			);

@@ -291,7 +291,13 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 				<ChevronDown size={iconSize.xs} aria-hidden="true" className="nav_bar_locale_chevron" />
 			</button>
 			{open && (
-				<ul id={menuId} role="menu" className="nav_bar_locale_menu" onKeyDown={handleMenuKeyDown}>
+				<ul
+					id={menuId}
+					// biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: ARIA in HTML 이 ul 의 role=menu 를 허용한다 (li 는 role=none)
+					role="menu"
+					className="nav_bar_locale_menu"
+					onKeyDown={handleMenuKeyDown}
+				>
 					{locale.options.map((opt, index) => (
 						<li key={opt.value} role="none">
 							<button

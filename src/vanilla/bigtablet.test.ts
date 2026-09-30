@@ -214,7 +214,7 @@ describe("Dropdown - 검색", () => {
 		return wrap;
 	};
 
-	const visibleLabels = (wrap: HTMLElement) =>
+	const visibleLabels = () =>
 		[...document.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
 			.filter((el) => !el.hidden)
 			.map((el) => el.textContent?.trim());
@@ -239,7 +239,7 @@ describe("Dropdown - 검색", () => {
 		input.value = "  aPP le ";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
-		expect(visibleLabels(wrap)).toEqual(["사과 Apple"]);
+		expect(visibleLabels()).toEqual(["사과 Apple"]);
 	});
 
 	it("결과가 없으면 안내 문구를 보여준다", () => {
@@ -267,11 +267,11 @@ describe("Dropdown - 검색", () => {
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
 		// 조합 중 - 아직 아무것도 걸러지지 않았다.
-		expect(visibleLabels(wrap)).toHaveLength(3);
+		expect(visibleLabels()).toHaveLength(3);
 
 		input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "포" }));
 
-		expect(visibleLabels(wrap)).toEqual(["포도"]);
+		expect(visibleLabels()).toEqual(["포도"]);
 	});
 });
 
