@@ -1,12 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import { useRadioGroupContext } from "../radio-group";
 import "./style.scss";
 
-export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface RadioProps
+	extends Omit<SafeHTMLProps<React.InputHTMLAttributes<HTMLInputElement>>, "size"> {
 	/** 라디오 버튼 옆에 표시할 라벨 */
 	label?: React.ReactNode;
 	/** 라디오 버튼 크기 (기본값: "md"). `RadioGroup` 안에서는 그룹 size 가 기본값. */

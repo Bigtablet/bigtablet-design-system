@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
 - [v3.13.0 (a11y 문자열 기본값 한글화)](#v3130-a11y-문자열-기본값-한글화)
@@ -29,6 +30,32 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)
+
+DS 컴포넌트의 props 타입에서 `dangerouslySetInnerHTML` 이 빠집니다(시큐어코딩 가이드 W-1-4-6). 지금까지는 대부분의 컴포넌트가 HTML 속성 타입을 그대로 확장해 `<Button dangerouslySetInnerHTML={{ __html: input }} />` 가 타입 검사를 통과하고, 그 값이 루트 요소에 그대로 닿았습니다. 이제는 **컴파일 에러**입니다.
+
+> 타입에서 prop 하나가 사라지므로 엄밀히는 breaking 입니다. 그 prop 을 DS 컴포넌트에 넘기던 코드는 이미 가이드 위반이고, 사내 저장소에서 사용처가 없어서 minor 로 올립니다. 런타임 동작은 바뀌지 않습니다.
+
+### 무엇이 바뀌나
+
+공개 export 된 컴포넌트 전부입니다. `ImageCropper` 는 처음부터 막혀 있었고, 이번에 나머지(`as` 를 받는 `Button`·`SidebarItem`·`BottomNavItem`·`NavLink`·레이아웃 프리미티브 포함)가 맞춰졌습니다.
+
+### 앱 쪽에서 할 일
+
+`tsc` 가 에러를 내는 자리만 고치면 됩니다. 마크업은 `children` 으로 넘깁니다.
+
+```tsx
+// Before - 타입 에러
+<Card dangerouslySetInnerHTML={{ __html: html }} />
+
+// After - 신뢰할 수 있는 HTML 이 꼭 필요하면, 소독한 뒤 DS 밖의 요소에서 렌더한다
+<Card>
+  <div dangerouslySetInnerHTML={{ __html: sanitize(html) }} />
+</Card>
+```
 
 ---
 

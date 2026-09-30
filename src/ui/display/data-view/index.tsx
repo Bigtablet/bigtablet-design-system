@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { EmptyState } from "../../feedback/empty-state";
 import { ErrorState } from "../../feedback/error-state";
 import { TextField } from "../../forms/textfield";
@@ -68,7 +68,7 @@ export interface DataViewPagination {
 }
 
 export interface DataViewProps<T extends object>
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "children"> {
 	/** 데이터와 그 상태 */
 	query: DataViewQuery<T>;
 	/** 표 컬럼 정의 */

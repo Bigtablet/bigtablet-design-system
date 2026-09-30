@@ -29,7 +29,7 @@ export type PolymorphicProps<T extends React.ElementType, Own> = Own & {
 	as?: T;
 	/** 루트 요소 ref (React 19 ref-as-prop) */
 	ref?: PolymorphicRef<T>;
-} & Omit<React.ComponentPropsWithoutRef<T>, keyof Own | "as" | "ref">;
+} & Omit<React.ComponentPropsWithoutRef<T>, keyof Own | "as" | "ref" | "dangerouslySetInnerHTML">;
 
 /** `as` 에 준 요소의 ref 타입 */
 export type PolymorphicRef<T extends React.ElementType> = React.ComponentPropsWithRef<T>["ref"];

@@ -6,7 +6,7 @@ import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, splitAriaProps, useSpringPresence } from "../../../utils";
+import { cn, splitAriaProps, useSpringPresence, type SafeHTMLProps } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
 import { useLocaleText } from "../../system/locale-provider";
@@ -25,7 +25,7 @@ export interface ComboboxOption {
 export type ComboboxSize = "sm" | "md" | "lg";
 
 export interface ComboboxProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue"> {
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange" | "defaultValue"> {
 	/** 선택된 값 (제어형) */
 	value?: ComboboxOption | null;
 	/** 선택 변경 콜백 */
@@ -189,7 +189,8 @@ export const Combobox = ({
 		const seq = ++requestSeq.current;
 		setIsLoading(true);
 		const timer = setTimeout(() => {
-			onSearchRef.current(query)
+			onSearchRef
+				.current(query)
 				.then((result) => {
 					// 최신 요청이 아니면 버린다.
 					if (seq !== requestSeq.current) return;

@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { createContext, useContext, useId } from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useFormError } from "../form";
 import "./style.scss";
 
@@ -61,7 +61,8 @@ export const FieldControlBoundary = ({ children }: { children: React.ReactNode }
 	<FieldContext.Provider value={undefined}>{children}</FieldContext.Provider>
 );
 
-export interface FieldProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+export interface FieldProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "children"> {
 	/** 필드 이름. `Form` 의 `errors[name]` 을 찾는 키이자 입력 id 의 접두사 */
 	name: string;
 	/** 라벨 텍스트. `Field` 가 소유하므로 자식 입력에는 `label` 을 주지 않는다 */

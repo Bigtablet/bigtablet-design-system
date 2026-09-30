@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
-import { cn, useSafeLayoutEffect } from "../../../utils";
+import { cn, useSafeLayoutEffect, type SafeHTMLProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";
@@ -12,7 +12,7 @@ export type TextareaResize = "none" | "vertical" | "both";
 
 export interface TextareaProps
 	extends Omit<
-		React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+		SafeHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>>,
 		"size" | "onChange" | "value" | "defaultValue" | "rows"
 	> {
 	/** 입력 필드 크기 (기본값: "md") */

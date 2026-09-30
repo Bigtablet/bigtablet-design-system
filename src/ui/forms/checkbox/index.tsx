@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
-export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface CheckboxProps
+	extends Omit<SafeHTMLProps<React.InputHTMLAttributes<HTMLInputElement>>, "size"> {
 	/** 체크박스 옆에 표시할 라벨 */
 	label?: React.ReactNode;
 	/** 중간 선택(indeterminate) 상태 여부 */

@@ -4,7 +4,7 @@ import type { LucideIcon, LucideProps } from "lucide-react";
 
 export type { LucideIcon, LucideProps } from "lucide-react";
 
-export interface IconProps extends Omit<LucideProps, "ref"> {
+export interface IconProps extends Omit<LucideProps, "ref" | "dangerouslySetInnerHTML"> {
 	/** lucide-react 아이콘 컴포넌트 */
 	icon: LucideIcon;
 }
