@@ -81,6 +81,26 @@ describe("overlay-stack", () => {
 		expect(consumer).not.toHaveBeenCalled();
 	});
 
+	it("leaves the top overlay alone when a child already consumed the Escape via preventDefault", () => {
+		// 목록 훅(Combobox·Dropdown)은 stopPropagation 없이 preventDefault 로만 "처리했다" 를
+		// 알린다. 그 신호를 안 보면 Modal 안에서 목록을 Esc 로 닫는 순간 Modal 까지 닫힌다(#697).
+		const onEscape = vi.fn();
+		open(onEscape);
+
+		const consumed = new KeyboardEvent("keydown", {
+			key: "Escape",
+			bubbles: true,
+			cancelable: true,
+		});
+		consumed.preventDefault();
+		document.body.dispatchEvent(consumed);
+		expect(onEscape).not.toHaveBeenCalled();
+
+		// 소비되지 않은 다음 Escape 는 그대로 최상단을 닫는다.
+		pressEscape();
+		expect(onEscape).toHaveBeenCalledTimes(1);
+	});
+
 	it("releases the global listener again once the stack empties", () => {
 		const onEscape = vi.fn();
 		open(onEscape)();

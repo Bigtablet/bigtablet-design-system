@@ -51,7 +51,11 @@ type EscapeHandler = () => void;
 const stack: EscapeHandler[] = [];
 
 const handleKeyDown = (e: KeyboardEvent) => {
-	if (e.key !== "Escape") return;
+	// 자식이 이미 소비한 Escape 는 넘긴다. 소비 신호는 둘이다 - stopPropagation 이면 여기까지
+	// 오지도 않고, preventDefault 면 오되 defaultPrevented 가 켜져 있다. Combobox·Dropdown·Menu
+	// 의 목록은 후자로 알리는데 이걸 안 보면 Modal 안에서 목록을 Esc 로 닫는 순간 Modal 까지
+	// 닫힌다(#697). APG: 열린 팝업의 Escape 는 팝업만 닫는다.
+	if (e.key !== "Escape" || e.defaultPrevented) return;
 	const top = stack[stack.length - 1];
 	if (!top) return;
 	// 여기까지 왔다는 건 자식(input/select/IME 등)이 이벤트를 소비하지 않았다는 뜻.
