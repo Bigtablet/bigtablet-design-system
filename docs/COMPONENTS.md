@@ -2396,6 +2396,8 @@ const [isOpen, setIsOpen] = useState(false);
 
 `dismissible={false}` 여도 Escape 스택에는 **등록된다.** 최상단 자리를 차지해 Escape 를 소비하므로, 아래에 열려 있는 다른 오버레이가 대신 닫히지 않는다 — 사용자가 보고 있지 않은 것이 닫히는 게 더 나쁜 결과다.
 
+안쪽의 `Combobox`·`Dropdown`·`Menu` 목록이 **열려 있으면** Esc 는 그 목록만 닫고 Modal 은 남는다 — 열린 팝업의 Escape 는 팝업만 닫는다(APG). 목록이 닫혀 있을 때의 Esc 는 그대로 Modal 에 닿는다. 자식이 `preventDefault()` 또는 `stopPropagation()` 으로 처리를 알린 Escape 를 스택이 넘기는 규칙이라, 소비자 컴포넌트도 같은 방식으로 자기 Escape 를 지킬 수 있다.
+
 #### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
 
 패널은 퇴출 스프링이 끝날 때까지 마운트를 유지한다(그래야 페이드아웃이 보인다). **DS 가 닫히는 순간의 `children` 을 붙잡으므로**, 부모가 같은 tick 에 데이터를 비워도 본문이 먼저 사라지지 않는다.

@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Combobox } from "../forms/combobox";
+import { Dropdown } from "../forms/dropdown";
 import { Modal } from "./modal";
 import { Popover } from "./popover";
 import { Tooltip } from "./tooltip";
@@ -97,6 +99,49 @@ describe("overlay Escape composition (shared stack)", () => {
 		// 자식이 소비했으므로 Popover 는 열린 채 유지
 		expect(onOpenChange).not.toHaveBeenCalled();
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
+	});
+
+	it("Combobox inside Modal: first Escape closes only the list, second closes the Modal", async () => {
+		// 목록 훅은 preventDefault 로만 소비를 알린다 - 스택이 그 신호를 읽어야 한다(#697).
+		const modalClose = vi.fn();
+		render(
+			<Modal open onClose={modalClose} title="M">
+				<Combobox
+					onSearch={vi.fn().mockResolvedValue([])}
+					defaultOptions={[{ value: "1", label: "박상민" }]}
+					ariaLabel="담당자"
+				/>
+			</Modal>,
+		);
+		const input = screen.getByRole("combobox", { name: "담당자" });
+		fireEvent.focus(input);
+		await waitFor(() => expect(input).toHaveAttribute("aria-expanded", "true"));
+
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(input).toHaveAttribute("aria-expanded", "false");
+		expect(modalClose).not.toHaveBeenCalled();
+
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(modalClose).toHaveBeenCalledTimes(1);
+	});
+
+	it("Dropdown inside Modal: first Escape closes only the list, second closes the Modal", async () => {
+		const modalClose = vi.fn();
+		render(
+			<Modal open onClose={modalClose} title="M">
+				<Dropdown label="권한" options={[{ value: "a", label: "관리자" }]} />
+			</Modal>,
+		);
+		const trigger = screen.getByRole("combobox", { name: /권한/ });
+		fireEvent.click(trigger);
+		await waitFor(() => expect(trigger).toHaveAttribute("aria-expanded", "true"));
+
+		fireEvent.keyDown(trigger, { key: "Escape" });
+		expect(trigger).toHaveAttribute("aria-expanded", "false");
+		expect(modalClose).not.toHaveBeenCalled();
+
+		fireEvent.keyDown(trigger, { key: "Escape" });
+		expect(modalClose).toHaveBeenCalledTimes(1);
 	});
 
 	it("closes the Popover when a child does NOT consume the Escape", () => {
