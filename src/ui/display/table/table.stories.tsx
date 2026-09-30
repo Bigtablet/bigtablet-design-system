@@ -175,6 +175,7 @@ export const StickyHeader: Story = {
 	},
 	render: () => (
 		<div
+			// biome-ignore lint/a11y/noNoninteractiveTabindex: 가로 스크롤 영역은 키보드로 닿아야 한다 (axe scrollable-region-focusable)
 			tabIndex={0}
 			role="region"
 			aria-label="사용자 목록"

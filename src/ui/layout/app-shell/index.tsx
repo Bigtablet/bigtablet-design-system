@@ -1,10 +1,10 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AppShellProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 좌측 네비게이션. 보통 `Sidebar` */
 	sidebar?: React.ReactNode;
 	/** 콘텐츠 열 위에 고정되는 헤더. 보통 `NavBar` */

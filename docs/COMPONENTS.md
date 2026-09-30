@@ -67,6 +67,10 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ---
 
+> **모든 컴포넌트는 `dangerouslySetInnerHTML` 을 받지 않습니다** (v3.25.0~). 마크업은 `children` 으로 넘깁니다. 새 컴포넌트는 props 를 `SafeHTMLProps<React.*HTMLAttributes<…>>` 로 선언하고, `src/utils/safe-html.type-test.tsx` 가 공개 export 전체를 `tsc` 로 검사합니다.
+
+---
+
 ## v3.0 주요 변경사항
 
 v3.0에서 다크 모드 지원, B2C 마케팅용 컴포넌트, 레이아웃 프리미티브가 추가되었습니다.
@@ -2395,6 +2399,8 @@ const [isOpen, setIsOpen] = useState(false);
 `dismissible` 을 주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다.
 
 `dismissible={false}` 여도 Escape 스택에는 **등록된다.** 최상단 자리를 차지해 Escape 를 소비하므로, 아래에 열려 있는 다른 오버레이가 대신 닫히지 않는다 — 사용자가 보고 있지 않은 것이 닫히는 게 더 나쁜 결과다.
+
+안쪽의 `Combobox`·`Dropdown`·`Menu` 목록이 **열려 있으면** Esc 는 그 목록만 닫고 Modal 은 남는다 — 열린 팝업의 Escape 는 팝업만 닫는다(APG). 목록이 닫혀 있을 때의 Esc 는 그대로 Modal 에 닿는다. 자식이 `preventDefault()` 또는 `stopPropagation()` 으로 처리를 알린 Escape 를 스택이 넘기는 규칙이라, 소비자 컴포넌트도 같은 방식으로 자기 Escape 를 지킬 수 있다.
 
 #### 마운트 수명 — `children` 을 `open` 과 같은 값에 묶지 말 것
 

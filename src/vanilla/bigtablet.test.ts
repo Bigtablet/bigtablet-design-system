@@ -214,7 +214,7 @@ describe("Dropdown - 검색", () => {
 		return wrap;
 	};
 
-	const visibleLabels = (wrap: HTMLElement) =>
+	const visibleLabels = () =>
 		[...document.querySelectorAll<HTMLElement>(".bt-dropdown__option")]
 			.filter((el) => !el.hidden)
 			.map((el) => el.textContent?.trim());
@@ -239,7 +239,7 @@ describe("Dropdown - 검색", () => {
 		input.value = "  aPP le ";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
-		expect(visibleLabels(wrap)).toEqual(["사과 Apple"]);
+		expect(visibleLabels()).toEqual(["사과 Apple"]);
 	});
 
 	it("결과가 없으면 안내 문구를 보여준다", () => {
@@ -267,11 +267,11 @@ describe("Dropdown - 검색", () => {
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 
 		// 조합 중 - 아직 아무것도 걸러지지 않았다.
-		expect(visibleLabels(wrap)).toHaveLength(3);
+		expect(visibleLabels()).toHaveLength(3);
 
 		input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "포" }));
 
-		expect(visibleLabels(wrap)).toEqual(["포도"]);
+		expect(visibleLabels()).toEqual(["포도"]);
 	});
 });
 
@@ -517,6 +517,33 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(el.classList.contains("is-open")).toBe(true);
 		second?.close();
 		expect(el.classList.contains("is-open")).toBe(false);
+	});
+
+	it("안의 Dropdown 목록이 열려 있으면 Esc 는 목록만 닫고, 다음 Esc 가 모달을 닫는다", () => {
+		// 목록은 preventDefault 로 "처리했다" 를 알린다 - 스택이 그 신호를 읽어야 한다(#697).
+		// 닫힌 목록은 Escape 에 손대지 않아야 두 번째 Esc 가 모달에 닿는다.
+		setViewportInset(0);
+		const el = modalMarkup();
+		const wrap = dropdownMarkup();
+		el.querySelector(".bt-modal__panel")?.appendChild(wrap);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLButtonElement;
+		const dd = Dropdown(wrap);
+		const m = Modal(el);
+
+		m?.open();
+		dd?.open();
+		expect(control.getAttribute("aria-expanded")).toBe("true");
+
+		control.dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+		);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+		expect(m?.isOpen()).toBe(true);
+
+		control.dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }),
+		);
+		expect(m?.isOpen()).toBe(false);
 	});
 
 	it("패널에 소비자가 준 tabindex 는 열고 닫아도 그대로다", () => {

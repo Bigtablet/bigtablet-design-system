@@ -20,7 +20,7 @@ Bigtablet Design System에 기여해 주셔서 감사합니다!
 ### 요구사항
 
 - Node.js 18+
-- pnpm 10.20.0+ (필수)
+- pnpm 10.x (필수) - `package.json` 의 `packageManager` 버전(현재 10.34.6)으로 자동 전환됩니다
 
 ### 설치
 

@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { EmptyState } from "../../feedback/empty-state";
 import { ErrorState } from "../../feedback/error-state";
 import { TextField } from "../../forms/textfield";
@@ -68,7 +68,7 @@ export interface DataViewPagination {
 }
 
 export interface DataViewProps<T extends object>
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "children"> {
 	/** 데이터와 그 상태 */
 	query: DataViewQuery<T>;
 	/** 표 컬럼 정의 */
@@ -137,6 +137,7 @@ export interface DataViewProps<T extends object>
  * />
  * ```
  */
+// biome-ignore lint/suspicious/noShadowRestrictedNames: 공개 export 이름이라 바꾸면 breaking - 모듈 스코프라 전역 DataView 를 가리지 않는다
 export const DataView = <T extends object>({
 	query,
 	columns,

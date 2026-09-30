@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface LinearProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface LinearProgressProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 전체 단계 수 */
 	totalSteps: number;
 	/** 현재 단계 (0부터 totalSteps까지) */
@@ -43,6 +43,7 @@ export const LinearProgress = ({
 			<div className="linear_progress_indicator" style={{ width: `${percent}%` }} />
 			{Array.from({ length: dotCount }, (_, i) => (
 				<span
+					// biome-ignore lint/suspicious/noArrayIndexKey: 길이만 있는 고정 점 목록이라 순서가 바뀌지 않는다
 					key={i}
 					className={cn("linear_progress_step", i <= clampedStep && "linear_progress_step_done")}
 					aria-hidden="true"

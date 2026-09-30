@@ -4,6 +4,14 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.25.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.25.0) - 2026-09-30
+- 모든 컴포넌트의 props 타입에서 `dangerouslySetInnerHTML` 이 빠집니다(시큐어코딩 가이드 W-1-4-6). 지금까지는 `ImageCropper` 외 전부가 HTML 속성 타입을 그대로 확장해 `<Button dangerouslySetInnerHTML={…} />` 가 타입 검사를 통과하고 루트 요소에 닿았습니다. 이제 컴파일 에러이고, 마크업은 `children` 으로 넘깁니다. 런타임 동작은 같습니다 - [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.25.0 섹션
+- `Accordion` 패널 요소가 `div[role="region"]` 에서 `<section>` 으로 바뀝니다. 접근성 트리(region + 헤더 이름)와 화면은 같고, `div.accordion_panel` 처럼 태그로 고른 앱 CSS 만 영향을 받습니다
+- `Modal`·`Drawer` 안에 둔 `Combobox`·`Dropdown` 의 목록을 Esc 로 닫으면 뒤의 Modal 까지 함께 닫히던 문제를 고쳤습니다. 이제 첫 Esc 는 목록만, 다음 Esc 가 Modal 을 닫습니다. 목록은 열려 있을 때만 Esc 를 소비하고, 오버레이 스택은 이미 `preventDefault` 된 Esc 를 무시합니다 - React·Vanilla 동일
+- (개발) dev 전용 전이 의존성 보안 패치 - `undici` `^7.29.1`·`fast-uri` `^3.1.8` override 상향, `brace-expansion` `^5.0.12`·`nanoid@5` `^5.1.16` 추가 (`pnpm audit` 15건 → 0, 배포 패키지 무관)
+- (개발) `packageManager` 를 `pnpm@10.34.6` 으로 올립니다. 10.20.0 은 lockfile 재생성 때 네이티브 바인딩의 `libc` 메타데이터를 지워 Dependabot 과 번갈아 되돌리고 있었습니다
+- (개발) `biome.json` 에 security 규칙 4종을 명시하고 `noExplicitAny`·`noFloatingPromises` 를 error 로 올립니다(가이드 W-9-2-1). 기존 진단 35건을 정리해 `biome check .` 가 0 건입니다
+
 ## [3.24.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.24.0) - 2026-09-30
 - `Stepper` 가 생겼습니다 - 가입·온보딩·결제처럼 사용자가 순서대로 밟아 가는 절차의 진행 표시. `current` 인덱스 하나에서 상태가 파생되고, `<ol>` + `aria-current="step"` + 숨김 상태 텍스트로 색·모양만이 아니라 말로도 상태를 전합니다. `onStepClick` 을 주면 지나간 단계만 눌립니다 - 앞으로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 열지 않습니다. 시간 순 기록은 `Timeline`, 밟아 가는 절차는 `Stepper` 입니다
 - `useToast()` 의 표시 함수가 **토스트 id** 를 반환하고 `dismiss(id)`·`update(id, patch)` 가 생겼습니다. "업로드 중… → 완료" 같은 진행 토스트와 "삭제됨 [실행 취소]" 같은 액션 버튼(`{ action: { label, onClick } }`)을 DS 가 소유합니다. `duration: Infinity` 면 저절로 닫히지 않습니다. 두 번째 인자로 ms 숫자를 주던 기존 호출은 그대로 동작합니다

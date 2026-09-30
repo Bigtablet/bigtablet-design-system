@@ -6,7 +6,7 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 
 - **Package**: `@bigtablet/design-system` (버전은 `package.json` 참조)
 - **Type**: React 19 component library with TypeScript + Vanilla JS
-- **Package Manager**: pnpm@10.20.0 (enforced)
+- **Package Manager**: pnpm@10.34.6 (enforced)
 - **Exports** (`package.json` `exports`):
   - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
   - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
@@ -52,7 +52,7 @@ src/
 
 ### Component Files
 - All components use `"use client"` directive
-- Props interfaces extend HTML element attributes
+- Props interfaces extend HTML element attributes **wrapped in `SafeHTMLProps`** (`src/utils/safe-html.ts`) - `extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>`. 원본 `React.*HTMLAttributes` 를 직접 확장하면 `dangerouslySetInnerHTML` 이 루트로 새고(가이드 W-1-4-6), `src/utils/safe-html.type-test.tsx` 가 `tsc` 에서 실패시킨다. `as` 컴포넌트는 `PolymorphicProps` 가 이미 뺀다
 - Standard structure - **폴더 이름은 kebab-case** 로 짓고, 테스트·스토리 파일은 그 폴더명을 그대로 쓴다:
   ```
   src/ui/{category}/{component-name}/
@@ -248,6 +248,7 @@ return <animated.div style={style}>...</animated.div>;
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
+  pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   ```
 
@@ -308,6 +309,8 @@ label/domain
        - **결함 수정**(지금 렌더가 틀렸다) → **patch**. `~3.16.0` 처럼 patch 만 받는 앱에도 수정이 닿아야 한다. minor 로 올리면 가장 보수적으로 고정한 소비자가 그 수정을 못 받는다.
          예 - Prose `h1` 이 `h3` 보다 가늘던 것(3.14.1), close 버튼이 내용 열 밖 20px(3.15.0), Vanilla 모달이 375px 에서 잘림(3.15.2).
        - **의도적 디자인 변경**(지금도 틀리지 않았는데 다르게 바꾼다) → **minor**. 기본 size·간격 스케일·컴포넌트 재디자인 등. 받을지를 소비자가 고르게 한다.
+     - **한 주기에 모인 변경은 릴리즈 하나로 묶는다 - patch 를 따로 쪼개 내지 않는다.** 사내 패키지라 버전을 보수적으로 고정한 외부 소비자가 없다. 결함 수정과 minor 감이 같이 있으면 가장 높은 등급(minor) 하나로 낸다. 위의 "결함 수정 → patch" 는 **결함 수정만 있는 릴리즈**의 등급이다. 분리를 먼저 권하지 않는다 (3.23.0·3.25.0 - 사용자 결정)
+     - **prop 제거라도 minor 로 갈 수 있는 경우**: 그 prop 을 넘기는 것 자체가 이미 규칙 위반이고 사내 저장소 사용처가 0 일 때 - `docs/MIGRATION.md` 에 섹션을 두고 minor (3.25.0 `dangerouslySetInnerHTML` 제거). 사용처를 grep 한 결과를 릴리즈 PR 에 적는다
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
    - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
 2. 리뷰어 approve 후 머지.

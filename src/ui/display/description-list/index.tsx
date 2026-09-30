@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export interface DescriptionListItem {
@@ -15,7 +15,8 @@ export interface DescriptionListItem {
 
 export type DescriptionListLayout = "row" | "stack";
 
-export interface DescriptionListProps extends React.HTMLAttributes<HTMLDListElement> {
+export interface DescriptionListProps
+	extends SafeHTMLProps<React.HTMLAttributes<HTMLDListElement>> {
 	/** 이름·값 쌍 */
 	items: DescriptionListItem[];
 	/**

@@ -1,12 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 // HTML 의 `title` 속성(툴팁 문자열)과 이름이 겹친다. 화면 제목은 ReactNode 를 받으므로
 // 그쪽을 뺀다 - 툴팁이 필요하면 안쪽 요소에 직접 준다.
-export interface PageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface PageHeaderProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "title"> {
 	/** 화면 제목. `h1` 로 렌더된다 */
 	title: React.ReactNode;
 	/** 제목 아래 한 줄 설명 */

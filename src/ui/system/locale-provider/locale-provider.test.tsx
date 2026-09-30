@@ -33,12 +33,10 @@ describe("LocaleProvider", () => {
 		// 한 줄만 바꾸고 나머지는 기준을 그대로 쓰는 것이 이 prop 의 목적이다.
 		render(
 			<LocaleProvider messages={{ "table.empty": "주문이 없습니다" }}>
-				<>
-					<Probe msgKey="table.empty" />
-					<span data-testid="untouched">
-						<Probe msgKey="modal.close" />
-					</span>
-				</>
+				<Probe msgKey="table.empty" />
+				<span data-testid="untouched">
+					<Probe msgKey="modal.close" />
+				</span>
 			</LocaleProvider>,
 		);
 		expect(screen.getAllByTestId("out")[0].textContent).toBe("주문이 없습니다");
@@ -48,10 +46,8 @@ describe("LocaleProvider", () => {
 	it("overrides on top of a non-default base", () => {
 		render(
 			<LocaleProvider locale="en" messages={{ "table.empty": "Nothing here" }}>
-				<>
-					<Probe msgKey="table.empty" />
-					<Probe msgKey="modal.close" />
-				</>
+				<Probe msgKey="table.empty" />
+				<Probe msgKey="modal.close" />
 			</LocaleProvider>,
 		);
 		expect(screen.getAllByTestId("out")[0].textContent).toBe("Nothing here");

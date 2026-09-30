@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 import { useFieldControl } from "../field";
 
 export interface ToggleProps
-	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+	extends Omit<SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>, "onChange"> {
 	/** 제어형 토글 상태 */
 	checked?: boolean;
 	/** 비제어형 초기 토글 상태 */

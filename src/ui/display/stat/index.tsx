@@ -1,13 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 /** 변화량의 색. 방향(↑↓)과 좋음/나쁨은 다르다 - "재고 부족 +2" 는 오르지만 나쁘다 */
 export type StatDeltaTone = "positive" | "negative" | "neutral";
 
-export interface StatProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface StatProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
 	/** 지표 이름 */
 	label: React.ReactNode;
 	/** 지표 값. 숫자는 `tabular-nums` 로 폭이 고정된다 */

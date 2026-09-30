@@ -1,12 +1,13 @@
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type SkeletonVariant = "text" | "title" | "avatar" | "rect";
 
-export interface SkeletonProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+export interface SkeletonProps
+	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "children"> {
 	/** 스켈레톤 모양 (기본값: "text") */
 	variant?: SkeletonVariant;
 	/** CSS width 값 (예: "100%", 200, "16rem"). variant=avatar는 width=height로 사용 */

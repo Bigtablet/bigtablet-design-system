@@ -5,7 +5,6 @@ import { useSpringHover } from "./use-spring-hover";
 
 const Probe = (options?: { scale?: number; lift?: number }) => {
 	const { style, bind } = useSpringHover(options);
-	// biome-ignore lint/a11y/useSemanticElements: 훅의 bind 를 그대로 붙여 검사하는 프로브다
 	return <animated.div data-testid="target" role="button" tabIndex={0} style={style} {...bind} />;
 };
 

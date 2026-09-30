@@ -122,7 +122,9 @@
 	const escapeStack = [];
 
 	function onEscapeKeyDown(e) {
-		if (e.key !== "Escape") return;
+		// 자식이 preventDefault 로 "처리했다" 고 알린 Escape 는 넘긴다 - React overlay-stack 과 같은
+		// 규약. 안 보면 Modal 안의 Select 목록을 Esc 로 닫는 순간 Modal 까지 닫힌다(#697).
+		if (e.key !== "Escape" || e.defaultPrevented) return;
 		const top = escapeStack[escapeStack.length - 1];
 		if (!top) return;
 		e.stopImmediatePropagation();
@@ -920,6 +922,9 @@
 					}
 					break;
 				case "Escape":
+					// 닫혀 있으면 손대지 않는다 - preventDefault 는 스택에 "처리했다" 는 신호라, 닫힌
+					// 목록이 보내면 Modal 안에서 두 번째 Esc 가 Modal 에 닿지 못한다(#697).
+					if (!state.isOpen) break;
 					e.preventDefault();
 					close();
 					break;

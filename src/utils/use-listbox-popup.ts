@@ -219,6 +219,9 @@ export function useListboxPopup<T extends ListboxItem>({
 					setActiveIndex(lastEnabled());
 					break;
 				case "Escape":
+					// 닫혀 있으면 손대지 않는다. preventDefault 는 오버레이 스택에 "자식이 처리했다"
+					// 는 신호라, 닫힌 목록이 그걸 보내면 Modal 안에서 Esc 로 Modal 을 못 닫는다(#697).
+					if (!isOpen) break;
 					event.preventDefault();
 					setIsOpen(false);
 					break;
@@ -252,6 +255,10 @@ export function useListboxPopup<T extends ListboxItem>({
 					commitActive();
 					break;
 				case "Escape":
+					// 닫혀 있으면 손대지 않는다 - 트리거 핸들러와 같은 이유(#697). Combobox 는 이
+					// 핸들러를 상시 입력에 걸어 두므로, 여기서 preventDefault 하면 두 번째 Esc 가
+					// 부모 Modal 에 닿지 못한다.
+					if (!isOpen) break;
 					event.preventDefault();
 					close();
 					break;
@@ -262,7 +269,7 @@ export function useListboxPopup<T extends ListboxItem>({
 			}
 			// Home/End 는 커서 이동에 양보한다 - 입력 안에서는 텍스트 조작이 우선이다.
 		},
-		[disabled, moveActive, commitActive, close],
+		[disabled, isOpen, moveActive, commitActive, close],
 	);
 
 	// 열릴 때 활성 인덱스를 정한다. 소비자가 준 initialActiveIndex 가 있으면 그것을, 없으면
@@ -295,6 +302,7 @@ export function useListboxPopup<T extends ListboxItem>({
 	// 방향키로 옮긴 활성 항목이 스크롤 밖에 있으면 따라 스크롤한다. 포커스는 트리거·입력에
 	// 남으므로(APG) 브라우저가 알아서 스크롤해 주지 않는다 - 옵션 20개 목록에서 아래로 내려가면
 	// 활성 표시가 보이지 않는 채로 움직였다.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: items 는 본문에서 읽지 않는 재실행 트리거다 - 아래 주석
 	useEffect(() => {
 		if (!isOpen || activeIndex < 0) return;
 		const list = listRef.current;
