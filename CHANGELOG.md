@@ -4,6 +4,14 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.24.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.24.0) - 2026-09-30
+- `Stepper` 가 생겼습니다 - 가입·온보딩·결제처럼 사용자가 순서대로 밟아 가는 절차의 진행 표시. `current` 인덱스 하나에서 상태가 파생되고, `<ol>` + `aria-current="step"` + 숨김 상태 텍스트로 색·모양만이 아니라 말로도 상태를 전합니다. `onStepClick` 을 주면 지나간 단계만 눌립니다 - 앞으로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 열지 않습니다. 시간 순 기록은 `Timeline`, 밟아 가는 절차는 `Stepper` 입니다
+- `useToast()` 의 표시 함수가 **토스트 id** 를 반환하고 `dismiss(id)`·`update(id, patch)` 가 생겼습니다. "업로드 중… → 완료" 같은 진행 토스트와 "삭제됨 [실행 취소]" 같은 액션 버튼(`{ action: { label, onClick } }`)을 DS 가 소유합니다. `duration: Infinity` 면 저절로 닫히지 않습니다. 두 번째 인자로 ms 숫자를 주던 기존 호출은 그대로 동작합니다
+- (렌더 변경) 토스트의 라이브 리전이 아이콘·메시지만 감쌉니다. 닫기·액션 버튼은 밖으로 나가 "닫기" 가 함께 읽히던 소음이 빠지고, `update` 로 상태가 `status ↔ alert` 를 건너면 리전 노드가 다시 삽입돼 보조기술이 새 긴급도로 재공지합니다
+- `Modal`·`Drawer` 에 `initialFocusRef` 가 생겼습니다. 기본 순서(본문 첫 컨트롤 → 닫기 → 패널)가 틀린 자리로 가는 화면 - 필터 토글 뒤의 검색 입력, 위험 확인의 "취소" 버튼 - 에서 자리를 지정합니다. 패널 안에 붙어 있고 지금 포커스 가능한 요소일 때만 적용되고, 아니면 기본 순서로 떨어집니다
+- `Table`·`DataView` 의 `selectRowAriaLabel` 이 둘째 인자로 **행 데이터**를 받습니다. 행을 이름으로 읽게 하려고 바깥 `rows` 를 클로저로 닫고 페이지 오프셋을 빼던 우회가 필요 없습니다 - `(_, row) => …` 형태로 `row.name` 을 그대로 씁니다
+- `Combobox` 가 고르지 않고 닫히면 검색어를 버립니다. 닫힌 동안은 선택 라벨이 가려 주다가 다시 여는 순간 예전 검색어가 되살아나고 같은 `onSearch` 가 또 나가던 문제 - 열고 닫기만으로 같은 요청이 6번 나갔습니다. 다시 열면 빈 검색어에 `defaultOptions` 입니다
+
 ## [3.23.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.1) - 2026-09-18
 - (렌더 변경) `Toast` 가 `maxCount` 를 넘겨 밀어내는 가장 오래된 토스트도 닫기 버튼과 같은 퇴출 모션으로 사라집니다. 지금까지는 한 프레임에 잘려 나갔고, 그 안에 포커스가 있었으면 `body` 로 떨어져 다음 Tab 이 문서 처음부터 시작했습니다(WCAG 2.4.3). 이제 인접 토스트로 넘어갑니다. `maxCount` 가 0 이하면 예전처럼 아무것도 그리지 않습니다
 - `selectable` 인 `Table` 의 미선택 행에 `aria-selected="false"` 가 붙습니다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없었습니다. 선택 개념이 없는 표는 그대로 속성이 없습니다. `DataView` 도 함께 고쳐집니다
