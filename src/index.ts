@@ -77,6 +77,13 @@ export type {
 } from "./ui/navigation/sidebar";
 export { Sidebar, SidebarItem, SidebarSection } from "./ui/navigation/sidebar";
 export type {
+	StepperOrientation,
+	StepperProps,
+	StepperStatus,
+	StepperStep,
+} from "./ui/navigation/stepper";
+export { Stepper } from "./ui/navigation/stepper";
+export type {
 	TabListProps,
 	TabPanelProps,
 	TabProps,
@@ -153,7 +160,13 @@ export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
 export { Skeleton } from "./ui/feedback/skeleton";
 export type { SpinnerProps } from "./ui/feedback/spinner";
 export { Spinner } from "./ui/feedback/spinner";
-export type { ToastProviderProps, ToastVariant } from "./ui/feedback/toast";
+export type {
+	ToastAction,
+	ToastOptions,
+	ToastPatch,
+	ToastProviderProps,
+	ToastVariant,
+} from "./ui/feedback/toast";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/use-toast";
 export type { TopLoadingProps } from "./ui/feedback/top-loading";

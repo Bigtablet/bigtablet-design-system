@@ -39,6 +39,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [BottomNav](#bottomnav)
   - [NavBar](#navbar)
   - [Breadcrumb](#breadcrumb)
+  - [Stepper](#stepper)
 - [Overlay](#overlay)
   - [Modal](#modal)
   - [Drawer](#drawer)
@@ -586,6 +587,7 @@ import { Settings } from 'lucide-react';
 - **로딩 표시** — 조회 중 스피너
 - **응답 경합 차단** — 늦게 도착한 이전 쿼리의 결과가 최신 목록을 덮지 않는다. 타이핑이 빠르면 순서가 뒤집히고, 그러면 방금 친 글자와 무관한 후보가 남는다
 - **"검색 전" 과 "결과 없음" 구분** — 같은 문구로 묶으면 검색 전 빈 목록이 실패처럼 읽힌다
+- **고르지 않고 닫으면 검색어를 버린다** — 남기면 닫힌 동안은 선택 라벨이 가려 주다가 다시 여는 순간 예전 검색어가 되살아나고, 같은 조회가 또 나간다. 다시 열면 빈 검색어에 `defaultOptions`
 
 `Dropdown` 과 언제 갈리나 — 옵션을 이미 다 갖고 있으면 `Dropdown`(+`searchable`), 서버에서 가져와야
 하면 `Combobox`.
@@ -637,7 +639,7 @@ import { Settings } from 'lucide-react';
 | `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
 | `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
-| `selectRowAriaLabel` | `(index: number) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. 인자는 `pagination.pageSize` 를 반영한 전체 순번 |
+| `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
 
 동작 규칙 세 가지:
 
@@ -645,17 +647,13 @@ import { Settings } from 'lucide-react';
 - **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
 - **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
 
-> **선택 체크박스 라벨은 순번만 읽는다.** 기본값이 `"13번째 행 선택"` 이라 스크린리더 사용자는
-> 어떤 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 에 바깥
-> `rows` 를 닫아 넘긴다 — 인자는 `Table` 과 같은 **전체 순번**이라, 페이지가 있으면
-> `pagination.pageSize` 만큼 빼서 그 쪽의 행을 찾는다.
+> **선택 체크박스 라벨은 기본값이 순번이다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
+> 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
+> 쓴다 - 그 행의 데이터가 그대로 온다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
+> 오프셋 계산이 필요 없다.
 >
 > ```tsx
-> const offset = (page - 1) * SIZE;
-> <DataView
->   pagination={{ page, totalPages, pageSize: SIZE, onPageChange: setPage }}
->   selectRowAriaLabel={(index) => `${rows[index - offset].name} 선택`}
-> />
+> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
 > ```
 
 ### 문장 속 링크 (`.text_link`)
@@ -1508,7 +1506,36 @@ function YourComponent() {
     </div>
   );
 }
+
+// 진행 토스트 - 띄운 뒤 같은 토스트를 바꾼다
+const id = toast.info('업로드 중…', { duration: Infinity });
+await upload();
+toast.update(id, { variant: 'success', message: '업로드 완료', duration: 3000 });
+
+// 실행 취소 - 버튼을 누르면 onClick 뒤 토스트가 닫힌다
+toast.message('항목이 삭제되었습니다', {
+  duration: 6000, // 기본 3초는 누르기에 짧다
+  action: { label: '실행 취소', onClick: restore },
+});
+
+// 프로그램으로 닫기
+toast.dismiss(id);
 ```
+
+#### `useToast()` 반환
+
+| 함수 | 시그니처 | 설명 |
+|------|---------|------|
+| `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환한다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions` |
+| `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫는다. 없는 id·퇴출 중인 id 는 무시 |
+| `update` | `(id, patch) => void` | `message`·`variant`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
+
+**`ToastOptions`**
+
+| 필드 | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `3000` | 자동 닫힘까지의 ms. **`Infinity`** 면 진행 바가 없고 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 |
+| `action` | `{ label: string; onClick: () => void }` | - | 메시지 옆 텍스트 버튼. 누르면 `onClick` 뒤 토스트가 닫힌다 |
 
 #### `ToastProvider` props
 
@@ -2136,7 +2163,7 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
 | 깊은 위계(3단 이상)의 페이지에서 현재 위치 표시 | ✅ Breadcrumb |
 | 글로벌 페이지 네비게이션 | ❌ **NavBar / Sidebar** |
 | 같은 페이지 내 섹션 전환 | ❌ **Tabs** |
-| 순서가 있는 step indicator (체크아웃 등) | ❌ Stepper (별도 컴포넌트) |
+| 순서가 있는 step indicator (체크아웃 등) | ❌ **[Stepper](#stepper)** |
 | 평탄한 페이지 구조 (위계 1단) | ❌ 사용 안 함 |
 
 #### items 동작
@@ -2241,6 +2268,62 @@ const router = useRouter();
 
 ---
 
+### Stepper
+
+다단계 폼의 진행 표시. 가입·온보딩·결제처럼 **몇 단계 중 어디**를 보여 준다.
+
+```tsx
+import { Stepper } from '@bigtablet/design-system';
+
+<Stepper
+  steps={[
+    { id: 'account', label: '계정' },
+    { id: 'profile', label: '프로필', description: '이름과 소속' },
+    { id: 'done', label: '완료' },
+  ]}
+  current={1}
+  onStepClick={setStep}
+/>
+```
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 사용자가 순서대로 밟아 가는 절차 (가입·결제·온보딩) | ✅ Stepper |
+| 시간 순 **기록** (주문 추적, 승인 이력, 활동 로그) | ❌ **Timeline** |
+| 같은 페이지 안 섹션 전환 | ❌ **Tabs** |
+| 페이지 위계 표시 | ❌ **Breadcrumb** |
+
+#### 동작
+
+- 상태는 `current` 인덱스 하나에서 파생된다 - 앞은 `done`, 지금은 `active`, 뒤는 `pending`. 단계마다 상태를 따로 관리하지 않는다
+- `<ol>` 로 렌더한다. 현재 단계 `<li>` 에 `aria-current="step"`, 지나간 단계에는 시각 숨김 텍스트 **"완료"**, 현재 단계에는 **"현재 단계"** 가 붙는다 - 색·체크 모양만으로 상태를 전하지 않는다 (WCAG 1.4.1)
+- 모양으로도 갈린다 - `done` 체크, `active` 번호(강조), `pending` 빈 원에 번호
+- `onStepClick` 을 주면 모든 단계가 `<button>` 이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` + `tabindex="-1"` 이다 - 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 컴포넌트가 열지 않고, 앞으로 가는 길은 화면의 "다음" 버튼이 담당한다. 태그를 클릭 가능 여부로 가르지 않는 이유는 되돌아간 순간 그 단계의 요소가 바뀌어 포커스가 유실되기 때문이다
+- 연결선은 마지막 단계에서 끊긴다. `isLast` 계산은 소비자 몫이 아니다
+
+**Stepper Props** (`<ol>` 속성 상속, `onClick` 제외)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `StepperStep[]` | required | 순서대로 |
+| `current` | `number` | required | 현재 단계 인덱스 (0-based) |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 배치 방향. 세로는 좁은 패널이나 설명이 긴 단계에 |
+| `onStepClick` | `(index: number, step: StepperStep) => void` | - | 지나간 단계를 눌렀을 때. 주면 모든 단계가 버튼이 되고 지나간 단계만 눌린다 |
+
+**StepperStep**
+
+| 필드 | Type | Description |
+|------|------|-------------|
+| `id` | `string \| number` | 목록 키 |
+| `label` | `ReactNode` | 단계 이름. **인라인 내용만** - 클릭 가능한 단계는 `<button>` 안에 그려진다 |
+| `description` | `ReactNode` | 이름 아래 짧은 설명. 인라인 내용만 |
+
+> 숨김 상태 텍스트("완료"·"현재 단계")는 [LocaleProvider](#localeprovider) 의 `stepper.done`·`stepper.current` 로 바꾼다.
+
+---
+
 ## Overlay
 
 ### Modal
@@ -2277,6 +2360,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 #### 접근성 이름은 필수다
 
@@ -2392,6 +2476,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
 | `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
 | `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
+| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 
 > 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
@@ -2410,6 +2495,14 @@ const [isOpen, setIsOpen] = useState(false);
 초기 포커스 순서는 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 이다. 첫 조작이 "닫기" 가 되면 Space/Enter 한 번에 모달이 사라지고 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 하므로, 본문에 컨트롤이 있으면 그쪽이 이긴다.
 
 **footer 는 초기 포커스 대상이 아니다.** `children` 없이 `footer` 만 쓰는 확인 모달에서 footer 첫 자리가 destructive 액션인 패턴이 흔해, 그리로 포커스가 가면 열자마자 Enter 한 번에 삭제가 실행된다. 그런 모달은 닫기 버튼으로 간다. 탭 순환에는 모두 남는다. `Drawer` 도 같다.
+
+기본 순서가 틀린 자리로 가는 화면은 `initialFocusRef` 로 자리를 지정한다 - 본문 첫 컨트롤이 필터 토글인 검색 모달은 검색 입력으로, 위험 확인 모달은 footer 의 **취소**로. 지정한 요소는 패널 안에 붙어 있어야 하고, 아니면 기본 순서로 떨어진다.
+
+```tsx
+const cancelRef = useRef<HTMLButtonElement>(null);
+<Modal open title="프로젝트 삭제" initialFocusRef={cancelRef}
+  footer={<><Button danger onClick={remove}>삭제</Button><Button ref={cancelRef} onClick={close}>취소</Button></>} />
+```
 
 #### 오버레이 클릭 — 폼 드로어에서는 끌 것
 
@@ -4009,7 +4102,7 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
 | `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
 | `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
-| `selectRowAriaLabel` | `(index: number) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. 인자는 `rowIndexOffset` 이 더해진 전체 순번 |
+| `selectRowAriaLabel` | `(index: number, row: T) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. `index` 는 `rowIndexOffset` 이 더해진 전체 순번, `row` 는 그 행의 데이터 - 번호 대신 이름으로 읽히게 할 때 |
 | `rowIndexOffset` | `number` | `0` | 이 표의 첫 행이 전체에서 몇 번째인지(0-based). 서버 페이지네이션에서 행 번호가 쪽마다 1 로 되돌아가지 않게 한다 |
 | `className` | `string` | - | 루트 wrapper 에 추가할 className |
 

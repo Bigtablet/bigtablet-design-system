@@ -252,6 +252,48 @@ describe("Combobox", () => {
 		expect(document.getElementById(active as string)).toHaveTextContent("김민준");
 	});
 
+	it("drops the query on Escape so reopening neither restores it nor searches again", async () => {
+		// 닫힌 동안은 value.label 이 가려 줘서 멀쩡해 보이다가, 다시 여는 순간 예전 검색어가
+		// 되살아나고 같은 조회가 또 나갔다(#694).
+		const onSearch = vi.fn().mockResolvedValue(OPTIONS);
+		render(<Combobox onSearch={onSearch} value={OPTIONS[0]} debounceMs={10} />);
+		const input = screen.getByRole("combobox");
+
+		open();
+		type("xyz");
+		await waitFor(() => expect(onSearch).toHaveBeenCalledTimes(1));
+
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(input).toHaveValue(OPTIONS[0].label);
+
+		open();
+		expect(input).toHaveValue("");
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(50);
+		});
+		expect(onSearch).toHaveBeenCalledTimes(1);
+		expect(screen.getByText("검색어를 입력하세요")).toBeInTheDocument();
+	});
+
+	it("drops the query on outside click too", async () => {
+		const onSearch = vi.fn().mockResolvedValue(OPTIONS);
+		render(<Combobox onSearch={onSearch} debounceMs={10} />);
+		const input = screen.getByRole("combobox");
+
+		open();
+		type("xyz");
+		await waitFor(() => expect(onSearch).toHaveBeenCalledTimes(1));
+
+		fireEvent.mouseDown(document.body);
+		open();
+
+		expect(input).toHaveValue("");
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(50);
+		});
+		expect(onSearch).toHaveBeenCalledTimes(1);
+	});
+
 	it("shows the selected label once the panel is closed", async () => {
 		render(
 			<Combobox onSearch={vi.fn().mockResolvedValue(OPTIONS)} debounceMs={10} value={OPTIONS[0]} />,

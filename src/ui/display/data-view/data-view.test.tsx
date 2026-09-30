@@ -234,7 +234,7 @@ describe("DataView", () => {
 	});
 
 	it("passes custom selection labels through to the table", () => {
-		// 기본 라벨은 순번만 읽는다 - 행을 이름으로 구분하려면 소비자가 바깥 rows 를 닫아 넘긴다.
+		// 기본 라벨은 순번만 읽는다 - 행을 이름으로 구분하려면 둘째 인자로 오는 행 데이터를 쓴다.
 		render(
 			<DataView
 				query={{ data: USERS }}
@@ -242,7 +242,7 @@ describe("DataView", () => {
 				rowKey={rowKey}
 				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
 				selectAllAriaLabel="사용자 전체 선택"
-				selectRowAriaLabel={(index) => `${USERS[index].name} 선택`}
+				selectRowAriaLabel={(_, row) => `${row.name} 선택`}
 			/>,
 		);
 
@@ -260,10 +260,12 @@ describe("DataView", () => {
 				rowKey={rowKey}
 				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
 				pagination={{ page: 3, totalPages: 5, pageSize: 10, onPageChange: vi.fn() }}
-				selectRowAriaLabel={(index) => `${index + 1}행 선택`}
+				selectRowAriaLabel={(index, row) => `${index + 1}행 ${row.name} 선택`}
 			/>,
 		);
 
-		expect(screen.getByRole("checkbox", { name: "21행 선택" })).toBeInTheDocument();
+		// 첫 인자는 전체 순번, 둘째는 그 쪽의 행 - 오프셋을 소비자가 다시 계산할 필요가 없다.
+		expect(screen.getByRole("checkbox", { name: "21행 박상민 선택" })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: "22행 김민준 선택" })).toBeInTheDocument();
 	});
 });

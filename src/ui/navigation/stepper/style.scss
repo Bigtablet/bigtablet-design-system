@@ -1,0 +1,186 @@
+@use "src/styles/token" as token;
+
+// Stepper - 다단계 절차의 진행 표시.
+//
+// 연결선은 별도 요소 없이 그린다 - 가로는 단계(li)의 `::after` 가 남은 폭을 채우고, 세로는
+// 인디케이터의 `::before` 가 아래로 내려간다. 마지막 단계에는 그리지 않아 소비자가 `isLast`
+// 를 계산할 일이 없다 (Timeline 과 같은 규칙).
+
+$indicator: 28px;
+
+.stepper {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  font-family: token.$font_family_primary;
+
+  &_step {
+    position: relative;
+    display: flex;
+    min-width: 0;
+  }
+
+  // 클릭 가능 여부와 무관하게 같은 박스 - 버튼일 때만 커서·포커스 링이 더해진다.
+  &_content {
+    display: flex;
+    align-items: flex-start;
+    gap: token.$spacing_8;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+  }
+
+  &_button {
+    cursor: pointer;
+    border-radius: token.$radius_sm;
+    transition: background-color token.$transition_fast;
+
+    &:hover:not([aria-disabled="true"]) {
+      background-color: token.$color_bg_solid_dim;
+    }
+
+    // 현재·이후 단계 - 태그는 button 으로 유지하되 눌리는 표면처럼 보이지 않게
+    &[aria-disabled="true"] {
+      cursor: default;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  &_indicator {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: $indicator;
+    height: $indicator;
+    border-radius: token.$radius_full;
+    background: token.$color_bg_solid_dim;
+    color: token.$color_text_caption;
+    @include token.body_small_medium;
+    @include token.tabular_nums;
+    transition:
+      background-color token.$transition_fast,
+      color token.$transition_fast;
+  }
+
+  &_text {
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+    min-width: 0;
+    // 인디케이터(28px)의 세로 중심에 한 줄 라벨이 맞도록
+    padding-top: token.$spacing_4;
+  }
+
+  &_label {
+    color: token.$color_text_heading;
+    @include token.body_medium_medium;
+    overflow-wrap: anywhere;
+  }
+
+  &_description {
+    color: token.$color_text_caption;
+    @include token.body_small;
+    overflow-wrap: anywhere;
+  }
+
+  &_sr_only {
+    @include token.visually_hidden;
+  }
+
+  // ── 상태 ────────────────────────────────────────────────────────────────
+
+  &_step_done &_indicator {
+    background: token.$color_status_success_container;
+    color: token.$color_status_success_on_container;
+  }
+
+  &_step_active &_indicator {
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+  }
+
+  // 아직 오지 않은 단계는 빈 원 + 약한 제목 - 색을 못 보는 사용자에게도 지나간 단계와 갈린다.
+  &_step_pending &_indicator {
+    background: transparent;
+    border: token.$border_width_thick solid token.$color_border_default;
+  }
+
+  &_step_pending &_label {
+    color: token.$color_text_caption;
+  }
+
+  // ── 가로 ────────────────────────────────────────────────────────────────
+
+  &_horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: token.$spacing_8;
+
+    .stepper_step {
+      flex: 1;
+      align-items: flex-start;
+    }
+
+    // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 인디케이터 세로 중심에 맞춘다.
+    .stepper_step:not(:last-child)::after {
+      content: "";
+      flex: 1;
+      height: token.$border_width_standard;
+      margin-top: calc($indicator / 2);
+      margin-left: token.$spacing_8;
+      background: token.$color_border_default;
+    }
+
+    // 지나온 구간의 선은 진행 색 - 어디까지 왔는지 선으로도 읽힌다.
+    .stepper_step_done:not(:last-child)::after {
+      background: token.$color_accent_default;
+    }
+  }
+
+  // ── 세로 ────────────────────────────────────────────────────────────────
+
+  &_vertical {
+    flex-direction: column;
+
+    .stepper_step {
+      padding-bottom: token.$spacing_20;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .stepper_step:not(:last-child) .stepper_indicator::before {
+      content: "";
+      position: absolute;
+      top: $indicator;
+      bottom: calc(-1 * token.$spacing_4);
+      left: calc($indicator / 2);
+      width: token.$border_width_standard;
+      background: token.$color_border_default;
+      transform: translateX(-50%);
+    }
+
+    .stepper_step_done:not(:last-child) .stepper_indicator::before {
+      background: token.$color_accent_default;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepper_button,
+  .stepper_indicator {
+    transition: none;
+  }
+}

@@ -407,6 +407,24 @@ describe("Table selection", () => {
 		expect(screen.getByRole("checkbox", { name: "Select row 2" })).toBeInTheDocument();
 	});
 
+	it("passes the row to selectRowAriaLabel so labels can use its data", () => {
+		// 번호만으로는 어떤 행인지 알 수 없다 - 라벨을 만드는 쪽이 행을 이미 들고 있으니 넘긴다.
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+				rowIndexOffset={20}
+				selectRowAriaLabel={(index, row) => `${index + 1}: ${row.name} 선택`}
+			/>,
+		);
+		expect(screen.getByRole("checkbox", { name: `21: ${rows[0].name} 선택` })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: `22: ${rows[1].name} 선택` })).toBeInTheDocument();
+	});
+
 	it("disables the select-all checkbox while isLoading", () => {
 		render(
 			<Table
@@ -523,15 +541,16 @@ describe("Table isLoading guards", () => {
 		// 스크롤 영역을 만든 쪽이 DS 다 - 키보드로 그 안을 움직일 수단도 DS 가 줘야 한다
 		// (axe scrollable-region-focusable). stickyHeader 를 켜면 래퍼가 세로 스크롤
 		// 컨테이너가 되므로 특히 필요하다.
-		const scrollWidth = vi
-			.spyOn(HTMLElement.prototype, "scrollWidth", "get")
-			.mockReturnValue(800);
-		const clientWidth = vi
-			.spyOn(HTMLElement.prototype, "clientWidth", "get")
-			.mockReturnValue(400);
+		const scrollWidth = vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(800);
+		const clientWidth = vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(400);
 		try {
 			const { container } = render(
-				<Table<Row> ariaLabel="넓은 표" columns={columns} data={rows} keyExtractor={(r: Row) => r.id} />,
+				<Table<Row>
+					ariaLabel="넓은 표"
+					columns={columns}
+					data={rows}
+					keyExtractor={(r: Row) => r.id}
+				/>,
 			);
 			expect(container.querySelector(".table_wrapper")).toHaveAttribute("tabindex", "0");
 		} finally {
@@ -540,7 +559,12 @@ describe("Table isLoading guards", () => {
 		}
 
 		const { container } = render(
-			<Table<Row> ariaLabel="좁은 표" columns={columns} data={rows} keyExtractor={(r: Row) => r.id} />,
+			<Table<Row>
+				ariaLabel="좁은 표"
+				columns={columns}
+				data={rows}
+				keyExtractor={(r: Row) => r.id}
+			/>,
 		);
 		expect(container.querySelector(".table_wrapper")).not.toHaveAttribute("tabindex");
 	});
