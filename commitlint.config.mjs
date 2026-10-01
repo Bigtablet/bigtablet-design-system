@@ -7,7 +7,7 @@
  *
  * **본문은 보지 않는다.** 배경을 한글로 적는 것은 이 규칙이 노리는 바가 아니다.
  */
-const HANGUL_PATTERN = /[가-힣ㄱ-ㅎㅏ-ㅣ]/;
+const HANGUL_PATTERN = /\p{Script=Hangul}/u;
 
 /** @type {import('@commitlint/types').UserConfig} */
 export default {
