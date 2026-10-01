@@ -19,6 +19,12 @@ updates:
       time: "09:00"
       timezone: "Asia/Seoul"
     open-pull-requests-limit: 5
+    # `pnpm-workspace.yaml` 의 `minimumReleaseAge: 1440` 과 맞춘다. pnpm 은 `--frozen-lockfile` 설치에서도
+    # 24시간 미만 버전을 거절하므로, 묶음 PR 에 갓 나온 버전이 하나라도 섞이면 CI 설치가 통째로 실패한다.
+    # cooldown 은 버전 업데이트에만 걸리고 보안 업데이트 PR 에는 걸리지 않는다 - 보안 PR 이 그 이유로
+    # 막히면 `minimumReleaseAgeExclude` 로 그 패키지만 연다.
+    cooldown:
+      default-days: 1
     target-branch: develop
     labels:
       - dependencies
