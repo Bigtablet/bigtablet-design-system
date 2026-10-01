@@ -4,6 +4,64 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.25.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.25.0) - 2026-09-30
+- 모든 컴포넌트의 props 타입에서 `dangerouslySetInnerHTML` 이 빠집니다(시큐어코딩 가이드 W-1-4-6). 지금까지는 `ImageCropper` 외 전부가 HTML 속성 타입을 그대로 확장해 `<Button dangerouslySetInnerHTML={…} />` 가 타입 검사를 통과하고 루트 요소에 닿았습니다. 이제 컴파일 에러이고, 마크업은 `children` 으로 넘깁니다. 런타임 동작은 같습니다 - [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.25.0 섹션
+- `Accordion` 패널 요소가 `div[role="region"]` 에서 `<section>` 으로 바뀝니다. 접근성 트리(region + 헤더 이름)와 화면은 같고, `div.accordion_panel` 처럼 태그로 고른 앱 CSS 만 영향을 받습니다
+- `Modal`·`Drawer` 안에 둔 `Combobox`·`Dropdown` 의 목록을 Esc 로 닫으면 뒤의 Modal 까지 함께 닫히던 문제를 고쳤습니다. 이제 첫 Esc 는 목록만, 다음 Esc 가 Modal 을 닫습니다. 목록은 열려 있을 때만 Esc 를 소비하고, 오버레이 스택은 이미 `preventDefault` 된 Esc 를 무시합니다 - React·Vanilla 동일
+- (개발) dev 전용 전이 의존성 보안 패치 - `undici` `^7.29.1`·`fast-uri` `^3.1.8` override 상향, `brace-expansion` `^5.0.12`·`nanoid@5` `^5.1.16` 추가 (`pnpm audit` 15건 → 0, 배포 패키지 무관)
+- (개발) `packageManager` 를 `pnpm@10.34.6` 으로 올립니다. 10.20.0 은 lockfile 재생성 때 네이티브 바인딩의 `libc` 메타데이터를 지워 Dependabot 과 번갈아 되돌리고 있었습니다
+- (개발) `biome.json` 에 security 규칙 4종을 명시하고 `noExplicitAny`·`noFloatingPromises` 를 error 로 올립니다(가이드 W-9-2-1). 기존 진단 35건을 정리해 `biome check .` 가 0 건입니다
+
+## [3.24.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.24.0) - 2026-09-30
+- `Stepper` 가 생겼습니다 - 가입·온보딩·결제처럼 사용자가 순서대로 밟아 가는 절차의 진행 표시. `current` 인덱스 하나에서 상태가 파생되고, `<ol>` + `aria-current="step"` + 숨김 상태 텍스트로 색·모양만이 아니라 말로도 상태를 전합니다. `onStepClick` 을 주면 지나간 단계만 눌립니다 - 앞으로 건너뛰는 것은 그 사이 폼 검증을 우회하므로 열지 않습니다. 시간 순 기록은 `Timeline`, 밟아 가는 절차는 `Stepper` 입니다
+- `useToast()` 의 표시 함수가 **토스트 id** 를 반환하고 `dismiss(id)`·`update(id, patch)` 가 생겼습니다. "업로드 중… → 완료" 같은 진행 토스트와 "삭제됨 [실행 취소]" 같은 액션 버튼(`{ action: { label, onClick } }`)을 DS 가 소유합니다. `duration: Infinity` 면 저절로 닫히지 않습니다. 두 번째 인자로 ms 숫자를 주던 기존 호출은 그대로 동작합니다
+- (렌더 변경) 토스트의 라이브 리전이 아이콘·메시지만 감쌉니다. 닫기·액션 버튼은 밖으로 나가 "닫기" 가 함께 읽히던 소음이 빠지고, `update` 로 상태가 `status ↔ alert` 를 건너면 리전 노드가 다시 삽입돼 보조기술이 새 긴급도로 재공지합니다
+- `Modal`·`Drawer` 에 `initialFocusRef` 가 생겼습니다. 기본 순서(본문 첫 컨트롤 → 닫기 → 패널)가 틀린 자리로 가는 화면 - 필터 토글 뒤의 검색 입력, 위험 확인의 "취소" 버튼 - 에서 자리를 지정합니다. 패널 안에 붙어 있고 지금 포커스 가능한 요소일 때만 적용되고, 아니면 기본 순서로 떨어집니다
+- `Table`·`DataView` 의 `selectRowAriaLabel` 이 둘째 인자로 **행 데이터**를 받습니다. 행을 이름으로 읽게 하려고 바깥 `rows` 를 클로저로 닫고 페이지 오프셋을 빼던 우회가 필요 없습니다 - `(_, row) => …` 형태로 `row.name` 을 그대로 씁니다
+- `Combobox` 가 고르지 않고 닫히면 검색어를 버립니다. 닫힌 동안은 선택 라벨이 가려 주다가 다시 여는 순간 예전 검색어가 되살아나고 같은 `onSearch` 가 또 나가던 문제 - 열고 닫기만으로 같은 요청이 6번 나갔습니다. 다시 열면 빈 검색어에 `defaultOptions` 입니다
+
+## [3.23.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.1) - 2026-09-18
+- (렌더 변경) `Toast` 가 `maxCount` 를 넘겨 밀어내는 가장 오래된 토스트도 닫기 버튼과 같은 퇴출 모션으로 사라집니다. 지금까지는 한 프레임에 잘려 나갔고, 그 안에 포커스가 있었으면 `body` 로 떨어져 다음 Tab 이 문서 처음부터 시작했습니다(WCAG 2.4.3). 이제 인접 토스트로 넘어갑니다. `maxCount` 가 0 이하면 예전처럼 아무것도 그리지 않습니다
+- `selectable` 인 `Table` 의 미선택 행에 `aria-selected="false"` 가 붙습니다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없었습니다. 선택 개념이 없는 표는 그대로 속성이 없습니다. `DataView` 도 함께 고쳐집니다
+- (렌더 변경) Vanilla `Modal` 을 열린 채 `destroy()` 하면 `close()` 와 같은 정리를 합니다 - Escape 등록·스크롤 잠금에 더해 **`is-open` 클래스 제거, 포커스 복원, 우리가 붙인 `tabindex` 제거**까지. 지금까지는 모달이 화면에 열린 채 고정되고(리스너는 해제돼 닫을 길이 없었습니다), 포커스가 파괴된 패널 안에 남고, 같은 DOM 으로 다시 만든 `Modal` 이 남은 `tabindex` 를 "원래 있던 것" 으로 오인했습니다. `destroy()` 는 바인딩 해제라 `onClose` 만 부르지 않습니다
+- `Modal`(React·Vanilla 모두) 이 패널에 소비자가 미리 준 `tabindex` 를 보존합니다. focusable 자식이 없는 패널을 열 때 기존 값을 `-1` 로 덮고 닫을 때 지워 버려, `tabindex="0"` 을 준 패널이 한 번 열고 닫히면 탭 순서에서 영구히 빠졌습니다
+
+## [3.23.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.23.0) - 2026-09-15
+- `Field` 의 필수 표시가 보조기술에 닿습니다. 지금까지 `aria-required` 를 내보내던 입력은 16종 중 7종뿐이라, 나머지에서는 라벨 옆 `*`(`aria-hidden` 입니다)만 있고 스크린리더에는 필수 여부가 전혀 들리지 않았습니다. `Toggle` 은 `role="switch"` 에 직접, `FileInput` 은 네이티브 `required` 로, 묶음 입력(`DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput`)은 **안쪽 컨트롤마다** 붙습니다 - `role="group"` 은 그 속성을 허용하지 않습니다
+- `Dropdown`·`DatePicker`·`TimePicker`·`DateRangePicker` 에 `required` prop 이 생겼습니다. `Field` 밖에서 쓰거나 묶음 안쪽으로 필수 여부를 내려보낼 때 씁니다 - `Field` 안에서는 `Field` 가 이깁니다
+- `DataView` 에 `selectAllAriaLabel`·`selectRowAriaLabel` 이 생겼습니다. 선택 체크박스 라벨이 `"13번째 행 선택"` 에 고정돼 있어, 스크린리더 사용자는 어떤 행을 고르는지 번호로만 들었습니다. 인자는 `Table` 과 같은 전체 순번입니다
+- `Combobox`·`TagInput`·`RadioGroup` 에 준 `aria-label`·`aria-describedby` 가 실제 컨트롤에 붙습니다. 지금까지는 role 없는 바깥 래퍼에 붙어 보조기술에 닿지 않았습니다 - 특히 `RadioGroup` 은 `label` prop 을 쓰지 않으면 그룹에 이름을 붙일 방법이 아예 없었습니다
+- `ListItem` 에 `onKeyDown` 을 함께 주면 Enter·Space 활성화가 사라지던 문제를 고쳤습니다. 소비자 핸들러가 내부 핸들러를 통째로 덮었습니다. `role="link"` 로 덮어쓴 `ListItem` 이 Space 로 눌리던 것도 함께 고쳤습니다(링크에서 Space 는 스크롤입니다) - `Card`·`MediaCard` 와 같은 규칙입니다
+
+## [3.22.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.22.0) - 2026-09-15
+- (렌더 변경) `Field` 안에서는 **Field 가 준 `id`·설명·에러가 소비자 값보다 우선합니다.** `Radio`·`TextField`·`Textarea` 는 소비자가 직접 준 `id` 나 `aria-*` 가 뒤에 덮여, 라벨이 문서에 없는 id 를 가리키고 라벨 클릭이 죽었습니다. **`Field` 안의 입력에 `id` 를 직접 주던 코드는 그 값이 더 이상 쓰이지 않습니다** - 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.22.0 섹션. 이 항목은 3.21.1 에 먼저 나갔고, 소비자 코드가 깨지는 변경이라 minor 로 다시 올립니다
+- (렌더 변경) `Modal`·`Drawer` 의 초기 포커스가 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 순서가 됩니다. 지금까지는 닫기 버튼이 첫 후보라 열자마자 Space/Enter 한 번에 모달이 사라지고, 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 했습니다. footer 는 초기 포커스 대상이 아닙니다 - 확인 모달의 footer 첫 자리가 destructive 인 패턴이 흔합니다
+- (렌더 변경) `onClick` 을 준 `Card`·`MediaCard` 가 키보드로 조작됩니다. 마우스로는 눌리는데 탭 순서에 없어 키보드로는 도달조차 못 하던 문제입니다(WCAG 2.1.1). 포커스 링이 새로 보입니다. `clickable`·`interactive` 는 겉모습 전용 그대로이고, **`onClick` 을 줄 때 함께 켜야** 마우스 사용자에게도 단서가 남습니다
+- (렌더 변경) `Card`·`MediaCard`·`ListItem` 에서 Enter·Space 를 누르고 있어도 `onClick` 이 한 번만 실행됩니다. keydown 이 반복돼 삭제 같은 동작이 여러 번 나갔습니다
+- `Table` 에 `rowIndexOffset` 이 생겼습니다. 한 쪽만 받아 그리는 표에서 행 선택 체크박스가 쪽마다 "1번째 행 선택" 으로 되돌아가, 3쪽인지 1쪽인지 스크린리더로는 구분할 수 없었습니다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산합니다
+- `Checkbox` 가 `Field` 밖에서 소비자가 준 `aria-required` 를 지우지 않습니다. 필수 동의 체크박스를 `Field` 없이 쓰면 그 정보가 보조기술에 전혀 닿지 않았습니다
+- `FocusTrapOptions` 타입을 함께 내보냅니다. `useFocusTrap` 은 공개 export 인데 새 옵션 타입은 이름을 쓸 수 없었습니다
+
+## [3.21.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.1) - 2026-09-15
+- (렌더 변경) `Table` 의 `stickyHeader` 가 실제로 붙습니다. 표 래퍼가 `overflow-x: auto` 라 자기 자신이 스크롤 영역인데 높이 제한은 바깥에 있어, 헤더가 행과 함께 밀려 나갔습니다. **감싼 요소에 확정된 높이**(`height: 240px` 등)를 주면 래퍼가 그것을 물려받습니다
+- (렌더 변경) controlled 로 쓴 `TextField`·`Textarea` 가 부모가 준 `value` 를 따릅니다. 부모가 입력을 거절하면(길이 제한·검증 실패) 화면엔 거절된 글자가 남고 부모 상태는 예전 값이라 둘이 갈렸습니다. **`value` 를 비동기로 갱신하는 화면에서는 그 사이 입력이 되돌아가 보입니다** - 평범한 controlled input 과 같은 동작입니다
+- (렌더 변경) 토스트를 마우스로 닫아도 옆 토스트가 그대로 남던 문제를 고쳤습니다. 닫을 때 포커스를 옆 토스트로 넘기는데 그것이 자동 닫힘 타이머를 멈춰 세웠습니다. 이제 키보드로 옮겨 갔을 때만 멈춥니다
+- (렌더 변경) `Tabs`·`NavBar` 의 밑줄이 탭·링크가 나중에 추가되거나 라벨 글자가 바뀔 때 따라옵니다
+- (렌더 변경) `DataView` 가 목록에서 사라진 선택을 정리합니다. 검색어를 바꾼 뒤에도 "N개 선택됨" 이 남아 보이지 않는 행에 삭제가 실행됐습니다. 페이지네이션을 쓰면 화면 밖 선택은 그대로 둡니다
+- (렌더 변경) `Avatar` 가 깨진 `src` 뒤에 새 사진을 받으면 다시 보여 줍니다. 한 번 실패하면 계속 이니셜만 나왔습니다
+- (렌더 변경) `Field` 안에서는 **Field 가 준 `id`·설명·에러가 소비자 값보다 우선합니다.** `Radio`·`TextField`·`Textarea` 는 소비자가 직접 준 `id` 나 `aria-*` 가 뒤에 덮여, 라벨이 문서에 없는 id 를 가리키고 라벨 클릭이 죽었습니다. **`Field` 안의 입력에 `id` 를 직접 주던 코드는 그 값이 더 이상 쓰이지 않습니다** - 라벨 연결은 `Field` 가 담당합니다. `Field` 밖에서는 소비자가 준 `id`·`aria-*` 가 그대로 남습니다
+- `DatePicker` 가 자기 범위 밖 날짜를 내보내지 않습니다. 연·월을 바꿀 때 일이 그대로 따라가 `minDate` 이전이나 미래 날짜가 나갔고, 제약이 충돌하면 고를 수 없는 달·일이 목록에 남아 있었습니다
+- `Field` 가 감싼 모든 입력이 에러 상태를 보조기술에 전달합니다. 화면엔 빨간 문구가 있는데 `Checkbox`·`Toggle`·`Radio`·`ImageCropper` 는 정상 입력으로 보였습니다. 입력이 자체 도움말을 그릴 때 그것도 함께 읽힙니다
+- 닫힌 `Dropdown`·`Combobox` 에서 `End` 키가 마지막 항목을 고릅니다. 목록만 열리고 첫 항목이 활성화됐습니다. `options` 를 인라인 배열로 주는 화면에서 부모가 리렌더할 때 활성 표시가 첫 항목으로 튀던 것도 고쳤습니다
+- `Combobox` 가 부모 리렌더에 디바운스를 되감지 않습니다. 부모가 자주 리렌더하는 화면에서는 검색이 아예 실행되지 않고 스피너만 돌았습니다
+- `Menu` 항목을 고르면 포커스가 트리거로 돌아옵니다. 문서 맨 앞으로 떨어져 다음 `Tab` 이 처음부터 시작했습니다
+- 오버레이 안에서 `Tab` 이 밖으로 나가지 않습니다. 패널이 키 이벤트를 막아 `Modal`·`Drawer`·`Alert` 의 포커스 트랩이 동작하지 않았습니다
+- Vanilla JS 에서 `Escape` 가 최상단 오버레이만 닫습니다. `Modal` 위의 `Alert` 에서 한 번에 둘 다 닫혔습니다
+- `html` 에 `overflow` 를 지정한 앱에서도 배경 스크롤이 잠깁니다. 잠금 전 인라인 `overflow` 는 축까지 그대로 복원합니다
+- 닫힌 `Dropdown`·`Combobox` 가 `document` 리스너를 물고 있지 않습니다. 행마다 팝업을 두는 목록 화면에서 클릭 한 번에 행 수만큼 핸들러가 돌았습니다
+- `Toast` id 가 보안 컨텍스트에 의존하지 않습니다. `http` 사내망 주소에서 첫 토스트가 예외로 죽었습니다
+- `Accordion` 의 `key` 에 공백이 있으면 ARIA 참조가 깨지던 문제와, `Prose` 가 나중에 그려진 넓은 표에 탭 정지를 붙이지 못하던 문제를 고쳤습니다
+
 ## [3.21.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.21.0) - 2026-09-14
 - (렌더 변경) `scrollbar-gutter: stable` 을 쓰는 앱에서 Modal·Drawer·Alert 오른쪽에 딤이 닿지 않는 15px 띠가 남고, 그 옆에 표나 카드가 닿으면 경계에 세로선이 보이던 문제를 고쳤습니다. 잠금이 그 자리를 회수해 오버레이가 실제로 덮습니다 - 색으로 흉내내던 이전 방식은 문서 배경이 단색일 때만 맞았습니다
 - (렌더 변경) 잠금 중 회수된 폭은 `--bt-scrollbar-width` 로 계속 노출되고, DS 오버레이와 `Toast` 가 그 값으로 자기 위치를 상쇄합니다. **오른쪽에 고정된 앱 요소(FAB·플로팅 툴바·자체 토스트)는 같은 보정이 필요합니다** - `right: calc(16px + var(--bt-scrollbar-width, 0px))`. 3.17~3.20 안내를 따라 보정을 걷어냈던 앱은 다시 넣어야 합니다. 자세한 절차는 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.21.0 섹션
