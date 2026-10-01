@@ -234,7 +234,8 @@ export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }
 		else if (e.key === "End") next = tabs.length - 1;
 		const target = tabs[next];
 		const targetValue = target?.dataset.value;
-		if (target && targetValue) {
+		// `value=""` 탭도 클릭으로는 선택되므로 빈 문자열을 거르지 않는다
+		if (target && targetValue !== undefined) {
 			ctx.setValue(targetValue);
 			target.focus();
 		}
