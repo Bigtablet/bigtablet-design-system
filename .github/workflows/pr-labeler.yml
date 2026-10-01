@@ -17,6 +17,11 @@ on:
   pull_request_target:
     types: [opened, reopened, edited]
 
+# 워크플로 기본 권한은 읽기만 (시큐어코딩 가이드 W-2-3-2). 쓰기가 필요한 job 이 자기 블록에서 상향한다 -
+# job 레벨 `permissions` 는 이 값을 합치지 않고 통째로 대체한다.
+permissions:
+  contents: read
+
 # 같은 PR 에 연속 편집이 들어오면 마지막 것만 실행한다.
 concurrency:
   group: pr-labeler-${{ github.event.pull_request.number }}

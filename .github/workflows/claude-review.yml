@@ -31,6 +31,11 @@ on:
 # issue_comment)만 공유 그룹(`-review`)으로 묶어 supersede 하고, 그 외 run 은 `run_id` 로 고유 그룹을
 # 줘 아무것도 cancel 하지 않게 한다. 대화형 답글(pull_request_review_comment)도 이 식의 두 조건에
 # 안 걸려 자동으로 `run_id` 고유 그룹 -> 진행 중인 리뷰를 취소하지 않는다.
+# 워크플로 기본 권한은 읽기만 (시큐어코딩 가이드 W-2-3-2). 쓰기가 필요한 job 이 자기 블록에서 상향한다 -
+# job 레벨 `permissions` 는 이 값을 합치지 않고 통째로 대체한다.
+permissions:
+  contents: read
+
 concurrency:
   group: >-
     claude-review-${{ github.event.issue.number || github.event.pull_request.number }}-${{
@@ -145,7 +150,7 @@ jobs:
       # pwn-request / untrusted-checkout 위험이 생긴다 (immutable SHA 여도 코드 자체가 신뢰 불가라 동일).
       # 그래서 head 를 로컬에 두지 않고, PR 변경분은 리뷰/답글 단계가 `gh pr diff`(GitHub API)로만
       # 읽는다 - 신뢰 불가 코드를 로컬에 두거나 실행하지 않는다. head SHA 는 `gh pr view` 로 조회.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ steps.prctx.outputs.base }}
           persist-credentials: false
@@ -154,7 +159,7 @@ jobs:
       # 판정 제출 + 인라인 코멘트. gh api 는 주지 않는다(리뷰는 gh pr review/comment 로 충분).
       - name: Review
         if: github.event_name != 'pull_request_review_comment' && steps.guard.outputs.has_secret == 'true'
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@12dd8d74c712f5f3669365b2369b558c495b1104 # v1.0.238
         with:
           # Claude LLM API 인증 (GitHub 인증과 별개).
           # secret 은 `claude setup-token` 으로 만든 OAuth 토큰(sk-ant-oat...) 이므로
@@ -266,7 +271,7 @@ jobs:
       - name: Answer inline thread
         id: answer
         if: github.event_name == 'pull_request_review_comment' && steps.guard.outputs.has_secret == 'true'
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@12dd8d74c712f5f3669365b2369b558c495b1104 # v1.0.238
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_REVIEW_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
