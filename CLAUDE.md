@@ -401,10 +401,13 @@ EOF
 | 브랜치 접두사 | 라벨 |
 |--------------|------|
 | `feat` | `Feature` |
-| `fix`, `style`, `refactor`, `config`, `delete`, `note`, `ci`, `etc` | `Fix` |
+| `fix`, `style`, `refactor`, `config`, `delete`, `note`, `etc` | `Fix` |
 | `bug` | `Bug` |
 | `docs` | `Docs` |
-| `release`, `deploy`, `develop`, `sync` | `Deploy` |
+| `deploy`, `develop`, `main` | `Deploy` |
+
+접두사는 위 Commit Labels 표에 있는 것만 쓴다 - `ci/` 는 없다(워크플로 변경은 `config/`). `develop`·`main` 은
+접두사가 아니라 릴리즈 PR(develop → main)·동기화 PR(main → develop)의 head 브랜치 이름이다.
 
 > `.github/workflows/pr-labeler.yml` 이 PR open/reopen/edit 시 위 매핑을 **자동 적용**하고,
 > 담당자가 비어 있으면 작성자를 자동 지정한다. 아래 `--label` / `--assignee @me` 는

@@ -54,14 +54,16 @@ jobs:
           # `label/domain` 의 첫 세그먼트. 슬래시가 없으면(예: `develop`) 이름 전체가 접두사.
           PREFIX="$(printf '%s' "${HEAD_REF%%/*}" | tr '[:upper:]' '[:lower:]')"
 
-          # 커밋 라벨(CLAUDE.md `Commit Labels`) -> 레포 라벨 매핑.
+          # 커밋 라벨(CLAUDE.md `Commit Labels`) -> 레포 라벨 매핑. 접두사는 커밋 라벨에 있는 것만 둔다.
+          # `develop`·`main` 은 접두사가 아니라 브랜치 이름 그대로 - 릴리즈 PR(develop -> main)과
+          # 동기화 PR(main -> develop)의 head 다. `release/`·`sync/` 우회 브랜치는 쓰지 않는다.
           case "$PREFIX" in
-            feat)                                              LABEL="Feature" ;;
-            fix|style|refactor|config|delete|note|ci|etc)      LABEL="Fix" ;;
-            bug)                                               LABEL="Bug" ;;
-            docs)                                              LABEL="Docs" ;;
-            release|deploy|develop|sync)                       LABEL="Deploy" ;;
-            *)                                                 LABEL="" ;;
+            feat)                                           LABEL="Feature" ;;
+            fix|style|refactor|config|delete|note|etc)      LABEL="Fix" ;;
+            bug)                                            LABEL="Bug" ;;
+            docs)                                           LABEL="Docs" ;;
+            deploy|develop|main)                            LABEL="Deploy" ;;
+            *)                                              LABEL="" ;;
           esac
 
           # --- 라벨 ---------------------------------------------------------
