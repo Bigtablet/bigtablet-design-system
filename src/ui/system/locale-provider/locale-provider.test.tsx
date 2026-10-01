@@ -39,8 +39,8 @@ describe("LocaleProvider", () => {
 				</span>
 			</LocaleProvider>,
 		);
-		expect(screen.getAllByTestId("out")[0].textContent).toBe("주문이 없습니다");
-		expect(screen.getAllByTestId("out")[1].textContent).toBe("닫기");
+		expect(screen.getAllByTestId("out")[0]!.textContent).toBe("주문이 없습니다");
+		expect(screen.getAllByTestId("out")[1]!.textContent).toBe("닫기");
 	});
 
 	it("overrides on top of a non-default base", () => {
@@ -50,8 +50,8 @@ describe("LocaleProvider", () => {
 				<Probe msgKey="modal.close" />
 			</LocaleProvider>,
 		);
-		expect(screen.getAllByTestId("out")[0].textContent).toBe("Nothing here");
-		expect(screen.getAllByTestId("out")[1].textContent).toBe("Close");
+		expect(screen.getAllByTestId("out")[0]!.textContent).toBe("Nothing here");
+		expect(screen.getAllByTestId("out")[1]!.textContent).toBe("Close");
 	});
 
 	it("fills placeholders from vars", () => {

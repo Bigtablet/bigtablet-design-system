@@ -15,7 +15,7 @@ const options = [
  * 트리거. searchable 이면 열린 뒤 패널의 검색 입력도 `combobox` 라 둘이 잡히므로,
  * 항상 첫 번째(=트리거)를 고른다 - 트리거는 패널보다 앞에 있다.
  */
-const trigger = () => screen.getAllByRole("combobox")[0];
+const trigger = () => screen.getAllByRole("combobox")[0]!;
 
 describe("Dropdown", () => {
 	it("renders the list outside the trigger's clipping ancestor", async () => {
@@ -863,7 +863,7 @@ describe("Dropdown", () => {
 
 		rerender(<Dropdown options={options} label="권한" placeholder="선택하세요" value="2" />);
 		expect(screen.getByRole("combobox", { name: /권한/ })).toHaveAccessibleName(
-			`권한 ${options[1].label}`,
+			`권한 ${options[1]!.label}`,
 		);
 	});
 

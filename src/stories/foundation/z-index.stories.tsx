@@ -169,7 +169,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 							return (
 								<div
 									key={group.value}
-									onMouseEnter={() => setHoveredLayer(group.primary)}
+									onMouseEnter={() => setHoveredLayer(group.primary ?? null)}
 									onMouseLeave={() => setHoveredLayer(null)}
 									style={{
 										position: "absolute",

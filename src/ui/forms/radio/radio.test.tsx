@@ -54,7 +54,7 @@ describe("Radio", () => {
 		const radios = screen.getAllByRole("radio");
 		expect(radios).toHaveLength(2);
 
-		fireEvent.click(radios[0]);
+		fireEvent.click(radios[0]!);
 		expect(radios[0]).toBeChecked();
 		expect(radios[1]).not.toBeChecked();
 	});

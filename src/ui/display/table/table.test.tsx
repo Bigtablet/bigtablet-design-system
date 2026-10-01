@@ -76,9 +76,9 @@ describe("Table", () => {
 		);
 		// First td (name) is empty string → "-"
 		const tds = container.querySelectorAll("td");
-		expect(tds[0].textContent).toBe("-");
+		expect(tds[0]!.textContent).toBe("-");
 		// Score 0 is rendered as "0"
-		expect(tds[1].textContent).toBe("0");
+		expect(tds[1]!.textContent).toBe("0");
 	});
 
 	it("calls onRowClick with item and index", () => {
@@ -371,7 +371,7 @@ describe("Table selection", () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
-		const firstCallKeys = onSelectionChange.mock.calls[0][0] as string[];
+		const firstCallKeys = onSelectionChange.mock.calls[0]![0] as string[];
 		expect(new Set(firstCallKeys)).toEqual(new Set(["99", "1", "2"]));
 
 		rerender(
@@ -421,8 +421,8 @@ describe("Table selection", () => {
 				selectRowAriaLabel={(index, row) => `${index + 1}: ${row.name} 선택`}
 			/>,
 		);
-		expect(screen.getByRole("checkbox", { name: `21: ${rows[0].name} 선택` })).toBeInTheDocument();
-		expect(screen.getByRole("checkbox", { name: `22: ${rows[1].name} 선택` })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: `21: ${rows[0]!.name} 선택` })).toBeInTheDocument();
+		expect(screen.getByRole("checkbox", { name: `22: ${rows[1]!.name} 선택` })).toBeInTheDocument();
 	});
 
 	it("disables the select-all checkbox while isLoading", () => {

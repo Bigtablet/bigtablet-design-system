@@ -51,7 +51,7 @@ describe("Stepper", () => {
 		const { container } = render(<Stepper steps={STEPS} current={1} />);
 
 		const indicators = container.querySelectorAll(".stepper_indicator");
-		expect(indicators[0].querySelector("svg")).not.toBeNull();
+		expect(indicators[0]!.querySelector("svg")).not.toBeNull();
 		expect(indicators[1]).toHaveTextContent("2");
 		expect(indicators[2]).toHaveTextContent("3");
 	});
@@ -70,11 +70,11 @@ describe("Stepper", () => {
 		// 누를 수 없는 단계는 탭 순서에서도 뺀다 - 아무 일도 안 하는 정지점을 늘리지 않는다.
 		expect(pending).toHaveAttribute("tabindex", "-1");
 
-		fireEvent.click(pending);
-		fireEvent.click(active);
+		fireEvent.click(pending!);
+		fireEvent.click(active!);
 		expect(onStepClick).not.toHaveBeenCalled();
 
-		fireEvent.click(past);
+		fireEvent.click(past!);
 		expect(onStepClick).toHaveBeenCalledWith(0, STEPS[0]);
 	});
 
@@ -87,7 +87,7 @@ describe("Stepper", () => {
 		}
 		render(<Wizard />);
 
-		const first = screen.getAllByRole("button")[0];
+		const first = screen.getAllByRole("button")[0]!;
 		first.focus();
 		fireEvent.click(first);
 

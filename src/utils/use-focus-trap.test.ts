@@ -56,7 +56,7 @@ describe("useFocusTrap", () => {
 		renderHook(() => useFocusTrap(containerRef, true));
 
 		// Move focus to last button
-		buttons[buttons.length - 1].focus();
+		buttons[buttons.length - 1]!.focus();
 		expect(document.activeElement).toBe(buttons[buttons.length - 1]);
 
 		// Tab from last element

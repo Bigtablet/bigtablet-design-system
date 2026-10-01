@@ -116,7 +116,7 @@ describe("DataView", () => {
 			expect(screen.queryByRole("button", { name: "삭제" })).not.toBeInTheDocument();
 
 			// 첫 데이터 행의 체크박스 (0번은 전체 선택)
-			fireEvent.click(screen.getAllByRole("checkbox")[1]);
+			fireEvent.click(screen.getAllByRole("checkbox")[1]!);
 
 			// role="status" - 선택이 바뀌면 스크린리더가 개수를 읽는다.
 			expect(screen.getByRole("status")).toHaveTextContent("1개 선택됨");
@@ -135,7 +135,7 @@ describe("DataView", () => {
 				/>,
 			);
 
-			fireEvent.click(screen.getAllByRole("checkbox")[1]);
+			fireEvent.click(screen.getAllByRole("checkbox")[1]!);
 			fireEvent.click(screen.getByRole("button", { name: "선택 해제" }));
 
 			expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -195,7 +195,7 @@ describe("DataView", () => {
 		);
 
 		const { rerender } = render(<View data={USERS} />);
-		fireEvent.click(screen.getAllByRole("checkbox")[1]);
+		fireEvent.click(screen.getAllByRole("checkbox")[1]!);
 		expect(screen.getByRole("status")).toHaveTextContent("1개 선택됨");
 
 		rerender(<View data={USERS.filter((u) => u.id !== "1")} />);

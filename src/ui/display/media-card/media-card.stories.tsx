@@ -163,7 +163,7 @@ export const Grid: Story = {
 			{Array.from({ length: 6 }).map((_, i) => (
 				<MediaCard
 					key={i}
-					image={{ src: [SAMPLE_IMAGE, SAMPLE_IMAGE_2, SAMPLE_IMAGE_3][i % 3], alt: "" }}
+					image={{ src: [SAMPLE_IMAGE, SAMPLE_IMAGE_2, SAMPLE_IMAGE_3][i % 3]!, alt: "" }}
 					heading={`아이템 ${i + 1}`}
 					eyebrow={i % 2 === 0 ? "NEW" : "BEST"}
 					clickable

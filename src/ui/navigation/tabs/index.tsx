@@ -232,10 +232,11 @@ export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }
 		else if (e.key === "ArrowLeft") next = (currentIndex - 1 + tabs.length) % tabs.length;
 		else if (e.key === "Home") next = 0;
 		else if (e.key === "End") next = tabs.length - 1;
-		const targetValue = tabs[next].dataset.value;
-		if (targetValue) {
+		const target = tabs[next];
+		const targetValue = target?.dataset.value;
+		if (target && targetValue) {
 			ctx.setValue(targetValue);
-			tabs[next].focus();
+			target.focus();
 		}
 	};
 

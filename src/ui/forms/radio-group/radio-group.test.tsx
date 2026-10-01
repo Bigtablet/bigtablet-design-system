@@ -25,8 +25,8 @@ describe("RadioGroup", () => {
 			</RadioGroup>,
 		);
 		const [a, b] = screen.getAllByRole("radio") as HTMLInputElement[];
-		expect(a.name).toBeTruthy();
-		expect(a.name).toBe(b.name);
+		expect(a!.name).toBeTruthy();
+		expect(a!.name).toBe(b!.name);
 	});
 
 	it("uncontrolled: defaultValue selects the matching radio", () => {

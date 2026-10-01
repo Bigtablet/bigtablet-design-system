@@ -147,6 +147,7 @@ export const TagInput = ({
 
 	const removeAt = (index: number) => {
 		const removed = tags[index];
+		if (removed === undefined) return;
 		setTags(tags.filter((_, i) => i !== index));
 		setAnnouncement(t("tagInput.removed", { name: removed }));
 	};

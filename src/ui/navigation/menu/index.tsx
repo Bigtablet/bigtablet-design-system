@@ -120,16 +120,19 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	const moveFocus = (dir: 1 | -1 | "first" | "last") => {
 		const enabled = items.flatMap((it, i) => (it.disabled ? [] : [i]));
 		if (enabled.length === 0) return;
-		if (dir === "first") return void itemRefs.current[enabled[0]]?.focus();
-		if (dir === "last") return void itemRefs.current[enabled[enabled.length - 1]]?.focus();
 		const pos = enabled.findIndex((i) => itemRefs.current[i] === document.activeElement);
 		const next =
-			pos < 0
-				? dir === 1
-					? 0
-					: enabled.length - 1
-				: (pos + dir + enabled.length) % enabled.length;
-		itemRefs.current[enabled[next]]?.focus();
+			dir === "first"
+				? 0
+				: dir === "last"
+					? enabled.length - 1
+					: pos < 0
+						? dir === 1
+							? 0
+							: enabled.length - 1
+						: (pos + dir + enabled.length) % enabled.length;
+		const target = enabled[next];
+		if (target !== undefined) itemRefs.current[target]?.focus();
 	};
 
 	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
