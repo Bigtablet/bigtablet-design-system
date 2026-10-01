@@ -84,7 +84,7 @@ export const OtpInput = ({
 			const filled = nextDigit.replace(/\D/g, "").slice(0, length);
 			if (!filled) return;
 			const newDigits = [...digits];
-			for (let i = 0; i < filled.length; i++) newDigits[i] = filled[i];
+			newDigits.splice(0, filled.length, ...filled);
 			updateValue(newDigits);
 			focusInput(Math.min(filled.length, length - 1));
 			return;
@@ -150,9 +150,7 @@ export const OtpInput = ({
 		if (!pasted) return;
 
 		const newDigits = [...digits];
-		for (let i = 0; i < pasted.length; i++) {
-			newDigits[i] = pasted[i];
-		}
+		newDigits.splice(0, pasted.length, ...pasted);
 		updateValue(newDigits);
 
 		const nextIndex = Math.min(pasted.length, length - 1);

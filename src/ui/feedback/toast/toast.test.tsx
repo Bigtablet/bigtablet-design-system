@@ -692,8 +692,8 @@ describe("Toast stack & ids", () => {
 
 		// 첫 번째(맨 위) 토스트의 닫기 버튼에 포커스를 두고 닫으면,
 		// 포커스가 body 로 유실되지 않고 인접 토스트의 닫기 버튼으로 이관되어야 한다.
-		closeButtons[0].focus();
-		fireEvent.click(closeButtons[0]);
+		closeButtons[0]!.focus();
+		fireEvent.click(closeButtons[0]!);
 
 		await waitFor(() => {
 			expect(document.activeElement).toBe(closeButtons[1]);

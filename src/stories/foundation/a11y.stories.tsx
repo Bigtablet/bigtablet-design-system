@@ -461,9 +461,9 @@ export const Density: Story = {
 function parseToRGB(color: string): [number, number, number] {
 	const rgba = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
 	if (rgba) {
-		const r = parseInt(rgba[1], 10);
-		const g = parseInt(rgba[2], 10);
-		const b = parseInt(rgba[3], 10);
+		const r = parseInt(rgba[1]!, 10);
+		const g = parseInt(rgba[2]!, 10);
+		const b = parseInt(rgba[3]!, 10);
 		const a = rgba[4] !== undefined ? parseFloat(rgba[4]) : 1;
 		// 흰 배경(255,255,255)과 알파 블렌딩
 		return [
@@ -473,11 +473,11 @@ function parseToRGB(color: string): [number, number, number] {
 		];
 	}
 	const hex = color.replace("#", "").match(/.{2}/g)!;
-	return [parseInt(hex[0], 16), parseInt(hex[1], 16), parseInt(hex[2], 16)];
+	return [parseInt(hex[0], 16), parseInt(hex[1]!, 16), parseInt(hex[2]!, 16)];
 }
 
 function getLuminance(color: string): number {
-	const [r, g, b] = parseToRGB(color).map((c) => {
+	const [r = 0, g = 0, b = 0] = parseToRGB(color).map((c) => {
 		const v = c / 255;
 		return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
 	});

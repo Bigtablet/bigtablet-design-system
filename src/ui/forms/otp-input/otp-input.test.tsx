@@ -25,15 +25,15 @@ describe("OtpInput", () => {
 	it("displays value across inputs", () => {
 		render(<OtpInput length={6} value="123456" ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-		expect(inputs[0].value).toBe("1");
-		expect(inputs[5].value).toBe("6");
+		expect(inputs[0]!.value).toBe("1");
+		expect(inputs[5]!.value).toBe("6");
 	});
 
 	it("calls onChange when digit is entered", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.change(inputs[0], { target: { value: "5" } });
+		fireEvent.change(inputs[0]!, { target: { value: "5" } });
 		expect(onChange).toHaveBeenCalledWith("5");
 	});
 
@@ -41,7 +41,7 @@ describe("OtpInput", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.change(inputs[0], { target: { value: "a" } });
+		fireEvent.change(inputs[0]!, { target: { value: "a" } });
 		expect(onChange).not.toHaveBeenCalled();
 	});
 
@@ -49,7 +49,7 @@ describe("OtpInput", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.paste(inputs[0], {
+		fireEvent.paste(inputs[0]!, {
 			clipboardData: { getData: () => "123456" },
 		});
 		expect(onChange).toHaveBeenCalledWith("123456");
@@ -60,7 +60,7 @@ describe("OtpInput", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.change(inputs[0], { target: { value: "123456" } });
+		fireEvent.change(inputs[0]!, { target: { value: "123456" } });
 		expect(onChange).toHaveBeenCalledWith("123456");
 	});
 
@@ -68,7 +68,7 @@ describe("OtpInput", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.paste(inputs[0], {
+		fireEvent.paste(inputs[0]!, {
 			clipboardData: { getData: () => "12-34-56" },
 		});
 		expect(onChange).toHaveBeenCalledWith("123456");
@@ -78,7 +78,7 @@ describe("OtpInput", () => {
 		const onChange = vi.fn();
 		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.paste(inputs[3], {
+		fireEvent.paste(inputs[3]!, {
 			clipboardData: { getData: () => "123456" },
 		});
 		expect(onChange).toHaveBeenCalledWith("123456");
@@ -87,7 +87,7 @@ describe("OtpInput", () => {
 	it("redirects focus to first empty box on focus", () => {
 		render(<ControlledOtp length={6} value="12" ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-		fireEvent.focus(inputs[5]);
+		fireEvent.focus(inputs[5]!);
 		expect(document.activeElement).toBe(inputs[2]);
 	});
 
@@ -99,13 +99,13 @@ describe("OtpInput", () => {
 	it("applies error class when error is true", () => {
 		render(<OtpInput length={6} error ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
-		expect(inputs[0].className).toContain("otp_input_box_error");
+		expect(inputs[0]!.className).toContain("otp_input_box_error");
 	});
 
 	it("applies disabled attribute when disabled", () => {
 		render(<OtpInput length={6} disabled ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-		expect(inputs[0].disabled).toBe(true);
+		expect(inputs[0]!.disabled).toBe(true);
 	});
 
 	it("has correct aria-label on group", () => {
@@ -126,16 +126,16 @@ describe("OtpInput", () => {
 		it("moves focus to next box after typing a digit", () => {
 			render(<ControlledOtp length={6} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[0].focus();
-			fireEvent.change(inputs[0], { target: { value: "1" } });
+			inputs[0]!.focus();
+			fireEvent.change(inputs[0]!, { target: { value: "1" } });
 			expect(document.activeElement).toBe(inputs[1]);
 		});
 
 		it("does not move focus past the last box", () => {
 			render(<ControlledOtp length={4} value="123" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[3].focus();
-			fireEvent.change(inputs[3], { target: { value: "4" } });
+			inputs[3]!.focus();
+			fireEvent.change(inputs[3]!, { target: { value: "4" } });
 			// 마지막 자리는 다음 칸으로 이동 안 함
 			expect(document.activeElement).toBe(inputs[3]);
 		});
@@ -143,8 +143,8 @@ describe("OtpInput", () => {
 		it("releases isTypingRef after timeout so focus redirect works again", () => {
 			render(<ControlledOtp length={6} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[0].focus();
-			fireEvent.change(inputs[0], { target: { value: "1" } });
+			inputs[0]!.focus();
+			fireEvent.change(inputs[0]!, { target: { value: "1" } });
 			// 타이핑 자동 이동으로 이미 2번 칸에 있다.
 			expect(document.activeElement).toBe(inputs[1]);
 
@@ -155,8 +155,8 @@ describe("OtpInput", () => {
 			// 뒷칸을 실제로 눌러 포커스를 옮긴 뒤에야 redirect 가 도는지 알 수 있다.
 			// fireEvent.focus 만 쏘면 activeElement 는 그대로 2번 칸이라, redirect 가 죽어도
 			// 단정이 통과한다(이전 판이 그랬다).
-			inputs[5].focus();
-			fireEvent.focus(inputs[5]);
+			inputs[5]!.focus();
+			fireEvent.focus(inputs[5]!);
 			expect(document.activeElement).toBe(inputs[1]);
 		});
 	});
@@ -166,7 +166,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="123" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.keyDown(inputs[2], { key: "Backspace" });
+			fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
 			expect(onChange).toHaveBeenCalledWith("12");
 		});
 
@@ -174,8 +174,8 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<ControlledOtp length={6} value="12" ariaLabel="OTP" onChange={onChange} />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[2].focus();
-			fireEvent.keyDown(inputs[2], { key: "Backspace" });
+			inputs[2]!.focus();
+			fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
 			expect(document.activeElement).toBe(inputs[1]);
 			expect(onChange).toHaveBeenCalledWith("1");
 		});
@@ -184,7 +184,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.keyDown(inputs[0], { key: "Backspace" });
+			fireEvent.keyDown(inputs[0]!, { key: "Backspace" });
 			expect(onChange).not.toHaveBeenCalled();
 		});
 	});
@@ -193,32 +193,32 @@ describe("OtpInput", () => {
 		it.skip("moves focus to previous box on ArrowLeft", () => {
 			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[3].focus();
-			fireEvent.keyDown(inputs[3], { key: "ArrowLeft" });
+			inputs[3]!.focus();
+			fireEvent.keyDown(inputs[3]!, { key: "ArrowLeft" });
 			expect(document.activeElement).toBe(inputs[2]);
 		});
 
 		it("does not move focus past index 0 on ArrowLeft", () => {
 			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[0].focus();
-			fireEvent.keyDown(inputs[0], { key: "ArrowLeft" });
+			inputs[0]!.focus();
+			fireEvent.keyDown(inputs[0]!, { key: "ArrowLeft" });
 			expect(document.activeElement).toBe(inputs[0]);
 		});
 
 		it.skip("moves focus to next box on ArrowRight", () => {
 			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[2].focus();
-			fireEvent.keyDown(inputs[2], { key: "ArrowRight" });
+			inputs[2]!.focus();
+			fireEvent.keyDown(inputs[2]!, { key: "ArrowRight" });
 			expect(document.activeElement).toBe(inputs[3]);
 		});
 
 		it.skip("does not move focus past the last box on ArrowRight", () => {
 			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[5].focus();
-			fireEvent.keyDown(inputs[5], { key: "ArrowRight" });
+			inputs[5]!.focus();
+			fireEvent.keyDown(inputs[5]!, { key: "ArrowRight" });
 			expect(document.activeElement).toBe(inputs[5]);
 		});
 
@@ -226,8 +226,8 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[2].focus();
-			fireEvent.keyDown(inputs[2], { key: "Tab" });
+			inputs[2]!.focus();
+			fireEvent.keyDown(inputs[2]!, { key: "Tab" });
 			expect(document.activeElement).toBe(inputs[2]);
 			expect(onChange).not.toHaveBeenCalled();
 		});
@@ -238,7 +238,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
-			fireEvent.paste(inputs[0], {
+			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "abc-xyz" },
 			});
 			expect(onChange).not.toHaveBeenCalled();
@@ -248,7 +248,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={4} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
-			fireEvent.paste(inputs[0], {
+			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "12345678" },
 			});
 			expect(onChange).toHaveBeenCalledWith("1234");
@@ -257,7 +257,7 @@ describe("OtpInput", () => {
 		it.skip("focuses last filled box after partial paste", () => {
 			render(<ControlledOtp length={6} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.paste(inputs[0], {
+			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "12" },
 			});
 			expect(document.activeElement).toBe(inputs[2]);
@@ -266,7 +266,7 @@ describe("OtpInput", () => {
 		it.skip("focuses last box after pasting exactly length digits", () => {
 			render(<ControlledOtp length={6} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.paste(inputs[0], {
+			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "123456" },
 			});
 			expect(document.activeElement).toBe(inputs[5]);
@@ -277,31 +277,31 @@ describe("OtpInput", () => {
 		it("redirects to first empty box when user clicks a later box", () => {
 			render(<ControlledOtp length={6} value="12" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.focus(inputs[4]);
+			fireEvent.focus(inputs[4]!);
 			expect(document.activeElement).toBe(inputs[2]);
 		});
 
 		it("does not redirect when focusing the first empty box itself", () => {
 			render(<ControlledOtp length={6} value="12" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[2].focus();
-			fireEvent.focus(inputs[2]);
+			inputs[2]!.focus();
+			fireEvent.focus(inputs[2]!);
 			expect(document.activeElement).toBe(inputs[2]);
 		});
 
 		it("does not redirect when all boxes are filled", () => {
 			render(<ControlledOtp length={6} value="123456" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[3].focus();
-			fireEvent.focus(inputs[3]);
+			inputs[3]!.focus();
+			fireEvent.focus(inputs[3]!);
 			expect(document.activeElement).toBe(inputs[3]);
 		});
 
 		it("does not redirect when focusing a box before the first empty one", () => {
 			render(<ControlledOtp length={6} value="12" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			inputs[0].focus();
-			fireEvent.focus(inputs[0]);
+			inputs[0]!.focus();
+			fireEvent.focus(inputs[0]!);
 			expect(document.activeElement).toBe(inputs[0]);
 		});
 	});
@@ -342,22 +342,22 @@ describe("OtpInput", () => {
 		it("re-renders boxes when value changes", () => {
 			const { rerender } = render(<OtpInput length={6} value="123" ariaLabel="OTP" />);
 			let inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			expect(inputs[0].value).toBe("1");
-			expect(inputs[3].value).toBe("");
+			expect(inputs[0]!.value).toBe("1");
+			expect(inputs[3]!.value).toBe("");
 
 			rerender(<OtpInput length={6} value="9876" ariaLabel="OTP" />);
 			inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			expect(inputs[0].value).toBe("9");
-			expect(inputs[3].value).toBe("6");
-			expect(inputs[4].value).toBe("");
+			expect(inputs[0]!.value).toBe("9");
+			expect(inputs[3]!.value).toBe("6");
+			expect(inputs[4]!.value).toBe("");
 		});
 
 		it("truncates value longer than length", () => {
 			render(<OtpInput length={4} value="123456789" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			expect(inputs.length).toBe(4);
-			expect(inputs[0].value).toBe("1");
-			expect(inputs[3].value).toBe("4");
+			expect(inputs[0]!.value).toBe("1");
+			expect(inputs[3]!.value).toBe("4");
 		});
 	});
 
@@ -393,7 +393,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
-			fireEvent.change(inputs[0], { target: { value: "12" } });
+			fireEvent.change(inputs[0]!, { target: { value: "12" } });
 			expect(onChange).toHaveBeenCalledWith("12");
 		});
 
@@ -401,7 +401,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="1" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
-			fireEvent.change(inputs[0], { target: { value: "" } });
+			fireEvent.change(inputs[0]!, { target: { value: "" } });
 			expect(onChange).toHaveBeenCalledWith("");
 		});
 
@@ -409,7 +409,7 @@ describe("OtpInput", () => {
 			const onChange = vi.fn();
 			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
-			fireEvent.change(inputs[0], { target: { value: "@" } });
+			fireEvent.change(inputs[0]!, { target: { value: "@" } });
 			expect(onChange).not.toHaveBeenCalled();
 		});
 	});
@@ -427,7 +427,7 @@ describe("OtpInput", () => {
 			/>,
 		);
 		const inputs = screen.getAllByRole("textbox");
-		fireEvent.change(inputs[0], { target: { value: "5" } });
+		fireEvent.change(inputs[0]!, { target: { value: "5" } });
 
 		expect(onValueChange).toHaveBeenCalledTimes(1);
 		expect(onValueChange).toHaveBeenCalledWith("5");
@@ -437,7 +437,7 @@ describe("OtpInput", () => {
 	it("calls onValueChange (canonical) when digit entered", () => {
 		const onValueChange = vi.fn();
 		render(<OtpInput length={6} value="" onValueChange={onValueChange} ariaLabel="OTP" />);
-		fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "5" } });
+		fireEvent.change(screen.getAllByRole("textbox")[0]!, { target: { value: "5" } });
 		expect(onValueChange).toHaveBeenCalledWith("5");
 	});
 

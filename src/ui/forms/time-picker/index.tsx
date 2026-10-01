@@ -38,7 +38,8 @@ export interface TimePickerProps {
 /** `"HH:mm"` 을 분 단위 정수로. 형식이 아니면 null */
 const toMinutes = (value: string | undefined) => {
 	if (!value) return null;
-	const [h, m] = value.split(":").map(Number);
+	// 자리가 모자라면 NaN - 아래 isInteger 가 null 로 돌린다
+	const [h = Number.NaN, m = Number.NaN] = value.split(":").map(Number);
 	if (!Number.isInteger(h) || !Number.isInteger(m)) return null;
 	if (h < 0 || h > 23 || m < 0 || m > 59) return null;
 	return h * 60 + m;
@@ -128,8 +129,9 @@ export const TimePicker = ({
 		const candidates = Array.from({ length: Math.ceil(60 / step) }, (_, i) => i * step).filter(
 			(m) => m < 60 && h * 60 + m >= min && h * 60 + m <= max,
 		);
-		if (candidates.length === 0) return;
-		const keep = minute !== null && candidates.includes(minute) ? minute : candidates[0];
+		const firstCandidate = candidates[0];
+		if (firstCandidate === undefined) return;
+		const keep = minute !== null && candidates.includes(minute) ? minute : firstCandidate;
 		emit(h, keep);
 	};
 

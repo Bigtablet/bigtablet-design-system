@@ -78,8 +78,9 @@ export const FileInput = ({
 			// preview variant 는 단일 이미지만, button variant 는 모든 이미지 썸네일
 			const limit = isPreviewVariant ? Math.min(1, files.length) : files.length;
 			for (let i = 0; i < limit; i++) {
-				if (files[i].type.startsWith("image/")) {
-					urls.push(URL.createObjectURL(files[i]));
+				const file = files[i];
+				if (file?.type.startsWith("image/")) {
+					urls.push(URL.createObjectURL(file));
 				}
 			}
 			setPreviewUrls(urls);

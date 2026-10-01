@@ -42,7 +42,7 @@ describe("DatePicker", () => {
 
 		// 첫 Select 버튼(연도) 열고 "2024" 클릭
 		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[0]);
+		fireEvent.click(buttons[0]!);
 		fireEvent.click(screen.getByText("2024"));
 
 		expect(onChange).toHaveBeenCalledWith("2024-01");
@@ -54,7 +54,7 @@ describe("DatePicker", () => {
 
 		const buttons = screen.getAllByRole("combobox");
 		// month = buttons[1]
-		fireEvent.click(buttons[1]);
+		fireEvent.click(buttons[1]!);
 		fireEvent.click(screen.getByText("06"));
 
 		expect(onChange).toHaveBeenCalledWith("2024-06-01");
@@ -65,7 +65,7 @@ describe("DatePicker", () => {
 		render(<DatePicker value="2024-06" onChange={onChange} />);
 
 		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[2]);
+		fireEvent.click(buttons[2]!);
 		fireEvent.click(screen.getByText("15"));
 
 		expect(onChange).toHaveBeenCalledWith("2024-06-15");
@@ -183,7 +183,7 @@ describe("DatePicker", () => {
 			/>,
 		);
 		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[0]);
+		fireEvent.click(buttons[0]!);
 		fireEvent.click(screen.getByText("2024"));
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
 	});
@@ -202,7 +202,7 @@ describe("DatePicker", () => {
 		);
 
 		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[0]);
+		fireEvent.click(buttons[0]!);
 		fireEvent.click(screen.getByText("2024"));
 
 		expect(onValueChange).toHaveBeenCalledTimes(1);
@@ -215,7 +215,7 @@ describe("DatePicker", () => {
 		// (월·일 제한은 `year === min.year` 일 때만 걸린다). 실제로 1950 이 첫 항목이었다.
 		render(<DatePicker value="2026-05-01" minDate="2020-01-01" onValueChange={vi.fn()} />);
 
-		fireEvent.click(screen.getAllByRole("combobox")[0]);
+		fireEvent.click(screen.getAllByRole("combobox")[0]!);
 		const years = screen.getAllByRole("option").map((o) => o.textContent);
 
 		expect(years[0]).toBe("2020");
@@ -228,7 +228,7 @@ describe("DatePicker", () => {
 		render(<DatePicker value="2030-01-01" minDate="2020-06-15" onValueChange={onValueChange} />);
 
 		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[0]);
+		fireEvent.click(buttons[0]!);
 		fireEvent.click(screen.getByText("2020"));
 
 		expect(onValueChange).toHaveBeenCalledWith("2020-06-15");
@@ -249,7 +249,7 @@ describe("DatePicker", () => {
 			);
 
 			const buttons = screen.getAllByRole("combobox");
-			fireEvent.click(buttons[0]);
+			fireEvent.click(buttons[0]!);
 			fireEvent.click(screen.getByText("2026"));
 
 			expect(onValueChange).toHaveBeenCalledWith("2026-09-15");
@@ -275,7 +275,7 @@ describe("DatePicker", () => {
 
 			// 일 목록이 비어 고를 수 있는 날이 없다 - 넓은 쪽으로 풀었다면 20일이 떴을 자리다.
 			const buttons = screen.getAllByRole("combobox");
-			fireEvent.click(buttons[2]);
+			fireEvent.click(buttons[2]!);
 			expect(screen.queryAllByRole("option")).toHaveLength(0);
 			expect(onValueChange).not.toHaveBeenCalled();
 		} finally {
@@ -301,7 +301,7 @@ describe("DatePicker", () => {
 			// 월 목록 자체가 비어야 한다. `Math.max` 로 넓히면 12 가 남고, 그것을 고르는 순간
 			// `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나갔다.
 			const buttons = screen.getAllByRole("combobox");
-			fireEvent.click(buttons[1]);
+			fireEvent.click(buttons[1]!);
 			expect(screen.queryAllByRole("option")).toHaveLength(0);
 			expect(onValueChange).not.toHaveBeenCalled();
 		} finally {
@@ -327,7 +327,7 @@ describe("DatePicker", () => {
 			);
 
 			const buttons = screen.getAllByRole("combobox");
-			fireEvent.click(buttons[1]);
+			fireEvent.click(buttons[1]!);
 			expect(screen.queryAllByRole("option")).toHaveLength(0);
 		} finally {
 			vi.useRealTimers();

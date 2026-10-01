@@ -117,7 +117,7 @@ describe("FileInput", () => {
 
 			fireEvent.change(input);
 			expect(onFiles).toHaveBeenCalledTimes(1);
-			const arg = onFiles.mock.calls[0][0];
+			const arg = onFiles.mock.calls[0]![0];
 			expect(arg).not.toBeNull();
 			expect(arg[0]).toBe(file);
 		});
@@ -136,7 +136,7 @@ describe("FileInput", () => {
 			});
 
 			fireEvent.change(input);
-			const arg = onFiles.mock.calls[0][0];
+			const arg = onFiles.mock.calls[0]![0];
 			expect(arg.length).toBe(2);
 			expect(arg[0]).toBe(file1);
 			expect(arg[1]).toBe(file2);
@@ -172,9 +172,9 @@ describe("FileInput", () => {
 			fireEvent.change(input);
 
 			expect(onFiles).toHaveBeenCalledTimes(1);
-			expect(onFiles.mock.calls[0][0][0]).toBe(file);
+			expect(onFiles.mock.calls[0]![0][0]).toBe(file);
 			expect(onChange).toHaveBeenCalledTimes(1);
-			expect(onChange.mock.calls[0][0].target).toBe(input);
+			expect(onChange.mock.calls[0]![0].target).toBe(input);
 		});
 	});
 

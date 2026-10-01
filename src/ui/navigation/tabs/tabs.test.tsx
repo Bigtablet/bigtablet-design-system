@@ -42,6 +42,23 @@ describe("Tabs", () => {
 		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("aria-selected", "true");
 	});
 
+	it("selects a tab whose value is an empty string via keyboard, same as click", () => {
+		const onValueChange = vi.fn();
+		render(
+			<Tabs defaultValue="a" onValueChange={onValueChange}>
+				<TabList>
+					<Tab value="a">A</Tab>
+					<Tab value="">전체</Tab>
+				</TabList>
+			</Tabs>,
+		);
+		const tabA = screen.getByRole("tab", { name: "A" });
+		tabA.focus();
+		fireEvent.keyDown(tabA, { key: "ArrowRight" });
+		expect(onValueChange).toHaveBeenCalledWith("");
+		expect(screen.getByRole("tab", { name: "전체" })).toHaveFocus();
+	});
+
 	it("supports Home/End keys", () => {
 		render(<Wrapper />);
 		const tabA = screen.getByRole("tab", { name: "A" });

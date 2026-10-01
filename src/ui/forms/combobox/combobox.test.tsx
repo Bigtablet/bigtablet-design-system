@@ -264,7 +264,7 @@ describe("Combobox", () => {
 		await waitFor(() => expect(onSearch).toHaveBeenCalledTimes(1));
 
 		fireEvent.keyDown(input, { key: "Escape" });
-		expect(input).toHaveValue(OPTIONS[0].label);
+		expect(input).toHaveValue(OPTIONS[0]!.label);
 
 		open();
 		expect(input).toHaveValue("");
