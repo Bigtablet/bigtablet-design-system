@@ -308,7 +308,7 @@ label/domain
 > develop 이 그걸 모른 채 다음 릴리즈에서 같은 자리를 또 고쳐 충돌하고, 그 충돌을 풀려고 다시 release 브랜치에서
 > main 을 먼저 병합하게 된다(3.22.0 ~ 3.25.0 이 그렇게 갈라져 develop 이 `3.21.0` 에 머물렀다 - #706 으로 동기화).
 
-1. **버전·CHANGELOG 는 develop 에 먼저 넣는다.** `deploy/X.Y.Z` 브랜치 → `develop` PR(제목은 다른 PR 처럼 브랜치명 `deploy/X.Y.Z`, 커밋은 `deploy: X.Y.Z`)에 아래를 담는다 (별도 커밋으로 미루지 말 것):
+1. **버전·CHANGELOG 는 develop 에 `deploy: X.Y.Z` 커밋 하나로 바로 올린다** - 별도 브랜치·PR 없이. 이 커밋이 2번의 릴리즈 PR 에 그대로 실려 리뷰된다. 담을 것:
    - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
      - **렌더 결과가 바뀌는 변경은 의도로 가른다.** API 가 그대로여도 소비자 화면은 바뀌므로 CHANGELOG 항목 앞에 **`(렌더 변경)` 을 반드시 붙인다** - 버전과 무관하게.
        - **결함 수정**(지금 렌더가 틀렸다) → **patch**. `~3.16.0` 처럼 patch 만 받는 앱에도 수정이 닿아야 한다. minor 로 올리면 가장 보수적으로 고정한 소비자가 그 수정을 못 받는다.
@@ -319,7 +319,7 @@ label/domain
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
 2. **릴리즈 PR** - head `develop` → base `main`, 제목 `merge: release` (head 가 `develop` 이라 "PR 제목 = 브랜치명" 의 예외 - Merge Convention 의 `main 배포` 규칙을 따른다).
    - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 머지 전 `gh pr view N --json closingIssuesReferences` 로 연결을 확인하고, 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
-   - 이 PR 에 커밋을 추가하지 않는다. 고칠 게 있으면 develop 에 PR 로 넣으면 릴리즈 PR 에 자동으로 따라온다.
+   - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 릴리즈 PR 에 자동으로 따라온다.
 3. 리뷰어 approve 후 **merge commit 으로 머지** (squash·rebase 금지 - main 에 develop 에 없는 커밋이 생겨 다시 어긋난다).
    squash 는 저장소 설정에서 꺼 두었다(2026-10-01). **rebase merging 은 설정상 아직 켜져 있으니** 머지 버튼 드롭다운이 "Create a merge commit" 인지 확인한다 - rebase 로 머지하면 develop 커밋이 새 SHA 로 main 에 복제돼 `git log origin/develop..origin/main` 에 내용 있는 커밋으로 잡힌다.
 4. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
