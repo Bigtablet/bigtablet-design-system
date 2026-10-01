@@ -159,7 +159,8 @@ export function useListboxPopup<T extends ListboxItem>({
 			const len = items.length;
 			for (let step = 0; step < len; step++) {
 				i = (i + dir + len) % len;
-				if (!items[i].disabled) {
+				const item = items[i];
+				if (item && !item.disabled) {
 					setActiveIndex(i);
 					break;
 				}
@@ -169,16 +170,16 @@ export function useListboxPopup<T extends ListboxItem>({
 	);
 
 	const commitActive = useCallback(() => {
-		if (activeIndex < 0 || activeIndex >= items.length) return;
 		const item = items[activeIndex];
-		if (item.disabled) return;
+		if (!item || item.disabled) return;
 		onCommit(item);
 	}, [activeIndex, items, onCommit]);
 
 	const firstEnabled = useCallback(() => items.findIndex((o) => !o.disabled), [items]);
 	const lastEnabled = useCallback(() => {
 		for (let i = items.length - 1; i >= 0; i--) {
-			if (!items[i].disabled) return i;
+			const item = items[i];
+			if (item && !item.disabled) return i;
 		}
 		return -1;
 	}, [items]);

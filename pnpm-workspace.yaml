@@ -1,3 +1,9 @@
+# 공급망 방어 (시큐어코딩 가이드 W-2-15-3) - 배포 24시간(1440분) 미만 버전은 받지 않는다.
+# 탈취 계정·typosquat 으로 올라온 악성 버전은 대부분 하루 안에 내려간다. `--frozen-lockfile` 설치도
+# lockfile 항목을 이 기준으로 검사하므로 CI 에서도 걸린다.
+# 당일 보안 패치를 받아야 하면 그 패키지만 `minimumReleaseAgeExclude: [<name>]` 에 넣고 사유를 적는다.
+minimumReleaseAge: 1440
+
 # pnpm 10 이후 `pnpm.overrides` 는 package.json 이 아닌 이 파일에서 읽힘.
 # (pnpm 10.20: "The pnpm field in package.json is no longer read" 경고 → 여기로 이전)
 # 전부 dev/build 전용 transitive 의존성 - 배포 패키지(dependencies: @react-spring/web) 에는 영향 없음.

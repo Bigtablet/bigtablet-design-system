@@ -102,13 +102,12 @@ export function useFocusTrap(
 			if (e.key !== "Tab") return;
 
 			const focusableElements = getFocusableElements();
-			if (focusableElements.length === 0) {
+			const firstElement = focusableElements[0];
+			const lastElement = focusableElements[focusableElements.length - 1];
+			if (!firstElement || !lastElement) {
 				e.preventDefault();
 				return;
 			}
-
-			const firstElement = focusableElements[0];
-			const lastElement = focusableElements[focusableElements.length - 1];
 
 			if (e.shiftKey) {
 				// Shift + Tab

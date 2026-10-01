@@ -41,12 +41,12 @@ describe("Timeline", () => {
 
 		const indicators = container.querySelectorAll(".timeline_indicator");
 		// done - 체크 글리프
-		expect(indicators[0].querySelector(".timeline_glyph")).not.toBeNull();
+		expect(indicators[0]!.querySelector(".timeline_glyph")).not.toBeNull();
 		// active - 꽉 찬 점
-		expect(indicators[1].querySelector(".timeline_dot")).not.toBeNull();
-		expect(indicators[1].querySelector(".timeline_dot")).not.toHaveClass("timeline_dot_hollow");
+		expect(indicators[1]!.querySelector(".timeline_dot")).not.toBeNull();
+		expect(indicators[1]!.querySelector(".timeline_dot")).not.toHaveClass("timeline_dot_hollow");
 		// pending - 빈 원
-		expect(indicators[2].querySelector(".timeline_dot")).toHaveClass("timeline_dot_hollow");
+		expect(indicators[2]!.querySelector(".timeline_dot")).toHaveClass("timeline_dot_hollow");
 	});
 
 	it("falls back to a dot when an item has no icon", () => {
@@ -60,8 +60,8 @@ describe("Timeline", () => {
 		);
 
 		const indicators = container.querySelectorAll(".timeline_indicator");
-		expect(indicators[0].querySelector(".timeline_dot")).not.toBeNull();
-		expect(indicators[1].querySelector(".timeline_dot")).toBeNull();
+		expect(indicators[0]!.querySelector(".timeline_dot")).not.toBeNull();
+		expect(indicators[1]!.querySelector(".timeline_dot")).toBeNull();
 		expect(indicators[1]).toHaveTextContent("★");
 	});
 

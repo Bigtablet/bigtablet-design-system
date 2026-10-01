@@ -6,7 +6,7 @@ import { DateRangePicker } from "./index";
 // DatePicker 는 Dropdown 3개(연·월·일)를 그린다. 두 벌이니 버튼 6개.
 const triggers = () => screen.getAllByRole("combobox");
 const pick = (index: number, label: string) => {
-	fireEvent.click(triggers()[index]);
+	fireEvent.click(triggers()[index]!);
 	fireEvent.click(screen.getByRole("option", { name: label }));
 };
 
@@ -34,7 +34,7 @@ describe("DateRangePicker", () => {
 		render(<DateRangePicker value={{ start: "2026-05-10" }} onValueChange={vi.fn()} />);
 
 		// 종료일의 연 목록을 열면 2026 이 첫 항목이다 (그 이전 연도가 없다).
-		fireEvent.click(triggers()[3]);
+		fireEvent.click(triggers()[3]!);
 		const years = screen.getAllByRole("option").map((o) => o.textContent);
 		expect(years[0]).toBe("2026");
 	});

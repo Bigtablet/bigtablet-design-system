@@ -119,9 +119,11 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	// 화살표/Home/End 로 메뉴 아이템 간 roving 포커스
 	const moveFocus = (dir: 1 | -1 | "first" | "last") => {
 		const enabled = items.flatMap((it, i) => (it.disabled ? [] : [i]));
-		if (enabled.length === 0) return;
-		if (dir === "first") return void itemRefs.current[enabled[0]]?.focus();
-		if (dir === "last") return void itemRefs.current[enabled[enabled.length - 1]]?.focus();
+		const focusAt = (i: number | undefined) => {
+			if (i !== undefined) itemRefs.current[i]?.focus();
+		};
+		if (dir === "first") return focusAt(enabled[0]);
+		if (dir === "last") return focusAt(enabled.at(-1));
 		const pos = enabled.findIndex((i) => itemRefs.current[i] === document.activeElement);
 		const next =
 			pos < 0
@@ -129,7 +131,7 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 					? 0
 					: enabled.length - 1
 				: (pos + dir + enabled.length) % enabled.length;
-		itemRefs.current[enabled[next]]?.focus();
+		focusAt(enabled[next]);
 	};
 
 	const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
