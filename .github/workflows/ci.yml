@@ -16,9 +16,9 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - 'LICENSE'
 
+# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). PR 코멘트를 쓰는 커버리지 리포트가 있는 `test` 만 상향한다.
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   # 무엇이 바뀌었는지 한 번만 검사해서 후속 step의 조건으로 사용한다
@@ -40,8 +40,8 @@ jobs:
       deps: ${{ steps.filter.outputs.deps }}
       vanilla: ${{ steps.filter.outputs.vanilla }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         with:
           filters: |
@@ -69,6 +69,48 @@ jobs:
             vanilla:
               - 'src/vanilla/**'
 
+  # 병합 게이트 - 정적 분석 + 의존성 취약점 (시큐어코딩 가이드 제9장 제3조).
+  # `test` 와 병렬로 돌아 빨리 실패한다. 조건은 `test` 와 같다 - biome 은 스토리·vanilla JS 도 보고,
+  # tsc 는 스토리 타입도 본다.
+  static-checks:
+    needs: changes
+    if: |
+      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.stories == 'true' ||
+      needs.changes.outputs.deps == 'true' ||
+      needs.changes.outputs.vanilla == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22.14.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Biome (lint · format · import 정렬)
+        run: pnpm exec biome check .
+
+      # `src/utils/safe-html.type-test.tsx` 는 어떤 엔트리에서도 import 되지 않아 tsup dts 가 보지 않는다.
+      # 이 단계가 없으면 W-1-4-6(`dangerouslySetInnerHTML` Omit) 재발을 막는 타입 테스트가 아무 데서도 돌지 않는다.
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+      # 운영 의존성 HIGH 이상이면 실패. 조회 실패(네트워크·레지스트리 오류)도 pnpm 이 non-zero 로 끝나므로
+      # 그대로 실패한다 - `|| true` 를 붙이지 않는다. deps 변경과 무관하게 매번 돈다: 새 권고는
+      # lockfile 이 그대로여도 생긴다.
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high
+
   test:
     needs: changes
     # docs-only / config-only PR은 paths-ignore에서 이미 걸러짐.
@@ -79,18 +121,22 @@ jobs:
       needs.changes.outputs.deps == 'true' ||
       needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
+    # Coverage Report step 이 PR 에 코멘트를 남긴다
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: 22.14.0
           cache: pnpm
@@ -152,7 +198,7 @@ jobs:
       # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
       - name: Cache Playwright browsers
         if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -190,7 +236,7 @@ jobs:
         run: pnpm check:dark-text
 
       - name: Coverage Report
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0
         if: github.event_name == 'pull_request' && (needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true')
         with:
           json-summary-path: ./coverage/coverage-summary.json
