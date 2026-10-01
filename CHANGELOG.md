@@ -4,6 +4,12 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.25.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.25.1) - 2026-10-01
+- `Tabs` 에서 `value=""` 인 탭(예: "전체")이 화살표·Home·End 키로 선택되지 않던 문제를 고쳤습니다. 클릭으로는 선택되는데 키보드 이동은 빈 문자열을 "값 없음" 으로 보고 건너뛰었습니다. 이제 클릭과 똑같이 선택되고 포커스가 옮겨 갑니다
+- (개발) `tsconfig.json` 에 `noUncheckedIndexedAccess` 를 켭니다(시큐어코딩 가이드 W-5-1-1). 인덱스 접근 219건을 정리했고 - 프로덕션 코드는 비-null 단언 없이 가드로 좁혔습니다 - 공개 타입(`d.ts`)은 같습니다
+- (개발) CI 에 `static-checks` job 을 둡니다 - `biome check`·`tsc --noEmit`·`pnpm audit --prod --audit-level=high`(가이드 제9장 제3조). `dangerouslySetInnerHTML` 을 막는 타입 테스트가 이제 실제로 머지를 막습니다. 워크플로 최상단 권한은 모두 `contents: read`, action 21곳은 커밋 SHA 로 고정합니다
+- (개발) 배포된 지 24시간이 안 된 패키지는 설치하지 않습니다 - `pnpm-workspace.yaml` `minimumReleaseAge: 1440`, Dependabot `cooldown` 1일(가이드 W-2-15-3)
+
 ## [3.25.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.25.0) - 2026-09-30
 - 모든 컴포넌트의 props 타입에서 `dangerouslySetInnerHTML` 이 빠집니다(시큐어코딩 가이드 W-1-4-6). 지금까지는 `ImageCropper` 외 전부가 HTML 속성 타입을 그대로 확장해 `<Button dangerouslySetInnerHTML={…} />` 가 타입 검사를 통과하고 루트 요소에 닿았습니다. 이제 컴파일 에러이고, 마크업은 `children` 으로 넘깁니다. 런타임 동작은 같습니다 - [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 v3.25.0 섹션
 - `Accordion` 패널 요소가 `div[role="region"]` 에서 `<section>` 으로 바뀝니다. 접근성 트리(region + 헤더 이름)와 화면은 같고, `div.accordion_panel` 처럼 태그로 고른 앱 CSS 만 영향을 받습니다
