@@ -318,6 +318,7 @@ label/domain
    - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 머지 전 `gh pr view N --json closingIssuesReferences` 로 연결을 확인하고, 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
    - 이 PR 에 커밋을 추가하지 않는다. 고칠 게 있으면 develop 에 PR 로 넣으면 릴리즈 PR 에 자동으로 따라온다.
 3. 리뷰어 approve 후 **merge commit 으로 머지** (squash·rebase 금지 - main 에 develop 에 없는 커밋이 생겨 다시 어긋난다).
+   squash 는 저장소 설정에서 꺼 두었다(2026-10-01). **rebase merging 은 설정상 아직 켜져 있으니** 머지 버튼 드롭다운이 "Create a merge commit" 인지 확인한다 - rebase 로 머지하면 develop 커밋이 새 SHA 로 main 에 복제돼 `git log origin/develop..origin/main` 에 내용 있는 커밋으로 잡힌다.
 4. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 5. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
 
