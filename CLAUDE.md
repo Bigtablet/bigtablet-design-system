@@ -239,12 +239,13 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 92.88% stmts / 90.21% branch / 93.77% funcs / 94.75% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 93.04% stmts / 90.38% branch / 93.97% funcs / 94.88% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
+  pnpm coverage:docs     # 커버리지를 재고 아래 Coverage 줄·docs/TESTING.md 표를 갱신 (손으로 고치지 않는다)
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
@@ -317,6 +318,7 @@ label/domain
      - **한 주기에 모인 변경은 릴리즈 하나로 묶는다 - patch 를 따로 쪼개 내지 않는다.** 사내 패키지라 버전을 보수적으로 고정한 외부 소비자가 없다. 결함 수정과 minor 감이 같이 있으면 가장 높은 등급(minor) 하나로 낸다. 위의 "결함 수정 → patch" 는 **결함 수정만 있는 릴리즈**의 등급이다. 분리를 먼저 권하지 않는다 (3.23.0·3.25.0 - 사용자 결정)
      - **prop 제거라도 minor 로 갈 수 있는 경우**: 그 prop 을 넘기는 것 자체가 이미 규칙 위반이고 사내 저장소 사용처가 0 일 때 - `docs/MIGRATION.md` 에 섹션을 두고 minor (3.25.0 `dangerouslySetInnerHTML` 제거). 사용처를 grep 한 결과를 릴리즈 PR 에 적는다
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
+   - `pnpm coverage:docs` 로 갱신된 커버리지 수치(`CLAUDE.md`·`docs/TESTING.md`) - 바뀐 게 없으면 생략.
 2. **릴리즈 PR** - head `develop` → base `main`, 제목 `merge: release` (head 가 `develop` 이라 "PR 제목 = 브랜치명" 의 예외 - Merge Convention 의 `main 배포` 규칙을 따른다).
    - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 머지 전 `gh pr view N --json closingIssuesReferences` 로 연결을 확인하고, 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
    - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 릴리즈 PR 에 자동으로 따라온다.
