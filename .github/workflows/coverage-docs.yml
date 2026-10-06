@@ -1,0 +1,81 @@
+name: Coverage Docs
+
+# 릴리즈 PR(develop -> main)이 열리거나 갱신되면 커버리지를 다시 재서 CLAUDE.md 의 Coverage 줄과
+# docs/TESTING.md 의 수치·표를 갱신하고, 바뀌었으면 develop 에 커밋한다 (`pnpm coverage:docs`).
+#
+# PR 마다 `--check` 로 막지 않는 이유: 커버리지는 feature PR 마다 조금씩 바뀌어서, 그러면 모든 PR 이
+# 문서를 함께 고쳐야 한다. 릴리즈 PR 에서 한 번 갱신하면 배포되는 시점의 수치가 남는다. develop 에
+# 커밋하므로 main 에만 있는 커밋도 생기지 않는다(CLAUDE.md 릴리즈 절차).
+#
+# 이 job 의 푸시는 `GITHUB_TOKEN` 으로 하므로 다른 워크플로를 깨우지 않는다 - 같은 PR 의
+# synchronize 로 이 워크플로가 다시 도는 루프가 없다.
+#
+# 전제 (2026-10-06 확인): main·develop 에 브랜치 보호도 적용 룰셋도 없다. 그래서 bot 푸시가
+# 거부되지 않고, 이 커밋에 체크가 안 돌아도 머지가 막히지 않는다(ci.yml 도 릴리즈 PR 은 원래
+# 건너뛴다). **develop 에 보호를 걸거나 main 에 required check 를 걸면** 이 푸시가 거부되거나
+# 새 head 의 체크가 비어 머지가 멈춘다 - 그때는 GitHub App 토큰으로 푸시해 후속 CI 가 돌게 바꾼다.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  # 수동 실행 - 워크플로 자체를 확인하거나 릴리즈 PR 없이 갱신할 때. 바뀐 게 없으면 커밋하지 않는다.
+  workflow_dispatch:
+
+# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). develop 에 커밋하는 job 만 상향한다.
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    # 릴리즈 PR 만 - 같은 저장소의 develop 에서 온 것. hotfix 브랜치 -> main PR 은 건너뛴다.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.ref == 'develop' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # PR 의 merge ref 가 아니라 develop 자체를 받는다 - 거기에 커밋해야 한다
+      - name: Checkout develop
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: develop
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22.14.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Refresh coverage figures
+        run: pnpm coverage:docs
+
+      # 바뀐 게 없으면 아무것도 하지 않는다. 커밋 헤더는 commitlint(type-enum·영어 헤더)를 따른다.
+      # HUSKY=0 - pre-commit 훅이 전체 테스트를 다시 돌리지 않게 한다(바로 위 단계가 이미 돌렸다).
+      - name: Commit to develop
+        env:
+          HUSKY: "0"
+        run: |
+          if git diff --quiet -- CLAUDE.md docs/TESTING.md; then
+            echo "커버리지 문서가 이미 최신이다"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CLAUDE.md docs/TESTING.md
+          git commit -m "docs: refresh coverage figures"
+          # 체크아웃 뒤 develop 에 다른 커밋이 들어왔으면 non-fast-forward 로 거절된다 - 한 번만 다시 얹어 민다.
+          # 문서 두 파일만 바꾸므로 보통 충돌이 없고, 충돌하면 job 이 실패해 다음 develop 푸시 때 다시 돈다.
+          git push origin HEAD:develop || { git pull --rebase origin develop && git push origin HEAD:develop; }
