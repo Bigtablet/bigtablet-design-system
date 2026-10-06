@@ -543,6 +543,35 @@ describe("Drawer", () => {
 		}
 	});
 
+	// 열자마자 같은 tick 에 닫으면 오버레이 스프링이 0 을 떠난 적이 없어 onRest 가 오지 않는다.
+	// 그때도 패널이 남거나 스크롤 잠금이 걸린 채로 있으면 안 된다 - 투명한 오버레이가 화면을 덮는다.
+	it.each([
+		["reduced motion", {}, true],
+		["disableAnimation", { disableAnimation: true }, false],
+	])("cleans up when opened and closed in the same tick (%s)", async (_, extra, reduced) => {
+		Globals.assign({ skipAnimation: false });
+		if (reduced) stubReducedMotion();
+		try {
+			const onExited = vi.fn();
+			const el = (open: boolean) => (
+				<Drawer open={open} onClose={() => {}} onExited={onExited} title="메뉴" {...extra}>
+					Content
+				</Drawer>
+			);
+			const { rerender } = render(el(false));
+			rerender(el(true));
+			rerender(el(false));
+			await waitFor(() => {
+				expect(document.querySelector(".drawer_panel")).toBeNull();
+				expect(document.body.style.overflow).not.toBe("hidden");
+				expect(document.body.dataset.openModals).toBeUndefined();
+			});
+			expect(onExited).toHaveBeenCalledTimes(1);
+		} finally {
+			Globals.assign({ skipAnimation: true });
+		}
+	});
+
 	// ── className passthrough ─────────────────────────────────────────────
 
 	it("applies custom className to the panel", () => {
