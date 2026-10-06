@@ -21,16 +21,18 @@ export const baseTypography = {
 		"48": "48px",
 	},
 
+	// CSS font-weight 값 - SCSS `$font_weight_*` 와 같다. tokens.json 은 Figma 스타일 이름("Regular")을
+	// 쓰지만 이 객체는 `style` 에 바로 펼쳐 쓰는 값이라 숫자여야 한다(이름이면 font-weight 가 무시된다).
 	fontWeight: {
-		thin: "Thin",
-		extraLight: "ExtraLight",
-		light: "Light",
-		regular: "Regular",
-		medium: "Medium",
-		semiBold: "SemiBold",
-		bold: "Bold",
-		extraBold: "ExtraBold",
-		black: "Black",
+		thin: 100,
+		extraLight: 200,
+		light: 300,
+		regular: 400,
+		medium: 500,
+		semiBold: 600,
+		bold: 700,
+		extraBold: 800,
+		black: 900,
 	},
 
 	lineHeight: {

@@ -42,21 +42,9 @@ type Story = StoryObj;
 
 type TypoStyle = {
 	fontSize: string;
-	fontWeight: string;
+	fontWeight: number;
 	lineHeight: string;
 	letterSpacing: string;
-};
-
-const fontWeightMap: Record<string, number> = {
-	Thin: 100,
-	ExtraLight: 200,
-	Light: 300,
-	Regular: 400,
-	Medium: 500,
-	SemiBold: 600,
-	Bold: 700,
-	ExtraBold: 800,
-	Black: 900,
 };
 
 function TypoRow({ scale, variant, style }: { scale: string; variant: string; style: TypoStyle }) {
@@ -85,7 +73,7 @@ function TypoRow({ scale, variant, style }: { scale: string; variant: string; st
 				style={{
 					fontFamily: typography.fontFamily.primary,
 					fontSize: style.fontSize,
-					fontWeight: fontWeightMap[style.fontWeight] ?? 400,
+					fontWeight: style.fontWeight,
 					lineHeight: style.lineHeight,
 					letterSpacing: style.letterSpacing,
 					overflow: "hidden",
@@ -272,10 +260,10 @@ export const Base: Story = {
 							fontFamily: typography.fontFamily.primary,
 						}}
 					>
-						<div style={{ fontWeight: fontWeightMap[value] ?? 400, fontSize: 16 }}>
+						<div style={{ fontWeight: value, fontSize: 16 }}>
 							굵기 예시 - font-weight-{key} ({value})
 						</div>
-						<code style={{ fontSize: 12 }}>{fontWeightMap[value] ?? value}</code>
+						<code style={{ fontSize: 12 }}>{value}</code>
 					</div>
 				))}
 			</section>
@@ -438,7 +426,7 @@ export const Comparison: Story = {
 								style={{
 									fontFamily: typography.fontFamily.primary,
 									fontSize: style.fontSize,
-									fontWeight: fontWeightMap[style.fontWeight] ?? 400,
+									fontWeight: style.fontWeight,
 									lineHeight: style.lineHeight,
 								}}
 							>
