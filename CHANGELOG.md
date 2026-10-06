@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.27.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.27.0) - 2026-10-06
+- TS `typography` 에 SCSS 에만 있던 글자 스타일 20종이 생겼습니다 - 그룹마다 `largeBold`·`mediumBold`·`smallBold`(예: `typography.title.mediumBold`), 그리고 `caption`·`captionBold`·`overline`·`subtitle`·`code`. 값은 SCSS 믹스인과 같고, 둘이 어긋나면 테스트가 실패합니다
+- (렌더 변경) TS `typography`·`baseTypography` 의 `fontWeight` 가 CSS 숫자(400·500·700 …)가 됩니다. 지금까지 `"Regular"` 같은 Figma 스타일 이름이어서 `style={typography.body.small}` 로 쓰면 굵기가 무시됐습니다. 값의 타입이 string 에서 number 로 바뀝니다(사내 저장소 사용처 0)
+- (렌더 변경) `Table`·`DataView` 셀의 한글이 어절 중간("아메리카 / 노")에서 끊기지 않습니다. 끊을 곳이 없는 긴 값은 여전히 표 안에서 가로 스크롤됩니다
+- (렌더 변경) `Container` 와 `Textarea` 의 도움말·글자 수 줄이 부모보다 넓게 그려지던 것을 고쳤습니다(각각 64px·8px). 전역 `box-sizing: border-box` 리셋이 없는 앱에서 가로 스크롤이 생기던 원인입니다
+- (문서) Storybook cookbook 을 DS 컴포넌트(`Stat`·`PageHeader`·`Avatar`·`Card`)와 토큰만으로 다시 조립했습니다 - 숫자로 박은 글자 크기·색이 없습니다. foundation 스토리가 다크 모드에서 읽힙니다
+
 ## [3.26.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.26.0) - 2026-10-06
 - `Drawer` 에 `disableAnimation` prop 이 생겼습니다 - 슬라이드·페이드 없이 즉시 열고 닫습니다. 화면 전체를 덮는 모바일 메뉴처럼 미끄러지는 모션이 디자인에 맞지 않는 곳에서 씁니다. OS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끕니다
 - (렌더 변경) `Drawer` 패널이 열릴 때 목표 위치를 지나쳐 튀었다 돌아오던 것을 고쳤습니다(360px 패널에서 약 2.6px). 슬라이드는 그대로이고 되튐만 사라집니다
