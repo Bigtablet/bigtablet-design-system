@@ -28,9 +28,11 @@ def load(path):
 
 
 def pct(covered, total):
-    if total == 0:
+    if covered == total:
         return "100%"
-    return f"{round(covered / total * 100, 2):.2f}".rstrip("0").rstrip(".") + "%"
+    # 반올림이 100 으로 올라가면 덜 덮인 것이 100% 로 보인다 - 그때는 99.99 에서 멈춘다
+    value = min(round(covered / total * 100, 2), 99.99)
+    return f"{value:.2f}".rstrip("0").rstrip(".") + "%"
 
 
 def build():
@@ -54,7 +56,8 @@ def build():
     rows, full = [], 0
     for key in sorted(groups):
         values = [pct(*groups[key][m]) for m in METRICS]
-        if all(v == "100%" for v in values):
+        # 100% 판정은 표기값이 아니라 covered == total 로 한다
+        if all(groups[key][m][0] == groups[key][m][1] for m in METRICS):
             full += 1
             continue
         rows.append(f"| {key} | " + " | ".join(values) + " |")
