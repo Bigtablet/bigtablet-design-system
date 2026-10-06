@@ -44,25 +44,59 @@ describe("typography tokens - TS ↔ SCSS", () => {
 		}
 	});
 
-	it("each semantic style matches its SCSS mixin", () => {
-		// 그룹을 손으로 나열하지 않는다 - 새 그룹이 생기면 자동으로 검사 대상이 된다.
-		const { fontFamily: _fontFamily, ...groups } = typography;
-		let checked = 0;
-		for (const [group, styles] of Object.entries(groups)) {
-			for (const [key, style] of Object.entries(styles)) {
-				const mixin = `${group}_${snake(key)}`;
-				const body = scss.match(new RegExp(`@mixin ${mixin}\\s*\\{([^}]*)\\}`))?.[1];
-				expect(body, `@mixin ${mixin}`).toBeDefined();
-				const decl = (prop: string) =>
-					scssVar(body?.match(new RegExp(`${prop}:\\s*\\$(\\w+)`))?.[1] ?? "");
-				expect(style.fontSize, mixin).toBe(decl("font-size"));
-				expect(String(style.fontWeight), mixin).toBe(decl("font-weight"));
-				expect(style.lineHeight, mixin).toBe(decl("line-height"));
-				expect(style.letterSpacing, mixin).toBe(decl("letter-spacing"));
-				checked++;
+	// 글자 스타일 믹스인(font-size 를 선언하고 다른 믹스인·미디어쿼리를 부르지 않는 것) 전부.
+	// `display_large_responsive` 같은 반응형 믹스인과 `text_truncate` 같은 유틸은 빠진다.
+	const styleMixins = new Map(
+		[...scss.matchAll(/@mixin (\w+)\s*\{([^}]*)\}/g)]
+			.filter((m) => /font-size:/.test(m[2] ?? "") && !/@include|@media/.test(m[2] ?? ""))
+			.map((m) => [m[1] ?? "", m[2] ?? ""]),
+	);
+	const GROUPS = ["display", "heading", "title", "body", "label"];
+	/** `display_large_bold` → `display.largeBold`, `caption_bold` → `captionBold` */
+	const tsPath = (mixin: string) => {
+		const camel = (parts: string[]) =>
+			parts.map((p, i) => (i === 0 ? p : p[0]?.toUpperCase() + p.slice(1))).join("");
+		const [head = "", ...rest] = mixin.split("_");
+		return GROUPS.includes(head) ? [head, camel(rest)] : [camel([head, ...rest])];
+	};
+	const tsStyle = (path: string[]) =>
+		path.reduce<unknown>((o, k) => (o as Record<string, unknown> | undefined)?.[k], typography) as
+			| Record<string, string | number>
+			| undefined;
+	/** SCSS 선언값 - `$변수` 면 풀고, 아니면 리터럴(`-0.02em`) 그대로 */
+	const resolve = (raw: string) => (raw.startsWith("$") ? scssVar(raw.slice(1)) : raw);
+	const camelProp = (prop: string) => prop.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+
+	it("every SCSS text style has a TS twin with the same declarations", () => {
+		expect(styleMixins.size).toBeGreaterThan(0);
+		for (const [mixin, body] of styleMixins) {
+			const style = tsStyle(tsPath(mixin));
+			expect(style, `TS typography.${tsPath(mixin).join(".")} (← @mixin ${mixin})`).toBeDefined();
+			const decls = [...body.matchAll(/([a-z-]+):\s*([^;]+);/g)];
+			for (const [, prop = "", raw = ""] of decls) {
+				expect(String(style?.[camelProp(prop)]), `${mixin} ${prop}`).toBe(resolve(raw.trim()));
 			}
+			// TS 쪽에만 있는 속성도 없어야 한다
+			expect(Object.keys(style ?? {}).sort(), mixin).toEqual(
+				decls.map(([, prop = ""]) => camelProp(prop)).sort(),
+			);
 		}
-		// 그룹이 비어 루프가 한 번도 돌지 않고 통과하는 것을 막는다
-		expect(checked).toBeGreaterThan(0);
+	});
+
+	it("every TS text style has a SCSS mixin", () => {
+		const { fontFamily: _fontFamily, ...rest } = typography;
+		const paths: string[][] = [];
+		for (const [name, value] of Object.entries(rest)) {
+			if ("fontSize" in value) paths.push([name]);
+			else for (const key of Object.keys(value)) paths.push([name, key]);
+		}
+		const mixinOf = (path: string[]) => path.map((p) => snake(p)).join("_");
+		for (const path of paths) {
+			expect(
+				styleMixins.has(mixinOf(path)),
+				`@mixin ${mixinOf(path)} (← typography.${path.join(".")})`,
+			).toBe(true);
+		}
+		expect(paths.length).toBe(styleMixins.size);
 	});
 });
