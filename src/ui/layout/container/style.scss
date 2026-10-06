@@ -1,6 +1,9 @@
 @use "src/styles/token" as token;
 
 .container {
+  // `width: 100%` 에 패딩이 더해지지 않게 - content-box 면 부모보다 좌우 패딩만큼 넓어져
+  // (실측 32px × 2 = 64px) 가로 스크롤이 생긴다. 전역 border-box 리셋이 없는 앱에서 드러난다.
+  box-sizing: border-box;
   width: 100%;
   padding-inline: token.$spacing_16;
 

@@ -122,6 +122,8 @@
     align-items: center;
     justify-content: space-between;
     gap: token.$spacing_8;
+    // `width: 100%` + 좌우 패딩이 입력칸보다 8px 넓어지지 않게 (Container 와 같은 이유)
+    box-sizing: border-box;
     width: 100%;
     padding: 0 token.$spacing_4;
   }
