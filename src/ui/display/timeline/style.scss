@@ -99,7 +99,7 @@ $indicator: 28px;
     margin: 0;
     color: token.$color_text_caption;
     @include token.body_small;
-    overflow-wrap: anywhere;
+    @include token.wrap_keep_all;
   }
 
   // ── 상태 ────────────────────────────────────────────────────────────────
