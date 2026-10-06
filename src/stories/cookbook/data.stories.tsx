@@ -9,11 +9,14 @@ import {
 	Truck,
 } from "lucide-react";
 import { useState } from "react";
+import { iconSize } from "src/styles/icon";
+import { typography } from "src/styles/typography";
 import { Avatar } from "src/ui/display/avatar";
 import { Card } from "src/ui/display/card";
-import { Chip } from "src/ui/display/chip";
+import { Chip, type ChipTone } from "src/ui/display/chip";
 import { DataView } from "src/ui/display/data-view";
 import { Divider } from "src/ui/display/divider";
+import { Stat } from "src/ui/display/stat";
 import type { TableColumn } from "src/ui/display/table";
 import { Timeline, type TimelineItem } from "src/ui/display/timeline";
 import { Grid } from "src/ui/layout/grid";
@@ -27,7 +30,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**데이터를 보여주는 화면 모음**입니다. 사용자 목록, 상태 칩, 통계 카드, 주문 타임라인 네 가지를 다룹니다.\n\n각 스토리의 코드는 그대로 복사해 시작점으로 쓸 수 있습니다. 아래 Show code 를 열어 보세요.",
+					'**데이터를 보여주는 화면 모음**입니다. 사용자 목록, 상태 칩, 통계 카드, 주문 타임라인 네 가지를 다룹니다.\n\n각 스토리의 코드는 그대로 복사해 시작점으로 쓸 수 있습니다. 아래 Show code 를 열어 보세요.\n\n글자·간격·모서리는 숫자 대신 토큰을 씁니다 - `style={{ ...typography.label.medium, color: "var(--bt-color-text-body)" }}` 처럼 `typography`·`spacing`·`radius` 를 펼치고 색은 `--bt-color-*` 변수로 받습니다.',
 			},
 		},
 	},
@@ -160,73 +163,64 @@ export const StatusBadgesRow: Story = {
 			},
 		},
 	},
-	render: () => (
-		<Card bordered padding="lg" shadow="sm" style={{ width: 560 }}>
-			<Stack gap={24}>
-				<Stack gap={8}>
-					<span
-						style={{
-							fontSize: 12,
-							fontWeight: 600,
-							color: "var(--bt-color-text-caption)",
-							textTransform: "uppercase",
-							letterSpacing: "0.04em",
-						}}
-					>
-						주문 상태
-					</span>
-					<Stack direction="horizontal" gap={8} wrap="wrap">
-						<Chip type="static" tone="default" label="대기" />
-						<Chip type="static" tone="info" label="접수" />
-						<Chip type="static" tone="accent" label="처리중" />
-						<Chip type="static" tone="success" label="완료" />
-						<Chip type="static" tone="warning" label="보류" />
-						<Chip type="static" tone="error" label="취소" />
-					</Stack>
-				</Stack>
+	render: () => {
+		const groups: { title: string; chips: { tone: ChipTone; label: string }[] }[] = [
+			{
+				title: "주문 상태",
+				chips: [
+					{ tone: "default", label: "대기" },
+					{ tone: "info", label: "접수" },
+					{ tone: "accent", label: "처리중" },
+					{ tone: "success", label: "완료" },
+					{ tone: "warning", label: "보류" },
+					{ tone: "error", label: "취소" },
+				],
+			},
+			{
+				title: "결제 상태",
+				chips: [
+					{ tone: "success", label: "결제 완료" },
+					{ tone: "warning", label: "부분 환불" },
+					{ tone: "error", label: "환불" },
+					{ tone: "default", label: "현장 결제" },
+				],
+			},
+			{
+				title: "재고 상태",
+				chips: [
+					{ tone: "success", label: "충분" },
+					{ tone: "warning", label: "주의" },
+					{ tone: "error", label: "품절 임박" },
+					{ tone: "default", label: "단종" },
+				],
+			},
+		];
 
-				<Stack gap={8}>
-					<span
-						style={{
-							fontSize: 12,
-							fontWeight: 600,
-							color: "var(--bt-color-text-caption)",
-							textTransform: "uppercase",
-							letterSpacing: "0.04em",
-						}}
-					>
-						결제 상태
-					</span>
-					<Stack direction="horizontal" gap={8} wrap="wrap">
-						<Chip type="static" tone="success" label="결제 완료" />
-						<Chip type="static" tone="warning" label="부분 환불" />
-						<Chip type="static" tone="error" label="환불" />
-						<Chip type="static" tone="default" label="현장 결제" />
-					</Stack>
+		return (
+			<Card bordered padding="lg" shadow="sm" style={{ width: 560 }}>
+				<Stack gap={24}>
+					{groups.map((group) => (
+						<Stack key={group.title} gap={8}>
+							<span
+								style={{
+									...typography.label.smallMedium,
+									color: "var(--bt-color-text-caption)",
+									textTransform: "uppercase",
+								}}
+							>
+								{group.title}
+							</span>
+							<Stack direction="horizontal" gap={8} wrap="wrap">
+								{group.chips.map((chip) => (
+									<Chip key={chip.label} type="static" tone={chip.tone} label={chip.label} />
+								))}
+							</Stack>
+						</Stack>
+					))}
 				</Stack>
-
-				<Stack gap={8}>
-					<span
-						style={{
-							fontSize: 12,
-							fontWeight: 600,
-							color: "var(--bt-color-text-caption)",
-							textTransform: "uppercase",
-							letterSpacing: "0.04em",
-						}}
-					>
-						재고 상태
-					</span>
-					<Stack direction="horizontal" gap={8} wrap="wrap">
-						<Chip type="static" tone="success" label="충분" />
-						<Chip type="static" tone="warning" label="주의" />
-						<Chip type="static" tone="error" label="품절 임박" />
-						<Chip type="static" tone="default" label="단종" />
-					</Stack>
-				</Stack>
-			</Stack>
-		</Card>
-	),
+			</Card>
+		);
+	},
 };
 
 // ─── Stat Cards ─────────────────────────────────────────────────────────────
@@ -235,34 +229,30 @@ const STATS = [
 	{
 		label: "오늘 매출",
 		value: "₩1,284,000",
-		delta: "+12.4%",
-		positive: true,
-		caption: "지난주 같은 요일 대비",
-		icon: <TrendingUp size={20} />,
+		delta: "+12.4% · 지난주 같은 요일 대비",
+		tone: "positive" as const,
+		icon: <TrendingUp size={iconSize.sm} />,
 	},
 	{
 		label: "신규 주문",
 		value: "47건",
-		delta: "+8.0%",
-		positive: true,
-		caption: "전일 대비",
-		icon: <Package size={20} />,
+		delta: "+8.0% · 전일 대비",
+		tone: "positive" as const,
+		icon: <Package size={iconSize.sm} />,
 	},
 	{
 		label: "평균 대기 시간",
 		value: "3분 12초",
-		delta: "-18초",
-		positive: true,
-		caption: "전일 대비",
-		icon: <Clock size={20} />,
+		delta: "-18초 · 전일 대비",
+		tone: "positive" as const,
+		icon: <Clock size={iconSize.sm} />,
 	},
 	{
 		label: "반품률",
 		value: "1.4%",
-		delta: "+0.3%p",
-		positive: false,
-		caption: "지난달 대비",
-		icon: <TrendingDown size={20} />,
+		delta: "+0.3%p · 지난달 대비",
+		tone: "negative" as const,
+		icon: <TrendingDown size={iconSize.sm} />,
 	},
 ];
 
@@ -272,7 +262,7 @@ export const StatCards: Story = {
 		docs: {
 			description: {
 				story:
-					"대시보드 첫 화면의 **숫자 요약 줄**입니다. `Grid` 가 열 수를, `Card` 가 테두리와 여백을 갖고, 증감 화살표만 화면이 정합니다.\n\n모바일에서는 `Grid` 가 자동으로 1열로 접힙니다(`singleColOnMobile` 기본값).",
+					"대시보드 첫 화면의 **숫자 요약 줄**입니다. `Grid` 가 열 수를, `Card` 가 테두리와 여백을, `Stat` 이 지표 이름·값·변화량의 글자 크기와 숫자 폭 고정(`tabular-nums`)을 갖습니다.\n\n변화량의 색은 방향이 아니라 **좋음/나쁨**으로 고릅니다 - 대기 시간이 줄어든 것(`-18초`)은 `positive`, 반품률이 오른 것은 `negative` 입니다. 모바일에서는 `Grid` 가 자동으로 1열로 접힙니다(`singleColOnMobile` 기본값).",
 			},
 		},
 	},
@@ -280,64 +270,13 @@ export const StatCards: Story = {
 		<Grid cols={2} gap={16} style={{ width: 640 }}>
 			{STATS.map((stat) => (
 				<Card key={stat.label} bordered padding="lg" shadow="sm">
-					<Stack gap={12}>
-						<Stack direction="horizontal" justify="between" align="center">
-							<span
-								style={{ fontSize: 13, color: "var(--bt-color-text-caption)", fontWeight: 500 }}
-							>
-								{stat.label}
-							</span>
-							<span
-								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									justifyContent: "center",
-									width: 36,
-									height: 36,
-									borderRadius: 10,
-									background: "var(--bt-color-bg-solid-dim)",
-									color: "var(--bt-color-text-body)",
-								}}
-							>
-								{stat.icon}
-							</span>
-						</Stack>
-						<span
-							style={{
-								fontSize: 28,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-								letterSpacing: "-0.02em",
-							}}
-						>
-							{stat.value}
-						</span>
-						<Stack direction="horizontal" gap={8} align="center">
-							<span
-								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 4,
-									fontSize: 12,
-									fontWeight: 700,
-									padding: "2px 8px",
-									borderRadius: 999,
-									background: stat.positive
-										? "var(--bt-color-status-success-container)"
-										: "var(--bt-color-status-error-container)",
-									color: stat.positive
-										? "var(--bt-color-status-success-on-container)"
-										: "var(--bt-color-status-error-on-container)",
-								}}
-							>
-								{stat.positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-								{stat.delta}
-							</span>
-							<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
-								{stat.caption}
-							</span>
-						</Stack>
-					</Stack>
+					<Stat
+						label={stat.label}
+						icon={stat.icon}
+						value={stat.value}
+						delta={stat.delta}
+						deltaTone={stat.tone}
+					/>
 				</Card>
 			))}
 		</Grid>
@@ -353,7 +292,7 @@ const TIMELINE: TimelineItem[] = [
 		time: "오후 1:32",
 		description: "고객이 #1024 주문을 결제했습니다.",
 		status: "done",
-		icon: <CheckCircle2 size={16} />,
+		icon: <CheckCircle2 size={iconSize.sm} />,
 	},
 	{
 		id: 2,
@@ -361,7 +300,7 @@ const TIMELINE: TimelineItem[] = [
 		time: "오후 1:35",
 		description: "주방에서 메뉴 준비를 시작했어요.",
 		status: "done",
-		icon: <CheckCircle2 size={16} />,
+		icon: <CheckCircle2 size={iconSize.sm} />,
 	},
 	{
 		id: 3,
@@ -369,14 +308,14 @@ const TIMELINE: TimelineItem[] = [
 		time: "오후 1:48",
 		description: "라이더가 매장에서 픽업 후 이동 중입니다.",
 		status: "active",
-		icon: <Truck size={16} />,
+		icon: <Truck size={iconSize.sm} />,
 	},
 	{
 		id: 4,
 		title: "배송 완료",
 		time: "예상 오후 2:05",
 		description: "고객 주소지에 도착 예정.",
-		icon: <Circle size={16} />,
+		icon: <Circle size={iconSize.sm} />,
 	},
 ];
 
