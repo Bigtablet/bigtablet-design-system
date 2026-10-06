@@ -85,13 +85,13 @@ $indicator: 28px;
   &_label {
     color: token.$color_text_heading;
     @include token.body_medium_medium;
-    overflow-wrap: anywhere;
+    @include token.wrap_keep_all;
   }
 
   &_description {
     color: token.$color_text_caption;
     @include token.body_small;
-    overflow-wrap: anywhere;
+    @include token.wrap_keep_all;
   }
 
   &_sr_only {
