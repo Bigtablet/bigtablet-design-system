@@ -42,9 +42,12 @@ type Story = StoryObj;
 
 type TypoStyle = {
 	fontSize: string;
-	fontWeight: number;
 	lineHeight: string;
-	letterSpacing: string;
+	fontWeight?: number;
+	letterSpacing?: string;
+	// 의미 이름 스타일만 갖는다 - overline 의 대문자, code 의 고정폭 글꼴
+	fontFamily?: string;
+	textTransform?: "uppercase";
 };
 
 function TypoRow({ scale, variant, style }: { scale: string; variant: string; style: TypoStyle }) {
@@ -63,19 +66,20 @@ function TypoRow({ scale, variant, style }: { scale: string; variant: string; st
 		>
 			<div>
 				<code style={{ fontSize: 12 }}>
-					typography.{scale}.{variant}
+					{scale ? `typography.${scale}.${variant}` : `typography.${variant}`}
 				</code>
 				<div style={{ fontSize: 11, opacity: 0.55, marginTop: 2 }}>
-					{style.fontSize} / {style.lineHeight} / {style.fontWeight}
+					{style.fontSize} / {style.lineHeight} / {style.fontWeight ?? "-"}
 				</div>
 			</div>
 			<div
 				style={{
-					fontFamily: typography.fontFamily.primary,
+					fontFamily: style.fontFamily ?? typography.fontFamily.primary,
 					fontSize: style.fontSize,
 					fontWeight: style.fontWeight,
 					lineHeight: style.lineHeight,
 					letterSpacing: style.letterSpacing,
+					textTransform: style.textTransform,
 					overflow: "hidden",
 					whiteSpace: "nowrap",
 					textOverflow: "ellipsis",
@@ -147,6 +151,20 @@ export const Semantic: Story = {
 				description="라벨·캡션·보조 텍스트 (12–14px) - 폼 라벨, 버튼 텍스트, 뱃지, 헬퍼 텍스트, 타임스탬프"
 				scale="label"
 				entries={Object.entries(typography.label) as [string, TypoStyle][]}
+			/>
+			<ScaleSection
+				title="Named"
+				description="의미로 고르는 스타일 - 캡션, 섹션 머리 라벨(overline, 대문자 변환 포함), 부제, 코드. SCSS 의 `@mixin caption` 등과 같은 값"
+				scale=""
+				entries={
+					[
+						["caption", typography.caption],
+						["captionBold", typography.captionBold],
+						["overline", typography.overline],
+						["subtitle", typography.subtitle],
+						["code", typography.code],
+					] as [string, TypoStyle][]
+				}
 			/>
 		</div>
 	),
