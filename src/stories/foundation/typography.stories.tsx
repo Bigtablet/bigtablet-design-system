@@ -85,7 +85,7 @@ function TypoRow({ scale, variant, style }: { scale: string; variant: string; st
 					textOverflow: "ellipsis",
 				}}
 			>
-				{sampleText(scale)}
+				{scale ? sampleText(scale) : namedSample(variant)}
 			</div>
 			<div style={{ fontSize: 11, opacity: 0.6, textAlign: "right" }}>
 				{style.fontSize} · lh {style.lineHeight}
@@ -553,6 +553,18 @@ export const Comparison: Story = {
 		);
 	},
 };
+
+/** 의미 이름 스타일의 샘플 - overline 의 대문자 변환, code 의 고정폭이 보이게 영문을 섞는다 */
+function namedSample(variant: string) {
+	switch (variant) {
+		case "overline":
+			return "Section label · 섹션 라벨";
+		case "code":
+			return "const total = items.length;";
+		default:
+			return "캡션 · 부제 텍스트 Caption";
+	}
+}
 
 function sampleText(scale: string) {
 	switch (scale) {
