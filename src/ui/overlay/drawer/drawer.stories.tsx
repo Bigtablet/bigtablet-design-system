@@ -25,12 +25,18 @@ const meta: Meta<typeof Drawer> = {
 			control: "boolean",
 			description: "우상단 X 닫기 아이콘 표시 여부",
 		},
+		disableAnimation: {
+			control: "boolean",
+			description:
+				"슬라이드·페이드 모션을 끄고 즉시 열고 닫기 (OS reduced-motion 은 이 값과 상관없이 항상 끈다)",
+		},
 	},
 	args: {
 		placement: "right",
 		size: 360,
 		closeOnOverlay: true,
 		showCloseIcon: true,
+		disableAnimation: false,
 	},
 	parameters: {
 		docs: {
@@ -38,7 +44,7 @@ const meta: Meta<typeof Drawer> = {
 				component: `
 **Drawer** - 화면 가장자리에서 미끄러져 들어오는 패널. 포커스 트랩 + Esc 닫기 + 배경 스크롤 잠금이 자동으로 적용된다.
 
-주요 prop: \`open\`, \`onClose\`, \`placement\` ("left" | "right" | "bottom"), \`size\`, \`title\`, \`footer\`, \`closeOnOverlay\`.
+주요 prop: \`open\`, \`onClose\`, \`placement\` ("left" | "right" | "bottom"), \`size\`, \`title\`, \`footer\`, \`closeOnOverlay\`, \`disableAnimation\`.
         `,
 			},
 		},
@@ -156,6 +162,34 @@ export const WithFooter: Story = {
 					<p style={{ margin: 0 }}>
 						본문은 스크롤되고 footer 는 항상 하단에 고정됩니다. 긴 폼에 적합합니다.
 					</p>
+				</Drawer>
+			</div>
+		);
+	},
+};
+
+export const WithoutAnimation: Story = {
+	name: "Without animation (전체 화면 메뉴)",
+	args: { placement: "right", size: "100%", disableAnimation: true },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`disableAnimation` - 슬라이드 없이 즉시 열고 닫는다. 화면 전체를 덮는 모바일 햄버거 메뉴처럼 미끄러지는 모션이 디자인에 맞지 않을 때 쓴다. 포커스 트랩·Esc·스크롤 잠금·`onExited` 는 그대로 동작한다.",
+			},
+		},
+	},
+	render: (args) => {
+		const [open, setOpen] = useState(false);
+		return (
+			<div style={{ padding: 24 }}>
+				<Button onClick={() => setOpen(true)}>메뉴 열기</Button>
+				<Drawer {...args} open={open} onClose={() => setOpen(false)} title="메뉴 / Menu">
+					<nav style={{ display: "grid", gap: 12 }}>
+						<a href="#home">홈 / Home</a>
+						<a href="#guide">이용 가이드 / Guide</a>
+						<a href="#contact">문의하기 / Contact</a>
+					</nav>
 				</Drawer>
 			</div>
 		);
