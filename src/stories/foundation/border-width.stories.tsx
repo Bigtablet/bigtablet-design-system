@@ -43,8 +43,8 @@ export const Semantic: Story = {
 						alignItems: "center",
 						gap: 16,
 						padding: 16,
-						background: "#fff",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 12,
 					}}
 				>
@@ -59,7 +59,7 @@ export const Semantic: Story = {
 						style={{
 							height: 40,
 							borderRadius: 8,
-							background: "#fafafa",
+							background: "var(--bt-color-bg-solid-dim)",
 							border: `${value} solid #121212`,
 							display: "flex",
 							alignItems: "center",
@@ -90,8 +90,8 @@ export const Base: Story = {
 						justifyContent: "space-between",
 						alignItems: "center",
 						padding: 12,
-						background: "#fff",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 10,
 					}}
 				>
@@ -108,7 +108,7 @@ export const UsageExamples: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				borderRadius: 12,
 				padding: 24,
 				display: "grid",
@@ -121,18 +121,20 @@ export const UsageExamples: Story = {
 			{/* none → standard → indicator 상태 변화 */}
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 10,
 					padding: 16,
-					border: "1px solid rgba(0,0,0,0.06)",
+					border: "1px solid var(--bt-color-border-subtle)",
 				}}
 			>
-				<div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 12 }}>
 					입력 필드의 상태 변화: none → standard → indicator
 				</div>
 				<div style={{ display: "grid", gap: 12 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-						<span style={{ width: 80, fontSize: 12, color: "#999" }}>기본</span>
+						<span style={{ width: 80, fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+							기본
+						</span>
 						<div
 							style={{
 								flex: 1,
@@ -143,14 +145,16 @@ export const UsageExamples: Story = {
 								alignItems: "center",
 								padding: "0 12px",
 								fontSize: 13,
-								color: "#999",
+								color: "var(--bt-color-text-caption)",
 							}}
 						>
 							placeholder
 						</div>
 					</div>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-						<span style={{ width: 80, fontSize: 12, color: "#999" }}>포커스</span>
+						<span style={{ width: 80, fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+							포커스
+						</span>
 						<div
 							style={{
 								flex: 1,
@@ -167,7 +171,9 @@ export const UsageExamples: Story = {
 						</div>
 					</div>
 					<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-						<span style={{ width: 80, fontSize: 12, color: "#999" }}>에러</span>
+						<span style={{ width: 80, fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+							에러
+						</span>
 						<div
 							style={{
 								flex: 1,
@@ -178,7 +184,7 @@ export const UsageExamples: Story = {
 								alignItems: "center",
 								padding: "0 12px",
 								fontSize: 13,
-								color: "#ef4444",
+								color: "var(--bt-color-status-error-on-surface)",
 							}}
 						>
 							잘못된 입력
@@ -190,20 +196,20 @@ export const UsageExamples: Story = {
 			{/* Card border */}
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 10,
 					padding: 16,
-					border: "1px solid rgba(0,0,0,0.06)",
+					border: "1px solid var(--bt-color-border-subtle)",
 				}}
 			>
-				<div style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 12 }}>
 					카드: <code>standard</code> (1px) - 영역 구분
 				</div>
 				<div
 					style={{ border: `${borderWidth.standard} solid #e5e5e5`, borderRadius: 12, padding: 16 }}
 				>
 					<div style={{ fontWeight: 600, fontSize: 14 }}>카드 제목</div>
-					<div style={{ fontSize: 13, color: "#666", marginTop: 4 }}>
+					<div style={{ fontSize: 13, color: "var(--bt-color-text-caption)", marginTop: 4 }}>
 						standard 두께의 테두리로 영역을 구분합니다.
 					</div>
 				</div>
@@ -215,30 +221,37 @@ export const UsageExamples: Story = {
 export const Comparison: Story = {
 	name: "차이 비교",
 	render: () => (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 720,
+			}}
+		>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 				같은 인풋인데, 테두리 두께만 다릅니다.
 			</p>
-			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				두꺼울수록 "이 요소에 주목하세요"라는 신호가 강해집니다. 비활성 → 일반 → 강조 순서입니다.
 			</p>
 			<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
 				{(Object.entries(borderWidth) as [string, string][]).map(([key, value]) => (
 					<div key={key} style={{ textAlign: "center" }}>
-						<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>
+						<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
 							{key} ({value})
 						</div>
 						<div
 							style={{
 								height: 44,
 								borderRadius: 10,
-								border: `${value} solid ${key === "indicator" || key === "thick" ? "#000" : "#e5e5e5"}`,
+								border: `${value} solid ${key === "indicator" || key === "thick" ? "#000" : "var(--bt-color-border-default)"}`,
 								display: "flex",
 								alignItems: "center",
 								padding: "0 12px",
 								fontSize: 13,
 								color: key === "none" ? "#ccc" : "#333",
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 							}}
 						>
 							{key === "none"
@@ -249,7 +262,7 @@ export const Comparison: Story = {
 										? "두꺼움"
 										: "강조"}
 						</div>
-						<div style={{ marginTop: 8, fontSize: 11, color: "#666" }}>
+						<div style={{ marginTop: 8, fontSize: 11, color: "var(--bt-color-text-caption)" }}>
 							{key === "none"
 								? "경계 없음"
 								: key === "standard"

@@ -67,7 +67,10 @@ export const Overview: Story = {
 									<td style={td}>
 										<code>{group.primary}</code>
 										{group.alias && (
-											<span style={{ color: "#888", fontSize: 12 }}> · {group.alias}</span>
+											<span style={{ color: "var(--bt-color-text-caption)", fontSize: 12 }}>
+												{" "}
+												· {group.alias}
+											</span>
 										)}
 									</td>
 									<td style={td}>{group.value}</td>
@@ -133,7 +136,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 					style={{
 						padding: "4px 12px",
 						borderRadius: 6,
-						border: "1px solid #e5e5e5",
+						border: "1px solid var(--bt-color-border-default)",
 						background: expanded ? "#121212" : "#fff",
 						color: expanded ? "#fff" : "#121212",
 						fontSize: 12,
@@ -144,7 +147,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 					{expanded ? "접기" : "3D 분해도"}
 				</button>
 			</div>
-			<p style={{ marginTop: 0, fontSize: 13, color: "#555" }}>
+			<p style={{ marginTop: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>
 				{expanded
 					? "마우스로 회전할 수 있습니다. 위에 있을수록 사용자에게 먼저 보입니다."
 					: `구분되는 레이어는 ${groups.length}개입니다. 아래에서 위로 쌓이며, 위에 있을수록 사용자에게 먼저 보입니다.`}
@@ -152,7 +155,7 @@ function LayerStack({ groups }: { groups: LayerGroup[] }) {
 
 			<div
 				style={{
-					background: "#f5f5f5",
+					background: "var(--bt-color-bg-solid-dim)",
 					borderRadius: 12,
 					overflow: "hidden",
 					transition: "height 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -340,13 +343,13 @@ type LayerGroup = ReturnType<typeof layerGroups>[number];
 const th: React.CSSProperties = {
 	textAlign: "left",
 	padding: "8px 12px",
-	borderBottom: "1px solid #e5e5e5",
+	borderBottom: "1px solid var(--bt-color-border-default)",
 	fontWeight: 600,
 };
 
 const td: React.CSSProperties = {
 	padding: "8px 12px",
-	borderBottom: "1px solid #f0f0f0",
+	borderBottom: "1px solid var(--bt-color-border-subtle)",
 };
 
 /**

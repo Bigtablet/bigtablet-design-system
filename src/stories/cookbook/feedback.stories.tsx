@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Search, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { iconSize } from "../../styles/icon";
+import { radius } from "../../styles/radius";
+import { spacing } from "../../styles/spacing";
+import { typography } from "../../styles/typography";
+import { Avatar } from "../../ui/display/avatar";
 import { Card } from "../../ui/display/card";
 import { EmptyState } from "../../ui/feedback/empty-state";
 import { Skeleton } from "../../ui/feedback/skeleton";
@@ -18,7 +23,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**사용자의 동작에 화면이 응답하는 방법** 모음입니다. 기다리게 할 때(로딩), 보여줄 것이 없을 때(빈 상태), 멈춰 세울 때(확인 모달), 알려만 줄 때(토스트) 네 가지입니다.\n\n각 스토리 설명에 '언제 쓰는지'를 적어 두었습니다. 고르는 기준이 되는 문장이니 먼저 읽어 보세요.",
+					"**사용자의 동작에 화면이 응답하는 방법** 모음입니다. 기다리게 할 때(로딩), 보여줄 것이 없을 때(빈 상태), 멈춰 세울 때(확인 모달), 알려만 줄 때(토스트) 네 가지입니다.\n\n각 스토리 설명에 '언제 쓰는지'를 적어 두었습니다. 고르는 기준이 되는 문장이니 먼저 읽어 보세요.\n\n글자·간격·모서리는 숫자 대신 토큰을 씁니다 - `style={{ ...typography.label.medium, color: \"var(--bt-color-text-body)\" }}` 처럼 `typography`·`spacing`·`radius` 를 펼치고 색은 `--bt-color-*` 변수로 받습니다.",
 			},
 		},
 	},
@@ -48,8 +53,7 @@ export const LoadingSkeleton: Story = {
 					<h3
 						style={{
 							margin: 0,
-							fontSize: 16,
-							fontWeight: 700,
+							...typography.title.mediumMedium,
 							color: "var(--bt-color-text-heading)",
 						}}
 					>
@@ -93,36 +97,19 @@ export const LoadingSkeleton: Story = {
 							].map((post) => (
 								<Card key={post.title} bordered padding="md" shadow="sm">
 									<Stack direction="horizontal" gap={16} align="start">
-										<div
-											style={{
-												width: 48,
-												height: 48,
-												borderRadius: "50%",
-												background: "linear-gradient(135deg, #47555E 0%, #303841 100%)",
-												color: "#fff",
-												display: "inline-flex",
-												alignItems: "center",
-												justifyContent: "center",
-												fontSize: 14,
-												fontWeight: 700,
-											}}
-										>
-											{post.name.charAt(0)}
-										</div>
+										<Avatar name={post.name} size="lg" />
 										<Stack gap={4} style={{ flex: 1 }}>
 											<span
 												style={{
-													fontSize: 13,
+													...typography.label.mediumMedium,
 													color: "var(--bt-color-text-caption)",
-													fontWeight: 500,
 												}}
 											>
 												{post.name}
 											</span>
 											<span
 												style={{
-													fontSize: 15,
-													fontWeight: 700,
+													...typography.body.mediumMedium,
 													color: "var(--bt-color-text-heading)",
 												}}
 											>
@@ -131,9 +118,8 @@ export const LoadingSkeleton: Story = {
 											<p
 												style={{
 													margin: 0,
-													fontSize: 13,
+													...typography.label.medium,
 													color: "var(--bt-color-text-body)",
-													lineHeight: 1.55,
 												}}
 											>
 												{post.body}
@@ -167,7 +153,7 @@ export const EmptyStatePattern: Story = {
 				alignItems: "center",
 				justifyContent: "center",
 				minHeight: 480,
-				padding: 48,
+				padding: spacing["48"],
 				background: "var(--bt-color-bg-solid)",
 			}}
 		>
@@ -209,21 +195,23 @@ export const ConfirmationModal: Story = {
 				<Button
 					variant="outline"
 					size="md"
-					leadingIcon={<Trash2 size={16} />}
+					danger
+					leadingIcon={<Trash2 size={iconSize.sm} />}
 					onClick={() => {
 						setCompleted(false);
 						setOpen(true);
-					}}
-					style={{
-						color: "var(--bt-color-status-error)",
-						borderColor: "color-mix(in srgb, var(--bt-color-status-error) 45%, transparent)",
 					}}
 				>
 					계정 삭제
 				</Button>
 
 				{completed && (
-					<span style={{ fontSize: 13, color: "var(--bt-color-status-success)", fontWeight: 600 }}>
+					<span
+						style={{
+							...typography.label.mediumMedium,
+							color: "var(--bt-color-status-success-on-surface)",
+						}}
+					>
 						삭제 요청이 접수되었습니다.
 					</span>
 				)}
@@ -238,9 +226,8 @@ export const ConfirmationModal: Story = {
 						<p
 							style={{
 								margin: 0,
-								fontSize: 14,
+								...typography.body.small,
 								color: "var(--bt-color-text-body)",
-								lineHeight: 1.6,
 							}}
 						>
 							계정을 삭제하면 모든 매장 데이터·정산 기록·연동 정보가 영구적으로 제거되며, 이 작업은
@@ -248,13 +235,11 @@ export const ConfirmationModal: Story = {
 						</p>
 						<div
 							style={{
-								padding: 12,
-								borderRadius: 8,
-								background: "color-mix(in srgb, var(--bt-color-status-error) 12%, transparent)",
-								border:
-									"1px solid color-mix(in srgb, var(--bt-color-status-error) 35%, transparent)",
-								fontSize: 13,
-								color: "var(--bt-color-status-error)",
+								padding: spacing["12"],
+								borderRadius: radius.md,
+								background: "var(--bt-color-status-error-container)",
+								color: "var(--bt-color-status-error-on-container)",
+								...typography.label.medium,
 							}}
 						>
 							삭제 후 7일 동안은 동일 이메일로 신규 가입이 제한됩니다.
@@ -286,23 +271,11 @@ const ToastDemo = () => {
 	const toast = useToast();
 
 	return (
-		<Card bordered padding="lg" shadow="sm">
+		<Card bordered padding="lg" shadow="sm" heading="토스트 메시지">
 			<Stack gap={16} style={{ width: 360 }}>
-				<Stack gap={4}>
-					<h3
-						style={{
-							margin: 0,
-							fontSize: 16,
-							fontWeight: 700,
-							color: "var(--bt-color-text-heading)",
-						}}
-					>
-						토스트 메시지
-					</h3>
-					<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-body)" }}>
-						짧고 일시적인 시스템 피드백에 사용하세요.
-					</p>
-				</Stack>
+				<p style={{ margin: 0, ...typography.label.medium, color: "var(--bt-color-text-body)" }}>
+					짧고 일시적인 시스템 피드백에 사용하세요.
+				</p>
 
 				<Grid cols={3} gap={8}>
 					<Button

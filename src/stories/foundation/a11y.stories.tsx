@@ -38,7 +38,7 @@ export const FocusRing: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 720 }}>
 			<section>
 				<h3 style={{ marginBottom: 4 }}>포커스 링 스타일</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					키보드(Tab)로 이동할 때, 현재 위치를 명확히 보여주는 시각적 표시입니다.
 				</p>
 
@@ -56,8 +56,8 @@ export const FocusRing: Story = {
 								style={{
 									padding: "10px 20px",
 									borderRadius: 8,
-									border: "1px solid #e5e5e5",
-									background: "#fff",
+									border: "1px solid var(--bt-color-border-default)",
+									background: "var(--bt-color-bg-solid)",
 									boxShadow: shadow,
 									cursor: "pointer",
 									fontSize: 14,
@@ -65,7 +65,7 @@ export const FocusRing: Story = {
 							>
 								{label} 포커스
 							</button>
-							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>
+							<div style={{ marginTop: 6, fontSize: 11, color: "var(--bt-color-text-caption)" }}>
 								<code>{token}</code>
 							</div>
 						</div>
@@ -75,7 +75,7 @@ export const FocusRing: Story = {
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>실제 UI 요소에서의 포커스 링</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					다양한 인터랙티브 요소 위에서 포커스 링이 어떻게 보이는지 확인하세요.
 				</p>
 
@@ -89,14 +89,14 @@ export const FocusRing: Story = {
 							gap: 12,
 						}}
 					>
-						<span style={{ fontSize: 13, color: "#555" }}>입력창</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>입력창</span>
 						<input
 							type="text"
 							placeholder="Tab으로 포커스 이동해 보세요"
 							style={{
 								padding: "10px 12px",
 								borderRadius: 8,
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								fontSize: 14,
 								outline: "none",
 								width: "100%",
@@ -120,7 +120,7 @@ export const FocusRing: Story = {
 							gap: 12,
 						}}
 					>
-						<span style={{ fontSize: 13, color: "#555" }}>에러 상태</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>에러 상태</span>
 						<input
 							type="text"
 							placeholder="오류가 있는 필드"
@@ -151,7 +151,7 @@ export const FocusRing: Story = {
 							gap: 12,
 						}}
 					>
-						<span style={{ fontSize: 13, color: "#555" }}>버튼</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>버튼</span>
 						<div style={{ display: "flex", gap: 8 }}>
 							<button
 								type="button"
@@ -179,8 +179,8 @@ export const FocusRing: Story = {
 								style={{
 									padding: "10px 20px",
 									borderRadius: 8,
-									border: "1px solid #e5e5e5",
-									background: "#fff",
+									border: "1px solid var(--bt-color-border-default)",
+									background: "var(--bt-color-bg-solid)",
 									fontSize: 14,
 									cursor: "pointer",
 									outline: "none",
@@ -206,13 +206,13 @@ export const FocusRing: Story = {
 							gap: 12,
 						}}
 					>
-						<span style={{ fontSize: 13, color: "#555" }}>링크</span>
+						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>링크</span>
 						<a
 							href="#"
 							onClick={(e) => e.preventDefault()}
 							style={{
 								fontSize: 14,
-								color: "#121212",
+								color: "var(--bt-color-text-heading)",
 								textDecoration: "underline",
 								outline: "none",
 								borderRadius: 4,
@@ -242,7 +242,7 @@ export const TapTarget: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 720 }}>
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 44px인가요?</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					DS 의 하한은 <strong>44×44px</strong> 입니다 - 손끝이 닿는 면적이 이보다 작으면 탭 실수가
 					잦아집니다. 특히 이동 중이거나 손이 큰 사용자에게 불편합니다.
 					<br />
@@ -257,7 +257,7 @@ export const TapTarget: Story = {
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>크기 비교</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					아래 버튼에 직접 손가락을 대보면 체감하실 수 있습니다.
 				</p>
 
@@ -275,14 +275,18 @@ export const TapTarget: Story = {
 								style={{
 									width: size,
 									height: size,
-									background: isBad ? "#FEE2E2" : "#D1FAE5",
-									border: `2px solid ${isBad ? "#EF4444" : "#10B981"}`,
+									background: isBad
+										? "var(--bt-color-status-error-container)"
+										: "var(--bt-color-status-success-container)",
+									border: `2px solid ${isBad ? "var(--bt-color-status-error)" : "var(--bt-color-status-success)"}`,
 									borderRadius: 8,
 									display: "flex",
 									alignItems: "center",
 									justifyContent: "center",
 									fontSize: 11,
-									color: isBad ? "#991B1B" : "#065F46",
+									color: isBad
+										? "var(--bt-color-status-error-on-container)"
+										: "var(--bt-color-status-success-on-container)",
 									fontWeight: 600,
 									margin: "0 auto",
 								}}
@@ -292,7 +296,7 @@ export const TapTarget: Story = {
 							<div style={{ marginTop: 6, fontSize: 12 }}>
 								<strong>{label}</strong>
 							</div>
-							<div style={{ fontSize: 11, color: "#666" }}>
+							<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
 								{size}×{size}px
 							</div>
 						</div>
@@ -303,8 +307,8 @@ export const TapTarget: Story = {
 					style={{
 						marginTop: 20,
 						padding: 12,
-						background: "#FFFBEB",
-						border: "1px solid #FDE68A",
+						background: "var(--bt-color-status-warning-container)",
+						border: "1px solid var(--bt-color-status-warning)",
 						borderRadius: 8,
 						fontSize: 13,
 					}}
@@ -333,7 +337,7 @@ export const Density: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 760 }}>
 			<section>
 				<h3 style={{ marginBottom: 4 }}>왜 반응형 밀도인가요?</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					웹과 앱은 입력 방식이 다릅니다.
 					<br />
 					데스크탑은 마우스라 작은 컨트롤도 정확히 누르지만, 모바일은 손가락이라 더 큰 영역이
@@ -346,7 +350,7 @@ export const Density: Story = {
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>밀도 토큰</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					폼 컨트롤(Button, TextField, Dropdown)의 height 결정에 사용됩니다.
 				</p>
 				<div style={{ display: "grid", gap: 12, marginTop: 16 }}>
@@ -359,31 +363,37 @@ export const Density: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: 12,
-								background: "#fff",
-								border: "1px solid rgba(0,0,0,0.06)",
+								background: "var(--bt-color-bg-solid)",
+								border: "1px solid var(--bt-color-border-subtle)",
 								borderRadius: 12,
 							}}
 						>
 							<div>
 								<code style={{ fontSize: 12 }}>tap-target-{key}</code>
-								<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{desc}</div>
+								<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 2 }}>
+									{desc}
+								</div>
 							</div>
 							<div
 								style={{
 									height: size,
-									background: "#fff",
-									border: "1px solid #e5e5e5",
+									background: "var(--bt-color-bg-solid)",
+									border: "1px solid var(--bt-color-border-default)",
 									borderRadius: 8,
 									display: "flex",
 									alignItems: "center",
 									justifyContent: "center",
 									fontSize: 12,
-									color: "#555",
+									color: "var(--bt-color-text-body)",
 								}}
 							>
 								height {size}px
 							</div>
-							<span style={{ textAlign: "right", fontSize: 12, color: "#666" }}>{size}px</span>
+							<span
+								style={{ textAlign: "right", fontSize: 12, color: "var(--bt-color-text-caption)" }}
+							>
+								{size}px
+							</span>
 						</div>
 					))}
 				</div>
@@ -391,7 +401,7 @@ export const Density: Story = {
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>반응형 매핑 규칙</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					compact breakpoint (<code>{"<"}600px</code>)에서 한 단계 키움. 이미 spacious(56)면 유지.
 				</p>
 				<div style={{ display: "grid", gap: 8, marginTop: 16 }}>
@@ -409,15 +419,17 @@ export const Density: Story = {
 								alignItems: "center",
 								gap: 8,
 								padding: 10,
-								background: "#fafafa",
+								background: "var(--bt-color-bg-solid-dim)",
 								borderRadius: 8,
 								fontSize: 13,
 								fontFamily: "monospace",
 							}}
 						>
 							<span>{desktop}</span>
-							<span style={{ textAlign: "center", color: "#999" }}>{arrow}</span>
-							<span style={{ color: "#0369A1" }}>{mobile}</span>
+							<span style={{ textAlign: "center", color: "var(--bt-color-text-caption)" }}>
+								{arrow}
+							</span>
+							<span style={{ color: "var(--bt-color-status-info-on-surface)" }}>{mobile}</span>
 						</div>
 					))}
 				</div>
@@ -425,7 +437,7 @@ export const Density: Story = {
 
 			<section>
 				<h3 style={{ marginBottom: 4 }}>실사용 예시</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					Storybook 상단 툴바의 <strong>뷰포트 변경</strong> 버튼에서 모바일을 고르면, 같은{" "}
 					<code>size="md"</code> Button 이 자동으로 한 단계 커집니다.
 				</p>
@@ -437,17 +449,17 @@ export const Density: Story = {
 						style={{
 							display: "block",
 							maxWidth: "100%",
-							border: "1px solid #e5e5e5",
+							border: "1px solid var(--bt-color-border-default)",
 							borderRadius: 8,
 						}}
 					/>
-					<figcaption style={{ marginTop: 6, fontSize: 12, color: "#555" }}>
+					<figcaption style={{ marginTop: 6, fontSize: 12, color: "var(--bt-color-text-body)" }}>
 						툴바가 안 보이면 Docs 탭이 아니라 스토리 페이지로 들어와야 합니다 - 왼쪽 트리에서{" "}
 						<strong>A11y → 밀도 / 반응형 사이즈 (Density)</strong>.
 					</figcaption>
 				</figure>
 
-				<p style={{ color: "#555", fontSize: 12, marginTop: 12 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 12, marginTop: 12 }}>
 					적용 대상은 Button, TextField, Dropdown 입니다. Chip은 인라인 컴포넌트라 제외합니다.
 				</p>
 			</section>
@@ -580,7 +592,7 @@ export const ColorContrast: Story = {
 		<div style={{ display: "grid", gap: 32, maxWidth: 760 }}>
 			<section>
 				<h3 style={{ marginBottom: 4 }}>WCAG AA 기준</h3>
-				<p style={{ color: "#555", fontSize: 13, marginTop: 0 }}>
+				<p style={{ color: "var(--bt-color-text-body)", fontSize: 13, marginTop: 0 }}>
 					일반 텍스트는 <strong>4.5:1 이상</strong>, 큰 텍스트(18px bold 또는 24px 이상)는{" "}
 					<strong>3:1 이상</strong>의 명도 대비가 필요합니다. 아래는 우리 디자인 토큰의 주요
 					텍스트/배경 조합별 대비율입니다.
@@ -602,14 +614,14 @@ export const ColorContrast: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: 12,
-								background: "#fff",
-								border: "1px solid rgba(0,0,0,0.06)",
+								background: "var(--bt-color-bg-solid)",
+								border: "1px solid var(--bt-color-border-subtle)",
 								borderRadius: 10,
 							}}
 						>
 							<div>
 								<strong style={{ fontSize: 13 }}>{pair.label}</strong>
-								<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>
+								<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 2 }}>
 									{pair.fgName} / {pair.bgName}
 								</div>
 							</div>
@@ -621,7 +633,7 @@ export const ColorContrast: Story = {
 									background: pair.bg,
 									color: pair.fg,
 									fontSize: 14,
-									border: "1px solid rgba(0,0,0,0.06)",
+									border: "1px solid var(--bt-color-border-subtle)",
 								}}
 								aria-disabled={pair.fgName === "text.disabled" || undefined}
 							>
@@ -638,8 +650,8 @@ export const ColorContrast: Story = {
 										style={{
 											padding: "3px 8px",
 											borderRadius: 4,
-											background: "#D1FAE5",
-											color: "#065F46",
+											background: "var(--bt-color-status-success-container)",
+											color: "var(--bt-color-status-success-on-container)",
 											fontSize: 12,
 											fontWeight: 600,
 										}}
@@ -651,8 +663,8 @@ export const ColorContrast: Story = {
 										style={{
 											padding: "3px 8px",
 											borderRadius: 4,
-											background: "#FEF3C7",
-											color: "#92400E",
+											background: "var(--bt-color-status-warning-container)",
+											color: "var(--bt-color-status-warning-on-container)",
 											fontSize: 12,
 											fontWeight: 600,
 										}}
@@ -664,8 +676,8 @@ export const ColorContrast: Story = {
 										style={{
 											padding: "3px 8px",
 											borderRadius: 4,
-											background: "#FEE2E2",
-											color: "#991B1B",
+											background: "var(--bt-color-status-error-container)",
+											color: "var(--bt-color-status-error-on-container)",
 											fontSize: 12,
 											fontWeight: 600,
 										}}
@@ -682,8 +694,8 @@ export const ColorContrast: Story = {
 			<div
 				style={{
 					padding: 12,
-					background: "#F0F9FF",
-					border: "1px solid #BAE6FD",
+					background: "var(--bt-color-status-info-container)",
+					border: "1px solid var(--bt-color-status-info)",
 					borderRadius: 8,
 					fontSize: 13,
 				}}

@@ -31,7 +31,7 @@ export const Scale: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				borderRadius: 12,
 				padding: 24,
 				display: "grid",
@@ -48,21 +48,23 @@ export const Scale: Story = {
 						alignItems: "center",
 						gap: 12,
 						padding: 12,
-						background: "#fff",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 12,
 					}}
 				>
 					<div>
 						<strong style={{ fontSize: 13 }}>{value}</strong>
-						<div style={{ fontSize: 11, color: "#666", marginTop: 1 }}>spacing-{key}</div>
+						<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 1 }}>
+							spacing-{key}
+						</div>
 					</div>
 
 					<div
 						style={{
 							height: 10,
 							borderRadius: 6,
-							background: "#e5e5e5",
+							background: "var(--bt-color-border-default)",
 							overflow: "hidden",
 						}}
 						aria-hidden
@@ -77,8 +79,8 @@ export const Scale: Story = {
 						/>
 					</div>
 
-					<div style={{ fontSize: 12, color: "#444", textAlign: "right" }}>
-						<span style={{ marginRight: 8, color: "#666" }}>{value}</span>
+					<div style={{ fontSize: 12, color: "var(--bt-color-text-body)", textAlign: "right" }}>
+						<span style={{ marginRight: 8, color: "var(--bt-color-text-caption)" }}>{value}</span>
 						{spacingUseCase(key)}
 					</div>
 				</div>
@@ -90,14 +92,21 @@ export const Scale: Story = {
 export const LayoutExample: Story = {
 	name: "실제 레이아웃 적용",
 	render: () => (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 400 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 400,
+			}}
+		>
 			<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>폼 레이아웃에서의 spacing 사용</h3>
 
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 12,
-					border: "1px solid #e5e5e5",
+					border: "1px solid var(--bt-color-border-default)",
 					padding: spacing[16],
 				}}
 			>
@@ -121,7 +130,7 @@ export const LayoutExample: Story = {
 							style={{
 								height: 40,
 								borderRadius: 8,
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								padding: `0 ${spacing[8]}`,
 								display: "flex",
 								alignItems: "center",
@@ -137,8 +146,8 @@ export const LayoutExample: Story = {
 								left: 0,
 								top: -2,
 								fontSize: 10,
-								color: "#2563eb",
-								background: "#fff",
+								color: "var(--bt-color-status-info-on-surface)",
+								background: "var(--bt-color-bg-solid)",
 								padding: "0 4px",
 							}}
 						>
@@ -163,7 +172,7 @@ export const LayoutExample: Story = {
 						style={{
 							height: 40,
 							borderRadius: 8,
-							border: "1px solid #e5e5e5",
+							border: "1px solid var(--bt-color-border-default)",
 							padding: `0 ${spacing[8]}`,
 							display: "flex",
 							alignItems: "center",
@@ -181,8 +190,8 @@ export const LayoutExample: Story = {
 						display: "grid",
 						gap: 4,
 						fontSize: 11,
-						color: "#2563eb",
-						background: "#eff6ff",
+						color: "var(--bt-color-status-info-on-surface)",
+						background: "var(--bt-color-status-info-container)",
 						borderRadius: 8,
 						padding: 10,
 					}}
@@ -217,19 +226,33 @@ export const Comparison: Story = {
 
 		const card = (
 			<div
-				style={{ background: "#fff", borderRadius: 8, border: "1px solid #e5e5e5", padding: 12 }}
+				style={{
+					background: "var(--bt-color-bg-solid)",
+					borderRadius: 8,
+					border: "1px solid var(--bt-color-border-default)",
+					padding: 12,
+				}}
 			>
 				<div style={{ fontSize: 13, fontWeight: 600 }}>카드</div>
-				<div style={{ fontSize: 11, color: "#666", marginTop: 4 }}>내용</div>
+				<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 4 }}>
+					내용
+				</div>
 			</div>
 		);
 
 		return (
-			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid-dim)",
+					borderRadius: 12,
+					padding: 24,
+					maxWidth: 720,
+				}}
+			>
 				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 					같은 카드 3개를 놓고, 간격만 바꿨습니다.
 				</p>
-				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 					간격이 넓을수록 여유로운 느낌, 좁을수록 빽빽한 느낌이 나는 걸 비교해보세요.
 				</p>
 				<div
@@ -245,7 +268,7 @@ export const Comparison: Story = {
 								style={{
 									display: "grid",
 									gap: parseInt(value, 10),
-									background: "#f0f0f0",
+									background: "var(--bt-color-bg-solid-dim)",
 									borderRadius: 10,
 									padding: 12,
 								}}
@@ -257,7 +280,9 @@ export const Comparison: Story = {
 							<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600, textAlign: "center" }}>
 								{token}
 							</div>
-							<div style={{ fontSize: 11, color: "#666", textAlign: "center" }}>
+							<div
+								style={{ fontSize: 11, color: "var(--bt-color-text-caption)", textAlign: "center" }}
+							>
 								{value} - {desc}
 							</div>
 						</div>

@@ -40,7 +40,7 @@ export const Overview: Story = {
 				<div
 					key={key}
 					style={{
-						border: "1px solid #e5e5e5",
+						border: "1px solid var(--bt-color-border-default)",
 						borderRadius: 8,
 						padding: 16,
 					}}
@@ -58,7 +58,7 @@ export const Overview: Story = {
 						style={{
 							height: 8,
 							width: "100%",
-							background: "#f0f0f0",
+							background: "var(--bt-color-bg-solid-dim)",
 							borderRadius: 4,
 							overflow: "hidden",
 						}}
@@ -87,7 +87,12 @@ export const LayoutTransition: Story = {
 
 			{/* Compact */}
 			<div
-				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+				style={{
+					background: "var(--bt-color-bg-solid)",
+					borderRadius: 12,
+					border: "1px solid var(--bt-color-border-default)",
+					padding: 16,
+				}}
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>compact</strong>
@@ -96,16 +101,29 @@ export const LayoutTransition: Story = {
 					</span>
 				</div>
 				<div style={{ display: "grid", gap: 8, maxWidth: 200 }}>
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
 				</div>
-				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>단일 컬럼, 풀 너비</p>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+					단일 컬럼, 풀 너비
+				</p>
 			</div>
 
 			{/* Medium */}
 			<div
-				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+				style={{
+					background: "var(--bt-color-bg-solid)",
+					borderRadius: 12,
+					border: "1px solid var(--bt-color-border-default)",
+					padding: 16,
+				}}
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>medium</strong>
@@ -114,17 +132,32 @@ export const LayoutTransition: Story = {
 					</span>
 				</div>
 				<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 320 }}>
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-					<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
+					<div
+						style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
 				</div>
-				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>2컬럼 그리드 시작</p>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+					2컬럼 그리드 시작
+				</p>
 			</div>
 
 			{/* Expanded */}
 			<div
-				style={{ background: "#fff", borderRadius: 12, border: "1px solid #e5e5e5", padding: 16 }}
+				style={{
+					background: "var(--bt-color-bg-solid)",
+					borderRadius: 12,
+					border: "1px solid var(--bt-color-border-default)",
+					padding: 16,
+				}}
 			>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<strong style={{ fontSize: 13 }}>expanded</strong>
@@ -133,14 +166,24 @@ export const LayoutTransition: Story = {
 					</span>
 				</div>
 				<div style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: 8, maxWidth: 400 }}>
-					<div style={{ height: 80, background: "#d4d4d4", borderRadius: 6 }} />
+					<div
+						style={{ height: 80, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+					/>
 					<div style={{ display: "grid", gap: 8 }}>
-						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
-						<div style={{ height: 24, background: "#e5e5e5", borderRadius: 6 }} />
+						<div
+							style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+						/>
+						<div
+							style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+						/>
+						<div
+							style={{ height: 24, background: "var(--bt-color-border-default)", borderRadius: 6 }}
+						/>
 					</div>
 				</div>
-				<p style={{ margin: "8px 0 0", fontSize: 12, color: "#666" }}>사이드바 + 콘텐츠 영역</p>
+				<p style={{ margin: "8px 0 0", fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+					사이드바 + 콘텐츠 영역
+				</p>
 			</div>
 		</div>
 	),

@@ -42,21 +42,12 @@ type Story = StoryObj;
 
 type TypoStyle = {
 	fontSize: string;
-	fontWeight: string;
 	lineHeight: string;
-	letterSpacing: string;
-};
-
-const fontWeightMap: Record<string, number> = {
-	Thin: 100,
-	ExtraLight: 200,
-	Light: 300,
-	Regular: 400,
-	Medium: 500,
-	SemiBold: 600,
-	Bold: 700,
-	ExtraBold: 800,
-	Black: 900,
+	fontWeight?: number;
+	letterSpacing?: string;
+	// 의미 이름 스타일만 갖는다 - overline 의 대문자, code 의 고정폭 글꼴
+	fontFamily?: string;
+	textTransform?: "uppercase";
 };
 
 function TypoRow({ scale, variant, style }: { scale: string; variant: string; style: TypoStyle }) {
@@ -68,32 +59,33 @@ function TypoRow({ scale, variant, style }: { scale: string; variant: string; st
 				alignItems: "center",
 				gap: 12,
 				padding: 14,
-				background: "#fff",
-				border: "1px solid rgba(0,0,0,0.06)",
+				background: "var(--bt-color-bg-solid)",
+				border: "1px solid var(--bt-color-border-subtle)",
 				borderRadius: 12,
 			}}
 		>
 			<div>
 				<code style={{ fontSize: 12 }}>
-					typography.{scale}.{variant}
+					{scale ? `typography.${scale}.${variant}` : `typography.${variant}`}
 				</code>
 				<div style={{ fontSize: 11, opacity: 0.55, marginTop: 2 }}>
-					{style.fontSize} / {style.lineHeight} / {style.fontWeight}
+					{style.fontSize} / {style.lineHeight} / {style.fontWeight ?? "-"}
 				</div>
 			</div>
 			<div
 				style={{
-					fontFamily: typography.fontFamily.primary,
+					fontFamily: style.fontFamily ?? typography.fontFamily.primary,
 					fontSize: style.fontSize,
-					fontWeight: fontWeightMap[style.fontWeight] ?? 400,
+					fontWeight: style.fontWeight,
 					lineHeight: style.lineHeight,
 					letterSpacing: style.letterSpacing,
+					textTransform: style.textTransform,
 					overflow: "hidden",
 					whiteSpace: "nowrap",
 					textOverflow: "ellipsis",
 				}}
 			>
-				{sampleText(scale)}
+				{scale ? sampleText(scale) : namedSample(variant)}
 			</div>
 			<div style={{ fontSize: 11, opacity: 0.6, textAlign: "right" }}>
 				{style.fontSize} · lh {style.lineHeight}
@@ -160,6 +152,20 @@ export const Semantic: Story = {
 				scale="label"
 				entries={Object.entries(typography.label) as [string, TypoStyle][]}
 			/>
+			<ScaleSection
+				title="Named"
+				description="의미로 고르는 스타일 - 캡션, 섹션 머리 라벨(overline, 대문자 변환 포함), 부제, 코드. SCSS 의 `@mixin caption` 등과 같은 값"
+				scale=""
+				entries={
+					[
+						["caption", typography.caption],
+						["captionBold", typography.captionBold],
+						["overline", typography.overline],
+						["subtitle", typography.subtitle],
+						["code", typography.code],
+					] as [string, TypoStyle][]
+				}
+			/>
 		</div>
 	),
 };
@@ -173,8 +179,8 @@ export const Base: Story = {
 				<div
 					style={{
 						padding: 16,
-						background: "#fafafa",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid-dim)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 12,
 						fontFamily: typography.fontFamily.primary,
 					}}
@@ -198,8 +204,8 @@ export const Base: Story = {
 							alignItems: "center",
 							gap: 12,
 							padding: 12,
-							background: "#fff",
-							border: "1px solid rgba(0,0,0,0.06)",
+							background: "var(--bt-color-bg-solid)",
+							border: "1px solid var(--bt-color-border-subtle)",
 							borderRadius: 12,
 						}}
 					>
@@ -235,8 +241,8 @@ export const Base: Story = {
 							alignItems: "center",
 							gap: 12,
 							padding: 12,
-							background: "#fff",
-							border: "1px solid rgba(0,0,0,0.06)",
+							background: "var(--bt-color-bg-solid)",
+							border: "1px solid var(--bt-color-border-subtle)",
 							borderRadius: 12,
 						}}
 					>
@@ -266,16 +272,16 @@ export const Base: Story = {
 							alignItems: "center",
 							gap: 12,
 							padding: 14,
-							border: "1px solid rgba(0,0,0,0.06)",
+							border: "1px solid var(--bt-color-border-subtle)",
 							borderRadius: 12,
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							fontFamily: typography.fontFamily.primary,
 						}}
 					>
-						<div style={{ fontWeight: fontWeightMap[value] ?? 400, fontSize: 16 }}>
+						<div style={{ fontWeight: value, fontSize: 16 }}>
 							굵기 예시 - font-weight-{key} ({value})
 						</div>
-						<code style={{ fontSize: 12 }}>{fontWeightMap[value] ?? value}</code>
+						<code style={{ fontSize: 12 }}>{value}</code>
 					</div>
 				))}
 			</section>
@@ -288,9 +294,9 @@ export const Hierarchy: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fff",
+				background: "var(--bt-color-bg-solid)",
 				borderRadius: 12,
-				border: "1px solid #e5e5e5",
+				border: "1px solid var(--bt-color-border-default)",
 				padding: 32,
 				maxWidth: 560,
 			}}
@@ -299,8 +305,8 @@ export const Hierarchy: Story = {
 				style={{
 					margin: "0 0 20px",
 					fontSize: 12,
-					color: "#2563eb",
-					background: "#eff6ff",
+					color: "var(--bt-color-status-info-on-surface)",
+					background: "var(--bt-color-status-info-container)",
 					borderRadius: 8,
 					padding: 10,
 				}}
@@ -321,7 +327,14 @@ export const Hierarchy: Story = {
 			>
 				캠페인 타이틀
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 24 }}>
+			<span
+				style={{
+					fontSize: 10,
+					color: "var(--bt-color-text-caption)",
+					display: "block",
+					marginBottom: 24,
+				}}
+			>
 				↑ Display.large
 			</span>
 
@@ -337,7 +350,14 @@ export const Hierarchy: Story = {
 			>
 				섹션 제목
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 16 }}>
+			<span
+				style={{
+					fontSize: 10,
+					color: "var(--bt-color-text-caption)",
+					display: "block",
+					marginBottom: 16,
+				}}
+			>
 				↑ Heading.large
 			</span>
 
@@ -353,7 +373,14 @@ export const Hierarchy: Story = {
 			>
 				카드 헤더 텍스트
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 8 }}>
+			<span
+				style={{
+					fontSize: 10,
+					color: "var(--bt-color-text-caption)",
+					display: "block",
+					marginBottom: 8,
+				}}
+			>
 				↑ Title.medium
 			</span>
 
@@ -364,14 +391,21 @@ export const Hierarchy: Story = {
 					fontSize: "14px",
 					fontWeight: 400,
 					lineHeight: "1.6",
-					color: "#444",
+					color: "var(--bt-color-text-body)",
 					marginBottom: 4,
 				}}
 			>
 				본문 텍스트입니다. 이 영역은 사용자에게 상세한 정보를 전달하는 데 사용됩니다. 적절한
 				line-height와 letter-spacing으로 가독성을 확보합니다.
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block", marginBottom: 12 }}>
+			<span
+				style={{
+					fontSize: 10,
+					color: "var(--bt-color-text-caption)",
+					display: "block",
+					marginBottom: 12,
+				}}
+			>
 				↑ Body.medium
 			</span>
 
@@ -382,13 +416,15 @@ export const Hierarchy: Story = {
 					fontSize: "12px",
 					fontWeight: 400,
 					lineHeight: "1.4",
-					color: "#999",
+					color: "var(--bt-color-text-caption)",
 					marginBottom: 4,
 				}}
 			>
 				2026-04-09 · 보조 텍스트 · 캡션
 			</div>
-			<span style={{ fontSize: 10, color: "#999", display: "block" }}>↑ Label.small</span>
+			<span style={{ fontSize: 10, color: "var(--bt-color-text-caption)", display: "block" }}>
+				↑ Label.small
+			</span>
 		</div>
 	),
 };
@@ -406,11 +442,18 @@ export const Comparison: Story = {
 		];
 
 		return (
-			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid-dim)",
+					borderRadius: 12,
+					padding: 24,
+					maxWidth: 720,
+				}}
+			>
 				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 					같은 문장을 다른 타이포 스케일로 비교해보세요.
 				</p>
-				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 					위에서 아래로 갈수록 작아집니다. 크기만으로 "이건 제목이고 이건 본문이구나"를 느낄 수
 					있어야 합니다.
 				</p>
@@ -425,20 +468,26 @@ export const Comparison: Story = {
 								alignItems: "baseline",
 								gap: 12,
 								padding: 12,
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 10,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 						>
 							<div>
-								<div style={{ fontSize: 11, fontWeight: 600, color: "#666" }}>{name}</div>
-								<div style={{ fontSize: 10, color: "#999" }}>{style.fontSize}</div>
+								<div
+									style={{ fontSize: 11, fontWeight: 600, color: "var(--bt-color-text-caption)" }}
+								>
+									{name}
+								</div>
+								<div style={{ fontSize: 10, color: "var(--bt-color-text-caption)" }}>
+									{style.fontSize}
+								</div>
 							</div>
 							<div
 								style={{
 									fontFamily: typography.fontFamily.primary,
 									fontSize: style.fontSize,
-									fontWeight: fontWeightMap[style.fontWeight] ?? 400,
+									fontWeight: style.fontWeight,
 									lineHeight: style.lineHeight,
 								}}
 							>
@@ -456,13 +505,15 @@ export const Comparison: Story = {
 					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
 						<div
 							style={{
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 10,
 								padding: 16,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 						>
-							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Regular (400)</div>
+							<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
+								Regular (400)
+							</div>
 							<div
 								style={{
 									fontFamily: typography.fontFamily.primary,
@@ -476,13 +527,15 @@ export const Comparison: Story = {
 						</div>
 						<div
 							style={{
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 10,
 								padding: 16,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 						>
-							<div style={{ fontSize: 11, color: "#666", marginBottom: 8 }}>Medium (500)</div>
+							<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
+								Medium (500)
+							</div>
 							<div
 								style={{
 									fontFamily: typography.fontFamily.primary,
@@ -500,6 +553,18 @@ export const Comparison: Story = {
 		);
 	},
 };
+
+/** 의미 이름 스타일의 샘플 - overline 의 대문자 변환, code 의 고정폭이 보이게 영문을 섞는다 */
+function namedSample(variant: string) {
+	switch (variant) {
+		case "overline":
+			return "Section label · 섹션 라벨";
+		case "code":
+			return "const total = items.length;";
+		default:
+			return "캡션 · 부제 텍스트 Caption";
+	}
+}
 
 function sampleText(scale: string) {
 	switch (scale) {

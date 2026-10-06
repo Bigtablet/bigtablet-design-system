@@ -12,15 +12,22 @@ import {
 	Users,
 	Zap,
 } from "lucide-react";
+import { borderWidth } from "src/styles/border-width";
+import { iconSize } from "src/styles/icon";
+import { radius } from "src/styles/radius";
+import { spacing } from "src/styles/spacing";
+import { typography } from "src/styles/typography";
 import { Avatar } from "src/ui/display/avatar";
 import { Badge } from "src/ui/display/badge";
 import { Card } from "src/ui/display/card";
 import { Chip } from "src/ui/display/chip";
 import { Hero } from "src/ui/display/hero";
+import { Stat } from "src/ui/display/stat";
 import { Table } from "src/ui/display/table";
 import { Button } from "src/ui/general/button";
 import { Container } from "src/ui/layout/container";
 import { Grid } from "src/ui/layout/grid";
+import { PageHeader } from "src/ui/layout/page-header";
 import { Section } from "src/ui/layout/section";
 import { Stack } from "src/ui/layout/stack";
 import { Breadcrumb } from "src/ui/navigation/breadcrumb";
@@ -34,7 +41,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"**페이지의 골격**을 만드는 방법입니다. 마케팅 페이지, 사이드바 화면, 대시보드, 목록 페이지 네 가지를 다룹니다.\n\n공통 재료는 `Container`(최대 폭) · `Grid`/`Stack`(내부 배치) 셋이고, 화면 유형에 따라 바깥이 달라집니다 - 마케팅 페이지만 `Section` 으로 위아래 여백을 잡고, 사이드바 화면은 `Sidebar` 로 시작하며, 대시보드·목록은 `Container` 부터 엽니다.",
+					'**페이지의 골격**을 만드는 방법입니다. 마케팅 페이지, 사이드바 화면, 대시보드, 목록 페이지 네 가지를 다룹니다.\n\n공통 재료는 `Container`(최대 폭) · `Grid`/`Stack`(내부 배치) 셋이고, 화면 유형에 따라 바깥이 달라집니다 - 마케팅 페이지만 `Section` 으로 위아래 여백을 잡고, 사이드바 화면은 `Sidebar` 로 시작하며, 대시보드·목록은 `Container` 부터 엽니다.\n\n글자·간격·모서리는 숫자 대신 토큰을 씁니다 - `style={{ ...typography.label.medium, color: "var(--bt-color-text-body)" }}` 처럼 `typography`·`spacing`·`radius` 를 펼치고 색은 `--bt-color-*` 변수로 받습니다.',
 			},
 		},
 	},
@@ -76,11 +83,9 @@ export const MarketingHeroFeatureGrid: Story = {
 							<h2
 								style={{
 									margin: 0,
-									fontSize: 32,
-									fontWeight: 700,
+									...typography.display.smallMedium,
 									color: "var(--bt-color-text-heading)",
 									textAlign: "center",
-									letterSpacing: "-0.02em",
 								}}
 							>
 								필요한 모든 것이 하나의 화면에
@@ -88,7 +93,7 @@ export const MarketingHeroFeatureGrid: Story = {
 							<p
 								style={{
 									margin: 0,
-									fontSize: 16,
+									...typography.body.large,
 									color: "var(--bt-color-text-body)",
 									textAlign: "center",
 									maxWidth: 520,
@@ -101,32 +106,32 @@ export const MarketingHeroFeatureGrid: Story = {
 						<Grid cols="auto" minColWidth="280px" gap={24}>
 							{[
 								{
-									icon: <Zap size={22} />,
+									icon: <Zap size={iconSize.lg} />,
 									title: "1초 만에 결제",
 									desc: "QR·NFC·카드 모두 지원하는 통합 결제 모듈",
 								},
 								{
-									icon: <ShieldCheck size={22} />,
+									icon: <ShieldCheck size={iconSize.lg} />,
 									title: "안전한 데이터",
 									desc: "ISO 27001 인증 · 한국 리전 전용 클라우드",
 								},
 								{
-									icon: <Sparkles size={22} />,
+									icon: <Sparkles size={iconSize.lg} />,
 									title: "AI 매출 인사이트",
 									desc: "이상 패턴 자동 감지로 사고를 사전에 예방",
 								},
 								{
-									icon: <Briefcase size={22} />,
+									icon: <Briefcase size={iconSize.lg} />,
 									title: "직원·근태 관리",
 									desc: "스케줄·급여·평가까지 한 번에",
 								},
 								{
-									icon: <LineChart size={22} />,
+									icon: <LineChart size={iconSize.lg} />,
 									title: "실시간 대시보드",
 									desc: "오늘의 매출과 트렌드를 한눈에",
 								},
 								{
-									icon: <TrendingUp size={22} />,
+									icon: <TrendingUp size={iconSize.lg} />,
 									title: "성장 리포트",
 									desc: "주간·월간 리포트를 이메일로 자동 발송",
 								},
@@ -138,11 +143,11 @@ export const MarketingHeroFeatureGrid: Story = {
 												display: "inline-flex",
 												alignItems: "center",
 												justifyContent: "center",
-												width: 44,
-												height: 44,
-												borderRadius: 12,
-												background: "linear-gradient(135deg, #47555E 0%, #303841 100%)",
-												color: "#fff",
+												width: spacing["40"],
+												height: spacing["40"],
+												borderRadius: radius.lg,
+												background: "var(--bt-color-accent-default)",
+												color: "var(--bt-color-accent-on-surface)",
 											}}
 										>
 											{feature.icon}
@@ -150,8 +155,7 @@ export const MarketingHeroFeatureGrid: Story = {
 										<h3
 											style={{
 												margin: 0,
-												fontSize: 16,
-												fontWeight: 700,
+												...typography.title.mediumMedium,
 												color: "var(--bt-color-text-heading)",
 											}}
 										>
@@ -160,9 +164,8 @@ export const MarketingHeroFeatureGrid: Story = {
 										<p
 											style={{
 												margin: 0,
-												fontSize: 14,
+												...typography.body.small,
 												color: "var(--bt-color-text-body)",
-												lineHeight: 1.55,
 											}}
 										>
 											{feature.desc}
@@ -211,7 +214,7 @@ export const SidebarLayout: Story = {
 						alt="Bigtablet"
 						width={28}
 						height={28}
-						style={{ display: "block", borderRadius: 6 }}
+						style={{ display: "block", borderRadius: radius.sm }}
 					/>
 				}
 				footer={
@@ -219,29 +222,18 @@ export const SidebarLayout: Story = {
 						style={{
 							display: "flex",
 							alignItems: "center",
-							gap: 8,
-							padding: "8px 12px",
+							gap: spacing["8"],
+							padding: `${spacing["8"]} ${spacing["12"]}`,
 						}}
 					>
-						<div
-							style={{
-								width: 32,
-								height: 32,
-								borderRadius: 999,
-								background: "var(--bt-color-bg-solid-dim)",
-								color: "var(--bt-color-text-heading)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								fontWeight: 600,
-								flexShrink: 0,
-							}}
-						>
-							S
-						</div>
-						<div style={{ display: "grid", gap: 2, fontSize: 13, minWidth: 0 }}>
-							<strong style={{ color: "var(--bt-color-text-heading)" }}>sangmin</strong>
-							<span style={{ color: "var(--bt-color-text-body)", fontSize: 11 }}>
+						<Avatar name="sangmin" size="sm" />
+						<div style={{ display: "grid", gap: spacing["2"], minWidth: 0 }}>
+							<strong
+								style={{ ...typography.label.mediumMedium, color: "var(--bt-color-text-heading)" }}
+							>
+								sangmin
+							</strong>
+							<span style={{ ...typography.label.small, color: "var(--bt-color-text-body)" }}>
 								sangmin@bigtablet.com
 							</span>
 						</div>
@@ -249,41 +241,30 @@ export const SidebarLayout: Story = {
 				}
 			>
 				<SidebarSection label="메인">
-					<SidebarItem icon={<Home size={20} />} active>
+					<SidebarItem icon={<Home size={iconSize.lg} />} active>
 						홈
 					</SidebarItem>
 					<SidebarItem
-						icon={<Receipt size={20} />}
+						icon={<Receipt size={iconSize.lg} />}
 						trailing={<Badge shape="count" variant="accent" count={3} />}
 					>
 						주문
 					</SidebarItem>
-					<SidebarItem icon={<BarChart3 size={20} />}>매출</SidebarItem>
+					<SidebarItem icon={<BarChart3 size={iconSize.lg} />}>매출</SidebarItem>
 				</SidebarSection>
 				<SidebarSection label="관리">
-					<SidebarItem icon={<Users size={20} />}>직원</SidebarItem>
-					<SidebarItem icon={<Settings size={20} />}>설정</SidebarItem>
+					<SidebarItem icon={<Users size={iconSize.lg} />}>직원</SidebarItem>
+					<SidebarItem icon={<Settings size={iconSize.lg} />}>설정</SidebarItem>
 				</SidebarSection>
 			</Sidebar>
 
-			<div style={{ flex: 1, padding: 32, overflowY: "auto" }}>
+			<div style={{ flex: 1, padding: spacing["32"], overflowY: "auto" }}>
 				<Stack gap={24}>
-					<Stack gap={4}>
-						<h1
-							style={{
-								margin: 0,
-								fontSize: 24,
-								fontWeight: 700,
-								color: "var(--bt-color-text-heading)",
-								letterSpacing: "-0.02em",
-							}}
-						>
-							홈
-						</h1>
-						<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)" }}>
-							오늘 매장의 흐름을 빠르게 확인하세요.
-						</p>
-					</Stack>
+					<PageHeader
+						title="홈"
+						description="오늘 매장의 흐름을 빠르게 확인하세요."
+						style={{ marginBottom: 0 }}
+					/>
 
 					<Card bordered padding="lg" shadow="sm">
 						<Stack gap={12}>
@@ -291,8 +272,7 @@ export const SidebarLayout: Story = {
 								<h2
 									style={{
 										margin: 0,
-										fontSize: 16,
-										fontWeight: 700,
+										...typography.title.mediumMedium,
 										color: "var(--bt-color-text-heading)",
 									}}
 								>
@@ -305,9 +285,8 @@ export const SidebarLayout: Story = {
 							<p
 								style={{
 									margin: 0,
-									fontSize: 14,
+									...typography.body.small,
 									color: "var(--bt-color-text-body)",
-									lineHeight: 1.6,
 								}}
 							>
 								사이드바 + main content 영역의 기본 골격입니다. Sidebar 컴포넌트와 우측 Stack 기반
@@ -328,29 +307,29 @@ const STAT_CARDS = [
 		label: "오늘 매출",
 		value: "₩1,284,000",
 		delta: "+12%",
-		positive: true,
-		icon: <TrendingUp size={20} />,
+		tone: "positive" as const,
+		icon: <TrendingUp size={iconSize.sm} />,
 	},
 	{
 		label: "신규 주문",
 		value: "47",
 		delta: "+8건",
-		positive: true,
-		icon: <Receipt size={20} />,
+		tone: "positive" as const,
+		icon: <Receipt size={iconSize.sm} />,
 	},
 	{
 		label: "방문 고객",
 		value: "182",
 		delta: "+5%",
-		positive: true,
-		icon: <Users size={20} />,
+		tone: "positive" as const,
+		icon: <Users size={iconSize.sm} />,
 	},
 	{
 		label: "객단가",
 		value: "₩7,054",
 		delta: "-2%",
-		positive: false,
-		icon: <BarChart3 size={20} />,
+		tone: "negative" as const,
+		icon: <BarChart3 size={iconSize.sm} />,
 	},
 ];
 
@@ -365,62 +344,42 @@ export const TwoColumnDashboard: Story = {
 		},
 	},
 	render: () => (
-		<div style={{ padding: 32, background: "var(--bt-color-bg-solid-dim)", minHeight: "100vh" }}>
+		<div
+			style={{
+				padding: spacing["32"],
+				background: "var(--bt-color-bg-solid-dim)",
+				minHeight: "100vh",
+			}}
+		>
 			<Container size="xl">
 				<Stack gap={24}>
-					<Stack direction="horizontal" justify="between" align="center">
-						<Stack gap={4}>
-							<h1
-								style={{
-									margin: 0,
-									fontSize: 24,
-									fontWeight: 700,
-									color: "var(--bt-color-text-heading)",
-									letterSpacing: "-0.02em",
-								}}
-							>
-								오늘의 매출
-							</h1>
-							<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)" }}>
-								2026년 5월 20일 화요일 · 영업 중
-							</p>
-						</Stack>
-						<Stack direction="horizontal" gap={8}>
-							<Button variant="outline" size="sm">
-								기간 선택
-							</Button>
-							<Button variant="filled" size="sm">
-								리포트 내보내기
-							</Button>
-						</Stack>
-					</Stack>
+					<PageHeader
+						title="오늘의 매출"
+						description="2026년 5월 20일 화요일 · 영업 중"
+						actions={
+							<>
+								<Button variant="outline" size="sm">
+									기간 선택
+								</Button>
+								<Button variant="filled" size="sm">
+									리포트 내보내기
+								</Button>
+							</>
+						}
+						style={{ marginBottom: 0 }}
+					/>
 
 					{/* 상단 stat cards (4-column → 모바일에선 1열 자동) */}
 					<Grid cols={4} gap={16}>
 						{STAT_CARDS.map((stat) => (
 							<Card key={stat.label} bordered padding="md" shadow="sm">
-								<Stack gap={12}>
-									<Stack direction="horizontal" justify="between" align="center">
-										<span style={{ fontSize: 13, color: "var(--bt-color-text-caption)" }}>
-											{stat.label}
-										</span>
-										<span style={{ color: "var(--bt-color-text-body)" }}>{stat.icon}</span>
-									</Stack>
-									<span
-										style={{ fontSize: 24, fontWeight: 700, color: "var(--bt-color-text-heading)" }}
-									>
-										{stat.value}
-									</span>
-									<span
-										style={{
-											fontSize: 12,
-											fontWeight: 600,
-											color: stat.positive ? "#047857" : "#B91C1C",
-										}}
-									>
-										{stat.delta}
-									</span>
-								</Stack>
+								<Stat
+									label={stat.label}
+									icon={stat.icon}
+									value={stat.value}
+									delta={stat.delta}
+									deltaTone={stat.tone}
+								/>
 							</Card>
 						))}
 					</Grid>
@@ -434,8 +393,7 @@ export const TwoColumnDashboard: Story = {
 										<h2
 											style={{
 												margin: 0,
-												fontSize: 16,
-												fontWeight: 700,
+												...typography.title.mediumMedium,
 												color: "var(--bt-color-text-heading)",
 											}}
 										>
@@ -450,15 +408,14 @@ export const TwoColumnDashboard: Story = {
 										aria-label="매출 차트 영역"
 										style={{
 											height: 240,
-											borderRadius: 12,
-											background:
-												"linear-gradient(180deg, rgba(122, 165, 210, 0.10) 0%, rgba(122, 165, 210, 0) 100%)",
-											border: "1px dashed #CBD5E1",
+											borderRadius: radius.lg,
+											background: "var(--bt-color-bg-solid-dim)",
+											border: `${borderWidth.standard} dashed var(--bt-color-border-default)`,
 											display: "flex",
 											alignItems: "center",
 											justifyContent: "center",
 											color: "var(--bt-color-text-caption)",
-											fontSize: 13,
+											...typography.label.medium,
 										}}
 									>
 										차트 자리 (Recharts / Tremor 등으로 대체)
@@ -471,8 +428,7 @@ export const TwoColumnDashboard: Story = {
 								<h2
 									style={{
 										margin: 0,
-										fontSize: 16,
-										fontWeight: 700,
+										...typography.title.mediumMedium,
 										color: "var(--bt-color-text-heading)",
 									}}
 								>
@@ -489,13 +445,18 @@ export const TwoColumnDashboard: Story = {
 											<Stack direction="horizontal" gap={12} align="center">
 												<span
 													style={{
-														width: 24,
-														height: 24,
-														borderRadius: "50%",
-														background: idx === 0 ? "#303841" : "#F2F5F8",
-														color: idx === 0 ? "#fff" : "#666",
-														fontSize: 12,
-														fontWeight: 700,
+														width: spacing["24"],
+														height: spacing["24"],
+														borderRadius: radius.full,
+														background:
+															idx === 0
+																? "var(--bt-color-accent-default)"
+																: "var(--bt-color-bg-solid-dim)",
+														color:
+															idx === 0
+																? "var(--bt-color-accent-on-surface)"
+																: "var(--bt-color-text-body)",
+														...typography.label.smallMedium,
 														display: "inline-flex",
 														alignItems: "center",
 														justifyContent: "center",
@@ -505,8 +466,7 @@ export const TwoColumnDashboard: Story = {
 												</span>
 												<span
 													style={{
-														fontSize: 14,
-														fontWeight: 500,
+														...typography.body.smallMedium,
 														color: "var(--bt-color-text-heading)",
 													}}
 												>
@@ -515,9 +475,8 @@ export const TwoColumnDashboard: Story = {
 											</Stack>
 											<span
 												style={{
-													fontSize: 13,
+													...typography.label.mediumMedium,
 													color: "var(--bt-color-text-body)",
-													fontWeight: 600,
 												}}
 											>
 												{item.count}건
@@ -595,41 +554,37 @@ export const ListPage: Story = {
 		},
 	},
 	render: () => (
-		<div style={{ padding: 32, background: "var(--bt-color-bg-solid-dim)", minHeight: "100vh" }}>
+		<div
+			style={{
+				padding: spacing["32"],
+				background: "var(--bt-color-bg-solid-dim)",
+				minHeight: "100vh",
+			}}
+		>
 			<Container size="xl">
 				<Stack gap={20}>
-					<Breadcrumb
-						items={[
-							{ label: "홈", href: "#" },
-							{ label: "주문 관리", href: "#" },
-							{ label: "주문 목록" },
-						]}
+					<PageHeader
+						breadcrumb={
+							<Breadcrumb
+								items={[
+									{ label: "홈", href: "#" },
+									{ label: "주문 관리", href: "#" },
+									{ label: "주문 목록" },
+								]}
+							/>
+						}
+						title="주문 목록"
+						description="오늘 들어온 모든 주문을 한 곳에서 확인하세요."
+						actions={
+							<Button variant="filled" size="md">
+								새 주문 등록
+							</Button>
+						}
+						style={{ marginBottom: 0 }}
 					/>
 
-					<Stack direction="horizontal" justify="between" align="center">
-						<Stack gap={4}>
-							<h1
-								style={{
-									margin: 0,
-									fontSize: 24,
-									fontWeight: 700,
-									color: "var(--bt-color-text-heading)",
-									letterSpacing: "-0.02em",
-								}}
-							>
-								주문 목록
-							</h1>
-							<p style={{ margin: 0, fontSize: 14, color: "var(--bt-color-text-body)" }}>
-								오늘 들어온 모든 주문을 한 곳에서 확인하세요.
-							</p>
-						</Stack>
-						<Button variant="filled" size="md">
-							새 주문 등록
-						</Button>
-					</Stack>
-
 					<Card bordered padding="none" shadow="sm">
-						<div style={{ padding: "16px 16px 0" }}>
+						<div style={{ padding: `${spacing["16"]} ${spacing["16"]} 0` }}>
 							<Tabs defaultValue="all" variant="line">
 								<TabList>
 									<Tab value="all">전체</Tab>
@@ -647,7 +602,9 @@ export const ListPage: Story = {
 												render: (row) => (
 													<Stack direction="horizontal" gap={8} align="center">
 														<Avatar name={row.customer} size="sm" />
-														<span style={{ fontSize: 14, fontWeight: 500 }}>{row.customer}</span>
+														<span style={{ ...typography.body.smallMedium, whiteSpace: "nowrap" }}>
+															{row.customer}
+														</span>
 													</Stack>
 												),
 											},
@@ -670,7 +627,7 @@ export const ListPage: Story = {
 									/>
 								</TabPanel>
 								<TabPanel value="processing">
-									<div style={{ padding: "24px 0" }}>
+									<div style={{ padding: `${spacing["24"]} 0` }}>
 										<Table
 											columns={[
 												{ key: "id", header: "주문번호", width: "120px" },
@@ -683,7 +640,7 @@ export const ListPage: Story = {
 									</div>
 								</TabPanel>
 								<TabPanel value="pending">
-									<div style={{ padding: "24px 0" }}>
+									<div style={{ padding: `${spacing["24"]} 0` }}>
 										<Table
 											columns={[
 												{ key: "id", header: "주문번호", width: "120px" },
@@ -696,7 +653,7 @@ export const ListPage: Story = {
 									</div>
 								</TabPanel>
 								<TabPanel value="completed">
-									<div style={{ padding: "24px 0" }}>
+									<div style={{ padding: `${spacing["24"]} 0` }}>
 										<Table
 											columns={[
 												{ key: "id", header: "주문번호", width: "120px" },

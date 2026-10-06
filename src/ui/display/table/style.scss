@@ -140,6 +140,14 @@
   color: token.$color_text_body;
   vertical-align: middle;
   @include token.body_small;
+  // 한글을 어절 단위로 끊는다 - 없으면 좁은 열에서 "아메리카 / 노" 처럼 음절 사이에서 끊긴다.
+  // `wrap_keep_all` 믹스인을 쓰지 않는다. 그 안의 `overflow-wrap: anywhere` 는 min-content 를
+  // 한 글자로 만드는데, 표의 자동 레이아웃은 열 최소 폭을 min-content 로 잡아 열이 단어보다 좁게
+  // 눌리고 keep-all 이 소용없어진다(84px 열 실측: anywhere "아메리카|노 2", break-word "아메리카노 |2").
+  // `break-word` 는 최장 어절이 열 최소 폭이 된다. 끊을 곳 없는 긴 값은 래퍼의 가로 스크롤이 받는다.
+  // 헤더(`.table_th`, 정렬 버튼 포함)는 `white-space: nowrap` 이라 줄바꿈 자체가 없어 여기서만 건다.
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .table_align_left   { text-align: start; }
