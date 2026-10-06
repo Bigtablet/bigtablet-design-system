@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.26.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.26.0) - 2026-10-06
+- `Drawer` 에 `disableAnimation` prop 이 생겼습니다 - 슬라이드·페이드 없이 즉시 열고 닫습니다. 화면 전체를 덮는 모바일 메뉴처럼 미끄러지는 모션이 디자인에 맞지 않는 곳에서 씁니다. OS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끕니다
+- (렌더 변경) `Drawer` 패널이 열릴 때 목표 위치를 지나쳐 튀었다 돌아오던 것을 고쳤습니다(360px 패널에서 약 2.6px). 슬라이드는 그대로이고 되튐만 사라집니다
+- `Drawer` 를 열자마자 같은 tick 에 닫으면 보이지 않는 오버레이가 남아 화면 클릭을 막고 배경 스크롤 잠금이 풀리지 않던 문제를 고쳤습니다
+- (렌더 변경) `Stepper`·`Timeline`·`DescriptionList` 의 한글 텍스트가 어절 중간("비밀번 / 호")에서 끊기지 않습니다. 끊을 곳이 없는 긴 값(주문번호·URL)은 여전히 칸 안에서 끊겨 넘치지 않습니다
+- (개발) 커밋 헤더에 한글이 있으면 commitlint 가 거절합니다(조직 커밋 가이드). 본문은 제한하지 않습니다
+
 ## [3.25.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.25.1) - 2026-10-01
 - `Tabs` 에서 `value=""` 인 탭(예: "전체")이 화살표·Home·End 키로 선택되지 않던 문제를 고쳤습니다. 클릭으로는 선택되는데 키보드 이동은 빈 문자열을 "값 없음" 으로 보고 건너뛰었습니다. 이제 클릭과 똑같이 선택되고 포커스가 옮겨 갑니다
 - (개발) `tsconfig.json` 에 `noUncheckedIndexedAccess` 를 켭니다(시큐어코딩 가이드 W-5-1-1). 인덱스 접근 219건을 정리했고 - 프로덕션 코드는 비-null 단언 없이 가드로 좁혔습니다 - 공개 타입(`d.ts`)은 같습니다
