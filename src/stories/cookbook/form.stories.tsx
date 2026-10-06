@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Filter, Lock, Mail, Search, User } from "lucide-react";
 import { useState } from "react";
+import { iconSize } from "src/styles/icon";
+import { typography } from "src/styles/typography";
+import { Card } from "src/ui/display/card";
 import { Chip } from "src/ui/display/chip";
 import { Divider } from "src/ui/display/divider";
 import { Checkbox } from "src/ui/forms/checkbox";
@@ -20,7 +23,7 @@ const meta: Meta = {
 		docs: {
 			description: {
 				component:
-					"로그인, 회원가입, 검색, 설정 등 **자주 만드는 폼 네 가지**입니다.\n\n모든 예시가 DS 컴포넌트로 완결되어 있어 다른 파일을 만들지 않고 그대로 붙여 넣을 수 있습니다. 약관 링크처럼 컴포넌트가 없는 인라인 링크만 `text_link` 클래스를 씁니다. 폼이 커질수록 `Stack` → `Form` + `Field` 로 올라가는 순서를 같이 보여 줍니다.",
+					'로그인, 회원가입, 검색, 설정 등 **자주 만드는 폼 네 가지**입니다.\n\n모든 예시가 DS 컴포넌트로 완결되어 있어 다른 파일을 만들지 않고 그대로 붙여 넣을 수 있습니다. 약관 링크처럼 컴포넌트가 없는 인라인 링크만 `text_link` 클래스를 씁니다. 폼이 커질수록 `Stack` → `Form` + `Field` 로 올라가는 순서를 같이 보여 줍니다.\n\n글자·간격·모서리는 숫자 대신 토큰을 씁니다 - `style={{ ...typography.label.medium, color: "var(--bt-color-text-body)" }}` 처럼 `typography`·`spacing`·`radius` 를 펼치고 색은 `--bt-color-*` 변수로 받습니다.',
 			},
 		},
 	},
@@ -39,29 +42,9 @@ const FormCard = ({
 	width?: number;
 	children: React.ReactNode;
 }) => (
-	<div
-		style={{
-			width,
-			background: "var(--bt-color-bg-solid)",
-			borderRadius: 16,
-			border: "1px solid var(--bt-color-border-default)",
-			padding: "28px 24px",
-			boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
-		}}
-	>
-		<h3
-			style={{
-				margin: "0 0 20px",
-				fontSize: 18,
-				fontWeight: 700,
-				color: "var(--bt-color-text-heading)",
-				letterSpacing: "-0.01em",
-			}}
-		>
-			{title}
-		</h3>
+	<Card bordered padding="lg" shadow="sm" heading={title} style={{ width }}>
 		{children}
-	</div>
+	</Card>
 );
 
 // ─── Login Form ─────────────────────────────────────────────────────────────
@@ -88,7 +71,7 @@ export const LoginForm: Story = {
 						label="이메일"
 						type="email"
 						placeholder="you@example.com"
-						leadingIcon={<Mail size={18} />}
+						leadingIcon={<Mail size={iconSize.md} />}
 						value={email}
 						onChangeAction={setEmail}
 						fullWidth
@@ -97,7 +80,7 @@ export const LoginForm: Story = {
 						label="비밀번호"
 						type="password"
 						placeholder="비밀번호 입력"
-						leadingIcon={<Lock size={18} />}
+						leadingIcon={<Lock size={iconSize.md} />}
 						value={password}
 						onChangeAction={setPassword}
 						fullWidth
@@ -121,7 +104,7 @@ export const LoginForm: Story = {
 					<Divider />
 
 					<Stack direction="horizontal" justify="center" gap={4} align="center">
-						<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>
+						<span style={{ ...typography.label.medium, color: "var(--bt-color-text-body)" }}>
 							아직 계정이 없으신가요?
 						</span>
 						<Button variant="text" size="sm">
@@ -166,7 +149,7 @@ export const SignUpForm: Story = {
 					<Field name="name" label="이름" required>
 						<TextField
 							placeholder="홍길동"
-							leadingIcon={<User size={18} />}
+							leadingIcon={<User size={iconSize.md} />}
 							value={form.name}
 							onValueChange={(v) => setForm({ ...form, name: v })}
 							fullWidth
@@ -177,7 +160,7 @@ export const SignUpForm: Story = {
 						<TextField
 							type="email"
 							placeholder="you@example.com"
-							leadingIcon={<Mail size={18} />}
+							leadingIcon={<Mail size={iconSize.md} />}
 							value={form.email}
 							onValueChange={(v) => setForm({ ...form, email: v })}
 							fullWidth
@@ -193,7 +176,7 @@ export const SignUpForm: Story = {
 						<TextField
 							type="password"
 							placeholder="8자 이상 영문·숫자 포함"
-							leadingIcon={<Lock size={18} />}
+							leadingIcon={<Lock size={iconSize.md} />}
 							value={form.password}
 							onValueChange={(v) => setForm({ ...form, password: v })}
 							fullWidth
@@ -209,7 +192,7 @@ export const SignUpForm: Story = {
 						<TextField
 							type="password"
 							placeholder="비밀번호 재입력"
-							leadingIcon={<Lock size={18} />}
+							leadingIcon={<Lock size={iconSize.md} />}
 							value={form.passwordConfirm}
 							onValueChange={(v) => setForm({ ...form, passwordConfirm: v })}
 							fullWidth
@@ -273,23 +256,14 @@ export const SearchWithFilter: Story = {
 			setActiveFilters((prev) => prev.filter((item) => item !== label));
 
 		return (
-			<div
-				style={{
-					width: 600,
-					background: "var(--bt-color-bg-solid)",
-					borderRadius: 16,
-					border: "1px solid var(--bt-color-border-default)",
-					padding: "24px",
-					boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.04)",
-				}}
-			>
+			<Card bordered padding="lg" shadow="sm" style={{ width: 600 }}>
 				<Stack gap={16}>
 					<Stack direction="horizontal" gap={12} align="end">
 						<div style={{ flex: 1 }}>
 							<TextField
 								label="검색"
 								placeholder="매장 이름·지역으로 검색"
-								leadingIcon={<Search size={18} />}
+								leadingIcon={<Search size={iconSize.md} />}
 								value={keyword}
 								onChangeAction={setKeyword}
 								clearable
@@ -317,7 +291,7 @@ export const SearchWithFilter: Story = {
 							type="static"
 							size="sm"
 							tone="default"
-							leadingIcon={<Filter size={14} />}
+							leadingIcon={<Filter size={iconSize.xs} />}
 							label="활성 필터"
 						/>
 						{activeFilters.map((filter) => (
@@ -337,7 +311,7 @@ export const SearchWithFilter: Story = {
 						)}
 					</Stack>
 				</Stack>
-			</div>
+			</Card>
 		);
 	},
 };
@@ -370,11 +344,9 @@ export const SettingsSection: Story = {
 						<p
 							style={{
 								margin: 0,
-								fontSize: 13,
-								fontWeight: 600,
+								...typography.label.mediumMedium,
 								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
-								letterSpacing: "0.04em",
 							}}
 						>
 							프로필
@@ -401,11 +373,9 @@ export const SettingsSection: Story = {
 						<p
 							style={{
 								margin: 0,
-								fontSize: 13,
-								fontWeight: 600,
+								...typography.label.mediumMedium,
 								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
-								letterSpacing: "0.04em",
 							}}
 						>
 							알림
@@ -413,11 +383,11 @@ export const SettingsSection: Story = {
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
 								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
+									style={{ ...typography.body.smallMedium, color: "var(--bt-color-text-heading)" }}
 								>
 									이메일 알림
 								</span>
-								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+								<span style={{ ...typography.label.small, color: "var(--bt-color-text-caption)" }}>
 									주문·정산 등 주요 활동을 이메일로 받아보기
 								</span>
 							</Stack>
@@ -431,11 +401,11 @@ export const SettingsSection: Story = {
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
 								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
+									style={{ ...typography.body.smallMedium, color: "var(--bt-color-text-heading)" }}
 								>
 									푸시 알림
 								</span>
-								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+								<span style={{ ...typography.label.small, color: "var(--bt-color-text-caption)" }}>
 									앱에서 실시간 푸시 알림 수신
 								</span>
 							</Stack>
@@ -449,11 +419,11 @@ export const SettingsSection: Story = {
 						<Stack direction="horizontal" justify="between" align="center">
 							<Stack gap={2}>
 								<span
-									style={{ fontSize: 14, fontWeight: 500, color: "var(--bt-color-text-heading)" }}
+									style={{ ...typography.body.smallMedium, color: "var(--bt-color-text-heading)" }}
 								>
 									SMS 알림
 								</span>
-								<span style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
+								<span style={{ ...typography.label.small, color: "var(--bt-color-text-caption)" }}>
 									긴급 알림만 SMS로 발송
 								</span>
 							</Stack>
@@ -468,11 +438,9 @@ export const SettingsSection: Story = {
 						<p
 							style={{
 								margin: 0,
-								fontSize: 13,
-								fontWeight: 600,
+								...typography.label.mediumMedium,
 								color: "var(--bt-color-text-caption)",
 								textTransform: "uppercase",
-								letterSpacing: "0.04em",
 							}}
 						>
 							테마
