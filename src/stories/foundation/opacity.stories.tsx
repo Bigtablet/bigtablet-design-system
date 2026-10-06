@@ -35,7 +35,7 @@ export const Scale: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				borderRadius: 12,
 				padding: 24,
 				display: "grid",
@@ -52,14 +52,16 @@ export const Scale: Story = {
 						alignItems: "center",
 						gap: 12,
 						padding: 12,
-						background: "#fff",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 10,
 					}}
 				>
 					<div>
 						<strong style={{ fontSize: 12 }}>{value}</strong>
-						<div style={{ fontSize: 11, color: "#666", marginTop: 1 }}>{opacityUseCase(key)}</div>
+						<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 1 }}>
+							{opacityUseCase(key)}
+						</div>
 					</div>
 
 					<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -89,7 +91,7 @@ export const Scale: Story = {
 						</div>
 					</div>
 
-					<span style={{ fontSize: 11, color: "#666", textAlign: "right" }}>
+					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)", textAlign: "right" }}>
 						<code>opacity-{key}</code>
 					</span>
 				</div>
@@ -103,7 +105,7 @@ export const UsageExamples: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				borderRadius: 12,
 				padding: 24,
 				display: "grid",
@@ -116,13 +118,13 @@ export const UsageExamples: Story = {
 			{/* Hover overlay */}
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 10,
 					padding: 16,
-					border: "1px solid rgba(0,0,0,0.06)",
+					border: "1px solid var(--bt-color-border-subtle)",
 				}}
 			>
-				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
 					<code>opacity-5</code> - 버튼 호버 오버레이
 				</div>
 				<div style={{ display: "flex", gap: 12 }}>
@@ -153,7 +155,7 @@ export const UsageExamples: Story = {
 								position: "absolute",
 								inset: 0,
 								borderRadius: 8,
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								opacity: 0.05,
 							}}
 						/>
@@ -164,13 +166,13 @@ export const UsageExamples: Story = {
 			{/* Disabled */}
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 10,
 					padding: 16,
-					border: "1px solid rgba(0,0,0,0.06)",
+					border: "1px solid var(--bt-color-border-subtle)",
 				}}
 			>
-				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
 					<code>opacity-38</code> - 비활성화 상태
 				</div>
 				<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -209,17 +211,19 @@ export const UsageExamples: Story = {
 			{/* Modal overlay */}
 			<div
 				style={{
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 10,
 					padding: 16,
-					border: "1px solid rgba(0,0,0,0.06)",
+					border: "1px solid var(--bt-color-border-subtle)",
 				}}
 			>
-				<div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
+				<div style={{ fontSize: 12, color: "var(--bt-color-text-caption)", marginBottom: 8 }}>
 					<code>opacity-50</code> - 모달 배경 오버레이
 				</div>
 				<div style={{ position: "relative", height: 80, borderRadius: 8, overflow: "hidden" }}>
-					<div style={{ padding: 12, fontSize: 13, color: "#333" }}>배경 콘텐츠 영역</div>
+					<div style={{ padding: 12, fontSize: 13, color: "var(--bt-color-text-body)" }}>
+						배경 콘텐츠 영역
+					</div>
 					<div style={{ position: "absolute", inset: 0, background: "#000", opacity: 0.5 }} />
 					<div
 						style={{
@@ -227,7 +231,7 @@ export const UsageExamples: Story = {
 							top: "50%",
 							left: "50%",
 							transform: "translate(-50%, -50%)",
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: "8px 20px",
 							fontSize: 13,
@@ -262,11 +266,18 @@ const _bgContent = (
 export const Comparison: Story = {
 	name: "차이 비교",
 	render: () => (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 720,
+			}}
+		>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 				뒤에 같은 물체를 놓고, opacity에 따라 얼마나 가려지는지 비교해보세요.
 			</p>
-			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				검은 오버레이의 투명도만 다릅니다. 숫자가 클수록 뒤가 안 보입니다.
 			</p>
 			<div
@@ -285,7 +296,7 @@ export const Comparison: Story = {
 								aspectRatio: "1",
 								borderRadius: 10,
 								overflow: "hidden",
-								border: "1px solid rgba(0,0,0,0.08)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 						>
 							<div
@@ -328,7 +339,9 @@ export const Comparison: Story = {
 						<div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>
 							{Math.round(value * 100)}%
 						</div>
-						<div style={{ fontSize: 11, color: "#666" }}>{opacityLabel(value)}</div>
+						<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+							{opacityLabel(value)}
+						</div>
 					</div>
 				))}
 			</div>

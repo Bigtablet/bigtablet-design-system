@@ -52,8 +52,8 @@ function ColorRow({ group, token, value }: { group: string; token: string; value
 				alignItems: "center",
 				gap: 12,
 				padding: 12,
-				background: "#fff",
-				border: "1px solid rgba(0,0,0,0.06)",
+				background: "var(--bt-color-bg-solid)",
+				border: "1px solid var(--bt-color-border-subtle)",
 				borderRadius: 12,
 			}}
 		>
@@ -64,7 +64,7 @@ function ColorRow({ group, token, value }: { group: string; token: string; value
 						height: 36,
 						borderRadius: 8,
 						background: value,
-						border: "1px solid rgba(0,0,0,0.08)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						flexShrink: 0,
 					}}
 				/>
@@ -72,7 +72,9 @@ function ColorRow({ group, token, value }: { group: string; token: string; value
 					<code style={{ fontSize: 12 }}>
 						{group === "baseColors" ? toJsonKey(token) : `${group}.${token}`}
 					</code>
-					<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{value}</div>
+					<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 2 }}>
+						{value}
+					</div>
 				</div>
 			</div>
 			<div
@@ -106,7 +108,9 @@ function Section({
 		<section style={{ display: "grid", gap: 8 }}>
 			<div>
 				<strong style={{ fontSize: 15 }}>{title}</strong>
-				<p style={{ margin: "2px 0 0", fontSize: 13, color: "#555" }}>{description}</p>
+				<p style={{ margin: "2px 0 0", fontSize: 13, color: "var(--bt-color-text-body)" }}>
+					{description}
+				</p>
 			</div>
 			{entries.map(([key, value]) => (
 				<ColorRow key={key} group={group} token={key} value={value} />
@@ -165,7 +169,7 @@ export const Base: Story = {
 		<div style={{ display: "grid", gap: 8, maxWidth: 760 }}>
 			<div>
 				<strong style={{ fontSize: 15 }}>Semantic Color의 베이스가 되는 팔레트입니다.</strong>
-				<p style={{ margin: "2px 0 0", fontSize: 13, color: "#555" }}>
+				<p style={{ margin: "2px 0 0", fontSize: 13, color: "var(--bt-color-text-body)" }}>
 					⚠️ Base 토큰은 직접 사용을 지양하고 Semantic 토큰을 통해 사용하세요.
 				</p>
 			</div>
@@ -180,31 +184,65 @@ export const DoAndDont: Story = {
 	name: "DO / DON'T",
 	render: () => (
 		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640 }}>
-			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
+			<div
+				style={{
+					background: "var(--bt-color-status-success-container)",
+					borderRadius: 12,
+					padding: 20,
+				}}
+			>
+				<div
+					style={{
+						fontSize: 13,
+						fontWeight: 700,
+						color: "var(--bt-color-status-success-on-surface)",
+						marginBottom: 12,
+					}}
+				>
+					DO
+				</div>
 				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+					<code style={{ background: "var(--bt-color-bg-solid)", padding: 8, borderRadius: 6 }}>
 						color: colors.text.body
 					</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+					<code style={{ background: "var(--bt-color-bg-solid)", padding: 8, borderRadius: 6 }}>
 						background: colors.bg.surface
 					</code>
-					<code style={{ background: "#fff", padding: 8, borderRadius: 6 }}>
+					<code style={{ background: "var(--bt-color-bg-solid)", padding: 8, borderRadius: 6 }}>
 						border: colors.border.default
 					</code>
 				</div>
-				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
+				<p
+					style={{
+						margin: "12px 0 0",
+						fontSize: 12,
+						color: "var(--bt-color-status-success-on-surface)",
+					}}
+				>
 					Semantic 토큰을 사용하면 테마 변경 시 자동 반영됩니다.
 				</p>
 			</div>
-			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>
+			<div
+				style={{
+					background: "var(--bt-color-status-error-container)",
+					borderRadius: 12,
+					padding: 20,
+				}}
+			>
+				<div
+					style={{
+						fontSize: 13,
+						fontWeight: 700,
+						color: "var(--bt-color-status-error-on-surface)",
+						marginBottom: 12,
+					}}
+				>
 					DON'T
 				</div>
 				<div style={{ display: "grid", gap: 8, fontSize: 13 }}>
 					<code
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							padding: 8,
 							borderRadius: 6,
 							textDecoration: "line-through",
@@ -214,7 +252,7 @@ export const DoAndDont: Story = {
 					</code>
 					<code
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							padding: 8,
 							borderRadius: 6,
 							textDecoration: "line-through",
@@ -224,7 +262,7 @@ export const DoAndDont: Story = {
 					</code>
 					<code
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							padding: 8,
 							borderRadius: 6,
 							textDecoration: "line-through",
@@ -233,7 +271,13 @@ export const DoAndDont: Story = {
 						border: "#e5e5e5"
 					</code>
 				</div>
-				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
+				<p
+					style={{
+						margin: "12px 0 0",
+						fontSize: 12,
+						color: "var(--bt-color-status-error-on-surface)",
+					}}
+				>
 					하드코딩된 HEX 값은 테마 변경 시 깨지고 일관성이 무너집니다.
 				</p>
 			</div>
@@ -262,11 +306,18 @@ export const Comparison: Story = {
 		];
 
 		return (
-			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid-dim)",
+					borderRadius: 12,
+					padding: 24,
+					maxWidth: 720,
+				}}
+			>
 				<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 					같은 UI인데, 상태 색상만 다릅니다.
 				</p>
-				<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+				<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 					색 하나만 바꿔도 "에러인지 성공인지" 사용자에게 보다 정확히 전달됩니다.
 				</p>
 
@@ -288,7 +339,7 @@ export const Comparison: Story = {
 							}}
 						>
 							<div style={{ fontSize: 13, fontWeight: 600, color, marginBottom: 6 }}>{name}</div>
-							<div style={{ fontSize: 12, color: "#333" }}>{text}</div>
+							<div style={{ fontSize: 12, color: "var(--bt-color-text-body)" }}>{text}</div>
 						</div>
 					))}
 				</div>
@@ -342,7 +393,7 @@ export const NeutralDarkPalette: Story = {
 	name: "Neutral Dark 스케일",
 	render: () => (
 		<div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
-			<p style={{ margin: 0, fontSize: 13, color: "#666" }}>
+			<p style={{ margin: 0, fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				<strong>Dark mode 표면 컬러</strong> - Vercel-style 순수 중성 그레이. 925/950은 dark mode
 				전용 추가 단계.
 			</p>
@@ -355,8 +406,8 @@ export const NeutralDarkPalette: Story = {
 						alignItems: "center",
 						gap: 12,
 						padding: 12,
-						background: "#fff",
-						border: "1px solid rgba(0,0,0,0.06)",
+						background: "var(--bt-color-bg-solid)",
+						border: "1px solid var(--bt-color-border-subtle)",
 						borderRadius: 10,
 					}}
 				>
@@ -405,14 +456,16 @@ export const AccentTokens: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: 12,
-								background: "#fff",
-								border: "1px solid rgba(0,0,0,0.06)",
+								background: "var(--bt-color-bg-solid)",
+								border: "1px solid var(--bt-color-border-subtle)",
 								borderRadius: 10,
 							}}
 						>
 							<div>
 								<code style={{ fontSize: 12 }}>accent.{key}</code>
-								<div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{desc}</div>
+								<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 2 }}>
+									{desc}
+								</div>
 							</div>
 							<div
 								style={{
@@ -442,7 +495,7 @@ function PresenceDemo() {
 	const [visible, setVisible] = React.useState(true);
 	const style = useSpringPresence({ visible });
 	return (
-		<div style={{ padding: 16, background: "#fff", borderRadius: 12 }}>
+		<div style={{ padding: 16, background: "var(--bt-color-bg-solid)", borderRadius: 12 }}>
 			<button
 				type="button"
 				onClick={() => setVisible((v) => !v)}
@@ -470,7 +523,7 @@ function PresenceDemo() {
 					}}
 				>
 					<strong style={{ display: "block", marginBottom: 4 }}>useSpringPresence</strong>
-					<span style={{ fontSize: 13, color: "#555" }}>
+					<span style={{ fontSize: 13, color: "var(--bt-color-text-body)" }}>
 						부드러운 fade + translateY. Vercel/Linear 스타일.
 					</span>
 				</animated.div>
@@ -489,15 +542,17 @@ function HoverDemo() {
 				style={{
 					...a.style,
 					padding: 24,
-					background: "#fff",
+					background: "var(--bt-color-bg-solid)",
 					borderRadius: 12,
-					border: "1px solid rgba(0,0,0,0.08)",
+					border: "1px solid var(--bt-color-border-subtle)",
 					boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
 					cursor: "pointer",
 				}}
 			>
 				<strong>기본 lift (-2px, scale 1.02)</strong>
-				<p style={{ margin: "8px 0 0", fontSize: 13, color: "#666" }}>마우스를 올려보세요</p>
+				<p style={{ margin: "8px 0 0", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
+					마우스를 올려보세요
+				</p>
 			</animated.div>
 
 			<animated.div
@@ -526,7 +581,7 @@ export const SpringMotion: Story = {
 		<div style={{ display: "grid", gap: 24, maxWidth: 720 }}>
 			<section>
 				<h3 style={{ margin: "0 0 4px" }}>useSpringPresence</h3>
-				<p style={{ margin: "0 0 12px", fontSize: 13, color: "#666" }}>
+				<p style={{ margin: "0 0 12px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 					마운트/언마운트 시 자연스러운 fade + slide. tension 280 / friction 28.
 				</p>
 				<PresenceDemo />
@@ -534,7 +589,7 @@ export const SpringMotion: Story = {
 
 			<section>
 				<h3 style={{ margin: "0 0 4px" }}>useSpringHover</h3>
-				<p style={{ margin: "0 0 12px", fontSize: 13, color: "#666" }}>
+				<p style={{ margin: "0 0 12px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 					hover 시 spring 기반 lift. CSS transition 보다 더 자연스러운 가속·감속.
 				</p>
 				<HoverDemo />

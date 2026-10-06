@@ -55,7 +55,7 @@ function MotionPreview({ name, transition }: { name: string; transition: string 
 	return (
 		<div
 			style={{
-				border: "1px solid #e5e5e5",
+				border: "1px solid var(--bt-color-border-default)",
 				borderRadius: 8,
 				padding: 16,
 			}}
@@ -76,7 +76,7 @@ function MotionPreview({ name, transition }: { name: string; transition: string 
 					width: active ? 160 : 120,
 					height: 40,
 					borderRadius: 6,
-					background: active ? "#000" : "#e5e5e5",
+					background: active ? "#000" : "var(--bt-color-border-default)",
 					color: active ? "#fff" : "#000",
 					display: "flex",
 					alignItems: "center",
@@ -109,7 +109,14 @@ export const ComponentMapping: Story = {
 		];
 
 		return (
-			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 560 }}>
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid-dim)",
+					borderRadius: 12,
+					padding: 24,
+					maxWidth: 560,
+				}}
+			>
 				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>
 					어떤 컴포넌트에 어떤 모션 토큰을 쓰나요?
 				</h3>
@@ -123,15 +130,15 @@ export const ComponentMapping: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: 10,
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 8,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 								fontSize: 13,
 							}}
 						>
 							<strong>{component}</strong>
-							<code style={{ color: "#2563eb" }}>{token}</code>
-							<span style={{ color: "#666" }}>{desc}</span>
+							<code style={{ color: "var(--bt-color-status-info-on-surface)" }}>{token}</code>
+							<span style={{ color: "var(--bt-color-text-caption)" }}>{desc}</span>
 						</div>
 					))}
 				</div>
@@ -150,11 +157,18 @@ function MotionRace() {
 	];
 
 	return (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 720,
+			}}
+		>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 				같은 애니메이션을 동시에 재생 - 속도 차이를 비교해보세요.
 			</p>
-			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				버튼을 누르면 4개 바가 동시에 늘어납니다. 누가 먼저 도착하는지 보세요.
 			</p>
 			<button
@@ -187,9 +201,18 @@ function MotionRace() {
 					>
 						<div style={{ fontSize: 12, fontWeight: 600 }}>
 							{name}{" "}
-							<span style={{ color: "#999", fontWeight: 400 }}>({transition.split(" ")[0]})</span>
+							<span style={{ color: "var(--bt-color-text-caption)", fontWeight: 400 }}>
+								({transition.split(" ")[0]})
+							</span>
 						</div>
-						<div style={{ height: 28, background: "#e5e5e5", borderRadius: 6, overflow: "hidden" }}>
+						<div
+							style={{
+								height: 28,
+								background: "var(--bt-color-border-default)",
+								borderRadius: 6,
+								overflow: "hidden",
+							}}
+						>
 							<div
 								style={{
 									width: go ? "100%" : "8%",
