@@ -101,6 +101,25 @@ export const typography = {
 			lineHeight: lh["40"],
 			letterSpacing: ls.normal,
 		},
+		// 굵은 강조 - letter-spacing 은 SCSS `@mixin display_large_bold` 와 같은 값
+		largeBold: {
+			fontSize: fs["48"],
+			fontWeight: fw.bold,
+			lineHeight: lh["60"],
+			letterSpacing: "-0.02em",
+		},
+		mediumBold: {
+			fontSize: fs["40"],
+			fontWeight: fw.bold,
+			lineHeight: lh["50"],
+			letterSpacing: "-0.02em",
+		},
+		smallBold: {
+			fontSize: fs["32"],
+			fontWeight: fw.bold,
+			lineHeight: lh["40"],
+			letterSpacing: "-0.015em",
+		},
 	},
 
 	heading: {
@@ -137,6 +156,25 @@ export const typography = {
 		smallMedium: {
 			fontSize: fs["20"],
 			fontWeight: fw.medium,
+			lineHeight: lh["28"],
+			letterSpacing: ls.normal,
+		},
+		// 굵은 강조 - letter-spacing 은 SCSS `@mixin heading_large_bold` 와 같은 값
+		largeBold: {
+			fontSize: fs["28"],
+			fontWeight: fw.bold,
+			lineHeight: lh["36"],
+			letterSpacing: "-0.01em",
+		},
+		mediumBold: {
+			fontSize: fs["24"],
+			fontWeight: fw.bold,
+			lineHeight: lh["32"],
+			letterSpacing: "-0.01em",
+		},
+		smallBold: {
+			fontSize: fs["20"],
+			fontWeight: fw.bold,
 			lineHeight: lh["28"],
 			letterSpacing: ls.normal,
 		},
@@ -179,6 +217,25 @@ export const typography = {
 			lineHeight: lh["20"],
 			letterSpacing: ls.normal,
 		},
+		// 굵은 강조 - letter-spacing 은 SCSS `@mixin title_large_bold` 와 같은 값
+		largeBold: {
+			fontSize: fs["18"],
+			fontWeight: fw.bold,
+			lineHeight: lh["24"],
+			letterSpacing: ls.normal,
+		},
+		mediumBold: {
+			fontSize: fs["16"],
+			fontWeight: fw.bold,
+			lineHeight: lh["24"],
+			letterSpacing: ls.normal,
+		},
+		smallBold: {
+			fontSize: fs["14"],
+			fontWeight: fw.bold,
+			lineHeight: lh["20"],
+			letterSpacing: ls.normal,
+		},
 	},
 
 	body: {
@@ -215,6 +272,25 @@ export const typography = {
 		smallMedium: {
 			fontSize: fs["14"],
 			fontWeight: fw.medium,
+			lineHeight: lh["20"],
+			letterSpacing: ls.normal,
+		},
+		// 굵은 강조 - letter-spacing 은 SCSS `@mixin body_large_bold` 와 같은 값
+		largeBold: {
+			fontSize: fs["16"],
+			fontWeight: fw.bold,
+			lineHeight: lh["24"],
+			letterSpacing: ls.normal,
+		},
+		mediumBold: {
+			fontSize: fs["15"],
+			fontWeight: fw.bold,
+			lineHeight: lh["22-5"],
+			letterSpacing: ls.normal,
+		},
+		smallBold: {
+			fontSize: fs["14"],
+			fontWeight: fw.bold,
 			lineHeight: lh["20"],
 			letterSpacing: ls.normal,
 		},
@@ -257,5 +333,56 @@ export const typography = {
 			lineHeight: lh["16"],
 			letterSpacing: ls.normal,
 		},
+		// 굵은 강조 - letter-spacing 은 SCSS `@mixin label_large_bold` 와 같은 값
+		largeBold: {
+			fontSize: fs["14"],
+			fontWeight: fw.bold,
+			lineHeight: lh["20"],
+			letterSpacing: ls.tight,
+		},
+		mediumBold: {
+			fontSize: fs["13"],
+			fontWeight: fw.bold,
+			lineHeight: lh["18"],
+			letterSpacing: ls.tight,
+		},
+		smallBold: {
+			fontSize: fs["12"],
+			fontWeight: fw.bold,
+			lineHeight: lh["16"],
+			letterSpacing: ls.tight,
+		},
+	},
+	// ── 의미 이름 (SCSS `@mixin caption` 등과 같은 값) ─────────────────────────
+	caption: {
+		fontSize: fs["12"],
+		fontWeight: fw.regular,
+		lineHeight: lh["16"],
+		letterSpacing: ls.tight,
+	},
+	captionBold: {
+		fontSize: fs["12"],
+		fontWeight: fw.bold,
+		lineHeight: lh["16"],
+		letterSpacing: ls.tight,
+	},
+	/** 섹션 머리 라벨 - 대문자 변환까지 포함한다 */
+	overline: {
+		fontSize: fs["12"],
+		fontWeight: fw.semiBold,
+		lineHeight: lh["16"],
+		letterSpacing: "0.08em",
+		textTransform: "uppercase",
+	},
+	subtitle: {
+		fontSize: fs["15"],
+		fontWeight: fw.medium,
+		lineHeight: lh["22-5"],
+		letterSpacing: ls.normal,
+	},
+	code: {
+		fontFamily: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
+		fontSize: fs["13"],
+		lineHeight: lh["18"],
 	},
 } as const;
