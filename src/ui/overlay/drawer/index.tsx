@@ -16,6 +16,7 @@ import {
 	useIsMounted,
 	useOverlayEscape,
 	useReducedMotion,
+	useSafeLayoutEffect,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -168,15 +169,15 @@ export const Drawer = ({
 	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
 	if (open && !shouldRender) setShouldRender(true);
 
-	// 오버레이 opacity 페이드 - Modal·Alert 와 같은 규칙으로 **transform 을 주지 않는다**.
-	// 항등 transform(`translateY(0px)`)이라도 붙으면 그 요소가 `position: fixed` 자손의
-	// containing block 이 되고 전체 화면 합성 레이어가 하나 생긴다 (springEnterFrom JSDoc).
-	// 퇴출 완료(onRest)에서 unmount 와 onExited 를 처리한다.
-	// 퇴출 마무리 - 아래 onRest 와 그 뒤의 안전망 양쪽에서 부르므로 한 번만 돌게 한다.
+	// 퇴출 마무리 - 오버레이 onRest 와 그 뒤의 안전망 양쪽에서 부르므로 한 번만 돌게 한다.
+	// ref 는 커밋 뒤 layout effect 에서 갱신한다(렌더 중에 쓰지 않는다). 두 호출 지점(onRest·rAF)은
+	// 모두 커밋 이후라 항상 최신 값을 읽는다.
 	const renderingRef = React.useRef(shouldRender);
-	renderingRef.current = shouldRender;
 	const onExitedRef = React.useRef(onExited);
-	onExitedRef.current = onExited;
+	useSafeLayoutEffect(() => {
+		renderingRef.current = shouldRender;
+		onExitedRef.current = onExited;
+	});
 	const finishExit = React.useCallback(() => {
 		if (!renderingRef.current) return;
 		renderingRef.current = false;
@@ -184,6 +185,10 @@ export const Drawer = ({
 		onExitedRef.current?.();
 	}, []);
 
+	// 오버레이 opacity 페이드 - Modal·Alert 와 같은 규칙으로 **transform 을 주지 않는다**.
+	// 항등 transform(`translateY(0px)`)이라도 붙으면 그 요소가 `position: fixed` 자손의
+	// containing block 이 되고 전체 화면 합성 레이어가 하나 생긴다 (springEnterFrom JSDoc).
+	// 퇴출 완료(onRest)에서 finishExit 로 unmount 와 onExited 를 처리한다.
 	const overlayStyle = useSpring({
 		...springEnterFrom(instant),
 		to: { opacity: open ? 1 : 0 },
