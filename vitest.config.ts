@@ -16,7 +16,13 @@ export default defineConfig({
 			include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
 			// `.docs.ts` 는 Storybook meta 설명 전용 문자열이다 - 런타임 import 도, 번들 포함도
 			// 없으므로 테스트 대상이 아니다. `*.test.*`·`*.stories.*` 와 같은 이유로 뺀다.
-			exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}", "**/*.docs.{ts,tsx}"],
+			// `.type-test.*` 는 tsc 가 검사하는 타입 단정 파일이다 - 실행되지 않으니 0% 로 잡혀 수치만 깎는다.
+			exclude: [
+				"**/*.test.{ts,tsx}",
+				"**/*.type-test.{ts,tsx}",
+				"**/*.stories.{ts,tsx}",
+				"**/*.docs.{ts,tsx}",
+			],
 		},
 		projects: [
 			// Unit tests with jsdom

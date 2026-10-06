@@ -46,6 +46,8 @@
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
+		"coverage:docs": "vitest run --project unit --coverage --reporter=default --reporter=json --outputFile.json=coverage/test-results.json && python3 scripts/update-coverage-docs.py",
+		"coverage:docs:check": "vitest run --project unit --coverage --reporter=default --reporter=json --outputFile.json=coverage/test-results.json && python3 scripts/update-coverage-docs.py --check",
 		"test:storybook": "vitest run --project storybook",
 		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss' 'src/vanilla/**/*.scss'",
 		"check:css-vars": "scripts/check-css-vars.sh",
