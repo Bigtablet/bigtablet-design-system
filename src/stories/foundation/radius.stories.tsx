@@ -34,7 +34,7 @@ export const Scale: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				padding: 24,
 				borderRadius: 12,
 				display: "grid",
@@ -48,10 +48,10 @@ export const Scale: Story = {
 					key={key}
 					style={{
 						textAlign: "center",
-						background: "#fff",
+						background: "var(--bt-color-bg-solid)",
 						padding: 16,
 						borderRadius: 12,
-						border: "1px solid rgba(0,0,0,0.06)",
+						border: "1px solid var(--bt-color-border-subtle)",
 					}}
 				>
 					<div
@@ -86,7 +86,14 @@ export const ComponentMapping: Story = {
 		];
 
 		return (
-			<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 560 }}>
+			<div
+				style={{
+					background: "var(--bt-color-bg-solid-dim)",
+					borderRadius: 12,
+					padding: 24,
+					maxWidth: 560,
+				}}
+			>
 				<h3 style={{ margin: "0 0 16px", fontSize: 14 }}>어떤 컴포넌트에 어떤 radius를 쓰나요?</h3>
 				<div style={{ display: "grid", gap: 10 }}>
 					{mappings.map(({ component, token, value, bg }) => (
@@ -98,9 +105,9 @@ export const ComponentMapping: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: 12,
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 10,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 						>
 							<span style={{ fontSize: 13, fontWeight: 600 }}>{component}</span>
@@ -113,7 +120,7 @@ export const ComponentMapping: Story = {
 									border: "1.5px solid #333",
 								}}
 							/>
-							<code style={{ fontSize: 12, color: "#666" }}>
+							<code style={{ fontSize: 12, color: "var(--bt-color-text-caption)" }}>
 								radius.{token} ({value})
 							</code>
 						</div>
@@ -127,17 +134,31 @@ export const ComponentMapping: Story = {
 export const Comparison: Story = {
 	name: "차이 비교",
 	render: () => (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 720,
+			}}
+		>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 				같은 모양인데, 모서리 둥글기만 다릅니다.
 			</p>
-			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				둥글기가 커질수록 부드럽고 친근한 느낌, 작을수록 단정하고 정보성 느낌이 됩니다.
 			</p>
 
 			{/* 버튼 비교 */}
 			<div style={{ marginBottom: 24 }}>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+				<div
+					style={{
+						fontSize: 12,
+						fontWeight: 600,
+						marginBottom: 10,
+						color: "var(--bt-color-text-body)",
+					}}
+				>
 					버튼에 적용했을 때
 				</div>
 				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
@@ -155,7 +176,7 @@ export const Comparison: Story = {
 							>
 								Button
 							</div>
-							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>
+							<div style={{ marginTop: 6, fontSize: 11, color: "var(--bt-color-text-caption)" }}>
 								{key} ({value})
 							</div>
 						</div>
@@ -165,7 +186,14 @@ export const Comparison: Story = {
 
 			{/* 카드 비교 */}
 			<div style={{ marginBottom: 24 }}>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+				<div
+					style={{
+						fontSize: 12,
+						fontWeight: 600,
+						marginBottom: 10,
+						color: "var(--bt-color-text-body)",
+					}}
+				>
 					카드에 적용했을 때
 				</div>
 				<div
@@ -179,8 +207,8 @@ export const Comparison: Story = {
 						<div key={key} style={{ textAlign: "center" }}>
 							<div
 								style={{
-									background: "#fff",
-									border: "1px solid #e5e5e5",
+									background: "var(--bt-color-bg-solid)",
+									border: "1px solid var(--bt-color-border-default)",
 									borderRadius: value,
 									padding: 12,
 									height: 60,
@@ -193,7 +221,9 @@ export const Comparison: Story = {
 							>
 								Card
 							</div>
-							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key}</div>
+							<div style={{ marginTop: 6, fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+								{key}
+							</div>
 						</div>
 					))}
 				</div>
@@ -201,14 +231,30 @@ export const Comparison: Story = {
 
 			{/* 아바타 비교 */}
 			<div>
-				<div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10, color: "#333" }}>
+				<div
+					style={{
+						fontSize: 12,
+						fontWeight: 600,
+						marginBottom: 10,
+						color: "var(--bt-color-text-body)",
+					}}
+				>
 					아바타에 적용했을 때
 				</div>
 				<div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
 					{Object.entries(radius).map(([key, value]) => (
 						<div key={key} style={{ textAlign: "center" }}>
-							<div style={{ width: 48, height: 48, background: "#e5e5e5", borderRadius: value }} />
-							<div style={{ marginTop: 6, fontSize: 11, color: "#666" }}>{key}</div>
+							<div
+								style={{
+									width: 48,
+									height: 48,
+									background: "var(--bt-color-border-default)",
+									borderRadius: value,
+								}}
+							/>
+							<div style={{ marginTop: 6, fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+								{key}
+							</div>
 						</div>
 					))}
 				</div>

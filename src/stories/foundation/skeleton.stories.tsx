@@ -80,7 +80,7 @@ export const Tokens: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: "10px 14px",
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								borderRadius: 8,
 							}}
 						>
@@ -90,7 +90,7 @@ export const Tokens: Story = {
 									height: 40,
 									borderRadius: 6,
 									background: value,
-									border: "1px solid #e5e5e5",
+									border: "1px solid var(--bt-color-border-default)",
 								}}
 							/>
 							<code style={{ fontSize: 13 }}>color.{key}</code>
@@ -113,7 +113,7 @@ export const Tokens: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: "10px 14px",
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								borderRadius: 8,
 							}}
 						>
@@ -124,7 +124,7 @@ export const Tokens: Story = {
 									width: 120,
 									height: 24,
 									borderRadius: value,
-									background: "#e5e5e5",
+									background: "var(--bt-color-border-default)",
 								}}
 							/>
 						</div>
@@ -145,7 +145,7 @@ export const Tokens: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: "10px 14px",
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								borderRadius: 8,
 							}}
 						>
@@ -156,7 +156,7 @@ export const Tokens: Story = {
 									width: "100%",
 									height: value,
 									borderRadius: skeleton.radius.md,
-									background: "#e5e5e5",
+									background: "var(--bt-color-border-default)",
 								}}
 							/>
 						</div>
@@ -177,7 +177,7 @@ export const Tokens: Story = {
 								alignItems: "center",
 								gap: 12,
 								padding: "10px 14px",
-								border: "1px solid #e5e5e5",
+								border: "1px solid var(--bt-color-border-default)",
 								borderRadius: 8,
 							}}
 						>
@@ -239,7 +239,7 @@ export const CardExample: Story = {
 					key={`card-${i}`}
 					style={{
 						padding: 16,
-						border: "1px solid #e5e5e5",
+						border: "1px solid var(--bt-color-border-default)",
 						borderRadius: 12,
 						display: "grid",
 						gap: 12,
@@ -274,7 +274,7 @@ export const ProfileExample: Story = {
 					alignItems: "center",
 					gap: 16,
 					padding: 16,
-					border: "1px solid #e5e5e5",
+					border: "1px solid var(--bt-color-border-default)",
 					borderRadius: 12,
 				}}
 			>
@@ -319,7 +319,7 @@ export const ListExample: Story = {
 						alignItems: "center",
 						gap: 12,
 						padding: "12px 16px",
-						border: "1px solid #e5e5e5",
+						border: "1px solid var(--bt-color-border-default)",
 						borderRadius: 8,
 					}}
 				>

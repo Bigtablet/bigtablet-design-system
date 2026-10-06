@@ -235,5 +235,5 @@ const swatch: React.CSSProperties = {
 	borderRadius: 3,
 	marginRight: 8,
 	verticalAlign: "middle",
-	border: "1px solid rgba(0,0,0,0.08)",
+	border: "1px solid var(--bt-color-border-subtle)",
 };

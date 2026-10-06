@@ -34,7 +34,7 @@ export const Levels: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#fafafa",
+				background: "var(--bt-color-bg-solid-dim)",
 				padding: 24,
 				borderRadius: 12,
 				display: "grid",
@@ -46,11 +46,11 @@ export const Levels: Story = {
 				<div
 					key={key}
 					style={{
-						background: "#fff",
+						background: "var(--bt-color-bg-solid)",
 						borderRadius: 12,
 						padding: 16,
 						boxShadow: value,
-						border: "1px solid rgba(0,0,0,0.06)",
+						border: "1px solid var(--bt-color-border-subtle)",
 					}}
 				>
 					<div
@@ -82,9 +82,9 @@ export const Levels: Story = {
 								width: 72,
 								height: 44,
 								borderRadius: 10,
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								boxShadow: value,
-								border: "1px solid rgba(0,0,0,0.06)",
+								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 							aria-hidden
 						/>
@@ -104,7 +104,7 @@ export const ElevationStack: Story = {
 	render: () => (
 		<div
 			style={{
-				background: "#f0f0f0",
+				background: "var(--bt-color-bg-solid-dim)",
 				borderRadius: 16,
 				padding: 32,
 				maxWidth: 480,
@@ -113,7 +113,7 @@ export const ElevationStack: Story = {
 				perspective: "800px",
 			}}
 		>
-			<p style={{ margin: "0 0 16px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 16px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이
 				강해집니다.
 			</p>
@@ -126,7 +126,7 @@ export const ElevationStack: Story = {
 						right: 32 + i * 8,
 						bottom: 60 + i * 48,
 						height: 44,
-						background: "#fff",
+						background: "var(--bt-color-bg-solid)",
 						borderRadius: 10,
 						boxShadow: value,
 						display: "flex",
@@ -138,7 +138,9 @@ export const ElevationStack: Story = {
 					}}
 				>
 					<strong>{key}</strong>
-					<span style={{ fontSize: 11, color: "#999" }}>{elevationUseCase(key)}</span>
+					<span style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+						{elevationUseCase(key)}
+					</span>
 				</div>
 			))}
 		</div>
@@ -150,12 +152,27 @@ export const DoAndDont: Story = {
 	render: () => (
 		<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640 }}>
 			{/* DO */}
-			<div style={{ background: "#f0fdf4", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#047857", marginBottom: 12 }}>DO</div>
+			<div
+				style={{
+					background: "var(--bt-color-status-success-container)",
+					borderRadius: 12,
+					padding: 20,
+				}}
+			>
+				<div
+					style={{
+						fontSize: 13,
+						fontWeight: 700,
+						color: "var(--bt-color-status-success-on-surface)",
+						marginBottom: 12,
+					}}
+				>
+					DO
+				</div>
 				<div style={{ display: "grid", gap: 8 }}>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level1,
@@ -166,7 +183,7 @@ export const DoAndDont: Story = {
 					</div>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level2,
@@ -177,7 +194,7 @@ export const DoAndDont: Story = {
 					</div>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level4,
@@ -187,20 +204,39 @@ export const DoAndDont: Story = {
 						모달 → level4
 					</div>
 				</div>
-				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#047857" }}>
+				<p
+					style={{
+						margin: "12px 0 0",
+						fontSize: 12,
+						color: "var(--bt-color-status-success-on-surface)",
+					}}
+				>
 					UI의 높낮이에 맞게 단계적으로 사용합니다.
 				</p>
 			</div>
 
 			{/* DON'T */}
-			<div style={{ background: "#fef2f2", borderRadius: 12, padding: 20 }}>
-				<div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 12 }}>
+			<div
+				style={{
+					background: "var(--bt-color-status-error-container)",
+					borderRadius: 12,
+					padding: 20,
+				}}
+			>
+				<div
+					style={{
+						fontSize: 13,
+						fontWeight: 700,
+						color: "var(--bt-color-status-error-on-surface)",
+						marginBottom: 12,
+					}}
+				>
 					DON'T
 				</div>
 				<div style={{ display: "grid", gap: 8 }}>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level5,
@@ -211,7 +247,7 @@ export const DoAndDont: Story = {
 					</div>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level5,
@@ -222,7 +258,7 @@ export const DoAndDont: Story = {
 					</div>
 					<div
 						style={{
-							background: "#fff",
+							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
 							boxShadow: elevation.level5,
@@ -232,7 +268,13 @@ export const DoAndDont: Story = {
 						모든 요소에 같은 그림자
 					</div>
 				</div>
-				<p style={{ margin: "12px 0 0", fontSize: 12, color: "#ef4444" }}>
+				<p
+					style={{
+						margin: "12px 0 0",
+						fontSize: 12,
+						color: "var(--bt-color-status-error-on-surface)",
+					}}
+				>
 					강한 그림자를 남용하면 위계가 무너집니다.
 				</p>
 			</div>
@@ -243,11 +285,18 @@ export const DoAndDont: Story = {
 export const Comparison: Story = {
 	name: "차이 비교",
 	render: () => (
-		<div style={{ background: "#fafafa", borderRadius: 12, padding: 24, maxWidth: 720 }}>
+		<div
+			style={{
+				background: "var(--bt-color-bg-solid-dim)",
+				borderRadius: 12,
+				padding: 24,
+				maxWidth: 720,
+			}}
+		>
 			<p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600 }}>
 				완전히 같은 카드인데, 그림자만 다릅니다.
 			</p>
-			<p style={{ margin: "0 0 20px", fontSize: 13, color: "#666" }}>
+			<p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--bt-color-text-caption)" }}>
 				level이 올라갈수록 "공중에 떠 있는" 느낌이 강해지는 걸 비교해보세요.
 			</p>
 			<div
@@ -261,7 +310,7 @@ export const Comparison: Story = {
 					<div key={key} style={{ textAlign: "center" }}>
 						<div
 							style={{
-								background: "#fff",
+								background: "var(--bt-color-bg-solid)",
 								borderRadius: 12,
 								padding: 16,
 								boxShadow: value,
@@ -273,12 +322,21 @@ export const Comparison: Story = {
 								gap: 8,
 							}}
 						>
-							<div style={{ width: 32, height: 32, borderRadius: 8, background: "#f3f4f6" }} />
-							<div style={{ fontSize: 12, color: "#333" }}>카드 제목</div>
-							<div style={{ fontSize: 11, color: "#999" }}>설명 텍스트</div>
+							<div
+								style={{
+									width: 32,
+									height: 32,
+									borderRadius: 8,
+									background: "var(--bt-color-bg-solid-dim)",
+								}}
+							/>
+							<div style={{ fontSize: 12, color: "var(--bt-color-text-body)" }}>카드 제목</div>
+							<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>설명 텍스트</div>
 						</div>
 						<div style={{ marginTop: 10, fontSize: 13, fontWeight: 600 }}>{key}</div>
-						<div style={{ fontSize: 11, color: "#666" }}>{elevationUseCase(key)}</div>
+						<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)" }}>
+							{elevationUseCase(key)}
+						</div>
 					</div>
 				))}
 			</div>
