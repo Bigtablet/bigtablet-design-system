@@ -45,10 +45,11 @@ describe("typography tokens - TS ↔ SCSS", () => {
 	});
 
 	it("each semantic style matches its SCSS mixin", () => {
-		const groups = ["display", "heading", "title", "body", "label"] as const;
+		// 그룹을 손으로 나열하지 않는다 - 새 그룹이 생기면 자동으로 검사 대상이 된다.
+		const { fontFamily: _fontFamily, ...groups } = typography;
 		let checked = 0;
-		for (const group of groups) {
-			for (const [key, style] of Object.entries(typography[group])) {
+		for (const [group, styles] of Object.entries(groups)) {
+			for (const [key, style] of Object.entries(styles)) {
 				const mixin = `${group}_${snake(key)}`;
 				const body = scss.match(new RegExp(`@mixin ${mixin}\\s*\\{([^}]*)\\}`))?.[1];
 				expect(body, `@mixin ${mixin}`).toBeDefined();
@@ -61,7 +62,7 @@ describe("typography tokens - TS ↔ SCSS", () => {
 				checked++;
 			}
 		}
-		// 정규식이 하나도 못 잡고 통과하는 것을 막는다
-		expect(checked).toBe(30);
+		// 그룹이 비어 루프가 한 번도 돌지 않고 통과하는 것을 막는다
+		expect(checked).toBeGreaterThan(0);
 	});
 });
