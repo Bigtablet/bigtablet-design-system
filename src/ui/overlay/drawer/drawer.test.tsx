@@ -472,6 +472,77 @@ describe("Drawer", () => {
 		expect(panel).toHaveStyle({ transform: "translateX(0%)" });
 	});
 
+	// ── disableAnimation ────────────────────────────────────────────────────
+	// 전역 skipAnimation 을 끄고 reduced-motion 도 없이 돌려, prop 하나로 즉시 경로를 타는지 본다.
+	// skipAnimation 이 켜져 있으면 어떤 스프링이든 즉시 끝나 prop 이 없어도 통과한다.
+
+	it("opens at rest on the first frame when disableAnimation is set", () => {
+		Globals.assign({ skipAnimation: false });
+		try {
+			render(
+				<Drawer open onClose={() => {}} placement="right" title="메뉴" disableAnimation>
+					Content
+				</Drawer>,
+			);
+			const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+			expect(panel).toHaveStyle({ transform: "translateX(0%)" });
+		} finally {
+			Globals.assign({ skipAnimation: true });
+		}
+	});
+
+	it("jumps to rest when opened after mounting closed with disableAnimation", async () => {
+		// 닫힌 채 마운트하면 패널 스프링이 translateX(100%) 에서 출발한다. immediate 도 다음 프레임에
+		// 반영되므로 한 프레임은 기다리되, 슬라이드(280/28 스프링)가 끝나기엔 짧은 100ms 안에 휴지
+		// 위치여야 한다.
+		Globals.assign({ skipAnimation: false });
+		try {
+			const el = (open: boolean) => (
+				<Drawer open={open} onClose={() => {}} placement="right" title="메뉴" disableAnimation>
+					Content
+				</Drawer>
+			);
+			const { rerender } = render(el(false));
+			rerender(el(true));
+			const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
+			await waitFor(() => expect(panel).toHaveStyle({ transform: "translateX(0%)" }), {
+				timeout: 100,
+			});
+		} finally {
+			Globals.assign({ skipAnimation: true });
+		}
+	});
+
+	it("closes, unmounts and fires onExited once when disableAnimation is set", async () => {
+		Globals.assign({ skipAnimation: false });
+		try {
+			const onExited = vi.fn();
+			const { rerender } = render(
+				<Drawer open onClose={() => {}} onExited={onExited} title="메뉴" disableAnimation>
+					Content
+				</Drawer>,
+			);
+			rerender(
+				<Drawer open={false} onClose={() => {}} onExited={onExited} title="메뉴" disableAnimation>
+					Content
+				</Drawer>,
+			);
+			// onExited 는 unmount 를 예약한 tick 에 불리고 스크롤 잠금은 그 커밋의 effect 에서 풀린다 -
+			// 셋을 한 waitFor 로 기다린다(따로 단정하면 부하가 걸릴 때 커밋 전에 읽는다).
+			await waitFor(() => {
+				expect(onExited).toHaveBeenCalledTimes(1);
+				expect(document.querySelector(".drawer_panel")).toBeNull();
+				expect(document.body.style.overflow).not.toBe("hidden");
+			});
+
+			// 한 번만 - 즉시 경로에서 onRest 가 두 번 돌지 않는다.
+			await new Promise((r) => setTimeout(r, 50));
+			expect(onExited).toHaveBeenCalledTimes(1);
+		} finally {
+			Globals.assign({ skipAnimation: true });
+		}
+	});
+
 	// ── className passthrough ─────────────────────────────────────────────
 
 	it("applies custom className to the panel", () => {

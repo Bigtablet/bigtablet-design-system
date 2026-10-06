@@ -73,6 +73,12 @@ export interface DrawerProps
 	 * `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다.
 	 */
 	onExited?: () => void;
+	/**
+	 * 슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. 기본값 `false`.
+	 * 화면 전체를 덮는 메뉴처럼 슬라이드가 디자인에 맞지 않는 곳에서 쓴다.
+	 * OS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끈다.
+	 */
+	disableAnimation?: boolean;
 }
 
 // placement 별 진입 시작(=퇴출 도착) transform. 방향 축과 단위(%)를 진입/퇴출 양쪽에서
@@ -104,6 +110,7 @@ export const Drawer = ({
 	ariaLabel,
 	initialFocusRef,
 	onExited,
+	disableAnimation = false,
 	children,
 	className,
 	...props
@@ -130,7 +137,8 @@ export const Drawer = ({
 	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
 	const [shouldRender, setShouldRender] = React.useState(open);
-	const reduced = useReducedMotion();
+	// reduced-motion 과 disableAnimation 은 같은 경로를 탄다 - 즉시 최종 상태로 점프하고 onRest 는 그대로 발화.
+	const instant = useReducedMotion() || disableAnimation;
 	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
 	// mismatch(서버 null vs 클라 포털)를 피한다 (Modal/Toast/Alert 와 동일 패턴을 훅으로 공유).
 	const isMounted = useIsMounted();
@@ -165,9 +173,9 @@ export const Drawer = ({
 	// containing block 이 되고 전체 화면 합성 레이어가 하나 생긴다 (springEnterFrom JSDoc).
 	// 퇴출 완료(onRest)에서 unmount 와 onExited 를 처리한다.
 	const overlayStyle = useSpring({
-		...springEnterFrom(reduced),
+		...springEnterFrom(instant),
 		to: { opacity: open ? 1 : 0 },
-		immediate: reduced,
+		immediate: instant,
 		config: OVERLAY_SPRING_CONFIG,
 		onRest: (result) => {
 			// 열린 적 없는 드로어의 스프링은 이미 목표값(opacity 0)에 있어 onRest 가 발화하지
@@ -182,11 +190,14 @@ export const Drawer = ({
 	// 패널 슬라이드 - 진입/퇴출 모두 placement 축을 따라 동일 template 로 보간(정확한 reverse).
 	const slideFrom = SLIDE_FROM[placement];
 	const slideRest = placement === "bottom" ? "translateY(0%)" : "translateX(0%)";
+	// 즉시 모드에선 `from` 을 생략한다 - 오버레이의 springEnterFrom 과 같은 이유(첫 프레임 깜빡임).
+	// clamp 는 진입에도 건다. 진입만 풀어 두면 감쇠비 0.84 로 목표를 0.8% 지나쳤다 돌아와,
+	// 375px 전체 폭 패널이 3px 튀는 것이 보였다(오버레이는 처음부터 OVERLAY_SPRING_CONFIG 였다).
 	const panelStyle = useSpring({
-		from: { transform: slideFrom },
+		...(instant ? {} : { from: { transform: slideFrom } }),
 		to: { transform: open ? slideRest : slideFrom },
-		immediate: reduced,
-		config: { tension: 280, friction: 28, clamp: !open },
+		immediate: instant,
+		config: OVERLAY_SPRING_CONFIG,
 	});
 
 	// 바디 스크롤 잠금 - Modal 과 동일한 data-open-modals 카운터 공유.
