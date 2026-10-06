@@ -447,8 +447,9 @@ it("calls callback with correct arguments", () => {
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 
-> 이 표는 `coverage/coverage-summary.json` 에서 뜬 실측이다. 손으로 고치지 말고 `pnpm test:coverage`
-> 를 돌린 뒤 그 파일 기준으로 갱신한다 - 예전에 이 표가 788 tests 시절 수치로 굳어 있었다.
+> 이 절의 수치와 표는 `pnpm coverage:docs` 가 쓴다 - unit 테스트를 커버리지와 함께 돌리고
+> `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표와 `CLAUDE.md` 의 한 줄을 갱신한다.
+> 손으로 고치지 않는다(예전에 788 tests 시절 수치로 굳어 있었다). 릴리즈의 `deploy:` 커밋 전에 돌린다.
 
 ## 컴포넌트별 테스트 예시
 
