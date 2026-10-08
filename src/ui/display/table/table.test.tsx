@@ -669,6 +669,28 @@ describe("Table 키보드 행 이동", () => {
 		expect(focused.textContent).toContain("Alpha");
 	});
 
+	it("셀 안 버튼의 Enter · ↑↓ 는 행이 가로채지 않는다", () => {
+		const onRowClick = vi.fn();
+		render(
+			<Table
+				columns={[
+					...columns,
+					{ key: "edit", header: "", render: () => <button type="button">편집</button> },
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
+		);
+		const [button] = screen.getAllByRole("button", { name: "편집" });
+		button?.focus();
+
+		expect(fireEvent.keyDown(button as HTMLElement, { key: "Enter" })).toBe(true);
+		expect(fireEvent.keyDown(button as HTMLElement, { key: "ArrowDown" })).toBe(true);
+		expect(onRowClick).not.toHaveBeenCalled();
+		expect(button).toHaveFocus();
+	});
+
 	it("clickable 이 아닌 표는 방향키를 받지 않는다", () => {
 		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
 
