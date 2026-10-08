@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.28.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.28.0) - 2026-10-08
+- `Table` 의 clickable 행(`onRowClick`)을 ↑↓ 로 옮길 수 있습니다. 꾹 누르면 연속으로 움직이고, 끝 행에서는 멈춘 채 페이지가 대신 스크롤되지 않습니다. 포커스가 어디에도 없을 때 ↓ 는 화면에서 포커스를 받을 수 있는 첫 clickable 표의 첫 행으로 들어갑니다(입력 포커스·수식키는 가로채지 않음, 닫힌 탭처럼 숨겨진 표는 건너뜀). `DataView` 도 같습니다
+- 셀 안 버튼·링크·입력이나 포털 메뉴에서 시작한 클릭·키(Enter·↑↓)가 행 동작으로 이어지지 않습니다. 지금까지는 셀 안 버튼에서 Enter 를 누르면 버튼 대신 행이 열렸고, 마우스로 눌러도 소비자가 전파를 막지 않으면 행이 같이 열렸습니다
+
 ## [3.27.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.27.0) - 2026-10-06
 - TS `typography` 에 SCSS 에만 있던 글자 스타일 20종이 생겼습니다 - 그룹마다 `largeBold`·`mediumBold`·`smallBold`(예: `typography.title.mediumBold`), 그리고 `caption`·`captionBold`·`overline`·`subtitle`·`code`. 값은 SCSS 믹스인과 같고, 둘이 어긋나면 테스트가 실패합니다
 - (렌더 변경) TS `typography`·`baseTypography` 의 `fontWeight` 가 CSS 숫자(400·500·700 …)가 됩니다. 지금까지 `"Regular"` 같은 Figma 스타일 이름이어서 `style={typography.body.small}` 로 쓰면 굵기가 무시됐습니다. 값의 타입이 string 에서 number 로 바뀝니다(사내 저장소 사용처 0)

@@ -389,7 +389,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 78 test files / 1300 passed · 8 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 78 test files / 1308 passed · 8 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -399,7 +399,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **93.04%** | **90.38%** | **93.97%** | **94.88%** |
+| **All files** | **93.1%** | **90.5%** | **94.03%** | **94.94%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (39개는 전 지표 100% 라 빠져 있다).
 
@@ -413,7 +413,7 @@ it("calls callback with correct arguments", () => {
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 76.32% | 53.33% | 100% | 79.41% |
-| ui/display/table | 97.44% | 91.41% | 96.43% | 98.53% |
+| ui/display/table | 97.41% | 93.29% | 96.97% | 98.97% |
 | ui/feedback/alert | 98.57% | 94.92% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 98.77% | 94.12% | 100% | 100% |

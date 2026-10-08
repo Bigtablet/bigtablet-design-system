@@ -11,6 +11,22 @@ import "./style.scss";
 
 export type TableSize = "sm" | "md" | "lg";
 
+/** 셀 안에서 자기 동작을 가진 요소 - 여기서 시작한 클릭은 행 클릭이 아니다. */
+const CELL_CONTROL =
+	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch']";
+
+/**
+ * 클릭이 셀 안 컨트롤(또는 포털로 띄운 메뉴)에서 왔는지. 버튼 Enter 도 `click` 으로 올라오므로 keydown
+ * 만 걸러서는 버튼을 눌렀는데 행까지 열린다. 포털 안 요소는 DOM 상 행 밖이지만 React 이벤트는 행으로
+ * 올라온다 - 그래서 "행 안에 없음" 도 컨트롤로 본다.
+ */
+const isFromCellControl = (e: React.MouseEvent<HTMLElement>) => {
+	const target = e.target as Element;
+	if (!e.currentTarget.contains(target)) return true;
+	const control = target.closest(CELL_CONTROL);
+	return control !== null && e.currentTarget.contains(control);
+};
+
 export type TableSortDirection = "asc" | "desc";
 
 export interface TableSort {
@@ -77,7 +93,10 @@ export type TableProps<T extends object> = {
 	ariaLabel?: string;
 	/** 루트 wrapper에 추가할 className */
 	className?: string;
-	/** 행 클릭 콜백 */
+	/**
+	 * 행 클릭 콜백. 주면 행이 키보드로도 동작한다 - Enter/Space 로 열고 ↑↓ 로 행을 옮기며, 포커스가
+	 * 어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다.
+	 */
 	onRowClick?: (item: T, index: number) => void;
 	/**
 	 * clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다 (기본값: "클릭 가능한 행").
@@ -201,6 +220,51 @@ export const Table = <T extends object>({
 			mutationObserver?.disconnect();
 		};
 	}, []);
+
+	// 포커스가 어디에도 없을 때(페이지 첫 진입 · 상세에서 돌아옴) ↓ 로 첫 행에 들어간다. 이게 없으면
+	// 행을 한 번 클릭하거나 Tab 으로 필터를 다 지나야 방향키가 먹는다. 한 화면에 표가 여럿이면 문서
+	// 순서상 포커스를 받을 수 있는 첫 표로 들어간다 - 숨겨진 표(닫힌 탭 등)의 행은 `focus()` 가 아무것도
+	// 하지 않으므로 다음 표로 넘어간다. 리스너는 표마다 걸리지만 먼저 처리한 쪽이 포커스를 옮기고
+	// `preventDefault` 하므로 나머지는 위의 조건에서 빠진다.
+	const isRowClickable = Boolean(onRowClick);
+	React.useEffect(() => {
+		if (!isRowClickable) return;
+
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key !== "ArrowDown" || e.defaultPrevented) return;
+			if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+			const active = document.activeElement;
+			if (active && active !== document.body) return;
+			const firstRows = document.querySelectorAll<HTMLTableRowElement>(
+				".table_tbody > tr.table_row_clickable:first-child",
+			);
+			for (const row of firstRows) {
+				row.focus();
+				if (document.activeElement === row) {
+					e.preventDefault();
+					return;
+				}
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isRowClickable]);
+
+	/**
+	 * ↑↓ 로 이웃 행에 포커스를 옮긴다. 인덱스로 계산하지 않고 DOM 형제를 집는 이유는 `focus()` 의
+	 * 기본 스크롤(최소 이동)이 화면 밖 행을 끌어와 주기 때문이다. 꾹 누름은 브라우저 키 반복이
+	 * keydown 을 계속 보내 그대로 연속 이동이 된다. 기본 동작(페이지 스크롤)은 막는다 - 행 이동과
+	 * 스크롤이 겹치면 포커스 행이 화면에서 튄다. 끝 행에서도 막아 페이지가 대신 움직이지 않게 한다.
+	 */
+	const moveRowFocus = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+		e.preventDefault();
+		const sibling =
+			e.key === "ArrowDown"
+				? e.currentTarget.nextElementSibling
+				: e.currentTarget.previousElementSibling;
+		if (sibling instanceof HTMLTableRowElement && sibling.tabIndex >= 0) sibling.focus();
+	};
 
 	const isEmpty = !isLoading && data.length === 0;
 
@@ -350,17 +414,28 @@ export const Table = <T extends object>({
 										aria-selected={selectable ? (isSelected ? "true" : "false") : undefined}
 										// clickable 행은 role/aria-label 을 tr 에 붙이지 않는다 (role="button" 은 셀을
 										// presentational 로, aria-label 은 셀 이름을 덮어써 스크린리더가 데이터를 못 읽음).
-										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작하고, 동작 설명은 rowClickHint 를
+										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작(↑↓ 는 행 이동)하고, 동작 설명은 rowClickHint 를
 										// aria-describedby 로 덧붙여 셀 낭독을 유지한다.
 										aria-describedby={onRowClick && rowClickHint ? rowClickHintId : undefined}
 										tabIndex={onRowClick ? 0 : undefined}
-										onClick={onRowClick ? () => onRowClick(item, rowIndex) : undefined}
+										onClick={
+											onRowClick
+												? (e) => {
+														if (!isFromCellControl(e)) onRowClick(item, rowIndex);
+													}
+												: undefined
+										}
 										onKeyDown={
 											onRowClick
 												? (e) => {
+														// 셀 안 버튼·메뉴(포털이어도 React 이벤트는 올라온다)의 키는 그쪽 몫이다 -
+														// 받으면 버튼 Enter 가 행 열기로, 메뉴 ↑↓ 가 행 이동으로 바뀐다.
+														if (e.target !== e.currentTarget) return;
 														if (e.key === "Enter" || e.key === " ") {
 															e.preventDefault();
 															onRowClick(item, rowIndex);
+														} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+															moveRowFocus(e);
 														}
 													}
 												: undefined
