@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.29.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.29.0) - 2026-10-08
+- `Table` 의 clickable 행을 Home/End(처음·끝)와 PageUp/PageDown(한 화면씩, 직전 화면의 끝 행이 남게)으로 건너뛸 수 있습니다. 한 화면은 표가 세로로 스크롤되면 표 높이, 아니면 창 높이로 잽니다. `DataView` 도 같습니다
+- 행에 포커스가 있을 때 Ctrl/Cmd/Alt 가 붙은 키(Ctrl+Home, Cmd+↑, Ctrl+PageUp 등)를 더 이상 가로채지 않습니다. 3.28.0 에서는 이런 조합의 ↑↓ 도 행 이동으로 처리돼 브라우저·OS 단축키가 막혔습니다
+- (개발) 개발·빌드 전용 transitive 의존성 `source-map-js` 를 1.2.2 로 올렸습니다(indexed source map 이벤트 루프 DoS). 배포 패키지에는 들어가지 않습니다
+
 ## [3.28.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.28.0) - 2026-10-08
 - `Table` 의 clickable 행(`onRowClick`)을 ↑↓ 로 옮길 수 있습니다. 꾹 누르면 연속으로 움직이고, 끝 행에서는 멈춘 채 페이지가 대신 스크롤되지 않습니다. 포커스가 어디에도 없을 때 ↓ 는 화면에서 포커스를 받을 수 있는 첫 clickable 표의 첫 행으로 들어갑니다(입력 포커스·수식키는 가로채지 않음, 닫힌 탭처럼 숨겨진 표는 건너뜀). `DataView` 도 같습니다
 - 셀 안 버튼·링크·입력이나 포털 메뉴에서 시작한 클릭·키(Enter·↑↓)가 행 동작으로 이어지지 않습니다. 지금까지는 셀 안 버튼에서 Enter 를 누르면 버튼 대신 행이 열렸고, 마우스로 눌러도 소비자가 전파를 막지 않으면 행이 같이 열렸습니다

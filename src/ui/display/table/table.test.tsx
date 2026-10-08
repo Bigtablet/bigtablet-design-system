@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Table, type TableColumn } from "./index";
 
 interface Row {
@@ -591,6 +591,9 @@ describe("Table isLoading guards", () => {
 });
 
 describe("Table 키보드 행 이동", () => {
+	// 창 높이 · 행 높이 spy 가 실패한 테스트에서 다음 테스트로 새지 않게 본문 밖에서 되돌린다.
+	afterEach(() => vi.restoreAllMocks());
+
 	const three: Row[] = [...rows, { id: 3, name: "Gamma", score: 70 }];
 	const renderClickable = () =>
 		render(
@@ -612,6 +615,81 @@ describe("Table 키보드 행 이동", () => {
 		expect(fireEvent.keyDown(third, { key: "ArrowDown" })).toBe(false);
 		expect(third).toHaveFocus();
 		fireEvent.keyDown(third, { key: "ArrowUp" });
+		expect(second).toHaveFocus();
+	});
+
+	it("Home/End 는 처음·끝 행, PageUp/PageDown 은 보이는 행 수 - 1 만큼 옮긴다", () => {
+		const five: Row[] = Array.from({ length: 5 }, (_, i) => ({
+			id: i + 1,
+			name: `R${i}`,
+			score: i,
+		}));
+		render(
+			<Table columns={columns} data={five} keyExtractor={(r) => r.id} onRowClick={() => {}} />,
+		);
+		const all = screen.getAllByRole("row").slice(1) as HTMLElement[];
+		// 행 40px · 창 130px → 3 행이 보이고 한 화면은 2 행
+		for (const row of all)
+			Object.defineProperty(row, "offsetHeight", { value: 40, configurable: true });
+		vi.spyOn(window, "innerHeight", "get").mockReturnValue(130);
+		const [first, , third, , last] = all as [
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+		];
+		first.focus();
+
+		fireEvent.keyDown(first, { key: "PageDown" });
+		expect(third).toHaveFocus();
+		fireEvent.keyDown(third, { key: "End" });
+		expect(last).toHaveFocus();
+		fireEvent.keyDown(last, { key: "PageUp" });
+		expect(third).toHaveFocus();
+		expect(fireEvent.keyDown(third, { key: "Home" })).toBe(false);
+		expect(first).toHaveFocus();
+		// 수식키 조합은 브라우저 단축키라 가로채지 않는다.
+		expect(fireEvent.keyDown(first, { key: "End", altKey: true })).toBe(true);
+		expect(fireEvent.keyDown(first, { key: "ArrowDown", metaKey: true })).toBe(true);
+		expect(first).toHaveFocus();
+	});
+
+	it("PageUp/PageDown 은 처음 · 끝 행에서 멈추고, 표가 세로로 스크롤되면 표 높이로 한 화면을 잰다", () => {
+		const five: Row[] = Array.from({ length: 5 }, (_, i) => ({
+			id: i + 1,
+			name: `R${i}`,
+			score: i,
+		}));
+		const { container } = render(
+			<Table columns={columns} data={five} keyExtractor={(r) => r.id} onRowClick={() => {}} />,
+		);
+		const all = screen.getAllByRole("row").slice(1) as HTMLElement[];
+		for (const row of all)
+			Object.defineProperty(row, "offsetHeight", { value: 40, configurable: true });
+		const [first, second, , , last] = all as [
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+		];
+
+		// 끝에서 멈춤 - 창이 커서 한 화면이 행 수보다 많아도 범위를 벗어나지 않는다.
+		first.focus();
+		expect(fireEvent.keyDown(first, { key: "PageUp" })).toBe(false);
+		expect(first).toHaveFocus();
+		fireEvent.keyDown(first, { key: "PageDown" });
+		expect(last).toHaveFocus();
+		fireEvent.keyDown(last, { key: "PageDown" });
+		expect(last).toHaveFocus();
+
+		// 래퍼가 세로로 스크롤되면 창이 아니라 래퍼 높이(90px → 2 행 보임 → 한 화면 1 행)를 쓴다.
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		Object.defineProperty(wrapper, "clientHeight", { value: 90, configurable: true });
+		Object.defineProperty(wrapper, "scrollHeight", { value: 300, configurable: true });
+		first.focus();
+		fireEvent.keyDown(first, { key: "PageDown" });
 		expect(second).toHaveFocus();
 	});
 
