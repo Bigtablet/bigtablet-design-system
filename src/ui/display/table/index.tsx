@@ -219,8 +219,9 @@ export const Table = <T extends object>({
 			if (active && active !== document.body) return;
 			const firstRow = document.querySelector<HTMLTableRowElement>("tr.table_row_clickable");
 			if (!firstRow || !wrapperRef.current?.contains(firstRow)) return;
-			e.preventDefault();
 			firstRow.focus();
+			// 숨겨진 표(닫힌 탭 등)의 행이면 focus() 가 아무것도 하지 않는다 - 그때 스크롤까지 막지 않는다.
+			if (document.activeElement === firstRow) e.preventDefault();
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
