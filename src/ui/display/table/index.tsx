@@ -77,7 +77,10 @@ export type TableProps<T extends object> = {
 	ariaLabel?: string;
 	/** 루트 wrapper에 추가할 className */
 	className?: string;
-	/** 행 클릭 콜백 */
+	/**
+	 * 행 클릭 콜백. 주면 행이 키보드로도 동작한다 - Enter/Space 로 열고 ↑↓ 로 행을 옮기며, 포커스가
+	 * 어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다.
+	 */
 	onRowClick?: (item: T, index: number) => void;
 	/**
 	 * clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다 (기본값: "클릭 가능한 행").
@@ -201,6 +204,43 @@ export const Table = <T extends object>({
 			mutationObserver?.disconnect();
 		};
 	}, []);
+
+	// 포커스가 어디에도 없을 때(페이지 첫 진입 · 상세에서 돌아옴) ↓ 로 첫 행에 들어간다. 이게 없으면
+	// 행을 한 번 클릭하거나 Tab 으로 필터를 다 지나야 방향키가 먹는다. 한 화면에 표가 여럿이면 문서
+	// 순서상 첫 clickable 표만 받는다 - 표마다 받으면 마지막에 등록된 표가 포커스를 가져간다.
+	const isRowClickable = Boolean(onRowClick);
+	React.useEffect(() => {
+		if (!isRowClickable) return;
+
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key !== "ArrowDown" || e.defaultPrevented) return;
+			if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+			const active = document.activeElement;
+			if (active && active !== document.body) return;
+			const firstRow = document.querySelector<HTMLTableRowElement>("tr.table_row_clickable");
+			if (!firstRow || !wrapperRef.current?.contains(firstRow)) return;
+			e.preventDefault();
+			firstRow.focus();
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isRowClickable]);
+
+	/**
+	 * ↑↓ 로 이웃 행에 포커스를 옮긴다. 인덱스로 계산하지 않고 DOM 형제를 집는 이유는 `focus()` 의
+	 * 기본 스크롤(최소 이동)이 화면 밖 행을 끌어와 주기 때문이다. 꾹 누름은 브라우저 키 반복이
+	 * keydown 을 계속 보내 그대로 연속 이동이 된다. 기본 동작(페이지 스크롤)은 막는다 - 행 이동과
+	 * 스크롤이 겹치면 포커스 행이 화면에서 튄다. 끝 행에서도 막아 페이지가 대신 움직이지 않게 한다.
+	 */
+	const moveRowFocus = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+		e.preventDefault();
+		const sibling =
+			e.key === "ArrowDown"
+				? e.currentTarget.nextElementSibling
+				: e.currentTarget.previousElementSibling;
+		if (sibling instanceof HTMLTableRowElement && sibling.tabIndex >= 0) sibling.focus();
+	};
 
 	const isEmpty = !isLoading && data.length === 0;
 
@@ -350,7 +390,7 @@ export const Table = <T extends object>({
 										aria-selected={selectable ? (isSelected ? "true" : "false") : undefined}
 										// clickable 행은 role/aria-label 을 tr 에 붙이지 않는다 (role="button" 은 셀을
 										// presentational 로, aria-label 은 셀 이름을 덮어써 스크린리더가 데이터를 못 읽음).
-										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작하고, 동작 설명은 rowClickHint 를
+										// 대신 focus 가능(tabIndex) + Enter/Space 로 동작(↑↓ 는 행 이동)하고, 동작 설명은 rowClickHint 를
 										// aria-describedby 로 덧붙여 셀 낭독을 유지한다.
 										aria-describedby={onRowClick && rowClickHint ? rowClickHintId : undefined}
 										tabIndex={onRowClick ? 0 : undefined}
@@ -361,6 +401,8 @@ export const Table = <T extends object>({
 														if (e.key === "Enter" || e.key === " ") {
 															e.preventDefault();
 															onRowClick(item, rowIndex);
+														} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+															moveRowFocus(e);
 														}
 													}
 												: undefined
