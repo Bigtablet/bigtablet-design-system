@@ -646,6 +646,10 @@ describe("Table 키보드 행 이동", () => {
 		expect(third).toHaveFocus();
 		expect(fireEvent.keyDown(third, { key: "Home" })).toBe(false);
 		expect(first).toHaveFocus();
+		// 수식키 조합은 브라우저 단축키라 가로채지 않는다.
+		expect(fireEvent.keyDown(first, { key: "End", altKey: true })).toBe(true);
+		expect(fireEvent.keyDown(first, { key: "ArrowDown", metaKey: true })).toBe(true);
+		expect(first).toHaveFocus();
 		vi.restoreAllMocks();
 	});
 

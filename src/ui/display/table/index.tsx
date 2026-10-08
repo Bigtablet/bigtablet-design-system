@@ -455,6 +455,8 @@ export const Table = <T extends object>({
 														// 셀 안 버튼·메뉴(포털이어도 React 이벤트는 올라온다)의 키는 그쪽 몫이다 -
 														// 받으면 버튼 Enter 가 행 열기로, 메뉴 ↑↓ 가 행 이동으로 바뀐다.
 														if (e.target !== e.currentTarget) return;
+														// 수식키 조합(Cmd+↑, Alt+Home 등)은 브라우저 · OS 단축키다 - 막지 않는다.
+														if (e.altKey || e.ctrlKey || e.metaKey) return;
 														if (e.key === "Enter" || e.key === " ") {
 															e.preventDefault();
 															onRowClick(item, rowIndex);
