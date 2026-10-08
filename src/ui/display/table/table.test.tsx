@@ -691,6 +691,37 @@ describe("Table 키보드 행 이동", () => {
 		expect(button).toHaveFocus();
 	});
 
+	it("셀 안 버튼 클릭(Enter 활성화 포함)은 행 클릭이 아니고, 일반 셀 클릭은 행 클릭이다", () => {
+		const onRowClick = vi.fn();
+		const onEdit = vi.fn();
+		render(
+			<Table
+				columns={[
+					...columns,
+					{
+						key: "edit",
+						header: "",
+						render: () => (
+							<button type="button" onClick={onEdit}>
+								<span>편집</span>
+							</button>
+						),
+					},
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
+		);
+
+		fireEvent.click(screen.getAllByText("편집")[0] as HTMLElement);
+		expect(onEdit).toHaveBeenCalledTimes(1);
+		expect(onRowClick).not.toHaveBeenCalled();
+
+		fireEvent.click(screen.getByText("Alpha"));
+		expect(onRowClick).toHaveBeenCalledWith(rows[0], 0);
+	});
+
 	it("clickable 이 아닌 표는 방향키를 받지 않는다", () => {
 		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
 
