@@ -722,6 +722,40 @@ describe("Table 키보드 행 이동", () => {
 		expect(onRowClick).toHaveBeenCalledWith(rows[0], 0);
 	});
 
+	it("첫 표가 포커스를 받을 수 없으면(숨겨진 탭) 다음 표로 들어가고, 아무 표도 못 받으면 스크롤을 막지 않는다", () => {
+		render(
+			<>
+				<Table
+					columns={columns}
+					data={rows}
+					keyExtractor={(r) => r.id}
+					ariaLabel="숨김"
+					onRowClick={() => {}}
+				/>
+				<Table
+					columns={columns}
+					data={rows}
+					keyExtractor={(r) => r.id}
+					ariaLabel="보임"
+					onRowClick={() => {}}
+				/>
+			</>,
+		);
+		const [hiddenTable, visibleTable] = screen.getAllByRole("table") as [HTMLElement, HTMLElement];
+		// jsdom 은 레이아웃이 없어 display:none 행에도 포커스가 간다 - 숨김을 "focus() 가 아무것도 안 함" 으로 재현
+		const hiddenRow = hiddenTable.querySelector("tbody tr") as HTMLElement;
+		vi.spyOn(hiddenRow, "focus").mockImplementation(() => {});
+
+		expect(fireEvent.keyDown(document.body, { key: "ArrowDown" })).toBe(false);
+		expect(document.activeElement?.closest("table")).toBe(visibleTable);
+
+		(document.activeElement as HTMLElement).blur();
+		vi.spyOn(visibleTable.querySelector("tbody tr") as HTMLElement, "focus").mockImplementation(
+			() => {},
+		);
+		expect(fireEvent.keyDown(document.body, { key: "ArrowDown" })).toBe(true);
+	});
+
 	it("clickable 이 아닌 표는 방향키를 받지 않는다", () => {
 		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
 

@@ -223,7 +223,9 @@ export const Table = <T extends object>({
 
 	// 포커스가 어디에도 없을 때(페이지 첫 진입 · 상세에서 돌아옴) ↓ 로 첫 행에 들어간다. 이게 없으면
 	// 행을 한 번 클릭하거나 Tab 으로 필터를 다 지나야 방향키가 먹는다. 한 화면에 표가 여럿이면 문서
-	// 순서상 첫 clickable 표만 받는다 - 표마다 받으면 마지막에 등록된 표가 포커스를 가져간다.
+	// 순서상 포커스를 받을 수 있는 첫 표로 들어간다 - 숨겨진 표(닫힌 탭 등)의 행은 `focus()` 가 아무것도
+	// 하지 않으므로 다음 표로 넘어간다. 리스너는 표마다 걸리지만 먼저 처리한 쪽이 포커스를 옮기고
+	// `preventDefault` 하므로 나머지는 위의 조건에서 빠진다.
 	const isRowClickable = Boolean(onRowClick);
 	React.useEffect(() => {
 		if (!isRowClickable) return;
@@ -233,11 +235,16 @@ export const Table = <T extends object>({
 			if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
 			const active = document.activeElement;
 			if (active && active !== document.body) return;
-			const firstRow = document.querySelector<HTMLTableRowElement>("tr.table_row_clickable");
-			if (!firstRow || !wrapperRef.current?.contains(firstRow)) return;
-			firstRow.focus();
-			// 숨겨진 표(닫힌 탭 등)의 행이면 focus() 가 아무것도 하지 않는다 - 그때 스크롤까지 막지 않는다.
-			if (document.activeElement === firstRow) e.preventDefault();
+			const firstRows = document.querySelectorAll<HTMLTableRowElement>(
+				".table_tbody > tr.table_row_clickable:first-child",
+			);
+			for (const row of firstRows) {
+				row.focus();
+				if (document.activeElement === row) {
+					e.preventDefault();
+					return;
+				}
+			}
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
