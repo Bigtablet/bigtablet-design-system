@@ -615,6 +615,40 @@ describe("Table 키보드 행 이동", () => {
 		expect(second).toHaveFocus();
 	});
 
+	it("Home/End 는 처음·끝 행, PageUp/PageDown 은 보이는 행 수 - 1 만큼 옮긴다", () => {
+		const five: Row[] = Array.from({ length: 5 }, (_, i) => ({
+			id: i + 1,
+			name: `R${i}`,
+			score: i,
+		}));
+		render(
+			<Table columns={columns} data={five} keyExtractor={(r) => r.id} onRowClick={() => {}} />,
+		);
+		const all = screen.getAllByRole("row").slice(1) as HTMLElement[];
+		// 행 40px · 창 130px → 3 행이 보이고 한 화면은 2 행
+		for (const row of all)
+			Object.defineProperty(row, "offsetHeight", { value: 40, configurable: true });
+		vi.spyOn(window, "innerHeight", "get").mockReturnValue(130);
+		const [first, , third, , last] = all as [
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+			HTMLElement,
+		];
+		first.focus();
+
+		fireEvent.keyDown(first, { key: "PageDown" });
+		expect(third).toHaveFocus();
+		fireEvent.keyDown(third, { key: "End" });
+		expect(last).toHaveFocus();
+		fireEvent.keyDown(last, { key: "PageUp" });
+		expect(third).toHaveFocus();
+		expect(fireEvent.keyDown(third, { key: "Home" })).toBe(false);
+		expect(first).toHaveFocus();
+		vi.restoreAllMocks();
+	});
+
 	it("포커스가 없을 때 ↓ 는 첫 행으로 들어간다", () => {
 		renderClickable();
 		(document.activeElement as HTMLElement | null)?.blur();

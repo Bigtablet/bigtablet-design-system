@@ -11,6 +11,9 @@ import "./style.scss";
 
 export type TableSize = "sm" | "md" | "lg";
 
+/** 행 사이를 옮기는 키 - `moveRowFocus` 가 받는다. */
+const ROW_MOVE_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"]);
+
 /** 셀 안에서 자기 동작을 가진 요소 - 여기서 시작한 클릭은 행 클릭이 아니다. */
 const CELL_CONTROL =
 	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch']";
@@ -94,7 +97,7 @@ export type TableProps<T extends object> = {
 	/** 루트 wrapper에 추가할 className */
 	className?: string;
 	/**
-	 * 행 클릭 콜백. 주면 행이 키보드로도 동작한다 - Enter/Space 로 열고 ↑↓ 로 행을 옮기며, 포커스가
+	 * 행 클릭 콜백. 주면 행이 키보드로도 동작한다 - Enter/Space 로 열고 ↑↓ · PageUp/PageDown · Home/End 로 행을 옮기며, 포커스가
 	 * 어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다.
 	 */
 	onRowClick?: (item: T, index: number) => void;
@@ -252,18 +255,39 @@ export const Table = <T extends object>({
 	}, [isRowClickable]);
 
 	/**
-	 * ↑↓ 로 이웃 행에 포커스를 옮긴다. 인덱스로 계산하지 않고 DOM 형제를 집는 이유는 `focus()` 의
-	 * 기본 스크롤(최소 이동)이 화면 밖 행을 끌어와 주기 때문이다. 꾹 누름은 브라우저 키 반복이
-	 * keydown 을 계속 보내 그대로 연속 이동이 된다. 기본 동작(페이지 스크롤)은 막는다 - 행 이동과
-	 * 스크롤이 겹치면 포커스 행이 화면에서 튄다. 끝 행에서도 막아 페이지가 대신 움직이지 않게 한다.
+	 * 키로 다른 행에 포커스를 옮긴다 - ↑↓ 한 행, PageUp/PageDown 한 화면, Home/End 처음·끝.
+	 * 인덱스 계산 대신 DOM 의 clickable 행 목록에서 집는 이유는 `focus()` 의 기본 스크롤(최소 이동)이
+	 * 화면 밖 행을 끌어와 주기 때문이다. 꾹 누름은 브라우저 키 반복이 keydown 을 계속 보내 그대로 연속
+	 * 이동이 된다. 기본 동작(페이지 스크롤)은 막는다 - 행 이동과 스크롤이 겹치면 포커스 행이 화면에서
+	 * 튄다. 끝 행에서도 막아 페이지가 대신 움직이지 않게 한다.
+	 *
+	 * "한 화면" 은 보이는 높이에 들어가는 행 수에서 하나를 뺀 값이다 - 직전 화면의 마지막 행이 다음
+	 * 화면 첫 행으로 남아 어디서 넘어왔는지 놓치지 않는다. 표가 세로로 스크롤되면(stickyHeader) 그
+	 * 높이를, 아니면 창 높이를 쓴다.
 	 */
 	const moveRowFocus = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
 		e.preventDefault();
-		const sibling =
-			e.key === "ArrowDown"
-				? e.currentTarget.nextElementSibling
-				: e.currentTarget.previousElementSibling;
-		if (sibling instanceof HTMLTableRowElement && sibling.tabIndex >= 0) sibling.focus();
+		const row = e.currentTarget;
+		const rows = Array.from(row.parentElement?.children ?? []).filter(
+			(el): el is HTMLTableRowElement => el instanceof HTMLTableRowElement && el.tabIndex >= 0,
+		);
+		const current = rows.indexOf(row);
+		const wrapper = wrapperRef.current;
+		const viewHeight =
+			wrapper && wrapper.scrollHeight > wrapper.clientHeight
+				? wrapper.clientHeight
+				: window.innerHeight;
+		const pageStep = Math.max(1, Math.floor(viewHeight / Math.max(1, row.offsetHeight)) - 1);
+		const steps: Record<string, number> = {
+			ArrowDown: 1,
+			ArrowUp: -1,
+			PageDown: pageStep,
+			PageUp: -pageStep,
+			Home: -rows.length,
+			End: rows.length,
+		};
+		const target = rows[Math.min(rows.length - 1, Math.max(0, current + (steps[e.key] ?? 0)))];
+		target?.focus();
 	};
 
 	const isEmpty = !isLoading && data.length === 0;
@@ -434,7 +458,7 @@ export const Table = <T extends object>({
 														if (e.key === "Enter" || e.key === " ") {
 															e.preventDefault();
 															onRowClick(item, rowIndex);
-														} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+														} else if (ROW_MOVE_KEYS.has(e.key)) {
 															moveRowFocus(e);
 														}
 													}
