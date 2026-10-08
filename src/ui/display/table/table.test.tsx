@@ -589,3 +589,143 @@ describe("Table isLoading guards", () => {
 		expect(screen.queryByRole("checkbox", { name: "1번째 행 선택" })).not.toBeInTheDocument();
 	});
 });
+
+describe("Table 키보드 행 이동", () => {
+	const three: Row[] = [...rows, { id: 3, name: "Gamma", score: 70 }];
+	const renderClickable = () =>
+		render(
+			<Table columns={columns} data={three} keyExtractor={(r) => r.id} onRowClick={() => {}} />,
+		);
+	const bodyRows = () =>
+		screen.getAllByRole("row").slice(1) as [HTMLElement, HTMLElement, HTMLElement];
+
+	it("↑↓ 로 이웃 행에 포커스를 옮기고, 끝 행에서는 멈춘 채 페이지 스크롤도 막는다", () => {
+		renderClickable();
+		const [first, second, third] = bodyRows();
+		first.focus();
+
+		fireEvent.keyDown(first, { key: "ArrowDown" });
+		expect(second).toHaveFocus();
+		fireEvent.keyDown(second, { key: "ArrowDown" });
+		expect(third).toHaveFocus();
+		// 끝 행: 머물고 기본 동작(스크롤)은 막힌다
+		expect(fireEvent.keyDown(third, { key: "ArrowDown" })).toBe(false);
+		expect(third).toHaveFocus();
+		fireEvent.keyDown(third, { key: "ArrowUp" });
+		expect(second).toHaveFocus();
+	});
+
+	it("포커스가 없을 때 ↓ 는 첫 행으로 들어간다", () => {
+		renderClickable();
+		(document.activeElement as HTMLElement | null)?.blur();
+
+		expect(fireEvent.keyDown(document.body, { key: "ArrowDown" })).toBe(false);
+		expect(bodyRows()[0]).toHaveFocus();
+	});
+
+	it("다른 곳에 포커스가 있거나 수식키 · ↑ 이면 가로채지 않는다", () => {
+		render(
+			<>
+				<input aria-label="검색" />
+				<Table columns={columns} data={three} keyExtractor={(r) => r.id} onRowClick={() => {}} />
+			</>,
+		);
+		const input = screen.getByLabelText("검색");
+		input.focus();
+		expect(fireEvent.keyDown(input, { key: "ArrowDown" })).toBe(true);
+		expect(input).toHaveFocus();
+
+		input.blur();
+		expect(fireEvent.keyDown(document.body, { key: "ArrowDown", shiftKey: true })).toBe(true);
+		expect(fireEvent.keyDown(document.body, { key: "ArrowUp" })).toBe(true);
+		expect(document.body).toHaveFocus();
+	});
+
+	it("표가 여럿이면 문서 순서상 첫 clickable 표만 받는다", () => {
+		render(
+			<>
+				<Table columns={columns} data={rows} keyExtractor={(r) => r.id} ariaLabel="정적" />
+				<Table
+					columns={columns}
+					data={rows}
+					keyExtractor={(r) => r.id}
+					ariaLabel="첫째"
+					onRowClick={() => {}}
+				/>
+				<Table
+					columns={columns}
+					data={rows}
+					keyExtractor={(r) => r.id}
+					ariaLabel="둘째"
+					onRowClick={() => {}}
+				/>
+			</>,
+		);
+
+		fireEvent.keyDown(document.body, { key: "ArrowDown" });
+
+		const focused = document.activeElement as HTMLElement;
+		expect(focused.closest("table")).toHaveAttribute("aria-label", "첫째");
+		expect(focused.textContent).toContain("Alpha");
+	});
+
+	it("셀 안 버튼의 Enter · ↑↓ 는 행이 가로채지 않는다", () => {
+		const onRowClick = vi.fn();
+		render(
+			<Table
+				columns={[
+					...columns,
+					{ key: "edit", header: "", render: () => <button type="button">편집</button> },
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
+		);
+		const [button] = screen.getAllByRole("button", { name: "편집" });
+		button?.focus();
+
+		expect(fireEvent.keyDown(button as HTMLElement, { key: "Enter" })).toBe(true);
+		expect(fireEvent.keyDown(button as HTMLElement, { key: "ArrowDown" })).toBe(true);
+		expect(onRowClick).not.toHaveBeenCalled();
+		expect(button).toHaveFocus();
+	});
+
+	it("셀 안 버튼 클릭(Enter 활성화 포함)은 행 클릭이 아니고, 일반 셀 클릭은 행 클릭이다", () => {
+		const onRowClick = vi.fn();
+		const onEdit = vi.fn();
+		render(
+			<Table
+				columns={[
+					...columns,
+					{
+						key: "edit",
+						header: "",
+						render: () => (
+							<button type="button" onClick={onEdit}>
+								<span>편집</span>
+							</button>
+						),
+					},
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
+		);
+
+		fireEvent.click(screen.getAllByText("편집")[0] as HTMLElement);
+		expect(onEdit).toHaveBeenCalledTimes(1);
+		expect(onRowClick).not.toHaveBeenCalled();
+
+		fireEvent.click(screen.getByText("Alpha"));
+		expect(onRowClick).toHaveBeenCalledWith(rows[0], 0);
+	});
+
+	it("clickable 이 아닌 표는 방향키를 받지 않는다", () => {
+		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+
+		expect(fireEvent.keyDown(document.body, { key: "ArrowDown" })).toBe(true);
+		expect(document.body).toHaveFocus();
+	});
+});
