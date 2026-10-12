@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.29.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.29.1) - 2026-10-12
+- (렌더 변경) `DatePicker` 를 `fullWidth` 로 좁은 칸에 두면 월·일 값이 잘리던 것을 고쳤습니다. 연도 칸이 실제 필요한 폭보다 넓게(1.5배) 잡혀 있었고, 252px 칸(375 폭 모달)에서 월·일 칸이 70px 이라 "08"·"28"·"30" 이 잘렸습니다. 연도 칸 비율을 1.25배로 줄여 월·일이 75px 가 됩니다. 넓은 칸에서는 연도 칸이 조금 좁아지고 월·일 칸이 조금 넓어집니다. `DateRangePicker` 도 같습니다
+- (개발) 개발 · CI 의존성 묶음을 갱신했습니다(lock 파일만). 배포 패키지에는 영향이 없습니다
+
 ## [3.29.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.29.0) - 2026-10-08
 - `Table` 의 clickable 행을 Home/End(처음·끝)와 PageUp/PageDown(한 화면씩, 직전 화면의 끝 행이 남게)으로 건너뛸 수 있습니다. 한 화면은 표가 세로로 스크롤되면 표 높이, 아니면 창 높이로 잽니다. `DataView` 도 같습니다
 - 행에 포커스가 있을 때 Ctrl/Cmd/Alt 가 붙은 키(Ctrl+Home, Cmd+↑, Ctrl+PageUp 등)를 더 이상 가로채지 않습니다. 3.28.0 에서는 이런 조합의 ↑↓ 도 행 이동으로 처리돼 브라우저·OS 단축키가 막혔습니다
