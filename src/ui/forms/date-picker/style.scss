@@ -225,9 +225,16 @@
       box-shadow: token.$focus_ring;
     }
 
-    // 오늘은 테두리만 - 고른 날(채움)과 겹쳐도 구분된다.
+    // 오늘은 테두리만 - 고른 날(채움)과 겹쳐도 구분된다. 포커스 링도 box-shadow 라 그대로 두면 오늘에
+    // 포커스가 갈 때 테두리가 덮인다 - 두 그림자를 겹친다.
     &_today {
       box-shadow: inset 0 0 0 token.$border_width_standard token.$color_accent_default;
+
+      &:focus-visible {
+        box-shadow:
+          inset 0 0 0 token.$border_width_standard token.$color_accent_default,
+          token.$focus_ring;
+      }
     }
 
     &_selected {
@@ -245,5 +252,11 @@
       color: token.$color_text_disabled;
       cursor: not-allowed;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .date_picker_trigger {
+    transition: none;
   }
 }
