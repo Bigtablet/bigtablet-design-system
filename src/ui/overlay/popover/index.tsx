@@ -127,7 +127,10 @@ export const Popover = ({
 
 	// body 로 포탈되면 트리거 뒤 tab 순서가 끊기므로 다른 포탈 오버레이(Modal/Drawer/Alert)와 동일하게
 	// 포커스를 패널 안에 트랩한다 - 열릴 때 첫 focusable 로 이동, Tab 순환, 닫힐 때 트리거로 복귀.
-	useFocusTrap(popoverRef, open);
+	// 위치를 잰 뒤(`ready`)에 켠다. 첫 측정 전에는 패널이 `visibility: hidden` 이라 그 안의 `focus()` 가
+	// 조용히 무시되고, 포커스가 트리거에 남아 Tab 한 번에 패널을 건너뛰었다(브라우저 실측, jsdom 은
+	// visibility 를 보지 않아 테스트로는 드러나지 않는다).
+	useFocusTrap(popoverRef, open && pos.ready);
 
 	// 외부 클릭으로 닫기. Escape 는 아래 wrapper 의 React onKeyDown 에서 처리한다.
 	React.useEffect(() => {
