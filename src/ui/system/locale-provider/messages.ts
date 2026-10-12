@@ -35,9 +35,13 @@ export interface LocaleMessages {
 	"combobox.idle": string;
 	"combobox.loading": string;
 	"combobox.placeholder": string;
+	"datePicker.calendar": string;
 	"datePicker.day": string;
 	"datePicker.minDateSr": string; // {date}
 	"datePicker.month": string;
+	"datePicker.nextMonth": string;
+	"datePicker.placeholder": string;
+	"datePicker.prevMonth": string;
 	"datePicker.rangeUntilTodaySr": string;
 	"datePicker.year": string;
 	"dateRange.end": string;
@@ -112,9 +116,13 @@ export const ko: LocaleMessages = {
 	"combobox.idle": "검색어를 입력하세요",
 	"combobox.loading": "검색 중",
 	"combobox.placeholder": "검색해서 선택",
+	"datePicker.calendar": "달력",
 	"datePicker.day": "일",
 	"datePicker.minDateSr": "최소 날짜: {date}",
 	"datePicker.month": "월",
+	"datePicker.nextMonth": "다음 달",
+	"datePicker.placeholder": "날짜 선택",
+	"datePicker.prevMonth": "이전 달",
 	"datePicker.rangeUntilTodaySr": "오늘까지 선택 가능",
 	"datePicker.year": "년",
 	"dateRange.end": "종료일",
@@ -185,9 +193,13 @@ export const en: LocaleMessages = {
 	"combobox.idle": "Type to search",
 	"combobox.loading": "Searching",
 	"combobox.placeholder": "Search to select",
+	"datePicker.calendar": "Calendar",
 	"datePicker.day": "Day",
 	"datePicker.minDateSr": "Earliest date: {date}",
 	"datePicker.month": "Month",
+	"datePicker.nextMonth": "Next month",
+	"datePicker.placeholder": "Select date",
+	"datePicker.prevMonth": "Previous month",
 	"datePicker.rangeUntilTodaySr": "Selectable up to today",
 	"datePicker.year": "Year",
 	"dateRange.end": "End date",

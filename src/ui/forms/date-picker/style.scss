@@ -64,3 +64,199 @@
     @include token.visually_hidden;
   }
 }
+
+// ── variant="calendar" ─────────────────────────────────────────────────────────
+// 날짜 칸은 Dropdown sm 트리거와 같은 높이 · 테두리 · 글자다 - 옆에 TimePicker · Dropdown 을 나란히
+// 둘 때 줄이 맞아야 한다(높이 40 → 모바일 48).
+
+.date_picker_calendar {
+  .popover_wrapper {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.date_picker_trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  width: 100%;
+  @include token.responsive_height(token.$tap_target_compact);
+  padding: token.$spacing_4 token.$spacing_16;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  background-color: token.$color_bg_solid;
+  box-sizing: border-box;
+  font-family: token.$font_family_primary;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color token.$transition_base;
+
+  &:hover:not(:disabled) {
+    border-color: token.$color_border_hover;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  &[aria-expanded="true"] {
+    border-color: token.$color_accent_default;
+  }
+
+  &[aria-invalid="true"] {
+    border-color: token.$color_status_error_on_surface;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: token.$opacity_38;
+  }
+
+  &_icon {
+    flex-shrink: 0;
+    color: token.$color_text_body;
+  }
+
+  &_value,
+  &_placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include token.body_small;
+  }
+
+  &_value {
+    color: token.$color_text_heading;
+    @include token.tabular_nums;
+  }
+
+  &_placeholder {
+    color: token.$color_text_caption;
+  }
+}
+
+// 7칸 × 40px = 280 + 패딩 32 → 팝오버 기본 상한(320) 안에 들어간다.
+.date_calendar {
+  display: flex;
+  flex-direction: column;
+  gap: token.$spacing_8;
+
+  &_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+  }
+
+  &_title {
+    @include token.title_small_medium;
+    color: token.$color_text_heading;
+  }
+
+  &_nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    border: 0;
+    border-radius: token.$radius_md;
+    background: transparent;
+    color: token.$color_text_body;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: token.$color_bg_additive;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  &_grid {
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  &_weekday {
+    width: token.$tap_target_compact;
+    height: token.$spacing_32;
+    padding: 0;
+    @include token.label_small;
+    font-weight: token.$font_weight_regular;
+    color: token.$color_text_caption;
+    text-align: center;
+  }
+
+  &_cell {
+    padding: 0;
+    text-align: center;
+  }
+
+  &_day {
+    width: token.$tap_target_compact;
+    height: token.$tap_target_compact;
+    padding: 0;
+    border: 0;
+    border-radius: token.$radius_full;
+    background: transparent;
+    @include token.body_small;
+    @include token.tabular_nums;
+    color: token.$color_text_heading;
+    cursor: pointer;
+
+    &:hover:not([aria-disabled="true"]) {
+      background: token.$color_bg_additive;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    // 오늘은 테두리만 - 고른 날(채움)과 겹쳐도 구분된다. 포커스 링도 box-shadow 라 그대로 두면 오늘에
+    // 포커스가 갈 때 테두리가 덮인다 - 두 그림자를 겹친다.
+    &_today {
+      box-shadow: inset 0 0 0 token.$border_width_standard token.$color_accent_default;
+
+      &:focus-visible {
+        box-shadow:
+          inset 0 0 0 token.$border_width_standard token.$color_accent_default,
+          token.$focus_ring;
+      }
+    }
+
+    &_selected {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+      font-weight: token.$font_weight_medium;
+
+      &:hover:not([aria-disabled="true"]) {
+        background: token.$color_accent_strong;
+      }
+    }
+
+    // 고를 수 없는 날 - 비활성 컨트롤이라 WCAG 1.4.3 대비 예외다. 포커스는 지나간다(aria-disabled).
+    &[aria-disabled="true"] {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .date_picker_trigger {
+    transition: none;
+  }
+}
