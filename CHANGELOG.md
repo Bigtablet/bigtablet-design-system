@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.30.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.0) - 2026-10-12
+- `DatePicker` 에 `variant="calendar"` 가 생겼습니다 - 날짜 칸 하나에 요일까지 보이고("2026. 10. 12. (월)"), 누르면 월 달력이 열립니다. 일정 · 예약처럼 가까운 날을 요일로 고르는 자리에 맞습니다. 기본값은 지금과 같은 `"dropdown"`(연 · 월 · 일 드롭다운)이라 기존 화면은 바뀌지 않습니다. `minDate` · `selectableRange` 는 드롭다운과 같게 지키고, 키보드는 WAI-ARIA APG Date Picker 규칙(←→ ↑↓ Home/End PageUp/PageDown Enter Esc)을 따릅니다. 문구 키 4개(`datePicker.calendar` · `datePicker.placeholder` · `datePicker.prevMonth` · `datePicker.nextMonth`)가 추가됐습니다
+- `Popover` 가 열릴 때 포커스가 패널 안으로 들어가지 않던 것을 고쳤습니다. 위치를 재기 전(숨긴 상태)에 포커스를 옮겨 브라우저가 무시했고, 포커스가 트리거에 남아 Tab 한 번에 패널을 건너뛰었습니다
+
 ## [3.29.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.29.1) - 2026-10-12
 - (렌더 변경) `DatePicker` 를 `fullWidth` 로 좁은 칸에 두면 월·일 값이 잘리던 것을 고쳤습니다. 연도 칸이 실제 필요한 폭보다 넓게(1.5배) 잡혀 있었고, 252px 칸(375 폭 모달)에서 월·일 칸이 70px 이라 "08"·"28"·"30" 이 잘렸습니다. 연도 칸 비율을 1.25배로 줄여 월·일이 75px 가 됩니다. 넓은 칸에서는 연도 칸이 조금 좁아지고 월·일 칸이 조금 넓어집니다. `DateRangePicker` 도 같습니다
 - (개발) 개발 · CI 의존성 묶음을 갱신했습니다(lock 파일만). 배포 패키지에는 영향이 없습니다
