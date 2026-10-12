@@ -5,6 +5,7 @@ import { DatePicker } from ".";
 
 type DateFieldDemoProps = {
 	mode?: "year-month" | "year-month-day";
+	variant?: "dropdown" | "calendar";
 	startYear?: number;
 	endYear?: number;
 	disabled?: boolean;
@@ -14,6 +15,7 @@ type DateFieldDemoProps = {
 
 const DateFieldDemo = ({
 	mode = "year-month-day",
+	variant = "dropdown",
 	startYear = 1950,
 	endYear = new Date().getFullYear() + 10,
 	disabled = false,
@@ -28,6 +30,7 @@ const DateFieldDemo = ({
 				value={value}
 				onValueChange={setValue}
 				mode={mode}
+				variant={variant}
 				startYear={startYear}
 				endYear={endYear}
 				disabled={disabled}
@@ -46,6 +49,7 @@ const meta: Meta<typeof DateFieldDemo> = {
 	tags: ["autodocs"],
 	argTypes: {
 		mode: { control: "select", options: ["year-month", "year-month-day"] },
+		variant: { control: "select", options: ["dropdown", "calendar"] },
 		selectableRange: { control: "select", options: ["all", "until-today"] },
 		startYear: { control: "number" },
 		endYear: { control: "number" },
@@ -54,6 +58,7 @@ const meta: Meta<typeof DateFieldDemo> = {
 	},
 	args: {
 		mode: "year-month-day",
+		variant: "dropdown",
 		startYear: 1950,
 		endYear: new Date().getFullYear() + 10,
 		defaultValue: "2026-01-06",
@@ -129,4 +134,17 @@ export const UntilToday: Story = {
 		},
 	},
 	args: { selectableRange: "until-today" },
+};
+
+export const Calendar: Story = {
+	name: "달력 (variant=calendar)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`variant="calendar"` 는 날짜 칸 하나에 월 달력을 띄웁니다. 칸에 요일까지 보여 일정 · 예약처럼 **가까운 날을 요일로 고르는** 자리에 맞습니다. 생년월일처럼 먼 과거의 연도를 골라야 하면 기본(드롭다운)이 빠릅니다.\n\n키보드: ←→ 하루, ↑↓ 한 주, Home/End 주의 처음·끝, PageUp/PageDown 한 달(Shift 와 함께면 한 해), Enter 선택, Esc 닫기.\n\n`minDate` · `selectableRange` 는 드롭다운과 같게 지킵니다 - 고를 수 없는 날은 흐리게 보이고 눌러도 값이 바뀌지 않습니다.',
+			},
+		},
+	},
+	args: { variant: "calendar", defaultValue: "2026-10-12" },
 };

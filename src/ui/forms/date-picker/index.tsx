@@ -1,13 +1,18 @@
 "use client";
 
+import { Calendar } from "lucide-react";
 import * as React from "react";
+import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
-import { useLocaleText } from "../../system/locale-provider";
+import { Popover } from "../../overlay/popover";
+import { useLocaleName, useLocaleText } from "../../system/locale-provider";
 import { Dropdown, type DropdownOption } from "../dropdown";
 import { FieldControlBoundary, useFieldControl } from "../field";
+import { type CalendarDate, DateCalendar } from "./calendar";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
+type DatePickerVariant = "dropdown" | "calendar";
 type SelectableRange = "all" | "until-today";
 
 interface DatePickerBaseProps {
@@ -17,6 +22,15 @@ interface DatePickerBaseProps {
 	value?: string;
 	/** 선택 모드 */
 	mode?: DatePickerMode;
+	/**
+	 * 고르는 방식 (기본값: "dropdown").
+	 * - `"dropdown"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.
+	 * - `"calendar"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다.
+	 *   `mode="year-month-day"` 에서만 쓴다 - `"year-month"` 면 달력이 고를 날이 없어 드롭다운으로 그린다.
+	 */
+	variant?: DatePickerVariant;
+	/** `variant="calendar"` 에서 값이 없을 때 칸에 보일 문구 (기본값: "날짜 선택") */
+	placeholder?: string;
 	/** 연도 선택 범위 시작 (기본값: 1950) */
 	startYear?: number;
 	/** 연도 선택 범위 끝 (기본값: 현재 연도 + 10) */
@@ -98,6 +112,8 @@ export const DatePicker = ({
 	onValueChange,
 	onChange,
 	mode = "year-month-day",
+	variant = "dropdown",
+	placeholder: placeholderProp,
 	startYear = 1950,
 	endYear: endYearProp,
 	minDate,
@@ -113,6 +129,7 @@ export const DatePicker = ({
 	selectableRangeUntilTodaySrText: selectableRangeUntilTodaySrTextProp,
 }: DatePickerProps) => {
 	const t = useLocaleText();
+	const localeName = useLocaleName();
 	const yearLabel = yearLabelProp ?? t("datePicker.year");
 	const monthLabel = monthLabelProp ?? t("datePicker.month");
 	const dayLabel = dayLabelProp ?? t("datePicker.day");
@@ -346,6 +363,47 @@ export const DatePicker = ({
 	if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
 	const constraintDesc = constraintParts.join(". ");
 
+	if (variant === "calendar" && mode === "year-month-day") {
+		return (
+			<CalendarField
+				rootClassName={rootClassName}
+				containerStyle={containerStyle}
+				label={label}
+				labelId={field?.labelId ?? (label ? groupId : undefined)}
+				describedBy={
+					[field?.describedBy, constraintDesc ? constraintId : undefined]
+						.filter(Boolean)
+						.join(" ") || undefined
+				}
+				invalid={field?.invalid}
+				inputId={field?.inputId}
+				groupId={groupId}
+				constraintId={constraintId}
+				constraintDesc={constraintDesc}
+				disabled={disabled}
+				selected={year && month && day ? { year, month, day } : null}
+				today={{ year: todayYear, month: todayMonth, day: todayDay }}
+				isSelectable={({ year: yy, month: mm, day: dd }) =>
+					yy >= minYear && yy <= maxYear && withinRange(yy, mm, dd)
+				}
+				minMonth={{
+					year: minYear,
+					month: min.year > 0 && minYear === min.year ? Math.max(1, min.month) : 1,
+				}}
+				maxMonth={{
+					year: maxYear,
+					month: selectableRange === "until-today" && maxYear === todayYear ? todayMonth : 12,
+				}}
+				intlLocale={localeName === "en" ? "en-US" : "ko-KR"}
+				placeholder={placeholderProp ?? t("datePicker.placeholder")}
+				dialogLabel={label ?? t("datePicker.calendar")}
+				prevLabel={t("datePicker.prevMonth")}
+				nextLabel={t("datePicker.nextMonth")}
+				onSelect={(d) => emit(d.year, d.month, d.day)}
+			/>
+		);
+	}
+
 	return (
 		<div className={rootClassName} style={containerStyle}>
 			{label && (
@@ -413,6 +471,137 @@ export const DatePicker = ({
 					)}
 				</FieldControlBoundary>
 			</div>
+		</div>
+	);
+};
+
+interface CalendarFieldProps {
+	rootClassName: string;
+	containerStyle: React.CSSProperties | undefined;
+	label: string | undefined;
+	labelId: string | undefined;
+	describedBy: string | undefined;
+	invalid: boolean | undefined;
+	inputId: string | undefined;
+	groupId: string;
+	constraintId: string;
+	constraintDesc: string;
+	disabled: boolean | undefined;
+	selected: CalendarDate | null;
+	today: CalendarDate;
+	isSelectable: (date: CalendarDate) => boolean;
+	minMonth: { year: number; month: number };
+	maxMonth: { year: number; month: number };
+	intlLocale: string;
+	placeholder: string;
+	dialogLabel: string;
+	prevLabel: string;
+	nextLabel: string;
+	onSelect: (date: CalendarDate) => void;
+}
+
+/**
+ * `variant="calendar"` - 날짜 칸 하나 + 월 달력 팝오버. 칸은 Dropdown 트리거와 같은 높이 · 테두리라
+ * 옆에 TimePicker · Dropdown 을 나란히 둬도 줄이 맞는다.
+ *
+ * 칸에는 요일까지 보인다("2026. 10. 12. (월)") - 일정은 "다음 주 화요일" 처럼 요일로 생각하는데,
+ * 드롭다운 3개에서는 요일을 따로 계산해야 했다.
+ */
+const CalendarField = ({
+	rootClassName,
+	containerStyle,
+	label,
+	labelId,
+	describedBy,
+	invalid,
+	inputId,
+	groupId,
+	constraintId,
+	constraintDesc,
+	disabled,
+	selected,
+	today,
+	isSelectable,
+	minMonth,
+	maxMonth,
+	intlLocale,
+	placeholder,
+	dialogLabel,
+	prevLabel,
+	nextLabel,
+	onSelect,
+}: CalendarFieldProps) => {
+	const [open, setOpen] = React.useState(false);
+	const valueId = React.useId();
+	const valueText = React.useMemo(() => {
+		if (!selected) return null;
+		const options: Intl.DateTimeFormatOptions = intlLocale.startsWith("ko")
+			? { year: "numeric", month: "2-digit", day: "2-digit", weekday: "short" }
+			: { year: "numeric", month: "short", day: "numeric", weekday: "short" };
+		return new Intl.DateTimeFormat(intlLocale, options).format(
+			new Date(selected.year, selected.month - 1, selected.day),
+		);
+	}, [selected, intlLocale]);
+
+	return (
+		<div className={cn(rootClassName, "date_picker_calendar")} style={containerStyle}>
+			{label && (
+				<span className="date_picker_label" id={groupId}>
+					{label}
+				</span>
+			)}
+			{constraintDesc && (
+				<span id={constraintId} className="date_picker_sr_only">
+					{constraintDesc}
+				</span>
+			)}
+			<Popover
+				open={open && !disabled}
+				onOpenChange={setOpen}
+				placement="bottom"
+				aria-label={dialogLabel}
+				className="date_picker_popover"
+				trigger={
+					<button
+						type="button"
+						// Field 의 `<label for>` 가 이 칸을 가리킨다 - 칸이 하나뿐이라 드롭다운 3개 때의
+						// id 충돌(#629)이 없다.
+						id={inputId}
+						className="date_picker_trigger"
+						disabled={disabled}
+						// 이름 = 라벨 + 지금 값. 값만 읽히면 무엇의 날짜인지 모른다.
+						aria-labelledby={[labelId, valueId].filter(Boolean).join(" ")}
+						aria-describedby={describedBy}
+						aria-invalid={invalid || undefined}
+					>
+						<Calendar size={iconSize.md} aria-hidden="true" className="date_picker_trigger_icon" />
+						<span
+							id={valueId}
+							className={
+								valueText ? "date_picker_trigger_value" : "date_picker_trigger_placeholder"
+							}
+						>
+							{valueText ?? placeholder}
+						</span>
+					</button>
+				}
+				content={
+					<DateCalendar
+						selected={selected}
+						today={today}
+						isSelectable={isSelectable}
+						minMonth={minMonth}
+						maxMonth={maxMonth}
+						intlLocale={intlLocale}
+						prevLabel={prevLabel}
+						nextLabel={nextLabel}
+						onSelect={(date) => {
+							onSelect(date);
+							setOpen(false);
+						}}
+					/>
+				}
+			/>
 		</div>
 	);
 };
