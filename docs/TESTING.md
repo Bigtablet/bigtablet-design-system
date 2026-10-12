@@ -389,7 +389,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 78 test files / 1310 passed · 8 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 78 test files / 1324 passed · 8 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -399,7 +399,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **93.13%** | **90.45%** | **94.04%** | **94.96%** |
+| **All files** | **93.21%** | **90.55%** | **93.73%** | **94.99%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (39개는 전 지표 100% 라 빠져 있다).
 
@@ -419,7 +419,7 @@ it("calls callback with correct arguments", () => {
 | ui/feedback/toast | 98.77% | 94.12% | 100% | 100% |
 | ui/forms/checkbox | 92.31% | 95.45% | 100% | 100% |
 | ui/forms/combobox | 94.67% | 92% | 83.33% | 97.06% |
-| ui/forms/date-picker | 93.22% | 91.67% | 100% | 100% |
+| ui/forms/date-picker | 94.22% | 92.31% | 93.33% | 97.91% |
 | ui/forms/dropdown | 100% | 93.71% | 100% | 100% |
 | ui/forms/file | 82.35% | 72.55% | 83.33% | 82% |
 | ui/forms/image-cropper | 59.33% | 58.95% | 50% | 60.28% |
@@ -434,7 +434,7 @@ it("calls callback with correct arguments", () => {
 | ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
 | ui/navigation/tabs | 91.51% | 78.95% | 88.89% | 98.91% |
 | ui/overlay/drawer | 100% | 98.81% | 100% | 100% |
-| ui/overlay/popover | 91.3% | 85.71% | 100% | 92.68% |
+| ui/overlay/popover | 91.3% | 86.49% | 100% | 92.68% |
 | ui/overlay/tooltip | 93.33% | 87.18% | 93.75% | 92% |
 | ui/system/theme-provider | 93.88% | 85.71% | 100% | 100% |
 | utils/cn.ts | 100% | 87.5% | 100% | 100% |
