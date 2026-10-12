@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "../../system/locale-provider";
 import { Field } from "../field";
 import { DatePicker } from "./index";
 
@@ -377,5 +378,186 @@ describe("DatePicker", () => {
 		for (const control of screen.getAllByRole("combobox")) {
 			expect(control).not.toHaveAttribute("aria-required");
 		}
+	});
+});
+
+/**
+ * `variant="calendar"` - 날짜 칸 하나 + 월 달력 팝오버. 드롭다운 3개와 같은 값 형식(`YYYY-MM-DD`)과 같은
+ * 제약(`minDate` · `selectableRange`)을 지키는지, 그리고 APG Date Picker Dialog 키보드 규칙을 잠근다.
+ * 오늘은 2026-10-12(월)로 고정한다.
+ */
+
+/** 날짜 칸 - 이름이 값에 따라 바뀌어 팝오버를 여는 버튼이라는 점으로 찾는다. */
+const open = () => {
+	const trigger = screen
+		.getAllByRole("button")
+		.find((b) => b.getAttribute("aria-haspopup") === "dialog");
+	if (!trigger) throw new Error("date trigger not found");
+	fireEvent.click(trigger);
+};
+const grid = () => screen.getByRole("grid");
+const day = (n: number) => within(grid()).getByRole("button", { name: new RegExp(`10월 ${n}일`) });
+
+describe("DatePicker variant=calendar", () => {
+	beforeEach(() => {
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date(2026, 9, 12, 9, 0));
+	});
+	afterEach(() => vi.useRealTimers());
+
+	it("드롭다운 대신 날짜 칸 하나를 그리고, 값이 없으면 안내 문구를 보인다", () => {
+		render(<DatePicker variant="calendar" onValueChange={vi.fn()} />);
+
+		expect(screen.queryAllByRole("combobox")).toHaveLength(0);
+		expect(screen.getByRole("button", { name: "날짜 선택" })).toHaveAttribute(
+			"aria-haspopup",
+			"dialog",
+		);
+	});
+
+	it("값은 요일과 함께 보인다", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+
+		expect(screen.getByText("2026. 10. 12. (월)")).toBeInTheDocument();
+	});
+
+	it("열면 고른 달이 보이고, 날을 누르면 YYYY-MM-DD 로 내보낸 뒤 닫힌다", async () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={onValueChange} />);
+
+		open();
+		expect(screen.getByText("2026년 10월")).toBeInTheDocument();
+		expect(day(12)).toHaveAttribute("tabindex", "0");
+		expect(day(12).closest("td")).toHaveAttribute("aria-selected", "true");
+
+		fireEvent.click(day(20));
+
+		expect(onValueChange).toHaveBeenCalledWith("2026-10-20");
+		await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+	});
+
+	it("열면 포커스가 고른 날에 앉는다 - 1일이나 넘김 버튼이 아니다", async () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+
+		await waitFor(() => expect(day(12)).toHaveFocus());
+	});
+
+	it("오늘은 aria-current 로 표시하고, 값이 없으면 오늘에서 시작한다", () => {
+		render(<DatePicker variant="calendar" onValueChange={vi.fn()} />);
+
+		open();
+		expect(day(12)).toHaveAttribute("aria-current", "date");
+		expect(day(12)).toHaveAttribute("tabindex", "0");
+	});
+
+	it("방향키 · PageDown · Home/End 로 옮기고 Enter 로 고른다", () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={onValueChange} />);
+		open();
+
+		fireEvent.keyDown(day(12), { key: "ArrowRight" });
+		expect(day(13)).toHaveFocus();
+		fireEvent.keyDown(day(13), { key: "ArrowDown" });
+		expect(day(20)).toHaveFocus();
+		fireEvent.keyDown(day(20), { key: "Home" });
+		expect(day(18)).toHaveFocus(); // 10-18 은 일요일
+		fireEvent.keyDown(day(18), { key: "End" });
+		expect(day(24)).toHaveFocus();
+
+		fireEvent.keyDown(day(24), { key: "PageDown" });
+		expect(screen.getByText("2026년 11월")).toBeInTheDocument();
+		const nov24 = within(grid()).getByRole("button", { name: /11월 24일/ });
+		expect(nov24).toHaveFocus();
+
+		fireEvent.click(nov24);
+		expect(onValueChange).toHaveBeenCalledWith("2026-11-24");
+	});
+
+	it("수식키가 붙은 키는 가로채지 않는다", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+
+		fireEvent.keyDown(day(12), { key: "ArrowRight", ctrlKey: true });
+		expect(day(12)).toHaveAttribute("tabindex", "0");
+	});
+
+	it("minDate 이전 날은 고를 수 없고, 그 달보다 앞으로 넘어가지 않는다", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				variant="calendar"
+				minDate="2026-10-10"
+				value="2026-10-12"
+				onValueChange={onValueChange}
+			/>,
+		);
+		open();
+
+		expect(day(9)).toHaveAttribute("aria-disabled", "true");
+		fireEvent.click(day(9));
+		expect(onValueChange).not.toHaveBeenCalled();
+		expect(day(10)).not.toHaveAttribute("aria-disabled");
+		expect(screen.getByRole("button", { name: "이전 달" })).toBeDisabled();
+	});
+
+	it("selectableRange=until-today 면 내일부터 막고 다음 달로 넘어가지 않는다", () => {
+		render(<DatePicker variant="calendar" selectableRange="until-today" onValueChange={vi.fn()} />);
+		open();
+
+		expect(day(12)).not.toHaveAttribute("aria-disabled");
+		expect(day(13)).toHaveAttribute("aria-disabled", "true");
+		expect(screen.getByRole("button", { name: "다음 달" })).toBeDisabled();
+	});
+
+	it("넘김 버튼으로 달을 바꿔도 포커스는 버튼에 남는다", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+
+		const next = screen.getByRole("button", { name: "다음 달" });
+		next.focus();
+		act(() => fireEvent.click(next));
+		expect(screen.getByText("2026년 11월")).toBeInTheDocument();
+		expect(next).toHaveFocus();
+	});
+
+	it("Field 안에서는 라벨이 칸을 가리키고, 칸의 이름은 라벨 + 값이다", () => {
+		render(
+			<Field name="start" label="시작일" error="날짜를 고르세요">
+				<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />
+			</Field>,
+		);
+
+		const trigger = screen.getByRole("button", { name: "시작일 2026. 10. 12. (월)" });
+		expect(screen.getByText("시작일").closest("label")).toHaveAttribute("for", trigger.id);
+		expect(trigger).toHaveAttribute("aria-invalid", "true");
+	});
+
+	it("disabled 면 열리지 않는다", () => {
+		render(<DatePicker variant="calendar" disabled onValueChange={vi.fn()} />);
+
+		const trigger = screen.getByRole("button", { name: "날짜 선택" });
+		expect(trigger).toBeDisabled();
+		fireEvent.click(trigger);
+		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+	});
+
+	it("mode=year-month 면 고를 날이 없어 드롭다운으로 그린다", () => {
+		render(<DatePicker variant="calendar" mode="year-month" onValueChange={vi.fn()} />);
+
+		expect(screen.getAllByRole("combobox")).toHaveLength(2);
+	});
+
+	it("영어 로캘에서는 영어 날짜와 문구를 쓴다", () => {
+		render(
+			<LocaleProvider locale="en">
+				<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />
+			</LocaleProvider>,
+		);
+
+		expect(screen.getByText("Mon, Oct 12, 2026")).toBeInTheDocument();
+		open();
+		expect(screen.getByText("October 2026")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Previous month" })).toBeInTheDocument();
 	});
 });
