@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { createPortal } from "react-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Table, type TableColumn } from "./index";
 
@@ -70,15 +71,16 @@ describe("Table", () => {
 	});
 
 	it("renders dash for null/undefined/empty values", () => {
-		const data = [{ id: 1, name: "", score: 0 }] as Row[];
+		const data = [
+			{ id: 1, name: "", score: 0 },
+			{ id: 2, name: null, score: undefined },
+		] as unknown as Row[];
 		const { container } = render(
 			<Table columns={columns} data={data} keyExtractor={(r) => r.id} />,
 		);
-		// First td (name) is empty string → "-"
-		const tds = container.querySelectorAll("td");
-		expect(tds[0]!.textContent).toBe("-");
-		// Score 0 is rendered as "0"
-		expect(tds[1]!.textContent).toBe("0");
+		const tds = Array.from(container.querySelectorAll("td"), (td) => td.textContent);
+		// "" · null · undefined → "-", 0 은 값이므로 "0"
+		expect(tds).toEqual(["-", "0", "-", "-"]);
 	});
 
 	it("calls onRowClick with item and index", () => {
@@ -839,5 +841,242 @@ describe("Table 키보드 행 이동", () => {
 
 		expect(fireEvent.keyDown(document.body, { key: "ArrowDown" })).toBe(true);
 		expect(document.body).toHaveFocus();
+	});
+});
+
+// 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기를 잡는 단언들.
+describe("Table 분기 단언", () => {
+	it("포털로 띄운 셀 내용(행 DOM 밖) 클릭은 행 클릭이 아니다", () => {
+		const onRowClick = vi.fn();
+		render(
+			<Table
+				columns={[
+					...columns,
+					{
+						key: "menu",
+						header: "",
+						render: (r) => createPortal(<div>메뉴 {r.id}</div>, document.body),
+					},
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				onRowClick={onRowClick}
+			/>,
+		);
+		fireEvent.click(screen.getByText("메뉴 1"));
+		expect(onRowClick).not.toHaveBeenCalled();
+	});
+
+	it("표를 감싼 바깥 컨트롤(role=button 카드 등)은 셀 클릭을 막지 않는다", () => {
+		const onRowClick = vi.fn();
+		render(
+			<div role="button" tabIndex={0}>
+				<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={onRowClick} />
+			</div>,
+		);
+		fireEvent.click(screen.getByText("Alpha"));
+		expect(onRowClick).toHaveBeenCalledWith(rows[0], 0);
+	});
+
+	it("체크박스 셀 여백 클릭은 행 클릭으로 올라가지 않는다", () => {
+		const onRowClick = vi.fn();
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				onRowClick={onRowClick}
+			/>,
+		);
+		fireEvent.click(container.querySelector("tbody .table_td_checkbox") as HTMLElement);
+		expect(onRowClick).not.toHaveBeenCalled();
+	});
+
+	it("행에서 Space 도 Enter 처럼 행을 열고, 둘 다 기본 동작을 막는다", () => {
+		const onRowClick = vi.fn();
+		render(
+			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={onRowClick} />,
+		);
+		const row = screen.getAllByRole("row")[1] as HTMLElement;
+		expect(fireEvent.keyDown(row, { key: " " })).toBe(false);
+		expect(fireEvent.keyDown(row, { key: "Enter" })).toBe(false);
+		expect(onRowClick).toHaveBeenCalledTimes(2);
+		// 이동 · 활성화 키가 아니면 건드리지 않는다
+		expect(fireEvent.keyDown(row, { key: "a" })).toBe(true);
+	});
+
+	it("Alt · Ctrl · Meta + ↓ 는 첫 행 진입으로 가로채지 않는다", () => {
+		render(
+			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={() => {}} />,
+		);
+		for (const mod of ["altKey", "ctrlKey", "metaKey"]) {
+			expect(fireEvent.keyDown(document.body, { key: "ArrowDown", [mod]: true })).toBe(true);
+		}
+		expect(document.body).toHaveFocus();
+	});
+
+	it("빈 선택 표의 전체 선택은 체크되지 않고 비활성, 데이터가 있으면 활성", () => {
+		const { rerender } = render(
+			<Table
+				columns={columns}
+				data={[]}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+			/>,
+		);
+		const selectAll = () => screen.getByRole("checkbox", { name: "전체 선택" });
+		expect(selectAll()).not.toBeChecked();
+		expect(selectAll()).toBeDisabled();
+
+		rerender(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={[]}
+			/>,
+		);
+		expect(selectAll()).toBeEnabled();
+	});
+
+	it("선택된 행 하나를 풀면 그 키만 빠진다", () => {
+		const onSelectionChange = vi.fn();
+		render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1", "2"]}
+				onSelectionChange={onSelectionChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("checkbox", { name: "1번째 행 선택" }));
+		expect(onSelectionChange).toHaveBeenCalledWith(["2"]);
+	});
+
+	it("핸들러 없이 정렬 · 선택을 눌러도 깨지지 않는다", () => {
+		render(
+			<Table
+				columns={[{ key: "name", header: "Name", sortable: true }]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		expect(() => {
+			fireEvent.click(screen.getByRole("button", { name: "Name" }));
+			fireEvent.click(screen.getByRole("checkbox", { name: "전체 선택" }));
+			fireEvent.click(screen.getByRole("checkbox", { name: "1번째 행 선택" }));
+		}).not.toThrow();
+	});
+
+	it("정렬 중이 아닌 다른 sortable 열은 aria-sort none · 중립 아이콘을 유지한다", () => {
+		const { container } = render(
+			<Table
+				columns={[
+					{ key: "name", header: "Name", sortable: true },
+					{ key: "score", header: "Score", sortable: true },
+				]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "asc" }}
+			/>,
+		);
+		const [nameTh, scoreTh] = Array.from(container.querySelectorAll("th"));
+		expect(nameTh).toHaveAttribute("aria-sort", "ascending");
+		expect(nameTh?.querySelector(".lucide-arrow-up")).not.toBeNull();
+		expect(scoreTh).toHaveAttribute("aria-sort", "none");
+		expect(scoreTh?.querySelector(".lucide-arrow-up-down")).not.toBeNull();
+		expect(scoreTh?.querySelector(".table_sort_icon_active")).toBeNull();
+	});
+
+	it("desc 정렬은 아래 화살표 아이콘을 쓴다", () => {
+		const { container } = render(
+			<Table
+				columns={[{ key: "name", header: "Name", sortable: true }]}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				sort={{ key: "name", direction: "desc" }}
+			/>,
+		);
+		expect(container.querySelector("th .lucide-arrow-down")).not.toBeNull();
+		expect(container.querySelector("th .lucide-arrow-up")).toBeNull();
+	});
+
+	it("정렬 · 정렬 기준 클래스를 th 와 td(스켈레톤 포함)에 붙인다", () => {
+		const cols: TableColumn<Row>[] = [
+			{ key: "name", header: "Name" },
+			{ key: "score", header: "Score", align: "right", sortable: true },
+		];
+		const { container, rerender } = render(
+			<Table columns={cols} data={rows} keyExtractor={(r) => r.id} />,
+		);
+		const [nameTh, scoreTh] = Array.from(container.querySelectorAll("th"));
+		expect(nameTh?.className).toBe("table_th");
+		expect(scoreTh).toHaveClass("table_align_right", "table_th_sortable");
+		const firstRowTds = container.querySelectorAll("tbody tr:first-child td");
+		expect(firstRowTds[0]?.className).toBe("table_td");
+		expect(firstRowTds[1]).toHaveClass("table_align_right");
+
+		rerender(
+			<Table
+				columns={cols}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				isLoading
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		const skeletonTds = container.querySelectorAll("tbody tr:first-child td");
+		// 선택 가능하면 스켈레톤 행에도 체크박스 칸을 비워 둬 열이 밀리지 않는다
+		expect(skeletonTds).toHaveLength(3);
+		expect(skeletonTds[0]).toHaveClass("table_td_checkbox");
+		expect(skeletonTds[1]?.className).toBe("table_td");
+		expect(skeletonTds[2]).toHaveClass("table_align_right");
+	});
+
+	it("행 상태 클래스 - hoverable 기본 on, 선택 행 표시", () => {
+		const { container, rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				selectable
+				rowKey={(r) => String(r.id)}
+				selectedKeys={["1"]}
+			/>,
+		);
+		const bodyRows = () => container.querySelectorAll("tbody tr");
+		expect(bodyRows()[0]).toHaveClass("table_row_hoverable", "table_row_selected");
+		expect(bodyRows()[1]).not.toHaveClass("table_row_selected");
+
+		rerender(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} hoverable={false} />);
+		expect(bodyRows()[0]).not.toHaveClass("table_row_hoverable");
+		// stickyHeader 기본 off
+		expect(container.firstElementChild).not.toHaveClass("table_sticky_header");
+	});
+
+	it("aria-busy 는 로딩 중에만 붙는다", () => {
+		const { rerender } = render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+		expect(screen.getByRole("table")).not.toHaveAttribute("aria-busy");
+		rerender(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} isLoading />);
+		expect(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+	});
+
+	it("clickable 이 아닌 표에는 행 동작 힌트를 두지 않는다", () => {
+		const { container } = render(
+			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} rowClickHint="열기" />,
+		);
+		expect(container.querySelector(".table_sr_only")).toBeNull();
 	});
 });
