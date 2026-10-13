@@ -1,0 +1,12 @@
+# 뮤테이션 테스트(Stryker) 실행 도구만 담는 독립 설치. 저장소 의존성 그래프에 넣지 않는다.
+#
+# Stryker 의 코드 변형기는 Babel 8 을 쓴다. 저장소 설치 그래프에 들어오면 `next` 아래 `styled-jsx` 가
+# 선택적 peer 로 `@babel/core` 를 잡아 pnpm 이 `next` 를 Babel 버전별로 여러 벌 설치한다(notiiv 에서
+# 라우터 컨텍스트가 갈려 테스트가 깨진 사례). 이 파일이 있으면 pnpm 이 여기를 독립 루트로 본다 -
+# 루트 `pnpm install` 은 이 폴더를 건드리지 않는다.
+#
+# `hoisted` 는 Stryker 가 플러그인과 `typescript` 를 자기 옆 node_modules 에서 찾기 때문이다.
+# `typescript` · `vitest` 는 저장소와 같은 버전으로 맞춘다 - 테스트는 저장소 루트의 vitest 로 돈다.
+nodeLinker: hoisted
+# 저장소 루트와 같은 공급망 규칙 - 배포 24시간 미만 버전은 받지 않는다.
+minimumReleaseAge: 1440
