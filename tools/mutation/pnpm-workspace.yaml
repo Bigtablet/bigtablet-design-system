@@ -6,7 +6,8 @@
 # 루트 `pnpm install` 은 이 폴더를 건드리지 않는다.
 #
 # `hoisted` 는 Stryker 가 플러그인과 `typescript` 를 자기 옆 node_modules 에서 찾기 때문이다.
-# `typescript` · `vitest` 는 저장소와 같은 버전으로 맞춘다 - 테스트는 저장소 루트의 vitest 로 돈다.
+# `typescript` · `vitest` 는 플러그인 peer 를 채우는 용도다 - 테스트는 러너가 실행 위치(저장소 루트)의
+# vitest 를 찾아 그것으로 돈다. 루트 버전을 올릴 때 여기도 맞춘다. `engines` 는 Babel 8 요구 범위.
 nodeLinker: hoisted
 # 저장소 루트와 같은 공급망 규칙 - 배포 24시간 미만 버전은 받지 않는다.
 minimumReleaseAge: 1440

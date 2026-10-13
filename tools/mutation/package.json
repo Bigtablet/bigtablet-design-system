@@ -3,6 +3,9 @@
 	"private": true,
 	"description": "Stryker 실행 전용 - 저장소 의존성과 따로 설치한다(이유는 pnpm-workspace.yaml)",
 	"packageManager": "pnpm@10.34.6",
+	"engines": {
+		"node": "^22.18.0 || >=24.11.0"
+	},
 	"devDependencies": {
 		"@stryker-mutator/core": "10.0.0",
 		"@stryker-mutator/vitest-runner": "10.0.0",

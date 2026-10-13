@@ -7,6 +7,14 @@ import { defineConfig } from "vitest/config";
 const dirname =
 	typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
+// `unit` 프로젝트 설정 - 뮤테이션 테스트(`vitest.mutation.config.ts`)도 이 객체를 그대로 쓴다.
+export const unitTest = {
+	include: ["src/**/*.test.{ts,tsx}"],
+	environment: "jsdom",
+	globals: true,
+	setupFiles: ["./src/test/setup.ts"],
+};
+
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
 	test: {
@@ -28,13 +36,7 @@ export default defineConfig({
 			// Unit tests with jsdom
 			{
 				extends: true,
-				test: {
-					name: "unit",
-					include: ["src/**/*.test.{ts,tsx}"],
-					environment: "jsdom",
-					globals: true,
-					setupFiles: ["./src/test/setup.ts"],
-				},
+				test: { name: "unit", ...unitTest },
 			},
 			// Storybook tests with browser
 			{
