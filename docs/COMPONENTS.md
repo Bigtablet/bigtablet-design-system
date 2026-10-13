@@ -714,6 +714,10 @@ import { Settings } from 'lucide-react';
 첫 번째 컨트롤을 가리킨다 (#629 - 종료일의 "년" 라벨이 시작일 목록을 열었다). 내부 컨트롤은
 각자 생성한 id 와 각자의 라벨을 쓴다.
 
+`RadioGroup` 도 같은 계약이다. 연결은 `role="radiogroup"` 이 받고, 안쪽 `Radio` 는 `Field` 를
+보지 않는다 (#757 - 라디오가 id 하나를 나눠 써서 라디오 이름이 옆 문구가 아니라 그룹 라벨이 됐다).
+`radiogroup` 은 `aria-required` 를 허용하므로 필수 여부도 그룹에 붙는다.
+
 **필수 여부만은 예외로 내부까지 내려간다.** `role="group"` 은 `aria-required` 를 허용하지 않아
 (axe `aria-allowed-attr`) 묶음에 붙일 수 없기 때문이다 — 안쪽 `Dropdown` 마다 `required` 로
 전달된다. 어느 쪽이든 소비처가 할 일은 없다.

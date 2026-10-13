@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
-import { useFieldControl } from "../field";
+import { FieldControlBoundary, useFieldControl } from "../field";
 import "./style.scss";
 
 export type RadioGroupSize = "sm" | "md" | "lg";
@@ -141,7 +141,10 @@ export const RadioGroup = ({
 					aria-required={field ? field.required || undefined : ariaProps["aria-required"]}
 					className="radio_group_options"
 				>
-					{children}
+					{/* 안쪽 Radio 는 Field 연결을 받지 않는다. 받으면 라디오마다 같은 `inputId` 를 써서 id 가
+					    겹치고 `<label for>` 가 첫 라디오를 잡는다(#757). 라벨 · 설명 · 필수 연결은 바로 위
+					    `role="radiogroup"` 이 이미 담당한다 - `DatePicker` 의 경계(#629)와 같은 이유다. */}
+					<FieldControlBoundary>{children}</FieldControlBoundary>
 				</div>
 				{supportingText && (
 					<div id={helperId} className="radio_group_helper">
