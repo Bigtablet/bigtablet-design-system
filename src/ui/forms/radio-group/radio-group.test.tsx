@@ -231,6 +231,32 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		expect(group).not.toHaveAttribute("aria-invalid");
 	});
 
+	it("does not let the radios share the Field input id (#757)", () => {
+		// Field 가 내려주는 `inputId` 는 컨트롤 하나용이다. 라디오마다 그대로 쓰면 id 가 겹치고
+		// `<label for>` 가 첫 라디오를 잡아, 라디오 이름이 옆 문구가 아니라 그룹 라벨이 된다.
+		// 라벨 · 설명 · 필수 연결은 `role="radiogroup"` 이 이미 한다.
+		const { container } = render(
+			<Field name="lang" label="언어" help="고르세요" required>
+				<RadioGroup>
+					<Radio value="ko" label="한국어" />
+					<Radio value="en" label="English" />
+				</RadioGroup>
+			</Field>,
+		);
+
+		const ids = [...container.querySelectorAll("[id]")].map((element) => element.id);
+		expect(new Set(ids).size).toBe(ids.length);
+		expect(screen.getByRole("radio", { name: "한국어" })).toBeInTheDocument();
+		expect(screen.getByRole("radio", { name: "English" })).toBeInTheDocument();
+		for (const radio of screen.getAllByRole("radio")) {
+			expect(radio).not.toHaveAttribute("aria-describedby");
+		}
+		const group = screen.getByRole("radiogroup");
+		expect(group).toHaveAccessibleName("언어");
+		expect(group).toHaveAccessibleDescription("고르세요");
+		expect(group).toHaveAttribute("aria-required", "true");
+	});
+
 	it("keeps its own error prop ahead of a valid Field", () => {
 		// error 는 이 컴포넌트에 직접 준 신호다 - Checkbox 와 같은 순서를 쓴다.
 		render(
