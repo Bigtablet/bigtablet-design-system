@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.30.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.1) - 2026-10-13
+- `Field` 안에 `RadioGroup` 을 넣으면 라디오들이 `Field` 의 id 하나를 나눠 써 id 가 겹치던 것을 고쳤습니다. 라벨이 첫 라디오에 묶여 라디오가 옆 문구("한국어")가 아니라 그룹 라벨("언어")로 읽혔습니다. 이제 라벨 · 설명 · 필수는 `role="radiogroup"` 에만 걸리고 라디오는 각자 이름을 씁니다. 화면 모양은 같고, `Field` 라벨을 누르면 첫 라디오가 선택되던 동작만 없어집니다
+
 ## [3.30.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.0) - 2026-10-12
 - `DatePicker` 에 `variant="calendar"` 가 생겼습니다 - 날짜 칸 하나에 요일까지 보이고("2026. 10. 12. (월)"), 누르면 월 달력이 열립니다. 일정 · 예약처럼 가까운 날을 요일로 고르는 자리에 맞습니다. 기본값은 지금과 같은 `"dropdown"`(연 · 월 · 일 드롭다운)이라 기존 화면은 바뀌지 않습니다. `minDate` · `selectableRange` 는 드롭다운과 같게 지키고, 키보드는 WAI-ARIA APG Date Picker 규칙(←→ ↑↓ Home/End PageUp/PageDown Enter Esc)을 따릅니다. 문구 키 4개(`datePicker.calendar` · `datePicker.placeholder` · `datePicker.prevMonth` · `datePicker.nextMonth`)가 추가됐습니다
 - `Popover` 가 열릴 때 포커스가 패널 안으로 들어가지 않던 것을 고쳤습니다. 위치를 재기 전(숨긴 상태)에 포커스를 옮겨 브라우저가 무시했고, 포커스가 트리거에 남아 Tab 한 번에 패널을 건너뛰었습니다
