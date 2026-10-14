@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.30.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.2) - 2026-10-14
+- (렌더 변경) `Tooltip` 이 폭 256px 미만 화면에서 오른쪽으로 넘치던 것을 고쳤습니다. 툴팁 자신의 `max-width: 240px` 가 화면 폭에 맞춘 상한을 가려, 200px 화면에서 툴팁이 48px 밖으로 나갔습니다. 이제 `Popover` 와 같이 화면 가용 폭을 넘지 않습니다. 그보다 넓은 화면에서는 달라지는 것이 없습니다
+
 ## [3.30.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.1) - 2026-10-13
 - `Field` 안에 `RadioGroup` 을 넣으면 라디오들이 `Field` 의 id 하나를 나눠 써 id 가 겹치던 것을 고쳤습니다. 라벨이 첫 라디오에 묶여 라디오가 옆 문구("한국어")가 아니라 그룹 라벨("언어")로 읽혔습니다. 이제 라벨 · 설명 · 필수는 `role="radiogroup"` 에만 걸리고 라디오는 각자 이름을 씁니다. 화면 모양은 같고, `Field` 라벨을 누르면 첫 라디오가 선택되던 동작만 없어집니다
 
