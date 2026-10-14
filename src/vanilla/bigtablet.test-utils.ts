@@ -2,11 +2,6 @@ import { afterEach, beforeEach, vi } from "vitest";
 
 // Vanilla 번들 테스트 공용 헬퍼 - 컴포넌트별 테스트 파일이 함께 쓴다.
 
-/**
- * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 폭이 0 이다. 스크롤바나 예약된 거터가 있는
- * 상황을 만들려면 프로브가 재는 ICB 폭을 직접 세운다. `clientWidth` 가 아니라 프로브를 세우는
- * 것이 핵심 - `scrollbar-gutter: stable` 에서는 `clientWidth` 가 거터를 포함해 보고한다.
- */
 /** jsdom 은 scrollHeight/clientHeight 가 0 이라 "문서가 스크롤된다" 를 세워야 한다. */
 export const setDocumentScrolls = (scrolls: boolean) => {
 	Object.defineProperty(document.documentElement, "scrollHeight", {
@@ -28,6 +23,11 @@ export const setGutterSupport = (supported: boolean) => {
 	});
 };
 
+/**
+ * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 폭이 0 이다. 스크롤바나 예약된 거터가 있는
+ * 상황을 만들려면 프로브가 재는 ICB 폭을 직접 세운다. `clientWidth` 가 아니라 프로브를 세우는
+ * 것이 핵심 - `scrollbar-gutter: stable` 에서는 `clientWidth` 가 거터를 포함해 보고한다.
+ */
 export const setViewportInset = (inset: number, options: { afterLock?: number } = {}) => {
 	Object.defineProperty(window, "innerWidth", { value: 1280, configurable: true, writable: true });
 	// 잠금은 두 번 잰다 - 걸기 전(회수할 폭)과 건 뒤(실제로 회수됐는지).
