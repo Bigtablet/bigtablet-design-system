@@ -528,6 +528,8 @@ describe("Menu", () => {
 		openMenu();
 		fireEvent.keyDown(document, { key: "a" });
 		expect(screen.getByRole("menu")).toBeInTheDocument();
+		fireEvent.keyDown(document, { key: "Escape" });
+		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 	});
 
 	it("keeps the focused item when the items array is recreated while open", () => {

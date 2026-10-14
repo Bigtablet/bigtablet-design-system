@@ -188,6 +188,15 @@ describe("Tooltip", () => {
 			expect(isOpen()).toBe(true);
 		});
 
+		it("stays open after it appears while the trigger is on screen", () => {
+			ui();
+			fireEvent.mouseEnter(screen.getByRole("button"));
+			advance(200);
+			expect(isOpen()).toBe(true);
+			advance(300);
+			expect(isOpen()).toBe(true);
+		});
+
 		it("stays open when the pointer moves onto the tooltip within the grace period", () => {
 			ui();
 			fireEvent.mouseEnter(screen.getByRole("button"));
@@ -213,19 +222,5 @@ describe("Tooltip", () => {
 			</Tooltip>,
 		);
 		expect(document.querySelector(".tooltip_wrapper")).toBeNull();
-	});
-
-	it("stays open after it appears while the trigger is on screen", async () => {
-		render(
-			<Tooltip content="hint" delay={10}>
-				<button type="button">btn</button>
-			</Tooltip>,
-		);
-		fireEvent.mouseEnter(screen.getByRole("button"));
-		await waitFor(() => expect(isOpen()).toBe(true));
-		await act(async () => {
-			await new Promise((r) => setTimeout(r, 50));
-		});
-		expect(isOpen()).toBe(true);
 	});
 });
