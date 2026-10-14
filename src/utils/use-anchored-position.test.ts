@@ -244,3 +244,183 @@ describe("computeAnchoredPosition", () => {
 		expect(r.maxHeight).toBe(768 - 16);
 	});
 });
+
+// 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 - 경계값과 가로 배치.
+describe("computeAnchoredPosition 경계 · 가로 배치", () => {
+	const view = vp(1024, 768);
+	const opts = { gap: 4, padding: 8 } as const;
+
+	it("places left with each cross-axis alignment", () => {
+		const anchor: AnchorRect = { top: 300, left: 500, width: 40, height: 40 };
+		const size = { width: 200, height: 100 };
+		const at = (align?: "start" | "end") =>
+			computeAnchoredPosition(anchor, size, view, { ...opts, placement: "left", align });
+
+		expect(at()).toMatchObject({ placement: "left", x: 296, y: 270 });
+		expect(at("start").y).toBe(300);
+		expect(at("end").y).toBe(240);
+	});
+
+	it("start-aligns a vertical popup that is wider than its anchor", () => {
+		const anchor: AnchorRect = { top: 100, left: 100, width: 40, height: 40 };
+		const r = computeAnchoredPosition(anchor, { width: 200, height: 100 }, view, {
+			...opts,
+			placement: "bottom",
+			align: "start",
+		});
+		expect(r.x).toBe(100);
+	});
+
+	it("keeps a side whose popup touches the padding exactly", () => {
+		// top: 112 - 4 - 100 = 8 == padding
+		expect(
+			computeAnchoredPosition(
+				{ top: 112, left: 400, width: 40, height: 40 },
+				{ width: 100, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "top",
+				},
+			).placement,
+		).toBe("top");
+		// left: 112 - 4 - 100 = 8 == padding
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 112, width: 40, height: 40 },
+				{ width: 100, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "left",
+				},
+			).placement,
+		).toBe("left");
+		// bottom: 644 + 116 = 760 == 768 - 8
+		expect(
+			computeAnchoredPosition(
+				{ top: 600, left: 400, width: 40, height: 40 },
+				{ width: 100, height: 116 },
+				view,
+				{
+					...opts,
+					placement: "bottom",
+				},
+			).placement,
+		).toBe("bottom");
+		// right: 644 + 372 = 1016 == 1024 - 8
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 600, width: 40, height: 40 },
+				{ width: 372, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "right",
+				},
+			).placement,
+		).toBe("right");
+	});
+
+	it("flips when the popup crosses the padding by less than the padding", () => {
+		// 4px 넘침 - 여백을 반대 부호로 계산하면 들어맞는 것으로 잘못 본다
+		expect(
+			computeAnchoredPosition(
+				{ top: 600, left: 400, width: 40, height: 40 },
+				{ width: 100, height: 120 },
+				view,
+				{
+					...opts,
+					placement: "bottom",
+				},
+			).placement,
+		).toBe("top");
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 600, width: 40, height: 40 },
+				{ width: 376, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "right",
+				},
+			).placement,
+		).toBe("left");
+	});
+
+	it("keeps the preferred side when neither fits and the spaces tie or the other is smaller", () => {
+		// 위·아래 공간 352 동률 - 선호 유지
+		expect(
+			computeAnchoredPosition(
+				{ top: 364, left: 400, width: 40, height: 40 },
+				{ width: 100, height: 400 },
+				view,
+				{
+					...opts,
+					placement: "bottom",
+				},
+			).placement,
+		).toBe("bottom");
+		// 아래(416)가 위(288)보다 넓다 - 선호 유지
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 400, width: 40, height: 40 },
+				{ width: 100, height: 500 },
+				view,
+				{
+					...opts,
+					placement: "bottom",
+				},
+			).placement,
+		).toBe("bottom");
+	});
+
+	it("compares horizontal spaces from the clamped anchor edges", () => {
+		// 왼쪽 481 vs 오른쪽 479 - 1px 차이로 왼쪽
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 493, width: 40, height: 40 },
+				{ width: 600, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "right",
+				},
+			).placement,
+		).toBe("left");
+		// 왼쪽 480 vs 오른쪽 480 - 동률이면 선호 유지
+		expect(
+			computeAnchoredPosition(
+				{ top: 300, left: 492, width: 40, height: 40 },
+				{ width: 600, height: 100 },
+				view,
+				{
+					...opts,
+					placement: "right",
+				},
+			).placement,
+		).toBe("right");
+	});
+
+	it("clamps the cross axis of a horizontal popup near the bottom edge", () => {
+		const r = computeAnchoredPosition(
+			{ top: 740, left: 400, width: 40, height: 20 },
+			{ width: 100, height: 100 },
+			view,
+			{ ...opts, placement: "right" },
+		);
+		expect(r.y).toBe(660);
+	});
+
+	it("clamps the main axis of a vertical popup by its measured height", () => {
+		// 아래(516)가 위(188)보다 넓어 아래로 - 측정 높이 700 은 그래도 넘쳐 위로 민다
+		const r = computeAnchoredPosition(
+			{ top: 200, left: 400, width: 40, height: 40 },
+			{ width: 100, height: 700 },
+			view,
+			{ ...opts, placement: "bottom" },
+		);
+		expect(r.placement).toBe("bottom");
+		expect(r.y).toBe(60);
+	});
+});

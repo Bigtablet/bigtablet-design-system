@@ -89,6 +89,11 @@ pnpm test:coverage
 # a11y 테스트 (Storybook + Playwright)
 pnpm test:storybook
 
+# 레이아웃 테스트 (*.browser.test.tsx, 실제 Chromium)
+# Chromium 바이너리가 없으면 먼저 한 번 설치한다 (test:storybook 과 같은 바이너리)
+pnpm exec playwright install chromium
+pnpm test:browser
+
 # UI 모드
 pnpm vitest --ui
 ```
@@ -110,14 +115,16 @@ src/ui/general/button/
 
 ### Vanilla 번들 테스트
 
-`src/vanilla/bigtablet.test.ts` 가 Vanilla 번들(`Dropdown` / `Modal` / `Toggle` / `Alert`)을 덮는다.
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts`.
+공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
+`resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
 
 ```ts
 // UMD 번들이지만 Vite 가 named export 로 노출해준다. 소비자는 `<script>` + 전역 `Bigtablet`
 // 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
 // 소스 변경이 곧 테스트에 걸리게 한다.
-import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
+import { Dropdown } from "./bigtablet.js";
 ```
 
 주의할 점:
@@ -156,8 +163,33 @@ import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
   스크롤을 하지 않아 증상이 안 보이므로, 인자까지 단언해야 회귀가 잡힌다:
   `expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })`.
 
-레이아웃 자체(높이 상한·정렬)는 jsdom 이 계산하지 않는다 - 실제 브라우저(Storybook)에서 재고
-그 수치를 PR 에 남긴다.
+레이아웃 자체(높이 상한·정렬·flip)는 jsdom 이 계산하지 않는다 - 아래 브라우저 레이아웃 테스트로 잰다.
+
+### 브라우저 레이아웃 테스트 (`*.browser.test.tsx`)
+
+배치·잘림·스크롤 잠금처럼 **실제 레이아웃이 있어야 의미 있는 것**은 `{폴더명}.browser.test.tsx` 에
+쓴다. `vitest.config.ts` 의 `browser` 프로젝트가 headless Chromium 에서 돌리고(`pnpm test:browser`),
+`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺀다. 지금 덮는 것:
+
+| 대상 | 검사 |
+|------|------|
+| Tooltip · Popover · Menu | flip·shift, 정렬(`align`), Menu 가 `overflow: hidden` 조상에 안 잘림(#586) |
+| Dropdown · Combobox | 높이 상한(#621), 트리거 정렬, 375px 넘침 |
+| DatePicker (`variant="calendar"`) | 달력 flip, 320px 에서 요일 7칸이 패널 안 |
+| Modal · Drawer · Vanilla Modal | 좁은 화면 잘림, 스크롤 잠금 - 콘텐츠 안 밀림·스크롤바 자리 덮음·패널 중심(#574·#635)·스크롤 위치 복원 |
+
+- **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세운다. 앵커는
+  `position: fixed` 래퍼로 원하는 좌표에 둔다.
+- **컴포넌트 `style.scss` 를 테스트에서 import 한다.** 컴포넌트 파일이 이미 import 하지만, 레이아웃
+  테스트가 CSS 에 기대고 있다는 걸 드러낸다. 토큰 CSS 변수(`theme.scss`)는 `src/test/browser-setup.ts` 가 넣는다.
+- **스크롤바가 보인다.** headless Chromium 은 기본으로 스크롤바를 숨겨(폭 0) 스크롤 잠금 보정이
+  공회전한다 - 프로젝트 설정이 `--hide-scrollbars` 를 빼서 15px 클래식 스크롤바가 생긴다.
+- **소스를 일부러 깨서 테스트가 실패하는지 본다.** 처음 쓴 테스트 절반이 그래도 통과했다 -
+  CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
+  내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
+- Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
+- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 브라우저 ESM 에서 UMD 번들의 `this` 가
+  undefined 라 named import 가 안 된다 - `import "./bigtablet.js"` 후 `window.Bigtablet` 을 쓴다.
 
 ### 기본 구조
 
@@ -389,7 +421,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 78 test files / 1325 passed · 8 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 83 test files / 1536 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -399,13 +431,13 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **93.21%** | **90.55%** | **93.73%** | **94.99%** |
+| **All files** | **94.69%** | **92.71%** | **95.26%** | **95.85%** |
 
-아래는 **100% 미만**인 것만 나열한 것이다 (39개는 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것이다 (42개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| ui/display/accordion | 100% | 80% | 100% | 100% |
+| ui/display/accordion | 100% | 95% | 100% | 100% |
 | ui/display/avatar | 100% | 82.76% | 100% | 100% |
 | ui/display/chip | 91.67% | 95.65% | 66.67% | 100% |
 | ui/display/data-view | 100% | 97.87% | 100% | 100% |
@@ -413,37 +445,34 @@ it("calls callback with correct arguments", () => {
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 76.32% | 53.33% | 100% | 79.41% |
-| ui/display/table | 97.62% | 92.4% | 97.06% | 99.07% |
+| ui/display/table | 98.41% | 96.49% | 97.06% | 99.07% |
 | ui/feedback/alert | 98.57% | 94.92% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 98.77% | 94.12% | 100% | 100% |
 | ui/forms/checkbox | 92.31% | 95.45% | 100% | 100% |
-| ui/forms/combobox | 94.67% | 92% | 83.33% | 97.06% |
-| ui/forms/date-picker | 94.22% | 92.31% | 93.33% | 97.91% |
-| ui/forms/dropdown | 100% | 93.71% | 100% | 100% |
+| ui/forms/combobox | 100% | 98% | 94.44% | 100% |
+| ui/forms/date-picker | 97.78% | 95.55% | 100% | 100% |
+| ui/forms/dropdown | 100% | 95.6% | 100% | 100% |
 | ui/forms/file | 82.35% | 72.55% | 83.33% | 82% |
 | ui/forms/image-cropper | 59.33% | 58.95% | 50% | 60.28% |
-| ui/forms/otp-input | 89.77% | 92.65% | 100% | 90% |
-| ui/forms/tag-input | 96.55% | 90.7% | 100% | 100% |
+| ui/forms/tag-input | 98.85% | 95.35% | 100% | 100% |
 | ui/forms/textarea | 88.33% | 74.51% | 100% | 92.73% |
 | ui/forms/textfield | 98.18% | 97.06% | 90.91% | 98.08% |
-| ui/forms/time-picker | 93.44% | 91.36% | 100% | 100% |
+| ui/forms/time-picker | 96.72% | 97.53% | 100% | 100% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
-| ui/navigation/menu | 98.88% | 90.32% | 100% | 100% |
+| ui/navigation/menu | 98.88% | 95.16% | 100% | 100% |
 | ui/navigation/nav-bar | 80.19% | 71.95% | 81.82% | 85.11% |
 | ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
-| ui/navigation/tabs | 91.51% | 78.95% | 88.89% | 98.91% |
+| ui/navigation/tabs | 97.17% | 89.47% | 100% | 100% |
 | ui/overlay/drawer | 100% | 98.81% | 100% | 100% |
 | ui/overlay/popover | 91.3% | 86.49% | 100% | 92.68% |
-| ui/overlay/tooltip | 93.33% | 87.18% | 93.75% | 92% |
+| ui/overlay/tooltip | 96.67% | 87.18% | 100% | 96% |
 | ui/system/theme-provider | 93.88% | 85.71% | 100% | 100% |
 | utils/cn.ts | 100% | 87.5% | 100% | 100% |
 | utils/overlay-stack.ts | 93.94% | 83.33% | 87.5% | 96.3% |
 | utils/scroll-lock.ts | 97.59% | 95.24% | 100% | 100% |
-| utils/split-aria-props.ts | 100% | 50% | 100% | 100% |
-| utils/use-anchored-position.ts | 97.73% | 90% | 100% | 100% |
-| utils/use-focus-trap.ts | 97.96% | 91.43% | 100% | 100% |
-| utils/use-listbox-popup.ts | 94.67% | 93.68% | 100% | 95.08% |
+| utils/use-anchored-position.ts | 97.73% | 95% | 100% | 100% |
+| utils/use-listbox-popup.ts | 99.33% | 100% | 100% | 99.18% |
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 

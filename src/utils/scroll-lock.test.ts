@@ -291,4 +291,36 @@ describe("scroll-lock", () => {
 		expect(document.documentElement.style.getPropertyValue("overflow")).toBe("");
 		expect(document.body.style.getPropertyValue("overflow")).toBe("");
 	});
+
+	it("restores every overflow axis and the padding a reclaimed lock changed", () => {
+		document.body.style.overflowX = "scroll";
+		document.documentElement.style.overflowY = "auto";
+		document.body.style.paddingRight = "20px";
+		setViewportInset(15, { afterLock: 0 });
+
+		lockBodyScroll();
+		expect(document.body.style.paddingRight).toBe("35px");
+		expect(document.documentElement.getAttribute("data-bt-scroll-locked")).toBe("");
+
+		unlockBodyScroll();
+		expect(document.body.style.overflowX).toBe("scroll");
+		expect(document.documentElement.style.overflowY).toBe("auto");
+		expect(document.body.style.paddingRight).toBe("20px");
+		expect(document.documentElement.hasAttribute("data-bt-scroll-locked")).toBe(false);
+	});
+
+	it("keeps the consumer's padding when the reclaim fails", () => {
+		document.body.style.paddingRight = "20px";
+		setViewportInset(15);
+
+		lockBodyScroll();
+		expect(document.body.style.paddingRight).toBe("20px");
+	});
+
+	it("removes its measuring probe", () => {
+		setViewportInset(15, { afterLock: 0 });
+		const before = document.documentElement.children.length;
+		lockBodyScroll();
+		expect(document.documentElement.children.length).toBe(before);
+	});
 });

@@ -380,4 +380,149 @@ describe("Combobox", () => {
 		expect(input).not.toHaveAttribute("aria-required");
 		expect(input).not.toHaveAttribute("aria-invalid");
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────
+
+	const PICKS: ComboboxOption[] = [
+		{ value: "1", label: "박상민" },
+		{ value: "2", label: "김민준", disabled: true },
+		{ value: "3", label: "이서연" },
+	];
+
+	it("renders nothing in the portal and no spinner while closed, with locale defaults", () => {
+		render(<Combobox onSearch={vi.fn()} />);
+		const input = screen.getByRole("combobox");
+		expect(input).toHaveAttribute("placeholder", "검색해서 선택");
+		expect(input.id).not.toBe("");
+		expect(document.body.querySelector(".combobox_panel")).toBeNull();
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
+		expect(screen.queryByLabelText("검색 중")).not.toBeInTheDocument();
+	});
+
+	it("labels the spinner with the locale default while searching", async () => {
+		render(<Combobox onSearch={() => new Promise(() => {})} debounceMs={10} />);
+		open();
+		type("박");
+		expect(screen.getByLabelText("검색 중")).toBeInTheDocument();
+	});
+
+	it("keeps the first typed character when typing opens the panel", async () => {
+		const onSearch = vi.fn().mockResolvedValue(OPTIONS);
+		render(<Combobox onSearch={onSearch} debounceMs={10} />);
+		// focus 없이 바로 입력 - onChange 가 패널을 연다
+		type("박");
+		expect(screen.getByRole("combobox")).toHaveValue("박");
+		await vi.advanceTimersByTimeAsync(10);
+		expect(onSearch).toHaveBeenCalledWith("박");
+	});
+
+	it("shows defaultOptions before any search and marks selected, disabled and active options", () => {
+		render(
+			<Combobox
+				onSearch={vi.fn()}
+				defaultOptions={PICKS}
+				value={PICKS[2]}
+				fullWidth
+				disabled={false}
+			/>,
+		);
+		open();
+		expect(screen.queryByText("검색어를 입력하세요")).not.toBeInTheDocument();
+		const [first, second, third] = screen.getAllByRole("option");
+		expect(first).toHaveAttribute("aria-selected", "false");
+		expect(third).toHaveAttribute("aria-selected", "true");
+		expect(second).toHaveAttribute("aria-disabled", "true");
+		expect(first).not.toHaveAttribute("aria-disabled");
+		expect(first).toHaveAttribute("tabindex", "-1");
+		expect(first).toHaveClass("is_active");
+		expect(third).not.toHaveClass("is_active");
+
+		// 마우스를 올리면 활성이 따라오고, 비활성 항목은 활성이 되지 않는다
+		fireEvent.mouseEnter(third as HTMLElement);
+		expect(third).toHaveClass("is_active");
+		fireEvent.mouseEnter(second as HTMLElement);
+		expect(second).not.toHaveClass("is_active");
+		expect(third).toHaveClass("is_active");
+	});
+
+	it("applies the fullWidth class only when asked", () => {
+		const { container, rerender } = render(<Combobox onSearch={vi.fn()} />);
+		expect(container.firstChild).not.toHaveClass("combobox_full_width");
+		rerender(<Combobox onSearch={vi.fn()} fullWidth />);
+		expect(container.firstChild).toHaveClass("combobox_full_width");
+	});
+
+	it("toggles the panel from the chevron, which stays out of the tab order", () => {
+		const { container } = render(<Combobox onSearch={vi.fn()} />);
+		const toggle = container.querySelector(".combobox_toggle") as HTMLElement;
+		expect(toggle).toHaveAttribute("tabindex", "-1");
+		fireEvent.click(toggle);
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-expanded", "true");
+		fireEvent.click(toggle);
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
+	});
+
+	it("drops aria-activedescendant once the panel closes", () => {
+		render(<Combobox onSearch={vi.fn()} defaultOptions={PICKS} />);
+		const input = screen.getByRole("combobox");
+		open();
+		expect(input).toHaveAttribute("aria-activedescendant");
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(input).not.toHaveAttribute("aria-activedescendant");
+	});
+
+	it("commits without an onValueChange handler", () => {
+		render(<Combobox onSearch={vi.fn()} defaultOptions={PICKS} />);
+		open();
+		expect(() => fireEvent.click(screen.getByText("박상민"))).not.toThrow();
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
+	});
+
+	it("ignores a stale failure and a stale settle while a newer search is in flight", async () => {
+		let rejectFirst!: (e: Error) => void;
+		const firstFail = new Promise<ComboboxOption[]>((_, reject) => {
+			rejectFirst = reject;
+		});
+		const second = deferred<ComboboxOption[]>();
+		const onSearch = vi
+			.fn()
+			.mockImplementationOnce(() => firstFail)
+			.mockImplementationOnce(() => second.promise);
+
+		render(<Combobox onSearch={onSearch} debounceMs={10} />);
+		open();
+		type("김");
+		await vi.advanceTimersByTimeAsync(10);
+		type("박");
+		await vi.advanceTimersByTimeAsync(10);
+
+		// 옛 요청이 실패로 끝나도 최신 요청의 스피너와 목록을 건드리지 않는다
+		await act(async () => {
+			rejectFirst(new Error("late"));
+		});
+		expect(screen.getByLabelText("검색 중")).toBeInTheDocument();
+		expect(screen.queryByText("일치하는 항목이 없습니다")).not.toBeInTheDocument();
+
+		await act(async () => {
+			second.resolve(OPTIONS);
+		});
+		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["박상민", "김민준"]);
+	});
+
+	it("hides the no-results message while the next search is loading", async () => {
+		const next = deferred<ComboboxOption[]>();
+		const onSearch = vi
+			.fn()
+			.mockResolvedValueOnce([])
+			.mockImplementationOnce(() => next.promise);
+		render(<Combobox onSearch={onSearch} debounceMs={10} />);
+		open();
+		type("x");
+		await vi.advanceTimersByTimeAsync(10);
+		await waitFor(() => expect(screen.getByText("일치하는 항목이 없습니다")).toBeInTheDocument());
+
+		type("xy");
+		await vi.advanceTimersByTimeAsync(10);
+		expect(screen.queryByText("일치하는 항목이 없습니다")).not.toBeInTheDocument();
+	});
 });

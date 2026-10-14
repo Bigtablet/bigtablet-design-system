@@ -257,4 +257,43 @@ describe("useFocusTrap", () => {
 		);
 		expect(document.activeElement).toBe(container.querySelector("button"));
 	});
+
+	it("does not wrap Tab or Shift+Tab from a middle element", () => {
+		// 첫 · 끝 요소에서만 감싼다 - 가운데서 막으면 트랩 안 이동이 통째로 멈춘다.
+		const container = tracked(createContainer(3));
+		const buttons = container.querySelectorAll<HTMLButtonElement>("button");
+		renderHook(() => useFocusTrap({ current: container }, true));
+
+		for (const shiftKey of [false, true]) {
+			buttons[1]!.focus();
+			const event = new KeyboardEvent("keydown", {
+				key: "Tab",
+				shiftKey,
+				bubbles: true,
+				cancelable: true,
+			});
+			act(() => {
+				buttons[1]!.dispatchEvent(event);
+			});
+			expect(event.defaultPrevented).toBe(false);
+			expect(document.activeElement).toBe(buttons[1]);
+		}
+	});
+
+	it("adds tabindex=-1 to an empty container and removes it on cleanup", () => {
+		const container = document.createElement("div");
+		document.body.appendChild(container);
+		tracked(container);
+
+		const { unmount } = renderHook(() => useFocusTrap({ current: container }, true));
+		expect(container.getAttribute("tabindex")).toBe("-1");
+		expect(document.activeElement).toBe(container);
+
+		unmount();
+		expect(container.hasAttribute("tabindex")).toBe(false);
+	});
+
+	it("does nothing when the container ref is empty", () => {
+		expect(() => renderHook(() => useFocusTrap({ current: null }, true))).not.toThrow();
+	});
 });

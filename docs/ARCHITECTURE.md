@@ -448,27 +448,30 @@ describe("Button", () => {
 
 | Job | 역할 |
 |------|------|
-| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 step 의 조건으로 넘긴다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, `static-checks`·`test` 도 `needs: changes` 라 함께 skip 된다 |
-| `static-checks` | 병합 게이트(시큐어코딩 가이드 제9장 제3조). `test` 와 같은 조건으로 병렬 실행 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킨다. audit 은 조회 실패도 실패로 끝난다 |
-| `test` | 위 4개 중 하나라도 변경됐을 때만 실행 |
+| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘긴다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 된다 |
+| `static-checks` | 병합 게이트(시큐어코딩 가이드 제9장 제3조). `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킨다. audit 은 조회 실패도 실패로 끝난다 |
+| `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돈다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트라서다 |
+| `a11y` | `playwright install --with-deps chromium`(브라우저 캐시) → `pnpm test:storybook` → `pnpm test:browser`(레이아웃). `code` · `stories` 가 바뀌면 돈다 (Chromium ~200MB 라 무겁다) |
+| `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돈다 |
 
-**`test` job 의 step (실행 조건 포함)**
+`static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돈다. 한 job 에서 차례로
+돌던 때는 커버리지 → a11y → 빌드가 이어져 150s 안팎이었다 - job 마다 `pnpm install` 을 반복하는
+runner 시간을 내고, 대기 시간을 가장 긴 job 하나로 줄였다.
+
+**`build` job 의 step (실행 조건 포함)**
 
 | Step | 조건 |
 |------|------|
-| Checkout (`actions/checkout`, `fetch-depth: 0`) | 항상 |
+| Checkout (`actions/checkout`, `fetch-depth: 0` - commitlint 가 base 부터 읽는다) | 항상 |
 | Setup pnpm (`pnpm/action-setup`) + Node (`actions/setup-node`, `node-version: 22.14.0`, `cache: pnpm`) | 항상 |
 | `pnpm install --frozen-lockfile` | 항상 |
 | `pnpm exec commitlint` | `develop` 대상 PR 이고 dependabot 이 아닐 때 |
-| `pnpm lint:css` (Stylelint - raw hex / named color 금지) | `code` 또는 `stories` 변경 |
-| `pnpm test:coverage` | `code` 또는 `deps` 변경 |
-| `pnpm exec playwright install --with-deps chromium` → `pnpm test:storybook` | `code` 또는 `stories` 변경 (Chromium ~200MB 라 무겁다) |
+| `pnpm lint:css` · `check:defaults` · `check:deprecated` · `check:filenames` | 항상 (소스만 읽어 빌드 앞에서 빨리 실패) |
 | `pnpm build` | 항상 |
-| `pnpm size` (size-limit - dist 산출물 기반) | 항상 |
-| `davelosert/vitest-coverage-report-action` | PR 이면서 `code` 또는 `deps` 변경 |
+| `pnpm size` · `check:css-vars` · `check:geometry` · `check:dark-text` | 항상 (dist 를 읽어 빌드 뒤) |
 
 **권한과 액션 고정** (시큐어코딩 가이드 W-2-3-2 · W-2-15-5)
-- 모든 워크플로 최상단은 `permissions: contents: read` 뿐이다. 쓰기가 필요한 job 만 자기 블록에서 상향한다 (`test` 의 `pull-requests: write` 는 커버리지 코멘트용). job 레벨 `permissions` 는 최상단 값을 합치지 않고 대체한다
+- 모든 워크플로 최상단은 `permissions: contents: read` 뿐이다. 쓰기가 필요한 job 만 자기 블록에서 상향한다 (`unit` 의 `pull-requests: write` 는 커버리지 코멘트용). job 레벨 `permissions` 는 최상단 값을 합치지 않고 대체한다
 - `uses:` 는 전부 `owner/action@<40자 SHA> # vX.Y.Z` 로 고정한다. 태그는 옮겨질 수 있어 무결성 보장이 안 된다. 갱신은 `dependabot.yml` 의 `github-actions` ecosystem 이 SHA 와 버전 주석을 함께 올린다
 
 **size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막

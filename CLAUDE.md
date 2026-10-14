@@ -239,7 +239,7 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 93.21% stmts / 90.55% branch / 93.73% funcs / 94.99% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 94.69% stmts / 92.71% branch / 95.26% funcs / 95.85% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
@@ -251,6 +251,7 @@ return <animated.div style={style}>...</animated.div>;
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
+  pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
   ```
 
 ---

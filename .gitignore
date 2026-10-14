@@ -28,3 +28,9 @@ tsup.config.bundled_*.mjs
 
 # Coverage
 coverage/
+# Mutation testing
+.stryker-tmp/
+reports/mutation/
+
+# vitest browser 실패 스크린샷
+__screenshots__/

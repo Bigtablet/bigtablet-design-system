@@ -20,8 +20,10 @@ dist/vanilla/
 
 ### 테스트
 
-`bigtablet.test.ts` 가 이 번들을 덮는다 (`pnpm test` 에 포함). 소스를 직접 import 하므로
-여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을 추가하면 같은 파일에 케이스를 더한다.
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts` 가 이 번들을 덮는다
+(`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
+추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
+`resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 
 jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접 세워야 한다. 자세한 주의점은
 [docs/TESTING.md](../../docs/TESTING.md#vanilla-번들-테스트) 참고.

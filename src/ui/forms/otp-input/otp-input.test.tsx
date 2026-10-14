@@ -170,9 +170,10 @@ describe("OtpInput", () => {
 			expect(onChange).toHaveBeenCalledWith("12");
 		});
 
-		it.skip("moves to previous box and clears it when current is empty", () => {
+		it("moves to previous box and clears it when current is empty", () => {
+			// ControlledOtp 는 onChange 를 자기 setState 로 덮어 spy 가 불리지 않는다 - 직접 렌더한다
 			const onChange = vi.fn();
-			render(<ControlledOtp length={6} value="12" ariaLabel="OTP" onChange={onChange} />);
+			render(<OtpInput length={6} value="12" ariaLabel="OTP" onChange={onChange} />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[2]!.focus();
 			fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
@@ -190,8 +191,9 @@ describe("OtpInput", () => {
 	});
 
 	describe("Arrow key navigation", () => {
-		it.skip("moves focus to previous box on ArrowLeft", () => {
-			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
+		// 빈 값이면 onFocus 가 첫 빈 칸으로 되돌리므로, 이동을 보려면 칸을 채워 둔다
+		it("moves focus to previous box on ArrowLeft", () => {
+			render(<OtpInput length={6} value="123456" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[3]!.focus();
 			fireEvent.keyDown(inputs[3]!, { key: "ArrowLeft" });
@@ -206,25 +208,25 @@ describe("OtpInput", () => {
 			expect(document.activeElement).toBe(inputs[0]);
 		});
 
-		it.skip("moves focus to next box on ArrowRight", () => {
-			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
+		it("moves focus to next box on ArrowRight", () => {
+			render(<OtpInput length={6} value="123456" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[2]!.focus();
 			fireEvent.keyDown(inputs[2]!, { key: "ArrowRight" });
 			expect(document.activeElement).toBe(inputs[3]);
 		});
 
-		it.skip("does not move focus past the last box on ArrowRight", () => {
-			render(<OtpInput length={6} value="" ariaLabel="OTP" />);
+		it("does not move focus past the last box on ArrowRight", () => {
+			render(<OtpInput length={6} value="123456" ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[5]!.focus();
 			fireEvent.keyDown(inputs[5]!, { key: "ArrowRight" });
 			expect(document.activeElement).toBe(inputs[5]);
 		});
 
-		it.skip("ignores unrelated keys", () => {
+		it("ignores unrelated keys", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="123456" onChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[2]!.focus();
 			fireEvent.keyDown(inputs[2]!, { key: "Tab" });
@@ -254,17 +256,10 @@ describe("OtpInput", () => {
 			expect(onChange).toHaveBeenCalledWith("1234");
 		});
 
-		it.skip("focuses last filled box after partial paste", () => {
-			render(<ControlledOtp length={6} ariaLabel="OTP" />);
-			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-			fireEvent.paste(inputs[0]!, {
-				clipboardData: { getData: () => "12" },
-			});
-			expect(document.activeElement).toBe(inputs[2]);
-		});
-
-		it.skip("focuses last box after pasting exactly length digits", () => {
-			render(<ControlledOtp length={6} ariaLabel="OTP" />);
+		// 부분 붙여넣기 뒤 포커스는 아래 "focuses after the pasted digits" 가 본다.
+		// ControlledOtp 는 focus 시점에 아직 빈 값이라 onFocus 가 첫 칸으로 되돌린다 - 칸을 채워 둔다.
+		it("focuses last box after pasting exactly length digits", () => {
+			render(<OtpInput length={6} value="999999" ariaLabel="OTP" onValueChange={vi.fn()} />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "123456" },
@@ -456,5 +451,106 @@ describe("OtpInput", () => {
 			expect(input).toHaveAttribute("aria-required", "true");
 		}
 		expect(screen.getByRole("group")).not.toHaveAttribute("aria-required");
+	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const boxes = () => screen.getAllByRole("textbox") as HTMLInputElement[];
+
+	it("prevents the default action of Backspace and the arrows, but not of other keys", () => {
+		render(<OtpInput length={6} value="123456" ariaLabel="OTP" onValueChange={vi.fn()} />);
+		boxes()[2]!.focus();
+		expect(fireEvent.keyDown(boxes()[2]!, { key: "ArrowLeft" })).toBe(false);
+		expect(fireEvent.keyDown(boxes()[1]!, { key: "ArrowRight" })).toBe(false);
+		expect(fireEvent.keyDown(boxes()[2]!, { key: "Backspace" })).toBe(false);
+		expect(fireEvent.keyDown(boxes()[2]!, { key: "Tab" })).toBe(true);
+		expect(fireEvent.keyDown(boxes()[0]!, { key: "ArrowLeft" })).toBe(true);
+		expect(fireEvent.keyDown(boxes()[5]!, { key: "ArrowRight" })).toBe(true);
+	});
+
+	it("ignores multi-character input outside the first box and malformed single values", () => {
+		const onValueChange = vi.fn();
+		render(<OtpInput length={6} value="" ariaLabel="OTP" onValueChange={onValueChange} />);
+		fireEvent.change(boxes()[2]!, { target: { value: "123" } });
+		fireEvent.change(boxes()[1]!, { target: { value: "a1" } });
+		fireEvent.change(boxes()[1]!, { target: { value: "1a" } });
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("ignores autofill without digits, truncates long autofill and focuses after the filled part", () => {
+		const onValueChange = vi.fn();
+		const { rerender } = render(
+			<OtpInput length={6} value="" ariaLabel="OTP" onValueChange={onValueChange} />,
+		);
+		fireEvent.change(boxes()[0]!, { target: { value: "ab" } });
+		expect(onValueChange).not.toHaveBeenCalled();
+
+		fireEvent.change(boxes()[0]!, { target: { value: "12345678" } });
+		expect(onValueChange).toHaveBeenLastCalledWith("123456");
+
+		// 칸이 차 있어야 onFocus 가 첫 빈 칸으로 되돌리지 않는다
+		rerender(<OtpInput length={6} value="999999" ariaLabel="OTP" onValueChange={onValueChange} />);
+		fireEvent.change(boxes()[0]!, { target: { value: "123" } });
+		expect(document.activeElement).toBe(boxes()[3]);
+	});
+
+	it("focuses after the pasted digits and blocks the native paste", () => {
+		render(<OtpInput length={6} value="999999" ariaLabel="OTP" onValueChange={vi.fn()} />);
+		const notPrevented = fireEvent.paste(boxes()[0]!, {
+			clipboardData: { getData: () => "123" },
+		});
+		expect(notPrevented).toBe(false);
+		expect(document.activeElement).toBe(boxes()[3]);
+	});
+
+	it("keeps focus when a digit is cleared", () => {
+		render(<OtpInput length={6} value="123456" ariaLabel="OTP" onValueChange={vi.fn()} />);
+		boxes()[2]!.focus();
+		fireEvent.change(boxes()[2]!, { target: { value: "" } });
+		expect(document.activeElement).toBe(boxes()[2]);
+	});
+
+	it("works without any change handler", () => {
+		render(<OtpInput length={6} value="" ariaLabel="OTP" />);
+		expect(() => {
+			fireEvent.change(boxes()[0]!, { target: { value: "1" } });
+			fireEvent.paste(boxes()[0]!, { clipboardData: { getData: () => "123" } });
+		}).not.toThrow();
+	});
+
+	it("labels each box by position and offers OTP autofill on the first only", () => {
+		render(<OtpInput length={4} value="" />);
+		expect(boxes().map((b) => b.getAttribute("aria-label"))).toEqual([
+			"1번째 자리",
+			"2번째 자리",
+			"3번째 자리",
+			"4번째 자리",
+		]);
+		expect(boxes().map((b) => b.getAttribute("autocomplete"))).toEqual([
+			"one-time-code",
+			"off",
+			"off",
+			"off",
+		]);
+	});
+
+	it("marks invalid from error or an invalid Field, and links the supporting text", () => {
+		const { rerender, container } = render(<OtpInput length={4} value="" />);
+		expect(boxes()[0]).not.toHaveAttribute("aria-invalid");
+		expect(boxes()[0]).not.toHaveAttribute("aria-required");
+		expect(boxes()[0]).not.toHaveAttribute("aria-describedby");
+
+		rerender(<OtpInput length={4} value="" error supportingText="코드가 틀렸어요" />);
+		expect(boxes()[0]).toHaveAttribute("aria-invalid", "true");
+		const supportingId = container.querySelector(".otp_input_supporting")?.id;
+		expect(boxes()[0]).toHaveAttribute("aria-describedby", supportingId);
+
+		rerender(
+			<Field name="otp" label="인증 코드" error="필수" help="문자로 받은 코드">
+				<OtpInput length={4} value="" supportingText="도움말" />
+			</Field>,
+		);
+		expect(boxes()[0]).toHaveAttribute("aria-invalid", "true");
+		expect(boxes()[0]?.getAttribute("aria-describedby")?.split(" ").length).toBe(2);
 	});
 });

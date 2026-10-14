@@ -102,4 +102,30 @@ describe("Pagination", () => {
 		render(<Pagination page={2} totalPages={5} onPageChange={() => {}} navLabel="Pagination" />);
 		expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Pagination");
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const labels = () =>
+		Array.from(document.querySelectorAll(".pagination_pages > li"), (li) =>
+			(li.textContent ?? "").trim(),
+		);
+
+	it("lays out the start, middle and end windows at their boundaries", () => {
+		const cases: [number, number, string[]][] = [
+			[1, 8, ["1", "2", "3", "4", "5", "…", "8"]],
+			[4, 20, ["1", "2", "3", "4", "5", "…", "20"]],
+			[5, 20, ["1", "…", "3", "4", "5", "6", "7", "…", "20"]],
+			[16, 20, ["1", "…", "14", "15", "16", "17", "18", "…", "20"]],
+			[17, 20, ["1", "…", "16", "17", "18", "19", "20"]],
+			[7, 7, ["1", "2", "3", "4", "5", "6", "7"]],
+		];
+		for (const [page, total, expected] of cases) {
+			const { unmount } = render(
+				<Pagination page={page} totalPages={total} onPageChange={() => {}} />,
+			);
+			expect(labels()).toEqual(expected);
+			expect(document.querySelectorAll(".pagination_active")).toHaveLength(1);
+			unmount();
+		}
+	});
 });
