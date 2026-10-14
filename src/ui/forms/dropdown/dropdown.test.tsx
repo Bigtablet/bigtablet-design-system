@@ -945,4 +945,150 @@ describe("Dropdown", () => {
 		const hiddens = container.querySelectorAll('input[type="hidden"][name="fruit"]');
 		expect(Array.from(hiddens).map((el) => (el as HTMLInputElement).value)).toEqual(["1", "2"]);
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const option = (name: string) => screen.getByRole("option", { name: new RegExp(name) });
+
+	it("starts uncontrolled multiple mode from defaultValue", () => {
+		render(<Dropdown multiple options={options} defaultValue={["1", "2"]} />);
+		expect(trigger()).toHaveTextContent("2개 선택");
+		fireEvent.click(trigger());
+		expect(option("Option 1")).toHaveAttribute("aria-selected", "true");
+		expect(option("Option 2")).toHaveAttribute("aria-selected", "true");
+	});
+
+	it("selects without any change handler in both modes", () => {
+		const { unmount } = render(<Dropdown options={options} />);
+		fireEvent.click(trigger());
+		expect(() => fireEvent.click(option("Option 2"))).not.toThrow();
+		expect(trigger()).toHaveTextContent("Option 2");
+		unmount();
+
+		render(<Dropdown multiple options={options} />);
+		fireEvent.click(trigger());
+		expect(() => fireEvent.click(option("Option 1"))).not.toThrow();
+		expect(trigger()).toHaveTextContent("1개 선택");
+	});
+
+	it("reports the selected options alongside the values in multiple mode", () => {
+		const onValueChange = vi.fn();
+		render(<Dropdown multiple options={options} value={["2"]} onValueChange={onValueChange} />);
+		fireEvent.click(trigger());
+		fireEvent.click(option("Option 1"));
+		expect(onValueChange).toHaveBeenCalledWith(["2", "1"], [options[1], options[0]]);
+	});
+
+	it("opens on the selected option, or the first enabled one when the selection is disabled", () => {
+		const { unmount } = render(<Dropdown options={options} defaultValue="2" />);
+		fireEvent.click(trigger());
+		expect(option("Option 2")).toHaveClass("is_active");
+		expect(option("Option 1")).not.toHaveClass("is_active");
+		unmount();
+
+		render(<Dropdown options={options} defaultValue="3" />);
+		fireEvent.click(trigger());
+		expect(option("Option 1")).toHaveClass("is_active");
+	});
+
+	it("filters on the very first keystroke and shows the typed text", () => {
+		render(<Dropdown searchable options={options} />);
+		fireEvent.click(trigger());
+		const input = screen.getByPlaceholderText("검색…");
+		fireEvent.change(input, { target: { value: "2" } });
+		expect(input).toHaveValue("2");
+		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Option 2"]);
+	});
+
+	it("filters again once a composition ends", () => {
+		render(<Dropdown searchable options={options} />);
+		fireEvent.click(trigger());
+		const input = screen.getByPlaceholderText("검색…");
+		fireEvent.compositionStart(input);
+		fireEvent.compositionEnd(input, { currentTarget: { value: "1" }, target: { value: "1" } });
+		fireEvent.change(input, { target: { value: "2" } });
+		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Option 2"]);
+	});
+
+	it("clears the search when the panel closes and reopens", () => {
+		render(<Dropdown searchable options={options} />);
+		fireEvent.click(trigger());
+		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "2" } });
+		fireEvent.keyDown(screen.getByPlaceholderText("검색…"), { key: "Escape" });
+		fireEvent.click(trigger());
+		expect(screen.getByPlaceholderText("검색…")).toHaveValue("");
+		expect(screen.getAllByRole("option")).toHaveLength(3);
+	});
+
+	it("moves focus into the search input only when searchable", () => {
+		const { unmount } = render(<Dropdown searchable options={options} />);
+		trigger().focus();
+		fireEvent.click(trigger());
+		expect(screen.getByPlaceholderText("검색…")).toHaveFocus();
+		expect(trigger()).not.toHaveAttribute("aria-activedescendant");
+		unmount();
+
+		render(<Dropdown options={options} />);
+		trigger().focus();
+		fireEvent.click(trigger());
+		expect(trigger()).toHaveFocus();
+	});
+
+	it("marks the value span as value or placeholder", () => {
+		const { container, rerender } = render(<Dropdown options={options} placeholder="선택" />);
+		expect(container.querySelector(".dropdown_placeholder")).toHaveTextContent("선택");
+		expect(container.querySelector(".dropdown_value")).toBeNull();
+		rerender(<Dropdown options={options} placeholder="선택" value="1" />);
+		expect(container.querySelector(".dropdown_value")).toHaveTextContent("Option 1");
+		expect(container.querySelector(".dropdown_placeholder")).toBeNull();
+	});
+
+	it("labels a label-less trigger with exactly its value span", () => {
+		const { container } = render(<Dropdown options={options} />);
+		const valueId = container.querySelector(".dropdown_placeholder")?.id;
+		expect(trigger().getAttribute("aria-labelledby")).toBe(valueId);
+	});
+
+	it("points the trigger at the first option when it is active, and at nothing once closed", () => {
+		render(<Dropdown options={options} />);
+		fireEvent.click(trigger());
+		expect(trigger().getAttribute("aria-activedescendant")).toBe(option("Option 1").id);
+		fireEvent.keyDown(trigger(), { key: "Escape" });
+		expect(trigger()).not.toHaveAttribute("aria-activedescendant");
+	});
+
+	it("marks the trigger invalid only inside an invalid Field and required only when asked", () => {
+		const { rerender } = render(<Dropdown options={options} />);
+		expect(trigger()).not.toHaveAttribute("aria-invalid");
+		expect(trigger()).not.toHaveAttribute("aria-required");
+		rerender(
+			<Field name="f" label="과일" error="필수">
+				<Dropdown options={options} />
+			</Field>,
+		);
+		expect(trigger()).toHaveAttribute("aria-invalid", "true");
+	});
+
+	it("follows the mouse onto enabled options and keeps options out of the tab order", () => {
+		render(<Dropdown options={options} />);
+		fireEvent.click(trigger());
+		fireEvent.mouseEnter(option("Option 2"));
+		expect(option("Option 2")).toHaveClass("is_active");
+		expect(option("Option 1")).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("renders option extras only when given, and the check only on a single selection", () => {
+		const { unmount } = render(<Dropdown options={options} value="1" />);
+		fireEvent.click(trigger());
+		expect(document.querySelector(".dropdown_option_icon")).toBeNull();
+		expect(document.querySelector(".dropdown_option_supporting")).toBeNull();
+		expect(document.querySelector(".dropdown_option_divider")).toBeNull();
+		expect(option("Option 1").querySelector(".dropdown_option_trailing")).not.toBeNull();
+		expect(option("Option 2").querySelector(".dropdown_option_trailing")).toBeNull();
+		unmount();
+
+		render(<Dropdown multiple options={options} value={["1"]} />);
+		fireEvent.click(trigger());
+		expect(option("Option 1").querySelector(".dropdown_option_trailing")).toBeNull();
+	});
 });
