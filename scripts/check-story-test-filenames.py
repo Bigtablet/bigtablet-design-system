@@ -29,7 +29,8 @@ import sys
 from pathlib import Path
 
 UI = Path("src/ui")
-SUFFIXES = (".test.tsx", ".test.ts", ".stories.tsx", ".stories.ts")
+# `.browser.test.*` 를 먼저 - 짧은 `.test.tsx` 가 먼저 잡히면 stem 이 `tooltip.browser` 가 된다.
+SUFFIXES = (".browser.test.tsx", ".browser.test.ts", ".test.tsx", ".test.ts", ".stories.tsx", ".stories.ts")
 
 
 def stem_and_kind(name: str) -> tuple[str, str] | None:

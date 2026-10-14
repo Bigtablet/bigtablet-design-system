@@ -37,6 +37,8 @@
   text-align: center;
   box-shadow: token.$elevation_level2;
   width: max-content; // 짧은 텍스트는 폭 자동, 긴 텍스트는 max-width 까지
-  max-width: 240px;
+  // `100%` = 위치 컨테이너의 인라인 max-width(뷰포트 가용 폭). 240px 만 두면 `max-content` 가
+  // 그 상한을 무시해 256px 미만 화면에서 툴팁이 오른쪽으로 넘친다 - Popover 와 같은 패턴.
+  max-width: min(240px, 100%);
   will-change: transform, opacity;
 }
