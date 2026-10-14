@@ -394,6 +394,7 @@ describe("Combobox", () => {
 		const input = screen.getByRole("combobox");
 		expect(input).toHaveAttribute("placeholder", "검색해서 선택");
 		expect(input.id).not.toBe("");
+		expect(document.body.querySelector(".combobox_panel")).toBeNull();
 		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 		expect(screen.queryByLabelText("검색 중")).not.toBeInTheDocument();
 	});
