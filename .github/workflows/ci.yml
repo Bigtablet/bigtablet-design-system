@@ -16,7 +16,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - 'LICENSE'
 
-# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). PR 코멘트를 쓰는 커버리지 리포트가 있는 `test` 만 상향한다.
+# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). PR 코멘트를 쓰는 커버리지 리포트가 있는 `unit` 만 상향한다.
 permissions:
   contents: read
 
@@ -28,7 +28,7 @@ jobs:
     # develop tip 과 동일하다. 그래서 develop 에 푸시할 때의 push 실행과 열린 릴리즈 PR 의
     # pull_request(synchronize) 실행이 같은 SHA·같은 트리를 두 번 검사하게 된다.
     # 이 조건은 head 가 develop 인 경우만 빼므로, 긴급 hotfix 브랜치 -> main PR 은 그대로 돈다.
-    # `test` 는 `needs: changes` 라 이 job 이 skip 되면 함께 skip 된다.
+    # 후속 job 은 모두 `needs: changes` 라 이 job 이 skip 되면 함께 skip 된다.
     if: >-
       !(github.event_name == 'pull_request' &&
         github.event.pull_request.head.ref == 'develop' &&
@@ -57,7 +57,7 @@ jobs:
               - 'biome.json'
               - 'scripts/**'
               # 워크플로를 바꾼 PR 도 돌려야 한다 - 그러지 않으면 CI 변경이
-              # 검증되지 않은 채 머지된다(이 축이 없어서 그동안 test job 이 스킵됐다)
+              # 검증되지 않은 채 머지된다(이 축이 없어서 그동안 테스트 job 이 스킵됐다)
               - '.github/workflows/**'
             stories:
               - 'src/**/*.stories.tsx'
@@ -70,7 +70,7 @@ jobs:
               - 'src/vanilla/**'
 
   # 병합 게이트 - 정적 분석 + 의존성 취약점 (시큐어코딩 가이드 제9장 제3조).
-  # `test` 와 병렬로 돌아 빨리 실패한다. 조건은 `test` 와 같다 - biome 은 스토리·vanilla JS 도 보고,
+  # 다른 job 과 병렬로 돌아 빨리 실패한다. 조건은 `build` 와 같다 - biome 은 스토리·vanilla JS 도 보고,
   # tsc 는 스토리 타입도 본다.
   static-checks:
     needs: changes
@@ -111,13 +111,16 @@ jobs:
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level=high
 
-  test:
+  # 아래 세 job(unit · a11y · build)은 서로 기다리지 않고 병렬로 돈다. 한 job 에서 차례로 돌 때는
+  # 커버리지(~60s) → Playwright 설치·a11y(~50s) → 빌드·검사가 이어져 150s 안팎이 걸렸다. job 마다
+  # `pnpm install` 이 반복되는 runner 시간을 내고 대기 시간을 가장 긴 job 하나로 줄인다.
+
+  # 단위 테스트 + 커버리지. vanilla 도 여기서 돈다 - `src/vanilla/*.test.ts` 가 `unit` 프로젝트에
+  # 들어 있는데, 예전 조건(`code || deps`)에는 vanilla 가 없어 vanilla 만 바꾼 PR 은 테스트 없이 통과했다.
+  unit:
     needs: changes
-    # docs-only / config-only PR은 paths-ignore에서 이미 걸러짐.
-    # 그 외엔 code / stories / deps / vanilla 중 하나라도 변경된 경우만 돈다.
     if: |
       needs.changes.outputs.code == 'true' ||
-      needs.changes.outputs.stories == 'true' ||
       needs.changes.outputs.deps == 'true' ||
       needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
@@ -125,6 +128,85 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22.14.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+      - name: Coverage Report
+        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0
+        if: github.event_name == 'pull_request'
+        with:
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+
+  # Storybook a11y - 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다.
+  a11y:
+    needs: changes
+    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22.14.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Playwright + Chromium 다운로드 ~200MB 라 무겁다.
+      #
+      # 브라우저 바이너리는 캐시한다. 실측으로 이 스텝은 apt(`--with-deps`, 폰트 9개 설치)
+      # 11s + 다운로드 8.7s 로 갈리는데, 캐시가 잡는 것은 뒤쪽이다. 폰트는 a11y 렌더에
+      # 영향을 주므로 `--with-deps` 는 유지한다. `playwright install` 이 idempotent 해서
+      # 캐시가 맞으면 다운로드만 건너뛰므로 hit/miss 분기는 두지 않는다.
+      # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
+      - name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run a11y tests (Storybook)
+        run: pnpm test:storybook
+
+  # 정적 검사(커밋 메시지 · SCSS · 파일명 등) + 빌드와 dist 기반 검사.
+  build:
+    needs: changes
+    if: |
+      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.stories == 'true' ||
+      needs.changes.outputs.deps == 'true' ||
+      needs.changes.outputs.vanilla == 'true'
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -183,36 +265,6 @@ jobs:
       - name: Check test and story filenames
         run: pnpm check:filenames
 
-      # 코드 또는 의존성 변경 → unit 테스트 + 커버리지
-      - name: Run tests with coverage
-        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true'
-        run: pnpm test:coverage
-
-      # Storybook a11y는 무겁다 (Playwright + Chromium 다운로드 ~200MB)
-      # 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다
-      #
-      # 브라우저 바이너리는 캐시한다. 실측으로 이 스텝은 apt(`--with-deps`, 폰트 9개 설치)
-      # 11s + 다운로드 8.7s 로 갈리는데, 캐시가 잡는 것은 뒤쪽이다. 폰트는 a11y 렌더에
-      # 영향을 주므로 `--with-deps` 는 유지한다. `playwright install` 이 idempotent 해서
-      # 캐시가 맞으면 다운로드만 건너뛰므로 hit/miss 분기는 두지 않는다.
-      # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
-      - name: Cache Playwright browsers
-        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
-      - name: Install Playwright browsers
-        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Run a11y tests (Storybook)
-        if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
-        run: pnpm test:storybook
-
       # 빌드는 모든 변경에서 검증 (deps/scripts 변경도 빌드 영향 가능)
       - name: Build
         run: pnpm build
@@ -234,10 +286,3 @@ jobs:
       # 렌더해 axe 가 이 대비 결함을 못 잡는다(실측 3.06:1 · 2.85:1).
       - name: Check dark-theme text tokens
         run: pnpm check:dark-text
-
-      - name: Coverage Report
-        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0
-        if: github.event_name == 'pull_request' && (needs.changes.outputs.code == 'true' || needs.changes.outputs.deps == 'true')
-        with:
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
