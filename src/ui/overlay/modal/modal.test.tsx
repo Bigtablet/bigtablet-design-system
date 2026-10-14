@@ -788,4 +788,173 @@ describe("Modal", () => {
 
 		expect(document.activeElement).toBe(screen.getByRole("button", { name: "취소" }));
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	it("does not take Escape while closed", () => {
+		const onClose = vi.fn();
+		render(
+			<Modal open={false} onClose={onClose}>
+				Content
+			</Modal>,
+		);
+		fireEvent.keyDown(document, { key: "Escape" });
+		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it("tolerates Escape, overlay click and exit without callbacks", async () => {
+		const { rerender } = render(<Modal open>Content</Modal>);
+		const overlay = screen.getByRole("dialog");
+		expect(() => {
+			fireEvent.keyDown(document, { key: "Escape" });
+			fireEvent.pointerDown(overlay);
+			fireEvent.click(overlay);
+		}).not.toThrow();
+		rerender(<Modal open={false}>Content</Modal>);
+		await waitFor(() => expect(document.querySelector(".modal_panel")).toBeNull());
+	});
+
+	it("does not close on an overlay click that never started on the overlay", () => {
+		const onClose = vi.fn();
+		render(
+			<Modal open onClose={onClose}>
+				Content
+			</Modal>,
+		);
+		fireEvent.click(screen.getByRole("dialog"));
+		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it("does not close when a press starts on the overlay but the click lands on the panel", () => {
+		const onClose = vi.fn();
+		render(
+			<Modal open onClose={onClose}>
+				Content
+			</Modal>,
+		);
+		fireEvent.pointerDown(screen.getByRole("dialog"));
+		fireEvent.click(document.querySelector(".modal_panel") as HTMLElement);
+		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it("keeps keys other than Escape from reaching handlers above the modal", () => {
+		const onKeyDown = vi.fn();
+		render(
+			<div onKeyDown={onKeyDown}>
+				<Modal open onClose={() => {}}>
+					<input aria-label="입력" />
+				</Modal>
+			</div>,
+		);
+		fireEvent.keyDown(screen.getByLabelText("입력"), { key: "a" });
+		expect(onKeyDown).not.toHaveBeenCalled();
+	});
+
+	it("names the dialog from ariaLabel even when a title exists", () => {
+		render(
+			<Modal open onClose={() => {}} title="제목" ariaLabel="설정">
+				Content
+			</Modal>,
+		);
+		const dialog = screen.getByRole("dialog");
+		expect(dialog).toHaveAttribute("aria-label", "설정");
+		expect(dialog).not.toHaveAttribute("aria-labelledby");
+	});
+
+	it("names the dialog from its title when there is no ariaLabel", () => {
+		render(
+			<Modal open onClose={() => {}} title="제목">
+				Content
+			</Modal>,
+		);
+		expect(screen.getByRole("dialog", { name: "제목" })).toHaveAttribute(
+			"aria-labelledby",
+			document.querySelector(".modal_title")?.id,
+		);
+	});
+
+	it("renders no title, description or footer slots when they are empty", () => {
+		render(
+			<Modal open onClose={() => {}}>
+				Content
+			</Modal>,
+		);
+		expect(document.querySelector(".modal_title")).toBeNull();
+		expect(document.querySelector(".modal_description")).toBeNull();
+		expect(document.querySelector(".modal_footer")).toBeNull();
+	});
+
+	it("aligns the footer to the end by default and to the requested side otherwise", () => {
+		const { rerender } = render(
+			<Modal open onClose={() => {}} footer={<button type="button">확인</button>}>
+				Content
+			</Modal>,
+		);
+		expect(document.querySelector(".modal_footer")).toHaveClass("modal_footer_end");
+		rerender(
+			<Modal
+				open
+				onClose={() => {}}
+				footer={<button type="button">확인</button>}
+				footerAlign="start"
+			>
+				Content
+			</Modal>,
+		);
+		expect(document.querySelector(".modal_footer")).toHaveClass("modal_footer_start");
+	});
+
+	it("does not report onExited when it finishes opening", async () => {
+		const onExited = vi.fn();
+		const { rerender } = render(
+			<Modal open={false} onClose={() => {}} onExited={onExited}>
+				Content
+			</Modal>,
+		);
+		rerender(
+			<Modal open onClose={() => {}} onExited={onExited}>
+				Content
+			</Modal>,
+		);
+		await waitFor(() => expect(screen.getByRole("dialog")).toBeInTheDocument());
+		await new Promise((r) => setTimeout(r, 0));
+		expect(onExited).not.toHaveBeenCalled();
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+	});
+
+	describe("exit animation after opening from closed (skipAnimation off)", () => {
+		beforeEach(() => Globals.assign({ skipAnimation: false }));
+		afterEach(() => Globals.assign({ skipAnimation: true }));
+
+		it("stays mounted through the exit when it was first mounted closed", () => {
+			const ui = (open: boolean) => (
+				<Modal open={open} onClose={() => {}}>
+					Content
+				</Modal>
+			);
+			const { rerender } = render(ui(false));
+			rerender(ui(true));
+			rerender(ui(false));
+			// 퇴출 애니메이션이 도는 동안은 남아 있어야 한다 - 바로 사라지면 모션 없이 끊긴다
+			expect(document.querySelector(".modal_panel")).not.toBeNull();
+		});
+
+		it("does not report onExited when the enter animation settles", async () => {
+			// 진입이 끝나도 onRest 는 발화한다 - 열린 상태에서는 퇴출 처리를 건너뛰어야 한다
+			const onExited = vi.fn();
+			const ui = (open: boolean) => (
+				<Modal open={open} onClose={() => {}} onExited={onExited}>
+					Content
+				</Modal>
+			);
+			const { rerender } = render(ui(false));
+			rerender(ui(true));
+			await waitFor(() =>
+				expect((document.querySelector(".modal_panel") as HTMLElement).style.opacity).toBe("1"),
+			);
+			await new Promise((r) => setTimeout(r, 50));
+			expect(onExited).not.toHaveBeenCalled();
+			expect(document.querySelector(".modal_panel")).not.toBeNull();
+		});
+	});
 });
