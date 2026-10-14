@@ -561,3 +561,360 @@ describe("DatePicker variant=calendar", () => {
 		expect(screen.getByRole("button", { name: "Previous month" })).toBeInTheDocument();
 	});
 });
+
+// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+// 오늘은 2026-09-15 로 고정한다(드롭다운) / 2026-10-12 (달력, 위 describe 와 같은 날).
+
+/** n 번째 드롭다운을 열어 옵션 글자를 읽고 닫는다. */
+const optionsOf = (index: number) => {
+	const trigger = screen.getAllByRole("combobox")[index] as HTMLElement;
+	fireEvent.click(trigger);
+	const labels = screen.queryAllByRole("option").map((o) => o.textContent);
+	fireEvent.keyDown(trigger, { key: "Escape" });
+	return labels;
+};
+const pick = (index: number, label: string) => {
+	fireEvent.click(screen.getAllByRole("combobox")[index] as HTMLElement);
+	fireEvent.click(screen.getByRole("option", { name: label }));
+};
+
+describe("DatePicker 범위 분기", () => {
+	beforeEach(() => {
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date(2026, 8, 15, 9, 0));
+	});
+	afterEach(() => vi.useRealTimers());
+
+	it("ends the year list at today + 10 by default and at today for until-today", () => {
+		const { rerender } = render(<DatePicker startYear={2020} onValueChange={vi.fn()} />);
+		expect(optionsOf(0).at(-1)).toBe("2036");
+		rerender(<DatePicker startYear={2020} selectableRange="until-today" onValueChange={vi.fn()} />);
+		expect(optionsOf(0).at(-1)).toBe("2026");
+	});
+
+	it("starts the month list at minDate's month only in minDate's year", () => {
+		const { rerender } = render(
+			<DatePicker value="2020-07-01" minDate="2020-06-15" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(1)[0]).toBe("06");
+		expect(optionsOf(1)).toHaveLength(7);
+		rerender(<DatePicker value="2021-07-01" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		expect(optionsOf(1)).toHaveLength(12);
+	});
+
+	it("ends the month list at this month only for until-today in this year", () => {
+		const { rerender } = render(
+			<DatePicker value="2026-03-01" selectableRange="until-today" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(1).at(-1)).toBe("09");
+		rerender(
+			<DatePicker value="2025-03-01" selectableRange="until-today" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(1).at(-1)).toBe("12");
+		rerender(<DatePicker value="2026-03-01" onValueChange={vi.fn()} />);
+		expect(optionsOf(1).at(-1)).toBe("12");
+	});
+
+	it("narrows the day list only in minDate's month and in this month for until-today", () => {
+		const { rerender } = render(
+			<DatePicker value="2020-06-20" minDate="2020-06-15" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(2)[0]).toBe("15");
+		rerender(<DatePicker value="2020-07-20" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		expect(optionsOf(2)[0]).toBe("01");
+		rerender(<DatePicker value="2021-06-20" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		expect(optionsOf(2)[0]).toBe("01");
+
+		rerender(
+			<DatePicker value="2026-09-01" selectableRange="until-today" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(2).at(-1)).toBe("15");
+		rerender(
+			<DatePicker value="2026-08-01" selectableRange="until-today" onValueChange={vi.fn()} />,
+		);
+		expect(optionsOf(2).at(-1)).toBe("31");
+		rerender(<DatePicker value="2026-09-01" onValueChange={vi.fn()} />);
+		expect(optionsOf(2).at(-1)).toBe("30");
+	});
+
+	it("keeps a month and a day whose window is exactly one day", () => {
+		// minDate 와 오늘이 같은 날 - 고를 수 있는 날이 하나뿐이어도 비우면 안 된다
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				value="2026-08-10"
+				minDate="2026-09-15"
+				selectableRange="until-today"
+				onValueChange={onValueChange}
+			/>,
+		);
+		expect(optionsOf(1)).toEqual(["09"]);
+		pick(1, "09");
+		expect(onValueChange).toHaveBeenCalledWith("2026-09-15");
+	});
+
+	it("emits a one-day month in year-month mode", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				mode="year-month"
+				value="2026-08"
+				minDate="2026-09-15"
+				selectableRange="until-today"
+				onValueChange={onValueChange}
+			/>,
+		);
+		pick(1, "09");
+		expect(onValueChange).toHaveBeenCalledWith("2026-09");
+	});
+
+	it("emits nothing when a year change lands before minDate", () => {
+		// 2026 으로 바꾸면 월은 오늘(9월)로 당겨지지만 minDate 는 12월 - 일 범위만으로는 못 거른다
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				value="2025-12-10"
+				minDate="2026-12-01"
+				selectableRange="until-today"
+				onValueChange={onValueChange}
+			/>,
+		);
+		pick(0, "2026");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("keeps the month on a year change outside minDate's year and below until-today's year", () => {
+		const onValueChange = vi.fn();
+		const { rerender } = render(
+			<DatePicker value="2030-03-10" minDate="2020-06-15" onValueChange={onValueChange} />,
+		);
+		pick(0, "2021");
+		expect(onValueChange).toHaveBeenLastCalledWith("2021-03-10");
+
+		rerender(
+			<DatePicker value="2025-11-10" selectableRange="until-today" onValueChange={onValueChange} />,
+		);
+		pick(0, "2024");
+		expect(onValueChange).toHaveBeenLastCalledWith("2024-11-10");
+	});
+
+	it("keeps the chosen day when the month changes", () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker value="2024-05-20" onValueChange={onValueChange} />);
+		pick(1, "06");
+		expect(onValueChange).toHaveBeenCalledWith("2024-06-20");
+	});
+
+	it("marks the group invalid only inside an invalid Field", () => {
+		const { rerender } = render(<DatePicker onValueChange={vi.fn()} />);
+		expect(screen.getByRole("group")).not.toHaveAttribute("aria-invalid");
+		rerender(
+			<Field name="d" label="날짜" error="필수">
+				<DatePicker onValueChange={vi.fn()} />
+			</Field>,
+		);
+		expect(screen.getByRole("group")).toHaveAttribute("aria-invalid", "true");
+	});
+});
+
+describe("DatePicker variant=calendar 분기", () => {
+	beforeEach(() => {
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date(2026, 9, 12, 9, 0));
+	});
+	afterEach(() => vi.useRealTimers());
+
+	const title = () => document.querySelector(".date_calendar_title")?.textContent;
+	const focusedDay = () => grid().querySelector('button[tabindex="0"]')?.textContent;
+
+	it("starts closed, names the dialog, and links label, value and constraint", () => {
+		const { rerender } = render(<DatePicker variant="calendar" onValueChange={vi.fn()} />);
+		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		const trigger = () => screen.getAllByRole("button")[0] as HTMLElement;
+		const valueSpan = () => trigger().querySelector("span") as HTMLElement;
+		// 라벨 없으면 값 칸 하나만 가리킨다
+		expect(trigger()).toHaveAttribute("aria-labelledby", valueSpan().id);
+		expect(trigger()).not.toHaveAttribute("aria-describedby");
+		expect(trigger()).not.toHaveAttribute("aria-invalid");
+		expect(document.querySelector(".date_picker_label")).toBeNull();
+		expect(document.querySelector(".date_picker_sr_only")).toBeNull();
+		open();
+		expect(screen.getByRole("dialog", { name: "달력" })).toBeInTheDocument();
+
+		rerender(
+			<DatePicker variant="calendar" label="시작일" minDate="2026-10-01" onValueChange={vi.fn()} />,
+		);
+		expect(screen.getByRole("dialog", { name: "시작일" })).toBeInTheDocument();
+		const constraint = document.querySelector(".date_picker_sr_only") as HTMLElement;
+		expect(constraint).toHaveTextContent("최소 날짜: 2026-10-01");
+		expect(trigger()).toHaveAttribute("aria-describedby", constraint.id);
+		expect(document.querySelector(".date_picker_label")).toHaveTextContent("시작일");
+	});
+
+	it("joins the Field description and the constraint", () => {
+		render(
+			<Field name="d" label="날짜" help="도움말">
+				<DatePicker variant="calendar" minDate="2026-10-01" onValueChange={vi.fn()} />
+			</Field>,
+		);
+		const trigger = screen.getAllByRole("button")[0] as HTMLElement;
+		expect(trigger.getAttribute("aria-describedby")?.split(" ")).toHaveLength(2);
+	});
+
+	it("treats a value without a day as no selection", () => {
+		render(<DatePicker variant="calendar" value="2026-10" onValueChange={vi.fn()} />);
+		expect(screen.getByRole("button", { name: "날짜 선택" })).toBeInTheDocument();
+	});
+
+	it("lays out October 2026 from Thursday with 31 days and Sunday-first headers", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+		const headers = Array.from(grid().querySelectorAll("th"), (th) => th.getAttribute("abbr"));
+		expect(headers.slice(0, 2)).toEqual(["일요일", "월요일"]);
+		const rows = Array.from(grid().querySelectorAll("tbody tr"), (tr) =>
+			Array.from(tr.querySelectorAll("td"), (td) => td.textContent),
+		);
+		expect(rows).toHaveLength(6);
+		expect(rows[0]).toEqual(["", "", "", "", "1", "2", "3"]);
+		expect(rows[4]).toEqual(["25", "26", "27", "28", "29", "30", "31"]);
+		expect(rows[5]?.every((c) => c === "")).toBe(true);
+		expect(day(13)).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("moves left, up, to the week ends and by month or year with PageUp", () => {
+		render(<DatePicker variant="calendar" value="2026-10-13" onValueChange={vi.fn()} />);
+		open();
+		fireEvent.keyDown(day(13), { key: "Home" });
+		expect(focusedDay()).toBe("11");
+		fireEvent.keyDown(day(11), { key: "ArrowRight" });
+		fireEvent.keyDown(day(12), { key: "ArrowRight" });
+		fireEvent.keyDown(day(13), { key: "End" });
+		expect(focusedDay()).toBe("17");
+		fireEvent.keyDown(day(17), { key: "ArrowLeft" });
+		expect(focusedDay()).toBe("16");
+		fireEvent.keyDown(day(16), { key: "ArrowUp" });
+		expect(focusedDay()).toBe("9");
+
+		fireEvent.keyDown(day(9), { key: "PageUp" });
+		expect(title()).toBe("2026년 9월");
+		const sep9 = within(grid()).getByRole("button", { name: /9월 9일/ });
+		fireEvent.keyDown(sep9, { key: "PageUp", shiftKey: true });
+		expect(title()).toBe("2025년 9월");
+	});
+
+	it("prevents the default action only for navigation keys", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+		expect(fireEvent.keyDown(day(12), { key: "a" })).toBe(true);
+		expect(fireEvent.keyDown(day(12), { key: "ArrowRight" })).toBe(false);
+	});
+
+	it("goes back a month from the previous button, which is enabled without a lower bound", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+		const prev = screen.getByRole("button", { name: "이전 달" });
+		expect(prev).toBeEnabled();
+		fireEvent.click(prev);
+		expect(title()).toBe("2026년 9월");
+	});
+
+	it("keeps focus on the nav button after an earlier keyboard move", () => {
+		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
+		open();
+		fireEvent.keyDown(day(12), { key: "ArrowRight" });
+		const next = screen.getByRole("button", { name: "다음 달" });
+		next.focus();
+		act(() => fireEvent.click(next));
+		expect(next).toHaveFocus();
+	});
+
+	it("moves the focus marker to a clicked day even when it cannot be picked", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				variant="calendar"
+				minDate="2026-10-10"
+				value="2026-10-12"
+				onValueChange={onValueChange}
+			/>,
+		);
+		open();
+		fireEvent.click(day(9));
+		expect(onValueChange).not.toHaveBeenCalled();
+		expect(day(9)).toHaveAttribute("tabindex", "0");
+	});
+
+	it("starts on the selected day inside the bounding months and clamps outside ones", () => {
+		const { unmount } = render(
+			<DatePicker
+				variant="calendar"
+				minDate="2026-10-10"
+				value="2026-10-12"
+				onValueChange={vi.fn()}
+			/>,
+		);
+		open();
+		expect(focusedDay()).toBe("12");
+		unmount();
+
+		const second = render(
+			<DatePicker
+				variant="calendar"
+				selectableRange="until-today"
+				value="2026-10-05"
+				onValueChange={vi.fn()}
+			/>,
+		);
+		open();
+		expect(focusedDay()).toBe("5");
+		second.unmount();
+
+		const third = render(
+			<DatePicker
+				variant="calendar"
+				minDate="2026-10-10"
+				value="2026-08-01"
+				onValueChange={vi.fn()}
+			/>,
+		);
+		open();
+		expect(title()).toBe("2026년 10월");
+		expect(focusedDay()).toBe("1");
+		third.unmount();
+
+		render(
+			<DatePicker
+				variant="calendar"
+				selectableRange="until-today"
+				value="2026-12-01"
+				onValueChange={vi.fn()}
+			/>,
+		);
+		open();
+		expect(title()).toBe("2026년 10월");
+		expect(focusedDay()).toBe("31");
+	});
+
+	it("bounds months by startYear/endYear alone when minDate is earlier and the range is open", () => {
+		// minDate 의 월(6월)은 minDate 의 해에만 걸린다 - startYear 가 더 늦으면 그 해 1월부터
+		const { unmount } = render(
+			<DatePicker
+				variant="calendar"
+				startYear={2026}
+				minDate="2020-06-01"
+				value="2026-02-10"
+				onValueChange={vi.fn()}
+			/>,
+		);
+		open();
+		expect(title()).toBe("2026년 2월");
+		unmount();
+
+		// endYear 가 올해여도 "all" 이면 12월까지 넘어간다
+		render(
+			<DatePicker variant="calendar" endYear={2026} value="2026-10-12" onValueChange={vi.fn()} />,
+		);
+		open();
+		expect(screen.getByRole("button", { name: "다음 달" })).toBeEnabled();
+	});
+});
