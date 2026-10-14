@@ -254,4 +254,82 @@ describe("TagInput", () => {
 		expect(field()).not.toHaveAttribute("aria-required");
 		expect(field()).not.toHaveAttribute("aria-invalid");
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const status = () => screen.getByRole("status").textContent;
+
+	it("trims typed values and splits a typed list", () => {
+		const onValueChange = vi.fn();
+		render(<TagInput onValueChange={onValueChange} />);
+		type("  react , vue  ");
+		enter();
+		expect(onValueChange).toHaveBeenCalledWith(["react", "vue"]);
+		expect(status()).toBe("react, vue 추가됨");
+	});
+
+	it("announces a plain add without notes, and no cap note below the cap", () => {
+		render(<TagInput defaultValue={["a"]} maxTags={3} />);
+		type("b");
+		enter();
+		expect(status()).toBe("b 추가됨");
+		expect(field()).not.toHaveAttribute("readonly");
+	});
+
+	it("keeps the draft and the tags when every candidate is a duplicate", () => {
+		const onValueChange = vi.fn();
+		render(<TagInput defaultValue={["a"]} onValueChange={onValueChange} />);
+		type("a");
+		enter();
+		expect(status()).toBe("a 이미 있음");
+		expect(field()).toHaveValue("a");
+		fireEvent.blur(field());
+		expect(field()).toHaveValue("a");
+		fireEvent.paste(field(), { clipboardData: { getData: () => ",a" } });
+		expect(field()).toHaveValue("a");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("notes the dropped duplicates next to what was added", () => {
+		render(<TagInput defaultValue={["a"]} />);
+		fireEvent.paste(field(), { clipboardData: { getData: () => "a,b" } });
+		expect(tagLabels()).toEqual(["a", "b"]);
+		expect(status()).toBe("b 추가됨 (a 이미 있음)");
+		expect(field()).toHaveValue("");
+	});
+
+	it("says only the cap when a full input gets more, and ignores an empty Enter", () => {
+		render(<TagInput defaultValue={["a", "b"]} maxTags={2} />);
+		enter();
+		expect(status()).toBe("");
+		fireEvent.paste(field(), { clipboardData: { getData: () => "c,d" } });
+		expect(status()).toBe("최대 2개까지 추가할 수 있습니다");
+		expect(field()).toHaveAttribute("placeholder", "");
+	});
+
+	it("never fills up without maxTags", () => {
+		render(<TagInput defaultValue={["a", "b", "c"]} />);
+		expect(field()).not.toHaveAttribute("readonly");
+		expect(field()).toHaveAttribute("placeholder", "입력 후 Enter");
+	});
+
+	it("blocks the default only for Backspace that removes a tag and for separated pastes", () => {
+		const { unmount } = render(<TagInput />);
+		expect(fireEvent.keyDown(field(), { key: "Backspace" })).toBe(true);
+		expect(fireEvent.paste(field(), { clipboardData: { getData: () => "plain" } })).toBe(true);
+		unmount();
+
+		render(<TagInput defaultValue={["a"]} />);
+		expect(fireEvent.paste(field(), { clipboardData: { getData: () => "x,y" } })).toBe(false);
+		expect(fireEvent.keyDown(field(), { key: "Backspace" })).toBe(false);
+	});
+
+	it("renders no tag list when empty, an id on the input and full width only when asked", () => {
+		const { container, rerender } = render(<TagInput />);
+		expect(screen.queryByRole("list")).not.toBeInTheDocument();
+		expect(field().id).not.toBe("");
+		expect(container.firstChild).not.toHaveClass("tag_input_full_width");
+		rerender(<TagInput fullWidth />);
+		expect(container.firstChild).toHaveClass("tag_input_full_width");
+	});
 });
