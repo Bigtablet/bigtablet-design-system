@@ -158,7 +158,8 @@ jobs:
   # Storybook a11y - 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다.
   a11y:
     needs: changes
-    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true'
+    # vanilla - `src/vanilla/*.browser.test.ts` 레이아웃 테스트가 이 job 에서 돈다
+    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true' || needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
 
     steps:
