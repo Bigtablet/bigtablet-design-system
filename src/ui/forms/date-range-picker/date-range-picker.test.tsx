@@ -144,6 +144,9 @@ describe("DateRangePicker", () => {
 	it("marks required from the prop, invalid only inside an invalid Field, and full width by default", () => {
 		const { container, rerender } = render(<DateRangePicker onValueChange={vi.fn()} />);
 		expect(triggers()[0]).not.toHaveAttribute("aria-required");
+		expect(container.querySelector(".date_range_picker_fields")).not.toHaveAttribute(
+			"aria-invalid",
+		);
 		expect(container.firstChild).toHaveClass("date_range_picker_full_width");
 
 		rerender(<DateRangePicker onValueChange={vi.fn()} required fullWidth={false} />);

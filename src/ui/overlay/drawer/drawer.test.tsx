@@ -860,6 +860,10 @@ describe("Drawer", () => {
 		fireEvent.pointerDown(overlay);
 		fireEvent.click(document.querySelector(".drawer_panel") as HTMLElement);
 		expect(onClose).not.toHaveBeenCalled();
+
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 
 	it("keeps keys other than Escape from reaching handlers above the drawer", () => {
@@ -898,7 +902,8 @@ describe("Drawer", () => {
 			const { rerender } = render(ui(false));
 			rerender(ui(true));
 			await waitFor(() => expect(screen.getByRole("dialog").style.opacity).toBe("1"));
-			await new Promise((r) => requestAnimationFrame(() => r(null)));
+			// 오버레이가 목표값에 닿은 뒤 onRest 가 돌 여유를 몇 프레임 준다
+			for (let i = 0; i < 3; i++) await new Promise((r) => requestAnimationFrame(() => r(null)));
 			expect(onExited).not.toHaveBeenCalled();
 			expect(document.querySelector(".drawer_panel")).not.toBeNull();
 		});
