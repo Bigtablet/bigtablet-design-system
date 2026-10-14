@@ -2,7 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // Vanilla 번들은 UMD 다. 소비자는 `<script>` 로 읽어 전역 `Bigtablet` 을 쓰지만, 여기서는
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
-import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
+import {
+	Alert,
+	Dropdown,
+	init,
+	Modal,
+	Modal as ModalFactory,
+	Pagination,
+	Toggle,
+} from "./bigtablet.js";
 
 /**
  * jsdom 은 레이아웃을 하지 않아 fixed 프로브의 폭이 0 이다. 스크롤바나 예약된 거터가 있는
@@ -755,5 +763,694 @@ describe("Alert", () => {
 		expect(scrolled.at(-1)).toEqual({ text: "포도", arg: { block: "nearest" } });
 
 		vi.restoreAllMocks();
+	});
+});
+
+// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남거나 실행되지 않던 분기 ──────────
+
+const key = (target: EventTarget, k: string, init: KeyboardEventInit = {}) => {
+	const event = new KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true, ...init });
+	target.dispatchEvent(event);
+	return event;
+};
+
+describe("Pagination", () => {
+	const mount = (page: number, totalPages: number, onPageChange?: (p: number) => void) => {
+		const el = document.createElement("nav");
+		el.className = "bt-pagination";
+		document.body.appendChild(el);
+		return { el, api: Pagination(el, { page, totalPages, onPageChange }) };
+	};
+	const labels = (el: HTMLElement) =>
+		Array.from(el.querySelectorAll(".bt-pagination__pages > *"), (n) =>
+			n.classList.contains("bt-pagination__ellipsis") ? "…" : (n.textContent ?? "").trim(),
+		);
+
+	it("lists every page up to 7 and collapses with ellipses beyond", () => {
+		expect(labels(mount(1, 7).el)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
+		expect(labels(mount(4, 20).el)).toEqual(["1", "2", "3", "4", "5", "…", "20"]);
+		expect(labels(mount(5, 20).el)).toEqual(["1", "…", "3", "4", "5", "6", "7", "…", "20"]);
+		expect(labels(mount(16, 20).el)).toEqual(["1", "…", "14", "15", "16", "17", "18", "…", "20"]);
+		expect(labels(mount(17, 20).el)).toEqual(["1", "…", "16", "17", "18", "19", "20"]);
+	});
+
+	it("marks the current page and disables prev/next at the ends", () => {
+		const { el } = mount(1, 3);
+		const current = el.querySelector('[aria-current="page"]');
+		expect(current?.textContent?.trim()).toBe("1");
+		expect(current).toHaveClass("bt-pagination__page--active");
+		expect(el.querySelectorAll(".bt-pagination__page--active")).toHaveLength(1);
+		expect(el.querySelector<HTMLButtonElement>('[data-action="prev"]')?.disabled).toBe(true);
+		expect(el.querySelector<HTMLButtonElement>('[data-action="next"]')?.disabled).toBe(false);
+
+		const last = mount(3, 3).el;
+		expect(last.querySelector<HTMLButtonElement>('[data-action="prev"]')?.disabled).toBe(false);
+		expect(last.querySelector<HTMLButtonElement>('[data-action="next"]')?.disabled).toBe(true);
+	});
+
+	it("moves by page buttons and prev/next, reporting each change once", () => {
+		const onPageChange = vi.fn();
+		const { el, api } = mount(2, 5, onPageChange);
+		el.querySelector<HTMLButtonElement>('[data-page="4"]')?.click();
+		expect(api?.getPage()).toBe(4);
+		el.querySelector<HTMLButtonElement>('[data-action="next"]')?.click();
+		expect(api?.getPage()).toBe(5);
+		el.querySelector<HTMLButtonElement>('[data-action="prev"]')?.click();
+		expect(api?.getPage()).toBe(4);
+		expect(onPageChange.mock.calls.map(([p]) => p)).toEqual([4, 5, 4]);
+	});
+
+	it("ignores setPage outside the range or on the current page", () => {
+		const onPageChange = vi.fn();
+		const { api } = mount(2, 5, onPageChange);
+		api?.setPage(0);
+		api?.setPage(6);
+		api?.setPage(2);
+		expect(api?.getPage()).toBe(2);
+		expect(onPageChange).not.toHaveBeenCalled();
+		api?.setPage(1);
+		api?.setPage(5);
+		expect(onPageChange.mock.calls.map(([p]) => p)).toEqual([1, 5]);
+	});
+
+	it("clamps the page when the total shrinks and accepts a selector", () => {
+		const { el, api } = mount(5, 5);
+		api?.setTotalPages(3);
+		expect(api?.getPage()).toBe(3);
+		expect(labels(el)).toEqual(["1", "2", "3"]);
+		api?.setTotalPages(10);
+		expect(api?.getPage()).toBe(3);
+
+		el.id = "pg";
+		expect(Pagination("#pg", { totalPages: 2 })?.getPage()).toBe(1);
+		expect(Pagination("#missing")).toBeNull();
+	});
+});
+
+describe("init", () => {
+	it("binds data-bt-* elements once, including modal triggers and pagination attributes", () => {
+		document.body.innerHTML = `
+			<div class="bt-dropdown" data-bt-dropdown>
+				<button type="button" class="bt-dropdown__control"></button>
+				<ul class="bt-dropdown__list"><li class="bt-dropdown__option" data-value="a">A</li></ul>
+			</div>
+			<button id="opener" data-bt-modal-open="m">open</button>
+			<div id="m" class="bt-modal" data-bt-modal><div class="bt-modal__panel"><button>x</button></div></div>
+			<button class="bt-toggle" data-bt-toggle></button>
+			<nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="9"></nav>
+			<nav id="p2" class="bt-pagination" data-bt-pagination></nav>`;
+		init();
+		init();
+
+		type Bound = HTMLElement & Record<string, { getPage?: () => number } | undefined>;
+		const $el = (sel: string) => document.querySelector(sel) as Bound;
+		expect($el("[data-bt-dropdown]")._btDropdown).toBeTruthy();
+		expect($el("[data-bt-toggle]")._btToggle).toBeTruthy();
+		expect($el("[data-bt-toggle]").getAttribute("role")).toBe("switch");
+		expect($el("[data-bt-pagination]")._btPagination?.getPage?.()).toBe(3);
+		expect($el("#p2")._btPagination?.getPage?.()).toBe(1);
+
+		const modal = $el("#m");
+		const opener = $el("#opener");
+		expect(opener.dataset.btBound).toBe("true");
+		const open = vi.spyOn(modal._btModal as unknown as { open: () => void }, "open");
+		// 두 번 init 해도 리스너는 하나다
+		opener.click();
+		expect(open).toHaveBeenCalledTimes(1);
+		expect(modal.classList.contains("is-open")).toBe(true);
+		(modal._btModal as unknown as { destroy: () => void }).destroy();
+	});
+});
+
+describe("Toggle - 초기화 · API", () => {
+	const mount = (html = '<button class="bt-toggle"></button>') => {
+		document.body.innerHTML = `<form>${html}</form>`;
+		return document.querySelector(".bt-toggle") as HTMLButtonElement;
+	};
+
+	it("adds switch semantics and type=button without overriding consumer values", () => {
+		const el = mount();
+		Toggle(el);
+		expect(el.getAttribute("role")).toBe("switch");
+		expect(el.getAttribute("type")).toBe("button");
+		expect(el.getAttribute("aria-checked")).toBe("false");
+		expect(el.classList.contains("bt-toggle--on")).toBe(false);
+
+		const custom = mount('<button class="bt-toggle" role="checkbox" type="submit"></button>');
+		Toggle(custom);
+		expect(custom.getAttribute("role")).toBe("checkbox");
+		expect(custom.getAttribute("type")).toBe("submit");
+	});
+
+	it("starts on from defaultChecked or the on class", () => {
+		const a = mount();
+		expect(Toggle(a, { defaultChecked: true })?.isChecked()).toBe(true);
+		expect(a.classList.contains("bt-toggle--on")).toBe(true);
+		expect(a.getAttribute("aria-checked")).toBe("true");
+
+		const b = mount('<button class="bt-toggle bt-toggle--on"></button>');
+		expect(Toggle(b)?.isChecked()).toBe(true);
+	});
+
+	it("creates a sibling hidden input for a named button and keeps it in sync", () => {
+		const el = mount();
+		const api = Toggle(el, { name: "agree" });
+		const input = el.nextElementSibling as HTMLInputElement;
+		expect(input.tagName).toBe("INPUT");
+		expect(input.type).toBe("hidden");
+		expect(input.name).toBe("agree");
+		expect(input.value).toBe("false");
+		expect(el.querySelector("input")).toBeNull();
+		api?.setChecked(true);
+		expect(input.value).toBe("true");
+		expect(el.getAttribute("aria-checked")).toBe("true");
+	});
+
+	it("appends the hidden input inside a non-button toggle and reads data-name", () => {
+		const el = mount('<div class="bt-toggle" data-name="dark"></div>');
+		Toggle(el);
+		expect(el.querySelector<HTMLInputElement>('input[type="hidden"]')?.name).toBe("dark");
+	});
+
+	it("reuses a server-rendered sibling input and reads lenient on values", () => {
+		for (const raw of ["true", "1", "on", "y", "YES "]) {
+			const el = mount(
+				`<button class="bt-toggle" data-name="n"></button><input type="hidden" name="other" value="true"><input type="hidden" name="n" value="${raw}">`,
+			);
+			expect(Toggle(el)?.isChecked()).toBe(true);
+			expect(document.querySelectorAll('input[name="n"]')).toHaveLength(1);
+			expect(document.querySelector<HTMLInputElement>('input[name="n"]')?.value).toBe("true");
+			expect(document.querySelector<HTMLInputElement>('input[name="other"]')?.value).toBe("true");
+		}
+		const off = mount(
+			'<button class="bt-toggle" data-name="n"></button><input type="hidden" name="n" value="no">',
+		);
+		expect(Toggle(off)?.isChecked()).toBe(false);
+	});
+
+	it("toggles, disables and unbinds through the API", () => {
+		const onCheckedChange = vi.fn();
+		const el = mount();
+		const api = Toggle(el, { onCheckedChange });
+		api?.toggle();
+		expect(api?.isChecked()).toBe(true);
+		api?.setDisabled(true);
+		expect(el.disabled).toBe(true);
+		api?.toggle();
+		expect(api?.isChecked()).toBe(true);
+		api?.setDisabled(false);
+		api?.destroy();
+		el.click();
+		expect(api?.isChecked()).toBe(true);
+		expect(onCheckedChange).toHaveBeenCalledTimes(1);
+		expect(Toggle("#missing")).toBeNull();
+	});
+});
+
+describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
+	// 열린 채 남은 모달의 document Tab 트랩이 다음 테스트의 키 이벤트를 막지 않게 해제한다.
+	const created: { destroy: () => void }[] = [];
+	const Modal = (...args: Parameters<typeof ModalFactory>) => {
+		const api = ModalFactory(...args);
+		if (api) created.push(api);
+		return api;
+	};
+	afterEach(() => {
+		for (const api of created.splice(0)) api.destroy();
+	});
+	const mount = (panelHtml: string, attrs = "") => {
+		document.body.innerHTML = `<button id="trigger">t</button><div id="m" class="bt-modal"><div class="bt-modal__panel" ${attrs}>${panelHtml}</div></div>`;
+		return document.getElementById("m") as HTMLElement;
+	};
+	const panelOf = (m: HTMLElement) => m.querySelector(".bt-modal__panel") as HTMLElement;
+
+	it("names the dialog from its header, falls back to a label, and keeps a consumer name", () => {
+		const a = mount('<div class="bt-modal__header">제목</div>');
+		Modal(a);
+		const header = a.querySelector(".bt-modal__header") as HTMLElement;
+		expect(panelOf(a).getAttribute("role")).toBe("dialog");
+		expect(panelOf(a).getAttribute("aria-modal")).toBe("true");
+		expect(header.id).not.toBe("");
+		expect(panelOf(a).getAttribute("aria-labelledby")).toBe(header.id);
+
+		const b = mount("");
+		Modal(b);
+		expect(panelOf(b).getAttribute("aria-label")).toBe("Dialog");
+
+		const c = mount('<div class="bt-modal__header" id="keep">x</div>', 'aria-label="설정"');
+		Modal(c);
+		expect(panelOf(c).getAttribute("aria-label")).toBe("설정");
+		expect(panelOf(c).hasAttribute("aria-labelledby")).toBe(false);
+	});
+
+	it("focuses the first control, traps Tab both ways, and leaves middle Tabs alone", () => {
+		const m = mount('<button id="a">a</button><button id="b">b</button><button id="c">c</button>');
+		const api = Modal(m);
+		api?.open();
+		const [a, b, c] = ["a", "b", "c"].map((id) => document.getElementById(id) as HTMLElement);
+		expect(document.activeElement).toBe(a);
+
+		expect(key(a as HTMLElement, "Tab", { shiftKey: true }).defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(c);
+		expect(key(c as HTMLElement, "Tab").defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(a);
+
+		(b as HTMLElement).focus();
+		expect(key(b as HTMLElement, "Tab").defaultPrevented).toBe(false);
+		expect(key(b as HTMLElement, "Tab", { shiftKey: true }).defaultPrevented).toBe(false);
+		expect(key(b as HTMLElement, "Enter").defaultPrevented).toBe(false);
+	});
+
+	it("blocks Tab in a panel without focusables and ignores keys while closed", () => {
+		const m = mount("<p>본문</p>");
+		const api = Modal(m);
+		expect(key(document.body, "Tab").defaultPrevented).toBe(false);
+		api?.open();
+		expect(key(document.body, "Tab").defaultPrevented).toBe(true);
+	});
+
+	it("closes from the overlay only, from close buttons, and reports open/close", () => {
+		const onOpen = vi.fn();
+		const onClose = vi.fn();
+		const m = mount("<button data-modal-close>닫기</button>");
+		const api = Modal(m, { onOpen, onClose });
+		api?.toggle();
+		expect(api?.isOpen()).toBe(true);
+		expect(onOpen).toHaveBeenCalledTimes(1);
+
+		panelOf(m).click();
+		expect(api?.isOpen()).toBe(true);
+		m.click();
+		expect(api?.isOpen()).toBe(false);
+		expect(onClose).toHaveBeenCalledTimes(1);
+
+		api?.open();
+		m.querySelector<HTMLButtonElement>("[data-modal-close]")?.click();
+		expect(api?.isOpen()).toBe(false);
+		api?.close();
+		expect(onClose).toHaveBeenCalledTimes(2);
+
+		api?.toggle();
+		api?.toggle();
+		expect(api?.isOpen()).toBe(false);
+	});
+
+	it("restores focus to the opener on close and keeps open when closeOnOverlay is false", () => {
+		const m = mount("<button>x</button>");
+		const trigger = document.getElementById("trigger") as HTMLElement;
+		trigger.focus();
+		const api = Modal("#m", { closeOnOverlay: false });
+		api?.open();
+		m.click();
+		expect(api?.isOpen()).toBe(true);
+		api?.close();
+		expect(document.activeElement).toBe(trigger);
+		expect(Modal("#missing")).toBeNull();
+	});
+});
+
+describe("Alert - 마크업 · 버튼", () => {
+	beforeEach(() => vi.useFakeTimers());
+	afterEach(() => vi.useRealTimers());
+
+	const overlay = () => document.querySelector(".bt-alert__overlay") as HTMLElement;
+
+	it("escapes text, wires ARIA ids, and focuses confirm", () => {
+		Alert({ title: "<b>제목</b>", message: "<i>내용</i>", variant: "error" });
+		const panel = overlay().querySelector(".bt-alert__modal") as HTMLElement;
+		const title = overlay().querySelector(".bt-alert__title") as HTMLElement;
+		const message = overlay().querySelector(".bt-alert__message") as HTMLElement;
+		expect(overlay()).toHaveClass("bt-alert--error", "is-open");
+		expect(title.textContent).toBe("<b>제목</b>");
+		expect(panel.getAttribute("role")).toBe("alertdialog");
+		expect(panel.getAttribute("aria-modal")).toBe("true");
+		expect(panel.getAttribute("aria-labelledby")).toBe(title.id);
+		expect(panel.getAttribute("aria-describedby")).toBe(message.id);
+		expect(document.activeElement).toBe(overlay().querySelector("[data-alert-confirm]"));
+	});
+
+	it("omits the title and cancel button by default and aligns actions", () => {
+		Alert({ message: "m" });
+		expect(overlay().querySelector(".bt-alert__title")).toBeNull();
+		expect(overlay().querySelector(".bt-alert__modal")?.hasAttribute("aria-labelledby")).toBe(
+			false,
+		);
+		expect(overlay().querySelector("[data-alert-cancel]")).toBeNull();
+		expect(overlay().querySelector<HTMLElement>(".bt-alert__actions")?.style.justifyContent).toBe(
+			"flex-end",
+		);
+		expect(overlay().querySelector("[data-alert-confirm]")).not.toHaveClass("bt-button--danger");
+
+		for (const [align, css] of [
+			["left", "flex-start"],
+			["center", "center"],
+		] as const) {
+			document.body.innerHTML = "";
+			Alert({ message: "m", actionsAlign: align });
+			expect(overlay().querySelector<HTMLElement>(".bt-alert__actions")?.style.justifyContent).toBe(
+				css,
+			);
+		}
+	});
+
+	it("routes confirm and cancel to their callbacks and removes the overlay after the fade", () => {
+		const onConfirm = vi.fn();
+		const onCancel = vi.fn();
+		Alert({
+			message: "m",
+			showCancel: true,
+			destructive: true,
+			confirmText: "삭제",
+			cancelText: "취소",
+			onConfirm,
+			onCancel,
+		});
+		const confirm = overlay().querySelector("[data-alert-confirm]") as HTMLButtonElement;
+		expect(confirm).toHaveClass("bt-button--danger", "bt-button--filled");
+		expect(overlay().querySelector("[data-alert-cancel]")).toHaveClass("bt-button--outline");
+		confirm.click();
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+		expect(onCancel).not.toHaveBeenCalled();
+		vi.advanceTimersByTime(200);
+		expect(document.querySelector(".bt-alert__overlay")).toBeNull();
+
+		Alert({ message: "m", showCancel: true, onConfirm, onCancel });
+		(overlay().querySelector("[data-alert-cancel]") as HTMLButtonElement).click();
+		expect(onCancel).toHaveBeenCalledTimes(1);
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+	});
+
+	it("traps Tab between its buttons", () => {
+		Alert({ message: "m", showCancel: true });
+		const cancel = overlay().querySelector("[data-alert-cancel]") as HTMLElement;
+		const confirm = overlay().querySelector("[data-alert-confirm]") as HTMLElement;
+		expect(key(confirm, "Tab").defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(cancel);
+		expect(key(cancel, "Tab", { shiftKey: true }).defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(confirm);
+		expect(key(confirm, "Tab", { shiftKey: true }).defaultPrevented).toBe(false);
+	});
+
+	it("stops trapping after close", () => {
+		const { close } = Alert({ message: "m" });
+		close();
+		expect(key(document.body, "Tab").defaultPrevented).toBe(false);
+	});
+});
+
+describe("Dropdown - 키보드", () => {
+	const active = () =>
+		document.querySelector(".bt-dropdown__option.is-active")?.getAttribute("data-value");
+	const setup = () => {
+		const wrap = dropdownMarkup();
+		const api = Dropdown(wrap);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+		return { api, control };
+	};
+
+	it("opens on Enter, Space and arrows, then moves with arrows skipping disabled and wrapping", () => {
+		const { api, control } = setup();
+		for (const k of ["Enter", " ", "ArrowDown", "ArrowUp"]) {
+			expect(key(control, k).defaultPrevented).toBe(true);
+			expect(control.getAttribute("aria-expanded")).toBe("true");
+			api?.close();
+		}
+		key(control, "ArrowDown");
+		expect(active()).toBe("apple");
+		key(control, "ArrowDown");
+		expect(active()).toBe("grape");
+		key(control, "ArrowDown");
+		expect(active()).toBe("apple");
+		key(control, "ArrowUp");
+		expect(active()).toBe("grape");
+		expect(control.getAttribute("aria-activedescendant")).toBe(
+			document.querySelector(".bt-dropdown__option.is-active")?.id,
+		);
+	});
+
+	it("commits the active option with Enter and closes", () => {
+		const { api, control } = setup();
+		key(control, "Enter");
+		key(control, "ArrowDown");
+		key(control, "Enter");
+		expect(api?.getValue()).toBe("grape");
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+	});
+
+	it("Home/End open and jump to the enabled ends", () => {
+		const { api, control } = setup();
+		expect(key(control, "End").defaultPrevented).toBe(true);
+		expect(control.getAttribute("aria-expanded")).toBe("true");
+		expect(active()).toBe("grape");
+		expect(key(control, "Home").defaultPrevented).toBe(true);
+		expect(active()).toBe("apple");
+		api?.close();
+	});
+
+	it("leaves Escape alone while closed, closes on Tab without blocking it, and ignores keys when disabled", () => {
+		const { api, control } = setup();
+		expect(key(control, "Escape").defaultPrevented).toBe(false);
+		key(control, "Enter");
+		expect(key(control, "Tab").defaultPrevented).toBe(false);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+
+		api?.setDisabled(true);
+		expect(control.getAttribute("aria-disabled")).toBe("true");
+		expect(control).toHaveClass("is-disabled");
+		expect(key(control, "Enter").defaultPrevented).toBe(false);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+	});
+
+	it("handles arrows, Enter, Escape and Tab inside the search input", () => {
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		const api = Dropdown(wrap);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+		api?.open();
+		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		expect(document.activeElement).toBe(input);
+		expect(key(input, "ArrowDown").defaultPrevented).toBe(true);
+		expect(active()).toBe("grape");
+		expect(key(input, "ArrowUp").defaultPrevented).toBe(true);
+		expect(active()).toBe("apple");
+		expect(key(input, "Enter").defaultPrevented).toBe(true);
+		expect(api?.getValue()).toBe("apple");
+		expect(document.activeElement).toBe(control);
+
+		api?.open();
+		expect(key(input, "Escape").defaultPrevented).toBe(true);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+		api?.open();
+		expect(key(input, "Tab").defaultPrevented).toBe(false);
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+		expect(document.activeElement).toBe(control);
+	});
+
+	it("follows the mouse but not onto disabled options, and toggles from a click", () => {
+		const { control } = setup();
+		control.click();
+		expect(control.getAttribute("aria-expanded")).toBe("true");
+		const [, grape, melon] = Array.from(
+			document.querySelectorAll<HTMLElement>(".bt-dropdown__option"),
+		);
+		grape?.dispatchEvent(new MouseEvent("mouseenter"));
+		expect(active()).toBe("grape");
+		melon?.dispatchEvent(new MouseEvent("mouseenter"));
+		expect(active()).toBe("grape");
+		melon?.click();
+		expect(control.getAttribute("aria-expanded")).toBe("true");
+		control.click();
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+	});
+});
+
+describe("Dropdown - 옵션 소스 · 선택 표시", () => {
+	const shell = (listTag: "ul" | "div" = "ul", attrs: Record<string, string> = {}) => {
+		const wrap = document.createElement("div");
+		wrap.className = "bt-dropdown";
+		for (const [k, v] of Object.entries(attrs)) wrap.setAttribute(k, v);
+		wrap.innerHTML = `<button type="button" class="bt-dropdown__control"><span class="bt-dropdown__placeholder">고르세요</span></button><${listTag} class="bt-dropdown__list"></${listTag}>`;
+		document.body.appendChild(wrap);
+		return wrap;
+	};
+	const optionEls = () =>
+		Array.from(document.querySelectorAll<HTMLElement>(".bt-dropdown__option"));
+	const OPTS = [
+		{ value: "a", label: "에이" },
+		{ value: "b", label: "비", disabled: true },
+	];
+
+	it("builds li items under a list and div items under a div from config.options", () => {
+		Dropdown(shell("ul"), { options: OPTS });
+		expect(optionEls().map((el) => el.tagName)).toEqual(["LI", "LI"]);
+		expect(optionEls()[1]).toHaveClass("is-disabled");
+		expect(optionEls()[1]?.getAttribute("aria-disabled")).toBe("true");
+		expect(optionEls()[0]?.hasAttribute("aria-disabled")).toBe(false);
+		expect(optionEls()[0]?.textContent).toBe("에이");
+
+		document.body.innerHTML = "";
+		Dropdown(shell("div"), { options: OPTS });
+		expect(optionEls().map((el) => el.tagName)).toEqual(["DIV", "DIV"]);
+	});
+
+	it("reads data-options JSON and falls back to markup when it is not a valid array", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		Dropdown(shell("ul", { "data-options": JSON.stringify(OPTS) }));
+		expect(optionEls().map((el) => el.dataset.value)).toEqual(["a", "b"]);
+
+		for (const bad of ["{'a':1}", '{"value":"x"}']) {
+			document.body.innerHTML = "";
+			const wrap = dropdownMarkup();
+			wrap.dataset.options = bad;
+			Dropdown(wrap);
+			expect(optionEls().map((el) => el.dataset.value)).toEqual(["apple", "grape", "melon"]);
+		}
+		expect(warn).toHaveBeenCalledTimes(2);
+	});
+
+	it("uses option text as the value when data-value is missing", () => {
+		const wrap = shell();
+		wrap.querySelector("ul")!.innerHTML = '<li class="bt-dropdown__option">  자두  </li>';
+		const api = Dropdown(wrap);
+		optionEls()[0]?.click();
+		expect(api?.getValue()).toBe("자두");
+	});
+
+	it("takes placeholder, search placeholder and empty text from data-* unless set in JS", () => {
+		Dropdown(
+			shell("ul", {
+				"data-placeholder": "속성 문구",
+				"data-searchable": "",
+				"data-search-placeholder": "찾기",
+				"data-empty-text": "없음",
+			}),
+			{ options: OPTS },
+		);
+		expect(document.querySelector(".bt-dropdown__placeholder")?.textContent).toBe("속성 문구");
+		expect(
+			document.querySelector<HTMLInputElement>(".bt-dropdown__search-input")?.placeholder,
+		).toBe("찾기");
+		expect(document.querySelector(".bt-dropdown__empty")?.textContent).toBe("없음");
+		expect(document.querySelector<HTMLElement>(".bt-dropdown__empty")?.hidden).toBe(true);
+		expect(document.querySelector(".bt-dropdown__control")?.hasAttribute("role")).toBe(false);
+
+		document.body.innerHTML = "";
+		Dropdown(
+			shell("ul", {
+				"data-placeholder": "속성",
+				"data-searchable": "",
+				"data-search-placeholder": "x",
+				"data-empty-text": "y",
+			}),
+			{ options: OPTS, placeholder: "JS", searchPlaceholder: "JS 찾기", emptyText: "JS 없음" },
+		);
+		expect(document.querySelector(".bt-dropdown__placeholder")?.textContent).toBe("JS");
+		expect(
+			document.querySelector<HTMLInputElement>(".bt-dropdown__search-input")?.placeholder,
+		).toBe("JS 찾기");
+		expect(document.querySelector(".bt-dropdown__empty")?.textContent).toBe("JS 없음");
+	});
+
+	it("derives listbox and option ids from the wrapper id but keeps existing ones", () => {
+		const wrap = dropdownMarkup();
+		wrap.querySelector("li")!.id = "keep";
+		Dropdown(wrap);
+		const list = document.querySelector("[role=listbox]") as HTMLElement;
+		expect(list.id).toBe("dd_listbox");
+		expect(document.querySelector(".bt-dropdown__control")?.getAttribute("aria-controls")).toBe(
+			"dd_listbox",
+		);
+		expect(document.querySelector(".bt-dropdown__control")?.getAttribute("role")).toBe("combobox");
+		expect(optionEls().map((el) => el.id)).toEqual(["keep", "dd_option_1", "dd_option_2"]);
+
+		document.body.innerHTML = "";
+		const anon = dropdownMarkup();
+		anon.removeAttribute("id");
+		Dropdown(anon);
+		expect((document.querySelector("[role=listbox]") as HTMLElement).id).toMatch(/_listbox$/);
+		expect((document.querySelector("[role=listbox]") as HTMLElement).id).not.toBe("_listbox");
+	});
+
+	it("returns null without the control or list, or for a missing selector", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const noList = document.createElement("div");
+		noList.innerHTML = '<button class="bt-dropdown__control"></button>';
+		expect(Dropdown(noList)).toBeNull();
+		const noControl = document.createElement("div");
+		noControl.innerHTML = '<ul class="bt-dropdown__list"></ul>';
+		expect(Dropdown(noControl)).toBeNull();
+		expect(Dropdown("#missing")).toBeNull();
+		dropdownMarkup();
+		expect(Dropdown("#dd")).not.toBeNull();
+		expect(warn).toHaveBeenCalledTimes(2);
+	});
+
+	it("shows the picked label, marks only that option and reports value with option", () => {
+		const onValueChange = vi.fn();
+		const wrap = dropdownMarkup({ name: "fruit" });
+		const api = Dropdown(wrap, { onValueChange });
+		const value = () =>
+			wrap.querySelector(".bt-dropdown__value, .bt-dropdown__placeholder") as HTMLElement;
+		const hidden = () => wrap.querySelector<HTMLInputElement>('input[name="fruit"]');
+		expect(hidden()?.value).toBe("");
+
+		optionEls()[1]?.click();
+		expect(value().textContent).toBe("포도");
+		expect(value()).toHaveClass("bt-dropdown__value");
+		expect(value()).not.toHaveClass("bt-dropdown__placeholder");
+		expect(optionEls().map((el) => el.getAttribute("aria-selected"))).toEqual([
+			"false",
+			"true",
+			"false",
+		]);
+		expect(optionEls()[1]).toHaveClass("is-selected");
+		expect(optionEls()[0]).not.toHaveClass("is-selected");
+		expect(hidden()?.value).toBe("grape");
+		expect(onValueChange).toHaveBeenLastCalledWith("grape", {
+			value: "grape",
+			label: "포도",
+			disabled: false,
+		});
+
+		api?.setValue(["apple"]);
+		expect(api?.getValue()).toBe("apple");
+		api?.setValue([]);
+		expect(api?.getValue()).toBeNull();
+		api?.setValue("nope");
+		expect(onValueChange).toHaveBeenLastCalledWith("nope", null);
+		expect(value().textContent).toBe("선택하세요");
+		expect(value()).toHaveClass("bt-dropdown__placeholder");
+		api?.setValue(null);
+		expect(hidden()?.value).toBe("");
+	});
+
+	it("matches numeric values against string option values", () => {
+		const api = Dropdown(shell(), { options: [{ value: 1, label: "하나" }] });
+		api?.setValue("1");
+		expect(document.querySelector(".bt-dropdown__value")?.textContent).toBe("하나");
+	});
+
+	it("reports values with their options in multiple mode and removes a toggled value", () => {
+		const onValueChange = vi.fn();
+		const wrap = dropdownMarkup({ multiple: true });
+		const api = Dropdown(wrap, { onValueChange });
+		expect(optionEls()[0]?.querySelector(".bt-dropdown__option-check")).not.toBeNull();
+		expect(optionEls()[0]?.firstElementChild).toHaveClass("bt-dropdown__option-check");
+
+		api?.setValue(["apple", "ghost", "grape"]);
+		expect(onValueChange).toHaveBeenLastCalledWith(
+			["apple", "ghost", "grape"],
+			[
+				{ value: "apple", label: "사과 Apple", disabled: false },
+				{ value: "grape", label: "포도", disabled: false },
+			],
+		);
+		optionEls()[0]?.click();
+		expect(api?.getValue()).toEqual(["ghost", "grape"]);
+		api?.setValue("apple");
+		expect(api?.getValue()).toEqual(["apple"]);
+		api?.setValue(null);
+		expect(api?.getValue()).toEqual([]);
+		expect(wrap.querySelector(".bt-dropdown__placeholder")?.textContent).toBe("선택하세요");
 	});
 });
