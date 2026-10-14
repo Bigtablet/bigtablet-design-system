@@ -251,6 +251,7 @@ return <animated.div style={style}>...</animated.div>;
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
+  pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
   ```
 
 ---

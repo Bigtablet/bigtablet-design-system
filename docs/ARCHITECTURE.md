@@ -451,7 +451,7 @@ describe("Button", () => {
 | `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘긴다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 된다 |
 | `static-checks` | 병합 게이트(시큐어코딩 가이드 제9장 제3조). `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킨다. audit 은 조회 실패도 실패로 끝난다 |
 | `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돈다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트라서다 |
-| `a11y` | `playwright install --with-deps chromium`(브라우저 캐시) → `pnpm test:storybook`. `code` · `stories` 가 바뀌면 돈다 (Chromium ~200MB 라 무겁다) |
+| `a11y` | `playwright install --with-deps chromium`(브라우저 캐시) → `pnpm test:storybook` → `pnpm test:browser`(레이아웃). `code` · `stories` 가 바뀌면 돈다 (Chromium ~200MB 라 무겁다) |
 | `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돈다 |
 
 `static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돈다. 한 job 에서 차례로

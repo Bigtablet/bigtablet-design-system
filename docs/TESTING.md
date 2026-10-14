@@ -89,6 +89,9 @@ pnpm test:coverage
 # a11y 테스트 (Storybook + Playwright)
 pnpm test:storybook
 
+# 레이아웃 테스트 (*.browser.test.tsx, 실제 Chromium)
+pnpm test:browser
+
 # UI 모드
 pnpm vitest --ui
 ```
@@ -158,8 +161,25 @@ import { Dropdown } from "./bigtablet.js";
   스크롤을 하지 않아 증상이 안 보이므로, 인자까지 단언해야 회귀가 잡힌다:
   `expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })`.
 
-레이아웃 자체(높이 상한·정렬)는 jsdom 이 계산하지 않는다 - 실제 브라우저(Storybook)에서 재고
-그 수치를 PR 에 남긴다.
+레이아웃 자체(높이 상한·정렬·flip)는 jsdom 이 계산하지 않는다 - 아래 브라우저 레이아웃 테스트로 잰다.
+
+### 브라우저 레이아웃 테스트 (`*.browser.test.tsx`)
+
+배치·잘림·스크롤 잠금처럼 **실제 레이아웃이 있어야 의미 있는 것**은 `{폴더명}.browser.test.tsx` 에
+쓴다. `vitest.config.ts` 의 `browser` 프로젝트가 headless Chromium 에서 돌리고(`pnpm test:browser`),
+`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺀다. 지금 덮는 것 - Tooltip·Popover 의 flip·shift,
+Dropdown 의 높이 상한(#621)·트리거 정렬·375px 넘침, Modal 의 375px 잘림·스크롤 잠금(#574·#635).
+
+- **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세운다. 앵커는
+  `position: fixed` 래퍼로 원하는 좌표에 둔다.
+- **컴포넌트 `style.scss` 를 테스트에서 import 한다.** 컴포넌트 파일이 이미 import 하지만, 레이아웃
+  테스트가 CSS 에 기대고 있다는 걸 드러낸다. 토큰 CSS 변수(`theme.scss`)는 `src/test/browser-setup.ts` 가 넣는다.
+- **스크롤바가 보인다.** headless Chromium 은 기본으로 스크롤바를 숨겨(폭 0) 스크롤 잠금 보정이
+  공회전한다 - 프로젝트 설정이 `--hide-scrollbars` 를 빼서 15px 클래식 스크롤바가 생긴다.
+- **소스를 일부러 깨서 테스트가 실패하는지 본다.** 처음 쓴 테스트 절반이 그래도 통과했다 -
+  CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
+  내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
+- Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
 
 ### 기본 구조
 
