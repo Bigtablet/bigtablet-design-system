@@ -125,4 +125,37 @@ describe("DateRangePicker", () => {
 			expect(control).toHaveAttribute("aria-required", "true");
 		}
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	it("keeps an end date equal to the new start", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DateRangePicker
+				value={{ start: "2026-05-01", end: "2026-05-10" }}
+				onValueChange={onValueChange}
+			/>,
+		);
+		// 시작일의 일(index 2)을 10 으로 - 종료일과 같은 날이면 범위가 유효하다
+		pick(2, "10");
+		expect(onValueChange).toHaveBeenCalledWith({ start: "2026-05-10", end: "2026-05-10" });
+	});
+
+	it("marks required from the prop, invalid only inside an invalid Field, and full width by default", () => {
+		const { container, rerender } = render(<DateRangePicker onValueChange={vi.fn()} />);
+		expect(triggers()[0]).not.toHaveAttribute("aria-required");
+		expect(container.firstChild).toHaveClass("date_range_picker_full_width");
+
+		rerender(<DateRangePicker onValueChange={vi.fn()} required fullWidth={false} />);
+		expect(triggers()[0]).toHaveAttribute("aria-required", "true");
+		expect(container.firstChild).not.toHaveClass("date_range_picker_full_width");
+
+		rerender(
+			<Field name="r" label="기간" error="필수">
+				<DateRangePicker onValueChange={vi.fn()} />
+			</Field>,
+		);
+		const outer = container.querySelector(".date_range_picker_fields");
+		expect(outer).toHaveAttribute("aria-invalid", "true");
+	});
 });

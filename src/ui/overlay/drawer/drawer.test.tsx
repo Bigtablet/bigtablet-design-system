@@ -1,7 +1,7 @@
 import { Globals } from "@react-spring/web";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Drawer } from "./index";
 
 const stubReducedMotion = () => {
@@ -823,5 +823,84 @@ describe("Drawer", () => {
 		);
 
 		expect(document.activeElement).toBe(screen.getByRole("button", { name: "취소" }));
+	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	it("does not take Escape while closed", () => {
+		const onClose = vi.fn();
+		render(
+			<Drawer open={false} onClose={onClose}>
+				본문
+			</Drawer>,
+		);
+		fireEvent.keyDown(document, { key: "Escape" });
+		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it("tolerates Escape and overlay clicks without onClose", () => {
+		render(<Drawer open>본문</Drawer>);
+		const overlay = screen.getByRole("dialog");
+		expect(() => {
+			fireEvent.keyDown(document, { key: "Escape" });
+			fireEvent.pointerDown(overlay);
+			fireEvent.click(overlay);
+		}).not.toThrow();
+	});
+
+	it("closes only on a press that starts and ends on the overlay", () => {
+		const onClose = vi.fn();
+		render(
+			<Drawer open onClose={onClose}>
+				본문
+			</Drawer>,
+		);
+		const overlay = screen.getByRole("dialog");
+		fireEvent.click(overlay);
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(document.querySelector(".drawer_panel") as HTMLElement);
+		expect(onClose).not.toHaveBeenCalled();
+	});
+
+	it("keeps keys other than Escape from reaching handlers above the drawer", () => {
+		const onKeyDown = vi.fn();
+		render(
+			<div onKeyDown={onKeyDown}>
+				<Drawer open onClose={() => {}}>
+					<input aria-label="입력" />
+				</Drawer>
+			</div>,
+		);
+		fireEvent.keyDown(screen.getByLabelText("입력"), { key: "a" });
+		expect(onKeyDown).not.toHaveBeenCalled();
+	});
+
+	it("renders no footer slot when it is empty", () => {
+		render(
+			<Drawer open onClose={() => {}}>
+				본문
+			</Drawer>,
+		);
+		expect(document.querySelector(".drawer_footer")).toBeNull();
+	});
+
+	describe("enter settle (skipAnimation off)", () => {
+		beforeEach(() => Globals.assign({ skipAnimation: false }));
+		afterEach(() => Globals.assign({ skipAnimation: true }));
+
+		it("does not report onExited when the enter animation settles", async () => {
+			const onExited = vi.fn();
+			const ui = (open: boolean) => (
+				<Drawer open={open} onClose={() => {}} onExited={onExited}>
+					본문
+				</Drawer>
+			);
+			const { rerender } = render(ui(false));
+			rerender(ui(true));
+			await waitFor(() => expect(screen.getByRole("dialog").style.opacity).toBe("1"));
+			await new Promise((r) => requestAnimationFrame(() => r(null)));
+			expect(onExited).not.toHaveBeenCalled();
+			expect(document.querySelector(".drawer_panel")).not.toBeNull();
+		});
 	});
 });

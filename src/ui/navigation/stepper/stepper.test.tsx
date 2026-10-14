@@ -109,4 +109,24 @@ describe("Stepper", () => {
 		rerender(<Stepper steps={STEPS} current={0} orientation="vertical" />);
 		expect(container.firstChild).toHaveClass("stepper_vertical");
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	it("speaks no status for pending steps and renders a description only when given", () => {
+		const { container } = render(
+			<Stepper
+				current={0}
+				steps={[
+					{ id: "a", label: "A", description: 0 },
+					{ id: "b", label: "B", description: null },
+					{ id: "c", label: "C" },
+				]}
+			/>,
+		);
+		const steps = Array.from(container.querySelectorAll(".stepper_step"));
+		expect(steps[1]?.querySelector(".stepper_sr_only")).toBeNull();
+		expect(steps[0]?.querySelector(".stepper_description")).toHaveTextContent("0");
+		expect(steps[1]?.querySelector(".stepper_description")).toBeNull();
+		expect(steps[2]?.querySelector(".stepper_description")).toBeNull();
+	});
 });
