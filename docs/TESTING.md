@@ -169,8 +169,14 @@ import { Dropdown } from "./bigtablet.js";
 
 배치·잘림·스크롤 잠금처럼 **실제 레이아웃이 있어야 의미 있는 것**은 `{폴더명}.browser.test.tsx` 에
 쓴다. `vitest.config.ts` 의 `browser` 프로젝트가 headless Chromium 에서 돌리고(`pnpm test:browser`),
-`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺀다. 지금 덮는 것 - Tooltip·Popover 의 flip·shift,
-Dropdown 의 높이 상한(#621)·트리거 정렬·375px 넘침, Modal 의 375px 잘림·스크롤 잠금(#574·#635).
+`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺀다. 지금 덮는 것:
+
+| 대상 | 검사 |
+|------|------|
+| Tooltip · Popover · Menu | flip·shift, 정렬(`align`), Menu 가 `overflow: hidden` 조상에 안 잘림(#586) |
+| Dropdown · Combobox | 높이 상한(#621), 트리거 정렬, 375px 넘침 |
+| DatePicker (`variant="calendar"`) | 달력 flip, 320px 에서 요일 7칸이 패널 안 |
+| Modal · Drawer · Vanilla Modal | 좁은 화면 잘림, 스크롤 잠금 - 콘텐츠 안 밀림·스크롤바 자리 덮음·패널 중심(#574·#635)·스크롤 위치 복원 |
 
 - **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세운다. 앵커는
   `position: fixed` 래퍼로 원하는 좌표에 둔다.
@@ -182,6 +188,8 @@ Dropdown 의 높이 상한(#621)·트리거 정렬·375px 넘침, Modal 의 375p
   CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
   내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
 - Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
+- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 브라우저 ESM 에서 UMD 번들의 `this` 가
+  undefined 라 named import 가 안 된다 - `import "./bigtablet.js"` 후 `window.Bigtablet` 을 쓴다.
 
 ### 기본 구조
 
