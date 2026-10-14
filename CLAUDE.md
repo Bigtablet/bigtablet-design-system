@@ -239,7 +239,7 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 93.21% stmts / 90.55% branch / 93.73% funcs / 94.99% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 94.69% stmts / 92.71% branch / 95.26% funcs / 95.85% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
