@@ -66,4 +66,15 @@ describe("useReducedMotion", () => {
 		const { result } = renderHook(() => useReducedMotion());
 		expect(result.current).toBe(false);
 	});
+
+	it("subscribes to the change event of the reduced-motion query", () => {
+		const mql = mockMatchMedia(false);
+		const add = vi.spyOn(mql, "addEventListener");
+		const remove = vi.spyOn(mql, "removeEventListener");
+		const { unmount } = renderHook(() => useReducedMotion());
+		expect(window.matchMedia).toHaveBeenCalledWith("(prefers-reduced-motion: reduce)");
+		expect(add).toHaveBeenCalledWith("change", expect.any(Function));
+		unmount();
+		expect(remove).toHaveBeenCalledWith("change", add.mock.calls[0]?.[1]);
+	});
 });
