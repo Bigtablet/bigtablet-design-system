@@ -120,4 +120,46 @@ describe("Accordion", () => {
 		expect(labelId).not.toContain(" ");
 		expect(document.getElementById(labelId)).not.toBeNull();
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const ITEMS = [
+		{ key: "a", title: "A", content: "내용 A" },
+		{ key: "b", title: "B", content: "내용 B" },
+	];
+
+	it("closes an open item on a second click and keeps the others open in multiple mode", () => {
+		const onValueChange = vi.fn();
+		render(
+			<Accordion
+				items={ITEMS}
+				multiple
+				defaultOpenKeys={["a", "b"]}
+				onValueChange={onValueChange}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "A" }));
+		expect(onValueChange).toHaveBeenLastCalledWith(["b"]);
+		expect(screen.getByRole("button", { name: "A" })).toHaveAttribute("aria-expanded", "false");
+	});
+
+	it("follows openKeys when controlled", () => {
+		const onValueChange = vi.fn();
+		render(<Accordion items={ITEMS} openKeys={["a"]} onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button", { name: "B" }));
+		expect(onValueChange).toHaveBeenCalledWith(["b"]);
+		expect(screen.getByRole("button", { name: "A" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("button", { name: "B" })).toHaveAttribute("aria-expanded", "false");
+	});
+
+	it("marks open items, rotates their chevron and makes closed panels inert", () => {
+		const { container } = render(<Accordion items={ITEMS} defaultOpenKeys={["a"]} />);
+		const [itemA, itemB] = Array.from(container.querySelectorAll(".accordion_item"));
+		expect(itemA).toHaveClass("accordion_item_open");
+		expect(itemB).not.toHaveClass("accordion_item_open");
+		expect(itemA?.querySelector(".accordion_chevron")).toHaveClass("accordion_chevron_open");
+		expect(itemB?.querySelector(".accordion_chevron")).not.toHaveClass("accordion_chevron_open");
+		expect(itemA?.querySelector("section")).not.toHaveAttribute("inert");
+		expect(itemB?.querySelector("section")).toHaveAttribute("inert");
+	});
 });
