@@ -45,6 +45,7 @@ describe("Tooltip layout (Chromium)", () => {
 	it("flips to the left at the right edge", async () => {
 		const { trigger, tip } = await openAt({ top: 300, right: 4 }, "right");
 		expect(tip.right).toBeLessThanOrEqual(trigger.left);
+		expect(tip.left).toBeGreaterThanOrEqual(8);
 	});
 
 	it("narrows below its 240px max-width on a tiny viewport", async () => {

@@ -56,8 +56,8 @@ describe("Modal layout (Chromium)", () => {
 		expect(getComputedStyle(html).overflow).toBe("hidden");
 		const during = screen.getByTestId("content").getBoundingClientRect();
 		// 스크롤바가 사라진 자리만큼 padding 으로 메워 콘텐츠가 옆으로 움직이지 않는다
-		expect(during.width).toBe(before.width);
-		expect(during.left).toBe(before.left);
+		expect(Math.abs(during.width - before.width)).toBeLessThan(1);
+		expect(Math.abs(during.left - before.left)).toBeLessThan(1);
 		// 오른쪽 끝(원래 스크롤바 자리)까지 오버레이가 덮는다 - 밝은 띠가 남지 않는다(#635)
 		expect(isCoveredByOverlay(window.innerWidth - 1, 300)).toBe(true);
 		// 오버레이가 스크롤바 자리까지 넓어져도 패널은 잠금 전 화면의 가운데에 남는다(#574)

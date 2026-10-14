@@ -27,9 +27,11 @@ describe("Popover layout (Chromium)", () => {
 		await page.viewport(800, 600);
 	});
 
-	it("opens below the trigger by default room", async () => {
+	it("opens below the trigger when there is room", async () => {
 		const { trigger, panel } = await openAt({ top: 100, left: 300 }, "bottom");
 		expect(panel.top).toBeGreaterThanOrEqual(trigger.bottom);
+		expect(panel.bottom).toBeLessThanOrEqual(600 - 8);
+		expect(panel.left).toBeGreaterThanOrEqual(8);
 	});
 
 	it("flips above when there is no room below", async () => {
