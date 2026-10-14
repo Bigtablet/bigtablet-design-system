@@ -90,6 +90,8 @@ pnpm test:coverage
 pnpm test:storybook
 
 # 레이아웃 테스트 (*.browser.test.tsx, 실제 Chromium)
+# Chromium 바이너리가 없으면 먼저 한 번 설치한다 (test:storybook 과 같은 바이너리)
+pnpm exec playwright install chromium
 pnpm test:browser
 
 # UI 모드
