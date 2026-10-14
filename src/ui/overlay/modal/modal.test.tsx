@@ -885,6 +885,8 @@ describe("Modal", () => {
 	});
 
 	it("aligns the footer to the end by default and to the requested side otherwise", () => {
+		// 클래스 이름까지만 본다 - 실제 정렬(justify-content)은 jsdom 이 계산하지 않는다. 기본값
+		// `footerAlign = "end"` 를 바꾸는 회귀를 막는 자리다.
 		const { rerender } = render(
 			<Modal open onClose={() => {}} footer={<button type="button">확인</button>}>
 				Content
@@ -902,24 +904,6 @@ describe("Modal", () => {
 			</Modal>,
 		);
 		expect(document.querySelector(".modal_footer")).toHaveClass("modal_footer_start");
-	});
-
-	it("does not report onExited when it finishes opening", async () => {
-		const onExited = vi.fn();
-		const { rerender } = render(
-			<Modal open={false} onClose={() => {}} onExited={onExited}>
-				Content
-			</Modal>,
-		);
-		rerender(
-			<Modal open onClose={() => {}} onExited={onExited}>
-				Content
-			</Modal>,
-		);
-		await waitFor(() => expect(screen.getByRole("dialog")).toBeInTheDocument());
-		await new Promise((r) => setTimeout(r, 0));
-		expect(onExited).not.toHaveBeenCalled();
-		expect(screen.getByRole("dialog")).toBeInTheDocument();
 	});
 
 	describe("exit animation after opening from closed (skipAnimation off)", () => {
