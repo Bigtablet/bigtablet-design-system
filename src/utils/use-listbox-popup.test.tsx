@@ -14,13 +14,14 @@ const ITEMS: Item[] = [{ value: "a" }, { value: "b", disabled: true }, { value: 
 const Probe = ({
 	items = ITEMS,
 	onCommit = vi.fn(),
-	returnFocusOnClose = false,
+	returnFocusOnClose,
 	disabled = false,
 	initialActiveIndex,
 	expose,
 }: {
 	items?: Item[];
 	onCommit?: (item: Item) => void;
+	/** 기본값은 넘기지 않는다 - 훅의 기본값(false)을 그대로 검증한다 */
 	returnFocusOnClose?: boolean;
 	disabled?: boolean;
 	initialActiveIndex?: (items: Item[]) => number;
@@ -473,5 +474,144 @@ describe("useListboxPopup", () => {
 		fireEvent.keyDown(trigger, { key: "Enter" });
 
 		expect(onCommit).toHaveBeenCalledWith(ITEMS[2]);
+	});
+
+	// ── 뮤테이션 테스트에서 살아남은 분기 ──────────────────────────────────────
+
+	it("prevents the default action of every handled key except Tab", () => {
+		render(<Probe />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		// 닫힌 상태의 Enter·Space 는 열기, 열린 뒤 방향키·Home·End
+		expect(fireEvent.keyDown(trigger, { key: "Enter" })).toBe(false);
+		for (const key of ["ArrowDown", "ArrowUp", "Home", "End", " "]) {
+			expect(fireEvent.keyDown(trigger, { key })).toBe(false);
+		}
+		fireEvent.click(trigger);
+		const input = screen.getByLabelText("filter");
+		for (const key of ["ArrowDown", "ArrowUp", "Enter"]) {
+			expect(fireEvent.keyDown(input, { key })).toBe(false);
+		}
+		// Tab 은 닫기만 하고 브라우저 기본 이동을 막지 않는다 (APG)
+		expect(fireEvent.keyDown(input, { key: "Tab" })).toBe(true);
+		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+	});
+
+	it("closes on Tab from the trigger without blocking focus movement", () => {
+		render(<Probe />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		fireEvent.click(trigger);
+		expect(fireEvent.keyDown(trigger, { key: "Tab" })).toBe(true);
+		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+	});
+
+	it("does not open on arrow keys when there are no items", () => {
+		render(<Probe items={[]} />);
+		fireEvent.keyDown(screen.getByRole("button", { name: "trigger" }), { key: "ArrowDown" });
+		expect(screen.queryByLabelText("filter")).not.toBeInTheDocument();
+	});
+
+	it("moves down from no active item to the first enabled item", () => {
+		let api: ReturnType<typeof useListboxPopup<Item>> | undefined;
+		render(
+			<Probe
+				expose={(p) => {
+					api = p;
+				}}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		act(() => api?.setActiveIndex(-1));
+		act(() => api?.moveActive(1));
+		expect(activeValue()).toBe("a");
+	});
+
+	it("stops after one lap when every item is disabled", () => {
+		let api: ReturnType<typeof useListboxPopup<Item>> | undefined;
+		render(
+			<Probe
+				items={[
+					{ value: "x", disabled: true },
+					{ value: "y", disabled: true },
+				]}
+				expose={(p) => {
+					api = p;
+				}}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		act(() => api?.moveActive(1));
+		expect(activeValue()).toBeUndefined();
+	});
+
+	it("Home/End skip disabled ends, also while open", () => {
+		const items = [
+			{ value: "x", disabled: true },
+			{ value: "a" },
+			{ value: "b" },
+			{ value: "y", disabled: true },
+		];
+		render(<Probe items={items} />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+
+		fireEvent.keyDown(trigger, { key: "End" });
+		expect(activeValue()).toBe("b");
+		fireEvent.keyDown(trigger, { key: "Home" });
+		expect(activeValue()).toBe("a");
+		fireEvent.keyDown(trigger, { key: "End" });
+		expect(activeValue()).toBe("b");
+	});
+
+	it("End finds an enabled item at index 0", () => {
+		render(<Probe items={[{ value: "a" }, { value: "b", disabled: true }]} />);
+		fireEvent.keyDown(screen.getByRole("button", { name: "trigger" }), { key: "End" });
+		expect(activeValue()).toBe("a");
+	});
+
+	it("does not carry an End pressed while open into the next open", () => {
+		const onCommit = vi.fn();
+		render(<Probe onCommit={onCommit} initialActiveIndex={() => 0} />);
+		const trigger = screen.getByRole("button");
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "End" });
+		fireEvent.keyDown(trigger, { key: "Escape" });
+
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Enter" });
+		expect(onCommit).toHaveBeenCalledWith(ITEMS[0]);
+	});
+
+	it("lets Home on a closed popup win over initialActiveIndex even at index 0", () => {
+		render(<Probe initialActiveIndex={() => 2} />);
+		fireEvent.keyDown(screen.getByRole("button", { name: "trigger" }), { key: "Home" });
+		expect(activeValue()).toBe("a");
+	});
+
+	it("opens on the first enabled item when the first item is disabled", () => {
+		render(<Probe items={[{ value: "x", disabled: true }, { value: "a" }]} />);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(activeValue()).toBe("a");
+	});
+
+	it("keeps an active index of 0 across a new items identity even with initialActiveIndex", () => {
+		const { rerender } = render(<Probe items={[...ITEMS]} initialActiveIndex={() => 2} />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "Home" });
+		expect(activeValue()).toBe("a");
+
+		rerender(<Probe items={[...ITEMS]} initialActiveIndex={() => 2} />);
+		expect(activeValue()).toBe("a");
+	});
+
+	it("resets to initialActiveIndex when the items shrink past the active index", () => {
+		const { rerender } = render(<Probe items={ITEMS} initialActiveIndex={() => 0} />);
+		const trigger = screen.getByRole("button", { name: "trigger" });
+		fireEvent.click(trigger);
+		fireEvent.keyDown(trigger, { key: "End" });
+		expect(activeValue()).toBe("c");
+
+		const shrunk = [{ value: "a" }, { value: "b" }];
+		rerender(<Probe items={shrunk} initialActiveIndex={(items) => items.length - 1} />);
+		expect(activeValue()).toBe("b");
 	});
 });
