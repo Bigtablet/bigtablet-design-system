@@ -14,4 +14,13 @@ describe("useIsMounted", () => {
 		rerender();
 		expect(result.current).toBe(true);
 	});
+
+	it("returns false on the first render, before the mount effect", () => {
+		const seen: boolean[] = [];
+		renderHook(() => {
+			seen.push(useIsMounted());
+		});
+		expect(seen[0]).toBe(false);
+		expect(seen.at(-1)).toBe(true);
+	});
 });

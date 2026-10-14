@@ -1,5 +1,5 @@
 import { animated, Globals } from "@react-spring/web";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useSpringPresence } from "./use-spring-presence";
 
@@ -52,5 +52,27 @@ describe("useSpringPresence enter frame", () => {
 		const probe = screen.getByTestId("probe");
 		expect(probe.style.opacity).toBe("1");
 		expect(probe.style.transform).toBe("translateY(0px)");
+	});
+
+	it("starts from translateY(8px) by default", () => {
+		stubReducedMotion(false);
+		const Default = () => (
+			<animated.div data-testid="probe" style={useSpringPresence({ visible: true })} />
+		);
+		render(<Default />);
+		expect(screen.getByTestId("probe").style.transform).toBe("translateY(8px)");
+	});
+
+	it("reports opacity progress while animating", async () => {
+		stubReducedMotion(false);
+		const onProgress = vi.fn();
+		const Reporter = () => (
+			<animated.div style={useSpringPresence({ visible: true, onProgress })} />
+		);
+		render(<Reporter />);
+		await waitFor(() => expect(onProgress).toHaveBeenCalled());
+		const values = onProgress.mock.calls.map(([v]) => v as number);
+		expect(values.every((v) => typeof v === "number" && v >= 0 && v <= 1)).toBe(true);
+		await waitFor(() => expect(onProgress).toHaveBeenLastCalledWith(1));
 	});
 });

@@ -134,4 +134,27 @@ describe("overlay-stack", () => {
 		pressEscape();
 		expect(first).toHaveBeenCalledTimes(1);
 	});
+
+	it("keeps the other registration of the same handler when one is unregistered twice", () => {
+		// 같은 close 를 두 오버레이가 넘길 수 있다 - 해제 함수가 두 번 불려도 자기 몫 하나만 빼야 한다
+		const shared = vi.fn();
+		const unregFirst = open(shared);
+		open(shared);
+
+		unregFirst();
+		unregFirst();
+
+		pressEscape();
+		expect(shared).toHaveBeenCalledTimes(1);
+	});
+
+	it("removes its document listener only when the last overlay leaves", () => {
+		const remove = vi.spyOn(document, "removeEventListener");
+		const a = open(vi.fn());
+		const b = open(vi.fn());
+		a();
+		expect(remove).not.toHaveBeenCalledWith("keydown", expect.any(Function));
+		b();
+		expect(remove).toHaveBeenCalledWith("keydown", expect.any(Function));
+	});
 });
