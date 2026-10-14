@@ -1061,6 +1061,8 @@ describe("Dropdown", () => {
 		const { rerender } = render(<Dropdown options={options} />);
 		expect(trigger()).not.toHaveAttribute("aria-invalid");
 		expect(trigger()).not.toHaveAttribute("aria-required");
+		rerender(<Dropdown options={options} required />);
+		expect(trigger()).toHaveAttribute("aria-required", "true");
 		rerender(
 			<Field name="f" label="과일" error="필수">
 				<Dropdown options={options} />
