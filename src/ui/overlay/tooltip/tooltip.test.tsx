@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Tooltip } from "./index";
 
 // react-spring 은 setup.ts 에서 skipAnimation 이지만 퇴장 언마운트(onExitComplete)는 한 tick 늦게
@@ -130,5 +130,102 @@ describe("Tooltip", () => {
 		// 위치 컨테이너는 fixed 로 배치된다.
 		const position = tip.closest(".tooltip_position") as HTMLElement;
 		expect(position.style.position).toBe("fixed");
+	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+	// 타이머가 서로를 지우는지 보려면 시점을 직접 움직여야 한다 - fake timer 로 앞뒤를 고정한다.
+
+	const isOpen = () => screen.getByRole("button").hasAttribute("aria-describedby");
+	const advance = (ms: number) =>
+		act(() => {
+			vi.advanceTimersByTime(ms);
+		});
+
+	describe("timers", () => {
+		beforeEach(() => vi.useFakeTimers());
+		afterEach(() => vi.useRealTimers());
+
+		const ui = () =>
+			render(
+				<Tooltip content="hint" delay={200}>
+					<button type="button">btn</button>
+				</Tooltip>,
+			);
+
+		it("does not open when the pointer leaves before the delay", () => {
+			ui();
+			fireEvent.mouseEnter(screen.getByRole("button"));
+			advance(100);
+			fireEvent.mouseLeave(screen.getByRole("button"));
+			// 원래 열렸을 시점(200ms)과 닫힘 지연(+120ms) 사이 - 열기 타이머가 남아 있으면 여기서 열려 있다
+			advance(110);
+			expect(isOpen()).toBe(false);
+			advance(300);
+			expect(isOpen()).toBe(false);
+		});
+
+		it("does not open when focus leaves before the delay", () => {
+			ui();
+			fireEvent.focus(screen.getByRole("button"));
+			advance(100);
+			fireEvent.blur(screen.getByRole("button"));
+			advance(300);
+			expect(isOpen()).toBe(false);
+		});
+
+		it("stays open when the pointer comes back within the grace period", () => {
+			ui();
+			fireEvent.mouseEnter(screen.getByRole("button"));
+			advance(200);
+			expect(isOpen()).toBe(true);
+			fireEvent.mouseLeave(screen.getByRole("button"));
+			advance(60);
+			fireEvent.mouseEnter(screen.getByRole("button"));
+			// 닫힘 지연(120ms)이 지난 시점 - 다시 들어올 때 지우지 않았다면 여기서 닫혀 있다
+			advance(70);
+			expect(isOpen()).toBe(true);
+			advance(400);
+			expect(isOpen()).toBe(true);
+		});
+
+		it("stays open when the pointer moves onto the tooltip within the grace period", () => {
+			ui();
+			fireEvent.mouseEnter(screen.getByRole("button"));
+			advance(200);
+			fireEvent.mouseLeave(screen.getByRole("button"));
+			advance(60);
+			fireEvent.mouseEnter(document.querySelector(".tooltip_position") as HTMLElement);
+			advance(400);
+			expect(isOpen()).toBe(true);
+		});
+	});
+
+	it("keeps no portal in the DOM while closed, and none at all when disabled", () => {
+		const { rerender } = render(
+			<Tooltip content="hint">
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		expect(document.querySelector(".tooltip_position")).toBeNull();
+		rerender(
+			<Tooltip content="hint" disabled>
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		expect(document.querySelector(".tooltip_wrapper")).toBeNull();
+	});
+
+	it("stays open after it appears while the trigger is on screen", async () => {
+		render(
+			<Tooltip content="hint" delay={10}>
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		fireEvent.mouseEnter(screen.getByRole("button"));
+		await waitFor(() => expect(isOpen()).toBe(true));
+		await act(async () => {
+			await new Promise((r) => setTimeout(r, 50));
+		});
+		expect(isOpen()).toBe(true);
 	});
 });

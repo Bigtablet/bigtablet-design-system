@@ -305,4 +305,58 @@ describe("Popover", () => {
 		expect(modalClose).not.toHaveBeenCalled();
 		await waitFor(() => expect(screen.queryByText("Pop content")).not.toBeInTheDocument());
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	it("listens for outside presses only while open", () => {
+		const onOpenChange = vi.fn();
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel</span>}
+				open={false}
+				onOpenChange={onOpenChange}
+				aria-label="p"
+			/>,
+		);
+		fireEvent.mouseDown(document.body);
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(document.querySelector(".popover_position")).toBeNull();
+	});
+
+	it("treats presses on the trigger and inside the panel as inside", () => {
+		const onOpenChange = vi.fn();
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel</span>}
+				open
+				onOpenChange={onOpenChange}
+				aria-label="p"
+			/>,
+		);
+		fireEvent.mouseDown(screen.getByRole("button", { name: "Open" }));
+		fireEvent.mouseDown(screen.getByText("Panel"));
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(screen.getByRole("dialog")).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("drops its outside-press listener after closing", async () => {
+		const onOpenChange = vi.fn();
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel</span>}
+				onOpenChange={onOpenChange}
+				aria-label="p"
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		fireEvent.mouseDown(document.body);
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+		const calls = onOpenChange.mock.calls.length;
+		fireEvent.mouseDown(document.body);
+		expect(onOpenChange).toHaveBeenCalledTimes(calls);
+	});
 });

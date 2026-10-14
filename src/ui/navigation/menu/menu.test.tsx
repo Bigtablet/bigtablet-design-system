@@ -477,4 +477,70 @@ describe("Menu", () => {
 		expect(onSelect).toHaveBeenCalledOnce();
 		expect(document.activeElement).toBe(trigger);
 	});
+
+	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
+
+	const three = [
+		{ key: "a", label: "A" },
+		{ key: "b", label: "B" },
+		{ key: "c", label: "C" },
+	];
+	const openMenu = (items = three) => {
+		const utils = render(<Menu trigger={<button type="button">Open</button>} items={items} />);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		return utils;
+	};
+
+	it("moves one step with the arrows across three items and wraps up from the first", () => {
+		openMenu();
+		const menu = screen.getByRole("menu");
+		const items = screen.getAllByRole("menuitem");
+		fireEvent.keyDown(menu, { key: "ArrowDown" });
+		expect(items[1]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "ArrowUp" });
+		expect(items[0]).toHaveFocus();
+		fireEvent.keyDown(menu, { key: "ArrowUp" });
+		expect(items[2]).toHaveFocus();
+	});
+
+	it("enters from the matching end when no item has focus", () => {
+		openMenu();
+		const menu = screen.getByRole("menu");
+		const items = screen.getAllByRole("menuitem");
+		(document.activeElement as HTMLElement).blur();
+		fireEvent.keyDown(menu, { key: "ArrowUp" });
+		expect(items[2]).toHaveFocus();
+		(document.activeElement as HTMLElement).blur();
+		fireEvent.keyDown(menu, { key: "ArrowDown" });
+		expect(items[0]).toHaveFocus();
+	});
+
+	it("prevents the default action of the keys it handles", () => {
+		openMenu();
+		const menu = screen.getByRole("menu");
+		for (const key of ["ArrowDown", "ArrowUp", "Home", "End"]) {
+			expect(fireEvent.keyDown(menu, { key })).toBe(false);
+		}
+		expect(fireEvent.keyDown(menu, { key: "Escape" })).toBe(false);
+	});
+
+	it("closes on Escape only, not on other document keys", () => {
+		openMenu();
+		fireEvent.keyDown(document, { key: "a" });
+		expect(screen.getByRole("menu")).toBeInTheDocument();
+	});
+
+	it("keeps the focused item when the items array is recreated while open", () => {
+		const { rerender } = openMenu();
+		fireEvent.keyDown(screen.getByRole("menu"), { key: "ArrowDown" });
+		rerender(<Menu trigger={<button type="button">Open</button>} items={[...three]} />);
+		expect(screen.getAllByRole("menuitem")[1]).toHaveFocus();
+	});
+
+	it("keeps no menu in the DOM while closed and items out of the tab order", () => {
+		render(<Menu trigger={<button type="button">Open</button>} items={three} />);
+		expect(document.querySelector('[role="menu"]')).toBeNull();
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		expect(screen.getAllByRole("menuitem")[0]).toHaveAttribute("tabindex", "-1");
+	});
 });
