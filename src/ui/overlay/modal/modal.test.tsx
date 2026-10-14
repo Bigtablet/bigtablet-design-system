@@ -949,10 +949,9 @@ describe("Modal", () => {
 			);
 			const { rerender } = render(ui(false));
 			rerender(ui(true));
-			await waitFor(() =>
-				expect((document.querySelector(".modal_panel") as HTMLElement).style.opacity).toBe("1"),
-			);
-			await new Promise((r) => setTimeout(r, 50));
+			// onRest 를 가진 것은 오버레이 스프링이다 - 그 값이 목표에 닿고 한 프레임 뒤면 onRest 가 돌았다
+			await waitFor(() => expect(screen.getByRole("dialog").style.opacity).toBe("1"));
+			await new Promise((r) => requestAnimationFrame(() => r(null)));
 			expect(onExited).not.toHaveBeenCalled();
 			expect(document.querySelector(".modal_panel")).not.toBeNull();
 		});
