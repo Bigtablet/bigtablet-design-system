@@ -110,14 +110,16 @@ src/ui/general/button/
 
 ### Vanilla 번들 테스트
 
-`src/vanilla/bigtablet.test.ts` 가 Vanilla 번들(`Dropdown` / `Modal` / `Toggle` / `Alert`)을 덮는다.
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts`.
+공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
+`resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
 
 ```ts
 // UMD 번들이지만 Vite 가 named export 로 노출해준다. 소비자는 `<script>` + 전역 `Bigtablet`
 // 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
 // 소스 변경이 곧 테스트에 걸리게 한다.
-import { Alert, Dropdown, Modal, Toggle } from "./bigtablet.js";
+import { Dropdown } from "./bigtablet.js";
 ```
 
 주의할 점:
