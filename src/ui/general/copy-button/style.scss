@@ -1,0 +1,6 @@
+@use "src/styles/token" as token;
+
+// 복사 결과를 스크린리더에만 알리는 라이브 리전 - 화면에는 버튼 아이콘·문구가 바뀌는 것으로 충분하다
+.copy_button_status {
+  @include token.visually_hidden;
+}

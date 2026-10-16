@@ -30,6 +30,13 @@ export {
 	useAnchoredPosition,
 	type Viewport,
 } from "./use-anchored-position";
+export {
+	type ClipboardStatus,
+	copyText,
+	type UseClipboardOptions,
+	type UseClipboardResult,
+	useClipboard,
+} from "./use-clipboard";
 export { type FocusTrapOptions, useFocusTrap } from "./use-focus-trap";
 export { useIsMounted } from "./use-is-mounted";
 export { useReducedMotion } from "./use-reduced-motion";

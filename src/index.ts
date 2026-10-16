@@ -12,8 +12,13 @@ import "./styles/link.scss";
 
 export type { PolymorphicProps, PolymorphicRef } from "./utils";
 export {
+	type ClipboardStatus,
 	cn,
+	copyText,
 	type FocusTrapOptions,
+	type UseClipboardOptions,
+	type UseClipboardResult,
+	useClipboard,
 	useFocusTrap,
 	useReducedMotion,
 	useSpringHover,
@@ -250,6 +255,8 @@ export type {
 	ButtonVariant,
 } from "./ui/general/button";
 export { Button } from "./ui/general/button";
+export type { CopyButtonProps } from "./ui/general/copy-button";
+export { CopyButton } from "./ui/general/copy-button";
 export type { IconButtonProps, IconButtonSize, IconButtonVariant } from "./ui/general/icon-button";
 export { IconButton } from "./ui/general/icon-button";
 export type { PaginationProps } from "./ui/navigation/pagination";
