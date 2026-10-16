@@ -177,6 +177,7 @@ import { Dropdown } from "./bigtablet.js";
 | Dropdown · Combobox | 높이 상한(#621), 트리거 정렬, 375px 넘침 |
 | DatePicker (`variant="calendar"`) | 달력 flip, 320px 에서 요일 7칸이 패널 안 |
 | Modal · Drawer · Vanilla Modal | 좁은 화면 잘림, 스크롤 잠금 - 콘텐츠 안 밀림·스크롤바 자리 덮음·패널 중심(#574·#635)·스크롤 위치 복원 |
+| Table | 클릭 가능한 행의 키보드 포커스 테두리(#802) - 키보드에서만, 마우스 클릭엔 없음, 다크 테마 색 |
 
 - **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세운다. 앵커는
   `position: fixed` 래퍼로 원하는 좌표에 둔다.
