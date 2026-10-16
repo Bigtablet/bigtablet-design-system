@@ -422,7 +422,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 83 test files / 1536 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 90 test files / 1624 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -432,9 +432,9 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **94.69%** | **92.71%** | **95.26%** | **95.85%** |
+| **All files** | **94.99%** | **93%** | **95.38%** | **96.12%** |
 
-아래는 **100% 미만**인 것만 나열한 것이다 (42개는 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것이다 (45개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
@@ -447,15 +447,17 @@ it("calls callback with correct arguments", () => {
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 76.32% | 53.33% | 100% | 79.41% |
 | ui/display/table | 98.41% | 96.49% | 97.06% | 99.07% |
-| ui/feedback/alert | 98.57% | 94.92% | 100% | 100% |
+| ui/feedback/alert | 99.07% | 95% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 98.77% | 94.12% | 100% | 100% |
 | ui/forms/checkbox | 92.31% | 95.45% | 100% | 100% |
 | ui/forms/combobox | 100% | 98% | 94.44% | 100% |
-| ui/forms/date-picker | 97.78% | 95.55% | 100% | 100% |
+| ui/forms/date-calendar | 100% | 98.37% | 100% | 100% |
+| ui/forms/date-picker | 96.48% | 95.28% | 100% | 100% |
 | ui/forms/dropdown | 100% | 95.6% | 100% | 100% |
 | ui/forms/file | 82.35% | 72.55% | 83.33% | 82% |
 | ui/forms/image-cropper | 59.33% | 58.95% | 50% | 60.28% |
+| ui/forms/segmented-control | 96.97% | 95.92% | 100% | 100% |
 | ui/forms/tag-input | 98.85% | 95.35% | 100% | 100% |
 | ui/forms/textarea | 88.33% | 74.51% | 100% | 92.73% |
 | ui/forms/textfield | 98.18% | 97.06% | 90.91% | 98.08% |
@@ -473,6 +475,7 @@ it("calls callback with correct arguments", () => {
 | utils/overlay-stack.ts | 93.94% | 83.33% | 87.5% | 96.3% |
 | utils/scroll-lock.ts | 97.59% | 95.24% | 100% | 100% |
 | utils/use-anchored-position.ts | 97.73% | 95% | 100% | 100% |
+| utils/use-clipboard.ts | 95.95% | 83.33% | 88.89% | 97.18% |
 | utils/use-listbox-popup.ts | 99.33% | 100% | 100% | 99.18% |
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
