@@ -290,6 +290,10 @@ export const colors = {
 export const spacing = { "4": "4px", "8": "8px", "16": "16px", "24": "24px", /* ... */ } as const;
 ```
 
+TS 의 `colors` · `elevation` 은 **light 고정값**이다. 테마를 따라가야 하는 인라인 스타일은 같은 키의 `cssVars`(`src/styles/css-vars.ts`, 값이 `var(--bt-*)`)를 쓴다.
+
+값의 기준은 SCSS(`colors/_index.scss` · `theme.scss`)다. TS 와 `tokens.json` 은 사본이라 `src/styles/tokens.test.ts` 가 SCSS 컴파일 결과와 대조한다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스).
+
 ### SCSS 토큰
 
 semantic 색상은 `var(--bt-*)` 를 가리킨다. SCSS 변수 자체가 CSS 변수 참조라서 `[data-theme="dark"]` 전환이 재컴파일 없이 그대로 따라온다.

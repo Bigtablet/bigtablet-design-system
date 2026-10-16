@@ -19,7 +19,7 @@
 
 .otp_input_box {
   width: 48px;
-  min-height: 56px;
+  min-height: token.$control_height_xl;
   padding: token.$spacing_4;
 
   border: token.$border_width_standard solid token.$color_border_default;

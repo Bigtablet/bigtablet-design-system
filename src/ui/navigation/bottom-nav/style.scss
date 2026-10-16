@@ -2,7 +2,7 @@
 
 // height + safe-area 합산 - 소비처 layout 계산용 노출
 :root {
-  --bt-bottom-nav-height: 56px;
+  --bt-bottom-nav-height: #{token.$tap_target_spacious};
   --bt-bottom-nav-safe-area: env(safe-area-inset-bottom, 0px);
   --bt-bottom-nav-total-height: calc(
     var(--bt-bottom-nav-height) + var(--bt-bottom-nav-safe-area)
@@ -55,7 +55,7 @@ body:has(.bottom_nav) {
     color: token.$color_text_caption;
     cursor: pointer;
     text-decoration: none;
-    min-height: 56px; // a11y tap target
+    min-height: token.$tap_target_spacious; // a11y tap target
     transition:
       color token.$duration_fast token.$easing_enter,
       background token.$duration_fast token.$easing_enter;

@@ -106,10 +106,11 @@ export { Tooltip } from "./ui/overlay/tooltip";
 
 // Design Tokens
 
-export { a11y } from "./styles/a11y";
+export { a11y, controlHeight } from "./styles/a11y";
 export { baseBorderWidth, borderWidth } from "./styles/border-width";
 export { breakpoints } from "./styles/breakpoints";
 export { baseColors, colors } from "./styles/colors";
+export { cssVars } from "./styles/css-vars";
 export { elevation } from "./styles/elevation";
 export { iconSize } from "./styles/icon";
 export { motion } from "./styles/motion";
