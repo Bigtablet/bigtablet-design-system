@@ -76,6 +76,7 @@ export const SegmentedControl = <T extends string = string>({
 	disabled = false,
 	required = false,
 	className,
+	onKeyDown: onKeyDownProp,
 	...props
 }: SegmentedControlProps<T>) => {
 	const isControlled = controlledValue !== undefined;
@@ -95,8 +96,10 @@ export const SegmentedControl = <T extends string = string>({
 	};
 
 	// 방향키는 native radio 가 처리한다. Home/End 는 radio 기본 동작에 없어 직접 더한다.
+	// 소비자 onKeyDown 을 먼저 부르고, 거기서 preventDefault 했으면 Home/End 를 건너뛴다.
 	const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (e.key !== "Home" && e.key !== "End") return;
+		onKeyDownProp?.(e);
+		if (e.defaultPrevented || (e.key !== "Home" && e.key !== "End")) return;
 		const enabled = items.filter((item) => !(disabled || item.disabled));
 		const target = e.key === "Home" ? enabled[0] : enabled.at(-1);
 		if (!target) return;
@@ -127,7 +130,7 @@ export const SegmentedControl = <T extends string = string>({
 			)}
 			onKeyDown={onKeyDown}
 		>
-			{items.map((item, index) => {
+			{items.map((item) => {
 				const selected = item.value === value;
 				const itemDisabled = disabled || !!item.disabled;
 				return (
@@ -146,8 +149,9 @@ export const SegmentedControl = <T extends string = string>({
 							value={item.value}
 							checked={selected}
 							disabled={itemDisabled}
-							// native required 는 그룹 중 하나에만 있어도 그룹 전체에 걸린다
-							required={isRequired && index === 0}
+							// 모든 칸에 건다 - 한 칸에만 걸면 그 칸이 disabled 일 때 제약 검증에서 빠져
+							// 선택 없이 제출된다. radio 그룹은 하나만 골라도 충족된다.
+							required={isRequired}
 							aria-label={item.ariaLabel}
 							onChange={() => select(item.value)}
 						/>

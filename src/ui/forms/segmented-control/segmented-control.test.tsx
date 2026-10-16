@@ -120,7 +120,44 @@ describe("SegmentedControl", () => {
 		expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-required", "true");
 		const radios = screen.getAllByRole("radio") as HTMLInputElement[];
 		expect(radios.map((r) => r.name)).toEqual(["currency", "currency", "currency"]);
-		expect(radios[0]).toBeRequired();
+		for (const r of radios) expect(r).toBeRequired();
+	});
+
+	it("still blocks an empty submit when the first item is disabled", () => {
+		const { container } = render(
+			<form>
+				<SegmentedControl
+					aria-label="통화"
+					items={[{ value: "A", label: "A", disabled: true }, ...currencies]}
+					required
+				/>
+			</form>,
+		);
+		expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
+		fireEvent.click(screen.getByRole("radio", { name: "KRW" }));
+		expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(true);
+	});
+
+	it("calls the consumer's onKeyDown first and lets it cancel Home/End", () => {
+		const onValueChange = vi.fn();
+		const onKeyDown = vi.fn((e: React.KeyboardEvent) => {
+			if (e.key === "End") e.preventDefault();
+		});
+		render(
+			<SegmentedControl
+				aria-label="통화"
+				items={currencies}
+				defaultValue="USD"
+				onValueChange={onValueChange}
+				onKeyDown={onKeyDown}
+			/>,
+		);
+		const usd = screen.getByRole("radio", { name: "USD" });
+		fireEvent.keyDown(usd, { key: "End" });
+		expect(onKeyDown).toHaveBeenCalledTimes(1);
+		expect(onValueChange).not.toHaveBeenCalled();
+		fireEvent.keyDown(usd, { key: "Home" });
+		expect(onValueChange).toHaveBeenCalledWith("USD");
 	});
 
 	it("takes its name, description, error and required state from Field", () => {
