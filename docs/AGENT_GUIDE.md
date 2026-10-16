@@ -239,6 +239,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
+| `FilterBar` | List-page filter form: field grid + Enter submit + search/reset buttons. Holds no filter state. | `children` (fields), `onSubmit`, `onReset` (shows reset), `canSubmit`, `canReset`, `loading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
 | `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
 | `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
