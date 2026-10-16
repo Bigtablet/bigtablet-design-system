@@ -46,7 +46,7 @@ export interface TabsProps
 	defaultValue?: string;
 	/** value 변경 콜백 */
 	onValueChange?: (value: string) => void;
-	/** 시각 스타일 (기본값: "line"). line=하단 underline, pills=둥근 박스 */
+	/** 시각 스타일 (기본값: "line"). line=하단 underline, fills=활성 탭을 채운 둥근 박스 그룹 */
 	variant?: TabsVariant;
 	/** 크기 (기본값: "md") */
 	size?: TabsSize;

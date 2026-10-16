@@ -20,6 +20,9 @@
    Storybook autodocs 와 소비자 문서가 조용히 거짓말을 한다.
 3. `docs/COMPONENTS.md` prop 표의 Default 열이 소스 기본값과 일치해야 한다. 소비자가 읽는
    문서라 어긋나면 그대로 잘못된 코드를 쓴다.
+6. `docs/COMPONENTS.md` 의 문자열 union 값(prop 표 Type 열 `'line' \| 'fills'`, 예제의
+   `<Tabs variant="fills">`)이 소스의 union 타입과 일치해야 한다. Tabs 가 `pills` → `fills` 로
+   이름을 바꾼 뒤 문서만 `pills` 로 남아, 문서 예제를 그대로 쓰면 tsc 가 실패했다(#798).
 
 exit 1 이면 위반이 있다.
 """
@@ -267,6 +270,93 @@ def check_catalog_order() -> list[str]:
     return problems
 
 
+TYPE_HEADER = re.compile(r"^(?:Type|타입)$", re.IGNORECASE)
+# `export type TabsVariant = "line" | "fills";` - 문자열 리터럴로만 된 union
+UNION_ALIAS = re.compile(r'^export type (\w+) =\s*((?:"[^"]+"\s*\|\s*)*"[^"]+");', re.M)
+# `\tvariant?: TabsVariant;` 또는 `\tsize?: "sm" | "md";`
+PROP_TYPE = re.compile(r"^\t([a-z][A-Za-z0-9]*)\??:\s*([^;]+);", re.M)
+LITERAL = re.compile(r"""["']([^"']+)["']""")
+
+
+def union_props(path: Path) -> dict[str, set[str]]:
+    """props 인터페이스에서 문자열 union 으로 타입이 정해진 prop -> 허용 값 집합."""
+    text = path.read_text(encoding="utf-8")
+    aliases = {name: set(LITERAL.findall(body)) for name, body in UNION_ALIAS.findall(text)}
+    out: dict[str, set[str]] = {}
+    for prop, typ in PROP_TYPE.findall(text):
+        typ = typ.strip()
+        if typ in aliases:
+            out.setdefault(prop, aliases[typ])
+        elif re.fullmatch(r'(?:"[^"]+"\s*\|\s*)*"[^"]+"', typ):
+            out.setdefault(prop, set(LITERAL.findall(typ)))
+    return out
+
+
+def check_doc_unions(files: list[Path]) -> tuple[list[str], int]:
+    """문서의 union 값(prop 표 Type 열 · 예제 JSX 속성)이 소스 union 과 같은지."""
+    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
+    problems: list[str] = []
+    compared = 0
+    component: Path | None = None
+    name = ""
+    type_col: int | None = None
+    in_code = False
+
+    for i, line in enumerate(DOC.read_text(encoding="utf-8").splitlines(), start=1):
+        if line.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            if component is None:
+                continue
+            allowed = union_props(component)
+            # 이 섹션 컴포넌트의 태그만 본다 - 예제 안의 Button 등은 자기 섹션에서 검사된다
+            for tag in re.finditer(rf"<{name}\b([^>]*)", line):
+                for prop, value in re.findall(r'\b([a-z][A-Za-z0-9]*)="([^"]*)"', tag.group(1)):
+                    if prop in allowed:
+                        compared += 1
+                        if value not in allowed[prop]:
+                            problems.append(
+                                f"{DOC}:{i}  <{name} {prop}=\"{value}\"> - 소스 허용값"
+                                f" {sorted(allowed[prop])} 에 없다"
+                            )
+            continue
+        if line.startswith("#"):
+            # `####`(언제 쓰는가 · variant 선택 가이드)는 컴포넌트 섹션 안의 소제목이다 -
+            # 여기서 섹션을 끊으면 그 아래 Props 표와 예제가 통째로 검사에서 빠진다
+            if not line.startswith("####"):
+                name = line.lstrip("# ").strip()
+                component = by_name.get(re.sub(r"[^A-Za-z0-9]", "", name).lower())
+            type_col = None
+            continue
+        if not line.startswith("|"):
+            type_col = None
+            continue
+        cells = cells_of(line)
+        header = next((n for n, c in enumerate(cells) if TYPE_HEADER.match(c)), None)
+        if header is not None:
+            type_col = header
+            continue
+        if type_col is None or component is None or len(cells) <= type_col:
+            continue
+        prop = normalize(cells[0])
+        documented = cells[type_col].replace("\\|", "|").strip("` ")
+        if not re.fullmatch(r"(?:'[^']+'\s*\|\s*)*'[^']+'", documented):
+            continue
+        allowed = union_props(component).get(prop)
+        if allowed is None:
+            continue
+        compared += 1
+        values = set(LITERAL.findall(documented))
+        if values != allowed:
+            problems.append(
+                f"{DOC}:{i}  {component.parent.name}.{prop} - 문서 {sorted(values)}"
+                f" != 소스 {sorted(allowed)}"
+            )
+
+    return problems, compared
+
+
 def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], int]:
     by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
     problems: list[str] = []
@@ -276,8 +366,11 @@ def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], i
 
     for i, line in enumerate(DOC.read_text(encoding="utf-8").splitlines(), start=1):
         if line.startswith("#"):
-            key = re.sub(r"[^A-Za-z0-9]", "", line.lstrip("# ")).lower()
-            component, default_col = by_name.get(key), None
+            # `####` 소제목은 섹션을 끊지 않는다 (check_doc_unions 주석 참고)
+            if not line.startswith("####"):
+                key = re.sub(r"[^A-Za-z0-9]", "", line.lstrip("# ")).lower()
+                component = by_name.get(key)
+            default_col = None
             continue
         if not line.startswith("|"):
             default_col = None
@@ -332,6 +425,8 @@ def main() -> int:
     problems += check_catalog_wiring(files, catalog)
     doc_problems, doc_compared = check_docs(files, catalog)
     problems += doc_problems
+    union_problems, union_compared = check_doc_unions(files)
+    problems += union_problems
 
     exposed = len(catalog)
     documented = sum(
@@ -341,10 +436,10 @@ def main() -> int:
         if JSDOC_DEFAULT.match(line)
     )
 
-    if exposed == 0 or documented == 0 or doc_compared == 0:
+    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0:
         print(
             f"검사 대상이 사라졌다 (카탈로그 {exposed}, @default {documented},"
-            f" 문서 표 {doc_compared})"
+            f" 문서 표 {doc_compared}, union {union_compared})"
             " - 정규식이나 파일 구조가 바뀌었는지 확인하라",
             file=sys.stderr,
         )
@@ -359,6 +454,7 @@ def main() -> int:
     print(f"로케일 카탈로그 {exposed}개 - 전부 한글입니다.")
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
     print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
+    print(f"docs/COMPONENTS.md union 값(표 타입 · 예제 속성) {union_compared}개 - 전부 소스와 일치합니다.")
     print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있고 섹션 안에서 정렬돼 있습니다.")
     return 0
 
