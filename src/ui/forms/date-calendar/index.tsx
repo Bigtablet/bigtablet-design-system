@@ -179,12 +179,12 @@ export const DateCalendar = ({
 
 	// 제어형에서 달을 넘기려던 칸 - 부모가 month 를 바꿔 주면 그 칸에 앉는다
 	const pendingRef = React.useRef<{ date: Ymd; viaKeyboard: boolean } | null>(null);
-	// 제어형 month 가 바깥에서 바뀌면 그 달로 따라간다
+	// 제어형 month 가 바깥에서 바뀌면 그 달로 따라간다. **값이 바뀔 때 한 번만** 맞춘다 - 범위
+	// 밖의 달이면 clamp 결과가 다른 달이라, focused 와 비교하면 렌더마다 다시 맞추느라 끝나지 않는다.
+	const syncedMonthRef = React.useRef(monthProp);
 	const controlledMonth = parse(monthProp);
-	if (
-		controlledMonth &&
-		(controlledMonth.year !== focused.year || controlledMonth.month !== focused.month)
-	) {
+	if (controlledMonth && syncedMonthRef.current !== monthProp) {
+		syncedMonthRef.current = monthProp;
 		const pending = pendingRef.current;
 		pendingRef.current = null;
 		const hit =
@@ -194,6 +194,21 @@ export const DateCalendar = ({
 		// 포커스는 이 경우에만 따라간다 - 부모가 거절했다 나중에 다른 이유로 렌더될 때 튀지 않게
 		moveFocusRef.current = !!hit && pending.viaKeyboard;
 		setFocused(clampToRange(hit ? pending.date : pickInMonth(controlledMonth)));
+	}
+
+	// 고른 날이 바깥에서(오늘 버튼 · 다른 입력) 다른 달로 바뀌면 그 달을 보여 준다 - 보이는 달을
+	// 부모가 제어하면 그쪽이 정한다. 역시 값이 바뀔 때 한 번만.
+	const selectedKey = selected ? format(selected) : null;
+	const syncedValueRef = React.useRef(selectedKey);
+	if (syncedValueRef.current !== selectedKey) {
+		syncedValueRef.current = selectedKey;
+		if (
+			selected &&
+			monthProp === undefined &&
+			(selected.year !== focused.year || selected.month !== focused.month)
+		) {
+			setFocused(clampToRange(selected));
+		}
 	}
 
 	const view = { year: focused.year, month: focused.month };

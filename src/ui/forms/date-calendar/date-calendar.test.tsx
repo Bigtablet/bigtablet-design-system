@@ -199,4 +199,25 @@ describe("DateCalendar", () => {
 		expect(outside).toHaveFocus();
 		outside.remove();
 	});
+
+	it("does not loop when a controlled month is outside min/max", () => {
+		const { rerender } = render(
+			<DateCalendar today="2026-10-16" month="2026-10" min="2026-10-05" />,
+		);
+		rerender(<DateCalendar today="2026-10-16" month="2026-01" min="2026-10-05" />);
+		// 범위 끝(min 의 달)에 붙는다
+		expect(title()).toBe("2026년 10월");
+		render(<DateCalendar today="2026-10-16" month="2027-05" max="2026-11-20" />);
+		expect(screen.getAllByText("2026년 11월")).toHaveLength(1);
+	});
+
+	it("shows the month of a value changed from outside when the month is not controlled", () => {
+		const { rerender } = render(<DateCalendar today="2026-10-16" value="2026-10-16" />);
+		rerender(<DateCalendar today="2026-10-16" value="2027-02-03" />);
+		expect(title()).toBe("2027년 2월");
+		expect(screen.getByRole("button", { name: /2027년 2월 3일/ })).toHaveAttribute("tabindex", "0");
+		// 보이는 달을 부모가 정하면 value 가 바뀌어도 움직이지 않는다
+		rerender(<DateCalendar today="2026-10-16" value="2027-06-01" month="2027-02" />);
+		expect(title()).toBe("2027년 2월");
+	});
 });

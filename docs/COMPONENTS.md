@@ -1480,10 +1480,10 @@ const [date, setDate] = useState('');
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string \| null` | - | 제어형: 고른 날 `"YYYY-MM-DD"` |
+| `value` | `string \| null` | - | 제어형: 고른 날 `"YYYY-MM-DD"`. 바깥에서 다른 달로 바뀌면 그 달을 보여 준다 (`month` 를 제어하면 그쪽이 정한다) |
 | `defaultValue` | `string` | - | 비제어형: 처음 고른 날 |
 | `onValueChange` | `(value: string) => void` | - | 날을 고를 때 |
-| `month` | `string` | - | 제어형: 보이는 달 `"YYYY-MM"` |
+| `month` | `string` | - | 제어형: 보이는 달 `"YYYY-MM"`. `min`/`max` 밖이면 범위 끝 달에 붙는다 |
 | `defaultMonth` | `string` | 고른 날 → 오늘의 달 | 비제어형: 처음 보이는 달 |
 | `onMonthChange` | `(month: string) => void` | - | 보이는 달이 바뀔 때 (넘김 버튼 · PageUp/Down · 방향키로 달을 넘을 때) |
 | `min` / `max` | `string` | - | 고를 수 있는 첫날 / 마지막 날. 그 밖의 달로는 넘어가지 않는다 |
