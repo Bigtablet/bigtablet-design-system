@@ -25,6 +25,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [SegmentedControl](#segmentedcontrol)
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
+  - [DateCalendar](#datecalendar)
   - [FileInput](#fileinput)
   - [ImageCropper](#imagecropper)
   - [OtpInput](#otpinput)
@@ -1459,6 +1460,64 @@ const [date, setDate] = useState('');
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
+
+---
+
+### DateCalendar
+
+월 달력 - 날짜 하나를 고른다. 보이는 달 · 범위 · 고를 수 없는 날 · 주 시작 요일 · 날짜 장식(일정 점 · 배지)을 다룬다. [DatePicker](#datepicker) `variant="calendar"` 의 팝오버도 이 컴포넌트다. 범위(시작~끝) 선택은 아직 없다 - [DateRangePicker](#daterangepicker) 를 쓴다.
+
+#### 날짜 값과 시간대
+
+값은 **`"YYYY-MM-DD"` 문자열**이다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `minDate` 와 같은 형식이다.
+
+- 시간대가 없다 - `new Date("2026-10-16")` 은 **UTC 자정**으로 해석돼 한국(UTC+9)에서는 맞지만 미국에서는 하루 전날이 된다. 문자열이라 이 변환이 끼어들 자리가 없다
+- Date 가 필요하면 **로컬 생성자**로 만든다: `const [y, m, d] = value.split("-").map(Number); new Date(y, m - 1, d)`
+- 서버가 `2026-10-16T00:00:00Z` 같은 시각을 주면, 그 날짜를 **어느 시간대 기준으로 볼지 앱이 정해** `"YYYY-MM-DD"` 로 바꿔 넘긴다
+- `today` 기본값은 기기의 오늘이다. 서버 기준 날짜를 써야 하면 넘긴다
+
+**Props** (`<div>` 속성 상속)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string \| null` | - | 제어형: 고른 날 `"YYYY-MM-DD"` |
+| `defaultValue` | `string` | - | 비제어형: 처음 고른 날 |
+| `onValueChange` | `(value: string) => void` | - | 날을 고를 때 |
+| `month` | `string` | - | 제어형: 보이는 달 `"YYYY-MM"` |
+| `defaultMonth` | `string` | 고른 날 → 오늘의 달 | 비제어형: 처음 보이는 달 |
+| `onMonthChange` | `(month: string) => void` | - | 보이는 달이 바뀔 때 (넘김 버튼 · PageUp/Down · 방향키로 달을 넘을 때) |
+| `min` / `max` | `string` | - | 고를 수 있는 첫날 / 마지막 날. 그 밖의 달로는 넘어가지 않는다 |
+| `isDateDisabled` | `(date: string) => boolean` | - | 그 밖에 고를 수 없는 날 (휴일 · 마감) |
+| `today` | `string` | 기기의 오늘 | 오늘 표시(테두리 · `aria-current="date"`) 기준 |
+| `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | `0` | 주의 첫 요일 (0 일요일, 1 월요일) |
+| `renderDay` | `(date, { selected, today, disabled }) => ReactNode` | - | 날짜 칸 장식. 숫자 아래에 그려지고 보조기기에는 숨겨진다 |
+| `describeDay` | `(date: string) => string \| undefined` | - | 날짜 이름 뒤에 붙일 설명 - 장식의 뜻을 스크린리더에 전한다 |
+| `prevMonthLabel` / `nextMonthLabel` | `string` | `'이전 달'` / `'다음 달'` | 넘김 버튼 이름 (로케일 `datePicker.prevMonth` · `nextMonth`) |
+
+#### 접근성
+
+- WAI-ARIA APG "Date Picker Dialog" 의 `grid` 구조 - 요일 머리글이 각 칸을 설명하고, 칸 이름은 전체 날짜("2026년 10월 16일 금요일")
+- 키보드: <kbd>←</kbd>/<kbd>→</kbd> 하루, <kbd>↑</kbd>/<kbd>↓</kbd> 한 주, <kbd>Home</kbd>/<kbd>End</kbd> 주의 처음 · 끝(`weekStartsOn` 기준), <kbd>PageUp</kbd>/<kbd>PageDown</kbd> 한 달(<kbd>Shift</kbd> 와 함께면 한 해), <kbd>Enter</kbd>/<kbd>Space</kbd> 선택. 포커스는 한 칸만(roving tabindex)
+- 고를 수 없는 날도 포커스는 지나간다 - `disabled` 가 아니라 `aria-disabled`
+- **장식(`renderDay`)은 화면에만 보인다.** 일정 개수처럼 뜻이 있으면 `describeDay` 로 같은 정보를 이름에 붙인다 ("2026년 10월 12일 월요일, 일정 3개")
+
+**Usage**
+
+```tsx
+import { DateCalendar } from "@bigtablet/design-system";
+
+const [date, setDate] = useState<string | null>(null);
+
+<DateCalendar
+  value={date}
+  onValueChange={setDate}
+  weekStartsOn={1}
+  min="2026-10-01"
+  isDateDisabled={(d) => holidays.has(d)}
+  renderDay={(d) => (events[d] ? <span className="event_dot" /> : null)}
+  describeDay={(d) => (events[d] ? `일정 ${events[d].length}개` : undefined)}
+/>
+```
 
 ---
 

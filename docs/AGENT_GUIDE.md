@@ -244,6 +244,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
 | `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
 | `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
+| `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
 | `OTPInput` | Single-digit code boxes. | `length`, `value`, `onChange`, `autoFocus`, `error` |
 
