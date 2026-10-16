@@ -124,7 +124,10 @@
       $edge: token.$border_width_thick;
       $color: token.$color_border_focus;
 
-      outline: none;
+      // `none` 이 아니라 투명 outline - 고대비 모드(`forced-colors: active`)는 box-shadow 를 지우고
+      // 배경도 시스템 색으로 덮는데, 투명 outline 은 시스템 색으로 칠해 그 모드의 포커스 표시가 된다.
+      outline: $edge solid transparent;
+      outline-offset: calc(-1 * $edge);
       background: token.$color_state_focus_on_light;
 
       > * {

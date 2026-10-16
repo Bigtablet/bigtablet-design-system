@@ -40,6 +40,11 @@ describe("Table clickable row focus (Chromium)", () => {
 			expect(shadow).toMatch(/0px 2px 0px 0px/);
 			expect(shadow).toMatch(/0px -2px 0px 0px/);
 		}
+		// 고대비 모드 폴백 - 평소엔 투명이고 forced-colors 에서 시스템 색으로 칠해진다
+		const style = getComputedStyle(row);
+		expect(style.outlineStyle).toBe("solid");
+		expect(style.outlineWidth).toBe("2px");
+		expect(style.outlineColor).toBe("rgba(0, 0, 0, 0)");
 	});
 
 	it("shows no border when the row is clicked with the mouse", async () => {
