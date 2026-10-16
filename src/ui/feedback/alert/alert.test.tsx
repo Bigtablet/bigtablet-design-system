@@ -426,6 +426,39 @@ describe("useConfirm", () => {
 		expect(first).toHaveBeenCalledTimes(1);
 	});
 
+	it("keeps the replacement when the earlier async confirm finishes later", async () => {
+		let finishFirst!: () => void;
+		const firstAction = vi.fn(() => new Promise<void>((r) => (finishFirst = r)));
+		const first = vi.fn();
+		const second = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={first} label="첫째" options={{ onConfirm: firstAction }} />
+				<Opener onResult={second} label="둘째" options={{ title: "버릴까요?" }} />
+			</AlertProvider>,
+		);
+		open("첫째");
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(firstAction).toHaveBeenCalledTimes(1);
+
+		// 첫째가 아직 진행 중일 때 둘째로 교체 - 교체 시점에 첫째는 false 로 끝난다
+		open("둘째");
+		await flush();
+		expect(first).toHaveBeenCalledWith(false);
+
+		// 늦게 끝난 첫째 작업이 둘째를 닫거나 둘째 promise 를 resolve 하지 않는다
+		await act(async () => finishFirst());
+		const dialog = screen.getByRole("alertdialog", { name: "버릴까요?" });
+		expect(dialog).not.toHaveAttribute("aria-busy");
+		expect(second).not.toHaveBeenCalled();
+		expect(first).toHaveBeenCalledTimes(1);
+
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(second).toHaveBeenCalledWith(true);
+	});
+
 	it("keeps the dialog open while an async onConfirm runs and blocks double submit and dismiss", async () => {
 		let finish!: () => void;
 		const action = vi.fn(() => new Promise<void>((r) => (finish = r)));
