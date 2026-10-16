@@ -305,7 +305,7 @@
 
     // 라벨 옆에 시각적 호흡 - supporting text 있으면 더 큼
     &:has(.dropdown_option_supporting) {
-      min-height: token.$control_height_xl;
+      min-height: token.$tap_target_spacious;
       padding: token.$spacing_8 token.$spacing_16;
     }
 
