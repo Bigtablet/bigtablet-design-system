@@ -1700,7 +1700,8 @@ const [page, setPage] = useState(1);
 | 상황 | 선택 |
 |------|------|
 | 카테고리 간 전환 (서로 배타적, 한 번에 하나만) | ✅ Tabs |
-| 같은 페이지 내 카테고리 필터/토글 그룹 | ✅ Tabs (`pills` variant) |
+| 같은 영역의 보기 전환을 박스 그룹 모양으로 (목록 / 보드 등) | ✅ Tabs (`fills` variant) |
+| 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **RadioGroup** - `tablist`/`tab` 은 "패널을 바꾼다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속한다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
 | 단순 boolean 토글 1쌍 | ❌ **Toggle** |
@@ -1708,7 +1709,7 @@ const [page, setPage] = useState(1);
 #### variant 선택 가이드
 
 - `variant="line"` (기본) - **하단 underline**. 페이지 내 섹션 전환 (admin 페이지 위계, 제품 상세 등). 가장 흔한 케이스
-- `variant="pills"` - **둥근 박스 그룹**. 카테고리 필터, 토글성 그룹화 (전체/활성/보관 등). dim bg 위에 segmented control 형태
+- `variant="fills"` - **둥근 박스 그룹**. dim bg 위에서 활성 탭을 박스로 채운다. 짧은 라벨 2~4개의 보기 전환(목록/보드, 월/주)처럼 underline 이 약해 보이는 자리. **모양이 segmented control 이어도 패널을 바꾸는 탭이다** - 값만 고르는 컨트롤로 쓰지 않는다
 
 #### 제어형 vs 비제어형
 
@@ -1728,7 +1729,7 @@ const [tab, setTab] = useState("overview");
 | `value` | `string` | - | 제어형: 현재 활성 tab의 value |
 | `defaultValue` | `string` | `''` | 비제어형: 초기 활성 tab의 value |
 | `onValueChange` | `(value: string) => void` | - | value 변경 콜백 |
-| `variant` | `'line' \| 'pills'` | `'line'` | 시각 스타일. line=하단 underline, pills=둥근 박스 |
+| `variant` | `'line' \| 'fills'` | `'line'` | 시각 스타일. line=하단 underline, fills=둥근 박스 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 (sm=32px min-height, md=40px) |
 
 **TabList Props**
@@ -1772,8 +1773,8 @@ const [tab, setTab] = useState("overview");
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-.tabs (+ tabs_variant_line | tabs_variant_pills, tabs_size_sm | tabs_size_md)
-├── .tabs_list (+ tabs_list_line | tabs_list_pills)
+.tabs (+ tabs_variant_line | tabs_variant_fills, tabs_size_sm | tabs_size_md)
+├── .tabs_list (+ tabs_list_line | tabs_list_fills)
 │   └── button.tabs_tab (+ tabs_tab_active)
 └── .tabs_panel
 ```
@@ -1795,18 +1796,18 @@ import { Tabs, TabList, Tab, TabPanel } from "@bigtablet/design-system";
   <TabPanel value="reviews">리뷰 목록</TabPanel>
 </Tabs>
 
-// pills variant - 리스트 필터
-const [filter, setFilter] = useState("all");
-<Tabs value={filter} onValueChange={setFilter} variant="pills" size="sm">
-  <TabList ariaLabel="주문 필터">
-    <Tab value="all">전체</Tab>
-    <Tab value="active">활성</Tab>
-    <Tab value="archived">보관</Tab>
+// fills variant - 같은 데이터의 보기 전환 (패널마다 다른 화면)
+const [view, setView] = useState("list");
+<Tabs value={view} onValueChange={setView} variant="fills" size="sm">
+  <TabList ariaLabel="보기 방식">
+    <Tab value="list">목록</Tab>
+    <Tab value="board">보드</Tab>
   </TabList>
-  <TabPanel value="all"><OrderList filter="all" /></TabPanel>
-  <TabPanel value="active"><OrderList filter="active" /></TabPanel>
-  <TabPanel value="archived"><OrderList filter="archived" /></TabPanel>
+  <TabPanel value="list"><OrderTable /></TabPanel>
+  <TabPanel value="board"><OrderBoard /></TabPanel>
 </Tabs>
+
+// ❌ 같은 목록을 상태로 거르기만 한다면 Tabs 가 아니다 - 값만 고르는 RadioGroup 을 쓴다
 
 // unmountInactive=false - 무거운 패널에서 state/스크롤 보존
 <Tabs defaultValue="editor">
@@ -4330,7 +4331,7 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 |------|------|
 | 페이지/섹션의 가로 폭을 제한하고 좌우 정렬 | ✅ Container |
 | 수직 spacing이나 배경색 변경 필요 | ❌ Section을 한 단계 위에 |
-| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="navy"` + 내부에 `Container` |
+| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="inverted"` + 내부에 `Container` |
 | 블로그 본문(읽기 좋은 폭) | `size="md"` (768px) |
 
 #### size 선택 가이드
@@ -4409,7 +4410,7 @@ import { Container } from "@bigtablet/design-system";
 | `default` | `color_bg_solid` | 기본 흰 배경 |
 | `dim` | `color_bg_solid_dim` | 인접 섹션과 시각적 대비 (Zebra 패턴) |
 | `accent` | `color_accent_subtle` | 부드러운 강조 (테스티모니얼 등) |
-| `navy` | `color_accent_default` | 강한 강조 - 자동으로 텍스트 색 흰색 적용 |
+| `inverted` | `color_accent_default` | 강한 강조 (검정/흰색 반전) - 텍스트 색이 자동으로 반전된다 |
 | `transparent` | 없음 | 상위 배경 그대로 노출 |
 
 **Props**
@@ -4417,7 +4418,7 @@ import { Container } from "@bigtablet/design-system";
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `spacing` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 수직 패딩 (반응형 - 아래 표 참고) |
-| `bg` | `'default' \| 'dim' \| 'accent' \| 'navy' \| 'transparent'` | `'default'` | 배경색 변형 |
+| `bg` | `'default' \| 'dim' \| 'accent' \| 'inverted' \| 'transparent'` | `'default'` | 배경색 변형 |
 | `as` | `React.ElementType` | `'section'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
@@ -4444,7 +4445,7 @@ import { Section, Container } from "@bigtablet/design-system";
   </Container>
 </Section>
 
-<Section spacing="xl" bg="navy">
+<Section spacing="xl" bg="inverted">
   <Container>
     <CtaBlock />
   </Container>
@@ -4612,8 +4613,8 @@ import { Section, Container, Stack, Grid, Button, Hero, MediaCard } from "@bigta
 export function LandingPage() {
   return (
     <>
-      {/* 1. Hero - 풀-블리드 navy 배경 */}
-      <Section spacing="xl" bg="navy">
+      {/* 1. Hero - 풀-블리드 inverted 배경 */}
+      <Section spacing="xl" bg="inverted">
         <Container size="xl">
           <Stack gap={24} align="center">
             <h1>가장 빠른 결제 솔루션</h1>
@@ -4671,6 +4672,6 @@ export function LandingPage() {
 
 **핵심 패턴**
 - 모든 Section은 내부에 Container를 둠 (가로 폭 제한 책임 분리).
-- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `navy` ↔ `accent`) 변경해 페이지 리듬을 만듦.
+- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `inverted` ↔ `accent`) 변경해 페이지 리듬을 만듦.
 - 같은 Section 안에서도 Stack을 중첩해 헤더-본문 간 spacing을 조정.
 - 카드 격자는 Grid, 그 외 한 줄/한 열 흐름은 Stack.
