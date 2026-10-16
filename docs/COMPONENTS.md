@@ -1755,7 +1755,7 @@ function YourComponent() {
 | `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
 | `actionsAlign` | `'left' \| 'center' \| 'right'` | `'right'` | 버튼 정렬 |
-| `onConfirm` | `() => void` | - | 확인 핸들러 |
+| `onConfirm` | `() => unknown` | - | 확인 핸들러. Promise 를 돌려주면 끝날 때까지 열린 채 스피너 · 중복 클릭/취소/Escape 차단, 실패하면 열린 채 재시도 |
 | `onCancel` | `() => void` | - | 취소 핸들러 |
 
 ---
@@ -1763,6 +1763,49 @@ function YourComponent() {
 > 오버레이 클릭은 **누른 곳과 놓은 곳이 모두 오버레이**일 때만 취소로 본다. 메시지를 드래그로
 > 선택하다 오버레이에서 놓으면 `click` 이 공통 조상(오버레이)에 디스패치되는데, 그걸 취소로 처리하면
 > 확인 대화상자가 실수로 닫힌다 - Modal·Drawer 와 같은 판정이다.
+
+#### useConfirm - Promise 로 받는 확인
+
+```tsx
+import { useConfirm } from "@bigtablet/design-system";
+
+const confirm = useConfirm();
+
+// 미저장 변경
+if (await confirm({
+  variant: "warning",
+  title: "변경사항을 버릴까요?",
+  message: "저장하지 않은 내용은 복구할 수 없습니다.",
+  confirmText: "버리기",
+  cancelText: "계속 편집",
+  destructive: true,
+})) {
+  discard();
+}
+
+// 비동기 삭제 - 끝날 때까지 열린 채 pending
+await confirm({
+  variant: "error",
+  title: `${order.no} 를 삭제할까요?`,
+  confirmText: "삭제",
+  destructive: true,
+  onConfirm: () => deleteOrder(order.id),   // Promise
+});
+```
+
+`useAlert` 의 `AlertProvider` 를 그대로 쓴다 - 애니메이션 · 포커스 트랩 · 스크롤 잠금이 같고, 옵션도 `AlertOptions` 와 같다(`showCancel` 은 항상 켜지고 `onCancel` 은 없다).
+
+| 경우 | 결과 |
+|------|------|
+| 확인 | `true` (`onConfirm` 이 Promise 면 성공한 뒤) |
+| 취소 · Escape · 오버레이 | `false` |
+| 열려 있는 동안 다시 `confirm`/`showAlert` | 앞의 것은 `false` 로 끝나고 새 것으로 **교체** |
+| `onConfirm` 이 reject | 열린 채 버튼이 다시 살아난다 - 재시도하거나 취소(`false`). 오류 안내는 작업 쪽에서 |
+| `AlertProvider` 가 사라짐 | `false` |
+
+- 어느 경로든 **정확히 한 번** resolve 된다
+- pending 중 버튼은 `disabled` 가 아니라 `aria-disabled` - 누른 버튼에서 포커스가 빠지지 않는다. 대화상자에 `aria-busy`
+- 첫 포커스는 **취소 버튼**이다 - destructive 확인이 Enter 한 번에 실행되지 않는다
 
 ### Toast
 

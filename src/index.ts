@@ -159,8 +159,13 @@ export type {
 	TableSortDirection,
 } from "./ui/display/table";
 export { Table } from "./ui/display/table";
-export type { AlertActionsAlign, AlertOptions, AlertVariant } from "./ui/feedback/alert";
-export { AlertProvider, useAlert } from "./ui/feedback/alert";
+export type {
+	AlertActionsAlign,
+	AlertOptions,
+	AlertVariant,
+	ConfirmOptions,
+} from "./ui/feedback/alert";
+export { AlertProvider, useAlert, useConfirm } from "./ui/feedback/alert";
 export type { LinearProgressProps } from "./ui/feedback/linear-progress";
 export { LinearProgress } from "./ui/feedback/linear-progress";
 export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
