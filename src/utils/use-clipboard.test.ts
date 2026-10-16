@@ -213,4 +213,23 @@ describe("useClipboard", () => {
 		expect(result.current.status).toBe("error");
 		expect(result.current.error).toBe(boom);
 	});
+
+	it("calls onCopy and onError per attempt", async () => {
+		const onCopy = vi.fn();
+		const onError = vi.fn();
+		const { result } = renderHook(() => useClipboard({ onCopy, onError }));
+		await act(async () => {
+			await result.current.copy(() => "v");
+		});
+		expect(onCopy).toHaveBeenCalledWith("v");
+		const boom = new Error("x");
+		for (let i = 0; i < 2; i++) {
+			await act(async () => {
+				await result.current.copy(() => {
+					throw boom;
+				});
+			});
+		}
+		expect(onError).toHaveBeenCalledTimes(2);
+	});
 });

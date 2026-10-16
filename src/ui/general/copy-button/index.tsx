@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { type SafeHTMLProps, useClipboard } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
@@ -66,24 +66,13 @@ export const CopyButton = ({
 	const label = labelProp ?? t("copyButton.copy");
 	const copiedLabel = copiedLabelProp ?? t("copyButton.copied");
 	const failedLabel = failedLabelProp ?? t("copyButton.failed");
-	const { copy, status, error } = useClipboard({ resetAfter });
+	// onCopy · onError 는 훅이 시도마다 직접 부른다 - 같은 오류가 연달아 나도 매번
+	const { copy, status } = useClipboard({ resetAfter, onCopy, onError });
 	const copied = status === "copied";
 
-	// onError 는 상태가 error 로 바뀐 직후 한 번
-	const onErrorRef = React.useRef(onError);
-	onErrorRef.current = onError;
-	React.useEffect(() => {
-		if (status === "error") onErrorRef.current?.(error);
-	}, [status, error]);
-
-	const handleClick = async () => {
-		let value = "";
-		// 함수 text 는 훅 안에서 계산한다 - throw 하면 실패 알림 · onError 로 간다
-		const ok = await copy(() => {
-			value = typeof text === "function" ? text() : text;
-			return value;
-		});
-		if (ok) onCopy?.(value);
+	// 함수 text 는 훅 안에서 계산한다 - throw 하면 실패 알림 · onError 로 간다
+	const handleClick = () => {
+		void copy(text);
 	};
 
 	const icon = copied ? <Check size={iconSize.sm} /> : <Copy size={iconSize.sm} />;

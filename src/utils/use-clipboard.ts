@@ -67,6 +67,13 @@ export type ClipboardStatus = "idle" | "copying" | "copied" | "error";
 export interface UseClipboardOptions {
 	/** `copied`·`error` 를 `idle` 로 되돌리기까지(ms). 0 이면 되돌리지 않는다 (기본값: 2000) */
 	resetAfter?: number;
+	/** 성공할 때마다 - 복사한 텍스트를 받는다 */
+	onCopy?: (text: string) => void;
+	/**
+	 * 실패할 때마다 (권한 거부 · API 없음 · 폴백 실패 · 함수 text 의 throw). 같은 오류가 연달아
+	 * 나도 매번 불린다 - 상태(`error`)를 effect 로 지켜보면 값이 같아 두 번째를 놓친다.
+	 */
+	onError?: (error: unknown) => void;
 }
 
 export interface UseClipboardResult {
@@ -88,7 +95,14 @@ export interface UseClipboardResult {
  * 연속 클릭하면 마지막 복사만 상태에 반영하고, 되돌림 타이머는 새로 시작한다. 언마운트하면
  * 타이머를 지우고 이후 결과를 무시한다.
  */
-export function useClipboard({ resetAfter = 2000 }: UseClipboardOptions = {}): UseClipboardResult {
+export function useClipboard({
+	resetAfter = 2000,
+	onCopy,
+	onError,
+}: UseClipboardOptions = {}): UseClipboardResult {
+	// 최신 콜백 - copy 의 정체성을 콜백마다 바꾸지 않는다
+	const callbacks = React.useRef({ onCopy, onError });
+	callbacks.current = { onCopy, onError };
 	const [status, setStatus] = React.useState<ClipboardStatus>("idle");
 	const [error, setError] = React.useState<unknown>(null);
 	const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -120,14 +134,19 @@ export function useClipboard({ resetAfter = 2000 }: UseClipboardOptions = {}): U
 
 			let ok = true;
 			let failure: unknown = null;
+			let value = "";
 			try {
-				await copyText(typeof text === "function" ? text() : text);
+				value = typeof text === "function" ? text() : text;
+				await copyText(value);
 			} catch (e) {
 				ok = false;
 				failure = e;
 			}
 			// 언마운트됐거나 그 사이 더 새 복사가 시작됐으면 상태를 건드리지 않는다
 			if (!alive.current || id !== seq.current) return ok;
+
+			if (ok) callbacks.current.onCopy?.(value);
+			else callbacks.current.onError?.(failure);
 
 			setStatus(ok ? "copied" : "error");
 			setError(failure);

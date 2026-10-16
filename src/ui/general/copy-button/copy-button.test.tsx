@@ -126,4 +126,20 @@ describe("CopyButton", () => {
 		expect(button).toHaveAccessibleDescription("초대 링크");
 		expect(ref.current).toBe(button);
 	});
+
+	it("calls onError on every failure, even the same error twice in a row", async () => {
+		const boom = new Error("same");
+		const onError = vi.fn();
+		render(
+			<CopyButton
+				text={() => {
+					throw boom;
+				}}
+				onError={onError}
+			/>,
+		);
+		await click(screen.getByRole("button"));
+		await click(screen.getByRole("button"));
+		expect(onError).toHaveBeenCalledTimes(2);
+	});
 });

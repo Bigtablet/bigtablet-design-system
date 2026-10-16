@@ -592,7 +592,11 @@ import { Settings } from 'lucide-react';
 ```tsx
 import { useClipboard, copyText } from "@bigtablet/design-system";
 
-const { copy, status, error, reset } = useClipboard({ resetAfter: 2000 });
+const { copy, status, error, reset } = useClipboard({
+  resetAfter: 2000,
+  onCopy: (text) => toast.success("복사했습니다"),   // 시도마다 - 선택
+  onError: (e) => toast.error("복사하지 못했습니다"),
+});
 // status: "idle" | "copying" | "copied" | "error"
 const ok = await copy(orderNo);   // throw 하지 않는다 - 성공 여부만 돌려준다
 
@@ -601,6 +605,7 @@ await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
 
 - Clipboard API(보안 컨텍스트)를 먼저 쓰고, 없거나 거부되면 `execCommand("copy")` 로 폴백한다 - 인앱 브라우저 · HTTP 사내망. 폴백은 임시 textarea 를 쓰고 **사용자의 선택 영역과 포커스를 되돌린다**
 - 둘 다 실패하면 원래 오류(`NotAllowedError` 등)를 `error` 로 준다
+- 성공 · 실패 반응은 `onCopy` · `onError` 옵션으로 - **시도마다** 불린다. `status`·`error` 를 effect 로 지켜보면 같은 오류가 연달아 날 때 값이 같아 두 번째를 놓친다
 - 연속 클릭하면 마지막 복사만 상태에 반영하고 되돌림 타이머를 새로 시작한다. 언마운트하면 타이머를 지우고 이후 결과를 무시한다
 - SSR 에서 `navigator` · `document` 가 없어도 import 만으로는 아무것도 하지 않는다
 
