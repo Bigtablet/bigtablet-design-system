@@ -53,6 +53,8 @@ export interface LocaleMessages {
 	"dropdown.selectedSummary": string; // {count}
 	"fileInput.label": string;
 	"fileInput.removeImage": string;
+	"filterBar.reset": string;
+	"filterBar.submit": string;
 	"imageCropper.hint": string;
 	"imageCropper.label": string;
 	"imageCropper.noPanHint": string;
@@ -135,6 +137,8 @@ export const ko: LocaleMessages = {
 	"dropdown.selectedSummary": "{count}개 선택",
 	"fileInput.label": "파일 선택",
 	"fileInput.removeImage": "이미지 제거",
+	"filterBar.reset": "초기화",
+	"filterBar.submit": "검색",
 	"imageCropper.hint": "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
 	"imageCropper.label": "이미지 위치와 배율 조정",
 	"imageCropper.noPanHint": "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
@@ -213,6 +217,8 @@ export const en: LocaleMessages = {
 	"dropdown.selectedSummary": "{count} selected",
 	"fileInput.label": "Choose file",
 	"fileInput.removeImage": "Remove image",
+	"filterBar.reset": "Reset",
+	"filterBar.submit": "Search",
 	"imageCropper.hint": "Drag (or use arrow keys) to move, wheel or slider to zoom.",
 	"imageCropper.label": "Adjust image position and zoom",
 	"imageCropper.noPanHint": "The image fills the viewport exactly, so there is no room to move it.",

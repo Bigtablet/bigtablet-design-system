@@ -1,0 +1,37 @@
+@use "src/styles/token" as token;
+@use "src/styles/breakpoints" as breakpoint;
+
+// 필드는 `auto-fill` grid - 칸이 `--filter-bar-field-min` 보다 좁아지면 줄을 바꾼다. 버튼은
+// 마지막 줄 오른쪽 끝에 붙고, 좁은 화면에서는 필드 아래 전폭으로 내려간다.
+.filter_bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: token.$spacing_12 token.$spacing_16;
+  font-family: token.$font_family_primary;
+
+  &_fields {
+    display: grid;
+    flex: 1 1 0;
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--filter-bar-field-min, 200px), 100%), 1fr));
+    gap: token.$spacing_12 token.$spacing_16;
+    min-width: min(var(--filter-bar-field-min, 200px), 100%);
+  }
+
+  &_actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: token.$spacing_8;
+    margin-left: auto;
+  }
+
+  @include breakpoint.compact {
+    &_actions {
+      width: 100%;
+
+      > * {
+        flex: 1;
+      }
+    }
+  }
+}

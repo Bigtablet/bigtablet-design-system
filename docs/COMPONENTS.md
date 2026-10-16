@@ -15,6 +15,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Chip](#chip)
   - [IconButton](#iconbutton)
 - [Form](#form)
+  - [FilterBar](#filterbar)
   - [TextField](#textfield)
   - [Textarea](#textarea)
   - [Checkbox](#checkbox)
@@ -796,6 +797,68 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 > 개별 `Radio` 는 대상이 아니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당한다.
 > `ImageCropper` 는 값에 해당하는 컨트롤이 없어(뷰포트는 조작 표면, 슬라이더는 확대율) 붙일
 > 자리가 없다.
+
+---
+
+### FilterBar
+
+목록 화면 상단의 필터 묶음. `<form role="search">` 라 입력에서 <kbd>Enter</kbd> 로 검색되고, 필드는 반응형 grid 로 배치된다. **필터 상태를 갖지 않는다** - 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치 · Enter 제출 · 검색/초기화 버튼만 맡는다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 필드 여러 개 + 검색/초기화 버튼 (관리자 목록) | ✅ FilterBar |
+| 검색창 하나뿐 (입력 즉시 거름) | ❌ [DataView](#dataview) `toolbar.search` |
+| 짧은 옵션 하나만 바로 바꿈 (상태 탭 같은 필터) | ❌ [SegmentedControl](#segmentedcontrol) 단독 |
+
+**Props** (`<form>` 속성 상속 - `aria-label` 로 검색 영역 이름을 준다)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | 필터 입력들 (TextField · Dropdown · DatePicker · SegmentedControl 등) |
+| `onSubmit` | `() => void` | required | 검색 - Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막는다 |
+| `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
+| `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
+| `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
+| `loading` | `boolean` | `false` | 검색 중 - 검색 버튼 스피너, 중복 제출 막음, `aria-busy` |
+| `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
+| `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
+| `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
+| `fieldMinWidth` | `number \| string` | `200` | 필드 한 칸의 최소 폭 - 이보다 좁아지면 줄을 바꾼다 |
+
+#### 레이아웃
+
+- 필드: `repeat(auto-fill, minmax(fieldMinWidth, 1fr))` grid. 버튼은 마지막 줄 오른쪽 끝, 입력 칸 아랫변에 맞춘다
+- 좁은 화면(< 600px): 버튼이 필드 아래 전폭 한 줄로 내려간다
+- 앱에서 바꾸려면 `fieldMinWidth` 또는 `className` 으로 `.filter_bar_fields` 의 `grid-template-columns` 를 덮는다
+
+**Usage**
+
+```tsx
+import { FilterBar, TextField, Dropdown } from "@bigtablet/design-system";
+
+const EMPTY = { name: "", status: null as string | null };
+const [draft, setDraft] = useState(EMPTY);   // 입력 중
+const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴다
+
+<FilterBar
+  aria-label="회원 필터"
+  onSubmit={() => setQuery(draft)}
+  onReset={() => { setDraft(EMPTY); setQuery(EMPTY); }}
+  canReset={draft.name !== "" || draft.status !== null}
+  loading={isFetching}
+>
+  <TextField label="이름" value={draft.name} onValueChange={(name) => setDraft({ ...draft, name })} />
+  <Dropdown label="상태" placeholder="전체" options={STATUS} value={draft.status}
+    onChange={(status) => setDraft({ ...draft, status })} />
+</FilterBar>
+
+// DataView 와 함께 - toolbar.filters 에 그대로 넣는다
+<DataView query={query} columns={columns} rowKey={rowKey} toolbar={{ filters: <FilterBar onSubmit={search}>...</FilterBar> }} />
+```
+
+---
 
 ### TextField
 
