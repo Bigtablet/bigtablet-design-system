@@ -86,7 +86,9 @@ describe("SegmentedControl (Chromium)", () => {
 		);
 		const form = container.querySelector("form") as HTMLFormElement;
 		expect(form.checkValidity()).toBe(false);
-		await userEvent.click(screen.getByRole("radio", { name: "KRW" }).closest("label") as HTMLElement);
+		await userEvent.click(
+			screen.getByRole("radio", { name: "KRW" }).closest("label") as HTMLElement,
+		);
 		expect(form.checkValidity()).toBe(true);
 	});
 });
