@@ -3,13 +3,14 @@ import { radius } from "../radius";
 import { spacing } from "../spacing";
 
 export const skeleton = {
+	// SCSS `$color_skeleton_*` 의 light 값과 같다. dark 테마를 따라가려면 `cssVars.colors.skeleton`.
 	color: {
-		base: baseColors.neutral50,
-		wave: baseColors.neutral200,
-		highlight: baseColors.neutral0,
+		base: baseColors.skeletonBase,
+		wave: baseColors.skeletonWave,
+		highlight: baseColors.skeletonHighlight,
 	},
 
-	gradient: `linear-gradient(90deg, ${baseColors.neutral50} 25%, ${baseColors.neutral0} 37%, ${baseColors.neutral200} 63%)`,
+	gradient: `linear-gradient(90deg, ${baseColors.skeletonBase} 25%, ${baseColors.skeletonHighlight} 37%, ${baseColors.skeletonWave} 63%)`,
 
 	radius: {
 		sm: radius.sm,
