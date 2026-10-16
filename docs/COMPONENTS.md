@@ -20,6 +20,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Checkbox](#checkbox)
   - [Radio](#radio)
   - [RadioGroup](#radiogroup)
+  - [SegmentedControl](#segmentedcontrol)
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
@@ -1099,6 +1100,7 @@ const [selected, setSelected] = useState('option1');
 | 단일 라디오 (그룹 아님) | △ [Radio](#radio) standalone |
 | 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
 | 여러 개 동시 선택 | ❌ [Checkbox](#checkbox) |
+| 짧은 라벨 2~5개를 한 줄로 | ❌ [SegmentedControl](#segmentedcontrol) |
 
 #### 제어 / 비제어
 
@@ -1151,6 +1153,96 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
   <Radio value="card" label="카드" />
   <Radio value="bank" label="계좌이체" />
 </RadioGroup>
+```
+
+---
+
+### SegmentedControl
+
+짧은 옵션 2~5개 중 **값 하나를 고르는** 컨트롤 (통화 USD/KRW, 로케일 KO/EN, 운영/개발, 만료 기간). 트랙 위에서 선택된 칸만 떠오른 표면으로 채운다. native `input[type=radio]` 기반이라 방향키 이동·선택과 폼 제출은 브라우저가 처리하고, Home/End 를 더했다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 짧은 라벨 2~5개 중 하나, 한 줄에 다 보임 | ✅ SegmentedControl |
+| 라벨이 길거나 설명이 붙거나 6개 이상 | ❌ [RadioGroup](#radiogroup) |
+| 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) - `fills` 모양이 비슷해도 패널 전환은 Tabs |
+| 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
+| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `SegmentedControlItem<T>[]` | required | 칸 목록 - `{ value, label?, icon?, ariaLabel?, disabled? }` |
+| `value` | `T` | - | 제어형 선택 값 |
+| `defaultValue` | `T` | - | 비제어형 초기 값 |
+| `onValueChange` | `(value: T) => void` | - | 선택 변경 콜백 |
+| `name` | `string` | (auto) | 폼 제출용 name (미지정 시 자동 생성) |
+| `size` | `'sm' \| 'md'` | `'md'` | 크기 - 칸 높이 32/40px, 터치 화면(< 600px)에서 40/48px |
+| `fullWidth` | `boolean` | `false` | 부모 폭을 채우고 칸을 균등 분배 |
+| `disabled` | `boolean` | `false` | 전체 비활성화. 칸 하나만 막으려면 `items[].disabled` |
+| `required` | `boolean` | `false` | 폼 제출 시 선택이 없으면 막는다. `Field required` 도 같이 반영 |
+
+`T` 는 `string` 을 좁힌 리터럴 유니온을 받는다 - `SegmentedControl<"ko" | "en">` 이면 `onValueChange` 가 그 타입으로 온다.
+
+#### 접근성
+
+- 루트가 `role="radiogroup"`, 각 칸이 `radio`. 이름은 `aria-label` 또는 `Field` 라벨(`aria-labelledby`)
+- 키보드: <kbd>←</kbd>/<kbd>→</kbd>(<kbd>↑</kbd>/<kbd>↓</kbd>) 이동 + 선택(끝에서 wrap, 비활성 칸 건너뜀), <kbd>Home</kbd>/<kbd>End</kbd> 처음/마지막 칸
+- 선택 상태를 색만으로 전달하지 않는다 - 선택된 칸은 떠오른 표면(그림자)이다
+- 아이콘만 둔 칸은 `ariaLabel` 로 이름을 준다. 아이콘은 `aria-hidden`
+- 포커스 링은 키보드 포커스에만(`:focus-visible`) 칸에 그려진다
+
+**Usage**
+
+```tsx
+import { SegmentedControl, Field } from "@bigtablet/design-system";
+
+const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
+
+<SegmentedControl<"USD" | "KRW">
+  aria-label="통화"
+  value={currency}
+  onValueChange={setCurrency}
+  items={[
+    { value: "USD", label: "USD" },
+    { value: "KRW", label: "KRW" },
+  ]}
+/>
+
+// Field 와 함께 - 라벨 · 설명 · 필수 · 에러를 Field 가 연결한다
+<Field name="locale" label="언어" required>
+  <SegmentedControl size="sm" defaultValue="ko" items={[
+    { value: "ko", label: "KO" },
+    { value: "en", label: "EN" },
+  ]} />
+</Field>
+```
+
+#### 마이그레이션 - 버튼 그룹으로 만든 통화 선택
+
+앱에서 `Button` 을 나란히 두고 선택된 쪽만 `variant` 를 바꾸던 패턴은 스크린리더에 "버튼 두 개" 로만 읽히고 어느 쪽이 선택됐는지 전달되지 않는다.
+
+```tsx
+// Before - 선택 상태가 색(variant)으로만 전달된다
+<div className="currency_toggle">
+  {(["USD", "KRW"] as const).map((c) => (
+    <Button key={c} size="sm" variant={currency === c ? "filled" : "outline"} onClick={() => setCurrency(c)}>
+      {c}
+    </Button>
+  ))}
+</div>
+
+// After - radiogroup/radio 의미, 방향키, 폼 name 이 따라온다
+<SegmentedControl<"USD" | "KRW">
+  aria-label="통화"
+  size="sm"
+  value={currency}
+  onValueChange={setCurrency}
+  items={[{ value: "USD", label: "USD" }, { value: "KRW", label: "KRW" }]}
+/>
 ```
 
 ---
@@ -1701,7 +1793,7 @@ const [page, setPage] = useState(1);
 |------|------|
 | 카테고리 간 전환 (서로 배타적, 한 번에 하나만) | ✅ Tabs |
 | 같은 영역의 보기 전환을 박스 그룹 모양으로 (목록 / 보드 등) | ✅ Tabs (`fills` variant) |
-| 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **RadioGroup** - `tablist`/`tab` 은 "패널을 바꾼다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속한다 |
+| 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **[SegmentedControl](#segmentedcontrol)** (라벨이 길면 RadioGroup) - `tablist`/`tab` 은 "패널을 바꾼다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속한다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
 | 단순 boolean 토글 1쌍 | ❌ **Toggle** |
@@ -1807,7 +1899,7 @@ const [view, setView] = useState("list");
   <TabPanel value="board"><OrderBoard /></TabPanel>
 </Tabs>
 
-// ❌ 같은 목록을 상태로 거르기만 한다면 Tabs 가 아니다 - 값만 고르는 RadioGroup 을 쓴다
+// ❌ 같은 목록을 상태로 거르기만 한다면 Tabs 가 아니다 - 값만 고르는 SegmentedControl 을 쓴다
 
 // unmountInactive=false - 무거운 패널에서 state/스크롤 보존
 <Tabs defaultValue="editor">

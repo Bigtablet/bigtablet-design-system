@@ -213,6 +213,12 @@ export type {
 	RadioGroupSize,
 } from "./ui/forms/radio-group";
 export { RadioGroup, useRadioGroupContext } from "./ui/forms/radio-group";
+export type {
+	SegmentedControlItem,
+	SegmentedControlProps,
+	SegmentedControlSize,
+} from "./ui/forms/segmented-control";
+export { SegmentedControl } from "./ui/forms/segmented-control";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {
