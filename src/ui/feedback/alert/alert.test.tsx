@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { AlertProvider, useAlert } from "./index";
+import { AlertProvider, type ConfirmOptions, useAlert, useConfirm } from "./index";
 
 const TestComponent = ({
 	options,
@@ -334,5 +334,235 @@ describe("Alert", () => {
 			expect(document.body.style.overflow).toBe("");
 			expect(document.body.dataset.openModals).toBeUndefined();
 		});
+	});
+});
+
+/** 버튼을 누르면 confirm 을 열고, 결과를 콜백으로 넘긴다 */
+const Opener = ({
+	options = {},
+	onResult,
+	label = "열기",
+}: {
+	options?: ConfirmOptions;
+	onResult: (ok: boolean) => void;
+	label?: string;
+}) => {
+	const confirm = useConfirm();
+	return (
+		<button
+			type="button"
+			onClick={() => void confirm({ title: "삭제할까요?", ...options }).then(onResult)}
+		>
+			{label}
+		</button>
+	);
+};
+
+const open = (label = "열기") => fireEvent.click(screen.getByRole("button", { name: label }));
+const flush = () => act(async () => {});
+
+describe("useConfirm", () => {
+	it("resolves true on confirm and false on cancel, with a cancel button always shown", async () => {
+		const onResult = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={onResult} />
+			</AlertProvider>,
+		);
+		open();
+		expect(screen.getByRole("alertdialog", { name: "삭제할까요?" })).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(onResult).toHaveBeenLastCalledWith(true);
+
+		open();
+		fireEvent.click(screen.getByRole("button", { name: "취소" }));
+		await flush();
+		expect(onResult).toHaveBeenLastCalledWith(false);
+		expect(onResult).toHaveBeenCalledTimes(2);
+	});
+
+	it("resolves false on Escape and on an overlay click, exactly once", async () => {
+		const onResult = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={onResult} />
+			</AlertProvider>,
+		);
+		open();
+		fireEvent.keyDown(document, { key: "Escape" });
+		// 닫히는 중 다시 눌러도 두 번 resolve 되지 않는다
+		fireEvent.keyDown(document, { key: "Escape" });
+		await flush();
+		expect(onResult).toHaveBeenCalledTimes(1);
+		expect(onResult).toHaveBeenLastCalledWith(false);
+
+		open();
+		const overlay = document.querySelector(".alert_overlay") as HTMLElement;
+		fireEvent.pointerDown(overlay);
+		fireEvent.click(overlay);
+		await flush();
+		expect(onResult).toHaveBeenCalledTimes(2);
+		expect(onResult).toHaveBeenLastCalledWith(false);
+	});
+
+	it("replaces an open confirm - the earlier one resolves false", async () => {
+		const first = vi.fn();
+		const second = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={first} label="첫째" />
+				<Opener onResult={second} label="둘째" options={{ title: "버릴까요?" }} />
+			</AlertProvider>,
+		);
+		open("첫째");
+		open("둘째");
+		await flush();
+		expect(first).toHaveBeenCalledWith(false);
+		expect(screen.getByRole("alertdialog", { name: "버릴까요?" })).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(second).toHaveBeenCalledWith(true);
+		expect(first).toHaveBeenCalledTimes(1);
+	});
+
+	it("keeps the replacement when the earlier async confirm finishes later", async () => {
+		let finishFirst!: () => void;
+		const firstAction = vi.fn(() => new Promise<void>((r) => (finishFirst = r)));
+		const first = vi.fn();
+		const second = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={first} label="첫째" options={{ onConfirm: firstAction }} />
+				<Opener onResult={second} label="둘째" options={{ title: "버릴까요?" }} />
+			</AlertProvider>,
+		);
+		open("첫째");
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(firstAction).toHaveBeenCalledTimes(1);
+
+		// 첫째가 아직 진행 중일 때 둘째로 교체 - 교체 시점에 첫째는 false 로 끝난다
+		open("둘째");
+		await flush();
+		expect(first).toHaveBeenCalledWith(false);
+
+		// 늦게 끝난 첫째 작업이 둘째를 닫거나 둘째 promise 를 resolve 하지 않는다
+		await act(async () => finishFirst());
+		const dialog = screen.getByRole("alertdialog", { name: "버릴까요?" });
+		expect(dialog).not.toHaveAttribute("aria-busy");
+		expect(second).not.toHaveBeenCalled();
+		expect(first).toHaveBeenCalledTimes(1);
+
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(second).toHaveBeenCalledWith(true);
+	});
+
+	it("keeps the dialog open while an async onConfirm runs and blocks double submit and dismiss", async () => {
+		let finish!: () => void;
+		const action = vi.fn(() => new Promise<void>((r) => (finish = r)));
+		const onResult = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={onResult} options={{ onConfirm: action, destructive: true }} />
+			</AlertProvider>,
+		);
+		open();
+		const confirmButton = screen.getByRole("button", { name: "확인" });
+		confirmButton.focus();
+		fireEvent.click(confirmButton);
+		fireEvent.click(confirmButton);
+		expect(action).toHaveBeenCalledTimes(1);
+		expect(confirmButton).toHaveAttribute("aria-disabled", "true");
+		expect(confirmButton).toHaveFocus();
+		expect(screen.getByRole("alertdialog")).toHaveAttribute("aria-busy", "true");
+
+		fireEvent.keyDown(document, { key: "Escape" });
+		fireEvent.click(screen.getByRole("button", { name: "취소" }));
+		await flush();
+		expect(onResult).not.toHaveBeenCalled();
+		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+
+		await act(async () => finish());
+		expect(onResult).toHaveBeenCalledWith(true);
+	});
+
+	it("stays open for a retry when the async onConfirm fails", async () => {
+		const action = vi
+			.fn()
+			.mockRejectedValueOnce(new Error("network"))
+			.mockResolvedValueOnce(undefined);
+		const onResult = vi.fn();
+		render(
+			<AlertProvider>
+				<Opener onResult={onResult} options={{ onConfirm: action }} />
+			</AlertProvider>,
+		);
+		open();
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		await flush();
+		expect(onResult).not.toHaveBeenCalled();
+		const confirmButton = screen.getByRole("button", { name: "확인" });
+		expect(confirmButton).not.toHaveAttribute("aria-disabled");
+
+		fireEvent.click(confirmButton);
+		await flush();
+		expect(action).toHaveBeenCalledTimes(2);
+		expect(onResult).toHaveBeenCalledWith(true);
+	});
+
+	it("resolves false when the provider unmounts while waiting", async () => {
+		const onResult = vi.fn();
+		const { unmount } = render(
+			<AlertProvider>
+				<Opener onResult={onResult} />
+			</AlertProvider>,
+		);
+		open();
+		unmount();
+		await flush();
+		expect(onResult).toHaveBeenCalledWith(false);
+	});
+
+	it("puts the first focus on cancel, so a destructive confirm is not one Enter away", async () => {
+		render(
+			<AlertProvider>
+				<Opener onResult={() => {}} options={{ destructive: true, confirmText: "삭제" }} />
+			</AlertProvider>,
+		);
+		open();
+		await waitFor(() => expect(screen.getByRole("button", { name: "취소" })).toHaveFocus());
+	});
+
+	it("leaves useAlert as it was - a plain alert has no cancel and runs its callbacks", async () => {
+		const onConfirm = vi.fn();
+		const T = () => {
+			const { showAlert } = useAlert();
+			return (
+				<button type="button" onClick={() => showAlert({ title: "알림", onConfirm })}>
+					열기
+				</button>
+			);
+		};
+		render(
+			<AlertProvider>
+				<T />
+			</AlertProvider>,
+		);
+		open();
+		expect(screen.queryByRole("button", { name: "취소" })).toBeNull();
+		fireEvent.click(screen.getByRole("button", { name: "확인" }));
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+	});
+
+	it("throws outside the provider", () => {
+		const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const Bare = () => {
+			useConfirm();
+			return null;
+		};
+		expect(() => render(<Bare />)).toThrow(/AlertProvider/);
+		spy.mockRestore();
 	});
 });

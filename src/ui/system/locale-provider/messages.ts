@@ -10,6 +10,9 @@
 export interface LocaleMessages {
 	// ── display ─────────────────────────────────────────────────────────────
 	"chip.remove": string; // {label}
+	"copyButton.copied": string;
+	"copyButton.copy": string;
+	"copyButton.failed": string;
 	"dataView.clearSelection": string;
 	"dataView.empty": string;
 	"dataView.errorTitle": string;
@@ -25,6 +28,7 @@ export interface LocaleMessages {
 	"alert.cancel": string;
 	"alert.confirm": string;
 	"errorState.title": string;
+	"inlineAlert.dismiss": string;
 	"spinner.label": string;
 	"toast.close": string;
 	"toast.region": string;
@@ -52,6 +56,8 @@ export interface LocaleMessages {
 	"dropdown.selectedSummary": string; // {count}
 	"fileInput.label": string;
 	"fileInput.removeImage": string;
+	"filterBar.reset": string;
+	"filterBar.submit": string;
 	"imageCropper.hint": string;
 	"imageCropper.label": string;
 	"imageCropper.noPanHint": string;
@@ -93,6 +99,9 @@ export type LocaleKey = keyof LocaleMessages;
 /** 기본 카탈로그. 이 값이 각 컴포넌트의 기본 문구다 */
 export const ko: LocaleMessages = {
 	"chip.remove": "{label} 제거",
+	"copyButton.copied": "복사됨",
+	"copyButton.copy": "복사",
+	"copyButton.failed": "복사하지 못했습니다",
 	"dataView.clearSelection": "선택 해제",
 	"dataView.empty": "데이터가 없습니다",
 	"dataView.errorTitle": "불러오지 못했습니다",
@@ -107,6 +116,7 @@ export const ko: LocaleMessages = {
 	"alert.cancel": "취소",
 	"alert.confirm": "확인",
 	"errorState.title": "문제가 발생했습니다",
+	"inlineAlert.dismiss": "알림 닫기",
 	"spinner.label": "로딩 중",
 	"toast.close": "닫기",
 	"toast.region": "알림",
@@ -133,6 +143,8 @@ export const ko: LocaleMessages = {
 	"dropdown.selectedSummary": "{count}개 선택",
 	"fileInput.label": "파일 선택",
 	"fileInput.removeImage": "이미지 제거",
+	"filterBar.reset": "초기화",
+	"filterBar.submit": "검색",
 	"imageCropper.hint": "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
 	"imageCropper.label": "이미지 위치와 배율 조정",
 	"imageCropper.noPanHint": "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
@@ -170,6 +182,9 @@ export const ko: LocaleMessages = {
 /** 영어 카탈로그. `<LocaleProvider locale="en">` 로 고른다 */
 export const en: LocaleMessages = {
 	"chip.remove": "Remove {label}",
+	"copyButton.copied": "Copied",
+	"copyButton.copy": "Copy",
+	"copyButton.failed": "Couldn't copy",
 	"dataView.clearSelection": "Clear selection",
 	"dataView.empty": "No data",
 	"dataView.errorTitle": "Could not load",
@@ -184,6 +199,7 @@ export const en: LocaleMessages = {
 	"alert.cancel": "Cancel",
 	"alert.confirm": "OK",
 	"errorState.title": "Something went wrong",
+	"inlineAlert.dismiss": "Dismiss",
 	"spinner.label": "Loading",
 	"toast.close": "Close",
 	"toast.region": "Notifications",
@@ -210,6 +226,8 @@ export const en: LocaleMessages = {
 	"dropdown.selectedSummary": "{count} selected",
 	"fileInput.label": "Choose file",
 	"fileInput.removeImage": "Remove image",
+	"filterBar.reset": "Reset",
+	"filterBar.submit": "Search",
 	"imageCropper.hint": "Drag (or use arrow keys) to move, wheel or slider to zoom.",
 	"imageCropper.label": "Adjust image position and zoom",
 	"imageCropper.noPanHint": "The image fills the viewport exactly, so there is no room to move it.",

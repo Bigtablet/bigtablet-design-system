@@ -6,12 +6,26 @@ import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
 import { Popover } from "../../overlay/popover";
 import { useLocaleName, useLocaleText } from "../../system/locale-provider";
+import { DateCalendar } from "../date-calendar";
 import { Dropdown, type DropdownOption } from "../dropdown";
 import { FieldControlBoundary, useFieldControl } from "../field";
-import { type CalendarDate, DateCalendar } from "./calendar";
 import "./style.scss";
 
 type DatePickerMode = "year-month" | "year-month-day";
+/** 연·월·일 한 점. 월은 1부터. */
+interface CalendarDate {
+	year: number;
+	month: number;
+	day: number;
+}
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const toIso = ({ year, month, day }: CalendarDate) => `${year}-${pad2(month)}-${pad2(day)}`;
+const fromIso = (iso: string): CalendarDate => {
+	const [year = 0, month = 0, day = 0] = iso.split("-").map(Number);
+	return { year, month, day };
+};
+
 type DatePickerVariant = "dropdown" | "calendar";
 type SelectableRange = "all" | "until-today";
 
@@ -587,16 +601,16 @@ const CalendarField = ({
 				}
 				content={
 					<DateCalendar
-						selected={selected}
-						today={today}
-						isSelectable={isSelectable}
-						minMonth={minMonth}
-						maxMonth={maxMonth}
-						intlLocale={intlLocale}
-						prevLabel={prevLabel}
-						nextLabel={nextLabel}
-						onSelect={(date) => {
-							onSelect(date);
+						value={selected ? toIso(selected) : null}
+						today={toIso(today)}
+						// 넘김 범위는 달 단위 - 그 안의 날별 판정은 isDateDisabled 가 맡는다
+						min={toIso({ ...minMonth, day: 1 })}
+						max={toIso({ ...maxMonth, day: new Date(maxMonth.year, maxMonth.month, 0).getDate() })}
+						isDateDisabled={(iso) => !isSelectable(fromIso(iso))}
+						prevMonthLabel={prevLabel}
+						nextMonthLabel={nextLabel}
+						onValueChange={(iso) => {
+							onSelect(fromIso(iso));
 							setOpen(false);
 						}}
 					/>

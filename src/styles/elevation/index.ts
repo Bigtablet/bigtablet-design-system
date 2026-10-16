@@ -1,3 +1,4 @@
+// light 테마 값 - dark 를 따라가려면 `cssVars.elevation`
 export const elevation = {
 	level1: "0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12)",
 	level2: "0 2px 2px -2px rgba(0, 0, 0, 0.20), 0 6px 6px 0px rgba(0, 0, 0, 0.12)",

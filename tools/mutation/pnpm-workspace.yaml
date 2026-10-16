@@ -11,3 +11,7 @@
 nodeLinker: hoisted
 # 저장소 루트와 같은 공급망 규칙 - 배포 24시간 미만 버전은 받지 않는다.
 minimumReleaseAge: 1440
+overrides:
+  # 보안 패치 (Dependabot #133) - @stryker-mutator/vitest-runner 경유 transitive. 6.11.1~6.15.1 의
+  # stringify(arrayFormat: 'comma' + encodeValuesOnly) null 원소 TypeError. 상위가 qs 를 올리면 지운다.
+  qs: ^6.15.2

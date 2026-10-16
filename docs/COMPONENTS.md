@@ -14,20 +14,25 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Dropdown](#dropdown)
   - [Chip](#chip)
   - [IconButton](#iconbutton)
+  - [CopyButton](#copybutton)
 - [Form](#form)
+  - [FilterBar](#filterbar)
   - [TextField](#textfield)
   - [Textarea](#textarea)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
   - [RadioGroup](#radiogroup)
+  - [SegmentedControl](#segmentedcontrol)
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
+  - [DateCalendar](#datecalendar)
   - [FileInput](#fileinput)
   - [ImageCropper](#imagecropper)
   - [OtpInput](#otpinput)
 - [Feedback](#feedback)
   - [Alert](#alert)
   - [Toast](#toast)
+  - [InlineAlert](#inlinealert)
   - [Spinner](#spinner)
   - [TopLoading](#toploading)
   - [LinearProgress](#linearprogress)
@@ -555,6 +560,69 @@ import { Settings } from 'lucide-react';
 
 ---
 
+### CopyButton
+
+텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알린다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 쓴다.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
+| `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
+| `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
+| `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
+| `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
+| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
+| `variant` | `ButtonVariant` | `'outline'` | 문구 버튼의 variant |
+| `resetAfter` | `number` | `2000` | 복사됨 표시 유지 시간(ms) |
+| `onCopy` | `(text: string) => void` | - | 성공 - Toast 를 띄우려면 여기서 |
+| `onError` | `(error: unknown) => void` | - | 실패 (권한 거부 · API 없음 · 폴백 실패) |
+| `disabled` | `boolean` | - | 비활성화 |
+
+#### 접근성 - 복사됨 알림
+
+- 결과는 버튼 옆 **숨긴 `role="status"`** 가 알린다 ("복사됨" / "복사하지 못했습니다"). 화면에는 아이콘 · 문구 변화로 충분하다
+- 버튼 이름(`label`)은 **바꾸지 않는다** - 문구 버튼도 보이는 문구만 "복사됨" 으로 바뀐다. 포커스 중인 버튼의 이름이 바뀌면 status 와 함께 두 번 읽힌다. 보이는 문구가 이름을 포함하므로(복사 → 복사됨) WCAG 2.5.3 Label in Name 도 지킨다
+- 함수 `text` 가 throw 하면 실패로 처리한다 - "복사하지 못했습니다" 알림 + `onError`
+- `id` · `title` · `data-*` · `aria-describedby` · `ref` 등 `<button>` 속성은 그대로 전달된다
+- Toast 를 함께 띄우면 같은 문구를 두 번 듣게 된다 - 다른 문구("초대 링크를 복사했습니다")로 맥락을 더하거나 하나만 쓴다
+
+### useClipboard / copyText
+
+```tsx
+import { useClipboard, copyText } from "@bigtablet/design-system";
+
+const { copy, status, error, reset } = useClipboard({
+  resetAfter: 2000,
+  onCopy: (text) => toast.success("복사했습니다"),   // 시도마다 - 선택
+  onError: (e) => toast.error("복사하지 못했습니다"),
+});
+// status: "idle" | "copying" | "copied" | "error"
+const ok = await copy(orderNo);   // throw 하지 않는다 - 성공 여부만 돌려준다
+
+await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
+```
+
+- Clipboard API(보안 컨텍스트)를 먼저 쓰고, 없거나 거부되면 `execCommand("copy")` 로 폴백한다 - 인앱 브라우저 · HTTP 사내망. 폴백은 임시 textarea 를 쓰고 **사용자의 선택 영역과 포커스를 되돌린다**
+- 둘 다 실패하면 원래 오류(`NotAllowedError` 등)를 `error` 로 준다
+- 성공 · 실패 반응은 `onCopy` · `onError` 옵션으로 - **시도마다** 불린다. `status`·`error` 를 effect 로 지켜보면 같은 오류가 연달아 날 때 값이 같아 두 번째를 놓친다
+- 연속 클릭하면 마지막 복사만 상태에 반영하고 되돌림 타이머를 새로 시작한다. 언마운트하면 타이머를 지우고 이후 결과를 무시한다
+- SSR 에서 `navigator` · `document` 가 없어도 import 만으로는 아무것도 하지 않는다
+
+**Usage**
+
+```tsx
+// 문구 버튼 + Toast
+<CopyButton text={inviteUrl} label="초대 링크 복사" onCopy={() => toast.success("초대 링크를 복사했습니다")} />
+
+// 아이콘만
+<code>{maskedKey}</code>
+<CopyButton text={apiKey} iconOnly label="API 키 복사" />
+```
+
+---
+
 ## Form
 
 ### Combobox
@@ -794,6 +862,68 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 > 개별 `Radio` 는 대상이 아니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당한다.
 > `ImageCropper` 는 값에 해당하는 컨트롤이 없어(뷰포트는 조작 표면, 슬라이더는 확대율) 붙일
 > 자리가 없다.
+
+---
+
+### FilterBar
+
+목록 화면 상단의 필터 묶음. `<form role="search">` 라 입력에서 <kbd>Enter</kbd> 로 검색되고, 필드는 반응형 grid 로 배치된다. **필터 상태를 갖지 않는다** - 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치 · Enter 제출 · 검색/초기화 버튼만 맡는다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 필드 여러 개 + 검색/초기화 버튼 (관리자 목록) | ✅ FilterBar |
+| 검색창 하나뿐 (입력 즉시 거름) | ❌ [DataView](#dataview) `toolbar.search` |
+| 짧은 옵션 하나만 바로 바꿈 (상태 탭 같은 필터) | ❌ [SegmentedControl](#segmentedcontrol) 단독 |
+
+**Props** (`<form>` 속성 상속 - `aria-label` 로 검색 영역 이름을 준다)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | 필터 입력들 (TextField · Dropdown · DatePicker · SegmentedControl 등) |
+| `onSubmit` | `() => void` | required | 검색 - Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막는다 |
+| `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
+| `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
+| `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
+| `loading` | `boolean` | `false` | 검색 중 - 검색 버튼 스피너, 중복 제출 막음, `aria-busy` |
+| `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
+| `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
+| `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
+| `fieldMinWidth` | `number \| string` | `200` | 필드 한 칸의 최소 폭 - 이보다 좁아지면 줄을 바꾼다 |
+
+#### 레이아웃
+
+- 필드: `repeat(auto-fill, minmax(fieldMinWidth, 1fr))` grid. 버튼은 마지막 줄 오른쪽 끝, 입력 칸 아랫변에 맞춘다
+- 좁은 화면(< 600px): 버튼이 필드 아래 전폭 한 줄로 내려간다
+- 앱에서 바꾸려면 `fieldMinWidth` 또는 `className` 으로 `.filter_bar_fields` 의 `grid-template-columns` 를 덮는다
+
+**Usage**
+
+```tsx
+import { FilterBar, TextField, Dropdown } from "@bigtablet/design-system";
+
+const EMPTY = { name: "", status: null as string | null };
+const [draft, setDraft] = useState(EMPTY);   // 입력 중
+const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴다
+
+<FilterBar
+  aria-label="회원 필터"
+  onSubmit={() => setQuery(draft)}
+  onReset={() => { setDraft(EMPTY); setQuery(EMPTY); }}
+  canReset={draft.name !== "" || draft.status !== null}
+  loading={isFetching}
+>
+  <TextField label="이름" value={draft.name} onValueChange={(name) => setDraft({ ...draft, name })} />
+  <Dropdown label="상태" placeholder="전체" options={STATUS} value={draft.status}
+    onChange={(status) => setDraft({ ...draft, status })} />
+</FilterBar>
+
+// DataView 와 함께 - toolbar.filters 에 그대로 넣는다
+<DataView query={query} columns={columns} rowKey={rowKey} toolbar={{ filters: <FilterBar onSubmit={search}>...</FilterBar> }} />
+```
+
+---
 
 ### TextField
 
@@ -1099,6 +1229,7 @@ const [selected, setSelected] = useState('option1');
 | 단일 라디오 (그룹 아님) | △ [Radio](#radio) standalone |
 | 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
 | 여러 개 동시 선택 | ❌ [Checkbox](#checkbox) |
+| 짧은 라벨 2~5개를 한 줄로 | ❌ [SegmentedControl](#segmentedcontrol) |
 
 #### 제어 / 비제어
 
@@ -1151,6 +1282,96 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
   <Radio value="card" label="카드" />
   <Radio value="bank" label="계좌이체" />
 </RadioGroup>
+```
+
+---
+
+### SegmentedControl
+
+짧은 옵션 2~5개 중 **값 하나를 고르는** 컨트롤 (통화 USD/KRW, 로케일 KO/EN, 운영/개발, 만료 기간). 트랙 위에서 선택된 칸만 떠오른 표면으로 채운다. native `input[type=radio]` 기반이라 방향키 이동·선택과 폼 제출은 브라우저가 처리하고, Home/End 를 더했다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 짧은 라벨 2~5개 중 하나, 한 줄에 다 보임 | ✅ SegmentedControl |
+| 라벨이 길거나 설명이 붙거나 6개 이상 | ❌ [RadioGroup](#radiogroup) |
+| 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) - `fills` 모양이 비슷해도 패널 전환은 Tabs |
+| 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
+| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `SegmentedControlItem<T>[]` | required | 칸 목록 - `{ value, label?, icon?, ariaLabel?, disabled? }` |
+| `value` | `T` | - | 제어형 선택 값 |
+| `defaultValue` | `T` | - | 비제어형 초기 값 |
+| `onValueChange` | `(value: T) => void` | - | 선택 변경 콜백 |
+| `name` | `string` | (auto) | 폼 제출용 name (미지정 시 자동 생성) |
+| `size` | `'sm' \| 'md'` | `'md'` | 크기 - 칸 높이 32/40px, 터치 화면(< 600px)에서 40/48px |
+| `fullWidth` | `boolean` | `false` | 부모 폭을 채우고 칸을 균등 분배 |
+| `disabled` | `boolean` | `false` | 전체 비활성화. 칸 하나만 막으려면 `items[].disabled` |
+| `required` | `boolean` | `false` | 폼 제출 시 선택이 없으면 막는다. `Field required` 도 같이 반영 |
+
+`T` 는 `string` 을 좁힌 리터럴 유니온을 받는다 - `SegmentedControl<"ko" | "en">` 이면 `onValueChange` 가 그 타입으로 온다.
+
+#### 접근성
+
+- 루트가 `role="radiogroup"`, 각 칸이 `radio`. 이름은 `aria-label` 또는 `Field` 라벨(`aria-labelledby`)
+- 키보드: <kbd>←</kbd>/<kbd>→</kbd>(<kbd>↑</kbd>/<kbd>↓</kbd>) 이동 + 선택(끝에서 wrap, 비활성 칸 건너뜀), <kbd>Home</kbd>/<kbd>End</kbd> 처음/마지막 칸
+- 선택 상태를 색만으로 전달하지 않는다 - 선택된 칸은 떠오른 표면(그림자)이다
+- 아이콘만 둔 칸은 `ariaLabel` 로 이름을 준다. 아이콘은 `aria-hidden`
+- 포커스 링은 키보드 포커스에만(`:focus-visible`) 칸에 그려진다
+
+**Usage**
+
+```tsx
+import { SegmentedControl, Field } from "@bigtablet/design-system";
+
+const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
+
+<SegmentedControl<"USD" | "KRW">
+  aria-label="통화"
+  value={currency}
+  onValueChange={setCurrency}
+  items={[
+    { value: "USD", label: "USD" },
+    { value: "KRW", label: "KRW" },
+  ]}
+/>
+
+// Field 와 함께 - 라벨 · 설명 · 필수 · 에러를 Field 가 연결한다
+<Field name="locale" label="언어" required>
+  <SegmentedControl size="sm" defaultValue="ko" items={[
+    { value: "ko", label: "KO" },
+    { value: "en", label: "EN" },
+  ]} />
+</Field>
+```
+
+#### 마이그레이션 - 버튼 그룹으로 만든 통화 선택
+
+앱에서 `Button` 을 나란히 두고 선택된 쪽만 `variant` 를 바꾸던 패턴은 스크린리더에 "버튼 두 개" 로만 읽히고 어느 쪽이 선택됐는지 전달되지 않는다.
+
+```tsx
+// Before - 선택 상태가 색(variant)으로만 전달된다
+<div className="currency_toggle">
+  {(["USD", "KRW"] as const).map((c) => (
+    <Button key={c} size="sm" variant={currency === c ? "filled" : "outline"} onClick={() => setCurrency(c)}>
+      {c}
+    </Button>
+  ))}
+</div>
+
+// After - radiogroup/radio 의미, 방향키, 폼 name 이 따라온다
+<SegmentedControl<"USD" | "KRW">
+  aria-label="통화"
+  size="sm"
+  value={currency}
+  onValueChange={setCurrency}
+  items={[{ value: "USD", label: "USD" }, { value: "KRW", label: "KRW" }]}
+/>
 ```
 
 ---
@@ -1239,6 +1460,64 @@ const [date, setDate] = useState('');
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
+
+---
+
+### DateCalendar
+
+월 달력 - 날짜 하나를 고른다. 보이는 달 · 범위 · 고를 수 없는 날 · 주 시작 요일 · 날짜 장식(일정 점 · 배지)을 다룬다. [DatePicker](#datepicker) `variant="calendar"` 의 팝오버도 이 컴포넌트다. 범위(시작~끝) 선택은 아직 없다 - [DateRangePicker](#daterangepicker) 를 쓴다.
+
+#### 날짜 값과 시간대
+
+값은 **`"YYYY-MM-DD"` 문자열**이다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `minDate` 와 같은 형식이다.
+
+- 시간대가 없다 - `new Date("2026-10-16")` 은 **UTC 자정**으로 해석돼 한국(UTC+9)에서는 맞지만 미국에서는 하루 전날이 된다. 문자열이라 이 변환이 끼어들 자리가 없다
+- Date 가 필요하면 **로컬 생성자**로 만든다: `const [y, m, d] = value.split("-").map(Number); new Date(y, m - 1, d)`
+- 서버가 `2026-10-16T00:00:00Z` 같은 시각을 주면, 그 날짜를 **어느 시간대 기준으로 볼지 앱이 정해** `"YYYY-MM-DD"` 로 바꿔 넘긴다
+- `today` 기본값은 기기의 오늘이다. 서버 기준 날짜를 써야 하면 넘긴다
+
+**Props** (`<div>` 속성 상속)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string \| null` | - | 제어형: 고른 날 `"YYYY-MM-DD"`. 바깥에서 다른 달로 바뀌면 그 달을 보여 준다 (`month` 를 제어하면 그쪽이 정한다) |
+| `defaultValue` | `string` | - | 비제어형: 처음 고른 날 |
+| `onValueChange` | `(value: string) => void` | - | 날을 고를 때 |
+| `month` | `string` | - | 제어형: 보이는 달 `"YYYY-MM"`. `min`/`max` 밖이면 범위 끝 달에 붙는다 |
+| `defaultMonth` | `string` | 고른 날 → 오늘의 달 | 비제어형: 처음 보이는 달 |
+| `onMonthChange` | `(month: string) => void` | - | 보이는 달이 바뀔 때 (넘김 버튼 · PageUp/Down · 방향키로 달을 넘을 때) |
+| `min` / `max` | `string` | - | 고를 수 있는 첫날 / 마지막 날. 그 밖의 달로는 넘어가지 않는다 |
+| `isDateDisabled` | `(date: string) => boolean` | - | 그 밖에 고를 수 없는 날 (휴일 · 마감) |
+| `today` | `string` | 기기의 오늘 | 오늘 표시(테두리 · `aria-current="date"`) 기준 |
+| `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | `0` | 주의 첫 요일 (0 일요일, 1 월요일) |
+| `renderDay` | `(date, { selected, today, disabled }) => ReactNode` | - | 날짜 칸 장식. 숫자 아래에 그려지고 보조기기에는 숨겨진다 |
+| `describeDay` | `(date: string) => string \| undefined` | - | 날짜 이름 뒤에 붙일 설명 - 장식의 뜻을 스크린리더에 전한다 |
+| `prevMonthLabel` / `nextMonthLabel` | `string` | `'이전 달'` / `'다음 달'` | 넘김 버튼 이름 (로케일 `datePicker.prevMonth` · `nextMonth`) |
+
+#### 접근성
+
+- WAI-ARIA APG "Date Picker Dialog" 의 `grid` 구조 - 요일 머리글이 각 칸을 설명하고, 칸 이름은 전체 날짜("2026년 10월 16일 금요일")
+- 키보드: <kbd>←</kbd>/<kbd>→</kbd> 하루, <kbd>↑</kbd>/<kbd>↓</kbd> 한 주, <kbd>Home</kbd>/<kbd>End</kbd> 주의 처음 · 끝(`weekStartsOn` 기준), <kbd>PageUp</kbd>/<kbd>PageDown</kbd> 한 달(<kbd>Shift</kbd> 와 함께면 한 해), <kbd>Enter</kbd>/<kbd>Space</kbd> 선택. 포커스는 한 칸만(roving tabindex)
+- 고를 수 없는 날도 포커스는 지나간다 - `disabled` 가 아니라 `aria-disabled`
+- **장식(`renderDay`)은 화면에만 보인다.** 일정 개수처럼 뜻이 있으면 `describeDay` 로 같은 정보를 이름에 붙인다 ("2026년 10월 12일 월요일, 일정 3개")
+
+**Usage**
+
+```tsx
+import { DateCalendar } from "@bigtablet/design-system";
+
+const [date, setDate] = useState<string | null>(null);
+
+<DateCalendar
+  value={date}
+  onValueChange={setDate}
+  weekStartsOn={1}
+  min="2026-10-01"
+  isDateDisabled={(d) => holidays.has(d)}
+  renderDay={(d) => (events[d] ? <span className="event_dot" /> : null)}
+  describeDay={(d) => (events[d] ? `일정 ${events[d].length}개` : undefined)}
+/>
+```
 
 ---
 
@@ -1476,7 +1755,7 @@ function YourComponent() {
 | `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
 | `actionsAlign` | `'left' \| 'center' \| 'right'` | `'right'` | 버튼 정렬 |
-| `onConfirm` | `() => void` | - | 확인 핸들러 |
+| `onConfirm` | `() => unknown` | - | 확인 핸들러. Promise 를 돌려주면 끝날 때까지 열린 채 스피너 · 중복 클릭/취소/Escape 차단, 실패하면 열린 채 재시도 |
 | `onCancel` | `() => void` | - | 취소 핸들러 |
 
 ---
@@ -1484,6 +1763,49 @@ function YourComponent() {
 > 오버레이 클릭은 **누른 곳과 놓은 곳이 모두 오버레이**일 때만 취소로 본다. 메시지를 드래그로
 > 선택하다 오버레이에서 놓으면 `click` 이 공통 조상(오버레이)에 디스패치되는데, 그걸 취소로 처리하면
 > 확인 대화상자가 실수로 닫힌다 - Modal·Drawer 와 같은 판정이다.
+
+#### useConfirm - Promise 로 받는 확인
+
+```tsx
+import { useConfirm } from "@bigtablet/design-system";
+
+const confirm = useConfirm();
+
+// 미저장 변경
+if (await confirm({
+  variant: "warning",
+  title: "변경사항을 버릴까요?",
+  message: "저장하지 않은 내용은 복구할 수 없습니다.",
+  confirmText: "버리기",
+  cancelText: "계속 편집",
+  destructive: true,
+})) {
+  discard();
+}
+
+// 비동기 삭제 - 끝날 때까지 열린 채 pending
+await confirm({
+  variant: "error",
+  title: `${order.no} 를 삭제할까요?`,
+  confirmText: "삭제",
+  destructive: true,
+  onConfirm: () => deleteOrder(order.id),   // Promise
+});
+```
+
+`useAlert` 의 `AlertProvider` 를 그대로 쓴다 - 애니메이션 · 포커스 트랩 · 스크롤 잠금이 같고, 옵션도 `AlertOptions` 와 같다(`showCancel` 은 항상 켜지고 `onCancel` 은 없다).
+
+| 경우 | 결과 |
+|------|------|
+| 확인 | `true` (`onConfirm` 이 Promise 면 성공한 뒤) |
+| 취소 · Escape · 오버레이 | `false` |
+| 열려 있는 동안 다시 `confirm`/`showAlert` | 앞의 것은 `false` 로 끝나고 새 것으로 **교체** |
+| `onConfirm` 이 reject | 열린 채 버튼이 다시 살아난다 - 재시도하거나 취소(`false`). 오류 안내는 작업 쪽에서 |
+| `AlertProvider` 가 사라짐 | `false` |
+
+- 어느 경로든 **정확히 한 번** resolve 된다
+- pending 중 버튼은 `disabled` 가 아니라 `aria-disabled` - 누른 버튼에서 포커스가 빠지지 않는다. 대화상자에 `aria-busy`
+- 첫 포커스는 **취소 버튼**이다 - destructive 확인이 Enter 한 번에 실행되지 않는다
 
 ### Toast
 
@@ -1554,6 +1876,72 @@ toast.dismiss(id);
 | `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜬다 |
 
 > **다국어(ko/en) 앱은 두 값을 주입하세요.** DS 기본값은 한글입니다 — [MIGRATION.md](./MIGRATION.md#v3130-a11y-문자열-기본값-한글화) 참고.
+
+---
+
+### InlineAlert
+
+페이지 흐름 안에 **계속 남는** 안내·경고 블록. 톤 5종(`neutral` · `info` · `success` · `warning` · `error`), 제목 · 본문 · 액션 · 닫기 버튼을 조합한다. 톤 색은 status `container`(배경) · `on-container`(아이콘·제목) 쌍이라 다크 테마에서 함께 뒤집히고, 본문은 일반 텍스트 색이다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경, 저장 결과) | ✅ InlineAlert |
+| 잠깐 보였다 사라지는 결과 알림 | ❌ [Toast](#toast) |
+| 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
+| 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
+
+**Props** (`<div>` 속성 상속)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tone` | `'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 톤 |
+| `title` | `ReactNode` | - | 굵은 한 줄 제목 |
+| `children` | `ReactNode` | - | 본문 설명 |
+| `icon` | `ReactNode` | 톤 기본 아이콘 | 앞 아이콘. `null` 이면 숨긴다 |
+| `action` | `ReactNode` | - | 본문 아래 버튼·링크 |
+| `onDismiss` | `() => void` | - | 주면 닫기 버튼이 생긴다. 실제로 지우는 건 부모(상태를 false 로) |
+| `dismissLabel` | `string` | `'알림 닫기'` | 닫기 버튼 접근성 이름 (로케일 `inlineAlert.dismiss`) |
+
+#### 접근성 - 정적 안내 vs 나중에 나타나는 알림
+
+라이브 리전을 **강제하지 않는다.** 처음부터 화면에 있는 안내를 스크린리더가 끼어들어 읽으면 소음이다.
+
+| 경우 | `role` |
+|------|--------|
+| 페이지와 함께 처음부터 있는 안내 (점검 공지, 만료 예정) | 없음 (기본) |
+| 동작 결과로 **나중에** 나타나는 정보·성공 (저장했습니다) | `role="status"` - 하던 낭독을 끝낸 뒤 읽는다 |
+| 즉시 알아야 하는 오류 (저장 실패) | `role="alert"` - 끼어들어 읽는다. 남발하지 않는다 |
+
+- 아이콘은 `aria-hidden` - 톤 의미는 제목·본문 문구로 전달한다 (색·아이콘만으로 전달하지 않는다)
+- 닫기 버튼은 32px, 이름은 `dismissLabel`. 닫은 뒤 포커스는 부모가 다음 의미 있는 요소로 옮긴다
+- 진입 시 짧은 fade(200ms), `prefers-reduced-motion: reduce` 면 끈다
+
+**Usage**
+
+```tsx
+import { InlineAlert, Button } from "@bigtablet/design-system";
+
+// 정적 안내
+<InlineAlert tone="warning" title="구독이 7일 뒤 만료됩니다" action={<Button size="sm">갱신</Button>}>
+  만료되면 팀원 초대가 막힙니다.
+</InlineAlert>
+
+// 닫을 수 있는 안내 - 지우는 건 부모
+{showNotice && (
+  <InlineAlert tone="info" onDismiss={() => setShowNotice(false)}>
+    새 기능: 일정 공유 링크를 만들 수 있습니다.
+  </InlineAlert>
+)}
+
+// 동작 결과로 나타나는 오류
+{saveError && (
+  <InlineAlert tone="error" role="alert" title="저장하지 못했습니다">
+    네트워크 연결을 확인하고 다시 시도하세요.
+  </InlineAlert>
+)}
+```
 
 ---
 
@@ -1700,7 +2088,8 @@ const [page, setPage] = useState(1);
 | 상황 | 선택 |
 |------|------|
 | 카테고리 간 전환 (서로 배타적, 한 번에 하나만) | ✅ Tabs |
-| 같은 페이지 내 카테고리 필터/토글 그룹 | ✅ Tabs (`pills` variant) |
+| 같은 영역의 보기 전환을 박스 그룹 모양으로 (목록 / 보드 등) | ✅ Tabs (`fills` variant) |
+| 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **[SegmentedControl](#segmentedcontrol)** (라벨이 길면 RadioGroup) - `tablist`/`tab` 은 "패널을 바꾼다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속한다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
 | 단순 boolean 토글 1쌍 | ❌ **Toggle** |
@@ -1708,7 +2097,7 @@ const [page, setPage] = useState(1);
 #### variant 선택 가이드
 
 - `variant="line"` (기본) - **하단 underline**. 페이지 내 섹션 전환 (admin 페이지 위계, 제품 상세 등). 가장 흔한 케이스
-- `variant="pills"` - **둥근 박스 그룹**. 카테고리 필터, 토글성 그룹화 (전체/활성/보관 등). dim bg 위에 segmented control 형태
+- `variant="fills"` - **둥근 박스 그룹**. dim bg 위에서 활성 탭을 박스로 채운다. 짧은 라벨 2~4개의 보기 전환(목록/보드, 월/주)처럼 underline 이 약해 보이는 자리. **모양이 segmented control 이어도 패널을 바꾸는 탭이다** - 값만 고르는 컨트롤로 쓰지 않는다
 
 #### 제어형 vs 비제어형
 
@@ -1728,7 +2117,7 @@ const [tab, setTab] = useState("overview");
 | `value` | `string` | - | 제어형: 현재 활성 tab의 value |
 | `defaultValue` | `string` | `''` | 비제어형: 초기 활성 tab의 value |
 | `onValueChange` | `(value: string) => void` | - | value 변경 콜백 |
-| `variant` | `'line' \| 'pills'` | `'line'` | 시각 스타일. line=하단 underline, pills=둥근 박스 |
+| `variant` | `'line' \| 'fills'` | `'line'` | 시각 스타일. line=하단 underline, fills=둥근 박스 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 (sm=32px min-height, md=40px) |
 
 **TabList Props**
@@ -1772,8 +2161,8 @@ const [tab, setTab] = useState("overview");
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-.tabs (+ tabs_variant_line | tabs_variant_pills, tabs_size_sm | tabs_size_md)
-├── .tabs_list (+ tabs_list_line | tabs_list_pills)
+.tabs (+ tabs_variant_line | tabs_variant_fills, tabs_size_sm | tabs_size_md)
+├── .tabs_list (+ tabs_list_line | tabs_list_fills)
 │   └── button.tabs_tab (+ tabs_tab_active)
 └── .tabs_panel
 ```
@@ -1795,18 +2184,18 @@ import { Tabs, TabList, Tab, TabPanel } from "@bigtablet/design-system";
   <TabPanel value="reviews">리뷰 목록</TabPanel>
 </Tabs>
 
-// pills variant - 리스트 필터
-const [filter, setFilter] = useState("all");
-<Tabs value={filter} onValueChange={setFilter} variant="pills" size="sm">
-  <TabList ariaLabel="주문 필터">
-    <Tab value="all">전체</Tab>
-    <Tab value="active">활성</Tab>
-    <Tab value="archived">보관</Tab>
+// fills variant - 같은 데이터의 보기 전환 (패널마다 다른 화면)
+const [view, setView] = useState("list");
+<Tabs value={view} onValueChange={setView} variant="fills" size="sm">
+  <TabList ariaLabel="보기 방식">
+    <Tab value="list">목록</Tab>
+    <Tab value="board">보드</Tab>
   </TabList>
-  <TabPanel value="all"><OrderList filter="all" /></TabPanel>
-  <TabPanel value="active"><OrderList filter="active" /></TabPanel>
-  <TabPanel value="archived"><OrderList filter="archived" /></TabPanel>
+  <TabPanel value="list"><OrderTable /></TabPanel>
+  <TabPanel value="board"><OrderBoard /></TabPanel>
 </Tabs>
+
+// ❌ 같은 목록을 상태로 거르기만 한다면 Tabs 가 아니다 - 값만 고르는 SegmentedControl 을 쓴다
 
 // unmountInactive=false - 무거운 패널에서 state/스크롤 보존
 <Tabs defaultValue="editor">
@@ -4330,7 +4719,7 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 |------|------|
 | 페이지/섹션의 가로 폭을 제한하고 좌우 정렬 | ✅ Container |
 | 수직 spacing이나 배경색 변경 필요 | ❌ Section을 한 단계 위에 |
-| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="navy"` + 내부에 `Container` |
+| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="inverted"` + 내부에 `Container` |
 | 블로그 본문(읽기 좋은 폭) | `size="md"` (768px) |
 
 #### size 선택 가이드
@@ -4409,7 +4798,7 @@ import { Container } from "@bigtablet/design-system";
 | `default` | `color_bg_solid` | 기본 흰 배경 |
 | `dim` | `color_bg_solid_dim` | 인접 섹션과 시각적 대비 (Zebra 패턴) |
 | `accent` | `color_accent_subtle` | 부드러운 강조 (테스티모니얼 등) |
-| `navy` | `color_accent_default` | 강한 강조 - 자동으로 텍스트 색 흰색 적용 |
+| `inverted` | `color_accent_default` | 강한 강조 (검정/흰색 반전) - 텍스트 색이 자동으로 반전된다 |
 | `transparent` | 없음 | 상위 배경 그대로 노출 |
 
 **Props**
@@ -4417,7 +4806,7 @@ import { Container } from "@bigtablet/design-system";
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `spacing` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 수직 패딩 (반응형 - 아래 표 참고) |
-| `bg` | `'default' \| 'dim' \| 'accent' \| 'navy' \| 'transparent'` | `'default'` | 배경색 변형 |
+| `bg` | `'default' \| 'dim' \| 'accent' \| 'inverted' \| 'transparent'` | `'default'` | 배경색 변형 |
 | `as` | `React.ElementType` | `'section'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라온다 |
 
 #### 반응형 동작
@@ -4444,7 +4833,7 @@ import { Section, Container } from "@bigtablet/design-system";
   </Container>
 </Section>
 
-<Section spacing="xl" bg="navy">
+<Section spacing="xl" bg="inverted">
   <Container>
     <CtaBlock />
   </Container>
@@ -4612,8 +5001,8 @@ import { Section, Container, Stack, Grid, Button, Hero, MediaCard } from "@bigta
 export function LandingPage() {
   return (
     <>
-      {/* 1. Hero - 풀-블리드 navy 배경 */}
-      <Section spacing="xl" bg="navy">
+      {/* 1. Hero - 풀-블리드 inverted 배경 */}
+      <Section spacing="xl" bg="inverted">
         <Container size="xl">
           <Stack gap={24} align="center">
             <h1>가장 빠른 결제 솔루션</h1>
@@ -4671,6 +5060,6 @@ export function LandingPage() {
 
 **핵심 패턴**
 - 모든 Section은 내부에 Container를 둠 (가로 폭 제한 책임 분리).
-- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `navy` ↔ `accent`) 변경해 페이지 리듬을 만듦.
+- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `inverted` ↔ `accent`) 변경해 페이지 리듬을 만듦.
 - 같은 Section 안에서도 Stack을 중첩해 헤더-본문 간 spacing을 조정.
 - 카드 격자는 Grid, 그 외 한 줄/한 열 흐름은 Stack.

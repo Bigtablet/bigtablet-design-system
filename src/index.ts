@@ -12,8 +12,13 @@ import "./styles/link.scss";
 
 export type { PolymorphicProps, PolymorphicRef } from "./utils";
 export {
+	type ClipboardStatus,
 	cn,
+	copyText,
 	type FocusTrapOptions,
+	type UseClipboardOptions,
+	type UseClipboardResult,
+	useClipboard,
 	useFocusTrap,
 	useReducedMotion,
 	useSpringHover,
@@ -54,6 +59,8 @@ export type { EmptyStateProps } from "./ui/feedback/empty-state";
 export { EmptyState } from "./ui/feedback/empty-state";
 export type { ErrorStateProps, ErrorStateVariant } from "./ui/feedback/error-state";
 export { ErrorState } from "./ui/feedback/error-state";
+export type { InlineAlertProps, InlineAlertTone } from "./ui/feedback/inline-alert";
+export { InlineAlert } from "./ui/feedback/inline-alert";
 export type { BottomNavItemProps, BottomNavProps } from "./ui/navigation/bottom-nav";
 export { BottomNav, BottomNavItem, BottomNavSpacer } from "./ui/navigation/bottom-nav";
 export type { BreadcrumbItem, BreadcrumbProps } from "./ui/navigation/breadcrumb";
@@ -99,10 +106,11 @@ export { Tooltip } from "./ui/overlay/tooltip";
 
 // Design Tokens
 
-export { a11y } from "./styles/a11y";
+export { a11y, controlHeight } from "./styles/a11y";
 export { baseBorderWidth, borderWidth } from "./styles/border-width";
 export { breakpoints } from "./styles/breakpoints";
 export { baseColors, colors } from "./styles/colors";
+export { cssVars } from "./styles/css-vars";
 export { elevation } from "./styles/elevation";
 export { iconSize } from "./styles/icon";
 export { motion } from "./styles/motion";
@@ -152,8 +160,13 @@ export type {
 	TableSortDirection,
 } from "./ui/display/table";
 export { Table } from "./ui/display/table";
-export type { AlertActionsAlign, AlertOptions, AlertVariant } from "./ui/feedback/alert";
-export { AlertProvider, useAlert } from "./ui/feedback/alert";
+export type {
+	AlertActionsAlign,
+	AlertOptions,
+	AlertVariant,
+	ConfirmOptions,
+} from "./ui/feedback/alert";
+export { AlertProvider, useAlert, useConfirm } from "./ui/feedback/alert";
 export type { LinearProgressProps } from "./ui/feedback/linear-progress";
 export { LinearProgress } from "./ui/feedback/linear-progress";
 export type { SkeletonProps, SkeletonVariant } from "./ui/feedback/skeleton";
@@ -175,6 +188,12 @@ export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
 export type { ComboboxOption, ComboboxProps, ComboboxSize } from "./ui/forms/combobox";
 export { Combobox } from "./ui/forms/combobox";
+export type {
+	DateCalendarDayInfo,
+	DateCalendarProps,
+	Weekday,
+} from "./ui/forms/date-calendar";
+export { DateCalendar } from "./ui/forms/date-calendar";
 export type { DatePickerProps } from "./ui/forms/date-picker";
 export { DatePicker } from "./ui/forms/date-picker";
 export type { DateRange, DateRangePickerProps } from "./ui/forms/date-range-picker";
@@ -192,6 +211,8 @@ export type { FieldControl, FieldProps } from "./ui/forms/field";
 export { Field, useFieldControl } from "./ui/forms/field";
 export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
 export { FileInput } from "./ui/forms/file";
+export type { FilterBarProps } from "./ui/forms/filter-bar";
+export { FilterBar } from "./ui/forms/filter-bar";
 export type { FormActionsProps, FormProps } from "./ui/forms/form";
 export { Form } from "./ui/forms/form";
 export type {
@@ -213,6 +234,12 @@ export type {
 	RadioGroupSize,
 } from "./ui/forms/radio-group";
 export { RadioGroup, useRadioGroupContext } from "./ui/forms/radio-group";
+export type {
+	SegmentedControlItem,
+	SegmentedControlProps,
+	SegmentedControlSize,
+} from "./ui/forms/segmented-control";
+export { SegmentedControl } from "./ui/forms/segmented-control";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {
@@ -240,6 +267,8 @@ export type {
 	ButtonVariant,
 } from "./ui/general/button";
 export { Button } from "./ui/general/button";
+export type { CopyButtonProps } from "./ui/general/copy-button";
+export { CopyButton } from "./ui/general/copy-button";
 export type { IconButtonProps, IconButtonSize, IconButtonVariant } from "./ui/general/icon-button";
 export { IconButton } from "./ui/general/icon-button";
 export type { PaginationProps } from "./ui/navigation/pagination";

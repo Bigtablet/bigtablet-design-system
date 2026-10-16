@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { cssVars } from "src/styles/css-vars";
 import { elevation } from "src/styles/elevation";
 
 const meta: Meta = {
@@ -49,7 +50,7 @@ export const Levels: Story = {
 						background: "var(--bt-color-bg-solid)",
 						borderRadius: 12,
 						padding: 16,
-						boxShadow: value,
+						boxShadow: cssVars.elevation[key as keyof typeof elevation],
 						border: "1px solid var(--bt-color-border-subtle)",
 					}}
 				>
@@ -83,7 +84,7 @@ export const Levels: Story = {
 								height: 44,
 								borderRadius: 10,
 								background: "var(--bt-color-bg-solid)",
-								boxShadow: value,
+								boxShadow: cssVars.elevation[key as keyof typeof elevation],
 								border: "1px solid var(--bt-color-border-subtle)",
 							}}
 							aria-hidden
@@ -117,7 +118,7 @@ export const ElevationStack: Story = {
 				아래에서 위로 갈수록 elevation이 높아집니다. 높을수록 그림자가 강해지고 "떠 있는" 느낌이
 				강해집니다.
 			</p>
-			{Object.entries(elevation).map(([key, value], i) => (
+			{Object.keys(elevation).map((key, i) => (
 				<div
 					key={key}
 					style={{
@@ -128,7 +129,7 @@ export const ElevationStack: Story = {
 						height: 44,
 						background: "var(--bt-color-bg-solid)",
 						borderRadius: 10,
-						boxShadow: value,
+						boxShadow: cssVars.elevation[key as keyof typeof elevation],
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "space-between",
@@ -175,7 +176,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level1,
+							boxShadow: cssVars.elevation.level1,
 							fontSize: 13,
 						}}
 					>
@@ -186,7 +187,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level2,
+							boxShadow: cssVars.elevation.level2,
 							fontSize: 13,
 						}}
 					>
@@ -197,7 +198,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level4,
+							boxShadow: cssVars.elevation.level4,
 							fontSize: 13,
 						}}
 					>
@@ -239,7 +240,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level5,
+							boxShadow: cssVars.elevation.level5,
 							fontSize: 13,
 						}}
 					>
@@ -250,7 +251,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level5,
+							boxShadow: cssVars.elevation.level5,
 							fontSize: 13,
 						}}
 					>
@@ -261,7 +262,7 @@ export const DoAndDont: Story = {
 							background: "var(--bt-color-bg-solid)",
 							borderRadius: 8,
 							padding: 12,
-							boxShadow: elevation.level5,
+							boxShadow: cssVars.elevation.level5,
 							fontSize: 13,
 						}}
 					>
@@ -306,14 +307,14 @@ export const Comparison: Story = {
 					gap: 20,
 				}}
 			>
-				{Object.entries(elevation).map(([key, value]) => (
+				{Object.keys(elevation).map((key) => (
 					<div key={key} style={{ textAlign: "center" }}>
 						<div
 							style={{
 								background: "var(--bt-color-bg-solid)",
 								borderRadius: 12,
 								padding: 16,
-								boxShadow: value,
+								boxShadow: cssVars.elevation[key as keyof typeof elevation],
 								minHeight: 100,
 								display: "flex",
 								flexDirection: "column",

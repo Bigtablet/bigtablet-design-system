@@ -3,7 +3,7 @@
 .chip {
     display: inline-flex;
     align-items: center;
-    height: 32px;
+    height: token.$control_height_sm;
     border-radius: token.$radius_full;
     border: token.$border_width_standard solid token.$color_border_default;
     overflow: hidden;

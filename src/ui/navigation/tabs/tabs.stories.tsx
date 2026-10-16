@@ -12,7 +12,8 @@ const meta: Meta<typeof Tabs> = {
 				component: `
 **Tabs** - 배타적 패널 전환. compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`.
 
-Variants: \`line\` (기본, 하단 underline) / \`fills\` (segmented control).
+Variants: \`line\` (기본, 하단 underline) / \`fills\` (활성 탭을 채운 박스 그룹).
+패널을 바꿀 때만 쓴다 - 패널 없이 값만 고르는 설정·필터는 \`SegmentedControl\`.
 WAI-ARIA + roving tabIndex + 키보드 (←→/Home/End, disabled 는 건너뜀).
         `,
 			},

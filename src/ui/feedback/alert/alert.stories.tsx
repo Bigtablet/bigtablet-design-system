@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type * as React from "react";
-import { AlertProvider, useAlert } from ".";
+import * as React from "react";
+import { AlertProvider, useAlert, useConfirm } from ".";
 
 type AlertDemoProps = {
 	variant?: "info" | "success" | "warning" | "error";
@@ -151,4 +151,95 @@ export const Destructive: Story = {
 			cancelText="유지"
 		/>
 	),
+};
+
+const DiscardDemo = () => {
+	const confirm = useConfirm();
+	const [text, setText] = React.useState("작성 중인 메모");
+	const [log, setLog] = React.useState("");
+	return (
+		<div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 360 }}>
+			<textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} aria-label="메모" />
+			<button
+				type="button"
+				onClick={async () => {
+					const ok = await confirm({
+						variant: "warning",
+						title: "변경사항을 버릴까요?",
+						message: "저장하지 않은 내용은 복구할 수 없습니다.",
+						confirmText: "버리기",
+						cancelText: "계속 편집",
+						destructive: true,
+					});
+					setLog(ok ? "버렸습니다" : "계속 편집합니다");
+					if (ok) setText("");
+				}}
+			>
+				닫기
+			</button>
+			<span aria-live="polite">{log}</span>
+		</div>
+	);
+};
+
+export const ConfirmDiscard: Story = {
+	name: "useConfirm - 미저장 변경 버리기",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`const ok = await confirm({...})` - 확인하면 `true`, 취소 · Escape · 오버레이로 닫으면 `false` 입니다. 첫 포커스는 취소 버튼이라 Enter 한 번에 지워지지 않습니다.",
+			},
+		},
+	},
+	render: () => <DiscardDemo />,
+};
+
+const DeleteDemo = () => {
+	const confirm = useConfirm();
+	const [rows, setRows] = React.useState(["주문 #1024", "주문 #1025"]);
+	return (
+		<ul style={{ display: "flex", flexDirection: "column", gap: 8, padding: 0, listStyle: "none" }}>
+			{rows.map((row) => (
+				<li key={row} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+					{row}
+					<button
+						type="button"
+						onClick={() =>
+							confirm({
+								variant: "error",
+								title: `${row} 를 삭제할까요?`,
+								message: "삭제한 주문은 되돌릴 수 없습니다.",
+								confirmText: "삭제",
+								destructive: true,
+								// 서버 삭제가 끝날 때까지 열린 채 스피너 - 중복 클릭 · 취소가 막힌다
+								onConfirm: () =>
+									new Promise<void>((resolve) =>
+										setTimeout(() => {
+											setRows((r) => r.filter((x) => x !== row));
+											resolve();
+										}, 1200),
+									),
+							})
+						}
+					>
+						삭제
+					</button>
+				</li>
+			))}
+		</ul>
+	);
+};
+
+export const ConfirmDeleteAsync: Story = {
+	name: "useConfirm - 비동기 삭제",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`onConfirm` 이 Promise 를 돌려주면 끝날 때까지 열린 채 확인 버튼에 스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힙니다. 실패(reject)하면 열린 채 다시 시도하거나 취소할 수 있습니다.",
+			},
+		},
+	},
+	render: () => <DeleteDemo />,
 };

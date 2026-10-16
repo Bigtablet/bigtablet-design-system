@@ -298,14 +298,14 @@
     align-items: center;
     gap: token.$spacing_8;
     padding: token.$spacing_8 token.$spacing_12;
-    min-height: 40px; // 일반 옵션: 40px. supporting text 있으면 56px (아래 override)
+    min-height: token.$control_height_md; // 일반 옵션 40px. supporting text 있으면 56px (아래 override)
     cursor: pointer;
     background: transparent;
     color: token.$color_text_heading;
 
     // 라벨 옆에 시각적 호흡 - supporting text 있으면 더 큼
     &:has(.dropdown_option_supporting) {
-      min-height: 56px;
+      min-height: token.$tap_target_spacious;
       padding: token.$spacing_8 token.$spacing_16;
     }
 

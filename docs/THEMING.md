@@ -11,6 +11,8 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
 - [SSR / FOUC](#ssr--fouc)
 - [소비 표면별 사용법](#소비-표면별-사용법)
   - [React](#react)
+  - [인라인 스타일 - `cssVars`](#인라인-스타일---cssvars)
+  - [토큰 단일 소스](#토큰-단일-소스)
   - [SCSS 소비자](#scss-소비자)
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
   - [레이아웃·런타임 계약 변수](#레이아웃런타임-계약-변수)
@@ -164,6 +166,36 @@ import "@bigtablet/design-system/style.css";
 ```
 
 `style.css` (빌드 산출물 `dist/index.css`) 는 컴포넌트 스타일과 `src/styles/theme.scss` 의 `:root` / `[data-theme="dark"]` / `@media (prefers-color-scheme)` CSS 변수 정의를 모두 포함합니다.
+
+### 인라인 스타일 - `cssVars`
+
+`colors` · `elevation` · `a11y.focusRing*` · `skeleton.color` 는 **light 테마 고정값**입니다. 인라인 스타일에 넣으면 dark 테마에서도 light 색이 그대로 남습니다. 테마를 따라가야 하면 같은 키로 `cssVars` 를 씁니다 - 값 대신 `var(--bt-*)` 문자열이라 브라우저가 현재 테마의 값을 고릅니다.
+
+```tsx
+import { colors, cssVars } from "@bigtablet/design-system";
+
+// ❌ dark 에서도 #6F6F6F
+<span style={{ color: colors.text.caption }} />
+
+// ✅ light #6F6F6F · dark #808080
+<span style={{ color: cssVars.colors.text.caption, boxShadow: cssVars.elevation.level2 }} />
+```
+
+| export | 내용 |
+|---|---|
+| `cssVars.colors.{그룹}.{키}` | `colors` 와 같은 키 → `var(--bt-color-{그룹}-{키 kebab})`. status 는 `error` · `errorOnDefault` · `errorContainer` · `errorOnContainer` · `errorOnSurface` 계열 전부 |
+| `cssVars.elevation.level1` ~ `level5` | `var(--bt-elevation-level1)` ~ `var(--bt-elevation-level5)` |
+| `cssVars.a11y.focusRing` / `focusRingError` / `focusRingSuccess` | `var(--bt-focus-ring*)` |
+
+`style.css` 가 로드돼 있어야 변수가 정의됩니다. 실제 숫자가 필요한 계산(캔버스·차트 라이브러리 등)에는 `colors` 같은 고정값을 쓰거나 `getComputedStyle` 로 현재 값을 읽으세요.
+
+### 토큰 단일 소스
+
+토큰 값의 기준은 **SCSS** 입니다 - raw 값은 `src/styles/colors/_index.scss`, light/dark 테마 값은 `src/styles/theme.scss`. TS export(`baseColors` · `colors` · `elevation` · `a11y` · `skeleton` · `controlHeight`)와 디자이너용 `src/styles/tokens.json` 은 그 값을 옮겨 적은 사본이고, `src/styles/tokens.test.ts` 가 SCSS 를 실제로 컴파일해 나온 값과 키 하나하나를 대조합니다(단위 테스트라 CI 에서 돈다).
+
+- 값을 바꿀 때는 SCSS 를 먼저 고치고 TS · JSON 을 맞춥니다. 한쪽만 고치면 테스트가 어긋난 이름과 두 값을 보여 줍니다
+- 테마 색 변수(`--bt-color-*`)를 새로 만들면 `colors` 와 `tokens.json` 에도 같은 이름이 있어야 합니다
+- `tokens.json` 의 dark 값은 `$extensions["com.bigtablet.theme"].dark` 에 둡니다. 없으면 light 와 같다는 뜻입니다
 
 ### SCSS 소비자
 
@@ -340,7 +372,7 @@ pnpm build
 scripts/check-css-vars.sh
 ```
 
-문서에 적혔지만 어느 번들에도 없는 변수를 찾아냅니다. 현재는 수동 실행이며 CI 에는 연결돼 있지 않습니다.
+문서에 적혔지만 어느 번들에도 없는 변수를 찾아냅니다. CI 의 build 뒤에 `pnpm check:css-vars` 로 돕니다.
 
 ### 접근성 토큰 — 하드코딩하지 마세요
 
@@ -355,6 +387,7 @@ scripts/check-css-vars.sh
 | `token.$tap_target_compact` | — | 40px (데스크탑 기본) |
 | `token.$tap_target_comfortable` | — | 48px (모바일/터치 기본) |
 | `token.$tap_target_spacious` | — | 56px (강조 CTA) |
+| `token.$control_height_sm` ~ `_xl` | — | 32 · 40 · 48 · 56px. 위 tap target 의 크기 단계 이름 - 컨트롤·아바타처럼 sm/md/lg 단계가 있는 요소는 이쪽을 씁니다 (TS `controlHeight`) |
 
 ```scss
 // ✅

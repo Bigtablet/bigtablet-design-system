@@ -170,6 +170,12 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 // ✓ OK - --bt-color-* IS emitted by the React entry's style.css
 <div style={{ background: "var(--bt-color-bg-solid-dim)" }} />
 
+// ✓ Same, typed - cssVars mirrors colors / elevation / a11y focus rings as var() strings
+<div style={{ background: cssVars.colors.bg.solidDim, boxShadow: cssVars.elevation.level2 }} />
+
+// ✗ Avoid - colors.* / elevation.* are fixed light values and stay light in dark mode
+<div style={{ background: colors.bg.solidDim }} />
+
 // ✗ Never - hardcoded hex breaks dark mode
 <div style={{ background: "#F2F5F8" }} />
 
@@ -233,14 +239,18 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
 | `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
+| `CopyButton` | Copy-to-clipboard button: shows "copied" for 2s and announces via hidden `role="status"`. Hook: `useClipboard()` → `{ copy, status, error, reset }`; `copyText()` one-shot. Falls back to `execCommand` (in-app browsers, http). | `text` (string or fn), `label`/`copiedLabel`/`failedLabel`, `iconOnly` (label = accessible name), `size`, `variant`, `resetAfter`, `onCopy`, `onError`. |
 | `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
 | `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
+| `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
+| `FilterBar` | List-page filter form: field grid + Enter submit + search/reset buttons. Holds no filter state. | `children` (fields), `onSubmit`, `onReset` (shows reset), `canSubmit`, `canReset`, `loading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
 | `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
 | `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
+| `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
 | `OTPInput` | Single-digit code boxes. | `length`, `value`, `onChange`, `autoFocus`, `error` |
 
@@ -265,7 +275,9 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, variant, showCancel, destructive, onConfirm, onCancel })` |
+| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, variant, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
+| `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
 | `Spinner` | Inline loading indicator. | `size` (px), `ariaLabel`. Vercel-style 12-bar fade. |
 | `TopLoading` | Top-of-page progress bar. | `progress` (0-100, or undefined for indeterminate), `height`, `color`, `isLoading`, `ariaLabel` |
 | `LinearProgress` | Step progress with dots. | `totalSteps`, `currentStep`, `aria-label`. Renders N+1 checkpoints. |

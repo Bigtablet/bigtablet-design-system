@@ -96,12 +96,12 @@
   &_size_sm .tabs_tab {
     @include token.label_medium_medium;
     padding: token.$spacing_4 token.$spacing_8;
-    min-height: 32px;
+    min-height: token.$control_height_sm;
   }
 
   &_size_md .tabs_tab {
     padding: token.$spacing_8 token.$spacing_12;
-    min-height: 40px;
+    min-height: token.$control_height_md;
   }
 
   // ── Variant: line ────────────────────────────────────────────────────

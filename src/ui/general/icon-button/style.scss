@@ -32,13 +32,13 @@
   // ── Sizes ────────────────────────────────────────────────────────────────
 
   &_size_sm {
-    width: 40px;
-    height: 40px;
+    width: token.$control_height_md;
+    height: token.$control_height_md;
   }
 
   &_size_md {
-    width: 48px;
-    height: 48px;
+    width: token.$control_height_lg;
+    height: token.$control_height_lg;
   }
 
   // ── Variant: Standard ───────────────────────────────────────────────────

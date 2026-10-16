@@ -4,6 +4,19 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.31.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.31.0) - 2026-10-16
+- `SegmentedControl` 이 생겼습니다 - 짧은 선택지 2~5개 중 하나를 고르는 붙은 버튼 묶음입니다(보기 전환 · 기간 단위 등). native radio 라 방향키 · Home/End · 폼 제출(`name` · `required`)이 그대로 동작합니다
+- `InlineAlert` 가 생겼습니다 - 화면 안에 남아 있는 안내 · 경고 상자입니다(`info` · `success` · `warning` · `error`, 선택적으로 닫기 버튼). 기본으로 라이브 리전이 아니라, 바로 읽혀야 하면 `role="alert"` · `role="status"` 를 넘깁니다. 문구 키 `inlineAlert.dismiss` 가 추가됐습니다
+- `FilterBar` 가 생겼습니다 - 목록 위 검색 · 필터 폼 레이아웃입니다. Enter 로 제출하고, 초기화 버튼 · 로딩 상태(`loading`) · 비활성(`canSubmit` · `canReset` · `disabled`)을 지원합니다. 문구 키 `filterBar.submit` · `filterBar.reset` 이 추가됐습니다
+- `CopyButton` · `useClipboard` · `copyText` 가 생겼습니다 - 클립보드 복사 버튼과 훅입니다. Clipboard API 가 막힌 환경(비보안 컨텍스트 등)에서는 `execCommand` 로 대신 복사하고, 복사 결과를 스크린리더에 알립니다. 문구 키 `copyButton.*` 가 추가됐습니다
+- `DateCalendar` 를 공개합니다 - `DatePicker` 의 월 달력을 단독으로 쓸 수 있습니다. 값은 `"YYYY-MM-DD"` 문자열이고 `min` · `max` · `isDateDisabled` · `renderDay` 등으로 날짜를 제한 · 꾸밉니다. `DatePicker variant="calendar"` 도 이 컴포넌트를 씁니다
+- `useConfirm` 이 생겼습니다 - `AlertProvider` 위에서 `await confirm({ title })` 로 확인/취소 결과(`true`/`false`)를 받습니다. `onConfirm` 이 Promise 를 돌려주면 끝날 때까지 대화상자가 열린 채 스피너를 보이고, 실패하면 열린 채로 다시 시도할 수 있습니다
+- `cssVars` 가 생겼습니다 - `colors` · `elevation` · `a11y.focusRing*` 과 같은 키로 `var(--bt-*)` 문자열을 줍니다. 인라인 스타일에 쓰면 dark 테마를 따라갑니다(`colors` 등은 light 고정값). `colors` 에 status 계열(`errorContainer` · `errorOnContainer` · `errorOnSurface` 등) · `brand.primaryContainer` · `state.focusOn*` · `skeleton` 이 추가됐습니다
+- 크기 단계 토큰 `$control_height_sm` ~ `$control_height_xl`(SCSS) · `controlHeight`(TS) 가 생겼습니다 - 32 · 40 · 48 · 56px
+- (렌더 변경) TS 토큰 `a11y.focusRingError` · `a11y.focusRingSuccess` 의 투명도를 0.15 에서 실제 CSS 와 같은 0.30 으로, `skeleton.color` 를 실제 CSS 와 같은 값(`#F3F3F3` 등)으로 고쳤습니다. 이 값을 인라인 스타일에 쓰던 화면만 바뀝니다. 컴포넌트 렌더는 그대로입니다
+- (렌더 변경) `Table` 에서 클릭할 수 있는 행에 키보드 포커스가 오면 2px 테두리가 보입니다. 이전에는 배경색만 옅게 바뀌어(흰 바탕 대비 약 1.2:1) 어느 행인지 거의 구분되지 않았습니다. 고대비(forced-colors) 모드에서도 보입니다
+- (개발) 뮤테이션 테스트 도구(`tools/mutation`)의 transitive `qs` 를 보안 패치 버전으로 올렸습니다. 배포 패키지에는 영향이 없습니다
+
 ## [3.30.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.30.2) - 2026-10-14
 - (렌더 변경) `Tooltip` 이 폭 256px 미만 화면에서 오른쪽으로 넘치던 것을 고쳤습니다. 툴팁 자신의 `max-width: 240px` 가 화면 폭에 맞춘 상한을 가려, 200px 화면에서 툴팁이 48px 밖으로 나갔습니다. 이제 `Popover` 와 같이 화면 가용 폭을 넘지 않습니다. 그보다 넓은 화면에서는 달라지는 것이 없습니다
 
