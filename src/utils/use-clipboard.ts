@@ -70,8 +70,11 @@ export interface UseClipboardOptions {
 }
 
 export interface UseClipboardResult {
-	/** 복사 - 성공하면 true. 실패해도 throw 하지 않는다 (`status`·`error` 로 본다) */
-	copy: (text: string) => Promise<boolean>;
+	/**
+	 * 복사 - 성공하면 true. 실패해도 throw 하지 않는다 (`status`·`error` 로 본다).
+	 * 함수를 주면 그 자리에서 계산하고, 그 함수가 throw 해도 실패(`error`)로 처리한다.
+	 */
+	copy: (text: string | (() => string)) => Promise<boolean>;
 	status: ClipboardStatus;
 	/** 마지막 실패의 원인 (`NotAllowedError` 등) */
 	error: unknown;
@@ -101,13 +104,15 @@ export function useClipboard({ resetAfter = 2000 }: UseClipboardOptions = {}): U
 	}, []);
 
 	const reset = React.useCallback(() => {
+		// 진행 중인 복사도 무효화 - 안 그러면 끝나는 순간 copied 로 돌아가고 타이머가 다시 돈다
+		seq.current++;
 		clearTimeout(timer.current);
 		setStatus("idle");
 		setError(null);
 	}, []);
 
 	const copy = React.useCallback(
-		async (text: string) => {
+		async (text: string | (() => string)) => {
 			const id = ++seq.current;
 			clearTimeout(timer.current);
 			setStatus("copying");
@@ -116,7 +121,7 @@ export function useClipboard({ resetAfter = 2000 }: UseClipboardOptions = {}): U
 			let ok = true;
 			let failure: unknown = null;
 			try {
-				await copyText(text);
+				await copyText(typeof text === "function" ? text() : text);
 			} catch (e) {
 				ok = false;
 				failure = e;

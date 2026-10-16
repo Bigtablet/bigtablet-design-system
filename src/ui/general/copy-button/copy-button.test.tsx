@@ -27,7 +27,9 @@ describe("CopyButton", () => {
 		await click(screen.getByRole("button", { name: "복사" }));
 		expect(writeText).toHaveBeenCalledWith("https://bigtablet.com/i/abc");
 		expect(onCopy).toHaveBeenCalledWith("https://bigtablet.com/i/abc");
-		expect(screen.getByRole("button", { name: "복사됨" })).toBeInTheDocument();
+		// 이름은 "복사" 그대로 - 보이는 문구만 바뀌고 낭독은 status 한 번
+		const button = screen.getByRole("button", { name: "복사" });
+		expect(button).toHaveTextContent("복사됨");
 		expect(screen.getByRole("status")).toHaveTextContent("복사됨");
 	});
 
@@ -35,9 +37,9 @@ describe("CopyButton", () => {
 		vi.useFakeTimers();
 		render(<CopyButton text="x" resetAfter={500} />);
 		await click(screen.getByRole("button", { name: "복사" }));
-		expect(screen.getByRole("button", { name: "복사됨" })).toBeInTheDocument();
+		expect(screen.getByRole("button")).toHaveTextContent("복사됨");
 		act(() => vi.advanceTimersByTime(500));
-		expect(screen.getByRole("button", { name: "복사" })).toBeInTheDocument();
+		expect(screen.getByRole("button")).toHaveTextContent(/^복사$/);
 		expect(screen.getByRole("status")).toBeEmptyDOMElement();
 	});
 
@@ -84,6 +86,44 @@ describe("CopyButton", () => {
 			</LocaleProvider>,
 		);
 		await click(screen.getByRole("button", { name: "Copy" }));
-		expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copy" })).toHaveTextContent("Copied");
+	});
+
+	it("treats a throwing text function as a failure", async () => {
+		const boom = new Error("no value yet");
+		const onError = vi.fn();
+		render(
+			<CopyButton
+				text={() => {
+					throw boom;
+				}}
+				onError={onError}
+			/>,
+		);
+		await click(screen.getByRole("button"));
+		expect(writeText).not.toHaveBeenCalled();
+		expect(onError).toHaveBeenCalledWith(boom);
+		expect(screen.getByRole("status")).toHaveTextContent("복사하지 못했습니다");
+	});
+
+	it("forwards button attributes and ref", () => {
+		const ref = { current: null as HTMLButtonElement | null };
+		render(
+			<>
+				<span id="hint">초대 링크</span>
+				<CopyButton
+					text="x"
+					id="copy-invite"
+					data-testid="cb"
+					aria-describedby="hint"
+					title="복사"
+					ref={ref}
+				/>
+			</>,
+		);
+		const button = screen.getByTestId("cb");
+		expect(button).toHaveAttribute("id", "copy-invite");
+		expect(button).toHaveAccessibleDescription("초대 링크");
+		expect(ref.current).toBe(button);
 	});
 });

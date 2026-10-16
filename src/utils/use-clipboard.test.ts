@@ -183,4 +183,34 @@ describe("useClipboard", () => {
 		expect(vi.getTimerCount()).toBe(0);
 		clear.mockRestore();
 	});
+
+	it("drops an in-flight copy when reset is called", async () => {
+		let resolve!: () => void;
+		setClipboard(() => new Promise<void>((r) => (resolve = r)));
+		const { result } = renderHook(() => useClipboard({ resetAfter: 1000 }));
+		let pending!: Promise<boolean>;
+		act(() => {
+			pending = result.current.copy("x");
+		});
+		act(() => result.current.reset());
+		await act(async () => {
+			resolve();
+			await pending;
+		});
+		expect(result.current.status).toBe("idle");
+	});
+
+	it("reports a throwing text function as an error", async () => {
+		const boom = new Error("boom");
+		const { result } = renderHook(() => useClipboard());
+		let ok = true;
+		await act(async () => {
+			ok = await result.current.copy(() => {
+				throw boom;
+			});
+		});
+		expect(ok).toBe(false);
+		expect(result.current.status).toBe("error");
+		expect(result.current.error).toBe(boom);
+	});
 });

@@ -3,13 +3,18 @@
 import { Check, Copy } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { useClipboard } from "../../../utils";
+import { type SafeHTMLProps, useClipboard } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { Button, type ButtonVariant } from "../button";
 import { IconButton } from "../icon-button";
 import "./style.scss";
 
-export interface CopyButtonProps {
+export interface CopyButtonProps
+	extends Omit<
+		SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>,
+		// onCopy·onError 는 아래 의미로 쓴다 (DOM 의 copy · error 이벤트가 아니다)
+		"children" | "onClick" | "onCopy" | "onError" | "type" | "aria-label"
+	> {
 	/** 복사할 텍스트. 누를 때 계산하려면 함수로 */
 	text: string | (() => string);
 	/** 버튼 문구 · 아이콘만일 때는 접근성 이름 (기본값: 로케일 `copyButton.copy`) */
@@ -30,8 +35,7 @@ export interface CopyButtonProps {
 	onCopy?: (text: string) => void;
 	/** 실패 (권한 거부 · API 없음 · 폴백 실패) */
 	onError?: (error: unknown) => void;
-	disabled?: boolean;
-	className?: string;
+	ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -55,8 +59,8 @@ export const CopyButton = ({
 	resetAfter = 2000,
 	onCopy,
 	onError,
-	disabled,
 	className,
+	...props
 }: CopyButtonProps) => {
 	const t = useLocaleText();
 	const label = labelProp ?? t("copyButton.copy");
@@ -73,8 +77,13 @@ export const CopyButton = ({
 	}, [status, error]);
 
 	const handleClick = async () => {
-		const value = typeof text === "function" ? text() : text;
-		if (await copy(value)) onCopy?.(value);
+		let value = "";
+		// 함수 text 는 훅 안에서 계산한다 - throw 하면 실패 알림 · onError 로 간다
+		const ok = await copy(() => {
+			value = typeof text === "function" ? text() : text;
+			return value;
+		});
+		if (ok) onCopy?.(value);
 	};
 
 	const icon = copied ? <Check size={iconSize.sm} /> : <Copy size={iconSize.sm} />;
@@ -84,25 +93,27 @@ export const CopyButton = ({
 		<>
 			{iconOnly ? (
 				<IconButton
+					{...props}
 					size={size}
 					icon={icon}
 					// 이름은 바꾸지 않는다 - 결과는 아래 status 가 알린다. 이름이 바뀌면 포커스 중
 					// 같은 버튼을 두 번 읽는다
 					aria-label={label}
-					disabled={disabled}
 					className={className}
 					onClick={handleClick}
 				/>
 			) : (
 				<Button
+					{...props}
 					size={size}
 					variant={variant}
 					leadingIcon={icon}
-					disabled={disabled}
+					// 문구 버튼도 이름은 고정 - 보이는 문구만 "복사됨" 으로 바꾸고 낭독은 status 한 번
+					aria-label={label}
 					className={className}
 					onClick={handleClick}
 				>
-					{copied ? copiedLabel : label}
+					<span aria-hidden="true">{copied ? copiedLabel : label}</span>
 				</Button>
 			)}
 			<span className="copy_button_status" role="status">
