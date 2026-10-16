@@ -72,4 +72,21 @@ describe("SegmentedControl (Chromium)", () => {
 			.map((r) => (r.closest("label") as HTMLElement).getBoundingClientRect().width);
 		expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
 	});
+
+	it("still blocks an empty submit when the first item is disabled", async () => {
+		// disabled 칸은 제약 검증에서 빠진다 - 실제 브라우저의 검증으로 본다
+		const { container } = render(
+			<form>
+				<SegmentedControl
+					aria-label="통화"
+					items={[{ value: "A", label: "A", disabled: true }, ...items.slice(0, 2)]}
+					required
+				/>
+			</form>,
+		);
+		const form = container.querySelector("form") as HTMLFormElement;
+		expect(form.checkValidity()).toBe(false);
+		await userEvent.click(screen.getByRole("radio", { name: "KRW" }).closest("label") as HTMLElement);
+		expect(form.checkValidity()).toBe(true);
+	});
 });

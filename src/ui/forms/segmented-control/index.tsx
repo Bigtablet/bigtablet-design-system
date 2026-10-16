@@ -149,8 +149,8 @@ export const SegmentedControl = <T extends string = string>({
 							value={item.value}
 							checked={selected}
 							disabled={itemDisabled}
-							// 모든 칸에 건다 - 한 칸에만 걸면 그 칸이 disabled 일 때 제약 검증에서 빠져
-							// 선택 없이 제출된다. radio 그룹은 하나만 골라도 충족된다.
+							// 모든 칸에 건다 - 표준상 한 칸만 required 여도 그룹 전체가 검증되지만, 어느 칸이
+							// disabled 인지와 무관하게 의도가 바로 읽힌다. 하나만 골라도 충족된다.
 							required={isRequired}
 							aria-label={item.ariaLabel}
 							onChange={() => select(item.value)}

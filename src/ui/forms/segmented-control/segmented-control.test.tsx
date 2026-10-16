@@ -123,21 +123,6 @@ describe("SegmentedControl", () => {
 		for (const r of radios) expect(r).toBeRequired();
 	});
 
-	it("still blocks an empty submit when the first item is disabled", () => {
-		const { container } = render(
-			<form>
-				<SegmentedControl
-					aria-label="통화"
-					items={[{ value: "A", label: "A", disabled: true }, ...currencies]}
-					required
-				/>
-			</form>,
-		);
-		expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
-		fireEvent.click(screen.getByRole("radio", { name: "KRW" }));
-		expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(true);
-	});
-
 	it("calls the consumer's onKeyDown first and lets it cancel Home/End", () => {
 		const onValueChange = vi.fn();
 		const onKeyDown = vi.fn((e: React.KeyboardEvent) => {
