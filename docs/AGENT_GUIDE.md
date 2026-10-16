@@ -170,6 +170,12 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 // ✓ OK - --bt-color-* IS emitted by the React entry's style.css
 <div style={{ background: "var(--bt-color-bg-solid-dim)" }} />
 
+// ✓ Same, typed - cssVars mirrors colors / elevation / a11y focus rings as var() strings
+<div style={{ background: cssVars.colors.bg.solidDim, boxShadow: cssVars.elevation.level2 }} />
+
+// ✗ Avoid - colors.* / elevation.* are fixed light values and stay light in dark mode
+<div style={{ background: colors.bg.solidDim }} />
+
 // ✗ Never - hardcoded hex breaks dark mode
 <div style={{ background: "#F2F5F8" }} />
 

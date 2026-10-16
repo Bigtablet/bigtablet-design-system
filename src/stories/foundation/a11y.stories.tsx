@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { a11y } from "src/styles/a11y";
+import { controlHeight } from "src/styles/a11y";
 import { baseColors, colors } from "src/styles/colors";
+import { cssVars } from "src/styles/css-vars";
 import { Grid } from "src/ui/layout/grid";
 
 const meta: Meta = {
@@ -45,9 +46,9 @@ export const FocusRing: Story = {
 				<Grid cols={3} gap={16}>
 					{(
 						[
-							["기본", a11y.focusRing, "focusRing"],
-							["에러", a11y.focusRingError, "focusRingError"],
-							["성공", a11y.focusRingSuccess, "focusRingSuccess"],
+							["기본", cssVars.a11y.focusRing, "focusRing"],
+							["에러", cssVars.a11y.focusRingError, "focusRingError"],
+							["성공", cssVars.a11y.focusRingSuccess, "focusRingSuccess"],
 						] as const
 					).map(([label, shadow, token]) => (
 						<div key={token} style={{ textAlign: "center" }}>
@@ -103,7 +104,7 @@ export const FocusRing: Story = {
 								boxSizing: "border-box",
 							}}
 							onFocus={(e) => {
-								e.currentTarget.style.boxShadow = a11y.focusRing;
+								e.currentTarget.style.boxShadow = cssVars.a11y.focusRing;
 							}}
 							onBlur={(e) => {
 								e.currentTarget.style.boxShadow = "none";
@@ -134,7 +135,7 @@ export const FocusRing: Story = {
 								boxSizing: "border-box",
 							}}
 							onFocus={(e) => {
-								e.currentTarget.style.boxShadow = a11y.focusRingError;
+								e.currentTarget.style.boxShadow = cssVars.a11y.focusRingError;
 							}}
 							onBlur={(e) => {
 								e.currentTarget.style.boxShadow = "none";
@@ -166,7 +167,7 @@ export const FocusRing: Story = {
 									outline: "none",
 								}}
 								onFocus={(e) => {
-									e.currentTarget.style.boxShadow = a11y.focusRing;
+									e.currentTarget.style.boxShadow = cssVars.a11y.focusRing;
 								}}
 								onBlur={(e) => {
 									e.currentTarget.style.boxShadow = "none";
@@ -186,7 +187,7 @@ export const FocusRing: Story = {
 									outline: "none",
 								}}
 								onFocus={(e) => {
-									e.currentTarget.style.boxShadow = a11y.focusRing;
+									e.currentTarget.style.boxShadow = cssVars.a11y.focusRing;
 								}}
 								onBlur={(e) => {
 									e.currentTarget.style.boxShadow = "none";
@@ -219,7 +220,7 @@ export const FocusRing: Story = {
 								padding: "2px 4px",
 							}}
 							onFocus={(e) => {
-								e.currentTarget.style.boxShadow = a11y.focusRing;
+								e.currentTarget.style.boxShadow = cssVars.a11y.focusRing;
 							}}
 							onBlur={(e) => {
 								e.currentTarget.style.boxShadow = "none";
@@ -324,12 +325,16 @@ export const TapTarget: Story = {
 
 // ── 밀도 / 반응형 사이즈 ────────────────────────────────────────────────────
 
+// `control-height-*` 는 같은 값의 크기 단계 이름이다 - sm/md/lg 단계가 있는 컨트롤·아바타가 참조한다.
 const DENSITY_TOKENS = [
-	{ key: "dense", size: 32, desc: "데스크탑 인라인 폼, 컴팩트 UI" },
-	{ key: "compact", size: 40, desc: "데스크탑 기본" },
-	{ key: "comfortable", size: 48, desc: "모바일/터치 기본 (44 초과)" },
-	{ key: "spacious", size: 56, desc: "강조 CTA, 풀스크린 액션" },
-] as const;
+	{ key: "dense", step: "sm", desc: "데스크탑 인라인 폼, 컴팩트 UI" },
+	{ key: "compact", step: "md", desc: "데스크탑 기본" },
+	{ key: "comfortable", step: "lg", desc: "모바일/터치 기본 (44 초과)" },
+	{ key: "spacious", step: "xl", desc: "강조 CTA, 풀스크린 액션" },
+].map((token) => ({
+	...token,
+	size: Number.parseInt(controlHeight[token.step as keyof typeof controlHeight], 10),
+}));
 
 export const Density: Story = {
 	name: "밀도 / 반응형 사이즈 (Density)",
@@ -354,7 +359,7 @@ export const Density: Story = {
 					폼 컨트롤(Button, TextField, Dropdown)의 height 결정에 사용됩니다.
 				</p>
 				<div style={{ display: "grid", gap: 12, marginTop: 16 }}>
-					{DENSITY_TOKENS.map(({ key, size, desc }) => (
+					{DENSITY_TOKENS.map(({ key, step, size, desc }) => (
 						<div
 							key={key}
 							style={{
@@ -370,6 +375,8 @@ export const Density: Story = {
 						>
 							<div>
 								<code style={{ fontSize: 12 }}>tap-target-{key}</code>
+								<br />
+								<code style={{ fontSize: 12 }}>control-height-{step}</code>
 								<div style={{ fontSize: 11, color: "var(--bt-color-text-caption)", marginTop: 2 }}>
 									{desc}
 								</div>
