@@ -25,6 +25,7 @@ export interface LocaleMessages {
 	"alert.cancel": string;
 	"alert.confirm": string;
 	"errorState.title": string;
+	"inlineAlert.dismiss": string;
 	"spinner.label": string;
 	"toast.close": string;
 	"toast.region": string;
@@ -107,6 +108,7 @@ export const ko: LocaleMessages = {
 	"alert.cancel": "취소",
 	"alert.confirm": "확인",
 	"errorState.title": "문제가 발생했습니다",
+	"inlineAlert.dismiss": "알림 닫기",
 	"spinner.label": "로딩 중",
 	"toast.close": "닫기",
 	"toast.region": "알림",
@@ -184,6 +186,7 @@ export const en: LocaleMessages = {
 	"alert.cancel": "Cancel",
 	"alert.confirm": "OK",
 	"errorState.title": "Something went wrong",
+	"inlineAlert.dismiss": "Dismiss",
 	"spinner.label": "Loading",
 	"toast.close": "Close",
 	"toast.region": "Notifications",

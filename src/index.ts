@@ -54,6 +54,8 @@ export type { EmptyStateProps } from "./ui/feedback/empty-state";
 export { EmptyState } from "./ui/feedback/empty-state";
 export type { ErrorStateProps, ErrorStateVariant } from "./ui/feedback/error-state";
 export { ErrorState } from "./ui/feedback/error-state";
+export type { InlineAlertProps, InlineAlertTone } from "./ui/feedback/inline-alert";
+export { InlineAlert } from "./ui/feedback/inline-alert";
 export type { BottomNavItemProps, BottomNavProps } from "./ui/navigation/bottom-nav";
 export { BottomNav, BottomNavItem, BottomNavSpacer } from "./ui/navigation/bottom-nav";
 export type { BreadcrumbItem, BreadcrumbProps } from "./ui/navigation/breadcrumb";
