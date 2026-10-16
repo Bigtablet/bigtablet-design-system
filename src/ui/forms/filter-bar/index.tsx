@@ -94,8 +94,18 @@ export const FilterBar = ({
 				)}
 				<Button
 					type="submit"
-					disabled={submitBlocked}
-					leadingIcon={loading ? <Spinner size={16} ariaLabel={submitLabel} /> : undefined}
+					// loading 은 `disabled` 대신 `aria-disabled` - 버튼에 포커스가 있는 채 막히면 포커스가
+					// body 로 빠진다. 제출 자체는 위 onSubmit 가드가 막는다.
+					disabled={disabled || !canSubmit}
+					aria-disabled={loading || undefined}
+					// 스피너는 장식 - 상태는 폼의 aria-busy 가 전한다. 이름을 따로 주면 "검색 검색" 으로 읽힌다
+					leadingIcon={
+						loading ? (
+							<span aria-hidden="true">
+								<Spinner size={16} />
+							</span>
+						) : undefined
+					}
 				>
 					{submitLabel}
 				</Button>

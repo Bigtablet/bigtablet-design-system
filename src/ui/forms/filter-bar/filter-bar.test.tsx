@@ -31,8 +31,8 @@ describe("FilterBar", () => {
 		expect(onSubmit).toHaveBeenCalledTimes(1);
 	});
 
-	it("blocks Enter and the button when canSubmit is false, loading or disabled", () => {
-		for (const blocked of [{ canSubmit: false }, { loading: true }, { disabled: true }]) {
+	it("blocks Enter and the button when canSubmit is false or disabled", () => {
+		for (const blocked of [{ canSubmit: false }, { disabled: true }]) {
 			const { onSubmit, unmount } = setup(blocked);
 			expect(screen.getByRole("button", { name: "검색" })).toBeDisabled();
 			fireEvent.submit(screen.getByRole("search"));
@@ -41,12 +41,26 @@ describe("FilterBar", () => {
 		}
 	});
 
-	it("marks the form busy and shows a spinner while loading", () => {
+	it("keeps the button focusable while loading but blocks submitting", () => {
+		const { onSubmit } = setup({ loading: true });
+		const button = screen.getByRole("button", { name: "검색" });
+		button.focus();
+		// disabled 로 바꾸면 포커스가 body 로 빠진다 - aria-disabled 로 막는다
+		expect(button).toBeEnabled();
+		expect(button).toHaveAttribute("aria-disabled", "true");
+		expect(button).toHaveFocus();
+		fireEvent.click(button);
+		fireEvent.submit(screen.getByRole("search"));
+		expect(onSubmit).not.toHaveBeenCalled();
+	});
+
+	it("marks the form busy and shows a decorative spinner while loading", () => {
 		setup({ loading: true });
 		expect(screen.getByRole("search")).toHaveAttribute("aria-busy", "true");
-		expect(
-			screen.getByRole("button", { name: /검색/ }).querySelector("svg, [role='status']"),
-		).not.toBeNull();
+		// 이름이 "검색" 그대로 - 스피너 라벨이 붙어 "검색 검색" 이 되지 않는다
+		const button = screen.getByRole("button", { name: "검색" });
+		expect(button.querySelector("[aria-hidden='true'] [role='status']")).not.toBeNull();
+		expect(screen.queryByRole("status")).toBeNull();
 	});
 
 	it("shows a reset button only with onReset and keeps it apart from submit", () => {
