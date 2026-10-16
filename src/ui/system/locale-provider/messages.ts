@@ -10,6 +10,9 @@
 export interface LocaleMessages {
 	// ── display ─────────────────────────────────────────────────────────────
 	"chip.remove": string; // {label}
+	"copyButton.copied": string;
+	"copyButton.copy": string;
+	"copyButton.failed": string;
 	"dataView.clearSelection": string;
 	"dataView.empty": string;
 	"dataView.errorTitle": string;
@@ -96,6 +99,9 @@ export type LocaleKey = keyof LocaleMessages;
 /** 기본 카탈로그. 이 값이 각 컴포넌트의 기본 문구다 */
 export const ko: LocaleMessages = {
 	"chip.remove": "{label} 제거",
+	"copyButton.copied": "복사됨",
+	"copyButton.copy": "복사",
+	"copyButton.failed": "복사하지 못했습니다",
 	"dataView.clearSelection": "선택 해제",
 	"dataView.empty": "데이터가 없습니다",
 	"dataView.errorTitle": "불러오지 못했습니다",
@@ -176,6 +182,9 @@ export const ko: LocaleMessages = {
 /** 영어 카탈로그. `<LocaleProvider locale="en">` 로 고른다 */
 export const en: LocaleMessages = {
 	"chip.remove": "Remove {label}",
+	"copyButton.copied": "Copied",
+	"copyButton.copy": "Copy",
+	"copyButton.failed": "Couldn't copy",
 	"dataView.clearSelection": "Clear selection",
 	"dataView.empty": "No data",
 	"dataView.errorTitle": "Could not load",

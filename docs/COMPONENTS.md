@@ -14,6 +14,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Dropdown](#dropdown)
   - [Chip](#chip)
   - [IconButton](#iconbutton)
+  - [CopyButton](#copybutton)
 - [Form](#form)
   - [FilterBar](#filterbar)
   - [TextField](#textfield)
@@ -555,6 +556,62 @@ import { Settings } from 'lucide-react';
 > <IconButton icon={<X />} aria-label="닫기" />
 > <IconButton icon={<X />} aria-labelledby="dialog-title" />
 > ```
+
+---
+
+### CopyButton
+
+텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알린다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 쓴다.
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
+| `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
+| `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
+| `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
+| `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
+| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
+| `variant` | `ButtonVariant` | `'outline'` | 문구 버튼의 variant |
+| `resetAfter` | `number` | `2000` | 복사됨 표시 유지 시간(ms) |
+| `onCopy` | `(text: string) => void` | - | 성공 - Toast 를 띄우려면 여기서 |
+| `onError` | `(error: unknown) => void` | - | 실패 (권한 거부 · API 없음 · 폴백 실패) |
+| `disabled` | `boolean` | - | 비활성화 |
+
+#### 접근성 - 복사됨 알림
+
+- 결과는 버튼 옆 **숨긴 `role="status"`** 가 알린다 ("복사됨" / "복사하지 못했습니다"). 화면에는 아이콘 · 문구 변화로 충분하다
+- 아이콘만 버튼은 이름(`label`)을 **바꾸지 않는다** - 포커스 중인 버튼의 이름이 바뀌면 같은 버튼을 두 번 읽는다. 결과는 status 가 전한다
+- Toast 를 함께 띄우면 같은 문구를 두 번 듣게 된다 - 다른 문구("초대 링크를 복사했습니다")로 맥락을 더하거나 하나만 쓴다
+
+### useClipboard / copyText
+
+```tsx
+import { useClipboard, copyText } from "@bigtablet/design-system";
+
+const { copy, status, error, reset } = useClipboard({ resetAfter: 2000 });
+// status: "idle" | "copying" | "copied" | "error"
+const ok = await copy(orderNo);   // throw 하지 않는다 - 성공 여부만 돌려준다
+
+await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
+```
+
+- Clipboard API(보안 컨텍스트)를 먼저 쓰고, 없거나 거부되면 `execCommand("copy")` 로 폴백한다 - 인앱 브라우저 · HTTP 사내망. 폴백은 임시 textarea 를 쓰고 **사용자의 선택 영역과 포커스를 되돌린다**
+- 둘 다 실패하면 원래 오류(`NotAllowedError` 등)를 `error` 로 준다
+- 연속 클릭하면 마지막 복사만 상태에 반영하고 되돌림 타이머를 새로 시작한다. 언마운트하면 타이머를 지우고 이후 결과를 무시한다
+- SSR 에서 `navigator` · `document` 가 없어도 import 만으로는 아무것도 하지 않는다
+
+**Usage**
+
+```tsx
+// 문구 버튼 + Toast
+<CopyButton text={inviteUrl} label="초대 링크 복사" onCopy={() => toast.success("초대 링크를 복사했습니다")} />
+
+// 아이콘만
+<code>{maskedKey}</code>
+<CopyButton text={apiKey} iconOnly label="API 키 복사" />
+```
 
 ---
 
