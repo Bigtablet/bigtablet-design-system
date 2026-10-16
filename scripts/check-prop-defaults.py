@@ -293,12 +293,11 @@ def union_props(path: Path) -> dict[str, set[str]]:
 
 
 def check_doc_unions(files: list[Path]) -> tuple[list[str], int]:
-    """문서의 union 값(prop 표 Type 열 · 예제 JSX 속성)이 소스 union 과 같은지."""
+    """문서 prop 표 Type 열의 문자열 union 이 소스 union 과 같은지."""
     by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
     problems: list[str] = []
     compared = 0
     component: Path | None = None
-    name = ""
     type_col: int | None = None
     in_code = False
 
@@ -307,26 +306,13 @@ def check_doc_unions(files: list[Path]) -> tuple[list[str], int]:
             in_code = not in_code
             continue
         if in_code:
-            if component is None:
-                continue
-            allowed = union_props(component)
-            # 이 섹션 컴포넌트의 태그만 본다 - 예제 안의 Button 등은 자기 섹션에서 검사된다
-            for tag in re.finditer(rf"<{name}\b([^>]*)", line):
-                for prop, value in re.findall(r'\b([a-z][A-Za-z0-9]*)="([^"]*)"', tag.group(1)):
-                    if prop in allowed:
-                        compared += 1
-                        if value not in allowed[prop]:
-                            problems.append(
-                                f"{DOC}:{i}  <{name} {prop}=\"{value}\"> - 소스 허용값"
-                                f" {sorted(allowed[prop])} 에 없다"
-                            )
             continue
         if line.startswith("#"):
             # `####`(언제 쓰는가 · variant 선택 가이드)는 컴포넌트 섹션 안의 소제목이다 -
             # 여기서 섹션을 끊으면 그 아래 Props 표와 예제가 통째로 검사에서 빠진다
             if not line.startswith("####"):
-                name = line.lstrip("# ").strip()
-                component = by_name.get(re.sub(r"[^A-Za-z0-9]", "", name).lower())
+                key = re.sub(r"[^A-Za-z0-9]", "", line.lstrip("# ")).lower()
+                component = by_name.get(key)
             type_col = None
             continue
         if not line.startswith("|"):
@@ -353,6 +339,56 @@ def check_doc_unions(files: list[Path]) -> tuple[list[str], int]:
                 f"{DOC}:{i}  {component.parent.name}.{prop} - 문서 {sorted(values)}"
                 f" != 소스 {sorted(allowed)}"
             )
+
+    return problems, compared
+
+
+# `<Tabs variant="fills" ...>` - 태그는 첫 `>` 에서 끝나지만 `=>`(화살표 함수 prop)는 건너뛴다.
+# 중첩 JSX(`action={<Button variant="outline">}`)의 `<` 에서도 끊는다 - 그 속성은 Button 의 것이고
+# Button 태그로 따로 잡힌다.
+# 코드 블록 전체 문자열에 돌려 여러 줄로 쓴 태그도 잡는다. `{...}` 안에 `>` 비교식이 있으면
+# 거기서 끊긴다 - 그 뒤 속성은 검사되지 않는다(문서 예제에는 아직 없다).
+JSX_TAG = re.compile(r"<([A-Z][A-Za-z0-9]*)\b((?:=>|[^<>])*)")
+# 표·본문의 인라인 코드 - `Section bg="inverted"` 처럼 `<` 없이 쓰기도 한다
+INLINE_TAG = re.compile(r"`<?([A-Z][A-Za-z0-9]*)((?:\s+[a-z][A-Za-z0-9]*=\"[^\"]*\")+)[^`]*`")
+JSX_ATTR = re.compile(r'\b([a-z][A-Za-z0-9]*)="([^"]*)"')
+
+
+def check_doc_usages(files: list[Path]) -> tuple[list[str], int]:
+    """문서 예제(코드 블록)와 인라인 코드의 `<Comp prop="값">` 이 소스 union 에 있는 값인지.
+
+    섹션과 무관하게 모든 컴포넌트 태그를 본다 - Modal 예제 안의 `<Button variant>` 도 검사된다.
+    """
+    unions = {f.parent.name.replace("-", "").lower(): union_props(f) for f in files}
+    text = DOC.read_text(encoding="utf-8")
+    problems: list[str] = []
+    compared = 0
+
+    def check(tag_name: str, attrs: str, pos: int) -> None:
+        nonlocal compared
+        allowed = unions.get(tag_name.lower(), {})
+        for prop, value in JSX_ATTR.findall(attrs):
+            # `tone="..."` · `shape="dot/count"` 같은 자리표시는 값이 아니다
+            if prop not in allowed or not re.fullmatch(r"[\w-]+", value):
+                continue
+            compared += 1
+            if value not in allowed[prop]:
+                line = text.count("\n", 0, pos) + 1
+                problems.append(
+                    f"{DOC}:{line}  <{tag_name} {prop}=\"{value}\"> - 소스 허용값"
+                    f" {sorted(allowed[prop])} 에 없다"
+                )
+
+    blocks = list(re.finditer(r"^```[^\n]*\n(.*?)^```", text, re.S | re.M))
+    for block in blocks:
+        for tag in JSX_TAG.finditer(block.group(1)):
+            check(tag.group(1), tag.group(2), block.start(1) + tag.start())
+    # 코드 블록을 같은 길이의 공백으로 지워 인라인 검사가 블록 안을 다시 세지 않게 한다
+    prose = text
+    for block in blocks:
+        prose = prose[: block.start()] + re.sub(r"[^\n]", " ", block.group(0)) + prose[block.end() :]
+    for tag in INLINE_TAG.finditer(prose):
+        check(tag.group(1), tag.group(2), tag.start())
 
     return problems, compared
 
@@ -426,7 +462,9 @@ def main() -> int:
     doc_problems, doc_compared = check_docs(files, catalog)
     problems += doc_problems
     union_problems, union_compared = check_doc_unions(files)
-    problems += union_problems
+    usage_problems, usage_compared = check_doc_usages(files)
+    problems += union_problems + usage_problems
+    union_compared += usage_compared
 
     exposed = len(catalog)
     documented = sum(

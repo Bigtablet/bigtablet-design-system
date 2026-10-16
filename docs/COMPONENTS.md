@@ -4331,7 +4331,7 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 |------|------|
 | 페이지/섹션의 가로 폭을 제한하고 좌우 정렬 | ✅ Container |
 | 수직 spacing이나 배경색 변경 필요 | ❌ Section을 한 단계 위에 |
-| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="navy"` + 내부에 `Container` |
+| Hero 같은 풀-블리드(full-bleed) 배경이 필요 | `Section bg="inverted"` + 내부에 `Container` |
 | 블로그 본문(읽기 좋은 폭) | `size="md"` (768px) |
 
 #### size 선택 가이드
@@ -4613,7 +4613,7 @@ import { Section, Container, Stack, Grid, Button, Hero, MediaCard } from "@bigta
 export function LandingPage() {
   return (
     <>
-      {/* 1. Hero - 풀-블리드 navy 배경 */}
+      {/* 1. Hero - 풀-블리드 inverted 배경 */}
       <Section spacing="xl" bg="inverted">
         <Container size="xl">
           <Stack gap={24} align="center">
@@ -4672,6 +4672,6 @@ export function LandingPage() {
 
 **핵심 패턴**
 - 모든 Section은 내부에 Container를 둠 (가로 폭 제한 책임 분리).
-- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `navy` ↔ `accent`) 변경해 페이지 리듬을 만듦.
+- Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `inverted` ↔ `accent`) 변경해 페이지 리듬을 만듦.
 - 같은 Section 안에서도 Stack을 중첩해 헤더-본문 간 spacing을 조정.
 - 카드 격자는 Grid, 그 외 한 줄/한 열 흐름은 Stack.
