@@ -88,5 +88,13 @@
     &_left   { justify-content: flex-start; }
     &_center { justify-content: center; }
     &_right  { justify-content: flex-end; }
+
+    // async onConfirm 진행 중 - disabled 대신 aria-disabled 라 Button 의 :disabled 스타일이 안 붙는다.
+    // 막힌 버튼임을 보이게 한다. 확인 버튼(항상 마지막)은 스피너가 진행을 알리니 흐리게 하지 않는다.
+    .button[aria-disabled="true"] {
+      cursor: progress;
+
+      &:not(:last-child) { opacity: token.$opacity_38; }
+    }
   }
 }
