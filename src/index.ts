@@ -182,6 +182,12 @@ export type { CheckboxProps } from "./ui/forms/checkbox";
 export { Checkbox } from "./ui/forms/checkbox";
 export type { ComboboxOption, ComboboxProps, ComboboxSize } from "./ui/forms/combobox";
 export { Combobox } from "./ui/forms/combobox";
+export type {
+	DateCalendarDayInfo,
+	DateCalendarProps,
+	Weekday,
+} from "./ui/forms/date-calendar";
+export { DateCalendar } from "./ui/forms/date-calendar";
 export type { DatePickerProps } from "./ui/forms/date-picker";
 export { DatePicker } from "./ui/forms/date-picker";
 export type { DateRange, DateRangePickerProps } from "./ui/forms/date-range-picker";
