@@ -20,6 +20,7 @@ import {
 } from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
 import { useLocaleText } from "../../system/locale-provider";
+import { Spinner } from "../spinner";
 import "./style.scss";
 
 export type AlertVariant = "info" | "success" | "warning" | "error";
@@ -56,8 +57,11 @@ export interface AlertOptions {
 	actionsAlign?: AlertActionsAlign;
 	/** 변형 아이콘 표시 여부 (기본값: false). 원하면 명시적으로 켜기 */
 	showIcon?: boolean;
-	/** 확인 버튼 클릭 시 호출되는 콜백 */
-	onConfirm?: () => void;
+	/**
+	 * 확인 버튼 클릭 시 호출되는 콜백. Promise 를 돌려주면 끝날 때까지 알림이 열린 채 확인 버튼에
+	 * 스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힌다. 실패(reject)하면 열린 채 다시 시도할 수 있다.
+	 */
+	onConfirm?: () => unknown;
 	/** 취소 버튼 클릭 시 호출되는 콜백 */
 	onCancel?: () => void;
 	/**
@@ -67,11 +71,34 @@ export interface AlertOptions {
 	closeOnOverlay?: boolean;
 }
 
+/** `useConfirm()` 옵션 - 취소 버튼은 항상 있고 결과는 Promise 로 받는다 */
+export interface ConfirmOptions
+	extends Omit<AlertOptions, "onConfirm" | "onCancel" | "showCancel"> {
+	/** 확인 직후 실행할 작업. Promise 면 끝날 때까지 pending - 성공해야 `true` 로 끝난다 */
+	onConfirm?: () => unknown;
+}
+
 interface AlertContextValue {
 	showAlert: (options: AlertOptions) => void;
+	confirm: (options: ConfirmOptions) => Promise<boolean>;
 }
 
 const AlertContext = createContext<AlertContextValue | null>(null);
+
+/**
+ * Promise 로 받는 확인 대화상자. 확인하면 `true`, 취소 · Escape · 오버레이로 닫으면 `false` -
+ * 어느 경로든 정확히 한 번 resolve 된다. 열려 있는 동안 다시 부르면 앞의 것은 `false` 로 끝나고
+ * 새 것으로 바뀐다(교체). `AlertProvider` 를 그대로 쓰므로 애니메이션 · 포커스 트랩이 같다.
+ *
+ * @example
+ * ```tsx
+ * const confirm = useConfirm();
+ * if (await confirm({ variant: "warning", title: "변경사항을 버릴까요?", confirmText: "버리기", destructive: true })) {
+ *   discard();
+ * }
+ * ```
+ */
+export const useConfirm = () => useAlert().confirm;
 
 export const useAlert = () => {
 	const context = useContext(AlertContext);
@@ -93,10 +120,40 @@ interface AlertState extends AlertOptions {
 
 export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [alertState, setAlertState] = useState<AlertState>({ isOpen: false });
+	const [pending, setPending] = useState(false);
+	// 열려 있는 confirm 의 resolve. 한 번 부르면 비운다 - 어느 경로로 닫혀도 정확히 한 번
+	const resolveRef = React.useRef<((ok: boolean) => void) | null>(null);
+	// 알림마다 새 번호 - 교체된 뒤 끝난 이전 비동기 작업이 새 알림을 닫지 않게
+	const tokenRef = React.useRef(0);
 
-	const showAlert = useCallback((options: AlertOptions) => {
-		setAlertState({ ...options, isOpen: true });
+	const settle = useCallback((ok: boolean) => {
+		const resolve = resolveRef.current;
+		resolveRef.current = null;
+		resolve?.(ok);
 	}, []);
+
+	// Provider 가 사라지면 기다리는 쪽이 영원히 매달리지 않게 false 로 끝낸다
+	React.useEffect(() => () => settle(false), [settle]);
+
+	const showAlert = useCallback(
+		(options: AlertOptions) => {
+			// 열려 있던 confirm 을 교체한다 - 앞의 것은 확인되지 않았으니 false
+			settle(false);
+			tokenRef.current++;
+			setPending(false);
+			setAlertState({ ...options, isOpen: true });
+		},
+		[settle],
+	);
+
+	const confirm = useCallback(
+		(options: ConfirmOptions) =>
+			new Promise<boolean>((resolve) => {
+				showAlert({ ...options, showCancel: true });
+				resolveRef.current = resolve;
+			}),
+		[showAlert],
+	);
 
 	const handleClose = useCallback(() => {
 		setAlertState((prev) => ({ ...prev, isOpen: false }));
@@ -110,23 +167,46 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	}, []);
 
 	const handleConfirm = useCallback(() => {
-		alertState.onConfirm?.();
+		if (pending) return;
+		const token = tokenRef.current;
+		const result = alertState.onConfirm?.();
+		if (result && typeof (result as Promise<unknown>).then === "function") {
+			setPending(true);
+			(result as Promise<unknown>).then(
+				() => {
+					if (token !== tokenRef.current) return;
+					setPending(false);
+					settle(true);
+					handleClose();
+				},
+				() => {
+					// 실패 - 열린 채 다시 시도하거나 취소할 수 있게 둔다. 오류 안내는 작업 쪽 몫
+					if (token === tokenRef.current) setPending(false);
+				},
+			);
+			return;
+		}
+		settle(true);
 		handleClose();
-	}, [alertState.onConfirm, handleClose]);
+	}, [alertState.onConfirm, handleClose, pending, settle]);
 
 	const handleCancel = useCallback(() => {
+		// 작업 중에는 닫지 않는다 - 이미 시작된 삭제가 끝났는지 모르는 채 취소로 끝나면 안 된다
+		if (pending) return;
 		alertState.onCancel?.();
+		settle(false);
 		handleClose();
-	}, [alertState.onCancel, handleClose]);
+	}, [alertState.onCancel, handleClose, pending, settle]);
 
 	return (
-		<AlertContext.Provider value={{ showAlert }}>
+		<AlertContext.Provider value={{ showAlert, confirm }}>
 			{children}
 			<AlertModal
 				{...alertState}
+				pending={pending}
 				onConfirm={handleConfirm}
 				onCancel={handleCancel}
-				onClose={handleClose}
+				onClose={handleCancel}
 				onExited={handleExited}
 			/>
 		</AlertContext.Provider>
@@ -135,6 +215,8 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 interface AlertModalProps extends AlertOptions {
 	isOpen: boolean;
+	/** 확인 작업이 진행 중 - 버튼은 포커스를 유지한 채(aria-disabled) 막힌다 */
+	pending?: boolean;
 	onClose: () => void;
 	/** 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 - Provider 가 페이로드를 비우는 시점 */
 	onExited?: () => void;
@@ -152,6 +234,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	actionsAlign = "right",
 	showIcon = false,
 	closeOnOverlay = true,
+	pending = false,
 	onConfirm,
 	onCancel,
 	onClose,
@@ -269,6 +352,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				}}
 				role="alertdialog"
 				aria-modal="true"
+				aria-busy={pending || undefined}
 				aria-labelledby={title ? titleId : undefined}
 				aria-describedby={message ? messageId : undefined}
 			>
@@ -294,8 +378,15 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				)}
 
 				<div className={cn("alert_actions", `alert_actions_${actionsAlign}`)}>
+					{/* pending 중에는 disabled 대신 aria-disabled - 누른 버튼이 막히면 포커스가 트랩 밖으로 빠진다 */}
 					{showCancel && (
-						<Button variant={cancelVariant} size="md" radius="md" onClick={onCancel}>
+						<Button
+							variant={cancelVariant}
+							size="md"
+							radius="md"
+							aria-disabled={pending || undefined}
+							onClick={onCancel}
+						>
 							{cancelText}
 						</Button>
 					)}
@@ -304,6 +395,14 @@ const AlertModal: React.FC<AlertModalProps> = ({
 						danger={destructive}
 						size="md"
 						radius="md"
+						aria-disabled={pending || undefined}
+						leadingIcon={
+							pending ? (
+								<span aria-hidden="true">
+									<Spinner size={16} />
+								</span>
+							) : undefined
+						}
 						onClick={onConfirm}
 					>
 						{confirmText}
