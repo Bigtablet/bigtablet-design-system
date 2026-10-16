@@ -1,0 +1,114 @@
+@use "src/styles/token" as token;
+
+// 페이지 흐름 안의 안내 블록. 톤 색은 status `container`(배경) · `on-container`(아이콘·제목) 쌍이라
+// 다크 테마에서 함께 뒤집힌다. 본문은 일반 텍스트 색 - 긴 문장을 톤 색으로 칠하면 읽기 힘들다.
+
+@keyframes inline_alert_enter {
+  from {
+    opacity: 0;
+    transform: translateY(-#{token.$spacing_4});
+  }
+}
+
+.inline_alert {
+  display: flex;
+  align-items: flex-start;
+  gap: token.$spacing_12;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: token.$border_width_standard solid token.$color_border_subtle;
+  border-radius: token.$radius_md;
+  font-family: token.$font_family_primary;
+  color: token.$color_text_body;
+  // 나중에 나타나는 경우(저장 결과 등)에 툭 튀지 않게 - 처음부터 있던 것도 같은 값이라 무해하다
+  animation: inline_alert_enter token.$duration_base token.$easing_enter;
+
+  &_icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    // 첫 줄(제목 20px) 가운데에 맞춘다
+    padding-top: token.$spacing_2;
+  }
+
+  &_content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: token.$spacing_4;
+    min-width: 0;
+  }
+
+  &_title {
+    @include token.label_large_medium;
+    font-weight: token.$font_weight_semi_bold;
+  }
+
+  &_description {
+    @include token.body_small;
+    @include token.wrap_keep_all;
+  }
+
+  &_action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_8;
+    margin-top: token.$spacing_4;
+  }
+
+  &_dismiss {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    // 패딩 안쪽 여백을 먹어 우상단에 붙인다 - 버튼이 커도 블록 높이가 늘지 않게
+    margin: calc(-1 * #{token.$spacing_6}) calc(-1 * #{token.$spacing_8}) calc(-1 * #{token.$spacing_6}) 0;
+    border: none;
+    border-radius: token.$radius_sm;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background token.$transition_fast;
+
+    &:hover {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── Tone ────────────────────────────────────────────────────────────────
+
+  &_tone_neutral {
+    background: token.$color_bg_solid_dim;
+  }
+
+  &_tone_neutral &_icon,
+  &_tone_neutral &_title {
+    color: token.$color_text_heading;
+  }
+
+  @each $tone in (info, success, warning, error) {
+    &_tone_#{$tone} {
+      background: var(--bt-color-status-#{$tone}-container);
+    }
+
+    &_tone_#{$tone} &_icon,
+    &_tone_#{$tone} &_title {
+      color: var(--bt-color-status-#{$tone}-on-container);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline_alert {
+    animation: none;
+  }
+
+  .inline_alert_dismiss {
+    transition: none;
+  }
+}

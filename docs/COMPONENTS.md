@@ -29,6 +29,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 - [Feedback](#feedback)
   - [Alert](#alert)
   - [Toast](#toast)
+  - [InlineAlert](#inlinealert)
   - [Spinner](#spinner)
   - [TopLoading](#toploading)
   - [LinearProgress](#linearprogress)
@@ -1646,6 +1647,72 @@ toast.dismiss(id);
 | `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜬다 |
 
 > **다국어(ko/en) 앱은 두 값을 주입하세요.** DS 기본값은 한글입니다 — [MIGRATION.md](./MIGRATION.md#v3130-a11y-문자열-기본값-한글화) 참고.
+
+---
+
+### InlineAlert
+
+페이지 흐름 안에 **계속 남는** 안내·경고 블록. 톤 5종(`neutral` · `info` · `success` · `warning` · `error`), 제목 · 본문 · 액션 · 닫기 버튼을 조합한다. 톤 색은 status `container`(배경) · `on-container`(아이콘·제목) 쌍이라 다크 테마에서 함께 뒤집히고, 본문은 일반 텍스트 색이다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경, 저장 결과) | ✅ InlineAlert |
+| 잠깐 보였다 사라지는 결과 알림 | ❌ [Toast](#toast) |
+| 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
+| 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
+
+**Props** (`<div>` 속성 상속)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tone` | `'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 톤 |
+| `title` | `ReactNode` | - | 굵은 한 줄 제목 |
+| `children` | `ReactNode` | - | 본문 설명 |
+| `icon` | `ReactNode` | 톤 기본 아이콘 | 앞 아이콘. `null` 이면 숨긴다 |
+| `action` | `ReactNode` | - | 본문 아래 버튼·링크 |
+| `onDismiss` | `() => void` | - | 주면 닫기 버튼이 생긴다. 실제로 지우는 건 부모(상태를 false 로) |
+| `dismissLabel` | `string` | `'알림 닫기'` | 닫기 버튼 접근성 이름 (로케일 `inlineAlert.dismiss`) |
+
+#### 접근성 - 정적 안내 vs 나중에 나타나는 알림
+
+라이브 리전을 **강제하지 않는다.** 처음부터 화면에 있는 안내를 스크린리더가 끼어들어 읽으면 소음이다.
+
+| 경우 | `role` |
+|------|--------|
+| 페이지와 함께 처음부터 있는 안내 (점검 공지, 만료 예정) | 없음 (기본) |
+| 동작 결과로 **나중에** 나타나는 정보·성공 (저장했습니다) | `role="status"` - 하던 낭독을 끝낸 뒤 읽는다 |
+| 즉시 알아야 하는 오류 (저장 실패) | `role="alert"` - 끼어들어 읽는다. 남발하지 않는다 |
+
+- 아이콘은 `aria-hidden` - 톤 의미는 제목·본문 문구로 전달한다 (색·아이콘만으로 전달하지 않는다)
+- 닫기 버튼은 32px, 이름은 `dismissLabel`. 닫은 뒤 포커스는 부모가 다음 의미 있는 요소로 옮긴다
+- 진입 시 짧은 fade(200ms), `prefers-reduced-motion: reduce` 면 끈다
+
+**Usage**
+
+```tsx
+import { InlineAlert, Button } from "@bigtablet/design-system";
+
+// 정적 안내
+<InlineAlert tone="warning" title="구독이 7일 뒤 만료됩니다" action={<Button size="sm">갱신</Button>}>
+  만료되면 팀원 초대가 막힙니다.
+</InlineAlert>
+
+// 닫을 수 있는 안내 - 지우는 건 부모
+{showNotice && (
+  <InlineAlert tone="info" onDismiss={() => setShowNotice(false)}>
+    새 기능: 일정 공유 링크를 만들 수 있습니다.
+  </InlineAlert>
+)}
+
+// 동작 결과로 나타나는 오류
+{saveError && (
+  <InlineAlert tone="error" role="alert" title="저장하지 못했습니다">
+    네트워크 연결을 확인하고 다시 시도하세요.
+  </InlineAlert>
+)}
+```
 
 ---
 

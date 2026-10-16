@@ -267,6 +267,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, variant, showCancel, destructive, onConfirm, onCancel })` |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
+| `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
 | `Spinner` | Inline loading indicator. | `size` (px), `ariaLabel`. Vercel-style 12-bar fade. |
 | `TopLoading` | Top-of-page progress bar. | `progress` (0-100, or undefined for indeterminate), `height`, `color`, `isLoading`, `ariaLabel` |
 | `LinearProgress` | Step progress with dots. | `totalSteps`, `currentStep`, `aria-label`. Renders N+1 checkpoints. |
