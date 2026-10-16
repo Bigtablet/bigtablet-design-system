@@ -1,8 +1,8 @@
 /**
  * 선택 컨트롤을 고르는 기준 - Storybook meta 설명 전용 문자열.
  *
- * `Checkbox`·`Radio`/`RadioGroup`·`Toggle`·`Dropdown` 은 모두 "고르게 하는" 컨트롤이라
- * 처음 보면 어느 것을 써야 하는지가 가장 먼저 막히는 지점이다. 네 스토리가 같은 표를 실어
+ * `Checkbox`·`Radio`/`RadioGroup`·`SegmentedControl`·`Toggle`·`Dropdown` 은 모두 "고르게 하는"
+ * 컨트롤이라 처음 보면 어느 것을 써야 하는지가 가장 먼저 막히는 지점이다. 각 스토리가 같은 표를 실어
  * 어느 컴포넌트로 들어와도 비교가 되게 한다.
  *
  * 런타임 코드가 아니다 - `src/index.ts` 에서 export 되지 않아 번들에 들어가지 않는다.
@@ -12,14 +12,19 @@
  * `` \` `` escape 규칙이 여기서는 없어 표를 그대로 읽을 수 있다.
  */
 export const SELECTION_COMPARISON = [
-	"#### 선택 컨트롤 넷 중 무엇을 쓰나",
+	"#### 선택 컨트롤 중 무엇을 쓰나",
 	"",
 	"| 상황 | 컴포넌트 |",
 	"| --- | --- |",
 	"| 여러 개를 **각각** 켜고 끌 때 (약관 동의, 필터) | `Checkbox` |",
 	"| 몇 개 중 **하나만** 고를 때 (배송 방법, 성별) | `RadioGroup` + `Radio` |",
+	"| 짧은 라벨 2~5개 중 하나를 한 줄로 (통화 USD/KRW, 로케일 KO/EN, 기간) | `SegmentedControl` |",
 	"| 켜는 **즉시 반영**되는 설정 하나 (알림 on/off) | `Toggle` |",
 	"| 후보가 많아 나열하면 화면을 먹을 때 | `Dropdown` |",
+	"",
+	"`SegmentedControl` 과 `RadioGroup` 의 갈림길은 **라벨 길이와 개수**입니다 - 한 줄에 다 보이면",
+	"`SegmentedControl`, 라벨이 길거나 설명이 붙거나 6개를 넘으면 `RadioGroup` 입니다. 모양이 비슷한",
+	"`Tabs`(`fills`)는 **패널을 바꿀 때만**, `Chip` 은 입력 토큰·필터 칩일 때 씁니다.",
 	"",
 	"`Toggle` 과 `Checkbox` 의 갈림길은 **저장 버튼**입니다 - 누르는 즉시 적용되면 `Toggle`,",
 	"폼을 제출해야 반영되면 `Checkbox` 입니다.",
