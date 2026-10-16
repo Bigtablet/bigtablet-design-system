@@ -249,7 +249,7 @@
   // main content 끝에 `padding-bottom: var(--bt-sidebar-total-height)` 등으로 가림 방지.
   // (desktop 에선 정의 X - Sidebar 가 fixed bottom 이 아니라 padding 불필요)
   :root {
-    --bt-sidebar-height: 56px;
+    --bt-sidebar-height: #{token.$control_height_xl};
     --bt-sidebar-safe-area: env(safe-area-inset-bottom, 0px);
     --bt-sidebar-total-height: calc(
       var(--bt-sidebar-height) + var(--bt-sidebar-safe-area)
@@ -308,7 +308,7 @@
       justify-content: center;
       gap: token.$spacing_4;
       padding: token.$spacing_6 token.$spacing_4;
-      min-height: 56px;             // a11y tap target
+      min-height: token.$control_height_xl; // a11y tap target
       border-radius: 0;
       color: token.$color_text_body; // rail inactive 와 동일 톤
 

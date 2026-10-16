@@ -133,7 +133,7 @@
     gap: token.$spacing_8;
     box-sizing: border-box;
     width: 100%;
-    min-height: 40px;
+    min-height: token.$control_height_md;
     padding: token.$spacing_8 token.$spacing_12;
     cursor: pointer;
     color: token.$color_text_heading;
