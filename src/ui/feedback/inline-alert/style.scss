@@ -55,7 +55,11 @@
 
     // 톤 배경과 Button 기본 outline/tonal 경계색이 가까우면 액션이 본문처럼 보인다.
     // 두 변형에만 경계를 보강하고, filled/text 의 강조 체계는 그대로 둔다.
-    :is(.button_variant_outline, .button_variant_tonal) {
+    :is(.button_variant_outline, .button_variant_tonal):not(
+      :disabled,
+      .button_disabled,
+      .button_danger
+    ) {
       border-width: token.$border_width_standard;
       border-style: solid;
     }
@@ -98,7 +102,11 @@
     color: token.$color_text_heading;
   }
 
-  &_tone_neutral &_action :is(.button_variant_outline, .button_variant_tonal) {
+  &_tone_neutral &_action :is(.button_variant_outline, .button_variant_tonal):not(
+    :disabled,
+    .button_disabled,
+    .button_danger
+  ) {
     border-color: token.$color_text_heading;
   }
 
@@ -112,7 +120,11 @@
       color: var(--bt-color-status-#{$tone}-on-container);
     }
 
-    &_tone_#{$tone} &_action :is(.button_variant_outline, .button_variant_tonal) {
+    &_tone_#{$tone} &_action :is(.button_variant_outline, .button_variant_tonal):not(
+      :disabled,
+      .button_disabled,
+      .button_danger
+    ) {
       border-color: var(--bt-color-status-#{$tone}-on-container);
     }
   }

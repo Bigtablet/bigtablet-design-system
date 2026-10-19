@@ -96,6 +96,53 @@ describe("InlineAlert (Chromium)", () => {
 		});
 	}
 
+	it("preserves disabled and danger button boundaries", () => {
+		render(
+			<>
+				<div data-testid="baseline">
+					<Button size="sm" variant="outline" disabled>
+						Disabled
+					</Button>
+					<Button size="sm" variant="outline" danger>
+						Danger
+					</Button>
+					<Button size="sm" variant="tonal" danger>
+						Danger tonal
+					</Button>
+				</div>
+				<InlineAlert
+					tone="warning"
+					action={
+						<>
+							<Button size="sm" variant="outline" disabled>
+								Disabled
+							</Button>
+							<Button size="sm" variant="outline" danger>
+								Danger
+							</Button>
+							<Button size="sm" variant="tonal" danger>
+								Danger tonal
+							</Button>
+						</>
+					}
+				>
+					안내
+				</InlineAlert>
+			</>,
+		);
+
+		const baseline = screen.getByTestId("baseline").querySelectorAll<HTMLElement>(".button");
+		const actions = document.querySelectorAll<HTMLElement>(".inline_alert_action .button");
+		expect(actions).toHaveLength(baseline.length);
+		for (const [index, action] of [...actions].entries()) {
+			const expected = getComputedStyle(baseline[index]!);
+			const actual = getComputedStyle(action);
+			expect(actual.borderTopColor).toBe(expected.borderTopColor);
+			expect(actual.borderTopStyle).toBe(expected.borderTopStyle);
+			expect(actual.borderTopWidth).toBe(expected.borderTopWidth);
+		}
+	});
+
 	it("shows the focus ring on the dismiss button for keyboard focus", async () => {
 		render(
 			<>
