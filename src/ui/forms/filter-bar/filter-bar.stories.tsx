@@ -15,9 +15,9 @@ const meta: Meta<typeof FilterBar> = {
 		docs: {
 			description: {
 				component: `
-**FilterBar** - 목록 화면 상단의 필터 묶음. \`<form role="search">\` 라 입력에서 Enter 로 검색되고, 필드는 칸이 \`fieldMinWidth\`(기본 200px)보다 좁아지면 줄을 바꿉니다. 좁은 화면(< 600px)에서는 버튼이 필드 아래 전폭으로 내려갑니다.
+**FilterBar** - 목록 화면 상단의 필터 묶음. 필드는 칸이 \`fieldMinWidth\`(기본 200px)보다 좁아지면 줄을 바꿉니다. submit 모드의 버튼은 좁은 화면(< 600px)에서 필드 아래 전폭으로 내려갑니다.
 
-**상태를 갖지 않습니다.** 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치 · Enter 제출 · 검색/초기화 버튼만 맡습니다. \`canSubmit\` · \`canReset\` 으로 버튼을 막고, \`loading\` 이면 검색 버튼에 스피너가 돌며 중복 제출이 막힙니다.
+**상태를 갖지 않습니다.** 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치와 액션 영역만 맡습니다. 기본 \`submitMode="submit"\` 은 Enter·검색 버튼으로 적용하고, \`submitMode="instant"\` 는 필드 변경 핸들러가 즉시 적용하므로 검색 버튼을 렌더링하지 않습니다. \`loading\` 은 두 모드 모두 폼에 \`aria-busy\` 를 전달하며, 스피너는 submit 모드에서만 표시됩니다.
         `,
 			},
 		},
@@ -82,6 +82,33 @@ const MemberFilterDemo = () => {
 export const MemberList: Story = {
 	name: "회원 목록 필터",
 	render: () => <MemberFilterDemo />,
+};
+
+/** 드롭다운만 있는 목록: 선택 즉시 적용, 검색 버튼 없음 */
+export const Instant: Story = {
+	name: "즉시 적용 필터",
+	render: () => {
+		const [status, setStatus] = React.useState<string | null>(null);
+		return (
+			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<FilterBar
+					aria-label="상태 필터"
+					submitMode="instant"
+					onReset={() => setStatus(null)}
+					canReset={status !== null}
+				>
+					<Dropdown
+						label="상태"
+						placeholder="전체"
+						options={STATUS}
+						value={status}
+						onChange={setStatus}
+					/>
+				</FilterBar>
+				<code style={{ fontSize: 12 }}>적용된 필터: {status ?? "전체"}</code>
+			</div>
+		);
+	},
 };
 
 /** 관리자 화면 2 - 주문 목록: 검색어 + 결제 수단(SegmentedControl) + 정렬, 검색 중 상태 */

@@ -19,6 +19,7 @@ const setExecCommand = (result: boolean | Error) => {
 
 afterEach(() => {
 	setClipboard(undefined);
+	vi.restoreAllMocks();
 	vi.useRealTimers();
 });
 
@@ -34,10 +35,29 @@ describe("copyText", () => {
 	it("falls back to execCommand when the API is missing (in-app browser, http)", async () => {
 		setClipboard(undefined);
 		const exec = setExecCommand(true);
+		const setSelectionRange = vi.spyOn(HTMLTextAreaElement.prototype, "setSelectionRange");
 		await copyText("hello");
+		expect(setSelectionRange).toHaveBeenCalledWith(0, 5);
 		expect(exec).toHaveBeenCalledWith("copy");
 		// 임시 textarea 는 남지 않는다
 		expect(document.querySelector("textarea")).toBeNull();
+	});
+
+	it("continues with select() when explicit range selection fails", async () => {
+		setClipboard(undefined);
+		const exec = setExecCommand(true);
+		const button = document.createElement("button");
+		document.body.appendChild(button);
+		button.focus();
+		vi.spyOn(HTMLTextAreaElement.prototype, "setSelectionRange").mockImplementation(() => {
+			throw new Error("selection failed");
+		});
+
+		await expect(copyText("hello")).resolves.toBeUndefined();
+		expect(exec).toHaveBeenCalledWith("copy");
+		expect(document.querySelector("textarea")).toBeNull();
+		expect(document.activeElement).toBe(button);
+		button.remove();
 	});
 
 	it("falls back when permission is denied, and rethrows that error if the fallback fails too", async () => {

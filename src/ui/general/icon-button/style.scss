@@ -13,7 +13,8 @@
   padding: 0;
   transition: background token.$transition_base,
     color token.$transition_base,
-    border-color token.$transition_base;
+    border-color token.$transition_base,
+    box-shadow token.$transition_fast;
 
   // State layer overlay
   &::before {
@@ -23,6 +24,12 @@
     border-radius: inherit;
     transition: background token.$transition_base;
     pointer-events: none;
+  }
+
+  // Button 과 같은 이유로 state layer 틴트에 링을 더한다.
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
   }
 
   &:disabled {

@@ -13,6 +13,7 @@ describe("DateCalendar", () => {
 		render(<DateCalendar value="2026-10-16" today="2026-10-01" />);
 		expect(title()).toBe("2026년 10월");
 		const cell = screen.getByRole("button", { name: /2026년 10월 16일/ });
+		expect(cell).toHaveAccessibleName("16, 2026년 10월 16일 금요일");
 		expect(cell.closest("td")).toHaveAttribute("aria-selected", "true");
 		expect(cell).toHaveAttribute("tabindex", "0");
 		expect(screen.getByRole("button", { name: /2026년 10월 1일/ })).toHaveAttribute(

@@ -43,10 +43,17 @@ function execCopy(text: string): boolean {
 	// 화면 밖 고정 - 스크롤을 움직이지 않고, iOS 가 확대하지 않게 글자 크기를 둔다
 	textarea.style.cssText = "position:fixed;top:0;left:-9999px;opacity:0;font-size:12pt";
 	document.body.appendChild(textarea);
-	textarea.select();
 
 	let ok = false;
 	try {
+		textarea.select();
+		// iOS Safari·인앱 웹뷰는 select() 만으로 실제 선택 범위가 잡히지 않는 경우가 있다.
+		// readonly textarea 에 범위를 한 번 더 명시해야 execCommand 가 값을 복사한다.
+		try {
+			textarea.setSelectionRange(0, text.length);
+		} catch {
+			// 보정 API 가 없는 기존 환경에서는 select() 결과로 계속 시도한다.
+		}
 		ok = document.execCommand("copy");
 	} catch {
 		ok = false;

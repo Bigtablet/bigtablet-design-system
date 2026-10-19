@@ -19,6 +19,7 @@
     background token.$transition_base,
     opacity token.$transition_base,
     border-color token.$transition_base,
+    box-shadow token.$transition_fast,
     transform token.$transition_fast;
 
   // State layer overlay - interaction색은 여기서만 변하므로 transition 1개로 단순화
@@ -29,6 +30,13 @@
     border-radius: inherit;
     transition: background token.$transition_base;
     pointer-events: none;
+  }
+
+  // 포커스는 state layer 틴트(8%)만으로는 대비 3:1 이 안 나와(WCAG 1.4.11) 링을 함께 그린다.
+  // 버튼 자신의 overflow: hidden 은 자기 box-shadow 를 자르지 않는다.
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
   }
 
   &:active:not(:disabled) {

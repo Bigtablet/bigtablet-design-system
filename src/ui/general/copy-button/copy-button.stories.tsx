@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useEffect, useState } from "react";
 import { useClipboard } from "../../../utils";
 import { ToastProvider } from "../../feedback/toast";
 import { useToast } from "../../feedback/toast/use-toast";
@@ -86,5 +87,70 @@ export const Hook: Story = {
 				</span>
 			</div>
 		);
+	},
+};
+
+const FALLBACK_TEST_VALUE = "BTDS-copyText-iOS-fallback";
+
+const FallbackVerificationDemo = () => {
+	const [ready, setReady] = useState(false);
+	const { copy, status, error } = useClipboard({ resetAfter: 0 });
+
+	useEffect(() => {
+		const ownDescriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+		try {
+			// localhost 는 secure context 라 Clipboard API 가 존재한다. 이 story 에서만 가려
+			// iOS Safari·인앱 웹뷰의 execCommand 폴백을 같은 조건으로 직접 검증한다.
+			Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
+			setReady(true);
+		} catch {
+			setReady(false);
+		}
+
+		return () => {
+			if (ownDescriptor) Object.defineProperty(navigator, "clipboard", ownDescriptor);
+			else Reflect.deleteProperty(navigator, "clipboard");
+		};
+	}, []);
+
+	return (
+		<div style={{ display: "grid", gap: 12, maxWidth: 420 }}>
+			<p style={{ margin: 0, fontSize: 14 }}>
+				아래 버튼은 Clipboard API를 가리고 execCommand 폴백만 사용합니다.
+			</p>
+			<Button
+				size="sm"
+				variant="outline"
+				disabled={!ready}
+				onClick={() => copy(FALLBACK_TEST_VALUE)}
+			>
+				폴백으로 복사
+			</Button>
+			<label style={{ display: "grid", gap: 4, fontSize: 13 }}>
+				여기에 붙여넣어 확인
+				<input
+					aria-label="복사 결과 붙여넣기"
+					style={{ minHeight: 40, padding: "4px 12px" }}
+					placeholder={FALLBACK_TEST_VALUE}
+				/>
+			</label>
+			<output aria-live="polite" style={{ fontSize: 13 }}>
+				상태: {ready ? status : "이 브라우저에서는 API를 가릴 수 없음"}
+				{error ? ` (${String(error)})` : ""}
+			</output>
+		</div>
+	);
+};
+
+export const FallbackVerification: Story = {
+	name: "폴백 수동 검증",
+	render: () => <FallbackVerificationDemo />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"iOS Safari·인앱 브라우저 확인용입니다. 복사 버튼을 누르고 입력 칸에 붙여넣어 예상 문자열과 같은지 확인합니다.",
+			},
+		},
 	},
 };

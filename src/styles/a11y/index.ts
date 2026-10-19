@@ -1,8 +1,8 @@
 export const a11y = {
 	// light 테마 값 - dark 를 따라가려면 `cssVars.a11y`
-	focusRing: "0 0 0 3px rgba(0, 0, 0, 0.15)",
-	focusRingError: "0 0 0 3px rgba(239, 68, 68, 0.30)",
-	focusRingSuccess: "0 0 0 3px rgba(16, 185, 129, 0.30)",
+	focusRing: "0 0 0 2px #FFFFFF, 0 0 0 4px #121212",
+	focusRingError: "0 0 0 2px #FFFFFF, 0 0 0 4px #B91C1C",
+	focusRingSuccess: "0 0 0 2px #FFFFFF, 0 0 0 4px #047857",
 
 	tapMinSize: "44px",
 

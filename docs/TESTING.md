@@ -422,7 +422,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 90 test files / 1624 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 90 test files / 1630 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -432,7 +432,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **94.99%** | **93%** | **95.38%** | **96.12%** |
+| **All files** | **95.07%** | **93.03%** | **95.56%** | **96.17%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (45개는 전 지표 100% 라 빠져 있다).
 
@@ -475,7 +475,7 @@ it("calls callback with correct arguments", () => {
 | utils/overlay-stack.ts | 93.94% | 83.33% | 87.5% | 96.3% |
 | utils/scroll-lock.ts | 97.59% | 95.24% | 100% | 100% |
 | utils/use-anchored-position.ts | 97.73% | 95% | 100% | 100% |
-| utils/use-clipboard.ts | 95.95% | 83.33% | 88.89% | 97.18% |
+| utils/use-clipboard.ts | 98.68% | 83.33% | 100% | 98.63% |
 | utils/use-listbox-popup.ts | 99.33% | 100% | 100% | 99.18% |
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
