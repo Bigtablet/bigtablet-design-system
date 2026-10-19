@@ -65,6 +65,12 @@ export const OtpInput = ({
 		return chars;
 	}, [value, length]);
 
+	// Tab 순서에는 한 칸만 둔다(roving tabindex). 모든 칸이 탭 가능하면 빈 상태에서 Tab 이
+	// 다음 칸으로 갔다가 handleFocus redirect 로 첫 빈 칸에 되돌아와 그룹을 빠져나가지 못한다
+	// (WCAG 2.1.2). 칸 사이 이동은 화살표·입력이 맡는다.
+	const firstEmpty = digits.indexOf("");
+	const tabStop = firstEmpty === -1 ? length - 1 : firstEmpty;
+
 	const focusInput = (index: number) => {
 		inputsRef.current[index]?.focus();
 	};
@@ -113,7 +119,6 @@ export const OtpInput = ({
 	const handleFocus = (index: number) => {
 		// typing 자동 이동 중엔 redirect 안 함
 		if (isTypingRef.current) return;
-		const firstEmpty = digits.indexOf("");
 		if (firstEmpty !== -1 && firstEmpty < index) {
 			focusInput(firstEmpty);
 		}
@@ -186,6 +191,7 @@ export const OtpInput = ({
 						// SMS/키체인의 OTP 자동입력 - 첫 입력에만 지정 (paste 핸들러가 전 자리 분배)
 						autoComplete={i === 0 ? "one-time-code" : "off"}
 						value={digit}
+						tabIndex={i === tabStop ? 0 : -1}
 						onChange={(e) => handleChange(i, e)}
 						onFocus={() => handleFocus(i)}
 						onKeyDown={(e) => handleKeyDown(i, e)}
