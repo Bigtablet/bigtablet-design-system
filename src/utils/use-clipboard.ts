@@ -49,7 +49,11 @@ function execCopy(text: string): boolean {
 		textarea.select();
 		// iOS Safari·인앱 웹뷰는 select() 만으로 실제 선택 범위가 잡히지 않는 경우가 있다.
 		// readonly textarea 에 범위를 한 번 더 명시해야 execCommand 가 값을 복사한다.
-		textarea.setSelectionRange(0, text.length);
+		try {
+			textarea.setSelectionRange(0, text.length);
+		} catch {
+			// 보정 API 가 없는 기존 환경에서는 select() 결과로 계속 시도한다.
+		}
 		ok = document.execCommand("copy");
 	} catch {
 		ok = false;

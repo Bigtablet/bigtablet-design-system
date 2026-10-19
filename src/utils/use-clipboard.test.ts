@@ -43,8 +43,9 @@ describe("copyText", () => {
 		expect(document.querySelector("textarea")).toBeNull();
 	});
 
-	it("cleans up the fallback textarea when selecting the range fails", async () => {
+	it("continues with select() when explicit range selection fails", async () => {
 		setClipboard(undefined);
+		const exec = setExecCommand(true);
 		const button = document.createElement("button");
 		document.body.appendChild(button);
 		button.focus();
@@ -52,7 +53,8 @@ describe("copyText", () => {
 			throw new Error("selection failed");
 		});
 
-		await expect(copyText("hello")).rejects.toThrow("Copy command was rejected");
+		await expect(copyText("hello")).resolves.toBeUndefined();
+		expect(exec).toHaveBeenCalledWith("copy");
 		expect(document.querySelector("textarea")).toBeNull();
 		expect(document.activeElement).toBe(button);
 		button.remove();
