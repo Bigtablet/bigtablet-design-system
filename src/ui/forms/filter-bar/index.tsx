@@ -7,10 +7,14 @@ import { Button } from "../../general/button";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
+export type FilterBarSubmitMode = "submit" | "instant";
+
 interface FilterBarBaseProps
 	extends Omit<SafeHTMLProps<React.FormHTMLAttributes<HTMLFormElement>>, "onSubmit" | "onReset"> {
 	/** 필터 입력들 (TextField · Dropdown · DatePicker 등). 반응형 grid 로 배치된다 */
 	children: React.ReactNode;
+	/** 필터 적용 방식 (기본값: submit) */
+	submitMode?: FilterBarSubmitMode;
 	/** 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫이다 */
 	onReset?: () => void;
 	/** 초기화할 것이 있는가 (기본값: true). 이미 비어 있으면 false 로 */

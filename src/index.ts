@@ -211,7 +211,7 @@ export type { FieldControl, FieldProps } from "./ui/forms/field";
 export { Field, useFieldControl } from "./ui/forms/field";
 export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
 export { FileInput } from "./ui/forms/file";
-export type { FilterBarProps } from "./ui/forms/filter-bar";
+export type { FilterBarProps, FilterBarSubmitMode } from "./ui/forms/filter-bar";
 export { FilterBar } from "./ui/forms/filter-bar";
 export type { FormActionsProps, FormProps } from "./ui/forms/form";
 export { Form } from "./ui/forms/form";
