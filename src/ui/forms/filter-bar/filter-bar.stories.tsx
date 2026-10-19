@@ -15,9 +15,9 @@ const meta: Meta<typeof FilterBar> = {
 		docs: {
 			description: {
 				component: `
-**FilterBar** - 목록 화면 상단의 필터 묶음. \`<form role="search">\` 라 입력에서 Enter 로 검색되고, 필드는 칸이 \`fieldMinWidth\`(기본 200px)보다 좁아지면 줄을 바꿉니다. 좁은 화면(< 600px)에서는 버튼이 필드 아래 전폭으로 내려갑니다.
+**FilterBar** - 목록 화면 상단의 필터 묶음. 필드는 칸이 \`fieldMinWidth\`(기본 200px)보다 좁아지면 줄을 바꿉니다. submit 모드의 버튼은 좁은 화면(< 600px)에서 필드 아래 전폭으로 내려갑니다.
 
-**상태를 갖지 않습니다.** 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치와 액션 영역만 맡습니다. 기본 \`submitMode="submit"\` 은 Enter·검색 버튼으로 적용하고, \`submitMode="instant"\` 는 필드 변경 핸들러가 즉시 적용하므로 검색 버튼을 렌더링하지 않습니다.
+**상태를 갖지 않습니다.** 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치와 액션 영역만 맡습니다. 기본 \`submitMode="submit"\` 은 Enter·검색 버튼으로 적용하고, \`submitMode="instant"\` 는 필드 변경 핸들러가 즉시 적용하므로 검색 버튼을 렌더링하지 않습니다. \`loading\` 은 두 모드 모두 폼에 \`aria-busy\` 를 전달하며, 스피너는 submit 모드에서만 표시됩니다.
         `,
 			},
 		},

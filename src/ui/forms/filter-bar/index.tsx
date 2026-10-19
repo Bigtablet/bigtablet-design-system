@@ -19,7 +19,7 @@ interface FilterBarBaseProps
 	onReset?: () => void;
 	/** 초기화할 것이 있는가 (기본값: true). 이미 비어 있으면 false 로 */
 	canReset?: boolean;
-	/** 검색 중 - 검색 버튼에 스피너, 중복 제출을 막는다 */
+	/** 적용 중 - form 에 aria-busy. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용한다 */
 	loading?: boolean;
 	/** 버튼 전체 비활성화 */
 	disabled?: boolean;
