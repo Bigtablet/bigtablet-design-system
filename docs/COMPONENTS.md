@@ -867,13 +867,14 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 
 ### FilterBar
 
-목록 화면 상단의 필터 묶음. `<form role="search">` 라 입력에서 <kbd>Enter</kbd> 로 검색되고, 필드는 반응형 grid 로 배치된다. **필터 상태를 갖지 않는다** - 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가지고, FilterBar 는 배치 · Enter 제출 · 검색/초기화 버튼만 맡는다.
+목록 화면 상단의 필터 묶음. 필드는 반응형 grid 로 배치된다. 기본 `submitMode="submit"` 에서는 `<form role="search">` 의 <kbd>Enter</kbd> 와 검색 버튼으로 적용하고, `submitMode="instant"` 에서는 각 필드 변경 핸들러가 즉시 적용하며 검색 버튼을 렌더링하지 않는다. **필터 상태를 갖지 않는다** - 입력 중인 값(draft)과 적용된 값(query), URL 동기화는 소비자가 가진다.
 
 #### 언제 쓰는가
 
 | 상황 | 선택 |
 |------|------|
 | 필드 여러 개 + 검색/초기화 버튼 (관리자 목록) | ✅ FilterBar |
+| 드롭다운 여러 개 + 선택 즉시 적용 (검색 버튼 없음) | ✅ FilterBar `submitMode="instant"` |
 | 검색창 하나뿐 (입력 즉시 거름) | ❌ [DataView](#dataview) `toolbar.search` |
 | 짧은 옵션 하나만 바로 바꿈 (상태 탭 같은 필터) | ❌ [SegmentedControl](#segmentedcontrol) 단독 |
 
@@ -882,7 +883,8 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | required | 필터 입력들 (TextField · Dropdown · DatePicker · SegmentedControl 등) |
-| `onSubmit` | `() => void` | required | 검색 - Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막는다 |
+| `submitMode` | `'submit' \| 'instant'` | `'submit'` | `instant` 면 검색 버튼과 Enter 제출을 생략한다 |
+| `onSubmit` | `() => void` | submit 모드에서 required | 검색 - Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막는다 |
 | `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
 | `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
 | `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
@@ -921,6 +923,11 @@ const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴
 
 // DataView 와 함께 - toolbar.filters 에 그대로 넣는다
 <DataView query={query} columns={columns} rowKey={rowKey} toolbar={{ filters: <FilterBar onSubmit={search}>...</FilterBar> }} />
+
+// 드롭다운 변경 즉시 적용 - 검색 버튼 없음
+<FilterBar submitMode="instant" onReset={() => setStatus(null)} canReset={status !== null}>
+  <Dropdown label="상태" options={STATUS} value={status} onChange={setStatus} />
+</FilterBar>
 ```
 
 ---

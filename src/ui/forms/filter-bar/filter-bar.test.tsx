@@ -4,7 +4,12 @@ import { LocaleProvider } from "../../system/locale-provider";
 import { TextField } from "../textfield";
 import { FilterBar } from "./index";
 
-const setup = (props: Partial<React.ComponentProps<typeof FilterBar>> = {}) => {
+type SubmitFilterBarProps = Extract<
+	React.ComponentProps<typeof FilterBar>,
+	{ submitMode?: "submit" }
+>;
+
+const setup = (props: Partial<SubmitFilterBarProps> = {}) => {
 	const onSubmit = vi.fn();
 	const utils = render(
 		<FilterBar onSubmit={onSubmit} {...props}>
@@ -29,6 +34,32 @@ describe("FilterBar", () => {
 		const { onSubmit } = setup();
 		fireEvent.click(screen.getByRole("button", { name: "검색" }));
 		expect(onSubmit).toHaveBeenCalledTimes(1);
+	});
+
+	it("omits submit controls and prevents form submission in instant mode", () => {
+		const onReset = vi.fn();
+		render(
+			<FilterBar submitMode="instant" onReset={onReset}>
+				<TextField label="이름" />
+			</FilterBar>,
+		);
+
+		expect(screen.queryByRole("button", { name: "검색" })).toBeNull();
+		expect(screen.getByRole("button", { name: "초기화" })).toBeInTheDocument();
+		const form = screen.getByRole("search");
+		const submitEvent = new Event("submit", { bubbles: true, cancelable: true });
+		form.dispatchEvent(submitEvent);
+		expect(submitEvent.defaultPrevented).toBe(true);
+	});
+
+	it("omits the actions container when instant mode has no reset", () => {
+		render(
+			<FilterBar submitMode="instant">
+				<TextField label="이름" />
+			</FilterBar>,
+		);
+
+		expect(document.querySelector(".filter_bar_actions")).toBeNull();
 	});
 
 	it("blocks Enter and the button when canSubmit is false or disabled", () => {
