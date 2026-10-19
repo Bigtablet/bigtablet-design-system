@@ -358,7 +358,7 @@ export const DateCalendar = ({
 											// 포커스 트랩은 `tabindex="-1"` 버튼도 후보로 세서, 표시가 없으면 열자마자 1일에
 											// 앉았다(브라우저 실측). 포커스 받을 한 칸만 남기고 나머지는 건너뛰게 한다.
 											data-focus-trap-skip-autofocus={sameDay(cell, focused) ? undefined : ""}
-											aria-label={[fmt.full.format(toDate(cell)), description]
+											aria-label={[String(cell.day), fmt.full.format(toDate(cell)), description]
 												.filter(Boolean)
 												.join(", ")}
 											aria-current={isToday ? "date" : undefined}
