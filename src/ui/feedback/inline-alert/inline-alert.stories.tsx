@@ -100,6 +100,33 @@ export const WithActionAndDismiss: Story = {
 	},
 };
 
+export const ActionBoundaries: Story = {
+	name: "톤별 액션 경계",
+	render: () => (
+		<div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 560 }}>
+			{(["neutral", "info", "success", "warning", "error"] as const).map((tone) => (
+				<InlineAlert
+					key={tone}
+					tone={tone}
+					title={`${tone} 액션`}
+					action={
+						<>
+							<Button size="sm" variant="outline">
+								Outline
+							</Button>
+							<Button size="sm" variant="tonal">
+								Tonal
+							</Button>
+						</>
+					}
+				>
+					톤 배경에서도 액션의 클릭 영역을 구분할 수 있습니다.
+				</InlineAlert>
+			))}
+		</div>
+	),
+};
+
 export const DescriptionOnly: Story = {
 	name: "본문만 · 아이콘 없음",
 	render: () => (

@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
+import { Button } from "../../general/button";
 import { InlineAlert, type InlineAlertTone } from "./index";
 import "./style.scss";
 
@@ -44,7 +45,20 @@ describe("InlineAlert (Chromium)", () => {
 			const page = getComputedStyle(document.body).backgroundColor;
 			for (const tone of TONES) {
 				const { container, unmount } = render(
-					<InlineAlert tone={tone} title="제목">
+					<InlineAlert
+						tone={tone}
+						title="제목"
+						action={
+							<>
+								<Button size="sm" variant="outline">
+									Outline
+								</Button>
+								<Button size="sm" variant="tonal">
+									Tonal
+								</Button>
+							</>
+						}
+					>
 						본문
 					</InlineAlert>,
 				);
@@ -66,10 +80,68 @@ describe("InlineAlert (Chromium)", () => {
 					contrast(getComputedStyle(icon).color, bg, page),
 					`${tone} icon`,
 				).toBeGreaterThanOrEqual(3);
+				for (const button of container.querySelectorAll<HTMLElement>(
+					".inline_alert_action .button",
+				)) {
+					const style = getComputedStyle(button);
+					expect(style.borderTopStyle, `${tone} ${button.textContent} border`).toBe("solid");
+					expect(parseFloat(style.borderTopWidth), `${tone} ${button.textContent} border`).toBe(1);
+					expect(
+						contrast(style.borderTopColor, bg, page),
+						`${tone} ${button.textContent} boundary`,
+					).toBeGreaterThanOrEqual(3);
+				}
 				unmount();
 			}
 		});
 	}
+
+	it("preserves disabled and danger button boundaries", () => {
+		render(
+			<>
+				<div data-testid="baseline">
+					<Button size="sm" variant="outline" disabled>
+						Disabled
+					</Button>
+					<Button size="sm" variant="outline" danger>
+						Danger
+					</Button>
+					<Button size="sm" variant="tonal" danger>
+						Danger tonal
+					</Button>
+				</div>
+				<InlineAlert
+					tone="warning"
+					action={
+						<>
+							<Button size="sm" variant="outline" disabled>
+								Disabled
+							</Button>
+							<Button size="sm" variant="outline" danger>
+								Danger
+							</Button>
+							<Button size="sm" variant="tonal" danger>
+								Danger tonal
+							</Button>
+						</>
+					}
+				>
+					안내
+				</InlineAlert>
+			</>,
+		);
+
+		const baseline = screen.getByTestId("baseline").querySelectorAll<HTMLElement>(".button");
+		const actions = document.querySelectorAll<HTMLElement>(".inline_alert_action .button");
+		expect(actions).toHaveLength(baseline.length);
+		for (const [index, action] of [...actions].entries()) {
+			const expected = getComputedStyle(baseline[index]!);
+			const actual = getComputedStyle(action);
+			expect(actual.borderTopColor).toBe(expected.borderTopColor);
+			expect(actual.borderTopStyle).toBe(expected.borderTopStyle);
+			expect(actual.borderTopWidth).toBe(expected.borderTopWidth);
+		}
+	});
 
 	it("shows the focus ring on the dismiss button for keyboard focus", async () => {
 		render(

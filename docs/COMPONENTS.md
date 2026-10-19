@@ -1916,6 +1916,7 @@ toast.dismiss(id);
 
 - 아이콘은 `aria-hidden` - 톤 의미는 제목·본문 문구로 전달한다 (색·아이콘만으로 전달하지 않는다)
 - 닫기 버튼은 32px, 이름은 `dismissLabel`. 닫은 뒤 포커스는 부모가 다음 의미 있는 요소로 옮긴다
+- `action`의 기본 강조는 `Button variant="filled"`. `outline`·`tonal`도 톤별 경계색이 적용되어 배경과 구분된다
 - 진입 시 짧은 fade(200ms), `prefers-reduced-motion: reduce` 면 끈다
 
 **Usage**
