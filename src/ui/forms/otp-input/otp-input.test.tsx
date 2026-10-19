@@ -91,6 +91,19 @@ describe("OtpInput", () => {
 		expect(document.activeElement).toBe(inputs[2]);
 	});
 
+	// 모든 칸이 탭 가능하면 빈 상태에서 Tab 이 redirect 에 붙잡혀 그룹을 못 빠져나간다
+	it.each([
+		["", 0],
+		["12", 2],
+		["123456", 5],
+	])("keeps only one box in the tab order (value=%j → box %i)", (value, stop) => {
+		render(<ControlledOtp length={6} value={value} ariaLabel="OTP" />);
+		const tabIndexes = (screen.getAllByRole("textbox") as HTMLInputElement[]).map(
+			(el) => el.tabIndex,
+		);
+		expect(tabIndexes).toEqual(tabIndexes.map((_, i) => (i === stop ? 0 : -1)));
+	});
+
 	it("renders supporting text", () => {
 		render(<OtpInput length={6} supportingText="인증 코드를 입력하세요" ariaLabel="OTP" />);
 		expect(screen.getByText("인증 코드를 입력하세요")).toBeDefined();
