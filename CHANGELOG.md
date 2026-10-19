@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.32.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.32.0) - 2026-10-19
+- `FilterBar` 에 `submitMode="instant"` 가 생겼습니다 - 필터를 바꾸면 바로 적용되고 검색 버튼 · Enter 제출이 없습니다. 필드 배치와 초기화 버튼은 그대로입니다
+- (렌더 변경) 포커스 링이 바뀌었습니다 - 배경색 2px 틈 + 진한 2px 링(라이트 `#121212` · 다크 흰색)으로 주변 색 대비 3:1 을 넘깁니다(WCAG 1.4.11). `--bt-focus-ring*` · `token.$focus_ring*` · `a11y.focusRing*` 값이 함께 바뀌었고, Vanilla 포커스 링도 같은 토큰을 씁니다
+- (렌더 변경) `Button` · `IconButton` · `Chip` 에 키보드 포커스 링이 생겼습니다 - 이전에는 배경 틴트만 바뀌었습니다. `Accordion` 트리거 · `Table` 정렬 버튼은 링이 잘리지 않게 안쪽에 그립니다
+- (렌더 변경) `InlineAlert` 안의 `outline` · `tonal` 버튼에 톤 색 경계가 생겼습니다 - 톤 배경 위에서도 클릭 영역이 구분됩니다
+- `OtpInput` 이 비어 있을 때 Tab 으로 빠져나가지 못하던 문제를 고쳤습니다 - Tab 순서에는 첫 빈 칸 하나만 두고, 칸 사이 이동은 입력 · 방향키로 합니다
+- `copyText` 의 `execCommand` 폴백이 iOS Safari · 인앱 웹뷰에서도 복사되도록 고쳤습니다
+- `DateCalendar` 날짜 버튼의 접근성 이름을 화면 표시와 맞췄습니다
+
 ## [3.31.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.31.0) - 2026-10-16
 - `SegmentedControl` 이 생겼습니다 - 짧은 선택지 2~5개 중 하나를 고르는 붙은 버튼 묶음입니다(보기 전환 · 기간 단위 등). native radio 라 방향키 · Home/End · 폼 제출(`name` · `required`)이 그대로 동작합니다
 - `InlineAlert` 가 생겼습니다 - 화면 안에 남아 있는 안내 · 경고 상자입니다(`info` · `success` · `warning` · `error`, 선택적으로 닫기 버튼). 기본으로 라이브 리전이 아니라, 바로 읽혀야 하면 `role="alert"` · `role="status"` 를 넘깁니다. 문구 키 `inlineAlert.dismiss` 가 추가됐습니다
