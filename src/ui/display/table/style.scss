@@ -65,9 +65,10 @@
     background: token.$color_state_hover_on_light;
   }
 
+  // 헤더 셀을 꽉 채우고 table_wrapper(가로 스크롤) 안에 있어 바깥 링은 가장자리가 잘린다 - 안쪽에 그린다.
   &:focus-visible {
-    outline: none;
-    box-shadow: token.$focus_ring;
+    outline: token.$border_width_thick solid token.$color_border_focus;
+    outline-offset: calc(-1 * #{token.$border_width_thick});
   }
 
   &:disabled {
