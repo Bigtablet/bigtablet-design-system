@@ -58,6 +58,23 @@ describe("FilterBar (Chromium)", () => {
 		expect(Math.abs(submit.bottom - last.bottom)).toBeLessThan(2);
 	});
 
+	it("uses the same field layout without a submit button in instant mode", () => {
+		render(
+			<FilterBar submitMode="instant">
+				<Fields />
+			</FilterBar>,
+		);
+
+		expect(screen.queryByRole("button", { name: "검색" })).toBeNull();
+		const fields = ["이름", "이메일", "전화", "소속"].map((label) =>
+			screen.getByLabelText(label).getBoundingClientRect(),
+		);
+		expect(new Set(fields.map(({ top }) => Math.round(top))).size).toBe(1);
+		expect(
+			Math.round(document.querySelector(".filter_bar_fields")!.getBoundingClientRect().right),
+		).toBe(Math.round(screen.getByRole("search").getBoundingClientRect().right));
+	});
+
 	it("wraps fields and drops the buttons to a full-width row on a phone", async () => {
 		await page.viewport(375, 800);
 		render(
