@@ -44,12 +44,12 @@ describe("SegmentedControl (Chromium)", () => {
 		await userEvent.click(krw);
 		// box-shadow 전환(200ms)이 끝난 값을 본다
 		await expect.poll(() => getComputedStyle(krw).boxShadow).not.toMatch(/0\.\d+px/);
-		expect(getComputedStyle(krw).boxShadow).not.toMatch(/0px 0px 0px 3px/);
+		expect(getComputedStyle(krw).boxShadow).not.toMatch(/0px 0px 0px 4px/);
 
 		await userEvent.click(screen.getByRole("button", { name: "앞" }));
 		await userEvent.keyboard("{Tab}");
 		// 선택된 칸(KRW)으로 들어온다 - 그림자(elevation) 위에 포커스 링이 겹친다
-		await expect.poll(() => getComputedStyle(krw).boxShadow).toMatch(/0px 0px 0px 3px/);
+		await expect.poll(() => getComputedStyle(krw).boxShadow).toMatch(/0px 0px 0px 4px/);
 		expect(getComputedStyle(usd).boxShadow).toBe("none");
 	});
 

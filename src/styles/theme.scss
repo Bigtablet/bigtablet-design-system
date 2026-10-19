@@ -101,10 +101,12 @@
   --bt-color-skeleton-wave:        #{$color_base_skeleton_wave};
   --bt-color-skeleton-highlight:   #{$color_base_skeleton_highlight};
 
-  // Focus rings (a11y) - dark 는 흰색 alpha 기반으로 neutral dark bg 위 가시성 확보.
-  --bt-focus-ring:         0 0 0 3px rgba(0, 0, 0, 0.15);
-  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.30);
-  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.30);
+  // Focus rings (a11y) - bg-solid 2px 틈 + 불투명 2px 링. 틈이 진한 컨트롤(filled 버튼)과
+  // 링을 떼어 놓고, 링은 bg-solid 대비 3:1 이상(WCAG 1.4.11) - 색은 border-focus·status-*-on-surface 와 같다.
+  // light: neutral_900 18:1 · red-700 6.4:1 · green-700 5.5:1
+  --bt-focus-ring:         0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_neutral_900};
+  --bt-focus-ring-error:   0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_status_error};
+  --bt-focus-ring-success: 0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_status_success};
 
   // Elevation shadows - dark 는 더 강한 검정 + 살짝 spread 증가로 가시성 확보.
   --bt-elevation-level1: 0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12);
@@ -220,10 +222,10 @@ body {
   --bt-color-skeleton-wave:        #{$color_base_neutral_800};
   --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
 
-  // Focus rings - 흰색 alpha 기반
-  --bt-focus-ring:         0 0 0 3px rgba(255, 255, 255, 0.35);
-  --bt-focus-ring-error:   0 0 0 3px rgba(239, 68, 68, 0.45);
-  --bt-focus-ring-success: 0 0 0 3px rgba(16, 185, 129, 0.45);
+  // Focus rings - light 와 같은 구조. neutral_0 · red-400 · green-400 on neutral_950
+  --bt-focus-ring:         0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_neutral_0};
+  --bt-focus-ring-error:   0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_status_error_dark_text};
+  --bt-focus-ring-success: 0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_status_success_dark_text};
 
   // Elevation shadows - neutral dark bg 위 가시성 (검정 더 진하게 + 큰 spread)
   --bt-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 3px 6px 0 rgba(0, 0, 0, 0.30);

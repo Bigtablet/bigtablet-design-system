@@ -10,8 +10,15 @@
     transition:
       border-color token.$transition_base,
       background token.$transition_base,
-      color token.$transition_base;
+      color token.$transition_base,
+      box-shadow token.$transition_fast;
     position: relative;
+
+    // 칩 본체·trailing 버튼은 칩의 overflow: hidden 안에 있어 자기 링이 잘린다 - 칩 테두리에 그린다.
+    // 어느 쪽에 포커스가 있는지는 아래 틴트가 구분한다.
+    &:has(:focus-visible) {
+        box-shadow: token.$focus_ring;
+    }
 
     &::before {
         content: "";

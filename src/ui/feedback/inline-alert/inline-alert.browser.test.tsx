@@ -154,7 +154,7 @@ describe("InlineAlert (Chromium)", () => {
 		await userEvent.keyboard("{Tab}");
 		const dismiss = screen.getByRole("button", { name: "알림 닫기" });
 		expect(dismiss).toHaveFocus();
-		expect(getComputedStyle(dismiss).boxShadow).toMatch(/0px 0px 0px 3px/);
+		expect(getComputedStyle(dismiss).boxShadow).toMatch(/0px 0px 0px 4px/);
 		// 32px 버튼이 블록 높이를 늘리지 않는다 - 한 줄 본문 기준
 		const root = dismiss.closest(".inline_alert") as HTMLElement;
 		expect(root.getBoundingClientRect().height).toBeLessThan(50);
