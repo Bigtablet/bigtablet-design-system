@@ -98,3 +98,34 @@ export const Clickable: Story = {
 	},
 	render: () => <ClickableDemo />,
 };
+
+export const FewSteps: Story = {
+	name: "단계가 적을 때",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"단계가 2~3개여도 마지막 단계가 오른쪽 끝에 붙습니다. 앞 단계의 연결선이 남은 폭을 채웁니다.",
+			},
+		},
+	},
+	render: () => (
+		<Stack gap={32}>
+			<Stepper
+				steps={[
+					{ id: "input", label: "입력" },
+					{ id: "done", label: "완료" },
+				]}
+				current={0}
+			/>
+			<Stepper
+				steps={[
+					{ id: "upload", label: "업로드" },
+					{ id: "mapping", label: "매핑·검증" },
+					{ id: "done", label: "등록 완료" },
+				]}
+				current={1}
+			/>
+		</Stack>
+	),
+};
