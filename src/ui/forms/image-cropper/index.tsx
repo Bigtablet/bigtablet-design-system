@@ -248,7 +248,8 @@ export function ImageCropper({
 	// 대안(WCAG 2.5.7). 누른 지점과 그때의 위치를 기준으로 해 임계값 안의 미세한 움직임은 결과에 섞이지 않는다.
 	const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
 		const drag = dragRef.current;
-		if (drag?.pointerId === event.pointerId && imageSize) {
+		// 주 버튼만 탭이다 - 우클릭(컨텍스트 메뉴)·보조 버튼이 위치를 바꾸면 안 된다. 터치·펜은 항상 0.
+		if (drag?.pointerId === event.pointerId && event.button === 0 && imageSize) {
 			const movedX = event.clientX - drag.x;
 			const movedY = event.clientY - drag.y;
 			if (Math.hypot(movedX, movedY) <= TAP_SLOP) {

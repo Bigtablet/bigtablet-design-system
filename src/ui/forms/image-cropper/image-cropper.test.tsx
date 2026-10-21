@@ -185,6 +185,13 @@ describe("ImageCropper tap to center", () => {
 		expect(offsetX()).toBe(30);
 	});
 
+	it("does not recenter on a right click", () => {
+		const viewport = setup();
+		fireEvent.pointerDown(viewport, { pointerId: 1, button: 2, clientX: 100, clientY: 120 });
+		fireEvent.pointerUp(viewport, { pointerId: 1, button: 2, clientX: 100, clientY: 120 });
+		expect(offsetX()).toBe(0);
+	});
+
 	it("does not recenter on pointercancel", () => {
 		const viewport = setup();
 		press(viewport, 100, 100, "pointerCancel");
