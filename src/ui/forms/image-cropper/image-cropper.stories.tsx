@@ -29,7 +29,7 @@ const meta = {
 		docs: {
 			description: {
 				component: [
-					"업로드 전에 이미지에서 보일 **정사각 영역**을 정하는 크로퍼입니다. 뷰포트 안에서 **드래그(또는 방향키)** 로 위치를, **마우스 휠 · 슬라이더 · ＋/－ 버튼(또는 `+`/`-` 키)** 으로 배율을 맞춥니다. 모달을 포함하지 않으므로 소비자가 `Modal` 등으로 감싸고, 적용 버튼에서 `ref.crop()` 을 호출해 잘린 `Blob` 을 받습니다.",
+					"업로드 전에 이미지에서 보일 **정사각 영역**을 정하는 크로퍼입니다. 뷰포트 안에서 **드래그 · 탭(또는 방향키)** 으로 위치를(탭하면 그 지점이 가운데로 옵니다), **마우스 휠 · 슬라이더 · ＋/－ 버튼(또는 `+`/`-` 키)** 으로 배율을 맞춥니다. 모달을 포함하지 않으므로 소비자가 `Modal` 등으로 감싸고, 적용 버튼에서 `ref.crop()` 을 호출해 잘린 `Blob` 을 받습니다.",
 					"",
 					"```tsx",
 					"const cropperRef = useRef<ImageCropperHandle>(null);",
@@ -155,7 +155,7 @@ export const Localized: Story = {
 		src: SQUARE,
 		circular: true,
 		label: "Adjust image position and zoom",
-		hint: "Drag (or use arrow keys) to move, scroll or use the slider to zoom.",
+		hint: "Drag, or tap the spot to center (or use arrow keys) to move; scroll or use the slider to zoom.",
 		zoomOutLabel: "Zoom out",
 		zoomLabel: "Zoom",
 		zoomInLabel: "Zoom in",

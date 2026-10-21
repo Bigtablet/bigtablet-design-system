@@ -130,3 +130,64 @@ describe("ImageCropper native attribute forwarding", () => {
 		expect(onError).toHaveBeenCalledTimes(1);
 	});
 });
+
+/**
+ * 탭으로 위치 이동 - 드래그를 못 하는 사용자의 단일 포인터 대안(WCAG 2.5.7).
+ * 800x600 이미지가 240 뷰포트를 덮으면 320x240 이라 가로로만 ±40px 움직일 수 있다.
+ */
+describe("ImageCropper tap to center", () => {
+	beforeAll(() => {
+		Element.prototype.setPointerCapture ??= () => {};
+	});
+
+	const setup = () => {
+		render(<ImageCropper src={file()} />);
+		loadImage();
+		const viewport = screen.getByRole("group");
+		viewport.getBoundingClientRect = () =>
+			({ left: 0, top: 0, width: 240, height: 240 }) as DOMRect;
+		return viewport;
+	};
+	const offsetX = () => {
+		const image = document.querySelector(".image_cropper_image") as HTMLElement;
+		return Number(/calc\(-50% \+ (-?[\d.]+)px\)/.exec(image.style.transform)?.[1]);
+	};
+	const press = (viewport: HTMLElement, from: number, to = from, end = "pointerUp") => {
+		fireEvent.pointerDown(viewport, { pointerId: 1, clientX: from, clientY: 120 });
+		if (to !== from) fireEvent.pointerMove(viewport, { pointerId: 1, clientX: to, clientY: 120 });
+		fireEvent[end as "pointerUp"](viewport, { pointerId: 1, clientX: to, clientY: 120 });
+	};
+
+	it("moves the tapped point toward the center", () => {
+		const viewport = setup();
+		// 가운데(120)보다 20px 왼쪽을 탭 → 이미지가 오른쪽으로 20px
+		press(viewport, 100);
+		expect(offsetX()).toBe(20);
+	});
+
+	it("clamps so the image still covers the viewport", () => {
+		const viewport = setup();
+		press(viewport, 0);
+		expect(offsetX()).toBe(40);
+	});
+
+	it("ignores tiny jitter within the tap slop", () => {
+		const viewport = setup();
+		// 3px 흔들림은 여전히 탭 - 결과는 누른 지점 기준
+		press(viewport, 100, 103);
+		expect(offsetX()).toBe(20);
+	});
+
+	it("does not recenter after a real drag", () => {
+		const viewport = setup();
+		press(viewport, 100, 130);
+		// 드래그만큼(30, 한계 40 안)만 움직이고 놓을 때 추가 이동이 없다
+		expect(offsetX()).toBe(30);
+	});
+
+	it("does not recenter on pointercancel", () => {
+		const viewport = setup();
+		press(viewport, 100, 100, "pointerCancel");
+		expect(offsetX()).toBe(0);
+	});
+});
