@@ -132,6 +132,12 @@ $indicator: 28px;
       align-items: flex-start;
     }
 
+    // 마지막 단계는 선이 없으니 내용 폭만 - 1/N 을 차지하면 오른쪽이 비어 보인다.
+    // 앞 단계의 선이 남은 폭을 채워 마지막 단계가 오른쪽 끝에 붙는다.
+    .stepper_step:last-child {
+      flex: 0 0 auto;
+    }
+
     // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 인디케이터 세로 중심에 맞춘다.
     .stepper_step:not(:last-child)::after {
       content: "";
