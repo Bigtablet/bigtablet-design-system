@@ -9,7 +9,9 @@ $focus_ring_error:   var(--bt-focus-ring-error);
 $focus_ring_success: var(--bt-focus-ring-success);
 
 // ── Tap target sizes (a11y) ─────────────────────────────────────────────
-// WCAG 2.1 SC 2.5.5 권장 최소: 44×44
+// WCAG 2.2 SC 2.5.8 Target Size (Minimum, AA): 24×24 - 모든 단계(admin 예외 28 포함)가 이 하한을 넘는다.
+//   Storybook a11y 테스트가 axe `target-size` 규칙으로 검사한다(.storybook/preview.ts).
+// WCAG 2.1 SC 2.5.5 Target Size (AAA) 권장: 44×44 - $tap_min_size
 
 $tap_min_size:           44px;  // a11y 최소 권장
 $tap_target_dense:       32px;  // 데스크탑 인라인 폼, 컴팩트 UI. 인터랙티브 컨트롤의 하한이다
