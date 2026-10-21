@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
+import { useTopInset } from "../../../utils/use-top-inset";
 import "./style.scss";
 
 export type NavBarVariant = "default" | "transparent" | "accent";
@@ -146,6 +147,10 @@ export const NavBar = ({
 		};
 	}, []);
 
+	// sticky 면 헤더 높이만큼 html 에 scroll-padding 을 준다(WCAG 2.4.11). AppShell header 안이면
+	// AppShell 이 이미 잰다. ref 는 소비자 ref 와 겹치지 않게 inner 에 걸고 header 를 잰다.
+	const innerRef = useTopInset<HTMLDivElement>(sticky, measureNavBar);
+
 	return (
 		<header
 			className={cn(
@@ -157,7 +162,7 @@ export const NavBar = ({
 			)}
 			{...props}
 		>
-			<div className="nav_bar_inner">
+			<div ref={innerRef} className="nav_bar_inner">
 				{brand && <div className="nav_bar_brand">{brand}</div>}
 				{children && (
 					<nav ref={linksRef} className="nav_bar_links">
@@ -182,6 +187,9 @@ export const NavBar = ({
 		</header>
 	);
 };
+
+const measureNavBar = (inner: HTMLElement) =>
+	inner.closest(".app_shell_header") ? null : inner.parentElement;
 
 // ── LocaleSwitcher (내장 i18n 드롭다운) ────────────────────────────────────
 

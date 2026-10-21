@@ -18,6 +18,11 @@ body:has(.bottom_nav) {
   --bt-bottom-nav-inset: var(--bt-bottom-nav-total-height);
 }
 
+// Tab 으로 내려갈 때 포커스가 바 밑에 숨지 않게 (WCAG 2.4.11, theme.scss 의 html scroll-padding 참고).
+html:has(.bottom_nav) {
+  scroll-padding-bottom: var(--bt-bottom-nav-total-height);
+}
+
 .bottom_nav {
   position: fixed;
   left: 0;
