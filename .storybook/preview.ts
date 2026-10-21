@@ -134,7 +134,9 @@ const preview: Preview = {
 			test: "error",
 			// axe-core 는 `target-size`(WCAG 2.2 SC 2.5.8, 24px AA)를 기본으로 꺼 둔다 - 켜지 않으면
 			// 아이콘 버튼·칩 닫기처럼 토큰 밖에서 크기가 정해지는 타깃을 CI 가 보지 않는다.
-			config: { rules: [{ id: "target-size", enabled: true }] },
+			// `config.rules` 가 아니라 `options.rules` 에 둔다 - 파라미터 병합에서 배열은 교체돼, 스토리가
+			// `config.rules` 로 color-contrast 를 끄면 이 규칙까지 사라진다. 객체는 깊게 병합된다.
+			options: { rules: { "target-size": { enabled: true } } },
 		},
 		// Controls/Actions 패널 활성 — args가 명시된 story에서 size/variant 등 enum prop을 dropdown으로 조작 가능.
 		// disableSaveFromUI: UI에서 args 변경 시 뜨는 "Update story / Create new story" 다이얼로그 비활성 (잡음 제거)
