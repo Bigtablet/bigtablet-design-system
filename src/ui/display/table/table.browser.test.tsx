@@ -1,6 +1,7 @@
+/// <reference types="@vitest/browser-playwright" />
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { userEvent } from "vitest/browser";
+import { cdp, userEvent } from "vitest/browser";
 import { Table, type TableColumn } from "./index";
 import "./style.scss";
 
@@ -73,6 +74,30 @@ describe("Table clickable row focus (Chromium)", () => {
 			expect(first).toContain("rgb(255, 255, 255)");
 		} finally {
 			document.documentElement.removeAttribute("data-theme");
+		}
+	});
+
+	// theme.scss 의 forced-colors 전역 outline 은 offset 을 important 로 덮지 않는다 -
+	// 행은 셀 안쪽(-2px)에 그리는 자기 offset 을 유지해야 이웃 행과 겹치지 않는다.
+	it("keeps the row's inset outline offset in forced-colors mode", async () => {
+		const setForcedColors = (value: "active" | "none") =>
+			cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
+		await setForcedColors("active");
+		try {
+			render(
+				<>
+					<button type="button">앞</button>
+					<Table columns={columns} data={rows} keyExtractor={(r) => r.id} onRowClick={() => {}} />
+				</>,
+			);
+			await userEvent.click(screen.getByRole("button", { name: "앞" }));
+			await userEvent.keyboard("{Tab}");
+			const style = getComputedStyle(document.activeElement as HTMLElement);
+			expect(style.outlineStyle).toBe("solid");
+			expect(style.outlineWidth).toBe("2px");
+			expect(style.outlineOffset).toBe("-2px");
+		} finally {
+			await setForcedColors("none");
 		}
 	});
 });
