@@ -35,6 +35,8 @@ const ZOOM_STEP = 0.01;
 const PAN_STEP = 8;
 /** 키보드 `+`/`-` 한 번의 배율 변화량. */
 const ZOOM_KEY_STEP = 0.1;
+/** 이 거리(px) 안에서 눌렀다 떼면 드래그가 아니라 탭 - 탭한 지점을 가운데로 옮긴다. */
+const TAP_SLOP = 4;
 /** 마우스 휠 한 번의 배율 변화 계수. */
 const WHEEL_ZOOM_FACTOR = 0.0015;
 
@@ -76,7 +78,7 @@ export interface ImageCropperProps
 	className?: string;
 	/** 뷰포트 접근성 레이블. 기본 "이미지 위치와 배율 조정". */
 	label?: string;
-	/** 뷰포트 아래 조작 안내 문구. 기본 "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요." */
+	/** 뷰포트 아래 조작 안내 문구. 기본 "드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요." */
 	hint?: string;
 	/** 축소 버튼 접근성 레이블. 기본 "축소". */
 	zoomOutLabel?: string;
@@ -97,8 +99,8 @@ const resolveOutputType = (
 };
 
 /**
- * 업로드 전에 이미지에서 보일 정사각 영역을 정하는 크로퍼. 뷰포트 안에서 **드래그(또는 방향키)**
- * 로 위치를, **휠·슬라이더·＋/－ 버튼(또는 `+`/`-` 키)** 으로 배율을 맞춘다. 모달은 포함하지
+ * 업로드 전에 이미지에서 보일 정사각 영역을 정하는 크로퍼. 뷰포트 안에서 **드래그·탭(또는 방향키)**
+ * 으로 위치를(탭하면 그 지점이 가운데로 온다), **휠·슬라이더·＋/－ 버튼(또는 `+`/`-` 키)** 으로 배율을 맞춘다. 모달은 포함하지
  * 않으므로 소비자가 `Modal` 등으로 감싸고, 적용 버튼에서 `ref.crop()` 을 호출해 Blob 을 받는다.
  *
  * ```tsx
@@ -242,6 +244,26 @@ export function ImageCropper({
 		}
 	};
 
+	// 드래그 없이 탭(클릭)하면 그 지점을 뷰포트 가운데로 옮긴다 - 드래그를 못 하는 사용자의 단일 포인터
+	// 대안(WCAG 2.5.7). 누른 지점과 그때의 위치를 기준으로 해 임계값 안의 미세한 움직임은 결과에 섞이지 않는다.
+	const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+		const drag = dragRef.current;
+		// 주 버튼만 탭이다 - 우클릭(컨텍스트 메뉴)·보조 버튼이 위치를 바꾸면 안 된다. 터치·펜은 항상 0.
+		if (drag?.pointerId === event.pointerId && event.button === 0 && imageSize) {
+			const movedX = event.clientX - drag.x;
+			const movedY = event.clientY - drag.y;
+			if (Math.hypot(movedX, movedY) <= TAP_SLOP) {
+				const rect = event.currentTarget.getBoundingClientRect();
+				const toCenter = {
+					x: drag.offset.x + rect.left + rect.width / 2 - drag.x,
+					y: drag.offset.y + rect.top + rect.height / 2 - drag.y,
+				};
+				setOffset(clampCropOffset(toCenter, imageSize, viewportSize, zoom));
+			}
+		}
+		handlePointerEnd(event);
+	};
+
 	// 휠 줌은 React 의 onWheel 이 아니라 네이티브 리스너로 붙인다 — React 는 wheel 을 루트에
 	// `passive: true` 로 위임하므로 핸들러 안의 preventDefault 가 무시되고("Unable to
 	// preventDefault inside passive event listener invocation") 확대하는 동안 뒤 페이지가 함께
@@ -364,7 +386,7 @@ export function ImageCropper({
 				tabIndex={imageSize ? 0 : -1}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}
-				onPointerUp={handlePointerEnd}
+				onPointerUp={handlePointerUp}
 				onPointerCancel={handlePointerEnd}
 				onKeyDown={handleKeyDown}
 			>
