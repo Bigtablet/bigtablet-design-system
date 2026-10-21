@@ -7,6 +7,7 @@ import { AppShell } from "./index";
 import "./style.scss";
 
 const topInset = () => document.documentElement.style.getPropertyValue("--bt-top-inset");
+const insetOf = (el: HTMLElement) => `${Math.ceil(el.getBoundingClientRect().height)}px`;
 
 // 헤더 밑에 걸치도록 스크롤한 뒤 Tab 으로 포커스한다 - 가려지지 않았다면 헤더 아래로 스크롤돼 있어야 한다.
 const tabIntoTargetUnderHeader = async (header: HTMLElement) => {
@@ -37,10 +38,8 @@ describe("AppShell sticky header does not obscure focus (WCAG 2.4.11, Chromium)"
 			</AppShell>,
 		);
 		const header = document.querySelector(".app_shell_header") as HTMLElement;
-		await expect.poll(topInset).toBe(`${header.offsetHeight}px`);
-		expect(getComputedStyle(document.documentElement).scrollPaddingTop).toBe(
-			`${header.offsetHeight}px`,
-		);
+		await expect.poll(topInset).toBe(insetOf(header));
+		expect(getComputedStyle(document.documentElement).scrollPaddingTop).toBe(insetOf(header));
 
 		const top = await tabIntoTargetUnderHeader(header);
 		expect(top).toBeGreaterThanOrEqual(header.getBoundingClientRect().bottom);
@@ -58,7 +57,7 @@ describe("AppShell sticky header does not obscure focus (WCAG 2.4.11, Chromium)"
 			</>,
 		);
 		const header = document.querySelector(".nav_bar") as HTMLElement;
-		await expect.poll(topInset).toBe(`${header.offsetHeight}px`);
+		await expect.poll(topInset).toBe(insetOf(header));
 		unmount();
 		expect(topInset()).toBe("");
 	});

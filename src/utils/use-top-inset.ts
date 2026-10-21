@@ -26,7 +26,9 @@ export const useTopInset = <T extends HTMLElement>(
 			if (!enabled || !target || typeof ResizeObserver === "undefined") return;
 			const root = document.documentElement;
 			const observer = new ResizeObserver(() => {
-				root.style.setProperty("--bt-top-inset", `${target.offsetHeight}px`);
+				// offsetHeight 는 반올림이라 소수 높이(줌·rem)에서 최대 0.5px 모자란다 - 가림 방지는 올림이 안전.
+				const height = Math.ceil(target.getBoundingClientRect().height);
+				root.style.setProperty("--bt-top-inset", `${height}px`);
 			});
 			observer.observe(target);
 			return () => {

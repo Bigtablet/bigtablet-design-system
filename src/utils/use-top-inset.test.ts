@@ -15,7 +15,7 @@ const topInset = () => document.documentElement.style.getPropertyValue("--bt-top
 
 const header = (height: number) => {
 	const el = document.createElement("div");
-	Object.defineProperty(el, "offsetHeight", { value: height });
+	el.getBoundingClientRect = () => ({ height }) as DOMRect;
 	return el;
 };
 
@@ -33,6 +33,12 @@ describe("useTopInset", () => {
 
 		cleanup?.();
 		expect(topInset()).toBe("");
+	});
+
+	it("rounds a fractional height up so the header is never under-padded", () => {
+		const { result } = renderHook(() => useTopInset(true));
+		result.current(header(60.4));
+		expect(topInset()).toBe("61px");
 	});
 
 	it("measures the element picked by measure", () => {
