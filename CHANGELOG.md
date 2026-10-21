@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [3.32.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.32.1) - 2026-10-21
+- (렌더 변경) 가로 `Stepper` 의 마지막 단계가 오른쪽 끝에 붙습니다 - 이전에는 단계마다 같은 폭을 차지해 2단계면 절반, 3단계면 약 70% 지점에서 끝나고 오른쪽이 비었습니다. 마지막 단계는 내용 폭만 차지하고, 라벨이 폭보다 길면 줄바꿈됩니다
+
 ## [3.32.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.32.0) - 2026-10-19
 - `FilterBar` 에 `submitMode="instant"` 가 생겼습니다 - 필터를 바꾸면 바로 적용되고 검색 버튼 · Enter 제출이 없습니다. 필드 배치와 초기화 버튼은 그대로입니다
 - (렌더 변경) 포커스 링이 바뀌었습니다 - 배경색 2px 틈 + 진한 2px 링(라이트 `#121212` · 다크 흰색)으로 주변 색 대비 3:1 을 넘깁니다(WCAG 1.4.11). `--bt-focus-ring*` · `token.$focus_ring*` · `a11y.focusRing*` 값이 함께 바뀌었고, Vanilla 포커스 링도 같은 토큰을 씁니다
