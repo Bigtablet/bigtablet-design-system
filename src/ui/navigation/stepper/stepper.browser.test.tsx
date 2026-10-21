@@ -38,7 +38,10 @@ describe("Stepper horizontal layout (Chromium)", () => {
 				<Stepper
 					steps={[
 						{ id: "a", label: "입력" },
-						{ id: "b", label: "고객 정보 매핑과 중복 검증을 모두 마친 뒤 일괄 등록 완료를 확인하는 단계" },
+						{
+							id: "b",
+							label: "고객 정보 매핑과 중복 검증을 모두 마친 뒤 일괄 등록 완료를 확인하는 단계",
+						},
 					]}
 					current={0}
 				/>
