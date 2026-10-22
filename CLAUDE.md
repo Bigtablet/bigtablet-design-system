@@ -31,7 +31,6 @@ src/
 │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
 │   ├── tokens.json      # Designer JSON tokens
 │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
-│   ├── global.css
 │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   └── layout/          # SCSS only (no TS)

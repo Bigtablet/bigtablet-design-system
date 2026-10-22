@@ -15,6 +15,7 @@
 			"import": "./dist/index.js"
 		},
 		"./style.css": "./dist/index.css",
+		"./tailwind.css": "./dist/tailwind.css",
 		"./scss/token": "./dist/styles/token.scss",
 		"./vanilla": {
 			"style": "./dist/vanilla/bigtablet.min.css",
@@ -37,7 +38,8 @@
 		"**/*.scss"
 	],
 	"scripts": {
-		"build": "tsup && pnpm run copy:scss && pnpm run build:vanilla",
+		"build": "tsup && pnpm run copy:scss && pnpm run build:vanilla && pnpm run build:tailwind",
+		"build:tailwind": "node scripts/build-tailwind.mjs",
 		"build:vanilla": "sh scripts/build-vanilla.sh",
 		"copy:scss": "sh scripts/copy-scss.sh",
 		"dev": "tsup --watch",

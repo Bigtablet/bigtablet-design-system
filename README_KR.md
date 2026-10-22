@@ -146,6 +146,23 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 
 <br />
 
+### Tailwind CSS (v4)
+
+```css
+/* app/globals.css - 레이어 순서를 먼저 고정하도록 tailwindcss 보다 앞에 */
+@import "@bigtablet/design-system/tailwind.css";
+@import "tailwindcss";
+```
+
+```tsx
+import "@bigtablet/design-system/style.css"; // --bt-* 값 정의
+<p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
+```
+
+`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로 매핑한다(값은 `var()` 그대로라 다크 모드를 따라간다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮는다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)은 `@layer reset { ... }` 에 넣어야 한다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이긴다.
+
+<br />
+
 ## Vanilla JS
 
 서버 렌더링 환경 (Thymeleaf, JSP, PHP, Django) :

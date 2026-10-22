@@ -146,6 +146,23 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 
 <br />
 
+### Tailwind CSS (v4)
+
+```css
+/* app/globals.css - import before tailwindcss so the layer order is fixed first */
+@import "@bigtablet/design-system/tailwind.css";
+@import "tailwindcss";
+```
+
+```tsx
+import "@bigtablet/design-system/style.css"; // defines the --bt-* values
+<p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
+```
+
+`tailwind.css` maps every `--bt-color-*` to `--color-bt-*` and `--bt-elevation-*` / `--bt-focus-ring*` to `--shadow-bt-*` (values stay `var()`, so dark mode follows), and makes `dark:` match ThemeProvider (`data-theme="dark"`, or OS dark when `data-theme` is unset). Component CSS lives in the `bigtablet` cascade layer (`theme, base, reset, bigtablet, components, utilities`), so utilities and your own unlayered CSS override it without specificity fights: `<Button className="bg-bt-text-brand" />`. Element-selector resets of your own (`* { padding: 0 }`, `button { background: none }`) must go in `@layer reset { ... }` - unlayered, they beat every DS component.
+
+<br />
+
 ## Vanilla JS
 
 For server-rendered apps (Thymeleaf, JSP, PHP, Django):
