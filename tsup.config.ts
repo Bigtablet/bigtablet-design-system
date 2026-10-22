@@ -34,6 +34,21 @@ export default defineConfig([
 			}
 
 			fs.writeFileSync(filePath, newContent);
+
+			// 컴포넌트 CSS 를 `bigtablet` cascade layer 에 넣는다 - 소비자의 레이어 밖 CSS·Tailwind 유틸리티가
+			// 특이도 싸움 없이 className 으로 덮을 수 있게. 순서 선언은 리셋(Tailwind `base`, 앱 `reset`)보다 위,
+			// 유틸리티보다 아래에 둔다. 선언은 처음 나온 것이 순서를 정하므로 Tailwind 가 먼저 로드돼도 리셋보다
+			// 아래로 가는 일은 없다(그 경우 유틸리티보다 위에 붙어 지금과 같은 동작 - `!` 로 덮는다).
+			// 소비자의 요소 선택자 리셋(`* { padding: 0 }` 등)은 레이어 밖이면 DS 를 이기므로 `@layer reset` 에 둬야 한다.
+			const cssPath = path.join(process.cwd(), "dist/index.css");
+			const css = fs.readFileSync(cssPath, "utf-8");
+			if (!css.includes("@layer bigtablet {")) {
+				const body = css.replace(/^@charset "UTF-8";\n/, "");
+				fs.writeFileSync(
+					cssPath,
+					`@charset "UTF-8";\n@layer theme, base, reset, bigtablet, components, utilities;\n@layer bigtablet {\n${body}}\n`,
+				);
+			}
 		},
 	},
 	// Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.)
