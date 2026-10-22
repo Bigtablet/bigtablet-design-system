@@ -15,7 +15,6 @@ bigtablet-design-system/
 │   │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
 │   │   ├── tokens.json      # 디자이너 JSON 토큰
 │   │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
-│   │   ├── global.css
 │   │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   │   ├── icon/            # 아이콘 사이즈 (xs-xl)
