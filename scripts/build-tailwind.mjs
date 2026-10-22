@@ -8,7 +8,9 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const theme = readFileSync("src/styles/theme.scss", "utf-8");
-const names = [...new Set(theme.match(/^\s*--bt-[a-z0-9-]+(?=\s*:)/gm).map((n) => n.trim()))];
+const names = [
+	...new Set((theme.match(/^\s*--bt-[a-z0-9-]+(?=\s*:)/gm) ?? []).map((n) => n.trim())),
+];
 
 const map = (prefix, to) =>
 	names
