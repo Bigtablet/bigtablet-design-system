@@ -157,7 +157,7 @@ token.$easing_exit   // cubic-bezier(0.4, 0, 1, 1)     - ease-in (가속 퇴출)
 | Panel 펼침/닫힘 | `transition_base` | `easing_enter` | `grid-template-rows`, `max-height` |
 | Modal/Toast 진입 | `transition_enter_base` | `easing_enter` | `opacity`, `transform` |
 | Modal/Toast 퇴출 | `transition_exit_fast` | `easing_exit` | `opacity`, `transform` |
-| Tooltip/Menu pop | `useSpringPresence` hook | spring | `opacity`, `scale` |
+| 오버레이·팝업 진입/퇴출 | `duration_presence` | `easing_presence` (`linear()` 스프링 근사) | `@include token.presence($from)` - `opacity`, `transform` |
 
 #### 3. Height auto transition
 
@@ -194,16 +194,25 @@ WCAG 2.1 SC 2.3.3 - `prefers-reduced-motion: reduce` 사용자 위해 모든 컴
 
 #### 5. React 컴포넌트의 진입/퇴출 애니메이션
 
-`unmount` 시점에 exit animation을 위해 `useSpringPresence` hook 사용 (`src/utils/use-spring-presence.ts`). Modal/Toast/Tooltip/Menu 패턴.
+모션은 CSS(`token.presence` mixin - 진입은 `@starting-style`, 퇴출은 `[data-state="closed"]` 로의 transition)가 하고,
+퇴출이 끝날 때까지 마운트를 붙잡는 건 `usePresence` hook(`src/utils/use-presence.ts`)이 한다. JS 애니메이션 라이브러리는 쓰지 않는다
+(react-spring 은 트리 쉐이킹이 안 돼 4.0.0 에서 뺐다). Modal/Drawer/Alert/Toast/Tooltip/Popover 패턴.
 
 ```tsx
-import { animated } from "@react-spring/web";
-import { useSpringPresence } from "../../utils";
+import { usePresence } from "../../utils";
 
-// visible=false 가 되면 exit 애니메이션 후 onExitComplete 발화 → 부모에서 unmount.
-const style = useSpringPresence({ visible: open, onExitComplete: () => setMounted(false) });
-return <animated.div style={style}>...</animated.div>;
+const panelRef = React.useRef<HTMLDivElement>(null);
+// open=false 가 되면 panelRef 의 transition 이 끝난 뒤 false 를 돌려주고 onExited 를 부른다.
+const mounted = usePresence(open, [panelRef], onExited);
+if (!mounted) return null;
+return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed"}>...</div>;
 ```
+
+```scss
+.panel { @include token.presence(scale(0.96)); } // 인자 = 닫힌 상태 transform. 전면 딤에는 주지 않는다
+```
+
+퇴출 모션이 필요 없는 팝업(Menu·Dropdown·Combobox)은 `data-state` 없이 `open &&` 로 렌더하면 진입만 돈다.
 
 #### 6. 금지 사항
 
