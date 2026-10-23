@@ -6,6 +6,7 @@ import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } fr
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { matchesSearch } from "../../../utils/hangul-search";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
@@ -114,9 +115,6 @@ export interface DropdownMultipleProps extends DropdownCommonProps {
 
 export type DropdownProps = DropdownSingleProps | DropdownMultipleProps;
 
-/** 검색 매칭용 정규화 - 대소문자·공백 무시 */
-const normalizeForSearch = (s: string) => s.toLowerCase().replace(/\s+/g, "");
-
 /**
  * 드롭다운 컴포넌트를 렌더링한다.
  * 제어형/비제어형 상태를 지원하며, 키보드/마우스 상호작용과 정적 라벨을 관리한다.
@@ -165,10 +163,10 @@ export const Dropdown = (props: DropdownProps) => {
 		props.multiple === true ? ((props.defaultValue as string[] | undefined) ?? []) : [],
 	);
 
-	// 검색 상태 - searchText 는 표시용(IME 조합 중에도 즉시 반영), committedQuery 는 필터용(조합 완료 시 반영)
+	// 검색어 - IME 조합 중인 글자도 바로 필터에 쓴다. 조합이 끝나기를 기다리면 초성 하나(`ㄱ`)는
+	// 영영 반영되지 않고, `서울` 의 마지막 글자를 치는 동안 `서` 까지만 걸린다. 조합 중의 Enter 는
+	// useListboxPopup 이 `isComposing` 으로 걸러낸다.
 	const [searchText, setSearchText] = useState("");
-	const [committedQuery, setCommittedQuery] = useState("");
-	const isComposingRef = useRef(false);
 
 	const searchRef = useRef<HTMLInputElement>(null);
 
@@ -185,10 +183,8 @@ export const Dropdown = (props: DropdownProps) => {
 	// 검색 필터 적용된 노출 옵션. searchable 아니거나 쿼리 없으면 전체.
 	const visibleOptions = useMemo<DropdownOption[]>(() => {
 		if (!searchable) return options;
-		const q = normalizeForSearch(committedQuery);
-		if (q === "") return options;
-		return options.filter((o) => normalizeForSearch(o.label).includes(q));
-	}, [options, searchable, committedQuery]);
+		return options.filter((o) => matchesSearch(o.label, searchText));
+	}, [options, searchable, searchText]);
 
 	// ── 선택 처리 ──────────────────────────────────────────────────────────
 
@@ -266,8 +262,6 @@ export const Dropdown = (props: DropdownProps) => {
 	useEffect(() => {
 		if (!isOpen) {
 			setSearchText("");
-			setCommittedQuery("");
-			isComposingRef.current = false;
 		}
 	}, [isOpen]);
 
@@ -426,21 +420,7 @@ export const Dropdown = (props: DropdownProps) => {
 											: undefined
 									}
 									value={searchText}
-									onChange={(e) => {
-										const v = e.target.value;
-										setSearchText(v);
-										// 조합 중에는 필터 갱신 보류 (mid-composition 리스트 thrash 방지)
-										if (!isComposingRef.current) setCommittedQuery(v);
-									}}
-									onCompositionStart={() => {
-										isComposingRef.current = true;
-									}}
-									onCompositionEnd={(e) => {
-										isComposingRef.current = false;
-										const v = e.currentTarget.value;
-										setSearchText(v);
-										setCommittedQuery(v);
-									}}
+									onChange={(e) => setSearchText(e.target.value)}
 									onKeyDown={onSearchKeyDown}
 								/>
 							</div>

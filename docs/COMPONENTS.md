@@ -369,7 +369,7 @@ import Link from "next/link";
 > `searchable` 을 열면 패널의 검색 입력도 `combobox` 라 둘이 된다 - 테스트에서는 이름으로
 > 가른다. 활성 옵션 추적(`aria-activedescendant`)은 그때 입력 쪽이 갖는다.
 >
-> **높이는 `min(288px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
+> **높이는 `min(300px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
 > 자라고 그 안에서 스크롤한다 - 상한이 없던 3.19.1 까지는 뷰포트 461px 에서 목록이 130px
 > 넘쳤다(#621). 위아래 어느 쪽도 목록이 다 들어가지 않으면 **공간이 더 넓은 쪽**으로 열린다.
 > 검색 행은 줄지 않고 옵션 목록만 줄어든다. `Combobox`·`Menu`·`Popover`·`Tooltip` 도 같은
@@ -455,7 +455,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
 | ~~`onChange`~~ | `onValueChange` 와 동일 시그니처 | - | **deprecated** (v3.3.0, `onValueChange` 의 alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
-| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터) |
+| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터 - 대소문자·공백 무시, 한글 초성 `ㅅㅇ` · 조합 중인 글자 `서우` 도 찾는다) |
 | `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
 | `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
 | `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
