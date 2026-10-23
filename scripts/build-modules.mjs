@@ -15,7 +15,6 @@ import {
 	mkdirSync,
 	readdirSync,
 	readFileSync,
-	rmSync,
 	statSync,
 	writeFileSync,
 } from "node:fs";
@@ -143,9 +142,6 @@ for (const [abs, css] of compiled) {
 	writeFileSync(target, out);
 	cssBytes += out.length;
 }
-
-// 한 덩어리 JS 는 package.json 이 가리키지 않는다 - 배포물에 남기지 않는다
-rmSync("dist/index.js", { force: true });
 
 console.log(
 	`✓ dist/esm: JS ${jsFiles.length}개, CSS ${styles.size}개 (${(cssBytes / 1024).toFixed(1)}KB)`,

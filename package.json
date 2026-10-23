@@ -38,7 +38,7 @@
 		"**/*.scss"
 	],
 	"scripts": {
-		"build": "tsup && node scripts/build-modules.mjs && pnpm run copy:scss && pnpm run build:vanilla && pnpm run build:tailwind",
+		"build": "tsup && pnpm run copy:scss && pnpm run build:vanilla && pnpm run build:tailwind",
 		"build:tailwind": "node scripts/build-tailwind.mjs",
 		"tokens": "node scripts/build-tokens.mjs",
 		"check:tokens": "node scripts/build-tokens.mjs --check",

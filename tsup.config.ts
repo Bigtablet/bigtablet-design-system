@@ -35,6 +35,8 @@ export default defineConfig([
 					`@charset "UTF-8";\n@layer theme, base, reset, bigtablet, components, utilities;\n@layer bigtablet {\n${body}}\n`,
 				);
 			}
+			// 이 JS 는 package.json 이 가리키지 않는다(진입점은 dist/esm) - 배포물에 남기지 않는다
+			fs.rmSync(path.join(process.cwd(), "dist/index.js"), { force: true });
 		},
 	},
 	// 모듈 단위 ESM (dist/esm) - 파일 하나를 모듈 하나로. 사용처 번들러가 쓰지 않는 컴포넌트를 JS·CSS 째로
@@ -66,6 +68,8 @@ export default defineConfig([
 		esbuildOptions(options) {
 			options.minifyWhitespace = true;
 		},
+		// import 경로 보정 · 컴포넌트 CSS 컴파일. `pnpm build` 와 `pnpm dev`(watch 재빌드마다) 모두 여기서 돈다
+		onSuccess: "node scripts/build-modules.mjs",
 	},
 	// Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.)
 	{
