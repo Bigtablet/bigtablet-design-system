@@ -247,7 +247,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 95.45% stmts / 93.39% branch / 95.99% funcs / 96.7% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 95.48% stmts / 93.43% branch / 96% funcs / 96.72% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
