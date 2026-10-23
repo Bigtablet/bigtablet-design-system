@@ -1,5 +1,7 @@
 @use "../colors" as colors;
 @use "../motion" as motion;
+@forward "tokens";
+@use "tokens" as *;
 
 /* Flex Utilities */
 @mixin flex_center { display: flex; align-items: center; justify-content: center; }
@@ -84,5 +86,3 @@
 }
 
 /* Overlay list scroll cap - dropdown/menu/select 등 오버레이 옵션 리스트의 최대 높이 */
-// 18.75rem = 40px 행 7.5개 - 다음 행이 절반 보여 "더 있다" 로 읽힌다. 18rem(7.2개)일 땐 8px 띠만 걸쳐 잘린 것처럼 보였다.
-$overlay_list_max_height: 18.75rem;

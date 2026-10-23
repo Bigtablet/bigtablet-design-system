@@ -1,0 +1,23 @@
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
+
+// CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환.
+// fallback 값은 standalone import (colors 미포함) 시 light 동작 보장.
+$color_skeleton_base: var(--bt-color-skeleton-base, #F3F3F3);
+$color_skeleton_wave: var(--bt-color-skeleton-wave, #F0F0F0);
+$color_skeleton_highlight: var(--bt-color-skeleton-highlight, #FAFAFA);
+$skeleton_gradient: linear-gradient(90deg, var(--bt-color-skeleton-base, #F3F3F3) 25%, var(--bt-color-skeleton-highlight, #FAFAFA) 37%, var(--bt-color-skeleton-wave, #F0F0F0) 63%);
+$skeleton_radius_sm: 6px;
+$skeleton_radius_md: 8px;
+$skeleton_radius_lg: 12px;
+// 4px
+$skeleton_height_xs: 0.25rem;
+// 8px
+$skeleton_height_sm: 0.5rem;
+// 12px
+$skeleton_height_md: 0.75rem;
+// 16px
+$skeleton_height_lg: 1rem;
+// 20px
+$skeleton_height_xl: 1.25rem;
+$skeleton_animation_duration: 1.4s;
+$skeleton_animation_timing: ease-in-out;

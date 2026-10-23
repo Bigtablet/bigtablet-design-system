@@ -1,12 +1,2 @@
-// ── Base opacity ─────────────────────────────────────────────────────────────
-
-$opacity_0:   0;
-$opacity_5:   0.05;
-$opacity_8:   0.08;
-$opacity_12:  0.12;
-$opacity_16:  0.16;
-$opacity_38:  0.38;
-$opacity_50:  0.5;
-$opacity_80:  0.8;
-$opacity_90:  0.9;
-$opacity_100: 1;
+// 값은 tokens.json 에서 생성한 _tokens.scss 에 있다 - 고칠 때는 tokens.json 을 고치고 `pnpm tokens`.
+@forward "tokens";

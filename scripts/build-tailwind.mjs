@@ -1,6 +1,6 @@
 // build-tailwind.mjs - dist/tailwind.css 생성 (Tailwind v4 소비자용 토큰 브리지)
 //
-// theme.scss 의 CSS 변수 이름만 읽어 `@theme inline` 으로 매핑한다. 값은 복사하지 않고 var() 로 가리키므로
+// theme.scss · _theme-tokens.scss 의 CSS 변수 이름만 읽어 `@theme inline` 으로 매핑한다. 값은 복사하지 않고 var() 로 가리키므로
 // light/dark 전환·테마 덮어쓰기가 style.css 와 그대로 연동되고, theme.scss 에 변수가 늘면 자동으로 따라온다.
 //   --bt-color-text-heading → --color-bt-text-heading → `text-bt-text-heading`
 //   --bt-elevation-level2   → --shadow-bt-level2       → `shadow-bt-level2`
@@ -10,7 +10,10 @@
 // 변수 정의(:root)는 style.css 가 공급하므로 이 파일만으로는 색이 나오지 않는다.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
-const theme = readFileSync("src/styles/theme.scss", "utf-8");
+// 토큰 변수는 tokens.json 에서 생성한 _theme-tokens.scss 에, 런타임 계약 변수는 theme.scss 에 있다
+const theme = ["src/styles/_theme-tokens.scss", "src/styles/theme.scss"]
+	.map((path) => readFileSync(path, "utf-8"))
+	.join("\n");
 const names = [
 	...new Set((theme.match(/^\s*--bt-[a-z0-9-]+(?=\s*:)/gm) ?? []).map((n) => n.trim())),
 ];

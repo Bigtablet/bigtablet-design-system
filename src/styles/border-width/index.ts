@@ -1,4 +1,4 @@
-// ── Base border-width tokens ──────────────────────────────────────────────────
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
 
 export const baseBorderWidth = {
 	"0": "0px",
@@ -6,11 +6,9 @@ export const baseBorderWidth = {
 	"2": "2px",
 } as const;
 
-// ── Semantic border-width tokens ──────────────────────────────────────────────
-
 export const borderWidth = {
-	none: baseBorderWidth["0"],
-	standard: baseBorderWidth["1"],
-	thick: baseBorderWidth["2"],
-	indicator: baseBorderWidth["2"],
+	none: "0px",
+	standard: "1px",
+	thick: "2px",
+	indicator: "2px",
 } as const;
