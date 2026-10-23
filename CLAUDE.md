@@ -29,7 +29,7 @@ src/
 ├── index.ts             # 진입점 (React/Next.js 공용 - 빌드 시 "use client" 자동 주입)
 ├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
 │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
-│   ├── tokens.json      # Designer JSON tokens
+│   ├── tokens.json      # 토큰 원본 - pnpm tokens 가 각 폴더 _tokens.scss · index.ts 와 _theme-tokens.scss 를 생성
 │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
 │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
@@ -94,7 +94,7 @@ const buttonClassName = cn(
 ```
 
 ### Design Tokens
-Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`):
+Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`). 값의 원본은 `tokens.json` 이고 `_tokens.scss` · `index.ts` · `_theme-tokens.scss` 는 `pnpm tokens` 생성 파일이다 - 직접 고치지 말 것:
 - `colors/` - Brand, background, text, status colors
 - `spacing/` - xs(4px) to 5xl(48px)
 - `typography/` - Font families, heading/body styles
@@ -254,6 +254,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
   pnpm coverage:docs     # 커버리지를 재고 아래 Coverage 줄·docs/TESTING.md 표를 갱신 (릴리즈 PR 에서 CI 가 자동으로 돈다)
+  pnpm tokens            # tokens.json → SCSS·TS·테마 변수 생성 (check:tokens 는 커밋본과 같은지만 본다)
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)

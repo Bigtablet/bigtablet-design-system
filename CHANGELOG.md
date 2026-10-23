@@ -9,6 +9,8 @@
 - **Breaking (SCSS)** `token.$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자가 아니라 `var(--bt-*, 기본값)` 입니다 - `calc()` 밖의 Sass 계산(`token.$spacing_48 * 2`, `-token.$spacing_4`)은 `calc(2 * #{token.$spacing_48})` 로 바꾸거나 원값 `token.$spacing_base_48` 을 쓰세요. 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
 - Tailwind v4 연결 파일 `@bigtablet/design-system/tailwind.css` 가 생겼습니다 - `bg-bt-text-brand` · `shadow-bt-level2` · `rounded-bt-md` · `p-bt-16` · `font-bt` 유틸과, ThemeProvider 와 같은 규칙의 `dark:` 를 씁니다
 - `cssVars` 에 `radius` · `spacing` · `fontFamily` 가 생겼습니다 (styled-components · 인라인 스타일용)
+- 디자인 토큰 원본이 `src/styles/tokens.json` 하나가 됐습니다 - SCSS · TS · 테마 CSS 변수를 `pnpm tokens` 로 생성합니다. CSS 결과는 이전과 같습니다
+- (렌더 변경) TS 토큰 중 SCSS 와 어긋나 있던 값을 SCSS 에 맞췄습니다 - `motion.transition.slide` 가 `0.25s ease-in-out` → `0.25s cubic-bezier(0.16, 1, 0.3, 1)`, `skeleton.height.*` 가 `4px`… → `0.25rem`…(기본 글자 크기에서 같은 크기), `typography.fontFamily.primary` 따옴표가 `'` → `"`. 인라인 스타일로 이 값을 쓰던 화면만 해당합니다
 - **Breaking** `useSpringHover` · `useSpringPresence` 를 지웠고 런타임 의존성 `@react-spring/web` 이 없어졌습니다 - hover lift 는 CSS `:hover` · `:focus-visible` 로, 진입/퇴출은 SCSS `token.presence` mixin 으로 옮기세요. 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
 - 번들이 작아졌습니다 - `Button` 하나만 import 하면 gzip 34.2KB → 5.2KB, 전체 import 는 60.1KB → 42.4KB 입니다. 쓰지 않는 컴포넌트가 트리 쉐이킹으로 빠지고, `dist/index.css` 가 압축돼 나갑니다(gzip 21.9KB → 20.6KB)
 - (렌더 변경) Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox 의 열고 닫는 모션을 CSS 가 그립니다 - 곡선은 예전 스프링을 근사해 거의 같습니다. 오버레이에 인라인 `opacity` · `transform` 대신 `data-state="open" | "closed"` 가 붙습니다
