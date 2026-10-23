@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [다음 릴리즈 (radius·spacing·font SCSS 토큰이 var() 로)](#다음-릴리즈-radiusspacingfont-scss-토큰이-var-로)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -30,6 +31,44 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## 다음 릴리즈 (radius·spacing·font SCSS 토큰이 var() 로)
+
+> 릴리즈 버전이 정해지면 제목을 `vX.Y.Z (...)` 로 바꾼다.
+
+`scss/token` 의 `$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자에서 `var(--bt-radius-md, 8px)` 같은 문자열로 바뀝니다. 사용처가 `:root { --bt-radius-md: 4px }` 로 덮어쓰면 DS 컴포넌트가 따라가게 하려는 변경입니다([THEMING](./THEMING.md#모서리간격글꼴-덮어쓰기)). 덮어쓰지 않으면 렌더 결과는 같습니다.
+
+### 무엇이 바뀌나
+
+- 원래 숫자는 `$radius_base_*` · `$spacing_base_*` · `$font_family_base_primary` 로 남습니다.
+- 값이 문자열이라 **`calc()` 밖의 Sass 산술**이 깨집니다. `token.$spacing_48 * 2` 는 컴파일 에러(`Undefined operation`)이고, `-token.$spacing_4` 는 에러 없이 무효한 `-var(...)` 를 냅니다. `math.div`·비교 연산도 마찬가지입니다.
+- `calc(-1 * token.$spacing_24)` · `calc(token.$spacing_16 + var(--x))` · `clamp(token.$spacing_48, 6vw, calc(token.$spacing_48 * 2))` 처럼 `calc()` 안에서 계산하던 코드는 그대로 동작합니다.
+
+### 앱 쪽에서 할 일
+
+```scss
+// before
+padding-bottom: token.$spacing_48 * 2;
+transform: translateY(-token.$spacing_4);
+
+// after - 덮어쓰기를 따라간다
+padding-bottom: calc(2 * #{token.$spacing_48});
+transform: translateY(calc(-1 * #{token.$spacing_4}));
+
+// after - 고정 숫자가 필요하면 (Sass 함수 인자, 비교 등)
+padding-bottom: token.$spacing_base_48 * 2;
+```
+
+사내 사용처 (2026-10-23 grep, `calc()` 밖 산술):
+
+| 저장소 | 위치 |
+|---|---|
+| bigtablet-notiiv-monorepo-web | `apps/status/src/app/page.module.scss:8` (`token.$spacing_48 * 2`) |
+| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/page-skeleton.module.scss:9,13` (`* 2`, `* 1.5`) |
+
+bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없습니다.
 
 ---
 

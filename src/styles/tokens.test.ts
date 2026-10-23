@@ -15,6 +15,7 @@ import { elevation } from "./elevation";
 import { radius } from "./radius";
 import { skeleton } from "./skeleton";
 import { spacing } from "./spacing";
+import { baseTypography } from "./typography";
 
 // ── SCSS 컴파일 ────────────────────────────────────────────────────────────
 
@@ -223,6 +224,14 @@ describe("design tokens stay in sync with SCSS", () => {
 				: [{ name, actual, expected }];
 		});
 		expect(wrong).toEqual([]);
+	});
+
+	it("--bt-font-family definition matches the SCSS fallback and the TS primary family", () => {
+		const root = lightVars["--bt-font-family"];
+		expect(root?.startsWith(`"${baseTypography.fontFamily.primary}"`)).toBe(true);
+		expect(moduleVariables("src/styles/typography").font_family_primary).toBe(
+			`var(--bt-font-family, ${root})`,
+		);
 	});
 
 	it("controlHeight equals the SCSS $control_height_* steps", () => {
