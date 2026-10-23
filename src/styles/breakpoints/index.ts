@@ -1,6 +1,8 @@
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
+
 export const breakpoints = {
-	compact: 0, // mobile
-	medium: 600, // tablet
-	expanded: 840, // small desktop
-	large: 1200, // desktop
+	compact: 0,
+	medium: 600,
+	expanded: 840,
+	large: 1200,
 } as const;

@@ -1,7 +1,5 @@
-$breakpoint_compact:  0px;
-$breakpoint_medium:   600px;
-$breakpoint_expanded: 840px;
-$breakpoint_large:    1200px;
+@forward "tokens";
+@use "tokens" as *;
 
 @mixin compact {
   @media (max-width: #{$breakpoint_medium - 1}) {

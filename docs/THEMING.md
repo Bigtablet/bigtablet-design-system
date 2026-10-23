@@ -191,11 +191,18 @@ import { colors, cssVars } from "@bigtablet/design-system";
 
 ### 토큰 단일 소스
 
-토큰 값의 기준은 **SCSS** 입니다 - raw 값은 `src/styles/colors/_index.scss`, light/dark 테마 값은 `src/styles/theme.scss`. TS export(`baseColors` · `colors` · `elevation` · `a11y` · `skeleton` · `controlHeight`)와 디자이너용 `src/styles/tokens.json` 은 그 값을 옮겨 적은 사본이고, `src/styles/tokens.test.ts` 가 SCSS 를 실제로 컴파일해 나온 값과 키 하나하나를 대조합니다(단위 테스트라 CI 에서 돈다).
+토큰 값의 원본은 **`src/styles/tokens.json`**(DTCG 형식) 하나입니다. `pnpm tokens`(`scripts/build-tokens.mjs`, Node 표준 기능만 씀)가 여기서 세 가지를 만듭니다.
 
-- 값을 바꿀 때는 SCSS 를 먼저 고치고 TS · JSON 을 맞춥니다. 한쪽만 고치면 테스트가 어긋난 이름과 두 값을 보여 줍니다
-- 테마 색 변수(`--bt-color-*`)를 새로 만들면 `colors` 와 `tokens.json` 에도 같은 이름이 있어야 합니다
-- `tokens.json` 의 dark 값은 `$extensions["com.bigtablet.theme"].dark` 에 둡니다. 없으면 light 와 같다는 뜻입니다
+| 생성 파일 | 내용 |
+|---|---|
+| `src/styles/<폴더>/_tokens.scss` | SCSS 변수 · typography 역할 mixin. 손으로 쓴 mixin 은 같은 폴더 `_index.scss` 에 남고 이 파일을 `@forward` 한다 |
+| `src/styles/<폴더>/index.ts` | TS export(`baseColors` · `colors` · `spacing` · `typography` …) |
+| `src/styles/_theme-tokens.scss` | `--bt-*` 변수의 light/dark 값 - `theme.scss` 가 include 한다 |
+
+- 값을 바꿀 때는 `tokens.json` 을 고치고 `pnpm tokens` 를 돌린 뒤 생성 파일까지 커밋합니다. 생성 파일을 직접 고치면 `src/styles/tokens.test.ts`(CI 단위 테스트)와 `pnpm check:tokens` 가 실패합니다
+- 각 토큰의 출력 이름은 `$extensions["com.bigtablet"]` 이 정합니다 - `scss`("폴더/변수", `@` 로 시작하면 mixin), `ts`(export 경로), `css`(CSS 변수), `cssMode`(`var` 테마를 따라감 · `fallback` 기본값을 품은 `var()` · `define` CSS 변수만 정의). 이름을 경로에서 추론하지 않는 이유는 `tokens.json` 경로가 Figma 변수 이름으로도 쓰여서입니다(bigtablet-figma-plugins)
+- dark 값은 `$extensions["com.bigtablet.theme"].dark` 에 둡니다. 없으면 light 와 같다는 뜻입니다
+- 주석은 `$description` 에 둡니다 - 생성 SCSS 의 주석과 TS 의 JSDoc 이 됩니다
 
 ### SCSS 소비자
 

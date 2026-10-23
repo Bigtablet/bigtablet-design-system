@@ -13,7 +13,7 @@ bigtablet-design-system/
 │   │
 │   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
 │   │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
-│   │   ├── tokens.json      # 디자이너 JSON 토큰
+│   │   ├── tokens.json      # 토큰 원본 (pnpm tokens → _tokens.scss · index.ts · _theme-tokens.scss)
 │   │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
 │   │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
@@ -291,7 +291,7 @@ export const spacing = { "4": "4px", "8": "8px", "16": "16px", "24": "24px", /* 
 
 TS 의 `colors` · `elevation` 은 **light 고정값**이다. 테마를 따라가야 하는 인라인 스타일은 같은 키의 `cssVars`(`src/styles/css-vars.ts`, 값이 `var(--bt-*)`)를 쓴다.
 
-값의 기준은 SCSS(`colors/_index.scss` · `theme.scss`)다. TS 와 `tokens.json` 은 사본이라 `src/styles/tokens.test.ts` 가 SCSS 컴파일 결과와 대조한다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스).
+값의 원본은 `src/styles/tokens.json` 이다. `pnpm tokens` 가 SCSS(`<폴더>/_tokens.scss`) · TS(`<폴더>/index.ts`) · 테마 변수(`_theme-tokens.scss`)를 생성하고, `src/styles/tokens.test.ts` 가 커밋된 생성 파일이 원본과 같은지 본다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스). 아래 SCSS 예시의 값은 생성 파일 `_tokens.scss` 에 있다.
 
 ### SCSS 토큰
 

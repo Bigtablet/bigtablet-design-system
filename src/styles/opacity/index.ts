@@ -1,4 +1,4 @@
-// ── Base opacity tokens ───────────────────────────────────────────────────────
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
 
 export const opacity = {
 	"0": 0,

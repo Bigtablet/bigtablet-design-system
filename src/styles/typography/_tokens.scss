@@ -1,0 +1,93 @@
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
+
+// 폴백까지 포함한 CSS font-family 값
+$font_family_base_primary: "Pretendard", sans-serif;
+// 10px - 본문에는 쓰지 않는다. avatar xs(24px 원) 이니셜과 badge count 처럼 장식적인 숫자·글자
+// 전용이다. 그 자리에 12px 을 넣으면 16px 카운트 뱃지를 넘친다.
+$font_size_10: 10px;
+$font_size_12: 12px;
+$font_size_13: 13px;
+$font_size_14: 14px;
+$font_size_15: 15px;
+$font_size_16: 16px;
+$font_size_18: 18px;
+$font_size_20: 20px;
+$font_size_24: 24px;
+$font_size_28: 28px;
+$font_size_32: 32px;
+$font_size_40: 40px;
+$font_size_48: 48px;
+$font_weight_thin: 100;
+$font_weight_extra_light: 200;
+$font_weight_light: 300;
+$font_weight_regular: 400;
+$font_weight_medium: 500;
+$font_weight_semi_bold: 600;
+$font_weight_bold: 700;
+$font_weight_extra_bold: 800;
+$font_weight_black: 900;
+$line_height_16: 16px;
+$line_height_18: 18px;
+$line_height_20: 20px;
+$line_height_22_5: 22.5px;
+$line_height_24: 24px;
+$line_height_28: 28px;
+$line_height_32: 32px;
+$line_height_36: 36px;
+$line_height_40: 40px;
+$line_height_50: 50px;
+$line_height_60: 60px;
+$letter_spacing_normal: 0px;
+$letter_spacing_tight: 0.32px;
+// `:root { --bt-font-family: "Inter", sans-serif }` 로 덮어쓰면 컴포넌트 글꼴이 따라간다
+$font_family_primary: var(--bt-font-family, "Pretendard", sans-serif);
+@mixin display_large { font-size: 48px; font-weight: 400; line-height: 60px; letter-spacing: 0px; }
+@mixin display_large_medium { font-size: 48px; font-weight: 500; line-height: 60px; letter-spacing: 0px; }
+@mixin display_medium { font-size: 40px; font-weight: 400; line-height: 50px; letter-spacing: 0px; }
+@mixin display_medium_medium { font-size: 40px; font-weight: 500; line-height: 50px; letter-spacing: 0px; }
+@mixin display_small { font-size: 32px; font-weight: 400; line-height: 40px; letter-spacing: 0px; }
+@mixin display_small_medium { font-size: 32px; font-weight: 500; line-height: 40px; letter-spacing: 0px; }
+@mixin display_large_bold { font-size: 48px; font-weight: 700; line-height: 60px; letter-spacing: -0.02em; }
+@mixin display_medium_bold { font-size: 40px; font-weight: 700; line-height: 50px; letter-spacing: -0.02em; }
+@mixin display_small_bold { font-size: 32px; font-weight: 700; line-height: 40px; letter-spacing: -0.015em; }
+@mixin heading_large { font-size: 28px; font-weight: 400; line-height: 36px; letter-spacing: 0px; }
+@mixin heading_large_medium { font-size: 28px; font-weight: 500; line-height: 36px; letter-spacing: 0px; }
+@mixin heading_medium { font-size: 24px; font-weight: 400; line-height: 32px; letter-spacing: 0px; }
+@mixin heading_medium_medium { font-size: 24px; font-weight: 500; line-height: 32px; letter-spacing: 0px; }
+@mixin heading_small { font-size: 20px; font-weight: 400; line-height: 28px; letter-spacing: 0px; }
+@mixin heading_small_medium { font-size: 20px; font-weight: 500; line-height: 28px; letter-spacing: 0px; }
+@mixin heading_large_bold { font-size: 28px; font-weight: 700; line-height: 36px; letter-spacing: -0.01em; }
+@mixin heading_medium_bold { font-size: 24px; font-weight: 700; line-height: 32px; letter-spacing: -0.01em; }
+@mixin heading_small_bold { font-size: 20px; font-weight: 700; line-height: 28px; letter-spacing: 0px; }
+@mixin title_large { font-size: 18px; font-weight: 400; line-height: 24px; letter-spacing: 0px; }
+@mixin title_large_medium { font-size: 18px; font-weight: 500; line-height: 24px; letter-spacing: 0px; }
+@mixin title_medium { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0px; }
+@mixin title_medium_medium { font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0px; }
+@mixin title_small { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0px; }
+@mixin title_small_medium { font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0px; }
+@mixin title_large_bold { font-size: 18px; font-weight: 700; line-height: 24px; letter-spacing: 0px; }
+@mixin title_medium_bold { font-size: 16px; font-weight: 700; line-height: 24px; letter-spacing: 0px; }
+@mixin title_small_bold { font-size: 14px; font-weight: 700; line-height: 20px; letter-spacing: 0px; }
+@mixin body_large { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0px; }
+@mixin body_large_medium { font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0px; }
+@mixin body_medium { font-size: 15px; font-weight: 400; line-height: 22.5px; letter-spacing: 0px; }
+@mixin body_medium_medium { font-size: 15px; font-weight: 500; line-height: 22.5px; letter-spacing: 0px; }
+@mixin body_small { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0px; }
+@mixin body_small_medium { font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0px; }
+@mixin body_large_bold { font-size: 16px; font-weight: 700; line-height: 24px; letter-spacing: 0px; }
+@mixin body_medium_bold { font-size: 15px; font-weight: 700; line-height: 22.5px; letter-spacing: 0px; }
+@mixin body_small_bold { font-size: 14px; font-weight: 700; line-height: 20px; letter-spacing: 0px; }
+@mixin label_large { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0px; }
+@mixin label_large_medium { font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0px; }
+@mixin label_medium { font-size: 13px; font-weight: 400; line-height: 18px; letter-spacing: 0px; }
+@mixin label_medium_medium { font-size: 13px; font-weight: 500; line-height: 18px; letter-spacing: 0px; }
+@mixin label_small { font-size: 12px; font-weight: 400; line-height: 16px; letter-spacing: 0px; }
+@mixin label_small_medium { font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0px; }
+@mixin label_large_bold { font-size: 14px; font-weight: 700; line-height: 20px; letter-spacing: 0.32px; }
+@mixin label_medium_bold { font-size: 13px; font-weight: 700; line-height: 18px; letter-spacing: 0.32px; }
+@mixin label_small_bold { font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.32px; }
+@mixin caption { font-size: 12px; font-weight: 400; line-height: 16px; letter-spacing: 0.32px; }
+@mixin caption_bold { font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.32px; }
+@mixin overline { font-size: 12px; font-weight: 600; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; }
+@mixin subtitle { font-size: 15px; font-weight: 500; line-height: 22.5px; letter-spacing: 0px; }
+@mixin code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 18px; }

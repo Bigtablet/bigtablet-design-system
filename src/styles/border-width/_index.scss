@@ -1,18 +1,7 @@
 @use "sass:list";
 @use "../colors" as colors;
-
-// ── Base border-width ────────────────────────────────────────────────────────
-
-$border_width_0: 0px;
-$border_width_1: 1px;
-$border_width_2: 2px;
-
-// ── Semantic border-width ────────────────────────────────────────────────────
-
-$border_width_none:      $border_width_0;
-$border_width_standard:  $border_width_1;
-$border_width_thick:     $border_width_2;
-$border_width_indicator: $border_width_2;
+@forward "tokens";
+@use "tokens" as *;
 
 // ── Hairline mixin ───────────────────────────────────────────────────────────
 //
@@ -26,7 +15,6 @@ $border_width_indicator: $border_width_2;
 // .header { @include token.hairline(bottom); }      // 한 면
 // .active { @include token.hairline(left, token.$color_border_hover); }
 // ```
-
 
 @mixin hairline($side: all, $color: colors.$color_border_default) {
   @if $side == all {
