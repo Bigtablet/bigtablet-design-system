@@ -12,7 +12,7 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
+			"import": "./dist/esm/index.js"
 		},
 		"./style.css": "./dist/index.css",
 		"./tailwind.css": "./dist/tailwind.css",
@@ -132,7 +132,8 @@
 	},
 	"size-limit": [
 		{
-			"path": "dist/index.js",
+			"path": "dist/esm/index.js",
+			"import": "*",
 			"limit": "60 kB",
 			"message": "Lowered 70 kB -> 60 kB on 2026-10-23: removing @react-spring/web (the only runtime dependency, ~18 kB brotli) brought the measurement to 53.37 kB, so 70 kB could no longer catch a regression of that size. The current limit leaves 6.63 kB. Re-measure before raising again."
 		},

@@ -64,7 +64,7 @@ import {
   AlertProvider,
   ToastProvider,
 } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
+// no CSS import - components bring their own CSS and the shared theme variables (4.0.0+)
 
 export default function RootLayout({ children }) {
   return (

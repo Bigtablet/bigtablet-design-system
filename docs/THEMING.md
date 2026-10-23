@@ -158,14 +158,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### React
 
-CSS 변수는 `style.css` 를 import 해야 제공됩니다. 컴포넌트 JS 만 import 해서는 색/타이포그래피가 적용되지 않습니다.
+컴포넌트를 import 하면 그 컴포넌트의 CSS 와 공통 CSS(`theme.scss` 의 `:root` / `[data-theme="dark"]` / `@media (prefers-color-scheme)` 변수 정의, autofill, 링크)가 함께 실립니다. 따로 CSS 를 import 하지 않아도 되고, 쓰지 않는 컴포넌트의 CSS 는 사용처 번들에서 빠집니다(4.0.0 부터).
 
 ```tsx
 import { ThemeProvider, Button } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
 ```
 
-`style.css` (빌드 산출물 `dist/index.css`) 는 컴포넌트 스타일과 `src/styles/theme.scss` 의 `:root` / `[data-theme="dark"]` / `@media (prefers-color-scheme)` CSS 변수 정의를 모두 포함합니다.
+- **Next.js (webpack 빌드)** - `next.config` 의 `experimental.optimizePackageImports` 에 `"@bigtablet/design-system"` 을 넣어야 안 쓰는 컴포넌트가 빠집니다. 넣지 않으면 동작은 같고 CSS 전체가 실립니다. Turbopack(Next 16 기본)은 설정이 필요 없습니다
+- **`style.css`(`dist/index.css`)** - 전체 CSS 한 파일입니다. 컴포넌트 JS 없이 CSS 변수나 DS 클래스만 쓰는 페이지에 씁니다. 컴포넌트와 같이 import 해도 화면은 같지만 CSS 가 두 번 실립니다
+- 토큰 객체(`colors` 등)만 import 하면 CSS 는 실리지 않습니다. `cssVars` 는 테마 변수를 가리키므로 공통 CSS 를 함께 싣습니다
 
 ### 인라인 스타일 - `cssVars`
 
@@ -187,7 +188,7 @@ import { colors, cssVars } from "@bigtablet/design-system";
 | `cssVars.elevation.level1` ~ `level5` | `var(--bt-elevation-level1)` ~ `var(--bt-elevation-level5)` |
 | `cssVars.a11y.focusRing` / `focusRingError` / `focusRingSuccess` | `var(--bt-focus-ring*)` |
 
-`style.css` 가 로드돼 있어야 변수가 정의됩니다. 실제 숫자가 필요한 계산(캔버스·차트 라이브러리 등)에는 `colors` 같은 고정값을 쓰거나 `getComputedStyle` 로 현재 값을 읽으세요.
+DS 컴포넌트나 `cssVars` 를 import 했거나 `style.css` 가 로드돼 있어야 변수가 정의됩니다. 실제 숫자가 필요한 계산(캔버스·차트 라이브러리 등)에는 `colors` 같은 고정값을 쓰거나 `getComputedStyle` 로 현재 값을 읽으세요.
 
 ### 토큰 단일 소스
 

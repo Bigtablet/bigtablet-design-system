@@ -9,6 +9,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - [개요](#개요)
 - [v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v400-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)](#v400-radiusspacingfont-scss-토큰이-var-로)
+- [v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v400-컴포넌트별-css---stylecss-import-가-필요-없다)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -127,6 +128,33 @@ padding-bottom: token.$spacing_base_48 * 2;
 옛 토큰에서도 값이 같게 고쳐 두어 DS 버전을 올릴 때 이 표의 수정은 따로 필요 없다.
 
 bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없습니다.
+
+---
+
+## v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)
+
+패키지 진입점(`.`)이 한 덩어리 번들에서 모듈 단위 ESM(`dist/esm`)으로 바뀝니다. 컴포넌트마다 자기 CSS 와 공통 CSS(테마 변수 · autofill · 링크)를 import 하므로, 사용처 번들러가 쓰지 않는 컴포넌트를 JS 와 CSS 째로 뺍니다. Button 만 쓰는 페이지의 DS CSS 가 약 20KB → 3KB(gzip)입니다. import 하는 이름과 타입은 그대로입니다.
+
+### 무엇이 바뀌나
+
+- 컴포넌트를 import 하면 CSS 가 자동으로 실립니다. `@bigtablet/design-system/style.css` 는 계속 있고 내용도 같습니다
+- 둘을 함께 import 하면 화면은 같지만 CSS 가 두 번 실립니다(Notiiv support 앱 4개 화면 × 라이트·다크에서 계산된 스타일 · 스크린샷 비교로 확인)
+- 토큰 객체(`colors` 등)만 import 하는 모듈에는 CSS 가 실리지 않습니다. 테마 변수가 필요하면 `cssVars` 를 쓰거나 `style.css` 를 import 합니다
+
+### 앱 쪽에서 할 일
+
+1. layout 의 `import "@bigtablet/design-system/style.css";` 를 지웁니다 - 남겨도 깨지지 않고 크기 이득만 없습니다. Notiiv support 앱(Turbopack)에서 이 한 줄을 지우면 페이지 CSS 전체(앱 CSS 포함)가 gzip 33.7KB → 20.1KB(랜딩), 34.7KB → 24.6KB(문의)로 줄었습니다. 브랜드 팔레트처럼 `--bt-*` 를 덮는 CSS 는 레이어 밖이라 순서와 상관없이 그대로 이깁니다
+2. Next.js 를 webpack 으로 빌드한다면 `next.config` 에 추가합니다. Turbopack(Next 16 기본)은 필요 없습니다
+
+```ts
+experimental: {
+  optimizePackageImports: ["@bigtablet/design-system"],
+},
+```
+
+이 설정이 없으면 webpack 은 배럴에서 닿는 모든 `"use client"` 컴포넌트의 CSS 를 싣습니다(지금과 같은 크기 - 동작 문제는 없음).
+
+사내 사용처 - Notiiv(owner · admin · status · support layout)와 bigtablet-homepage-web(3.2.2 고정) layout 이 `style.css` 를 import 합니다.
 
 ---
 
