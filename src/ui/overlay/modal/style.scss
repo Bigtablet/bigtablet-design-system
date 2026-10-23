@@ -32,6 +32,7 @@ $close_clearance: token.$spacing_24;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome;
   will-change: opacity;
+  @include token.presence;
 
   &_panel {
     position: relative; // close button 의 absolute 기준
@@ -52,6 +53,7 @@ $close_clearance: token.$spacing_24;
     // 넘치는 내용은 &_body 가 자기 안에서 처리한다.
     overflow: visible;
     will-change: transform, opacity;
+    @include token.presence(scale(0.96) translateY(-4px));
 
     @include token.from_medium {
       padding: token.$spacing_32;

@@ -1,11 +1,10 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { useIsMounted, useSpringPresence } from "../../../utils";
+import { useIsMounted, usePresence } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -89,31 +88,28 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	const closingRef = React.useRef(false);
 	const rootRef = React.useRef<HTMLDivElement>(null);
 
-	const style = useSpringPresence({
-		visible,
-		from: "translateX(20px)", // 우측에서 슬라이드 인
-		onExitComplete: () => {
-			// 포커스가 이 토스트 안에 있었으면(닫기 버튼 Enter 등) unmount 로 포커스가
-			// body 로 유실되지 않게 인접 토스트의 닫기 버튼으로 넘긴다 (WCAG 2.4.3).
-			// onRemove(=state 갱신) 전에 포커스를 옮겨 배치 flush 타이밍에 의존하지 않는다.
-			const hadFocus = rootRef.current?.contains(document.activeElement) ?? false;
-			if (hadFocus) {
-				const closeButtons = Array.from(
-					document.querySelectorAll<HTMLElement>(".toast_item .toast_close"),
-				);
-				const currentIndex = closeButtons.findIndex((el) => rootRef.current?.contains(el));
-				if (currentIndex !== -1) {
-					// 다음(아래) 우선, 없으면 이전(위) 토스트로 - 논리적 인접 이동
-					const next = closeButtons[currentIndex + 1] || closeButtons[currentIndex - 1];
-					next?.focus();
-				}
+	// 퇴출 transition 이 끝나면 부른다 - 모션은 style.scss 의 token.presence.
+	usePresence(visible, [rootRef], () => {
+		// 포커스가 이 토스트 안에 있었으면(닫기 버튼 Enter 등) unmount 로 포커스가
+		// body 로 유실되지 않게 인접 토스트의 닫기 버튼으로 넘긴다 (WCAG 2.4.3).
+		// onRemove(=state 갱신) 전에 포커스를 옮겨 배치 flush 타이밍에 의존하지 않는다.
+		const hadFocus = rootRef.current?.contains(document.activeElement) ?? false;
+		if (hadFocus) {
+			const closeButtons = Array.from(
+				document.querySelectorAll<HTMLElement>(".toast_item .toast_close"),
+			);
+			const currentIndex = closeButtons.findIndex((el) => rootRef.current?.contains(el));
+			if (currentIndex !== -1) {
+				// 다음(아래) 우선, 없으면 이전(위) 토스트로 - 논리적 인접 이동
+				const next = closeButtons[currentIndex + 1] || closeButtons[currentIndex - 1];
+				next?.focus();
 			}
-			onRemove(item.id);
-		},
+		}
+		onRemove(item.id);
 	});
 
 	/**
-	 * 슬라이드 아웃 모션 후 토스트를 제거한다 (onExitComplete 가 onRemove 호출).
+	 * 슬라이드 아웃 모션 후 토스트를 제거한다 (usePresence 콜백이 onRemove 호출).
 	 * @returns void
 	 */
 	const close = React.useCallback(() => {
@@ -123,7 +119,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	}, []);
 
 	// maxCount 에 밀린 토스트도 닫기 버튼과 같은 경로로 나간다 - 퇴출 모션이 끝나면
-	// onExitComplete 가 포커스를 인접 토스트로 넘기고 onRemove 를 부른다. 상태에서 바로
+	// 퇴출 콜백이 포커스를 인접 토스트로 넘기고 onRemove 를 부른다. 상태에서 바로
 	// 잘라내면 한 프레임에 사라지고, 그 안에 있던 포커스는 body 로 떨어진다(WCAG 2.4.3).
 	React.useEffect(() => {
 		if (item.dismissing) close();
@@ -134,11 +130,11 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	const liveRole = item.variant === "error" ? "alert" : "status";
 
 	return (
-		<animated.div ref={rootRef} className="toast_item" style={style}>
+		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
 			{/* 라이브 리전은 메시지만 감싼다 - 버튼까지 읽히면 소음이다. role 을 key 로 두어
 			    update 로 status↔alert 가 바뀌면 이 노드만 다시 삽입된다. 보조기술은 라이브 리전의
 			    긴급도를 노드 삽입 시점에 정하므로, 속성만 바꾸면 "진행 중 → 실패" 가 assertive 로
-			    재공지되지 않는다. 바깥 animated.div 는 그대로라 진입 모션이 다시 돌지 않고 닫기·액션
+			    재공지되지 않는다. 바깥 div 는 그대로라 진입 모션이 다시 돌지 않고 닫기·액션
 			    버튼의 포커스도 유지된다. */}
 			<div key={liveRole} className="toast_live" role={liveRole}>
 				<span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
@@ -177,7 +173,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 					aria-hidden="true"
 				/>
 			)}
-		</animated.div>
+		</div>
 	);
 };
 

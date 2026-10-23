@@ -1,6 +1,7 @@
-import { fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
+import { stubPendingAnimation } from "../../../test/stub-animation";
 import { ToastProvider } from "./index";
 import { useToast } from "./use-toast";
 
@@ -472,7 +473,8 @@ describe("Toast auto-dismiss", () => {
 	// 사라진다. 키보드 Tab 으로 닫기 버튼에 가면 `:focus-visible` 이라 `paused` 가 된다
 	// (WCAG 2.2.1). 그 대비가 style.scss 의 일시정지 규칙이 지키는 계약이다.
 
-	it("toast remains in DOM during spring exit then unmounts", async () => {
+	it("toast remains in DOM during the exit transition then unmounts", async () => {
+		const anim = stubPendingAnimation();
 		render(
 			<ToastProvider>
 				<ToastTrigger fn={(t) => t.success("exiting 상태")} />
@@ -485,10 +487,11 @@ describe("Toast auto-dismiss", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
 
-		// spring exit 진행 중 - 잠시 DOM 유지
+		// 퇴출 transition 진행 중 - 잠시 DOM 유지
 		expect(document.querySelector(".toast_item")).not.toBeNull();
 
-		// spring 완료 후 unmount
+		// transition 완료 후 unmount
+		await act(async () => anim.finish());
 		await waitFor(
 			() => {
 				expect(document.querySelector(".toast_item")).toBeNull();
@@ -540,6 +543,7 @@ describe("Toast stack & ids", () => {
 	});
 
 	it("removes the oldest toast when maxCount is exceeded", async () => {
+		const anim = stubPendingAnimation();
 		function SpamTrigger() {
 			const t = useToast();
 			return (
@@ -570,6 +574,7 @@ describe("Toast stack & ids", () => {
 		expect(screen.getByText("mid")).toBeInTheDocument();
 		expect(screen.getByText("new")).toBeInTheDocument();
 
+		await act(async () => anim.finish());
 		await waitFor(
 			() => {
 				expect(screen.queryByText("old")).not.toBeInTheDocument();
@@ -724,6 +729,7 @@ describe("Toast programmatic control", () => {
 	});
 
 	it("dismiss(id) leaves through the same exit path as the close button", async () => {
+		const anim = stubPendingAnimation();
 		let id = "";
 		render(
 			<ToastProvider>
@@ -737,6 +743,7 @@ describe("Toast programmatic control", () => {
 
 		// 즉시 잘라내지 않는다 - 퇴출 모션 동안 남아 있다가 사라진다.
 		expect(screen.getByText("닫힐 것")).toBeInTheDocument();
+		await act(async () => anim.finish());
 		await waitFor(
 			() => {
 				expect(screen.queryByText("닫힐 것")).not.toBeInTheDocument();

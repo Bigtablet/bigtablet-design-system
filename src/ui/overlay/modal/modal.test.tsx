@@ -1,7 +1,7 @@
-import { Globals } from "@react-spring/web";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { stubPendingAnimation } from "../../../test/stub-animation";
 import { unlockBodyScroll } from "../../../utils";
 import { Modal } from "./index";
 
@@ -54,10 +54,11 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		// reduced-motion 에서 패널이 최종(휴지) 상태로 즉시 도달 (spring immediate)
-		const panel = screen.getByRole("dialog").querySelector(".modal_panel");
+		// reduced-motion 은 CSS(token.presence)가 transition 을 끈다. JS 는 인라인 모션 값을 쓰지 않는다.
+		const panel = screen.getByRole("dialog").querySelector(".modal_panel") as HTMLElement;
 		expect(panel).toBeInTheDocument();
-		expect(panel).toHaveStyle({ transform: "scale(1) translateY(0px)" });
+		expect(panel.style.transform).toBe("");
+		expect(panel.style.opacity).toBe("");
 	});
 
 	it("keeps Tab inside the panel even though the panel stops other keys from bubbling", () => {
@@ -194,6 +195,7 @@ describe("Modal", () => {
 	});
 
 	it("keeps scroll locked when one of multiple open modals is closed", async () => {
+		const anim = stubPendingAnimation();
 		const { rerender } = render(
 			<>
 				<Modal open onClose={() => {}}>
@@ -227,6 +229,7 @@ describe("Modal", () => {
 		expect(document.body.dataset.openModals).toBe("2");
 
 		// 두 번째의 퇴출이 끝나면 카운터가 내려가고, 첫 번째 잠금은 그대로 남는다.
+		await act(async () => anim.finish());
 		await waitFor(() => expect(document.body.dataset.openModals).toBe("1"));
 		expect(document.body.style.overflow).toBe("hidden");
 	});
@@ -249,13 +252,7 @@ describe("Modal", () => {
 
 	it("releases the scroll lock under reduced motion", async () => {
 		// 잠금이 `shouldRender` 에 묶여 있으므로, 퇴출 완료 콜백이 발화하지 않으면 페이지가
-		// 영구히 잠긴다. reduced-motion 은 `immediate: true` 로 스프링을 점프시키는 경로라
-		// onRest 가 도는지 따로 확인한다.
-		// setup.ts 가 스위트 전체에 skipAnimation 을 걸어 두면 어떤 스프링이든 즉시 끝나
-		// 일반 종료 테스트와 같은 경로가 된다. 여기서만 끄고 `immediate: reduced` 가 실제로
-		// 도는 경로를 태운다. (그 플래그를 지우는 뮤테이션까지 잡지는 못한다 - 스프링이
-		// 애니메이션으로 끝나도 waitFor 안에 들어오기 때문이다.)
-		Globals.assign({ skipAnimation: false });
+		// 영구히 잠긴다. reduced-motion 은 transition 이 없어 기다릴 애니메이션이 없는 경로다.
 		stubReducedMotion();
 		const { rerender } = render(
 			<Modal open onClose={() => {}}>
@@ -272,8 +269,6 @@ describe("Modal", () => {
 
 		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 		expect(document.body.dataset.openModals).toBeUndefined();
-
-		Globals.assign({ skipAnimation: true });
 	});
 
 	it("activates the focus trap when toggled open after mounting closed", () => {
@@ -467,6 +462,7 @@ describe("Modal", () => {
 	// 부모가 open 과 본문을 같은 값에 묶는 것은 흔한 형태다. 그때 본문이 먼저 사라지면
 	// 제목만 남은 빈 패널이 페이드아웃해 두 단계로 닫히는 것이 보인다.
 	it("keeps the last children through the exit animation", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Modal open onClose={() => {}} title="상세">
 				<p>상세 내용</p>
@@ -480,6 +476,7 @@ describe("Modal", () => {
 	});
 
 	it("lets new children win when reopened during the exit animation", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Modal open onClose={() => {}} title="상세">
 				<p>첫 번째</p>
@@ -539,6 +536,7 @@ describe("Modal", () => {
 	// 열려 있는 동안 children 이 바뀌면 기억도 따라가야 한다. 초기값만 붙잡으면 닫을 때
 	// 처음 열었을 때의 본문으로 되돌아간다.
 	it("freezes the children it had when it closed, not the ones it opened with", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Modal open onClose={() => {}} title="상세">
 				<p>첫 내용</p>
@@ -585,6 +583,7 @@ describe("Modal", () => {
 
 	// children 만 얼리면 같은 데이터에 묶인 footer/title 이 먼저 사라져 같은 버그가 재현된다.
 	it("freezes title, description and footer along with children", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Modal
 				open
@@ -604,82 +603,31 @@ describe("Modal", () => {
 		expect(screen.getByText("항목 본문")).toBeInTheDocument();
 	});
 
-	// ── 등장 애니메이션 ─────────────────────────────────────────────────────
-	// react-spring 은 `from` 이 없으면 첫 렌더의 `to` 를 초기값으로 잡는다. 처음부터
-	// open=true 로 마운트되면 초기값 = 목표값이 되어 등장 모션이 사라지던 버그(#522).
-	// 전역 모달 스택과 조건부 렌더가 정확히 그 형태다.
-	// src/test/setup.ts 가 전 테스트에 skipAnimation 을 걸어 스프링을 목표값으로 즉시 점프시킨다
-	// (퇴출 unmount 타이밍 테스트가 rAF 없이 돌게 하려고). 등장 보간을 보려면 이 두 테스트에서만
-	// 끈다 - afterEach 가 다시 켜므로 다른 테스트에 새지 않는다.
-	describe("enter animation (skipAnimation off)", () => {
-		beforeEach(() => Globals.assign({ skipAnimation: false }));
-		afterEach(() => Globals.assign({ skipAnimation: true }));
+	// ── 등장/퇴출 애니메이션 ─────────────────────────────────────────────────
+	// 모션은 CSS(token.presence)가 `data-state` 를 보고 한다. 처음부터 open=true 로 마운트돼도
+	// `@starting-style` 이 진입을 그린다(#522 - 스프링 시절 `from` 누락으로 등장 모션이 사라졌던 버그).
+	it("marks the overlay and panel open, then closed while the exit runs", () => {
+		stubPendingAnimation();
+		const { rerender } = render(
+			<Modal open onClose={() => {}} title="상세">
+				본문
+			</Modal>,
+		);
+		const panel = document.querySelector(".modal_panel") as HTMLElement;
+		const overlay = screen.getByRole("dialog");
+		expect(overlay).toHaveAttribute("data-state", "open");
+		expect(panel).toHaveAttribute("data-state", "open");
 
-		it("starts the panel away from its resting state when mounted already open", () => {
-			render(
-				<Modal open onClose={() => {}} title="상세">
-					본문
-				</Modal>,
-			);
-			const panel = document.querySelector(".modal_panel") as HTMLElement;
-			const overlay = screen.getByRole("dialog");
-
-			// 마운트 직후 프레임 - 아직 목표값에 도달하지 않았어야 한다
-			expect(Number(panel.style.opacity)).toBeLessThan(1);
-			expect(panel.style.transform).not.toBe("scale(1) translateY(0px)");
-			expect(Number(overlay.style.opacity)).toBeLessThan(1);
-		});
-
-		// 기존 reduced-motion 테스트는 skipAnimation 이 켜진 상태에서 돌아, `immediate: reduced` 를
-		// 지워도 통과한다(뮤테이션으로 확인). skipAnimation 을 끈 여기서는 `from` 을 reduced 에서
-		// 빼는 처리가 실제로 물린다.
-		//
-		// 한계: false→true 플립 경로에서 `immediate` 자체가 일하는지는 여기서 못 본다. react-spring
-		// 은 React 커밋 밖에서 스타일을 쓰므로 rerender 직후 동기 시점에는 아직 값이 반영되지 않고,
-		// waitFor 로 기다리면 immediate 든 일반 스프링이든 결국 목표값에 도달해 구분이 안 된다.
-		it("skips the enter interpolation entirely under prefers-reduced-motion (WCAG 2.3.3)", () => {
-			vi.stubGlobal(
-				"matchMedia",
-				vi.fn().mockImplementation((query: string) => ({
-					matches: query.includes("prefers-reduced-motion"),
-					media: query,
-					addEventListener: vi.fn(),
-					removeEventListener: vi.fn(),
-					addListener: vi.fn(),
-					removeListener: vi.fn(),
-					dispatchEvent: vi.fn(),
-				})),
-			);
-			render(
-				<Modal open onClose={() => {}} title="Reduced">
-					본문
-				</Modal>,
-			);
-			const panel = document.querySelector(".modal_panel") as HTMLElement;
-			const overlay = screen.getByRole("dialog");
-
-			// 보간 없이 첫 프레임부터 휴지 상태여야 한다 - overlay·panel 양쪽
-			expect(Number(panel.style.opacity)).toBe(1);
-			expect(panel.style.transform).toBe("scale(1) translateY(0px)");
-			expect(Number(overlay.style.opacity)).toBe(1);
-			vi.unstubAllGlobals();
-		});
-
-		it("animates to the resting state after mounting already open", async () => {
-			render(
-				<Modal open onClose={() => {}} title="상세">
-					본문
-				</Modal>,
-			);
-			const panel = document.querySelector(".modal_panel") as HTMLElement;
-
-			await waitFor(() => expect(Number(panel.style.opacity)).toBe(1));
-			expect(panel.style.transform).toBe("scale(1) translateY(0px)");
-		});
+		rerender(
+			<Modal open={false} onClose={() => {}} title="상세">
+				본문
+			</Modal>,
+		);
+		expect(overlay).toHaveAttribute("data-state", "closed");
+		expect(panel).toHaveAttribute("data-state", "closed");
 	});
 
-	// `from` 은 첫 렌더에만 적용된다 - 닫았다 다시 열면 그때의 현재값에서 이어져야 하고,
-	// 퇴출 수명(onExited)도 영향받지 않아야 한다.
+	// 처음부터 열린 채 마운트돼도 퇴출 수명(onExited)은 같다.
 	it("keeps the exit lifecycle intact after mounting already open", async () => {
 		vi.stubGlobal(
 			"matchMedia",
@@ -906,25 +854,9 @@ describe("Modal", () => {
 		expect(document.querySelector(".modal_footer")).toHaveClass("modal_footer_start");
 	});
 
-	describe("exit animation after opening from closed (skipAnimation off)", () => {
-		beforeEach(() => Globals.assign({ skipAnimation: false }));
-		afterEach(() => Globals.assign({ skipAnimation: true }));
-
-		it("stays mounted through the exit when it was first mounted closed", () => {
-			const ui = (open: boolean) => (
-				<Modal open={open} onClose={() => {}}>
-					Content
-				</Modal>
-			);
-			const { rerender } = render(ui(false));
-			rerender(ui(true));
-			rerender(ui(false));
-			// 퇴출 애니메이션이 도는 동안은 남아 있어야 한다 - 바로 사라지면 모션 없이 끊긴다
-			expect(document.querySelector(".modal_panel")).not.toBeNull();
-		});
-
-		it("does not report onExited when the enter animation settles", async () => {
-			// 진입이 끝나도 onRest 는 발화한다 - 열린 상태에서는 퇴출 처리를 건너뛰어야 한다
+	describe("exit animation", () => {
+		it("stays mounted until the exit transition finishes, then reports onExited", async () => {
+			const anim = stubPendingAnimation();
 			const onExited = vi.fn();
 			const ui = (open: boolean) => (
 				<Modal open={open} onClose={() => {}} onExited={onExited}>
@@ -933,11 +865,31 @@ describe("Modal", () => {
 			);
 			const { rerender } = render(ui(false));
 			rerender(ui(true));
-			// onRest 를 가진 것은 오버레이 스프링이다 - 그 값이 목표에 닿고 한 프레임 뒤면 onRest 가 돌았다
-			await waitFor(() => expect(screen.getByRole("dialog").style.opacity).toBe("1"));
-			await new Promise((r) => requestAnimationFrame(() => r(null)));
-			expect(onExited).not.toHaveBeenCalled();
+			rerender(ui(false));
+			// 퇴출 애니메이션이 도는 동안은 남아 있어야 한다 - 바로 사라지면 모션 없이 끊긴다
 			expect(document.querySelector(".modal_panel")).not.toBeNull();
+			expect(document.body.style.overflow).toBe("hidden");
+			expect(onExited).not.toHaveBeenCalled();
+
+			await act(async () => anim.finish());
+			expect(document.querySelector(".modal_panel")).toBeNull();
+			expect(onExited).toHaveBeenCalledTimes(1);
+		});
+
+		it("does not report onExited when reopened during the exit", async () => {
+			const anim = stubPendingAnimation();
+			const onExited = vi.fn();
+			const ui = (open: boolean) => (
+				<Modal open={open} onClose={() => {}} onExited={onExited}>
+					Content
+				</Modal>
+			);
+			const { rerender } = render(ui(true));
+			rerender(ui(false));
+			rerender(ui(true));
+			await act(async () => anim.finish());
+			expect(onExited).not.toHaveBeenCalled();
+			expect(document.querySelector(".modal_panel")).toHaveAttribute("data-state", "open");
 		});
 	});
 });

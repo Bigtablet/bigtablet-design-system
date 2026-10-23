@@ -1,7 +1,7 @@
-import { Globals } from "@react-spring/web";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { stubPendingAnimation } from "../../../test/stub-animation";
 import { Drawer } from "./index";
 
 const stubReducedMotion = () => {
@@ -354,6 +354,7 @@ describe("Drawer", () => {
 	// ── Body scroll lock ───────────────────────────────────────────────────
 
 	it("locks body scroll while open and restores after the exit finishes", async () => {
+		const anim = stubPendingAnimation();
 		const { rerender } = render(
 			<Drawer open onClose={() => {}}>
 				Content
@@ -372,6 +373,7 @@ describe("Drawer", () => {
 		expect(document.body.style.overflow).toBe("hidden");
 
 		// 퇴출이 끝나(shouldRender false) 완전히 unmount 되면 풀린다.
+		await act(async () => anim.finish());
 		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 	});
 
@@ -383,7 +385,6 @@ describe("Drawer", () => {
 		// 일반 종료 테스트와 같은 경로가 된다. 여기서만 끄고 `immediate: reduced` 가 실제로
 		// 도는 경로를 태운다. (그 플래그를 지우는 뮤테이션까지 잡지는 못한다 - 스프링이
 		// 애니메이션으로 끝나도 waitFor 안에 들어오기 때문이다.)
-		Globals.assign({ skipAnimation: false });
 		stubReducedMotion();
 		const { rerender } = render(
 			<Drawer open onClose={() => {}}>
@@ -400,8 +401,6 @@ describe("Drawer", () => {
 
 		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
 		expect(document.body.dataset.openModals).toBeUndefined();
-
-		Globals.assign({ skipAnimation: true });
 	});
 
 	it("keeps body scroll locked until the last overlay closes (shared counter)", async () => {
@@ -469,53 +468,25 @@ describe("Drawer", () => {
 		// reduced-motion 에서도 정상 렌더 + 패널이 최종(휴지) 위치에 즉시 도달
 		const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
 		expect(panel).toBeInTheDocument();
-		expect(panel).toHaveStyle({ transform: "translateX(0%)" });
+		expect(panel).toHaveAttribute("data-state", "open");
+		expect((panel as HTMLElement).style.transform).toBe("");
 	});
 
 	// ── disableAnimation ────────────────────────────────────────────────────
-	// 전역 skipAnimation 을 끄고 reduced-motion 도 없이 돌려, prop 하나로 즉시 경로를 타는지 본다.
-	// skipAnimation 이 켜져 있으면 어떤 스프링이든 즉시 끝나 prop 이 없어도 통과한다.
+	// 모션을 끄는 건 CSS(`drawer_instant` - transition: none)다. transition 이 없으면 usePresence 가
+	// 기다릴 애니메이션이 없어 바로 언마운트한다.
 
-	it("opens at rest on the first frame when disableAnimation is set", () => {
-		Globals.assign({ skipAnimation: false });
-		try {
-			render(
-				<Drawer open onClose={() => {}} placement="right" title="메뉴" disableAnimation>
-					Content
-				</Drawer>,
-			);
-			const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
-			expect(panel).toHaveStyle({ transform: "translateX(0%)" });
-		} finally {
-			Globals.assign({ skipAnimation: true });
-		}
-	});
-
-	it("jumps to rest when opened after mounting closed with disableAnimation", async () => {
-		// 닫힌 채 마운트하면 패널 스프링이 translateX(100%) 에서 출발한다. immediate 도 다음 프레임에
-		// 반영되므로 한 프레임은 기다리되, 슬라이드(280/28 스프링)가 끝나기엔 짧은 100ms 안에 휴지
-		// 위치여야 한다.
-		Globals.assign({ skipAnimation: false });
-		try {
-			const el = (open: boolean) => (
-				<Drawer open={open} onClose={() => {}} placement="right" title="메뉴" disableAnimation>
-					Content
-				</Drawer>
-			);
-			const { rerender } = render(el(false));
-			rerender(el(true));
-			const panel = screen.getByRole("dialog").querySelector(".drawer_panel");
-			await waitFor(() => expect(panel).toHaveStyle({ transform: "translateX(0%)" }), {
-				timeout: 100,
-			});
-		} finally {
-			Globals.assign({ skipAnimation: true });
-		}
+	it("marks the overlay instant when disableAnimation is set", () => {
+		render(
+			<Drawer open onClose={() => {}} placement="right" title="메뉴" disableAnimation>
+				Content
+			</Drawer>,
+		);
+		expect(screen.getByRole("dialog")).toHaveClass("drawer_instant");
 	});
 
 	it("closes, unmounts and fires onExited once when disableAnimation is set", async () => {
-		Globals.assign({ skipAnimation: false });
-		try {
+		{
 			const onExited = vi.fn();
 			const { rerender } = render(
 				<Drawer open onClose={() => {}} onExited={onExited} title="메뉴" disableAnimation>
@@ -538,20 +509,17 @@ describe("Drawer", () => {
 			// 한 번만 - 즉시 경로에서 onRest 가 두 번 돌지 않는다.
 			await new Promise((r) => setTimeout(r, 50));
 			expect(onExited).toHaveBeenCalledTimes(1);
-		} finally {
-			Globals.assign({ skipAnimation: true });
 		}
 	});
 
-	// 열자마자 같은 tick 에 닫으면 오버레이 스프링이 0 을 떠난 적이 없어 onRest 가 오지 않는다.
+	// 열자마자 같은 tick 에 닫아도(스프링 시절 onRest 가 오지 않던 경로) 정리돼야 한다.
 	// 그때도 패널이 남거나 스크롤 잠금이 걸린 채로 있으면 안 된다 - 투명한 오버레이가 화면을 덮는다.
 	it.each([
 		["reduced motion", {}, true],
 		["disableAnimation", { disableAnimation: true }, false],
 	])("cleans up when opened and closed in the same tick (%s)", async (_, extra, reduced) => {
-		Globals.assign({ skipAnimation: false });
 		if (reduced) stubReducedMotion();
-		try {
+		{
 			const onExited = vi.fn();
 			const el = (open: boolean) => (
 				<Drawer open={open} onClose={() => {}} onExited={onExited} title="메뉴" {...extra}>
@@ -567,8 +535,6 @@ describe("Drawer", () => {
 				expect(document.body.dataset.openModals).toBeUndefined();
 			});
 			expect(onExited).toHaveBeenCalledTimes(1);
-		} finally {
-			Globals.assign({ skipAnimation: true });
 		}
 	});
 
@@ -645,6 +611,7 @@ describe("Drawer", () => {
 
 	// ── children freeze ──────────────────────────────────────────────────────
 	it("keeps the last children through the exit animation", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Drawer open onClose={() => {}} title="상세">
 				<p>상세 내용</p>
@@ -703,6 +670,7 @@ describe("Drawer", () => {
 	// 열려 있는 동안 children 이 바뀌면 기억도 따라가야 한다. 초기값만 붙잡으면 닫을 때
 	// 처음 열었을 때의 본문으로 되돌아간다.
 	it("freezes the children it had when it closed, not the ones it opened with", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Drawer open onClose={() => {}} title="상세">
 				<p>첫 내용</p>
@@ -744,6 +712,7 @@ describe("Drawer", () => {
 	});
 
 	it("freezes title and footer along with children", () => {
+		stubPendingAnimation();
 		const { rerender } = render(
 			<Drawer
 				open
@@ -888,24 +857,16 @@ describe("Drawer", () => {
 		expect(document.querySelector(".drawer_footer")).toBeNull();
 	});
 
-	describe("enter settle (skipAnimation off)", () => {
-		beforeEach(() => Globals.assign({ skipAnimation: false }));
-		afterEach(() => Globals.assign({ skipAnimation: true }));
-
-		it("does not report onExited when the enter animation settles", async () => {
-			const onExited = vi.fn();
-			const ui = (open: boolean) => (
-				<Drawer open={open} onClose={() => {}} onExited={onExited}>
-					본문
-				</Drawer>
-			);
-			const { rerender } = render(ui(false));
-			rerender(ui(true));
-			await waitFor(() => expect(screen.getByRole("dialog").style.opacity).toBe("1"));
-			// 오버레이가 목표값에 닿은 뒤 onRest 가 돌 여유를 몇 프레임 준다
-			for (let i = 0; i < 3; i++) await new Promise((r) => requestAnimationFrame(() => r(null)));
-			expect(onExited).not.toHaveBeenCalled();
-			expect(document.querySelector(".drawer_panel")).not.toBeNull();
-		});
+	it("does not report onExited when opened from closed", () => {
+		const onExited = vi.fn();
+		const ui = (open: boolean) => (
+			<Drawer open={open} onClose={() => {}} onExited={onExited}>
+				본문
+			</Drawer>
+		);
+		const { rerender } = render(ui(false));
+		rerender(ui(true));
+		expect(onExited).not.toHaveBeenCalled();
+		expect(document.querySelector(".drawer_panel")).toHaveAttribute("data-state", "open");
 	});
 });

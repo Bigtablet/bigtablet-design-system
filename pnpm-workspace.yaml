@@ -6,7 +6,7 @@ minimumReleaseAge: 1440
 
 # pnpm 10 이후 `pnpm.overrides` 는 package.json 이 아닌 이 파일에서 읽힘.
 # (pnpm 10.20: "The pnpm field in package.json is no longer read" 경고 → 여기로 이전)
-# 전부 dev/build 전용 transitive 의존성 - 배포 패키지(dependencies: @react-spring/web) 에는 영향 없음.
+# 전부 dev/build 전용 transitive 의존성 - 배포 패키지(런타임 dependencies 없음)에는 영향 없음.
 overrides:
   # 보안 패치 (Dependabot open alert 대응 - first_patched_version 기준)
   immutable: ^5.1.9 # was 5.1.5 - hash-collision DoS + List 32bit overflow (GHSA #83/#84)

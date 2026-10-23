@@ -52,7 +52,6 @@ export default defineConfig({
 						"react-dom",
 						"react-dom/client",
 						"react/jsx-dev-runtime",
-						"@react-spring/web",
 						"@testing-library/react",
 						"lucide-react",
 					],

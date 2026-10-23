@@ -21,8 +21,6 @@ export {
 	useClipboard,
 	useFocusTrap,
 	useReducedMotion,
-	useSpringHover,
-	useSpringPresence,
 } from "./utils";
 export type {
 	ListboxItem,

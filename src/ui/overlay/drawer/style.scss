@@ -18,6 +18,7 @@ $close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome; // Modal 과 동일 레이어
   will-change: opacity;
+  @include token.presence;
 
   // ── Placement (패널을 가장자리에 정렬) ─────────────────────────────────
   &_placement_left  { justify-content: flex-start; }
@@ -38,6 +39,21 @@ $close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
     max-height: 100%;
     overflow: hidden; // body 영역만 스크롤
     will-change: transform;
+    // 패널은 페이드 없이 placement 축으로만 미끄러진다 - 오버레이(딤)가 페이드를 맡는다.
+    transition: transform token.$duration_presence token.$easing_presence;
+
+    &[data-state="closed"] { transform: var(--drawer-slide-from); }
+    @starting-style { transform: var(--drawer-slide-from); }
+  }
+
+  &_placement_left &_panel { --drawer-slide-from: translateX(-100%); }
+  &_placement_right &_panel { --drawer-slide-from: translateX(100%); }
+  &_placement_bottom &_panel { --drawer-slide-from: translateY(100%); }
+
+  // disableAnimation - reduced-motion 과 같은 경로(모션 없이 즉시 열고 닫는다).
+  &_instant,
+  &_instant &_panel {
+    transition: none;
   }
 
   &_placement_left &_panel,
@@ -125,7 +141,7 @@ $close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
   }
 }
 
-// Reduced motion (WCAG 2.3.3) - JS 스프링은 immediate 로 처리, CSS transition 은 여기서 제거
+// Reduced motion (WCAG 2.3.3)
 @media (prefers-reduced-motion: reduce) {
   .drawer,
   .drawer_panel,
