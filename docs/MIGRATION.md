@@ -7,6 +7,9 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v400-react-spring-제거--usespringhover--usespringpresence-삭제)
+- [v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)](#v400-radiusspacingfont-scss-토큰이-var-로)
+- [v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v400-컴포넌트별-css---stylecss-import-가-필요-없다)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -30,6 +33,128 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)
+
+런타임 의존성 `@react-spring/web` 을 뺐습니다. 이 패키지는 쓰지 않아도 트리 쉐이킹으로 빠지지 않아서, `Button` 하나만 import 해도 번들에 약 42KB(원본)가 들어갔습니다. 오버레이 9개(Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox)의 열고 닫는 모션은 이제 CSS 가 그립니다. 곡선은 예전 스프링(tension 280 / friction 28)을 `linear()` 로 근사해서 거의 같게 보입니다. `prefers-reduced-motion` 에서는 지금처럼 모션 없이 열리고 닫힙니다.
+
+### 무엇이 바뀌나
+
+- `useSpringHover` · `useSpringPresence` export 가 없어졌습니다. `import { animated } from "@react-spring/web"` 도 앱이 직접 의존성으로 두지 않았다면 깨집니다(DS 를 통해 설치돼 있던 것).
+- 오버레이 요소에 `data-state="open" | "closed"` 가 붙고, 인라인 `style` 의 `opacity` · `transform` 은 더 이상 쓰지 않습니다. 테스트에서 `toHaveStyle({ transform: "scale(1) ..." })` 를 보던 코드는 `data-state` 를 보도록 바꾸세요.
+- jsdom 테스트에서는 퇴출 모션 없이 바로 언마운트됩니다(`getAnimations` 가 없다). `Globals.assign({ skipAnimation: true })` 설정은 지워도 됩니다.
+
+### 앱 쪽에서 할 일 - `useSpringHover`
+
+마우스를 올리거나 키보드로 포커스했을 때 살짝 뜨는 효과는 CSS 로 충분합니다. `:focus-visible` 을 쓰면 마우스 클릭으로 생긴 포커스에는 뜨지 않아 예전보다 자연스럽습니다.
+
+```tsx
+// before
+const { style, bind } = useSpringHover();
+<animated.div style={style} {...bind}>...</animated.div>
+
+// after
+<div className="summary_card">...</div>
+```
+
+```scss
+@use "@bigtablet/design-system/scss/token" as token;
+
+.summary_card {
+  transition: transform token.$duration_presence token.$easing_presence;
+
+  &:hover,
+  &:focus-visible,
+  &:has(:focus-visible) { // 카드 안의 링크·버튼에 키보드 포커스가 있을 때
+    transform: translateY(-2px) scale(1.02); // useSpringHover 기본값 (lift -2, scale 1.02)
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none; // 뜨는 상태는 남기고 움직임만 없앤다 - 예전 훅과 같다
+  }
+}
+```
+
+### 앱 쪽에서 할 일 - `useSpringPresence`
+
+`token.presence` mixin 이 같은 모션을 줍니다. 열 때는 `@starting-style`, 닫을 때는 `[data-state="closed"]` 로 가는 transition 입니다.
+
+```scss
+.my_panel {
+  @include token.presence(translateY(8px)); // 인자 = 닫힌 상태 transform (useSpringPresence 의 from)
+}
+```
+
+닫는 모션을 보이려면 transition 이 끝날 때까지 마운트를 유지해야 합니다. `el.getAnimations()` 의 `finished` 를 기다린 뒤 언마운트하세요. 퇴출 모션이 필요 없으면 `open && <div className="my_panel" />` 만으로 진입 모션이 납니다.
+
+---
+
+## v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)
+
+`scss/token` 의 `$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자에서 `var(--bt-radius-md, 8px)` 같은 문자열로 바뀝니다. 사용처가 `:root { --bt-radius-md: 4px }` 로 덮어쓰면 DS 컴포넌트가 따라가게 하려는 변경입니다([THEMING](./THEMING.md#모서리간격글꼴-덮어쓰기)). 덮어쓰지 않으면 렌더 결과는 같습니다.
+
+### 무엇이 바뀌나
+
+- 원래 숫자는 `$radius_base_*` · `$spacing_base_*` · `$font_family_base_primary` 로 남습니다.
+- 값이 문자열이라 **`calc()` 밖의 Sass 산술**이 깨집니다. `token.$spacing_48 * 2` 는 컴파일 에러(`Undefined operation`)이고, `-token.$spacing_4` 는 에러 없이 무효한 `-var(...)` 를 냅니다. `math.div`·비교 연산도 마찬가지입니다.
+- `calc(-1 * token.$spacing_24)` · `calc(token.$spacing_16 + var(--x))` · `clamp(token.$spacing_48, 6vw, calc(token.$spacing_48 * 2))` 처럼 `calc()` 안에서 계산하던 코드는 그대로 동작합니다.
+
+### 앱 쪽에서 할 일
+
+```scss
+// before
+padding-bottom: token.$spacing_48 * 2;
+transform: translateY(-token.$spacing_4);
+
+// after - 덮어쓰기를 따라간다
+padding-bottom: calc(2 * #{token.$spacing_48});
+transform: translateY(calc(-1 * #{token.$spacing_4}));
+
+// after - 고정 숫자가 필요하면 (Sass 함수 인자, 비교 등)
+padding-bottom: token.$spacing_base_48 * 2;
+```
+
+사내 사용처 (2026-10-23, `calc()` 밖 산술):
+
+| 저장소 | 위치 | 상태 |
+|---|---|---|
+| bigtablet-notiiv-monorepo-web | `apps/status/src/app/page.module.scss:8` (`token.$spacing_48 * 2`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/page-skeleton.module.scss:9,13,22` (`* 2`, `* 1.5`, `* 2.5`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/uptime-bars/bar-tooltip.module.scss:11,12` (`* 4`, `* 6`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/owner/src/features/signup/ui/consent-section.module.scss:80` (`-(token.$spacing_12)` - 에러 없이 무효한 `-var()` 를 냄) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+
+옛 토큰에서도 값이 같게 고쳐 두어 DS 버전을 올릴 때 이 표의 수정은 따로 필요 없다.
+
+bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없습니다.
+
+---
+
+## v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)
+
+패키지 진입점(`.`)이 한 덩어리 번들에서 모듈 단위 ESM(`dist/esm`)으로 바뀝니다. 컴포넌트마다 자기 CSS 와 공통 CSS(테마 변수 · autofill · 링크)를 import 하므로, 사용처 번들러가 쓰지 않는 컴포넌트를 JS 와 CSS 째로 뺍니다. Button 만 쓰는 페이지의 DS CSS 가 약 20KB → 3KB(gzip)입니다. import 하는 이름과 타입은 그대로입니다.
+
+### 무엇이 바뀌나
+
+- 컴포넌트를 import 하면 CSS 가 자동으로 실립니다. `@bigtablet/design-system/style.css` 는 계속 있고 내용도 같습니다
+- 둘을 함께 import 하면 화면은 같지만 CSS 가 두 번 실립니다(Notiiv support 앱 4개 화면 × 라이트·다크에서 계산된 스타일 · 스크린샷 비교로 확인)
+- 토큰 객체(`colors` 등)만 import 하는 모듈에는 CSS 가 실리지 않습니다. 테마 변수가 필요하면 `cssVars` 를 쓰거나 `style.css` 를 import 합니다
+
+### 앱 쪽에서 할 일
+
+1. layout 의 `import "@bigtablet/design-system/style.css";` 를 지웁니다 - 남겨도 깨지지 않고 크기 이득만 없습니다. Notiiv support 앱(Turbopack)에서 이 한 줄을 지우면 페이지 CSS 전체(앱 CSS 포함)가 gzip 33.7KB → 20.1KB(랜딩), 34.7KB → 24.6KB(문의)로 줄었습니다. 브랜드 팔레트처럼 `--bt-*` 를 덮는 CSS 는 레이어 밖이라 순서와 상관없이 그대로 이깁니다
+2. Next.js 를 webpack 으로 빌드한다면 `next.config` 에 추가합니다. Turbopack(Next 16 기본)은 필요 없습니다
+
+```ts
+experimental: {
+  optimizePackageImports: ["@bigtablet/design-system"],
+},
+```
+
+이 설정이 없으면 webpack 은 배럴에서 닿는 모든 `"use client"` 컴포넌트의 CSS 를 싣습니다(지금과 같은 크기 - 동작 문제는 없음).
+
+사내 사용처 - Notiiv(owner · admin · status · support layout)와 bigtablet-homepage-web(3.2.2 고정) layout 이 `style.css` 를 import 합니다.
 
 ---
 

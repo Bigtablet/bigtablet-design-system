@@ -1,5 +1,2 @@
-$icon_size_xs: 14px;
-$icon_size_sm: 16px;
-$icon_size_md: 18px;
-$icon_size_lg: 20px;
-$icon_size_xl: 32px;
+// 값은 tokens.json 에서 생성한 _tokens.scss 에 있다 - 고칠 때는 tokens.json 을 고치고 `pnpm tokens`.
+@forward "tokens";

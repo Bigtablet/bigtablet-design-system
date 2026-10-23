@@ -34,5 +34,3 @@ export const Icon = ({ icon: IconComponent, ...props }: IconProps) => {
 		/>
 	);
 };
-
-Icon.displayName = "Icon";

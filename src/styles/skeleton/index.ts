@@ -1,31 +1,30 @@
-import { baseColors } from "../colors";
-import { radius } from "../radius";
-import { spacing } from "../spacing";
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
 
 export const skeleton = {
-	// SCSS `$color_skeleton_*` 의 light 값과 같다. dark 테마를 따라가려면 `cssVars.colors.skeleton`.
 	color: {
-		base: baseColors.skeletonBase,
-		wave: baseColors.skeletonWave,
-		highlight: baseColors.skeletonHighlight,
+		/** CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환. fallback 값은 standalone import (colors 미포함) 시 light 동작 보장. */
+		base: "#F3F3F3",
+		wave: "#F0F0F0",
+		highlight: "#FAFAFA",
 	},
-
-	gradient: `linear-gradient(90deg, ${baseColors.skeletonBase} 25%, ${baseColors.skeletonHighlight} 37%, ${baseColors.skeletonWave} 63%)`,
-
+	gradient: "linear-gradient(90deg, #F3F3F3 25%, #FAFAFA 37%, #F0F0F0 63%)",
 	radius: {
-		sm: radius.sm,
-		md: radius.md,
-		lg: radius.lg,
+		sm: "6px",
+		md: "8px",
+		lg: "12px",
 	},
-
 	height: {
-		xs: spacing["4"],
-		sm: spacing["8"],
-		md: spacing["12"],
-		lg: spacing["16"],
-		xl: spacing["20"],
+		/** 4px */
+		xs: "0.25rem",
+		/** 8px */
+		sm: "0.5rem",
+		/** 12px */
+		md: "0.75rem",
+		/** 16px */
+		lg: "1rem",
+		/** 20px */
+		xl: "1.25rem",
 	},
-
 	animation: {
 		duration: "1.4s",
 		timing: "ease-in-out",

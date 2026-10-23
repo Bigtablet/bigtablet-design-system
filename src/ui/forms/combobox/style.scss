@@ -89,6 +89,11 @@
     z-index: token.$z_popup;
     box-sizing: border-box;
 
+    // 진입만 있다(닫으면 바로 언마운트, Dropdown 과 같다).
+    --combobox-panel-from: translateY(-4px);
+    &_up { --combobox-panel-from: translateY(4px); }
+    @include token.presence(var(--combobox-panel-from));
+
     // 세로 flex - 인라인 `max-height` 안에서 목록만 줄고 스크롤한다(#621, Dropdown 과 동일).
     display: flex;
     flex-direction: column;

@@ -29,9 +29,8 @@ src/
 ├── index.ts             # 진입점 (React/Next.js 공용 - 빌드 시 "use client" 자동 주입)
 ├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
 │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
-│   ├── tokens.json      # Designer JSON tokens
+│   ├── tokens.json      # 토큰 원본 - pnpm tokens 가 각 폴더 _tokens.scss · index.ts 와 _theme-tokens.scss 를 생성
 │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
-│   ├── global.css
 │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   └── layout/          # SCSS only (no TS)
@@ -95,7 +94,7 @@ const buttonClassName = cn(
 ```
 
 ### Design Tokens
-Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`):
+Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`). 값의 원본은 `tokens.json` 이고 `_tokens.scss` · `index.ts` · `_theme-tokens.scss` 는 `pnpm tokens` 생성 파일이다 - 직접 고치지 말 것:
 - `colors/` - Brand, background, text, status colors
 - `spacing/` - xs(4px) to 5xl(48px)
 - `typography/` - Font families, heading/body styles
@@ -158,7 +157,7 @@ token.$easing_exit   // cubic-bezier(0.4, 0, 1, 1)     - ease-in (가속 퇴출)
 | Panel 펼침/닫힘 | `transition_base` | `easing_enter` | `grid-template-rows`, `max-height` |
 | Modal/Toast 진입 | `transition_enter_base` | `easing_enter` | `opacity`, `transform` |
 | Modal/Toast 퇴출 | `transition_exit_fast` | `easing_exit` | `opacity`, `transform` |
-| Tooltip/Menu pop | `useSpringPresence` hook | spring | `opacity`, `scale` |
+| 오버레이·팝업 진입/퇴출 | `duration_presence` | `easing_presence` (`linear()` 스프링 근사) | `@include token.presence($from)` - `opacity`, `transform` |
 
 #### 3. Height auto transition
 
@@ -195,16 +194,25 @@ WCAG 2.1 SC 2.3.3 - `prefers-reduced-motion: reduce` 사용자 위해 모든 컴
 
 #### 5. React 컴포넌트의 진입/퇴출 애니메이션
 
-`unmount` 시점에 exit animation을 위해 `useSpringPresence` hook 사용 (`src/utils/use-spring-presence.ts`). Modal/Toast/Tooltip/Menu 패턴.
+모션은 CSS(`token.presence` mixin - 진입은 `@starting-style`, 퇴출은 `[data-state="closed"]` 로의 transition)가 하고,
+퇴출이 끝날 때까지 마운트를 붙잡는 건 `usePresence` hook(`src/utils/use-presence.ts`)이 한다. JS 애니메이션 라이브러리는 쓰지 않는다
+(react-spring 은 트리 쉐이킹이 안 돼 4.0.0 에서 뺐다). Modal/Drawer/Alert/Toast/Tooltip/Popover 패턴.
 
 ```tsx
-import { animated } from "@react-spring/web";
-import { useSpringPresence } from "../../utils";
+import { usePresence } from "../../utils";
 
-// visible=false 가 되면 exit 애니메이션 후 onExitComplete 발화 → 부모에서 unmount.
-const style = useSpringPresence({ visible: open, onExitComplete: () => setMounted(false) });
-return <animated.div style={style}>...</animated.div>;
+const panelRef = React.useRef<HTMLDivElement>(null);
+// open=false 가 되면 panelRef 의 transition 이 끝난 뒤 false 를 돌려주고 onExited 를 부른다.
+const mounted = usePresence(open, [panelRef], onExited);
+if (!mounted) return null;
+return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed"}>...</div>;
 ```
+
+```scss
+.panel { @include token.presence(scale(0.96)); } // 인자 = 닫힌 상태 transform. 전면 딤에는 주지 않는다
+```
+
+퇴출 모션이 필요 없는 팝업(Menu·Dropdown·Combobox)은 `data-state` 없이 `open &&` 로 렌더하면 진입만 돈다.
 
 #### 6. 금지 사항
 
@@ -239,13 +247,14 @@ return <animated.div style={style}>...</animated.div>;
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 95.07% stmts / 93.03% branch / 95.56% funcs / 96.17% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 95.48% stmts / 93.43% branch / 96% funcs / 96.72% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
   pnpm test:watch        # Watch mode
   pnpm test:coverage     # Coverage report
   pnpm coverage:docs     # 커버리지를 재고 아래 Coverage 줄·docs/TESTING.md 표를 갱신 (릴리즈 PR 에서 CI 가 자동으로 돈다)
+  pnpm tokens            # tokens.json → SCSS·TS·테마 변수 생성 (check:tokens 는 커밋본과 같은지만 본다)
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)

@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
+import { useTopInset } from "../../../utils/use-top-inset";
 import "./style.scss";
 
 export interface AppShellProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
@@ -50,16 +51,24 @@ export const AppShell = ({
 	children,
 	ref,
 	...props
-}: AppShellProps) => (
-	<div
-		ref={ref}
-		className={cn("app_shell", { app_shell_with_sidebar: !!sidebar }, className)}
-		{...props}
-	>
-		{sidebar && <div className="app_shell_sidebar">{sidebar}</div>}
-		<div className="app_shell_body">
-			{header && <div className="app_shell_header">{header}</div>}
-			<main className={cn("app_shell_main", { app_shell_main_padded: padded })}>{children}</main>
+}: AppShellProps) => {
+	// 문서가 스크롤하므로 sticky 헤더 높이만큼 html 에 scroll-padding 을 준다(WCAG 2.4.11).
+	const headerRef = useTopInset<HTMLDivElement>(!!header);
+	return (
+		<div
+			ref={ref}
+			className={cn("app_shell", { app_shell_with_sidebar: !!sidebar }, className)}
+			{...props}
+		>
+			{sidebar && <div className="app_shell_sidebar">{sidebar}</div>}
+			<div className="app_shell_body">
+				{header && (
+					<div ref={headerRef} className="app_shell_header">
+						{header}
+					</div>
+				)}
+				<main className={cn("app_shell_main", { app_shell_main_padded: padded })}>{children}</main>
+			</div>
 		</div>
-	</div>
-);
+	);
+};

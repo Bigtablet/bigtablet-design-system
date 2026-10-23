@@ -85,5 +85,3 @@ export const Radio = ({
 		</label>
 	);
 };
-
-Radio.displayName = "Radio";

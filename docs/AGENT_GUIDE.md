@@ -64,7 +64,7 @@ import {
   AlertProvider,
   ToastProvider,
 } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
+// no CSS import - components bring their own CSS and the shared theme variables (4.0.0+)
 
 export default function RootLayout({ children }) {
   return (
@@ -90,10 +90,10 @@ Always reference tokens - never inline a hex value.
 
 Two surfaces, and they are **not** interchangeable:
 - **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
-- **CSS custom properties** - read them with `var()` in consumer CSS. Spacing / radius / typography CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
+- **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
-The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`.
+The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`, `--bt-radius-*`, `--bt-spacing-*`, `--bt-font-family`.
 
 ### Color tokens
 
@@ -126,13 +126,13 @@ SCSS: `$spacing_0` … `$spacing_128`. Scale: 0, 1, 2, 3, 4, 6, 8, 10, 12, 16, 2
 
 `$spacing_64` / `_96` / `_128` are layout rhythm - screen-level block padding (`Section`), not padding inside a component. `$spacing_10` exists because dense controls (pagination, nav-bar, tooltip) share a `6px 10px` pair.
 
-CSS vars exist **only in the Vanilla bundle**, and only for `--bt-spacing-4` / `-8` / `-12` / `-16` / `-20` / `-24` / `-32` / `-40` / `-48`. There is no CSS var for 0, 1, 2, 3, 6, 10, 64, 96 or 128, and the React entry's `style.css` emits none of them. In React/Next code use the SCSS token.
+Every step has a CSS var (`--bt-spacing-0` … `--bt-spacing-128`) in both bundles, and `$spacing_*` compiles to `var(--bt-spacing-N, Npx)` so app overrides on `:root` flow into DS components. Because the SCSS value is a `var()` string, do Sass math inside `calc()` (`calc(2 * #{token.$spacing_48})`), or use the raw `$spacing_base_*` number for fixed sizes. Don't use spacing for control heights or tap targets - those are fixed UX values.
 
 ### Radius
 
 SCSS: `$radius_none` (0), `$radius_xs` (4px), `$radius_sm` (6px), `$radius_md` (8px), `$radius_lg` (12px), `$radius_xl` (16px), `$radius_full` (9999px).
 
-CSS vars exist **only in the Vanilla bundle**, and only for a subset: `--bt-radius-sm` / `-md` / `-lg` / `-full`. There is no `--bt-radius-xs` or `-xl`.
+Every step has a CSS var (`--bt-radius-none` … `--bt-radius-full`) in both bundles; `$radius_*` compiles to `var(--bt-radius-*, <px>)`. Raw numbers: `$radius_base_*`.
 
 ### Elevation
 
@@ -170,8 +170,8 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 // ✓ OK - --bt-color-* IS emitted by the React entry's style.css
 <div style={{ background: "var(--bt-color-bg-solid-dim)" }} />
 
-// ✓ Same, typed - cssVars mirrors colors / elevation / a11y focus rings as var() strings
-<div style={{ background: cssVars.colors.bg.solidDim, boxShadow: cssVars.elevation.level2 }} />
+// ✓ Same, typed - cssVars mirrors colors / elevation / a11y focus rings / radius / spacing as var() strings
+<div style={{ background: cssVars.colors.bg.solidDim, padding: cssVars.spacing["16"] }} />
 
 // ✗ Avoid - colors.* / elevation.* are fixed light values and stay light in dark mode
 <div style={{ background: colors.bg.solidDim }} />
@@ -179,11 +179,9 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 // ✗ Never - hardcoded hex breaks dark mode
 <div style={{ background: "#F2F5F8" }} />
 
-// ✗ Never - --bt-spacing-* is Vanilla-only, resolves to nothing in a React app
-<div style={{ padding: "var(--bt-spacing-16)" }} />
+// ✗ Avoid - bare number ignores app overrides of --bt-spacing-16
+<div style={{ padding: 16 }} />
 ```
-
-Spacing has no CSS var to reference on the React entry, so an inline `padding` has to be a bare number (`padding: 16`). That is a last resort - it is an untokenised literal. If you find yourself writing one, move the rule into `style.scss` and use `token.$spacing_16` instead.
 
 ---
 
@@ -323,38 +321,39 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ## Animation
 
-**All entrance/exit animations on overlays use `react-spring`.** Don't reach for CSS keyframes.
+**Overlay entrance/exit is CSS** (`@starting-style` + a transition to `[data-state="closed"]`). There is no JS animation library.
 
 ### Built-in motion (just use the components)
-- Modal, Alert: overlay fade + panel scale-translate spring
-- Dropdown, Menu, Tooltip, Popover: pop-in spring
-- Toast: slide-in spring with onExitComplete unmount
+- Modal, Alert: overlay fade + panel scale-translate
+- Drawer: overlay fade + panel slide along the placement axis
+- Dropdown, Menu, Combobox: pop-in on open, removed immediately on close
+- Tooltip, Popover: pop-in and fade-out, direction follows the resolved placement
+- Toast: slide-in from the right, slide-out before removal
 - Accordion: grid-template-rows 0fr → 1fr (CSS, height-auto-safe)
 - Sidebar logo: crossfade between collapsed/expanded layers
 - NavBar/Tabs active: sliding indicator
 
 ### Custom motion utility
-For your own interactive components:
+For your own overlay, use the SCSS mixin. It uses the same curve as the components (a `linear()` approximation of a tension 280 / friction 28 spring):
 
-```tsx
-import { useSpringPresence, animated } from "@bigtablet/design-system";
+```scss
+@use "@bigtablet/design-system/scss/token" as token;
 
-function MyPopover({ open, onClose }) {
-  const [shouldRender, setShouldRender] = useState(open);
-  useEffect(() => { if (open) setShouldRender(true); }, [open]);
-
-  const style = useSpringPresence({
-    visible: open,
-    from: "translateY(-4px)",
-    onExitComplete: () => setShouldRender(false),  // unmount after exit
-  });
-
-  if (!shouldRender) return null;
-  return <animated.div style={style}>...</animated.div>;
+.my_popover {
+  @include token.presence(translateY(-4px)); // argument = closed-state transform
 }
 ```
 
-**Reduced motion:** every component respects `prefers-reduced-motion: reduce`. Spring respects it automatically; CSS animations have explicit overrides.
+```tsx
+// Enter only: mounting is enough.
+{open && <div className="my_popover">...</div>}
+
+// Enter + exit: keep it mounted with data-state="closed" until el.getAnimations() settle, then unmount.
+```
+
+Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See `docs/MIGRATION.md`.
+
+**Reduced motion:** every component respects `prefers-reduced-motion: reduce`. `token.presence` turns its transition off there.
 
 ---
 
@@ -485,7 +484,7 @@ toast.error("Network error", 6000); // custom 6s duration
 | Custom modal with CSS keyframes | `<Modal>` (spring built in) |
 | Build dropdown from scratch | `<Dropdown>` |
 | `transition: all 0.2s ease` | Specific properties + motion tokens |
-| `animation: ... infinite` outside loading indicators | Spring (`useSpringPresence`) for entrance/exit |
+| `animation: ... infinite` outside loading indicators | `token.presence` mixin for entrance/exit |
 | Skip `aria-label` on icon-only triggers | `<IconButton icon={...} aria-label="..." />` |
 | Hardcode logo color white inside a Sidebar | Sidebar uses light bg by default - use `text-heading` for text |
 | Use Tag component | Removed in v3.0 - use `<Chip type="static" tone="..." />` |

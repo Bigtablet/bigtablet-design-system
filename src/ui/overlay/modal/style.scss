@@ -32,6 +32,7 @@ $close_clearance: token.$spacing_24;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome;
   will-change: opacity;
+  @include token.presence;
 
   &_panel {
     position: relative; // close button 의 absolute 기준
@@ -41,17 +42,18 @@ $close_clearance: token.$spacing_24;
     background: token.$color_bg_solid;
     border-radius: token.$radius_lg;
     box-shadow: token.$elevation_level3;
-    max-width: calc(100% - #{token.$spacing_32 * 2});
+    max-width: calc(100% - 2 * #{token.$spacing_32});
     // 뷰포트보다 긴 내용이 위아래로 잘려 접근 불가가 되던 것을 막는다. body 스크롤이 잠긴 상태라
     // 페이지 스크롤로도 닿을 수 없었다. 제목·푸터는 고정되고 본문만 스크롤된다(&_body).
     // dvh 는 모바일 사파리 주소창을 따라가고, 미지원 브라우저는 위의 vh 선언을 쓴다.
-    max-height: calc(100vh - #{token.$spacing_32 * 2});
-    max-height: calc(100dvh - #{token.$spacing_32 * 2});
+    max-height: calc(100vh - 2 * #{token.$spacing_32});
+    max-height: calc(100dvh - 2 * #{token.$spacing_32});
     padding: token.$spacing_24;
     // visible 유지 - hidden 으로 바꾸면 우상단 close 버튼의 focus ring(box-shadow)이 잘린다.
     // 넘치는 내용은 &_body 가 자기 안에서 처리한다.
     overflow: visible;
     will-change: transform, opacity;
+    @include token.presence(scale(0.96) translateY(-4px));
 
     @include token.from_medium {
       padding: token.$spacing_32;

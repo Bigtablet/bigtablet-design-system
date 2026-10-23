@@ -145,7 +145,8 @@ export const ko: LocaleMessages = {
 	"fileInput.removeImage": "이미지 제거",
 	"filterBar.reset": "초기화",
 	"filterBar.submit": "검색",
-	"imageCropper.hint": "드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.",
+	"imageCropper.hint":
+		"드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요.",
 	"imageCropper.label": "이미지 위치와 배율 조정",
 	"imageCropper.noPanHint": "이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.",
 	"imageCropper.zoom": "배율",
@@ -228,7 +229,8 @@ export const en: LocaleMessages = {
 	"fileInput.removeImage": "Remove image",
 	"filterBar.reset": "Reset",
 	"filterBar.submit": "Search",
-	"imageCropper.hint": "Drag (or use arrow keys) to move, wheel or slider to zoom.",
+	"imageCropper.hint":
+		"Drag, or tap the spot to center (or use arrow keys) to move; wheel or slider to zoom.",
 	"imageCropper.label": "Adjust image position and zoom",
 	"imageCropper.noPanHint": "The image fills the viewport exactly, so there is no room to move it.",
 	"imageCropper.zoom": "Zoom",

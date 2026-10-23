@@ -6,7 +6,7 @@
 @keyframes inline_alert_enter {
   from {
     opacity: 0;
-    transform: translateY(-#{token.$spacing_4});
+    transform: translateY(calc(-1 * #{token.$spacing_4}));
   }
 }
 

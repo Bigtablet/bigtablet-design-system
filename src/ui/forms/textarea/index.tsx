@@ -281,5 +281,3 @@ export const Textarea = ({
 		</div>
 	);
 };
-
-Textarea.displayName = "Textarea";

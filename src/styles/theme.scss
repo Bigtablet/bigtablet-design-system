@@ -15,105 +15,16 @@
 // mixin 한 곳에 정의하고 두 셀렉터에서 @include 한다 (drift 방지).
 // ════════════════════════════════════════════════════════════════════════
 
-@use "./colors/index" as *;
-@use "./z-index/index" as zindex;
+@use "./border-width/index" as bw;
+@use "./theme-tokens" as tokens;
 
 // ── Light (기본) ────────────────────────────────────────────────────────
+// 색 · 포커스 링 · 그림자 · z-index · 모서리 · 간격 · 글꼴 변수는 tokens.json 에서 생성한다(_theme-tokens.scss).
+// 모서리 · 간격 · 글꼴은 테마와 무관하다. 컴포넌트 SCSS 가 `var(--bt-radius-md, 8px)` 처럼 기본값을 품고
+// 참조하므로 정의가 없어도 화면은 같지만, tailwind.css(`rounded-bt-md`) · cssVars 처럼 기본값 없이 읽는 쪽을
+// 위해 정의해 둔다. 높이 · 터치 영역 · 아이콘 크기는 UX 값이라 열지 않는다.
 :root {
-  // Brand (light/dark 동일)
-  --bt-color-brand-primary:        #{$color_base_brand_primary};
-  --bt-color-brand-on-primary:     #{$color_base_neutral_0};
-  --bt-color-brand-primary-container: #{$color_base_alpha_black_5};
-
-  // Text
-  --bt-color-text-heading:         #{$color_base_neutral_900};
-  --bt-color-text-body:            #{$color_base_neutral_700};
-  --bt-color-text-caption:         #{$color_base_text_caption_light};
-  --bt-color-text-brand:           #{$color_base_brand_primary};
-  --bt-color-text-inverse:         #{$color_base_neutral_0};
-  --bt-color-text-disabled:        #{$color_base_alpha_black_38};
-
-  // Background
-  --bt-color-bg-solid:             #{$color_base_neutral_0};
-  --bt-color-bg-solid-dim:         #{$color_base_neutral_50};
-  --bt-color-bg-additive:          #{$color_base_alpha_black_5};
-  --bt-color-bg-disabled:          #{$color_base_alpha_black_12};
-  --bt-color-bg-overlay:           #{$color_base_alpha_black_50};
-  --bt-color-bg-inverse-surface:   #{$color_base_neutral_800};
-
-  // State
-  --bt-color-state-hover-on-light:    #{$color_base_alpha_black_5};
-  --bt-color-state-pressed-on-light:  #{$color_base_alpha_black_12};
-  --bt-color-state-focus-on-light:    #{$color_base_alpha_black_8};
-  --bt-color-state-hover-on-dark:     #{$color_base_alpha_white_5};
-  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_white_12};
-  --bt-color-state-focus-on-dark:     #{$color_base_alpha_white_8};
-
-  // Border
-  --bt-color-border-default:       #{$color_base_neutral_200};
-  --bt-color-border-hover:         #{$color_base_neutral_400};
-  --bt-color-border-subtle:        #{$color_base_alpha_black_8};
-  --bt-color-border-focus:         #{$color_base_neutral_900};
-  --bt-color-border-disabled:      #{$color_base_neutral_100};
-
-  // Status - base (solid bg 용, light = darkened - #fff text 5+:1)
-  --bt-color-status-error:         #{$color_base_status_error};
-  --bt-color-status-success:       #{$color_base_status_success};
-  --bt-color-status-warning:       #{$color_base_status_warning};
-  --bt-color-status-info:          #{$color_base_status_info};
-
-  // Status - on-default (solid bg 위 텍스트)
-  --bt-color-status-error-on-default:    #{$color_base_neutral_0};
-  --bt-color-status-success-on-default:  #{$color_base_neutral_0};
-  --bt-color-status-warning-on-default:  #{$color_base_neutral_0};
-  --bt-color-status-info-on-default:     #{$color_base_neutral_0};
-
-  // Status - container (tint 배경 - soft variant 용)
-  --bt-color-status-error-container:    #{$color_base_status_error_container_light};
-  --bt-color-status-success-container:  #{$color_base_status_success_container_light};
-  --bt-color-status-warning-container:  #{$color_base_status_warning_container_light};
-  --bt-color-status-info-container:     #{$color_base_status_info_container_light};
-
-  // Status - on-container (tint 위 텍스트)
-  --bt-color-status-error-on-container:    #{$color_base_status_error};
-  --bt-color-status-success-on-container:  #{$color_base_status_success};
-  --bt-color-status-warning-on-container:  #{$color_base_status_warning};
-  --bt-color-status-info-on-container:     #{$color_base_status_info};
-
-  // Status - on-surface (앱 surface 위 직접 텍스트, e.g. TextField error helper)
-  // light: darkened (= status-* 와 동일), dark 에서만 분기 됨.
-  --bt-color-status-error-on-surface:    #{$color_base_status_error};
-  --bt-color-status-success-on-surface:  #{$color_base_status_success};
-  --bt-color-status-warning-on-surface:  #{$color_base_status_warning};
-  --bt-color-status-info-on-surface:     #{$color_base_status_info};
-
-  // Accent (검정 brand 기반 - light에서 검정, dark에서 흰색 반전)
-  // 컴포넌트 active/selected/indicator 강조에 사용.
-  --bt-color-accent-subtle:        #{$color_base_alpha_black_5};
-  --bt-color-accent-muted:         #{$color_base_alpha_black_12};
-  --bt-color-accent-light:         #{$color_base_neutral_400};
-  --bt-color-accent-default:       #{$color_base_brand_primary};   // 검정 (brand와 동일)
-  --bt-color-accent-strong:        #{$color_base_neutral_900};
-  --bt-color-accent-on-surface:    #{$color_base_neutral_0};        // 검정 위 흰색
-
-  // Skeleton (light gray gradient - dark 에서 neutral gray 로 전환)
-  --bt-color-skeleton-base:        #{$color_base_skeleton_base};
-  --bt-color-skeleton-wave:        #{$color_base_skeleton_wave};
-  --bt-color-skeleton-highlight:   #{$color_base_skeleton_highlight};
-
-  // Focus rings (a11y) - bg-solid 2px 틈 + 불투명 2px 링. 틈이 진한 컨트롤(filled 버튼)과
-  // 링을 떼어 놓고, 링은 bg-solid 대비 3:1 이상(WCAG 1.4.11) - 색은 border-focus·status-*-on-surface 와 같다.
-  // light: neutral_900 18:1 · red-700 6.4:1 · green-700 5.5:1
-  --bt-focus-ring:         0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_neutral_900};
-  --bt-focus-ring-error:   0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_status_error};
-  --bt-focus-ring-success: 0 0 0 2px #{$color_base_neutral_0}, 0 0 0 4px #{$color_base_status_success};
-
-  // Elevation shadows - dark 는 더 강한 검정 + 살짝 spread 증가로 가시성 확보.
-  --bt-elevation-level1: 0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12);
-  --bt-elevation-level2: 0 2px 2px -2px rgba(0, 0, 0, 0.20), 0 6px 6px 0px rgba(0, 0, 0, 0.12);
-  --bt-elevation-level3: 0 3px 3px -3px rgba(0, 0, 0, 0.20), 0 9px 9px 0px rgba(0, 0, 0, 0.12);
-  --bt-elevation-level4: 0 5px 5px -5px rgba(0, 0, 0, 0.20), 0 15px 15px 0px rgba(0, 0, 0, 0.12);
-  --bt-elevation-level5: 0 8px 10px -5px rgba(0, 0, 0, 0.20), 0 20px 20px 0px rgba(0, 0, 0, 0.12);
+  @include tokens.light;
 
   // 뷰포트 하단이 고정 크롬에 가려진 높이. 소비처는 `bottom: calc(16px + var(--bt-bottom-inset))`
   // 처럼 더해 겹침을 피한다. 읽는 쪽은 이 변수 하나만 보면 된다.
@@ -125,18 +36,6 @@
   --bt-bottom-nav-inset: 0px; // DS 몫 - BottomNav 가 있으면 그 스타일시트가 채운다
   --bt-sidebar-inset: 0px;    // DS 몫 - Sidebar 가 BottomBar 로 변신하면 그 스타일시트가 채운다
   --bt-bottom-inset-app: 0px; // 앱 몫 - 플로팅 바·고정 액션 바 등 앱이 소유한 하단 크롬
-
-  // 쌓임 순서. 값이 결정되는 곳은 CSS 라서, SCSS 를 쓰지 않는 소비자(인라인 스타일, 런타임
-  // 계산)도 DS 레이어를 참조할 수 있어야 한다. SCSS 쪽은 token.$z_* 로 같은 값이 나온다.
-  //
-  // 앱 레이어를 DS 사이에 놓을 때는 값을 베끼지 말고 이 변수로 계산한다.
-  //   .floating_bar { z-index: calc(var(--bt-z-notification) - 1); }
-  --bt-z-content: #{zindex.$z_content};           //   10
-  --bt-z-chrome: #{zindex.$z_chrome};             //  100
-  --bt-z-app-chrome: #{zindex.$z_app_chrome};     //  150 - 앱 크롬용 대역
-  --bt-z-notification: #{zindex.$z_notification}; //  200
-  --bt-z-loading: #{zindex.$z_loading};           //  500
-  --bt-z-popup: #{zindex.$z_popup};               // 1000
 }
 
 // 합성은 body 에서 한다. DS 몫을 `body:has(.bottom_nav)` 가 채우므로 :root 에서 계산하면
@@ -149,6 +48,35 @@ body {
   );
 }
 
+// ── 고정 크롬 아래로 포커스가 숨지 않게 (WCAG 2.4.11) ─────────────────────
+// 스크롤은 문서가 갖는다(AppShell). Tab·앵커 이동으로 스크롤될 때 대상이 sticky 헤더나 하단 고정
+// 바 밑에 멈추지 않도록 뷰포트 스크롤러(html)에 그 높이만큼 scroll-padding 을 준다.
+// - 위: `--bt-top-inset` 은 AppShell header·sticky NavBar 가 재서 html 인라인 스타일로 쓴다(헤더 높이가
+//   내용에 따라 달라 CSS 로는 모른다). DS 헤더가 아닌 앱 고정 헤더는 앱이 같은 변수를 쓰면 된다.
+// - 아래: BottomNav·BottomBar(Sidebar) 스타일시트가 `html:has(...)` 로 채운다. `--bt-bottom-inset` 은
+//   body 에서 합성돼 html 이 읽지 못하기 때문이다.
+// 모든 요소에 scroll-margin 을 거는 방식은 쓰지 않는다 - 내부 스크롤러(목록의 scrollIntoView,
+// 스냅 캐러셀)까지 그만큼 밀린다.
+html {
+  scroll-padding-top: var(--bt-top-inset, 0px);
+}
+
+// ── 고대비(forced-colors) 포커스 표시 ───────────────────────────────────
+// 컴포넌트의 포커스 표시는 `outline: none` + `box-shadow` 링이거나 컨테이너 `border-color`
+// 변화다. forced-colors 는 box-shadow 를 지우고 테두리 색을 시스템 색으로 덮어 둘 다 사라진다
+// (WCAG 2.4.7). 컴포넌트마다 고치지 않고 여기 한 곳에서 outline 을 되살린다 - 이 파일은 React
+// style.css 와 Vanilla bigtablet.css 가 같이 쓴다.
+//
+// `!important` 는 컴포넌트의 `.x:focus-visible { outline: none }`(특이도 0,2,0 이상)을 이기기
+// 위해서다. 이 미디어 안에서만 걸리므로 일반 렌더는 그대로다. offset 은 important 가 아니라
+// Table 행처럼 안쪽으로 그리는 컴포넌트는 자기 값을 유지한다.
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: bw.$border_width_thick solid Highlight !important;
+    outline-offset: bw.$border_width_thick;
+  }
+}
+
 // ── Dark overrides (mixin - 두 셀렉터에서 공유) ──────────────────────────
 @mixin dark-theme {
   // 브라우저 기본 UI (스크롤바, form control 등) 다크 적응
@@ -157,82 +85,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Text (light → inverted)
-  // heading: 100% 흰색 → 95%로 살짝 부드럽게 (눈 피로 완화, halation 보정)
-  --bt-color-text-heading:         rgba(255, 255, 255, 0.95);
-  --bt-color-text-body:            #{$color_base_neutral_400};
-  --bt-color-text-caption:         #{$color_base_text_caption_dark};
-  --bt-color-text-inverse:         #{$color_base_neutral_900};
-  --bt-color-text-disabled:        #{$color_base_alpha_white_38};
-
-  // Background (light → neutral dark)
-  --bt-color-bg-solid:             #{$color_base_neutral_950};
-  --bt-color-bg-solid-dim:         #{$color_base_neutral_925};
-  --bt-color-bg-additive:          #{$color_base_alpha_white_5};
-  --bt-color-bg-disabled:          #{$color_base_alpha_white_12};
-  --bt-color-bg-overlay:           rgba(0, 0, 0, 0.7);
-  --bt-color-bg-inverse-surface:   #{$color_base_neutral_50};
-
-  // State (검정 alpha → 흰색 alpha - dark bg 위에서 작동)
-  --bt-color-state-hover-on-light:    #{$color_base_alpha_white_8};
-  --bt-color-state-pressed-on-light:  #{$color_base_alpha_white_12};
-  --bt-color-state-focus-on-light:    #{$color_base_alpha_white_12};
-  --bt-color-state-hover-on-dark:     #{$color_base_alpha_black_8};
-  --bt-color-state-pressed-on-dark:   #{$color_base_alpha_black_12};
-  --bt-color-state-focus-on-dark:     #{$color_base_alpha_black_12};
-
-  // Border (light gray → neutral dark)
-  --bt-color-border-default:       #{$color_base_neutral_800};
-  --bt-color-border-hover:         #{$color_base_neutral_600};
-  --bt-color-border-subtle:        #{$color_base_alpha_white_12};
-  --bt-color-border-focus:         #{$color_base_neutral_0};
-  --bt-color-border-disabled:      #{$color_base_neutral_925};
-
-  // Brand container - dark 모드에선 white alpha로
-  --bt-color-brand-primary-container: #{$color_base_alpha_white_8};
-
-  // Accent (dark - 흰색 반전. active/selected가 dark neutral bg 위에서 잘 보임)
-  --bt-color-accent-subtle:        #{$color_base_alpha_white_8};
-  --bt-color-accent-muted:         #{$color_base_alpha_white_12};
-  --bt-color-accent-light:         #{$color_base_neutral_300};
-  --bt-color-accent-default:       #{$color_base_neutral_0};         // 흰색
-  --bt-color-accent-strong:        #{$color_base_neutral_0};
-  --bt-color-accent-on-surface:    #{$color_base_neutral_900};       // 흰 위 검정 텍스트
-
-  // Status - dark mode 분기
-  // base solid 는 light 와 동일 (darkened) 유지 - Badge solid 의 #fff 텍스트 대비 보존.
-  // container / on-container / on-surface 만 dark variant 적용.
-  --bt-color-status-error-container:     #{$color_base_status_error_container_dark};
-  --bt-color-status-success-container:   #{$color_base_status_success_container_dark};
-  --bt-color-status-warning-container:   #{$color_base_status_warning_container_dark};
-  --bt-color-status-info-container:      #{$color_base_status_info_container_dark};
-
-  --bt-color-status-error-on-container:    #{$color_base_status_error_on_container_dark};
-  --bt-color-status-success-on-container:  #{$color_base_status_success_on_container_dark};
-  --bt-color-status-warning-on-container:  #{$color_base_status_warning_on_container_dark};
-  --bt-color-status-info-on-container:     #{$color_base_status_info_on_container_dark};
-
-  --bt-color-status-error-on-surface:    #{$color_base_status_error_dark_text};
-  --bt-color-status-success-on-surface:  #{$color_base_status_success_dark_text};
-  --bt-color-status-warning-on-surface:  #{$color_base_status_warning_dark_text};
-  --bt-color-status-info-on-surface:     #{$color_base_status_info_dark_text};
-
-  // Skeleton - neutral_800 (bg-solid-dim neutral_925 보다 밝음 → 시각 대비)
-  --bt-color-skeleton-base:        #{$color_base_neutral_800};
-  --bt-color-skeleton-wave:        #{$color_base_neutral_800};
-  --bt-color-skeleton-highlight:   #{$color_base_neutral_700};
-
-  // Focus rings - light 와 같은 구조. neutral_0 · red-400 · green-400 on neutral_950
-  --bt-focus-ring:         0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_neutral_0};
-  --bt-focus-ring-error:   0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_status_error_dark_text};
-  --bt-focus-ring-success: 0 0 0 2px #{$color_base_neutral_950}, 0 0 0 4px #{$color_base_status_success_dark_text};
-
-  // Elevation shadows - neutral dark bg 위 가시성 (검정 더 진하게 + 큰 spread)
-  --bt-elevation-level1: 0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 3px 6px 0 rgba(0, 0, 0, 0.30);
-  --bt-elevation-level2: 0 2px 4px 0 rgba(0, 0, 0, 0.45), 0 6px 12px 0 rgba(0, 0, 0, 0.30);
-  --bt-elevation-level3: 0 3px 6px 0 rgba(0, 0, 0, 0.50), 0 9px 18px 0 rgba(0, 0, 0, 0.35);
-  --bt-elevation-level4: 0 5px 10px 0 rgba(0, 0, 0, 0.55), 0 15px 30px 0 rgba(0, 0, 0, 0.40);
-  --bt-elevation-level5: 0 8px 16px 0 rgba(0, 0, 0, 0.60), 0 20px 40px 0 rgba(0, 0, 0, 0.45);
+  @include tokens.dark;
 }
 
 // ── 런타임 측정값 (테마 무관) ─────────────────────────────────────────────

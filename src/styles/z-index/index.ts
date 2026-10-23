@@ -1,21 +1,23 @@
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
+
 export const zIndex = {
+	/** 레벨 스케일 - 값의 원천. 제거하면 하위 호환이 깨지므로 유지한다. */
 	level0: 0,
 	level1: 10,
 	level2: 100,
 	level3: 200,
 	level4: 500,
 	level5: 1000,
-
-	/** 컨텐츠 내부 겹침 - sticky 표 헤더, Hero 오버레이 */
+	/** 레벨 이름만으로는 "무엇이 어디 있는지" 를 알 수 없다. $z_level2 를 보고 모달을 떠올릴 방법이 없어서, 소비자가 배포 CSS 를 grep 해 레이어를 알아내고 있었다. 값은 위와 같고 이름만 붙인다.  앱 레이어를 DS 레이어 사이에 놓을 때는 값을 베끼지 말고 이 이름을 기준으로 계산한다.   .floating_bar { z-index: calc(#{$z_notification} - 1); }  // 토스트 아래, 모달 위 10 - 컨텐츠 내부 겹침 (sticky 표 헤더, Hero 오버레이) */
 	content: 10,
-	/** Modal · Drawer · Sidebar · BottomNav */
+	/** 100 - Modal · Drawer · Sidebar · BottomNav */
 	chrome: 100,
-	/** Toast · NavBar */
+	/** 200 - Toast · NavBar */
 	notification: 200,
-	/** TopLoading */
+	/** 500 - TopLoading */
 	loading: 500,
-	/** Tooltip · Popover · Menu · Dropdown 목록 · Alert */
+	/** 1000 - Tooltip · Popover · Menu · Dropdown 목록 · Alert */
 	popup: 1000,
-	/** 앱이 소유한 크롬용 대역 - DS chrome(100) 위, notification(200) 아래 */
+	/** 앱이 소유한 하단·상단 크롬을 위한 자리. DS 크롬(100)보다 위, 알림(200)보다 아래. 소비처의 플로팅 액션 바가 정확히 이 대역을 필요로 한다 - 앱 스케일에서 900 을 골랐다가 DS 토스트(200)를 덮어 토스트에 z-index 를 덧씌우는 규칙이 남아 있었다. */
 	appChrome: 150,
 } as const;

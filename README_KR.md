@@ -26,7 +26,9 @@ Bigtablet 제품을 떠받치는 UI 라이브러리.<br />
 
 ```tsx
 import { ThemeProvider, Button, Modal, useToast } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
+// CSS import 는 필요 없다 - 컴포넌트가 자기 CSS 와 공통 테마 변수를 불러온다.
+// Button 만 쓰는 페이지는 DS CSS 가 약 3KB(gzip)만 실린다(전체 20KB).
+// Next.js 를 webpack 으로 빌드하면 `experimental.optimizePackageImports` 에 이 패키지를 넣는다(Turbopack 은 그대로).
 
 export default function App() {
   const toast = useToast();
@@ -140,9 +142,26 @@ showAlert({ title: "삭제할까요?", showCancel: true, onConfirm: ... });
 ```
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
-> React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*` 뿐이다. spacing / radius / typography 는 이 entry 에선 **SCSS 전용**이라 `scss/token` 을 써야 한다 (`--bt-spacing-*` / `--bt-radius-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
+> React entry 의 `style.css` 가 내보내는 CSS 변수는 `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`, `--bt-radius-*`, `--bt-spacing-*`, `--bt-font-family` 뿐이다. 글자 크기·줄 높이는 이 entry 에선 **SCSS 전용**이라 `scss/token` 타이포 믹스인을 써야 한다 (`--bt-font-size-*` 는 [Vanilla 번들](./docs/VANILLA.md) 에만 존재).
 
 `colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS 전용</sup>
+
+<br />
+
+### Tailwind CSS (v4)
+
+```css
+/* app/globals.css - 레이어 순서를 먼저 고정하도록 tailwindcss 보다 앞에 */
+@import "@bigtablet/design-system/tailwind.css";
+@import "tailwindcss";
+```
+
+```tsx
+import "@bigtablet/design-system/style.css"; // --bt-* 값 정의
+<p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
+```
+
+`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로 매핑한다(값은 `var()` 그대로라 다크 모드를 따라간다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮는다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)은 `@layer reset { ... }` 에 넣어야 한다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이긴다.
 
 <br />
 

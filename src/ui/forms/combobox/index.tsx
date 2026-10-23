@@ -1,12 +1,11 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import { ChevronDown } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps, splitAriaProps, useSpringPresence } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { Spinner } from "../../feedback/spinner";
 import { useLocaleText } from "../../system/locale-provider";
@@ -223,12 +222,6 @@ export const Combobox = ({
 	// 보조기술이 존재하지 않는 요소를 가리킨다.
 	const hasList = !showIdle && !showEmpty;
 
-	// 패널 진입 모션 - Dropdown 목록과 같은 값. 퇴출은 즉시 unmount (Dropdown 주석 참고).
-	const panelStyle = useSpringPresence({
-		visible: isOpen,
-		from: popup.dropUp ? "translateY(4px)" : "translateY(-4px)",
-	});
-
 	return (
 		<div ref={popup.wrapperRef} className={rootClassName} {...restProps}>
 			<div className="combobox_control">
@@ -288,11 +281,11 @@ export const Combobox = ({
 				createPortal(
 					// Dropdown 과 같은 이유로 포탈이다 - 트리거 옆에 두면 `overflow: hidden` 조상이
 					// 잘라낸다(#586). 좌표·폭은 배치 훅이 트리거를 재서 준다.
-					<animated.div
+					// 진입 모션만 있다(style.scss) - 퇴출은 즉시 unmount (Dropdown 주석 참고).
+					<div
 						ref={popup.panelRef}
 						className={cn("combobox_panel", { combobox_panel_up: popup.dropUp })}
 						style={{
-							...panelStyle,
 							position: "fixed",
 							left: popup.position.x,
 							top: popup.position.y,
@@ -341,7 +334,7 @@ export const Combobox = ({
 								))}
 							</div>
 						)}
-					</animated.div>,
+					</div>,
 					document.body,
 				)}
 		</div>

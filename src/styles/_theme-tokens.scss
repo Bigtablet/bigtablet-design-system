@@ -1,0 +1,186 @@
+// 생성 파일 - 직접 고치지 말 것. 원본은 src/styles/tokens.json, `pnpm tokens` 로 다시 만든다.
+// theme.scss 가 :root 와 다크 셀렉터에서 include 한다.
+
+@mixin light {
+	--bt-elevation-level1: 0 1px 1px -1px rgba(0, 0, 0, 0.20), 0 3px 3px 0px rgba(0, 0, 0, 0.12);
+	--bt-elevation-level2: 0 2px 2px -2px rgba(0, 0, 0, 0.20), 0 6px 6px 0px rgba(0, 0, 0, 0.12);
+	--bt-elevation-level3: 0 3px 3px -3px rgba(0, 0, 0, 0.20), 0 9px 9px 0px rgba(0, 0, 0, 0.12);
+	--bt-elevation-level4: 0 5px 5px -5px rgba(0, 0, 0, 0.20), 0 15px 15px 0px rgba(0, 0, 0, 0.12);
+	--bt-elevation-level5: 0 8px 10px -5px rgba(0, 0, 0, 0.20), 0 20px 20px 0px rgba(0, 0, 0, 0.12);
+	// Brand
+	--bt-color-brand-primary: #121212;
+	--bt-color-brand-on-primary: #FFFFFF;
+	--bt-color-brand-primary-container: rgba(0, 0, 0, 0.05);
+	// Text
+	--bt-color-text-heading: #121212;
+	--bt-color-text-body: #666666;
+	--bt-color-text-caption: #6F6F6F;
+	--bt-color-text-brand: #121212;
+	--bt-color-text-inverse: #FFFFFF;
+	--bt-color-text-disabled: rgba(26, 26, 26, 0.38);
+	// Background
+	--bt-color-bg-solid: #FFFFFF;
+	--bt-color-bg-solid-dim: #F4F4F4;
+	--bt-color-bg-additive: rgba(0, 0, 0, 0.05);
+	--bt-color-bg-disabled: rgba(26, 26, 26, 0.12);
+	--bt-color-bg-overlay: rgba(0, 0, 0, 0.50);
+	--bt-color-bg-inverse-surface: #333333;
+	// State
+	--bt-color-state-hover-on-light: rgba(0, 0, 0, 0.05);
+	--bt-color-state-pressed-on-light: rgba(26, 26, 26, 0.12);
+	--bt-color-state-focus-on-light: rgba(0, 0, 0, 0.08);
+	--bt-color-state-hover-on-dark: rgba(255, 255, 255, 0.05);
+	--bt-color-state-pressed-on-dark: rgba(255, 255, 255, 0.12);
+	--bt-color-state-focus-on-dark: rgba(255, 255, 255, 0.08);
+	// Border
+	--bt-color-border-default: #E5E5E5;
+	--bt-color-border-hover: #B3B3B3;
+	--bt-color-border-subtle: rgba(0, 0, 0, 0.08);
+	--bt-color-border-focus: #121212;
+	--bt-color-border-disabled: #F2F2F2;
+	// Status - solid (light=darkened for AA, dark=동일)
+	--bt-color-status-error: #B91C1C;
+	--bt-color-status-success: #047857;
+	--bt-color-status-warning: #B45309;
+	--bt-color-status-info: #1D4ED8;
+	// Status - on-default (solid bg 위 텍스트)
+	--bt-color-status-error-on-default: #FFFFFF;
+	--bt-color-status-success-on-default: #FFFFFF;
+	--bt-color-status-warning-on-default: #FFFFFF;
+	--bt-color-status-info-on-default: #FFFFFF;
+	// Status - container (tint 배경, soft variant 용)
+	--bt-color-status-error-container: #FEE2E2;
+	--bt-color-status-success-container: #DCFCE7;
+	--bt-color-status-warning-container: #FEF3C7;
+	--bt-color-status-info-container: #DBEAFE;
+	// Status - on-container (tint 위 텍스트)
+	--bt-color-status-error-on-container: #B91C1C;
+	--bt-color-status-success-on-container: #047857;
+	--bt-color-status-warning-on-container: #B45309;
+	--bt-color-status-info-on-container: #1D4ED8;
+	// Status - on-surface (앱 surface 위 직접 텍스트, light/dark 자동 swap)
+	--bt-color-status-error-on-surface: #B91C1C;
+	--bt-color-status-success-on-surface: #047857;
+	--bt-color-status-warning-on-surface: #B45309;
+	--bt-color-status-info-on-surface: #1D4ED8;
+	// Accent
+	--bt-color-accent-subtle: rgba(0, 0, 0, 0.05);
+	--bt-color-accent-muted: rgba(26, 26, 26, 0.12);
+	--bt-color-accent-light: #B3B3B3;
+	// light 는 검정(brand), dark 는 흰색으로 반전
+	--bt-color-accent-default: #121212;
+	--bt-color-accent-strong: #121212;
+	--bt-color-accent-on-surface: #FFFFFF;
+	// CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환.
+	// fallback 값은 standalone import (colors 미포함) 시 light 동작 보장.
+	--bt-color-skeleton-base: #F3F3F3;
+	--bt-color-skeleton-wave: #F0F0F0;
+	--bt-color-skeleton-highlight: #FAFAFA;
+	// 컴포넌트·소비자용 - `var(--bt-*, 원값)`. `:root { --bt-spacing-16: 20px }` 처럼 덮어쓰면 따라간다.
+	// 문자열이라 Sass 산술(`* 2`, 단항 `-`)이 안 된다 - `calc(2 * #{$x})` 를 쓰거나 원값(`_base_`)을 쓴다.
+	--bt-spacing-0: 0px;
+	--bt-spacing-1: 1px;
+	--bt-spacing-2: 2px;
+	--bt-spacing-3: 3px;
+	--bt-spacing-4: 4px;
+	--bt-spacing-6: 6px;
+	--bt-spacing-8: 8px;
+	--bt-spacing-10: 10px;
+	--bt-spacing-12: 12px;
+	--bt-spacing-16: 16px;
+	--bt-spacing-20: 20px;
+	--bt-spacing-24: 24px;
+	--bt-spacing-32: 32px;
+	--bt-spacing-40: 40px;
+	--bt-spacing-48: 48px;
+	--bt-spacing-64: 64px;
+	--bt-spacing-96: 96px;
+	--bt-spacing-128: 128px;
+	// 컴포넌트·소비자용 - `var(--bt-*, 원값)`. `:root { --bt-radius-md: 4px }` 처럼 덮어쓰면 따라간다.
+	// 문자열이라 Sass 산술(`* 2`, 단항 `-`)이 안 된다 - `calc(2 * #{$x})` 를 쓰거나 원값(`_base_`)을 쓴다.
+	--bt-radius-none: 0px;
+	--bt-radius-xs: 4px;
+	--bt-radius-sm: 6px;
+	--bt-radius-md: 8px;
+	--bt-radius-lg: 12px;
+	--bt-radius-xl: 16px;
+	--bt-radius-full: 9999px;
+	// `:root { --bt-font-family: "Inter", sans-serif }` 로 덮어쓰면 컴포넌트 글꼴이 따라간다
+	--bt-font-family: "Pretendard", sans-serif;
+	// 레벨 이름만으로는 "무엇이 어디 있는지" 를 알 수 없다. $z_level2 를 보고 모달을 떠올릴 방법이
+	// 없어서, 소비자가 배포 CSS 를 grep 해 레이어를 알아내고 있었다. 값은 위와 같고 이름만 붙인다.
+	// 앱 레이어를 DS 레이어 사이에 놓을 때는 값을 베끼지 말고 이 이름을 기준으로 계산한다.
+	//   .floating_bar { z-index: calc(#{$z_notification} - 1); }  // 토스트 아래, 모달 위
+	// 10 - 컨텐츠 내부 겹침 (sticky 표 헤더, Hero 오버레이)
+	--bt-z-content: 10;
+	// 100 - Modal · Drawer · Sidebar · BottomNav
+	--bt-z-chrome: 100;
+	// 200 - Toast · NavBar
+	--bt-z-notification: 200;
+	// 500 - TopLoading
+	--bt-z-loading: 500;
+	// 1000 - Tooltip · Popover · Menu · Dropdown 목록 · Alert
+	--bt-z-popup: 1000;
+	// 앱이 소유한 하단·상단 크롬을 위한 자리. DS 크롬(100)보다 위, 알림(200)보다 아래.
+	// 소비처의 플로팅 액션 바가 정확히 이 대역을 필요로 한다 - 앱 스케일에서 900 을 골랐다가
+	// DS 토스트(200)를 덮어 토스트에 z-index 를 덧씌우는 규칙이 남아 있었다.
+	--bt-z-app-chrome: 150;
+	--bt-focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #121212;
+	--bt-focus-ring-error: 0 0 0 2px #FFFFFF, 0 0 0 4px #B91C1C;
+	--bt-focus-ring-success: 0 0 0 2px #FFFFFF, 0 0 0 4px #047857;
+}
+
+@mixin dark {
+	--bt-elevation-level1: 0 1px 2px 0px rgba(0, 0, 0, 0.45), 0 3px 6px 0px rgba(0, 0, 0, 0.30);
+	--bt-elevation-level2: 0 2px 4px 0px rgba(0, 0, 0, 0.45), 0 6px 12px 0px rgba(0, 0, 0, 0.30);
+	--bt-elevation-level3: 0 3px 6px 0px rgba(0, 0, 0, 0.50), 0 9px 18px 0px rgba(0, 0, 0, 0.35);
+	--bt-elevation-level4: 0 5px 10px 0px rgba(0, 0, 0, 0.55), 0 15px 30px 0px rgba(0, 0, 0, 0.40);
+	--bt-elevation-level5: 0 8px 16px 0px rgba(0, 0, 0, 0.60), 0 20px 40px 0px rgba(0, 0, 0, 0.45);
+	--bt-color-brand-primary-container: rgba(255, 255, 255, 0.08);
+	--bt-color-text-heading: rgba(255, 255, 255, 0.95);
+	--bt-color-text-body: #B3B3B3;
+	--bt-color-text-caption: #808080;
+	--bt-color-text-inverse: #121212;
+	--bt-color-text-disabled: rgba(255, 255, 255, 0.38);
+	--bt-color-bg-solid: #0A0A0A;
+	--bt-color-bg-solid-dim: #141414;
+	--bt-color-bg-additive: rgba(255, 255, 255, 0.05);
+	--bt-color-bg-disabled: rgba(255, 255, 255, 0.12);
+	--bt-color-bg-overlay: rgba(0, 0, 0, 0.7);
+	--bt-color-bg-inverse-surface: #F4F4F4;
+	--bt-color-state-hover-on-light: rgba(255, 255, 255, 0.08);
+	--bt-color-state-pressed-on-light: rgba(255, 255, 255, 0.12);
+	--bt-color-state-focus-on-light: rgba(255, 255, 255, 0.12);
+	--bt-color-state-hover-on-dark: rgba(0, 0, 0, 0.08);
+	--bt-color-state-pressed-on-dark: rgba(26, 26, 26, 0.12);
+	--bt-color-state-focus-on-dark: rgba(26, 26, 26, 0.12);
+	--bt-color-border-default: #333333;
+	--bt-color-border-hover: #777777;
+	--bt-color-border-subtle: rgba(255, 255, 255, 0.12);
+	--bt-color-border-focus: #FFFFFF;
+	--bt-color-border-disabled: #141414;
+	--bt-color-status-error-container: rgba(127, 29, 29, 0.35);
+	--bt-color-status-success-container: rgba(6, 78, 59, 0.35);
+	--bt-color-status-warning-container: rgba(120, 53, 15, 0.35);
+	--bt-color-status-info-container: rgba(30, 58, 138, 0.35);
+	--bt-color-status-error-on-container: #FCA5A5;
+	--bt-color-status-success-on-container: #86EFAC;
+	--bt-color-status-warning-on-container: #FCD34D;
+	--bt-color-status-info-on-container: #93C5FD;
+	--bt-color-status-error-on-surface: #F87171;
+	--bt-color-status-success-on-surface: #4ADE80;
+	--bt-color-status-warning-on-surface: #FBBF24;
+	--bt-color-status-info-on-surface: #60A5FA;
+	--bt-color-accent-subtle: rgba(255, 255, 255, 0.08);
+	--bt-color-accent-muted: rgba(255, 255, 255, 0.12);
+	--bt-color-accent-light: #999999;
+	--bt-color-accent-default: #FFFFFF;
+	--bt-color-accent-strong: #FFFFFF;
+	--bt-color-accent-on-surface: #121212;
+	--bt-color-skeleton-base: #333333;
+	--bt-color-skeleton-wave: #333333;
+	--bt-color-skeleton-highlight: #666666;
+	--bt-focus-ring: 0 0 0 2px #0A0A0A, 0 0 0 4px #FFFFFF;
+	--bt-focus-ring-error: 0 0 0 2px #0A0A0A, 0 0 0 4px #F87171;
+	--bt-focus-ring-success: 0 0 0 2px #0A0A0A, 0 0 0 4px #4ADE80;
+}

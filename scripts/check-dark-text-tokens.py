@@ -25,7 +25,8 @@ import re
 import sys
 from pathlib import Path
 
-THEME = Path("src/styles/theme.scss")
+# 테마 색 변수는 tokens.json 에서 생성한 이 파일의 light/dark mixin 에 있다
+THEME = Path("src/styles/_theme-tokens.scss")
 REACT_SCSS = sorted(Path("src/ui").rglob("*.scss"))
 VANILLA_SCSS = Path("src/vanilla/bigtablet.scss")
 
@@ -65,12 +66,12 @@ def theme_token_sets() -> tuple[set[str], set[str]]:
             j += 1
         return set(re.findall(r"(--bt-[a-z0-9-]+)\s*:", text[i:j]))
 
-    light: set[str] = set()
-    for match in re.finditer(r"(?m)^:root \{", text):
-        light |= vars_in(match.start())
-
-    dark_match = re.search(r"@mixin dark-theme", text)
-    return light, (vars_in(dark_match.start()) if dark_match else set())
+    light_match = re.search(r"(?m)^@mixin light \{", text)
+    dark_match = re.search(r"(?m)^@mixin dark \{", text)
+    return (
+        vars_in(light_match.start()) if light_match else set(),
+        vars_in(dark_match.start()) if dark_match else set(),
+    )
 
 
 def css_var_of(token: str) -> str:
@@ -92,7 +93,7 @@ def exempted(lines: list[str], line_no: int) -> bool:
 def main() -> int:
     light, dark = theme_token_sets()
     if not light or not dark:
-        print("theme.scss 에서 토큰 블록을 못 찾았다 - 구조가 바뀌었는지 보라", file=sys.stderr)
+        print("_theme-tokens.scss 에서 토큰 블록을 못 찾았다 - 구조가 바뀌었는지 보라", file=sys.stderr)
         return 1
 
     # 양 테마 공통값인 색 토큰 중, 이름으로 고정 표면과 짝지어지지 않은 것 = 표면 색.

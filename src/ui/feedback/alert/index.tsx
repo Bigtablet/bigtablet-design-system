@@ -1,6 +1,5 @@
 "use client";
 
-import { animated, useSpring } from "@react-spring/web";
 import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
@@ -9,14 +8,10 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
-	OVERLAY_PANEL_CLOSED_TRANSFORM,
-	OVERLAY_PANEL_OPEN_TRANSFORM,
-	OVERLAY_SPRING_CONFIG,
-	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useOverlayEscape,
-	useReducedMotion,
+	usePresence,
 } from "../../../utils";
 import { Button, type ButtonVariant } from "../../general/button";
 import { useLocaleText } from "../../system/locale-provider";
@@ -253,7 +248,12 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const titleId = React.useId();
 	const messageId = React.useId();
 
-	const [shouldRender, setShouldRender] = useState(isOpen);
+	// 퇴출 transition 이 끝날 때까지 마운트를 붙잡는다 (Modal 과 동일). isOpen 이 true 가 되는 렌더에서
+	// 바로 마운트해야 useFocusTrap effect 시점에 panelRef 가 붙어 있다 - AlertProvider 는 항상
+	// isOpen=false 로 마운트해 두고 showAlert() 로 여는 구조라 모든 useAlert() 경로가 이 성질에 기댄다.
+	const overlayRef = React.useRef<HTMLDivElement>(null);
+	const shouldRender = usePresence(isOpen, [overlayRef, panelRef], onExited);
+	const state = isOpen ? "open" : "closed";
 
 	useFocusTrap(panelRef, isOpen);
 
@@ -261,43 +261,6 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	// dismiss = onCancel ?? onClose 로 라우팅해 취소 정리 로직이 우회되지 않게 한다 (APG alertdialog).
 	// Modal 위에 confirm Alert 를 띄우는 조합에서도 Alert(최상단)만 닫히고 Modal 은 유지된다.
 	useOverlayEscape(isOpen, () => dismiss());
-
-	// isOpen 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다 (Modal 과 동일한
-	// React "render 중 상태 조정" 패턴). effect 로 미루면 패널 마운트가 한 렌더 늦어져
-	// useFocusTrap effect 실행 시점에 panelRef.current 가 null 이라 트랩(초기 포커스 이동·
-	// Tab 격리·포커스 복원)이 전혀 걸리지 않는다 — AlertProvider 는 항상 isOpen=false 로
-	// 마운트해 두고 showAlert() 로 여는 구조라 모든 useAlert() 경로에서 재현되는 버그였다.
-	if (isOpen && !shouldRender) setShouldRender(true);
-
-	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
-	const reduced = useReducedMotion();
-
-	// `from` 을 명시한다. 없으면 첫 렌더의 `to` 가 초기값이 되어, isOpen=true 로 처음
-	// 마운트되면 등장 모션이 없다(Modal 이 그 버그였다). AlertProvider 는 항상 isOpen=false 로
-	// 마운트하므로 지금 동작은 바뀌지 않지만, 그 성질에 기대지 않게 못박는다.
-	// reduced-motion 예외는 springEnterFrom 안에 있다.
-
-	const overlayStyle = useSpring({
-		...springEnterFrom(reduced),
-		to: { opacity: isOpen ? 1 : 0 },
-		immediate: reduced,
-		config: OVERLAY_SPRING_CONFIG,
-		onRest: (result) => {
-			if (isOpen || !result.finished) return;
-			setShouldRender(false);
-			onExited?.();
-		},
-	});
-
-	const panelStyle = useSpring({
-		...springEnterFrom(reduced, OVERLAY_PANEL_CLOSED_TRANSFORM),
-		to: {
-			opacity: isOpen ? 1 : 0,
-			transform: isOpen ? OVERLAY_PANEL_OPEN_TRANSFORM : OVERLAY_PANEL_CLOSED_TRANSFORM,
-		},
-		immediate: reduced,
-		config: OVERLAY_SPRING_CONFIG,
-	});
 
 	// 바디 스크롤 잠금 - Modal/Drawer 와 동일한 data-open-modals 카운터 공유
 	// (Modal 위에서 confirm Alert 를 띄우는 패턴에서도 카운터가 맞게 유지된다).
@@ -324,9 +287,11 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const modalClassName = cn("alert_modal", `alert_variant_${variant}`);
 
 	return createPortal(
-		<animated.div
+		// biome-ignore lint/a11y/noStaticElementInteractions: 오버레이 클릭 닫기 - 키보드는 Escape(useOverlayEscape)가 맡는다
+		<div
+			ref={overlayRef}
 			className="alert_overlay"
-			style={overlayStyle}
+			data-state={state}
 			role="presentation"
 			onPointerDown={(e) => {
 				pressedOverlayRef.current = e.target === e.currentTarget;
@@ -340,10 +305,10 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				dismiss();
 			}}
 		>
-			<animated.div
+			<div
 				ref={panelRef}
 				className={modalClassName}
-				style={panelStyle}
+				data-state={state}
 				onClick={(e) => e.stopPropagation()}
 				// Escape 는 공유 스택(useOverlayEscape)이 처리하고, 여기서는 그 외 키가 알림 밖으로
 				// 새어 상위 오버레이/소비자 단축키를 건드리지 않게 막는다.
@@ -408,8 +373,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 						{confirmText}
 					</Button>
 				</div>
-			</animated.div>
-		</animated.div>,
+			</div>
+		</div>,
 		document.body,
 	);
 };

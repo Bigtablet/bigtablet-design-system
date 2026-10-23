@@ -263,6 +263,11 @@
     --bt-sidebar-inset: var(--bt-sidebar-total-height);
   }
 
+  // Tab 으로 내려갈 때 포커스가 BottomBar 밑에 숨지 않게 (WCAG 2.4.11, BottomNav 와 같은 방식).
+  html:has(.sidebar:not(.sidebar_static)) {
+    scroll-padding-bottom: var(--bt-sidebar-total-height);
+  }
+
   .sidebar:not(.sidebar_static) {
     // BottomBar 본체 - fixed bottom, 가로 flex
     position: fixed;

@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { stubPendingAnimation } from "../../../test/stub-animation";
 import { AlertProvider, type ConfirmOptions, useAlert, useConfirm } from "./index";
 
 const TestComponent = ({
@@ -152,17 +153,19 @@ describe("Alert", () => {
 	});
 
 	it("starts exit animation when confirm is clicked", () => {
+		stubPendingAnimation();
 		renderWithProvider(<TestComponent options={{ title: "Test" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		expect(screen.getByText("Test")).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText("확인"));
-		// Exit animation in progress (spring) - overlay still mounted with role="presentation"
+		// 퇴출 transition 진행 중 - 오버레이가 아직 마운트돼 있다
 		expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 	});
 
 	it("starts exit animation when cancel is clicked", () => {
+		stubPendingAnimation();
 		renderWithProvider(<TestComponent options={{ title: "Test", showCancel: true }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
@@ -312,9 +315,9 @@ describe("Alert", () => {
 
 		fireEvent.click(screen.getByText("Show Alert"));
 
-		// reduced-motion 에서 패널이 최종(휴지) 상태로 즉시 도달 (spring immediate)
+		// reduced-motion 은 CSS(token.presence)가 transition 을 끈다. JS 는 인라인 모션 값을 쓰지 않는다.
 		const dialog = screen.getByRole("alertdialog");
-		expect(dialog).toHaveStyle({ transform: "scale(1) translateY(0px)" });
+		expect(dialog.style.transform).toBe("");
 		vi.unstubAllGlobals();
 	});
 

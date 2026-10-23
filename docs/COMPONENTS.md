@@ -369,7 +369,7 @@ import Link from "next/link";
 > `searchable` 을 열면 패널의 검색 입력도 `combobox` 라 둘이 된다 - 테스트에서는 이름으로
 > 가른다. 활성 옵션 추적(`aria-activedescendant`)은 그때 입력 쪽이 갖는다.
 >
-> **높이는 `min(288px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
+> **높이는 `min(300px, 배치 방향에 남은 공간)`.** 낮은 뷰포트에서는 목록이 남은 공간까지만
 > 자라고 그 안에서 스크롤한다 - 상한이 없던 3.19.1 까지는 뷰포트 461px 에서 목록이 130px
 > 넘쳤다(#621). 위아래 어느 쪽도 목록이 다 들어가지 않으면 **공간이 더 넓은 쪽**으로 열린다.
 > 검색 행은 줄지 않고 옵션 목록만 줄어든다. `Combobox`·`Menu`·`Popover`·`Tooltip` 도 같은
@@ -455,7 +455,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
 | ~~`onChange`~~ | `onValueChange` 와 동일 시그니처 | - | **deprecated** (v3.3.0, `onValueChange` 의 alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
-| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터) |
+| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터 - 대소문자·공백 무시, 한글 초성 `ㅅㅇ` · 조합 중인 글자 `서우` 도 찾는다) |
 | `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
 | `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
 | `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
@@ -1579,7 +1579,7 @@ import { FileInput } from '@bigtablet/design-system';
 
 ### ImageCropper
 
-업로드 전에 이미지에서 **보일 정사각 영역**을 정하는 크로퍼 (v3.7.0). 뷰포트 안에서 드래그(또는 방향키)로 위치를, 휠·슬라이더·＋/－ 버튼(또는 <kbd>+</kbd>/<kbd>-</kbd> 키)으로 배율을 맞춘다.
+업로드 전에 이미지에서 **보일 정사각 영역**을 정하는 크로퍼 (v3.7.0). 뷰포트 안에서 드래그·탭(또는 방향키)으로 위치를(탭하면 그 지점이 가운데로 온다 - 드래그 대안, WCAG 2.5.7), 휠·슬라이더·＋/－ 버튼(또는 <kbd>+</kbd>/<kbd>-</kbd> 키)으로 배율을 맞춘다.
 
 모달을 포함하지 않으므로 소비자가 [`Modal`](#modal) 등으로 감싸고, "적용" 버튼에서 `ref.crop()` 을 호출해 `Blob` 을 받는다.
 
@@ -1608,7 +1608,7 @@ import { FileInput } from '@bigtablet/design-system';
 | `onReady` | `(size: CropImageSize) => void` | - | 이미지 로드 완료 콜백 |
 | `onError` | `() => void` | - | 이미지 디코딩 실패 콜백 (손상 파일 등) |
 | `label` | `string` | `'이미지 위치와 배율 조정'` | 뷰포트 접근성 레이블 |
-| `hint` | `string` | `'드래그(또는 방향키)로 위치, 휠·슬라이더로 배율을 맞추세요.'` | 뷰포트 아래 조작 안내 문구 |
+| `hint` | `string` | `'드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요.'` | 뷰포트 아래 조작 안내 문구 |
 | `zoomOutLabel` | `string` | `'축소'` | 축소 버튼 접근성 레이블 |
 | `zoomLabel` | `string` | `'배율'` | 배율 슬라이더 접근성 레이블 |
 | `zoomInLabel` | `string` | `'확대'` | 확대 버튼 접근성 레이블 |
@@ -2832,7 +2832,7 @@ const [isOpen, setIsOpen] = useState(false);
 
 #### 포털 — `document.body` 로 렌더된다
 
-Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 이 DS 는 `transform` 을 광범위하게 쓰는데(`useSpringHover` 등), `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
+Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 앱에는 `transform` 을 쓰는 조상(hover lift · 애니메이션 등)이 흔한데, `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
 
 ```tsx
 // ❌ 이중 포털 - 사이드바의 스태킹 컨텍스트를 벗어나려고 감쌀 필요가 없다
@@ -2886,7 +2886,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 | `disableAnimation` | `boolean` | `false` | 슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. OS reduced-motion 은 이 값과 상관없이 항상 모션을 끈다 |
 
-> 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
+> 방향별 슬라이드 진입/퇴출은 CSS transition(`@starting-style` · `data-state`)으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
 **계약은 Modal 과 같다** — 아래 네 가지는 [Modal](#modal) 절의 설명과 동일하게 적용된다.
 
@@ -2986,12 +2986,12 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
 - **진입**: opacity `0→1` + transform `translate(4px) → 0` (placement 별로 진입 방향 다름)
   - top → 아래에서 위로, bottom → 위에서 아래로, left → 오른쪽에서 왼쪽으로, right → 그 반대
-- **퇴출**: `clamp: true`로 진동 없이 빠르게 사라짐 (비대칭)
-- spring config: `tension: 280, friction: 28` (Vercel/Linear 톤)
+- **퇴출**: 같은 곡선으로 되돌아간 뒤 언마운트
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 
 #### 닫힘 처리
 
@@ -3083,7 +3083,7 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 - `"start"` (기본) - trigger의 **왼쪽 가장자리**부터 메뉴 펼침. 페이지 좌측 / 본문 안 트리거에 적합.
 - `"end"` - trigger의 **오른쪽 가장자리**까지 정렬. 페이지 우측 (테이블 마지막 칼럼의 케밥, 헤더 우측 액션)에서 화면 밖으로 안 넘어가게.
 
-> ℹ️ 세로 방향은 항상 trigger **아래**로 펼침 (현재 구현은 위로 뒤집기 미지원). 화면 하단에 가까우면 trigger 위치를 조정하거나 페이지 상단에 두라.
+> ℹ️ 세로 방향은 trigger **아래**가 우선이다. 아래 공간이 모자라면 **위로 뒤집히고**(양쪽 다 모자라면 더 넓은 쪽), 진입 모션 방향도 따라 바뀐다.
 
 **trigger 패턴**
 - `IconButton` + `MoreVertical` (케밥) - 행/카드의 잠재 액션 모음
@@ -3130,11 +3130,11 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
-- **진입**: opacity `0→1` + transform `translateY(-4px) → 0` (위에서 살짝 내려옴)
-- **퇴출**: `clamp: true`로 진동 없이 빠르게 사라짐 (비대칭, 진입은 부드럽게 / 퇴출은 단호하게)
-- spring config: `tension: 280, friction: 28`
+- **진입**: opacity `0→1` + transform `translateY(-4px) → 0` (위에서 살짝 내려옴, 위로 flip 되면 아래에서 올라옴)
+- **퇴출**: 모션 없이 바로 사라짐 - 항목을 고른 직후 메뉴가 남아 있지 않게
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 - 아이템 hover/focus는 `transition_fast` 배경 트랜지션
 
 #### 외부 클릭/Esc 처리
@@ -3274,11 +3274,11 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
 - **진입**: opacity `0→1` + transform `translate(4px) → 0` (placement별 진입 방향 다름 - Tooltip과 동일 규칙)
-- **퇴출**: `clamp: true`로 진동 없이 빠르게
-- spring config: `tension: 280, friction: 28`
+- **퇴출**: 같은 곡선으로 되돌아간 뒤 언마운트
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 
 #### 외부 클릭/Esc 처리
 

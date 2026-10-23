@@ -617,7 +617,7 @@ describe("Dropdown", () => {
 		expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
 	});
 
-	it("defers filtering until composition ends (Korean IME)", () => {
+	it("filters while a Korean syllable is still being composed (IME)", () => {
 		const imeOptions = [
 			{ value: "seoul", label: "서울" },
 			{ value: "busan", label: "부산" },
@@ -626,14 +626,14 @@ describe("Dropdown", () => {
 		fireEvent.click(trigger());
 		const search = screen.getByPlaceholderText("검색…");
 
+		// 조합 중에도 바로 걸러야 한다 - 초성 하나(`ㅂ`)는 조합이 끝나지 않는다
 		fireEvent.compositionStart(search);
-		// 조합 중: 표시는 갱신되지만 필터는 아직 적용되지 않아야 함
-		fireEvent.change(search, { target: { value: "서" } });
-		expect(screen.getByText("서울")).toBeInTheDocument();
+		fireEvent.change(search, { target: { value: "ㅂ" } });
+		expect(screen.queryByText("서울")).not.toBeInTheDocument();
 		expect(screen.getByText("부산")).toBeInTheDocument();
 
-		// 조합 종료: 이제 필터 적용
-		fireEvent.compositionEnd(search, { target: { value: "서울" } });
+		// `서울` 을 치는 도중의 `성` (받침이 다음 글자의 초성)
+		fireEvent.change(search, { target: { value: "성" } });
 		expect(screen.getByText("서울")).toBeInTheDocument();
 		expect(screen.queryByText("부산")).not.toBeInTheDocument();
 	});
@@ -997,16 +997,6 @@ describe("Dropdown", () => {
 		const input = screen.getByPlaceholderText("검색…");
 		fireEvent.change(input, { target: { value: "2" } });
 		expect(input).toHaveValue("2");
-		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Option 2"]);
-	});
-
-	it("filters again once a composition ends", () => {
-		render(<Dropdown searchable options={options} />);
-		fireEvent.click(trigger());
-		const input = screen.getByPlaceholderText("검색…");
-		fireEvent.compositionStart(input);
-		fireEvent.compositionEnd(input, { currentTarget: { value: "1" }, target: { value: "1" } });
-		fireEvent.change(input, { target: { value: "2" } });
 		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Option 2"]);
 	});
 

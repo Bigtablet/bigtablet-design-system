@@ -1,9 +1,2 @@
-// Elevation shadows - var() 정의(:root/[data-theme])는 ../theme.scss 로 분리.
-// scss/token @use 시 CSS 가 새어 CSS Modules pure-selector 를 깨지 않도록 함.
-
-// SCSS aliases - 기존 사용처는 그대로 작동
-$elevation_level1: var(--bt-elevation-level1);
-$elevation_level2: var(--bt-elevation-level2);
-$elevation_level3: var(--bt-elevation-level3);
-$elevation_level4: var(--bt-elevation-level4);
-$elevation_level5: var(--bt-elevation-level5);
+// 값은 tokens.json 에서 생성한 _tokens.scss 에 있다 - 고칠 때는 tokens.json 을 고치고 `pnpm tokens`.
+@forward "tokens";

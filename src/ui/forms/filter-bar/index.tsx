@@ -141,5 +141,3 @@ export const FilterBar = ({
 		</form>
 	);
 };
-
-FilterBar.displayName = "FilterBar";

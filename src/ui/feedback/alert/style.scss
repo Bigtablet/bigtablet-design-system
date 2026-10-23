@@ -13,6 +13,7 @@
     justify-content: center;
     z-index: token.$z_popup;
     will-change: opacity;
+    @include token.presence;
   }
 
   &_modal {
@@ -22,6 +23,7 @@
     max-width: 480px;
     box-shadow: token.$elevation_level4;
     will-change: transform, opacity;
+    @include token.presence(scale(0.96) translateY(-4px));
     overflow: hidden;
   }
 

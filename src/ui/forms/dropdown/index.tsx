@@ -1,12 +1,12 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import { Check, ChevronDown, Search } from "lucide-react";
 import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn } from "../../../utils";
+import { matchesSearch } from "../../../utils/hangul-search";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
@@ -115,9 +115,6 @@ export interface DropdownMultipleProps extends DropdownCommonProps {
 
 export type DropdownProps = DropdownSingleProps | DropdownMultipleProps;
 
-/** 검색 매칭용 정규화 - 대소문자·공백 무시 */
-const normalizeForSearch = (s: string) => s.toLowerCase().replace(/\s+/g, "");
-
 /**
  * 드롭다운 컴포넌트를 렌더링한다.
  * 제어형/비제어형 상태를 지원하며, 키보드/마우스 상호작용과 정적 라벨을 관리한다.
@@ -166,10 +163,10 @@ export const Dropdown = (props: DropdownProps) => {
 		props.multiple === true ? ((props.defaultValue as string[] | undefined) ?? []) : [],
 	);
 
-	// 검색 상태 - searchText 는 표시용(IME 조합 중에도 즉시 반영), committedQuery 는 필터용(조합 완료 시 반영)
+	// 검색어 - IME 조합 중인 글자도 바로 필터에 쓴다. 조합이 끝나기를 기다리면 초성 하나(`ㄱ`)는
+	// 영영 반영되지 않고, `서울` 의 마지막 글자를 치는 동안 `서` 까지만 걸린다. 조합 중의 Enter 는
+	// useListboxPopup 이 `isComposing` 으로 걸러낸다.
 	const [searchText, setSearchText] = useState("");
-	const [committedQuery, setCommittedQuery] = useState("");
-	const isComposingRef = useRef(false);
 
 	const searchRef = useRef<HTMLInputElement>(null);
 
@@ -186,10 +183,8 @@ export const Dropdown = (props: DropdownProps) => {
 	// 검색 필터 적용된 노출 옵션. searchable 아니거나 쿼리 없으면 전체.
 	const visibleOptions = useMemo<DropdownOption[]>(() => {
 		if (!searchable) return options;
-		const q = normalizeForSearch(committedQuery);
-		if (q === "") return options;
-		return options.filter((o) => normalizeForSearch(o.label).includes(q));
-	}, [options, searchable, committedQuery]);
+		return options.filter((o) => matchesSearch(o.label, searchText));
+	}, [options, searchable, searchText]);
 
 	// ── 선택 처리 ──────────────────────────────────────────────────────────
 
@@ -267,8 +262,6 @@ export const Dropdown = (props: DropdownProps) => {
 	useEffect(() => {
 		if (!isOpen) {
 			setSearchText("");
-			setCommittedQuery("");
-			isComposingRef.current = false;
 		}
 	}, [isOpen]);
 
@@ -304,18 +297,11 @@ export const Dropdown = (props: DropdownProps) => {
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 
-	// Spring presence - list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
-	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
-	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
-	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
+	// 목록은 진입 모션만 있다(style.scss 의 token.presence). 빠른 선택 popup 이라 외부 클릭/Esc/선택 뒤
+	// 즉시 사라져야 자연스럽다 - 퇴출을 기다리면 선택 직후에도 목록이 잠깐 남는다.
 	// 이름의 앞부분. 직접 준 `label` 이 있으면 그 요소, `Field` 안이면 Field 의 라벨.
 	// 둘 다 없으면 값만으로 이름이 만들어진다.
 	const labelledBy = label ? `${dropdownId}_label` : field?.labelId;
-
-	const listStyle = useSpringPresence({
-		visible: isOpen,
-		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
-	});
 
 	return (
 		<div ref={wrapperRef} className={rootClassName}>
@@ -389,11 +375,10 @@ export const Dropdown = (props: DropdownProps) => {
 					// 포탈로 body 에 띄운다. 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표
 					// 래퍼)이 목록을 잘라내고 `z-index` 로는 넘지 못한다(#586 - 170px 중 46px 만
 					// 보였다). 좌표·폭은 훅이 트리거를 재서 준다.
-					<animated.div
+					<div
 						ref={panelRef}
 						className={listClassName}
 						style={{
-							...listStyle,
 							position: "fixed",
 							left: position.x,
 							top: position.y,
@@ -435,21 +420,7 @@ export const Dropdown = (props: DropdownProps) => {
 											: undefined
 									}
 									value={searchText}
-									onChange={(e) => {
-										const v = e.target.value;
-										setSearchText(v);
-										// 조합 중에는 필터 갱신 보류 (mid-composition 리스트 thrash 방지)
-										if (!isComposingRef.current) setCommittedQuery(v);
-									}}
-									onCompositionStart={() => {
-										isComposingRef.current = true;
-									}}
-									onCompositionEnd={(e) => {
-										isComposingRef.current = false;
-										const v = e.currentTarget.value;
-										setSearchText(v);
-										setCommittedQuery(v);
-									}}
+									onChange={(e) => setSearchText(e.target.value)}
 									onKeyDown={onSearchKeyDown}
 								/>
 							</div>
@@ -513,7 +484,7 @@ export const Dropdown = (props: DropdownProps) => {
 										);
 									})}
 						</div>
-					</animated.div>,
+					</div>,
 					document.body,
 				)}
 		</div>

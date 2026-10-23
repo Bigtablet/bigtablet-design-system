@@ -13,9 +13,8 @@ bigtablet-design-system/
 │   │
 │   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
 │   │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
-│   │   ├── tokens.json      # 디자이너 JSON 토큰
+│   │   ├── tokens.json      # 토큰 원본 (pnpm tokens → _tokens.scss · index.ts · _theme-tokens.scss)
 │   │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
-│   │   ├── global.css
 │   │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
 │   │   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
 │   │   ├── icon/            # 아이콘 사이즈 (xs-xl)
@@ -234,7 +233,7 @@ cn(styles.button, styles[`size_${size}`], className);
 import "./styles/theme.scss"; // :root / [data-theme="dark"] CSS 변수 (dist/index.css 에 1회 포함)
 import "./styles/autofill.scss"; // 자동완성 칸의 UA 배경/글자색 무력화 (전역 요소 규칙)
 
-export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
+export { cn, useFocusTrap, useReducedMotion } from "./utils";
 
 export type { ButtonProps } from "./ui/general/button";
 export { Button } from "./ui/general/button";
@@ -292,7 +291,7 @@ export const spacing = { "4": "4px", "8": "8px", "16": "16px", "24": "24px", /* 
 
 TS 의 `colors` · `elevation` 은 **light 고정값**이다. 테마를 따라가야 하는 인라인 스타일은 같은 키의 `cssVars`(`src/styles/css-vars.ts`, 값이 `var(--bt-*)`)를 쓴다.
 
-값의 기준은 SCSS(`colors/_index.scss` · `theme.scss`)다. TS 와 `tokens.json` 은 사본이라 `src/styles/tokens.test.ts` 가 SCSS 컴파일 결과와 대조한다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스).
+값의 원본은 `src/styles/tokens.json` 이다. `pnpm tokens` 가 SCSS(`<폴더>/_tokens.scss`) · TS(`<폴더>/index.ts`) · 테마 변수(`_theme-tokens.scss`)를 생성하고, `src/styles/tokens.test.ts` 가 커밋된 생성 파일이 원본과 같은지 본다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스). 아래 SCSS 예시의 값은 생성 파일 `_tokens.scss` 에 있다.
 
 ### SCSS 토큰
 
@@ -479,9 +478,8 @@ runner 시간을 내고, 대기 시간을 가장 긴 job 하나로 줄였다.
 - `uses:` 는 전부 `owner/action@<40자 SHA> # vX.Y.Z` 로 고정한다. 태그는 옮겨질 수 있어 무결성 보장이 안 된다. 갱신은 `dependabot.yml` 의 `github-actions` ecosystem 이 SHA 와 버전 주석을 함께 올린다
 
 **size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막
-조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. `dist/index.js` 는
-런타임 의존성인 `@react-spring/web` 까지 번들해서 잰다(2026-09-10 기준 59.91 kB 중 18.48 kB).
-이 패키지 코드만 보려면 `dist/index.js` 를 직접 brotli 로 재면 된다(같은 시점 40.55 kB).
+조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. 런타임 의존성은 없다
+(4.0.0 에서 `@react-spring/web` 제거). `dist/index.js` 는 minify 된 채로 배포된다.
 
 배포는 별도 워크플로다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리한다.
 
