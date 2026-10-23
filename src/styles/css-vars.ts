@@ -1,6 +1,8 @@
 import type { a11y } from "./a11y";
 import { colors } from "./colors";
 import { elevation } from "./elevation";
+import { radius } from "./radius";
+import { spacing } from "./spacing";
 
 /** `errorOnContainer` → `error-on-container` */
 const kebab = (key: string) => key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
@@ -19,9 +21,12 @@ const varsOf = <T extends object>(source: T, prefix: string): VarsOf<T> =>
  * light 색이 남는다. 같은 키로 이쪽을 쓰면 브라우저가 현재 테마의 값을 고른다. `style.css` 가 로드돼
  * 있어야 변수가 정의된다.
  *
+ * `radius` · `spacing` · `fontFamily` 는 테마와 무관하지만 사용처가 `:root` 에서 덮어쓸 수 있다 - 숫자 export
+ * (`radius.md` = `"8px"`) 대신 이쪽을 쓰면 그 덮어쓴 값을 DS 컴포넌트와 같이 따라간다.
+ *
  * @example
  * ```tsx
- * <div style={{ color: cssVars.colors.text.caption, boxShadow: cssVars.elevation.level2 }} />
+ * <div style={{ color: cssVars.colors.text.caption, borderRadius: cssVars.radius.md }} />
  * ```
  */
 export const cssVars = {
@@ -34,4 +39,7 @@ export const cssVars = {
 		focusRingError: "var(--bt-focus-ring-error)",
 		focusRingSuccess: "var(--bt-focus-ring-success)",
 	} satisfies Partial<VarsOf<typeof a11y>>,
+	radius: varsOf(radius, "radius-"),
+	spacing: varsOf(spacing, "spacing-"),
+	fontFamily: "var(--bt-font-family)",
 } as const;

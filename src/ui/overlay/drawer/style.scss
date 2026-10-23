@@ -7,7 +7,7 @@
 $close_inset: token.$spacing_16; // 헤더/본문 패딩 24 - 8
 
 // 제목이 close 를 비켜갈 폭 = inset + 박스(32). 헤더는 자체 padding-right 로 이 폭을 낸다.
-$close_clearance: $close_inset + token.$tap_target_dense;
+$close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
 
 .drawer {
   position: fixed;

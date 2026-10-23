@@ -358,10 +358,27 @@ Vanilla 번들도 같은 `--bt-z-*` 를 쓰고, 기존 이름 `--bt-z-modal` · 
 padding-bottom: var(--bt-sidebar-total-height, 0px);
 ```
 
+#### 모서리·간격·글꼴 덮어쓰기
+
+`--bt-radius-*` · `--bt-spacing-*` · `--bt-font-family` 는 테마와 무관한 값이지만 사용처가 바꿀 수 있습니다. 컴포넌트 CSS 는 `var(--bt-radius-md, 8px)` 처럼 기본값을 품고 있어 덮어쓰지 않으면 화면이 그대로입니다.
+
+```css
+:root {
+  --bt-radius-md: 4px;              /* md 모서리를 쓰는 모든 컴포넌트 */
+  --bt-spacing-16: 20px;            /* 16px 간격을 쓰는 모든 자리 */
+  --bt-font-family: "Inter", sans-serif;
+}
+```
+
+DS CSS 는 `bigtablet` 레이어 안이라 레이어 밖 `:root` 선언이 특이도와 무관하게 이깁니다. SCSS 에서는 `token.$radius_md` 가 같은 `var()` 문자열이고, 인라인 스타일은 `cssVars.radius.md` · `cssVars.spacing["16"]` · `cssVars.fontFamily`, Tailwind 는 `rounded-bt-md` · `p-bt-16` · `font-bt` 입니다.
+
+- **값이 문자열이라 Sass 산술이 안 됩니다.** `token.$spacing_48 * 2` · `-token.$spacing_4` 대신 `calc(2 * #{token.$spacing_48})` · `calc(-1 * #{token.$spacing_4})` 를 쓰거나, 덮어쓰기를 따라가지 않아도 되는 계산이면 원값 `token.$spacing_base_48` 을 쓰세요.
+- **열지 않은 값:** 컨트롤 높이(`controlHeight`)·터치 영역(`tap_target_*`)·아이콘 크기·글자 크기/줄 높이는 사용처마다 달라지면 안 되는 UX 값이라 고정입니다. 간격 토큰을 크기로 쓰던 몇 자리(Timeline 점, DateCalendar 요일 행, ImageCropper 줌 버튼, Table 체크박스 열, Toast 진행 막대, Dropdown 체크 슬롯)도 원값으로 고정했습니다.
+
 #### 번들에 따라 변수 집합이 다릅니다
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
-React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-sidebar-*` · `--bt-bottom-nav-*` · `--bt-bottom-inset*` · `--bt-scrollbar-width` · `--bt-z-*` 만 내보냅니다. spacing · radius · typography 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 토큰(`token.$spacing_16` 등)을 쓰세요.
+React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-sidebar-*` · `--bt-bottom-nav-*` · `--bt-bottom-inset*` · `--bt-scrollbar-width` · `--bt-z-*` · `--bt-radius-*` · `--bt-spacing-*` · `--bt-font-family` 만 내보냅니다. font-size · line-height 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 믹스인(`token.body_medium` 등)을 쓰세요.
 
 #### 문서와 실제가 갈리지 않게 하려면
 

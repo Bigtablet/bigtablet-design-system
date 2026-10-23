@@ -1,7 +1,18 @@
-$radius_none: 0px;
-$radius_xs:   4px;
-$radius_sm:   6px;
-$radius_md:   8px;
-$radius_lg:   12px;
-$radius_xl:   16px;
-$radius_full: 9999px;
+// 원값(숫자) - 계산·고정 크기·CSS 변수 정의용. 사용처가 덮어써도 바뀌지 않는다.
+$radius_base_none: 0px;
+$radius_base_xs: 4px;
+$radius_base_sm: 6px;
+$radius_base_md: 8px;
+$radius_base_lg: 12px;
+$radius_base_xl: 16px;
+$radius_base_full: 9999px;
+
+// 컴포넌트·소비자용 - `var(--bt-*, 원값)`. `:root { --bt-radius-md: 4px }` 처럼 덮어쓰면 따라간다.
+// 문자열이라 Sass 산술(`* 2`, 단항 `-`)이 안 된다 - `calc(2 * #{$x})` 를 쓰거나 원값(`_base_`)을 쓴다.
+$radius_none: var(--bt-radius-none, #{$radius_base_none});
+$radius_xs: var(--bt-radius-xs, #{$radius_base_xs});
+$radius_sm: var(--bt-radius-sm, #{$radius_base_sm});
+$radius_md: var(--bt-radius-md, #{$radius_base_md});
+$radius_lg: var(--bt-radius-lg, #{$radius_base_lg});
+$radius_xl: var(--bt-radius-xl, #{$radius_base_xl});
+$radius_full: var(--bt-radius-full, #{$radius_base_full});

@@ -1,9 +1,13 @@
+@use "sass:meta";
 @use "../a11y" as a11y;
 @use "../breakpoints" as breakpoint;
 @use "../colors" as colors;
 @use "../radius" as radius;
 
-$font_family_primary: "Pretendard", sans-serif;
+// 원값 - CSS 변수 정의용. 컴포넌트는 아래 `$font_family_primary` 를 쓴다.
+$font_family_base_primary: "Pretendard", sans-serif;
+// `:root { --bt-font-family: "Inter", sans-serif }` 로 덮어쓰면 컴포넌트 글꼴이 따라간다.
+$font_family_primary: var(--bt-font-family, #{meta.inspect($font_family_base_primary)});
 
 // ── Base: Font size ───────────────────────────────────────────────────────────
 

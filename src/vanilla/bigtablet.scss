@@ -74,16 +74,7 @@
   --bt-color-warning: #{token.$color_status_warning};
   --bt-color-info: #{token.$color_status_info};
 
-  /* Spacing - Base */
-  --bt-spacing-4:  #{token.$spacing_4};
-  --bt-spacing-8:  #{token.$spacing_8};
-  --bt-spacing-12: #{token.$spacing_12};
-  --bt-spacing-16: #{token.$spacing_16};
-  --bt-spacing-20: #{token.$spacing_20};
-  --bt-spacing-24: #{token.$spacing_24};
-  --bt-spacing-32: #{token.$spacing_32};
-  --bt-spacing-40: #{token.$spacing_40};
-  --bt-spacing-48: #{token.$spacing_48};
+  /* Spacing - Base(--bt-spacing-*)·Radius(--bt-radius-*)·--bt-font-family 는 theme.scss 가 정의한다 */
 
   /* Spacing - Semantic */
   --bt-spacing-xs:  var(--bt-spacing-4);
@@ -95,7 +86,6 @@
   --bt-spacing-3xl: var(--bt-spacing-32);
 
   /* Typography - Base */
-  --bt-font-family: #{token.$font_family_primary};
   --bt-font-size-12: #{token.$font_size_12};
   --bt-font-size-14: #{token.$font_size_14};
   --bt-font-size-15: #{token.$font_size_15};
@@ -115,15 +105,6 @@
   --bt-font-size-lg:   var(--bt-font-size-18);
   --bt-font-size-xl:   var(--bt-font-size-20);
   --bt-line-height-normal: 1.5;
-
-  /* Radius - React `radius` prop 스케일과 동일 */
-  --bt-radius-none: #{token.$radius_none};
-  --bt-radius-xs: #{token.$radius_xs};
-  --bt-radius-sm: #{token.$radius_sm};
-  --bt-radius-md: #{token.$radius_md};
-  --bt-radius-lg: #{token.$radius_lg};
-  --bt-radius-xl: #{token.$radius_xl};
-  --bt-radius-full: #{token.$radius_full};
 
   /* Elevation */
   --bt-elevation-1: #{token.$elevation_level1};
