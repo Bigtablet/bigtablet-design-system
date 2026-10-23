@@ -1,9 +1,8 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { useAnchoredPosition, useOverlayEscape, useSpringPresence } from "../../../utils";
+import { useAnchoredPosition, useOverlayEscape, usePresence } from "../../../utils";
 import "./style.scss";
 
 /** 트리거와 툴팁 사이 간격(px). */
@@ -27,7 +26,7 @@ export interface TooltipProps {
 }
 
 /**
- * hover/focus 시 추가 정보를 보여주는 툴팁. react-spring fade+slide entrance.
+ * hover/focus 시 추가 정보를 보여주는 툴팁. CSS fade+slide 진입/퇴장.
  *
  * @example
  * ```tsx
@@ -44,9 +43,9 @@ export const Tooltip = ({
 	children,
 }: TooltipProps) => {
 	const [open, setOpen] = React.useState(false);
-	// 퇴장 스프링이 끝난 뒤 언마운트 - open&& 로 바로 지우면 fade+slide 퇴장 모션이 잘린다 (Popover 와 동일).
-	const [shouldRender, setShouldRender] = React.useState(false);
-	if (open && !shouldRender) setShouldRender(true);
+	// 퇴장 transition 이 끝난 뒤 언마운트 - open&& 로 바로 지우면 fade+slide 퇴장 모션이 잘린다 (Popover 와 동일).
+	const tooltipRef = React.useRef<HTMLSpanElement>(null);
+	const shouldRender = usePresence(open, [tooltipRef]);
 	const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const tooltipId = React.useId();
 	// wrapper = 앵커(트리거) 측정 대상, position = 플로팅(뷰포트 fixed 배치) 측정 대상.
@@ -108,25 +107,6 @@ export const Tooltip = ({
 		if (open && pos.ready && pos.anchorHidden) hideNow();
 	}, [open, pos.ready, pos.anchorHidden, hideNow]);
 
-	const fromTransform = (() => {
-		switch (pos.placement) {
-			case "top":
-				return "translateY(4px)";
-			case "bottom":
-				return "translateY(-4px)";
-			case "left":
-				return "translateX(4px)";
-			case "right":
-				return "translateX(-4px)";
-		}
-	})();
-
-	const style = useSpringPresence({
-		visible: open,
-		from: fromTransform,
-		onExitComplete: () => setShouldRender(false),
-	});
-
 	const child = children as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
 	const childProps = child.props;
 	// 자식의 기존 핸들러를 보존하고 tooltip 핸들러를 합성 (덮어쓰기 방지)
@@ -180,16 +160,19 @@ export const Tooltip = ({
 						onMouseEnter={cancelHide}
 						onMouseLeave={hide}
 					>
-						<animated.span
+						<span
+							ref={tooltipRef}
 							id={tooltipId}
 							role="tooltip"
+							data-state={open ? "open" : "closed"}
+							data-placement={pos.placement}
 							// 높이 상한은 툴팁 자신에 - 위치 컨테이너에 걸면 그 `overflow` 가 툴팁의
 							// `box-shadow` 를 스크롤이 필요 없을 때도 잘라낸다(#621).
-							style={{ ...style, maxHeight: pos.ready ? pos.maxHeight : undefined }}
+							style={{ maxHeight: pos.ready ? pos.maxHeight : undefined }}
 							className="tooltip"
 						>
 							{content}
-						</animated.span>
+						</span>
 					</span>,
 					document.body,
 				)}

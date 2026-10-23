@@ -12,6 +12,9 @@ export default defineConfig([
 		clean: true,
 		treeshake: true,
 		sourcemap: false,
+		// CSS 압축이 목적이다(gzip 기준 약 2KB). tsup 에 CSS 만 압축하는 옵션이 없어 JS 도 함께 압축된다 -
+		// export 이름과 `/* @__PURE__ */` 표시는 남으므로 소비자 쪽 트리 쉐이킹은 그대로다.
+		minify: true,
 		external: ["react", "react-dom", "lucide-react"],
 		esbuildPlugins: [sassPlugin({ type: "css", loadPaths: [".", "src"] })],
 		loader: { ".svg": "dataurl" },
@@ -43,7 +46,7 @@ export default defineConfig([
 			const cssPath = path.join(process.cwd(), "dist/index.css");
 			const css = fs.readFileSync(cssPath, "utf-8");
 			if (!css.includes("@layer bigtablet {")) {
-				const body = css.replace(/^@charset "UTF-8";\n/, "");
+				const body = css.replace(/^@charset "UTF-8";\n?/, ""); // minify 하면 줄바꿈이 없다
 				fs.writeFileSync(
 					cssPath,
 					`@charset "UTF-8";\n@layer theme, base, reset, bigtablet, components, utilities;\n@layer bigtablet {\n${body}}\n`,

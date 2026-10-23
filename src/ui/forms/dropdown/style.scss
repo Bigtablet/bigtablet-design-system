@@ -219,6 +219,11 @@
 
     will-change: transform, opacity;
 
+    // 진입만 있다(닫으면 바로 언마운트 - 키보드 선택 직후 목록이 남아 있으면 안 된다).
+    --dropdown-list-from: translateY(-4px);
+    &_up { --dropdown-list-from: translateY(4px); }
+    @include token.presence(var(--dropdown-list-from));
+
     // `_up` 은 이제 좌표를 바꾸지 않는다 - 위/아래 모두 인라인 fixed 좌표를 배치 훅이 준다.
     // 클래스는 남긴다: 진입 모션 방향이 이걸 보고, 소비자 스타일 훅으로도 쓰인다.
   }

@@ -1,6 +1,5 @@
 "use client";
 
-import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -8,15 +7,12 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
-	OVERLAY_SPRING_CONFIG,
 	type SafeHTMLProps,
-	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
-	useReducedMotion,
-	useSafeLayoutEffect,
+	usePresence,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -82,17 +78,9 @@ export interface DrawerProps
 	disableAnimation?: boolean;
 }
 
-// placement 별 진입 시작(=퇴출 도착) transform. 방향 축과 단위(%)를 진입/퇴출 양쪽에서
-// 일치시켜야 react-spring 문자열 보간이 올바른 축으로 슬라이드한다.
-const SLIDE_FROM: Record<DrawerPlacement, string> = {
-	left: "translateX(-100%)",
-	right: "translateX(100%)",
-	bottom: "translateY(100%)",
-};
-
 /**
  * 화면 가장자리에서 미끄러져 들어오는 패널(Drawer)을 렌더링한다.
- * react-spring 기반 방향별 슬라이드 진입/퇴출 + 포커스 트랩 + 바디 스크롤 잠금.
+ * CSS 방향별 슬라이드 진입/퇴출 + 포커스 트랩 + 바디 스크롤 잠금.
  *
  * @param props 드로어 속성
  * @returns 열림 상태일 때 렌더링된 드로어, 닫힘 상태면 null
@@ -137,9 +125,6 @@ export const Drawer = ({
 	// 오버레이 닫기 판정용 - pointerdown 이 오버레이에서 시작했는지 기억한다.
 	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
-	const [shouldRender, setShouldRender] = React.useState(open);
-	// reduced-motion 과 disableAnimation 은 같은 경로를 탄다 - 즉시 최종 상태로 점프하고 onRest 는 그대로 발화.
-	const instant = useReducedMotion() || disableAnimation;
 	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
 	// mismatch(서버 null vs 클라 포털)를 피한다 (Modal/Toast/Alert 와 동일 패턴을 훅으로 공유).
 	const isMounted = useIsMounted();
@@ -163,73 +148,11 @@ export const Drawer = ({
 		if (escapeDismissible) onClose?.();
 	});
 
-	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
-	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
-	// true 가 안 돼 exit 애니메이션이 누락될 수 있다. React "render 중 상태 조정" 패턴 — setState 는 이
-	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
-	if (open && !shouldRender) setShouldRender(true);
-
-	// 퇴출 마무리 - 오버레이 onRest 와 그 뒤의 안전망 양쪽에서 부르므로 한 번만 돌게 한다.
-	// ref 는 커밋 뒤 layout effect 에서 갱신한다(렌더 중에 쓰지 않는다). 두 호출 지점(onRest·rAF)은
-	// 모두 커밋 이후라 항상 최신 값을 읽는다.
-	const renderingRef = React.useRef(shouldRender);
-	const onExitedRef = React.useRef(onExited);
-	useSafeLayoutEffect(() => {
-		renderingRef.current = shouldRender;
-		onExitedRef.current = onExited;
-	});
-	const finishExit = React.useCallback(() => {
-		if (!renderingRef.current) return;
-		renderingRef.current = false;
-		setShouldRender(false);
-		onExitedRef.current?.();
-	}, []);
-
-	// 오버레이 opacity 페이드 - Modal·Alert 와 같은 규칙으로 **transform 을 주지 않는다**.
-	// 항등 transform(`translateY(0px)`)이라도 붙으면 그 요소가 `position: fixed` 자손의
-	// containing block 이 되고 전체 화면 합성 레이어가 하나 생긴다 (springEnterFrom JSDoc).
-	// 퇴출 완료(onRest)에서 finishExit 로 unmount 와 onExited 를 처리한다.
-	const overlayStyle = useSpring({
-		...springEnterFrom(instant),
-		to: { opacity: open ? 1 : 0 },
-		immediate: instant,
-		config: OVERLAY_SPRING_CONFIG,
-		onRest: (result) => {
-			// 열린 적 없는 드로어의 스프링은 이미 목표값(opacity 0)에 있어 onRest 가 발화하지
-			// 않으므로 별도 가드를 두지 않는다. 그 가정은 "열린 적 없으면 onExited 없음" 테스트가
-			// 지킨다.
-			if (open || !result.finished) return;
-			finishExit();
-		},
-	});
-
-	// 안전망 - 열자마자 같은 tick 에 닫히면 오버레이 스프링이 0 을 떠난 적이 없어 onRest 가 오지
-	// 않는다. shouldRender 는 이미 켜졌으므로 그대로 두면 투명한 오버레이가 화면을 덮고 스크롤 잠금도
-	// 풀리지 않는다. 한 프레임 뒤에도 스프링이 0 에 멈춰 있으면 같은 마무리를 한다.
-	// 바로 검사하지 않고 한 프레임 미루는 이유: 스프링 갱신(immediate 포함)은 다음 프레임에 반영되므로
-	// 정상 퇴출도 닫힌 직후에는 아직 출발 전일 수 있다. 한 프레임 뒤면 정상 퇴출은 움직이는 중이거나
-	// (onRest 가 마무리) 이미 끝나 finishExit 가 한 번만 돈다.
-	const overlayOpacity = overlayStyle.opacity;
-	React.useEffect(() => {
-		if (open || !shouldRender) return;
-		const frame = requestAnimationFrame(() => {
-			if (!overlayOpacity.isAnimating && overlayOpacity.get() === 0) finishExit();
-		});
-		return () => cancelAnimationFrame(frame);
-	}, [open, shouldRender, overlayOpacity, finishExit]);
-
-	// 패널 슬라이드 - 진입/퇴출 모두 placement 축을 따라 동일 template 로 보간(정확한 reverse).
-	const slideFrom = SLIDE_FROM[placement];
-	const slideRest = placement === "bottom" ? "translateY(0%)" : "translateX(0%)";
-	// 즉시 모드에선 `from` 을 생략한다 - 오버레이의 springEnterFrom 과 같은 이유(첫 프레임 깜빡임).
-	// clamp 는 진입에도 건다. 진입만 풀어 두면 감쇠비 0.84 로 목표를 0.8% 지나쳤다 돌아와,
-	// 375px 전체 폭 패널이 3px 튀는 것이 보였다(오버레이는 처음부터 OVERLAY_SPRING_CONFIG 였다).
-	const panelStyle = useSpring({
-		...(instant ? {} : { from: { transform: slideFrom } }),
-		to: { transform: open ? slideRest : slideFrom },
-		immediate: instant,
-		config: OVERLAY_SPRING_CONFIG,
-	});
+	// 퇴출 transition 이 끝날 때까지 마운트를 붙잡는다. 모션은 style.scss 가 한다. disableAnimation 과
+	// reduced-motion 은 transition 이 없어 같은 effect 에서 바로 언마운트된다.
+	const overlayRef = React.useRef<HTMLDivElement>(null);
+	const shouldRender = usePresence(open, [overlayRef, panelRef], onExited);
+	const state = open ? "open" : "closed";
 
 	// 바디 스크롤 잠금 - Modal 과 동일한 data-open-modals 카운터 공유.
 	// Modal/Drawer 를 동시에 열거나 중첩해도 카운터가 0 이 될 때만 원래 overflow 를 복원해
@@ -264,9 +187,15 @@ export const Drawer = ({
 	// 포털로 body 끝에 렌더 - transform/filter 조상 아래서 position: fixed 가 깨지는 문제 방지
 	// (Modal/Alert/Toast 와 동일 패턴).
 	return createPortal(
-		<animated.div
-			className={cn("drawer", `drawer_placement_${placement}`)}
-			style={overlayStyle}
+		// biome-ignore lint/a11y/useKeyWithClickEvents: 오버레이 클릭 닫기의 키보드 대응은 Escape(useOverlayEscape)다
+		<div
+			ref={overlayRef}
+			className={cn(
+				"drawer",
+				`drawer_placement_${placement}`,
+				disableAnimation && "drawer_instant",
+			)}
+			data-state={state}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
@@ -283,7 +212,8 @@ export const Drawer = ({
 				onClose?.();
 			}}
 		>
-			<animated.div
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: Escape 외 키가 오버레이 밖으로 새지 않게 막을 뿐이다 */}
+			<div
 				ref={panelRef}
 				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id/role 등은 통과시키되,
 				// 아래 className/style(애니메이션)/onKeyDown 은 컴포넌트가 항상 이기도록 뒤에 배치한다.
@@ -293,7 +223,8 @@ export const Drawer = ({
 				// 소비자 핸들러가 상위에서 이벤트를 못 받는 부작용만 남는다.
 				{...props}
 				className={cn("drawer_panel", className)}
-				style={{ ...props.style, ...panelStyle, ...panelSizeStyle }}
+				data-state={state}
+				style={{ ...props.style, ...panelSizeStyle }}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
@@ -325,10 +256,8 @@ export const Drawer = ({
 					</div>
 				)}
 				{content.footer && <div className="drawer_footer">{content.footer}</div>}
-			</animated.div>
-		</animated.div>,
+			</div>
+		</div>,
 		document.body,
 	);
 };
-
-Drawer.displayName = "Drawer";

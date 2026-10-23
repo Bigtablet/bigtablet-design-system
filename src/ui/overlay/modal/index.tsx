@@ -1,6 +1,5 @@
 "use client";
 
-import { animated, useSpring } from "@react-spring/web";
 import { X } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
@@ -8,16 +7,12 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
-	OVERLAY_PANEL_CLOSED_TRANSFORM,
-	OVERLAY_PANEL_OPEN_TRANSFORM,
-	OVERLAY_SPRING_CONFIG,
 	type SafeHTMLProps,
-	springEnterFrom,
 	unlockBodyScroll,
 	useFocusTrap,
 	useIsMounted,
 	useOverlayEscape,
-	useReducedMotion,
+	usePresence,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -79,7 +74,7 @@ export interface ModalProps
 
 /**
  * 모달을 렌더링한다.
- * react-spring 기반 진입/퇴출 모션 + 포커스 트랩 + 바디 스크롤 잠금.
+ * CSS 진입/퇴출 모션 + 포커스 트랩 + 바디 스크롤 잠금.
  * @param props 모달 속성
  * @returns 열림 상태일 때 렌더링된 모달, 닫힘 상태면 null
  */
@@ -125,7 +120,6 @@ export const Modal = ({
 	// 공통 조상인 오버레이에 디스패치되므로, target 검사만으로는 진짜 오버레이 클릭과 구분되지 않는다.
 	const pressedOverlayRef = React.useRef(false);
 	const titleId = React.useId();
-	const [shouldRender, setShouldRender] = React.useState(open);
 	// 클라이언트 마운트 여부 - 서버/하이드레이션 첫 렌더에서는 포털을 만들지 않아 hydration
 	// mismatch(서버 null vs 클라 포털)를 피한다. Toast/Alert 와 동일한 패턴을 훅으로 공유.
 	const isMounted = useIsMounted();
@@ -149,48 +143,11 @@ export const Modal = ({
 		if (escapeDismissible) onClose?.();
 	});
 
-	// open 이 true 가 되면 렌더 단계에서 즉시 마운트 플래그를 켠다. effect 로 미루면 (a) 불필요한
-	// double render 가 생기고, (b) open 이 곧바로 false 로 바뀌는 극단 케이스에서 shouldRender 가 미처
-	// true 가 안 돼 exit 애니메이션이 누락될 수 있다. React "render 중 상태 조정" 패턴 — setState 는 이
-	// 컴포넌트 자신만 대상으로 하고 조건이 곧 거짓이 되어 무한 루프가 없다.
-	if (open && !shouldRender) setShouldRender(true);
-
-	// reduced-motion: 진입/퇴출 모션 없이 즉시 최종 상태 (WCAG 2.3.3). onRest 는 그대로 발화.
-	const reduced = useReducedMotion();
-
-	// `from` 을 명시해야 한다. 없으면 react-spring 이 **첫 렌더의 `to`** 를 초기값으로 잡으므로,
-	// 처음부터 open=true 로 마운트된 모달은 초기값 = 목표값이 되어 등장 모션이 아예 없다.
-	// 전역 모달 스택이나 조건부 렌더(`{isOpen && <Modal open />}`)가 정확히 그 형태다.
-	// `from` 은 첫 렌더에만 쓰이므로 재열림·퇴출 동작은 그대로다.
-	//
-	// reduced-motion 예외 처리는 springEnterFrom 안에 있다(주면 한 프레임 깜빡임이 남는다).
-	// 오버레이에 transform 을 주지 않는 이유도 그 JSDoc 에 있다.
-
-	// Spring: overlay (opacity) - onRest 로 exit 완료 후 unmount
-	const overlayStyle = useSpring({
-		...springEnterFrom(reduced),
-		to: { opacity: open ? 1 : 0 },
-		immediate: reduced,
-		config: OVERLAY_SPRING_CONFIG,
-		onRest: (result) => {
-			if (open || !result.finished) return;
-			setShouldRender(false);
-			// 열린 적 없는 모달의 스프링은 목표값에 이미 있어 onRest 가 발화하지 않으므로 별도
-			// 가드를 두지 않는다. 그 가정은 "열린 적 없으면 onExited 없음" 테스트가 지킨다.
-			onExited?.();
-		},
-	});
-
-	// Spring: panel (opacity + scale + translateY) - overlay 와 같은 규칙.
-	const panelStyle = useSpring({
-		...springEnterFrom(reduced, OVERLAY_PANEL_CLOSED_TRANSFORM),
-		to: {
-			opacity: open ? 1 : 0,
-			transform: open ? OVERLAY_PANEL_OPEN_TRANSFORM : OVERLAY_PANEL_CLOSED_TRANSFORM,
-		},
-		immediate: reduced,
-		config: OVERLAY_SPRING_CONFIG,
-	});
+	// 퇴출 transition 이 끝날 때까지 마운트를 붙잡는다. 모션은 style.scss 의 token.presence 가 한다.
+	// 열린 적 없는 모달은 마운트된 적이 없어 onExited 가 불리지 않는다.
+	const overlayRef = React.useRef<HTMLDivElement>(null);
+	const shouldRender = usePresence(open, [overlayRef, panelRef], onExited);
+	const state = open ? "open" : "closed";
 
 	// 바디 스크롤 잠금(중첩 모달 지원)
 	React.useEffect(() => {
@@ -220,11 +177,13 @@ export const Modal = ({
 
 	// 포털로 body 끝에 렌더 - 트리거 위치 인라인 렌더는 transform/filter 조상 아래서
 	// position: fixed 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다
-	// (이 DS 자체가 useSpringHover 등 transform 을 광범위하게 사용). Alert/Toast 와 동일 패턴.
+	// (앱의 hover lift·애니메이션 등 transform 조상은 흔하다). Alert/Toast 와 동일 패턴.
 	return createPortal(
-		<animated.div
+		// biome-ignore lint/a11y/useKeyWithClickEvents: 오버레이 클릭 닫기의 키보드 대응은 Escape(useOverlayEscape)다
+		<div
+			ref={overlayRef}
 			className="modal"
-			style={overlayStyle}
+			data-state={state}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={hasTitle && !ariaLabel ? titleId : undefined}
@@ -241,7 +200,8 @@ export const Modal = ({
 				onClose?.();
 			}}
 		>
-			<animated.div
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: Escape 외 키가 오버레이 밖으로 새지 않게 막을 뿐이다 */}
+			<div
 				ref={panelRef}
 				// {...props} 를 먼저 펼쳐 소비자의 data-*/aria-*/id/role 등은 통과시키되,
 				// 아래 className/style(애니메이션)/onKeyDown 은 컴포넌트가 항상 이기도록 뒤에 배치한다.
@@ -251,7 +211,8 @@ export const Modal = ({
 				// 소비자 핸들러가 상위에서 이벤트를 못 받는 부작용만 남는다.
 				{...props}
 				className={cn("modal_panel", className)}
-				style={{ ...props.style, ...panelStyle, width }}
+				data-state={state}
+				style={{ ...props.style, width }}
 				onKeyDown={(e) => {
 					if (e.key !== "Escape") e.stopPropagation();
 				}}
@@ -284,8 +245,8 @@ export const Modal = ({
 				{content.footer && (
 					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{content.footer}</div>
 				)}
-			</animated.div>
-		</animated.div>,
+			</div>
+		</div>,
 		document.body,
 	);
 };

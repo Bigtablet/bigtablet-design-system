@@ -54,3 +54,37 @@ $transition_lift: transform 0.25s $ease_out_expo, box-shadow 0.25s $ease_out_exp
 $duration_loading_spinner:  1.2s;    // Spinner spoke fade 1 cycle
 $duration_loading_bar:      1.5s;    // TopLoading indeterminate sweep 1 cycle
 $duration_progress_default: 3s;      // Toast progress bar 기본값 (--toast-duration fallback)
+// Presence (오버레이·팝업 진입/퇴출) - 예전 react-spring(tension 280, friction 28) 곡선을 풀어 근사한 것.
+// 감쇠비 0.84 의 오버슈트(0.8%)는 잘랐다 - 눈에 안 보이고 퇴출과 같은 곡선을 쓰기 위해서다.
+// `linear()` 를 모르는 브라우저는 transition 선언 전체를 버려 모션 없이 즉시 열고 닫는다.
+$duration_presence: 0.3s;
+$easing_presence: linear(0, 0.069, 0.219, 0.39, 0.551, 0.687, 0.793, 0.871, 0.926, 0.963, 0.985, 0.998, 1);
+
+// 진입/퇴출 모션. `data-state="open" | "closed"` 를 다는 요소에 쓴다.
+// 진입은 `@starting-style`, 퇴출은 `[data-state="closed"]` 로의 transition 이다. 언마운트는
+// 컴포넌트가 transition 이 끝난 뒤에 한다(`getAnimations()` 의 `finished` 대기).
+// $from: 닫힌 상태 transform. 전면 오버레이(딤)에는 주지 않는다 - 항등값이어도 `position: fixed`
+//   자손의 containing block 이 되고 전체 화면 합성 레이어가 생긴다.
+@mixin presence($from: null) {
+  @if $from {
+    transition:
+      opacity $duration_presence $easing_presence,
+      transform $duration_presence $easing_presence;
+  } @else {
+    transition: opacity $duration_presence $easing_presence;
+  }
+
+  &[data-state="closed"] {
+    opacity: 0;
+    @if $from { transform: $from; }
+  }
+
+  @starting-style {
+    opacity: 0;
+    @if $from { transform: $from; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

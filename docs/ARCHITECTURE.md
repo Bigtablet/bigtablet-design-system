@@ -233,7 +233,7 @@ cn(styles.button, styles[`size_${size}`], className);
 import "./styles/theme.scss"; // :root / [data-theme="dark"] CSS 변수 (dist/index.css 에 1회 포함)
 import "./styles/autofill.scss"; // 자동완성 칸의 UA 배경/글자색 무력화 (전역 요소 규칙)
 
-export { cn, useFocusTrap, useReducedMotion, useSpringHover, useSpringPresence } from "./utils";
+export { cn, useFocusTrap, useReducedMotion } from "./utils";
 
 export type { ButtonProps } from "./ui/general/button";
 export { Button } from "./ui/general/button";
@@ -478,9 +478,8 @@ runner 시간을 내고, 대기 시간을 가장 긴 job 하나로 줄였다.
 - `uses:` 는 전부 `owner/action@<40자 SHA> # vX.Y.Z` 로 고정한다. 태그는 옮겨질 수 있어 무결성 보장이 안 된다. 갱신은 `dependabot.yml` 의 `github-actions` ecosystem 이 SHA 와 버전 주석을 함께 올린다
 
 **size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막
-조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. `dist/index.js` 는
-런타임 의존성인 `@react-spring/web` 까지 번들해서 잰다(2026-09-10 기준 59.91 kB 중 18.48 kB).
-이 패키지 코드만 보려면 `dist/index.js` 를 직접 brotli 로 재면 된다(같은 시점 40.55 kB).
+조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. 런타임 의존성은 없다
+(4.0.0 에서 `@react-spring/web` 제거). `dist/index.js` 는 minify 된 채로 배포된다.
 
 배포는 별도 워크플로다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리한다.
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import {
@@ -8,7 +7,7 @@ import {
 	useAnchoredPosition,
 	useFocusTrap,
 	useOverlayEscape,
-	useSpringPresence,
+	usePresence,
 } from "../../../utils";
 import "./style.scss";
 
@@ -79,12 +78,11 @@ export const Popover = ({
 	const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
 	const open = isControlled ? openProp : internalOpen;
 
-	const [shouldRender, setShouldRender] = React.useState(open ?? false);
-	if (open && !shouldRender) setShouldRender(true);
-
 	const wrapperRef = React.useRef<HTMLDivElement>(null);
 	const positionRef = React.useRef<HTMLDivElement>(null);
 	const popoverRef = React.useRef<HTMLDivElement>(null);
+	// 퇴장 transition 이 끝난 뒤 언마운트한다.
+	const shouldRender = usePresence(!!open, [popoverRef]);
 	const popoverId = React.useId();
 
 	const setOpen = React.useCallback(
@@ -104,25 +102,6 @@ export const Popover = ({
 		placement,
 		gap: POPOVER_GAP,
 		padding: 8,
-	});
-
-	const fromTransform = (() => {
-		switch (pos.placement) {
-			case "top":
-				return "translateY(4px)";
-			case "bottom":
-				return "translateY(-4px)";
-			case "left":
-				return "translateX(4px)";
-			case "right":
-				return "translateX(-4px)";
-		}
-	})();
-
-	const style = useSpringPresence({
-		visible: open,
-		from: fromTransform,
-		onExitComplete: () => setShouldRender(false),
 	});
 
 	// body 로 포탈되면 트리거 뒤 tab 순서가 끊기므로 다른 포탈 오버레이(Modal/Drawer/Alert)와 동일하게
@@ -192,9 +171,11 @@ export const Popover = ({
 							visibility: pos.ready ? undefined : "hidden",
 						}}
 					>
-						<animated.div
+						<div
 							id={popoverId}
 							ref={popoverRef}
+							data-state={open ? "open" : "closed"}
+							data-placement={pos.placement}
 							role="dialog"
 							tabIndex={-1}
 							// 이름을 폴백하지 않는다 - Modal/Drawer 와 같은 계약이다. 영문 폴백은 한국어 UI 에서
@@ -203,16 +184,14 @@ export const Popover = ({
 							aria-labelledby={ariaLabelledby}
 							// 높이 상한은 **패널 자신**에 건다(#621). 위치 컨테이너에 걸면 그 `overflow` 가
 							// 자식의 `box-shadow`·focus ring 을 스크롤이 필요 없을 때도 잘라낸다.
-							style={{ ...style, maxHeight: pos.ready ? pos.maxHeight : undefined }}
+							style={{ maxHeight: pos.ready ? pos.maxHeight : undefined }}
 							className={cn("popover", className)}
 						>
 							{content}
-						</animated.div>
+						</div>
 					</div>,
 					document.body,
 				)}
 		</div>
 	);
 };
-
-Popover.displayName = "Popover";

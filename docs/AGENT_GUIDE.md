@@ -321,38 +321,39 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ## Animation
 
-**All entrance/exit animations on overlays use `react-spring`.** Don't reach for CSS keyframes.
+**Overlay entrance/exit is CSS** (`@starting-style` + a transition to `[data-state="closed"]`). There is no JS animation library.
 
 ### Built-in motion (just use the components)
-- Modal, Alert: overlay fade + panel scale-translate spring
-- Dropdown, Menu, Tooltip, Popover: pop-in spring
-- Toast: slide-in spring with onExitComplete unmount
+- Modal, Alert: overlay fade + panel scale-translate
+- Drawer: overlay fade + panel slide along the placement axis
+- Dropdown, Menu, Combobox: pop-in on open, removed immediately on close
+- Tooltip, Popover: pop-in and fade-out, direction follows the resolved placement
+- Toast: slide-in from the right, slide-out before removal
 - Accordion: grid-template-rows 0fr → 1fr (CSS, height-auto-safe)
 - Sidebar logo: crossfade between collapsed/expanded layers
 - NavBar/Tabs active: sliding indicator
 
 ### Custom motion utility
-For your own interactive components:
+For your own overlay, use the SCSS mixin. It uses the same curve as the components (a `linear()` approximation of a tension 280 / friction 28 spring):
 
-```tsx
-import { useSpringPresence, animated } from "@bigtablet/design-system";
+```scss
+@use "@bigtablet/design-system/scss/token" as token;
 
-function MyPopover({ open, onClose }) {
-  const [shouldRender, setShouldRender] = useState(open);
-  useEffect(() => { if (open) setShouldRender(true); }, [open]);
-
-  const style = useSpringPresence({
-    visible: open,
-    from: "translateY(-4px)",
-    onExitComplete: () => setShouldRender(false),  // unmount after exit
-  });
-
-  if (!shouldRender) return null;
-  return <animated.div style={style}>...</animated.div>;
+.my_popover {
+  @include token.presence(translateY(-4px)); // argument = closed-state transform
 }
 ```
 
-**Reduced motion:** every component respects `prefers-reduced-motion: reduce`. Spring respects it automatically; CSS animations have explicit overrides.
+```tsx
+// Enter only: mounting is enough.
+{open && <div className="my_popover">...</div>}
+
+// Enter + exit: keep it mounted with data-state="closed" until el.getAnimations() settle, then unmount.
+```
+
+Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See `docs/MIGRATION.md`.
+
+**Reduced motion:** every component respects `prefers-reduced-motion: reduce`. `token.presence` turns its transition off there.
 
 ---
 
@@ -483,7 +484,7 @@ toast.error("Network error", 6000); // custom 6s duration
 | Custom modal with CSS keyframes | `<Modal>` (spring built in) |
 | Build dropdown from scratch | `<Dropdown>` |
 | `transition: all 0.2s ease` | Specific properties + motion tokens |
-| `animation: ... infinite` outside loading indicators | Spring (`useSpringPresence`) for entrance/exit |
+| `animation: ... infinite` outside loading indicators | `token.presence` mixin for entrance/exit |
 | Skip `aria-label` on icon-only triggers | `<IconButton icon={...} aria-label="..." />` |
 | Hardcode logo color white inside a Sidebar | Sidebar uses light bg by default - use `text-heading` for text |
 | Use Tag component | Removed in v3.0 - use `<Chip type="static" tone="..." />` |

@@ -1,10 +1,6 @@
 import "@testing-library/jest-dom";
-import { Globals } from "@react-spring/web";
 import { afterEach, beforeEach } from "vitest";
-
-// jsdom 환경에서 react-spring 애니메이션 즉시 완료 (onRest 트리거 보장)
-// - 진입/퇴출 unmount 타이밍 의존 테스트가 RAF 없이 동작
-Globals.assign({ skipAnimation: true });
+import { restoreAnimationStub } from "./stub-animation";
 
 // jsdom 에는 `Element.prototype.scrollIntoView` 가 없다 - 호출하면 TypeError 다. 실제
 // 구현은 옵셔널 호출(`?.`)로 방어하지만, 테스트에서 "호출됐는지" 를 볼 수 있게 스텁을 둔다.
@@ -42,3 +38,6 @@ function resetBodyScrollLock() {
 
 beforeEach(resetBodyScrollLock);
 afterEach(resetBodyScrollLock);
+
+// stubPendingAnimation 이 건 getAnimations 스텁을 걷는다 (jsdom 에는 원래 없다).
+afterEach(restoreAnimationStub);

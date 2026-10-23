@@ -227,5 +227,3 @@ export const OtpInput = ({
 		</div>
 	);
 };
-
-OtpInput.displayName = "OtpInput";

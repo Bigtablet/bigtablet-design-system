@@ -26,6 +26,11 @@
   @include token.scrollable;
   will-change: transform, opacity;
 
+  // 진입만 있다(닫으면 바로 언마운트). 방향은 실제 배치를 따른다 - 위로 flip 되면 아래에서 올라온다.
+  --menu-from: translateY(-4px);
+  &[data-placement="top"] { --menu-from: translateY(4px); }
+  @include token.presence(var(--menu-from));
+
   [data-theme="dark"] & {
     background: token.$color_bg_solid_dim;
   }

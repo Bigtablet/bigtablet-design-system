@@ -353,5 +353,3 @@ export const TextField = ({
 		</div>
 	);
 };
-
-TextField.displayName = "TextField";

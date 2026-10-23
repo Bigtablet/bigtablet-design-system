@@ -386,5 +386,3 @@ export const DateCalendar = ({
 		</div>
 	);
 };
-
-DateCalendar.displayName = "DateCalendar";
