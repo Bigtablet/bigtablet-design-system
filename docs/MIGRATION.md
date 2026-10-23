@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v400-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)](#v400-radiusspacingfont-scss-토큰이-var-로)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
@@ -31,6 +32,61 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)
+
+런타임 의존성 `@react-spring/web` 을 뺐습니다. 이 패키지는 쓰지 않아도 트리 쉐이킹으로 빠지지 않아서, `Button` 하나만 import 해도 번들에 약 42KB(원본)가 들어갔습니다. 오버레이 9개(Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox)의 열고 닫는 모션은 이제 CSS 가 그립니다. 곡선은 예전 스프링(tension 280 / friction 28)을 `linear()` 로 근사해서 거의 같게 보입니다. `prefers-reduced-motion` 에서는 지금처럼 모션 없이 열리고 닫힙니다.
+
+### 무엇이 바뀌나
+
+- `useSpringHover` · `useSpringPresence` export 가 없어졌습니다. `import { animated } from "@react-spring/web"` 도 앱이 직접 의존성으로 두지 않았다면 깨집니다(DS 를 통해 설치돼 있던 것).
+- 오버레이 요소에 `data-state="open" | "closed"` 가 붙고, 인라인 `style` 의 `opacity` · `transform` 은 더 이상 쓰지 않습니다. 테스트에서 `toHaveStyle({ transform: "scale(1) ..." })` 를 보던 코드는 `data-state` 를 보도록 바꾸세요.
+- jsdom 테스트에서는 퇴출 모션 없이 바로 언마운트됩니다(`getAnimations` 가 없다). `Globals.assign({ skipAnimation: true })` 설정은 지워도 됩니다.
+
+### 앱 쪽에서 할 일 - `useSpringHover`
+
+마우스를 올리거나 키보드로 포커스했을 때 살짝 뜨는 효과는 CSS 로 충분합니다. `:focus-visible` 을 쓰면 마우스 클릭으로 생긴 포커스에는 뜨지 않아 예전보다 자연스럽습니다.
+
+```tsx
+// before
+const { style, bind } = useSpringHover();
+<animated.div style={style} {...bind}>...</animated.div>
+
+// after
+<div className="summary_card">...</div>
+```
+
+```scss
+@use "@bigtablet/design-system/scss/token" as token;
+
+.summary_card {
+  transition: transform token.$duration_presence token.$easing_presence;
+
+  &:hover,
+  &:focus-visible,
+  &:has(:focus-visible) { // 카드 안의 링크·버튼에 키보드 포커스가 있을 때
+    transform: translateY(-2px) scale(1.02); // useSpringHover 기본값 (lift -2, scale 1.02)
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none; // 뜨는 상태는 남기고 움직임만 없앤다 - 예전 훅과 같다
+  }
+}
+```
+
+### 앱 쪽에서 할 일 - `useSpringPresence`
+
+`token.presence` mixin 이 같은 모션을 줍니다. 열 때는 `@starting-style`, 닫을 때는 `[data-state="closed"]` 로 가는 transition 입니다.
+
+```scss
+.my_panel {
+  @include token.presence(translateY(8px)); // 인자 = 닫힌 상태 transform (useSpringPresence 의 from)
+}
+```
+
+닫는 모션을 보이려면 transition 이 끝날 때까지 마운트를 유지해야 합니다. `el.getAnimations()` 의 `finished` 를 기다린 뒤 언마운트하세요. 퇴출 모션이 필요 없으면 `open && <div className="my_panel" />` 만으로 진입 모션이 납니다.
 
 ---
 

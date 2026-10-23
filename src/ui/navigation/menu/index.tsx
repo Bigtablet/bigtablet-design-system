@@ -1,9 +1,8 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { cn, useAnchoredPosition, useSpringPresence } from "../../../utils";
+import { cn, useAnchoredPosition } from "../../../utils";
 import "./style.scss";
 
 export interface MenuItem {
@@ -77,13 +76,6 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 				?.focus({ preventScroll: true });
 		}
 	}, [open, pos.ready, pos.anchorHidden]);
-
-	// 진입 방향은 실제 배치를 따라야 한다 - 위로 flip 됐는데 아래에서 올라오면 거꾸로 보인다
-	// (Dropdown·Combobox 는 `dropUp` 으로 같은 처리를 한다).
-	const style = useSpringPresence({
-		visible: open,
-		from: pos.placement === "top" ? `translateY(${MENU_GAP}px)` : `translateY(-${MENU_GAP}px)`,
-	});
 
 	React.useEffect(() => {
 		if (!open) return;
@@ -190,12 +182,13 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 			{open &&
 				typeof document !== "undefined" &&
 				createPortal(
-					<animated.div
+					<div
 						id={menuId}
 						ref={menuRef}
 						role="menu"
+						// 진입 방향은 실제 배치를 따른다(style.scss) - Dropdown·Combobox 는 `_up` 클래스로 같은 처리를 한다.
+						data-placement={pos.placement}
 						style={{
-							...style,
 							position: "fixed",
 							left: pos.x,
 							top: pos.y,
@@ -242,7 +235,7 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 								<span className="menu_item_label">{item.label}</span>
 							</button>
 						))}
-					</animated.div>,
+					</div>,
 					document.body,
 				)}
 		</span>

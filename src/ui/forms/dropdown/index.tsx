@@ -1,12 +1,11 @@
 "use client";
 
-import { animated } from "@react-spring/web";
 import { Check, ChevronDown, Search } from "lucide-react";
 import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSpringPresence } from "../../../utils";
+import { cn } from "../../../utils";
 import { matchesSearch } from "../../../utils/hangul-search";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { useLocaleText } from "../../system/locale-provider";
@@ -298,18 +297,11 @@ export const Dropdown = (props: DropdownProps) => {
 	const fieldsetClassName = cn("dropdown_fieldset", { is_open: isOpen, is_disabled: disabled });
 	const listClassName = cn("dropdown_list", { dropdown_list_up: dropUp });
 
-	// Spring presence - list 진입 모션 (Menu/Tooltip 과 동일 패턴, 퇴출은 즉시 unmount)
-	// Dropdown 은 빠른 선택 popup 이라 외부 클릭/Esc 가 즉시 닫혀야 자연. Modal 처럼
-	// shouldRender + onExitComplete 패턴은 spring onRest 가 sync 동작 보장 안 해
-	// 키보드 네비/선택 unit test (Esc/Enter 후 즉시 listbox 사라짐 기대) 깨짐.
+	// 목록은 진입 모션만 있다(style.scss 의 token.presence). 빠른 선택 popup 이라 외부 클릭/Esc/선택 뒤
+	// 즉시 사라져야 자연스럽다 - 퇴출을 기다리면 선택 직후에도 목록이 잠깐 남는다.
 	// 이름의 앞부분. 직접 준 `label` 이 있으면 그 요소, `Field` 안이면 Field 의 라벨.
 	// 둘 다 없으면 값만으로 이름이 만들어진다.
 	const labelledBy = label ? `${dropdownId}_label` : field?.labelId;
-
-	const listStyle = useSpringPresence({
-		visible: isOpen,
-		from: dropUp ? "translateY(4px)" : "translateY(-4px)",
-	});
 
 	return (
 		<div ref={wrapperRef} className={rootClassName}>
@@ -383,11 +375,10 @@ export const Dropdown = (props: DropdownProps) => {
 					// 포탈로 body 에 띄운다. 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표
 					// 래퍼)이 목록을 잘라내고 `z-index` 로는 넘지 못한다(#586 - 170px 중 46px 만
 					// 보였다). 좌표·폭은 훅이 트리거를 재서 준다.
-					<animated.div
+					<div
 						ref={panelRef}
 						className={listClassName}
 						style={{
-							...listStyle,
 							position: "fixed",
 							left: position.x,
 							top: position.y,
@@ -493,7 +484,7 @@ export const Dropdown = (props: DropdownProps) => {
 										);
 									})}
 						</div>
-					</animated.div>,
+					</div>,
 					document.body,
 				)}
 		</div>

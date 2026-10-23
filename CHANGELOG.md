@@ -9,6 +9,9 @@
 - **Breaking (SCSS)** `token.$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자가 아니라 `var(--bt-*, 기본값)` 입니다 - `calc()` 밖의 Sass 계산(`token.$spacing_48 * 2`, `-token.$spacing_4`)은 `calc(2 * #{token.$spacing_48})` 로 바꾸거나 원값 `token.$spacing_base_48` 을 쓰세요. 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
 - Tailwind v4 연결 파일 `@bigtablet/design-system/tailwind.css` 가 생겼습니다 - `bg-bt-text-brand` · `shadow-bt-level2` · `rounded-bt-md` · `p-bt-16` · `font-bt` 유틸과, ThemeProvider 와 같은 규칙의 `dark:` 를 씁니다
 - `cssVars` 에 `radius` · `spacing` · `fontFamily` 가 생겼습니다 (styled-components · 인라인 스타일용)
+- **Breaking** `useSpringHover` · `useSpringPresence` 를 지웠고 런타임 의존성 `@react-spring/web` 이 없어졌습니다 - hover lift 는 CSS `:hover` · `:focus-visible` 로, 진입/퇴출은 SCSS `token.presence` mixin 으로 옮기세요. 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
+- 번들이 작아졌습니다 - `Button` 하나만 import 하면 gzip 34.2KB → 5.2KB, 전체 import 는 60.1KB → 42.4KB 입니다. 쓰지 않는 컴포넌트가 트리 쉐이킹으로 빠지고, `dist/index.css` 가 압축돼 나갑니다(gzip 21.9KB → 20.6KB)
+- (렌더 변경) Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox 의 열고 닫는 모션을 CSS 가 그립니다 - 곡선은 예전 스프링을 근사해 거의 같습니다. 오버레이에 인라인 `opacity` · `transform` 대신 `data-state="open" | "closed"` 가 붙습니다
 - (렌더 변경) 컴포넌트 CSS 가 `bigtablet` cascade layer 안으로 들어갔습니다 - 앱의 레이어 밖 CSS 가 특이도와 무관하게 DS 를 이깁니다. 앱이 요소 선택자로 쓴 리셋(`button { background: none }` 등)은 DS 버튼까지 덮으므로 `@layer reset { ... }` 으로 옮기세요
 - (렌더 변경) 고대비(forced-colors) 모드에서 키보드 포커스 표시가 다시 보입니다
 - (렌더 변경) Tab · 앵커 이동으로 스크롤될 때 포커스가 sticky 헤더 · 하단 고정 바 밑에 숨지 않습니다

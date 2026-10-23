@@ -41,4 +41,11 @@
   // 그 상한을 무시해 256px 미만 화면에서 툴팁이 오른쪽으로 넘친다 - Popover 와 같은 패턴.
   max-width: min(240px, 100%);
   will-change: transform, opacity;
+
+  // 진입 방향은 실제 배치를 따른다 - 위로 flip 됐는데 아래에서 올라오면 거꾸로 보인다.
+  --tooltip-from: translateY(-4px);
+  &[data-placement="top"] { --tooltip-from: translateY(4px); }
+  &[data-placement="left"] { --tooltip-from: translateX(4px); }
+  &[data-placement="right"] { --tooltip-from: translateX(-4px); }
+  @include token.presence(var(--tooltip-from));
 }

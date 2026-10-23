@@ -96,5 +96,3 @@ export const Toggle = ({
 		</button>
 	);
 };
-
-Toggle.displayName = "Toggle";

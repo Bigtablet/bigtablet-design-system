@@ -155,5 +155,3 @@ export const RadioGroup = ({
 		</RadioGroupContext.Provider>
 	);
 };
-
-RadioGroup.displayName = "RadioGroup";

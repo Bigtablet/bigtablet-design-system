@@ -2,8 +2,7 @@
 @use "src/styles/breakpoints" as breakpoint;
 
 // ── Animations ───────────────────────────────────────────────────────────────
-// Toast item 진입/퇴출 모션은 react-spring (useSpringPresence) 가 처리.
-// progress bar 는 CSS keyframes 로.
+// Toast item 진입/퇴출 모션은 token.presence (아래 .toast_item), progress bar 는 keyframes 로.
 
 @keyframes toast_progress {
   from { width: 100%; }
@@ -69,6 +68,7 @@
   line-height: token.$line_height_24;
 
   will-change: transform, opacity;
+  @include token.presence(translateX(20px)); // 우측에서 슬라이드 인
 
   @include breakpoint.compact {
     padding: token.$spacing_8 token.$spacing_12 token.$spacing_12;

@@ -2832,7 +2832,7 @@ const [isOpen, setIsOpen] = useState(false);
 
 #### 포털 — `document.body` 로 렌더된다
 
-Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 이 DS 는 `transform` 을 광범위하게 쓰는데(`useSpringHover` 등), `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
+Modal 은 `createPortal(…, document.body)` 로 렌더한다. **앱이 다시 감쌀 필요가 없다.** 앱에는 `transform` 을 쓰는 조상(hover lift · 애니메이션 등)이 흔한데, `transform` 조상 아래에서는 `position: fixed` 의 containing block 이 뷰포트가 아니게 되어 오버레이가 깨진다. 그걸 피하려고 컴포넌트가 스스로 포털한다.
 
 ```tsx
 // ❌ 이중 포털 - 사이드바의 스태킹 컨텍스트를 벗어나려고 감쌀 필요가 없다
@@ -2886,7 +2886,7 @@ const [isOpen, setIsOpen] = useState(false);
 | `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어진다 |
 | `disableAnimation` | `boolean` | `false` | 슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. OS reduced-motion 은 이 값과 상관없이 항상 모션을 끈다 |
 
-> 방향별 슬라이드 진입/퇴출은 `react-spring` 으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
+> 방향별 슬라이드 진입/퇴출은 CSS transition(`@starting-style` · `data-state`)으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시된다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
 **계약은 Modal 과 같다** — 아래 네 가지는 [Modal](#modal) 절의 설명과 동일하게 적용된다.
 
@@ -2986,12 +2986,12 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
 - **진입**: opacity `0→1` + transform `translate(4px) → 0` (placement 별로 진입 방향 다름)
   - top → 아래에서 위로, bottom → 위에서 아래로, left → 오른쪽에서 왼쪽으로, right → 그 반대
-- **퇴출**: `clamp: true`로 진동 없이 빠르게 사라짐 (비대칭)
-- spring config: `tension: 280, friction: 28` (Vercel/Linear 톤)
+- **퇴출**: 같은 곡선으로 되돌아간 뒤 언마운트
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 
 #### 닫힘 처리
 
@@ -3083,7 +3083,7 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 - `"start"` (기본) - trigger의 **왼쪽 가장자리**부터 메뉴 펼침. 페이지 좌측 / 본문 안 트리거에 적합.
 - `"end"` - trigger의 **오른쪽 가장자리**까지 정렬. 페이지 우측 (테이블 마지막 칼럼의 케밥, 헤더 우측 액션)에서 화면 밖으로 안 넘어가게.
 
-> ℹ️ 세로 방향은 항상 trigger **아래**로 펼침 (현재 구현은 위로 뒤집기 미지원). 화면 하단에 가까우면 trigger 위치를 조정하거나 페이지 상단에 두라.
+> ℹ️ 세로 방향은 trigger **아래**가 우선이다. 아래 공간이 모자라면 **위로 뒤집히고**(양쪽 다 모자라면 더 넓은 쪽), 진입 모션 방향도 따라 바뀐다.
 
 **trigger 패턴**
 - `IconButton` + `MoreVertical` (케밥) - 행/카드의 잠재 액션 모음
@@ -3130,11 +3130,11 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
-- **진입**: opacity `0→1` + transform `translateY(-4px) → 0` (위에서 살짝 내려옴)
-- **퇴출**: `clamp: true`로 진동 없이 빠르게 사라짐 (비대칭, 진입은 부드럽게 / 퇴출은 단호하게)
-- spring config: `tension: 280, friction: 28`
+- **진입**: opacity `0→1` + transform `translateY(-4px) → 0` (위에서 살짝 내려옴, 위로 flip 되면 아래에서 올라옴)
+- **퇴출**: 모션 없이 바로 사라짐 - 항목을 고른 직후 메뉴가 남아 있지 않게
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 - 아이템 hover/focus는 `transition_fast` 배경 트랜지션
 
 #### 외부 클릭/Esc 처리
@@ -3274,11 +3274,11 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 
 #### 애니메이션
 
-`useSpringPresence` 훅 + react-spring:
+CSS transition(`token.presence`):
 
 - **진입**: opacity `0→1` + transform `translate(4px) → 0` (placement별 진입 방향 다름 - Tooltip과 동일 규칙)
-- **퇴출**: `clamp: true`로 진동 없이 빠르게
-- spring config: `tension: 280, friction: 28`
+- **퇴출**: 같은 곡선으로 되돌아간 뒤 언마운트
+- 곡선: 0.3s `linear()` - 예전 스프링(`tension: 280, friction: 28`)의 근사
 
 #### 외부 클릭/Esc 처리
 

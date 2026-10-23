@@ -90,5 +90,3 @@ export const InlineAlert = ({
 		</div>
 	);
 };
-
-InlineAlert.displayName = "InlineAlert";

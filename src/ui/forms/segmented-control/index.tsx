@@ -167,5 +167,3 @@ export const SegmentedControl = <T extends string = string>({
 		</div>
 	);
 };
-
-SegmentedControl.displayName = "SegmentedControl";
