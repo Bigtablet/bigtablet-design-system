@@ -78,11 +78,15 @@ const base = [...code.get(BARREL).matchAll(sideEffectCss)].map((m) => resolve(OU
 if (base.length === 0) throw new Error("build-modules: 배럴에서 공통 CSS import 를 찾지 못했다");
 // 배럴은 소스 index.ts 의 값 export 만 `export { … } from` 그대로 다시 쓴다. esbuild 출력은 이를
 // `import { X } from …; export { X }` 로 바꿔 Next 가 배럴로 알아보지 못한다(타입 export 는 빠진다).
-const barrel = [
-	...readFileSync("src/index.ts", "utf8").matchAll(
-		/^export\s+(type\s+)?\{([^}]*)\}\s*from\s*"([^"]+)";/gm,
-	),
-]
+const indexSource = readFileSync("src/index.ts", "utf8");
+const reexport = /^export\s+(type\s+)?\{([^}]*)\}\s*from\s*"([^"]+)";/gm;
+// 위 형태가 아닌 export(`export *`, 선언 export 등)는 배럴에서 조용히 빠진다 - 빌드를 멈춘다
+const unhandled = indexSource.replace(reexport, "").match(/^export\b.*$/gm);
+if (unhandled)
+	throw new Error(
+		`build-modules: src/index.ts 의 export 를 배럴로 옮기지 못한다 - ${unhandled.join(" / ")}`,
+	);
+const barrel = [...indexSource.matchAll(reexport)]
 	.filter(([, typeOnly]) => !typeOnly)
 	.map(([, , names, from]) => {
 		const values = names
