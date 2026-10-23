@@ -115,12 +115,16 @@ transform: translateY(calc(-1 * #{token.$spacing_4}));
 padding-bottom: token.$spacing_base_48 * 2;
 ```
 
-사내 사용처 (2026-10-23 grep, `calc()` 밖 산술):
+사내 사용처 (2026-10-23, `calc()` 밖 산술):
 
-| 저장소 | 위치 |
-|---|---|
-| bigtablet-notiiv-monorepo-web | `apps/status/src/app/page.module.scss:8` (`token.$spacing_48 * 2`) |
-| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/page-skeleton.module.scss:9,13` (`* 2`, `* 1.5`) |
+| 저장소 | 위치 | 상태 |
+|---|---|---|
+| bigtablet-notiiv-monorepo-web | `apps/status/src/app/page.module.scss:8` (`token.$spacing_48 * 2`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/page-skeleton.module.scss:9,13,22` (`* 2`, `* 1.5`, `* 2.5`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/uptime-bars/bar-tooltip.module.scss:11,12` (`* 4`, `* 6`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+| bigtablet-notiiv-monorepo-web | `apps/owner/src/features/signup/ui/consent-section.module.scss:80` (`-(token.$spacing_12)` - 에러 없이 무효한 `-var()` 를 냄) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
+
+옛 토큰에서도 값이 같게 고쳐 두어 DS 버전을 올릴 때 이 표의 수정은 따로 필요 없다.
 
 bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없습니다.
 
