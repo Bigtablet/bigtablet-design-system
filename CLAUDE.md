@@ -196,7 +196,7 @@ WCAG 2.1 SC 2.3.3 - `prefers-reduced-motion: reduce` 사용자 위해 모든 컴
 
 모션은 CSS(`token.presence` mixin - 진입은 `@starting-style`, 퇴출은 `[data-state="closed"]` 로의 transition)가 하고,
 퇴출이 끝날 때까지 마운트를 붙잡는 건 `usePresence` hook(`src/utils/use-presence.ts`)이 한다. JS 애니메이션 라이브러리는 쓰지 않는다
-(react-spring 은 트리 쉐이킹이 안 돼 4.0.0 에서 뺐다). Modal/Drawer/Alert/Toast/Tooltip/Popover 패턴.
+(react-spring 은 트리 쉐이킹이 안 돼 4.0.1 에서 뺐다). Modal/Drawer/Alert/Toast/Tooltip/Popover 패턴.
 
 ```tsx
 import { usePresence } from "../../utils";
