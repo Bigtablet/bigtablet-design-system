@@ -158,7 +158,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### React
 
-컴포넌트를 import 하면 그 컴포넌트의 CSS 와 공통 CSS(`theme.scss` 의 `:root` / `[data-theme="dark"]` / `@media (prefers-color-scheme)` 변수 정의, autofill, 링크)가 함께 실립니다. 따로 CSS 를 import 하지 않아도 되고, 쓰지 않는 컴포넌트의 CSS 는 사용처 번들에서 빠집니다(4.0.0 부터).
+컴포넌트를 import 하면 그 컴포넌트의 CSS 와 공통 CSS(`theme.scss` 의 `:root` / `[data-theme="dark"]` / `@media (prefers-color-scheme)` 변수 정의, autofill, 링크)가 함께 실립니다. 따로 CSS 를 import 하지 않아도 되고, 쓰지 않는 컴포넌트의 CSS 는 사용처 번들에서 빠집니다(4.0.1 부터).
 
 ```tsx
 import { ThemeProvider, Button } from "@bigtablet/design-system";

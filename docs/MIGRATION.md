@@ -7,9 +7,9 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v400-react-spring-제거--usespringhover--usespringpresence-삭제)
-- [v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)](#v400-radiusspacingfont-scss-토큰이-var-로)
-- [v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v400-컴포넌트별-css---stylecss-import-가-필요-없다)
+- [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
+- [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
+- [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -36,7 +36,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
-## v4.0.0 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)
+## v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)
 
 런타임 의존성 `@react-spring/web` 을 뺐습니다. 이 패키지는 쓰지 않아도 트리 쉐이킹으로 빠지지 않아서, `Button` 하나만 import 해도 번들에 약 42KB(원본)가 들어갔습니다. 오버레이 9개(Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox)의 열고 닫는 모션은 이제 CSS 가 그립니다. 곡선은 예전 스프링(tension 280 / friction 28)을 `linear()` 로 근사해서 거의 같게 보입니다. `prefers-reduced-motion` 에서는 지금처럼 모션 없이 열리고 닫힙니다.
 
@@ -91,7 +91,7 @@ const { style, bind } = useSpringHover();
 
 ---
 
-## v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)
+## v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)
 
 `scss/token` 의 `$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자에서 `var(--bt-radius-md, 8px)` 같은 문자열로 바뀝니다. 사용처가 `:root { --bt-radius-md: 4px }` 로 덮어쓰면 DS 컴포넌트가 따라가게 하려는 변경입니다([THEMING](./THEMING.md#모서리간격글꼴-덮어쓰기)). 덮어쓰지 않으면 렌더 결과는 같습니다.
 
@@ -131,7 +131,7 @@ bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없�
 
 ---
 
-## v4.0.0 (컴포넌트별 CSS - style.css import 가 필요 없다)
+## v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)
 
 패키지 진입점(`.`)이 한 덩어리 번들에서 모듈 단위 ESM(`dist/esm`)으로 바뀝니다. 컴포넌트마다 자기 CSS 와 공통 CSS(테마 변수 · autofill · 링크)를 import 하므로, 사용처 번들러가 쓰지 않는 컴포넌트를 JS 와 CSS 째로 뺍니다. Button 만 쓰는 페이지의 DS CSS 가 약 20KB → 3KB(gzip)입니다. import 하는 이름과 타입은 그대로입니다.
 

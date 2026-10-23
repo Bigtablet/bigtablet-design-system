@@ -373,7 +373,7 @@ export default defineConfig([
 
 ```
 dist/
-├── index.js           # ESM (React/Next.js)
+├── esm/               # ESM (React/Next.js) 진입점 - 모듈 단위, 컴포넌트마다 style.css
 ├── index.d.ts         # TypeScript 타입
 ├── index.css          # 통합 스타일 (= style.css, theme.scss CSS 변수 포함)
 ├── styles/token.scss  # SCSS 토큰 (/scss/token)
@@ -479,7 +479,7 @@ runner 시간을 내고, 대기 시간을 가장 긴 job 하나로 줄였다.
 
 **size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막
 조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. 런타임 의존성은 없다
-(4.0.0 에서 `@react-spring/web` 제거). `dist/index.js` 는 minify 된 채로 배포된다.
+(4.0.1 에서 `@react-spring/web` 제거). 진입점 `dist/esm` 은 파일 하나가 모듈 하나인 ESM 이고 공백만 줄여 배포한다 - 이름 압축 · 트리 쉐이킹은 사용처 번들러가 한다.
 
 배포는 별도 워크플로다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리한다.
 
