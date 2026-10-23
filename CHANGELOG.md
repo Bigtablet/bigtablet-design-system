@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.0.0) - 2026-10-23
+- 모서리 · 간격 · 글꼴을 CSS 변수로 바꿀 수 있습니다 - `:root { --bt-radius-md: 4px; --bt-spacing-16: 20px; --bt-font-family: "Inter", sans-serif }` 처럼 덮어쓰면 DS 컴포넌트가 따라갑니다. 덮어쓰지 않으면 화면은 같습니다. 컨트롤 높이 · 터치 영역 · 글자 크기는 고정입니다
+- **Breaking (SCSS)** `token.$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자가 아니라 `var(--bt-*, 기본값)` 입니다 - `calc()` 밖의 Sass 계산(`token.$spacing_48 * 2`, `-token.$spacing_4`)은 `calc(2 * #{token.$spacing_48})` 로 바꾸거나 원값 `token.$spacing_base_48` 을 쓰세요. 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
+- Tailwind v4 연결 파일 `@bigtablet/design-system/tailwind.css` 가 생겼습니다 - `bg-bt-text-brand` · `shadow-bt-level2` · `rounded-bt-md` · `p-bt-16` · `font-bt` 유틸과, ThemeProvider 와 같은 규칙의 `dark:` 를 씁니다
+- `cssVars` 에 `radius` · `spacing` · `fontFamily` 가 생겼습니다 (styled-components · 인라인 스타일용)
+- (렌더 변경) 컴포넌트 CSS 가 `bigtablet` cascade layer 안으로 들어갔습니다 - 앱의 레이어 밖 CSS 가 특이도와 무관하게 DS 를 이깁니다. 앱이 요소 선택자로 쓴 리셋(`button { background: none }` 등)은 DS 버튼까지 덮으므로 `@layer reset { ... }` 으로 옮기세요
+- (렌더 변경) 고대비(forced-colors) 모드에서 키보드 포커스 표시가 다시 보입니다
+- (렌더 변경) Tab · 앵커 이동으로 스크롤될 때 포커스가 sticky 헤더 · 하단 고정 바 밑에 숨지 않습니다
+- `ImageCropper` 뷰포트를 한 번 탭하면 그 지점이 가운데로 옵니다 - 드래그 없이 위치를 옮길 수 있습니다(WCAG 2.5.7)
+
 ## [3.32.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v3.32.1) - 2026-10-21
 - (렌더 변경) 가로 `Stepper` 의 마지막 단계가 오른쪽 끝에 붙습니다 - 이전에는 단계마다 같은 폭을 차지해 2단계면 절반, 3단계면 약 70% 지점에서 끝나고 오른쪽이 비었습니다. 마지막 단계는 내용 폭만 차지하고, 라벨이 폭보다 길면 줄바꿈됩니다
 

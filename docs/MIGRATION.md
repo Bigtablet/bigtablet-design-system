@@ -7,7 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [다음 릴리즈 (radius·spacing·font SCSS 토큰이 var() 로)](#다음-릴리즈-radiusspacingfont-scss-토큰이-var-로)
+- [v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)](#v400-radiusspacingfont-scss-토큰이-var-로)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -34,9 +34,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
-## 다음 릴리즈 (radius·spacing·font SCSS 토큰이 var() 로)
-
-> 릴리즈 버전이 정해지면 제목을 `vX.Y.Z (...)` 로 바꾼다.
+## v4.0.0 (radius·spacing·font SCSS 토큰이 var() 로)
 
 `scss/token` 의 `$radius_*` · `$spacing_*` · `$font_family_primary` 가 숫자에서 `var(--bt-radius-md, 8px)` 같은 문자열로 바뀝니다. 사용처가 `:root { --bt-radius-md: 4px }` 로 덮어쓰면 DS 컴포넌트가 따라가게 하려는 변경입니다([THEMING](./THEMING.md#모서리간격글꼴-덮어쓰기)). 덮어쓰지 않으면 렌더 결과는 같습니다.
 
