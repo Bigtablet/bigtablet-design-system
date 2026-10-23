@@ -10,14 +10,7 @@
 // 여기서 하는 일
 //   1. import 경로를 실제 파일로 (`./button` → `./button/index.js`) - ESM 패키지에서 webpack 은 확장자를 요구한다
 //   2. `.scss` import 를 `.css` 로 바꾸고 그 SCSS 를 컴파일해 옆에 둔다 - dist/index.css 와 같은 `bigtablet` 레이어
-import {
-	existsSync,
-	mkdirSync,
-	readdirSync,
-	readFileSync,
-	statSync,
-	writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { compile } from "sass-embedded";
 
