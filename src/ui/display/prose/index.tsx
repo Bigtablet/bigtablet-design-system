@@ -106,5 +106,3 @@ export const Prose = ({ size = "md", className, children, ref, ...props }: Prose
 		</div>
 	);
 };
-
-Prose.displayName = "Prose";

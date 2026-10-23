@@ -130,5 +130,3 @@ export const Stepper = ({
 		</ol>
 	);
 };
-
-Stepper.displayName = "Stepper";

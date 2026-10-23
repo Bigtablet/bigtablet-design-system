@@ -77,5 +77,3 @@ export const Checkbox = ({
 		</label>
 	);
 };
-
-Checkbox.displayName = "Checkbox";
