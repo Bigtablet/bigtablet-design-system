@@ -26,7 +26,9 @@ Crafted for clarity. Built on tokens. Ships with dark mode.
 
 ```tsx
 import { ThemeProvider, Button, Modal, useToast } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
+// No CSS import needed - each component brings its own CSS plus the shared theme variables,
+// so a page that uses only Button ships about 3 kB of DS CSS (gzip) instead of 20 kB.
+// Next.js with webpack: add the package to `experimental.optimizePackageImports` (Turbopack needs nothing).
 
 export default function App() {
   const toast = useToast();

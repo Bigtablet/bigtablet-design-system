@@ -17,6 +17,7 @@
 - (렌더 변경) 컴포넌트 CSS 가 `bigtablet` cascade layer 안으로 들어갔습니다 - 앱의 레이어 밖 CSS 가 특이도와 무관하게 DS 를 이깁니다. 앱이 요소 선택자로 쓴 리셋(`button { background: none }` 등)은 DS 버튼까지 덮으므로 `@layer reset { ... }` 으로 옮기세요
 - (렌더 변경) 고대비(forced-colors) 모드에서 키보드 포커스 표시가 다시 보입니다
 - (렌더 변경) Tab · 앵커 이동으로 스크롤될 때 포커스가 sticky 헤더 · 하단 고정 바 밑에 숨지 않습니다
+- 컴포넌트가 자기 CSS 만 싣습니다 - 패키지 진입점이 모듈 단위 ESM 이 돼, 사용처 번들러가 쓰지 않는 컴포넌트의 JS · CSS 를 뺍니다. `Button` 만 쓰는 페이지의 DS CSS 가 gzip 20.7KB → 2.9KB. CSS import 가 필요 없어졌고 `style.css` 는 그대로 있습니다(같이 쓰면 두 번 실림). Next 를 webpack 으로 빌드하면 `optimizePackageImports` 에 패키지를 넣어야 합니다 - 자세한 내용은 `docs/MIGRATION.md` 의 v4.0.0 절
 - `ImageCropper` 뷰포트를 한 번 탭하면 그 지점이 가운데로 옵니다 - 드래그 없이 위치를 옮길 수 있습니다(WCAG 2.5.7)
 - `Dropdown` 검색이 초성(`ㅅㅇ` → 서울)과 조합 중인 글자(`서우` · `성` → 서울)도 찾습니다 - 이전에는 한글 조합이 끝나야 걸러서 초성 하나는 아예 반영되지 않았습니다
 - (렌더 변경) `Dropdown` · `Combobox` 목록의 최대 높이가 행 7.5개(300px)입니다 - 이전 288px 에서는 다음 행이 8px 띠로만 걸쳐 잘린 것처럼 보였습니다. `token.$overlay_list_max_height` 가 `18rem` → `18.75rem`
