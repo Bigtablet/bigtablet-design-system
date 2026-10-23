@@ -14,7 +14,7 @@
 //            fallback SCSS 는 `var(--x, 값)` (모서리 · 간격 · 글꼴 - 사용처가 덮어쓴다)
 //            define   CSS 변수만 정의하고 SCSS 는 값 그대로 (z-index)
 // dark 값은 `$extensions["com.bigtablet.theme"].dark`.
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const SOURCE = "src/styles/tokens.json";
@@ -147,6 +147,11 @@ const buildScss = (tokens, value) => {
 	for (const token of tokens) {
 		if (!token.meta.scss) continue;
 		const [dir, name] = token.meta.scss.split("/");
+		// 폴더 오타면 새 폴더에 아무도 @forward 하지 않는 파일이 생긴다 - 만들지 않고 멈춘다
+		if (!name || !existsSync(`src/styles/${dir}/_index.scss`))
+			throw new Error(
+				`build-tokens: ${token.path} 의 scss "${token.meta.scss}" - src/styles/${dir}/_index.scss 가 없다`,
+			);
 		if (!files.has(dir)) files.set(dir, []);
 		const out = files.get(dir);
 		out.push(...scssNotes(token));
