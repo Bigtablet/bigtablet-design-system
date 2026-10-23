@@ -98,8 +98,8 @@
 
 	&_zoom_button {
 		flex-shrink: 0;
-		width: token.$spacing_32;
-		height: token.$spacing_32;
+		width: token.$spacing_base_32;
+		height: token.$spacing_base_32;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

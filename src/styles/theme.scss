@@ -15,9 +15,13 @@
 // mixin 한 곳에 정의하고 두 셀렉터에서 @include 한다 (drift 방지).
 // ════════════════════════════════════════════════════════════════════════
 
+@use "sass:meta";
 @use "./colors/index" as *;
 @use "./z-index/index" as zindex;
 @use "./border-width/index" as bw;
+@use "./radius/index" as radius;
+@use "./spacing/index" as spacing;
+@use "./typography/index" as typography;
 
 // ── Light (기본) ────────────────────────────────────────────────────────
 :root {
@@ -138,6 +142,37 @@
   --bt-z-notification: #{zindex.$z_notification}; //  200
   --bt-z-loading: #{zindex.$z_loading};           //  500
   --bt-z-popup: #{zindex.$z_popup};               // 1000
+
+  // 모서리·간격·글꼴 - 테마 무관. 컴포넌트 SCSS 는 `var(--bt-radius-md, 8px)` 처럼 기본값을 품고 참조하므로
+  // 여기 정의가 없어도 화면은 같다. 사용처가 `:root { --bt-radius-md: 4px }` 로 덮어쓰면 DS 컴포넌트가 따라가고,
+  // 정의를 둬야 tailwind.css(`rounded-bt-md`)·cssVars 처럼 기본값 없이 읽는 쪽도 값을 얻는다.
+  // 높이·터치 영역(controlHeight, a11y tap target)·아이콘 크기는 UX 값이라 열지 않는다.
+  --bt-radius-none: #{radius.$radius_base_none};
+  --bt-radius-xs: #{radius.$radius_base_xs};
+  --bt-radius-sm: #{radius.$radius_base_sm};
+  --bt-radius-md: #{radius.$radius_base_md};
+  --bt-radius-lg: #{radius.$radius_base_lg};
+  --bt-radius-xl: #{radius.$radius_base_xl};
+  --bt-radius-full: #{radius.$radius_base_full};
+  --bt-spacing-0: #{spacing.$spacing_base_0};
+  --bt-spacing-1: #{spacing.$spacing_base_1};
+  --bt-spacing-2: #{spacing.$spacing_base_2};
+  --bt-spacing-3: #{spacing.$spacing_base_3};
+  --bt-spacing-4: #{spacing.$spacing_base_4};
+  --bt-spacing-6: #{spacing.$spacing_base_6};
+  --bt-spacing-8: #{spacing.$spacing_base_8};
+  --bt-spacing-10: #{spacing.$spacing_base_10};
+  --bt-spacing-12: #{spacing.$spacing_base_12};
+  --bt-spacing-16: #{spacing.$spacing_base_16};
+  --bt-spacing-20: #{spacing.$spacing_base_20};
+  --bt-spacing-24: #{spacing.$spacing_base_24};
+  --bt-spacing-32: #{spacing.$spacing_base_32};
+  --bt-spacing-40: #{spacing.$spacing_base_40};
+  --bt-spacing-48: #{spacing.$spacing_base_48};
+  --bt-spacing-64: #{spacing.$spacing_base_64};
+  --bt-spacing-96: #{spacing.$spacing_base_96};
+  --bt-spacing-128: #{spacing.$spacing_base_128};
+  --bt-font-family: #{meta.inspect(typography.$font_family_base_primary)};
 }
 
 // 합성은 body 에서 한다. DS 몫을 `body:has(.bottom_nav)` 가 채우므로 :root 에서 계산하면

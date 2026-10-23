@@ -51,8 +51,8 @@ $indicator: 28px;
 
   &_dot {
     box-sizing: border-box;
-    width: token.$spacing_8;
-    height: token.$spacing_8;
+    width: token.$spacing_base_8;
+    height: token.$spacing_base_8;
     border-radius: token.$radius_full;
     background: currentcolor;
 

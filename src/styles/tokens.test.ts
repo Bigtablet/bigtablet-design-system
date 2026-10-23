@@ -12,7 +12,10 @@ import { a11y, controlHeight } from "./a11y";
 import { baseColors, colors } from "./colors";
 import { cssVars } from "./css-vars";
 import { elevation } from "./elevation";
+import { radius } from "./radius";
 import { skeleton } from "./skeleton";
+import { spacing } from "./spacing";
+import { baseTypography } from "./typography";
 
 // ── SCSS 컴파일 ────────────────────────────────────────────────────────────
 
@@ -201,6 +204,34 @@ describe("design tokens stay in sync with SCSS", () => {
 			/^--bt-(color|elevation|focus-ring)/.test(name),
 		);
 		expect(themed.filter((name) => !referenced.includes(name))).toEqual([]);
+	});
+
+	it("radius/spacing CSS vars keep the TS values as both definition and SCSS fallback", () => {
+		const scss = {
+			...moduleVariables("src/styles/radius"),
+			...moduleVariables("src/styles/spacing"),
+		};
+		const rows = [
+			...Object.entries(radius).map(([key, value]) => ["radius", key, value] as const),
+			...Object.entries(spacing).map(([key, value]) => ["spacing", key, value] as const),
+		];
+		const wrong = rows.flatMap(([group, key, value]) => {
+			const name = `--bt-${group}-${key}`;
+			const expected = { root: value, scss: `var(${name}, ${value})` };
+			const actual = { root: lightVars[name], scss: scss[`${group}_${key}`] };
+			return JSON.stringify(actual) === JSON.stringify(expected)
+				? []
+				: [{ name, actual, expected }];
+		});
+		expect(wrong).toEqual([]);
+	});
+
+	it("--bt-font-family definition matches the SCSS fallback and the TS primary family", () => {
+		const root = lightVars["--bt-font-family"];
+		expect(root?.startsWith(`"${baseTypography.fontFamily.primary}"`)).toBe(true);
+		expect(moduleVariables("src/styles/typography").font_family_primary).toBe(
+			`var(--bt-font-family, ${root})`,
+		);
 	});
 
 	it("controlHeight equals the SCSS $control_height_* steps", () => {

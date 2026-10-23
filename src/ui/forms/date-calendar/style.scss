@@ -52,7 +52,7 @@
 
   &_weekday {
     width: token.$tap_target_compact;
-    height: token.$spacing_32;
+    height: token.$spacing_base_32;
     padding: 0;
     @include token.label_small;
     font-weight: token.$font_weight_regular;

@@ -50,6 +50,7 @@ ICON_INSET = 8  # (32 - 18) / 2 = 7 이지만 토큰 스케일에 맞춰 8 을 �
 def rules(css: str) -> list[tuple[str, str, dict[str, str]]]:
     """(media, selector, declarations) 목록. 한 단계 @media 만 다룬다 - 이 파일에 그 이상 없다."""
     out: list[tuple[str, str, dict[str, str]]] = []
+    css = _resolve_tokens(css)
     for media, block in _blocks(css):
         for selector, body in re.findall(r"([^{}]+)\{([^{}]*)\}", block):
             decls: dict[str, str] = {}
@@ -59,6 +60,23 @@ def rules(css: str) -> list[tuple[str, str, dict[str, str]]]:
                     decls[prop.strip()] = value.strip()
             out.append((media, selector.strip(), decls))
     return out
+
+
+def _resolve_tokens(css: str) -> str:
+    """`var(--bt-spacing-24, 24px)` 를 기본값으로 풀고 `calc(16px + 32px)` 같은 px 합을 접는다.
+
+    간격·모서리는 사용처가 덮어쓸 수 있는 변수지만 이 검사는 DS 기본값끼리의 합의를 본다.
+    """
+    css = re.sub(r"var\(--bt-(?:spacing|radius)-[a-z0-9]+,\s*(-?[\d.]+px)\)", r"\1", css)
+
+    def fold(m: re.Match[str]) -> str:
+        terms = re.fullmatch(r"(-?[\d.]+)px\s*([+-])\s*(-?[\d.]+)px", m.group(1).strip())
+        if not terms:
+            return m.group(0)
+        a, op, b = float(terms.group(1)), terms.group(2), float(terms.group(3))
+        return f"{a + b if op == '+' else a - b:g}px"
+
+    return re.sub(r"calc\(([^()]*)\)", fold, css)
 
 
 def _blocks(css: str) -> list[tuple[str, str]]:

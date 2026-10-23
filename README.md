@@ -140,7 +140,7 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ```
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사한다. -->
-> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`. Spacing, radius, and typography are **SCSS-only** on this entry - use `scss/token` for them (`--bt-spacing-*` / `--bt-radius-*` exist only in the [Vanilla bundle](./docs/VANILLA.md)).
+> The React entry's `style.css` only emits `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`, `--bt-radius-*`, `--bt-spacing-*`, `--bt-font-family`. Font size and line height are **SCSS-only** on this entry - use the `scss/token` typography mixins (`--bt-font-size-*` exists only in the [Vanilla bundle](./docs/VANILLA.md)).
 
 `colors`&nbsp;·&nbsp;`spacing`&nbsp;·&nbsp;`typography`&nbsp;·&nbsp;`radius`&nbsp;·&nbsp;`elevation`&nbsp;·&nbsp;`motion`&nbsp;·&nbsp;`z-index`&nbsp;·&nbsp;`breakpoints`&nbsp;·&nbsp;`border-width`&nbsp;·&nbsp;`opacity`&nbsp;·&nbsp;`skeleton`&nbsp;·&nbsp;`icon`&nbsp;·&nbsp;`a11y`&nbsp;·&nbsp;`layout`<sup>SCSS only</sup>
 
@@ -159,7 +159,7 @@ import "@bigtablet/design-system/style.css"; // defines the --bt-* values
 <p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
 ```
 
-`tailwind.css` maps every `--bt-color-*` to `--color-bt-*` and `--bt-elevation-*` / `--bt-focus-ring*` to `--shadow-bt-*` (values stay `var()`, so dark mode follows), and makes `dark:` match ThemeProvider (`data-theme="dark"`, or OS dark when `data-theme` is unset). Component CSS lives in the `bigtablet` cascade layer (`theme, base, reset, bigtablet, components, utilities`), so utilities and your own unlayered CSS override it without specificity fights: `<Button className="bg-bt-text-brand" />`. Element-selector resets of your own (`* { padding: 0 }`, `button { background: none }`) must go in `@layer reset { ... }` - unlayered, they beat every DS component.
+`tailwind.css` maps every `--bt-color-*` to `--color-bt-*`, `--bt-elevation-*` / `--bt-focus-ring*` to `--shadow-bt-*`, `--bt-radius-*` to `--radius-bt-*` (`rounded-bt-md`), `--bt-spacing-*` to `--spacing-bt-*` (`p-bt-16`) and `--bt-font-family` to `--font-bt` (`font-bt`) (values stay `var()`, so dark mode and your overrides follow), and makes `dark:` match ThemeProvider (`data-theme="dark"`, or OS dark when `data-theme` is unset). Component CSS lives in the `bigtablet` cascade layer (`theme, base, reset, bigtablet, components, utilities`), so utilities and your own unlayered CSS override it without specificity fights: `<Button className="bg-bt-text-brand" />`. Element-selector resets of your own (`* { padding: 0 }`, `button { background: none }`) must go in `@layer reset { ... }` - unlayered, they beat every DS component.
 
 <br />
 
