@@ -30,7 +30,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 - `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
-- deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 의 `onChange` 계열은 v4.1.0 에서 지워졌고, 지금 이 규칙이 적용되는 것은 TextField·Textarea 의 `onChangeAction` 뿐입니다.
+- deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 에 deprecated 된 콜백(`onChange` 계열 · `onChangeAction`)은 v4.1.0 에서 모두 지워졌습니다.
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
@@ -83,6 +83,7 @@ Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outli
 | NavBar | `locale.onChange` | `locale.onValueChange` |
 | Toggle | `onChange` | `onCheckedChange` |
 | FilterBar | `loading` | `isLoading` (DataView · Table 과 같은 이름) |
+| TextField · Textarea | `onChangeAction` | `onValueChange`. 서버 액션도 이 이름으로 넘긴다 - `Action` 접미사는 쓰는 쪽에 필요 없다 |
 | 타입 | `ButtonAsButton` · `ButtonAsAnchor` | `ButtonProps<"button">` · `ButtonProps<"a">` |
 
 ### 앱 쪽에서 할 일
@@ -732,19 +733,19 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 
 ## v3.3.0
 
-변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 계속 동작합니다.
+변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 남겼다가 **v4.1.0 에서 모두 제거했습니다** - [v4.1.0 섹션](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) 참고.
 
 | 컴포넌트 | 구 prop | 신 prop | 도입 버전 | 비고 |
 |------|------|------|------|------|
 | Dropdown | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string \| null, option?: DropdownOption \| null) => void` |
 | OtpInput | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void` |
 | Toggle | `onChange` | `onCheckedChange` | v3.3.0 | 시그니처 동일: `(checked: boolean) => void` |
-| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. Next 서버 액션에 직접 전달할 때 `Action` 접미사가 필요하면 `onChangeAction` 을 그대로 사용해도 됩니다 |
-| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. TextField와 동일하게 `onChangeAction` 유지 가능 |
-| DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. controlled 전용 컴포넌트라 `onValueChange` 또는 `onChange` 중 최소 하나는 필수(TS 유니언 타입으로 강제) |
+| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 - 서버 액션도 `onValueChange` 로 넘긴다 |
+| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 |
+| DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChange` 제거 - 지금은 `onValueChange` 가 필수 |
 | Accordion | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(openKeys: string[]) => void` |
 | NavBar | `locale.onChange` | `locale.onValueChange` | v3.3.0 | `NavBarProps.locale`(`NavBarLocaleConfig`) 내부 필드입니다. 시그니처 동일: `(next: string) => void` |
-| Pagination | `onChange` | `onPageChange` | v3.3.0 | 시그니처 동일: `(page: number) => void`. controlled 전용 컴포넌트라 `onPageChange` 또는 `onChange` 중 최소 하나는 필수(TS 유니언 타입으로 강제) |
+| Pagination | `onChange` | `onPageChange` | v3.3.0 | 시그니처 동일: `(page: number) => void`. v4.1.0 에서 `onChange` 제거 - 지금은 `onPageChange` 가 필수 |
 
 ---
 
@@ -819,7 +820,7 @@ After:
 />
 ```
 
-> Next.js 서버 액션에 값을 바로 넘겨야 해서 `Action` 접미사가 필요하다면 `onChangeAction` 을 그대로 사용해도 됩니다 - 두 prop 은 시그니처가 동일합니다.
+> `onChangeAction` 은 v4.1.0 에서 지워졌습니다. 서버 액션도 `onValueChange` 로 넘기면 됩니다 - `Action` 접미사 규칙은 `"use client"` 컴포넌트를 **선언하는** 쪽(DS)에 걸리는 경고라, 쓰는 쪽 prop 이름과는 상관이 없습니다.
 
 ### 3. Dropdown - fullWidth / textAlign 제거
 

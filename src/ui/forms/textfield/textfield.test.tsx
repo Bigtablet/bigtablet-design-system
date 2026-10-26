@@ -23,7 +23,7 @@ describe("TextField", () => {
 
 	it("handles value changes", () => {
 		const handleChange = vi.fn();
-		render(<TextField onChangeAction={handleChange} />);
+		render(<TextField onValueChange={handleChange} />);
 
 		const input = screen.getByRole("textbox");
 		fireEvent.change(input, { target: { value: "test@example.com" } });
@@ -33,7 +33,7 @@ describe("TextField", () => {
 
 	it("transforms value", () => {
 		const handleChange = vi.fn();
-		render(<TextField onChangeAction={handleChange} transformValue={(v) => v.toUpperCase()} />);
+		render(<TextField onValueChange={handleChange} transformValue={(v) => v.toUpperCase()} />);
 
 		const input = screen.getByRole("textbox");
 		fireEvent.change(input, { target: { value: "hello" } });
@@ -101,7 +101,7 @@ describe("TextField", () => {
 
 	it("handles IME composition correctly", () => {
 		const handleChange = vi.fn();
-		render(<TextField onChangeAction={handleChange} />);
+		render(<TextField onValueChange={handleChange} />);
 
 		const input = screen.getByRole("textbox");
 
@@ -116,7 +116,7 @@ describe("TextField", () => {
 
 	it("applies transform after IME composition ends", () => {
 		const handleChange = vi.fn();
-		render(<TextField onChangeAction={handleChange} transformValue={(v) => v.toUpperCase()} />);
+		render(<TextField onValueChange={handleChange} transformValue={(v) => v.toUpperCase()} />);
 
 		const input = screen.getByRole("textbox");
 
@@ -132,39 +132,6 @@ describe("TextField", () => {
 		render(<TextField onValueChange={handleChange} />);
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "test@example.com" } });
 		expect(handleChange).toHaveBeenCalledWith("test@example.com");
-	});
-
-	it("prefers onValueChange over the deprecated onChangeAction when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChangeAction = vi.fn();
-		render(<TextField onValueChange={onValueChange} onChangeAction={onChangeAction} />);
-
-		fireEvent.change(screen.getByRole("textbox"), { target: { value: "test@example.com" } });
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("test@example.com");
-		expect(onChangeAction).not.toHaveBeenCalled();
-	});
-
-	it("prefers onValueChange over onChangeAction on the mid-composition (immediate) path", () => {
-		// imeStrategy="immediate" 는 emit() 을 거치지 않는 별도 방출 경로 - 여기서도 canonical 우선
-		const onValueChange = vi.fn();
-		const onChangeAction = vi.fn();
-		render(
-			<TextField
-				imeStrategy="immediate"
-				onValueChange={onValueChange}
-				onChangeAction={onChangeAction}
-			/>,
-		);
-
-		const input = screen.getByRole("textbox");
-		fireEvent.compositionStart(input);
-		fireEvent.change(input, { target: { value: "ㅈ" } });
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("ㅈ");
-		expect(onChangeAction).not.toHaveBeenCalled();
 	});
 
 	// ── variant ────────────────────────────────────────────────────────────

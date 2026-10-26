@@ -1010,7 +1010,6 @@ import { Search, X } from 'lucide-react';
 | `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
-| ~~`onChangeAction`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). Next 서버 액션 전달용 `Action` 접미사가 필요하면 계속 사용 가능 |
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 (v3.1). `immediate` = 조합 중에도 즉시 호출 |
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
 

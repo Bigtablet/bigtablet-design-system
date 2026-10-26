@@ -20,7 +20,7 @@ export type TextFieldVariant = "outline" | "filled";
 
 /**
  * IME 조합(한글/일본어/중국어) 중 외부 콜백 처리 전략.
- * - `delayed`: 조합 완료 후에만 `onChangeAction` 호출 (기본 - 폼 제출/검증용).
+ * - `delayed`: 조합 완료 후에만 `onValueChange` 호출 (기본 - 폼 제출/검증용).
  * - `immediate`: 조합 중에도 매 입력마다 즉시 호출 (실시간 검색/필터/미리보기용).
  */
 export type ImeStrategy = "delayed" | "immediate";
@@ -82,10 +82,8 @@ export interface TextFieldProps
 	clearLabel?: string;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
-	/** 값 변경 콜백 (canonical). 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
+	/** 값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
 	onValueChange?: (value: string) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. (Next 서버액션 전달용으로 `Action` 접미사가 필요하면 그대로 사용 가능) */
-	onChangeAction?: (value: string) => void;
 	/**
 	 * IME 조합 중 콜백 전략 (기본값: "delayed").
 	 * 실시간 구독(검색/필터) 이 필요하면 "immediate" - 한글 조합 중에도 매 입력 즉시 반영.
@@ -133,7 +131,6 @@ export const TextField = ({
 	variant = "outline",
 	className,
 	onValueChange,
-	onChangeAction,
 	imeStrategy = "delayed",
 	value,
 	defaultValue,
@@ -167,7 +164,7 @@ export const TextField = ({
 	const [innerValue, setInnerValue] = useState(() => applyTransform(value ?? defaultValue ?? ""));
 
 	const isComposingRef = useRef(false);
-	// 마지막으로 onChangeAction 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
+	// 마지막으로 onValueChange 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
 	const lastEmittedValueRef = useRef(innerValue);
 
 	// Controlled value 동기화 - useEffect 대신 "렌더 중 상태 조정"(React 공식 derived state).
@@ -192,10 +189,10 @@ export const TextField = ({
 			setInnerValue(nextValue);
 			if (nextValue !== lastEmittedValueRef.current) {
 				lastEmittedValueRef.current = nextValue;
-				(onValueChange ?? onChangeAction)?.(nextValue);
+				onValueChange?.(nextValue);
 			}
 		},
-		[onValueChange, onChangeAction],
+		[onValueChange],
 	);
 
 	const handleClear = useCallback(() => {
@@ -332,7 +329,7 @@ export const TextField = ({
 									// immediate: 조합 중에도 외부 구독 즉시 반영 (raw value).
 									if (imeStrategy === "immediate" && rawValue !== lastEmittedValueRef.current) {
 										lastEmittedValueRef.current = rawValue;
-										(onValueChange ?? onChangeAction)?.(rawValue);
+										onValueChange?.(rawValue);
 									}
 									return;
 								}

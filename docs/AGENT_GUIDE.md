@@ -1,8 +1,8 @@
 # Bigtablet Design System - Agent Guide
 
-> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^3.0.0`. Load this file as context before generating any component code.
+> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^4`. Load this file as context before generating any component code.
 
-**Version:** 3.0.0
+**Version:** 4.x - for the exact props of your installed version, see "Checking what a version gives you" below
 **React:** 19+ required
 **Bundle:** Pure React (`@bigtablet/design-system`) or Vanilla JS (`@bigtablet/design-system/vanilla`)
 
@@ -239,7 +239,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `IconButton` | Icon-only button. | `variant` (text/filled/tonal/outline), `size` (sm/md), `icon`, `aria-label` (required) |
 | `CopyButton` | Copy-to-clipboard button: shows "copied" for 2s and announces via hidden `role="status"`. Hook: `useClipboard()` → `{ copy, status, error, reset }`; `copyText()` one-shot. Falls back to `execCommand` (in-app browsers, http). | `text` (string or fn), `label`/`copiedLabel`/`failedLabel`, `iconOnly` (label = accessible name), `size`, `variant`, `resetAfter`, `onCopy`, `onError`. |
 | `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
-| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
+| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onValueChange`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
