@@ -733,15 +733,15 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 
 ## v3.3.0
 
-변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 계속 동작합니다.
+변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 남겼다가 **v4.1.0 에서 모두 제거했습니다** - [v4.1.0 섹션](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) 참고.
 
 | 컴포넌트 | 구 prop | 신 prop | 도입 버전 | 비고 |
 |------|------|------|------|------|
 | Dropdown | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string \| null, option?: DropdownOption \| null) => void` |
 | OtpInput | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void` |
 | Toggle | `onChange` | `onCheckedChange` | v3.3.0 | 시그니처 동일: `(checked: boolean) => void` |
-| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. Next 서버 액션에 직접 전달할 때 `Action` 접미사가 필요하면 `onChangeAction` 을 그대로 사용해도 됩니다 |
-| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. TextField와 동일하게 `onChangeAction` 유지 가능 |
+| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 - 서버 액션도 `onValueChange` 로 넘긴다 |
+| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 |
 | DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. controlled 전용 컴포넌트라 `onValueChange` 또는 `onChange` 중 최소 하나는 필수(TS 유니언 타입으로 강제) |
 | Accordion | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(openKeys: string[]) => void` |
 | NavBar | `locale.onChange` | `locale.onValueChange` | v3.3.0 | `NavBarProps.locale`(`NavBarLocaleConfig`) 내부 필드입니다. 시그니처 동일: `(next: string) => void` |

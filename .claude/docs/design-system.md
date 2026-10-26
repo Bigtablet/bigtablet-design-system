@@ -40,7 +40,7 @@ import { ToastProvider, useToast } from '@bigtablet/design-system';
 | `variant` | `"primary" \| "secondary" \| "ghost" \| "danger"` | `"primary"` | Button |
 | `variant` | `"outline" \| "filled" \| "ghost"` | `"outline"` | TextField |
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button, TextField, Dropdown, Checkbox, Radio, Toggle |
-| `fullWidth` | `boolean` | varies | Button, TextField, Dropdown, DatePicker |
+| `fullWidth` | `boolean` | varies | Button, TextField, DatePicker (Dropdown always fills its parent) |
 | `disabled` | `boolean` | `false` | All form components |
 | `className` | `string` | - | All components |
 
@@ -100,7 +100,7 @@ const [phone, setPhone] = useState('');
   label="Phone"
   value={phone}
   transformValue={(v) => v.replace(/\D/g, '').slice(0, 11)}
-  onChangeAction={setPhone}
+  onValueChange={setPhone}
 />
 ```
 
@@ -114,7 +114,7 @@ const [phone, setPhone] = useState('');
 - `leftIcon`: `ReactNode`
 - `rightIcon`: `ReactNode`
 - `fullWidth`: `boolean`
-- `onChangeAction`: `(value: string) => void` - value callback
+- `onValueChange`: `(value: string) => void` - value callback
 - `transformValue`: `(value: string) => string` - transform input
 - Extends `InputHTMLAttributes<HTMLInputElement>`
 
@@ -136,12 +136,12 @@ const options: DropdownOption[] = [
   label="Fruit"
   options={options}
   placeholder="Select..."
-  onChange={(value, option) => console.log(value)}
+  onValueChange={(value, option) => console.log(value)}
 />
 
 // Controlled
 const [value, setValue] = useState<string | null>(null);
-<Dropdown options={options} value={value} onChange={(v) => setValue(v)} />
+<Dropdown options={options} value={value} onValueChange={(v) => setValue(v)} />
 
 // With supporting text + icon
 <Dropdown
@@ -156,12 +156,11 @@ const [value, setValue] = useState<string | null>(null);
 - `options`: `DropdownOption[]` - **required**
 - `value`: `string | null` - controlled value
 - `defaultValue`: `string | null` - uncontrolled default
-- `onChange`: `(value: string | null, option: DropdownOption | null) => void`
+- `onValueChange`: `(value: string | null, option: DropdownOption | null) => void`
 - `placeholder`: `string` (default: `"Select…"`)
 - `label`: `string` — floating label, visible when open or value selected
 - `size`: `"sm" | "md" | "lg"` (default: `"md"`)
 - `disabled`: `boolean`
-- `fullWidth`: `boolean`
 
 **DropdownOption interface:**
 ```typescript
@@ -256,11 +255,11 @@ const [selected, setSelected] = useState('opt1');
 import { Toggle } from '@bigtablet/design-system';
 
 // Basic (ariaLabel is REQUIRED)
-<Toggle ariaLabel="Enable notifications" onChange={(checked) => console.log(checked)} />
+<Toggle ariaLabel="Enable notifications" onCheckedChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [on, setOn] = useState(false);
-<Toggle ariaLabel="Dark mode" checked={on} onChange={setOn} />
+<Toggle ariaLabel="Dark mode" checked={on} onCheckedChange={setOn} />
 
 // Sizes
 <Toggle size="sm" ariaLabel="Small" />
@@ -271,7 +270,7 @@ const [on, setOn] = useState(false);
 - `ariaLabel`: `string` - **required** for accessibility
 - `checked`: `boolean` - controlled
 - `defaultChecked`: `boolean` - uncontrolled default
-- `onChange`: `(checked: boolean) => void`
+- `onCheckedChange`: `(checked: boolean) => void`
 - `size`: `"sm" | "md" | "lg"` (default: `"md"`)
 - `disabled`: `boolean`
 
@@ -285,10 +284,10 @@ import { DatePicker } from '@bigtablet/design-system';
 const [date, setDate] = useState('');
 
 // Full date (YYYY-MM-DD)
-<DatePicker label="Birth Date" value={date} onChange={setDate} />
+<DatePicker label="Birth Date" value={date} onValueChange={setDate} />
 
 // Year-month only (YYYY-MM)
-<DatePicker label="Start Month" mode="year-month" value={date} onChange={setDate} />
+<DatePicker label="Start Month" mode="year-month" value={date} onValueChange={setDate} />
 
 // With restrictions
 <DatePicker
@@ -297,14 +296,14 @@ const [date, setDate] = useState('');
   endYear={2030}
   selectableRange="until-today"
   value={date}
-  onChange={setDate}
+  onValueChange={setDate}
 />
 ```
 
 **Props:**
 - `label`: `string`
 - `value`: `string` - `"YYYY-MM-DD"` or `"YYYY-MM"`
-- `onChange`: `(value: string) => void` - **required**
+- `onValueChange`: `(value: string) => void` - **required**
 - `mode`: `"year-month" | "year-month-day"` (default: `"year-month-day"`)
 - `startYear`: `number` (default: `1950`)
 - `endYear`: `number` (default: current + 10)
@@ -423,7 +422,7 @@ function DeleteButton() {
 
   const handleDelete = () => {
     showAlert({
-      variant: 'warning',
+      tone: 'warning',
       title: 'Delete Item',
       message: 'Are you sure?',
       showCancel: true,
@@ -439,7 +438,7 @@ function DeleteButton() {
 ```
 
 **Alert Options:**
-- `variant`: `"info" | "success" | "warning" | "error"` (default: `"info"`)
+- `tone`: `"info" | "success" | "warning" | "error"` (default: `"info"`)
 - `title`: `ReactNode`
 - `message`: `ReactNode`
 - `confirmText`: `string` (default: `"확인"`)
@@ -543,13 +542,13 @@ import { Pagination } from '@bigtablet/design-system';
 
 const [page, setPage] = useState(1);
 
-<Pagination page={page} totalPages={20} onChange={setPage} />
+<Pagination page={page} totalPages={20} onPageChange={setPage} />
 ```
 
 **Props:**
 - `page`: `number` - **required**, current page (1-indexed)
 - `totalPages`: `number` - **required**
-- `onChange`: `(page: number) => void` - **required**
+- `onPageChange`: `(page: number) => void` - **required**
 
 ---
 
@@ -849,7 +848,7 @@ function ContactForm() {
       <TextField
         label="Name"
         value={form.name}
-        onChangeAction={(v) => setForm({ ...form, name: v })}
+        onValueChange={(v) => setForm({ ...form, name: v })}
         error={!!errors.name}
         helperText={errors.name}
       />
@@ -857,7 +856,7 @@ function ContactForm() {
         label="Email"
         type="email"
         value={form.email}
-        onChangeAction={(v) => setForm({ ...form, email: v })}
+        onValueChange={(v) => setForm({ ...form, email: v })}
         error={!!errors.email}
         helperText={errors.email}
       />
