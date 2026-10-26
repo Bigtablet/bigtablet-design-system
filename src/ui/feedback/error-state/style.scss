@@ -9,6 +9,7 @@
   align-items: center;
   text-align: center;
   width: 100%;
+  box-sizing: border-box; // width 100% + padding 이 부모를 넘지 않게
   gap: token.$spacing_12;
 
   &_icon {

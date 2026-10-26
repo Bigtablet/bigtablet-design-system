@@ -1,12 +1,14 @@
 @use "src/styles/token" as token;
 
+// 간격 위계: 제목-설명은 `gap` 으로 붙이고, 아이콘 아래와 버튼 위는 margin 으로 더 띄운다.
+// 한 gap 으로 다 띄우면 네 요소가 같은 거리로 늘어서 한 덩어리로 안 읽힌다.
 .empty_state {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 100%;
-  gap: token.$spacing_12;
+  box-sizing: border-box; // width 100% + padding 이 부모를 넘지 않게
 
   // 부모 높이를 채우고 세로 중앙 정렬. 없을 때는 콘텐츠가 긴 래퍼 상단에 붙어 아래가 비어 보여
   // 앱마다 `margin: auto` 래퍼를 따로 만들고 있었다. 미지정 시 위 기본값과 동일하게 동작한다.
@@ -18,6 +20,22 @@
   &_illustration {
     color: token.$color_text_caption;
     display: inline-flex;
+
+    // lucide 아이콘이면 원형 배지에 올리고 크기를 size 에 맞춰 고정한다 - 넘긴 `size` prop 은 무시된다.
+    // 이미지·직접 그린 svg 일러스트는 배지 없이 원래 크기 그대로 둔다.
+    &:has(> .lucide) {
+      align-items: center;
+      justify-content: center;
+      width: var(--bt-empty-state-badge);
+      height: var(--bt-empty-state-badge);
+      border-radius: token.$radius_full;
+      background: token.$color_bg_additive;
+
+      > .lucide {
+        width: var(--bt-empty-state-icon);
+        height: var(--bt-empty-state-icon);
+      }
+    }
   }
 
   &_title {
@@ -33,31 +51,58 @@
     max-width: 480px;
   }
 
-  &_action {
-    margin-top: token.$spacing_8;
-  }
-
   // ── Size ─────────────────────────────────────────────────────────────
 
   &_size_sm {
+    --bt-empty-state-badge: #{token.$spacing_40};
+    --bt-empty-state-icon: #{token.$icon_size_lg};
     padding: token.$spacing_24 token.$spacing_16;
-    gap: token.$spacing_8;
+    gap: token.$spacing_4;
+
+    .empty_state_illustration {
+      margin-bottom: token.$spacing_12;
+    }
 
     .empty_state_title {
       @include token.title_medium_medium;
     }
+
+    .empty_state_action {
+      margin-top: token.$spacing_16;
+    }
   }
 
   &_size_md {
+    --bt-empty-state-badge: #{token.$spacing_64};
+    --bt-empty-state-icon: #{token.$icon_size_xl};
     padding: token.$spacing_40 token.$spacing_24;
+    gap: token.$spacing_8;
+
+    .empty_state_illustration {
+      margin-bottom: token.$spacing_16;
+    }
+
+    .empty_state_action {
+      margin-top: token.$spacing_24;
+    }
   }
 
   &_size_lg {
+    --bt-empty-state-badge: #{token.$spacing_96};
+    --bt-empty-state-icon: #{token.$spacing_48};
     padding: token.$spacing_48 token.$spacing_24;
-    gap: token.$spacing_16;
+    gap: token.$spacing_8;
+
+    .empty_state_illustration {
+      margin-bottom: token.$spacing_20;
+    }
 
     .empty_state_title {
       @include token.heading_small_medium;
+    }
+
+    .empty_state_action {
+      margin-top: token.$spacing_32;
     }
   }
 }
