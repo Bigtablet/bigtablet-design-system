@@ -8,7 +8,12 @@ import { useIsMounted, usePresence } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
-export type ToastVariant = "success" | "error" | "warning" | "info" | "default";
+export type ToastTone = "success" | "error" | "warning" | "info" | "neutral";
+/** @deprecated `ToastTone` 을 쓰세요. `"default"` 는 `"neutral"` 로 바뀌었습니다. */
+export type ToastVariant = ToastTone | "default";
+
+/** 옛 `variant` 값을 `tone` 으로 - `"default"` 만 이름이 바뀌었다 */
+const toTone = (variant: ToastVariant): ToastTone => (variant === "default" ? "neutral" : variant);
 
 export interface ToastAction {
 	/** 버튼 라벨 - "실행 취소" 등 */
@@ -27,6 +32,8 @@ export interface ToastOptions {
 /** `update` 로 바꿀 수 있는 필드. `action: null` 이면 버튼을 뗀다 */
 export type ToastPatch = Partial<{
 	message: string;
+	tone: ToastTone;
+	/** @deprecated `tone` 을 쓰세요. 둘 다 주면 `tone` 이 이깁니다. */
 	variant: ToastVariant;
 	duration: number;
 	action: ToastAction | null;
@@ -35,7 +42,7 @@ export type ToastPatch = Partial<{
 interface ToastItem {
 	id: string;
 	message: string;
-	variant: ToastVariant;
+	tone: ToastTone;
 	duration: number;
 	action?: ToastAction;
 	/** 퇴출 중(maxCount 에 밀렸거나 dismiss 됨). 잘라내지 않고 표시만 해서 수동 닫기와 같은 경로로 사라지게 한다 */
@@ -43,7 +50,7 @@ interface ToastItem {
 }
 
 interface ToastContextValue {
-	addToast: (message: string, variant: ToastVariant, options?: ToastOptions) => string;
+	addToast: (message: string, tone: ToastTone, options?: ToastOptions) => string;
 	dismissToast: (id: string) => void;
 	updateToast: (id: string, patch: ToastPatch) => void;
 }
@@ -61,12 +68,12 @@ export interface ToastProviderProps {
 	regionLabel?: string;
 }
 
-const VARIANT_ICONS: Record<ToastVariant, React.ReactElement> = {
+const TONE_ICONS: Record<ToastTone, React.ReactElement> = {
 	success: <CheckCircle2 size={iconSize.md} />,
 	error: <XCircle size={iconSize.md} />,
 	warning: <AlertTriangle size={iconSize.md} />,
 	info: <Info size={iconSize.md} />,
-	default: <Bell size={iconSize.md} />,
+	neutral: <Bell size={iconSize.md} />,
 };
 
 // ── ToastItemComponent ───────────────────────────────────────────────────────
@@ -127,7 +134,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
 	const autoDismisses = Number.isFinite(item.duration);
-	const liveRole = item.variant === "error" ? "alert" : "status";
+	const liveRole = item.tone === "error" ? "alert" : "status";
 
 	return (
 		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
@@ -137,8 +144,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 			    재공지되지 않는다. 바깥 div 는 그대로라 진입 모션이 다시 돌지 않고 닫기·액션
 			    버튼의 포커스도 유지된다. */}
 			<div key={liveRole} className="toast_live" role={liveRole}>
-				<span className={`toast_icon toast_icon_${item.variant}`} aria-hidden="true">
-					{VARIANT_ICONS[item.variant]}
+				<span className={`toast_icon toast_icon_${item.tone}`} aria-hidden="true">
+					{TONE_ICONS[item.tone]}
 				</span>
 				<span className="toast_message">{item.message}</span>
 			</div>
@@ -167,7 +174,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 				<div
 					// duration 이 update 로 바뀌면 key 가 바뀌어 애니메이션이 새 값으로 다시 시작한다.
 					key={item.duration}
-					className={`toast_progress toast_progress_${item.variant}`}
+					className={`toast_progress toast_progress_${item.tone}`}
 					style={{ "--toast-duration": `${item.duration}ms` } as React.CSSProperties}
 					onAnimationEnd={close}
 					aria-hidden="true"
@@ -210,19 +217,19 @@ export const ToastProvider = ({
 	 * 토스트를 큐에 추가한다. maxCount 를 넘는 가장 오래된 항목은 퇴출 표시만 한다 - 실제 제거는
 	 * 그 토스트의 퇴출 모션이 끝난 뒤 `removeToast` 가 한다.
 	 * @param message 표시할 메시지
-	 * @param variant 토스트 변형
+	 * @param tone 의미 색
 	 * @param options 자동 닫힘 시간(기본값 3000ms)·액션 버튼
 	 * @returns 토스트 id - `dismiss`·`update` 에 넘긴다
 	 */
 	const addToast = React.useCallback(
-		(message: string, variant: ToastVariant, options: ToastOptions = {}) => {
+		(message: string, tone: ToastTone, options: ToastOptions = {}) => {
 			const { duration = 3000, action } = options;
 			const id = `toast_${++toastSeq}`;
 			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
 			// 표시만 하는 지금 방식이면 새 토스트가 진입과 동시에 퇴출 모션을 타며 깜빡인다.
 			if (maxCount <= 0) return id;
 			setToasts((prev) => {
-				const next = [{ id, message, variant, duration, action }, ...prev];
+				const next = [{ id, message, tone, duration, action }, ...prev];
 				// 최신이 앞이라 maxCount 뒤는 항상 가장 오래된 것들이다. 이미 퇴출 중인 항목은
 				// 그대로 두고, 새로 밀려난 것만 표시한다.
 				return next.map((toast, index) =>
@@ -255,10 +262,12 @@ export const ToastProvider = ({
 		setToasts((prev) =>
 			prev.map((toast) => {
 				if (toast.id !== id || toast.dismissing) return toast;
-				const { action, ...rest } = patch;
+				const { action, tone, variant, ...rest } = patch;
+				const nextTone = tone ?? (variant === undefined ? undefined : toTone(variant));
 				return {
 					...toast,
 					...rest,
+					...(nextTone && { tone: nextTone }),
 					action: action === null ? undefined : (action ?? toast.action),
 				};
 			}),

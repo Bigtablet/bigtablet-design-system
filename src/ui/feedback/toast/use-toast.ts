@@ -40,9 +40,9 @@ export const useToast = () => {
 		/** 정보 메시지를 표시한다 */
 		info: (message: string, options?: number | ToastOptions) =>
 			ctx.addToast(message, "info", toOptions(options)),
-		/** 기본 메시지를 표시한다 */
+		/** 의미 색 없는(neutral) 메시지를 표시한다 */
 		message: (message: string, options?: number | ToastOptions) =>
-			ctx.addToast(message, "default", toOptions(options)),
+			ctx.addToast(message, "neutral", toOptions(options)),
 		/** id 의 토스트를 닫는다 - 닫기 버튼과 같은 퇴출 모션 */
 		dismiss: ctx.dismissToast,
 		/** id 의 토스트 내용을 바꾼다 - "업로드 중…" 을 "완료" 로 */

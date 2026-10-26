@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v4.1.0 (의미 색 prop 을 tone 으로 - Alert · Badge · Toast)](#v410-의미-색-prop-을-tone-으로---alert--badge--toast)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
 - [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
@@ -33,6 +34,30 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.1.0 (의미 색 prop 을 tone 으로 - Alert · Badge · Toast)
+
+기준을 **모양은 `variant`, 의미 색(info·success·warning·error 등)은 `tone`** 으로 정했습니다. Chip · InlineAlert 는 원래 `tone` 이었고, Alert · Badge · Toast 가 이번에 맞춥니다.
+
+### 무엇이 바뀌나
+
+| 컴포넌트 | 전 | 후 |
+|------|------|------|
+| Badge | `<Badge variant="success">` | `<Badge tone="success">` |
+| Alert | `showAlert({ variant: "warning" })` · `confirm({ variant })` | `{ tone: "warning" }` |
+| Toast | `toast.update(id, { variant: "error" })` | `{ tone: "error" }` |
+| Toast | 값 `"default"` | `"neutral"` (`toast.message()` 는 그대로) |
+| Vanilla | `Bigtablet.Alert({ variant: 'info' })` | `{ tone: 'info' }` |
+| 타입 | `BadgeVariant` · `AlertVariant` · `ToastVariant` | `BadgeTone` · `AlertTone` · `ToastTone` |
+
+- 옛 이름은 `@deprecated` 별칭으로 계속 동작합니다. 둘 다 넘기면 `tone` 이 이깁니다. Toast 의 옛 값 `"default"` 는 `"neutral"` 로 바뀌어 적용됩니다.
+- **렌더 결과는 그대로입니다.** 클래스명 `.badge_variant_*` · `.alert_variant_*` 도 바뀌지 않았습니다 - 앱이 이 클래스로 덮어쓰고 있기 때문입니다. Toast 내부 클래스만 `toast_icon_default` · `toast_progress_default` → `*_neutral` 로 바뀌었습니다.
+
+### 앱 쪽에서 할 일
+
+prop·옵션 키 `variant` 를 `tone` 으로, 타입 import 를 `*Tone` 으로 바꿉니다. 값은 Toast 의 `"default"` → `"neutral"` 만 바뀝니다.
 
 ---
 

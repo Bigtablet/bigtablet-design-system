@@ -160,7 +160,7 @@ export const RichContent: Story = {
 		overline: (
 			<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
 				프로젝트
-				<Badge variant="success" appearance="soft" shape="label">
+				<Badge tone="success" appearance="soft" shape="label">
 					활성
 				</Badge>
 			</span>

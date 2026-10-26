@@ -75,7 +75,7 @@ describe("Alert - 마크업 · 버튼", () => {
 	const overlay = () => document.querySelector(".bt-alert__overlay") as HTMLElement;
 
 	it("escapes text, wires ARIA ids, and focuses confirm", () => {
-		Alert({ title: "<b>제목</b>", message: "<i>내용</i>", variant: "error" });
+		Alert({ title: "<b>제목</b>", message: "<i>내용</i>", tone: "error" });
 		const panel = overlay().querySelector(".bt-alert__modal") as HTMLElement;
 		const title = overlay().querySelector(".bt-alert__title") as HTMLElement;
 		const message = overlay().querySelector(".bt-alert__message") as HTMLElement;
@@ -86,6 +86,15 @@ describe("Alert - 마크업 · 버튼", () => {
 		expect(panel.getAttribute("aria-labelledby")).toBe(title.id);
 		expect(panel.getAttribute("aria-describedby")).toBe(message.id);
 		expect(document.activeElement).toBe(overlay().querySelector("[data-alert-confirm]"));
+	});
+
+	// 옛 옵션 이름 `variant` 도 받는다 - `tone` 이 우선.
+	it("accepts the deprecated variant option, tone wins when both are set", () => {
+		Alert({ message: "m", variant: "warning" });
+		expect(overlay()).toHaveClass("bt-alert--warning");
+		overlay().remove();
+		Alert({ message: "m", variant: "warning", tone: "success" });
+		expect(overlay()).toHaveClass("bt-alert--success");
 	});
 
 	it("omits the title and cancel button by default and aligns actions", () => {

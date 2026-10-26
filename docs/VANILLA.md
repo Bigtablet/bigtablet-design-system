@@ -619,7 +619,7 @@ Alert는 JavaScript로만 사용합니다.
     Bigtablet.Alert({
       title: '알림',
       message: '작업이 완료되었습니다.',
-      variant: 'info',  // 'info', 'success', 'warning', 'error'
+      tone: 'info',  // 'info', 'success', 'warning', 'error'
       confirmText: '확인'
     });
   }
@@ -629,7 +629,7 @@ Alert는 JavaScript로만 사용합니다.
     Bigtablet.Alert({
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
-      variant: 'warning',
+      tone: 'warning',
       showCancel: true,
       confirmText: '삭제',
       cancelText: '취소',

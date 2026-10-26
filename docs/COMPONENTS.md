@@ -6,6 +6,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ## 목차
 
+- [prop 이름 기준](#prop-이름-기준)
 - [v3.0 주요 변경사항](#v30-주요-변경사항)
 - [Foundation](#foundation)
   - [ThemeProvider](#themeprovider)
@@ -73,6 +74,18 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 ---
 
 > **모든 컴포넌트는 `dangerouslySetInnerHTML` 을 받지 않습니다** (v3.25.0~). 마크업은 `children` 으로 넘깁니다. 새 컴포넌트는 props 를 `SafeHTMLProps<React.*HTMLAttributes<…>>` 로 선언하고, `src/utils/safe-html.type-test.tsx` 가 공개 export 전체를 `tsc` 로 검사합니다.
+
+---
+
+## prop 이름 기준
+
+| 고르는 것 | prop | 예 |
+|------|------|------|
+| 모양 | `variant` | Button `filled`/`outline`, Card `glass` |
+| 의미 색 (info·success·warning·error 등) | `tone` | Alert · Badge · Toast · Chip · InlineAlert |
+| 변경 콜백 | `on*Change` | `onValueChange` · `onCheckedChange` · `onPageChange` |
+
+Alert · Badge · Toast 는 예전에 의미 색을 `variant` 로 받았다. 지금도 `variant` 를 받지만 deprecated 이고, 둘 다 주면 `tone` 이 이긴다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 바뀌지 않았다.
 
 ---
 
@@ -1738,7 +1751,7 @@ function YourComponent() {
 
   const handleDelete = () => {
     showAlert({
-      variant: 'warning',
+      tone: 'warning',
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
       showCancel: true,
@@ -1755,7 +1768,7 @@ function YourComponent() {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `variant` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 알림 타입 |
+| `tone` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 의미 색. 옛 이름 `variant` 도 받는다 (deprecated, `tone` 이 우선) |
 | `title` | `ReactNode` | - | 제목 |
 | `message` | `ReactNode` | - | 메시지 |
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
@@ -1780,7 +1793,7 @@ const confirm = useConfirm();
 
 // 미저장 변경
 if (await confirm({
-  variant: "warning",
+  tone: "warning",
   title: "변경사항을 버릴까요?",
   message: "저장하지 않은 내용은 복구할 수 없습니다.",
   confirmText: "버리기",
@@ -1792,7 +1805,7 @@ if (await confirm({
 
 // 비동기 삭제 - 끝날 때까지 열린 채 pending
 await confirm({
-  variant: "error",
+  tone: "error",
   title: `${order.no} 를 삭제할까요?`,
   confirmText: "삭제",
   destructive: true,
@@ -1847,7 +1860,7 @@ function YourComponent() {
 // 진행 토스트 - 띄운 뒤 같은 토스트를 바꾼다
 const id = toast.info('업로드 중…', { duration: Infinity });
 await upload();
-toast.update(id, { variant: 'success', message: '업로드 완료', duration: 3000 });
+toast.update(id, { tone: 'success', message: '업로드 완료', duration: 3000 });
 
 // 실행 취소 - 버튼을 누르면 onClick 뒤 토스트가 닫힌다
 toast.message('항목이 삭제되었습니다', {
@@ -1865,7 +1878,7 @@ toast.dismiss(id);
 |------|---------|------|
 | `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환한다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions` |
 | `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫는다. 없는 id·퇴출 중인 id 는 무시 |
-| `update` | `(id, patch) => void` | `message`·`variant`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
+| `update` | `(id, patch) => void` | `message`·`tone`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
 
 **`ToastOptions`**
 
@@ -2442,7 +2455,7 @@ function App() {
       <BottomNav>
         <BottomNavItem icon={<Home />} label="주문" active={tab === "orders"} onClick={() => setTab("orders")} />
         <BottomNavItem icon={<UtensilsCrossed />} label="메뉴" active={tab === "menu"} onClick={() => setTab("menu")}
-          badge={<Badge variant="error" shape="dot" size="sm" />} />
+          badge={<Badge tone="error" shape="dot" size="sm" />} />
         <BottomNavItem icon={<BarChart3 />} label="매출" active={tab === "sales"} onClick={() => setTab("sales")} />
       </BottomNav>
     </>
@@ -3520,7 +3533,7 @@ import { User, MoreVertical } from 'lucide-react';
 
 // rich content - 텍스트 슬롯에 노드 인라인 (string·ReactNode 모두 허용)
 <ListItem
-  overline={<Badge variant="success" appearance="soft">활성</Badge>}
+  overline={<Badge tone="success" appearance="soft">활성</Badge>}
   label={<span>릴리스 <strong>v3.2</strong></span>}
   supportingText={<span>자세히는 <a href="/changelog">체인지로그</a></span>}
 />
@@ -3639,7 +3652,7 @@ import { Avatar } from "@bigtablet/design-system";
 <span style={{ position: "relative", display: "inline-block" }}>
   <Avatar src="/me.jpg" name="박상민" />
   <span style={{ position: "absolute", top: 0, right: 0 }}>
-    <Badge shape="dot" variant="error" aria-label="읽지 않은 알림" />
+    <Badge shape="dot" tone="error" aria-label="읽지 않은 알림" />
   </span>
 </span>
 
@@ -3655,7 +3668,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 ### Badge
 
-작은 상태/카운트 표시. `dot` / `count` / `label` 3가지 shape × 6가지 색상 variant.
+작은 상태/카운트 표시. `dot` / `count` / `label` 3가지 shape × 6가지 의미 색(`tone`).
 
 #### 언제 쓰는가
 
@@ -3685,9 +3698,9 @@ import { Avatar } from "@bigtablet/design-system";
 | `count` | min-width 18, 6px 패딩, 원형 | 알림 개수. `count > max` 시 `${max}+`로 표시 |
 | `label` | 11px 폰트, padding 2×8, uppercase | "NEW", "BETA" 라벨 |
 
-#### variant 의미 매핑
+#### tone 의미 매핑
 
-| variant | 토큰 | 의미 |
+| tone | 토큰 | 의미 |
 |---------|------|------|
 | `accent` | brand navy | 기본/브랜드 강조 |
 | `neutral` | bg.solid.dim | 정보 없는 메타 라벨 |
@@ -3700,7 +3713,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 색상 |
+| `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색. 옛 이름 `variant` 도 받는다 (deprecated, `tone` 이 우선) |
 | `shape` | `'dot' \| 'count' \| 'label'` | `'label'` | 모양 |
 | `count` | `number` | - | shape=`count`일 때 표시 숫자. undefined면 빈 상태 |
 | `max` | `number` | `99` | count 최댓값. 초과 시 `${max}+`로 표시 |
@@ -3714,15 +3727,15 @@ import { Avatar } from "@bigtablet/design-system";
 
 ```tsx
 // 알림 점만 있고 SR은 모름
-<Badge shape="dot" variant="error" />
+<Badge shape="dot" tone="error" />
 
 // SR에게 "읽지 않은 알림" 이라고 알려줌
-<Badge shape="dot" variant="error" aria-label="읽지 않은 알림" />
+<Badge shape="dot" tone="error" aria-label="읽지 않은 알림" />
 
 // 부모가 의미를 전달하면 Badge는 aria-hidden으로 중복 제거
 <button aria-label={`알림 ${count}개`}>
   <BellIcon />
-  <Badge shape="count" count={count} variant="error" aria-hidden="true" />
+  <Badge shape="count" count={count} tone="error" aria-hidden="true" />
 </button>
 ```
 
@@ -3739,22 +3752,22 @@ span.badge (+ badge_shape_count + badge_variant_error)
 import { Badge } from "@bigtablet/design-system";
 
 // dot - 가장 작은 상태 표시
-<Badge shape="dot" variant="error" aria-label="읽지 않은 메시지 있음" />
+<Badge shape="dot" tone="error" aria-label="읽지 않은 메시지 있음" />
 
 // count - 알림 개수
-<Badge shape="count" count={5} variant="error" />
+<Badge shape="count" count={5} tone="error" />
 <Badge shape="count" count={120} max={99} /> // "99+"
 
-// label - variant 비교
-<Badge variant="success">Active</Badge>
-<Badge variant="warning">Pending</Badge>
-<Badge variant="info">Beta</Badge>
+// label - tone 비교
+<Badge tone="success">Active</Badge>
+<Badge tone="warning">Pending</Badge>
+<Badge tone="info">Beta</Badge>
 
 // 다른 요소에 부착 - 아이콘 버튼 + 카운트
 <button aria-label={`알림 ${unread}개`} style={{ position: "relative" }}>
   <BellIcon />
   <span style={{ position: "absolute", top: -4, right: -4 }}>
-    <Badge shape="count" count={unread} variant="error" aria-hidden="true" />
+    <Badge shape="count" count={unread} tone="error" aria-hidden="true" />
   </span>
 </button>
 ```

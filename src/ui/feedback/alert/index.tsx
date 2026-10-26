@@ -18,10 +18,12 @@ import { useLocaleText } from "../../system/locale-provider";
 import { Spinner } from "../spinner";
 import "./style.scss";
 
-export type AlertVariant = "info" | "success" | "warning" | "error";
+export type AlertTone = "info" | "success" | "warning" | "error";
+/** @deprecated `AlertTone` 을 쓰세요. 의미 색은 `tone` 으로 통일했습니다. */
+export type AlertVariant = AlertTone;
 export type AlertActionsAlign = "left" | "center" | "right";
 
-const ICONS: Record<AlertVariant, React.ReactNode> = {
+const ICONS: Record<AlertTone, React.ReactNode> = {
 	info: <Info size={iconSize.lg} aria-hidden="true" />,
 	success: <CheckCircle2 size={iconSize.lg} aria-hidden="true" />,
 	warning: <AlertTriangle size={iconSize.lg} aria-hidden="true" />,
@@ -29,8 +31,10 @@ const ICONS: Record<AlertVariant, React.ReactNode> = {
 };
 
 export interface AlertOptions {
-	/** 알림 스타일 변형 */
-	variant?: AlertVariant;
+	/** 의미 색 (기본값: "info") */
+	tone?: AlertTone;
+	/** @deprecated `tone` 을 쓰세요. 둘 다 주면 `tone` 이 이깁니다. */
+	variant?: AlertTone;
 	/** 알림 제목 */
 	title?: React.ReactNode;
 	/** 알림 본문 메시지 */
@@ -88,7 +92,7 @@ const AlertContext = createContext<AlertContextValue | null>(null);
  * @example
  * ```tsx
  * const confirm = useConfirm();
- * if (await confirm({ variant: "warning", title: "변경사항을 버릴까요?", confirmText: "버리기", destructive: true })) {
+ * if (await confirm({ tone: "warning", title: "변경사항을 버릴까요?", confirmText: "버리기", destructive: true })) {
  *   discard();
  * }
  * ```
@@ -219,7 +223,8 @@ interface AlertModalProps extends AlertOptions {
 
 const AlertModal: React.FC<AlertModalProps> = ({
 	isOpen,
-	variant = "info",
+	tone: toneProp,
+	variant,
 	title,
 	message,
 	confirmText: confirmTextProp,
@@ -235,6 +240,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onClose,
 	onExited,
 }) => {
+	const tone = toneProp ?? variant ?? "info";
 	const t = useLocaleText();
 	const confirmText = confirmTextProp ?? t("alert.confirm");
 	const cancelText = cancelTextProp ?? t("alert.cancel");
@@ -284,7 +290,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const confirmVariant: ButtonVariant = "filled";
 	const cancelVariant: ButtonVariant = "outline";
 
-	const modalClassName = cn("alert_modal", `alert_variant_${variant}`);
+	// 클래스명은 그대로 둔다 - 앱이 `.alert_variant_*` 로 덮어쓰고 있다 (notiiv brand.css)
+	const modalClassName = cn("alert_modal", `alert_variant_${tone}`);
 
 	return createPortal(
 		// biome-ignore lint/a11y/noStaticElementInteractions: 오버레이 클릭 닫기 - 키보드는 Escape(useOverlayEscape)가 맡는다
@@ -324,8 +331,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 				{(showIcon || title) && (
 					<div className="alert_header">
 						{showIcon && (
-							<span className={cn("alert_icon", `alert_icon_${variant}`)} aria-hidden="true">
-								{ICONS[variant]}
+							<span className={cn("alert_icon", `alert_icon_${tone}`)} aria-hidden="true">
+								{ICONS[tone]}
 							</span>
 						)}
 						{title && (
