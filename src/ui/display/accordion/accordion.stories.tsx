@@ -10,7 +10,7 @@ const meta: Meta<typeof Accordion> = {
 		multiple: { control: "boolean" },
 		defaultOpenKeys: { control: "object" },
 		openKeys: { control: false },
-		onChange: { action: "changed" },
+		onValueChange: { action: "changed" },
 		items: { control: false },
 	},
 	args: { multiple: false, defaultOpenKeys: [] },

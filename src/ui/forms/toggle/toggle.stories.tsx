@@ -20,10 +20,6 @@ const meta: Meta<typeof Toggle> = {
 		checked: { control: false },
 		defaultChecked: { control: false },
 		onCheckedChange: { control: false },
-		onChange: {
-			control: false,
-			description: "**deprecated** - `onCheckedChange` 를 쓰세요.",
-		},
 		ariaLabel: {
 			control: "text",
 			description:

@@ -31,19 +31,6 @@ describe("Badge", () => {
 		expect(container.firstChild).toHaveClass("badge_variant_success");
 	});
 
-	// 옛 이름 `variant` 는 deprecated 별칭으로 계속 받는다. 둘 다 주면 `tone` 이 이긴다.
-	it("still accepts the deprecated variant prop, tone wins when both are set", () => {
-		const { container, rerender } = render(<Badge variant="warning">OK</Badge>);
-		expect(container.firstChild).toHaveClass("badge_variant_warning");
-		rerender(
-			<Badge variant="warning" tone="error">
-				OK
-			</Badge>,
-		);
-		expect(container.firstChild).toHaveClass("badge_variant_error");
-		expect(container.firstChild).not.toHaveClass("badge_variant_warning");
-	});
-
 	it("default appearance is solid", () => {
 		const { container } = render(<Badge tone="success">OK</Badge>);
 		expect(container.firstChild).toHaveClass("badge_appearance_solid");

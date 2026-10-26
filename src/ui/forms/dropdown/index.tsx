@@ -55,18 +55,10 @@ interface DropdownCommonProps {
 	required?: boolean;
 	/** 드롭다운 크기 */
 	size?: DropdownSize;
-	/**
-	 * @deprecated Dropdown 은 이제 항상 부모 너비를 채웁니다. 인라인 사용 시 부모를 `inline-block + width` 로 감싸세요.
-	 */
-	fullWidth?: boolean;
 	/** 루트 요소에 추가할 className */
 	className?: string;
 	/** 컨트롤 시각 변형 */
 	variant?: DropdownVariant;
-	/**
-	 * @deprecated textAlign은 더 이상 지원되지 않습니다.
-	 */
-	textAlign?: "left" | "center";
 	/**
 	 * 검색 가능 여부. 활성화 시 열린 패널 상단에 검색 입력이 표시되고, 옵션 `label` 부분 일치로 필터링됩니다.
 	 * (기본값: false)
@@ -93,8 +85,6 @@ export interface DropdownSingleProps extends DropdownCommonProps {
 	value?: string | null;
 	/** 값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다. */
 	onValueChange?: (value: string | null, option?: DropdownOption | null) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. */
-	onChange?: (value: string | null, option?: DropdownOption | null) => void;
 	/** 비제어형 초기 선택 값 */
 	defaultValue?: string | null;
 }
@@ -107,8 +97,6 @@ export interface DropdownMultipleProps extends DropdownCommonProps {
 	value?: string[];
 	/** 값 변경 콜백 (canonical). 선택된 값 목록과 옵션 객체 목록을 전달합니다. */
 	onValueChange?: (values: string[], options: DropdownOption[]) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. */
-	onChange?: (values: string[], options: DropdownOption[]) => void;
 	/** 비제어형 초기 선택 값 목록 */
 	defaultValue?: string[];
 }
@@ -193,10 +181,10 @@ export const Dropdown = (props: DropdownProps) => {
 			const option = options.find((o) => o.value === next) ?? null;
 			if (!isControlled) setInternalSingle(next);
 			if (props.multiple !== true) {
-				(props.onValueChange ?? props.onChange)?.(next, option);
+				props.onValueChange?.(next, option);
 			}
 		},
-		[isControlled, options, props.multiple, props.onValueChange, props.onChange],
+		[isControlled, options, props.multiple, props.onValueChange],
 	);
 
 	const toggleMultiple = useCallback(
@@ -210,10 +198,10 @@ export const Dropdown = (props: DropdownProps) => {
 				.filter((o): o is DropdownOption => Boolean(o));
 			if (!isControlled) setInternalMulti(nextValues);
 			if (props.multiple === true) {
-				(props.onValueChange ?? props.onChange)?.(nextValues, nextOptions);
+				props.onValueChange?.(nextValues, nextOptions);
 			}
 		},
-		[selectedValues, options, isControlled, props.multiple, props.onValueChange, props.onChange],
+		[selectedValues, options, isControlled, props.multiple, props.onValueChange],
 	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: closePanel 은 아래 훅 결과라 선언 순서상 참조만 한다 (렌더마다 동일 참조)

@@ -82,7 +82,7 @@ describe("Card", () => {
 		expect(container.firstChild).toHaveClass("card_p_none");
 	});
 
-	// ── variant (glass / outlined) ──────────────────────────────────────
+	// ── variant (glass / outline) ──────────────────────────────────────
 
 	it("does not apply a variant class for default variant", () => {
 		const { container } = render(<Card>Content</Card>);
@@ -102,12 +102,6 @@ describe("Card", () => {
 	it("applies outline variant class", () => {
 		const { container } = render(<Card variant="outline">Content</Card>);
 		expect(container.firstChild).toHaveClass("card_variant_outline");
-	});
-
-	// 옛 이름은 아직 받고, 넘긴 값 그대로 클래스가 붙는다.
-	it("still accepts the old outlined name as-is", () => {
-		const { container } = render(<Card variant="outlined">Content</Card>);
-		expect(container.firstChild).toHaveClass("card_variant_outlined");
 	});
 
 	// ── interactive (hover-lift) ────────────────────────────────────────

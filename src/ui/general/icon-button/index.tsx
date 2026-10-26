@@ -4,8 +4,7 @@ import type * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-/** `standard`·`outlined` 는 옛 이름이다 - 각각 `text`·`outline` 을 쓴다. */
-export type IconButtonVariant = "text" | "filled" | "tonal" | "outline" | "standard" | "outlined";
+export type IconButtonVariant = "text" | "filled" | "tonal" | "outline";
 export type IconButtonSize = "sm" | "md";
 
 /** 접근성 이름을 제외한 IconButton 공통 props */
@@ -14,10 +13,7 @@ interface IconButtonBaseProps
 		SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>,
 		"aria-label" | "aria-labelledby"
 	> {
-	/**
-	 * 아이콘 버튼 스타일 변형 (기본값: "text"). Button 의 variant 이름과 같다.
-	 * `standard`(= `text`)·`outlined`(= `outline`) 는 옛 이름이라 다음 정리 때 지운다 (#856) - 클래스는 넘긴 값 그대로 붙어 앱의 기존 선택자가 깨지지 않는다.
-	 */
+	/** 아이콘 버튼 스타일 변형 (기본값: "text"). Button 의 variant 이름과 같다 */
 	variant?: IconButtonVariant;
 	/** 아이콘 버튼 크기 (기본값: "md") */
 	size?: IconButtonSize;

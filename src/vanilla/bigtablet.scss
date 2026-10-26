@@ -1168,7 +1168,7 @@
    ========================================
    React `<Card>` 는 shadow / padding / bordered(조합형)와 variant(enum)를 모두 노출한다.
    Vanilla 도 같은 모델을 그대로 따른다 - shadow·padding·bordered 는 서로 직교하는 modifier 고,
-   variant(accent / glass / outlined)는 그 위에 얹는 표면 스타일이다(기본 = default).
+   variant(accent / glass / outline)는 그 위에 얹는 표면 스타일이다(기본 = default).
    기본값도 React 와 동일하게 shadow=sm / padding=md - 끄려면 --shadow-none / --p-none. */
 .bt-card {
   background: var(--bt-color-background);
@@ -1209,9 +1209,8 @@
     }
   }
 
-  /* Variant: outline - 투명 배경 + 테두리만, shadow 무시 (React card_variant_outline). outlined 는 옛 이름 */
-  &--outline,
-  &--outlined {
+  /* Variant: outline - 투명 배경 + 테두리만, shadow 무시 (React card_variant_outline) */
+  &--outline {
     background: transparent;
     border: 1px solid var(--bt-color-border);
     box-shadow: none;

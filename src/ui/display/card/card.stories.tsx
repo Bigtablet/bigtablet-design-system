@@ -32,7 +32,7 @@ const meta: Meta<typeof Card> = {
 				component: `
 **Card** - 관련 콘텐츠를 한 덩어리로 묶는 컨테이너.
 
-**Variants**: \`default\` / \`accent\` (반전 배경 + 흰 텍스트) / \`glass\` (반투명 + backdrop blur, 컬러·이미지 배경 위 권장) / \`outline\` (투명 배경 + 테두리만). 옛 이름 \`outlined\` 도 아직 받는다.
+**Variants**: \`default\` / \`accent\` (반전 배경 + 흰 텍스트) / \`glass\` (반투명 + backdrop blur, 컬러·이미지 배경 위 권장) / \`outline\` (투명 배경 + 테두리만).
 
 **구성**: \`heading\` (헤더) + children (본문) + \`footer\` (\`footerAlign\` start/between/end) 3단. \`interactive\` 를 켜면 클릭 가능한 카드에 hover lift 가 붙는다.
 

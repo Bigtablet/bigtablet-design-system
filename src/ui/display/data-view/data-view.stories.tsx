@@ -31,7 +31,7 @@ const COLUMNS: TableColumn<User>[] = [
 			<Chip
 				type="static"
 				size="sm"
-				tone={u.status === "active" ? "accent" : "default"}
+				tone={u.status === "active" ? "accent" : "neutral"}
 				label={u.status === "active" ? "활성" : "초대됨"}
 			/>
 		),

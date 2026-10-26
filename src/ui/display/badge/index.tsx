@@ -5,8 +5,6 @@ import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type BadgeTone = "accent" | "neutral" | "info" | "success" | "warning" | "error";
-/** @deprecated `BadgeTone` 을 쓰세요. 의미 색은 `tone` 으로 통일했습니다. */
-export type BadgeVariant = BadgeTone;
 export type BadgeShape = "dot" | "count" | "label";
 export type BadgeSize = "sm" | "md" | "lg";
 export type BadgeAppearance = "solid" | "soft";
@@ -14,8 +12,6 @@ export type BadgeAppearance = "solid" | "soft";
 export interface BadgeProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
 	/** 의미 색 (기본값: "accent") */
 	tone?: BadgeTone;
-	/** @deprecated `tone` 을 쓰세요. 둘 다 주면 `tone` 이 이깁니다. */
-	variant?: BadgeTone;
 	/** 모양 (기본값: "label"). dot=점만 / count=숫자 / label=텍스트 */
 	shape?: BadgeShape;
 	/**
@@ -49,8 +45,7 @@ export interface BadgeProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanE
  * ```
  */
 export const Badge = ({
-	tone,
-	variant,
+	tone = "accent",
 	shape = "label",
 	size = "md",
 	appearance = "solid",
@@ -73,7 +68,7 @@ export const Badge = ({
 			className={cn(
 				"badge",
 				// 클래스명은 그대로 둔다 - 앱이 `.badge_variant_*` 로 덮어쓰고 있다 (notiiv brand.css)
-				`badge_variant_${tone ?? variant ?? "accent"}`,
+				`badge_variant_${tone}`,
 				`badge_shape_${shape}`,
 				`badge_size_${size}`,
 				`badge_appearance_${appearance}`,

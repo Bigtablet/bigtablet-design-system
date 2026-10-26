@@ -36,17 +36,12 @@ const meta: Meta<typeof Dropdown> = {
 		size: { control: "select", options: ["sm", "md", "lg"] },
 		variant: { control: "inline-radio", options: ["outline", "filled"] },
 		disabled: { control: "boolean" },
-		fullWidth: {
-			control: false,
-			description:
-				"**deprecated (v3.0.0)** - no-op 입니다. Dropdown 은 항상 부모 폭을 채웁니다. 인라인 폭은 부모를 `inline-block` + `width` 로 감싸세요.",
-		},
 		searchable: { control: "boolean" },
 		multiple: { control: "boolean" },
 		searchPlaceholder: { control: "text" },
 		emptyText: { control: "text" },
 		options: { table: { disable: true } },
-		onChange: { control: false },
+		onValueChange: { control: false },
 		value: { control: false },
 		defaultValue: { control: false },
 	},
@@ -130,7 +125,7 @@ export const FullWidth: Story = {
 		docs: {
 			description: {
 				story:
-					"Dropdown 은 **언제나 부모 폭을 채웁니다.** 이 스토리에 특별한 prop 은 없습니다 - 아래 padded 레이아웃이 부모이고, 컨트롤이 그 폭을 그대로 씁니다.\n\n`fullWidth` prop 은 v3.0.0 부터 no-op 입니다(타입만 남아 있고 구현이 읽지 않습니다). 인라인 폭이 필요하면 부모를 `inline-block` + `width` 로 감싸세요.",
+					"Dropdown 은 **언제나 부모 폭을 채웁니다.** 이 스토리에 특별한 prop 은 없습니다 - 아래 padded 레이아웃이 부모이고, 컨트롤이 그 폭을 그대로 씁니다.\n\n인라인 폭이 필요하면 부모를 `inline-block` + `width` 로 감싸세요.",
 			},
 		},
 		layout: "padded",

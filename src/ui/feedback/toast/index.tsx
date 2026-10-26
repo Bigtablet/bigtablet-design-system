@@ -9,11 +9,6 @@ import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export type ToastTone = "success" | "error" | "warning" | "info" | "neutral";
-/** @deprecated `ToastTone` 을 쓰세요. `"default"` 는 `"neutral"` 로 바뀌었습니다. */
-export type ToastVariant = ToastTone | "default";
-
-/** 옛 `variant` 값을 `tone` 으로 - `"default"` 만 이름이 바뀌었다 */
-const toTone = (variant: ToastVariant): ToastTone => (variant === "default" ? "neutral" : variant);
 
 export interface ToastAction {
 	/** 버튼 라벨 - "실행 취소" 등 */
@@ -33,8 +28,6 @@ export interface ToastOptions {
 export type ToastPatch = Partial<{
 	message: string;
 	tone: ToastTone;
-	/** @deprecated `tone` 을 쓰세요. 둘 다 주면 `tone` 이 이깁니다. */
-	variant: ToastVariant;
 	duration: number;
 	action: ToastAction | null;
 }>;
@@ -262,12 +255,10 @@ export const ToastProvider = ({
 		setToasts((prev) =>
 			prev.map((toast) => {
 				if (toast.id !== id || toast.dismissing) return toast;
-				const { action, tone, variant, ...rest } = patch;
-				const nextTone = tone ?? (variant === undefined ? undefined : toTone(variant));
+				const { action, ...rest } = patch;
 				return {
 					...toast,
 					...rest,
-					...(nextTone && { tone: nextTone }),
 					action: action === null ? undefined : (action ?? toast.action),
 				};
 			}),

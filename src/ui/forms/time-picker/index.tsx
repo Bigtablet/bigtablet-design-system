@@ -178,7 +178,6 @@ export const TimePicker = ({
 				<FieldControlBoundary>
 					<Dropdown
 						size="sm"
-						fullWidth
 						label={hourLabel}
 						placeholder={hourLabel}
 						options={hourOptions}
@@ -189,7 +188,6 @@ export const TimePicker = ({
 					/>
 					<Dropdown
 						size="sm"
-						fullWidth
 						label={minuteLabel}
 						placeholder={minuteLabel}
 						options={minuteOptions}

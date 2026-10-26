@@ -88,15 +88,6 @@ describe("Alert - 마크업 · 버튼", () => {
 		expect(document.activeElement).toBe(overlay().querySelector("[data-alert-confirm]"));
 	});
 
-	// 옛 옵션 이름 `variant` 도 받는다 - `tone` 이 우선.
-	it("accepts the deprecated variant option, tone wins when both are set", () => {
-		Alert({ message: "m", variant: "warning" });
-		expect(overlay()).toHaveClass("bt-alert--warning");
-		overlay().remove();
-		Alert({ message: "m", variant: "warning", tone: "success" });
-		expect(overlay()).toHaveClass("bt-alert--success");
-	});
-
 	it("omits the title and cancel button by default and aligns actions", () => {
 		Alert({ message: "m" });
 		expect(overlay().querySelector(".bt-alert__title")).toBeNull();

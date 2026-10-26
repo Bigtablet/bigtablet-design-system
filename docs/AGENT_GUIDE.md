@@ -246,11 +246,11 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
 | `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
-| `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
-| `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
+| `Dropdown` | Value-selection menu. | `options`, `value`, `onValueChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
+| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
-| `OTPInput` | Single-digit code boxes. | `length`, `value`, `onChange`, `autoFocus`, `error` |
+| `OTPInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
 
 ### Display
 
@@ -260,7 +260,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
-| `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error; old name `variant` still accepted), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
+| `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
@@ -293,7 +293,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
 | `Breadcrumb` | Page path nav. | `items` array (`label`, `href`, `current`). |
 | `Menu` | Action menu (context/kebab). | `trigger` element, `items` (key/label/icon/onSelect/destructive/disabled), `align` (start/end). Trigger components MUST forward props (`<button {...props}>`). |
-| `Pagination` | Page number nav. | `page`, `pageCount`, `onChange`, `siblingCount`. Cursor pointer baked in. |
+| `Pagination` | Page number nav. | `page`, `pageCount`, `onPageChange`, `siblingCount`. Cursor pointer baked in. |
 
 ### Overlay
 
@@ -371,7 +371,7 @@ Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hov
       { value: "editor", label: "Editor" },
     ]}
     value={role}
-    onChange={setRole}
+    onValueChange={setRole}
   />
   <Stack direction="horizontal" gap={8} justify="end">
     <Button variant="outline">Cancel</Button>
@@ -558,7 +558,7 @@ When asked to generate UI:
 - `Select` → `Dropdown` (`SelectOption` → `DropdownOption`)
 - `Tag` → `<Chip type="static" tone="..." />`
 - `Chip` import path changed (`general/chip` → `display/chip`) - root import unaffected
-- `Dropdown` `fullWidth` prop is now a no-op (always full width)
+- `Dropdown` always fills its parent width (the `fullWidth` prop was removed in 4.1.0)
 - `Icon` API: `<Icon name="search" />` → `<Icon icon={Search} />` (pass lucide-react component)
 - Vanilla `--bt-color-primary` is now reserved for Button `--primary` only. Use `--bt-color-accent` for indicators.
 

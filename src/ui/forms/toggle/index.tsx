@@ -13,8 +13,6 @@ export interface ToggleProps
 	defaultChecked?: boolean;
 	/** 상태 변경 콜백 (canonical) */
 	onCheckedChange?: (checked: boolean) => void;
-	/** @deprecated `onCheckedChange` 를 사용하세요. */
-	onChange?: (checked: boolean) => void;
 	/** 토글 크기 (기본값: "sm") */
 	size?: "sm" | "md";
 	/** 비활성화 여부 */
@@ -35,7 +33,6 @@ export const Toggle = ({
 	checked,
 	defaultChecked,
 	onCheckedChange,
-	onChange,
 	size = "sm",
 	disabled,
 	className,
@@ -57,7 +54,7 @@ export const Toggle = ({
 		if (disabled || e.defaultPrevented) return;
 		const next = !isOn;
 		if (!isControlled) setInnerChecked(next);
-		(onCheckedChange ?? onChange)?.(next);
+		onCheckedChange?.(next);
 	};
 
 	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.

@@ -62,11 +62,6 @@ interface DatePickerBaseProps {
 	required?: boolean;
 	/** 데이트 피커가 컨테이너의 전체 너비를 차지할지 여부 */
 	fullWidth?: boolean;
-	/**
-	 * 데이트 피커의 커스텀 너비
-	 * @deprecated `fullWidth` 사용 또는 CSS로 처리
-	 */
-	width?: number | string;
 	/** 연도 select의 라벨/플레이스홀더 */
 	yearLabel?: string;
 	/** 월 select의 라벨/플레이스홀더 */
@@ -85,23 +80,11 @@ interface DatePickerBaseProps {
 	selectableRangeUntilTodaySrText?: string;
 }
 
-// DatePicker 는 controlled 전용(내부 value 상태 없음) → 콜백이 최소 하나는 필요.
-// canonical 은 `onValueChange` 이고 구 `onChange` 도 아직 받는다. 둘 중 하나는 필수.
-// 폐기 표시는 **멤버마다 인라인 JSDoc** 으로 둔다 - 주석 산문에만 적으면 IDE 가 취소선을
-// 그리지 못하고 정적 검사도 어느 멤버가 폐기됐는지 알 수 없다(#603).
-type DatePickerCallbacks =
-	| {
-			onValueChange: (value: string) => void;
-			/** @deprecated `onValueChange` 를 사용하세요. */
-			onChange?: (value: string) => void;
-	  }
-	| {
-			onValueChange?: (value: string) => void;
-			/** @deprecated `onValueChange` 를 사용하세요. */
-			onChange: (value: string) => void;
-	  };
-
-export type DatePickerProps = DatePickerBaseProps & DatePickerCallbacks;
+// DatePicker 는 controlled 전용(내부 value 상태 없음) → 값 콜백이 필수다.
+export type DatePickerProps = DatePickerBaseProps & {
+	/** 값이 바뀔 때 호출된다 - `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`) */
+	onValueChange: (value: string) => void;
+};
 
 /** 숫자를 두 자리 문자열로 보정한다. */
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -110,7 +93,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
 
 /** 너비 값을 CSS 문자열로 정규화한다. */
-const normalizeWidth = (v?: number | string) => (typeof v === "number" ? `${v}px` : v);
 
 /** start~end 범위의 숫자 배열을 생성한다. */
 const range = (start: number, end: number) =>
@@ -124,7 +106,6 @@ export const DatePicker = ({
 	label,
 	value,
 	onValueChange,
-	onChange,
 	mode = "year-month-day",
 	variant = "dropdown",
 	placeholder: placeholderProp,
@@ -135,7 +116,6 @@ export const DatePicker = ({
 	disabled,
 	required,
 	fullWidth = true,
-	width,
 	yearLabel: yearLabelProp,
 	monthLabel: monthLabelProp,
 	dayLabel: dayLabelProp,
@@ -280,7 +260,7 @@ export const DatePicker = ({
 		[minDay, maxDay, hasSelectableDay],
 	);
 
-	// ── emit: 선택 값을 포맷팅해 onChange로 전달 ─────────────────────────
+	// ── emit: 선택 값을 포맷팅해 onValueChange 로 전달 ─────────────────────────
 
 	/**
 	 * 마지막 관문. 목록을 아무리 좁혀도 **월 단위로 넘어가는 경로**가 남는다 -
@@ -307,13 +287,12 @@ export const DatePicker = ({
 
 	const emit = React.useCallback(
 		(yy: number, mm: number, dd?: number) => {
-			const cb = onValueChange ?? onChange;
 			if (mode === "year-month") {
 				// 목록과 **같은 계산**을 쓴다. 대표일을 하나 골라 검사하면 목록에는 있는데 고르면
 				// 아무 반응이 없는 달이 생긴다.
 				const monthBounds = dayBoundsFor(yy, mm);
 				if (monthBounds.max < monthBounds.min) return;
-				cb?.(`${yy}-${pad(mm)}`);
+				onValueChange(`${yy}-${pad(mm)}`);
 				return;
 			}
 			const bounds = dayBoundsFor(yy, mm);
@@ -321,9 +300,9 @@ export const DatePicker = ({
 			if (bounds.max < bounds.min) return;
 			const safeDay = Math.min(Math.max(dd ?? bounds.min, bounds.min), bounds.max);
 			if (!withinRange(yy, mm, safeDay)) return;
-			cb?.(`${yy}-${pad(mm)}-${pad(safeDay)}`);
+			onValueChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, onChange, dayBoundsFor, withinRange],
+		[mode, onValueChange, dayBoundsFor, withinRange],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
@@ -366,9 +345,8 @@ export const DatePicker = ({
 
 	// ── 렌더링 ───────────────────────────────────────────────────────────
 
-	const containerStyle = width ? { width: normalizeWidth(width) } : undefined;
 	const rootClassName = cn("date_picker", {
-		date_picker_full_width: fullWidth && !width,
+		date_picker_full_width: fullWidth,
 		date_picker_disabled: disabled,
 	});
 
@@ -381,7 +359,6 @@ export const DatePicker = ({
 		return (
 			<CalendarField
 				rootClassName={rootClassName}
-				containerStyle={containerStyle}
 				label={label}
 				labelId={field?.labelId ?? (label ? groupId : undefined)}
 				describedBy={
@@ -419,7 +396,7 @@ export const DatePicker = ({
 	}
 
 	return (
-		<div className={rootClassName} style={containerStyle}>
+		<div className={rootClassName}>
 			{label && (
 				<span className="date_picker_label" id={groupId}>
 					{label}
@@ -448,7 +425,6 @@ export const DatePicker = ({
 				<FieldControlBoundary>
 					<Dropdown
 						size="sm"
-						fullWidth
 						label={yearLabel}
 						placeholder={yearLabel}
 						options={yearOptions}
@@ -460,7 +436,6 @@ export const DatePicker = ({
 
 					<Dropdown
 						size="sm"
-						fullWidth
 						label={monthLabel}
 						placeholder={monthLabel}
 						options={monthOptions}
@@ -473,7 +448,6 @@ export const DatePicker = ({
 					{mode === "year-month-day" && (
 						<Dropdown
 							size="sm"
-							fullWidth
 							label={dayLabel}
 							placeholder={dayLabel}
 							options={dayOptions}
@@ -491,7 +465,6 @@ export const DatePicker = ({
 
 interface CalendarFieldProps {
 	rootClassName: string;
-	containerStyle: React.CSSProperties | undefined;
 	label: string | undefined;
 	labelId: string | undefined;
 	describedBy: string | undefined;
@@ -523,7 +496,6 @@ interface CalendarFieldProps {
  */
 const CalendarField = ({
 	rootClassName,
-	containerStyle,
 	label,
 	labelId,
 	describedBy,
@@ -558,7 +530,7 @@ const CalendarField = ({
 	}, [selected, intlLocale]);
 
 	return (
-		<div className={cn(rootClassName, "date_picker_calendar")} style={containerStyle}>
+		<div className={cn(rootClassName, "date_picker_calendar")}>
 			{label && (
 				<span className="date_picker_label" id={groupId}>
 					{label}
