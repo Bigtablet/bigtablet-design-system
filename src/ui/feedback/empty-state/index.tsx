@@ -9,8 +9,8 @@ export interface EmptyStateProps
 	/**
 	 * 일러스트 영역 (아이콘/이미지 등). lucide 아이콘은 `size` 에 맞는 원형 배지에 올라가고 크기가
 	 * 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다.
-	 * **장식 전용** - `aria-hidden="true"` 래퍼로 접근성 트리에서 제외된다. 포커스 가능한 요소(버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가
-	 * 되므로(WCAG 4.1.2) `action` 을 쓸 것.
+	 * **장식 전용** - `aria-hidden="true"` 래퍼로 접근성 트리에서 제외된다. 포커스 가능한 요소
+	 * (버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가 되므로(WCAG 4.1.2) `action` 을 쓸 것.
 	 */
 	illustration?: React.ReactNode;
 	/** 제목 */
