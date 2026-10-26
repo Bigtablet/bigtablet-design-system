@@ -72,6 +72,7 @@ prop·옵션 키 `variant` 를 `tone` 으로, 타입 import 를 `*Tone` 으로 �
 
 - 옛 값도 계속 받습니다. **넘긴 값 그대로 클래스가 붙습니다** - `variant="standard"` 면 `icon_button_variant_standard` 가 그대로 붙어, 그 클래스를 잡는 앱 CSS·테스트가 깨지지 않습니다.
 - 값을 **안 넘긴 경우**에만 기본값이 새 이름으로 바뀌어 클래스가 `icon_button_variant_text` · `chip_tone_neutral` 이 됩니다. 기본값의 클래스명을 직접 잡고 있었다면 새 이름으로 바꾸세요. 모양은 같습니다.
+- Storybook 의 IconButton 스토리 이름이 `Standard` · `Outlined` → `Text` · `Outline` 으로 바뀌어 스토리 id(`components-general-iconbutton--standard` 등)가 달라졌습니다. 스토리 id 로 링크하거나 스냅샷을 찍고 있었다면 새 id 로 바꾸세요.
 
 ---
 
