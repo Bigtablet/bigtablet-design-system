@@ -901,7 +901,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
 | `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
 | `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
-| `loading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용 |
+| `isLoading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용. 옛 이름 `loading` 도 받는다 (deprecated, `isLoading` 이 우선) |
 | `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
 | `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
 | `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
@@ -927,11 +927,11 @@ const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴
   onSubmit={() => setQuery(draft)}
   onReset={() => { setDraft(EMPTY); setQuery(EMPTY); }}
   canReset={draft.name !== "" || draft.status !== null}
-  loading={isFetching}
+  isLoading={isFetching}
 >
   <TextField label="이름" value={draft.name} onValueChange={(name) => setDraft({ ...draft, name })} />
   <Dropdown label="상태" placeholder="전체" options={STATUS} value={draft.status}
-    onChange={(status) => setDraft({ ...draft, status })} />
+    onValueChange={(status) => setDraft({ ...draft, status })} />
 </FilterBar>
 
 // DataView 와 함께 - toolbar.filters 에 그대로 넣는다

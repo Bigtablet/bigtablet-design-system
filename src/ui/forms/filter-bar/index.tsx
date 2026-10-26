@@ -20,6 +20,8 @@ interface FilterBarBaseProps
 	/** 초기화할 것이 있는가 (기본값: true). 이미 비어 있으면 false 로 */
 	canReset?: boolean;
 	/** 적용 중 - form 에 aria-busy. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용한다 */
+	isLoading?: boolean;
+	/** @deprecated `isLoading` 을 쓰세요. DataView · Table 과 같은 이름입니다. 둘 다 주면 `isLoading` 이 이깁니다. */
 	loading?: boolean;
 	/** 버튼 전체 비활성화 */
 	disabled?: boolean;
@@ -70,7 +72,8 @@ export const FilterBar = ({
 	onReset,
 	canSubmit = true,
 	canReset = true,
-	loading = false,
+	isLoading,
+	loading: loadingProp,
 	disabled = false,
 	submitLabel: submitLabelProp,
 	resetLabel: resetLabelProp,
@@ -82,6 +85,7 @@ export const FilterBar = ({
 	const t = useLocaleText();
 	const submitLabel = submitLabelProp ?? t("filterBar.submit");
 	const resetLabel = resetLabelProp ?? t("filterBar.reset");
+	const loading = isLoading ?? loadingProp ?? false;
 	const submitBlocked = disabled || loading || !canSubmit;
 	const showSubmit = submitMode === "submit";
 	const showActions = Boolean(onReset) || showSubmit;

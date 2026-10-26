@@ -73,7 +73,7 @@ describe("FilterBar", () => {
 	});
 
 	it("keeps the button focusable while loading but blocks submitting", () => {
-		const { onSubmit } = setup({ loading: true });
+		const { onSubmit } = setup({ isLoading: true });
 		const button = screen.getByRole("button", { name: "검색" });
 		button.focus();
 		// disabled 로 바꾸면 포커스가 body 로 빠진다 - aria-disabled 로 막는다
@@ -86,12 +86,25 @@ describe("FilterBar", () => {
 	});
 
 	it("marks the form busy and shows a decorative spinner while loading", () => {
-		setup({ loading: true });
+		setup({ isLoading: true });
 		expect(screen.getByRole("search")).toHaveAttribute("aria-busy", "true");
 		// 이름이 "검색" 그대로 - 스피너 라벨이 붙어 "검색 검색" 이 되지 않는다
 		const button = screen.getByRole("button", { name: "검색" });
 		expect(button.querySelector("[aria-hidden='true'] [role='status']")).not.toBeNull();
 		expect(screen.queryByRole("status")).toBeNull();
+	});
+
+	// 옛 이름 `loading` 은 deprecated 별칭으로 계속 받는다. 둘 다 주면 `isLoading` 이 이긴다.
+	it("still accepts the deprecated loading prop, isLoading wins when both are set", () => {
+		const { rerender, onSubmit } = setup({ loading: true });
+		expect(screen.getByRole("search")).toHaveAttribute("aria-busy", "true");
+
+		rerender(
+			<FilterBar onSubmit={onSubmit} loading isLoading={false}>
+				<TextField label="이름" />
+			</FilterBar>,
+		);
+		expect(screen.getByRole("search")).not.toHaveAttribute("aria-busy");
 	});
 
 	it("shows a reset button only with onReset and keeps it apart from submit", () => {

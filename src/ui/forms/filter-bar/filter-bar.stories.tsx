@@ -122,7 +122,7 @@ export const OrderList: Story = {
 			<FilterBar
 				aria-label="주문 필터"
 				fieldMinWidth={240}
-				loading={loading}
+				isLoading={loading}
 				canSubmit={keyword.trim().length >= 2}
 				onSubmit={() => {
 					setLoading(true);
