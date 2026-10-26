@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { LABEL_COMPARISON } from "../label-comparison.docs";
 import { Badge } from ".";
 
 const meta: Meta<typeof Badge> = {
@@ -28,6 +29,8 @@ const meta: Meta<typeof Badge> = {
 - **Tones** (\`tone\`) - \`accent\` / \`neutral\` / \`info\` / \`success\` / \`warning\` / \`error\`
 - **Appearance** - \`solid\` (강한 fill) / \`soft\` (tint 배경 + 진한 글자). 둘 다 WCAG AA 통과
 - \`count > max\` → \`{max}+\`
+
+${LABEL_COMPARISON}
 				`,
 			},
 		},

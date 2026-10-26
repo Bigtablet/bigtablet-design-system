@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
+import { NOTICE_COMPARISON } from "../notice-comparison.docs";
 import { AlertProvider, useAlert, useConfirm } from ".";
 
 type AlertDemoProps = {
@@ -94,6 +95,8 @@ const meta: Meta<typeof AlertDemo> = {
 Tones (\`tone\`): \`info\` / \`success\` / \`warning\` / \`error\`.
 주요 prop: \`title\`, \`message\`, \`showCancel\`, \`actionsAlign\`, \`destructive\` (confirm 을 빨간색으로 강조), \`showIcon\`.
 사용: \`AlertProvider\` 하위에서 \`useAlert().showAlert({...})\`.
+
+${NOTICE_COMPARISON}
 				`,
 			},
 		},

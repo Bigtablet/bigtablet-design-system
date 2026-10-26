@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { POPUP_COMPARISON } from "../popup-comparison.docs";
 import { Tooltip } from ".";
 
 const meta: Meta<typeof Tooltip> = {
@@ -43,6 +44,8 @@ const meta: Meta<typeof Tooltip> = {
 
 주요 prop: \`content\`, \`placement\` (선호 위치 — 뷰포트를 벗어나면 자동 flip/shift, \`body\` 로 포탈), \`delay\` (기본 200ms), \`disabled\`.
 \`role="tooltip"\` + \`aria-describedby\` 가 자동으로 설정된다.
+
+${POPUP_COMPARISON}
 				`.trim(),
 			},
 		},

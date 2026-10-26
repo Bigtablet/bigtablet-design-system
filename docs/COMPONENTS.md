@@ -495,6 +495,17 @@ const [fruits, setFruits] = useState<string[]>([]);
 
 ### Chip
 
+읽을 거리가 있는 태그·카테고리(`static`), 또는 누르고 고르고 지우는 토큰(`basic` · `filter` · `input`).
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 태그·카테고리 라벨, 상태 라벨 (`tone`) | ✅ Chip `type="static"` |
+| 필터 토글, 입력된 값 토큰 (지우기 가능) | ✅ Chip `type="filter"` · `"input"` |
+| 개수 · 점 · `New` 같은 짧은 표시 | ❌ [Badge](#badge) |
+| 사용자가 목록에 없는 값을 직접 여러 개 입력 | ❌ [TagInput](#taginput) |
+
 ```tsx
 import { Chip } from '@bigtablet/design-system';
 
@@ -1726,6 +1737,16 @@ const [code, setCode] = useState('');
 
 ### Alert
 
+화면을 막고 **확인을 받는** 모달 알림. `AlertProvider` 아래에서 `useAlert().showAlert` · `useConfirm()` 으로 연다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 진행 전에 확인을 받아야 함 (삭제 확인, 저장 안 한 변경) | ✅ Alert |
+| 화면의 한 부분에 남아 읽혀야 하는 안내 | ❌ [InlineAlert](#inlinealert) |
+| 방금 한 일의 결과를 잠깐 알림 (저장됨, 복사됨) | ❌ [Toast](#toast) |
+
 ```tsx
 import { AlertProvider, useAlert } from '@bigtablet/design-system';
 
@@ -1822,6 +1843,16 @@ await confirm({
 
 ### Toast
 
+화면을 막지 않고 **잠깐 떴다 사라지는** 결과 알림. `ToastProvider` 아래에서 `useToast()` 로 띄운다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 방금 한 일의 결과를 잠깐 알림 (저장됨, 복사됨, 업로드 완료) | ✅ Toast |
+| 화면의 한 부분에 남아 읽혀야 하는 안내 | ❌ [InlineAlert](#inlinealert) |
+| 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) |
+
 ```tsx
 import { ToastProvider, useToast } from '@bigtablet/design-system';
 
@@ -1900,7 +1931,7 @@ toast.dismiss(id);
 
 | 상황 | 선택 |
 |------|------|
-| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경, 저장 결과) | ✅ InlineAlert |
+| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경) | ✅ InlineAlert |
 | 잠깐 보였다 사라지는 결과 알림 | ❌ [Toast](#toast) |
 | 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
 | 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
