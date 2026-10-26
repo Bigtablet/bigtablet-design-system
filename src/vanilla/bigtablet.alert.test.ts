@@ -88,6 +88,11 @@ describe("Alert - 마크업 · 버튼", () => {
 		expect(document.activeElement).toBe(overlay().querySelector("[data-alert-confirm]"));
 	});
 
+	it("falls back to the info tone when tone is passed as undefined", () => {
+		Alert({ message: "m", tone: undefined });
+		expect(overlay()).toHaveClass("bt-alert--info");
+	});
+
 	it("omits the title and cancel button by default and aligns actions", () => {
 		Alert({ message: "m" });
 		expect(overlay().querySelector(".bt-alert__title")).toBeNull();

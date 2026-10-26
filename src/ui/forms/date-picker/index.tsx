@@ -92,8 +92,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
 /** 해당 연/월의 일 수를 구한다. */
 const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
 
-/** 너비 값을 CSS 문자열로 정규화한다. */
-
 /** start~end 범위의 숫자 배열을 생성한다. */
 const range = (start: number, end: number) =>
 	Array.from({ length: end - start + 1 }, (_, i) => start + i);

@@ -30,8 +30,8 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 - `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
-- 변경 콜백(`onChange` 계열) 은 신규(canonical) prop 과 구(deprecated) prop 을 동시에 넘겨도 안전합니다. 컴포넌트 내부는 `canonical ?? deprecated` 순서로 우선 적용하므로, 신규 prop 을 넘기면 그 값만 호출되고 신규 prop 이 없을 때만 구 prop 이 fallback 으로 호출됩니다.
-- React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
+- deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 의 `onChange` 계열은 v4.1.0 에서 지워졌고, 지금 이 규칙이 적용되는 것은 TextField·Textarea 의 `onChangeAction` 뿐입니다.
+- 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
 
