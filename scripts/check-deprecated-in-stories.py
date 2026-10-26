@@ -198,7 +198,7 @@ def deprecated_props(component: Path) -> tuple[dict[str, str], list[str]]:
                 continue
 
         # (b) 뒤따르는 주석 줄을 건너뛰고 첫 코드 줄
-        for follow in lines[index + 1 : index + 6]:
+        for offset, follow in enumerate(lines[index + 1 : index + 6], start=index + 1):
             stripped = follow.strip()
             if not stripped or stripped.startswith(("*", "//", "/*")):
                 continue
@@ -212,7 +212,15 @@ def deprecated_props(component: Path) -> tuple[dict[str, str], list[str]]:
                 #   `type DatePickerCallbacks = | { …; onChange?: … }`
                 #       → 본문이 멤버를 선언한다. 어느 멤버가 폐기됐는지 산문으로는 알 수 없다.
                 #         멤버에 인라인 JSDoc 이 없으면 검사가 통째로 비므로 실패로 알린다.
-                body = "\n".join(lines[index + 1 : index + 12])
+                # 본문은 그 타입 선언이 `;` 로 끝나는 데까지만 본다. 넉넉히 몇 줄을 잘라 오면
+                # `export type AlertVariant = AlertTone;` 처럼 한 줄짜리 별칭 아래에 있는 다른
+                # 선언(`const ICONS = { info: … }`)을 이 타입의 멤버로 오인한다.
+                decl_lines = []
+                for code in lines[offset : offset + 12]:
+                    decl_lines.append(code)
+                    if code.rstrip().endswith(";"):
+                        break
+                body = "\n".join(decl_lines)
                 declares_members = bool(re.search(r"\{[^}]*\w+\??\s*:", body))
                 if declares_members and "@deprecated" not in body:
                     unresolved.append(f"{component}:{index + 1}")
