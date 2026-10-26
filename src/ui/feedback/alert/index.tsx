@@ -19,8 +19,6 @@ import { Spinner } from "../spinner";
 import "./style.scss";
 
 export type AlertTone = "info" | "success" | "warning" | "error";
-/** @deprecated `AlertTone` 을 쓰세요. 의미 색은 `tone` 으로 통일했습니다. */
-export type AlertVariant = AlertTone;
 export type AlertActionsAlign = "left" | "center" | "right";
 
 const ICONS: Record<AlertTone, React.ReactNode> = {
@@ -33,8 +31,6 @@ const ICONS: Record<AlertTone, React.ReactNode> = {
 export interface AlertOptions {
 	/** 의미 색 (기본값: "info") */
 	tone?: AlertTone;
-	/** @deprecated `tone` 을 쓰세요. 둘 다 주면 `tone` 이 이깁니다. */
-	variant?: AlertTone;
 	/** 알림 제목 */
 	title?: React.ReactNode;
 	/** 알림 본문 메시지 */
@@ -223,8 +219,7 @@ interface AlertModalProps extends AlertOptions {
 
 const AlertModal: React.FC<AlertModalProps> = ({
 	isOpen,
-	tone: toneProp,
-	variant,
+	tone = "info",
 	title,
 	message,
 	confirmText: confirmTextProp,
@@ -240,7 +235,6 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onClose,
 	onExited,
 }) => {
-	const tone = toneProp ?? variant ?? "info";
 	const t = useLocaleText();
 	const confirmText = confirmTextProp ?? t("alert.confirm");
 	const cancelText = cancelTextProp ?? t("alert.cancel");

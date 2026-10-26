@@ -7,7 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [v4.1.0 (의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-의미-색-prop-을-tone-으로--variant-값-이름-통일)
+- [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
 - [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
@@ -28,20 +28,23 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ## 개요
 
-- `@deprecated` 로 표시된 prop 은 삭제되지 않고 계속 동작합니다. 실제 제거는 다음 major 릴리즈에서 이루어집니다.
+- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
-- 변경 콜백(`onChange` 계열) 은 신규(canonical) prop 과 구(deprecated) prop 을 동시에 넘겨도 안전합니다. 컴포넌트 내부는 `canonical ?? deprecated` 순서로 우선 적용하므로, 신규 prop 을 넘기면 그 값만 호출되고 신규 prop 이 없을 때만 구 prop 이 fallback 으로 호출됩니다.
-- React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
+- deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 의 `onChange` 계열은 v4.1.0 에서 지워졌고, 지금 이 규칙이 적용되는 것은 TextField·Textarea 의 `onChangeAction` 뿐입니다.
+- 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
 
 ---
 
-## v4.1.0 (의미 색 prop 을 tone 으로 · variant 값 이름 통일)
+## v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)
 
-기준을 **모양은 `variant`, 의미 색(info·success·warning·error 등)은 `tone`** 으로 정했습니다. Chip · InlineAlert 는 원래 `tone` 이었고, Alert · Badge · Toast 가 이번에 맞춥니다.
+이름이 바뀌거나 사라진 prop·값을 **별칭 없이 한 번에** 정리했습니다. 사내 패키지라 major 를 따로 내지 않고 minor 로 냅니다.
+prop 이름이 바뀐 곳은 타입 에러로 다 드러납니다. 다만 **클래스명·문자열 키는 타입이 잡지 못하니** 아래 "타입으로 안 잡히는 것" 을 따로 확인하세요.
 
-### 무엇이 바뀌나
+### 1. 의미 색은 `tone` (Alert · Badge · Toast)
+
+기준을 **모양은 `variant`, 의미 색(info·success·warning·error 등)은 `tone`** 으로 정했습니다. Chip · InlineAlert 는 원래 `tone` 이었습니다.
 
 | 컴포넌트 | 전 | 후 |
 |------|------|------|
@@ -52,28 +55,44 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 | Vanilla | `Bigtablet.Alert({ variant: 'info' })` | `{ tone: 'info' }` |
 | 타입 | `BadgeVariant` · `AlertVariant` · `ToastVariant` | `BadgeTone` · `AlertTone` · `ToastTone` |
 
-- 옛 이름은 `@deprecated` 별칭으로 계속 동작합니다. 둘 다 넘기면 `tone` 이 이깁니다. Toast 의 옛 값 `"default"` 는 `"neutral"` 로 바뀌어 적용됩니다.
-- **렌더 결과는 그대로입니다.** 클래스명 `.badge_variant_*` · `.alert_variant_*` 도 바뀌지 않았습니다 - 앱이 이 클래스로 덮어쓰고 있기 때문입니다. Toast 내부 클래스만 `toast_icon_default` · `toast_progress_default` → `*_neutral` 로 바뀌었습니다.
+렌더되는 클래스명 `.badge_variant_*` · `.alert_variant_*` 는 **바뀌지 않았습니다**. Toast 내부 클래스만 `toast_icon_default` · `toast_progress_default` → `*_neutral` 입니다.
 
-### 앱 쪽에서 할 일
+### 2. variant 값 이름 통일 (IconButton · Card · Chip)
 
-prop·옵션 키 `variant` 를 `tone` 으로, 타입 import 를 `*Tone` 으로 바꿉니다. 값은 Toast 의 `"default"` → `"neutral"` 만 바뀝니다.
+같은 모양이 컴포넌트마다 다른 이름이던 것을 Button 기준으로 맞췄습니다. **클래스명도 새 값을 따릅니다.**
 
-### variant 값 이름 통일 (IconButton · Card · Chip)
-
-같은 모양이 컴포넌트마다 다른 이름이던 것을 Button 기준으로 맞췄습니다.
-
-| 컴포넌트 | 옛 값 | 새 값 |
+| 컴포넌트 | 전 | 후 |
 |------|------|------|
 | IconButton `variant` | `"standard"` (기본값) · `"outlined"` | `"text"` (기본값) · `"outline"` |
 | Card `variant` | `"outlined"` | `"outline"` |
 | Chip `tone` | `"default"` (기본값) | `"neutral"` (기본값) |
 | Vanilla | `.bt-card--outlined` | `.bt-card--outline` |
 
-- 옛 값도 계속 받습니다. **넘긴 값 그대로 클래스가 붙습니다** - `variant="standard"` 면 `icon_button_variant_standard` 가 그대로 붙어, 그 클래스를 잡는 앱 CSS·테스트가 깨지지 않습니다.
-- 값을 **안 넘긴 경우**에만 기본값이 새 이름으로 바뀌어 클래스가 `icon_button_variant_text` · `chip_tone_neutral` 이 됩니다. 기본값의 클래스명을 직접 잡고 있었다면 새 이름으로 바꾸세요. 모양은 같습니다.
-- FilterBar 의 `loading` 은 `isLoading` 으로 바뀌었습니다 (DataView · Table 과 같은 이름). `loading` 도 deprecated 별칭으로 계속 받고, 둘 다 넘기면 `isLoading` 이 이깁니다.
-- Storybook 의 IconButton 스토리 이름이 `Standard` · `Outlined` → `Text` · `Outline` 으로 바뀌어 스토리 id(`components-general-iconbutton--standard` 등)가 달라졌습니다. 스토리 id 로 링크하거나 스냅샷을 찍고 있었다면 새 id 로 바꾸세요.
+Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outline` 으로 바뀌어 스토리 id 도 달라졌습니다.
+
+### 3. 지워진 prop · 타입
+
+| 컴포넌트 | 지워진 것 | 대신 |
+|------|------|------|
+| Dropdown | `onChange` | `onValueChange` |
+| Dropdown | `fullWidth` · `textAlign` | 없음 (원래 no-op). 인라인 폭은 부모를 `inline-block` + `width` 로 감싼다 |
+| DatePicker | `onChange` | `onValueChange` (이제 필수) |
+| DatePicker | `width` | `fullWidth` 또는 CSS |
+| Pagination | `onChange` | `onPageChange` (이제 필수) |
+| Accordion · OtpInput | `onChange` | `onValueChange` |
+| NavBar | `locale.onChange` | `locale.onValueChange` |
+| Toggle | `onChange` | `onCheckedChange` |
+| FilterBar | `loading` | `isLoading` (DataView · Table 과 같은 이름) |
+| 타입 | `ButtonAsButton` · `ButtonAsAnchor` | `ButtonProps<"button">` · `ButtonProps<"a">` |
+
+### 앱 쪽에서 할 일
+
+1. 패키지를 올리고 타입 체크를 돌려, 나오는 에러를 위 표대로 바꿉니다. 콜백은 시그니처가 같아 이름만 바꾸면 됩니다.
+2. **타입으로 안 잡히는 것**을 grep 으로 찾습니다.
+   - 테스트·CSS 에서 옛 클래스명을 잡는 곳: `icon_button_variant_standard` · `icon_button_variant_outlined` · `card_variant_outlined` · `chip_tone_default` · `toast_icon_default` · `toast_progress_default` · `.bt-card--outlined`
+   - DS 를 `vi.mock` 으로 갈아 끼운 테스트 stub 이 옛 prop 이름(`onChange` 등)을 받아 호출하는 곳
+   - 매핑 객체(`Record<string, BadgeVariant>` 등)의 타입 이름
+   - **변수에 따로 만든 객체로 넘기는 옵션** - `const locale = { …, onChange }` 처럼 객체를 먼저 만들고 넘기면 TS 가 남는 키를 에러로 잡지 않는다. NavBar `locale`, Alert·confirm 옵션, Toast `update` 패치가 여기에 해당한다
 
 ---
 

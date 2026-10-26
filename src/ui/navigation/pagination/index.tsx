@@ -18,22 +18,11 @@ interface PaginationBaseProps {
 	navLabel?: string;
 }
 
-// Pagination 은 controlled 전용 → 콜백 최소 하나 필수. canonical 은 `onPageChange` 이고
-// 구 `onChange` 도 아직 받는다. 폐기 표시는 멤버마다 인라인 JSDoc 으로 둔다 - 산문에만
-// 적으면 IDE 취소선도, 정적 검사도 걸리지 않는다(#603).
-type PaginationCallbacks =
-	| {
-			onPageChange: (page: number) => void;
-			/** @deprecated `onPageChange` 를 사용하세요. */
-			onChange?: (page: number) => void;
-	  }
-	| {
-			onPageChange?: (page: number) => void;
-			/** @deprecated `onPageChange` 를 사용하세요. */
-			onChange: (page: number) => void;
-	  };
-
-export type PaginationProps = PaginationBaseProps & PaginationCallbacks;
+// Pagination 은 controlled 전용 → 페이지 콜백이 필수다.
+export type PaginationProps = PaginationBaseProps & {
+	/** 페이지를 바꿀 때 호출된다 */
+	onPageChange: (page: number) => void;
+};
 
 /**
  * 시작-끝 범위의 숫자 배열을 만든다.
@@ -96,7 +85,6 @@ export const Pagination = ({
 	page,
 	totalPages,
 	onPageChange,
-	onChange,
 	prevLabel: prevLabelProp,
 	nextLabel: nextLabelProp,
 	navLabel: navLabelProp,
@@ -105,7 +93,6 @@ export const Pagination = ({
 	const prevLabel = prevLabelProp ?? t("pagination.prev");
 	const nextLabel = nextLabelProp ?? t("pagination.next");
 	const navLabel = navLabelProp ?? t("pagination.label");
-	const emit = onPageChange ?? onChange;
 	const prevDisabled = page <= 1;
 	const nextDisabled = page >= totalPages;
 
@@ -116,7 +103,7 @@ export const Pagination = ({
 			<button
 				type="button"
 				className="pagination_item"
-				onClick={() => emit?.(page - 1)}
+				onClick={() => onPageChange(page - 1)}
 				disabled={prevDisabled}
 				aria-label={prevLabel}
 			>
@@ -143,7 +130,7 @@ export const Pagination = ({
 							<button
 								type="button"
 								className={buttonClassName}
-								onClick={() => emit?.(it)}
+								onClick={() => onPageChange(it)}
 								aria-current={isActive ? "page" : undefined}
 							>
 								{it}
@@ -156,7 +143,7 @@ export const Pagination = ({
 			<button
 				type="button"
 				className="pagination_item"
-				onClick={() => emit?.(page + 1)}
+				onClick={() => onPageChange(page + 1)}
 				disabled={nextDisabled}
 				aria-label={nextLabel}
 			>

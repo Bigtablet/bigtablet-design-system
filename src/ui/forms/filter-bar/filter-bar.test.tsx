@@ -94,19 +94,6 @@ describe("FilterBar", () => {
 		expect(screen.queryByRole("status")).toBeNull();
 	});
 
-	// 옛 이름 `loading` 은 deprecated 별칭으로 계속 받는다. 둘 다 주면 `isLoading` 이 이긴다.
-	it("still accepts the deprecated loading prop, isLoading wins when both are set", () => {
-		const { rerender, onSubmit } = setup({ loading: true });
-		expect(screen.getByRole("search")).toHaveAttribute("aria-busy", "true");
-
-		rerender(
-			<FilterBar onSubmit={onSubmit} loading isLoading={false}>
-				<TextField label="이름" />
-			</FilterBar>,
-		);
-		expect(screen.getByRole("search")).not.toHaveAttribute("aria-busy");
-	});
-
 	it("shows a reset button only with onReset and keeps it apart from submit", () => {
 		const { rerender, onSubmit } = setup();
 		expect(screen.queryByRole("button", { name: "초기화" })).toBeNull();

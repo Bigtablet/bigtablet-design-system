@@ -85,7 +85,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 | 의미 색 (info·success·warning·error 등) | `tone` | Alert · Badge · Toast · Chip · InlineAlert - 회색 기본은 `neutral` |
 | 변경 콜백 | `on*Change` | `onValueChange` · `onCheckedChange` · `onPageChange` |
 
-Alert · Badge · Toast 는 예전에 의미 색을 `variant` 로 받았다. 지금도 `variant` 를 받지만 deprecated 이고, 둘 다 주면 `tone` 이 이긴다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 바뀌지 않았다.
+Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone` 으로 바뀌었다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 그대로다.
 
 ---
 
@@ -293,8 +293,6 @@ import Link from "next/link";
 (`<button href>` 는 유효하지 않다).
 
 > `ButtonProps` 는 `ButtonProps<T>` 제네릭이다. `ButtonProps` 그대로 쓰면 `T = "button"` 이다.
-> `ButtonAsButton`·`ButtonAsAnchor` 는 `ButtonProps<"button">`·`ButtonProps<"a">` 의 deprecated
-> 별칭으로 남겨 뒀다.
 
 ---
 
@@ -466,7 +464,6 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `value` | `string \| null` (single) · `string[]` (multiple) | - | 선택된 값 (controlled) |
 | `defaultValue` | `string \| null` (single) · `string[]` (multiple) | - | 기본 선택값 |
 | `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
-| ~~`onChange`~~ | `onValueChange` 와 동일 시그니처 | - | **deprecated** (v3.3.0, `onValueChange` 의 alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
 | `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터 - 대소문자·공백 무시, 한글 초성 `ㅅㅇ` · 조합 중인 글자 `서우` 도 찾는다) |
 | `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
@@ -478,9 +475,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
 | `className` | `string` | - | 루트 요소에 추가할 className |
-| ~~`fullWidth`~~ | `boolean` | - | **deprecated** (v3.0.0, no-op - 항상 부모 너비를 채움). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
-| ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
@@ -521,7 +516,7 @@ import { Chip } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
 | `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
-| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'default'` | `'neutral'` | 의미 색 (type=`static`에서만 적용). 옛 이름 `default`(= `neutral`) 도 받는다 |
+| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'neutral'` | 의미 색 (type=`static`에서만 적용) |
 | `label` | `string` | required | 라벨 텍스트 |
 | `selected` | `boolean` | - | 선택 상태 |
 | `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
@@ -554,7 +549,7 @@ import { Settings } from 'lucide-react';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline' \| 'standard' \| 'outlined'` | `'text'` | 스타일. Button 과 같은 이름. 옛 이름 `standard`(= `text`)·`outlined`(= `outline`) 도 받는다 |
+| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline'` | `'text'` | 스타일. Button 과 같은 이름 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 |
 | `icon` | `ReactNode` | required | 표시할 아이콘 |
 | `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
@@ -819,7 +814,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
   label="소속"
   required
   labelAction={
-    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onChange={setNoAffiliation} />
+    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
   }
 >
   <TextField disabled={noAffiliation} />
@@ -901,7 +896,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
 | `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
 | `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
-| `isLoading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용. 옛 이름 `loading` 도 받는다 (deprecated, `isLoading` 이 우선) |
+| `isLoading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용 |
 | `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
 | `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
 | `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
@@ -939,7 +934,7 @@ const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴
 
 // 드롭다운 변경 즉시 적용 - 검색 버튼 없음
 <FilterBar submitMode="instant" onReset={() => setStatus(null)} canReset={status !== null}>
-  <Dropdown label="상태" options={STATUS} value={status} onChange={setStatus} />
+  <Dropdown label="상태" options={STATUS} value={status} onValueChange={setStatus} />
 </FilterBar>
 ```
 
@@ -1717,7 +1712,6 @@ const [code, setCode] = useState('');
 | `length` | `4 \| 6` | `6` | OTP 자릿수 |
 | `value` | `string` | `''` | 제어형 값 (controlled 전용) |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (canonical) |
-| ~~`onChange`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `error` | `boolean` | `false` | 에러 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `supportingText` | `string` | - | 하단 도움말 텍스트 |
@@ -1768,7 +1762,7 @@ function YourComponent() {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `tone` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 의미 색. 옛 이름 `variant` 도 받는다 (deprecated, `tone` 이 우선) |
+| `tone` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 의미 색 |
 | `title` | `ReactNode` | - | 제목 |
 | `message` | `ReactNode` | - | 메시지 |
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
@@ -3392,7 +3386,7 @@ import { Card, Button } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `heading` | `ReactNode` | - | 카드 제목 (header) |
 | `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
-| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline' \| 'outlined'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시). 옛 이름 `outlined` 도 받는다 |
+| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시) |
 | `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
 | `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
 | `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
@@ -3713,7 +3707,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색. 옛 이름 `variant` 도 받는다 (deprecated, `tone` 이 우선) |
+| `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색 |
 | `shape` | `'dot' \| 'count' \| 'label'` | `'label'` | 모양 |
 | `count` | `number` | - | shape=`count`일 때 표시 숫자. undefined면 빈 상태 |
 | `max` | `number` | `99` | count 최댓값. 초과 시 `${max}+`로 표시 |

@@ -33,17 +33,6 @@ describe("IconButton", () => {
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_text");
 	});
 
-	// 옛 이름은 아직 받고, 넘긴 값 그대로 클래스가 붙는다 - 앱의 기존 선택자·테스트가 깨지지 않게.
-	it("still accepts the old standard/outlined names as-is", () => {
-		const { rerender } = render(
-			<IconButton variant="standard" icon={<TestIcon />} aria-label="action" />,
-		);
-		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_standard");
-
-		rerender(<IconButton variant="outlined" icon={<TestIcon />} aria-label="action" />);
-		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_outlined");
-	});
-
 	it("renders with different sizes", () => {
 		const { rerender } = render(<IconButton size="sm" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_size_sm");

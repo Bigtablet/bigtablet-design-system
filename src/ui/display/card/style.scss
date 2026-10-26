@@ -109,11 +109,9 @@
     }
   }
 
-  // ── Variant: outlined (투명 bg + 테두리만) ──────────────────────────
+  // ── Variant: outline (투명 bg + 테두리만) ──────────────────────────
 
-  // outlined 는 옛 이름 (#856) - 넘긴 값이 클래스로 붙으니 둘 다 칠한다
-  &_variant_outline,
-  &_variant_outlined {
+  &_variant_outline {
     background: transparent;
     border: token.$border_width_standard solid token.$color_border_default;
     box-shadow: none;

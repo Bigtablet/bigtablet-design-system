@@ -6,7 +6,7 @@ import { OtpInput } from "./index";
 
 function ControlledOtp(props: Partial<React.ComponentProps<typeof OtpInput>>) {
 	const [val, setVal] = React.useState(props.value ?? "");
-	return <OtpInput length={6} {...props} value={val} onChange={setVal} />;
+	return <OtpInput length={6} {...props} value={val} onValueChange={setVal} />;
 }
 
 describe("OtpInput", () => {
@@ -31,7 +31,7 @@ describe("OtpInput", () => {
 
 	it("calls onChange when digit is entered", () => {
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.change(inputs[0]!, { target: { value: "5" } });
 		expect(onChange).toHaveBeenCalledWith("5");
@@ -39,7 +39,7 @@ describe("OtpInput", () => {
 
 	it("rejects non-numeric input", () => {
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.change(inputs[0]!, { target: { value: "a" } });
 		expect(onChange).not.toHaveBeenCalled();
@@ -47,7 +47,7 @@ describe("OtpInput", () => {
 
 	it("handles paste", () => {
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.paste(inputs[0]!, {
 			clipboardData: { getData: () => "123456" },
@@ -58,7 +58,7 @@ describe("OtpInput", () => {
 	it("distributes a multi-char value from SMS autofill (onChange with full code)", () => {
 		// autocomplete="one-time-code" 자동입력은 첫 박스 onChange 로 전체 코드가 한 번에 들어옴
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.change(inputs[0]!, { target: { value: "123456" } });
 		expect(onChange).toHaveBeenCalledWith("123456");
@@ -66,7 +66,7 @@ describe("OtpInput", () => {
 
 	it("handles paste with non-numeric characters", () => {
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.paste(inputs[0]!, {
 			clipboardData: { getData: () => "12-34-56" },
@@ -76,7 +76,7 @@ describe("OtpInput", () => {
 
 	it("handles paste on non-first input", () => {
 		const onChange = vi.fn();
-		render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+		render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		fireEvent.paste(inputs[3]!, {
 			clipboardData: { getData: () => "123456" },
@@ -177,7 +177,7 @@ describe("OtpInput", () => {
 	describe("Backspace handling", () => {
 		it("clears current digit when current box has a value", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="123" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="123" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
 			expect(onChange).toHaveBeenCalledWith("12");
@@ -186,7 +186,7 @@ describe("OtpInput", () => {
 		it("moves to previous box and clears it when current is empty", () => {
 			// ControlledOtp 는 onChange 를 자기 setState 로 덮어 spy 가 불리지 않는다 - 직접 렌더한다
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="12" ariaLabel="OTP" onChange={onChange} />);
+			render(<OtpInput length={6} value="12" ariaLabel="OTP" onValueChange={onChange} />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[2]!.focus();
 			fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
@@ -196,7 +196,7 @@ describe("OtpInput", () => {
 
 		it("does nothing meaningful at index 0 with empty value", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			fireEvent.keyDown(inputs[0]!, { key: "Backspace" });
 			expect(onChange).not.toHaveBeenCalled();
@@ -239,7 +239,7 @@ describe("OtpInput", () => {
 
 		it("ignores unrelated keys", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="123456" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="123456" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
 			inputs[2]!.focus();
 			fireEvent.keyDown(inputs[2]!, { key: "Tab" });
@@ -251,7 +251,7 @@ describe("OtpInput", () => {
 	describe("Paste behavior", () => {
 		it("ignores paste with no digits", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "abc-xyz" },
@@ -261,7 +261,7 @@ describe("OtpInput", () => {
 
 		it("truncates paste data to length", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={4} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={4} value="" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.paste(inputs[0]!, {
 				clipboardData: { getData: () => "12345678" },
@@ -399,7 +399,7 @@ describe("OtpInput", () => {
 			// 이전엔 멀티문자를 거부했으나, SMS 자동입력이 첫 박스에 전체 코드를 넣으므로
 			// handlePaste 처럼 각 자리에 분배하도록 변경됨.
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.change(inputs[0]!, { target: { value: "12" } });
 			expect(onChange).toHaveBeenCalledWith("12");
@@ -407,7 +407,7 @@ describe("OtpInput", () => {
 
 		it("allows clearing a digit (empty string)", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="1" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="1" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.change(inputs[0]!, { target: { value: "" } });
 			expect(onChange).toHaveBeenCalledWith("");
@@ -415,31 +415,11 @@ describe("OtpInput", () => {
 
 		it("rejects special characters", () => {
 			const onChange = vi.fn();
-			render(<OtpInput length={6} value="" onChange={onChange} ariaLabel="OTP" />);
+			render(<OtpInput length={6} value="" onValueChange={onChange} ariaLabel="OTP" />);
 			const inputs = screen.getAllByRole("textbox");
 			fireEvent.change(inputs[0]!, { target: { value: "@" } });
 			expect(onChange).not.toHaveBeenCalled();
 		});
-	});
-
-	it("prefers onValueChange over the deprecated onChange when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChange = vi.fn();
-		render(
-			<OtpInput
-				length={6}
-				value=""
-				onValueChange={onValueChange}
-				onChange={onChange}
-				ariaLabel="OTP"
-			/>,
-		);
-		const inputs = screen.getAllByRole("textbox");
-		fireEvent.change(inputs[0]!, { target: { value: "5" } });
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("5");
-		expect(onChange).not.toHaveBeenCalled();
 	});
 
 	it("calls onValueChange (canonical) when digit entered", () => {

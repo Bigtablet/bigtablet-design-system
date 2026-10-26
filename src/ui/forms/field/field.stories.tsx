@@ -96,7 +96,7 @@ export const AnyInput: Story = {
 	render: () => (
 		<div style={{ display: "grid", gap: 20, width: 360 }}>
 			<Field name="role" label="권한" help="나중에 변경할 수 있습니다">
-				<Dropdown options={ROLES} fullWidth placeholder="선택하세요" />
+				<Dropdown options={ROLES} placeholder="선택하세요" />
 			</Field>
 			<Field name="joinedAt" label="가입일">
 				<DatePicker value="" onValueChange={() => {}} />
@@ -133,7 +133,9 @@ export const LabelAction: Story = {
 					name="companyName"
 					label="소속"
 					required
-					labelAction={<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />}
+					labelAction={
+						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onCheckedChange={setNone} />
+					}
 					help="소속이 없으면 오른쪽 토글을 켜세요"
 				>
 					<TextField fullWidth placeholder="회사명" disabled={none} />
@@ -162,7 +164,9 @@ export const GridAlignment: Story = {
 					name="companyName"
 					label="소속"
 					required
-					labelAction={<Toggle ariaLabel="소속 없음" size="sm" checked={none} onChange={setNone} />}
+					labelAction={
+						<Toggle ariaLabel="소속 없음" size="sm" checked={none} onCheckedChange={setNone} />
+					}
 				>
 					<TextField fullWidth placeholder="회사명" disabled={none} />
 				</Field>
@@ -204,7 +208,7 @@ export const ServerErrors: Story = {
 						<TextField fullWidth />
 					</Field>
 					<Field name="role" label="권한">
-						<Dropdown options={ROLES} fullWidth placeholder="선택하세요" />
+						<Dropdown options={ROLES} placeholder="선택하세요" />
 					</Field>
 					<Form.Actions>
 						<Button type="button" variant="outline" onClick={() => setErrors({})}>

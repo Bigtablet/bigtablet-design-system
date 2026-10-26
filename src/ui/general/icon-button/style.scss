@@ -50,9 +50,7 @@
 
   // ── Variant: Standard ───────────────────────────────────────────────────
 
-  // standard·outlined 는 옛 이름 (#856) - 넘긴 값이 클래스로 붙으니 둘 다 칠한다
-  &_variant_text,
-  &_variant_standard {
+  &_variant_text {
     background: transparent;
     color: token.$color_text_heading;
 
@@ -126,8 +124,7 @@
 
   // ── Variant: Outlined ───────────────────────────────────────────────────
 
-  &_variant_outline,
-  &_variant_outlined {
+  &_variant_outline {
     background: transparent;
     @include token.hairline;
     color: token.$color_text_heading;

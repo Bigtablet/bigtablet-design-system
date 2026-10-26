@@ -25,8 +25,6 @@ export interface AccordionProps
 	openKeys?: string[];
 	/** 펼침/접힘 콜백 (canonical). 열린 키 배열 전달 */
 	onValueChange?: (openKeys: string[]) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. */
-	onChange?: (openKeys: string[]) => void;
 }
 
 /**
@@ -43,7 +41,6 @@ export const Accordion = ({
 	defaultOpenKeys = [],
 	openKeys: controlledKeys,
 	onValueChange,
-	onChange,
 	className,
 	...props
 }: AccordionProps) => {
@@ -60,7 +57,7 @@ export const Accordion = ({
 		const isOpen = open.includes(key);
 		const next = isOpen ? open.filter((k) => k !== key) : multiple ? [...open, key] : [key];
 		if (!isControlled) setInternalKeys(next);
-		(onValueChange ?? onChange)?.(next);
+		onValueChange?.(next);
 	};
 
 	return (

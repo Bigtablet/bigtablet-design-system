@@ -41,7 +41,6 @@ export type {
 	BadgeShape,
 	BadgeSize,
 	BadgeTone,
-	BadgeVariant,
 } from "./ui/display/badge";
 export { Badge } from "./ui/display/badge";
 export type {
@@ -163,7 +162,6 @@ export type {
 	AlertActionsAlign,
 	AlertOptions,
 	AlertTone,
-	AlertVariant,
 	ConfirmOptions,
 } from "./ui/feedback/alert";
 export { AlertProvider, useAlert, useConfirm } from "./ui/feedback/alert";
@@ -179,7 +177,6 @@ export type {
 	ToastPatch,
 	ToastProviderProps,
 	ToastTone,
-	ToastVariant,
 } from "./ui/feedback/toast";
 export { ToastProvider } from "./ui/feedback/toast";
 export { useToast } from "./ui/feedback/toast/use-toast";
@@ -261,8 +258,6 @@ export { TimePicker } from "./ui/forms/time-picker";
 export type { ToggleProps } from "./ui/forms/toggle";
 export { Toggle } from "./ui/forms/toggle";
 export type {
-	ButtonAsAnchor,
-	ButtonAsButton,
 	ButtonProps,
 	ButtonSize,
 	ButtonVariant,

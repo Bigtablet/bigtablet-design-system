@@ -1267,7 +1267,7 @@
 		const config = {
 			title: "",
 			message: "",
-			tone: "info", // info, success, warning, error (옛 이름 `variant` 도 받는다 - tone 이 우선)
+			tone: "info", // info, success, warning, error
 			confirmText: "확인",
 			cancelText: "취소",
 			showCancel: false,
@@ -1281,11 +1281,10 @@
 			...options,
 		};
 
-		const tone = options.tone ?? options.variant ?? config.tone;
-
 		// Create alert DOM
 		const overlay = document.createElement("div");
-		overlay.className = `bt-alert__overlay bt-alert--${tone} is-open`;
+		// `{ tone: undefined }` 처럼 키만 오면 spread 가 기본값을 덮는다 - 한 번 더 받친다
+		overlay.className = `bt-alert__overlay bt-alert--${config.tone ?? "info"} is-open`;
 
 		overlay.innerHTML = `
       <div class="bt-alert__modal">

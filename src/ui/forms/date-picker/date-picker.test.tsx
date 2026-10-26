@@ -6,40 +6,42 @@ import { DatePicker } from "./index";
 
 describe("DatePicker", () => {
 	it("renders with label", () => {
-		render(<DatePicker label="Birth Date" onChange={() => {}} />);
+		render(<DatePicker label="Birth Date" onValueChange={() => {}} />);
 		expect(screen.getByText("Birth Date")).toBeInTheDocument();
 	});
 
 	it("renders year/month selects by default", () => {
-		render(<DatePicker onChange={() => {}} />);
+		render(<DatePicker onValueChange={() => {}} />);
 		// label + placeholder 로 각 Dropdown 에 두 번씩 "년"/"월" 나타남
 		expect(screen.getAllByText("년").length).toBeGreaterThan(0);
 		expect(screen.getAllByText("월").length).toBeGreaterThan(0);
 	});
 
 	it("renders day select in year-month-day mode", () => {
-		render(<DatePicker mode="year-month-day" onChange={() => {}} />);
+		render(<DatePicker mode="year-month-day" onValueChange={() => {}} />);
 		expect(screen.getAllByText("일").length).toBeGreaterThan(0);
 	});
 
 	it("does not render day select in year-month mode", () => {
-		render(<DatePicker mode="year-month" onChange={() => {}} />);
+		render(<DatePicker mode="year-month" onValueChange={() => {}} />);
 		expect(screen.queryByText("일")).not.toBeInTheDocument();
 	});
 
 	it("renders 3 select buttons in year-month-day mode", () => {
-		render(<DatePicker mode="year-month-day" onChange={() => {}} />);
+		render(<DatePicker mode="year-month-day" onValueChange={() => {}} />);
 		expect(screen.getAllByRole("combobox")).toHaveLength(3);
 	});
 
 	it("renders 2 select buttons in year-month mode", () => {
-		render(<DatePicker mode="year-month" onChange={() => {}} />);
+		render(<DatePicker mode="year-month" onValueChange={() => {}} />);
 		expect(screen.getAllByRole("combobox")).toHaveLength(2);
 	});
 
 	it("calls onChange when year is selected (year-month mode)", () => {
 		const onChange = vi.fn();
-		render(<DatePicker mode="year-month" startYear={2020} endYear={2025} onChange={onChange} />);
+		render(
+			<DatePicker mode="year-month" startYear={2020} endYear={2025} onValueChange={onChange} />,
+		);
 
 		// 첫 Select 버튼(연도) 열고 "2024" 클릭
 		const buttons = screen.getAllByRole("combobox");
@@ -51,7 +53,7 @@ describe("DatePicker", () => {
 
 	it("calls onChange when month is changed", () => {
 		const onChange = vi.fn();
-		render(<DatePicker value="2024" onChange={onChange} />);
+		render(<DatePicker value="2024" onValueChange={onChange} />);
 
 		const buttons = screen.getAllByRole("combobox");
 		// month = buttons[1]
@@ -63,7 +65,7 @@ describe("DatePicker", () => {
 
 	it("calls onChange when day is changed", () => {
 		const onChange = vi.fn();
-		render(<DatePicker value="2024-06" onChange={onChange} />);
+		render(<DatePicker value="2024-06" onValueChange={onChange} />);
 
 		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[2]!);
@@ -73,25 +75,25 @@ describe("DatePicker", () => {
 	});
 
 	it("shows selected year in button label", () => {
-		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		render(<DatePicker value="2024-06-15" onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[0]).toHaveTextContent("2024");
 	});
 
 	it("shows selected month in button label", () => {
-		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		render(<DatePicker value="2024-06-15" onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[1]).toHaveTextContent("06");
 	});
 
 	it("shows selected day in button label", () => {
-		render(<DatePicker value="2024-06-15" onChange={() => {}} />);
+		render(<DatePicker value="2024-06-15" onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[2]).toHaveTextContent("15");
 	});
 
 	it("disables all selects when disabled", () => {
-		render(<DatePicker disabled onChange={() => {}} />);
+		render(<DatePicker disabled onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		buttons.forEach((btn) => {
 			expect(btn).toBeDisabled();
@@ -99,49 +101,39 @@ describe("DatePicker", () => {
 	});
 
 	it("disables month select when year is not selected", () => {
-		render(<DatePicker onChange={() => {}} />);
+		render(<DatePicker onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[1]).toBeDisabled();
 	});
 
 	it("disables day select when month is not selected", () => {
-		render(<DatePicker value="2024" onChange={() => {}} />);
+		render(<DatePicker value="2024" onValueChange={() => {}} />);
 		const buttons = screen.getAllByRole("combobox");
 		expect(buttons[2]).toBeDisabled();
 	});
 
 	it("applies fullWidth class by default", () => {
-		const { container } = render(<DatePicker onChange={() => {}} />);
+		const { container } = render(<DatePicker onValueChange={() => {}} />);
 		expect(container.firstChild).toHaveClass("date_picker_full_width");
 	});
 
 	it("does not apply fullWidth class when fullWidth is false", () => {
-		const { container } = render(<DatePicker fullWidth={false} onChange={() => {}} />);
+		const { container } = render(<DatePicker fullWidth={false} onValueChange={() => {}} />);
 		expect(container.firstChild).not.toHaveClass("date_picker_full_width");
 	});
 
-	it("applies custom width style", () => {
-		const { container } = render(<DatePicker width={300} onChange={() => {}} />);
-		expect(container.firstChild).toHaveStyle({ width: "300px" });
-	});
-
-	it("applies string width style", () => {
-		const { container } = render(<DatePicker width="50%" onChange={() => {}} />);
-		expect(container.firstChild).toHaveStyle({ width: "50%" });
-	});
-
 	it("renders sr-only constraint description when minDate is set", () => {
-		render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
+		render(<DatePicker minDate="2020-01-01" onValueChange={() => {}} />);
 		expect(screen.getByText(/최소 날짜: 2020-01-01/)).toBeInTheDocument();
 	});
 
 	it("renders sr-only constraint description when selectableRange is until-today", () => {
-		render(<DatePicker selectableRange="until-today" onChange={() => {}} />);
+		render(<DatePicker selectableRange="until-today" onValueChange={() => {}} />);
 		expect(screen.getByText(/오늘까지 선택 가능/)).toBeInTheDocument();
 	});
 
 	it("links group to constraint description via aria-describedby", () => {
-		render(<DatePicker minDate="2020-01-01" onChange={() => {}} />);
+		render(<DatePicker minDate="2020-01-01" onValueChange={() => {}} />);
 		const group = document.querySelector("[role='group']") as HTMLElement;
 		const descId = group.getAttribute("aria-describedby");
 
@@ -150,14 +142,18 @@ describe("DatePicker", () => {
 	});
 
 	it("does not render constraint description when no constraints set", () => {
-		render(<DatePicker onChange={() => {}} />);
+		render(<DatePicker onValueChange={() => {}} />);
 		const group = document.querySelector("[role='group']") as HTMLElement;
 		expect(group).not.toHaveAttribute("aria-describedby");
 	});
 
 	it("uses custom minDateSrFormat when provided", () => {
 		render(
-			<DatePicker minDate="2020-01-01" minDateSrFormat="최소 날짜: {date}" onChange={() => {}} />,
+			<DatePicker
+				minDate="2020-01-01"
+				minDateSrFormat="최소 날짜: {date}"
+				onValueChange={() => {}}
+			/>,
 		);
 		expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
 	});
@@ -167,7 +163,7 @@ describe("DatePicker", () => {
 			<DatePicker
 				selectableRange="until-today"
 				selectableRangeUntilTodaySrText="오늘까지 선택 가능"
-				onChange={() => {}}
+				onValueChange={() => {}}
 			/>,
 		);
 		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
@@ -187,28 +183,6 @@ describe("DatePicker", () => {
 		fireEvent.click(buttons[0]!);
 		fireEvent.click(screen.getByText("2024"));
 		expect(onValueChange).toHaveBeenCalledWith("2024-01");
-	});
-
-	it("prefers onValueChange over the deprecated onChange when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChange = vi.fn();
-		render(
-			<DatePicker
-				mode="year-month"
-				startYear={2020}
-				endYear={2025}
-				onValueChange={onValueChange}
-				onChange={onChange}
-			/>,
-		);
-
-		const buttons = screen.getAllByRole("combobox");
-		fireEvent.click(buttons[0]!);
-		fireEvent.click(screen.getByText("2024"));
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("2024-01");
-		expect(onChange).not.toHaveBeenCalled();
 	});
 
 	it("keeps years before minDate out of the list", () => {

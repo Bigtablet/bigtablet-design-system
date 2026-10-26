@@ -77,7 +77,7 @@ describe("Accordion", () => {
 
 	it("fires onChange callback", () => {
 		const onChange = vi.fn();
-		render(<Accordion items={items} onChange={onChange} />);
+		render(<Accordion items={items} onValueChange={onChange} />);
 		fireEvent.click(screen.getByText("Title A"));
 		expect(onChange).toHaveBeenCalledWith(["a"]);
 	});
@@ -87,18 +87,6 @@ describe("Accordion", () => {
 		render(<Accordion items={items} onValueChange={onValueChange} />);
 		fireEvent.click(screen.getByText("Title A"));
 		expect(onValueChange).toHaveBeenCalledWith(["a"]);
-	});
-
-	it("prefers onValueChange over the deprecated onChange when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChange = vi.fn();
-		render(<Accordion items={items} onValueChange={onValueChange} onChange={onChange} />);
-
-		fireEvent.click(screen.getByText("Title A"));
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith(["a"]);
-		expect(onChange).not.toHaveBeenCalled();
 	});
 	it("builds valid ids even when a key contains whitespace", () => {
 		// aria-controls·aria-labelledby 는 IDREF 목록이라 공백이 있으면 두 참조로 쪼개진다.

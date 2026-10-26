@@ -187,9 +187,7 @@
     }
 
     // Tone variants (static type only) - color-mix로 dark mode 대응
-    // default 는 옛 이름 (#856) - 넘긴 값이 클래스로 붙으니 둘 다 칠한다
-    &_tone_neutral,
-    &_tone_default {
+    &_tone_neutral {
         background: token.$color_bg_solid_dim;
 
         .chip_content { color: token.$color_text_body; }

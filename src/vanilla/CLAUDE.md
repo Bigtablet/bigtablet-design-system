@@ -59,7 +59,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
 | Modal | `.bt-modal` | | `.is-open` |
-| Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outlined`, `--interactive` | |
+| Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
 | Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
 | Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
@@ -287,7 +287,7 @@ pagination.setPage(5);
 Bigtablet.Alert({
   title: 'Title',
   message: 'Message',
-  tone: 'info',  // info, success, warning, error (옛 이름 variant 도 받는다)
+  tone: 'info',  // info, success, warning, error
   showCancel: true,
   onConfirm: () => {},
   onCancel: () => {}

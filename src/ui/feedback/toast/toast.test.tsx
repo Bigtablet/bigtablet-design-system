@@ -793,23 +793,6 @@ describe("Toast programmatic control", () => {
 		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
 	});
 
-	// 옛 키 `variant` 는 deprecated 별칭이다. `"default"` 는 `"neutral"` 로 바뀌었다.
-	it("update maps the deprecated variant key, including default to neutral", () => {
-		let id = "";
-		render(
-			<ToastProvider>
-				<ToastTrigger fn={(t) => (id = t.info("처리 중…", { duration: 5000 }))} label="show" />
-				<ToastTrigger fn={(t) => t.update(id, { variant: "default" })} label="update" />
-			</ToastProvider>,
-		);
-
-		fireEvent.click(screen.getByRole("button", { name: "show" }));
-		fireEvent.click(screen.getByRole("button", { name: "update" }));
-
-		expect(document.querySelector(".toast_icon_neutral")).not.toBeNull();
-		expect(document.querySelector(".toast_icon_info")).toBeNull();
-	});
-
 	it("does not auto-dismiss when duration is Infinity", () => {
 		render(
 			<ToastProvider>

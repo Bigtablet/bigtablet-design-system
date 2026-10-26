@@ -274,14 +274,13 @@ export const SearchWithFilter: Story = {
 							<Dropdown
 								label="정렬"
 								value={sort}
-								onChange={(v) => setSort(v)}
+								onValueChange={(v) => setSort(v)}
 								options={[
 									{ value: "newest", label: "최신순" },
 									{ value: "rating", label: "평점순" },
 									{ value: "popular", label: "인기순" },
 									{ value: "nearby", label: "가까운 순" },
 								]}
-								fullWidth
 							/>
 						</div>
 					</Stack>
@@ -394,7 +393,7 @@ export const SettingsSection: Story = {
 							<Toggle
 								ariaLabel="이메일 알림"
 								checked={notifyEmail}
-								onChange={setNotifyEmail}
+								onCheckedChange={setNotifyEmail}
 								size="md"
 							/>
 						</Stack>
@@ -412,7 +411,7 @@ export const SettingsSection: Story = {
 							<Toggle
 								ariaLabel="푸시 알림"
 								checked={notifyPush}
-								onChange={setNotifyPush}
+								onCheckedChange={setNotifyPush}
 								size="md"
 							/>
 						</Stack>
@@ -427,7 +426,12 @@ export const SettingsSection: Story = {
 									긴급 알림만 SMS로 발송
 								</span>
 							</Stack>
-							<Toggle ariaLabel="SMS 알림" checked={notifySms} onChange={setNotifySms} size="md" />
+							<Toggle
+								ariaLabel="SMS 알림"
+								checked={notifySms}
+								onCheckedChange={setNotifySms}
+								size="md"
+							/>
 						</Stack>
 					</Stack>
 

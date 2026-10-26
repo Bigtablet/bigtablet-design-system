@@ -44,7 +44,7 @@ const meta: Meta<typeof IconButton> = {
 				component: `
 **IconButton** - 아이콘만 가진 버튼. \`aria-label\` 이 필수다.
 
-Variants: \`text\` / \`filled\` / \`tonal\` / \`outline\` - Button 과 같은 이름이다. 옛 이름 \`standard\`·\`outlined\` 도 아직 받는다.
+Variants: \`text\` / \`filled\` / \`tonal\` / \`outline\` - Button 과 같은 이름이다.
 크기: \`sm\` 40 (아이콘 20) / \`md\` 48 (아이콘 24).
 
 > ⚠️ **Docs 뷰 안내** - \`text\` variant 는 배경이 투명이라 부모 색에 의존한다. Storybook Docs 의 스토리 프리뷰 패널은 흰 배경 고정이라, 다크 모드로 토글하면 아이콘이 흰 위에 흰으로 보이지 않을 수 있다. 실제 동작은 좌측 사이드바에서 개별 스토리를 열어 Canvas 뷰에서 확인한다.
