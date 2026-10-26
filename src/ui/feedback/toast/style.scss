@@ -89,7 +89,8 @@
   // Toast icon - surface 위 직접 색 (배경 없는 SVG) - light/dark 자동 swap
   &_success { color: token.$color_status_success_on_surface; }
   &_error   { color: token.$color_status_error_on_surface; }
-  &_warning { color: token.$color_status_warning_on_surface; }
+  // warning 만 graphic 토큰 - 글자용 amber-700 은 아이콘에선 갈색으로 보여 error 와 안 갈린다 (#883)
+  &_warning { color: token.$color_status_warning_graphic; }
   &_info    { color: token.$color_status_info_on_surface; }
   &_neutral { color: token.$color_text_body; }
 
@@ -195,7 +196,7 @@
 
   &_success { background: token.$color_status_success; }
   &_error   { background: token.$color_status_error; }
-  &_warning { background: token.$color_status_warning; }
+  &_warning { background: token.$color_status_warning_graphic; }
   &_info    { background: token.$color_status_info; }
   &_neutral { background: token.$color_text_body; }
 }

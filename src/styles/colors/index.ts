@@ -60,6 +60,8 @@ export const baseColors = {
 	statusSuccessDarkText: "#4ADE80",
 	/** amber-400, on neutral_950 ~15.7:1 */
 	statusWarningDarkText: "#FBBF24",
+	/** amber-600, with #fff = 3.19:1 - icons and bars only (non-text 3:1). Fails 4.5:1, never use for text */
+	statusWarningGraphic: "#D97706",
 	/** blue-400, on neutral_950 ~9.4:1 */
 	statusInfoDarkText: "#60A5FA",
 	/** Skeleton - light mode (off-white grays, not in neutral scale) */
@@ -145,6 +147,8 @@ export const colors = {
 		errorOnSurface: "#B91C1C",
 		successOnSurface: "#047857",
 		warningOnSurface: "#B45309",
+		/** Warning icons and progress bars on a surface. amber-700 (warning) reads brown next to error red, and graphics only need 3:1 - not for text */
+		warningGraphic: "#D97706",
 		infoOnSurface: "#1D4ED8",
 	},
 	accent: {
