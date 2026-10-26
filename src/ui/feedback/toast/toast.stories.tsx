@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type * as React from "react";
+import { NOTICE_COMPARISON } from "../notice-comparison.docs";
 import { ToastProvider } from ".";
 import { useToast } from "./use-toast";
 
@@ -120,6 +121,8 @@ Types: \`message\` (기본) / \`success\` / \`warning\` / \`error\` / \`info\`.
 표시 함수는 **id** 를 반환한다. \`t.update(id, patch)\` 로 떠 있는 토스트를 바꾸고(진행 토스트),
 \`t.dismiss(id)\` 로 닫는다. \`{ duration: Infinity }\` 는 저절로 닫히지 않고, \`{ action }\` 은
 메시지 옆에 한 번 누를 수 있는 버튼("실행 취소")을 둔다.
+
+${NOTICE_COMPARISON}
 				`,
 			},
 		},

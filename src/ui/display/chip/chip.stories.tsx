@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
+import { LABEL_COMPARISON } from "../label-comparison.docs";
 import { Chip } from ".";
 
 const meta: Meta<typeof Chip> = {
@@ -30,8 +31,7 @@ const meta: Meta<typeof Chip> = {
 **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
 주요 prop: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / 기본 32), \`selected\`, \`removable\`.
 
-누를 수도 지울 수도 없는 **표시 전용**이면 \`Badge\` 입니다. 카운트(\`3\`)나 점 표시도 \`Badge\` 쪽입니다.
-반대로 사용자가 고르거나 떼어낼 수 있으면 Chip 입니다 - \`type="static"\` 은 그 사이에 있는 라벨 전용입니다.
+${LABEL_COMPARISON}
 				`,
 			},
 		},

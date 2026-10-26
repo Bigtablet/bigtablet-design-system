@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { LABEL_COMPARISON } from "../../display/label-comparison.docs";
 import { Field } from "../field";
 import { TagInput } from ".";
 
@@ -22,7 +23,9 @@ const meta: Meta<typeof TagInput> = {
 - 빈 입력에서 Backspace 로 마지막 태그 제거 (마우스 없이 되돌리는 경로)
 - 쉼표·줄바꿈이 섞인 목록을 붙여넣으면 여러 태그로 나뉜다
 - 포커스를 옮길 때 남은 입력을 확정한다 - Enter 를 잊어 값이 사라지지 않게
-        `,
+
+${LABEL_COMPARISON}
+				`,
 			},
 		},
 	},

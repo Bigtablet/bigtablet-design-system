@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
 import { Button } from "../../general/button";
+import { NOTICE_COMPARISON } from "../notice-comparison.docs";
 import { InlineAlert } from ".";
 
 const meta: Meta<typeof InlineAlert> = {
@@ -22,15 +23,10 @@ const meta: Meta<typeof InlineAlert> = {
 				component: `
 **InlineAlert** - 페이지 안에 **계속 남는** 안내·경고 블록.
 
-| 상황 | 컴포넌트 |
-| --- | --- |
-| 잠깐 보였다 사라지는 결과 알림 (저장됨) | \`Toast\` |
-| 진행 전에 확인을 받아야 함 (삭제할까요?) | \`AlertProvider\` (modal) |
-| 화면·위젯 전체가 비었거나 실패 | \`EmptyState\` / \`ErrorState\` |
-| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 개발 환경) | \`InlineAlert\` |
-
 라이브 리전을 강제하지 않습니다. 처음부터 있는 안내는 그대로 두고, 나중에 나타나는 알림만 \`role="status"\`(정보·성공) 또는 \`role="alert"\`(즉시 알아야 하는 오류)를 주세요.
-        `,
+
+${NOTICE_COMPARISON}
+				`,
 			},
 		},
 	},
