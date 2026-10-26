@@ -134,8 +134,11 @@ export const NotFound: Story = {
 				description="주소가 바뀌었거나 삭제된 페이지입니다. 주소를 다시 확인해 주세요."
 				action={
 					<div style={{ display: "flex", gap: 8 }}>
-						<Button>홈으로</Button>
-						<Button variant="outline">이전 페이지</Button>
+						{/* 라우터를 쓰면 `as={Link}` 로 바꾼다 */}
+						<Button href="/">홈으로</Button>
+						<Button variant="outline" onClick={() => window.history.back()}>
+							이전 페이지
+						</Button>
 					</div>
 				}
 				size="lg"
