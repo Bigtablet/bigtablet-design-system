@@ -1,8 +1,8 @@
 # Bigtablet Design System - Agent Guide
 
-> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^3.0.0`. Load this file as context before generating any component code.
+> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^4`. Load this file as context before generating any component code.
 
-**Version:** 3.0.0
+**Version:** 4.x - for the exact props of your installed version, see "Checking what a version gives you" below
 **React:** 19+ required
 **Bundle:** Pure React (`@bigtablet/design-system`) or Vanilla JS (`@bigtablet/design-system/vanilla`)
 
