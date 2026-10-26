@@ -953,13 +953,15 @@
        React 처럼 `__option-content` 에 flex:1 을 줘서 처리한다 (space-between 대신). */
     justify-content: flex-start;
     gap: var(--bt-spacing-sm);
-    padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
+    /* React 옵션 행(src/ui/_option-row.scss)과 같은 치수 - 14/20, 40px, 8·12 (#862) */
+    min-height: token.$control_height_md;
+    padding: var(--bt-spacing-sm) var(--bt-spacing-md);
     cursor: pointer;
     color: var(--bt-color-text-primary);
     background: transparent;
     font-family: var(--bt-font-family);
-    font-size: var(--bt-font-size-base);
-    line-height: var(--bt-line-height-normal);
+    font-size: var(--bt-font-size-sm);
+    line-height: var(--bt-line-height-20);
 
     /* 검색 필터로 숨긴 옵션 - display:flex 가 UA 의 [hidden] 규칙을 이기므로 명시적으로 끈다 */
     &[hidden] {
