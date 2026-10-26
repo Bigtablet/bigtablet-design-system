@@ -161,6 +161,13 @@ jobs:
     # vanilla - `src/vanilla/*.browser.test.ts` 레이아웃 테스트가 이 job 에서 돈다
     if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true' || needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
+    # Playwright 공식 이미지 - Chromium·시스템 패키지·폰트가 들어 있어 설치 단계가 없다.
+    # 예전엔 `playwright install --with-deps` 의 apt 가 Ubuntu 미러에 묶여 가끔 2~11분 멈췄다 (#872).
+    # 태그는 pnpm-lock.yaml 의 playwright 버전과 같아야 한다 - 어긋나면 아래 확인 단계가 실패한다.
+    # 다른 액션처럼 digest 로 고정한다 (태그 재푸시 대비). 올릴 때는 태그와 digest 를 함께 바꾼다 -
+    # digest 는 새 태그로 한 번 돌린 job 의 "Initialize containers" 로그 `Digest:` 줄에 나온다.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
 
     steps:
       - name: Checkout
@@ -178,23 +185,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Playwright + Chromium 다운로드 ~200MB 라 무겁다.
-      #
-      # 브라우저 바이너리는 캐시한다. 실측으로 이 스텝은 apt(`--with-deps`, 폰트 9개 설치)
-      # 11s + 다운로드 8.7s 로 갈리는데, 캐시가 잡는 것은 뒤쪽이다. 폰트는 a11y 렌더에
-      # 영향을 주므로 `--with-deps` 는 유지한다. `playwright install` 이 idempotent 해서
-      # 캐시가 맞으면 다운로드만 건너뛰므로 hit/miss 분기는 두지 않는다.
-      # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
-      - name: Cache Playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+      # 이미지 태그와 lockfile 의 playwright 버전이 어긋나면 브라우저 경로가 없어 테스트가 엉뚱하게 깨진다.
+      # 여기서 먼저 막고, 고칠 곳(컨테이너 태그)을 알려 준다.
+      - name: Check Playwright image matches lockfile
+        run: |
+          dirs=$(pnpm exec playwright install --dry-run chromium | awk '/Install location:/ {print $3}')
+          # 출력 형식이 바뀌어 경로를 하나도 못 읽으면 검사가 조용히 통과한다 - 그것도 실패로 본다
+          if [ -z "$dirs" ]; then
+            echo "::error::playwright install --dry-run 출력에서 브라우저 경로를 읽지 못했다 - 이 확인 단계의 파싱을 고칠 것"
+            exit 1
+          fi
+          missing=$(echo "$dirs" | while read -r dir; do [ -d "$dir" ] || echo "$dir"; done)
+          if [ -n "$missing" ]; then
+            echo "::error::Playwright 이미지에 이 lockfile 의 브라우저가 없다 - ci.yml a11y 의 container.image 태그를 $(pnpm exec playwright --version | awk '{print $2}') 로 맞출 것"
+            echo "$missing"
+            exit 1
+          fi
 
       - name: Run a11y tests (Storybook)
         run: pnpm test:storybook
