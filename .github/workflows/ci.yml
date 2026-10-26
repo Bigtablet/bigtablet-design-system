@@ -276,6 +276,12 @@ jobs:
       - name: Check test and story filenames
         run: pnpm check:filenames
 
+      # AGENT_GUIDE 카탈로그의 prop 이 소스에 있는지. AI 에이전트가 이 표로 코드를 만드는데,
+      # 소스를 바꾸고 가이드를 안 고쳐 5개 컴포넌트가 없는 prop 을 안내하고 있었다(#878).
+      # 소스만 읽으므로 여기(Build 앞)에 둔다.
+      - name: Check AGENT_GUIDE props
+        run: pnpm check:agent-guide
+
       # 빌드는 모든 변경에서 검증 (deps/scripts 변경도 빌드 영향 가능)
       - name: Build
         run: pnpm build

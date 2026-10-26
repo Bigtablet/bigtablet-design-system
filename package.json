@@ -62,6 +62,7 @@
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
 		"check:deprecated": "python3 scripts/check-deprecated-in-stories.py",
 		"check:filenames": "python3 scripts/check-story-test-filenames.py",
+		"check:agent-guide": "python3 scripts/check-agent-guide.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},
