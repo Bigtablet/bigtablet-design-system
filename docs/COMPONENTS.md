@@ -4083,7 +4083,8 @@ import { MediaCard } from "@bigtablet/design-system";
 | 에러로 인한 로드 실패 | △ EmptyState로 가능하지만 [Alert](#alert) `variant="error"`도 고려 |
 | 권한 없어서 못 봄 | ✅ EmptyState (illustration: Lock 아이콘) |
 | 로딩 중 | ❌ [Spinner](#spinner) 또는 Skeleton 권장 |
-| 페이지 전체 404/500 에러 | ❌ 전용 에러 페이지 + Hero 패턴 권장 |
+| 페이지 없음 (404) | ✅ EmptyState `size="lg"` + `fillHeight` (스토리 `404 (페이지 없음)`) |
+| 서버·네트워크 실패 (500 등) | ❌ [ErrorState](#errorstate) |
 
 **EmptyState vs Alert(error) 비교**
 
@@ -4096,11 +4097,23 @@ import { MediaCard } from "@bigtablet/design-system";
 
 #### size 선택 가이드
 
-| size | 패딩 | 제목 타이포 | 권장 위치 |
-|------|------|----------|----------|
-| `sm` | 24/16, gap 8 | title.medium | 모달 안, 사이드바, 좁은 영역, 검색 결과 |
-| `md` (기본) | 40/24, gap 12 | title.large | 콘텐츠 영역 전체 |
-| `lg` | 48/24, gap 16 | heading.small | 페이지 메인, 온보딩 |
+| size | 패딩 | 제목 타이포 | 아이콘 배지 / 아이콘 | 권장 위치 |
+|------|------|----------|----------|----------|
+| `sm` | 24/16 | title.medium | 40 / 20px | 모달 안, 사이드바, 좁은 영역, 검색 결과 |
+| `md` (기본) | 40/24 | title.large | 64 / 32px | 콘텐츠 영역 전체 |
+| `lg` | 48/24 | heading.small | 96 / 48px | 페이지 메인, 온보딩, 404 |
+
+간격은 위계를 둔다 - 제목·설명은 붙이고(4~8px), 아이콘 아래(12~20px)와 버튼 위(16~32px)는 더 띄운다.
+
+#### illustration 슬롯
+
+lucide 아이콘을 넘기면 원형 배지(`bg-additive`)에 올리고 아이콘 크기를 `size` 에 맞춰 고정한다 -
+아이콘의 `size` prop 은 넘기지 않아도 되고, 넘겨도 무시된다. 이미지나 직접 그린 svg 일러스트는 배지 없이
+원래 크기 그대로 렌더한다.
+
+```tsx
+<EmptyState illustration={<Inbox />} title="받은 메일이 없습니다" />
+```
 
 #### 구성 가이드
 
@@ -4179,7 +4192,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 기본 - 받은 메일
 <EmptyState
-  illustration={<Inbox size={48} />}
+  illustration={<Inbox />}
   title="받은 메일이 없습니다"
   description="새 메일이 오면 여기 표시됩니다."
   action={<Button>새 메일 작성</Button>}
@@ -4187,7 +4200,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 검색 결과 없음 - sm 사이즈, action 없음
 <EmptyState
-  illustration={<Search size={40} />}
+  illustration={<Search />}
   title="검색 결과가 없습니다"
   description="다른 키워드로 검색해보세요."
   size="sm"
@@ -4195,7 +4208,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 온보딩 - lg + 2개 CTA
 <EmptyState
-  illustration={<Inbox size={64} />}
+  illustration={<Inbox />}
   title="첫 프로젝트를 만들어보세요"
   description="프로젝트를 만들면 팀원과 협업하고 진행 상황을 추적할 수 있습니다."
   action={
@@ -4210,7 +4223,7 @@ import { Inbox, Search } from "lucide-react";
 // 라이브 검색 결과 (동적 변경) - role="status"
 <EmptyState
   role="status"
-  illustration={<Search size={40} />}
+  illustration={<Search />}
   title={`"${query}"에 대한 결과가 없습니다`}
   size="sm"
 />

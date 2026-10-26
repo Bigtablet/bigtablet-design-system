@@ -2,6 +2,7 @@
 
 // ErrorState - EmptyState 형제. error boundary / widget fallback.
 // icon 색은 status-error-on-surface (surface 위 직접 - light/dark 자동 swap).
+// 간격 위계는 EmptyState 와 같다 - page 는 lg, widget 은 sm 값.
 
 .error_state {
   display: flex;
@@ -9,7 +10,7 @@
   align-items: center;
   text-align: center;
   width: 100%;
-  gap: token.$spacing_12;
+  box-sizing: border-box; // width 100% + padding 이 부모를 넘지 않게
 
   &_icon {
     display: inline-flex;
@@ -29,17 +30,21 @@
     max-width: 480px;
   }
 
-  &_action {
-    margin-top: token.$spacing_8;
-  }
-
   // ── Variant: page (전체 화면 fallback) ─────────────────────────────────
 
   &_variant_page {
     justify-content: center;
     min-height: 320px;
     padding: token.$spacing_48 token.$spacing_24;
-    gap: token.$spacing_16;
+    gap: token.$spacing_8;
+
+    .error_state_icon {
+      margin-bottom: token.$spacing_20;
+    }
+
+    .error_state_action {
+      margin-top: token.$spacing_32;
+    }
 
     .error_state_title {
       @include token.heading_small_medium;
@@ -50,7 +55,15 @@
 
   &_variant_widget {
     padding: token.$spacing_24 token.$spacing_16;
-    gap: token.$spacing_8;
+    gap: token.$spacing_4;
+
+    .error_state_icon {
+      margin-bottom: token.$spacing_12;
+    }
+
+    .error_state_action {
+      margin-top: token.$spacing_16;
+    }
 
     .error_state_title {
       @include token.title_medium_medium;
