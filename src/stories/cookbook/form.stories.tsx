@@ -73,7 +73,7 @@ export const LoginForm: Story = {
 						placeholder="you@example.com"
 						leadingIcon={<Mail size={iconSize.md} />}
 						value={email}
-						onChangeAction={setEmail}
+						onValueChange={setEmail}
 						fullWidth
 					/>
 					<TextField
@@ -82,7 +82,7 @@ export const LoginForm: Story = {
 						placeholder="비밀번호 입력"
 						leadingIcon={<Lock size={iconSize.md} />}
 						value={password}
-						onChangeAction={setPassword}
+						onValueChange={setPassword}
 						fullWidth
 					/>
 
@@ -265,7 +265,7 @@ export const SearchWithFilter: Story = {
 								placeholder="매장 이름·지역으로 검색"
 								leadingIcon={<Search size={iconSize.md} />}
 								value={keyword}
-								onChangeAction={setKeyword}
+								onValueChange={setKeyword}
 								clearable
 								fullWidth
 							/>
@@ -353,14 +353,14 @@ export const SettingsSection: Story = {
 						<TextField
 							label="표시 이름"
 							value={displayName}
-							onChangeAction={setDisplayName}
+							onValueChange={setDisplayName}
 							fullWidth
 						/>
 						<TextField
 							label="연락처 이메일"
 							type="email"
 							value={contactEmail}
-							onChangeAction={setContactEmail}
+							onValueChange={setContactEmail}
 							fullWidth
 						/>
 					</Stack>

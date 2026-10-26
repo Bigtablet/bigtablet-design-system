@@ -10,17 +10,17 @@ describe("Textarea", () => {
 		expect(screen.getByRole("textbox")).toBeInTheDocument();
 	});
 
-	it("calls onChangeAction on input (uncontrolled)", () => {
+	it("calls onValueChange on input (uncontrolled)", () => {
 		const onChange = vi.fn();
-		render(<Textarea label="내용" onChangeAction={onChange} />);
+		render(<Textarea label="내용" onValueChange={onChange} />);
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
 		expect(onChange).toHaveBeenCalledWith("hello");
 	});
 
 	it("controlled value reflects prop", () => {
-		const { rerender } = render(<Textarea value="a" onChangeAction={() => {}} />);
+		const { rerender } = render(<Textarea value="a" onValueChange={() => {}} />);
 		expect(screen.getByRole("textbox")).toHaveValue("a");
-		rerender(<Textarea value="ab" onChangeAction={() => {}} />);
+		rerender(<Textarea value="ab" onValueChange={() => {}} />);
 		expect(screen.getByRole("textbox")).toHaveValue("ab");
 	});
 
@@ -60,9 +60,9 @@ describe("Textarea", () => {
 		expect(screen.getByRole("textbox")).toBeDisabled();
 	});
 
-	it("delayed IME - onChangeAction NOT called during composition", () => {
+	it("delayed IME - onValueChange NOT called during composition", () => {
 		const onChange = vi.fn();
-		render(<Textarea label="내용" onChangeAction={onChange} />);
+		render(<Textarea label="내용" onValueChange={onChange} />);
 		const ta = screen.getByRole("textbox");
 		fireEvent.compositionStart(ta);
 		fireEvent.change(ta, { target: { value: "ㅎ" } });
@@ -71,9 +71,9 @@ describe("Textarea", () => {
 		expect(onChange).toHaveBeenCalledWith("한");
 	});
 
-	it("immediate IME - onChangeAction called during composition", () => {
+	it("immediate IME - onValueChange called during composition", () => {
 		const onChange = vi.fn();
-		render(<Textarea label="내용" imeStrategy="immediate" onChangeAction={onChange} />);
+		render(<Textarea label="내용" imeStrategy="immediate" onValueChange={onChange} />);
 		const ta = screen.getByRole("textbox");
 		fireEvent.compositionStart(ta);
 		fireEvent.change(ta, { target: { value: "ㅎ" } });
@@ -83,7 +83,7 @@ describe("Textarea", () => {
 	it("transformValue applied (non-composition)", () => {
 		const onChange = vi.fn();
 		render(
-			<Textarea label="내용" transformValue={(v) => v.toUpperCase()} onChangeAction={onChange} />,
+			<Textarea label="내용" transformValue={(v) => v.toUpperCase()} onValueChange={onChange} />,
 		);
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "abc" } });
 		expect(onChange).toHaveBeenCalledWith("ABC");
@@ -92,23 +92,23 @@ describe("Textarea", () => {
 	it("controlled value does NOT override innerValue mid-composition", () => {
 		// immediate + controlled: 조합 중 부모 value 가 되돌아와도 입력 중 글자 보존
 		const { rerender } = render(
-			<Textarea value="ㄱ" imeStrategy="immediate" onChangeAction={() => {}} />,
+			<Textarea value="ㄱ" imeStrategy="immediate" onValueChange={() => {}} />,
 		);
 		const ta = screen.getByRole("textbox") as HTMLTextAreaElement;
 		fireEvent.compositionStart(ta);
 		fireEvent.change(ta, { target: { value: "가" } });
 		// 부모가 조합 중 이전 value 로 re-render - 가드로 인해 innerValue 유지
-		rerender(<Textarea value="ㄱ" imeStrategy="immediate" onChangeAction={() => {}} />);
+		rerender(<Textarea value="ㄱ" imeStrategy="immediate" onValueChange={() => {}} />);
 		expect(ta.value).toBe("가");
 		// 조합 종료 후엔 정상 동기화
 		fireEvent.compositionEnd(ta, { target: { value: "가" } });
 		expect(ta.value).toBe("가");
 	});
 
-	it("does NOT emit onChangeAction twice when compositionEnd is followed by duplicate onChange", () => {
+	it("does NOT emit onValueChange twice when compositionEnd is followed by duplicate onChange", () => {
 		// 일부 브라우저는 compositionEnd 직후 같은 값으로 onChange 를 한 번 더 트리거 → 중복 방출 차단 검증
 		const onChange = vi.fn();
-		render(<Textarea onChangeAction={onChange} />);
+		render(<Textarea onValueChange={onChange} />);
 		const ta = screen.getByRole("textbox");
 		fireEvent.compositionStart(ta);
 		fireEvent.change(ta, { target: { value: "한" } }); // delayed - 조합 중 방출 X
@@ -123,40 +123,6 @@ describe("Textarea", () => {
 		render(<Textarea label="내용" onValueChange={onValueChange} />);
 		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
 		expect(onValueChange).toHaveBeenCalledWith("hello");
-	});
-
-	it("prefers onValueChange over the deprecated onChangeAction when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChangeAction = vi.fn();
-		render(<Textarea label="내용" onValueChange={onValueChange} onChangeAction={onChangeAction} />);
-
-		fireEvent.change(screen.getByRole("textbox"), { target: { value: "hello" } });
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("hello");
-		expect(onChangeAction).not.toHaveBeenCalled();
-	});
-
-	it("prefers onValueChange over onChangeAction on the mid-composition (immediate) path", () => {
-		// imeStrategy="immediate" 는 emit() 을 거치지 않는 별도 방출 경로 - 여기서도 canonical 우선
-		const onValueChange = vi.fn();
-		const onChangeAction = vi.fn();
-		render(
-			<Textarea
-				label="내용"
-				imeStrategy="immediate"
-				onValueChange={onValueChange}
-				onChangeAction={onChangeAction}
-			/>,
-		);
-
-		const ta = screen.getByRole("textbox");
-		fireEvent.compositionStart(ta);
-		fireEvent.change(ta, { target: { value: "ㅎ" } });
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("ㅎ");
-		expect(onChangeAction).not.toHaveBeenCalled();
 	});
 
 	// ── toolbar 슬롯 ────────────────────────────────────────────────────────
