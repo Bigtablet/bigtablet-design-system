@@ -91,7 +91,7 @@
   &_error   { color: token.$color_status_error_on_surface; }
   &_warning { color: token.$color_status_warning_on_surface; }
   &_info    { color: token.$color_status_info_on_surface; }
-  &_default { color: token.$color_text_body; }
+  &_neutral { color: token.$color_text_body; }
 
   @include breakpoint.compact {
     margin-top: 0;
@@ -197,7 +197,7 @@
   &_error   { background: token.$color_status_error; }
   &_warning { background: token.$color_status_warning; }
   &_info    { background: token.$color_status_info; }
-  &_default { background: token.$color_text_body; }
+  &_neutral { background: token.$color_text_body; }
 }
 
 // WCAG 2.2.1 Timing Adjustable - 포인터를 올리거나 키보드 포커스가 안에 있는 동안

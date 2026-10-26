@@ -444,7 +444,7 @@ export const AdminDashboard: Story = {
 								</svg>
 							}
 							trailing={
-								<Badge shape="count" variant="error">
+								<Badge shape="count" tone="error">
 									5
 								</Badge>
 							}
@@ -515,7 +515,7 @@ export const AdminDashboard: Story = {
 				description="2026년 5월 20일 화요일"
 				actions={
 					<>
-						<Badge shape="dot" variant="success" />
+						<Badge shape="dot" tone="success" />
 						<Avatar name="박상민" size="md" />
 					</>
 				}

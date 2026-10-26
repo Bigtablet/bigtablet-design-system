@@ -29,7 +29,7 @@ function ToastDemoButtons() {
 	return (
 		<div style={demo_wrap_style}>
 			<button type="button" style={demo_btn_style} onClick={() => t.message("기본 메시지입니다.")}>
-				Default
+				Neutral
 			</button>
 			<button
 				type="button"
@@ -74,7 +74,7 @@ function ToastControlButtons() {
 					// 진행 토스트 - 같은 토스트를 갱신한다. duration: Infinity 는 진행 바 없이 떠 있다.
 					const id = t.info("업로드 중…", { duration: Infinity });
 					await new Promise((r) => setTimeout(r, 1500));
-					t.update(id, { variant: "success", message: "업로드 완료", duration: 3000 });
+					t.update(id, { tone: "success", message: "업로드 완료", duration: 3000 });
 				}}
 			>
 				진행 토스트 (update)

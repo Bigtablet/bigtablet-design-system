@@ -197,8 +197,8 @@ describe("Alert", () => {
 		expect(dialog).toHaveAttribute("aria-describedby");
 	});
 
-	it("applies variant class", () => {
-		renderWithProvider(<TestComponent options={{ variant: "error" }} />);
+	it("applies tone class", () => {
+		renderWithProvider(<TestComponent options={{ tone: "error" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 
@@ -206,16 +206,35 @@ describe("Alert", () => {
 		expect(dialog).toHaveClass("alert_variant_error");
 	});
 
+	// 옛 이름 `variant` 는 deprecated 별칭으로 계속 받는다. 둘 다 주면 `tone` 이 이긴다.
+	it("still accepts the deprecated variant option, tone wins when both are set", () => {
+		renderWithProvider(<TestComponent options={{ variant: "warning", tone: "success" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		const dialog = screen.getByRole("alertdialog");
+		expect(dialog).toHaveClass("alert_variant_success");
+		expect(dialog).not.toHaveClass("alert_variant_warning");
+	});
+
+	it("falls back to the deprecated variant option when tone is absent", () => {
+		renderWithProvider(<TestComponent options={{ variant: "warning" }} />);
+
+		fireEvent.click(screen.getByText("Show Alert"));
+
+		expect(screen.getByRole("alertdialog")).toHaveClass("alert_variant_warning");
+	});
+
 	it("does not render icon by default", () => {
-		renderWithProvider(<TestComponent options={{ variant: "info" }} />);
+		renderWithProvider(<TestComponent options={{ tone: "info" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 
 		expect(document.querySelector(".alert_icon")).not.toBeInTheDocument();
 	});
 
-	it("renders variant icon when showIcon=true", () => {
-		renderWithProvider(<TestComponent options={{ variant: "error", showIcon: true }} />);
+	it("renders tone icon when showIcon=true", () => {
+		renderWithProvider(<TestComponent options={{ tone: "error", showIcon: true }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 

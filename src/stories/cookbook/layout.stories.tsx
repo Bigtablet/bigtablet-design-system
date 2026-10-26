@@ -246,7 +246,7 @@ export const SidebarLayout: Story = {
 					</SidebarItem>
 					<SidebarItem
 						icon={<Receipt size={iconSize.lg} />}
-						trailing={<Badge shape="count" variant="accent" count={3} />}
+						trailing={<Badge shape="count" tone="accent" count={3} />}
 					>
 						주문
 					</SidebarItem>

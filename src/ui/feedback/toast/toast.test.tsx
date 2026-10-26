@@ -399,24 +399,24 @@ describe("Toast portal & a11y", () => {
 	});
 });
 
-// ── Toast variant classes ───────────────────────────────────────────────────
+// ── Toast tone classes ───────────────────────────────────────────────────
 
-describe("Toast variant classes", () => {
+describe("Toast tone classes", () => {
 	it.each([
 		["success", "toast_progress_success", "toast_icon_success"],
 		["error", "toast_progress_error", "toast_icon_error"],
 		["warning", "toast_progress_warning", "toast_icon_warning"],
 		["info", "toast_progress_info", "toast_icon_info"],
-		["default", "toast_progress_default", "toast_icon_default"],
+		["neutral", "toast_progress_neutral", "toast_icon_neutral"],
 	] as const)(
-		"applies %s variant classes to progress bar and icon",
-		(variant, progressClass, iconClass) => {
+		"applies %s tone classes to progress bar and icon",
+		(tone, progressClass, iconClass) => {
 			render(
 				<ToastProvider>
 					<ToastTrigger
 						fn={(t) => {
-							if (variant === "default") t.message("variant");
-							else t[variant]("variant");
+							if (tone === "neutral") t.message("tone");
+							else t[tone]("tone");
 						}}
 					/>
 				</ToastProvider>,
@@ -768,7 +768,7 @@ describe("Toast programmatic control", () => {
 		expect(screen.getByText("남는다")).toBeInTheDocument();
 	});
 
-	it("update(id, patch) changes message and variant in place", () => {
+	it("update(id, patch) changes message and tone in place", () => {
 		let id = "";
 		render(
 			<ToastProvider>
@@ -777,7 +777,7 @@ describe("Toast programmatic control", () => {
 					label="show"
 				/>
 				<ToastTrigger
-					fn={(t) => t.update(id, { message: "업로드 완료", variant: "error" })}
+					fn={(t) => t.update(id, { message: "업로드 완료", tone: "error" })}
 					label="update"
 				/>
 			</ToastProvider>,
@@ -791,6 +791,23 @@ describe("Toast programmatic control", () => {
 		expect(screen.queryByText("업로드 중…")).not.toBeInTheDocument();
 		expect(screen.getByRole("alert")).toHaveTextContent("업로드 완료");
 		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
+	});
+
+	// 옛 키 `variant` 는 deprecated 별칭이다. `"default"` 는 `"neutral"` 로 바뀌었다.
+	it("update maps the deprecated variant key, including default to neutral", () => {
+		let id = "";
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => (id = t.info("처리 중…", { duration: 5000 }))} label="show" />
+				<ToastTrigger fn={(t) => t.update(id, { variant: "default" })} label="update" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "show" }));
+		fireEvent.click(screen.getByRole("button", { name: "update" }));
+
+		expect(document.querySelector(".toast_icon_neutral")).not.toBeNull();
+		expect(document.querySelector(".toast_icon_info")).toBeNull();
 	});
 
 	it("does not auto-dismiss when duration is Infinity", () => {
@@ -901,10 +918,7 @@ describe("Toast programmatic control", () => {
 					fn={(t) => (id = t.info("업로드 중…", { duration: Infinity }))}
 					label="show"
 				/>
-				<ToastTrigger
-					fn={(t) => t.update(id, { variant: "error", message: "실패" })}
-					label="fail"
-				/>
+				<ToastTrigger fn={(t) => t.update(id, { tone: "error", message: "실패" })} label="fail" />
 				<ToastTrigger fn={(t) => t.update(id, { message: "재시도 중" })} label="retry" />
 			</ToastProvider>,
 		);

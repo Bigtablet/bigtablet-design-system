@@ -3,7 +3,7 @@ import * as React from "react";
 import { AlertProvider, useAlert, useConfirm } from ".";
 
 type AlertDemoProps = {
-	variant?: "info" | "success" | "warning" | "error";
+	tone?: "info" | "success" | "warning" | "error";
 	title?: React.ReactNode;
 	message?: React.ReactNode;
 	showCancel?: boolean;
@@ -15,7 +15,7 @@ type AlertDemoProps = {
 };
 
 const AlertDemo = ({
-	variant = "info",
+	tone = "info",
 	title = "알림",
 	message = "내용을 확인해주세요.",
 	showCancel = false,
@@ -32,7 +32,7 @@ const AlertDemo = ({
 				type="button"
 				onClick={() =>
 					showAlert({
-						variant,
+						tone,
 						title,
 						message,
 						showCancel,
@@ -72,14 +72,14 @@ const meta: Meta<typeof AlertDemo> = {
 	],
 	tags: ["autodocs"],
 	argTypes: {
-		variant: { control: "select", options: ["info", "success", "warning", "error"] },
+		tone: { control: "select", options: ["info", "success", "warning", "error"] },
 		title: { control: "text" },
 		message: { control: "text" },
 		showCancel: { control: "boolean" },
 		actionsAlign: { control: "select", options: ["left", "center", "right"] },
 	},
 	args: {
-		variant: "info",
+		tone: "info",
 		title: "알림",
 		message: "이것은 정보 알림입니다.",
 		showCancel: false,
@@ -91,7 +91,7 @@ const meta: Meta<typeof AlertDemo> = {
 				component: `
 **Alert** - 즉각 확인이 필요한 동작을 위한 모달 알림.
 
-Variants: \`info\` / \`success\` / \`warning\` / \`error\`.
+Tones (\`tone\`): \`info\` / \`success\` / \`warning\` / \`error\`.
 주요 prop: \`title\`, \`message\`, \`showCancel\`, \`actionsAlign\`, \`destructive\` (confirm 을 빨간색으로 강조), \`showIcon\`.
 사용: \`AlertProvider\` 하위에서 \`useAlert().showAlert({...})\`.
 				`,
@@ -104,18 +104,18 @@ export default meta;
 type Story = StoryObj<typeof AlertDemo>;
 
 export const Info: Story = {
-	render: () => <AlertDemo variant="info" title="알림" message="이것은 정보 알림입니다." />,
+	render: () => <AlertDemo tone="info" title="알림" message="이것은 정보 알림입니다." />,
 };
 
 export const Success: Story = {
 	render: () => (
-		<AlertDemo variant="success" title="성공" message="작업이 성공적으로 완료되었습니다." />
+		<AlertDemo tone="success" title="성공" message="작업이 성공적으로 완료되었습니다." />
 	),
 };
 
 export const Warning: Story = {
 	render: () => (
-		<AlertDemo variant="warning" title="경고" message="이 작업을 진행하시겠습니까?" showCancel />
+		<AlertDemo tone="warning" title="경고" message="이 작업을 진행하시겠습니까?" showCancel />
 	),
 };
 
@@ -123,7 +123,7 @@ export const ErrorAlert: Story = {
 	name: "Error",
 	render: () => (
 		<AlertDemo
-			variant="error"
+			tone="error"
 			title="오류"
 			message="작업을 처리하는 중 오류가 발생했습니다."
 			showCancel
@@ -142,7 +142,7 @@ export const Destructive: Story = {
 	},
 	render: () => (
 		<AlertDemo
-			variant="error"
+			tone="error"
 			title="계정을 삭제하시겠습니까?"
 			message="이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구 삭제됩니다."
 			showCancel
@@ -164,7 +164,7 @@ const DiscardDemo = () => {
 				type="button"
 				onClick={async () => {
 					const ok = await confirm({
-						variant: "warning",
+						tone: "warning",
 						title: "변경사항을 버릴까요?",
 						message: "저장하지 않은 내용은 복구할 수 없습니다.",
 						confirmText: "버리기",
@@ -207,7 +207,7 @@ const DeleteDemo = () => {
 						type="button"
 						onClick={() =>
 							confirm({
-								variant: "error",
+								tone: "error",
 								title: `${row} 를 삭제할까요?`,
 								message: "삭제한 주문은 되돌릴 수 없습니다.",
 								confirmText: "삭제",

@@ -1267,7 +1267,7 @@
 		const config = {
 			title: "",
 			message: "",
-			variant: "info", // info, success, warning, error
+			tone: "info", // info, success, warning, error (옛 이름 `variant` 도 받는다 - tone 이 우선)
 			confirmText: "확인",
 			cancelText: "취소",
 			showCancel: false,
@@ -1281,9 +1281,11 @@
 			...options,
 		};
 
+		const tone = options.tone ?? options.variant ?? config.tone;
+
 		// Create alert DOM
 		const overlay = document.createElement("div");
-		overlay.className = `bt-alert__overlay bt-alert--${config.variant} is-open`;
+		overlay.className = `bt-alert__overlay bt-alert--${tone} is-open`;
 
 		overlay.innerHTML = `
       <div class="bt-alert__modal">

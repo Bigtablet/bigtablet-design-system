@@ -287,7 +287,7 @@ pagination.setPage(5);
 Bigtablet.Alert({
   title: 'Title',
   message: 'Message',
-  variant: 'info',  // info, success, warning, error
+  tone: 'info',  // info, success, warning, error (옛 이름 variant 도 받는다)
   showCancel: true,
   onConfirm: () => {},
   onCancel: () => {}
