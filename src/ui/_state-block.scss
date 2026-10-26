@@ -99,7 +99,7 @@
     $icon: token.$icon_size_lg;
   } @else if $size == lg {
     $badge: token.$spacing_96;
-    $icon: token.$spacing_48;
+    $icon: token.$spacing_48; // icon_size 토큰은 xl(32px)까지라 48px 은 spacing 값을 빌린다
   }
 
   .#{$root}_#{$media}:has(> .lucide) {
