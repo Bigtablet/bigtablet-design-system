@@ -236,7 +236,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
-| `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
+| `IconButton` | Icon-only button. | `variant` (text/filled/tonal/outline), `size` (sm/md), `icon`, `aria-label` (required) |
 | `CopyButton` | Copy-to-clipboard button: shows "copied" for 2s and announces via hidden `role="status"`. Hook: `useClipboard()` → `{ copy, status, error, reset }`; `copyText()` one-shot. Falls back to `execCommand` (in-app browsers, http). | `text` (string or fn), `label`/`copiedLabel`/`failedLabel`, `iconOnly` (label = accessible name), `size`, `variant`, `resetAfter`, `onCopy`, `onError`. |
 | `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
 | `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
@@ -256,12 +256,12 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outlined - glass=frosted blur over colored bg, outlined=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
+| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outline - glass=frosted blur over colored bg, outline=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
 | `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
-| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
-| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
+| `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error; old name `variant` still accepted), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
+| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal/vertical line. | `orientation` |
@@ -272,8 +272,8 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, variant, showCancel, destructive, onConfirm, onCancel })` |
-| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, variant, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
+| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, tone, showCancel, destructive, onConfirm, onCancel })` |
+| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, tone, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
 | `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
 | `Spinner` | Inline loading indicator. | `size` (px), `ariaLabel`. Vercel-style 12-bar fade. |

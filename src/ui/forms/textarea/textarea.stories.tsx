@@ -173,7 +173,7 @@ export const ToolbarDisabled: Story = {
 					<IconButton
 						aria-label="굵게"
 						size="sm"
-						variant="standard"
+						variant="text"
 						icon={<Bold size={iconSize.sm} />}
 					/>
 				}
@@ -205,19 +205,19 @@ export const WithToolbar: Story = {
 						<IconButton
 							aria-label="굵게"
 							size="sm"
-							variant="standard"
+							variant="text"
 							icon={<Bold size={iconSize.sm} />}
 						/>
 						<IconButton
 							aria-label="기울임"
 							size="sm"
-							variant="standard"
+							variant="text"
 							icon={<Italic size={iconSize.sm} />}
 						/>
 						<IconButton
 							aria-label="밑줄"
 							size="sm"
-							variant="standard"
+							variant="text"
 							icon={<Underline size={iconSize.sm} />}
 						/>
 					</>

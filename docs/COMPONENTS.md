@@ -81,8 +81,8 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 | 고르는 것 | prop | 예 |
 |------|------|------|
-| 모양 | `variant` | Button `filled`/`outline`, Card `glass` |
-| 의미 색 (info·success·warning·error 등) | `tone` | Alert · Badge · Toast · Chip · InlineAlert |
+| 모양 | `variant` | Button·IconButton `text`/`outline`, Card `glass`/`outline` - 같은 모양은 같은 값 이름 |
+| 의미 색 (info·success·warning·error 등) | `tone` | Alert · Badge · Toast · Chip · InlineAlert - 회색 기본은 `neutral` |
 | 변경 콜백 | `on*Change` | `onValueChange` · `onCheckedChange` · `onPageChange` |
 
 Alert · Badge · Toast 는 예전에 의미 색을 `variant` 로 받았다. 지금도 `variant` 를 받지만 deprecated 이고, 둘 다 주면 `tone` 이 이긴다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 바뀌지 않았다.
@@ -521,7 +521,7 @@ import { Chip } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
 | `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
-| `tone` | `'default' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'default'` | 색조 (type=`static`에서만 적용) |
+| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'default'` | `'neutral'` | 의미 색 (type=`static`에서만 적용). 옛 이름 `default`(= `neutral`) 도 받는다 |
 | `label` | `string` | required | 라벨 텍스트 |
 | `selected` | `boolean` | - | 선택 상태 |
 | `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
@@ -542,10 +542,10 @@ import { IconButton } from '@bigtablet/design-system';
 import { Settings } from 'lucide-react';
 
 // Variants
-<IconButton variant="standard" icon={<Settings />} aria-label="설정" />
+<IconButton variant="text" icon={<Settings />} aria-label="설정" />
 <IconButton variant="filled" icon={<Settings />} aria-label="설정" />
 <IconButton variant="tonal" icon={<Settings />} aria-label="설정" />
-<IconButton variant="outlined" icon={<Settings />} aria-label="설정" />
+<IconButton variant="outline" icon={<Settings />} aria-label="설정" />
 
 // Sizes
 <IconButton size="sm" icon={<Settings />} aria-label="설정" />
@@ -554,7 +554,7 @@ import { Settings } from 'lucide-react';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'standard' \| 'filled' \| 'tonal' \| 'outlined'` | `'standard'` | 스타일 |
+| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline' \| 'standard' \| 'outlined'` | `'text'` | 스타일. Button 과 같은 이름. 옛 이름 `standard`(= `text`)·`outlined`(= `outline`) 도 받는다 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 |
 | `icon` | `ReactNode` | required | 표시할 아이콘 |
 | `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
@@ -3372,9 +3372,9 @@ import { Card, Button } from '@bigtablet/design-system';
   내용
 </Card>
 
-// variant - glass 는 컬러/이미지 배경 위에서 빛난다, outlined 는 투명 + 테두리
+// variant - glass 는 컬러/이미지 배경 위에서 빛난다, outline 은 투명 + 테두리
 <Card variant="glass" heading="Glass">내용</Card>
-<Card variant="outlined" heading="Outlined">내용</Card>
+<Card variant="outline" heading="Outline">내용</Card>
 
 // interactive - hover 시 살짝 떠오름 (클릭 가능한 카드)
 <Card interactive onClick={open}>내용</Card>
@@ -3392,11 +3392,11 @@ import { Card, Button } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `heading` | `ReactNode` | - | 카드 제목 (header) |
 | `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
-| `variant` | `'default' \| 'accent' \| 'glass' \| 'outlined'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outlined=투명 bg+테두리(shadow 무시) |
+| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline' \| 'outlined'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시). 옛 이름 `outlined` 도 받는다 |
 | `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
 | `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
 | `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
-| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outlined/glass 는 자체 처리) |
+| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outline/glass 는 자체 처리) |
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
 
@@ -4574,7 +4574,7 @@ const columns: TableColumn<User>[] = [
     key: "active",
     header: "상태",
     align: "center",
-    render: (u) => <Chip type="static" tone={u.active ? "success" : "default"} label={u.active ? "활성" : "휴면"} />,
+    render: (u) => <Chip type="static" tone={u.active ? "success" : "neutral"} label={u.active ? "활성" : "휴면"} />,
   },
 ];
 

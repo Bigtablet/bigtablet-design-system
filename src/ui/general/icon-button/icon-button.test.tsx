@@ -9,11 +9,7 @@ describe("IconButton", () => {
 		render(<IconButton icon={<TestIcon />} aria-label="action" />);
 		const button = screen.getByRole("button", { name: "action" });
 		expect(button).toBeInTheDocument();
-		expect(button).toHaveClass(
-			"icon_button",
-			"icon_button_variant_standard",
-			"icon_button_size_md",
-		);
+		expect(button).toHaveClass("icon_button", "icon_button_variant_text", "icon_button_size_md");
 	});
 
 	it("renders the icon", () => {
@@ -30,11 +26,22 @@ describe("IconButton", () => {
 		rerender(<IconButton variant="tonal" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_tonal");
 
+		rerender(<IconButton variant="outline" icon={<TestIcon />} aria-label="action" />);
+		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_outline");
+
+		rerender(<IconButton variant="text" icon={<TestIcon />} aria-label="action" />);
+		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_text");
+	});
+
+	// 옛 이름은 아직 받고, 넘긴 값 그대로 클래스가 붙는다 - 앱의 기존 선택자·테스트가 깨지지 않게.
+	it("still accepts the old standard/outlined names as-is", () => {
+		const { rerender } = render(
+			<IconButton variant="standard" icon={<TestIcon />} aria-label="action" />,
+		);
+		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_standard");
+
 		rerender(<IconButton variant="outlined" icon={<TestIcon />} aria-label="action" />);
 		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_outlined");
-
-		rerender(<IconButton variant="standard" icon={<TestIcon />} aria-label="action" />);
-		expect(screen.getByRole("button")).toHaveClass("icon_button_variant_standard");
 	});
 
 	it("renders with different sizes", () => {

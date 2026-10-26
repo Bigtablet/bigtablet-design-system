@@ -10,7 +10,7 @@ const meta: Meta<typeof Chip> = {
 		type: { control: "select", options: ["basic", "input", "filter", "static"] },
 		tone: {
 			control: "select",
-			options: ["default", "accent", "info", "success", "warning", "error"],
+			options: ["neutral", "accent", "info", "success", "warning", "error"],
 		},
 		size: { control: "select", options: [undefined, "sm", "md"] },
 		label: { control: "text" },
@@ -66,7 +66,7 @@ export const Static: Story = {
 	name: "Static (tone)",
 	render: () => (
 		<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-			<Chip type="static" tone="default" label="Default" />
+			<Chip type="static" tone="neutral" label="Neutral" />
 			<Chip type="static" tone="accent" label="Accent" />
 			<Chip type="static" tone="info" label="Info" />
 			<Chip type="static" tone="success" label="Success" />
@@ -95,7 +95,7 @@ export const Disabled: Story = {
 			</div>
 			{/* static 은 컨트롤이 아니라 텍스트 라벨이라 흐려지지 않는다 - 흐리면 대비가 AA 미달. */}
 			<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-				<Chip type="static" tone="default" label="Default" disabled />
+				<Chip type="static" tone="neutral" label="Neutral" disabled />
 				<Chip type="static" tone="accent" label="Accent" disabled />
 				<Chip type="static" tone="info" label="Info" disabled />
 				<Chip type="static" tone="success" label="Success" disabled />

@@ -4,7 +4,8 @@ import type * as React from "react";
 import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export type CardVariant = "default" | "accent" | "glass" | "outlined";
+/** `outlined` 는 옛 이름이다 - `outline` 을 쓴다. */
+export type CardVariant = "default" | "accent" | "glass" | "outline" | "outlined";
 
 export type CardFooterAlign = "start" | "between" | "end";
 
@@ -23,7 +24,9 @@ export interface CardProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivEle
 	 * 카드 variant (기본값: "default")
 	 * - "accent": inverted bg + white text (강조 카드)
 	 * - "glass": 반투명 + backdrop blur (컬러/이미지 배경 위에 권장)
-	 * - "outlined": 투명 bg + 테두리만 (shadow 무시)
+	 * - "outline": 투명 bg + 테두리만 (shadow 무시)
+	 *
+	 * `outlined`(= `outline`) 는 옛 이름이라 다음 정리 때 지운다 (#856) - 클래스는 넘긴 값 그대로 붙어 앱의 기존 선택자가 깨지지 않는다.
 	 */
 	variant?: CardVariant;
 	/** hover 시 살짝 떠오르는 인터랙션 (기본값: false). 클릭 가능한 카드에 사용 */
