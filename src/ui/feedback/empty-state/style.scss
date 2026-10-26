@@ -1,28 +1,8 @@
 @use "src/styles/token" as token;
+@use "src/ui/state-block" as *;
 
-// size 별 배지·아이콘 크기 - 넘긴 아이콘의 `size` prop 은 무시된다. CSS 변수(--bt-*)로 두지 않는 건
-// --bt-* 가 공개 계약(check:css-vars)이라서다. 여기 크기는 내부 값이다.
-@mixin badge($badge, $icon) {
-  .empty_state_illustration:has(> .lucide) {
-    width: $badge;
-    height: $badge;
-
-    > .lucide {
-      width: $icon;
-      height: $icon;
-    }
-  }
-}
-
-// 간격 위계: 제목-설명은 `gap` 으로 붙이고, 아이콘 아래와 버튼 위는 margin 으로 더 띄운다.
-// 한 gap 으로 다 띄우면 네 요소가 같은 거리로 늘어서 한 덩어리로 안 읽힌다.
 .empty_state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box; // width 100% + padding 이 부모를 넘지 않게
+  @include state_block;
 
   // 부모 높이를 채우고 세로 중앙 정렬. 없을 때는 콘텐츠가 긴 래퍼 상단에 붙어 아래가 비어 보여
   // 앱마다 `margin: auto` 래퍼를 따로 만들고 있었다. 미지정 시 위 기본값과 동일하게 동작한다.
@@ -33,80 +13,23 @@
 
   &_illustration {
     color: token.$color_text_caption;
-    display: inline-flex;
-
-    // lucide 아이콘이면 원형 배지에 올린다. 크기는 아래 size 블록의 `badge` mixin 이 정한다.
-    // 이미지·직접 그린 svg 일러스트는 배지 없이 원래 크기 그대로 둔다.
-    &:has(> .lucide) {
-      align-items: center;
-      justify-content: center;
-      border-radius: token.$radius_full;
-      background: token.$color_bg_additive;
-    }
-  }
-
-  &_title {
-    @include token.title_large_medium;
-    color: token.$color_text_heading;
-    margin: 0;
-  }
-
-  &_description {
-    @include token.body_small;
-    color: token.$color_text_body;
-    margin: 0;
-    max-width: 480px;
+    @include state_badge(token.$color_bg_additive);
   }
 
   // ── Size ─────────────────────────────────────────────────────────────
 
   &_size_sm {
-    @include badge(token.$spacing_40, token.$icon_size_lg);
-    padding: token.$spacing_24 token.$spacing_16;
-    gap: token.$spacing_4;
-
-    .empty_state_illustration {
-      margin-bottom: token.$spacing_12;
-    }
-
-    .empty_state_title {
-      @include token.title_medium_medium;
-    }
-
-    .empty_state_action {
-      margin-top: token.$spacing_16;
-    }
+    @include state_spacing(sm, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, sm);
   }
 
   &_size_md {
-    @include badge(token.$spacing_64, token.$icon_size_xl);
-    padding: token.$spacing_40 token.$spacing_24;
-    gap: token.$spacing_8;
-
-    .empty_state_illustration {
-      margin-bottom: token.$spacing_16;
-    }
-
-    .empty_state_action {
-      margin-top: token.$spacing_24;
-    }
+    @include state_spacing(md, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, md);
   }
 
   &_size_lg {
-    @include badge(token.$spacing_96, token.$spacing_48);
-    padding: token.$spacing_48 token.$spacing_24;
-    gap: token.$spacing_8;
-
-    .empty_state_illustration {
-      margin-bottom: token.$spacing_20;
-    }
-
-    .empty_state_title {
-      @include token.heading_small_medium;
-    }
-
-    .empty_state_action {
-      margin-top: token.$spacing_32;
-    }
+    @include state_spacing(lg, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, lg);
   }
 }

@@ -4258,8 +4258,10 @@ import { Inbox, Search } from "lucide-react";
 
 | variant | 용도 | 시각 |
 |---------|------|------|
-| `page` (기본) | 전체 화면/영역 fallback (route error boundary) | 큰 아이콘 (48) + `min-height: 320` + 넉넉한 패딩 |
-| `widget` | 위젯/카드 내부 인라인 fallback | 작은 아이콘 (28) + 좁은 패딩 |
+| `page` (기본) | 전체 화면/영역 fallback (route error boundary) | 배지 96 / 아이콘 48 + `min-height: 320` + 넉넉한 패딩 |
+| `widget` | 위젯/카드 내부 인라인 fallback | 배지 40 / 아이콘 20 + 좁은 패딩 |
+
+`variant` 는 [EmptyState](#emptystate) 의 `size` 에 대응한다 - `page` ≈ `lg`, `widget` ≈ `sm` (간격 위계·제목 크기가 같다). 같은 화면에 둘을 섞어 쓸 때 이 짝을 맞추면 높이와 리듬이 어긋나지 않는다.
 
 #### 아이콘
 
@@ -4273,7 +4275,7 @@ import { Inbox, Search } from "lucide-react";
 |------|------|---------|-------------|
 | `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 |
-| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
+| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. lucide 아이콘은 variant 에 맞는 원형 배지(`status-error-container`)에 올라가고 크기가 고정된다. 이미지·직접 그린 svg 는 그대로. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
 | `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
 | `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |
@@ -4306,7 +4308,7 @@ import { ErrorState, Button } from "@bigtablet/design-system";
 // 커스텀 아이콘
 import { ServerCrash } from "lucide-react";
 <ErrorState
-  icon={<ServerCrash size={48} strokeWidth={1.5} />}
+  icon={<ServerCrash strokeWidth={1.5} />}
   title="서버에 연결할 수 없습니다"
   action={<Button onClick={refetch}>새로고침</Button>}
 />
