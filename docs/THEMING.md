@@ -626,6 +626,11 @@ html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 | 테두리 (입력 error 상태) | `--bt-color-status-error` - 비텍스트는 3:1 기준이라 다크에서도 통과 |
 | 텍스트 (helper, 제목, outline·text 버튼 라벨) | `--bt-color-status-error-on-surface` |
 
+**warning 아이콘·진행 바는 `--bt-color-status-warning-graphic` 을 쓴다.** 라이트의 `status-warning`(amber-700)은
+글자 대비 4.5:1 을 맞춘 값이라, 아이콘·바에 쓰면 갈색으로 보여 error 빨강과 잘 갈리지 않는다. 그래픽은
+3:1 이면 되므로(WCAG 1.4.11) 라이트 amber-600 `#D97706`(흰 배경 3.19:1), 다크 amber-400 `#FBBF24` 를 쓴다.
+**글자에는 쓰지 않는다** - 라이트에서 4.5:1 에 못 미친다. 지금은 Toast 의 warning 아이콘·진행 바가 쓴다.
+
 **고정 표면 위의 텍스트는 예외다.** brand 표면 위 `--bt-color-brand-on-primary`, 스크림·glass 위
 `--bt-color-text-on-dark-*`, status 표면 위 `-on-default`·`-on-container` 는 표면 자체가 테마와
 무관하므로 대비가 일정하다 - 이름이 그 짝을 밝힌다.
