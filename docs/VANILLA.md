@@ -697,7 +697,7 @@ Alert는 JavaScript로만 사용합니다.
 
 <!-- Variant (React Card variant prop 과 동일) -->
 <div class="bt-card bt-card--accent bt-card--p-md">Accent</div>
-<div class="bt-card bt-card--outlined bt-card--p-md">Outlined (shadow 무시)</div>
+<div class="bt-card bt-card--outline bt-card--p-md">Outline (shadow 무시. 옛 이름 bt-card--outlined 도 동작)</div>
 <div class="bt-card bt-card--glass bt-card--p-md">Glass (컬러/이미지 배경 위에서)</div>
 
 <!-- interactive - hover 시 살짝 떠오름 (React interactive prop) -->

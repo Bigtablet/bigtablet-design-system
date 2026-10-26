@@ -26,7 +26,7 @@ const meta: Meta<typeof IconButton> = {
 	component: IconButton,
 	tags: ["autodocs"],
 	argTypes: {
-		variant: { control: "select", options: ["standard", "filled", "tonal", "outlined"] },
+		variant: { control: "select", options: ["text", "filled", "tonal", "outline"] },
 		size: { control: "select", options: ["sm", "md"] },
 		icon: { control: "select", options: Object.keys(iconMap), mapping: iconMap },
 		disabled: { control: "boolean" },
@@ -34,7 +34,7 @@ const meta: Meta<typeof IconButton> = {
 	},
 	args: {
 		icon: "Plus" as unknown as React.ReactNode,
-		variant: "standard",
+		variant: "text",
 		size: "md",
 		"aria-label": "추가",
 	},
@@ -44,10 +44,10 @@ const meta: Meta<typeof IconButton> = {
 				component: `
 **IconButton** - 아이콘만 가진 버튼. \`aria-label\` 이 필수다.
 
-Variants: \`standard\` / \`filled\` / \`tonal\` / \`outlined\`.
+Variants: \`text\` / \`filled\` / \`tonal\` / \`outline\` - Button 과 같은 이름이다. 옛 이름 \`standard\`·\`outlined\` 도 아직 받는다.
 크기: \`sm\` 40 (아이콘 20) / \`md\` 48 (아이콘 24).
 
-> ⚠️ **Docs 뷰 안내** - \`standard\` variant 는 배경이 투명이라 부모 색에 의존한다. Storybook Docs 의 스토리 프리뷰 패널은 흰 배경 고정이라, 다크 모드로 토글하면 아이콘이 흰 위에 흰으로 보이지 않을 수 있다. 실제 동작은 좌측 사이드바에서 개별 스토리를 열어 Canvas 뷰에서 확인한다.
+> ⚠️ **Docs 뷰 안내** - \`text\` variant 는 배경이 투명이라 부모 색에 의존한다. Storybook Docs 의 스토리 프리뷰 패널은 흰 배경 고정이라, 다크 모드로 토글하면 아이콘이 흰 위에 흰으로 보이지 않을 수 있다. 실제 동작은 좌측 사이드바에서 개별 스토리를 열어 Canvas 뷰에서 확인한다.
 				`,
 			},
 		},
@@ -64,7 +64,7 @@ type Story = StoryObj<typeof IconButton>;
  * 접근성 이름은 `aria-label`(또는 `aria-labelledby`)이 **타입상 필수**다 - 아이콘만 있어
  * 화면에 읽을 글자가 없기 때문이다.
  */
-export const Standard: Story = { args: { variant: "standard" } };
+export const Text: Story = { args: { variant: "text" } };
 
 /**
  * 배경이 채워져 주 액션에 쓴다. 한 화면에 여러 개 두지 않는다 - 아이콘만으로 구분되는
@@ -75,8 +75,8 @@ export const Filled: Story = { args: { variant: "filled" } };
 /** 옅은 강조. `filled` 만큼 튀지 않으면서 배경에 묻히지도 않는 중간 단계다. */
 export const Tonal: Story = { args: { variant: "tonal" } };
 
-/** 테두리로 경계를 만든다. `standard` 가 묻히는 자리(이미지 위, 색 배경 위)의 대안이다. */
-export const Outlined: Story = { args: { variant: "outlined" } };
+/** 테두리로 경계를 만든다. `text` 가 묻히는 자리(이미지 위, 색 배경 위)의 대안이다. */
+export const Outline: Story = { args: { variant: "outline" } };
 
 /**
  * 잠긴 상태. **`aria-label` 은 잠겨 있어도 그대로 둔다** - 스크린리더가 무엇이 잠겼는지

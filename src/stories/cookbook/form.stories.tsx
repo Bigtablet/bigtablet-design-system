@@ -290,7 +290,7 @@ export const SearchWithFilter: Story = {
 						<Chip
 							type="static"
 							size="sm"
-							tone="default"
+							tone="neutral"
 							leadingIcon={<Filter size={iconSize.xs} />}
 							label="활성 필터"
 						/>

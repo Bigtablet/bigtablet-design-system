@@ -7,7 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
-- [v4.1.0 (의미 색 prop 을 tone 으로 - Alert · Badge · Toast)](#v410-의미-색-prop-을-tone-으로---alert--badge--toast)
+- [v4.1.0 (의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
 - [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
@@ -37,7 +37,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
-## v4.1.0 (의미 색 prop 을 tone 으로 - Alert · Badge · Toast)
+## v4.1.0 (의미 색 prop 을 tone 으로 · variant 값 이름 통일)
 
 기준을 **모양은 `variant`, 의미 색(info·success·warning·error 등)은 `tone`** 으로 정했습니다. Chip · InlineAlert 는 원래 `tone` 이었고, Alert · Badge · Toast 가 이번에 맞춥니다.
 
@@ -58,6 +58,21 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ### 앱 쪽에서 할 일
 
 prop·옵션 키 `variant` 를 `tone` 으로, 타입 import 를 `*Tone` 으로 바꿉니다. 값은 Toast 의 `"default"` → `"neutral"` 만 바뀝니다.
+
+### variant 값 이름 통일 (IconButton · Card · Chip)
+
+같은 모양이 컴포넌트마다 다른 이름이던 것을 Button 기준으로 맞췄습니다.
+
+| 컴포넌트 | 옛 값 | 새 값 |
+|------|------|------|
+| IconButton `variant` | `"standard"` (기본값) · `"outlined"` | `"text"` (기본값) · `"outline"` |
+| Card `variant` | `"outlined"` | `"outline"` |
+| Chip `tone` | `"default"` (기본값) | `"neutral"` (기본값) |
+| Vanilla | `.bt-card--outlined` | `.bt-card--outline` |
+
+- 옛 값도 계속 받습니다. **넘긴 값 그대로 클래스가 붙습니다** - `variant="standard"` 면 `icon_button_variant_standard` 가 그대로 붙어, 그 클래스를 잡는 앱 CSS·테스트가 깨지지 않습니다.
+- 값을 **안 넘긴 경우**에만 기본값이 새 이름으로 바뀌어 클래스가 `icon_button_variant_text` · `chip_tone_neutral` 이 됩니다. 기본값의 클래스명을 직접 잡고 있었다면 새 이름으로 바꾸세요. 모양은 같습니다.
+- Storybook 의 IconButton 스토리 이름이 `Standard` · `Outlined` → `Text` · `Outline` 으로 바뀌어 스토리 id(`components-general-iconbutton--standard` 등)가 달라졌습니다. 스토리 id 로 링크하거나 스냅샷을 찍고 있었다면 새 id 로 바꾸세요.
 
 ---
 

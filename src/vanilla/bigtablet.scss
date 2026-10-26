@@ -1207,7 +1207,8 @@
     }
   }
 
-  /* Variant: outlined - 투명 배경 + 테두리만, shadow 무시 (React card_variant_outlined) */
+  /* Variant: outline - 투명 배경 + 테두리만, shadow 무시 (React card_variant_outline). outlined 는 옛 이름 */
+  &--outline,
   &--outlined {
     background: transparent;
     border: 1px solid var(--bt-color-border);
