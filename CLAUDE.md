@@ -258,6 +258,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
+  pnpm check:agent-guide # docs/AGENT_GUIDE.md 카탈로그의 prop 이 소스에 있는지
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
