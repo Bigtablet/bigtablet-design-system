@@ -41,6 +41,35 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
 
+  # tools/mutation - Stryker 실행 전용 독립 설치 (`tools/mutation/pnpm-workspace.yaml`).
+  #
+  # 루트 `pnpm install` 이 이 폴더를 건드리지 않아 위 항목으로는 갱신되지 않는다. 이 항목이 없던 동안
+  # `vitest` 4.1.11 이 남아 `@vitest/mocker` 보안 알림(#136·#137)이 열렸다 (#875).
+  # 여기 `vitest` · `typescript` 는 플러그인 peer 용이라 루트 버전과 맞추는 게 목적이다 - 묶음으로 같이 받는다.
+  - package-ecosystem: npm
+    directory: "/tools/mutation"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 2
+    cooldown:
+      default-days: 1
+    target-branch: develop
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "config"
+    groups:
+      mutation:
+        patterns:
+          - "*"
+    ignore:
+      # major 버전 업은 수동으로 검토
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
   # GitHub Actions
   #
   # 같은 이유로 묶는다 - 액션 버전은 워크플로 파일 여러 개에 흩어져 있어 PR 이 갈리면
