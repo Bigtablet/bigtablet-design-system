@@ -12,9 +12,9 @@ export const NOTICE_COMPARISON = [
 	"| 상황 | 컴포넌트 |",
 	"| --- | --- |",
 	"| 진행 전에 **확인을 받아야** 함 - 화면을 막고 답을 기다린다 (삭제 확인, 저장 안 한 변경) | `Alert` (`useAlert` · `useConfirm`) |",
-	"| 화면의 한 부분에 **남아서 읽혀야** 하는 안내 (만료 예정, 점검, 저장 결과) | `InlineAlert` |",
+	"| 화면의 한 부분에 **남아서 읽혀야** 하는 안내 (만료 예정, 점검, 개발 환경 표시) | `InlineAlert` |",
 	"| 방금 한 일의 결과를 **잠깐 알리고 사라짐** - 화면을 막지 않는다 (저장됨, 복사됨) | `Toast` (`useToast`) |",
 	"",
-	"세 컴포넌트 모두 의미 색은 `tone`(`info`·`success`·`warning`·`error`)으로 고릅니다.",
+	"의미 색은 Alert·InlineAlert 는 `tone` 으로, Toast 는 `toast.success()` · `error()` · `warning()` · `info()` · `message()` 메서드로 고릅니다 (`toast.update` 에서는 `tone`).",
 	"화면·위젯 **전체**가 비었거나 불러오기에 실패했으면 셋이 아니라 `EmptyState` · `ErrorState` 입니다.",
 ].join("\n");

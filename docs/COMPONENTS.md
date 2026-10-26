@@ -1931,7 +1931,7 @@ toast.dismiss(id);
 
 | 상황 | 선택 |
 |------|------|
-| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경, 저장 결과) | ✅ InlineAlert |
+| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경) | ✅ InlineAlert |
 | 잠깐 보였다 사라지는 결과 알림 | ❌ [Toast](#toast) |
 | 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
 | 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
