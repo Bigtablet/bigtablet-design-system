@@ -209,6 +209,20 @@ jobs:
       - name: Run layout tests (browser)
         run: pnpm test:browser
 
+      # 시각 회귀 - 기준 스크린샷과 픽셀 비교 (#879). 기준 이미지는 이 컨테이너(linux)에서 만든 것이라
+      # 여기서만 비교가 의미 있다. 실패하면 아래 artifact 에 실제·차이·새 기준 스크린샷이 남는다 -
+      # 의도한 렌더 변경이면 `pnpm visual:accept <run-id>` 로 받아 기준을 갱신한다 (docs/TESTING.md).
+      - name: Run visual regression tests
+        run: pnpm test:visual
+
+      - name: Upload visual screenshots
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-screenshots
+          path: .vitest-attachments/src/test/
+          retention-days: 14
+
   # 정적 검사(커밋 메시지 · SCSS · 파일명 등) + 빌드와 dist 기반 검사.
   build:
     needs: changes

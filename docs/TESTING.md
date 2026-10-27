@@ -94,6 +94,11 @@ pnpm test:storybook
 pnpm exec playwright install chromium
 pnpm test:browser
 
+# 시각 회귀 (*.visual.test.tsx) - CI 컨테이너(linux) 전용. 맥에서는 비교할 기준이 없어 실패한다
+pnpm test:visual
+# 의도한 렌더 변경으로 CI 의 시각 회귀가 실패했을 때 - 그 실행의 스크린샷을 기준으로 받는다
+pnpm visual:accept <run-id>
+
 # UI 모드
 pnpm vitest --ui
 ```
@@ -191,6 +196,25 @@ import { Dropdown } from "./bigtablet.js";
 - Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
 - **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 브라우저 ESM 에서 UMD 번들의 `this` 가
   undefined 라 named import 가 안 된다 - `import "./bigtablet.js"` 후 `window.Bigtablet` 을 쓴다.
+
+### 시각 회귀 테스트 (`*.visual.test.tsx`)
+
+컴포넌트의 기본 모양을 **기준 스크린샷과 픽셀 비교**한다 (#879). 렌더가 바뀌는 변경을 사람 눈 말고도
+잡으려는 것이다 - 의도한 변경이면 기준을 같이 갱신하고, 의도하지 않은 변경이면 테스트가 막는다.
+`src/test/components.visual.test.tsx` 가 Button · IconButton · Badge · Chip · InlineAlert · EmptyState ·
+ErrorState · TextField · Checkbox/Radio/Toggle · Card · Tabs · Pagination 을 **라이트·다크** 로 찍는다.
+팝업(Dropdown·Menu·Toast 등)은 포털·타이머가 얽혀 첫 범위에서 뺐다.
+
+- **기준 이미지는 CI 와 같은 Playwright 이미지(linux)에서 만든 것만 쓴다.** 폰트·안티앨리어싱이 OS 마다
+  달라 맥 렌더는 기준이 될 수 없다. 파일 이름에 platform 이 붙고(`-chromium-linux.png`), 맥·윈도 결과는
+  gitignore 된다. 기준은 `src/test/__visual__/<테스트파일>/` 에 있다.
+- **CI 에서만 돈다** - a11y job 의 `Run visual regression tests` 단계. 실패하면 `visual-screenshots`
+  artifact 에 실제(`-actual-`)·차이(`-diff-`)·새 기준(`-reference-`) 스크린샷이 남는다.
+- **의도한 렌더 변경이면** 실패한 실행의 run-id 로 `pnpm visual:accept <run-id>` 를 돌린다. artifact 를
+  받아 `-actual-`·`-reference-` 를 기준 이름으로 바꿔 넣는다. 받은 이미지를 열어 보고 커밋한다.
+  PR 본문에 `(렌더 변경)` 과 함께 바뀐 기준 이미지를 적는다.
+- **움직임은 멈춘다** - `src/test/visual-setup.ts` 가 transition·animation·커서 깜빡임을 끈다.
+- 새 컴포넌트를 추가할 때는 `shoot(이름, <요소 />)` 한 줄을 더하고, 첫 CI 실패의 `-reference-` 를 받아 넣는다.
 
 ### 기본 구조
 

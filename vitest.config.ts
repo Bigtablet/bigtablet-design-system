@@ -11,7 +11,12 @@ const dirname =
 export const unitTest = {
 	include: ["src/**/*.test.{ts,tsx}"],
 	// `*.browser.test.*` 는 실제 레이아웃이 필요해 `browser` 프로젝트(Chromium)에서만 돈다.
-	exclude: [...configDefaults.exclude, "src/**/*.browser.test.{ts,tsx}"],
+	// `*.visual.test.*` 는 기준 스크린샷 비교라 Playwright 이미지 안에서만 돈다 (`visual` 프로젝트).
+	exclude: [
+		...configDefaults.exclude,
+		"src/**/*.browser.test.{ts,tsx}",
+		"src/**/*.visual.test.{ts,tsx}",
+	],
 	environment: "jsdom",
 	globals: true,
 	setupFiles: ["./src/test/setup.ts"],
@@ -67,6 +72,50 @@ export default defineConfig({
 						// 스크롤바 폭 보정이 아무 일도 안 해 테스트가 공회전한다.
 						provider: playwright({ launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] } }),
 						instances: [{ browser: "chromium" }],
+					},
+				},
+			},
+			// 시각 회귀 - 기준 스크린샷과 픽셀 비교 (#879). 렌더는 OS·폰트에 묶이므로 기준 이미지는
+			// CI 와 같은 Playwright 이미지(linux)에서만 만들고 비교한다. 파일 이름에 platform 이 붙어
+			// 맥에서 돌리면 비교할 기준이 없어 실패한다 - 로컬에서는 돌리지 않는다 (docs/TESTING.md).
+			{
+				extends: true,
+				css: { preprocessorOptions: { scss: { loadPaths: [dirname], quietDeps: true } } },
+				optimizeDeps: {
+					include: [
+						"react",
+						"react-dom",
+						"react-dom/client",
+						"react/jsx-dev-runtime",
+						"@testing-library/react",
+						"lucide-react",
+					],
+				},
+				test: {
+					name: "visual",
+					include: ["src/**/*.visual.test.{ts,tsx}"],
+					setupFiles: ["./src/test/visual-setup.ts"],
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: playwright({}),
+						instances: [{ browser: "chromium" }],
+						viewport: { width: 800, height: 600 },
+						expect: {
+							toMatchScreenshot: {
+								// 기본 위치(`__screenshots__`)는 실패 스크린샷과 함께 gitignore 돼 있다
+								resolveScreenshotPath: ({
+									root,
+									testFileDirectory,
+									testFileName,
+									arg,
+									browserName,
+									platform,
+									ext,
+								}) =>
+									`${root}/${testFileDirectory}/__visual__/${testFileName}/${arg}-${browserName}-${platform}${ext}`,
+							},
+						},
 					},
 				},
 			},
