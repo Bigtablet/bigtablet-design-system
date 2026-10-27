@@ -7,8 +7,8 @@
 		"node": "^22.18.0 || >=24.11.0"
 	},
 	"devDependencies": {
-		"@stryker-mutator/core": "10.0.0",
-		"@stryker-mutator/vitest-runner": "10.0.0",
+		"@stryker-mutator/core": "10.1.1",
+		"@stryker-mutator/vitest-runner": "10.1.1",
 		"typescript": "6.0.3",
 		"vitest": "4.1.12"
 	}
