@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { Inbox, Settings } from "lucide-react";
 import type * as React from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
 	Badge,
@@ -34,26 +34,22 @@ import {
 
 const THEMES = ["light", "dark"] as const;
 
-/** 테마를 걸고, 표면 배경 위에 고정 폭으로 그린다. */
+/** 표면 배경 위에 고정 폭으로 그려 찍는다. 테마는 `describe.each` 가 건다. */
 const shoot = async (name: string, ui: React.ReactNode) => {
-	for (const theme of THEMES) {
-		document.documentElement.setAttribute("data-theme", theme);
-		const { unmount } = render(
-			<div
-				data-testid="shot"
-				style={{
-					width: 640,
-					padding: 16,
-					background: "var(--bt-color-bg-solid)",
-					color: "var(--bt-color-text-body)",
-				}}
-			>
-				{ui}
-			</div>,
-		);
-		await expect.element(page.getByTestId("shot")).toMatchScreenshot(`${name}-${theme}`);
-		unmount();
-	}
+	render(
+		<div
+			data-testid="shot"
+			style={{
+				width: 640,
+				padding: 16,
+				background: "var(--bt-color-bg-solid)",
+				color: "var(--bt-color-text-body)",
+			}}
+		>
+			{ui}
+		</div>,
+	);
+	await expect.element(page.getByTestId("shot")).toMatchScreenshot(name);
 };
 
 const row: React.CSSProperties = {
@@ -65,14 +61,19 @@ const row: React.CSSProperties = {
 const col: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 8 };
 const TONES = ["neutral", "info", "success", "warning", "error"] as const;
 
-afterEach(() => {
-	document.documentElement.removeAttribute("data-theme");
-});
+// 테마마다 별도 테스트다 - 한 장이 실패해도 나머지는 계속 찍혀, 첫 CI 실행이 기준 24장을 모두 남기고
+// 회귀 때도 diff 가 전부 남는다. 렌더 정리는 browser-setup 의 cleanup 이 한다.
+describe.each(THEMES)("visual %s", (theme) => {
+	beforeEach(() => {
+		document.documentElement.setAttribute("data-theme", theme);
+	});
+	afterEach(() => {
+		document.documentElement.removeAttribute("data-theme");
+	});
 
-describe("visual", () => {
 	it("button", async () => {
 		await shoot(
-			"button",
+			`button-${theme}`,
 			<div style={col}>
 				<div style={row}>
 					<Button variant="filled">filled</Button>
@@ -95,7 +96,7 @@ describe("visual", () => {
 
 	it("icon-button", async () => {
 		await shoot(
-			"icon-button",
+			`icon-button-${theme}`,
 			<div style={row}>
 				{(["text", "filled", "tonal", "outline"] as const).map((variant) => (
 					<IconButton key={variant} variant={variant} icon={<Settings />} aria-label={variant} />
@@ -106,7 +107,7 @@ describe("visual", () => {
 
 	it("badge", async () => {
 		await shoot(
-			"badge",
+			`badge-${theme}`,
 			<div style={col}>
 				{(["solid", "soft"] as const).map((appearance) => (
 					<div key={appearance} style={row}>
@@ -123,7 +124,7 @@ describe("visual", () => {
 
 	it("chip", async () => {
 		await shoot(
-			"chip",
+			`chip-${theme}`,
 			<div style={row}>
 				{(["neutral", "accent", "info", "success", "warning", "error"] as const).map((tone) => (
 					<Chip key={tone} type="static" tone={tone} label={tone} />
@@ -135,7 +136,7 @@ describe("visual", () => {
 
 	it("inline-alert", async () => {
 		await shoot(
-			"inline-alert",
+			`inline-alert-${theme}`,
 			<div style={col}>
 				{TONES.map((tone) => (
 					<InlineAlert key={tone} tone={tone} title={tone}>
@@ -148,7 +149,7 @@ describe("visual", () => {
 
 	it("empty-state", async () => {
 		await shoot(
-			"empty-state",
+			`empty-state-${theme}`,
 			<EmptyState
 				illustration={<Inbox />}
 				title="받은 메일이 없습니다"
@@ -160,7 +161,7 @@ describe("visual", () => {
 
 	it("error-state", async () => {
 		await shoot(
-			"error-state",
+			`error-state-${theme}`,
 			<div style={col}>
 				<ErrorState
 					variant="widget"
@@ -177,7 +178,7 @@ describe("visual", () => {
 
 	it("text-field", async () => {
 		await shoot(
-			"text-field",
+			`text-field-${theme}`,
 			<div style={col}>
 				<TextField label="이름" placeholder="입력" />
 				<TextField label="이메일" defaultValue="hello@bigtablet.com" supportingText="도움말" />
@@ -194,7 +195,7 @@ describe("visual", () => {
 
 	it("selection", async () => {
 		await shoot(
-			"selection",
+			`selection-${theme}`,
 			<div style={col}>
 				<div style={row}>
 					<Checkbox label="체크" defaultChecked />
@@ -216,7 +217,7 @@ describe("visual", () => {
 
 	it("card", async () => {
 		await shoot(
-			"card",
+			`card-${theme}`,
 			<div style={row}>
 				{(["default", "accent", "outline"] as const).map((variant) => (
 					<Card key={variant} variant={variant} heading={variant} style={{ width: 180 }}>
@@ -229,7 +230,7 @@ describe("visual", () => {
 
 	it("tabs", async () => {
 		await shoot(
-			"tabs",
+			`tabs-${theme}`,
 			<div style={col}>
 				{(["line", "fills"] as const).map((variant) => (
 					<Tabs key={variant} variant={variant} defaultValue="a">
@@ -245,6 +246,9 @@ describe("visual", () => {
 	});
 
 	it("pagination", async () => {
-		await shoot("pagination", <Pagination page={5} totalPages={10} onPageChange={() => {}} />);
+		await shoot(
+			`pagination-${theme}`,
+			<Pagination page={5} totalPages={10} onPageChange={() => {}} />,
+		);
 	});
 });

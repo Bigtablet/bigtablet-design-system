@@ -19,8 +19,10 @@ trap 'rm -rf "$TMP"' EXIT
 
 gh run download "$RUN_ID" --name visual-screenshots --dir "$TMP"
 
+# 경로에 공백이 있어도 깨지지 않게 목록을 파일로 받아 한 줄씩 읽는다 (파이프 while 은 subshell 이라 count 를 잃는다)
+find "$TMP" \( -name '*-reference-chromium-linux.png' -o -name '*-actual-chromium-linux.png' \) > "$TMP/.list"
 count=0
-for file in $(find "$TMP" -name '*-reference-chromium-linux.png' -o -name '*-actual-chromium-linux.png'); do
+while IFS= read -r file; do
 	test_file=$(basename "$(dirname "$file")")
 	name=$(basename "$file" | sed -e 's/-reference-chromium-linux\.png$/-chromium-linux.png/' -e 's/-actual-chromium-linux\.png$/-chromium-linux.png/')
 	dest="src/test/__visual__/$test_file"
@@ -28,7 +30,7 @@ for file in $(find "$TMP" -name '*-reference-chromium-linux.png' -o -name '*-act
 	cp "$file" "$dest/$name"
 	echo "  $dest/$name"
 	count=$((count + 1))
-done
+done < "$TMP/.list"
 
 if [ "$count" -eq 0 ]; then
 	echo "artifact 에 갱신할 스크린샷이 없다 - 실패한 visual 실행의 run-id 인지 확인할 것" >&2
