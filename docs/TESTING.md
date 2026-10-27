@@ -446,7 +446,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 89 test files / 1622 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 89 test files / 1615 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -456,13 +456,13 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **95.48%** | **93.43%** | **96%** | **96.72%** |
+| **All files** | **96.06%** | **93.72%** | **96.48%** | **97.33%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (46개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| ui/display/accordion | 100% | 95% | 100% | 100% |
+| ui/display/accordion | 100% | 94.44% | 100% | 100% |
 | ui/display/avatar | 100% | 82.76% | 100% | 100% |
 | ui/display/chip | 91.67% | 95.65% | 66.67% | 100% |
 | ui/display/data-view | 100% | 97.87% | 100% | 100% |
@@ -477,18 +477,18 @@ it("calls callback with correct arguments", () => {
 | ui/forms/checkbox | 91.67% | 95.45% | 100% | 100% |
 | ui/forms/combobox | 100% | 98.98% | 94.44% | 100% |
 | ui/forms/date-calendar | 100% | 98.37% | 100% | 100% |
-| ui/forms/date-picker | 96.48% | 95.28% | 100% | 100% |
-| ui/forms/dropdown | 100% | 96.08% | 100% | 100% |
+| ui/forms/date-picker | 96.38% | 95.1% | 100% | 100% |
+| ui/forms/dropdown | 100% | 95.97% | 100% | 100% |
 | ui/forms/file | 82.35% | 72.55% | 83.33% | 82% |
-| ui/forms/image-cropper | 68.94% | 69.61% | 61.29% | 70.39% |
+| ui/forms/image-cropper | 81.37% | 81.37% | 70.97% | 82.89% |
 | ui/forms/segmented-control | 96.88% | 95.92% | 100% | 100% |
 | ui/forms/tag-input | 98.85% | 95.35% | 100% | 100% |
-| ui/forms/textarea | 88.14% | 74.51% | 100% | 92.59% |
-| ui/forms/textfield | 98.15% | 97.06% | 90.91% | 98.04% |
+| ui/forms/textarea | 88.14% | 73.47% | 100% | 92.59% |
+| ui/forms/textfield | 94.44% | 95.92% | 90.91% | 94.12% |
 | ui/forms/time-picker | 96.72% | 97.53% | 100% | 100% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
 | ui/navigation/menu | 98.86% | 96.67% | 100% | 100% |
-| ui/navigation/nav-bar | 80.73% | 71.43% | 82.61% | 85.57% |
+| ui/navigation/nav-bar | 80.73% | 70.73% | 82.61% | 85.57% |
 | ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
 | ui/navigation/tabs | 97.17% | 89.47% | 100% | 100% |
 | ui/overlay/popover | 97.14% | 96.55% | 100% | 100% |
