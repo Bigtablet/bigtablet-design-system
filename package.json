@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "4.0.1",
+	"version": "4.1.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -54,6 +54,8 @@
 		"coverage:docs:check": "vitest run --project unit --coverage --reporter=default --reporter=json --outputFile.json=coverage/test-results.json && python3 scripts/update-coverage-docs.py --check",
 		"test:storybook": "vitest run --project storybook",
 		"test:browser": "vitest run --project browser",
+		"test:visual": "vitest run --project visual",
+		"visual:accept": "scripts/accept-visual.sh",
 		"test:mutation": "pnpm --dir tools/mutation install --frozen-lockfile && tools/mutation/node_modules/.bin/stryker run",
 		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss' 'src/vanilla/**/*.scss'",
 		"check:css-vars": "scripts/check-css-vars.sh",
@@ -62,6 +64,7 @@
 		"check:dark-text": "python3 scripts/check-dark-text-tokens.py",
 		"check:deprecated": "python3 scripts/check-deprecated-in-stories.py",
 		"check:filenames": "python3 scripts/check-story-test-filenames.py",
+		"check:agent-guide": "python3 scripts/check-agent-guide.py",
 		"size": "size-limit",
 		"prepare": "husky"
 	},

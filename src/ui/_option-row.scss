@@ -1,0 +1,18 @@
+@use "src/styles/token" as token;
+
+// 목록 팝업의 한 줄 - Dropdown 옵션 · Combobox 옵션 · Menu 항목.
+// 한 폼에 나란히 놓이는 컴포넌트들이라 글자 크기·높이가 갈리면 바로 눈에 띈다 (#862).
+// 내부용이다 - `token` 으로 forward 하지 않아 공개 SCSS API 가 아니다.
+// hover·선택 같은 상태는 컴포넌트마다 선택자가 달라(`is_active` / `aria-selected` / `:focus-visible`) 각자 둔다.
+@mixin option_row {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: token.$control_height_md; // 40px
+  padding: token.$spacing_8 token.$spacing_12;
+  cursor: pointer;
+  color: token.$color_text_heading;
+  @include token.body_small; // 14/20
+}

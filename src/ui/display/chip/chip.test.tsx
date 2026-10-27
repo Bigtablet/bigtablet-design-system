@@ -19,6 +19,14 @@ describe("Chip", () => {
 		expect(container.firstChild).toHaveClass("chip_type_filter");
 	});
 
+	it("applies the neutral tone by default on a static chip", () => {
+		const { container, rerender } = render(<Chip label="Tag" type="static" />);
+		expect(container.firstChild).toHaveClass("chip_tone_neutral");
+
+		rerender(<Chip label="Tag" type="static" tone="success" />);
+		expect(container.firstChild).toHaveClass("chip_tone_success");
+	});
+
 	it("shows check icon when selected", () => {
 		const { container } = render(<Chip label="Tag" selected />);
 		expect(container.firstChild).toHaveClass("chip_selected", "chip_has_leading");

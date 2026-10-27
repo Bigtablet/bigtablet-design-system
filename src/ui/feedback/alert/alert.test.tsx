@@ -197,8 +197,8 @@ describe("Alert", () => {
 		expect(dialog).toHaveAttribute("aria-describedby");
 	});
 
-	it("applies variant class", () => {
-		renderWithProvider(<TestComponent options={{ variant: "error" }} />);
+	it("applies tone class", () => {
+		renderWithProvider(<TestComponent options={{ tone: "error" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 
@@ -207,15 +207,15 @@ describe("Alert", () => {
 	});
 
 	it("does not render icon by default", () => {
-		renderWithProvider(<TestComponent options={{ variant: "info" }} />);
+		renderWithProvider(<TestComponent options={{ tone: "info" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 
 		expect(document.querySelector(".alert_icon")).not.toBeInTheDocument();
 	});
 
-	it("renders variant icon when showIcon=true", () => {
-		renderWithProvider(<TestComponent options={{ variant: "error", showIcon: true }} />);
+	it("renders tone icon when showIcon=true", () => {
+		renderWithProvider(<TestComponent options={{ tone: "error", showIcon: true }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 

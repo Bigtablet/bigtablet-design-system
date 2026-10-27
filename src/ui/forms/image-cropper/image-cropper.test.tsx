@@ -198,3 +198,92 @@ describe("ImageCropper tap to center", () => {
 		expect(offsetX()).toBe(0);
 	});
 });
+
+/**
+ * 키보드 조작 - 포인터를 못 쓰는 사용자의 대안(WCAG 2.1.1). 방향키는 8px 씩 이동, `+`·`=` 와
+ * `-`·`_` 는 0.1 씩 확대·축소. 800x600 이미지가 240 뷰포트를 덮으면 320x240 이라
+ * 배율 1 에서는 가로로만 ±40px 움직이고 세로 여유는 0 이다.
+ */
+describe("ImageCropper keyboard", () => {
+	const setup = () => {
+		render(<ImageCropper src={file()} />);
+		loadImage();
+		return screen.getByRole("group");
+	};
+	const offset = () => {
+		const image = document.querySelector(".image_cropper_image") as HTMLElement;
+		const [, x, y] =
+			/calc\(-50% \+ (-?[\d.]+)px\), calc\(-50% \+ (-?[\d.]+)px\)/.exec(image.style.transform) ??
+			[];
+		return { x: Number(x), y: Number(y) };
+	};
+	const zoom = () => Number((screen.getByLabelText("배율") as HTMLInputElement).value);
+	const press = (viewport: HTMLElement, key: string, times = 1) => {
+		let notCancelled = true;
+		for (let i = 0; i < times; i++) notCancelled = fireEvent.keyDown(viewport, { key });
+		return notCancelled;
+	};
+
+	it("moves 8px per arrow key on the axis that has room", () => {
+		const viewport = setup();
+		press(viewport, "ArrowRight");
+		expect(offset().x).toBe(8);
+		press(viewport, "ArrowLeft", 2);
+		expect(offset().x).toBe(-8);
+	});
+
+	it("clamps arrow moves so the image still covers the viewport", () => {
+		const viewport = setup();
+		press(viewport, "ArrowRight", 10);
+		expect(offset().x).toBe(40);
+		// 배율 1 에서는 세로 여유가 없다
+		press(viewport, "ArrowDown", 3);
+		expect(offset().y).toBe(0);
+	});
+
+	it("moves vertically once zooming in makes room", () => {
+		const viewport = setup();
+		press(viewport, "+", 5);
+		press(viewport, "ArrowDown");
+		expect(offset().y).toBe(8);
+		press(viewport, "ArrowUp", 2);
+		expect(offset().y).toBe(-8);
+	});
+
+	it("zooms with + and = and out with - and _", () => {
+		const viewport = setup();
+		press(viewport, "+");
+		expect(zoom()).toBeCloseTo(1.1);
+		press(viewport, "=");
+		expect(zoom()).toBeCloseTo(1.2);
+		press(viewport, "-");
+		expect(zoom()).toBeCloseTo(1.1);
+		press(viewport, "_");
+		expect(zoom()).toBeCloseTo(1);
+	});
+
+	it("keeps zoom between minZoom and maxZoom", () => {
+		const viewport = setup();
+		press(viewport, "-", 3);
+		expect(zoom()).toBe(1);
+		press(viewport, "+", 30);
+		expect(zoom()).toBe(3);
+	});
+
+	it("cancels the default only for the keys it handles", () => {
+		const viewport = setup();
+		// 처리한 키는 페이지 스크롤 등 기본 동작을 막는다
+		expect(press(viewport, "ArrowDown")).toBe(false);
+		expect(press(viewport, "+")).toBe(false);
+		// 나머지(Tab 등)는 막지 않아 포커스 이동이 그대로 된다
+		expect(press(viewport, "Tab")).toBe(true);
+		expect(press(viewport, "a")).toBe(true);
+	});
+
+	it("ignores keys until the image has loaded", () => {
+		render(<ImageCropper src={file()} />);
+		const viewport = screen.getByRole("group");
+		expect(press(viewport, "ArrowRight")).toBe(true);
+		expect(press(viewport, "+")).toBe(true);
+	});
+});

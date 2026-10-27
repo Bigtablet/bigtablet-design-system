@@ -21,7 +21,7 @@ describe("Toggle", () => {
 
 	it("toggles on click", () => {
 		const onChange = vi.fn();
-		render(<Toggle ariaLabel="Toggle" onChange={onChange} />);
+		render(<Toggle ariaLabel="Toggle" onCheckedChange={onChange} />);
 
 		fireEvent.click(screen.getByRole("switch"));
 		expect(onChange).toHaveBeenCalledWith(true);
@@ -29,7 +29,7 @@ describe("Toggle", () => {
 
 	it("toggles off when already on", () => {
 		const onChange = vi.fn();
-		render(<Toggle ariaLabel="Toggle" defaultChecked onChange={onChange} />);
+		render(<Toggle ariaLabel="Toggle" defaultChecked onCheckedChange={onChange} />);
 
 		fireEvent.click(screen.getByRole("switch"));
 		expect(onChange).toHaveBeenCalledWith(false);
@@ -42,7 +42,7 @@ describe("Toggle", () => {
 
 	it("does not toggle when disabled", () => {
 		const onChange = vi.fn();
-		render(<Toggle ariaLabel="Toggle" disabled onChange={onChange} />);
+		render(<Toggle ariaLabel="Toggle" disabled onCheckedChange={onChange} />);
 
 		fireEvent.click(screen.getByRole("switch"));
 		expect(onChange).not.toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe("Toggle", () => {
 
 	it("calls onChange but keeps controlled value in controlled mode", () => {
 		const onChange = vi.fn();
-		render(<Toggle ariaLabel="Toggle" checked={false} onChange={onChange} />);
+		render(<Toggle ariaLabel="Toggle" checked={false} onCheckedChange={onChange} />);
 
 		fireEvent.click(screen.getByRole("switch"));
 
@@ -88,18 +88,6 @@ describe("Toggle", () => {
 		render(<Toggle ariaLabel="Toggle" onCheckedChange={onCheckedChange} />);
 		fireEvent.click(screen.getByRole("switch"));
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
-	});
-
-	it("prefers onCheckedChange over the deprecated onChange when both are given", () => {
-		const onCheckedChange = vi.fn();
-		const onChange = vi.fn();
-		render(<Toggle ariaLabel="Toggle" onCheckedChange={onCheckedChange} onChange={onChange} />);
-
-		fireEvent.click(screen.getByRole("switch"));
-
-		expect(onCheckedChange).toHaveBeenCalledTimes(1);
-		expect(onCheckedChange).toHaveBeenCalledWith(true);
-		expect(onChange).not.toHaveBeenCalled();
 	});
 
 	it("runs consumer onClick AND still toggles ({...props} spread must not replace toggle handler)", () => {

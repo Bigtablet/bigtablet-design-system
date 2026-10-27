@@ -12,7 +12,7 @@ const meta: Meta<typeof Card> = {
 		shadow: { control: "select", options: ["none", "sm", "md", "lg"] },
 		padding: { control: "select", options: ["none", "sm", "md", "lg"] },
 		bordered: { control: "boolean" },
-		variant: { control: "select", options: ["default", "accent", "glass", "outlined"] },
+		variant: { control: "select", options: ["default", "accent", "glass", "outline"] },
 		interactive: { control: "boolean" },
 		footerAlign: { control: "select", options: ["start", "between", "end"] },
 		footer: { control: false },
@@ -32,7 +32,7 @@ const meta: Meta<typeof Card> = {
 				component: `
 **Card** - 관련 콘텐츠를 한 덩어리로 묶는 컨테이너.
 
-**Variants**: \`default\` / \`accent\` (반전 배경 + 흰 텍스트) / \`glass\` (반투명 + backdrop blur, 컬러·이미지 배경 위 권장) / \`outlined\` (투명 배경 + 테두리만).
+**Variants**: \`default\` / \`accent\` (반전 배경 + 흰 텍스트) / \`glass\` (반투명 + backdrop blur, 컬러·이미지 배경 위 권장) / \`outline\` (투명 배경 + 테두리만).
 
 **구성**: \`heading\` (헤더) + children (본문) + \`footer\` (\`footerAlign\` start/between/end) 3단. \`interactive\` 를 켜면 클릭 가능한 카드에 hover lift 가 붙는다.
 
@@ -106,7 +106,7 @@ export const Variants: Story = {
 			<Card variant="glass" heading="glass">
 				<p style={{ margin: 0 }}>반투명 frosted + blur. 컬러 배경 위에서 빛남.</p>
 			</Card>
-			<Card variant="outlined" heading="outlined">
+			<Card variant="outline" heading="outline">
 				<p style={{ margin: 0 }}>투명 배경 + 테두리만.</p>
 			</Card>
 		</div>

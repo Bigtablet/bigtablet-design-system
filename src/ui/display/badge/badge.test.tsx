@@ -19,26 +19,26 @@ describe("Badge", () => {
 	});
 
 	it("renders empty dot", () => {
-		const { container } = render(<Badge shape="dot" variant="error" />);
+		const { container } = render(<Badge shape="dot" tone="error" />);
 		const dot = container.firstChild as HTMLElement;
 		expect(dot).toHaveClass("badge_shape_dot");
 		expect(dot).toHaveClass("badge_variant_error");
 		expect(dot.textContent).toBe("");
 	});
 
-	it("applies variant class", () => {
-		const { container } = render(<Badge variant="success">OK</Badge>);
+	it("applies tone class", () => {
+		const { container } = render(<Badge tone="success">OK</Badge>);
 		expect(container.firstChild).toHaveClass("badge_variant_success");
 	});
 
 	it("default appearance is solid", () => {
-		const { container } = render(<Badge variant="success">OK</Badge>);
+		const { container } = render(<Badge tone="success">OK</Badge>);
 		expect(container.firstChild).toHaveClass("badge_appearance_solid");
 	});
 
 	it("applies appearance=soft class when specified", () => {
 		const { container } = render(
-			<Badge variant="success" appearance="soft">
+			<Badge tone="success" appearance="soft">
 				+5%
 			</Badge>,
 		);
@@ -46,9 +46,9 @@ describe("Badge", () => {
 		expect(container.firstChild).toHaveClass("badge_variant_success");
 	});
 
-	it("soft + accent variant uses accent_subtle bg via class", () => {
+	it("soft + accent tone uses accent_subtle bg via class", () => {
 		const { container } = render(
-			<Badge variant="accent" appearance="soft">
+			<Badge tone="accent" appearance="soft">
 				New
 			</Badge>,
 		);

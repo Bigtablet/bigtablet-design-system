@@ -6,6 +6,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ## 목차
 
+- [prop 이름 기준](#prop-이름-기준)
 - [v3.0 주요 변경사항](#v30-주요-변경사항)
 - [Foundation](#foundation)
   - [ThemeProvider](#themeprovider)
@@ -73,6 +74,18 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 ---
 
 > **모든 컴포넌트는 `dangerouslySetInnerHTML` 을 받지 않습니다** (v3.25.0~). 마크업은 `children` 으로 넘깁니다. 새 컴포넌트는 props 를 `SafeHTMLProps<React.*HTMLAttributes<…>>` 로 선언하고, `src/utils/safe-html.type-test.tsx` 가 공개 export 전체를 `tsc` 로 검사합니다.
+
+---
+
+## prop 이름 기준
+
+| 고르는 것 | prop | 예 |
+|------|------|------|
+| 모양 | `variant` | Button·IconButton `text`/`outline`, Card `glass`/`outline` - 같은 모양은 같은 값 이름 |
+| 의미 색 (info·success·warning·error 등) | `tone` | Alert · Badge · Toast · Chip · InlineAlert - 회색 기본은 `neutral` |
+| 변경 콜백 | `on*Change` | `onValueChange` · `onCheckedChange` · `onPageChange` |
+
+Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone` 으로 바뀌었다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 그대로다.
 
 ---
 
@@ -280,8 +293,6 @@ import Link from "next/link";
 (`<button href>` 는 유효하지 않다).
 
 > `ButtonProps` 는 `ButtonProps<T>` 제네릭이다. `ButtonProps` 그대로 쓰면 `T = "button"` 이다.
-> `ButtonAsButton`·`ButtonAsAnchor` 는 `ButtonProps<"button">`·`ButtonProps<"a">` 의 deprecated
-> 별칭으로 남겨 뒀다.
 
 ---
 
@@ -453,7 +464,6 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `value` | `string \| null` (single) · `string[]` (multiple) | - | 선택된 값 (controlled) |
 | `defaultValue` | `string \| null` (single) · `string[]` (multiple) | - | 기본 선택값 |
 | `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
-| ~~`onChange`~~ | `onValueChange` 와 동일 시그니처 | - | **deprecated** (v3.3.0, `onValueChange` 의 alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
 | `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터 - 대소문자·공백 무시, 한글 초성 `ㅅㅇ` · 조합 중인 글자 `서우` 도 찾는다) |
 | `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
@@ -465,9 +475,7 @@ const [fruits, setFruits] = useState<string[]>([]);
 | `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
 | `id` | `string` | 자동 생성 | 드롭다운 요소 id |
 | `className` | `string` | - | 루트 요소에 추가할 className |
-| ~~`fullWidth`~~ | `boolean` | - | **deprecated** (v3.0.0, no-op - 항상 부모 너비를 채움). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
-| ~~`textAlign`~~ | `'left' \| 'center'` | - | **deprecated** (no-op) |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 
@@ -486,6 +494,17 @@ const [fruits, setFruits] = useState<string[]>([]);
 ---
 
 ### Chip
+
+읽을 거리가 있는 태그·카테고리(`static`), 또는 누르고 고르고 지우는 토큰(`basic` · `filter` · `input`).
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 태그·카테고리 라벨, 상태 라벨 (`tone`) | ✅ Chip `type="static"` |
+| 필터 토글, 입력된 값 토큰 (지우기 가능) | ✅ Chip `type="filter"` · `"input"` |
+| 개수 · 점 · `New` 같은 짧은 표시 | ❌ [Badge](#badge) |
+| 사용자가 목록에 없는 값을 직접 여러 개 입력 | ❌ [TagInput](#taginput) |
 
 ```tsx
 import { Chip } from '@bigtablet/design-system';
@@ -508,7 +527,7 @@ import { Chip } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
 | `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
-| `tone` | `'default' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'default'` | 색조 (type=`static`에서만 적용) |
+| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'neutral'` | 의미 색 (type=`static`에서만 적용) |
 | `label` | `string` | required | 라벨 텍스트 |
 | `selected` | `boolean` | - | 선택 상태 |
 | `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
@@ -529,10 +548,10 @@ import { IconButton } from '@bigtablet/design-system';
 import { Settings } from 'lucide-react';
 
 // Variants
-<IconButton variant="standard" icon={<Settings />} aria-label="설정" />
+<IconButton variant="text" icon={<Settings />} aria-label="설정" />
 <IconButton variant="filled" icon={<Settings />} aria-label="설정" />
 <IconButton variant="tonal" icon={<Settings />} aria-label="설정" />
-<IconButton variant="outlined" icon={<Settings />} aria-label="설정" />
+<IconButton variant="outline" icon={<Settings />} aria-label="설정" />
 
 // Sizes
 <IconButton size="sm" icon={<Settings />} aria-label="설정" />
@@ -541,7 +560,7 @@ import { Settings } from 'lucide-react';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'standard' \| 'filled' \| 'tonal' \| 'outlined'` | `'standard'` | 스타일 |
+| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline'` | `'text'` | 스타일. Button 과 같은 이름 |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 |
 | `icon` | `ReactNode` | required | 표시할 아이콘 |
 | `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
@@ -806,7 +825,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
   label="소속"
   required
   labelAction={
-    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onChange={setNoAffiliation} />
+    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
   }
 >
   <TextField disabled={noAffiliation} />
@@ -888,7 +907,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `onReset` | `() => void` | - | 주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫 |
 | `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힌다 |
 | `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
-| `loading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용 |
+| `isLoading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용 |
 | `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
 | `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
 | `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
@@ -914,11 +933,11 @@ const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴
   onSubmit={() => setQuery(draft)}
   onReset={() => { setDraft(EMPTY); setQuery(EMPTY); }}
   canReset={draft.name !== "" || draft.status !== null}
-  loading={isFetching}
+  isLoading={isFetching}
 >
   <TextField label="이름" value={draft.name} onValueChange={(name) => setDraft({ ...draft, name })} />
   <Dropdown label="상태" placeholder="전체" options={STATUS} value={draft.status}
-    onChange={(status) => setDraft({ ...draft, status })} />
+    onValueChange={(status) => setDraft({ ...draft, status })} />
 </FilterBar>
 
 // DataView 와 함께 - toolbar.filters 에 그대로 넣는다
@@ -926,7 +945,7 @@ const [query, setQuery] = useState(EMPTY);   // 적용됨 - 목록 요청에 쓴
 
 // 드롭다운 변경 즉시 적용 - 검색 버튼 없음
 <FilterBar submitMode="instant" onReset={() => setStatus(null)} canReset={status !== null}>
-  <Dropdown label="상태" options={STATUS} value={status} onChange={setStatus} />
+  <Dropdown label="상태" options={STATUS} value={status} onValueChange={setStatus} />
 </FilterBar>
 ```
 
@@ -1002,7 +1021,6 @@ import { Search, X } from 'lucide-react';
 | `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
 | `fullWidth` | `boolean` | `false` | 전체 너비 |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
-| ~~`onChangeAction`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). Next 서버 액션 전달용 `Action` 접미사가 필요하면 계속 사용 가능 |
 | `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 (v3.1). `immediate` = 조합 중에도 즉시 호출 |
 | `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
 
@@ -1704,7 +1722,6 @@ const [code, setCode] = useState('');
 | `length` | `4 \| 6` | `6` | OTP 자릿수 |
 | `value` | `string` | `''` | 제어형 값 (controlled 전용) |
 | `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (canonical) |
-| ~~`onChange`~~ | `(value: string) => void` | - | **deprecated** (v3.3.0, `onValueChange` alias). [MIGRATION.md](./MIGRATION.md) 참고 |
 | `error` | `boolean` | `false` | 에러 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `supportingText` | `string` | - | 하단 도움말 텍스트 |
@@ -1719,6 +1736,16 @@ const [code, setCode] = useState('');
 ## Feedback
 
 ### Alert
+
+화면을 막고 **확인을 받는** 모달 알림. `AlertProvider` 아래에서 `useAlert().showAlert` · `useConfirm()` 으로 연다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 진행 전에 확인을 받아야 함 (삭제 확인, 저장 안 한 변경) | ✅ Alert |
+| 화면의 한 부분에 남아 읽혀야 하는 안내 | ❌ [InlineAlert](#inlinealert) |
+| 방금 한 일의 결과를 잠깐 알림 (저장됨, 복사됨) | ❌ [Toast](#toast) |
 
 ```tsx
 import { AlertProvider, useAlert } from '@bigtablet/design-system';
@@ -1738,7 +1765,7 @@ function YourComponent() {
 
   const handleDelete = () => {
     showAlert({
-      variant: 'warning',
+      tone: 'warning',
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
       showCancel: true,
@@ -1755,7 +1782,7 @@ function YourComponent() {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `variant` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 알림 타입 |
+| `tone` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 의미 색 |
 | `title` | `ReactNode` | - | 제목 |
 | `message` | `ReactNode` | - | 메시지 |
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
@@ -1780,7 +1807,7 @@ const confirm = useConfirm();
 
 // 미저장 변경
 if (await confirm({
-  variant: "warning",
+  tone: "warning",
   title: "변경사항을 버릴까요?",
   message: "저장하지 않은 내용은 복구할 수 없습니다.",
   confirmText: "버리기",
@@ -1792,7 +1819,7 @@ if (await confirm({
 
 // 비동기 삭제 - 끝날 때까지 열린 채 pending
 await confirm({
-  variant: "error",
+  tone: "error",
   title: `${order.no} 를 삭제할까요?`,
   confirmText: "삭제",
   destructive: true,
@@ -1815,6 +1842,16 @@ await confirm({
 - 첫 포커스는 **취소 버튼**이다 - destructive 확인이 Enter 한 번에 실행되지 않는다
 
 ### Toast
+
+화면을 막지 않고 **잠깐 떴다 사라지는** 결과 알림. `ToastProvider` 아래에서 `useToast()` 로 띄운다.
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 방금 한 일의 결과를 잠깐 알림 (저장됨, 복사됨, 업로드 완료) | ✅ Toast |
+| 화면의 한 부분에 남아 읽혀야 하는 안내 | ❌ [InlineAlert](#inlinealert) |
+| 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) |
 
 ```tsx
 import { ToastProvider, useToast } from '@bigtablet/design-system';
@@ -1847,7 +1884,7 @@ function YourComponent() {
 // 진행 토스트 - 띄운 뒤 같은 토스트를 바꾼다
 const id = toast.info('업로드 중…', { duration: Infinity });
 await upload();
-toast.update(id, { variant: 'success', message: '업로드 완료', duration: 3000 });
+toast.update(id, { tone: 'success', message: '업로드 완료', duration: 3000 });
 
 // 실행 취소 - 버튼을 누르면 onClick 뒤 토스트가 닫힌다
 toast.message('항목이 삭제되었습니다', {
@@ -1865,7 +1902,7 @@ toast.dismiss(id);
 |------|---------|------|
 | `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환한다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions` |
 | `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫는다. 없는 id·퇴출 중인 id 는 무시 |
-| `update` | `(id, patch) => void` | `message`·`variant`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
+| `update` | `(id, patch) => void` | `message`·`tone`·`duration`·`action` 을 바꾼다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작한다. `action: null` 이면 버튼을 뗀다 |
 
 **`ToastOptions`**
 
@@ -1894,7 +1931,7 @@ toast.dismiss(id);
 
 | 상황 | 선택 |
 |------|------|
-| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경, 저장 결과) | ✅ InlineAlert |
+| 화면의 한 부분에 남아 읽혀야 하는 안내·경고 (만료 예정, 점검, 개발 환경) | ✅ InlineAlert |
 | 잠깐 보였다 사라지는 결과 알림 | ❌ [Toast](#toast) |
 | 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
 | 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
@@ -2442,7 +2479,7 @@ function App() {
       <BottomNav>
         <BottomNavItem icon={<Home />} label="주문" active={tab === "orders"} onClick={() => setTab("orders")} />
         <BottomNavItem icon={<UtensilsCrossed />} label="메뉴" active={tab === "menu"} onClick={() => setTab("menu")}
-          badge={<Badge variant="error" shape="dot" size="sm" />} />
+          badge={<Badge tone="error" shape="dot" size="sm" />} />
         <BottomNavItem icon={<BarChart3 />} label="매출" active={tab === "sales"} onClick={() => setTab("sales")} />
       </BottomNav>
     </>
@@ -3359,9 +3396,9 @@ import { Card, Button } from '@bigtablet/design-system';
   내용
 </Card>
 
-// variant - glass 는 컬러/이미지 배경 위에서 빛난다, outlined 는 투명 + 테두리
+// variant - glass 는 컬러/이미지 배경 위에서 빛난다, outline 은 투명 + 테두리
 <Card variant="glass" heading="Glass">내용</Card>
-<Card variant="outlined" heading="Outlined">내용</Card>
+<Card variant="outline" heading="Outline">내용</Card>
 
 // interactive - hover 시 살짝 떠오름 (클릭 가능한 카드)
 <Card interactive onClick={open}>내용</Card>
@@ -3379,11 +3416,11 @@ import { Card, Button } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `heading` | `ReactNode` | - | 카드 제목 (header) |
 | `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
-| `variant` | `'default' \| 'accent' \| 'glass' \| 'outlined'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outlined=투명 bg+테두리(shadow 무시) |
+| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시) |
 | `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
 | `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
 | `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
-| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outlined/glass 는 자체 처리) |
+| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outline/glass 는 자체 처리) |
 | `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
 | `bordered` | `boolean` | `false` | 테두리 표시 |
 
@@ -3520,7 +3557,7 @@ import { User, MoreVertical } from 'lucide-react';
 
 // rich content - 텍스트 슬롯에 노드 인라인 (string·ReactNode 모두 허용)
 <ListItem
-  overline={<Badge variant="success" appearance="soft">활성</Badge>}
+  overline={<Badge tone="success" appearance="soft">활성</Badge>}
   label={<span>릴리스 <strong>v3.2</strong></span>}
   supportingText={<span>자세히는 <a href="/changelog">체인지로그</a></span>}
 />
@@ -3639,7 +3676,7 @@ import { Avatar } from "@bigtablet/design-system";
 <span style={{ position: "relative", display: "inline-block" }}>
   <Avatar src="/me.jpg" name="박상민" />
   <span style={{ position: "absolute", top: 0, right: 0 }}>
-    <Badge shape="dot" variant="error" aria-label="읽지 않은 알림" />
+    <Badge shape="dot" tone="error" aria-label="읽지 않은 알림" />
   </span>
 </span>
 
@@ -3655,7 +3692,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 ### Badge
 
-작은 상태/카운트 표시. `dot` / `count` / `label` 3가지 shape × 6가지 색상 variant.
+작은 상태/카운트 표시. `dot` / `count` / `label` 3가지 shape × 6가지 의미 색(`tone`).
 
 #### 언제 쓰는가
 
@@ -3685,9 +3722,9 @@ import { Avatar } from "@bigtablet/design-system";
 | `count` | min-width 18, 6px 패딩, 원형 | 알림 개수. `count > max` 시 `${max}+`로 표시 |
 | `label` | 11px 폰트, padding 2×8, uppercase | "NEW", "BETA" 라벨 |
 
-#### variant 의미 매핑
+#### tone 의미 매핑
 
-| variant | 토큰 | 의미 |
+| tone | 토큰 | 의미 |
 |---------|------|------|
 | `accent` | brand navy | 기본/브랜드 강조 |
 | `neutral` | bg.solid.dim | 정보 없는 메타 라벨 |
@@ -3700,7 +3737,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 색상 |
+| `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색 |
 | `shape` | `'dot' \| 'count' \| 'label'` | `'label'` | 모양 |
 | `count` | `number` | - | shape=`count`일 때 표시 숫자. undefined면 빈 상태 |
 | `max` | `number` | `99` | count 최댓값. 초과 시 `${max}+`로 표시 |
@@ -3714,15 +3751,15 @@ import { Avatar } from "@bigtablet/design-system";
 
 ```tsx
 // 알림 점만 있고 SR은 모름
-<Badge shape="dot" variant="error" />
+<Badge shape="dot" tone="error" />
 
 // SR에게 "읽지 않은 알림" 이라고 알려줌
-<Badge shape="dot" variant="error" aria-label="읽지 않은 알림" />
+<Badge shape="dot" tone="error" aria-label="읽지 않은 알림" />
 
 // 부모가 의미를 전달하면 Badge는 aria-hidden으로 중복 제거
 <button aria-label={`알림 ${count}개`}>
   <BellIcon />
-  <Badge shape="count" count={count} variant="error" aria-hidden="true" />
+  <Badge shape="count" count={count} tone="error" aria-hidden="true" />
 </button>
 ```
 
@@ -3739,22 +3776,22 @@ span.badge (+ badge_shape_count + badge_variant_error)
 import { Badge } from "@bigtablet/design-system";
 
 // dot - 가장 작은 상태 표시
-<Badge shape="dot" variant="error" aria-label="읽지 않은 메시지 있음" />
+<Badge shape="dot" tone="error" aria-label="읽지 않은 메시지 있음" />
 
 // count - 알림 개수
-<Badge shape="count" count={5} variant="error" />
+<Badge shape="count" count={5} tone="error" />
 <Badge shape="count" count={120} max={99} /> // "99+"
 
-// label - variant 비교
-<Badge variant="success">Active</Badge>
-<Badge variant="warning">Pending</Badge>
-<Badge variant="info">Beta</Badge>
+// label - tone 비교
+<Badge tone="success">Active</Badge>
+<Badge tone="warning">Pending</Badge>
+<Badge tone="info">Beta</Badge>
 
 // 다른 요소에 부착 - 아이콘 버튼 + 카운트
 <button aria-label={`알림 ${unread}개`} style={{ position: "relative" }}>
   <BellIcon />
   <span style={{ position: "absolute", top: -4, right: -4 }}>
-    <Badge shape="count" count={unread} variant="error" aria-hidden="true" />
+    <Badge shape="count" count={unread} tone="error" aria-hidden="true" />
   </span>
 </button>
 ```
@@ -4083,7 +4120,8 @@ import { MediaCard } from "@bigtablet/design-system";
 | 에러로 인한 로드 실패 | △ EmptyState로 가능하지만 [Alert](#alert) `variant="error"`도 고려 |
 | 권한 없어서 못 봄 | ✅ EmptyState (illustration: Lock 아이콘) |
 | 로딩 중 | ❌ [Spinner](#spinner) 또는 Skeleton 권장 |
-| 페이지 전체 404/500 에러 | ❌ 전용 에러 페이지 + Hero 패턴 권장 |
+| 페이지 없음 (404) | ✅ EmptyState `size="lg"` + `fillHeight` (스토리 `404 (페이지 없음)`) |
+| 서버·네트워크 실패 (500 등) | ❌ [ErrorState](#errorstate) |
 
 **EmptyState vs Alert(error) 비교**
 
@@ -4096,11 +4134,23 @@ import { MediaCard } from "@bigtablet/design-system";
 
 #### size 선택 가이드
 
-| size | 패딩 | 제목 타이포 | 권장 위치 |
-|------|------|----------|----------|
-| `sm` | 24/16, gap 8 | title.medium | 모달 안, 사이드바, 좁은 영역, 검색 결과 |
-| `md` (기본) | 40/24, gap 12 | title.large | 콘텐츠 영역 전체 |
-| `lg` | 48/24, gap 16 | heading.small | 페이지 메인, 온보딩 |
+| size | 패딩 | 제목 타이포 | 아이콘 배지 / 아이콘 | 권장 위치 |
+|------|------|----------|----------|----------|
+| `sm` | 24/16 | title.medium | 40 / 20px | 모달 안, 사이드바, 좁은 영역, 검색 결과 |
+| `md` (기본) | 40/24 | title.large | 64 / 32px | 콘텐츠 영역 전체 |
+| `lg` | 48/24 | heading.small | 96 / 48px | 페이지 메인, 온보딩, 404 |
+
+간격은 위계를 둔다 - 제목·설명은 붙이고(4~8px), 아이콘 아래(12~20px)와 버튼 위(16~32px)는 더 띄운다.
+
+#### illustration 슬롯
+
+lucide 아이콘을 넘기면 원형 배지(`bg-additive`)에 올리고 아이콘 크기를 `size` 에 맞춰 고정한다 -
+아이콘의 `size` prop 은 넘기지 않아도 되고, 넘겨도 무시된다. 이미지나 직접 그린 svg 일러스트는 배지 없이
+원래 크기 그대로 렌더한다.
+
+```tsx
+<EmptyState illustration={<Inbox />} title="받은 메일이 없습니다" />
+```
 
 #### 구성 가이드
 
@@ -4179,7 +4229,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 기본 - 받은 메일
 <EmptyState
-  illustration={<Inbox size={48} />}
+  illustration={<Inbox />}
   title="받은 메일이 없습니다"
   description="새 메일이 오면 여기 표시됩니다."
   action={<Button>새 메일 작성</Button>}
@@ -4187,7 +4237,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 검색 결과 없음 - sm 사이즈, action 없음
 <EmptyState
-  illustration={<Search size={40} />}
+  illustration={<Search />}
   title="검색 결과가 없습니다"
   description="다른 키워드로 검색해보세요."
   size="sm"
@@ -4195,7 +4245,7 @@ import { Inbox, Search } from "lucide-react";
 
 // 온보딩 - lg + 2개 CTA
 <EmptyState
-  illustration={<Inbox size={64} />}
+  illustration={<Inbox />}
   title="첫 프로젝트를 만들어보세요"
   description="프로젝트를 만들면 팀원과 협업하고 진행 상황을 추적할 수 있습니다."
   action={
@@ -4210,7 +4260,7 @@ import { Inbox, Search } from "lucide-react";
 // 라이브 검색 결과 (동적 변경) - role="status"
 <EmptyState
   role="status"
-  illustration={<Search size={40} />}
+  illustration={<Search />}
   title={`"${query}"에 대한 결과가 없습니다`}
   size="sm"
 />
@@ -4239,8 +4289,10 @@ import { Inbox, Search } from "lucide-react";
 
 | variant | 용도 | 시각 |
 |---------|------|------|
-| `page` (기본) | 전체 화면/영역 fallback (route error boundary) | 큰 아이콘 (48) + `min-height: 320` + 넉넉한 패딩 |
-| `widget` | 위젯/카드 내부 인라인 fallback | 작은 아이콘 (28) + 좁은 패딩 |
+| `page` (기본) | 전체 화면/영역 fallback (route error boundary) | 배지 96 / 아이콘 48 + `min-height: 320` + 넉넉한 패딩 |
+| `widget` | 위젯/카드 내부 인라인 fallback | 배지 40 / 아이콘 20 + 좁은 패딩 |
+
+`variant` 는 [EmptyState](#emptystate) 의 `size` 에 대응한다 - `page` ≈ `lg`, `widget` ≈ `sm` (간격 위계·제목 크기가 같다). 같은 화면에 둘을 섞어 쓸 때 이 짝을 맞추면 높이와 리듬이 어긋나지 않는다.
 
 #### 아이콘
 
@@ -4254,7 +4306,7 @@ import { Inbox, Search } from "lucide-react";
 |------|------|---------|-------------|
 | `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
 | `description` | `ReactNode` | - | 보조 설명 |
-| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
+| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. lucide 아이콘은 variant 에 맞는 원형 배지(`status-error-container`)에 올라가고 크기가 고정된다. 이미지·직접 그린 svg 는 그대로. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
 | `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
 | `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
 | `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |
@@ -4287,7 +4339,7 @@ import { ErrorState, Button } from "@bigtablet/design-system";
 // 커스텀 아이콘
 import { ServerCrash } from "lucide-react";
 <ErrorState
-  icon={<ServerCrash size={48} strokeWidth={1.5} />}
+  icon={<ServerCrash strokeWidth={1.5} />}
   title="서버에 연결할 수 없습니다"
   action={<Button onClick={refetch}>새로고침</Button>}
 />
@@ -4548,7 +4600,7 @@ const columns: TableColumn<User>[] = [
     key: "active",
     header: "상태",
     align: "center",
-    render: (u) => <Chip type="static" tone={u.active ? "success" : "default"} label={u.active ? "활성" : "휴면"} />,
+    render: (u) => <Chip type="static" tone={u.active ? "success" : "neutral"} label={u.active ? "활성" : "휴면"} />,
   },
 ];
 

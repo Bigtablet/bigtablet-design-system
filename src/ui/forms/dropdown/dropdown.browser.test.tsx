@@ -6,10 +6,10 @@ import "./style.scss";
 
 const options = Array.from({ length: 40 }, (_, i) => ({ value: `v${i}`, label: `옵션 ${i}` }));
 
-const openAt = async (pos: React.CSSProperties, props: { fullWidth?: boolean } = {}) => {
+const openAt = async (pos: React.CSSProperties) => {
 	render(
 		<div style={{ position: "fixed", ...pos }}>
-			<Dropdown label="항목" options={options} onChange={() => {}} {...props} />
+			<Dropdown label="항목" options={options} onValueChange={() => {}} />
 		</div>,
 	);
 	const trigger = screen.getByRole("combobox");
@@ -46,7 +46,7 @@ describe("Dropdown layout (Chromium)", () => {
 
 	it("does not spill past a 375px screen with a full-width trigger", async () => {
 		await page.viewport(375, 667);
-		const { list } = await openAt({ top: 40, left: 0, right: 0 }, { fullWidth: true });
+		const { list } = await openAt({ top: 40, left: 0, right: 0 });
 		expect(list.left).toBeGreaterThanOrEqual(0);
 		expect(list.right).toBeLessThanOrEqual(375 - 8);
 	});

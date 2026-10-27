@@ -62,6 +62,8 @@
 	--bt-color-status-error-on-surface: #B91C1C;
 	--bt-color-status-success-on-surface: #047857;
 	--bt-color-status-warning-on-surface: #B45309;
+	// Warning icons and progress bars on a surface. amber-700 (warning) reads brown next to error red, and graphics only need 3:1 - not for text
+	--bt-color-status-warning-graphic: #D97706;
 	--bt-color-status-info-on-surface: #1D4ED8;
 	// Accent
 	--bt-color-accent-subtle: rgba(0, 0, 0, 0.05);
@@ -170,6 +172,7 @@
 	--bt-color-status-error-on-surface: #F87171;
 	--bt-color-status-success-on-surface: #4ADE80;
 	--bt-color-status-warning-on-surface: #FBBF24;
+	--bt-color-status-warning-graphic: #FBBF24;
 	--bt-color-status-info-on-surface: #60A5FA;
 	--bt-color-accent-subtle: rgba(255, 255, 255, 0.08);
 	--bt-color-accent-muted: rgba(255, 255, 255, 0.12);

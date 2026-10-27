@@ -4,7 +4,7 @@ import type * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export type IconButtonVariant = "standard" | "filled" | "tonal" | "outlined";
+export type IconButtonVariant = "text" | "filled" | "tonal" | "outline";
 export type IconButtonSize = "sm" | "md";
 
 /** 접근성 이름을 제외한 IconButton 공통 props */
@@ -13,7 +13,7 @@ interface IconButtonBaseProps
 		SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>,
 		"aria-label" | "aria-labelledby"
 	> {
-	/** 아이콘 버튼 스타일 변형 (기본값: "standard") */
+	/** 아이콘 버튼 스타일 변형 (기본값: "text"). Button 의 variant 이름과 같다 */
 	variant?: IconButtonVariant;
 	/** 아이콘 버튼 크기 (기본값: "md") */
 	size?: IconButtonSize;
@@ -58,13 +58,13 @@ export type IconButtonProps = IconButtonWithAriaLabel | IconButtonWithAriaLabell
 
 /**
  * 아이콘만 표시하는 버튼을 렌더링한다.
- * Figma DS 기준 4가지 variant(standard/filled/tonal/outlined)와 2가지 size(sm/md)를 지원한다.
+ * 4가지 variant(text/filled/tonal/outline)와 2가지 size(sm/md)를 지원한다.
  * 아이콘은 `aria-hidden` 이므로 `aria-label` 또는 `aria-labelledby` 가 타입 레벨에서 필수다.
  * @param props 아이콘 버튼 속성
  * @returns 렌더링된 아이콘 버튼 요소
  */
 export const IconButton = ({
-	variant = "standard",
+	variant = "text",
 	size = "md",
 	icon,
 	type = "button",

@@ -159,7 +159,7 @@ jobs:
       # 판정 제출 + 인라인 코멘트. gh api 는 주지 않는다(리뷰는 gh pr review/comment 로 충분).
       - name: Review
         if: github.event_name != 'pull_request_review_comment' && steps.guard.outputs.has_secret == 'true'
-        uses: anthropics/claude-code-action@f27be6b65a4652f08a2ba3cff79114829b588967 # v1.0.252
+        uses: anthropics/claude-code-action@16f9f71ab9c490faf367f94dd294897edc25be33 # v1.0.261
         with:
           # Claude LLM API 인증 (GitHub 인증과 별개).
           # secret 은 `claude setup-token` 으로 만든 OAuth 토큰(sk-ant-oat...) 이므로
@@ -284,7 +284,7 @@ jobs:
       - name: Answer inline thread
         id: answer
         if: github.event_name == 'pull_request_review_comment' && steps.guard.outputs.has_secret == 'true'
-        uses: anthropics/claude-code-action@f27be6b65a4652f08a2ba3cff79114829b588967 # v1.0.252
+        uses: anthropics/claude-code-action@16f9f71ab9c490faf367f94dd294897edc25be33 # v1.0.261
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_REVIEW_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

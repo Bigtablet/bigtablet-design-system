@@ -73,7 +73,7 @@ describe("FilterBar", () => {
 	});
 
 	it("keeps the button focusable while loading but blocks submitting", () => {
-		const { onSubmit } = setup({ loading: true });
+		const { onSubmit } = setup({ isLoading: true });
 		const button = screen.getByRole("button", { name: "검색" });
 		button.focus();
 		// disabled 로 바꾸면 포커스가 body 로 빠진다 - aria-disabled 로 막는다
@@ -86,7 +86,7 @@ describe("FilterBar", () => {
 	});
 
 	it("marks the form busy and shows a decorative spinner while loading", () => {
-		setup({ loading: true });
+		setup({ isLoading: true });
 		expect(screen.getByRole("search")).toHaveAttribute("aria-busy", "true");
 		// 이름이 "검색" 그대로 - 스피너 라벨이 붙어 "검색 검색" 이 되지 않는다
 		const button = screen.getByRole("button", { name: "검색" });

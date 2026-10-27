@@ -4,14 +4,14 @@ import type * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export type BadgeVariant = "accent" | "neutral" | "info" | "success" | "warning" | "error";
+export type BadgeTone = "accent" | "neutral" | "info" | "success" | "warning" | "error";
 export type BadgeShape = "dot" | "count" | "label";
 export type BadgeSize = "sm" | "md" | "lg";
 export type BadgeAppearance = "solid" | "soft";
 
 export interface BadgeProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
-	/** 색상 variant (기본값: "accent") */
-	variant?: BadgeVariant;
+	/** 의미 색 (기본값: "accent") */
+	tone?: BadgeTone;
 	/** 모양 (기본값: "label"). dot=점만 / count=숫자 / label=텍스트 */
 	shape?: BadgeShape;
 	/**
@@ -38,14 +38,14 @@ export interface BadgeProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanE
  *
  * @example
  * ```tsx
- * <Badge shape="dot" variant="error" />
+ * <Badge shape="dot" tone="error" />
  * <Badge shape="count" count={5} />
  * <Badge>New</Badge>
- * <Badge variant="success" appearance="soft">+5%</Badge>
+ * <Badge tone="success" appearance="soft">+5%</Badge>
  * ```
  */
 export const Badge = ({
-	variant = "accent",
+	tone = "accent",
 	shape = "label",
 	size = "md",
 	appearance = "solid",
@@ -67,7 +67,8 @@ export const Badge = ({
 		<span
 			className={cn(
 				"badge",
-				`badge_variant_${variant}`,
+				// 클래스명은 그대로 둔다 - 앱이 `.badge_variant_*` 로 덮어쓰고 있다 (notiiv brand.css)
+				`badge_variant_${tone}`,
 				`badge_shape_${shape}`,
 				`badge_size_${size}`,
 				`badge_appearance_${appearance}`,

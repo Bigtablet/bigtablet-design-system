@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { LABEL_COMPARISON } from "../label-comparison.docs";
 import { Badge } from ".";
 
 const meta: Meta<typeof Badge> = {
@@ -7,7 +8,7 @@ const meta: Meta<typeof Badge> = {
 	tags: ["autodocs"],
 	argTypes: {
 		shape: { control: "select", options: ["dot", "count", "label"] },
-		variant: {
+		tone: {
 			control: "select",
 			options: ["accent", "neutral", "info", "success", "warning", "error"],
 		},
@@ -17,7 +18,7 @@ const meta: Meta<typeof Badge> = {
 		max: { control: "number" },
 		children: { control: "text" },
 	},
-	args: { shape: "label", variant: "accent", appearance: "solid", size: "md", children: "New" },
+	args: { shape: "label", tone: "accent", appearance: "solid", size: "md", children: "New" },
 	parameters: {
 		docs: {
 			description: {
@@ -25,9 +26,11 @@ const meta: Meta<typeof Badge> = {
 **Badge** - 작은 상태·카운트 표시. 정적 표시 전용이다 (클릭·삭제는 Chip 참고).
 
 - **Shapes** - \`dot\` / \`count\` / \`label\`
-- **Variants** - \`accent\` / \`neutral\` / \`info\` / \`success\` / \`warning\` / \`error\`
+- **Tones** (\`tone\`) - \`accent\` / \`neutral\` / \`info\` / \`success\` / \`warning\` / \`error\`
 - **Appearance** - \`solid\` (강한 fill) / \`soft\` (tint 배경 + 진한 글자). 둘 다 WCAG AA 통과
 - \`count > max\` → \`{max}+\`
+
+${LABEL_COMPARISON}
 				`,
 			},
 		},
@@ -40,12 +43,12 @@ type Story = StoryObj<typeof Badge>;
 export const Labels: Story = {
 	render: () => (
 		<div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-			<Badge variant="accent">New</Badge>
-			<Badge variant="neutral">Beta</Badge>
-			<Badge variant="info">Info</Badge>
-			<Badge variant="success">Active</Badge>
-			<Badge variant="warning">Pending</Badge>
-			<Badge variant="error">Error</Badge>
+			<Badge tone="accent">New</Badge>
+			<Badge tone="neutral">Beta</Badge>
+			<Badge tone="info">Info</Badge>
+			<Badge tone="success">Active</Badge>
+			<Badge tone="warning">Pending</Badge>
+			<Badge tone="error">Error</Badge>
 		</div>
 	),
 };
@@ -65,7 +68,7 @@ export const Counts: Story = {
 			<Badge shape="count" count={9} />
 			<Badge shape="count" count={42} />
 			<Badge shape="count" count={150} max={99} />
-			<Badge shape="count" count={5} variant="error" />
+			<Badge shape="count" count={5} tone="error" />
 		</div>
 	),
 };
@@ -81,10 +84,10 @@ export const Dots: Story = {
 	},
 	render: () => (
 		<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-			<Badge shape="dot" variant="success" />
-			<Badge shape="dot" variant="warning" />
-			<Badge shape="dot" variant="error" />
-			<Badge shape="dot" variant="accent" />
+			<Badge shape="dot" tone="success" />
+			<Badge shape="dot" tone="warning" />
+			<Badge shape="dot" tone="error" />
+			<Badge shape="dot" tone="accent" />
 		</div>
 	),
 };
@@ -106,22 +109,22 @@ export const SolidVsSoft: Story = {
 					solid
 				</div>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-					<Badge variant="accent" appearance="solid">
+					<Badge tone="accent" appearance="solid">
 						New
 					</Badge>
-					<Badge variant="neutral" appearance="solid">
+					<Badge tone="neutral" appearance="solid">
 						Beta
 					</Badge>
-					<Badge variant="info" appearance="solid">
+					<Badge tone="info" appearance="solid">
 						Info
 					</Badge>
-					<Badge variant="success" appearance="solid">
+					<Badge tone="success" appearance="solid">
 						Active
 					</Badge>
-					<Badge variant="warning" appearance="solid">
+					<Badge tone="warning" appearance="solid">
 						Pending
 					</Badge>
-					<Badge variant="error" appearance="solid">
+					<Badge tone="error" appearance="solid">
 						Error
 					</Badge>
 				</div>
@@ -131,22 +134,22 @@ export const SolidVsSoft: Story = {
 					soft
 				</div>
 				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-					<Badge variant="accent" appearance="soft">
+					<Badge tone="accent" appearance="soft">
 						New
 					</Badge>
-					<Badge variant="neutral" appearance="soft">
+					<Badge tone="neutral" appearance="soft">
 						Beta
 					</Badge>
-					<Badge variant="info" appearance="soft">
+					<Badge tone="info" appearance="soft">
 						Info
 					</Badge>
-					<Badge variant="success" appearance="soft">
+					<Badge tone="success" appearance="soft">
 						+5%
 					</Badge>
-					<Badge variant="warning" appearance="soft">
+					<Badge tone="warning" appearance="soft">
 						Review
 					</Badge>
-					<Badge variant="error" appearance="soft">
+					<Badge tone="error" appearance="soft">
 						Failed
 					</Badge>
 				</div>

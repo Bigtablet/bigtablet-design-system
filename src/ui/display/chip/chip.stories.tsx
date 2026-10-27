@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
+import { LABEL_COMPARISON } from "../label-comparison.docs";
 import { Chip } from ".";
 
 const meta: Meta<typeof Chip> = {
@@ -10,7 +11,7 @@ const meta: Meta<typeof Chip> = {
 		type: { control: "select", options: ["basic", "input", "filter", "static"] },
 		tone: {
 			control: "select",
-			options: ["default", "accent", "info", "success", "warning", "error"],
+			options: ["neutral", "accent", "info", "success", "warning", "error"],
 		},
 		size: { control: "select", options: [undefined, "sm", "md"] },
 		label: { control: "text" },
@@ -30,8 +31,7 @@ const meta: Meta<typeof Chip> = {
 **Types**: \`basic\` (태그) / \`input\` (입력값, removable) / \`filter\` (드롭다운) / \`static\` (라벨, tone).
 주요 prop: \`type\`, \`tone\`, \`size\` (sm 24 / md 28 / 기본 32), \`selected\`, \`removable\`.
 
-누를 수도 지울 수도 없는 **표시 전용**이면 \`Badge\` 입니다. 카운트(\`3\`)나 점 표시도 \`Badge\` 쪽입니다.
-반대로 사용자가 고르거나 떼어낼 수 있으면 Chip 입니다 - \`type="static"\` 은 그 사이에 있는 라벨 전용입니다.
+${LABEL_COMPARISON}
 				`,
 			},
 		},
@@ -66,7 +66,7 @@ export const Static: Story = {
 	name: "Static (tone)",
 	render: () => (
 		<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-			<Chip type="static" tone="default" label="Default" />
+			<Chip type="static" tone="neutral" label="Neutral" />
 			<Chip type="static" tone="accent" label="Accent" />
 			<Chip type="static" tone="info" label="Info" />
 			<Chip type="static" tone="success" label="Success" />
@@ -95,7 +95,7 @@ export const Disabled: Story = {
 			</div>
 			{/* static 은 컨트롤이 아니라 텍스트 라벨이라 흐려지지 않는다 - 흐리면 대비가 AA 미달. */}
 			<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-				<Chip type="static" tone="default" label="Default" disabled />
+				<Chip type="static" tone="neutral" label="Neutral" disabled />
 				<Chip type="static" tone="accent" label="Accent" disabled />
 				<Chip type="static" tone="info" label="Info" disabled />
 				<Chip type="static" tone="success" label="Success" disabled />

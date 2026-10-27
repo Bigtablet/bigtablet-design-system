@@ -73,7 +73,7 @@ export const LoginForm: Story = {
 						placeholder="you@example.com"
 						leadingIcon={<Mail size={iconSize.md} />}
 						value={email}
-						onChangeAction={setEmail}
+						onValueChange={setEmail}
 						fullWidth
 					/>
 					<TextField
@@ -82,7 +82,7 @@ export const LoginForm: Story = {
 						placeholder="비밀번호 입력"
 						leadingIcon={<Lock size={iconSize.md} />}
 						value={password}
-						onChangeAction={setPassword}
+						onValueChange={setPassword}
 						fullWidth
 					/>
 
@@ -265,7 +265,7 @@ export const SearchWithFilter: Story = {
 								placeholder="매장 이름·지역으로 검색"
 								leadingIcon={<Search size={iconSize.md} />}
 								value={keyword}
-								onChangeAction={setKeyword}
+								onValueChange={setKeyword}
 								clearable
 								fullWidth
 							/>
@@ -274,14 +274,13 @@ export const SearchWithFilter: Story = {
 							<Dropdown
 								label="정렬"
 								value={sort}
-								onChange={(v) => setSort(v)}
+								onValueChange={(v) => setSort(v)}
 								options={[
 									{ value: "newest", label: "최신순" },
 									{ value: "rating", label: "평점순" },
 									{ value: "popular", label: "인기순" },
 									{ value: "nearby", label: "가까운 순" },
 								]}
-								fullWidth
 							/>
 						</div>
 					</Stack>
@@ -290,7 +289,7 @@ export const SearchWithFilter: Story = {
 						<Chip
 							type="static"
 							size="sm"
-							tone="default"
+							tone="neutral"
 							leadingIcon={<Filter size={iconSize.xs} />}
 							label="활성 필터"
 						/>
@@ -354,14 +353,14 @@ export const SettingsSection: Story = {
 						<TextField
 							label="표시 이름"
 							value={displayName}
-							onChangeAction={setDisplayName}
+							onValueChange={setDisplayName}
 							fullWidth
 						/>
 						<TextField
 							label="연락처 이메일"
 							type="email"
 							value={contactEmail}
-							onChangeAction={setContactEmail}
+							onValueChange={setContactEmail}
 							fullWidth
 						/>
 					</Stack>
@@ -394,7 +393,7 @@ export const SettingsSection: Story = {
 							<Toggle
 								ariaLabel="이메일 알림"
 								checked={notifyEmail}
-								onChange={setNotifyEmail}
+								onCheckedChange={setNotifyEmail}
 								size="md"
 							/>
 						</Stack>
@@ -412,7 +411,7 @@ export const SettingsSection: Story = {
 							<Toggle
 								ariaLabel="푸시 알림"
 								checked={notifyPush}
-								onChange={setNotifyPush}
+								onCheckedChange={setNotifyPush}
 								size="md"
 							/>
 						</Stack>
@@ -427,7 +426,12 @@ export const SettingsSection: Story = {
 									긴급 알림만 SMS로 발송
 								</span>
 							</Stack>
-							<Toggle ariaLabel="SMS 알림" checked={notifySms} onChange={setNotifySms} size="md" />
+							<Toggle
+								ariaLabel="SMS 알림"
+								checked={notifySms}
+								onCheckedChange={setNotifySms}
+								size="md"
+							/>
 						</Stack>
 					</Stack>
 

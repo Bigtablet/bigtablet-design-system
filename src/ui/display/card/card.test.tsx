@@ -82,7 +82,7 @@ describe("Card", () => {
 		expect(container.firstChild).toHaveClass("card_p_none");
 	});
 
-	// ── variant (glass / outlined) ──────────────────────────────────────
+	// ── variant (glass / outline) ──────────────────────────────────────
 
 	it("does not apply a variant class for default variant", () => {
 		const { container } = render(<Card>Content</Card>);
@@ -99,9 +99,9 @@ describe("Card", () => {
 		expect(container.firstChild).toHaveClass("card_variant_glass");
 	});
 
-	it("applies outlined variant class", () => {
-		const { container } = render(<Card variant="outlined">Content</Card>);
-		expect(container.firstChild).toHaveClass("card_variant_outlined");
+	it("applies outline variant class", () => {
+		const { container } = render(<Card variant="outline">Content</Card>);
+		expect(container.firstChild).toHaveClass("card_variant_outline");
 	});
 
 	// ── interactive (hover-lift) ────────────────────────────────────────

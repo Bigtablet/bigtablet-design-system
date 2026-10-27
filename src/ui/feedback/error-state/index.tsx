@@ -15,8 +15,9 @@ export interface ErrorStateProps
 	/** 보조 설명 */
 	description?: React.ReactNode;
 	/**
-	 * 아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). **장식 전용** -
-	 * `aria-hidden="true"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이
+	 * 아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). lucide 아이콘은 `variant` 에 맞는 원형
+	 * 배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다.
+	 * **장식 전용** - `aria-hidden="true"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이
 	 * 이름 없는 bare lucide svg 라서, 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽는다.
 	 * 포커스 가능한 요소는 `action` 을 쓸 것 (WCAG 4.1.2).
 	 */
@@ -25,16 +26,11 @@ export interface ErrorStateProps
 	action?: React.ReactNode;
 	/**
 	 * 레이아웃 모드 (기본 "page").
-	 * - `page`: 전체 화면/영역 채움 - error boundary fallback. 큰 아이콘 + 넉넉한 패딩 + min-height.
-	 * - `widget`: 인라인 컴팩트 - 위젯/카드 내부 error fallback. 작은 아이콘 + 좁은 패딩.
+	 * - `page`: 전체 화면/영역 채움 - error boundary fallback. 배지 96 / 아이콘 48 + 넉넉한 패딩 + min-height.
+	 * - `widget`: 인라인 컴팩트 - 위젯/카드 내부 error fallback. 배지 40 / 아이콘 20 + 좁은 패딩.
 	 */
 	variant?: ErrorStateVariant;
 }
-
-const DEFAULT_ICON_SIZE: Record<ErrorStateVariant, number> = {
-	page: 48,
-	widget: 28,
-};
 
 /**
  * 에러 상태 표시 - error boundary / 데이터 로드 실패 / 위젯 에러 fallback.
@@ -68,10 +64,7 @@ export const ErrorState = ({
 	// 그 용법을 공식 지원한다). `??` 로 두면 숨겨 뒀던 제목이 기본 문구로 되살아난다.
 	const title = titleProp === undefined ? t("errorState.title") : titleProp;
 	// icon === null → 숨김, undefined → 기본 아이콘
-	const resolvedIcon =
-		icon === null
-			? null
-			: (icon ?? <TriangleAlert size={DEFAULT_ICON_SIZE[variant]} strokeWidth={1.5} />);
+	const resolvedIcon = icon === null ? null : (icon ?? <TriangleAlert strokeWidth={1.5} />);
 
 	return (
 		<div

@@ -161,6 +161,13 @@ jobs:
     # vanilla - `src/vanilla/*.browser.test.ts` 레이아웃 테스트가 이 job 에서 돈다
     if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true' || needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
+    # Playwright 공식 이미지 - Chromium·시스템 패키지·폰트가 들어 있어 설치 단계가 없다.
+    # 예전엔 `playwright install --with-deps` 의 apt 가 Ubuntu 미러에 묶여 가끔 2~11분 멈췄다 (#872).
+    # 태그는 pnpm-lock.yaml 의 playwright 버전과 같아야 한다 - 어긋나면 아래 확인 단계가 실패한다.
+    # 다른 액션처럼 digest 로 고정한다 (태그 재푸시 대비). 올릴 때는 태그와 digest 를 함께 바꾼다 -
+    # digest 는 새 태그로 한 번 돌린 job 의 "Initialize containers" 로그 `Digest:` 줄에 나온다.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
 
     steps:
       - name: Checkout
@@ -178,23 +185,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Playwright + Chromium 다운로드 ~200MB 라 무겁다.
-      #
-      # 브라우저 바이너리는 캐시한다. 실측으로 이 스텝은 apt(`--with-deps`, 폰트 9개 설치)
-      # 11s + 다운로드 8.7s 로 갈리는데, 캐시가 잡는 것은 뒤쪽이다. 폰트는 a11y 렌더에
-      # 영향을 주므로 `--with-deps` 는 유지한다. `playwright install` 이 idempotent 해서
-      # 캐시가 맞으면 다운로드만 건너뛰므로 hit/miss 분기는 두지 않는다.
-      # 키에 lockfile 해시를 쓴다 - playwright 버전이 거기 고정돼 있어 버전이 오르면 무효화된다.
-      - name: Cache Playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+      # 이미지 태그와 lockfile 의 playwright 버전이 어긋나면 브라우저 경로가 없어 테스트가 엉뚱하게 깨진다.
+      # 여기서 먼저 막고, 고칠 곳(컨테이너 태그)을 알려 준다.
+      - name: Check Playwright image matches lockfile
+        run: |
+          dirs=$(pnpm exec playwright install --dry-run chromium | awk '/Install location:/ {print $3}')
+          # 출력 형식이 바뀌어 경로를 하나도 못 읽으면 검사가 조용히 통과한다 - 그것도 실패로 본다
+          if [ -z "$dirs" ]; then
+            echo "::error::playwright install --dry-run 출력에서 브라우저 경로를 읽지 못했다 - 이 확인 단계의 파싱을 고칠 것"
+            exit 1
+          fi
+          missing=$(echo "$dirs" | while read -r dir; do [ -d "$dir" ] || echo "$dir"; done)
+          if [ -n "$missing" ]; then
+            echo "::error::Playwright 이미지에 이 lockfile 의 브라우저가 없다 - ci.yml a11y 의 container.image 태그를 $(pnpm exec playwright --version | awk '{print $2}') 로 맞출 것"
+            echo "$missing"
+            exit 1
+          fi
 
       - name: Run a11y tests (Storybook)
         run: pnpm test:storybook
@@ -202,6 +208,20 @@ jobs:
       # 같은 Chromium 을 쓰므로 별도 job 없이 이어서 돈다 - 배치·잘림·스크롤 잠금 실측.
       - name: Run layout tests (browser)
         run: pnpm test:browser
+
+      # 시각 회귀 - 기준 스크린샷과 픽셀 비교 (#879). 기준 이미지는 이 컨테이너(linux)에서 만든 것이라
+      # 여기서만 비교가 의미 있다. 실패하면 아래 artifact 에 실제·차이·새 기준 스크린샷이 남는다 -
+      # 의도한 렌더 변경이면 `pnpm visual:accept <run-id>` 로 받아 기준을 갱신한다 (docs/TESTING.md).
+      - name: Run visual regression tests
+        run: pnpm test:visual
+
+      - name: Upload visual screenshots
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-screenshots
+          path: .vitest-attachments/src/test/
+          retention-days: 14
 
   # 정적 검사(커밋 메시지 · SCSS · 파일명 등) + 빌드와 dist 기반 검사.
   build:
@@ -269,6 +289,12 @@ jobs:
       # 다시 갈라진다 - 그래서 정적으로 본다. 소스만 읽으므로 여기(Build 앞)에 둔다.
       - name: Check test and story filenames
         run: pnpm check:filenames
+
+      # AGENT_GUIDE 카탈로그의 prop 이 소스에 있는지. AI 에이전트가 이 표로 코드를 만드는데,
+      # 소스를 바꾸고 가이드를 안 고쳐 5개 컴포넌트가 없는 prop 을 안내하고 있었다(#878).
+      # 소스만 읽으므로 여기(Build 앞)에 둔다.
+      - name: Check AGENT_GUIDE props
+        run: pnpm check:agent-guide
 
       # 빌드는 모든 변경에서 검증 (deps/scripts 변경도 빌드 영향 가능)
       - name: Build

@@ -247,7 +247,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 95.48% stmts / 93.43% branch / 96% funcs / 96.72% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 96.06% stmts / 93.72% branch / 96.48% funcs / 97.33% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
@@ -258,9 +258,11 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
   pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
   pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
+  pnpm check:agent-guide # docs/AGENT_GUIDE.md 카탈로그의 prop 이 소스에 있는지
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
+  pnpm test:visual       # 시각 회귀 (*.visual.test.tsx) - CI 컨테이너 전용. 의도한 렌더 변경이면 pnpm visual:accept <run-id>
   ```
 
 ---
@@ -330,7 +332,7 @@ label/domain
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
    - 커버리지 수치는 손대지 않는다 - 2번의 릴리즈 PR 이 열리면 CI(`.github/workflows/coverage-docs.yml`)가 `pnpm coverage:docs` 로 다시 재서 `docs: refresh coverage figures` 커밋을 develop 에 올린다. 그 커밋도 릴리즈 PR 에 그대로 실린다.
 2. **릴리즈 PR** - head `develop` → base `main`, 제목 `merge: release` (head 가 `develop` 이라 "PR 제목 = 브랜치명" 의 예외 - Merge Convention 의 `main 배포` 규칙을 따른다).
-   - **이번 릴리즈에 담긴 모든 이슈의 `Closes #NNN`** 을 `## 작업 개요` 에 나열. `Closes #` 는 기본 브랜치(main) 머지에서만 발동하는데 feature PR 은 전부 `develop` 대상이라, feature PR 본문에 써 둔 것은 이슈를 닫지 못한다. 머지 전 `gh pr view N --json closingIssuesReferences` 로 연결을 확인하고, 배포 후 `gh issue list --state open` 으로 실제로 닫혔는지 확인한다.
+   - 이번 릴리즈에 담긴 이슈 번호를 `## 작업 개요` 에 나열한다 (기록용). 이슈는 이미 각 PR 이 develop 에 머지될 때 닫혀 있다 - 아래 "이슈 닫기" 참고. 배포 후 Dependabot 알림처럼 main 반영이 필요한 것만 실제로 닫혔는지 확인한다.
    - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 릴리즈 PR 에 자동으로 따라온다.
 3. 리뷰어 approve 후 **merge commit 으로 머지** (squash·rebase 금지 - main 에 develop 에 없는 커밋이 생겨 다시 어긋난다).
    squash 는 저장소 설정에서 꺼 두었다(2026-10-01). **rebase merging 은 설정상 아직 켜져 있으니** 머지 버튼 드롭다운이 "Create a merge commit" 인지 확인한다 - rebase 로 머지하면 develop 커밋이 새 SHA 로 main 에 복제돼 `git log origin/develop..origin/main` 에 내용 있는 커밋으로 잡힌다.
@@ -382,10 +384,18 @@ When a user requests feature development or modifications, follow this workflow:
 - **Security Report**: `[SECURITY]` (labels: Bug, Hotfix) - 보안 이슈 개요, 관련 CVE, TO DO
 
 ### 2. Create Branch
+이슈에 **연결된 브랜치**로 만든다 - 이슈의 Development 칸에 브랜치가 뜨고, 그 브랜치로 PR 을 열면 PR 이 그 자리에 뜬다.
 ```bash
-git checkout -b label/domain
-# Example: git checkout -b feat/new-component
+gh issue develop <이슈번호> --base develop --name label/domain --checkout
+# Example: gh issue develop 885 --base develop --name docs/issue-closing --checkout
 ```
+`git checkout -b` 로 만든 브랜치는 이슈와 연결되지 않는다. 이미 만든 PR 을 이슈에 붙이는 API 는 없어 사이드바에서 손으로 연결해야 한다.
+
+**이슈 닫기** - 연관 PR 이 develop 에 머지되면 그 이슈를 **바로** 닫는다. 릴리즈까지 기다리지 않는다.
+```bash
+gh issue close <이슈번호> --reason completed --comment "#<PR> 로 develop 에 머지 완료."
+```
+`Closes #N` 키워드로는 닫히지 않는다 - GitHub 은 PR 이 기본 브랜치(main)를 향할 때만 키워드를 해석해서, develop 대상 PR 에서는 링크도 생기지 않고 머지해도 아무 일이 없다. 그래서 예전에는 릴리즈 PR 본문에 `Closes` 를 모아 main 머지 때 닫았는데, 끝난 이슈가 릴리즈까지 열려 있어 무엇이 남았는지 헷갈렸다 (#885). Dependabot 알림처럼 main 반영 후에야 실제로 해결되는 건 닫을 때 그 사실을 코멘트에 적는다.
 
 ### 3. Implement Changes
 - Follow Global SCSS convention (`style.scss`)
@@ -467,7 +477,7 @@ EOF
 - ❌ `## 제목` 자리에 임의의 제목을 넣기 (`## Modal 이슈 6건 + 문서`). 제목은 PR title 이 이미 담당한다 - 본문 첫 섹션은 **`## 작업 개요`** 다
 - ❌ 섹션 제목을 바꾸거나(`## 변경 사항`) 새로 만들기
 - ❌ `## 작업한 내용` 을 산문으로 쓰기 - 체크박스 목록이다. 배경 설명은 `## 작업 개요` 로
-- 이슈를 닫으려면 `## 작업 개요` 안에 `Closes #000` 을 둔다
+- `## 작업 개요` 에 이슈 번호(`이슈 #000`)를 적는다. `Closes #000` 은 develop 대상 PR 에서 아무 효과가 없다 - 이슈는 머지 후 손으로 닫는다 (Claude Workflow 2번)
 
 ### Important Notes
 - Always create PRs targeting `develop` branch

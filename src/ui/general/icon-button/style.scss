@@ -50,7 +50,7 @@
 
   // ── Variant: Standard ───────────────────────────────────────────────────
 
-  &_variant_standard {
+  &_variant_text {
     background: transparent;
     color: token.$color_text_heading;
 
@@ -124,7 +124,7 @@
 
   // ── Variant: Outlined ───────────────────────────────────────────────────
 
-  &_variant_outlined {
+  &_variant_outline {
     background: transparent;
     @include token.hairline;
     color: token.$color_text_heading;

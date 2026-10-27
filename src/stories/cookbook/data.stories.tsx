@@ -168,7 +168,7 @@ export const StatusBadgesRow: Story = {
 			{
 				title: "주문 상태",
 				chips: [
-					{ tone: "default", label: "대기" },
+					{ tone: "neutral", label: "대기" },
 					{ tone: "info", label: "접수" },
 					{ tone: "accent", label: "처리중" },
 					{ tone: "success", label: "완료" },
@@ -182,7 +182,7 @@ export const StatusBadgesRow: Story = {
 					{ tone: "success", label: "결제 완료" },
 					{ tone: "warning", label: "부분 환불" },
 					{ tone: "error", label: "환불" },
-					{ tone: "default", label: "현장 결제" },
+					{ tone: "neutral", label: "현장 결제" },
 				],
 			},
 			{
@@ -191,7 +191,7 @@ export const StatusBadgesRow: Story = {
 					{ tone: "success", label: "충분" },
 					{ tone: "warning", label: "주의" },
 					{ tone: "error", label: "품절 임박" },
-					{ tone: "default", label: "단종" },
+					{ tone: "neutral", label: "단종" },
 				],
 			},
 		];

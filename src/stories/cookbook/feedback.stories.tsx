@@ -159,7 +159,7 @@ export const EmptyStatePattern: Story = {
 		>
 			<EmptyState
 				size="lg"
-				illustration={<Search size={56} strokeWidth={1.5} />}
+				illustration={<Search />}
 				title="검색 결과가 없습니다"
 				description={
 					<>

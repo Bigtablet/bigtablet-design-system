@@ -619,7 +619,7 @@ Alert는 JavaScript로만 사용합니다.
     Bigtablet.Alert({
       title: '알림',
       message: '작업이 완료되었습니다.',
-      variant: 'info',  // 'info', 'success', 'warning', 'error'
+      tone: 'info',  // 'info', 'success', 'warning', 'error'
       confirmText: '확인'
     });
   }
@@ -629,7 +629,7 @@ Alert는 JavaScript로만 사용합니다.
     Bigtablet.Alert({
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
-      variant: 'warning',
+      tone: 'warning',
       showCancel: true,
       confirmText: '삭제',
       cancelText: '취소',
@@ -697,7 +697,7 @@ Alert는 JavaScript로만 사용합니다.
 
 <!-- Variant (React Card variant prop 과 동일) -->
 <div class="bt-card bt-card--accent bt-card--p-md">Accent</div>
-<div class="bt-card bt-card--outlined bt-card--p-md">Outlined (shadow 무시)</div>
+<div class="bt-card bt-card--outline bt-card--p-md">Outline (shadow 무시. 옛 이름 bt-card--outlined 도 동작)</div>
 <div class="bt-card bt-card--glass bt-card--p-md">Glass (컬러/이미지 배경 위에서)</div>
 
 <!-- interactive - hover 시 살짝 떠오름 (React interactive prop) -->

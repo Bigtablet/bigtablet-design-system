@@ -109,9 +109,9 @@
     }
   }
 
-  // ── Variant: outlined (투명 bg + 테두리만) ──────────────────────────
+  // ── Variant: outline (투명 bg + 테두리만) ──────────────────────────
 
-  &_variant_outlined {
+  &_variant_outline {
     background: transparent;
     border: token.$border_width_standard solid token.$color_border_default;
     box-shadow: none;

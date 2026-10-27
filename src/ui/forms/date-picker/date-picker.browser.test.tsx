@@ -8,7 +8,7 @@ import "../../overlay/popover/style.scss";
 const openAt = async (pos: React.CSSProperties) => {
 	render(
 		<div style={{ position: "fixed", ...pos }}>
-			<DatePicker label="날짜" variant="calendar" onChange={() => {}} />
+			<DatePicker label="날짜" variant="calendar" onValueChange={() => {}} />
 		</div>,
 	);
 	const trigger = document.querySelector(".date_picker_trigger") as HTMLElement;

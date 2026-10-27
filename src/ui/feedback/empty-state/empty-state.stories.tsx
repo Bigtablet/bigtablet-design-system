@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Inbox, Search } from "lucide-react";
+import { FileQuestion, Inbox, Search } from "lucide-react";
 import { Button } from "../../general/button";
 import { EmptyState } from ".";
 
@@ -19,11 +19,12 @@ const meta: Meta<typeof EmptyState> = {
 		size: {
 			control: "select",
 			options: ["sm", "md", "lg"],
-			description: "크기 - sm: 24/16, md: 40/24, lg: 48/24",
+			description: "크기 - 패딩·제목 크기·아이콘 배지(sm 40 / md 64 / lg 96px)가 함께 바뀐다",
 		},
 		illustration: {
 			control: false,
-			description: "일러스트 영역 (아이콘/이미지). aria-hidden 자동 부여.",
+			description:
+				"일러스트 영역. lucide 아이콘은 size 에 맞는 원형 배지에 올라가고 크기가 고정된다. 이미지는 그대로. aria-hidden 자동 부여.",
 		},
 		action: {
 			control: false,
@@ -55,7 +56,7 @@ export const Default: Story = {
 	name: "받은 메일 없음",
 	render: () => (
 		<EmptyState
-			illustration={<Inbox size={48} />}
+			illustration={<Inbox />}
 			title="받은 메일이 없습니다"
 			description="새 메일이 오면 여기 표시됩니다."
 			action={<Button>새 메일 작성</Button>}
@@ -75,7 +76,7 @@ export const SearchNoResults: Story = {
 	},
 	render: () => (
 		<EmptyState
-			illustration={<Search size={40} />}
+			illustration={<Search />}
 			title="검색 결과가 없습니다"
 			description="다른 키워드로 검색해보세요."
 			size="sm"
@@ -87,7 +88,7 @@ export const Onboarding: Story = {
 	name: "온보딩",
 	render: () => (
 		<EmptyState
-			illustration={<Inbox size={64} />}
+			illustration={<Inbox />}
 			title="첫 프로젝트를 만들어보세요"
 			description="프로젝트를 만들면 팀원과 협업하고 진행 상황을 추적할 수 있습니다."
 			action={
@@ -112,4 +113,37 @@ export const Minimal: Story = {
 		},
 	},
 	render: () => <EmptyState title="아직 데이터가 없습니다" size="sm" />,
+};
+
+export const NotFound: Story = {
+	name: "404 (페이지 없음)",
+	parameters: {
+		layout: "fullscreen",
+		docs: {
+			description: {
+				story:
+					'404 페이지는 `size="lg"` + `fillHeight` 로 화면 한가운데에 둡니다. **`fillHeight` 는 부모가 세로 flex 여야** 높이를 채웁니다.\n\n갈 곳을 두 개 줍니다 - 홈(primary)과 이전 페이지(outline). 서버·네트워크 실패라면 `ErrorState` 입니다.',
+			},
+		},
+	},
+	render: () => (
+		<div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+			<EmptyState
+				illustration={<FileQuestion />}
+				title="페이지를 찾을 수 없습니다"
+				description="주소가 바뀌었거나 삭제된 페이지입니다. 주소를 다시 확인해 주세요."
+				action={
+					<div style={{ display: "flex", gap: 8 }}>
+						{/* 라우터를 쓰면 `as={Link}` 로 바꾼다 */}
+						<Button href="/">홈으로</Button>
+						<Button variant="outline" onClick={() => window.history.back()}>
+							이전 페이지
+						</Button>
+					</div>
+				}
+				size="lg"
+				fillHeight
+			/>
+		</div>
+	),
 };

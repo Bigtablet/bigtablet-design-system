@@ -19,11 +19,6 @@ const meta: Meta<typeof Pagination> = {
 			action: "changed",
 			description: "페이지 변경 시 호출되는 콜백입니다.",
 		},
-		onChange: {
-			action: "changed",
-			description:
-				"**deprecated** - `onPageChange` 를 쓰세요. 구현이 `onPageChange ?? onChange` 순으로 읽습니다.",
-		},
 	},
 	parameters: {
 		docs: {

@@ -4,6 +4,19 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.1.0) - 2026-10-27
+- **Breaking** 이름이 바뀌었거나 사라진 prop · 값을 별칭 없이 한 번에 지웠습니다 - 사내 패키지라 major 대신 minor 로 냅니다. prop 이름은 타입 에러로 드러나지만 클래스명 · 테스트 stub · 따로 만든 옵션 객체는 타입이 잡지 못합니다. 자세한 내용은 `docs/MIGRATION.md` 의 v4.1.0 절
+- **Breaking** 의미 색 prop 이 `tone` 으로 통일됐습니다 - `Badge` · `Alert`(`showAlert` · `confirm` 옵션) · `Toast` 의 `variant` → `tone`, Toast 값 `"default"` → `"neutral"`, 타입 `BadgeVariant` · `AlertVariant` · `ToastVariant` → `*Tone`. 모양은 `variant`, 의미 색은 `tone` 입니다. 렌더 클래스 `.badge_variant_*` · `.alert_variant_*` 는 그대로입니다
+- **Breaking** variant 값 이름을 `Button` 에 맞췄습니다 - `IconButton` `"standard"` · `"outlined"` → `"text"` · `"outline"`, `Card` `"outlined"` → `"outline"`, `Chip` `tone` `"default"` → `"neutral"`, Vanilla `.bt-card--outlined` → `.bt-card--outline`. 클래스명도 새 값을 따릅니다
+- **Breaking** deprecated prop 을 지웠습니다 - `onChange`(Dropdown · DatePicker · Pagination · Accordion · OtpInput · Toggle · NavBar `locale`), `TextField` · `Textarea` 의 `onChangeAction`, Dropdown `fullWidth` · `textAlign`, DatePicker `width`, 타입 `ButtonAsButton` · `ButtonAsAnchor`. 이제 deprecated prop 이 하나도 없습니다
+- `FilterBar` 로딩 prop 이 `DataView` · `Table` 과 같은 `isLoading` 입니다 (`loading` 은 지웠습니다)
+- 색 토큰 `status-warning-graphic` 이 생겼습니다 - 경고 아이콘 · 진행 바 같은 그래픽 전용(라이트 `#D97706` · 다크 `#FBBF24`, 3:1). 글자에는 기존 `status-warning` 을 씁니다
+- (렌더 변경) `EmptyState` 가 다시 디자인됐습니다 - 제목 · 설명은 좁게 묶고 아이콘 아래 · 버튼 위는 넓게 띄웁니다. lucide 아이콘은 원형 배지 위에 올라가고, 아이콘 크기는 `size` 별로 고정입니다(sm 20 · md 32 · lg 48px, 아이콘의 `size` prop 은 무시). 부모보다 48px 넘치던 폭도 고쳤습니다. 404 화면 예시는 Storybook `NotFound` 스토리를 보세요
+- (렌더 변경) `ErrorState` 아이콘도 `status-error-container` 원형 배지 위에 올라가고 간격 위계가 `EmptyState` 와 같아졌습니다 - `widget` 아이콘은 28px → 20px(배지 40px)
+- (렌더 변경) 목록 팝업의 옵션 행 치수를 맞췄습니다 - `Combobox` 옵션 · 안내 문구 16px → 14px, `Menu` 항목 높이 36px → 40px, Vanilla Dropdown 옵션 15px → 14px · 최소 높이 40px
+- (렌더 변경) `Toast` warning 아이콘 · 진행 바가 `status-warning-graphic` 을 씁니다 - 라이트 `#B45309` → `#D97706`(갈색이라 오류 빨강과 잘 갈리지 않았습니다), 다크 진행 바 `#B45309` → `#FBBF24`
+- Storybook 에 비슷한 컴포넌트 비교 표가 생겼습니다 - Alert / InlineAlert / Toast, Menu / Popover / Tooltip, Badge / Chip / TagInput 중 무엇을 언제 쓰는지
+
 ## [4.0.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.0.1) - 2026-10-23
 - 4.x 첫 릴리즈입니다 - 4.0.0 은 npm 에서 예전에 지운 번호라 다시 쓸 수 없어 4.0.1 로 냅니다
 - 모서리 · 간격 · 글꼴을 CSS 변수로 바꿀 수 있습니다 - `:root { --bt-radius-md: 4px; --bt-spacing-16: 20px; --bt-font-family: "Inter", sans-serif }` 처럼 덮어쓰면 DS 컴포넌트가 따라갑니다. 덮어쓰지 않으면 화면은 같습니다. 컨트롤 높이 · 터치 영역 · 글자 크기는 고정입니다

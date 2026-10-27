@@ -24,8 +24,6 @@ export interface NavBarLocaleConfig {
 	options: NavBarLocaleOption[];
 	/** locale 변경 콜백 (canonical) */
 	onValueChange?: (next: string) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. */
-	onChange?: (next: string) => void;
 	/** 표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시 */
 	hideLabel?: boolean;
 	/**
@@ -77,7 +75,7 @@ export interface NavBarProps extends SafeHTMLProps<React.HTMLAttributes<HTMLElem
  *   brand={<OrgButton />}
  *   searchSlot={<TextField placeholder="검색" />}
  *   actions={<IconButton icon={Calendar} aria-label="캘린더" />}
- *   locale={{ current: "ko", options: [...], onChange: setLocale }}
+ *   locale={{ current: "ko", options: [...], onValueChange: setLocale }}
  *   profile={<Avatar name="박상민" />}
  * />
  * ```
@@ -277,7 +275,7 @@ const LocaleSwitcher = ({ locale }: { locale: NavBarLocaleConfig }) => {
 	const handleSelect = (value: string) => {
 		// Menu 와 같은 규칙 - 포탈된 항목에서 그냥 닫으면 포커스가 body 로 떨어진다.
 		wrapperRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
-		(locale.onValueChange ?? locale.onChange)?.(value);
+		locale.onValueChange?.(value);
 		setOpen(false);
 	};
 

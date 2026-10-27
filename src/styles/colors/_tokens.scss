@@ -68,6 +68,8 @@ $color_base_status_error_dark_text: #F87171;
 $color_base_status_success_dark_text: #4ADE80;
 // amber-400, on neutral_950 ~15.7:1
 $color_base_status_warning_dark_text: #FBBF24;
+// amber-600, with #fff = 3.19:1 - icons and bars only (non-text 3:1). Fails 4.5:1, never use for text
+$color_base_status_warning_graphic: #D97706;
 // blue-400, on neutral_950 ~9.4:1
 $color_base_status_info_dark_text: #60A5FA;
 // Skeleton - light mode (off-white grays, not in neutral scale)
@@ -167,6 +169,8 @@ $color_status_info_on_container: var(--bt-color-status-info-on-container);
 $color_status_error_on_surface: var(--bt-color-status-error-on-surface);
 $color_status_success_on_surface: var(--bt-color-status-success-on-surface);
 $color_status_warning_on_surface: var(--bt-color-status-warning-on-surface);
+// Warning icons and progress bars on a surface. amber-700 (warning) reads brown next to error red, and graphics only need 3:1 - not for text
+$color_status_warning_graphic: var(--bt-color-status-warning-graphic);
 $color_status_info_on_surface: var(--bt-color-status-info-on-surface);
 // Accent
 $color_accent_subtle: var(--bt-color-accent-subtle);

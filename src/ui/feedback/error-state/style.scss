@@ -1,36 +1,21 @@
 @use "src/styles/token" as token;
+@use "src/ui/state-block" as *;
 
 // ErrorState - EmptyState 형제. error boundary / widget fallback.
-// icon 색은 status-error-on-surface (surface 위 직접 - light/dark 자동 swap).
+// 아이콘은 EmptyState 처럼 원형 배지에 올린다 - 배경 status-error-container, 아이콘 status-error-on-container.
+// variant 는 EmptyState size 에 대응한다 - page ≈ lg, widget ≈ sm (간격·제목 크기가 같다).
 
 .error_state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  gap: token.$spacing_12;
+  @include state_block;
 
   &_icon {
-    display: inline-flex;
+    // 배지 없는 커스텀 svg 는 surface 위에 바로 놓이므로 on-surface 색을 쓴다
     color: token.$color_status_error_on_surface;
-  }
+    @include state_badge(token.$color_status_error_container);
 
-  &_title {
-    @include token.title_large_medium;
-    color: token.$color_text_heading;
-    margin: 0;
-  }
-
-  &_description {
-    @include token.body_small;
-    color: token.$color_text_body;
-    margin: 0;
-    max-width: 480px;
-  }
-
-  &_action {
-    margin-top: token.$spacing_8;
+    &:has(> .lucide) {
+      color: token.$color_status_error_on_container;
+    }
   }
 
   // ── Variant: page (전체 화면 fallback) ─────────────────────────────────
@@ -38,23 +23,15 @@
   &_variant_page {
     justify-content: center;
     min-height: 320px;
-    padding: token.$spacing_48 token.$spacing_24;
-    gap: token.$spacing_16;
-
-    .error_state_title {
-      @include token.heading_small_medium;
-    }
+    @include state_spacing(lg, error_state, icon);
+    @include state_badge_size(error_state, icon, lg);
   }
 
   // ── Variant: widget (인라인 컴팩트) ────────────────────────────────────
 
   &_variant_widget {
-    padding: token.$spacing_24 token.$spacing_16;
-    gap: token.$spacing_8;
-
-    .error_state_title {
-      @include token.title_medium_medium;
-    }
+    @include state_spacing(sm, error_state, icon);
+    @include state_badge_size(error_state, icon, sm);
 
     .error_state_description {
       @include token.label_medium;

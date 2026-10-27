@@ -84,7 +84,7 @@ export const CustomIcon: Story = {
 	render: () => (
 		<div style={{ background: "var(--bt-color-bg-solid)", minHeight: 420 }}>
 			<ErrorState
-				icon={<ServerCrash size={48} strokeWidth={1.5} />}
+				icon={<ServerCrash strokeWidth={1.5} />}
 				title="서버에 연결할 수 없습니다"
 				description="네트워크 상태를 확인해 주세요."
 				action={<Button variant="filled">새로고침</Button>}

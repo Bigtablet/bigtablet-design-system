@@ -71,7 +71,7 @@ const MemberFilterDemo = () => {
 					placeholder="전체"
 					options={STATUS}
 					value={draft.status}
-					onChange={(status) => setDraft({ ...draft, status })}
+					onValueChange={(status) => setDraft({ ...draft, status })}
 				/>
 			</FilterBar>
 			<code style={{ fontSize: 12 }}>적용된 필터: {JSON.stringify(applied)}</code>
@@ -102,7 +102,7 @@ export const Instant: Story = {
 						placeholder="전체"
 						options={STATUS}
 						value={status}
-						onChange={setStatus}
+						onValueChange={setStatus}
 					/>
 				</FilterBar>
 				<code style={{ fontSize: 12 }}>적용된 필터: {status ?? "전체"}</code>
@@ -122,7 +122,7 @@ export const OrderList: Story = {
 			<FilterBar
 				aria-label="주문 필터"
 				fieldMinWidth={240}
-				loading={loading}
+				isLoading={loading}
 				canSubmit={keyword.trim().length >= 2}
 				onSubmit={() => {
 					setLoading(true);
@@ -205,7 +205,7 @@ export const InDataView: Story = {
 								placeholder="전체"
 								options={STATUS}
 								value={draft}
-								onChange={setDraft}
+								onValueChange={setDraft}
 							/>
 						</FilterBar>
 					),

@@ -27,10 +27,8 @@ export interface TextareaProps
 	error?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
-	/** 값 변경 콜백 (canonical). 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
+	/** 값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
 	onValueChange?: (value: string) => void;
-	/** @deprecated `onValueChange` 를 사용하세요. (Next 서버액션 전달용으로 `Action` 접미사가 필요하면 그대로 사용 가능) */
-	onChangeAction?: (value: string) => void;
 	/**
 	 * IME 조합 중 콜백 전략 (기본값: "delayed").
 	 * 실시간 구독이 필요하면 "immediate" - 한글 조합 중에도 매 입력 즉시 반영.
@@ -78,7 +76,7 @@ const LINE_HEIGHT_PX: Record<TextareaSize, number> = {
  * @example
  * ```tsx
  * <Textarea label="내용" minRows={3} maxRows={8} maxLength={500} showCounter
- *   onChangeAction={(v) => setContent(v)} />
+ *   onValueChange={(v) => setContent(v)} />
  * ```
  */
 export const Textarea = ({
@@ -91,7 +89,6 @@ export const Textarea = ({
 	size = "md",
 	className,
 	onValueChange,
-	onChangeAction,
 	imeStrategy = "delayed",
 	value,
 	defaultValue,
@@ -129,7 +126,7 @@ export const Textarea = ({
 
 	const isComposingRef = useRef(false);
 	const innerRef = useRef<HTMLTextAreaElement | null>(null);
-	// 마지막으로 onChangeAction 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
+	// 마지막으로 onValueChange 에 방출한 값 - 중복 호출(특히 IME 종료 직후) 차단용.
 	const lastEmittedValueRef = useRef(innerValue);
 	const autoGrow = minRows !== undefined || maxRows !== undefined;
 
@@ -197,7 +194,7 @@ export const Textarea = ({
 		setInnerValue(nextValue);
 		if (nextValue !== lastEmittedValueRef.current) {
 			lastEmittedValueRef.current = nextValue;
-			(onValueChange ?? onChangeAction)?.(nextValue);
+			onValueChange?.(nextValue);
 		}
 	};
 
@@ -252,7 +249,7 @@ export const Textarea = ({
 								setInnerValue(rawValue);
 								if (imeStrategy === "immediate" && rawValue !== lastEmittedValueRef.current) {
 									lastEmittedValueRef.current = rawValue;
-									(onValueChange ?? onChangeAction)?.(rawValue);
+									onValueChange?.(rawValue);
 								}
 								return;
 							}

@@ -53,16 +53,6 @@ export type ButtonProps<T extends React.ElementType = "button"> = PolymorphicPro
 	("a" extends T ? { href: string } : Record<never, never>);
 
 /**
- * @deprecated `ButtonProps<"button">` 을 쓰세요. 리터럴 유니온 시절의 이름입니다.
- */
-export type ButtonAsButton = ButtonProps<"button">;
-
-/**
- * @deprecated `ButtonProps<"a">` 을 쓰세요. 리터럴 유니온 시절의 이름입니다.
- */
-export type ButtonAsAnchor = ButtonProps<"a">;
-
-/**
  * 버튼을 렌더링한다.
  * Figma DS 기준 4가지 variant(filled/tonal/outline/text)와 4가지 size(sm/md/lg/xl)를 지원한다.
  *

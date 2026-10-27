@@ -3,6 +3,7 @@ import * as React from "react";
 import { Checkbox } from "../../forms/checkbox";
 import { Button } from "../../general/button";
 import { Stack } from "../../layout/stack";
+import { POPUP_COMPARISON } from "../popup-comparison.docs";
 import { Popover } from ".";
 
 const meta: Meta<typeof Popover> = {
@@ -42,6 +43,8 @@ const meta: Meta<typeof Popover> = {
 실측(Chromium): 마우스로 열면 포커스가 트리거에 남아 있고 **첫 Tab 이 패널로 들어간다.**
 
 \`role="dialog"\` (non-modal) - 접근성 이름을 위해 \`aria-label\` 또는 \`aria-labelledby\` 를 전달한다.
+
+${POPUP_COMPARISON}
 				`.trim(),
 			},
 		},

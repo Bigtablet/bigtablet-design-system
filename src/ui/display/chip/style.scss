@@ -187,7 +187,7 @@
     }
 
     // Tone variants (static type only) - color-mix로 dark mode 대응
-    &_tone_default {
+    &_tone_neutral {
         background: token.$color_bg_solid_dim;
 
         .chip_content { color: token.$color_text_body; }

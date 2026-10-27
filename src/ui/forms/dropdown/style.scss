@@ -1,4 +1,5 @@
 @use "src/styles/token" as token;
+@use "src/ui/option-row" as *;
 
 .dropdown {
   position: relative;
@@ -297,16 +298,8 @@
   // ── Option ────────────────────────────────────────────────────────────────────
 
   &_option {
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    gap: token.$spacing_8;
-    padding: token.$spacing_8 token.$spacing_12;
-    min-height: token.$control_height_md; // 일반 옵션 40px. supporting text 있으면 56px (아래 override)
-    cursor: pointer;
+    @include option_row; // supporting text 있으면 56px (아래 override)
     background: transparent;
-    color: token.$color_text_heading;
 
     // 라벨 옆에 시각적 호흡 - supporting text 있으면 더 큼
     &:has(.dropdown_option_supporting) {

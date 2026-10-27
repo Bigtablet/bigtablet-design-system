@@ -1,0 +1,114 @@
+@use "src/styles/token" as token;
+
+// 상태 블록 - EmptyState · ErrorState 가 함께 쓴다 (#864).
+// 내부용이다 - `token` 으로 forward 하지 않아 공개 SCSS API 가 아니다.
+
+// 루트와 제목·설명. 루트 블록 안에서 include 한다 (`&_title` 이 그 블록 이름을 따른다).
+@mixin state_block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box; // width 100% + padding 이 부모를 넘지 않게
+
+  &_title {
+    @include token.title_large_medium;
+    color: token.$color_text_heading;
+    margin: 0;
+  }
+
+  &_description {
+    @include token.body_small;
+    color: token.$color_text_body;
+    margin: 0;
+    max-width: 480px;
+  }
+}
+
+// 간격 위계: 제목-설명은 `gap` 으로 붙이고, 그림 아래와 버튼 위는 margin 으로 더 띄운다.
+// 한 gap 으로 다 띄우면 네 요소가 같은 거리로 늘어서 한 덩어리로 안 읽힌다.
+// $root - 블록 이름 (`empty_state`), $media - 그림 칸 꼬리 (`illustration` / `icon`)
+@mixin state_spacing($size, $root, $media) {
+  @if $size == sm {
+    padding: token.$spacing_24 token.$spacing_16;
+    gap: token.$spacing_4;
+
+    .#{$root}_#{$media} {
+      margin-bottom: token.$spacing_12;
+    }
+
+    .#{$root}_title {
+      @include token.title_medium_medium;
+    }
+
+    .#{$root}_action {
+      margin-top: token.$spacing_16;
+    }
+  } @else if $size == md {
+    padding: token.$spacing_40 token.$spacing_24;
+    gap: token.$spacing_8;
+
+    .#{$root}_#{$media} {
+      margin-bottom: token.$spacing_16;
+    }
+
+    .#{$root}_action {
+      margin-top: token.$spacing_24;
+    }
+  } @else if $size == lg {
+    padding: token.$spacing_48 token.$spacing_24;
+    gap: token.$spacing_8;
+
+    .#{$root}_#{$media} {
+      margin-bottom: token.$spacing_20;
+    }
+
+    .#{$root}_title {
+      @include token.heading_small_medium;
+    }
+
+    .#{$root}_action {
+      margin-top: token.$spacing_32;
+    }
+  } @else {
+    @error "state_spacing: size 는 sm · md · lg 중 하나 - #{$size}";
+  }
+}
+
+// 그림 칸의 원형 배지 - lucide 아이콘일 때만 씌운다. 이미지·직접 그린 svg 일러스트는 원래 크기 그대로 둔다.
+// 그림 칸(`.{root}_{media}`) 블록 안에서 include 한다.
+@mixin state_badge($background) {
+  display: inline-flex;
+
+  &:has(> .lucide) {
+    align-items: center;
+    justify-content: center;
+    border-radius: token.$radius_full;
+    background: $background;
+  }
+}
+
+// 크기별 배지·아이콘 크기 - 넘긴 아이콘의 `size` prop 은 무시된다. CSS 변수(--bt-*)로 두지 않는 건
+// --bt-* 가 공개 계약(check:css-vars)이라서다. 여기 크기는 내부 값이다.
+@mixin state_badge_size($root, $media, $size) {
+  $badge: token.$spacing_64;
+  $icon: token.$icon_size_xl;
+  @if $size == sm {
+    $badge: token.$spacing_40;
+    $icon: token.$icon_size_lg;
+  } @else if $size == lg {
+    $badge: token.$spacing_96;
+    $icon: token.$spacing_48; // icon_size 토큰은 xl(32px)까지라 48px 은 spacing 값을 빌린다
+  }
+
+  .#{$root}_#{$media}:has(> .lucide) {
+    width: $badge;
+    height: $badge;
+
+    > .lucide {
+      width: $icon;
+      height: $icon;
+    }
+  }
+}

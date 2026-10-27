@@ -1,8 +1,8 @@
 # Bigtablet Design System - Agent Guide
 
-> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^3.0.0`. Load this file as context before generating any component code.
+> Prompt-ready reference for AI coding agents building UIs with `@bigtablet/design-system@^4`. Load this file as context before generating any component code.
 
-**Version:** 3.0.0
+**Version:** 4.x - for the exact props of your installed version, see "Checking what a version gives you" below
 **React:** 19+ required
 **Bundle:** Pure React (`@bigtablet/design-system`) or Vanilla JS (`@bigtablet/design-system/vanilla`)
 
@@ -236,44 +236,44 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth` |
-| `IconButton` | Icon-only button. | `variant` (standard/filled/tonal/outlined), `size` (sm/md), `icon`, `aria-label` (required) |
+| `IconButton` | Icon-only button. | `variant` (text/filled/tonal/outline), `size` (sm/md), `icon`, `aria-label` (required) |
 | `CopyButton` | Copy-to-clipboard button: shows "copied" for 2s and announces via hidden `role="status"`. Hook: `useClipboard()` → `{ copy, status, error, reset }`; `copyText()` one-shot. Falls back to `execCommand` (in-app browsers, http). | `text` (string or fn), `label`/`copiedLabel`/`failedLabel`, `iconOnly` (label = accessible name), `size`, `variant`, `resetAfter`, `onCopy`, `onError`. |
 | `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
-| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onChangeAction`, `imeStrategy`. Same tokens/visuals as TextField. |
+| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onValueChange`, `imeStrategy`. Same tokens/visuals as TextField. |
 | `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
-| `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `loading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
+| `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
-| `Dropdown` | Value-selection menu. | `options`, `value`, `onChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
-| `DatePicker` | Year/month/day select. | `value`, `onChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
+| `Dropdown` | Value-selection menu. | `options`, `value`, `onValueChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
+| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
-| `OTPInput` | Single-digit code boxes. | `length`, `value`, `onChange`, `autoFocus`, `error` |
+| `OTPInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
 
 ### Display
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outlined - glass=frosted blur over colored bg, outlined=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
-| `MediaCard` | Image + content card. | `heading`, `eyebrow`, `description`, `media` (URL), `clickable`, `shadow` |
+| `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outline - glass=frosted blur over colored bg, outline=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
+| `MediaCard` | Image + content card. | `image` (`{ src, alt }`, required), `imagePosition`, `aspectRatio`, `heading`, `eyebrow`, `meta`, `children` (body), `clickable`, `shadow`, `bordered` |
 | `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
-| `Badge` | Number/status pill. | `shape` (dot/count/label), `variant` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
-| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (default/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
+| `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
+| `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
-| `Divider` | Horizontal/vertical line. | `orientation` |
+| `Divider` | Horizontal rule. | `weight` (standard/heavy). Horizontal only - there is no vertical variant. |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
-| `Accordion` | Expandable disclosure. | `items` array with `id`/`trigger`/`content`. Hover bg works in any open state. |
+| `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`. Hover bg works in any open state. |
 
 ### Feedback
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, variant, showCancel, destructive, onConfirm, onCancel })` |
-| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, variant, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
+| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, tone, showCancel, destructive, onConfirm, onCancel })` |
+| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, tone, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
 | `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
 | `Spinner` | Inline loading indicator. | `size` (px), `ariaLabel`. Vercel-style 12-bar fade. |
@@ -287,13 +287,13 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). Variants `line` (default) / `fills`. |
+| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). `variant` (line default / fills). |
 | `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`, `mode` (auto/static - auto transforms to bottom bar <600px). Children = `SidebarSection` + `SidebarItem`. |
 | `BottomNav` | Mobile bottom nav bar. | 2-5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
 | `Breadcrumb` | Page path nav. | `items` array (`label`, `href`, `current`). |
 | `Menu` | Action menu (context/kebab). | `trigger` element, `items` (key/label/icon/onSelect/destructive/disabled), `align` (start/end). Trigger components MUST forward props (`<button {...props}>`). |
-| `Pagination` | Page number nav. | `page`, `pageCount`, `onChange`, `siblingCount`. Cursor pointer baked in. |
+| `Pagination` | Page number nav. | `page`, `totalPages`, `onPageChange` (required). Cursor pointer baked in. |
 
 ### Overlay
 
@@ -307,7 +307,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Container` | Centered max-width wrapper. | `size` (sm/md/lg/xl/full), `padding` |
+| `Container` | Centered max-width wrapper. | `size` (sm/md/lg/xl/full, default xl), `center` (default true) |
 | `Section` | Page section with vertical rhythm. | `spacing` (xs/sm/md/lg/xl), `bg` (default/dim/accent/navy/transparent) |
 | `Stack` | 1D flex layout. | `direction` (horizontal/vertical), `gap`, `align`, `justify`, `wrap` |
 | `Grid` | CSS Grid layout. | `cols` (number or "auto"), `gap`, `minColWidth` (when `cols="auto"`) |
@@ -371,7 +371,7 @@ Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hov
       { value: "editor", label: "Editor" },
     ]}
     value={role}
-    onChange={setRole}
+    onValueChange={setRole}
   />
   <Stack direction="horizontal" gap={8} justify="end">
     <Button variant="outline">Cancel</Button>
@@ -558,7 +558,7 @@ When asked to generate UI:
 - `Select` → `Dropdown` (`SelectOption` → `DropdownOption`)
 - `Tag` → `<Chip type="static" tone="..." />`
 - `Chip` import path changed (`general/chip` → `display/chip`) - root import unaffected
-- `Dropdown` `fullWidth` prop is now a no-op (always full width)
+- `Dropdown` always fills its parent width (the `fullWidth` prop was removed in 4.1.0)
 - `Icon` API: `<Icon name="search" />` → `<Icon icon={Search} />` (pass lucide-react component)
 - Vanilla `--bt-color-primary` is now reserved for Button `--primary` only. Use `--bt-color-accent` for indicators.
 

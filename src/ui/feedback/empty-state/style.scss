@@ -1,12 +1,8 @@
 @use "src/styles/token" as token;
+@use "src/ui/state-block" as *;
 
 .empty_state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  gap: token.$spacing_12;
+  @include state_block;
 
   // 부모 높이를 채우고 세로 중앙 정렬. 없을 때는 콘텐츠가 긴 래퍼 상단에 붙어 아래가 비어 보여
   // 앱마다 `margin: auto` 래퍼를 따로 만들고 있었다. 미지정 시 위 기본값과 동일하게 동작한다.
@@ -17,47 +13,23 @@
 
   &_illustration {
     color: token.$color_text_caption;
-    display: inline-flex;
-  }
-
-  &_title {
-    @include token.title_large_medium;
-    color: token.$color_text_heading;
-    margin: 0;
-  }
-
-  &_description {
-    @include token.body_small;
-    color: token.$color_text_body;
-    margin: 0;
-    max-width: 480px;
-  }
-
-  &_action {
-    margin-top: token.$spacing_8;
+    @include state_badge(token.$color_bg_additive);
   }
 
   // ── Size ─────────────────────────────────────────────────────────────
 
   &_size_sm {
-    padding: token.$spacing_24 token.$spacing_16;
-    gap: token.$spacing_8;
-
-    .empty_state_title {
-      @include token.title_medium_medium;
-    }
+    @include state_spacing(sm, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, sm);
   }
 
   &_size_md {
-    padding: token.$spacing_40 token.$spacing_24;
+    @include state_spacing(md, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, md);
   }
 
   &_size_lg {
-    padding: token.$spacing_48 token.$spacing_24;
-    gap: token.$spacing_16;
-
-    .empty_state_title {
-      @include token.heading_small_medium;
-    }
+    @include state_spacing(lg, empty_state, illustration);
+    @include state_badge_size(empty_state, illustration, lg);
   }
 }

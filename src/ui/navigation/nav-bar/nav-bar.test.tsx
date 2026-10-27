@@ -66,13 +66,13 @@ describe("NavBar", () => {
 	});
 
 	describe("LocaleSwitcher", () => {
-		const makeLocale = (onChange = vi.fn()) => ({
+		const makeLocale = (onValueChange = vi.fn()) => ({
 			current: "ko",
 			options: [
 				{ value: "ko", label: "한국어" },
 				{ value: "en", label: "English" },
 			],
-			onChange,
+			onValueChange,
 		});
 
 		it("opens menu with options on trigger click", () => {
@@ -82,12 +82,12 @@ describe("NavBar", () => {
 			expect(screen.getAllByRole("menuitemradio")).toHaveLength(2);
 		});
 
-		it("calls onChange and closes on option select", () => {
-			const onChange = vi.fn();
-			render(<NavBar locale={makeLocale(onChange)} />);
+		it("calls onValueChange and closes on option select", () => {
+			const onValueChange = vi.fn();
+			render(<NavBar locale={makeLocale(onValueChange)} />);
 			fireEvent.click(screen.getByRole("button"));
 			fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
-			expect(onChange).toHaveBeenCalledWith("en");
+			expect(onValueChange).toHaveBeenCalledWith("en");
 			expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 		});
 
@@ -150,30 +150,5 @@ describe("NavBar", () => {
 		fireEvent.click(screen.getByRole("button"));
 		fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
 		expect(onValueChange).toHaveBeenCalledWith("en");
-	});
-
-	it("LocaleSwitcher prefers onValueChange over the deprecated onChange when both are given", () => {
-		const onValueChange = vi.fn();
-		const onChange = vi.fn();
-		render(
-			<NavBar
-				locale={{
-					current: "ko",
-					options: [
-						{ value: "ko", label: "한국어" },
-						{ value: "en", label: "English" },
-					],
-					onValueChange,
-					onChange,
-				}}
-			/>,
-		);
-
-		fireEvent.click(screen.getByRole("button"));
-		fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
-
-		expect(onValueChange).toHaveBeenCalledTimes(1);
-		expect(onValueChange).toHaveBeenCalledWith("en");
-		expect(onChange).not.toHaveBeenCalled();
 	});
 });

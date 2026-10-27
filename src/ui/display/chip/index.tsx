@@ -8,7 +8,7 @@ import "./style.scss";
 
 export type ChipType = "basic" | "input" | "filter" | "static";
 export type ChipSize = "sm" | "md";
-export type ChipTone = "default" | "accent" | "info" | "success" | "warning" | "error";
+export type ChipTone = "neutral" | "accent" | "info" | "success" | "warning" | "error";
 
 export interface ChipProps
 	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onClick"> {
@@ -16,7 +16,7 @@ export interface ChipProps
 	type?: ChipType;
 	/** 칩 크기 (미지정 시 기본 32px). "sm"=24px, "md"=28px */
 	size?: ChipSize;
-	/** 색조 (type=`static`에서만 적용). 카테고리/상태 라벨 색 구분 */
+	/** 의미 색 (기본값: "neutral", type=`static`에서만 적용). 카테고리/상태 라벨 색 구분 */
 	tone?: ChipTone;
 	/** 라벨 텍스트 */
 	label: string;
@@ -87,7 +87,7 @@ const ChevronDownIcon = () => (
 export const Chip = ({
 	type = "basic",
 	size,
-	tone = "default",
+	tone = "neutral",
 	label,
 	selected,
 	removable,

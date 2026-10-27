@@ -7,6 +7,7 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 ## 목차
 
 - [개요](#개요)
+- [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
 - [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
@@ -27,12 +28,72 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ## 개요
 
-- `@deprecated` 로 표시된 prop 은 삭제되지 않고 계속 동작합니다. 실제 제거는 다음 major 릴리즈에서 이루어집니다.
+- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
-- 변경 콜백(`onChange` 계열) 은 신규(canonical) prop 과 구(deprecated) prop 을 동시에 넘겨도 안전합니다. 컴포넌트 내부는 `canonical ?? deprecated` 순서로 우선 적용하므로, 신규 prop 을 넘기면 그 값만 호출되고 신규 prop 이 없을 때만 구 prop 이 fallback 으로 호출됩니다.
-- React 컴포넌트 섹션은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 코드에 실제 존재하는 deprecated prop 전체를 기준으로 작성했습니다.
+- deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 에 deprecated 된 콜백(`onChange` 계열 · `onChangeAction`)은 v4.1.0 에서 모두 지워졌습니다.
+- 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)
+
+이름이 바뀌거나 사라진 prop·값을 **별칭 없이 한 번에** 정리했습니다. 사내 패키지라 major 를 따로 내지 않고 minor 로 냅니다.
+prop 이름이 바뀐 곳은 타입 에러로 다 드러납니다. 다만 **클래스명·문자열 키는 타입이 잡지 못하니** 아래 "타입으로 안 잡히는 것" 을 따로 확인하세요.
+
+### 1. 의미 색은 `tone` (Alert · Badge · Toast)
+
+기준을 **모양은 `variant`, 의미 색(info·success·warning·error 등)은 `tone`** 으로 정했습니다. Chip · InlineAlert 는 원래 `tone` 이었습니다.
+
+| 컴포넌트 | 전 | 후 |
+|------|------|------|
+| Badge | `<Badge variant="success">` | `<Badge tone="success">` |
+| Alert | `showAlert({ variant: "warning" })` · `confirm({ variant })` | `{ tone: "warning" }` |
+| Toast | `toast.update(id, { variant: "error" })` | `{ tone: "error" }` |
+| Toast | 값 `"default"` | `"neutral"` (`toast.message()` 는 그대로) |
+| Vanilla | `Bigtablet.Alert({ variant: 'info' })` | `{ tone: 'info' }` |
+| 타입 | `BadgeVariant` · `AlertVariant` · `ToastVariant` | `BadgeTone` · `AlertTone` · `ToastTone` |
+
+렌더되는 클래스명 `.badge_variant_*` · `.alert_variant_*` 는 **바뀌지 않았습니다**. Toast 내부 클래스만 `toast_icon_default` · `toast_progress_default` → `*_neutral` 입니다.
+
+### 2. variant 값 이름 통일 (IconButton · Card · Chip)
+
+같은 모양이 컴포넌트마다 다른 이름이던 것을 Button 기준으로 맞췄습니다. **클래스명도 새 값을 따릅니다.**
+
+| 컴포넌트 | 전 | 후 |
+|------|------|------|
+| IconButton `variant` | `"standard"` (기본값) · `"outlined"` | `"text"` (기본값) · `"outline"` |
+| Card `variant` | `"outlined"` | `"outline"` |
+| Chip `tone` | `"default"` (기본값) | `"neutral"` (기본값) |
+| Vanilla | `.bt-card--outlined` | `.bt-card--outline` |
+
+Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outline` 으로 바뀌어 스토리 id 도 달라졌습니다.
+
+### 3. 지워진 prop · 타입
+
+| 컴포넌트 | 지워진 것 | 대신 |
+|------|------|------|
+| Dropdown | `onChange` | `onValueChange` |
+| Dropdown | `fullWidth` · `textAlign` | 없음 (원래 no-op). 인라인 폭은 부모를 `inline-block` + `width` 로 감싼다 |
+| DatePicker | `onChange` | `onValueChange` (이제 필수) |
+| DatePicker | `width` | `fullWidth` 또는 CSS |
+| Pagination | `onChange` | `onPageChange` (이제 필수) |
+| Accordion · OtpInput | `onChange` | `onValueChange` |
+| NavBar | `locale.onChange` | `locale.onValueChange` |
+| Toggle | `onChange` | `onCheckedChange` |
+| FilterBar | `loading` | `isLoading` (DataView · Table 과 같은 이름) |
+| TextField · Textarea | `onChangeAction` | `onValueChange`. 서버 액션도 이 이름으로 넘긴다 - `Action` 접미사는 쓰는 쪽에 필요 없다 |
+| 타입 | `ButtonAsButton` · `ButtonAsAnchor` | `ButtonProps<"button">` · `ButtonProps<"a">` |
+
+### 앱 쪽에서 할 일
+
+1. 패키지를 올리고 타입 체크를 돌려, 나오는 에러를 위 표대로 바꿉니다. 콜백은 시그니처가 같아 이름만 바꾸면 됩니다.
+2. **타입으로 안 잡히는 것**을 grep 으로 찾습니다.
+   - 테스트·CSS 에서 옛 클래스명을 잡는 곳: `icon_button_variant_standard` · `icon_button_variant_outlined` · `card_variant_outlined` · `chip_tone_default` · `toast_icon_default` · `toast_progress_default` · `.bt-card--outlined`
+   - DS 를 `vi.mock` 으로 갈아 끼운 테스트 stub 이 옛 prop 이름(`onChange` 등)을 받아 호출하는 곳
+   - 매핑 객체(`Record<string, BadgeVariant>` 등)의 타입 이름
+   - **변수에 따로 만든 객체로 넘기는 옵션** - `const locale = { …, onChange }` 처럼 객체를 먼저 만들고 넘기면 TS 가 남는 키를 에러로 잡지 않는다. NavBar `locale`, Alert·confirm 옵션, Toast `update` 패치가 여기에 해당한다
 
 ---
 
@@ -672,19 +733,19 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 
 ## v3.3.0
 
-변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 계속 동작합니다.
+변경 콜백 네이밍을 Radix 스타일 `on*Change` 패밀리로 통일했습니다 (`onValueChange` / `onCheckedChange` / `onPageChange`). 기존 `onChange`(TextField/Textarea 는 `onChangeAction`) 는 `@deprecated` alias 로 남겼다가 **v4.1.0 에서 모두 제거했습니다** - [v4.1.0 섹션](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) 참고.
 
 | 컴포넌트 | 구 prop | 신 prop | 도입 버전 | 비고 |
 |------|------|------|------|------|
 | Dropdown | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string \| null, option?: DropdownOption \| null) => void` |
 | OtpInput | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void` |
 | Toggle | `onChange` | `onCheckedChange` | v3.3.0 | 시그니처 동일: `(checked: boolean) => void` |
-| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. Next 서버 액션에 직접 전달할 때 `Action` 접미사가 필요하면 `onChangeAction` 을 그대로 사용해도 됩니다 |
-| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. TextField와 동일하게 `onChangeAction` 유지 가능 |
-| DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. controlled 전용 컴포넌트라 `onValueChange` 또는 `onChange` 중 최소 하나는 필수(TS 유니언 타입으로 강제) |
+| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 - 서버 액션도 `onValueChange` 로 넘긴다 |
+| Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 |
+| DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChange` 제거 - 지금은 `onValueChange` 가 필수 |
 | Accordion | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(openKeys: string[]) => void` |
 | NavBar | `locale.onChange` | `locale.onValueChange` | v3.3.0 | `NavBarProps.locale`(`NavBarLocaleConfig`) 내부 필드입니다. 시그니처 동일: `(next: string) => void` |
-| Pagination | `onChange` | `onPageChange` | v3.3.0 | 시그니처 동일: `(page: number) => void`. controlled 전용 컴포넌트라 `onPageChange` 또는 `onChange` 중 최소 하나는 필수(TS 유니언 타입으로 강제) |
+| Pagination | `onChange` | `onPageChange` | v3.3.0 | 시그니처 동일: `(page: number) => void`. v4.1.0 에서 `onChange` 제거 - 지금은 `onPageChange` 가 필수 |
 
 ---
 
@@ -759,7 +820,7 @@ After:
 />
 ```
 
-> Next.js 서버 액션에 값을 바로 넘겨야 해서 `Action` 접미사가 필요하다면 `onChangeAction` 을 그대로 사용해도 됩니다 - 두 prop 은 시그니처가 동일합니다.
+> `onChangeAction` 은 v4.1.0 에서 지워졌습니다. 서버 액션도 `onValueChange` 로 넘기면 됩니다 - `Action` 접미사 규칙은 `"use client"` 컴포넌트를 **선언하는** 쪽(DS)에 걸리는 경고라, 쓰는 쪽 prop 이름과는 상관이 없습니다.
 
 ### 3. Dropdown - fullWidth / textAlign 제거
 

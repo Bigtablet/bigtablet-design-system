@@ -119,14 +119,14 @@ export const WithBadge: Story = {
 						label="주문"
 						active={active === "orders"}
 						onClick={() => setActive("orders")}
-						badge={<Badge variant="error" shape="count" size="sm" count={3} />}
+						badge={<Badge tone="error" shape="count" size="sm" count={3} />}
 					/>
 					<BottomNavItem
 						icon={<Bell size={22} />}
 						label="알림"
 						active={active === "alerts"}
 						onClick={() => setActive("alerts")}
-						badge={<Badge variant="error" shape="dot" size="sm" />}
+						badge={<Badge tone="error" shape="dot" size="sm" />}
 					/>
 					<BottomNavItem
 						icon={<BarChart3 size={22} />}

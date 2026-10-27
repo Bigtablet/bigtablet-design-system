@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Copy, Edit, MoreVertical, Trash } from "lucide-react";
 import type * as React from "react";
+import { POPUP_COMPARISON } from "../../overlay/popup-comparison.docs";
 import { Menu } from ".";
 
 const meta: Meta<typeof Menu> = {
@@ -33,6 +34,8 @@ const meta: Meta<typeof Menu> = {
 
 \`align\`: \`start\` (기본) / \`end\` (우측 화면 밖으로 넘치는 것을 방지).
 \`MenuItem\` 필드: \`key\`, \`label\`, \`icon\`, \`onSelect\` (자동 close), \`destructive\`, \`disabled\`.
+
+${POPUP_COMPARISON}
 				`.trim(),
 			},
 		},
