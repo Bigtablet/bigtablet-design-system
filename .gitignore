@@ -34,3 +34,8 @@ reports/mutation/
 
 # vitest browser 실패 스크린샷
 __screenshots__/
+# 시각 회귀 비교 산출물(실제·차이) - 기준 이미지는 __visual__ 에 있다
+.vitest-attachments/
+# 시각 회귀 기준 이미지는 CI 와 같은 linux 렌더만 쓴다 - 맥·윈도에서 돌린 결과는 커밋하지 않는다
+**/__visual__/**/*-darwin.png
+**/__visual__/**/*-win32.png

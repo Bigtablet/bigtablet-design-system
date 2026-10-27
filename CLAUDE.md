@@ -262,6 +262,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
   pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
+  pnpm test:visual       # 시각 회귀 (*.visual.test.tsx) - CI 컨테이너 전용. 의도한 렌더 변경이면 pnpm visual:accept <run-id>
   ```
 
 ---
