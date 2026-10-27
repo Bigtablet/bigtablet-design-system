@@ -383,7 +383,7 @@ When a user requests feature development or modifications, follow this workflow:
 - **Security Report**: `[SECURITY]` (labels: Bug, Hotfix) - 보안 이슈 개요, 관련 CVE, TO DO
 
 ### 2. Create Branch
-이슈에 **연결된 브랜치**로 만든다 - 이슈의 Development 칸에 브랜치와 그 PR 이 뜬다.
+이슈에 **연결된 브랜치**로 만든다 - 이슈의 Development 칸에 브랜치가 뜨고, 그 브랜치로 PR 을 열면 PR 이 그 자리에 뜬다.
 ```bash
 gh issue develop <이슈번호> --base develop --name label/domain --checkout
 # Example: gh issue develop 885 --base develop --name docs/issue-closing --checkout
@@ -392,7 +392,7 @@ gh issue develop <이슈번호> --base develop --name label/domain --checkout
 
 **이슈 닫기** - 연관 PR 이 develop 에 머지되면 그 이슈를 **바로** 닫는다. 릴리즈까지 기다리지 않는다.
 ```bash
-gh issue close <이슈번호> --comment "#<PR> 로 develop 에 머지 완료."
+gh issue close <이슈번호> --reason completed --comment "#<PR> 로 develop 에 머지 완료."
 ```
 `Closes #N` 키워드로는 닫히지 않는다 - GitHub 은 PR 이 기본 브랜치(main)를 향할 때만 키워드를 해석해서, develop 대상 PR 에서는 링크도 생기지 않고 머지해도 아무 일이 없다. 그래서 예전에는 릴리즈 PR 본문에 `Closes` 를 모아 main 머지 때 닫았는데, 끝난 이슈가 릴리즈까지 열려 있어 무엇이 남았는지 헷갈렸다 (#885). Dependabot 알림처럼 main 반영 후에야 실제로 해결되는 건 닫을 때 그 사실을 코멘트에 적는다.
 

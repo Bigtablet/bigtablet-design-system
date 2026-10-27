@@ -72,13 +72,13 @@ gh issue create --title "feat: Add new component" --body "Description..."
 
 ### 2. 브랜치 생성
 
-이슈에 연결된 브랜치로 만든다 - 이슈의 Development 칸에 브랜치와 PR 이 뜬다.
+이슈에 연결된 브랜치로 만든다 - 이슈의 Development 칸에 브랜치가 뜨고, 그 브랜치로 PR 을 열면 PR 이 그 자리에 뜬다.
 
 ```bash
 gh issue develop <이슈번호> --base develop --name feat/new-component --checkout
 ```
 
-PR 이 develop 에 머지되면 그 이슈를 바로 닫는다 (`gh issue close <이슈번호> --comment "#<PR> 로 머지 완료"`).
+PR 이 develop 에 머지되면 그 이슈를 바로 닫는다 (`gh issue close <이슈번호> --reason completed --comment "#<PR> 로 머지 완료"`).
 develop 대상 PR 의 `Closes #` 는 GitHub 이 해석하지 않아 자동으로 닫히지 않는다.
 
 ### 3. 개발
