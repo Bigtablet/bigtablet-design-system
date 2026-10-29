@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.2.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.2.0) - 2026-10-29
+- Vanilla `Pagination` 에 링크 모드가 생겼습니다 - `data-href="/logs?page={page}"`(수동 초기화는 `href` 옵션)를 주면 번호 · 이전 · 다음을 `<a href>` 로 그려 서버 렌더 화면(Thymeleaf 등)에서 쪽을 넘깁니다. `{page}` 는 URL 인코딩된 `%7Bpage%7D` 도 치환하고, `http(s)` 가 아닌 틀은 무시합니다. 기존 `onPageChange` 콜백 방식은 그대로입니다
+- 개발 전용 의존성 보안 패치 - `fast-uri` 3.1.9 · `undici` 7.30.1. 배포 패키지에는 영향이 없습니다
+
 ## [4.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.1.0) - 2026-10-27
 - **Breaking** 이름이 바뀌었거나 사라진 prop · 값을 별칭 없이 한 번에 지웠습니다 - 사내 패키지라 major 대신 minor 로 냅니다. prop 이름은 타입 에러로 드러나지만 클래스명 · 테스트 stub · 따로 만든 옵션 객체는 타입이 잡지 못합니다. 자세한 내용은 `docs/MIGRATION.md` 의 v4.1.0 절
 - **Breaking** 의미 색 prop 이 `tone` 으로 통일됐습니다 - `Badge` · `Alert`(`showAlert` · `confirm` 옵션) · `Toast` 의 `variant` → `tone`, Toast 값 `"default"` → `"neutral"`, 타입 `BadgeVariant` · `AlertVariant` · `ToastVariant` → `*Tone`. 모양은 `variant`, 의미 색은 `tone` 입니다. 렌더 클래스 `.badge_variant_*` · `.alert_variant_*` 는 그대로입니다
