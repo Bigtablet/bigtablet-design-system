@@ -1551,7 +1551,18 @@
 			...options,
 		};
 
-		const pageHref = (page) => config.href.split("{page}").join(String(page));
+		// http(s) 가 아닌 틀(javascript:, data: 등)은 링크로 그리지 않고 버튼 모드로 둔다.
+		// URL 로 파싱해 브라우저와 같은 규칙으로 스킴을 읽는다 (상대 경로는 현재 주소 기준 http(s)).
+		if (config.href) {
+			let protocol = "";
+			try {
+				protocol = new URL(config.href, document.baseURI).protocol;
+			} catch {}
+			if (protocol !== "http:" && protocol !== "https:") config.href = null;
+		}
+
+		// Thymeleaf 의 @{...(page='{page}')} 처럼 틀이 URL 인코딩돼 들어와도 치환한다.
+		const pageHref = (page) => config.href.replace(/\{page\}|%7Bpage%7D/gi, String(page));
 
 		// 링크 모드면 <a>, 아니면 <button>. 눌리지 않는 이전·다음은 링크 모드에서도 disabled 버튼으로 둔다.
 		function control(target, disabled, attrs, content) {

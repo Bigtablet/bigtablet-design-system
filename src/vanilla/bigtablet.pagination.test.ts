@@ -93,6 +93,19 @@ describe("Pagination", () => {
 		expect(onPageChange).not.toHaveBeenCalled();
 	});
 
+	it("substitutes a URL-encoded {page} and ignores non-http(s) templates", () => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		Pagination(el, { page: 1, totalPages: 2, href: "/logs?from=a&page=%7Bpage%7D" });
+		expect(el.querySelector('[data-page="2"]')?.getAttribute("href")).toBe("/logs?from=a&page=2");
+
+		for (const href of ["javascript:alert(1)", "java\tscript:alert(1)", "data:text/html,x"]) {
+			Pagination(el, { page: 1, totalPages: 2, href });
+			expect(el.querySelector("a")).toBeNull();
+			expect(el.querySelector('[data-page="2"]')?.tagName).toBe("BUTTON");
+		}
+	});
+
 	it("clamps the page when the total shrinks and accepts a selector", () => {
 		const { el, api } = mount(5, 5);
 		api?.setTotalPages(3);
