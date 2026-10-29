@@ -179,3 +179,51 @@ describe("init", () => {
 		expect(aria(auto, "next")).toBe("뒤");
 	});
 });
+
+describe("Pagination - 점검 회귀 (#898)", () => {
+	const make = (opts: Record<string, unknown>) => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		return { el, api: Pagination(el, opts) };
+	};
+
+	it("범위 밖 page 를 보정한다", () => {
+		expect(make({ page: 12, totalPages: 10 }).api?.getPage()).toBe(10);
+		expect(make({ page: -3, totalPages: 10 }).api?.getPage()).toBe(1);
+		const { el } = make({ page: 12, totalPages: 10, href: "/l?page={page}" });
+		expect(el.querySelector('[data-action="prev"]')?.getAttribute("href")).toBe("/l?page=9");
+	});
+
+	it("setTotalPages(0) 이어도 page 는 1 이다", () => {
+		const { api } = make({ page: 3, totalPages: 5 });
+		api?.setTotalPages(0);
+		expect(api?.getPage()).toBe(1);
+	});
+
+	it("링크 모드에서는 setPage 도 onPageChange 를 부르지 않는다", () => {
+		const onPageChange = vi.fn();
+		const { api } = make({ page: 1, totalPages: 5, href: "/l?page={page}", onPageChange });
+		api?.setPage(2);
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("다시 그려도 누른 자리에 포커스가 남는다", () => {
+		const { el } = make({ page: 2, totalPages: 5 });
+		const next = () => el.querySelector('[data-action="next"]') as HTMLButtonElement;
+		next().focus();
+		next().click();
+		expect(document.activeElement).toBe(next());
+		(el.querySelector('[data-page="5"]') as HTMLButtonElement).focus();
+		(el.querySelector('[data-page="5"]') as HTMLButtonElement).click();
+		expect(document.activeElement?.getAttribute("aria-current")).toBe("page");
+	});
+
+	it("nav 에 이름을 단다 - 기본 '페이지 이동', 소비자 이름은 그대로", () => {
+		expect(make({}).el.getAttribute("aria-label")).toBe("페이지 이동");
+		const el = document.createElement("nav");
+		el.setAttribute("aria-label", "로그 페이지");
+		document.body.appendChild(el);
+		Pagination(el, {});
+		expect(el.getAttribute("aria-label")).toBe("로그 페이지");
+	});
+});

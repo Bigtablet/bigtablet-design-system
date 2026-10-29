@@ -178,22 +178,25 @@ describe("Dropdown - 검색", () => {
 		expect(empty.textContent).toBe("결과 없음");
 	});
 
-	it("한글 IME 조합 중에는 필터를 보류한다", () => {
+	it("한글은 조합 중에도 거르고 초성으로도 찾는다 (React matchesSearch 와 같음)", () => {
 		const wrap = searchableMarkup();
 		const dd = Dropdown(wrap);
 		dd?.open();
 
 		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
+		const type = (v: string) => {
+			input.value = v;
+			input.dispatchEvent(new Event("input", { bubbles: true }));
+		};
 		input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
-		input.value = "포";
-		input.dispatchEvent(new Event("input", { bubbles: true }));
-
-		// 조합 중 - 아직 아무것도 걸러지지 않았다.
-		expect(visibleLabels()).toHaveLength(3);
-
-		input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "포" }));
-
+		type("ㅍ"); // 초성 - 조합이 끝나기 전. "(품절)" 의 품도 ㅍ 이다
+		expect(visibleLabels()).toEqual(["포도", "멜론 (품절)"]);
+		type("포");
 		expect(visibleLabels()).toEqual(["포도"]);
+		type("폳"); // 받침이 다음 글자 초성 (포+ㄷ)
+		expect(visibleLabels()).toEqual(["포도"]);
+		type("ㅅㄱ");
+		expect(visibleLabels()).toEqual(["사과 Apple"]);
 	});
 });
 
@@ -483,7 +486,8 @@ describe("Dropdown - 옵션 소스 · 선택 표시", () => {
 		).toBe("찾기");
 		expect(document.querySelector(".bt-dropdown__empty")?.textContent).toBe("없음");
 		expect(document.querySelector<HTMLElement>(".bt-dropdown__empty")?.hidden).toBe(true);
-		expect(document.querySelector(".bt-dropdown__control")?.hasAttribute("role")).toBe(false);
+		// React 와 같이 searchable 이어도 트리거는 combobox
+		expect(document.querySelector(".bt-dropdown__control")?.getAttribute("role")).toBe("combobox");
 
 		document.body.innerHTML = "";
 		Dropdown(
@@ -603,5 +607,91 @@ describe("Dropdown - 옵션 소스 · 선택 표시", () => {
 		api?.setValue(null);
 		expect(api?.getValue()).toEqual([]);
 		expect(wrap.querySelector(".bt-dropdown__placeholder")?.textContent).toBe("선택하세요");
+	});
+});
+
+describe("Dropdown - 점검 회귀 (#898)", () => {
+	it("트리거 이름을 라벨 + 현재 값으로 잇는다", () => {
+		const wrap = dropdownMarkup();
+		wrap.insertAdjacentHTML("afterbegin", '<label for="fruit">과일</label>');
+		(wrap.querySelector(".bt-dropdown__control") as HTMLElement).id = "fruit";
+		const dd = Dropdown(wrap);
+		dd?.setValue("grape");
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+		const names = (control.getAttribute("aria-labelledby") ?? "")
+			.split(" ")
+			.map((id) => document.getElementById(id)?.textContent?.trim());
+		expect(control.getAttribute("role")).toBe("combobox");
+		expect(names).toEqual(["과일", "포도"]);
+	});
+
+	it("disabled 면 hidden input 을 전송하지 않는다", () => {
+		const wrap = dropdownMarkup({ name: "fruit" });
+		const form = document.createElement("form");
+		form.appendChild(wrap);
+		document.body.appendChild(form);
+		const dd = Dropdown(wrap);
+		dd?.setValue("apple");
+		expect([...new FormData(form)]).toEqual([["fruit", "apple"]]);
+		dd?.setDisabled(true);
+		expect([...new FormData(form)]).toEqual([]);
+		dd?.setDisabled(false);
+		expect([...new FormData(form)]).toEqual([["fruit", "apple"]]);
+	});
+
+	it("초기값으로는 onValueChange 를 부르지 않는다", () => {
+		const onValueChange = vi.fn();
+		const wrap = dropdownMarkup({ name: "fruit" });
+		wrap.insertAdjacentHTML("beforeend", '<input type="hidden" name="fruit" value="apple">');
+		const dd = Dropdown(wrap, { onValueChange });
+		expect(dd?.getValue()).toBe("apple");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("열린 채 비활성이 되면 닫히고 더 선택되지 않는다", () => {
+		const onValueChange = vi.fn();
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		const dd = Dropdown(wrap, { onValueChange });
+		dd?.open();
+		dd?.setDisabled(true);
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+		expect(control.getAttribute("aria-expanded")).toBe("false");
+		(document.querySelector('[data-value="apple"]') as HTMLElement).click();
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it('값이 "null" 인 옵션을 미선택 상태에서 표시하지 않는다', () => {
+		const wrap = dropdownMarkup();
+		wrap
+			.querySelector("ul")
+			?.insertAdjacentHTML(
+				"beforeend",
+				'<li class="bt-dropdown__option" data-value="null">없음</li>',
+			);
+		Dropdown(wrap);
+		expect(wrap.querySelector(".bt-dropdown__control")?.textContent?.trim()).toBe("선택하세요");
+	});
+
+	it("열린 채 destroy 하면 닫고, 다시 init 할 수 있다", () => {
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap);
+		dd?.open();
+		dd?.destroy();
+		const panel = wrap.querySelector(".bt-dropdown__list") as HTMLElement;
+		expect(panel.style.display).toBe("none");
+		expect(wrap.querySelector(".bt-dropdown__control")?.getAttribute("aria-expanded")).toBe(
+			"false",
+		);
+		expect((wrap as HTMLElement & { _btDropdown?: unknown })._btDropdown).toBeUndefined();
+	});
+
+	it("빈 결과 안내는 listbox 안에서 역할이 없다", () => {
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		Dropdown(wrap);
+		expect(document.querySelector(".bt-dropdown__empty")?.getAttribute("role")).toBe(
+			"presentation",
+		);
 	});
 });

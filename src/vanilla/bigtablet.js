@@ -66,7 +66,8 @@
 	const FOCUSABLE_SELECTORS = [
 		"a[href]",
 		"button:not([disabled])",
-		"input:not([disabled])",
+		// type=hidden 은 포커스를 받지 않는다 - Thymeleaf 폼의 _csrf 가 첫 항목이 되면 초기 포커스·Tab 트랩이 깨진다
+		'input:not([disabled]):not([type="hidden"])',
 		"select:not([disabled])",
 		"textarea:not([disabled])",
 		'[tabindex]:not([tabindex="-1"])',
@@ -256,9 +257,54 @@
      Dropdown Component
      ======================================== */
 
-	/** 검색 매칭용 정규화 - 대소문자·공백 무시 (React `normalizeForSearch` 와 동일 규칙) */
+	/** 검색 매칭용 정규화 - 대소문자·공백 무시 */
 	function normalizeForSearch(str) {
 		return String(str).toLowerCase().replace(/\s+/g, "");
+	}
+
+	// 한글 검색 - React `src/utils/hangul-search.ts` 의 `matchesSearch` 를 그대로 옮겼다. 고칠 때 둘을 같이 고친다.
+	// 초성(`ㅅㅇ` → 서울)과 조합 중인 마지막 글자(`서우`·`성` → 서울)를 받아 IME 조합을 기다리지 않고 거른다.
+	const HANGUL_FIRST = 0xac00;
+	const HANGUL_LAST = 0xd7a3;
+	const HANGUL_CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+	const HANGUL_JONG = " ㄱㄲ ㄴ  ㄷㄹ       ㅁㅂ ㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+
+	function syllableIndex(ch) {
+		const code = ch.charCodeAt(0);
+		return code >= HANGUL_FIRST && code <= HANGUL_LAST ? code - HANGUL_FIRST : -1;
+	}
+
+	function hangulCharMatches(q, l, isLast) {
+		if (q === l) return true;
+		const li = syllableIndex(l);
+		if (li < 0) return false;
+		const cho = HANGUL_CHO.indexOf(q);
+		if (cho >= 0) return Math.floor(li / 588) === cho;
+		const qi = syllableIndex(q);
+		return isLast && qi >= 0 && qi % 28 === 0 && li - (li % 28) === qi;
+	}
+
+	function hangulMatchesAt(label, query) {
+		for (let start = 0; start + query.length <= label.length; start++) {
+			let ok = true;
+			for (let i = 0; i < query.length && ok; i++) {
+				ok = hangulCharMatches(query.charAt(i), label.charAt(start + i), i === query.length - 1);
+			}
+			if (ok) return true;
+		}
+		return false;
+	}
+
+	function matchesSearch(label, query) {
+		const l = normalizeForSearch(label);
+		const q = normalizeForSearch(query);
+		if (q === "") return true;
+		if (hangulMatchesAt(l, q)) return true;
+		const last = syllableIndex(q.charAt(q.length - 1));
+		const jong = last >= 0 ? HANGUL_JONG.charAt(last % 28).trim() : "";
+		if (!jong) return false;
+		const withoutJong = String.fromCharCode(HANGUL_FIRST + last - (last % 28));
+		return hangulMatchesAt(l, q.slice(0, -1) + withoutJong + jong);
 	}
 
 	/**
@@ -350,7 +396,6 @@
 			// searchText 는 표시용(IME 조합 중에도 즉시 반영), committedQuery 는 필터용(조합 완료 시 반영)
 			committedQuery: "",
 		};
-		let isComposing = false;
 
 		// Create DOM structure
 		const controlId = wrapper.id || generateId("dropdown");
@@ -461,8 +506,18 @@
 		control.setAttribute("aria-haspopup", "listbox");
 		control.setAttribute("aria-expanded", "false");
 		control.setAttribute("aria-controls", listbox.id);
-		if (searchable) control.removeAttribute("role");
-		else control.setAttribute("role", "combobox");
+		// React 와 같이 searchable 이어도 트리거는 combobox 다. combobox 는 내용으로 이름이 붙지 않아
+		// 이름을 **라벨 + 현재 값** 으로 직접 잇는다 (APG select-only combobox).
+		control.setAttribute("role", "combobox");
+		if (!control.hasAttribute("aria-labelledby")) {
+			control.id = control.id || `${controlId}_control`;
+			const labelEl = control.labels?.[0];
+			if (labelEl) labelEl.id = labelEl.id || `${controlId}_label`;
+			const valueEl = control.querySelector(".bt-dropdown__value, .bt-dropdown__placeholder");
+			if (valueEl) valueEl.id = valueEl.id || `${controlId}_value`;
+			const ids = [labelEl?.id, valueEl?.id].filter(Boolean).join(" ");
+			if (ids) control.setAttribute("aria-labelledby", ids);
+		}
 
 		optionEls.forEach((el, i) => {
 			el.id = el.id || `${controlId}_option_${i}`;
@@ -517,6 +572,8 @@
 				emptyEl.className = "bt-dropdown__empty";
 				listbox.appendChild(emptyEl);
 			}
+			// listbox 의 자식은 option 만 - <li> 의 암시적 listitem 역할을 지운다 (React 는 <div>)
+			emptyEl.setAttribute("role", "presentation");
 			emptyEl.textContent = config.emptyText;
 			emptyEl.hidden = true;
 		}
@@ -555,12 +612,14 @@
 			}
 			hiddenEls.forEach((el, i) => {
 				el.value = values[i];
+				el.disabled = config.disabled;
 			});
 		}
 
 		// String 비교 - 서버 hidden input 초기값(항상 문자열)과 JS config 의 숫자 value 가
 		// 섞여도 매칭되도록 (엄격 === 이면 조용히 placeholder 로 남던 문제 방지).
 		function findOption(value) {
+			if (value == null) return undefined;
 			return state.options.find((o) => String(o.value) === String(value));
 		}
 
@@ -608,18 +667,21 @@
 		 * 값 설정. React `value` prop 과 같은 타입 규칙 -
 		 * 단일 모드는 `string | null`, 다중 모드는 `string[]`(단일 값을 주면 1개짜리로 승격).
 		 */
-		function setValue(newValue) {
+		function assignValue(newValue) {
 			if (multiple) {
 				state.values =
 					newValue == null ? [] : Array.isArray(newValue) ? newValue.slice() : [newValue];
-				renderSelection();
-				if (config.onValueChange) config.onValueChange(state.values.slice(), selectedOptions());
 			} else {
 				state.value = Array.isArray(newValue) ? (newValue[0] ?? null) : newValue;
-				renderSelection();
-				if (config.onValueChange)
-					config.onValueChange(state.value, findOption(state.value) ?? null);
 			}
+			renderSelection();
+		}
+
+		function setValue(newValue) {
+			assignValue(newValue);
+			if (!config.onValueChange) return;
+			if (multiple) config.onValueChange(state.values.slice(), selectedOptions());
+			else config.onValueChange(state.value, findOption(state.value) ?? null);
 		}
 
 		/** 다중 모드 토글 - React `toggleMultiple` 과 동일하게 선택 순서를 유지한다 */
@@ -666,11 +728,11 @@
 		 * 키보드 탐색·Enter 선택은 모두 여기서 만든 `state.visible`(필터된 목록) 위에서 동작한다.
 		 */
 		function applyFilter() {
-			const query = searchable ? normalizeForSearch(state.committedQuery) : "";
+			const query = searchable ? state.committedQuery : "";
 			state.visible = [];
 			optionEls.forEach((el, i) => {
 				const label = state.options[i]?.label ?? el.textContent;
-				const match = query === "" || normalizeForSearch(label).includes(query);
+				const match = matchesSearch(label, query);
 				el.hidden = !match;
 				if (match) state.visible.push(i);
 			});
@@ -815,7 +877,6 @@
 				searchInput.removeAttribute("aria-activedescendant");
 			}
 			state.committedQuery = "";
-			isComposing = false;
 			state.activeIndex = -1;
 			applyFilter();
 
@@ -854,6 +915,7 @@
 
 		/** 옵션 확정 - 단일은 선택 후 닫고, 다중은 토글만 하고 패널을 유지한다 (React 와 동일) */
 		function selectOption(index) {
+			if (config.disabled) return;
 			const option = state.options[index];
 			if (!option || option.disabled) return;
 			if (multiple) {
@@ -969,7 +1031,7 @@
 			// 목록은 열려 있는 동안 `body` 로 옮겨져 wrapper 의 자손이 아니다(#586). 함께 보지
 			// 않으면 옵션의 `mousedown` 이 바깥 클릭으로 오인돼 - `mousedown` 은 `click` 보다
 			// 먼저다 - 패널이 닫히고 원래 자리로 돌아간 뒤에 `click` 이 도착해 선택이 무산된다.
-			if (!wrapper.contains(e.target) && !panel.contains(e.target)) {
+			if (state.isOpen && !wrapper.contains(e.target) && !panel.contains(e.target)) {
 				close();
 			}
 		}
@@ -1003,23 +1065,10 @@
 		});
 
 		if (searchInput) {
-			// IME(한글 등) 조합 중에는 필터 갱신을 보류한다 - 조합 중간 자모로 리스트가 튀지 않게.
-			// 표시값은 input 자체가 즉시 반영하고, 필터용 committedQuery 만 조합 완료 시 커밋한다.
-			cleanups.push(
-				on(searchInput, "compositionstart", () => {
-					isComposing = true;
-				}),
-			);
-			cleanups.push(
-				on(searchInput, "compositionend", (e) => {
-					isComposing = false;
-					state.committedQuery = e.target.value;
-					applyFilter();
-				}),
-			);
+			// React 와 같이 조합 중에도 매 입력마다 거른다 - matchesSearch 가 조합 중인 마지막 글자를 받아준다.
+			// (조합 중 Enter 가 선택으로 새지 않게 막는 건 onSearchKeyDown 의 isComposing 가드)
 			cleanups.push(
 				on(searchInput, "input", (e) => {
-					if (isComposing) return;
 					state.committedQuery = e.target.value;
 					applyFilter();
 				}),
@@ -1040,17 +1089,18 @@
 				: config.defaultValue != null
 					? [config.defaultValue]
 					: serverValues;
-			if (initial.length > 0) setValue(initial);
+			// 초기값은 assignValue - React defaultValue 처럼 onValueChange 를 부르지 않는다
+			if (initial.length > 0) assignValue(initial);
 			// `!= null` 로 판단 - truthy 검사면 빈 문자열("")도 유효한 값인데 미지정으로 보고
 			// 서버 값/placeholder 로 넘어간다. 위 multiple 분기와 같은 기준.
 		} else if (config.defaultValue != null) {
-			setValue(config.defaultValue);
+			assignValue(config.defaultValue);
 		} else if (serverValues[0]) {
-			setValue(serverValues[0]);
+			assignValue(serverValues[0]);
 		}
 
 		// Public API
-		return {
+		const api = {
 			/** 단일 모드는 `string | null`, 다중 모드는 `string[]` (React `value` prop 과 같은 규칙) */
 			getValue: () => (multiple ? state.values.slice() : state.value),
 			setValue,
@@ -1062,15 +1112,23 @@
 				control.disabled = disabled;
 				control.setAttribute("aria-disabled", disabled ? "true" : "false");
 				control.classList.toggle("is-disabled", disabled);
+				// 열린 채 비활성이 되면 닫는다 - 남겨 두면 검색 Enter·옵션 클릭으로 계속 선택된다
+				if (disabled && state.isOpen) close();
+				syncHiddenInputs();
 			},
 			destroy: () => {
-				// 열린 채 destroy 되면 목록이 body 에 남는다 - 리스너까지 함께 떼어낸다.
-				restorePanel();
+				// 열린 채 destroy 되면 목록이 body 에 펼쳐진 채 남는다 - close() 가 restorePanel 까지 한다.
+				if (state.isOpen) close();
+				else restorePanel();
 				cleanups.forEach((cleanup) => {
 					cleanup();
 				});
+				// 참조를 지워야 init() 이 다시 붙인다
+				if (wrapper._btDropdown === api) delete wrapper._btDropdown;
 			},
 		};
+		wrapper._btDropdown = api;
+		return api;
 	}
 
 	/* ========================================
@@ -1085,6 +1143,9 @@
 	function Modal(element, options = {}) {
 		const modal = typeof element === "string" ? $(element) : element;
 		if (!modal) return null;
+		// 같은 요소에 두 번 만들면(자동 초기화 + 수동 호출) 앞 인스턴스를 풀고 교체한다 - 리스너가
+		// 겹치고 data-bt-modal-open 트리거가 콜백 없는 쪽을 여는 것을 막는다.
+		modal._btModal?.destroy();
 
 		const config = {
 			closeOnOverlay: true,
@@ -1135,7 +1196,10 @@
 			// 포커스 이동 - 이전 포커스 저장 후 패널 첫 focusable(없으면 패널 자체)로 (WCAG 2.4.3)
 			previousFocus = document.activeElement;
 			if (panel) {
-				const first = panel.querySelector(FOCUSABLE_SELECTORS);
+				// React Modal 과 같은 순서 - 본문 첫 컨트롤, 없으면 패널 첫 focusable(닫기 버튼 등)
+				const first =
+					panel.querySelector(".bt-modal__body")?.querySelector(FOCUSABLE_SELECTORS) ||
+					panel.querySelector(FOCUSABLE_SELECTORS);
 				if (first) {
 					first.focus();
 				} else {
@@ -1238,7 +1302,7 @@
 		});
 
 		// Public API
-		return {
+		const api = {
 			isOpen: () => state.isOpen,
 			open,
 			close,
@@ -1250,8 +1314,12 @@
 				// 열려 있으면 release() 로 되돌린다 - 왜 다섯을 전부 되돌려야 하는지는 그쪽 JSDoc.
 				// close() 와 다른 점은 `onClose` 를 부르지 않는 것 하나다.
 				if (state.isOpen) release();
+				// 참조를 지워야 init() 이 다시 붙인다
+				if (modal._btModal === api) delete modal._btModal;
 			},
 		};
+		modal._btModal = api;
+		return api;
 	}
 
 	/* ========================================
@@ -1329,7 +1397,11 @@
 			}
 		}
 
-		const previousFocus = document.activeElement;
+		// 다른 Alert 안에서 띄웠으면(onConfirm 의 후속 Alert) 그쪽이 돌려줄 곳을 이어받는다 -
+		// 앞 Alert 의 버튼은 곧 DOM 에서 빠져 되돌아갈 수 없다.
+		const opener = document.activeElement;
+		const previousFocus = opener?.closest?.(".bt-alert__overlay")?._btPreviousFocus ?? opener;
+		overlay._btPreviousFocus = previousFocus;
 
 		document.body.appendChild(overlay);
 		lockScroll();
@@ -1346,15 +1418,16 @@
 			// 리스너를 닫힘 경로 공통에서 해제 - 버튼/오버레이로 닫을 때 남아 누수되지 않게.
 			popEscape();
 			document.removeEventListener("keydown", onKeyDown);
-			overlay.classList.remove("is-open");
-			if (previousFocus && typeof previousFocus.focus === "function") {
+			// 포커스가 아직 이 Alert 안(또는 body)일 때만 되돌린다 - onConfirm 에서 다음 Alert 를 띄웠으면
+			// 포커스는 이미 그쪽에 있고, 여기서 되돌리면 새 대화상자 뒤 트리거로 빼앗는다.
+			const active = document.activeElement;
+			const focusHere = !active || active === document.body || overlay.contains(active);
+			// 퇴출 모션이 없어(.bt-alert 는 진입 애니메이션만) 기다릴 이유가 없다 - 즉시 걷고 잠금을 푼다.
+			overlay.remove();
+			unlockScroll();
+			if (focusHere && previousFocus && typeof previousFocus.focus === "function") {
 				previousFocus.focus();
 			}
-			setTimeout(() => {
-				overlay.remove();
-				// 이 딤은 페이드 아웃한다 - 남은 거터도 같은 커브로 밝아진다.
-				unlockScroll();
-			}, 200);
 		}
 
 		// 오버레이 클릭 / Escape 는 "취소"와 동등한 동작이어야 한다 (WAI-ARIA APG alertdialog).
@@ -1431,6 +1504,9 @@
 	function Toggle(element, options = {}) {
 		const toggleEl = typeof element === "string" ? $(element) : element;
 		if (!toggleEl) return null;
+		// 같은 요소에 두 번 만들면 앞 인스턴스를 풀고 교체한다 - 클릭 리스너가 둘이면 한 번 누를 때
+		// 두 번 뒤집혀 상태·aria-checked·hidden 값이 갈라진다. 상태는 DOM(클래스·hidden 값)에서 다시 읽는다.
+		toggleEl._btToggle?.destroy();
 
 		const config = {
 			defaultChecked: false,
@@ -1463,13 +1539,17 @@
 		const fieldName = config.name || toggleEl.dataset.name || null;
 		// 직계 형제만 탐색 - parentNode.querySelector 는 하위 트리 전체를 뒤져 같은 부모를 공유하는
 		// 다른 토글(예: 테이블 행 안 여러 토글)의 hidden input 을 잘못 집을 수 있다.
+		// name 이 없으면 바로 다음 형제 hidden input 을 쓴다 - 문서의 "서버 렌더 초기값" 마크업
+		// (`<button data-bt-toggle>` + `<input type="hidden" name=... th:value=...>`).
+		const next = toggleEl.nextElementSibling;
 		let hiddenInput =
 			toggleEl.querySelector('input[type="hidden"]') ||
 			(fieldName && toggleEl.parentNode
 				? Array.from(toggleEl.parentNode.children).find(
 						(el) => el.tagName === "INPUT" && el.type === "hidden" && el.name === fieldName,
 					)
-				: null);
+				: null) ||
+			(!fieldName && next?.tagName === "INPUT" && next.type === "hidden" ? next : null);
 		if (!hiddenInput && fieldName) {
 			hiddenInput = document.createElement("input");
 			hiddenInput.type = "hidden";
@@ -1517,7 +1597,7 @@
 		toggleEl.setAttribute("aria-checked", state.checked ? "true" : "false");
 		if (hiddenInput) hiddenInput.value = state.checked ? "true" : "false";
 
-		return {
+		const api = {
 			isChecked: () => state.checked,
 			setChecked,
 			toggle,
@@ -1525,8 +1605,13 @@
 				config.disabled = disabled;
 				toggleEl.disabled = disabled;
 			},
-			destroy: () => cleanup(),
+			destroy: () => {
+				cleanup();
+				if (toggleEl._btToggle === api) delete toggleEl._btToggle;
+			},
 		};
+		toggleEl._btToggle = api;
+		return api;
 	}
 
 	/* ========================================
@@ -1554,8 +1639,19 @@
 			// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (ko 카탈로그).
 			prevLabel: "이전 페이지",
 			nextLabel: "다음 페이지",
+			// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
+			navLabel: "페이지 이동",
 			...options,
 		};
+
+		// 범위 보정 - data-page 가 total 을 넘거나 음수여도 활성 쪽·이전/다음 링크가 범위 안에 있게
+		const clampPage = (page) => Math.min(Math.max(1, page), config.totalPages);
+		config.totalPages = Math.max(1, config.totalPages);
+		config.page = clampPage(config.page);
+
+		if (!container.hasAttribute("aria-label") && !container.hasAttribute("aria-labelledby")) {
+			container.setAttribute("aria-label", config.navLabel);
+		}
 
 		// http(s) 가 아닌 틀(javascript:, data: 등)은 링크로 그리지 않고 버튼 모드로 둔다.
 		// URL 로 파싱해 브라우저와 같은 규칙으로 스킴을 읽는다 (상대 경로는 현재 주소 기준 http(s)).
@@ -1616,6 +1712,9 @@
 
 		function render() {
 			const items = getPaginationItems(config.page, config.totalPages);
+			// innerHTML 을 갈면 누른 버튼이 사라져 포커스가 body 로 떨어진다 - 같은 자리로 되돌린다
+			const focused = container.contains(document.activeElement) ? document.activeElement : null;
+			const focusAction = focused?.dataset.action;
 
 			let html = control(
 				config.page - 1,
@@ -1649,6 +1748,15 @@
 
 			container.innerHTML = html;
 
+			if (focused) {
+				const current = container.querySelector('[aria-current="page"]');
+				const target = focusAction
+					? container.querySelector(`[data-action="${focusAction}"]`)
+					: current;
+				// 끝쪽에서 비활성이 된 이전·다음이면 현재 쪽으로
+				(target && !target.disabled ? target : current)?.focus();
+			}
+
 			// 링크 모드는 브라우저가 이동한다
 			if (config.href) return;
 
@@ -1677,16 +1785,15 @@
 			config.page = page;
 			render();
 
-			if (config.onPageChange) {
+			// 링크 모드에서는 부르지 않는다 (문서 약속 - 쪽 이동은 브라우저가 한다)
+			if (config.onPageChange && !config.href) {
 				config.onPageChange(page);
 			}
 		}
 
 		function setTotalPages(totalPages) {
-			config.totalPages = totalPages;
-			if (config.page > totalPages) {
-				config.page = totalPages;
-			}
+			config.totalPages = Math.max(1, totalPages);
+			config.page = clampPage(config.page);
 			render();
 		}
 
@@ -1726,8 +1833,8 @@
 		// Modal triggers - init() 재호출 시 리스너 중복 바인딩 방지 가드
 		$$("[data-bt-modal-open]").forEach((btn) => {
 			if (btn.dataset.btBound) return;
-			const targetId = btn.dataset.btModalOpen;
-			const modal = $(`#${targetId}`);
+			// getElementById - "123" 처럼 셀렉터로 무효한 id 에서 예외로 init 전체가 멈추지 않게
+			const modal = document.getElementById(btn.dataset.btModalOpen);
 			if (modal?._btModal) {
 				btn.dataset.btBound = "true";
 				btn.addEventListener("click", () => modal._btModal.open());
@@ -1750,6 +1857,7 @@
 				const labels = {};
 				if (el.dataset.prevLabel) labels.prevLabel = el.dataset.prevLabel;
 				if (el.dataset.nextLabel) labels.nextLabel = el.dataset.nextLabel;
+				if (el.dataset.navLabel) labels.navLabel = el.dataset.navLabel;
 				el._btPagination = Pagination(el, { page, totalPages, href, ...labels });
 			}
 		});

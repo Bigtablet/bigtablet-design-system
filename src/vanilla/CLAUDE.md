@@ -92,9 +92,9 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 #### TextField
 ```html
 <div class="bt-text-field">
-  <label class="bt-text-field__label">Label</label>
+  <label class="bt-text-field__label" for="field-1">Label</label>
   <div class="bt-text-field__wrap">
-    <input type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter...">
+    <input id="field-1" type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter...">
   </div>
   <span class="bt-text-field__helper">Helper text</span>
 </div>
@@ -127,12 +127,12 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 
 #### Toggle
 ```html
-<button class="bt-toggle" data-bt-toggle>
+<button class="bt-toggle" data-bt-toggle aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- On state -->
-<button class="bt-toggle bt-toggle--on" data-bt-toggle>
+<button class="bt-toggle bt-toggle--on" data-bt-toggle aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 ```
@@ -170,7 +170,7 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
   </ul>
 </div>
 
-<!-- 검색 - 대소문자·공백 무시 부분 일치. 한글 IME 조합 중에는 필터를 보류한다. -->
+<!-- 검색 - 대소문자·공백 무시 부분 일치. 한글 초성·조합 중 글자도 맞춘다 (React matchesSearch 이식). -->
 <div class="bt-dropdown" data-bt-dropdown data-searchable
      data-search-placeholder="검색…" data-empty-text="결과 없음">
   ...
@@ -253,7 +253,7 @@ const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   placeholder: '선택…',
   name: 'field',            // hidden input 으로 폼 제출 참여 (multiple 은 같은 name 반복)
   multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
-  searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, IME 조합 중 필터 보류)
+  searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, 한글 초성·조합 중 매칭)
   searchPlaceholder: '검색…',
   emptyText: '결과 없음',
   selectedSummary: (count) => `${count}개 선택`,  // multiple 트리거 요약 문구
@@ -289,7 +289,8 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
   onPageChange: (page) => console.log(page),
   href: null,               // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
   prevLabel: '이전 페이지',  // 이전·다음 버튼 aria-label (data-prev-label · data-next-label)
-  nextLabel: '다음 페이지'
+  nextLabel: '다음 페이지',
+  navLabel: '페이지 이동'    // <nav> aria-label (이미 있으면 그대로, data-nav-label)
 });
 pagination.setPage(5);
 
@@ -332,7 +333,7 @@ All design tokens available as CSS variables:
 ```html
 <form th:action="@{/submit}" method="post">
   <div class="bt-text-field">
-    <label class="bt-text-field__label">Name</label>
+    <label class="bt-text-field__label" for="name">Name</label>  <!-- th:field 가 id="name" 을 만든다 -->
     <input type="text"
            th:field="*{name}"
            class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md"

@@ -130,3 +130,29 @@ describe("Toggle - 초기화 · API", () => {
 		expect(Toggle("#missing")).toBeNull();
 	});
 });
+
+describe("Toggle - 점검 회귀 (#898)", () => {
+	it("data-name 없이 바로 다음 hidden input 을 초기값·제출값으로 쓴다", () => {
+		document.body.innerHTML =
+			'<form><button class="bt-toggle" aria-label="알림"></button><input type="hidden" name="notifications" value="true"></form>';
+		const el = document.querySelector(".bt-toggle") as HTMLButtonElement;
+		const t = Toggle(el);
+		expect(t?.isChecked()).toBe(true);
+		el.click();
+		expect([...new FormData(document.querySelector("form") as HTMLFormElement)]).toEqual([
+			["notifications", "false"],
+		]);
+	});
+
+	it("같은 요소에 두 번 만들면 교체되어 한 번 누를 때 한 번만 뒤집힌다", () => {
+		document.body.innerHTML = '<button class="bt-toggle" aria-label="알림"></button>';
+		const el = document.querySelector(".bt-toggle") as HTMLButtonElement;
+		Toggle(el);
+		const onCheckedChange = vi.fn();
+		const t = Toggle(el, { onCheckedChange });
+		el.click();
+		expect(t?.isChecked()).toBe(true);
+		expect(el.getAttribute("aria-checked")).toBe("true");
+		expect(onCheckedChange).toHaveBeenCalledTimes(1);
+	});
+});
