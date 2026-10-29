@@ -15,3 +15,5 @@ overrides:
   # 보안 패치 (Dependabot #133) - @stryker-mutator/vitest-runner 경유 transitive. 6.11.1~6.15.1 의
   # stringify(arrayFormat: 'comma' + encodeValuesOnly) null 원소 TypeError. 상위가 qs 를 올리면 지운다.
   qs: ^6.15.2
+  # 보안 패치 (Dependabot #145-148) - scheme 스푸핑·host 혼동·경로 동치·scheme 주입. 상위가 올리면 지운다.
+  fast-uri: ^3.1.9
