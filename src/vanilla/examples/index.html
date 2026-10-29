@@ -600,7 +600,7 @@ Bigtablet.Alert({
               <option value="2025">2025</option>
               <option value="2026">2026</option>
             </select>
-            <select class="bt-date-picker__select">
+            <select class="bt-date-picker__select" aria-label="Month">
               <option value="">Month</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -615,7 +615,7 @@ Bigtablet.Alert({
               <option value="11">11</option>
               <option value="12">12</option>
             </select>
-            <select class="bt-date-picker__select">
+            <select class="bt-date-picker__select" aria-label="Day">
               <option value="">Day</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -629,15 +629,15 @@ Bigtablet.Alert({
       <pre><code>&lt;div class="bt-date-picker"&gt;
   &lt;label class="bt-date-picker__label"&gt;Date&lt;/label&gt;
   &lt;div class="bt-date-picker__fields"&gt;
-    &lt;select class="bt-date-picker__select"&gt;
+    &lt;select class="bt-date-picker__select" aria-label="Year"&gt;
       &lt;option value=""&gt;Year&lt;/option&gt;
       &lt;option value="2024"&gt;2024&lt;/option&gt;
     &lt;/select&gt;
-    &lt;select class="bt-date-picker__select"&gt;
+    &lt;select class="bt-date-picker__select" aria-label="Month"&gt;
       &lt;option value=""&gt;Month&lt;/option&gt;
       &lt;option value="1"&gt;1&lt;/option&gt;
     &lt;/select&gt;
-    &lt;select class="bt-date-picker__select"&gt;
+    &lt;select class="bt-date-picker__select" aria-label="Day"&gt;
       &lt;option value=""&gt;Day&lt;/option&gt;
       &lt;option value="1"&gt;1&lt;/option&gt;
     &lt;/select&gt;

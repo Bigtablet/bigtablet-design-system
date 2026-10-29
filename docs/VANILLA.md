@@ -839,14 +839,14 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
       <option value="2022">2022</option>
       <!-- ... -->
     </select>
-    <select class="bt-date-picker__select" name="month">
+    <select class="bt-date-picker__select" name="month" aria-label="월">
       <option value="">월</option>
       <option value="1">1월</option>
       <option value="2">2월</option>
       <!-- ... -->
       <option value="12">12월</option>
     </select>
-    <select class="bt-date-picker__select" name="day">
+    <select class="bt-date-picker__select" name="day" aria-label="일">
       <option value="">일</option>
       <option value="1">1일</option>
       <option value="2">2일</option>
