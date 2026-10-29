@@ -694,4 +694,20 @@ describe("Dropdown - 점검 회귀 (#898)", () => {
 			"presentation",
 		);
 	});
+
+	it("같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다", () => {
+		const wrap = dropdownMarkup();
+		wrap.dataset.searchable = "";
+		const first = Dropdown(wrap);
+		first?.open();
+		const onValueChange = vi.fn();
+		const second = Dropdown(wrap, { onValueChange });
+		expect((wrap as HTMLElement & { _btDropdown?: unknown })._btDropdown).toBe(second);
+		expect(document.querySelectorAll(".bt-dropdown__search")).toHaveLength(1);
+		(wrap.querySelector(".bt-dropdown__control") as HTMLElement).click();
+		expect(wrap.querySelector(".bt-dropdown__control")?.getAttribute("aria-expanded")).toBe("true");
+		(document.querySelector('[data-value="grape"]') as HTMLElement).click();
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(second?.getValue()).toBe("grape");
+	});
 });

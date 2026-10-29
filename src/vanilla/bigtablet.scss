@@ -159,9 +159,10 @@
     opacity: 0.6;
   }
 
-  // React Button 과 같은 토큰 포커스 링 (UA outline 은 pill·다크에서 제각각이다)
+  // React Button 과 같은 토큰 포커스 링 (UA outline 은 pill·다크에서 제각각이다).
+  // outline 은 지우지 않고 투명하게 둔다 - 고대비 모드(forced-colors)는 box-shadow 를 지우고 outline 만 시스템색으로 그린다.
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent;
     box-shadow: var(--bt-focus-ring);
   }
 
@@ -653,7 +654,7 @@
   border: none;
 
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
     box-shadow: var(--bt-focus-ring);
   }
 
@@ -776,7 +777,7 @@
     text-align: left;
 
     &:focus-visible {
-      outline: none;
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
       box-shadow: var(--bt-focus-ring);
     }
 
@@ -1349,7 +1350,7 @@
     text-decoration: none;
 
     &:focus-visible {
-      outline: none;
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
       box-shadow: var(--bt-focus-ring);
     }
   }

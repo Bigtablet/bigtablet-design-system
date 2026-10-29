@@ -194,6 +194,14 @@ describe("Pagination - 점검 회귀 (#898)", () => {
 		expect(el.querySelector('[data-action="prev"]')?.getAttribute("href")).toBe("/l?page=9");
 	});
 
+	it("totalPages · page 가 숫자가 아니면 1 로 본다", () => {
+		const { api, el } = make({ page: Number.NaN, totalPages: undefined });
+		expect(api?.getPage()).toBe(1);
+		expect(el.querySelectorAll("[data-page]")).toHaveLength(1);
+		api?.setTotalPages(Number.NaN);
+		expect(api?.getPage()).toBe(1);
+	});
+
 	it("setTotalPages(0) 이어도 page 는 1 이다", () => {
 		const { api } = make({ page: 3, totalPages: 5 });
 		api?.setTotalPages(0);

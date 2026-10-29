@@ -339,6 +339,9 @@
 	function Dropdown(element, options = {}) {
 		const wrapper = typeof element === "string" ? $(element) : element;
 		if (!wrapper) return null;
+		// 같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다 (Modal · Toggle 과 같음) - document 리스너와
+		// body 로 옮겨진 패널이 이중으로 남지 않게. 새 인스턴스는 앞이 만든 구조(검색 행·__options)를 재사용한다.
+		wrapper._btDropdown?.destroy();
 
 		const config = {
 			placeholder: "선택…",
@@ -1645,8 +1648,10 @@
 		};
 
 		// 범위 보정 - data-page 가 total 을 넘거나 음수여도 활성 쪽·이전/다음 링크가 범위 안에 있게
-		const clampPage = (page) => Math.min(Math.max(1, page), config.totalPages);
-		config.totalPages = Math.max(1, config.totalPages);
+		// 숫자가 아니면(NaN · undefined) 1 로 - Math.max(1, NaN) 은 NaN 이라 보정이 그대로 번진다
+		const toCount = (n) => (Number.isFinite(n) ? Math.max(1, Math.floor(n)) : 1);
+		const clampPage = (page) => Math.min(toCount(page), config.totalPages);
+		config.totalPages = toCount(config.totalPages);
 		config.page = clampPage(config.page);
 
 		if (!container.hasAttribute("aria-label") && !container.hasAttribute("aria-labelledby")) {
@@ -1792,7 +1797,7 @@
 		}
 
 		function setTotalPages(totalPages) {
-			config.totalPages = Math.max(1, totalPages);
+			config.totalPages = toCount(totalPages);
 			config.page = clampPage(config.page);
 			render();
 		}
