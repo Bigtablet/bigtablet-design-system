@@ -7,9 +7,8 @@ import { key, pressEscape, resetVanillaDom, setViewportInset } from "./bigtablet
 
 resetVanillaDom();
 
-// Alert 의 close() 는 퇴출 애니메이션을 기다려 `setTimeout(..., 200)` 안에서 overlay 제거와
-// unlockScroll() 을 한다. 실제 타이머로 두면 그 콜백이 이 테스트가 끝난 뒤 **다른 테스트가 도는
-// 중에** 발화해 남의 스크롤 잠금 상태를 건드린다. fake timer 로 시점을 직접 통제한다.
+// Alert 의 close() 는 overlay 제거와 unlockScroll() 을 즉시 한다(퇴출 모션이 없다 - #898).
+// fake timer 는 그 전 지연 구현에서 남은 것으로, 타이머가 남의 테스트로 새지 않게 계속 둔다.
 describe("Alert", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
@@ -45,11 +44,8 @@ describe("Alert", () => {
 		expect(document.body.dataset.btOpenModals).toBe("1");
 
 		pressEscape();
-		// 잠금 해제는 200ms 뒤 - 그 전에는 아직 잠겨 있다.
-		expect(document.body.style.overflow).toBe("hidden");
-
-		vi.advanceTimersByTime(200);
-
+		// 퇴출 모션이 없으니 바로 풀린다 - 딤이 사라진 뒤 휠이 막혀 있지 않게
+		expect(document.querySelector(".bt-alert__overlay")).toBeNull();
 		expect(document.body.style.overflow).toBe("");
 		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
@@ -159,5 +155,19 @@ describe("Alert - 마크업 · 버튼", () => {
 		const { close } = Alert({ message: "m" });
 		close();
 		expect(key(document.body, "Tab").defaultPrevented).toBe(false);
+	});
+
+	it("onConfirm 에서 띄운 다음 Alert 의 포커스를 빼앗지 않는다 (#898)", () => {
+		const trigger = document.createElement("button");
+		document.body.appendChild(trigger);
+		trigger.focus();
+		Alert({
+			message: "삭제할까요?",
+			onConfirm: () => Alert({ message: "삭제됨", confirmText: "닫기" }),
+		});
+		(document.querySelector("[data-alert-confirm]") as HTMLButtonElement).click();
+		expect(document.activeElement?.textContent).toBe("닫기");
+		(document.activeElement as HTMLButtonElement).click();
+		expect(document.activeElement).toBe(trigger);
 	});
 });
