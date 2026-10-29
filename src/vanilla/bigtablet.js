@@ -1545,8 +1545,21 @@
 			sibling: 2,
 			// React Pagination 과 동일한 페이지 변경 콜백.
 			onPageChange: null,
+			// 링크 주소 틀 (예: "/logs?page={page}"). 주면 번호·이전·다음을 <a href> 로 그려
+			// 서버 렌더 화면에서 쪽을 넘긴다. onPageChange 는 부르지 않는다.
+			href: null,
 			...options,
 		};
+
+		const pageHref = (page) => config.href.split("{page}").join(String(page));
+
+		// 링크 모드면 <a>, 아니면 <button>. 눌리지 않는 이전·다음은 링크 모드에서도 disabled 버튼으로 둔다.
+		function control(target, disabled, attrs, content) {
+			if (config.href && !disabled) {
+				return `<a href="${escapeHtml(pageHref(target))}" ${attrs}>${content}</a>`;
+			}
+			return `<button type="button" ${disabled ? "disabled" : ""} ${attrs}>${content}</button>`;
+		}
 
 		function range(start, end) {
 			const out = [];
@@ -1587,38 +1600,40 @@
 		function render() {
 			const items = getPaginationItems(config.page, config.totalPages);
 
-			let html = `
-        <button class="bt-pagination__item" ${config.page <= 1 ? "disabled" : ""} data-action="prev" aria-label="Previous page">
-          ‹
-        </button>
-        <div class="bt-pagination__pages">
-      `;
+			let html = control(
+				config.page - 1,
+				config.page <= 1,
+				'class="bt-pagination__item" data-action="prev" aria-label="Previous page"',
+				"‹",
+			);
+			html += `<div class="bt-pagination__pages">`;
 
-			items.forEach((item, _idx) => {
+			items.forEach((item) => {
 				if (item === "ellipsis") {
 					html += `<span class="bt-pagination__ellipsis" aria-hidden="true">…</span>`;
 				} else {
 					const isActive = item === config.page;
-					html += `
-            <button
-              class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}"
-              data-page="${escapeHtml(item)}"
-              ${isActive ? 'aria-current="page"' : ""}
-            >
-              ${escapeHtml(item)}
-            </button>
-          `;
+					html += control(
+						item,
+						false,
+						`class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}" data-page="${escapeHtml(item)}"${isActive ? ' aria-current="page"' : ""}`,
+						escapeHtml(item),
+					);
 				}
 			});
 
-			html += `
-        </div>
-        <button class="bt-pagination__item" ${config.page >= config.totalPages ? "disabled" : ""} data-action="next" aria-label="Next page">
-          ›
-        </button>
-      `;
+			html += "</div>";
+			html += control(
+				config.page + 1,
+				config.page >= config.totalPages,
+				'class="bt-pagination__item" data-action="next" aria-label="Next page"',
+				"›",
+			);
 
 			container.innerHTML = html;
+
+			// 링크 모드는 브라우저가 이동한다
+			if (config.href) return;
 
 			// Bind events
 			$$("[data-page]", container).forEach((btn) => {
@@ -1714,7 +1729,8 @@
 			if (!el._btPagination) {
 				const page = parseInt(el.dataset.page, 10) || 1;
 				const totalPages = parseInt(el.dataset.totalPages, 10) || 1;
-				el._btPagination = Pagination(el, { page, totalPages });
+				const href = el.dataset.href || null;
+				el._btPagination = Pagination(el, { page, totalPages, href });
 			}
 		});
 	}

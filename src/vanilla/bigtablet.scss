@@ -1313,6 +1313,17 @@
   gap: var(--bt-spacing-sm);
   margin-top: var(--bt-spacing-3xl);
 
+  // <button> 과 <a>(data-href 링크 모드) 가 같은 모양이 되도록
+  &__item,
+  &__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    line-height: normal; // <a> 는 body line-height 를 물려받아 버튼보다 높아진다
+    text-decoration: none;
+  }
+
   &__item {
     border: 1px solid var(--bt-color-border);
     background: var(--bt-color-background);
