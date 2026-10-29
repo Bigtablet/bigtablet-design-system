@@ -767,6 +767,26 @@ React `<Spinner size>` 가 px 숫자를 그대로 받는 것과 맞춰, 크기�
 </nav>
 ```
 
+**링크로 넘기기 (서버 렌더 화면):** `data-href` 에 주소 틀을 주면 번호·이전·다음을 `<a href>` 로 그린다.
+`{page}` 만 쪽 번호로 바뀌고, 첫 쪽의 이전·마지막 쪽의 다음은 눌리지 않는 버튼으로 남는다.
+링크 모드에서는 브라우저가 이동하므로 `onPageChange` 는 부르지 않는다.
+Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와도 치환한다.
+`http(s)` 가 아닌 틀(`javascript:` 등)은 무시하고 버튼 모드로 그린다.
+
+```html
+<!-- Thymeleaf 예 -->
+<nav class="bt-pagination" data-bt-pagination
+     th:attr="data-page=${page}, data-total-pages=${totalPages}"
+     th:data-href="@{/logs(from=${from}, page='{page}')}">
+</nav>
+
+<!-- 렌더 결과의 href 예: /logs?from=2026-10-01&page=3 -->
+<nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="12"
+     data-href="/logs?from=2026-10-01&amp;page={page}"></nav>
+```
+
+수동 초기화에서는 `href` 옵션으로 같은 틀을 넘긴다: `Bigtablet.Pagination(el, { page, totalPages, href: '/logs?page={page}' })`.
+
 **JavaScript 연동:**
 
 ```html
@@ -982,7 +1002,7 @@ Bigtablet.init();
 |---|---|
 | `Bigtablet.Dropdown` | `onValueChange(value, option)` |
 | `Bigtablet.Toggle` | `onCheckedChange(checked)` |
-| `Bigtablet.Pagination` | `onPageChange(page)` |
+| `Bigtablet.Pagination` | `onPageChange(page)` (`href` 링크 모드에서는 호출 안 함) |
 
 ### 유틸리티
 

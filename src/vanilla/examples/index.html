@@ -81,6 +81,14 @@
       font-size: 0.875rem;
       margin-top: 1rem;
     }
+
+    /* 인라인 code 배경이 블록 안까지 번져 밝은 글자가 묻히지 않게 */
+    pre code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+    }
   </style>
 </head>
 <body>
@@ -492,17 +500,23 @@
       <nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="10">
         <!-- JS가 자동으로 렌더링 -->
       </nav>
+      <nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="10" data-href="?page={page}">
+        <!-- 링크 모드 -->
+      </nav>
 
       <pre><code>&lt;nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="10"&gt;
   &lt;!-- JS가 자동으로 렌더링 --&gt;
 &lt;/nav&gt;
+
+&lt;!-- 링크 모드 (서버 렌더): {page} 만 쪽 번호로 바뀐다 --&gt;
+&lt;nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="10" data-href="?page={page}"&gt;&lt;/nav&gt;
 
 &lt;script&gt;
 // 또는 수동 초기화
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
-  onChange: (page) => console.log('Page:', page)
+  onPageChange: (page) => console.log('Page:', page)
 });
 &lt;/script&gt;</code></pre>
     </div>

@@ -1545,8 +1545,32 @@
 			sibling: 2,
 			// React Pagination 과 동일한 페이지 변경 콜백.
 			onPageChange: null,
+			// 링크 주소 틀 (예: "/logs?page={page}"). 주면 번호·이전·다음을 <a href> 로 그려
+			// 서버 렌더 화면에서 쪽을 넘긴다. onPageChange 는 부르지 않는다.
+			href: null,
 			...options,
 		};
+
+		// http(s) 가 아닌 틀(javascript:, data: 등)은 링크로 그리지 않고 버튼 모드로 둔다.
+		// URL 로 파싱해 브라우저와 같은 규칙으로 스킴을 읽는다 (상대 경로는 현재 주소 기준 http(s)).
+		if (config.href) {
+			let protocol = "";
+			try {
+				protocol = new URL(config.href, document.baseURI).protocol;
+			} catch {}
+			if (protocol !== "http:" && protocol !== "https:") config.href = null;
+		}
+
+		// Thymeleaf 의 @{...(page='{page}')} 처럼 틀이 URL 인코딩돼 들어와도 치환한다.
+		const pageHref = (page) => config.href.replace(/\{page\}|%7Bpage%7D/gi, String(page));
+
+		// 링크 모드면 <a>, 아니면 <button>. 눌리지 않는 이전·다음은 링크 모드에서도 disabled 버튼으로 둔다.
+		function control(target, disabled, attrs, content) {
+			if (config.href && !disabled) {
+				return `<a href="${escapeHtml(pageHref(target))}" ${attrs}>${content}</a>`;
+			}
+			return `<button type="button" ${disabled ? "disabled" : ""} ${attrs}>${content}</button>`;
+		}
 
 		function range(start, end) {
 			const out = [];
@@ -1587,38 +1611,40 @@
 		function render() {
 			const items = getPaginationItems(config.page, config.totalPages);
 
-			let html = `
-        <button class="bt-pagination__item" ${config.page <= 1 ? "disabled" : ""} data-action="prev" aria-label="Previous page">
-          ‹
-        </button>
-        <div class="bt-pagination__pages">
-      `;
+			let html = control(
+				config.page - 1,
+				config.page <= 1,
+				'class="bt-pagination__item" data-action="prev" aria-label="Previous page"',
+				"‹",
+			);
+			html += `<div class="bt-pagination__pages">`;
 
-			items.forEach((item, _idx) => {
+			items.forEach((item) => {
 				if (item === "ellipsis") {
 					html += `<span class="bt-pagination__ellipsis" aria-hidden="true">…</span>`;
 				} else {
 					const isActive = item === config.page;
-					html += `
-            <button
-              class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}"
-              data-page="${escapeHtml(item)}"
-              ${isActive ? 'aria-current="page"' : ""}
-            >
-              ${escapeHtml(item)}
-            </button>
-          `;
+					html += control(
+						item,
+						false,
+						`class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}" data-page="${escapeHtml(item)}"${isActive ? ' aria-current="page"' : ""}`,
+						escapeHtml(item),
+					);
 				}
 			});
 
-			html += `
-        </div>
-        <button class="bt-pagination__item" ${config.page >= config.totalPages ? "disabled" : ""} data-action="next" aria-label="Next page">
-          ›
-        </button>
-      `;
+			html += "</div>";
+			html += control(
+				config.page + 1,
+				config.page >= config.totalPages,
+				'class="bt-pagination__item" data-action="next" aria-label="Next page"',
+				"›",
+			);
 
 			container.innerHTML = html;
+
+			// 링크 모드는 브라우저가 이동한다
+			if (config.href) return;
 
 			// Bind events
 			$$("[data-page]", container).forEach((btn) => {
@@ -1714,7 +1740,8 @@
 			if (!el._btPagination) {
 				const page = parseInt(el.dataset.page, 10) || 1;
 				const totalPages = parseInt(el.dataset.totalPages, 10) || 1;
-				el._btPagination = Pagination(el, { page, totalPages });
+				const href = el.dataset.href || null;
+				el._btPagination = Pagination(el, { page, totalPages, href });
 			}
 		});
 	}

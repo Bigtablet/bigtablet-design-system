@@ -233,6 +233,10 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 <nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10">
   <!-- JS renders automatically -->
 </nav>
+
+<!-- 링크 모드 - 번호·이전·다음을 <a href> 로. {page} 만 치환, 끝쪽 이전/다음은 disabled 버튼 -->
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10"
+     data-href="/logs?page={page}"></nav>
 ```
 
 ### JavaScript API
@@ -279,7 +283,8 @@ sw.setChecked(true);
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
-  onPageChange: (page) => console.log(page)
+  onPageChange: (page) => console.log(page),
+  href: null                // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
 });
 pagination.setPage(5);
 

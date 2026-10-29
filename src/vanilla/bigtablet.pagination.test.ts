@@ -66,6 +66,46 @@ describe("Pagination", () => {
 		expect(onPageChange.mock.calls.map(([p]) => p)).toEqual([1, 5]);
 	});
 
+	it("renders links from the href template and keeps edge prev/next unclickable", () => {
+		const onPageChange = vi.fn();
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		Pagination(el, { page: 1, totalPages: 3, href: "/logs?from=a&b&page={page}", onPageChange });
+
+		const hrefs = Array.from(el.querySelectorAll<HTMLAnchorElement>("a"), (a) =>
+			a.getAttribute("href"),
+		);
+		expect(hrefs).toEqual([
+			"/logs?from=a&b&page=1",
+			"/logs?from=a&b&page=2",
+			"/logs?from=a&b&page=3",
+			"/logs?from=a&b&page=2",
+		]);
+		expect(el.querySelector('a[aria-current="page"]')?.textContent).toBe("1");
+		const prev = el.querySelector<HTMLButtonElement>('[data-action="prev"]');
+		expect(prev?.tagName).toBe("BUTTON");
+		expect(prev?.disabled).toBe(true);
+		expect(el.querySelector('[data-action="next"]')?.tagName).toBe("A");
+
+		Pagination(el, { page: 3, totalPages: 3, href: "?page={page}" });
+		expect(el.querySelector('[data-action="prev"]')?.getAttribute("href")).toBe("?page=2");
+		expect(el.querySelector<HTMLButtonElement>('[data-action="next"]')?.disabled).toBe(true);
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("substitutes a URL-encoded {page} and ignores non-http(s) templates", () => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		Pagination(el, { page: 1, totalPages: 2, href: "/logs?from=a&page=%7Bpage%7D" });
+		expect(el.querySelector('[data-page="2"]')?.getAttribute("href")).toBe("/logs?from=a&page=2");
+
+		for (const href of ["javascript:alert(1)", "java\tscript:alert(1)", "data:text/html,x"]) {
+			Pagination(el, { page: 1, totalPages: 2, href });
+			expect(el.querySelector("a")).toBeNull();
+			expect(el.querySelector('[data-page="2"]')?.tagName).toBe("BUTTON");
+		}
+	});
+
 	it("clamps the page when the total shrinks and accepts a selector", () => {
 		const { el, api } = mount(5, 5);
 		api?.setTotalPages(3);
@@ -91,7 +131,8 @@ describe("init", () => {
 			<div id="m" class="bt-modal" data-bt-modal><div class="bt-modal__panel"><button>x</button></div></div>
 			<button class="bt-toggle" data-bt-toggle></button>
 			<nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="9"></nav>
-			<nav id="p2" class="bt-pagination" data-bt-pagination></nav>`;
+			<nav id="p2" class="bt-pagination" data-bt-pagination></nav>
+			<nav id="p3" class="bt-pagination" data-bt-pagination data-page="2" data-total-pages="3" data-href="?page={page}"></nav>`;
 		init();
 		init();
 
@@ -102,6 +143,7 @@ describe("init", () => {
 		expect($el("[data-bt-toggle]").getAttribute("role")).toBe("switch");
 		expect($el("[data-bt-pagination]")._btPagination?.getPage?.()).toBe(3);
 		expect($el("#p2")._btPagination?.getPage?.()).toBe(1);
+		expect($el("#p3").querySelector('[data-page="3"]')?.getAttribute("href")).toBe("?page=3");
 
 		const modal = $el("#m");
 		const opener = $el("#opener");
