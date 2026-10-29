@@ -727,7 +727,8 @@
      (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
   &:disabled {
     cursor: not-allowed;
-    background: var(--bt-color-border-light);
+    // React Toggle 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
+    background: token.$color_base_neutral_400;
 
     // React Toggle 과 같은 토큰 - 하드코딩 흰색은 다크에서 활성 off 토글보다 밝아 비활성 신호가 뒤집혔다
     .bt-toggle__thumb {
@@ -776,7 +777,9 @@
     border: none;
     text-align: left;
 
-    &:focus-visible {
+    // .is-open 은 뒤에서 같은 특이도의 box-shadow 를 준다 - 키보드로 연 동안에도 링이 이기게 올린다
+    &:focus-visible,
+    &.is-open:focus-visible {
       outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
       box-shadow: var(--bt-focus-ring);
     }
@@ -1625,6 +1628,17 @@ select:-webkit-autofill {
 .bt-text-field__input--filled:-webkit-autofill:focus-visible {
   -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
   box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+}
+
+// 자동완성 inset 이 상태 포커스 링을 덮지 않게 둘을 함께 준다
+.bt-text-field__input--error:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
+}
+
+.bt-text-field__input--success:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
 }
 
 /* 비활성 + 자동완성 - 인증 후 칸을 잠그는 흐름에서 값이 남는다. 위 규칙만 두면

@@ -512,7 +512,8 @@
 		// React 와 같이 searchable 이어도 트리거는 combobox 다. combobox 는 내용으로 이름이 붙지 않아
 		// 이름을 **라벨 + 현재 값** 으로 직접 잇는다 (APG select-only combobox).
 		control.setAttribute("role", "combobox");
-		if (!control.hasAttribute("aria-labelledby")) {
+		// 소비자가 aria-label / aria-labelledby 를 줬으면 그대로 둔다 - labelledby 가 label 보다 우선이라 덮어쓰면 값만 읽힌다
+		if (!control.hasAttribute("aria-labelledby") && !control.hasAttribute("aria-label")) {
 			control.id = control.id || `${controlId}_control`;
 			const labelEl = control.labels?.[0];
 			if (labelEl) labelEl.id = labelEl.id || `${controlId}_label`;
@@ -1542,17 +1543,13 @@
 		const fieldName = config.name || toggleEl.dataset.name || null;
 		// 직계 형제만 탐색 - parentNode.querySelector 는 하위 트리 전체를 뒤져 같은 부모를 공유하는
 		// 다른 토글(예: 테이블 행 안 여러 토글)의 hidden input 을 잘못 집을 수 있다.
-		// name 이 없으면 바로 다음 형제 hidden input 을 쓴다 - 문서의 "서버 렌더 초기값" 마크업
-		// (`<button data-bt-toggle>` + `<input type="hidden" name=... th:value=...>`).
-		const next = toggleEl.nextElementSibling;
 		let hiddenInput =
 			toggleEl.querySelector('input[type="hidden"]') ||
 			(fieldName && toggleEl.parentNode
 				? Array.from(toggleEl.parentNode.children).find(
 						(el) => el.tagName === "INPUT" && el.type === "hidden" && el.name === fieldName,
 					)
-				: null) ||
-			(!fieldName && next?.tagName === "INPUT" && next.type === "hidden" ? next : null);
+				: null);
 		if (!hiddenInput && fieldName) {
 			hiddenInput = document.createElement("input");
 			hiddenInput.type = "hidden";

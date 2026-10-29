@@ -407,6 +407,15 @@ describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
 });
 
 describe("Modal - 점검 회귀 (#898)", () => {
+	// 열린 채 끝난 Modal 의 document 리스너·Escape 스택이 다음 테스트로 새지 않게
+	afterEach(() => {
+		for (const m of document.querySelectorAll<HTMLElement & { _btModal?: { destroy: () => void } }>(
+			".bt-modal",
+		)) {
+			m._btModal?.destroy();
+		}
+	});
+
 	const mount = (panelHtml: string) => {
 		document.body.innerHTML = `<button id="trigger" data-bt-modal-open="m">t</button><div id="m" class="bt-modal" data-bt-modal><div class="bt-modal__panel" aria-label="설정">${panelHtml}</div></div>`;
 		return document.getElementById("m") as HTMLElement & { _btModal?: { open: () => void } };

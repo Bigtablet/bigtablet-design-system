@@ -332,8 +332,8 @@ npm install @bigtablet/design-system
   <span class="bt-toggle__thumb"></span>
 </button>
 
-<!-- 또는 서버 렌더링 초기값 - 버튼 **바로 다음** 형제 hidden input 을 읽고 갱신한다 -->
-<button type="button" class="bt-toggle" data-bt-toggle aria-label="알림 받기">
+<!-- 또는 서버 렌더링 초기값 - data-name 과 같은 name 의 형제 hidden input 을 읽고 갱신한다 -->
+<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 <input type="hidden" name="notifications" th:value="${enabled}">
@@ -911,6 +911,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   --bt-color-error: #ef4444;
   --bt-color-warning: #f59e0b;
   --bt-color-info: #2563eb;
+  --bt-color-accent: #121212;             /* 강조색 - 다크에서 자동 반전 */
+  --bt-color-accent-on-surface: #ffffff;  /* 강조색 위 글자·아이콘 */
 
   /* Spacing */
   --bt-spacing-xs: 0.25rem;   /* 4px */

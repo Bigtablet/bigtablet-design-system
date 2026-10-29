@@ -625,6 +625,14 @@ describe("Dropdown - 점검 회귀 (#898)", () => {
 		expect(names).toEqual(["과일", "포도"]);
 	});
 
+	it("소비자가 준 aria-label 은 aria-labelledby 로 덮지 않는다", () => {
+		const wrap = dropdownMarkup();
+		const control = wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+		control.setAttribute("aria-label", "과일 선택");
+		Dropdown(wrap);
+		expect(control.hasAttribute("aria-labelledby")).toBe(false);
+	});
+
 	it("disabled 면 hidden input 을 전송하지 않는다", () => {
 		const wrap = dropdownMarkup({ name: "fruit" });
 		const form = document.createElement("form");
