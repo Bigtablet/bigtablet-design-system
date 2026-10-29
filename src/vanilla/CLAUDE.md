@@ -196,6 +196,9 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 </div>
 ```
 
+접근성 이름은 필수다 - `.bt-modal__header` 가 있으면 `aria-labelledby` 로 잇고, 없으면 `.bt-modal__panel` 에
+`aria-label` 을 직접 단다. 번들은 이름을 지어내지 않고 `console.warn` 만 남긴다 (React Modal #473 과 같은 결론).
+
 #### Card
 ```html
 <!-- title / body / footer 3단 구성 (React Card 의 heading / children / footer 와 동일).

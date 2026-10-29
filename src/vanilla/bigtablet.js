@@ -1105,7 +1105,7 @@
 
 		// Dialog ARIA - React Modal 과 패리티. 접근 가능한 이름(aria-labelledby/label)도 연결한다
 		// 헤더가 있으면 그 id 로 연결한다. 둘 다 없으면 이름을 지어내지 않는다 - React Modal(#473)처럼
-		// 이름 누락을 axe aria-dialog-name 이 잡게 둔다.
+		// 이름 누락을 axe aria-dialog-name 이 잡게 두고, axe 를 안 돌리는 서버 렌더 화면을 위해 경고한다.
 		if (panel) {
 			panel.setAttribute("role", "dialog");
 			panel.setAttribute("aria-modal", "true");
@@ -1114,6 +1114,10 @@
 				if (header) {
 					header.id = header.id || generateId("modal_title");
 					panel.setAttribute("aria-labelledby", header.id);
+				} else {
+					console.warn(
+						"Modal: no accessible name - add .bt-modal__header or aria-label on .bt-modal__panel",
+					);
 				}
 			}
 		}

@@ -325,8 +325,11 @@ describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
 		expect(header.id).not.toBe("");
 		expect(panelOf(a).getAttribute("aria-labelledby")).toBe(header.id);
 
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const b = mount("");
 		Modal(b);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("Modal: no accessible name"));
+		warn.mockRestore();
 		// 이름을 지어내지 않는다 (#896 - React Modal #473 과 같은 결론)
 		expect(panelOf(b).hasAttribute("aria-label")).toBe(false);
 		expect(panelOf(b).hasAttribute("aria-labelledby")).toBe(false);

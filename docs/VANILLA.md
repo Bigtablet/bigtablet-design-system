@@ -578,7 +578,7 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 ```
 
 **접근성 이름은 필수다.** `.bt-modal__header` 가 있으면 그 id 로 `aria-labelledby` 를 잇는다.
-헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않는다
+헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않고 콘솔에 경고만 남긴다
 (이전에는 영어 `"Dialog"` 로 채웠다. React Modal 과 같은 이유로 제거).
 
 **JavaScript 연동:**
