@@ -155,4 +155,27 @@ describe("init", () => {
 		expect(modal.classList.contains("is-open")).toBe(true);
 		(modal._btModal as unknown as { destroy: () => void }).destroy();
 	});
+
+	it("names prev/next in Korean by default and takes prevLabel/nextLabel (#896)", () => {
+		const aria = (el: HTMLElement, action: string) =>
+			el.querySelector(`[data-action="${action}"]`)?.getAttribute("aria-label");
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		Pagination(el, { page: 2, totalPages: 3 });
+		expect(aria(el, "prev")).toBe("이전 페이지");
+		expect(aria(el, "next")).toBe("다음 페이지");
+
+		const custom = document.createElement("nav");
+		document.body.appendChild(custom);
+		Pagination(custom, { page: 2, totalPages: 3, prevLabel: "Prev", nextLabel: 'Next "x"' });
+		expect(aria(custom, "prev")).toBe("Prev");
+		expect(aria(custom, "next")).toBe('Next "x"');
+
+		document.body.innerHTML =
+			'<nav data-bt-pagination data-page="2" data-total-pages="3" data-prev-label="앞" data-next-label="뒤"></nav>';
+		init();
+		const auto = document.querySelector("nav") as HTMLElement;
+		expect(aria(auto, "prev")).toBe("앞");
+		expect(aria(auto, "next")).toBe("뒤");
+	});
 });

@@ -327,7 +327,9 @@ describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
 
 		const b = mount("");
 		Modal(b);
-		expect(panelOf(b).getAttribute("aria-label")).toBe("Dialog");
+		// 이름을 지어내지 않는다 (#896 - React Modal #473 과 같은 결론)
+		expect(panelOf(b).hasAttribute("aria-label")).toBe(false);
+		expect(panelOf(b).hasAttribute("aria-labelledby")).toBe(false);
 
 		const c = mount('<div class="bt-modal__header" id="keep">x</div>', 'aria-label="설정"');
 		Modal(c);
