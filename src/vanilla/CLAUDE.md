@@ -142,7 +142,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 <div class="bt-dropdown" data-bt-dropdown>
   <label class="bt-dropdown__label" for="my-dropdown-control">Label</label>
   <button type="button" id="my-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
-    <span class="bt-dropdown__placeholder">Select...</span>
+    <span class="bt-dropdown__placeholder">선택…</span>
     <span class="bt-dropdown__icon">▼</span>
   </button>
   <ul class="bt-dropdown__list">
@@ -196,6 +196,9 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 </div>
 ```
 
+접근성 이름은 필수다 - `.bt-modal__header` 가 있으면 `aria-labelledby` 로 잇고, 없으면 `.bt-modal__panel` 에
+`aria-label` 을 직접 단다. 번들은 이름을 지어내지 않고 `console.warn` 만 남긴다 (React Modal #473 과 같은 결론).
+
 #### Card
 ```html
 <!-- title / body / footer 3단 구성 (React Card 의 heading / children / footer 와 동일).
@@ -247,7 +250,7 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 // Manual initialization - 옵션 이름은 React Dropdown prop 과 동일 (별칭 없음)
 const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   options: [{ value: '1', label: 'One' }],
-  placeholder: 'Select...',
+  placeholder: '선택…',
   name: 'field',            // hidden input 으로 폼 제출 참여 (multiple 은 같은 name 반복)
   multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
   searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, IME 조합 중 필터 보류)
@@ -284,7 +287,9 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
   onPageChange: (page) => console.log(page),
-  href: null                // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
+  href: null,               // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
+  prevLabel: '이전 페이지',  // 이전·다음 버튼 aria-label (data-prev-label · data-next-label)
+  nextLabel: '다음 페이지'
 });
 pagination.setPage(5);
 

@@ -295,7 +295,7 @@
 		if (!wrapper) return null;
 
 		const config = {
-			placeholder: "Select...",
+			placeholder: "선택…",
 			disabled: false,
 			// React Dropdown 과 동일한 이름의 옵션들 (별칭 없음).
 			multiple: false,
@@ -1104,7 +1104,8 @@
 		let popEscape = null;
 
 		// Dialog ARIA - React Modal 과 패리티. 접근 가능한 이름(aria-labelledby/label)도 연결한다
-		// (없으면 axe aria-dialog-name 실패). 헤더가 있으면 그 id 로, 없으면 aria-label fallback.
+		// 헤더가 있으면 그 id 로 연결한다. 둘 다 없으면 이름을 지어내지 않는다 - React Modal(#473)처럼
+		// 이름 누락을 axe aria-dialog-name 이 잡게 두고, axe 를 안 돌리는 서버 렌더 화면을 위해 경고한다.
 		if (panel) {
 			panel.setAttribute("role", "dialog");
 			panel.setAttribute("aria-modal", "true");
@@ -1114,7 +1115,9 @@
 					header.id = header.id || generateId("modal_title");
 					panel.setAttribute("aria-labelledby", header.id);
 				} else {
-					panel.setAttribute("aria-label", "Dialog");
+					console.warn(
+						"Modal: no accessible name - add .bt-modal__header or aria-label on .bt-modal__panel",
+					);
 				}
 			}
 		}
@@ -1548,6 +1551,9 @@
 			// 링크 주소 틀 (예: "/logs?page={page}"). 주면 번호·이전·다음을 <a href> 로 그려
 			// 서버 렌더 화면에서 쪽을 넘긴다. onPageChange 는 부르지 않는다.
 			href: null,
+			// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (ko 카탈로그).
+			prevLabel: "이전 페이지",
+			nextLabel: "다음 페이지",
 			...options,
 		};
 
@@ -1614,7 +1620,7 @@
 			let html = control(
 				config.page - 1,
 				config.page <= 1,
-				'class="bt-pagination__item" data-action="prev" aria-label="Previous page"',
+				`class="bt-pagination__item" data-action="prev" aria-label="${escapeHtml(config.prevLabel)}"`,
 				"‹",
 			);
 			html += `<div class="bt-pagination__pages">`;
@@ -1637,7 +1643,7 @@
 			html += control(
 				config.page + 1,
 				config.page >= config.totalPages,
-				'class="bt-pagination__item" data-action="next" aria-label="Next page"',
+				`class="bt-pagination__item" data-action="next" aria-label="${escapeHtml(config.nextLabel)}"`,
 				"›",
 			);
 
@@ -1741,7 +1747,10 @@
 				const page = parseInt(el.dataset.page, 10) || 1;
 				const totalPages = parseInt(el.dataset.totalPages, 10) || 1;
 				const href = el.dataset.href || null;
-				el._btPagination = Pagination(el, { page, totalPages, href });
+				const labels = {};
+				if (el.dataset.prevLabel) labels.prevLabel = el.dataset.prevLabel;
+				if (el.dataset.nextLabel) labels.nextLabel = el.dataset.nextLabel;
+				el._btPagination = Pagination(el, { page, totalPages, href, ...labels });
 			}
 		});
 	}

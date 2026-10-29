@@ -577,6 +577,10 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 </div>
 ```
 
+**접근성 이름은 필수다.** `.bt-modal__header` 가 있으면 그 id 로 `aria-labelledby` 를 잇는다.
+헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않고 콘솔에 경고만 남긴다
+(이전에는 영어 `"Dialog"` 로 채웠다. React Modal 과 같은 이유로 제거).
+
 **JavaScript 연동:**
 
 ```html
@@ -787,6 +791,14 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 수동 초기화에서는 `href` 옵션으로 같은 틀을 넘긴다: `Bigtablet.Pagination(el, { page, totalPages, href: '/logs?page={page}' })`.
 
+**이전·다음 버튼 이름:** 기본값은 React `ko` 카탈로그와 같은 `"이전 페이지"` · `"다음 페이지"` 다.
+다른 언어 화면이면 `data-prev-label` · `data-next-label` (수동 초기화는 `prevLabel` · `nextLabel` 옵션, React props 와 같은 이름)로 바꾼다.
+
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10"
+     data-prev-label="Previous page" data-next-label="Next page"></nav>
+```
+
 **JavaScript 연동:**
 
 ```html
@@ -827,14 +839,14 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
       <option value="2022">2022</option>
       <!-- ... -->
     </select>
-    <select class="bt-date-picker__select" name="month">
+    <select class="bt-date-picker__select" name="month" aria-label="월">
       <option value="">월</option>
       <option value="1">1월</option>
       <option value="2">2월</option>
       <!-- ... -->
       <option value="12">12월</option>
     </select>
-    <select class="bt-date-picker__select" name="day">
+    <select class="bt-date-picker__select" name="day" aria-label="일">
       <option value="">일</option>
       <option value="1">1일</option>
       <option value="2">2일</option>
