@@ -9,10 +9,13 @@ const SKIP_AUTOFOCUS_ATTR = "data-focus-trap-skip-autofocus";
 const FOCUSABLE_SELECTORS = [
 	"a[href]",
 	"button:not([disabled])",
-	"input:not([disabled])",
+	// type=hidden 은 focus() 를 무시한다 - 폼의 _csrf 등이 첫 후보가 되면 초기 포커스가 밖에 남고
+	// Tab 트랩의 첫·끝 판정이 어긋난다 (#900, vanilla 는 #898)
+	'input:not([disabled]):not([type="hidden"])',
 	"select:not([disabled])",
 	"textarea:not([disabled])",
-	'[tabindex]:not([tabindex="-1"])',
+	// tabindex 가 붙은 hidden input 도 이 경로로 들어오지 않게
+	'[tabindex]:not([tabindex="-1"]):not(input[type="hidden"])',
 ].join(", ");
 
 export interface FocusTrapOptions {
