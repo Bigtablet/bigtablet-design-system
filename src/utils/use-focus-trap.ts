@@ -14,7 +14,8 @@ const FOCUSABLE_SELECTORS = [
 	'input:not([disabled]):not([type="hidden"])',
 	"select:not([disabled])",
 	"textarea:not([disabled])",
-	'[tabindex]:not([tabindex="-1"])',
+	// tabindex 가 붙은 hidden input 도 이 경로로 들어오지 않게
+	'[tabindex]:not([tabindex="-1"]):not(input[type="hidden"])',
 ].join(", ");
 
 export interface FocusTrapOptions {

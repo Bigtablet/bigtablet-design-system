@@ -300,7 +300,7 @@ describe("useFocusTrap", () => {
 	it("skips hidden inputs for initial focus and Tab wrapping (#900)", () => {
 		const container = tracked(document.createElement("div"));
 		container.innerHTML =
-			'<form><input type="hidden" name="_csrf"><input id="first"><button id="last">ok</button><input type="hidden" name="token"></form>';
+			'<form><input type="hidden" name="_csrf" tabindex="0"><input id="first"><button id="last">ok</button><input type="hidden" name="token"></form>';
 		document.body.appendChild(container);
 
 		renderHook(() => useFocusTrap({ current: container }, true));

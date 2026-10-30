@@ -423,7 +423,7 @@ describe("Modal - 점검 회귀 (#898)", () => {
 
 	it("초기 포커스는 본문 첫 컨트롤 - hidden input(_csrf)과 닫기 버튼보다 먼저", () => {
 		const m = mount(
-			'<button data-modal-close>x</button><div class="bt-modal__body"><form><input type="hidden" name="_csrf" value="t"><input id="first"></form></div>',
+			'<button data-modal-close>x</button><div class="bt-modal__body"><form><input type="hidden" name="_csrf" value="t" tabindex="0"><input id="first"></form></div>',
 		);
 		Modal(m)?.open();
 		expect(document.activeElement?.id).toBe("first");
