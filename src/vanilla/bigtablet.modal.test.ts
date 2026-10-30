@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // Vanilla 번들은 UMD 다. 소비자는 `<script>` 로 읽어 전역 `Bigtablet` 을 쓰지만, 여기서는
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
-import { Alert, Dropdown, Modal, Modal as ModalFactory } from "./bigtablet.js";
+import { Alert, Dropdown, init, Modal, Modal as ModalFactory } from "./bigtablet.js";
 import {
 	dropdownMarkup,
 	key,
@@ -325,9 +325,14 @@ describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
 		expect(header.id).not.toBe("");
 		expect(panelOf(a).getAttribute("aria-labelledby")).toBe(header.id);
 
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const b = mount("");
 		Modal(b);
-		expect(panelOf(b).getAttribute("aria-label")).toBe("Dialog");
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("Modal: no accessible name"));
+		warn.mockRestore();
+		// 이름을 지어내지 않는다 (#896 - React Modal #473 과 같은 결론)
+		expect(panelOf(b).hasAttribute("aria-label")).toBe(false);
+		expect(panelOf(b).hasAttribute("aria-labelledby")).toBe(false);
 
 		const c = mount('<div class="bt-modal__header" id="keep">x</div>', 'aria-label="설정"');
 		Modal(c);
@@ -398,5 +403,62 @@ describe("Modal - ARIA · 포커스 · 닫기 경로", () => {
 		api?.close();
 		expect(document.activeElement).toBe(trigger);
 		expect(Modal("#missing")).toBeNull();
+	});
+});
+
+describe("Modal - 점검 회귀 (#898)", () => {
+	// 열린 채 끝난 Modal 의 document 리스너·Escape 스택이 다음 테스트로 새지 않게
+	afterEach(() => {
+		for (const m of document.querySelectorAll<HTMLElement & { _btModal?: { destroy: () => void } }>(
+			".bt-modal",
+		)) {
+			m._btModal?.destroy();
+		}
+	});
+
+	const mount = (panelHtml: string) => {
+		document.body.innerHTML = `<button id="trigger" data-bt-modal-open="m">t</button><div id="m" class="bt-modal" data-bt-modal><div class="bt-modal__panel" aria-label="설정">${panelHtml}</div></div>`;
+		return document.getElementById("m") as HTMLElement & { _btModal?: { open: () => void } };
+	};
+
+	it("초기 포커스는 본문 첫 컨트롤 - hidden input(_csrf)과 닫기 버튼보다 먼저", () => {
+		const m = mount(
+			'<button data-modal-close>x</button><div class="bt-modal__body"><form><input type="hidden" name="_csrf" value="t" tabindex="0"><input id="first"></form></div>',
+		);
+		Modal(m)?.open();
+		expect(document.activeElement?.id).toBe("first");
+	});
+
+	it("Tab 트랩이 hidden input 을 첫 항목으로 세지 않는다", () => {
+		const m = mount(
+			'<input type="hidden" name="_csrf"><button id="a">a</button><button id="b">b</button>',
+		);
+		Modal(m)?.open();
+		expect(document.activeElement?.id).toBe("a");
+		expect(
+			key(document.activeElement as HTMLElement, "Tab", { shiftKey: true }).defaultPrevented,
+		).toBe(true);
+		expect(document.activeElement?.id).toBe("b");
+	});
+
+	it("자동 초기화 뒤 수동으로 만들면 교체되어 트리거가 새 인스턴스의 콜백을 부른다", () => {
+		const m = mount("<button>x</button>");
+		init();
+		const onOpen = vi.fn();
+		const manual = Modal(m, { onOpen });
+		(document.getElementById("trigger") as HTMLButtonElement).click();
+		expect(onOpen).toHaveBeenCalledTimes(1);
+		expect(manual?.isOpen()).toBe(true);
+		expect(m._btModal).toBe(manual);
+		manual?.destroy();
+		expect(m._btModal).toBeUndefined();
+	});
+
+	it("셀렉터로 무효한 id 의 트리거도 init 을 멈추지 않는다", () => {
+		document.body.innerHTML = `<button data-bt-modal-open="123">t</button><div id="123" class="bt-modal" data-bt-modal><div class="bt-modal__panel" aria-label="x"><button>x</button></div></div><button class="bt-toggle" data-bt-toggle aria-label="t"></button>`;
+		expect(() => init()).not.toThrow();
+		expect(document.querySelector("[data-bt-toggle]")?.getAttribute("role")).toBe("switch");
+		(document.querySelector("[data-bt-modal-open]") as HTMLButtonElement).click();
+		expect(document.getElementById("123")?.classList.contains("is-open")).toBe(true);
 	});
 });

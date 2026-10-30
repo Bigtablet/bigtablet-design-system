@@ -155,4 +155,83 @@ describe("init", () => {
 		expect(modal.classList.contains("is-open")).toBe(true);
 		(modal._btModal as unknown as { destroy: () => void }).destroy();
 	});
+
+	it("names prev/next in Korean by default and takes prevLabel/nextLabel (#896)", () => {
+		const aria = (el: HTMLElement, action: string) =>
+			el.querySelector(`[data-action="${action}"]`)?.getAttribute("aria-label");
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		Pagination(el, { page: 2, totalPages: 3 });
+		expect(aria(el, "prev")).toBe("이전 페이지");
+		expect(aria(el, "next")).toBe("다음 페이지");
+
+		const custom = document.createElement("nav");
+		document.body.appendChild(custom);
+		Pagination(custom, { page: 2, totalPages: 3, prevLabel: "Prev", nextLabel: 'Next "x"' });
+		expect(aria(custom, "prev")).toBe("Prev");
+		expect(aria(custom, "next")).toBe('Next "x"');
+
+		document.body.innerHTML =
+			'<nav data-bt-pagination data-page="2" data-total-pages="3" data-prev-label="앞" data-next-label="뒤"></nav>';
+		init();
+		const auto = document.querySelector("nav") as HTMLElement;
+		expect(aria(auto, "prev")).toBe("앞");
+		expect(aria(auto, "next")).toBe("뒤");
+	});
+});
+
+describe("Pagination - 점검 회귀 (#898)", () => {
+	const make = (opts: Record<string, unknown>) => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		return { el, api: Pagination(el, opts) };
+	};
+
+	it("범위 밖 page 를 보정한다", () => {
+		expect(make({ page: 12, totalPages: 10 }).api?.getPage()).toBe(10);
+		expect(make({ page: -3, totalPages: 10 }).api?.getPage()).toBe(1);
+		const { el } = make({ page: 12, totalPages: 10, href: "/l?page={page}" });
+		expect(el.querySelector('[data-action="prev"]')?.getAttribute("href")).toBe("/l?page=9");
+	});
+
+	it("totalPages · page 가 숫자가 아니면 1 로 본다", () => {
+		const { api, el } = make({ page: Number.NaN, totalPages: undefined });
+		expect(api?.getPage()).toBe(1);
+		expect(el.querySelectorAll("[data-page]")).toHaveLength(1);
+		api?.setTotalPages(Number.NaN);
+		expect(api?.getPage()).toBe(1);
+	});
+
+	it("setTotalPages(0) 이어도 page 는 1 이다", () => {
+		const { api } = make({ page: 3, totalPages: 5 });
+		api?.setTotalPages(0);
+		expect(api?.getPage()).toBe(1);
+	});
+
+	it("링크 모드에서는 setPage 도 onPageChange 를 부르지 않는다", () => {
+		const onPageChange = vi.fn();
+		const { api } = make({ page: 1, totalPages: 5, href: "/l?page={page}", onPageChange });
+		api?.setPage(2);
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("다시 그려도 누른 자리에 포커스가 남는다", () => {
+		const { el } = make({ page: 2, totalPages: 5 });
+		const next = () => el.querySelector('[data-action="next"]') as HTMLButtonElement;
+		next().focus();
+		next().click();
+		expect(document.activeElement).toBe(next());
+		(el.querySelector('[data-page="5"]') as HTMLButtonElement).focus();
+		(el.querySelector('[data-page="5"]') as HTMLButtonElement).click();
+		expect(document.activeElement?.getAttribute("aria-current")).toBe("page");
+	});
+
+	it("nav 에 이름을 단다 - 기본 '페이지 이동', 소비자 이름은 그대로", () => {
+		expect(make({}).el.getAttribute("aria-label")).toBe("페이지 이동");
+		const el = document.createElement("nav");
+		el.setAttribute("aria-label", "로그 페이지");
+		document.body.appendChild(el);
+		Pagination(el, {});
+		expect(el.getAttribute("aria-label")).toBe("로그 페이지");
+	});
 });

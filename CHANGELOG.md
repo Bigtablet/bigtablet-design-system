@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.3.0) - 2026-10-30
+- Vanilla 기본 문구가 React `ko` 카탈로그와 같은 한국어입니다 - Pagination 이전 · 다음 "이전 페이지" · "다음 페이지", Dropdown placeholder "선택…". Pagination 에 `prevLabel` · `nextLabel` · `navLabel` 옵션(`data-prev-label` · `data-next-label` · `data-nav-label`)이 생겼고, `<nav>` 에 이름이 없으면 "페이지 이동" 을 답니다
+- (렌더 변경) Vanilla Modal 이 제목도 `aria-label` 도 없을 때 영어 `"Dialog"` 로 이름을 지어내지 않고 콘솔 경고만 남깁니다 (React Modal 과 같음). `.bt-modal__header` 를 두거나 패널에 `aria-label` 을 다세요
+- Vanilla 폼 값 수정 - Dropdown 은 비활성이면 값을 전송하지 않고(`<select disabled>` 와 같음), 초기값으로 `onValueChange` 를 부르지 않으며, 열린 채 비활성이 되면 닫힙니다. Toggle 서버 초기값 문서 예시(`data-name` 누락)를 바로잡았습니다
+- Vanilla 동작 수정 - 같은 요소에 다시 만든 Modal · Toggle · Dropdown 은 앞 인스턴스를 풀고 교체하고, `destroy()` 뒤 `init()` 으로 다시 붙습니다. 모달 트리거 id 가 숫자여도 `init()` 이 멈추지 않고, Pagination 은 범위 밖 · 숫자 아닌 page 를 보정하며 링크 모드에서 `onPageChange` 를 부르지 않습니다
+- Vanilla 포커스 · 접근성 수정 - Modal 초기 포커스가 본문 첫 컨트롤로 가고, Alert 를 연달아 띄워도 포커스를 빼앗지 않으며, Pagination 은 다시 그려도 누른 자리에 포커스가 남습니다. Dropdown 트리거 이름이 라벨 + 현재 값이고, 한글 검색이 React 와 같이 초성 · 조합 중 글자를 맞춥니다
+- 포커스 트랩이 `type="hidden"` 입력(`_csrf` 등)을 후보로 잡지 않습니다 - React `useFocusTrap`(Modal · Drawer · Alert 등)과 Vanilla 모두. 폼의 첫 요소가 hidden input 이어도 초기 포커스가 오버레이 안으로 들어갑니다
+- (렌더 변경) Vanilla Button · Toggle · Dropdown · Pagination 에 토큰 포커스 링이 생겼고, TextField error · success 는 halo 대신 포커스 때 상태색 링을 씁니다(오류 칸에서 포커스가 보이지 않던 문제). 비활성 Toggle 트랙이 React 와 같은 `neutral_400` 입니다
+- (렌더 변경) Vanilla Alert 가 닫힐 때 바로 사라집니다 - 퇴출 모션 없이 200ms 동안 스크롤만 잠겨 있던 것을 고쳤습니다
+
 ## [4.2.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.2.0) - 2026-10-29
 - Vanilla `Pagination` 에 링크 모드가 생겼습니다 - `data-href="/logs?page={page}"`(수동 초기화는 `href` 옵션)를 주면 번호 · 이전 · 다음을 `<a href>` 로 그려 서버 렌더 화면(Thymeleaf 등)에서 쪽을 넘깁니다. `{page}` 는 URL 인코딩된 `%7Bpage%7D` 도 치환하고, `http(s)` 가 아닌 틀은 무시합니다. 기존 `onPageChange` 콜백 방식은 그대로입니다
 - 개발 전용 의존성 보안 패치 - `fast-uri` 3.1.9 · `undici` 7.30.1. 배포 패키지에는 영향이 없습니다

@@ -267,22 +267,23 @@ npm install @bigtablet/design-system
 ### Toggle
 
 ```html
-<!-- 기본 (Off) -->
-<button type="button" class="bt-toggle" data-bt-toggle>
+<!-- 기본 (Off) - 이름은 필수다. 보이는 라벨이 있으면 aria-labelledby 로 잇는다 -->
+<button type="button" class="bt-toggle" data-bt-toggle aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- On 상태 -->
-<button type="button" class="bt-toggle bt-toggle--on" data-bt-toggle>
+<span id="dark-label">다크 모드</span>
+<button type="button" class="bt-toggle bt-toggle--on" data-bt-toggle aria-labelledby="dark-label">
   <span class="bt-toggle__thumb"></span>
 </button>
 
 <!-- Sizes (React ToggleSize 와 동일) -->
-<button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle>...</button>  <!-- 기본값 -->
-<button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle>...</button>
+<button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle aria-label="...">...</button>  <!-- 기본값 -->
+<button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle aria-label="...">...</button>
 
 <!-- 비활성화 - React Toggle 과 동일하게 native disabled 속성을 쓴다 -->
-<button type="button" class="bt-toggle" data-bt-toggle disabled>
+<button type="button" class="bt-toggle" data-bt-toggle disabled aria-label="자동 저장">
   <span class="bt-toggle__thumb"></span>
 </button>
 ```
@@ -290,14 +291,14 @@ npm install @bigtablet/design-system
 **JavaScript 연동:**
 
 ```html
-<button type="button" class="bt-toggle" data-bt-toggle id="my-toggle">
+<button type="button" class="bt-toggle" data-bt-toggle id="my-toggle" aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 
 <script>
   // 자동 초기화 (data-bt-toggle 속성이 있으면 자동으로 초기화됨)
 
-  // 또는 수동 초기화
+  // 또는 수동 초기화 - 자동 초기화된 요소에 다시 부르면 앞 인스턴스를 풀고 교체한다 (Modal 도 같음)
   const toggleEl = document.getElementById('my-toggle');
   const myToggle = Bigtablet.Toggle(toggleEl, {
     defaultChecked: false,
@@ -327,12 +328,12 @@ npm install @bigtablet/design-system
 
 ```html
 <!-- data-name 으로 자동 생성 -->
-<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications">
+<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 
-<!-- 또는 서버 렌더링 초기값(형제 hidden input) -->
-<button type="button" class="bt-toggle" data-bt-toggle>
+<!-- 또는 서버 렌더링 초기값 - data-name 과 같은 name 의 형제 hidden input 을 읽고 갱신한다 -->
+<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
   <span class="bt-toggle__thumb"></span>
 </button>
 <input type="hidden" name="notifications" th:value="${enabled}">
@@ -405,7 +406,10 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 
 폼 제출은 **같은 `name` 의 hidden input 을 선택 개수만큼 반복**해 담습니다
 (React 가 `selectedValues.map(...)` 로 hidden input 을 반복 렌더하는 것과 동일).
-선택이 0개면 hidden input 도 0개입니다.
+선택이 0개면 hidden input 도 0개입니다 - 필드 자체가 전송되지 않습니다.
+Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@SessionAttributes`, 기존 엔티티 수정 폼)에서는
+전부 해제한 것이 반영되지 않으니, 서버에서 빈 목록으로 받도록 처리하세요 (예: `@RequestParam(defaultValue = "")`).
+비활성(`disabled`) 상태에서는 hidden input 도 `disabled` 가 되어 전송되지 않습니다 (`<select disabled>` 와 같음).
 
 ```html
 <div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping">
@@ -428,14 +432,13 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 **검색 (`searchable`):**
 
 `data-searchable` 또는 JS `searchable: true` 를 주면 패널 상단에 검색 행이 생깁니다.
-필터는 옵션 `label` 부분 일치이고 **대소문자·공백을 무시**합니다 (React `normalizeForSearch` 와 동일).
+필터는 옵션 `label` 부분 일치이고 **대소문자·공백을 무시**합니다. 한글은 **초성**(`ㅅㅇ` → 서울)으로도 찾습니다 (React `matchesSearch` 와 같은 규칙).
 패널을 열면 검색 입력에 포커스가 가고, 닫으면 검색어가 초기화됩니다.
 결과가 0개면 `emptyText`(기본 `결과 없음`)가 표시됩니다.
 
-> **한글 IME**: 조합 중(`compositionstart` ~ `compositionend`)에는 필터를 갱신하지 않습니다.
-> 입력 표시는 즉시 반영되지만 중간 자모(`ㅍ`, `포`)로 목록이 튀지 않고, 조합이 확정된 뒤에만
-> 필터가 적용됩니다. 조합 중 Enter 도 조합 확정용이라 선택/닫기를 트리거하지 않습니다.
-> (React 가 `searchText` / `committedQuery` 를 분리한 것과 같은 동작)
+> **한글 IME**: 조합이 끝나기를 기다리지 않고 입력마다 거릅니다. 조합 중인 마지막 글자도
+> 받아 줍니다 - `서우`, `성`(받침이 다음 글자 초성) 모두 "서울" 에 맞습니다. 조합 중 Enter 는
+> 조합 확정용이라 선택/닫기를 트리거하지 않습니다. (React Dropdown 과 같은 동작)
 
 검색 행·스크롤 컨테이너·빈 결과 안내는 JS 가 자동으로 만들어 넣으므로 마크업은 그대로 둡니다.
 결과 DOM 은 React 와 같은 구조입니다:
@@ -577,6 +580,10 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 </div>
 ```
 
+**접근성 이름은 필수다.** `.bt-modal__header` 가 있으면 그 id 로 `aria-labelledby` 를 잇는다.
+헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않고 콘솔에 경고만 남긴다
+(이전에는 영어 `"Dialog"` 로 채웠다. React Modal 과 같은 이유로 제거).
+
 **JavaScript 연동:**
 
 ```html
@@ -651,7 +658,7 @@ Alert는 JavaScript로만 사용합니다.
 |--------|------|---------|-------------|
 | `title` | `string` | - | 제목 |
 | `message` | `string` | - | 메시지 |
-| `variant` | `string` | `'info'` | `'info'`, `'success'`, `'warning'`, `'error'` |
+| `tone` | `string` | `'info'` | `'info'`, `'success'`, `'warning'`, `'error'` |
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
 | `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
@@ -697,7 +704,7 @@ Alert는 JavaScript로만 사용합니다.
 
 <!-- Variant (React Card variant prop 과 동일) -->
 <div class="bt-card bt-card--accent bt-card--p-md">Accent</div>
-<div class="bt-card bt-card--outline bt-card--p-md">Outline (shadow 무시. 옛 이름 bt-card--outlined 도 동작)</div>
+<div class="bt-card bt-card--outline bt-card--p-md">Outline (shadow 무시)</div>
 <div class="bt-card bt-card--glass bt-card--p-md">Glass (컬러/이미지 배경 위에서)</div>
 
 <!-- interactive - hover 시 살짝 떠오름 (React interactive prop) -->
@@ -709,7 +716,7 @@ Alert는 JavaScript로만 사용합니다.
 - `.bt-card--shadow-{none|sm|md|lg}` (선택)
 - `.bt-card--p-{none|sm|md|lg}` (선택)
 - `.bt-card--bordered` (선택)
-- `.bt-card--{accent|outlined|glass}` (선택) - variant. 미지정 시 `default`
+- `.bt-card--{accent|outline|glass}` (선택) - variant. 미지정 시 `default`
 - `.bt-card--interactive` (선택)
 
 **내부 요소:**
@@ -787,6 +794,15 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 수동 초기화에서는 `href` 옵션으로 같은 틀을 넘긴다: `Bigtablet.Pagination(el, { page, totalPages, href: '/logs?page={page}' })`.
 
+**이름:** `<nav>` 에 `aria-label` 이 없으면 `"페이지 이동"` 을 단다 (`data-nav-label` / `navLabel` 로 변경).
+이전·다음 버튼 이름 기본값은 React `ko` 카탈로그와 같은 `"이전 페이지"` · `"다음 페이지"` 다.
+다른 언어 화면이면 `data-prev-label` · `data-next-label` (수동 초기화는 `prevLabel` · `nextLabel` 옵션, React props 와 같은 이름)로 바꾼다.
+
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10"
+     data-prev-label="Previous page" data-next-label="Next page"></nav>
+```
+
 **JavaScript 연동:**
 
 ```html
@@ -827,14 +843,14 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
       <option value="2022">2022</option>
       <!-- ... -->
     </select>
-    <select class="bt-date-picker__select" name="month">
+    <select class="bt-date-picker__select" name="month" aria-label="월">
       <option value="">월</option>
       <option value="1">1월</option>
       <option value="2">2월</option>
       <!-- ... -->
       <option value="12">12월</option>
     </select>
-    <select class="bt-date-picker__select" name="day">
+    <select class="bt-date-picker__select" name="day" aria-label="일">
       <option value="">일</option>
       <option value="1">1일</option>
       <option value="2">2일</option>
@@ -895,6 +911,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   --bt-color-error: #ef4444;
   --bt-color-warning: #f59e0b;
   --bt-color-info: #2563eb;
+  --bt-color-accent: #121212;             /* 강조색 - 다크에서 자동 반전 */
+  --bt-color-accent-on-surface: #ffffff;  /* 강조색 위 글자·아이콘 */
 
   /* Spacing */
   --bt-spacing-xs: 0.25rem;   /* 4px */
@@ -938,8 +956,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 ```css
 /* 커스텀 테마 */
 :root {
-  --bt-color-primary: #2563eb;
-  --bt-color-primary-hover: #1d4ed8;
+  --bt-color-accent: #2563eb;            /* filled 버튼 · 토글 on · 포커스 등 강조색 */
+  --bt-color-accent-on-surface: #ffffff; /* 강조색 위 글자·아이콘 */
   --bt-radius-md: 12px;
 }
 

@@ -159,6 +159,13 @@
     opacity: 0.6;
   }
 
+  // React Button 과 같은 토큰 포커스 링 (UA outline 은 pill·다크에서 제각각이다).
+  // outline 은 지우지 않고 투명하게 둔다 - 고대비 모드(forced-colors)는 box-shadow 를 지우고 outline 만 시스템색으로 그린다.
+  &:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: var(--bt-focus-ring);
+  }
+
   /* Sizes - React ButtonSize(sm/md/lg/xl) 와 동일 */
   &--sm {
     padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
@@ -394,14 +401,22 @@
     }
 
     /* States */
+    // 상태는 테두리색으로만 - 예전 !important halo 가 :focus-visible 링을 항상 덮어 오류 칸에
+    // 키보드 포커스가 안 보였다(WCAG 2.4.7). 포커스 때는 상태색 링 토큰을 쓴다 (React TextField 와 같음).
     &--error {
       border-color: var(--bt-color-error) !important;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+
+      &:focus-visible {
+        box-shadow: var(--bt-focus-ring-error);
+      }
     }
 
     &--success {
       border-color: var(--bt-color-success) !important;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+
+      &:focus-visible {
+        box-shadow: var(--bt-focus-ring-success);
+      }
     }
 
     /* 식별자 칸 - React TextField 의 `identifier` prop 과 같은 처리 */
@@ -638,6 +653,11 @@
   cursor: pointer;
   border: none;
 
+  &:focus-visible {
+    outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+    box-shadow: var(--bt-focus-ring);
+  }
+
   /* 트랙은 24~28px 이라 그대로는 터치 하한(32px)에 못 미친다. 스위치는 시각적으로 작은 것이
      정상이므로 크기를 키우는 대신 히트 영역만 넓힌다 - 절대배치라 레이아웃에 영향이 없다.
      React `Toggle` 과 동일한 처리 (src/ui/forms/toggle/style.scss).
@@ -707,10 +727,12 @@
      (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
   &:disabled {
     cursor: not-allowed;
-    background: var(--bt-color-border-light);
+    // React Toggle 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
+    background: token.$color_base_neutral_400;
 
+    // React Toggle 과 같은 토큰 - 하드코딩 흰색은 다크에서 활성 off 토글보다 밝아 비활성 신호가 뒤집혔다
     .bt-toggle__thumb {
-      background: #ffffff;
+      background: var(--bt-color-accent-on-surface);
     }
   }
 }
@@ -754,6 +776,13 @@
     line-height: var(--bt-line-height-normal);
     border: none;
     text-align: left;
+
+    // .is-open 은 뒤에서 같은 특이도의 box-shadow 를 준다 - 키보드로 연 동안에도 링이 이기게 올린다
+    &:focus-visible,
+    &.is-open:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+      box-shadow: var(--bt-focus-ring);
+    }
 
     &:disabled,
     &.is-disabled {
@@ -1322,6 +1351,11 @@
     box-sizing: border-box;
     line-height: normal; // <a> 는 body line-height 를 물려받아 버튼보다 높아진다
     text-decoration: none;
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+      box-shadow: var(--bt-focus-ring);
+    }
   }
 
   &__item {
@@ -1594,6 +1628,17 @@ select:-webkit-autofill {
 .bt-text-field__input--filled:-webkit-autofill:focus-visible {
   -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
   box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
+}
+
+// 자동완성 inset 이 상태 포커스 링을 덮지 않게 둘을 함께 준다
+.bt-text-field__input--error:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
+}
+
+.bt-text-field__input--success:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
+  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
 }
 
 /* 비활성 + 자동완성 - 인증 후 칸을 잠그는 흐름에서 값이 남는다. 위 규칙만 두면
