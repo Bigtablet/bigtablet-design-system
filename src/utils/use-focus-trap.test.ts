@@ -296,4 +296,26 @@ describe("useFocusTrap", () => {
 	it("does nothing when the container ref is empty", () => {
 		expect(() => renderHook(() => useFocusTrap({ current: null }, true))).not.toThrow();
 	});
+
+	it("skips hidden inputs for initial focus and Tab wrapping (#900)", () => {
+		const container = tracked(document.createElement("div"));
+		container.innerHTML =
+			'<form><input type="hidden" name="_csrf"><input id="first"><button id="last">ok</button><input type="hidden" name="token"></form>';
+		document.body.appendChild(container);
+
+		renderHook(() => useFocusTrap({ current: container }, true));
+		expect(document.activeElement?.id).toBe("first");
+
+		const shiftTab = new KeyboardEvent("keydown", {
+			key: "Tab",
+			shiftKey: true,
+			bubbles: true,
+			cancelable: true,
+		});
+		act(() => {
+			(document.activeElement as HTMLElement).dispatchEvent(shiftTab);
+		});
+		expect(shiftTab.defaultPrevented).toBe(true);
+		expect(document.activeElement?.id).toBe("last");
+	});
 });
