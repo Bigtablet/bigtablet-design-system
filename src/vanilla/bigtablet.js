@@ -1817,7 +1817,7 @@
 		function parsePageJump(raw) {
 			const text = String(raw).replace(/[\s,]/g, "");
 			if (!/^\d+$/.test(text)) return null;
-			return Math.min(Math.max(1, Number(text)), config.totalPages);
+			return Math.min(Math.max(1, Number(text)), Math.max(1, config.totalPages));
 		}
 
 		function setJumpInvalid(input, invalid) {
