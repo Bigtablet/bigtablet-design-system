@@ -446,7 +446,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 89 test files / 1642 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 89 test files / 1659 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -456,9 +456,9 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **96.06%** | **93.72%** | **96.48%** | **97.33%** |
+| **All files** | **96.11%** | **93.75%** | **96.51%** | **97.36%** |
 
-아래는 **100% 미만**인 것만 나열한 것이다 (46개는 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것이다 (45개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
@@ -489,6 +489,7 @@ it("calls callback with correct arguments", () => {
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
 | ui/navigation/menu | 98.86% | 96.67% | 100% | 100% |
 | ui/navigation/nav-bar | 80.73% | 70.73% | 82.61% | 85.57% |
+| ui/navigation/pagination | 100% | 97.78% | 100% | 100% |
 | ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
 | ui/navigation/tabs | 97.17% | 89.47% | 100% | 100% |
 | ui/overlay/popover | 97.14% | 96.55% | 100% | 100% |

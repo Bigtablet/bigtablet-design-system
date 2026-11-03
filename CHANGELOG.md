@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.4.0) - 2026-11-03
+- `Pagination` 에 `showPageJump` 옵션이 생겼습니다 - 켜면 현재 쪽 칸이 테두리 있는 입력칸이 되어 번호를 적고 Enter 로 바로 갑니다. 쪽이 수천 개라 이전 · 다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록용입니다. 천 단위 쉼표는 무시하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며, 숫자가 아니면 이동하지 않고 오류로 표시합니다. Esc 나 포커스를 잃으면 현재 쪽으로 돌아갑니다. 입력칸 이름은 `pageJumpLabel` 로 바꿀 수 있습니다. 기본은 꺼져 있어 기존 화면은 그대로입니다
+- Vanilla `Pagination` 도 같은 기능을 `data-page-jump`(수동 초기화는 `showPageJump`) · `data-page-jump-label` 로 지원합니다. 링크 모드(`data-href`)에서는 `{page}` 를 적은 번호로 바꾼 주소로 이동합니다
+- 개발 전용 의존성 업데이트 - Storybook 10.6.5 · Biome 2.6.4 · sass-embedded 1.107.1 등. 배포 패키지에는 영향이 없습니다
+
 ## [4.3.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.3.0) - 2026-10-30
 - Vanilla 기본 문구가 React `ko` 카탈로그와 같은 한국어입니다 - Pagination 이전 · 다음 "이전 페이지" · "다음 페이지", Dropdown placeholder "선택…". Pagination 에 `prevLabel` · `nextLabel` · `navLabel` 옵션(`data-prev-label` · `data-next-label` · `data-nav-label`)이 생겼고, `<nav>` 에 이름이 없으면 "페이지 이동" 을 답니다
 - (렌더 변경) Vanilla Modal 이 제목도 `aria-label` 도 없을 때 영어 `"Dialog"` 로 이름을 지어내지 않고 콘솔 경고만 남깁니다 (React Modal 과 같음). `.bt-modal__header` 를 두거나 패널에 `aria-label` 을 다세요

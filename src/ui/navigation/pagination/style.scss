@@ -80,6 +80,41 @@
     }
   }
 
+  // 현재 쪽 입력칸 (showPageJump) - 검정 채움 대신 테두리로 현재 쪽을 표시해 처음부터 "적는 곳" 으로 보이게 한다
+  &_page_input {
+    min-width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 token.$spacing_6;
+    border: token.$border_width_thick solid token.$color_accent_default;
+    border-radius: token.$radius_md;
+    background: token.$color_bg_solid;
+    text-align: center;
+    cursor: text;
+
+    @include token.label_small;
+    color: token.$color_text_heading;
+    font-weight: token.$font_weight_medium;
+
+    transition: background token.$transition_fast,
+    box-shadow token.$transition_fast;
+
+    &:hover {
+      background: token.$color_bg_solid_dim;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용
+      box-shadow: token.$focus_ring;
+    }
+
+    &_invalid,
+    &_invalid:focus-visible {
+      border-color: token.$color_status_error;
+      box-shadow: token.$focus_ring_error;
+    }
+  }
+
   &_ellipsis {
     min-width: 20px;
     text-align: center;
@@ -92,7 +127,8 @@
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .pagination_item,
-  .pagination_page_button {
+  .pagination_page_button,
+  .pagination_page_input {
     transition: none;
   }
 }
