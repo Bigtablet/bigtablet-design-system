@@ -251,4 +251,11 @@ describe.each(THEMES)("visual %s", (theme) => {
 			<Pagination page={5} totalPages={10} onPageChange={() => {}} />,
 		);
 	});
+
+	it("pagination-jump", async () => {
+		await shoot(
+			`pagination-jump-${theme}`,
+			<Pagination page={5} totalPages={3650} onPageChange={() => {}} showPageJump />,
+		);
+	});
 });

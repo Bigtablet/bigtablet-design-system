@@ -235,3 +235,114 @@ describe("Pagination - 점검 회귀 (#898)", () => {
 		expect(el.getAttribute("aria-label")).toBe("로그 페이지");
 	});
 });
+
+describe("Pagination - showPageJump (#905)", () => {
+	const make = (opts: Record<string, unknown>) => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		const api = Pagination(el, opts);
+		const input = () => el.querySelector(".bt-pagination__page-input") as HTMLInputElement;
+		const key = (k: string, extra: KeyboardEventInit = {}) => {
+			const e = new KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true, ...extra });
+			input().dispatchEvent(e);
+			return e;
+		};
+		const go = (value: string) => {
+			input().value = value;
+			return key("Enter");
+		};
+		return { el, api, input, key, go };
+	};
+
+	it("is off by default - the current page stays a button", () => {
+		const { el, input } = make({ page: 1, totalPages: 10 });
+		expect(input()).toBeNull();
+		expect(el.querySelector('[aria-current="page"]')?.tagName).toBe("BUTTON");
+	});
+
+	it("turns the current page into an input named with the page and range", () => {
+		const { el, input } = make({ page: 1234, totalPages: 3650, showPageJump: true });
+		expect(input().value).toBe("1234");
+		expect(input().getAttribute("aria-current")).toBe("page");
+		expect(input().getAttribute("aria-label")).toBe("현재 1234쪽 - 이동할 쪽 번호 (1–3650)");
+		expect(el.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
+	});
+
+	it("moves on Enter (button mode), keeps focus in the input and blocks the outer form submit", () => {
+		const onPageChange = vi.fn();
+		const { input, go } = make({ page: 1, totalPages: 3650, showPageJump: true, onPageChange });
+		input().focus();
+		const enter = go("2,000");
+		expect(onPageChange).toHaveBeenLastCalledWith(2000);
+		expect(enter.defaultPrevented).toBe(true);
+		// 다시 그려도 새 현재 쪽 입력칸에 포커스가 남는다
+		expect(document.activeElement).toBe(input());
+		expect(input().value).toBe("2000");
+	});
+
+	it("ignores Enter while composing (IME)", () => {
+		const onPageChange = vi.fn();
+		const { input, key } = make({ page: 1, totalPages: 50, showPageJump: true, onPageChange });
+		input().value = "12";
+		key("Enter", { isComposing: true });
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("clamps out-of-range values", () => {
+		const { api, go } = make({ page: 5, totalPages: 100, showPageJump: true });
+		go("99999");
+		expect(api?.getPage()).toBe(100);
+	});
+
+	it("marks non-numbers invalid without moving, and Escape or blur restores the page", () => {
+		const onPageChange = vi.fn();
+		const { input, key, go } = make({ page: 7, totalPages: 100, showPageJump: true, onPageChange });
+		go("abc");
+		expect(onPageChange).not.toHaveBeenCalled();
+		expect(input().getAttribute("aria-invalid")).toBe("true");
+		expect(input().value).toBe("abc");
+
+		key("Escape");
+		expect(input().value).toBe("7");
+		expect(input().hasAttribute("aria-invalid")).toBe(false);
+
+		input().value = "30";
+		input().dispatchEvent(new FocusEvent("blur"));
+		expect(input().value).toBe("7");
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("link mode navigates to the href template with the typed page", () => {
+		const onPageChange = vi.fn();
+		const { go } = make({
+			page: 1,
+			totalPages: 500,
+			href: "/logs?from=2026-10-01&page={page}",
+			showPageJump: true,
+			onPageChange,
+		});
+		let navigated = "";
+		const capture = (e: MouseEvent) => {
+			const a = (e.target as Element).closest("a");
+			if (a) {
+				navigated = a.getAttribute("href") ?? "";
+				e.preventDefault();
+			}
+		};
+		document.addEventListener("click", capture);
+		go("321");
+		document.removeEventListener("click", capture);
+		expect(navigated).toBe("/logs?from=2026-10-01&page=321");
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("init reads data-page-jump and data-page-jump-label", () => {
+		document.body.innerHTML =
+			'<nav data-bt-pagination data-page="2" data-total-pages="9" data-page-jump data-page-jump-label="Page {page} of {total}"></nav>';
+		init();
+		const el = document.querySelector("nav") as HTMLElement;
+		expect(el.querySelector(".bt-pagination__page-input")?.getAttribute("aria-label")).toBe(
+			"Page 2 of 9",
+		);
+	});
+});

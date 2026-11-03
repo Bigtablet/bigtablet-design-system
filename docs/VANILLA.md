@@ -794,6 +794,17 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 수동 초기화에서는 `href` 옵션으로 같은 틀을 넘긴다: `Bigtablet.Pagination(el, { page, totalPages, href: '/logs?page={page}' })`.
 
+**쪽 번호로 바로 가기:** `data-page-jump`(수동 초기화는 `showPageJump: true`)를 주면 현재 쪽 칸이 테두리 있는
+입력칸이 된다 (React `showPageJump` 와 같음). 번호를 적고 Enter 로 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며
+숫자가 아니면 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽으로 되돌린다. 링크 모드(`data-href`)면 `{page}` 를 적은
+번호로 바꾼 주소로 이동하고, 아니면 `onPageChange` 를 부른다. 입력칸 이름은 `data-page-jump-label`
+(기본 `"현재 {page}쪽 - 이동할 쪽 번호 (1–{total})"` - `{page}` 는 현재 쪽, `{total}` 은 마지막 쪽).
+
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="3650"
+     data-href="/logs?page={page}" data-page-jump></nav>
+```
+
 **이름:** `<nav>` 에 `aria-label` 이 없으면 `"페이지 이동"` 을 단다 (`data-nav-label` / `navLabel` 로 변경).
 이전·다음 버튼 이름 기본값은 React `ko` 카탈로그와 같은 `"이전 페이지"` · `"다음 페이지"` 다.
 다른 언어 화면이면 `data-prev-label` · `data-next-label` (수동 초기화는 `prevLabel` · `nextLabel` 옵션, React props 와 같은 이름)로 바꾼다.
