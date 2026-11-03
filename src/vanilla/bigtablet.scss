@@ -1415,7 +1415,7 @@
   &__jump {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--bt-spacing-6);
     margin-left: var(--bt-spacing-sm);
   }
 
