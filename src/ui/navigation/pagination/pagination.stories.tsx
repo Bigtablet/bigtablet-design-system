@@ -87,14 +87,14 @@ export const LastPage: Story = {
 };
 
 /**
- * 쪽이 수천 개면 이전·다음과 `…` 만으로는 원하는 쪽에 닿을 수 없다. `showPageJump` 로 번호를 적어
- * 바로 가는 입력칸(`이동 [   ] 쪽`)을 붙인다 - 적고 Enter. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,
- * 숫자가 아니면 아무 일도 하지 않는다. 기본은 꺼져 있다.
+ * 쪽이 수천 개면 이전·다음과 `…` 만으로는 원하는 쪽에 닿을 수 없다. `showPageJump` 를 켜면 현재 쪽 칸이
+ * 테두리 있는 입력칸이 된다 - 눌러서 번호를 적고 Enter. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고, 숫자가 아니면
+ * 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽으로 돌아간다. 기본은 꺼져 있다.
  */
 export const PageJump: Story = {
 	name: "쪽 번호로 바로 가기 (showPageJump)",
 	render: () => {
-		const [page, setPage] = useState(1);
+		const [page, setPage] = useState(1234);
 
 		return <Pagination page={page} totalPages={3650} onPageChange={setPage} showPageJump />;
 	},

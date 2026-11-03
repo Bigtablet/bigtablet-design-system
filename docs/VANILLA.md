@@ -794,11 +794,11 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 수동 초기화에서는 `href` 옵션으로 같은 틀을 넘긴다: `Bigtablet.Pagination(el, { page, totalPages, href: '/logs?page={page}' })`.
 
-**쪽 번호로 바로 가기:** `data-page-jump`(수동 초기화는 `showPageJump: true`)를 주면 `이동 [   ] 쪽` 입력칸이 붙는다
-(React `showPageJump` 와 같음). 번호를 적고 Enter 로 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며 숫자가 아니면 무시한다.
-링크 모드(`data-href`)면 `{page}` 를 적은 번호로 바꾼 주소로 이동하고, 아니면 `onPageChange` 를 부른다. 600px 미만 화면에서는 아래 줄로 내려간다.
-문구는 `data-page-jump-label`(입력칸 이름, 기본 `"이동할 쪽 번호 (1–{total})"` - `{total}` 은 마지막 쪽) ·
-`data-page-jump-prefix`(기본 `"이동"`) · `data-page-jump-suffix`(기본 `"쪽"`).
+**쪽 번호로 바로 가기:** `data-page-jump`(수동 초기화는 `showPageJump: true`)를 주면 현재 쪽 칸이 테두리 있는
+입력칸이 된다 (React `showPageJump` 와 같음). 번호를 적고 Enter 로 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며
+숫자가 아니면 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽으로 되돌린다. 링크 모드(`data-href`)면 `{page}` 를 적은
+번호로 바꾼 주소로 이동하고, 아니면 `onPageChange` 를 부른다. 입력칸 이름은 `data-page-jump-label`
+(기본 `"현재 {page}쪽 - 이동할 쪽 번호 (1–{total})"` - `{page}` 는 현재 쪽, `{total}` 은 마지막 쪽).
 
 ```html
 <nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="3650"

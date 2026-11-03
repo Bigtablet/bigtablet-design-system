@@ -1411,54 +1411,37 @@
     }
   }
 
-  // 쪽 번호로 바로 가기 (React showPageJump) - `이동 [   ] 쪽`. 입력칸만 테두리를 둔다
-  &__jump {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: var(--bt-spacing-6);
-    margin-left: var(--bt-spacing-lg);
-    font-size: var(--bt-font-size-sm);
-    color: var(--bt-color-text-secondary);
-    white-space: nowrap;
-
-    // 좁은 화면 - 아래 줄로 내린다 (React breakpoint.compact 와 같은 600px 미만)
-    @media (max-width: 599px) {
-      grid-column: 1 / -1;
-      justify-self: center;
-      margin-left: 0;
-    }
-  }
-
-  // flex 줄바꿈이면 다음(›) 버튼까지 밀려 떨어진다 - 윗줄 `‹ 번호 ›` 는 그대로 두고 grid 로 두 줄 고정.
-  // 켰을 때만 - 기존 화면은 그대로
-  @media (max-width: 599px) {
-    &:has(.bt-pagination__jump) {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      justify-content: center;
-    }
-  }
-
-  &__jump-input {
-    width: 7ch; // 4~5 자리 쪽 번호가 잘리지 않는 폭
-    height: 36px; // 번호 버튼과 같은 높이
+  // 현재 쪽 입력칸 (React showPageJump) - 검정 채움 대신 테두리로 현재 쪽을 표시해 처음부터 "적는 곳" 으로 보이게 한다
+  &__page-input {
+    min-width: 36px;
+    height: 36px;
     box-sizing: border-box;
-    padding: 0 var(--bt-spacing-sm);
-    border: 1px solid var(--bt-color-border);
+    padding: 0 var(--bt-spacing-6);
+    border: 2px solid var(--bt-color-accent);
     border-radius: var(--bt-radius-md);
     background: var(--bt-color-background);
     font-family: var(--bt-font-family);
     font-size: var(--bt-font-size-sm);
+    font-weight: var(--bt-font-weight-medium);
     color: var(--bt-color-text-primary);
     text-align: center;
-    transition: border-color var(--bt-transition-fast),
+    cursor: text;
+    transition: background var(--bt-transition-fast),
                 box-shadow var(--bt-transition-fast);
+
+    &:hover {
+      background: var(--bt-color-background-secondary);
+    }
 
     &:focus-visible {
       outline: 2px solid transparent; // 고대비 모드용
-      border-color: var(--bt-color-accent);
       box-shadow: var(--bt-focus-ring);
+    }
+
+    &--invalid,
+    &--invalid:focus-visible {
+      border-color: var(--bt-color-error);
+      box-shadow: var(--bt-focus-ring-error);
     }
   }
 

@@ -291,7 +291,7 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
   prevLabel: '이전 페이지',  // 이전·다음 버튼 aria-label (data-prev-label · data-next-label)
   nextLabel: '다음 페이지',
   navLabel: '페이지 이동',   // <nav> aria-label (이미 있으면 그대로, data-nav-label)
-  showPageJump: false       // true 면 `이동 [   ] 쪽` 입력칸, Enter 로 이동 (data-page-jump, 링크 모드면 href 로 이동)
+  showPageJump: false       // true 면 현재 쪽 칸이 입력칸 - 적고 Enter 로 이동 (data-page-jump, 링크 모드면 href 로 이동)
 });
 pagination.setPage(5);
 

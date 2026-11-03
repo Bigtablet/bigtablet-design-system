@@ -118,35 +118,48 @@ describe("Pagination", () => {
 	});
 
 	describe("showPageJump (#905)", () => {
-		const setup = (page = 1, totalPages = 3650) => {
+		const setup = (page = 1234, totalPages = 3650) => {
 			const onPageChange = vi.fn();
-			render(
+			const view = render(
 				<Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} showPageJump />,
 			);
-			const input = screen.getByRole("textbox", { name: `이동할 쪽 번호 (1–${totalPages})` });
+			const input = screen.getByRole("textbox", {
+				name: `현재 ${page}쪽 - 이동할 쪽 번호 (1–${totalPages})`,
+			}) as HTMLInputElement;
 			const go = (value: string) => {
 				fireEvent.change(input, { target: { value } });
 				return fireEvent.keyDown(input, { key: "Enter" });
 			};
-			return { onPageChange, input, go };
+			return { onPageChange, input, go, view };
 		};
 
-		it("is off by default", () => {
+		it("is off by default - the current page stays a button", () => {
 			render(<Pagination page={1} totalPages={10} onPageChange={() => {}} />);
 			expect(screen.queryByRole("textbox")).toBeNull();
+			expect(document.querySelector(".pagination_active")).toHaveAttribute("aria-current", "page");
 		});
 
-		it("renders 이동 [ ] 쪽 without a button", () => {
-			setup();
-			expect(document.querySelector(".pagination_jump")?.textContent).toBe("이동쪽");
-			expect(screen.queryByRole("button", { name: "이동" })).toBeNull();
+		it("turns the current page into an input showing its number", () => {
+			const { input } = setup();
+			expect(input).toHaveValue("1234");
+			expect(input).toHaveAttribute("aria-current", "page");
+			expect(document.querySelector(".pagination_active")).toBeNull();
 		});
 
 		it("moves to the typed page on Enter and blocks the outer form submit", () => {
-			const { onPageChange, input, go } = setup();
-			expect(go("1,234")).toBe(false); // preventDefault - 바깥 <form> 제출 방지
-			expect(onPageChange).toHaveBeenLastCalledWith(1234);
-			expect(input).toHaveValue("");
+			const { onPageChange, go } = setup();
+			expect(go("2,000")).toBe(false); // preventDefault - 바깥 <form> 제출 방지
+			expect(onPageChange).toHaveBeenLastCalledWith(2000);
+		});
+
+		it("keeps the same input focused after the page changes", () => {
+			const { input, view } = setup(5, 100);
+			input.focus();
+			view.rerender(<Pagination page={42} totalPages={100} onPageChange={() => {}} showPageJump />);
+			expect(document.activeElement).toBe(input);
+			expect(input).toHaveValue("42");
+			// 새 번호가 선택돼 있어 다음 입력이 덮어쓴다
+			expect([input.selectionStart, input.selectionEnd]).toEqual([0, 2]);
 		});
 
 		it("ignores Enter while composing (IME)", () => {
@@ -156,18 +169,29 @@ describe("Pagination", () => {
 			expect(onPageChange).not.toHaveBeenCalled();
 		});
 
-		it("clamps out-of-range values and ignores non-numbers", () => {
-			const { onPageChange, input, go } = setup(5);
+		it("clamps out-of-range values", () => {
+			const { onPageChange, go } = setup(5);
 			go("99999");
 			expect(onPageChange).toHaveBeenLastCalledWith(3650);
 			go("0");
 			expect(onPageChange).toHaveBeenLastCalledWith(1);
+		});
 
-			onPageChange.mockClear();
+		it("marks non-numbers invalid without moving, and Escape or blur restores the page", () => {
+			const { onPageChange, input, go } = setup(7);
 			go("abc");
-			go("-3");
 			expect(onPageChange).not.toHaveBeenCalled();
-			expect(input).toHaveValue("-3"); // 고칠 수 있게 남긴다
+			expect(input).toHaveAttribute("aria-invalid", "true");
+			expect(input).toHaveValue("abc"); // 고칠 수 있게 남긴다
+
+			fireEvent.keyDown(input, { key: "Escape" });
+			expect(input).toHaveValue("7");
+			expect(input).not.toHaveAttribute("aria-invalid");
+
+			fireEvent.change(input, { target: { value: "30" } });
+			fireEvent.blur(input);
+			expect(input).toHaveValue("7");
+			expect(onPageChange).not.toHaveBeenCalled();
 		});
 
 		it("does not call onPageChange for the current page", () => {
@@ -176,7 +200,7 @@ describe("Pagination", () => {
 			expect(onPageChange).not.toHaveBeenCalled();
 		});
 
-		it("takes custom labels", () => {
+		it("takes a custom label", () => {
 			render(
 				<Pagination
 					page={1}
@@ -184,12 +208,9 @@ describe("Pagination", () => {
 					onPageChange={() => {}}
 					showPageJump
 					pageJumpLabel="Page number"
-					pageJumpPrefix="Go to"
-					pageJumpSuffix="page"
 				/>,
 			);
 			expect(screen.getByRole("textbox", { name: "Page number" })).toBeInTheDocument();
-			expect(document.querySelector(".pagination_jump")?.textContent).toBe("Go topage");
 		});
 	});
 });

@@ -2121,14 +2121,12 @@ const [page, setPage] = useState(1);
 | `prevLabel` | `string` | `'이전 페이지'` | 이전 버튼 `aria-label` |
 | `nextLabel` | `string` | `'다음 페이지'` | 다음 버튼 `aria-label` |
 | `navLabel` | `string` | `'페이지 이동'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
-| `showPageJump` | `boolean` | `false` | 쪽 번호를 적어 Enter 로 바로 가는 입력칸(`이동 [   ] 쪽`). 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고 숫자가 아니면 무시한다 |
-| `pageJumpLabel` | `string` | `'이동할 쪽 번호 (1–{totalPages})'` | 입력칸 `aria-label` |
-| `pageJumpPrefix` | `string` | `'이동'` | 입력칸 앞 문구 |
-| `pageJumpSuffix` | `string` | `'쪽'` | 입력칸 뒤 문구 |
+| `showPageJump` | `boolean` | `false` | 현재 쪽 칸을 입력칸으로 바꾼다. 번호를 적고 Enter 로 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며 숫자가 아니면 오류로 표시한다. Esc·포커스 잃음은 현재 쪽으로 되돌린다 |
+| `pageJumpLabel` | `string` | `'현재 {page}쪽 - 이동할 쪽 번호 (1–{totalPages})'` | 현재 쪽 입력칸 `aria-label` |
 
 쪽이 수백·수천 개인 목록(접속 기록 등)은 `…` 와 이전·다음만으로는 원하는 쪽에 닿을 수 없다 - `showPageJump` 를 켠다.
-이동 버튼 없이 Enter 로 이동한다 (Ant Design quick jumper 형). 입력칸은 `<form>` 이 아니라서 검색 폼 안에 두어도
-중첩 폼이 되지 않고, Enter 가 바깥 폼을 제출하지 않는다. 600px 미만 화면에서는 페이지 목록 아래 줄로 내려간다.
+켜면 현재 쪽이 검정 채움 대신 **테두리 있는 입력칸**으로 보여 처음부터 "적는 곳" 으로 읽힌다. 컨트롤이 늘지 않아 좁은
+화면에서도 배치가 그대로다. `<form>` 이 아니라서 검색 폼 안에 두어도 중첩 폼이 되지 않고, Enter 가 바깥 폼을 제출하지 않는다.
 
 ```tsx
 <Pagination page={page} totalPages={3650} onPageChange={setPage} showPageJump />

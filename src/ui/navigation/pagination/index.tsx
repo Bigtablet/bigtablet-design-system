@@ -17,17 +17,13 @@ interface PaginationBaseProps {
 	/** `<nav>` 랜드마크 이름 (기본값: "페이지 이동"). 스크린리더의 리전 목록에 그대로 뜬다 */
 	navLabel?: string;
 	/**
-	 * 쪽 번호를 적어 Enter 로 바로 가는 입력칸(`이동 [   ] 쪽`)을 붙인다 (기본값: false). 쪽이 수백·수천 개라
+	 * 현재 쪽 칸을 입력칸으로 바꿔, 번호를 적고 Enter 로 바로 가게 한다 (기본값: false). 쪽이 수백·수천 개라
 	 * 이전·다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,
-	 * 숫자가 아니면 아무 일도 하지 않는다
+	 * 숫자가 아니면 이동하지 않고 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽 번호로 돌아간다
 	 */
 	showPageJump?: boolean;
-	/** 쪽 이동 입력칸의 `aria-label` (기본값: "이동할 쪽 번호 (1–{totalPages})") */
+	/** 현재 쪽 입력칸의 `aria-label` (기본값: "현재 {page}쪽 - 이동할 쪽 번호 (1–{totalPages})") */
 	pageJumpLabel?: string;
-	/** 입력칸 앞 문구 (기본값: "이동") */
-	pageJumpPrefix?: string;
-	/** 입력칸 뒤 문구 (기본값: "쪽") */
-	pageJumpSuffix?: string;
 }
 
 // Pagination 은 controlled 전용 → 페이지 콜백이 필수다.
@@ -112,11 +108,19 @@ export const Pagination = ({
 	navLabel: navLabelProp,
 	showPageJump = false,
 	pageJumpLabel: pageJumpLabelProp,
-	pageJumpPrefix: pageJumpPrefixProp,
-	pageJumpSuffix: pageJumpSuffixProp,
 }: PaginationProps) => {
 	const t = useLocaleText();
-	const [jumpDraft, setJumpDraft] = React.useState("");
+	// 입력 중인 값. null 이면 현재 쪽 번호를 보여 준다
+	const [jumpDraft, setJumpDraft] = React.useState<string | null>(null);
+	const [jumpInvalid, setJumpInvalid] = React.useState(false);
+	const jumpInputRef = React.useRef<HTMLInputElement>(null);
+
+	// 적어서 이동한 뒤에도 같은 입력칸에 포커스가 남는다 - 새 번호를 선택해 두어 다음 입력이 덮어쓰게
+	// biome-ignore lint/correctness/useExhaustiveDependencies: page 가 바뀔 때 다시 선택하려는 트리거다
+	React.useEffect(() => {
+		const input = jumpInputRef.current;
+		if (input && document.activeElement === input) input.select();
+	}, [page]);
 	const prevLabel = prevLabelProp ?? t("pagination.prev");
 	const nextLabel = nextLabelProp ?? t("pagination.next");
 	const navLabel = navLabelProp ?? t("pagination.label");
@@ -125,12 +129,23 @@ export const Pagination = ({
 
 	const items = React.useMemo(() => getPaginationItems(page, totalPages), [page, totalPages]);
 
+	const resetJump = () => {
+		setJumpDraft(null);
+		setJumpInvalid(false);
+	};
+
 	const jump = () => {
+		if (jumpDraft === null) return;
 		const target = parsePageJump(jumpDraft, totalPages);
-		if (target === null) return; // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
-		setJumpDraft("");
+		if (target === null) {
+			setJumpInvalid(true); // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
+			return;
+		}
+		resetJump();
 		if (target !== page) onPageChange(target);
 	};
+
+	const jumpValue = jumpDraft ?? String(page);
 
 	return (
 		<nav className="pagination" aria-label={navLabel}>
@@ -157,6 +172,47 @@ export const Pagination = ({
 					}
 
 					const isActive = it === page;
+
+					if (isActive && showPageJump) {
+						// 키를 고정해 쪽이 바뀌어도 같은 입력칸이 남는다 - 이동한 뒤에도 포커스가 그대로
+						return (
+							<li key="current">
+								<input
+									ref={jumpInputRef}
+									type="text"
+									inputMode="numeric"
+									className={cn("pagination_page_input", {
+										pagination_page_input_invalid: jumpInvalid,
+									})}
+									// 자릿수에 맞춰 폭을 바꾼다 (한 자리 쪽은 CSS min-width 가 번호 버튼 폭으로 받친다)
+									size={Math.max(1, jumpValue.length)}
+									value={jumpValue}
+									aria-current="page"
+									aria-invalid={jumpInvalid || undefined}
+									aria-label={
+										pageJumpLabelProp ?? t("pagination.jumpLabel", { page, total: totalPages })
+									}
+									onFocus={(e) => e.currentTarget.select()}
+									onChange={(e) => {
+										setJumpDraft(e.target.value);
+										setJumpInvalid(false);
+									}}
+									onKeyDown={(e) => {
+										if (e.key === "Escape") {
+											resetJump();
+											return;
+										}
+										// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
+										if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+										e.preventDefault();
+										jump();
+									}}
+									onBlur={resetJump}
+								/>
+							</li>
+						);
+					}
+
 					const buttonClassName = cn("pagination_page_button", { pagination_active: isActive });
 
 					return (
@@ -183,28 +239,6 @@ export const Pagination = ({
 			>
 				›
 			</button>
-
-			{showPageJump && (
-				// <label> - 앞뒤 문구를 눌러도 입력칸에 포커스. 이름은 범위까지 담은 aria-label 이 맡는다
-				<label className="pagination_jump">
-					<span aria-hidden="true">{pageJumpPrefixProp ?? t("pagination.jumpPrefix")}</span>
-					<input
-						type="text"
-						inputMode="numeric"
-						className="pagination_jump_input"
-						value={jumpDraft}
-						aria-label={pageJumpLabelProp ?? t("pagination.jumpLabel", { total: totalPages })}
-						onChange={(e) => setJumpDraft(e.target.value)}
-						onKeyDown={(e) => {
-							// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
-							if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
-							e.preventDefault();
-							jump();
-						}}
-					/>
-					<span aria-hidden="true">{pageJumpSuffixProp ?? t("pagination.jumpSuffix")}</span>
-				</label>
-			)}
 		</nav>
 	);
 };

@@ -1642,12 +1642,10 @@
 			nextLabel: "다음 페이지",
 			// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
 			navLabel: "페이지 이동",
-			// React showPageJump · pageJumpLabel · pageJumpPrefix · pageJumpSuffix 와 같은 이름·기본값 -
-			// 쪽 번호를 적어 Enter 로 바로 가는 입력칸 (`이동 [   ] 쪽`)
+			// React showPageJump · pageJumpLabel 과 같은 이름·기본값 - 현재 쪽 칸을 입력칸으로 바꿔
+			// 번호를 적고 Enter 로 바로 가게 한다. {page} 는 현재 쪽, {total} 은 마지막 쪽
 			showPageJump: false,
-			pageJumpLabel: "이동할 쪽 번호 (1–{total})",
-			pageJumpPrefix: "이동",
-			pageJumpSuffix: "쪽",
+			pageJumpLabel: "현재 {page}쪽 - 이동할 쪽 번호 (1–{total})",
 			...options,
 		};
 
@@ -1736,6 +1734,12 @@
 			items.forEach((item) => {
 				if (item === "ellipsis") {
 					html += `<span class="bt-pagination__ellipsis" aria-hidden="true">…</span>`;
+				} else if (item === config.page && config.showPageJump) {
+					// 현재 쪽 = 입력칸. size 로 자릿수에 맞춘 폭 (한 자리는 CSS min-width 가 받친다)
+					const label = String(config.pageJumpLabel)
+						.replace("{page}", String(config.page))
+						.replace("{total}", String(config.totalPages));
+					html += `<input type="text" inputmode="numeric" class="bt-pagination__page-input" data-action="jump-input" aria-current="page" value="${config.page}" size="${String(config.page).length}" aria-label="${escapeHtml(label)}">`;
 				} else {
 					const isActive = item === config.page;
 					html += control(
@@ -1755,17 +1759,6 @@
 				"›",
 			);
 
-			if (config.showPageJump) {
-				const label = String(config.pageJumpLabel).replace("{total}", String(config.totalPages));
-				// <label> - 앞뒤 문구를 눌러도 입력칸에 포커스. 이름은 범위까지 담은 aria-label 이 맡는다
-				html +=
-					`<label class="bt-pagination__jump">` +
-					`<span aria-hidden="true">${escapeHtml(config.pageJumpPrefix)}</span>` +
-					`<input type="text" inputmode="numeric" class="bt-pagination__jump-input" data-action="jump-input" aria-label="${escapeHtml(label)}">` +
-					`<span aria-hidden="true">${escapeHtml(config.pageJumpSuffix)}</span>` +
-					"</label>";
-			}
-
 			container.innerHTML = html;
 
 			if (focused) {
@@ -1779,12 +1772,23 @@
 
 			if (config.showPageJump) {
 				const input = container.querySelector('[data-action="jump-input"]');
+				input.addEventListener("focus", () => input.select());
+				input.addEventListener("input", () => {
+					input.size = Math.max(1, input.value.length);
+					setJumpInvalid(input, false);
+				});
 				input.addEventListener("keydown", (e) => {
+					if (e.key === "Escape") {
+						resetJump(input);
+						return;
+					}
 					// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
 					if (e.key !== "Enter" || e.isComposing || e.keyCode === 229) return;
 					e.preventDefault();
 					jump(input);
 				});
+				// 포커스를 잃으면 적다 만 값은 버리고 현재 쪽으로
+				input.addEventListener("blur", () => resetJump(input));
 			}
 
 			// 링크 모드는 브라우저가 이동한다
@@ -1816,11 +1820,28 @@
 			return Math.min(Math.max(1, Number(text)), config.totalPages);
 		}
 
+		function setJumpInvalid(input, invalid) {
+			input.classList.toggle("bt-pagination__page-input--invalid", invalid);
+			if (invalid) input.setAttribute("aria-invalid", "true");
+			else input.removeAttribute("aria-invalid");
+		}
+
+		function resetJump(input) {
+			input.value = String(config.page);
+			input.size = input.value.length;
+			setJumpInvalid(input, false);
+		}
+
 		function jump(input) {
 			const target = parsePageJump(input.value);
-			if (target === null) return; // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
-			input.value = "";
-			if (target === config.page) return;
+			if (target === null) {
+				setJumpInvalid(input, true); // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
+				return;
+			}
+			if (target === config.page) {
+				resetJump(input);
+				return;
+			}
 			if (config.href) {
 				// 링크 모드 - 같은 틀의 주소로 이동. <a> 클릭으로 브라우저 기본 이동을 그대로 탄다
 				const link = document.createElement("a");
@@ -1915,8 +1936,6 @@
 				if (el.dataset.navLabel) labels.navLabel = el.dataset.navLabel;
 				if (parseBoolAttr(el.dataset.pageJump)) labels.showPageJump = true;
 				if (el.dataset.pageJumpLabel) labels.pageJumpLabel = el.dataset.pageJumpLabel;
-				if (el.dataset.pageJumpPrefix) labels.pageJumpPrefix = el.dataset.pageJumpPrefix;
-				if (el.dataset.pageJumpSuffix) labels.pageJumpSuffix = el.dataset.pageJumpSuffix;
 				el._btPagination = Pagination(el, { page, totalPages, href, ...labels });
 			}
 		});
