@@ -1,4 +1,5 @@
 @use "src/styles/token" as token;
+@use "src/styles/breakpoints" as breakpoint;
 
 .pagination {
   display: flex;
@@ -80,11 +81,18 @@
     }
   }
 
+  // 쪽 이동 - `이동 [   ] 쪽`. 입력칸만 테두리를 두어 "적는 곳" 이 한눈에 보이게 한다 (Ant Design quick jumper 형).
+  // 높이는 번호 버튼(36px)과 같고, 페이지 목록과는 넓게 떼어 섞여 보이지 않게 한다.
   &_jump {
-    display: flex;
+    display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     gap: token.$spacing_6;
-    margin-left: token.$spacing_8;
+    margin-left: token.$spacing_16;
+
+    @include token.label_small;
+    color: token.$color_text_body;
+    white-space: nowrap;
   }
 
   &_jump_input {
@@ -104,21 +112,15 @@
     transition: border-color token.$transition_fast,
     box-shadow token.$transition_fast;
 
-    &::placeholder {
-      color: token.$color_text_caption;
+    &:hover {
+      border-color: token.$color_border_hover;
     }
 
     &:focus-visible {
-      outline: 2px solid transparent;
+      outline: 2px solid transparent; // 고대비 모드용
       border-color: token.$color_accent_default;
       box-shadow: token.$focus_ring;
     }
-  }
-
-  &_jump_total {
-    @include token.label_small;
-    color: token.$color_text_caption;
-    white-space: nowrap;
   }
 
   &_ellipsis {
@@ -127,6 +129,22 @@
 
     @include token.label_small;
     color: token.$color_text_caption;
+  }
+}
+
+// 좁은 화면 - 쪽 이동만 아래 줄로 내린다. flex 줄바꿈이면 다음(›) 버튼까지 밀려 떨어져서,
+// 윗줄 `‹ 번호 ›` 는 그대로 두고 grid 로 두 줄을 고정한다 (켰을 때만 - 기존 화면은 그대로)
+@include breakpoint.compact {
+  .pagination:has(.pagination_jump) {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+  }
+
+  .pagination_jump {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-left: 0;
   }
 }
 

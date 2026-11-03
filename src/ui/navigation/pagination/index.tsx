@@ -17,15 +17,17 @@ interface PaginationBaseProps {
 	/** `<nav>` 랜드마크 이름 (기본값: "페이지 이동"). 스크린리더의 리전 목록에 그대로 뜬다 */
 	navLabel?: string;
 	/**
-	 * 쪽 번호를 적어 바로 가는 입력칸을 붙인다 (기본값: false). 쪽이 수백·수천 개라 이전·다음과
-	 * `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,
+	 * 쪽 번호를 적어 Enter 로 바로 가는 입력칸(`이동 [   ] 쪽`)을 붙인다 (기본값: false). 쪽이 수백·수천 개라
+	 * 이전·다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,
 	 * 숫자가 아니면 아무 일도 하지 않는다
 	 */
 	showPageJump?: boolean;
 	/** 쪽 이동 입력칸의 `aria-label` (기본값: "이동할 쪽 번호 (1–{totalPages})") */
 	pageJumpLabel?: string;
-	/** 쪽 이동 버튼 문구 (기본값: "이동") */
-	pageJumpButtonText?: string;
+	/** 입력칸 앞 문구 (기본값: "이동") */
+	pageJumpPrefix?: string;
+	/** 입력칸 뒤 문구 (기본값: "쪽") */
+	pageJumpSuffix?: string;
 }
 
 // Pagination 은 controlled 전용 → 페이지 콜백이 필수다.
@@ -110,7 +112,8 @@ export const Pagination = ({
 	navLabel: navLabelProp,
 	showPageJump = false,
 	pageJumpLabel: pageJumpLabelProp,
-	pageJumpButtonText: pageJumpButtonTextProp,
+	pageJumpPrefix: pageJumpPrefixProp,
+	pageJumpSuffix: pageJumpSuffixProp,
 }: PaginationProps) => {
 	const t = useLocaleText();
 	const [jumpDraft, setJumpDraft] = React.useState("");
@@ -182,13 +185,14 @@ export const Pagination = ({
 			</button>
 
 			{showPageJump && (
-				<div className="pagination_jump">
+				// <label> - 앞뒤 문구를 눌러도 입력칸에 포커스. 이름은 범위까지 담은 aria-label 이 맡는다
+				<label className="pagination_jump">
+					<span aria-hidden="true">{pageJumpPrefixProp ?? t("pagination.jumpPrefix")}</span>
 					<input
 						type="text"
 						inputMode="numeric"
 						className="pagination_jump_input"
 						value={jumpDraft}
-						placeholder={String(page)}
 						aria-label={pageJumpLabelProp ?? t("pagination.jumpLabel", { total: totalPages })}
 						onChange={(e) => setJumpDraft(e.target.value)}
 						onKeyDown={(e) => {
@@ -198,14 +202,8 @@ export const Pagination = ({
 							jump();
 						}}
 					/>
-					{/* 범위는 입력칸 이름이 이미 읽는다 - 화면용 */}
-					<span className="pagination_jump_total" aria-hidden="true">
-						/ {totalPages}
-					</span>
-					<button type="button" className="pagination_item" onClick={jump}>
-						{pageJumpButtonTextProp ?? t("pagination.jumpButton")}
-					</button>
-				</div>
+					<span aria-hidden="true">{pageJumpSuffixProp ?? t("pagination.jumpSuffix")}</span>
+				</label>
 			)}
 		</nav>
 	);

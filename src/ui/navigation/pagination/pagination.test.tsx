@@ -124,7 +124,11 @@ describe("Pagination", () => {
 				<Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} showPageJump />,
 			);
 			const input = screen.getByRole("textbox", { name: `이동할 쪽 번호 (1–${totalPages})` });
-			return { onPageChange, input, go: screen.getByRole("button", { name: "이동" }) };
+			const go = (value: string) => {
+				fireEvent.change(input, { target: { value } });
+				return fireEvent.keyDown(input, { key: "Enter" });
+			};
+			return { onPageChange, input, go };
 		};
 
 		it("is off by default", () => {
@@ -132,43 +136,43 @@ describe("Pagination", () => {
 			expect(screen.queryByRole("textbox")).toBeNull();
 		});
 
-		it("moves to the typed page with the button or Enter", () => {
+		it("renders 이동 [ ] 쪽 without a button", () => {
+			setup();
+			expect(document.querySelector(".pagination_jump")?.textContent).toBe("이동쪽");
+			expect(screen.queryByRole("button", { name: "이동" })).toBeNull();
+		});
+
+		it("moves to the typed page on Enter and blocks the outer form submit", () => {
 			const { onPageChange, input, go } = setup();
-			fireEvent.change(input, { target: { value: "1,234" } });
-			fireEvent.click(go);
+			expect(go("1,234")).toBe(false); // preventDefault - 바깥 <form> 제출 방지
 			expect(onPageChange).toHaveBeenLastCalledWith(1234);
 			expect(input).toHaveValue("");
+		});
 
-			fireEvent.change(input, { target: { value: "42" } });
-			const enter = fireEvent.keyDown(input, { key: "Enter" });
-			expect(onPageChange).toHaveBeenLastCalledWith(42);
-			// 바깥 <form> 제출을 막는다
-			expect(enter).toBe(false);
+		it("ignores Enter while composing (IME)", () => {
+			const { onPageChange, input } = setup();
+			fireEvent.change(input, { target: { value: "12" } });
+			fireEvent.keyDown(input, { key: "Enter", isComposing: true });
+			expect(onPageChange).not.toHaveBeenCalled();
 		});
 
 		it("clamps out-of-range values and ignores non-numbers", () => {
 			const { onPageChange, input, go } = setup(5);
-			fireEvent.change(input, { target: { value: "99999" } });
-			fireEvent.click(go);
+			go("99999");
 			expect(onPageChange).toHaveBeenLastCalledWith(3650);
-
-			fireEvent.change(input, { target: { value: "0" } });
-			fireEvent.click(go);
+			go("0");
 			expect(onPageChange).toHaveBeenLastCalledWith(1);
 
 			onPageChange.mockClear();
-			fireEvent.change(input, { target: { value: "abc" } });
-			fireEvent.click(go);
-			fireEvent.change(input, { target: { value: "-3" } });
-			fireEvent.click(go);
+			go("abc");
+			go("-3");
 			expect(onPageChange).not.toHaveBeenCalled();
 			expect(input).toHaveValue("-3"); // 고칠 수 있게 남긴다
 		});
 
 		it("does not call onPageChange for the current page", () => {
-			const { onPageChange, input, go } = setup(7);
-			fireEvent.change(input, { target: { value: "7" } });
-			fireEvent.click(go);
+			const { onPageChange, go } = setup(7);
+			go("7");
 			expect(onPageChange).not.toHaveBeenCalled();
 		});
 
@@ -179,12 +183,13 @@ describe("Pagination", () => {
 					totalPages={5}
 					onPageChange={() => {}}
 					showPageJump
-					pageJumpLabel="쪽"
-					pageJumpButtonText="가기"
+					pageJumpLabel="Page number"
+					pageJumpPrefix="Go to"
+					pageJumpSuffix="page"
 				/>,
 			);
-			expect(screen.getByRole("textbox", { name: "쪽" })).toBeInTheDocument();
-			expect(screen.getByRole("button", { name: "가기" })).toBeInTheDocument();
+			expect(screen.getByRole("textbox", { name: "Page number" })).toBeInTheDocument();
+			expect(document.querySelector(".pagination_jump")?.textContent).toBe("Go topage");
 		});
 	});
 });

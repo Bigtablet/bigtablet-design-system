@@ -242,61 +242,59 @@ describe("Pagination - showPageJump (#905)", () => {
 		document.body.appendChild(el);
 		const api = Pagination(el, opts);
 		const input = () => el.querySelector(".bt-pagination__jump-input") as HTMLInputElement;
-		const go = () => el.querySelector('[data-action="jump"]') as HTMLButtonElement;
-		const type = (v: string) => {
-			input().value = v;
+		const go = (value: string) => {
+			input().value = value;
+			const enter = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+			input().dispatchEvent(enter);
+			return enter;
 		};
-		return { el, api, input, go, type };
+		return { el, api, input, go };
 	};
 
 	it("is off by default", () => {
 		expect(make({ page: 1, totalPages: 10 }).input()).toBeNull();
 	});
 
-	it("names the input with the range and moves on click or Enter (button mode)", () => {
-		const onPageChange = vi.fn();
-		const { input, go, type } = make({
-			page: 1,
-			totalPages: 3650,
-			showPageJump: true,
-			onPageChange,
-		});
+	it("renders 이동 [ ] 쪽 named with the range, without a button", () => {
+		const { el, input } = make({ page: 1, totalPages: 3650, showPageJump: true });
+		expect(el.querySelector(".bt-pagination__jump")?.textContent).toBe("이동쪽");
 		expect(input().getAttribute("aria-label")).toBe("이동할 쪽 번호 (1–3650)");
-		type("1,234");
-		go().focus();
-		go().click();
-		expect(onPageChange).toHaveBeenLastCalledWith(1234);
-		// 다시 그려도 새 "이동" 버튼에 포커스가 남는다
-		expect(document.activeElement).toBe(go());
+		expect(el.querySelector(".bt-pagination__jump button")).toBeNull();
+	});
 
-		type("42");
-		const enter = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
-		input().dispatchEvent(enter);
-		expect(onPageChange).toHaveBeenLastCalledWith(42);
-		expect(enter.defaultPrevented).toBe(true); // 바깥 <form> 제출 방지
+	it("moves on Enter (button mode), keeps focus in the input and blocks the outer form submit", () => {
+		const onPageChange = vi.fn();
+		const { input, go } = make({ page: 1, totalPages: 3650, showPageJump: true, onPageChange });
+		input().focus();
+		const enter = go("1,234");
+		expect(onPageChange).toHaveBeenLastCalledWith(1234);
+		expect(enter.defaultPrevented).toBe(true);
+		// 다시 그려도 새 입력칸에 포커스가 남는다
+		expect(document.activeElement).toBe(input());
+	});
+
+	it("ignores Enter while composing (IME)", () => {
+		const onPageChange = vi.fn();
+		const { input } = make({ page: 1, totalPages: 50, showPageJump: true, onPageChange });
+		input().value = "12";
+		input().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true }));
+		expect(onPageChange).not.toHaveBeenCalled();
 	});
 
 	it("clamps out-of-range values and ignores non-numbers", () => {
 		const onPageChange = vi.fn();
-		const { api, input, go, type } = make({
-			page: 5,
-			totalPages: 100,
-			showPageJump: true,
-			onPageChange,
-		});
-		type("99999");
-		go().click();
+		const { api, input, go } = make({ page: 5, totalPages: 100, showPageJump: true, onPageChange });
+		go("99999");
 		expect(api?.getPage()).toBe(100);
 		onPageChange.mockClear();
-		type("abc");
-		go().click();
+		go("abc");
 		expect(onPageChange).not.toHaveBeenCalled();
 		expect(input().value).toBe("abc");
 	});
 
 	it("link mode navigates to the href template with the typed page", () => {
 		const onPageChange = vi.fn();
-		const { go, type } = make({
+		const { go } = make({
 			page: 1,
 			totalPages: 500,
 			href: "/logs?from=2026-10-01&page={page}",
@@ -312,8 +310,7 @@ describe("Pagination - showPageJump (#905)", () => {
 			}
 		};
 		document.addEventListener("click", capture);
-		type("321");
-		go().click();
+		go("321");
 		document.removeEventListener("click", capture);
 		expect(navigated).toBe("/logs?from=2026-10-01&page=321");
 		expect(onPageChange).not.toHaveBeenCalled();
@@ -321,12 +318,12 @@ describe("Pagination - showPageJump (#905)", () => {
 
 	it("init reads data-page-jump and its labels", () => {
 		document.body.innerHTML =
-			'<nav data-bt-pagination data-page="2" data-total-pages="9" data-page-jump data-page-jump-label="쪽 번호" data-page-jump-button-text="가기"></nav>';
+			'<nav data-bt-pagination data-page="2" data-total-pages="9" data-page-jump data-page-jump-label="Page number" data-page-jump-prefix="Go to" data-page-jump-suffix="page"></nav>';
 		init();
 		const el = document.querySelector("nav") as HTMLElement;
 		expect(el.querySelector(".bt-pagination__jump-input")?.getAttribute("aria-label")).toBe(
-			"쪽 번호",
+			"Page number",
 		);
-		expect(el.querySelector('[data-action="jump"]')?.textContent).toBe("가기");
+		expect(el.querySelector(".bt-pagination__jump")?.textContent).toBe("Go topage");
 	});
 });

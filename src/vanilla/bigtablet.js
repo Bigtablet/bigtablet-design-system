@@ -1642,10 +1642,12 @@
 			nextLabel: "다음 페이지",
 			// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
 			navLabel: "페이지 이동",
-			// React showPageJump · pageJumpLabel · pageJumpButtonText 와 같은 이름·기본값 - 쪽 번호를 적어 바로 가는 입력칸
+			// React showPageJump · pageJumpLabel · pageJumpPrefix · pageJumpSuffix 와 같은 이름·기본값 -
+			// 쪽 번호를 적어 Enter 로 바로 가는 입력칸 (`이동 [   ] 쪽`)
 			showPageJump: false,
 			pageJumpLabel: "이동할 쪽 번호 (1–{total})",
-			pageJumpButtonText: "이동",
+			pageJumpPrefix: "이동",
+			pageJumpSuffix: "쪽",
 			...options,
 		};
 
@@ -1755,12 +1757,13 @@
 
 			if (config.showPageJump) {
 				const label = String(config.pageJumpLabel).replace("{total}", String(config.totalPages));
+				// <label> - 앞뒤 문구를 눌러도 입력칸에 포커스. 이름은 범위까지 담은 aria-label 이 맡는다
 				html +=
-					`<div class="bt-pagination__jump">` +
-					`<input type="text" inputmode="numeric" class="bt-pagination__jump-input" data-action="jump-input" placeholder="${config.page}" aria-label="${escapeHtml(label)}">` +
-					`<span class="bt-pagination__jump-total" aria-hidden="true">/ ${config.totalPages}</span>` +
-					`<button type="button" class="bt-pagination__item" data-action="jump">${escapeHtml(config.pageJumpButtonText)}</button>` +
-					"</div>";
+					`<label class="bt-pagination__jump">` +
+					`<span aria-hidden="true">${escapeHtml(config.pageJumpPrefix)}</span>` +
+					`<input type="text" inputmode="numeric" class="bt-pagination__jump-input" data-action="jump-input" aria-label="${escapeHtml(label)}">` +
+					`<span aria-hidden="true">${escapeHtml(config.pageJumpSuffix)}</span>` +
+					"</label>";
 			}
 
 			container.innerHTML = html;
@@ -1776,9 +1779,6 @@
 
 			if (config.showPageJump) {
 				const input = container.querySelector('[data-action="jump-input"]');
-				container
-					.querySelector('[data-action="jump"]')
-					.addEventListener("click", () => jump(input));
 				input.addEventListener("keydown", (e) => {
 					// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
 					if (e.key !== "Enter" || e.isComposing || e.keyCode === 229) return;
@@ -1915,8 +1915,8 @@
 				if (el.dataset.navLabel) labels.navLabel = el.dataset.navLabel;
 				if (parseBoolAttr(el.dataset.pageJump)) labels.showPageJump = true;
 				if (el.dataset.pageJumpLabel) labels.pageJumpLabel = el.dataset.pageJumpLabel;
-				if (el.dataset.pageJumpButtonText)
-					labels.pageJumpButtonText = el.dataset.pageJumpButtonText;
+				if (el.dataset.pageJumpPrefix) labels.pageJumpPrefix = el.dataset.pageJumpPrefix;
+				if (el.dataset.pageJumpSuffix) labels.pageJumpSuffix = el.dataset.pageJumpSuffix;
 				el._btPagination = Pagination(el, { page, totalPages, href, ...labels });
 			}
 		});
