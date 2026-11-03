@@ -235,3 +235,98 @@ describe("Pagination - 점검 회귀 (#898)", () => {
 		expect(el.getAttribute("aria-label")).toBe("로그 페이지");
 	});
 });
+
+describe("Pagination - showPageJump (#905)", () => {
+	const make = (opts: Record<string, unknown>) => {
+		const el = document.createElement("nav");
+		document.body.appendChild(el);
+		const api = Pagination(el, opts);
+		const input = () => el.querySelector(".bt-pagination__jump-input") as HTMLInputElement;
+		const go = () => el.querySelector('[data-action="jump"]') as HTMLButtonElement;
+		const type = (v: string) => {
+			input().value = v;
+		};
+		return { el, api, input, go, type };
+	};
+
+	it("is off by default", () => {
+		expect(make({ page: 1, totalPages: 10 }).input()).toBeNull();
+	});
+
+	it("names the input with the range and moves on click or Enter (button mode)", () => {
+		const onPageChange = vi.fn();
+		const { input, go, type } = make({
+			page: 1,
+			totalPages: 3650,
+			showPageJump: true,
+			onPageChange,
+		});
+		expect(input().getAttribute("aria-label")).toBe("이동할 쪽 번호 (1–3650)");
+		type("1,234");
+		go().focus();
+		go().click();
+		expect(onPageChange).toHaveBeenLastCalledWith(1234);
+		// 다시 그려도 새 "이동" 버튼에 포커스가 남는다
+		expect(document.activeElement).toBe(go());
+
+		type("42");
+		const enter = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+		input().dispatchEvent(enter);
+		expect(onPageChange).toHaveBeenLastCalledWith(42);
+		expect(enter.defaultPrevented).toBe(true); // 바깥 <form> 제출 방지
+	});
+
+	it("clamps out-of-range values and ignores non-numbers", () => {
+		const onPageChange = vi.fn();
+		const { api, input, go, type } = make({
+			page: 5,
+			totalPages: 100,
+			showPageJump: true,
+			onPageChange,
+		});
+		type("99999");
+		go().click();
+		expect(api?.getPage()).toBe(100);
+		onPageChange.mockClear();
+		type("abc");
+		go().click();
+		expect(onPageChange).not.toHaveBeenCalled();
+		expect(input().value).toBe("abc");
+	});
+
+	it("link mode navigates to the href template with the typed page", () => {
+		const onPageChange = vi.fn();
+		const { go, type } = make({
+			page: 1,
+			totalPages: 500,
+			href: "/logs?from=2026-10-01&page={page}",
+			showPageJump: true,
+			onPageChange,
+		});
+		let navigated = "";
+		const capture = (e: MouseEvent) => {
+			const a = (e.target as Element).closest("a");
+			if (a) {
+				navigated = a.getAttribute("href") ?? "";
+				e.preventDefault();
+			}
+		};
+		document.addEventListener("click", capture);
+		type("321");
+		go().click();
+		document.removeEventListener("click", capture);
+		expect(navigated).toBe("/logs?from=2026-10-01&page=321");
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it("init reads data-page-jump and its labels", () => {
+		document.body.innerHTML =
+			'<nav data-bt-pagination data-page="2" data-total-pages="9" data-page-jump data-page-jump-label="쪽 번호" data-page-jump-button-text="가기"></nav>';
+		init();
+		const el = document.querySelector("nav") as HTMLElement;
+		expect(el.querySelector(".bt-pagination__jump-input")?.getAttribute("aria-label")).toBe(
+			"쪽 번호",
+		);
+		expect(el.querySelector('[data-action="jump"]')?.textContent).toBe("가기");
+	});
+});

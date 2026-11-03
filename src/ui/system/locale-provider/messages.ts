@@ -82,6 +82,8 @@ export interface LocaleMessages {
 	// ── navigation ──────────────────────────────────────────────────────────
 	"bottomNav.label": string;
 	"breadcrumb.label": string;
+	"pagination.jumpButton": string;
+	"pagination.jumpLabel": string; // {total}
 	"pagination.label": string;
 	"pagination.next": string;
 	"pagination.prev": string;
@@ -169,6 +171,8 @@ export const ko: LocaleMessages = {
 
 	"bottomNav.label": "주요 메뉴",
 	"breadcrumb.label": "현재 위치",
+	"pagination.jumpButton": "이동",
+	"pagination.jumpLabel": "이동할 쪽 번호 (1–{total})",
 	"pagination.label": "페이지 이동",
 	"pagination.next": "다음 페이지",
 	"pagination.prev": "이전 페이지",
@@ -253,6 +257,8 @@ export const en: LocaleMessages = {
 
 	"bottomNav.label": "Main menu",
 	"breadcrumb.label": "Breadcrumb",
+	"pagination.jumpButton": "Go",
+	"pagination.jumpLabel": "Go to page (1–{total})",
 	"pagination.label": "Pagination",
 	"pagination.next": "Next page",
 	"pagination.prev": "Previous page",

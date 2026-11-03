@@ -1642,6 +1642,10 @@
 			nextLabel: "다음 페이지",
 			// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
 			navLabel: "페이지 이동",
+			// React showPageJump · pageJumpLabel · pageJumpButtonText 와 같은 이름·기본값 - 쪽 번호를 적어 바로 가는 입력칸
+			showPageJump: false,
+			pageJumpLabel: "이동할 쪽 번호 (1–{total})",
+			pageJumpButtonText: "이동",
 			...options,
 		};
 
@@ -1749,6 +1753,16 @@
 				"›",
 			);
 
+			if (config.showPageJump) {
+				const label = String(config.pageJumpLabel).replace("{total}", String(config.totalPages));
+				html +=
+					`<div class="bt-pagination__jump">` +
+					`<input type="text" inputmode="numeric" class="bt-pagination__jump-input" data-action="jump-input" placeholder="${config.page}" aria-label="${escapeHtml(label)}">` +
+					`<span class="bt-pagination__jump-total" aria-hidden="true">/ ${config.totalPages}</span>` +
+					`<button type="button" class="bt-pagination__item" data-action="jump">${escapeHtml(config.pageJumpButtonText)}</button>` +
+					"</div>";
+			}
+
 			container.innerHTML = html;
 
 			if (focused) {
@@ -1758,6 +1772,19 @@
 					: current;
 				// 끝쪽에서 비활성이 된 이전·다음이면 현재 쪽으로
 				(target && !target.disabled ? target : current)?.focus();
+			}
+
+			if (config.showPageJump) {
+				const input = container.querySelector('[data-action="jump-input"]');
+				container
+					.querySelector('[data-action="jump"]')
+					.addEventListener("click", () => jump(input));
+				input.addEventListener("keydown", (e) => {
+					// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
+					if (e.key !== "Enter" || e.isComposing || e.keyCode === 229) return;
+					e.preventDefault();
+					jump(input);
+				});
 			}
 
 			// 링크 모드는 브라우저가 이동한다
@@ -1779,6 +1806,31 @@
 			}
 			if (nextBtn) {
 				nextBtn.addEventListener("click", () => setPage(config.page + 1));
+			}
+		}
+
+		/** 적은 값을 쪽 번호로 - 천 단위 쉼표·공백 무시, 1 ~ 마지막 쪽으로 맞춘다. 정수가 아니면 null (React parsePageJump 와 같음) */
+		function parsePageJump(raw) {
+			const text = String(raw).replace(/[\s,]/g, "");
+			if (!/^\d+$/.test(text)) return null;
+			return Math.min(Math.max(1, Number(text)), config.totalPages);
+		}
+
+		function jump(input) {
+			const target = parsePageJump(input.value);
+			if (target === null) return; // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
+			input.value = "";
+			if (target === config.page) return;
+			if (config.href) {
+				// 링크 모드 - 같은 틀의 주소로 이동. <a> 클릭으로 브라우저 기본 이동을 그대로 탄다
+				const link = document.createElement("a");
+				link.href = pageHref(target);
+				link.hidden = true;
+				container.appendChild(link);
+				link.click();
+				link.remove();
+			} else {
+				setPage(target);
 			}
 		}
 
@@ -1861,6 +1913,10 @@
 				if (el.dataset.prevLabel) labels.prevLabel = el.dataset.prevLabel;
 				if (el.dataset.nextLabel) labels.nextLabel = el.dataset.nextLabel;
 				if (el.dataset.navLabel) labels.navLabel = el.dataset.navLabel;
+				if (parseBoolAttr(el.dataset.pageJump)) labels.showPageJump = true;
+				if (el.dataset.pageJumpLabel) labels.pageJumpLabel = el.dataset.pageJumpLabel;
+				if (el.dataset.pageJumpButtonText)
+					labels.pageJumpButtonText = el.dataset.pageJumpButtonText;
 				el._btPagination = Pagination(el, { page, totalPages, href, ...labels });
 			}
 		});

@@ -2121,6 +2121,16 @@ const [page, setPage] = useState(1);
 | `prevLabel` | `string` | `'이전 페이지'` | 이전 버튼 `aria-label` |
 | `nextLabel` | `string` | `'다음 페이지'` | 다음 버튼 `aria-label` |
 | `navLabel` | `string` | `'페이지 이동'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜬다 |
+| `showPageJump` | `boolean` | `false` | 쪽 번호를 적어 바로 가는 입력칸 + "이동" 버튼. Enter 로도 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며 숫자가 아니면 무시한다 |
+| `pageJumpLabel` | `string` | `'이동할 쪽 번호 (1–{totalPages})'` | 입력칸 `aria-label` |
+| `pageJumpButtonText` | `string` | `'이동'` | 이동 버튼 문구 |
+
+쪽이 수백·수천 개인 목록(접속 기록 등)은 `…` 와 이전·다음만으로는 원하는 쪽에 닿을 수 없다 - `showPageJump` 를 켠다.
+입력칸은 `<form>` 이 아니라서 검색 폼 안에 두어도 중첩 폼이 되지 않고, Enter 가 바깥 폼을 제출하지 않는다.
+
+```tsx
+<Pagination page={page} totalPages={3650} onPageChange={setPage} showPageJump />
+```
 
 ---
 

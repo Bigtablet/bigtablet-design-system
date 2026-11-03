@@ -1411,6 +1411,46 @@
     }
   }
 
+  // 쪽 번호로 바로 가기 (React showPageJump) - 이동 버튼은 __item 을 재사용
+  &__jump {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: var(--bt-spacing-sm);
+  }
+
+  &__jump-input {
+    width: 7ch; // 4~5 자리 쪽 번호가 잘리지 않는 폭
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 var(--bt-spacing-sm);
+    border: 1px solid var(--bt-color-border);
+    border-radius: var(--bt-radius-md);
+    background: var(--bt-color-background);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-primary);
+    text-align: center;
+    transition: border-color var(--bt-transition-fast),
+                box-shadow var(--bt-transition-fast);
+
+    &::placeholder {
+      color: var(--bt-color-text-tertiary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+      border-color: var(--bt-color-accent);
+      box-shadow: var(--bt-focus-ring);
+    }
+  }
+
+  &__jump-total {
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-secondary);
+    white-space: nowrap;
+  }
+
   &__ellipsis {
     min-width: 20px;
     text-align: center;

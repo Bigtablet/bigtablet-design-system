@@ -80,6 +80,47 @@
     }
   }
 
+  &_jump {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_6;
+    margin-left: token.$spacing_8;
+  }
+
+  &_jump_input {
+    // 4~5 자리 쪽 번호가 잘리지 않는 폭. ch 라 글꼴 크기를 따라간다
+    width: 7ch;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 token.$spacing_8;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_md;
+    background: token.$color_bg_solid;
+    text-align: center;
+
+    @include token.label_small;
+    color: token.$color_text_heading;
+
+    transition: border-color token.$transition_fast,
+    box-shadow token.$transition_fast;
+
+    &::placeholder {
+      color: token.$color_text_caption;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      border-color: token.$color_accent_default;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  &_jump_total {
+    @include token.label_small;
+    color: token.$color_text_caption;
+    white-space: nowrap;
+  }
+
   &_ellipsis {
     min-width: 20px;
     text-align: center;
@@ -92,7 +133,8 @@
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .pagination_item,
-  .pagination_page_button {
+  .pagination_page_button,
+  .pagination_jump_input {
     transition: none;
   }
 }

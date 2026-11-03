@@ -16,6 +16,16 @@ interface PaginationBaseProps {
 	nextLabel?: string;
 	/** `<nav>` 랜드마크 이름 (기본값: "페이지 이동"). 스크린리더의 리전 목록에 그대로 뜬다 */
 	navLabel?: string;
+	/**
+	 * 쪽 번호를 적어 바로 가는 입력칸을 붙인다 (기본값: false). 쪽이 수백·수천 개라 이전·다음과
+	 * `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,
+	 * 숫자가 아니면 아무 일도 하지 않는다
+	 */
+	showPageJump?: boolean;
+	/** 쪽 이동 입력칸의 `aria-label` (기본값: "이동할 쪽 번호 (1–{totalPages})") */
+	pageJumpLabel?: string;
+	/** 쪽 이동 버튼 문구 (기본값: "이동") */
+	pageJumpButtonText?: string;
 }
 
 // Pagination 은 controlled 전용 → 페이지 콜백이 필수다.
@@ -76,6 +86,16 @@ const getPaginationItems = (page: number, totalPages: number) => {
 };
 
 /**
+ * 쪽 이동 입력값을 쪽 번호로 바꾼다. 천 단위 쉼표·공백은 무시하고 1 ~ totalPages 로 맞춘다.
+ * @returns 정수가 아니면 null
+ */
+const parsePageJump = (raw: string, totalPages: number) => {
+	const text = raw.replace(/[\s,]/g, "");
+	if (!/^\d+$/.test(text)) return null;
+	return Math.min(Math.max(1, Number(text)), Math.max(1, totalPages));
+};
+
+/**
  * 페이지네이션을 렌더링한다.
  * 이전/다음 버튼과 페이지 목록을 구성해 전달된 콜백으로 페이지 변경을 전달한다.
  * @param props 페이지네이션 속성
@@ -88,8 +108,12 @@ export const Pagination = ({
 	prevLabel: prevLabelProp,
 	nextLabel: nextLabelProp,
 	navLabel: navLabelProp,
+	showPageJump = false,
+	pageJumpLabel: pageJumpLabelProp,
+	pageJumpButtonText: pageJumpButtonTextProp,
 }: PaginationProps) => {
 	const t = useLocaleText();
+	const [jumpDraft, setJumpDraft] = React.useState("");
 	const prevLabel = prevLabelProp ?? t("pagination.prev");
 	const nextLabel = nextLabelProp ?? t("pagination.next");
 	const navLabel = navLabelProp ?? t("pagination.label");
@@ -97,6 +121,13 @@ export const Pagination = ({
 	const nextDisabled = page >= totalPages;
 
 	const items = React.useMemo(() => getPaginationItems(page, totalPages), [page, totalPages]);
+
+	const jump = () => {
+		const target = parsePageJump(jumpDraft, totalPages);
+		if (target === null) return; // 숫자가 아니면 입력을 그대로 두어 고칠 수 있게
+		setJumpDraft("");
+		if (target !== page) onPageChange(target);
+	};
 
 	return (
 		<nav className="pagination" aria-label={navLabel}>
@@ -149,6 +180,33 @@ export const Pagination = ({
 			>
 				›
 			</button>
+
+			{showPageJump && (
+				<div className="pagination_jump">
+					<input
+						type="text"
+						inputMode="numeric"
+						className="pagination_jump_input"
+						value={jumpDraft}
+						placeholder={String(page)}
+						aria-label={pageJumpLabelProp ?? t("pagination.jumpLabel", { total: totalPages })}
+						onChange={(e) => setJumpDraft(e.target.value)}
+						onKeyDown={(e) => {
+							// 조합 중 Enter 는 IME 확정용. preventDefault - 바깥 <form> 이 제출되지 않게
+							if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+							e.preventDefault();
+							jump();
+						}}
+					/>
+					{/* 범위는 입력칸 이름이 이미 읽는다 - 화면용 */}
+					<span className="pagination_jump_total" aria-hidden="true">
+						/ {totalPages}
+					</span>
+					<button type="button" className="pagination_item" onClick={jump}>
+						{pageJumpButtonTextProp ?? t("pagination.jumpButton")}
+					</button>
+				</div>
+			)}
 		</nav>
 	);
 };
