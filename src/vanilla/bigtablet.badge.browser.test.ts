@@ -23,8 +23,14 @@ const rgb = (color: string) => {
 	return out;
 };
 
-// WCAG 상대 휘도 대비 - 배지 배경이 불투명하다는 전제(투명이면 바탕을 섞어야 한다)
+// WCAG 상대 휘도 대비. 반투명 배경(다크 soft 의 container)은 페이지 바탕(bg-solid) 위에 섞은 색으로 잰다.
 const channels = (c: string) => (c.match(/[\d.]+/g) ?? []).map(Number);
+const over = (top: string, base: string) => {
+	const [r = 0, g = 0, b = 0, a = 1] = channels(top);
+	const [br = 0, bg = 0, bb = 0] = channels(base);
+	const mix = (x: number, y: number) => Math.round(x * a + y * (1 - a));
+	return `rgb(${mix(r, br)}, ${mix(g, bg)}, ${mix(b, bb)})`;
+};
 const luminance = (c: string) => {
 	const [r = 0, g = 0, b = 0] = channels(c).map((v) => {
 		const s = v / 255;
@@ -65,10 +71,9 @@ describe("Vanilla Badge (Chromium, #917)", () => {
 					const label = `${tone}${soft ? " soft" : ""}`;
 					expect(s.backgroundColor, label).toBe(rgb(cssVar(bg)));
 					expect(s.color, label).toBe(rgb(cssVar(fg)));
-					// 반투명 배경(다크 container)은 바탕 위에서 재야 해 여기서는 불투명한 것만 잰다
-					if (channels(s.backgroundColor).length === 3) {
-						expect(contrast(s.color, s.backgroundColor), label).toBeGreaterThanOrEqual(4.5);
-					}
+					const page = rgb(cssVar("--bt-color-bg-solid"));
+					const shown = over(s.backgroundColor, page);
+					expect(contrast(s.color, shown), label).toBeGreaterThanOrEqual(4.5);
 				}
 			}
 		});
