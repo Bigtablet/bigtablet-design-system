@@ -1134,6 +1134,15 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 퇴출 - 진입의 역방향. 오버레이와 패널을 같은 길이로 맞춰 함께 끝나게 한다 (#909) */
+@keyframes bt-alert-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes bt-alert-slide-down {
+  to { opacity: 0; transform: translateY(20px); }
+}
+
 .bt-alert {
   &__overlay {
     position: fixed;
@@ -1150,6 +1159,15 @@
     &.is-open {
       display: flex;
     }
+
+    /* bigtablet.js 가 이 애니메이션이 끝난 뒤 DOM 에서 걷는다 */
+    &.is-closing {
+      animation: bt-alert-fade-out token.$transition_exit_fast forwards;
+    }
+  }
+
+  &__overlay.is-closing &__modal {
+    animation: bt-alert-slide-down token.$transition_exit_fast forwards;
   }
 
   &__modal {
@@ -1692,11 +1710,13 @@ select:-webkit-autofill:disabled {
     --bt-transition-slow: 0s;
   }
 
-  /* Alert 진입 모션 - 장식 목적이고 bigtablet.js 가 animationend 에 의존하지 않는다.
-     keyframe 종료 상태(opacity:1 / translateY(0))가 요소의 기본값이라
-     animation 을 제거해도 최종 표시 상태는 동일하다. */
+  /* Alert 진입·퇴출 모션 - 장식 목적이다. 진입 keyframe 종료 상태(opacity:1 / translateY(0))가
+     요소의 기본값이라 animation 을 제거해도 최종 표시 상태는 동일하다. 퇴출은 bigtablet.js 가
+     돌고 있는 애니메이션이 없으면 기다리지 않고 바로 걷는다. */
   .bt-alert__overlay,
-  .bt-alert__modal {
+  .bt-alert__modal,
+  .bt-alert__overlay.is-closing,
+  .bt-alert__overlay.is-closing .bt-alert__modal {
     animation: none;
   }
 
