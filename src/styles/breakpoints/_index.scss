@@ -30,3 +30,10 @@
 @mixin from_medium   { @media (min-width: $breakpoint_medium)   { @content; } }
 @mixin from_expanded { @media (min-width: $breakpoint_expanded) { @content; } }
 @mixin from_large    { @media (min-width: $breakpoint_large)    { @content; } }
+
+// ── Input capability ─────────────────────────────────────────────────────────
+
+// hover 가 가능한 기기에서만 @content 를 건다. 터치 기기는 탭한 뒤에도 :hover 가 남아
+// 탭한 요소에 hover 강조가 붙은 채로 남는다 (#908).
+// 조건은 (hover: hover) 단독 - pointer: fine 까지 걸면 펜·hover 되는 리모컨이 빠진다.
+@mixin hoverable { @media (hover: hover) { @content; } }
