@@ -163,3 +163,92 @@ describe("Toggle - 점검 회귀 (#898)", () => {
 		expect((document.querySelector('[name="_csrf"]') as HTMLInputElement).value).toBe("token");
 	});
 });
+
+describe("Toggle - 제어 모드 (#920)", () => {
+	const mount = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<button class="bt-toggle" aria-label="알림 받기" ${attrs}><span class="bt-toggle__thumb"></span></button>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLButtonElement;
+	};
+
+	it("클릭은 onCheckedChange(next) 만 부르고 상태는 바꾸지 않는다", () => {
+		const onCheckedChange = vi.fn();
+		const el = mount();
+		const t = Toggle(el, { controlled: true, onCheckedChange });
+
+		el.click();
+
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+		expect(t?.isChecked()).toBe(false);
+		expect(el.getAttribute("aria-checked")).toBe("false");
+		expect(el.classList.contains("bt-toggle--on")).toBe(false);
+	});
+
+	it("소비자가 setChecked 로 확정하고, 그때 콜백이 다시 돌지 않는다", () => {
+		const el = mount('data-name="push"');
+		const onCheckedChange = vi.fn((next: boolean) => t?.setChecked(next));
+		const t = Toggle(el, { controlled: true, onCheckedChange });
+
+		el.click();
+
+		expect(onCheckedChange).toHaveBeenCalledTimes(1);
+		expect(el.getAttribute("aria-checked")).toBe("true");
+		expect((el.nextElementSibling as HTMLInputElement).value).toBe("true");
+	});
+
+	it("data-controlled 로도 켜진다", () => {
+		const onCheckedChange = vi.fn();
+		const el = mount("data-controlled");
+		Toggle(el, { onCheckedChange });
+
+		el.click();
+
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+		expect(el.getAttribute("aria-checked")).toBe("false");
+	});
+
+	it("Promise 를 돌려주면 끝날 때까지 aria-busy 이고 연타는 무시한다 - 실패하면 그대로 남는다", async () => {
+		let reject = () => {};
+		const onCheckedChange = vi.fn(
+			() =>
+				new Promise<void>((_, rej) => {
+					reject = () => rej(new Error("권한 거부"));
+				}),
+		);
+		const el = mount();
+		const t = Toggle(el, { controlled: true, onCheckedChange });
+
+		el.click();
+		el.click();
+		expect(onCheckedChange).toHaveBeenCalledTimes(1);
+		expect(el.getAttribute("aria-busy")).toBe("true");
+
+		// 실패는 삼키지 않고 처리 안 된 예외처럼 보고한다 - 기대한 예외라 여기서 받는다
+		const reported: unknown[] = [];
+		const onError = (e: ErrorEvent) => {
+			reported.push(e.error);
+			e.preventDefault();
+		};
+		window.addEventListener("error", onError);
+		vi.spyOn(console, "error").mockImplementation((err) => reported.push(err));
+		reject();
+		await vi.waitFor(() => expect(el.hasAttribute("aria-busy")).toBe(false));
+		window.removeEventListener("error", onError);
+		expect(t?.isChecked()).toBe(false);
+		expect(reported.some((err) => err instanceof Error && err.message === "권한 거부")).toBe(true);
+
+		// 끝난 뒤에는 다시 누를 수 있다
+		el.click();
+		expect(onCheckedChange).toHaveBeenCalledTimes(2);
+	});
+
+	it("비제어(기본)는 예전처럼 setChecked 도 onCheckedChange 를 부른다", () => {
+		const onCheckedChange = vi.fn();
+		const t = Toggle(mount(), { onCheckedChange });
+
+		t?.setChecked(true);
+
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+	});
+});

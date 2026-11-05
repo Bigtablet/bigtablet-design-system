@@ -285,6 +285,13 @@ const sw = Bigtablet.Toggle('#my-toggle', {
 sw.toggle();
 sw.setChecked(true);
 
+// 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.
+// 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
+const push = Bigtablet.Toggle('#push', {
+  controlled: true,
+  onCheckedChange: async (next) => { if (await save(next)) push.setChecked(next); }
+});
+
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,

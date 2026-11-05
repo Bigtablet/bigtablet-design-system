@@ -1742,6 +1742,12 @@
 			onCheckedChange: null,
 			...options,
 		};
+		// 제어 모드 (#920) - React 의 `checked` + `onCheckedChange` 와 같은 모델. 클릭은
+		// onCheckedChange(next) 만 부르고 상태는 소비자가 setChecked() 로 정한다 - 권한 · 저장 ·
+		// 확인 대화상자 뒤에 바뀌는 토글. 실패하면 setChecked 를 안 부르면 그대로 남는다.
+		const controlled = config.controlled ?? parseBoolAttr(toggleEl.dataset.controlled) ?? false;
+		// 제어 모드 콜백이 돌려준 Promise 가 끝나기 전 - 그동안 클릭은 무시한다(연타로 두 번 등록 방지)
+		let pending = false;
 
 		const state = {
 			checked: config.defaultChecked || toggleEl.classList.contains("bt-toggle--on"),
@@ -1793,15 +1799,33 @@
 				hiddenInput.value = checked ? "true" : "false";
 			}
 
-			if (config.onCheckedChange) {
+			// 제어 모드에서는 부르지 않는다 - 소비자가 콜백 안에서 setChecked 로 확정하면 콜백이 다시
+			// 돌아 등록이 두 번 된다. React 도 `checked` prop 이 바뀔 때는 onCheckedChange 를 안 부른다.
+			if (!controlled && config.onCheckedChange) {
 				config.onCheckedChange(checked);
 			}
 		}
 
 		function toggle() {
 			// React Toggle 과 동일하게 native `disabled` 만 본다 (구 --disabled 클래스는 v3.8.0 에서 제거).
-			if (!config.disabled && !toggleEl.disabled) {
+			if (config.disabled || toggleEl.disabled || pending) return;
+			if (!controlled) {
 				setChecked(!state.checked);
+				return;
+			}
+			const result = config.onCheckedChange?.(!state.checked);
+			if (result && typeof result.then === "function") {
+				pending = true;
+				toggleEl.setAttribute("aria-busy", "true");
+				const settle = () => {
+					pending = false;
+					toggleEl.removeAttribute("aria-busy");
+				};
+				// 실패해도 풀되 에러는 삼키지 않는다 - 처리 안 된 예외처럼 콘솔 · window "error" 로 보낸다
+				result.then(settle, (error) => {
+					settle();
+					(globalThis.reportError ?? console.error)(error);
+				});
 			}
 		}
 
