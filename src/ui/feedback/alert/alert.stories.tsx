@@ -250,6 +250,7 @@ export const ConfirmDeleteAsync: Story = {
 
 const ReasonDemo = () => {
 	const { showAlert } = useAlert();
+	const [saved, setSaved] = React.useState<string | null>(null);
 	const open = () => {
 		// 사유는 창 안에서 바뀌므로 밖에서 들고 있다가 onConfirm 이 읽는다
 		let reason = "";
@@ -271,13 +272,16 @@ const ReasonDemo = () => {
 			showCancel: true,
 			confirmText: "저장",
 			confirmDisabled: true,
-			onConfirm: () => console.log("저장", reason),
+			onConfirm: () => setSaved(reason.trim()),
 		});
 	};
 	return (
-		<button type="button" onClick={open}>
-			정책 저장
-		</button>
+		<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+			<button type="button" onClick={open}>
+				정책 저장
+			</button>
+			{saved !== null && <span>저장됨 - 사유: {saved}</span>}
+		</div>
 	);
 };
 
