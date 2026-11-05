@@ -4,6 +4,17 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.5.0) - 2026-11-05
+- Vanilla 번들에 컴포넌트가 늘었습니다 - `Bigtablet.Toast(message, tone, options)`(React Toast 와 같은 모양 · 최대 5개 · 액션 버튼 · hover 시 진행 멈춤), `Bigtablet.CopyButton`(`data-bt-copy` 자동 초기화 · Clipboard API 가 없으면 `execCommand` 로 복사), CSS 만으로 쓰는 `bt-inline-alert` · `bt-badge` · `bt-table`(크기 · 고정 너비 · 좁은 화면 카드 모드)
+- `Table` 에 `layout="fixed"` · `minWidth` · `cards` prop 과 열 옵션 `truncate` · `cardLabel` 이 생겼습니다 - 쪽마다 열 위치를 고정하거나, 좁은 화면에서 줄마다 카드로 쌓습니다. 기본값은 그대로라 기존 표는 바뀌지 않습니다
+- `showAlert` 가 핸들 `{ update(patch) }` 를 돌려주고, `AlertOptions` 에 `confirmDisabled` 가 생겼습니다 - 창 안 입력(변경 사유 등)이 비어 있는 동안 확인 버튼을 잠급니다. 잠긴 버튼은 `aria-disabled` 라 포커스가 빠지지 않고 클릭 · Enter 로 확인되지 않습니다
+- Vanilla Toggle 에 제어 모드(`controlled: true` · `data-controlled`)가 생겼습니다 - 눌러도 바로 바뀌지 않고 `onCheckedChange` 에서 `setChecked` 로 확정합니다. 콜백이 Promise 를 돌려주면 끝날 때까지 `aria-busy` 로 대기합니다
+- SCSS 믹스인 `breakpoints.hoverable` 을 추가했습니다 - `@media (hover: hover)` 안에서만 hover 스타일을 줍니다
+- (렌더 변경) `layout.hover_lift` · `hover_glow` 가 hover 되는 기기에서만 돕니다 - 터치 기기에서 탭한 요소에 hover 강조가 남던 문제를 고쳤습니다
+- (렌더 변경) Vanilla Alert · Modal 이 닫힐 때 퇴출 모션이 돌고, Modal 은 열릴 때도 진입 모션이 있습니다 (React 와 같은 `presence` 모션). Modal 에 `onExited` 옵션이 생겼습니다
+- Vanilla Modal 을 서버가 `.bt-modal.is-open` 으로 그려 두면 열린 상태로 초기화합니다 - Escape · 바깥 클릭 · 닫기 버튼 · 스크롤 잠금 · 포커스 이동이 듣지 않던 문제를 고쳤습니다
+- Vanilla 소스를 컴포넌트별 파일(`js/` · `scss/`)로 나눴습니다. 배포물(`bigtablet.min.css` · `bigtablet.min.js`)의 동작은 같습니다
+
 ## [4.4.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.4.0) - 2026-11-03
 - `Pagination` 에 `showPageJump` 옵션이 생겼습니다 - 켜면 현재 쪽 칸이 테두리 있는 입력칸이 되어 번호를 적고 Enter 로 바로 갑니다. 쪽이 수천 개라 이전 · 다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록용입니다. 천 단위 쉼표는 무시하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며, 숫자가 아니면 이동하지 않고 오류로 표시합니다. Esc 나 포커스를 잃으면 현재 쪽으로 돌아갑니다. 입력칸 이름은 `pageJumpLabel` 로 바꿀 수 있습니다. 기본은 꺼져 있어 기존 화면은 그대로입니다
 - Vanilla `Pagination` 도 같은 기능을 `data-page-jump`(수동 초기화는 `showPageJump`) · `data-page-jump-label` 로 지원합니다. 링크 모드(`data-href`)에서는 `{page}` 를 적은 번호로 바꾼 주소로 이동합니다
