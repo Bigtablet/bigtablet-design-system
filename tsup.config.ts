@@ -71,25 +71,25 @@ export default defineConfig([
 		// import 경로 보정 · 컴포넌트 CSS 컴파일. `pnpm build` 와 `pnpm dev`(watch 재빌드마다) 모두 여기서 돈다
 		onSuccess: "node scripts/build-modules.mjs",
 	},
-	// Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.)
-	{
+	// Vanilla JS bundle (for HTML/CSS/JS, Thymeleaf, JSP, etc.) - 압축본(배포)과 비압축본(examples 용, 배포 제외)
+	...[true, false].map((minify) => ({
 		entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },
-		format: ["iife"],
+		format: ["iife" as const],
 		globalName: "Bigtablet",
 		dts: false,
 		clean: false,
 		treeshake: true,
 		sourcemap: false,
-		minify: true,
-		outExtension: () => ({ js: ".min.js" }),
-		esbuildOptions(options) {
-			// bigtablet.js 는 src/vanilla/js/*.js 를 모아 내보내는 ES 모듈 진입점이다 (#926). iife +
-			// globalName 이 그 export 전부를 전역 `Bigtablet` 으로 만든다 - `<script>` 로 읽는 소비자에게는
-			// 예전 UMD 래퍼와 같은 객체다.
+		minify,
+		outExtension: () => ({ js: minify ? ".min.js" : ".js" }),
+		// bigtablet.js 는 src/vanilla/js/*.js 를 모아 내보내는 ES 모듈 진입점이다 (#926). iife + globalName 이
+		// 그 export 전부를 전역 `Bigtablet` 으로 만든다. 예전 UMD 래퍼가 하던 CommonJS · AMD 경로는
+		// scripts/build-vanilla.sh 가 파일 끝에 덧붙인다 (tsup 의 footer 는 IIFE 안쪽에 들어가 쓸 수 없다).
+		esbuildOptions(options: { legalComments?: string }) {
 			// min.js 는 files 에서 비minified bigtablet.js 를 제외해 실제로 배포되는 유일한 vanilla JS 다.
 			// esbuild 는 minify 시 legalComments 기본값이 "none" 이라 소스의 @license 배너를 떼버리는데,
 			// 그러면 배포물에 라이선스 표기가 하나도 남지 않는다. 원위치에 보존한다.
 			options.legalComments = "inline";
 		},
-	},
+	})),
 ]);
