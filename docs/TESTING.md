@@ -120,7 +120,7 @@ src/ui/general/button/
 
 ### Vanilla 번들 테스트
 
-Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts`.
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toast,toggle,pagination}.test.ts`.
 공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.

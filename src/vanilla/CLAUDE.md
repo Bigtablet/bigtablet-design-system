@@ -20,7 +20,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
 추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
@@ -59,6 +59,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
 | Modal | `.bt-modal` | | `.is-open` |
+| Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다 | | `[data-state="closed"]`(퇴출 중) |
 | Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
 | Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
@@ -304,6 +305,15 @@ Bigtablet.Alert({
   onConfirm: () => {},
   onCancel: () => {}
 });
+
+// Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 위, 최대 5개
+const t = Bigtablet.Toast('저장했습니다', 'success', {
+  duration: 3000,           // Infinity 면 닫기 버튼·dismiss 로만
+  action: { label: '실행 취소', onClick: () => {} },
+  closeLabel: '닫기',
+  regionLabel: '알림'
+});
+t.dismiss();
 ```
 
 ### CSS Custom Properties

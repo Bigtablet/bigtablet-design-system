@@ -556,6 +556,23 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
 &lt;/div&gt;</code></pre>
     </div>
 
+    <!-- Toast -->
+    <div class="section">
+      <h2>Toast (JavaScript)</h2>
+      <div class="demo-row">
+        <button type="button" class="bt-button bt-button--md bt-button--filled" onclick="Bigtablet.Toast('저장했습니다', 'success')">Success</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline" onclick="Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error')">Error</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline" onclick="Bigtablet.Toast('삭제했습니다', 'neutral', { action: { label: '실행 취소', onClick: () => {} } })">Action</button>
+      </div>
+
+      <pre><code>Bigtablet.Toast('저장했습니다', 'success');
+Bigtablet.Toast('삭제했습니다', 'neutral', {
+  action: { label: '실행 취소', onClick: () =&gt; restore() }
+});
+const t = Bigtablet.Toast('업로드 중…', 'info', { duration: Infinity });
+t.dismiss();</code></pre>
+    </div>
+
     <!-- Alert -->
     <div class="section">
       <h2>Alert (JavaScript)</h2>
