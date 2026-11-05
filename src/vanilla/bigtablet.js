@@ -1821,7 +1821,11 @@
 					pending = false;
 					toggleEl.removeAttribute("aria-busy");
 				};
-				result.then(settle, settle);
+				// 실패해도 풀되 에러는 삼키지 않는다 - 처리 안 된 예외처럼 콘솔 · window "error" 로 보낸다
+				result.then(settle, (error) => {
+					settle();
+					(globalThis.reportError ?? console.error)(error);
+				});
 			}
 		}
 

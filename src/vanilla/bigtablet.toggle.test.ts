@@ -224,9 +224,19 @@ describe("Toggle - 제어 모드 (#920)", () => {
 		expect(onCheckedChange).toHaveBeenCalledTimes(1);
 		expect(el.getAttribute("aria-busy")).toBe("true");
 
+		// 실패는 삼키지 않고 처리 안 된 예외처럼 보고한다 - 기대한 예외라 여기서 받는다
+		const reported: unknown[] = [];
+		const onError = (e: ErrorEvent) => {
+			reported.push(e.error);
+			e.preventDefault();
+		};
+		window.addEventListener("error", onError);
+		vi.spyOn(console, "error").mockImplementation((err) => reported.push(err));
 		reject();
 		await vi.waitFor(() => expect(el.hasAttribute("aria-busy")).toBe(false));
+		window.removeEventListener("error", onError);
 		expect(t?.isChecked()).toBe(false);
+		expect(reported.some((err) => err instanceof Error && err.message === "권한 거부")).toBe(true);
 
 		// 끝난 뒤에는 다시 누를 수 있다
 		el.click();
