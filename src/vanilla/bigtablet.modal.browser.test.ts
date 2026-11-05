@@ -5,7 +5,12 @@ import { page } from "vitest/browser";
 import "./bigtablet.scss";
 import "./bigtablet.js";
 
-type VanillaModal = { open: () => void; close: () => void; destroy?: () => void };
+type VanillaModal = {
+	open: () => void;
+	close: () => void;
+	destroy?: () => void;
+	isOpen: () => boolean;
+};
 const { Modal } = (window as unknown as { Bigtablet: { Modal: (el: Element) => VanillaModal } })
 	.Bigtablet;
 let opened: VanillaModal[] = [];
@@ -70,5 +75,30 @@ describe("Vanilla Modal layout (Chromium)", () => {
 		m.close();
 		expect(window.scrollY).toBe(300);
 		expect(document.body.style.paddingRight).toBe("");
+	});
+
+	it("opens a server-rendered is-open modal without moving the scrolled page (#919)", () => {
+		const content = document.createElement("div");
+		content.style.height = "3000px";
+		document.body.appendChild(content);
+		// 주소 앵커로 내려온 상태 - 초기화가 포커스를 옮기며 페이지를 끌어올리면 안 된다
+		window.scrollTo(0, 300);
+
+		const el = document.createElement("div");
+		el.className = "bt-modal is-open";
+		el.innerHTML = `<div class="bt-modal__panel" style="width: 400px;">
+			<div class="bt-modal__header">수정</div>
+			<div class="bt-modal__body"><input id="edit-name"></div>
+		</div>`;
+		document.body.appendChild(el);
+		const m = Modal(el);
+		opened.push(m);
+
+		expect(m.isOpen()).toBe(true);
+		expect(document.activeElement?.id).toBe("edit-name");
+		expect(window.scrollY).toBe(300);
+
+		m.close();
+		expect(window.scrollY).toBe(300);
 	});
 });

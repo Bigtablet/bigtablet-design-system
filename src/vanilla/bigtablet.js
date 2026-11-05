@@ -1162,6 +1162,10 @@
 	function Modal(element, options = {}) {
 		const modal = typeof element === "string" ? $(element) : element;
 		if (!modal) return null;
+		// 서버가 열린 채로 그렸거나(`.bt-modal.is-open` - 폼 재표시 · `?edit=`) 열려 있던 인스턴스를
+		// 교체하는 중이면, 아래에서 open() 경로로 다시 연다 (#919). 클래스만 보고 닫힌 것으로 알면
+		// 화면엔 열려 있는데 close() 가드에 막혀 닫히지 않고 잠금 · 포커스 · Escape 도 없다.
+		const startsOpen = modal._btModal?.isOpen() ?? modal.classList.contains("is-open");
 		// 같은 요소에 두 번 만들면(자동 초기화 + 수동 호출) 앞 인스턴스를 풀고 교체한다 - 리스너가
 		// 겹치고 data-bt-modal-open 트리거가 콜백 없는 쪽을 여는 것을 막는다.
 		modal._btModal?.destroy();
@@ -1182,6 +1186,9 @@
 		let previousFocus = null;
 		let panelTabindexAdded = false;
 		let popEscape = null;
+		// 생성 중(startsOpen)에 연 경우 onOpen 을 한 박자 미룬다 - 콜백 안에서
+		// `const m = Bigtablet.Modal(...)` 의 m 을 쓰면 아직 대입 전이라 ReferenceError 가 난다.
+		let constructing = true;
 
 		// Dialog ARIA - React Modal 과 패리티. 접근 가능한 이름(aria-labelledby/label)도 연결한다
 		// 헤더가 있으면 그 id 로 연결한다. 둘 다 없으면 이름을 지어내지 않는다 - React Modal(#473)처럼
@@ -1233,7 +1240,11 @@
 			}
 
 			if (config.onOpen) {
-				config.onOpen();
+				if (!constructing) config.onOpen();
+				else
+					queueMicrotask(() => {
+						if (state.isOpen) config.onOpen();
+					});
 			}
 		}
 
@@ -1244,8 +1255,9 @@
 		 *
 		 * 다섯 중 하나라도 빠지면 열린 채 destroy 된 모달이 흔적을 남긴다:
 		 * - is-open - `.bt-modal` 은 display: none 이고 이 클래스만이 grid 로 뒤집는다. 남으면 모달이
-		 *   화면에 열린 채 고정되고, 리스너는 이미 해제돼 닫을 길이 없다. 같은 DOM 으로 다시 만든
-		 *   인스턴스도 isOpen 이 false 로 시작해 close() 가드에 막힌다
+		 *   화면에 열린 채 고정되고, 리스너는 이미 해제돼 닫을 길이 없다. (같은 DOM 으로 다시 만든
+		 *   인스턴스는 이제 is-open 을 보고 열린 채로 시작한다 - #919. 그래도 바인딩이 없는 사이에
+		 *   남으면 안 된다)
 		 * - Escape 등록 - 스택이 파괴된 모달의 close 를 붙들어(누수) 다음 Escape 에 그게 다시 돌고,
 		 *   isOpen 이 true 라 가드를 통과해 unlockScroll 이 한 번 더 불린다. 진짜로 열려 있는
 		 *   오버레이의 배경 스크롤이 조기에 풀린다
@@ -1338,6 +1350,8 @@
 			},
 		};
 		modal._btModal = api;
+		if (startsOpen) open();
+		constructing = false;
 		return api;
 	}
 
