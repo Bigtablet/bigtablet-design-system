@@ -101,6 +101,7 @@ describe("Alert - 퇴출 모션 (#909)", () => {
 		pressEscape();
 		const overlay = document.querySelector(".bt-alert__overlay");
 		expect(overlay?.classList.contains("is-closing")).toBe(true);
+		expect(overlay?.hasAttribute("inert")).toBe(true);
 		expect(document.body.dataset.btOpenModals).toBe("1");
 
 		anim.done();

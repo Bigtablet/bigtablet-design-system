@@ -1434,6 +1434,8 @@
 			// 돌고 있는 애니메이션이 없으면(reduced-motion, jsdom) 기다리지 않는다 - animationend 를
 			// 기다리면 오지 않아 오버레이와 스크롤 잠금이 남는다.
 			overlay.classList.add("is-closing");
+			// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게 - aria-hidden 은 포커스를 막지 못한다
+			overlay.setAttribute("inert", "");
 			const animations = [overlay, alertPanel].flatMap((el) => el?.getAnimations?.() ?? []);
 			const finish = () => {
 				overlay.remove();
