@@ -831,18 +831,21 @@ Alert는 JavaScript로만 사용합니다.
 
 ```html
 <div class="bt-table-wrap">
-  <table class="bt-table bt-table--fixed bt-table--cards" style="--bt-table-min-width: 60rem">
+  <!-- --cards 를 쓰면 role 을 명시한다 (아래 표 참고). 보통 표에는 필요 없다 -->
+  <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 60rem">
     <colgroup>
       <col style="width: 12rem"><col style="width: 10rem"><col>   <!-- 너비 없는 열이 남는 폭을 가져간다 -->
     </colgroup>
-    <thead>
-      <tr><th scope="col">시각</th><th scope="col">사람</th><th scope="col">내용</th></tr>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader">시각</th><th scope="col" role="columnheader">사람</th><th scope="col" role="columnheader">내용</th>
+      </tr>
     </thead>
-    <tbody>
-      <tr th:each="log : ${logs}">
-        <td class="bt-table__truncate" data-label="시각" th:text="${log.time}" th:title="${log.time}"></td>
-        <td class="bt-table__truncate" data-label="사람" th:text="${log.person}" th:title="${log.person}"></td>
-        <td data-label="내용" th:text="${log.detail}"></td>
+    <tbody role="rowgroup">
+      <tr role="row" th:each="log : ${logs}">
+        <td role="cell" class="bt-table__truncate" data-label="시각" th:text="${log.time}" th:title="${log.time}"></td>
+        <td role="cell" class="bt-table__truncate" data-label="사람" th:text="${log.person}" th:title="${log.person}"></td>
+        <td role="cell" data-label="내용" th:text="${log.detail}"></td>
       </tr>
     </tbody>
   </table>
@@ -855,7 +858,7 @@ Alert는 JavaScript로만 사용합니다.
 | `.bt-table` | 머리 · 칸 여백, 구분선, 14px, 행 hover. `--sm` · `--lg` 는 React `size` |
 | `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘겨도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
 | `td.bt-table__truncate` | 한 줄 칸 - 넘치면 말줄임. 전체 값은 `title` 로 단다 (React `truncate`) |
-| `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다 |
+| `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다. 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버리므로 **`table`·`thead`/`tbody`·`tr`·`th`·`td` 에 `role="table"`·`"rowgroup"`·`"row"`·`"columnheader"`·`"cell"` 을 단다** (React 는 `cards` 일 때 자동) |
 | `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
 
 - 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다

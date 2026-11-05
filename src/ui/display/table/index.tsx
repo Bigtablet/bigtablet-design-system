@@ -200,6 +200,13 @@ export const Table = <T extends object>({
 		((index: number, _row: T) => t("table.selectRow", { index: index + 1 }));
 	/** 쪽 안의 인덱스를 전체 순번으로 옮긴다. 기본 오프셋 0 이면 지금까지와 같은 값이다. */
 	const toGlobalIndex = (rowIndex: number) => rowIndex + rowIndexOffset;
+	/**
+	 * 카드 화면은 표 요소를 `display: block` 으로 바꾸는데, Safari(VoiceOver) 등은 그러면 표 의미를 버려
+	 * "표 N행 M열" 탐색이 사라진다. 카드일 때만 role 을 명시해 의미를 붙잡는다 (보통 표에는 붙이지 않는다 -
+	 * 네이티브 의미와 같아 소음이다).
+	 */
+	const cardRole = (role: "table" | "rowgroup" | "row" | "columnheader" | "cell") =>
+		cards ? role : undefined;
 	const wrapperClassName = cn(
 		"table_wrapper",
 		`table_size_${size}`,
@@ -356,16 +363,21 @@ export const Table = <T extends object>({
 		<div ref={wrapperRef} className={wrapperClassName}>
 			{/* aria-busy - 스켈레톤 로딩 중임을 AT 에 전달 (시각 전용이던 문제 수정) */}
 			<table
+				role={cardRole("table")}
 				className={cn("table", layout === "fixed" && "table_layout_fixed")}
 				// 카드가 된 화면에서 CSS 가 풀 수 있게 인라인 min-width 가 아니라 변수로 넘긴다
 				style={minWidth ? ({ "--table-min-width": minWidth } as React.CSSProperties) : undefined}
 				aria-label={ariaLabel}
 				aria-busy={isLoading || undefined}
 			>
-				<thead className="table_thead">
-					<tr>
+				<thead role={cardRole("rowgroup")} className="table_thead">
+					<tr role={cardRole("row")}>
 						{selectable && (
-							<th scope="col" className="table_th table_th_checkbox">
+							<th
+								role={cardRole("columnheader")}
+								scope="col"
+								className="table_th table_th_checkbox"
+							>
 								<Checkbox
 									aria-label={selectAllAriaLabel}
 									checked={isAllSelected}
@@ -389,6 +401,7 @@ export const Table = <T extends object>({
 							return (
 								<th
 									key={col.key}
+									role={cardRole("columnheader")}
 									scope="col"
 									className={cn(
 										"table_th",
@@ -434,15 +447,18 @@ export const Table = <T extends object>({
 						})}
 					</tr>
 				</thead>
-				<tbody className="table_tbody">
+				<tbody role={cardRole("rowgroup")} className="table_tbody">
 					{isLoading
 						? Array.from({ length: skeletonRows }).map((_, rowIndex) => (
 								// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows have no stable identity
-								<tr key={rowIndex} className="table_row table_row_skeleton">
-									{selectable && <td className="table_td table_td_checkbox" />}
+								<tr key={rowIndex} role={cardRole("row")} className="table_row table_row_skeleton">
+									{selectable && (
+										<td role={cardRole("cell")} className="table_td table_td_checkbox" />
+									)}
 									{columns.map((col) => (
 										<td
 											key={col.key}
+											role={cardRole("cell")}
 											className={cn("table_td", col.align && `table_align_${col.align}`)}
 											style={{ width: col.width }}
 										>
@@ -458,6 +474,7 @@ export const Table = <T extends object>({
 								return (
 									<tr
 										key={keyExtractor(item, rowIndex)}
+										role={cardRole("row")}
 										className={cn(
 											"table_row",
 											hoverable && "table_row_hoverable",
@@ -501,6 +518,7 @@ export const Table = <T extends object>({
 									>
 										{selectable && rowIdentity !== undefined && (
 											<td
+												role={cardRole("cell")}
 												className="table_td table_td_checkbox"
 												onClick={(e) => e.stopPropagation()}
 												onKeyDown={(e) => e.stopPropagation()}
@@ -521,6 +539,7 @@ export const Table = <T extends object>({
 											return (
 												<td
 													key={col.key}
+													role={cardRole("cell")}
 													className={cn(
 														"table_td",
 														col.align && `table_align_${col.align}`,

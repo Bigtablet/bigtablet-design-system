@@ -1134,6 +1134,29 @@ describe("Table - 고정 너비 · 말줄임 · 카드 (#915)", () => {
 		expect(screen.getByText("90")).not.toHaveAttribute("data-label");
 	});
 
+	it("cards 면 표 요소에 role 을 명시해 display: block 에도 표 의미를 붙잡는다 - 보통 표에는 달지 않는다", () => {
+		const { container, rerender } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				cards
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		const roleOf = (sel: string) =>
+			Array.from(container.querySelectorAll(sel)).map((el) => el.getAttribute("role"));
+		expect(roleOf("table")).toEqual(["table"]);
+		expect(roleOf("thead, tbody")).toEqual(["rowgroup", "rowgroup"]);
+		expect(new Set(roleOf("tr"))).toEqual(new Set(["row"]));
+		expect(new Set(roleOf("th"))).toEqual(new Set(["columnheader"]));
+		expect(new Set(roleOf("td"))).toEqual(new Set(["cell"]));
+
+		rerender(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+		expect(container.querySelectorAll("[role]")).toHaveLength(0);
+	});
+
 	it("cards 가 아니면 data-label 을 달지 않는다", () => {
 		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
 		expect(screen.getByText("Alpha")).not.toHaveAttribute("data-label");

@@ -161,7 +161,7 @@
       }
 
       td {
-        width: auto !important; // 열 width 인라인 스타일 - 카드에서는 한 줄을 다 쓴다
+        width: auto; // 카드에서는 한 줄을 다 쓴다 (열 너비는 <colgroup> 이라 칸에 인라인 width 가 없다)
         padding: token.$spacing_2 0;
         text-align: start;
       }
