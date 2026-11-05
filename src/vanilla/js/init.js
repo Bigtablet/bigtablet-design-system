@@ -1,3 +1,4 @@
+import { CopyButton } from "./copy-button.js";
 import { Dropdown } from "./dropdown.js";
 import { Modal } from "./modal.js";
 import { Pagination } from "./pagination.js";
@@ -12,6 +13,11 @@ import { $$, parseBoolAttr } from "./utils.js";
  * Auto-initialize all components with data-bt attribute
  */
 export function init() {
+	// CopyButton - data-bt-copy 값을 복사한다 (#918)
+	$$("[data-bt-copy]").forEach((el) => {
+		if (!el._btCopyButton) CopyButton(el);
+	});
+
 	// Dropdown
 	$$("[data-bt-dropdown]").forEach((el) => {
 		if (!el._btDropdown) {

@@ -17,7 +17,7 @@ src/vanilla/
 │   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
-│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js
+│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js
 │   └── init.js         # data-bt-* 자동 초기화
 └── scss/
     ├── _custom-properties.scss   # :root --bt-* 변수
@@ -46,7 +46,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
 추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
@@ -344,6 +344,13 @@ Bigtablet.Alert({
   showCancel: true,
   onConfirm: () => {},
   onCancel: () => {}
+});
+
+// CopyButton (#918) - <button data-bt-copy="값"> 는 자동 초기화. 옵션 이름은 React CopyButton 과 같다
+Bigtablet.CopyButton('#copy', {
+  text: () => input.value,   // 또는 data-bt-copy. 바뀌는 문구만 [data-copy-label] 로 감쌀 수 있다
+  copiedLabel: '복사됨', failedLabel: '복사하지 못했습니다', resetAfter: 2000,
+  onCopy: (text) => {}, onError: (error) => {}
 });
 
 // Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 위, 최대 5개
