@@ -556,6 +556,36 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
 &lt;/div&gt;</code></pre>
     </div>
 
+    <!-- Table -->
+    <div class="section">
+      <h2>Table (CSS only)</h2>
+      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: 넘치면 가로로 스크롤되는 상자라 키보드로 닿아야 한다 (axe scrollable-region-focusable) -->
+      <section class="bt-table-wrap" tabindex="0" aria-label="접속 기록">
+        <!-- biome-ignore-start lint/a11y/noRedundantRoles: bt-table--cards 는 표 요소를 display: block 으로 바꿔 Safari 가 표 의미를 버린다 - role 로 붙잡는다 -->
+        <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 40rem">
+          <colgroup><col style="width: 12rem"><col style="width: 9rem"><col style="width: 7rem"><col></colgroup>
+          <thead role="rowgroup">
+            <tr role="row"><th scope="col" role="columnheader">시각</th><th scope="col" role="columnheader">사람</th><th scope="col" role="columnheader">상태</th><th scope="col" role="columnheader">내용</th></tr>
+          </thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell" class="bt-table__truncate" data-label="시각" title="2026-10-28 09:00:00">2026-10-28 09:00:00</td>
+              <td role="cell" class="bt-table__truncate" data-label="사람" title="박상민">박상민</td>
+              <td role="cell" data-label="상태"><span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span></td>
+              <td role="cell" data-label="내용">로그인</td>
+            </tr>
+            <tr role="row" class="is-selected">
+              <td role="cell" class="bt-table__truncate" data-label="시각" title="2026-10-28 09:12:41">2026-10-28 09:12:41</td>
+              <td role="cell" class="bt-table__truncate" data-label="사람" title="아주아주긴이름을가진외부협력사담당자">아주아주긴이름을가진외부협력사담당자</td>
+              <td role="cell" data-label="상태"><span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span></td>
+              <td role="cell" data-label="내용">접속 대상 3개의 권한을 바꾸고 기존 세션을 끊었다. 바뀐 권한은 다음 접속부터 적용된다.</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- biome-ignore-end lint/a11y/noRedundantRoles: 위와 같음 -->
+      </section>
+    </div>
+
     <!-- Badge -->
     <div class="section">
       <h2>Badge (CSS only)</h2>

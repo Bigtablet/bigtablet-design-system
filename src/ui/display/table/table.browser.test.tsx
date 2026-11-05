@@ -1,7 +1,7 @@
 /// <reference types="@vitest/browser-playwright" />
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import { cdp, userEvent } from "vitest/browser";
+import { describe, expect, it, vi } from "vitest";
+import { cdp, page, userEvent } from "vitest/browser";
 import { Table, type TableColumn } from "./index";
 import "./style.scss";
 
@@ -99,5 +99,140 @@ describe("Table clickable row focus (Chromium)", () => {
 		} finally {
 			await setForcedColors("none");
 		}
+	});
+});
+
+describe("Table fixed layout · cards (Chromium, #915)", () => {
+	type Log = { id: number; time: string; who: string; body: string };
+	const logCols: TableColumn<Log>[] = [
+		{ key: "time", header: "시각", width: "12rem", truncate: true },
+		{ key: "who", header: "사람", width: "8rem", truncate: true },
+		{ key: "body", header: "내용" },
+	];
+	const page1: Log[] = [{ id: 1, time: "2026-10-28 09:00:00", who: "박상민", body: "짧음" }];
+	const page2: Log[] = [
+		{
+			id: 2,
+			time: "2026-10-28 09:00:01",
+			who: "아주아주긴이름을가진사람입니다",
+			body: "x".repeat(200),
+		},
+	];
+	const colLefts = (container: HTMLElement) =>
+		Array.from(container.querySelectorAll("th")).map((th) =>
+			Math.round(th.getBoundingClientRect().left),
+		);
+
+	it("keeps column positions across pages with different content", async () => {
+		const { container, rerender } = render(
+			<div style={{ width: 900 }}>
+				<Table columns={logCols} data={page1} keyExtractor={(r) => r.id} layout="fixed" />
+			</div>,
+		);
+		const before = colLefts(container);
+		rerender(
+			<div style={{ width: 900 }}>
+				<Table columns={logCols} data={page2} keyExtractor={(r) => r.id} layout="fixed" />
+			</div>,
+		);
+		expect(colLefts(container)).toEqual(before);
+		// 긴 이름은 잘리고(말줄임) 긴 본문은 칸 안에서 끊겨 표가 넘치지 않는다
+		const who = screen.getByText("아주아주긴이름을가진사람입니다");
+		expect(getComputedStyle(who).textOverflow).toBe("ellipsis");
+		expect(who.scrollWidth).toBeGreaterThan(who.clientWidth);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		expect(wrapper.scrollWidth).toBe(wrapper.clientWidth);
+	});
+
+	it("holds minWidth and scrolls the wrapper instead of squashing", () => {
+		const { container } = render(
+			<div style={{ width: 320 }}>
+				<Table
+					columns={logCols}
+					data={page1}
+					keyExtractor={(r) => r.id}
+					layout="fixed"
+					minWidth="40rem"
+				/>
+			</div>,
+		);
+		const table = container.querySelector("table") as HTMLElement;
+		expect(table.getBoundingClientRect().width).toBe(640);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+	});
+
+	it("applies minWidth in the default auto layout too", () => {
+		const { container } = render(
+			<div style={{ width: 320 }}>
+				<Table columns={logCols} data={page1} keyExtractor={(r) => r.id} minWidth="40rem" />
+			</div>,
+		);
+		expect((container.querySelector("table") as HTMLElement).getBoundingClientRect().width).toBe(
+			640,
+		);
+	});
+
+	it("keeps sort buttons and select-all visible and clickable on cards", async () => {
+		await page.viewport(375, 667);
+		const sortable = logCols.map((c) => (c.key === "time" ? { ...c, sortable: true } : c));
+		const onSortChange = vi.fn();
+		const { container } = render(
+			<Table
+				columns={sortable}
+				data={page1}
+				keyExtractor={(r) => r.id}
+				cards
+				onSortChange={onSortChange}
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		const sortButton = screen.getByRole("button", { name: /시각/ });
+		// Checkbox 는 native input 을 화면에서 숨기고 상자를 따로 그린다 - 그 칸을 잰다
+		const selectAll = screen
+			.getByRole("checkbox", { name: "전체 선택" })
+			.closest("th") as HTMLElement;
+		for (const el of [sortButton, selectAll]) {
+			const r = el.getBoundingClientRect();
+			expect(r.width).toBeGreaterThan(8);
+			expect(r.height).toBeGreaterThan(8);
+		}
+		// 조작할 것이 없는 머리 칸(사람 · 내용)은 여전히 화면 읽기용
+		const plainTh = Array.from(container.querySelectorAll("th")).find(
+			(th) => th.textContent === "사람",
+		) as HTMLElement;
+		// 열 width 인라인 스타일이 1px 를 이겨 폭은 남지만, absolute + clip 이라 보이지도 자리를 차지하지도 않는다
+		expect(getComputedStyle(plainTh).position).toBe("absolute");
+		expect(getComputedStyle(plainTh).clipPath).toContain("inset(50%)");
+		await userEvent.click(sortButton);
+		expect(onSortChange).toHaveBeenCalledWith({ key: "time", direction: "asc" });
+		await page.viewport(1280, 800);
+	});
+
+	it("stacks rows as labelled cards on compact screens and hides the head visually", async () => {
+		await page.viewport(375, 667);
+		const { container } = render(
+			<Table
+				columns={logCols}
+				data={page2}
+				keyExtractor={(r) => r.id}
+				layout="fixed"
+				minWidth="60rem"
+				cards
+			/>,
+		);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		// 카드에서는 minWidth 를 풀어 가로로 넘치지 않는다
+		expect(wrapper.scrollWidth).toBe(wrapper.clientWidth);
+		const thead = container.querySelector("thead") as HTMLElement;
+		expect(thead.getBoundingClientRect().height).toBeLessThanOrEqual(1);
+		const cells = Array.from(container.querySelectorAll("tbody td")) as HTMLElement[];
+		// 칸이 세로로 쌓이고 한 줄을 다 쓴다
+		const [a, b] = cells.map((c) => c.getBoundingClientRect());
+		expect(b?.top).toBeGreaterThanOrEqual(a?.bottom ?? 0);
+		expect(Math.round(a?.width ?? 0)).toBe(Math.round(b?.width ?? 0));
+		expect(getComputedStyle(cells[0] as HTMLElement, "::before").content).toBe('"시각"');
+		await page.viewport(1280, 800);
 	});
 });
