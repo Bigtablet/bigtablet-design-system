@@ -315,6 +315,31 @@ npm install @bigtablet/design-system
 </script>
 ```
 
+**제어 모드 - 바꾸기 전에 확인 · 비동기 (React `checked` + `onCheckedChange` 와 같은 모델):**
+
+권한 요청 · 서버 저장 · 확인 대화상자가 끝난 뒤에 바뀌어야 하는 토글은 `controlled: true`(또는 `data-controlled`)로 만든다.
+클릭은 `onCheckedChange(next)` 만 부르고 켜짐/꺼짐은 그대로 둔다 - 결과에 맞게 `setChecked()` 로 정한다. 실패하면 부르지 않으면 원래 상태로 남는다.
+
+```html
+<button type="button" class="bt-toggle" id="push-toggle" aria-label="이 단말로 알림 받기">
+  <span class="bt-toggle__thumb"></span>
+</button>
+
+<script>
+  const push = Bigtablet.Toggle('#push-toggle', {
+    controlled: true,
+    onCheckedChange: async (next) => {
+      const ok = next ? await subscribePush() : await unsubscribePush();
+      if (ok) push.setChecked(next);
+      else Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
+    }
+  });
+</script>
+```
+
+- 콜백이 Promise 를 돌려주면 끝날 때까지 `aria-busy="true"` 를 두고 클릭을 무시한다 - 권한 창이 떠 있는 동안 연타해도 두 번 등록되지 않는다
+- 제어 모드의 `setChecked()` 는 `onCheckedChange` 를 **부르지 않는다** (React 도 `checked` 가 바뀔 때 안 부름). 비제어(기본)는 예전처럼 부른다
+
 > `type="button"` 을 반드시 지정하세요 - 폼 안에서 기본 type(submit)이면 토글 클릭이
 > 폼을 제출합니다 (JS 초기화 시 자동 보정되지만 JS 로드 전 클릭은 막지 못합니다).
 
