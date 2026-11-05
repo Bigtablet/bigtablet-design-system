@@ -20,6 +20,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Alert](#alert)
   - [Toast](#toast)
   - [InlineAlert](#inlinealert)
+  - [Badge](#badge)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -798,6 +799,28 @@ Alert는 JavaScript로만 사용합니다.
 - `role` 은 상황에 맞게 소비자가 준다 - 처음부터 있는 안내는 주지 않는다(스크린리더가 끼어들면 소음). 나중에 나타나는 정보·성공은 `role="status"`, 즉시 알아야 하는 오류만 `role="alert"`
 - 나타날 때(서버가 처음부터 그린 경우 포함 · 스크립트가 `hidden` 을 풀 때) 짧은 진입 모션(0.2s, 4px)이 돈다 - React 와 같다. `prefers-reduced-motion` 에서는 없음
 - 닫기 버튼은 없다 - 닫아야 하는 안내는 React `onDismiss` 처럼 소비자 스크립트로 요소를 숨긴다
+
+---
+
+### Badge
+
+상태·분류를 보여 주는 작은 라벨입니다 (사용 중 · 정지 · 만료 등). React `Badge` 의 label 모양과 같으며 CSS 만으로 동작합니다.
+
+```html
+<span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span>
+<span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span>
+<span class="bt-badge bt-badge--neutral">정지</span>
+<span class="bt-badge">New</span>  <!-- 기본 accent · solid -->
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `--accent`(기본) · `--neutral` · `--info` · `--success` · `--warning` · `--error` | 톤 (React `BadgeTone` 과 같은 이름) |
+| `--soft` | 옅은 배경 + 진한 글자 (React `appearance="soft"`). 없으면 solid(진한 배경 + 흰/검 글자) |
+
+- 목록의 상태 표시처럼 여러 개가 나란히 있으면 `--soft` 가 차분하다. 눈에 띄어야 하는 하나만 solid
+- `neutral` 은 solid · soft 가 같다 (React 와 같음)
+- 크기(`sm`/`lg`)와 모양(dot · count)은 아직 없다 - React 기본값(md · label)과 같은 하나
 
 ---
 
