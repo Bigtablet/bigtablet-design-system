@@ -611,6 +611,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 닫을 때는 포커스를 바로 돌려주고, 모션이 끝난 뒤 `is-open` 을 떼고 스크롤 잠금을 푼다. 그사이 모달에는
 `data-state="closed"` 와 `inert` 가 붙는다. 닫히는 중 `open()` 하면 그 자리에서 되돌아 열리고, `destroy()` 는 기다리지 않고 바로 걷는다.
 `prefers-reduced-motion` 에서는 모션 없이 바로 닫힌다.
+`.bt-modal` · `.bt-modal__panel` 의 `data-state` 와 `inert` 는 번들이 쓰는 속성이다 - 소비자 마크업에서 따로 쓰지 않는다.
 
 > Escape 는 열린 오버레이들이 **공유하는 스택**이 처리한다 - Modal 위에 `Alert` 를 띄우면 Escape 한 번에
 > 최상단(Alert)만 닫히고 Modal 은 남는다. React 쪽 `useOverlayEscape` 와 같은 규약이다. 이전에는 오버레이마다
