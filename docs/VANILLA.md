@@ -329,9 +329,14 @@ npm install @bigtablet/design-system
   const push = Bigtablet.Toggle('#push-toggle', {
     controlled: true,
     onCheckedChange: async (next) => {
-      const ok = next ? await subscribePush() : await unsubscribePush();
-      if (ok) push.setChecked(next);
-      else Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
+      try {
+        const ok = next ? await subscribePush() : await unsubscribePush();
+        if (!ok) throw new Error('push subscription failed');
+        push.setChecked(next);
+      } catch {
+        // reject 도 실패다 - 잡지 않으면 Toggle 은 대기만 풀고 사용자는 실패를 모른다
+        Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
+      }
     }
   });
 </script>
