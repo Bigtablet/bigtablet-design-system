@@ -22,6 +22,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [InlineAlert](#inlinealert)
   - [Badge](#badge)
   - [Table](#table)
+  - [CopyButton](#copybutton)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -865,6 +866,48 @@ Alert는 JavaScript로만 사용합니다.
 - 상자가 가로로 넘칠 수 있으면(`--bt-table-min-width` · 칸이 많은 표) `tabindex="0"` 과 `aria-label` 을 준다 - 키보드 사용자가 상자에 포커스를 두고 ←→ 로 가려진 열을 본다. CSS 는 넘침을 알 수 없어 React 처럼 자동으로 달지 못한다 (axe `scrollable-region-focusable`)
 - 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
 - 칸 머리 안의 `bt-sr-only` 는 상자 기준으로 숨는다 (`.bt-table-wrap` 이 `position: relative`) - 페이지 폭을 넓히지 않는다
+
+---
+
+### CopyButton
+
+값을 클립보드에 복사하는 버튼입니다. React `CopyButton` 과 같은 동작이며, `data-bt-copy` 를 단 버튼은 자동으로 초기화됩니다.
+
+```html
+<!-- 기본 - 누르면 값을 복사하고 2초간 "복사됨" 으로 바뀐다 -->
+<button class="bt-button bt-button--sm bt-button--outline" data-bt-copy="10.8.0.2/32" th:attr="data-bt-copy=${peer.address}">복사</button>
+
+<!-- 아이콘과 함께 - 바뀌는 문구만 data-copy-label 로 감싼다 -->
+<button class="bt-button bt-button--sm bt-button--outline" data-bt-copy="https://example.com/invite/abc">
+  <svg aria-hidden="true" ...></svg><span data-copy-label>링크 복사</span>
+</button>
+
+<script>
+  // 직접 만들기 - 누를 때 계산하는 값 · 결과 콜백 (React 와 같은 이름)
+  Bigtablet.CopyButton('#copy-key', {
+    text: () => document.querySelector('#api-key').value,
+    label: 'API 키 복사',
+    copiedLabel: '복사됨',
+    failedLabel: '복사하지 못했습니다',
+    resetAfter: 2000,
+    onCopy: () => Bigtablet.Toast('복사했습니다', 'success'),
+    onError: () => Bigtablet.Toast('복사하지 못했습니다. 직접 선택해 복사해 주세요', 'error'),
+  });
+</script>
+```
+
+| 옵션 (`data-*`) | 기본값 | 설명 |
+|---|---|---|
+| `text` (`data-bt-copy`) | - | 복사할 값. 함수면 누를 때 계산한다 (throw 하면 실패로 처리) |
+| `label` (`data-label`) | 버튼의 지금 글자 | 버튼 이름 · 문구. 이름(`aria-label`)은 "복사됨" 으로 바뀌지 않는다 |
+| `copiedLabel` (`data-copied-label`) | `복사됨` | 복사 직후 문구 |
+| `failedLabel` (`data-failed-label`) | `복사하지 못했습니다` | 실패 시 스크린리더에 알리는 문구 |
+| `resetAfter` | `2000` | 문구를 되돌리기까지(ms). `0` 이면 되돌리지 않는다 |
+| `onCopy` · `onError` | - | 성공(값) · 실패(오류) - Toast 를 띄우려면 여기서 |
+
+- 결과는 버튼 옆에 넣는 숨은 `role="status"` 로 알린다 (보이는 문구만 바뀌고 이름은 그대로 - 포커스 중 두 번 읽지 않게)
+- Clipboard API 가 없거나 거부되는 환경(HTTP 사내망 · 인앱 브라우저)에서는 `execCommand("copy")` 로 대신 복사하고, 사용자가 잡아 둔 선택 영역과 포커스를 되돌린다. 그것도 막히면 `onError` - 값을 옆에 보이게 두면 사용자가 직접 복사할 수 있다
+- 연타하면 마지막 복사만 반영한다. `copyButton.destroy()` 로 리스너와 status 를 걷는다
 
 ---
 
