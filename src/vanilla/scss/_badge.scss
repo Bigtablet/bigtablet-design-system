@@ -1,0 +1,62 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Badge - React `src/ui/display/badge/style.scss` 의 label 모양(md)을 bt-badge* 로 옮겼다 (#917).
+   tone(6) × appearance(solid / soft) 만 - size · shape(dot / count) 는 필요해지면 따로. 값을 바꿀 때는
+   두 파일을 함께 고친다.
+   ======================================== */
+.bt-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: token.$radius_full;
+  font-family: token.$font_family_primary;
+  font-size: token.$font_size_12;
+  font-weight: token.$font_weight_semi_bold;
+  line-height: 1;
+  letter-spacing: token.$letter_spacing_tight;
+  white-space: nowrap;
+  // tone modifier 가 없으면 React 기본값(tone="accent", appearance="solid")과 같다
+  background: token.$color_accent_default;
+  color: token.$color_accent_on_surface;
+
+  &--soft {
+    background: token.$color_accent_subtle;
+    color: token.$color_accent_default;
+  }
+
+  // ── Tone ────────────────────────────────────────────────────────────
+  // solid: 강한 fill + on-default 텍스트 / soft: tint 배경(status container) + 진한 텍스트(on-container)
+
+  // accent 는 위 기본값 - 클래스로 명시해도 같다
+  &--accent {
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+
+    &.bt-badge--soft {
+      background: token.$color_accent_subtle;
+      color: token.$color_accent_default;
+    }
+  }
+
+  // neutral 은 solid / soft 동일 - 이미 subtle 톤 (React 와 같음)
+  &--neutral,
+  &--neutral.bt-badge--soft {
+    background: token.$color_bg_solid_dim;
+    color: token.$color_text_body;
+  }
+
+  @each $tone in (info, success, warning, error) {
+    &--#{$tone} {
+      background: var(--bt-color-status-#{$tone});
+      color: var(--bt-color-status-#{$tone}-on-default);
+
+      &.bt-badge--soft {
+        background: var(--bt-color-status-#{$tone}-container);
+        color: var(--bt-color-status-#{$tone}-on-container);
+      }
+    }
+  }
+}

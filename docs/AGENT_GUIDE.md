@@ -520,7 +520,7 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Card, Spinner, Pagination, DatePicker, FileInput.
 
 Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
