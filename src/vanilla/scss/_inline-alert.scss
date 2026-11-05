@@ -43,7 +43,8 @@ $_icon_paths: (
   color: token.$color_text_body;
   // tone modifier 가 없으면 React 기본값(tone="info")과 같다
   background: var(--bt-color-status-info-container);
-  // 나중에 나타나는 경우(스크립트가 hidden 을 풀 때)에 툭 튀지 않게
+  // 나중에 나타나는 경우(스크립트가 hidden 을 풀 때)에 툭 튀지 않게 - 처음부터 그려진 것도 같은 모션이 도는데,
+  // CSS 로는 둘을 가를 수 없고 짧아서(0.2s · 4px) 무해하다 (React 와 같음)
   animation: bt-inline-alert-enter token.$duration_base token.$easing_enter;
 
   &[hidden] {

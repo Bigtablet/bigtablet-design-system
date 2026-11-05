@@ -796,7 +796,7 @@ Alert는 JavaScript로만 사용합니다.
 | `__title` · `__message` · `__action` | 굵은 제목 · 본문 · 버튼/링크 줄 (`__content` 안) |
 
 - `role` 은 상황에 맞게 소비자가 준다 - 처음부터 있는 안내는 주지 않는다(스크린리더가 끼어들면 소음). 나중에 나타나는 정보·성공은 `role="status"`, 즉시 알아야 하는 오류만 `role="alert"`
-- 스크립트가 `hidden` 을 풀어 보이면 짧은 진입 모션이 돈다 (`prefers-reduced-motion` 에서는 없음)
+- 나타날 때(서버가 처음부터 그린 경우 포함 · 스크립트가 `hidden` 을 풀 때) 짧은 진입 모션(0.2s, 4px)이 돈다 - React 와 같다. `prefers-reduced-motion` 에서는 없음
 - 닫기 버튼은 없다 - 닫아야 하는 안내는 React `onDismiss` 처럼 소비자 스크립트로 요소를 숨긴다
 
 ---
