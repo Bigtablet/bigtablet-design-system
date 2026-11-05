@@ -18,6 +18,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Dropdown](#dropdown)
   - [Modal](#modal)
   - [Alert](#alert)
+  - [Toast](#toast)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -668,6 +669,46 @@ Alert는 JavaScript로만 사용합니다.
 | `onConfirm` | `function` | - | 확인 콜백 |
 | `onCancel` | `function` | - | 취소 콜백 |
 
+닫을 때 퇴출 모션(페이드아웃 + 아래로)이 끝난 뒤 DOM 에서 걷고 스크롤 잠금을 풉니다. 포커스는 바로 트리거로 돌아갑니다. `prefers-reduced-motion` 에서는 기다리지 않습니다.
+
+---
+
+### Toast
+
+짧은 결과를 알리고 저절로 사라지는 알림입니다. React `useToast` 와 같은 모양·동작이며 JavaScript 로만 씁니다 - 마크업은 번들이 만듭니다.
+
+```html
+<script>
+  Bigtablet.Toast("저장했습니다", "success");
+  Bigtablet.Toast("알림 받기를 켜지 못했습니다", "error");
+
+  // 되돌리기 버튼 - 누르면 실행하고 닫힌다
+  Bigtablet.Toast("삭제했습니다", "neutral", {
+    action: { label: "실행 취소", onClick: () => restore() },
+  });
+
+  // 저절로 닫히지 않는 진행 토스트 - 돌려받은 dismiss 로 닫는다
+  const uploading = Bigtablet.Toast("업로드 중…", "info", { duration: Infinity });
+  uploading.dismiss();
+</script>
+```
+
+`Bigtablet.Toast(message, tone, options)` → `{ dismiss }`
+
+| 인자 | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | - | 본문. 텍스트로 넣는다 (HTML 은 해석하지 않음) |
+| `tone` | `string` | `'neutral'` | `'success'`, `'error'`, `'warning'`, `'info'`, `'neutral'` |
+| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 면 막대 없이 닫기 버튼·`dismiss` 로만 닫힘 |
+| `options.action` | `{ label, onClick }` | - | 메시지 옆 텍스트 버튼. 한 번만 실행되고 토스트를 닫는다 |
+| `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
+| `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
+
+- 오른쪽 위에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
+- `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
+- `prefers-reduced-motion` 에서는 모션만 빠지고 시간은 그대로 간다
+
 ---
 
 ### Card
@@ -1016,6 +1057,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Alert (즉시 표시)
   Bigtablet.Alert({ title: '알림', message: '메시지' });
+
+  // Toast (즉시 표시)
+  Bigtablet.Toast('저장했습니다', 'success');
 });
 
 // 전체 재초기화

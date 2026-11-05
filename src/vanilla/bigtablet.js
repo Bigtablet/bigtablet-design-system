@@ -317,6 +317,20 @@
 		return value !== "false";
 	}
 
+	/**
+	 * 퇴출 모션이 끝나면 done 을 부른다 - React `usePresence` 와 같은 판정 (#909).
+	 * 닫힘 상태(클래스·data-state)를 건 **뒤에** 부른다 - getAnimations() 가 대기 중인 스타일을 먼저 반영해
+	 * 방금 시작된 퇴출 애니메이션·transition 이 잡힌다. 돌고 있는 것이 없으면(reduced-motion, jsdom)
+	 * 바로 부른다 - animationend 를 기다리면 오지 않아 요소가 남는다. 자식은 훑지 않는다(본문의
+	 * Spinner 같은 무한 애니메이션을 기다리면 영영 끝나지 않는다).
+	 */
+	function afterExit(elements, done) {
+		const animations = elements.flatMap((el) => el?.getAnimations?.() ?? []);
+		if (animations.length === 0) done();
+		// allSettled - 진입 도중 닫혀 취소된 애니메이션(finished reject)도 끝난 것으로 본다.
+		else void Promise.allSettled(animations.map((a) => a.finished)).then(done);
+	}
+
 	/** 검색 행 아이콘 (lucide `Search` 와 동일한 path - React Dropdown 이 쓰는 아이콘) */
 	const SEARCH_ICON_SVG =
 		'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -1430,20 +1444,14 @@
 			if (focusHere && previousFocus && typeof previousFocus.focus === "function") {
 				previousFocus.focus();
 			}
-			// 퇴출 모션이 끝난 뒤 걷고 잠금을 푼다 - React usePresence 와 같은 판정 (#909).
-			// 돌고 있는 애니메이션이 없으면(reduced-motion, jsdom) 기다리지 않는다 - animationend 를
-			// 기다리면 오지 않아 오버레이와 스크롤 잠금이 남는다.
+			// 퇴출 모션이 끝난 뒤 걷고 잠금을 푼다 (#909)
 			overlay.classList.add("is-closing");
 			// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게 - aria-hidden 은 포커스를 막지 못한다
 			overlay.setAttribute("inert", "");
-			const animations = [overlay, alertPanel].flatMap((el) => el?.getAnimations?.() ?? []);
-			const finish = () => {
+			afterExit([overlay, alertPanel], () => {
 				overlay.remove();
 				unlockScroll();
-			};
-			if (animations.length === 0) finish();
-			// allSettled - 진입 도중 닫혀 취소된 애니메이션(finished reject)도 끝난 것으로 본다.
-			else void Promise.allSettled(animations.map((a) => a.finished)).then(finish);
+			});
 		}
 
 		// 오버레이 클릭 / Escape 는 "취소"와 동등한 동작이어야 한다 (WAI-ARIA APG alertdialog).
@@ -1509,6 +1517,139 @@
 		if (confirmBtn) confirmBtn.focus();
 
 		return { close };
+	}
+
+	/* ========================================
+     Toast Component
+     ======================================== */
+
+	/** 동시에 떠 있는 토스트 수 - React `ToastProvider` 의 maxCount 기본값과 같다 */
+	const TOAST_MAX_COUNT = 5;
+
+	// lucide 아이콘 - React Toast 의 TONE_ICONS(iconSize.md = 18) · X(iconSize.xs = 14) 와 같은 path
+	const toastSvg = (size, body) =>
+		`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
+		`stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+	const TOAST_ICONS = {
+		success: toastSvg(18, '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>'),
+		error: toastSvg(
+			18,
+			'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+		),
+		warning: toastSvg(
+			18,
+			'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>' +
+				'<path d="M12 9v4"/><path d="M12 17h.01"/>',
+		),
+		info: toastSvg(
+			18,
+			'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+		),
+		neutral: toastSvg(
+			18,
+			'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+		),
+	};
+	const TOAST_CLOSE_ICON = toastSvg(14, '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
+
+	/**
+	 * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고, 최대
+	 * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
+	 * 포커스가 있으면 멈춘다(WCAG 2.2.1 - CSS).
+	 *
+	 * @param {string} message - 본문 (텍스트로 넣는다 - HTML 은 해석하지 않는다)
+	 * @param {"success"|"error"|"warning"|"info"|"neutral"} [tone="neutral"]
+	 * @param {Object} [options]
+	 * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity` 면 닫기 버튼·dismiss 로만 닫힌다
+	 * @param {{label: string, onClick: Function}} [options.action] - 메시지 옆 텍스트 버튼. 누르면 실행 후 닫힌다
+	 * @param {string} [options.closeLabel="닫기"] - 닫기 버튼 aria-label
+	 * @param {string} [options.regionLabel="알림"] - 토스트 리전 이름. 리전을 처음 만들 때만 쓴다
+	 * @returns {{dismiss: Function}}
+	 */
+	function Toast(message, tone = "neutral", options = {}) {
+		const { duration = 3000, action, closeLabel = "닫기", regionLabel = "알림" } = options;
+		// 모르는 tone 은 neutral - `in` 이 아니라 keys 라 "toString" 같은 상속 키도 거른다
+		const safeTone = Object.keys(TOAST_ICONS).includes(tone) ? tone : "neutral";
+
+		let region = document.querySelector(".bt-toast-container");
+		if (!region) {
+			region = document.createElement("div");
+			region.className = "bt-toast-container";
+			region.setAttribute("role", "region");
+			region.setAttribute("aria-live", "polite");
+			region.setAttribute("aria-atomic", "false");
+			region.setAttribute("aria-label", regionLabel);
+			document.body.appendChild(region);
+		}
+
+		const item = document.createElement("div");
+		item.className = "bt-toast";
+		item.dataset.state = "open";
+		// 라이브 리전은 아이콘 + 메시지만 감싼다 - 버튼까지 읽히면 소음이다 (React 와 같음)
+		item.innerHTML =
+			`<div class="bt-toast__live" role="${safeTone === "error" ? "alert" : "status"}">` +
+			`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
+			'<span class="bt-toast__message"></span></div>';
+		item.querySelector(".bt-toast__message").textContent = message;
+
+		let closing = false;
+
+		function dismiss() {
+			if (closing) return;
+			closing = true;
+			// 포커스가 이 토스트 안이면(닫기 버튼 Enter 등) 걷힐 때 body 로 떨어지지 않게 이웃 토스트의
+			// 닫기 버튼으로 넘긴다 - 아래(오래된 쪽) 우선 (React 와 같음, WCAG 2.4.3)
+			if (item.contains(document.activeElement)) {
+				const closes = $$('.bt-toast:not([data-state="closed"]) .bt-toast__close', region);
+				const index = closes.findIndex((el) => item.contains(el));
+				(closes[index + 1] || closes[index - 1])?.focus();
+			}
+			item.dataset.state = "closed";
+			// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게
+			item.setAttribute("inert", "");
+			afterExit([item], () => item.remove());
+		}
+
+		if (action) {
+			const actionBtn = document.createElement("button");
+			actionBtn.type = "button";
+			actionBtn.className = "bt-toast__action";
+			actionBtn.textContent = action.label;
+			actionBtn.addEventListener("click", () => {
+				// 퇴출 모션 동안 버튼이 남아 있다 - 연타로 되돌리기가 두 번 돌지 않게
+				if (closing) return;
+				action.onClick?.();
+				dismiss();
+			});
+			item.appendChild(actionBtn);
+		}
+
+		const closeBtn = document.createElement("button");
+		closeBtn.type = "button";
+		closeBtn.className = "bt-toast__close";
+		closeBtn.setAttribute("aria-label", closeLabel);
+		closeBtn.innerHTML = TOAST_CLOSE_ICON;
+		closeBtn.addEventListener("click", dismiss);
+		item.appendChild(closeBtn);
+
+		// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다
+		if (Number.isFinite(duration)) {
+			const progress = document.createElement("div");
+			progress.className = `bt-toast__progress bt-toast__progress--${safeTone}`;
+			progress.style.setProperty("--bt-toast-duration", `${duration}ms`);
+			progress.setAttribute("aria-hidden", "true");
+			progress.addEventListener("animationend", dismiss);
+			item.appendChild(progress);
+		}
+
+		item._btDismiss = dismiss;
+		region.prepend(item);
+		// 넘친 오래된 것은 잘라내지 않고 같은 퇴출 경로로 내보낸다 - 안의 포커스가 body 로 떨어지지 않게
+		for (const el of $$('.bt-toast:not([data-state="closed"])', region).slice(TOAST_MAX_COUNT)) {
+			el._btDismiss?.();
+		}
+
+		return { dismiss };
 	}
 
 	/* ========================================
@@ -1973,6 +2114,7 @@
 		Dropdown,
 		Modal,
 		Alert,
+		Toast,
 		Toggle,
 		Pagination,
 
