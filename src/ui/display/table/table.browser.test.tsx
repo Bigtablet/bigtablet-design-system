@@ -1,7 +1,7 @@
 /// <reference types="@vitest/browser-playwright" />
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { cdp, userEvent } from "vitest/browser";
+import { cdp, page, userEvent } from "vitest/browser";
 import { Table, type TableColumn } from "./index";
 import "./style.scss";
 
@@ -99,5 +99,92 @@ describe("Table clickable row focus (Chromium)", () => {
 		} finally {
 			await setForcedColors("none");
 		}
+	});
+});
+
+describe("Table fixed layout · cards (Chromium, #915)", () => {
+	type Log = { id: number; time: string; who: string; body: string };
+	const logCols: TableColumn<Log>[] = [
+		{ key: "time", header: "시각", width: "12rem", truncate: true },
+		{ key: "who", header: "사람", width: "8rem", truncate: true },
+		{ key: "body", header: "내용" },
+	];
+	const page1: Log[] = [{ id: 1, time: "2026-10-28 09:00:00", who: "박상민", body: "짧음" }];
+	const page2: Log[] = [
+		{
+			id: 2,
+			time: "2026-10-28 09:00:01",
+			who: "아주아주긴이름을가진사람입니다",
+			body: "x".repeat(200),
+		},
+	];
+	const colLefts = (container: HTMLElement) =>
+		Array.from(container.querySelectorAll("th")).map((th) =>
+			Math.round(th.getBoundingClientRect().left),
+		);
+
+	it("keeps column positions across pages with different content", async () => {
+		const { container, rerender } = render(
+			<div style={{ width: 900 }}>
+				<Table columns={logCols} data={page1} keyExtractor={(r) => r.id} layout="fixed" />
+			</div>,
+		);
+		const before = colLefts(container);
+		rerender(
+			<div style={{ width: 900 }}>
+				<Table columns={logCols} data={page2} keyExtractor={(r) => r.id} layout="fixed" />
+			</div>,
+		);
+		expect(colLefts(container)).toEqual(before);
+		// 긴 이름은 잘리고(말줄임) 긴 본문은 칸 안에서 끊겨 표가 넘치지 않는다
+		const who = screen.getByText("아주아주긴이름을가진사람입니다");
+		expect(getComputedStyle(who).textOverflow).toBe("ellipsis");
+		expect(who.scrollWidth).toBeGreaterThan(who.clientWidth);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		expect(wrapper.scrollWidth).toBe(wrapper.clientWidth);
+	});
+
+	it("holds minWidth and scrolls the wrapper instead of squashing", () => {
+		const { container } = render(
+			<div style={{ width: 320 }}>
+				<Table
+					columns={logCols}
+					data={page1}
+					keyExtractor={(r) => r.id}
+					layout="fixed"
+					minWidth="40rem"
+				/>
+			</div>,
+		);
+		const table = container.querySelector("table") as HTMLElement;
+		expect(table.getBoundingClientRect().width).toBe(640);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+	});
+
+	it("stacks rows as labelled cards on compact screens and hides the head visually", async () => {
+		await page.viewport(375, 667);
+		const { container } = render(
+			<Table
+				columns={logCols}
+				data={page2}
+				keyExtractor={(r) => r.id}
+				layout="fixed"
+				minWidth="60rem"
+				cards
+			/>,
+		);
+		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
+		// 카드에서는 minWidth 를 풀어 가로로 넘치지 않는다
+		expect(wrapper.scrollWidth).toBe(wrapper.clientWidth);
+		const thead = container.querySelector("thead") as HTMLElement;
+		expect(thead.getBoundingClientRect().height).toBeLessThanOrEqual(1);
+		const cells = Array.from(container.querySelectorAll("tbody td")) as HTMLElement[];
+		// 칸이 세로로 쌓이고 한 줄을 다 쓴다
+		const [a, b] = cells.map((c) => c.getBoundingClientRect());
+		expect(b?.top).toBeGreaterThanOrEqual(a?.bottom ?? 0);
+		expect(Math.round(a?.width ?? 0)).toBe(Math.round(b?.width ?? 0));
+		expect(getComputedStyle(cells[0] as HTMLElement, "::before").content).toBe('"시각"');
+		await page.viewport(1280, 800);
 	});
 });

@@ -556,6 +556,33 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
 &lt;/div&gt;</code></pre>
     </div>
 
+    <!-- Table -->
+    <div class="section">
+      <h2>Table (CSS only)</h2>
+      <div class="bt-table-wrap">
+        <table class="bt-table bt-table--fixed bt-table--cards" style="--bt-table-min-width: 40rem">
+          <colgroup><col style="width: 12rem"><col style="width: 9rem"><col style="width: 7rem"><col></colgroup>
+          <thead>
+            <tr><th scope="col">시각</th><th scope="col">사람</th><th scope="col">상태</th><th scope="col">내용</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="bt-table__truncate" data-label="시각" title="2026-10-28 09:00:00">2026-10-28 09:00:00</td>
+              <td class="bt-table__truncate" data-label="사람" title="박상민">박상민</td>
+              <td data-label="상태"><span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span></td>
+              <td data-label="내용">로그인</td>
+            </tr>
+            <tr class="is-selected">
+              <td class="bt-table__truncate" data-label="시각" title="2026-10-28 09:12:41">2026-10-28 09:12:41</td>
+              <td class="bt-table__truncate" data-label="사람" title="아주아주긴이름을가진외부협력사담당자">아주아주긴이름을가진외부협력사담당자</td>
+              <td data-label="상태"><span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span></td>
+              <td data-label="내용">접속 대상 3개의 권한을 바꾸고 기존 세션을 끊었다. 바뀐 권한은 다음 접속부터 적용된다.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Badge -->
     <div class="section">
       <h2>Badge (CSS only)</h2>

@@ -263,7 +263,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
-| `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
+| `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`, `layout` (auto/fixed - fixed keeps column positions across pages), `minWidth`, `cards` (stack rows as cards on compact). Column `truncate` for one-line ellipsis. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal rule. | `weight` (standard/heavy). Horizontal only - there is no vertical variant. |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
 | `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`. Hover bg works in any open state. |
@@ -520,7 +520,7 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), Card, Spinner, Pagination, DatePicker, FileInput.
 
 Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 

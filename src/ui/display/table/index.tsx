@@ -52,6 +52,11 @@ export interface TableColumn<T extends object> {
 	align?: "left" | "center" | "right";
 	/** 정렬 가능한 컬럼 여부 (기본값: false). 클릭 시 `onSortChange` 발화 - 실제 정렬은 소비자가 수행 */
 	sortable?: boolean;
+	/**
+	 * 한 줄로 두고 넘치면 말줄임으로 자른다 (기본값: false). 자동 렌더(문자열 값)면 전체 값을 `title` 로 단다.
+	 * 열 폭이 정해져야 잘리므로 `layout="fixed"` + `width` 와 함께 쓴다 - 시각 · IP 처럼 길이가 거의 같은 칸.
+	 */
+	truncate?: boolean;
 }
 
 /** `selectable` 시 `rowKey` 를 요구하기 위한 판별 유니온 */
@@ -92,6 +97,23 @@ export type TableProps<T extends object> = {
 	hoverable?: boolean;
 	/** thead sticky 고정 (기본값: false) */
 	stickyHeader?: boolean;
+	/**
+	 * 열 너비 계산 방식 (기본값: "auto").
+	 * - `auto`: 브라우저가 내용 길이로 잰다 - 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다
+	 * - `fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다.
+	 *   목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때
+	 */
+	layout?: "auto" | "fixed";
+	/**
+	 * 표의 최소 폭 (예: "60rem"). 좁은 화면에서 `fixed` 표의 너비 없는 열이 사라질 만큼 눌리지 않게 -
+	 * 넘치면 래퍼가 가로로 스크롤한다. `cards` 로 카드가 된 화면에서는 무시한다.
+	 */
+	minWidth?: string;
+	/**
+	 * 좁은 화면(compact)에서 행을 카드로 쌓는다 (기본값: false). 칸 머리는 화면 읽기용으로만 남고, 칸마다
+	 * 머리 글자(`header` 가 문자열일 때)를 라벨로 붙인다. 칸이 많아 가로로 넘치는 목록용
+	 */
+	cards?: boolean;
 	/** 스크린 리더용 테이블 레이블 */
 	ariaLabel?: string;
 	/** 루트 wrapper에 추가할 className */
@@ -150,6 +172,9 @@ export const Table = <T extends object>({
 	size = "md",
 	hoverable = true,
 	stickyHeader = false,
+	layout = "auto",
+	minWidth,
+	cards = false,
 	ariaLabel,
 	className,
 	onRowClick,
@@ -179,6 +204,7 @@ export const Table = <T extends object>({
 		"table_wrapper",
 		`table_size_${size}`,
 		stickyHeader && "table_sticky_header",
+		cards && "table_cards",
 		className,
 	);
 
@@ -329,7 +355,13 @@ export const Table = <T extends object>({
 	return (
 		<div ref={wrapperRef} className={wrapperClassName}>
 			{/* aria-busy - 스켈레톤 로딩 중임을 AT 에 전달 (시각 전용이던 문제 수정) */}
-			<table className="table" aria-label={ariaLabel} aria-busy={isLoading || undefined}>
+			<table
+				className={cn("table", layout === "fixed" && "table_layout_fixed")}
+				// 카드가 된 화면에서 CSS 가 풀 수 있게 인라인 min-width 가 아니라 변수로 넘긴다
+				style={minWidth ? ({ "--table-min-width": minWidth } as React.CSSProperties) : undefined}
+				aria-label={ariaLabel}
+				aria-busy={isLoading || undefined}
+			>
 				<thead className="table_thead">
 					<tr>
 						{selectable && (
@@ -480,21 +512,32 @@ export const Table = <T extends object>({
 												/>
 											</td>
 										)}
-										{columns.map((col) => (
-											<td
-												key={col.key}
-												className={cn("table_td", col.align && `table_align_${col.align}`)}
-												style={{ width: col.width }}
-											>
-												{(() => {
-													if (col.render) return col.render(item, rowIndex);
-													const value = (item as Record<string, unknown>)[col.key];
-													return value === null || value === undefined || value === ""
-														? "-"
-														: String(value);
-												})()}
-											</td>
-										))}
+										{columns.map((col) => {
+											const value = col.render
+												? undefined
+												: (item as Record<string, unknown>)[col.key];
+											const text =
+												value === null || value === undefined || value === "" ? "-" : String(value);
+											return (
+												<td
+													key={col.key}
+													className={cn(
+														"table_td",
+														col.align && `table_align_${col.align}`,
+														col.truncate && "table_td_truncate",
+													)}
+													style={{ width: col.width }}
+													// 잘린 칸의 전체 값 - render 를 쓴 칸은 내용이 무엇인지 몰라 소비자가 단다
+													title={col.truncate && !col.render ? text : undefined}
+													// 카드에서 칸 머리 대신 보이는 라벨
+													data-label={
+														cards && typeof col.header === "string" ? col.header : undefined
+													}
+												>
+													{col.render ? col.render(item, rowIndex) : text}
+												</td>
+											);
+										})}
 									</tr>
 								);
 							})}

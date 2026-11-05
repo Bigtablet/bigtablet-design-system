@@ -4562,6 +4562,9 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `skeletonRows` | `number` | `5` | 로딩 시 스켈레톤 행 개수 |
 | `hoverable` | `boolean` | `true` | 행 hover 강조 |
 | `stickyHeader` | `boolean` | `false` | thead sticky 고정. **표를 감싼 요소에 확정된 높이**(`height: 240px` 등)를 줘야 동작한다 - 표 래퍼가 그 높이를 물려받아 스스로 스크롤 컨테이너가 된다. 높이가 확정이 아니면(`max-height` 만, 또는 페이지 전체 스크롤) 아무 일도 하지 않는다 |
+| `layout` | `'auto' \| 'fixed'` | `'auto'` | 열 너비 계산. `fixed` 면 열 `width` 를 그대로 써서 쪽을 넘겨도 열 위치가 같다 - 너비 없는 열이 남는 폭을 나눠 가지며 줄바꿈 |
+| `minWidth` | `string` | - | 표 최소 폭(예: `"60rem"`). 좁은 화면에서 눌리지 않고 래퍼가 가로로 스크롤. `cards` 로 카드가 된 화면에서는 무시 |
+| `cards` | `boolean` | `false` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다. 칸 머리는 화면 읽기용으로 남고 칸마다 `header`(문자열일 때)를 라벨로 붙인다 |
 | `ariaLabel` | `string` | - | 스크린리더용 테이블 레이블 |
 | `onRowClick` | `(item: T, index: number) => void` | - | 행 클릭 콜백 |
 | `rowClickHint` | `string` | `'클릭 가능한 행'` | clickable 행에 `aria-describedby` 로 연결되는 동작 설명. `''` 면 힌트 미부착 |
@@ -4586,6 +4589,7 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
 | `width` | `string` | - | CSS width 값 (예: `"120px"`, `"20%"`) |
 | `align` | `'left' \| 'center' \| 'right'` | `'left'` | 정렬 |
 | `sortable` | `boolean` | `false` | 정렬 가능 여부. 클릭 시 `onSortChange` 발화 |
+| `truncate` | `boolean` | `false` | 한 줄로 두고 넘치면 말줄임. 자동 렌더면 전체 값을 `title` 로 단다(`render` 칸은 소비자가). `layout="fixed"` + `width` 와 함께 |
 
 **`TableSort`**
 

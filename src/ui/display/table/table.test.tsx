@@ -1080,3 +1080,62 @@ describe("Table 분기 단언", () => {
 		expect(container.querySelector(".table_sr_only")).toBeNull();
 	});
 });
+
+describe("Table - 고정 너비 · 말줄임 · 카드 (#915)", () => {
+	it("layout=fixed 면 표에 고정 레이아웃 클래스를 붙이고 minWidth 는 변수로 넘긴다", () => {
+		const { container } = render(
+			<Table
+				columns={columns}
+				data={rows}
+				keyExtractor={(r) => r.id}
+				layout="fixed"
+				minWidth="60rem"
+			/>,
+		);
+		const table = container.querySelector("table") as HTMLTableElement;
+		expect(table).toHaveClass("table", "table_layout_fixed");
+		expect(table.style.getPropertyValue("--table-min-width")).toBe("60rem");
+	});
+
+	it("기본은 자동 레이아웃이고 인라인 스타일을 남기지 않는다", () => {
+		const { container } = render(
+			<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />,
+		);
+		const table = container.querySelector("table") as HTMLTableElement;
+		expect(table).not.toHaveClass("table_layout_fixed");
+		expect(table.getAttribute("style")).toBeNull();
+	});
+
+	it("truncate 칸은 말줄임 클래스와 전체 값 title 을 단다 - render 칸에는 title 을 짓지 않는다", () => {
+		const cols: TableColumn<Row>[] = [
+			{ key: "name", header: "Name", truncate: true },
+			{ key: "score", header: "Score", truncate: true, render: (r) => <b>{r.score}점</b> },
+		];
+		render(<Table columns={cols} data={rows} keyExtractor={(r) => r.id} />);
+		const nameCell = screen.getByText("Alpha");
+		expect(nameCell).toHaveClass("table_td_truncate");
+		expect(nameCell).toHaveAttribute("title", "Alpha");
+		const scoreCell = screen.getByText("90점").closest("td") as HTMLElement;
+		expect(scoreCell).toHaveClass("table_td_truncate");
+		expect(scoreCell).not.toHaveAttribute("title");
+	});
+
+	it("cards 면 래퍼에 카드 클래스를, 칸에 문자열 머리를 data-label 로 단다", () => {
+		const cols: TableColumn<Row>[] = [
+			{ key: "name", header: "Name" },
+			{ key: "score", header: <span>Score</span> },
+		];
+		const { container } = render(
+			<Table columns={cols} data={rows} keyExtractor={(r) => r.id} cards />,
+		);
+		expect(container.firstElementChild).toHaveClass("table_wrapper", "table_cards");
+		expect(screen.getByText("Alpha")).toHaveAttribute("data-label", "Name");
+		// ReactNode 머리는 글자로 옮길 수 없어 라벨을 짓지 않는다
+		expect(screen.getByText("90")).not.toHaveAttribute("data-label");
+	});
+
+	it("cards 가 아니면 data-label 을 달지 않는다", () => {
+		render(<Table columns={columns} data={rows} keyExtractor={(r) => r.id} />);
+		expect(screen.getByText("Alpha")).not.toHaveAttribute("data-label");
+	});
+});

@@ -309,3 +309,76 @@ export const SortableAndSelectable: Story = {
 		);
 	},
 };
+
+interface AccessLog {
+	id: number;
+	time: string;
+	person: string;
+	ip: string;
+	detail: string;
+}
+
+const accessLogs: AccessLog[] = [
+	{ id: 1, time: "2026-10-28 09:00:00", person: "박상민", ip: "10.8.0.2", detail: "로그인" },
+	{
+		id: 2,
+		time: "2026-10-28 09:12:41",
+		person: "아주아주긴이름을가진외부협력사담당자",
+		ip: "192.168.100.254",
+		detail: "접속 대상 3개의 권한을 바꾸고 기존 세션을 끊었다. 바뀐 권한은 다음 접속부터 적용된다.",
+	},
+	{ id: 3, time: "2026-10-28 10:03:07", person: "김지원", ip: "10.8.0.17", detail: "로그아웃" },
+];
+
+const accessLogColumns: TableColumn<AccessLog>[] = [
+	{ key: "time", header: "시각", width: "12rem", truncate: true },
+	{ key: "person", header: "사람", width: "10rem", truncate: true },
+	{ key: "ip", header: "접속 위치", width: "9rem", truncate: true },
+	{ key: "detail", header: "내용" },
+];
+
+export const FixedLayout: Story = {
+	name: "고정 너비",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`layout="fixed"` - 열 너비를 `width` 로 고정해 쪽을 넘겨도 열 위치가 그대로입니다. `truncate` 칸은 한 줄로 두고 넘치면 말줄임(전체 값은 `title`), 너비 없는 "내용" 열이 남는 폭을 가져가며 줄바꿈합니다.\n\n`minWidth` 아래로는 눌리지 않고 래퍼가 가로로 스크롤합니다.',
+			},
+		},
+	},
+	render: () => (
+		<Table<AccessLog>
+			columns={accessLogColumns}
+			data={accessLogs}
+			keyExtractor={(r) => r.id}
+			layout="fixed"
+			minWidth="48rem"
+			ariaLabel="접속 기록"
+		/>
+	),
+};
+
+export const Cards: Story = {
+	name: "카드 (모바일 375px)",
+	globals: { viewport: { value: "compact" } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`cards` - 좁은 화면(600px 미만)에서 행을 카드로 쌓습니다. 칸 머리는 화면 읽기용으로만 남고, 칸마다 머리 글자(`header` 가 문자열일 때)를 라벨로 붙입니다. 600px 이상에서는 보통 표입니다.",
+			},
+		},
+	},
+	render: () => (
+		<Table<AccessLog>
+			columns={accessLogColumns}
+			data={accessLogs}
+			keyExtractor={(r) => r.id}
+			layout="fixed"
+			minWidth="48rem"
+			cards
+			ariaLabel="접속 기록"
+		/>
+	),
+};

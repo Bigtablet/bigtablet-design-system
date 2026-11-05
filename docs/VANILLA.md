@@ -21,6 +21,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Toast](#toast)
   - [InlineAlert](#inlinealert)
   - [Badge](#badge)
+  - [Table](#table)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -821,6 +822,44 @@ Alert는 JavaScript로만 사용합니다.
 - 목록의 상태 표시처럼 여러 개가 나란히 있으면 `--soft` 가 차분하다. 눈에 띄어야 하는 하나만 solid
 - `neutral` 은 solid · soft 가 같다 (React 와 같음)
 - 크기(`sm`/`lg`)와 모양(dot · count)은 아직 없다 - React 기본값(md · label)과 같은 하나
+
+---
+
+### Table
+
+서버가 그린 `<table>` 에 클래스만 붙입니다. React `Table` 과 같은 모양이며 CSS 만으로 동작합니다 (정렬 버튼 · 행 선택 · 행 클릭 키보드는 React 에만 있습니다).
+
+```html
+<div class="bt-table-wrap">
+  <table class="bt-table bt-table--fixed bt-table--cards" style="--bt-table-min-width: 60rem">
+    <colgroup>
+      <col style="width: 12rem"><col style="width: 10rem"><col>   <!-- 너비 없는 열이 남는 폭을 가져간다 -->
+    </colgroup>
+    <thead>
+      <tr><th scope="col">시각</th><th scope="col">사람</th><th scope="col">내용</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="log : ${logs}">
+        <td class="bt-table__truncate" data-label="시각" th:text="${log.time}" th:title="${log.time}"></td>
+        <td class="bt-table__truncate" data-label="사람" th:text="${log.person}" th:title="${log.person}"></td>
+        <td data-label="내용" th:text="${log.detail}"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `.bt-table-wrap` | 가로 스크롤 상자 (테두리 · 둥근 모서리). `--sticky-header` 면 머리가 붙는다 - 감싼 요소에 확정된 높이가 있어야 한다 (React `stickyHeader` 와 같음) |
+| `.bt-table` | 머리 · 칸 여백, 구분선, 14px, 행 hover. `--sm` · `--lg` 는 React `size` |
+| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘겨도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
+| `td.bt-table__truncate` | 한 줄 칸 - 넘치면 말줄임. 전체 값은 `title` 로 단다 (React `truncate`) |
+| `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다 |
+| `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
+
+- 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
+- 칸 머리 안의 `bt-sr-only` 는 상자 기준으로 숨는다 (`.bt-table-wrap` 이 `position: relative`) - 페이지 폭을 넓히지 않는다
 
 ---
 

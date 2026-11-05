@@ -1,0 +1,188 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Table - React `src/ui/display/table/style.scss` 를 bt-table* 로 옮겼다 (#915).
+   소비자가 그린 <table> 에 클래스만 붙인다 - 칸은 th / td 요소로 잡는다. 정렬 버튼 · 행 선택 · 행 클릭
+   키보드는 스크립트가 필요해 범위 밖이다. 값을 바꿀 때는 두 파일을 함께 고친다.
+   ======================================== */
+
+// 가로 스크롤 상자. position: relative 가 없으면 칸 머리 안의 `.bt-sr-only`(absolute)가 상자 밖 기준으로
+// 잡혀 페이지 폭을 넓힌다 (wg-control-server 실측)
+.bt-table-wrap {
+  position: relative;
+  // 이 번들은 전역 box-sizing 리셋이 없다 - 없으면 width: 100% 에 테두리 2px 이 더해져 부모를 넘친다
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: auto;
+  @include token.scrollable;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+
+  // 높이 제한은 상자 자신이 받는다 - 이유는 React `.table_sticky_header` 주석
+  &--sticky-header {
+    max-height: 100%;
+
+    .bt-table thead {
+      position: sticky;
+      top: 0;
+      z-index: token.$z_content;
+    }
+  }
+}
+
+.bt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: token.$font_family_primary;
+
+  thead {
+    background: token.$color_bg_solid_dim;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  th {
+    padding: token.$spacing_12 token.$spacing_16;
+    text-align: start;
+    color: token.$color_text_heading;
+    white-space: nowrap;
+    @include token.label_large_medium;
+  }
+
+  tbody tr {
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+    transition: background-color token.$transition_fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    // React `hoverable` 기본값(true)과 같다
+    &:hover {
+      background: token.$color_state_hover_on_light;
+    }
+
+    &.is-selected {
+      background: token.$color_accent_subtle;
+
+      &:hover {
+        background: token.$color_accent_muted;
+      }
+    }
+  }
+
+  td {
+    padding: token.$spacing_12 token.$spacing_16;
+    color: token.$color_text_body;
+    // 가운데 맞춤 - sm 버튼(32px)이 글자 줄보다 높아도 글씨가 처지지 않는다 (wg 는 top 이라 당겨 맞췄다)
+    vertical-align: middle;
+    @include token.body_small;
+    // 어절 단위 줄바꿈 - `wrap_keep_all` 을 쓰지 않는 이유는 React `.table_td` 주석 (자동 레이아웃 열 최소 폭)
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  // ── Size (React TableSize) ──────────────────────────────────────────────
+
+  &--sm {
+    th,
+    td {
+      padding: token.$spacing_8 token.$spacing_12;
+      @include token.label_medium;
+    }
+
+    th {
+      @include token.label_medium_medium;
+    }
+  }
+
+  &--lg {
+    th,
+    td {
+      padding: token.$spacing_16 token.$spacing_20;
+    }
+
+    th {
+      @include token.body_large_medium;
+    }
+
+    td {
+      @include token.body_medium;
+    }
+  }
+
+  // ── Fixed layout (React layout="fixed") ─────────────────────────────────
+  // 열 위치를 쪽마다 같게 - 열 너비는 <colgroup><col style="width: 12rem"> 또는 첫 줄 th 의 width 로 준다.
+  // 너비 없는 열이 남는 폭을 나눠 가지며 줄바꿈한다. 표 최소 폭은 `--bt-table-min-width` 로.
+
+  &--fixed {
+    table-layout: fixed;
+    min-width: var(--bt-table-min-width, 0);
+
+    td {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  // 한 줄 칸 - 넘치면 말줄임. 전체 값은 소비자가 title 로 단다 (React 는 자동 렌더면 자동으로 단다)
+  &__truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__empty {
+    padding: token.$spacing_40 token.$spacing_16;
+    text-align: center;
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  // ── Cards (React cards) ─────────────────────────────────────────────────
+  // 좁은 화면에서 줄마다 카드로 쌓는다. 칸 머리는 화면 읽기용으로만 남기고, 칸의 `data-label` 을 앞에 붙인다.
+
+  @include token.compact {
+    &--cards {
+      min-width: 0;
+
+      thead {
+        @include token.visually_hidden;
+      }
+
+      &,
+      tbody,
+      tr,
+      td {
+        display: block;
+      }
+
+      tbody tr {
+        padding: token.$spacing_12 token.$spacing_16;
+      }
+
+      td {
+        width: auto !important; // 열 width 인라인 스타일 - 카드에서는 한 줄을 다 쓴다
+        padding: token.$spacing_2 0;
+        text-align: start;
+      }
+
+      td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        color: token.$color_text_caption;
+        @include token.label_small;
+      }
+
+      .bt-table__truncate {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-table tbody tr {
+    transition: none;
+  }
+}
