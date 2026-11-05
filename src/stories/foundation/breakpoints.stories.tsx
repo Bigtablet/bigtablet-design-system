@@ -24,7 +24,7 @@ Material Design 3의 Window Size Class에 기반한 4단계 시스템입니다.
 
 SCSS: \`@include token.compact { ... }\` / \`@include token.from_medium { ... }\`
 
-hover 스타일은 폭이 아니라 입력 기기로 가릅니다 - \`@include token.hoverable { &:hover { ... } }\` (\`@media (hover: hover)\`). 터치 기기에서 탭한 뒤 hover 강조가 남지 않습니다.
+hover 스타일은 폭이 아니라 입력 기기로 가릅니다 - \`@include token.hoverable { &:hover { ... } }\` (\`@media (hover: hover)\`). 기본 포인팅 장치를 기준으로 판정하므로 터치 전용 기기에서는 hover 가 빠지고, 터치스크린 노트북처럼 입력이 섞인 기기에서는 탭한 뒤 강조가 남을 수 있습니다.
         `,
 			},
 		},

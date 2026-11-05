@@ -510,7 +510,7 @@ Vanilla 번들은 같은 믹스인으로 만든 `.bt-sr-only` · `.bt-sr-only-fo
 }
 ```
 
-`@media (hover: hover)` 를 냅니다. 앱마다 직접 쓰면 조건이 흩어지니 이 믹스인으로 모으세요. `hover_lift` · `hover_glow` 는 안에서 이미 감싸고 있습니다.
+`@media (hover: hover)` 를 냅니다. 이 조건은 **기본 포인팅 장치**만 봅니다 - 터치 전용 기기(폰·태블릿)에서는 hover 가 빠지지만, 터치스크린 노트북처럼 입력이 섞인 기기에서는 탭한 뒤 강조가 남을 수 있습니다. 앱마다 직접 쓰면 조건이 흩어지니 이 믹스인으로 모으세요. `hover_lift` · `hover_glow` 는 안에서 이미 감싸고 있습니다.
 
 #### 식별자 판독 — `legible_identifiers`
 
