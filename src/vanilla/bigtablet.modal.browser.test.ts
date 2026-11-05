@@ -9,7 +9,7 @@ type VanillaModal = {
 	open: () => void;
 	close: () => void;
 	destroy?: () => void;
-	isOpen?: () => boolean;
+	isOpen: () => boolean;
 };
 const { Modal } = (window as unknown as { Bigtablet: { Modal: (el: Element) => VanillaModal } })
 	.Bigtablet;
@@ -94,7 +94,7 @@ describe("Vanilla Modal layout (Chromium)", () => {
 		const m = Modal(el);
 		opened.push(m);
 
-		expect(m.isOpen?.() ?? true).toBe(true);
+		expect(m.isOpen()).toBe(true);
 		expect(document.activeElement?.id).toBe("edit-name");
 		expect(window.scrollY).toBe(300);
 
