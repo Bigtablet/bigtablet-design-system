@@ -272,11 +272,12 @@ dropdown.destroy();         // 바인딩한 리스너 해제
 const modal = Bigtablet.Modal('#my-modal', {
   closeOnOverlay: true,
   onOpen: () => {},
-  onClose: () => {}
+  onClose: () => {},        // 닫기 시작할 때
+  onExited: () => {}        // 퇴출 모션이 끝난 뒤 (React onExited) - #913
 });
 modal.open();
-modal.close();
-modal.destroy();            // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리를 하되 onClose 는 안 부름
+modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
+modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
 
 const sw = Bigtablet.Toggle('#my-toggle', {
   onCheckedChange: (checked) => console.log(checked)

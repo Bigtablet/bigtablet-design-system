@@ -1051,6 +1051,10 @@
   place-items: center;
   background: var(--bt-color-overlay);
   z-index: var(--bt-z-modal);
+  // 진입·퇴출 모션 - React `.modal` 과 같은 presence (#913). 진입은 display: none → grid 에서
+  // @starting-style 이, 퇴출은 bigtablet.js 가 붙이는 data-state="closed" 로의 transition 이 한다.
+  // 모션이 끝나면 bigtablet.js 가 is-open 을 뗀다.
+  @include token.presence;
 
   &.is-open {
     display: grid;
@@ -1068,6 +1072,7 @@
     box-shadow: var(--bt-elevation-3);
     max-width: calc(100% - 32px);
     overflow: hidden;
+    @include token.presence(scale(0.96) translateY(-4px));
   }
 
   &__header {

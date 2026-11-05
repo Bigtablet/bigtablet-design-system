@@ -594,7 +594,8 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
     closeOnOverlay: true,
     closeOnEscape: true,
     onOpen: () => console.log('Modal opened'),
-    onClose: () => console.log('Modal closed')
+    onClose: () => console.log('Modal closed'),      // 닫기를 시작할 때 바로
+    onExited: () => console.log('Modal hidden')       // 퇴출 모션이 끝나 사라진 뒤 (React onExited 와 같음)
   });
 
   // API
@@ -605,6 +606,11 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
   myModal.destroy(); // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리(Escape·스크롤 잠금·포커스 복원)를 하되 onClose 는 부르지 않는다
 </script>
 ```
+
+열고 닫을 때 React Modal 과 같은 모션이 돈다 - 딤은 페이드, 패널은 살짝 작아지며(`scale(0.96)`) 위로 사라진다.
+닫을 때는 포커스를 바로 돌려주고, 모션이 끝난 뒤 `is-open` 을 떼고 스크롤 잠금을 푼다. 그사이 모달에는
+`data-state="closed"` 와 `inert` 가 붙는다. 닫히는 중 `open()` 하면 그 자리에서 되돌아 열리고, `destroy()` 는 기다리지 않고 바로 걷는다.
+`prefers-reduced-motion` 에서는 모션 없이 바로 닫힌다.
 
 > Escape 는 열린 오버레이들이 **공유하는 스택**이 처리한다 - Modal 위에 `Alert` 를 띄우면 Escape 한 번에
 > 최상단(Alert)만 닫히고 Modal 은 남는다. React 쪽 `useOverlayEscape` 와 같은 규약이다. 이전에는 오버레이마다
