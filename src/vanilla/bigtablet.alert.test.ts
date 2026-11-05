@@ -7,7 +7,9 @@ import { key, pressEscape, resetVanillaDom, setViewportInset } from "./bigtablet
 
 resetVanillaDom();
 
-// Alert 의 close() 는 overlay 제거와 unlockScroll() 을 즉시 한다(퇴출 모션이 없다 - #898).
+// Alert 의 close() 는 퇴출 애니메이션이 끝난 뒤 overlay 를 걷고 unlockScroll() 을 한다(#909).
+// jsdom 에는 getAnimations 가 없어 "돌고 있는 애니메이션 없음" 으로 보고 바로 걷는다 -
+// 기다리는 경로는 아래 "퇴출 모션" describe 가 getAnimations 를 세워 확인한다.
 // fake timer 는 그 전 지연 구현에서 남은 것으로, 타이머가 남의 테스트로 새지 않게 계속 둔다.
 describe("Alert", () => {
 	beforeEach(() => {
@@ -44,7 +46,7 @@ describe("Alert", () => {
 		expect(document.body.dataset.btOpenModals).toBe("1");
 
 		pressEscape();
-		// 퇴출 모션이 없으니 바로 풀린다 - 딤이 사라진 뒤 휠이 막혀 있지 않게
+		// 돌고 있는 애니메이션이 없으면 바로 풀린다 - 딤이 사라진 뒤 휠이 막혀 있지 않게
 		expect(document.querySelector(".bt-alert__overlay")).toBeNull();
 		expect(document.body.style.overflow).toBe("");
 		expect(document.body.dataset.btOpenModals).toBeUndefined();
@@ -61,6 +63,110 @@ describe("Alert", () => {
 		// 이 케이스는 끝까지 열려 있으므로 직접 닫는다 - 안 닫으면 Alert 가 `document` 에 건
 		// keydown 리스너와 스크롤 잠금이 파일 끝까지 남는다.
 		alert?.close();
+	});
+});
+
+describe("Alert - 퇴출 모션 (#909)", () => {
+	// jsdom 에는 Web Animations 가 없다 - 오버레이에 퇴출 애니메이션 하나가 도는 것처럼 세운다.
+	function stubExitAnimation(settle: "resolve" | "reject" = "resolve") {
+		let done = () => {};
+		const finished = new Promise<void>((resolve, reject) => {
+			done =
+				settle === "resolve" ? resolve : () => reject(new DOMException("aborted", "AbortError"));
+		});
+		const spy = vi.spyOn(HTMLElement.prototype, "getAnimations").mockImplementation(function (
+			this: HTMLElement,
+		) {
+			return this.classList.contains("is-closing") ? [{ finished } as unknown as Animation] : [];
+		});
+		return { done, restore: () => spy.mockRestore() };
+	}
+
+	beforeEach(() => {
+		setViewportInset(0);
+		// jsdom 은 getAnimations 를 정의하지 않아 spyOn 할 자리를 먼저 만든다
+		if (!("getAnimations" in HTMLElement.prototype)) {
+			Object.defineProperty(HTMLElement.prototype, "getAnimations", {
+				configurable: true,
+				writable: true,
+				value: () => [],
+			});
+		}
+	});
+
+	it("퇴출 애니메이션이 끝날 때까지 오버레이와 스크롤 잠금을 유지한다", async () => {
+		const anim = stubExitAnimation();
+		Alert({ title: "삭제", message: "정말?", showCancel: true });
+
+		pressEscape();
+		const overlay = document.querySelector(".bt-alert__overlay");
+		expect(overlay?.classList.contains("is-closing")).toBe(true);
+		expect(overlay?.hasAttribute("inert")).toBe(true);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		anim.done();
+		await vi.waitFor(() => expect(document.querySelector(".bt-alert__overlay")).toBeNull());
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		anim.restore();
+	});
+
+	it("닫히는 중 연타·Escape 에도 close 가 다시 돌지 않는다", async () => {
+		const anim = stubExitAnimation();
+		const onCancel = vi.fn();
+		Alert({ title: "삭제", message: "정말?", showCancel: true, onCancel });
+
+		pressEscape();
+		pressEscape();
+		(document.querySelector("[data-alert-cancel]") as HTMLElement).click();
+		(document.querySelector(".bt-alert__overlay") as HTMLElement).click();
+		expect(onCancel).toHaveBeenCalledTimes(1);
+
+		anim.done();
+		await vi.waitFor(() => expect(document.querySelector(".bt-alert__overlay")).toBeNull());
+		// 잠금 카운터가 음수로 내려가지 않고 깨끗이 풀린다
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		expect(document.body.style.overflow).toBe("");
+		anim.restore();
+	});
+
+	it("닫히는 중 확인을 연타해도 onConfirm 은 한 번만 돈다", async () => {
+		const anim = stubExitAnimation();
+		const onConfirm = vi.fn();
+		Alert({ title: "삭제", message: "정말?", onConfirm });
+
+		const confirm = document.querySelector("[data-alert-confirm]") as HTMLElement;
+		confirm.click();
+		confirm.click();
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+
+		anim.done();
+		await vi.waitFor(() => expect(document.querySelector(".bt-alert__overlay")).toBeNull());
+		anim.restore();
+	});
+
+	it("진입 도중 닫혀 애니메이션이 취소돼도 오버레이를 걷는다", async () => {
+		const anim = stubExitAnimation("reject");
+		Alert({ title: "삭제", message: "정말?" });
+
+		pressEscape();
+		anim.done();
+		await vi.waitFor(() => expect(document.querySelector(".bt-alert__overlay")).toBeNull());
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		anim.restore();
+	});
+
+	it("포커스는 퇴출 모션을 기다리지 않고 바로 트리거로 돌아간다", () => {
+		const anim = stubExitAnimation();
+		const trigger = document.createElement("button");
+		document.body.appendChild(trigger);
+		trigger.focus();
+		Alert({ title: "삭제", message: "정말?" });
+
+		pressEscape();
+		expect(document.activeElement).toBe(trigger);
+		anim.done();
+		anim.restore();
+		trigger.remove();
 	});
 });
 

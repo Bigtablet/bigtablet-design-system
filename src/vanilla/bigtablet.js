@@ -1427,12 +1427,23 @@
 			// 포커스는 이미 그쪽에 있고, 여기서 되돌리면 새 대화상자 뒤 트리거로 빼앗는다.
 			const active = document.activeElement;
 			const focusHere = !active || active === document.body || overlay.contains(active);
-			// 퇴출 모션이 없어(.bt-alert 는 진입 애니메이션만) 기다릴 이유가 없다 - 즉시 걷고 잠금을 푼다.
-			overlay.remove();
-			unlockScroll();
 			if (focusHere && previousFocus && typeof previousFocus.focus === "function") {
 				previousFocus.focus();
 			}
+			// 퇴출 모션이 끝난 뒤 걷고 잠금을 푼다 - React usePresence 와 같은 판정 (#909).
+			// 돌고 있는 애니메이션이 없으면(reduced-motion, jsdom) 기다리지 않는다 - animationend 를
+			// 기다리면 오지 않아 오버레이와 스크롤 잠금이 남는다.
+			overlay.classList.add("is-closing");
+			// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게 - aria-hidden 은 포커스를 막지 못한다
+			overlay.setAttribute("inert", "");
+			const animations = [overlay, alertPanel].flatMap((el) => el?.getAnimations?.() ?? []);
+			const finish = () => {
+				overlay.remove();
+				unlockScroll();
+			};
+			if (animations.length === 0) finish();
+			// allSettled - 진입 도중 닫혀 취소된 애니메이션(finished reject)도 끝난 것으로 본다.
+			else void Promise.allSettled(animations.map((a) => a.finished)).then(finish);
 		}
 
 		// 오버레이 클릭 / Escape 는 "취소"와 동등한 동작이어야 한다 (WAI-ARIA APG alertdialog).
@@ -1450,6 +1461,8 @@
 
 		if (confirmBtn) {
 			confirmBtn.addEventListener("click", () => {
+				// 퇴출 모션 동안 버튼이 남아 있다 - 연타로 onConfirm(삭제 등)이 두 번 돌지 않게
+				if (!isOpen) return;
 				if (config.onConfirm) config.onConfirm();
 				close();
 			});
@@ -1457,6 +1470,7 @@
 
 		if (cancelBtn) {
 			cancelBtn.addEventListener("click", () => {
+				if (!isOpen) return;
 				if (config.onCancel) config.onCancel();
 				close();
 			});
