@@ -5,12 +5,38 @@
 
 For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
 
+### Source Layout
+
+소스는 컴포넌트별로 나뉘어 있고(#926) 배포물은 파일 하나씩으로 묶인다 - 소비자에게는 차이가 없다.
+
+```
+src/vanilla/
+├── bigtablet.js        # 진입점 - js/* 를 모아 export + DOMContentLoaded 자동 초기화
+├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
+├── js/
+│   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
+│   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
+│   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
+│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js
+│   └── init.js         # data-bt-* 자동 초기화
+└── scss/
+    ├── _custom-properties.scss   # :root --bt-* 변수
+    ├── _{component}.scss         # button · text-field · … · toast
+    ├── _utilities.scss · _autofill.scss
+    └── _reduced-motion.scss      # 앞 규칙을 덮어야 해서 마지막
+```
+
+**컴포넌트를 추가할 때:** `js/{name}.js` 에서 `export function {Name}` → `bigtablet.js` 에 `export { {Name} } from` 한 줄
+(자동 초기화가 필요하면 `init.js` 에도). 스타일은 `scss/_{name}.scss` 를 만들고 `bigtablet.scss` 의 `_utilities` 앞에
+`@use` 한다 - 토큰을 쓰면 partial 맨 위에 `@use "../../styles/token" as token;`. 테스트는 지금처럼
+`bigtablet.{name}.test.ts` 에서 `./bigtablet.js` 를 import 한다.
+
 ### Build Output
 ```
 dist/vanilla/
 ├── bigtablet.css       # Full CSS (~55KB)      - 배포 제외
 ├── bigtablet.min.css   # Minified CSS (~38KB)  - 배포됨
-├── bigtablet.js        # Full JS (~48KB)       - 배포 제외
+├── bigtablet.js        # Full JS (~58KB, esbuild IIFE) - 배포 제외
 ├── bigtablet.min.js    # Minified JS (~19KB)   - 배포됨
 └── examples/           # HTML examples         - 배포 제외
 ```
@@ -20,7 +46,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
 추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
@@ -58,7 +84,11 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled`, `[hidden]`(필터로 숨김) |
 | Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
-| Modal | `.bt-modal` | | `.is-open` |
+| Modal | `.bt-modal` | | `.is-open` (서버가 붙여 그리면 초기화가 열린 상태로 시작 - #919) |
+| Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다 | | `[data-state="closed"]`(퇴출 중) |
+| InlineAlert | `.bt-inline-alert` (+ `__icon`(빈 span - CSS mask 아이콘), `__content` > `__title` · `__message` · `__action`) - CSS 만 | `--neutral/info/success/warning/error`(기본 info) | `[hidden]` |
+| Badge | `.bt-badge` - CSS 만 (React label · md) | `--accent(기본)/neutral/info/success/warning/error`, `--soft`(기본 solid) | |
+| Table | `.bt-table-wrap`(가로 스크롤 상자, `--sticky-header`) > `table.bt-table` - CSS 만, 소비자가 그린 표에 클래스만 | `--sm/lg`, `--fixed`(+ `--bt-table-min-width`), `--cards`(compact 에서 카드, 칸은 `data-label`) | `tr.is-selected`, `td.bt-table__truncate`, `.bt-table__empty` |
 | Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
 | Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
@@ -271,17 +301,28 @@ dropdown.destroy();         // 바인딩한 리스너 해제
 const modal = Bigtablet.Modal('#my-modal', {
   closeOnOverlay: true,
   onOpen: () => {},
-  onClose: () => {}
+  onClose: () => {},        // 닫기 시작할 때
+  onExited: () => {}        // 퇴출 모션이 끝난 뒤 (React onExited) - #913
 });
 modal.open();
-modal.close();
-modal.destroy();            // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리를 하되 onClose 는 안 부름
+modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
+modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
 
 const sw = Bigtablet.Toggle('#my-toggle', {
   onCheckedChange: (checked) => console.log(checked)
 });
 sw.toggle();
 sw.setChecked(true);
+
+// 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.
+// 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
+const push = Bigtablet.Toggle('#push', {
+  controlled: true,
+  onCheckedChange: async (next) => {
+    try { if (await save(next)) push.setChecked(next); else showError(); }
+    catch { showError(); } // reject 도 실패 - 잡지 않으면 대기만 풀리고 사용자는 모른다
+  }
+});
 
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
@@ -304,6 +345,22 @@ Bigtablet.Alert({
   onConfirm: () => {},
   onCancel: () => {}
 });
+
+// CopyButton (#918) - <button data-bt-copy="값"> 는 자동 초기화. 옵션 이름은 React CopyButton 과 같다
+Bigtablet.CopyButton('#copy', {
+  text: () => input.value,   // 또는 data-bt-copy. 바뀌는 문구만 [data-copy-label] 로 감쌀 수 있다
+  copiedLabel: '복사됨', failedLabel: '복사하지 못했습니다', resetAfter: 2000,
+  onCopy: (text) => {}, onError: (error) => {}
+});
+
+// Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 위, 최대 5개
+const t = Bigtablet.Toast('저장했습니다', 'success', {
+  duration: 3000,           // Infinity 면 닫기 버튼·dismiss 로만
+  action: { label: '실행 취소', onClick: () => {} },
+  closeLabel: '닫기',
+  regionLabel: '알림'
+});
+t.dismiss();
 ```
 
 ### CSS Custom Properties

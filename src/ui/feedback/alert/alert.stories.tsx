@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
+import { Textarea } from "../../forms/textarea";
 import { NOTICE_COMPARISON } from "../notice-comparison.docs";
 import { AlertProvider, useAlert, useConfirm } from ".";
 
@@ -245,4 +246,54 @@ export const ConfirmDeleteAsync: Story = {
 		},
 	},
 	render: () => <DeleteDemo />,
+};
+
+const ReasonDemo = () => {
+	const { showAlert } = useAlert();
+	const [saved, setSaved] = React.useState<string | null>(null);
+	const open = () => {
+		// 사유는 창 안에서 바뀌므로 밖에서 들고 있다가 onConfirm 이 읽는다
+		let reason = "";
+		const alert = showAlert({
+			tone: "warning",
+			title: "버전 정책을 저장할까요?",
+			message: (
+				<Textarea
+					label="변경 사유"
+					maxLength={500}
+					showCounter
+					fullWidth
+					onValueChange={(value) => {
+						reason = value;
+						alert.update({ confirmDisabled: !value.trim() });
+					}}
+				/>
+			),
+			showCancel: true,
+			confirmText: "저장",
+			confirmDisabled: true,
+			onConfirm: () => setSaved(reason.trim()),
+		});
+	};
+	return (
+		<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+			<button type="button" onClick={open}>
+				정책 저장
+			</button>
+			{saved !== null && <span>저장됨 - 사유: {saved}</span>}
+		</div>
+	);
+};
+
+export const ConfirmDisabled: Story = {
+	name: "확인 잠금 - 사유 입력",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`showAlert` 는 핸들을 돌려줍니다. `confirmDisabled: true` 로 열고 입력이 바뀔 때 `alert.update({ confirmDisabled })` 로 풀고 잠급니다. 잠긴 확인 버튼은 `aria-disabled` 라 포커스가 빠지지 않고, 클릭 · Enter 로 확인되지 않습니다.",
+			},
+		},
+	},
+	render: () => <ReasonDemo />,
 };

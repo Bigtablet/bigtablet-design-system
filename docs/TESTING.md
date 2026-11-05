@@ -120,7 +120,7 @@ src/ui/general/button/
 
 ### Vanilla 번들 테스트
 
-Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toggle,pagination}.test.ts`.
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts`.
 공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
@@ -194,8 +194,8 @@ import { Dropdown } from "./bigtablet.js";
   CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
   내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
 - Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
-- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 브라우저 ESM 에서 UMD 번들의 `this` 가
-  undefined 라 named import 가 안 된다 - `import "./bigtablet.js"` 후 `window.Bigtablet` 을 쓴다.
+- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 소스가 ES 모듈이라(#926) unit 과 같이
+  `import { Modal } from "./bigtablet.js"` 로 받는다. 전역 `Bigtablet` 은 빌드된 `bigtablet.min.js` 에만 생긴다.
 
 ### 시각 회귀 테스트 (`*.visual.test.tsx`)
 
@@ -446,7 +446,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 89 test files / 1659 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 91 test files / 1707 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -456,7 +456,7 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **96.11%** | **93.75%** | **96.51%** | **97.36%** |
+| **All files** | **96.12%** | **93.79%** | **96.52%** | **97.37%** |
 
 아래는 **100% 미만**인 것만 나열한 것이다 (45개는 전 지표 100% 라 빠져 있다).
 
@@ -470,8 +470,8 @@ it("calls callback with correct arguments", () => {
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
 | ui/display/media-card | 100% | 96.3% | 100% | 100% |
 | ui/display/prose | 75.68% | 53.33% | 100% | 78.79% |
-| ui/display/table | 98.41% | 96.49% | 97.06% | 99.07% |
-| ui/feedback/alert | 99% | 94.12% | 100% | 100% |
+| ui/display/table | 98.41% | 96.92% | 97.06% | 99.07% |
+| ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 96.3% | 90.57% | 100% | 100% |
 | ui/forms/checkbox | 91.67% | 95.45% | 100% | 100% |

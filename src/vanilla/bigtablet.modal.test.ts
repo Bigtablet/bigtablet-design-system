@@ -462,3 +462,197 @@ describe("Modal - 점검 회귀 (#898)", () => {
 		expect(document.getElementById("123")?.classList.contains("is-open")).toBe(true);
 	});
 });
+
+describe("Modal - 서버가 열린 채로 그린 모달 (#919)", () => {
+	const openMarkup = () => {
+		const el = document.createElement("div");
+		el.className = "bt-modal is-open";
+		el.setAttribute("data-bt-modal", "");
+		el.innerHTML =
+			'<div class="bt-modal__panel"><div class="bt-modal__header">수정</div>' +
+			'<div class="bt-modal__body"><input id="name"></div>' +
+			'<button data-modal-close aria-label="닫기">×</button></div>';
+		document.body.appendChild(el);
+		return el;
+	};
+
+	it("is-open 으로 그린 모달을 열린 상태로 시작한다 - 잠금 · 포커스까지", () => {
+		setViewportInset(0);
+		const m = Modal(openMarkup());
+
+		expect(m?.isOpen()).toBe(true);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+		expect(document.activeElement?.id).toBe("name");
+	});
+
+	it("자동 초기화된 열린 모달이 Escape · 바깥 클릭 · 닫기 버튼으로 닫힌다", () => {
+		setViewportInset(0);
+		const el = openMarkup();
+		init();
+		const reopen = () => (el as HTMLElement & { _btModal?: { open: () => void } })._btModal?.open();
+
+		pressEscape();
+		expect(el.classList.contains("is-open")).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+
+		reopen();
+		el.click();
+		expect(el.classList.contains("is-open")).toBe(false);
+
+		reopen();
+		(el.querySelector("[data-modal-close]") as HTMLElement).click();
+		expect(el.classList.contains("is-open")).toBe(false);
+	});
+
+	it("열린 채 자동 초기화된 모달을 수동으로 다시 만들어도 열린 채로 남는다", () => {
+		setViewportInset(0);
+		const el = openMarkup();
+		init();
+		const onClose = vi.fn();
+
+		const m = Modal(el, { onClose });
+		expect(m?.isOpen()).toBe(true);
+		expect(el.classList.contains("is-open")).toBe(true);
+		// 잠금 카운터가 교체 중에 새지 않는다
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		pressEscape();
+		expect(onClose).toHaveBeenCalledTimes(1);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+	});
+
+	it("생성 중에 열리면 onOpen 은 반환값을 쓸 수 있게 한 박자 뒤에 부른다", async () => {
+		setViewportInset(0);
+		const seen: boolean[] = [];
+		const m = Modal(openMarkup(), { onOpen: () => seen.push(m?.isOpen() ?? false) });
+
+		expect(seen).toEqual([]);
+		await Promise.resolve();
+		expect(seen).toEqual([true]);
+	});
+});
+
+describe("Modal - 퇴출 모션 (#913)", () => {
+	// jsdom 에는 Web Animations 가 없다 - 닫힘 표시가 붙은 요소에 퇴출 transition 이 도는 것처럼 세운다.
+	function stubExitAnimation() {
+		let done = () => {};
+		const finished = new Promise<void>((resolve) => {
+			done = resolve;
+		});
+		if (!("getAnimations" in HTMLElement.prototype)) {
+			Object.defineProperty(HTMLElement.prototype, "getAnimations", {
+				configurable: true,
+				writable: true,
+				value: () => [],
+			});
+		}
+		vi.spyOn(HTMLElement.prototype, "getAnimations").mockImplementation(function (
+			this: HTMLElement,
+		) {
+			return this.dataset.state === "closed" ? [{ finished } as unknown as Animation] : [];
+		});
+		return { done: () => done() };
+	}
+
+	const mount = () => {
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML =
+			'<div class="bt-modal__panel" aria-label="편집"><div class="bt-modal__body"><input></div></div>';
+		document.body.appendChild(el);
+		return el;
+	};
+
+	it("퇴출 모션이 끝날 때까지 is-open · 잠금을 유지하고, 끝나면 걷고 onExited 를 부른다", async () => {
+		setViewportInset(0);
+		const anim = stubExitAnimation();
+		const onClose = vi.fn();
+		const onExited = vi.fn();
+		const el = mount();
+		const m = Modal(el, { onClose, onExited });
+		m?.open();
+
+		m?.close();
+		// onClose 는 닫기를 시작할 때 바로 (예전과 같다)
+		expect(onClose).toHaveBeenCalledTimes(1);
+		expect(m?.isOpen()).toBe(false);
+		expect(el.classList.contains("is-open")).toBe(true);
+		expect(el.dataset.state).toBe("closed");
+		expect(el.querySelector<HTMLElement>(".bt-modal__panel")?.dataset.state).toBe("closed");
+		expect(el.hasAttribute("inert")).toBe(true);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+		expect(onExited).not.toHaveBeenCalled();
+
+		anim.done();
+		await vi.waitFor(() => expect(el.classList.contains("is-open")).toBe(false));
+		expect(el.dataset.state).toBeUndefined();
+		expect(el.hasAttribute("inert")).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		expect(onExited).toHaveBeenCalledTimes(1);
+	});
+
+	it("닫히는 중 다시 열면 대기를 버리고 열린 채로 남는다 - 잠금은 한 번만", async () => {
+		setViewportInset(0);
+		const anim = stubExitAnimation();
+		const onExited = vi.fn();
+		const el = mount();
+		const m = Modal(el, { onExited });
+		m?.open();
+		m?.close();
+
+		m?.open();
+		expect(el.dataset.state).toBeUndefined();
+		expect(el.hasAttribute("inert")).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		anim.done();
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(el.classList.contains("is-open")).toBe(true);
+		expect(onExited).not.toHaveBeenCalled();
+
+		m?.close();
+		await vi.waitFor(() => expect(document.body.dataset.btOpenModals).toBeUndefined());
+	});
+
+	it("닫히는 중 destroy 하면 기다리지 않고 바로 걷는다", () => {
+		setViewportInset(0);
+		const anim = stubExitAnimation();
+		const onExited = vi.fn();
+		const el = mount();
+		const m = Modal(el, { onExited });
+		m?.open();
+		m?.close();
+
+		m?.destroy();
+		expect(el.classList.contains("is-open")).toBe(false);
+		expect(el.dataset.state).toBeUndefined();
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+		anim.done();
+		expect(onExited).not.toHaveBeenCalled();
+	});
+
+	it("열린 채 destroy 도 기다리지 않는다", () => {
+		setViewportInset(0);
+		stubExitAnimation();
+		const el = mount();
+		const m = Modal(el);
+		m?.open();
+
+		m?.destroy();
+		expect(el.classList.contains("is-open")).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+	});
+
+	it("돌고 있는 모션이 없으면(reduced-motion) 바로 걷고 onExited 도 바로 부른다", () => {
+		setViewportInset(0);
+		const onExited = vi.fn();
+		const el = mount();
+		const m = Modal(el, { onExited });
+		m?.open();
+
+		m?.close();
+		expect(el.classList.contains("is-open")).toBe(false);
+		expect(onExited).toHaveBeenCalledTimes(1);
+	});
+});

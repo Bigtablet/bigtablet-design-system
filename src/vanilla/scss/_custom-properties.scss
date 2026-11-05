@@ -1,0 +1,112 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   CSS Custom Properties (Design Tokens)
+   ======================================== */
+:root {
+  /* Colors - Brand (양 테마 검정/흰 고정 - 의도적으로 반전되지 않아야 하는 표면용) */
+  --bt-color-primary: #{token.$color_brand_primary};
+  --bt-color-on-primary: #{token.$color_brand_on_primary};
+
+  /* Colors - Accent (light=검정/dark=흰 자동 반전 - Button --filled / indicator / checked / focus) */
+  --bt-color-accent: #{token.$color_accent_default};
+
+  /* Colors - Primary container (React Button variant="tonal" 의 채움색) */
+  --bt-color-primary-container: #{token.$color_brand_primary_container};
+
+  /* Colors - Background */
+  --bt-color-background: #{token.$color_bg_solid};
+  --bt-color-background-dim: #{token.$color_bg_solid_dim};
+  --bt-color-background-overlay: #{token.$color_bg_overlay};
+
+  /* Colors - Text/Border 원 토큰(--bt-color-text-heading, --bt-color-border-subtle 등)은
+     theme.scss 가 정의한다. 여기서 같은 이름으로 재선언하면
+     `--bt-color-text-heading: var(--bt-color-text-heading)` 자기참조 순환이 되어
+     theme 정의까지 덮어 무효화되므로 재선언 금지 (아래 Semantic alias 로만 노출). */
+
+  /* Colors - Border */
+  --bt-color-border: #{token.$color_border_default};
+
+  /* Colors - Text Semantic */
+  --bt-color-text-primary: var(--bt-color-text-heading);
+  --bt-color-text-secondary: var(--bt-color-text-body);
+  --bt-color-text-tertiary: var(--bt-color-text-caption);
+
+  /* Colors - Background Semantic */
+  --bt-color-background-secondary: var(--bt-color-background-dim);
+
+  /* Colors - Border Semantic */
+  --bt-color-border-light: #{token.$color_border_hover};
+
+  /* Colors - State */
+  --bt-color-hover: #{token.$color_state_hover_on_light};
+  /* 어두운 표면(Card --accent / --glass) 위의 반투명 흰 hover/divider */
+  --bt-color-hover-on-dark: #{token.$color_state_hover_on_dark};
+  --bt-color-pressed: #{token.$color_state_pressed_on_light};
+  --bt-color-primary-hover: #{token.$color_base_neutral_800}; // brand_primary lighten 15% 근사 (CSS var와 SCSS color.adjust 호환 X)
+
+  /* Colors - Overlay */
+  --bt-color-overlay: #{token.$color_bg_overlay};
+
+  /* Colors - Status */
+  --bt-color-success: #{token.$color_status_success};
+  --bt-color-error: #{token.$color_status_error};
+  /* 다크에서 재정의되는 텍스트용 error 색. 위 `--bt-color-error` 는 양 테마 고정이라
+     배경·테두리에만 쓴다 - 다크 표면에서 텍스트로 쓰면 2.85:1 까지 떨어진다. */
+  --bt-color-error-text: #{token.$color_status_error_on_surface};
+  --bt-color-success-text: #{token.$color_status_success_on_surface};
+  --bt-color-warning-text: #{token.$color_status_warning_on_surface};
+  --bt-color-info-text: #{token.$color_status_info_on_surface};
+  --bt-color-warning: #{token.$color_status_warning};
+  --bt-color-info: #{token.$color_status_info};
+
+  /* Spacing - Base(--bt-spacing-*)·Radius(--bt-radius-*)·--bt-font-family 는 theme.scss 가 정의한다 */
+
+  /* Spacing - Semantic */
+  --bt-spacing-xs:  var(--bt-spacing-4);
+  --bt-spacing-sm:  var(--bt-spacing-8);
+  --bt-spacing-md:  var(--bt-spacing-12);
+  --bt-spacing-lg:  var(--bt-spacing-16);
+  --bt-spacing-xl:  var(--bt-spacing-20);
+  --bt-spacing-2xl: var(--bt-spacing-24);
+  --bt-spacing-3xl: var(--bt-spacing-32);
+
+  /* Typography - Base */
+  --bt-font-size-12: #{token.$font_size_12};
+  --bt-font-size-14: #{token.$font_size_14};
+  --bt-font-size-15: #{token.$font_size_15};
+  --bt-font-size-16: #{token.$font_size_16};
+  --bt-font-size-18: #{token.$font_size_18};
+  --bt-font-size-20: #{token.$font_size_20};
+  --bt-font-weight-regular: #{token.$font_weight_regular};
+  --bt-font-weight-medium: #{token.$font_weight_medium};
+  --bt-font-weight-semibold: 600;
+  --bt-line-height-20: #{token.$line_height_20};
+  --bt-line-height-24: #{token.$line_height_24};
+
+  /* Typography - Semantic */
+  --bt-font-size-sm:   var(--bt-font-size-14);
+  --bt-font-size-base: var(--bt-font-size-15);
+  --bt-font-size-md:   var(--bt-font-size-16);
+  --bt-font-size-lg:   var(--bt-font-size-18);
+  --bt-font-size-xl:   var(--bt-font-size-20);
+  --bt-line-height-normal: 1.5;
+
+  /* Elevation */
+  --bt-elevation-1: #{token.$elevation_level1};
+  --bt-elevation-2: #{token.$elevation_level2};
+  --bt-elevation-3: #{token.$elevation_level3};
+  --bt-elevation-4: #{token.$elevation_level4};
+  --bt-elevation-5: #{token.$elevation_level5};
+
+  /* Transitions */
+  --bt-transition-fast: #{token.$transition_fast};
+  --bt-transition-base: #{token.$transition_base};
+  --bt-transition-slow: #{token.$transition_slow};
+
+  /* Z-index - 역할 변수(--bt-z-*)는 theme.scss 가 정의한다. 아래 둘은 기존 이름 호환용
+     별칭이며, 값은 React 번들과 정렬했다. 이전에는 둘 다 1000 이라 모달과 토스트의 순서를
+     정할 수 없었고 React(모달 100 · 토스트 200)와도 어긋났다. */
+  --bt-z-modal: var(--bt-z-chrome);
+  --bt-z-toast: var(--bt-z-notification);
+}

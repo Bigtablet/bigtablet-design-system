@@ -28,7 +28,8 @@ from pathlib import Path
 # 테마 색 변수는 tokens.json 에서 생성한 이 파일의 light/dark mixin 에 있다
 THEME = Path("src/styles/_theme-tokens.scss")
 REACT_SCSS = sorted(Path("src/ui").rglob("*.scss"))
-VANILLA_SCSS = Path("src/vanilla/bigtablet.scss")
+# Vanilla 는 컴포넌트별 partial 로 나뉘어 있다 (#926)
+VANILLA_SCSS = sorted(Path("src/vanilla/scss").glob("_*.scss"))
 
 # 고정 표면과 짝지어진 텍스트 토큰 - 이름이 그 표면을 밝힌다.
 PAIRED_SUFFIXES = ("-on-primary", "-on-dark", "-on-default", "-on-container", "-on-surface")
@@ -120,25 +121,27 @@ def main() -> int:
                     " 않는다 - 텍스트로 쓰면 다크에서 AA 미달이다. `_on_surface` 쪽을 써라"
                 )
 
-    vanilla = VANILLA_SCSS.read_text(encoding="utf-8")
-    vanilla_lines = vanilla.splitlines()
-    for line_no, line in enumerate(vanilla_lines, 1):
-        match = TEXT_COLOR_CSS.search(line)
-        if not match:
-            continue
-        checked += 1
-        # Vanilla 는 자기 이름의 별칭을 둔다 - 그 별칭이 가리키는 토큰까지 따라간다.
-        alias = re.search(rf"{re.escape(match.group(1))}:\s*#\{{token\.(\$[a-z0-9_]+)\}}", vanilla)
-        target = css_var_of(alias.group(1)) if alias else match.group(1)
-        if target not in surface_only or is_paired(match.group(1)):
-            continue
-        if exempted(vanilla_lines, line_no):
-            exemptions += 1
-        else:
-            problems.append(
-                f"{VANILLA_SCSS}:{line_no}: `{match.group(1)}` 이 가리키는 `{target}` 은 표면"
-                " 색이고 다크에서 재정의되지 않는다 - 텍스트로 쓰면 다크에서 AA 미달이다"
-            )
+    # 별칭(`--bt-color-*: #{token.$...}`)은 custom-properties partial 에 있다 - 전체에서 찾는다.
+    vanilla = "\n".join(path.read_text(encoding="utf-8") for path in VANILLA_SCSS)
+    for vanilla_path in VANILLA_SCSS:
+        vanilla_lines = vanilla_path.read_text(encoding="utf-8").splitlines()
+        for line_no, line in enumerate(vanilla_lines, 1):
+            match = TEXT_COLOR_CSS.search(line)
+            if not match:
+                continue
+            checked += 1
+            # Vanilla 는 자기 이름의 별칭을 둔다 - 그 별칭이 가리키는 토큰까지 따라간다.
+            alias = re.search(rf"{re.escape(match.group(1))}:\s*#\{{token\.(\$[a-z0-9_]+)\}}", vanilla)
+            target = css_var_of(alias.group(1)) if alias else match.group(1)
+            if target not in surface_only or is_paired(match.group(1)):
+                continue
+            if exempted(vanilla_lines, line_no):
+                exemptions += 1
+            else:
+                problems.append(
+                    f"{vanilla_path}:{line_no}: `{match.group(1)}` 이 가리키는 `{target}` 은 표면"
+                    " 색이고 다크에서 재정의되지 않는다 - 텍스트로 쓰면 다크에서 AA 미달이다"
+                )
 
     if checked == 0:
         problems.append("검사 대상이 사라졌다 (텍스트 색 선언 0건) - 패턴이 바뀌었는지 보라")

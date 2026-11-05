@@ -263,7 +263,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
 | `ListItem` | Single row in a list. | `label`, `overline`, `supportingText`, `metadata` (all accept string **or ReactNode** - inline `<strong>`/`<a>`/`Badge`), `leadingElement`, `trailingElement`, `alignment` (auto-detects OneLine → middle), `onClick`, `selected` |
-| `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`. Clickable rows get keyboard support automatically. |
+| `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`, `layout` (auto/fixed - fixed keeps column positions across pages), `minWidth`, `cards` (stack rows as cards on compact). Column `truncate` for one-line ellipsis. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal rule. | `weight` (standard/heavy). Horizontal only - there is no vertical variant. |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
 | `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`. Hover bg works in any open state. |
@@ -272,7 +272,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, tone, showCancel, destructive, onConfirm, onCancel })` |
+| `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, tone, showCancel, destructive, confirmDisabled, onConfirm, onCancel })` → handle `{ update(patch) }` (e.g. lock confirm until a reason is typed). `confirmDisabled` uses `aria-disabled` and blocks click/Enter. |
 | `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, tone, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
 | `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
@@ -520,7 +520,7 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), CopyButton, Card, Spinner, Pagination, DatePicker, FileInput.
 
 Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
@@ -529,8 +529,10 @@ JS API (auto-init on DOMContentLoaded, or manual):
 const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
 // React 와 동일한 이름의 multiple / searchable 도 지원 (data-multiple / data-searchable 로도 가능)
 Bigtablet.Dropdown("#multi", { multiple: true, searchable: true, selectedSummary: (n) => `${n}개 선택` });
-const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose });
+const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose, onExited });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
+Bigtablet.CopyButton("#copy", { text: () => input.value, onCopy }); // 또는 <button data-bt-copy="값">
+const toast = Bigtablet.Toast("저장했습니다", "success", { duration: 3000, action: { label, onClick } }); // → { dismiss }
 ```
 
 Dark mode: same `[data-theme="dark"]` attribute works. CSS custom properties expose all tokens with `--bt-` prefix.

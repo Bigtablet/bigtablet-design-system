@@ -1,13 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
-// 소비자가 받는 그대로 - 번들 CSS 와 `<script>` 전역. 브라우저 ESM 에서는 UMD 의 `this` 가
-// undefined 라 `self.Bigtablet` 에 붙는다(unit 의 named import 는 Vite 의 CJS 변환 덕분이다).
+// 번들 CSS 와 소스 진입점. 소스는 ES 모듈이라(#926) named import 로 받는다 - 전역 `Bigtablet`
+// 은 빌드된 bigtablet.min.js(IIFE)에만 생긴다.
 import "./bigtablet.scss";
-import "./bigtablet.js";
+import { Modal as createModal } from "./bigtablet.js";
 
-type VanillaModal = { open: () => void; close: () => void; destroy?: () => void };
-const { Modal } = (window as unknown as { Bigtablet: { Modal: (el: Element) => VanillaModal } })
-	.Bigtablet;
+type VanillaModal = {
+	open: () => void;
+	close: () => void;
+	destroy?: () => void;
+	isOpen: () => boolean;
+};
+const Modal = (el: HTMLElement) => createModal(el) as VanillaModal;
 let opened: VanillaModal[] = [];
 
 const mount = (width = 480) => {
@@ -70,5 +74,61 @@ describe("Vanilla Modal layout (Chromium)", () => {
 		m.close();
 		expect(window.scrollY).toBe(300);
 		expect(document.body.style.paddingRight).toBe("");
+	});
+
+	it("opens a server-rendered is-open modal without moving the scrolled page (#919)", () => {
+		const content = document.createElement("div");
+		content.style.height = "3000px";
+		document.body.appendChild(content);
+		// 주소 앵커로 내려온 상태 - 초기화가 포커스를 옮기며 페이지를 끌어올리면 안 된다
+		window.scrollTo(0, 300);
+
+		const el = document.createElement("div");
+		el.className = "bt-modal is-open";
+		el.innerHTML = `<div class="bt-modal__panel" style="width: 400px;">
+			<div class="bt-modal__header">수정</div>
+			<div class="bt-modal__body"><input id="edit-name"></div>
+		</div>`;
+		document.body.appendChild(el);
+		const m = Modal(el);
+		opened.push(m);
+
+		expect(m.isOpen()).toBe(true);
+		expect(document.activeElement?.id).toBe("edit-name");
+		expect(window.scrollY).toBe(300);
+
+		m.close();
+		expect(window.scrollY).toBe(300);
+	});
+
+	it("plays the exit transition, then hides and unlocks; reopening mid-exit cancels it (#913)", async () => {
+		// browser-setup.ts 가 레이아웃 실측용으로 transition 을 전부 0s 로 눌러 둔다 - 이 테스트만 푼다
+		const noTransition = Array.from(document.querySelectorAll("style")).find((st) =>
+			st.textContent?.includes("transition-duration: 0s !important"),
+		);
+		if (noTransition) noTransition.disabled = true;
+		onTestFinished(() => {
+			if (noTransition) noTransition.disabled = false;
+		});
+
+		const { el, m } = mount(400);
+		const panel = el.querySelector(".bt-modal__panel") as HTMLElement;
+		m.open();
+		await expect.poll(() => [el, panel].flatMap((x) => x.getAnimations()).length).toBe(0);
+
+		m.close();
+		expect(el.classList.contains("is-open")).toBe(true);
+		expect([el, panel].flatMap((x) => x.getAnimations()).length).toBeGreaterThan(0);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		// 닫히는 중 다시 열면 그대로 열린 채 남는다
+		m.open();
+		await expect.poll(() => getComputedStyle(el).opacity).toBe("1");
+		expect(el.classList.contains("is-open")).toBe(true);
+
+		m.close();
+		await expect.poll(() => el.classList.contains("is-open")).toBe(false);
+		expect(getComputedStyle(el).display).toBe("none");
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
 });

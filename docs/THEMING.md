@@ -498,6 +498,20 @@ Vanilla 번들은 같은 믹스인으로 만든 `.bt-sr-only` · `.bt-sr-only-fo
 
 > `break-word` 가 아니라 `anywhere` 인 이유: 눈에 보이는 줄바꿈 지점은 둘이 같지만 min-content 폭이 다릅니다 — `break-word` 는 최장 단어(실측 122px), `anywhere` 는 한 글자(13px). flex item 의 기본값 `min-width: auto` 는 min-content 아래로 줄지 못하므로 `break-word` 를 쓰면 긴 URL 이 좁은 컨테이너를 넘칩니다(실측 120px 컨테이너에서 98px 초과). `anywhere` 는 `min-width: 0` 을 따로 주지 않아도 넘치지 않습니다.
 
+#### hover 가능 기기에서만 — `hoverable`
+
+터치 기기는 탭한 뒤에도 `:hover` 가 남습니다. 그래서 탭한 항목이 원래 활성 항목과 함께 강조된 채로 남습니다. `&:hover` 를 그대로 쓰지 말고 감싸세요.
+
+```scss
+.item {
+  @include token.hoverable {
+    &:hover { background: token.$color_state_hover_on_light; }
+  }
+}
+```
+
+`@media (hover: hover)` 를 냅니다. 이 조건은 **기본 포인팅 장치**만 봅니다 - 터치 전용 기기(폰·태블릿)에서는 hover 가 빠지지만, 터치스크린 노트북처럼 입력이 섞인 기기에서는 탭한 뒤 강조가 남을 수 있습니다. 앱마다 직접 쓰면 조건이 흩어지니 이 믹스인으로 모으세요. `hover_lift` · `hover_glow` 는 안에서 이미 감싸고 있습니다.
+
 #### 식별자 판독 — `legible_identifiers`
 
 Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이고 `0` 과 `O` 도 헷갈립니다. 사용자가 한 글자씩 옮겨 적는 값(아이디·인증코드·시리얼·사업자번호)에는 켜세요.

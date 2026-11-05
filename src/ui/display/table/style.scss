@@ -1,6 +1,9 @@
 @use "src/styles/token" as token;
 
 .table_wrapper {
+  // 안의 `.table_sr_only`(absolute)가 래퍼를 기준으로 잡히게 - 없으면 가로로 스크롤된 래퍼 밖으로 나가
+  // 페이지 폭을 넓힌다 (wg-control-server 가 Vanilla 표에서 실측)
+  position: relative;
   width: 100%;
   overflow-x: auto;
   @include token.scrollable;
@@ -16,6 +19,8 @@
 
 .table {
   width: 100%;
+  // `minWidth` prop - 레이아웃과 상관없이 건다 (auto 표도 좁은 화면에서 눌리지 않게)
+  min-width: var(--table-min-width, 0);
   border-collapse: collapse;
   font-family: token.$font_family_primary;
 }
@@ -185,6 +190,26 @@
   overflow-wrap: break-word;
 }
 
+// ── Fixed layout (#915) ───────────────────────────────────────────────────
+// 열 위치를 쪽마다 같게 - 자동 레이아웃은 쪽 내용 길이로 열을 다시 재서 넘길 때마다 열이 옮겨 다닌다.
+// 너비 없는 열이 남는 폭을 나눠 가지며 줄바꿈한다. 여기서는 열 폭이 고정이라 min-content 가 열을 넓히지
+// 못하므로(위 `break-word` 를 고른 이유가 사라진다) 끊을 곳 없는 긴 값도 칸 안에서 끊는다.
+
+.table_layout_fixed {
+  table-layout: fixed;
+
+  .table_td {
+    overflow-wrap: anywhere;
+  }
+}
+
+// 한 줄 칸 - 넘치면 말줄임. 전체 값은 title (index.tsx)
+.table_td_truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .table_align_left   { text-align: start; }
 .table_align_center { text-align: center; }
 .table_align_right  { text-align: end; }
@@ -230,6 +255,93 @@
     position: sticky;
     top: 0;
     z-index: token.$z_content;
+  }
+}
+
+// ── Cards (#915) ──────────────────────────────────────────────────────────
+// 좁은 화면에서 칸이 많은 표는 가로로 넘친다 - 줄마다 카드로 쌓는다. 칸 머리는 화면 읽기용으로만 남기고
+// (표 의미는 그대로), 칸마다 머리 글자를 `data-label` 로 앞에 붙인다.
+
+@include token.compact {
+  .table_cards {
+    .table {
+      min-width: 0;
+    }
+
+    // 칸 머리는 화면 읽기용으로 숨긴다. 단 정렬 버튼 · 전체 선택은 조작해야 하므로 머리 줄을 카드 위의
+    // 한 줄 도구 막대로 남기고, 조작할 것이 없는 머리 칸만 숨긴다 (숨기면 탭 순서엔 남는데 보이지 않는다)
+    .table_thead {
+      display: block;
+      background: none;
+
+      > tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: token.$spacing_4;
+        padding: token.$spacing_8 token.$spacing_12;
+      }
+    }
+
+    .table_th:not(.table_th_sortable, .table_th_checkbox) {
+      @include token.visually_hidden;
+    }
+
+    .table_th_sortable,
+    .table_th_checkbox {
+      display: block;
+      width: auto !important; // 열 width 인라인 스타일
+      padding: 0;
+    }
+
+    .table_sort_button {
+      padding: token.$spacing_4 token.$spacing_8;
+      border-radius: token.$radius_sm;
+    }
+
+    // 조작할 머리가 하나도 없으면 머리 줄 자체가 빈 막대로 남지 않게
+    .table_thead:not(:has(.table_th_sortable, .table_th_checkbox)) {
+      @include token.visually_hidden;
+    }
+
+    .table,
+    .table_tbody,
+    .table_row,
+    .table_td {
+      display: block;
+    }
+
+    .table_row {
+      padding: token.$spacing_12 token.$spacing_16;
+    }
+
+    .table_td {
+      width: auto !important; // 열 width 인라인 스타일 - 카드에서는 한 줄을 다 쓴다
+      padding: token.$spacing_2 0;
+      text-align: start;
+    }
+
+    .table_td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      color: token.$color_text_caption;
+      @include token.label_small;
+    }
+
+    .table_td_truncate {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    // 셀 inset 테두리는 칸이 세로로 쌓이면 칸마다 박스가 된다 - 카드(행) 하나에 그린다
+    .table_row_clickable:focus-visible {
+      outline: token.$border_width_thick solid token.$color_border_focus;
+      outline-offset: calc(-1 * #{token.$border_width_thick});
+
+      > * {
+        box-shadow: none;
+      }
+    }
   }
 }
 

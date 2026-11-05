@@ -18,6 +18,11 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Dropdown](#dropdown)
   - [Modal](#modal)
   - [Alert](#alert)
+  - [Toast](#toast)
+  - [InlineAlert](#inlinealert)
+  - [Badge](#badge)
+  - [Table](#table)
+  - [CopyButton](#copybutton)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -57,7 +62,7 @@ npm install @bigtablet/design-system
 > 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
 > `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
 > `files` 에서 제외돼 npm·CDN 어느 쪽에도 없습니다. 소스를 읽어야 하면 저장소의
-> `src/vanilla/bigtablet.scss` · `src/vanilla/bigtablet.js` 를 보세요.
+> `src/vanilla/js/` · `src/vanilla/scss/`(컴포넌트별 파일)를 보세요.
 
 ---
 
@@ -313,6 +318,36 @@ npm install @bigtablet/design-system
   myToggle.toggle();        // 토글
 </script>
 ```
+
+**제어 모드 - 바꾸기 전에 확인 · 비동기 (React `checked` + `onCheckedChange` 와 같은 모델):**
+
+권한 요청 · 서버 저장 · 확인 대화상자가 끝난 뒤에 바뀌어야 하는 토글은 `controlled: true`(또는 `data-controlled`)로 만든다.
+클릭은 `onCheckedChange(next)` 만 부르고 켜짐/꺼짐은 그대로 둔다 - 결과에 맞게 `setChecked()` 로 정한다. 실패하면 부르지 않으면 원래 상태로 남는다.
+
+```html
+<button type="button" class="bt-toggle" id="push-toggle" aria-label="이 단말로 알림 받기">
+  <span class="bt-toggle__thumb"></span>
+</button>
+
+<script>
+  const push = Bigtablet.Toggle('#push-toggle', {
+    controlled: true,
+    onCheckedChange: async (next) => {
+      try {
+        const ok = next ? await subscribePush() : await unsubscribePush();
+        if (!ok) throw new Error('push subscription failed');
+        push.setChecked(next);
+      } catch {
+        // reject 도 실패다 - 잡지 않으면 Toggle 은 대기만 풀고 사용자는 실패를 모른다
+        Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
+      }
+    }
+  });
+</script>
+```
+
+- 콜백이 Promise 를 돌려주면 끝날 때까지 `aria-busy="true"` 를 두고 클릭을 무시한다 - 권한 창이 떠 있는 동안 연타해도 두 번 등록되지 않는다
+- 제어 모드의 `setChecked()` 는 `onCheckedChange` 를 **부르지 않는다** (React 도 `checked` 가 바뀔 때 안 부름). 비제어(기본)는 예전처럼 부른다
 
 > `type="button"` 을 반드시 지정하세요 - 폼 안에서 기본 type(submit)이면 토글 클릭이
 > 폼을 제출합니다 (JS 초기화 시 자동 보정되지만 JS 로드 전 클릭은 막지 못합니다).
@@ -593,7 +628,8 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
     closeOnOverlay: true,
     closeOnEscape: true,
     onOpen: () => console.log('Modal opened'),
-    onClose: () => console.log('Modal closed')
+    onClose: () => console.log('Modal closed'),      // 닫기를 시작할 때 바로
+    onExited: () => console.log('Modal hidden')       // 퇴출 모션이 끝나 사라진 뒤 (React onExited 와 같음)
   });
 
   // API
@@ -605,10 +641,30 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 </script>
 ```
 
+열고 닫을 때 React Modal 과 같은 모션이 돈다 - 딤은 페이드, 패널은 살짝 작아지며(`scale(0.96)`) 위로 사라진다.
+닫을 때는 포커스를 바로 돌려주고, 모션이 끝난 뒤 `is-open` 을 떼고 스크롤 잠금을 푼다. 그사이 모달에는
+`data-state="closed"` 와 `inert` 가 붙는다. 닫히는 중 `open()` 하면 그 자리에서 되돌아 열리고, `destroy()` 는 기다리지 않고 바로 걷는다.
+`prefers-reduced-motion` 에서는 모션 없이 바로 닫힌다.
+`.bt-modal` · `.bt-modal__panel` 의 `data-state` 와 `inert` 는 번들이 쓰는 속성이다 - 소비자 마크업에서 따로 쓰지 않는다.
+
 > Escape 는 열린 오버레이들이 **공유하는 스택**이 처리한다 - Modal 위에 `Alert` 를 띄우면 Escape 한 번에
 > 최상단(Alert)만 닫히고 Modal 은 남는다. React 쪽 `useOverlayEscape` 와 같은 규약이다. 이전에는 오버레이마다
 > 자기 document 리스너를 걸어 둘이 함께 닫혔다. `closeOnEscape: false` 인 Modal 도 스택에는 등록되어
 > Escape 를 **소비**한다 - 닫히지는 않지만 아래 오버레이로 내려가지도 않는다.
+
+**서버가 열린 채로 그리기** - 입력 오류로 폼을 다시 그리거나 `?edit=` 로 수정 폼을 바로 열 때는 `is-open` 을 붙여 그리면 된다.
+초기화가 그 클래스를 보고 `open()` 과 같은 경로로 연다 - 스크롤 잠금, 본문 첫 칸 포커스, Escape · 바깥 클릭 · 닫기 버튼이 모두 듣는다.
+`load` 뒤에 `open()` 을 따로 부르는 우회는 필요 없다.
+
+```html
+<!-- Thymeleaf: 검증 오류가 있으면 열린 채로 -->
+<div id="edit-modal" class="bt-modal" data-bt-modal
+     th:classappend="${#fields.hasErrors('*')} ? 'is-open' : ''">
+  ...
+</div>
+```
+
+열린 채로 그린 모달을 `Bigtablet.Modal(el, { onClose })` 로 다시 만들어도 열린 상태를 이어받는다. 이때 `onOpen` 은 생성 직후(다음 마이크로태스크)에 불려 콜백 안에서 반환값을 쓸 수 있다.
 
 ---
 
@@ -667,6 +723,191 @@ Alert는 JavaScript로만 사용합니다.
 | `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭으로 닫기 허용 (React `AlertOptions.closeOnOverlay` 와 동일) |
 | `onConfirm` | `function` | - | 확인 콜백 |
 | `onCancel` | `function` | - | 취소 콜백 |
+
+닫을 때 퇴출 모션(페이드아웃 + 아래로)이 끝난 뒤 DOM 에서 걷고 스크롤 잠금을 풉니다. 포커스는 바로 트리거로 돌아갑니다. `prefers-reduced-motion` 에서는 기다리지 않습니다.
+
+---
+
+### Toast
+
+짧은 결과를 알리고 저절로 사라지는 알림입니다. React `useToast` 와 같은 모양·동작이며 JavaScript 로만 씁니다 - 마크업은 번들이 만듭니다.
+
+```html
+<script>
+  Bigtablet.Toast("저장했습니다", "success");
+  Bigtablet.Toast("알림 받기를 켜지 못했습니다", "error");
+
+  // 되돌리기 버튼 - 누르면 실행하고 닫힌다
+  Bigtablet.Toast("삭제했습니다", "neutral", {
+    action: { label: "실행 취소", onClick: () => restore() },
+  });
+
+  // 저절로 닫히지 않는 진행 토스트 - 돌려받은 dismiss 로 닫는다
+  const uploading = Bigtablet.Toast("업로드 중…", "info", { duration: Infinity });
+  uploading.dismiss();
+</script>
+```
+
+`Bigtablet.Toast(message, tone, options)` → `{ dismiss }`
+
+| 인자 | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | - | 본문. 텍스트로 넣는다 (HTML 은 해석하지 않음) |
+| `tone` | `string` | `'neutral'` | `'success'`, `'error'`, `'warning'`, `'info'`, `'neutral'` |
+| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 면 막대 없이 닫기 버튼·`dismiss` 로만 닫힘 |
+| `options.action` | `{ label, onClick }` | - | 메시지 옆 텍스트 버튼. 한 번만 실행되고 토스트를 닫는다 |
+| `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
+| `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
+
+- 오른쪽 위에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
+- `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
+- `prefers-reduced-motion` 에서는 모션만 빠지고 시간은 그대로 간다
+
+---
+
+### InlineAlert
+
+페이지 안에 **계속 남는** 안내·경고 블록입니다. React `InlineAlert` 와 같은 모양이며 스크립트 없이 CSS 만으로 동작합니다.
+사라지는 알림은 [Toast](#toast), 확인을 받아야 하면 [Alert](#alert) 를 쓰세요.
+
+```html
+<div class="bt-inline-alert bt-inline-alert--warning">
+  <span class="bt-inline-alert__icon" aria-hidden="true"></span>   <!-- 비워 두면 톤 아이콘이 그려진다 -->
+  <div class="bt-inline-alert__content">
+    <div class="bt-inline-alert__title">구독이 7일 뒤 만료됩니다</div>  <!-- 선택 -->
+    <div class="bt-inline-alert__message">만료되면 팀원 초대가 막힙니다.</div>
+    <div class="bt-inline-alert__action">                              <!-- 선택 -->
+      <button type="button" class="bt-button bt-button--sm bt-button--outline">갱신</button>
+    </div>
+  </div>
+</div>
+
+<!-- Thymeleaf: 폼 오류를 서버가 그대로 그린다 -->
+<div class="bt-inline-alert bt-inline-alert--error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+  <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+  <div class="bt-inline-alert__content">
+    <div class="bt-inline-alert__message" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+  </div>
+</div>
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `--neutral` · `--info` · `--success` · `--warning` · `--error` | 톤 (React `InlineAlertTone` 과 같은 이름). 없으면 `info` |
+| `__icon` | 빈 `<span>` - 톤 아이콘(React 와 같은 lucide)을 CSS 가 그린다. 아이콘이 필요 없으면 빼면 된다 |
+| `__title` · `__message` · `__action` | 굵은 제목 · 본문 · 버튼/링크 줄 (`__content` 안) |
+
+- `role` 은 상황에 맞게 소비자가 준다 - 처음부터 있는 안내는 주지 않는다(스크린리더가 끼어들면 소음). 나중에 나타나는 정보·성공은 `role="status"`, 즉시 알아야 하는 오류만 `role="alert"`
+- 나타날 때(서버가 처음부터 그린 경우 포함 · 스크립트가 `hidden` 을 풀 때) 짧은 진입 모션(0.2s, 4px)이 돈다 - React 와 같다. `prefers-reduced-motion` 에서는 없음
+- 닫기 버튼은 없다 - 닫아야 하는 안내는 React `onDismiss` 처럼 소비자 스크립트로 요소를 숨긴다
+
+---
+
+### Badge
+
+상태·분류를 보여 주는 작은 라벨입니다 (사용 중 · 정지 · 만료 등). React `Badge` 의 label 모양과 같으며 CSS 만으로 동작합니다.
+
+```html
+<span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span>
+<span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span>
+<span class="bt-badge bt-badge--neutral">정지</span>
+<span class="bt-badge">New</span>  <!-- 기본 accent · solid -->
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `--accent`(기본) · `--neutral` · `--info` · `--success` · `--warning` · `--error` | 톤 (React `BadgeTone` 과 같은 이름) |
+| `--soft` | 옅은 배경 + 진한 글자 (React `appearance="soft"`). 없으면 solid(진한 배경 + 흰/검 글자) |
+
+- 목록의 상태 표시처럼 여러 개가 나란히 있으면 `--soft` 가 차분하다. 눈에 띄어야 하는 하나만 solid
+- `neutral` 은 solid · soft 가 같다 (React 와 같음)
+- 크기(`sm`/`lg`)와 모양(dot · count)은 아직 없다 - React 기본값(md · label)과 같은 하나
+
+---
+
+### Table
+
+서버가 그린 `<table>` 에 클래스만 붙입니다. React `Table` 과 같은 모양이며 CSS 만으로 동작합니다 (정렬 버튼 · 행 선택 · 행 클릭 키보드는 React 에만 있습니다).
+
+```html
+<!-- 넘칠 수 있는 표(minWidth · 칸이 많음)는 키보드로 가로 스크롤할 수 있게 tabindex + 이름을 준다 -->
+<section class="bt-table-wrap" tabindex="0" aria-label="접속 기록">
+  <!-- --cards 를 쓰면 role 을 명시한다 (아래 표 참고). 보통 표에는 필요 없다 -->
+  <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 60rem">
+    <colgroup>
+      <col style="width: 12rem"><col style="width: 10rem"><col>   <!-- 너비 없는 열이 남는 폭을 가져간다 -->
+    </colgroup>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader">시각</th><th scope="col" role="columnheader">사람</th><th scope="col" role="columnheader">내용</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      <tr role="row" th:each="log : ${logs}">
+        <td role="cell" class="bt-table__truncate" data-label="시각" th:text="${log.time}" th:title="${log.time}"></td>
+        <td role="cell" class="bt-table__truncate" data-label="사람" th:text="${log.person}" th:title="${log.person}"></td>
+        <td role="cell" data-label="내용" th:text="${log.detail}"></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `.bt-table-wrap` | 가로 스크롤 상자 (테두리 · 둥근 모서리). `--sticky-header` 면 머리가 붙는다 - 감싼 요소에 확정된 높이가 있어야 한다 (React `stickyHeader` 와 같음) |
+| `.bt-table` | 머리 · 칸 여백, 구분선, 14px, 행 hover. `--sm` · `--lg` 는 React `size` |
+| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘겨도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
+| `td.bt-table__truncate` | 한 줄 칸 - 넘치면 말줄임. 전체 값은 `title` 로 단다 (React `truncate`) |
+| `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다. 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버리므로 **`table`·`thead`/`tbody`·`tr`·`th`·`td` 에 `role="table"`·`"rowgroup"`·`"row"`·`"columnheader"`·`"cell"` 을 단다** (React 는 `cards` 일 때 자동) |
+| `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
+
+- 상자가 가로로 넘칠 수 있으면(`--bt-table-min-width` · 칸이 많은 표) `tabindex="0"` 과 `aria-label` 을 준다 - 키보드 사용자가 상자에 포커스를 두고 ←→ 로 가려진 열을 본다. CSS 는 넘침을 알 수 없어 React 처럼 자동으로 달지 못한다 (axe `scrollable-region-focusable`)
+- 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
+- 칸 머리 안의 `bt-sr-only` 는 상자 기준으로 숨는다 (`.bt-table-wrap` 이 `position: relative`) - 페이지 폭을 넓히지 않는다
+
+---
+
+### CopyButton
+
+값을 클립보드에 복사하는 버튼입니다. React `CopyButton` 과 같은 동작이며, `data-bt-copy` 를 단 버튼은 자동으로 초기화됩니다.
+
+```html
+<!-- 기본 - 누르면 값을 복사하고 2초간 "복사됨" 으로 바뀐다 -->
+<button class="bt-button bt-button--sm bt-button--outline" data-bt-copy="10.8.0.2/32" th:attr="data-bt-copy=${peer.address}">복사</button>
+
+<!-- 아이콘과 함께 - 바뀌는 문구만 data-copy-label 로 감싼다 -->
+<button class="bt-button bt-button--sm bt-button--outline" data-bt-copy="https://example.com/invite/abc">
+  <svg aria-hidden="true" ...></svg><span data-copy-label>링크 복사</span>
+</button>
+
+<script>
+  // 직접 만들기 - 누를 때 계산하는 값 · 결과 콜백 (React 와 같은 이름)
+  Bigtablet.CopyButton('#copy-key', {
+    text: () => document.querySelector('#api-key').value,
+    label: 'API 키 복사',
+    copiedLabel: '복사됨',
+    failedLabel: '복사하지 못했습니다',
+    resetAfter: 2000,
+    onCopy: () => Bigtablet.Toast('복사했습니다', 'success'),
+    onError: () => Bigtablet.Toast('복사하지 못했습니다. 직접 선택해 복사해 주세요', 'error'),
+  });
+</script>
+```
+
+| 옵션 (`data-*`) | 기본값 | 설명 |
+|---|---|---|
+| `text` (`data-bt-copy`) | - | 복사할 값. 함수면 누를 때 계산한다 (throw 하면 실패로 처리) |
+| `label` (`data-label`) | 버튼의 지금 글자 | 버튼 이름 · 문구. 이름(`aria-label`)은 "복사됨" 으로 바뀌지 않는다 |
+| `copiedLabel` (`data-copied-label`) | `복사됨` | 복사 직후 문구 |
+| `failedLabel` (`data-failed-label`) | `복사하지 못했습니다` | 실패 시 스크린리더에 알리는 문구 |
+| `resetAfter` | `2000` | 문구를 되돌리기까지(ms). `0` 이면 되돌리지 않는다 |
+| `onCopy` · `onError` | - | 성공(값) · 실패(오류) - Toast 를 띄우려면 여기서 |
+
+- 결과는 버튼 옆에 넣는 숨은 `role="status"` 로 알린다 (보이는 문구만 바뀌고 이름은 그대로 - 포커스 중 두 번 읽지 않게)
+- Clipboard API 가 없거나 거부되는 환경(HTTP 사내망 · 인앱 브라우저)에서는 `execCommand("copy")` 로 대신 복사하고, 사용자가 잡아 둔 선택 영역과 포커스를 되돌린다. 그것도 막히면 `onError` - 값을 옆에 보이게 두면 사용자가 직접 복사할 수 있다
+- 연타하면 마지막 복사만 반영한다. `copyButton.destroy()` 로 리스너와 status 를 걷는다
 
 ---
 
@@ -1016,6 +1257,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Alert (즉시 표시)
   Bigtablet.Alert({ title: '알림', message: '메시지' });
+
+  // Toast (즉시 표시)
+  Bigtablet.Toast('저장했습니다', 'success');
 });
 
 // 전체 재초기화

@@ -1,3 +1,4 @@
+@use "../breakpoints" as breakpoints;
 @use "../colors" as colors;
 @use "../motion" as motion;
 @forward "tokens";
@@ -59,9 +60,11 @@
 @mixin hover_lift($y: -4px, $shadow: 0 12px 24px rgba(0, 0, 0, 0.15)) {
   transition: motion.$transition_lift;
 
-  &:hover {
-    transform: translateY($y);
-    box-shadow: $shadow;
+  @include breakpoints.hoverable {
+    &:hover {
+      transform: translateY($y);
+      box-shadow: $shadow;
+    }
   }
 
   // WCAG 2.1 SC 2.3.3 - mixin 은 호출 지점을 모르므로 guard 를 body 안에 둔다.
@@ -75,8 +78,10 @@
 @mixin hover_glow($color: rgba(59, 130, 246, 0.4)) {
   transition: box-shadow motion.$duration_slow motion.$easing_enter;
 
-  &:hover {
-    box-shadow: 0 0 30px $color;
+  @include breakpoints.hoverable {
+    &:hover {
+      box-shadow: 0 0 30px $color;
+    }
   }
 
   // WCAG 2.1 SC 2.3.3 - hover_lift 와 동일하게 mixin body 안에서 guard.

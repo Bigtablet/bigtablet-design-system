@@ -556,6 +556,126 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
 &lt;/div&gt;</code></pre>
     </div>
 
+    <!-- CopyButton -->
+    <div class="section">
+      <h2>CopyButton</h2>
+      <div class="demo-row">
+        <code>10.8.0.2/32</code>
+        <button type="button" class="bt-button bt-button--sm bt-button--outline" data-bt-copy="10.8.0.2/32">복사</button>
+      </div>
+      <pre><code>&lt;button class="bt-button bt-button--sm bt-button--outline" data-bt-copy="10.8.0.2/32"&gt;복사&lt;/button&gt;</code></pre>
+    </div>
+
+    <!-- Table -->
+    <div class="section">
+      <h2>Table (CSS only)</h2>
+      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: 넘치면 가로로 스크롤되는 상자라 키보드로 닿아야 한다 (axe scrollable-region-focusable) -->
+      <section class="bt-table-wrap" tabindex="0" aria-label="접속 기록">
+        <!-- biome-ignore-start lint/a11y/noRedundantRoles: bt-table--cards 는 표 요소를 display: block 으로 바꿔 Safari 가 표 의미를 버린다 - role 로 붙잡는다 -->
+        <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 40rem">
+          <colgroup><col style="width: 12rem"><col style="width: 9rem"><col style="width: 7rem"><col></colgroup>
+          <thead role="rowgroup">
+            <tr role="row"><th scope="col" role="columnheader">시각</th><th scope="col" role="columnheader">사람</th><th scope="col" role="columnheader">상태</th><th scope="col" role="columnheader">내용</th></tr>
+          </thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell" class="bt-table__truncate" data-label="시각" title="2026-10-28 09:00:00">2026-10-28 09:00:00</td>
+              <td role="cell" class="bt-table__truncate" data-label="사람" title="박상민">박상민</td>
+              <td role="cell" data-label="상태"><span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span></td>
+              <td role="cell" data-label="내용">로그인</td>
+            </tr>
+            <tr role="row" class="is-selected">
+              <td role="cell" class="bt-table__truncate" data-label="시각" title="2026-10-28 09:12:41">2026-10-28 09:12:41</td>
+              <td role="cell" class="bt-table__truncate" data-label="사람" title="아주아주긴이름을가진외부협력사담당자">아주아주긴이름을가진외부협력사담당자</td>
+              <td role="cell" data-label="상태"><span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span></td>
+              <td role="cell" data-label="내용">접속 대상 3개의 권한을 바꾸고 기존 세션을 끊었다. 바뀐 권한은 다음 접속부터 적용된다.</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- biome-ignore-end lint/a11y/noRedundantRoles: 위와 같음 -->
+      </section>
+    </div>
+
+    <!-- Badge -->
+    <div class="section">
+      <h2>Badge (CSS only)</h2>
+      <div class="demo-row">
+        <span class="bt-badge">accent</span>
+        <span class="bt-badge bt-badge--neutral">neutral</span>
+        <span class="bt-badge bt-badge--info">info</span>
+        <span class="bt-badge bt-badge--success">success</span>
+        <span class="bt-badge bt-badge--warning">warning</span>
+        <span class="bt-badge bt-badge--error">error</span>
+      </div>
+      <div class="demo-row">
+        <span class="bt-badge bt-badge--soft">accent</span>
+        <span class="bt-badge bt-badge--info bt-badge--soft">info</span>
+        <span class="bt-badge bt-badge--success bt-badge--soft">사용 중</span>
+        <span class="bt-badge bt-badge--warning bt-badge--soft">만료 임박</span>
+        <span class="bt-badge bt-badge--error bt-badge--soft">만료</span>
+      </div>
+    </div>
+
+    <!-- InlineAlert -->
+    <div class="section">
+      <h2>InlineAlert (CSS only)</h2>
+      <div style="display: grid; gap: 12px; max-width: 560px;">
+        <div class="bt-inline-alert bt-inline-alert--info" role="status">
+          <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+          <div class="bt-inline-alert__content">
+            <div class="bt-inline-alert__title">점검 예정</div>
+            <div class="bt-inline-alert__message">오늘 밤 11시부터 30분 동안 서비스를 쓸 수 없습니다.</div>
+          </div>
+        </div>
+        <div class="bt-inline-alert bt-inline-alert--success" role="status">
+          <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+          <div class="bt-inline-alert__content">
+            <div class="bt-inline-alert__message">저장했습니다.</div>
+          </div>
+        </div>
+        <div class="bt-inline-alert bt-inline-alert--warning">
+          <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+          <div class="bt-inline-alert__content">
+            <div class="bt-inline-alert__title">구독이 7일 뒤 만료됩니다</div>
+            <div class="bt-inline-alert__message">만료되면 팀원 초대가 막힙니다.</div>
+            <div class="bt-inline-alert__action">
+              <button type="button" class="bt-button bt-button--sm bt-button--outline">갱신</button>
+            </div>
+          </div>
+        </div>
+        <div class="bt-inline-alert bt-inline-alert--error" role="alert">
+          <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+          <div class="bt-inline-alert__content">
+            <div class="bt-inline-alert__title">알림 받기를 켜지 못했습니다</div>
+            <div class="bt-inline-alert__message">브라우저 설정에서 이 사이트의 알림을 허용해 주세요.</div>
+          </div>
+        </div>
+        <div class="bt-inline-alert bt-inline-alert--neutral">
+          <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+          <div class="bt-inline-alert__content">
+            <div class="bt-inline-alert__message">필터를 바꾸면 목록이 다시 그려집니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="section">
+      <h2>Toast (JavaScript)</h2>
+      <div class="demo-row">
+        <button type="button" class="bt-button bt-button--md bt-button--filled" onclick="Bigtablet.Toast('저장했습니다', 'success')">Success</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline" onclick="Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error')">Error</button>
+        <button type="button" class="bt-button bt-button--md bt-button--outline" onclick="Bigtablet.Toast('삭제했습니다', 'neutral', { action: { label: '실행 취소', onClick: () => {} } })">Action</button>
+      </div>
+
+      <pre><code>Bigtablet.Toast('저장했습니다', 'success');
+Bigtablet.Toast('삭제했습니다', 'neutral', {
+  action: { label: '실행 취소', onClick: () =&gt; restore() }
+});
+const t = Bigtablet.Toast('업로드 중…', 'info', { duration: Infinity });
+t.dismiss();</code></pre>
+    </div>
+
     <!-- Alert -->
     <div class="section">
       <h2>Alert (JavaScript)</h2>

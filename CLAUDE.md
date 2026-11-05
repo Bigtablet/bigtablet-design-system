@@ -42,8 +42,9 @@ src/
 ├── test/                # setup.ts (Vitest)
 ├── types/               # scss.d.ts
 └── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)
-    ├── bigtablet.scss   # 컴포넌트 스타일 + CSS custom properties
-    ├── bigtablet.js     # JS 유틸 (Select, Modal, Alert, etc.)
+    ├── bigtablet.scss   # 진입점 - scss/_*.scss 컴포넌트 partial 을 순서대로 @use
+    ├── bigtablet.js     # 진입점 - js/*.js (Dropdown, Modal, Alert, Toast …) 를 모아 export
+    ├── js/  scss/       # 컴포넌트별 소스 - 빌드가 min.js · min.css 하나씩으로 묶는다
     └── examples/        # HTML 사용 예시
 ```
 
@@ -247,7 +248,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 - **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
 - **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 96.11% stmts / 93.75% branch / 96.51% funcs / 97.36% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 96.12% stmts / 93.79% branch / 96.52% funcs / 97.37% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
