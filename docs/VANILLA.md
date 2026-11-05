@@ -19,6 +19,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Modal](#modal)
   - [Alert](#alert)
   - [Toast](#toast)
+  - [InlineAlert](#inlinealert)
   - [Card](#card)
   - [Spinner](#spinner)
   - [Pagination](#pagination)
@@ -759,6 +760,44 @@ Alert는 JavaScript로만 사용합니다.
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
 - `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
 - `prefers-reduced-motion` 에서는 모션만 빠지고 시간은 그대로 간다
+
+---
+
+### InlineAlert
+
+페이지 안에 **계속 남는** 안내·경고 블록입니다. React `InlineAlert` 와 같은 모양이며 스크립트 없이 CSS 만으로 동작합니다.
+사라지는 알림은 [Toast](#toast), 확인을 받아야 하면 [Alert](#alert) 를 쓰세요.
+
+```html
+<div class="bt-inline-alert bt-inline-alert--warning">
+  <span class="bt-inline-alert__icon" aria-hidden="true"></span>   <!-- 비워 두면 톤 아이콘이 그려진다 -->
+  <div class="bt-inline-alert__content">
+    <div class="bt-inline-alert__title">구독이 7일 뒤 만료됩니다</div>  <!-- 선택 -->
+    <div class="bt-inline-alert__message">만료되면 팀원 초대가 막힙니다.</div>
+    <div class="bt-inline-alert__action">                              <!-- 선택 -->
+      <button type="button" class="bt-button bt-button--sm bt-button--outline">갱신</button>
+    </div>
+  </div>
+</div>
+
+<!-- Thymeleaf: 폼 오류를 서버가 그대로 그린다 -->
+<div class="bt-inline-alert bt-inline-alert--error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+  <span class="bt-inline-alert__icon" aria-hidden="true"></span>
+  <div class="bt-inline-alert__content">
+    <div class="bt-inline-alert__message" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+  </div>
+</div>
+```
+
+| 클래스 | 설명 |
+|---|---|
+| `--neutral` · `--info` · `--success` · `--warning` · `--error` | 톤 (React `InlineAlertTone` 과 같은 이름). 없으면 `info` |
+| `__icon` | 빈 `<span>` - 톤 아이콘(React 와 같은 lucide)을 CSS 가 그린다. 아이콘이 필요 없으면 빼면 된다 |
+| `__title` · `__message` · `__action` | 굵은 제목 · 본문 · 버튼/링크 줄 (`__content` 안) |
+
+- `role` 은 상황에 맞게 소비자가 준다 - 처음부터 있는 안내는 주지 않는다(스크린리더가 끼어들면 소음). 나중에 나타나는 정보·성공은 `role="status"`, 즉시 알아야 하는 오류만 `role="alert"`
+- 나타날 때(서버가 처음부터 그린 경우 포함 · 스크립트가 `hidden` 을 풀 때) 짧은 진입 모션(0.2s, 4px)이 돈다 - React 와 같다. `prefers-reduced-motion` 에서는 없음
+- 닫기 버튼은 없다 - 닫아야 하는 안내는 React `onDismiss` 처럼 소비자 스크립트로 요소를 숨긴다
 
 ---
 

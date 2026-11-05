@@ -1,0 +1,146 @@
+@use "sass:map";
+@use "../../styles/token" as token;
+
+/* ========================================
+   InlineAlert - React `src/ui/feedback/inline-alert/style.scss` 를 bt-inline-alert* 로 옮겼다 (#916).
+   값을 바꿀 때는 두 파일을 함께 고친다. 스크립트 없이 CSS 만으로 동작한다 (닫기 버튼은 범위 밖).
+   ======================================== */
+
+// 톤 아이콘 - React 와 같은 lucide 아이콘(Info · CheckCircle2 · AlertTriangle · XCircle)을 mask 로 그린다.
+// 마크업에는 빈 `.bt-inline-alert__icon` 만 두면 된다 - 색은 currentColor(톤 on-container).
+$_icon_paths: (
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  success: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  warning:
+    '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>' +
+    '<path d="M12 9v4"/><path d="M12 17h.01"/>',
+  error: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+);
+
+@function _icon($tone) {
+  $svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + map.get($_icon_paths, $tone) + "</svg>";
+  @return url("data:image/svg+xml;utf8,#{$svg}");
+}
+
+@keyframes bt-inline-alert-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * #{token.$spacing_4}));
+  }
+}
+
+// 페이지 흐름 안의 안내 블록. 톤 색은 status `container`(배경) · `on-container`(아이콘·제목) 쌍이라
+// 다크 테마에서 함께 뒤집힌다. 본문은 일반 텍스트 색 - 긴 문장을 톤 색으로 칠하면 읽기 힘들다.
+.bt-inline-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: token.$spacing_12;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: token.$border_width_standard solid token.$color_border_subtle;
+  border-radius: token.$radius_md;
+  font-family: token.$font_family_primary;
+  color: token.$color_text_body;
+  // tone modifier 가 없으면 React 기본값(tone="info")과 같다
+  background: var(--bt-color-status-info-container);
+  // 나중에 나타나는 경우(스크립트가 hidden 을 풀 때)에 툭 튀지 않게 - 처음부터 그려진 것도 같은 모션이 도는데,
+  // CSS 로는 둘을 가를 수 없고 짧아서(0.2s · 4px) 무해하다 (React 와 같음)
+  animation: bt-inline-alert-enter token.$duration_base token.$easing_enter;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: token.$icon_size_md;
+    height: token.$icon_size_md;
+    // 첫 줄(제목 20px) 가운데에 맞춘다
+    margin-top: token.$spacing_2;
+    background-color: currentColor;
+    // -webkit- 은 unprefixed mask 를 모르는 Safari 15.3 이하용
+    -webkit-mask: _icon(info) center / contain no-repeat;
+    mask: _icon(info) center / contain no-repeat;
+  }
+
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: token.$spacing_4;
+    min-width: 0;
+  }
+
+  &__icon,
+  &__title {
+    color: var(--bt-color-status-info-on-container);
+  }
+
+  &__title {
+    @include token.label_large_medium;
+    font-weight: token.$font_weight_semi_bold;
+  }
+
+  &__message {
+    @include token.body_small;
+    @include token.wrap_keep_all;
+  }
+
+  &__action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_8;
+    margin-top: token.$spacing_4;
+  }
+
+  // ── Tone ────────────────────────────────────────────────────────────────
+
+  &--neutral {
+    background: token.$color_bg_solid_dim;
+  }
+
+  &--neutral &__icon,
+  &--neutral &__title {
+    color: token.$color_text_heading;
+  }
+
+  @each $tone in (info, success, warning, error) {
+    &--#{$tone} {
+      background: var(--bt-color-status-#{$tone}-container);
+    }
+
+    &--#{$tone} &__icon,
+    &--#{$tone} &__title {
+      color: var(--bt-color-status-#{$tone}-on-container);
+    }
+
+    &--#{$tone} &__icon {
+      -webkit-mask-image: _icon($tone);
+      mask-image: _icon($tone);
+    }
+  }
+
+  // 톤 배경과 outline/tonal 버튼의 경계색이 가까우면 액션이 본문처럼 보인다 - 두 변형에만 경계를 톤 색으로
+  // 보강하고 filled/text 의 강조 체계는 그대로 둔다 (React 와 같음)
+  &__action :is(.bt-button--outline, .bt-button--tonal):not(:disabled, .bt-button--danger) {
+    border-width: token.$border_width_standard;
+    border-style: solid;
+    border-color: var(--bt-color-status-info-on-container);
+  }
+
+  &--neutral &__action :is(.bt-button--outline, .bt-button--tonal):not(:disabled, .bt-button--danger) {
+    border-color: token.$color_text_heading;
+  }
+
+  @each $tone in (info, success, warning, error) {
+    &--#{$tone} &__action :is(.bt-button--outline, .bt-button--tonal):not(:disabled, .bt-button--danger) {
+      border-color: var(--bt-color-status-#{$tone}-on-container);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-inline-alert {
+    animation: none;
+  }
+}
