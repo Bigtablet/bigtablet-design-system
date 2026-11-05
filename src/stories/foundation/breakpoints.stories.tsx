@@ -23,6 +23,8 @@ Material Design 3의 Window Size Class에 기반한 4단계 시스템입니다.
 | large | 1200px~ | 와이드 데스크탑 |
 
 SCSS: \`@include token.compact { ... }\` / \`@include token.from_medium { ... }\`
+
+hover 스타일은 폭이 아니라 입력 기기로 가릅니다 - \`@include token.hoverable { &:hover { ... } }\` (\`@media (hover: hover)\`). 터치 기기에서 탭한 뒤 hover 강조가 남지 않습니다.
         `,
 			},
 		},
