@@ -289,7 +289,10 @@ sw.setChecked(true);
 // 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
 const push = Bigtablet.Toggle('#push', {
   controlled: true,
-  onCheckedChange: async (next) => { if (await save(next)) push.setChecked(next); }
+  onCheckedChange: async (next) => {
+    try { if (await save(next)) push.setChecked(next); else showError(); }
+    catch { showError(); } // reject 도 실패 - 잡지 않으면 대기만 풀리고 사용자는 모른다
+  }
 });
 
 const pagination = Bigtablet.Pagination('#my-pagination', {
