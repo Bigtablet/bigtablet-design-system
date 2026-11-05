@@ -1,0 +1,183 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Button
+   ========================================
+   variant 는 React `<Button variant>` 와 동일한 filled / tonal / outline / text 4종.
+   danger 는 React 의 `danger` boolean 처럼 variant 와 직교(orthogonal)한 modifier 다.
+   `--danger` 단독은 React `<Button danger />`(variant 기본값 filled)와 같이 red filled 이고,
+   variant 클래스와 함께 쓰면 해당 variant 의 red 표현(outline=빨간 테두리, tonal=빨간 wash,
+   text=빨간 텍스트)이 된다.
+   기본 radius 는 React `radius` 기본값과 동일한 full(pill) - `--radius-*` 로 덮어쓴다. */
+.bt-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // React 의 .button_label 과 동일한 한글 줄바꿈 (vanilla 는 label span 이 없어 여기에 준다)
+  @include token.wrap_keep_all;
+  gap: var(--bt-spacing-sm);
+  border-radius: var(--bt-radius-full);
+  border: none;
+  cursor: pointer;
+  font-family: var(--bt-font-family);
+  font-weight: var(--bt-font-weight-medium);
+  transition: background var(--bt-transition-base),
+              color var(--bt-transition-base),
+              opacity var(--bt-transition-base),
+              box-shadow var(--bt-transition-base),
+              transform var(--bt-transition-base);
+
+  &:disabled {
+    cursor: not-allowed;
+    // opacity 도 위 목록에 있다 - 없으면 background·color 는 200ms 로 따라오는데
+    // 불투명도만 0ms 로 튀어 React 에서 고친 것과 같은 이질감이 남는다(#610).
+    opacity: 0.6;
+  }
+
+  // React Button 과 같은 토큰 포커스 링 (UA outline 은 pill·다크에서 제각각이다).
+  // outline 은 지우지 않고 투명하게 둔다 - 고대비 모드(forced-colors)는 box-shadow 를 지우고 outline 만 시스템색으로 그린다.
+  &:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: var(--bt-focus-ring);
+  }
+
+  /* Sizes - React ButtonSize(sm/md/lg/xl) 와 동일 */
+  &--sm {
+    padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
+    font-size: var(--bt-font-size-sm);
+  }
+
+  &--md {
+    padding: var(--bt-spacing-md) var(--bt-spacing-xl);
+    font-size: var(--bt-font-size-base);
+  }
+
+  &--lg {
+    padding: var(--bt-spacing-lg) var(--bt-spacing-2xl);
+    font-size: var(--bt-font-size-md);
+  }
+
+  &--xl {
+    padding: var(--bt-spacing-xl) var(--bt-spacing-3xl);
+    font-size: var(--bt-font-size-lg);
+  }
+
+  /* Variants */
+  /* React `variant="filled"` 와 동일하게 accent 계열을 쓴다 - light 는 검정(brand 와 같은 값),
+     dark 는 흰색으로 자동 반전되어 다크 테마에서 채움이 페이지 배경에 묻히지 않는다.
+     (구 Vanilla 는 양 테마 고정인 --bt-color-primary 를 써서 다크에서 React 와 갈라졌다.) */
+  &--filled {
+    background: var(--bt-color-accent);
+    color: var(--bt-color-accent-on-surface);
+
+    &:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--bt-color-accent) 88%, var(--bt-color-accent-on-surface));
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  /* React Button variant="tonal" */
+  /* state 토큰(--bt-color-hover/pressed)은 반투명 alpha 라 background 를 교체하면 컨테이너 색이
+     사라진다. React 는 ::before 오버레이로 겹치는데 여기엔 그 레이어가 없으므로,
+     background-image 로 같은 알파를 컨테이너 위에 덧칠해 동일한 결과를 낸다. */
+  &--tonal {
+    background: var(--bt-color-primary-container);
+    color: var(--bt-color-text-primary);
+
+    &:hover:not(:disabled) {
+      background-image: linear-gradient(var(--bt-color-hover), var(--bt-color-hover));
+    }
+
+    &:active:not(:disabled) {
+      background-image: linear-gradient(var(--bt-color-pressed), var(--bt-color-pressed));
+      transform: scale(0.98);
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    border: 1px solid var(--bt-color-border);
+    color: var(--bt-color-text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--bt-color-background-secondary);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  &--text {
+    background: transparent;
+    color: var(--bt-color-text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--bt-color-hover);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+  }
+
+  /* --danger 단독 = React `<Button danger />` (variant 기본값 filled) */
+  &--danger {
+    background: var(--bt-color-error);
+    color: var(--bt-color-on-primary);
+
+    &:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--bt-color-error) 88%, #000);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  /* Radius overrides - React `radius` prop 과 동일 (기본값 full) */
+  &--radius-none { border-radius: var(--bt-radius-none); }
+  &--radius-xs   { border-radius: var(--bt-radius-xs); }
+  &--radius-sm   { border-radius: var(--bt-radius-sm); }
+  &--radius-md   { border-radius: var(--bt-radius-md); }
+  &--radius-lg   { border-radius: var(--bt-radius-lg); }
+  &--radius-xl   { border-radius: var(--bt-radius-xl); }
+  &--radius-full { border-radius: var(--bt-radius-full); }
+
+  &--full-width {
+    width: 100%;
+  }
+}
+
+/* danger × variant - React 의 `variant` + `danger` 조합과 동일한 렌더링.
+   클래스 2개라 단독 `--danger`(클래스 1개)보다 우선순위가 높다. */
+.bt-button--danger.bt-button--outline {
+  background: transparent;
+  border-color: var(--bt-color-error);
+  color: var(--bt-color-error-text);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 8%, transparent);
+  }
+}
+
+.bt-button--danger.bt-button--tonal {
+  background: color-mix(in srgb, var(--bt-color-error) 12%, transparent);
+  color: var(--bt-color-error-text);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 18%, transparent);
+  }
+}
+
+.bt-button--danger.bt-button--text {
+  background: transparent;
+  color: var(--bt-color-error-text);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--bt-color-error) 8%, transparent);
+  }
+}

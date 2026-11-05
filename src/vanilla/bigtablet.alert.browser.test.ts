@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
-// 소비자가 받는 그대로 - 번들 CSS 와 `<script>` 전역 (bigtablet.modal.browser.test.ts 와 같은 방식).
+// 번들 CSS 와 소스 진입점 (bigtablet.modal.browser.test.ts 와 같은 방식).
 // jsdom 에는 Web Animations 가 없어, 퇴출 애니메이션이 실제로 돌고 끝나면 걷히는지는 여기서만 본다.
 import "./bigtablet.scss";
-import "./bigtablet.js";
-
-type AlertFn = (config: { title?: string; message: string }) => { close: () => void };
-const { Alert } = (window as unknown as { Bigtablet: { Alert: AlertFn } }).Bigtablet;
+import { Alert } from "./bigtablet.js";
 
 describe("Vanilla Alert exit motion (Chromium, #909)", () => {
 	it("plays the exit animation, then removes the overlay and unlocks scroll", async () => {

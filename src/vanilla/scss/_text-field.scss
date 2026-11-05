@@ -1,0 +1,152 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   TextField
+   ======================================== */
+.bt-text-field {
+  display: flex;
+  flex-direction: column;
+
+  &--full-width {
+    width: 100%;
+  }
+
+  &__label {
+    margin-bottom: var(--bt-spacing-xs);
+    color: var(--bt-color-text-primary);
+    font-size: var(--bt-font-size-sm);
+    font-weight: var(--bt-font-weight-medium);
+    line-height: var(--bt-line-height-normal);
+  }
+
+  &__wrap {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  &__input {
+    width: 100%;
+    border-radius: var(--bt-radius-md);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-base);
+    line-height: var(--bt-line-height-normal);
+    color: var(--bt-color-text-primary);
+    background: var(--bt-color-background);
+    transition: border-color var(--bt-transition-base),
+                box-shadow var(--bt-transition-base),
+                background var(--bt-transition-base);
+
+    &::placeholder {
+      color: var(--bt-color-text-tertiary);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: var(--bt-color-background-secondary);
+      color: var(--bt-color-text-tertiary);
+      opacity: 0.7;
+    }
+
+    /* Variants - React `<TextField variant>` 와 1:1 대응.
+       --outline 이 기본값(React `variant="outline"`), --filled 는 `variant="filled"` 다. */
+    &--outline {
+      border: 1px solid var(--bt-color-border);
+
+      &:hover:not(:disabled) {
+        border-color: var(--bt-color-border-light);
+      }
+
+      &:focus-visible {
+        outline: none;
+        border-color: var(--bt-color-accent);
+        box-shadow: var(--bt-focus-ring);
+      }
+    }
+
+    &--filled {
+      background: var(--bt-color-background-secondary);
+      border: 1px solid transparent;
+
+      &:focus-visible {
+        outline: none;
+        border-color: var(--bt-color-accent);
+        background: var(--bt-color-background);
+        box-shadow: var(--bt-focus-ring);
+      }
+    }
+
+    /* Sizes */
+    &--sm {
+      padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
+      font-size: var(--bt-font-size-sm);
+    }
+
+    &--md {
+      padding: var(--bt-spacing-md) var(--bt-spacing-xl);
+      font-size: var(--bt-font-size-base);
+    }
+
+    &--lg {
+      padding: var(--bt-spacing-lg) var(--bt-spacing-2xl);
+      font-size: var(--bt-font-size-md);
+    }
+
+    /* States */
+    // 상태는 테두리색으로만 - 예전 !important halo 가 :focus-visible 링을 항상 덮어 오류 칸에
+    // 키보드 포커스가 안 보였다(WCAG 2.4.7). 포커스 때는 상태색 링 토큰을 쓴다 (React TextField 와 같음).
+    &--error {
+      border-color: var(--bt-color-error) !important;
+
+      &:focus-visible {
+        box-shadow: var(--bt-focus-ring-error);
+      }
+    }
+
+    &--success {
+      border-color: var(--bt-color-success) !important;
+
+      &:focus-visible {
+        box-shadow: var(--bt-focus-ring-success);
+      }
+    }
+
+    /* 식별자 칸 - React TextField 의 `identifier` prop 과 같은 처리 */
+    &--identifier {
+      @include token.legible_identifiers;
+    }
+  }
+
+  &__helper {
+    margin-top: var(--bt-spacing-xs);
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-secondary);
+
+    &--error {
+      color: var(--bt-color-error-text);
+    }
+
+    &--success {
+      color: var(--bt-color-success-text);
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--bt-color-text-secondary);
+
+    &--left {
+      left: var(--bt-spacing-md);
+    }
+
+    &--right {
+      right: var(--bt-spacing-md);
+    }
+  }
+}

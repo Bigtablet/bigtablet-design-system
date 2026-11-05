@@ -1,0 +1,120 @@
+/* ========================================
+   Pagination
+   ======================================== */
+.bt-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bt-spacing-sm);
+  margin-top: var(--bt-spacing-3xl);
+
+  // <button> 과 <a>(data-href 링크 모드) 가 같은 모양이 되도록
+  &__item,
+  &__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    line-height: normal; // <a> 는 body line-height 를 물려받아 버튼보다 높아진다
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+      box-shadow: var(--bt-focus-ring);
+    }
+  }
+
+  &__item {
+    border: 1px solid var(--bt-color-border);
+    background: var(--bt-color-background);
+    border-radius: var(--bt-radius-md);
+    padding: 6px 10px;
+    min-width: 36px;
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-primary);
+    cursor: pointer;
+    transition: background var(--bt-transition-base),
+                border-color var(--bt-transition-base);
+
+    &:hover:not(:disabled) {
+      background: var(--bt-color-background-secondary);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__page {
+    border: 0;
+    background: transparent;
+    min-width: 36px;
+    height: 36px;
+    border-radius: var(--bt-radius-md);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-secondary);
+    cursor: pointer;
+    transition: background var(--bt-transition-base),
+                color var(--bt-transition-base);
+
+    &:hover {
+      background: var(--bt-color-background-secondary);
+      color: var(--bt-color-text-primary);
+    }
+
+    &--active {
+      color: var(--bt-color-text-primary);
+      font-weight: var(--bt-font-weight-semibold);
+    }
+  }
+
+  // 현재 쪽 입력칸 (React showPageJump) - 검정 채움 대신 테두리로 현재 쪽을 표시해 처음부터 "적는 곳" 으로 보이게 한다
+  &__page-input {
+    min-width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 var(--bt-spacing-6);
+    border: 2px solid var(--bt-color-accent);
+    border-radius: var(--bt-radius-md);
+    background: var(--bt-color-background);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    font-weight: var(--bt-font-weight-medium);
+    color: var(--bt-color-text-primary);
+    text-align: center;
+    cursor: text;
+    transition: background var(--bt-transition-fast),
+                box-shadow var(--bt-transition-fast);
+
+    &:hover {
+      background: var(--bt-color-background-secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용
+      box-shadow: var(--bt-focus-ring);
+    }
+
+    &--invalid,
+    &--invalid:focus-visible {
+      border-color: var(--bt-color-error);
+      box-shadow: var(--bt-focus-ring-error);
+    }
+  }
+
+  &__ellipsis {
+    min-width: 20px;
+    text-align: center;
+    font-size: var(--bt-font-size-sm);
+    color: var(--bt-color-text-tertiary);
+  }
+}

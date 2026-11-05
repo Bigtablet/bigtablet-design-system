@@ -58,7 +58,7 @@ npm install @bigtablet/design-system
 > 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
 > `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
 > `files` 에서 제외돼 npm·CDN 어느 쪽에도 없습니다. 소스를 읽어야 하면 저장소의
-> `src/vanilla/bigtablet.scss` · `src/vanilla/bigtablet.js` 를 보세요.
+> `src/vanilla/js/` · `src/vanilla/scss/`(컴포넌트별 파일)를 보세요.
 
 ---
 

@@ -42,8 +42,9 @@ src/
 ├── test/                # setup.ts (Vitest)
 ├── types/               # scss.d.ts
 └── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)
-    ├── bigtablet.scss   # 컴포넌트 스타일 + CSS custom properties
-    ├── bigtablet.js     # JS 유틸 (Select, Modal, Alert, etc.)
+    ├── bigtablet.scss   # 진입점 - scss/_*.scss 컴포넌트 partial 을 순서대로 @use
+    ├── bigtablet.js     # 진입점 - js/*.js (Dropdown, Modal, Alert, Toast …) 를 모아 export
+    ├── js/  scss/       # 컴포넌트별 소스 - 빌드가 min.js · min.css 하나씩으로 묶는다
     └── examples/        # HTML 사용 예시
 ```
 

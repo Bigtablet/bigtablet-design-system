@@ -1,0 +1,89 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Checkbox
+   ======================================== */
+.bt-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+
+  &__input {
+    @include token.visually_hidden;
+  }
+
+  &__box {
+    width: 1.125rem;
+    height: 1.125rem;
+    box-sizing: border-box;
+    border: 1px solid var(--bt-color-border);
+    border-radius: var(--bt-radius-sm);
+    background: var(--bt-color-background);
+    transition: background var(--bt-transition-base),
+                border-color var(--bt-transition-base),
+                box-shadow var(--bt-transition-base);
+    display: inline-block;
+    position: relative;
+  }
+
+  &__label {
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-base);
+    line-height: var(--bt-line-height-normal);
+    color: var(--bt-color-text-primary);
+  }
+
+  /* Sizes */
+  &--sm {
+    .bt-checkbox__box {
+      width: 1rem;
+      height: 1rem;
+    }
+    .bt-checkbox__label {
+      font-size: var(--bt-font-size-sm);
+    }
+  }
+
+  &--lg {
+    .bt-checkbox__box {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .bt-checkbox__label {
+      font-size: var(--bt-font-size-md);
+    }
+  }
+
+  /* States */
+  &__input:focus-visible + .bt-checkbox__box {
+    box-shadow: var(--bt-focus-ring);
+    border-color: var(--bt-color-accent);
+  }
+
+  &__input:disabled + .bt-checkbox__box,
+  &__input:disabled ~ .bt-checkbox__label {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &__input:checked + .bt-checkbox__box {
+    background: var(--bt-color-accent);
+    border-color: var(--bt-color-accent);
+  }
+
+  &__input:checked + .bt-checkbox__box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.28rem;
+    height: 0.55rem;
+    border: 2px solid var(--bt-color-accent-on-surface);
+    border-top: 0;
+    border-left: 0;
+    transform: translate(-50%, -58%) rotate(45deg);
+  }
+}

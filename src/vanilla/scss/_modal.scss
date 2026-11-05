@@ -1,0 +1,89 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Modal
+   ======================================== */
+.bt-modal {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  /* 잠금이 거터를 회수해 ICB 가 스크롤바 폭만큼 넓어진다(#635). 그만큼 오른쪽에 padding 을 줘
+     패널 중심이 잠금 전후로 같은 자리에 남게 한다 - React 의 `.modal` 과 같은 처리다. */
+  padding-right: var(--bt-scrollbar-width, 0px);
+  display: none;
+  place-items: center;
+  background: var(--bt-color-overlay);
+  z-index: var(--bt-z-modal);
+  // 진입·퇴출 모션 - React `.modal` 과 같은 presence (#913). 진입은 display: none → grid 에서
+  // @starting-style 이, 퇴출은 bigtablet.js 가 붙이는 data-state="closed" 로의 transition 이 한다.
+  // 모션이 끝나면 bigtablet.js 가 is-open 을 뗀다.
+  @include token.presence;
+
+  &.is-open {
+    display: grid;
+    // 암묵 트랙은 auto - 즉 패널의 max-content 로 커진다. 그러면 패널의
+    // `max-width: calc(100% - 32px)` 가 뷰포트가 아니라 그 트랙 기준으로 풀려 전혀 clamp 되지
+    // 않는다. 실측 - 375px 화면에서 `width: 480px` 를 준 패널이 우측으로 89px 잘렸다.
+    // React 쪽 `.modal` 과 같은 수정이다.
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  &__panel {
+    position: relative; // close button 의 absolute 기준
+    background: var(--bt-color-background);
+    border-radius: var(--bt-radius-lg);
+    box-shadow: var(--bt-elevation-3);
+    max-width: calc(100% - 32px);
+    overflow: hidden;
+    @include token.presence(scale(0.96) translateY(-4px));
+  }
+
+  &__header {
+    padding: var(--bt-spacing-lg);
+    padding-right: calc(var(--bt-spacing-lg) + 32px); // close 버튼 겹침 방지
+    border-bottom: 1px solid var(--bt-color-border);
+    color: var(--bt-color-text-primary);
+    font-size: var(--bt-font-size-xl);
+    font-weight: var(--bt-font-weight-semibold);
+    line-height: 1.3;
+  }
+
+  &__close {
+    position: absolute;
+    top: var(--bt-spacing-md);
+    right: var(--bt-spacing-md);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--bt-color-text-tertiary);
+    border-radius: var(--bt-radius-md);
+    cursor: pointer;
+    transition: background var(--bt-transition-fast),
+                color var(--bt-transition-fast);
+
+    &:hover {
+      background: var(--bt-color-hover);
+      color: var(--bt-color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--bt-focus-ring);
+    }
+  }
+
+  &__body {
+    padding: var(--bt-spacing-lg);
+  }
+
+  &__footer {
+    padding: var(--bt-spacing-lg);
+    border-top: 1px solid var(--bt-color-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--bt-spacing-sm);
+  }
+}

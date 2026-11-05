@@ -33,9 +33,19 @@ npx sass --no-source-map --load-path=. --load-path=src --style=compressed \
 
 echo "✓ Vanilla CSS compiled"
 
-# ── Copy JS ───────────────────────────────────────────────────────────────────
-cp "$SRC/bigtablet.js" "$OUT/bigtablet.js"
-echo "✓ Vanilla JS copied"
+# ── JS ────────────────────────────────────────────────────────────────────────
+# bigtablet.js(비압축) · bigtablet.min.js 둘 다 tsup 이 IIFE(`var Bigtablet = …`)로 만든다 (tsup.config.ts) -
+# 소스가 ES 모듈 여러 개라(#926) 원본 복사로는 <script> 에서 돌지 않는다.
+# 예전 소스의 UMD 래퍼가 하던 CommonJS · AMD 경로를 파일 끝에 잇는다 - `exports["./vanilla"]` 로 공개된 파일이라
+# <script> 밖(require · RequireJS) 소비도 깨지면 안 된다. 전역 `Bigtablet` 은 IIFE 가 그대로 만든다.
+for f in "$OUT/bigtablet.js" "$OUT/bigtablet.min.js"; do
+  if [ ! -f "$f" ]; then
+    echo "❌ tsup 산출물이 없습니다: $f (pnpm build 는 tsup 을 먼저 돌린다)" >&2
+    exit 1
+  fi
+  printf '%s\n' 'typeof module=="object"&&module.exports?module.exports=Bigtablet:typeof define=="function"&&define.amd&&define(function(){return Bigtablet});' >> "$f"
+done
+echo "✓ Vanilla JS UMD footer appended"
 
 # ── Copy examples (if present) ────────────────────────────────────────────────
 if [ -d "$SRC/examples" ]; then

@@ -1,0 +1,20 @@
+/* ========================================
+   Spinner
+   ======================================== */
+@keyframes bt-spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* React `<Spinner size>` 는 px 숫자를 그대로 받는 자유 스케일이라(기본 24) Vanilla 도
+   size enum 대신 --bt-spinner-size 커스텀 프로퍼티로 임의 px 을 받는다.
+   예) <span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="Loading"></span> */
+.bt-spinner {
+  display: inline-block;
+  box-sizing: border-box;
+  width: var(--bt-spinner-size, 24px);
+  height: var(--bt-spinner-size, 24px);
+  border-radius: 50%;
+  border: 2px solid var(--bt-color-border);
+  border-top-color: var(--bt-color-accent);
+  animation: bt-spinner-spin 0.8s linear infinite;
+}

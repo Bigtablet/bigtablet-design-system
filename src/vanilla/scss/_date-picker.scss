@@ -1,0 +1,82 @@
+/* ========================================
+   DatePicker
+   ======================================== */
+.bt-date-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bt-spacing-xs);
+
+  &__label {
+    color: var(--bt-color-text-primary);
+    margin-bottom: var(--bt-spacing-xs);
+    font-weight: var(--bt-font-weight-medium);
+    font-size: var(--bt-font-size-sm);
+    line-height: var(--bt-line-height-normal);
+
+    &-required {
+      margin-left: var(--bt-spacing-xs);
+      color: var(--bt-color-error-text);
+    }
+  }
+
+  &__fields {
+    display: flex;
+    gap: var(--bt-spacing-sm);
+  }
+
+  &__select {
+    min-width: 88px;
+    height: 44px;
+    padding: 0 var(--bt-spacing-md);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-base);
+    color: var(--bt-color-text-primary);
+    background-color: var(--bt-color-background);
+    border: 1px solid var(--bt-color-border);
+    border-radius: var(--bt-radius-sm);
+    cursor: pointer;
+    transition: border-color var(--bt-transition-fast),
+                box-shadow var(--bt-transition-fast),
+                background-color var(--bt-transition-fast);
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--bt-color-text-secondary) 50%),
+      linear-gradient(135deg, var(--bt-color-text-secondary) 50%, transparent 50%);
+    background-position:
+      calc(100% - 16px) calc(50% - 3px),
+      calc(100% - 11px) calc(50% - 3px);
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+
+    &:hover:not(:disabled) {
+      border-color: var(--bt-color-accent);
+      background-color: var(--bt-color-background-secondary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--bt-color-accent);
+      box-shadow: var(--bt-focus-ring);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--bt-color-text-disabled);
+      background-color: var(--bt-color-background-secondary);
+      border-color: var(--bt-color-border-light);
+    }
+  }
+
+  &--full-width {
+    width: 100%;
+
+    .bt-date-picker__fields {
+      width: 100%;
+    }
+
+    .bt-date-picker__select {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

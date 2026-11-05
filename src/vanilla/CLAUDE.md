@@ -5,12 +5,38 @@
 
 For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
 
+### Source Layout
+
+소스는 컴포넌트별로 나뉘어 있고(#926) 배포물은 파일 하나씩으로 묶인다 - 소비자에게는 차이가 없다.
+
+```
+src/vanilla/
+├── bigtablet.js        # 진입점 - js/* 를 모아 export + DOMContentLoaded 자동 초기화
+├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
+├── js/
+│   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
+│   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
+│   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
+│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js
+│   └── init.js         # data-bt-* 자동 초기화
+└── scss/
+    ├── _custom-properties.scss   # :root --bt-* 변수
+    ├── _{component}.scss         # button · text-field · … · toast
+    ├── _utilities.scss · _autofill.scss
+    └── _reduced-motion.scss      # 앞 규칙을 덮어야 해서 마지막
+```
+
+**컴포넌트를 추가할 때:** `js/{name}.js` 에서 `export function {Name}` → `bigtablet.js` 에 `export { {Name} } from` 한 줄
+(자동 초기화가 필요하면 `init.js` 에도). 스타일은 `scss/_{name}.scss` 를 만들고 `bigtablet.scss` 의 `_utilities` 앞에
+`@use` 한다 - 토큰을 쓰면 partial 맨 위에 `@use "../../styles/token" as token;`. 테스트는 지금처럼
+`bigtablet.{name}.test.ts` 에서 `./bigtablet.js` 를 import 한다.
+
 ### Build Output
 ```
 dist/vanilla/
 ├── bigtablet.css       # Full CSS (~55KB)      - 배포 제외
 ├── bigtablet.min.css   # Minified CSS (~38KB)  - 배포됨
-├── bigtablet.js        # Full JS (~48KB)       - 배포 제외
+├── bigtablet.js        # Full JS (~58KB, esbuild IIFE) - 배포 제외
 ├── bigtablet.min.js    # Minified JS (~19KB)   - 배포됨
 └── examples/           # HTML examples         - 배포 제외
 ```
