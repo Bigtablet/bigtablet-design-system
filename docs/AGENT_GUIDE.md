@@ -529,7 +529,7 @@ JS API (auto-init on DOMContentLoaded, or manual):
 const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
 // React 와 동일한 이름의 multiple / searchable 도 지원 (data-multiple / data-searchable 로도 가능)
 Bigtablet.Dropdown("#multi", { multiple: true, searchable: true, selectedSummary: (n) => `${n}개 선택` });
-const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose });
+const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose, onExited });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 const toast = Bigtablet.Toast("저장했습니다", "success", { duration: 3000, action: { label, onClick } }); // → { dismiss }
 ```

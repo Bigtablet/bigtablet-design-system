@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 // 소비자가 받는 그대로 - 번들 CSS 와 `<script>` 전역. 브라우저 ESM 에서는 UMD 의 `this` 가
 // undefined 라 `self.Bigtablet` 에 붙는다(unit 의 named import 는 Vite 의 CJS 변환 덕분이다).
@@ -100,5 +100,36 @@ describe("Vanilla Modal layout (Chromium)", () => {
 
 		m.close();
 		expect(window.scrollY).toBe(300);
+	});
+
+	it("plays the exit transition, then hides and unlocks; reopening mid-exit cancels it (#913)", async () => {
+		// browser-setup.ts 가 레이아웃 실측용으로 transition 을 전부 0s 로 눌러 둔다 - 이 테스트만 푼다
+		const noTransition = Array.from(document.querySelectorAll("style")).find((st) =>
+			st.textContent?.includes("transition-duration: 0s !important"),
+		);
+		if (noTransition) noTransition.disabled = true;
+		onTestFinished(() => {
+			if (noTransition) noTransition.disabled = false;
+		});
+
+		const { el, m } = mount(400);
+		const panel = el.querySelector(".bt-modal__panel") as HTMLElement;
+		m.open();
+		await expect.poll(() => [el, panel].flatMap((x) => x.getAnimations()).length).toBe(0);
+
+		m.close();
+		expect(el.classList.contains("is-open")).toBe(true);
+		expect([el, panel].flatMap((x) => x.getAnimations()).length).toBeGreaterThan(0);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		// 닫히는 중 다시 열면 그대로 열린 채 남는다
+		m.open();
+		await expect.poll(() => getComputedStyle(el).opacity).toBe("1");
+		expect(el.classList.contains("is-open")).toBe(true);
+
+		m.close();
+		await expect.poll(() => el.classList.contains("is-open")).toBe(false);
+		expect(getComputedStyle(el).display).toBe("none");
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
 });
