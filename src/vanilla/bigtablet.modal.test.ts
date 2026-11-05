@@ -462,3 +462,72 @@ describe("Modal - 점검 회귀 (#898)", () => {
 		expect(document.getElementById("123")?.classList.contains("is-open")).toBe(true);
 	});
 });
+
+describe("Modal - 서버가 열린 채로 그린 모달 (#919)", () => {
+	const openMarkup = () => {
+		const el = document.createElement("div");
+		el.className = "bt-modal is-open";
+		el.setAttribute("data-bt-modal", "");
+		el.innerHTML =
+			'<div class="bt-modal__panel"><div class="bt-modal__header">수정</div>' +
+			'<div class="bt-modal__body"><input id="name"></div>' +
+			'<button data-modal-close aria-label="닫기">×</button></div>';
+		document.body.appendChild(el);
+		return el;
+	};
+
+	it("is-open 으로 그린 모달을 열린 상태로 시작한다 - 잠금 · 포커스까지", () => {
+		setViewportInset(0);
+		const m = Modal(openMarkup());
+
+		expect(m?.isOpen()).toBe(true);
+		expect(document.body.dataset.btOpenModals).toBe("1");
+		expect(document.activeElement?.id).toBe("name");
+	});
+
+	it("자동 초기화된 열린 모달이 Escape · 바깥 클릭 · 닫기 버튼으로 닫힌다", () => {
+		setViewportInset(0);
+		const el = openMarkup();
+		init();
+		const reopen = () => (el as HTMLElement & { _btModal?: { open: () => void } })._btModal?.open();
+
+		pressEscape();
+		expect(el.classList.contains("is-open")).toBe(false);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+
+		reopen();
+		el.click();
+		expect(el.classList.contains("is-open")).toBe(false);
+
+		reopen();
+		(el.querySelector("[data-modal-close]") as HTMLElement).click();
+		expect(el.classList.contains("is-open")).toBe(false);
+	});
+
+	it("열린 채 자동 초기화된 모달을 수동으로 다시 만들어도 열린 채로 남는다", () => {
+		setViewportInset(0);
+		const el = openMarkup();
+		init();
+		const onClose = vi.fn();
+
+		const m = Modal(el, { onClose });
+		expect(m?.isOpen()).toBe(true);
+		expect(el.classList.contains("is-open")).toBe(true);
+		// 잠금 카운터가 교체 중에 새지 않는다
+		expect(document.body.dataset.btOpenModals).toBe("1");
+
+		pressEscape();
+		expect(onClose).toHaveBeenCalledTimes(1);
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+	});
+
+	it("생성 중에 열리면 onOpen 은 반환값을 쓸 수 있게 한 박자 뒤에 부른다", async () => {
+		setViewportInset(0);
+		const seen: boolean[] = [];
+		const m = Modal(openMarkup(), { onOpen: () => seen.push(m?.isOpen() ?? false) });
+
+		expect(seen).toEqual([]);
+		await Promise.resolve();
+		expect(seen).toEqual([true]);
+	});
+});

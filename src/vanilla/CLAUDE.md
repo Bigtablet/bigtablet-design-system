@@ -58,7 +58,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled`, `[hidden]`(필터로 숨김) |
 | Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
-| Modal | `.bt-modal` | | `.is-open` |
+| Modal | `.bt-modal` | | `.is-open` (서버가 붙여 그리면 초기화가 열린 상태로 시작 - #919) |
 | Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다 | | `[data-state="closed"]`(퇴출 중) |
 | Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
 | Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |

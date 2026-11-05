@@ -611,6 +611,20 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 > 자기 document 리스너를 걸어 둘이 함께 닫혔다. `closeOnEscape: false` 인 Modal 도 스택에는 등록되어
 > Escape 를 **소비**한다 - 닫히지는 않지만 아래 오버레이로 내려가지도 않는다.
 
+**서버가 열린 채로 그리기** - 입력 오류로 폼을 다시 그리거나 `?edit=` 로 수정 폼을 바로 열 때는 `is-open` 을 붙여 그리면 된다.
+초기화가 그 클래스를 보고 `open()` 과 같은 경로로 연다 - 스크롤 잠금, 본문 첫 칸 포커스, Escape · 바깥 클릭 · 닫기 버튼이 모두 듣는다.
+`load` 뒤에 `open()` 을 따로 부르는 우회는 필요 없다.
+
+```html
+<!-- Thymeleaf: 검증 오류가 있으면 열린 채로 -->
+<div id="edit-modal" class="bt-modal" data-bt-modal
+     th:classappend="${#fields.hasErrors('*')} ? 'is-open' : ''">
+  ...
+</div>
+```
+
+열린 채로 그린 모달을 `Bigtablet.Modal(el, { onClose })` 로 다시 만들어도 열린 상태를 이어받는다. 이때 `onOpen` 은 생성 직후(다음 마이크로태스크)에 불려 콜백 안에서 반환값을 쓸 수 있다.
+
 ---
 
 ### Alert
