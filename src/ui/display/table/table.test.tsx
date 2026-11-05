@@ -1134,6 +1134,16 @@ describe("Table - 고정 너비 · 말줄임 · 카드 (#915)", () => {
 		expect(screen.getByText("90")).not.toHaveAttribute("data-label");
 	});
 
+	it("cardLabel 이 있으면 머리 대신 그 글자를 카드 라벨로 쓴다", () => {
+		const cols: TableColumn<Row>[] = [
+			{ key: "name", header: "Name", cardLabel: "이름" },
+			{ key: "score", header: <span>★</span>, cardLabel: "점수" },
+		];
+		render(<Table columns={cols} data={rows} keyExtractor={(r) => r.id} cards />);
+		expect(screen.getByText("Alpha")).toHaveAttribute("data-label", "이름");
+		expect(screen.getByText("90")).toHaveAttribute("data-label", "점수");
+	});
+
 	it("cards 면 표 요소에 role 을 명시해 display: block 에도 표 의미를 붙잡는다 - 보통 표에는 달지 않는다", () => {
 		const { container, rerender } = render(
 			<Table

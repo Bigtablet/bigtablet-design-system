@@ -1,6 +1,6 @@
 /// <reference types="@vitest/browser-playwright" />
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { cdp, page, userEvent } from "vitest/browser";
 import { Table, type TableColumn } from "./index";
 import "./style.scss";
@@ -160,6 +160,54 @@ describe("Table fixed layout · cards (Chromium, #915)", () => {
 		expect(table.getBoundingClientRect().width).toBe(640);
 		const wrapper = container.querySelector(".table_wrapper") as HTMLElement;
 		expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+	});
+
+	it("applies minWidth in the default auto layout too", () => {
+		const { container } = render(
+			<div style={{ width: 320 }}>
+				<Table columns={logCols} data={page1} keyExtractor={(r) => r.id} minWidth="40rem" />
+			</div>,
+		);
+		expect((container.querySelector("table") as HTMLElement).getBoundingClientRect().width).toBe(
+			640,
+		);
+	});
+
+	it("keeps sort buttons and select-all visible and clickable on cards", async () => {
+		await page.viewport(375, 667);
+		const sortable = logCols.map((c) => (c.key === "time" ? { ...c, sortable: true } : c));
+		const onSortChange = vi.fn();
+		const { container } = render(
+			<Table
+				columns={sortable}
+				data={page1}
+				keyExtractor={(r) => r.id}
+				cards
+				onSortChange={onSortChange}
+				selectable
+				rowKey={(r) => String(r.id)}
+			/>,
+		);
+		const sortButton = screen.getByRole("button", { name: /시각/ });
+		// Checkbox 는 native input 을 화면에서 숨기고 상자를 따로 그린다 - 그 칸을 잰다
+		const selectAll = screen
+			.getByRole("checkbox", { name: "전체 선택" })
+			.closest("th") as HTMLElement;
+		for (const el of [sortButton, selectAll]) {
+			const r = el.getBoundingClientRect();
+			expect(r.width).toBeGreaterThan(8);
+			expect(r.height).toBeGreaterThan(8);
+		}
+		// 조작할 것이 없는 머리 칸(사람 · 내용)은 여전히 화면 읽기용
+		const plainTh = Array.from(container.querySelectorAll("th")).find(
+			(th) => th.textContent === "사람",
+		) as HTMLElement;
+		// 열 width 인라인 스타일이 1px 를 이겨 폭은 남지만, absolute + clip 이라 보이지도 자리를 차지하지도 않는다
+		expect(getComputedStyle(plainTh).position).toBe("absolute");
+		expect(getComputedStyle(plainTh).clipPath).toContain("inset(50%)");
+		await userEvent.click(sortButton);
+		expect(onSortChange).toHaveBeenCalledWith({ key: "time", direction: "asc" });
+		await page.viewport(1280, 800);
 	});
 
 	it("stacks rows as labelled cards on compact screens and hides the head visually", async () => {

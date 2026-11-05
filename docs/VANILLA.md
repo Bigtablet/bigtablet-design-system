@@ -830,7 +830,8 @@ Alert는 JavaScript로만 사용합니다.
 서버가 그린 `<table>` 에 클래스만 붙입니다. React `Table` 과 같은 모양이며 CSS 만으로 동작합니다 (정렬 버튼 · 행 선택 · 행 클릭 키보드는 React 에만 있습니다).
 
 ```html
-<div class="bt-table-wrap">
+<!-- 넘칠 수 있는 표(minWidth · 칸이 많음)는 키보드로 가로 스크롤할 수 있게 tabindex + 이름을 준다 -->
+<section class="bt-table-wrap" tabindex="0" aria-label="접속 기록">
   <!-- --cards 를 쓰면 role 을 명시한다 (아래 표 참고). 보통 표에는 필요 없다 -->
   <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 60rem">
     <colgroup>
@@ -849,7 +850,7 @@ Alert는 JavaScript로만 사용합니다.
       </tr>
     </tbody>
   </table>
-</div>
+</section>
 ```
 
 | 클래스 | 설명 |
@@ -861,6 +862,7 @@ Alert는 JavaScript로만 사용합니다.
 | `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다. 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버리므로 **`table`·`thead`/`tbody`·`tr`·`th`·`td` 에 `role="table"`·`"rowgroup"`·`"row"`·`"columnheader"`·`"cell"` 을 단다** (React 는 `cards` 일 때 자동) |
 | `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
 
+- 상자가 가로로 넘칠 수 있으면(`--bt-table-min-width` · 칸이 많은 표) `tabindex="0"` 과 `aria-label` 을 준다 - 키보드 사용자가 상자에 포커스를 두고 ←→ 로 가려진 열을 본다. CSS 는 넘침을 알 수 없어 React 처럼 자동으로 달지 못한다 (axe `scrollable-region-focusable`)
 - 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
 - 칸 머리 안의 `bt-sr-only` 는 상자 기준으로 숨는다 (`.bt-table-wrap` 이 `position: relative`) - 페이지 폭을 넓히지 않는다
 

@@ -19,6 +19,8 @@
 
 .table {
   width: 100%;
+  // `minWidth` prop - 레이아웃과 상관없이 건다 (auto 표도 좁은 화면에서 눌리지 않게)
+  min-width: var(--table-min-width, 0);
   border-collapse: collapse;
   font-family: token.$font_family_primary;
 }
@@ -195,7 +197,6 @@
 
 .table_layout_fixed {
   table-layout: fixed;
-  min-width: var(--table-min-width, 0);
 
   .table_td {
     overflow-wrap: anywhere;
@@ -267,7 +268,39 @@
       min-width: 0;
     }
 
+    // 칸 머리는 화면 읽기용으로 숨긴다. 단 정렬 버튼 · 전체 선택은 조작해야 하므로 머리 줄을 카드 위의
+    // 한 줄 도구 막대로 남기고, 조작할 것이 없는 머리 칸만 숨긴다 (숨기면 탭 순서엔 남는데 보이지 않는다)
     .table_thead {
+      display: block;
+      background: none;
+
+      > tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: token.$spacing_4;
+        padding: token.$spacing_8 token.$spacing_12;
+      }
+    }
+
+    .table_th:not(.table_th_sortable, .table_th_checkbox) {
+      @include token.visually_hidden;
+    }
+
+    .table_th_sortable,
+    .table_th_checkbox {
+      display: block;
+      width: auto !important; // 열 width 인라인 스타일
+      padding: 0;
+    }
+
+    .table_sort_button {
+      padding: token.$spacing_4 token.$spacing_8;
+      border-radius: token.$radius_sm;
+    }
+
+    // 조작할 머리가 하나도 없으면 머리 줄 자체가 빈 막대로 남지 않게
+    .table_thead:not(:has(.table_th_sortable, .table_th_checkbox)) {
       @include token.visually_hidden;
     }
 

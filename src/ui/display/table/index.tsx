@@ -57,6 +57,11 @@ export interface TableColumn<T extends object> {
 	 * 열 폭이 정해져야 잘리므로 `layout="fixed"` + `width` 와 함께 쓴다 - 시각 · IP 처럼 길이가 거의 같은 칸.
 	 */
 	truncate?: boolean;
+	/**
+	 * `cards` 화면에서 칸 앞에 붙는 라벨. 없으면 `header` 가 문자열일 때 그 글자를 쓴다 - `header` 가 아이콘 ·
+	 * 요소라면 이걸 줘야 카드에서 칸이 무슨 값인지 보인다 (칸 머리는 카드에서 화면 읽기용으로만 남는다).
+	 */
+	cardLabel?: string;
 }
 
 /** `selectable` 시 `rowKey` 를 요구하기 위한 판별 유니온 */
@@ -550,7 +555,10 @@ export const Table = <T extends object>({
 													title={col.truncate && !col.render ? text : undefined}
 													// 카드에서 칸 머리 대신 보이는 라벨
 													data-label={
-														cards && typeof col.header === "string" ? col.header : undefined
+														cards
+															? (col.cardLabel ??
+																(typeof col.header === "string" ? col.header : undefined))
+															: undefined
 													}
 												>
 													{col.render ? col.render(item, rowIndex) : text}

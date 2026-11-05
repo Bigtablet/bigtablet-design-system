@@ -559,7 +559,9 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
     <!-- Table -->
     <div class="section">
       <h2>Table (CSS only)</h2>
-      <div class="bt-table-wrap">
+      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: 넘치면 가로로 스크롤되는 상자라 키보드로 닿아야 한다 (axe scrollable-region-focusable) -->
+      <section class="bt-table-wrap" tabindex="0" aria-label="접속 기록">
+        <!-- biome-ignore-start lint/a11y/noRedundantRoles: bt-table--cards 는 표 요소를 display: block 으로 바꿔 Safari 가 표 의미를 버린다 - role 로 붙잡는다 -->
         <table class="bt-table bt-table--fixed bt-table--cards" role="table" style="--bt-table-min-width: 40rem">
           <colgroup><col style="width: 12rem"><col style="width: 9rem"><col style="width: 7rem"><col></colgroup>
           <thead role="rowgroup">
@@ -580,7 +582,8 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
             </tr>
           </tbody>
         </table>
-      </div>
+        <!-- biome-ignore-end lint/a11y/noRedundantRoles: 위와 같음 -->
+      </section>
     </div>
 
     <!-- Badge -->
