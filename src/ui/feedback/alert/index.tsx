@@ -60,21 +60,36 @@ export interface AlertOptions {
 	/** 취소 버튼 클릭 시 호출되는 콜백 */
 	onCancel?: () => void;
 	/**
+	 * 확인 버튼 잠금 (기본값: false). 창 안 입력에 따라 바꾸려면 `showAlert` 가 돌려준 핸들의
+	 * `update({ confirmDisabled })` 로 - 옵션은 호출 시점에 한 번만 읽힌다. 잠긴 버튼은 포커스를 잃지 않게
+	 * `aria-disabled` 로 막고, 클릭 · Enter 로 확인되지 않는다.
+	 */
+	confirmDisabled?: boolean;
+	/**
 	 * 오버레이 클릭으로 닫기 허용 여부 (기본값: true).
 	 * destructive 확인처럼 실수 닫힘을 막아야 하면 false 로.
 	 */
 	closeOnOverlay?: boolean;
 }
 
-/** `useConfirm()` 옵션 - 취소 버튼은 항상 있고 결과는 Promise 로 받는다 */
+/** `showAlert` 가 돌려주는 핸들. 창이 닫혔거나 다른 알림으로 바뀐 뒤의 호출은 무시된다 */
+export interface AlertHandle {
+	/** 열린 알림의 옵션을 바꾼다 - 예: 입력이 비면 `update({ confirmDisabled: true })` */
+	update: (patch: Partial<AlertOptions>) => void;
+}
+
+/**
+ * `useConfirm()` 옵션 - 취소 버튼은 항상 있고 결과는 Promise 로 받는다.
+ * `confirmDisabled` 는 없다 - 핸들을 돌려주지 않아 풀 방법이 없다 (필요하면 `showAlert`)
+ */
 export interface ConfirmOptions
-	extends Omit<AlertOptions, "onConfirm" | "onCancel" | "showCancel"> {
+	extends Omit<AlertOptions, "onConfirm" | "onCancel" | "showCancel" | "confirmDisabled"> {
 	/** 확인 직후 실행할 작업. Promise 면 끝날 때까지 pending - 성공해야 `true` 로 끝난다 */
 	onConfirm?: () => unknown;
 }
 
 interface AlertContextValue {
-	showAlert: (options: AlertOptions) => void;
+	showAlert: (options: AlertOptions) => AlertHandle;
 	confirm: (options: ConfirmOptions) => Promise<boolean>;
 }
 
@@ -131,12 +146,18 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	React.useEffect(() => () => settle(false), [settle]);
 
 	const showAlert = useCallback(
-		(options: AlertOptions) => {
+		(options: AlertOptions): AlertHandle => {
 			// 열려 있던 confirm 을 교체한다 - 앞의 것은 확인되지 않았으니 false
 			settle(false);
-			tokenRef.current++;
+			const token = ++tokenRef.current;
 			setPending(false);
 			setAlertState({ ...options, isOpen: true });
+			return {
+				update: (patch) => {
+					if (token !== tokenRef.current) return;
+					setAlertState((prev) => (prev.isOpen ? { ...prev, ...patch, isOpen: true } : prev));
+				},
+			};
 		},
 		[settle],
 	);
@@ -162,7 +183,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	}, []);
 
 	const handleConfirm = useCallback(() => {
-		if (pending) return;
+		if (pending || alertState.confirmDisabled) return;
 		const token = tokenRef.current;
 		const result = alertState.onConfirm?.();
 		if (result && typeof (result as Promise<unknown>).then === "function") {
@@ -183,7 +204,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		}
 		settle(true);
 		handleClose();
-	}, [alertState.onConfirm, handleClose, pending, settle]);
+	}, [alertState.confirmDisabled, alertState.onConfirm, handleClose, pending, settle]);
 
 	const handleCancel = useCallback(() => {
 		// 작업 중에는 닫지 않는다 - 이미 시작된 삭제가 끝났는지 모르는 채 취소로 끝나면 안 된다
@@ -229,6 +250,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	actionsAlign = "right",
 	showIcon = false,
 	closeOnOverlay = true,
+	confirmDisabled = false,
 	pending = false,
 	onConfirm,
 	onCancel,
@@ -236,6 +258,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	onExited,
 }) => {
 	const t = useLocaleText();
+	// 진행 중이면 스피너가 우선 - 잠금 모양(흐림)은 pending 이 아닐 때만
+	const locked = confirmDisabled && !pending;
 	const confirmText = confirmTextProp ?? t("alert.confirm");
 	const cancelText = cancelTextProp ?? t("alert.cancel");
 	// Escape/overlay 닫힘은 취소 동작과 동등해야 한다 (APG alertdialog) - onCancel 경로로
@@ -361,7 +385,10 @@ const AlertModal: React.FC<AlertModalProps> = ({
 						danger={destructive}
 						size="md"
 						radius="md"
-						aria-disabled={pending || undefined}
+						// 잠금도 disabled 대신 aria-disabled - 입력 중 잠겼다 풀려도 Tab 순서 · 포커스 트랩이 그대로다.
+						// 모양은 anchor 비활성과 같은 button_disabled (흐림 · 포인터 차단)
+						className={locked ? "button_disabled" : undefined}
+						aria-disabled={pending || locked || undefined}
 						leadingIcon={
 							pending ? (
 								<span aria-hidden="true">

@@ -1791,6 +1791,36 @@ function YourComponent() {
 | `actionsAlign` | `'left' \| 'center' \| 'right'` | `'right'` | 버튼 정렬 |
 | `onConfirm` | `() => unknown` | - | 확인 핸들러. Promise 를 돌려주면 끝날 때까지 열린 채 스피너 · 중복 클릭/취소/Escape 차단, 실패하면 열린 채 재시도 |
 | `onCancel` | `() => void` | - | 취소 핸들러 |
+| `confirmDisabled` | `boolean` | `false` | 확인 버튼 잠금 (`aria-disabled` - 포커스 유지, 클릭 · Enter 무시). 바꾸려면 핸들의 `update` |
+
+#### 확인 잠금 - 창 안 입력에 따라
+
+`showAlert` 는 핸들 `{ update(patch) }` 를 돌려준다. 옵션은 호출 시점에 한 번만 읽히므로, 창 안 입력에
+따라 바꿀 값은 `update` 로 넘긴다. 창이 닫혔거나 다른 알림으로 바뀐 뒤의 `update` 는 무시된다.
+
+```tsx
+let reason = "";
+const alert = showAlert({
+  tone: "warning",
+  title: "버전 정책을 저장할까요?",
+  message: (
+    <Textarea
+      label="변경 사유"
+      maxLength={500}
+      onValueChange={(value) => {
+        reason = value;
+        alert.update({ confirmDisabled: !value.trim() });
+      }}
+    />
+  ),
+  showCancel: true,
+  confirmText: "저장",
+  confirmDisabled: true,
+  onConfirm: () => savePolicy({ reason }),
+});
+```
+
+`useConfirm` 에는 `confirmDisabled` 가 없다 - 핸들을 돌려주지 않아 풀 방법이 없다. 입력을 받는 확인은 `showAlert` 로.
 
 ---
 

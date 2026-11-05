@@ -1,7 +1,13 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { stubPendingAnimation } from "../../../test/stub-animation";
-import { AlertProvider, type ConfirmOptions, useAlert, useConfirm } from "./index";
+import {
+	type AlertHandle,
+	AlertProvider,
+	type ConfirmOptions,
+	useAlert,
+	useConfirm,
+} from "./index";
 
 const TestComponent = ({
 	options,
@@ -557,6 +563,75 @@ describe("useConfirm", () => {
 		expect(screen.queryByRole("button", { name: "취소" })).toBeNull();
 		fireEvent.click(screen.getByRole("button", { name: "확인" }));
 		expect(onConfirm).toHaveBeenCalledTimes(1);
+	});
+
+	it("confirmDisabled 로 확인을 잠그고 핸들의 update 로 푼다 - 잠긴 동안 포커스는 남는다 (#931)", async () => {
+		const onConfirm = vi.fn();
+		let handle: AlertHandle | undefined;
+		const T = () => {
+			const { showAlert } = useAlert();
+			return (
+				<button
+					type="button"
+					onClick={() => {
+						handle = showAlert({ title: "사유", confirmDisabled: true, onConfirm });
+					}}
+				>
+					열기
+				</button>
+			);
+		};
+		render(
+			<AlertProvider>
+				<T />
+			</AlertProvider>,
+		);
+		open();
+		const confirmBtn = screen.getByRole("button", { name: "확인" });
+		expect(confirmBtn).toHaveAttribute("aria-disabled", "true");
+		expect(confirmBtn).not.toBeDisabled();
+		confirmBtn.focus();
+		fireEvent.click(confirmBtn);
+		fireEvent.keyDown(confirmBtn, { key: "Enter" });
+		expect(onConfirm).not.toHaveBeenCalled();
+		expect(confirmBtn).toHaveFocus();
+
+		act(() => handle?.update({ confirmDisabled: false }));
+		expect(confirmBtn).not.toHaveAttribute("aria-disabled");
+		fireEvent.click(confirmBtn);
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+	});
+
+	it("닫히거나 교체된 알림의 핸들은 아무것도 바꾸지 않는다", () => {
+		let first: AlertHandle | undefined;
+		const T = () => {
+			const { showAlert } = useAlert();
+			return (
+				<>
+					<button
+						type="button"
+						onClick={() => {
+							first = showAlert({ title: "첫째" });
+						}}
+					>
+						첫째
+					</button>
+					<button type="button" onClick={() => showAlert({ title: "둘째" })}>
+						둘째
+					</button>
+				</>
+			);
+		};
+		render(
+			<AlertProvider>
+				<T />
+			</AlertProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "첫째" }));
+		fireEvent.click(screen.getByRole("button", { name: "둘째" }));
+		act(() => first?.update({ title: "덮어씀", confirmDisabled: true }));
+		expect(screen.getByRole("alertdialog")).toHaveTextContent("둘째");
+		expect(screen.getByRole("button", { name: "확인" })).not.toHaveAttribute("aria-disabled");
 	});
 
 	it("throws outside the provider", () => {

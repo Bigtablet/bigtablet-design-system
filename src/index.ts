@@ -160,6 +160,7 @@ export type {
 export { Table } from "./ui/display/table";
 export type {
 	AlertActionsAlign,
+	AlertHandle,
 	AlertOptions,
 	AlertTone,
 	ConfirmOptions,
