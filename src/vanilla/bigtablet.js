@@ -1618,8 +1618,12 @@
 			actionBtn.addEventListener("click", () => {
 				// 퇴출 모션 동안 버튼이 남아 있다 - 연타로 되돌리기가 두 번 돌지 않게
 				if (closing) return;
-				action.onClick?.();
-				dismiss();
+				// onClick 이 throw 해도 닫는다 - 남으면 다시 눌러 콜백이 두 번 돈다
+				try {
+					action.onClick?.();
+				} finally {
+					dismiss();
+				}
 			});
 			item.appendChild(actionBtn);
 		}

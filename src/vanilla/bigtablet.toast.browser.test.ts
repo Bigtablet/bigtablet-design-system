@@ -24,6 +24,7 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 		Toast("두 번째", "error");
 
 		const [newer, older] = Array.from(document.querySelectorAll(".bt-toast"));
+		if (!newer || !older) throw new Error("expected two toasts");
 		expect(newer.textContent).toContain("두 번째");
 		expect(rect(newer).width).toBe(360);
 		expect(1280 - rect(newer).right).toBe(16);

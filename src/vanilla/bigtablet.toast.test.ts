@@ -6,6 +6,12 @@ import { resetVanillaDom } from "./bigtablet.test-utils";
 resetVanillaDom();
 
 const toasts = () => Array.from(document.querySelectorAll<HTMLElement>(".bt-toast"));
+/** 위에서 i 번째 토스트 (0 = 최신). 없으면 테스트를 바로 실패시킨다 */
+const nth = (i: number) => {
+	const el = toasts()[i];
+	if (!el) throw new Error(`toast #${i} not found`);
+	return el;
+};
 const progressOf = (el: Element) => el.querySelector(".bt-toast__progress") as HTMLElement;
 const endProgress = (el: Element) => progressOf(el).dispatchEvent(new Event("animationend"));
 
@@ -37,11 +43,11 @@ describe("Toast", () => {
 		Toast("<b>저장</b>했습니다", "success");
 		Toast("두 번째", "info");
 
-		const regions = document.querySelectorAll(".bt-toast-container");
-		expect(regions).toHaveLength(1);
-		expect(regions[0].getAttribute("role")).toBe("region");
-		expect(regions[0].getAttribute("aria-label")).toBe("알림");
-		const [, first] = toasts();
+		expect(document.querySelectorAll(".bt-toast-container")).toHaveLength(1);
+		const region = document.querySelector(".bt-toast-container");
+		expect(region?.getAttribute("role")).toBe("region");
+		expect(region?.getAttribute("aria-label")).toBe("알림");
+		const first = nth(1);
 		expect(first.querySelector(".bt-toast__message")?.textContent).toBe("<b>저장</b>했습니다");
 		expect(first.querySelector("b")).toBeNull();
 		expect(first.querySelector(".bt-toast__icon--success")).not.toBeNull();
@@ -51,7 +57,8 @@ describe("Toast", () => {
 		Toast("실패", "error");
 		Toast("안내", "info");
 
-		const [info, error] = toasts();
+		const info = nth(0);
+		const error = nth(1);
 		expect(error.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("alert");
 		expect(info.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("status");
 		// 버튼은 라이브 리전 밖이다
@@ -72,7 +79,7 @@ describe("Toast", () => {
 		for (let i = 1; i <= 6; i++) Toast(`토스트 ${i}`);
 
 		const all = toasts();
-		expect(all[0].textContent).toContain("토스트 6");
+		expect(nth(0).textContent).toContain("토스트 6");
 		expect(all).toHaveLength(6);
 		expect(all.filter((el) => el.dataset.state === "closed").map((el) => el.textContent)).toEqual([
 			"토스트 1",
@@ -85,8 +92,8 @@ describe("Toast", () => {
 		const b = Toast("b");
 		Toast("c");
 
-		const [c, , a] = toasts();
-		endProgress(a);
+		const c = nth(0);
+		endProgress(nth(2));
 		(c.querySelector(".bt-toast__close") as HTMLElement).click();
 		b.dismiss();
 		b.dismiss(); // 두 번 불러도 괜찮다
@@ -98,7 +105,8 @@ describe("Toast", () => {
 		Toast("a", "info", { duration: 5000 });
 		Toast("b", "info", { duration: Number.POSITIVE_INFINITY });
 
-		const [infinite, timed] = toasts();
+		const infinite = nth(0);
+		const timed = nth(1);
 		expect(progressOf(timed).style.getPropertyValue("--bt-toast-duration")).toBe("5000ms");
 		expect(progressOf(infinite)).toBeNull();
 	});
@@ -108,7 +116,7 @@ describe("Toast", () => {
 		const t = Toast("a");
 
 		t.dismiss();
-		const [el] = toasts();
+		const el = nth(0);
 		expect(el.dataset.state).toBe("closed");
 		expect(el.hasAttribute("inert")).toBe(true);
 
@@ -127,14 +135,34 @@ describe("Toast", () => {
 		btn.click();
 
 		expect(onClick).toHaveBeenCalledTimes(1);
-		expect(toasts()[0].dataset.state).toBe("closed");
+		expect(nth(0).dataset.state).toBe("closed");
 		anim.done();
+	});
+
+	it("action 이 throw 해도 토스트는 닫히고 다시 실행되지 않는다", () => {
+		const onClick = vi.fn(() => {
+			throw new Error("boom");
+		});
+		Toast("a", "neutral", { action: { label: "되돌리기", onClick } });
+
+		const btn = document.querySelector(".bt-toast__action") as HTMLElement;
+		// jsdom 은 리스너 예외를 window "error" 로 보고한다 - 기대한 예외라 여기서 삼킨다
+		const swallow = (e: ErrorEvent) => e.preventDefault();
+		window.addEventListener("error", swallow);
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		btn.click();
+		btn.click();
+		window.removeEventListener("error", swallow);
+
+		expect(onClick).toHaveBeenCalledTimes(1);
+		expect(toasts()).toHaveLength(0);
 	});
 
 	it("포커스가 있던 토스트가 닫히면 이웃 토스트의 닫기 버튼으로 넘긴다", () => {
 		Toast("old");
 		Toast("new");
-		const [newer, older] = toasts();
+		const newer = nth(0);
+		const older = nth(1);
 		const closeOf = (el: Element) => el.querySelector(".bt-toast__close") as HTMLElement;
 
 		closeOf(newer).focus();
