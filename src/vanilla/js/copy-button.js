@@ -100,8 +100,10 @@ export function CopyButton(element, options = {}) {
 	};
 
 	if (btn.tagName === "BUTTON" && !btn.hasAttribute("type")) btn.setAttribute("type", "button");
-	// 이름은 고정 - 보이는 문구가 "복사됨" 으로 바뀌어도 낭독은 아래 status 한 번
+	// 이름은 고정 - 보이는 문구가 "복사됨" 으로 바뀌어도 낭독은 아래 status 한 번. 보이는 문구도 처음부터
+	// 이름과 같게 둔다 (label 옵션이 버튼 글자와 다를 때 첫 복사 전까지 어긋나지 않게)
 	btn.setAttribute("aria-label", config.label);
+	labelEl.textContent = config.label;
 
 	const status = document.createElement("span");
 	status.className = "bt-sr-only";
@@ -118,25 +120,33 @@ export function CopyButton(element, options = {}) {
 		status.textContent = message;
 	}
 
+	// 소비자 콜백의 예외는 삼키지 않되 상태(되돌림 타이머)를 깨지 않게 - 처리 안 된 예외처럼 보고한다
+	function notify(callback, value) {
+		try {
+			callback?.(value);
+		} catch (error) {
+			(globalThis.reportError ?? console.error)(error);
+		}
+	}
+
 	async function copy() {
 		const id = ++seq;
 		clearTimeout(timer);
 		let text;
+		let failure;
 		try {
 			const source = config.text ?? btn.dataset.btCopy ?? "";
 			text = typeof source === "function" ? source() : String(source);
 			await copyText(text);
 		} catch (error) {
-			if (id !== seq) return;
-			show(false, config.failedLabel);
-			config.onError?.(error);
-			if (config.resetAfter > 0) timer = setTimeout(() => show(false, ""), config.resetAfter);
-			return;
+			failure = error;
 		}
 		if (id !== seq) return;
-		show(true, config.copiedLabel);
-		config.onCopy?.(text);
+		const ok = failure === undefined;
+		show(ok, ok ? config.copiedLabel : config.failedLabel);
 		if (config.resetAfter > 0) timer = setTimeout(() => show(false, ""), config.resetAfter);
+		if (ok) notify(config.onCopy, text);
+		else notify(config.onError, failure);
 	}
 
 	const cleanup = on(btn, "click", () => {

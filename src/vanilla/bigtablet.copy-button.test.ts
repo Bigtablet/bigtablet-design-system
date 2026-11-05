@@ -138,6 +138,38 @@ describe("CopyButton (#918)", () => {
 		expect(btn.getAttribute("aria-label")).toBe("주소 복사");
 	});
 
+	it("label 옵션이 버튼 글자와 달라도 처음부터 문구와 이름이 같다", () => {
+		const btn = mount('<button data-bt-copy="x">copy</button>');
+		CopyButton(btn, { label: "주소 복사" });
+		expect(btn.textContent).toBe("주소 복사");
+		expect(btn.getAttribute("aria-label")).toBe("주소 복사");
+	});
+
+	it("onCopy 가 throw 해도 문구는 제때 되돌아가고 예외는 보고된다", async () => {
+		vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+		setClipboard(() => Promise.resolve());
+		const reported: unknown[] = [];
+		const onError = (e: ErrorEvent) => {
+			reported.push(e.error);
+			e.preventDefault();
+		};
+		window.addEventListener("error", onError);
+		vi.spyOn(console, "error").mockImplementation((err) => reported.push(err));
+		const btn = mount();
+		CopyButton(btn, {
+			onCopy: () => {
+				throw new Error("toast broke");
+			},
+		});
+
+		btn.click();
+		await vi.waitFor(() => expect(btn.textContent).toBe("복사됨"));
+		expect(reported.some((e) => e instanceof Error && e.message === "toast broke")).toBe(true);
+		vi.advanceTimersByTime(2000);
+		expect(btn.textContent).toBe("복사");
+		window.removeEventListener("error", onError);
+	});
+
 	it("자동 초기화되고, destroy 하면 문구 · status · 리스너를 걷는다", async () => {
 		const writeText = vi.fn(() => Promise.resolve());
 		setClipboard(writeText);
