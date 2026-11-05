@@ -23,7 +23,7 @@ export default {
 		"src/ui/forms/date-picker/index.tsx",
 		"src/ui/forms/date-calendar/index.tsx",
 		"src/ui/overlay/modal/index.tsx",
-		"src/vanilla/bigtablet.js",
+		"src/vanilla/js/*.js",
 	],
 	// 뮤턴트마다 그 줄을 지나는 테스트만 돌린다 - 전체를 다시 돌리면 몇 배 느리다.
 	coverageAnalysis: "perTest",

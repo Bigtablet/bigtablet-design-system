@@ -306,7 +306,7 @@ def check_popup_width_has_a_floor() -> list[str]:
 
 SCROLL_LOCK_SOURCES = (
     Path("src/utils/scroll-lock.ts"),
-    Path("src/vanilla/bigtablet.js"),
+    Path("src/vanilla/js/overlay.js"),
 )
 
 
@@ -314,7 +314,8 @@ DIM_SOURCES = (
     Path("src/ui/overlay/modal/style.scss"),
     Path("src/ui/overlay/drawer/style.scss"),
     Path("src/ui/feedback/alert/style.scss"),
-    Path("src/vanilla/bigtablet.scss"),
+    Path("src/vanilla/scss/_modal.scss"),
+    Path("src/vanilla/scss/_alert.scss"),
 )
 NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
 
@@ -323,7 +324,8 @@ NEGATIVE_OFFSET = "-1 * var(--bt-scrollbar-width"
 CENTERED_OVERLAY_STYLES = (
     Path("src/ui/overlay/modal/style.scss"),
     Path("src/ui/feedback/alert/style.scss"),
-    Path("src/vanilla/bigtablet.scss"),
+    Path("src/vanilla/scss/_modal.scss"),
+    Path("src/vanilla/scss/_alert.scss"),
 )
 
 

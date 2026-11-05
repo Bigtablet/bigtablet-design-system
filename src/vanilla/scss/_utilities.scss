@@ -1,0 +1,15 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+.bt-hidden { display: none !important; }
+/* React 의 token.visually_hidden 과 같은 믹스인에서 생성 - 두 번들이 갈라지지 않게 */
+.bt-sr-only {
+  @include token.visually_hidden;
+}
+
+/* 포커스되면 드러난다 - 스킵 링크 패턴 */
+.bt-sr-only-focusable {
+  @include token.visually_hidden_focusable;
+}

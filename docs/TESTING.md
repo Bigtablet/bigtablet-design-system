@@ -194,8 +194,8 @@ import { Dropdown } from "./bigtablet.js";
   CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
   내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
 - Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
-- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 브라우저 ESM 에서 UMD 번들의 `this` 가
-  undefined 라 named import 가 안 된다 - `import "./bigtablet.js"` 후 `window.Bigtablet` 을 쓴다.
+- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 소스가 ES 모듈이라(#926) unit 과 같이
+  `import { Modal } from "./bigtablet.js"` 로 받는다. 전역 `Bigtablet` 은 빌드된 `bigtablet.min.js` 에만 생긴다.
 
 ### 시각 회귀 테스트 (`*.visual.test.tsx`)
 

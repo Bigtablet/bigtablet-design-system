@@ -1,0 +1,52 @@
+/* ========================================
+   Reduced Motion (WCAG 2.1 SC 2.3.3)
+   ======================================== */
+/* 컴포넌트 partial 이 모두 출력된 뒤 한 블록으로 모아 처리한다 (bigtablet.scss 에서 마지막 @use).
+   Button / TextField / Checkbox / Radio / Toggle / Dropdown / Card / Modal / Pagination /
+   DatePicker / FileInput 의 transition 은 전부 --bt-transition-* 를 경유하므로,
+   선택자를 나열하는 대신 토큰 자체를 0s 로 눌러 일괄 무효화한다.
+   (이후 추가되는 규칙과, 같은 var 를 쓰는 소비자 커스텀 스타일까지 자동으로 커버된다.) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bt-transition-fast: 0s;
+    --bt-transition-base: 0s;
+    --bt-transition-slow: 0s;
+  }
+
+  /* Alert 진입·퇴출 모션 - 장식 목적이다. 진입 keyframe 종료 상태(opacity:1 / translateY(0))가
+     요소의 기본값이라 animation 을 제거해도 최종 표시 상태는 동일하다. 퇴출은 bigtablet.js 가
+     돌고 있는 애니메이션이 없으면 기다리지 않고 바로 걷는다. */
+  .bt-alert__overlay,
+  .bt-alert__modal,
+  .bt-alert__overlay.is-closing,
+  .bt-alert__overlay.is-closing .bt-alert__modal {
+    animation: none;
+  }
+
+  /* Toast 막대 - 모션만 빼고 시간은 그대로 (위 bt-toast-progress-reduced 참고).
+     animation: none 이면 animationend 가 오지 않아 토스트가 영영 남는다. */
+  .bt-toast__progress {
+    animation-name: bt-toast-progress-reduced;
+    width: 0;
+  }
+
+  /* Card --interactive 의 hover lift 는 transform 이라 토큰 무효화만으로는 안 사라진다
+     (transition 만 사라지고 이동은 즉시 일어남) - React Card 와 동일하게 아예 끈다. */
+  .bt-card--interactive:hover {
+    transform: none;
+  }
+
+  /* Spinner 는 끄지 않는다 - 회전 자체가 "로딩 중"이라는 상태 정보라
+     animation:none 이면 멈춘 위젯처럼 보여 의미를 잃는다.
+     회전을 크게 늦춰(0.8s → 2.4s) 전정기관 자극만 줄인다.
+     (Toast progress 를 정적 keyframe 으로 바꿔 타이머를 살려두는 React 쪽과 같은 판단 -
+      모션만 줄이고 기능은 유지)
+
+     React Spinner 는 12개 bar 를 `animation: none; opacity: .5` 로 완전히 정지시킨다 -
+     정지해도 12개 spoke 라는 형태 자체가 "로딩 위젯"으로 읽히기 때문이다. Vanilla 의
+     단일 border ring 은 정지하면 그냥 원 하나라 상태 정보가 사라지므로 감속을 택했다.
+     둘의 차이는 렌더 형태 차이에서 나온 의도된 divergence 다 (docs/VANILLA.md#spinner). */
+  .bt-spinner {
+    animation-duration: 2.4s;
+  }
+}

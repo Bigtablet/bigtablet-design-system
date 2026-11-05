@@ -45,8 +45,10 @@ bigtablet-design-system/
 │   ├── test/                # setup.ts (Vitest)
 │   ├── types/               # scss.d.ts
 │   └── vanilla/             # Vanilla JS 패키지
-│       ├── bigtablet.scss
-│       ├── bigtablet.js
+│       ├── bigtablet.scss   # 진입점 - scss/_*.scss partial 을 순서대로 @use
+│       ├── bigtablet.js     # 진입점 - js/*.js ES 모듈을 모아 export (빌드가 IIFE 하나로 묶는다)
+│       ├── js/              # 컴포넌트별 JS (dropdown · modal · alert · toast · toggle · pagination · …)
+│       ├── scss/            # 컴포넌트별 스타일 partial
 │       └── examples/
 │
 ├── docs/                    # 문서 (COMPONENTS, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)

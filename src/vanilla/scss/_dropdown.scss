@@ -1,0 +1,302 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Dropdown
+   ========================================
+   React `<Dropdown>` 과 같은 블록 이름을 쓴다 (구 Vanilla 이름은 Select 였다).
+   React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지원한다 -
+   패널 구조도 React 와 같은 __list(패널) > [__search] + __options(role=listbox, 스크롤) 다.
+   옵션을 __list 에 직접 두는 평면 마크업도 계속 지원한다(그 경우 __list 가 곧 listbox). */
+.bt-dropdown {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--bt-spacing-xs);
+  font-family: var(--bt-font-family);
+
+  &__label {
+    font-size: var(--bt-font-size-sm);
+    font-weight: var(--bt-font-weight-medium);
+    line-height: var(--bt-line-height-normal);
+    color: var(--bt-color-text-primary);
+  }
+
+  &__control {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bt-spacing-sm);
+    cursor: pointer;
+    color: var(--bt-color-text-primary);
+    background: var(--bt-color-background);
+    border-radius: var(--bt-radius-md);
+    transition: border-color var(--bt-transition-base),
+                box-shadow var(--bt-transition-base),
+                background var(--bt-transition-base);
+    font-size: var(--bt-font-size-base);
+    line-height: var(--bt-line-height-normal);
+    border: none;
+    text-align: left;
+
+    // .is-open 은 뒤에서 같은 특이도의 box-shadow 를 준다 - 키보드로 연 동안에도 링이 이기게 올린다
+    &:focus-visible,
+    &.is-open:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+      box-shadow: var(--bt-focus-ring);
+    }
+
+    &:disabled,
+    &.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      background: var(--bt-color-background-secondary);
+      color: var(--bt-color-text-tertiary);
+    }
+
+    /* Variants - React `<Dropdown variant>` 와 1:1 대응.
+       --outline 이 기본값(React `variant="outline"`), --filled 는 `variant="filled"` 다. */
+    &--outline {
+      border: 1px solid var(--bt-color-border);
+
+      &:hover:not(.is-disabled) {
+        border-color: var(--bt-color-border-light);
+      }
+
+      &.is-open {
+        border-color: var(--bt-color-accent);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
+      }
+    }
+
+    &--filled {
+      background: var(--bt-color-background-secondary);
+      border: 1px solid transparent;
+
+      &.is-open {
+        background: var(--bt-color-background);
+        border-color: var(--bt-color-accent);
+        box-shadow: 0 0 0 3px var(--bt-color-border-light);
+      }
+    }
+
+    /* Sizes */
+    &--sm {
+      padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
+      font-size: var(--bt-font-size-sm);
+    }
+
+    &--md {
+      padding: var(--bt-spacing-md) var(--bt-spacing-xl);
+      font-size: var(--bt-font-size-base);
+    }
+
+    &--lg {
+      padding: var(--bt-spacing-lg) var(--bt-spacing-2xl);
+      font-size: var(--bt-font-size-md);
+    }
+  }
+
+  &__value {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--bt-color-text-tertiary);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bt-color-text-secondary);
+    transition: transform var(--bt-transition-base);
+
+    &.is-open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__list {
+    // 기본 숨김 - JS 초기화 전/JS 비활성 시 드롭다운이 펼쳐진 채 렌더링(FOUC)되지 않게.
+    // 열림/닫힘은 JS 가 inline display 로 토글한다.
+    display: none;
+    // 좌표·폭은 JS 가 인라인으로 준다 - 트리거 옆에 두면 `overflow: hidden` 인 조상(카드·표
+    // 래퍼)이 목록을 잘라내고 `z-index` 로는 넘지 못한다(#586). React 번들과 같은 처리로
+    // body 로 옮겨 fixed 로 띄운다.
+    position: fixed;
+    z-index: var(--bt-z-popup);
+    box-sizing: border-box;
+
+    /* 폭은 내용 기준 - JS 가 주는 min-width(트리거 폭)와 max-width(뷰포트 가용 폭) 사이에서
+       옵션 라벨이 필요한 만큼 넓어진다. 트리거 폭을 못박으면 좁은 트리거에서 목록이 자기
+       라벨을 ellipsis 로 접는다(#596). React 번들과 같은 처리. */
+    width: max-content;
+
+    background: var(--bt-color-background);
+    border: 1px solid var(--bt-color-border);
+    border-radius: var(--bt-radius-md);
+    box-shadow: var(--bt-elevation-2);
+    max-height: 18rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--bt-color-border-light) transparent;
+    padding: var(--bt-spacing-xs) 0;
+    list-style: none;
+    // 간격은 JS 가 좌표에 넣는다 - margin 을 남기면 그만큼 더 벌어진다(실측 4px 초과).
+    margin: 0;
+
+    // `--up` 은 좌표를 바꾸지 않는다 - 위/아래 모두 JS 가 fixed 좌표를 준다(React 와 동일).
+
+    /* __options 를 품은 패널은 스크롤/여백을 그쪽에 넘긴다 -
+       그래야 검색 행이 옵션과 함께 스크롤되지 않고 상단에 고정된다. */
+    &:has(> .bt-dropdown__options) {
+      max-height: none;
+      overflow: hidden;
+      padding: 0;
+    }
+  }
+
+  /* Search (searchable) - React `.dropdown_search` 와 동일 구조: 패널 상단 고정 행 */
+  &__search {
+    /* 검색 행은 폭 계산에서 빼둔다 - `<input>` 의 기본 내재 폭이 패널의 max-content 를
+       끌어올려 짧은 라벨만 있는 목록이 두 배로 벌어진다(React 번들과 동일). */
+    contain: inline-size;
+
+    display: flex;
+    align-items: center;
+    gap: var(--bt-spacing-sm);
+    padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+    border-bottom: 1px solid var(--bt-color-border);
+  }
+
+  &__search-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--bt-color-text-secondary);
+  }
+
+  &__search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--bt-color-text-primary);
+    border-radius: var(--bt-radius-sm);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    line-height: var(--bt-line-height-normal);
+    transition: box-shadow var(--bt-transition-fast);
+
+    &::placeholder {
+      color: var(--bt-color-text-tertiary);
+    }
+
+    &:focus-visible {
+      box-shadow: var(--bt-focus-ring);
+    }
+  }
+
+  /* 옵션 스크롤 컨테이너(role=listbox). React 가 스크롤을 list 에서 이 컨테이너로 옮긴 것과 동일. */
+  &__options {
+    max-height: 18rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--bt-color-border-light) transparent;
+    padding: var(--bt-spacing-xs) 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  /* 검색 결과 0개 안내 (React `.dropdown_empty`) */
+  &__empty {
+    padding: var(--bt-spacing-md) var(--bt-spacing-lg);
+    color: var(--bt-color-text-tertiary);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    line-height: var(--bt-line-height-normal);
+    text-align: center;
+    list-style: none;
+  }
+
+  &__option {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    /* 왼쪽부터 채운다 - 다중 선택 체크 슬롯이 라벨 앞에 오고, 오른쪽으로 밀 요소는
+       React 처럼 `__option-content` 에 flex:1 을 줘서 처리한다 (space-between 대신). */
+    justify-content: flex-start;
+    gap: var(--bt-spacing-sm);
+    /* React 옵션 행(src/ui/_option-row.scss)과 같은 치수 - 14/20, 40px, 8·12 (#862) */
+    min-height: token.$control_height_md;
+    padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+    cursor: pointer;
+    color: var(--bt-color-text-primary);
+    background: transparent;
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-sm);
+    line-height: var(--bt-line-height-20);
+
+    /* 검색 필터로 숨긴 옵션 - display:flex 가 UA 의 [hidden] 규칙을 이기므로 명시적으로 끈다 */
+    &[hidden] {
+      display: none;
+    }
+
+    &:hover,
+    &.is-active {
+      background: var(--bt-color-background-secondary);
+    }
+
+    &.is-selected {
+      font-weight: var(--bt-font-weight-medium);
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      color: var(--bt-color-text-tertiary);
+    }
+  }
+
+  /* 라벨/보조 텍스트 래퍼 (선택) - 트레일링 요소를 오른쪽 끝으로 밀 때 쓴다 */
+  &__option-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* 다중 선택 체크 슬롯 - 미선택 시에도 폭을 유지해 라벨 정렬이 흔들리지 않는다 (React 와 동일) */
+  &__option-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: token.$spacing_base_16; // 크기라 고정 - 간격 덮어쓰기를 따라가지 않는다
+    color: var(--bt-color-accent);
+
+    svg {
+      opacity: 0;
+      transition: opacity var(--bt-transition-fast);
+    }
+  }
+
+  &__option.is-selected &__option-check svg {
+    opacity: 1;
+  }
+}

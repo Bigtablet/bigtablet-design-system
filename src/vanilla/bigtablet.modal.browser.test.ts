@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
-// 소비자가 받는 그대로 - 번들 CSS 와 `<script>` 전역. 브라우저 ESM 에서는 UMD 의 `this` 가
-// undefined 라 `self.Bigtablet` 에 붙는다(unit 의 named import 는 Vite 의 CJS 변환 덕분이다).
+// 번들 CSS 와 소스 진입점. 소스는 ES 모듈이라(#926) named import 로 받는다 - 전역 `Bigtablet`
+// 은 빌드된 bigtablet.min.js(IIFE)에만 생긴다.
 import "./bigtablet.scss";
-import "./bigtablet.js";
+import { Modal as createModal } from "./bigtablet.js";
 
 type VanillaModal = {
 	open: () => void;
@@ -11,8 +11,7 @@ type VanillaModal = {
 	destroy?: () => void;
 	isOpen: () => boolean;
 };
-const { Modal } = (window as unknown as { Bigtablet: { Modal: (el: Element) => VanillaModal } })
-	.Bigtablet;
+const Modal = (el: HTMLElement) => createModal(el) as VanillaModal;
 let opened: VanillaModal[] = [];
 
 const mount = (width = 480) => {

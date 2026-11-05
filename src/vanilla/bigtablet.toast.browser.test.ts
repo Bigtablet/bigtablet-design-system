@@ -1,15 +1,8 @@
 import { afterEach, describe, expect, it, onTestFinished } from "vitest";
 import { page, userEvent } from "vitest/browser";
-// 소비자가 받는 그대로 - 번들 CSS 와 `<script>` 전역 (bigtablet.modal.browser.test.ts 와 같은 방식).
+// 번들 CSS 와 소스 진입점 (bigtablet.modal.browser.test.ts 와 같은 방식).
 import "./bigtablet.scss";
-import "./bigtablet.js";
-
-type ToastFn = (
-	message: string,
-	tone?: string,
-	options?: { duration?: number },
-) => { dismiss: () => void };
-const { Toast } = (window as unknown as { Bigtablet: { Toast: ToastFn } }).Bigtablet;
+import { Toast } from "./bigtablet.js";
 
 const rect = (el: Element) => el.getBoundingClientRect();
 

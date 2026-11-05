@@ -1,0 +1,90 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Alert
+   ======================================== */
+@keyframes bt-alert-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bt-alert-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 퇴출 - 진입의 역방향. 오버레이와 패널을 같은 길이로 맞춰 함께 끝나게 한다 (#909) */
+@keyframes bt-alert-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes bt-alert-slide-down {
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+.bt-alert {
+  &__overlay {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    /* 잠금이 회수한 폭만큼 상쇄한다 - React 의 `.alert_overlay` 와 같은 처리다(#635). */
+    padding-right: var(--bt-scrollbar-width, 0px);
+    background: var(--bt-color-overlay);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--bt-z-popup);
+    animation: bt-alert-fade-in var(--bt-transition-base);
+
+    &.is-open {
+      display: flex;
+    }
+
+    /* bigtablet.js 가 이 애니메이션이 끝난 뒤 DOM 에서 걷는다 */
+    &.is-closing {
+      animation: bt-alert-fade-out token.$transition_exit_fast forwards;
+    }
+  }
+
+  &__overlay.is-closing &__modal {
+    animation: bt-alert-slide-down token.$transition_exit_fast forwards;
+  }
+
+  &__modal {
+    background: var(--bt-color-background);
+    border-radius: var(--bt-radius-lg);
+    min-width: 320px;
+    max-width: 480px;
+    box-shadow: var(--bt-elevation-4);
+    animation: bt-alert-slide-up var(--bt-transition-slow);
+    overflow: hidden;
+  }
+
+  &__title {
+    font-size: var(--bt-font-size-lg);
+    font-weight: var(--bt-font-weight-semibold);
+    line-height: var(--bt-line-height-normal);
+    color: var(--bt-color-info-text);
+    padding: var(--bt-spacing-md) var(--bt-spacing-xl) var(--bt-spacing-xs);
+  }
+
+  &__message {
+    font-size: var(--bt-font-size-base);
+    color: var(--bt-color-text-secondary);
+    padding: var(--bt-spacing-xl);
+    line-height: 1.75;
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--bt-spacing-sm);
+    align-items: center;
+    padding: 0 var(--bt-spacing-xl) var(--bt-spacing-xl);
+    justify-content: flex-end;
+  }
+
+  /* Variants */
+  &--info .bt-alert__title { color: var(--bt-color-info-text); }
+  &--success .bt-alert__title { color: var(--bt-color-success-text); }
+  &--warning .bt-alert__title { color: var(--bt-color-warning-text); }
+  &--error .bt-alert__title { color: var(--bt-color-error-text); }
+}

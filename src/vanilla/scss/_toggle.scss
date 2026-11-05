@@ -1,0 +1,101 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Toggle
+   ======================================== */
+.bt-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 40px;
+  height: 24px;
+  padding: 2px;
+  border-radius: var(--bt-radius-full);
+  background: var(--bt-color-border-light);
+  transition: background var(--bt-transition-base);
+  cursor: pointer;
+  border: none;
+
+  &:focus-visible {
+    outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+    box-shadow: var(--bt-focus-ring);
+  }
+
+  /* 트랙은 24~28px 이라 그대로는 터치 하한(32px)에 못 미친다. 스위치는 시각적으로 작은 것이
+     정상이므로 크기를 키우는 대신 히트 영역만 넓힌다 - 절대배치라 레이아웃에 영향이 없다.
+     React `Toggle` 과 동일한 처리 (src/ui/forms/toggle/style.scss).
+     세로로 쌓을 때는 16px 이상 띄울 것 - 그보다 좁으면 인접 토글끼리 히트 영역이 겹친다. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 32px;
+  }
+
+  @media (max-width: 599px) {
+    &::after {
+      height: 40px;
+    }
+  }
+
+  &__thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--bt-color-background);
+    border-radius: var(--bt-radius-full);
+    transition: transform var(--bt-transition-base),
+                width var(--bt-transition-base),
+                height var(--bt-transition-base);
+    transform: translateX(0);
+  }
+
+  &--on {
+    background: var(--bt-color-accent);
+
+    .bt-toggle__thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--bt-color-accent-on-surface);
+      transform: translateX(16px);
+    }
+  }
+
+  /* Sizes - React ToggleSize(sm/md) 와 동일. sm 은 기본값이라 클래스 없이도 같게 렌더링되지만,
+     React 의 `size="sm"` 를 그대로 옮겨 적을 수 있도록 명시적 클래스를 제공한다. */
+  &--sm {
+    width: 40px;
+    height: 24px;
+  }
+
+  &--md {
+    width: 48px;
+    height: 28px;
+
+    .bt-toggle__thumb {
+      width: 16px;
+      height: 16px;
+    }
+
+    &.bt-toggle--on .bt-toggle__thumb {
+      width: 24px;
+      height: 24px;
+      transform: translateX(20px);
+    }
+  }
+
+  /* React Toggle 과 동일하게 native `disabled` 속성만 지원한다.
+     (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
+  &:disabled {
+    cursor: not-allowed;
+    // React Toggle 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
+    background: token.$color_base_neutral_400;
+
+    // React Toggle 과 같은 토큰 - 하드코딩 흰색은 다크에서 활성 off 토글보다 밝아 비활성 신호가 뒤집혔다
+    .bt-toggle__thumb {
+      background: var(--bt-color-accent-on-surface);
+    }
+  }
+}

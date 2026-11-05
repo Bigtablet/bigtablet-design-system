@@ -83,11 +83,9 @@ export default defineConfig([
 		minify: true,
 		outExtension: () => ({ js: ".min.js" }),
 		esbuildOptions(options) {
-			// bigtablet.js uses UMD pattern (module.exports) for browser compatibility.
-			// Since package.json has "type": "module", esbuild treats it as ESM and warns
-			// about the CommonJS `module` variable. Suppress this — the IIFE format handles
-			// the global export and the UMD check is irrelevant at runtime.
-			options.logOverride = { "commonjs-variable-in-esm": "silent" };
+			// bigtablet.js 는 src/vanilla/js/*.js 를 모아 내보내는 ES 모듈 진입점이다 (#926). iife +
+			// globalName 이 그 export 전부를 전역 `Bigtablet` 으로 만든다 - `<script>` 로 읽는 소비자에게는
+			// 예전 UMD 래퍼와 같은 객체다.
 			// min.js 는 files 에서 비minified bigtablet.js 를 제외해 실제로 배포되는 유일한 vanilla JS 다.
 			// esbuild 는 minify 시 legalComments 기본값이 "none" 이라 소스의 @license 배너를 떼버리는데,
 			// 그러면 배포물에 라이선스 표기가 하나도 남지 않는다. 원위치에 보존한다.

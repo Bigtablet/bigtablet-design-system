@@ -1,0 +1,54 @@
+/* ========================================
+   FileInput
+   ======================================== */
+.bt-file-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover .bt-file-input__label {
+    border-color: var(--bt-color-border-light);
+  }
+
+  &__control {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__label {
+    border: 1px solid var(--bt-color-border);
+    border-radius: var(--bt-radius-md);
+    background: var(--bt-color-background);
+    padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
+    font-family: var(--bt-font-family);
+    font-size: var(--bt-font-size-base);
+    color: var(--bt-color-text-primary);
+    transition: background var(--bt-transition-base),
+                border-color var(--bt-transition-base),
+                box-shadow var(--bt-transition-base);
+  }
+
+  &__control:focus-visible + .bt-file-input__label {
+    box-shadow: var(--bt-focus-ring);
+    border-color: var(--bt-color-accent);
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+
+    .bt-file-input__control {
+      cursor: not-allowed;
+    }
+
+    .bt-file-input__label {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover .bt-file-input__label {
+      border-color: var(--bt-color-border);
+    }
+  }
+}
