@@ -262,14 +262,15 @@
     color: token.$color_text_heading;
     border-radius: token.$radius_sm;
     @include token.body_small;
-    transition: box-shadow token.$transition_fast;
 
     &::placeholder {
       color: token.$color_text_caption; // #420 - placeholder 통일(다크 구분)
     }
 
+    // 링을 그리지 않는다 - 패널이 열리며 늘 여기로 포커스가 와서, 링이면 열 때마다 패널 안에 상자가 하나 더
+    // 생겼다 (#936). 검색 행 자체가 칸이고 캐럿이 포커스를 보여 준다. 고대비 모드에서는 투명 outline 이 보인다
     &:focus-visible {
-      box-shadow: token.$focus_ring;
+      outline: 2px solid transparent;
     }
   }
 
