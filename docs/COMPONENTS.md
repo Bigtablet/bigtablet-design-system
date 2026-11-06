@@ -4760,9 +4760,10 @@ Section (수직 패딩 + 배경)
 | `sidebar` | `ReactNode` | - | 좌측 네비게이션. 보통 `Sidebar`. 주지 않으면 열을 만들지 않는다 |
 | `header` | `ReactNode` | - | 콘텐츠 열 위에 `sticky` 로 붙는 헤더. 보통 `NavBar` |
 | `padded` | `boolean` | `true` | 본문 여백. 자체 여백을 가진 화면은 `false` |
+| `skipLinkLabel` | `string` | 로케일 `appShell.skipLink` ("본문으로 건너뛰기") | 건너뛰기 링크 문구. 사이드바나 헤더가 있을 때만 그린다 |
 | `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
 
-손으로 조립할 때 조용히 빠지던 셋을 DS 가 소유한다.
+손으로 조립할 때 조용히 빠지던 넷을 DS 가 소유한다.
 
 - **문서가 스크롤한다** — 본문을 `overflow-y: auto` 로 만들면 `Modal`·`Drawer` 의 스크롤 잠금
   (`body { overflow: hidden }`)이 본문에 닿지 않아 모달 뒤 배경이 계속 스크롤된다. 사이드바와
@@ -4772,6 +4773,9 @@ Section (수직 패딩 + 배경)
   고정 헤더와 모든 행이 화면보다 넓어진다
 - **하단 크롬 여백** — `Sidebar` 는 600px 아래에서 fixed BottomBar 로 변신하고 `BottomNav` 도
   fixed 다. 본문 끝이 그 아래로 가리지 않게 `--bt-bottom-inset` 만큼 띄운다
+- **건너뛰기 링크** — 사이드바나 헤더가 있으면 첫 Tab 에 "본문으로 건너뛰기" 가 왼쪽 위에 뜬다.
+  Enter 로 `<main tabindex="-1">` 에 포커스가 가서 다음 Tab 이 본문 첫 컨트롤이 된다 (WCAG 2.4.1).
+  SCSS 로 직접 그릴 때는 `@include token.skip_link` (Vanilla `.bt-skip-link` 와 같은 믹스인)
 
 헤더를 사이드바 위까지 꽉 채우려면 `AppShell` 밖에 두면 된다.
 

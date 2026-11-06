@@ -80,6 +80,7 @@ export interface LocaleMessages {
 	"timePicker.rangeSr": string;
 
 	// ── navigation ──────────────────────────────────────────────────────────
+	"appShell.skipLink": string;
 	"bottomNav.label": string;
 	"breadcrumb.label": string;
 	"pagination.jumpLabel": string; // {page} {total}
@@ -168,6 +169,7 @@ export const ko: LocaleMessages = {
 	"timePicker.minute": "분",
 	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
 
+	"appShell.skipLink": "본문으로 건너뛰기",
 	"bottomNav.label": "주요 메뉴",
 	"breadcrumb.label": "현재 위치",
 	"pagination.jumpLabel": "현재 {page}쪽 - 이동할 쪽 번호 (1–{total})",
@@ -253,6 +255,7 @@ export const en: LocaleMessages = {
 	"timePicker.minute": "Minute",
 	"timePicker.rangeSr": "Selectable from {min} to {max}",
 
+	"appShell.skipLink": "Skip to main content",
 	"bottomNav.label": "Main menu",
 	"breadcrumb.label": "Breadcrumb",
 	"pagination.jumpLabel": "Page {page} - go to page (1–{total})",

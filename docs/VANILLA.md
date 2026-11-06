@@ -28,6 +28,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Pagination](#pagination)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
+  - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
 
@@ -1140,6 +1141,26 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   <label class="bt-file-input__label" for="file-disabled">파일 선택</label>
 </div>
 ```
+
+---
+
+### 건너뛰기 링크 · 기본 포커스 링
+
+```html
+<body>
+  <!-- 첫 Tab 에 왼쪽 위로 뜬다. 레이아웃 칸을 차지하지 않아 grid · flex 첫 자식이어도 된다 -->
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <nav>…</nav>
+  <!-- tabindex="-1" 이라 건너뛰기로 포커스를 받는다. 링은 그리지 않는다 -->
+  <main id="main" tabindex="-1">…</main>
+</body>
+```
+
+- 번들은 DS 컴포넌트가 아닌 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에도 `--bt-focus-ring` 을 그린다.
+  앱이 그린 메뉴 링크 · 로고 · 스크롤 상자에 `:focus-visible` 규칙을 따로 둘 필요가 없다
+- 이 규칙은 `:where()` 라 특이도가 0 이다 - 앱이나 컴포넌트가 포커스 모양을 정하면 그쪽이 언제나 이긴다
+- `tabindex="-1"` 요소(스크립트 · 건너뛰기로만 포커스를 받는 영역)에는 링도 브라우저 기본 테두리도 그리지 않는다
+- React `AppShell` 은 사이드바나 헤더가 있으면 같은 링크를 스스로 그린다 (`skipLinkLabel`)
 
 ---
 
