@@ -72,24 +72,25 @@ export function Pagination(element, options = {}) {
 		return out;
 	}
 
+	// React getPaginationItems 와 같은 규칙 - 쪽이 많으면 어느 쪽에서든 칸 수가 2 * sibling + 5 로 같다 (#935)
 	function getPaginationItems(page, totalPages) {
-		if (totalPages <= 7) return range(1, totalPages);
+		const sibling = config.sibling;
+		if (totalPages <= 2 * sibling + 5) return range(1, totalPages);
 
 		const items = [];
 		const last = totalPages;
-		const sibling = config.sibling;
 
-		if (page <= sibling + 2) {
-			for (const p of range(1, sibling + 3)) items.push(p);
+		if (page <= sibling + 3) {
+			for (const p of range(1, 2 * sibling + 3)) items.push(p);
 			items.push("ellipsis");
 			items.push(last);
 			return items;
 		}
 
-		if (page >= last - sibling - 1) {
+		if (page >= last - sibling - 2) {
 			items.push(1);
 			items.push("ellipsis");
-			for (const p of range(last - sibling - 2, last)) items.push(p);
+			for (const p of range(last - 2 * sibling - 2, last)) items.push(p);
 			return items;
 		}
 

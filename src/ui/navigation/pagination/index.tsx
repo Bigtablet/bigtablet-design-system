@@ -46,30 +46,33 @@ const range = (start: number, end: number) => {
 
 /**
  * 현재 페이지를 기준으로 페이지네이션 아이템을 만든다.
+ * 쪽이 많으면 어느 쪽에서든 칸 수가 `2 * sibling + 5` 로 같다 - 앞·뒤쪽은 `…` 대신 번호를 더 채운다
+ * (MUI boundaryCount 1 · siblingCount 와 같은 규칙). 칸 수가 바뀌면 가운데 정렬한 ‹ › 가 좌우로 움직인다 (#935).
  * @param page 현재 페이지
  * @param totalPages 전체 페이지 수
  * @returns 페이지 번호와 생략 기호 배열
  */
 const getPaginationItems = (page: number, totalPages: number) => {
-	if (totalPages <= 7) return range(1, totalPages);
+	const sibling = 2;
+	const slots = 2 * sibling + 5;
+	if (totalPages <= slots) return range(1, totalPages);
 
 	const items: Array<number | "ellipsis"> = [];
 	const last = totalPages;
-	const sibling = 2;
 
-	// 시작 부분 (1~5페이지 근처)
-	if (page <= sibling + 2) {
-		for (const p of range(1, sibling + 3)) items.push(p);
+	// 시작 부분 - 1 ~ (2 * sibling + 3), …, last
+	if (page <= sibling + 3) {
+		for (const p of range(1, 2 * sibling + 3)) items.push(p);
 		items.push("ellipsis");
 		items.push(last);
 		return items;
 	}
 
-	// 끝 부분 (마지막 5페이지 근처)
-	if (page >= last - sibling - 1) {
+	// 끝 부분 - 1, …, 마지막 (2 * sibling + 3) 쪽
+	if (page >= last - sibling - 2) {
 		items.push(1);
 		items.push("ellipsis");
-		for (const p of range(last - sibling - 2, last)) items.push(p);
+		for (const p of range(last - 2 * sibling - 2, last)) items.push(p);
 		return items;
 	}
 

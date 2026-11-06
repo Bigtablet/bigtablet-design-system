@@ -19,12 +19,14 @@ describe("Pagination", () => {
 			n.classList.contains("bt-pagination__ellipsis") ? "…" : (n.textContent ?? "").trim(),
 		);
 
-	it("lists every page up to 7 and collapses with ellipses beyond", () => {
-		expect(labels(mount(1, 7).el)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
-		expect(labels(mount(4, 20).el)).toEqual(["1", "2", "3", "4", "5", "…", "20"]);
-		expect(labels(mount(5, 20).el)).toEqual(["1", "…", "3", "4", "5", "6", "7", "…", "20"]);
-		expect(labels(mount(16, 20).el)).toEqual(["1", "…", "14", "15", "16", "17", "18", "…", "20"]);
-		expect(labels(mount(17, 20).el)).toEqual(["1", "…", "16", "17", "18", "19", "20"]);
+	// 쪽이 많으면 어느 쪽에서든 9칸 - ‹ › 가 움직이지 않는다 (#935)
+	it("lists every page up to 9 and keeps 9 slots beyond", () => {
+		expect(labels(mount(1, 9).el)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+		expect(labels(mount(5, 20).el)).toEqual(["1", "2", "3", "4", "5", "6", "7", "…", "20"]);
+		expect(labels(mount(6, 20).el)).toEqual(["1", "…", "4", "5", "6", "7", "8", "…", "20"]);
+		expect(labels(mount(15, 20).el)).toEqual(["1", "…", "13", "14", "15", "16", "17", "…", "20"]);
+		expect(labels(mount(16, 20).el)).toEqual(["1", "…", "14", "15", "16", "17", "18", "19", "20"]);
+		for (let page = 1; page <= 20; page++) expect(labels(mount(page, 20).el)).toHaveLength(9);
 	});
 
 	it("marks the current page and disables prev/next at the ends", () => {
