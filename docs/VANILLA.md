@@ -1418,7 +1418,7 @@ React `LocaleProvider` 와 같은 키 · 같은 문구다 (ko · en).
 ```javascript
 // 번들 바로 뒤 스크립트에서 - 자동 초기화보다 먼저 불러야 이미 그린 컴포넌트에도 걸린다
 Bigtablet.setLocale('en');                          // <html lang> 대신 고정. null 이면 다시 lang 을 따른다
-Bigtablet.setMessages({ 'pagination.prev': 'Prev' }); // 일부 문구만 덮어쓰기
+Bigtablet.setMessages({ 'pagination.prev': 'Prev' }); // 일부 문구만 덮어쓰기 (null 이면 모두 지운다)
 Bigtablet.getLocale();                              // "ko" | "en"
 ```
 

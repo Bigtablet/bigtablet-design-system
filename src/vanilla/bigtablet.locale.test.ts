@@ -9,6 +9,7 @@ resetVanillaDom();
 describe("Vanilla locale (#949)", () => {
 	afterEach(() => {
 		setLocale(null);
+		setMessages(null);
 		document.documentElement.lang = "";
 	});
 
@@ -51,7 +52,11 @@ describe("Vanilla locale (#949)", () => {
 		document.body.appendChild(el);
 		Pagination(el, { page: 2, totalPages: 5, prevLabel: "직접" });
 		expect(el.querySelector('[data-action="prev"]')?.getAttribute("aria-label")).toBe("직접");
-		setMessages({ "pagination.prev": "이전 페이지" });
+	});
+
+	it("ignores unknown or prototype locale names", () => {
+		setLocale("constructor");
+		expect(mountPagination().getAttribute("aria-label")).toBe("페이지 이동");
 	});
 
 	it("formats DatePicker text in English", () => {

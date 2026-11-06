@@ -82,11 +82,16 @@ export const intlLocale = () => (getLocale() === "en" ? "en-US" : "ko-KR");
  * 이미 만든 컴포넌트의 문구는 바뀌지 않는다 - 자동 초기화 전에(번들 바로 뒤 스크립트에서) 부른다.
  */
 export function setLocale(locale) {
-	forced = locale && catalogs[locale] ? locale : null;
+	// 자체 키만 - "constructor" 같은 프로토타입 키가 들어가면 t() 가 TypeError 를 낸다
+	forced = locale && Object.hasOwn(catalogs, locale) ? locale : null;
 }
 
-/** 일부 문구를 덮어쓴다 - `{ "pagination.prev": "Prev" }`. 로케일과 무관하게 이긴다 */
+/** 일부 문구를 덮어쓴다 - `{ "pagination.prev": "Prev" }`. 로케일과 무관하게 이긴다. null 이면 덮어쓴 문구를 모두 지운다 */
 export function setMessages(messages) {
+	if (messages === null) {
+		for (const key of Object.keys(overrides)) delete overrides[key];
+		return;
+	}
 	Object.assign(overrides, messages);
 }
 
