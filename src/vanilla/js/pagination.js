@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { $, $$, escapeHtml } from "./utils.js";
 
 /* ========================================
@@ -22,15 +23,15 @@ export function Pagination(element, options = {}) {
 		// 링크 주소 틀 (예: "/logs?page={page}"). 주면 번호·이전·다음을 <a href> 로 그려
 		// 서버 렌더 화면에서 쪽을 넘긴다. onPageChange 는 부르지 않는다.
 		href: null,
-		// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (ko 카탈로그).
-		prevLabel: "이전 페이지",
-		nextLabel: "다음 페이지",
+		// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (로케일 카탈로그 - locale.js).
+		prevLabel: t("pagination.prev"),
+		nextLabel: t("pagination.next"),
 		// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
-		navLabel: "페이지 이동",
+		navLabel: t("pagination.label"),
 		// React showPageJump · pageJumpLabel 과 같은 이름·기본값 - 현재 쪽 칸을 입력칸으로 바꿔
 		// 번호를 적고 Enter 로 바로 가게 한다. {page} 는 현재 쪽, {total} 은 마지막 쪽
 		showPageJump: false,
-		pageJumpLabel: "현재 {page}쪽 - 이동할 쪽 번호 (1–{total})",
+		pageJumpLabel: t("pagination.jumpLabel"),
 		...options,
 	};
 

@@ -1,3 +1,4 @@
+import { intlLocale, t } from "./locale.js";
 import { pushEscape } from "./overlay.js";
 import { $, escapeHtml, generateId, on, parseBoolAttr } from "./utils.js";
 
@@ -88,15 +89,17 @@ export function DatePicker(element, options = {}) {
 		weekStartsOn: pick("weekStartsOn", ds.weekStartsOn, Number) ?? 0,
 		disabled: pick("disabled", ds.disabled, parseBoolAttr) ?? false,
 		placeholder: pick("placeholder", ds.placeholder),
-		prevMonthLabel: pick("prevMonthLabel", ds.prevMonthLabel) ?? "이전 달",
-		nextMonthLabel: pick("nextMonthLabel", ds.nextMonthLabel) ?? "다음 달",
-		hourLabel: pick("hourLabel", ds.hourLabel) ?? "시",
-		minuteLabel: pick("minuteLabel", ds.minuteLabel) ?? "분",
-		doneLabel: pick("doneLabel", ds.doneLabel) ?? "완료",
+		prevMonthLabel: pick("prevMonthLabel", ds.prevMonthLabel) ?? t("datePicker.prevMonth"),
+		nextMonthLabel: pick("nextMonthLabel", ds.nextMonthLabel) ?? t("datePicker.nextMonth"),
+		hourLabel: pick("hourLabel", ds.hourLabel) ?? t("timePicker.hour"),
+		minuteLabel: pick("minuteLabel", ds.minuteLabel) ?? t("timePicker.minute"),
+		doneLabel: pick("doneLabel", ds.doneLabel) ?? t("vanilla.datePicker.done"),
 		dialogLabel: pick("dialogLabel", ds.dialogLabel),
 		onValueChange: options.onValueChange ?? null,
 	};
-	config.placeholder ??= config.time ? "날짜와 시각 선택" : "날짜 선택";
+	config.placeholder ??= t(
+		config.time ? "vanilla.datePicker.placeholderTime" : "datePicker.placeholder",
+	);
 	if (!(config.minuteStep >= 1 && 60 % config.minuteStep === 0)) config.minuteStep = 5;
 
 	const cleanups = [];
@@ -134,7 +137,10 @@ export function DatePicker(element, options = {}) {
 
 	const panel = make("div", "bt-date-picker__panel", root);
 	panel.setAttribute("role", "dialog");
-	panel.setAttribute("aria-label", config.dialogLabel ?? labelEl?.textContent.trim() ?? "달력");
+	panel.setAttribute(
+		"aria-label",
+		config.dialogLabel ?? labelEl?.textContent.trim() ?? t("datePicker.calendar"),
+	);
 	panel.hidden = true;
 	const titleId = generateId("bt-date-picker-title");
 	panel.innerHTML = `
@@ -171,15 +177,17 @@ export function DatePicker(element, options = {}) {
 		cleanups.push(on(done, "click", () => close(true)));
 	}
 
+	const locale = intlLocale();
 	const fmt = {
-		title: new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" }),
-		full: new Intl.DateTimeFormat("ko-KR", { dateStyle: "full" }),
-		value: new Intl.DateTimeFormat("ko-KR", {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			weekday: "short",
-		}),
+		title: new Intl.DateTimeFormat(locale, { year: "numeric", month: "long" }),
+		full: new Intl.DateTimeFormat(locale, { dateStyle: "full" }),
+		// React CalendarField 와 같은 표기 - ko "2026. 10. 16. (금)", en "Fri, Oct 16, 2026"
+		value: new Intl.DateTimeFormat(
+			locale,
+			locale === "ko-KR"
+				? { year: "numeric", month: "2-digit", day: "2-digit", weekday: "short" }
+				: { year: "numeric", month: "short", day: "numeric", weekday: "short" },
+		),
 	};
 	const headRow = panel.querySelector("thead tr");
 	for (let i = 0; i < 7; i++) {
@@ -187,8 +195,8 @@ export function DatePicker(element, options = {}) {
 		const d = new Date(2026, 9, 4 + ((config.weekStartsOn + i) % 7));
 		const th = make("th", "bt-date-picker__weekday", headRow);
 		th.scope = "col";
-		th.abbr = d.toLocaleDateString("ko-KR", { weekday: "long" });
-		th.textContent = d.toLocaleDateString("ko-KR", { weekday: "narrow" });
+		th.abbr = d.toLocaleDateString(locale, { weekday: "long" });
+		th.textContent = d.toLocaleDateString(locale, { weekday: "narrow" });
 	}
 
 	// ── 상태 ─────────────────────────────────────────────────────────────────

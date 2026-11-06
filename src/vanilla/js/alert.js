@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { afterExit, lockScroll, pushEscape, unlockScroll } from "./overlay.js";
 import { $$, escapeHtml, FOCUSABLE_SELECTORS, generateId } from "./utils.js";
 
@@ -18,8 +19,8 @@ export function Alert(options = {}) {
 		title: "",
 		message: "",
 		tone: "info", // info, success, warning, error
-		confirmText: "확인",
-		cancelText: "취소",
+		confirmText: t("alert.confirm"),
+		cancelText: t("alert.cancel"),
 		showCancel: false,
 		// React AlertOptions.destructive 와 동일 - true 면 확인 버튼이 danger(빨강)로 강조된다.
 		destructive: false,

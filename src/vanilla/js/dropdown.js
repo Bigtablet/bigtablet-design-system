@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { matchesSearch } from "./search.js";
 import { $, $$, generateId, on, parseBoolAttr } from "./utils.js";
 
@@ -33,14 +34,14 @@ export function Dropdown(element, options = {}) {
 	wrapper._btDropdown?.destroy();
 
 	const config = {
-		placeholder: "선택…",
+		placeholder: t("dropdown.placeholder"),
 		disabled: false,
 		// React Dropdown 과 동일한 이름의 옵션들 (별칭 없음).
 		multiple: false,
 		searchable: false,
-		searchPlaceholder: "검색…",
-		emptyText: "결과 없음",
-		selectedSummary: (count) => `${count}개 선택`,
+		searchPlaceholder: t("dropdown.searchPlaceholder"),
+		emptyText: t("dropdown.empty"),
+		selectedSummary: (count) => t("dropdown.selectedSummary", { count }),
 		// React Dropdown 과 동일한 값 변경 콜백.
 		onValueChange: null,
 		...options,
