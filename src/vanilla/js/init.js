@@ -1,4 +1,5 @@
 import { CopyButton } from "./copy-button.js";
+import { DatePicker } from "./date-picker.js";
 import { Dropdown } from "./dropdown.js";
 import { Modal } from "./modal.js";
 import { Pagination } from "./pagination.js";
@@ -16,6 +17,11 @@ export function init() {
 	// CopyButton - data-bt-copy 값을 복사한다 (#918)
 	$$("[data-bt-copy]").forEach((el) => {
 		if (!el._btCopyButton) CopyButton(el);
+	});
+
+	// DatePicker (달력형, #937) - 옵션은 data-* 에서 읽는다
+	$$("[data-bt-date-picker]").forEach((el) => {
+		if (!el._btDatePicker) DatePicker(el);
 	});
 
 	// Dropdown

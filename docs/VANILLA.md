@@ -1120,6 +1120,52 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 </div>
 ```
 
+#### 달력형 · 시각 선택
+
+React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 누르면 월 달력 팝오버가 열리고, 고른 값은 숨은
+`<input>` 으로 폼에 실린다. `data-time` 을 주면 달력 아래 시 · 분 칸이 붙고 값이 `datetime-local` 과 같은
+`YYYY-MM-DDTHH:mm` 이 된다 - `<input type="datetime-local">` 을 바꿔 끼워도 서버는 그대로다.
+
+```html
+<!-- 시작 ~ 종료 - 칸 두 개. 종료는 data-min-from 으로 시작보다 앞을 막는다 -->
+<div class="bt-date-picker" id="from" data-bt-date-picker data-name="from" data-time data-minute-step="1">
+  <span class="bt-date-picker__label">시작 시각</span>
+</div>
+<div class="bt-date-picker" data-bt-date-picker data-name="to" data-time data-minute-step="1" data-min-from="#from">
+  <span class="bt-date-picker__label">종료 시각</span>
+</div>
+<!-- 폼을 보내면 from=2026-10-01T14:00&to=2026-10-02T09:00 -->
+```
+
+옵션 이름은 React prop 과 같다 - JS 로 줄 때는 camelCase, 마크업은 `data-` + kebab-case.
+
+| 옵션 (data-*) | React 대응 | 기본값 | 설명 |
+|---------------|-----------|--------|------|
+| `name` (`data-name`) | - | - | 숨은 input 이름. 서버가 `<input type="hidden">` 을 미리 그려 두면 그것을 쓴다 |
+| `defaultValue` (`data-value`) | `DateCalendar defaultValue` | 숨은 input 값 | 처음 값 `YYYY-MM-DD` · `YYYY-MM-DDTHH:mm` |
+| `time` (`data-time`) | `TimePicker` | `false` | 시 · 분까지 고른다 |
+| `minuteStep` (`data-minute-step`) | `TimePicker minuteStep` | `5` | 분 간격. 60 의 약수 |
+| `min` · `max` (`data-min` · `data-max`) | `DateCalendar min` · `max`, `TimePicker minTime` · `maxTime` | - | 고를 수 있는 범위. 시각까지 주면 그날의 시 · 분도 막는다 |
+| `minFrom` · `maxFrom` (`data-min-from` · `data-max-from`) | - | - | 다른 DatePicker(셀렉터 · 요소)의 값을 최소 · 최대로 따른다. 그 값이 바뀌면 범위 밖 값은 경계로 맞춘다 |
+| `today` (`data-today`) | `DateCalendar today` | 기기의 오늘 | 서버 기준 날짜를 쓸 때 |
+| `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
+| `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
+| `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
+| `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `dialogLabel` | 같은 이름 | 한국어 | 버튼 · 칸 이름 |
+| `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
+
+```javascript
+const to = Bigtablet.DatePicker('#to', { time: true, minFrom: '#from', onValueChange: (v) => {} });
+to.getValue();                  // "2026-10-02T09:00" | null
+to.setValue('2026-10-03T10:00'); // 범위 밖이면 경계로 맞춘다, null 이면 비운다
+to.setMin('2026-10-01');  to.setMax(null);
+to.open();  to.close();  to.setDisabled(true);  to.destroy();
+```
+
+- 키보드는 React DateCalendar 와 같다 - ←→ 하루, ↑↓ 한 주, Home/End 주의 처음 · 끝, PageUp/PageDown 한 달(Shift 면 한 해), Enter/Space 선택, Escape 닫기
+- 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 날짜를 고른 뒤 시 칸으로 포커스가 가고, 완료 · Escape · 바깥 클릭으로 닫는다
+- 아래 공간이 모자라면 위로 연다
+
 ---
 
 ### FileInput

@@ -1,3 +1,5 @@
+@use "../../styles/token" as token;
+
 /* ========================================
    DatePicker
    ======================================== */
@@ -77,6 +79,250 @@
     .bt-date-picker__select {
       flex: 1;
       min-width: 0;
+    }
+  }
+}
+
+/* ── 달력형 (#937) - React DatePicker variant="calendar" + TimePicker 대응 ─────────────────────
+   칸 · 팝오버 · 달력 칸은 bigtablet.js 의 DatePicker() 가 그린다. 값 · 크기는 React
+   `date-picker/style.scss` · `date-calendar/style.scss` 와 같다 - 바꿀 때는 함께 고친다 */
+$_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>');
+
+.bt-date-picker--calendar {
+  position: relative;
+
+  .bt-date-picker__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    width: 100%;
+    @include token.responsive_height(token.$tap_target_compact);
+    padding: token.$spacing_4 token.$spacing_16;
+    box-sizing: border-box;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background: token.$color_bg_solid;
+    font-family: token.$font_family_primary;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color var(--bt-transition-base);
+
+    &:hover:not(:disabled):not([aria-expanded="true"]) {
+      border-color: token.$color_border_hover;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용
+      box-shadow: token.$focus_ring;
+    }
+
+    &[aria-expanded="true"] {
+      border-color: token.$color_border_focus;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  .bt-date-picker__trigger-icon {
+    flex-shrink: 0;
+    width: token.$icon_size_md;
+    height: token.$icon_size_md;
+    color: token.$color_text_body;
+    background-color: currentColor;
+    -webkit-mask: $_calendar_icon center / contain no-repeat;
+    mask: $_calendar_icon center / contain no-repeat;
+  }
+
+  .bt-date-picker__trigger-value,
+  .bt-date-picker__trigger-placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include token.body_small;
+  }
+
+  .bt-date-picker__trigger-value {
+    color: token.$color_text_heading;
+    @include token.tabular_nums;
+  }
+
+  .bt-date-picker__trigger-placeholder {
+    color: token.$color_text_caption;
+  }
+
+  // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다
+  .bt-date-picker__panel {
+    position: absolute;
+    top: calc(100% + #{token.$spacing_4});
+    left: 0;
+    z-index: token.$z_popup;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_8;
+    padding: token.$spacing_16;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background: token.$color_bg_solid;
+    box-shadow: token.$elevation_level2;
+    @include token.presence(translateY(-4px));
+
+    &[hidden] {
+      display: none;
+    }
+
+    &--up {
+      top: auto;
+      bottom: calc(100% + #{token.$spacing_4});
+    }
+  }
+
+  .bt-date-picker__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+  }
+
+  .bt-date-picker__title {
+    @include token.title_small_medium;
+    color: token.$color_text_heading;
+  }
+
+  .bt-date-picker__nav,
+  .bt-date-picker__day {
+    border: 0;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  .bt-date-picker__nav {
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    border-radius: token.$radius_md;
+    color: token.$color_text_body;
+    font-size: 20px;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: token.$color_bg_additive;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  .bt-date-picker__grid {
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .bt-date-picker__weekday {
+    width: token.$tap_target_compact;
+    height: token.$spacing_base_32;
+    padding: 0;
+    @include token.label_small;
+    font-weight: token.$font_weight_regular;
+    color: token.$color_text_caption;
+    text-align: center;
+  }
+
+  .bt-date-picker__cell {
+    padding: 0;
+    text-align: center;
+  }
+
+  .bt-date-picker__day {
+    width: token.$tap_target_compact;
+    height: token.$tap_target_compact;
+    padding: 0;
+    border-radius: token.$radius_full;
+    @include token.body_small;
+    @include token.tabular_nums;
+    color: token.$color_text_heading;
+
+    &:hover:not([aria-disabled="true"]) {
+      background: token.$color_bg_additive;
+    }
+
+    // 오늘은 테두리만 - 고른 날(채움) · 포커스 링과 겹쳐도 구분된다
+    &--today {
+      box-shadow: inset 0 0 0 token.$border_width_standard token.$color_accent_default;
+
+      &:focus-visible {
+        box-shadow:
+          inset 0 0 0 token.$border_width_standard token.$color_accent_default,
+          token.$focus_ring;
+      }
+    }
+
+    &--selected {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+      font-weight: token.$font_weight_medium;
+
+      &:hover:not([aria-disabled="true"]) {
+        background: token.$color_accent_strong;
+      }
+    }
+
+    // 고를 수 없는 날 - 비활성 컨트롤이라 WCAG 1.4.3 대비 예외. 포커스는 지나간다
+    &[aria-disabled="true"] {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+  }
+
+  // 시각 - 시 · 분 select + 완료
+  .bt-date-picker__time {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    padding-top: token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+
+    .bt-date-picker__select {
+      flex: 1;
+      min-width: 0;
+      height: token.$tap_target_dense;
+      @include token.tabular_nums;
+    }
+  }
+
+  .bt-date-picker__time-sep {
+    color: token.$color_text_body;
+  }
+
+  .bt-date-picker__done {
+    height: token.$tap_target_dense;
+    padding: 0 token.$spacing_12;
+    border: 0;
+    border-radius: token.$radius_full;
+    background: token.$color_accent_default;
+    color: token.$color_accent_on_surface;
+    font-family: token.$font_family_primary;
+    @include token.label_medium_medium;
+    cursor: pointer;
+
+    &:hover {
+      background: token.$color_accent_strong;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
     }
   }
 }

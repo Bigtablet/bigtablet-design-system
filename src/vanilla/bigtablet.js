@@ -14,6 +14,7 @@ import { init } from "./js/init.js";
 // Components
 export { Alert } from "./js/alert.js";
 export { CopyButton } from "./js/copy-button.js";
+export { DatePicker } from "./js/date-picker.js";
 export { Dropdown } from "./js/dropdown.js";
 // Utilities
 export { init } from "./js/init.js";
