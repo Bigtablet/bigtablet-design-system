@@ -152,7 +152,8 @@ describe("Vanilla focus defaults (Chromium)", () => {
 		const root = mount(
 			'<button type="button">앞</button><div role="menu"><div role="menuitem" tabindex="0">하나</div><div role="menuitem" tabindex="-1">둘</div></div>',
 		);
-		const [first, second] = Array.from(root.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+		const first = root.querySelector('[tabindex="0"]') as HTMLElement;
+		const second = root.querySelector('[role="menuitem"][tabindex="-1"]') as HTMLElement;
 		first.addEventListener("keydown", (e) => {
 			if (e.key === "ArrowDown") second.focus();
 		});
