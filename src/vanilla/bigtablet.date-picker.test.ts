@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { DatePicker, init } from "./bigtablet.js";
+import { DatePicker, DateRangePicker, init } from "./bigtablet.js";
 import { resetVanillaDom } from "./bigtablet.test-utils";
 
 resetVanillaDom();
@@ -294,5 +294,122 @@ describe("DatePicker 월 · 연 보기 (#953)", () => {
 		// 키보드(detail 0)면 시 칸으로
 		(root.querySelector('button[data-day="11"]') as HTMLButtonElement).click();
 		expect(document.activeElement?.tagName).toBe("SELECT");
+	});
+});
+
+describe("DateRangePicker 범위형 (#951)", () => {
+	const mountRoot = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<div class="bt-date-picker" ${attrs}></div>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLElement;
+	};
+	const day = (root: HTMLElement, d: number) =>
+		root.querySelector(`button[data-day="${d}"]`) as HTMLButtonElement;
+	const hiddenNamed = (root: HTMLElement, name: string) =>
+		root.querySelector(`input[name="${name}"]`) as HTMLInputElement;
+
+	it("첫 클릭은 시작, 두 번째는 종료이고 사이를 띠로 칠한다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot();
+		const api = DateRangePicker(root, {
+			startName: "from",
+			endName: "to",
+			today: "2026-11-06",
+			onValueChange,
+		});
+		api?.open();
+		day(root, 3).click();
+		expect(api?.getValue()).toEqual({ start: "2026-11-03", end: null });
+		expect(root.querySelector(".bt-date-picker__trigger")?.getAttribute("aria-expanded")).toBe(
+			"true",
+		);
+		day(root, 7).click();
+		expect(api?.getValue()).toEqual({ start: "2026-11-03", end: "2026-11-07" });
+		expect(onValueChange).toHaveBeenLastCalledWith({ start: "2026-11-03", end: "2026-11-07" });
+		expect(hiddenNamed(root, "from").value).toBe("2026-11-03");
+		expect(hiddenNamed(root, "to").value).toBe("2026-11-07");
+		// 날짜만 고르면 종료를 고르는 순간 닫힌다
+		expect(root.querySelector(".bt-date-picker__trigger")?.getAttribute("aria-expanded")).toBe(
+			"false",
+		);
+		api?.open();
+		const cell = (d: number) => day(root, d).parentElement as HTMLElement;
+		expect(cell(5).classList.contains("bt-date-picker__cell--in-range")).toBe(true);
+		expect(cell(5).getAttribute("aria-selected")).toBe("true");
+		expect(cell(3).classList.contains("bt-date-picker__cell--range-start")).toBe(true);
+		expect(cell(7).classList.contains("bt-date-picker__cell--range-end")).toBe(true);
+		expect(cell(8).classList.contains("bt-date-picker__cell--in-range")).toBe(false);
+	});
+
+	it("시작보다 앞을 누르거나 종료가 있으면 새 시작이 된다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { today: "2026-11-06" });
+		api?.open();
+		day(root, 10).click();
+		day(root, 4).click(); // 시작보다 앞 → 새 시작
+		expect(api?.getValue()).toEqual({ start: "2026-11-04", end: null });
+		day(root, 9).click();
+		api?.open();
+		day(root, 20).click(); // 종료가 있으면 새 시작
+		expect(api?.getValue()).toEqual({ start: "2026-11-20", end: null });
+	});
+
+	it("시작을 종료 뒤로 옮기면 종료를 비운다 (React DateRangePicker 와 같음)", () => {
+		const root = mountRoot(
+			'data-start="2026-11-01" data-end="2026-11-05" data-range data-bt-date-picker',
+		);
+		init();
+		const api = (root as HTMLElement & { _btDatePicker?: ReturnType<typeof DatePicker> })
+			._btDatePicker;
+		expect(api?.getValue()).toEqual({ start: "2026-11-01", end: "2026-11-05" });
+		api?.setValue({ start: "2026-11-09", end: "2026-11-05" });
+		expect(api?.getValue()).toEqual({ start: "2026-11-09", end: null });
+	});
+
+	it("시작 없는 종료는 받지 않는다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { endName: "to" });
+		api?.setValue({ start: null, end: "2026-11-05" });
+		expect(api?.getValue()).toEqual({ start: null, end: null });
+		expect(hiddenNamed(root, "to").value).toBe("");
+	});
+
+	it("시작만 고른 동안의 미리보기 띠는 달력을 벗어나면 지운다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { today: "2026-11-06" });
+		api?.open();
+		day(root, 3).click();
+		day(root, 8).dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+		const cell = (d: number) => day(root, d).parentElement as HTMLElement;
+		expect(cell(5).classList.contains("bt-date-picker__cell--in-range")).toBe(true);
+		root.querySelector("tbody")?.dispatchEvent(new MouseEvent("mouseleave"));
+		expect(cell(5).classList.contains("bt-date-picker__cell--in-range")).toBe(false);
+	});
+
+	it("키보드로 종료를 고르면 종료 시각 줄로 간다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { time: true, today: "2026-11-06" });
+		api?.open();
+		day(root, 3).click();
+		day(root, 7).click(); // detail 0 - 키보드
+		expect(document.activeElement).toBe(root.querySelectorAll("select")[2]);
+	});
+
+	it("시각을 켜면 시작 · 종료 시각 줄이 생기고 같은 날 종료는 시작 시각 앞을 막는다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { time: true, minuteStep: 30, today: "2026-11-06" });
+		api?.open();
+		day(root, 6).click();
+		day(root, 6).click();
+		expect(api?.getValue()).toEqual({ start: "2026-11-06T00:00", end: "2026-11-06T23:30" });
+		const selects = root.querySelectorAll("select");
+		const startHour = selects[0] as HTMLSelectElement;
+		const endHour = selects[2] as HTMLSelectElement;
+		startHour.value = "14";
+		startHour.dispatchEvent(new Event("change"));
+		expect(endHour.options[13]?.disabled).toBe(true);
+		expect(endHour.options[14]?.disabled).toBe(false);
+		expect(root.querySelectorAll(".bt-date-picker__time-label")).toHaveLength(2);
 	});
 });

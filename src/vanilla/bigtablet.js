@@ -15,7 +15,7 @@ import { init } from "./js/init.js";
 export { Alert } from "./js/alert.js";
 export { AppShell } from "./js/app-shell.js";
 export { CopyButton } from "./js/copy-button.js";
-export { DatePicker } from "./js/date-picker.js";
+export { DatePicker, DateRangePicker } from "./js/date-picker.js";
 export { Dropdown } from "./js/dropdown.js";
 // Utilities
 export { init } from "./js/init.js";
