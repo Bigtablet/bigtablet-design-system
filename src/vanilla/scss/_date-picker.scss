@@ -379,19 +379,34 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   }
 
   // 시각 - 시 · 분 select + 완료
+  // 시각 - 시 · 분 칸은 날짜 칸(.bt-date-picker__trigger)과 같은 높이 · 모서리 · 테두리. 폼 입력칸을 덧붙인
+  // 것처럼 보이지 않게 달력과 한 덩어리로 둔다
   .bt-date-picker__time {
     display: flex;
     align-items: center;
     gap: token.$spacing_8;
-    padding-top: token.$spacing_8;
-    border-top: token.$border_width_standard solid token.$color_border_default;
 
     .bt-date-picker__select {
       width: 100%;
-      height: token.$tap_target_dense;
-      padding-right: calc(#{token.$spacing_8} * 2 + #{token.$icon_size_md});
+      height: token.$tap_target_compact;
+      padding: 0 calc(#{token.$spacing_8} * 2 + #{token.$icon_size_md}) 0 token.$spacing_12;
+      border-color: token.$color_border_default;
+      border-radius: token.$radius_lg;
+      background-color: token.$color_bg_solid;
       background-image: none; // 기본 select 의 삼각형 대신 감싼 칸의 chevron
+      font-size: inherit;
+      @include token.body_small;
       @include token.tabular_nums;
+      color: token.$color_text_heading;
+
+      &:hover:not(:disabled) {
+        border-color: token.$color_border_hover;
+        background-color: token.$color_bg_solid;
+      }
+
+      &:focus-visible {
+        border-color: token.$color_border_focus;
+      }
     }
   }
 
@@ -418,27 +433,43 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   }
 
   .bt-date-picker__time-sep {
-    color: token.$color_text_body;
+    @include token.body_small;
+    color: token.$color_text_caption;
   }
 
-  .bt-date-picker__done {
+  // 아래 줄 - 오늘 · 완료. 글자 버튼이라 고른 날짜(채운 원)가 화면의 주인공으로 남는다
+  .bt-date-picker__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  .bt-date-picker__action {
     height: token.$tap_target_dense;
     padding: 0 token.$spacing_12;
     border: 0;
-    border-radius: token.$radius_full;
-    background: token.$color_accent_default;
-    color: token.$color_accent_on_surface;
+    border-radius: token.$radius_md;
+    background: transparent;
     font-family: token.$font_family_primary;
     @include token.label_medium_medium;
+    color: token.$color_text_body;
     cursor: pointer;
 
     &:hover {
-      background: token.$color_accent_strong;
+      background: token.$color_bg_additive;
+      color: token.$color_text_heading;
     }
 
     &:focus-visible {
       outline: 2px solid transparent;
       box-shadow: token.$focus_ring;
+    }
+
+    &--primary {
+      color: token.$color_text_heading;
+      font-weight: token.$font_weight_semi_bold;
     }
   }
 }

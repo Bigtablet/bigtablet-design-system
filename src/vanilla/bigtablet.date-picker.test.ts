@@ -93,7 +93,7 @@ describe("DatePicker (달력형, #937)", () => {
 		minute.dispatchEvent(new Event("change"));
 		expect(api?.getValue()).toBe("2026-10-02T14:30");
 		// 시각을 고르는 동안 팝오버는 열려 있다 - 완료로 닫는다
-		(root.querySelector(".bt-date-picker__done") as HTMLButtonElement).click();
+		(root.querySelector(".bt-date-picker__action--primary") as HTMLButtonElement).click();
 		expect(trigger(root).getAttribute("aria-expanded")).toBe("false");
 	});
 
@@ -223,6 +223,34 @@ describe("DatePicker 월 · 연 보기 (#953)", () => {
 		title(root).click();
 		expect(pick(root, 2025).getAttribute("aria-disabled")).toBe("true");
 		expect(pick(root, 2027).getAttribute("aria-disabled")).toBeNull();
+	});
+
+	it("오늘 버튼은 어느 보기 · 달에서든 오늘을 고른다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot();
+		const api = DatePicker(root, {
+			today: "2026-11-06",
+			defaultValue: "2019-03-02",
+			onValueChange,
+		});
+		api?.open();
+		title(root).click(); // 월 보기
+		(root.querySelector(".bt-date-picker__action") as HTMLButtonElement).click();
+		expect(api?.getValue()).toBe("2026-11-06");
+		expect(onValueChange).toHaveBeenCalledWith("2026-11-06");
+		// 날짜만 고르는 칸은 바로 닫힌다
+		expect(root.querySelector(".bt-date-picker__trigger")?.getAttribute("aria-expanded")).toBe(
+			"false",
+		);
+	});
+
+	it("오늘이 범위 밖이면 고르지 않고 그 근처로 옮기기만 한다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06", max: "2026-10-31" });
+		api?.open();
+		(root.querySelector(".bt-date-picker__action") as HTMLButtonElement).click();
+		expect(api?.getValue()).toBeNull();
+		expect(title(root).textContent).toContain("10월");
 	});
 
 	it("마우스로 날짜를 고르면 시 칸으로 포커스를 옮기지 않는다", () => {

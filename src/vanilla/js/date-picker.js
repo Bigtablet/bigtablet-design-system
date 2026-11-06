@@ -94,6 +94,7 @@ export function DatePicker(element, options = {}) {
 		hourLabel: pick("hourLabel", ds.hourLabel) ?? t("timePicker.hour"),
 		minuteLabel: pick("minuteLabel", ds.minuteLabel) ?? t("timePicker.minute"),
 		doneLabel: pick("doneLabel", ds.doneLabel) ?? t("vanilla.datePicker.done"),
+		todayLabel: pick("todayLabel", ds.todayLabel) ?? t("vanilla.datePicker.today"),
 		dialogLabel: pick("dialogLabel", ds.dialogLabel),
 		onValueChange: options.onValueChange ?? null,
 	};
@@ -175,7 +176,15 @@ export function DatePicker(element, options = {}) {
 		hourSel = select(config.hourLabel);
 		make("span", "bt-date-picker__time-sep", row).textContent = ":";
 		minuteSel = select(config.minuteLabel);
-		const done = make("button", "bt-date-picker__done", row);
+	}
+	// 아래 줄 - 오늘(왼쪽) · 완료(시각을 켰을 때, 오른쪽). 둘 다 글자 버튼이라 고른 날짜보다 눈에 덜 띈다
+	const footer = make("div", "bt-date-picker__footer", panel);
+	const todayBtn = make("button", "bt-date-picker__action", footer);
+	todayBtn.type = "button";
+	todayBtn.textContent = config.todayLabel;
+	cleanups.push(on(todayBtn, "click", () => selectToday()));
+	if (config.time) {
+		const done = make("button", "bt-date-picker__action bt-date-picker__action--primary", footer);
 		done.type = "button";
 		done.textContent = config.doneLabel;
 		cleanups.push(on(done, "click", () => close(true)));
@@ -470,6 +479,20 @@ export function DatePicker(element, options = {}) {
 		// 대신 같은 날에 앉힌다. 마우스 클릭 뒤 select 로 옮기면 select 가 :focus-visible 에 걸려 링이 떴다 (#953)
 		else if (viaKeyboard) hourSel.focus();
 		else focusDay();
+	}
+
+	/** 오늘을 고른다 - 어느 달 · 보기에 있든 한 번에. 오늘이 범위 밖이면 그 달로 옮기기만 한다 */
+	function selectToday() {
+		state.view = "day";
+		state.pick = null;
+		state.focused = { ...today };
+		if (dayDisabled(today)) {
+			moveFocus(today, false);
+			render();
+			focusDay();
+			return;
+		}
+		selectDay(today.day, false);
 	}
 
 	/** 월 · 연 보기에서 칸을 고른다 - 한 단계 아래 보기로 */

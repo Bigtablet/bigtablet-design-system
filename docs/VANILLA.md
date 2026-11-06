@@ -1151,7 +1151,7 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
 | `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
 | `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
-| `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `dialogLabel` | 같은 이름 | 한국어 | 버튼 · 칸 이름 |
+| `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `todayLabel` · `dialogLabel` | 같은 이름 (`todayLabel` 은 Vanilla 만) | 로케일 카탈로그 | 버튼 · 칸 이름 |
 | `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
 
 ```javascript
@@ -1165,6 +1165,7 @@ to.open();  to.close();  to.setDisabled(true);  to.destroy();
 - 키보드는 React DateCalendar 와 같다 - ←→ 하루, ↑↓ 한 주, Home/End 주의 처음 · 끝, PageUp/PageDown 한 달(Shift 면 한 해), Enter/Space 선택, Escape 닫기
 - 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)
 - 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 열린 채로 남아 시 · 분을 고르고(키보드로 고르면 시 칸으로 포커스가 간다), 완료 · Escape · 바깥 클릭으로 닫는다
+- 아래 줄의 "오늘" 은 어느 달 · 보기에 있든 오늘을 고른다 (시각은 그대로). 오늘이 범위 밖이면 그 근처 달로 옮기기만 한다
 - 아래 공간이 모자라면 위로 연다
 
 ---
