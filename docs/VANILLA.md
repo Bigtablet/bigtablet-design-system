@@ -28,6 +28,8 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Pagination](#pagination)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
+  - [AppShell · Sidebar](#appshell--sidebar)
+  - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
 
@@ -1118,6 +1120,80 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 </div>
 ```
 
+#### 달력형 · 시각 선택
+
+React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 누르면 월 달력 팝오버가 열리고, 고른 값은 숨은
+`<input>` 으로 폼에 실린다. `data-time` 을 주면 달력 아래 시 · 분 칸이 붙고 값이 `datetime-local` 과 같은
+`YYYY-MM-DDTHH:mm` 이 된다 - `<input type="datetime-local">` 을 바꿔 끼워도 서버는 그대로다.
+
+```html
+<!-- 시작 ~ 종료 - 칸 두 개. 종료는 data-min-from 으로 시작보다 앞을 막는다 -->
+<div class="bt-date-picker" id="from" data-bt-date-picker data-name="from" data-time data-minute-step="1">
+  <span class="bt-date-picker__label">시작 시각</span>
+</div>
+<div class="bt-date-picker" data-bt-date-picker data-name="to" data-time data-minute-step="1" data-min-from="#from">
+  <span class="bt-date-picker__label">종료 시각</span>
+</div>
+<!-- 폼을 보내면 from=2026-10-01T14:00&to=2026-10-02T09:00 -->
+```
+
+옵션 이름은 React prop 과 같다 - JS 로 줄 때는 camelCase, 마크업은 `data-` + kebab-case.
+
+| 옵션 (data-*) | React 대응 | 기본값 | 설명 |
+|---------------|-----------|--------|------|
+| `name` (`data-name`) | - | - | 숨은 input 이름. 서버가 `<input type="hidden">` 을 미리 그려 두면 그것을 쓴다 |
+| `defaultValue` (`data-value`) | `DateCalendar defaultValue` | 숨은 input 값 | 처음 값 `YYYY-MM-DD` · `YYYY-MM-DDTHH:mm` |
+| `time` (`data-time`) | `TimePicker` | `false` | 시 · 분까지 고른다 |
+| `minuteStep` (`data-minute-step`) | `TimePicker minuteStep` | `5` | 분 간격. 60 의 약수 |
+| `min` · `max` (`data-min` · `data-max`) | `DateCalendar min` · `max`, `TimePicker minTime` · `maxTime` | - | 고를 수 있는 범위. 시각까지 주면 그날의 시 · 분도 막는다 |
+| `minFrom` · `maxFrom` (`data-min-from` · `data-max-from`) | - | - | 다른 DatePicker(셀렉터 · 요소)의 값을 최소 · 최대로 따른다. 그 값이 바뀌면 범위 밖 값은 경계로 맞춘다 |
+| `today` (`data-today`) | `DateCalendar today` | 기기의 오늘 | 서버 기준 날짜를 쓸 때 |
+| `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
+| `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
+| `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
+| `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `todayLabel` · `dialogLabel` | 같은 이름 (`todayLabel` 은 Vanilla 만) | 로케일 카탈로그 | 버튼 · 칸 이름 |
+| `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
+
+```javascript
+const to = Bigtablet.DatePicker('#to', { time: true, minFrom: '#from', onValueChange: (v) => {} });
+to.getValue();                  // "2026-10-02T09:00" | null
+to.setValue('2026-10-03T10:00'); // 범위 밖이면 경계로 맞춘다, null 이면 비운다
+to.setMin('2026-10-01');  to.setMax(null);
+to.open();  to.close();  to.setDisabled(true);  to.destroy();
+```
+
+- 키보드는 React DateCalendar 와 같다 - ←→ 하루, ↑↓ 한 주, Home/End 주의 처음 · 끝, PageUp/PageDown 한 달(Shift 면 한 해), Enter/Space 선택, Escape 닫기
+- 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)
+- 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 열린 채로 남아 시 · 분을 고르고(키보드로 고르면 시 칸으로 포커스가 간다), 완료 · Escape · 바깥 클릭으로 닫는다
+- 아래 줄의 "오늘" 은 어느 달 · 보기에 있든 오늘을 고른다 (시각은 그대로). 오늘이 범위 밖이면 그 근처 달로 옮기기만 한다
+- 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
+
+#### 범위형 (#951)
+
+React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종료를 차례로 고른다. 사이 날은 띠로 칠하고,
+시작만 고른 동안 마우스가 가리키는 날까지 미리 보인다. 시각을 켜면 시작일 · 종료일 시각 줄이 두 개 생긴다.
+
+```html
+<div class="bt-date-picker" data-bt-date-picker data-range
+     data-start-name="from" data-end-name="to" data-time data-minute-step="10">
+  <span class="bt-date-picker__label">조회 기간</span>
+</div>
+<!-- from=2026-10-01T09:00&to=2026-10-02T18:00 - 칸 두 개 방식과 같은 값 형식 -->
+```
+
+| 옵션 (data-*) | 설명 |
+|---------------|------|
+| `range` (`data-range`) | 범위형으로 그린다. `Bigtablet.DateRangePicker(el, options)` 는 `range: true` 와 같다 |
+| `startName` · `endName` (`data-start-name` · `data-end-name`) | 시작 · 종료 숨은 input 이름. 서버가 같은 이름으로 그려 둔 input 은 재사용한다 |
+| `defaultValue` (`data-start` · `data-end`) | 처음 값 `{ start, end }` |
+
+나머지 옵션(`time` · `minuteStep` · `min` · `max` · `today` …)은 한 칸과 같다. 값은 `{ start, end }` 다 -
+`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`.
+
+- 첫 클릭은 시작, 두 번째는 종료다. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이 된다. 날짜만 고르면 종료를 고르는 순간 닫힌다
+- **시작을 종료 뒤로 옮기면 종료를 비운다** (React `DateRangePicker` 와 같은 규칙) - 시작으로 맞춰 버리면 고르지 않은 날짜가 조회 · 저장된다. 같은 날의 더 이른 종료 시각만 시작 시각으로 올린다
+- 종료 시각의 처음 값은 그날 끝(분 간격 마지막)이다 - 하루 단위 조회가 그날 전체를 덮는다
+
 ---
 
 ### FileInput
@@ -1140,6 +1216,107 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   <label class="bt-file-input__label" for="file-disabled">파일 선택</label>
 </div>
 ```
+
+---
+
+### AppShell · Sidebar
+
+React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다 - CSS 만, 스크립트 없음.
+
+```html
+<div class="bt-app-shell">
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <aside class="bt-sidebar">
+    <div class="bt-sidebar__brand"><img src="/logo.svg" alt="Bigtablet" height="24"></div>
+    <nav class="bt-sidebar__nav" aria-label="메뉴">
+      <div class="bt-sidebar__section">
+        <div class="bt-sidebar__section-label">관리</div>
+        <a class="bt-sidebar__item" href="/" aria-current="page">
+          <span class="bt-sidebar__item-icon"><svg …></svg></span>
+          <span class="bt-sidebar__item-label">대시보드</span>
+        </a>
+        <a class="bt-sidebar__item" href="/logs">
+          <span class="bt-sidebar__item-icon"><svg …></svg></span>
+          <span class="bt-sidebar__item-label">접속 기록</span>
+        </a>
+      </div>
+      <div class="bt-sidebar__section">…</div>  <!-- 구역 사이에 구분선 -->
+    </nav>
+    <div class="bt-sidebar__footer">…</div>
+  </aside>
+  <main class="bt-app-shell__main" id="main" tabindex="-1">…</main>
+</div>
+```
+
+| 클래스 | 설명 |
+|--------|------|
+| `.bt-app-shell` | 사이드바 열 + 본문 열 grid. 문서가 스크롤하고 사이드바는 `sticky` 다. 본문 열은 `minmax(0, 1fr)` 라 넓은 표가 열을 늘리지 않는다 |
+| `.bt-app-shell__main` | 본문 (여백 32px, 600px 아래 16px). `--flush` 면 여백 없음 (React `padded={false}`) |
+| `.bt-sidebar` | 좌측 메뉴. 너비는 `--bt-sidebar-width` (기본 240px) |
+| `__brand` · `__nav` · `__footer` | 로고 줄 · 메뉴 목록(넘치면 스크롤) · 아래 고정 영역 |
+| `__section` · `__section-label` | 구역 묶음 · 구역 제목. 구역이 이어지면 사이에 구분선 |
+| `__item` · `__item-icon` · `__item-label` | 메뉴 항목. `<a>` · `<button>` 모두 된다 |
+
+- **현재 메뉴**는 `aria-current="page"` 만 달면 accent 로 채워진다 (`.is-active` 도 같음). 다크에서도 accent 토큰이 함께 뒤집혀 앱이 색을 바꿀 필요가 없다
+- **비활성** 항목은 `aria-disabled="true"` - 클릭 차단은 앱이 한다 (`<a>` 에는 native `disabled` 가 없다)
+- **좁은 화면(< 600px)** 에서는 React `Sidebar` 와 같이 화면 아래 고정 바로 바뀐다. 로고 · 구역 제목 · footer 는 숨고, 본문 끝은 `--bt-bottom-inset` 만큼 띄운다. 바꾸지 않으려면 `bt-sidebar--static` (React `mode="static"`)
+
+#### 접기 · 고정 헤더 (#950)
+
+```html
+<div class="bt-app-shell">
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <aside class="bt-sidebar" data-bt-sidebar data-storage-key="nav-collapsed">
+    <div class="bt-sidebar__brand">
+      <img class="bt-sidebar__brand-full" src="/logo.svg" alt="Bigtablet" height="24">
+      <img class="bt-sidebar__brand-mark" src="/mark.svg" alt="Bigtablet" height="24">  <!-- 접혔을 때 -->
+    </div>
+    …
+  </aside>
+  <div class="bt-app-shell__body">
+    <header class="bt-app-shell__header">…</header>   <!-- 본문 열 위에 붙는다 -->
+    <main class="bt-app-shell__main" id="main" tabindex="-1">…</main>
+  </div>
+</div>
+```
+
+- `data-bt-sidebar` 를 주면 오른쪽 가장자리에 접기 토글이 생긴다. 접으면 64px 레일에 아이콘만 남고 라벨 · 구역 제목은 스크린리더에 남는다. 600px 아래 하단 바에서는 토글이 숨고 라벨이 보인다
+- 고정 헤더를 쓰면 `__body` 로 헤더와 `__main` 을 감싼다. 번들이 헤더 높이를 `--bt-top-inset` 에 적어 Tab · 앵커 이동 때 포커스가 헤더 밑에 숨지 않는다 (WCAG 2.4.11)
+
+| 옵션 (data-*) | React 대응 | 기본값 | 설명 |
+|---------------|-----------|--------|------|
+| `collapsible` (`data-collapsible`) | `collapsible` | `true` | 접기 토글을 단다 |
+| `defaultCollapsed` (`data-collapsed` · `bt-sidebar--collapsed`) | `defaultCollapsed` | `false` | 처음 접힘 |
+| `width` · `collapsedWidth` (`data-width` · `data-collapsed-width`) | 같은 이름 | 240 · 64 | 너비(px) |
+| `toggleLabel` (`data-toggle-label`) | `toggleLabel` | 로케일 `sidebar.toggle` | 토글 이름 |
+| `storageKey` (`data-storage-key`) | - | - | 접힘을 `localStorage` 에 기억 (쪽을 옮겨도 유지) |
+| `onCollapsedChange` | `onCollapsedChange` | - | `(collapsed)` |
+
+```javascript
+const nav = Bigtablet.Sidebar('#nav', { onCollapsedChange: (c) => {} });
+nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
+```
+
+---
+
+### 건너뛰기 링크 · 기본 포커스 링
+
+```html
+<body>
+  <!-- 첫 Tab 에 왼쪽 위로 뜬다. 레이아웃 칸을 차지하지 않아 grid · flex 첫 자식이어도 된다 -->
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <nav>…</nav>
+  <!-- tabindex="-1" 이라 건너뛰기로 포커스를 받는다. 링은 그리지 않는다 -->
+  <main id="main" tabindex="-1">…</main>
+</body>
+```
+
+- 번들은 DS 컴포넌트가 아닌 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에도 `--bt-focus-ring` 을 그린다.
+  앱이 그린 메뉴 링크 · 로고 · 스크롤 상자에 `:focus-visible` 규칙을 따로 둘 필요가 없다. 방향키로 옮기는 `tabindex="-1"`
+  항목(메뉴 · 탭 · 리스트박스)도 포함한다
+- 이 규칙은 `:where()` 라 특이도가 0 이다 - 앱이나 컴포넌트가 포커스 모양을 정하면 그쪽이 언제나 이긴다
+- 건너뛰기 대상 `<main tabindex="-1">` 에는 링도 브라우저 기본 테두리도 그리지 않는다
+- React `AppShell` 은 사이드바나 헤더가 있으면 같은 링크를 스스로 그린다 (`skipLinkLabel`)
 
 ---
 
@@ -1291,6 +1468,25 @@ Bigtablet.generateId('prefix');  // 'prefix_abc123'
 const cleanup = Bigtablet.on(element, 'click', handler);
 cleanup();  // 리스너 제거
 ```
+
+### 로케일
+
+컴포넌트가 스스로 그리는 문구(이전 · 다음 페이지, 닫기, 달력 넘김, 시 · 분 …)는 로케일 카탈로그에서 온다.
+React `LocaleProvider` 와 같은 키 · 같은 문구다 (ko · en).
+
+```html
+<html lang="en">  <!-- en* 이면 영어, 그 밖은 한국어 -->
+```
+
+```javascript
+// 번들 바로 뒤 스크립트에서 - 자동 초기화보다 먼저 불러야 이미 그린 컴포넌트에도 걸린다
+Bigtablet.setLocale('en');                          // <html lang> 대신 고정. null 이면 다시 lang 을 따른다
+Bigtablet.setMessages({ 'pagination.prev': 'Prev' }); // 일부 문구만 덮어쓰기 (null 이면 모두 지운다)
+Bigtablet.getLocale();                              // "ko" | "en"
+```
+
+- 컴포넌트 옵션(`prevLabel` · `closeLabel` …)으로 준 문구가 카탈로그보다 언제나 이긴다
+- 키 목록은 React `src/ui/system/locale-provider/messages.ts` 와 같다. Vanilla 에만 있는 문구는 `vanilla.*` 키다
 
 ---
 

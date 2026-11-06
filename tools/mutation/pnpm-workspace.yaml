@@ -17,3 +17,6 @@ overrides:
   qs: ^6.15.2
   # 보안 패치 (Dependabot #145-148) - scheme 스푸핑·host 혼동·경로 동치·scheme 주입. 상위가 올리면 지운다.
   fast-uri: ^3.1.9
+  # 보안 패치 (Dependabot #158) - `**/../` globparts 증폭 DoS (GHSA-g3hv-75wg-m249). @stryker-mutator/core 가 10 을 요구한다.
+  # 상위가 11 로 올리면 지운다. 11.0.5 는 minimumReleaseAge 전이라 11.0.4
+  minimatch: ^11.0.4

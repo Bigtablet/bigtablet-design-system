@@ -35,7 +35,6 @@
     color: var(--bt-color-text-primary);
     background: var(--bt-color-background);
     transition: border-color var(--bt-transition-base),
-                box-shadow var(--bt-transition-base),
                 background var(--bt-transition-base);
 
     &::placeholder {
@@ -54,14 +53,16 @@
     &--outline {
       border: 1px solid var(--bt-color-border);
 
-      &:hover:not(:disabled) {
+      // 포커스 중에는 hover 가 테두리를 덮지 않게 - 특이도가 더 높아 포커스 테두리를 지웠다
+      &:hover:not(:disabled):not(:focus-visible) {
         border-color: var(--bt-color-border-light);
       }
 
+      // React TextField 와 같이 테두리색으로만 - 텍스트 입력은 마우스로 눌러도 :focus-visible 이라
+      // 링을 그리면 클릭할 때마다 두꺼운 링이 떴다 (#936). 고대비 모드에서는 투명 outline 이 보인다
       &:focus-visible {
-        outline: none;
-        border-color: var(--bt-color-accent);
-        box-shadow: var(--bt-focus-ring);
+        outline: 2px solid transparent;
+        border-color: token.$color_border_focus;
       }
     }
 
@@ -70,10 +71,9 @@
       border: 1px solid transparent;
 
       &:focus-visible {
-        outline: none;
-        border-color: var(--bt-color-accent);
+        outline: 2px solid transparent;
+        border-color: token.$color_border_focus;
         background: var(--bt-color-background);
-        box-shadow: var(--bt-focus-ring);
       }
     }
 
@@ -94,22 +94,13 @@
     }
 
     /* States */
-    // 상태는 테두리색으로만 - 예전 !important halo 가 :focus-visible 링을 항상 덮어 오류 칸에
-    // 키보드 포커스가 안 보였다(WCAG 2.4.7). 포커스 때는 상태색 링 토큰을 쓴다 (React TextField 와 같음).
+    // 상태는 테두리색으로만 - 포커스 때도 상태색 테두리를 유지한다 (React TextField `_error` · `_success` 와 같음)
     &--error {
       border-color: var(--bt-color-error) !important;
-
-      &:focus-visible {
-        box-shadow: var(--bt-focus-ring-error);
-      }
     }
 
     &--success {
       border-color: var(--bt-color-success) !important;
-
-      &:focus-visible {
-        box-shadow: var(--bt-focus-ring-success);
-      }
     }
 
     /* 식별자 칸 - React TextField 의 `identifier` prop 과 같은 처리 */

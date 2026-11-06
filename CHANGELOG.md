@@ -4,6 +4,19 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.6.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.6.0) - 2026-11-06
+- Vanilla 에 달력형 DatePicker 가 생겼습니다 - `Bigtablet.DatePicker` · `data-bt-date-picker`. 시각(`data-time`)까지 고르면 값이 datetime-local 과 같은 `YYYY-MM-DDTHH:mm` 입니다. 제목을 누르면 월 · 연 보기, "오늘" 로 한 번에 오늘을 고릅니다. 옵션 이름은 React DatePicker · DateCalendar · TimePicker prop 과 같습니다
+- Vanilla 범위형 DatePicker(`data-range` · `Bigtablet.DateRangePicker`) - 한 팝오버에서 시작 · 종료를 고르고 사이를 띠로 보입니다. 시작을 종료 뒤로 옮기면 종료를 비웁니다 (React DateRangePicker 와 같음)
+- Vanilla 에 AppShell · Sidebar 가 생겼습니다 - `bt-app-shell` · `bt-sidebar`, `aria-current="page"` 로 현재 메뉴 강조, 600px 아래 하단 바(`--static` 으로 끔), `data-bt-sidebar` 접기 · 펼치기(`storageKey` 로 기억), 고정 헤더 `bt-app-shell__header`
+- Vanilla 로케일 카탈로그 - `<html lang>` 또는 `Bigtablet.setLocale('en')` 로 기본 문구를 바꾸고 `setMessages` 로 일부를 덮어씁니다. React messages 와 같은 키 · 문구입니다
+- React `AppShell` 이 "본문으로 건너뛰기" 링크를 그립니다(`skipLinkLabel`). Vanilla 는 `.bt-skip-link` 와 DS 밖 요소(링크 · tabindex)의 기본 포커스 링을 제공합니다. SCSS 믹스인 `token.skip_link` 를 추가했습니다
+- (렌더 변경) `<html lang="en">` 인 Vanilla 화면은 기본 문구가 영어로 바뀝니다
+- (렌더 변경) Toggle 손잡이를 트랙 가운데에 두고 React · Vanilla 이동 거리를 맞췄습니다. 꺼진 트랙을 진하게 해 대비를 3:1 이상으로 올렸습니다
+- (렌더 변경) Pagination 이 쪽이 많으면 어느 쪽에서든 9칸이라 너비가 바뀌지 않습니다 - ‹ › 가 움직이지 않습니다
+- (렌더 변경) 표 가로 스크롤 상자에 DS 포커스 링, Vanilla Pagination 현재 쪽은 채운 배경으로 포커스와 구분됩니다
+- (렌더 변경) Vanilla TextField · Dropdown · DatePicker select 포커스를 React 처럼 테두리색으로만 그립니다. Dropdown 검색칸의 포커스 링을 뺐습니다 (React · Vanilla)
+- 개발 의존성 보안 패치 - minimatch globparts 증폭 DoS (GHSA-g3hv-75wg-m249)
+
 ## [4.5.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.5.0) - 2026-11-05
 - Vanilla 번들에 컴포넌트가 늘었습니다 - `Bigtablet.Toast(message, tone, options)`(React Toast 와 같은 모양 · 최대 5개 · 액션 버튼 · hover 시 진행 멈춤), `Bigtablet.CopyButton`(`data-bt-copy` 자동 초기화 · Clipboard API 가 없으면 `execCommand` 로 복사), CSS 만으로 쓰는 `bt-inline-alert` · `bt-badge` · `bt-table`(크기 · 고정 너비 · 좁은 화면 카드 모드)
 - `Table` 에 `layout="fixed"` · `minWidth` · `cards` prop 과 열 옵션 `truncate` · `cardLabel` 이 생겼습니다 - 쪽마다 열 위치를 고정하거나, 좁은 화면에서 줄마다 카드로 쌓습니다. 기본값은 그대로라 기존 표는 바뀌지 않습니다

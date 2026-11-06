@@ -2,6 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { cdp, page, userEvent } from "vitest/browser";
+import "../../../vanilla/scss/_table.scss";
 import { Table, type TableColumn } from "./index";
 import "./style.scss";
 
@@ -234,5 +235,43 @@ describe("Table fixed layout · cards (Chromium, #915)", () => {
 		expect(Math.round(a?.width ?? 0)).toBe(Math.round(b?.width ?? 0));
 		expect(getComputedStyle(cells[0] as HTMLElement, "::before").content).toBe('"시각"');
 		await page.viewport(1280, 800);
+	});
+});
+
+// 넘치는 상자에 tabindex="0" 이 붙으면 키보드로 들어올 수 있다 - 브라우저 기본 파란 테두리가 아니라
+// 다른 DS 컨트롤과 같은 링이어야 한다 (#939)
+describe("Table scroll box focus (Chromium)", () => {
+	const RING = /0px 0px 0px 4px/;
+
+	it("rings the React scroll box on keyboard focus", async () => {
+		await page.viewport(400, 600);
+		render(
+			<>
+				<button type="button">앞</button>
+				<Table columns={columns} data={rows} keyExtractor={(r) => r.id} minWidth="800px" />
+			</>,
+		);
+		const box = document.querySelector(".table_wrapper") as HTMLElement;
+		await expect.poll(() => box.getAttribute("tabindex")).toBe("0");
+		await userEvent.click(screen.getByRole("button", { name: "앞" }));
+		await userEvent.keyboard("{Tab}");
+		expect(box).toHaveFocus();
+		expect(getComputedStyle(box).boxShadow).toMatch(RING);
+		expect(getComputedStyle(box).outlineColor).toBe("rgba(0, 0, 0, 0)");
+	});
+
+	it("rings the Vanilla scroll box on keyboard focus", async () => {
+		// docs/VANILLA.md 가 안내하는 마크업 그대로 - 서버가 그린 HTML 이라 DOM 으로 꽂는다
+		const { container } = render(<button type="button">앞</button>);
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<section class="bt-table-wrap" tabindex="0" aria-label="접속 기록"><table class="bt-table"><tbody><tr><td>회의 A</td></tr></tbody></table></section>',
+		);
+		const box = screen.getByRole("region", { name: "접속 기록" });
+		await userEvent.click(screen.getByRole("button", { name: "앞" }));
+		await userEvent.keyboard("{Tab}");
+		expect(box).toHaveFocus();
+		expect(getComputedStyle(box).boxShadow).toMatch(RING);
+		expect(getComputedStyle(box).outlineColor).toBe("rgba(0, 0, 0, 0)");
 	});
 });

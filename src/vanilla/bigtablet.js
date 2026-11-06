@@ -13,12 +13,16 @@ import { init } from "./js/init.js";
 
 // Components
 export { Alert } from "./js/alert.js";
+export { AppShell } from "./js/app-shell.js";
 export { CopyButton } from "./js/copy-button.js";
+export { DatePicker, DateRangePicker } from "./js/date-picker.js";
 export { Dropdown } from "./js/dropdown.js";
 // Utilities
 export { init } from "./js/init.js";
+export { getLocale, setLocale, setMessages } from "./js/locale.js";
 export { Modal } from "./js/modal.js";
 export { Pagination } from "./js/pagination.js";
+export { Sidebar } from "./js/sidebar.js";
 export { Toast } from "./js/toast.js";
 export { Toggle } from "./js/toggle.js";
 export { $, $$, generateId, on } from "./js/utils.js";

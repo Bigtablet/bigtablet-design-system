@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
+import { DatePicker as VanillaDatePicker } from "../../../vanilla/bigtablet.js";
+import "../../../vanilla/scss/_date-picker.scss";
 import { DatePicker } from "./index";
 import "./style.scss";
 import "../../overlay/popover/style.scss";
@@ -44,5 +46,55 @@ describe("DatePicker layout (Chromium)", () => {
 			expect(r.left).toBeGreaterThanOrEqual(panel.left - 0.5);
 			expect(r.right).toBeLessThanOrEqual(panel.right + 0.5);
 		}
+	});
+});
+
+// Vanilla 달력형 DatePicker (#937)
+describe("Vanilla calendar DatePicker (Chromium)", () => {
+	const mountVanilla = (style: string) => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div style="position: fixed; ${style}; width: 280px"><div class="bt-date-picker"><span class="bt-date-picker__label">시작</span></div></div>`,
+		);
+		const root = container.querySelector(".bt-date-picker") as HTMLElement;
+		VanillaDatePicker(root, { time: true, today: "2026-10-16" });
+		return {
+			trigger: root.querySelector(".bt-date-picker__trigger") as HTMLElement,
+			panel: () => root.querySelector(".bt-date-picker__panel") as HTMLElement,
+		};
+	};
+
+	beforeEach(async () => {
+		await page.viewport(800, 600);
+	});
+
+	it("draws the trigger at the React calendar trigger height and opens the panel below", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px");
+		expect(trigger.getBoundingClientRect().height).toBe(40);
+		await userEvent.click(trigger);
+		const t = trigger.getBoundingClientRect();
+		const p = panel().getBoundingClientRect();
+		expect(p.top).toBeGreaterThanOrEqual(t.bottom);
+		expect(p.bottom).toBeLessThanOrEqual(600);
+		// 7칸 × 40px 달력 + 시각 줄이 한 팝오버에 들어간다
+		expect(p.width).toBeGreaterThanOrEqual(280);
+	});
+
+	it("opens upward near the bottom edge", async () => {
+		const { trigger, panel } = mountVanilla("bottom: 20px; left: 40px");
+		await userEvent.click(trigger);
+		expect(panel().getBoundingClientRect().bottom).toBeLessThanOrEqual(
+			trigger.getBoundingClientRect().top,
+		);
+	});
+
+	it("aligns to the trigger's right edge when it would overflow the screen", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; right: 10px");
+		await userEvent.click(trigger);
+		expect(panel().getBoundingClientRect().right).toBeLessThanOrEqual(800);
+		expect(
+			Math.abs(panel().getBoundingClientRect().right - trigger.getBoundingClientRect().right),
+		).toBeLessThan(1);
 	});
 });

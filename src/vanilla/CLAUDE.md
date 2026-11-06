@@ -15,9 +15,11 @@ src/vanilla/
 ├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
 ├── js/
 │   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
+│   ├── locale.js       # 문구 카탈로그 t() · setLocale · setMessages (React messages.ts 의 부분집합, #949)
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
-│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js
+│   ├── app-shell.js · sidebar.js  # 고정 헤더 높이 · 사이드바 접기 (#950)
+│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
 │   └── init.js         # data-bt-* 자동 초기화
 └── scss/
     ├── _custom-properties.scss   # :root --bt-* 변수
@@ -46,7 +48,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
 추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
@@ -94,9 +96,11 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
 | Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
 | Pagination | `.bt-pagination` | | |
-| DatePicker | `.bt-date-picker` | `--full-width` | |
+| DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다, `data-range` 면 범위형 - `DateRangePicker()`) | `[aria-expanded]` |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
-| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남 - 스킵 링크) | | |
+| AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` (고정 헤더면 `__body` > `__header` + `__main`) - 헤더 높이는 JS `AppShell()` 가 `--bt-top-inset` 으로 | `__main--flush` | |
+| Sidebar | `.bt-sidebar` (+ `__brand`(`__brand-full` · `__brand-mark`), `__toggle`(JS), `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음), `--collapsed`(JS `Sidebar()` · `data-bt-sidebar`) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
+| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남), `.bt-skip-link`(포커스 때 왼쪽 위에 뜨는 건너뛰기 링크 - 레이아웃 칸 없음) | | |
 
 `.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.
 
@@ -104,9 +108,13 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 <!-- 라이브 리전: 화면에는 안 보이고 스크린리더만 읽는다 -->
 <span class="bt-sr-only" role="status" aria-live="polite">저장되었습니다</span>
 
-<!-- 스킵 링크: Tab 을 누르면 나타난다 -->
-<a href="#main" class="bt-sr-only-focusable">본문으로 건너뛰기</a>
+<!-- 스킵 링크: Tab 을 누르면 왼쪽 위에 뜬다. 대상은 <main id="main" tabindex="-1"> -->
+<a href="#main" class="bt-skip-link">본문으로 건너뛰기</a>
 ```
+
+`_utilities.scss` 는 DS 밖 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에 `--bt-focus-ring` 을 그린다 -
+`:where()` 라 특이도 0, 컴포넌트 규칙이 언제나 이긴다. 방향키로 옮기는 `tabindex="-1"` 항목도 포함하고,
+건너뛰기 대상 `<main tabindex="-1">` 만 링 · 기본 outline 을 지운다 (#940).
 
 ### HTML Examples
 
@@ -335,6 +343,17 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
   showPageJump: false       // true 면 현재 쪽 칸이 입력칸 - 적고 Enter 로 이동 (data-page-jump, 링크 모드면 href 로 이동)
 });
 pagination.setPage(5);
+
+// DatePicker 달력형 (#937) - 옵션 이름은 React DatePicker · DateCalendar · TimePicker prop 과 같다 (data-* 는 kebab-case)
+const to = Bigtablet.DatePicker('#to', {
+  name: 'to', time: true, minuteStep: 1,  // 값 "YYYY-MM-DDTHH:mm" (datetime-local 과 같은 형식)
+  min: '2026-01-01', minFrom: '#from',    // 다른 DatePicker 값을 최소로 따른다 (시작 ~ 종료는 칸 두 개)
+  onValueChange: (value) => {}
+});
+to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
+
+// 로케일 (#949) - <html lang> 을 따르고, 자동 초기화 전에 바꾼다. 컴포넌트 기본 문구는 하드코딩하지 말고 t(key) 로
+Bigtablet.setLocale('en'); Bigtablet.setMessages({ 'pagination.prev': 'Prev' });
 
 // Alert (no element needed)
 Bigtablet.Alert({

@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { afterExit } from "./overlay.js";
 import { $$ } from "./utils.js";
 
@@ -43,7 +44,12 @@ export const TOAST_CLOSE_ICON = toastSvg(14, '<path d="M18 6 6 18"/><path d="m6 
  * @returns {{dismiss: Function}}
  */
 export function Toast(message, tone = "neutral", options = {}) {
-	const { duration = 3000, action, closeLabel = "닫기", regionLabel = "알림" } = options;
+	const {
+		duration = 3000,
+		action,
+		closeLabel = t("toast.close"),
+		regionLabel = t("toast.region"),
+	} = options;
 	// 모르는 tone 은 neutral - `in` 이 아니라 keys 라 "toString" 같은 상속 키도 거른다
 	const safeTone = Object.keys(TOAST_ICONS).includes(tone) ? tone : "neutral";
 

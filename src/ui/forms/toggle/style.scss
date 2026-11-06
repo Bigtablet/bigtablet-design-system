@@ -8,11 +8,13 @@
 
   width: 40px;
   height: 24px;
-  padding: 2px;
+  padding: 0;
 
   border: 2px solid transparent;
   border-radius: token.$radius_full;
-  background: token.$color_base_neutral_400;
+  // 흰 손잡이와 3:1 (WCAG 1.4.11) - neutral_400(#B3B3B3) 은 2.1:1 이라 빈 막대처럼 보였다.
+  // 비활성은 neutral_400 그대로라 활성 off 와 구분된다
+  background: token.$color_base_neutral_600;
 
   transition: background token.$transition_base,
     border-color token.$transition_base;
@@ -36,8 +38,14 @@
 
   // ── Thumb ──────────────────────────────────────────────────────────────
 
+  // 손잡이는 중심 기준으로 둔다 - 꺼짐 중심은 왼쪽 끝에서 트랙 높이/2, 켜짐 중심은 오른쪽 끝에서
+  // 트랙 높이/2. 그래서 켜진 큰 손잡이는 위·아래·오른쪽 여백이 같고, 꺼진 작은 손잡이는 그 큰
+  // 손잡이가 왼쪽 끝에 놓일 자리의 중심에 선다 (Material 3 스위치). 크기가 바뀌어도(누름) 중심이
+  // 그대로라 이동 거리를 따로 보정하지 않는다. left 는 padding box 기준이라 border(2px)를 뺀 값이다.
   &_thumb {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 10px; // 24/2 - 2
     width: 12px;
     height: 12px;
     background: token.$color_brand_on_primary;
@@ -46,7 +54,7 @@
       width token.$transition_base,
       height token.$transition_base,
       background token.$transition_base;
-    transform: translateX(0);
+    transform: translate(-50%, -50%);
   }
 
   // ── On state ───────────────────────────────────────────────────────────
@@ -58,7 +66,7 @@
       width: 20px;
       height: 20px;
       background: token.$color_accent_on_surface;
-      transform: translateX(14px);
+      transform: translate(calc(16px - 50%), -50%); // 40 - 24
     }
 
     // disabled overrides on-state (specificity 0,2,0 beats .toggle_on 0,1,0)
@@ -92,10 +100,6 @@
     height: 20px;
   }
 
-  &_on:not(:disabled):active .toggle_thumb {
-    transform: translateX(12px);
-  }
-
   // ── Sizes ──────────────────────────────────────────────────────────────
 
   &_size_sm {
@@ -106,9 +110,9 @@
   &_size_md {
     width: 48px;
     height: 28px;
-    padding: 2px;
 
     .toggle_thumb {
+      left: 12px; // 28/2 - 2
       width: 16px;
       height: 16px;
     }
@@ -116,16 +120,12 @@
     &.toggle_on .toggle_thumb {
       width: 24px;
       height: 24px;
-      transform: translateX(18px);
+      transform: translate(calc(20px - 50%), -50%); // 48 - 28
     }
 
     &:not(:disabled):active .toggle_thumb {
       width: 24px;
       height: 24px;
-    }
-
-    &.toggle_on:not(:disabled):active .toggle_thumb {
-      transform: translateX(16px);
     }
   }
 

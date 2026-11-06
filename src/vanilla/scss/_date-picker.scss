@@ -1,3 +1,5 @@
+@use "../../styles/token" as token;
+
 /* ========================================
    DatePicker
    ======================================== */
@@ -53,10 +55,11 @@
       background-color: var(--bt-color-background-secondary);
     }
 
+    // TextField · Dropdown 과 같이 테두리색으로만 (#936). select 는 마우스로 눌러도 :focus-visible 이라
+    // 링이면 누를 때마다 두꺼운 링이 떴다 (#953). 고대비 모드는 투명 outline 이 보인다
     &:focus-visible {
-      outline: none;
-      border-color: var(--bt-color-accent);
-      box-shadow: var(--bt-focus-ring);
+      outline: 2px solid transparent;
+      border-color: token.$color_border_focus;
     }
 
     &:disabled {
@@ -78,5 +81,428 @@
       flex: 1;
       min-width: 0;
     }
+  }
+}
+
+/* ── 달력형 (#937) - React DatePicker variant="calendar" + TimePicker 대응 ─────────────────────
+   칸 · 팝오버 · 달력 칸은 bigtablet.js 의 DatePicker() 가 그린다. 값 · 크기는 React
+   `date-picker/style.scss` · `date-calendar/style.scss` 와 같다 - 바꿀 때는 함께 고친다 */
+$_chevron_left: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>');
+$_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>');
+$_chevron_down: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+$_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>');
+
+.bt-date-picker--calendar {
+  position: relative;
+
+  .bt-date-picker__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: token.$spacing_8;
+    width: 100%;
+    @include token.responsive_height(token.$tap_target_compact);
+    padding: token.$spacing_4 token.$spacing_16;
+    box-sizing: border-box;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background: token.$color_bg_solid;
+    font-family: token.$font_family_primary;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color var(--bt-transition-base);
+
+    &:hover:not(:disabled):not([aria-expanded="true"]) {
+      border-color: token.$color_border_hover;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용
+      box-shadow: token.$focus_ring;
+    }
+
+    &[aria-expanded="true"] {
+      border-color: token.$color_border_focus;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  .bt-date-picker__trigger-icon {
+    flex-shrink: 0;
+    width: token.$icon_size_md;
+    height: token.$icon_size_md;
+    color: token.$color_text_body;
+    background-color: currentColor;
+    -webkit-mask: $_calendar_icon center / contain no-repeat;
+    mask: $_calendar_icon center / contain no-repeat;
+  }
+
+  .bt-date-picker__trigger-value,
+  .bt-date-picker__trigger-placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include token.body_small;
+  }
+
+  .bt-date-picker__trigger-value {
+    color: token.$color_text_heading;
+    @include token.tabular_nums;
+  }
+
+  .bt-date-picker__trigger-placeholder {
+    color: token.$color_text_caption;
+  }
+
+  // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다
+  .bt-date-picker__panel {
+    position: absolute;
+    top: calc(100% + #{token.$spacing_4});
+    left: 0;
+    z-index: token.$z_popup;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_8;
+    padding: token.$spacing_16;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: token.$radius_lg;
+    background: token.$color_bg_solid;
+    box-shadow: token.$elevation_level2;
+    @include token.presence(translateY(-4px));
+
+    &[hidden] {
+      display: none;
+    }
+
+    &--up {
+      top: auto;
+      bottom: calc(100% + #{token.$spacing_4});
+    }
+
+    &--end {
+      right: 0;
+      left: auto;
+    }
+  }
+
+  .bt-date-picker__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+  }
+
+  // 제목 - 누르면 월 → 연 보기 (#953)
+  .bt-date-picker__title {
+    padding: token.$spacing_4 token.$spacing_8;
+    border: 0;
+    border-radius: token.$radius_md;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    @include token.title_small_medium;
+    color: token.$color_text_heading;
+    cursor: pointer;
+
+    &:hover:not([aria-disabled="true"]) {
+      background: token.$color_bg_additive;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+
+    &[aria-disabled="true"] {
+      cursor: default;
+    }
+  }
+
+  // 월 · 연 보기 - 달력 칸(7 × 40px)과 같은 폭에 3칸 × 4줄
+  .bt-date-picker__picks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: center;
+    gap: token.$spacing_4;
+    width: calc(7 * #{token.$tap_target_compact});
+    // 달력(요일 줄 + 6줄)과 같은 높이 - 보기를 바꿀 때 팝오버가 출렁이지 않게
+    height: calc(#{token.$spacing_base_32} + 6 * #{token.$tap_target_compact});
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .bt-date-picker__pick {
+    height: token.$tap_target_compact;
+    padding: 0;
+    border: 0;
+    border-radius: token.$radius_full;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    @include token.body_small;
+    @include token.tabular_nums;
+    color: token.$color_text_heading;
+    cursor: pointer;
+
+    &:hover:not([aria-disabled="true"]) {
+      background: token.$color_bg_additive;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+
+    &--selected {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+      font-weight: token.$font_weight_medium;
+
+      &:hover:not([aria-disabled="true"]) {
+        background: token.$color_accent_strong;
+      }
+    }
+
+    &[aria-disabled="true"] {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+  }
+
+  .bt-date-picker__nav,
+  .bt-date-picker__day {
+    border: 0;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // 넘김 버튼 - React DateCalendar 와 같은 lucide ChevronLeft · ChevronRight (icon md) 를 mask 로 가운데에 그린다
+  .bt-date-picker__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    padding: 0;
+    border-radius: token.$radius_md;
+    color: token.$color_text_body;
+
+    &::before {
+      content: "";
+      width: token.$icon_size_md;
+      height: token.$icon_size_md;
+      background-color: currentColor;
+      -webkit-mask: $_chevron_left center / contain no-repeat;
+      mask: $_chevron_left center / contain no-repeat;
+    }
+
+    &[data-nav="1"]::before {
+      -webkit-mask-image: $_chevron_right;
+      mask-image: $_chevron_right;
+    }
+
+    &:hover:not(:disabled) {
+      background: token.$color_bg_additive;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: token.$opacity_38;
+    }
+  }
+
+  .bt-date-picker__grid {
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .bt-date-picker__weekday {
+    width: token.$tap_target_compact;
+    height: token.$spacing_base_32;
+    padding: 0;
+    @include token.label_small;
+    font-weight: token.$font_weight_regular;
+    color: token.$color_text_caption;
+    text-align: center;
+  }
+
+  .bt-date-picker__cell {
+    padding: 0;
+    text-align: center;
+
+    // 범위의 띠 (#951) - 칸에 그려 이웃 칸과 이어진다. 시작 · 종료 칸은 원 쪽 반만 칠해 원과 붙는다
+    &--in-range {
+      background: token.$color_accent_muted;
+    }
+
+    &--range-start {
+      background: linear-gradient(to right, transparent 50%, #{token.$color_accent_muted} 50%);
+    }
+
+    &--range-end {
+      background: linear-gradient(to left, transparent 50%, #{token.$color_accent_muted} 50%);
+    }
+  }
+
+  .bt-date-picker__day {
+    width: token.$tap_target_compact;
+    height: token.$tap_target_compact;
+    padding: 0;
+    border-radius: token.$radius_full;
+    @include token.body_small;
+    @include token.tabular_nums;
+    color: token.$color_text_heading;
+
+    &:hover:not([aria-disabled="true"]) {
+      background: token.$color_bg_additive;
+    }
+
+    // 오늘은 테두리만 - 고른 날(채움) · 포커스 링과 겹쳐도 구분된다
+    &--today {
+      box-shadow: inset 0 0 0 token.$border_width_standard token.$color_accent_default;
+
+      &:focus-visible {
+        box-shadow:
+          inset 0 0 0 token.$border_width_standard token.$color_accent_default,
+          token.$focus_ring;
+      }
+    }
+
+    &--selected {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+      font-weight: token.$font_weight_medium;
+
+      &:hover:not([aria-disabled="true"]) {
+        background: token.$color_accent_strong;
+      }
+    }
+
+    // 고를 수 없는 날 - 비활성 컨트롤이라 WCAG 1.4.3 대비 예외. 포커스는 지나간다
+    &[aria-disabled="true"] {
+      color: token.$color_text_disabled;
+      cursor: not-allowed;
+    }
+  }
+
+  // 시각 - 시 · 분 select + 완료
+  // 시각 - 시 · 분 칸은 날짜 칸(.bt-date-picker__trigger)과 같은 높이 · 모서리 · 테두리. 폼 입력칸을 덧붙인
+  // 것처럼 보이지 않게 달력과 한 덩어리로 둔다
+  .bt-date-picker__time {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_8;
+
+    .bt-date-picker__select {
+      width: 100%;
+      height: token.$tap_target_compact;
+      padding: 0 calc(#{token.$spacing_8} * 2 + #{token.$icon_size_md}) 0 token.$spacing_12;
+      border-color: token.$color_border_default;
+      border-radius: token.$radius_lg;
+      background-color: token.$color_bg_solid;
+      background-image: none; // 기본 select 의 삼각형 대신 감싼 칸의 chevron
+      font-size: inherit;
+      @include token.body_small;
+      @include token.tabular_nums;
+      color: token.$color_text_heading;
+
+      &:hover:not(:disabled) {
+        border-color: token.$color_border_hover;
+        background-color: token.$color_bg_solid;
+      }
+
+      &:focus-visible {
+        border-color: token.$color_border_focus;
+      }
+    }
+  }
+
+  // 시 · 분 select 화살표 - React TimePicker(Dropdown)의 ChevronDown 과 같은 모양을 세로 가운데에
+  .bt-date-picker__select-wrap {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: token.$spacing_8;
+      width: token.$icon_size_md;
+      height: token.$icon_size_md;
+      transform: translateY(-50%);
+      background-color: token.$color_text_body;
+      -webkit-mask: $_chevron_down center / contain no-repeat;
+      mask: $_chevron_down center / contain no-repeat;
+      pointer-events: none;
+    }
+  }
+
+  // 범위의 시각 줄 이름 (시작일 · 종료일) - 두 줄의 칸이 같은 자리에서 시작하게 폭을 고정한다
+  .bt-date-picker__time-label {
+    flex: 0 0 auto;
+    min-width: 3.5em;
+    @include token.label_medium_medium;
+    color: token.$color_text_body;
+  }
+
+  .bt-date-picker__time-sep {
+    @include token.body_small;
+    color: token.$color_text_caption;
+  }
+
+  // 아래 줄 - 오늘 · 완료. 글자 버튼이라 고른 날짜(채운 원)가 화면의 주인공으로 남는다
+  .bt-date-picker__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  .bt-date-picker__action {
+    height: token.$tap_target_dense;
+    padding: 0 token.$spacing_12;
+    border: 0;
+    border-radius: token.$radius_md;
+    background: transparent;
+    font-family: token.$font_family_primary;
+    @include token.label_medium_medium;
+    color: token.$color_text_body;
+    cursor: pointer;
+
+    &:hover {
+      background: token.$color_bg_additive;
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+
+    &--primary {
+      color: token.$color_text_heading;
+      font-weight: token.$font_weight_semi_bold;
+    }
+  }
+}
+
+// WCAG 2.3.3 - 칸 테두리 전환. 토큰(--bt-transition-*)은 _reduced-motion 이 0s 로 누르지만 이 파일에서도 명시한다
+@media (prefers-reduced-motion: reduce) {
+  .bt-date-picker--calendar .bt-date-picker__trigger {
+    transition: none;
   }
 }

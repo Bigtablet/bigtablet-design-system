@@ -13,3 +13,21 @@
 .bt-sr-only-focusable {
   @include token.visually_hidden_focusable;
 }
+
+/* 본문으로 건너뛰기 - 포커스 때 왼쪽 위에 뜨고 레이아웃 칸을 차지하지 않는다 (React AppShell 과 같은 믹스인) */
+.bt-skip-link {
+  @include token.skip_link;
+}
+
+/* DS 밖 요소(앱이 그린 링크 · 메뉴 · tabindex 영역)의 키보드 포커스도 DS 와 같은 링으로 (#940).
+   :where() 로 특이도 0 - 컴포넌트 규칙이 언제나 이긴다. 고대비 모드는 theme 의 forced-colors 규칙이 맡는다.
+   tabindex="-1" 도 포함한다 - 방향키로 focus() 하는 roving 항목(메뉴 · 탭 · 리스트박스)도 :focus-visible 이다 */
+:where(a[href], [tabindex]:not(main), summary):where(:focus-visible) {
+  outline: 2px solid transparent;
+  box-shadow: var(--bt-focus-ring);
+}
+
+/* 건너뛰기 대상 <main tabindex="-1"> 은 컨트롤이 아니다 - 링도 브라우저 기본 outline 도 그리지 않는다 */
+:where(main[tabindex="-1"]):where(:focus-visible) {
+  outline: none;
+}

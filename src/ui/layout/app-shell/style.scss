@@ -39,10 +39,20 @@
     z-index: token.$z_content;
   }
 
+  // 건너뛰기 링크 - 숨김·드러남 모두 문서 흐름 밖이라 grid 칸을 차지하지 않는다 (#940)
+  &_skip_link {
+    @include token.skip_link;
+  }
+
   &_main {
     flex: 1;
     // flex column 안에서도 자식이 이 칸을 늘리지 못하게 한다 (grid 열과 같은 이유).
     min-width: 0;
+
+    // 건너뛰기로 포커스를 받는 자리일 뿐 컨트롤이 아니다 - 링·브라우저 기본 outline 을 그리지 않는다
+    &:focus-visible {
+      outline: none;
+    }
   }
 
   &_main_padded {

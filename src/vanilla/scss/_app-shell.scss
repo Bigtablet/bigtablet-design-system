@@ -1,0 +1,71 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   AppShell - 관리자 화면 껍데기 (React AppShell 대응, #941)
+   ======================================== */
+/* 스크롤은 문서가 갖는다 - 본문을 스크롤 상자로 만들면 Modal 의 body 스크롤 잠금이 닿지 않는다.
+   사이드바는 sticky 로 붙인다. 이유는 React `src/ui/layout/app-shell/style.scss` 주석 */
+.bt-app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+  background: token.$color_bg_solid_dim;
+
+  // 첫 열은 사이드바가 자기 너비를 갖는다. 콘텐츠 열의 minmax(0, …) 가 넘치는 자식이 열을 늘리지 못하게 묶는다
+  &:has(> .bt-sidebar) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  > .bt-sidebar {
+    position: sticky;
+    top: 0;
+    // 고정 헤더(z_content)보다 위 - 가장자리에 걸친 접기 토글이 헤더 밑에 가려지지 않게
+    z-index: token.$z_chrome;
+    align-self: start;
+    height: 100vh;
+  }
+
+  // 고정 헤더를 쓸 때 본문 열 - 헤더 + main 을 세로로 쌓는다 (React app_shell_body)
+  &__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  // 본문 열 위에 붙는 헤더. 높이는 bigtablet.js AppShell() 이 --bt-top-inset 으로 알려 포커스가 밑에 숨지 않는다
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: token.$z_content;
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+    padding: token.$spacing_32;
+    // 하단 고정 크롬(하단 바로 바뀐 사이드바)에 마지막 콘텐츠가 가리지 않게
+    padding-bottom: calc(#{token.$spacing_32} + var(--bt-bottom-inset, 0px));
+
+    // React `padded={false}` - 자체 여백을 가진 화면
+    &--flush {
+      padding: 0 0 var(--bt-bottom-inset, 0px);
+    }
+
+    // 건너뛰기 대상일 뿐 컨트롤이 아니다
+    &:focus-visible {
+      outline: none;
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  // 사이드바가 하단 바(fixed)로 빠지면 열을 차지하지 않는다
+  .bt-app-shell:has(> .bt-sidebar:not(.bt-sidebar--static)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bt-app-shell__main:not(.bt-app-shell__main--flush) {
+    padding: token.$spacing_16;
+    padding-bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+  }
+}

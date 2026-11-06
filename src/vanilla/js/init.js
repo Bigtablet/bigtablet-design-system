@@ -1,7 +1,10 @@
+import { AppShell } from "./app-shell.js";
 import { CopyButton } from "./copy-button.js";
+import { DatePicker } from "./date-picker.js";
 import { Dropdown } from "./dropdown.js";
 import { Modal } from "./modal.js";
 import { Pagination } from "./pagination.js";
+import { Sidebar } from "./sidebar.js";
 import { Toggle } from "./toggle.js";
 import { $$, parseBoolAttr } from "./utils.js";
 
@@ -16,6 +19,21 @@ export function init() {
 	// CopyButton - data-bt-copy 값을 복사한다 (#918)
 	$$("[data-bt-copy]").forEach((el) => {
 		if (!el._btCopyButton) CopyButton(el);
+	});
+
+	// AppShell - 고정 헤더가 있을 때만 높이를 잰다 (#950). 마크업만으로 쓰는 컴포넌트라 data-* 표시 없이 찾는다
+	$$(".bt-app-shell").forEach((el) => {
+		if (!el._btAppShell && el.querySelector(".bt-app-shell__header")) AppShell(el);
+	});
+
+	// Sidebar 접기 (#950)
+	$$("[data-bt-sidebar]").forEach((el) => {
+		if (!el._btSidebar) Sidebar(el);
+	});
+
+	// DatePicker (달력형, #937) - 옵션은 data-* 에서 읽는다
+	$$("[data-bt-date-picker]").forEach((el) => {
+		if (!el._btDatePicker) DatePicker(el);
 	});
 
 	// Dropdown

@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { $, $$, escapeHtml } from "./utils.js";
 
 /* ========================================
@@ -22,15 +23,15 @@ export function Pagination(element, options = {}) {
 		// 링크 주소 틀 (예: "/logs?page={page}"). 주면 번호·이전·다음을 <a href> 로 그려
 		// 서버 렌더 화면에서 쪽을 넘긴다. onPageChange 는 부르지 않는다.
 		href: null,
-		// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (ko 카탈로그).
-		prevLabel: "이전 페이지",
-		nextLabel: "다음 페이지",
+		// React Pagination 의 prevLabel · nextLabel 과 같은 이름·기본값 (로케일 카탈로그 - locale.js).
+		prevLabel: t("pagination.prev"),
+		nextLabel: t("pagination.next"),
 		// React Pagination 의 navLabel - 컨테이너(<nav>)에 이름이 없을 때만 단다.
-		navLabel: "페이지 이동",
+		navLabel: t("pagination.label"),
 		// React showPageJump · pageJumpLabel 과 같은 이름·기본값 - 현재 쪽 칸을 입력칸으로 바꿔
 		// 번호를 적고 Enter 로 바로 가게 한다. {page} 는 현재 쪽, {total} 은 마지막 쪽
 		showPageJump: false,
-		pageJumpLabel: "현재 {page}쪽 - 이동할 쪽 번호 (1–{total})",
+		pageJumpLabel: t("pagination.jumpLabel"),
 		...options,
 	};
 
@@ -72,24 +73,25 @@ export function Pagination(element, options = {}) {
 		return out;
 	}
 
+	// React getPaginationItems 와 같은 규칙 - 쪽이 많으면 어느 쪽에서든 칸 수가 2 * sibling + 5 로 같다 (#935)
 	function getPaginationItems(page, totalPages) {
-		if (totalPages <= 7) return range(1, totalPages);
+		const sibling = config.sibling;
+		if (totalPages <= 2 * sibling + 5) return range(1, totalPages);
 
 		const items = [];
 		const last = totalPages;
-		const sibling = config.sibling;
 
-		if (page <= sibling + 2) {
-			for (const p of range(1, sibling + 3)) items.push(p);
+		if (page <= sibling + 3) {
+			for (const p of range(1, 2 * sibling + 3)) items.push(p);
 			items.push("ellipsis");
 			items.push(last);
 			return items;
 		}
 
-		if (page >= last - sibling - 1) {
+		if (page >= last - sibling - 2) {
 			items.push(1);
 			items.push("ellipsis");
-			for (const p of range(last - sibling - 2, last)) items.push(p);
+			for (const p of range(last - 2 * sibling - 2, last)) items.push(p);
 			return items;
 		}
 

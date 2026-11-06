@@ -1,8 +1,9 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import { useTopInset } from "../../../utils/use-top-inset";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 export interface AppShellProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
@@ -12,6 +13,8 @@ export interface AppShellProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDi
 	header?: React.ReactNode;
 	/** 본문 여백 (기본값: true). 자체 여백을 가진 화면은 false */
 	padded?: boolean;
+	/** "본문으로 건너뛰기" 링크 문구 (기본값: 로케일 `appShell.skipLink`). 사이드바나 헤더가 있을 때만 그린다 */
+	skipLinkLabel?: string;
 	/** 루트 요소 ref (React 19 ref-as-prop) */
 	ref?: React.Ref<HTMLDivElement>;
 }
@@ -29,6 +32,8 @@ export interface AppShellProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDi
  *   긴 문자열, 폭이 고정된 블록)이 열 자체를 자기 폭까지 늘린다. 실측 - 1800px 자식을 넣으면
  *   열이 1024px → 1869px 로 늘어나 고정 헤더와 모든 행이 화면보다 넓어진다. 이 값이 있으면
  *   열은 뷰포트 폭에 머물고 넘침은 그 자식 안에 남는다.
+ * - **건너뛰기 링크.** 사이드바·헤더가 있으면 첫 Tab 에 "본문으로 건너뛰기" 가 왼쪽 위에 뜨고, Enter 로
+ *   `<main tabindex="-1">` 에 포커스가 가 다음 Tab 이 본문 첫 컨트롤이 된다 (WCAG 2.4.1, #940).
  * - **하단 크롬 여백.** `Sidebar` 는 600px 아래에서 fixed BottomBar 로 변신해 문서 흐름에서
  *   빠지고, `BottomNav` 도 fixed 다. 본문 끝이 그 아래로 가려지지 않게 `--bt-bottom-inset`
  *   만큼 띄운다.
@@ -47,6 +52,7 @@ export const AppShell = ({
 	sidebar,
 	header,
 	padded = true,
+	skipLinkLabel,
 	className,
 	children,
 	ref,
@@ -54,12 +60,20 @@ export const AppShell = ({
 }: AppShellProps) => {
 	// 문서가 스크롤하므로 sticky 헤더 높이만큼 html 에 scroll-padding 을 준다(WCAG 2.4.11).
 	const headerRef = useTopInset<HTMLDivElement>(!!header);
+	const t = useLocaleText();
+	const mainId = React.useId();
+	const hasChrome = !!sidebar || !!header;
 	return (
 		<div
 			ref={ref}
 			className={cn("app_shell", { app_shell_with_sidebar: !!sidebar }, className)}
 			{...props}
 		>
+			{hasChrome && (
+				<a className="app_shell_skip_link" href={`#${mainId}`}>
+					{skipLinkLabel ?? t("appShell.skipLink")}
+				</a>
+			)}
 			{sidebar && <div className="app_shell_sidebar">{sidebar}</div>}
 			<div className="app_shell_body">
 				{header && (
@@ -67,7 +81,13 @@ export const AppShell = ({
 						{header}
 					</div>
 				)}
-				<main className={cn("app_shell_main", { app_shell_main_padded: padded })}>{children}</main>
+				<main
+					id={mainId}
+					tabIndex={-1}
+					className={cn("app_shell_main", { app_shell_main_padded: padded })}
+				>
+					{children}
+				</main>
 			</div>
 		</div>
 	);
