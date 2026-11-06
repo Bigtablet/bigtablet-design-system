@@ -49,10 +49,13 @@ describe("Sidebar 접기 (#950)", () => {
 		expect(Sidebar(again)?.isCollapsed()).toBe(true);
 	});
 
-	it("destroy 가 토글을 걷는다", () => {
-		const root = mount();
+	it("destroy 가 토글과 인라인 너비를 걷고, 접힘 상태는 DOM 에 남겨 다시 만들 때 잇는다", () => {
+		const root = mount('data-width="280"');
 		const api = Sidebar(root);
+		api?.collapse();
 		api?.destroy();
 		expect(toggle(root)).toBeNull();
+		expect(root.style.getPropertyValue("--bt-sidebar-width")).toBe("");
+		expect(Sidebar(root)?.isCollapsed()).toBe(true);
 	});
 });

@@ -89,6 +89,10 @@ export function Sidebar(element, options = {}) {
 				cleanup();
 			});
 			toggle?.remove();
+			// 이 함수가 넣은 인라인 너비만 걷는다. 접힘 클래스는 남긴다 - Toggle 처럼 상태는 DOM 에 있어
+			// 다시 만들면(Sidebar(el)) 그 상태를 이어받는다. 펼치려면 destroy 전에 expand()
+			if (config.width) root.style.removeProperty("--bt-sidebar-width");
+			if (config.collapsedWidth) root.style.removeProperty("--bt-sidebar-collapsed-width");
 			if (root._btSidebar === api) delete root._btSidebar;
 		},
 	};

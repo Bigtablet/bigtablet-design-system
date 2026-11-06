@@ -7,7 +7,7 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
    Sidebar - 좌측 메뉴 (React Sidebar 대응, #941)
    ======================================== */
 /* 마크업은 서버가 그리고 클래스만 붙인다. 현재 메뉴는 aria-current="page"(또는 .is-active),
-   비활성은 aria-disabled="true". 접기·펼치기는 스크립트가 필요해 아직 없다 - 너비는 --bt-sidebar-width */
+   비활성은 aria-disabled="true". 접기 · 펼치기는 JS Sidebar() (data-bt-sidebar) 가 토글을 달고 --collapsed 를 붙인다 - 너비는 --bt-sidebar-width */
 .bt-sidebar {
   position: relative; // 접기 토글의 기준 (AppShell 안에서는 sticky 가 이 역할)
   display: flex;
