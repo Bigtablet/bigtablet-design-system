@@ -11,6 +11,15 @@ const pad = (n) => String(n).padStart(2, "0");
 const daysIn = (y, m) => new Date(y, m, 0).getDate();
 const ROWS = 6; // 달마다 5 · 6줄로 바뀌면 넘길 때 높이가 출렁인다
 
+/** 셀렉터로 무효한 값("#123")은 예외 대신 null - 한 칸의 잘못된 data-min-from 이 init() 전체를 멈추지 않게 */
+function safeQuery(selector) {
+	try {
+		return document.querySelector(selector);
+	} catch {
+		return null;
+	}
+}
+
 /** "YYYY-MM-DD" · "YYYY-MM-DDTHH:mm" → { year, month, day, minutes } (형식이 틀리면 null) */
 function parse(value) {
 	const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?$/.exec(value ?? "");
@@ -188,7 +197,7 @@ export function DatePicker(element, options = {}) {
 
 	/** 다른 DatePicker 의 값(minFrom · maxFrom)이 이 칸의 값보다 우선한다 - 더 좁은 쪽 */
 	const linked = (ref) => {
-		const el = typeof ref === "string" ? document.querySelector(ref) : ref;
+		const el = typeof ref === "string" ? safeQuery(ref) : ref;
 		return el?._btDatePicker ? parse(el._btDatePicker.getValue()) : null;
 	};
 	const bound = (own, ref, pickTighter) => {
@@ -311,8 +320,9 @@ export function DatePicker(element, options = {}) {
 		const hi = maxBound();
 		if (lo && cmp(next, { ...lo, minutes: config.time ? (lo.minutes ?? 0) : 0 }) < 0)
 			next = { ...lo };
-		if (hi && cmp(next, { ...hi, minutes: config.time ? (hi.minutes ?? 0) : 0 }) > 0)
-			next = { ...hi };
+		// 날짜만 준 상한은 그날 끝까지 - 00:00 으로 보면 상한 날에 고른 시각이 00:00 으로 되돌아간다
+		const hiEnd = { ...hi, minutes: config.time ? (hi?.minutes ?? 24 * 60 - 1) : 0 };
+		if (hi && cmp(next, hiEnd) > 0) next = hiEnd;
 		if (config.time) next.minutes = clampMinutes(next, next.minutes ?? 0);
 		else next.minutes = null;
 		return next;
@@ -447,7 +457,7 @@ export function DatePicker(element, options = {}) {
 		cleanups.push(
 			on(document, "bt-date-picker-change", (e) => {
 				const hit = followRefs.some((ref) =>
-					typeof ref === "string" ? e.target.matches?.(ref) : e.target === ref,
+					typeof ref === "string" ? e.target === safeQuery(ref) : e.target === ref,
 				);
 				if (hit && e.target !== root) commit(state.value);
 			}),

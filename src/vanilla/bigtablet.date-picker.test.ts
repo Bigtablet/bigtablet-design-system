@@ -125,6 +125,20 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(toApi?.getValue()).toBe("2026-10-05");
 	});
 
+	it("시각 모드에서 날짜만 준 max 날에 고른 시각을 지킨다", () => {
+		const root = mount('data-time data-max="2026-10-20"');
+		const api = DatePicker(root, { defaultValue: "2026-10-20T14:00" });
+		expect(api?.getValue()).toBe("2026-10-20T14:00");
+		api?.setValue("2026-10-21T09:00");
+		expect(api?.getValue()).toBe("2026-10-20T23:55"); // 그날 끝(분 간격 5)으로 맞춘다
+	});
+
+	it("셀렉터로 무효한 data-min-from 은 연결하지 않고 init 을 멈추지 않는다", () => {
+		const root = mount('data-bt-date-picker data-min-from="#123" data-value="2026-10-01"');
+		expect(() => init()).not.toThrow();
+		expect(hidden(root)?.value ?? trigger(root).textContent).toContain("2026");
+	});
+
 	it("setDisabled 와 destroy 가 칸 · 리스너를 정리한다", () => {
 		const root = mount();
 		const api = DatePicker(root, { name: "d" });
