@@ -7,14 +7,17 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  box-sizing: border-box;
   width: 40px;
   height: 24px;
-  padding: 2px;
+  padding: 0;
+  // React Toggle 과 같은 투명 테두리 - 손잡이 위치 계산이 두 번들에서 같아지고, 고대비 모드에서는 트랙 윤곽이 된다
+  border: 2px solid transparent;
   border-radius: var(--bt-radius-full);
-  background: var(--bt-color-border-light);
+  // 흰 손잡이와 3:1 (WCAG 1.4.11) - border-light(#B3B3B3) 는 2.1:1 이었다. React Toggle 과 같은 토큰
+  background: token.$color_base_neutral_600;
   transition: background var(--bt-transition-base);
   cursor: pointer;
-  border: none;
 
   &:focus-visible {
     outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
@@ -41,7 +44,12 @@
     }
   }
 
+  /* 손잡이는 중심 기준 - 꺼짐 중심은 왼쪽 끝에서 트랙 높이/2, 켜짐 중심은 오른쪽 끝에서 트랙 높이/2.
+     위·아래·옆 여백이 같아진다. React Toggle 과 같은 계산 (src/ui/forms/toggle/style.scss) */
   &__thumb {
+    position: absolute;
+    top: 50%;
+    left: 10px; // 24/2 - 테두리 2
     width: 12px;
     height: 12px;
     background: var(--bt-color-background);
@@ -49,7 +57,7 @@
     transition: transform var(--bt-transition-base),
                 width var(--bt-transition-base),
                 height var(--bt-transition-base);
-    transform: translateX(0);
+    transform: translate(-50%, -50%);
   }
 
   &--on {
@@ -59,7 +67,7 @@
       width: 20px;
       height: 20px;
       background: var(--bt-color-accent-on-surface);
-      transform: translateX(16px);
+      transform: translate(calc(16px - 50%), -50%); // 40 - 24
     }
   }
 
@@ -75,6 +83,7 @@
     height: 28px;
 
     .bt-toggle__thumb {
+      left: 12px; // 28/2 - 테두리 2
       width: 16px;
       height: 16px;
     }
@@ -82,7 +91,7 @@
     &.bt-toggle--on .bt-toggle__thumb {
       width: 24px;
       height: 24px;
-      transform: translateX(20px);
+      transform: translate(calc(20px - 50%), -50%); // 48 - 28
     }
   }
 
