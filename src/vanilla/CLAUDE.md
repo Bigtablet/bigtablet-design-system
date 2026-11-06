@@ -15,6 +15,7 @@ src/vanilla/
 ├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
 ├── js/
 │   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
+│   ├── locale.js       # 문구 카탈로그 t() · setLocale · setMessages (React messages.ts 의 부분집합, #949)
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
 │   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
@@ -349,6 +350,9 @@ const to = Bigtablet.DatePicker('#to', {
   onValueChange: (value) => {}
 });
 to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
+
+// 로케일 (#949) - <html lang> 을 따르고, 자동 초기화 전에 바꾼다. 컴포넌트 기본 문구는 하드코딩하지 말고 t(key) 로
+Bigtablet.setLocale('en'); Bigtablet.setMessages({ 'pagination.prev': 'Prev' });
 
 // Alert (no element needed)
 Bigtablet.Alert({

@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 // 소스 진입점 - 소스는 ES 모듈이라 named import 로 받는다 (bigtablet.modal.browser.test.ts 참고).
 import "./bigtablet.scss";
-import { CopyButton } from "./bigtablet.js";
+import { CopyButton, setLocale } from "./bigtablet.js";
+
+// 브라우저 테스트 페이지는 <html lang="en"> 이다 - 기본 문구를 한국어로 고정해 본다 (#949)
+setLocale("ko");
 
 describe("Vanilla CopyButton execCommand fallback (Chromium, #918)", () => {
 	afterEach(() => {

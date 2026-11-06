@@ -1406,6 +1406,25 @@ const cleanup = Bigtablet.on(element, 'click', handler);
 cleanup();  // 리스너 제거
 ```
 
+### 로케일
+
+컴포넌트가 스스로 그리는 문구(이전 · 다음 페이지, 닫기, 달력 넘김, 시 · 분 …)는 로케일 카탈로그에서 온다.
+React `LocaleProvider` 와 같은 키 · 같은 문구다 (ko · en).
+
+```html
+<html lang="en">  <!-- en* 이면 영어, 그 밖은 한국어 -->
+```
+
+```javascript
+// 번들 바로 뒤 스크립트에서 - 자동 초기화보다 먼저 불러야 이미 그린 컴포넌트에도 걸린다
+Bigtablet.setLocale('en');                          // <html lang> 대신 고정. null 이면 다시 lang 을 따른다
+Bigtablet.setMessages({ 'pagination.prev': 'Prev' }); // 일부 문구만 덮어쓰기 (null 이면 모두 지운다)
+Bigtablet.getLocale();                              // "ko" | "en"
+```
+
+- 컴포넌트 옵션(`prevLabel` · `closeLabel` …)으로 준 문구가 카탈로그보다 언제나 이긴다
+- 키 목록은 React `src/ui/system/locale-provider/messages.ts` 와 같다. Vanilla 에만 있는 문구는 `vanilla.*` 키다
+
 ---
 
 ## Thymeleaf 예시

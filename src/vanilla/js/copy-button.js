@@ -1,3 +1,4 @@
+import { t } from "./locale.js";
 import { $, on } from "./utils.js";
 
 /* ========================================
@@ -90,9 +91,9 @@ export function CopyButton(element, options = {}) {
 
 	const labelEl = $("[data-copy-label]", btn) || btn;
 	const config = {
-		label: btn.dataset.label || labelEl.textContent.trim() || "복사",
-		copiedLabel: btn.dataset.copiedLabel || "복사됨",
-		failedLabel: btn.dataset.failedLabel || "복사하지 못했습니다",
+		label: btn.dataset.label || labelEl.textContent.trim() || t("copyButton.copy"),
+		copiedLabel: btn.dataset.copiedLabel || t("copyButton.copied"),
+		failedLabel: btn.dataset.failedLabel || t("copyButton.failed"),
 		resetAfter: 2000,
 		onCopy: null,
 		onError: null,

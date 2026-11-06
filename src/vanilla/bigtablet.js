@@ -18,6 +18,7 @@ export { DatePicker } from "./js/date-picker.js";
 export { Dropdown } from "./js/dropdown.js";
 // Utilities
 export { init } from "./js/init.js";
+export { getLocale, setLocale, setMessages } from "./js/locale.js";
 export { Modal } from "./js/modal.js";
 export { Pagination } from "./js/pagination.js";
 export { Toast } from "./js/toast.js";
