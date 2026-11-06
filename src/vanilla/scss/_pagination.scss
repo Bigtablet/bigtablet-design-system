@@ -71,9 +71,17 @@
       color: var(--bt-color-text-primary);
     }
 
+    // React `.pagination_active` 와 같은 채운 배경 - 포커스(링)와 모양이 갈려야 키보드로 다닐 때
+    // 어느 쪽이 지금 쪽인지 안다 (#939). 글자색만 바꾸면 포커스 링을 받은 다른 번호가 더 눈에 띈다
     &--active {
-      color: var(--bt-color-text-primary);
+      background: var(--bt-color-accent-default);
+      color: var(--bt-color-accent-on-surface);
       font-weight: var(--bt-font-weight-semibold);
+
+      &:hover {
+        background: var(--bt-color-accent-strong);
+        color: var(--bt-color-accent-on-surface);
+      }
     }
   }
 

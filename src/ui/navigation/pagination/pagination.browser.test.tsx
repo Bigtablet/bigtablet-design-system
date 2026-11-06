@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 import { Pagination as VanillaPagination } from "../../../vanilla/bigtablet.js";
 import "../../../vanilla/scss/_pagination.scss";
 import { Pagination } from "./index";
@@ -29,6 +30,26 @@ describe("Pagination (Chromium)", () => {
 			api?.setPage(page);
 			expect(widthOf(), `page ${page}`).toBe(first);
 		}
+		el.remove();
+	});
+
+	// 현재 쪽은 채운 배경, 포커스는 링 - 키보드로 다닐 때 둘이 같은 모양이면 지금 쪽을 알 수 없다 (#939)
+	it("tells the focused page apart from the current page in the Vanilla bundle", async () => {
+		const el = document.createElement("nav");
+		el.className = "bt-pagination";
+		document.body.appendChild(el);
+		VanillaPagination(el, { page: 1, totalPages: 20 });
+		const current = el.querySelector('[aria-current="page"]') as HTMLElement;
+		const other = el.querySelector('[data-page="2"]') as HTMLElement;
+
+		current.focus();
+		await userEvent.keyboard("{Tab}");
+		expect(other).toHaveFocus();
+		const transparent = "rgba(0, 0, 0, 0)";
+		expect(getComputedStyle(current).backgroundColor).not.toBe(transparent);
+		expect(getComputedStyle(current).boxShadow).toBe("none");
+		expect(getComputedStyle(other).backgroundColor).toBe(transparent);
+		expect(getComputedStyle(other).boxShadow).toMatch(/0px 0px 0px 4px/);
 		el.remove();
 	});
 });

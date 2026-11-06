@@ -10,6 +10,12 @@
   border: token.$border_width_standard solid token.$color_border_default;
   border-radius: token.$radius_md;
   background: token.$color_bg_solid;
+
+  // 넘칠 때 붙이는 tabindex="0" 의 포커스 - 다른 DS 컨트롤과 같은 링 (#939)
+  &:focus-visible {
+    outline: 2px solid transparent; // 고대비 모드용
+    box-shadow: token.$focus_ring;
+  }
 }
 
 // 스크린리더 전용(시각적으로 숨김) - clickable 행 동작 힌트를 aria-describedby 로 노출할 때 사용
