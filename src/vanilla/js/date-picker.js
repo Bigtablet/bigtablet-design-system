@@ -130,9 +130,9 @@ export function DatePicker(element, options = {}) {
 	const titleId = generateId("bt-date-picker-title");
 	panel.innerHTML = `
 		<div class="bt-date-picker__header">
-			<button type="button" class="bt-date-picker__nav" data-nav="-1" aria-label="${escapeHtml(config.prevMonthLabel)}">‹</button>
+			<button type="button" class="bt-date-picker__nav" data-nav="-1" aria-label="${escapeHtml(config.prevMonthLabel)}"></button>
 			<span class="bt-date-picker__title" id="${titleId}" aria-live="polite"></span>
-			<button type="button" class="bt-date-picker__nav" data-nav="1" aria-label="${escapeHtml(config.nextMonthLabel)}">›</button>
+			<button type="button" class="bt-date-picker__nav" data-nav="1" aria-label="${escapeHtml(config.nextMonthLabel)}"></button>
 		</div>
 		<table class="bt-date-picker__grid" role="grid" aria-labelledby="${titleId}"><thead><tr></tr></thead><tbody></tbody></table>`;
 	const [prevBtn, nextBtn] = panel.querySelectorAll(".bt-date-picker__nav");
