@@ -1,6 +1,11 @@
+@use "../a11y" as a11y;
 @use "../breakpoints" as breakpoints;
 @use "../colors" as colors;
 @use "../motion" as motion;
+@use "../radius" as radius;
+@use "../spacing" as spacing;
+@use "../typography" as typography;
+@use "../z-index" as z;
 @forward "tokens";
 @use "tokens" as *;
 
@@ -91,3 +96,34 @@
 }
 
 /* Overlay list scroll cap - dropdown/menu/select 등 오버레이 옵션 리스트의 최대 높이 */
+
+/* Skip link */
+
+// "본문으로 건너뛰기" 링크 (#940). 평소엔 숨기고 키보드 포커스 때 화면 왼쪽 위에 띄운다.
+// 숨김도 드러남도 문서 흐름 밖(absolute → fixed)이라 grid·flex 레이아웃의 첫 자식이어도 칸을 차지하지 않는다 -
+// `visually_hidden_focusable` 은 드러날 때 `position: static` 으로 돌아와 레이아웃을 민다.
+// React AppShell(`.app_shell_skip_link`)과 Vanilla `.bt-skip-link` 가 이 믹스인 하나를 쓴다.
+@mixin skip_link {
+  @include a11y.visually_hidden;
+
+  &:focus-visible {
+    position: fixed;
+    top: spacing.$spacing_8;
+    left: spacing.$spacing_8;
+    z-index: z.$z_popup;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: spacing.$spacing_8 spacing.$spacing_16;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    border-radius: radius.$radius_md;
+    background: colors.$color_bg_solid;
+    color: colors.$color_text_heading;
+    @include typography.label_medium_medium;
+    text-decoration: none;
+    outline: 2px solid transparent; // 고대비 모드용
+    box-shadow: a11y.$focus_ring;
+  }
+}

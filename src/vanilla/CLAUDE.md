@@ -96,7 +96,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
-| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남 - 스킵 링크) | | |
+| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남), `.bt-skip-link`(포커스 때 왼쪽 위에 뜨는 건너뛰기 링크 - 레이아웃 칸 없음) | | |
 
 `.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.
 
@@ -104,9 +104,13 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 <!-- 라이브 리전: 화면에는 안 보이고 스크린리더만 읽는다 -->
 <span class="bt-sr-only" role="status" aria-live="polite">저장되었습니다</span>
 
-<!-- 스킵 링크: Tab 을 누르면 나타난다 -->
-<a href="#main" class="bt-sr-only-focusable">본문으로 건너뛰기</a>
+<!-- 스킵 링크: Tab 을 누르면 왼쪽 위에 뜬다. 대상은 <main id="main" tabindex="-1"> -->
+<a href="#main" class="bt-skip-link">본문으로 건너뛰기</a>
 ```
+
+`_utilities.scss` 는 DS 밖 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에 `--bt-focus-ring` 을 그린다 -
+`:where()` 라 특이도 0, 컴포넌트 규칙이 언제나 이긴다. 방향키로 옮기는 `tabindex="-1"` 항목도 포함하고,
+건너뛰기 대상 `<main tabindex="-1">` 만 링 · 기본 outline 을 지운다 (#940).
 
 ### HTML Examples
 
