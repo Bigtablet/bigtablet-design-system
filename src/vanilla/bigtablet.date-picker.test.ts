@@ -164,3 +164,76 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(api?.getValue()).toBeNull();
 	});
 });
+
+describe("DatePicker 월 · 연 보기 (#953)", () => {
+	const mountRoot = () => {
+		const root = document.createElement("div");
+		document.body.appendChild(root);
+		return root;
+	};
+	const title = (root: HTMLElement) =>
+		root.querySelector(".bt-date-picker__title") as HTMLButtonElement;
+	const pick = (root: HTMLElement, v: number) =>
+		root.querySelector(`button[data-pick="${v}"]`) as HTMLButtonElement;
+
+	it("제목을 누르면 월 → 연 보기로 가고, 고르면 한 단계씩 내려온다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06" });
+		api?.open();
+		title(root).click();
+		expect(title(root).textContent).toContain("2026");
+		expect(root.querySelectorAll("button[data-pick]")).toHaveLength(12);
+		title(root).click();
+		expect(title(root).textContent).toBe("2016 – 2027");
+		pick(root, 2019).click();
+		expect(title(root).textContent).toContain("2019");
+		pick(root, 3).click();
+		expect(title(root).textContent).toContain("2019년 3월");
+		expect(root.querySelector(".bt-date-picker__grid")?.hasAttribute("hidden")).toBe(false);
+		// 같은 날(6일)에 앉는다
+		expect(document.activeElement?.getAttribute("data-day")).toBe("6");
+	});
+
+	it("월 보기의 방향키 · ‹ › 가 해를 넘긴다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06" });
+		api?.open();
+		title(root).click();
+		const key = (k: string) =>
+			document.activeElement?.dispatchEvent(
+				new KeyboardEvent("keydown", { key: k, bubbles: true }),
+			);
+		expect(document.activeElement).toBe(pick(root, 11));
+		key("ArrowDown"); // 11월 + 3 → 다음 해 2월
+		expect(title(root).textContent).toContain("2027");
+		expect(document.activeElement).toBe(pick(root, 2));
+		(root.querySelector('[data-nav="-1"]') as HTMLButtonElement).click();
+		expect(title(root).textContent).toContain("2026");
+	});
+
+	it("min · max 밖의 달 · 해는 고를 수 없다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06", min: "2026-03-10", max: "2027-02-01" });
+		api?.open();
+		title(root).click();
+		expect(pick(root, 2).getAttribute("aria-disabled")).toBe("true");
+		expect(pick(root, 3).getAttribute("aria-disabled")).toBeNull();
+		pick(root, 2).click();
+		expect(title(root).textContent).not.toContain("월"); // 월 보기에 그대로
+		title(root).click();
+		expect(pick(root, 2025).getAttribute("aria-disabled")).toBe("true");
+		expect(pick(root, 2027).getAttribute("aria-disabled")).toBeNull();
+	});
+
+	it("마우스로 날짜를 고르면 시 칸으로 포커스를 옮기지 않는다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { time: true, today: "2026-11-06" });
+		api?.open();
+		const day = root.querySelector('button[data-day="10"]') as HTMLButtonElement;
+		day.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 }));
+		expect(document.activeElement?.getAttribute("data-day")).toBe("10");
+		// 키보드(detail 0)면 시 칸으로
+		(root.querySelector('button[data-day="11"]') as HTMLButtonElement).click();
+		expect(document.activeElement?.tagName).toBe("SELECT");
+	});
+});
