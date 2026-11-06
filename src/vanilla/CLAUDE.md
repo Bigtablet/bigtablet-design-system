@@ -18,6 +18,7 @@ src/vanilla/
 │   ├── locale.js       # 문구 카탈로그 t() · setLocale · setMessages (React messages.ts 의 부분집합, #949)
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
+│   ├── app-shell.js · sidebar.js  # 고정 헤더 높이 · 사이드바 접기 (#950)
 │   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
 │   └── init.js         # data-bt-* 자동 초기화
 └── scss/
@@ -97,8 +98,8 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다) | `[aria-expanded]` |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
-| AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` - CSS 만 | `__main--flush` | |
-| Sidebar | `.bt-sidebar` (+ `__brand`, `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
+| AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` (고정 헤더면 `__body` > `__header` + `__main`) - 헤더 높이는 JS `AppShell()` 가 `--bt-top-inset` 으로 | `__main--flush` | |
+| Sidebar | `.bt-sidebar` (+ `__brand`(`__brand-full` · `__brand-mark`), `__toggle`(JS), `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음), `--collapsed`(JS `Sidebar()` · `data-bt-sidebar`) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
 | 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남), `.bt-skip-link`(포커스 때 왼쪽 위에 뜨는 건너뛰기 링크 - 레이아웃 칸 없음) | | |
 
 `.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.

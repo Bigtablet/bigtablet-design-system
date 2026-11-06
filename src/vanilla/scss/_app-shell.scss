@@ -19,11 +19,28 @@
   > .bt-sidebar {
     position: sticky;
     top: 0;
+    // 고정 헤더(z_content)보다 위 - 가장자리에 걸친 접기 토글이 헤더 밑에 가려지지 않게
+    z-index: token.$z_chrome;
     align-self: start;
     height: 100vh;
   }
 
+  // 고정 헤더를 쓸 때 본문 열 - 헤더 + main 을 세로로 쌓는다 (React app_shell_body)
+  &__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  // 본문 열 위에 붙는 헤더. 높이는 bigtablet.js AppShell() 이 --bt-top-inset 으로 알려 포커스가 밑에 숨지 않는다
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: token.$z_content;
+  }
+
   &__main {
+    flex: 1;
     min-width: 0;
     padding: token.$spacing_32;
     // 하단 고정 크롬(하단 바로 바뀐 사이드바)에 마지막 콘텐츠가 가리지 않게
