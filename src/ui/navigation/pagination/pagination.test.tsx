@@ -59,7 +59,7 @@ describe("Pagination", () => {
 		expect(screen.getByText("3")).toHaveAttribute("aria-current", "page");
 	});
 
-	it("shows all pages when totalPages <= 7", () => {
+	it("shows all pages when totalPages <= 9", () => {
 		render(<Pagination page={1} totalPages={5} onPageChange={() => {}} />);
 
 		for (let i = 1; i <= 5; i++) {
@@ -100,12 +100,12 @@ describe("Pagination", () => {
 
 	it("lays out the start, middle and end windows at their boundaries", () => {
 		const cases: [number, number, string[]][] = [
-			[1, 8, ["1", "2", "3", "4", "5", "…", "8"]],
-			[4, 20, ["1", "2", "3", "4", "5", "…", "20"]],
-			[5, 20, ["1", "…", "3", "4", "5", "6", "7", "…", "20"]],
-			[16, 20, ["1", "…", "14", "15", "16", "17", "18", "…", "20"]],
-			[17, 20, ["1", "…", "16", "17", "18", "19", "20"]],
-			[7, 7, ["1", "2", "3", "4", "5", "6", "7"]],
+			[1, 10, ["1", "2", "3", "4", "5", "6", "7", "…", "10"]],
+			[5, 20, ["1", "2", "3", "4", "5", "6", "7", "…", "20"]],
+			[6, 20, ["1", "…", "4", "5", "6", "7", "8", "…", "20"]],
+			[15, 20, ["1", "…", "13", "14", "15", "16", "17", "…", "20"]],
+			[16, 20, ["1", "…", "14", "15", "16", "17", "18", "19", "20"]],
+			[9, 9, ["1", "2", "3", "4", "5", "6", "7", "8", "9"]],
 		];
 		for (const [page, total, expected] of cases) {
 			const { unmount } = render(
@@ -113,6 +113,8 @@ describe("Pagination", () => {
 			);
 			expect(labels()).toEqual(expected);
 			expect(document.querySelectorAll(".pagination_active")).toHaveLength(1);
+			// 쪽이 많으면 칸 수가 늘 9 - ‹ › 가 움직이지 않는다 (#935)
+			if (total > 9) expect(labels()).toHaveLength(9);
 			unmount();
 		}
 	});

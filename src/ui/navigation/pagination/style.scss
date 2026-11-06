@@ -115,8 +115,9 @@
     }
   }
 
+  // 번호 버튼과 같은 폭 - 앞·뒤쪽(… 하나)과 가운데(… 둘)의 너비가 같아야 ‹ › 가 움직이지 않는다 (#935)
   &_ellipsis {
-    min-width: 20px;
+    min-width: 36px;
     text-align: center;
 
     @include token.label_small;
