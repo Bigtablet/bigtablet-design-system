@@ -22,4 +22,4 @@ overrides:
   esbuild: ^0.28.1
   rollup: ^4.59.0
   postcss: ^8.5.23 # was 8.5.22 - sourceMappingURL arbitrary .map read when `from` unset (#100)
-  minimatch: ^10.2.4
+  minimatch: ^11.0.4 # was 10.2.6 - `**/../` globparts 증폭 DoS (GHSA-g3hv-75wg-m249, #157). glob@13(@storybook/react-vite docgen) 경유. 11.0.5 는 minimumReleaseAge 전이라 11.0.4
