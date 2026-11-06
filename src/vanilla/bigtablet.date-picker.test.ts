@@ -117,6 +117,14 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(hour.options[10]?.disabled).toBe(false);
 	});
 
+	it("종료 칸이 먼저 초기화돼도 시작 칸의 처음 값으로 맞춘다", () => {
+		const to = mount('data-min-from="#from-first"');
+		const toApi = DatePicker(to, { defaultValue: "2026-10-01" });
+		const from = mount('id="from-first"');
+		DatePicker(from, { defaultValue: "2026-10-05" });
+		expect(toApi?.getValue()).toBe("2026-10-05");
+	});
+
 	it("setDisabled 와 destroy 가 칸 · 리스너를 정리한다", () => {
 		const root = mount();
 		const api = DatePicker(root, { name: "d" });
@@ -133,6 +141,12 @@ describe("DatePicker (달력형, #937)", () => {
 		const api = DatePicker(root, { defaultValue: "2026-02-30" });
 		expect(api?.getValue()).toBeNull();
 		api?.setValue("not-a-date");
+		expect(api?.getValue()).toBeNull();
+		// 값이 있을 때 잘못된 값을 넣어도 지우지 않는다
+		api?.setValue("2026-10-16");
+		api?.setValue("2026-02-30");
+		expect(api?.getValue()).toBe("2026-10-16");
+		api?.setValue(null);
 		expect(api?.getValue()).toBeNull();
 	});
 });

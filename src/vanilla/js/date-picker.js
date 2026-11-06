@@ -143,8 +143,13 @@ export function DatePicker(element, options = {}) {
 	let minuteSel = null;
 	if (config.time) {
 		const row = make("div", "bt-date-picker__time", panel);
+		// select 를 감싼다 - select 는 ::after 를 못 가져 화살표(React Dropdown 의 ChevronDown)를 감싼 칸에 그린다
 		const select = (label) => {
-			const s = make("select", "bt-date-picker__select", row);
+			const s = make(
+				"select",
+				"bt-date-picker__select",
+				make("span", "bt-date-picker__select-wrap", row),
+			);
 			s.setAttribute("aria-label", label);
 			return s;
 		};
@@ -457,7 +462,12 @@ export function DatePicker(element, options = {}) {
 		/** 지금 값 - "YYYY-MM-DD" · "YYYY-MM-DDTHH:mm", 없으면 null */
 		getValue: () => (state.value ? format(state.value, config.time) : null),
 		/** 값을 바꾼다. 범위 밖이면 경계로 맞추고, null 이면 비운다 */
-		setValue: (value) => commit(value ? parse(value) : null),
+		setValue: (value) => {
+			// null · 빈 문자열만 비운다 - 형식이 틀린 값은 무시하고 지금 값을 지킨다
+			if (!value) return commit(null);
+			const parsed = parse(value);
+			if (parsed) commit(parsed);
+		},
 		open,
 		close: () => close(),
 		setDisabled: (disabled) => {
@@ -485,5 +495,8 @@ export function DatePicker(element, options = {}) {
 		},
 	};
 	root._btDatePicker = api;
+	// 이 칸을 minFrom · maxFrom 으로 따르는 칸이 먼저 초기화됐어도 처음 값으로 다시 맞추게 알린다 -
+	// api 를 붙인 뒤에 보내야 따르는 칸이 getValue() 로 이 값을 읽는다
+	if (state.value) root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
 	return api;
 }
