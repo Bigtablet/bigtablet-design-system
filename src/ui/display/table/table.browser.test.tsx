@@ -261,19 +261,11 @@ describe("Table scroll box focus (Chromium)", () => {
 	});
 
 	it("rings the Vanilla scroll box on keyboard focus", async () => {
-		render(
-			<>
-				<button type="button">앞</button>
-				<section className="bt-table-wrap" tabIndex={0} aria-label="접속 기록">
-					<table className="bt-table">
-						<tbody>
-							<tr>
-								<td>회의 A</td>
-							</tr>
-						</tbody>
-					</table>
-				</section>
-			</>,
+		// docs/VANILLA.md 가 안내하는 마크업 그대로 - 서버가 그린 HTML 이라 DOM 으로 꽂는다
+		const { container } = render(<button type="button">앞</button>);
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<section class="bt-table-wrap" tabindex="0" aria-label="접속 기록"><table class="bt-table"><tbody><tr><td>회의 A</td></tr></tbody></table></section>',
 		);
 		const box = screen.getByRole("region", { name: "접속 기록" });
 		await userEvent.click(screen.getByRole("button", { name: "앞" }));
