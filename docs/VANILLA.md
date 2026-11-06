@@ -1166,7 +1166,33 @@ to.open();  to.close();  to.setDisabled(true);  to.destroy();
 - 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)
 - 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 열린 채로 남아 시 · 분을 고르고(키보드로 고르면 시 칸으로 포커스가 간다), 완료 · Escape · 바깥 클릭으로 닫는다
 - 아래 줄의 "오늘" 은 어느 달 · 보기에 있든 오늘을 고른다 (시각은 그대로). 오늘이 범위 밖이면 그 근처 달로 옮기기만 한다
-- 아래 공간이 모자라면 위로 연다
+- 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
+
+#### 범위형 (#951)
+
+React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종료를 차례로 고른다. 사이 날은 띠로 칠하고,
+시작만 고른 동안 마우스가 가리키는 날까지 미리 보인다. 시각을 켜면 시작일 · 종료일 시각 줄이 두 개 생긴다.
+
+```html
+<div class="bt-date-picker" data-bt-date-picker data-range
+     data-start-name="from" data-end-name="to" data-time data-minute-step="10">
+  <span class="bt-date-picker__label">조회 기간</span>
+</div>
+<!-- from=2026-10-01T09:00&to=2026-10-02T18:00 - 칸 두 개 방식과 같은 값 형식 -->
+```
+
+| 옵션 (data-*) | 설명 |
+|---------------|------|
+| `range` (`data-range`) | 범위형으로 그린다. `Bigtablet.DateRangePicker(el, options)` 는 `range: true` 와 같다 |
+| `startName` · `endName` (`data-start-name` · `data-end-name`) | 시작 · 종료 숨은 input 이름. 서버가 같은 이름으로 그려 둔 input 은 재사용한다 |
+| `defaultValue` (`data-start` · `data-end`) | 처음 값 `{ start, end }` |
+
+나머지 옵션(`time` · `minuteStep` · `min` · `max` · `today` …)은 한 칸과 같다. 값은 `{ start, end }` 다 -
+`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`.
+
+- 첫 클릭은 시작, 두 번째는 종료다. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이 된다. 날짜만 고르면 종료를 고르는 순간 닫힌다
+- **시작을 종료 뒤로 옮기면 종료를 비운다** (React `DateRangePicker` 와 같은 규칙) - 시작으로 맞춰 버리면 고르지 않은 날짜가 조회 · 저장된다. 같은 날의 더 이른 종료 시각만 시작 시각으로 올린다
+- 종료 시각의 처음 값은 그날 끝(분 간격 마지막)이다 - 하루 단위 조회가 그날 전체를 덮는다
 
 ---
 

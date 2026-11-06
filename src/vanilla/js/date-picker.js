@@ -77,6 +77,10 @@ export function DatePicker(element, options = {}) {
 	const config = {
 		name: pick("name", ds.name),
 		defaultValue: pick("defaultValue", ds.value),
+		// 범위 - 한 팝오버에서 시작 · 종료를 차례로 고른다 (React DateRangePicker 대응, #951). 값은 { start, end }
+		range: pick("range", ds.range, parseBoolAttr) ?? false,
+		startName: pick("startName", ds.startName),
+		endName: pick("endName", ds.endName),
 		// 시각까지 고른다 - 값이 "YYYY-MM-DDTHH:mm" 가 된다
 		time: pick("time", ds.time, parseBoolAttr) ?? false,
 		minuteStep: pick("minuteStep", ds.minuteStep, Number) ?? 5,
@@ -99,8 +103,21 @@ export function DatePicker(element, options = {}) {
 		onValueChange: options.onValueChange ?? null,
 	};
 	config.placeholder ??= t(
-		config.time ? "vanilla.datePicker.placeholderTime" : "datePicker.placeholder",
+		config.range
+			? config.time
+				? "vanilla.dateRange.placeholderTime"
+				: "vanilla.dateRange.placeholder"
+			: config.time
+				? "vanilla.datePicker.placeholderTime"
+				: "datePicker.placeholder",
 	);
+	// 범위의 처음 값 - { start, end } 또는 data-start · data-end
+	const initial = config.range
+		? {
+				start: config.defaultValue?.start ?? ds.start,
+				end: config.defaultValue?.end ?? ds.end,
+			}
+		: null;
 	if (!(config.minuteStep >= 1 && 60 % config.minuteStep === 0)) config.minuteStep = 5;
 
 	const cleanups = [];
@@ -119,12 +136,26 @@ export function DatePicker(element, options = {}) {
 	root.classList.add("bt-date-picker--calendar");
 	const labelEl = root.querySelector(".bt-date-picker__label");
 	if (labelEl && !labelEl.id) labelEl.id = generateId("bt-date-picker-label");
-	const hidden =
-		root.querySelector('input[type="hidden"]') || (config.name ? make("input", null, root) : null);
-	if (hidden) {
-		hidden.type = "hidden";
-		if (config.name) hidden.name = config.name;
-		config.defaultValue ??= hidden.value || undefined;
+	/** 숨은 input - 서버가 같은 name 으로 그려 두었으면 재사용한다 */
+	const hiddenFor = (name, fallback) => {
+		const el =
+			(name && root.querySelector(`input[type="hidden"][name="${CSS.escape(name)}"]`)) ||
+			fallback ||
+			(name ? make("input", null, root) : null);
+		if (el) {
+			el.type = "hidden";
+			if (name) el.name = name;
+		}
+		return el;
+	};
+	const hidden = config.range
+		? hiddenFor(config.startName)
+		: hiddenFor(config.name, root.querySelector('input[type="hidden"]'));
+	const hiddenEnd = config.range ? hiddenFor(config.endName) : null;
+	if (hidden && !config.range) config.defaultValue ??= hidden.value || undefined;
+	if (config.range) {
+		initial.start ??= hidden?.value || undefined;
+		initial.end ??= hiddenEnd?.value || undefined;
 	}
 
 	const trigger = make("button", "bt-date-picker__trigger", root);
@@ -164,23 +195,29 @@ export function DatePicker(element, options = {}) {
 	const tbody = panel.querySelector("tbody");
 	const picks = panel.querySelector(".bt-date-picker__picks");
 
-	let hourSel = null;
-	let minuteSel = null;
+	// 시각 줄 - 한 칸이면 하나, 범위면 시작 · 종료 두 줄. edge 는 그 줄이 다루는 값 ("start" · "end")
+	const timeRows = [];
 	if (config.time) {
-		const row = make("div", "bt-date-picker__time", panel);
-		// select 를 감싼다 - select 는 ::after 를 못 가져 화살표(React Dropdown 의 ChevronDown)를 감싼 칸에 그린다
-		const select = (label) => {
-			const s = make(
-				"select",
-				"bt-date-picker__select",
-				make("span", "bt-date-picker__select-wrap", row),
-			);
-			s.setAttribute("aria-label", label);
-			return s;
-		};
-		hourSel = select(config.hourLabel);
-		make("span", "bt-date-picker__time-sep", row).textContent = ":";
-		minuteSel = select(config.minuteLabel);
+		for (const edge of config.range ? ["start", "end"] : ["start"]) {
+			const row = make("div", "bt-date-picker__time", panel);
+			const edgeLabel = config.range
+				? t(edge === "start" ? "dateRange.start" : "dateRange.end")
+				: "";
+			if (edgeLabel) make("span", "bt-date-picker__time-label", row).textContent = edgeLabel;
+			// select 를 감싼다 - select 는 ::after 를 못 가져 화살표(React Dropdown 의 ChevronDown)를 감싼 칸에 그린다
+			const select = (label) => {
+				const s = make(
+					"select",
+					"bt-date-picker__select",
+					make("span", "bt-date-picker__select-wrap", row),
+				);
+				s.setAttribute("aria-label", [edgeLabel, label].filter(Boolean).join(" "));
+				return s;
+			};
+			const hour = select(config.hourLabel);
+			make("span", "bt-date-picker__time-sep", row).textContent = ":";
+			timeRows.push({ edge, hour, minute: select(config.minuteLabel) });
+		}
 	}
 	// 아래 줄 - 오늘(왼쪽) · 완료(시각을 켰을 때, 오른쪽). 둘 다 글자 버튼이라 고른 날짜보다 눈에 덜 띈다
 	const footer = make("div", "bt-date-picker__footer", panel);
@@ -222,7 +259,8 @@ export function DatePicker(element, options = {}) {
 	// ── 상태 ─────────────────────────────────────────────────────────────────
 	const today = parse(config.today) ?? fromDate(new Date());
 	// view - "day"(달력) · "month"(한 해의 12달) · "year"(12년). pick - 월 · 연 보기에서 포커스된 칸의 연 · 월
-	const state = { value: null, focused: null, isOpen: false, view: "day", pick: null };
+	// value - 한 칸의 값, 범위면 시작. end - 범위의 종료 (한 칸이면 늘 null)
+	const state = { value: null, end: null, focused: null, isOpen: false, view: "day", pick: null };
 
 	/** 다른 DatePicker 의 값(minFrom · maxFrom)이 이 칸의 값보다 우선한다 - 더 좁은 쪽 */
 	const linked = (ref) => {
@@ -261,19 +299,28 @@ export function DatePicker(element, options = {}) {
 	};
 
 	// ── 그리기 ───────────────────────────────────────────────────────────────
+	const valueText = (v) =>
+		v
+			? fmt.value.format(toDate(v)) +
+				(config.time ? ` ${pad(Math.floor(v.minutes / 60))}:${pad(v.minutes % 60)}` : "")
+			: "";
+
 	function renderTrigger() {
 		const v = state.value;
+		const has = !!v || !!state.end;
 		let text = config.placeholder;
-		if (v) {
-			text = fmt.value.format(toDate(v));
-			if (config.time) text += ` ${pad(Math.floor(v.minutes / 60))}:${pad(v.minutes % 60)}`;
-		}
+		if (has)
+			text = config.range ? `${valueText(v)} ~ ${valueText(state.end)}`.trim() : valueText(v);
 		valueEl.textContent = text;
-		valueEl.className = `bt-date-picker__trigger-${v ? "value" : "placeholder"}`;
+		valueEl.className = `bt-date-picker__trigger-${has ? "value" : "placeholder"}`;
 		trigger.disabled = config.disabled;
-		if (hidden) {
-			hidden.value = v ? format(v, config.time) : "";
-			hidden.disabled = config.disabled;
+		for (const [el, val] of [
+			[hidden, v],
+			[hiddenEnd, state.end],
+		]) {
+			if (!el) continue;
+			el.value = val ? format(val, config.time) : "";
+			el.disabled = config.disabled;
 		}
 	}
 
@@ -300,13 +347,22 @@ export function DatePicker(element, options = {}) {
 					continue;
 				}
 				const d = { year: f.year, month: f.month, day };
-				const selected = sameDay(d, state.value);
+				const selected = sameDay(d, state.value) || sameDay(d, state.end);
+				// 범위의 띠는 칸(td)에 그린다 - 시작 · 종료 칸은 반쪽만 칠해 채운 원과 이어진다. 버튼은 원 그대로라
+				// 띠 안의 오늘 테두리도 둥글다
+				const span = !!state.end && !sameDay(state.value, state.end);
+				const between =
+					!!state.end && compareDay(d, state.value) > 0 && compareDay(d, state.end) < 0;
+				const cell = ["bt-date-picker__cell"];
+				if (between) cell.push("bt-date-picker__cell--in-range");
+				if (span && sameDay(d, state.value)) cell.push("bt-date-picker__cell--range-start");
+				if (span && sameDay(d, state.end)) cell.push("bt-date-picker__cell--range-end");
 				const cls = ["bt-date-picker__day"];
 				if (selected) cls.push("bt-date-picker__day--selected");
 				if (sameDay(d, today)) cls.push("bt-date-picker__day--today");
 				const label = escapeHtml(`${day}, ${fmt.full.format(toDate(d))}`);
 				// 고를 수 없는 날도 방향키는 지나가야 한다 - disabled 대신 aria-disabled
-				html += `<td class="bt-date-picker__cell" role="gridcell" aria-selected="${selected}"><button type="button" class="${cls.join(" ")}" data-day="${day}" tabindex="${day === f.day ? 0 : -1}" aria-label="${label}"${dayDisabled(d) ? ' aria-disabled="true"' : ""}>${day}</button></td>`;
+				html += `<td class="${cell.join(" ")}" role="gridcell" aria-selected="${selected || between}"><button type="button" class="${cls.join(" ")}" data-day="${day}" tabindex="${day === f.day ? 0 : -1}" aria-label="${label}"${dayDisabled(d) ? ' aria-disabled="true"' : ""}>${day}</button></td>`;
 			}
 			html += "</tr>";
 		}
@@ -314,25 +370,31 @@ export function DatePicker(element, options = {}) {
 	}
 
 	function renderTime() {
-		if (!config.time) return;
-		const base = state.value ?? state.focused;
-		const [lo, hi] = minuteRange(base);
-		const minutes = state.value?.minutes ?? null;
-		const hour = minutes === null ? null : Math.floor(minutes / 60);
-		let hours = "";
-		for (let h = 0; h < 24; h++) {
-			const off = h * 60 + 59 < lo || h * 60 > hi;
-			hours += `<option value="${h}"${h === hour ? " selected" : ""}${off ? " disabled" : ""}>${pad(h)}</option>`;
+		for (const row of timeRows) {
+			const own = row.edge === "start" ? state.value : state.end;
+			const base = own ?? state.focused;
+			let [lo, hi] = minuteRange(base);
+			// 같은 날의 종료는 시작 시각보다 앞일 수 없다
+			if (row.edge === "end" && own && state.value && sameDay(own, state.value)) {
+				lo = Math.max(lo, state.value.minutes ?? 0);
+			}
+			const minutes = own?.minutes ?? null;
+			const hour = minutes === null ? null : Math.floor(minutes / 60);
+			let hours = "";
+			for (let h = 0; h < 24; h++) {
+				const off = h * 60 + 59 < lo || h * 60 > hi;
+				hours += `<option value="${h}"${h === hour ? " selected" : ""}${off ? " disabled" : ""}>${pad(h)}</option>`;
+			}
+			row.hour.innerHTML = hours;
+			let mins = "";
+			for (let m = 0; m < 60; m += config.minuteStep) {
+				const at = (hour ?? 0) * 60 + m;
+				const off = at < lo || at > hi;
+				mins += `<option value="${m}"${minutes !== null && minutes % 60 === m ? " selected" : ""}${off ? " disabled" : ""}>${pad(m)}</option>`;
+			}
+			row.minute.innerHTML = mins;
+			row.hour.disabled = row.minute.disabled = !own;
 		}
-		hourSel.innerHTML = hours;
-		let mins = "";
-		for (let m = 0; m < 60; m += config.minuteStep) {
-			const at = (hour ?? 0) * 60 + m;
-			const off = at < lo || at > hi;
-			mins += `<option value="${m}"${minutes !== null && minutes % 60 === m ? " selected" : ""}${off ? " disabled" : ""}>${pad(m)}</option>`;
-		}
-		minuteSel.innerHTML = mins;
-		hourSel.disabled = minuteSel.disabled = !state.value;
 	}
 
 	/** 월 · 연 보기 - 4줄 × 3칸. 범위(min · max) 밖의 달 · 해는 고를 수 없다 */
@@ -412,13 +474,30 @@ export function DatePicker(element, options = {}) {
 		return next;
 	}
 
-	function commit(next, notify = true) {
-		const prev = state.value ? format(state.value, config.time) : null;
+	/**
+	 * 범위의 종료를 맞춘다. 시작보다 앞이면 비운다 - React DateRangePicker 와 같은 규칙. 시작으로 맞춰
+	 * 버리면 사용자가 고르지 않은 날짜가 그대로 조회 · 저장된다. 같은 날의 더 이른 시각만 시작 시각으로 올린다
+	 */
+	function clampEnd(e) {
+		const next = clamp(e);
+		const s = state.value;
+		if (!next || !s || cmp(next, s) >= 0) return next;
+		return config.time && sameDay(next, s) ? { ...next, minutes: s.minutes } : null;
+	}
+
+	const out = (v) => (v ? format(v, config.time) : null);
+	/** 바깥에 내보내는 값 - 한 칸이면 문자열, 범위면 { start, end } */
+	const output = () =>
+		config.range ? { start: out(state.value), end: out(state.end) } : out(state.value);
+
+	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
+	function commit(next, notify = true, end = state.end) {
+		const prev = JSON.stringify(output());
 		state.value = clamp(next);
-		const cur = state.value ? format(state.value, config.time) : null;
+		if (config.range) state.end = clampEnd(end);
 		render();
-		if (prev === cur) return;
-		if (notify) config.onValueChange?.(cur);
+		if (prev === JSON.stringify(output())) return;
+		if (notify) config.onValueChange?.(output());
 		// 이 칸을 minFrom · maxFrom 으로 따르는 칸들이 다시 맞춘다
 		root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
 	}
@@ -438,12 +517,15 @@ export function DatePicker(element, options = {}) {
 		state.pick = null;
 		panel.hidden = false;
 		trigger.setAttribute("aria-expanded", "true");
-		// 아래 공간이 모자라면 위로 연다
-		panel.classList.remove("bt-date-picker__panel--up");
+		// 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
+		panel.classList.remove("bt-date-picker__panel--up", "bt-date-picker__panel--end");
 		render();
 		const rect = panel.getBoundingClientRect();
 		if (rect.bottom > window.innerHeight && trigger.getBoundingClientRect().top > rect.height) {
 			panel.classList.add("bt-date-picker__panel--up");
+		}
+		if (rect.right > document.documentElement.clientWidth) {
+			panel.classList.add("bt-date-picker__panel--end");
 		}
 		releaseEscape = pushEscape(() => close(true));
 		focusDay();
@@ -477,13 +559,25 @@ export function DatePicker(element, options = {}) {
 	function selectDay(day, viaKeyboard) {
 		const d = { ...state.focused, day };
 		if (dayDisabled(d)) return;
-		const minutes = config.time ? (state.value?.minutes ?? minuteRange(d)[0]) : null;
 		state.focused = d;
+		if (config.range) {
+			// 첫 클릭은 시작, 두 번째는 종료. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이다
+			const s = state.value;
+			const restart = !s || !!state.end || compareDay(d, s) < 0;
+			if (restart) commit({ ...d, minutes: config.time ? minuteRange(d)[0] : null }, true, null);
+			// 종료 시각의 처음 값은 그날 끝 - 하루 단위 조회가 그날 전체를 덮게
+			else commit(s, true, { ...d, minutes: config.time ? clampMinutes(d, 24 * 60 - 1) : null });
+			if (!restart && !config.time) close(true);
+			else if (!restart && viaKeyboard) timeRows[0].hour.focus();
+			else focusDay();
+			return;
+		}
+		const minutes = config.time ? (state.value?.minutes ?? minuteRange(d)[0]) : null;
 		commit({ ...d, minutes });
 		if (!config.time) close(true);
 		// 키보드로 고르면 다음 할 일(시 칸)로 옮긴다. 마우스면 고른 날에 그대로 둔다 - 다시 그려 사라진 버튼
 		// 대신 같은 날에 앉힌다. 마우스 클릭 뒤 select 로 옮기면 select 가 :focus-visible 에 걸려 링이 떴다 (#953)
-		else if (viaKeyboard) hourSel.focus();
+		else if (viaKeyboard) timeRows[0].hour.focus();
 		else focusDay();
 	}
 
@@ -615,14 +709,32 @@ export function DatePicker(element, options = {}) {
 			if (state.isOpen && e.relatedTarget && !root.contains(e.relatedTarget)) close();
 		}),
 	);
-	if (config.time) {
+	for (const row of timeRows) {
 		const onTime = () => {
-			if (!state.value) return;
-			const hour = Number(hourSel.value);
-			const minute = Number(minuteSel.value);
-			commit({ ...state.value, minutes: hour * 60 + minute });
+			const own = row.edge === "start" ? state.value : state.end;
+			if (!own) return;
+			const next = { ...own, minutes: Number(row.hour.value) * 60 + Number(row.minute.value) };
+			if (row.edge === "start") commit(next);
+			else commit(state.value, true, next);
 		};
-		cleanups.push(on(hourSel, "change", onTime), on(minuteSel, "change", onTime));
+		cleanups.push(on(row.hour, "change", onTime), on(row.minute, "change", onTime));
+	}
+	// 범위 - 시작만 고른 동안 마우스가 가리키는 날까지 띠로 미리 보인다
+	if (config.range) {
+		cleanups.push(
+			on(tbody, "mouseover", (e) => {
+				const btn = e.target.closest("button[data-day]");
+				if (!btn || !state.value || state.end) return;
+				const hover = { ...state.focused, day: Number(btn.dataset.day) };
+				for (const b of tbody.querySelectorAll("button[data-day]")) {
+					const d = { ...state.focused, day: Number(b.dataset.day) };
+					b.parentElement.classList.toggle(
+						"bt-date-picker__cell--in-range",
+						compareDay(d, state.value) > 0 && compareDay(d, hover) < 0,
+					);
+				}
+			}),
+		);
 	}
 	// 따르는 칸의 값이 바뀌면 범위를 다시 맞춘다
 	const followRefs = [config.minFrom, config.maxFrom].filter(Boolean);
@@ -638,16 +750,28 @@ export function DatePicker(element, options = {}) {
 	}
 
 	// ── 시작 ─────────────────────────────────────────────────────────────────
-	state.value = clamp(parse(config.defaultValue));
+	if (config.range) {
+		state.value = clamp(parse(initial.start));
+		state.end = clampEnd(parse(initial.end));
+	} else {
+		state.value = clamp(parse(config.defaultValue));
+	}
 	render();
 
 	const api = {
 		/** 지금 값 - "YYYY-MM-DD" · "YYYY-MM-DDTHH:mm", 없으면 null */
-		getValue: () => (state.value ? format(state.value, config.time) : null),
+		// 범위면 { start, end } (각각 문자열 또는 null)
+		getValue: output,
 		/** 값을 바꾼다. 범위 밖이면 경계로 맞추고, null 이면 비운다 */
 		setValue: (value) => {
 			// null · 빈 문자열만 비운다 - 형식이 틀린 값은 무시하고 지금 값을 지킨다
-			if (!value) return commit(null);
+			if (!value) return commit(null, true, null);
+			if (config.range) {
+				const start = value.start ? parse(value.start) : null;
+				const end = value.end ? parse(value.end) : null;
+				if ((value.start && !start) || (value.end && !end)) return;
+				return commit(start, true, end);
+			}
 			const parsed = parse(value);
 			if (parsed) commit(parsed);
 		},
@@ -682,4 +806,12 @@ export function DatePicker(element, options = {}) {
 	// api 를 붙인 뒤에 보내야 따르는 칸이 getValue() 로 이 값을 읽는다
 	if (state.value) root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
 	return api;
+}
+
+/**
+ * 범위형 - 한 팝오버에서 시작 · 종료를 고른다 (React DateRangePicker 대응, #951). `DatePicker(el, { range: true })` 와 같다.
+ * 마크업은 `data-bt-date-picker data-range`.
+ */
+export function DateRangePicker(element, options = {}) {
+	return DatePicker(element, { ...options, range: true });
 }

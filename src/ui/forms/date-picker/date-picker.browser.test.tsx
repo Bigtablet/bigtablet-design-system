@@ -88,4 +88,13 @@ describe("Vanilla calendar DatePicker (Chromium)", () => {
 			trigger.getBoundingClientRect().top,
 		);
 	});
+
+	it("aligns to the trigger's right edge when it would overflow the screen", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; right: 10px");
+		await userEvent.click(trigger);
+		expect(panel().getBoundingClientRect().right).toBeLessThanOrEqual(800);
+		expect(
+			Math.abs(panel().getBoundingClientRect().right - trigger.getBoundingClientRect().right),
+		).toBeLessThan(1);
+	});
 });

@@ -39,6 +39,8 @@ const catalogs = {
 		"vanilla.datePicker.prevYear": "이전 해",
 		"vanilla.datePicker.prevYears": "이전 12년",
 		"vanilla.datePicker.today": "오늘",
+		"vanilla.dateRange.placeholder": "기간 선택",
+		"vanilla.dateRange.placeholderTime": "기간과 시각 선택",
 	},
 	en: {
 		"alert.cancel": "Cancel",
@@ -73,6 +75,8 @@ const catalogs = {
 		"vanilla.datePicker.prevYear": "Previous year",
 		"vanilla.datePicker.prevYears": "Previous 12 years",
 		"vanilla.datePicker.today": "Today",
+		"vanilla.dateRange.placeholder": "Select dates",
+		"vanilla.dateRange.placeholderTime": "Select dates and times",
 	},
 };
 

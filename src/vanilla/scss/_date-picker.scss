@@ -183,6 +183,11 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
       top: auto;
       bottom: calc(100% + #{token.$spacing_4});
     }
+
+    &--end {
+      right: 0;
+      left: auto;
+    }
   }
 
   .bt-date-picker__header {
@@ -335,6 +340,19 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   .bt-date-picker__cell {
     padding: 0;
     text-align: center;
+
+    // 범위의 띠 (#951) - 칸에 그려 이웃 칸과 이어진다. 시작 · 종료 칸은 원 쪽 반만 칠해 원과 붙는다
+    &--in-range {
+      background: token.$color_accent_muted;
+    }
+
+    &--range-start {
+      background: linear-gradient(to right, transparent 50%, #{token.$color_accent_muted} 50%);
+    }
+
+    &--range-end {
+      background: linear-gradient(to left, transparent 50%, #{token.$color_accent_muted} 50%);
+    }
   }
 
   .bt-date-picker__day {
@@ -430,6 +448,14 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
       mask: $_chevron_down center / contain no-repeat;
       pointer-events: none;
     }
+  }
+
+  // 범위의 시각 줄 이름 (시작일 · 종료일) - 두 줄의 칸이 같은 자리에서 시작하게 폭을 고정한다
+  .bt-date-picker__time-label {
+    flex: 0 0 auto;
+    min-width: 3.5em;
+    @include token.label_medium_medium;
+    color: token.$color_text_body;
   }
 
   .bt-date-picker__time-sep {
