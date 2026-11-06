@@ -19,6 +19,12 @@
   border-radius: token.$radius_md;
   background: token.$color_bg_solid;
 
+  // 넘치는 상자에 tabindex="0" 을 주라고 안내한다 - 규칙이 없으면 브라우저 기본 파란 테두리가 나온다 (#939)
+  &:focus-visible {
+    outline: 2px solid transparent; // 고대비 모드용 - Button 주석 참고
+    box-shadow: token.$focus_ring;
+  }
+
   // 높이 제한은 상자 자신이 받는다 - 이유는 React `.table_sticky_header` 주석
   &--sticky-header {
     max-height: 100%;
