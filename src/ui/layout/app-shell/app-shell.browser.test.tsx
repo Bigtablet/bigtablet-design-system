@@ -147,7 +147,24 @@ describe("Vanilla focus defaults (Chromium)", () => {
 		return container;
 	};
 
-	it("rings an app-drawn link on keyboard focus but not a tabindex=-1 target", async () => {
+	// roving tabindex 항목은 -1 이어도 방향키 포커스가 보여야 한다 (WCAG 2.4.7)
+	it("rings a roving tabindex=-1 item focused from the keyboard", async () => {
+		const root = mount(
+			'<button type="button">앞</button><div role="menu"><div role="menuitem" tabindex="0">하나</div><div role="menuitem" tabindex="-1">둘</div></div>',
+		);
+		const [first, second] = Array.from(root.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+		first.addEventListener("keydown", (e) => {
+			if (e.key === "ArrowDown") second.focus();
+		});
+		(root.querySelector("button") as HTMLElement).focus();
+		await userEvent.keyboard("{Tab}");
+		expect(first).toHaveFocus();
+		await userEvent.keyboard("{ArrowDown}");
+		expect(second).toHaveFocus();
+		expect(getComputedStyle(second).boxShadow).toMatch(/0px 0px 0px 4px/);
+	});
+
+	it("rings an app-drawn link on keyboard focus but not the skip target main", async () => {
 		const root = mount(
 			'<a class="bt-skip-link" href="#main">본문으로 건너뛰기</a><a href="/logs">접속 기록</a><main id="main" tabindex="-1">본문</main>',
 		);

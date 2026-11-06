@@ -109,7 +109,8 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 ```
 
 `_utilities.scss` 는 DS 밖 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에 `--bt-focus-ring` 을 그린다 -
-`:where()` 라 특이도 0, 컴포넌트 규칙이 언제나 이긴다. `tabindex="-1"` 은 링도 기본 outline 도 지운다 (#940).
+`:where()` 라 특이도 0, 컴포넌트 규칙이 언제나 이긴다. 방향키로 옮기는 `tabindex="-1"` 항목도 포함하고,
+건너뛰기 대상 `<main tabindex="-1">` 만 링 · 기본 outline 을 지운다 (#940).
 
 ### HTML Examples
 

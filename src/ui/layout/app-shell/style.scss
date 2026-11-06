@@ -46,13 +46,13 @@
 
   &_main {
     flex: 1;
+    // flex column 안에서도 자식이 이 칸을 늘리지 못하게 한다 (grid 열과 같은 이유).
+    min-width: 0;
 
     // 건너뛰기로 포커스를 받는 자리일 뿐 컨트롤이 아니다 - 링·브라우저 기본 outline 을 그리지 않는다
     &:focus-visible {
       outline: none;
     }
-    // flex column 안에서도 자식이 이 칸을 늘리지 못하게 한다 (grid 열과 같은 이유).
-    min-width: 0;
   }
 
   &_main_padded {
