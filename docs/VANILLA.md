@@ -1234,7 +1234,42 @@ React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. �
 - **현재 메뉴**는 `aria-current="page"` 만 달면 accent 로 채워진다 (`.is-active` 도 같음). 다크에서도 accent 토큰이 함께 뒤집혀 앱이 색을 바꿀 필요가 없다
 - **비활성** 항목은 `aria-disabled="true"` - 클릭 차단은 앱이 한다 (`<a>` 에는 native `disabled` 가 없다)
 - **좁은 화면(< 600px)** 에서는 React `Sidebar` 와 같이 화면 아래 고정 바로 바뀐다. 로고 · 구역 제목 · footer 는 숨고, 본문 끝은 `--bt-bottom-inset` 만큼 띄운다. 바꾸지 않으려면 `bt-sidebar--static` (React `mode="static"`)
-- 접기 · 펼치기(React `collapsible`)는 스크립트가 필요해 아직 없다
+
+#### 접기 · 고정 헤더 (#950)
+
+```html
+<div class="bt-app-shell">
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <aside class="bt-sidebar" data-bt-sidebar data-storage-key="nav-collapsed">
+    <div class="bt-sidebar__brand">
+      <img class="bt-sidebar__brand-full" src="/logo.svg" alt="Bigtablet" height="24">
+      <img class="bt-sidebar__brand-mark" src="/mark.svg" alt="Bigtablet" height="24">  <!-- 접혔을 때 -->
+    </div>
+    …
+  </aside>
+  <div class="bt-app-shell__body">
+    <header class="bt-app-shell__header">…</header>   <!-- 본문 열 위에 붙는다 -->
+    <main class="bt-app-shell__main" id="main" tabindex="-1">…</main>
+  </div>
+</div>
+```
+
+- `data-bt-sidebar` 를 주면 오른쪽 가장자리에 접기 토글이 생긴다. 접으면 64px 레일에 아이콘만 남고 라벨 · 구역 제목은 스크린리더에 남는다. 600px 아래 하단 바에서는 토글이 숨고 라벨이 보인다
+- 고정 헤더를 쓰면 `__body` 로 헤더와 `__main` 을 감싼다. 번들이 헤더 높이를 `--bt-top-inset` 에 적어 Tab · 앵커 이동 때 포커스가 헤더 밑에 숨지 않는다 (WCAG 2.4.11)
+
+| 옵션 (data-*) | React 대응 | 기본값 | 설명 |
+|---------------|-----------|--------|------|
+| `collapsible` (`data-collapsible`) | `collapsible` | `true` | 접기 토글을 단다 |
+| `defaultCollapsed` (`data-collapsed` · `bt-sidebar--collapsed`) | `defaultCollapsed` | `false` | 처음 접힘 |
+| `width` · `collapsedWidth` (`data-width` · `data-collapsed-width`) | 같은 이름 | 240 · 64 | 너비(px) |
+| `toggleLabel` (`data-toggle-label`) | `toggleLabel` | 로케일 `sidebar.toggle` | 토글 이름 |
+| `storageKey` (`data-storage-key`) | - | - | 접힘을 `localStorage` 에 기억 (쪽을 옮겨도 유지) |
+| `onCollapsedChange` | `onCollapsedChange` | - | `(collapsed)` |
+
+```javascript
+const nav = Bigtablet.Sidebar('#nav', { onCollapsedChange: (c) => {} });
+nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
+```
 
 ---
 

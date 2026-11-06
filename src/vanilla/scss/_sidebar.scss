@@ -1,15 +1,20 @@
 @use "../../styles/token" as token;
 
+$_chevron_left: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>');
+$_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>');
+
 /* ========================================
    Sidebar - 좌측 메뉴 (React Sidebar 대응, #941)
    ======================================== */
 /* 마크업은 서버가 그리고 클래스만 붙인다. 현재 메뉴는 aria-current="page"(또는 .is-active),
    비활성은 aria-disabled="true". 접기·펼치기는 스크립트가 필요해 아직 없다 - 너비는 --bt-sidebar-width */
 .bt-sidebar {
+  position: relative; // 접기 토글의 기준 (AppShell 안에서는 sticky 가 이 역할)
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: var(--bt-sidebar-width, 240px);
+  transition: width var(--bt-transition-base);
   min-height: 100vh;
   flex-shrink: 0;
   background: token.$color_bg_solid;
@@ -120,6 +125,91 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  // 로고 - 접힘에 따라 바꿔 보일 때 (React header · headerCollapsed). 하나만 두면 그대로 보인다
+  &__brand-mark {
+    display: none;
+  }
+
+  // 접기 토글 - 사이드바 오른쪽 가장자리에 반쯤 걸친 원 (React sidebar_collapse_btn)
+  &__toggle {
+    position: absolute;
+    top: token.$spacing_24;
+    right: -12px;
+    z-index: token.$z_content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: token.$border_width_standard solid token.$color_border_default;
+    border-radius: 50%;
+    background: token.$color_bg_solid;
+    color: token.$color_text_caption;
+    box-shadow: token.$elevation_level1;
+    cursor: pointer;
+    transition: background var(--bt-transition-fast), color var(--bt-transition-fast),
+      border-color var(--bt-transition-fast);
+
+    &::before {
+      content: "";
+      width: token.$icon_size_xs;
+      height: token.$icon_size_xs;
+      background-color: currentColor;
+      -webkit-mask: $_chevron_left center / contain no-repeat;
+      mask: $_chevron_left center / contain no-repeat;
+    }
+
+    &:hover {
+      border-color: token.$color_accent_default;
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      box-shadow: token.$focus_ring;
+    }
+  }
+
+  // ── 접힘 (React sidebar_collapsed) - 64px 레일, 아이콘만. 라벨 · 구역 제목은 스크린리더에 남긴다 ──
+  &--collapsed {
+    width: var(--bt-sidebar-collapsed-width, 64px);
+
+    .bt-sidebar__brand {
+      justify-content: center;
+      padding: token.$spacing_16 token.$spacing_8;
+    }
+
+    .bt-sidebar__brand-full {
+      display: none;
+    }
+
+    .bt-sidebar__brand-mark {
+      display: inline-flex;
+    }
+
+    .bt-sidebar__item-label,
+    .bt-sidebar__section-label {
+      @include token.visually_hidden;
+    }
+
+    .bt-sidebar__section {
+      padding: token.$spacing_4 0;
+    }
+
+    .bt-sidebar__item {
+      justify-content: center;
+      gap: 0;
+      padding: token.$spacing_8;
+    }
+
+    .bt-sidebar__toggle::before {
+      -webkit-mask-image: $_chevron_right;
+      mask-image: $_chevron_right;
+    }
+  }
 }
 
 /* 좁은 화면(< 600px) - React Sidebar 와 같은 기준으로 하단 바로 바뀐다. --static 이면 바뀌지 않는다 */
@@ -160,7 +250,8 @@
 
     .bt-sidebar__brand,
     .bt-sidebar__footer,
-    .bt-sidebar__section-label {
+    .bt-sidebar__section-label,
+    .bt-sidebar__toggle {
       display: none;
     }
 
@@ -216,6 +307,8 @@
     }
 
     .bt-sidebar__item-label {
+      // 접힌 상태여도 하단 바에서는 라벨을 보인다 (React 와 같음) - 짝 믹스인으로 되돌린다
+      @include token.visually_hidden_reset;
       @include token.label_small_medium;
       flex: 0 0 auto;
       max-width: 100%;

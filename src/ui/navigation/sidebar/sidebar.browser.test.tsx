@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import "../../../vanilla/scss/_app-shell.scss";
 import "../../../vanilla/scss/_sidebar.scss";
+import { AppShell, Sidebar } from "../../../vanilla/bigtablet.js";
 
 // Vanilla AppShell · Sidebar (#941) - 서버가 그린 마크업에 클래스만 붙인다
 const shellHtml = (sidebarClass = "bt-sidebar") => `
@@ -68,5 +69,54 @@ describe("Vanilla AppShell · Sidebar (Chromium)", () => {
 		const { sidebar, main } = mount("bt-sidebar bt-sidebar--static");
 		expect(getComputedStyle(sidebar).position).toBe("sticky");
 		expect(main.getBoundingClientRect().left).toBe(240);
+	});
+});
+
+describe("Vanilla Sidebar collapse · AppShell header (Chromium, #950)", () => {
+	beforeEach(async () => {
+		await page.viewport(1024, 768);
+	});
+
+	it("collapses to a 64px rail with icons only and keeps labels for screen readers", () => {
+		const { sidebar, main, current } = mount();
+		Sidebar(sidebar)?.collapse();
+		expect(sidebar.getBoundingClientRect().width).toBe(64);
+		expect(main.getBoundingClientRect().left).toBe(64);
+		const label = current.querySelector(".bt-sidebar__item-label") as HTMLElement;
+		expect(label.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+		expect(label.textContent).toBe("대시보드");
+		// 토글은 가장자리에 반쯤 걸친다
+		const toggle = sidebar.querySelector(".bt-sidebar__toggle") as HTMLElement;
+		const t = toggle.getBoundingClientRect();
+		// 가운데가 사이드바 오른쪽 테두리 위 (React 와 같이 padding box 기준이라 테두리 1px 안쪽)
+		expect(Math.abs(t.left + t.width / 2 - 64)).toBeLessThanOrEqual(1);
+	});
+
+	it("hides the toggle and shows labels in the bottom bar even when collapsed", async () => {
+		await page.viewport(375, 667);
+		const { sidebar, current } = mount();
+		Sidebar(sidebar)?.collapse();
+		expect(
+			getComputedStyle(sidebar.querySelector(".bt-sidebar__toggle") as HTMLElement).display,
+		).toBe("none");
+		const label = current.querySelector(".bt-sidebar__item-label") as HTMLElement;
+		expect(label.getBoundingClientRect().width).toBeGreaterThan(10);
+	});
+
+	it("keeps the header sticky and reports its height as --bt-top-inset", async () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<div class="bt-app-shell"><div class="bt-app-shell__body"><header class="bt-app-shell__header" style="height: 56px; background: white">헤더</header><main class="bt-app-shell__main"><div style="height: 3000px"></div></main></div></div>',
+		);
+		const shell = container.querySelector(".bt-app-shell") as HTMLElement;
+		const api = AppShell(shell);
+		await expect
+			.poll(() => document.documentElement.style.getPropertyValue("--bt-top-inset"))
+			.toBe("56px");
+		window.scrollTo(0, 500);
+		expect((shell.querySelector("header") as HTMLElement).getBoundingClientRect().top).toBe(0);
+		api?.destroy();
+		expect(document.documentElement.style.getPropertyValue("--bt-top-inset")).toBe("");
 	});
 });
