@@ -147,14 +147,19 @@ export function DatePicker(element, options = {}) {
 	panel.innerHTML = `
 		<div class="bt-date-picker__header">
 			<button type="button" class="bt-date-picker__nav" data-nav="-1" aria-label="${escapeHtml(config.prevMonthLabel)}"></button>
-			<button type="button" class="bt-date-picker__title" aria-label="${escapeHtml(t("vanilla.datePicker.changeView"))}"><span id="${titleId}" aria-live="polite"></span></button>
+			<button type="button" class="bt-date-picker__title" aria-describedby="${titleId}-hint"><span id="${titleId}"></span></button>
 			<button type="button" class="bt-date-picker__nav" data-nav="1" aria-label="${escapeHtml(config.nextMonthLabel)}"></button>
 		</div>
 		<table class="bt-date-picker__grid" role="grid" aria-labelledby="${titleId}"><thead><tr></tr></thead><tbody></tbody></table>
-		<div class="bt-date-picker__picks" role="group" aria-labelledby="${titleId}" hidden></div>`;
+		<div class="bt-date-picker__picks" role="group" aria-labelledby="${titleId}" hidden></div>
+		<span class="bt-sr-only" id="${titleId}-hint">${escapeHtml(t("vanilla.datePicker.changeView"))}</span>
+		<span class="bt-sr-only" aria-live="polite"></span>`;
+	// 제목 버튼의 이름은 보이는 연 · 월 그대로다(WCAG 2.5.3) - 동작은 설명(describedby)으로 붙인다.
+	// 달이 바뀔 때 알리는 live region 은 버튼 밖에 둔다 - 안에 두면 보기를 바꿀 때마다 포커스 낭독과 겹친다
 	const [prevBtn, nextBtn] = panel.querySelectorAll(".bt-date-picker__nav");
 	const titleBtn = panel.querySelector(".bt-date-picker__title");
 	const titleEl = titleBtn.firstElementChild;
+	const liveEl = panel.querySelector("[aria-live]");
 	const table = panel.querySelector(".bt-date-picker__grid");
 	const tbody = panel.querySelector("tbody");
 	const picks = panel.querySelector(".bt-date-picker__picks");
@@ -275,6 +280,7 @@ export function DatePicker(element, options = {}) {
 	function renderGrid() {
 		const f = state.focused;
 		titleEl.textContent = fmt.title.format(toDate({ ...f, day: 1 }));
+		if (liveEl.textContent !== titleEl.textContent) liveEl.textContent = titleEl.textContent;
 		prevBtn.setAttribute("aria-label", config.prevMonthLabel);
 		nextBtn.setAttribute("aria-label", config.nextMonthLabel);
 		const lo = minBound();
@@ -528,11 +534,19 @@ export function DatePicker(element, options = {}) {
 		const step = steps[key];
 		if (step === undefined) return false;
 		const p = state.pick;
+		const lo = minBound();
+		const hi = maxBound();
+		// 일 보기(moveFocus)처럼 범위로 묶는다 - 고를 수 없는 칸에 포커스가 앉지 않게
 		if (monthView) {
-			const idx = p.year * 12 + (p.month - 1) + step;
+			let idx = p.year * 12 + (p.month - 1) + step;
+			if (lo) idx = Math.max(idx, lo.year * 12 + lo.month - 1);
+			if (hi) idx = Math.min(idx, hi.year * 12 + hi.month - 1);
 			state.pick = { year: Math.floor(idx / 12), month: (idx % 12) + 1 };
 		} else {
-			state.pick = { ...p, year: p.year + step };
+			let year = p.year + step;
+			if (lo) year = Math.max(year, lo.year);
+			if (hi) year = Math.min(year, hi.year);
+			state.pick = { ...p, year };
 		}
 		render();
 		picks.querySelector('button[tabindex="0"]')?.focus();

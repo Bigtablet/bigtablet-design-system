@@ -225,6 +225,37 @@ describe("DatePicker 월 · 연 보기 (#953)", () => {
 		expect(pick(root, 2027).getAttribute("aria-disabled")).toBeNull();
 	});
 
+	it("월 · 연 보기의 방향키는 min · max 밖으로 나가지 않는다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06", max: "2027-02-01", min: "2026-03-10" });
+		api?.open();
+		title(root).click();
+		const key = (k: string) =>
+			document.activeElement?.dispatchEvent(
+				new KeyboardEvent("keydown", { key: k, bubbles: true }),
+			);
+		key("PageDown"); // 2027-11 → max 2027-02 로 묶인다
+		expect(title(root).textContent).toContain("2027");
+		expect(document.activeElement).toBe(pick(root, 2));
+		expect(document.activeElement?.getAttribute("aria-disabled")).toBeNull();
+		title(root).click();
+		key("ArrowRight"); // 2028 → 2027
+		expect(document.activeElement).toBe(pick(root, 2027));
+		key("PageUp"); // 2015 → 2026
+		expect(document.activeElement).toBe(pick(root, 2026));
+	});
+
+	it("제목 버튼의 이름은 보이는 연 · 월이고 동작은 설명으로 붙는다", () => {
+		const root = mountRoot();
+		const api = DatePicker(root, { today: "2026-11-06" });
+		api?.open();
+		expect(title(root).hasAttribute("aria-label")).toBe(false);
+		expect(title(root).textContent).toBe("2026년 11월");
+		const hint = document.getElementById(title(root).getAttribute("aria-describedby") ?? "");
+		expect(hint?.textContent).toBe("연 · 월 선택");
+		expect(title(root).querySelector("[aria-live]")).toBeNull();
+	});
+
 	it("오늘 버튼은 어느 보기 · 달에서든 오늘을 고른다", () => {
 		const onValueChange = vi.fn();
 		const root = mountRoot();
