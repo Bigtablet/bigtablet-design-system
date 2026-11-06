@@ -94,6 +94,7 @@ export function DatePicker(element, options = {}) {
 		hourLabel: pick("hourLabel", ds.hourLabel) ?? t("timePicker.hour"),
 		minuteLabel: pick("minuteLabel", ds.minuteLabel) ?? t("timePicker.minute"),
 		doneLabel: pick("doneLabel", ds.doneLabel) ?? t("vanilla.datePicker.done"),
+		todayLabel: pick("todayLabel", ds.todayLabel) ?? t("vanilla.datePicker.today"),
 		dialogLabel: pick("dialogLabel", ds.dialogLabel),
 		onValueChange: options.onValueChange ?? null,
 	};
@@ -146,13 +147,22 @@ export function DatePicker(element, options = {}) {
 	panel.innerHTML = `
 		<div class="bt-date-picker__header">
 			<button type="button" class="bt-date-picker__nav" data-nav="-1" aria-label="${escapeHtml(config.prevMonthLabel)}"></button>
-			<span class="bt-date-picker__title" id="${titleId}" aria-live="polite"></span>
+			<button type="button" class="bt-date-picker__title" aria-describedby="${titleId}-hint"><span id="${titleId}"></span></button>
 			<button type="button" class="bt-date-picker__nav" data-nav="1" aria-label="${escapeHtml(config.nextMonthLabel)}"></button>
 		</div>
-		<table class="bt-date-picker__grid" role="grid" aria-labelledby="${titleId}"><thead><tr></tr></thead><tbody></tbody></table>`;
+		<table class="bt-date-picker__grid" role="grid" aria-labelledby="${titleId}"><thead><tr></tr></thead><tbody></tbody></table>
+		<div class="bt-date-picker__picks" role="group" aria-labelledby="${titleId}" hidden></div>
+		<span class="bt-sr-only" id="${titleId}-hint">${escapeHtml(t("vanilla.datePicker.changeView"))}</span>
+		<span class="bt-sr-only" aria-live="polite"></span>`;
+	// 제목 버튼의 이름은 보이는 연 · 월 그대로다(WCAG 2.5.3) - 동작은 설명(describedby)으로 붙인다.
+	// 달이 바뀔 때 알리는 live region 은 버튼 밖에 둔다 - 안에 두면 보기를 바꿀 때마다 포커스 낭독과 겹친다
 	const [prevBtn, nextBtn] = panel.querySelectorAll(".bt-date-picker__nav");
-	const titleEl = panel.querySelector(".bt-date-picker__title");
+	const titleBtn = panel.querySelector(".bt-date-picker__title");
+	const titleEl = titleBtn.firstElementChild;
+	const liveEl = panel.querySelector("[aria-live]");
+	const table = panel.querySelector(".bt-date-picker__grid");
 	const tbody = panel.querySelector("tbody");
+	const picks = panel.querySelector(".bt-date-picker__picks");
 
 	let hourSel = null;
 	let minuteSel = null;
@@ -171,7 +181,15 @@ export function DatePicker(element, options = {}) {
 		hourSel = select(config.hourLabel);
 		make("span", "bt-date-picker__time-sep", row).textContent = ":";
 		minuteSel = select(config.minuteLabel);
-		const done = make("button", "bt-date-picker__done", row);
+	}
+	// 아래 줄 - 오늘(왼쪽) · 완료(시각을 켰을 때, 오른쪽). 둘 다 글자 버튼이라 고른 날짜보다 눈에 덜 띈다
+	const footer = make("div", "bt-date-picker__footer", panel);
+	const todayBtn = make("button", "bt-date-picker__action", footer);
+	todayBtn.type = "button";
+	todayBtn.textContent = config.todayLabel;
+	cleanups.push(on(todayBtn, "click", () => selectToday()));
+	if (config.time) {
+		const done = make("button", "bt-date-picker__action bt-date-picker__action--primary", footer);
 		done.type = "button";
 		done.textContent = config.doneLabel;
 		cleanups.push(on(done, "click", () => close(true)));
@@ -180,6 +198,8 @@ export function DatePicker(element, options = {}) {
 	const locale = intlLocale();
 	const fmt = {
 		title: new Intl.DateTimeFormat(locale, { year: "numeric", month: "long" }),
+		year: new Intl.DateTimeFormat(locale, { year: "numeric" }),
+		month: new Intl.DateTimeFormat(locale, { month: "short" }),
 		full: new Intl.DateTimeFormat(locale, { dateStyle: "full" }),
 		// React CalendarField 와 같은 표기 - ko "2026. 10. 16. (금)", en "Fri, Oct 16, 2026"
 		value: new Intl.DateTimeFormat(
@@ -201,7 +221,8 @@ export function DatePicker(element, options = {}) {
 
 	// ── 상태 ─────────────────────────────────────────────────────────────────
 	const today = parse(config.today) ?? fromDate(new Date());
-	const state = { value: null, focused: null, isOpen: false };
+	// view - "day"(달력) · "month"(한 해의 12달) · "year"(12년). pick - 월 · 연 보기에서 포커스된 칸의 연 · 월
+	const state = { value: null, focused: null, isOpen: false, view: "day", pick: null };
 
 	/** 다른 DatePicker 의 값(minFrom · maxFrom)이 이 칸의 값보다 우선한다 - 더 좁은 쪽 */
 	const linked = (ref) => {
@@ -259,6 +280,9 @@ export function DatePicker(element, options = {}) {
 	function renderGrid() {
 		const f = state.focused;
 		titleEl.textContent = fmt.title.format(toDate({ ...f, day: 1 }));
+		if (liveEl.textContent !== titleEl.textContent) liveEl.textContent = titleEl.textContent;
+		prevBtn.setAttribute("aria-label", config.prevMonthLabel);
+		nextBtn.setAttribute("aria-label", config.nextMonthLabel);
 		const lo = minBound();
 		const hi = maxBound();
 		const viewIdx = f.year * 12 + f.month;
@@ -311,12 +335,64 @@ export function DatePicker(element, options = {}) {
 		hourSel.disabled = minuteSel.disabled = !state.value;
 	}
 
+	/** 월 · 연 보기 - 4줄 × 3칸. 범위(min · max) 밖의 달 · 해는 고를 수 없다 */
+	const YEARS = 12;
+	const yearStart = (y) => y - (((y % YEARS) + YEARS) % YEARS);
+	function renderPicks() {
+		const { year, month } = state.pick;
+		const lo = minBound();
+		const hi = maxBound();
+		const monthView = state.view === "month";
+		const start = yearStart(year);
+		titleEl.textContent = monthView
+			? fmt.year.format(new Date(year, 0, 1))
+			: `${start} – ${start + YEARS - 1}`;
+		prevBtn.setAttribute(
+			"aria-label",
+			t(monthView ? "vanilla.datePicker.prevYear" : "vanilla.datePicker.prevYears"),
+		);
+		nextBtn.setAttribute(
+			"aria-label",
+			t(monthView ? "vanilla.datePicker.nextYear" : "vanilla.datePicker.nextYears"),
+		);
+		prevBtn.disabled = !!lo && (monthView ? year <= lo.year : start <= lo.year);
+		nextBtn.disabled = !!hi && (monthView ? year >= hi.year : start + YEARS - 1 >= hi.year);
+		let html = "";
+		for (let i = 0; i < 12; i++) {
+			const y = monthView ? year : start + i;
+			const m = monthView ? i + 1 : month;
+			const idx = y * 12 + m;
+			const off = monthView
+				? (!!lo && idx < lo.year * 12 + lo.month) || (!!hi && idx > hi.year * 12 + hi.month)
+				: (!!lo && y < lo.year) || (!!hi && y > hi.year);
+			const current = monthView
+				? state.value?.year === y && state.value?.month === m
+				: state.value?.year === y;
+			const focused = monthView ? m === month : y === year;
+			const text = monthView ? fmt.month.format(new Date(y, m - 1, 1)) : String(y);
+			html += `<button type="button" class="bt-date-picker__pick${current ? " bt-date-picker__pick--selected" : ""}" data-pick="${monthView ? m : y}" tabindex="${focused ? 0 : -1}"${current ? ' aria-current="true"' : ""}${off ? ' aria-disabled="true"' : ""}>${escapeHtml(text)}</button>`;
+		}
+		picks.innerHTML = html;
+	}
+
 	function render() {
 		renderTrigger();
-		if (state.isOpen) {
-			renderGrid();
-			renderTime();
-		}
+		if (!state.isOpen) return;
+		const dayView = state.view === "day";
+		table.hidden = !dayView;
+		picks.hidden = dayView;
+		titleBtn.setAttribute("aria-disabled", String(state.view === "year"));
+		if (dayView) renderGrid();
+		else renderPicks();
+		renderTime();
+	}
+
+	/** 보기를 바꾸고 그 보기의 포커스 칸에 앉는다 - 누른 버튼이 사라져 포커스가 body 로 떨어지지 않게 */
+	function setView(view) {
+		state.view = view;
+		if (view !== "day") state.pick ??= { year: state.focused.year, month: state.focused.month };
+		render();
+		(view === "day" ? tbody : picks).querySelector('button[tabindex="0"]')?.focus();
 	}
 
 	// ── 값 ───────────────────────────────────────────────────────────────────
@@ -358,6 +434,8 @@ export function DatePicker(element, options = {}) {
 		if (lo && compareDay(f, lo) < 0) f = lo;
 		if (hi && compareDay(f, hi) > 0) f = hi;
 		state.focused = { ...f };
+		state.view = "day";
+		state.pick = null;
 		panel.hidden = false;
 		trigger.setAttribute("aria-expanded", "true");
 		// 아래 공간이 모자라면 위로 연다
@@ -396,16 +474,91 @@ export function DatePicker(element, options = {}) {
 		if (viaKeyboard) focusDay();
 	}
 
-	function selectDay(day) {
+	function selectDay(day, viaKeyboard) {
 		const d = { ...state.focused, day };
 		if (dayDisabled(d)) return;
 		const minutes = config.time ? (state.value?.minutes ?? minuteRange(d)[0]) : null;
+		state.focused = d;
 		commit({ ...d, minutes });
-		if (config.time) {
-			hourSel.focus();
-		} else {
-			close(true);
+		if (!config.time) close(true);
+		// 키보드로 고르면 다음 할 일(시 칸)로 옮긴다. 마우스면 고른 날에 그대로 둔다 - 다시 그려 사라진 버튼
+		// 대신 같은 날에 앉힌다. 마우스 클릭 뒤 select 로 옮기면 select 가 :focus-visible 에 걸려 링이 떴다 (#953)
+		else if (viaKeyboard) hourSel.focus();
+		else focusDay();
+	}
+
+	/** 오늘을 고른다 - 어느 달 · 보기에 있든 한 번에. 오늘이 범위 밖이면 그 달로 옮기기만 한다 */
+	function selectToday() {
+		state.view = "day";
+		state.pick = null;
+		state.focused = { ...today };
+		if (dayDisabled(today)) {
+			moveFocus(today, false);
+			render();
+			focusDay();
+			return;
 		}
+		selectDay(today.day, false);
+	}
+
+	/** 월 · 연 보기에서 칸을 고른다 - 한 단계 아래 보기로 */
+	function selectPick(value) {
+		if (state.view === "year") {
+			state.pick = { ...state.pick, year: value };
+			setView("month");
+			return;
+		}
+		const { year } = state.pick;
+		state.focused = {
+			...state.focused,
+			year,
+			month: value,
+			day: Math.min(state.focused.day, daysIn(year, value)),
+		};
+		moveFocus(state.focused, false);
+		state.pick = null;
+		setView("day");
+	}
+
+	/** 월 · 연 보기의 방향키 - ←→ 한 칸, ↑↓ 한 줄(3칸), PageUp/Down 한 쪽(한 해 · 12년) */
+	function movePick(key) {
+		const monthView = state.view === "month";
+		const steps = {
+			ArrowLeft: -1,
+			ArrowRight: 1,
+			ArrowUp: -3,
+			ArrowDown: 3,
+			PageUp: -12,
+			PageDown: 12,
+		};
+		const step = steps[key];
+		if (step === undefined) return false;
+		const p = state.pick;
+		const lo = minBound();
+		const hi = maxBound();
+		// 일 보기(moveFocus)처럼 범위로 묶는다 - 고를 수 없는 칸에 포커스가 앉지 않게
+		if (monthView) {
+			let idx = p.year * 12 + (p.month - 1) + step;
+			if (lo) idx = Math.max(idx, lo.year * 12 + lo.month - 1);
+			if (hi) idx = Math.min(idx, hi.year * 12 + hi.month - 1);
+			state.pick = { year: Math.floor(idx / 12), month: (idx % 12) + 1 };
+		} else {
+			let year = p.year + step;
+			if (lo) year = Math.max(year, lo.year);
+			if (hi) year = Math.min(year, hi.year);
+			state.pick = { ...p, year };
+		}
+		render();
+		picks.querySelector('button[tabindex="0"]')?.focus();
+		return true;
+	}
+
+	/** ‹ › - 보기마다 한 달 · 한 해 · 12년 */
+	function navigate(dir) {
+		if (state.view === "day") return moveFocus(addMonths(state.focused, dir), false);
+		const p = state.pick;
+		state.pick = { ...p, year: p.year + dir * (state.view === "month" ? 1 : YEARS) };
+		render();
 	}
 
 	// ── 이벤트 ───────────────────────────────────────────────────────────────
@@ -417,11 +570,23 @@ export function DatePicker(element, options = {}) {
 				open();
 			}
 		}),
-		on(prevBtn, "click", () => moveFocus(addMonths(state.focused, -1), false)),
-		on(nextBtn, "click", () => moveFocus(addMonths(state.focused, 1), false)),
+		on(prevBtn, "click", () => navigate(-1)),
+		on(nextBtn, "click", () => navigate(1)),
+		on(titleBtn, "click", () => {
+			if (state.view !== "year") setView(state.view === "day" ? "month" : "year");
+		}),
 		on(tbody, "click", (e) => {
 			const btn = e.target.closest("button[data-day]");
-			if (btn) selectDay(Number(btn.dataset.day));
+			// detail 0 - Enter · Space 가 만든 클릭 (키보드)
+			if (btn) selectDay(Number(btn.dataset.day), e.detail === 0);
+		}),
+		on(picks, "click", (e) => {
+			const btn = e.target.closest("button[data-pick]");
+			if (btn && btn.getAttribute("aria-disabled") !== "true") selectPick(Number(btn.dataset.pick));
+		}),
+		on(picks, "keydown", (e) => {
+			if (e.altKey || e.ctrlKey || e.metaKey) return;
+			if (movePick(e.key)) e.preventDefault();
 		}),
 		on(tbody, "keydown", (e) => {
 			if (e.altKey || e.ctrlKey || e.metaKey) return;
