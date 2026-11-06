@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
+import { Dropdown as VanillaDropdown } from "../../../vanilla/bigtablet.js";
+import "../../../vanilla/scss/_dropdown.scss";
 import { Dropdown } from "./index";
 import "./style.scss";
 
@@ -50,4 +52,38 @@ describe("Dropdown layout (Chromium)", () => {
 		expect(list.left).toBeGreaterThanOrEqual(0);
 		expect(list.right).toBeLessThanOrEqual(375 - 8);
 	});
+});
+
+// 패널이 열리며 검색칸에 포커스가 간다 - 링이면 열 때마다 패널 안에 상자가 하나 더 생긴다 (#936)
+describe("Dropdown focus (Chromium)", () => {
+	const DARK = "rgb(18, 18, 18)"; // --bt-color-border-focus (라이트)
+
+	it("draws no ring on the React search input", async () => {
+		render(<Dropdown label="항목" options={options} searchable onValueChange={() => {}} />);
+		await userEvent.click(screen.getByRole("combobox"));
+		await expect.poll(() => document.querySelector(".dropdown_search_input")).not.toBeNull();
+		const search = document.querySelector(".dropdown_search_input") as HTMLElement;
+		await userEvent.click(search);
+		expect(search).toHaveFocus();
+		expect(getComputedStyle(search).boxShadow).toBe("none");
+	});
+
+	it.each(["outline", "filled"])(
+		"shows the open Vanilla %s control with the border colour only and no ring in the search input",
+		async (variant) => {
+			const { container } = render(<span />);
+			container.insertAdjacentHTML(
+				"beforeend",
+				`<div class="bt-dropdown"><button type="button" class="bt-dropdown__control bt-dropdown__control--${variant} bt-dropdown__control--md"><span class="bt-dropdown__placeholder">선택</span><span class="bt-dropdown__icon">▼</span></button><ul class="bt-dropdown__list"><li class="bt-dropdown__option" data-value="1">하나</li><li class="bt-dropdown__option" data-value="2">둘</li></ul></div>`,
+			);
+			VanillaDropdown(container.querySelector(".bt-dropdown") as HTMLElement, { searchable: true });
+			const control = container.querySelector(".bt-dropdown__control") as HTMLElement;
+			await userEvent.click(control);
+			const search = document.querySelector(".bt-dropdown__search-input") as HTMLElement;
+			await expect.poll(() => document.activeElement).toBe(search);
+			expect(getComputedStyle(search).boxShadow).toBe("none");
+			expect(getComputedStyle(control).boxShadow).toBe("none");
+			expect(getComputedStyle(control).borderColor).toBe(DARK);
+		},
+	);
 });
