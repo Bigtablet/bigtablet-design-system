@@ -367,6 +367,35 @@ describe("DateRangePicker 범위형 (#951)", () => {
 		expect(api?.getValue()).toEqual({ start: "2026-11-09", end: null });
 	});
 
+	it("시작 없는 종료는 받지 않는다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { endName: "to" });
+		api?.setValue({ start: null, end: "2026-11-05" });
+		expect(api?.getValue()).toEqual({ start: null, end: null });
+		expect(hiddenNamed(root, "to").value).toBe("");
+	});
+
+	it("시작만 고른 동안의 미리보기 띠는 달력을 벗어나면 지운다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { today: "2026-11-06" });
+		api?.open();
+		day(root, 3).click();
+		day(root, 8).dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+		const cell = (d: number) => day(root, d).parentElement as HTMLElement;
+		expect(cell(5).classList.contains("bt-date-picker__cell--in-range")).toBe(true);
+		root.querySelector("tbody")?.dispatchEvent(new MouseEvent("mouseleave"));
+		expect(cell(5).classList.contains("bt-date-picker__cell--in-range")).toBe(false);
+	});
+
+	it("키보드로 종료를 고르면 종료 시각 줄로 간다", () => {
+		const root = mountRoot();
+		const api = DateRangePicker(root, { time: true, today: "2026-11-06" });
+		api?.open();
+		day(root, 3).click();
+		day(root, 7).click(); // detail 0 - 키보드
+		expect(document.activeElement).toBe(root.querySelectorAll("select")[2]);
+	});
+
 	it("시각을 켜면 시작 · 종료 시각 줄이 생기고 같은 날 종료는 시작 시각 앞을 막는다", () => {
 		const root = mountRoot();
 		const api = DateRangePicker(root, { time: true, minuteStep: 30, today: "2026-11-06" });

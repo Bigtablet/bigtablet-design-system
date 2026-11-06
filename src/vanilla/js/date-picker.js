@@ -481,7 +481,9 @@ export function DatePicker(element, options = {}) {
 	function clampEnd(e) {
 		const next = clamp(e);
 		const s = state.value;
-		if (!next || !s || cmp(next, s) >= 0) return next;
+		// 시작 없는 종료는 만들지 않는다 - 달력으로는 만들 수 없는 상태라 종료만 서버로 가지 않게
+		if (!next || !s) return null;
+		if (cmp(next, s) >= 0) return next;
 		return config.time && sameDay(next, s) ? { ...next, minutes: s.minutes } : null;
 	}
 
@@ -568,7 +570,8 @@ export function DatePicker(element, options = {}) {
 			// 종료 시각의 처음 값은 그날 끝 - 하루 단위 조회가 그날 전체를 덮게
 			else commit(s, true, { ...d, minutes: config.time ? clampMinutes(d, 24 * 60 - 1) : null });
 			if (!restart && !config.time) close(true);
-			else if (!restart && viaKeyboard) timeRows[0].hour.focus();
+			// 종료를 골랐으니 다음 할 일은 종료 시각 - 마지막 시각 줄로
+			else if (!restart && viaKeyboard) timeRows[timeRows.length - 1].hour.focus();
 			else focusDay();
 			return;
 		}
@@ -733,6 +736,10 @@ export function DatePicker(element, options = {}) {
 						compareDay(d, state.value) > 0 && compareDay(d, hover) < 0,
 					);
 				}
+			}),
+			// 달력 밖으로 나가면 미리보기를 지운다 - 고르지 않은 종료가 고른 것처럼 남지 않게
+			on(tbody, "mouseleave", () => {
+				if (state.value && !state.end) renderGrid();
 			}),
 		);
 	}
