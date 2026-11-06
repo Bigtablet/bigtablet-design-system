@@ -1,0 +1,226 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Sidebar - 좌측 메뉴 (React Sidebar 대응, #941)
+   ======================================== */
+/* 마크업은 서버가 그리고 클래스만 붙인다. 현재 메뉴는 aria-current="page"(또는 .is-active),
+   비활성은 aria-disabled="true". 접기·펼치기는 스크립트가 필요해 아직 없다 - 너비는 --bt-sidebar-width */
+.bt-sidebar {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--bt-sidebar-width, 240px);
+  min-height: 100vh;
+  flex-shrink: 0;
+  background: token.$color_bg_solid;
+  color: token.$color_text_heading;
+  border-right: token.$border_width_standard solid token.$color_border_default;
+  font-family: token.$font_family_primary;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 28px;
+    padding: token.$spacing_20 token.$spacing_16;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+    padding: token.$spacing_12 token.$spacing_8;
+    overflow-x: hidden;
+    overflow-y: auto;
+    @include token.scrollable;
+  }
+
+  &__footer {
+    flex-shrink: 0;
+    padding: token.$spacing_12 token.$spacing_8;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_2;
+    padding: token.$spacing_8 0;
+
+    // 구역 사이 구분선
+    & + & {
+      border-top: token.$border_width_standard solid token.$color_border_default;
+    }
+  }
+
+  &__section-label {
+    @include token.label_small_medium;
+    letter-spacing: token.$letter_spacing_tight;
+    color: token.$color_text_caption;
+    padding: token.$spacing_4 token.$spacing_12;
+    text-transform: uppercase;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: token.$spacing_12;
+    box-sizing: border-box;
+    width: 100%;
+    padding: token.$spacing_8 token.$spacing_12;
+    border: none;
+    border-radius: token.$radius_md;
+    background: transparent;
+    color: token.$color_text_body;
+    font-family: inherit;
+    @include token.label_large_medium;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--bt-transition-fast), color var(--bt-transition-fast);
+
+    &:hover:not(.is-active):not([aria-current="page"]):not([aria-disabled="true"]) {
+      background: token.$color_state_hover_on_light;
+      color: token.$color_text_heading;
+    }
+
+    &:focus-visible {
+      outline: 2px solid transparent; // 고대비 모드용
+      box-shadow: token.$focus_ring;
+    }
+
+    // 현재 메뉴 - React 와 같은 accent 채움. 다크에서도 accent 토큰이 뒤집혀 대비가 유지된다
+    &.is-active,
+    &[aria-current="page"] {
+      background: token.$color_accent_default;
+      color: token.$color_accent_on_surface;
+    }
+
+    // 라벨은 읽혀야 해 caption 색 (React 와 같은 판단)
+    &[aria-disabled="true"] {
+      color: token.$color_text_caption;
+      cursor: not-allowed;
+    }
+  }
+
+  &__item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
+
+  &__item-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* 좁은 화면(< 600px) - React Sidebar 와 같은 기준으로 하단 바로 바뀐다. --static 이면 바뀌지 않는다 */
+@media (max-width: 599px) {
+  :root {
+    --bt-sidebar-height: #{token.$tap_target_spacious};
+    --bt-sidebar-safe-area: env(safe-area-inset-bottom, 0px);
+    --bt-sidebar-total-height: calc(var(--bt-sidebar-height) + var(--bt-sidebar-safe-area));
+  }
+
+  // 하단 고정 크롬 높이를 DS 하단 inset 채널에 알린다 (React 와 같은 변수)
+  body:has(.bt-sidebar:not(.bt-sidebar--static)) {
+    --bt-sidebar-inset: var(--bt-sidebar-total-height);
+  }
+
+  html:has(.bt-sidebar:not(.bt-sidebar--static)) {
+    scroll-padding-bottom: var(--bt-sidebar-total-height);
+  }
+
+  .bt-sidebar:not(.bt-sidebar--static) {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: token.$z_chrome;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding-bottom: var(--bt-sidebar-safe-area);
+    border-right: none;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+    box-shadow: token.$elevation_level2;
+
+    // AppShell 안의 sticky 규칙(특이도 0,2,0)을 이긴다
+    .bt-app-shell > & {
+      position: fixed;
+      height: auto;
+    }
+
+    .bt-sidebar__brand,
+    .bt-sidebar__footer,
+    .bt-sidebar__section-label {
+      display: none;
+    }
+
+    .bt-sidebar__nav {
+      flex: 1;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      overflow: visible;
+    }
+
+    .bt-sidebar__section {
+      display: contents;
+    }
+
+    .bt-sidebar__item {
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      gap: token.$spacing_4;
+      min-width: 0;
+      min-height: token.$tap_target_spacious;
+      padding: token.$spacing_6 token.$spacing_4;
+      border-radius: 0;
+
+      // 현재 메뉴는 아이콘 자리만 채운다 (React 와 같음)
+      &.is-active,
+      &[aria-current="page"] {
+        background: transparent;
+        color: token.$color_text_heading;
+
+        .bt-sidebar__item-icon {
+          width: auto;
+          min-width: 56px;
+          height: 32px;
+          padding: 0 token.$spacing_16;
+          box-sizing: border-box;
+          border-radius: token.$radius_full;
+          background: token.$color_accent_default;
+          color: token.$color_accent_on_surface;
+        }
+
+        .bt-sidebar__item-label {
+          font-weight: token.$font_weight_semi_bold;
+        }
+      }
+    }
+
+    .bt-sidebar__item-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .bt-sidebar__item-label {
+      @include token.label_small_medium;
+      flex: 0 0 auto;
+      max-width: 100%;
+      line-height: 1.2;
+      text-align: center;
+    }
+  }
+}

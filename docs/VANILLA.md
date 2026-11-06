@@ -28,6 +28,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [Pagination](#pagination)
   - [DatePicker](#datepicker)
   - [FileInput](#fileinput)
+  - [AppShell · Sidebar](#appshell--sidebar)
   - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
@@ -1141,6 +1142,51 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   <label class="bt-file-input__label" for="file-disabled">파일 선택</label>
 </div>
 ```
+
+---
+
+### AppShell · Sidebar
+
+React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다 - CSS 만, 스크립트 없음.
+
+```html
+<div class="bt-app-shell">
+  <a class="bt-skip-link" href="#main">본문으로 건너뛰기</a>
+  <aside class="bt-sidebar">
+    <div class="bt-sidebar__brand"><img src="/logo.svg" alt="Bigtablet" height="24"></div>
+    <nav class="bt-sidebar__nav" aria-label="메뉴">
+      <div class="bt-sidebar__section">
+        <div class="bt-sidebar__section-label">관리</div>
+        <a class="bt-sidebar__item" href="/" aria-current="page">
+          <span class="bt-sidebar__item-icon"><svg …></svg></span>
+          <span class="bt-sidebar__item-label">대시보드</span>
+        </a>
+        <a class="bt-sidebar__item" href="/logs">
+          <span class="bt-sidebar__item-icon"><svg …></svg></span>
+          <span class="bt-sidebar__item-label">접속 기록</span>
+        </a>
+      </div>
+      <div class="bt-sidebar__section">…</div>  <!-- 구역 사이에 구분선 -->
+    </nav>
+    <div class="bt-sidebar__footer">…</div>
+  </aside>
+  <main class="bt-app-shell__main" id="main" tabindex="-1">…</main>
+</div>
+```
+
+| 클래스 | 설명 |
+|--------|------|
+| `.bt-app-shell` | 사이드바 열 + 본문 열 grid. 문서가 스크롤하고 사이드바는 `sticky` 다. 본문 열은 `minmax(0, 1fr)` 라 넓은 표가 열을 늘리지 않는다 |
+| `.bt-app-shell__main` | 본문 (여백 32px, 600px 아래 16px). `--flush` 면 여백 없음 (React `padded={false}`) |
+| `.bt-sidebar` | 좌측 메뉴. 너비는 `--bt-sidebar-width` (기본 240px) |
+| `__brand` · `__nav` · `__footer` | 로고 줄 · 메뉴 목록(넘치면 스크롤) · 아래 고정 영역 |
+| `__section` · `__section-label` | 구역 묶음 · 구역 제목. 구역이 이어지면 사이에 구분선 |
+| `__item` · `__item-icon` · `__item-label` | 메뉴 항목. `<a>` · `<button>` 모두 된다 |
+
+- **현재 메뉴**는 `aria-current="page"` 만 달면 accent 로 채워진다 (`.is-active` 도 같음). 다크에서도 accent 토큰이 함께 뒤집혀 앱이 색을 바꿀 필요가 없다
+- **비활성** 항목은 `aria-disabled="true"` - 클릭 차단은 앱이 한다 (`<a>` 에는 native `disabled` 가 없다)
+- **좁은 화면(< 600px)** 에서는 React `Sidebar` 와 같이 화면 아래 고정 바로 바뀐다. 로고 · 구역 제목 · footer 는 숨고, 본문 끝은 `--bt-bottom-inset` 만큼 띄운다. 바꾸지 않으려면 `bt-sidebar--static` (React `mode="static"`)
+- 접기 · 펼치기(React `collapsible`)는 스크립트가 필요해 아직 없다
 
 ---
 

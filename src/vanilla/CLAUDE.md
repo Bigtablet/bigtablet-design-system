@@ -96,6 +96,8 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` | `--full-width` | |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
+| AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` - CSS 만 | `__main--flush` | |
+| Sidebar | `.bt-sidebar` (+ `__brand`, `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
 | 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남), `.bt-skip-link`(포커스 때 왼쪽 위에 뜨는 건너뛰기 링크 - 레이아웃 칸 없음) | | |
 
 `.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.
