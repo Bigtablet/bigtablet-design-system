@@ -534,6 +534,15 @@ describe("DatePicker 시각 먼저 고르기 (#964)", () => {
 		expect(api?.getValue()).toEqual({ start: "2026-11-09T09:00", end: "2026-11-09T23:59" });
 	});
 
+	it("범위형에서 종료 시각만 골랐으면 시작은 오늘 처음", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[2] as HTMLSelectElement, "17");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T00:00", end: "2026-11-09T17:00" });
+	});
+
 	it("오늘이 범위 밖이면 채우지 않는다", () => {
 		const root = mountRoot("data-time");
 		const api = DatePicker(root, { today: "2026-11-09", min: "2026-12-01", minuteStep: 1 });
