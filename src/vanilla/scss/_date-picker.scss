@@ -231,10 +231,11 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
   }
 
-  // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다
+  // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다. fixed 라야 Modal 패널 · 표 상자 같은 조상의
+  // `overflow: hidden` 에 잘리지 않는다 (#974). 좌표는 JS 가 칸 기준으로 준다 - `--up` · `--end` 는 그 결과 표시다
   .bt-date-picker__panel {
-    position: absolute;
-    top: calc(100% + #{token.$spacing_4});
+    position: fixed;
+    top: 0;
     left: 0;
     z-index: token.$z_popup;
     display: flex;
@@ -251,15 +252,17 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
       display: none;
     }
 
-    &--up {
-      top: auto;
-      bottom: calc(100% + #{token.$spacing_4});
-    }
+  }
 
-    &--end {
-      right: 0;
-      left: auto;
-    }
+  // fixed 의 기준점 - transform 이 걸린 조상이 있으면 그것이 기준이 된다. 그 어긋남을 JS 가 이 점으로 잰다
+  .bt-date-picker__probe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .bt-date-picker__header {

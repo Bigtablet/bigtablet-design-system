@@ -195,6 +195,8 @@ export function DatePicker(element, options = {}) {
 		);
 	}
 
+	const probe = make("span", "bt-date-picker__probe", root);
+	probe.setAttribute("aria-hidden", "true");
 	const panel = make("div", "bt-date-picker__panel", root);
 	panel.setAttribute("role", "dialog");
 	panel.setAttribute(
@@ -484,6 +486,8 @@ export function DatePicker(element, options = {}) {
 		if (dayView) renderGrid();
 		else renderPicks();
 		renderTime();
+		// 보기가 바뀌면 크기도 바뀐다 - 위로 열린 팝오버가 칸에서 떨어지지 않게 다시 붙인다
+		place();
 	}
 
 	/** 보기를 바꾸고 그 보기의 포커스 칸에 앉는다 - 누른 버튼이 사라져 포커스가 body 로 떨어지지 않게 */
@@ -543,7 +547,12 @@ export function DatePicker(element, options = {}) {
 		if (config.range) state.end = clampEnd(end);
 		render();
 		if (prev === JSON.stringify(output())) return;
-		if (notify) config.onValueChange?.(output());
+		if (notify) {
+			config.onValueChange?.(output());
+			// 폼 단위 change 리스너(자동 조회 · 바뀜 표시)가 날짜도 보게 - 숨은 input 은 스스로 change 를 내지 않는다 (#974)
+			for (const el of [hidden, hiddenEnd])
+				el?.dispatchEvent(new Event("change", { bubbles: true }));
+		}
 		// 이 칸을 minFrom · maxFrom 으로 따르는 칸들이 다시 맞춘다
 		root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
 	}
@@ -563,23 +572,61 @@ export function DatePicker(element, options = {}) {
 		state.pick = null;
 		panel.hidden = false;
 		trigger.setAttribute("aria-expanded", "true");
-		// 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
-		panel.classList.remove("bt-date-picker__panel--up", "bt-date-picker__panel--end");
 		render();
-		const rect = panel.getBoundingClientRect();
-		if (rect.bottom > window.innerHeight && trigger.getBoundingClientRect().top > rect.height) {
-			panel.classList.add("bt-date-picker__panel--up");
-		}
-		if (rect.right > document.documentElement.clientWidth) {
-			panel.classList.add("bt-date-picker__panel--end");
-		}
+		trackPanel();
 		releaseEscape = pushEscape(() => close(true));
 		focusDay();
+	}
+
+	/**
+	 * 팝오버를 칸에 붙인다 - 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춘다. fixed 라
+	 * 스크롤 · 리사이즈 때마다 다시 잰다. 크기는 offset* 로 - 진입 모션의 transform 이 섞이지 않게
+	 */
+	function place() {
+		const a = field.getBoundingClientRect();
+		const origin = probe.getBoundingClientRect();
+		const w = panel.offsetWidth;
+		const h = panel.offsetHeight;
+		const gap = 4;
+		const up = a.bottom + gap + h > window.innerHeight && a.top - gap > h;
+		const end = a.left + w > document.documentElement.clientWidth;
+		panel.classList.toggle("bt-date-picker__panel--up", up);
+		panel.classList.toggle("bt-date-picker__panel--end", end);
+		// 어느 쪽에도 다 안 들어가면(낮은 화면) 화면 안으로 민다 - 칸을 덮더라도 달력 아랫줄이 밖으로 나가지 않게
+		const top = Math.max(
+			gap,
+			Math.min(up ? a.top - gap - h : a.bottom + gap, window.innerHeight - gap - h),
+		);
+		panel.style.top = `${top - origin.top}px`;
+		panel.style.left = `${(end ? a.right - w : a.left) - origin.left}px`;
+	}
+
+	let untrackPanel = null;
+	/** 열려 있는 동안 좌표를 따라간다. capture - 스크롤 이벤트는 버블링하지 않는다 */
+	function trackPanel() {
+		if (untrackPanel) return;
+		let frame = 0;
+		const schedule = () => {
+			if (frame) return;
+			frame = requestAnimationFrame(() => {
+				frame = 0;
+				if (state.isOpen) place();
+			});
+		};
+		window.addEventListener("scroll", schedule, true);
+		window.addEventListener("resize", schedule);
+		untrackPanel = () => {
+			if (frame) cancelAnimationFrame(frame);
+			window.removeEventListener("scroll", schedule, true);
+			window.removeEventListener("resize", schedule);
+			untrackPanel = null;
+		};
 	}
 
 	function close(returnFocus = false) {
 		if (!state.isOpen) return;
 		state.isOpen = false;
+		untrackPanel?.();
 		panel.hidden = true;
 		trigger.setAttribute("aria-expanded", "false");
 		releaseEscape?.();
@@ -612,7 +659,13 @@ export function DatePicker(element, options = {}) {
 			const restart = !s || !!state.end || compareDay(d, s) < 0;
 			if (restart) {
 				commit(
-					{ ...d, minutes: config.time ? (draft.start ?? minuteRange(d)[0]) : null },
+					// 시작을 다시 고르면 지금 시작 시각을 지킨다 - 한 칸 모드와 같다 (#974)
+					{
+						...d,
+						minutes: config.time
+							? (draft.start ?? state.value?.minutes ?? minuteRange(d)[0])
+							: null,
+					},
 					true,
 					null,
 				);
@@ -718,11 +771,18 @@ export function DatePicker(element, options = {}) {
 	}
 
 	/** ‹ › - 보기마다 한 달 · 한 해 · 12년 */
-	function navigate(dir) {
-		if (state.view === "day") return moveFocus(addMonths(state.focused, dir), false);
-		const p = state.pick;
-		state.pick = { ...p, year: p.year + dir * (state.view === "month" ? 1 : YEARS) };
-		render();
+	function navigate(dir, btn) {
+		if (state.view === "day") moveFocus(addMonths(state.focused, dir), false);
+		else {
+			const p = state.pick;
+			state.pick = { ...p, year: p.year + dir * (state.view === "month" ? 1 : YEARS) };
+			render();
+		}
+		// 범위 끝에 닿아 누른 버튼이 막히면 포커스가 body 로 빠진다 - 고를 칸으로 옮긴다 (#974)
+		if (btn.disabled) {
+			if (state.view === "day") focusDay();
+			else picks.querySelector('button[tabindex="0"]')?.focus();
+		}
 	}
 
 	// ── 이벤트 ───────────────────────────────────────────────────────────────
@@ -746,8 +806,8 @@ export function DatePicker(element, options = {}) {
 				open();
 			}
 		}),
-		on(prevBtn, "click", () => navigate(-1)),
-		on(nextBtn, "click", () => navigate(1)),
+		on(prevBtn, "click", () => navigate(-1, prevBtn)),
+		on(nextBtn, "click", () => navigate(1, nextBtn)),
 		on(titleBtn, "click", () => {
 			if (state.view !== "year") setView(state.view === "day" ? "month" : "year");
 		}),
@@ -855,6 +915,12 @@ export function DatePicker(element, options = {}) {
 	}
 	render();
 
+	// form.reset() · <button type="reset"> 은 숨은 input 을 되돌리지 못한다 - value 를 대입하면 기본값도 바뀐다.
+	// reset 이 끝난 뒤 처음 값으로 되돌린다 (#974)
+	const startValue = output();
+	const form = root.closest("form");
+	if (form) cleanups.push(on(form, "reset", () => queueMicrotask(() => api.setValue(startValue))));
+
 	const api = {
 		/** 지금 값 - "YYYY-MM-DD" · "YYYY-MM-DDTHH:mm", 없으면 null */
 		// 범위면 { start, end } (각각 문자열 또는 null)
@@ -894,8 +960,9 @@ export function DatePicker(element, options = {}) {
 			cleanups.forEach((cleanup) => {
 				cleanup();
 			});
+			// 숨은 input 은 남긴다 - 폼이 값을 계속 보내고, 다시 만들면 같은 name 으로 이어받는다 (범위면 종료도, #974)
 			created.forEach((el) => {
-				if (el !== hidden) el.remove();
+				if (el !== hidden && el !== hiddenEnd) el.remove();
 			});
 			if (root._btDatePicker === api) delete root._btDatePicker;
 		},
