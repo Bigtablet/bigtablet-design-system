@@ -1,9 +1,10 @@
 "use client";
 
-import { Calendar } from "lucide-react";
+import { Calendar, X } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn } from "../../../utils";
+import { IconButton } from "../../general/icon-button";
 import { Popover } from "../../overlay/popover";
 import { useLocaleName, useLocaleText } from "../../system/locale-provider";
 import { DateCalendar } from "../date-calendar";
@@ -67,6 +68,13 @@ interface DatePickerBaseProps {
 	 * - sm · md 40px, lg 48px (좁은 화면은 한 단계 위).
 	 */
 	size?: DropdownSize;
+	/**
+	 * 값이 있을 때 지우기(×) 버튼을 둔다 - 누르면 `onValueChange("")` (#965). 조회 조건처럼
+	 * "값 없음 = 조건 없음" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다
+	 */
+	clearable?: boolean;
+	/** 지우기 버튼 이름 (기본값: 로케일 `datePicker.clear`) */
+	clearLabel?: string;
 	/** 연도 select의 라벨/플레이스홀더 */
 	yearLabel?: string;
 	/** 월 select의 라벨/플레이스홀더 */
@@ -120,6 +128,8 @@ export const DatePicker = ({
 	required,
 	fullWidth = true,
 	size = "md",
+	clearable = false,
+	clearLabel: clearLabelProp,
 	yearLabel: yearLabelProp,
 	monthLabel: monthLabelProp,
 	dayLabel: dayLabelProp,
@@ -139,6 +149,9 @@ export const DatePicker = ({
 	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
 	// 안쪽 컨트롤마다 내려보낸다. Field 가 감싸면 Field 가 출처다.
 	const isRequired = field ? field.required || undefined : required || undefined;
+	const clearLabel = clearLabelProp ?? t("datePicker.clear");
+	// 값이 있을 때만 - 비활성 칸은 지울 수 없다
+	const onClear = clearable && value && !disabled ? () => onValueChange("") : undefined;
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
@@ -395,6 +408,8 @@ export const DatePicker = ({
 				prevLabel={t("datePicker.prevMonth")}
 				nextLabel={t("datePicker.nextMonth")}
 				onSelect={(d) => emit(d.year, d.month, d.day)}
+				onClear={onClear}
+				clearLabel={clearLabel}
 			/>
 		);
 	}
@@ -462,6 +477,21 @@ export const DatePicker = ({
 						/>
 					)}
 				</FieldControlBoundary>
+				{onClear && (
+					<IconButton
+						className="date_picker_clear"
+						size="sm"
+						icon={<X size={iconSize.sm} />}
+						aria-label={clearLabel}
+						onClick={(e) => {
+							// 지우면 이 버튼이 사라져 포커스가 body 로 떨어진다 - 연도 칸으로 돌린다
+							const first =
+								e.currentTarget.parentElement?.querySelector<HTMLButtonElement>("button");
+							onClear();
+							first?.focus();
+						}}
+					/>
+				)}
 			</div>
 		</div>
 	);
@@ -489,6 +519,9 @@ interface CalendarFieldProps {
 	prevLabel: string;
 	nextLabel: string;
 	onSelect: (date: CalendarDate) => void;
+	/** 지우기 - 지울 값이 있을 때만 준다 */
+	onClear: (() => void) | undefined;
+	clearLabel: string;
 }
 
 /**
@@ -520,6 +553,8 @@ const CalendarField = ({
 	prevLabel,
 	nextLabel,
 	onSelect,
+	onClear,
+	clearLabel,
 }: CalendarFieldProps) => {
 	const [open, setOpen] = React.useState(false);
 	const valueId = React.useId();
@@ -545,53 +580,88 @@ const CalendarField = ({
 					{constraintDesc}
 				</span>
 			)}
-			<Popover
-				open={open && !disabled}
-				onOpenChange={setOpen}
-				placement="bottom"
-				aria-label={dialogLabel}
-				className="date_picker_popover"
-				trigger={
-					<button
-						type="button"
-						// Field 의 `<label for>` 가 이 칸을 가리킨다 - 칸이 하나뿐이라 드롭다운 3개 때의
-						// id 충돌(#629)이 없다.
-						id={inputId}
-						className="date_picker_trigger"
-						disabled={disabled}
-						// 이름 = 라벨 + 지금 값. 값만 읽히면 무엇의 날짜인지 모른다.
-						aria-labelledby={[labelId, valueId].filter(Boolean).join(" ")}
-						aria-describedby={describedBy}
-						aria-invalid={invalid || undefined}
-					>
-						<Calendar size={iconSize.md} aria-hidden="true" className="date_picker_trigger_icon" />
-						<span
-							id={valueId}
-							className={
-								valueText ? "date_picker_trigger_value" : "date_picker_trigger_placeholder"
-							}
+			<div className={cn("date_picker_field", onClear && "date_picker_field_clearable")}>
+				<Popover
+					open={open && !disabled}
+					onOpenChange={setOpen}
+					placement="bottom"
+					aria-label={dialogLabel}
+					className="date_picker_popover"
+					trigger={
+						<button
+							type="button"
+							// Field 의 `<label for>` 가 이 칸을 가리킨다 - 칸이 하나뿐이라 드롭다운 3개 때의
+							// id 충돌(#629)이 없다.
+							id={inputId}
+							className="date_picker_trigger"
+							disabled={disabled}
+							// 이름 = 라벨 + 지금 값. 값만 읽히면 무엇의 날짜인지 모른다.
+							aria-labelledby={[labelId, valueId].filter(Boolean).join(" ")}
+							aria-describedby={describedBy}
+							aria-invalid={invalid || undefined}
+							onKeyDown={(e) => {
+								// 수정 키와 함께면 브라우저 · 보조기술 단축키라 건드리지 않는다
+								const modified = e.ctrlKey || e.metaKey || e.altKey;
+								if (onClear && !modified && (e.key === "Delete" || e.key === "Backspace")) {
+									e.preventDefault();
+									onClear();
+								}
+							}}
 						>
-							{valueText ?? placeholder}
-						</span>
-					</button>
-				}
-				content={
-					<DateCalendar
-						value={selected ? toIso(selected) : null}
-						today={toIso(today)}
-						// 넘김 범위는 달 단위 - 그 안의 날별 판정은 isDateDisabled 가 맡는다
-						min={toIso({ ...minMonth, day: 1 })}
-						max={toIso({ ...maxMonth, day: new Date(maxMonth.year, maxMonth.month, 0).getDate() })}
-						isDateDisabled={(iso) => !isSelectable(fromIso(iso))}
-						prevMonthLabel={prevLabel}
-						nextMonthLabel={nextLabel}
-						onValueChange={(iso) => {
-							onSelect(fromIso(iso));
+							<Calendar
+								size={iconSize.md}
+								aria-hidden="true"
+								className="date_picker_trigger_icon"
+							/>
+							<span
+								id={valueId}
+								className={
+									valueText ? "date_picker_trigger_value" : "date_picker_trigger_placeholder"
+								}
+							>
+								{valueText ?? placeholder}
+							</span>
+						</button>
+					}
+					content={
+						<DateCalendar
+							value={selected ? toIso(selected) : null}
+							today={toIso(today)}
+							// 넘김 범위는 달 단위 - 그 안의 날별 판정은 isDateDisabled 가 맡는다
+							min={toIso({ ...minMonth, day: 1 })}
+							max={toIso({
+								...maxMonth,
+								day: new Date(maxMonth.year, maxMonth.month, 0).getDate(),
+							})}
+							isDateDisabled={(iso) => !isSelectable(fromIso(iso))}
+							prevMonthLabel={prevLabel}
+							nextMonthLabel={nextLabel}
+							onValueChange={(iso) => {
+								onSelect(fromIso(iso));
+								setOpen(false);
+							}}
+						/>
+					}
+				/>
+				{onClear && (
+					// 칸 안에 둘 수 없어(버튼 안 버튼) 칸 오른쪽에 겹친다. 지운 뒤 포커스는 칸으로 - 이 버튼은 사라진다
+					<IconButton
+						className="date_picker_clear"
+						size="sm"
+						icon={<X size={iconSize.sm} />}
+						aria-label={clearLabel}
+						onClick={(e) => {
+							const trigger =
+								e.currentTarget.parentElement?.querySelector<HTMLButtonElement>(
+									".date_picker_trigger",
+								);
 							setOpen(false);
+							onClear();
+							trigger?.focus();
 						}}
 					/>
-				}
-			/>
+				)}
+			</div>
 		</div>
 	);
 };

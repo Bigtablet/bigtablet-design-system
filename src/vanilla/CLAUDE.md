@@ -352,6 +352,7 @@ const to = Bigtablet.DatePicker('#to', {
 });
 to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
 // size: 'sm' | 'md'(기본) | 'lg' (data-size) - 폼 칸 · Button 은 React 와 같은 높이 단계라 한 줄에 맞는다 (#960)
+// clearable: true (data-clearable) - 값이 있으면 × · Delete 로 비운다 → onValueChange(null), 범위면 { start: null, end: null } (#965)
 
 // 로케일 (#949) - <html lang> 을 따르고, 자동 초기화 전에 바꾼다. 컴포넌트 기본 문구는 하드코딩하지 말고 t(key) 로
 Bigtablet.setLocale('en'); Bigtablet.setMessages({ 'pagination.prev': 'Prev' });

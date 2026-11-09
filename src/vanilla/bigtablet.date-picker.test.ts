@@ -516,3 +516,82 @@ describe("DatePicker 시각 먼저 고르기 (#964)", () => {
 		expect(expanded()).toBe("false");
 	});
 });
+
+// 고른 날짜를 지운다 - 조회 조건처럼 "값 없음 = 조건 없음" 인 칸 (#965)
+describe("DatePicker clearable (#965)", () => {
+	const mountRoot = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<div class="bt-date-picker" ${attrs}></div>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLElement;
+	};
+	const clearBtn = (root: HTMLElement) =>
+		root.querySelector(".bt-date-picker__clear") as HTMLButtonElement | null;
+	const triggerOf = (root: HTMLElement) =>
+		root.querySelector(".bt-date-picker__trigger") as HTMLButtonElement;
+
+	it("값이 있을 때만 지우기 버튼을 보이고, 누르면 비우고 placeholder 로 돌아간다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot('data-clearable data-name="from" data-value="2026-11-09"');
+		DatePicker(root, { onValueChange });
+		const btn = clearBtn(root) as HTMLButtonElement;
+		expect(btn.hidden).toBe(false);
+		expect(btn.getAttribute("aria-label")).toBe("날짜 지우기");
+		btn.click();
+		expect(onValueChange).toHaveBeenCalledWith(null);
+		expect((root.querySelector('input[name="from"]') as HTMLInputElement).value).toBe("");
+		expect(triggerOf(root).textContent).toContain("날짜 선택");
+		expect(btn.hidden).toBe(true);
+		expect(triggerOf(root).getAttribute("aria-expanded")).toBe("false");
+		expect(document.activeElement).toBe(triggerOf(root));
+	});
+
+	it("끄면 버튼이 없고 Delete 도 지우지 않는다", () => {
+		const root = mountRoot('data-value="2026-11-09"');
+		const api = DatePicker(root);
+		expect(clearBtn(root)).toBeNull();
+		triggerOf(root).dispatchEvent(new KeyboardEvent("keydown", { key: "Delete", bubbles: true }));
+		expect(api?.getValue()).toBe("2026-11-09");
+	});
+
+	it("수정 키와 함께 누른 Backspace 는 지우지 않는다", () => {
+		const root = mountRoot('data-clearable data-value="2026-11-09"');
+		const api = DatePicker(root);
+		triggerOf(root).dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Backspace", metaKey: true, bubbles: true }),
+		);
+		expect(api?.getValue()).toBe("2026-11-09");
+	});
+
+	it("칸에서 Delete · Backspace 로 지운다", () => {
+		for (const key of ["Delete", "Backspace"]) {
+			const root = mountRoot('data-clearable data-value="2026-11-09"');
+			const api = DatePicker(root);
+			triggerOf(root).dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+			expect(api?.getValue()).toBeNull();
+		}
+	});
+
+	it("범위형은 시작 · 종료를 함께 비운다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot('data-clearable data-start="2026-11-03" data-end="2026-11-05"');
+		DateRangePicker(root, { onValueChange });
+		(clearBtn(root) as HTMLButtonElement).click();
+		expect(onValueChange).toHaveBeenCalledWith({ start: null, end: null });
+	});
+
+	it("minFrom 으로 이어진 칸은 기준 칸이 비면 제한이 풀린다", () => {
+		const from = mountRoot('id="from-clear" data-clearable data-value="2026-11-10"');
+		const to = mountRoot('data-min-from="#from-clear"');
+		DatePicker(from);
+		const toApi = DatePicker(to, { today: "2026-11-01" });
+		toApi?.open();
+		expect(to.querySelector('button[data-day="5"]')?.getAttribute("aria-disabled")).toBe("true");
+		toApi?.close();
+		(clearBtn(from) as HTMLButtonElement).click();
+		toApi?.open();
+		expect(to.querySelector('button[data-day="5"]')?.getAttribute("aria-disabled")).not.toBe(
+			"true",
+		);
+	});
+});

@@ -40,6 +40,7 @@ export interface LocaleMessages {
 	"combobox.loading": string;
 	"combobox.placeholder": string;
 	"datePicker.calendar": string;
+	"datePicker.clear": string;
 	"datePicker.day": string;
 	"datePicker.minDateSr": string; // {date}
 	"datePicker.month": string;
@@ -129,6 +130,7 @@ export const ko: LocaleMessages = {
 	"combobox.loading": "검색 중",
 	"combobox.placeholder": "검색해서 선택",
 	"datePicker.calendar": "달력",
+	"datePicker.clear": "날짜 지우기",
 	"datePicker.day": "일",
 	"datePicker.minDateSr": "최소 날짜: {date}",
 	"datePicker.month": "월",
@@ -215,6 +217,7 @@ export const en: LocaleMessages = {
 	"combobox.loading": "Searching",
 	"combobox.placeholder": "Search to select",
 	"datePicker.calendar": "Calendar",
+	"datePicker.clear": "Clear date",
 	"datePicker.day": "Day",
 	"datePicker.minDateSr": "Earliest date: {date}",
 	"datePicker.month": "Month",

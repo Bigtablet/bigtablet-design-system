@@ -92,6 +92,9 @@ export function DatePicker(element, options = {}) {
 		today: pick("today", ds.today),
 		weekStartsOn: pick("weekStartsOn", ds.weekStartsOn, Number) ?? 0,
 		disabled: pick("disabled", ds.disabled, parseBoolAttr) ?? false,
+		// 값이 있으면 칸 오른쪽에 지우기(×) - 조회 조건처럼 "값 없음 = 조건 없음" 인 칸 (#965). 필수 칸에는 두지 않는다
+		clearable: pick("clearable", ds.clearable, parseBoolAttr) ?? false,
+		clearLabel: pick("clearLabel", ds.clearLabel) ?? t("datePicker.clear"),
 		// 칸 크기 - Dropdown · TextField · Button 과 같은 단계 (sm · md 40px, lg 48px, #960). 클래스
 		// `bt-date-picker--{size}` 를 직접 써도 된다
 		size: pick("size", ds.size),
@@ -169,7 +172,9 @@ export function DatePicker(element, options = {}) {
 		initial.end ??= hiddenEnd?.value || undefined;
 	}
 
-	const trigger = make("button", "bt-date-picker__trigger", root);
+	// 칸 + 지우기 버튼. 지우기는 칸 안에 둘 수 없어(버튼 안 버튼) 옆에 겹쳐 둔다
+	const field = make("div", "bt-date-picker__field", root);
+	const trigger = make("button", "bt-date-picker__trigger", field);
 	trigger.type = "button";
 	trigger.setAttribute("aria-haspopup", "dialog");
 	trigger.setAttribute("aria-expanded", "false");
@@ -177,6 +182,18 @@ export function DatePicker(element, options = {}) {
 	trigger.innerHTML = `<span class="bt-date-picker__trigger-icon" aria-hidden="true"></span><span class="bt-date-picker__trigger-text" id="${valueId}"></span>`;
 	const valueEl = trigger.lastElementChild;
 	trigger.setAttribute("aria-labelledby", [labelEl?.id, valueId].filter(Boolean).join(" "));
+	const clearBtn = config.clearable ? make("button", "bt-date-picker__clear", field) : null;
+	if (clearBtn) {
+		clearBtn.type = "button";
+		clearBtn.setAttribute("aria-label", config.clearLabel);
+		field.classList.add("bt-date-picker__field--clearable");
+		cleanups.push(
+			on(clearBtn, "click", () => {
+				close();
+				clear();
+			}),
+		);
+	}
 
 	const panel = make("div", "bt-date-picker__panel", root);
 	panel.setAttribute("role", "dialog");
@@ -327,6 +344,7 @@ export function DatePicker(element, options = {}) {
 		valueEl.textContent = text;
 		valueEl.className = `bt-date-picker__trigger-${has ? "value" : "placeholder"}`;
 		trigger.disabled = config.disabled;
+		if (clearBtn) clearBtn.hidden = !has || config.disabled;
 		for (const [el, val] of [
 			[hidden, v],
 			[hiddenEnd, state.end],
@@ -505,6 +523,13 @@ export function DatePicker(element, options = {}) {
 	/** 바깥에 내보내는 값 - 한 칸이면 문자열, 범위면 { start, end } */
 	const output = () =>
 		config.range ? { start: out(state.value), end: out(state.end) } : out(state.value);
+
+	/** 값을 비운다 (지우기 버튼 · Delete) - 범위면 시작 · 종료 함께. 팝오버는 열지 않는다 */
+	function clear() {
+		draft.start = draft.end = null;
+		commit(null, true, null);
+		trigger.focus();
+	}
 
 	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	function commit(next, notify = true, end = state.end) {
@@ -686,7 +711,19 @@ export function DatePicker(element, options = {}) {
 	// ── 이벤트 ───────────────────────────────────────────────────────────────
 	cleanups.push(
 		on(trigger, "click", () => (state.isOpen ? close() : open())),
+
 		on(trigger, "keydown", (e) => {
+			if (
+				config.clearable &&
+				(e.key === "Delete" || e.key === "Backspace") &&
+				// 수정 키와 함께면 브라우저 · 보조기술 단축키라 건드리지 않는다
+				!(e.ctrlKey || e.metaKey || e.altKey) &&
+				(state.value || state.end)
+			) {
+				e.preventDefault();
+				clear();
+				return;
+			}
 			if (e.key === "ArrowDown" && !state.isOpen) {
 				e.preventDefault();
 				open();
