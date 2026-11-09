@@ -3,7 +3,10 @@
 /* ========================================
    CSS Custom Properties (Design Tokens)
    ======================================== */
-:root {
+// [data-theme] 에도 다시 선언한다 - :root 에서 계산된 별칭은 그 값으로 상속돼, 자손에 둔 data-theme="dark" 안에서
+// 반전되지 않았다 (#976). 그 요소에서 다시 풀면 그 테마의 토큰 값을 읽는다
+:root,
+[data-theme] {
   /* Colors - Brand (양 테마 검정/흰 고정 - 의도적으로 반전되지 않아야 하는 표면용) */
   --bt-color-primary: #{token.$color_brand_primary};
   --bt-color-on-primary: #{token.$color_brand_on_primary};

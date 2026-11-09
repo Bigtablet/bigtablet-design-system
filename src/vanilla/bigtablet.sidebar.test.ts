@@ -59,3 +59,28 @@ describe("Sidebar 접기 (#950)", () => {
 		expect(Sidebar(root)?.isCollapsed()).toBe(true);
 	});
 });
+
+describe("Sidebar data-width 단위 (#976)", () => {
+	it("280px 처럼 단위를 붙여도 너비로 받는다", () => {
+		document.body.innerHTML = '<aside class="bt-sidebar" data-width="280px"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.getPropertyValue("--bt-sidebar-width")).toBe("280px");
+	});
+
+	it("처음 그릴 때 끈 전환을 소비자 인라인 값으로 되돌린다", () => {
+		document.body.innerHTML = '<aside class="bt-sidebar" style="transition: width 1s"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.transition).toBe("width 1s");
+	});
+
+	it("소비자가 준 transition longhand 도 지킨다", () => {
+		document.body.innerHTML =
+			'<aside class="bt-sidebar" style="transition-property: opacity; transition-duration: 1s"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.transitionProperty).toBe("opacity");
+		expect(el.style.transitionDuration).toBe("1s");
+	});
+});

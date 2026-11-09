@@ -101,7 +101,9 @@ export const intlLocale = () => (getLocale() === "en" ? "en-US" : "ko-KR");
  */
 export function setLocale(locale) {
 	// 자체 키만 - "constructor" 같은 프로토타입 키가 들어가면 t() 가 TypeError 를 낸다
-	forced = locale && Object.hasOwn(catalogs, locale) ? locale : null;
+	// "en-US" · "EN" 도 받는다 - <html lang> 을 읽을 때와 같은 관용 (#976)
+	const lang = locale ? String(locale).toLowerCase().split("-")[0] : null;
+	forced = lang && Object.hasOwn(catalogs, lang) ? lang : null;
 }
 
 /** 일부 문구를 덮어쓴다 - `{ "pagination.prev": "Prev" }`. 로케일과 무관하게 이긴다. null 이면 덮어쓴 문구를 모두 지운다 */

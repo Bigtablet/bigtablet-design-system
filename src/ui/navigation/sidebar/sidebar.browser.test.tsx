@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import "../../../vanilla/scss/_custom-properties.scss";
 import "../../../vanilla/scss/_app-shell.scss";
 import "../../../vanilla/scss/_sidebar.scss";
 import { AppShell, Sidebar } from "../../../vanilla/bigtablet.js";

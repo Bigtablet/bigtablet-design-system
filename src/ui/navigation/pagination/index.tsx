@@ -202,6 +202,8 @@ export const Pagination = ({
 									}}
 									onKeyDown={(e) => {
 										if (e.key === "Escape") {
+											// 적다 만 값을 되돌렸으면 "처리했다" 고 알린다 - 바깥 Modal 이 같은 Escape 로 닫히지 않게 (#976)
+											if (e.currentTarget.value !== String(page)) e.preventDefault();
 											resetJump();
 											return;
 										}

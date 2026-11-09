@@ -785,7 +785,7 @@ export function Dropdown(element, options = {}) {
 	// hidden input 이 없으면 서버가 옵션에 그린 `is-selected` 를 읽는다 (`th:classappend`). renderSelection 이
 	// 클래스를 값 기준으로 다시 그리므로 그 전에 (#975). 다시 만들 때도 앞 인스턴스의 선택이 여기 남아 있다
 	const markupValues = state.options
-		.filter((o, i) => optionEls[i]?.classList.contains("is-selected"))
+		.filter((_, i) => optionEls[i]?.classList.contains("is-selected"))
 		.map((o) => o.value);
 	const serverValues = hiddenValues.length > 0 ? hiddenValues : markupValues;
 	panel.style.display = "none";

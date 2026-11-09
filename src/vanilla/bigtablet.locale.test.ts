@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { catalogs } from "../ui/system/locale-provider/messages";
-import { DatePicker, Pagination, setLocale, setMessages } from "./bigtablet.js";
+import { DatePicker, getLocale, Pagination, setLocale, setMessages } from "./bigtablet.js";
 import { resetVanillaDom } from "./bigtablet.test-utils";
 import { vanillaCatalogs } from "./js/locale.js";
 
@@ -70,5 +70,13 @@ describe("Vanilla locale (#949)", () => {
 		expect(root.querySelector('[data-nav="-1"]')?.getAttribute("aria-label")).toBe(
 			"Previous month",
 		);
+	});
+});
+
+describe("setLocale 지역 태그 (#976)", () => {
+	afterEach(() => setLocale(null));
+	it.each(["en-US", "EN", "en"])("%s 를 en 으로 받는다", (tag) => {
+		setLocale(tag);
+		expect(getLocale()).toBe("en");
 	});
 });

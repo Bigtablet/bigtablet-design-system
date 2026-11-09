@@ -13,6 +13,9 @@ import { $, $$, escapeHtml } from "./utils.js";
 export function Pagination(element, options = {}) {
 	const container = typeof element === "string" ? $(element) : element;
 	if (!container) return null;
+	// 같은 요소에 다시 만들면 앞 인스턴스를 걷고 교체한다 (Modal · Toggle 과 같음). 인스턴스를 등록해 두면
+	// 수동 초기화 뒤 자동 초기화(init)가 콜백 없는 인스턴스로 덮지 않는다 (#976)
+	container._btPagination?.destroy();
 
 	const config = {
 		page: 1,
@@ -105,6 +108,8 @@ export function Pagination(element, options = {}) {
 	}
 
 	function render() {
+		// 걷힌 인스턴스는 그리지 않는다 - 같은 요소의 새 인스턴스 화면을 옛 리스너로 덮지 않게
+		if (destroyed) return;
 		const items = getPaginationItems(config.page, config.totalPages);
 		// innerHTML 을 갈면 누른 버튼이 사라져 포커스가 body 로 떨어진다 - 같은 자리로 되돌린다
 		const focused = container.contains(document.activeElement) ? document.activeElement : null;
@@ -166,6 +171,8 @@ export function Pagination(element, options = {}) {
 			});
 			input.addEventListener("keydown", (e) => {
 				if (e.key === "Escape") {
+					// 적다 만 값을 되돌렸으면 "처리했다" 고 알린다 - 바깥 Modal 이 같은 Escape 로 닫히지 않게 (#976)
+					if (input.value !== String(config.page)) e.preventDefault();
 					resetJump(input);
 					return;
 				}
@@ -242,7 +249,10 @@ export function Pagination(element, options = {}) {
 		}
 	}
 
-	function setPage(page) {
+	function setPage(value) {
+		// `setPage(input.value)` 처럼 문자열이 와도 쪽 번호로 - 그대로 두면 "3" + 1 = "31" 이 됐다 (#976)
+		const page = Number(value);
+		if (!Number.isInteger(page)) return;
 		if (page < 1 || page > config.totalPages || page === config.page) return;
 
 		config.page = page;
@@ -260,13 +270,26 @@ export function Pagination(element, options = {}) {
 		render();
 	}
 
+	let destroyed = false;
+
 	// Initialize
 	render();
 
-	return {
+	const api = {
 		getPage: () => config.page,
 		setPage,
 		setTotalPages,
 		render,
+		/** 그린 버튼과 리스너를 걷는다 - 다시 만들 때 앞 인스턴스를 치운다 */
+		destroy: () => {
+			if (destroyed) return;
+			destroyed = true;
+			// 이미 교체된 인스턴스면 지금 화면은 새 인스턴스 것이다 - 지우지 않는다
+			if (container._btPagination !== api) return;
+			container.innerHTML = "";
+			delete container._btPagination;
+		},
 	};
+	container._btPagination = api;
+	return api;
 }

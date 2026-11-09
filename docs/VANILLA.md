@@ -1070,8 +1070,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 ```html
 <script>
-  // Dropdown 과 마찬가지로, 수동 초기화 대상에는 `data-bt-pagination` 을 붙이지 않는다
-  // (붙이면 자동 초기화와 인스턴스가 겹친다).
+  // 수동 초기화 대상에는 `data-bt-pagination` 을 붙이지 않아도 된다 - 붙여도 손으로 만든 인스턴스가
+  // 이기고(자동 초기화가 건너뛰거나 교체된다) onPageChange 가 사라지지 않는다 (#976).
   const pagination = Bigtablet.Pagination('#article-pagination', {
     page: 1,
     totalPages: 20,
@@ -1253,7 +1253,7 @@ React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종�
 
 ### AppShell · Sidebar
 
-React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다 - CSS 만, 스크립트 없음.
+React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다. 고정 헤더 높이(`AppShell()`, 헤더가 있으면 자동)와 사이드바 접기(`Sidebar()` · `data-bt-sidebar`)만 스크립트가 맡는다.
 
 ```html
 <div class="bt-app-shell">
@@ -1359,19 +1359,19 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 ```css
 :root {
   /* Colors */
-  --bt-color-primary: #000000;
+  --bt-color-primary: #121212;
   --bt-color-primary-hover: #333333;
   --bt-color-primary-container: rgba(0, 0, 0, 0.05);  /* .bt-button--tonal 채움색 */
   --bt-color-background: #ffffff;
   --bt-color-background-secondary: #fafafa;
-  --bt-color-text-primary: #1a1a1a;
+  --bt-color-text-primary: #121212;
   --bt-color-text-secondary: #666666;
-  --bt-color-text-tertiary: #999999;
+  --bt-color-text-tertiary: #6f6f6f;
   --bt-color-border: #e5e5e5;
   --bt-color-success: #047857;
-  --bt-color-error: #ef4444;
-  --bt-color-warning: #f59e0b;
-  --bt-color-info: #2563eb;
+  --bt-color-error: #b91c1c;
+  --bt-color-warning: #b45309;
+  --bt-color-info: #1d4ed8;
   --bt-color-accent: #121212;             /* 강조색 - 다크에서 자동 반전 */
   --bt-color-accent-on-surface: #ffffff;  /* 강조색 위 글자·아이콘 */
 
@@ -1445,7 +1445,14 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
 <button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
+<div data-bt-date-picker>...</div> <!-- DatePicker 자동 초기화 -->
+<button data-bt-copy="값">...</button> <!-- CopyButton 자동 초기화 -->
+<aside data-bt-sidebar>...</aside> <!-- Sidebar 접기 자동 초기화 -->
+<div class="bt-app-shell">...</div> <!-- AppShell - .bt-app-shell__header 가 있으면 자동 -->
 ```
+
+같은 요소에 손으로 다시 만들면(`Bigtablet.Pagination(el, { onPageChange })`) 자동 초기화 인스턴스를 걷고 교체한다.
+손으로 먼저 만들었으면 자동 초기화가 건너뛴다 - 콜백 없는 인스턴스로 덮지 않는다 (#976).
 
 ### 수동 초기화
 
