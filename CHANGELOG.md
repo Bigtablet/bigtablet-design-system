@@ -4,6 +4,16 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.7.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.7.0) - 2026-11-09
+- DatePicker · DateRangePicker 에 `clearable` 이 생겼습니다 - 값이 있으면 칸에 지우기(×) 버튼이 생기고, 달력형은 칸에서 Delete · Backspace 로도 지웁니다. React 는 `onValueChange("")`, Vanilla(`data-clearable`)는 `onValueChange(null)` 입니다. 범위형은 시작 · 종료를 함께 비웁니다
+- DatePicker 에 `size`(`sm` · `md` · `lg`, 기본 `md`)가 생겼습니다 - Dropdown · TextField 와 같은 높이 단계입니다. Vanilla 는 `data-size`
+- CopyButton 에 보이는 글자와 따로 이름을 줄 수 있습니다 - React `aria-label`, Vanilla `data-aria-label` · `ariaLabel`. 표처럼 복사 버튼이 여럿일 때 "192.168.10.1 주소 복사" 처럼 구분합니다
+- Vanilla 달력형 DatePicker 에서 시 · 분을 날짜보다 먼저 고를 수 있습니다 - 날짜를 고르기 전에 시 칸을 누르면 팝오버가 닫히던 문제를 고쳤습니다
+- (렌더 변경) Vanilla Dropdown · TextField 칸을 React 와 같은 높이 · 모서리로 맞췄습니다 - md 49px → 40px(lg 48px), 모서리 8px → 12px. 라벨 → 칸 간격은 세 폼 컨트롤 모두 6px 입니다. 조회 조건처럼 한 줄에 두면 윗선이 맞습니다
+- (렌더 변경) Vanilla Button 높이 · 글자를 React 와 같게 맞췄습니다 - sm 32 · md 40 · lg 48 · xl 56px, 글자는 모두 14px. 칸 sm · md 옆에는 `bt-button--md`, lg 옆에는 `bt-button--lg` 가 같은 높이입니다
+- (렌더 변경) React TextField 가 테두리까지 40px 이 됩니다(예전 42px). DatePicker 라벨 아래 간격이 8px → 6px 입니다 (React · Vanilla)
+- (렌더 변경) Vanilla 연 · 월 · 일 select 가 칸 높이 · 모서리(44px · 6px → 40px · 12px)를 따릅니다
+
 ## [4.6.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.6.0) - 2026-11-06
 - Vanilla 에 달력형 DatePicker 가 생겼습니다 - `Bigtablet.DatePicker` · `data-bt-date-picker`. 시각(`data-time`)까지 고르면 값이 datetime-local 과 같은 `YYYY-MM-DDTHH:mm` 입니다. 제목을 누르면 월 · 연 보기, "오늘" 로 한 번에 오늘을 고릅니다. 옵션 이름은 React DatePicker · DateCalendar · TimePicker prop 과 같습니다
 - Vanilla 범위형 DatePicker(`data-range` · `Bigtablet.DateRangePicker`) - 한 팝오버에서 시작 · 종료를 고르고 사이를 띠로 보입니다. 시작을 종료 뒤로 옮기면 종료를 비웁니다 (React DateRangePicker 와 같음)
