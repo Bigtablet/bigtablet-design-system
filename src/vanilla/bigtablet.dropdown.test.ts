@@ -758,6 +758,14 @@ describe("Dropdown 서버 선택 · 재초기화 · 리스너 (#975)", () => {
 		);
 	});
 
+	it("다시 만들 때 마크업 placeholder 가 바뀌었으면 그쪽을 따른다", () => {
+		const wrap = dropdownMarkup({ placeholder: "옛 문구" });
+		Dropdown(wrap);
+		(wrap.querySelector(".bt-dropdown__placeholder") as HTMLElement).textContent = "새 문구";
+		Dropdown(wrap)?.setValue(null);
+		expect(wrap.querySelector(".bt-dropdown__control")?.textContent?.trim()).toBe("새 문구");
+	});
+
 	it("바깥 클릭 리스너는 열린 동안만 건다", () => {
 		const add = vi.spyOn(document, "addEventListener");
 		const dd = Dropdown(dropdownMarkup());

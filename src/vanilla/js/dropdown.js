@@ -68,10 +68,11 @@ export function Dropdown(element, options = {}) {
 	} else if (options.placeholder === undefined) {
 		// 서버 마크업의 `.bt-dropdown__placeholder` 텍스트를 기본 placeholder 로 이어받는다.
 		// (없으면 값을 지웠을 때 마크업에 쓴 문구 대신 라이브러리 기본값이 튀어나온다.)
-		// 다시 만들 때는 값이 골라져 있으면 그 span 이 `__value` 라 문구를 못 읽는다 - 앞 인스턴스가 쓴 것을 이어받는다 (#975)
+		// 다시 만들 때 값이 골라져 있으면 그 span 이 `__value` 라 문구를 못 읽는다 - 그때만 앞 인스턴스가 쓴 것을
+		// 이어받는다. 마크업이 먼저다 - 서버가 안쪽을 새로 그려 문구가 바뀌었으면 그쪽을 따른다 (#975)
 		const markupPlaceholder =
-			wrapper._btPlaceholder ??
-			wrapper.querySelector(".bt-dropdown__placeholder")?.textContent.trim();
+			wrapper.querySelector(".bt-dropdown__placeholder")?.textContent.trim() ||
+			wrapper._btPlaceholder;
 		if (markupPlaceholder) config.placeholder = markupPlaceholder;
 	}
 	wrapper._btPlaceholder = config.placeholder;
