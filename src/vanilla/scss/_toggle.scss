@@ -52,7 +52,7 @@
     left: 10px; // 24/2 - 테두리 2
     width: 12px;
     height: 12px;
-    background: var(--bt-color-background);
+    background: var(--bt-color-on-primary); // React 와 같은 on_primary - background 면 다크에서 검은 점이었다 (#976)
     border-radius: var(--bt-radius-full);
     transition: transform var(--bt-transition-base),
                 width var(--bt-transition-base),
@@ -102,8 +102,12 @@
     // React Toggle 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
     background: token.$color_base_neutral_400;
 
-    // React Toggle 과 같은 토큰 - 하드코딩 흰색은 다크에서 활성 off 토글보다 밝아 비활성 신호가 뒤집혔다
+    // React Toggle 과 같은 토큰 - off 는 on_primary, on 은 accent_on_surface (#976)
     .bt-toggle__thumb {
+      background: var(--bt-color-on-primary);
+    }
+
+    &.bt-toggle--on .bt-toggle__thumb {
       background: var(--bt-color-accent-on-surface);
     }
   }

@@ -59,3 +59,12 @@ describe("Sidebar 접기 (#950)", () => {
 		expect(Sidebar(root)?.isCollapsed()).toBe(true);
 	});
 });
+
+describe("Sidebar data-width 단위 (#976)", () => {
+	it("280px 처럼 단위를 붙여도 너비로 받는다", () => {
+		document.body.innerHTML = '<aside class="bt-sidebar" data-width="280px"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.getPropertyValue("--bt-sidebar-width")).toBe("280px");
+	});
+});

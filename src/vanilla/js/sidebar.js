@@ -26,8 +26,9 @@ export function Sidebar(element, options = {}) {
 		defaultCollapsed:
 			pick("defaultCollapsed", ds.collapsed, parseBoolAttr) ??
 			root.classList.contains("bt-sidebar--collapsed"),
-		width: pick("width", ds.width, Number),
-		collapsedWidth: pick("collapsedWidth", ds.collapsedWidth, Number),
+		// parseFloat - `data-width="280px"` 처럼 단위를 붙여도 받는다 (Number 면 NaN 으로 무시됐다, #976)
+		width: pick("width", ds.width, Number.parseFloat),
+		collapsedWidth: pick("collapsedWidth", ds.collapsedWidth, Number.parseFloat),
 		toggleLabel: pick("toggleLabel", ds.toggleLabel) ?? t("sidebar.toggle"),
 		// 접힘 상태를 localStorage 에 기억한다 (Vanilla 전용 - 서버 렌더 화면은 쪽을 옮길 때마다 새로 그린다)
 		storageKey: pick("storageKey", ds.storageKey),
@@ -77,7 +78,11 @@ export function Sidebar(element, options = {}) {
 		config.onCollapsedChange?.(collapsed);
 	}
 
+	// 처음 그릴 때는 너비 전환을 끈다 - 저장된 접힘 상태를 쪽마다 240 → 64px 로 줄이며 보여 주지 않게 (#976)
+	root.style.transition = "none";
 	apply();
+	void root.offsetWidth; // 전환 없이 적용된 너비를 확정한 뒤 되돌린다
+	root.style.transition = "";
 
 	const api = {
 		isCollapsed: () => collapsed,

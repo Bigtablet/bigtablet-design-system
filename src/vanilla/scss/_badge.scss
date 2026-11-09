@@ -19,12 +19,12 @@
   letter-spacing: token.$letter_spacing_tight;
   white-space: nowrap;
   // tone modifier 가 없으면 React 기본값(tone="accent", appearance="solid")과 같다
-  background: token.$color_accent_default;
+  background: var(--bt-color-accent);
   color: token.$color_accent_on_surface;
 
   &--soft {
     background: token.$color_accent_subtle;
-    color: token.$color_accent_default;
+    color: var(--bt-color-accent);
   }
 
   // ── Tone ────────────────────────────────────────────────────────────
@@ -32,12 +32,12 @@
 
   // accent 는 위 기본값 - 클래스로 명시해도 같다
   &--accent {
-    background: token.$color_accent_default;
+    background: var(--bt-color-accent);
     color: token.$color_accent_on_surface;
 
     &.bt-badge--soft {
       background: token.$color_accent_subtle;
-      color: token.$color_accent_default;
+      color: var(--bt-color-accent);
     }
   }
 

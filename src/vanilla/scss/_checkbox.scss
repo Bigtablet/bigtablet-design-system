@@ -86,4 +86,24 @@
     border-left: 0;
     transform: translate(-50%, -58%) rotate(45deg);
   }
+
+  /* 일부 선택 - `input.indeterminate = true` (표 전체 선택). React Checkbox `indeterminate` 와 같은 가로 막대.
+     checked 보다 뒤에 둬서 둘 다일 때도 막대를 그린다 (#976) */
+  &__input:indeterminate + .bt-checkbox__box {
+    background: var(--bt-color-accent);
+    border-color: var(--bt-color-accent);
+  }
+
+  &__input:indeterminate + .bt-checkbox__box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60%;
+    height: 2px;
+    border: 0;
+    border-radius: 1px;
+    background: var(--bt-color-accent-on-surface);
+    transform: translate(-50%, -50%);
+  }
 }

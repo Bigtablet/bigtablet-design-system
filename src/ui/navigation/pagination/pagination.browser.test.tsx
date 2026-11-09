@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 import { Pagination as VanillaPagination } from "../../../vanilla/bigtablet.js";
+import "../../../vanilla/scss/_custom-properties.scss";
 import "../../../vanilla/scss/_pagination.scss";
 import { Pagination } from "./index";
 import "./style.scss";

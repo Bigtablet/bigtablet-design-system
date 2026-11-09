@@ -99,7 +99,7 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     // 현재 메뉴 - React 와 같은 accent 채움. 다크에서도 accent 토큰이 뒤집혀 대비가 유지된다
     &.is-active,
     &[aria-current="page"] {
-      background: token.$color_accent_default;
+      background: var(--bt-color-accent);
       color: token.$color_accent_on_surface;
     }
 
@@ -162,8 +162,8 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     }
 
     &:hover {
-      border-color: token.$color_accent_default;
-      background: token.$color_accent_default;
+      border-color: var(--bt-color-accent);
+      background: var(--bt-color-accent);
       color: token.$color_accent_on_surface;
     }
 
@@ -291,7 +291,7 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
           padding: 0 token.$spacing_16;
           box-sizing: border-box;
           border-radius: token.$radius_full;
-          background: token.$color_accent_default;
+          background: var(--bt-color-accent);
           color: token.$color_accent_on_surface;
         }
 

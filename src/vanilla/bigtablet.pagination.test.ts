@@ -348,3 +348,45 @@ describe("Pagination - showPageJump (#905)", () => {
 		);
 	});
 });
+
+// 감사에서 나온 결함 (#976)
+describe("Pagination - 재초기화 · Escape · setPage (#976)", () => {
+	const mount = (attrs = "") => {
+		document.body.innerHTML = `<nav id="p" class="bt-pagination" ${attrs}></nav>`;
+		return document.getElementById("p") as HTMLElement;
+	};
+
+	it("손으로 만든 뒤 자동 초기화가 돌아도 onPageChange 가 남는다", () => {
+		const el = mount('data-bt-pagination data-page="1" data-total-pages="5"');
+		const onPageChange = vi.fn();
+		Pagination(el, { page: 1, totalPages: 5, onPageChange });
+		init();
+		(el.querySelector('[data-page="2"]') as HTMLElement).click();
+		expect(onPageChange).toHaveBeenCalledWith(2);
+	});
+
+	it("적다 만 쪽 번호를 Escape 로 되돌리면 처리했다고 알린다", () => {
+		const el = mount();
+		Pagination(el, { page: 2, totalPages: 50, showPageJump: true });
+		const input = el.querySelector('[data-action="jump-input"]') as HTMLInputElement;
+		const esc = () => {
+			const e = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+			input.dispatchEvent(e);
+			return e.defaultPrevented;
+		};
+		expect(esc()).toBe(false);
+		input.value = "9";
+		expect(esc()).toBe(true);
+		expect(input.value).toBe("2");
+	});
+
+	it("setPage 는 문자열 숫자를 쪽 번호로 받고 정수가 아니면 무시한다", () => {
+		const onPageChange = vi.fn();
+		const api = Pagination(mount(), { page: 1, totalPages: 10, onPageChange });
+		api?.setPage("3" as unknown as number);
+		expect(api?.getPage()).toBe(3);
+		expect(onPageChange).toHaveBeenCalledWith(3);
+		api?.setPage(4.5);
+		expect(api?.getPage()).toBe(3);
+	});
+});
