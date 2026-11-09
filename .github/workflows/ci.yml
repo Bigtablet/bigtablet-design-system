@@ -167,7 +167,7 @@ jobs:
     # 다른 액션처럼 digest 로 고정한다 (태그 재푸시 대비). 올릴 때는 태그와 digest 를 함께 바꾼다 -
     # digest 는 새 태그로 한 번 돌린 job 의 "Initialize containers" 로그 `Digest:` 줄에 나온다.
     container:
-      image: mcr.microsoft.com/playwright:v1.65.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.0-noble@sha256:6e3fb709361521eb27161606e6da6d2674e5e89fa16516cb37d6fdd91372273d
 
     steps:
       - name: Checkout
