@@ -621,6 +621,10 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않고 콘솔에 경고만 남긴다
 (이전에는 영어 `"Dialog"` 로 채웠다. React Modal 과 같은 이유로 제거).
 
+`[data-modal-close]` 는 클릭 위임이라 열린 뒤 넣은 버튼도 닫는다. 안에 겹친 모달의 닫기 버튼은 그 모달만 닫는다.
+`type` 이 없으면 `<form>` 안에서도 제출하지 않는다. 패널 안에서 누른 채 딤 위에서 떼면(입력칸 글자를 드래그로 고르다
+밖에서 놓기) 닫히지 않는다 (#973).
+
 **JavaScript 연동:**
 
 ```html
@@ -727,6 +731,9 @@ Alert는 JavaScript로만 사용합니다.
 | `onCancel` | `function` | - | 취소 콜백 |
 
 닫을 때 퇴출 모션(페이드아웃 + 아래로)이 끝난 뒤 DOM 에서 걷고 스크롤 잠금을 풉니다. 포커스는 바로 트리거로 돌아갑니다. `prefers-reduced-motion` 에서는 기다리지 않습니다.
+
+열리면 첫 버튼에 포커스가 갑니다 - 취소가 있으면 취소(React Alert 와 같음). `destructive` "삭제?" 에서 Enter 한 번에
+지워지지 않습니다. `onConfirm` · `onCancel` 이 예외를 던져도 Alert 는 닫힙니다 (#973).
 
 ---
 

@@ -1,5 +1,5 @@
 import { afterExit, lockScroll, noop, pushEscape, unlockScroll } from "./overlay.js";
-import { $, $$, FOCUSABLE_SELECTORS, generateId, on } from "./utils.js";
+import { $, focusablesIn, generateId, on, ownsFocus, returnFocusTarget, trapTab } from "./utils.js";
 
 /* ========================================
      Modal Component
@@ -86,12 +86,11 @@ export function Modal(element, options = {}) {
 		popEscape = pushEscape(config.closeOnEscape ? close : noop);
 
 		// 포커스 이동 - 이전 포커스 저장 후 패널 첫 focusable(없으면 패널 자체)로 (WCAG 2.4.3)
-		previousFocus = document.activeElement;
+		previousFocus = returnFocusTarget();
 		if (panel) {
 			// React Modal 과 같은 순서 - 본문 첫 컨트롤, 없으면 패널 첫 focusable(닫기 버튼 등)
-			const first =
-				panel.querySelector(".bt-modal__body")?.querySelector(FOCUSABLE_SELECTORS) ||
-				panel.querySelector(FOCUSABLE_SELECTORS);
+			const body = panel.querySelector(".bt-modal__body");
+			const first = (body && focusablesIn(body)[0]) || focusablesIn(panel)[0];
 			if (first) {
 				first.focus();
 			} else {
@@ -160,7 +159,7 @@ export function Modal(element, options = {}) {
 		}
 
 		// 포커스 복원 - 모션을 기다리지 않는다 (Alert 와 같음)
-		if (previousFocus && typeof previousFocus.focus === "function") {
+		if (previousFocus?.isConnected && typeof previousFocus.focus === "function") {
 			previousFocus.focus();
 		}
 		previousFocus = null;
@@ -191,41 +190,41 @@ export function Modal(element, options = {}) {
 		}
 	}
 
-	function onOverlayClick(e) {
-		if (config.closeOnOverlay && e.target === modal) {
+	// 패널 안에서 누른 채 딤 위에서 떼면 click 이 공통 조상(딤)으로 온다 - 입력칸 글자를 드래그로 고르다
+	// 밖에서 놓으면 닫혔다 (#973). React Modal 의 pressedOverlayRef 와 같다
+	let pressedInside = false;
+	function onPointerDown(e) {
+		pressedInside = e.target !== modal;
+	}
+
+	function onClick(e) {
+		// 닫기 버튼은 위임으로 - 나중에 넣은 버튼도 동작하고, 안에 겹친 모달의 닫기는 그 모달 몫이다 (#973)
+		const closer = e.target.closest?.("[data-modal-close]");
+		if (closer && closer.closest(".bt-modal") === modal) {
+			// type 없는 <button> 은 <form> 안에서 submit 이다 - "취소" 가 폼을 보내지 않게
+			if (!closer.hasAttribute("type")) e.preventDefault();
+			close();
+			return;
+		}
+		const fromInside = pressedInside;
+		pressedInside = false;
+		if (config.closeOnOverlay && e.target === modal && !fromInside) {
 			close();
 		}
 	}
 
 	function onKeyDown(e) {
 		if (!state.isOpen) return;
-		// Escape 는 위 스택이 처리한다.
-		// Tab 트랩 - 포커스가 패널 밖으로 빠지지 않게 순환 (WAI-ARIA APG Dialog)
-		if (e.key === "Tab" && panel) {
-			const focusables = $$(FOCUSABLE_SELECTORS, panel);
-			if (focusables.length === 0) {
-				e.preventDefault();
-				return;
-			}
-			const first = focusables[0];
-			const last = focusables[focusables.length - 1];
-			if (e.shiftKey && document.activeElement === first) {
-				e.preventDefault();
-				last.focus();
-			} else if (!e.shiftKey && document.activeElement === last) {
-				e.preventDefault();
-				first.focus();
-			}
-		}
+		// Escape 는 위 스택이 처리한다. Tab 트랩은 포커스가 이 모달에 있을 때만 - 위에 뜬 Alert 의 Tab 을 막지 않게
+		if (e.key === "Tab" && panel && ownsFocus(panel)) trapTab(e, panel);
 	}
 
 	// Bind events
-	const cleanups = [on(modal, "click", onOverlayClick), on(document, "keydown", onKeyDown)];
-
-	// Close buttons
-	$$("[data-modal-close]", modal).forEach((btn) => {
-		cleanups.push(on(btn, "click", close));
-	});
+	const cleanups = [
+		on(modal, "pointerdown", onPointerDown),
+		on(modal, "click", onClick),
+		on(document, "keydown", onKeyDown),
+	];
 
 	// Public API
 	const api = {

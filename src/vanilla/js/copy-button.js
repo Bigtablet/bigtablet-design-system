@@ -104,6 +104,8 @@ export function CopyButton(element, options = {}) {
 	};
 
 	if (btn.tagName === "BUTTON" && !btn.hasAttribute("type")) btn.setAttribute("type", "button");
+	// destroy 가 소비자가 준 이름으로 되돌린다 (#973)
+	const originalAriaLabel = btn.getAttribute("aria-label");
 	// 이름은 고정 - 보이는 문구가 "복사됨" 으로 바뀌어도 낭독은 아래 status 한 번. 보이는 문구도 처음부터
 	// 이름과 같게 둔다 (label 옵션이 버튼 글자와 다를 때 첫 복사 전까지 어긋나지 않게)
 	btn.setAttribute("aria-label", config.ariaLabel || config.label);
@@ -164,6 +166,8 @@ export function CopyButton(element, options = {}) {
 			seq++;
 			clearTimeout(timer);
 			labelEl.textContent = config.label;
+			if (originalAriaLabel === null) btn.removeAttribute("aria-label");
+			else btn.setAttribute("aria-label", originalAriaLabel);
 			delete btn.dataset.state;
 			status.remove();
 			if (btn._btCopyButton === api) delete btn._btCopyButton;

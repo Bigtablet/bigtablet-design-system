@@ -656,3 +656,179 @@ describe("Modal - 퇴출 모션 (#913)", () => {
 		expect(onExited).toHaveBeenCalledTimes(1);
 	});
 });
+
+// 감사에서 나온 포커스 트랩 · 닫힘 결함 (#973)
+describe("Modal · Alert - 포커스 트랩 · 닫힘 (#973)", () => {
+	const closers: Array<() => void> = [];
+	const alert = (options: Parameters<typeof Alert>[0]) => {
+		const a = Alert(options);
+		closers.push(a.close);
+		return a;
+	};
+	afterEach(() => {
+		for (const close of closers.splice(0)) close();
+		document.body.innerHTML = "";
+	});
+	const mount = (inner: string) => {
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = `<div class="bt-modal__panel" aria-label="m">${inner}</div>`;
+		document.body.appendChild(el);
+		return el;
+	};
+	const pageButton = () => {
+		const b = document.createElement("button");
+		document.body.appendChild(b);
+		b.focus();
+		return b;
+	};
+
+	it("패널에서 누르고 딤에서 뗀 click 은 닫지 않는다", () => {
+		const el = mount("<input>");
+		const m = Modal(el);
+		m?.open();
+		const input = el.querySelector("input") as HTMLElement;
+		input.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+		el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		expect(m?.isOpen()).toBe(true);
+		el.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+		el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		expect(m?.isOpen()).toBe(false);
+	});
+
+	it("Tab 트랩이 숨은 버튼을 건너뛴다", () => {
+		const el = mount('<button id="a">a</button><button hidden>숨김</button>');
+		Modal(el)?.open();
+		const a = el.querySelector("#a") as HTMLElement;
+		expect(document.activeElement).toBe(a);
+		expect(key(a, "Tab").defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(a);
+	});
+
+	it("포커스가 패널 자체일 때 Shift+Tab 은 마지막 요소로 간다", () => {
+		const el = mount("<p>본문</p>");
+		Modal(el)?.open();
+		const panel = el.querySelector(".bt-modal__panel") as HTMLElement;
+		expect(document.activeElement).toBe(panel);
+		panel.insertAdjacentHTML("beforeend", '<button id="late">늦게</button>');
+		expect(key(panel, "Tab", { shiftKey: true }).defaultPrevented).toBe(true);
+		expect(document.activeElement?.id).toBe("late");
+	});
+
+	it("아래 Modal 이 위에 뜬 Alert 의 Tab 을 막지 않는다", () => {
+		Modal(mount("<p>텍스트만</p>"))?.open();
+		alert({ message: "m", showCancel: true });
+		const cancel = document.querySelector("[data-alert-cancel]") as HTMLElement;
+		expect(document.activeElement).toBe(cancel);
+		expect(key(cancel, "Tab").defaultPrevented).toBe(false);
+	});
+
+	it("Alert onConfirm 에서 연 Modal 은 닫을 때 원래 트리거로 돌아간다", () => {
+		const trigger = pageButton();
+		const m = Modal(mount("<input>"));
+		alert({ message: "열까요?", onConfirm: () => m?.open() });
+		(document.querySelector("[data-alert-confirm]") as HTMLElement).click();
+		m?.close();
+		expect(document.activeElement).toBe(trigger);
+	});
+
+	it("나중에 넣은 닫기 버튼도 닫고, 안쪽 모달의 닫기는 바깥 모달을 닫지 않는다", () => {
+		const outer = mount(
+			'<div class="bt-modal" id="inner"><div class="bt-modal__panel" aria-label="i"></div></div>',
+		);
+		const o = Modal(outer);
+		const i = Modal(outer.querySelector("#inner") as HTMLElement);
+		o?.open();
+		i?.open();
+		const innerPanel = outer.querySelector("#inner .bt-modal__panel") as HTMLElement;
+		innerPanel.insertAdjacentHTML("beforeend", "<button data-modal-close>닫기</button>");
+		(innerPanel.querySelector("[data-modal-close]") as HTMLElement).click();
+		expect(i?.isOpen()).toBe(false);
+		expect(o?.isOpen()).toBe(true);
+	});
+
+	it("type 없는 닫기 버튼이 폼을 제출하지 않는다", () => {
+		const el = mount("<form><button data-modal-close>취소</button></form>");
+		const m = Modal(el);
+		m?.open();
+		const submit = vi.fn((e: Event) => e.preventDefault());
+		el.querySelector("form")?.addEventListener("submit", submit);
+		const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+		el.querySelector("[data-modal-close]")?.dispatchEvent(click);
+		expect(click.defaultPrevented).toBe(true);
+		expect(m?.isOpen()).toBe(false);
+	});
+
+	it("destroy 뒤 data-bt-modal-open 트리거를 눌러도 에러가 없다", () => {
+		const el = mount("<p>x</p>");
+		el.id = "dm";
+		const btn = document.createElement("button");
+		btn.dataset.btModalOpen = "dm";
+		document.body.appendChild(btn);
+		Modal(el);
+		init();
+		el._btModal?.destroy();
+		// 리스너 안의 예외는 click() 밖으로 나오지 않는다 - window error 로 잡는다
+		const errors: unknown[] = [];
+		const onError = (e: ErrorEvent) => {
+			errors.push(e.error);
+			e.preventDefault();
+		};
+		window.addEventListener("error", onError);
+		btn.click();
+		window.removeEventListener("error", onError);
+		expect(errors).toEqual([]);
+	});
+});
+
+describe("Alert - 콜백 예외 · 초기 포커스 · 겹침 (#973)", () => {
+	afterEach(() => {
+		document.querySelectorAll<HTMLElement>(".bt-alert__overlay").forEach((o) => {
+			(o.querySelector("[data-alert-cancel], [data-alert-confirm]") as HTMLElement | null)?.click();
+		});
+		document.body.innerHTML = "";
+	});
+
+	it("onConfirm 이 throw 해도 닫히고 다시 부르지 않는다", () => {
+		const onConfirm = vi.fn(() => {
+			throw new Error("boom");
+		});
+		Alert({ message: "m", onConfirm });
+		const confirm = document.querySelector("[data-alert-confirm]") as HTMLElement;
+		// 리스너 안의 예외는 click() 밖으로 나오지 않고 window error 로 보고된다
+		const swallow = (e: ErrorEvent) => e.preventDefault();
+		window.addEventListener("error", swallow);
+		confirm.click();
+		confirm.click();
+		window.removeEventListener("error", swallow);
+		expect(onConfirm).toHaveBeenCalledTimes(1);
+		expect(document.querySelector(".bt-alert__overlay")).toBeNull();
+		expect(document.body.dataset.btOpenModals).toBeUndefined();
+	});
+
+	it("destructive 확인 대화상자는 취소에 포커스를 둔다", () => {
+		Alert({ message: "삭제할까요?", showCancel: true, destructive: true });
+		expect(document.activeElement).toBe(document.querySelector("[data-alert-cancel]"));
+	});
+
+	it("패널에서 누르고 딤에서 뗀 click 은 닫지 않는다", () => {
+		Alert({ message: "m" });
+		const overlay = document.querySelector(".bt-alert__overlay") as HTMLElement;
+		overlay
+			.querySelector(".bt-alert__modal")
+			?.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+		overlay.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		expect(overlay.isConnected).toBe(true);
+	});
+
+	it("겹친 Alert 중 위쪽을 닫으면 아래 Alert 로 돌아간다", () => {
+		const trigger = document.createElement("button");
+		document.body.appendChild(trigger);
+		trigger.focus();
+		Alert({ message: "A" });
+		const aConfirm = document.activeElement;
+		const b = Alert({ message: "B" });
+		b.close();
+		expect(document.activeElement).toBe(aConfirm);
+	});
+});

@@ -204,3 +204,14 @@ describe("CopyButton (#918)", () => {
 		expect(writeText).not.toHaveBeenCalled();
 	});
 });
+
+describe("CopyButton destroy (#973)", () => {
+	it("덮어쓴 aria-label 을 원래대로 되돌린다", () => {
+		const btn = mount('<button aria-label="원래 이름" data-bt-copy="x">복사</button>');
+		CopyButton(btn)?.destroy();
+		expect(btn.getAttribute("aria-label")).toBe("원래 이름");
+		const bare = mount('<button data-bt-copy="x">복사</button>');
+		CopyButton(bare)?.destroy();
+		expect(bare.hasAttribute("aria-label")).toBe(false);
+	});
+});

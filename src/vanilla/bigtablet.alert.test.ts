@@ -250,17 +250,23 @@ describe("Alert - 마크업 · 버튼", () => {
 		Alert({ message: "m", showCancel: true });
 		const cancel = overlay().querySelector("[data-alert-cancel]") as HTMLElement;
 		const confirm = overlay().querySelector("[data-alert-confirm]") as HTMLElement;
-		expect(key(confirm, "Tab").defaultPrevented).toBe(true);
+		// 첫 포커스는 취소 - React useFocusTrap 과 같다 (#973)
 		expect(document.activeElement).toBe(cancel);
 		expect(key(cancel, "Tab", { shiftKey: true }).defaultPrevented).toBe(true);
 		expect(document.activeElement).toBe(confirm);
-		expect(key(confirm, "Tab", { shiftKey: true }).defaultPrevented).toBe(false);
+		expect(key(confirm, "Tab").defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(cancel);
+		expect(key(cancel, "Tab").defaultPrevented).toBe(false);
 	});
 
 	it("stops trapping after close", () => {
 		const { close } = Alert({ message: "m" });
 		close();
-		expect(key(document.body, "Tab").defaultPrevented).toBe(false);
+		// 앞 테스트들의 Alert 가 열린 채라 body 대신 페이지 버튼에서 - body 는 열린 대화상자가 가져간다
+		const page = document.createElement("button");
+		document.body.appendChild(page);
+		page.focus();
+		expect(key(page, "Tab").defaultPrevented).toBe(false);
 	});
 
 	it("onConfirm 에서 띄운 다음 Alert 의 포커스를 빼앗지 않는다 (#898)", () => {

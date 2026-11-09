@@ -57,7 +57,7 @@ export function init() {
 		const modal = document.getElementById(btn.dataset.btModalOpen);
 		if (modal?._btModal) {
 			btn.dataset.btBound = "true";
-			btn.addEventListener("click", () => modal._btModal.open());
+			btn.addEventListener("click", () => modal._btModal?.open());
 		}
 	});
 
