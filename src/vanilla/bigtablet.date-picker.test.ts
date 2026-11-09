@@ -40,6 +40,15 @@ describe("DatePicker (달력형, #937)", () => {
 		const byOption = mount('data-size="lg"');
 		DatePicker(byOption, { size: "sm" });
 		expect(byOption.classList.contains("bt-date-picker--sm")).toBe(true);
+		// 모르는 값은 기본 md, 직접 쓴 클래스는 그대로 둔다
+		const unknown = mount('data-size="xl"');
+		DatePicker(unknown);
+		expect(unknown.className).not.toContain("--xl");
+		expect(unknown.classList.contains("bt-date-picker--md")).toBe(true);
+		const byClass = mount();
+		byClass.classList.add("bt-date-picker--lg");
+		DatePicker(byClass);
+		expect(byClass.classList.contains("bt-date-picker--md")).toBe(false);
 	});
 
 	it("날짜를 누르면 값이 바뀌고 팝오버가 닫히며 포커스가 칸으로 돌아온다", () => {
