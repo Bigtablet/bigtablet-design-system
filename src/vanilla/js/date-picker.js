@@ -92,6 +92,9 @@ export function DatePicker(element, options = {}) {
 		today: pick("today", ds.today),
 		weekStartsOn: pick("weekStartsOn", ds.weekStartsOn, Number) ?? 0,
 		disabled: pick("disabled", ds.disabled, parseBoolAttr) ?? false,
+		// 칸 크기 - Dropdown · TextField · Button 과 같은 단계 (sm · md 40px, lg 48px, #960). 클래스
+		// `bt-date-picker--{size}` 를 직접 써도 된다
+		size: pick("size", ds.size) ?? "md",
 		placeholder: pick("placeholder", ds.placeholder),
 		prevMonthLabel: pick("prevMonthLabel", ds.prevMonthLabel) ?? t("datePicker.prevMonth"),
 		nextMonthLabel: pick("nextMonthLabel", ds.nextMonthLabel) ?? t("datePicker.nextMonth"),
@@ -133,7 +136,7 @@ export function DatePicker(element, options = {}) {
 	};
 
 	// ── 마크업 - 서버가 라벨 · 숨은 input 을 그려 두면 재사용한다 ─────────────────────
-	root.classList.add("bt-date-picker--calendar");
+	root.classList.add("bt-date-picker--calendar", `bt-date-picker--${config.size}`);
 	const labelEl = root.querySelector(".bt-date-picker__label");
 	if (labelEl && !labelEl.id) labelEl.id = generateId("bt-date-picker-label");
 	/** 숨은 input - 서버가 같은 name 으로 그려 두었으면 재사용한다 */

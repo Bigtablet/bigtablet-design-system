@@ -6,14 +6,14 @@
 .bt-date-picker {
   display: flex;
   flex-direction: column;
-  gap: var(--bt-spacing-xs);
+  // 라벨 → 칸 간격은 Dropdown · TextField 와 같이 이 gap 하나로 (React 와 같은 6px, #960).
+  // 라벨에도 margin-bottom 이 있어 두 배(8px)로 벌어졌었다
+  gap: token.$spacing_6;
 
   &__label {
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
     color: var(--bt-color-text-primary);
-    margin-bottom: var(--bt-spacing-xs);
-    font-weight: var(--bt-font-weight-medium);
-    font-size: var(--bt-font-size-sm);
-    line-height: var(--bt-line-height-normal);
 
     &-required {
       margin-left: var(--bt-spacing-xs);
@@ -26,16 +26,18 @@
     gap: var(--bt-spacing-sm);
   }
 
+  // 연 · 월 · 일 select - 높이 · 모서리 · 글자는 Dropdown 칸과 같다 (#960, 예전에는 44px · 6px)
   &__select {
     min-width: 88px;
-    height: 44px;
-    padding: 0 var(--bt-spacing-md);
+    @include token.responsive_height(token.$tap_target_compact);
+    box-sizing: border-box;
+    padding: 0 calc(#{token.$spacing_16} + #{token.$spacing_12}) 0 token.$spacing_16;
     font-family: var(--bt-font-family);
-    font-size: var(--bt-font-size-base);
+    @include token.body_small;
     color: var(--bt-color-text-primary);
     background-color: var(--bt-color-background);
     border: 1px solid var(--bt-color-border);
-    border-radius: var(--bt-radius-sm);
+    border-radius: token.$radius_lg;
     cursor: pointer;
     transition: border-color var(--bt-transition-fast),
                 box-shadow var(--bt-transition-fast),
@@ -68,6 +70,13 @@
       background-color: var(--bt-color-background-secondary);
       border-color: var(--bt-color-border-light);
     }
+  }
+
+  // 크기 - React DatePicker `size` · Dropdown 과 같은 단계 (sm · md 40, lg 48). sm 과 md 는 높이가 같다
+  &--lg &__select {
+    @include token.responsive_height(token.$tap_target_comfortable);
+    padding-left: token.$spacing_20;
+    @include token.body_large;
   }
 
   &--full-width {
@@ -157,6 +166,17 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
 
   .bt-date-picker__trigger-placeholder {
     color: token.$color_text_caption;
+  }
+
+  // lg - Dropdown lg 와 같은 높이 · 패딩 · 글자 (#960)
+  &.bt-date-picker--lg .bt-date-picker__trigger {
+    @include token.responsive_height(token.$tap_target_comfortable);
+    padding: token.$spacing_8 token.$spacing_20;
+  }
+
+  &.bt-date-picker--lg .bt-date-picker__trigger-value,
+  &.bt-date-picker--lg .bt-date-picker__trigger-placeholder {
+    @include token.body_large;
   }
 
   // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다
