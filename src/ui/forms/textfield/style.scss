@@ -24,7 +24,12 @@
 
   // ── Container (border + border-radius) ─────────────────────────────────
 
+  // 높이는 테두리를 두른 이 상자가 가진다 - 안쪽 줄(&_inner)이 가지면 테두리 2px 이 그 밖에 붙어
+  // 42px 이 되어 옆 Dropdown · DatePicker(40px)보다 1px 씩 삐져나왔다 (#960)
   &_container {
+    display: flex;
+    flex-direction: column;
+    @include token.responsive_height(token.$tap_target_compact); // md: 40 → 48 (mobile)
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: token.$radius_lg;
     background-color: token.$color_bg_solid;
@@ -50,19 +55,14 @@
     align-items: center;
     gap: token.$spacing_4;
     box-sizing: border-box;
-    @include token.responsive_height(token.$tap_target_compact); // md: 40 → 48 (mobile)
+    flex: 1; // 상자 높이를 채운다
   }
 
   // ── Size variants ──────────────────────────────────────────────────────
 
-  &_size_sm &_inner {
-    @include token.responsive_height(token.$tap_target_compact); // 40 → 48
-  }
+  // sm 은 기본 &_input(padding 4/16 · 14 · 20)·높이와 값이 동일해 별도 override 불필요.
 
-  // sm 은 기본 &_input(padding 4/16 · 14 · 20)과 값이 동일해 별도 override 불필요 -
-  // 사이즈 구분은 &_inner 높이(tap_target_compact)로만 준다.
-
-  &_size_lg &_inner {
+  &_size_lg &_container {
     @include token.responsive_height(token.$tap_target_comfortable); // 48 → 56
   }
 

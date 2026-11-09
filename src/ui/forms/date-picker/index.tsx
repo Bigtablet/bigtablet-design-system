@@ -7,7 +7,7 @@ import { cn } from "../../../utils";
 import { Popover } from "../../overlay/popover";
 import { useLocaleName, useLocaleText } from "../../system/locale-provider";
 import { DateCalendar } from "../date-calendar";
-import { Dropdown, type DropdownOption } from "../dropdown";
+import { Dropdown, type DropdownOption, type DropdownSize } from "../dropdown";
 import { FieldControlBoundary, useFieldControl } from "../field";
 import "./style.scss";
 
@@ -62,6 +62,11 @@ interface DatePickerBaseProps {
 	required?: boolean;
 	/** 데이트 피커가 컨테이너의 전체 너비를 차지할지 여부 */
 	fullWidth?: boolean;
+	/**
+	 * 칸 크기 (기본값: "md"). Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다
+	 * - sm · md 40px, lg 48px (좁은 화면은 한 단계 위).
+	 */
+	size?: DropdownSize;
 	/** 연도 select의 라벨/플레이스홀더 */
 	yearLabel?: string;
 	/** 월 select의 라벨/플레이스홀더 */
@@ -114,6 +119,7 @@ export const DatePicker = ({
 	disabled,
 	required,
 	fullWidth = true,
+	size = "md",
 	yearLabel: yearLabelProp,
 	monthLabel: monthLabelProp,
 	dayLabel: dayLabelProp,
@@ -343,7 +349,7 @@ export const DatePicker = ({
 
 	// ── 렌더링 ───────────────────────────────────────────────────────────
 
-	const rootClassName = cn("date_picker", {
+	const rootClassName = cn("date_picker", `date_picker_size_${size}`, {
 		date_picker_full_width: fullWidth,
 		date_picker_disabled: disabled,
 	});
@@ -422,7 +428,7 @@ export const DatePicker = ({
 				    바로 위 `role="group"` 이 이미 담당한다. */}
 				<FieldControlBoundary>
 					<Dropdown
-						size="sm"
+						size={size}
 						label={yearLabel}
 						placeholder={yearLabel}
 						options={yearOptions}
@@ -433,7 +439,7 @@ export const DatePicker = ({
 					/>
 
 					<Dropdown
-						size="sm"
+						size={size}
 						label={monthLabel}
 						placeholder={monthLabel}
 						options={monthOptions}
@@ -445,7 +451,7 @@ export const DatePicker = ({
 
 					{mode === "year-month-day" && (
 						<Dropdown
-							size="sm"
+							size={size}
 							label={dayLabel}
 							placeholder={dayLabel}
 							options={dayOptions}

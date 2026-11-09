@@ -96,7 +96,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
 | Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
 | Pagination | `.bt-pagination` | | |
-| DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다, `data-range` 면 범위형 - `DateRangePicker()`) | `[aria-expanded]` |
+| DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--sm/md/lg`(칸 높이 - Dropdown · TextField 와 같은 단계, JS `size` · `data-size`), `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다, `data-range` 면 범위형 - `DateRangePicker()`) | `[aria-expanded]` |
 | FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
 | AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` (고정 헤더면 `__body` > `__header` + `__main`) - 헤더 높이는 JS `AppShell()` 가 `--bt-top-inset` 으로 | `__main--flush` | |
 | Sidebar | `.bt-sidebar` (+ `__brand`(`__brand-full` · `__brand-mark`), `__toggle`(JS), `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음), `--collapsed`(JS `Sidebar()` · `data-bt-sidebar`) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
@@ -351,6 +351,7 @@ const to = Bigtablet.DatePicker('#to', {
   onValueChange: (value) => {}
 });
 to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
+// size: 'sm' | 'md'(기본) | 'lg' (data-size) - 폼 칸 · Button 은 React 와 같은 높이 단계라 한 줄에 맞는다 (#960)
 
 // 로케일 (#949) - <html lang> 을 따르고, 자동 초기화 전에 바꾼다. 컴포넌트 기본 문구는 하드코딩하지 말고 t(key) 로
 Bigtablet.setLocale('en'); Bigtablet.setMessages({ 'pagination.prev': 'Prev' });

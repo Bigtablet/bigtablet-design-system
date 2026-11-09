@@ -10,6 +10,15 @@ describe("DatePicker", () => {
 		expect(screen.getByText("Birth Date")).toBeInTheDocument();
 	});
 
+	it("passes size to the field - calendar trigger and the year/month/day dropdowns (#960)", () => {
+		const { container, rerender } = render(<DatePicker size="lg" onValueChange={() => {}} />);
+		expect(container.querySelectorAll(".dropdown_size_lg")).toHaveLength(3);
+		rerender(<DatePicker size="lg" variant="calendar" onValueChange={() => {}} />);
+		expect(container.querySelector(".date_picker_size_lg .date_picker_trigger")).not.toBeNull();
+		rerender(<DatePicker onValueChange={() => {}} />);
+		expect(container.querySelectorAll(".dropdown_size_md")).toHaveLength(3);
+	});
+
 	it("renders year/month selects by default", () => {
 		render(<DatePicker onValueChange={() => {}} />);
 		// label + placeholder 로 각 Dropdown 에 두 번씩 "년"/"월" 나타남

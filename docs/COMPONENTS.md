@@ -1483,6 +1483,7 @@ const [date, setDate] = useState('');
 | `endYear` | `number` | `현재년도 + 10` | 종료 연도 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 칸 크기. Dropdown · TextField 와 같은 높이 단계(sm · md 40px, lg 48px)라 한 줄에 두면 맞는다 - 옆 Button 은 칸 sm · md 면 `md`, lg 면 `lg` |
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
 

@@ -9,6 +9,8 @@ import {
 	Card,
 	Checkbox,
 	Chip,
+	DatePicker,
+	Dropdown,
 	EmptyState,
 	ErrorState,
 	IconButton,
@@ -189,6 +191,19 @@ describe.each(THEMES)("visual %s", (theme) => {
 					supportingText="형식이 맞지 않습니다"
 				/>
 				<TextField label="비활성" defaultValue="수정 불가" disabled />
+			</div>,
+		);
+	});
+
+	// 조회 조건 한 줄 - 라벨 · 칸 윗선 · 높이 · 모서리가 같아야 한다 (#960)
+	it("field-row", async () => {
+		await shoot(
+			`field-row-${theme}`,
+			<div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+				<Dropdown label="직원" options={[{ value: "a", label: "가" }]} />
+				<TextField label="대상 주소" placeholder="입력" />
+				<DatePicker label="시작" variant="calendar" value="2026-10-12" onValueChange={() => {}} />
+				<Button style={{ flexShrink: 0 }}>조회</Button>
 			</div>,
 		);
 	});

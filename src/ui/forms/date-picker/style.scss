@@ -3,14 +3,14 @@
 
 .date_picker {
   @include token.flex_column;
-  gap: token.$spacing_4;
+  // 라벨 → 칸 간격은 Dropdown · TextField 와 같은 gap 하나 (#960) - 라벨에도 margin-bottom 이 있어
+  // 8px 로 벌어지고, 줄 높이도 24px 이라 옆 칸들보다 칸이 아래로 처졌다
+  gap: token.$spacing_6;
 
   &_label {
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
     color: token.$color_text_heading;
-    margin-bottom: token.$spacing_4;
-    font-weight: token.$font_weight_medium;
-    font-size: token.$font_size_14;
-    line-height: token.$line_height_24;
   }
 
   &_required {
@@ -136,6 +136,17 @@
 
   &_placeholder {
     color: token.$color_text_caption;
+  }
+}
+
+// lg - Dropdown lg 와 같은 높이 · 패딩 · 글자 (#960). sm · md 는 위 기본값(40px)과 같다
+.date_picker_size_lg .date_picker_trigger {
+  @include token.responsive_height(token.$tap_target_comfortable);
+  padding: token.$spacing_8 token.$spacing_20;
+
+  &_value,
+  &_placeholder {
+    @include token.body_large;
   }
 }
 

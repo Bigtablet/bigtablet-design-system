@@ -6,17 +6,17 @@
 .bt-text-field {
   display: flex;
   flex-direction: column;
+  // 라벨 → 칸 간격은 Dropdown · DatePicker 와 같이 이 gap 하나로 (React 와 같은 6px, #960)
+  gap: token.$spacing_6;
 
   &--full-width {
     width: 100%;
   }
 
   &__label {
-    margin-bottom: var(--bt-spacing-xs);
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
     color: var(--bt-color-text-primary);
-    font-size: var(--bt-font-size-sm);
-    font-weight: var(--bt-font-weight-medium);
-    line-height: var(--bt-line-height-normal);
   }
 
   &__wrap {
@@ -28,7 +28,8 @@
 
   &__input {
     width: 100%;
-    border-radius: var(--bt-radius-md);
+    border-radius: token.$radius_lg;
+    box-sizing: border-box; // input 은 UA 기본이 content-box - min-height 가 테두리 · 패딩을 포함하게
     font-family: var(--bt-font-family);
     font-size: var(--bt-font-size-base);
     line-height: var(--bt-line-height-normal);
@@ -77,20 +78,19 @@
       }
     }
 
-    /* Sizes */
-    &--sm {
-      padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
-      font-size: var(--bt-font-size-sm);
-    }
-
+    /* Sizes - React TextField 와 같은 높이 · 패딩 · 글자 (sm · md 40, lg 48 - 좁은 화면은 한 단계 위).
+       Dropdown · DatePicker · Button 도 같은 단계라 한 줄에 두면 맞는다 (#960) */
+    &--sm,
     &--md {
-      padding: var(--bt-spacing-md) var(--bt-spacing-xl);
-      font-size: var(--bt-font-size-base);
+      @include token.responsive_height(token.$tap_target_compact);
+      padding: token.$spacing_4 token.$spacing_16;
+      @include token.body_small;
     }
 
     &--lg {
-      padding: var(--bt-spacing-lg) var(--bt-spacing-2xl);
-      font-size: var(--bt-font-size-md);
+      @include token.responsive_height(token.$tap_target_comfortable);
+      padding: token.$spacing_8 token.$spacing_20;
+      @include token.body_large;
     }
 
     /* States */
@@ -109,8 +109,8 @@
     }
   }
 
+  // 칸 → 도움말 간격도 루트 gap 이 준다 (React 와 같은 6px)
   &__helper {
-    margin-top: var(--bt-spacing-xs);
     font-size: var(--bt-font-size-sm);
     color: var(--bt-color-text-secondary);
 

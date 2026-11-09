@@ -30,6 +30,27 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(trigger(root).getAttribute("aria-labelledby")?.split(" ")).toHaveLength(2);
 	});
 
+	it("크기는 기본 md 이고 size 옵션 · data-size 로 바꾼다 (#960)", () => {
+		const def = mount();
+		DatePicker(def);
+		expect(def.classList.contains("bt-date-picker--md")).toBe(true);
+		const byAttr = mount('data-size="lg"');
+		DatePicker(byAttr);
+		expect(byAttr.classList.contains("bt-date-picker--lg")).toBe(true);
+		const byOption = mount('data-size="lg"');
+		DatePicker(byOption, { size: "sm" });
+		expect(byOption.classList.contains("bt-date-picker--sm")).toBe(true);
+		// 모르는 값은 기본 md, 직접 쓴 클래스는 그대로 둔다
+		const unknown = mount('data-size="xl"');
+		DatePicker(unknown);
+		expect(unknown.className).not.toContain("--xl");
+		expect(unknown.classList.contains("bt-date-picker--md")).toBe(true);
+		const byClass = mount();
+		byClass.classList.add("bt-date-picker--lg");
+		DatePicker(byClass);
+		expect(byClass.classList.contains("bt-date-picker--md")).toBe(false);
+	});
+
 	it("날짜를 누르면 값이 바뀌고 팝오버가 닫히며 포커스가 칸으로 돌아온다", () => {
 		const onValueChange = vi.fn();
 		const root = mount();
