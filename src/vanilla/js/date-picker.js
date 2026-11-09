@@ -581,7 +581,11 @@ export function DatePicker(element, options = {}) {
 			const s = state.value;
 			const restart = !s || !!state.end || compareDay(d, s) < 0;
 			if (restart) {
-				commit({ ...d, minutes: config.time ? (draft.start ?? minuteRange(d)[0]) : null }, true, null);
+				commit(
+					{ ...d, minutes: config.time ? (draft.start ?? minuteRange(d)[0]) : null },
+					true,
+					null,
+				);
 				draft.start = null;
 			} else {
 				// 종료 시각의 처음 값은 그날 끝 - 하루 단위 조회가 그날 전체를 덮게 (먼저 고른 시각이 있으면 그것)
@@ -803,6 +807,8 @@ export function DatePicker(element, options = {}) {
 		getValue: output,
 		/** 값을 바꾼다. 범위 밖이면 경계로 맞추고, null 이면 비운다 */
 		setValue: (value) => {
+			// 바깥에서 값을 정하면(폼 리셋 등) 먼저 골라 둔 시각도 버린다 - 남으면 다음 날짜에 옛 시각이 붙었다
+			draft.start = draft.end = null;
 			// null · 빈 문자열만 비운다 - 형식이 틀린 값은 무시하고 지금 값을 지킨다
 			if (!value) return commit(null, true, null);
 			if (config.range) {

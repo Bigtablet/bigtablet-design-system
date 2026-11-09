@@ -467,6 +467,16 @@ describe("DatePicker 시각 먼저 고르기 (#964)", () => {
 		expect(api?.getValue()).toBe("2026-11-12T09:30");
 	});
 
+	it("setValue 로 값을 정하면 먼저 골라 둔 시각을 버린다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		api?.setValue(null);
+		day(root, 12).click();
+		expect(api?.getValue()).toBe("2026-11-12T00:00");
+	});
+
 	it("오늘 버튼도 먼저 고른 시각을 쓴다", () => {
 		const root = mountRoot("data-time");
 		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
