@@ -39,7 +39,7 @@ describe("DateRangePicker", () => {
 		expect(years[0]).toBe("2026");
 	});
 
-	it("clears both dates when the start is cleared (#965)", () => {
+	it("clears only the end, or both dates when the start is cleared (#965)", () => {
 		const onValueChange = vi.fn();
 		render(
 			<DateRangePicker

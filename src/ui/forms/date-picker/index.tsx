@@ -600,7 +600,9 @@ const CalendarField = ({
 							aria-describedby={describedBy}
 							aria-invalid={invalid || undefined}
 							onKeyDown={(e) => {
-								if (onClear && (e.key === "Delete" || e.key === "Backspace")) {
+								// 수정 키와 함께면 브라우저 · 보조기술 단축키라 건드리지 않는다
+								const modified = e.ctrlKey || e.metaKey || e.altKey;
+								if (onClear && !modified && (e.key === "Delete" || e.key === "Backspace")) {
 									e.preventDefault();
 									onClear();
 								}

@@ -716,6 +716,8 @@ export function DatePicker(element, options = {}) {
 			if (
 				config.clearable &&
 				(e.key === "Delete" || e.key === "Backspace") &&
+				// 수정 키와 함께면 브라우저 · 보조기술 단축키라 건드리지 않는다
+				!(e.ctrlKey || e.metaKey || e.altKey) &&
 				(state.value || state.end)
 			) {
 				e.preventDefault();

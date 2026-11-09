@@ -33,6 +33,8 @@ describe("DatePicker", () => {
 		const trigger = document.querySelector(".date_picker_trigger") as HTMLElement;
 		expect(trigger).toHaveFocus();
 		onValueChange.mockClear();
+		fireEvent.keyDown(trigger, { key: "Backspace", metaKey: true }); // 단축키는 지나간다
+		expect(onValueChange).not.toHaveBeenCalled();
 		fireEvent.keyDown(trigger, { key: "Delete" });
 		expect(onValueChange).toHaveBeenCalledWith("");
 		// 값이 없거나 비활성이면 버튼이 없다

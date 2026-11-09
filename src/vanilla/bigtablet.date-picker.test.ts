@@ -554,6 +554,15 @@ describe("DatePicker clearable (#965)", () => {
 		expect(api?.getValue()).toBe("2026-11-09");
 	});
 
+	it("수정 키와 함께 누른 Backspace 는 지우지 않는다", () => {
+		const root = mountRoot('data-clearable data-value="2026-11-09"');
+		const api = DatePicker(root);
+		triggerOf(root).dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Backspace", metaKey: true, bubbles: true }),
+		);
+		expect(api?.getValue()).toBe("2026-11-09");
+	});
+
 	it("칸에서 Delete · Backspace 로 지운다", () => {
 		for (const key of ["Delete", "Backspace"]) {
 			const root = mountRoot('data-clearable data-value="2026-11-09"');
