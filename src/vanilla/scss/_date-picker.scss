@@ -251,7 +251,6 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     &[hidden] {
       display: none;
     }
-
   }
 
   // fixed 의 기준점 - transform 이 걸린 조상이 있으면 그것이 기준이 된다. 그 어긋남을 JS 가 이 점으로 잰다

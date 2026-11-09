@@ -1189,7 +1189,7 @@ to.setMin('2026-10-01');  to.setMax(null);
 to.open();  to.close();  to.setDisabled(true);  to.destroy();
 ```
 
-- 값이 바뀌면 숨은 input 이 `change`(bubbles)를 낸다 - 폼 단위 리스너로 자동 조회 · 바뀜 표시를 걸 수 있다. `form.reset()` 은 처음 값으로 되돌린다 (#974)
+- 값이 바뀌면 바뀐 숨은 input 이 `change`(bubbles)를 낸다(범위면 시작 · 종료 중 바뀐 쪽만, `minFrom` 으로 따르는 칸이 다시 맞춘 뒤) - 폼 단위 리스너로 자동 조회 · 바뀜 표시를 걸 수 있다. `form.reset()` 은 처음 값으로 되돌린다 (#974)
 - 팝오버는 `position: fixed` 라 Modal · 표 상자 같은 `overflow: hidden` 조상에 잘리지 않는다. 스크롤 · 리사이즈를 따라가고, 위아래 어느 쪽에도 다 안 들어가면 화면 안으로 민다 (#974)
 - 키보드는 React DateCalendar 와 같다 - ←→ 하루, ↑↓ 한 주, Home/End 주의 처음 · 끝, PageUp/PageDown 한 달(Shift 면 한 해), Enter/Space 선택, Escape 닫기
 - 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)

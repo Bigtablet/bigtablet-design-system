@@ -711,9 +711,25 @@ describe("DatePicker 폼 · 포커스 (#974)", () => {
 		api?.open();
 		(root.querySelector('button[data-day="20"]') as HTMLElement).click();
 		expect(onChange).toHaveBeenCalledTimes(1);
-		expect((onChange.mock.calls[0]?.[0] as Event).target).toBe(
+		expect((onChange.mock.calls[0] as [Event])[0].target).toBe(
 			root.querySelector('input[name="d"]'),
 		);
+	});
+
+	it("범위형은 바뀐 input 에서만 change 를 낸다", () => {
+		const root = mountRoot(
+			'<form><div class="bt-date-picker" data-start-name="from" data-end-name="to"></div></form>',
+		);
+		const targets: string[] = [];
+		document.querySelector("form")?.addEventListener("change", (e) => {
+			targets.push((e.target as HTMLInputElement).name);
+		});
+		const api = DateRangePicker(root, { startName: "from", endName: "to", today: "2026-10-16" });
+		api?.open();
+		(root.querySelector('button[data-day="3"]') as HTMLElement).click();
+		expect(targets).toEqual(["from"]);
+		(root.querySelector('button[data-day="5"]') as HTMLElement).click();
+		expect(targets).toEqual(["from", "to"]);
 	});
 
 	it("min 달에 닿아 ‹ 가 막히면 포커스를 날짜 칸으로 옮긴다", () => {

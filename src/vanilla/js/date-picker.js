@@ -543,18 +543,22 @@ export function DatePicker(element, options = {}) {
 	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	function commit(next, notify = true, end = state.end) {
 		const prev = JSON.stringify(output());
+		const inputs = [hidden, hiddenEnd].filter(Boolean);
+		const before = inputs.map((el) => el.value);
 		state.value = clamp(next);
 		if (config.range) state.end = clampEnd(end);
 		render();
 		if (prev === JSON.stringify(output())) return;
-		if (notify) {
-			config.onValueChange?.(output());
-			// 폼 단위 change 리스너(자동 조회 · 바뀜 표시)가 날짜도 보게 - 숨은 input 은 스스로 change 를 내지 않는다 (#974)
-			for (const el of [hidden, hiddenEnd])
-				el?.dispatchEvent(new Event("change", { bubbles: true }));
-		}
+		if (notify) config.onValueChange?.(output());
 		// 이 칸을 minFrom · maxFrom 으로 따르는 칸들이 다시 맞춘다
 		root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
+		// 폼 단위 change 리스너(자동 조회 · 바뀜 표시)가 날짜도 보게 - 숨은 input 은 스스로 change 를 내지 않는다.
+		// 바뀐 input 만, 따르는 칸이 다시 맞춘 뒤에 낸다 (#974)
+		if (notify) {
+			inputs.forEach((el, i) => {
+				if (el.value !== before[i]) el.dispatchEvent(new Event("change", { bubbles: true }));
+			});
+		}
 	}
 
 	// ── 열고 닫기 ────────────────────────────────────────────────────────────
@@ -592,13 +596,15 @@ export function DatePicker(element, options = {}) {
 		const end = a.left + w > document.documentElement.clientWidth;
 		panel.classList.toggle("bt-date-picker__panel--up", up);
 		panel.classList.toggle("bt-date-picker__panel--end", end);
-		// 어느 쪽에도 다 안 들어가면(낮은 화면) 화면 안으로 민다 - 칸을 덮더라도 달력 아랫줄이 밖으로 나가지 않게
-		const top = Math.max(
-			gap,
-			Math.min(up ? a.top - gap - h : a.bottom + gap, window.innerHeight - gap - h),
-		);
+		let top = up ? a.top - gap - h : a.bottom + gap;
+		// 어느 쪽에도 다 안 들어가면(낮은 화면) 화면 안으로 민다 - 칸을 덮더라도 달력 아랫줄이 밖으로 나가지 않게.
+		// 칸이 스크롤로 화면 밖에 나갔으면 밀지 않는다 - 칸과 떨어져 가장자리에 붙어 남지 않게
+		if (a.bottom > 0 && a.top < window.innerHeight)
+			top = Math.max(gap, Math.min(top, window.innerHeight - gap - h));
+		// 오른쪽 끝에 맞춰도 좁은 화면이면 왼쪽이 잘린다 - 왼쪽 여백에서 멈춘다
+		const left = end ? Math.max(gap, a.right - w) : a.left;
 		panel.style.top = `${top - origin.top}px`;
-		panel.style.left = `${(end ? a.right - w : a.left) - origin.left}px`;
+		panel.style.left = `${left - origin.left}px`;
 	}
 
 	let untrackPanel = null;
