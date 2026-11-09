@@ -30,6 +30,27 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(trigger(root).getAttribute("aria-labelledby")?.split(" ")).toHaveLength(2);
 	});
 
+	it("크기는 기본 md 이고 size 옵션 · data-size 로 바꾼다 (#960)", () => {
+		const def = mount();
+		DatePicker(def);
+		expect(def.classList.contains("bt-date-picker--md")).toBe(true);
+		const byAttr = mount('data-size="lg"');
+		DatePicker(byAttr);
+		expect(byAttr.classList.contains("bt-date-picker--lg")).toBe(true);
+		const byOption = mount('data-size="lg"');
+		DatePicker(byOption, { size: "sm" });
+		expect(byOption.classList.contains("bt-date-picker--sm")).toBe(true);
+		// 모르는 값은 기본 md, 직접 쓴 클래스는 그대로 둔다
+		const unknown = mount('data-size="xl"');
+		DatePicker(unknown);
+		expect(unknown.className).not.toContain("--xl");
+		expect(unknown.classList.contains("bt-date-picker--md")).toBe(true);
+		const byClass = mount();
+		byClass.classList.add("bt-date-picker--lg");
+		DatePicker(byClass);
+		expect(byClass.classList.contains("bt-date-picker--md")).toBe(false);
+	});
+
 	it("날짜를 누르면 값이 바뀌고 팝오버가 닫히며 포커스가 칸으로 돌아온다", () => {
 		const onValueChange = vi.fn();
 		const root = mount();
@@ -411,5 +432,166 @@ describe("DateRangePicker 범위형 (#951)", () => {
 		expect(endHour.options[13]?.disabled).toBe(true);
 		expect(endHour.options[14]?.disabled).toBe(false);
 		expect(root.querySelectorAll(".bt-date-picker__time-label")).toHaveLength(2);
+	});
+});
+
+// 날짜보다 시각을 먼저 고른다 - 예전에는 날짜가 없으면 시 · 분 칸이 막혀 있었고, 막힌 칸을 누르면
+// 팝오버가 닫혔다 (#964)
+describe("DatePicker 시각 먼저 고르기 (#964)", () => {
+	const mountRoot = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<div class="bt-date-picker" ${attrs}></div>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLElement;
+	};
+	const day = (root: HTMLElement, d: number) =>
+		root.querySelector(`button[data-day="${d}"]`) as HTMLButtonElement;
+	const setTime = (select: HTMLSelectElement, value: string) => {
+		select.value = value;
+		select.dispatchEvent(new Event("change"));
+	};
+	const selects = (root: HTMLElement) =>
+		Array.from(root.querySelectorAll<HTMLSelectElement>(".bt-date-picker__time select"));
+
+	it("날짜 없이 고른 시각을 들고 있다가 날짜를 고르면 합친다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [hour, minute] = selects(root) as [HTMLSelectElement, HTMLSelectElement];
+		expect(hour.disabled || minute.disabled).toBe(false);
+		setTime(hour, "9");
+		setTime(minute, "30");
+		expect(api?.getValue()).toBeNull();
+		expect(hour.value).toBe("9"); // 다시 그려도 고른 시각이 남는다
+		day(root, 12).click();
+		expect(api?.getValue()).toBe("2026-11-12T09:30");
+	});
+
+	it("setValue 로 값을 정하면 먼저 골라 둔 시각을 버린다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		api?.setValue(null);
+		day(root, 12).click();
+		expect(api?.getValue()).toBe("2026-11-12T00:00");
+	});
+
+	it("오늘 버튼도 먼저 고른 시각을 쓴다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "18");
+		(root.querySelector(".bt-date-picker__action") as HTMLButtonElement).click();
+		expect(api?.getValue()).toBe("2026-11-09T18:00");
+	});
+
+	it("범위형은 시작 · 종료 시각을 각각 먼저 고를 수 있다", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [startHour, , endHour] = selects(root) as HTMLSelectElement[];
+		setTime(startHour as HTMLSelectElement, "9");
+		setTime(endHour as HTMLSelectElement, "17");
+		day(root, 3).click();
+		day(root, 5).click();
+		expect(api?.getValue()).toEqual({ start: "2026-11-03T09:00", end: "2026-11-05T17:00" });
+	});
+
+	it("팝오버 영역 안을 누르면 target 이 바깥이어도 닫지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09" });
+		api?.open();
+		const panel = root.querySelector(".bt-date-picker__panel") as HTMLElement;
+		panel.getBoundingClientRect = () => ({ left: 0, top: 50, right: 300, bottom: 400 }) as DOMRect;
+		const press = (x: number, y: number) =>
+			document.body.dispatchEvent(
+				new MouseEvent("pointerdown", { bubbles: true, clientX: x, clientY: y }),
+			);
+		const expanded = () =>
+			root.querySelector(".bt-date-picker__trigger")?.getAttribute("aria-expanded");
+		press(100, 380); // 막힌 컨트롤을 눌러 target 이 body 가 된 경우
+		expect(expanded()).toBe("true");
+		press(500, 500);
+		expect(expanded()).toBe("false");
+	});
+});
+
+// 고른 날짜를 지운다 - 조회 조건처럼 "값 없음 = 조건 없음" 인 칸 (#965)
+describe("DatePicker clearable (#965)", () => {
+	const mountRoot = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<div class="bt-date-picker" ${attrs}></div>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLElement;
+	};
+	const clearBtn = (root: HTMLElement) =>
+		root.querySelector(".bt-date-picker__clear") as HTMLButtonElement | null;
+	const triggerOf = (root: HTMLElement) =>
+		root.querySelector(".bt-date-picker__trigger") as HTMLButtonElement;
+
+	it("값이 있을 때만 지우기 버튼을 보이고, 누르면 비우고 placeholder 로 돌아간다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot('data-clearable data-name="from" data-value="2026-11-09"');
+		DatePicker(root, { onValueChange });
+		const btn = clearBtn(root) as HTMLButtonElement;
+		expect(btn.hidden).toBe(false);
+		expect(btn.getAttribute("aria-label")).toBe("날짜 지우기");
+		btn.click();
+		expect(onValueChange).toHaveBeenCalledWith(null);
+		expect((root.querySelector('input[name="from"]') as HTMLInputElement).value).toBe("");
+		expect(triggerOf(root).textContent).toContain("날짜 선택");
+		expect(btn.hidden).toBe(true);
+		expect(triggerOf(root).getAttribute("aria-expanded")).toBe("false");
+		expect(document.activeElement).toBe(triggerOf(root));
+	});
+
+	it("끄면 버튼이 없고 Delete 도 지우지 않는다", () => {
+		const root = mountRoot('data-value="2026-11-09"');
+		const api = DatePicker(root);
+		expect(clearBtn(root)).toBeNull();
+		triggerOf(root).dispatchEvent(new KeyboardEvent("keydown", { key: "Delete", bubbles: true }));
+		expect(api?.getValue()).toBe("2026-11-09");
+	});
+
+	it("수정 키와 함께 누른 Backspace 는 지우지 않는다", () => {
+		const root = mountRoot('data-clearable data-value="2026-11-09"');
+		const api = DatePicker(root);
+		triggerOf(root).dispatchEvent(
+			new KeyboardEvent("keydown", { key: "Backspace", metaKey: true, bubbles: true }),
+		);
+		expect(api?.getValue()).toBe("2026-11-09");
+	});
+
+	it("칸에서 Delete · Backspace 로 지운다", () => {
+		for (const key of ["Delete", "Backspace"]) {
+			const root = mountRoot('data-clearable data-value="2026-11-09"');
+			const api = DatePicker(root);
+			triggerOf(root).dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+			expect(api?.getValue()).toBeNull();
+		}
+	});
+
+	it("범위형은 시작 · 종료를 함께 비운다", () => {
+		const onValueChange = vi.fn();
+		const root = mountRoot('data-clearable data-start="2026-11-03" data-end="2026-11-05"');
+		DateRangePicker(root, { onValueChange });
+		(clearBtn(root) as HTMLButtonElement).click();
+		expect(onValueChange).toHaveBeenCalledWith({ start: null, end: null });
+	});
+
+	it("minFrom 으로 이어진 칸은 기준 칸이 비면 제한이 풀린다", () => {
+		const from = mountRoot('id="from-clear" data-clearable data-value="2026-11-10"');
+		const to = mountRoot('data-min-from="#from-clear"');
+		DatePicker(from);
+		const toApi = DatePicker(to, { today: "2026-11-01" });
+		toApi?.open();
+		expect(to.querySelector('button[data-day="5"]')?.getAttribute("aria-disabled")).toBe("true");
+		toApi?.close();
+		(clearBtn(from) as HTMLButtonElement).click();
+		toApi?.open();
+		expect(to.querySelector('button[data-day="5"]')?.getAttribute("aria-disabled")).not.toBe(
+			"true",
+		);
 	});
 });

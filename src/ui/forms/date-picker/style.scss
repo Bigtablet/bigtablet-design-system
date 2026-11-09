@@ -3,14 +3,14 @@
 
 .date_picker {
   @include token.flex_column;
-  gap: token.$spacing_4;
+  // 라벨 → 칸 간격은 Dropdown · TextField 와 같은 gap 하나 (#960) - 라벨에도 margin-bottom 이 있어
+  // 8px 로 벌어지고, 줄 높이도 24px 이라 옆 칸들보다 칸이 아래로 처졌다
+  gap: token.$spacing_6;
 
   &_label {
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
     color: token.$color_text_heading;
-    margin-bottom: token.$spacing_4;
-    font-weight: token.$font_weight_medium;
-    font-size: token.$font_size_14;
-    line-height: token.$line_height_24;
   }
 
   &_required {
@@ -137,6 +137,43 @@
   &_placeholder {
     color: token.$color_text_caption;
   }
+}
+
+// 지우기(×, #965) - 드롭다운형은 칸들 끝에, 달력형은 칸 오른쪽에 겹친다
+// 드롭다운형은 IconButton sm(칸과 같은 40px) 그대로 칸들 끝에 둔다
+.date_picker_clear {
+  flex-shrink: 0;
+}
+
+.date_picker_field {
+  position: relative;
+  width: 100%;
+
+  // 달력형은 칸(40px) 안에 겹치니 한 단계 작게 (Vanilla 와 같은 32px)
+  .date_picker_clear {
+    position: absolute;
+    top: 50%;
+    right: token.$spacing_4;
+    width: token.$tap_target_dense;
+    height: token.$tap_target_dense;
+    transform: translateY(-50%);
+  }
+}
+
+// lg - Dropdown lg 와 같은 높이 · 패딩 · 글자 (#960). sm · md 는 위 기본값(40px)과 같다
+.date_picker_size_lg .date_picker_trigger {
+  @include token.responsive_height(token.$tap_target_comfortable);
+  padding: token.$spacing_8 token.$spacing_20;
+
+  &_value,
+  &_placeholder {
+    @include token.body_large;
+  }
+}
+
+// 지우기 자리 - lg 의 padding 보다 뒤에 둬야 덮이지 않는다 (특이도가 같다)
+.date_picker_field_clearable .date_picker_trigger {
+  padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
 }
 
 @media (prefers-reduced-motion: reduce) {

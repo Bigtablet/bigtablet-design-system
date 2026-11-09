@@ -92,6 +92,12 @@ export function DatePicker(element, options = {}) {
 		today: pick("today", ds.today),
 		weekStartsOn: pick("weekStartsOn", ds.weekStartsOn, Number) ?? 0,
 		disabled: pick("disabled", ds.disabled, parseBoolAttr) ?? false,
+		// 값이 있으면 칸 오른쪽에 지우기(×) - 조회 조건처럼 "값 없음 = 조건 없음" 인 칸 (#965). 필수 칸에는 두지 않는다
+		clearable: pick("clearable", ds.clearable, parseBoolAttr) ?? false,
+		clearLabel: pick("clearLabel", ds.clearLabel) ?? t("datePicker.clear"),
+		// 칸 크기 - Dropdown · TextField · Button 과 같은 단계 (sm · md 40px, lg 48px, #960). 클래스
+		// `bt-date-picker--{size}` 를 직접 써도 된다
+		size: pick("size", ds.size),
 		placeholder: pick("placeholder", ds.placeholder),
 		prevMonthLabel: pick("prevMonthLabel", ds.prevMonthLabel) ?? t("datePicker.prevMonth"),
 		nextMonthLabel: pick("nextMonthLabel", ds.nextMonthLabel) ?? t("datePicker.nextMonth"),
@@ -134,6 +140,14 @@ export function DatePicker(element, options = {}) {
 
 	// ── 마크업 - 서버가 라벨 · 숨은 input 을 그려 두면 재사용한다 ─────────────────────
 	root.classList.add("bt-date-picker--calendar");
+	// 모르는 값은 버리고, 서버가 크기 클래스를 직접 써 둔 칸에는 기본 md 를 덧붙이지 않는다
+	const sizes = ["sm", "md", "lg"];
+	if (sizes.includes(config.size)) {
+		root.classList.remove(...sizes.map((s) => `bt-date-picker--${s}`));
+		root.classList.add(`bt-date-picker--${config.size}`);
+	} else if (!sizes.some((s) => root.classList.contains(`bt-date-picker--${s}`))) {
+		root.classList.add("bt-date-picker--md");
+	}
 	const labelEl = root.querySelector(".bt-date-picker__label");
 	if (labelEl && !labelEl.id) labelEl.id = generateId("bt-date-picker-label");
 	/** 숨은 input - 서버가 같은 name 으로 그려 두었으면 재사용한다 */
@@ -158,7 +172,9 @@ export function DatePicker(element, options = {}) {
 		initial.end ??= hiddenEnd?.value || undefined;
 	}
 
-	const trigger = make("button", "bt-date-picker__trigger", root);
+	// 칸 + 지우기 버튼. 지우기는 칸 안에 둘 수 없어(버튼 안 버튼) 옆에 겹쳐 둔다
+	const field = make("div", "bt-date-picker__field", root);
+	const trigger = make("button", "bt-date-picker__trigger", field);
 	trigger.type = "button";
 	trigger.setAttribute("aria-haspopup", "dialog");
 	trigger.setAttribute("aria-expanded", "false");
@@ -166,6 +182,18 @@ export function DatePicker(element, options = {}) {
 	trigger.innerHTML = `<span class="bt-date-picker__trigger-icon" aria-hidden="true"></span><span class="bt-date-picker__trigger-text" id="${valueId}"></span>`;
 	const valueEl = trigger.lastElementChild;
 	trigger.setAttribute("aria-labelledby", [labelEl?.id, valueId].filter(Boolean).join(" "));
+	const clearBtn = config.clearable ? make("button", "bt-date-picker__clear", field) : null;
+	if (clearBtn) {
+		clearBtn.type = "button";
+		clearBtn.setAttribute("aria-label", config.clearLabel);
+		field.classList.add("bt-date-picker__field--clearable");
+		cleanups.push(
+			on(clearBtn, "click", () => {
+				close();
+				clear();
+			}),
+		);
+	}
 
 	const panel = make("div", "bt-date-picker__panel", root);
 	panel.setAttribute("role", "dialog");
@@ -261,6 +289,8 @@ export function DatePicker(element, options = {}) {
 	// view - "day"(달력) · "month"(한 해의 12달) · "year"(12년). pick - 월 · 연 보기에서 포커스된 칸의 연 · 월
 	// value - 한 칸의 값, 범위면 시작. end - 범위의 종료 (한 칸이면 늘 null)
 	const state = { value: null, end: null, focused: null, isOpen: false, view: "day", pick: null };
+	// 날짜보다 먼저 고른 시각(분) - 날짜를 고르는 순간 합친다 (#964). 시작 · 종료 줄마다
+	const draft = { start: null, end: null };
 
 	/** 다른 DatePicker 의 값(minFrom · maxFrom)이 이 칸의 값보다 우선한다 - 더 좁은 쪽 */
 	const linked = (ref) => {
@@ -314,6 +344,7 @@ export function DatePicker(element, options = {}) {
 		valueEl.textContent = text;
 		valueEl.className = `bt-date-picker__trigger-${has ? "value" : "placeholder"}`;
 		trigger.disabled = config.disabled;
+		if (clearBtn) clearBtn.hidden = !has || config.disabled;
 		for (const [el, val] of [
 			[hidden, v],
 			[hiddenEnd, state.end],
@@ -378,7 +409,7 @@ export function DatePicker(element, options = {}) {
 			if (row.edge === "end" && own && state.value && sameDay(own, state.value)) {
 				lo = Math.max(lo, state.value.minutes ?? 0);
 			}
-			const minutes = own?.minutes ?? null;
+			const minutes = own?.minutes ?? draft[row.edge];
 			const hour = minutes === null ? null : Math.floor(minutes / 60);
 			let hours = "";
 			for (let h = 0; h < 24; h++) {
@@ -393,7 +424,8 @@ export function DatePicker(element, options = {}) {
 				mins += `<option value="${m}"${minutes !== null && minutes % 60 === m ? " selected" : ""}${off ? " disabled" : ""}>${pad(m)}</option>`;
 			}
 			row.minute.innerHTML = mins;
-			row.hour.disabled = row.minute.disabled = !own;
+			// 날짜가 없어도 막지 않는다 - 예전에는 막혀 있었는데 보통 칸과 똑같이 보였고, 막힌 select 를
+			// 누르면 팝오버가 닫혔다 (#964). 고른 시각은 draft 에 들고 있다가 날짜를 고를 때 합친다
 		}
 	}
 
@@ -492,6 +524,13 @@ export function DatePicker(element, options = {}) {
 	const output = () =>
 		config.range ? { start: out(state.value), end: out(state.end) } : out(state.value);
 
+	/** 값을 비운다 (지우기 버튼 · Delete) - 범위면 시작 · 종료 함께. 팝오버는 열지 않는다 */
+	function clear() {
+		draft.start = draft.end = null;
+		commit(null, true, null);
+		trigger.focus();
+	}
+
 	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	function commit(next, notify = true, end = state.end) {
 		const prev = JSON.stringify(output());
@@ -566,17 +605,28 @@ export function DatePicker(element, options = {}) {
 			// 첫 클릭은 시작, 두 번째는 종료. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이다
 			const s = state.value;
 			const restart = !s || !!state.end || compareDay(d, s) < 0;
-			if (restart) commit({ ...d, minutes: config.time ? minuteRange(d)[0] : null }, true, null);
-			// 종료 시각의 처음 값은 그날 끝 - 하루 단위 조회가 그날 전체를 덮게
-			else commit(s, true, { ...d, minutes: config.time ? clampMinutes(d, 24 * 60 - 1) : null });
+			if (restart) {
+				commit(
+					{ ...d, minutes: config.time ? (draft.start ?? minuteRange(d)[0]) : null },
+					true,
+					null,
+				);
+				draft.start = null;
+			} else {
+				// 종료 시각의 처음 값은 그날 끝 - 하루 단위 조회가 그날 전체를 덮게 (먼저 고른 시각이 있으면 그것)
+				const end = config.time ? clampMinutes(d, draft.end ?? 24 * 60 - 1) : null;
+				commit(s, true, { ...d, minutes: end });
+				draft.end = null;
+			}
 			if (!restart && !config.time) close(true);
 			// 종료를 골랐으니 다음 할 일은 종료 시각 - 마지막 시각 줄로
 			else if (!restart && viaKeyboard) timeRows[timeRows.length - 1].hour.focus();
 			else focusDay();
 			return;
 		}
-		const minutes = config.time ? (state.value?.minutes ?? minuteRange(d)[0]) : null;
+		const minutes = config.time ? (state.value?.minutes ?? draft.start ?? minuteRange(d)[0]) : null;
 		commit({ ...d, minutes });
+		draft.start = null;
 		if (!config.time) close(true);
 		// 키보드로 고르면 다음 할 일(시 칸)로 옮긴다. 마우스면 고른 날에 그대로 둔다 - 다시 그려 사라진 버튼
 		// 대신 같은 날에 앉힌다. 마우스 클릭 뒤 select 로 옮기면 select 가 :focus-visible 에 걸려 링이 떴다 (#953)
@@ -661,7 +711,19 @@ export function DatePicker(element, options = {}) {
 	// ── 이벤트 ───────────────────────────────────────────────────────────────
 	cleanups.push(
 		on(trigger, "click", () => (state.isOpen ? close() : open())),
+
 		on(trigger, "keydown", (e) => {
+			if (
+				config.clearable &&
+				(e.key === "Delete" || e.key === "Backspace") &&
+				// 수정 키와 함께면 브라우저 · 보조기술 단축키라 건드리지 않는다
+				!(e.ctrlKey || e.metaKey || e.altKey) &&
+				(state.value || state.end)
+			) {
+				e.preventDefault();
+				clear();
+				return;
+			}
 			if (e.key === "ArrowDown" && !state.isOpen) {
 				e.preventDefault();
 				open();
@@ -704,9 +766,15 @@ export function DatePicker(element, options = {}) {
 				moveFocus(moves[e.key](), true);
 			}
 		}),
-		// 팝오버 밖을 누르거나 Tab 으로 빠져나가면 닫는다
-		on(document, "mousedown", (e) => {
-			if (state.isOpen && !root.contains(e.target)) close();
+		// 팝오버 밖을 누르거나 Tab 으로 빠져나가면 닫는다. 안팎은 누른 자리로도 가린다 - 막힌 컨트롤을
+		// 누르면 브라우저가 그 컨트롤 대신 바깥 요소를 target 으로 줄 수 있어, target 만 보면 팝오버 안을
+		// 눌렀는데 닫혔다 (#964)
+		on(document, "pointerdown", (e) => {
+			if (!state.isOpen || root.contains(e.target)) return;
+			const r = panel.getBoundingClientRect();
+			const inside =
+				e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+			if (!inside) close();
 		}),
 		on(root, "focusout", (e) => {
 			if (state.isOpen && e.relatedTarget && !root.contains(e.relatedTarget)) close();
@@ -715,8 +783,13 @@ export function DatePicker(element, options = {}) {
 	for (const row of timeRows) {
 		const onTime = () => {
 			const own = row.edge === "start" ? state.value : state.end;
-			if (!own) return;
-			const next = { ...own, minutes: Number(row.hour.value) * 60 + Number(row.minute.value) };
+			const minutes = Number(row.hour.value) * 60 + Number(row.minute.value);
+			if (!own) {
+				draft[row.edge] = minutes;
+				renderTime();
+				return;
+			}
+			const next = { ...own, minutes };
 			if (row.edge === "start") commit(next);
 			else commit(state.value, true, next);
 		};
@@ -771,6 +844,8 @@ export function DatePicker(element, options = {}) {
 		getValue: output,
 		/** 값을 바꾼다. 범위 밖이면 경계로 맞추고, null 이면 비운다 */
 		setValue: (value) => {
+			// 바깥에서 값을 정하면(폼 리셋 등) 먼저 골라 둔 시각도 버린다 - 남으면 다음 날짜에 옛 시각이 붙었다
+			draft.start = draft.end = null;
 			// null · 빈 문자열만 비운다 - 형식이 틀린 값은 무시하고 지금 값을 지킨다
 			if (!value) return commit(null, true, null);
 			if (config.range) {

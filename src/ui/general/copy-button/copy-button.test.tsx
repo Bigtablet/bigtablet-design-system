@@ -33,6 +33,22 @@ describe("CopyButton", () => {
 		expect(screen.getByRole("status")).toHaveTextContent("복사됨");
 	});
 
+	// 표처럼 여러 개면 이름으로 구분한다 - 보이는 글자는 짧게 (#966)
+	it("takes aria-label as the name while the visible text stays the label", async () => {
+		render(
+			<>
+				<CopyButton text="192.168.10.1" aria-label="192.168.10.1 주소 복사" />
+				<CopyButton text="10.0.0.1" iconOnly aria-label="10.0.0.1 주소 복사" />
+			</>,
+		);
+		const first = screen.getByRole("button", { name: "192.168.10.1 주소 복사" });
+		expect(first).toHaveTextContent("복사");
+		expect(screen.getByRole("button", { name: "10.0.0.1 주소 복사" })).toBeInTheDocument();
+		await click(first);
+		expect(first).toHaveAccessibleName("192.168.10.1 주소 복사"); // 복사 뒤에도 이름은 그대로
+		expect(first).toHaveTextContent("복사됨");
+	});
+
 	it("goes back to the copy label after resetAfter", async () => {
 		vi.useFakeTimers();
 		render(<CopyButton text="x" resetAfter={500} />);

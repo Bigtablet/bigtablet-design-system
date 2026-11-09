@@ -902,6 +902,7 @@ Alert는 JavaScript로만 사용합니다.
 |---|---|---|
 | `text` (`data-bt-copy`) | - | 복사할 값. 함수면 누를 때 계산한다 (throw 하면 실패로 처리) |
 | `label` (`data-label`) | 버튼의 지금 글자 | 버튼 이름 · 문구. 이름(`aria-label`)은 "복사됨" 으로 바뀌지 않는다 |
+| `ariaLabel` (`data-aria-label`) | `label` | 이름만 따로 - 표처럼 여러 개면 `data-aria-label="192.168.10.1 주소 복사"` + 보이는 "복사". 보이는 문구를 이름 안에 넣는다 (WCAG 2.5.3). 버튼에 직접 쓴 `aria-label` 속성은 읽지 않고 덮는다 - 이 옵션을 쓴다 |
 | `copiedLabel` (`data-copied-label`) | `복사됨` | 복사 직후 문구 |
 | `failedLabel` (`data-failed-label`) | `복사하지 못했습니다` | 실패 시 스크린리더에 알리는 문구 |
 | `resetAfter` | `2000` | 문구를 되돌리기까지(ms). `0` 이면 되돌리지 않는다 |
@@ -1120,6 +1121,22 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 </div>
 ```
 
+#### 한 줄에 둘 때 (조회 조건)
+
+폼 칸(Dropdown · TextField · DatePicker)과 Button 은 React 와 같은 높이 단계를 쓴다 - 칸 `sm` · `md` 40px,
+`lg` 48px(좁은 화면은 한 단계 위), 모서리 12px, 라벨 → 칸 6px. 아래 맞춤(`align-items: flex-end`)으로
+나란히 두면 라벨 · 칸 윗선이 맞는다. 버튼은 칸과 같은 높이의 크기를 고른다 - 칸 `sm` · `md` 옆에는
+`bt-button--md`(40px), 칸 `lg` 옆에는 `bt-button--lg`(48px). `bt-button--sm` 은 32px 이라 칸보다 낮다.
+
+```html
+<div style="display: flex; align-items: flex-end; gap: 8px">
+  <div class="bt-dropdown" data-bt-dropdown>...<button class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">...</button>...</div>
+  <div class="bt-text-field">...<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md">...</div>
+  <div class="bt-date-picker" data-bt-date-picker data-size="md">...</div>
+  <button class="bt-button bt-button--md bt-button--filled">조회</button>
+</div>
+```
+
 #### 달력형 · 시각 선택
 
 React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 누르면 월 달력 팝오버가 열리고, 고른 값은 숨은
@@ -1151,6 +1168,9 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
 | `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
 | `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
+| `clearable` (`data-clearable`) | `clearable` | `false` | 값이 있으면 칸 오른쪽에 지우기(×). 누르거나 칸에서 Delete · Backspace 면 값을 비운다(`onValueChange(null)`, 숨은 input `""`). 팝오버는 열지 않는다. `minFrom` 으로 이 칸을 따르는 칸은 제한이 풀린다. 필수 칸에는 두지 않는다 |
+| `clearLabel` (`data-clear-label`) | `clearLabel` | "날짜 지우기" | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
+| `size` (`data-size`) | `size` | `md` | 칸 크기 `sm` · `md` · `lg` - Dropdown · TextField 칸과 같은 높이 (`bt-date-picker--{size}` 클래스를 직접 써도 된다) |
 | `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `todayLabel` · `dialogLabel` | 같은 이름 (`todayLabel` 은 Vanilla 만) | 로케일 카탈로그 | 버튼 · 칸 이름 |
 | `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
 
@@ -1166,6 +1186,7 @@ to.open();  to.close();  to.setDisabled(true);  to.destroy();
 - 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)
 - 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 열린 채로 남아 시 · 분을 고르고(키보드로 고르면 시 칸으로 포커스가 간다), 완료 · Escape · 바깥 클릭으로 닫는다
 - 아래 줄의 "오늘" 은 어느 달 · 보기에 있든 오늘을 고른다 (시각은 그대로). 오늘이 범위 밖이면 그 근처 달로 옮기기만 한다
+- 시각은 날짜보다 먼저 골라도 된다 - 들고 있다가 날짜(또는 "오늘")를 고르는 순간 합친다
 - 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
 
 #### 범위형 (#951)
@@ -1188,11 +1209,11 @@ React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종�
 | `defaultValue` (`data-start` · `data-end`) | 처음 값 `{ start, end }` |
 
 나머지 옵션(`time` · `minuteStep` · `min` · `max` · `today` …)은 한 칸과 같다. 값은 `{ start, end }` 다 -
-`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`.
+`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`. `clearable` 이면 시작 · 종료를 함께 비운다.
 
 - 첫 클릭은 시작, 두 번째는 종료다. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이 된다. 날짜만 고르면 종료를 고르는 순간 닫힌다
 - **시작을 종료 뒤로 옮기면 종료를 비운다** (React `DateRangePicker` 와 같은 규칙) - 시작으로 맞춰 버리면 고르지 않은 날짜가 조회 · 저장된다. 같은 날의 더 이른 종료 시각만 시작 시각으로 올린다
-- 종료 시각의 처음 값은 그날 끝(분 간격 마지막)이다 - 하루 단위 조회가 그날 전체를 덮는다
+- 종료 시각의 처음 값은 그날 끝(분 간격 마지막)이다 - 하루 단위 조회가 그날 전체를 덮는다. 종료 시각을 먼저 골라 두었으면 그 시각
 
 ---
 

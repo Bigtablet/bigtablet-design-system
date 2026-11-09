@@ -12,13 +12,13 @@
   display: inline-flex;
   flex-direction: column;
   width: 100%;
-  gap: var(--bt-spacing-xs);
+  // 라벨 → 칸 간격은 TextField · DatePicker 와 같이 이 gap 하나로 (React 와 같은 6px, #960)
+  gap: token.$spacing_6;
   font-family: var(--bt-font-family);
 
   &__label {
-    font-size: var(--bt-font-size-sm);
-    font-weight: var(--bt-font-weight-medium);
-    line-height: var(--bt-line-height-normal);
+    @include token.label_medium_medium;
+    letter-spacing: token.$letter_spacing_tight;
     color: var(--bt-color-text-primary);
   }
 
@@ -31,7 +31,8 @@
     cursor: pointer;
     color: var(--bt-color-text-primary);
     background: var(--bt-color-background);
-    border-radius: var(--bt-radius-md);
+    border-radius: token.$radius_lg;
+    box-sizing: border-box;
     transition: border-color var(--bt-transition-base),
                 box-shadow var(--bt-transition-base),
                 background var(--bt-transition-base);
@@ -81,20 +82,19 @@
       }
     }
 
-    /* Sizes */
-    &--sm {
-      padding: var(--bt-spacing-sm) var(--bt-spacing-lg);
-      font-size: var(--bt-font-size-sm);
-    }
-
+    /* Sizes - React Dropdown 과 같은 높이 · 패딩 · 글자 (sm · md 40, lg 48 - 좁은 화면은 한 단계 위).
+       TextField · DatePicker · Button 도 같은 단계라 한 줄에 두면 맞는다 (#960) */
+    &--sm,
     &--md {
-      padding: var(--bt-spacing-md) var(--bt-spacing-xl);
-      font-size: var(--bt-font-size-base);
+      @include token.responsive_height(token.$tap_target_compact);
+      padding: token.$spacing_4 token.$spacing_16;
+      @include token.body_small;
     }
 
     &--lg {
-      padding: var(--bt-spacing-lg) var(--bt-spacing-2xl);
-      font-size: var(--bt-font-size-md);
+      @include token.responsive_height(token.$tap_target_comfortable);
+      padding: token.$spacing_8 token.$spacing_20;
+      @include token.body_large;
     }
   }
 

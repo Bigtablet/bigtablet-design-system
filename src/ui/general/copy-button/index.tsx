@@ -13,12 +13,18 @@ export interface CopyButtonProps
 	extends Omit<
 		SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>,
 		// onCopy·onError 는 아래 의미로 쓴다 (DOM 의 copy · error 이벤트가 아니다)
-		"children" | "onClick" | "onCopy" | "onError" | "type" | "aria-label"
+		"children" | "onClick" | "onCopy" | "onError" | "type"
 	> {
 	/** 복사할 텍스트. 누를 때 계산하려면 함수로 */
 	text: string | (() => string);
 	/** 버튼 문구 · 아이콘만일 때는 접근성 이름 (기본값: 로케일 `copyButton.copy`) */
 	label?: string;
+	/**
+	 * 접근성 이름을 보이는 문구와 따로 줄 때 (#966). 표처럼 복사 버튼이 여럿이면 보이는 글자는 "복사" 로
+	 * 두고 이름은 `"192.168.10.1 주소 복사"` 처럼 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣는다
+	 * (WCAG 2.5.3 - 음성 입력이 보이는 글자로 버튼을 찾는다). 없으면 `label`
+	 */
+	"aria-label"?: string;
 	/** 복사 직후 문구 (기본값: 로케일 `copyButton.copied`) */
 	copiedLabel?: string;
 	/** 실패 시 스크린리더에 알릴 문구 (기본값: 로케일 `copyButton.failed`) */
@@ -60,10 +66,12 @@ export const CopyButton = ({
 	onCopy,
 	onError,
 	className,
+	"aria-label": ariaLabel,
 	...props
 }: CopyButtonProps) => {
 	const t = useLocaleText();
 	const label = labelProp ?? t("copyButton.copy");
+	const name = ariaLabel ?? label;
 	const copiedLabel = copiedLabelProp ?? t("copyButton.copied");
 	const failedLabel = failedLabelProp ?? t("copyButton.failed");
 	// onCopy · onError 는 훅이 시도마다 직접 부른다 - 같은 오류가 연달아 나도 매번
@@ -87,7 +95,7 @@ export const CopyButton = ({
 					icon={icon}
 					// 이름은 바꾸지 않는다 - 결과는 아래 status 가 알린다. 이름이 바뀌면 포커스 중
 					// 같은 버튼을 두 번 읽는다
-					aria-label={label}
+					aria-label={name}
 					className={className}
 					onClick={handleClick}
 				/>
@@ -98,7 +106,7 @@ export const CopyButton = ({
 					variant={variant}
 					leadingIcon={icon}
 					// 문구 버튼도 이름은 고정 - 보이는 문구만 "복사됨" 으로 바꾸고 낭독은 status 한 번
-					aria-label={label}
+					aria-label={name}
 					className={className}
 					onClick={handleClick}
 				>

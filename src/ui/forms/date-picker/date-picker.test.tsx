@@ -10,6 +10,46 @@ describe("DatePicker", () => {
 		expect(screen.getByText("Birth Date")).toBeInTheDocument();
 	});
 
+	it("passes size to the field - calendar trigger and the year/month/day dropdowns (#960)", () => {
+		const { container, rerender } = render(<DatePicker size="lg" onValueChange={() => {}} />);
+		expect(container.querySelectorAll(".dropdown_size_lg")).toHaveLength(3);
+		rerender(<DatePicker size="lg" variant="calendar" onValueChange={() => {}} />);
+		expect(container.querySelector(".date_picker_size_lg .date_picker_trigger")).not.toBeNull();
+		rerender(<DatePicker onValueChange={() => {}} />);
+		expect(container.querySelectorAll(".dropdown_size_md")).toHaveLength(3);
+	});
+
+	it("clears the value with the clear button or Delete when clearable (#965)", () => {
+		const onValueChange = vi.fn();
+		const { rerender } = render(
+			<DatePicker variant="calendar" value="2026-11-09" onValueChange={onValueChange} />,
+		);
+		expect(screen.queryByRole("button", { name: "날짜 지우기" })).toBeNull();
+		rerender(
+			<DatePicker clearable variant="calendar" value="2026-11-09" onValueChange={onValueChange} />,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "날짜 지우기" }));
+		expect(onValueChange).toHaveBeenLastCalledWith("");
+		const trigger = document.querySelector(".date_picker_trigger") as HTMLElement;
+		expect(trigger).toHaveFocus();
+		onValueChange.mockClear();
+		fireEvent.keyDown(trigger, { key: "Backspace", metaKey: true }); // 단축키는 지나간다
+		expect(onValueChange).not.toHaveBeenCalled();
+		fireEvent.keyDown(trigger, { key: "Delete" });
+		expect(onValueChange).toHaveBeenCalledWith("");
+		// 값이 없거나 비활성이면 버튼이 없다
+		rerender(<DatePicker clearable variant="calendar" onValueChange={onValueChange} />);
+		expect(screen.queryByRole("button", { name: "날짜 지우기" })).toBeNull();
+		rerender(<DatePicker clearable disabled value="2026-11-09" onValueChange={onValueChange} />);
+		expect(screen.queryByRole("button", { name: "날짜 지우기" })).toBeNull();
+		// 드롭다운형도 지운다
+		rerender(<DatePicker clearable value="2026-11-09" onValueChange={onValueChange} />);
+		fireEvent.click(screen.getByRole("button", { name: "날짜 지우기" }));
+		expect(onValueChange).toHaveBeenLastCalledWith("");
+		// 버튼이 사라지기 전에 포커스를 연도 칸으로 돌린다
+		expect(document.querySelector(".date_picker_fields button")).toHaveFocus();
+	});
+
 	it("renders year/month selects by default", () => {
 		render(<DatePicker onValueChange={() => {}} />);
 		// label + placeholder 로 각 Dropdown 에 두 번씩 "년"/"월" 나타남
