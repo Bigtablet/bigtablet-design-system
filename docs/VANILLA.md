@@ -412,7 +412,8 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 
 `data-name` 을 지정하면 hidden input 이 생성되어 선택 값이 폼 POST 에 포함됩니다.
 서버 템플릿이 `.bt-dropdown` 안에 hidden input 을 미리 렌더링해 두면 (예: `th:field`)
-그 input 의 name/초기값을 그대로 이어받아 표시·동기화합니다.
+그 input 의 name/초기값을 그대로 이어받아 표시·동기화합니다. hidden input 이 없거나 비어 있으면
+옵션에 그려 둔 `is-selected` 를 초기값으로 읽습니다 (`th:classappend="${...} ? 'is-selected'"`, #975).
 
 ```html
 <div class="bt-dropdown" data-bt-dropdown data-name="fruit">
@@ -509,9 +510,9 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 > </div>
 > ```
 
-`searchable` 일 때는 React 와 동일하게 **`role="combobox"` 가 검색 입력으로 옮겨가고**
-(`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함),
-트리거 버튼에는 `aria-haspopup="listbox"` + `aria-expanded` 만 남습니다.
+`searchable` 일 때는 React 와 동일하게 **검색 입력도 `role="combobox"` 가 되고**
+(`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함 - 활성 옵션은 검색 입력이 가리킨다),
+트리거도 `role="combobox"`(이름 = 라벨 + 현재 값)로 남습니다.
 
 **키보드 (WAI-ARIA APG Combobox):**
 
