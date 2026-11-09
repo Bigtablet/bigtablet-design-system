@@ -2,10 +2,19 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { DatePicker as VanillaDatePicker } from "../../../vanilla/bigtablet.js";
+import "../../../vanilla/scss/_button.scss";
 import "../../../vanilla/scss/_date-picker.scss";
+import "../../../vanilla/scss/_dropdown.scss";
+import "../../../vanilla/scss/_text-field.scss";
+import { Button } from "../../general/button";
+import { Dropdown } from "../dropdown";
+import { TextField } from "../textfield";
 import { DatePicker } from "./index";
 import "./style.scss";
 import "../../overlay/popover/style.scss";
+import "../../general/button/style.scss";
+import "../dropdown/style.scss";
+import "../textfield/style.scss";
 
 const openAt = async (pos: React.CSSProperties) => {
 	render(
@@ -96,5 +105,89 @@ describe("Vanilla calendar DatePicker (Chromium)", () => {
 		expect(
 			Math.abs(panel().getBoundingClientRect().right - trigger.getBoundingClientRect().right),
 		).toBeLessThan(1);
+	});
+});
+
+// 조회 조건 한 줄 - Dropdown · TextField · DatePicker · Button 을 아래 맞춤으로 나란히 두면 라벨 · 칸 윗선 ·
+// 높이 · 모서리가 같아야 한다 (#960). Vanilla 는 칸이 패딩으로 높이를 정해 49px · 8px, DatePicker 만 40px ·
+// 12px 이었고, React 는 TextField 테두리가 높이 밖에 붙어 42px 이었다
+describe("form field row alignment (Chromium)", () => {
+	const SIZES = [
+		["sm", 40],
+		["md", 40],
+		["lg", 48],
+	] as const;
+	const rowStyle = "display:flex;align-items:flex-end;gap:8px;width:1000px";
+	const box = (el: Element | null) => {
+		if (!el) throw new Error("missing element");
+		const r = el.getBoundingClientRect();
+		return { top: r.top, height: r.height, radius: getComputedStyle(el).borderRadius };
+	};
+
+	beforeEach(async () => {
+		await page.viewport(1280, 800);
+	});
+
+	// 칸 sm · md 는 높이가 같아(40) Button md 와 짝이다 - Button sm 은 32 로 더 낮다
+	it.each(SIZES)("lines up React %s fields and button", (size, height) => {
+		const { container } = render(
+			<div style={{ display: "flex", alignItems: "flex-end", gap: 8, width: 1000 }}>
+				<Dropdown label="직원" size={size} options={[{ value: "a", label: "가" }]} />
+				<TextField label="대상 주소" size={size} />
+				<DatePicker label="시작" size={size} variant="calendar" onValueChange={() => {}} />
+				<Button size={size === "sm" ? "md" : size} style={{ flexShrink: 0 }}>
+					조회
+				</Button>
+			</div>,
+		);
+		const q = (s: string) => container.querySelector(s);
+		const fields = [".dropdown_fieldset", ".text_field_container", ".date_picker_trigger"].map(
+			(s) => box(q(s)),
+		);
+		const labels = [".dropdown_label", ".text_field_label", ".date_picker_label"].map((s) =>
+			box(q(s)),
+		);
+		for (const f of fields) expect(f).toEqual({ ...fields[0], height, radius: "12px" });
+		for (const l of labels) expect(l.top).toBe(labels[0]?.top);
+		// 같은 높이 단계의 버튼은 칸과 위아래가 같다
+		expect(box(q("button.button")).top).toBe(fields[0]?.top);
+	});
+
+	it.each(SIZES)("lines up Vanilla %s fields and button", (size, height) => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div style="${rowStyle}">
+				<div class="bt-dropdown"><label class="bt-dropdown__label">직원</label><button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--${size}"><span class="bt-dropdown__placeholder">선택</span></button></div>
+				<div class="bt-text-field"><label class="bt-text-field__label">대상 주소</label><div class="bt-text-field__wrap"><input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--${size}"></div></div>
+				<div class="bt-date-picker" data-size="${size}"><span class="bt-date-picker__label">시작</span></div>
+				<button class="bt-button bt-button--${size === "sm" ? "md" : size} bt-button--filled" style="flex-shrink:0">조회</button>
+			</div>`,
+		);
+		VanillaDatePicker(container.querySelector(".bt-date-picker") as HTMLElement);
+		const q = (s: string) => container.querySelector(s);
+		const fields = [
+			".bt-dropdown__control",
+			".bt-text-field__input",
+			".bt-date-picker__trigger",
+		].map((s) => box(q(s)));
+		const labels = [".bt-dropdown__label", ".bt-text-field__label", ".bt-date-picker__label"].map(
+			(s) => box(q(s)),
+		);
+		for (const f of fields) expect(f).toEqual({ ...fields[0], height, radius: "12px" });
+		for (const l of labels) expect(l).toEqual(labels[0]);
+		expect(box(q(".bt-button")).top).toBe(fields[0]?.top);
+	});
+
+	it("keeps the Vanilla date selects at the field height", () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div class="bt-date-picker"><div class="bt-date-picker__fields"><select class="bt-date-picker__select" aria-label="연도"><option>2026</option></select></div></div>`,
+		);
+		expect(box(container.querySelector(".bt-date-picker__select"))).toMatchObject({
+			height: 40,
+			radius: "12px",
+		});
 	});
 });

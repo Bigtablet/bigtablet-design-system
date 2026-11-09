@@ -1120,6 +1120,22 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 </div>
 ```
 
+#### 한 줄에 둘 때 (조회 조건)
+
+폼 칸(Dropdown · TextField · DatePicker)과 Button 은 React 와 같은 높이 단계를 쓴다 - 칸 `sm` · `md` 40px,
+`lg` 48px(좁은 화면은 한 단계 위), 모서리 12px, 라벨 → 칸 6px. 아래 맞춤(`align-items: flex-end`)으로
+나란히 두면 라벨 · 칸 윗선이 맞는다. 버튼은 칸과 같은 높이의 크기를 고른다 - 칸 `sm` · `md` 옆에는
+`bt-button--md`(40px), 칸 `lg` 옆에는 `bt-button--lg`(48px). `bt-button--sm` 은 32px 이라 칸보다 낮다.
+
+```html
+<div style="display: flex; align-items: flex-end; gap: 8px">
+  <div class="bt-dropdown" data-bt-dropdown>...<button class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">...</button>...</div>
+  <div class="bt-text-field">...<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md">...</div>
+  <div class="bt-date-picker" data-bt-date-picker data-size="md">...</div>
+  <button class="bt-button bt-button--md bt-button--filled">조회</button>
+</div>
+```
+
 #### 달력형 · 시각 선택
 
 React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 누르면 월 달력 팝오버가 열리고, 고른 값은 숨은
@@ -1151,6 +1167,7 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
 | `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
 | `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
+| `size` (`data-size`) | `size` | `md` | 칸 크기 `sm` · `md` · `lg` - Dropdown · TextField 칸과 같은 높이 (`bt-date-picker--{size}` 클래스를 직접 써도 된다) |
 | `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `todayLabel` · `dialogLabel` | 같은 이름 (`todayLabel` 은 Vanilla 만) | 로케일 카탈로그 | 버튼 · 칸 이름 |
 | `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
 

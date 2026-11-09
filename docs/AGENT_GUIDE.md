@@ -247,7 +247,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
 | `Dropdown` | Value-selection menu. | `options`, `value`, `onValueChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
-| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth` |
+| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth`, `size` (sm/md/lg - same field height as Dropdown/TextField) |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
 | `OTPInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
