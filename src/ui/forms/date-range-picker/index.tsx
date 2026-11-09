@@ -39,6 +39,10 @@ export interface DateRangePickerProps {
 	required?: boolean;
 	/** 전체 너비 차지 (기본값: true) */
 	fullWidth?: boolean;
+	/**
+	 * 날짜마다 지우기(×) 버튼 (#965). 시작일을 지우면 종료일도 함께 비운다 - 시작 없는 종료는 고를 수 없다
+	 */
+	clearable?: boolean;
 }
 
 /**
@@ -70,6 +74,7 @@ export const DateRangePicker = ({
 	disabled,
 	required,
 	fullWidth = true,
+	clearable = false,
 }: DateRangePickerProps) => {
 	const t = useLocaleText();
 	const startLabel = startLabelProp ?? t("dateRange.start");
@@ -84,13 +89,15 @@ export const DateRangePicker = ({
 	const end = value?.end;
 
 	const handleStartChange = (next: string) => {
+		// 시작일을 지우면 종료일도 비운다 - 종료일은 시작일 없이 열리지 않는다
+		if (!next) return onValueChange({ start: undefined, end: undefined });
 		// 시작일이 종료일을 넘어서면 종료일을 비운다. 시작일로 맞춰 버리면 사용자가 고르지
 		// 않은 날짜가 그대로 조회·저장된다.
 		onValueChange({ start: next, end: end && end < next ? undefined : end });
 	};
 
 	const handleEndChange = (next: string) => {
-		onValueChange({ start, end: next });
+		onValueChange({ start, end: next || undefined });
 	};
 
 	// 종료일의 최소값은 시작일이다 - 이전 날짜는 목록에 아예 없다.
@@ -127,6 +134,7 @@ export const DateRangePicker = ({
 						selectableRange={selectableRange}
 						required={isRequired}
 						disabled={disabled}
+						clearable={clearable}
 						fullWidth
 					/>
 					<DatePicker
@@ -140,6 +148,7 @@ export const DateRangePicker = ({
 						required={isRequired}
 						// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.
 						disabled={disabled || !start}
+						clearable={clearable}
 						fullWidth
 					/>
 				</FieldControlBoundary>

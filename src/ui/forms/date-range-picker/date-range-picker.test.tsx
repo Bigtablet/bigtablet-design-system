@@ -39,6 +39,22 @@ describe("DateRangePicker", () => {
 		expect(years[0]).toBe("2026");
 	});
 
+	it("clears both dates when the start is cleared (#965)", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DateRangePicker
+				clearable
+				value={{ start: "2026-11-03", end: "2026-11-05" }}
+				onValueChange={onValueChange}
+			/>,
+		);
+		const [clearStart, clearEnd] = screen.getAllByRole("button", { name: "날짜 지우기" });
+		fireEvent.click(clearEnd as HTMLElement);
+		expect(onValueChange).toHaveBeenLastCalledWith({ start: "2026-11-03", end: undefined });
+		fireEvent.click(clearStart as HTMLElement);
+		expect(onValueChange).toHaveBeenLastCalledWith({ start: undefined, end: undefined });
+	});
+
 	it("clears the end date when the start moves past it", () => {
 		// 시작일로 맞춰 버리면 사용자가 고르지 않은 날짜가 그대로 조회·저장된다.
 		const onValueChange = vi.fn();

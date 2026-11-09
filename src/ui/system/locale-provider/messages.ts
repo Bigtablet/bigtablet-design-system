@@ -45,6 +45,7 @@ export interface LocaleMessages {
 	"datePicker.month": string;
 	"datePicker.nextMonth": string;
 	"datePicker.placeholder": string;
+	"datePicker.clear": string;
 	"datePicker.prevMonth": string;
 	"datePicker.rangeUntilTodaySr": string;
 	"datePicker.year": string;
@@ -134,6 +135,7 @@ export const ko: LocaleMessages = {
 	"datePicker.month": "월",
 	"datePicker.nextMonth": "다음 달",
 	"datePicker.placeholder": "날짜 선택",
+	"datePicker.clear": "날짜 지우기",
 	"datePicker.prevMonth": "이전 달",
 	"datePicker.rangeUntilTodaySr": "오늘까지 선택 가능",
 	"datePicker.year": "년",
@@ -220,6 +222,7 @@ export const en: LocaleMessages = {
 	"datePicker.month": "Month",
 	"datePicker.nextMonth": "Next month",
 	"datePicker.placeholder": "Select date",
+	"datePicker.clear": "Clear date",
 	"datePicker.prevMonth": "Previous month",
 	"datePicker.rangeUntilTodaySr": "Selectable up to today",
 	"datePicker.year": "Year",

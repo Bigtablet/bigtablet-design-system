@@ -318,6 +318,7 @@ import Link from "next/link";
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
 | `disabled` | `boolean` | - | |
 | `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
+| `clearable` | `boolean` | `false` | 날짜마다 지우기(×). 시작일을 지우면 종료일도 함께 비운다 |
 | `fullWidth` | `boolean` | `true` | |
 
 **거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
@@ -1487,6 +1488,8 @@ const [date, setDate] = useState('');
 | `startYear` | `number` | `1950` | 시작 연도 |
 | `endYear` | `number` | `현재년도 + 10` | 종료 연도 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
+| `clearable` | `boolean` | `false` | 값이 있으면 지우기(×) 버튼 - 누르면 `onValueChange("")`. 달력형은 칸에서 Delete · Backspace 로도. 조회 조건처럼 "값 없음 = 조건 없음" 인 칸에, 필수 칸에는 두지 않는다 |
+| `clearLabel` | `string` | `'날짜 지우기'` | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 칸 크기. Dropdown · TextField 와 같은 높이 단계(sm · md 40px, lg 48px)라 한 줄에 두면 맞는다 - 옆 Button 은 칸 sm · md 면 `md`, lg 면 `lg` |
 | `disabled` | `boolean` | `false` | 비활성화 |

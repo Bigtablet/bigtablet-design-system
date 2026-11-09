@@ -13,6 +13,7 @@ import { DatePicker } from "./index";
 import "./style.scss";
 import "../../overlay/popover/style.scss";
 import "../../general/button/style.scss";
+import "../../general/icon-button/style.scss";
 import "../dropdown/style.scss";
 import "../textfield/style.scss";
 
@@ -203,5 +204,47 @@ describe("form field row alignment (Chromium)", () => {
 			height: 40,
 			radius: "12px",
 		});
+	});
+});
+
+// 지우기(×)는 칸 오른쪽 안쪽에 세로 가운데로 겹치고, 글자와 겹치지 않는다 (#965)
+describe("DatePicker clear button placement (Chromium)", () => {
+	const check = (trigger: Element | null, clear: Element | null, text: Element | null) => {
+		const t = (trigger as HTMLElement).getBoundingClientRect();
+		const c = (clear as HTMLElement).getBoundingClientRect();
+		const v = (text as HTMLElement).getBoundingClientRect();
+		expect(c.right).toBeLessThanOrEqual(t.right);
+		expect(c.left).toBeGreaterThan(t.left);
+		expect(Math.abs(c.top + c.height / 2 - (t.top + t.height / 2))).toBeLessThanOrEqual(0.5);
+		expect(v.right).toBeLessThanOrEqual(c.left);
+	};
+
+	beforeEach(async () => {
+		await page.viewport(1280, 800);
+	});
+
+	it("places the React clear button inside the field", () => {
+		const { container } = render(
+			<div style={{ width: 220 }}>
+				<DatePicker clearable variant="calendar" value="2026-11-09" onValueChange={() => {}} />
+			</div>,
+		);
+		const q = (s: string) => container.querySelector(s);
+		check(q(".date_picker_trigger"), q(".date_picker_clear"), q(".date_picker_trigger_value"));
+	});
+
+	it("places the Vanilla clear button inside the field", () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div style="width:220px"><div class="bt-date-picker" data-clearable data-value="2026-11-09"></div></div>`,
+		);
+		VanillaDatePicker(container.querySelector(".bt-date-picker") as HTMLElement);
+		const q = (s: string) => container.querySelector(s);
+		check(
+			q(".bt-date-picker__trigger"),
+			q(".bt-date-picker__clear"),
+			q(".bt-date-picker__trigger-value"),
+		);
 	});
 });

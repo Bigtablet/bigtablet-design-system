@@ -1168,6 +1168,8 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
 | `placeholder` (`data-placeholder`) | `placeholder` | "날짜 선택" / "날짜와 시각 선택" | 값이 없을 때 칸 문구 |
 | `disabled` (`data-disabled`) | `disabled` | `false` | 비활성 |
+| `clearable` (`data-clearable`) | `clearable` | `false` | 값이 있으면 칸 오른쪽에 지우기(×). 누르거나 칸에서 Delete · Backspace 면 값을 비운다(`onValueChange(null)`, 숨은 input `""`). 팝오버는 열지 않는다. `minFrom` 으로 이 칸을 따르는 칸은 제한이 풀린다. 필수 칸에는 두지 않는다 |
+| `clearLabel` (`data-clear-label`) | `clearLabel` | "날짜 지우기" | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
 | `size` (`data-size`) | `size` | `md` | 칸 크기 `sm` · `md` · `lg` - Dropdown · TextField 칸과 같은 높이 (`bt-date-picker--{size}` 클래스를 직접 써도 된다) |
 | `prevMonthLabel` · `nextMonthLabel` · `hourLabel` · `minuteLabel` · `doneLabel` · `todayLabel` · `dialogLabel` | 같은 이름 (`todayLabel` 은 Vanilla 만) | 로케일 카탈로그 | 버튼 · 칸 이름 |
 | `onValueChange` | `onValueChange` | - | 값이 바뀔 때 `(value \| null)` |
@@ -1207,7 +1209,7 @@ React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종�
 | `defaultValue` (`data-start` · `data-end`) | 처음 값 `{ start, end }` |
 
 나머지 옵션(`time` · `minuteStep` · `min` · `max` · `today` …)은 한 칸과 같다. 값은 `{ start, end }` 다 -
-`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`.
+`getValue()` · `setValue({ start, end })` · `onValueChange({ start, end })`. `clearable` 이면 시작 · 종료를 함께 비운다.
 
 - 첫 클릭은 시작, 두 번째는 종료다. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이 된다. 날짜만 고르면 종료를 고르는 순간 닫힌다
 - **시작을 종료 뒤로 옮기면 종료를 비운다** (React `DateRangePicker` 와 같은 규칙) - 시작으로 맞춰 버리면 고르지 않은 날짜가 조회 · 저장된다. 같은 날의 더 이른 종료 시각만 시작 시각으로 올린다
