@@ -257,7 +257,12 @@ export function DatePicker(element, options = {}) {
 		const done = make("button", "bt-date-picker__action bt-date-picker__action--primary", footer);
 		done.type = "button";
 		done.textContent = config.doneLabel;
-		cleanups.push(on(done, "click", () => close(true)));
+		cleanups.push(
+			on(done, "click", () => {
+				fillToday();
+				close(true);
+			}),
+		);
 	}
 
 	const locale = intlLocale();
@@ -646,6 +651,18 @@ export function DatePicker(element, options = {}) {
 			return;
 		}
 		selectDay(today.day, false);
+	}
+
+	/**
+	 * 날짜 없이 시각만 고르고 완료를 누르면 그 시각을 오늘에 붙인다 - 닫기만 하면 고른 시각이 말없이 사라졌다
+	 * (#971). 범위면 시작 · 종료 둘 다 오늘. 오늘이 범위 밖이면 "오늘" 버튼처럼 채우지 않는다
+	 */
+	function fillToday() {
+		if (state.value || (draft.start == null && draft.end == null) || dayDisabled(today)) return;
+		const start = { ...today, minutes: draft.start ?? minuteRange(today)[0] };
+		if (config.range) commit(start, true, { ...today, minutes: draft.end ?? 24 * 60 - 1 });
+		else if (draft.start != null) commit(start);
+		draft.start = draft.end = null;
 	}
 
 	/** 월 · 연 보기에서 칸을 고른다 - 한 단계 아래 보기로 */

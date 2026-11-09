@@ -498,6 +498,59 @@ describe("DatePicker 시각 먼저 고르기 (#964)", () => {
 		expect(api?.getValue()).toEqual({ start: "2026-11-03T09:00", end: "2026-11-05T17:00" });
 	});
 
+	// 날짜 없이 시각만 고르고 완료를 누르면 오늘로 채운다 - 닫기만 하면 고른 시각이 사라졌다 (#971)
+	const done = (root: HTMLElement) =>
+		(root.querySelector(".bt-date-picker__action--primary") as HTMLButtonElement).click();
+
+	it("완료를 누르면 먼저 고른 시각을 오늘에 붙인다", () => {
+		const root = mountRoot("data-time");
+		const onValueChange = vi.fn();
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1, onValueChange });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toBe("2026-11-09T09:00");
+		expect(onValueChange).toHaveBeenCalledWith("2026-11-09T09:00");
+		expect(root.querySelector(".bt-date-picker__panel")?.hasAttribute("hidden")).toBe(true);
+	});
+
+	it("범위형은 완료를 누르면 시작 · 종료 둘 다 오늘", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [startHour, , endHour] = selects(root) as HTMLSelectElement[];
+		setTime(startHour as HTMLSelectElement, "9");
+		setTime(endHour as HTMLSelectElement, "17");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T09:00", end: "2026-11-09T17:00" });
+	});
+
+	it("범위형에서 시작 시각만 골랐으면 종료는 오늘 끝", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T09:00", end: "2026-11-09T23:59" });
+	});
+
+	it("오늘이 범위 밖이면 채우지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", min: "2026-12-01", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toBeNull();
+	});
+
+	it("시각을 고르지 않고 완료를 누르면 값을 만들지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09" });
+		api?.open();
+		done(root);
+		expect(api?.getValue()).toBeNull();
+	});
+
 	it("팝오버 영역 안을 누르면 target 이 바깥이어도 닫지 않는다", () => {
 		const root = mountRoot("data-time");
 		const api = DatePicker(root, { today: "2026-11-09" });
