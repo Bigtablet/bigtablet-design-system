@@ -223,21 +223,27 @@ describe("DatePicker clear button placement (Chromium)", () => {
 		await page.viewport(1280, 800);
 	});
 
-	it("places the React clear button inside the field", () => {
+	it.each(["md", "lg"] as const)("places the React clear button inside the %s field", (size) => {
 		const { container } = render(
 			<div style={{ width: 220 }}>
-				<DatePicker clearable variant="calendar" value="2026-11-09" onValueChange={() => {}} />
+				<DatePicker
+					clearable
+					size={size}
+					variant="calendar"
+					value="2026-11-09"
+					onValueChange={() => {}}
+				/>
 			</div>,
 		);
 		const q = (s: string) => container.querySelector(s);
 		check(q(".date_picker_trigger"), q(".date_picker_clear"), q(".date_picker_trigger_value"));
 	});
 
-	it("places the Vanilla clear button inside the field", () => {
+	it.each(["md", "lg"])("places the Vanilla clear button inside the %s field", (size) => {
 		const { container } = render(<span />);
 		container.insertAdjacentHTML(
 			"beforeend",
-			`<div style="width:220px"><div class="bt-date-picker" data-clearable data-value="2026-11-09"></div></div>`,
+			`<div style="width:220px"><div class="bt-date-picker" data-size="${size}" data-clearable data-value="2026-11-09"></div></div>`,
 		);
 		VanillaDatePicker(container.querySelector(".bt-date-picker") as HTMLElement);
 		const q = (s: string) => container.querySelector(s);

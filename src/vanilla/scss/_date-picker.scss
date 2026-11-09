@@ -174,10 +174,6 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     position: relative;
   }
 
-  .bt-date-picker__field--clearable .bt-date-picker__trigger {
-    padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
-  }
-
   .bt-date-picker__clear {
     position: absolute;
     top: 50%;
@@ -228,6 +224,11 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   &.bt-date-picker--lg .bt-date-picker__trigger-value,
   &.bt-date-picker--lg .bt-date-picker__trigger-placeholder {
     @include token.body_large;
+  }
+
+  // 지우기 자리 - lg 의 padding 보다 뒤에 둬야 덮이지 않는다 (특이도가 같다)
+  .bt-date-picker__field--clearable .bt-date-picker__trigger {
+    padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
   }
 
   // 팝오버 - 칸 아래(공간이 모자라면 위)에 붙는다

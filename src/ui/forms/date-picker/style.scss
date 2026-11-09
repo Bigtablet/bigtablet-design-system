@@ -160,10 +160,6 @@
   }
 }
 
-.date_picker_field_clearable .date_picker_trigger {
-  padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
-}
-
 // lg - Dropdown lg 와 같은 높이 · 패딩 · 글자 (#960). sm · md 는 위 기본값(40px)과 같다
 .date_picker_size_lg .date_picker_trigger {
   @include token.responsive_height(token.$tap_target_comfortable);
@@ -173,6 +169,11 @@
   &_placeholder {
     @include token.body_large;
   }
+}
+
+// 지우기 자리 - lg 의 padding 보다 뒤에 둬야 덮이지 않는다 (특이도가 같다)
+.date_picker_field_clearable .date_picker_trigger {
+  padding-right: calc(#{token.$spacing_8} + #{token.$tap_target_dense});
 }
 
 @media (prefers-reduced-motion: reduce) {
