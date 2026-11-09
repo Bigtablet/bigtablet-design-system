@@ -35,17 +35,6 @@ select:-webkit-autofill {
   box-shadow: 0 0 0 1000px var(--bt-color-background) inset;
 }
 
-// 자동완성 inset 이 상태 포커스 링을 덮지 않게 둘을 함께 준다
-.bt-text-field__input--error:-webkit-autofill:focus-visible {
-  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
-  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-error);
-}
-
-.bt-text-field__input--success:-webkit-autofill:focus-visible {
-  -webkit-box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
-  box-shadow: 0 0 0 1000px var(--bt-color-background) inset, var(--bt-focus-ring-success);
-}
-
 /* 비활성 + 자동완성 - 인증 후 칸을 잠그는 흐름에서 값이 남는다. 위 규칙만 두면
    `-webkit-text-fill-color` 가 disabled 글자색을 이겨 잠긴 칸이 활성처럼 진해진다. */
 input:-webkit-autofill:disabled,

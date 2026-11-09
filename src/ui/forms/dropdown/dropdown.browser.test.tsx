@@ -87,3 +87,46 @@ describe("Dropdown focus (Chromium)", () => {
 		},
 	);
 });
+
+// 감사에서 나온 Vanilla 배치 결함 (#975)
+describe("Vanilla Dropdown placement (Chromium)", () => {
+	const mount = (style: string, count = 30) => {
+		const { container } = render(<span />);
+		const items = Array.from(
+			{ length: count },
+			(_, i) => `<li class="bt-dropdown__option" data-value="${i}">항목 ${i}</li>`,
+		).join("");
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div class="bt-dropdown" style="position: fixed; ${style}; width: 200px"><button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md"><span class="bt-dropdown__placeholder">선택</span></button><ul class="bt-dropdown__list">${items}<li class="bt-dropdown__option" data-value="last">마지막</li></ul></div>`,
+		);
+		const wrap = container.querySelector(".bt-dropdown") as HTMLElement;
+		VanillaDropdown(wrap, { searchable: true });
+		return wrap.querySelector(".bt-dropdown__control") as HTMLElement;
+	};
+
+	it("re-attaches an upward list to the trigger after filtering", async () => {
+		await page.viewport(800, 600);
+		const control = mount("bottom: 20px; left: 40px");
+		await userEvent.click(control);
+		const panel = document.querySelector(".bt-dropdown__list") as HTMLElement;
+		expect(panel).toHaveClass("bt-dropdown__list--up");
+		await userEvent.type(document.activeElement as HTMLElement, "마지막");
+		const gap = control.getBoundingClientRect().top - panel.getBoundingClientRect().bottom;
+		expect(gap).toBeGreaterThanOrEqual(0);
+		expect(gap).toBeLessThanOrEqual(8);
+	});
+
+	it("lets the last option scroll into reach on a short screen", async () => {
+		await page.viewport(800, 300);
+		const control = mount("top: 130px; left: 40px");
+		await userEvent.click(control);
+		const options = document.querySelector(".bt-dropdown__options") as HTMLElement;
+		const panel = document.querySelector(".bt-dropdown__list") as HTMLElement;
+		options.scrollTop = options.scrollHeight;
+		const last = document.querySelector('[data-value="last"]') as HTMLElement;
+		expect(last.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+			panel.getBoundingClientRect().bottom + 0.5,
+		);
+	});
+});
