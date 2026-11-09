@@ -902,6 +902,7 @@ Alert는 JavaScript로만 사용합니다.
 |---|---|---|
 | `text` (`data-bt-copy`) | - | 복사할 값. 함수면 누를 때 계산한다 (throw 하면 실패로 처리) |
 | `label` (`data-label`) | 버튼의 지금 글자 | 버튼 이름 · 문구. 이름(`aria-label`)은 "복사됨" 으로 바뀌지 않는다 |
+| `ariaLabel` (`data-aria-label`) | `label` | 이름만 따로 - 표처럼 여러 개면 `data-aria-label="192.168.10.1 주소 복사"` + 보이는 "복사". 보이는 문구를 이름 안에 넣는다 (WCAG 2.5.3). 버튼에 직접 쓴 `aria-label` 속성은 읽지 않고 덮는다 - 이 옵션을 쓴다 |
 | `copiedLabel` (`data-copied-label`) | `복사됨` | 복사 직후 문구 |
 | `failedLabel` (`data-failed-label`) | `복사하지 못했습니다` | 실패 시 스크린리더에 알리는 문구 |
 | `resetAfter` | `2000` | 문구를 되돌리기까지(ms). `0` 이면 되돌리지 않는다 |

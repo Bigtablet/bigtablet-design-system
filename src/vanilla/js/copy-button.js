@@ -78,6 +78,8 @@ function execCopy(text) {
  * @param {Object} [options] - React `CopyButton` 과 같은 이름
  * @param {string|Function} [options.text] - 복사할 텍스트. 누를 때 계산하려면 함수. 없으면 `data-bt-copy`
  * @param {string} [options.label] - 버튼 이름 · 문구 (기본값: 버튼의 지금 글자, 없으면 "복사")
+ * @param {string} [options.ariaLabel] - 이름만 따로 (`data-aria-label`, #966). 복사 버튼이 여럿이면 보이는
+ *   글자는 "복사" 로 두고 이름에 무엇을 복사하는지 담는다 - 보이는 문구를 이름 안에 넣는다 (WCAG 2.5.3)
  * @param {string} [options.copiedLabel="복사됨"]
  * @param {string} [options.failedLabel="복사하지 못했습니다"] - 실패 시 status 로 알리는 문구
  * @param {number} [options.resetAfter=2000] - "복사됨" 을 유지하는 시간(ms)
@@ -92,6 +94,7 @@ export function CopyButton(element, options = {}) {
 	const labelEl = $("[data-copy-label]", btn) || btn;
 	const config = {
 		label: btn.dataset.label || labelEl.textContent.trim() || t("copyButton.copy"),
+		ariaLabel: btn.dataset.ariaLabel || null,
 		copiedLabel: btn.dataset.copiedLabel || t("copyButton.copied"),
 		failedLabel: btn.dataset.failedLabel || t("copyButton.failed"),
 		resetAfter: 2000,
@@ -103,7 +106,7 @@ export function CopyButton(element, options = {}) {
 	if (btn.tagName === "BUTTON" && !btn.hasAttribute("type")) btn.setAttribute("type", "button");
 	// 이름은 고정 - 보이는 문구가 "복사됨" 으로 바뀌어도 낭독은 아래 status 한 번. 보이는 문구도 처음부터
 	// 이름과 같게 둔다 (label 옵션이 버튼 글자와 다를 때 첫 복사 전까지 어긋나지 않게)
-	btn.setAttribute("aria-label", config.label);
+	btn.setAttribute("aria-label", config.ariaLabel || config.label);
 	labelEl.textContent = config.label;
 
 	const status = document.createElement("span");

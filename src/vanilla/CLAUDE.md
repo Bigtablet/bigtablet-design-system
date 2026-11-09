@@ -370,6 +370,7 @@ Bigtablet.Alert({
 Bigtablet.CopyButton('#copy', {
   text: () => input.value,   // 또는 data-bt-copy. 바뀌는 문구만 [data-copy-label] 로 감쌀 수 있다
   copiedLabel: '복사됨', failedLabel: '복사하지 못했습니다', resetAfter: 2000,
+  ariaLabel: '192.168.10.1 주소 복사', // 이름만 따로 (data-aria-label, #966) - 버튼에 직접 쓴 aria-label 은 label 로 덮인다
   onCopy: (text) => {}, onError: (error) => {}
 });
 
