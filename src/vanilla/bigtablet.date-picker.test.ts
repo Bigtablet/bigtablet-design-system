@@ -434,3 +434,75 @@ describe("DateRangePicker 범위형 (#951)", () => {
 		expect(root.querySelectorAll(".bt-date-picker__time-label")).toHaveLength(2);
 	});
 });
+
+// 날짜보다 시각을 먼저 고른다 - 예전에는 날짜가 없으면 시 · 분 칸이 막혀 있었고, 막힌 칸을 누르면
+// 팝오버가 닫혔다 (#964)
+describe("DatePicker 시각 먼저 고르기 (#964)", () => {
+	const mountRoot = (attrs = "") => {
+		const wrap = document.createElement("div");
+		wrap.innerHTML = `<div class="bt-date-picker" ${attrs}></div>`;
+		document.body.appendChild(wrap);
+		return wrap.firstElementChild as HTMLElement;
+	};
+	const day = (root: HTMLElement, d: number) =>
+		root.querySelector(`button[data-day="${d}"]`) as HTMLButtonElement;
+	const setTime = (select: HTMLSelectElement, value: string) => {
+		select.value = value;
+		select.dispatchEvent(new Event("change"));
+	};
+	const selects = (root: HTMLElement) =>
+		Array.from(root.querySelectorAll<HTMLSelectElement>(".bt-date-picker__time select"));
+
+	it("날짜 없이 고른 시각을 들고 있다가 날짜를 고르면 합친다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [hour, minute] = selects(root) as [HTMLSelectElement, HTMLSelectElement];
+		expect(hour.disabled || minute.disabled).toBe(false);
+		setTime(hour, "9");
+		setTime(minute, "30");
+		expect(api?.getValue()).toBeNull();
+		expect(hour.value).toBe("9"); // 다시 그려도 고른 시각이 남는다
+		day(root, 12).click();
+		expect(api?.getValue()).toBe("2026-11-12T09:30");
+	});
+
+	it("오늘 버튼도 먼저 고른 시각을 쓴다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "18");
+		(root.querySelector(".bt-date-picker__action") as HTMLButtonElement).click();
+		expect(api?.getValue()).toBe("2026-11-09T18:00");
+	});
+
+	it("범위형은 시작 · 종료 시각을 각각 먼저 고를 수 있다", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [startHour, , endHour] = selects(root) as HTMLSelectElement[];
+		setTime(startHour as HTMLSelectElement, "9");
+		setTime(endHour as HTMLSelectElement, "17");
+		day(root, 3).click();
+		day(root, 5).click();
+		expect(api?.getValue()).toEqual({ start: "2026-11-03T09:00", end: "2026-11-05T17:00" });
+	});
+
+	it("팝오버 영역 안을 누르면 target 이 바깥이어도 닫지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09" });
+		api?.open();
+		const panel = root.querySelector(".bt-date-picker__panel") as HTMLElement;
+		panel.getBoundingClientRect = () => ({ left: 0, top: 50, right: 300, bottom: 400 }) as DOMRect;
+		const press = (x: number, y: number) =>
+			document.body.dispatchEvent(
+				new MouseEvent("pointerdown", { bubbles: true, clientX: x, clientY: y }),
+			);
+		const expanded = () =>
+			root.querySelector(".bt-date-picker__trigger")?.getAttribute("aria-expanded");
+		press(100, 380); // 막힌 컨트롤을 눌러 target 이 body 가 된 경우
+		expect(expanded()).toBe("true");
+		press(500, 500);
+		expect(expanded()).toBe("false");
+	});
+});
