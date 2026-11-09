@@ -589,6 +589,7 @@ import { Settings } from 'lucide-react';
 |------|------|---------|-------------|
 | `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
 | `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
+| `aria-label` | `string` | `label` | 이름만 따로. 복사 버튼이 여럿이면 보이는 글자는 짧게 두고 이름에 무엇을 복사하는지 담는다 (`"{값} 주소 복사"`) |
 | `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
 | `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
 | `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
@@ -603,6 +604,7 @@ import { Settings } from 'lucide-react';
 
 - 결과는 버튼 옆 **숨긴 `role="status"`** 가 알린다 ("복사됨" / "복사하지 못했습니다"). 화면에는 아이콘 · 문구 변화로 충분하다
 - 버튼 이름(`label`)은 **바꾸지 않는다** - 문구 버튼도 보이는 문구만 "복사됨" 으로 바뀐다. 포커스 중인 버튼의 이름이 바뀌면 status 와 함께 두 번 읽힌다. 보이는 문구가 이름을 포함하므로(복사 → 복사됨) WCAG 2.5.3 Label in Name 도 지킨다
+- **한 화면에 여러 개**(표의 줄마다 등)면 모두 "복사" 로 들려 구분되지 않는다 - `aria-label` 로 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣어 Label in Name 을 지킨다 (`aria-label="192.168.10.1 주소 복사"` + 보이는 "복사")
 - 함수 `text` 가 throw 하면 실패로 처리한다 - "복사하지 못했습니다" 알림 + `onError`
 - `id` · `title` · `data-*` · `aria-describedby` · `ref` 등 `<button>` 속성은 그대로 전달된다
 - Toast 를 함께 띄우면 같은 문구를 두 번 듣게 된다 - 다른 문구("초대 링크를 복사했습니다")로 맥락을 더하거나 하나만 쓴다
@@ -638,6 +640,9 @@ await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
 // 아이콘만
 <code>{maskedKey}</code>
 <CopyButton text={apiKey} iconOnly label="API 키 복사" />
+
+// 표의 줄마다 - 보이는 글자는 "복사", 이름은 줄마다 다르게
+<CopyButton text={row.ip} variant="text" aria-label={`${row.ip} 주소 복사`} />
 ```
 
 ---

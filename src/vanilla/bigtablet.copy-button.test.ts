@@ -145,6 +145,23 @@ describe("CopyButton (#918)", () => {
 		expect(btn.getAttribute("aria-label")).toBe("주소 복사");
 	});
 
+	it("이름만 따로 줄 수 있다 - data-aria-label · ariaLabel (#966)", async () => {
+		setClipboard(() => Promise.resolve());
+		const byAttr = mount(
+			'<button data-bt-copy="192.168.10.1" data-aria-label="192.168.10.1 주소 복사">복사</button>',
+		);
+		CopyButton(byAttr);
+		expect(byAttr.getAttribute("aria-label")).toBe("192.168.10.1 주소 복사");
+		expect(byAttr.textContent).toBe("복사");
+		byAttr.click();
+		await vi.waitFor(() => expect(byAttr.textContent).toBe("복사됨"));
+		expect(byAttr.getAttribute("aria-label")).toBe("192.168.10.1 주소 복사");
+		const byOption = mount('<button data-bt-copy="x">복사</button>');
+		CopyButton(byOption, { ariaLabel: "x 복사" });
+		expect(byOption.getAttribute("aria-label")).toBe("x 복사");
+		expect(byOption.textContent).toBe("복사");
+	});
+
 	it("onCopy 가 throw 해도 문구는 제때 되돌아가고 예외는 보고된다", async () => {
 		vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
 		setClipboard(() => Promise.resolve());
