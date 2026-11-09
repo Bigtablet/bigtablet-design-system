@@ -78,6 +78,20 @@ describe("Vanilla calendar DatePicker (Chromium)", () => {
 		await page.viewport(800, 600);
 	});
 
+	// 날짜를 고르기 전에 시 칸을 눌러도 팝오버가 닫히지 않는다 - 예전에는 칸이 막혀 있어 누르면 바깥 클릭으로
+	// 판정됐다 (#964)
+	it("keeps the panel open when the hour is picked before a date", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px");
+		await userEvent.click(trigger);
+		const hour = panel().querySelector(".bt-date-picker__time select") as HTMLSelectElement;
+		expect(hour.disabled).toBe(false);
+		await userEvent.click(hour);
+		expect(panel().hidden).toBe(false);
+		await userEvent.selectOptions(hour, "9");
+		await userEvent.click(panel().querySelector('button[data-day="20"]') as HTMLElement);
+		expect(trigger.textContent).toContain("09:00");
+	});
+
 	it("draws the trigger at the React calendar trigger height and opens the panel below", async () => {
 		const { trigger, panel } = mountVanilla("top: 40px; left: 40px");
 		expect(trigger.getBoundingClientRect().height).toBe(40);
