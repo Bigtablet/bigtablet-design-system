@@ -132,6 +132,8 @@ export function Alert(options = {}) {
 		try {
 			callback?.();
 		} finally {
+			// 이어받을 대화상자는 콜백 안에서 열렸다 - 그 뒤로는 표시를 남기지 않는다
+			overlay._btSettling = false;
 			close();
 		}
 	}

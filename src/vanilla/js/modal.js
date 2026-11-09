@@ -198,6 +198,8 @@ export function Modal(element, options = {}) {
 	}
 
 	function onClick(e) {
+		const fromInside = pressedInside;
+		pressedInside = false;
 		// 닫기 버튼은 위임으로 - 나중에 넣은 버튼도 동작하고, 안에 겹친 모달의 닫기는 그 모달 몫이다 (#973)
 		const closer = e.target.closest?.("[data-modal-close]");
 		if (closer && closer.closest(".bt-modal") === modal) {
@@ -206,8 +208,6 @@ export function Modal(element, options = {}) {
 			close();
 			return;
 		}
-		const fromInside = pressedInside;
-		pressedInside = false;
 		if (config.closeOnOverlay && e.target === modal && !fromInside) {
 			close();
 		}
