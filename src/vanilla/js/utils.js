@@ -56,6 +56,52 @@ export const FOCUSABLE_SELECTORS = [
 ].join(", ");
 
 /**
+ * Tab 이 실제로 닿는 요소만 - `hidden` · `inert` 안이나 display:none · visibility:hidden 은 뺀다.
+ * 셀렉터만 쓰면 서버가 조건부로 숨긴 버튼이 "마지막" 이 돼 Tab 트랩이 새고 초기 포커스가 숨은 칸으로 간다 (#973)
+ */
+export function focusablesIn(root) {
+	return $$(FOCUSABLE_SELECTORS, root).filter((el) => {
+		if (el.closest("[hidden],[inert]")) return false;
+		const style = getComputedStyle(el);
+		return style.display !== "none" && style.visibility !== "hidden";
+	});
+}
+
+/**
+ * 대화상자 Tab 트랩 (WAI-ARIA APG Dialog) - Modal · Alert 공용. 포커스가 목록 밖(패널 자체 ·
+ * body)이면 방향에 따라 처음 · 끝으로 보낸다 - 패널에 포커스를 둔 채 Shift+Tab 하면 빠져나갔다 (#973)
+ */
+export function trapTab(e, container) {
+	const list = focusablesIn(container);
+	if (list.length === 0) {
+		e.preventDefault();
+		return;
+	}
+	const first = list[0];
+	const last = list[list.length - 1];
+	const active = document.activeElement;
+	let next = null;
+	if (!list.includes(active)) next = e.shiftKey ? last : first;
+	else if (e.shiftKey && active === first) next = last;
+	else if (!e.shiftKey && active === last) next = first;
+	if (next) {
+		e.preventDefault();
+		next.focus();
+	}
+}
+
+/**
+ * 대화상자를 닫을 때 돌려줄 곳. 닫히는 중인 Alert 의 버튼에서 열었으면(onConfirm 에서 연 Modal ·
+ * 다음 Alert) 그 Alert 가 돌려줄 곳을 이어받는다 - 그 버튼은 곧 DOM 에서 빠진다. 아직 열려 있는
+ * Alert 위에 띄운 것이면 그 Alert 의 버튼으로 돌아간다 (#973)
+ */
+export function returnFocusTarget() {
+	const opener = document.activeElement;
+	const alert = opener?.closest?.(".bt-alert__overlay");
+	return alert?._btSettling ? alert._btPreviousFocus : opener;
+}
+
+/**
  * 잠금으로 회수되는 오른쪽 폭(px). 오버레이 스크롤바(macOS 기본)에서는 0.
  *
  * `window.innerWidth - html.clientWidth` 로는 안 된다. 그 값은 "지금 스크롤바가 떠 있는가"
