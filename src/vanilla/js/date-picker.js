@@ -524,7 +524,6 @@ export function DatePicker(element, options = {}) {
 	const output = () =>
 		config.range ? { start: out(state.value), end: out(state.end) } : out(state.value);
 
-	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	/** 값을 비운다 (지우기 버튼 · Delete) - 범위면 시작 · 종료 함께. 팝오버는 열지 않는다 */
 	function clear() {
 		draft.start = draft.end = null;
@@ -532,6 +531,7 @@ export function DatePicker(element, options = {}) {
 		trigger.focus();
 	}
 
+	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	function commit(next, notify = true, end = state.end) {
 		const prev = JSON.stringify(output());
 		state.value = clamp(next);

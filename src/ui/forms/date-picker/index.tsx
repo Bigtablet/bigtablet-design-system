@@ -483,7 +483,13 @@ export const DatePicker = ({
 						size="sm"
 						icon={<X size={iconSize.sm} />}
 						aria-label={clearLabel}
-						onClick={onClear}
+						onClick={(e) => {
+							// 지우면 이 버튼이 사라져 포커스가 body 로 떨어진다 - 연도 칸으로 돌린다
+							const first =
+								e.currentTarget.parentElement?.querySelector<HTMLButtonElement>("button");
+							onClear();
+							first?.focus();
+						}}
 					/>
 				)}
 			</div>

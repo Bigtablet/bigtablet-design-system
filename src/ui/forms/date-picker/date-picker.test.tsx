@@ -44,6 +44,8 @@ describe("DatePicker", () => {
 		rerender(<DatePicker clearable value="2026-11-09" onValueChange={onValueChange} />);
 		fireEvent.click(screen.getByRole("button", { name: "날짜 지우기" }));
 		expect(onValueChange).toHaveBeenLastCalledWith("");
+		// 버튼이 사라지기 전에 포커스를 연도 칸으로 돌린다
+		expect(document.querySelector(".date_picker_fields button")).toHaveFocus();
 	});
 
 	it("renders year/month selects by default", () => {
