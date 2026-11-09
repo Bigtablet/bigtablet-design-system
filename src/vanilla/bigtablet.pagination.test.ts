@@ -390,3 +390,16 @@ describe("Pagination - 재초기화 · Escape · setPage (#976)", () => {
 		expect(api?.getPage()).toBe(3);
 	});
 });
+
+describe("Pagination - 걷힌 인스턴스 (#976)", () => {
+	it("교체된 옛 인스턴스의 destroy · setPage 가 새 화면을 건드리지 않는다", () => {
+		document.body.innerHTML = '<nav id="p" class="bt-pagination"></nav>';
+		const el = document.getElementById("p") as HTMLElement;
+		const old = Pagination(el, { page: 1, totalPages: 5 });
+		Pagination(el, { page: 3, totalPages: 5 });
+		const html = el.innerHTML;
+		old?.setPage(2);
+		old?.destroy();
+		expect(el.innerHTML).toBe(html);
+	});
+});

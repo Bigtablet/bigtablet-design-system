@@ -24,7 +24,8 @@
 
   &--soft {
     background: token.$color_accent_subtle;
-    color: var(--bt-color-accent);
+    // 글자는 테마 토큰 그대로 - 커스텀 accent 를 쓰면 subtle 배경 위 대비가 보장되지 않는다 (#976)
+    color: token.$color_accent_default;
   }
 
   // ── Tone ────────────────────────────────────────────────────────────
@@ -37,7 +38,7 @@
 
     &.bt-badge--soft {
       background: token.$color_accent_subtle;
-      color: var(--bt-color-accent);
+      color: token.$color_accent_default;
     }
   }
 

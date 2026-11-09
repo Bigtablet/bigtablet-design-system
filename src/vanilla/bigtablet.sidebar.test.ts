@@ -74,4 +74,13 @@ describe("Sidebar data-width 단위 (#976)", () => {
 		Sidebar(el);
 		expect(el.style.transition).toBe("width 1s");
 	});
+
+	it("소비자가 준 transition longhand 도 지킨다", () => {
+		document.body.innerHTML =
+			'<aside class="bt-sidebar" style="transition-property: opacity; transition-duration: 1s"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.transitionProperty).toBe("opacity");
+		expect(el.style.transitionDuration).toBe("1s");
+	});
 });

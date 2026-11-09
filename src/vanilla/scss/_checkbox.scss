@@ -100,10 +100,10 @@
     left: 50%;
     top: 50%;
     width: 60%;
-    height: 2px;
+    height: 0;
+    // 막대는 테두리로 - 배경이면 강제 색상 모드에서 상자 배경과 같은 시스템 색이 돼 빈 상자처럼 보인다
     border: 0;
-    border-radius: 1px;
-    background: var(--bt-color-accent-on-surface);
+    border-top: 2px solid var(--bt-color-accent-on-surface);
     transform: translate(-50%, -50%);
   }
 }

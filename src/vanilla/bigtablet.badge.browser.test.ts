@@ -96,3 +96,25 @@ describe("Vanilla Badge (Chromium, #917)", () => {
 		expect(Number.parseFloat(s.borderTopLeftRadius)).toBeGreaterThan(100);
 	});
 });
+
+// 자손에 둔 data-theme="dark" 안에서도 accent 가 반전된다 - :root 에서만 별칭을 풀면 밝은 값이 상속됐다 (#976)
+describe("Badge accent inside a nested dark theme", () => {
+	afterEach(() => {
+		document.body.innerHTML = "";
+	});
+
+	it("flips the accent fill to the dark theme value", () => {
+		const scope = document.createElement("div");
+		scope.dataset.theme = "dark";
+		document.body.appendChild(scope);
+		const badge = document.createElement("span");
+		badge.className = "bt-badge";
+		badge.textContent = "사용 중";
+		scope.appendChild(badge);
+		const darkAccent = getComputedStyle(scope).getPropertyValue("--bt-color-accent-default").trim();
+		expect(getComputedStyle(badge).backgroundColor).toBe(rgb(darkAccent));
+		expect(getComputedStyle(badge).backgroundColor).not.toBe(
+			rgb(cssVar("--bt-color-accent-default")),
+		);
+	});
+});

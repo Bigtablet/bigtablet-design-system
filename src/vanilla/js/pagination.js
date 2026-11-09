@@ -108,6 +108,8 @@ export function Pagination(element, options = {}) {
 	}
 
 	function render() {
+		// 걷힌 인스턴스는 그리지 않는다 - 같은 요소의 새 인스턴스 화면을 옛 리스너로 덮지 않게
+		if (destroyed) return;
 		const items = getPaginationItems(config.page, config.totalPages);
 		// innerHTML 을 갈면 누른 버튼이 사라져 포커스가 body 로 떨어진다 - 같은 자리로 되돌린다
 		const focused = container.contains(document.activeElement) ? document.activeElement : null;
@@ -268,6 +270,8 @@ export function Pagination(element, options = {}) {
 		render();
 	}
 
+	let destroyed = false;
+
 	// Initialize
 	render();
 
@@ -278,8 +282,12 @@ export function Pagination(element, options = {}) {
 		render,
 		/** 그린 버튼과 리스너를 걷는다 - 다시 만들 때 앞 인스턴스를 치운다 */
 		destroy: () => {
+			if (destroyed) return;
+			destroyed = true;
+			// 이미 교체된 인스턴스면 지금 화면은 새 인스턴스 것이다 - 지우지 않는다
+			if (container._btPagination !== api) return;
 			container.innerHTML = "";
-			if (container._btPagination === api) delete container._btPagination;
+			delete container._btPagination;
 		},
 	};
 	container._btPagination = api;
