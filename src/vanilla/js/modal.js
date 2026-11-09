@@ -1,5 +1,5 @@
-import { afterExit, lockScroll, noop, pushEscape, unlockScroll } from "./overlay.js";
-import { $, focusablesIn, generateId, on, ownsFocus, returnFocusTarget, trapTab } from "./utils.js";
+import { afterExit, lockScroll, ownsFocus, pushEscape, unlockScroll } from "./overlay.js";
+import { $, focusablesIn, generateId, on, returnFocusTarget, trapTab } from "./utils.js";
 
 /* ========================================
      Modal Component
@@ -83,7 +83,7 @@ export function Modal(element, options = {}) {
 		// Escape 는 공유 스택에 - 최상단일 때만 닫힌다. `closeOnEscape: false` 여도
 		// **등록은 한다**: 모달은 아래 오버레이를 비활성으로 덮으므로, 등록을 건너뛰면
 		// 최상단 항목이 아래 오버레이가 되어 Escape 한 번에 뒤쪽이 닫힌다.
-		popEscape = pushEscape(config.closeOnEscape ? close : noop);
+		popEscape = pushEscape(onEscape);
 
 		// 포커스 이동 - 이전 포커스 저장 후 패널 첫 focusable(없으면 패널 자체)로 (WCAG 2.4.3)
 		previousFocus = returnFocusTarget();
@@ -213,10 +213,15 @@ export function Modal(element, options = {}) {
 		}
 	}
 
+	// 이 모달만의 핸들러 - 공용 noop 을 쓰면 스택 최상단이 어느 모달인지 가릴 수 없다 (ownsFocus)
+	function onEscape() {
+		if (config.closeOnEscape) close();
+	}
+
 	function onKeyDown(e) {
 		if (!state.isOpen) return;
 		// Escape 는 위 스택이 처리한다. Tab 트랩은 포커스가 이 모달에 있을 때만 - 위에 뜬 Alert 의 Tab 을 막지 않게
-		if (e.key === "Tab" && panel && ownsFocus(panel)) trapTab(e, panel);
+		if (e.key === "Tab" && panel && ownsFocus(panel, onEscape)) trapTab(e, panel);
 	}
 
 	// Bind events

@@ -91,15 +91,6 @@ export function trapTab(e, container) {
 }
 
 /**
- * 이 키 입력이 이 대화상자 몫인지 - 포커스가 안에 있거나 갈 곳 없이 body 에 떨어졌을 때만. 위에 다른
- * 대화상자(Modal 위 Alert, Alert 위 Alert)가 떠 있으면 그쪽 Tab 을 막지 않는다 (#973)
- */
-export function ownsFocus(container) {
-	const active = document.activeElement;
-	return !active || active === document.body || container.contains(active);
-}
-
-/**
  * 대화상자를 닫을 때 돌려줄 곳. 닫히는 중인 Alert 의 버튼에서 열었으면(onConfirm 에서 연 Modal ·
  * 다음 Alert) 그 Alert 가 돌려줄 곳을 이어받는다 - 그 버튼은 곧 DOM 에서 빠진다. 아직 열려 있는
  * Alert 위에 띄운 것이면 그 Alert 의 버튼으로 돌아간다 (#973)

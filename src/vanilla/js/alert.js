@@ -1,6 +1,6 @@
 import { t } from "./locale.js";
-import { afterExit, lockScroll, pushEscape, unlockScroll } from "./overlay.js";
-import { escapeHtml, generateId, ownsFocus, returnFocusTarget, trapTab } from "./utils.js";
+import { afterExit, lockScroll, ownsFocus, pushEscape, unlockScroll } from "./overlay.js";
+import { escapeHtml, generateId, returnFocusTarget, trapTab } from "./utils.js";
 
 /* ========================================
      Alert Component
@@ -166,7 +166,7 @@ export function Alert(options = {}) {
 	// Tab 포커스 트랩 (WAI-ARIA APG Dialog) - Modal 과 같은 헬퍼. Escape 는 위 스택이 처리한다.
 	// 포커스가 이 Alert 에 있을 때만 - 위에 뜬 다른 Alert 의 Tab 을 막지 않게
 	function onKeyDown(e) {
-		if (e.key === "Tab" && alertPanel && ownsFocus(alertPanel)) trapTab(e, alertPanel);
+		if (e.key === "Tab" && alertPanel && ownsFocus(alertPanel, dismiss)) trapTab(e, alertPanel);
 	}
 	document.addEventListener("keydown", onKeyDown);
 

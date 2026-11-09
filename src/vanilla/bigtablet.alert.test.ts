@@ -262,7 +262,7 @@ describe("Alert - 마크업 · 버튼", () => {
 	it("stops trapping after close", () => {
 		const { close } = Alert({ message: "m" });
 		close();
-		// 앞 테스트들의 Alert 가 열린 채라 body 대신 페이지 버튼에서 - body 는 열린 대화상자가 가져간다
+		// 앞 테스트들의 Alert 가 열린 채라 body 대신 페이지 버튼에서 - body 는 가장 위 대화상자가 가져간다
 		const page = document.createElement("button");
 		document.body.appendChild(page);
 		page.focus();

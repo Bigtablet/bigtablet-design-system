@@ -715,6 +715,15 @@ describe("Modal · Alert - 포커스 트랩 · 닫힘 (#973)", () => {
 		expect(document.activeElement?.id).toBe("late");
 	});
 
+	it("포커스가 body 면 가장 위 대화상자만 가져간다", () => {
+		Modal(mount('<button id="in-modal">m</button>'))?.open();
+		alert({ message: "m", showCancel: true });
+		(document.activeElement as HTMLElement).blur();
+		expect(document.activeElement).toBe(document.body);
+		key(document.body, "Tab");
+		expect(document.activeElement?.closest(".bt-alert__overlay")).not.toBeNull();
+	});
+
 	it("아래 Modal 이 위에 뜬 Alert 의 Tab 을 막지 않는다", () => {
 		Modal(mount("<p>텍스트만</p>"))?.open();
 		alert({ message: "m", showCancel: true });
@@ -767,7 +776,7 @@ describe("Modal · Alert - 포커스 트랩 · 닫힘 (#973)", () => {
 		document.body.appendChild(btn);
 		Modal(el);
 		init();
-		el._btModal?.destroy();
+		(el as HTMLElement & { _btModal?: { destroy: () => void } })._btModal?.destroy();
 		// 리스너 안의 예외는 click() 밖으로 나오지 않는다 - window error 로 잡는다
 		const errors: unknown[] = [];
 		const onError = (e: ErrorEvent) => {
