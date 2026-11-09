@@ -67,4 +67,11 @@ describe("Sidebar data-width 단위 (#976)", () => {
 		Sidebar(el);
 		expect(el.style.getPropertyValue("--bt-sidebar-width")).toBe("280px");
 	});
+
+	it("처음 그릴 때 끈 전환을 소비자 인라인 값으로 되돌린다", () => {
+		document.body.innerHTML = '<aside class="bt-sidebar" style="transition: width 1s"></aside>';
+		const el = document.querySelector(".bt-sidebar") as HTMLElement;
+		Sidebar(el);
+		expect(el.style.transition).toBe("width 1s");
+	});
 });

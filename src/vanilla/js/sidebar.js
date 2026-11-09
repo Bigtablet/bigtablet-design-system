@@ -79,10 +79,15 @@ export function Sidebar(element, options = {}) {
 	}
 
 	// 처음 그릴 때는 너비 전환을 끈다 - 저장된 접힘 상태를 쪽마다 240 → 64px 로 줄이며 보여 주지 않게 (#976)
+	// 소비자가 인라인으로 준 transition 은 지키고 되돌린다
+	const prevTransition = root.style.transition;
 	root.style.transition = "none";
-	apply();
-	void root.offsetWidth; // 전환 없이 적용된 너비를 확정한 뒤 되돌린다
-	root.style.transition = "";
+	try {
+		apply();
+		void root.offsetWidth; // 전환 없이 적용된 너비를 확정한 뒤 되돌린다
+	} finally {
+		root.style.transition = prevTransition;
+	}
 
 	const api = {
 		isCollapsed: () => collapsed,
