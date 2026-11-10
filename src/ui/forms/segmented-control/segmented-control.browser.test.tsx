@@ -1,8 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { page, userEvent } from "vitest/browser";
+import { cdp, page, userEvent } from "vitest/browser";
 import { SegmentedControl } from "./index";
 import "./style.scss";
+
+const emulateForcedColors = (value: "active" | "none") =>
+	cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
+
+/** 시스템 색의 실제 rgb - 고대비 팔레트마다 다르므로 같은 페이지에서 잰다 */
+const systemColor = (name: string) => {
+	const probe = document.createElement("span");
+	probe.style.cssText = `forced-color-adjust: none; color: ${name}`;
+	document.body.appendChild(probe);
+	const value = getComputedStyle(probe).color;
+	probe.remove();
+	return value;
+};
 
 const items = [
 	{ value: "USD", label: "USD" },
@@ -90,5 +103,19 @@ describe("SegmentedControl (Chromium)", () => {
 			screen.getByRole("radio", { name: "KRW" }).closest("label") as HTMLElement,
 		);
 		expect(form.checkValidity()).toBe(true);
+	});
+});
+
+// 고른 칸을 배경 · 그림자로만 표시한다 - 고대비에서는 시스템 선택색으로 (#1001)
+describe("SegmentedControl in forced-colors mode (Chromium)", () => {
+	it("paints the selected item with Highlight", async () => {
+		await emulateForcedColors("active");
+		try {
+			render(<SegmentedControl aria-label="통화" items={items} defaultValue="USD" />);
+			const item = screen.getByRole("radio", { name: "USD" }).closest(".segmented_control_item");
+			expect(getComputedStyle(item as Element).backgroundColor).toBe(systemColor("Highlight"));
+		} finally {
+			await emulateForcedColors("none");
+		}
 	});
 });

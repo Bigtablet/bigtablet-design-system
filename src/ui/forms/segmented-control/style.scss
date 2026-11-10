@@ -99,3 +99,13 @@
     transition: none;
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 고른 칸을 배경 · 그림자로만 표시한다 - 고대비는 둘 다 지워 어느 칸인지 알 수 없다.
+@media (forced-colors: active) {
+  .segmented_control_item_selected {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

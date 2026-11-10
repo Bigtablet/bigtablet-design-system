@@ -147,3 +147,34 @@
   .toggle,
   .toggle_thumb { transition: none; }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 손잡이 · 켜진 트랙을 배경으로만 그린다 - 고대비가 배경을 지우면 손잡이가 사라져 켬/끔을 알 수 없다.
+// 손잡이는 글자색, 켜진 트랙은 시스템 선택색, 비활성은 GrayText 로 칠한다. 선택자는 위 규칙과 같은 특이도로 맞춰 뒤에서 이긴다.
+@media (forced-colors: active) {
+  .toggle_thumb {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .toggle_on {
+    forced-color-adjust: none;
+    background: Highlight;
+    border-color: Highlight;
+
+    .toggle_thumb {
+      background: HighlightText;
+    }
+  }
+
+  .toggle_disabled,
+  .toggle_on.toggle_disabled {
+    forced-color-adjust: none;
+    background: Canvas;
+    border-color: GrayText;
+
+    .toggle_thumb {
+      background: GrayText;
+    }
+  }
+}
