@@ -184,12 +184,6 @@ let toastSeq = 0;
 // ── ToastProvider ────────────────────────────────────────────────────────────
 
 /**
- * 토스트 컨텍스트를 제공하는 Provider를 렌더링한다.
- * 앱 최상단에서 children을 감싸야 useToast 훅을 사용할 수 있다.
- * @param props Provider 속성
- * @returns 렌더링된 Provider와 토스트 컨테이너
- */
-/**
  * 토스트 문구를 읽어 주는 숨은 공지 영역 - 컨테이너와 함께 처음부터 붙어 있다. 라이브 리전은 내용보다 먼저
  * DOM 에 있어야 삽입이 공지된다 - 토스트마다 role 노드를 새로 꽂으면 그것을 놓치는 보조기술이 있다.
  * 문구만 담아 닫기 · 액션 버튼 이름이 섞이지 않는다.
@@ -214,6 +208,12 @@ const ToastAnnouncer = ({ toasts }: { toasts: ToastItem[] }) => {
 	);
 };
 
+/**
+ * 토스트 컨텍스트를 제공하는 Provider를 렌더링한다.
+ * 앱 최상단에서 children을 감싸야 useToast 훅을 사용할 수 있다.
+ * @param props Provider 속성
+ * @returns 렌더링된 Provider와 토스트 컨테이너
+ */
 export const ToastProvider = ({
 	children,
 	maxCount = 5,

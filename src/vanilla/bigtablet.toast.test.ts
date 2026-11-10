@@ -82,6 +82,16 @@ describe("Toast", () => {
 		expect(status.textContent).toBe("");
 	});
 
+	it("리전을 만든 직후 바로 닫으면 문구를 공지 영역에 넣지 않는다", () => {
+		vi.useFakeTimers();
+		const t = Toast("곧 닫힘", "info");
+		t.dismiss();
+		vi.runAllTimers();
+		vi.useRealTimers();
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(status.textContent).toBe("");
+	});
+
 	it("모르는 tone 은 neutral 로 그린다", () => {
 		Toast("a", "toString" as never);
 		Toast("b");

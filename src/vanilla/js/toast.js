@@ -93,7 +93,11 @@ export function Toast(message, tone = "neutral", options = {}) {
 	const announcer = region.querySelector(
 		`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
 	);
-	if (fresh) setTimeout(() => announcer?.appendChild(line), 100);
+	// 그 사이에 닫혔으면 넣지 않는다 - 닫힌 토스트 문구가 늦게 공지되고 영역에 남았다
+	if (fresh)
+		setTimeout(() => {
+			if (!closing) announcer?.appendChild(line);
+		}, 100);
 	else announcer?.appendChild(line);
 
 	let closing = false;
