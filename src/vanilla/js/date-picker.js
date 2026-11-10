@@ -195,6 +195,8 @@ export function DatePicker(element, options = {}) {
 		);
 	}
 
+	const probe = make("span", "bt-date-picker__probe", root);
+	probe.setAttribute("aria-hidden", "true");
 	const panel = make("div", "bt-date-picker__panel", root);
 	panel.setAttribute("role", "dialog");
 	panel.setAttribute(
@@ -257,7 +259,12 @@ export function DatePicker(element, options = {}) {
 		const done = make("button", "bt-date-picker__action bt-date-picker__action--primary", footer);
 		done.type = "button";
 		done.textContent = config.doneLabel;
-		cleanups.push(on(done, "click", () => close(true)));
+		cleanups.push(
+			on(done, "click", () => {
+				fillToday();
+				close(true);
+			}),
+		);
 	}
 
 	const locale = intlLocale();
@@ -479,6 +486,8 @@ export function DatePicker(element, options = {}) {
 		if (dayView) renderGrid();
 		else renderPicks();
 		renderTime();
+		// 보기가 바뀌면 크기도 바뀐다 - 위로 열린 팝오버가 칸에서 떨어지지 않게 다시 붙인다
+		place();
 	}
 
 	/** 보기를 바꾸고 그 보기의 포커스 칸에 앉는다 - 누른 버튼이 사라져 포커스가 body 로 떨어지지 않게 */
@@ -534,6 +543,8 @@ export function DatePicker(element, options = {}) {
 	/** 값을 바꾼다. 범위면 end 로 종료도 함께 (생략하면 지금 종료를 다시 맞춘다) */
 	function commit(next, notify = true, end = state.end) {
 		const prev = JSON.stringify(output());
+		const inputs = [hidden, hiddenEnd].filter(Boolean);
+		const before = inputs.map((el) => el.value);
 		state.value = clamp(next);
 		if (config.range) state.end = clampEnd(end);
 		render();
@@ -541,6 +552,13 @@ export function DatePicker(element, options = {}) {
 		if (notify) config.onValueChange?.(output());
 		// 이 칸을 minFrom · maxFrom 으로 따르는 칸들이 다시 맞춘다
 		root.dispatchEvent(new CustomEvent("bt-date-picker-change", { bubbles: true }));
+		// 폼 단위 change 리스너(자동 조회 · 바뀜 표시)가 날짜도 보게 - 숨은 input 은 스스로 change 를 내지 않는다.
+		// 바뀐 input 만, 따르는 칸이 다시 맞춘 뒤에 낸다 (#974)
+		if (notify) {
+			inputs.forEach((el, i) => {
+				if (el.value !== before[i]) el.dispatchEvent(new Event("change", { bubbles: true }));
+			});
+		}
 	}
 
 	// ── 열고 닫기 ────────────────────────────────────────────────────────────
@@ -558,23 +576,64 @@ export function DatePicker(element, options = {}) {
 		state.pick = null;
 		panel.hidden = false;
 		trigger.setAttribute("aria-expanded", "true");
-		// 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춰 연다
-		panel.classList.remove("bt-date-picker__panel--up", "bt-date-picker__panel--end");
 		render();
-		const rect = panel.getBoundingClientRect();
-		if (rect.bottom > window.innerHeight && trigger.getBoundingClientRect().top > rect.height) {
-			panel.classList.add("bt-date-picker__panel--up");
-		}
-		if (rect.right > document.documentElement.clientWidth) {
-			panel.classList.add("bt-date-picker__panel--end");
-		}
+		trackPanel();
 		releaseEscape = pushEscape(() => close(true));
 		focusDay();
+	}
+
+	/**
+	 * 팝오버를 칸에 붙인다 - 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춘다. fixed 라
+	 * 열려 있는 동안 다시 잰다. 크기는 offset* 로 - 진입 모션의 transform 이 섞이지 않게.
+	 * 조상에 CSS zoom 이 있으면 rect 는 확대된 화면 px, offset* · top · left 는 확대 전 px 다 - 둘을 맞춘다 (#981)
+	 */
+	function place() {
+		const a = field.getBoundingClientRect();
+		const origin = probe.getBoundingClientRect();
+		const zoom = panel.currentCSSZoom || 1;
+		const w = panel.offsetWidth * zoom;
+		const h = panel.offsetHeight * zoom;
+		const gap = 4;
+		const up = a.bottom + gap + h > window.innerHeight && a.top - gap > h;
+		const end = a.left + w > document.documentElement.clientWidth;
+		panel.classList.toggle("bt-date-picker__panel--up", up);
+		panel.classList.toggle("bt-date-picker__panel--end", end);
+		let top = up ? a.top - gap - h : a.bottom + gap;
+		// 어느 쪽에도 다 안 들어가면(낮은 화면) 화면 안으로 민다 - 칸을 덮더라도 달력 아랫줄이 밖으로 나가지 않게.
+		// 칸이 스크롤로 화면 밖에 나갔으면 밀지 않는다 - 칸과 떨어져 가장자리에 붙어 남지 않게
+		if (a.bottom > 0 && a.top < window.innerHeight)
+			top = Math.max(gap, Math.min(top, window.innerHeight - gap - h));
+		// 오른쪽 끝에 맞춰도 좁은 화면이면 왼쪽이 잘린다 - 왼쪽 여백에서 멈춘다
+		const left = end ? Math.max(gap, a.right - w) : a.left;
+		// 바뀐 때만 쓴다 - 매 프레임 같은 값을 써도 스타일 무효화가 생긴다
+		const nextTop = `${(top - origin.top) / zoom}px`;
+		const nextLeft = `${(left - origin.left) / zoom}px`;
+		if (panel.style.top !== nextTop) panel.style.top = nextTop;
+		if (panel.style.left !== nextLeft) panel.style.left = nextLeft;
+	}
+
+	let untrackPanel = null;
+	/**
+	 * 열려 있는 동안 매 프레임 좌표를 따라간다. 스크롤 · 리사이즈만이 아니라 조상의 transform 이 바뀌어도
+	 * (`.bt-card--interactive` hover 해제) fixed 기준이 움직이는데, 그걸 알려 주는 이벤트가 없다 (#981)
+	 */
+	// ponytail: 프레임마다 rect 두 번 - 팝오버 하나만 열리니 충분하다. 무거우면 ResizeObserver + scroll 로 나눈다
+	function trackPanel() {
+		if (untrackPanel) return;
+		let frame = requestAnimationFrame(function tick() {
+			if (state.isOpen) place();
+			frame = requestAnimationFrame(tick);
+		});
+		untrackPanel = () => {
+			cancelAnimationFrame(frame);
+			untrackPanel = null;
+		};
 	}
 
 	function close(returnFocus = false) {
 		if (!state.isOpen) return;
 		state.isOpen = false;
+		untrackPanel?.();
 		panel.hidden = true;
 		trigger.setAttribute("aria-expanded", "false");
 		releaseEscape?.();
@@ -607,7 +666,13 @@ export function DatePicker(element, options = {}) {
 			const restart = !s || !!state.end || compareDay(d, s) < 0;
 			if (restart) {
 				commit(
-					{ ...d, minutes: config.time ? (draft.start ?? minuteRange(d)[0]) : null },
+					// 시작을 다시 고르면 지금 시작 시각을 지킨다 - 한 칸 모드와 같다 (#974)
+					{
+						...d,
+						minutes: config.time
+							? (draft.start ?? state.value?.minutes ?? minuteRange(d)[0])
+							: null,
+					},
 					true,
 					null,
 				);
@@ -646,6 +711,18 @@ export function DatePicker(element, options = {}) {
 			return;
 		}
 		selectDay(today.day, false);
+	}
+
+	/**
+	 * 날짜 없이 시각만 고르고 완료를 누르면 그 시각을 오늘에 붙인다 - 닫기만 하면 고른 시각이 말없이 사라졌다
+	 * (#971). 범위면 시작 · 종료 둘 다 오늘. 오늘이 범위 밖이면 "오늘" 버튼처럼 채우지 않는다
+	 */
+	function fillToday() {
+		if (state.value || (draft.start == null && draft.end == null) || dayDisabled(today)) return;
+		const start = { ...today, minutes: draft.start ?? minuteRange(today)[0] };
+		if (config.range) commit(start, true, { ...today, minutes: draft.end ?? 24 * 60 - 1 });
+		else if (draft.start != null) commit(start);
+		draft.start = draft.end = null;
 	}
 
 	/** 월 · 연 보기에서 칸을 고른다 - 한 단계 아래 보기로 */
@@ -701,11 +778,18 @@ export function DatePicker(element, options = {}) {
 	}
 
 	/** ‹ › - 보기마다 한 달 · 한 해 · 12년 */
-	function navigate(dir) {
-		if (state.view === "day") return moveFocus(addMonths(state.focused, dir), false);
-		const p = state.pick;
-		state.pick = { ...p, year: p.year + dir * (state.view === "month" ? 1 : YEARS) };
-		render();
+	function navigate(dir, btn) {
+		if (state.view === "day") moveFocus(addMonths(state.focused, dir), false);
+		else {
+			const p = state.pick;
+			state.pick = { ...p, year: p.year + dir * (state.view === "month" ? 1 : YEARS) };
+			render();
+		}
+		// 범위 끝에 닿아 누른 버튼이 막히면 포커스가 body 로 빠진다 - 고를 칸으로 옮긴다 (#974)
+		if (btn.disabled) {
+			if (state.view === "day") focusDay();
+			else picks.querySelector('button[tabindex="0"]')?.focus();
+		}
 	}
 
 	// ── 이벤트 ───────────────────────────────────────────────────────────────
@@ -729,8 +813,8 @@ export function DatePicker(element, options = {}) {
 				open();
 			}
 		}),
-		on(prevBtn, "click", () => navigate(-1)),
-		on(nextBtn, "click", () => navigate(1)),
+		on(prevBtn, "click", () => navigate(-1, prevBtn)),
+		on(nextBtn, "click", () => navigate(1, nextBtn)),
 		on(titleBtn, "click", () => {
 			if (state.view !== "year") setView(state.view === "day" ? "month" : "year");
 		}),
@@ -838,6 +922,12 @@ export function DatePicker(element, options = {}) {
 	}
 	render();
 
+	// form.reset() · <button type="reset"> 은 숨은 input 을 되돌리지 못한다 - value 를 대입하면 기본값도 바뀐다.
+	// reset 이 끝난 뒤 처음 값으로 되돌린다 (#974)
+	const startValue = output();
+	const form = root.closest("form");
+	if (form) cleanups.push(on(form, "reset", () => queueMicrotask(() => api.setValue(startValue))));
+
 	const api = {
 		/** 지금 값 - "YYYY-MM-DD" · "YYYY-MM-DDTHH:mm", 없으면 null */
 		// 범위면 { start, end } (각각 문자열 또는 null)
@@ -877,8 +967,9 @@ export function DatePicker(element, options = {}) {
 			cleanups.forEach((cleanup) => {
 				cleanup();
 			});
+			// 숨은 input 은 남긴다 - 폼이 값을 계속 보내고, 다시 만들면 같은 name 으로 이어받는다 (범위면 종료도, #974)
 			created.forEach((el) => {
-				if (el !== hidden) el.remove();
+				if (el !== hidden && el !== hiddenEnd) el.remove();
 			});
 			if (root._btDatePicker === api) delete root._btDatePicker;
 		},

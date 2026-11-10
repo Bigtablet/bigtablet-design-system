@@ -66,4 +66,15 @@ describe("Checkbox", () => {
 		rerender(<Checkbox indeterminate={false} />);
 		expect(checkbox.indeterminate).toBe(false);
 	});
+
+	// 클릭으로 지워져도 prop 이 true 면 다시 세운다 (#985)
+	it("restores indeterminate after a click when the prop stays true", async () => {
+		vi.useFakeTimers();
+		render(<Checkbox label="전체" indeterminate checked={false} onChange={() => {}} />);
+		const box = screen.getByRole("checkbox") as HTMLInputElement;
+		fireEvent.click(box);
+		await vi.runAllTimersAsync();
+		expect(box.indeterminate).toBe(true);
+		vi.useRealTimers();
+	});
 });

@@ -4,6 +4,28 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.8.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.8.0) - 2026-11-10
+- Form 에 `errorSummary` 가 생겼습니다 - 제출 뒤 폼 위에 에러 개수와 필드별 링크를 보이고 그리로 포커스를 옮겨 한 번에 읽힙니다. 링크를 누르면 그 입력으로 갑니다. 켜면 필드는 `errors` 에서 온 에러를 따로 낭독하지 않습니다 (`errorSummaryTitle`, 로케일 `form.errorSummary`)
+- Accordion 에 `headingAs`(기본 `h3`)가 생겼습니다 - 페이지 헤딩 구조에 맞춥니다. Combobox 는 열린 채 검색어가 빈 칸에서 Backspace · Delete 로 선택을 지웁니다(`onValueChange(null)`)
+- Field 에러가 `role="alert"` 로 필드 이름과 함께 낭독됩니다
+- Toast 공지를 숨은 status · alert 영역으로 옮겨 문구가 한 번씩, 버튼 이름 없이 읽힙니다. 실패로 바뀐 진행 토스트는 바로(assertive) 다시 읽힙니다 (React · Vanilla)
+- 오버레이 포커스 트랩을 고쳤습니다 - 제목 · 본문을 누른 뒤나 패널 자신에서 Tab · Shift+Tab 이 빠져나가던 것, 숨김 · `inert` 요소가 끝 후보가 되던 것, 확인 대화상자 콜백에서 부모 Modal 을 닫으면 포커스가 body 로 떨어지던 것 (Modal · Drawer · Alert · Popover, Vanilla Modal · Alert 포함)
+- 닫기 버튼 없는 확인 Modal · Drawer 는 첫 포커스가 footer 의 destructive 버튼이 아니라 패널로 갑니다. Popover 안에서 연 Modal 위에 Popover 가 남지 않습니다
+- 클릭 가능한 ListItem · Card · MediaCard 가 안쪽 버튼 · 입력의 클릭과 Enter · Space 를 가로채지 않습니다 - 행 안 "더보기" 버튼이 키보드로 눌리고 카드 안 textarea 에서 Space 를 칠 수 있습니다. Menu 는 트리거 자신의 `onClick`(`stopPropagation` 등)을 지킵니다
+- DataView 는 지운 행의 선택을 버리고(페이지네이션이 있어도), 검색어가 바뀌면 선택을 비우며, 에러 때도 툴바를 남깁니다
+- Tabs 는 선택된 탭이 없거나 disabled 여도 tab stop 이 하나 남고, 공백이 든 value 로도 탭 · 패널 연결이 이어집니다. Pagination 은 범위를 넘는 `page` 를 마지막 쪽으로 봅니다
+- OtpInput 가운데 칸을 지워도 뒤 숫자가 당겨지지 않고, 찬 칸에 숫자를 치면 덮어씁니다. Combobox 는 Esc 로 닫은 뒤 클릭 · 화살표로 다시 열리고 닫을 때 스피너를 끕니다
+- 비제어 TextField · Textarea · Dropdown · SegmentedControl 이 `form.reset()` 을 따릅니다. TextField · Textarea 는 소비자 `onCompositionStart` · `onCompositionEnd` 도 부릅니다
+- Textarea 자동 높이가 폭이 바뀌어도 다시 맞춰집니다. ImageCropper 는 `minZoom` 을 바꿔도 먹통이 되지 않고 Ctrl/Cmd + = · - (브라우저 확대)를 가로채지 않습니다. TimePicker 는 고를 분이 없는 시를 목록에서 뺍니다. DateCalendar 는 SSR 첫 렌더에서 기기의 오늘을 읽지 않습니다
+- FileInput preview 박스에 이미지를 끌어다 놓을 수 있습니다. 지우기 버튼(TextField · FileInput)을 누르면 포커스가 입력으로 갑니다
+- ThemeProvider 가 마운트 때 no-flash 스크립트의 `data-theme` 를 지웠다 다시 세우지 않습니다. 중첩 LocaleProvider 는 바깥 `locale` · `messages` 를 이어받습니다
+- Vanilla - DatePicker 완료를 시각만 고르고 눌러도 오늘 날짜로 채웁니다, 팝오버가 스크롤 · CSS zoom · 조상 transform 에도 칸에 붙습니다, 범위형 종료 값 · `form.reset()` · `change` 이벤트를 고쳤습니다. Dropdown `is-selected` 초기값 · 재초기화 placeholder, Pagination `destroy()` · 문자열 `setPage`, `setLocale("en-US")`, 비활성 Toggle 미제출, `<a data-modal-close>` 이동, `Bigtablet.version` 실제 버전
+- Vanilla CSS 변수 - 간격 · 글꼴 · transition · z 별칭은 `:root` 에만 둬서 `:root` 에 준 값이 `data-theme` 구역 안에서도 이깁니다. 색 별칭 커스터마이징은 `:root, [data-theme]` 에 줍니다 (`docs/VANILLA.md`)
+- (렌더 변경) Sidebar 헤더의 로고 링크를 누를 수 있습니다(숨은 쪽 레이어는 Tab 에서 빠집니다). AppShell + `Sidebar mode="static"` 이 600px 미만에서도 2열이고, `padded={false}` 여도 하단 고정 크롬 여백을 둡니다
+- (렌더 변경) `[data-theme="light"]` 가 다크 조상 아래에서도 라이트 토큰을 다시 적용합니다 - 부분 트리 · 중첩 ThemeProvider · `targetSelector` 의 light 고정이 동작합니다
+- (렌더 변경) MediaCard 이미지를 불러오지 못하면 깨진 아이콘 대신 배경 자리만 남습니다. Timeline 진행 상태가 보조기술에 전달되고(`aria-current="step"` · 숨은 상태 문구), Chip 체크 아이콘 위에서 선택을 풀어도 hover 배경이 남습니다. NavBar 링크가 나중에 생겨도 인디케이터가 그려집니다. TopLoading `progress` 는 0~100 으로 자릅니다
+- (렌더 변경) Vanilla - 다크 Toggle off 손잡이 색 · Checkbox `:indeterminate` 막대, Pagination 현재 쪽 · Sidebar 현재 메뉴 · Badge accent 가 `--bt-color-accent` 를 따릅니다(기본 테마는 그대로), Dropdown 목록 높이 · disabled 투명도가 React 와 같은 토큰입니다
+
 ## [4.7.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.7.0) - 2026-11-09
 - DatePicker · DateRangePicker 에 `clearable` 이 생겼습니다 - 값이 있으면 칸에 지우기(×) 버튼이 생기고, 달력형은 칸에서 Delete · Backspace 로도 지웁니다. React 는 `onValueChange("")`, Vanilla(`data-clearable`)는 `onValueChange(null)` 입니다. 범위형은 시작 · 종료를 함께 비웁니다
 - DatePicker 에 `size`(`sm` · `md` · `lg`, 기본 `md`)가 생겼습니다 - Dropdown · TextField 와 같은 높이 단계입니다. Vanilla 는 `data-size`

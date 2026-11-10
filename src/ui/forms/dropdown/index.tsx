@@ -5,7 +5,7 @@ import type * as React from "react";
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { cn } from "../../../utils";
+import { cn, useFormReset } from "../../../utils";
 import { matchesSearch } from "../../../utils/hangul-search";
 import { useListboxPopup } from "../../../utils/use-listbox-popup";
 import { useLocaleText } from "../../system/locale-provider";
@@ -139,7 +139,9 @@ export const Dropdown = (props: DropdownProps) => {
 	const internalId = useId();
 	// Field 안에서는 Field 가 id·설명 연결·에러를 소유한다. 밖에서는 undefined 라 기존 동작 그대로.
 	const field = useFieldControl();
-	const dropdownId = id ?? field?.inputId ?? internalId;
+	// Field 안에서는 Field 의 id 가 이긴다 - <label for> 가 그 id 를 가리킨다. 소비자 id 를 앞세우면 라벨이 없는
+	// id 를 가리켰다 (Checkbox · Radio 와 같은 순서, #985)
+	const dropdownId = field?.inputId ?? id ?? internalId;
 
 	const isControlled = props.value !== undefined;
 
@@ -244,6 +246,13 @@ export const Dropdown = (props: DropdownProps) => {
 		// 열릴 때는 선택된 항목을 활성으로. 없으면 훅이 첫 활성 항목을 고른다.
 		initialActiveIndex: (opts) =>
 			opts.findIndex((o) => selectedValues.includes(o.value) && !o.disabled),
+	});
+	// form.reset() 뒤 비제어 선택도 처음 값으로 - 숨은 input 만 되돌아가 화면과 제출값이 어긋났다 (#985)
+	useFormReset(wrapperRef, () => {
+		if (isControlled) return;
+		if (props.multiple === true)
+			setInternalMulti((props.defaultValue as string[] | undefined) ?? []);
+		else setInternalSingle((props.defaultValue as string | null | undefined) ?? null);
 	});
 
 	// 패널을 닫으면 검색 상태 초기화 (다음 열림 시 fresh)
@@ -467,7 +476,10 @@ export const Dropdown = (props: DropdownProps) => {
 														</span>
 													)}
 												</div>
-												{opt.showDivider && <hr className="dropdown_option_divider" />}
+												{/* <hr>(separator)은 listbox 가 가질 수 없는 자식이다 - 장식 div 로 둔다 (#985) */}
+												{opt.showDivider && (
+													<div className="dropdown_option_divider" aria-hidden="true" />
+												)}
 											</Fragment>
 										);
 									})}

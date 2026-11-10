@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 // Vanilla 번들은 UMD 다. 소비자는 `<script>` 로 읽어 전역 `Bigtablet` 을 쓰지만, 여기서는
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
-import { Toggle } from "./bigtablet.js";
+import pkg from "../../package.json";
+import { Toggle, version } from "./bigtablet.js";
 import { resetVanillaDom } from "./bigtablet.test-utils";
 
 resetVanillaDom();
@@ -25,6 +26,18 @@ describe("Toggle", () => {
 
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 		expect(el.getAttribute("aria-checked")).toBe("true");
+	});
+
+	it("비활성이면 숨은 input 을 제출하지 않는다 (#981)", () => {
+		const el = toggleMarkup();
+		el.dataset.name = "agree";
+		const api = Toggle(el, { disabled: true });
+		const hidden = document.querySelector('input[name="agree"]') as HTMLInputElement;
+		expect(hidden.disabled).toBe(true);
+		api?.setDisabled(false);
+		expect(hidden.disabled).toBe(false);
+		api?.setDisabled(true);
+		expect(hidden.disabled).toBe(true);
 	});
 
 	it("native disabled 면 토글되지 않는다", () => {
@@ -250,5 +263,12 @@ describe("Toggle - 제어 모드 (#920)", () => {
 		t?.setChecked(true);
 
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
+	});
+});
+
+// 번들 공통 export - 별도 파일 없이 여기 둔다
+describe("version (#976)", () => {
+	it("package.json 의 버전을 내보낸다", () => {
+		expect(version).toBe(pkg.version);
 	});
 });

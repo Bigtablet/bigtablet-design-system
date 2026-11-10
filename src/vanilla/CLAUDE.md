@@ -390,13 +390,13 @@ t.dismiss();
 All design tokens available as CSS variables:
 ```css
 :root {
-  --bt-color-primary: #000000;
+  --bt-color-primary: #121212;
   --bt-color-background: #ffffff;
-  --bt-color-text-primary: #1a1a1a;
+  --bt-color-text-primary: #121212;
   --bt-color-border: #e5e5e5;
-  --bt-color-error: #ef4444;
+  --bt-color-error: #b91c1c;
   --bt-color-success: #047857;
-  --bt-color-info: #2563eb;
+  --bt-color-info: #1d4ed8;
   --bt-spacing-xs: 0.25rem;
   --bt-spacing-sm: 0.5rem;
   --bt-spacing-md: 0.75rem;

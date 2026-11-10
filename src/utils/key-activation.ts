@@ -15,7 +15,26 @@ export interface KeyActivationProps<E extends HTMLElement> {
 	role: React.AriaRole | undefined;
 	tabIndex: number | undefined;
 	onKeyDown: React.KeyboardEventHandler<E>;
+	/** 안쪽 컨트롤에서 온 클릭을 거른 onClick. onClick 이 없으면 undefined */
+	onClick: React.MouseEventHandler<E> | undefined;
 }
+
+/** 표면 안에서 자기 동작을 가진 요소 - 여기서 시작한 클릭 · 키는 표면 것이 아니다 */
+const INNER_CONTROL =
+	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch'], [contenteditable]:not([contenteditable='false'])";
+
+/**
+ * 이벤트가 표면 안 컨트롤(또는 포털로 띄운 메뉴)에서 왔는지. 버튼 Enter 도 `click` 으로 올라오므로 keydown
+ * 만 걸러서는 버튼을 눌렀는데 표면까지 열린다. 포털 안 요소는 DOM 상 표면 밖이지만 React 이벤트는 표면으로
+ * 올라온다 - 그래서 "표면 안에 없음" 도 컨트롤로 본다 (Table 행과 같은 규칙, #983)
+ */
+export const isFromInnerControl = (e: React.SyntheticEvent<HTMLElement>) => {
+	const target = e.target as Element;
+	if (target === e.currentTarget) return false;
+	if (!e.currentTarget.contains(target)) return true;
+	const control = target.closest(INNER_CONTROL);
+	return control !== null && control !== e.currentTarget && e.currentTarget.contains(control);
+};
 
 /**
  * div 로 만든 "눌리는 표면" 에 키보드 조작을 붙인다 (WCAG 2.1.1).
@@ -42,6 +61,9 @@ export function keyActivationProps<E extends HTMLElement>({
 		onKeyDown: (event) => {
 			// 소비자 핸들러를 **먼저** 부른다. 그래야 `preventDefault()` 로 활성화를 막을 수 있다.
 			onKeyDown?.(event);
+			// 안쪽 버튼 · 입력에서 올라온 Enter · Space 는 그쪽 몫이다 - 받으면 버튼이 키보드로 안 눌리고
+			// 표면이 대신 열렸고, textarea 에서 Space 를 칠 수 없었다 (#983)
+			if (event.target !== event.currentTarget) return;
 			// `event.repeat` - 키를 누르고 있으면 keydown 이 반복되어 삭제·이동 같은 부수효과가
 			// 여러 번 실행된다. 네이티브 `<button>` 은 Space 를 눌러도 keyup 에 한 번만 click 을 낸다.
 			if (!isInteractive || event.defaultPrevented || event.repeat) return;
@@ -53,5 +75,10 @@ export function keyActivationProps<E extends HTMLElement>({
 				event.currentTarget.click();
 			}
 		},
+		onClick: onClick
+			? (event) => {
+					if (!isFromInnerControl(event)) onClick(event);
+				}
+			: undefined,
 	};
 }

@@ -5,6 +5,7 @@ import { DatePicker as VanillaDatePicker } from "../../../vanilla/bigtablet.js";
 import "../../../vanilla/scss/_button.scss";
 import "../../../vanilla/scss/_date-picker.scss";
 import "../../../vanilla/scss/_dropdown.scss";
+import "../../../vanilla/scss/_modal.scss";
 import "../../../vanilla/scss/_text-field.scss";
 import { Button } from "../../general/button";
 import { Dropdown } from "../dropdown";
@@ -111,6 +112,73 @@ describe("Vanilla calendar DatePicker (Chromium)", () => {
 		expect(panel().getBoundingClientRect().bottom).toBeLessThanOrEqual(
 			trigger.getBoundingClientRect().top,
 		);
+	});
+
+	// 모달 패널의 overflow: hidden 에 잘려 아랫줄 날짜를 누를 수 없었다 (#974)
+	it("is not clipped inside a modal panel", async () => {
+		await page.viewport(800, 900);
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div class="bt-modal is-open"><div class="bt-modal__panel" aria-label="m" style="width: 400px"><div class="bt-modal__body"><div class="bt-date-picker"><span class="bt-date-picker__label">날짜</span></div></div></div></div>`,
+		);
+		const root = container.querySelector(".bt-date-picker") as HTMLElement;
+		VanillaDatePicker(root, { today: "2026-10-16" });
+		await userEvent.click(root.querySelector(".bt-date-picker__trigger") as HTMLElement);
+		const day = root.querySelector('button[data-day="28"]') as HTMLElement;
+		const r = day.getBoundingClientRect();
+		expect(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)).toBe(day);
+	});
+
+	it("follows the field when the page scrolls", async () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			`<div style="height: 2000px; padding-top: 100px"><div class="bt-date-picker" style="width: 280px"></div></div>`,
+		);
+		const root = container.querySelector(".bt-date-picker") as HTMLElement;
+		VanillaDatePicker(root, { today: "2026-10-16" });
+		const trigger = root.querySelector(".bt-date-picker__trigger") as HTMLElement;
+		await userEvent.click(trigger);
+		window.scrollBy(0, 50);
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		const gap =
+			(root.querySelector(".bt-date-picker__panel") as HTMLElement).getBoundingClientRect().top -
+			trigger.getBoundingClientRect().bottom;
+		expect(gap).toBeCloseTo(4, 0);
+		window.scrollTo(0, 0);
+	});
+
+	// rect 는 확대된 화면 px, top · left 는 확대 전 px 다 - 맞추지 않으면 칸에서 떨어진다 (#981)
+	it("stays attached to the field under an ancestor CSS zoom", async () => {
+		await page.viewport(800, 900); // 확대된 시각 달력이 칸 아래에 다 들어가게
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px; zoom: 1.25");
+		await userEvent.click(trigger);
+		const t = trigger.getBoundingClientRect();
+		const p = panel().getBoundingClientRect();
+		expect(p.top - t.bottom).toBeCloseTo(4, 0);
+		expect(p.left).toBeCloseTo(t.left, 0);
+	});
+
+	// 조상 transform 이 바뀌면 fixed 기준이 움직인다 - 이벤트 없이도 따라간다 (#981)
+	it("follows the field when an ancestor transform changes", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px; transform: translateY(-2px)");
+		await userEvent.click(trigger);
+		(trigger.closest('div[style*="fixed"]') as HTMLElement).style.transform = "none";
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		expect(
+			panel().getBoundingClientRect().top - trigger.getBoundingClientRect().bottom,
+		).toBeCloseTo(4, 0);
+	});
+
+	// 위아래 어느 쪽에도 다 안 들어가면 화면 안으로 민다 - 달력 아랫줄이 화면 밖으로 나가지 않게
+	it("keeps the panel inside a short viewport", async () => {
+		await page.viewport(800, 520);
+		const { trigger, panel } = mountVanilla("top: 150px; left: 40px");
+		await userEvent.click(trigger);
+		const p = panel().getBoundingClientRect();
+		expect(p.top).toBeGreaterThanOrEqual(0);
+		expect(p.bottom).toBeLessThanOrEqual(520);
 	});
 
 	it("aligns to the trigger's right edge when it would overflow the screen", async () => {

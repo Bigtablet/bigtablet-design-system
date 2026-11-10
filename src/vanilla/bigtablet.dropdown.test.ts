@@ -242,8 +242,9 @@ describe("Dropdown - 패널 배치 · 바깥 클릭", () => {
 		const input = document.querySelector(".bt-dropdown__search-input") as HTMLInputElement;
 		input.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
 
+		// 검색 행을 품은 패널은 세로 flex 로 열린다 (#975) - 닫히지 않았는지만 본다
 		expect((document.querySelector(".bt-dropdown__list") as HTMLElement).style.display).toBe(
-			"block",
+			"flex",
 		);
 	});
 
@@ -717,5 +718,81 @@ describe("Dropdown - 점검 회귀 (#898)", () => {
 		(document.querySelector('[data-value="grape"]') as HTMLElement).click();
 		expect(onValueChange).toHaveBeenCalledTimes(1);
 		expect(second?.getValue()).toBe("grape");
+	});
+});
+
+// 감사에서 나온 결함 (#975)
+describe("Dropdown 서버 선택 · 재초기화 · 리스너 (#975)", () => {
+	afterEach(() => {
+		for (const w of document.querySelectorAll<
+			HTMLElement & { _btDropdown?: { destroy: () => void } }
+		>(".bt-dropdown"))
+			w._btDropdown?.destroy();
+		document.body.innerHTML = "";
+	});
+
+	it("서버가 그린 li.is-selected 를 초기값으로 읽는다", () => {
+		const wrap = dropdownMarkup({ name: "fruit" });
+		wrap.querySelector('[data-value="grape"]')?.classList.add("is-selected");
+		const dd = Dropdown(wrap);
+		expect(dd?.getValue()).toBe("grape");
+		expect((wrap.querySelector('input[name="fruit"]') as HTMLInputElement).value).toBe("grape");
+		expect(wrap.querySelector('[data-value="grape"]')).toHaveClass("is-selected");
+	});
+
+	it("hidden input 값이 있으면 그쪽이 is-selected 보다 앞선다", () => {
+		const wrap = dropdownMarkup({ name: "fruit" });
+		wrap.insertAdjacentHTML("beforeend", '<input type="hidden" name="fruit" value="apple">');
+		wrap.querySelector('[data-value="grape"]')?.classList.add("is-selected");
+		expect(Dropdown(wrap)?.getValue()).toBe("apple");
+	});
+
+	it("다시 만들어도 값과 마크업 placeholder 를 지킨다", () => {
+		const wrap = dropdownMarkup({ placeholder: "과일을 고르세요" });
+		Dropdown(wrap)?.setValue("apple");
+		const again = Dropdown(wrap);
+		expect(again?.getValue()).toBe("apple");
+		again?.setValue(null);
+		expect(wrap.querySelector(".bt-dropdown__control")?.textContent?.trim()).toBe(
+			"과일을 고르세요",
+		);
+	});
+
+	it("다시 만들 때 마크업 placeholder 가 바뀌었으면 그쪽을 따른다", () => {
+		const wrap = dropdownMarkup({ placeholder: "옛 문구" });
+		Dropdown(wrap);
+		(wrap.querySelector(".bt-dropdown__placeholder") as HTMLElement).textContent = "새 문구";
+		Dropdown(wrap)?.setValue(null);
+		expect(wrap.querySelector(".bt-dropdown__control")?.textContent?.trim()).toBe("새 문구");
+	});
+
+	it("바깥 클릭 리스너는 열린 동안만 건다", () => {
+		const add = vi.spyOn(document, "addEventListener");
+		const dd = Dropdown(dropdownMarkup());
+		expect(add.mock.calls.some(([type]) => type === "mousedown")).toBe(false);
+		dd?.open();
+		expect(add.mock.calls.some(([type]) => type === "mousedown")).toBe(true);
+		const remove = vi.spyOn(document, "removeEventListener");
+		dd?.close();
+		expect(remove.mock.calls.some(([type]) => type === "mousedown")).toBe(true);
+		add.mockRestore();
+		remove.mockRestore();
+	});
+
+	it("옵션을 누를 때 포커스를 옮기지 않는다", () => {
+		const dd = Dropdown(dropdownMarkup());
+		dd?.open();
+		const down = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+		document.querySelector('[data-value="grape"]')?.dispatchEvent(down);
+		expect(down.defaultPrevented).toBe(true);
+	});
+
+	it("열린 채 destroy 하면 포커스를 트리거로 돌린다 (searchable)", () => {
+		const wrap = dropdownMarkup();
+		const dd = Dropdown(wrap, { searchable: true });
+		dd?.open();
+		expect(document.activeElement).toHaveClass("bt-dropdown__search-input");
+		dd?.destroy();
+		expect(document.activeElement).toBe(wrap.querySelector(".bt-dropdown__control"));
 	});
 });

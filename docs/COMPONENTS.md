@@ -148,7 +148,7 @@ DS 가 **스스로 렌더하는 문구**를 한곳에서 정한다. 소비자가
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `locale` | `'ko' \| 'en'` | `'ko'` | 기준 카탈로그 |
+| `locale` | `'ko' \| 'en'` | 바깥 Provider, 없으면 `'ko'` | 기준 카탈로그. 중첩하면 바깥의 `locale` · `messages` 를 이어받는다 (locale 을 바꾸면 바깥 덮어쓰기는 받지 않는다) |
 | `messages` | `Partial<LocaleMessages>` | - | 기준 위에 덮어쓸 문구 |
 
 **우선순위** — 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본. Provider 를 감싸지
@@ -858,7 +858,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖, 라벨 한 줄 높이로 고정된 슬롯에 렌더된다 |
 | `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
 | `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
-| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다. `role="alert"` 로 나타날 때 필드 이름과 함께 낭독된다. 여러 필드가 한꺼번에 틀리는 폼(서버 검증)은 `Form` 의 `errorSummary` 를 켠다 - 요약이 한 번 읽히고 필드는 그 에러를 따로 낭독하지 않는다(이 prop 으로 준 지역 검증 에러는 그대로 낭독) |
 | `children` | `ReactNode` | - | 입력 하나 |
 
 #### Form
@@ -866,6 +866,8 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣는다 |
+| `errorSummary` | `boolean` | `false` | 폼 위에 에러 요약(개수 + 필드별 링크)을 그린다. 제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 한 번 읽히고, 필드는 `errors` 에서 온 에러를 따로 낭독하지 않는다. 링크를 누르면 그 입력으로 포커스가 간다 |
+| `errorSummaryTitle` | `ReactNode` | `'{count}개 항목을 확인해 주세요'` | 요약 제목 (로케일 `form.errorSummary`) |
 | `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다 |
 
 #### Form.Actions
@@ -1195,18 +1197,12 @@ const [checked, setChecked] = useState(false);
 
 // Indeterminate (부분 선택)
 <Checkbox label="전체 선택" indeterminate />
-
-// Sizes
-<Checkbox size="sm" label="Small" />
-<Checkbox size="md" label="Medium" />
-<Checkbox size="lg" label="Large" />
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `ReactNode` | - | 라벨 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `indeterminate` | `boolean` | `false` | 부분 선택 상태 |
+| `indeterminate` | `boolean` | `false` | 부분 선택 상태. 클릭으로 지워져도 prop 이 `true` 면 다시 세운다 |
 | `checked` | `boolean` | - | 체크 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
@@ -1412,19 +1408,16 @@ const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
 ```tsx
 import { Toggle } from '@bigtablet/design-system';
 
-// 기본 사용
-<Toggle onCheckedChange={(checked) => console.log(checked)} />
+// 기본 사용 - ariaLabel 은 필수다 (보이는 라벨이 없는 스위치의 이름)
+<Toggle ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [isOn, setIsOn] = useState(false);
-<Toggle checked={isOn} onCheckedChange={setIsOn} />
+<Toggle ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
 
 // Sizes
-<Toggle size="sm" />
-<Toggle size="md" />
-
-// 접근성
-<Toggle ariaLabel="알림 설정" />
+<Toggle ariaLabel="알림 받기" size="sm" />
+<Toggle ariaLabel="알림 받기" size="md" />
 ```
 
 | Prop | Type | Default | Description |
@@ -1485,9 +1478,13 @@ const [date, setDate] = useState('');
 | `value` | `string` | - | 선택된 날짜 (`'YYYY-MM-DD'` 또는 `'YYYY-MM'`) |
 | `onValueChange` | `(value: string) => void` | required | 변경 핸들러 |
 | `mode` | `'year-month' \| 'year-month-day'` | `'year-month-day'` | 날짜 선택 모드 |
+| `variant` | `'dropdown' \| 'calendar'` | `'dropdown'` | 고르는 방식. `calendar` 는 날짜 칸 하나 + 월 달력 팝오버 - `mode="year-month-day"` 에서만 (그 밖은 드롭다운으로 그린다) |
+| `placeholder` | `string` | `'날짜 선택'` | `variant="calendar"` 에서 값이 없을 때 칸 문구 |
+| `minDate` | `string` | - | 고를 수 있는 최소 날짜 (`'YYYY-MM-DD'`) |
 | `startYear` | `number` | `1950` | 시작 연도 |
 | `endYear` | `number` | `현재년도 + 10` | 종료 연도 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
+| `yearLabel` · `monthLabel` · `dayLabel` | `string` | `'년'` · `'월'` · `'일'` | 드롭다운 각 칸의 라벨 · 플레이스홀더 (로케일 `datePicker.year` · `month` · `day`) |
 | `clearable` | `boolean` | `false` | 값이 있으면 지우기(×) 버튼 - 누르면 `onValueChange("")`. 달력형은 칸에서 Delete · Backspace 로도. 조회 조건처럼 "값 없음 = 조건 없음" 인 칸에, 필수 칸에는 두지 않는다 |
 | `clearLabel` | `string` | `'날짜 지우기'` | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |
@@ -2988,7 +2985,7 @@ const [isOpen, setIsOpen] = useState(false);
 
 초기 포커스 순서는 **본문 첫 컨트롤 → 닫기(X) 버튼 → 패널** 이다. 첫 조작이 "닫기" 가 되면 Space/Enter 한 번에 모달이 사라지고 폼 모달에서는 첫 입력까지 Tab 을 한 번 더 쳐야 하므로, 본문에 컨트롤이 있으면 그쪽이 이긴다.
 
-**footer 는 초기 포커스 대상이 아니다.** `children` 없이 `footer` 만 쓰는 확인 모달에서 footer 첫 자리가 destructive 액션인 패턴이 흔해, 그리로 포커스가 가면 열자마자 Enter 한 번에 삭제가 실행된다. 그런 모달은 닫기 버튼으로 간다. 탭 순환에는 모두 남는다. `Drawer` 도 같다.
+**footer 는 초기 포커스 대상이 아니다.** `children` 없이 `footer` 만 쓰는 확인 모달에서 footer 첫 자리가 destructive 액션인 패턴이 흔해, 그리로 포커스가 가면 열자마자 Enter 한 번에 삭제가 실행된다. 그런 모달은 닫기 버튼으로 가고, 닫기 버튼도 없으면 패널 자신으로 간다. 탭 순환에는 모두 남는다. `Drawer` 도 같다.
 
 기본 순서가 틀린 자리로 가는 화면은 `initialFocusRef` 로 자리를 지정한다 - 본문 첫 컨트롤이 필터 토글인 검색 모달은 검색 입력으로, 위험 확인 모달은 footer 의 **취소**로. 지정한 요소는 패널 안에 붙어 있어야 하고, 아니면 기본 순서로 떨어진다.
 
@@ -3620,9 +3617,10 @@ import { User, MoreVertical } from 'lucide-react';
 | `metadata` | `ReactNode` | - | 메타데이터 (string·노드) |
 | `leadingElement` | `ReactNode` | - | 왼쪽 요소 |
 | `trailingElement` | `ReactNode` | - | 오른쪽 요소 |
-| `alignment` | `'top' \| 'middle'` | `'top'` | 요소 정렬 |
+| `alignment` | `'top' \| 'middle'` | 자동 | 요소 정렬. 주지 않으면 `label` 만 있는 한 줄 항목은 `'middle'`, 그 밖은 `'top'` |
+| `selected` | `boolean` | - | 선택 상태. `onClick` 이 있으면 `aria-pressed` 로 노출된다 |
 | `disabled` | `boolean` | `false` | 비활성화 |
-| `onClick` | `(event) => void` | - | 클릭 핸들러 |
+| `onClick` | `(event) => void` | - | 클릭 핸들러. 안쪽 버튼(`trailingElement` 등)의 클릭 · 키 입력은 행 클릭으로 올라오지 않는다 |
 
 ---
 
@@ -4434,6 +4432,7 @@ const [open, setOpen] = useState<string[]>(["q1"]);
 | `defaultOpenKeys` | `string[]` | `[]` | 비제어형 초기 펼침 키 |
 | `openKeys` | `string[]` | - | 제어형 펼침 키 (`onValueChange`와 함께 사용) |
 | `onValueChange` | `(openKeys: string[]) => void` | - | 펼침/접힘 콜백 |
+| `headingAs` | `'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 항목 헤더의 헤딩 태그 - 페이지 헤딩 구조에 맞춘다 |
 
 **AccordionItem**
 

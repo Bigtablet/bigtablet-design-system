@@ -18,7 +18,7 @@
 // ── Individual box ───────────────────────────────────────────────────────────
 
 .otp_input_box {
-  width: 48px;
+  width: token.$spacing_48;
   min-height: token.$control_height_xl;
   padding: token.$spacing_4;
 

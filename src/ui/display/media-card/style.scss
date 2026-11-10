@@ -50,6 +50,11 @@
     overflow: hidden;
   }
 
+  // 불러오지 못한 이미지 - 깨진 아이콘은 감추고 배경 자리만 남긴다. opacity 라 alt 는 보조기술에 남는다
+  &_image_failed {
+    opacity: 0;
+  }
+
   &_image {
     width: 100%;
     height: 100%;

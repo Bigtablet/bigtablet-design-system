@@ -119,3 +119,8 @@ $indicator: 28px;
     color: token.$color_text_caption;
   }
 }
+
+// 보조기술에만 읽히는 상태 문구 (#983)
+.timeline_status {
+  @include token.visually_hidden;
+}

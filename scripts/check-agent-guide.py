@@ -48,7 +48,7 @@ INHERITED = {
     "textfield": {"placeholder"},
     "textarea": {"placeholder", "maxLength"},
     "checkbox": {"checked", "disabled"},
-    "radio": {"value", "checked"},
+    "radio": {"value", "checked", "name"},
     "file": {"multiple", "accept", "disabled"},
     "icon": {"size", "strokeWidth"},
 }
@@ -62,14 +62,30 @@ def strip_comments(code: str) -> str:
     return re.sub(r"(?m)//.*$", "", code)
 
 
+# 타입 선언 본문 - `interface X {…}` · `type X = {…}`. 닫는 `}` 는 줄 머리에 온다(biome 서식)
+TYPE_BLOCK = re.compile(r"(?ms)^(?:export\s+)?(?:interface\s+\w+[^{]*|type\s+\w+[^=]*=[^{;]*)\{\n.*?^\}")
+
+
 def sources() -> dict[str, str]:
+    """컴포넌트 폴더별 **타입 선언만** - 코드 전체를 보면 객체 리터럴(`{ min: 1 }` · 여러 줄 `minDate: …`)도
+    prop 선언으로 잡혀 없는 prop 이 통과했다 (#986)"""
     out: dict[str, str] = {}
     for index in UI.glob("*/*/index.tsx"):
-        out[index.parent.name.replace("-", "").lower()] = strip_comments(index.read_text(encoding="utf-8"))
+        code = strip_comments(index.read_text(encoding="utf-8"))
+        out[index.parent.name.replace("-", "").lower()] = "\n".join(TYPE_BLOCK.findall(code))
     return out
 
 
+def self_check() -> None:
+    """TYPE_BLOCK 회귀 - 여러 줄 객체 리터럴의 키는 prop 선언으로 잡히지 않아야 한다 (#986)"""
+    code = "const a = {\n\tminDate: 1,\n};\nexport type P = Base & {\n\tvalue?: string;\n};\n"
+    blocks = "\n".join(TYPE_BLOCK.findall(code))
+    assert not re.search(r"(?m)^\s*minDate\??\s*:", blocks), "객체 리터럴이 prop 으로 잡혔다"
+    assert re.search(r"(?m)^\s*value\??\s*:", blocks), "type 교차 선언의 prop 을 놓쳤다"
+
+
 def main() -> int:
+    self_check()
     src = sources()
     if not src:
         print("src/ui 에서 컴포넌트를 찾지 못했다 - 구조가 바뀌었는지 보라", file=sys.stderr)
@@ -99,7 +115,9 @@ def main() -> int:
             if prop in COMMON or prop in INHERITED.get(folder, set()):
                 continue
             checked += 1
-            if not re.search(rf"\b{re.escape(prop)}\??\s*:", code):
+            # 줄 머리의 선언만 본다 - 그냥 `prop:` 을 찾으면 소스 안 객체 리터럴(`{ min: 1, max: 31 }`)에 걸려
+            # 없는 prop 이 통과했다 (#986)
+            if not re.search(rf"(?m)^\s*(?:readonly\s+)?{re.escape(prop)}\??\s*:", code):
                 problems.append(f"{GUIDE}:{number + 1}  {name}.{prop} - 소스에 없다")
 
     if checked == 0:

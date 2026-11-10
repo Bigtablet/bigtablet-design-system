@@ -221,3 +221,45 @@ export const ServerErrors: Story = {
 		);
 	},
 };
+
+export const ErrorSummary: Story = {
+	name: "에러 요약 (Form errorSummary)",
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"`errorSummary` 를 켜면 제출 뒤 폼 위에 에러 개수와 필드별 링크를 보이고 그리로 포커스를 옮긴다 - 여러 필드가 한꺼번에 틀려도 한 번만 읽힌다. 링크를 누르면 그 입력으로 간다. 필드 쪽 에러는 화면에 그대로 남고 따로 낭독되지 않는다.",
+			},
+		},
+	},
+	render: () => {
+		const [errors, setErrors] = useState<Record<string, string>>({});
+		return (
+			<div style={{ width: 360 }}>
+				<Form
+					errorSummary
+					errors={errors}
+					onSubmit={() =>
+						setErrors({
+							email: "이미 사용 중인 이메일입니다",
+							nickname: "2자 이상이어야 합니다",
+						})
+					}
+				>
+					<Field name="email" label="이메일" required>
+						<TextField fullWidth />
+					</Field>
+					<Field name="nickname" label="닉네임">
+						<TextField fullWidth />
+					</Field>
+					<Form.Actions>
+						<Button type="button" variant="outline" onClick={() => setErrors({})}>
+							초기화
+						</Button>
+						<Button type="submit">저장</Button>
+					</Form.Actions>
+				</Form>
+			</div>
+		);
+	},
+};

@@ -6,11 +6,11 @@
   align-items: center;
   box-sizing: border-box;
 
-  width: 40px;
-  height: 24px;
+  width: token.$spacing_40;
+  height: token.$spacing_24;
   padding: 0;
 
-  border: 2px solid transparent;
+  border: token.$border_width_thick solid transparent;
   border-radius: token.$radius_full;
   // 흰 손잡이와 3:1 (WCAG 1.4.11) - neutral_400(#B3B3B3) 은 2.1:1 이라 빈 막대처럼 보였다.
   // 비활성은 neutral_400 그대로라 활성 off 와 구분된다
@@ -45,9 +45,9 @@
   &_thumb {
     position: absolute;
     top: 50%;
-    left: 10px; // 24/2 - 2
-    width: 12px;
-    height: 12px;
+    left: token.$spacing_10; // 24/2 - 2
+    width: token.$spacing_12;
+    height: token.$spacing_12;
     background: token.$color_brand_on_primary;
     border-radius: token.$radius_full;
     transition: transform token.$transition_base,
@@ -63,8 +63,8 @@
     background: token.$color_accent_default;
 
     .toggle_thumb {
-      width: 20px;
-      height: 20px;
+      width: token.$spacing_20;
+      height: token.$spacing_20;
       background: token.$color_accent_on_surface;
       transform: translate(calc(16px - 50%), -50%); // 40 - 24
     }
@@ -96,36 +96,36 @@
   // ── States: Active/Pressed ─────────────────────────────────────────────
 
   &:not(:disabled):active .toggle_thumb {
-    width: 20px;
-    height: 20px;
+    width: token.$spacing_20;
+    height: token.$spacing_20;
   }
 
   // ── Sizes ──────────────────────────────────────────────────────────────
 
   &_size_sm {
-    width: 40px;
-    height: 24px;
+    width: token.$spacing_40;
+    height: token.$spacing_24;
   }
 
   &_size_md {
-    width: 48px;
-    height: 28px;
+    width: token.$spacing_48;
+    height: 28px; // lg 트랙 - 스위치 전용 치수라 간격 토큰과 맞는 값이 없다
 
     .toggle_thumb {
-      left: 12px; // 28/2 - 2
-      width: 16px;
-      height: 16px;
+      left: token.$spacing_12; // 28/2 - 2
+      width: token.$spacing_16;
+      height: token.$spacing_16;
     }
 
     &.toggle_on .toggle_thumb {
-      width: 24px;
-      height: 24px;
+      width: token.$spacing_24;
+      height: token.$spacing_24;
       transform: translate(calc(20px - 50%), -50%); // 48 - 28
     }
 
     &:not(:disabled):active .toggle_thumb {
-      width: 24px;
-      height: 24px;
+      width: token.$spacing_24;
+      height: token.$spacing_24;
     }
   }
 

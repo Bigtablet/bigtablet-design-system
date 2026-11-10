@@ -135,6 +135,15 @@ describe("Pagination", () => {
 			return { onPageChange, input, go, view };
 		};
 
+		// 적다 만 값을 되돌린 Escape 는 처리했다고 알린다 - 바깥 Modal 이 같이 닫히지 않게 (#976)
+		it("marks Escape handled only when it resets a typed value", () => {
+			const { input } = setup(2, 50);
+			expect(fireEvent.keyDown(input, { key: "Escape" })).toBe(true);
+			fireEvent.change(input, { target: { value: "9" } });
+			expect(fireEvent.keyDown(input, { key: "Escape" })).toBe(false);
+			expect(input.value).toBe("2");
+		});
+
 		it("is off by default - the current page stays a button", () => {
 			render(<Pagination page={1} totalPages={10} onPageChange={() => {}} />);
 			expect(screen.queryByRole("textbox")).toBeNull();
@@ -214,5 +223,14 @@ describe("Pagination", () => {
 			);
 			expect(screen.getByRole("textbox", { name: "Page number" })).toBeInTheDocument();
 		});
+	});
+
+	// 범위 밖 page 는 마지막 쪽으로 보고 그린다 (#984)
+	it("treats a page beyond totalPages as the last page", () => {
+		const onPageChange = vi.fn();
+		render(<Pagination page={5} totalPages={3} onPageChange={onPageChange} />);
+		expect(screen.getByRole("button", { name: /3/ })).toHaveAttribute("aria-current", "page");
+		fireEvent.click(screen.getByRole("button", { name: "이전 페이지" }));
+		expect(onPageChange).toHaveBeenCalledWith(2);
 	});
 });

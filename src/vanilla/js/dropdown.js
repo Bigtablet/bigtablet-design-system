@@ -68,11 +68,14 @@ export function Dropdown(element, options = {}) {
 	} else if (options.placeholder === undefined) {
 		// 서버 마크업의 `.bt-dropdown__placeholder` 텍스트를 기본 placeholder 로 이어받는다.
 		// (없으면 값을 지웠을 때 마크업에 쓴 문구 대신 라이브러리 기본값이 튀어나온다.)
-		const markupPlaceholder = wrapper
-			.querySelector(".bt-dropdown__placeholder")
-			?.textContent.trim();
+		// 다시 만들 때 값이 골라져 있으면 그 span 이 `__value` 라 문구를 못 읽는다 - 그때만 앞 인스턴스가 쓴 것을
+		// 이어받는다. 마크업이 먼저다 - 서버가 안쪽을 새로 그려 문구가 바뀌었으면 그쪽을 따른다 (#975)
+		const markupPlaceholder =
+			wrapper.querySelector(".bt-dropdown__placeholder")?.textContent.trim() ||
+			wrapper._btPlaceholder;
 		if (markupPlaceholder) config.placeholder = markupPlaceholder;
 	}
+	wrapper._btPlaceholder = config.placeholder;
 
 	const multiple = config.multiple === true;
 	const searchable = config.searchable === true;
@@ -190,7 +193,7 @@ export function Dropdown(element, options = {}) {
 	}
 
 	// Combobox ARIA (WAI-ARIA APG combobox) - React Dropdown 과 패리티.
-	// searchable 이면 React 처럼 combobox 역할을 검색 입력이 갖고, 트리거는 팝업 버튼으로 남는다.
+	// searchable 이면 React 처럼 검색 입력도 combobox 가 되고 활성 옵션을 가리킨다 (트리거도 combobox 로 남는다).
 	listbox.id = listbox.id || `${controlId}_listbox`;
 	listbox.setAttribute("role", "listbox");
 	if (multiple) listbox.setAttribute("aria-multiselectable", "true");
@@ -436,8 +439,12 @@ export function Dropdown(element, options = {}) {
 			state.activeIndex = firstEnabledVisible();
 		}
 		updateActiveOption();
+		// 걸러져 높이가 줄면 위로 열린 목록이 트리거에서 떨어진다 - 다시 붙인다 (#975)
+		if (state.isOpen && panelHome) placePanel();
 	}
 
+	/** 바깥 클릭 리스너 해제 함수 - 열린 동안만 걸린다. */
+	let untrackOutside = null;
 	/** 목록의 원래 자리 - 닫을 때 되돌리려고 기억해 둔다. */
 	let panelHome = null;
 	/** 열려 있는 동안 좌표를 따라가는 리스너 해제 함수. */
@@ -534,13 +541,16 @@ export function Dropdown(element, options = {}) {
 		state.isOpen = true;
 		control.classList.add("is-open");
 		control.setAttribute("aria-expanded", "true");
-		panel.style.display = "block";
+		// 검색 행 · 옵션 칸을 품은 패널은 세로 flex 다 (SCSS `:has(> __options)`) - block 으로 덮지 않는다
+		panel.style.display = listbox === panel ? "block" : "flex";
 		if (searchInput) searchInput.setAttribute("aria-expanded", "true");
 
 		// 목록을 body 로 옮겨 fixed 로 띄운다 - 트리거 옆에 두면 `overflow: hidden` 인
 		// 조상이 잘라낸다(#586, React 번들과 같은 처리). 원래 자리는 닫을 때 되돌린다.
 		placePanel();
 		trackPanel();
+		// 바깥 클릭 감지는 열린 동안만 - 닫힌 Dropdown 이 행마다 있는 목록에서 클릭마다 N 개가 돌지 않게 (#975)
+		untrackOutside ??= on(document, "mousedown", onDocumentClick);
 
 		// Set active index - 선택된 항목이 있으면 그쪽, 없으면 첫 후보 (React 와 동일).
 		// applyFilter 가 필터 밖(=-1 포함)이면 첫 후보로 보정한다.
@@ -561,6 +571,8 @@ export function Dropdown(element, options = {}) {
 		control.removeAttribute("aria-activedescendant");
 		panel.style.display = "none";
 		restorePanel();
+		untrackOutside?.();
+		untrackOutside = null;
 
 		// 패널을 닫으면 검색 상태 초기화 (다음 열림 시 fresh - React 와 동일)
 		if (searchInput) {
@@ -745,13 +757,11 @@ export function Dropdown(element, options = {}) {
 	}
 
 	// Bind events
-	const cleanups = [
-		on(control, "click", onControlClick),
-		on(control, "keydown", onControlKeyDown),
-		on(document, "mousedown", onDocumentClick),
-	];
+	const cleanups = [on(control, "click", onControlClick), on(control, "keydown", onControlKeyDown)];
 
 	optionEls.forEach((el, i) => {
+		// 누를 때 포커스를 옮기지 않는다 - 검색칸 · 트리거에 남아야 ↑↓ · Enter · Esc 가 이어진다 (#975)
+		cleanups.push(on(el, "mousedown", (e) => e.preventDefault()));
 		cleanups.push(on(el, "click", onOptionClick(i)));
 		cleanups.push(on(el, "mouseenter", onOptionMouseEnter(i)));
 	});
@@ -771,7 +781,13 @@ export function Dropdown(element, options = {}) {
 	// Initialize.
 	// 서버 바인딩(th:field 등) 초기값은 renderSelection 이 hidden input 을 재동기화하기 **전에**
 	// 읽어 둔다 (다중 모드에서 선택 0개 = input 0개라 먼저 렌더하면 초기값이 지워진다).
-	const serverValues = hiddenEls.map((el) => el.value).filter((v) => v !== "");
+	const hiddenValues = hiddenEls.map((el) => el.value).filter((v) => v !== "");
+	// hidden input 이 없으면 서버가 옵션에 그린 `is-selected` 를 읽는다 (`th:classappend`). renderSelection 이
+	// 클래스를 값 기준으로 다시 그리므로 그 전에 (#975). 다시 만들 때도 앞 인스턴스의 선택이 여기 남아 있다
+	const markupValues = state.options
+		.filter((_, i) => optionEls[i]?.classList.contains("is-selected"))
+		.map((o) => o.value);
+	const serverValues = hiddenValues.length > 0 ? hiddenValues : markupValues;
 	panel.style.display = "none";
 	applyFilter();
 	renderSelection();
@@ -810,7 +826,8 @@ export function Dropdown(element, options = {}) {
 		},
 		destroy: () => {
 			// 열린 채 destroy 되면 목록이 body 에 펼쳐진 채 남는다 - close() 가 restorePanel 까지 한다.
-			if (state.isOpen) close();
+			// closePanel - searchable 이면 검색칸에 있던 포커스를 트리거로 돌린다 (#975)
+			if (state.isOpen) closePanel();
 			else restorePanel();
 			cleanups.forEach((cleanup) => {
 				cleanup();

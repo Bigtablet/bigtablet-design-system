@@ -98,26 +98,31 @@ export const TimePicker = ({
 	const hour = parsed === null ? null : Math.floor(parsed / 60);
 	const minute = parsed === null ? null : parsed % 60;
 
+	/** 그 시에 고를 수 있는 분 - 간격과 범위를 함께 본다 */
+	const minutesFor = React.useCallback(
+		(h: number) => {
+			const step = Math.max(1, Math.floor(minuteStep));
+			return Array.from({ length: Math.ceil(60 / step) }, (_, i) => i * step).filter(
+				(m) => m < 60 && h * 60 + m >= min && h * 60 + m <= max,
+			);
+		},
+		[minuteStep, min, max],
+	);
+
+	// 고를 분이 하나도 없는 시는 뺀다 - minuteStep=30, minTime="09:45" 면 09시는 고를 수 없는데 목록에 남았다 (#986)
 	const hourOptions = React.useMemo<DropdownOption[]>(() => {
 		const first = Math.floor(min / 60);
 		const last = Math.floor(max / 60);
-		return Array.from({ length: Math.max(0, last - first + 1) }, (_, i) => {
-			const h = first + i;
-			return { value: String(h), label: pad(h) };
-		});
-	}, [min, max]);
+		return Array.from({ length: Math.max(0, last - first + 1) }, (_, i) => first + i)
+			.filter((h) => minutesFor(h).length > 0)
+			.map((h) => ({ value: String(h), label: pad(h) }));
+	}, [min, max, minutesFor]);
 
-	const minuteOptions = React.useMemo<DropdownOption[]>(() => {
-		if (hour === null) return [];
-		const step = Math.max(1, Math.floor(minuteStep));
-		return (
-			Array.from({ length: Math.ceil(60 / step) }, (_, i) => i * step)
-				.filter((m) => m < 60)
-				// 경계 시각에서는 분도 좁힌다 - 최소가 09:30 이면 09시의 분은 30분부터다.
-				.filter((m) => hour * 60 + m >= min && hour * 60 + m <= max)
-				.map((m) => ({ value: String(m), label: pad(m) }))
-		);
-	}, [hour, minuteStep, min, max]);
+	// 경계 시각에서는 분도 좁힌다 - 최소가 09:30 이면 09시의 분은 30분부터다.
+	const minuteOptions = React.useMemo<DropdownOption[]>(
+		() => (hour === null ? [] : minutesFor(hour).map((m) => ({ value: String(m), label: pad(m) }))),
+		[hour, minutesFor],
+	);
 
 	const emit = (h: number, m: number) => onValueChange(`${pad(h)}:${pad(m)}`);
 
@@ -125,10 +130,7 @@ export const TimePicker = ({
 		if (!raw) return;
 		const h = Number(raw);
 		// 시를 바꾸면 지금 분이 범위 밖일 수 있다 (09:00~ 에서 09시로 옮기면 00분은 밖).
-		const step = Math.max(1, Math.floor(minuteStep));
-		const candidates = Array.from({ length: Math.ceil(60 / step) }, (_, i) => i * step).filter(
-			(m) => m < 60 && h * 60 + m >= min && h * 60 + m <= max,
-		);
+		const candidates = minutesFor(h);
 		const firstCandidate = candidates[0];
 		if (firstCandidate === undefined) return;
 		const keep = minute !== null && candidates.includes(minute) ? minute : firstCandidate;

@@ -124,6 +124,8 @@ export function Toggle(element, options = {}) {
 	toggleEl.classList.toggle("bt-toggle--on", state.checked);
 	toggleEl.setAttribute("aria-checked", state.checked ? "true" : "false");
 	if (hiddenInput) hiddenInput.value = state.checked ? "true" : "false";
+	// 비활성 토글은 제출하지 않는다 - native disabled 컨트롤과 같다 (Dropdown 과 같은 처리, #981)
+	if (hiddenInput) hiddenInput.disabled = config.disabled;
 
 	const api = {
 		isChecked: () => state.checked,
@@ -132,6 +134,7 @@ export function Toggle(element, options = {}) {
 		setDisabled: (disabled) => {
 			config.disabled = disabled;
 			toggleEl.disabled = disabled;
+			if (hiddenInput) hiddenInput.disabled = disabled;
 		},
 		destroy: () => {
 			cleanup();

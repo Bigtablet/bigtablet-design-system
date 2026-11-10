@@ -121,8 +121,22 @@ export const Popover = ({
 				setOpen(false);
 			}
 		};
+		// 팝오버 안에서 연 Modal · Drawer · Alert 로 포커스가 넘어가면 닫는다 - 남겨 두면 z 가 더 높아(popup 1000 >
+		// chrome 100) 딤 · 모달 패널 위에 떠서 클릭까지 됐다 (#982). 포탈된 목록(Menu · Dropdown)은
+		// aria-modal 이 아니라 닫지 않는다
+		const handleFocusIn = (e: FocusEvent) => {
+			const target = e.target as Element;
+			if (popoverRef.current?.contains(target) || wrapperRef.current?.contains(target)) return;
+			// 팝오버가 들어 있는 대화상자(Modal 폼 안의 Popover)는 빼고, 새로 열린 다른 대화상자만 본다
+			const dialog = target.closest?.('[aria-modal="true"]');
+			if (dialog && dialog !== wrapperRef.current?.closest('[aria-modal="true"]')) setOpen(false);
+		};
 		document.addEventListener("mousedown", handleClick);
-		return () => document.removeEventListener("mousedown", handleClick);
+		document.addEventListener("focusin", handleFocusIn);
+		return () => {
+			document.removeEventListener("mousedown", handleClick);
+			document.removeEventListener("focusin", handleFocusIn);
+		};
 	}, [open, setOpen]);
 
 	// Escape 닫기 - 공유 오버레이 스택에 등록해 최상단일 때만 닫는다 (overlay-stack.ts 참고).

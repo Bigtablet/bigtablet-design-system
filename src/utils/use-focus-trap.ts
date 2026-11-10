@@ -18,6 +18,17 @@ const FOCUSABLE_SELECTORS = [
 	'[tabindex]:not([tabindex="-1"]):not(input[type="hidden"])',
 ].join(", ");
 
+/**
+ * 지금 실제로 포커스를 받을 수 있는지 - 선택자는 맞아도 `hidden` · `[inert]` · `display:none` 안이면
+ * focus() 가 무시된다. 그게 마지막 후보가 되면 Tab 이 트랩을 빠져 body 로 갔다 (#982).
+ * `checkVisibility` 가 없는 환경(jsdom)은 속성만 본다.
+ */
+const isTabbable = (el: HTMLElement) =>
+	!el.closest("[hidden], [inert]") && el.checkVisibility?.() !== false;
+
+/** 닫히는 중인 오버레이(퇴출 모션 동안 DOM 에 남는다) - 포커스를 돌려줄 자리가 아니다 */
+const CLOSING_OVERLAY = '[aria-modal="true"][data-state="closed"]';
+
 export interface FocusTrapOptions {
 	/**
 	 * 초기 포커스를 **먼저 찾을** 영역. 여기 안에 포커스 가능한 컨트롤이 있으면 그 첫 번째로
@@ -58,10 +69,20 @@ export function useFocusTrap(
 
 		// Get all focusable elements
 		const getFocusableElements = () => {
-			return container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS);
+			return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter(
+				isTabbable,
+			);
 		};
 
+		// 컨테이너를 늘 포커스 가능하게 둔다 - 패널 안 비포커스 영역(제목 · 메시지)을 누르면 포커스가
+		// body 로 가고, 컨테이너에 건 Tab 리스너가 그 키를 받지 못해 다이얼로그 밖으로 나갔다 (#982).
+		// 소비자가 이미 tabindex 를 줬으면 그대로 둔다 - 덮어쓰고 "우리가 붙였다" 로 표시하면
+		// cleanup 이 소비자 속성을 지운다.
 		let wasTabIndexAdded = false;
+		if (!container.hasAttribute("tabindex")) {
+			container.setAttribute("tabindex", "-1");
+			wasTabIndexAdded = true;
+		}
 
 		// Focus the first focusable element or the container itself.
 		// 스크롤 wrapper 는 건너뛴다 - 안쪽에 실제 컨트롤이 있는데 빈 div 에 포커스가 놓이면
@@ -71,8 +92,8 @@ export function useFocusTrap(
 		// 중첩된 스크롤 wrapper 같은 것이 초기 포커스를 가로채지 않는다.
 		const preferredRoot = options?.preferWithin?.current;
 		const preferred = preferredRoot
-			? (Array.from(preferredRoot.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).find(
-					(el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR),
+			? (focusableElements.find(
+					(el) => preferredRoot.contains(el) && !el.hasAttribute(SKIP_AUTOFOCUS_ATTR),
 				) ?? null)
 			: null;
 		// 소비자가 자리를 지정했으면 그것이 이긴다 - 단, 이 컨테이너 안에 붙어 있고 지금 포커스
@@ -81,25 +102,22 @@ export function useFocusTrap(
 		// 트랩이 깨진다. 폴백 후보들과 같은 FOCUSABLE_SELECTORS 기준을 적용한다.
 		const explicit = options?.initialFocus?.current;
 		const explicitTarget =
-			explicit && container.contains(explicit) && explicit.matches(FOCUSABLE_SELECTORS)
+			explicit &&
+			container.contains(explicit) &&
+			explicit.matches(FOCUSABLE_SELECTORS) &&
+			isTabbable(explicit)
 				? explicit
 				: null;
+		// skip 표시는 **영역**에도 건다 - Modal · Drawer 의 footer 는 초기 포커스 대상이 아니다. 본문 없는 확인
+		// 모달에서 footer 첫 자리(흔히 destructive "삭제")로 가지 않고 패널로 간다 (#982). skip 표시가 붙은
+		// 요소 자신(본문 스크롤 wrapper)은 그 다음 후보다.
 		const initialTarget =
 			explicitTarget ??
 			preferred ??
-			Array.from(focusableElements).find((el) => !el.hasAttribute(SKIP_AUTOFOCUS_ATTR)) ??
-			focusableElements[0];
-		if (initialTarget) {
-			initialTarget.focus();
-		} else {
-			// 소비자가 이미 tabindex 를 줬으면 그대로 둔다 - 덮어쓰고 "우리가 붙였다" 로 표시하면
-			// cleanup 이 소비자 속성을 지운다. 이미 포커스 가능하니 focus 만.
-			if (!container.hasAttribute("tabindex")) {
-				container.setAttribute("tabindex", "-1");
-				wasTabIndexAdded = true;
-			}
-			container.focus();
-		}
+			focusableElements.find((el) => !el.closest(`[${SKIP_AUTOFOCUS_ATTR}]`)) ??
+			focusableElements.find((el) => el.hasAttribute(SKIP_AUTOFOCUS_ATTR)) ??
+			container;
+		initialTarget.focus();
 
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key !== "Tab") return;
@@ -112,18 +130,18 @@ export function useFocusTrap(
 				return;
 			}
 
+			// 포커스가 패널 자신이거나(본문 클릭 뒤) 패널 밖에 있으면 양 끝에서처럼 감싼다 - 패널에서 Shift+Tab 은
+			// DOM 순서상 패널 앞(트리거 쪽)으로 나갔다 (#982)
+			const active = document.activeElement as HTMLElement | null;
+			const outside = !active || active === container || !container.contains(active);
 			if (e.shiftKey) {
-				// Shift + Tab
-				if (document.activeElement === firstElement) {
+				if (active === firstElement || outside) {
 					e.preventDefault();
 					lastElement.focus();
 				}
-			} else {
-				// Tab
-				if (document.activeElement === lastElement) {
-					e.preventDefault();
-					firstElement.focus();
-				}
+			} else if (active === lastElement || (outside && active !== container)) {
+				e.preventDefault();
+				firstElement.focus();
 			}
 		};
 
@@ -143,8 +161,11 @@ export function useFocusTrap(
 				container.removeAttribute("tabindex");
 			}
 
-			// Restore focus to the previously focused element
-			previousActiveElement.current?.focus();
+			// 열기 전 자리로 돌려준다 - 단 그 자리가 사라졌거나 닫히는 오버레이 안이면 두지 않는다. 대화상자
+			// 콜백에서 부모 Modal 을 닫으면(useConfirm) 부모가 먼저 트리거로 돌려준 포커스를 이 cleanup 이
+			// 닫히는 Modal 안 버튼으로 다시 끌고 가 body 로 떨어졌다 (#982)
+			const previous = previousActiveElement.current;
+			if (previous?.isConnected && !previous.closest(CLOSING_OVERLAY)) previous.focus();
 		};
 	}, [isActive, containerRef]);
 }

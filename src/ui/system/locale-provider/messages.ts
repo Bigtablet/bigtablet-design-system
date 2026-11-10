@@ -59,6 +59,7 @@ export interface LocaleMessages {
 	"fileInput.removeImage": string;
 	"filterBar.reset": string;
 	"filterBar.submit": string;
+	"form.errorSummary": string; // {count}
 	"imageCropper.hint": string;
 	"imageCropper.label": string;
 	"imageCropper.noPanHint": string;
@@ -79,6 +80,9 @@ export interface LocaleMessages {
 	"timePicker.hour": string;
 	"timePicker.minute": string;
 	"timePicker.rangeSr": string;
+	"timeline.active": string;
+	"timeline.done": string;
+	"timeline.pending": string;
 
 	// ── navigation ──────────────────────────────────────────────────────────
 	"appShell.skipLink": string;
@@ -149,6 +153,7 @@ export const ko: LocaleMessages = {
 	"fileInput.removeImage": "이미지 제거",
 	"filterBar.reset": "초기화",
 	"filterBar.submit": "검색",
+	"form.errorSummary": "{count}개 항목을 확인해 주세요",
 	"imageCropper.hint":
 		"드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요.",
 	"imageCropper.label": "이미지 위치와 배율 조정",
@@ -170,6 +175,9 @@ export const ko: LocaleMessages = {
 	"timePicker.hour": "시",
 	"timePicker.minute": "분",
 	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
+	"timeline.active": "진행 중",
+	"timeline.done": "완료",
+	"timeline.pending": "대기",
 
 	"appShell.skipLink": "본문으로 건너뛰기",
 	"bottomNav.label": "주요 메뉴",
@@ -236,6 +244,7 @@ export const en: LocaleMessages = {
 	"fileInput.removeImage": "Remove image",
 	"filterBar.reset": "Reset",
 	"filterBar.submit": "Search",
+	"form.errorSummary": "Check {count} fields",
 	"imageCropper.hint":
 		"Drag, or tap the spot to center (or use arrow keys) to move; wheel or slider to zoom.",
 	"imageCropper.label": "Adjust image position and zoom",
@@ -257,6 +266,9 @@ export const en: LocaleMessages = {
 	"timePicker.hour": "Hour",
 	"timePicker.minute": "Minute",
 	"timePicker.rangeSr": "Selectable from {min} to {max}",
+	"timeline.active": "In progress",
+	"timeline.done": "Done",
+	"timeline.pending": "Pending",
 
 	"appShell.skipLink": "Skip to main content",
 	"bottomNav.label": "Main menu",

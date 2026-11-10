@@ -205,4 +205,29 @@ describe("ListItem", () => {
 		fireEvent.keyDown(item, { key: "Enter" });
 		expect(onClick).toHaveBeenCalledTimes(1);
 	});
+
+	// 안쪽 버튼의 키 · 클릭은 행 것이 아니다 (#983)
+	it("lets an inner trailing button handle its own Enter and click", () => {
+		const onRow = vi.fn();
+		const onBtn = vi.fn();
+		render(
+			<ListItem
+				label="행"
+				onClick={onRow}
+				trailingElement={
+					<button type="button" onClick={onBtn}>
+						더보기
+					</button>
+				}
+			/>,
+		);
+		const btn = screen.getByRole("button", { name: "더보기" });
+		const e = fireEvent.keyDown(btn, { key: "Enter" });
+		expect(e).toBe(true); // preventDefault 되지 않았다 - 네이티브 버튼 활성화가 그대로 돈다
+		fireEvent.click(btn);
+		expect(onBtn).toHaveBeenCalledTimes(1);
+		expect(onRow).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByText("행"));
+		expect(onRow).toHaveBeenCalledTimes(1);
+	});
 });

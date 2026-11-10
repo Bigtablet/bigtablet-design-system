@@ -1,8 +1,8 @@
 "use client";
 
 import type * as React from "react";
-import { useCallback, useId, useRef, useState } from "react";
-import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { cn, type SafeHTMLProps, useFormReset, useSafeLayoutEffect } from "../../../utils";
 import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";
@@ -159,10 +159,9 @@ export const Textarea = ({
 	// textarea 자체엔 padding 없음 (wrapper 가 padding 담당) → scrollHeight 는 순수 콘텐츠 높이.
 	// minH/maxH 도 padding 없이 line 높이만 - 안 그러면 wrapper padding 과 이중 적용됨.
 	// useSafeLayoutEffect - SSR 경고 방지 (서버에선 useEffect fallback).
-	useSafeLayoutEffect(() => {
-		if (!autoGrow) return;
+	const fitHeight = useCallback(() => {
 		const el = innerRef.current;
-		if (!el) return;
+		if (!autoGrow || !el) return;
 		const lh = LINE_HEIGHT_PX[size];
 		const minH = minRows ? minRows * lh : 0;
 		const maxH = maxRows ? maxRows * lh : Number.POSITIVE_INFINITY;
@@ -170,7 +169,36 @@ export const Textarea = ({
 		const next = Math.min(Math.max(el.scrollHeight, minH), maxH);
 		el.style.height = `${next}px`;
 		el.style.overflowY = el.scrollHeight > maxH ? "auto" : "hidden";
-	}, [innerValue, autoGrow, size, minRows, maxRows]);
+	}, [autoGrow, size, minRows, maxRows]);
+	// innerValue 는 다시 잴 신호다
+	useSafeLayoutEffect(() => fitHeight(), [innerValue, fitHeight]);
+	// 폭이 바뀌면(창 · 패널 크기, 숨김 상태로 마운트된 뒤 보일 때) 줄바꿈이 달라져 다시 잰다. 내용 변화에만
+	// 쟀을 때는 600 → 150px 로 좁아져도 높이가 48 에 머물고 overflow 가 hidden 이라 글이 잘렸다 (#986).
+	// 폭만 본다 - 높이를 바꾸는 건 이 함수 자신이라 높이 변화에 반응하면 되먹임이 생긴다
+	useEffect(() => {
+		const el = innerRef.current;
+		if (!autoGrow || !el || typeof ResizeObserver === "undefined") return;
+		let width = el.clientWidth;
+		let frame = 0;
+		const ro = new ResizeObserver(() => {
+			if (el.clientWidth === width) return;
+			width = el.clientWidth;
+			// 다음 프레임에 잰다 - 콜백 안에서 높이를 바꾸면 같은 프레임에 관찰이 다시 생겨
+			// "ResizeObserver loop completed with undelivered notifications" 가 났다
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(fitHeight);
+		});
+		ro.observe(el);
+		return () => {
+			cancelAnimationFrame(frame);
+			ro.disconnect();
+		};
+	}, [autoGrow, fitHeight]);
+
+	// form.reset() 뒤 비제어 값도 처음 값으로 - 네이티브 값만 되돌아가고 화면 상태는 남았다 (#986)
+	useFormReset(innerRef, () => {
+		if (!isControlled) emit(applyTransform(defaultValue ?? ""));
+	});
 
 	const rootClassName = cn(
 		"textarea",
@@ -234,11 +262,14 @@ export const Textarea = ({
 						aria-required={field ? field.required || undefined : props["aria-required"]}
 						aria-label={(!showLabel ? label : undefined) ?? props["aria-label"]}
 						value={innerValue}
-						onCompositionStart={() => {
+						// 소비자 조합 핸들러도 부른다 - 덮어쓰면 사라졌다 (#986)
+						onCompositionStart={(event) => {
 							isComposingRef.current = true;
+							props.onCompositionStart?.(event);
 						}}
 						onCompositionEnd={(event) => {
 							isComposingRef.current = false;
+							props.onCompositionEnd?.(event);
 							// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 - emit 가 중복 차단.
 							emit(applyTransform(event.currentTarget.value));
 						}}

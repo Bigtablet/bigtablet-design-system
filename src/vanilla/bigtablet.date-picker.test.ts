@@ -498,6 +498,68 @@ describe("DatePicker 시각 먼저 고르기 (#964)", () => {
 		expect(api?.getValue()).toEqual({ start: "2026-11-03T09:00", end: "2026-11-05T17:00" });
 	});
 
+	// 날짜 없이 시각만 고르고 완료를 누르면 오늘로 채운다 - 닫기만 하면 고른 시각이 사라졌다 (#971)
+	const done = (root: HTMLElement) =>
+		(root.querySelector(".bt-date-picker__action--primary") as HTMLButtonElement).click();
+
+	it("완료를 누르면 먼저 고른 시각을 오늘에 붙인다", () => {
+		const root = mountRoot("data-time");
+		const onValueChange = vi.fn();
+		const api = DatePicker(root, { today: "2026-11-09", minuteStep: 1, onValueChange });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toBe("2026-11-09T09:00");
+		expect(onValueChange).toHaveBeenCalledWith("2026-11-09T09:00");
+		expect(root.querySelector(".bt-date-picker__panel")?.hasAttribute("hidden")).toBe(true);
+	});
+
+	it("범위형은 완료를 누르면 시작 · 종료 둘 다 오늘", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		const [startHour, , endHour] = selects(root) as HTMLSelectElement[];
+		setTime(startHour as HTMLSelectElement, "9");
+		setTime(endHour as HTMLSelectElement, "17");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T09:00", end: "2026-11-09T17:00" });
+	});
+
+	it("범위형에서 시작 시각만 골랐으면 종료는 오늘 끝", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T09:00", end: "2026-11-09T23:59" });
+	});
+
+	it("범위형에서 종료 시각만 골랐으면 시작은 오늘 처음", () => {
+		const root = mountRoot("data-time");
+		const api = DateRangePicker(root, { today: "2026-11-09", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[2] as HTMLSelectElement, "17");
+		done(root);
+		expect(api?.getValue()).toEqual({ start: "2026-11-09T00:00", end: "2026-11-09T17:00" });
+	});
+
+	it("오늘이 범위 밖이면 채우지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09", min: "2026-12-01", minuteStep: 1 });
+		api?.open();
+		setTime(selects(root)[0] as HTMLSelectElement, "9");
+		done(root);
+		expect(api?.getValue()).toBeNull();
+	});
+
+	it("시각을 고르지 않고 완료를 누르면 값을 만들지 않는다", () => {
+		const root = mountRoot("data-time");
+		const api = DatePicker(root, { today: "2026-11-09" });
+		api?.open();
+		done(root);
+		expect(api?.getValue()).toBeNull();
+	});
+
 	it("팝오버 영역 안을 누르면 target 이 바깥이어도 닫지 않는다", () => {
 		const root = mountRoot("data-time");
 		const api = DatePicker(root, { today: "2026-11-09" });
@@ -593,5 +655,91 @@ describe("DatePicker clearable (#965)", () => {
 		expect(to.querySelector('button[data-day="5"]')?.getAttribute("aria-disabled")).not.toBe(
 			"true",
 		);
+	});
+});
+
+// 감사에서 나온 결함 (#974)
+describe("DatePicker 폼 · 포커스 (#974)", () => {
+	const mountRoot = (html: string) => {
+		document.body.innerHTML = html;
+		return document.querySelector(".bt-date-picker") as HTMLElement;
+	};
+
+	it("범위형 destroy · 재초기화가 종료 값을 폼에서 빼지 않는다", () => {
+		const root = mountRoot(
+			'<form><div class="bt-date-picker" data-start-name="from" data-end-name="to"></div></form>',
+		);
+		const api = DateRangePicker(root, {
+			startName: "from",
+			endName: "to",
+			defaultValue: { start: "2026-10-01", end: "2026-10-05" },
+		});
+		api?.destroy();
+		const form = document.querySelector("form") as HTMLFormElement;
+		expect([...new FormData(form)]).toEqual([
+			["from", "2026-10-01"],
+			["to", "2026-10-05"],
+		]);
+		const again = DateRangePicker(root, { startName: "from", endName: "to" });
+		expect(again?.getValue()).toEqual({ start: "2026-10-01", end: "2026-10-05" });
+	});
+
+	it("범위형에서 시작을 다시 고르면 시작 시각을 지킨다", () => {
+		const root = mountRoot('<div class="bt-date-picker"></div>');
+		const api = DateRangePicker(root, { time: true, today: "2026-10-16", minuteStep: 1 });
+		api?.setValue({ start: "2026-10-10T09:00", end: "2026-10-12T18:00" });
+		api?.open();
+		(root.querySelector('button[data-day="14"]') as HTMLElement).click();
+		expect(api?.getValue()).toEqual({ start: "2026-10-14T09:00", end: null });
+	});
+
+	it("form.reset() 이 처음 값으로 되돌린다", async () => {
+		const root = mountRoot('<form><div class="bt-date-picker" data-name="d"></div></form>');
+		const api = DatePicker(root, { name: "d", defaultValue: "2026-10-01" });
+		api?.setValue("2026-10-10");
+		(document.querySelector("form") as HTMLFormElement).reset();
+		await Promise.resolve();
+		expect(api?.getValue()).toBe("2026-10-01");
+		expect((root.querySelector('input[name="d"]') as HTMLInputElement).value).toBe("2026-10-01");
+	});
+
+	it("값이 바뀌면 숨은 input 이 change 를 낸다", () => {
+		const root = mountRoot('<form><div class="bt-date-picker" data-name="d"></div></form>');
+		const onChange = vi.fn();
+		document.querySelector("form")?.addEventListener("change", onChange);
+		const api = DatePicker(root, { name: "d", today: "2026-10-16" });
+		api?.open();
+		(root.querySelector('button[data-day="20"]') as HTMLElement).click();
+		expect(onChange).toHaveBeenCalledTimes(1);
+		expect((onChange.mock.calls[0] as [Event])[0].target).toBe(
+			root.querySelector('input[name="d"]'),
+		);
+	});
+
+	it("범위형은 바뀐 input 에서만 change 를 낸다", () => {
+		const root = mountRoot(
+			'<form><div class="bt-date-picker" data-start-name="from" data-end-name="to"></div></form>',
+		);
+		const targets: string[] = [];
+		document.querySelector("form")?.addEventListener("change", (e) => {
+			targets.push((e.target as HTMLInputElement).name);
+		});
+		const api = DateRangePicker(root, { startName: "from", endName: "to", today: "2026-10-16" });
+		api?.open();
+		(root.querySelector('button[data-day="3"]') as HTMLElement).click();
+		expect(targets).toEqual(["from"]);
+		(root.querySelector('button[data-day="5"]') as HTMLElement).click();
+		expect(targets).toEqual(["from", "to"]);
+	});
+
+	it("min 달에 닿아 ‹ 가 막히면 포커스를 날짜 칸으로 옮긴다", () => {
+		const root = mountRoot('<div class="bt-date-picker"></div>');
+		const api = DatePicker(root, { today: "2026-10-16", min: "2026-09-01" });
+		api?.open();
+		const prev = root.querySelector('.bt-date-picker__nav[data-nav="-1"]') as HTMLButtonElement;
+		prev.focus();
+		prev.click();
+		expect(prev.disabled).toBe(true);
+		expect(document.activeElement?.closest("tbody")).not.toBeNull();
 	});
 });

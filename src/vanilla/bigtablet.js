@@ -2,7 +2,6 @@
  * Bigtablet Design System - Vanilla JavaScript
  * For use with plain HTML/CSS/JS, Thymeleaf, JSP, etc.
  *
- * @version 1.0.0
  * @license Bigtablet Inc. Open Source License - see LICENSE at the repo root
  *          (https://github.com/Bigtablet/.github/blob/main/BIGTABLET_LICENSE.md)
  */
@@ -11,6 +10,8 @@
 // bigtablet.min.js 다 - 전역 `Bigtablet` 은 그 IIFE 의 반환값(아래 export 전부)이다 (#926).
 import { init } from "./js/init.js";
 
+// package.json 의 버전 - 번들러가 이 필드만 넣는다 (예전엔 "1.0.0" 고정이었다, #976)
+export { version } from "../../package.json";
 // Components
 export { Alert } from "./js/alert.js";
 export { AppShell } from "./js/app-shell.js";
@@ -26,8 +27,6 @@ export { Sidebar } from "./js/sidebar.js";
 export { Toast } from "./js/toast.js";
 export { Toggle } from "./js/toggle.js";
 export { $, $$, generateId, on } from "./js/utils.js";
-
-export const version = "1.0.0";
 
 // Auto-init on DOM ready
 if (typeof document !== "undefined") {

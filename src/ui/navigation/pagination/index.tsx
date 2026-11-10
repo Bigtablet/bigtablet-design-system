@@ -103,7 +103,7 @@ const parsePageJump = (raw: string, totalPages: number) => {
  * @returns 렌더링된 페이지네이션 UI
  */
 export const Pagination = ({
-	page,
+	page: pageProp,
 	totalPages,
 	onPageChange,
 	prevLabel: prevLabelProp,
@@ -113,6 +113,9 @@ export const Pagination = ({
 	pageJumpLabel: pageJumpLabelProp,
 }: PaginationProps) => {
 	const t = useLocaleText();
+	// 범위 밖 page(목록이 줄어 totalPages 보다 커진 경우)는 가장 가까운 쪽으로 보고 그린다 - 그대로 쓰면 현재 쪽
+	// 표시가 없고 이전 버튼이 범위 밖 쪽(onPageChange(4))으로 갔다 (#984)
+	const page = Math.min(Math.max(1, pageProp), Math.max(1, totalPages));
 	// 입력 중인 값. null 이면 현재 쪽 번호를 보여 준다
 	const [jumpDraft, setJumpDraft] = React.useState<string | null>(null);
 	const [jumpInvalid, setJumpInvalid] = React.useState(false);
@@ -202,6 +205,8 @@ export const Pagination = ({
 									}}
 									onKeyDown={(e) => {
 										if (e.key === "Escape") {
+											// 적다 만 값을 되돌렸으면 "처리했다" 고 알린다 - 바깥 Modal 이 같은 Escape 로 닫히지 않게 (#976)
+											if (e.currentTarget.value !== String(page)) e.preventDefault();
 											resetJump();
 											return;
 										}

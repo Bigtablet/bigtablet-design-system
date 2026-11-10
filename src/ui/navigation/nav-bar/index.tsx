@@ -101,6 +101,10 @@ export const NavBar = ({
 	const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = useState(false);
 
+	// 링크 영역(<nav>)은 children 이 있을 때만 그려진다 - 처음에 비어 있다가 권한 확인 뒤 링크가 생기면
+	// 그때 다시 붙어야 한다. 빈 deps 였을 때는 한 번도 재지 않아 인디케이터가 그려지지 않았다 (#984)
+	const hasLinks = !!children;
+	// hasLinks 는 <nav> 가 새로 붙었다는 신호로만 쓴다 (useSafeLayoutEffect 는 의존성 lint 대상이 아니다)
 	useSafeLayoutEffect(() => {
 		const links = linksRef.current;
 		if (!links) return;
@@ -143,7 +147,7 @@ export const NavBar = ({
 			ro?.disconnect();
 			window.removeEventListener("resize", handleResize);
 		};
-	}, []);
+	}, [hasLinks]);
 
 	// sticky 면 헤더 높이만큼 html 에 scroll-padding 을 준다(WCAG 2.4.11). AppShell header 안이면
 	// AppShell 이 이미 잰다. ref 는 소비자 ref 와 겹치지 않게 inner 에 걸고 header 를 잰다.

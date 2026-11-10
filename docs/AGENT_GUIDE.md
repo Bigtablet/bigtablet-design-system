@@ -245,12 +245,14 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
 | `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
-| `Toggle` | On/off switch. | `checked`, `size` (sm/md), `disabled` |
-| `Dropdown` | Value-selection menu. | `options`, `value`, `onValueChange`, `label`, `supportingText`, `placeholder`, `size`. Block-level - fills parent. |
-| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `min`, `max`, `fullWidth`, `size` (sm/md/lg - same field height as Dropdown/TextField), `clearable` (× button + Delete, emits `""`; DateRangePicker clears both) |
+| `Toggle` | On/off switch. | `ariaLabel` (required), `checked`/`onCheckedChange`, `size` (sm/md), `disabled` |
+| `Dropdown` | Value-selection menu. | `options` (each `{ value, label, supportingText?, leadingIcon?, disabled?, showDivider? }`), `value`, `onValueChange`, `label`, `placeholder`, `size`. Block-level - fills parent. |
+| `Combobox` | Async search-and-pick input. | `onSearch` (returns `Promise<ComboboxOption[]>`), `value`/`onValueChange` (`null` clears - Backspace on an empty query), `defaultOptions`, `debounceMs` (default 250), `placeholder`, `emptyMessage`, `idleMessage`, `renderOption`, `size`, `fullWidth`, `disabled`. |
+| `TagInput` | Free-text tags (Enter to add). | `value`/`defaultValue`/`onValueChange` (`string[]`), `placeholder`, `maxTags`, `allowDuplicates`, `size`, `fullWidth`, `disabled`, `ariaLabel`. |
+| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `variant` (dropdown default / calendar - day field + month popover, year-month-day only), `placeholder` (calendar), `minDate`, `selectableRange` (all/until-today), `startYear`/`endYear`, `label`, `fullWidth`, `size` (sm/md/lg - same field height as Dropdown/TextField), `clearable` (× button + Delete, emits `""`; DateRangePicker clears both) |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
-| `OTPInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
+| `OtpInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
 
 ### Display
 
@@ -266,7 +268,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`, `layout` (auto/fixed - fixed keeps column positions across pages), `minWidth`, `cards` (stack rows as cards on compact). Column `truncate` for one-line ellipsis. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal rule. | `weight` (standard/heavy). Horizontal only - there is no vertical variant. |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
-| `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`. Hover bg works in any open state. |
+| `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`, `headingAs` (default `h3`). Hover bg works in any open state. |
 
 ### Feedback
 

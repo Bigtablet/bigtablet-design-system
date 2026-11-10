@@ -412,7 +412,8 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 
 `data-name` 을 지정하면 hidden input 이 생성되어 선택 값이 폼 POST 에 포함됩니다.
 서버 템플릿이 `.bt-dropdown` 안에 hidden input 을 미리 렌더링해 두면 (예: `th:field`)
-그 input 의 name/초기값을 그대로 이어받아 표시·동기화합니다.
+그 input 의 name/초기값을 그대로 이어받아 표시·동기화합니다. hidden input 이 없거나 비어 있으면
+옵션에 그려 둔 `is-selected` 를 초기값으로 읽습니다 (`th:classappend="${...} ? 'is-selected'"`, #975).
 
 ```html
 <div class="bt-dropdown" data-bt-dropdown data-name="fruit">
@@ -509,9 +510,9 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 > </div>
 > ```
 
-`searchable` 일 때는 React 와 동일하게 **`role="combobox"` 가 검색 입력으로 옮겨가고**
-(`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함),
-트리거 버튼에는 `aria-haspopup="listbox"` + `aria-expanded` 만 남습니다.
+`searchable` 일 때는 React 와 동일하게 **검색 입력도 `role="combobox"` 가 되고**
+(`aria-autocomplete` / `aria-expanded` / `aria-controls` / `aria-activedescendant` 포함 - 활성 옵션은 검색 입력이 가리킨다),
+트리거도 `role="combobox"`(이름 = 라벨 + 현재 값)로 남습니다.
 
 **키보드 (WAI-ARIA APG Combobox):**
 
@@ -621,6 +622,10 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 헤더가 없으면 `.bt-modal__panel` 에 `aria-label` 을 직접 단다 - 번들이 이름을 지어내지 않고 콘솔에 경고만 남긴다
 (이전에는 영어 `"Dialog"` 로 채웠다. React Modal 과 같은 이유로 제거).
 
+`[data-modal-close]` 는 클릭 위임이라 열린 뒤 넣은 버튼도 닫는다. 안에 겹친 모달의 닫기 버튼은 그 모달만 닫는다.
+`type` 이 없으면 `<form>` 안에서도 제출하지 않는다. 패널 안에서 누른 채 딤 위에서 떼면(입력칸 글자를 드래그로 고르다
+밖에서 놓기) 닫히지 않는다 (#973).
+
 **JavaScript 연동:**
 
 ```html
@@ -727,6 +732,9 @@ Alert는 JavaScript로만 사용합니다.
 | `onCancel` | `function` | - | 취소 콜백 |
 
 닫을 때 퇴출 모션(페이드아웃 + 아래로)이 끝난 뒤 DOM 에서 걷고 스크롤 잠금을 풉니다. 포커스는 바로 트리거로 돌아갑니다. `prefers-reduced-motion` 에서는 기다리지 않습니다.
+
+열리면 첫 버튼에 포커스가 갑니다 - 취소가 있으면 취소(React Alert 와 같음). `destructive` "삭제?" 에서 Enter 한 번에
+지워지지 않습니다. `onConfirm` · `onCancel` 이 예외를 던져도 Alert 는 닫힙니다 (#973).
 
 ---
 
@@ -1062,8 +1070,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
 
 ```html
 <script>
-  // Dropdown 과 마찬가지로, 수동 초기화 대상에는 `data-bt-pagination` 을 붙이지 않는다
-  // (붙이면 자동 초기화와 인스턴스가 겹친다).
+  // 수동 초기화 대상에는 `data-bt-pagination` 을 붙이지 않아도 된다 - 붙여도 손으로 만든 인스턴스가
+  // 이기고(자동 초기화가 건너뛰거나 교체된다) onPageChange 가 사라지지 않는다 (#976).
   const pagination = Bigtablet.Pagination('#article-pagination', {
     page: 1,
     totalPages: 20,
@@ -1182,6 +1190,8 @@ to.setMin('2026-10-01');  to.setMax(null);
 to.open();  to.close();  to.setDisabled(true);  to.destroy();
 ```
 
+- 값이 바뀌면 바뀐 숨은 input 이 `change`(bubbles)를 낸다(범위면 시작 · 종료 중 바뀐 쪽만, `minFrom` 으로 따르는 칸이 다시 맞춘 뒤) - 폼 단위 리스너로 자동 조회 · 바뀜 표시를 걸 수 있다. `form.reset()` 은 처음 값으로 되돌린다 (#974)
+- 팝오버는 `position: fixed` 라 Modal · 표 상자 같은 `overflow: hidden` 조상에 잘리지 않는다. 스크롤 · 리사이즈를 따라가고, 위아래 어느 쪽에도 다 안 들어가면 화면 안으로 민다 (#974)
 - 키보드는 React DateCalendar 와 같다 - ←→ 하루, ↑↓ 한 주, Home/End 주의 처음 · 끝, PageUp/PageDown 한 달(Shift 면 한 해), Enter/Space 선택, Escape 닫기
 - 달력 제목("2026년 11월")을 누르면 월 보기, 월 보기 제목을 누르면 연 보기(12년)다. 고르면 한 단계씩 내려온다. 월 · 연 보기에서는 ←→ 한 칸, ↑↓ 한 줄, PageUp/PageDown 한 쪽(한 해 · 12년)
 - 날짜만 고르면 누르는 즉시 닫힌다. 시각을 켜면 열린 채로 남아 시 · 분을 고르고(키보드로 고르면 시 칸으로 포커스가 간다), 완료 · Escape · 바깥 클릭으로 닫는다
@@ -1214,6 +1224,7 @@ React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종�
 - 첫 클릭은 시작, 두 번째는 종료다. 종료가 이미 있거나 시작보다 앞을 누르면 새 시작이 된다. 날짜만 고르면 종료를 고르는 순간 닫힌다
 - **시작을 종료 뒤로 옮기면 종료를 비운다** (React `DateRangePicker` 와 같은 규칙) - 시작으로 맞춰 버리면 고르지 않은 날짜가 조회 · 저장된다. 같은 날의 더 이른 종료 시각만 시작 시각으로 올린다
 - 종료 시각의 처음 값은 그날 끝(분 간격 마지막)이다 - 하루 단위 조회가 그날 전체를 덮는다. 종료 시각을 먼저 골라 두었으면 그 시각
+- 날짜 없이 시각만 고르고 **완료**를 누르면 오늘 날짜로 채운다 (한 칸도 같다, #971). 종료 시각을 안 골랐으면 그날 끝. 오늘이 `min` · `max` 밖이면 채우지 않는다
 
 ---
 
@@ -1242,7 +1253,7 @@ React `DateRangePicker` 대응 - 칸 하나 + 달력 하나에서 시작 · 종�
 
 ### AppShell · Sidebar
 
-React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다 - CSS 만, 스크립트 없음.
+React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. 마크업은 서버가 그리고 클래스만 붙인다. 고정 헤더 높이(`AppShell()`, 헤더가 있으면 자동)와 사이드바 접기(`Sidebar()` · `data-bt-sidebar`)만 스크립트가 맡는다.
 
 ```html
 <div class="bt-app-shell">
@@ -1348,19 +1359,19 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 ```css
 :root {
   /* Colors */
-  --bt-color-primary: #000000;
+  --bt-color-primary: #121212;
   --bt-color-primary-hover: #333333;
   --bt-color-primary-container: rgba(0, 0, 0, 0.05);  /* .bt-button--tonal 채움색 */
   --bt-color-background: #ffffff;
   --bt-color-background-secondary: #fafafa;
-  --bt-color-text-primary: #1a1a1a;
+  --bt-color-text-primary: #121212;
   --bt-color-text-secondary: #666666;
-  --bt-color-text-tertiary: #999999;
+  --bt-color-text-tertiary: #6f6f6f;
   --bt-color-border: #e5e5e5;
   --bt-color-success: #047857;
-  --bt-color-error: #ef4444;
-  --bt-color-warning: #f59e0b;
-  --bt-color-info: #2563eb;
+  --bt-color-error: #b91c1c;
+  --bt-color-warning: #b45309;
+  --bt-color-info: #1d4ed8;
   --bt-color-accent: #121212;             /* 강조색 - 다크에서 자동 반전 */
   --bt-color-accent-on-surface: #ffffff;  /* 강조색 위 글자·아이콘 */
 
@@ -1404,10 +1415,17 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 **테마 커스터마이징 예시:**
 
 ```css
-/* 커스텀 테마 */
-:root {
+/* 커스텀 테마 - 색 · elevation 별칭은 [data-theme] 에도 함께 준다.
+   라이브러리가 그 구역에서 테마 값으로 다시 풀기 때문에 :root 에만 주면
+   data-theme 를 단 요소 안에서 기본값으로 돌아간다 */
+:root,
+[data-theme] {
   --bt-color-accent: #2563eb;            /* filled 버튼 · 토글 on · 포커스 등 강조색 */
   --bt-color-accent-on-surface: #ffffff; /* 강조색 위 글자·아이콘 */
+}
+
+/* 간격 · 모서리 · 글꼴처럼 테마와 무관한 값은 :root 만으로 충분하다 */
+:root {
   --bt-radius-md: 12px;
 }
 
@@ -1434,7 +1452,14 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
 <button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
+<div data-bt-date-picker>...</div> <!-- DatePicker 자동 초기화 -->
+<button data-bt-copy="값">...</button> <!-- CopyButton 자동 초기화 -->
+<aside data-bt-sidebar>...</aside> <!-- Sidebar 접기 자동 초기화 -->
+<div class="bt-app-shell">...</div> <!-- AppShell - .bt-app-shell__header 가 있으면 자동 -->
 ```
+
+같은 요소에 손으로 다시 만들면(`Bigtablet.Pagination(el, { onPageChange })`) 자동 초기화 인스턴스를 걷고 교체한다.
+손으로 먼저 만들었으면 자동 초기화가 건너뛴다 - 콜백 없는 인스턴스로 덮지 않는다 (#976).
 
 ### 수동 초기화
 

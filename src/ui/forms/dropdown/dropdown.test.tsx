@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -1043,5 +1043,48 @@ describe("Dropdown", () => {
 		render(<Dropdown multiple options={options} value={["1"]} />);
 		fireEvent.click(trigger());
 		expect(option("Option 1").querySelector(".dropdown_option_trailing")).toBeNull();
+	});
+
+	// #985 - Field id 우선 · 구분선 · form.reset
+	it("uses the Field id over a consumer id so the label points at it", () => {
+		render(
+			<Field label="상태" name="status">
+				<Dropdown id="mine" options={options} />
+			</Field>,
+		);
+		const label = screen.getByText("상태").closest("label") as HTMLLabelElement;
+		expect(document.getElementById(label.htmlFor)).toBe(trigger());
+	});
+
+	it("does not put an hr inside the listbox", () => {
+		render(
+			<Dropdown
+				options={[
+					{ value: "1", label: "A", showDivider: true },
+					{ value: "2", label: "B" },
+				]}
+			/>,
+		);
+		fireEvent.click(trigger());
+		expect(screen.getByRole("listbox").querySelector("hr")).toBeNull();
+	});
+
+	it("returns to the default value on form.reset()", async () => {
+		vi.useFakeTimers();
+		const { container } = render(
+			<form>
+				<Dropdown name="s" options={options} defaultValue="1" />
+			</form>,
+		);
+		fireEvent.click(trigger());
+		fireEvent.click(screen.getByRole("option", { name: "Option 2" }));
+		const hidden = container.querySelector('input[name="s"]') as HTMLInputElement;
+		expect(hidden.value).toBe("2");
+		(container.querySelector("form") as HTMLFormElement).reset();
+		await act(async () => {
+			vi.runAllTimers();
+		});
+		expect(hidden.value).toBe("1");
+		vi.useRealTimers();
 	});
 });

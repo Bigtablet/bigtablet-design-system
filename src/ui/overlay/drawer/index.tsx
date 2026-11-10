@@ -255,7 +255,12 @@ export const Drawer = ({
 						{content.children}
 					</div>
 				)}
-				{content.footer && <div className="drawer_footer">{content.footer}</div>}
+				{content.footer && (
+					// footer 는 초기 포커스 대상이 아니다 - 영역에 skip 표시 (useFocusTrap, #982)
+					<div className="drawer_footer" data-focus-trap-skip-autofocus="">
+						{content.footer}
+					</div>
+				)}
 			</div>
 		</div>,
 		document.body,

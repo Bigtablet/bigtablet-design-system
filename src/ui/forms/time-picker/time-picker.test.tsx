@@ -175,15 +175,12 @@ describe("TimePicker", () => {
 		expect(onValueChange).toHaveBeenCalledWith("14:15");
 	});
 
-	it("emits nothing for an hour that has no stepped minute in range", () => {
-		// 09:50 이 최소인데 30분 간격이면 09시에 고를 분이 없다
-		const onValueChange = vi.fn();
-		render(
-			<TimePicker value="10:00" minuteStep={30} minTime="09:50" onValueChange={onValueChange} />,
-		);
+	it("leaves out an hour that has no stepped minute in range (#986)", () => {
+		// 09:50 이 최소인데 30분 간격이면 09시에 고를 분이 없다 - 목록에 남기지 않는다
+		render(<TimePicker value="10:00" minuteStep={30} minTime="09:50" onValueChange={vi.fn()} />);
 		fireEvent.click(hourTrigger());
-		fireEvent.click(screen.getByRole("option", { name: "09" }));
-		expect(onValueChange).not.toHaveBeenCalled();
+		expect(screen.queryByRole("option", { name: "09" })).toBeNull();
+		expect(screen.getByRole("option", { name: "10" })).toBeInTheDocument();
 	});
 
 	it("starts at the first minute when an hour is picked with no value yet", () => {

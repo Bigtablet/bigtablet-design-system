@@ -53,16 +53,57 @@ describe("Toast", () => {
 		expect(first.querySelector(".bt-toast__icon--success")).not.toBeNull();
 	});
 
-	it("error 만 role=alert, 나머지는 role=status 로 메시지를 감싼다", () => {
-		Toast("실패", "error");
+	// 리전은 라이브 리전이 아니고, 문구만 숨은 공지 영역에 들어간다 - error 는 alert, 나머지는 status (#994)
+	it("error 는 alert, 나머지는 status 공지 영역에 문구만 넣는다", () => {
+		vi.useFakeTimers();
+		Toast("실패", "error", { action: { label: "다시", onClick: () => {} } });
 		Toast("안내", "info");
+		vi.advanceTimersByTime(150);
 
-		const info = nth(0);
-		const error = nth(1);
-		expect(error.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("alert");
-		expect(info.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("status");
-		// 버튼은 라이브 리전 밖이다
-		expect(error.querySelector(".bt-toast__live .bt-toast__close")).toBeNull();
+		const region = document.querySelector(".bt-toast-container") as HTMLElement;
+		expect(region.hasAttribute("aria-live")).toBe(false);
+		const announcer = (role: string) =>
+			region.querySelector(`.bt-toast__announcer[role="${role}"]`) as HTMLElement;
+		expect(announcer("alert").textContent).toBe("실패");
+		expect(announcer("status").textContent).toBe("안내");
+		// 읽힌 뒤에는 비운다 - 리전을 훑을 때 토스트 안 메시지와 겹치지 않게
+		vi.advanceTimersByTime(1000);
+		expect(announcer("status").textContent).toBe("");
+		vi.useRealTimers();
+		// 메시지는 토스트 안에도 남는다 - 버튼이 어느 메시지에 붙었는지 알 수 있게
+		expect(nth(0).querySelector(".bt-toast__live")?.hasAttribute("aria-hidden")).toBe(false);
+	});
+
+	it("닫으면 공지 영역의 문구도 뺀다", () => {
+		vi.useFakeTimers();
+		Toast("하나", "info");
+		vi.advanceTimersByTime(150);
+		vi.useRealTimers();
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(status.textContent).toBe("하나");
+		(nth(0).querySelector(".bt-toast__close") as HTMLButtonElement).click();
+		expect(status.textContent).toBe("");
+	});
+
+	it("리전을 만든 직후 바로 닫으면 문구를 공지 영역에 넣지 않는다", () => {
+		vi.useFakeTimers();
+		const t = Toast("곧 닫힘", "info");
+		t.dismiss();
+		vi.runAllTimers();
+		vi.useRealTimers();
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(status.textContent).toBe("");
+	});
+
+	it("공지 영역이 준비되는 동안 들어온 공지는 호출 순서대로 넣는다", () => {
+		vi.useFakeTimers();
+		Toast("첫째", "info");
+		Toast("둘째", "info");
+		vi.advanceTimersByTime(150);
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(Array.from(status.children, (p) => p.textContent)).toEqual(["첫째", "둘째"]);
+		vi.runAllTimers();
+		vi.useRealTimers();
 	});
 
 	it("모르는 tone 은 neutral 로 그린다", () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -110,6 +110,13 @@ export const Chip = ({
 	const hasTrailingButton = (type === "input" || isStatic) && removable;
 	const hasTrailingIcon = hasTrailingButton || type === "filter";
 
+	// 체크 아이콘 위에서 선택을 풀면 아이콘이 빠지며 pointerleave 가 오지 않는다 - 그대로 두면 hover 표시가
+	// 남아 칩 hover 배경이 사라졌다 (#983)
+	const hasHoverIcon = hasLeading || type === "filter";
+	useEffect(() => {
+		if (!hasHoverIcon) setIconHovered(false);
+	}, [hasHoverIcon]);
+
 	const enterIcon = () => setIconHovered(true);
 	const leaveIcon = () => setIconHovered(false);
 
@@ -122,7 +129,7 @@ export const Chip = ({
 		(hasLeading || hasStaticLeading) && "chip_has_leading",
 		hasTrailingIcon && "chip_has_trailing",
 		disabled && "chip_disabled",
-		iconHovered && "chip_icon_hovered",
+		iconHovered && hasHoverIcon && "chip_icon_hovered",
 		className,
 	);
 

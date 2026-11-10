@@ -21,8 +21,18 @@ export function onEscapeKeyDown(e) {
 	top();
 }
 
-/** Escape 를 소비만 하고 아무것도 닫지 않는 핸들러. `closeOnEscape: false` 인 모달용. */
-export function noop() {}
+/**
+ * 이 Tab 이 이 대화상자 몫인지 - 포커스가 안에 있을 때, 또는 갈 곳 없이 body 에 떨어졌으면 Escape 스택
+ * 최상단(가장 위 대화상자)일 때만. 위에 다른 대화상자(Modal 위 Alert, Alert 위 Alert)가 떠 있으면 아래쪽이
+ * 그 Tab 을 막거나 포커스를 끌어가지 않는다 (#973)
+ * @param {Element} container - 대화상자 패널
+ * @param {Function} handler - 그 대화상자가 pushEscape 에 넘긴 핸들러
+ */
+export function ownsFocus(container, handler) {
+	const active = document.activeElement;
+	if (active && active !== document.body) return container.contains(active);
+	return escapeStack[escapeStack.length - 1] === handler;
+}
 
 /** 최상단에 등록하고 해제 함수를 돌려준다. 마지막 항목이 빠지면 리스너도 뗀다. */
 export function pushEscape(handler) {

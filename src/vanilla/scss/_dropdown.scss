@@ -51,7 +51,7 @@
     &:disabled,
     &.is-disabled {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: token.$opacity_38; // React Dropdown 과 같은 값 (#975)
       background: var(--bt-color-background-secondary);
       color: var(--bt-color-text-tertiary);
     }
@@ -147,7 +147,7 @@
     border: 1px solid var(--bt-color-border);
     border-radius: var(--bt-radius-md);
     box-shadow: var(--bt-elevation-2);
-    max-height: 18rem;
+    max-height: token.$overlay_list_max_height;
     overflow-y: auto;
     overflow-x: hidden;
     /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */
@@ -162,7 +162,11 @@
 
     /* __options 를 품은 패널은 스크롤/여백을 그쪽에 넘긴다 -
        그래야 검색 행이 옵션과 함께 스크롤되지 않고 상단에 고정된다. */
+    // 세로 flex - JS 가 낮은 화면에서 패널에 max-height 를 주면 옵션 칸이 그만큼 줄어 스크롤된다. 블록이면
+    // 옵션 칸이 자기 max-height 를 지켜 패널 아래로 잘리고 마지막 옵션에 닿을 수 없었다 (#975, React #621)
     &:has(> .bt-dropdown__options) {
+      display: flex;
+      flex-direction: column;
       max-height: none;
       overflow: hidden;
       padding: 0;
@@ -215,7 +219,9 @@
 
   /* 옵션 스크롤 컨테이너(role=listbox). React 가 스크롤을 list 에서 이 컨테이너로 옮긴 것과 동일. */
   &__options {
-    max-height: 18rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: token.$overlay_list_max_height;
     overflow-y: auto;
     overflow-x: hidden;
     /* React 번들의 `@mixin scrollable` 과 같은 값 - 두 번들의 스크롤바가 갈리지 않게. */

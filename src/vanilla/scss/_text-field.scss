@@ -46,7 +46,7 @@
       cursor: not-allowed;
       background: var(--bt-color-background-secondary);
       color: var(--bt-color-text-tertiary);
-      opacity: 0.7;
+      opacity: token.$opacity_38; // React TextField 와 같은 값 (#975)
     }
 
     /* Variants - React `<TextField variant>` 와 1:1 대응.
@@ -128,8 +128,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: token.$icon_size_lg;
+    height: token.$icon_size_lg;
     color: var(--bt-color-text-secondary);
 
     &--left {

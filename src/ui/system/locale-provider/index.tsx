@@ -11,7 +11,7 @@ export { catalogs, en, ko } from "./messages";
 export type LocaleText = (key: LocaleKey, vars?: Record<string, string | number>) => string;
 
 export interface LocaleProviderProps {
-	/** 기준 카탈로그 (기본값: "ko") */
+	/** 기준 카탈로그. 주지 않으면 바깥 Provider 를 따르고, 바깥이 없으면 "ko" */
 	locale?: LocaleName;
 	/** 기준 위에 덮어쓸 문구. 한 줄만 바꿀 때 쓴다 */
 	messages?: Partial<LocaleMessages>;
@@ -20,6 +20,8 @@ export interface LocaleProviderProps {
 
 interface LocaleContextValue {
 	locale: LocaleName;
+	/** 덮어쓰기까지 합친 문구 - 안쪽 Provider 가 이어받는다 */
+	messages: LocaleMessages;
 	t: LocaleText;
 }
 
@@ -36,7 +38,7 @@ function makeText(messages: LocaleMessages): LocaleText {
 	return (key, vars) => format(messages[key], vars);
 }
 
-const FALLBACK: LocaleContextValue = { locale: "ko", t: makeText(ko) };
+const FALLBACK: LocaleContextValue = { locale: "ko", messages: ko, t: makeText(ko) };
 
 const LocaleContext = createContext<LocaleContextValue | undefined>(undefined);
 
@@ -57,7 +59,12 @@ const LocaleContext = createContext<LocaleContextValue | undefined>(undefined);
  * <LocaleProvider messages={{ "table.empty": "주문이 없습니다" }}>
  * ```
  */
-export const LocaleProvider = ({ locale = "ko", messages, children }: LocaleProviderProps) => {
+export const LocaleProvider = ({ locale: localeProp, messages, children }: LocaleProviderProps) => {
+	// 중첩되면 바깥을 이어받는다 - 기본값 "ko" 로 시작하면 안쪽 Provider(일부 문구만 바꾸려고 둔 것)가
+	// 바깥의 locale · messages 를 버렸다 (#984). locale 을 바꾸는 안쪽은 바깥 덮어쓰기(다른 언어)를 받지 않는다
+	const parent = useContext(LocaleContext);
+	const locale = localeProp ?? parent?.locale ?? "ko";
+	const inherited = parent && parent.locale === locale ? parent.messages : catalogs[locale];
 	// 소비자는 보통 `messages={{ "table.empty": … }}` 처럼 JSX 안에서 객체 리터럴을 넘긴다.
 	// 그러면 참조가 매 렌더 바뀌어 `t` 도 매번 새로 만들어지고, 앱 루트에 놓인 Provider 라
 	// 트리 전체의 `useLocaleText()` 소비자가 함께 리렌더된다. 내용이 같으면 같은 값을 유지해
@@ -65,10 +72,9 @@ export const LocaleProvider = ({ locale = "ko", messages, children }: LocaleProv
 	const stableMessages = useStableMessages(messages);
 
 	const value = useMemo<LocaleContextValue>(() => {
-		const base = catalogs[locale];
-		const merged = stableMessages ? { ...base, ...stableMessages } : base;
-		return { locale, t: makeText(merged) };
-	}, [locale, stableMessages]);
+		const merged = stableMessages ? { ...inherited, ...stableMessages } : inherited;
+		return { locale, messages: merged, t: makeText(merged) };
+	}, [locale, inherited, stableMessages]);
 
 	return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 };

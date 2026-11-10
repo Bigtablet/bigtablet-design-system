@@ -546,4 +546,29 @@ describe("OtpInput", () => {
 		expect(boxes()[0]).toHaveAttribute("aria-invalid", "true");
 		expect(boxes()[0]?.getAttribute("aria-describedby")?.split(" ").length).toBe(2);
 	});
+
+	// 가운데 칸을 지워도 뒤 숫자가 당겨지지 않고, 찬 칸은 덮어쓴다 (#985)
+	it("keeps later digits in place when a middle cell is cleared, and overwrites a filled cell", () => {
+		render(<ControlledOtp value="123456" ariaLabel="OTP" />);
+		const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
+		fireEvent.keyDown(inputs[2]!, { key: "Backspace" });
+		expect(inputs.map((i) => i.value)).toEqual(["1", "2", "", "4", "5", "6"]);
+		fireEvent.change(inputs[2]!, { target: { value: "3" } });
+		expect(inputs.map((i) => i.value).join("")).toBe("123456");
+		fireEvent.keyDown(inputs[0]!, { key: "9" });
+		expect(inputs[0]!.value).toBe("9");
+	});
+
+	it("rebuilds cells from an external value even if it matches the last emitted string", () => {
+		const { rerender } = render(
+			<OtpInput length={6} value="123456" onValueChange={() => {}} ariaLabel="OTP" />,
+		);
+		const inputs = () => screen.getAllByRole("textbox") as HTMLInputElement[];
+		fireEvent.keyDown(inputs()[2]!, { key: "Backspace" });
+		rerender(<OtpInput length={6} value="12456" onValueChange={() => {}} ariaLabel="OTP" />);
+		expect(inputs()[2]!.value).toBe("");
+		rerender(<OtpInput length={6} value="" onValueChange={() => {}} ariaLabel="OTP" />);
+		rerender(<OtpInput length={6} value="12456" onValueChange={() => {}} ariaLabel="OTP" />);
+		expect(inputs().map((i) => i.value)).toEqual(["1", "2", "4", "5", "6", ""]);
+	});
 });
