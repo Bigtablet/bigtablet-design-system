@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.9.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.9.0) - 2026-11-10
+- Toast 위치를 고를 수 있습니다 - `ToastProvider` `placement`(`"top-right"` 기본 · `"bottom-right"`), Vanilla 는 `<html data-bt-toast-placement="bottom-right">`. 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 내립니다. 좁은 화면은 그대로 아래쪽입니다
+- (렌더 변경) 쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤됩니다 - 아래쪽 배치에서 최신 토스트가 화면 위로 밀려 읽거나 누를 수 없던 것을 고쳤습니다 (React · Vanilla)
+- (렌더 변경) Windows 고대비(`forced-colors`)에서 사라지던 표시를 시스템 색으로 되살렸습니다 - 달력 고른 날 · 범위 · 오늘, Sidebar 현재 메뉴, Toggle 손잡이 · 켜짐, SegmentedControl 고른 칸, Tabs 표시기, 채운 버튼 테두리, Modal · Alert · Drawer · Tooltip 경계, Vanilla mask 아이콘(DatePicker · Sidebar · InlineAlert). 일반 모드 렌더는 그대로입니다
+
 ## [4.8.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.8.0) - 2026-11-10
 - Form 에 `errorSummary` 가 생겼습니다 - 제출 뒤 폼 위에 에러 개수와 필드별 링크를 보이고 그리로 포커스를 옮겨 한 번에 읽힙니다. 링크를 누르면 그 입력으로 갑니다. 켜면 필드는 `errors` 에서 온 에러를 따로 낭독하지 않습니다 (`errorSummaryTitle`, 로케일 `form.errorSummary`)
 - Accordion 에 `headingAs`(기본 `h3`)가 생겼습니다 - 페이지 헤딩 구조에 맞춥니다. Combobox 는 열린 채 검색어가 빈 칸에서 Backspace · Delete 로 선택을 지웁니다(`onValueChange(null)`)
