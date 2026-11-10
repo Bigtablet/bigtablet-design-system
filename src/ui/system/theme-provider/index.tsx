@@ -80,6 +80,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 	//  data-theme 를 직접 세팅하는 것을 권장 — next-themes 와 동일한 패턴)
 	const [mode, setModeState] = React.useState<ThemeMode>(defaultMode);
 	const [systemDark, setSystemDark] = React.useState<boolean>(false);
+	// 저장값을 읽기 전에는 data-theme 를 건드리지 않는다 - 첫 커밋의 mode 는 defaultMode 라, 그대로 적용하면
+	// no-flash 스크립트가 세운 data-theme 를 지웠다 다시 세워 테마가 한 번 깜빡였다 (#984)
+	const [synced, setSynced] = React.useState(false);
 
 	// mount 후 저장값 + 시스템 설정 동기화 (storageKey 변경 시에만 재실행 — body 는 storageKey 외
 	// 모듈 상수/안정 setter 만 참조하므로 deps 완전)
@@ -87,6 +90,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		// storageKey 가 바뀌면 새 키의 저장값으로 동기화. 저장값이 없으면 defaultMode 로 리셋
 		// (이전 키의 테마가 남지 않도록).
 		setModeState(readStored(storageKey) ?? defaultMode);
+		setSynced(true);
 		if (isClient) {
 			setSystemDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
 		}
@@ -105,7 +109,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
 	// data-theme attribute 적용
 	React.useEffect(() => {
-		if (!isClient) return;
+		if (!isClient || !synced) return;
 		const target = targetSelector
 			? document.querySelector(targetSelector)
 			: document.documentElement;
@@ -117,7 +121,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		} else {
 			target.setAttribute("data-theme", mode);
 		}
-	}, [mode, targetSelector]);
+	}, [mode, targetSelector, synced]);
 
 	const setMode = React.useCallback(
 		(next: ThemeMode) => {

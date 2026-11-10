@@ -148,7 +148,7 @@ DS 가 **스스로 렌더하는 문구**를 한곳에서 정한다. 소비자가
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `locale` | `'ko' \| 'en'` | `'ko'` | 기준 카탈로그 |
+| `locale` | `'ko' \| 'en'` | 바깥 Provider, 없으면 `'ko'` | 기준 카탈로그. 중첩하면 바깥의 `locale` · `messages` 를 이어받는다 (locale 을 바꾸면 바깥 덮어쓰기는 받지 않는다) |
 | `messages` | `Partial<LocaleMessages>` | - | 기준 위에 덮어쓸 문구 |
 
 **우선순위** — 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본. Provider 를 감싸지

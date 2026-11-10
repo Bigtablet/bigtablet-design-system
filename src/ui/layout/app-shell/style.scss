@@ -55,6 +55,11 @@
     }
   }
 
+  // padded={false} 여도 하단 고정 크롬 몫은 비운다 - 마지막 콘텐츠가 BottomBar 아래로 가렸다 (#984)
+  &_main:not(.app_shell_main_padded) {
+    padding-bottom: var(--bt-bottom-inset, 0px);
+  }
+
   &_main_padded {
     padding: token.$spacing_32;
     // 하단 고정 크롬(BottomNav, BottomBar 로 변신한 Sidebar)에 마지막 콘텐츠가 가리지 않게.
@@ -74,6 +79,16 @@
     // `height: 0` 으로는 사라지지 않는다 - 행을 만드는 것은 상자의 존재 자체다.
     // 래퍼는 역할 없는 div 라 `display: contents` 로 지워도 잃을 시맨틱이 없다.
     display: contents;
+  }
+
+  // static Sidebar 는 BottomBar 로 변신하지 않는다 - 열을 그대로 둔다. 1열로 접으면 rail 이 한 행을 통째로
+  // 차지해 본문이 첫 화면 밖으로 밀렸다 (375×667 에서 main top 667, #984)
+  .app_shell_with_sidebar:has(> .app_shell_sidebar .sidebar_static) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .app_shell_sidebar:has(.sidebar_static) {
+    display: flex;
   }
 
   .app_shell_main_padded {

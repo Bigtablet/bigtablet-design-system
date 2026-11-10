@@ -545,4 +545,38 @@ describe("Menu", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Open" }));
 		expect(screen.getAllByRole("menuitem")[0]).toHaveAttribute("tabindex", "-1");
 	});
+
+	// 트리거 자신의 onClick 을 덮어쓰지 않는다 - 표 행 안 "더보기" 의 stopPropagation 이 살아야 한다 (#984)
+	it("keeps the trigger's own onClick and lets preventDefault cancel opening", () => {
+		const onRow = vi.fn();
+		const { rerender } = render(
+			// biome-ignore lint/a11y/useKeyWithClickEvents: 테스트용 행
+			<div onClick={onRow}>
+				<Menu
+					trigger={
+						<button type="button" onClick={(e) => e.stopPropagation()}>
+							더보기
+						</button>
+					}
+					items={[{ key: "a", label: "항목 A" }]}
+				/>
+			</div>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "더보기" }));
+		expect(onRow).not.toHaveBeenCalled();
+		expect(screen.getByRole("menu")).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "더보기" }));
+		rerender(
+			<Menu
+				trigger={
+					<button type="button" onClick={(e) => e.preventDefault()}>
+						더보기
+					</button>
+				}
+				items={[{ key: "a", label: "항목 A" }]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "더보기" }));
+		expect(screen.queryByRole("menu")).toBeNull();
+	});
 });

@@ -214,4 +214,37 @@ describe("null 과 참조 안정성", () => {
 
 		expect(seen.at(-1)).toBe("하나도 없음");
 	});
+
+	// 중첩 Provider 는 바깥을 이어받는다 (#984)
+	describe("중첩 LocaleProvider", () => {
+		const Probe = () => {
+			const t = useLocaleText();
+			return (
+				<span>
+					{useLocaleName()}|{t("table.empty")}|{t("modal.close")}
+				</span>
+			);
+		};
+		it("inherits the outer locale and messages when the inner one only overrides a line", () => {
+			render(
+				<LocaleProvider locale="en" messages={{ "table.empty": "No orders" }}>
+					<LocaleProvider messages={{ "modal.close": "Dismiss" }}>
+						<Probe />
+					</LocaleProvider>
+				</LocaleProvider>,
+			);
+			expect(screen.getByText("en|No orders|Dismiss")).toBeInTheDocument();
+		});
+
+		it("drops the outer overrides when the inner one switches locale", () => {
+			render(
+				<LocaleProvider locale="en" messages={{ "table.empty": "No orders" }}>
+					<LocaleProvider locale="ko">
+						<Probe />
+					</LocaleProvider>
+				</LocaleProvider>,
+			);
+			expect(screen.getByText(`ko|${ko["table.empty"]}|${ko["modal.close"]}`)).toBeInTheDocument();
+		});
+	});
 });

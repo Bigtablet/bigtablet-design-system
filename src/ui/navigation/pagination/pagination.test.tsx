@@ -224,4 +224,13 @@ describe("Pagination", () => {
 			expect(screen.getByRole("textbox", { name: "Page number" })).toBeInTheDocument();
 		});
 	});
+
+	// 범위 밖 page 는 마지막 쪽으로 보고 그린다 (#984)
+	it("treats a page beyond totalPages as the last page", () => {
+		const onPageChange = vi.fn();
+		render(<Pagination page={5} totalPages={3} onPageChange={onPageChange} />);
+		expect(screen.getByRole("button", { name: /3/ })).toHaveAttribute("aria-current", "page");
+		fireEvent.click(screen.getByRole("button", { name: "이전 페이지" }));
+		expect(onPageChange).toHaveBeenCalledWith(2);
+	});
 });
