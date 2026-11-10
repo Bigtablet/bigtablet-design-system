@@ -177,12 +177,17 @@ export function ImageCropper({
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
-	// src(또는 minZoom)가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의
-	// onLoad 에서 다시 기록된다.
+	// src 가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의 onLoad 에서 다시 기록된다.
 	// src 는 body 에서 읽지 않지만 새 이미지로 교체될 때 리셋을 걸기 위한 의도적 트리거 의존성이다.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional trigger dependency
 	useEffect(() => {
 		setImageSize(null);
+		setOffset({ x: 0, y: 0 });
+	}, [src]);
+	// minZoom 만 바뀌면 줌만 맞춘다 - 이미지는 그대로라 onLoad 가 다시 오지 않는다. 예전에는 여기서도
+	// imageSize 를 비워 이미지가 영구히 먹통이 됐다(crop() reject, #986)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: minZoom 변화만 신호로 쓴다
+	useEffect(() => {
 		setZoom(minZoom);
 		zoomRef.current = minZoom;
 		setOffset({ x: 0, y: 0 });
@@ -283,6 +288,8 @@ export function ImageCropper({
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (!imageSize) return;
+		// Ctrl/Cmd + = · - 는 브라우저 확대다 - 가로채지 않는다 (WCAG 1.4.4, #986)
+		if (event.ctrlKey || event.metaKey || event.altKey) return;
 		switch (event.key) {
 			case "ArrowLeft":
 				panBy(-PAN_STEP, 0);

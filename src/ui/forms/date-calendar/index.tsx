@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, useIsMounted } from "../../../utils";
 import { useLocaleName, useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -138,7 +138,10 @@ export const DateCalendar = ({
 	const isControlled = valueProp !== undefined;
 	const [innerValue, setInnerValue] = React.useState(defaultValue ?? null);
 	const selected = parse(isControlled ? valueProp : innerValue);
-	const today = parse(todayProp) ?? fromDate(new Date());
+	// 기기의 오늘은 마운트 뒤에만 읽는다 - SSR 에서 읽으면 '오늘' 표시 · tabindex 가 서버 날짜로 굳어 하이드레이트가
+	// 어긋났다 (#986). 첫 렌더(서버 · 하이드레이트)는 '오늘' 없이 그리고, 마운트 뒤 다시 그린다
+	const mounted = useIsMounted();
+	const today = parse(todayProp) ?? (mounted ? fromDate(new Date()) : null);
 	const min = parse(minProp);
 	const max = parse(maxProp);
 
@@ -159,13 +162,21 @@ export const DateCalendar = ({
 	const pickInMonth = (m: Ymd): Ymd => {
 		const inMonth = (d: Ymd | null) => !!d && d.year === m.year && d.month === m.month;
 		if (inMonth(selected)) return selected as Ymd;
-		if (inMonth(today)) return today;
+		if (today && inMonth(today)) return today;
 		return { ...m, day: 1 };
 	};
 	const [focused, setFocused] = React.useState<Ymd>(() => {
 		const startMonth = parse(monthProp ?? defaultMonth);
-		return clampToRange(startMonth ? pickInMonth(startMonth) : (selected ?? today));
+		return clampToRange(
+			startMonth ? pickInMonth(startMonth) : (selected ?? today ?? fromDate(new Date())),
+		);
 	});
+	// 기기의 오늘에서 시작한 경우 마운트 뒤 클라이언트 날짜로 다시 맞춘다 - 서버 날짜와 다를 수 있다
+	// biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 때 한 번만
+	React.useEffect(() => {
+		if (todayProp || selected || monthProp || defaultMonth) return;
+		setFocused(clampToRange(fromDate(new Date())));
+	}, []);
 
 	const gridRef = React.useRef<HTMLTableElement>(null);
 	// 키보드로 옮겼을 때만 포커스를 따라간다. 마우스로 달을 넘겼는데 포커스가 달력 칸으로 튀면

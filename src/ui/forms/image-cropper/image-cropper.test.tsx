@@ -287,3 +287,22 @@ describe("ImageCropper keyboard", () => {
 		expect(press(viewport, "+")).toBe(true);
 	});
 });
+
+// #986 - minZoom 변경 · 브라우저 확대 단축키
+describe("ImageCropper #986", () => {
+	it("stays usable when minZoom changes after the image loaded", () => {
+		const src = file();
+		const { rerender } = render(<ImageCropper src={src} minZoom={1} />);
+		loadImage();
+		rerender(<ImageCropper src={src} minZoom={1.5} />);
+		expect(screen.getByRole("group")).toHaveAttribute("tabindex", "0");
+	});
+
+	it("leaves Ctrl/Cmd + = and - to the browser", () => {
+		render(<ImageCropper src={file()} />);
+		loadImage();
+		expect(fireEvent.keyDown(screen.getByRole("group"), { key: "=", ctrlKey: true })).toBe(true);
+		expect(fireEvent.keyDown(screen.getByRole("group"), { key: "-", metaKey: true })).toBe(true);
+		expect(fireEvent.keyDown(screen.getByRole("group"), { key: "=" })).toBe(false);
+	});
+});

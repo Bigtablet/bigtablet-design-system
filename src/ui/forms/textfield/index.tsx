@@ -4,7 +4,7 @@ import { Eye, EyeOff, X } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, type SafeHTMLProps, useFormReset } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -195,9 +195,27 @@ export const TextField = ({
 		[onValueChange],
 	);
 
+	// 외부 ref + 내부 ref 병합 (지우기 뒤 포커스 · form reset 용)
+	const innerRef = useRef<HTMLInputElement | null>(null);
+	const setRefs = useCallback(
+		(node: HTMLInputElement | null) => {
+			innerRef.current = node;
+			if (typeof ref === "function") ref(node);
+			else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+		},
+		[ref],
+	);
+
+	// 지우면 버튼이 사라진다 - 포커스를 입력으로 옮긴다. 두면 body 로 떨어졌다 (#986)
 	const handleClear = useCallback(() => {
 		emit("");
+		innerRef.current?.focus();
 	}, [emit]);
+
+	// form.reset() 뒤 비제어 값도 처음 값으로 - 네이티브 값만 되돌아가고 화면 상태는 남았다 (#986)
+	useFormReset(innerRef, () => {
+		if (!isControlled) emit(applyTransform(defaultValue ?? ""));
+	});
 
 	const [passwordRevealed, setPasswordRevealed] = useState(false);
 	const togglePassword = useCallback(() => {
@@ -303,7 +321,7 @@ export const TextField = ({
 						<input
 							{...props}
 							id={inputId}
-							ref={ref}
+							ref={setRefs}
 							className={cn("text_field_input", identifier && "text_field_input_identifier")}
 							aria-invalid={field ? isError : (props["aria-invalid"] ?? isError)}
 							aria-describedby={describedBy}
@@ -313,11 +331,14 @@ export const TextField = ({
 							aria-label={(!showLabel ? label : undefined) ?? props["aria-label"]}
 							type={resolvedType}
 							value={innerValue}
-							onCompositionStart={() => {
+							// 소비자 조합 핸들러도 부른다 - 덮어쓰면 사라졌다 (#986)
+							onCompositionStart={(event) => {
 								isComposingRef.current = true;
+								props.onCompositionStart?.(event);
 							}}
 							onCompositionEnd={(event) => {
 								isComposingRef.current = false;
+								props.onCompositionEnd?.(event);
 								// 조합 종료 직후 onChange 가 한 번 더 트리거되는 브라우저 대응 - emit 가 중복 차단.
 								emit(applyTransform(event.currentTarget.value));
 							}}

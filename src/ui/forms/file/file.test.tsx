@@ -368,3 +368,31 @@ describe("FileInput", () => {
 		expect(document.querySelector('input[type="file"]')).not.toBeRequired();
 	});
 });
+
+describe("FileInput #986", () => {
+	beforeEach(() => {
+		URL.createObjectURL = vi.fn(() => "blob:drop");
+		URL.revokeObjectURL = vi.fn();
+	});
+
+	it("takes an image dropped on the preview box", () => {
+		const onFiles = vi.fn();
+		const { container } = render(<FileInput variant="preview" label="사진" onFiles={onFiles} />);
+		const box = container.querySelector(".file_input_label") as HTMLElement;
+		const files = [new File(["x"], "a.png", { type: "image/png" })];
+		expect(fireEvent.dragOver(box, { dataTransfer: { files, dropEffect: "none" } })).toBe(false);
+		fireEvent.drop(box, { dataTransfer: { files } });
+		expect(onFiles).toHaveBeenCalledWith(files);
+		expect(container.querySelector(".file_input_preview_image")).not.toBeNull();
+	});
+
+	it("moves focus to the input after removing the preview", () => {
+		const { container } = render(<FileInput variant="preview" label="사진" />);
+		const input = container.querySelector("input[type=file]") as HTMLInputElement;
+		fireEvent.change(input, {
+			target: { files: [new File(["x"], "a.png", { type: "image/png" })] },
+		});
+		fireEvent.click(screen.getByRole("button"));
+		expect(input).toHaveFocus();
+	});
+});

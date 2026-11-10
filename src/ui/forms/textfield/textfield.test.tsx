@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { TextField } from "./index";
@@ -415,5 +415,41 @@ describe("TextField", () => {
 
 		fireEvent.compositionEnd(input, { target: { value: "중" } });
 		expect(input.value).toBe("중");
+	});
+});
+
+describe("TextField #986", () => {
+	it("moves focus to the input when the clear button removes itself", () => {
+		render(<TextField aria-label="검색" defaultValue="abc" clearable />);
+		fireEvent.click(screen.getByRole("button"));
+		expect(screen.getByRole("textbox")).toHaveFocus();
+	});
+
+	it("returns an uncontrolled value to the default on form.reset()", async () => {
+		vi.useFakeTimers();
+		const { container } = render(
+			<form>
+				<TextField aria-label="이름" defaultValue="처음" />
+			</form>,
+		);
+		const input = screen.getByRole("textbox") as HTMLInputElement;
+		fireEvent.change(input, { target: { value: "바뀜" } });
+		(container.querySelector("form") as HTMLFormElement).reset();
+		await act(async () => {
+			await vi.runAllTimersAsync();
+		});
+		expect(input.value).toBe("처음");
+		vi.useRealTimers();
+	});
+
+	it("keeps consumer composition handlers", () => {
+		const onStart = vi.fn();
+		const onEnd = vi.fn();
+		render(<TextField aria-label="이름" onCompositionStart={onStart} onCompositionEnd={onEnd} />);
+		const input = screen.getByRole("textbox");
+		fireEvent.compositionStart(input);
+		fireEvent.compositionEnd(input);
+		expect(onStart).toHaveBeenCalledTimes(1);
+		expect(onEnd).toHaveBeenCalledTimes(1);
 	});
 });

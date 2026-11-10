@@ -165,8 +165,10 @@ export const Field = ({
 					{help}
 				</div>
 			)}
+			{/* 제출 뒤 붙은 에러가 낭독되도록 role="alert" - 새로 삽입되는 노드라 aria-live 는 놓치는 보조기술이
+			    있다 (#986). 에러는 자주 바뀌지 않고 사용자가 고쳐야 하는 정보라 assertive 가 맞다 */}
 			{error && (
-				<div id={errorId} className="field_message">
+				<div id={errorId} className="field_message" role="alert">
 					{error}
 				</div>
 			)}

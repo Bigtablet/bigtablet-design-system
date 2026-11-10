@@ -99,7 +99,9 @@ def main() -> int:
             if prop in COMMON or prop in INHERITED.get(folder, set()):
                 continue
             checked += 1
-            if not re.search(rf"\b{re.escape(prop)}\??\s*:", code):
+            # 줄 머리의 선언만 본다 - 그냥 `prop:` 을 찾으면 소스 안 객체 리터럴(`{ min: 1, max: 31 }`)에 걸려
+            # 없는 prop 이 통과했다 (#986)
+            if not re.search(rf"(?m)^\s*(?:readonly\s+)?{re.escape(prop)}\??\s*:", code):
                 problems.append(f"{GUIDE}:{number + 1}  {name}.{prop} - 소스에 없다")
 
     if checked == 0:

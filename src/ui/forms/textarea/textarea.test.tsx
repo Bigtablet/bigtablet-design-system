@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Textarea } from "./index";
@@ -223,5 +223,35 @@ describe("Textarea", () => {
 
 		fireEvent.compositionEnd(input, { target: { value: "중" } });
 		expect(input.value).toBe("중");
+	});
+});
+
+describe("Textarea #986", () => {
+	it("returns an uncontrolled value to the default on form.reset()", async () => {
+		vi.useFakeTimers();
+		const { container } = render(
+			<form>
+				<Textarea aria-label="메모" defaultValue="처음" />
+			</form>,
+		);
+		const box = screen.getByRole("textbox") as HTMLTextAreaElement;
+		fireEvent.change(box, { target: { value: "바뀜" } });
+		(container.querySelector("form") as HTMLFormElement).reset();
+		await act(async () => {
+			await vi.runAllTimersAsync();
+		});
+		expect(box.value).toBe("처음");
+		vi.useRealTimers();
+	});
+
+	it("keeps consumer composition handlers", () => {
+		const onStart = vi.fn();
+		const onEnd = vi.fn();
+		render(<Textarea aria-label="메모" onCompositionStart={onStart} onCompositionEnd={onEnd} />);
+		const box = screen.getByRole("textbox");
+		fireEvent.compositionStart(box);
+		fireEvent.compositionEnd(box);
+		expect(onStart).toHaveBeenCalledTimes(1);
+		expect(onEnd).toHaveBeenCalledTimes(1);
 	});
 });
