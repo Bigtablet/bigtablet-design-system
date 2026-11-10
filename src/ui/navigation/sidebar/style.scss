@@ -396,3 +396,15 @@
   .sidebar_collapse_btn { transition: none; }
   .sidebar_collapse_btn:hover { transform: none; }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 현재 메뉴를 채운 배경으로만 표시한다 - 고대비가 배경을 지우면 다른 메뉴와 같아진다.
+// 시스템 선택색으로 칠한다. forced-color-adjust 를 꺼야 아이콘(currentColor)까지 HighlightText 로 따라온다.
+@media (forced-colors: active) {
+  .sidebar_item_active {
+    // `!important` - hover · 모바일 레일처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+}

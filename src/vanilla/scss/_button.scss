@@ -195,3 +195,18 @@
     background: color-mix(in srgb, var(--bt-color-error) 8%, transparent);
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 채운 버튼은 배경으로만 모양을 낸다 - 고대비가 배경을 지우면 글자만 남아 링크처럼 보인다 (React 와 같음).
+@media (forced-colors: active) {
+  .bt-button--filled,
+  .bt-button--tonal,
+  .bt-button--danger {
+    border: token.$border_width_standard solid ButtonText;
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      border-color: GrayText;
+    }
+  }
+}

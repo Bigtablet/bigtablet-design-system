@@ -1,10 +1,12 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { cdp, page } from "vitest/browser";
 import "../../../vanilla/scss/_custom-properties.scss";
 import "../../../vanilla/scss/_app-shell.scss";
 import "../../../vanilla/scss/_sidebar.scss";
 import { AppShell, Sidebar } from "../../../vanilla/bigtablet.js";
+import { SidebarItem } from "./index";
+import "./style.scss";
 
 // Vanilla AppShell · Sidebar (#941) - 서버가 그린 마크업에 클래스만 붙인다
 const shellHtml = (sidebarClass = "bt-sidebar") => `
@@ -119,5 +121,26 @@ describe("Vanilla Sidebar collapse · AppShell header (Chromium, #950)", () => {
 		expect((shell.querySelector("header") as HTMLElement).getBoundingClientRect().top).toBe(0);
 		api?.destroy();
 		expect(document.documentElement.style.getPropertyValue("--bt-top-inset")).toBe("");
+	});
+});
+
+// 현재 메뉴는 채운 배경으로만 표시한다 - 고대비에서는 시스템 선택색으로 칠한다 (#1001)
+describe("React SidebarItem in forced-colors mode (Chromium)", () => {
+	it("paints the active item with Highlight", async () => {
+		const emulate = (value: "active" | "none") =>
+			cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
+		await emulate("active");
+		try {
+			render(<SidebarItem active>홈</SidebarItem>);
+			const probe = document.createElement("span");
+			probe.style.cssText = "forced-color-adjust: none; color: Highlight";
+			document.body.appendChild(probe);
+			const highlight = getComputedStyle(probe).color;
+			expect(getComputedStyle(screen.getByRole("button", { name: "홈" })).backgroundColor).toBe(
+				highlight,
+			);
+		} finally {
+			await emulate("none");
+		}
 	});
 });
