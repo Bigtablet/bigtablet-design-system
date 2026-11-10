@@ -446,7 +446,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 94 test files / 1760 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 94 test files / 1874 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -456,50 +456,53 @@ it("calls callback with correct arguments", () => {
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **96.14%** | **93.83%** | **96.55%** | **97.39%** |
+| **All files** | **96.09%** | **93.79%** | **97.02%** | **97.39%** |
 
-아래는 **100% 미만**인 것만 나열한 것이다 (45개는 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것이다 (43개는 전 지표 100% 라 빠져 있다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| ui/display/accordion | 100% | 94.44% | 100% | 100% |
+| ui/display/accordion | 100% | 94.74% | 100% | 100% |
 | ui/display/avatar | 100% | 82.76% | 100% | 100% |
-| ui/display/chip | 91.67% | 95.65% | 66.67% | 100% |
-| ui/display/data-view | 100% | 97.87% | 100% | 100% |
+| ui/display/chip | 96.43% | 98.04% | 85.71% | 100% |
+| ui/display/data-view | 100% | 98.51% | 100% | 100% |
 | ui/display/hero | 92.86% | 88.89% | 100% | 100% |
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
-| ui/display/media-card | 100% | 96.3% | 100% | 100% |
+| ui/display/media-card | 93.75% | 88.24% | 100% | 100% |
 | ui/display/prose | 75.68% | 53.33% | 100% | 78.79% |
-| ui/display/table | 98.41% | 96.92% | 97.06% | 99.07% |
+| ui/display/table | 98.32% | 96.86% | 96.97% | 99.02% |
 | ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
-| ui/feedback/toast | 96.3% | 90.57% | 100% | 100% |
-| ui/forms/checkbox | 91.67% | 95.45% | 100% | 100% |
-| ui/forms/combobox | 100% | 98.98% | 94.44% | 100% |
-| ui/forms/date-calendar | 100% | 98.37% | 100% | 100% |
+| ui/feedback/toast | 97.25% | 90.57% | 100% | 100% |
+| ui/forms/checkbox | 95.83% | 91.67% | 100% | 100% |
+| ui/forms/combobox | 100% | 99.12% | 95% | 100% |
+| ui/forms/date-calendar | 99.4% | 98.64% | 100% | 100% |
 | ui/forms/date-picker | 96.71% | 95.18% | 100% | 100% |
-| ui/forms/dropdown | 100% | 95.97% | 100% | 100% |
-| ui/forms/file | 82.35% | 72.55% | 83.33% | 82% |
-| ui/forms/image-cropper | 81.37% | 81.37% | 70.97% | 82.89% |
-| ui/forms/segmented-control | 96.88% | 95.92% | 100% | 100% |
+| ui/forms/dropdown | 97.83% | 92.99% | 100% | 98.75% |
+| ui/forms/file | 89.47% | 89.23% | 100% | 93.06% |
+| ui/forms/form | 100% | 92% | 100% | 100% |
+| ui/forms/image-cropper | 81.82% | 82.24% | 71.88% | 83.23% |
+| ui/forms/segmented-control | 97.22% | 94.34% | 100% | 100% |
 | ui/forms/tag-input | 98.85% | 95.35% | 100% | 100% |
-| ui/forms/textarea | 88.14% | 73.47% | 100% | 92.59% |
-| ui/forms/textfield | 94.44% | 95.92% | 90.91% | 94.12% |
-| ui/forms/time-picker | 96.72% | 97.53% | 100% | 100% |
+| ui/forms/textarea | 80% | 70.64% | 85.71% | 81.94% |
+| ui/forms/textfield | 94.03% | 93.4% | 100% | 96.72% |
+| ui/forms/time-picker | 94.83% | 96.2% | 100% | 100% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
-| ui/navigation/menu | 98.86% | 96.67% | 100% | 100% |
-| ui/navigation/nav-bar | 80.73% | 70.73% | 82.61% | 85.57% |
-| ui/navigation/pagination | 100% | 97.78% | 100% | 100% |
+| ui/navigation/menu | 98.9% | 96.77% | 100% | 100% |
+| ui/navigation/nav-bar | 80.91% | 70.73% | 82.61% | 85.71% |
+| ui/navigation/pagination | 100% | 97.87% | 100% | 100% |
 | ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
-| ui/navigation/tabs | 97.17% | 89.47% | 100% | 100% |
-| ui/overlay/popover | 97.14% | 96.55% | 100% | 100% |
-| ui/overlay/tooltip | 100% | 90.91% | 100% | 100% |
-| ui/system/theme-provider | 93.88% | 85.71% | 100% | 100% |
+| ui/navigation/tabs | 96.83% | 89.23% | 100% | 99.07% |
+| ui/overlay/popover | 97.73% | 97.3% | 100% | 100% |
+| ui/overlay/tooltip | 100% | 91.43% | 100% | 100% |
+| ui/system/theme-provider | 96.08% | 89.19% | 100% | 100% |
 | utils/cn.ts | 100% | 87.5% | 100% | 100% |
 | utils/overlay-stack.ts | 93.94% | 83.33% | 87.5% | 96.3% |
 | utils/scroll-lock.ts | 97.59% | 95.24% | 100% | 100% |
 | utils/use-anchored-position.ts | 97.73% | 95% | 100% | 100% |
 | utils/use-clipboard.ts | 98.68% | 83.33% | 100% | 98.63% |
+| utils/use-focus-trap.ts | 100% | 98.04% | 100% | 100% |
+| utils/use-form-reset.ts | 100% | 87.5% | 100% | 100% |
 | utils/use-listbox-popup.ts | 99.33% | 100% | 100% | 99.18% |
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
