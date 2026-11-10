@@ -56,11 +56,26 @@ export const OtpInput = ({
 		if (autoFocus) inputsRef.current[0]?.focus();
 	}, [autoFocus]);
 
-	const digits = React.useMemo(() => {
-		const chars = value.split("").slice(0, length);
+	const toDigits = (v: string) => {
+		const chars = v.split("").slice(0, length);
 		while (chars.length < length) chars.push("");
 		return chars;
-	}, [value, length]);
+	};
+	// 칸 자리를 기억한다 - 값은 빈칸을 담지 못하는 문자열이라, 가운데 칸을 지우면 join 에서 뒤 숫자가
+	// 당겨졌다("123456" 3번째 칸 → "12456" 이 "12456_" 로 다시 그려짐, #985). 내보내는 값은 그대로 join 이고,
+	// 부모 값이 이 칸들의 join 과 같으면 칸 배치를 유지한다. 다르면(외부에서 바꿈) 값에서 다시 만든다
+	// draft 는 이 컴포넌트가 내보낸 값과 짝이다. 부모 값이 그 밖의 값으로 한 번이라도 바뀌면 버린다 - 우연히
+	// 같은 문자열이 다시 들어와도(초기화 뒤 재주입) 예전 칸 배치가 남지 않게
+	const [draft, setDraft] = React.useState<{ digits: string[]; emitted: string } | null>(null);
+	const [prevValue, setPrevValue] = React.useState(value);
+	if (value !== prevValue) {
+		setPrevValue(value);
+		if (draft && value !== draft.emitted) setDraft(null);
+	}
+	const digits =
+		draft && draft.digits.length === length && value === draft.emitted
+			? draft.digits
+			: toDigits(value);
 
 	// Tab 순서에는 한 칸만 둔다(roving tabindex). 모든 칸이 탭 가능하면 빈 상태에서 Tab 이
 	// 다음 칸으로 갔다가 handleFocus redirect 로 첫 빈 칸에 되돌아와 그룹을 빠져나가지 못한다
@@ -73,7 +88,26 @@ export const OtpInput = ({
 	};
 
 	const updateValue = (newDigits: string[]) => {
-		onValueChange?.(newDigits.join(""));
+		const emitted = newDigits.join("");
+		setDraft({ digits: newDigits, emitted });
+		onValueChange?.(emitted);
+	};
+
+	/** 한 칸에 숫자를 넣고 다음 칸으로 간다 */
+	const typeDigit = (index: number, digit: string) => {
+		const newDigits = [...digits];
+		newDigits[index] = digit;
+		updateValue(newDigits);
+		if (index < length - 1) {
+			// typing 후 next 칸 이동 - onFocus의 redirect 로직 잠시 비활성
+			isTypingRef.current = true;
+			focusInput(index + 1);
+			// 부모의 controlled value 업데이트 + onFocus 사이클 완료 후 해제
+			clearTimeout(typingTimerRef.current);
+			typingTimerRef.current = setTimeout(() => {
+				isTypingRef.current = false;
+			}, 50);
+		}
 	};
 
 	const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,19 +129,11 @@ export const OtpInput = ({
 
 		if (nextDigit && !/^\d$/.test(nextDigit)) return;
 
-		const newDigits = [...digits];
-		newDigits[index] = nextDigit;
-		updateValue(newDigits);
-
-		if (nextDigit && index < length - 1) {
-			// typing 후 next 칸 이동 - onFocus의 redirect 로직 잠시 비활성
-			isTypingRef.current = true;
-			focusInput(index + 1);
-			// 부모의 controlled value 업데이트 + onFocus 사이클 완료 후 해제
-			clearTimeout(typingTimerRef.current);
-			typingTimerRef.current = setTimeout(() => {
-				isTypingRef.current = false;
-			}, 50);
+		if (nextDigit) typeDigit(index, nextDigit);
+		else {
+			const newDigits = [...digits];
+			newDigits[index] = "";
+			updateValue(newDigits);
 		}
 	};
 
@@ -122,6 +148,12 @@ export const OtpInput = ({
 	};
 
 	const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+		// 이미 찬 칸에 숫자를 치면 덮어쓴다 - maxLength 1 이라 그대로 두면 입력이 막혔다 (#985)
+		if (/^\d$/.test(e.key) && digits[index] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+			e.preventDefault();
+			typeDigit(index, e.key);
+			return;
+		}
 		if (e.key === "Backspace") {
 			if (digits[index]) {
 				const newDigits = [...digits];

@@ -1195,18 +1195,12 @@ const [checked, setChecked] = useState(false);
 
 // Indeterminate (부분 선택)
 <Checkbox label="전체 선택" indeterminate />
-
-// Sizes
-<Checkbox size="sm" label="Small" />
-<Checkbox size="md" label="Medium" />
-<Checkbox size="lg" label="Large" />
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `ReactNode` | - | 라벨 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `indeterminate` | `boolean` | `false` | 부분 선택 상태 |
+| `indeterminate` | `boolean` | `false` | 부분 선택 상태. 클릭으로 지워져도 prop 이 `true` 면 다시 세운다 |
 | `checked` | `boolean` | - | 체크 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
@@ -1412,19 +1406,16 @@ const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
 ```tsx
 import { Toggle } from '@bigtablet/design-system';
 
-// 기본 사용
-<Toggle onCheckedChange={(checked) => console.log(checked)} />
+// 기본 사용 - ariaLabel 은 필수다 (보이는 라벨이 없는 스위치의 이름)
+<Toggle ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [isOn, setIsOn] = useState(false);
-<Toggle checked={isOn} onCheckedChange={setIsOn} />
+<Toggle ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
 
 // Sizes
-<Toggle size="sm" />
-<Toggle size="md" />
-
-// 접근성
-<Toggle ariaLabel="알림 설정" />
+<Toggle ariaLabel="알림 받기" size="sm" />
+<Toggle ariaLabel="알림 받기" size="md" />
 ```
 
 | Prop | Type | Default | Description |

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn, type SafeHTMLProps, splitAriaProps } from "../../../utils";
+import { cn, type SafeHTMLProps, splitAriaProps, useFormReset } from "../../../utils";
 import { useFieldControl } from "../field";
 import "./style.scss";
 
@@ -82,6 +82,11 @@ export const SegmentedControl = <T extends string = string>({
 	const isControlled = controlledValue !== undefined;
 	const [internalValue, setInternalValue] = React.useState<T | undefined>(defaultValue);
 	const value = isControlled ? controlledValue : internalValue;
+	// form.reset() 뒤 비제어 상태도 처음 값으로 - 라디오만 되돌아가 화면과 상태가 어긋났다 (#985)
+	const firstInputRef = React.useRef<HTMLInputElement>(null);
+	useFormReset(firstInputRef, () => {
+		if (!isControlled) setInternalValue(defaultValue);
+	});
 
 	const generatedName = React.useId();
 	const name = nameProp ?? generatedName;
@@ -130,7 +135,7 @@ export const SegmentedControl = <T extends string = string>({
 			)}
 			onKeyDown={onKeyDown}
 		>
-			{items.map((item) => {
+			{items.map((item, index) => {
 				const selected = item.value === value;
 				const itemDisabled = disabled || !!item.disabled;
 				return (
@@ -143,6 +148,7 @@ export const SegmentedControl = <T extends string = string>({
 						)}
 					>
 						<input
+							ref={index === 0 ? firstInputRef : undefined}
 							type="radio"
 							className="segmented_control_input"
 							name={name}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Field } from "../field";
@@ -187,5 +187,22 @@ describe("SegmentedControl", () => {
 		render(<Demo />);
 		fireEvent.click(screen.getByRole("radio", { name: "EN" }));
 		expect(screen.getByRole("radio", { name: "EN" })).toBeChecked();
+	});
+
+	it("returns to the default value on form.reset() (#985)", async () => {
+		vi.useFakeTimers();
+		const { container } = render(
+			<form>
+				<SegmentedControl aria-label="통화" items={currencies} defaultValue="USD" />
+			</form>,
+		);
+		fireEvent.click(screen.getByRole("radio", { name: "KRW" }));
+		(container.querySelector("form") as HTMLFormElement).reset();
+		await act(async () => {
+			vi.runAllTimers();
+		});
+		expect(screen.getByRole("radio", { name: "USD" })).toBeChecked();
+		expect(container.querySelector(".segmented_control_item_selected")).toHaveTextContent("USD");
+		vi.useRealTimers();
 	});
 });

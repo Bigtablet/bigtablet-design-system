@@ -27,7 +27,7 @@ export interface ComboboxProps
 	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange" | "defaultValue"> {
 	/** 선택된 값 (제어형) */
 	value?: ComboboxOption | null;
-	/** 선택 변경 콜백 */
+	/** 선택 변경 콜백. 열린 채 검색어가 비어 있을 때 Backspace · Delete 를 누르면 `null` 로 선택을 지운다 */
 	onValueChange?: (option: ComboboxOption | null) => void;
 	/**
 	 * 검색어가 바뀔 때 호출. 서버에서 후보를 가져오는 자리다.
@@ -173,7 +173,12 @@ export const Combobox = ({
 
 	// 검색어가 바뀌면 디바운스 후 한 번만 조회한다.
 	useEffect(() => {
-		if (!isOpen) return;
+		if (!isOpen) {
+			// 디바운스 중에 닫으면 조회도 버리고 스피너도 끈다 - 남기면 닫힌 칸에 스피너가 계속 돌았다 (#985)
+			requestSeq.current++;
+			setIsLoading(false);
+			return;
+		}
 		if (query === "") {
 			// 진행 중인 요청을 무효화한다. 안 올리면 나중에 도착한 응답이 가드를 통과해
 			// 방금 리셋한 상태를 낡은 검색 결과로 덮는다.
@@ -256,7 +261,28 @@ export const Combobox = ({
 						if (!isOpen) setIsOpen(true);
 					}}
 					onFocus={() => !disabled && setIsOpen(true)}
-					onKeyDown={popup.onInputKeyDown}
+					// 포커스가 이미 있는 채로 닫혔으면(Esc) onFocus 가 다시 오지 않는다 - 클릭 · 화살표로도 연다.
+					// 후보가 0개일 때 다시 열 방법이 타이핑뿐이었다 (#985)
+					onClick={() => !disabled && !isOpen && setIsOpen(true)}
+					onKeyDown={(event) => {
+						if (!isOpen && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+							event.preventDefault();
+							setIsOpen(true);
+							return;
+						}
+						// 열린 채 검색어가 비어 있을 때 Backspace · Delete 를 누르면 고른 값을 지운다 - 지울 경로가 없었다
+						// (#985). 닫힌 동안은 칸에 라벨이 보여 한 글자 지우기로 읽히므로 지우지 않는다
+						if (
+							isOpen &&
+							(event.key === "Backspace" || event.key === "Delete") &&
+							query === "" &&
+							value
+						) {
+							onValueChange?.(null);
+							return;
+						}
+						popup.onInputKeyDown(event);
+					}}
 				/>
 				{isLoading && (
 					<span className="combobox_spinner">
