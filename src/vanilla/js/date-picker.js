@@ -584,13 +584,15 @@ export function DatePicker(element, options = {}) {
 
 	/**
 	 * 팝오버를 칸에 붙인다 - 아래 공간이 모자라면 위로, 오른쪽이 넘치면 칸의 오른쪽 끝에 맞춘다. fixed 라
-	 * 스크롤 · 리사이즈 때마다 다시 잰다. 크기는 offset* 로 - 진입 모션의 transform 이 섞이지 않게
+	 * 열려 있는 동안 다시 잰다. 크기는 offset* 로 - 진입 모션의 transform 이 섞이지 않게.
+	 * 조상에 CSS zoom 이 있으면 rect 는 확대된 화면 px, offset* · top · left 는 확대 전 px 다 - 둘을 맞춘다 (#981)
 	 */
 	function place() {
 		const a = field.getBoundingClientRect();
 		const origin = probe.getBoundingClientRect();
-		const w = panel.offsetWidth;
-		const h = panel.offsetHeight;
+		const zoom = panel.currentCSSZoom || 1;
+		const w = panel.offsetWidth * zoom;
+		const h = panel.offsetHeight * zoom;
 		const gap = 4;
 		const up = a.bottom + gap + h > window.innerHeight && a.top - gap > h;
 		const end = a.left + w > document.documentElement.clientWidth;
@@ -603,28 +605,27 @@ export function DatePicker(element, options = {}) {
 			top = Math.max(gap, Math.min(top, window.innerHeight - gap - h));
 		// 오른쪽 끝에 맞춰도 좁은 화면이면 왼쪽이 잘린다 - 왼쪽 여백에서 멈춘다
 		const left = end ? Math.max(gap, a.right - w) : a.left;
-		panel.style.top = `${top - origin.top}px`;
-		panel.style.left = `${left - origin.left}px`;
+		// 바뀐 때만 쓴다 - 매 프레임 같은 값을 써도 스타일 무효화가 생긴다
+		const nextTop = `${(top - origin.top) / zoom}px`;
+		const nextLeft = `${(left - origin.left) / zoom}px`;
+		if (panel.style.top !== nextTop) panel.style.top = nextTop;
+		if (panel.style.left !== nextLeft) panel.style.left = nextLeft;
 	}
 
 	let untrackPanel = null;
-	/** 열려 있는 동안 좌표를 따라간다. capture - 스크롤 이벤트는 버블링하지 않는다 */
+	/**
+	 * 열려 있는 동안 매 프레임 좌표를 따라간다. 스크롤 · 리사이즈만이 아니라 조상의 transform 이 바뀌어도
+	 * (`.bt-card--interactive` hover 해제) fixed 기준이 움직이는데, 그걸 알려 주는 이벤트가 없다 (#981)
+	 */
+	// ponytail: 프레임마다 rect 두 번 - 팝오버 하나만 열리니 충분하다. 무거우면 ResizeObserver + scroll 로 나눈다
 	function trackPanel() {
 		if (untrackPanel) return;
-		let frame = 0;
-		const schedule = () => {
-			if (frame) return;
-			frame = requestAnimationFrame(() => {
-				frame = 0;
-				if (state.isOpen) place();
-			});
-		};
-		window.addEventListener("scroll", schedule, true);
-		window.addEventListener("resize", schedule);
+		let frame = requestAnimationFrame(function tick() {
+			if (state.isOpen) place();
+			frame = requestAnimationFrame(tick);
+		});
 		untrackPanel = () => {
-			if (frame) cancelAnimationFrame(frame);
-			window.removeEventListener("scroll", schedule, true);
-			window.removeEventListener("resize", schedule);
+			cancelAnimationFrame(frame);
 			untrackPanel = null;
 		};
 	}

@@ -28,6 +28,18 @@ describe("Toggle", () => {
 		expect(el.getAttribute("aria-checked")).toBe("true");
 	});
 
+	it("비활성이면 숨은 input 을 제출하지 않는다 (#981)", () => {
+		const el = toggleMarkup();
+		el.dataset.name = "agree";
+		const api = Toggle(el, { disabled: true });
+		const hidden = document.querySelector('input[name="agree"]') as HTMLInputElement;
+		expect(hidden.disabled).toBe(true);
+		api?.setDisabled(false);
+		expect(hidden.disabled).toBe(false);
+		api?.setDisabled(true);
+		expect(hidden.disabled).toBe(true);
+	});
+
 	it("native disabled 면 토글되지 않는다", () => {
 		const onCheckedChange = vi.fn();
 		const el = toggleMarkup();
