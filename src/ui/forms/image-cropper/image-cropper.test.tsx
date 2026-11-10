@@ -298,6 +298,16 @@ describe("ImageCropper #986", () => {
 		expect(screen.getByRole("group")).toHaveAttribute("tabindex", "0");
 	});
 
+	it("resets the zoom to minZoom when src changes", () => {
+		const { rerender } = render(<ImageCropper src={file()} />);
+		loadImage();
+		fireEvent.wheel(screen.getByRole("group"), { deltaY: -120 });
+		const slider = () => screen.getByLabelText("배율") as HTMLInputElement;
+		expect(Number(slider().value)).toBeGreaterThan(1);
+		rerender(<ImageCropper src={file()} />);
+		expect(Number(slider().value)).toBe(1);
+	});
+
 	it("leaves Ctrl/Cmd + = and - to the browser", () => {
 		render(<ImageCropper src={file()} />);
 		loadImage();

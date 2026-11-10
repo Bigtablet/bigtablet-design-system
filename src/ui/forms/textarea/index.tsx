@@ -179,13 +179,20 @@ export const Textarea = ({
 		const el = innerRef.current;
 		if (!autoGrow || !el || typeof ResizeObserver === "undefined") return;
 		let width = el.clientWidth;
+		let frame = 0;
 		const ro = new ResizeObserver(() => {
 			if (el.clientWidth === width) return;
 			width = el.clientWidth;
-			fitHeight();
+			// 다음 프레임에 잰다 - 콜백 안에서 높이를 바꾸면 같은 프레임에 관찰이 다시 생겨
+			// "ResizeObserver loop completed with undelivered notifications" 가 났다
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(fitHeight);
 		});
 		ro.observe(el);
-		return () => ro.disconnect();
+		return () => {
+			cancelAnimationFrame(frame);
+			ro.disconnect();
+		};
 	}, [autoGrow, fitHeight]);
 
 	// form.reset() 뒤 비제어 값도 처음 값으로 - 네이티브 값만 되돌아가고 화면 상태는 남았다 (#986)

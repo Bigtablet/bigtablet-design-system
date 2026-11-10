@@ -141,6 +141,9 @@ export const DateCalendar = ({
 	// 기기의 오늘은 마운트 뒤에만 읽는다 - SSR 에서 읽으면 '오늘' 표시 · tabindex 가 서버 날짜로 굳어 하이드레이트가
 	// 어긋났다 (#986). 첫 렌더(서버 · 하이드레이트)는 '오늘' 없이 그리고, 마운트 뒤 다시 그린다
 	const mounted = useIsMounted();
+	// 첫 포커스 칸이 기기의 오늘에서 왔는지 - 그렇다면 마운트 전에는 확정되지 않았다
+	const focusFromDeviceToday = !todayProp && !selected && !monthProp && !defaultMonth;
+	const focusSettled = mounted || !focusFromDeviceToday;
 	const today = parse(todayProp) ?? (mounted ? fromDate(new Date()) : null);
 	const min = parse(minProp);
 	const max = parse(maxProp);
@@ -174,7 +177,7 @@ export const DateCalendar = ({
 	// 기기의 오늘에서 시작한 경우 마운트 뒤 클라이언트 날짜로 다시 맞춘다 - 서버 날짜와 다를 수 있다
 	// biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 때 한 번만
 	React.useEffect(() => {
-		if (todayProp || selected || monthProp || defaultMonth) return;
+		if (!focusFromDeviceToday) return;
 		setFocused(clampToRange(fromDate(new Date())));
 	}, []);
 
@@ -365,7 +368,9 @@ export const DateCalendar = ({
 												date_calendar_day_selected: isSelected,
 												date_calendar_day_today: isToday,
 											})}
-											tabIndex={sameDay(cell, focused) ? 0 : -1}
+											// 기기의 오늘에서 시작한 칸은 마운트 전(SSR · 하이드레이트)에 tab stop 을 주지 않는다 -
+											// 서버와 클라이언트 날짜가 다르면 tabindex 가 어긋난다. 마운트 뒤 effect 가 맞춘 칸이 받는다
+											tabIndex={sameDay(cell, focused) && focusSettled ? 0 : -1}
 											// 포커스 트랩은 `tabindex="-1"` 버튼도 후보로 세서, 표시가 없으면 열자마자 1일에
 											// 앉았다(브라우저 실측). 포커스 받을 한 칸만 남기고 나머지는 건너뛰게 한다.
 											data-focus-trap-skip-autofocus={sameDay(cell, focused) ? undefined : ""}

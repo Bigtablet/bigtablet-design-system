@@ -184,9 +184,10 @@ export function ImageCropper({
 		setImageSize(null);
 		setOffset({ x: 0, y: 0 });
 	}, [src]);
-	// minZoom 만 바뀌면 줌만 맞춘다 - 이미지는 그대로라 onLoad 가 다시 오지 않는다. 예전에는 여기서도
-	// imageSize 를 비워 이미지가 영구히 먹통이 됐다(crop() reject, #986)
-	// biome-ignore lint/correctness/useExhaustiveDependencies: minZoom 변화만 신호로 쓴다
+	// 줌 · 오프셋은 src **와** minZoom 이 바뀔 때 맞춘다(src 교체 때도 이전 배율이 남지 않게). imageSize 는
+	// 위 effect 에서 src 가 바뀔 때만 비운다 - minZoom 만 바뀌면 이미지가 그대로라 onLoad 가 다시 오지 않아,
+	// 예전처럼 여기서도 비우면 영구히 먹통이 됐다(crop() reject, #986)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: src 는 교체 신호로 쓴다
 	useEffect(() => {
 		setZoom(minZoom);
 		zoomRef.current = minZoom;

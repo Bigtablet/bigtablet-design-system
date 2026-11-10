@@ -20,7 +20,9 @@ describe("Textarea auto-grow (Chromium)", () => {
 		const area = screen.getByRole("textbox") as HTMLTextAreaElement;
 		const before = area.getBoundingClientRect().height;
 		box.style.width = "150px";
-		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		await new Promise((r) =>
+			requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))),
+		);
 		expect(area.getBoundingClientRect().height).toBeGreaterThan(before);
 		expect(area.scrollHeight).toBeLessThanOrEqual(area.clientHeight + 1);
 	});

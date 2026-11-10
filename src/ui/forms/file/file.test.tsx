@@ -383,6 +383,7 @@ describe("FileInput #986", () => {
 		expect(fireEvent.dragOver(box, { dataTransfer: { files, dropEffect: "none" } })).toBe(false);
 		fireEvent.drop(box, { dataTransfer: { files } });
 		expect(onFiles).toHaveBeenCalledWith(files);
+		// 실제 FileList 를 input 에 옮기는 경로는 jsdom 에 FileList 생성자가 없어 브라우저 테스트가 본다
 		expect(container.querySelector(".file_input_preview_image")).not.toBeNull();
 	});
 

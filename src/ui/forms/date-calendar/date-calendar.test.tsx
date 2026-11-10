@@ -222,3 +222,20 @@ describe("DateCalendar", () => {
 		expect(title()).toBe("2027년 2월");
 	});
 });
+
+// SSR 첫 렌더는 기기의 오늘을 읽지 않는다 - '오늘' 표시 · tab stop 이 서버 날짜로 굳지 않게 (#986)
+describe("DateCalendar SSR (#986)", () => {
+	it("renders no today mark and no device-today tab stop on the server", async () => {
+		const { renderToString } = await import("react-dom/server");
+		const html = renderToString(<DateCalendar aria-label="달력" />);
+		expect(html).not.toContain("date_calendar_day_today");
+		expect(html).not.toContain('tabindex="0"');
+	});
+
+	it("keeps the given today on the server", async () => {
+		const { renderToString } = await import("react-dom/server");
+		const html = renderToString(<DateCalendar aria-label="달력" today="2026-11-10" />);
+		expect(html).toContain("date_calendar_day_today");
+		expect(html).toContain('tabindex="0"');
+	});
+});
