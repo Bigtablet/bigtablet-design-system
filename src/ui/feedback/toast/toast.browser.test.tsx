@@ -40,4 +40,37 @@ describe("Toast placement (Chromium, #998)", () => {
 		expect(1280 - (r?.right ?? 0)).toBe(16);
 		expect(800 - (r?.bottom ?? 0)).toBe(16);
 	});
+
+	it("scrolls inside the list instead of pushing the newest toast off screen (#1000)", async () => {
+		await page.viewport(1280, 400);
+		const long = "여러 줄로 넘어가는 긴 안내 문구입니다. ".repeat(4);
+		function Many() {
+			const t = useToast();
+			return (
+				<button
+					type="button"
+					onClick={() => {
+						for (let i = 0; i < 5; i++)
+							t.info(`${i} ${long}`, { duration: Number.POSITIVE_INFINITY });
+					}}
+				>
+					many
+				</button>
+			);
+		}
+		render(
+			<ToastProvider placement="bottom-right">
+				<Many />
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "many" }));
+		await expect.poll(() => document.querySelectorAll(".toast_item").length).toBe(5);
+
+		const region = document.querySelector(".toast_container") as HTMLElement;
+		const newest = document.querySelector(".toast_item") as Element;
+		expect(region.scrollHeight).toBeGreaterThan(region.clientHeight);
+		expect(newest.getBoundingClientRect().top).toBeGreaterThanOrEqual(16);
+		// 상자는 그림자 · 슬라이드용 안쪽 여백(20px)만큼 크다 - 내용 아래끝이 여백 16px 에 남는다
+		expect(region.getBoundingClientRect().bottom - 20).toBe(400 - 16);
+	});
 });
