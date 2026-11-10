@@ -770,6 +770,7 @@ Alert는 JavaScript로만 사용합니다.
 | `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
 
 - 오른쪽 위에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 머리 오른쪽의 주 동작 버튼("추가")을 가리면 `<html data-bt-toast-placement="bottom-right">` 로 오른쪽 아래에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
 - `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
 - `prefers-reduced-motion` 에서는 모션만 빠지고 시간은 그대로 간다

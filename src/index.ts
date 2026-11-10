@@ -176,6 +176,7 @@ export type {
 	ToastAction,
 	ToastOptions,
 	ToastPatch,
+	ToastPlacement,
 	ToastProviderProps,
 	ToastTone,
 } from "./ui/feedback/toast";

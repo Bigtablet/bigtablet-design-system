@@ -10,6 +10,9 @@ import "./style.scss";
 
 export type ToastTone = "success" | "error" | "warning" | "info" | "neutral";
 
+/** 넓은 화면에서 토스트가 뜨는 자리. compact(600px 미만)는 값과 상관없이 아래쪽에 가로로 채운다 */
+export type ToastPlacement = "top-right" | "bottom-right";
+
 export interface ToastAction {
 	/** 버튼 라벨 - "실행 취소" 등 */
 	label: string;
@@ -59,6 +62,8 @@ export interface ToastProviderProps {
 	closeAriaLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
+	/** 넓은 화면에서 뜨는 자리 (기본값: "top-right"). 머리 오른쪽 주 동작 버튼을 가리면 "bottom-right" */
+	placement?: ToastPlacement;
 }
 
 const TONE_ICONS: Record<ToastTone, React.ReactElement> = {
@@ -242,6 +247,7 @@ export const ToastProvider = ({
 	maxCount = 5,
 	closeAriaLabel: closeAriaLabelProp,
 	regionLabel: regionLabelProp,
+	placement = "top-right",
 }: ToastProviderProps) => {
 	const t = useLocaleText();
 	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");
@@ -332,7 +338,12 @@ export const ToastProvider = ({
 					// 컨테이너는 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(닫기 · 액션 버튼 포함)를 감싸고
 					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다
 					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the landmark for the toast list
-					<div className="toast_container" role="region" aria-label={regionLabel}>
+					<div
+						className="toast_container"
+						data-placement={placement}
+						role="region"
+						aria-label={regionLabel}
+					>
 						<ToastAnnouncer toasts={toasts} />
 						{toasts.map((item) => (
 							<ToastItemComponent

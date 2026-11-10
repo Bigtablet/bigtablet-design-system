@@ -48,7 +48,8 @@ function announce(region, announcer, line, isClosed) {
 }
 
 /**
- * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고, 최대
+ * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고(`<html
+ * data-bt-toast-placement="bottom-right">` 면 오른쪽 아래), 최대
  * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
  * 포커스가 있으면 멈춘다(WCAG 2.2.1 - CSS).
  *
