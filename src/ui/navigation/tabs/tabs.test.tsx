@@ -330,4 +330,49 @@ describe("Tabs", () => {
 			removeListener.mockRestore();
 		}
 	});
+
+	// tab stop 이 늘 하나는 있다 (#984)
+	it("keeps one tab stop when the controlled value matches no tab", () => {
+		render(
+			<Tabs value="nope">
+				<TabList>
+					<Tab value="a">A</Tab>
+					<Tab value="b">B</Tab>
+				</TabList>
+			</Tabs>,
+		);
+		expect(screen.getByRole("tab", { name: "A" })).toHaveAttribute("tabindex", "0");
+		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("skips a disabled first tab as the entry point", () => {
+		render(
+			<Tabs>
+				<TabList>
+					<Tab value="a" disabled>
+						A
+					</Tab>
+					<Tab value="b">B</Tab>
+				</TabList>
+			</Tabs>,
+		);
+		expect(screen.getByRole("tab", { name: "A" })).toHaveAttribute("tabindex", "-1");
+		expect(screen.getByRole("tab", { name: "B" })).toHaveAttribute("tabindex", "0");
+	});
+
+	it("keeps aria-controls and aria-labelledby intact for values with spaces", () => {
+		render(
+			<Tabs defaultValue="my tab">
+				<TabList>
+					<Tab value="my tab">A</Tab>
+				</TabList>
+				<TabPanel value="my tab">본문</TabPanel>
+			</Tabs>,
+		);
+		const tab = screen.getByRole("tab", { name: "A" });
+		const panel = screen.getByRole("tabpanel");
+		expect(tab.getAttribute("aria-controls")).not.toMatch(/\s/);
+		expect(tab.getAttribute("aria-controls")).toBe(panel.id);
+		expect(panel.getAttribute("aria-labelledby")).toBe(tab.id);
+	});
 });

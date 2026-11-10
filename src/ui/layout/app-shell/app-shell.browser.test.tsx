@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import { userEvent } from "vitest/browser";
+import { afterEach, describe, expect, it } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import "../../../styles/theme.scss";
 import { BottomNav, BottomNavItem } from "../../navigation/bottom-nav";
 import { NavBar } from "../../navigation/nav-bar";
+import { Sidebar, SidebarItem } from "../../navigation/sidebar";
+import "../../navigation/sidebar/style.scss";
 import "../../../vanilla/scss/_utilities.scss";
 import { AppShell } from "./index";
 import "./style.scss";
@@ -194,5 +197,66 @@ describe("Vanilla focus defaults (Chromium)", () => {
 		await userEvent.keyboard("{Tab}");
 		expect(link).toHaveFocus();
 		expect(getComputedStyle(link).boxShadow).toBe("none");
+	});
+});
+
+// #984 - Sidebar 헤더 · static rail · 하단 여백 · light 고정
+describe("AppShell + Sidebar (Chromium, #984)", () => {
+	afterEach(async () => {
+		await page.viewport(1280, 720);
+		document.documentElement.style.removeProperty("--bt-bottom-inset-app");
+	});
+
+	it("lets the header logo link be clicked and drops the hidden layer from Tab", async () => {
+		await page.viewport(1280, 720); // 600px 미만이면 Sidebar 가 BottomBar 로 변신한다
+		render(
+			<Sidebar header={<a href="#home">로고</a>} headerCollapsed={<a href="#home-mark">마크</a>}>
+				<SidebarItem>항목</SidebarItem>
+			</Sidebar>,
+		);
+		const logo = screen.getByRole("link", { name: "로고" });
+		const r = logo.getBoundingClientRect();
+		expect(
+			document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest("a"),
+		).toBe(logo);
+		const mark = document.querySelector('a[href="#home-mark"]') as HTMLElement;
+		expect(getComputedStyle(mark).visibility).toBe("hidden");
+	});
+
+	it("keeps the main column on the first screen with a static sidebar at 375px", async () => {
+		await page.viewport(375, 667);
+		render(
+			<AppShell
+				sidebar={
+					<Sidebar mode="static" collapsed>
+						<SidebarItem>항목</SidebarItem>
+					</Sidebar>
+				}
+			>
+				<p>본문</p>
+			</AppShell>,
+		);
+		expect(screen.getByRole("main").getBoundingClientRect().top).toBeLessThan(100);
+	});
+
+	it("keeps the bottom chrome inset when padded is false", () => {
+		// 앱 몫으로 준다 - 합성(--bt-bottom-inset)은 body 에서 한다
+		document.documentElement.style.setProperty("--bt-bottom-inset-app", "56px");
+		render(
+			<AppShell padded={false}>
+				<p>본문</p>
+			</AppShell>,
+		);
+		expect(getComputedStyle(screen.getByRole("main")).paddingBottom).toBe("56px");
+	});
+
+	it("re-applies light tokens under a dark ancestor", () => {
+		render(
+			<div data-theme="dark">
+				<div data-theme="light" data-testid="light" />
+			</div>,
+		);
+		const bg = (el: Element) => getComputedStyle(el).getPropertyValue("--bt-color-bg-solid").trim();
+		expect(bg(screen.getByTestId("light"))).toBe(bg(document.documentElement));
 	});
 });

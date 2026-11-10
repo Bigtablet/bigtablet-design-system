@@ -169,7 +169,13 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	const triggerWithProps = React.cloneElement(
 		trigger as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
 		{
-			onClick: () => setOpen((o) => !o),
+			// 트리거 자신의 onClick 을 먼저 부른다 - 덮어쓰면 표 행 안 "더보기" 의 stopPropagation 이 사라져
+			// 행 클릭이 같이 돌았다 (#984). preventDefault 로 여닫기를 막을 수 있다 (Popover 와 같은 규약)
+			onClick: (e: React.MouseEvent<HTMLElement>) => {
+				(trigger.props as React.HTMLAttributes<HTMLElement>).onClick?.(e);
+				if (e.defaultPrevented) return;
+				setOpen((o) => !o);
+			},
 			"aria-haspopup": "menu",
 			"aria-expanded": open,
 			"aria-controls": open ? menuId : undefined,

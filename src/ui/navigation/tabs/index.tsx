@@ -15,8 +15,10 @@ interface TabsContextValue {
 	idPrefix: string;
 	/** Tab 이 마운트 순서대로 자신을 등록 - 미선택 시 어느 탭이 유일한 tab stop 인지 판별용 */
 	registerTab: (value: string) => () => void;
-	/** 마운트 순서상 첫 번째 탭의 value (미선택 시 roving tabindex 진입점) */
-	firstTabValue: string | undefined;
+	/** Tab 의 disabled 상태 - 선택된 탭 · 대신할 탭 판정에서 뺀다 */
+	markDisabled: (value: string, disabled: boolean) => void;
+	/** 선택된 탭이 tab stop 이 될 수 없을 때(값이 어느 탭과도 안 맞거나 그 탭이 disabled) 대신 tab stop 이 될 탭 */
+	fallbackTabValue: string | undefined;
 }
 
 const TabsContext = React.createContext<TabsContextValue | null>(null);
@@ -83,23 +85,49 @@ export const Tabs = ({
 	// 마운트 순서대로 탭 value 를 등록해 "첫 번째 탭"을 판별한다. 선택된 탭이 없을 때
 	// roving tabindex 를 유지(첫 탭만 tabIndex=0)하기 위함 - 전부 0 이면 Tab 키가 모든
 	// 탭을 순회해 리스트 건너뛰기가 불편해지는 WAI-ARIA 위반이 된다.
+	// 순서와 disabled 를 따로 둔다 - 한 등록에 묶으면 disabled 가 바뀔 때 cleanup 이 항목을 뺐다 다시 넣어
+	// 순서가 끝으로 밀린다
 	const orderRef = React.useRef<string[]>([]);
-	const [firstTabValue, setFirstTabValue] = React.useState<string>();
+	const [order, setOrder] = React.useState<string[]>([]);
+	const [disabledTabs, setDisabledTabs] = React.useState<ReadonlySet<string>>(() => new Set());
 	const registerTab = React.useCallback((v: string) => {
 		if (!orderRef.current.includes(v)) {
 			orderRef.current = [...orderRef.current, v];
-			setFirstTabValue(orderRef.current[0]);
+			setOrder(orderRef.current);
 		}
 		return () => {
 			orderRef.current = orderRef.current.filter((x) => x !== v);
-			setFirstTabValue(orderRef.current[0]);
+			setOrder(orderRef.current);
 		};
 	}, []);
+	const markDisabled = React.useCallback((v: string, disabled: boolean) => {
+		setDisabledTabs((prev) => {
+			if (prev.has(v) === disabled) return prev;
+			const next = new Set(prev);
+			if (disabled) next.add(v);
+			else next.delete(v);
+			return next;
+		});
+	}, []);
+	// 선택된 탭이 고를 수 있는 탭이 아니면 첫 활성 탭을 tab stop 으로 둔다. 예전에는 "값이 비었을 때 첫 탭" 만
+	// 봐서, 제어형 value 가 어느 탭과도 안 맞거나 첫 탭이 disabled 면 tab stop 이 하나도 없어 키보드로 목록에
+	// 들어갈 수 없었다 (#984)
+	const activeIsStop = order.includes(value) && !disabledTabs.has(value);
+	const fallbackTabValue = activeIsStop ? undefined : order.find((x) => !disabledTabs.has(x));
 
 	const idPrefix = React.useId();
 	const ctx = React.useMemo<TabsContextValue>(
-		() => ({ value, setValue, variant, size, idPrefix, registerTab, firstTabValue }),
-		[value, setValue, variant, size, idPrefix, registerTab, firstTabValue],
+		() => ({
+			value,
+			setValue,
+			variant,
+			size,
+			idPrefix,
+			registerTab,
+			markDisabled,
+			fallbackTabValue,
+		}),
+		[value, setValue, variant, size, idPrefix, registerTab, markDisabled, fallbackTabValue],
 	);
 	return (
 		<TabsContext.Provider value={ctx}>
@@ -111,6 +139,15 @@ export const Tabs = ({
 			</div>
 		</TabsContext.Provider>
 	);
+};
+
+/**
+ * 탭 · 패널 id. value 를 인코딩한다 - 공백이 든 value 를 그대로 쓰면 aria-controls · aria-labelledby 가
+ * 공백에서 끊겨 다른 id 목록으로 읽혔다 (#984)
+ */
+const tabIds = (prefix: string, value: string) => {
+	const key = encodeURIComponent(value);
+	return { panelId: `${prefix}-panel-${key}`, tabId: `${prefix}-tab-${key}` };
 };
 
 export interface TabListProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
@@ -200,12 +237,16 @@ export interface TabProps
 export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }: TabProps) => {
 	const ctx = useTabsContext();
 	const isActive = ctx.value === value;
-	const panelId = `${ctx.idPrefix}-panel-${value}`;
-	const tabId = `${ctx.idPrefix}-tab-${value}`;
+	const { panelId, tabId } = tabIds(ctx.idPrefix, value);
 
-	// 마운트 순서 등록 (미선택 시 첫 탭만 tab stop 이 되도록 firstTabValue 판별용)
-	const { registerTab } = ctx;
+	// 마운트 순서 등록 (선택된 탭이 tab stop 이 될 수 없을 때 대신할 탭 판별용)
+	const { registerTab, markDisabled } = ctx;
+	const disabled = !!props.disabled;
 	React.useEffect(() => registerTab(value), [registerTab, value]);
+	React.useEffect(() => {
+		markDisabled(value, disabled);
+		return () => markDisabled(value, false);
+	}, [markDisabled, value, disabled]);
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		ctx.setValue(value);
@@ -258,7 +299,7 @@ export const Tab = ({ value, className, children, onClick, onKeyDown, ...props }
 			aria-controls={panelId}
 			// 로빙 tabindex - 선택된 탭이 없으면(비제어 + defaultValue 없음, value="") 마운트 순서상
 			// 첫 탭만 tab stop 으로 두어 Tab 키 1회로 tablist 에 진입, 내부 이동은 화살표 키로.
-			tabIndex={isActive || (!ctx.value && value === ctx.firstTabValue) ? 0 : -1}
+			tabIndex={(isActive && !disabled) || value === ctx.fallbackTabValue ? 0 : -1}
 			className={cn("tabs_tab", isActive && "tabs_tab_active", className)}
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
@@ -284,8 +325,7 @@ export const TabPanel = ({
 }: TabPanelProps) => {
 	const ctx = useTabsContext();
 	const isActive = ctx.value === value;
-	const panelId = `${ctx.idPrefix}-panel-${value}`;
-	const tabId = `${ctx.idPrefix}-tab-${value}`;
+	const { panelId, tabId } = tabIds(ctx.idPrefix, value);
 
 	if (!isActive && unmountInactive) return null;
 

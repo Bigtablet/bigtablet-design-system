@@ -101,6 +101,12 @@ html {
   @include dark-theme;
 }
 
+// 명시 light - 다크 조상(다크 페이지 · OS 다크) 아래 부분 트리나 중첩 Provider 를 light 로 고정한다. 이 규칙이
+// 없으면 상속된 다크 값이 그대로라 targetSelector 로 light 를 걸어도 효과가 없었다 (#984)
+[data-theme="light"] {
+  @include tokens.light;
+}
+
 // OS 자동 (ThemeProvider 없거나 mode="system" - data-theme 미설정 시)
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {

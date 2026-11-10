@@ -151,4 +151,18 @@ describe("NavBar", () => {
 		fireEvent.click(screen.getByRole("menuitemradio", { name: "English" }));
 		expect(onValueChange).toHaveBeenCalledWith("en");
 	});
+
+	// 링크가 나중에 생겨도 인디케이터를 그린다 (#984)
+	it("draws the indicator when links appear after mount", () => {
+		const { container, rerender } = render(<NavBar brand="BT" />);
+		expect(container.querySelector(".nav_bar_indicator")).toBeNull();
+		rerender(
+			<NavBar brand="BT">
+				<NavLink href="/" active>
+					홈
+				</NavLink>
+			</NavBar>,
+		);
+		expect(container.querySelector(".nav_bar_indicator")).not.toBeNull();
+	});
 });

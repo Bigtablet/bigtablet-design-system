@@ -164,4 +164,25 @@ describe("ThemeProvider", () => {
 		unmount();
 		expect(mqListeners.length).toBe(0);
 	});
+
+	// 저장값을 읽기 전 기본값으로 data-theme 를 지웠다 다시 세우지 않는다 (#984)
+	it("does not touch a data-theme set by the no-flash script before syncing", () => {
+		window.localStorage.setItem("bt-theme", "dark");
+		document.documentElement.setAttribute("data-theme", "dark");
+		const changes: (string | null)[] = [];
+		const mo = new MutationObserver(() =>
+			changes.push(document.documentElement.getAttribute("data-theme")),
+		);
+		mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+		render(
+			<ThemeProvider>
+				<TestConsumer />
+			</ThemeProvider>,
+		);
+		return Promise.resolve().then(() => {
+			mo.disconnect();
+			expect(changes).not.toContain(null);
+			expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+		});
+	});
 });
