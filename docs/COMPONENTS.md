@@ -858,7 +858,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖, 라벨 한 줄 높이로 고정된 슬롯에 렌더된다 |
 | `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
 | `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
-| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다. `role="alert"` 로 나타날 때 낭독된다 - 처음부터 에러가 있는 필드가 여럿이면(서버 검증 결과로 다시 그린 폼) 모두 연달아 읽히므로, 그때는 폼 위에 요약 하나를 두고 필드 에러는 제출 뒤에 붙이는 편이 낫다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다. `role="alert"` 로 나타날 때 필드 이름과 함께 낭독된다. 여러 필드가 한꺼번에 틀리는 폼(서버 검증)은 `Form` 의 `errorSummary` 를 켠다 - 요약이 한 번 읽히고 필드는 그 에러를 따로 낭독하지 않는다(이 prop 으로 준 지역 검증 에러는 그대로 낭독) |
 | `children` | `ReactNode` | - | 입력 하나 |
 
 #### Form
@@ -866,6 +866,8 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣는다 |
+| `errorSummary` | `boolean` | `false` | 폼 위에 에러 요약(개수 + 필드별 링크)을 그린다. 제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 한 번 읽히고, 필드는 `errors` 에서 온 에러를 따로 낭독하지 않는다. 링크를 누르면 그 입력으로 포커스가 간다 |
+| `errorSummaryTitle` | `ReactNode` | `'{count}개 항목을 확인해 주세요'` | 요약 제목 (로케일 `form.errorSummary`) |
 | `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다 |
 
 #### Form.Actions

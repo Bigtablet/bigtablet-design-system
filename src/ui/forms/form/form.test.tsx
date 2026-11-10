@@ -81,3 +81,91 @@ describe("Form", () => {
 		expect(container.querySelector(".form_actions")).toHaveClass("form_actions_end");
 	});
 });
+
+// 에러 요약 - 제출 에러를 폼 위 한 곳에서 알린다 (#993)
+describe("Form errorSummary", () => {
+	const Fields = () => (
+		<>
+			<Field name="email" label="이메일">
+				<TextField />
+			</Field>
+			<Field name="nickname" label="닉네임">
+				<TextField />
+			</Field>
+		</>
+	);
+
+	it("lists each error with its field label and moves focus to the summary", () => {
+		render(
+			<Form errorSummary errors={{ email: "이미 사용 중입니다", nickname: "필수입니다" }}>
+				<Fields />
+			</Form>,
+		);
+		const summary = screen.getByRole("region", { name: "2개 항목을 확인해 주세요" });
+		expect(summary).toHaveFocus();
+		const links = screen.getAllByRole("link");
+		expect(links.map((a) => a.textContent)).toEqual([
+			"이메일: 이미 사용 중입니다",
+			"닉네임: 필수입니다",
+		]);
+	});
+
+	it("focuses the field when its summary link is clicked", () => {
+		render(
+			<Form errorSummary errors={{ nickname: "필수입니다" }}>
+				<Fields />
+			</Form>,
+		);
+		fireEvent.click(screen.getByRole("link", { name: "닉네임: 필수입니다" }));
+		expect(screen.getAllByRole("textbox")[1]).toHaveFocus();
+	});
+
+	it("does not announce form errors again from each field, but keeps a field's own error alert", () => {
+		render(
+			<Form errorSummary errors={{ email: "서버 에러", nickname: "서버 에러 2" }}>
+				<Field name="email" label="이메일">
+					<TextField />
+				</Field>
+				<Field name="nickname" label="닉네임" error="지역 검증">
+					<TextField />
+				</Field>
+			</Form>,
+		);
+		const alerts = screen.getAllByRole("alert");
+		expect(alerts).toHaveLength(1);
+		expect(alerts[0]).toHaveTextContent("닉네임: 지역 검증");
+	});
+
+	it("refocuses the summary after a submit, not on every re-render", () => {
+		const Screen = ({ tick }: { tick: number }) => (
+			<Form errorSummary errors={{ email: `에러` }} data-tick={tick} onSubmit={() => {}}>
+				<Fields />
+				<Button type="submit">저장</Button>
+			</Form>
+		);
+		const { rerender } = render(<Screen tick={0} />);
+		const button = screen.getByRole("button", { name: "저장" });
+		button.focus();
+		rerender(<Screen tick={1} />);
+		expect(button).toHaveFocus();
+		fireEvent.submit(button.closest("form") as HTMLFormElement);
+		rerender(<Screen tick={2} />);
+		expect(screen.getByRole("region", { name: "1개 항목을 확인해 주세요" })).toHaveFocus();
+	});
+
+	it("draws nothing when there are no errors or the option is off", () => {
+		const { rerender } = render(
+			<Form errorSummary errors={{ email: undefined }}>
+				<Fields />
+			</Form>,
+		);
+		expect(screen.queryByRole("region")).toBeNull();
+		rerender(
+			<Form errors={{ email: "에러" }}>
+				<Fields />
+			</Form>,
+		);
+		expect(screen.queryByRole("region")).toBeNull();
+		expect(screen.getByRole("alert")).toHaveTextContent("이메일: 에러");
+	});
+});
