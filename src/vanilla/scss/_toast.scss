@@ -38,6 +38,13 @@
   }
 }
 
+// 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 (#998) - 컨테이너는 번들이 만들어서 `<html>` 속성으로 고른다.
+// compact 는 원래 아래라 위 규칙과 같은 값이다.
+[data-bt-toast-placement="bottom-right"] .bt-toast-container {
+  top: auto;
+  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+}
+
 .bt-toast {
   pointer-events: auto;
   position: relative;

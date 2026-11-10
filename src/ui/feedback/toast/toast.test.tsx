@@ -169,6 +169,19 @@ describe("Toast display", () => {
 		expect(screen.getByText("두 번째", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
+	it("puts the container at top-right by default and bottom-right on request", () => {
+		const { rerender } = render(<ToastProvider>child</ToastProvider>);
+		expect(document.querySelector(".toast_container")).toHaveAttribute(
+			"data-placement",
+			"top-right",
+		);
+		rerender(<ToastProvider placement="bottom-right">child</ToastProvider>);
+		expect(document.querySelector(".toast_container")).toHaveAttribute(
+			"data-placement",
+			"bottom-right",
+		);
+	});
+
 	it("respects maxCount option", async () => {
 		function SpamTrigger() {
 			const t = useToast();

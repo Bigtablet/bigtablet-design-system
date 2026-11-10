@@ -35,6 +35,19 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 		expect(667 - r.bottom).toBe(16);
 	});
 
+	it("moves to the bottom right with <html data-bt-toast-placement> (#998)", async () => {
+		await page.viewport(1280, 800);
+		document.documentElement.dataset.btToastPlacement = "bottom-right";
+		onTestFinished(() => {
+			delete document.documentElement.dataset.btToastPlacement;
+		});
+		Toast("아래", "success");
+
+		const r = rect(document.querySelector(".bt-toast") as Element);
+		expect(1280 - r.right).toBe(16);
+		expect(800 - r.bottom).toBe(16);
+	});
+
 	it("runs the presence transition out, then removes the toast", async () => {
 		// browser-setup.ts 가 레이아웃 실측용으로 transition 을 전부 0s 로 눌러 둔다 - 이 테스트만 푼다
 		const noTransition = Array.from(document.querySelectorAll("style")).find((s) =>
