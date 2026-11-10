@@ -100,3 +100,11 @@
     }
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 패널을 그림자로만 구분한다 - 고대비는 그림자를 지운다.
+@media (forced-colors: active) {
+  .alert_modal {
+    border: token.$border_width_standard solid CanvasText;
+  }
+}

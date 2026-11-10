@@ -150,3 +150,11 @@ $close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
     animation: none;
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 패널을 그림자로만 구분한다 - 고대비는 그림자를 지운다.
+@media (forced-colors: active) {
+  .drawer_panel {
+    border: token.$border_width_standard solid CanvasText;
+  }
+}

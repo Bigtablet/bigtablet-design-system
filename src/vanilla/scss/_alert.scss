@@ -88,3 +88,11 @@
   &--warning .bt-alert__title { color: var(--bt-color-warning-text); }
   &--error .bt-alert__title { color: var(--bt-color-error-text); }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 패널을 그림자로만 구분한다 - 고대비는 그림자를 지운다 (React 와 같음).
+@media (forced-colors: active) {
+  .bt-alert__modal {
+    border: token.$border_width_standard solid CanvasText;
+  }
+}

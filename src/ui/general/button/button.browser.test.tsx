@@ -42,4 +42,19 @@ describe("Button focus in forced-colors mode (Chromium)", () => {
 		expect(style.outlineStyle).toBe("none");
 		expect(style.boxShadow).not.toBe("none");
 	});
+
+	// 채운 버튼은 배경으로만 모양을 낸다 - 고대비에서는 테두리로 버튼임을 보인다 (#1001).
+	it("outlines filled and tonal buttons when forced-colors is active", async () => {
+		await emulateForcedColors("active");
+		render(
+			<>
+				<Button variant="filled">조회</Button>
+				<Button variant="tonal">보기</Button>
+				<Button danger>삭제</Button>
+			</>,
+		);
+		for (const name of ["조회", "보기", "삭제"]) {
+			expect(getComputedStyle(screen.getByRole("button", { name })).borderTopStyle).toBe("solid");
+		}
+	});
 });

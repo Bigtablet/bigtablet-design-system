@@ -581,3 +581,37 @@ $_calendar_icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     transition: none;
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 고른 날 · 범위 띠는 배경으로만, 오늘은 그림자 테두리로만 표시한다 - 고대비는 둘 다 지운다.
+// 아이콘(달력 · 지우기 · 이전/다음 달 · 연월 화살표)은 mask + background-color 라 함께 사라진다 - 글자색으로 다시 칠한다.
+// 칸 · 아이콘 규칙이 모두 `.bt-date-picker--calendar` 아래라 같은 접두로 특이도를 맞춘다.
+@media (forced-colors: active) {
+  .bt-date-picker--calendar {
+    .bt-date-picker__day--selected,
+    .bt-date-picker__pick--selected {
+      // `!important` - hover 처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
+      forced-color-adjust: none;
+      background: Highlight !important;
+      color: HighlightText !important;
+    }
+
+    // 띠는 위아래 선으로 - 칸끼리 이어져 범위가 읽힌다. 시작 · 종료 칸의 반쪽 그라디언트도 고대비가 지운다
+    .bt-date-picker__cell--in-range {
+      border-block: token.$border_width_standard solid CanvasText;
+    }
+
+    .bt-date-picker__day--today {
+      outline: token.$border_width_standard solid CanvasText;
+      outline-offset: calc(-1 * #{token.$border_width_standard});
+    }
+
+    .bt-date-picker__trigger-icon,
+    .bt-date-picker__clear::before,
+    .bt-date-picker__nav::before,
+    .bt-date-picker__select-wrap::after {
+      forced-color-adjust: none;
+      background-color: ButtonText;
+    }
+  }
+}
