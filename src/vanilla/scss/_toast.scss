@@ -197,3 +197,8 @@
     animation-play-state: paused;
   }
 }
+
+// 토스트 문구를 읽어 주는 숨은 공지 영역 (#994) - 화면에는 보이지 않고 보조기술만 읽는다
+.bt-toast__announcer {
+  @include token.visually_hidden;
+}

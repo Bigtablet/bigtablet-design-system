@@ -83,6 +83,18 @@ function ToastControlButtons() {
 			<button
 				type="button"
 				style={demo_btn_style}
+				onClick={async () => {
+					// 진행 → 실패 - status 가 alert 로 바뀐다. 실패가 assertive 로 다시 공지되는지 듣는 용도 (#994)
+					const id = t.info("저장 중…", { duration: Infinity });
+					await new Promise((r) => setTimeout(r, 1500));
+					t.update(id, { tone: "error", message: "저장하지 못했습니다", duration: 6000 });
+				}}
+			>
+				진행 → 실패 (update)
+			</button>
+			<button
+				type="button"
+				style={demo_btn_style}
 				onClick={() =>
 					t.message("항목 3개가 삭제되었습니다.", {
 						duration: 6000,

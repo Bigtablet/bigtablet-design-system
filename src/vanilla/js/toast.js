@@ -29,6 +29,24 @@ export const TOAST_ICONS = {
 };
 export const TOAST_CLOSE_ICON = toastSvg(14, '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
 
+/** 공지 문구를 남겨 두는 시간 - 읽힌 뒤 비워 리전을 훑을 때 토스트 안 메시지와 겹치지 않게 (React 와 같음) */
+const ANNOUNCE_MS = 1000;
+/** 공지 영역을 막 만든 뒤 첫 공지까지 기다리는 시간 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 한다 */
+const ANNOUNCE_WARMUP_MS = 100;
+/**
+ * 문구 한 줄을 공지 영역에 넣고 잠시 뒤 뺀다. 그 사이 토스트가 닫혔으면(isClosed) 넣지 않는다.
+ * 리전의 `_btPending` 이 있으면(공지 영역을 막 만들었다) 거기 모았다가 준비되면 호출 순서대로 넣는다
+ */
+function announce(region, announcer, line, isClosed) {
+	if (region._btPending) {
+		region._btPending.push(() => announce(region, announcer, line, isClosed));
+		return;
+	}
+	if (isClosed() || !announcer) return;
+	announcer.appendChild(line);
+	setTimeout(() => line.remove(), ANNOUNCE_MS);
+}
+
 /**
  * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고, 최대
  * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
@@ -58,23 +76,56 @@ export function Toast(message, tone = "neutral", options = {}) {
 		region = document.createElement("div");
 		region.className = "bt-toast-container";
 		region.setAttribute("role", "region");
-		region.setAttribute("aria-live", "polite");
-		region.setAttribute("aria-atomic", "false");
 		region.setAttribute("aria-label", regionLabel);
 		document.body.appendChild(region);
+	}
+	// 리전은 랜드마크일 뿐 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(버튼 포함)를 감싸고 안쪽
+	// 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 안쪽 숨은 영역 둘이 맡는다.
+	// 예전 버전이 만든(또는 서버가 그린) 리전에도 붙인다
+	region.removeAttribute("aria-live");
+	region.removeAttribute("aria-atomic");
+	for (const role of ["status", "alert"]) {
+		if (region.querySelector(`:scope > .bt-toast__announcer[role="${role}"]`)) continue;
+		const announcer = document.createElement("div");
+		announcer.className = "bt-toast__announcer";
+		announcer.setAttribute("role", role);
+		region.appendChild(announcer);
+		// 방금 만들었다 - 준비될 때까지 들어오는 공지는 순서대로 모았다가 넣는다
+		if (!region._btPending) {
+			const pending = [];
+			region._btPending = pending;
+			setTimeout(() => {
+				delete region._btPending;
+				for (const run of pending) run();
+			}, ANNOUNCE_WARMUP_MS);
+		}
 	}
 
 	const item = document.createElement("div");
 	item.className = "bt-toast";
 	item.dataset.state = "open";
-	// 라이브 리전은 아이콘 + 메시지만 감싼다 - 버튼까지 읽히면 소음이다 (React 와 같음)
+	// 메시지는 토스트 안에 남긴다 - 리전을 훑을 때 버튼이 어느 메시지에 붙었는지 알 수 있게. 공지는 숨은
+	// 공지 영역이 따로 하고, 그 문구는 읽힌 뒤 비워 두 번 나오지 않는다 (React 와 같음, #994)
 	item.innerHTML =
-		`<div class="bt-toast__live" role="${safeTone === "error" ? "alert" : "status"}">` +
+		'<div class="bt-toast__live">' +
 		`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
 		'<span class="bt-toast__message"></span></div>';
 	item.querySelector(".bt-toast__message").textContent = message;
 
 	let closing = false;
+
+	// 문구만 공지 영역에 넣는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다. error 는 alert 쪽(assertive).
+	// 공지 영역이 준비되기 전에 닫혔으면 넣지 않는다 - 닫힌 토스트 문구가 늦게 공지되고 영역에 남았다
+	const line = document.createElement("p");
+	line.textContent = message;
+	announce(
+		region,
+		region.querySelector(
+			`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
+		),
+		line,
+		() => closing,
+	);
 
 	function dismiss() {
 		if (closing) return;
@@ -87,6 +138,7 @@ export function Toast(message, tone = "neutral", options = {}) {
 			(closes[index + 1] || closes[index - 1])?.focus();
 		}
 		item.dataset.state = "closed";
+		line.remove();
 		// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게
 		item.setAttribute("inert", "");
 		afterExit([item], () => item.remove());
