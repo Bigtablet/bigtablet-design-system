@@ -243,7 +243,13 @@ export const Modal = ({
 					</div>
 				)}
 				{content.footer && (
-					<div className={cn("modal_footer", `modal_footer_${footerAlign}`)}>{content.footer}</div>
+					// footer 는 초기 포커스 대상이 아니다 - 영역에 skip 표시 (useFocusTrap, #982)
+					<div
+						className={cn("modal_footer", `modal_footer_${footerAlign}`)}
+						data-focus-trap-skip-autofocus=""
+					>
+						{content.footer}
+					</div>
 				)}
 			</div>
 		</div>,

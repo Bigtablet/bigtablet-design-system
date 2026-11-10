@@ -75,4 +75,12 @@ describe("TopLoading", () => {
 		const bar = container.querySelector(".top_loading_bar");
 		expect(bar).toHaveStyle({ backgroundColor: "#ff0000" });
 	});
+
+	// 0~100 으로 자른다 (#982)
+	it("clamps progress into 0-100", () => {
+		const { rerender } = render(<TopLoading progress={140} />);
+		expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "100");
+		rerender(<TopLoading progress={-5} />);
+		expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+	});
 });

@@ -319,3 +319,75 @@ describe("useFocusTrap", () => {
 		expect(document.activeElement?.id).toBe("last");
 	});
 });
+
+// #982 - 트랩 구멍 · 첫 포커스 · 포커스 복귀
+describe("useFocusTrap gaps (#982)", () => {
+	const tab = (target: Element, shiftKey = false) => {
+		const e = new KeyboardEvent("keydown", {
+			key: "Tab",
+			shiftKey,
+			bubbles: true,
+			cancelable: true,
+		});
+		target.dispatchEvent(e);
+		return e;
+	};
+
+	it("keeps the container focusable so a click on static text still lands inside", () => {
+		const container = tracked(createContainer(2));
+		renderHook(() => useFocusTrap({ current: container }, true));
+		expect(container.getAttribute("tabindex")).toBe("-1");
+	});
+
+	it("wraps Shift+Tab to the last control when focus is on the container itself", () => {
+		const container = tracked(createContainer(2));
+		renderHook(() => useFocusTrap({ current: container }, true));
+		container.focus();
+		const e = tab(container, true);
+		expect(e.defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(container.querySelectorAll("button")[1]);
+	});
+
+	it("skips hidden and inert controls as trap ends", () => {
+		const container = tracked(createContainer(2));
+		const hidden = document.createElement("button");
+		hidden.hidden = true;
+		const inertWrap = document.createElement("div");
+		inertWrap.setAttribute("inert", "");
+		inertWrap.appendChild(document.createElement("button"));
+		container.append(hidden, inertWrap);
+		renderHook(() => useFocusTrap({ current: container }, true));
+		const last = container.querySelectorAll("button")[1] as HTMLButtonElement;
+		last.focus();
+		expect(tab(last).defaultPrevented).toBe(true);
+		expect(document.activeElement).toBe(container.querySelector("button"));
+	});
+
+	it("does not take a skip-marked region (footer) as the initial focus - falls back to the container", () => {
+		const container = tracked(document.createElement("div"));
+		container.innerHTML =
+			'<p>삭제할까요?</p><div data-focus-trap-skip-autofocus=""><button>삭제</button></div>';
+		document.body.appendChild(container);
+		renderHook(() => useFocusTrap({ current: container }, true));
+		expect(document.activeElement).toBe(container);
+	});
+
+	it("does not return focus into a closing modal overlay", () => {
+		const trigger = tracked(document.createElement("button"));
+		const overlay = tracked(document.createElement("div"));
+		overlay.setAttribute("aria-modal", "true");
+		const inner = document.createElement("button");
+		overlay.appendChild(inner);
+		document.body.append(trigger, overlay);
+		inner.focus();
+		const container = tracked(createContainer(1));
+		const { rerender } = renderHook(({ on }) => useFocusTrap({ current: container }, on), {
+			initialProps: { on: true },
+		});
+		// 부모 Modal 이 먼저 닫히며 트리거로 돌려줬다
+		overlay.setAttribute("data-state", "closed");
+		trigger.focus();
+		rerender({ on: false });
+		expect(document.activeElement).toBe(trigger);
+	});
+});

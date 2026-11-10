@@ -87,7 +87,8 @@ export const Tooltip = ({
 	// 다른 오버레이나 소비자 앱 핸들러를 삼키지 않는다 (overlay-stack.ts 참고).
 	// 툴팁은 hover 로 열려 포커스가 trigger 밖에 있을 수 있으므로 document 레벨 처리가 필요한데,
 	// 레지스트리가 그 역할을 대신한다.
-	useOverlayEscape(open, hideNow);
+	// 열린 채 disabled 가 되면 화면에서 사라지므로 스택에서도 뺀다 - 남으면 첫 Escape 를 삼켰다 (#982)
+	useOverlayEscape(open && !disabled, hideNow);
 
 	// 열릴 때 트리거 rect + 뷰포트로 flip/shift/shrink 를 계산해 body 로 포탈(fixed).
 	// shouldRender 로 게이트해 퇴장 애니메이션 동안에도 위치를 유지한다.

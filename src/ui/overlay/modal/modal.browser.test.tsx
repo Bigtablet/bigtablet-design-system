@@ -1,6 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import * as React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
+import { AlertProvider, useAlert } from "../../feedback/alert";
+import "../../feedback/alert/style.scss";
 import { Modal } from "./index";
 import "./style.scss";
 
@@ -85,5 +88,72 @@ describe("Modal layout (Chromium)", () => {
 		} finally {
 			html.style.scrollbarGutter = "";
 		}
+	});
+});
+
+// #982 - 포커스 트랩 구멍과 포커스 복귀를 실제 Chromium 에서 본다
+describe("Modal focus trap (Chromium, #982)", () => {
+	it("keeps Tab inside after a click on the title, and Shift+Tab from the panel wraps", async () => {
+		render(
+			<Modal open title="제목" footer={<button type="button">확인</button>}>
+				<input aria-label="이름" />
+			</Modal>,
+		);
+		await screen.findByRole("dialog");
+		await userEvent.click(screen.getByRole("heading", { name: "제목" }));
+		expect(document.querySelector(".modal_panel")?.contains(document.activeElement)).toBe(true);
+		await userEvent.keyboard("{Shift>}{Tab}{/Shift}");
+		expect(document.activeElement).toBe(screen.getByRole("button", { name: "확인" }));
+		await userEvent.keyboard("{Tab}");
+		expect(document.querySelector(".modal_panel")?.contains(document.activeElement)).toBe(true);
+	});
+
+	it("does not let Tab escape past a display:none last control", async () => {
+		render(
+			<Modal open title="제목">
+				<input aria-label="이름" />
+				<button type="button" style={{ display: "none" }}>
+					숨김
+				</button>
+			</Modal>,
+		);
+		await screen.findByRole("dialog");
+		const input = screen.getByRole("textbox", { name: "이름" });
+		input.focus();
+		await userEvent.keyboard("{Tab}");
+		expect(document.querySelector(".modal_panel")?.contains(document.activeElement)).toBe(true);
+	});
+
+	it("returns focus to the trigger when a confirm callback closes the parent modal", async () => {
+		function Screen() {
+			const [open, setOpen] = React.useState(false);
+			const { showAlert } = useAlert();
+			return (
+				<>
+					<button type="button" onClick={() => setOpen(true)}>
+						열기
+					</button>
+					<Modal open={open} onClose={() => setOpen(false)} title="편집">
+						<button
+							type="button"
+							onClick={() => showAlert({ title: "닫을까요?", onConfirm: () => setOpen(false) })}
+						>
+							닫기 요청
+						</button>
+					</Modal>
+				</>
+			);
+		}
+		render(
+			<AlertProvider>
+				<Screen />
+			</AlertProvider>,
+		);
+		const trigger = screen.getByRole("button", { name: "열기" });
+		await userEvent.click(trigger);
+		await userEvent.click(await screen.findByRole("button", { name: "닫기 요청" }));
+		await userEvent.click(await screen.findByRole("button", { name: /확인|OK/ }));
+		await waitFor(() => expect(document.querySelector(".modal")).toBeNull());
+		expect(document.activeElement).toBe(trigger);
 	});
 });

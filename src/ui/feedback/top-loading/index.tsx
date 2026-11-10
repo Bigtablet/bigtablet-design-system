@@ -35,6 +35,8 @@ export const TopLoading = ({
 	if (!isLoading) return null;
 
 	const isIndeterminate = progress === undefined;
+	// 0~100 으로 자른다 - 넘기면 aria-valuenow 와 폭이 범위를 넘었다 (#982)
+	const value = isIndeterminate ? undefined : Math.min(100, Math.max(0, progress));
 
 	return (
 		<div
@@ -43,13 +45,13 @@ export const TopLoading = ({
 			role="progressbar"
 			aria-valuemin={0}
 			aria-valuemax={100}
-			aria-valuenow={isIndeterminate ? undefined : progress}
+			aria-valuenow={value}
 			aria-label={ariaLabel}
 		>
 			<div
 				className={cn("top_loading_bar", isIndeterminate && "top_loading_indeterminate")}
 				style={{
-					width: isIndeterminate ? undefined : `${progress}%`,
+					width: isIndeterminate ? undefined : `${value}%`,
 					backgroundColor: color,
 				}}
 			/>
