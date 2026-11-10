@@ -48,7 +48,7 @@ INHERITED = {
     "textfield": {"placeholder"},
     "textarea": {"placeholder", "maxLength"},
     "checkbox": {"checked", "disabled"},
-    "radio": {"value", "checked"},
+    "radio": {"value", "checked", "name"},
     "file": {"multiple", "accept", "disabled"},
     "icon": {"size", "strokeWidth"},
 }
@@ -62,10 +62,17 @@ def strip_comments(code: str) -> str:
     return re.sub(r"(?m)//.*$", "", code)
 
 
+# 타입 선언 본문 - `interface X {…}` · `type X = {…}`. 닫는 `}` 는 줄 머리에 온다(biome 서식)
+TYPE_BLOCK = re.compile(r"(?ms)^(?:export\s+)?(?:interface\s+\w+[^{]*|type\s+\w+[^=]*=[^{;]*)\{\n.*?^\}")
+
+
 def sources() -> dict[str, str]:
+    """컴포넌트 폴더별 **타입 선언만** - 코드 전체를 보면 객체 리터럴(`{ min: 1 }` · 여러 줄 `minDate: …`)도
+    prop 선언으로 잡혀 없는 prop 이 통과했다 (#986)"""
     out: dict[str, str] = {}
     for index in UI.glob("*/*/index.tsx"):
-        out[index.parent.name.replace("-", "").lower()] = strip_comments(index.read_text(encoding="utf-8"))
+        code = strip_comments(index.read_text(encoding="utf-8"))
+        out[index.parent.name.replace("-", "").lower()] = "\n".join(TYPE_BLOCK.findall(code))
     return out
 
 

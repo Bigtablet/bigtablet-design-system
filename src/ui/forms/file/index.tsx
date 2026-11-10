@@ -113,9 +113,23 @@ export const FileInput = ({
 		e.preventDefault();
 		if (disabled) return;
 		const dropped = e.dataTransfer.files;
-		if (!dropped.length || !dropped[0]?.type.startsWith("image/")) return;
-		if (inputRef.current && dropped instanceof FileList) inputRef.current.files = dropped;
-		applyFiles(dropped);
+		const first = dropped[0];
+		if (!first?.type.startsWith("image/")) return;
+		const input = inputRef.current;
+		// 미리보기는 한 장이다 - multiple 이 아니면 첫 파일만 넘긴다. 보이지 않는 파일까지 소비자에게 가지 않게
+		let files: FileList = dropped;
+		if (!props.multiple && dropped.length > 1 && typeof DataTransfer !== "undefined") {
+			const one = new DataTransfer();
+			one.items.add(first);
+			files = one.files;
+		}
+		if (input && files instanceof FileList) {
+			// input 의 change 로 흘려 보낸다 - 선택 경로와 같이 onFiles · onChange 가 한 번씩 불린다
+			input.files = files;
+			input.dispatchEvent(new Event("change", { bubbles: true }));
+		} else {
+			applyFiles(files);
+		}
 	};
 
 	const handleRemove = (e: React.MouseEvent) => {

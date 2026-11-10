@@ -340,6 +340,6 @@ describe("Field error announcement (#986)", () => {
 				<TextField />
 			</Field>,
 		);
-		expect(screen.getByRole("alert")).toHaveTextContent("형식이 맞지 않습니다");
+		expect(screen.getByRole("alert")).toHaveTextContent("이메일: 형식이 맞지 않습니다");
 	});
 });

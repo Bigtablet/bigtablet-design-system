@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { FileInput } from "./index";
 import "./style.scss";
 
@@ -15,5 +15,22 @@ describe("FileInput drop (Chromium)", () => {
 		);
 		const input = container.querySelector("input[type=file]") as HTMLInputElement;
 		expect(input.files?.[0]?.name).toBe("a.png");
+	});
+
+	it("passes only the first file through change once when several are dropped", () => {
+		const onFiles = vi.fn();
+		const onChange = vi.fn();
+		const { container } = render(
+			<FileInput variant="preview" label="사진" onFiles={onFiles} onChange={onChange} />,
+		);
+		const transfer = new DataTransfer();
+		transfer.items.add(new File(["x"], "a.png", { type: "image/png" }));
+		transfer.items.add(new File(["y"], "b.png", { type: "image/png" }));
+		(container.querySelector(".file_input_label") as HTMLElement).dispatchEvent(
+			new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }),
+		);
+		expect(onFiles).toHaveBeenCalledTimes(1);
+		expect(onChange).toHaveBeenCalledTimes(1);
+		expect((onFiles.mock.calls[0]?.[0] as FileList).length).toBe(1);
 	});
 });

@@ -239,3 +239,13 @@ describe("DateCalendar SSR (#986)", () => {
 		expect(html).toContain('tabindex="0"');
 	});
 });
+
+describe("DateCalendar initial focus (#986)", () => {
+	it("moves the tab stop to today after mount when the given month is the current month", () => {
+		vi.useFakeTimers({ now: new Date(2026, 10, 10), toFake: ["Date"] });
+		render(<DateCalendar aria-label="달력" defaultMonth="2026-11" />);
+		const stop = document.querySelector('[tabindex="0"]');
+		expect(stop?.textContent).toContain("10");
+		vi.useRealTimers();
+	});
+});

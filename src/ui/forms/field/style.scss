@@ -93,3 +93,8 @@
     transition: none;
   }
 }
+
+// 에러 알림에만 읽히는 필드 이름 (#986)
+.field_message_label {
+  @include token.visually_hidden;
+}
