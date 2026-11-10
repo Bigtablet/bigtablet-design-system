@@ -605,8 +605,11 @@ export function DatePicker(element, options = {}) {
 			top = Math.max(gap, Math.min(top, window.innerHeight - gap - h));
 		// 오른쪽 끝에 맞춰도 좁은 화면이면 왼쪽이 잘린다 - 왼쪽 여백에서 멈춘다
 		const left = end ? Math.max(gap, a.right - w) : a.left;
-		panel.style.top = `${(top - origin.top) / zoom}px`;
-		panel.style.left = `${(left - origin.left) / zoom}px`;
+		// 바뀐 때만 쓴다 - 매 프레임 같은 값을 써도 스타일 무효화가 생긴다
+		const nextTop = `${(top - origin.top) / zoom}px`;
+		const nextLeft = `${(left - origin.left) / zoom}px`;
+		if (panel.style.top !== nextTop) panel.style.top = nextTop;
+		if (panel.style.left !== nextLeft) panel.style.left = nextLeft;
 	}
 
 	let untrackPanel = null;

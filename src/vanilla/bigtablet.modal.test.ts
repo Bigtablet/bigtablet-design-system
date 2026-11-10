@@ -768,6 +768,16 @@ describe("Modal · Alert - 포커스 트랩 · 닫힘 (#973)", () => {
 		expect(m?.isOpen()).toBe(false);
 	});
 
+	it("버튼 안 문구에 붙은 data-modal-close 도 폼을 제출하지 않는다", () => {
+		const el = mount("<form><button><span data-modal-close>취소</span></button></form>");
+		const m = Modal(el);
+		m?.open();
+		const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+		el.querySelector("[data-modal-close]")?.dispatchEvent(click);
+		expect(click.defaultPrevented).toBe(true);
+		expect(m?.isOpen()).toBe(false);
+	});
+
 	it("data-modal-close 링크는 닫으면서 이동을 막지 않는다 (#981)", () => {
 		const el = mount('<a href="#next" data-modal-close>다음</a>');
 		const m = Modal(el);

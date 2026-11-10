@@ -204,8 +204,10 @@ export function Modal(element, options = {}) {
 		const closer = e.target.closest?.("[data-modal-close]");
 		if (closer && closer.closest(".bt-modal") === modal) {
 			// type 없는 <button> 은 <form> 안에서 submit 이다 - "취소" 가 폼을 보내지 않게.
-			// <button> 만 막는다 - <a href data-modal-close> 는 닫으면서 이동해야 한다 (#981)
-			if (closer.tagName === "BUTTON" && !closer.hasAttribute("type")) e.preventDefault();
+			// <button> 만 막는다 - <a href data-modal-close> 는 닫으면서 이동해야 한다 (#981). 버튼 안 문구에
+			// 표시를 둔 `<button><span data-modal-close>` 도 그 버튼을 본다
+			const button = closer.closest("button");
+			if (button && !button.hasAttribute("type")) e.preventDefault();
 			close();
 			return;
 		}
