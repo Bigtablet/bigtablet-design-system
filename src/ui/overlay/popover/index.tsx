@@ -127,7 +127,9 @@ export const Popover = ({
 		const handleFocusIn = (e: FocusEvent) => {
 			const target = e.target as Element;
 			if (popoverRef.current?.contains(target) || wrapperRef.current?.contains(target)) return;
-			if (target.closest?.('[aria-modal="true"]')) setOpen(false);
+			// 팝오버가 들어 있는 대화상자(Modal 폼 안의 Popover)는 빼고, 새로 열린 다른 대화상자만 본다
+			const dialog = target.closest?.('[aria-modal="true"]');
+			if (dialog && dialog !== wrapperRef.current?.closest('[aria-modal="true"]')) setOpen(false);
 		};
 		document.addEventListener("mousedown", handleClick);
 		document.addEventListener("focusin", handleFocusIn);

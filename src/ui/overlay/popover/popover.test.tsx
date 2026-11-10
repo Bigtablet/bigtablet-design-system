@@ -35,6 +35,26 @@ describe("Popover", () => {
 		modal.remove();
 	});
 
+	it("stays open when focus moves to another control in the dialog that contains it", () => {
+		const host = document.createElement("div");
+		host.setAttribute("aria-modal", "true");
+		const other = document.createElement("button");
+		host.appendChild(other);
+		document.body.appendChild(host);
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel content</span>}
+				aria-label="popover"
+			/>,
+			{ container: host.appendChild(document.createElement("div")) },
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		act(() => other.focus());
+		expect(screen.getByText("Panel content")).toBeInTheDocument();
+		host.remove();
+	});
+
 	it("opens on trigger click and shows content", () => {
 		render(
 			<Popover

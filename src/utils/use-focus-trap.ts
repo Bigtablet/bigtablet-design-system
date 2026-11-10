@@ -130,10 +130,10 @@ export function useFocusTrap(
 				return;
 			}
 
-			// 포커스가 패널 자신이거나(본문 클릭 뒤) 후보 밖에 있으면 양 끝에서처럼 감싼다 - 패널에서 Shift+Tab 은
+			// 포커스가 패널 자신이거나(본문 클릭 뒤) 패널 밖에 있으면 양 끝에서처럼 감싼다 - 패널에서 Shift+Tab 은
 			// DOM 순서상 패널 앞(트리거 쪽)으로 나갔다 (#982)
 			const active = document.activeElement as HTMLElement | null;
-			const outside = !active || active === container || !focusableElements.includes(active);
+			const outside = !active || active === container || !container.contains(active);
 			if (e.shiftKey) {
 				if (active === firstElement || outside) {
 					e.preventDefault();
