@@ -134,6 +134,9 @@ Types: \`message\` (기본) / \`success\` / \`warning\` / \`error\` / \`info\`.
 \`t.dismiss(id)\` 로 닫는다. \`{ duration: Infinity }\` 는 저절로 닫히지 않고, \`{ action }\` 은
 메시지 옆에 한 번 누를 수 있는 버튼("실행 취소")을 둔다.
 
+\`placement\` 는 넓은 화면에서 뜨는 자리 - \`"top-right"\`(기본) · \`"bottom-right"\`. 머리 오른쪽의
+주 동작 버튼("추가")을 가리면 \`"bottom-right"\` 로 둔다. compact(600px 미만)는 값과 상관없이 아래쪽이다.
+
 ${NOTICE_COMPARISON}
 				`,
 			},
@@ -157,6 +160,15 @@ export const ProgrammaticControl: Story = {
 	render: () => (
 		<ToastProvider>
 			<ToastControlButtons />
+		</ToastProvider>
+	),
+};
+
+export const BottomRight: Story = {
+	name: "placement: bottom-right",
+	render: () => (
+		<ToastProvider placement="bottom-right">
+			<ToastDemoButtons />
 		</ToastProvider>
 	),
 };

@@ -49,3 +49,11 @@
   &[data-placement="right"] { --tooltip-from: translateX(-4px); }
   @include token.presence(var(--tooltip-from));
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 말풍선을 배경 · 그림자로만 구분한다 - 고대비는 둘 다 지운다.
+@media (forced-colors: active) {
+  .tooltip {
+    border: token.$border_width_standard solid CanvasText;
+  }
+}

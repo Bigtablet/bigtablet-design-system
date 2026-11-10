@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "4.8.0",
+	"version": "4.9.0",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -150,8 +150,8 @@
 		},
 		{
 			"path": "dist/index.css",
-			"limit": "18 kB",
-			"message": "Lowered 130 kB -> 18 kB on 2026-09-10: baseline is 14.56 kB brotlied, so the old limit sat 9x above reality and could never fire. The current limit leaves 3.44 kB. Raise it with a measurement, not to make a build pass."
+			"limit": "21 kB",
+			"message": "Raised 18 kB -> 21 kB on 2026-11-10 for forced-colors rules (#1001): develop measured 17.94 kB (0.06 kB under 18 kB after components added since 2026-09-10), the high-contrast rules add 0.2 kB -> 18.14 kB. Set with ~15% headroom as for the vanilla JS entry. Lowered 130 kB -> 18 kB on 2026-09-10: baseline is 14.56 kB brotlied, so the old limit sat 9x above reality and could never fire. The current limit leaves 3.44 kB. Raise it with a measurement, not to make a build pass."
 		}
 	]
 }

@@ -317,3 +317,21 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     }
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 현재 메뉴를 채운 배경으로만 표시한다 - 시스템 선택색으로 칠한다 (React 와 같음).
+// 접기 화살표는 mask + background-color 로 그려 고대비가 배경을 지우면 사라진다 - 글자색으로 다시 칠한다.
+@media (forced-colors: active) {
+  .bt-sidebar__item.is-active,
+  .bt-sidebar__item[aria-current="page"] {
+    // `!important` - hover · 모바일 레일처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+
+  .bt-sidebar__toggle::before {
+    forced-color-adjust: none;
+    background-color: ButtonText;
+  }
+}

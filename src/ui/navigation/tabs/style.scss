@@ -149,3 +149,18 @@
   .tabs_indicator_animated,
   .tabs_tab { transition: none; }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 현재 탭을 표시기(배경을 칠한 요소)로만 그린다 - 고대비가 배경을 지우면 밑줄 · 채운 상자가 사라진다.
+@media (forced-colors: active) {
+  .tabs_indicator {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .tabs_variant_fills .tabs_tab_active {
+    // `!important` - hover 처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
+    forced-color-adjust: none;
+    color: HighlightText !important;
+  }
+}

@@ -32,6 +32,19 @@
   pointer-events: none;
   width: 360px;
   max-width: calc(100vw - #{token.$spacing_32});
+  // 뷰포트보다 길어지면 목록 안에서 스크롤한다 (#1000) - 아래쪽 배치는 위로 자라 맨 위의 최신 토스트가
+  // 화면 밖으로 밀렸다. 위아래 여백 · BottomNav 를 뺀 높이. dvh 미지원 브라우저는 앞의 vh 를 쓴다.
+  max-height: calc(100vh - #{token.$spacing_32} - var(--bt-bottom-inset, 0px));
+  max-height: calc(100dvh - #{token.$spacing_32} - var(--bt-bottom-inset, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  // 막대는 숨긴다 - 상자가 pointer-events: none 이라 잡을 수 없고, 폭(클래식 막대 15px)만큼 토스트가 좁아진다.
+  // 휠 · 터치 · Tab(포커스가 가려진 토스트로 스크롤) 으로 움직이고, 아래끝에 잘린 토스트가 더 있음을 보인다
+  scrollbar-width: none;
+  // 스크롤 상자는 내용을 자른다 - 항목 그림자(다크 level2 아래 18px)와 슬라이드 인(translateX 20px)이
+  // 들어갈 안쪽 여백을 두고, 같은 만큼 음수 margin 으로 되돌려 자리는 그대로 둔다.
+  padding: token.$spacing_20;
+  margin: calc(-1 * #{token.$spacing_20});
 
   @include breakpoint.compact {
     top: auto;
@@ -45,9 +58,17 @@
   }
 }
 
+// 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 (#998). compact 는 원래 아래라 위 규칙과 같은 값이다.
+.toast_container[data-placement="bottom-right"] {
+  top: auto;
+  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+}
+
 // ── Item ─────────────────────────────────────────────────────────────────────
 
 .toast_item {
+  // 목록이 높이 상한에 닿으면 flex 가 항목을 눌러 줄인다(overflow: hidden 이라 min-height 가 0) - 스크롤되게 막는다
+  flex-shrink: 0;
   pointer-events: auto;
   position: relative;
   overflow: hidden;

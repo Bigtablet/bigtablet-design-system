@@ -288,3 +288,16 @@
   .button::before { transition: none; }
   .button:active { transform: none; }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 채운 버튼은 배경으로만 모양을 낸다 - 고대비가 배경을 지우면 글자만 남아 링크처럼 보인다.
+@media (forced-colors: active) {
+  .button_variant_filled,
+  .button_variant_tonal {
+    border: token.$border_width_standard solid ButtonText;
+  }
+
+  .button_disabled {
+    border-color: GrayText;
+  }
+}

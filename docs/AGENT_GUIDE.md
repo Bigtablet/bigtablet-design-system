@@ -80,7 +80,7 @@ export default function RootLayout({ children }) {
 Providers needed:
 - `ThemeProvider` - required for runtime dark mode toggle via `useTheme()`. If you only need OS-preference-based dark mode, you can omit it (CSS handles it).
 - `AlertProvider` - required for `useAlert()` confirmation dialogs.
-- `ToastProvider` - required for `useToast()` snackbar notifications.
+- `ToastProvider` - required for `useToast()` snackbar notifications. `placement="bottom-right"` (default `"top-right"`) when toasts would cover a header's primary action.
 
 ---
 

@@ -127,3 +127,19 @@
   pointer-events: none;
   line-height: 0;
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 고른 날은 배경으로만, 오늘은 그림자 테두리로만 표시한다 - 고대비는 둘 다 지운다.
+@media (forced-colors: active) {
+  .date_calendar_day_selected {
+    // `!important` - hover 처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
+    forced-color-adjust: none;
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+
+  .date_calendar_day_today {
+    outline: token.$border_width_standard solid CanvasText;
+    outline-offset: calc(-1 * #{token.$border_width_standard});
+  }
+}

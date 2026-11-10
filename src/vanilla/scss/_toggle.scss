@@ -112,3 +112,33 @@
     }
   }
 }
+
+// ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
+// 손잡이 · 켜진 트랙을 배경으로만 그린다 - 고대비가 배경을 지우면 손잡이가 사라져 켬/끔을 알 수 없다 (React 와 같음).
+@media (forced-colors: active) {
+  .bt-toggle__thumb {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .bt-toggle--on {
+    forced-color-adjust: none;
+    background: Highlight;
+    border-color: Highlight;
+
+    .bt-toggle__thumb {
+      background: HighlightText;
+    }
+  }
+
+  .bt-toggle:disabled {
+    forced-color-adjust: none;
+    background: Canvas;
+    border-color: GrayText;
+
+    .bt-toggle__thumb,
+    &.bt-toggle--on .bt-toggle__thumb {
+      background: GrayText;
+    }
+  }
+}
