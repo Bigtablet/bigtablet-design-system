@@ -168,4 +168,49 @@ describe("Form errorSummary", () => {
 		expect(screen.queryByRole("region")).toBeNull();
 		expect(screen.getByRole("alert")).toHaveTextContent("이메일: 에러");
 	});
+
+	// 비동기 제출 - 제출 중 재렌더에 남은 이전 에러가 아니라 응답으로 온 새 에러에서 포커스한다 (#993)
+	it("waits for new errors after an async submit before moving focus", () => {
+		const Screen = ({ errors, busy }: { errors: Record<string, string>; busy: boolean }) => (
+			<Form errorSummary errors={errors} aria-busy={busy} onSubmit={() => {}}>
+				<Fields />
+				<Button type="submit">저장</Button>
+			</Form>
+		);
+		const first = { email: "옛 에러" };
+		const { rerender } = render(<Screen errors={first} busy={false} />);
+		const button = screen.getByRole("button", { name: "저장" });
+		button.focus();
+		fireEvent.submit(button.closest("form") as HTMLFormElement);
+		rerender(<Screen errors={first} busy />);
+		expect(button).toHaveFocus();
+		rerender(<Screen errors={{ email: "새 에러" }} busy={false} />);
+		expect(screen.getByRole("region", { name: "1개 항목을 확인해 주세요" })).toHaveFocus();
+	});
+
+	it("does not steal focus for errors that appear without a submit", () => {
+		const { rerender } = render(
+			<Form errorSummary errors={{}}>
+				<Fields />
+			</Form>,
+		);
+		const input = screen.getAllByRole("textbox")[0] as HTMLElement;
+		input.focus();
+		rerender(
+			<Form errorSummary errors={{ email: "불러온 에러" }}>
+				<Fields />
+			</Form>,
+		);
+		expect(input).toHaveFocus();
+	});
+
+	it("renders an entry without a matching Field as plain text, not a dead link", () => {
+		render(
+			<Form errorSummary errors={{ unknown: "알 수 없는 에러" }}>
+				<Fields />
+			</Form>,
+		);
+		expect(screen.queryByRole("link")).toBeNull();
+		expect(screen.getByRole("region")).toHaveTextContent("알 수 없는 에러");
+	});
 });

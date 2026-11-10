@@ -109,13 +109,19 @@ export const Form = ({
 	const names = errorSummary ? errorNames(errors) : [];
 	const summaryRef = useRef<HTMLElement>(null);
 	const titleId = useId();
-	// 요약이 처음 나타날 때(마운트 · 제출 뒤) 포커스를 옮긴다. errors 객체가 렌더마다 새로 만들어져도
-	// 매번 뺏지 않게 "제출했다" · "막 붙었다" 를 표시로 둔다
-	const focusPendingRef = useRef(true);
 	const hasSummary = names.length > 0;
+	// 요약으로 포커스를 옮기는 때 - 처음부터 에러가 있으면 마운트 때, 그 밖에는 **제출 뒤 새 errors 가
+	// 들어왔을 때**. 제출 시점의 errors 를 기억해 둔다 - 비동기 제출 중 재렌더(제출 중 표시 등)에 남아 있던
+	// 이전 에러로 포커스를 써 버리면 서버 응답이 와도 옮기지 않았다. 제출과 무관하게 붙은 에러(비동기
+	// 로드)는 포커스를 뺏지 않는다
+	const focusRef = useRef<{ pending: boolean; staleErrors: FormProps["errors"] | null }>({
+		pending: hasSummary,
+		staleErrors: null,
+	});
 	useEffect(() => {
-		if (!hasSummary || !focusPendingRef.current) return;
-		focusPendingRef.current = false;
+		const focus = focusRef.current;
+		if (!focus.pending || !hasSummary || errors === focus.staleErrors) return;
+		focus.pending = false;
 		summaryRef.current?.focus();
 	});
 
@@ -134,7 +140,7 @@ export const Form = ({
 					// 기본 제출(페이지 이동)을 항상 막는다. 소비자가 매번 쓰던 한 줄이고,
 					// 빠뜨리면 SPA 에서 화면이 통째로 새로고침된다.
 					event.preventDefault();
-					focusPendingRef.current = true;
+					focusRef.current = { pending: true, staleErrors: errors };
 					onSubmit?.(event);
 				}}
 				{...props}
@@ -152,21 +158,34 @@ export const Form = ({
 							{errorSummaryTitle ?? t("form.errorSummary", { count: names.length })}
 						</div>
 						<ul className="form_error_summary_list">
-							{names.map((name) => (
-								<li key={name}>
-									<a
-										href={`#${fields[name]?.inputId ?? name}`}
-										className="form_error_summary_link"
-										onClick={(event) => {
-											event.preventDefault();
-											focusField(name);
-										}}
-									>
-										{fields[name]?.label ? `${fields[name].label}: ` : null}
+							{names.map((name) => {
+								const field = fields[name];
+								const text = (
+									<>
+										{field?.label ? `${field.label}: ` : null}
 										{errors?.[name]}
-									</a>
-								</li>
-							))}
+									</>
+								);
+								// 등록된 Field 가 없으면(이름 불일치 · Field 밖 입력) 갈 곳이 없다 - 죽은 링크 대신 글로 둔다
+								return (
+									<li key={name}>
+										{field ? (
+											<a
+												href={`#${field.inputId}`}
+												className="form_error_summary_link"
+												onClick={(event) => {
+													event.preventDefault();
+													focusField(name);
+												}}
+											>
+												{text}
+											</a>
+										) : (
+											text
+										)}
+									</li>
+								);
+							})}
 						</ul>
 					</section>
 				)}
