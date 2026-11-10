@@ -75,6 +75,27 @@ describe("Tooltip", () => {
 		await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
 	});
 
+	// 열린 채 disabled 가 되면 스택에서 빠진다 - 남으면 첫 Escape 를 삼켰다 (#982)
+	it("releases the Escape stack when it becomes disabled while open", async () => {
+		const { rerender } = render(
+			<Tooltip content="hint" delay={0}>
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		fireEvent.mouseEnter(screen.getByRole("button"));
+		await waitFor(() => expect(screen.getByRole("tooltip")).toBeInTheDocument());
+		rerender(
+			<Tooltip content="hint" delay={0} disabled>
+				<button type="button">btn</button>
+			</Tooltip>,
+		);
+		const onKey = vi.fn();
+		document.addEventListener("keydown", onKey);
+		fireEvent.keyDown(document.body, { key: "Escape" });
+		document.removeEventListener("keydown", onKey);
+		expect(onKey).toHaveBeenCalled();
+	});
+
 	it("hides when the trigger scrolls out of the viewport (#624)", async () => {
 		// 툴팁은 트리거를 설명하는 것이라 대상이 화면에 없으면 남을 이유가 없다.
 		const { container } = render(

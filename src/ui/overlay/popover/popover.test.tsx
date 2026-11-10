@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Popover } from "./index";
 
@@ -13,6 +13,26 @@ describe("Popover", () => {
 		);
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 		expect(screen.queryByText("Panel content")).not.toBeInTheDocument();
+	});
+
+	// 팝오버 안에서 연 Modal 로 포커스가 넘어가면 닫는다 - 남으면 딤 위에 떴다 (#982)
+	it("closes when focus moves into a modal dialog opened from it", () => {
+		render(
+			<Popover
+				trigger={<button type="button">Open</button>}
+				content={<span>Panel content</span>}
+				aria-label="popover"
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Open" }));
+		const modal = document.createElement("div");
+		modal.setAttribute("aria-modal", "true");
+		const inner = document.createElement("button");
+		modal.appendChild(inner);
+		document.body.appendChild(modal);
+		act(() => inner.focus());
+		expect(screen.queryByText("Panel content")).toBeNull();
+		modal.remove();
 	});
 
 	it("opens on trigger click and shows content", () => {

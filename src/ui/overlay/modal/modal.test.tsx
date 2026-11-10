@@ -691,6 +691,19 @@ describe("Modal", () => {
 		expect(document.activeElement).toBe(screen.getByRole("button", { name: "닫기" }));
 	});
 
+	// 닫기 버튼도 없으면 패널로 간다 - footer 의 destructive 버튼이 아니다 (#982)
+	it("focuses the panel, not a footer action, when there is no body and no close button", () => {
+		render(
+			<Modal
+				open
+				title="프로젝트 삭제"
+				footer={<button type="button">삭제</button>}
+				className="confirm_panel"
+			/>,
+		);
+		expect(document.activeElement).toHaveClass("confirm_panel");
+	});
+
 	it("still focuses the close button when the body has no control", () => {
 		render(
 			<Modal open onClose={() => {}} title="안내">
