@@ -83,7 +83,7 @@ describe("Toast display", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		expect(screen.getByRole("status")).toBeInTheDocument();
-		expect(screen.getByText("저장 완료")).toBeInTheDocument();
+		expect(screen.getByText("저장 완료", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows a toast when error() is called", () => {
@@ -96,7 +96,7 @@ describe("Toast display", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		expect(screen.getByRole("alert")).toBeInTheDocument();
-		expect(screen.getByText("오류 발생")).toBeInTheDocument();
+		expect(screen.getByText("오류 발생", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows a toast when warning() is called", () => {
@@ -109,7 +109,7 @@ describe("Toast display", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		expect(screen.getByRole("status")).toBeInTheDocument();
-		expect(screen.getByText("경고 메시지")).toBeInTheDocument();
+		expect(screen.getByText("경고 메시지", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows a toast when info() is called", () => {
@@ -122,7 +122,7 @@ describe("Toast display", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		expect(screen.getByRole("status")).toBeInTheDocument();
-		expect(screen.getByText("정보 메시지")).toBeInTheDocument();
+		expect(screen.getByText("정보 메시지", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows a toast when message() is called", () => {
@@ -135,7 +135,7 @@ describe("Toast display", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
 		expect(screen.getByRole("status")).toBeInTheDocument();
-		expect(screen.getByText("기본 메시지")).toBeInTheDocument();
+		expect(screen.getByText("기본 메시지", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows multiple toasts at once", () => {
@@ -165,8 +165,8 @@ describe("Toast display", () => {
 		// 첫 번째는 success(role="status"), 두 번째는 error(role="alert")
 		expect(screen.getByRole("status")).toBeInTheDocument();
 		expect(screen.getByRole("alert")).toBeInTheDocument();
-		expect(screen.getByText("첫 번째")).toBeInTheDocument();
-		expect(screen.getByText("두 번째")).toBeInTheDocument();
+		expect(screen.getByText("첫 번째", { selector: ".toast_message" })).toBeInTheDocument();
+		expect(screen.getByText("두 번째", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("respects maxCount option", async () => {
@@ -195,10 +195,10 @@ describe("Toast display", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "spam" }));
 
-		// maxCount=3 - 밀려난 하나는 퇴출 모션 동안 잠깐 남아 있다가 사라진다 (success 는 role="status")
+		// maxCount=3 - 밀려난 하나는 퇴출 모션 동안 잠깐 남아 있다가 사라진다
 		await waitFor(
 			() => {
-				expect(screen.getAllByRole("status")).toHaveLength(3);
+				expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
 			},
 			{ timeout: 1500 },
 		);
@@ -216,14 +216,16 @@ describe("Toast close", () => {
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
-		expect(screen.getByText("닫기 테스트")).toBeInTheDocument();
+		expect(screen.getByText("닫기 테스트", { selector: ".toast_message" })).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
 
 		// spring exit 완료 후 unmount (실제 RAF 진행 대기)
 		await waitFor(
 			() => {
-				expect(screen.queryByText("닫기 테스트")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("닫기 테스트", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
@@ -246,7 +248,9 @@ describe("Toast close", () => {
 		// 결국 단 한 번만 unmount 되고 토스트 사라짐
 		await waitFor(
 			() => {
-				expect(screen.queryByText("중복 닫기")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("중복 닫기", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
@@ -319,9 +323,11 @@ describe("Toast portal & a11y", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
+		// 컨테이너는 랜드마크일 뿐 라이브 리전이 아니다 - 공지는 안쪽 숨은 영역이 맡는다 (#994)
 		const region = screen.getByRole("region", { name: "알림" });
-		expect(region).toHaveAttribute("aria-live", "polite");
-		expect(region).toHaveAttribute("aria-atomic", "false");
+		expect(region).not.toHaveAttribute("aria-live");
+		expect(screen.getByRole("status")).toHaveTextContent("aria 검사");
+		expect(region.querySelector(".toast_live")).toHaveAttribute("aria-hidden", "true");
 	});
 
 	it("uses role=alert only for error variant and role=status for the rest", () => {
@@ -360,10 +366,9 @@ describe("Toast portal & a11y", () => {
 		fireEvent.click(screen.getByRole("button", { name: "m" }));
 		fireEvent.click(screen.getByRole("button", { name: "e" }));
 
-		// error 1개만 alert
-		expect(screen.getAllByRole("alert")).toHaveLength(1);
-		// 나머지 4개는 status
-		expect(screen.getAllByRole("status")).toHaveLength(4);
+		// error 만 alert 영역에, 나머지 4개는 status 영역에 읽힌다 - 영역은 하나씩이다 (#994)
+		expect(screen.getByRole("alert").querySelectorAll("p")).toHaveLength(1);
+		expect(screen.getByRole("status").querySelectorAll("p")).toHaveLength(4);
 	});
 
 	it("respects custom closeAriaLabel prop", () => {
@@ -570,19 +575,19 @@ describe("Toast stack & ids", () => {
 
 		// maxCount=2 에 밀린 "old" 는 즉시 잘리지 않고 닫기 버튼과 같은 퇴출 모션을 탄다 -
 		// 한 프레임에 사라지면 그 안의 포커스가 body 로 떨어진다.
-		expect(screen.getByText("old")).toBeInTheDocument();
-		expect(screen.getByText("mid")).toBeInTheDocument();
-		expect(screen.getByText("new")).toBeInTheDocument();
+		expect(screen.getByText("old", { selector: ".toast_message" })).toBeInTheDocument();
+		expect(screen.getByText("mid", { selector: ".toast_message" })).toBeInTheDocument();
+		expect(screen.getByText("new", { selector: ".toast_message" })).toBeInTheDocument();
 
 		await act(async () => anim.finish());
 		await waitFor(
 			() => {
-				expect(screen.queryByText("old")).not.toBeInTheDocument();
+				expect(screen.queryByText("old", { selector: ".toast_message" })).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
-		expect(screen.getByText("mid")).toBeInTheDocument();
-		expect(screen.getByText("new")).toBeInTheDocument();
+		expect(screen.getByText("mid", { selector: ".toast_message" })).toBeInTheDocument();
+		expect(screen.getByText("new", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("shows nothing for maxCount <= 0 instead of flashing a toast in and out", () => {
@@ -595,7 +600,9 @@ describe("Toast stack & ids", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 
-		expect(screen.queryByText("보이면 안 됨")).not.toBeInTheDocument();
+		expect(
+			screen.queryByText("보이면 안 됨", { selector: ".toast_message" }),
+		).not.toBeInTheDocument();
 	});
 
 	it("hands focus to an adjacent toast when the focused toast is evicted by maxCount", async () => {
@@ -630,7 +637,9 @@ describe("Toast stack & ids", () => {
 
 		await waitFor(
 			() => {
-				expect(screen.queryByText("첫 번째")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("첫 번째", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
@@ -664,7 +673,7 @@ describe("Toast stack & ids", () => {
 		fireEvent.click(screen.getByRole("button", { name: "dup" }));
 
 		// 동일한 메시지라도 별도의 DOM 노드(서로 다른 id)로 렌더링되어야 함
-		expect(screen.getAllByText("같은 메시지")).toHaveLength(3);
+		expect(screen.getAllByText("같은 메시지", { selector: ".toast_message" })).toHaveLength(3);
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
 	});
 
@@ -742,11 +751,13 @@ describe("Toast programmatic control", () => {
 		fireEvent.click(screen.getByRole("button", { name: "dismiss" }));
 
 		// 즉시 잘라내지 않는다 - 퇴출 모션 동안 남아 있다가 사라진다.
-		expect(screen.getByText("닫힐 것")).toBeInTheDocument();
+		expect(screen.getByText("닫힐 것", { selector: ".toast_message" })).toBeInTheDocument();
 		await act(async () => anim.finish());
 		await waitFor(
 			() => {
-				expect(screen.queryByText("닫힐 것")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("닫힐 것", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
@@ -765,7 +776,7 @@ describe("Toast programmatic control", () => {
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
-		expect(screen.getByText("남는다")).toBeInTheDocument();
+		expect(screen.getByText("남는다", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("update(id, patch) changes message and tone in place", () => {
@@ -788,7 +799,9 @@ describe("Toast programmatic control", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "update" }));
 		// 같은 토스트 하나가 바뀐다 - 새로 뜨지 않는다.
-		expect(screen.queryByText("업로드 중…")).not.toBeInTheDocument();
+		expect(
+			screen.queryByText("업로드 중…", { selector: ".toast_message" }),
+		).not.toBeInTheDocument();
 		expect(screen.getByRole("alert")).toHaveTextContent("업로드 완료");
 		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
 	});
@@ -804,7 +817,7 @@ describe("Toast programmatic control", () => {
 
 		// 진행 바가 없으면 onAnimationEnd 도 없다 - 자동 닫힘 경로 자체가 빠진다.
 		expect(document.querySelector(".toast_progress")).toBeNull();
-		expect(screen.getByText("계속 떠 있음")).toBeInTheDocument();
+		expect(screen.getByText("계속 떠 있음", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
 	it("restarts the progress bar when update changes duration", () => {
@@ -861,7 +874,9 @@ describe("Toast programmatic control", () => {
 		expect(onClick).toHaveBeenCalledTimes(1);
 		await waitFor(
 			() => {
-				expect(screen.queryByText("삭제됨")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("삭제됨", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
@@ -887,13 +902,15 @@ describe("Toast programmatic control", () => {
 		expect(onClick).toHaveBeenCalledTimes(1);
 		await waitFor(
 			() => {
-				expect(screen.queryByText("삭제됨")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("삭제됨", { selector: ".toast_message" }),
+				).not.toBeInTheDocument();
 			},
 			{ timeout: 1500 },
 		);
 	});
 
-	it("re-inserts the live region when update crosses status↔alert, keeping the item node", () => {
+	it("moves the announcement from status to alert when update turns it into an error, keeping the item node", () => {
 		let id = "";
 		render(
 			<ToastProvider>
@@ -908,21 +925,37 @@ describe("Toast programmatic control", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "show" }));
 		const itemBefore = document.querySelector(".toast_item");
-		const statusNode = screen.getByRole("status");
+		expect(screen.getByRole("status")).toHaveTextContent("업로드 중…");
 
-		// 보조기술은 라이브 리전의 긴급도를 삽입 시점에 정한다 - role 속성만 바뀌면 assertive 로
-		// 재공지되지 않는다. 노드가 새로 삽입돼야 한다.
+		// 보조기술은 긴급도를 노드 삽입 시점에 정한다 - 실패는 alert 영역에 새 노드로 들어가야 assertive 로 읽힌다
 		fireEvent.click(screen.getByRole("button", { name: "fail" }));
-		const alertNode = screen.getByRole("alert");
-		expect(alertNode).not.toBe(statusNode);
-		expect(alertNode).toHaveTextContent("실패");
+		expect(screen.getByRole("status")).toBeEmptyDOMElement();
+		const failLine = screen.getByRole("alert").querySelector("p");
+		expect(failLine).toHaveTextContent("실패");
 		// 바깥 토스트 노드는 그대로다 - 진입 모션이 다시 돌지 않고 버튼 포커스도 살아 있다.
 		expect(document.querySelector(".toast_item")).toBe(itemBefore);
 
-		// role 이 안 바뀌는 갱신은 같은 노드에서 내용만 바뀐다 (라이브 리전이 변경을 읽는다).
+		// 문구가 바뀌면 새 노드로 다시 넣는다 - 같은 노드의 텍스트만 바꾸면 놓치는 보조기술이 있다
 		fireEvent.click(screen.getByRole("button", { name: "retry" }));
-		expect(screen.getByRole("alert")).toBe(alertNode);
-		expect(alertNode).toHaveTextContent("재시도 중");
+		const retryLine = screen.getByRole("alert").querySelector("p");
+		expect(retryLine).toHaveTextContent("재시도 중");
+		expect(retryLine).not.toBe(failLine);
+	});
+
+	// 공지 영역은 문구만 담는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다 (#994)
+	it("announces only the message, not the close or action button names", () => {
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) =>
+						t.message("삭제했습니다", { action: { label: "실행 취소", onClick: () => {} } })
+					}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(screen.getByRole("status")).toHaveTextContent(/^삭제했습니다$/);
+		expect(screen.getByRole("region", { name: "알림" })).not.toHaveAttribute("aria-live");
 	});
 
 	it("update(id, { action: null }) removes the action button", () => {

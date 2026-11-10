@@ -53,16 +53,33 @@ describe("Toast", () => {
 		expect(first.querySelector(".bt-toast__icon--success")).not.toBeNull();
 	});
 
-	it("error 만 role=alert, 나머지는 role=status 로 메시지를 감싼다", () => {
-		Toast("실패", "error");
+	// 리전은 라이브 리전이 아니고, 문구만 숨은 공지 영역에 들어간다 - error 는 alert, 나머지는 status (#994)
+	it("error 는 alert, 나머지는 status 공지 영역에 문구만 넣는다", () => {
+		vi.useFakeTimers();
+		Toast("실패", "error", { action: { label: "다시", onClick: () => {} } });
 		Toast("안내", "info");
+		vi.runAllTimers();
+		vi.useRealTimers();
 
-		const info = nth(0);
-		const error = nth(1);
-		expect(error.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("alert");
-		expect(info.querySelector(".bt-toast__live")?.getAttribute("role")).toBe("status");
-		// 버튼은 라이브 리전 밖이다
-		expect(error.querySelector(".bt-toast__live .bt-toast__close")).toBeNull();
+		const region = document.querySelector(".bt-toast-container") as HTMLElement;
+		expect(region.hasAttribute("aria-live")).toBe(false);
+		const announcer = (role: string) =>
+			region.querySelector(`.bt-toast__announcer[role="${role}"]`) as HTMLElement;
+		expect(announcer("alert").textContent).toBe("실패");
+		expect(announcer("status").textContent).toBe("안내");
+		// 보이는 메시지는 보조기술에서 뺀다 - 두 번 읽히지 않게
+		expect(nth(0).querySelector(".bt-toast__live")?.getAttribute("aria-hidden")).toBe("true");
+	});
+
+	it("닫으면 공지 영역의 문구도 뺀다", () => {
+		vi.useFakeTimers();
+		Toast("하나", "info");
+		vi.runAllTimers();
+		vi.useRealTimers();
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(status.textContent).toBe("하나");
+		(nth(0).querySelector(".bt-toast__close") as HTMLButtonElement).click();
+		expect(status.textContent).toBe("");
 	});
 
 	it("모르는 tone 은 neutral 로 그린다", () => {

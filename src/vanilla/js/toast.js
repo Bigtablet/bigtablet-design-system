@@ -58,21 +58,43 @@ export function Toast(message, tone = "neutral", options = {}) {
 		region = document.createElement("div");
 		region.className = "bt-toast-container";
 		region.setAttribute("role", "region");
-		region.setAttribute("aria-live", "polite");
-		region.setAttribute("aria-atomic", "false");
 		region.setAttribute("aria-label", regionLabel);
 		document.body.appendChild(region);
+	}
+	// 리전은 랜드마크일 뿐 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(버튼 포함)를 감싸고 안쪽
+	// 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 안쪽 숨은 영역 둘이 맡는다.
+	// 예전 버전이 만든(또는 서버가 그린) 리전에도 붙인다
+	region.removeAttribute("aria-live");
+	region.removeAttribute("aria-atomic");
+	let fresh = false;
+	for (const role of ["status", "alert"]) {
+		if (region.querySelector(`:scope > .bt-toast__announcer[role="${role}"]`)) continue;
+		const announcer = document.createElement("div");
+		announcer.className = "bt-toast__announcer";
+		announcer.setAttribute("role", role);
+		region.appendChild(announcer);
+		fresh = true;
 	}
 
 	const item = document.createElement("div");
 	item.className = "bt-toast";
 	item.dataset.state = "open";
-	// 라이브 리전은 아이콘 + 메시지만 감싼다 - 버튼까지 읽히면 소음이다 (React 와 같음)
+	// 보이는 메시지는 보조기술에서 뺀다 - 같은 문구를 숨은 공지 영역이 읽는다 (React 와 같음, #994)
 	item.innerHTML =
-		`<div class="bt-toast__live" role="${safeTone === "error" ? "alert" : "status"}">` +
+		'<div class="bt-toast__live" aria-hidden="true">' +
 		`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
 		'<span class="bt-toast__message"></span></div>';
 	item.querySelector(".bt-toast__message").textContent = message;
+
+	// 문구만 공지 영역에 넣는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다. error 는 alert 쪽(assertive).
+	// 리전을 방금 만들었으면 한 틱 뒤에 넣는다 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 삽입이 공지된다
+	const line = document.createElement("p");
+	line.textContent = message;
+	const announcer = region.querySelector(
+		`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
+	);
+	if (fresh) setTimeout(() => announcer?.appendChild(line), 100);
+	else announcer?.appendChild(line);
 
 	let closing = false;
 
@@ -87,6 +109,7 @@ export function Toast(message, tone = "neutral", options = {}) {
 			(closes[index + 1] || closes[index - 1])?.focus();
 		}
 		item.dataset.state = "closed";
+		line.remove();
 		// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게
 		item.setAttribute("inert", "");
 		afterExit([item], () => item.remove());

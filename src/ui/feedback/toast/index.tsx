@@ -127,16 +127,12 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
 	const autoDismisses = Number.isFinite(item.duration);
-	const liveRole = item.tone === "error" ? "alert" : "status";
 
 	return (
 		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
-			{/* 라이브 리전은 메시지만 감싼다 - 버튼까지 읽히면 소음이다. role 을 key 로 두어
-			    update 로 status↔alert 가 바뀌면 이 노드만 다시 삽입된다. 보조기술은 라이브 리전의
-			    긴급도를 노드 삽입 시점에 정하므로, 속성만 바꾸면 "진행 중 → 실패" 가 assertive 로
-			    재공지되지 않는다. 바깥 div 는 그대로라 진입 모션이 다시 돌지 않고 닫기·액션
-			    버튼의 포커스도 유지된다. */}
-			<div key={liveRole} className="toast_live" role={liveRole}>
+			{/* 보이는 메시지는 보조기술에서 뺀다 - 같은 문구를 Provider 의 공지 영역(ToastAnnouncer)이 읽는다.
+			    둘 다 두면 리전을 훑을 때 메시지가 두 번 나온다. 버튼은 그대로 남는다 */}
+			<div className="toast_live" aria-hidden="true">
 				<span className={`toast_icon toast_icon_${item.tone}`} aria-hidden="true">
 					{TONE_ICONS[item.tone]}
 				</span>
@@ -193,6 +189,31 @@ let toastSeq = 0;
  * @param props Provider 속성
  * @returns 렌더링된 Provider와 토스트 컨테이너
  */
+/**
+ * 토스트 문구를 읽어 주는 숨은 공지 영역 - 컨테이너와 함께 처음부터 붙어 있다. 라이브 리전은 내용보다 먼저
+ * DOM 에 있어야 삽입이 공지된다 - 토스트마다 role 노드를 새로 꽂으면 그것을 놓치는 보조기술이 있다.
+ * 문구만 담아 닫기 · 액션 버튼 이름이 섞이지 않는다.
+ * key 에 문구를 넣어 update 로 바뀌면 다시 삽입(재공지)되고, tone 이 error 로 바뀌면 alert 쪽으로 옮겨
+ * assertive 로 읽힌다 - 보조기술은 긴급도를 노드 삽입 시점에 정한다. 퇴출 중인 항목은 뺀다.
+ */
+const ToastAnnouncer = ({ toasts }: { toasts: ToastItem[] }) => {
+	const live = toasts.filter((toast) => !toast.dismissing);
+	const lines = (urgent: boolean) =>
+		live
+			.filter((toast) => (toast.tone === "error") === urgent)
+			.map((toast) => <p key={`${toast.id}:${toast.message}`}>{toast.message}</p>);
+	return (
+		<>
+			<div className="toast_announcer" role="status">
+				{lines(false)}
+			</div>
+			<div className="toast_announcer" role="alert">
+				{lines(true)}
+			</div>
+		</>
+	);
+};
+
 export const ToastProvider = ({
 	children,
 	maxCount = 5,
@@ -285,14 +306,11 @@ export const ToastProvider = ({
 			{children}
 			{isMounted &&
 				createPortal(
-					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the WAI-ARIA equivalent for live announcements
-					<div
-						className="toast_container"
-						role="region"
-						aria-live="polite"
-						aria-atomic="false"
-						aria-label={regionLabel}
-					>
+					// 컨테이너는 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(닫기 · 액션 버튼 포함)를 감싸고
+					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다
+					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the landmark for the toast list
+					<div className="toast_container" role="region" aria-label={regionLabel}>
+						<ToastAnnouncer toasts={toasts} />
 						{toasts.map((item) => (
 							<ToastItemComponent
 								key={item.id}
