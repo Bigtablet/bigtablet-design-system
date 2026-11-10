@@ -84,6 +84,8 @@ export const Card = ({
 			{...props}
 			// 소비자 onKeyDown 은 activation 안에서 먼저 실행되므로 스프레드 뒤에 덮어쓴다.
 			onKeyDown={activation.onKeyDown}
+			// 안쪽 버튼 · 입력의 클릭은 카드 클릭이 아니다 (#983)
+			onClick={activation.onClick}
 		>
 			{heading ? <HeadingTag className="card_title">{heading}</HeadingTag> : null}
 			<div className="card_body">{children}</div>

@@ -73,7 +73,8 @@ export const ListItem = ({
 		// biome-ignore lint/a11y/useAriaPropsSupportedByRole: role 은 keyActivationProps 가 주므로 정적 분석이 못 본다 - onClick 이 있으면 role=button 이고 aria-pressed 는 그때만 붙는다
 		<div
 			className={rootClassName}
-			onClick={disabled ? undefined : onClick}
+			// 안쪽 버튼(trailingElement 등)의 클릭은 행 클릭이 아니다 (#983)
+			onClick={disabled ? undefined : activation.onClick}
 			// 키보드 활성화 규칙은 Card·MediaCard 와 같은 곳에서 온다 (`keyActivationProps`).
 			role={activation.role}
 			tabIndex={activation.tabIndex}

@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
+import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
 /** 항목의 진행 상태. 색과 연결선의 진하기를 정한다 */
@@ -74,40 +75,57 @@ export interface TimelineProps extends SafeHTMLProps<React.HTMLAttributes<HTMLOL
 /** 렌더할 값이 있는지. 숫자 0 은 값이고, 빈 문자열은 값이 아니다 */
 const isPresent = (value: React.ReactNode) => value !== undefined && value !== null && value !== "";
 
-export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => (
-	<ol ref={ref} className={cn("timeline", className)} {...props}>
-		{items.map((item) => {
-			const status = item.status ?? "pending";
-			return (
-				<li key={item.id} className={cn("timeline_item", `timeline_item_${status}`)}>
-					<span className="timeline_indicator" aria-hidden="true">
-						{/* 아이콘을 주지 않아도 상태가 **모양**으로 구분돼야 한다 - 배경색만 다르면
+export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => {
+	const t = useLocaleText();
+	// 숨은 상태 문구 - 키를 리터럴로 두어 카탈로그 검사(check:defaults)가 사용처를 찾는다
+	const statusText = {
+		done: t("timeline.done"),
+		active: t("timeline.active"),
+		pending: t("timeline.pending"),
+	};
+	return (
+		<ol ref={ref} className={cn("timeline", className)} {...props}>
+			{items.map((item) => {
+				const status = item.status ?? "pending";
+				return (
+					// 상태는 모양 · 색만으로 전하지 않는다 - active 는 aria-current, 각 항목에 숨은 상태 문구 (#983)
+					<li
+						key={item.id}
+						className={cn("timeline_item", `timeline_item_${status}`)}
+						aria-current={status === "active" ? "step" : undefined}
+					>
+						<span className="timeline_indicator" aria-hidden="true">
+							{/* 아이콘을 주지 않아도 상태가 **모양**으로 구분돼야 한다 - 배경색만 다르면
 						    색을 구분하지 못하는 사용자에게 done 과 active 가 같아 보인다
 						    (WCAG 1.4.1). done 은 체크, active 는 꽉 찬 점, pending 은 빈 원. */}
-						{item.icon ??
-							(status === "done" ? (
-								<CheckGlyph />
-							) : (
-								<span
-									className={cn("timeline_dot", { timeline_dot_hollow: status === "pending" })}
-								/>
-							))}
-					</span>
-					<div className="timeline_body">
-						{/* span·p 가 아니라 div 다. title·time·description 은 ReactNode 라 소비자가
+							{item.icon ??
+								(status === "done" ? (
+									<CheckGlyph />
+								) : (
+									<span
+										className={cn("timeline_dot", { timeline_dot_hollow: status === "pending" })}
+									/>
+								))}
+						</span>
+						<div className="timeline_body">
+							{/* span·p 가 아니라 div 다. title·time·description 은 ReactNode 라 소비자가
 						    Chip·Badge 같은 block 요소를 넣을 수 있는데, span 안의 div 나 p 안의 div 는
 						    유효하지 않은 HTML 이라 브라우저 파서가 구조를 바꾸고 SSR hydration 이 어긋난다. */}
-						<div className="timeline_head">
-							<div className="timeline_title">{item.title}</div>
-							{isPresent(item.time) && <div className="timeline_time">{item.time}</div>}
+							<div className="timeline_head">
+								<div className="timeline_title">
+									{item.title}
+									<span className="timeline_status">, {statusText[status]}</span>
+								</div>
+								{isPresent(item.time) && <div className="timeline_time">{item.time}</div>}
+							</div>
+							{isPresent(item.description) && (
+								<div className="timeline_description">{item.description}</div>
+							)}
+							{item.children}
 						</div>
-						{isPresent(item.description) && (
-							<div className="timeline_description">{item.description}</div>
-						)}
-						{item.children}
-					</div>
-				</li>
-			);
-		})}
-	</ol>
-);
+					</li>
+				);
+			})}
+		</ol>
+	);
+};

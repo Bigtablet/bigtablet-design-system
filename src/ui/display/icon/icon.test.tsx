@@ -37,4 +37,9 @@ describe("Icon", () => {
 
 		expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
 	});
+
+	it("does not hide an icon named by aria-labelledby (#983)", () => {
+		const { container } = render(<Icon icon={Search} aria-labelledby="x" />);
+		expect(container.querySelector("svg")).not.toHaveAttribute("aria-hidden");
+	});
 });

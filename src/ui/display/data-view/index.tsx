@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import type * as React from "react";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import { EmptyState } from "../../feedback/empty-state";
@@ -176,9 +176,9 @@ export const DataView = <T extends object>({
 	// "1개 선택됨" 을 유지하고, 삭제를 누르면 **보이지 않는 행**이 지워진다. 체크된 칸이
 	// 하나도 없는 화면에서 벌어지는 일이라 사용자는 무엇이 지워졌는지 알 수 없다.
 	//
-	// 페이지네이션이 있으면 건드리지 않는다. 그때는 화면 밖 선택이 정상이고(서버 페이지네이션에서
+	// 페이지네이션이 있으면 다른 쪽의 선택은 남긴다. 그때는 화면 밖 선택이 정상이고(서버 페이지네이션에서
 	// 여러 쪽에 걸쳐 고르는 것이 Table 이 의도적으로 지원하는 동작이다) 쪽을 넘길 때마다 선택이
-	// 사라지면 기능 자체가 없어진다.
+	// 사라지면 기능 자체가 없어진다. 같은 쪽에서 사라진 행만 버린다.
 	const hasPagination = !!pagination;
 	// 쪽 정보가 있으면 행 번호를 전체 순번으로 옮긴다. `pageSize` 없이는 계산할 수 없으므로
 	// 그때는 예전처럼 쪽마다 1 부터 시작한다.
@@ -189,39 +189,44 @@ export const DataView = <T extends object>({
 	// 문자열로 비교한다 - rows·rowKey 를 그대로 의존성에 두면 인라인 배열·화살표 때문에
 	// 매 렌더 새 정체가 되어 효과가 계속 돈다. 구분자를 끼워 잇는 방식은 key 안에 그 문자가
 	// 들어가면 서로 다른 목록이 같은 서명이 되므로 길이까지 보존하는 JSON 으로 만든다.
-	// 정리가 필요 없는 경우에는 아예 계산하지 않는다 - 행이 많은 표에서 매 렌더 O(n) 이다.
-	const needsSelectionPrune = selectable && !hasPagination;
-	const visibleKeySignature = needsSelectionPrune ? JSON.stringify(rows.map(rowKey)) : "";
+	// 선택이 없는 표에서는 아예 계산하지 않는다 - 행이 많은 표에서 매 렌더 O(n) 이다.
+	const visibleKeySignature = selectable ? JSON.stringify(rows.map(rowKey)) : "";
+	// 같은 쪽에 있다가 사라진 행 - 페이지네이션이 있어도 이건 버린다. 지운 행의 선택이 남아 "1개 선택됨" 이
+	// 유지되고, 다시 누르면 없는 행으로 액션이 또 불렸다 (#983).
+	// 쪽만 먼저 바뀌고 목록은 이전 쪽 그대로인 렌더(react-query · SWR 의 keepPreviousData)에서는 목록을
+	// 그 쪽 것으로 기록하지 않는다 - 기록하면 새 쪽 데이터가 올 때 이전 쪽 선택이 통째로 지워진다
+	const shownRef = useRef<{ page: number | undefined; signature: string; keys: string[] | null }>({
+		page: undefined,
+		signature: "",
+		keys: null,
+	});
 	// biome-ignore lint/correctness/useExhaustiveDependencies: rows·rowKey 대신 위 signature 로 내용 변화만 본다
 	useEffect(() => {
-		if (!needsSelectionPrune) return;
-		const visible = new Set(rows.map(rowKey));
-		setSelectedKeys((prev) => {
-			const next = prev.filter((key) => visible.has(key));
-			return next.length === prev.length ? prev : next;
+		// 불러오는 중에는 비어 보이는 목록으로 선택을 지우지 않는다
+		if (!selectable || query.isLoading) return;
+		const keys = rows.map(rowKey);
+		const visible = new Set(keys);
+		const prev = shownRef.current;
+		const page = pagination?.page;
+		const samePage = prev.page === page;
+		const stale = !samePage && prev.signature === visibleKeySignature;
+		shownRef.current = { page, signature: visibleKeySignature, keys: stale ? null : keys };
+		if (hasPagination && !(samePage && prev.keys)) return;
+		const removed = hasPagination ? new Set(prev.keys?.filter((k) => !visible.has(k))) : null;
+		setSelectedKeys((selected) => {
+			const next = selected.filter((key) => (removed ? !removed.has(key) : visible.has(key)));
+			return next.length === selected.length ? selected : next;
 		});
-	}, [visibleKeySignature, needsSelectionPrune]);
+	}, [visibleKeySignature, selectable, hasPagination, pagination?.page, query.isLoading]);
+	// 검색어가 바뀌면 다른 쪽에 남은 선택도 버린다 - 이제 조건 밖인 행이 액션 대상에 남는다 (#983)
+	const searchValue = toolbar?.searchValue;
+	// biome-ignore lint/correctness/useExhaustiveDependencies: 검색어 변화만 신호로 쓴다
+	useEffect(() => {
+		setSelectedKeys((selected) => (selected.length === 0 ? selected : []));
+	}, [searchValue]);
 	// 로딩 중에는 Table 이 스켈레톤을 그리므로 빈 상태로 넘기지 않는다. 셋을 동시에 보면
 	// 화면이 "없음 -> 스켈레톤 -> 데이터" 로 두 번 깜빡인다.
 	const showEmpty = !query.isLoading && !query.error && rows.length === 0;
-
-	if (query.error) {
-		return (
-			<div className={cn("data_view", className)} {...props}>
-				<ErrorState
-					variant="widget"
-					title={errorTitle}
-					action={
-						query.refetch ? (
-							<Button size="sm" variant="outline" onClick={query.refetch}>
-								{retryLabel}
-							</Button>
-						) : undefined
-					}
-				/>
-			</div>
-		);
-	}
 
 	return (
 		<div className={cn("data_view", className)} {...props}>
@@ -245,7 +250,22 @@ export const DataView = <T extends object>({
 				</div>
 			)}
 
-			{selectable && selectedKeys.length > 0 && (
+			{query.error ? (
+				// 툴바는 남긴다 - 조건(검색 · 필터)이 원인일 때 그걸 고칠 수 있어야 한다 (#983)
+				<ErrorState
+					variant="widget"
+					title={errorTitle}
+					action={
+						query.refetch ? (
+							<Button size="sm" variant="outline" onClick={query.refetch}>
+								{retryLabel}
+							</Button>
+						) : undefined
+					}
+				/>
+			) : null}
+
+			{!query.error && selectable && selectedKeys.length > 0 && (
 				// `role="status"` - 선택이 바뀔 때마다 스크린리더가 개수를 읽는다. 액션 줄이
 				// 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 알 수 없다.
 				<div id={selectionBarId} className="data_view_selection" role="status">
@@ -269,7 +289,7 @@ export const DataView = <T extends object>({
 				</div>
 			)}
 
-			{showEmpty ? (
+			{query.error ? null : showEmpty ? (
 				(empty ?? <EmptyState title={t("dataView.empty")} />)
 			) : selectable ? (
 				// 판별 union 이라 조건부 스프레드로는 좁혀지지 않는다 - 분기를 명시한다.
@@ -304,7 +324,7 @@ export const DataView = <T extends object>({
 				/>
 			)}
 
-			{pagination && pagination.totalPages > 1 && (
+			{!query.error && pagination && pagination.totalPages > 1 && (
 				<div className="data_view_pagination">
 					<Pagination
 						page={pagination.page}

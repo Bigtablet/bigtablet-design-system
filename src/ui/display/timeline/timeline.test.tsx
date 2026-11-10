@@ -121,4 +121,22 @@ describe("Timeline", () => {
 
 		expect(ref.current?.tagName).toBe("OL");
 	});
+
+	// 상태를 보조기술에 전한다 (#983)
+	it("marks the active step and names each status", () => {
+		render(
+			<Timeline
+				items={[
+					{ id: 1, title: "접수", status: "done" },
+					{ id: 2, title: "배송", status: "active" },
+					{ id: 3, title: "완료" },
+				]}
+			/>,
+		);
+		const items = screen.getAllByRole("listitem");
+		expect(items[1]).toHaveAttribute("aria-current", "step");
+		expect(items[0]).not.toHaveAttribute("aria-current");
+		expect(items[0]).toHaveTextContent("접수, 완료");
+		expect(items[2]).toHaveTextContent("완료, 대기");
+	});
 });

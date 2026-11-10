@@ -25,7 +25,8 @@ export interface IconProps extends Omit<LucideProps, "ref" | "dangerouslySetInne
  * lucide-react 아이콘 전체 카탈로그: https://lucide.dev/icons/
  */
 export const Icon = ({ icon: IconComponent, ...props }: IconProps) => {
-	const hasLabel = !!props["aria-label"];
+	// aria-labelledby 로 이름을 준 아이콘도 숨기지 않는다 (#983)
+	const hasLabel = !!props["aria-label"] || !!props["aria-labelledby"];
 	return (
 		<IconComponent
 			aria-hidden={hasLabel ? undefined : true}

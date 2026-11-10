@@ -266,7 +266,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `Table` | Data table. | `columns`, `data`, `keyExtractor`, `size` (sm/md/lg), `isLoading`, `stickyHeader`, `onRowClick`, `emptyMessage`, `layout` (auto/fixed - fixed keeps column positions across pages), `minWidth`, `cards` (stack rows as cards on compact). Column `truncate` for one-line ellipsis. Clickable rows get keyboard support automatically. |
 | `Divider` | Horizontal rule. | `weight` (standard/heavy). Horizontal only - there is no vertical variant. |
 | `Icon` | Lucide icon wrapper. | `icon` (lucide-react component), `size`, `strokeWidth`, `aria-label` |
-| `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`. Hover bg works in any open state. |
+| `Accordion` | Expandable disclosure. | `items` array with `key`/`title`/`content`, `multiple`, `defaultOpenKeys` or `openKeys` + `onValueChange`, `headingAs` (default `h3`). Hover bg works in any open state. |
 
 ### Feedback
 

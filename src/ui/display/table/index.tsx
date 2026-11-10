@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, useSafeLayoutEffect } from "../../../utils";
+import { cn, isFromInnerControl, useSafeLayoutEffect } from "../../../utils";
 import { Skeleton } from "../../feedback/skeleton";
 import { Checkbox } from "../../forms/checkbox";
 import { useLocaleText } from "../../system/locale-provider";
@@ -13,22 +13,6 @@ export type TableSize = "sm" | "md" | "lg";
 
 /** 행 사이를 옮기는 키 - `moveRowFocus` 가 받는다. */
 const ROW_MOVE_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"]);
-
-/** 셀 안에서 자기 동작을 가진 요소 - 여기서 시작한 클릭은 행 클릭이 아니다. */
-const CELL_CONTROL =
-	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch']";
-
-/**
- * 클릭이 셀 안 컨트롤(또는 포털로 띄운 메뉴)에서 왔는지. 버튼 Enter 도 `click` 으로 올라오므로 keydown
- * 만 걸러서는 버튼을 눌렀는데 행까지 열린다. 포털 안 요소는 DOM 상 행 밖이지만 React 이벤트는 행으로
- * 올라온다 - 그래서 "행 안에 없음" 도 컨트롤로 본다.
- */
-const isFromCellControl = (e: React.MouseEvent<HTMLElement>) => {
-	const target = e.target as Element;
-	if (!e.currentTarget.contains(target)) return true;
-	const control = target.closest(CELL_CONTROL);
-	return control !== null && e.currentTarget.contains(control);
-};
 
 export type TableSortDirection = "asc" | "desc";
 
@@ -499,7 +483,7 @@ export const Table = <T extends object>({
 										onClick={
 											onRowClick
 												? (e) => {
-														if (!isFromCellControl(e)) onRowClick(item, rowIndex);
+														if (!isFromInnerControl(e)) onRowClick(item, rowIndex);
 													}
 												: undefined
 										}
