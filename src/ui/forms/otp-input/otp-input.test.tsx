@@ -558,4 +558,17 @@ describe("OtpInput", () => {
 		fireEvent.keyDown(inputs[0]!, { key: "9" });
 		expect(inputs[0]!.value).toBe("9");
 	});
+
+	it("rebuilds cells from an external value even if it matches the last emitted string", () => {
+		const { rerender } = render(
+			<OtpInput length={6} value="123456" onValueChange={() => {}} ariaLabel="OTP" />,
+		);
+		const inputs = () => screen.getAllByRole("textbox") as HTMLInputElement[];
+		fireEvent.keyDown(inputs()[2]!, { key: "Backspace" });
+		rerender(<OtpInput length={6} value="12456" onValueChange={() => {}} ariaLabel="OTP" />);
+		expect(inputs()[2]!.value).toBe("");
+		rerender(<OtpInput length={6} value="" onValueChange={() => {}} ariaLabel="OTP" />);
+		rerender(<OtpInput length={6} value="12456" onValueChange={() => {}} ariaLabel="OTP" />);
+		expect(inputs().map((i) => i.value)).toEqual(["1", "2", "4", "5", "6", ""]);
+	});
 });

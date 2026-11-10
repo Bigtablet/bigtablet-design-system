@@ -27,7 +27,7 @@ export interface ComboboxProps
 	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>, "onChange" | "defaultValue"> {
 	/** 선택된 값 (제어형) */
 	value?: ComboboxOption | null;
-	/** 선택 변경 콜백. 검색어가 빈 채로 Backspace · Delete 를 누르면 `null` 로 선택을 지운다 */
+	/** 선택 변경 콜백. 열린 채 검색어가 비어 있을 때 Backspace · Delete 를 누르면 `null` 로 선택을 지운다 */
 	onValueChange?: (option: ComboboxOption | null) => void;
 	/**
 	 * 검색어가 바뀔 때 호출. 서버에서 후보를 가져오는 자리다.
@@ -270,8 +270,14 @@ export const Combobox = ({
 							setIsOpen(true);
 							return;
 						}
-						// 검색어가 빈 채로 Backspace · Delete 를 누르면 고른 값을 지운다 - 지울 경로가 없었다 (#985)
-						if ((event.key === "Backspace" || event.key === "Delete") && query === "" && value) {
+						// 열린 채 검색어가 비어 있을 때 Backspace · Delete 를 누르면 고른 값을 지운다 - 지울 경로가 없었다
+						// (#985). 닫힌 동안은 칸에 라벨이 보여 한 글자 지우기로 읽히므로 지우지 않는다
+						if (
+							isOpen &&
+							(event.key === "Backspace" || event.key === "Delete") &&
+							query === "" &&
+							value
+						) {
 							onValueChange?.(null);
 							return;
 						}

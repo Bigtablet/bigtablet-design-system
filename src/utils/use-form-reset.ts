@@ -15,11 +15,16 @@ export function useFormReset(ref: React.RefObject<HTMLElement | null>, onReset: 
 		onResetRef.current = onReset;
 	});
 	React.useEffect(() => {
-		const form = ref.current?.closest("form");
+		// 입력이면 `form` 속성으로 연결된 폼(밖에 있어도)까지 받는다. 그 밖의 요소는 감싼 폼
+		const el = ref.current;
+		const form = (el instanceof HTMLInputElement ? el.form : null) ?? el?.closest("form");
 		if (!form) return;
 		let timer: ReturnType<typeof setTimeout> | undefined;
-		const handle = () => {
-			timer = setTimeout(() => onResetRef.current());
+		const handle = (event: Event) => {
+			// 다른 리스너가 reset 을 취소했으면 네이티브 값도 그대로다 - 상태만 되돌리지 않는다
+			timer = setTimeout(() => {
+				if (!event.defaultPrevented) onResetRef.current();
+			});
 		};
 		form.addEventListener("reset", handle);
 		return () => {
