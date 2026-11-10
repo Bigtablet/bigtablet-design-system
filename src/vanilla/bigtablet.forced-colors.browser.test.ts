@@ -45,6 +45,11 @@ describe("Vanilla in forced-colors mode (Chromium, #1001)", () => {
 		}
 	});
 
+	it("leaves danger × text without a border", () => {
+		const host = mount('<button class="bt-button bt-button--text bt-button--danger">삭제</button>');
+		expect(getComputedStyle(host.querySelector("button") as Element).borderTopStyle).toBe("none");
+	});
+
 	it("outlines the modal and alert panels", () => {
 		const host = mount('<div class="bt-modal__panel"></div><div class="bt-alert__modal"></div>');
 		for (const panel of host.querySelectorAll("div")) {
