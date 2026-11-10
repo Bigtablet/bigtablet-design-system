@@ -3,7 +3,7 @@
 import type * as React from "react";
 import { createContext, useContext, useId } from "react";
 import { cn, type SafeHTMLProps } from "../../../utils";
-import { useFormError } from "../form";
+import { useFormField } from "../form";
 import "./style.scss";
 
 /**
@@ -118,8 +118,11 @@ export const Field = ({
 	const generatedId = useId();
 	const inputId = `${name}-${generatedId}`;
 	// prop 이 우선한다 - 화면이 지역 검증으로 덮어쓸 수 있어야 서버 에러가 남아 있지 않는다.
-	const formError = useFormError(name);
+	const { error: formError, summarized } = useFormField(name, { label, inputId });
 	const error = errorProp ?? formError;
+	// Form 의 요약이 이 에러를 이미 알린다 - 필드에서 또 알리면 겹친다 (#993). 화면 지역 검증(error prop)은
+	// 요약에 없으니 그대로 알린다
+	const announce = !(summarized && errorProp === undefined);
 	const labelId = label ? `${inputId}-label` : undefined;
 	const helpId = help ? `${inputId}-help` : undefined;
 	const errorId = error ? `${inputId}-error` : undefined;
@@ -170,8 +173,8 @@ export const Field = ({
 			    필드 이름은 바깥(알림)에만 두고 문구 요소(errorId)는 그대로라, 입력의 aria-describedby 로 읽힐
 			    때는 라벨이 두 번 나오지 않는다 */}
 			{error && (
-				<div role="alert">
-					{label && <span className="field_message_label">{label}: </span>}
+				<div role={announce ? "alert" : undefined}>
+					{announce && label && <span className="field_message_label">{label}: </span>}
 					<div id={errorId} className="field_message">
 						{error}
 					</div>

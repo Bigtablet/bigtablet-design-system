@@ -9,6 +9,44 @@
   gap: token.$spacing_20;
   width: 100%;
 
+  // ── Error summary (#993) ─────────────────────────────────────────────────
+  // 제출 뒤 포커스를 받아 한 번 읽힌다. 포커스 링은 프로그램 포커스라 그리지 않는다 - 상자 테두리가
+  // 이미 위치를 보여 준다.
+
+  &_error_summary {
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_8;
+    padding: token.$spacing_16;
+    border: token.$border_width_thick solid token.$color_status_error_on_surface;
+    border-radius: token.$radius_md;
+    background: token.$color_status_error_container;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &_error_summary_title {
+    @include token.body_medium_bold;
+    color: token.$color_status_error_on_surface;
+  }
+
+  &_error_summary_list {
+    display: flex;
+    flex-direction: column;
+    gap: token.$spacing_4;
+    margin: 0;
+    padding-left: token.$spacing_20;
+    @include token.body_medium;
+    color: token.$color_text_heading;
+  }
+
+  &_error_summary_link {
+    @include token.inline_link;
+    color: inherit;
+  }
+
   // ── Actions ──────────────────────────────────────────────────────────────
 
   &_actions {
