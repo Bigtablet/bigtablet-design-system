@@ -3,8 +3,10 @@
 /* ========================================
    CSS Custom Properties (Design Tokens)
    ======================================== */
-// [data-theme] 에도 다시 선언한다 - :root 에서 계산된 별칭은 그 값으로 상속돼, 자손에 둔 data-theme="dark" 안에서
-// 반전되지 않았다 (#976). 그 요소에서 다시 풀면 그 테마의 토큰 값을 읽는다
+// 테마마다 값이 다른 별칭(색 · elevation)은 [data-theme] 에도 다시 선언한다 - :root 에서 계산된 별칭은 그 값으로
+// 상속돼, 자손에 둔 data-theme="dark" 안에서 반전되지 않았다 (#976). 그 요소에서 다시 풀면 그 테마의 토큰 값을 읽는다.
+// 테마와 무관한 별칭(간격 · 글꼴 · transition · z)은 :root 에만 둔다 - [data-theme] 에서 다시 선언하면 소비자가
+// :root 에 준 값이 그 구역 안에서 기본값으로 돌아간다 (#981)
 :root,
 [data-theme] {
   /* Colors - Brand (양 테마 검정/흰 고정 - 의도적으로 반전되지 않아야 하는 표면용) */
@@ -63,6 +65,15 @@
   --bt-color-warning: #{token.$color_status_warning};
   --bt-color-info: #{token.$color_status_info};
 
+  /* Elevation */
+  --bt-elevation-1: #{token.$elevation_level1};
+  --bt-elevation-2: #{token.$elevation_level2};
+  --bt-elevation-3: #{token.$elevation_level3};
+  --bt-elevation-4: #{token.$elevation_level4};
+  --bt-elevation-5: #{token.$elevation_level5};
+}
+
+:root {
   /* Spacing - Base(--bt-spacing-*)·Radius(--bt-radius-*)·--bt-font-family 는 theme.scss 가 정의한다 */
 
   /* Spacing - Semantic */
@@ -94,13 +105,6 @@
   --bt-font-size-lg:   var(--bt-font-size-18);
   --bt-font-size-xl:   var(--bt-font-size-20);
   --bt-line-height-normal: 1.5;
-
-  /* Elevation */
-  --bt-elevation-1: #{token.$elevation_level1};
-  --bt-elevation-2: #{token.$elevation_level2};
-  --bt-elevation-3: #{token.$elevation_level3};
-  --bt-elevation-4: #{token.$elevation_level4};
-  --bt-elevation-5: #{token.$elevation_level5};
 
   /* Transitions */
   --bt-transition-fast: #{token.$transition_fast};

@@ -1415,10 +1415,17 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 **테마 커스터마이징 예시:**
 
 ```css
-/* 커스텀 테마 */
-:root {
+/* 커스텀 테마 - 색 · elevation 별칭은 [data-theme] 에도 함께 준다.
+   라이브러리가 그 구역에서 테마 값으로 다시 풀기 때문에 :root 에만 주면
+   data-theme 를 단 요소 안에서 기본값으로 돌아간다 */
+:root,
+[data-theme] {
   --bt-color-accent: #2563eb;            /* filled 버튼 · 토글 on · 포커스 등 강조색 */
   --bt-color-accent-on-surface: #ffffff; /* 강조색 위 글자·아이콘 */
+}
+
+/* 간격 · 모서리 · 글꼴처럼 테마와 무관한 값은 :root 만으로 충분하다 */
+:root {
   --bt-radius-md: 12px;
 }
 

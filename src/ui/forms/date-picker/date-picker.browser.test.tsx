@@ -149,6 +149,28 @@ describe("Vanilla calendar DatePicker (Chromium)", () => {
 		window.scrollTo(0, 0);
 	});
 
+	// rect 는 확대된 화면 px, top · left 는 확대 전 px 다 - 맞추지 않으면 칸에서 떨어진다 (#981)
+	it("stays attached to the field under an ancestor CSS zoom", async () => {
+		await page.viewport(800, 900); // 확대된 시각 달력이 칸 아래에 다 들어가게
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px; zoom: 1.25");
+		await userEvent.click(trigger);
+		const t = trigger.getBoundingClientRect();
+		const p = panel().getBoundingClientRect();
+		expect(p.top - t.bottom).toBeCloseTo(4, 0);
+		expect(p.left).toBeCloseTo(t.left, 0);
+	});
+
+	// 조상 transform 이 바뀌면 fixed 기준이 움직인다 - 이벤트 없이도 따라간다 (#981)
+	it("follows the field when an ancestor transform changes", async () => {
+		const { trigger, panel } = mountVanilla("top: 40px; left: 40px; transform: translateY(-2px)");
+		await userEvent.click(trigger);
+		(trigger.closest('div[style*="fixed"]') as HTMLElement).style.transform = "none";
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		expect(
+			panel().getBoundingClientRect().top - trigger.getBoundingClientRect().bottom,
+		).toBeCloseTo(4, 0);
+	});
+
 	// 위아래 어느 쪽에도 다 안 들어가면 화면 안으로 민다 - 달력 아랫줄이 화면 밖으로 나가지 않게
 	it("keeps the panel inside a short viewport", async () => {
 		await page.viewport(800, 520);
