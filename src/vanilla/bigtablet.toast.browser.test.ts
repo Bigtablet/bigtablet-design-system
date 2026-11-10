@@ -48,6 +48,27 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 		expect(800 - r.bottom).toBe(16);
 	});
 
+	it("scrolls inside the list instead of pushing the newest toast off screen (#1000)", async () => {
+		await page.viewport(1280, 400);
+		document.documentElement.dataset.btToastPlacement = "bottom-right";
+		onTestFinished(() => {
+			delete document.documentElement.dataset.btToastPlacement;
+		});
+		const long = "여러 줄로 넘어가는 긴 안내 문구입니다. ".repeat(4);
+		for (let i = 0; i < 5; i++)
+			Toast(`${i} ${long}`, "info", { duration: Number.POSITIVE_INFINITY });
+
+		const region = document.querySelector(".bt-toast-container") as HTMLElement;
+		const toasts = Array.from(region.querySelectorAll(".bt-toast"));
+		expect(region.scrollHeight).toBeGreaterThan(region.clientHeight);
+		// 최신(맨 위)이 화면 안에 있고, 줄어들지 않았다
+		expect(rect(toasts[0] as Element).top).toBeGreaterThanOrEqual(16);
+		// 상자는 그림자 · 슬라이드용 안쪽 여백(20px)만큼 크다 - 내용 아래끝이 여백 16px 에 남는다
+		expect(rect(region).bottom - 20).toBe(400 - 16);
+		for (const el of toasts) expect(rect(el).width).toBe(360);
+		expect(rect(toasts[0] as Element).height).toBe(rect(toasts[1] as Element).height);
+	});
+
 	it("runs the presence transition out, then removes the toast", async () => {
 		// browser-setup.ts 가 레이아웃 실측용으로 transition 을 전부 0s 로 눌러 둔다 - 이 테스트만 푼다
 		const noTransition = Array.from(document.querySelectorAll("style")).find((s) =>
