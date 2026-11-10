@@ -116,9 +116,9 @@ export const FileInput = ({
 		const first = dropped[0];
 		if (!first?.type.startsWith("image/")) return;
 		const input = inputRef.current;
-		// 미리보기는 한 장이다 - multiple 이 아니면 첫 파일만 넘긴다. 보이지 않는 파일까지 소비자에게 가지 않게
+		// 미리보기 박스는 한 장이다 - multiple 이어도 첫 파일만 넘긴다. 보이지 않는 파일까지 소비자에게 가지 않게
 		let files: FileList = dropped;
-		if (!props.multiple && dropped.length > 1 && typeof DataTransfer !== "undefined") {
+		if (dropped.length > 1 && typeof DataTransfer !== "undefined") {
 			const one = new DataTransfer();
 			one.items.add(first);
 			files = one.files;

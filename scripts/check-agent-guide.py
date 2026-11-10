@@ -76,7 +76,16 @@ def sources() -> dict[str, str]:
     return out
 
 
+def self_check() -> None:
+    """TYPE_BLOCK 회귀 - 여러 줄 객체 리터럴의 키는 prop 선언으로 잡히지 않아야 한다 (#986)"""
+    code = "const a = {\n\tminDate: 1,\n};\nexport type P = Base & {\n\tvalue?: string;\n};\n"
+    blocks = "\n".join(TYPE_BLOCK.findall(code))
+    assert not re.search(r"(?m)^\s*minDate\??\s*:", blocks), "객체 리터럴이 prop 으로 잡혔다"
+    assert re.search(r"(?m)^\s*value\??\s*:", blocks), "type 교차 선언의 prop 을 놓쳤다"
+
+
 def main() -> int:
+    self_check()
     src = sources()
     if not src:
         print("src/ui 에서 컴포넌트를 찾지 못했다 - 구조가 바뀌었는지 보라", file=sys.stderr)
