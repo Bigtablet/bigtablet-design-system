@@ -116,7 +116,7 @@
 
   &_input:checked ~ .radio_state_layer .radio_dot {
     border-color: token.$color_accent_default;
-    border-width: 2px;
+    border-width: token.$border_width_thick;
     // background 는 bg_solid 그대로 - 가운데 비워서 ring 강조
   }
 
@@ -126,8 +126,8 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 8px;
-    height: 8px;
+    width: token.$spacing_8;
+    height: token.$spacing_8;
     transform: translate(-50%, -50%);
     background: token.$color_accent_default;
     border-radius: token.$radius_full;
@@ -136,14 +136,14 @@
 
   // md: 18px 외부 → 16px 내부 → 내부 점 10px → 마진 3px (정수)
   &_size_md &_input:checked ~ .radio_state_layer .radio_dot::after {
-    width: 10px;
-    height: 10px;
+    width: token.$spacing_10;
+    height: token.$spacing_10;
   }
 
   // lg: 20px 외부 → 18px 내부 → 내부 점 10px → 마진 4px (정수)
   &_size_lg &_input:checked ~ .radio_state_layer .radio_dot::after {
-    width: 10px;
-    height: 10px;
+    width: token.$spacing_10;
+    height: token.$spacing_10;
   }
 }
 

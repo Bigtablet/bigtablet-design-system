@@ -33,6 +33,7 @@ export {
 	useClipboard,
 } from "./use-clipboard";
 export { type FocusTrapOptions, useFocusTrap } from "./use-focus-trap";
+export { useFormReset } from "./use-form-reset";
 export { useIsMounted } from "./use-is-mounted";
 export { usePresence } from "./use-presence";
 export { useReducedMotion } from "./use-reduced-motion";

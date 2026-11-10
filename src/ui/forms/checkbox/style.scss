@@ -27,10 +27,10 @@
   // ── Icon box (24x24 checkbox graphic) ──────────────────────────────────
 
   &_icon {
-    width: 24px;
-    height: 24px;
+    width: token.$spacing_24;
+    height: token.$spacing_24;
     box-sizing: border-box;
-    border: 2px solid token.$color_text_heading;
+    border: token.$border_width_thick solid token.$color_text_heading;
     border-radius: token.$radius_xs;
     background: transparent;
     position: relative;
@@ -96,10 +96,10 @@
     position: absolute;
     left: 50%;
     top: 45%;
-    width: 6px;
-    height: 11px;
+    width: token.$spacing_6;
+    height: 11px; // 체크 글리프 형상(6×11 의 L) - 크기 단계가 아니라 토큰이 없다
     // accent fill 의 반전색 - light=흰 체크 on 검정 / dark=검정 체크 on 흰
-    border: 2px solid token.$color_accent_on_surface;
+    border: token.$border_width_thick solid token.$color_accent_on_surface;
     border-top: 0;
     border-left: 0;
     transform: translate(-50%, -50%) rotate(45deg);
@@ -112,8 +112,8 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 12px;
-    height: 2px;
+    width: token.$spacing_12;
+    height: token.$spacing_2;
     background: token.$color_accent_on_surface;
     transform: translate(-50%, -50%);
     border: none;

@@ -525,4 +525,46 @@ describe("Combobox", () => {
 		await vi.advanceTimersByTimeAsync(10);
 		expect(screen.queryByText("일치하는 항목이 없습니다")).not.toBeInTheDocument();
 	});
+
+	// #985 - 디바운스 중 닫기 · 후보 0개 뒤 다시 열기 · 선택 지우기
+	it("stops the spinner when closed during the debounce", async () => {
+		render(
+			<Combobox onSearch={vi.fn().mockResolvedValue([])} debounceMs={200} ariaLabel="담당자" />,
+		);
+		const input = screen.getByRole("combobox");
+		fireEvent.focus(input);
+		fireEvent.change(input, { target: { value: "박" } });
+		expect(document.querySelector(".combobox_spinner")).not.toBeNull();
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(document.querySelector(".combobox_spinner")).toBeNull();
+	});
+
+	it("reopens on click and ArrowDown after closing with Escape", () => {
+		render(<Combobox onSearch={vi.fn().mockResolvedValue([])} ariaLabel="담당자" />);
+		const input = screen.getByRole("combobox");
+		fireEvent.focus(input);
+		fireEvent.keyDown(input, { key: "Escape" });
+		expect(input).toHaveAttribute("aria-expanded", "false");
+		fireEvent.click(input);
+		expect(input).toHaveAttribute("aria-expanded", "true");
+		fireEvent.keyDown(input, { key: "Escape" });
+		fireEvent.keyDown(input, { key: "ArrowDown" });
+		expect(input).toHaveAttribute("aria-expanded", "true");
+	});
+
+	it("clears the selection with Backspace on an empty query", () => {
+		const onValueChange = vi.fn();
+		render(
+			<Combobox
+				onSearch={vi.fn().mockResolvedValue([])}
+				value={OPTIONS[0]}
+				onValueChange={onValueChange}
+				ariaLabel="담당자"
+			/>,
+		);
+		const input = screen.getByRole("combobox");
+		fireEvent.focus(input);
+		fireEvent.keyDown(input, { key: "Backspace" });
+		expect(onValueChange).toHaveBeenCalledWith(null);
+	});
 });

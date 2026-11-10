@@ -38,10 +38,24 @@ export const Checkbox = ({
 		() => inputRef.current as HTMLInputElement,
 	);
 
+	// 클릭하면 브라우저가 indeterminate 를 지운다. prop 이 그대로 true 면(변경을 거부했거나 부모가 아직 같은 값)
+	// 다시 세운다 - prop 이 안 바뀌면 리렌더가 없어 effect 만으로는 돌아오지 않았다 (#985)
+	const indeterminateRef = React.useRef(indeterminate);
 	React.useEffect(() => {
+		indeterminateRef.current = indeterminate;
 		if (!inputRef.current) return;
 		inputRef.current.indeterminate = Boolean(indeterminate);
 	}, [indeterminate]);
+	const timerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	React.useEffect(() => () => clearTimeout(timerRef.current), []);
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		props.onChange?.(e);
+		// 부모의 리렌더 · 커밋이 끝난 뒤 최신 prop 으로 맞춘다
+		clearTimeout(timerRef.current);
+		timerRef.current = setTimeout(() => {
+			if (inputRef.current) inputRef.current.indeterminate = Boolean(indeterminateRef.current);
+		});
+	};
 
 	const rootClassName = cn(
 		"checkbox",
@@ -62,6 +76,7 @@ export const Checkbox = ({
 				{...props}
 				ref={inputRef}
 				type="checkbox"
+				onChange={handleChange}
 				className="checkbox_input"
 				id={field?.inputId ?? props.id}
 				aria-describedby={field?.describedBy ?? props["aria-describedby"]}
