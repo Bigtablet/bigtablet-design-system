@@ -21,7 +21,7 @@ export interface KeyActivationProps<E extends HTMLElement> {
 
 /** 표면 안에서 자기 동작을 가진 요소 - 여기서 시작한 클릭 · 키는 표면 것이 아니다 */
 const INNER_CONTROL =
-	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch'], [contenteditable='true']";
+	"a, button, input, select, textarea, label, [role='button'], [role='menuitem'], [role='checkbox'], [role='switch'], [contenteditable]:not([contenteditable='false'])";
 
 /**
  * 이벤트가 표면 안 컨트롤(또는 포털로 띄운 메뉴)에서 왔는지. 버튼 Enter 도 `click` 으로 올라오므로 keydown

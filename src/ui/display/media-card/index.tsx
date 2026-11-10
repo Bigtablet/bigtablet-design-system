@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
@@ -76,6 +76,12 @@ export const MediaCard = ({
 	// 깨진 이미지 아이콘 대신 자리(배경)만 남긴다 - src 가 바뀌면 다시 시도한다 (#983)
 	const [failedSrc, setFailedSrc] = useState<string | null>(null);
 	const imageFailed = failedSrc === image.src;
+	// SSR 이미지가 hydration 전에 실패하면 onError 를 놓친다 - 마운트 때 이미 끝난 실패를 한 번 본다
+	const imgRef = useRef<HTMLImageElement>(null);
+	useEffect(() => {
+		const img = imgRef.current;
+		if (img?.complete && img.naturalWidth === 0 && img.currentSrc) setFailedSrc(image.src);
+	}, [image.src]);
 
 	const activation = keyActivationProps<HTMLDivElement>({
 		onClick: props.onClick,
@@ -102,6 +108,7 @@ export const MediaCard = ({
 			<div className="media_card_image_wrap" style={wrapStyle}>
 				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image if needed */}
 				<img
+					ref={imgRef}
 					className={cn("media_card_image", imageFailed && "media_card_image_failed")}
 					src={image.src}
 					alt={image.alt}
