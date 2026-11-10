@@ -1,5 +1,6 @@
 export { cn } from "./cn";
 export {
+	isFromInnerControl,
 	type KeyActivationOptions,
 	type KeyActivationProps,
 	keyActivationProps,

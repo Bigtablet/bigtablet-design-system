@@ -150,4 +150,9 @@ describe("Accordion", () => {
 		expect(itemA?.querySelector("section")).not.toHaveAttribute("inert");
 		expect(itemB?.querySelector("section")).toHaveAttribute("inert");
 	});
+
+	it("renders headers with headingAs (#983)", () => {
+		render(<Accordion items={items} headingAs="h4" />);
+		expect(screen.getAllByRole("heading", { level: 4 })).toHaveLength(3);
+	});
 });

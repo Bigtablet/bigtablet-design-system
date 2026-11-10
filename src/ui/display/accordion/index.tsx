@@ -25,6 +25,8 @@ export interface AccordionProps
 	openKeys?: string[];
 	/** 펼침/접힘 콜백 (canonical). 열린 키 배열 전달 */
 	onValueChange?: (openKeys: string[]) => void;
+	/** 항목 헤더의 시맨틱 헤딩 태그 (기본값: "h3"). 페이지 헤딩 구조에 맞춘다 (Card 와 같은 prop) */
+	headingAs?: "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
 /**
@@ -41,6 +43,7 @@ export const Accordion = ({
 	defaultOpenKeys = [],
 	openKeys: controlledKeys,
 	onValueChange,
+	headingAs: HeadingTag = "h3",
 	className,
 	...props
 }: AccordionProps) => {
@@ -69,7 +72,7 @@ export const Accordion = ({
 
 				return (
 					<div key={item.key} className={cn("accordion_item", isOpen && "accordion_item_open")}>
-						<h3 className="accordion_header">
+						<HeadingTag className="accordion_header">
 							<button
 								type="button"
 								id={headerId}
@@ -86,7 +89,7 @@ export const Accordion = ({
 									aria-hidden="true"
 								/>
 							</button>
-						</h3>
+						</HeadingTag>
 						<section
 							id={panelId}
 							aria-labelledby={headerId}

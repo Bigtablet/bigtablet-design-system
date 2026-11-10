@@ -1,6 +1,7 @@
 "use client";
 
 import type * as React from "react";
+import { useState } from "react";
 import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
@@ -72,6 +73,10 @@ export const MediaCard = ({
 	const cardStyle = isOverlay && aspectRatio ? { aspectRatio } : undefined;
 	const wrapStyle = !isOverlay && aspectRatio ? { aspectRatio } : undefined;
 
+	// 깨진 이미지 아이콘 대신 자리(배경)만 남긴다 - src 가 바뀌면 다시 시도한다 (#983)
+	const [failedSrc, setFailedSrc] = useState<string | null>(null);
+	const imageFailed = failedSrc === image.src;
+
 	const activation = keyActivationProps<HTMLDivElement>({
 		onClick: props.onClick,
 		role: props.role,
@@ -91,10 +96,18 @@ export const MediaCard = ({
 			{...props}
 			// 소비자 onKeyDown 은 activation 안에서 먼저 실행되므로 스프레드 뒤에 덮어쓴다.
 			onKeyDown={activation.onKeyDown}
+			// 안쪽 버튼 · 입력의 클릭은 카드 클릭이 아니다 (#983)
+			onClick={activation.onClick}
 		>
 			<div className="media_card_image_wrap" style={wrapStyle}>
 				{/* biome-ignore lint/performance/noImgElement: DS is framework-agnostic - consumers wrap with next/image if needed */}
-				<img className="media_card_image" src={image.src} alt={image.alt} loading="lazy" />
+				<img
+					className={cn("media_card_image", imageFailed && "media_card_image_failed")}
+					src={image.src}
+					alt={image.alt}
+					loading="lazy"
+					onError={() => setFailedSrc(image.src)}
+				/>
 				{isOverlay && <div className="media_card_overlay" aria-hidden="true" />}
 			</div>
 

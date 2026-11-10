@@ -3620,9 +3620,10 @@ import { User, MoreVertical } from 'lucide-react';
 | `metadata` | `ReactNode` | - | 메타데이터 (string·노드) |
 | `leadingElement` | `ReactNode` | - | 왼쪽 요소 |
 | `trailingElement` | `ReactNode` | - | 오른쪽 요소 |
-| `alignment` | `'top' \| 'middle'` | `'top'` | 요소 정렬 |
+| `alignment` | `'top' \| 'middle'` | 자동 | 요소 정렬. 주지 않으면 `label` 만 있는 한 줄 항목은 `'middle'`, 그 밖은 `'top'` |
+| `selected` | `boolean` | - | 선택 상태. `onClick` 이 있으면 `aria-pressed` 로 노출된다 |
 | `disabled` | `boolean` | `false` | 비활성화 |
-| `onClick` | `(event) => void` | - | 클릭 핸들러 |
+| `onClick` | `(event) => void` | - | 클릭 핸들러. 안쪽 버튼(`trailingElement` 등)의 클릭 · 키 입력은 행 클릭으로 올라오지 않는다 |
 
 ---
 
@@ -4434,6 +4435,7 @@ const [open, setOpen] = useState<string[]>(["q1"]);
 | `defaultOpenKeys` | `string[]` | `[]` | 비제어형 초기 펼침 키 |
 | `openKeys` | `string[]` | - | 제어형 펼침 키 (`onValueChange`와 함께 사용) |
 | `onValueChange` | `(openKeys: string[]) => void` | - | 펼침/접힘 콜백 |
+| `headingAs` | `'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 항목 헤더의 헤딩 태그 - 페이지 헤딩 구조에 맞춘다 |
 
 **AccordionItem**
 

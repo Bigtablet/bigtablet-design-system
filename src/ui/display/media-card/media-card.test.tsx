@@ -148,4 +148,15 @@ describe("MediaCard", () => {
 		fireEvent.keyDown(card, { key: "Enter" });
 		expect(onClick).toHaveBeenCalledTimes(1);
 	});
+
+	it("hides a broken image and retries when src changes (#983)", () => {
+		const { container, rerender } = render(
+			<MediaCard image={{ src: "bad.png", alt: "사진" }} heading="t" />,
+		);
+		const img = () => container.querySelector("img") as HTMLImageElement;
+		fireEvent.error(img());
+		expect(img()).toHaveClass("media_card_image_failed");
+		rerender(<MediaCard image={{ src: "good.png", alt: "사진" }} heading="t" />);
+		expect(img()).not.toHaveClass("media_card_image_failed");
+	});
 });

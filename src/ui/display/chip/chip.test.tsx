@@ -69,4 +69,15 @@ describe("Chip", () => {
 		fireEvent.click(screen.getByLabelText("Tag 제거"));
 		expect(handleRemove).toHaveBeenCalledTimes(1);
 	});
+
+	// 체크 아이콘 위에서 선택을 풀면 hover 표시가 남았다 (#983)
+	it("drops the icon hover state when the check icon goes away", () => {
+		const { container, rerender } = render(
+			<Chip label="A" type="basic" selected onClick={() => {}} />,
+		);
+		fireEvent.pointerEnter(container.querySelector(".chip_icon") as Element);
+		expect(container.firstElementChild).toHaveClass("chip_icon_hovered");
+		rerender(<Chip label="A" type="basic" selected={false} onClick={() => {}} />);
+		expect(container.firstElementChild).not.toHaveClass("chip_icon_hovered");
+	});
 });

@@ -268,4 +268,55 @@ describe("DataView", () => {
 		expect(screen.getByRole("checkbox", { name: "21행 박상민 선택" })).toBeInTheDocument();
 		expect(screen.getByRole("checkbox", { name: "22행 김민준 선택" })).toBeInTheDocument();
 	});
+
+	// 같은 쪽에서 지운 행의 선택은 페이지네이션이 있어도 버린다 (#983)
+	it("drops the selection of a row removed from the current page", () => {
+		const onRun = vi.fn();
+		const View = ({ data, page = 1 }: { data: User[]; page?: number }) => (
+			<DataView
+				query={{ data }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun }]}
+				pagination={{ page, totalPages: 3, onPageChange: vi.fn() }}
+			/>
+		);
+		const { rerender } = render(<View data={USERS} />);
+		fireEvent.click(screen.getAllByRole("checkbox")[1]!);
+		// 다른 쪽으로 넘어가도 선택은 남는다
+		rerender(<View data={[{ id: "9", name: "이서연" }]} page={2} />);
+		expect(screen.getByRole("status")).toHaveTextContent("1개 선택됨");
+		rerender(<View data={USERS} page={1} />);
+		rerender(<View data={USERS.filter((u) => u.id !== "1")} page={1} />);
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
+	});
+
+	it("clears the selection when the search value changes", () => {
+		const View = ({ q }: { q: string }) => (
+			<DataView
+				query={{ data: USERS }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				toolbar={{ search: true, searchValue: q, onSearchChange: vi.fn() }}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				pagination={{ page: 1, totalPages: 3, onPageChange: vi.fn() }}
+			/>
+		);
+		const { rerender } = render(<View q="" />);
+		fireEvent.click(screen.getAllByRole("checkbox")[1]!);
+		rerender(<View q="박" />);
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
+	});
+
+	it("keeps the toolbar on error so the query can be changed", () => {
+		render(
+			<DataView
+				query={{ data: undefined, error: new Error("x") }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				toolbar={{ search: true, searchValue: "", onSearchChange: vi.fn() }}
+			/>,
+		);
+		expect(screen.getByRole("searchbox")).toBeInTheDocument();
+	});
 });
