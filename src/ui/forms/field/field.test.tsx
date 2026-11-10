@@ -327,3 +327,19 @@ describe("Field", () => {
 		expect(screen.getByRole("checkbox")).toHaveAttribute("aria-required", "true");
 	});
 });
+
+describe("Field error announcement (#986)", () => {
+	it("announces an error added after render", () => {
+		const { rerender } = render(
+			<Field name="email" label="이메일">
+				<TextField />
+			</Field>,
+		);
+		rerender(
+			<Field name="email" label="이메일" error="형식이 맞지 않습니다">
+				<TextField />
+			</Field>,
+		);
+		expect(screen.getByRole("alert")).toHaveTextContent("이메일: 형식이 맞지 않습니다");
+	});
+});

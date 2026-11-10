@@ -165,9 +165,16 @@ export const Field = ({
 					{help}
 				</div>
 			)}
+			{/* 제출 뒤 붙은 에러가 낭독되도록 role="alert" - 새로 삽입되는 노드라 aria-live 는 놓치는 보조기술이
+			    있다 (#986). 알림에는 어느 필드인지 붙인다 - 포커스가 제출 버튼에 있으면 문구만으로는 알 수 없다.
+			    필드 이름은 바깥(알림)에만 두고 문구 요소(errorId)는 그대로라, 입력의 aria-describedby 로 읽힐
+			    때는 라벨이 두 번 나오지 않는다 */}
 			{error && (
-				<div id={errorId} className="field_message">
-					{error}
+				<div role="alert">
+					{label && <span className="field_message_label">{label}: </span>}
+					<div id={errorId} className="field_message">
+						{error}
+					</div>
 				</div>
 			)}
 		</div>

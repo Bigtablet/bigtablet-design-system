@@ -858,7 +858,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖, 라벨 한 줄 높이로 고정된 슬롯에 렌더된다 |
 | `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
 | `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 |
-| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다 |
+| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선한다. `role="alert"` 로 나타날 때 낭독된다 - 처음부터 에러가 있는 필드가 여럿이면(서버 검증 결과로 다시 그린 폼) 모두 연달아 읽히므로, 그때는 폼 위에 요약 하나를 두고 필드 에러는 제출 뒤에 붙이는 편이 낫다 |
 | `children` | `ReactNode` | - | 입력 하나 |
 
 #### Form
@@ -1476,9 +1476,13 @@ const [date, setDate] = useState('');
 | `value` | `string` | - | 선택된 날짜 (`'YYYY-MM-DD'` 또는 `'YYYY-MM'`) |
 | `onValueChange` | `(value: string) => void` | required | 변경 핸들러 |
 | `mode` | `'year-month' \| 'year-month-day'` | `'year-month-day'` | 날짜 선택 모드 |
+| `variant` | `'dropdown' \| 'calendar'` | `'dropdown'` | 고르는 방식. `calendar` 는 날짜 칸 하나 + 월 달력 팝오버 - `mode="year-month-day"` 에서만 (그 밖은 드롭다운으로 그린다) |
+| `placeholder` | `string` | `'날짜 선택'` | `variant="calendar"` 에서 값이 없을 때 칸 문구 |
+| `minDate` | `string` | - | 고를 수 있는 최소 날짜 (`'YYYY-MM-DD'`) |
 | `startYear` | `number` | `1950` | 시작 연도 |
 | `endYear` | `number` | `현재년도 + 10` | 종료 연도 |
 | `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
+| `yearLabel` · `monthLabel` · `dayLabel` | `string` | `'년'` · `'월'` · `'일'` | 드롭다운 각 칸의 라벨 · 플레이스홀더 (로케일 `datePicker.year` · `month` · `day`) |
 | `clearable` | `boolean` | `false` | 값이 있으면 지우기(×) 버튼 - 누르면 `onValueChange("")`. 달력형은 칸에서 Delete · Backspace 로도. 조회 조건처럼 "값 없음 = 조건 없음" 인 칸에, 필수 칸에는 두지 않는다 |
 | `clearLabel` | `string` | `'날짜 지우기'` | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
 | `fullWidth` | `boolean` | `true` | 전체 너비 |

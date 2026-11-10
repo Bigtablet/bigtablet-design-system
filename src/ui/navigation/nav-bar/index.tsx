@@ -104,7 +104,7 @@ export const NavBar = ({
 	// 링크 영역(<nav>)은 children 이 있을 때만 그려진다 - 처음에 비어 있다가 권한 확인 뒤 링크가 생기면
 	// 그때 다시 붙어야 한다. 빈 deps 였을 때는 한 번도 재지 않아 인디케이터가 그려지지 않았다 (#984)
 	const hasLinks = !!children;
-	// biome-ignore lint/correctness/useExhaustiveDependencies: hasLinks 는 <nav> 가 새로 붙었다는 신호로만 쓴다
+	// hasLinks 는 <nav> 가 새로 붙었다는 신호로만 쓴다 (useSafeLayoutEffect 는 의존성 lint 대상이 아니다)
 	useSafeLayoutEffect(() => {
 		const links = linksRef.current;
 		if (!links) return;

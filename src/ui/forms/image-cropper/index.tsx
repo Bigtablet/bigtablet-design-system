@@ -177,12 +177,18 @@ export function ImageCropper({
 	const [offset, setOffset] = useState<CropOffset>({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(false);
 
-	// src(또는 minZoom)가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의
-	// onLoad 에서 다시 기록된다.
+	// src 가 바뀌면 조작 상태를 리셋한다. imageSize=null 로 되돌리면 새 이미지의 onLoad 에서 다시 기록된다.
 	// src 는 body 에서 읽지 않지만 새 이미지로 교체될 때 리셋을 걸기 위한 의도적 트리거 의존성이다.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional trigger dependency
 	useEffect(() => {
 		setImageSize(null);
+		setOffset({ x: 0, y: 0 });
+	}, [src]);
+	// 줌 · 오프셋은 src **와** minZoom 이 바뀔 때 맞춘다(src 교체 때도 이전 배율이 남지 않게). imageSize 는
+	// 위 effect 에서 src 가 바뀔 때만 비운다 - minZoom 만 바뀌면 이미지가 그대로라 onLoad 가 다시 오지 않아,
+	// 예전처럼 여기서도 비우면 영구히 먹통이 됐다(crop() reject, #986)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: src 는 교체 신호로 쓴다
+	useEffect(() => {
 		setZoom(minZoom);
 		zoomRef.current = minZoom;
 		setOffset({ x: 0, y: 0 });
@@ -283,6 +289,8 @@ export function ImageCropper({
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (!imageSize) return;
+		// Ctrl/Cmd + = · - 는 브라우저 확대다 - 가로채지 않는다 (WCAG 1.4.4, #986)
+		if (event.ctrlKey || event.metaKey || event.altKey) return;
 		switch (event.key) {
 			case "ArrowLeft":
 				panBy(-PAN_STEP, 0);

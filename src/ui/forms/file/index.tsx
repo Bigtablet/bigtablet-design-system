@@ -64,9 +64,8 @@ export const FileInput = ({
 	const isPreviewVariant = variant === "preview";
 	const showPreview = isPreviewVariant || preview;
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const files = e.currentTarget.files;
-
+	/** 고른(또는 놓은) 파일로 미리보기를 만들고 onFiles 를 부른다 */
+	const applyFiles = (files: FileList | null) => {
 		// preview URL 생성 + ref 갱신을 onFiles/onChange 호출보다 먼저 — 부모가 onFiles 안에서
 		// 동기 unmount 해도 ref 가 새 URL 을 이미 담고 있어 unmount cleanup 이 정리할 수 있도록.
 		if (showPreview && files) {
@@ -94,8 +93,43 @@ export const FileInput = ({
 		}
 
 		onFiles?.(files);
+	};
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		applyFiles(e.currentTarget.files);
 		// 사용자가 onChange 도 넘긴 경우 함께 호출 (back-compat)
 		onChange?.(e);
+	};
+
+	// 미리보기 박스에 파일을 끌어다 놓으면 받는다. 처리하는 곳이 없어 브라우저가 파일을 열며 폼이 날아갔다
+	// (input 은 pointer-events:none, #986). 폼 제출에도 실리게 input 의 files 를 바꾼다.
+	// ponytail: accept 는 preview 의 image/* 만 본다 - 임의 accept 패턴 검사는 필요해지면 더한다
+	const handleDragOver = (e: React.DragEvent) => {
+		if (disabled) return;
+		e.preventDefault();
+		e.dataTransfer.dropEffect = "copy";
+	};
+	const handleDrop = (e: React.DragEvent) => {
+		e.preventDefault();
+		if (disabled) return;
+		const dropped = e.dataTransfer.files;
+		const first = dropped[0];
+		if (!first?.type.startsWith("image/")) return;
+		const input = inputRef.current;
+		// 미리보기 박스는 한 장이다 - multiple 이어도 첫 파일만 넘긴다. 보이지 않는 파일까지 소비자에게 가지 않게
+		let files: FileList = dropped;
+		if (dropped.length > 1 && typeof DataTransfer !== "undefined") {
+			const one = new DataTransfer();
+			one.items.add(first);
+			files = one.files;
+		}
+		if (input && files instanceof FileList) {
+			// input 의 change 로 흘려 보낸다 - 선택 경로와 같이 onFiles · onChange 가 한 번씩 불린다
+			input.files = files;
+			input.dispatchEvent(new Event("change", { bubbles: true }));
+		} else {
+			applyFiles(files);
+		}
 	};
 
 	const handleRemove = (e: React.MouseEvent) => {
@@ -108,6 +142,8 @@ export const FileInput = ({
 		previewUrlsRef.current = [];
 		if (inputRef.current) {
 			inputRef.current.value = "";
+			// 지우기 버튼이 사라진다 - 포커스를 입력으로 옮긴다. 두면 body 로 떨어졌다 (#986)
+			inputRef.current.focus();
 		}
 		onFiles?.(null);
 	};
@@ -155,6 +191,8 @@ export const FileInput = ({
 					htmlFor={inputId}
 					className="file_input_label"
 					style={{ width: previewSize, height: previewSize }}
+					onDragOver={handleDragOver}
+					onDrop={handleDrop}
 				>
 					{hasImage ? (
 						// biome-ignore lint/performance/noImgElement: framework-agnostic DS - host app should swap with next/image if needed

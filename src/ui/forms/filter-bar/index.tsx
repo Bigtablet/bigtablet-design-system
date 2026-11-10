@@ -58,8 +58,8 @@ export type FilterBarProps = FilterBarBaseProps & (FilterBarSubmitProps | Filter
  * @example
  * ```tsx
  * <FilterBar onSubmit={() => setQuery(draft)} onReset={() => setDraft(EMPTY)} canReset={!isEmpty(draft)}>
- *   <TextField label="이름" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
- *   <Dropdown label="상태" options={STATUS} value={draft.status} onChange={(v) => setDraft({ ...draft, status: v })} />
+ *   <TextField label="이름" value={draft.name} onValueChange={(name) => setDraft({ ...draft, name })} />
+ *   <Dropdown label="상태" options={STATUS} value={draft.status} onValueChange={(status) => setDraft({ ...draft, status })} />
  * </FilterBar>
  * ```
  */
