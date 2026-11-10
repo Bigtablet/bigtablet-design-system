@@ -170,8 +170,8 @@ export const Textarea = ({
 		el.style.height = `${next}px`;
 		el.style.overflowY = el.scrollHeight > maxH ? "auto" : "hidden";
 	}, [autoGrow, size, minRows, maxRows]);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: innerValue 는 다시 잴 신호다
-	useSafeLayoutEffect(fitHeight, [innerValue, fitHeight]);
+	// innerValue 는 다시 잴 신호다
+	useSafeLayoutEffect(() => fitHeight(), [innerValue, fitHeight]);
 	// 폭이 바뀌면(창 · 패널 크기, 숨김 상태로 마운트된 뒤 보일 때) 줄바꿈이 달라져 다시 잰다. 내용 변화에만
 	// 쟀을 때는 600 → 150px 로 좁아져도 높이가 48 에 머물고 overflow 가 hidden 이라 글이 잘렸다 (#986).
 	// 폭만 본다 - 높이를 바꾸는 건 이 함수 자신이라 높이 변화에 반응하면 되먹임이 생긴다

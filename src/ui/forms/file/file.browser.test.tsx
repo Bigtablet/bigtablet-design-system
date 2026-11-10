@@ -31,6 +31,6 @@ describe("FileInput drop (Chromium)", () => {
 		);
 		expect(onFiles).toHaveBeenCalledTimes(1);
 		expect(onChange).toHaveBeenCalledTimes(1);
-		expect((onFiles.mock.calls[0]?.[0] as FileList).length).toBe(1);
+		expect((onFiles.mock.calls[0] as [FileList])[0].length).toBe(1);
 	});
 });

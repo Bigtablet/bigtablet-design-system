@@ -174,9 +174,9 @@ export const DateCalendar = ({
 			startMonth ? pickInMonth(startMonth) : (selected ?? today ?? fromDate(new Date())),
 		);
 	});
-	// 기기의 오늘에서 시작한 경우 마운트 뒤 클라이언트 날짜로 다시 맞춘다 - 서버 날짜와 다를 수 있다
+	// 마운트 뒤 클라이언트 날짜로 다시 맞춘다 - 서버 날짜와 다를 수 있다. 보이는 달을 줬어도 그 달이 이번 달이면
+	// 오늘로 맞춘다 - 첫 렌더엔 오늘을 몰라 1일에 놓였다
 	// biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 때 한 번만
-	// 보이는 달을 줬어도 그 달이 이번 달이면 오늘로 맞춘다 - 첫 렌더엔 오늘을 몰라 1일에 놓였다
 	React.useEffect(() => {
 		if (todayProp || selected) return;
 		const now = fromDate(new Date());
