@@ -58,8 +58,7 @@ describe("Toast", () => {
 		vi.useFakeTimers();
 		Toast("실패", "error", { action: { label: "다시", onClick: () => {} } });
 		Toast("안내", "info");
-		vi.runAllTimers();
-		vi.useRealTimers();
+		vi.advanceTimersByTime(150);
 
 		const region = document.querySelector(".bt-toast-container") as HTMLElement;
 		expect(region.hasAttribute("aria-live")).toBe(false);
@@ -67,14 +66,18 @@ describe("Toast", () => {
 			region.querySelector(`.bt-toast__announcer[role="${role}"]`) as HTMLElement;
 		expect(announcer("alert").textContent).toBe("실패");
 		expect(announcer("status").textContent).toBe("안내");
-		// 보이는 메시지는 보조기술에서 뺀다 - 두 번 읽히지 않게
-		expect(nth(0).querySelector(".bt-toast__live")?.getAttribute("aria-hidden")).toBe("true");
+		// 읽힌 뒤에는 비운다 - 리전을 훑을 때 토스트 안 메시지와 겹치지 않게
+		vi.advanceTimersByTime(1000);
+		expect(announcer("status").textContent).toBe("");
+		vi.useRealTimers();
+		// 메시지는 토스트 안에도 남는다 - 버튼이 어느 메시지에 붙었는지 알 수 있게
+		expect(nth(0).querySelector(".bt-toast__live")?.hasAttribute("aria-hidden")).toBe(false);
 	});
 
 	it("닫으면 공지 영역의 문구도 뺀다", () => {
 		vi.useFakeTimers();
 		Toast("하나", "info");
-		vi.runAllTimers();
+		vi.advanceTimersByTime(150);
 		vi.useRealTimers();
 		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
 		expect(status.textContent).toBe("하나");
@@ -90,6 +93,17 @@ describe("Toast", () => {
 		vi.useRealTimers();
 		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
 		expect(status.textContent).toBe("");
+	});
+
+	it("공지 영역이 준비되는 동안 들어온 공지는 호출 순서대로 넣는다", () => {
+		vi.useFakeTimers();
+		Toast("첫째", "info");
+		Toast("둘째", "info");
+		vi.advanceTimersByTime(150);
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		expect(Array.from(status.children, (p) => p.textContent)).toEqual(["첫째", "둘째"]);
+		vi.runAllTimers();
+		vi.useRealTimers();
 	});
 
 	it("모르는 tone 은 neutral 로 그린다", () => {

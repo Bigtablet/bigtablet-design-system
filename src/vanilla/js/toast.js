@@ -29,6 +29,24 @@ export const TOAST_ICONS = {
 };
 export const TOAST_CLOSE_ICON = toastSvg(14, '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
 
+/** 공지 문구를 남겨 두는 시간 - 읽힌 뒤 비워 리전을 훑을 때 토스트 안 메시지와 겹치지 않게 (React 와 같음) */
+const ANNOUNCE_MS = 1000;
+/** 공지 영역을 막 만든 뒤 첫 공지까지 기다리는 시간 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 한다 */
+const ANNOUNCE_WARMUP_MS = 100;
+/**
+ * 문구 한 줄을 공지 영역에 넣고 잠시 뒤 뺀다. 그 사이 토스트가 닫혔으면(isClosed) 넣지 않는다.
+ * 리전의 `_btPending` 이 있으면(공지 영역을 막 만들었다) 거기 모았다가 준비되면 호출 순서대로 넣는다
+ */
+function announce(region, announcer, line, isClosed) {
+	if (region._btPending) {
+		region._btPending.push(() => announce(region, announcer, line, isClosed));
+		return;
+	}
+	if (isClosed() || !announcer) return;
+	announcer.appendChild(line);
+	setTimeout(() => line.remove(), ANNOUNCE_MS);
+}
+
 /**
  * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고, 최대
  * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
@@ -66,41 +84,48 @@ export function Toast(message, tone = "neutral", options = {}) {
 	// 예전 버전이 만든(또는 서버가 그린) 리전에도 붙인다
 	region.removeAttribute("aria-live");
 	region.removeAttribute("aria-atomic");
-	let fresh = false;
 	for (const role of ["status", "alert"]) {
 		if (region.querySelector(`:scope > .bt-toast__announcer[role="${role}"]`)) continue;
 		const announcer = document.createElement("div");
 		announcer.className = "bt-toast__announcer";
 		announcer.setAttribute("role", role);
 		region.appendChild(announcer);
-		fresh = true;
+		// 방금 만들었다 - 준비될 때까지 들어오는 공지는 순서대로 모았다가 넣는다
+		if (!region._btPending) {
+			const pending = [];
+			region._btPending = pending;
+			setTimeout(() => {
+				delete region._btPending;
+				for (const run of pending) run();
+			}, ANNOUNCE_WARMUP_MS);
+		}
 	}
 
 	const item = document.createElement("div");
 	item.className = "bt-toast";
 	item.dataset.state = "open";
-	// 보이는 메시지는 보조기술에서 뺀다 - 같은 문구를 숨은 공지 영역이 읽는다 (React 와 같음, #994)
+	// 메시지는 토스트 안에 남긴다 - 리전을 훑을 때 버튼이 어느 메시지에 붙었는지 알 수 있게. 공지는 숨은
+	// 공지 영역이 따로 하고, 그 문구는 읽힌 뒤 비워 두 번 나오지 않는다 (React 와 같음, #994)
 	item.innerHTML =
-		'<div class="bt-toast__live" aria-hidden="true">' +
+		'<div class="bt-toast__live">' +
 		`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
 		'<span class="bt-toast__message"></span></div>';
 	item.querySelector(".bt-toast__message").textContent = message;
 
+	let closing = false;
+
 	// 문구만 공지 영역에 넣는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다. error 는 alert 쪽(assertive).
-	// 리전을 방금 만들었으면 한 틱 뒤에 넣는다 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 삽입이 공지된다
+	// 공지 영역이 준비되기 전에 닫혔으면 넣지 않는다 - 닫힌 토스트 문구가 늦게 공지되고 영역에 남았다
 	const line = document.createElement("p");
 	line.textContent = message;
-	const announcer = region.querySelector(
-		`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
+	announce(
+		region,
+		region.querySelector(
+			`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
+		),
+		line,
+		() => closing,
 	);
-	// 그 사이에 닫혔으면 넣지 않는다 - 닫힌 토스트 문구가 늦게 공지되고 영역에 남았다
-	if (fresh)
-		setTimeout(() => {
-			if (!closing) announcer?.appendChild(line);
-		}, 100);
-	else announcer?.appendChild(line);
-
-	let closing = false;
 
 	function dismiss() {
 		if (closing) return;

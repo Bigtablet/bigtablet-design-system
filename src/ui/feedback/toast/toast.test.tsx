@@ -327,7 +327,8 @@ describe("Toast portal & a11y", () => {
 		const region = screen.getByRole("region", { name: "알림" });
 		expect(region).not.toHaveAttribute("aria-live");
 		expect(screen.getByRole("status")).toHaveTextContent("aria 검사");
-		expect(region.querySelector(".toast_live")).toHaveAttribute("aria-hidden", "true");
+		// 메시지는 토스트 안에도 남는다 - 버튼이 어느 메시지에 붙었는지 알 수 있게
+		expect(region.querySelector(".toast_live")).not.toHaveAttribute("aria-hidden");
 	});
 
 	it("uses role=alert only for error variant and role=status for the rest", () => {
@@ -929,7 +930,6 @@ describe("Toast programmatic control", () => {
 
 		// 보조기술은 긴급도를 노드 삽입 시점에 정한다 - 실패는 alert 영역에 새 노드로 들어가야 assertive 로 읽힌다
 		fireEvent.click(screen.getByRole("button", { name: "fail" }));
-		expect(screen.getByRole("status")).toBeEmptyDOMElement();
 		const failLine = screen.getByRole("alert").querySelector("p");
 		expect(failLine).toHaveTextContent("실패");
 		// 바깥 토스트 노드는 그대로다 - 진입 모션이 다시 돌지 않고 버튼 포커스도 살아 있다.
@@ -937,7 +937,7 @@ describe("Toast programmatic control", () => {
 
 		// 문구가 바뀌면 새 노드로 다시 넣는다 - 같은 노드의 텍스트만 바꾸면 놓치는 보조기술이 있다
 		fireEvent.click(screen.getByRole("button", { name: "retry" }));
-		const retryLine = screen.getByRole("alert").querySelector("p");
+		const retryLine = Array.from(screen.getByRole("alert").querySelectorAll("p")).at(-1);
 		expect(retryLine).toHaveTextContent("재시도 중");
 		expect(retryLine).not.toBe(failLine);
 	});
@@ -992,5 +992,25 @@ describe("Toast programmatic control", () => {
 		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 		const bar = document.querySelector<HTMLElement>(".toast_progress");
 		expect(bar?.style.getPropertyValue("--toast-duration")).toBe("7000ms");
+	});
+
+	// 공지 문구는 읽힌 뒤 비운다 - 리전을 훑을 때 토스트 안 메시지와 겹치지 않게 (#994)
+	describe("Toast announcer clears after announcing", () => {
+		it("empties the status region after a second", async () => {
+			vi.useFakeTimers();
+			render(
+				<ToastProvider>
+					<ToastTrigger fn={(t) => t.info("잠깐", { duration: Infinity })} />
+				</ToastProvider>,
+			);
+			fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+			expect(screen.getByRole("status")).toHaveTextContent("잠깐");
+			await act(async () => {
+				vi.advanceTimersByTime(1000);
+			});
+			expect(screen.getByRole("status")).toBeEmptyDOMElement();
+			expect(screen.getByText("잠깐", { selector: ".toast_message" })).toBeInTheDocument();
+			vi.useRealTimers();
+		});
 	});
 });

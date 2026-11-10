@@ -130,9 +130,9 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 	return (
 		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
-			{/* 보이는 메시지는 보조기술에서 뺀다 - 같은 문구를 Provider 의 공지 영역(ToastAnnouncer)이 읽는다.
-			    둘 다 두면 리전을 훑을 때 메시지가 두 번 나온다. 버튼은 그대로 남는다 */}
-			<div className="toast_live" aria-hidden="true">
+			{/* 메시지는 토스트 안에 남긴다 - 리전을 훑을 때 버튼이 어느 메시지에 붙었는지 알 수 있게. 공지는
+			    Provider 의 ToastAnnouncer 가 따로 하고, 그 문구는 읽힌 뒤 비워 두 번 나오지 않는다 */}
+			<div className="toast_live">
 				<span className={`toast_icon toast_icon_${item.tone}`} aria-hidden="true">
 					{TONE_ICONS[item.tone]}
 				</span>
@@ -183,26 +183,49 @@ let toastSeq = 0;
 
 // ── ToastProvider ────────────────────────────────────────────────────────────
 
+/** 공지 문구를 남겨 두는 시간 - 읽힌 뒤 비워 리전을 훑을 때 토스트 안 메시지와 겹치지 않게 (Radix Toast 와 같은 방식) */
+const ANNOUNCE_MS = 1000;
+
 /**
  * 토스트 문구를 읽어 주는 숨은 공지 영역 - 컨테이너와 함께 처음부터 붙어 있다. 라이브 리전은 내용보다 먼저
  * DOM 에 있어야 삽입이 공지된다 - 토스트마다 role 노드를 새로 꽂으면 그것을 놓치는 보조기술이 있다.
  * 문구만 담아 닫기 · 액션 버튼 이름이 섞이지 않는다.
- * key 에 문구를 넣어 update 로 바뀌면 다시 삽입(재공지)되고, tone 이 error 로 바뀌면 alert 쪽으로 옮겨
- * assertive 로 읽힌다 - 보조기술은 긴급도를 노드 삽입 시점에 정한다. 퇴출 중인 항목은 뺀다.
+ * 새로 뜨거나 update 로 문구 · 긴급도가 바뀐 토스트만 넣고 잠시 뒤 뺀다. error 는 alert 쪽이라 assertive 로
+ * 읽힌다 - 보조기술은 긴급도를 노드 삽입 시점에 정한다. 퇴출 중인 항목은 넣지 않는다.
  */
 const ToastAnnouncer = ({ toasts }: { toasts: ToastItem[] }) => {
-	const live = toasts.filter((toast) => !toast.dismissing);
-	const lines = (urgent: boolean) =>
-		live
-			.filter((toast) => (toast.tone === "error") === urgent)
-			.map((toast) => <p key={`${toast.id}:${toast.message}`}>{toast.message}</p>);
+	type Line = { key: string; text: string; urgent: boolean };
+	const [lines, setLines] = React.useState<Line[]>([]);
+	const seenRef = React.useRef(new Set<string>());
+	const timersRef = React.useRef<ReturnType<typeof setTimeout>[]>([]);
+	React.useEffect(() => () => timersRef.current.forEach(clearTimeout), []);
+	React.useEffect(() => {
+		const fresh = toasts
+			.filter((toast) => !toast.dismissing)
+			.map((toast) => {
+				const urgent = toast.tone === "error";
+				return { key: `${toast.id}:${urgent}:${toast.message}`, text: toast.message, urgent };
+			})
+			.filter((line) => !seenRef.current.has(line.key));
+		if (fresh.length === 0) return;
+		for (const line of fresh) seenRef.current.add(line.key);
+		setLines((prev) => [...prev, ...fresh]);
+		timersRef.current.push(
+			setTimeout(
+				() => setLines((prev) => prev.filter((line) => !fresh.includes(line))),
+				ANNOUNCE_MS,
+			),
+		);
+	}, [toasts]);
+	const render = (urgent: boolean) =>
+		lines.filter((line) => line.urgent === urgent).map((line) => <p key={line.key}>{line.text}</p>);
 	return (
 		<>
 			<div className="toast_announcer" role="status">
-				{lines(false)}
+				{render(false)}
 			</div>
 			<div className="toast_announcer" role="alert">
-				{lines(true)}
+				{render(true)}
 			</div>
 		</>
 	);
