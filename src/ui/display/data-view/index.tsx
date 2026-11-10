@@ -192,10 +192,13 @@ export const DataView = <T extends object>({
 	// 선택이 없는 표에서는 아예 계산하지 않는다 - 행이 많은 표에서 매 렌더 O(n) 이다.
 	const visibleKeySignature = selectable ? JSON.stringify(rows.map(rowKey)) : "";
 	// 같은 쪽에 있다가 사라진 행 - 페이지네이션이 있어도 이건 버린다. 지운 행의 선택이 남아 "1개 선택됨" 이
-	// 유지되고, 다시 누르면 없는 행으로 액션이 또 불렸다 (#983)
-	const shownRef = useRef<{ page: number | undefined; keys: string[] }>({
+	// 유지되고, 다시 누르면 없는 행으로 액션이 또 불렸다 (#983).
+	// 쪽만 먼저 바뀌고 목록은 이전 쪽 그대로인 렌더(react-query · SWR 의 keepPreviousData)에서는 목록을
+	// 그 쪽 것으로 기록하지 않는다 - 기록하면 새 쪽 데이터가 올 때 이전 쪽 선택이 통째로 지워진다
+	const shownRef = useRef<{ page: number | undefined; signature: string; keys: string[] | null }>({
 		page: undefined,
-		keys: [],
+		signature: "",
+		keys: null,
 	});
 	// biome-ignore lint/correctness/useExhaustiveDependencies: rows·rowKey 대신 위 signature 로 내용 변화만 본다
 	useEffect(() => {
@@ -204,10 +207,12 @@ export const DataView = <T extends object>({
 		const keys = rows.map(rowKey);
 		const visible = new Set(keys);
 		const prev = shownRef.current;
-		shownRef.current = { page: pagination?.page, keys };
-		const removed = hasPagination
-			? new Set(prev.page === pagination?.page ? prev.keys.filter((k) => !visible.has(k)) : [])
-			: null;
+		const page = pagination?.page;
+		const samePage = prev.page === page;
+		const stale = !samePage && prev.signature === visibleKeySignature;
+		shownRef.current = { page, signature: visibleKeySignature, keys: stale ? null : keys };
+		if (hasPagination && !(samePage && prev.keys)) return;
+		const removed = hasPagination ? new Set(prev.keys?.filter((k) => !visible.has(k))) : null;
 		setSelectedKeys((selected) => {
 			const next = selected.filter((key) => (removed ? !removed.has(key) : visible.has(key)));
 			return next.length === selected.length ? selected : next;

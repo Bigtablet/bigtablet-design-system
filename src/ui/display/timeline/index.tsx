@@ -77,6 +77,12 @@ const isPresent = (value: React.ReactNode) => value !== undefined && value !== n
 
 export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => {
 	const t = useLocaleText();
+	// 숨은 상태 문구 - 키를 리터럴로 두어 카탈로그 검사(check:defaults)가 사용처를 찾는다
+	const statusText = {
+		done: t("timeline.done"),
+		active: t("timeline.active"),
+		pending: t("timeline.pending"),
+	};
 	return (
 		<ol ref={ref} className={cn("timeline", className)} {...props}>
 			{items.map((item) => {
@@ -108,7 +114,7 @@ export const Timeline = ({ items, className, ref, ...props }: TimelineProps) => 
 							<div className="timeline_head">
 								<div className="timeline_title">
 									{item.title}
-									<span className="timeline_status">, {t(`timeline.${status}`)}</span>
+									<span className="timeline_status">, {statusText[status]}</span>
 								</div>
 								{isPresent(item.time) && <div className="timeline_time">{item.time}</div>}
 							</div>

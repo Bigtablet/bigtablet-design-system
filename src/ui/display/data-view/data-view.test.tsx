@@ -319,4 +319,22 @@ describe("DataView", () => {
 		);
 		expect(screen.getByRole("searchbox")).toBeInTheDocument();
 	});
+
+	// keepPreviousData - 쪽이 먼저 바뀌고 이전 쪽 목록이 남은 렌더에서 다른 쪽 선택을 지우지 않는다
+	it("keeps other-page selection while the previous page data is still shown", () => {
+		const View = ({ data, page }: { data: User[]; page: number }) => (
+			<DataView
+				query={{ data }}
+				columns={COLUMNS}
+				rowKey={rowKey}
+				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
+				pagination={{ page, totalPages: 3, onPageChange: vi.fn() }}
+			/>
+		);
+		const { rerender } = render(<View data={USERS} page={1} />);
+		fireEvent.click(screen.getAllByRole("checkbox")[1]!);
+		rerender(<View data={USERS} page={2} />);
+		rerender(<View data={[{ id: "9", name: "이서연" }]} page={2} />);
+		expect(screen.getByRole("status")).toHaveTextContent("1개 선택됨");
+	});
 });

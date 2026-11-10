@@ -76,12 +76,12 @@ export interface LocaleMessages {
 	"textField.clear": string;
 	"textField.passwordHide": string;
 	"textField.passwordShow": string;
-	"timeline.active": string;
-	"timeline.done": string;
-	"timeline.pending": string;
 	"timePicker.hour": string;
 	"timePicker.minute": string;
 	"timePicker.rangeSr": string;
+	"timeline.active": string;
+	"timeline.done": string;
+	"timeline.pending": string;
 
 	// ── navigation ──────────────────────────────────────────────────────────
 	"appShell.skipLink": string;
@@ -170,12 +170,12 @@ export const ko: LocaleMessages = {
 	"textField.clear": "지우기",
 	"textField.passwordHide": "비밀번호 숨기기",
 	"textField.passwordShow": "비밀번호 표시",
-	"timeline.active": "진행 중",
-	"timeline.done": "완료",
-	"timeline.pending": "대기",
 	"timePicker.hour": "시",
 	"timePicker.minute": "분",
 	"timePicker.rangeSr": "{min} 부터 {max} 까지 선택 가능",
+	"timeline.active": "진행 중",
+	"timeline.done": "완료",
+	"timeline.pending": "대기",
 
 	"appShell.skipLink": "본문으로 건너뛰기",
 	"bottomNav.label": "주요 메뉴",
@@ -260,12 +260,12 @@ export const en: LocaleMessages = {
 	"textField.clear": "Clear",
 	"textField.passwordHide": "Hide password",
 	"textField.passwordShow": "Show password",
-	"timeline.active": "In progress",
-	"timeline.done": "Done",
-	"timeline.pending": "Pending",
 	"timePicker.hour": "Hour",
 	"timePicker.minute": "Minute",
 	"timePicker.rangeSr": "Selectable from {min} to {max}",
+	"timeline.active": "In progress",
+	"timeline.done": "Done",
+	"timeline.pending": "Pending",
 
 	"appShell.skipLink": "Skip to main content",
 	"bottomNav.label": "Main menu",
