@@ -446,7 +446,7 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 94 test files / 1874 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 94 test files / 1875 passed · 1 skipped.
 
 > **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
 > 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
@@ -473,7 +473,7 @@ it("calls callback with correct arguments", () => {
 | ui/display/table | 98.32% | 96.86% | 96.97% | 99.02% |
 | ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
-| ui/feedback/toast | 97.25% | 90.57% | 100% | 100% |
+| ui/feedback/toast | 97.25% | 90.74% | 100% | 100% |
 | ui/forms/checkbox | 95.83% | 91.67% | 100% | 100% |
 | ui/forms/combobox | 100% | 99.12% | 95% | 100% |
 | ui/forms/date-calendar | 99.4% | 98.64% | 100% | 100% |
