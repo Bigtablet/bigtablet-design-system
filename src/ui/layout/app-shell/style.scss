@@ -55,8 +55,9 @@
     }
   }
 
-  // padded={false} 여도 하단 고정 크롬 몫은 비운다 - 마지막 콘텐츠가 BottomBar 아래로 가렸다 (#984)
-  &_main:not(.app_shell_main_padded) {
+  // padded={false} 여도 하단 고정 크롬 몫은 비운다 - 마지막 콘텐츠가 BottomBar 아래로 가렸다 (#984).
+  // :where 로 특이도를 클래스 하나로 둔다 - 패딩을 직접 정하려는 소비자 규칙이 이길 수 있게
+  &_main:where(:not(.app_shell_main_padded)) {
     padding-bottom: var(--bt-bottom-inset, 0px);
   }
 
