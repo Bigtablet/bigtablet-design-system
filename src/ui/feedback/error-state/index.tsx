@@ -2,7 +2,7 @@
 
 import { TriangleAlert } from "lucide-react";
 import type * as React from "react";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -78,7 +78,7 @@ export const ErrorState = ({
 				</div>
 			)}
 			{title && <h3 className="error_state_title">{title}</h3>}
-			{description && <p className="error_state_description">{description}</p>}
+			{description && <p className="error_state_description">{renderSentences(description)}</p>}
 			{action && <div className="error_state_action">{action}</div>}
 		</div>
 	);

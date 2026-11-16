@@ -3,7 +3,7 @@
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -74,7 +74,9 @@ export const InlineAlert = ({
 			)}
 			<div className="inline_alert_content">
 				{title != null && <div className="inline_alert_title">{title}</div>}
-				{children != null && <div className="inline_alert_description">{children}</div>}
+				{children != null && (
+					<div className="inline_alert_description">{renderSentences(children)}</div>
+				)}
 				{action != null && <div className="inline_alert_action">{action}</div>}
 			</div>
 			{onDismiss && (
