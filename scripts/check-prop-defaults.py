@@ -450,29 +450,46 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
 
     소스에 prop 을 더하고 표를 안 고치면 문서만 읽는 소비자는 그 prop 을 모른다. NavBar `layout`
     은 다른 섹션 예제(AppShell)가 쓰는데 NavBar 표에는 없었고, Alert 는 바로 아래 예제가 쓰는
-    `destructive` 가 옵션 표에 없었다 (#1018). 표가 있는 섹션만 본다 - 표 대신 산문으로 설명하는
-    섹션은 건너뛴다. 한 칸에 `` `min` / `max` `` 처럼 여러 이름을 적어도 된다. `type XProps = ...`
+    `destructive` 가 옵션 표에 없었다 (#1018). 머리 첫 칸이 `Prop` · `Option` · `필드` 인 표만 본다 -
+    표 대신 산문으로 설명하는 섹션은 건너뛴다. `**X Props**` 제목 아래 표는 X 의 것이고, 그 표가 끝나면
+    섹션 컴포넌트로 돌아간다. 한 칸에 `` `min` / `max` `` 처럼 여러 이름을 적어도 된다. `type XProps = ...`
     (polymorphic 등)는 선언을 정규식으로 읽기 어려워 대상이 아니다.
     """
     by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
     documented: dict[Path, set[str]] = {}
-    component: Path | None = None
+    section: Path | None = None  # `###` 섹션의 컴포넌트
+    target: Path | None = None  # 다음 Props 표가 속할 컴포넌트
+    in_props_table = False
     for line in DOC.read_text(encoding="utf-8").splitlines():
         if line.startswith("#") and not line.startswith("####"):
             # 첫 단어가 컴포넌트 이름 - `### Chip - type="static" ...` 같은 소제목도 Chip 섹션이다
             word = line.lstrip("# ").split(" ")[0]
-            component = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
+            section = target = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
+            in_props_table = False
             continue
-        # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`).
-        # 그 표의 이름이 본 컴포넌트 집합에 섞이면 본 컴포넌트의 누락이 가려진다 - 표 제목으로 대상을 바꾸고,
-        # 자기 폴더가 없는 하위 컴포넌트 표는 건너뛴다.
-        sub = re.match(r"\*\*([A-Za-z]+) Props\*\*", line)
+        # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`). 그 표의 이름이
+        # 본 컴포넌트에 섞이면 본 컴포넌트의 누락이 가려진다 - 제목으로 대상을 바꾸고, 자기 폴더가 없는
+        # 하위 컴포넌트(`NavLink` · `Modal.Header`)의 표는 건너뛴다. 그 표가 끝나면 섹션 컴포넌트로 돌아간다.
+        sub = re.match(r"\*\*([A-Za-z.]+) Props\*\*", line)
         if sub:
-            component = by_name.get(sub.group(1).lower())
+            target = by_name.get(sub.group(1).replace(".", "").lower())
             continue
-        if component is not None and line.startswith("| `"):
-            names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells_of(line)[0])
-            documented.setdefault(component, set()).update(names)
+        if not line.startswith("|"):
+            if in_props_table:
+                target = section
+            in_props_table = False
+            continue
+        cells = cells_of(line)
+        # Props 표만 본다 - 머리 첫 칸이 `Prop`/`Option`/`필드`(Toast 옵션). 같은 섹션의 다른 표(색 · 모양 비교 등) 첫 칸이
+        # 섞이면 같은 이름이 누락을 가린다. 데이터 행이 없는 표도 등록해 prop 전부를 누락으로 잡는다.
+        if cells and cells[0] in ("Prop", "Option", "필드"):
+            in_props_table = target is not None
+            if target is not None:
+                documented.setdefault(target, set())
+            continue
+        if in_props_table and line.startswith("| `"):
+            names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells[0])
+            documented[target].update(names)
 
     problems: list[str] = []
     compared = 0
