@@ -89,7 +89,7 @@ Providers needed:
 Always reference tokens - never inline a hex value.
 
 Two surfaces, and they are **not** interchangeable:
-- **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
+- **SCSS tokens** (`@use "@bigtablet/design-system/scss/token" as token;` → `token.$spacing_16`) - the full set. Use these in your SCSS.
 - **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
@@ -99,16 +99,16 @@ The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--
 
 | Token | Light | Dark | When to use |
 |-------|-------|------|-------------|
-| `--bt-color-bg-solid` | white | navy_900 | Page/card background |
-| `--bt-color-bg-solid-dim` | neutral_50 | navy_800 | Elevated surface (panels, dimmed sections) |
-| `--bt-color-text-heading` | neutral_900 | white | Primary headings, body emphasis |
-| `--bt-color-text-body` | neutral_700 | navy_200 | Body text, descriptions |
-| `--bt-color-text-caption` | neutral_500 | neutral_400 | Captions, helper text, placeholders |
-| `--bt-color-border-default` | neutral_200 | navy_700 | Card borders, dividers |
-| `--bt-color-border-hover` | neutral_400 | navy_400 | Hover state borders |
+| `--bt-color-bg-solid` | #FFFFFF | #0A0A0A | Page/card background |
+| `--bt-color-bg-solid-dim` | #F4F4F4 | #141414 | Elevated surface (panels, dimmed sections) |
+| `--bt-color-text-heading` | #121212 | white 95% | Primary headings, body emphasis |
+| `--bt-color-text-body` | #666666 | #B3B3B3 | Body text, descriptions |
+| `--bt-color-text-caption` | #6F6F6F | #808080 | Captions, helper text, placeholders |
+| `--bt-color-border-default` | #E5E5E5 | #333333 | Card borders, dividers |
+| `--bt-color-border-hover` | #B3B3B3 | #777777 | Hover state borders |
 | `--bt-color-brand-primary` | #121212 | #121212 (same) | Button "filled" bg (intentional, both themes) |
 | `--bt-color-brand-on-primary` | white | white (same) | Text on `brand-primary` |
-| `--bt-color-accent-default` | #121212 | white | Indicators that flip in dark (checked checkboxes, active progress) |
+| `--bt-color-accent-default` | #121212 | #FFFFFF | Indicators that flip in dark (checked checkboxes, active progress) |
 | `--bt-color-accent-on-surface` | white | #121212 | Text/icon on top of `accent-default` |
 | `--bt-color-status-success` | green | green (same) | Success states |
 | `--bt-color-status-warning` | amber | amber (same) | Warning states |
@@ -136,7 +136,7 @@ Every step has a CSS var (`--bt-radius-none` … `--bt-radius-full`) in both bun
 
 ### Elevation
 
-`--bt-elevation-level1` through `-level5`. Light = subtle dark drops. Dark = stronger blacks with larger spread for visibility on navy.
+`--bt-elevation-level1` through `-level5`. Light = subtle dark drops. Dark = stronger blacks with larger spread for visibility on the near-black canvas.
 
 ### Motion
 
@@ -197,7 +197,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
    - Pair `accent-default` with `accent-on-surface` for the foreground (auto-inverts)
 
 4. **Panel elevation in dark mode:**
-   - Page bg: `bg-solid` (navy_900)
+   - Page bg: `bg-solid` (#0A0A0A)
    - Elevated panel (dropdown, menu, modal): use the conditional pattern below
 
    ```scss
@@ -205,7 +205,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
      background: var(--bt-color-bg-solid);  // white in light
 
      [data-theme="dark"] & {
-       background: var(--bt-color-bg-solid-dim);  // navy_800 (lighter than canvas)
+       background: var(--bt-color-bg-solid-dim);  // #141414 (lighter than canvas)
      }
      @media (prefers-color-scheme: dark) {
        :root:not([data-theme]) & {
@@ -216,8 +216,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
    ```
 
 5. **Hardcoded whites/darks are allowed for intentional fixed surfaces:**
-   - Navy gradient avatars (decorative, brand-colored)
-   - Hero `_overlay_navy` (always dark gradient)
+   - Hero `overlay="dark"` (always dark gradient)
    - Tooltip body (`accent-strong` token already handles theme)
    - Destructive red modal buttons
 
@@ -260,7 +259,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outline - glass=frosted blur over colored bg, outline=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
 | `MediaCard` | Image + content card. | `image` (`{ src, alt }`, required), `imagePosition`, `aspectRatio`, `heading`, `eyebrow`, `meta`, `children` (body), `clickable`, `shadow`, `bordered` |
-| `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
+| `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (`true`/`dark`/`light`), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
 | `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
@@ -310,14 +309,14 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Container` | Centered max-width wrapper. | `size` (sm/md/lg/xl/full, default xl), `center` (default true) |
-| `Section` | Page section with vertical rhythm. | `spacing` (xs/sm/md/lg/xl), `bg` (default/dim/accent/navy/transparent) |
+| `Section` | Page section with vertical rhythm. | `spacing` (xs/sm/md/lg/xl), `bg` (default/dim/accent/inverted/transparent) |
 | `Stack` | 1D flex layout. | `direction` (horizontal/vertical), `gap`, `align`, `justify`, `wrap` |
 | `Grid` | CSS Grid layout. | `cols` (number or "auto"), `gap`, `minColWidth` (when `cols="auto"`) |
 
 ### Foundation
 
 - `ThemeProvider` - wraps app for runtime theme control. `defaultMode` (light/dark/system).
-- `useTheme()` - returns `{ mode, setMode, resolvedMode }`.
+- `useTheme()` - returns `{ mode, resolved, setMode }` (`resolved` = the applied `"light" | "dark"`).
 
 ### Text
 

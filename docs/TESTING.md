@@ -323,10 +323,10 @@ it("does not call onClick when disabled", () => {
 ```tsx
 describe("controlled mode", () => {
     it("uses value prop", () => {
-        const { rerender } = render(<Toggle checked={false} onChange={() => {}} />);
+        const { rerender } = render(<Toggle checked={false} onCheckedChange={() => {}} />);
         expect(screen.getByRole("switch")).not.toHaveClass("toggle_on");
 
-        rerender(<Toggle checked={true} onChange={() => {}} />);
+        rerender(<Toggle checked={true} onCheckedChange={() => {}} />);
         expect(screen.getByRole("switch")).toHaveClass("toggle_on");
     });
 });
@@ -344,15 +344,15 @@ describe("uncontrolled mode", () => {
 ### 5. 폼 컴포넌트 테스트
 
 ```tsx
-it("calls onChange with new value", () => {
-    const onChange = vi.fn();
-    render(<TextField onChange={onChange} />);
+it("calls onValueChange with new value", () => {
+    const onValueChange = vi.fn();
+    render(<TextField aria-label="이름" onValueChange={onValueChange} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
         target: { value: "test" }
     });
 
-    expect(onChange).toHaveBeenCalled();
+    expect(onValueChange).toHaveBeenCalledWith("test");
 });
 
 it("shows error state", () => {
@@ -427,13 +427,14 @@ Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 // 함수 Mock
 it("calls callback with correct arguments", () => {
-    const onChange = vi.fn();
-    render(<Dropdown options={options} onChange={onChange} />);
+    const onValueChange = vi.fn();
+    render(<Dropdown options={options} onValueChange={onValueChange} />);
 
-    // Select option
+    // 트리거를 열고 옵션 선택
+    fireEvent.click(screen.getByRole("combobox"));
     fireEvent.click(screen.getByText("Option 1"));
 
-    expect(onChange).toHaveBeenCalledWith("value1", expect.objectContaining({
+    expect(onValueChange).toHaveBeenCalledWith("value1", expect.objectContaining({
         value: "value1",
         label: "Option 1",
     }));

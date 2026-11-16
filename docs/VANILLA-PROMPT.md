@@ -28,7 +28,7 @@ JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
 - Toggle: .bt-toggle --sm/md --on (비활성화는 native disabled 속성)
 - Dropdown: .bt-dropdown, .bt-dropdown__control --outline/filled --sm/md/lg
 - Modal: .bt-modal .is-open
-- Card: .bt-card --bordered --shadow-none/sm/md/lg(기본 sm) --p-none/sm/md/lg(기본 md) --accent/glass/outlined --interactive
+- Card: .bt-card --bordered --shadow-none/sm/md/lg(기본 sm) --p-none/sm/md/lg(기본 md) --accent/glass/outline --interactive
 - Spinner: .bt-spinner (크기는 --bt-spinner-size 커스텀 프로퍼티, 기본 24px)
 - Pagination: .bt-pagination
 - DatePicker: .bt-date-picker --full-width
