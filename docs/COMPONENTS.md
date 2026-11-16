@@ -89,6 +89,17 @@ Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone
 
 **문구 줄바꿈** — Toast `message`, Alert `message`(문자열일 때), TextField · Textarea · FileInput · OtpInput `supportingText` 는 두 문장 이상이면 문장마다 `.sentences_item`(`inline-block`)으로 묶어 줄이 문장 사이에서 먼저 끊긴다. 마침표 · 물음표 · 느낌표로 끝나는 어절에서 나누고, 숫자 바로 뒤 마침표(`2026. 5. 21.`)는 날짜라 넘긴다. 한 문장짜리는 마크업이 그대로이고, 문장 사이 공백이 남아 낭독 내용도 같다.
 
+앱이 직접 그리는 문단도 같은 규칙으로 나누려면 `Sentences` 를 쓴다. 규칙을 앱에 따로 두면 한쪽만 고쳐 화면마다 줄바꿈이 갈린다. 띄어쓰기 없는 언어(ja · zh)는 나누지 않고 원문 그대로 둔다.
+
+```tsx
+import { Sentences, sentenceText } from "@bigtablet/design-system";
+
+<p><Sentences text="결제 수단이 비활성화되었습니다. 새 결제 수단을 등록하세요." /></p>
+
+// 테스트 - 문장이 span 으로 나뉘면 getByText("전체 문장") 은 못 찾는다
+screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새 결제 수단을 등록하세요."));
+```
+
 ---
 
 ## v3.0 주요 변경사항

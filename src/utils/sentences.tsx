@@ -53,3 +53,30 @@ export const renderSentences = (content: React.ReactNode): React.ReactNode => {
 		content.slice(last),
 	];
 };
+
+export interface SentencesProps {
+	/** 나눌 문구. 한 문장이면 그대로 렌더된다. */
+	text: string;
+}
+
+/**
+ * @description
+ * 앱이 직접 그리는 문단에 Toast · Alert · `supportingText` 와 같은 문장 단위 줄바꿈을 건다 (#1012).
+ * 분할 규칙은 `renderSentences` 하나다 - 앱과 DS 가 따로 두면 한쪽만 고쳐 화면마다 줄바꿈이 갈린다.
+ * 띄어쓰기 없는 언어(ja · zh)는 어절이 하나라 나누지 않고 원문 그대로 둔다.
+ */
+export const Sentences = ({ text }: SentencesProps) => renderSentences(text);
+
+/**
+ * @description
+ * `Sentences` 가 문장마다 span 으로 나눈 문구를 원문 그대로 찾는 `getByText` 매처. 기본 매처는 텍스트 노드
+ * 하나만 보므로 나뉜 문구를 못 찾는다 - 전체 글자가 원문과 같은 가장 안쪽 요소를 고른다.
+ *
+ * @example
+ * screen.getByText(sentenceText("저장했어요. 계속할까요?"));
+ */
+export const sentenceText =
+	(text: string) =>
+	(_content: string, element: Element | null): boolean =>
+		element?.textContent === text &&
+		![...element.children].some((child) => child.textContent === text);
