@@ -4,6 +4,7 @@
    Toggle
    ======================================== */
 .bt-toggle {
+  @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
   align-items: center;

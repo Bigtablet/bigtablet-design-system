@@ -4,6 +4,7 @@
    Checkbox
    ======================================== */
 .bt-checkbox {
+  @include token.wrap_keep_all;
   display: inline-flex;
   align-items: center;
   gap: var(--bt-spacing-sm);

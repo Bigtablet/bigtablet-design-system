@@ -23,6 +23,7 @@
 }
 
 .bt-alert {
+  @include token.wrap_keep_all;
   &__overlay {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
