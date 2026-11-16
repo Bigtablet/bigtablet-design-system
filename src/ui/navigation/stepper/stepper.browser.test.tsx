@@ -32,6 +32,66 @@ describe("Stepper horizontal layout (Chromium)", () => {
 		}
 	}
 
+	// 선은 라벨 바로 뒤에서 시작해 인디케이터 중심 높이에 놓인다 - 설명이 라벨보다 길어도 라벨과 선 사이가 뜨지 않는다
+	// 라벨이 여러 조각(텍스트 + <strong>)이어도 조각 사이에 연결선용 간격이 들어가지 않는다
+	it("keeps a rich label in one piece", () => {
+		const { container, unmount } = render(
+			<div style={{ width: 800 }}>
+				<Stepper
+					steps={[
+						{
+							id: "verify",
+							label: (
+								<>
+									본인<strong>인증</strong>
+								</>
+							),
+						},
+						{ id: "done", label: "완료" },
+					]}
+					current={0}
+				/>
+			</div>,
+		);
+		const text = container.querySelector(".stepper_label_text")!;
+		const strong = text.querySelector("strong")!.getBoundingClientRect();
+		const range = document.createRange();
+		range.selectNodeContents(text.firstChild!);
+		expect(strong.left - range.getBoundingClientRect().right).toBeLessThan(1);
+		unmount();
+	});
+
+	it("starts each connector right after its label at the indicator's center", () => {
+		const { container, unmount } = render(
+			<div style={{ width: 800 }}>
+				<Stepper
+					steps={[
+						{ id: "account", label: "계정", description: "이메일과 비밀번호" },
+						{ id: "profile", label: "프로필", description: "이름과 소속" },
+						{ id: "done", label: "완료" },
+					]}
+					current={1}
+				/>
+			</div>,
+		);
+		for (const step of container.querySelectorAll(".stepper_step:not(:last-child)")) {
+			const label = step.querySelector(".stepper_label")!;
+			const text = label.querySelector(".stepper_label_text")!.getBoundingClientRect();
+			const line = getComputedStyle(label, "::after");
+			const lineLeft = label.getBoundingClientRect().right - Number.parseFloat(line.width);
+			const indicator = step.querySelector(".stepper_indicator")!.getBoundingClientRect();
+			const lineCenter =
+				label.getBoundingClientRect().top +
+				Number.parseFloat(line.marginTop) +
+				Number.parseFloat(line.height) / 2;
+
+			// 라벨과 선 사이는 gap 8px - 겹치거나(음수) 떠도(큰 값) 실패한다
+			expect(Math.abs(lineLeft - text.right - 8)).toBeLessThan(1);
+			expect(Math.abs(lineCenter - (indicator.top + indicator.height / 2))).toBeLessThan(1);
+		}
+		unmount();
+	});
+
 	it("lets an overlong last label wrap instead of overflowing at 375px", () => {
 		const { container, unmount } = render(
 			<div style={{ width: 375 }}>
@@ -69,7 +129,7 @@ describe("Stepper horizontal layout (Chromium)", () => {
 		);
 		const box = container.firstElementChild!;
 		expect(box.scrollWidth).toBeLessThanOrEqual(360);
-		const texts = container.querySelectorAll(".stepper_label, .stepper_description");
+		const texts = container.querySelectorAll(".stepper_label_text, .stepper_description");
 		for (const text of texts) {
 			expect(splitWords(text.firstChild as Text)).toEqual([]);
 		}
