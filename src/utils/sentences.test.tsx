@@ -17,6 +17,14 @@ describe("splitSentences", () => {
 		]);
 	});
 
+	it("ends a sentence after closing quotes and brackets", () => {
+		expect(texts('"완료했어요." (자동 저장돼요.) 「끝」이에요.')).toEqual([
+			'"완료했어요."',
+			"(자동 저장돼요.)",
+			"「끝」이에요.",
+		]);
+	});
+
 	it("keeps trailing words without an end mark as the last sentence", () => {
 		expect(texts("결제가 실패했어요. 다시 시도")).toEqual(["결제가 실패했어요.", "다시 시도"]);
 	});
