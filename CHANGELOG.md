@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.9.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.9.1) - 2026-11-16
+- (렌더 변경) 두 문장 이상인 문구가 문장 가운데서 끊기지 않고 문장 사이에서 먼저 줄바꿈됩니다 - Toast `message`, Alert `message`(문자열일 때), TextField · Textarea · FileInput · OtpInput `supportingText`. 한 문장짜리는 마크업이 그대로이고 낭독 내용도 같습니다
+- 앱에서 semantic-wrap 으로 Hero · PageHeader · EmptyState 제목을 의미 단위로 끊는 법을 문서에 추가했습니다
+- 개발 의존성 업데이트 (Storybook 10.6.7 · Vite 8.3.8 · Playwright 1.65.1 등)
+
 ## [4.9.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.9.0) - 2026-11-10
 - Toast 위치를 고를 수 있습니다 - `ToastProvider` `placement`(`"top-right"` 기본 · `"bottom-right"`), Vanilla 는 `<html data-bt-toast-placement="bottom-right">`. 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 내립니다. 좁은 화면은 그대로 아래쪽입니다
 - (렌더 변경) 쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤됩니다 - 아래쪽 배치에서 최신 토스트가 화면 위로 밀려 읽거나 누를 수 없던 것을 고쳤습니다 (React · Vanilla)
