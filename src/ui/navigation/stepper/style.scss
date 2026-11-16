@@ -162,20 +162,36 @@ $indicator: 28px;
       flex: 0 1 auto;
     }
 
-    // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 인디케이터 세로 중심에 맞춘다.
-    .stepper_step:not(:last-child)::after {
-      content: "";
-      flex: 1;
-      // 좁아서 목록이 스크롤될 때도 선이 0 으로 사라지지 않게 - 어디까지 왔는지가 선으로도 읽힌다
-      min-width: token.$spacing_16;
-      height: token.$border_width_standard;
-      margin-top: calc($indicator / 2);
-      margin-left: token.$spacing_8;
-      background: token.$color_border_default;
+    // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 선은 라벨 줄에 붙인다 - 단계 끝(설명 포함)에서
+    // 시작하면 설명이 라벨보다 길 때 "계정 ······· ——" 처럼 라벨과 선 사이가 떠서 어느 단계의
+    // 선인지 흐려진다. 내용 · 텍스트가 남은 폭을 받아 라벨 줄이 단계 끝까지 닿게 한다.
+    .stepper_step:not(:last-child) {
+      .stepper_content,
+      .stepper_text {
+        flex: 1;
+      }
+
+      .stepper_label {
+        display: flex;
+        align-items: flex-start;
+        gap: token.$spacing_8;
+
+        &::after {
+          content: "";
+          flex: 1;
+          // 인디케이터 세로 중심 - 라벨이 두 줄로 접혀도 선은 첫 줄에 남는다.
+          // `.stepper_text` 의 padding-top(4px) 만큼 라벨이 내려와 있다.
+          margin-top: calc(#{$indicator / 2} - #{token.$spacing_4});
+          // 좁아서 목록이 스크롤될 때도 선이 0 으로 사라지지 않게 - 어디까지 왔는지가 선으로도 읽힌다
+          min-width: token.$spacing_16;
+          height: token.$border_width_standard;
+          background: token.$color_border_default;
+        }
+      }
     }
 
     // 지나온 구간의 선은 진행 색 - 어디까지 왔는지 선으로도 읽힌다.
-    .stepper_step_done:not(:last-child)::after {
+    .stepper_step_done:not(:last-child) .stepper_label::after {
       background: token.$color_accent_default;
     }
   }

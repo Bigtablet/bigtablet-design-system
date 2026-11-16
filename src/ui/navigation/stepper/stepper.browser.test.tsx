@@ -32,25 +32,36 @@ describe("Stepper horizontal layout (Chromium)", () => {
 		}
 	}
 
-	// 라벨 길이가 달라도 선 길이는 같다 - 같은 칸 폭을 나누면 긴 라벨 뒤 선이 짧아져 들쭉날쭉했다
-	it("draws connectors of equal length between labels of different widths", () => {
+	// 선은 라벨 바로 뒤에서 시작해 인디케이터 중심 높이에 놓인다 - 설명이 라벨보다 길어도 라벨과 선 사이가 뜨지 않는다
+	it("starts each connector right after its label at the indicator's center", () => {
 		const { container, unmount } = render(
 			<div style={{ width: 800 }}>
 				<Stepper
 					steps={[
 						{ id: "account", label: "계정", description: "이메일과 비밀번호" },
 						{ id: "profile", label: "프로필", description: "이름과 소속" },
-						{ id: "team", label: "팀 초대", description: "건너뛸 수 있어요" },
 						{ id: "done", label: "완료" },
 					]}
 					current={1}
 				/>
 			</div>,
 		);
-		const lines = [...container.querySelectorAll(".stepper_step:not(:last-child)")].map((step) =>
-			Number.parseFloat(getComputedStyle(step, "::after").width),
-		);
-		expect(Math.max(...lines) - Math.min(...lines)).toBeLessThan(1);
+		for (const step of container.querySelectorAll(".stepper_step:not(:last-child)")) {
+			const label = step.querySelector(".stepper_label")!;
+			const range = document.createRange();
+			range.selectNodeContents(label.firstChild!);
+			const text = range.getBoundingClientRect();
+			const line = getComputedStyle(label, "::after");
+			const lineLeft = label.getBoundingClientRect().right - Number.parseFloat(line.width);
+			const indicator = step.querySelector(".stepper_indicator")!.getBoundingClientRect();
+			const lineCenter =
+				label.getBoundingClientRect().top +
+				Number.parseFloat(line.marginTop) +
+				Number.parseFloat(line.height) / 2;
+
+			expect(lineLeft - text.right).toBeLessThan(10);
+			expect(Math.abs(lineCenter - (indicator.top + indicator.height / 2))).toBeLessThan(1);
+		}
 		unmount();
 	});
 
