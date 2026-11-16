@@ -7,6 +7,8 @@
 // 를 계산할 일이 없다 (Timeline 과 같은 규칙).
 
 $indicator: 28px;
+// 라벨 첫 줄을 인디케이터 세로 중심에 맞추는 텍스트 위 여백 - 가로 연결선 위치도 이 값에서 계산한다
+$text_offset: token.$spacing_4;
 
 .stepper {
   margin: 0;
@@ -79,7 +81,7 @@ $indicator: 28px;
     gap: token.$spacing_2;
     min-width: 0;
     // 인디케이터(28px)의 세로 중심에 한 줄 라벨이 맞도록
-    padding-top: token.$spacing_4;
+    padding-top: $text_offset;
   }
 
   &_label {
@@ -180,8 +182,8 @@ $indicator: 28px;
           content: "";
           flex: 1;
           // 인디케이터 세로 중심 - 라벨이 두 줄로 접혀도 선은 첫 줄에 남는다.
-          // `.stepper_text` 의 padding-top(4px) 만큼 라벨이 내려와 있다.
-          margin-top: calc(#{$indicator / 2} - #{token.$spacing_4});
+          // `.stepper_text` 의 padding-top($text_offset) 만큼 라벨이 내려와 있다.
+          margin-top: calc(#{$indicator} / 2 - #{$text_offset});
           // 좁아서 목록이 스크롤될 때도 선이 0 으로 사라지지 않게 - 어디까지 왔는지가 선으로도 읽힌다
           min-width: token.$spacing_16;
           height: token.$border_width_standard;
