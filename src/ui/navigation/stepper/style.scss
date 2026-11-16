@@ -190,9 +190,10 @@ $indicator: 28px;
       }
     }
 
-    // 지나온 구간의 선은 진행 색 - 어디까지 왔는지 선으로도 읽힌다.
+    // 지나온 구간의 선은 완료 체크와 같은 초록 - 어디까지 왔는지 선으로도 읽히고, 체크(초록)와
+    // 선(검정)이 따로 놀지 않는다.
     .stepper_step_done:not(:last-child) .stepper_label::after {
-      background: token.$color_accent_default;
+      background: token.$color_status_success_on_container;
     }
   }
 
@@ -220,8 +221,9 @@ $indicator: 28px;
       transform: translateX(-50%);
     }
 
+    // 가로와 같은 완료 초록
     .stepper_step_done:not(:last-child) .stepper_indicator::before {
-      background: token.$color_accent_default;
+      background: token.$color_status_success_on_container;
     }
   }
 }
