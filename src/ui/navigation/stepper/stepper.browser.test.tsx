@@ -32,6 +32,28 @@ describe("Stepper horizontal layout (Chromium)", () => {
 		}
 	}
 
+	// 라벨 길이가 달라도 선 길이는 같다 - 같은 칸 폭을 나누면 긴 라벨 뒤 선이 짧아져 들쭉날쭉했다
+	it("draws connectors of equal length between labels of different widths", () => {
+		const { container, unmount } = render(
+			<div style={{ width: 800 }}>
+				<Stepper
+					steps={[
+						{ id: "account", label: "계정", description: "이메일과 비밀번호" },
+						{ id: "profile", label: "프로필", description: "이름과 소속" },
+						{ id: "team", label: "팀 초대", description: "건너뛸 수 있어요" },
+						{ id: "done", label: "완료" },
+					]}
+					current={1}
+				/>
+			</div>,
+		);
+		const lines = [...container.querySelectorAll(".stepper_step:not(:last-child)")].map((step) =>
+			Number.parseFloat(getComputedStyle(step, "::after").width),
+		);
+		expect(Math.max(...lines) - Math.min(...lines)).toBeLessThan(1);
+		unmount();
+	});
+
 	it("lets an overlong last label wrap instead of overflowing at 375px", () => {
 		const { container, unmount } = render(
 			<div style={{ width: 375 }}>

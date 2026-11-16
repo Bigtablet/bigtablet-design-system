@@ -127,8 +127,10 @@ $indicator: 28px;
     align-items: flex-start;
     gap: token.$spacing_8;
 
+    // basis 는 내용 폭 - 남는 폭을 단계마다 똑같이 더 받아 그 몫을 선이 채우므로 선 길이가 고르다.
+    // basis 0(같은 칸 폭)이면 라벨이 긴 단계일수록 선이 짧아져 들쭉날쭉했다.
     .stepper_step {
-      flex: 1;
+      flex: 1 1 auto;
       align-items: flex-start;
     }
 
