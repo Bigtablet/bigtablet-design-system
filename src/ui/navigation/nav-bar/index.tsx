@@ -4,7 +4,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
+import { cn, revealInline, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 import { useTopInset } from "../../../utils/use-top-inset";
 import "./style.scss";
@@ -113,6 +113,8 @@ export const NavBar = ({
 			const active = links.querySelector<HTMLElement>(".nav_bar_link_active");
 			if (active) {
 				setIndicator({ left: active.offsetLeft, width: active.offsetWidth });
+				// 링크 영역이 가로로 스크롤될 때 활성 링크가 잘린 자리에 있으면 보이게 옮긴다
+				revealInline(links, active);
 			} else {
 				setIndicator(null);
 			}

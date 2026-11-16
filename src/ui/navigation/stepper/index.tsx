@@ -2,8 +2,9 @@
 
 import { Check } from "lucide-react";
 import type * as React from "react";
+import { useCallback, useRef } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, revealInline, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -71,9 +72,25 @@ export const Stepper = ({
 	...props
 }: StepperProps) => {
 	const t = useLocaleText();
+	const listRef = useRef<HTMLOListElement | null>(null);
+	const setListRef = useCallback(
+		(node: HTMLOListElement | null) => {
+			listRef.current = node;
+			if (typeof ref === "function") ref(node);
+			else if (ref) ref.current = node;
+		},
+		[ref],
+	);
+
+	// 좁은 폭에서 목록이 가로로 스크롤될 때 현재 단계가 잘린 자리에 있으면 보이게 옮긴다 (#1014)
+	useSafeLayoutEffect(() => {
+		const list = listRef.current;
+		const active = list?.children[current];
+		if (list && active instanceof HTMLElement) revealInline(list, active);
+	}, [current]);
 
 	return (
-		<ol ref={ref} className={cn("stepper", `stepper_${orientation}`, className)} {...props}>
+		<ol ref={setListRef} className={cn("stepper", `stepper_${orientation}`, className)} {...props}>
 			{steps.map((step, index) => {
 				const status: StepperStatus =
 					index < current ? "done" : index === current ? "active" : "pending";

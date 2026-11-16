@@ -31,4 +31,27 @@ describe("NavBar narrow width (Chromium)", () => {
 		expect(new Set(heights).size).toBe(1);
 		unmount();
 	});
+
+	// 활성 링크가 잘린 자리(오른쪽 끝)에 있으면 처음부터 보이게 스크롤해 둔다
+	it("scrolls the active link into view when it starts out clipped", () => {
+		const { container, unmount } = render(
+			<div style={{ width: 360 }}>
+				<NavBar brand={<span>Bigtablet</span>} actions={<button type="button">로그인</button>}>
+					<NavLink href="#">Home</NavLink>
+					<NavLink href="#">제품</NavLink>
+					<NavLink href="#">블로그</NavLink>
+					<NavLink href="#" active>
+						문의
+					</NavLink>
+				</NavBar>
+			</div>,
+		);
+		const links = container.querySelector(".nav_bar_links")!;
+		const box = links.getBoundingClientRect();
+		const active = container.querySelector(".nav_bar_link_active")!.getBoundingClientRect();
+
+		expect(links.scrollLeft).toBeGreaterThan(0);
+		expect(active.right).toBeLessThanOrEqual(box.right + 1);
+		unmount();
+	});
 });

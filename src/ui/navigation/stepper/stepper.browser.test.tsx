@@ -77,6 +77,31 @@ describe("Stepper horizontal layout (Chromium)", () => {
 	});
 });
 
+describe("Stepper narrow width - current step (Chromium)", () => {
+	// 280px - 테스트 폰트로도 4단계가 확실히 넘치는 폭
+	it("scrolls the current step into view when it starts out clipped at 280px", () => {
+		const { container, unmount } = render(
+			<div style={{ width: 280 }}>
+				<Stepper
+					steps={[
+						{ id: "account", label: "계정", description: "이메일과 비밀번호" },
+						{ id: "profile", label: "프로필", description: "이름과 소속" },
+						{ id: "team", label: "팀 초대", description: "건너뛸 수 있어요" },
+						{ id: "done", label: "완료" },
+					]}
+					current={3}
+				/>
+			</div>,
+		);
+		const list = container.querySelector("ol")!;
+		const active = container.querySelector('[aria-current="step"]')!.getBoundingClientRect();
+
+		expect(list.scrollLeft).toBeGreaterThan(0);
+		expect(active.right).toBeLessThanOrEqual(list.getBoundingClientRect().right + 1);
+		unmount();
+	});
+});
+
 /** 두 줄에 걸친 어절 - 줄바꿈이 어절 사이에서만 일어나면 빈 배열이다. */
 const splitWords = (node: Text) =>
 	[...node.data.matchAll(/\S+/g)]
