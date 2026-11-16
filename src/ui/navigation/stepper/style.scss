@@ -132,6 +132,23 @@ $indicator: 28px;
       align-items: flex-start;
     }
 
+    // 좁은 폭에서도 어절은 통째로 (#1014). `overflow-wrap: anywhere` 와 `min-width: 0` 이 있으면
+    // 단계가 한 글자 폭까지 줄어 "프로 / 필" 로 쪼개진다. 어절 사이에서만 줄바꿈하고, 그래도
+    // 모자라면 목록이 가로로 스크롤된다 - 페이지가 넘치지 않는다.
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    .stepper_step,
+    .stepper_content,
+    .stepper_text {
+      min-width: auto;
+    }
+
+    .stepper_label,
+    .stepper_description {
+      overflow-wrap: normal;
+    }
+
     // 마지막 단계는 선이 없으니 내용 폭만 - 1/N 을 차지하면 오른쪽이 비어 보인다.
     // 앞 단계의 선이 남은 폭을 채워 마지막 단계가 오른쪽 끝에 붙는다.
     // shrink 는 남긴다 - 앞 단계는 basis 0 이라 평소엔 안 줄고, 라벨이 폭보다 길 때만 줄며 줄바꿈된다.
