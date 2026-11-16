@@ -25,18 +25,25 @@ Bigtablet 제품을 떠받치는 UI 라이브러리.<br />
 <br />
 
 ```tsx
-import { ThemeProvider, Button, Modal, useToast } from "@bigtablet/design-system";
+import { ThemeProvider, ToastProvider, Button, useToast } from "@bigtablet/design-system";
 // CSS import 는 필요 없다 - 컴포넌트가 자기 CSS 와 공통 테마 변수를 불러온다.
 // Button 만 쓰는 페이지는 DS CSS 가 약 3KB(gzip)만 실린다(전체 20KB).
 // Next.js 를 webpack 으로 빌드하면 `experimental.optimizePackageImports` 에 이 패키지를 넣는다(Turbopack 은 그대로).
 
 export default function App() {
-  const toast = useToast();
   return (
     <ThemeProvider>
-      <Button onClick={() => toast.success("저장됨")}>저장</Button>
+      <ToastProvider>
+        <SaveButton />
+      </ToastProvider>
     </ThemeProvider>
   );
+}
+
+// useToast() 는 위에 ToastProvider 가 있어야 한다 - Provider 를 렌더하는 컴포넌트가 아니라 그 자식에서 부른다.
+function SaveButton() {
+  const toast = useToast();
+  return <Button onClick={() => toast.success("저장됨")}>저장</Button>;
 }
 ```
 

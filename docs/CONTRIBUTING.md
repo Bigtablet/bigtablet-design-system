@@ -54,8 +54,9 @@ pnpm build
 | `pnpm test:watch` | 테스트 Watch 모드 |
 | `pnpm test:coverage` | 커버리지 리포트 |
 | `pnpm test:storybook` | a11y 테스트 (Storybook + Playwright) |
-| `pnpm lint` | ESLint 실행 |
-| `pnpm typecheck` | TypeScript 타입 체크 |
+| `pnpm test:browser` | 레이아웃 테스트 (실제 Chromium, `*.browser.test.tsx`) |
+| `pnpm exec biome check .` | 린트 · 포맷 · import 정렬 (ESLint/Prettier 대신 Biome) |
+| `pnpm exec tsc --noEmit` | TypeScript 타입 체크 |
 
 ---
 
@@ -252,42 +253,29 @@ gh pr create --base develop --title "feat/new-component" --body "..."
 ### TypeScript
 
 - 모든 컴포넌트는 `"use client"` 디렉티브 사용
-- Props 인터페이스는 HTML 요소 속성을 확장
-- `forwardRef` 사용 권장
+- Props 는 HTML 요소 속성을 **`SafeHTMLProps<...>` 로 감싸서** 확장한다. `React.*HTMLAttributes` 를 직접 확장하면 `dangerouslySetInnerHTML` 이 루트로 새고, `src/utils/safe-html.type-test.tsx` 가 `tsc` 에서 실패시킨다
+- `ref` 는 일반 prop 으로 받는다 (React 19). `forwardRef` 는 쓰지 않는다
 
 ```tsx
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface TagProps extends SafeHTMLProps<React.HTMLAttributes<HTMLSpanElement>> {
     variant?: "primary" | "secondary";
     size?: "sm" | "md" | "lg";
+    ref?: React.Ref<HTMLSpanElement>;
 }
 
-export const Button = ({
-    variant = "primary",
-    size = "md",
-    className,
-    children,
-    ...props
-}: ButtonProps) => {
-    return (
-        <button
-            className={cn(
-                "button",
-                `button_variant_${variant}`,
-                `button_size_${size}`,
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </button>
-    );
-};
+export const Tag = ({ variant = "primary", size = "md", className, ref, ...props }: TagProps) => (
+    <span
+        ref={ref}
+        className={cn("tag", `tag_variant_${variant}`, `tag_size_${size}`, className)}
+        {...props}
+    />
+);
 ```
 
 ### 스타일링

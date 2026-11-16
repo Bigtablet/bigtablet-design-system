@@ -76,81 +76,31 @@ src/ui/{category}/{component-name}/
 
 ### 컴포넌트 파일 예시
 
+가장 단순한 형태 - `src/ui/display/divider/index.tsx` 그대로:
+
 ```tsx
-// src/ui/general/button/index.tsx
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export type ButtonVariant = "filled" | "tonal" | "outline" | "text";
-export type ButtonSize = "sm" | "md" | "lg" | "xl";
-
-/** button/anchor 공통 스타일·콘텐츠 props (export 하지 않는 내부 베이스) */
-interface ButtonBaseProps {
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    fullWidth?: boolean;
-    /** 위험한 액션 - variant 와 조합되는 boolean modifier */
-    danger?: boolean;
-    disabled?: boolean;
+export interface DividerProps extends SafeHTMLProps<React.HTMLAttributes<HTMLHRElement>> {
+	/** 구분선 두께 (기본값: "standard") */
+	weight?: "standard" | "heavy";
 }
 
-export interface ButtonAsButton
-    extends ButtonBaseProps,
-        Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> {
-    as?: "button";
-    href?: never;
-    ref?: React.Ref<HTMLButtonElement>;
-}
+export const Divider = ({ weight = "standard", className, ...props }: DividerProps) => {
+	const dividerClassName = cn("divider", `divider_weight_${weight}`, className);
 
-export interface ButtonAsAnchor
-    extends ButtonBaseProps,
-        Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> {
-    as?: "a";
-    href: string;
-    ref?: React.Ref<HTMLAnchorElement>;
-}
-
-/** `as`/`href` 로 button ↔ anchor 를 가르는 discriminated union */
-export type ButtonProps = ButtonAsButton | ButtonAsAnchor;
-
-export const Button = (props: ButtonProps) => {
-    const {
-        variant = "filled",
-        size = "md",
-        fullWidth = false,
-        danger = false,
-        disabled = false,
-        as,
-        className,
-        children,
-        ref,
-        ...rest
-    } = props;
-
-    const buttonClassName = cn(
-        "button",
-        `button_variant_${variant}`,
-        `button_size_${size}`,
-        fullWidth && "button_full_width",
-        danger && "button_danger",
-        disabled && "button_disabled",
-        className
-    );
-
-    // 지면상 button 분기만 표시한 부분 예시. 실제 구현은 as="a" 또는 (as 미지정 + href 존재) 시
-    // <a href={href} {...rest}>{children}</a> 로 렌더링해야 한다 - 그대로 복사하면 링크가 동작하지 않음.
-    return (
-        <button ref={ref as React.Ref<HTMLButtonElement>} disabled={disabled} className={buttonClassName} {...rest}>
-            {children}
-        </button>
-    );
+	return <hr className={dividerClassName} {...props} />;
 };
 ```
 
-> 여러 요소로 렌더될 수 있는 컴포넌트는 이렇게 **discriminated union** 으로 만든다. 대신 소비자가 `interface X extends ButtonProps` 로 확장할 수 없으므로 `React.ComponentProps<typeof Button>` 을 안내한다 ([MIGRATION.md](./MIGRATION.md) 참고).
+- HTML 속성은 **`SafeHTMLProps<...>` 로 감싸서** 확장한다. `React.*HTMLAttributes` 를 직접 확장하면 `dangerouslySetInnerHTML` 이 루트로 새고, `src/utils/safe-html.type-test.tsx` 가 `tsc` 에서 실패시킨다
+- `ref` 는 일반 prop 으로 받는다 (React 19 ref-as-prop). `forwardRef` 는 쓰지 않는다
+
+> **여러 요소로 렌더되는 컴포넌트**(`as="a"`, `as={Link}`)는 `PolymorphicProps<T, OwnProps>`(`src/utils/polymorphic.ts`)를 쓴다 - `as` 에 준 요소의 props · ref 타입이 그대로 따라오고 `dangerouslySetInnerHTML` 은 이미 빠져 있다. 실제 예는 `src/ui/general/button/index.tsx` 의 `ButtonProps`.
 
 ---
 

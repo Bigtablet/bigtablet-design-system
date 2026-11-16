@@ -23,6 +23,7 @@
 6. `docs/COMPONENTS.md` 의 문자열 union 값(prop 표 Type 열 `'line' \| 'fills'`, 예제의
    `<Tabs variant="fills">`)이 소스의 union 타입과 일치해야 한다. Tabs 가 `pills` → `fills` 로
    이름을 바꾼 뒤 문서만 `pills` 로 남아, 문서 예제를 그대로 쓰면 tsc 가 실패했다(#798).
+7. `docs/COMPONENTS.md` prop 표가 소스 `{Name}Props` interface 의 prop 을 빠뜨리지 않아야 한다 (#1018).
 
 exit 1 이면 위반이 있다.
 """
@@ -444,6 +445,49 @@ def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], i
     return problems, compared
 
 
+def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
+    """7. 컴포넌트 `{Name}Props` (훅으로 여는 Alert 는 `{Name}Options`) interface 의 prop 이 `docs/COMPONENTS.md` 의 그 섹션 표에 다 있어야 한다.
+
+    소스에 prop 을 더하고 표를 안 고치면 문서만 읽는 소비자는 그 prop 을 모른다. NavBar `layout`
+    은 다른 섹션 예제(AppShell)가 쓰는데 NavBar 표에는 없었고, Alert 는 바로 아래 예제가 쓰는
+    `destructive` 가 옵션 표에 없었다 (#1018). 표가 있는 섹션만 본다 - 표 대신 산문으로 설명하는
+    섹션은 건너뛴다. 한 칸에 `` `min` / `max` `` 처럼 여러 이름을 적어도 된다. `type XProps = ...`
+    (polymorphic 등)는 선언을 정규식으로 읽기 어려워 대상이 아니다.
+    """
+    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
+    documented: dict[Path, set[str]] = {}
+    component: Path | None = None
+    for line in DOC.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#") and not line.startswith("####"):
+            # 첫 단어가 컴포넌트 이름 - `### Chip - type="static" ...` 같은 소제목도 Chip 섹션이다
+            word = line.lstrip("# ").split(" ")[0]
+            component = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
+            continue
+        if component is not None and line.startswith("| `"):
+            names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells_of(line)[0])
+            documented.setdefault(component, set()).update(names)
+
+    problems: list[str] = []
+    compared = 0
+    for path, names in documented.items():
+        pascal = "".join(part.capitalize() for part in path.parent.name.split("-"))
+        match = re.search(
+            rf"export interface {pascal}(?:Props|Options)\b[^{{]*\{{(.*?)\n\}}",
+            path.read_text(encoding="utf-8"),
+            re.S,
+        )
+        if not match:
+            continue
+        props = set(re.findall(r"^\t([a-zA-Z][A-Za-z0-9]*)\??:", match.group(1), re.M))
+        props -= {"children", "className", "style", "ref"}
+        compared += len(props)
+        problems += [
+            f"{DOC}  {pascal} 표에 `{prop}` 이 없다 - {path} 의 {pascal}Props · Options 에 있다"
+            for prop in sorted(props - names)
+        ]
+    return problems, compared
+
+
 def main() -> int:
     files = sorted(UI.rglob("index.tsx"))
     if not files:
@@ -465,6 +509,8 @@ def main() -> int:
     usage_problems, usage_compared = check_doc_usages(files)
     problems += union_problems + usage_problems
     union_compared += usage_compared
+    complete_problems, complete_compared = check_doc_completeness(files)
+    problems += complete_problems
 
     exposed = len(catalog)
     documented = sum(
@@ -474,10 +520,10 @@ def main() -> int:
         if JSDOC_DEFAULT.match(line)
     )
 
-    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0:
+    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0 or complete_compared == 0:
         print(
             f"검사 대상이 사라졌다 (카탈로그 {exposed}, @default {documented},"
-            f" 문서 표 {doc_compared}, union {union_compared})"
+            f" 문서 표 {doc_compared}, union {union_compared}, 표 누락 {complete_compared})"
             " - 정규식이나 파일 구조가 바뀌었는지 확인하라",
             file=sys.stderr,
         )
@@ -493,6 +539,7 @@ def main() -> int:
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
     print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
     print(f"docs/COMPONENTS.md union 값(표 타입 · 예제 속성) {union_compared}개 - 전부 소스와 일치합니다.")
+    print(f"docs/COMPONENTS.md prop 표 {complete_compared}개 prop - 소스 Props interface 에서 빠진 것이 없습니다.")
     print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있고 섹션 안에서 정렬돼 있습니다.")
     return 0
 
