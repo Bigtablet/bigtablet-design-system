@@ -137,6 +137,10 @@ $indicator: 28px;
     // 모자라면 목록이 가로로 스크롤된다 - 페이지가 넘치지 않는다.
     overflow-x: auto;
     scrollbar-width: none;
+    // Safari 18.2 미만(구형 iOS 인앱 웹뷰 포함)은 scrollbar-width 를 모른다
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .stepper_step,
     .stepper_content,

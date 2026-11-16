@@ -50,6 +50,10 @@
     min-width: 0;
     overflow-x: auto;
     scrollbar-width: none;
+    // Safari 18.2 미만(구형 iOS 인앱 웹뷰 포함)은 scrollbar-width 를 모른다
+    &::-webkit-scrollbar {
+      display: none;
+    }
     // overflow-x 가 auto 면 세로도 잘린다 - 아래로 10px 내려간 indicator 와 위아래 포커스 링이
     // 들어갈 자리를 padding 으로 만들고 같은 만큼 margin 으로 되돌려 헤더 높이는 그대로 둔다.
     padding-block: token.$spacing_10;
