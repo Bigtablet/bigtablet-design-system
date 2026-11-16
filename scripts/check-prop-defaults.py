@@ -463,6 +463,13 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
             word = line.lstrip("# ").split(" ")[0]
             component = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
             continue
+        # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`).
+        # 그 표의 이름이 본 컴포넌트 집합에 섞이면 본 컴포넌트의 누락이 가려진다 - 표 제목으로 대상을 바꾸고,
+        # 자기 폴더가 없는 하위 컴포넌트 표는 건너뛴다.
+        sub = re.match(r"\*\*([A-Za-z]+) Props\*\*", line)
+        if sub:
+            component = by_name.get(sub.group(1).lower())
+            continue
         if component is not None and line.startswith("| `"):
             names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells_of(line)[0])
             documented.setdefault(component, set()).update(names)
