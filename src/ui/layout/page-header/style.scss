@@ -3,6 +3,7 @@
 // PageHeader - 화면 제목 줄. 제목 크기·설명 색을 화면마다 정하지 않게 여기서 소유한다.
 
 .page_header {
+  @include token.wrap_keep_all;
   display: flex;
   flex-direction: column;
   gap: token.$spacing_8;

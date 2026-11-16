@@ -3,6 +3,7 @@
 // ── Root ─────────────────────────────────────────────────────────────────────
 
 .otp_input {
+  @include token.wrap_keep_all;
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;

@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .radio {
+  @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
   align-items: center;

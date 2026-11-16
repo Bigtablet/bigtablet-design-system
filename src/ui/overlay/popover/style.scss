@@ -15,6 +15,7 @@
 }
 
 .popover {
+  @include token.wrap_keep_all;
   // 라이트: 흰색 / 다크: bg_solid_dim (canvas 보다 한 톤 밝음 → elevation)
   background: token.$color_bg_solid;
   border: token.$border_width_standard solid token.$color_border_default;

@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .file_input {
+  @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
   flex-direction: column;

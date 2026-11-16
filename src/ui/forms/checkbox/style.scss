@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .checkbox {
+  @include token.wrap_keep_all;
   display: inline-flex;
   align-items: center;
   cursor: pointer;

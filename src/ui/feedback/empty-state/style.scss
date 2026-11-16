@@ -2,6 +2,7 @@
 @use "src/ui/state-block" as *;
 
 .empty_state {
+  @include token.wrap_keep_all;
   @include state_block;
 
   // 부모 높이를 채우고 세로 중앙 정렬. 없을 때는 콘텐츠가 긴 래퍼 상단에 붙어 아래가 비어 보여

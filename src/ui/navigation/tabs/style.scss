@@ -71,6 +71,8 @@
     cursor: pointer;
     color: token.$color_text_body;
     @include token.label_large_medium;
+    // 탭 라벨은 한 덩어리 - 폭이 모자라면 flex 가 한 글자 폭까지 줄여 "전 / 체" 로 세운다.
+    @include token.text_nowrap;
     transition:
       color token.$transition_base,
       background token.$transition_base,

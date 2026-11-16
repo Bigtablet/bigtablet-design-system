@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .media_card {
+  @include token.wrap_keep_all;
   position: relative;
   display: flex;
   background: token.$color_bg_solid;
