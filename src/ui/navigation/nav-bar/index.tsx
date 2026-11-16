@@ -143,7 +143,15 @@ export const NavBar = ({
 		const handleResize = () => update();
 		window.addEventListener("resize", handleResize);
 
+		// 웹폰트가 마운트 뒤에 들어오면 링크 폭이 바뀌는데 `.nav_bar_links` 박스는 그대로라 위
+		// 어느 것도 발화하지 않는다 - 폴백 글꼴 폭으로 잰 indicator 가 어긋난 채 남는다.
+		let disposed = false;
+		void document.fonts?.ready.then(() => {
+			if (!disposed) update();
+		});
+
 		return () => {
+			disposed = true;
 			clearTimeout(mountTimer);
 			mo.disconnect();
 			ro?.disconnect();

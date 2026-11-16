@@ -82,11 +82,22 @@ export const Stepper = ({
 		[ref],
 	);
 
-	// 좁은 폭에서 목록이 가로로 스크롤될 때 현재 단계가 잘린 자리에 있으면 보이게 옮긴다 (#1014)
+	// 좁은 폭에서 목록이 가로로 스크롤될 때 현재 단계가 잘린 자리에 있으면 보이게 옮긴다 (#1014).
+	// 웹폰트가 마운트 뒤에 들어오면 단계 폭이 바뀌므로 그때 한 번 더 맞춘다.
 	useSafeLayoutEffect(() => {
-		const list = listRef.current;
-		const active = list?.children[current];
-		if (list && active instanceof HTMLElement) revealInline(list, active);
+		const reveal = () => {
+			const list = listRef.current;
+			const active = list?.children[current];
+			if (list && active instanceof HTMLElement) revealInline(list, active);
+		};
+		reveal();
+		let disposed = false;
+		void document.fonts?.ready.then(() => {
+			if (!disposed) reveal();
+		});
+		return () => {
+			disposed = true;
+		};
 	}, [current]);
 
 	return (

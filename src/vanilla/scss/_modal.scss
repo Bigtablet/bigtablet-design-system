@@ -4,6 +4,7 @@
    Modal
    ======================================== */
 .bt-modal {
+  @include token.wrap_keep_all;
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   /* 잠금이 거터를 회수해 ICB 가 스크롤바 폭만큼 넓어진다(#635). 그만큼 오른쪽에 padding 을 줘
