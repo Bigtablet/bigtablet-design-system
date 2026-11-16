@@ -17,6 +17,14 @@ describe("splitSentences", () => {
 		]);
 	});
 
+	// 숫자 뒤 예외는 마침표에만 - 물음표 · 느낌표는 문장 끝이다.
+	it("ends a sentence on ? or ! right after a digit", () => {
+		expect(texts("정답은 42! 다음 문제로 넘어가세요.")).toEqual([
+			"정답은 42!",
+			"다음 문제로 넘어가세요.",
+		]);
+	});
+
 	it("ends a sentence after closing quotes and brackets", () => {
 		expect(texts('"완료했어요." (자동 저장돼요.) 「끝」이에요.')).toEqual([
 			'"완료했어요."',
@@ -51,6 +59,16 @@ describe("renderSentences", () => {
 			"결제 수단이 비활성화되었습니다.",
 			"새 결제 수단을 등록하세요.",
 		]);
+		expect(container.textContent).toBe(text);
+	});
+
+	// 문장 안팎의 공백을 원문 그대로 둔다 - 줄바꿈 금지 공백(U+00A0)이 일반 공백으로 바뀌지 않는다.
+	it("keeps non-breaking and surrounding spaces from the original", () => {
+		const text = " 금액은 1\u00a0000원입니다.  확인하세요. ";
+		const { container } = render(<p>{renderSentences(text)}</p>);
+		expect(container.querySelector(".sentences_item")?.textContent).toBe(
+			"금액은 1\u00a0000원입니다.",
+		);
 		expect(container.textContent).toBe(text);
 	});
 });
