@@ -117,7 +117,9 @@ export const Stepper = ({
 						</span>
 						<span className="stepper_text">
 							<span className="stepper_label">
-								{step.label}
+								{/* 라벨 내용은 한 덩어리 - 가로 연결선은 라벨의 ::after 라, 내용이 여러 조각(텍스트 + <strong>)이면
+								    조각마다 flex 항목이 돼 연결선용 gap 이 단어 사이에도 들어간다. */}
+								<span className="stepper_label_text">{step.label}</span>
 								{/* 색·체크 모양은 보조기술에 닿지 않는다 - 상태를 말로도 붙인다. */}
 								{statusText && <span className="stepper_sr_only"> {statusText}</span>}
 							</span>
