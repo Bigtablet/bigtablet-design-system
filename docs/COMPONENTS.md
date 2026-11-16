@@ -550,6 +550,7 @@ import { Chip } from '@bigtablet/design-system';
 | `disabled` | `boolean` | `false` | 비활성화 |
 | `onClick` | `(event) => void` | - | 클릭 핸들러 |
 | `onRemove` | `() => void` | - | 삭제 핸들러 |
+| `removeLabel` | `string` | `'{label} 제거'` | 삭제 버튼 이름 - 칩이 여러 개일 때 대상을 구분한다 |
 
 > **v3.0 변경**: 기존 별도 `Tag` 컴포넌트가 `Chip`의 `type="static"`으로 흡수되었습니다. 카테고리/상태 표시는 `<Chip type="static" tone="..." />`로 마이그레이션하세요.
 
@@ -690,6 +691,10 @@ await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
 | `idleMessage` | `string` | `'검색어를 입력하세요'` | 검색 전 |
 | `renderOption` | `(o: ComboboxOption) => ReactNode` | - | 목록 항목 커스터마이즈 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
+| `disabled` | `boolean` | `false` | 비활성 |
+| `fullWidth` | `boolean` | `false` | 전체 너비 |
+| `ariaLabel` | `string` | - | 접근성 이름 - `Field` 로 감싸면 그쪽 라벨이 우선 |
+| `loadingLabel` | `string` | `'검색 중'` | 조회 중 안내 |
 
 비동기에서 갈리는 네 가지를 DS 가 처리한다.
 
@@ -750,6 +755,11 @@ await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
 | `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
 | `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
 | `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
+| `onRowClick` | `(row: T, index: number) => void` | - | 행 클릭 |
+| `ariaLabel` | `string` | - | 표의 접근성 이름 |
+| `clearSelectionLabel` | `string` | `'선택 해제'` | 선택 해제 버튼 라벨 |
+| `errorTitle` | `string` | `'불러오지 못했습니다'` | 실패 상태 제목 |
+| `retryLabel` | `string` | `'다시 시도'` | 재시도 버튼 라벨 |
 
 동작 규칙 세 가지:
 
@@ -1216,6 +1226,7 @@ const [checked, setChecked] = useState(false);
 |------|------|---------|-------------|
 | `label` | `ReactNode` | - | 라벨 |
 | `indeterminate` | `boolean` | `false` | 부분 선택 상태. 클릭으로 지워져도 prop 이 `true` 면 다시 세운다 |
+| `error` | `boolean` | - | 에러 상태 (`aria-invalid`) |
 | `checked` | `boolean` | - | 체크 상태 |
 | `disabled` | `boolean` | `false` | 비활성화 |
 
@@ -1807,6 +1818,9 @@ function YourComponent() {
 | `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
 | `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
+| `destructive` | `boolean` | `false` | 되돌릴 수 없는 확인 - 확인 버튼을 빨간 강조로, 첫 포커스는 취소 버튼 |
+| `showIcon` | `boolean` | `false` | `tone` 아이콘 표시 |
+| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭으로 닫기. destructive 확인처럼 실수 닫힘을 막으려면 `false` |
 | `actionsAlign` | `'left' \| 'center' \| 'right'` | `'right'` | 버튼 정렬 |
 | `onConfirm` | `() => unknown` | - | 확인 핸들러. Promise 를 돌려주면 끝날 때까지 열린 채 스피너 · 중복 클릭/취소/Escape 차단, 실패하면 열린 채 재시도 |
 | `onCancel` | `() => void` | - | 취소 핸들러 |
@@ -1905,13 +1919,12 @@ await confirm({
 ```tsx
 import { ToastProvider, useToast } from '@bigtablet/design-system';
 
-// App에 Provider 추가
+// App 을 Provider 로 감싼다 - useToast() 는 그 아래(자식)에서만 부를 수 있다
 function App() {
   return (
-    <>
-      <ToastProvider />
+    <ToastProvider>
       <YourComponent />
-    </>
+    </ToastProvider>
   );
 }
 
@@ -2363,6 +2376,11 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 | `header` | `ReactNode` | - | 상단 brand/로고 영역 (border-bottom 자동) |
 | `footer` | `ReactNode` | - | 하단 영역 (border-top 자동) - 사용자 프로필/설정/로그아웃 |
 | `collapsed` | `boolean` | `false` | 축소 모드. 너비가 줄고 label 숨김 |
+| `defaultCollapsed` | `boolean` | `false` | 비제어 초기값 - `collapsed` 를 주지 않을 때 |
+| `onCollapsedChange` | `(collapsed: boolean) => void` | - | 축소 상태가 바뀔 때 (제어 · 비제어 모두) |
+| `collapsible` | `boolean` | `true` | 내장 축소 토글 버튼 표시 |
+| `toggleLabel` | `string` | `'사이드바 토글'` | 토글 버튼 이름 |
+| `headerCollapsed` | `ReactNode` | - | 축소 상태 헤더(보통 파비콘). 없으면 `header` 를 그대로 쓴다 |
 | `width` | `number` | `240` | 펼쳤을 때 너비 (px) |
 | `collapsedWidth` | `number` | `64` | 접혔을 때 너비 (px) |
 | `mode` | `'auto' \| 'static'` | `'auto'` | 반응형 모드 (v3.1). `auto` = `< 600px` 에서 하단 bar 로 변신 / `static` = 항상 좌측 rail |
@@ -2581,8 +2599,13 @@ function App() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `brand` | `ReactNode` | - | 왼쪽 brand/로고 영역 |
-| `actions` | `ReactNode` | - | 오른쪽 액션 영역 (Button, Avatar, 언어 셀렉터 등) |
-| `variant` | `'default' \| 'transparent' \| 'accent'` | `'default'` | 흰 bg / 투명 / navy bg |
+| `searchSlot` | `ReactNode` | - | 중앙 · 우측 검색 영역 (TextField 등) |
+| `actions` | `ReactNode` | - | 오른쪽 액션 영역 (Button, IconButton 등) |
+| `locale` | `{ current, options, onValueChange?, hideLabel?, ariaLabel? }` | - | 언어 셀렉터 (Globe 아이콘 + 드롭다운) |
+| `profile` | `ReactNode` | - | 맨 오른쪽 프로필 영역 (Avatar 등) |
+| `divider` | `boolean` | `true` | `profile` 이 있을 때 actions · locale 과 profile 사이 세로선 |
+| `variant` | `'default' \| 'transparent' \| 'accent'` | `'default'` | 흰 bg / 투명(Hero 위) / 검정 bg |
+| `layout` | `'contained' \| 'fluid'` | `'contained'` | `contained` = 최대 1200px 가운데(마케팅), `fluid` = 전체 폭(어드민 · 대시보드) |
 | `sticky` | `boolean` | `false` | 스크롤 시 상단 고정 |
 
 **NavLink Props** (`<a>` 속성 모두 상속)
@@ -3787,7 +3810,7 @@ import { Avatar } from "@bigtablet/design-system";
 
 | tone | 토큰 | 의미 |
 |---------|------|------|
-| `accent` | brand navy | 기본/브랜드 강조 |
+| `accent` | accent (라이트 검정 · 다크 흰색) | 기본/브랜드 강조 |
 | `neutral` | bg.solid.dim | 정보 없는 메타 라벨 |
 | `info` | status.info | 정보성 ("Beta") |
 | `success` | status.success | 정상/활성 |
@@ -3800,6 +3823,8 @@ import { Avatar } from "@bigtablet/design-system";
 |------|------|---------|-------------|
 | `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색 |
 | `shape` | `'dot' \| 'count' \| 'label'` | `'label'` | 모양 |
+| `appearance` | `'solid' \| 'soft'` | `'solid'` | 시각 강도. `soft` = 옅은 배경 + 진한 글자 (차분한 정보 라벨) |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | `sm` 아이콘 위 알림 · 모바일, `md` 일반, `lg` Hero 위 강조 |
 | `count` | `number` | - | shape=`count`일 때 표시 숫자. undefined면 빈 상태 |
 | `max` | `number` | `99` | count 최댓값. 초과 시 `${max}+`로 표시 |
 | `children` | `ReactNode` | - | shape=`label`일 때 라벨 텍스트 |
