@@ -12,7 +12,13 @@ export {
 	lockBodyScroll,
 	unlockBodyScroll,
 } from "./scroll-lock";
-export { renderSentences, splitSentences } from "./sentences";
+export {
+	renderSentences,
+	Sentences,
+	type SentencesProps,
+	sentenceText,
+	splitSentences,
+} from "./sentences";
 export { splitAriaProps } from "./split-aria-props";
 export {
 	type AnchoredOptions,

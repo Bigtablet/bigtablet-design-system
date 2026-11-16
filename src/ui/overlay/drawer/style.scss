@@ -10,6 +10,7 @@ $close_inset: token.$spacing_16; // 헤더/본문 패딩 24 - 8
 $close_clearance: calc(#{$close_inset} + #{token.$tap_target_dense});
 
 .drawer {
+  @include token.wrap_keep_all;
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   // 패널이 화면 가장자리에 붙는다 - 잠금으로 넓어진 ICB 는 그대로 쓴다(가운데 정렬이 아니라

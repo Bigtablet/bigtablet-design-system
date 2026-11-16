@@ -4,6 +4,7 @@
 // 차이: multiline, 아이콘/clear 없음, auto-grow + 카운터 + resize.
 
 .textarea {
+  @include token.wrap_keep_all;
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;

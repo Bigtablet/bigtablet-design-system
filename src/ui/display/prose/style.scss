@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .prose {
+  @include token.wrap_keep_all;
   font-family: token.$font_family_primary;
   color: token.$color_text_heading;
   @include token.body_medium;

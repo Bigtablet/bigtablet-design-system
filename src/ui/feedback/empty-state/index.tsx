@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export interface EmptyStateProps
@@ -69,7 +69,7 @@ export const EmptyState = ({
 				</div>
 			)}
 			{title && <h3 className="empty_state_title">{title}</h3>}
-			{description && <p className="empty_state_description">{description}</p>}
+			{description && <p className="empty_state_description">{renderSentences(description)}</p>}
 			{action && <div className="empty_state_action">{action}</div>}
 		</div>
 	);

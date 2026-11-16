@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .list_item {
+  @include token.wrap_keep_all;
   position: relative;
   display: flex;
   flex-direction: column;

@@ -1,6 +1,6 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { renderSentences, splitSentences } from "./sentences";
+import { renderSentences, Sentences, sentenceText, splitSentences } from "./sentences";
 
 const texts = (text: string) => splitSentences(text).map((sentence) => sentence.text);
 
@@ -70,5 +70,53 @@ describe("renderSentences", () => {
 			"금액은 1\u00a0000원입니다.",
 		);
 		expect(container.textContent).toBe(text);
+	});
+});
+
+describe("Sentences", () => {
+	it("renders a single sentence as plain text", () => {
+		const { container } = render(
+			<p>
+				<Sentences text="한 문장이에요." />
+			</p>,
+		);
+		expect(container.innerHTML).toBe("<p>한 문장이에요.</p>");
+	});
+
+	it("wraps each sentence like renderSentences", () => {
+		const text = "Saved. Continue?";
+		const { container } = render(
+			<p>
+				<Sentences text={text} />
+			</p>,
+		);
+		expect(container.querySelectorAll(".sentences_item")).toHaveLength(2);
+		expect(container.textContent).toBe(text);
+	});
+
+	// 띄어쓰기 없는 언어는 어절이 하나라 나누지 않는다.
+	it("leaves text without spaces (ja · zh) as is", () => {
+		const text = "保存しました。続けますか？";
+		const { container } = render(
+			<p>
+				<Sentences text={text} />
+			</p>,
+		);
+		expect(container.querySelector(".sentences_item")).toBeNull();
+		expect(container.textContent).toBe(text);
+	});
+});
+
+describe("sentenceText", () => {
+	// 기본 매처는 span 으로 나뉜 문구를 못 찾는다 - 매처는 가장 안쪽 요소 하나를 고른다.
+	it("finds split text by its full content", () => {
+		const text = "저장했어요. 계속할까요?";
+		render(
+			<p data-testid="target">
+				<Sentences text={text} />
+			</p>,
+		);
+		expect(screen.queryByText(text)).toBeNull();
+		expect(screen.getByText(sentenceText(text))).toBe(screen.getByTestId("target"));
 	});
 });
