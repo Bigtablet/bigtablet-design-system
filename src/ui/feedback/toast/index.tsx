@@ -4,7 +4,7 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { useIsMounted, usePresence } from "../../../utils";
+import { renderSentences, useIsMounted, usePresence } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -141,7 +141,7 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 				<span className={`toast_icon toast_icon_${item.tone}`} aria-hidden="true">
 					{TONE_ICONS[item.tone]}
 				</span>
-				<span className="toast_message">{item.message}</span>
+				<span className="toast_message">{renderSentences(item.message)}</span>
 			</div>
 
 			{item.action && (

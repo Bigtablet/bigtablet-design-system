@@ -87,6 +87,8 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone` 으로 바뀌었다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 그대로다.
 
+**문구 줄바꿈** — Toast `message`, Alert `message`(문자열일 때), TextField · Textarea · FileInput · OtpInput `supportingText` 는 두 문장 이상이면 문장마다 `.sentences_item`(`inline-block`)으로 묶어 줄이 문장 사이에서 먼저 끊긴다. 마침표 · 물음표 · 느낌표로 끝나는 어절에서 나누고, 숫자 바로 뒤 마침표(`2026. 5. 21.`)는 날짜라 넘긴다. 한 문장짜리는 마크업이 그대로이고, 문장 사이 공백이 남아 낭독 내용도 같다.
+
 ---
 
 ## v3.0 주요 변경사항
@@ -3999,6 +4001,36 @@ import { Hero, Button } from "@bigtablet/design-system";
   </a>
 </Hero>
 ```
+
+#### 제목 줄바꿈 - semantic-wrap
+
+랜딩 · 캠페인 제목을 의미 단위("고객의 신뢰를 먼저 얻은 다음에 / 더 많은 데이터를 요청하세요")로 끊고 싶으면
+앱에서 [semantic-wrap](https://github.com/woohyun-park/semantic-wrap) 을 직접 설치해 `title` 슬롯에 넣는다.
+DS 는 의존성으로 갖지 않는다 - 런타임 의존성 0 · 번들 한도를 지키고, 0.x 라 API 가 아직 바뀐다.
+Hero · PageHeader · EmptyState 의 `title` 이 `ReactNode` 라 그대로 들어간다 (#1009, 0.4.1 · Chromium 실측).
+
+```bash
+pnpm add @semantic-wrap/core@~0.4.1 @semantic-wrap/react@~0.4.1 @semantic-wrap/ko@~0.4.1
+```
+
+```tsx
+import { koTitleModel } from "@semantic-wrap/ko";
+import { SemanticWrap } from "@semantic-wrap/react";
+
+<PageHeader
+  title={
+    <SemanticWrap model={koTitleModel} initial="native" resize="settled">
+      <span style={{ display: "block" }}>{title}</span>
+    </SemanticWrap>
+  }
+/>
+```
+
+- **블록 요소로 감싼다** - `SemanticWrap` 은 자식 요소의 폭을 줄 폭으로 잰다. 인라인 `span` 은 글자 길이만큼만 넓어 끊을 자리가 없다고 보고 `<br>` 를 넣지 않는다
+- **`initial="native" resize="settled"`** - 원문을 먼저 그리고 계산은 뒤에 붙인다. 기본값(`resolved`)은 첫 결과까지 제목을 투명하게 둔다
+- **제목에만** - 폰트 · 폭을 재고 리사이즈마다 다시 계산한다. 안내 문구 · 본문은 DS 의 문장 단위 줄바꿈과 `text_pretty` 로 충분하다
+- **버전 고정** (`~0.4.1`) - 한국어 모델(`@semantic-wrap/ko`)은 실험 단계라 붙인 화면은 눈으로 확인한다
+- **접근성** - 줄바꿈 자리의 공백이 `<br>` 로 바뀌지만 Chrome 접근성 이름은 공백으로 읽어 원문과 같다. `textContent` 에서는 공백이 빠지므로 테스트는 `getByText` 대신 `getByRole("heading", { name })` 으로 찾는다
 
 ---
 

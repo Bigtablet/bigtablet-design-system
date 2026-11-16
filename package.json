@@ -1,6 +1,6 @@
 {
 	"name": "@bigtablet/design-system",
-	"version": "4.9.0",
+	"version": "4.9.1",
 	"description": "Bigtablet Design System UI Components",
 	"type": "module",
 	"types": "dist/index.d.ts",
@@ -137,8 +137,8 @@
 		{
 			"path": "dist/esm/index.js",
 			"import": "*",
-			"limit": "60 kB",
-			"message": "Lowered 70 kB -> 60 kB on 2026-10-23: removing @react-spring/web (the only runtime dependency, ~18 kB brotli) brought the measurement to 53.37 kB, so 70 kB could no longer catch a regression of that size. The current limit leaves 6.63 kB. Re-measure before raising again."
+			"limit": "66 kB",
+			"message": "Raised 60 kB -> 66 kB on 2026-11-16 for sentence wrapping in message slots (#1005): develop measured 59.81 kB (0.19 kB under 60 kB after components added since 2026-10-23), the sentence splitter adds 0.23 kB -> 60.04 kB. Set with ~10% headroom so a 6 kB jump still fails. Lowered 70 kB -> 60 kB on 2026-10-23: removing @react-spring/web (the only runtime dependency, ~18 kB brotli) brought the measurement to 53.37 kB, so 70 kB could no longer catch a regression of that size. The current limit leaves 6.63 kB. Re-measure before raising again."
 		},
 		{
 			"path": "dist/vanilla/bigtablet.min.js",
