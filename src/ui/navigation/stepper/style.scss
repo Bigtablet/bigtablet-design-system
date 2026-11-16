@@ -164,6 +164,8 @@ $indicator: 28px;
     .stepper_step:not(:last-child)::after {
       content: "";
       flex: 1;
+      // 좁아서 목록이 스크롤될 때도 선이 0 으로 사라지지 않게 - 어디까지 왔는지가 선으로도 읽힌다
+      min-width: token.$spacing_16;
       height: token.$border_width_standard;
       margin-top: calc($indicator / 2);
       margin-left: token.$spacing_8;
