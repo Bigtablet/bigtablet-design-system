@@ -4002,6 +4002,36 @@ import { Hero, Button } from "@bigtablet/design-system";
 </Hero>
 ```
 
+#### 제목 줄바꿈 - semantic-wrap
+
+랜딩 · 캠페인 제목을 의미 단위("고객의 신뢰를 먼저 얻은 다음에 / 더 많은 데이터를 요청하세요")로 끊고 싶으면
+앱에서 [semantic-wrap](https://github.com/woohyun-park/semantic-wrap) 을 직접 설치해 `title` 슬롯에 넣는다.
+DS 는 의존성으로 갖지 않는다 - 런타임 의존성 0 · 번들 한도를 지키고, 0.x 라 API 가 아직 바뀐다.
+Hero · PageHeader · EmptyState 의 `title` 이 `ReactNode` 라 그대로 들어간다 (#1009, 0.4.1 · Chromium 실측).
+
+```bash
+pnpm add @semantic-wrap/core@~0.4.1 @semantic-wrap/react@~0.4.1 @semantic-wrap/ko@~0.4.1
+```
+
+```tsx
+import { koTitleModel } from "@semantic-wrap/ko";
+import { SemanticWrap } from "@semantic-wrap/react";
+
+<PageHeader
+  title={
+    <SemanticWrap model={koTitleModel} initial="native" resize="settled">
+      <span style={{ display: "block" }}>{title}</span>
+    </SemanticWrap>
+  }
+/>
+```
+
+- **블록 요소로 감싼다** - `SemanticWrap` 은 자식 요소의 폭을 줄 폭으로 잰다. 인라인 `span` 은 글자 길이만큼만 넓어 끊을 자리가 없다고 보고 `<br>` 를 넣지 않는다
+- **`initial="native" resize="settled"`** - 원문을 먼저 그리고 계산은 뒤에 붙인다. 기본값(`resolved`)은 첫 결과까지 제목을 투명하게 둔다
+- **제목에만** - 폰트 · 폭을 재고 리사이즈마다 다시 계산한다. 안내 문구 · 본문은 DS 의 문장 단위 줄바꿈과 `text_pretty` 로 충분하다
+- **버전 고정** (`~0.4.1`) - 한국어 모델(`@semantic-wrap/ko`)은 실험 단계라 붙인 화면은 눈으로 확인한다
+- **접근성** - 줄바꿈 자리의 공백이 `<br>` 로 바뀌지만 Chrome 접근성 이름은 공백으로 읽어 원문과 같다. `textContent` 에서는 공백이 빠지므로 테스트는 `getByText` 대신 `getByRole("heading", { name })` 으로 찾는다
+
 ---
 
 ### MediaCard
