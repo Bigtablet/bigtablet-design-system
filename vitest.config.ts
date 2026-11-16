@@ -1,11 +1,9 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { configDefaults, defineConfig } from "vitest/config";
 
-const dirname =
-	typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const dirname = import.meta.dirname;
 
 // `unit` 프로젝트 설정 - 뮤테이션 테스트(`vitest.mutation.config.ts`)도 이 객체를 그대로 쓴다.
 export const unitTest = {
