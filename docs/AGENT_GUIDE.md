@@ -318,6 +318,9 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 - `ThemeProvider` - wraps app for runtime theme control. `defaultMode` (light/dark/system).
 - `useTheme()` - returns `{ mode, setMode, resolvedMode }`.
+
+### Text
+
 - `<Sentences text="..." />` - wraps each sentence in an `inline-block` span so lines break between sentences (same rule Toast/Alert/`supportingText` use). Use it for app-drawn paragraphs instead of your own splitter. In tests, find split text with `getByText(sentenceText("full text"))`.
 
 ---
