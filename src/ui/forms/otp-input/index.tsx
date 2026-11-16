@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../../../utils";
+import { cn, renderSentences } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -250,7 +250,7 @@ export const OtpInput = ({
 					id={supportingId}
 					className={cn("otp_input_supporting", error && "otp_input_supporting_error")}
 				>
-					{supportingText}
+					{renderSentences(supportingText)}
 				</span>
 			)}
 		</div>

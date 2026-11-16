@@ -4,7 +4,7 @@ import { Eye, EyeOff, X } from "lucide-react";
 import type * as React from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps, useFormReset } from "../../../utils";
+import { cn, renderSentences, type SafeHTMLProps, useFormReset } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -365,7 +365,7 @@ export const TextField = ({
 
 			{supportingText && (
 				<div id={helperId} className="text_field_helper">
-					{supportingText}
+					{renderSentences(supportingText)}
 				</div>
 			)}
 		</div>
