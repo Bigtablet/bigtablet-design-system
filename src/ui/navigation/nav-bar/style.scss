@@ -45,6 +45,19 @@
     display: flex;
     align-items: center;
     gap: token.$spacing_4;
+    // 링크가 다 들어가지 않으면 이 영역만 가로로 스크롤된다 (#1014). 줄이면 flex 가 링크를
+    // 한 글자 폭까지 눌러 "제 / 품" 이 되고, 안 줄이면 헤더가 넘쳐 페이지가 가로로 스크롤된다.
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    // Safari 18.2 미만(구형 iOS 인앱 웹뷰 포함)은 scrollbar-width 를 모른다
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    // overflow-x 가 auto 면 세로도 잘린다 - 아래로 10px 내려간 indicator 와 위아래 포커스 링이
+    // 들어갈 자리를 padding 으로 만들고 같은 만큼 margin 으로 되돌려 헤더 높이는 그대로 둔다.
+    padding-block: token.$spacing_10;
+    margin-block: calc(-1 * token.$spacing_10);
 
     @include token.compact {
       gap: 0;
@@ -56,7 +69,7 @@
 
   &_indicator {
     position: absolute;
-    bottom: -10px;            // link bottom과 NavBar bottom border 사이
+    bottom: 0;                // links 의 padding-bottom(10px) 안 - link bottom과 NavBar bottom border 사이
     height: 2px;
     background: token.$color_accent_default;
     border-radius: 1px;
@@ -195,9 +208,11 @@
     position: relative;
     padding: token.$spacing_8 token.$spacing_4;
     margin: 0 token.$spacing_8;
+    flex-shrink: 0;
     color: token.$color_text_body;
     text-decoration: none;
     @include token.label_large_medium;
+    @include token.text_nowrap;
     // underline은 부모 NavBar의 indicator가 처리 - link 자체에 border-bottom 없음
     transition: color token.$duration_fast token.$easing_enter;
 
