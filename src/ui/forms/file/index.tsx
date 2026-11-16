@@ -3,7 +3,7 @@
 import { Image as ImageIcon, X } from "lucide-react";
 import * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";
@@ -223,7 +223,7 @@ export const FileInput = ({
 
 			{supportingText && (
 				<span id={helperId} className="file_input_helper">
-					{supportingText}
+					{renderSentences(supportingText)}
 				</span>
 			)}
 

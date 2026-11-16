@@ -8,6 +8,7 @@ import { iconSize } from "../../../styles/icon";
 import {
 	cn,
 	lockBodyScroll,
+	renderSentences,
 	unlockBodyScroll,
 	useFocusTrap,
 	useOverlayEscape,
@@ -363,7 +364,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
 				{message && (
 					<div className="alert_message" id={messageId}>
-						{message}
+						{renderSentences(message)}
 					</div>
 				)}
 

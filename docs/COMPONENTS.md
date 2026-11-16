@@ -87,6 +87,8 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone` 으로 바뀌었다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 그대로다.
 
+**문구 줄바꿈** — Toast `message`, Alert `message`(문자열일 때), TextField · Textarea · FileInput · OtpInput `supportingText` 는 두 문장 이상이면 문장마다 `.sentences_item`(`inline-block`)으로 묶어 줄이 문장 사이에서 먼저 끊긴다. 마침표 · 물음표 · 느낌표로 끝나는 어절에서 나누고, 숫자 바로 뒤 마침표(`2026. 5. 21.`)는 날짜라 넘긴다. 한 문장짜리는 마크업이 그대로이고, 문장 사이 공백이 남아 낭독 내용도 같다.
+
 ---
 
 ## v3.0 주요 변경사항

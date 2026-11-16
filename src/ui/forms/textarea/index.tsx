@@ -2,7 +2,13 @@
 
 import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { cn, type SafeHTMLProps, useFormReset, useSafeLayoutEffect } from "../../../utils";
+import {
+	cn,
+	renderSentences,
+	type SafeHTMLProps,
+	useFormReset,
+	useSafeLayoutEffect,
+} from "../../../utils";
 import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";
@@ -294,7 +300,7 @@ export const Textarea = ({
 				<div className="textarea_footer">
 					{supportingText ? (
 						<div id={helperId} className="textarea_helper">
-							{supportingText}
+							{renderSentences(supportingText)}
 						</div>
 					) : (
 						<span />
