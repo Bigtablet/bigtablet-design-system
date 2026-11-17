@@ -2,8 +2,8 @@ import type { DocPage } from "../docs";
 
 export const linearProgress: DocPage = {
 	slug: "linear-progress",
-	category: "로딩",
-	order: 2,
+	category: "내비게이션",
+	order: 6.5,
 	title: "LinearProgress",
 	name: "단계 진행 막대",
 	summary: "단계형 진행 막대입니다. 몇 단계 중 몇 번째인지 보여 줍니다.",
