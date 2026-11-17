@@ -40,6 +40,16 @@ function lookup(path: string): unknown {
 }
 
 /** 묶음 아래 토큰을 펼친다 - 이름은 묶음 기준 상대 경로 */
+/**
+ * tokens.json 의 $description 은 대부분 유지보수 메모(대비값 · 예전 값 · 결정 이유)라 표에는 짧은 것만 싣는다.
+ * 묶음 전체에 해당하는 메모(spacing 0 의 var() 설명 등)는 페이지의 Group desc 가 맡는다.
+ * 묶음 첫 토큰에 붙은 "Text" · "Brand" 같은 묶음 이름도 설명이 아니다
+ */
+const summaryOf = (description: unknown) => {
+	const text = String(description ?? "");
+	return /\s/.test(text) && text.length <= 60 ? text : undefined;
+};
+
 function collect(path: string): Token[] {
 	const root = path.split(".").reduce<unknown>((n, key) => (n as Node)?.[key], tokens) as Node;
 	const out: Token[] = [];
@@ -58,10 +68,7 @@ function collect(path: string): Token[] {
 					css: own.css,
 					light: resolve(child.$value),
 					dark: ext["com.bigtablet.theme"]?.dark && resolve(ext["com.bigtablet.theme"].dark),
-					// 묶음 첫 토큰에 붙은 "Text" · "Brand" 같은 묶음 이름은 설명이 아니다
-					description: /\s/.test(String(child.$description ?? ""))
-						? (child.$description as string)
-						: undefined,
+					description: summaryOf(child.$description),
 				});
 			} else if (child && typeof child === "object") {
 				walk(child as Node, name);
@@ -85,6 +92,8 @@ const show = (value: unknown) => (typeof value === "object" ? shadowOf(value) : 
 
 /* ─── 공용 표 ──────────────────────────────────────────────────────────── */
 
+// 토큰 칸 하나에 쓰는 이름(SCSS) · CSS 변수 · 설명을 쌓는다. 변수명은 복사해 쓰는 값이라 중간에서 끊지 않는다 -
+// 칸이 좁으면 표가 가로로 스크롤된다. "이름" 칸을 따로 두면 SCSS 이름과 거의 같은 글자가 두 번 나와 좁아지기만 한다
 // preview 가 없으면(z-index 처럼 그릴 게 없는 값) 미리보기 칸을 아예 두지 않는다
 function TokenTable({ items, preview }: { items: Token[]; preview?: (t: Token) => ReactNode }) {
 	return (
@@ -93,8 +102,7 @@ function TokenTable({ items, preview }: { items: Token[]; preview?: (t: Token) =
 				<thead>
 					<tr>
 						{preview && <th aria-label="미리보기" />}
-						<th>이름</th>
-						<th>SCSS · CSS 변수</th>
+						<th>토큰</th>
 						<th>값</th>
 					</tr>
 				</thead>
@@ -103,20 +111,12 @@ function TokenTable({ items, preview }: { items: Token[]; preview?: (t: Token) =
 						<tr key={t.name}>
 							{preview && <td className="fd_preview_cell">{preview(t)}</td>}
 							<td>
-								<strong className="fd_name">{t.name}</strong>
+								<code className="fd_name">{t.scss ?? t.name}</code>
+								{t.css && <code className="fd_css">{t.css}</code>}
 								{t.description && (
 									<span className="fd_desc">
 										<Md>{t.description}</Md>
 									</span>
-								)}
-							</td>
-							<td>
-								{t.scss && <Code>{t.scss}</Code>}
-								{t.css && (
-									<>
-										<br />
-										<Code>{t.css}</Code>
-									</>
 								)}
 							</td>
 							<td className="fd_value">
@@ -180,7 +180,7 @@ const COLOR_GROUPS: [string, string, string][] = [
 	[
 		"status",
 		"상태",
-		"배경 · 테두리용과 글자용(`-on-surface`)이 나뉩니다. 글자에 배경용을 쓰면 다크에서 대비가 무너집니다.",
+		"배경 · 테두리용과 글자용(`-on-surface`)이 나뉩니다. 글자에 배경용을 쓰면 다크에서 대비가 무너집니다. `warning-graphic` 은 아이콘 · 막대 전용이라 글자에 쓰지 않습니다.",
 	],
 	["state", "상호작용 상태", "hover · pressed 등 겹쳐 칠하는 반투명 색."],
 	["scrim", "딤", "오버레이 뒤를 가리는 색."],
@@ -283,7 +283,10 @@ function Spacing() {
 			name="Spacing"
 			lede="여백 · 간격은 이 단계만 씁니다. 사이 값(14px · 18px)이 필요하면 가까운 단계로 맞춥니다."
 		>
-			<Group title="단계">
+			<Group
+				title="단계"
+				desc="`:root { --bt-spacing-16: 20px }` 처럼 CSS 변수를 덮어쓰면 컴포넌트 여백이 따라갑니다."
+			>
 				<TokenTable
 					items={collect("semantic.spacing")}
 					preview={(t) => <span className="fd_bar" style={{ width: String(t.light) }} />}
@@ -388,7 +391,7 @@ function BreakpointTable() {
 						return (
 							<tr key={t.name}>
 								<td>
-									<strong className="fd_name">{name}</strong>
+									<code className="fd_name">{name}</code>
 								</td>
 								<td className="fd_value">
 									{next
