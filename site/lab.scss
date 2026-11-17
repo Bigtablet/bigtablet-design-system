@@ -1,0 +1,778 @@
+@use "src/styles/token" as token;
+
+// 시안 3개. DS 토큰 색만 쓴다 - 다크 모드가 그대로 따라온다.
+// 글자 크기 단계(Elements of Typographic Style 의 고전 단계를 따름): 13 · 15 · 18 · 24 · 36 · 56 · 96
+
+$line: token.$border_width_standard solid token.$color_border_default;
+
+.lab {
+  min-height: 100vh;
+  padding-bottom: 96px; // 아래 시안 전환 바 자리
+  background: token.$color_bg_solid;
+  color: token.$color_text_body;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    color: token.$color_text_heading;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+}
+
+.lab_switcher {
+  position: fixed;
+  left: 50%;
+  bottom: token.$spacing_16;
+  z-index: token.$z_chrome;
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  padding: token.$spacing_6;
+  border: $line;
+  border-radius: token.$radius_full;
+  background: token.$color_bg_solid;
+  box-shadow: token.$elevation_level2;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 2 * #{token.$spacing_16});
+  overflow-x: auto;
+}
+
+.lab_switcher_back {
+  padding: 0 token.$spacing_12;
+  color: token.$color_text_caption;
+  white-space: nowrap;
+  @include token.body_small;
+}
+
+// ── 공용: 30° 등각 점 격자 (로고 육면체의 각도) ─────────────────────────────
+// 가로 24px, 세로 24·sin60 ≈ 20.78px 간격의 점을 두 겹 엇갈려 찍는다
+.iso_floor {
+  background-color: token.$color_bg_solid_dim;
+  background-image:
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px),
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px);
+  background-size: 24px 41.57px;
+  background-position:
+    0 0,
+    12px 20.78px;
+}
+
+/* ─── A 육면체 ─────────────────────────────────────────────────────────── */
+
+.a_top {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_32;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: token.$spacing_20 token.$spacing_24;
+}
+
+.a_brand {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_12;
+  color: token.$color_text_heading;
+  text-decoration: none;
+  @include token.body_medium_medium;
+
+  span {
+    padding-left: token.$spacing_12;
+    border-left: $line;
+  }
+}
+
+.a_nav {
+  display: flex;
+  gap: token.$spacing_24;
+  margin-right: auto;
+
+  a {
+    color: token.$color_text_body;
+    text-decoration: none;
+    @include token.body_medium;
+
+    &:hover {
+      color: token.$color_text_heading;
+    }
+  }
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+.a_hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: token.$spacing_48;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: token.$spacing_48 token.$spacing_24 token.$spacing_40;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.a_hero_text {
+  h1 {
+    font-size: 56px; // ponytail: 디스플레이 크기 토큰이 없다
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+
+    @include token.compact {
+      font-size: 36px;
+    }
+  }
+
+  p {
+    margin-top: token.$spacing_20;
+    max-width: 34em;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+}
+
+.a_actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: token.$spacing_8;
+  margin-top: token.$spacing_32;
+}
+
+// 상자: 격자 바닥 위에 마크 하나와 실제 부품 셋
+.a_box {
+  position: relative;
+  aspect-ratio: 1;
+  border: $line;
+  border-radius: token.$radius_lg;
+  overflow: hidden;
+}
+
+.a_mark {
+  position: absolute;
+  inset: 22% 26%;
+  width: 48%;
+  height: auto;
+  opacity: 0.9;
+}
+
+.a_part {
+  position: absolute;
+  pointer-events: none;
+
+  &_1 {
+    top: 14%;
+    left: 8%;
+  }
+
+  &_2 {
+    top: 46%;
+    right: 6%;
+  }
+
+  &_3 {
+    bottom: 12%;
+    left: 18%;
+  }
+}
+
+.a_groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: token.$spacing_40 token.$spacing_32;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: token.$spacing_48 token.$spacing_24;
+  border-top: $line;
+}
+
+.a_group {
+  h2 {
+    margin-bottom: token.$spacing_12;
+    @include token.body_large_bold;
+
+    span {
+      color: token.$color_text_caption;
+      font-weight: 400;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: token.$spacing_6;
+  }
+
+  a {
+    color: token.$color_text_body;
+    text-decoration: none;
+
+    &:hover {
+      color: token.$color_text_heading;
+      text-decoration: underline;
+    }
+  }
+}
+
+.a_doc {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: token.$spacing_32 token.$spacing_24;
+}
+
+.a_doc_head {
+  padding-bottom: token.$spacing_32;
+  border-bottom: $line;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+
+    span {
+      margin-left: token.$spacing_8;
+      color: token.$color_text_caption;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+  }
+
+  p {
+    margin-top: token.$spacing_12;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+}
+
+.a_crumb {
+  margin-bottom: token.$spacing_8 !important;
+  color: token.$color_text_caption;
+  font-size: 15px !important;
+}
+
+.a_example {
+  padding: token.$spacing_32 0;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  > p {
+    margin-top: token.$spacing_6;
+    color: token.$color_text_caption;
+  }
+}
+
+.a_stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  margin-top: token.$spacing_16;
+  padding: token.$spacing_32;
+  border: $line;
+  border-radius: token.$radius_lg;
+}
+
+/* ─── B 작업대 ─────────────────────────────────────────────────────────── */
+
+.b_top {
+  position: sticky;
+  top: 0;
+  z-index: token.$z_content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: token.$spacing_12 token.$spacing_24;
+  border-bottom: $line;
+  background: token.$color_bg_solid;
+}
+
+.b_brand {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  color: token.$color_text_heading;
+  text-decoration: none;
+  @include token.body_medium_bold;
+}
+
+.b_home {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: token.$spacing_40 token.$spacing_24;
+}
+
+.b_intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: token.$spacing_8 token.$spacing_32;
+  align-items: end;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    grid-column: 1;
+    max-width: 40em;
+  }
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.b_actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  gap: token.$spacing_8;
+
+  @include token.compact {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+// 작업대: 진짜 화면이 그대로 들어간 틀
+.b_bench {
+  margin: token.$spacing_32 0 0;
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 560px;
+    border: $line;
+    border-radius: token.$radius_lg;
+    box-shadow: token.$elevation_level3;
+    background: token.$color_bg_solid;
+  }
+
+  figcaption {
+    margin-top: token.$spacing_12;
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+}
+
+.b_shelves {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: token.$spacing_2;
+  margin-top: token.$spacing_48;
+  border: $line;
+  border-radius: token.$radius_lg;
+  overflow: hidden;
+  background: token.$color_border_default;
+}
+
+.b_shelf {
+  display: grid;
+  gap: token.$spacing_4;
+  padding: token.$spacing_16 token.$spacing_20;
+  background: token.$color_bg_solid;
+  color: inherit;
+  text-decoration: none;
+
+  strong {
+    color: token.$color_text_heading;
+  }
+
+  span {
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  &:hover {
+    background: token.$color_bg_solid_dim;
+  }
+}
+
+// 컴포넌트 페이지: 왼쪽 놀이판 고정, 오른쪽 문서
+.b_doc {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: start;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.b_play {
+  position: sticky;
+  top: 57px;
+  display: grid;
+  gap: token.$spacing_16;
+  align-content: start;
+  height: calc(100vh - 57px);
+  box-sizing: border-box;
+  padding: token.$spacing_24;
+  border-right: $line;
+  background: token.$color_bg_solid_dim;
+
+  @include token.compact {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: $line;
+  }
+}
+
+.b_play_stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  border: $line;
+  border-radius: token.$radius_lg;
+  background: token.$color_bg_solid;
+}
+
+.b_controls {
+  display: grid;
+  gap: token.$spacing_12;
+}
+
+.b_control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: token.$spacing_16;
+
+  > span {
+    color: token.$color_text_heading;
+    @include token.body_small_medium;
+  }
+}
+
+.b_text {
+  padding: token.$spacing_32 token.$spacing_40 token.$spacing_48;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+
+    span {
+      margin-left: token.$spacing_8;
+      color: token.$color_text_caption;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+  }
+
+  h2 {
+    margin: token.$spacing_40 0 token.$spacing_12;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  h3 {
+    margin-bottom: token.$spacing_8;
+    @include token.body_medium_bold;
+  }
+
+  @include token.compact {
+    padding: token.$spacing_24 token.$spacing_16;
+  }
+}
+
+.b_summary {
+  margin-top: token.$spacing_12 !important;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.b_when {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: token.$spacing_8;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: token.$spacing_16;
+    padding: token.$spacing_12 token.$spacing_16;
+    border: $line;
+    border-radius: token.$radius_md;
+    color: token.$color_text_caption;
+
+    strong {
+      color: token.$color_text_body;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    &[data-self] {
+      border-color: token.$color_text_heading;
+      color: token.$color_text_heading;
+
+      strong {
+        color: token.$color_text_heading;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.b_example {
+  margin-top: token.$spacing_20;
+}
+
+.b_example_stage {
+  padding: token.$spacing_24;
+  border: $line;
+  border-radius: token.$radius_md;
+}
+
+/* ─── C 색인 ───────────────────────────────────────────────────────────── */
+
+.c_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: token.$spacing_24;
+}
+
+.c_brand img {
+  display: block;
+}
+
+.c_hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: token.$spacing_48 token.$spacing_24 token.$spacing_48;
+
+  h1 {
+    font-size: 96px; // ponytail: 표지 크기 - 토큰 밖 값
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+
+    @include token.compact {
+      font-size: 56px;
+    }
+  }
+
+  > p {
+    max-width: 30em;
+    margin-top: token.$spacing_32;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+}
+
+.c_install {
+  max-width: 420px;
+  margin-top: token.$spacing_24;
+}
+
+.c_index {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 token.$spacing_24;
+}
+
+.c_row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: token.$spacing_24;
+  padding: token.$spacing_24 0;
+
+  & + & {
+    border-top: $line;
+  }
+
+  h2 {
+    padding-top: token.$spacing_10;
+    color: token.$color_text_caption;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: token.$spacing_4 token.$spacing_32;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: token.$spacing_8;
+    color: token.$color_text_heading;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+
+    code {
+      padding: 0;
+      background: none;
+      color: token.$color_text_caption;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
+    }
+  }
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: token.$spacing_8;
+
+    a {
+      font-size: 22px;
+    }
+  }
+}
+
+.c_doc {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: token.$spacing_32 token.$spacing_24;
+}
+
+.c_doc_head {
+  margin-left: 232px;
+  padding-bottom: token.$spacing_40;
+
+  h1 {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  > code {
+    display: inline-block;
+    margin-top: token.$spacing_8;
+  }
+
+  p {
+    max-width: 36em;
+    margin-top: token.$spacing_16;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  @include token.compact {
+    margin-left: 0;
+  }
+}
+
+// 본문 옆 여백 메모
+.c_section {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: token.$spacing_32;
+  padding: token.$spacing_32 0;
+  border-top: $line;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: token.$spacing_12;
+  }
+}
+
+.c_margin {
+  display: grid;
+  gap: token.$spacing_6;
+  align-content: start;
+  color: token.$color_text_caption;
+  @include token.body_small;
+
+  p {
+    margin-top: token.$spacing_12;
+    color: token.$color_text_heading;
+    font-weight: 600;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.c_body h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.c_body > p {
+  margin-top: token.$spacing_8;
+}
+
+.c_stage {
+  margin-top: token.$spacing_16;
+  padding: token.$spacing_32;
+  border-radius: token.$radius_lg;
+  background: token.$color_bg_solid_dim;
+}
+
+.c_source {
+  margin-top: token.$spacing_8;
+
+  summary {
+    cursor: pointer;
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab * {
+    transition: none !important;
+  }
+}
+
+// 검은 로고 · 마크 - 다크 테마에서는 뒤집어 흰색으로
+@mixin lab_dark_logo {
+  .a_brand img,
+  .a_mark,
+  .b_brand img,
+  .c_brand img {
+    filter: invert(1);
+  }
+}
+
+[data-theme="dark"] {
+  @include lab_dark_logo;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include lab_dark_logo;
+  }
+}

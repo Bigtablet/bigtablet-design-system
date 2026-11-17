@@ -39,7 +39,7 @@ const sources = import.meta.glob<string>("./examples/**/*.tsx", {
 	import: "default",
 });
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
-const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
+export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
 /** 코드 이름은 구분 기호(. _ - / | , = 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
 export function Code({ children, className }: { children: string; className?: string }) {
@@ -216,7 +216,7 @@ function Frame({
 	);
 }
 
-function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
+export function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 	return (
 		<>
 			{titled && (

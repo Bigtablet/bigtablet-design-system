@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { ComponentCard, type DocPage, Page } from "./docs";
 import { FOUNDATIONS } from "./foundation";
 import { GUIDES, Landing } from "./guides";
+import { Lab } from "./lab";
 import { SiteSearch } from "./search";
 import "./site.scss";
 
@@ -73,6 +74,16 @@ function App() {
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 	}, [slug]);
+	// 독자 템플릿 시안 - 사이트 틀 없이 시안 자체의 화면으로
+	if (slug.startsWith("lab")) {
+		return (
+			<Lab
+				slug={slug.startsWith("lab/") ? slug : "lab/a/home"}
+				pages={PAGES}
+				themeControl={<ThemeMenu theme={theme} onChange={setTheme} />}
+			/>
+		);
+	}
 	return (
 		<div className="site">
 			<header className="site_top">
