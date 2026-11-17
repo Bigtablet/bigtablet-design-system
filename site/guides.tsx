@@ -1,5 +1,5 @@
-import { Button, CopyButton } from "@bigtablet/design-system";
-import { ArrowRight, Blocks, Code2, Palette, Rocket } from "lucide-react";
+import { Badge, Button, CopyButton, Toggle } from "@bigtablet/design-system";
+import { Code2, Palette, Rocket } from "lucide-react";
 import type { ReactNode } from "react";
 import { Code, ComponentCard, type DocPage, Md } from "./docs";
 
@@ -34,53 +34,65 @@ function Block({ id, title, children }: { id: string; title: string; children: R
 	);
 }
 
-/* ─── 처음 화면 ─────────────────────────────────────────────────────── */
-
-const LEDE =
-	"Bigtablet 제품을 만드는 React 컴포넌트와 디자인 토큰입니다. 라이트 · 다크 모드가 기본으로 들어 있고, React 없는 서버 템플릿(Thymeleaf · JSP · PHP)에서도 씁니다.";
-
-const FEATURED = ["button", "text-field", "dropdown", "modal", "table", "toast"];
+/* ─── 처음 화면: 등각 격자 상자 위의 마크와 실제 부품 ───────────────────── */
 
 export function Landing({ pages }: { pages: DocPage[] }) {
-	const groups = new Set(pages.map((p) => p.category)).size;
+	const groups = [...new Set(pages.map((p) => p.category))].map((name) => ({
+		name,
+		pages: pages.filter((p) => p.category === name),
+	}));
 	return (
 		<article>
-			<header className="doc_block landing_hero">
-				<p className="landing_eyebrow">@bigtablet/design-system</p>
-				<h1>Bigtablet Design System</h1>
-				<p className="doc_lede">
-					<Md>{LEDE}</Md>
-				</p>
-				<div className="landing_actions">
-					<Button as="a" href="#/install" trailingIcon={<ArrowRight size={16} />}>
-						시작하기
-					</Button>
-					<Button as="a" href="#/components" variant="outline">
-						컴포넌트 보기
-					</Button>
+			<section className="landing_hero">
+				<div className="landing_text">
+					<h1>Bigtablet 화면을 쌓는 부품 상자</h1>
+					<p className="doc_lede">
+						<Md>{`${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
+					</p>
+					<div className="landing_actions">
+						<Button as="a" href="#/install" size="lg">
+							설치하기
+						</Button>
+						<Button as="a" href="#/components" size="lg" variant="outline">
+							컴포넌트 둘러보기
+						</Button>
+					</div>
+					<div className="landing_install">
+						<CodeBlock code="pnpm add @bigtablet/design-system" />
+					</div>
 				</div>
-				<div className="landing_install">
-					<CodeBlock code="pnpm add @bigtablet/design-system" />
+				{/* 그림 역할 - 실제 부품이지만 누르거나 포커스되지 않는다 */}
+				<div className="landing_box" aria-hidden inert>
+					<img className="landing_mark" src="/images/logo/favicon.png" alt="" />
+					<span className="landing_part landing_part_1">
+						<Button size="sm">저장</Button>
+					</span>
+					<span className="landing_part landing_part_2">
+						<Badge tone="success">결제 완료</Badge>
+					</span>
+					<span className="landing_part landing_part_3">
+						<Toggle ariaLabel="알림" defaultChecked />
+					</span>
 				</div>
-				<dl className="landing_stats">
-					<div>
-						<dt>컴포넌트</dt>
-						<dd>{pages.length}</dd>
+			</section>
+
+			<section className="doc_block landing_groups" aria-label="컴포넌트 묶음">
+				{groups.map((g) => (
+					<div key={g.name} className="landing_group">
+						<h2>
+							{g.name} <span>{g.pages.length}</span>
+						</h2>
+						<ul>
+							{g.pages.map((p) => (
+								<li key={p.slug}>
+									<a href={`#/${p.slug}`}>{p.title}</a>
+									<span>{p.name}</span>
+								</li>
+							))}
+						</ul>
 					</div>
-					<div>
-						<dt>쓰임새 그룹</dt>
-						<dd>{groups}</dd>
-					</div>
-					<div>
-						<dt>테마</dt>
-						<dd>라이트 · 다크</dd>
-					</div>
-					<div>
-						<dt>환경</dt>
-						<dd>React 19 · Vanilla</dd>
-					</div>
-				</dl>
-			</header>
+				))}
+			</section>
 
 			<section className="doc_block">
 				<h2>어디서부터 볼까요</h2>
@@ -89,19 +101,13 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						href="#/install"
 						icon={<Rocket size={20} />}
 						title="설치"
-						desc="패키지 설치, Provider 감싸기, 첫 컴포넌트까지 5분이면 됩니다."
+						desc="패키지 설치, Provider 감싸기, 첫 컴포넌트까지 차례대로 따라 합니다."
 					/>
 					<LinkCard
-						href="#/components"
-						icon={<Blocks size={20} />}
-						title="컴포넌트"
-						desc={`${pages.length}개를 쓰임새별로 묶었습니다. ⌘K 로 이름을 찾습니다.`}
-					/>
-					<LinkCard
-						href="#/theme-provider"
+						href="#/tokens/colors"
 						icon={<Palette size={20} />}
-						title="테마 · 다크 모드"
-						desc="OS 설정을 따르거나, 화면에서 바꾸는 버튼을 둡니다."
+						title="토큰"
+						desc="색 · 타이포 · 간격 · 그림자 · 모션 값을 토큰 원본에서 바로 봅니다."
 					/>
 					<LinkCard
 						href="#/vanilla"
@@ -109,16 +115,6 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						title="Vanilla (HTML · CSS · JS)"
 						desc="React 없이 CSS · JS 두 파일과 클래스 이름으로 씁니다."
 					/>
-				</div>
-			</section>
-
-			<section className="doc_block">
-				<h2>자주 쓰는 컴포넌트</h2>
-				<div className="ov_grid">
-					{FEATURED.map((slug) => {
-						const page = pages.find((p) => p.slug === slug);
-						return page && <ComponentCard key={slug} page={page} />;
-					})}
 				</div>
 			</section>
 		</article>

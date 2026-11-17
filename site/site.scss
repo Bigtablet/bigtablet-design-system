@@ -1,13 +1,25 @@
 @use "src/styles/token" as token;
 
 // 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다.
-// 꼴은 Vercel Geist 문서를 따른다 - 가운데 틀 + 1px 세로선, 구역마다 가로선, 예제 상자 아래 "코드 보기" 줄.
+// 꼴은 로고 육면체에서 왔다 - 30° 등각 점 격자를 예제 무대 · 미리보기의 바닥으로 깔고, 나머지는 조용히 둔다.
 
 $frame: 1220px; // 틀 최대 폭
 $top_height: 64px; // 상단 바 높이 - 사이드바의 sticky 위치 · 높이가 이 값에 맞춰진다
 $nav_width: 248px;
 $line: token.$border_width_standard solid token.$color_border_default;
 $mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+// 로고 육면체의 30° 등각 점 격자. 가로 24px, 세로 24·sin60 ≈ 20.78px 간격의 점을 두 겹 엇갈려 찍는다
+@mixin iso_floor {
+  background-color: token.$color_bg_solid_dim;
+  background-image:
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px),
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px);
+  background-size: 24px 41.57px;
+  background-position:
+    0 0,
+    12px 20.78px;
+}
 
 // 문서 글은 어절 단위로만 줄을 바꾼다. DS 의 wrap_keep_all 은 overflow-wrap: anywhere 라 좁은 칸에서
 // 변수명 · 영단어를 글자 중간에서 자른다 - 여기서는 한 줄에 다 안 들어가는 낱말만 마지막 수단으로 끊는다.
@@ -51,11 +63,9 @@ code {
   max-width: $frame;
   min-height: 100vh;
   margin-inline: auto;
-  border-inline: $line;
 
   @include token.compact {
     grid-template-columns: minmax(0, 1fr);
-    border-inline: none;
   }
 }
 
@@ -65,7 +75,8 @@ code {
   top: 0;
   z-index: token.$z_content;
   display: grid;
-  grid-template-columns: $nav_width minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: token.$spacing_24;
   align-items: center;
   box-sizing: border-box;
   height: $top_height;
@@ -76,6 +87,10 @@ code {
   @include token.compact {
     grid-template-columns: minmax(0, 1fr) auto auto;
     gap: token.$spacing_8;
+
+    .site_top_nav {
+      display: none;
+    }
     padding-left: token.$spacing_16;
   }
 }
@@ -84,16 +99,34 @@ code {
   padding-left: token.$spacing_24;
   color: token.$color_text_heading;
   text-decoration: none;
-  @include token.body_medium_bold;
+  @include token.body_medium_medium;
   @include token.text_nowrap;
 
+  // 워드마크 | 디자인 시스템
   span {
-    color: token.$color_text_caption;
-    font-weight: 400;
+    padding-left: token.$spacing_12;
+    border-left: $line;
   }
 
   @include token.compact {
     padding-left: 0;
+  }
+}
+
+.site_top_nav {
+  display: flex;
+  gap: token.$spacing_24;
+
+  a {
+    color: token.$color_text_body;
+    text-decoration: none;
+    @include token.body_medium;
+    @include token.text_nowrap;
+
+    &:hover,
+    &[aria-current="page"] {
+      color: token.$color_text_heading;
+    }
   }
 }
 
@@ -217,7 +250,7 @@ code {
   gap: token.$spacing_8;
   width: 240px;
   height: 32px;
-  margin-left: token.$spacing_16;
+  justify-self: end;
   padding: 0 token.$spacing_6 0 token.$spacing_12;
   border: $line;
   border-radius: token.$radius_sm;
@@ -356,10 +389,10 @@ code {
   h1 {
     margin: 0;
     color: token.$color_text_heading;
-    font-size: 40px; // ponytail: Geist 페이지 제목 크기
-    font-weight: 600;
+    font-size: 40px; // ponytail: 디스플레이 크기 토큰이 없다
+    font-weight: 800;
     line-height: 48px;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
   }
 }
 
@@ -388,11 +421,16 @@ code {
   background: token.$color_bg_solid;
 }
 
+// 예제 무대 - 등각 격자 바닥 위에 컴포넌트를 올린다
 .doc_demo_stage {
+  @include iso_floor;
   display: flex;
+  align-items: center;
   justify-content: center;
+  min-height: 140px;
+  box-sizing: border-box;
   overflow-x: auto;
-  padding: token.$spacing_24;
+  padding: token.$spacing_32 token.$spacing_24;
 }
 
 .doc_demo_inline {
@@ -584,10 +622,10 @@ code {
 $preview_scale: 0.6;
 
 .ov_preview {
+  @include iso_floor;
   position: relative;
   height: 140px;
   overflow: hidden;
-  background: token.$color_bg_solid_dim;
   border-bottom: $line;
   pointer-events: none;
 }
@@ -679,32 +717,41 @@ $preview_scale: 0.6;
   right: token.$spacing_8;
 }
 
-// ── 첫 화면 ─────────────────────────────────────────────────────────────
+// ── 첫 화면: 부품 상자 ──────────────────────────────────────────────────
 
 .landing_hero {
-  padding-top: calc(2 * #{token.$spacing_48});
-  padding-bottom: token.$spacing_48;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: token.$spacing_48;
+  align-items: center;
+  padding: token.$spacing_48 token.$spacing_48 token.$spacing_40;
+  border-bottom: $line;
+
+  // 사이드바 옆 본문이 좁으면 상자를 아래로 - 두 칸이면 제목 칸이 낱말 하나보다 좁아진다
+  @media (max-width: 1099px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @include token.compact {
+    padding: token.$spacing_32 token.$spacing_16;
+  }
 
   h1 {
     margin: 0;
     color: token.$color_text_heading;
-    font-size: 56px; // ponytail: 첫 화면 제목 - 타이포 토큰에 디스플레이 크기가 없다
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-    @include text_wrap;
+    font-size: 52px; // ponytail: 디스플레이 크기 토큰이 없다
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
 
     @include token.compact {
-      font-size: 40px;
+      font-size: 36px;
     }
   }
-}
 
-.landing_eyebrow {
-  margin: 0 0 token.$spacing_12;
-  color: token.$color_text_caption;
-  font-family: $mono;
-  @include token.body_small;
+  .doc_lede {
+    margin-top: token.$spacing_20;
+  }
 }
 
 .landing_actions {
@@ -715,39 +762,99 @@ $preview_scale: 0.6;
 }
 
 .landing_install {
-  max-width: 480px;
-  margin-top: token.$spacing_24;
+  max-width: 420px;
+  margin-top: token.$spacing_20;
 }
 
-.landing_stats {
-  // 칸이 좁아지면 칸 수를 줄인다 - 값("React 19 · Vanilla")이 칸 안에서 쪼개지지 않게.
-  // 칸 사이 선은 1px 간격 사이로 비치는 바탕색으로 그린다 (몇 칸으로 접히든 맞는다)
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: token.$border_width_standard;
-  margin: token.$spacing_48 0 0;
-  overflow: hidden;
+// 상자: 격자 바닥 위에 마크 하나와 실제 부품 셋
+.landing_box {
+  @include iso_floor;
+  position: relative;
+  aspect-ratio: 1;
+  max-height: 460px;
+  max-width: 460px;
   border: $line;
-  border-radius: token.$radius_md;
-  background: token.$color_border_default;
+  border-radius: token.$radius_lg;
+  overflow: hidden;
 
-  div {
-    padding: token.$spacing_16 token.$spacing_20;
-    background: token.$color_bg_solid;
+  @include token.compact {
+    display: none;
+  }
+}
+
+.landing_mark {
+  position: absolute;
+  inset: 22% 26%;
+  width: 48%;
+  height: auto;
+  opacity: 0.9;
+}
+
+.landing_part {
+  position: absolute;
+  pointer-events: none;
+
+  &_1 {
+    top: 14%;
+    left: 8%;
   }
 
-  dt {
+  &_2 {
+    top: 46%;
+    right: 6%;
+  }
+
+  &_3 {
+    bottom: 12%;
+    left: 18%;
+  }
+}
+
+.landing_groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: token.$spacing_40 token.$spacing_32;
+}
+
+.landing_group {
+  h2 {
+    margin: 0 0 token.$spacing_12;
+    color: token.$color_text_heading;
+    @include token.body_large_bold;
+
+    span {
+      color: token.$color_text_caption;
+      font-weight: 400;
+    }
+  }
+
+  ul {
+    display: grid;
+    gap: token.$spacing_6;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: token.$spacing_8;
+  }
+
+  a {
+    color: token.$color_text_heading;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  span {
     color: token.$color_text_caption;
     @include token.body_small;
-  }
-
-  dd {
-    margin: token.$spacing_4 0 0;
-    color: token.$color_text_heading;
-    white-space: nowrap;
-    font-size: 20px;
-    font-weight: 600;
-    @include token.tabular_nums;
   }
 }
 
@@ -962,7 +1069,8 @@ td {
 
 // 검은 로고 - 다크 테마에서는 뒤집어 흰색으로
 @mixin dark_logo {
-  .site_brand img {
+  .site_brand img,
+  .landing_mark {
     filter: invert(1);
   }
 }

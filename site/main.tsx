@@ -5,7 +5,6 @@ import { createRoot } from "react-dom/client";
 import { ComponentCard, type DocPage, Page } from "./docs";
 import { FOUNDATIONS } from "./foundation";
 import { GUIDES, Landing } from "./guides";
-import { Lab } from "./lab";
 import { SiteSearch } from "./search";
 import "./site.scss";
 
@@ -74,23 +73,24 @@ function App() {
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 	}, [slug]);
-	// 독자 템플릿 시안 - 사이트 틀 없이 시안 자체의 화면으로
-	if (slug.startsWith("lab")) {
-		return (
-			<Lab
-				slug={slug.startsWith("lab/") ? slug : "lab/a/home"}
-				pages={PAGES}
-				themeControl={<ThemeMenu theme={theme} onChange={setTheme} />}
-			/>
-		);
-	}
 	return (
 		<div className="site">
 			<header className="site_top">
 				<a className="site_brand" href="#/">
-					<img src="/images/logo/bigtablet.png" alt="Bigtablet" width={66} height={21} />
-					<span>Design System</span>
+					<img src="/images/logo/bigtablet.png" alt="Bigtablet" width={84} height={27} />
+					<span>디자인 시스템</span>
 				</a>
+				<nav className="site_top_nav" aria-label="주 메뉴">
+					<a href="#/components" aria-current={slug === "components" || page ? "page" : undefined}>
+						컴포넌트
+					</a>
+					<a href="#/tokens/colors" aria-current={slug.startsWith("tokens/") ? "page" : undefined}>
+						토큰
+					</a>
+					<a href="#/install" aria-current={slug === "install" ? "page" : undefined}>
+						설치
+					</a>
+				</nav>
 				<SiteSearch pages={PAGES} />
 				<div className="site_top_actions">
 					<ThemeMenu theme={theme} onChange={setTheme} />

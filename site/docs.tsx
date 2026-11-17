@@ -41,19 +41,19 @@ const sources = import.meta.glob<string>("./examples/**/*.tsx", {
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
 export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
-/** 코드 이름은 구분 기호(. _ - / | , = 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
+/** 코드 이름은 구분 기호(. _ - / | , = 여는 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
 export function Code({ children, className }: { children: string; className?: string }) {
-	// 따옴표 안("year-month")은 값 하나라 끊지 않는다 - 따옴표 밖에서만 구분 기호 뒤에 <wbr>
+	// 따옴표 안("year-month") · Sass 보간(#{$x})은 값 하나라 끊지 않는다 - 따옴표 밖에서만 구분 기호 뒤에 <wbr>
 	const parts = children
-		.split(/("[^"]*")/)
-		.flatMap((chunk) => (chunk.startsWith('"') ? [chunk] : chunk.split(/(?<=[._\-/|,(<={])/)))
+		.split(/("[^"]*"|#\{[^}]*\}\)?)/)
+		.flatMap((chunk) => (/^("|#\{)/.test(chunk) ? [chunk] : chunk.split(/(?<=[._\-/|,(<=])/)))
 		.filter(Boolean);
 	return (
 		<code className={className}>
 			{parts.map((part, i) => (
 				<Fragment key={i}>
 					{i > 0 && <wbr />}
-					{part.startsWith('"') ? <span className="code_nobreak">{part}</span> : part}
+					{/^("|#\{)/.test(part) ? <span className="code_nobreak">{part}</span> : part}
 				</Fragment>
 			))}
 		</code>
