@@ -1,8 +1,9 @@
-import { EmptyState, SegmentedControl, TextField } from "@bigtablet/design-system";
-import { Search } from "lucide-react";
+import { IconButton, Menu } from "@bigtablet/design-system";
+import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { type DocPage, exampleOf, Md, Page } from "./docs";
+import { SiteSearch } from "./search";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
@@ -76,17 +77,10 @@ function App() {
 				<a className="site_brand" href="#/">
 					Bigtablet <span>Design System</span>
 				</a>
-				<SegmentedControl<Theme>
-					size="sm"
-					aria-label="테마"
-					value={theme}
-					onValueChange={setTheme}
-					items={[
-						{ value: "light", label: "라이트" },
-						{ value: "dark", label: "다크" },
-						{ value: "system", label: "시스템" },
-					]}
-				/>
+				<div className="site_top_actions">
+					<SiteSearch pages={PAGES} />
+					<ThemeMenu theme={theme} onChange={setTheme} />
+				</div>
 			</header>
 			<nav className="site_nav" aria-label="컴포넌트">
 				<a href="#/" className="site_nav_home" aria-current={page ? undefined : "page"}>
@@ -118,36 +112,44 @@ function App() {
 	);
 }
 
-/** 컴포넌트 홈 - 검색 + 그룹별 카드(첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명) */
-function Overview() {
-	const [query, setQuery] = useState("");
-	const q = query.trim().toLowerCase();
-	const match = (p: DocPage) =>
-		!q || [p.title, p.name, p.category, p.summary].some((t) => t.toLowerCase().includes(q));
-	const groups = GROUPS.map((g) => ({ ...g, pages: g.pages.filter(match) })).filter(
-		(g) => g.pages.length,
+const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+
+const THEMES = [
+	{ value: "light", label: "라이트", icon: Sun },
+	{ value: "dark", label: "다크", icon: Moon },
+	{ value: "system", label: "시스템 설정", icon: Monitor },
+] as const;
+
+/** 테마 - 지금 테마 아이콘 버튼을 누르면 셋 중 하나를 고르는 메뉴 */
+function ThemeMenu({ theme, onChange }: { theme: Theme; onChange: (t: Theme) => void }) {
+	const current = THEMES.find((t) => t.value === theme) ?? THEMES[2];
+	const CurrentIcon = current.icon;
+	return (
+		<Menu
+			align="end"
+			trigger={<IconButton icon={<CurrentIcon />} aria-label={`테마: ${current.label}`} />}
+			items={THEMES.map((t) => ({
+				key: t.value,
+				label: t.label,
+				icon: t.value === theme ? <Check size={16} /> : <t.icon size={16} />,
+				onSelect: () => onChange(t.value),
+			}))}
+		/>
 	);
+}
+
+/** 컴포넌트 홈 - 그룹별 카드(첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명). 검색은 헤더 */
+function Overview() {
 	return (
 		<article className="doc_overview">
 			<header className="ov_head">
 				<h1>컴포넌트</h1>
-				<p className="doc_summary">{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다.</p>
-				<div className="ov_search">
-					<TextField
-						aria-label="컴포넌트 검색"
-						placeholder="이름 · 한국어 · 설명으로 찾기 (예: 날짜, Modal, 복사)"
-						leadingIcon={<Search size={16} />}
-						clearable
-						value={query}
-						onValueChange={setQuery}
-						fullWidth
-					/>
-				</div>
+				<p className="doc_summary">
+					{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다. 이름으로 찾으려면{" "}
+					{isMac ? "⌘K" : "Ctrl K"} 를 누릅니다.
+				</p>
 			</header>
-			{groups.length === 0 && (
-				<EmptyState title="찾는 컴포넌트가 없습니다" description="다른 이름으로 찾아 보세요" />
-			)}
-			{groups.map(({ c, pages }) => (
+			{GROUPS.map(({ c, pages }) => (
 				<section key={c} className="ov_group">
 					<h2>
 						{c} <span>{pages.length}</span>
