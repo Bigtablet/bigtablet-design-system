@@ -1,5 +1,5 @@
-import { Button, CopyButton, Menu, SegmentedControl, useClipboard } from "@bigtablet/design-system";
-import { Bot, ChevronDown, ChevronRight, Copy } from "lucide-react";
+import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
+import { ChevronRight } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { splitSentences } from "src/utils/sentences";
 import { AGENT_RULES, componentDoc } from "./llms";
@@ -259,46 +259,20 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 }
 
 /**
- * 컴포넌트 페이지의 AI 메뉴. 이 페이지를 AI 에 넘기는 일 하나만 맡는다:
- * 채팅(Claude · ChatGPT)에 붙여 넣을 문서 복사, 또는 에이전트(Claude Code · Codex)를 패키지 문서에 잇는 설정.
- * 복사 결과는 트리거 문구로 알린다 - 메뉴가 닫힌 뒤라 다른 자리가 없다
+ * 이 페이지를 Claude · ChatGPT 채팅에 붙여 넣을 문서로 복사한다. 패키지 규칙을 끝에 붙여 이 한 장만으로도 쓰게 한다.
+ * 에이전트(Claude Code · Codex) 연결은 저장소마다 한 번 하는 설정이라 페이지마다 두지 않는다 - 헤더의 AI 페이지가 맡는다
  */
-function AiMenu({ page }: { page: DocPage }) {
-	const { copy, status } = useClipboard();
-	const label =
-		status === "copied"
-			? "복사했습니다"
-			: status === "error"
-				? "복사하지 못했습니다"
-				: "AI 에게 넘기기";
+function AiCopy({ page }: { page: DocPage }) {
 	return (
-		<Menu
-			trigger={
-				<Button size="sm" variant="outline" trailingIcon={<ChevronDown size={14} />}>
-					<span aria-live="polite">{label}</span>
-				</Button>
+		<CopyButton
+			size="sm"
+			variant="outline"
+			label="AI 용 문서 복사"
+			copiedLabel="복사했습니다"
+			aria-label={`${page.title} 문서를 AI 에 붙여 넣을 마크다운으로 복사`}
+			text={() =>
+				`${componentDoc(page, sourceOf)}\n## @bigtablet/design-system 규칙\n\n${AGENT_RULES.join("\n")}\n`
 			}
-			items={[
-				{
-					key: "copy",
-					label: "채팅에 붙여 넣을 문서 복사",
-					icon: <Copy size={16} />,
-					// 패키지 규칙을 끝에 붙여 이 문서 한 장만으로도 쓰게 한다
-					onSelect: () =>
-						void copy(
-							() =>
-								`${componentDoc(page, sourceOf)}\n## @bigtablet/design-system 규칙\n\n${AGENT_RULES.join("\n")}\n`,
-						),
-				},
-				{
-					key: "agent",
-					label: "Claude Code · Codex 에 연결하기",
-					icon: <Bot size={16} />,
-					onSelect: () => {
-						location.hash = "#/ai";
-					},
-				},
-			]}
 		/>
 	);
 }
@@ -314,7 +288,7 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 					<Md>{page.summary}</Md>
 				</p>
 				<div className="doc_head_actions">
-					<AiMenu page={page} />
+					<AiCopy page={page} />
 				</div>
 			</header>
 

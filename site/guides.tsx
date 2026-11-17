@@ -476,8 +476,8 @@ function Ai() {
 			<Block id="copy" title="3. 한 컴포넌트만 붙여 넣기">
 				<p>
 					설정 없이 Claude · ChatGPT 채팅에서 바로 물을 때는 컴포넌트 페이지 맨 위의{" "}
-					<strong>AI 에게 넘기기</strong> 에서 <strong>채팅에 붙여 넣을 문서 복사</strong> 를
-					고릅니다. 그 컴포넌트 문서에 패키지 규칙까지 붙어 복사됩니다.
+					<strong>AI 용 문서 복사</strong> 를 누릅니다. 그 컴포넌트 문서에 패키지 규칙까지 붙어
+					복사됩니다.
 				</p>
 			</Block>
 
