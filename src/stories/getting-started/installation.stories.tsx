@@ -35,14 +35,20 @@ export const React: Story = {
 						number={1}
 						title="패키지 설치"
 						lang="bash"
-						code="pnpm add @bigtablet/design-system"
+						code="pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react"
 					/>
 					<Step
 						number={2}
-						title="스타일 import"
-						description="앱 최상위(예: app/layout.tsx)에서 한 번만 import."
+						title="Provider 로 감싸기"
+						description="앱 최상위(예: app/layout.tsx)에서 한 번. CSS 는 따로 import 하지 않는다 - 컴포넌트가 자기 CSS 를 함께 가져온다. Next.js 를 webpack 으로 빌드하면 next.config 의 experimental.optimizePackageImports 에 이 패키지를 넣어야 안 쓰는 컴포넌트 CSS 가 빠진다."
 						lang="tsx"
-						code={`import "@bigtablet/design-system/style.css";`}
+						code={`import { ThemeProvider, AlertProvider, ToastProvider } from "@bigtablet/design-system";
+
+<ThemeProvider>
+  <AlertProvider>
+    <ToastProvider>{children}</ToastProvider>
+  </AlertProvider>
+</ThemeProvider>`}
 					/>
 					<Step
 						number={3}
