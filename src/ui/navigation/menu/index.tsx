@@ -99,14 +99,17 @@ export const Menu = ({ items, trigger, align = "start" }: MenuProps) => {
 	// 열릴 때 첫 활성 아이템에 포커스 (WAI-ARIA menu button 패턴). 이미 메뉴 "아이템"에 포커스가
 	// 있으면(사용자 네비 중·items 재생성 re-run) 가로채지 않음 — trigger 포커스는 내부로 치지 않아
 	// 트리거 클릭으로 열 때 첫 항목 포커스를 보장한다.
+	// 위치를 잰 뒤(`ready`)에 옮긴다 - 첫 측정 전에는 메뉴가 `visibility: hidden` 이라 실제 브라우저가
+	// focus() 를 무시해 포커스가 트리거에 남았다 (#1033). Popover 의 focus trap 과 같은 이유.
 	React.useEffect(() => {
 		const active = document.activeElement;
 		// active 가 실제 메뉴 아이템일 때만 가로채지 않음. null/trigger 는 첫 항목 포커스를 진행
 		// (itemRefs 에 null 이 섞여 있어도 includes(null) 오탐이 나지 않도록 active truthy 체크).
-		if (!open || (active && itemRefs.current.includes(active as HTMLButtonElement))) return;
+		if (!open || !pos.ready) return;
+		if (active && itemRefs.current.includes(active as HTMLButtonElement)) return;
 		const first = items.findIndex((it) => !it.disabled);
 		if (first >= 0) itemRefs.current[first]?.focus();
-	}, [open, items]);
+	}, [open, pos.ready, items]);
 
 	// 화살표/Home/End 로 메뉴 아이템 간 roving 포커스
 	const moveFocus = (dir: 1 | -1 | "first" | "last") => {
