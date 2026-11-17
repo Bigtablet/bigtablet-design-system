@@ -55,6 +55,10 @@ function App() {
 	}, [theme]);
 
 	const page = PAGES.find((p) => p.slug === slug) ?? FIRST;
+	// 다른 페이지로 가면 사이드바에서 현재 항목이 보이게 - 사이드바 안에서만 움직인다
+	useEffect(() => {
+		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
+	}, [page.slug]);
 	return (
 		<div className="site">
 			<header className="site_top">

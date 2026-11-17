@@ -2,6 +2,9 @@
 
 // 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다
 
+// 상단 바 높이 - 사이드바의 sticky 위치 · 높이가 이 값에 맞춰진다
+$top_height: 60px;
+
 body {
   margin: 0;
   background: token.$color_bg_solid;
@@ -45,7 +48,9 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: token.$spacing_16;
-  padding: token.$spacing_12 token.$spacing_24;
+  box-sizing: border-box;
+  height: $top_height;
+  padding: 0 token.$spacing_24;
   background: token.$color_bg_solid;
   border-bottom: token.$border_width_standard solid token.$color_border_default;
 }
@@ -63,14 +68,22 @@ code {
 
 .site_nav {
   position: sticky;
-  top: 57px;
+  top: $top_height;
   align-self: start;
+  // 메뉴가 화면보다 길면 사이드바 안에서만 스크롤한다 - 끝에 닿아도 본문으로 스크롤이 넘어가지 않게
+  box-sizing: border-box;
+  max-height: calc(100dvh - #{$top_height});
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
   padding: token.$spacing_24 token.$spacing_16;
   display: grid;
   gap: token.$spacing_20;
 
   @include token.compact {
     position: static;
+    max-height: none;
+    overflow-y: visible;
     display: flex;
     gap: token.$spacing_8;
     overflow-x: auto;
