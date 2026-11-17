@@ -467,6 +467,7 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
             word = line.lstrip("# ").split(" ")[0]
             section = target = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
             in_props_table = False
+            last_title = ""
             continue
         # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`). 그 표의 이름이
         # 본 컴포넌트에 섞이면 본 컴포넌트의 누락이 가려진다 - 제목으로 대상을 바꾸고, 자기 폴더가 없는
@@ -496,6 +497,7 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
                 # (Toast) 표만 컴포넌트 것으로 본다.
                 pascal = "".join(part.capitalize() for part in section.parent.name.split("-")) if section else ""
                 owner = section if section and last_title == f"{pascal}Options" else None
+                last_title = ""  # 제목은 바로 아래 표 하나에만 걸린다
             in_props_table = owner is not None
             if owner is not None:
                 documented.setdefault(owner, set())
