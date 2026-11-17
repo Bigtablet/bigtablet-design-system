@@ -64,10 +64,10 @@ export const baseColors = {
 	statusWarningGraphic: "#D97706",
 	/** blue-400, on neutral_950 ~9.4:1 */
 	statusInfoDarkText: "#60A5FA",
-	/** Skeleton - light mode (off-white grays, not in neutral scale) */
-	skeletonBase: "#F3F3F3",
-	skeletonWave: "#F0F0F0",
-	skeletonHighlight: "#FAFAFA",
+	/** Skeleton - light mode. 회색 페이지 바탕(bg_solid_dim #F4F4F4)과 흰 표면 양쪽에서 자리가 보이는 값 - 예전 #F3F3F3 은 회색 바탕과 같아 사라졌다 (#1045) */
+	skeletonBase: "#E5E5E5",
+	skeletonWave: "#E2E2E2",
+	skeletonHighlight: "#F0F0F0",
 	/** Alpha */
 	alphaBlack5: "rgba(0, 0, 0, 0.05)",
 	alphaBlack8: "rgba(0, 0, 0, 0.08)",
@@ -163,8 +163,8 @@ export const colors = {
 	},
 	skeleton: {
 		/** CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환. fallback 값은 standalone import (colors 미포함) 시 light 동작 보장. */
-		base: "#F3F3F3",
-		wave: "#F0F0F0",
-		highlight: "#FAFAFA",
+		base: "#E5E5E5",
+		wave: "#E2E2E2",
+		highlight: "#F0F0F0",
 	},
 } as const;
