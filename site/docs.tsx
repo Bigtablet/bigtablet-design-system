@@ -73,18 +73,34 @@ function DefaultValue({ value }: { value: string }) {
  * 어절 단위(keep-all)만으로는 "…기본으로 들어 / 있고" 처럼 한 표현 중간에서 접힌다 - DS Toast 와 같은 방법 (#1005).
  */
 export function Md({ children }: { children: string }) {
-	// 닫는 괄호 · 코드 바로 뒤에 붙은 조사("PHP)에서도", "`static`에서만")는 브라우저가 그 사이를 줄바꿈 자리로 본다 -
-	// 단어 결합 문자(U+2060)를 끼워 한 어절로 둔다
+	// 닫는 괄호 · 코드 바로 뒤에 붙은 조사("PHP)에서도", "`static`에서만")는 브라우저가 그 사이를 줄바꿈 자리로 본다.
+	// 그 조각만 nowrap span 으로 묶는다 - 보이지 않는 문자를 넣으면 복사한 글에 섞여 들어가 원문과 달라진다
 	const inline = (text: string) =>
-		text
-			// 짧은 괄호 묶음("(Thymeleaf · JSP · PHP)")은 안에서 갈리지 않게 줄바꿈 없는 공백으로
-			.replace(/\([^()`]{1,32}\)/g, (group) => group.replace(/ /g, "\u00a0"))
-			.replace(/\)(?=[가-힣])/g, ")\u2060")
-			.split(/(`[^`]+`)/)
-			.map((part, i, all) => {
-				if (part.startsWith("`")) return <Code key={i}>{part.slice(1, -1)}</Code>;
-				return all[i - 1]?.startsWith("`") && /^[가-힣]/.test(part) ? `\u2060${part}` : part;
-			});
+		text.split(/(`[^`]+`[가-힣]*|[^\s()`]+\)[가-힣]+)/).map((part, i) => {
+			const code = part.match(/^`([^`]+)`([가-힣]*)$/);
+			if (code) {
+				const [, name = "", josa = ""] = code;
+				// 긴 코드 이름은 구분 기호에서 끊길 수 있어야 하니 짧을 때만 조사와 묶는다
+				return josa && name.length <= 24 ? (
+					<span key={i} className="nowrap">
+						<Code>{name}</Code>
+						{josa}
+					</span>
+				) : (
+					<Fragment key={i}>
+						<Code>{name}</Code>
+						{josa}
+					</Fragment>
+				);
+			}
+			return /\)[가-힣]+$/.test(part) && !/\s/.test(part) ? (
+				<span key={i} className="nowrap">
+					{part}
+				</span>
+			) : (
+				part
+			);
+		});
 	const sentences = splitSentences(children);
 	if (sentences.length < 2) return <>{inline(children)}</>;
 	return (

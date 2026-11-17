@@ -372,7 +372,6 @@ code {
 }
 
 .doc_lede {
-  max-width: 720px;
   margin: token.$spacing_12 0 0;
   color: token.$color_text_caption;
   font-size: 18px;
@@ -984,4 +983,9 @@ td {
 h1,
 h2 {
   text-wrap: balance;
+}
+
+// 떨어지면 안 되는 짧은 조각("PHP)에서도") - Md 가 묶는다
+.nowrap {
+  white-space: nowrap;
 }
