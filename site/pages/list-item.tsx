@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const listItem: DocPage = {
 	slug: "list-item",
-	category: "Display",
+	category: "데이터",
+	order: 3,
 	title: "ListItem",
 	summary: "한 줄짜리 항목입니다. 앞 · 뒤 칸에 아이콘 · 컨트롤을 넣습니다.",
 	when: [

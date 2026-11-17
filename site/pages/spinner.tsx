@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const spinner: DocPage = {
 	slug: "spinner",
-	category: "Feedback",
+	category: "로딩",
+	order: 0,
 	title: "Spinner",
 	summary: "돌아가는 로딩 표시입니다.",
 	when: [

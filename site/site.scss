@@ -78,7 +78,7 @@ code {
   scrollbar-width: thin;
   padding: token.$spacing_24 token.$spacing_16;
   display: grid;
-  gap: token.$spacing_20;
+  gap: token.$spacing_16;
 
   @include token.compact {
     position: static;
@@ -97,38 +97,68 @@ code {
 
   a {
     display: block;
-    padding: token.$spacing_6 token.$spacing_12;
-    border-radius: token.$radius_sm;
-    color: token.$color_text_body;
+    // 항목은 그룹 안쪽 세로 선에 붙여 들여 쓴다 - 그룹 제목과 한눈에 갈린다
+    margin-left: token.$spacing_12;
+    padding: token.$spacing_4 token.$spacing_12;
+    border-left: token.$border_width_standard solid token.$color_border_default;
+    color: token.$color_text_caption;
     text-decoration: none;
-    transition: background-color token.$transition_fast;
+    @include token.body_small;
+    transition:
+      color token.$transition_fast,
+      border-color token.$transition_fast;
 
     &:hover {
-      background: token.$color_bg_solid_dim;
+      color: token.$color_text_heading;
+      border-left-color: token.$color_text_caption;
     }
 
     &[aria-current="page"] {
-      background: token.$color_bg_solid_dim;
       color: token.$color_text_heading;
+      border-left: token.$border_width_thick solid token.$color_text_heading;
       font-weight: 600;
+    }
+
+    @include token.compact {
+      margin-left: 0;
+      border-left: none;
+      white-space: nowrap;
     }
   }
 }
 
 .site_nav_group {
   display: grid;
-  gap: token.$spacing_2;
+
+  // 그룹 사이는 선으로 끊는다
+  & + & {
+    padding-top: token.$spacing_16;
+    border-top: token.$border_width_standard solid token.$color_border_default;
+  }
 
   @include token.compact {
     display: flex;
+
+    & + & {
+      padding-top: 0;
+      border-top: none;
+    }
   }
 }
 
 .site_nav_title {
-  margin: 0 0 token.$spacing_4;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 token.$spacing_8;
   padding: 0 token.$spacing_12;
-  color: token.$color_text_caption;
-  @include token.body_small_medium;
+  color: token.$color_text_heading;
+  @include token.body_small_bold;
+
+  span {
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.tabular_nums;
+  }
 }
 
 .site_main {

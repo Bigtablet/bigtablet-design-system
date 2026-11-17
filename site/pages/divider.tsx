@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const divider: DocPage = {
 	slug: "divider",
-	category: "Display",
+	category: "콘텐츠",
+	order: 5,
 	title: "Divider",
 	summary: "구역을 나누는 선입니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const breadcrumb: DocPage = {
 	slug: "breadcrumb",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 4,
 	title: "Breadcrumb",
 	summary: "지금 화면이 어디에 있는지 상위 경로를 보여 줍니다. 마지막 항목이 현재 화면입니다.",
 	when: [

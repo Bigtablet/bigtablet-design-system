@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const textField: DocPage = {
 	slug: "text-field",
-	category: "Forms",
+	category: "텍스트 입력",
+	order: 0,
 	title: "TextField",
 	summary: "한 줄 텍스트 입력입니다. 아이콘 · 지우기 · 비밀번호 보기 버튼을 칸 안에 넣습니다.",
 	when: [

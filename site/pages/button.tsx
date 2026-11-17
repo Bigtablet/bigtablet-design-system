@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const button: DocPage = {
 	slug: "button",
-	category: "General",
+	category: "버튼",
+	order: 0,
 	title: "Button",
 	summary: "글자가 있는 버튼입니다. `href` 를 주거나 `as={Link}` 로 링크로도 렌더합니다.",
 	when: [

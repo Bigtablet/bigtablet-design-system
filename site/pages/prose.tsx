@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const prose: DocPage = {
 	slug: "prose",
-	category: "Display",
+	category: "콘텐츠",
+	order: 3,
 	title: "Prose",
 	summary: "클래스가 없는 글 마크업(h · p · ul · a …)에 타이포 규칙을 입힙니다.",
 	when: [

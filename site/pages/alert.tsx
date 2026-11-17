@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const alert: DocPage = {
 	slug: "alert",
-	category: "Feedback",
+	category: "알림 · 상태",
+	order: 1,
 	title: "Alert",
 	summary: "확인 · 안내 대화 상자입니다. 마크업 없이 `useConfirm` · `useAlert` 훅으로 띄웁니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const card: DocPage = {
 	slug: "card",
-	category: "Display",
+	category: "콘텐츠",
+	order: 0,
 	title: "Card",
 	summary: "내용을 한 덩어리로 묶는 표면입니다. 제목 · 하단 버튼 칸을 가집니다.",
 	when: [

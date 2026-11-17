@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const chip: DocPage = {
 	slug: "chip",
-	category: "Display",
+	category: "라벨 · 아이콘",
+	order: 1,
 	title: "Chip",
 	summary: "누르거나 지울 수 있는 작은 라벨입니다. `type` 으로 필터 · 입력 · 고정을 고릅니다.",
 	when: [

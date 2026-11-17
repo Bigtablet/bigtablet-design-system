@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const accordion: DocPage = {
 	slug: "accordion",
-	category: "Display",
+	category: "콘텐츠",
+	order: 4,
 	title: "Accordion",
 	summary:
 		"제목을 눌러 내용을 펼치고 접습니다. 기본은 하나만 열리고 `multiple` 이면 여럿이 열립니다.",

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const drawer: DocPage = {
 	slug: "drawer",
-	category: "Overlay",
+	category: "오버레이",
+	order: 1,
 	title: "Drawer",
 	summary: "옆이나 아래에서 나오는 패널입니다. 뒤 화면을 일부 보여 줍니다.",
 	when: [

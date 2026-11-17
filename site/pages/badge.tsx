@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const badge: DocPage = {
 	slug: "badge",
-	category: "Display",
+	category: "라벨 · 아이콘",
+	order: 0,
 	title: "Badge",
 	summary: "상태 · 개수를 짧게 붙이는 라벨입니다. 의미 색은 `tone`, 모양은 `shape` 로 정합니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const inlineAlert: DocPage = {
 	slug: "inline-alert",
-	category: "Feedback",
+	category: "알림 · 상태",
+	order: 2,
 	title: "InlineAlert",
 	summary: "화면 안에 고정해 두는 알림 띠입니다. 닫기 버튼을 둘 수 있습니다.",
 	when: [

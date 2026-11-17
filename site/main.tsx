@@ -6,14 +6,21 @@ import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
 const CATEGORIES = [
-	"System",
-	"General",
-	"Forms",
-	"Display",
-	"Feedback",
-	"Navigation",
-	"Overlay",
-	"Layout",
+	"시작하기",
+	"레이아웃",
+	"버튼",
+	"폼",
+	"텍스트 입력",
+	"선택",
+	"날짜 · 시간",
+	"파일",
+	"데이터",
+	"콘텐츠",
+	"라벨 · 아이콘",
+	"알림 · 상태",
+	"로딩",
+	"내비게이션",
+	"오버레이",
 ];
 const PAGES = Object.values(
 	import.meta.glob<Record<string, DocPage>>("./pages/*.tsx", { eager: true }),
@@ -22,7 +29,7 @@ const PAGES = Object.values(
 	.sort(
 		(a, b) =>
 			CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category) ||
-			a.title.localeCompare(b.title),
+			(a.order ?? 99) - (b.order ?? 99),
 	);
 const FIRST = PAGES[0] as DocPage;
 
@@ -80,7 +87,10 @@ function App() {
 			<nav className="site_nav" aria-label="컴포넌트">
 				{CATEGORIES.filter((c) => PAGES.some((p) => p.category === c)).map((c) => (
 					<div key={c} className="site_nav_group">
-						<p className="site_nav_title">{c}</p>
+						<p className="site_nav_title">
+							{c}
+							<span>{PAGES.filter((p) => p.category === c).length}</span>
+						</p>
 						{PAGES.filter((p) => p.category === c).map((p) => (
 							<a
 								key={p.slug}

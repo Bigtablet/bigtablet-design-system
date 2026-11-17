@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const navBar: DocPage = {
 	slug: "nav-bar",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 0,
 	title: "NavBar",
 	summary: "서비스 맨 위 가로 메뉴입니다. 로고 · 링크 · 언어 전환 · 동작 버튼을 둡니다.",
 	when: [

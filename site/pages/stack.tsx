@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const stack: DocPage = {
 	slug: "stack",
-	category: "Layout",
+	category: "레이아웃",
+	order: 4,
 	title: "Stack",
 	summary: "한 줄 또는 한 열로 흐르는 배치입니다. 간격은 spacing 토큰 값만 받습니다.",
 	when: [

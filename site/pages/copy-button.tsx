@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const copyButton: DocPage = {
 	slug: "copy-button",
-	category: "General",
+	category: "버튼",
+	order: 2,
 	title: "CopyButton",
 	summary:
 		'텍스트를 클립보드에 복사합니다. 복사되면 2초간 "복사됨" 으로 바뀌고 스크린리더에도 알립니다.',

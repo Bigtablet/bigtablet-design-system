@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const dropdown: DocPage = {
 	slug: "dropdown",
-	category: "Forms",
+	category: "선택",
+	order: 0,
 	title: "Dropdown",
 	summary:
 		"정해진 목록에서 하나(또는 `multiple` 로 여럿)를 고릅니다. `searchable` 로 목록 안을 검색합니다.",

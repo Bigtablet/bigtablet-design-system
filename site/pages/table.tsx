@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const table: DocPage = {
 	slug: "table",
-	category: "Display",
+	category: "데이터",
+	order: 0,
 	title: "Table",
 	summary: "열 정의 기반 표입니다. 정렬 · 선택 · 로딩 · 빈 상태를 가집니다.",
 	when: [

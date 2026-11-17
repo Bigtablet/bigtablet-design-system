@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const modal: DocPage = {
 	slug: "modal",
-	category: "Overlay",
+	category: "오버레이",
+	order: 0,
 	title: "Modal",
 	summary:
 		"화면 가운데에 뜨는 대화 상자입니다. 포커스 트랩 · Esc 닫기 · 배경 스크롤 잠금을 자동으로 처리합니다.",

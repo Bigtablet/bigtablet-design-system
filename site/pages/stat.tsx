@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const stat: DocPage = {
 	slug: "stat",
-	category: "Display",
+	category: "데이터",
+	order: 4,
 	title: "Stat",
 	summary: "숫자 하나와 변화량을 보여 줍니다.",
 	when: [

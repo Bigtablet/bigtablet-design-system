@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const section: DocPage = {
 	slug: "section",
-	category: "Layout",
+	category: "레이아웃",
+	order: 3,
 	title: "Section",
 	summary: "마케팅 페이지의 구역입니다. 세로 여백과 배경색을 정하고 `<section>` 으로 렌더합니다.",
 	when: [

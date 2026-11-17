@@ -7,6 +7,8 @@ export type PropsName = keyof typeof props;
 export interface DocPage {
 	slug: string;
 	category: string;
+	/** 그룹 안 순서 - 자주 쓰는 것부터 */
+	order?: number;
 	title: string;
 	summary: string;
 	/** [상황, 고를 것, 이 컴포넌트인가] */

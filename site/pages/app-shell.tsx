@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const appShell: DocPage = {
 	slug: "app-shell",
-	category: "Layout",
+	category: "레이아웃",
+	order: 0,
 	title: "AppShell",
 	summary:
 		"관리자 · 대시보드 화면의 껍데기입니다. 사이드바 열 + 고정 헤더 + 본문을 한 곳에서 잡습니다.",

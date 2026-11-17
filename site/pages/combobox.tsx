@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const combobox: DocPage = {
 	slug: "combobox",
-	category: "Forms",
+	category: "선택",
+	order: 1,
 	title: "Combobox",
 	summary: "후보를 서버에서 가져오는 선택 입력입니다. 입력이 멈추면 `onSearch` 를 한 번 부릅니다.",
 	when: [

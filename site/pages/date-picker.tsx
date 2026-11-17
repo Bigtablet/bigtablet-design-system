@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const datePicker: DocPage = {
 	slug: "date-picker",
-	category: "Forms",
+	category: "날짜 · 시간",
+	order: 0,
 	title: "DatePicker",
 	summary: '연 · 월 · 일 드롭다운으로 날짜를 고릅니다. `mode="year-month"` 면 월까지만 고릅니다.',
 	when: [

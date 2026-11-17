@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const segmentedControl: DocPage = {
 	slug: "segmented-control",
-	category: "Forms",
+	category: "선택",
+	order: 5,
 	title: "SegmentedControl",
 	summary: "짧은 옵션 2~5개 중 하나를 고릅니다. 고른 칸만 떠오른 표면으로 채웁니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const skeleton: DocPage = {
 	slug: "skeleton",
-	category: "Feedback",
+	category: "로딩",
+	order: 1,
 	title: "Skeleton",
 	summary: "불러오는 동안 내용 자리를 회색 모양으로 잡아 둡니다.",
 	when: [

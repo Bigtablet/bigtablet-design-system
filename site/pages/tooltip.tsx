@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const tooltip: DocPage = {
 	slug: "tooltip",
-	category: "Overlay",
+	category: "오버레이",
+	order: 3,
 	title: "Tooltip",
 	summary: "마우스를 올리거나 포커스하면 뜨는 짧은 설명입니다.",
 	when: [

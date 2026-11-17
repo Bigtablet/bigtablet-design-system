@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const descriptionList: DocPage = {
 	slug: "description-list",
-	category: "Display",
+	category: "데이터",
+	order: 2,
 	title: "DescriptionList",
 	summary: '한 항목의 속성을 "이름: 값" 으로 나열합니다. `<dl>` 로 렌더합니다.',
 	when: [

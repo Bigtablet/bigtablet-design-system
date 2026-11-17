@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const tabs: DocPage = {
 	slug: "tabs",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 3,
 	title: "Tabs",
 	summary: "같은 화면 안에서 내용 패널을 바꿉니다. 방향키로 탭을 옮깁니다.",
 	when: [

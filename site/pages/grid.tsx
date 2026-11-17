@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const grid: DocPage = {
 	slug: "grid",
-	category: "Layout",
+	category: "레이아웃",
+	order: 5,
 	title: "Grid",
 	summary: "같은 너비의 칸을 격자로 놓습니다. 열 수를 고정하거나 폭에 따라 자동으로 바꿉니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const toggle: DocPage = {
 	slug: "toggle",
-	category: "Forms",
+	category: "선택",
+	order: 4,
 	title: "Toggle",
 	summary:
 		"바로 적용되는 켜기 / 끄기 스위치입니다. 보이는 라벨이 없으므로 `ariaLabel` 이 필수입니다.",

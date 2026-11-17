@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const filterBar: DocPage = {
 	slug: "filter-bar",
-	category: "Forms",
+	category: "폼",
+	order: 1,
 	title: "FilterBar",
 	summary:
 		"목록 화면 위의 필터 묶음입니다. 필터 상태는 갖지 않고 배치 · 초기화 · 적용 버튼만 맡습니다.",

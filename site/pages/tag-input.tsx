@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const tagInput: DocPage = {
 	slug: "tag-input",
-	category: "Forms",
+	category: "텍스트 입력",
+	order: 3,
 	title: "TagInput",
 	summary: "목록에 없는 값을 사용자가 직접 만들어 넣는 다중 입력입니다.",
 	when: [

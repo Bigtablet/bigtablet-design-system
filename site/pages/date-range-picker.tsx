@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const dateRangePicker: DocPage = {
 	slug: "date-range-picker",
-	category: "Forms",
+	category: "날짜 · 시간",
+	order: 1,
 	title: "DateRangePicker",
 	summary: "시작일과 종료일을 고릅니다. 종료일은 시작일보다 앞설 수 없습니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const menu: DocPage = {
 	slug: "menu",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 7,
 	title: "Menu",
 	summary: "버튼을 누르면 뜨는 동작 목록입니다. 방향키로 옮기고 Enter 로 고릅니다.",
 	when: [

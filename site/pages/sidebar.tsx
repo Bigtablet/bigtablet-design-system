@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const sidebar: DocPage = {
 	slug: "sidebar",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 1,
 	title: "Sidebar",
 	summary: "관리 화면 왼쪽 메뉴입니다. 접을 수 있고 600px 미만에서는 하단 바로 바뀝니다.",
 	when: [

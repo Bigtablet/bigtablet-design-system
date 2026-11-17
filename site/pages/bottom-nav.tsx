@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const bottomNav: DocPage = {
 	slug: "bottom-nav",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 2,
 	title: "BottomNav",
 	summary: "모바일 화면 아래에 고정되는 주요 메뉴입니다. 2~5개 항목을 둡니다.",
 	when: [

@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const iconButton: DocPage = {
 	slug: "icon-button",
-	category: "General",
+	category: "버튼",
+	order: 1,
 	title: "IconButton",
 	summary:
 		"아이콘만 있는 버튼입니다. `aria-label` 이나 `aria-labelledby` 가 없으면 컴파일되지 않습니다.",

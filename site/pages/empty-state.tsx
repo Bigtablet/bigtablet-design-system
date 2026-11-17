@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const emptyState: DocPage = {
 	slug: "empty-state",
-	category: "Feedback",
+	category: "알림 · 상태",
+	order: 3,
 	title: "EmptyState",
 	summary: "목록이 비었을 때 이유와 다음 동작을 보여 줍니다.",
 	when: [

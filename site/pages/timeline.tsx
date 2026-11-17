@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const timeline: DocPage = {
 	slug: "timeline",
-	category: "Display",
+	category: "데이터",
+	order: 5,
 	title: "Timeline",
 	summary: "시간 순 기록입니다. 각 항목에 상태 점과 시각을 둡니다.",
 	when: [

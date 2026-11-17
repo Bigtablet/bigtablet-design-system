@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const topLoading: DocPage = {
 	slug: "top-loading",
-	category: "Feedback",
+	category: "로딩",
+	order: 3,
 	title: "TopLoading",
 	summary: "화면 맨 위에 붙는 얇은 진행 줄입니다.",
 	when: [

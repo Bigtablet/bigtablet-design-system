@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const checkbox: DocPage = {
 	slug: "checkbox",
-	category: "Forms",
+	category: "선택",
+	order: 2,
 	title: "Checkbox",
 	summary: "네모 체크 상자입니다. 여러 개를 독립적으로 켜고 끕니다.",
 	when: [

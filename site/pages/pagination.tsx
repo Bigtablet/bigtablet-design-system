@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const pagination: DocPage = {
 	slug: "pagination",
-	category: "Navigation",
+	category: "내비게이션",
+	order: 5,
 	title: "Pagination",
 	summary: "페이지 번호로 목록을 넘깁니다.",
 	when: [

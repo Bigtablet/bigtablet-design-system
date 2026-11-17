@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const popover: DocPage = {
 	slug: "popover",
-	category: "Overlay",
+	category: "오버레이",
+	order: 2,
 	title: "Popover",
 	summary: "버튼 옆에 붙는 작은 패널입니다. 안에 입력을 둘 수 있습니다.",
 	when: [

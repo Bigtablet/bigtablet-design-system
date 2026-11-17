@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const localeProvider: DocPage = {
 	slug: "locale-provider",
-	category: "System",
+	category: "시작하기",
+	order: 1,
 	title: "LocaleProvider",
 	summary:
 		"DS 가 스스로 렌더하는 문구(닫기 · 이전/다음 · 빈 목록 등 58개)를 한곳에서 정합니다. 감싸지 않으면 한국어입니다.",

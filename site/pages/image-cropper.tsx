@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const imageCropper: DocPage = {
 	slug: "image-cropper",
-	category: "Forms",
+	category: "파일",
+	order: 1,
 	title: "ImageCropper",
 	summary:
 		"업로드 전에 이미지에서 보일 정사각 영역을 정합니다. 결과는 `ref.crop()` 이 `Blob` 으로 줍니다.",

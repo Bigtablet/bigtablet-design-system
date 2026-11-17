@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const timePicker: DocPage = {
 	slug: "time-picker",
-	category: "Forms",
+	category: "날짜 · 시간",
+	order: 3,
 	title: "TimePicker",
 	summary: '시 · 분 드롭다운으로 시각을 고릅니다. 값은 `"HH:mm"` 문자열입니다.',
 	when: [

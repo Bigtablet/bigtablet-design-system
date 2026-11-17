@@ -2,7 +2,8 @@ import type { DocPage } from "../docs";
 
 export const errorState: DocPage = {
 	slug: "error-state",
-	category: "Feedback",
+	category: "알림 · 상태",
+	order: 4,
 	title: "ErrorState",
 	summary: "불러오기 실패를 알리고 다시 시도할 동작을 둡니다. 화면 전체 · 위젯 크기를 고릅니다.",
 	when: [
