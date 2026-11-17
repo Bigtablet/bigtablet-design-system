@@ -460,6 +460,7 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
     section: Path | None = None  # `###` 섹션의 컴포넌트
     target: Path | None = None  # 다음 Props 표가 속할 컴포넌트
     in_props_table = False
+    last_title = ""
     for line in DOC.read_text(encoding="utf-8").splitlines():
         if line.startswith("#") and not line.startswith("####"):
             # 첫 단어가 컴포넌트 이름 - `### Chip - type="static" ...` 같은 소제목도 Chip 섹션이다
@@ -474,6 +475,11 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
         if sub:
             target = by_name.get(sub.group(1).replace(".", "").lower())
             continue
+        # 굵은 제목은 다음 `필드` 표가 어느 타입인지 정한다 (`**BreadcrumbItem**`, `` **`ToastOptions`** ``)
+        title = re.match(r"\*\*`?([A-Za-z.]+)(?:<[^>]*>)?`?:?\*\*", line)
+        if title:
+            last_title = title.group(1)
+            continue
         if not line.startswith("|"):
             if in_props_table:
                 target = section
@@ -483,9 +489,17 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
         # Props 표만 본다 - 머리 첫 칸이 `Prop`/`Option`/`필드`(Toast 옵션). 같은 섹션의 다른 표(색 · 모양 비교 등) 첫 칸이
         # 섞이면 같은 이름이 누락을 가린다. 데이터 행이 없는 표도 등록해 prop 전부를 누락으로 잡는다.
         if cells and cells[0] in ("Prop", "Option", "필드"):
-            in_props_table = target is not None
-            if target is not None:
-                documented.setdefault(target, set())
+            owner = target
+            if cells[0] == "필드":
+                # `필드` 표는 보조 타입(`BreadcrumbItem` · `StepperStep` · `TableColumn`)의 필드다. 그 이름이
+                # 섞이면 컴포넌트에서 빠진 같은 이름의 prop 을 가린다 - 섹션 컴포넌트의 `{Name}Options`
+                # (Toast) 표만 컴포넌트 것으로 본다.
+                pascal = "".join(part.capitalize() for part in section.parent.name.split("-")) if section else ""
+                owner = section if section and last_title == f"{pascal}Options" else None
+            in_props_table = owner is not None
+            if owner is not None:
+                documented.setdefault(owner, set())
+                target = owner
             continue
         if in_props_table and line.startswith("| `"):
             names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells[0])
