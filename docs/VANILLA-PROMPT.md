@@ -11,8 +11,8 @@
 ```
 Bigtablet Design System의 Vanilla JS 패키지를 사용해서 HTML을 작성해줘.
 
-CSS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css
-JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
+CSS: https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css
+JS: https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js
 
 클래스 네이밍 규칙:
 - .bt-{component} (기본)

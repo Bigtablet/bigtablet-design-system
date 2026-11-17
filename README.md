@@ -178,8 +178,9 @@ import "@bigtablet/design-system/style.css"; // defines the --bt-* values
 For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<!-- @4 tracks the latest 4.x. Pin an exact version like @4.9.1 to freeze rendering -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
@@ -206,8 +207,8 @@ The published Storybook lives at **[bigtablet.github.io/bigtablet-design-system]
 
 | | |
 |---|---|
-| 📚 [Components](./docs/COMPONENTS.md) | Props API + usage per component |
-| 🔄 [Migration](./docs/MIGRATION.md) | Deprecated prop migration guide |
+| 📚 [Components](./docs/COMPONENTS.md) | When to use, examples, and props per component |
+| 🔄 [Migration](./docs/MIGRATION.md) | Upgrade checklist + what to change per version |
 | 🎨 [Theming](./docs/THEMING.md) | Light/dark theme system guide |
 | 🏗️ [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |

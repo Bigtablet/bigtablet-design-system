@@ -96,7 +96,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 
   <!-- Bigtablet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
 </head>
 <body>
   <div style="padding: 2rem;">
@@ -115,7 +115,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   </div>
 
   <!-- Bigtablet JS (인터랙티브 컴포넌트용) -->
-  <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+  <script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 </body>
 </html>
 ```

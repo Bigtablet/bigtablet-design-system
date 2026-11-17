@@ -32,6 +32,8 @@ const meta: Meta = {
 - **Foundation** - 색상, 타이포그래피, 간격 등 디자인 토큰
 - **Components** - 실제 UI 컴포넌트 (버튼, 인풋, 모달 등)
 
+저장소의 [docs/COMPONENTS.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md) 에도 같은 내용(고르는 법 · 예제 · props)이 있습니다. 버전을 올릴 때는 [MIGRATION](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 의 체크리스트를 봅니다.
+
 ---
 
 #### 지원 환경
