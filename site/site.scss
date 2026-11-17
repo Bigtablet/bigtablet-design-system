@@ -805,3 +805,132 @@ $preview_scale: 0.6;
 .doc_block > h2 + .ov_grid {
   margin-top: token.$spacing_16;
 }
+
+// ── Foundation ──────────────────────────────────────────────────────────
+
+.fd_table {
+  td {
+    vertical-align: middle;
+  }
+
+  code {
+    white-space: nowrap;
+  }
+}
+
+.fd_preview_cell {
+  width: 88px;
+}
+
+.fd_name {
+  display: block;
+  color: token.$color_text_heading;
+  font-family: $mono;
+  font-weight: 500;
+}
+
+.fd_desc {
+  display: block;
+  margin-top: token.$spacing_2;
+  color: token.$color_text_caption;
+  @include token.wrap_keep_all;
+}
+
+.fd_value {
+  color: token.$color_text_caption;
+  font-family: $mono;
+  font-size: 12px;
+  @include token.wrap_keep_all;
+}
+
+.fd_dark {
+  display: block;
+  margin-top: token.$spacing_2;
+  opacity: 0.8;
+}
+
+// 라이트 · 다크 값을 나란히 - 페이지 테마와 상관없이 원값으로 칠한다
+.fd_swatch {
+  display: inline-flex;
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_sm;
+  // 흰색 · 반투명 색도 보이게 바둑판 위에 칠한다
+  background: repeating-conic-gradient(token.$color_border_default 0 25%, token.$color_bg_solid 0 50%) 0 0 / 8px 8px;
+
+  span {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.fd_bar {
+  display: block;
+  min-width: 1px;
+  height: 12px;
+  border-radius: token.$radius_xs;
+  background: token.$color_text_heading;
+}
+
+.fd_box {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: $line;
+  background: token.$color_bg_solid_dim;
+}
+
+.fd_box_raised {
+  border: none;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+}
+
+.fd_motion {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: token.$radius_full;
+  background: token.$color_text_heading;
+
+  tr:hover & {
+    transform: translateX(48px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none !important;
+  }
+}
+
+.fd_type_list {
+  display: grid;
+  border: $line;
+  border-radius: token.$radius_md;
+}
+
+.fd_type_row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: token.$spacing_4 token.$spacing_16;
+  align-items: baseline;
+  padding: token.$spacing_16 token.$spacing_20;
+
+  & + & {
+    border-top: $line;
+  }
+
+  code {
+    justify-self: end;
+  }
+
+  .fd_value {
+    grid-column: 1 / -1;
+  }
+}
+
+.fd_type_sample {
+  color: token.$color_text_heading;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

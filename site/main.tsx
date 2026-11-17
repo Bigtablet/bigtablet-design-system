@@ -3,6 +3,7 @@ import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ComponentCard, type DocPage, Page } from "./docs";
+import { FOUNDATIONS } from "./foundation";
 import { GUIDES, Landing } from "./guides";
 import { SiteSearch } from "./search";
 import "./site.scss";
@@ -96,6 +97,18 @@ function App() {
 						</a>
 					))}
 				</div>
+				<div className="site_nav_group">
+					<p className="site_nav_title">Foundation</p>
+					{FOUNDATIONS.map((f) => (
+						<a
+							key={f.slug}
+							href={`#/${f.slug}`}
+							aria-current={slug === f.slug ? "page" : undefined}
+						>
+							{f.title}
+						</a>
+					))}
+				</div>
 				{GROUPS.map(({ c, pages }) => (
 					<div key={c} className="site_nav_group">
 						<p className="site_nav_title">
@@ -152,7 +165,7 @@ function ThemeMenu({ theme, onChange }: { theme: Theme; onChange: (t: Theme) => 
 function Route({ slug, page, theme }: { slug: string; page?: DocPage; theme: Theme }) {
 	if (page) return <Page key={page.slug} page={page} theme={theme} />;
 	if (slug === "components") return <Overview />;
-	const Guide = GUIDES.find((g) => g.slug === slug)?.Body;
+	const Guide = [...GUIDES, ...FOUNDATIONS].find((g) => g.slug === slug)?.Body;
 	return Guide ? <Guide /> : <Landing pages={PAGES} />;
 }
 
