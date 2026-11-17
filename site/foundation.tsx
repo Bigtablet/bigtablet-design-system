@@ -85,13 +85,14 @@ const show = (value: unknown) => (typeof value === "object" ? shadowOf(value) : 
 
 /* ─── 공용 표 ──────────────────────────────────────────────────────────── */
 
-function TokenTable({ items, preview }: { items: Token[]; preview: (t: Token) => ReactNode }) {
+// preview 가 없으면(z-index 처럼 그릴 게 없는 값) 미리보기 칸을 아예 두지 않는다
+function TokenTable({ items, preview }: { items: Token[]; preview?: (t: Token) => ReactNode }) {
 	return (
 		<div className="doc_table_wrap">
 			<table className="doc_table fd_table">
 				<thead>
 					<tr>
-						<th aria-label="미리보기" />
+						{preview && <th aria-label="미리보기" />}
 						<th>이름</th>
 						<th>SCSS · CSS 변수</th>
 						<th>값</th>
@@ -100,7 +101,7 @@ function TokenTable({ items, preview }: { items: Token[]; preview: (t: Token) =>
 				<tbody>
 					{items.map((t) => (
 						<tr key={t.name}>
-							<td className="fd_preview_cell">{preview(t)}</td>
+							{preview && <td className="fd_preview_cell">{preview(t)}</td>}
 							<td>
 								<strong className="fd_name">{t.name}</strong>
 								{t.description && (
@@ -158,7 +159,11 @@ function Group({ title, desc, children }: { title: string; desc?: string; childr
 	return (
 		<section className="doc_block">
 			<h2 id={title}>{title}</h2>
-			{desc && <p className="doc_block_desc">{desc}</p>}
+			{desc && (
+				<p className="doc_block_desc">
+					<Md>{desc}</Md>
+				</p>
+			)}
 			{children}
 		</section>
 	);
@@ -351,15 +356,60 @@ function Motion() {
 				title="길이"
 				desc="transition_* 는 길이와 곡선이 함께 들어 있습니다 - 곡선을 또 붙이면 CSS 가 깨집니다."
 			>
-				<TokenTable items={all.filter((t) => t.name.startsWith("duration"))} preview={() => null} />
+				<TokenTable items={all.filter((t) => t.name.startsWith("duration"))} />
 			</Group>
 			<Group title="곡선">
-				<TokenTable items={all.filter((t) => /^eas/.test(t.name))} preview={() => null} />
+				<TokenTable items={all.filter((t) => /^eas/.test(t.name))} />
 			</Group>
 			<Group title="전환 (길이 + 곡선)">
 				<TokenTable items={all.filter((t) => t.name.startsWith("transition"))} preview={play} />
 			</Group>
 		</FoundationPage>
+	);
+}
+
+/** 화면 폭 구간 - 경계값 토큰보다 "어느 폭이 어느 구간인가" 와 그 구간의 믹스인이 쓸모 있다 */
+function BreakpointTable() {
+	const items = collect("base.breakpoint");
+	return (
+		<div className="doc_table_wrap">
+			<table className="doc_table fd_table">
+				<thead>
+					<tr>
+						<th>구간</th>
+						<th>폭</th>
+						<th>SCSS 믹스인 (@include)</th>
+					</tr>
+				</thead>
+				<tbody>
+					{items.map((t, i) => {
+						const name = t.name.replace("breakpoint-", "");
+						const next = items[i + 1];
+						return (
+							<tr key={t.name}>
+								<td>
+									<strong className="fd_name">{name}</strong>
+								</td>
+								<td className="fd_value">
+									{next
+										? `${Number.parseInt(String(t.light), 10)} – ${Number.parseInt(String(next.light), 10) - 1}px`
+										: `${t.light} 이상`}
+								</td>
+								<td className="fd_nowrap">
+									<code>token.{name}</code>
+									{i > 0 && (
+										<>
+											<br />
+											<code>token.from_{name}</code>
+										</>
+									)}
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
 	);
 }
 
@@ -372,15 +422,15 @@ function Layout() {
 		>
 			<Group
 				title="화면 폭 구간"
-				desc="SCSS 는 `@include token.compact { … }` 처럼 구간 믹스인을 씁니다."
+				desc="구간 하나에만 걸 때는 `token.compact`, 그 폭 이상 전부에 걸 때는 `token.from_medium` 처럼 씁니다."
 			>
-				<TokenTable items={collect("base.breakpoint")} preview={() => null} />
+				<BreakpointTable />
 			</Group>
 			<Group
 				title="겹침 순서 (z-index)"
 				desc="숫자를 직접 쓰지 않고 이름(z_content · z_chrome · z_popup …)으로 씁니다."
 			>
-				<TokenTable items={collect("semantic.layer")} preview={() => null} />
+				<TokenTable items={collect("semantic.layer")} />
 			</Group>
 			<Group title="아이콘 크기" desc="lucide 아이콘의 size 에 iconSize.sm 처럼 넘깁니다.">
 				<TokenTable

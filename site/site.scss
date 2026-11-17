@@ -950,6 +950,11 @@ $preview_scale: 0.6;
 
 }
 
+// 구간 표의 폭 · 믹스인 이름은 짧아 한 줄로 둔다 (그래서 <wbr> 을 넣는 Code 대신 맨 <code>)
+.fd_nowrap {
+  white-space: nowrap;
+}
+
 .fd_preview_cell {
   width: 88px;
 }
