@@ -6,7 +6,7 @@ import "./site.scss";
 const q = new URLSearchParams(location.search);
 const theme = q.get("theme");
 if (theme && theme !== "system") document.documentElement.setAttribute("data-theme", theme);
-document.documentElement.classList.add("preview");
+document.documentElement.classList.add(q.has("bare") ? "preview_bare" : "preview");
 
 const Comp = exampleOf(q.get("ex") ?? "");
 createRoot(document.getElementById("root")!).render(Comp ? <Comp /> : <p>예제가 없습니다</p>);

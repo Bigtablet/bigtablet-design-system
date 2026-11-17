@@ -11,9 +11,15 @@ export interface DocPage {
 	summary: string;
 	/** [상황, 고를 것, 이 컴포넌트인가] */
 	when: [string, string, boolean][];
-	examples: { id: string; title: string; desc?: string }[];
+	examples: {
+		id: string;
+		title: string;
+		desc?: string;
+		/** 화면 전체를 쓰는 예제(AppShell · 고정 바) - 전체 폭도 이 높이의 iframe 으로 */
+		frame?: number;
+	}[];
 	/** 여러 개면 순서대로 표를 하나씩 (Tabs · TabList · Tab …) */
-	props: PropsName | PropsName[];
+	props?: PropsName | PropsName[];
 	notes?: string[];
 }
 
@@ -42,7 +48,13 @@ export function Md({ children }: { children: string }) {
 
 type Width = "full" | "768" | "375";
 
-function Example({ id, title, desc, theme }: DocPage["examples"][number] & { theme: string }) {
+function Example({
+	id,
+	title,
+	desc,
+	frame,
+	theme,
+}: DocPage["examples"][number] & { theme: string }) {
 	const [width, setWidth] = useState<Width>("full");
 	const [showCode, setShowCode] = useState(false);
 	const Comp = exampleOf(id);
@@ -76,10 +88,15 @@ function Example({ id, title, desc, theme }: DocPage["examples"][number] & { the
 				</div>
 			</div>
 			<div className="doc_example_stage">
-				{width === "full" ? (
+				{width === "full" && !frame ? (
 					<div className="doc_example_inline">{Comp && <Comp />}</div>
 				) : (
-					<Frame id={id} width={Number(width)} theme={theme} />
+					<Frame
+						id={id}
+						width={width === "full" ? "100%" : Number(width)}
+						height={frame}
+						theme={theme}
+					/>
 				)}
 			</div>
 			{showCode && (
@@ -92,7 +109,17 @@ function Example({ id, title, desc, theme }: DocPage["examples"][number] & { the
 }
 
 /** 좁은 폭은 iframe 으로 - 컴포넌트의 미디어 쿼리(600px 미만 등)가 실제로 걸린다 */
-function Frame({ id, width, theme }: { id: string; width: number; theme: string }) {
+function Frame({
+	id,
+	width,
+	height: fixed,
+	theme,
+}: {
+	id: string;
+	width: number | string;
+	height?: number;
+	theme: string;
+}) {
 	const ref = useRef<HTMLIFrameElement>(null);
 	const [height, setHeight] = useState(160);
 	useEffect(() => {
@@ -106,9 +133,9 @@ function Frame({ id, width, theme }: { id: string; width: number; theme: string 
 	return (
 		<iframe
 			ref={ref}
-			title={`${id} 미리보기 ${width}px`}
-			src={`preview.html?ex=${encodeURIComponent(id)}&theme=${theme}`}
-			style={{ width, height: Math.max(height, 160) }}
+			title={`${id} 미리보기`}
+			src={`preview.html?ex=${encodeURIComponent(id)}&theme=${theme}${fixed ? "&bare" : ""}`}
+			style={{ width, height: fixed ?? Math.max(height, 160) }}
 			className="doc_frame"
 		/>
 	);
@@ -188,11 +215,13 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				))}
 			</Section>
 
-			<Section title="Props">
-				{[page.props].flat().map((name, _, all) => (
-					<PropsTable key={name} name={name} titled={all.length > 1} />
-				))}
-			</Section>
+			{page.props && (
+				<Section title="Props">
+					{[page.props].flat().map((name, _, all) => (
+						<PropsTable key={name} name={name} titled={all.length > 1} />
+					))}
+				</Section>
+			)}
 
 			{page.notes && (
 				<Section title="알아 둘 것">

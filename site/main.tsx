@@ -74,7 +74,7 @@ function App() {
 				/>
 			</header>
 			<nav className="site_nav" aria-label="컴포넌트">
-				{CATEGORIES.map((c) => (
+				{CATEGORIES.filter((c) => PAGES.some((p) => p.category === c)).map((c) => (
 					<div key={c} className="site_nav_group">
 						<p className="site_nav_title">{c}</p>
 						{PAGES.filter((p) => p.category === c).map((p) => (
