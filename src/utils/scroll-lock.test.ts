@@ -65,8 +65,35 @@ describe("scroll-lock", () => {
 		setViewportInset(0);
 		lockBodyScroll();
 
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.body.dataset.openModals).toBe("1");
+	});
+
+	// #1043 - html 을 잠그면 body 의 overflow 가 body 상자에 걸린다. body 까지 hidden 이면 body 가 새
+	// 스크롤 상자가 되어 sticky 헤더 · 사이드바가 스크롤되지 않는 body 를 기준으로 밀려난다
+	it("keeps body a plain box so sticky elements stay attached to the viewport", () => {
+		setViewportInset(0);
+		document.body.style.overflowX = "hidden"; // 흔한 리셋 - 평소엔 뷰포트로 넘어가 body 상자엔 안 걸린다
+		lockBodyScroll();
+
+		expect(document.documentElement.style.overflow).toBe("hidden");
+		expect(document.body.style.overflow).toBe("visible");
+
+		unlockBodyScroll();
+		expect(document.body.style.overflowX).toBe("hidden");
+	});
+
+	it("locks body too when the app made body the scroller", () => {
+		setViewportInset(0);
+		document.documentElement.style.overflow = "hidden";
+		document.body.style.overflow = "auto";
+		lockBodyScroll();
+
+		expect(document.body.style.overflow).toBe("hidden");
+
+		unlockBodyScroll();
+		expect(document.body.style.overflow).toBe("auto");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 	});
 
 	it("releases the reserved gutter and keeps the width as body padding", () => {
@@ -169,7 +196,7 @@ describe("scroll-lock", () => {
 
 		lockBodyScroll();
 
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
 		expect(document.body.style.paddingRight).toBe("15px");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
@@ -223,7 +250,7 @@ describe("scroll-lock", () => {
 
 		unlockBodyScroll();
 
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
 		expect(document.body.dataset.openModals).toBe("1");
 	});
@@ -264,7 +291,7 @@ describe("scroll-lock", () => {
 		setViewportInset(0);
 
 		lockBodyScroll();
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		unlockBodyScroll();
 		expect(document.body.style.overflow).toBe("auto");
