@@ -25,6 +25,17 @@
     height: 100vh;
   }
 
+  // 고정 헤더가 있으면 사이드바 머리를 헤더 높이에 맞춘다 - 두 아래 선이 한 줄로 이어진다 (React 와 같음).
+  // 머리는 content-box 라 헤더 높이에서 위아래 여백 · 아래 선을 빼고, 원래 최소 높이(28px)는 지킨다.
+  &:has(.bt-app-shell__header) > .bt-sidebar .bt-sidebar__brand {
+    // 계산이 content-box 를 전제하므로 못박는다 - 소비 앱의 `* { box-sizing: border-box }` 리셋이면 여백 · 선을 두 번 뺀다
+    box-sizing: content-box;
+    min-height: max(
+      28px,
+      calc(var(--bt-top-inset, 0px) - 2 * #{token.$spacing_20} - #{token.$border_width_standard})
+    );
+  }
+
   // 고정 헤더를 쓸 때 본문 열 - 헤더 + main 을 세로로 쌓는다 (React app_shell_body)
   &__body {
     display: flex;
