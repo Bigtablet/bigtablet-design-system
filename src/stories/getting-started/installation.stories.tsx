@@ -107,9 +107,9 @@ export const Vanilla: Story = {
 <link rel="stylesheet" href="/assets/bigtablet.min.css">
 <script src="/assets/bigtablet.min.js"></script>
 
-<!-- 또는 CDN -->
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>`}
+<!-- 또는 CDN - @4 는 4.x 최신. 화면을 고정하려면 @4.9.1 처럼 정확한 버전 -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>`}
 					/>
 					<Step
 						number={2}

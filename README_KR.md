@@ -178,8 +178,9 @@ import "@bigtablet/design-system/style.css"; // --bt-* 값 정의
 React 없이 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다.
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<!-- @4 는 4.x 최신을 받습니다. 화면을 고정하려면 @4.9.1 처럼 정확한 버전을 씁니다 -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```

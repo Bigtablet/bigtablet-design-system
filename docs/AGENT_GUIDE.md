@@ -518,8 +518,8 @@ Run locally: `pnpm storybook` (port 6006).
 For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```

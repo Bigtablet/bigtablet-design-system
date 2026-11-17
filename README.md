@@ -178,8 +178,9 @@ import "@bigtablet/design-system/style.css"; // defines the --bt-* values
 For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<!-- @4 tracks the latest 4.x. Pin an exact version like @4.9.1 to freeze rendering -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
