@@ -165,7 +165,7 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 `pnpm check:dark-text` 가 막습니다. `--bt-color-status-*`(bare)·`--bt-color-brand-primary` 처럼
 **양 테마에서 같은 값**인 색을 테마 표면 위의 텍스트로 쓰면 다크에서 AA(4.5:1) 미달입니다. 텍스트에는 `_on_surface`
 (Vanilla `-text`) 쪽을 씁니다. 고정 표면 위 텍스트(`_on_primary`·`_on_dark`·`_on_default`·
-`_on_container`)는 이름으로 예외 처리됩니다. 자세한 표는 [THEMING](./THEMING.md#status-색-배경용과-텍스트용을-구분한다).
+`_on_container`)는 이름으로 예외 처리됩니다. 자세한 표는 [THEMING](./THEMING.md#status-색-배경용과-텍스트용을-구분합니다).
 
 a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡습니다 - 그래서 정적 검사가 필요합니다.
 
