@@ -509,7 +509,7 @@ Vanilla 번들은 같은 믹스인으로 만든 `.bt-sr-only` · `.bt-sr-only-fo
 }
 ```
 
-`@media (hover: hover)` 를 냅니다. 이 조건은 **기본 포인팅 장치**만 봅니다 - 터치 전용 기기(폰·태블릿)에서는 hover 가 빠지지만, 터치스크린 노트북처럼 입력이 섞인 기기에서는 탭한 뒤 강조가 남을 수 있습니다. 앱마다 직접 쓰면 조건이 흩어지니 이 믹스인으로 모으세요. `hover_lift` · `hover_glow` 는 안에서 이미 감싸고 있습니다.
+`@media (hover: hover)` 를 냅니다. 이 조건은 **기본 포인팅 장치**만 봅니다 - 터치 전용 기기(폰·태블릿)에서는 hover 가 빠지지만, 터치스크린 노트북처럼 입력이 섞인 기기에서는 탭한 뒤 강조가 남을 수 있습니다. 앱마다 직접 쓰면 조건이 흩어지니 이 믹스인으로 모으세요.
 
 #### 식별자 판독 — `legible_identifiers`
 
@@ -521,7 +521,7 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 
 `TextField` 는 `identifier` prop 으로 같은 처리를 합니다 — 앱이 `.text_field_input` 을 직접 뚫을 필요가 없습니다.
 
-> ⚠️ `legible_identifiers` · `tabular_nums` · `slashed_zero` 는 **셋 다 `font-variant-numeric` 를 건드립니다.** 같은 선택자에 두 개를 쓰면 뒤에 온 것만 적용됩니다. `legible_identifiers` 에는 `slashed-zero` 가 이미 포함되어 있으니 함께 쓰지 마세요. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero` 를 직접 쓰고 `font-feature-settings` 만 따로 주세요.
+> ⚠️ `legible_identifiers` · `tabular_nums` 는 **둘 다 `font-variant-numeric` 를 건드립니다.** 같은 선택자에 함께 쓰면 뒤에 온 것만 적용됩니다. `legible_identifiers` 에는 `slashed-zero` 가 이미 들어 있으니(그래서 `slashed_zero` 믹스인은 v4.10.0 부터 deprecated 입니다) 따로 더하지 않습니다. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero` 를 직접 쓰고 `font-feature-settings` 만 따로 주세요.
 
 #### 스켈레톤
 
