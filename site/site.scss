@@ -92,17 +92,13 @@ code {
 }
 
 .site_brand {
+  // 1fr 칸을 다 차지하면 로고 오른쪽 빈자리까지 눌린다
+  justify-self: start;
   padding-left: token.$spacing_24;
   color: token.$color_text_heading;
   text-decoration: none;
   @include token.body_medium_medium;
   @include token.text_nowrap;
-
-  // 워드마크 | 디자인 시스템
-  span {
-    padding-left: token.$spacing_12;
-    border-left: $line;
-  }
 
   @include token.compact {
     padding-left: 0;

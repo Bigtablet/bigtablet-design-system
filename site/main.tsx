@@ -73,18 +73,23 @@ function App() {
 	}, [slug]);
 	// 첫 화면은 사이드바 없이 넓게 - 문서 한 페이지처럼 보이지 않게
 	const isLanding = !page && slug === "";
-	// 탭 · 북마크 · 공유 미리보기에 어느 페이지인지 보이게. 첫 화면은 index.html 의 제목 그대로
+	// 탭 · 북마크에 어느 페이지인지 보이게 - 페이지 제목만. 첫 화면은 index.html 의 제목 그대로
 	useEffect(() => {
 		const title =
 			page?.title ?? [...GUIDES, ...FOUNDATIONS].find((g) => g.slug === slug && slug)?.title;
-		document.title = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+		document.title = title ?? SITE_TITLE;
 	}, [page, slug]);
 	return (
 		<div className={cn("site", isLanding && "site_landing")}>
 			<header className="site_top">
 				<a className="site_brand" href="#/">
-					<img src="/images/logo/bigtablet.png" alt="Bigtablet" width={84} height={27} />
-					<span>디자인 시스템</span>
+					{/* 로고만 - 링크 이름은 alt 가 맡는다 */}
+					<img
+						src="/images/logo/bigtablet.png"
+						alt="Bigtablet 디자인 시스템 홈"
+						width={84}
+						height={27}
+					/>
 				</a>
 				<SiteSearch entries={SEARCH} />
 				<div className="site_top_actions">
