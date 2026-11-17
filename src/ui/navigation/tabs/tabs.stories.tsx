@@ -12,7 +12,7 @@ const meta: Meta<typeof Tabs> = {
 				component: `
 **Tabs** - 배타적 패널 전환. compound API: \`Tabs\` + \`TabList\` + \`Tab\` + \`TabPanel\`.
 
-Variants: \`line\` (기본, 하단 underline) / \`fills\` (활성 탭을 채운 박스 그룹).
+Variant 는 \`line\`(하단 underline)을 씁니다. \`fills\` 는 SegmentedControl 과 같아 보여 deprecated 입니다.
 패널을 바꿀 때만 쓴다 - 패널 없이 값만 고르는 설정·필터는 \`SegmentedControl\`.
 WAI-ARIA + roving tabIndex + 키보드 (←→/Home/End, disabled 는 건너뜀).
         `,
@@ -46,22 +46,6 @@ function LineDemo() {
 	);
 }
 
-function FillsDemo() {
-	const [value, setValue] = React.useState("all");
-	return (
-		<Tabs value={value} onValueChange={setValue} variant="fills">
-			<TabList ariaLabel="Filter">
-				<Tab value="all">전체</Tab>
-				<Tab value="active">활성</Tab>
-				<Tab value="archived">보관</Tab>
-			</TabList>
-			<TabPanel value="all">전체 결과</TabPanel>
-			<TabPanel value="active">활성만</TabPanel>
-			<TabPanel value="archived">보관만</TabPanel>
-		</Tabs>
-	);
-}
-
 export const Line: Story = {
 	name: "Line (기본)",
 	parameters: {
@@ -75,23 +59,6 @@ export const Line: Story = {
 	render: () => (
 		<div style={{ width: 480 }}>
 			<LineDemo />
-		</div>
-	),
-};
-
-export const Fills: Story = {
-	name: "Fills",
-	parameters: {
-		docs: {
-			description: {
-				story:
-					"segmented control 형태입니다. 항목이 **둘~셋이고 라벨이 짧을 때** 어울립니다 - 넷 이상이면 칸이 좁아져 `line` 쪽이 읽기 쉽습니다.",
-			},
-		},
-	},
-	render: () => (
-		<div style={{ width: 480 }}>
-			<FillsDemo />
 		</div>
 	),
 };
