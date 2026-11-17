@@ -1,6 +1,6 @@
 # Testing
 
-Bigtablet Design System의 테스트 작성 가이드입니다.
+Bigtablet Design System 의 테스트 작성 가이드입니다.
 
 ---
 
@@ -27,7 +27,7 @@ Bigtablet Design System의 테스트 작성 가이드입니다.
 
 ### 설정 파일
 
-설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본이다 (`globals: true` - `describe` · `it` · `expect` 를 import 없이 써도 된다). 프로젝트는 넷이다.
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다 (`globals: true` - `describe` · `it` · `expect` 를 import 없이 써도 됩니다). 프로젝트는 넷입니다.
 
 | 프로젝트 | 명령 | 파일 | 환경 |
 |----------|------|------|------|
@@ -38,13 +38,13 @@ Bigtablet Design System의 테스트 작성 가이드입니다.
 
 ### Setup 파일
 
-[`src/test/setup.ts`](../src/test/setup.ts) 가 `unit` 테스트마다 돈다. 하는 일은 셋이다.
+[`src/test/setup.ts`](../src/test/setup.ts) 가 `unit` 테스트마다 돕니다. 하는 일은 셋입니다.
 
 - `@testing-library/jest-dom` 매처 등록 (`toBeInTheDocument` 등)
 - jsdom 에 없는 `Element.prototype.scrollIntoView` 스텁
 - Modal · Drawer · Alert 가 공유하는 body 스크롤 잠금 상태를 테스트마다 초기화 - 한 테스트의 잠금이 다음 테스트로 새지 않게
 
-`matchMedia` 는 전역으로 mock 하지 않는다 - 필요한 테스트가 직접 `vi.stubGlobal` 로 둔다.
+`matchMedia` 는 전역으로 mock 하지 않습니다 - 필요한 테스트가 직접 `vi.stubGlobal` 로 둡니다.
 
 ---
 
@@ -86,7 +86,7 @@ pnpm vitest --ui
 
 ### 파일 위치
 
-테스트 파일은 컴포넌트와 같은 디렉토리에 위치합니다:
+테스트 파일은 컴포넌트와 같은 폴더에 둡니다:
 
 ```
 src/ui/general/button/
@@ -94,104 +94,6 @@ src/ui/general/button/
 ├── style.scss
 └── button.test.tsx    # 테스트 파일 (폴더명과 같게)
 ```
-
-### Vanilla 번들 테스트
-
-Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts`.
-공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
-`resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
-React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
-
-```ts
-// 소스가 ES 모듈이라(#926) named export 로 받는다. 소비자는 `<script>` + 전역 `Bigtablet`(빌드된 IIFE)
-// 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
-// 소스 변경이 곧 테스트에 걸리게 한다.
-import { Dropdown } from "./bigtablet.js";
-```
-
-주의할 점:
-
-- **jsdom 은 레이아웃을 하지 않는다.** 스크롤바 폭(`innerWidth - documentElement.clientWidth`)은 항상 0
-  이므로, 스크롤 잠금 보정을 검사하려면 두 값을 직접 세워야 한다 (`setScrollbarWidth` 헬퍼 참고).
-- **내부 함수는 export 되지 않는다.** `lockScroll` / `unlockScroll` 는 `Modal` · `Alert` 를 열고
-  닫으며 간접 검사한다 - 통합 경로를 함께 보게 되어 오히려 낫다.
-- **문서화된 마크업으로 시작한다.** 서버 템플릿이 렌더하는 형태(평면 `<ul>`, 서버가 심어둔 hidden
-  input 등)를 그대로 세워야 실제 회귀를 잡는다 - 실제로 그 두 경로에서 버그가 나왔다.
-
-> 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` 만
-> 본다. Vanilla 를 넣으면 전체 수치가 크게 떨어지므로 별건으로 다룬다 - 테스트 자체는 이미 돈다.
-
-### 앵커 팝업(Dropdown·Combobox·Menu·Popover·Tooltip) 테스트
-
-배치·닫힘이 `getBoundingClientRect()` 에 달려 있어 jsdom 에서 두 가지가 걸린다.
-
-- **jsdom 의 rect 는 전부 0 이다.** 그래서 "앵커가 뷰포트 밖" 판정(`bottom <= 0`)이 아무것도 안
-  했는데 참이 된다. `useAnchoredPosition` 이 **앵커 크기가 0 이면 `anchorHidden` 을 false 로
-  두는** 것은 이 때문이다(#624). 이 가드를 빼면 열자마자 닫혀 기존 테스트 6개가 무너진다 -
-  뮤테이션으로 확인된 수치다. 위치·가시성을 검사하려면 rect 를 직접 세운다:
-
-  ```ts
-  vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue({
-    top: -80, bottom: -40, left: 0, right: 200, width: 200, height: 40,
-  } as DOMRect);
-  await act(async () => {
-    fireEvent.scroll(window);              // 훅은 scroll(capture) 로 재계산하고
-    await new Promise((r) => requestAnimationFrame(() => r(null))); // rAF 로 배칭한다
-  });
-  ```
-
-- **포커스 복귀는 `focus({ preventScroll: true })` 로 단언한다.** 트리거가 화면 밖이라 닫는
-  경로에서 그냥 `focus()` 하면 브라우저가 방금 벗어난 트리거로 화면을 되감는다. jsdom 은
-  스크롤을 하지 않아 증상이 안 보이므로, 인자까지 단언해야 회귀가 잡힌다:
-  `expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })`.
-
-레이아웃 자체(높이 상한·정렬·flip)는 jsdom 이 계산하지 않는다 - 아래 브라우저 레이아웃 테스트로 잰다.
-
-### 브라우저 레이아웃 테스트 (`*.browser.test.tsx`)
-
-배치·잘림·스크롤 잠금처럼 **실제 레이아웃이 있어야 의미 있는 것**은 `{폴더명}.browser.test.tsx` 에
-쓴다. `vitest.config.ts` 의 `browser` 프로젝트가 headless Chromium 에서 돌리고(`pnpm test:browser`),
-`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺀다. 지금 덮는 것:
-
-| 대상 | 검사 |
-|------|------|
-| Tooltip · Popover · Menu | flip·shift, 정렬(`align`), Menu 가 `overflow: hidden` 조상에 안 잘림(#586) |
-| Dropdown · Combobox | 높이 상한(#621), 트리거 정렬, 375px 넘침 |
-| DatePicker (`variant="calendar"`) | 달력 flip, 320px 에서 요일 7칸이 패널 안 |
-| Modal · Drawer · Vanilla Modal | 좁은 화면 잘림, 스크롤 잠금 - 콘텐츠 안 밀림·스크롤바 자리 덮음·패널 중심(#574·#635)·스크롤 위치 복원 |
-| Table | 클릭 가능한 행의 키보드 포커스 테두리(#802) - 키보드에서만, 마우스 클릭엔 없음, 다크 테마 색 |
-
-- **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세운다. 앵커는
-  `position: fixed` 래퍼로 원하는 좌표에 둔다.
-- **컴포넌트 `style.scss` 를 테스트에서 import 한다.** 컴포넌트 파일이 이미 import 하지만, 레이아웃
-  테스트가 CSS 에 기대고 있다는 걸 드러낸다. 토큰 CSS 변수(`theme.scss`)는 `src/test/browser-setup.ts` 가 넣는다.
-- **스크롤바가 보인다.** headless Chromium 은 기본으로 스크롤바를 숨겨(폭 0) 스크롤 잠금 보정이
-  공회전한다 - 프로젝트 설정이 `--hide-scrollbars` 를 빼서 15px 클래식 스크롤바가 생긴다.
-- **소스를 일부러 깨서 테스트가 실패하는지 본다.** 처음 쓴 테스트 절반이 그래도 통과했다 -
-  CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
-  내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했다.
-- Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있다. 패널 크기는 `.modal_panel` 로 잰다.
-- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 소스가 ES 모듈이라(#926) unit 과 같이
-  `import { Modal } from "./bigtablet.js"` 로 받는다. 전역 `Bigtablet` 은 빌드된 `bigtablet.min.js` 에만 생긴다.
-
-### 시각 회귀 테스트 (`*.visual.test.tsx`)
-
-컴포넌트의 기본 모양을 **기준 스크린샷과 픽셀 비교**한다 (#879). 렌더가 바뀌는 변경을 사람 눈 말고도
-잡으려는 것이다 - 의도한 변경이면 기준을 같이 갱신하고, 의도하지 않은 변경이면 테스트가 막는다.
-`src/test/components.visual.test.tsx` 가 Button · IconButton · Badge · Chip · InlineAlert · EmptyState ·
-ErrorState · TextField · Checkbox/Radio/Toggle · Card · Tabs · Pagination 을 **라이트·다크** 로 찍는다.
-팝업(Dropdown·Menu·Toast 등)은 포털·타이머가 얽혀 첫 범위에서 뺐다.
-
-- **기준 이미지는 CI 와 같은 Playwright 이미지(linux)에서 만든 것만 쓴다.** 폰트·안티앨리어싱이 OS 마다
-  달라 맥 렌더는 기준이 될 수 없다. 파일 이름에 platform 이 붙고(`-chromium-linux.png`), 맥·윈도 결과는
-  gitignore 된다. 기준은 `src/test/__visual__/<테스트파일>/` 에 있다.
-- **CI 에서만 돈다** - a11y job 의 `Run visual regression tests` 단계. 실패하면 `visual-screenshots`
-  artifact 에 실제(`-actual-`)·차이(`-diff-`)·새 기준(`-reference-`) 스크린샷이 남는다.
-- **의도한 렌더 변경이면** 실패한 실행의 run-id 로 `pnpm visual:accept <run-id>` 를 돌린다. artifact 를
-  받아 `-actual-`·`-reference-` 를 기준 이름으로 바꿔 넣는다. 받은 이미지를 열어 보고 커밋한다.
-  PR 본문에 `(렌더 변경)` 과 함께 바뀐 기준 이미지를 적는다.
-- **움직임은 멈춘다** - `src/test/visual-setup.ts` 가 transition·animation·커서 깜빡임을 끈다.
-- 새 컴포넌트를 추가할 때는 `shoot(이름, <요소 />)` 한 줄을 더하고, 첫 CI 실패의 `-reference-` 를 받아 넣는다.
 
 ### 기본 구조
 
@@ -232,7 +134,7 @@ describe("ComponentName", () => {
 
 ### 테스트 항목 체크리스트
 
-모든 컴포넌트는 다음 항목을 테스트해야 합니다:
+모든 컴포넌트는 다음 항목을 테스트합니다:
 
 - [ ] 기본 렌더링
 - [ ] 모든 Props 동작
@@ -243,6 +145,104 @@ describe("ComponentName", () => {
 - [ ] 에러 상태
 
 ---
+
+### Vanilla 번들 테스트
+
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮습니다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts`.
+공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
+`resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있습니다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부릅니다.
+React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돕니다.
+
+```ts
+// 소스가 ES 모듈이라(#926) named export 로 받는다. 소비자는 `<script>` + 전역 `Bigtablet`(빌드된 IIFE)
+// 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
+// 소스 변경이 곧 테스트에 걸리게 한다.
+import { Dropdown } from "./bigtablet.js";
+```
+
+주의할 점:
+
+- **jsdom 은 레이아웃을 하지 않습니다.** 스크롤바 폭(`innerWidth - documentElement.clientWidth`)은 항상 0
+  이므로, 스크롤 잠금 보정을 검사하려면 두 값을 직접 세워야 합니다 (`setScrollbarWidth` 헬퍼 참고).
+- **내부 함수는 export 되지 않습니다.** `lockScroll` / `unlockScroll` 는 `Modal` · `Alert` 를 열고
+  닫으며 간접 검사합니다 - 통합 경로를 함께 보게 되어 오히려 낫습니다.
+- **문서화된 마크업으로 시작합니다.** 서버 템플릿이 렌더하는 형태(평면 `<ul>`, 서버가 심어둔 hidden
+  input 등)를 그대로 세워야 실제 회귀를 잡습니다 - 실제로 그 두 경로에서 버그가 나왔습니다.
+
+> 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` 만
+> 봅니다. Vanilla 를 넣으면 전체 수치가 크게 떨어지므로 별건으로 다룹니다 - 테스트 자체는 이미 돕니다.
+
+### 앵커 팝업(Dropdown·Combobox·Menu·Popover·Tooltip) 테스트
+
+배치·닫힘이 `getBoundingClientRect()` 에 달려 있어 jsdom 에서 두 가지가 걸립니다.
+
+- **jsdom 의 rect 는 전부 0 입니다.** 그래서 "앵커가 뷰포트 밖" 판정(`bottom <= 0`)이 아무것도 안
+  했는데 참이 됩니다. `useAnchoredPosition` 이 **앵커 크기가 0 이면 `anchorHidden` 을 false 로
+  두는** 것은 이 때문입니다(#624). 이 가드를 빼면 열자마자 닫혀 기존 테스트 6개가 무너집니다 -
+  뮤테이션으로 확인된 수치입니다. 위치·가시성을 검사하려면 rect 를 직접 세웁니다:
+
+  ```ts
+  vi.spyOn(wrapper, "getBoundingClientRect").mockReturnValue({
+    top: -80, bottom: -40, left: 0, right: 200, width: 200, height: 40,
+  } as DOMRect);
+  await act(async () => {
+    fireEvent.scroll(window);              // 훅은 scroll(capture) 로 재계산하고
+    await new Promise((r) => requestAnimationFrame(() => r(null))); // rAF 로 배칭한다
+  });
+  ```
+
+- **포커스 복귀는 `focus({ preventScroll: true })` 로 단언합니다.** 트리거가 화면 밖이라 닫는
+  경로에서 그냥 `focus()` 하면 브라우저가 방금 벗어난 트리거로 화면을 되감습니다. jsdom 은
+  스크롤을 하지 않아 증상이 안 보이므로, 인자까지 단언해야 회귀가 잡힙니다:
+  `expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true })`.
+
+레이아웃 자체(높이 상한·정렬·flip)는 jsdom 이 계산하지 않습니다 - 아래 브라우저 레이아웃 테스트로 잽니다.
+
+### 브라우저 레이아웃 테스트 (`*.browser.test.tsx`)
+
+배치·잘림·스크롤 잠금처럼 **실제 레이아웃이 있어야 의미 있는 것**은 `{폴더명}.browser.test.tsx` 에
+씁니다. `vitest.config.ts` 의 `browser` 프로젝트가 headless Chromium 에서 돌리고(`pnpm test:browser`),
+`unit` 프로젝트와 뮤테이션 테스트는 이 파일을 뺍니다. 지금 덮는 것:
+
+| 대상 | 검사 |
+|------|------|
+| Tooltip · Popover · Menu | flip·shift, 정렬(`align`), Menu 가 `overflow: hidden` 조상에 안 잘림(#586) |
+| Dropdown · Combobox | 높이 상한(#621), 트리거 정렬, 375px 넘침 |
+| DatePicker (`variant="calendar"`) | 달력 flip, 320px 에서 요일 7칸이 패널 안 |
+| Modal · Drawer · Vanilla Modal | 좁은 화면 잘림, 스크롤 잠금 - 콘텐츠 안 밀림·스크롤바 자리 덮음·패널 중심(#574·#635)·스크롤 위치 복원 |
+| Table | 클릭 가능한 행의 키보드 포커스 테두리(#802) - 키보드에서만, 마우스 클릭엔 없음, 다크 테마 색 |
+
+- **뷰포트는 `page.viewport(w, h)`** (`vitest/browser`) 로 테스트마다 세웁니다. 앵커는
+  `position: fixed` 래퍼로 원하는 좌표에 둡니다.
+- **컴포넌트 `style.scss` 를 테스트에서 import 합니다.** 컴포넌트 파일이 이미 import 하지만, 레이아웃
+  테스트가 CSS 에 기대고 있다는 걸 드러냅니다. 토큰 CSS 변수(`theme.scss`)는 `src/test/browser-setup.ts` 가 넣습니다.
+- **스크롤바가 보입니다.** headless Chromium 은 기본으로 스크롤바를 숨겨(폭 0) 스크롤 잠금 보정이
+  공회전합니다 - 프로젝트 설정이 `--hide-scrollbars` 를 빼서 15px 클래식 스크롤바가 생깁니다.
+- **소스를 일부러 깨서 테스트가 실패하는지 봅니다.** 처음 쓴 테스트 절반이 그래도 통과했습니다 -
+  CSS 기본 상한(`max-width: 240px`)이 인라인 상한을 가리거나, `elementFromPoint` 가 `null` 을
+  내는 경우 `?.closest()` 가 `undefined` 가 되어 `not.toBeNull()` 을 통과했습니다.
+- Modal 의 `role="dialog"` 는 화면 전체 오버레이(`.modal`)에 있습니다. 패널 크기는 `.modal_panel` 로 잽니다.
+- **Vanilla 는 `bigtablet.{컴포넌트}.browser.test.ts`.** 소스가 ES 모듈이라(#926) unit 과 같이
+  `import { Modal } from "./bigtablet.js"` 로 받습니다. 전역 `Bigtablet` 은 빌드된 `bigtablet.min.js` 에만 생깁니다.
+
+### 시각 회귀 테스트 (`*.visual.test.tsx`)
+
+컴포넌트의 기본 모양을 **기준 스크린샷과 픽셀 비교**합니다 (#879). 렌더가 바뀌는 변경을 사람 눈 말고도
+잡으려는 것입니다 - 의도한 변경이면 기준을 같이 갱신하고, 의도하지 않은 변경이면 테스트가 막습니다.
+`src/test/components.visual.test.tsx` 가 Button · IconButton · Badge · Chip · InlineAlert · EmptyState ·
+ErrorState · TextField · Checkbox/Radio/Toggle · Card · Tabs · Pagination 을 **라이트·다크** 로 찍습니다.
+팝업(Dropdown·Menu·Toast 등)은 포털·타이머가 얽혀 첫 범위에서 뺐습니다.
+
+- **기준 이미지는 CI 와 같은 Playwright 이미지(linux)에서 만든 것만 씁니다.** 폰트·안티앨리어싱이 OS 마다
+  달라 맥 렌더는 기준이 될 수 없습니다. 파일 이름에 platform 이 붙고(`-chromium-linux.png`), 맥·윈도 결과는
+  gitignore 됩니다. 기준은 `src/test/__visual__/<테스트파일>/` 에 있습니다.
+- **CI 에서만 돕니다** - a11y job 의 `Run visual regression tests` 단계. 실패하면 `visual-screenshots`
+  artifact 에 실제(`-actual-`)·차이(`-diff-`)·새 기준(`-reference-`) 스크린샷이 남습니다.
+- **의도한 렌더 변경이면** 실패한 실행의 run-id 로 `pnpm visual:accept <run-id>` 를 돌립니다. artifact 를
+  받아 `-actual-`·`-reference-` 를 기준 이름으로 바꿔 넣습니다. 받은 이미지를 열어 보고 커밋합니다.
+  PR 본문에 `(렌더 변경)` 과 함께 바뀐 기준 이미지를 적습니다.
+- **움직임은 멈춥니다** - `src/test/visual-setup.ts` 가 transition·animation·커서 깜빡임을 끕니다.
+- 새 컴포넌트를 추가할 때는 `shoot(이름, <요소 />)` 한 줄을 더하고, 첫 CI 실패의 `-reference-` 를 받아 넣습니다.
 
 ## 테스트 패턴
 
@@ -426,17 +426,17 @@ it("calls callback with correct arguments", () => {
 
 `pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 95 test files / 1884 passed · 1 skipped.
 
-> **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나온다** - 실측 58.95% stmts.
-> 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아니다. 예를 들어
-> `src/utils/**` 는 스토리북 48.4% · unit 93.3% 다 - 훅과 유틸은 스토리가 거의 건드리지 않는다.
-> **스토리북 커버리지는 목표 지표가 아니다** - 그 러너의 목적은 axe a11y 검증이고 커버리지는 부산물이다.
-> 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준이다.
+> **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나옵니다** - 실측 58.95% stmts.
+> 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아닙니다. 예를 들어
+> `src/utils/**` 는 스토리북 48.4% · unit 93.3% 입니다 - 훅과 유틸은 스토리가 거의 건드리지 않습니다.
+> **스토리북 커버리지는 목표 지표가 아닙니다** - 그 러너의 목적은 axe a11y 검증이고 커버리지는 부산물입니다.
+> 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
 | **All files** | **96.11%** | **93.74%** | **97.03%** | **97.41%** |
 
-아래는 **100% 미만**인 것만 나열한 것이다 (43개는 전 지표 100% 라 빠져 있다).
+아래는 **100% 미만**인 것만 나열한 것입니다 (43개는 전 지표 100% 라 빠져 있습니다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
@@ -486,10 +486,10 @@ it("calls callback with correct arguments", () => {
 | utils/use-reduced-motion.ts | 95.24% | 100% | 85.71% | 94.74% |
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 
-> 이 절의 수치와 표는 `pnpm coverage:docs` 가 쓴다 - unit 테스트를 커버리지와 함께 돌리고
-> `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표와 `CLAUDE.md` 의 한 줄을 갱신한다.
-> 손으로 고치지 않는다(예전에 788 tests 시절 수치로 굳어 있었다). 릴리즈 PR(develop → main)이 열리면 CI
-> (`.github/workflows/coverage-docs.yml`)가 이 명령을 돌려 바뀐 수치를 develop 에 커밋한다.
+> 이 절의 수치와 표는 `pnpm coverage:docs` 가 씁니다 - unit 테스트를 커버리지와 함께 돌리고
+> `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표와 `CLAUDE.md` 의 한 줄을 갱신합니다.
+> 손으로 고치지 않습니다(예전에 788 tests 시절 수치로 굳어 있었습니다). 릴리즈 PR(develop → main)이 열리면 CI
+> (`.github/workflows/coverage-docs.yml`)가 이 명령을 돌려 바뀐 수치를 develop 에 커밋합니다.
 
 ## 컴포넌트별 테스트 예시
 
@@ -610,8 +610,8 @@ describe("Modal", () => {
 
 ### 개요
 
-모든 Storybook 스토리는 `@storybook/addon-a11y`를 통해 axe-core 기반 접근성 검사를 자동으로 수행합니다.
-CI에서는 Playwright(headless Chromium)로 실제 DOM에서 렌더링하여 테스트합니다.
+모든 Storybook 스토리는 `@storybook/addon-a11y` 로 axe-core 접근성 검사를 자동으로 받습니다.
+CI 에서는 Playwright(headless Chromium)로 실제 DOM 에 렌더해 검사합니다.
 
 ### 동작 방식
 
