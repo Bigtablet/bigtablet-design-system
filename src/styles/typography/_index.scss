@@ -68,8 +68,8 @@
 // 옮겨 적는 값(아이디·인증코드·시리얼·사업자번호)에서 오탈자를 만든다.
 // cv05 = l 에 꼬리, cv08 = I 에 세리프. Pretendard 가 아닌 폴백 폰트는 두 feature 를
 // 그냥 무시하므로 안전하다.
-// 주의: slashed-zero 를 포함하므로 tabular_nums / slashed_zero 와 같은 선택자에서
-// 겹쳐 쓰면 안 된다 - 셋 다 font-variant-numeric 이라 뒤에 온 것만 남는다.
+// 주의: slashed-zero 를 포함하므로 tabular_nums 와 같은 선택자에서 겹쳐 쓰면 안 된다 -
+// 둘 다 font-variant-numeric 이라 뒤에 온 것만 남는다.
 // 문장 속 링크. `Prose`(마크다운 본문)와 UI 텍스트가 같은 규칙을 쓴다 - 사용자가 링크
 // 어포던스를 두 벌 배우지 않게.
 //

@@ -63,7 +63,7 @@ DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개
 | 믹스인 | 이유 | 대신 쓸 것 |
 |------|------|------|
 | `glass_light` | 색 · 테두리를 하드코딩합니다 | 카드면 `<Card variant="glass">`. 그 밖에는 쓰던 선언을 앱 SCSS 로 옮기고 색은 토큰으로 바꿉니다 |
-| `hover_lift` | 그림자를 하드코딩합니다 | 카드면 `<Card interactive>`. 그 밖에는 `transition: token.$transition_lift;` 와 `@include token.hoverable { &:hover { box-shadow: token.$elevation_level3; } }` |
+| `hover_lift` | 그림자를 하드코딩합니다 | 카드면 `<Card interactive>`. 그 밖에는 `transition: token.$transition_lift;` 와 `@include token.hoverable { &:hover { box-shadow: token.$elevation_level3; } }`, 그리고 `prefers-reduced-motion: reduce` 에서 `transition: none` |
 | `hover_glow` | 단색 DS 에 없는 파란 glow 가 기본값입니다 | 강조가 필요하면 `token.$elevation_level*` 그림자나 테두리 색 변화로 바꿉니다 |
 | `slashed_zero` | `legible_identifiers` 가 이미 포함하고, `tabular_nums` 와 같은 선택자에 쓰면 뒤에 온 것만 남습니다 | 식별자 칸은 `@include token.legible_identifiers`. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero;` 를 직접 씁니다 |
 
