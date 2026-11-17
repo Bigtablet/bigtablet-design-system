@@ -27,7 +27,7 @@ export const field: DocPage = {
 	],
 	props: ["FieldProps", "FormProps", "FormActionsProps"],
 	notes: [
-		"Field 안에서는 입력에 `label` 을 주지 않습니다 - 두 번 보입니다",
+		"Field 안에서는 입력에 `label` 을 주지 않습니다. 주면 라벨이 두 번 보입니다",
 		"Field 의 `error` 가 Form `errors[name]` 보다 우선합니다",
 	],
 };

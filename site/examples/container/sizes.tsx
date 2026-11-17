@@ -6,13 +6,13 @@ export default function Example() {
 	return (
 		<div style={{ display: "grid", gap: 8 }}>
 			<Container size="sm">
-				<div style={box}>sm - 폼 · 로그인</div>
+				<div style={box}>sm: 폼 · 로그인</div>
 			</Container>
 			<Container size="md">
-				<div style={box}>md (768px) - 블로그 본문</div>
+				<div style={box}>md (768px): 블로그 본문</div>
 			</Container>
 			<Container size="xl">
-				<div style={box}>xl (기본) - 일반 페이지</div>
+				<div style={box}>xl (기본): 일반 페이지</div>
 			</Container>
 		</div>
 	);

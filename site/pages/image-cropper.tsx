@@ -15,7 +15,7 @@ export const imageCropper: DocPage = {
 	examples: [{ id: "image-cropper/avatar", title: "원형" }],
 	props: "ImageCropperProps",
 	notes: [
-		'모달은 포함하지 않습니다 - Modal 로 감싸고 "적용" 버튼에서 `crop()` 을 부릅니다',
+		'모달은 포함하지 않습니다. Modal 로 감싸고 "적용" 버튼에서 `crop()` 을 부릅니다',
 		"키보드로도 움직이고(방향키) 확대합니다(+ / -)",
 	],
 };

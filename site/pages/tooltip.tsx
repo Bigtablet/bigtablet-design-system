@@ -14,5 +14,5 @@ export const tooltip: DocPage = {
 	],
 	examples: [{ id: "tooltip/basic", title: "아이콘 버튼" }],
 	props: "TooltipProps",
-	notes: ["마우스 · 포커스에서만 뜹니다 - 꼭 알아야 하는 정보는 담지 않습니다"],
+	notes: ["마우스 · 포커스에서만 뜨므로 꼭 알아야 하는 정보는 담지 않습니다"],
 };

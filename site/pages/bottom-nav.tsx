@@ -22,7 +22,7 @@ export const bottomNav: DocPage = {
 	],
 	props: ["BottomNavProps", "BottomNavItemProps"],
 	notes: [
-		"`position: fixed` 라 본문 끝을 가립니다 - `BottomNavSpacer` 를 깔거나 `--bt-bottom-nav-total-height` 로 여백을 잡습니다",
-		"라벨은 짧게 - 넘치면 말줄임으로 잘립니다",
+		"`position: fixed` 라 본문 끝을 가립니다. `BottomNavSpacer` 를 깔거나 `--bt-bottom-nav-total-height` 로 여백을 잡습니다",
+		"라벨은 짧게 씁니다. 넘치면 말줄임으로 잘립니다",
 	],
 };

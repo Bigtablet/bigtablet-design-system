@@ -6,7 +6,7 @@ const PEOPLE = ["박상민", "김지원", "이수아", "최현우", "정다은"]
 	label: name,
 }));
 
-// 실제로는 서버에 묻는 함수 - 입력이 멈추고 250ms 뒤에 한 번만 불립니다
+// 실제로는 서버에 묻는 함수입니다. 입력이 멈추고 250ms 뒤에 한 번만 불립니다
 const search = async (query: string) => {
 	await new Promise((r) => setTimeout(r, 300));
 	return PEOPLE.filter((p) => p.label.includes(query));

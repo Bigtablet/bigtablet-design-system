@@ -14,7 +14,5 @@ export const accordion: DocPage = {
 	],
 	examples: [{ id: "accordion/faq", title: "FAQ" }],
 	props: "AccordionProps",
-	notes: [
-		"제목은 `headingAs` 로 정한 제목 태그 안의 버튼입니다 - 문서 구조에 맞춰 h2~h6 을 고릅니다",
-	],
+	notes: ["제목은 `headingAs` 로 정한 제목 태그 안의 버튼이라, 문서 구조에 맞춰 h2~h6 을 고릅니다"],
 };

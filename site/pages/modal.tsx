@@ -20,7 +20,7 @@ export const modal: DocPage = {
 	],
 	props: "ModalProps",
 	notes: [
-		"`document.body` 로 포털 렌더됩니다 - 부모의 `overflow: hidden` 에 잘리지 않습니다",
+		"`document.body` 로 포털로 렌더되어 부모의 `overflow: hidden` 에 잘리지 않습니다",
 		"닫히는 모션이 끝날 때까지 DOM 에 남습니다. 본문 데이터는 `onExited` 에서 비웁니다",
 	],
 };

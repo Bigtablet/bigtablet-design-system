@@ -267,8 +267,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }`}
 				/>
 				<p>
-					CSS 는 따로 import 하지 않습니다 - 컴포넌트가 자기 CSS 와 공통 테마 변수를 함께
-					가져옵니다. Next.js 를 webpack 으로 빌드하면 <Code>next.config</Code> 의{" "}
+					CSS 는 따로 import 하지 않습니다. 컴포넌트가 자기 CSS 와 공통 테마 변수를 함께 가져옵니다.
+					Next.js 를 webpack 으로 빌드하면 <Code>next.config</Code> 의{" "}
 					<Code>experimental.optimizePackageImports</Code> 에 이 패키지를 넣어야 쓰지 않는 컴포넌트
 					CSS 가 빠집니다 (Turbopack 은 그대로 됩니다).
 				</p>

@@ -20,5 +20,5 @@ export const pageHeader: DocPage = {
 		},
 	],
 	props: "PageHeaderProps",
-	notes: ["제목은 `h1` 입니다 - 화면에 하나만 둡니다"],
+	notes: ["제목은 `h1` 이라 화면에 하나만 둡니다"],
 };

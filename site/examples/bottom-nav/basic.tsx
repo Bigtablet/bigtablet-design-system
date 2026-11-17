@@ -2,7 +2,7 @@ import { BottomNav, BottomNavItem, BottomNavSpacer } from "@bigtablet/design-sys
 import { Home, Search, ShoppingBag, User } from "lucide-react";
 import { useState } from "react";
 
-// 화면 아래에 고정됩니다 - 본문 끝에 BottomNavSpacer 를 깔아 가리지 않게 합니다
+// 화면 아래에 고정되므로 본문 끝에 BottomNavSpacer 를 깔아 가리지 않게 합니다
 export default function Example() {
 	const [tab, setTab] = useState("home");
 	const items = [

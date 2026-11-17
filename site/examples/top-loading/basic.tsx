@@ -1,7 +1,7 @@
 import { Button, TopLoading } from "@bigtablet/design-system";
 import { useState } from "react";
 
-// 화면 맨 위에 붙는 진행 줄 - 페이지 이동 · 큰 저장에 씁니다
+// 화면 맨 위에 붙는 진행 줄입니다. 페이지 이동 · 큰 저장에 씁니다
 export default function Example() {
 	const [loading, setLoading] = useState(false);
 	return (

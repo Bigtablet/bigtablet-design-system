@@ -13,5 +13,5 @@ export const stat: DocPage = {
 	],
 	examples: [{ id: "stat/basic", title: "변화량" }],
 	props: "StatProps",
-	notes: ["`deltaTone` 은 좋음 · 나쁨입니다 - 숫자 부호와 따로 줍니다 (비용이 줄면 positive)"],
+	notes: ["`deltaTone` 은 좋음 · 나쁨이라 숫자 부호와 따로 줍니다 (비용이 줄면 positive)"],
 };

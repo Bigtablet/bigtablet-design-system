@@ -10,7 +10,7 @@ export const themeProvider: DocPage = {
 		"라이트 · 다크를 화면에서 전환할 때 씁니다. 대상 요소에 `data-theme` 를 붙여 CSS 변수를 바꿉니다.",
 	when: [
 		["앱 안에 테마 전환 버튼이 있음", "ThemeProvider + `useTheme`", true],
-		["OS 설정만 따르면 됨", "Provider 없이 - `prefers-color-scheme` 로 자동", false],
+		["OS 설정만 따르면 됨", "Provider 없이 `prefers-color-scheme` 로 자동", false],
 	],
 	examples: [
 		{

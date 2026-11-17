@@ -1,6 +1,6 @@
 import { Card, Grid } from "@bigtablet/design-system";
 
-// 폭에 따라 열 수가 바뀝니다 - 한 칸이 minColWidth 보다 좁아지면 줄을 바꿉니다
+// 폭에 따라 열 수가 바뀝니다. 한 칸이 minColWidth 보다 좁아지면 줄을 바꿉니다
 export default function Example() {
 	return (
 		<Grid cols="auto" minColWidth="180px" gap={12}>

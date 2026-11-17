@@ -1,7 +1,7 @@
 import { Button, Field, Form, TextField } from "@bigtablet/design-system";
 import { type FormEvent, type ReactNode, useState } from "react";
 
-// 서버가 돌려준 에러를 이름으로 한 번에 넘깁니다 - 첫 에러 칸으로 포커스가 갑니다
+// 서버가 돌려준 에러를 이름으로 한 번에 넘기면 첫 에러 칸으로 포커스가 갑니다
 export default function Example() {
 	const [errors, setErrors] = useState<Record<string, ReactNode>>({});
 	const submit = (e: FormEvent<HTMLFormElement>) => {

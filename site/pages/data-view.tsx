@@ -17,12 +17,12 @@ export const dataView: DocPage = {
 		{
 			id: "data-view/orders",
 			title: "주문 목록",
-			desc: "`query` 에 `{ data, isLoading, error, refetch }` 를 그대로 넘깁니다 - React Query 결과 모양과 같습니다.",
+			desc: "`query` 에 `{ data, isLoading, error, refetch }` 를 그대로 넘깁니다. React Query 결과와 모양이 같습니다.",
 		},
 	],
 	props: "DataViewProps",
 	notes: [
 		"`selectionActions` 를 주면 행 선택과 일괄 동작 바가 생깁니다",
-		"검색 · 페이지 나누기는 직접 합니다 - `query.data` 에는 지금 쪽의 행만 넘기고, 전체 쪽 수는 `pagination.totalPages` 로 줍니다",
+		"검색 · 페이지 나누기는 직접 합니다. `query.data` 에는 지금 쪽의 행만 넘기고, 전체 쪽 수는 `pagination.totalPages` 로 줍니다",
 	],
 };

@@ -14,5 +14,5 @@ export const card: DocPage = {
 	],
 	examples: [{ id: "card/basic", title: "기본 · 테두리" }],
 	props: "CardProps",
-	notes: ["`interactive` 면 카드 전체가 눌리는 표면이 됩니다 - 안에 다른 버튼을 두지 않습니다"],
+	notes: ["`interactive` 면 카드 전체가 눌리는 표면이 되므로 안에 다른 버튼을 두지 않습니다"],
 };

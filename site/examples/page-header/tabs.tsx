@@ -1,6 +1,6 @@
 import { PageHeader, Tab, TabList, TabPanel, Tabs } from "@bigtablet/design-system";
 
-// Tabs 가 PageHeader 와 본문을 함께 감쌉니다 - tabs 칸에는 TabList 만
+// Tabs 가 PageHeader 와 본문을 함께 감싸고, tabs 칸에는 TabList 만 둡니다
 export default function Example() {
 	return (
 		<Tabs defaultValue="all">

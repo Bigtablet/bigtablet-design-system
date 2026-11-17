@@ -245,7 +245,7 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 								<td>
 									<Code className="doc_type">{p.type}</Code>
 								</td>
-								<td>{"default" in p && p.default ? <DefaultValue value={p.default} /> : "-"}</td>
+								<td>{"default" in p && p.default ? <DefaultValue value={p.default} /> : null}</td>
 								<td>
 									<Md>{p.doc.split("\n")[0] ?? ""}</Md>
 								</td>

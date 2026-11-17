@@ -15,7 +15,5 @@ export const dateCalendar: DocPage = {
 	],
 	examples: [{ id: "date-calendar/basic", title: "기본" }],
 	props: "DateCalendarProps",
-	notes: [
-		'값은 `"YYYY-MM-DD"` 문자열입니다 - `Date` 로 바꾸면 시간대 때문에 하루 밀릴 수 있습니다',
-	],
+	notes: ['값은 `"YYYY-MM-DD"` 문자열입니다. `Date` 로 바꾸면 시간대 때문에 하루 밀릴 수 있습니다'],
 };

@@ -744,6 +744,11 @@ $preview_scale: 0.6;
   }
 }
 
+// 표 바로 아래 붙는 예시 코드
+.doc_table_wrap + .doc_snippet {
+  margin-top: token.$spacing_16;
+}
+
 .doc_snippet {
   position: relative;
   border: $line;

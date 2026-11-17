@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import tokens from "../src/styles/tokens.json";
 import { Code, Md } from "./docs";
 import { CodeBlock } from "./guides";
+import { undash } from "./undash";
 
 // 토큰 원본(tokens.json)에서 바로 표를 만든다 - 토큰을 바꾸면 문서가 따라온다. 손으로 쓰는 값은 없다.
 
@@ -47,7 +48,7 @@ function lookup(path: string): unknown {
  */
 const summaryOf = (description: unknown) => {
 	const text = String(description ?? "");
-	return /\s/.test(text) && text.length <= 60 ? text : undefined;
+	return /\s/.test(text) && text.length <= 60 ? undash(text) : undefined;
 };
 
 function collect(path: string): Token[] {
@@ -198,7 +199,7 @@ function Colors() {
 		<FoundationPage
 			title="색"
 			name="Colors"
-			lede="이름이 용도를 말합니다 - text 는 글자, bg 는 바탕. 왼쪽 칸이 라이트, 오른쪽 칸이 다크 값이고, 테마에 따라 CSS 변수가 알아서 바뀝니다."
+			lede="이름이 용도를 말합니다. text 는 글자, bg 는 바탕입니다. 왼쪽 칸이 라이트, 오른쪽 칸이 다크 값이고, 테마에 따라 CSS 변수가 알아서 바뀝니다."
 		>
 			<Group title="쓰는 법">
 				<CodeBlock
@@ -237,7 +238,7 @@ function Typography() {
 		<FoundationPage
 			title="타이포그래피"
 			name="Typography"
-			lede="글자 크기가 아니라 역할로 고릅니다 - 제목이면 heading, 본문이면 body. SCSS 믹스인 하나가 크기 · 굵기 · 줄 높이를 함께 정합니다."
+			lede="글자 크기가 아니라 역할로 고릅니다. 제목이면 heading, 본문이면 body 입니다. SCSS 믹스인 하나가 크기 · 굵기 · 줄 높이를 함께 정합니다."
 		>
 			<Group title="쓰는 법">
 				<CodeBlock
@@ -357,7 +358,7 @@ function Motion() {
 		>
 			<Group
 				title="길이"
-				desc="transition_* 는 길이와 곡선이 함께 들어 있습니다 - 곡선을 또 붙이면 CSS 가 깨집니다."
+				desc="transition_* 는 길이와 곡선이 함께 들어 있어서 곡선을 또 붙이면 CSS 가 깨집니다."
 			>
 				<TokenTable items={all.filter((t) => t.name.startsWith("duration"))} />
 			</Group>
@@ -395,7 +396,7 @@ function BreakpointTable() {
 								</td>
 								<td className="fd_value">
 									{next
-										? `${Number.parseInt(String(t.light), 10)} – ${Number.parseInt(String(next.light), 10) - 1}px`
+										? `${Number.parseInt(String(t.light), 10)}~${Number.parseInt(String(next.light), 10) - 1}px`
 										: `${t.light} 이상`}
 								</td>
 								<td className="fd_nowrap">
@@ -428,6 +429,30 @@ function Layout() {
 				desc="구간 하나에만 걸 때는 `token.compact`, 그 폭 이상 전부에 걸 때는 `token.from_medium` 처럼 씁니다."
 			>
 				<BreakpointTable />
+				<CodeBlock
+					code={`// 좁은 화면에서만 세로로 쌓기
+.toolbar {
+  display: flex;
+  gap: token.$spacing_8;
+
+  @include token.compact {
+    flex-direction: column;
+  }
+}
+
+// 600px 이상부터 2열, 1200px 이상부터 3열
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @include token.from_medium {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include token.from_large {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}`}
+				/>
 			</Group>
 			<Group
 				title="겹침 순서 (z-index)"

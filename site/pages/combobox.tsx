@@ -20,5 +20,5 @@ export const combobox: DocPage = {
 		},
 	],
 	props: "ComboboxProps",
-	notes: ["`onSearch` 는 Promise 를 돌려줍니다 - 그동안 목록에 로딩 표시가 뜹니다"],
+	notes: ["`onSearch` 는 Promise 를 돌려주고, 그동안 목록에 로딩 표시가 뜹니다"],
 };

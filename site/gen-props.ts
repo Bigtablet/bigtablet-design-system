@@ -1,6 +1,7 @@
 // 컴포넌트 Props 타입에서 props 표를 뽑는다 - 문서에 손으로 쓰는 표가 없어진다.
 import { writeFileSync } from "node:fs";
 import ts from "typescript";
+import { undash } from "./undash";
 
 const program = ts.createProgram(["src/index.ts"], {
 	jsx: ts.JsxEmit.ReactJSX,
@@ -46,7 +47,7 @@ for (const name of NAMES) {
 			let doc = ts.displayPartsToString(p.getDocumentationComment(checker));
 			// 이 저장소는 기본값을 설명 끝 "(기본값: x)" 로 적는다 - 열로 옮긴다
 			const found = takeDefault(doc);
-			doc = found.doc;
+			doc = undash(found.doc);
 			return {
 				name: p.name,
 				// 별칭(ButtonVariant)은 실제 값 목록으로 풀어 보여 준다
@@ -58,8 +59,10 @@ for (const name of NAMES) {
 								"",
 							),
 				required: !(p.flags & ts.SymbolFlags.Optional),
-				default:
+				// 통째로 문자열 값인 기본값("현재 {page}쪽 - …")은 실제 문구라 건드리지 않는다
+				default: ((v) => (v && !/^".*"$/.test(v) ? undash(v) : v))(
 					ts.displayPartsToString(tags.find((t) => t.name === "default")?.text) || found.value,
+				),
 				doc,
 			};
 		})

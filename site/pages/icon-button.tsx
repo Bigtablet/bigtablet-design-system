@@ -22,5 +22,5 @@ export const iconButton: DocPage = {
 		},
 	],
 	props: "IconButtonProps",
-	notes: ["아이콘은 `aria-hidden` 으로 감싸집니다 - 이름은 `aria-label` 로만 전해집니다"],
+	notes: ["아이콘은 `aria-hidden` 으로 감싸지고, 이름은 `aria-label` 로만 전해집니다"],
 };
