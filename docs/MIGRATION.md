@@ -68,7 +68,7 @@ DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개
 | `hover_glow` | 단색 DS 에 없는 파란 glow 가 기본값입니다 | 강조가 필요하면 `token.$elevation_level*` 그림자나 테두리 색 변화로 바꿉니다 |
 | `slashed_zero` | `legible_identifiers` 가 이미 포함하고, `tabular_nums` 와 같은 선택자에 쓰면 뒤에 온 것만 남습니다 | 식별자 칸은 `@include token.legible_identifiers`. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero;` 를 직접 씁니다 |
 
-**앱 쪽에서 할 일:** `grep -rnE "@include +([a-z_-]+\.)?(glass_light|hover_lift|hover_glow|slashed_zero)\b" --include=*.scss` 로 찾습니다. `@use … as ds` 처럼 네임스페이스를 바꿔 써도 걸립니다. 빌드 로그의 Sass 경고에도 위치가 나옵니다.
+**앱 쪽에서 할 일:** `grep -rnE "@include +([A-Za-z0-9_-]+\.)?(glass[-_]light|hover[-_]lift|hover[-_]glow|slashed[-_]zero)\b" --include=*.scss` 로 찾습니다. 네임스페이스(`ds.` · `DS2.` · 없음)와 Sass 가 같게 보는 `-` · `_` 표기를 모두 잡습니다. 빌드 로그의 Sass 경고에도 위치가 나옵니다.
 
 ---
 
