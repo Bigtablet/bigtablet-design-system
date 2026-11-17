@@ -409,6 +409,25 @@ code {
   @include text_wrap;
 }
 
+.doc_head_actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: token.$spacing_12;
+  margin-top: token.$spacing_20;
+}
+
+.doc_head_link {
+  color: token.$color_text_caption;
+  font-size: token.$font_size_14;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: token.$color_text_heading;
+  }
+}
+
 .doc_head {
   padding-top: token.$spacing_48;
   padding-bottom: token.$spacing_48;

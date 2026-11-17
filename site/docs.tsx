@@ -2,6 +2,7 @@ import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
 import { ChevronRight } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { splitSentences } from "src/utils/sentences";
+import { AGENT_RULES, componentDoc } from "./llms";
 import props from "./props.json";
 
 export type PropsName = keyof typeof props;
@@ -267,6 +268,22 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				<p className="doc_lede">
 					<Md>{page.summary}</Md>
 				</p>
+				<div className="doc_head_actions">
+					{/* 채팅에 붙여 넣을 한 장 - 패키지 규칙을 끝에 붙여 이 문서만으로도 쓰게 한다 */}
+					<CopyButton
+						size="sm"
+						variant="outline"
+						label="마크다운 복사"
+						copiedLabel="복사했습니다"
+						aria-label={`${page.title} 문서를 마크다운으로 복사`}
+						text={() =>
+							`${componentDoc(page, sourceOf)}\n## @bigtablet/design-system 규칙\n\n${AGENT_RULES.join("\n")}\n`
+						}
+					/>
+					<a className="doc_head_link" href="#/ai">
+						AI 로 쓰기
+					</a>
+				</div>
 			</header>
 
 			<Section id="when" title="언제 쓰는가">

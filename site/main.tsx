@@ -76,6 +76,9 @@ function App() {
 					<a href="#/install" aria-current={slug === "install" ? "page" : undefined}>
 						설치
 					</a>
+					<a href="#/ai" aria-current={slug === "ai" ? "page" : undefined}>
+						AI
+					</a>
 				</nav>
 				<SiteSearch pages={PAGES} />
 				<div className="site_top_actions">

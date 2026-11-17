@@ -5,12 +5,14 @@ import {
 	Dropdown,
 	Field,
 	InlineAlert,
+	SegmentedControl,
 	TextField,
 } from "@bigtablet/design-system";
 import { Code2, Palette, Rocket } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import pkg from "../package.json";
 import { Code, ComponentCard, type DocPage, Md } from "./docs";
+import { AGENT_SNIPPET } from "./llms";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
 export const GITHUB = "https://github.com/Bigtablet/bigtablet-design-system";
@@ -306,17 +308,11 @@ export function SaveButton() {
 				</p>
 			</Block>
 
-			<Block id="agents" title="Claude Code · Codex 에서 쓰기">
+			<Block id="agents" title="AI 에이전트로 쓰기">
 				<p>
-					패키지에 에이전트용 문서가 함께 실립니다. 컴포넌트마다 언제 쓰는가 · 예제 · Props 가 들어
-					있고, 설치한 버전과 내용이 같아 옛 prop 을 권하는 일이 없습니다. 아래 내용을 Claude Code 는{" "}
-					<Code>CLAUDE.md</Code>, Codex 는 <Code>AGENTS.md</Code> 에 넣어 이 문서를 먼저 읽게
-					합니다. 두 파일을 다 쓰면 양쪽에 같은 줄을 둡니다.
+					Claude Code · Codex · Cursor 가 이 패키지를 제대로 쓰게 하는 설정은{" "}
+					<a href="#/ai">AI 로 쓰기</a> 에 있습니다.
 				</p>
-				<CodeBlock
-					code={`## UI
-- 화면은 @bigtablet/design-system 컴포넌트로 만든다. 쓰기 전에 node_modules/@bigtablet/design-system/dist/llms/index.md 를 읽고, 고른 컴포넌트의 문서(dist/llms/components/*.md)를 따른다.`}
-				/>
 			</Block>
 
 			<Block id="upgrade" title="버전을 올릴 때">
@@ -395,10 +391,133 @@ function Vanilla() {
 	);
 }
 
+/* ─── AI 로 쓰기 ─────────────────────────────────────────────────────── */
+
+type Agent = "claude" | "codex" | "cursor";
+
+// 같은 내용을 에이전트마다 읽는 파일에 둔다. Cursor 규칙 파일은 앞머리(frontmatter)가 있어야 늘 적용된다
+const AGENT_FILES: Record<Agent, { file: string; code: string }> = {
+	claude: { file: "CLAUDE.md", code: AGENT_SNIPPET },
+	codex: { file: "AGENTS.md", code: AGENT_SNIPPET },
+	cursor: {
+		file: ".cursor/rules/bigtablet.mdc",
+		code: `---
+description: Bigtablet 디자인 시스템으로 화면을 만들 때
+alwaysApply: true
+---
+${AGENT_SNIPPET.split("\n").slice(1).join("\n")}`,
+	},
+};
+
+// 문서만 주고 "구성원 관리 화면" 을 만들게 했을 때 에이전트가 고른 조합 - 문서가 바뀌어도 이 답이 나와야 한다
+const PROMPT_PICKS: [string, string][] = [
+	["제목과 초대 버튼", "PageHeader"],
+	["검색 · 페이지가 있는 구성원 표", "DataView + Badge"],
+	["초대 대화 상자 (이메일 검증 · 역할 선택)", "Modal + Field + TextField + Dropdown"],
+	["보냈다는 알림", "useToast"],
+	["삭제 전 확인", "useConfirm"],
+];
+
+function Ai() {
+	const [agent, setAgent] = useState<Agent>("claude");
+	const { file, code } = AGENT_FILES[agent];
+	return (
+		<article>
+			<header className="doc_block doc_head">
+				<h1>
+					AI 로 쓰기 <span className="doc_name">AI Agents</span>
+				</h1>
+				<p className="doc_lede">
+					<Md>
+						{
+							"패키지에 에이전트가 읽는 문서가 함께 실립니다. 설정 한 번이면 에이전트가 이 디자인 시스템의 컴포넌트로 화면을 만들고, 설치한 버전에 없는 prop 을 지어내지 않습니다."
+						}
+					</Md>
+				</p>
+			</header>
+
+			<Block id="setup" title="1. 에이전트에 연결하기">
+				<p>
+					앱 저장소의 에이전트 설정 파일에 아래 내용을 넣습니다. 여러 에이전트를 쓰면 파일마다 같은
+					내용을 둡니다.
+				</p>
+				<SegmentedControl<Agent>
+					size="sm"
+					aria-label="에이전트"
+					value={agent}
+					onValueChange={setAgent}
+					items={[
+						{ value: "claude", label: "Claude Code" },
+						{ value: "codex", label: "Codex" },
+						{ value: "cursor", label: "Cursor" },
+					]}
+				/>
+				<p>
+					<Code>{file}</Code>
+				</p>
+				<CodeBlock code={code} />
+			</Block>
+
+			<Block id="contents" title="2. 들어 있는 것">
+				<p>
+					<Code>pnpm build</Code> 가 이 사이트와 같은 원본(페이지 데이터 · 예제 파일 · 타입)에서
+					만들어 패키지에 싣습니다. 사이트와 내용이 갈라지지 않습니다.
+				</p>
+				<CodeBlock
+					code={`node_modules/@bigtablet/design-system/dist/llms/
+├── index.md           # 쓰기 전 규칙 + 묶음별 컴포넌트 목록
+└── components/
+    ├── button.md      # 언제 쓰는가 · 예제 코드 · Props 표 · 알아 둘 것
+    ├── data-view.md   # props 가 가리키는 하위 타입(DataViewToolbar …) 표까지
+    └── …`}
+				/>
+			</Block>
+
+			<Block id="copy" title="3. 한 컴포넌트만 붙여 넣기">
+				<p>
+					설정 없이 채팅에서 바로 물을 때는 컴포넌트 페이지 맨 위의 <strong>마크다운 복사</strong>{" "}
+					를 눌러 붙여 넣습니다. 그 컴포넌트 문서에 패키지 규칙까지 붙어 복사됩니다.
+				</p>
+			</Block>
+
+			<Block id="prompt" title="4. 이렇게 요청합니다">
+				<p>
+					컴포넌트 이름을 몰라도 화면을 설명하면 됩니다. 에이전트는 각 문서의 "언제 쓰는가" 로
+					컴포넌트를 고릅니다.
+				</p>
+				<CodeBlock code="구성원 관리 화면을 만들어 줘. 제목 옆에 초대 버튼, 검색과 페이지가 있는 구성원 표, 초대는 이메일 · 역할을 받는 대화 상자, 삭제는 한 번 확인받기." />
+				<p>문서만 읽은 에이전트가 고르는 조합입니다.</p>
+				<div className="doc_table_wrap">
+					<table className="doc_table">
+						<tbody>
+							{PROMPT_PICKS.map(([part, pick]) => (
+								<tr key={part}>
+									<td>{part}</td>
+									<td>
+										<Code>{pick}</Code>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</Block>
+
+			<Block id="feedback" title="문서가 틀렸을 때">
+				<p>
+					에이전트가 엉뚱한 컴포넌트를 고르거나 없는 prop 을 쓰면 문서의 빈틈입니다. 요청과 결과를
+					붙여 <a href={`${GITHUB}/issues/new`}>이슈</a> 로 남겨 주세요.
+				</p>
+			</Block>
+		</article>
+	);
+}
+
 /** 사이드바 맨 위 "시작하기" 묶음 - slug 가 "" 인 첫 화면 포함 */
 export const GUIDES = [
 	{ slug: "", title: "소개", Body: null },
 	{ slug: "install", title: "설치", Body: Install },
 	{ slug: "vanilla", title: "Vanilla", Body: Vanilla },
+	{ slug: "ai", title: "AI 로 쓰기", Body: Ai },
 	{ slug: "components", title: "전체 컴포넌트", Body: null },
 ] as const;
