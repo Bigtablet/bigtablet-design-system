@@ -8,7 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
-- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 deprecate)](#v4100-쓰이지-않는-scss-믹스인-4개-deprecate)
+- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
@@ -39,7 +39,7 @@
 | 지금 버전 | 읽을 섹션 |
 |------|------|
 | 4.10.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개-deprecate) (SCSS 믹스인 4개 deprecate. 지금은 동작하지만 쓰면 경고가 뜹니다) |
+| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate) (SCSS 믹스인 4개 · Tabs `fills` deprecate. 지금은 동작합니다) |
 | 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
 | Vanilla 를 3.8 미만에서 올림 | [v3.8.0](#v380-vanilla-패키지-정리) 의 치환 스크립트를 먼저 돌립니다 |
@@ -57,7 +57,7 @@
 
 ---
 
-## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 deprecate)
+## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate)
 
 DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개를 deprecated 로 표시했습니다. 지금은 그대로 동작하고, 쓰면 컴파일할 때 Sass 경고가 뜹니다. 이후 버전에서 제거합니다.
 
@@ -69,6 +69,17 @@ DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개
 | `slashed_zero` | `legible_identifiers` 가 이미 포함하고, `tabular_nums` 와 같은 선택자에 쓰면 뒤에 온 것만 남습니다 | 식별자 칸은 `@include token.legible_identifiers`. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero;` 를 직접 씁니다 |
 
 **앱 쪽에서 할 일:** `grep -rnE "@include +([A-Za-z0-9_-]+\.)?(glass[-_]light|hover[-_]lift|hover[-_]glow|slashed[-_]zero)\b" --include=*.scss` 로 찾습니다. 네임스페이스(`ds.` · `DS2.` · 없음)와 Sass 가 같게 보는 `-` · `_` 표기를 모두 잡습니다. 빌드 로그의 Sass 경고에도 위치가 나옵니다.
+
+### Tabs `variant="fills"` deprecate
+
+`fills`(채운 둥근 박스 그룹)는 SegmentedControl 과 거의 같아 보여 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않습니다. 둥근 박스 모양은 SegmentedControl 만 갖고, Tabs 는 밑줄(`line`)만 씁니다. `fills` 는 지금 그대로 동작하고 이후 버전에서 제거합니다.
+
+| 쓰던 곳 | 대신 쓸 것 |
+|------|------|
+| 탭마다 다른 패널이 나옴 | `variant` 를 빼서 기본 `line` 으로 |
+| 패널 없이 값만 고름 (보기 방식 · 기간 · 상태 필터) | `<SegmentedControl items={…} value onValueChange />` |
+
+**앱 쪽에서 할 일:** `grep -rn 'variant="fills"' --include=*.tsx` 로 찾습니다.
 
 ---
 

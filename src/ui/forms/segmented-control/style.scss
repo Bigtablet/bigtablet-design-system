@@ -1,7 +1,7 @@
 @use "src/styles/token" as token;
 
 // 트랙(dim) 위에서 선택된 칸만 떠오른 표면으로 채운다 - 색만이 아니라 표면·그림자로도 선택을
-// 구분한다(WCAG 1.4.1). 그림자는 떠오른 모양이라 흑백에서도 보인다. Tabs `fills` 와 모양이 비슷하지만 그쪽은 패널을 바꾸는 탭이다.
+// 구분한다(WCAG 1.4.1). 그림자는 떠오른 모양이라 흑백에서도 보인다. 이 알약 모양은 SegmentedControl 만 갖는다 - Tabs `fills` 는 같은 모양이라 deprecated (#1047).
 .segmented_control {
   display: inline-flex;
   align-items: stretch;
