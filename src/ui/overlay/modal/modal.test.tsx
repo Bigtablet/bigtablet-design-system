@@ -207,7 +207,7 @@ describe("Modal", () => {
 			</>,
 		);
 
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.body.dataset.openModals).toBe("2");
 
 		// Close the second modal
@@ -223,7 +223,7 @@ describe("Modal", () => {
 		);
 
 		// First modal still open - scroll must remain locked
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		// 닫힌 모달도 퇴출 애니메이션 동안 계속 렌더되므로 그 잠금이 아직 살아 있다.
 		// 닫기 시작 즉시 풀면 `scrollbar-gutter` 보정이 사라져 거터에 빈 띠가 보인다.
 		expect(document.body.dataset.openModals).toBe("2");
@@ -231,7 +231,7 @@ describe("Modal", () => {
 		// 두 번째의 퇴출이 끝나면 카운터가 내려가고, 첫 번째 잠금은 그대로 남는다.
 		await act(async () => anim.finish());
 		await waitFor(() => expect(document.body.dataset.openModals).toBe("1"));
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 	});
 
 	it("releases the scroll lock when unmounted while still open", () => {
@@ -242,11 +242,11 @@ describe("Modal", () => {
 				Body
 			</Modal>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		unmount();
 
-		expect(document.body.style.overflow).not.toBe("hidden");
+		expect(document.documentElement.style.overflow).not.toBe("hidden");
 		expect(document.body.dataset.openModals).toBeUndefined();
 	});
 
@@ -259,7 +259,7 @@ describe("Modal", () => {
 				Body
 			</Modal>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		rerender(
 			<Modal open={false} onClose={() => {}}>
@@ -267,7 +267,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		await waitFor(() => expect(document.documentElement.style.overflow).not.toBe("hidden"));
 		expect(document.body.dataset.openModals).toBeUndefined();
 	});
 
@@ -881,7 +881,7 @@ describe("Modal", () => {
 			rerender(ui(false));
 			// 퇴출 애니메이션이 도는 동안은 남아 있어야 한다 - 바로 사라지면 모션 없이 끊긴다
 			expect(document.querySelector(".modal_panel")).not.toBeNull();
-			expect(document.body.style.overflow).toBe("hidden");
+			expect(document.documentElement.style.overflow).toBe("hidden");
 			expect(onExited).not.toHaveBeenCalled();
 
 			await act(async () => anim.finish());

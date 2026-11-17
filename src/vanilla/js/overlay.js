@@ -61,6 +61,13 @@ export function restoreScrollbarWidthVar(html, body) {
 	}
 }
 
+// 계산된 overflow 가 한 축이라도 visible 이 아닌가 - html · body 둘 다면 body 가 문서의 스크롤 상자다.
+// jsdom 처럼 값을 계산하지 않는 환경의 "" 는 visible 로 본다 (React utils/scroll-lock.ts 와 같음)
+function isScrollBox(el) {
+	const { overflow, overflowX, overflowY } = window.getComputedStyle(el);
+	return [overflow, overflowX, overflowY].some((v) => v !== "" && v !== "visible");
+}
+
 export function lockScroll() {
 	const body = document.body;
 	const html = document.documentElement;
@@ -92,7 +99,10 @@ export function lockScroll() {
 			html.style.setProperty("--bt-scrollbar-width", `${inset}px`);
 		}
 
-		body.style.overflow = "hidden";
+		// 잠금은 html 이 맡고, body 는 원래 스크롤 상자였을 때만 같이 잠근다 (#1043, React 쪽과 같음).
+		// html 이 hidden 이 되면 body 의 overflow 가 body 상자에 걸려 body 가 새 스크롤 상자가 되고,
+		// sticky 헤더 · 사이드바가 스크롤되지 않는 body 를 기준으로 붙어 위로 밀려난다.
+		body.style.overflow = isScrollBox(html) && isScrollBox(body) ? "hidden" : "visible";
 		// `html` 에도 건다 - body 의 overflow 는 html 이 `visible` 일 때만 뷰포트로 전파된다.
 		// `html { overflow-x: hidden }` 같은 리셋이 있으면 body 만 잠가도 문서가 스크롤된다
 		// (React 쪽과 같은 실측).
