@@ -91,4 +91,19 @@ describe("Menu layout (Chromium)", () => {
 		await userEvent.keyboard("{Enter}");
 		expect(onSelect).toHaveBeenCalledOnce();
 	});
+
+	// 닫으면 위치 측정(ready)이 처음으로 돌아가야 다음 열림에서도 측정 뒤 포커스한다 - 재오픈도 같은 결과
+	it("focuses the first item again when reopened after Escape (#1033)", async () => {
+		render(<Menu items={items} trigger={<button type="button">더보기</button>} />);
+		const trigger = screen.getByRole("button", { name: "더보기" });
+		const first = () => screen.getByRole("menuitem", { name: "편집" });
+
+		await userEvent.click(trigger);
+		await expect.poll(() => document.activeElement).toBe(first());
+		await userEvent.keyboard("{Escape}");
+		await expect.poll(() => screen.queryByRole("menu")).toBeNull();
+
+		await userEvent.click(trigger);
+		await expect.poll(() => document.activeElement).toBe(first());
+	});
 });
