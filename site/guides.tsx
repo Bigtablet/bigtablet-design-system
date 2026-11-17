@@ -1,17 +1,40 @@
 import {
+	Badge,
 	Button,
-	Card,
 	CopyButton,
-	Dropdown,
-	Field,
-	InlineAlert,
 	SegmentedControl,
 	TextField,
+	Toggle,
 } from "@bigtablet/design-system";
-import { Bot, Code2, Palette, Rocket } from "lucide-react";
+import {
+	BarChart3,
+	Bell,
+	Box,
+	Braces,
+	Calendar,
+	Clock,
+	Command,
+	Database,
+	ExternalLink,
+	FileText,
+	Flag,
+	Folder,
+	GitBranch,
+	Globe,
+	Inbox,
+	KeyRound,
+	LayoutGrid,
+	Paperclip,
+	Pencil,
+	Save,
+	Server,
+	Shield,
+	SlidersHorizontal,
+	TrendingDown,
+} from "lucide-react";
 import { type ReactNode, useState } from "react";
 import pkg from "../package.json";
-import { Code, ComponentCard, type DocPage, Md } from "./docs";
+import { Code, type DocPage, Md } from "./docs";
 import { AGENT_SNIPPET } from "./llms";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
@@ -47,180 +70,193 @@ function Block({ id, title, children }: { id: string; title: string; children: R
 	);
 }
 
-/* ─── 처음 화면: 등각 격자 바닥 위에 실제로 조립된 화면 하나 ──────────────── */
+/* ─── 처음 화면: 무엇이 있는지 한눈에 - 칸마다 그 페이지의 축소판 ──────────────── */
 
-const FEATURED = ["button", "text-field", "dropdown", "modal", "data-view", "toast"];
-
-/** 격자 위에 올린 실제 화면 - DS 부품으로 조립했고 실제로 동작한다 */
-function InviteDemo() {
-	const [email, setEmail] = useState("");
-	const [role, setRole] = useState<string | null>("member");
-	const [sent, setSent] = useState("");
-	const invalid = email !== "" && !email.includes("@");
+/** 격자 한 칸. 미리보기는 그림 역할만 한다 - 칸 전체가 링크라 안의 컴포넌트는 inert 로 조작을 막는다 */
+function Tile({
+	href,
+	title,
+	desc,
+	children,
+}: {
+	href: string;
+	title: string;
+	desc: string;
+	children: ReactNode;
+}) {
 	return (
-		<Card heading="팀원 초대" className="landing_demo_card">
-			<form
-				className="landing_demo_form"
-				onSubmit={(e) => {
-					e.preventDefault();
-					if (!email.includes("@")) return;
-					setSent(email);
-					setEmail("");
-				}}
-			>
-				<Field
-					name="invite-email"
-					label="이메일"
-					error={invalid ? "이메일 형식이 아닙니다" : undefined}
-				>
-					<TextField value={email} onValueChange={setEmail} placeholder="name@bigtablet.com" />
-				</Field>
-				<Field name="invite-role" label="역할">
-					<Dropdown
-						value={role}
-						onValueChange={setRole}
-						options={[
-							{ value: "admin", label: "관리자" },
-							{ value: "member", label: "구성원" },
-							{ value: "viewer", label: "보기 전용" },
-						]}
-					/>
-				</Field>
-				<Button type="submit" fullWidth disabled={!email.includes("@")}>
-					초대 보내기
-				</Button>
-				{sent && <InlineAlert tone="success">{sent} 님에게 초대를 보냈습니다.</InlineAlert>}
-			</form>
-		</Card>
+		<a href={href} className="bento_tile">
+			<div className="bento_preview" aria-hidden inert>
+				{children}
+			</div>
+			<span className="bento_title">{title}</span>
+			<span className="bento_desc">{desc}</span>
+		</a>
 	);
 }
+
+// 색 칸 - 실제 토큰 이름을 붙인 견본. 단색 DS 라 강조색보다 상태색이 대부분이다
+const SWATCHES = [
+	["text-heading", "heading"],
+	["text-caption", "caption"],
+	["border-hover", "border"],
+	["accent-default", "accent"],
+	["status-info", "info"],
+	["status-success", "success"],
+	["status-warning", "warning"],
+	["status-error", "error"],
+];
+
+// 간격 칸 - 등각 바닥 위에 단계별 정육면체를 계단처럼 세운다
+const STEPS = [4, 8, 12, 16, 24, 32, 48];
+
+const ICONS = [
+	LayoutGrid,
+	ExternalLink,
+	BarChart3,
+	Clock,
+	Globe,
+	Flag,
+	Bell,
+	Box,
+	Shield,
+	Inbox,
+	Pencil,
+	FileText,
+	Calendar,
+	Paperclip,
+	TrendingDown,
+	Braces,
+	KeyRound,
+	Save,
+	Server,
+	GitBranch,
+	Command,
+	SlidersHorizontal,
+	Folder,
+	Database,
+];
 
 export function Landing({ pages }: { pages: DocPage[] }) {
 	return (
 		<article className="landing">
-			<section className="landing_hero">
-				<div className="landing_text">
-					<h1>Bigtablet 디자인 시스템</h1>
-					<p className="doc_lede">
-						<Md>{`Bigtablet 제품 화면을 만드는 ${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
-					</p>
-					<div className="landing_actions">
-						<Button as="a" href="#/install" size="lg">
-							설치하기
+			<header className="doc_block doc_head">
+				<h1>Bigtablet 디자인 시스템</h1>
+				<p className="doc_lede">
+					<Md>{`Bigtablet 제품 화면을 만드는 ${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
+				</p>
+				<div className="landing_install">
+					<CodeBlock code="pnpm add @bigtablet/design-system" />
+				</div>
+				<p className="landing_meta">
+					<a href={NPM} target="_blank" rel="noreferrer">
+						v{pkg.version}
+					</a>
+					<span>React 19 이상</span>
+					<a href={`${GITHUB}/blob/main/CHANGELOG.md`} target="_blank" rel="noreferrer">
+						변경 내역
+					</a>
+				</p>
+			</header>
+
+			<div className="bento">
+				<Tile
+					href="#/components"
+					title="컴포넌트"
+					desc={`React 화면을 만드는 ${pages.length}개 부품입니다.`}
+				>
+					<div className="bento_parts">
+						<Button size="sm">저장</Button>
+						<Button size="sm" variant="outline">
+							취소
 						</Button>
-						<Button as="a" href="#/components" size="lg" variant="outline">
-							컴포넌트 둘러보기
-						</Button>
+						<Badge tone="success" appearance="soft">
+							진행 중
+						</Badge>
+						<Toggle size="sm" defaultChecked ariaLabel="알림" />
+						<TextField size="sm" placeholder="이메일" aria-label="이메일" />
 					</div>
-					<div className="landing_install">
-						<CodeBlock code="pnpm add @bigtablet/design-system" />
+				</Tile>
+				<Tile
+					href="#/tokens/colors"
+					title="색"
+					desc="라이트 · 다크에서 대비를 지키는 의미 색입니다."
+				>
+					<div className="bento_swatches">
+						{SWATCHES.map(([token, label]) => (
+							<span key={token}>
+								<span style={{ background: `var(--bt-color-${token})` }} />
+								{label}
+							</span>
+						))}
 					</div>
-				</div>
-				<div className="landing_stage">
-					<InviteDemo />
-					<p className="landing_stage_note">
-						Card · Field · TextField · Dropdown · Button · InlineAlert 로 조립했습니다. 직접 입력해
-						보세요.
-					</p>
-				</div>
-			</section>
-
-			<dl className="landing_meta">
-				<div>
-					<dt>최신 버전</dt>
-					<dd>
-						<a href={NPM} target="_blank" rel="noreferrer">
-							{pkg.version}
-						</a>
-					</dd>
-				</div>
-				<div>
-					<dt>필요한 것</dt>
-					<dd>React 19 이상</dd>
-				</div>
-				<div>
-					<dt>변경 내역</dt>
-					<dd>
-						<a href={`${GITHUB}/blob/main/CHANGELOG.md`} target="_blank" rel="noreferrer">
-							CHANGELOG
-						</a>
-					</dd>
-				</div>
-				<div>
-					<dt>소스 · 이슈</dt>
-					<dd>
-						<a href={GITHUB} target="_blank" rel="noreferrer">
-							GitHub
-						</a>
-					</dd>
-				</div>
-			</dl>
-
-			<section className="doc_block">
-				<h2>어디서부터 볼까요</h2>
-				<div className="landing_links">
-					<LinkCard
-						href="#/install"
-						icon={<Rocket size={20} />}
-						title="설치"
-						desc="패키지 설치, Provider 감싸기, 첫 컴포넌트까지 차례대로 따라 합니다."
-					/>
-					<LinkCard
-						href="#/tokens/colors"
-						icon={<Palette size={20} />}
-						title="토큰"
-						desc="색 · 타이포 · 간격 · 그림자 · 모션 값을 토큰 원본에서 바로 봅니다."
-					/>
-					<LinkCard
-						href="#/vanilla"
-						icon={<Code2 size={20} />}
-						title="Vanilla (HTML · CSS · JS)"
-						desc="React 없이 CSS · JS 두 파일과 클래스 이름으로 씁니다."
-					/>
-					<LinkCard
-						href="#/ai"
-						icon={<Bot size={20} />}
-						title="AI 에이전트"
-						desc="Claude Code · Codex · Cursor 가 이 패키지 문서를 읽고 화면을 만들게 합니다."
-					/>
-				</div>
-			</section>
-
-			<section className="doc_block">
-				<div className="landing_section_head">
-					<h2>자주 쓰는 컴포넌트</h2>
-					<a href="#/components">전체 {pages.length}개 보기</a>
-				</div>
-				<div className="ov_grid">
-					{FEATURED.map((slug) => {
-						const page = pages.find((p) => p.slug === slug);
-						return page && <ComponentCard key={slug} page={page} />;
-					})}
-				</div>
-			</section>
+				</Tile>
+				<Tile
+					href="#/tokens/typography"
+					title="타이포그래피"
+					desc="글자 크기가 아니라 역할로 고르는 Pretendard 스케일입니다."
+				>
+					<div className="bento_type">
+						<span className="bento_type_heading">제목</span>
+						<span className="bento_type_body">본문</span>
+						<span className="bento_type_caption">캡션</span>
+						<span className="bento_type_num">1,234,567</span>
+					</div>
+				</Tile>
+				<Tile href="#/tokens/spacing" title="간격" desc="4px 단위로 맞춘 여백 · 간격 단계입니다.">
+					<div className="bento_steps_floor">
+						{STEPS.map((n) => (
+							<span key={n}>
+								<span
+									style={{ width: `var(--bt-spacing-${n})`, height: `var(--bt-spacing-${n})` }}
+								/>
+								{n}
+							</span>
+						))}
+					</div>
+				</Tile>
+				<Tile href="#/icon" title="아이콘" desc="lucide 아이콘을 토큰 크기로 씁니다.">
+					<div className="bento_icons">
+						{ICONS.map((I) => (
+							<I key={I.displayName} size={18} />
+						))}
+					</div>
+				</Tile>
+				<Tile
+					href="#/ai"
+					title="AI 에이전트"
+					desc="Claude Code · Codex 가 이 패키지 문서를 읽고 화면을 만듭니다."
+				>
+					<pre className="bento_code">
+						<span className="bento_code_file">CLAUDE.md</span>
+						{
+							"\n## UI\n- 화면은 @bigtablet/design-system\n  컴포넌트로 만든다.\n- llms/index.md 를 먼저 읽는다."
+						}
+					</pre>
+				</Tile>
+				<Tile
+					href="#/vanilla"
+					title="Vanilla"
+					desc="React 없이 CSS · JS 두 파일과 클래스 이름으로 씁니다."
+				>
+					<pre className="bento_code">
+						<span className="bento_code_file">index.html</span>
+						{'\n<button class="bt-button\n  bt-button--md bt-button--filled">\n  저장\n</button>'}
+					</pre>
+				</Tile>
+				<Tile
+					href="#/install"
+					title="설치"
+					desc="패키지 설치부터 Provider, 첫 화면까지 차례대로 따라 합니다."
+				>
+					<div className="bento_steps">
+						<span>1. pnpm add</span>
+						<span>2. Provider</span>
+						<span>3. 첫 컴포넌트</span>
+					</div>
+				</Tile>
+			</div>
 		</article>
-	);
-}
-
-function LinkCard({
-	href,
-	icon,
-	title,
-	desc,
-}: {
-	href: string;
-	icon: ReactNode;
-	title: string;
-	desc: string;
-}) {
-	return (
-		<a href={href} className="landing_link">
-			<span className="landing_link_icon" aria-hidden>
-				{icon}
-			</span>
-			<span className="landing_link_title">{title}</span>
-			<span className="landing_link_desc">{desc}</span>
-		</a>
 	);
 }
 

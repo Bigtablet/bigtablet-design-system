@@ -1,4 +1,4 @@
-import { cn, IconButton, Menu } from "@bigtablet/design-system";
+import { IconButton, Menu } from "@bigtablet/design-system";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -71,8 +71,6 @@ function App() {
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 	}, [slug]);
-	// 첫 화면은 사이드바 없이 넓게 - 문서 한 페이지처럼 보이지 않게
-	const isLanding = !page && slug === "";
 	// 탭 · 북마크에 어느 페이지인지 보이게 - 페이지 제목만. 첫 화면은 index.html 의 제목 그대로
 	useEffect(() => {
 		const title =
@@ -80,7 +78,7 @@ function App() {
 		document.title = title ?? SITE_TITLE;
 	}, [page, slug]);
 	return (
-		<div className={cn("site", isLanding && "site_landing")}>
+		<div className="site">
 			<header className="site_top">
 				<a className="site_brand" href="#/">
 					{/* 로고만 - 링크 이름은 alt 가 맡는다 */}
@@ -102,52 +100,50 @@ function App() {
 					<ThemeMenu theme={theme} onChange={setTheme} />
 				</div>
 			</header>
-			{!isLanding && (
-				<nav className="site_nav" aria-label="컴포넌트">
-					<div className="site_nav_group">
-						<p className="site_nav_title">시작하기</p>
-						{GUIDES.map((g) => (
-							<a
-								key={g.slug}
-								href={`#/${g.slug}`}
-								aria-current={!page && slug === g.slug ? "page" : undefined}
-							>
-								{g.title}
-							</a>
-						))}
-					</div>
-					<div className="site_nav_group">
-						<p className="site_nav_title">Foundation</p>
-						{FOUNDATIONS.map((f) => (
-							<a
-								key={f.slug}
-								href={`#/${f.slug}`}
-								aria-current={slug === f.slug ? "page" : undefined}
-							>
-								{f.title}
-							</a>
-						))}
-					</div>
-					{GROUPS.map(({ c, pages }) => (
-						<div key={c} className="site_nav_group">
-							<p className="site_nav_title">
-								{c}
-								<span>{pages.length}</span>
-							</p>
-							{pages.map((p) => (
-								<a
-									key={p.slug}
-									href={`#/${p.slug}`}
-									aria-current={p.slug === page?.slug ? "page" : undefined}
-								>
-									<span className="site_nav_code">{p.title}</span>
-									<span className="site_nav_name">{p.name}</span>
-								</a>
-							))}
-						</div>
+			<nav className="site_nav" aria-label="컴포넌트">
+				<div className="site_nav_group">
+					<p className="site_nav_title">시작하기</p>
+					{GUIDES.map((g) => (
+						<a
+							key={g.slug}
+							href={`#/${g.slug}`}
+							aria-current={!page && slug === g.slug ? "page" : undefined}
+						>
+							{g.title}
+						</a>
 					))}
-				</nav>
-			)}
+				</div>
+				<div className="site_nav_group">
+					<p className="site_nav_title">Foundation</p>
+					{FOUNDATIONS.map((f) => (
+						<a
+							key={f.slug}
+							href={`#/${f.slug}`}
+							aria-current={slug === f.slug ? "page" : undefined}
+						>
+							{f.title}
+						</a>
+					))}
+				</div>
+				{GROUPS.map(({ c, pages }) => (
+					<div key={c} className="site_nav_group">
+						<p className="site_nav_title">
+							{c}
+							<span>{pages.length}</span>
+						</p>
+						{pages.map((p) => (
+							<a
+								key={p.slug}
+								href={`#/${p.slug}`}
+								aria-current={p.slug === page?.slug ? "page" : undefined}
+							>
+								<span className="site_nav_code">{p.title}</span>
+								<span className="site_nav_name">{p.name}</span>
+							</a>
+						))}
+					</div>
+				))}
+			</nav>
 			<main className="site_main">
 				<Route slug={slug} page={page} theme={theme} />
 			</main>

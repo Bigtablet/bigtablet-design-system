@@ -218,10 +218,6 @@ code {
 }
 
 // 첫 화면 - 사이드바 없이 본문이 폭을 다 쓴다
-.site_landing {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .site_top_link {
   padding: token.$spacing_6 token.$spacing_8;
   border-radius: token.$radius_sm;
@@ -744,202 +740,226 @@ $preview_scale: 0.6;
   }
 }
 
-// ── 첫 화면: 부품 상자 ──────────────────────────────────────────────────
-
-.landing_hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: token.$spacing_48;
-  align-items: center;
-  padding: token.$spacing_48 token.$spacing_48 token.$spacing_40;
-  border-bottom: $line;
-
-  // 사이드바 옆 본문이 좁으면 상자를 아래로 - 두 칸이면 제목 칸이 낱말 하나보다 좁아진다
-  @media (max-width: 899px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  @include token.compact {
-    padding: token.$spacing_32 token.$spacing_16;
-  }
-
-  h1 {
-    margin: 0;
-    color: token.$color_text_heading;
-    font-size: 52px; // ponytail: 디스플레이 크기 토큰이 없다
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.035em;
-
-    @include token.compact {
-      font-size: 36px;
-    }
-  }
-
-  .doc_lede {
-    margin-top: token.$spacing_20;
-  }
-}
-
-.landing_actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: token.$spacing_8;
-  margin-top: token.$spacing_32;
-}
+// ── 첫 화면: 칸마다 그 페이지의 축소판 ──────────────────────────────────
 
 .landing_install {
   max-width: 420px;
-  margin-top: token.$spacing_20;
+  margin-top: token.$spacing_24;
 }
 
-// 무대: 등각 격자 바닥 위에 실제로 조립된 화면 하나
-.landing_stage {
-  @include iso_floor;
-  display: grid;
-  justify-items: center;
+.landing_meta {
+  display: flex;
+  flex-wrap: wrap;
   gap: token.$spacing_16;
-  padding: token.$spacing_48 token.$spacing_32 token.$spacing_24;
-  border: $line;
-  border-radius: token.$radius_lg;
-}
+  margin: token.$spacing_16 0 0;
+  color: token.$color_text_caption;
+  @include token.body_small;
 
-.landing_demo_card {
-  width: 100%;
-  max-width: 360px;
-}
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
 
-.landing_demo_form {
-  display: grid;
-  gap: token.$spacing_16;
-
-  // Field 는 안의 입력을 내용 폭으로 줄인다(align-items: flex-start) - 데모 카드에서는 폭을 채운다
-  .field > * {
-    align-self: stretch;
+    &:hover {
+      color: token.$color_text_heading;
+    }
   }
 }
 
-.landing_stage_note {
-  max-width: 360px;
-  margin: 0;
-  color: token.$color_text_caption;
-  text-align: center;
-  @include token.body_small;
-}
-
-// 버전 · 요구 사항 · 링크 - 칸 사이 선은 1px 간격 사이로 비치는 바탕색
-.landing_meta {
+// 칸 사이 선은 1px 간격 사이로 비치는 테두리 색 - 칸마다 테두리를 그리면 맞닿는 곳이 2px 이 된다
+// 두 칸은 840px 이상부터 - 그보다 좁으면 사이드바 옆 본문이 500px 남짓이라 한 칸이 250px 이 되어
+// 색 막대 줄이 칸을 넘는다
+.bento {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: token.$border_width_standard;
-  margin: 0;
   background: token.$color_border_default;
   border-bottom: $line;
 
-  // 넓을 때만 첫 화면 여백(48)에 맞춘다. 네 칸이 한 줄인 중간 폭에서 48 을 주면 칸 안이 90px
-  // 남짓이라 "CHANGELOG" 가 글자 중간에서 끊겼다
-  div {
-    padding: token.$spacing_16 token.$spacing_24;
-    background: token.$color_bg_solid;
-
-    @include token.compact {
-      padding: token.$spacing_12 token.$spacing_16;
-    }
-    @include token.from_large {
-      padding: token.$spacing_16 token.$spacing_48;
-    }
-  }
-
-  dt {
-    color: token.$color_text_caption;
-    @include token.body_small;
-  }
-
-  dd {
-    margin: token.$spacing_4 0 0;
-    color: token.$color_text_heading;
-    @include token.body_medium_bold;
-    @include token.tabular_nums;
-
-    a {
-      color: inherit;
-      text-underline-offset: 3px;
-    }
+  @include token.from_expanded {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.landing_section_head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: token.$spacing_16;
-
-  h2 {
-    margin: 0;
-    color: token.$color_text_heading;
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  a {
-    color: token.$color_text_body;
-    text-underline-offset: 3px;
-  }
-
-  + .ov_grid {
-    margin-top: token.$spacing_16;
-  }
-}
-
-.landing_links {
+.bento_tile {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: token.$spacing_16;
-  margin-top: token.$spacing_16;
-}
-
-.landing_link {
-  display: grid;
-  gap: token.$spacing_6;
-  padding: token.$spacing_20;
-  border: $line;
-  border-radius: token.$radius_md;
+  grid-template-rows: auto auto 1fr;
+  gap: token.$spacing_4;
+  padding: token.$spacing_24 token.$spacing_24 token.$spacing_32;
+  background: token.$color_bg_solid;
   color: inherit;
   text-decoration: none;
-  transition: border-color token.$transition_fast;
+  transition: background token.$transition_fast;
 
-  &:hover {
-    border-color: token.$color_text_caption;
+  @include token.hoverable {
+    &:hover {
+      background: token.$color_bg_solid_dim;
+    }
   }
 
   &:focus-visible {
+    position: relative;
     outline: none;
-    box-shadow: token.$focus_ring;
+    box-shadow: inset token.$focus_ring;
   }
 }
 
-.landing_link_icon {
-  display: inline-flex;
-  width: 36px;
-  height: 36px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: token.$spacing_8;
-  border: $line;
-  border-radius: token.$radius_sm;
-  color: token.$color_text_heading;
+.bento_preview {
+  display: grid;
+  // minmax(0, …) - 줄바꿈 없는 코드 상자가 칸을 넓혀 테두리가 잘리지 않게
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  height: 168px;
+  margin-bottom: token.$spacing_16;
+  overflow: hidden;
 }
 
-.landing_link_title {
+.bento_title {
   color: token.$color_text_heading;
   @include token.body_medium_bold;
 }
 
-.landing_link_desc {
+.bento_desc {
   color: token.$color_text_caption;
   @include token.body_small;
   @include text_wrap;
+}
+
+.bento_parts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: token.$spacing_12;
+  max-width: 320px;
+}
+
+// 색 견본 - 네모 칩 아래 토큰 이름
+.bento_swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 56px);
+  gap: token.$spacing_12 token.$spacing_8;
+
+  > span {
+    display: grid;
+    justify-items: center;
+    gap: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-family: $mono;
+    font-size: 11px;
+
+    span {
+      width: 100%;
+      height: 32px;
+      border: $line;
+      border-radius: token.$radius_sm;
+    }
+  }
+}
+
+.bento_type {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 120px));
+  border: token.$border_width_standard dashed token.$color_border_default;
+  border-radius: token.$radius_sm;
+
+  span {
+    display: grid;
+    place-items: center;
+    height: 64px;
+    color: token.$color_text_heading;
+
+    &:nth-child(odd) {
+      border-right: token.$border_width_standard dashed token.$color_border_default;
+    }
+    &:nth-child(-n + 2) {
+      border-bottom: token.$border_width_standard dashed token.$color_border_default;
+    }
+  }
+}
+
+.bento_type_heading {
+  @include token.heading_medium_bold;
+}
+
+.bento_type_body {
+  @include token.body_large;
+}
+
+.bento_type_caption {
+  color: token.$color_text_caption !important;
+  @include token.body_small;
+}
+
+.bento_type_num {
+  @include token.body_medium_medium;
+  @include token.tabular_nums;
+}
+
+// 간격 단계 - 등각 바닥(A 육면체) 위에 단계 크기의 칸을 바닥선에 맞춰 세운다
+.bento_steps_floor {
+  @include iso_floor;
+  display: flex;
+  align-items: flex-end;
+  gap: token.$spacing_12;
+  padding: token.$spacing_20 token.$spacing_24 token.$spacing_12;
+  border: $line;
+  border-radius: token.$radius_md;
+
+  > span {
+    display: grid;
+    justify-items: center;
+    gap: token.$spacing_6;
+    color: token.$color_text_caption;
+    font-family: $mono;
+    font-size: 11px;
+
+    span {
+      background: token.$color_text_heading;
+      border-radius: token.$radius_xs;
+    }
+  }
+}
+
+.bento_icons {
+  display: grid;
+  grid-template-columns: repeat(8, 18px);
+  gap: token.$spacing_20 token.$spacing_16;
+  color: token.$color_text_body;
+}
+
+.bento_code {
+  box-sizing: border-box;
+  width: min(100%, 320px);
+  margin: 0;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid_dim;
+  color: token.$color_text_body;
+  font-family: $mono;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.bento_code_file {
+  color: token.$color_text_caption;
+}
+
+.bento_steps {
+  display: grid;
+  gap: token.$spacing_8;
+  width: min(100%, 220px);
+
+  span {
+    padding: token.$spacing_8 token.$spacing_12;
+    border: $line;
+    border-radius: token.$radius_md;
+    color: token.$color_text_body;
+    font-family: $mono;
+    font-size: 12px;
+  }
 }
 
 .doc_block > h2 + .ov_grid {
