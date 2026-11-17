@@ -5,6 +5,7 @@ export const stat: DocPage = {
 	category: "데이터",
 	order: 4,
 	title: "Stat",
+	name: "통계 숫자",
 	summary: "숫자 하나와 변화량을 보여 줍니다.",
 	when: [
 		["대시보드 숫자", "Stat", true],

@@ -5,6 +5,7 @@ export const tabs: DocPage = {
 	category: "내비게이션",
 	order: 3,
 	title: "Tabs",
+	name: "탭",
 	summary: "같은 화면 안에서 내용 패널을 바꿉니다. 방향키로 탭을 옮깁니다.",
 	when: [
 		["같은 화면의 내용 전환", "Tabs", true],

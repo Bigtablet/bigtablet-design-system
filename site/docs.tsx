@@ -10,6 +10,8 @@ export interface DocPage {
 	/** 그룹 안 순서 - 자주 쓰는 것부터 */
 	order?: number;
 	title: string;
+	/** 한국어 이름 - 사이드바 · 목록에서 코드명 옆에 붙는다 */
+	name: string;
 	summary: string;
 	/** [상황, 고를 것, 이 컴포넌트인가] */
 	when: [string, string, boolean][];
@@ -188,7 +190,9 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 	return (
 		<article className="doc_page">
 			<p className="doc_eyebrow">{page.category}</p>
-			<h1>{page.title}</h1>
+			<h1>
+				{page.title} <span className="doc_name">{page.name}</span>
+			</h1>
 			<p className="doc_summary">
 				<Md>{page.summary}</Md>
 			</p>

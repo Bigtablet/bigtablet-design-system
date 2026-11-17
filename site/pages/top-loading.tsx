@@ -5,6 +5,7 @@ export const topLoading: DocPage = {
 	category: "로딩",
 	order: 3,
 	title: "TopLoading",
+	name: "상단 로딩 바",
 	summary: "화면 맨 위에 붙는 얇은 진행 줄입니다.",
 	when: [
 		["페이지 이동 · 큰 저장", "TopLoading", true],

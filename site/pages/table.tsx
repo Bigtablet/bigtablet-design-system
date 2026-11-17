@@ -5,6 +5,7 @@ export const table: DocPage = {
 	category: "데이터",
 	order: 0,
 	title: "Table",
+	name: "표",
 	summary: "열 정의 기반 표입니다. 정렬 · 선택 · 로딩 · 빈 상태를 가집니다.",
 	when: [
 		["같은 형식의 행을 열로 비교", "Table", true],

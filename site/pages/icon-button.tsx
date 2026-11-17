@@ -5,6 +5,7 @@ export const iconButton: DocPage = {
 	category: "버튼",
 	order: 1,
 	title: "IconButton",
+	name: "아이콘 버튼",
 	summary:
 		"아이콘만 있는 버튼입니다. `aria-label` 이나 `aria-labelledby` 가 없으면 컴파일되지 않습니다.",
 	when: [

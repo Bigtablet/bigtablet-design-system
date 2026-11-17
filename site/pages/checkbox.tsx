@@ -5,6 +5,7 @@ export const checkbox: DocPage = {
 	category: "선택",
 	order: 2,
 	title: "Checkbox",
+	name: "체크박스",
 	summary: "네모 체크 상자입니다. 여러 개를 독립적으로 켜고 끕니다.",
 	when: [
 		["여러 항목을 각각 켜고 끔 (약관 동의, 필터)", "Checkbox", true],

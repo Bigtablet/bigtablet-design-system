@@ -5,6 +5,7 @@ export const button: DocPage = {
 	category: "버튼",
 	order: 0,
 	title: "Button",
+	name: "버튼",
 	summary: "글자가 있는 버튼입니다. `href` 를 주거나 `as={Link}` 로 링크로도 렌더합니다.",
 	when: [
 		["저장 · 제출 · 다음 같은 동작 (글자가 보임)", "Button", true],

@@ -5,6 +5,7 @@ export const dateCalendar: DocPage = {
 	category: "날짜 · 시간",
 	order: 2,
 	title: "DateCalendar",
+	name: "달력",
 	summary:
 		'월 달력에서 날짜 하나를 고릅니다. DatePicker `variant="calendar"` 의 팝오버도 이 컴포넌트입니다.',
 	when: [

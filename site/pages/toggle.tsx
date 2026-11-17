@@ -5,6 +5,7 @@ export const toggle: DocPage = {
 	category: "선택",
 	order: 4,
 	title: "Toggle",
+	name: "스위치",
 	summary:
 		"바로 적용되는 켜기 / 끄기 스위치입니다. 보이는 라벨이 없으므로 `ariaLabel` 이 필수입니다.",
 	when: [

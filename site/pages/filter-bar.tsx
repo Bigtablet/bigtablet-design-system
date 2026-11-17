@@ -5,6 +5,7 @@ export const filterBar: DocPage = {
 	category: "폼",
 	order: 1,
 	title: "FilterBar",
+	name: "필터 바",
 	summary:
 		"목록 화면 위의 필터 묶음입니다. 필터 상태는 갖지 않고 배치 · 초기화 · 적용 버튼만 맡습니다.",
 	when: [

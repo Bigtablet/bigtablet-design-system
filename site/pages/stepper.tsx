@@ -5,6 +5,7 @@ export const stepper: DocPage = {
 	category: "내비게이션",
 	order: 6,
 	title: "Stepper",
+	name: "단계 표시",
 	summary:
 		'가입 · 온보딩 · 결제처럼 "몇 단계 중 어디" 를 보여 줍니다. 상태는 `current` 하나에서 정해집니다.',
 	when: [

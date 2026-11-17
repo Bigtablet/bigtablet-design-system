@@ -5,6 +5,7 @@ export const tagInput: DocPage = {
 	category: "텍스트 입력",
 	order: 3,
 	title: "TagInput",
+	name: "태그 입력",
 	summary: "목록에 없는 값을 사용자가 직접 만들어 넣는 다중 입력입니다.",
 	when: [
 		["자유 키워드 · 라벨 · 이메일 여러 개", "TagInput", true],

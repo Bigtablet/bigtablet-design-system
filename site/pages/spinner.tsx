@@ -5,6 +5,7 @@ export const spinner: DocPage = {
 	category: "로딩",
 	order: 0,
 	title: "Spinner",
+	name: "스피너",
 	summary: "돌아가는 로딩 표시입니다.",
 	when: [
 		["버튼 · 작은 영역의 짧은 대기", "Spinner", true],

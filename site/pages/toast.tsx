@@ -5,6 +5,7 @@ export const toast: DocPage = {
 	category: "알림 · 상태",
 	order: 0,
 	title: "Toast",
+	name: "토스트",
 	summary:
 		"잠깐 떴다 사라지는 알림입니다. `useToast()` 로 띄우고 진행 중 → 완료로 바꿀 수 있습니다.",
 	when: [

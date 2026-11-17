@@ -5,6 +5,7 @@ export const field: DocPage = {
 	category: "폼",
 	order: 0,
 	title: "Field · Form",
+	name: "폼 필드",
 	summary:
 		"`Field` 는 라벨 · 도움말 · 에러를 입력 하나에 연결하고, `Form` 은 서버 에러를 이름으로 받아 각 Field 에 나눠 줍니다.",
 	when: [

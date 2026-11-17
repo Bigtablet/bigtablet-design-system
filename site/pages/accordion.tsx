@@ -5,6 +5,7 @@ export const accordion: DocPage = {
 	category: "콘텐츠",
 	order: 4,
 	title: "Accordion",
+	name: "아코디언",
 	summary:
 		"제목을 눌러 내용을 펼치고 접습니다. 기본은 하나만 열리고 `multiple` 이면 여럿이 열립니다.",
 	when: [

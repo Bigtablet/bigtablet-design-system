@@ -5,6 +5,7 @@ export const emptyState: DocPage = {
 	category: "알림 · 상태",
 	order: 3,
 	title: "EmptyState",
+	name: "빈 상태",
 	summary: "목록이 비었을 때 이유와 다음 동작을 보여 줍니다.",
 	when: [
 		["아직 데이터가 없음", "EmptyState", true],

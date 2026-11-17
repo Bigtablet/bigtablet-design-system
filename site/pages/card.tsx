@@ -5,6 +5,7 @@ export const card: DocPage = {
 	category: "콘텐츠",
 	order: 0,
 	title: "Card",
+	name: "카드",
 	summary: "내용을 한 덩어리로 묶는 표면입니다. 제목 · 하단 버튼 칸을 가집니다.",
 	when: [
 		["요약 · 설정 묶음", "Card", true],

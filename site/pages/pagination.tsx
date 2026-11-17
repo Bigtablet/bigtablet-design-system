@@ -5,6 +5,7 @@ export const pagination: DocPage = {
 	category: "내비게이션",
 	order: 5,
 	title: "Pagination",
+	name: "페이지 번호",
 	summary: "페이지 번호로 목록을 넘깁니다.",
 	when: [
 		["페이지 단위 목록", "Pagination", true],

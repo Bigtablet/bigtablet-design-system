@@ -5,6 +5,7 @@ export const timePicker: DocPage = {
 	category: "날짜 · 시간",
 	order: 3,
 	title: "TimePicker",
+	name: "시간 선택",
 	summary: '시 · 분 드롭다운으로 시각을 고릅니다. 값은 `"HH:mm"` 문자열입니다.',
 	when: [
 		["알림 · 예약 시각", "TimePicker", true],

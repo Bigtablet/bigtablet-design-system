@@ -379,3 +379,85 @@ code {
     margin-top: 0;
   }
 }
+
+// ── 사이드바 이름 · 컴포넌트 홈 ──────────────────────────────────────
+
+.site_nav a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: token.$spacing_8;
+}
+
+.site_nav_name {
+  color: token.$color_text_caption;
+  font-size: 12px; // ponytail: caption 보다 한 단계 작은 타이포 토큰이 없다
+  font-weight: 400;
+  @include token.text_nowrap;
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+.site_nav .site_nav_home {
+  margin-left: 0;
+  border-left: none;
+  padding-left: token.$spacing_12;
+  color: token.$color_text_heading;
+  @include token.body_small_bold;
+
+  &[aria-current="page"] {
+    border-left: none;
+    text-decoration: underline;
+  }
+}
+
+.doc_name {
+  margin-left: token.$spacing_8;
+  color: token.$color_text_caption;
+  @include token.body_large;
+}
+
+.doc_overview_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: token.$spacing_8;
+}
+
+.doc_overview_item {
+  display: grid;
+  gap: token.$spacing_4;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_md;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color token.$transition_fast;
+
+  &:hover {
+    border-color: token.$color_text_caption;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.doc_overview_title {
+  color: token.$color_text_heading;
+  @include token.body_medium_bold;
+
+  span {
+    margin-left: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-weight: 400;
+  }
+}
+
+.doc_overview_desc {
+  color: token.$color_text_caption;
+  @include token.body_small;
+  @include token.wrap_keep_all;
+}

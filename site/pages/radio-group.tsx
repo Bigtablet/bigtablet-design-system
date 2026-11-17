@@ -5,6 +5,7 @@ export const radioGroup: DocPage = {
 	category: "선택",
 	order: 3,
 	title: "RadioGroup · Radio",
+	name: "라디오",
 	summary:
 		"여럿 중 하나를 고릅니다. 보통은 `RadioGroup` 안에 `Radio` 를 넣어 그룹 라벨 · 에러 · 방향키 이동을 함께 받습니다.",
 	when: [

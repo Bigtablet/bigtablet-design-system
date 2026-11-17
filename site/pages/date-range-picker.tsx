@@ -5,6 +5,7 @@ export const dateRangePicker: DocPage = {
 	category: "날짜 · 시간",
 	order: 1,
 	title: "DateRangePicker",
+	name: "기간 선택",
 	summary: "시작일과 종료일을 고릅니다. 종료일은 시작일보다 앞설 수 없습니다.",
 	when: [
 		["조회 기간 · 예약 기간", "DateRangePicker", true],

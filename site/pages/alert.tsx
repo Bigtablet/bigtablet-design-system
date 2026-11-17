@@ -5,6 +5,7 @@ export const alert: DocPage = {
 	category: "알림 · 상태",
 	order: 1,
 	title: "Alert",
+	name: "확인 대화 상자",
 	summary: "확인 · 안내 대화 상자입니다. 마크업 없이 `useConfirm` · `useAlert` 훅으로 띄웁니다.",
 	when: [
 		["삭제 확인처럼 예 / 아니요만", "`useConfirm`", true],

@@ -5,6 +5,7 @@ export const bottomNav: DocPage = {
 	category: "내비게이션",
 	order: 2,
 	title: "BottomNav",
+	name: "하단 메뉴",
 	summary: "모바일 화면 아래에 고정되는 주요 메뉴입니다. 2~5개 항목을 둡니다.",
 	when: [
 		["모바일 앱형 화면의 주요 이동", "BottomNav", true],

@@ -5,6 +5,7 @@ export const sidebar: DocPage = {
 	category: "내비게이션",
 	order: 1,
 	title: "Sidebar",
+	name: "사이드바",
 	summary: "관리 화면 왼쪽 메뉴입니다. 접을 수 있고 600px 미만에서는 하단 바로 바뀝니다.",
 	when: [
 		["관리 · 대시보드 메뉴", "Sidebar (AppShell `sidebar`)", true],

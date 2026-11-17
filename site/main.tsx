@@ -1,7 +1,7 @@
 import { SegmentedControl } from "@bigtablet/design-system";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { type DocPage, Page } from "./docs";
+import { type DocPage, Md, Page } from "./docs";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
@@ -31,13 +31,15 @@ const PAGES = Object.values(
 			CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category) ||
 			(a.order ?? 99) - (b.order ?? 99),
 	);
-const FIRST = PAGES[0] as DocPage;
+const GROUPS = CATEGORIES.map((c) => ({ c, pages: PAGES.filter((p) => p.category === c) })).filter(
+	(g) => g.pages.length > 0,
+);
 
 type Theme = "light" | "dark" | "system";
 
 // ponytail: 해시 라우팅 - 페이지가 수십 개가 되고 검색 · SEO 가 필요해지면 Next.js 로
 function useSlug() {
-	const read = () => location.hash.replace(/^#\/?/, "").split("#")[0] || FIRST.slug;
+	const read = () => location.hash.replace(/^#\/?/, "").split("#")[0] ?? "";
 	const [slug, setSlug] = useState(read);
 	useEffect(() => {
 		const on = () => {
@@ -61,11 +63,12 @@ function App() {
 		localStorage.setItem("bt-docs-theme", theme);
 	}, [theme]);
 
-	const page = PAGES.find((p) => p.slug === slug) ?? FIRST;
+	// 없는 주소 · 빈 주소는 컴포넌트 홈
+	const page = PAGES.find((p) => p.slug === slug);
 	// 다른 페이지로 가면 사이드바에서 현재 항목이 보이게 - 사이드바 안에서만 움직인다
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
-	}, [page.slug]);
+	}, [page?.slug]);
 	return (
 		<div className="site">
 			<header className="site_top">
@@ -85,29 +88,64 @@ function App() {
 				/>
 			</header>
 			<nav className="site_nav" aria-label="컴포넌트">
-				{CATEGORIES.filter((c) => PAGES.some((p) => p.category === c)).map((c) => (
+				<a href="#/" className="site_nav_home" aria-current={page ? undefined : "page"}>
+					전체 컴포넌트
+				</a>
+				{GROUPS.map(({ c, pages }) => (
 					<div key={c} className="site_nav_group">
 						<p className="site_nav_title">
 							{c}
-							<span>{PAGES.filter((p) => p.category === c).length}</span>
+							<span>{pages.length}</span>
 						</p>
-						{PAGES.filter((p) => p.category === c).map((p) => (
+						{pages.map((p) => (
 							<a
 								key={p.slug}
 								href={`#/${p.slug}`}
-								aria-current={p.slug === page.slug ? "page" : undefined}
+								aria-current={p.slug === page?.slug ? "page" : undefined}
 							>
-								{p.title}
+								<span className="site_nav_code">{p.title}</span>
+								<span className="site_nav_name">{p.name}</span>
 							</a>
 						))}
 					</div>
 				))}
 			</nav>
 			<main className="site_main">
-				<Page key={page.slug} page={page} theme={theme} />
+				{page ? <Page key={page.slug} page={page} theme={theme} /> : <Overview />}
 			</main>
 		</div>
 	);
 }
+
+/** 컴포넌트 홈 - 그룹별로 코드명 · 한국어 이름 · 한 줄 설명 */
+function Overview() {
+	return (
+		<article className="doc_page doc_overview">
+			<h1>컴포넌트</h1>
+			<p className="doc_summary">
+				{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다. 이름을 누르면 예제와 Props 를 봅니다.
+			</p>
+			{GROUPS.map(({ c, pages }) => (
+				<section key={c} className="doc_section">
+					<h2>{c}</h2>
+					<div className="doc_overview_grid">
+						{pages.map((p) => (
+							<a key={p.slug} href={`#/${p.slug}`} className="doc_overview_item">
+								<span className="doc_overview_title">
+									{p.title} <span>{p.name}</span>
+								</span>
+								<span className="doc_overview_desc">
+									<Md>{firstSentence(p.summary)}</Md>
+								</span>
+							</a>
+						))}
+					</div>
+				</section>
+			))}
+		</article>
+	);
+}
+
+const firstSentence = (text: string) => text.split(/(?<=다\.)\s/)[0] ?? text;
 
 createRoot(document.getElementById("root")!).render(<App />);

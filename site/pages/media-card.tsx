@@ -5,6 +5,7 @@ export const mediaCard: DocPage = {
 	category: "콘텐츠",
 	order: 1,
 	title: "MediaCard",
+	name: "이미지 카드",
 	summary: "이미지가 주인공인 카드입니다. 이미지 위치는 위 · 왼쪽 · 겹치기 중에 고릅니다.",
 	when: [
 		["글 · 상품 · 사례 목록", "MediaCard", true],

@@ -5,6 +5,7 @@ export const skeleton: DocPage = {
 	category: "로딩",
 	order: 1,
 	title: "Skeleton",
+	name: "스켈레톤",
 	summary: "불러오는 동안 내용 자리를 회색 모양으로 잡아 둡니다.",
 	when: [
 		["모양을 아는 내용을 불러오는 중", "Skeleton", true],

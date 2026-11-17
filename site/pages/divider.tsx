@@ -5,6 +5,7 @@ export const divider: DocPage = {
 	category: "콘텐츠",
 	order: 5,
 	title: "Divider",
+	name: "구분선",
 	summary: "구역을 나누는 선입니다.",
 	when: [
 		["같은 표면 안의 구역 구분", "Divider", true],

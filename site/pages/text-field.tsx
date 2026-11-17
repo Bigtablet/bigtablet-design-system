@@ -5,6 +5,7 @@ export const textField: DocPage = {
 	category: "텍스트 입력",
 	order: 0,
 	title: "TextField",
+	name: "텍스트 입력",
 	summary: "한 줄 텍스트 입력입니다. 아이콘 · 지우기 · 비밀번호 보기 버튼을 칸 안에 넣습니다.",
 	when: [
 		["이름 · 이메일 · 검색어", "TextField", true],

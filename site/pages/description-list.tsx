@@ -5,6 +5,7 @@ export const descriptionList: DocPage = {
 	category: "데이터",
 	order: 2,
 	title: "DescriptionList",
+	name: "상세 정보",
 	summary: '한 항목의 속성을 "이름: 값" 으로 나열합니다. `<dl>` 로 렌더합니다.',
 	when: [
 		["주문 · 사용자 상세", "DescriptionList", true],

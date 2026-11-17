@@ -5,6 +5,7 @@ export const grid: DocPage = {
 	category: "레이아웃",
 	order: 5,
 	title: "Grid",
+	name: "격자 배치",
 	summary: "같은 너비의 칸을 격자로 놓습니다. 열 수를 고정하거나 폭에 따라 자동으로 바꿉니다.",
 	when: [
 		["같은 너비의 카드 격자", "Grid", true],

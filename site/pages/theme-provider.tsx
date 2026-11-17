@@ -5,6 +5,7 @@ export const themeProvider: DocPage = {
 	category: "시작하기",
 	order: 0,
 	title: "ThemeProvider",
+	name: "테마",
 	summary:
 		"라이트 · 다크를 화면에서 전환할 때 씁니다. 대상 요소에 `data-theme` 를 붙여 CSS 변수를 바꿉니다.",
 	when: [

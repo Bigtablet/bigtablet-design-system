@@ -5,6 +5,7 @@ export const stack: DocPage = {
 	category: "레이아웃",
 	order: 4,
 	title: "Stack",
+	name: "줄 배치",
 	summary: "한 줄 또는 한 열로 흐르는 배치입니다. 간격은 spacing 토큰 값만 받습니다.",
 	when: [
 		["아바타 + 이름, 버튼 줄, 폼 줄", "Stack", true],

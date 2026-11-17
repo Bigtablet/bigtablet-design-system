@@ -5,6 +5,7 @@ export const errorState: DocPage = {
 	category: "알림 · 상태",
 	order: 4,
 	title: "ErrorState",
+	name: "오류 상태",
 	summary: "불러오기 실패를 알리고 다시 시도할 동작을 둡니다. 화면 전체 · 위젯 크기를 고릅니다.",
 	when: [
 		["데이터를 못 불러옴", "ErrorState", true],

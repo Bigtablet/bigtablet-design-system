@@ -5,6 +5,7 @@ export const combobox: DocPage = {
 	category: "선택",
 	order: 1,
 	title: "Combobox",
+	name: "검색 선택",
 	summary: "후보를 서버에서 가져오는 선택 입력입니다. 입력이 멈추면 `onSearch` 를 한 번 부릅니다.",
 	when: [
 		["후보가 서버에 있어 검색해야 나옴 (담당자 · 회사 · 상품)", "Combobox", true],

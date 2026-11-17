@@ -5,6 +5,7 @@ export const popover: DocPage = {
 	category: "오버레이",
 	order: 2,
 	title: "Popover",
+	name: "팝오버",
 	summary: "버튼 옆에 붙는 작은 패널입니다. 안에 입력을 둘 수 있습니다.",
 	when: [
 		["짧은 폼 · 선택지", "Popover", true],

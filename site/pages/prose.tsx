@@ -5,6 +5,7 @@ export const prose: DocPage = {
 	category: "콘텐츠",
 	order: 3,
 	title: "Prose",
+	name: "본문 글",
 	summary: "클래스가 없는 글 마크업(h · p · ul · a …)에 타이포 규칙을 입힙니다.",
 	when: [
 		["CMS · 마크다운에서 온 본문", "Prose", true],

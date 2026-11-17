@@ -5,6 +5,7 @@ export const dataView: DocPage = {
 	category: "데이터",
 	order: 1,
 	title: "DataView",
+	name: "목록 화면",
 	summary:
 		"목록 화면 한 덩어리입니다. 표 · 검색 · 선택 동작 · 페이지 · 로딩 · 빈 상태 · 오류를 함께 맡습니다.",
 	when: [

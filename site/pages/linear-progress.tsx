@@ -5,6 +5,7 @@ export const linearProgress: DocPage = {
 	category: "로딩",
 	order: 2,
 	title: "LinearProgress",
+	name: "단계 진행 막대",
 	summary: "단계형 진행 막대입니다. 몇 단계 중 몇 번째인지 보여 줍니다.",
 	when: [
 		["단계 수만 보여 주면 됨", "LinearProgress", true],
