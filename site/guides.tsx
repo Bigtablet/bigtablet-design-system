@@ -180,7 +180,7 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 					<LinkCard
 						href="#/ai"
 						icon={<Bot size={20} />}
-						title="AI 로 쓰기"
+						title="AI 에이전트"
 						desc="Claude Code · Codex · Cursor 가 이 패키지 문서를 읽고 화면을 만들게 합니다."
 					/>
 				</div>
@@ -317,7 +317,7 @@ export function SaveButton() {
 			<Block id="agents" title="AI 에이전트로 쓰기">
 				<p>
 					Claude Code · Codex · Cursor 가 이 패키지를 제대로 쓰게 하는 설정은{" "}
-					<a href="#/ai">AI 로 쓰기</a> 에 있습니다.
+					<a href="#/ai">AI 에이전트</a> 에 있습니다.
 				</p>
 			</Block>
 
@@ -397,7 +397,7 @@ function Vanilla() {
 	);
 }
 
-/* ─── AI 로 쓰기 ─────────────────────────────────────────────────────── */
+/* ─── AI 에이전트 ─────────────────────────────────────────────────────── */
 
 type Agent = "claude" | "codex" | "cursor";
 
@@ -431,7 +431,7 @@ function Ai() {
 		<article>
 			<header className="doc_block doc_head">
 				<h1>
-					AI 로 쓰기 <span className="doc_name">AI Agents</span>
+					AI 에이전트 <span className="doc_name">AI Agents</span>
 				</h1>
 				<p className="doc_lede">
 					<Md>
@@ -542,7 +542,7 @@ export const GUIDES = [
 	},
 	{
 		slug: "ai",
-		title: "AI 로 쓰기",
+		title: "AI 에이전트",
 		name: "AI Agents",
 		keywords: "claude codex cursor agents.md claude.md llms 마크다운 에이전트",
 		Body: Ai,
