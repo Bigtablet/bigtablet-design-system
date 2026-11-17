@@ -46,7 +46,8 @@ grep -A30 "interface TextareaProps" node_modules/@bigtablet/design-system/dist/i
 
 # what changed, and which lines need a visual check
 #   entries starting with "(렌더 변경)" alter rendering with no API change
-cat node_modules/@bigtablet/design-system/CHANGELOG.md   # or the GitHub releases page
+# CHANGELOG is not in the npm package - read it on GitHub:
+# https://github.com/Bigtablet/bigtablet-design-system/blob/main/CHANGELOG.md  (or the releases page)
 ```
 
 ---
@@ -90,7 +91,7 @@ Always reference tokens - never inline a hex value.
 
 Two surfaces, and they are **not** interchangeable:
 - **SCSS tokens** (`@use "@bigtablet/design-system/scss/token" as token;` → `token.$spacing_16`) - the full set. Use these in your SCSS.
-- **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
+- **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/THEMING.md#레이아웃런타임-계약-변수).
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
 The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`, `--bt-radius-*`, `--bt-spacing-*`, `--bt-font-family`.
@@ -356,7 +357,7 @@ For your own overlay, use the SCSS mixin. It uses the same curve as the componen
 // Enter + exit: keep it mounted with data-state="closed" until el.getAnimations() settle, then unmount.
 ```
 
-Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See `docs/MIGRATION.md`.
+Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md).
 
 **Reduced motion:** every component respects `prefers-reduced-motion: reduce`. `token.presence` turns its transition off there.
 
@@ -527,7 +528,7 @@ Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
 Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), CopyButton, Card, Spinner, Pagination, DatePicker, FileInput.
 
-Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
+Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
 JS API (auto-init on DOMContentLoaded, or manual):
 ```js
@@ -603,7 +604,7 @@ When asked to generate UI:
 
 ## Final Reminders
 
-- Read the [Components](./COMPONENTS.md) doc for full props API per component.
+- Read the [Components](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md) doc for full props API per component.
 - Storybook is the source of truth for visual behavior - `pnpm storybook` and explore.
 - When in doubt, **use tokens, use components, use providers**. Don't reinvent.
 - Dark mode bugs are the most common failure mode - test both themes mentally before shipping code.

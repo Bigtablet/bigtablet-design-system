@@ -9,16 +9,21 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 - [prop 이름 기준](#prop-이름-기준)
 - [v3.0 주요 변경사항](#v30-주요-변경사항)
 - [Foundation](#foundation)
+  - [LocaleProvider](#localeprovider)
   - [ThemeProvider](#themeprovider)
 - [General](#general)
   - [Button](#button)
-  - [Dropdown](#dropdown)
-  - [Chip](#chip)
   - [IconButton](#iconbutton)
   - [CopyButton](#copybutton)
+  - [useClipboard / copyText](#useclipboard--copytext)
 - [Form](#form)
+  - [Dropdown](#dropdown)
+  - [Combobox](#combobox)
+  - [문장 속 링크](#문장-속-링크-text_link)
+  - [Field / Form](#field--form)
   - [FilterBar](#filterbar)
   - [TextField](#textfield)
+  - [TagInput](#taginput)
   - [Textarea](#textarea)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
@@ -27,6 +32,8 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Toggle](#toggle)
   - [DatePicker](#datepicker)
   - [DateCalendar](#datecalendar)
+  - [DateRangePicker](#daterangepicker)
+  - [TimePicker](#timepicker)
   - [FileInput](#fileinput)
   - [ImageCropper](#imagecropper)
   - [OtpInput](#otpinput)
@@ -54,22 +61,31 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Popover](#popover)
 - [Display](#display)
   - [Card](#card)
+  - [Stat](#stat)
+  - [DescriptionList](#descriptionlist)
+  - [Timeline](#timeline)
   - [Divider](#divider)
   - [ListItem](#listitem)
   - [Avatar](#avatar)
   - [Badge](#badge)
+  - [Chip](#chip)
   - [Hero](#hero)
   - [MediaCard](#mediacard)
   - [EmptyState](#emptystate)
   - [ErrorState](#errorstate)
   - [Accordion](#accordion)
+  - [Prose](#prose)
   - [Table](#table)
+  - [DataView](#dataview)
   - [Icon](#icon)
 - [Layout](#layout)
+  - [AppShell](#appshell)
+  - [PageHeader](#pageheader)
   - [Container](#container)
   - [Section](#section)
   - [Stack](#stack)
   - [Grid](#grid)
+  - [Layout 합성 예제 (마케팅 페이지)](#layout-합성-예제-마케팅-페이지)
 
 ---
 
@@ -309,66 +325,113 @@ import Link from "next/link";
 
 ---
 
-### DateRangePicker
-
-시작일·종료일 한 쌍. `DatePicker` 둘을 묶는다.
+### IconButton
 
 ```tsx
-<Field name="period" label="조회 기간">
-  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
-</Field>
+import { IconButton } from '@bigtablet/design-system';
+import { Settings } from 'lucide-react';
+
+// Variants
+<IconButton variant="text" icon={<Settings />} aria-label="설정" />
+<IconButton variant="filled" icon={<Settings />} aria-label="설정" />
+<IconButton variant="tonal" icon={<Settings />} aria-label="설정" />
+<IconButton variant="outline" icon={<Settings />} aria-label="설정" />
+
+// Sizes
+<IconButton size="sm" icon={<Settings />} aria-label="설정" />
+<IconButton size="md" icon={<Settings />} aria-label="설정" />
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `DateRange` | - | `{ start?, end? }` (`"YYYY-MM-DD"`) |
-| `onValueChange` | `(value: DateRange) => void` | - | 범위 변경. **필수** |
-| `startLabel` | `string` | `'시작일'` | 시작일 묶음 라벨 |
-| `endLabel` | `string` | `'종료일'` | 종료일 묶음 라벨 |
-| `startYear` | `number` | `1950` | 연도 범위 시작 |
-| `endYear` | `number` | - | 미지정 시 현재 연도 + 10 |
-| `minDate` | `string` | - | 가장 이른 날짜 |
-| `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
-| `disabled` | `boolean` | - | |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
-| `clearable` | `boolean` | `false` | 날짜마다 지우기(×). 시작일을 지우면 종료일도 함께 비운다 |
-| `fullWidth` | `boolean` | `true` | |
+| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline'` | `'text'` | 스타일. Button 과 같은 이름 |
+| `size` | `'sm' \| 'md'` | `'md'` | 크기 |
+| `icon` | `ReactNode` | required | 표시할 아이콘 |
+| `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
+| `aria-labelledby` | `string` | **둘 중 하나 필수** | 접근성 이름을 제공하는 외부 요소의 id |
+| `disabled` | `boolean` | `false` | 비활성화 |
 
-**거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
-시작일을 종료일보다 뒤로 옮기면 **종료일이 비워진다**(`{ start, end: undefined }`). 조용히
-시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장된다.
+> ⚠️ **접근성 이름은 타입 레벨에서 필수다.** `icon` 은 항상 `aria-hidden="true"` span 으로 감싸지므로, `aria-label` / `aria-labelledby` 중 하나를 주지 않으면 버튼에 접근성 이름이 전혀 없다 (WCAG 2.1 SC 4.1.2 Name, Role, Value). `IconButtonProps` 는 이를 강제하는 `IconButtonWithAriaLabel | IconButtonWithAriaLabelledBy` union 이라 `<IconButton icon={<X />} />` 는 **컴파일되지 않는다**.
+>
+> ```tsx
+> // ❌ 타입 에러 - 접근성 이름 없음
+> <IconButton icon={<X />} />
+> // ✅
+> <IconButton icon={<X />} aria-label="닫기" />
+> <IconButton icon={<X />} aria-labelledby="dialog-title" />
+> ```
 
-시작일을 고르기 전에는 종료일이 잠긴다. 순서가 뒤집힌 입력을 애초에 막는다.
+---
 
-### TimePicker
+### CopyButton
 
-시·분 선택. `DatePicker` 와 같은 방식으로 `Dropdown` 두 개를 조합한다.
+텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알린다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 쓴다.
 
-```tsx
-<Field name="pickupAt" label="픽업 시각">
-  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
-</Field>
-```
+**Props**
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | - | `"HH:mm"` (24시간) |
-| `onValueChange` | `(value: string) => void` | - | 선택 변경. **필수** |
-| `label` | `string` | - | 위에 표시할 라벨 |
-| `minuteStep` | `number` | `5` | 분 간격. 60 의 약수를 준다 |
-| `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
-| `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
-| `disabled` | `boolean` | - | |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
-| `fullWidth` | `boolean` | `true` | |
-| `hourLabel` | `string` | `'시'` | |
-| `minuteLabel` | `string` | `'분'` | |
+| `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
+| `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
+| `aria-label` | `string` | `label` | 이름만 따로. 복사 버튼이 여럿이면 보이는 글자는 짧게 두고 이름에 무엇을 복사하는지 담는다 (`"{값} 주소 복사"`) |
+| `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
+| `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
+| `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
+| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
+| `variant` | `ButtonVariant` | `'outline'` | 문구 버튼의 variant |
+| `resetAfter` | `number` | `2000` | 복사됨 표시 유지 시간(ms) |
+| `onCopy` | `(text: string) => void` | - | 성공 - Toast 를 띄우려면 여기서 |
+| `onError` | `(error: unknown) => void` | - | 실패 (권한 거부 · API 없음 · 폴백 실패) |
+| `disabled` | `boolean` | - | 비활성화 |
 
-`minTime`/`maxTime` 은 **시 목록까지** 좁힌다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
-있고, 그때 분 목록이 비어 막힌 화면이 된다. 경계 시각에서는 분도 좁힌다 — 최소가 09:30 이면
-09시의 분은 30분부터다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮긴다.
+#### 접근성 - 복사됨 알림
 
-값은 24시간 `"HH:mm"` 이다. 12시간 표기는 화면 표시의 문제라 소비자가 포맷한다.
+- 결과는 버튼 옆 **숨긴 `role="status"`** 가 알린다 ("복사됨" / "복사하지 못했습니다"). 화면에는 아이콘 · 문구 변화로 충분하다
+- 버튼 이름(`label`)은 **바꾸지 않는다** - 문구 버튼도 보이는 문구만 "복사됨" 으로 바뀐다. 포커스 중인 버튼의 이름이 바뀌면 status 와 함께 두 번 읽힌다. 보이는 문구가 이름을 포함하므로(복사 → 복사됨) WCAG 2.5.3 Label in Name 도 지킨다
+- **한 화면에 여러 개**(표의 줄마다 등)면 모두 "복사" 로 들려 구분되지 않는다 - `aria-label` 로 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣어 Label in Name 을 지킨다 (`aria-label="192.168.10.1 주소 복사"` + 보이는 "복사")
+- 함수 `text` 가 throw 하면 실패로 처리한다 - "복사하지 못했습니다" 알림 + `onError`
+- `id` · `title` · `data-*` · `aria-describedby` · `ref` 등 `<button>` 속성은 그대로 전달된다
+- Toast 를 함께 띄우면 같은 문구를 두 번 듣게 된다 - 다른 문구("초대 링크를 복사했습니다")로 맥락을 더하거나 하나만 쓴다
+
+### useClipboard / copyText
+
+```tsx
+import { useClipboard, copyText } from "@bigtablet/design-system";
+
+const { copy, status, error, reset } = useClipboard({
+  resetAfter: 2000,
+  onCopy: (text) => toast.success("복사했습니다"),   // 시도마다 - 선택
+  onError: (e) => toast.error("복사하지 못했습니다"),
+});
+// status: "idle" | "copying" | "copied" | "error"
+const ok = await copy(orderNo);   // throw 하지 않는다 - 성공 여부만 돌려준다
+
+await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
+```
+
+- Clipboard API(보안 컨텍스트)를 먼저 쓰고, 없거나 거부되면 `execCommand("copy")` 로 폴백한다 - 인앱 브라우저 · HTTP 사내망. 폴백은 임시 textarea 를 쓰고 **사용자의 선택 영역과 포커스를 되돌린다**
+- 둘 다 실패하면 원래 오류(`NotAllowedError` 등)를 `error` 로 준다
+- 성공 · 실패 반응은 `onCopy` · `onError` 옵션으로 - **시도마다** 불린다. `status`·`error` 를 effect 로 지켜보면 같은 오류가 연달아 날 때 값이 같아 두 번째를 놓친다
+- 연속 클릭하면 마지막 복사만 상태에 반영하고 되돌림 타이머를 새로 시작한다. 언마운트하면 타이머를 지우고 이후 결과를 무시한다
+- SSR 에서 `navigator` · `document` 가 없어도 import 만으로는 아무것도 하지 않는다
+
+**Usage**
+
+```tsx
+// 문구 버튼 + Toast
+<CopyButton text={inviteUrl} label="초대 링크 복사" onCopy={() => toast.success("초대 링크를 복사했습니다")} />
+
+// 아이콘만
+<code>{maskedKey}</code>
+<CopyButton text={apiKey} iconOnly label="API 키 복사" />
+
+// 표의 줄마다 - 보이는 글자는 "복사", 이름은 줄마다 다르게
+<CopyButton text={row.ip} variant="text" aria-label={`${row.ip} 주소 복사`} />
+```
+
+---
+
+## Form
 
 ### Dropdown
 
@@ -507,163 +570,6 @@ const [fruits, setFruits] = useState<string[]>([]);
 
 ---
 
-### Chip
-
-읽을 거리가 있는 태그·카테고리(`static`), 또는 누르고 고르고 지우는 토큰(`basic` · `filter` · `input`).
-
-#### 언제 쓰는가
-
-| 상황 | 선택 |
-|------|------|
-| 태그·카테고리 라벨, 상태 라벨 (`tone`) | ✅ Chip `type="static"` |
-| 필터 토글, 입력된 값 토큰 (지우기 가능) | ✅ Chip `type="filter"` · `"input"` |
-| 개수 · 점 · `New` 같은 짧은 표시 | ❌ [Badge](#badge) |
-| 사용자가 목록에 없는 값을 직접 여러 개 입력 | ❌ [TagInput](#taginput) |
-
-```tsx
-import { Chip } from '@bigtablet/design-system';
-
-// 기본 사용
-<Chip label="태그" />
-
-// 타입별
-<Chip type="basic" label="Basic" onClick={() => {}} />
-<Chip type="input" label="Input" removable onRemove={() => {}} />
-<Chip type="filter" label="Filter" selected onClick={() => {}} />
-
-// v3.0+ Static (구 Tag 대체) - 비인터랙티브 라벨 + tone
-<Chip type="static" tone="success" label="활성" />
-<Chip type="static" tone="warning" label="검토 중" leadingIcon={<AlertIcon />} />
-<Chip type="static" tone="info" label="베타" removable onRemove={() => {}} />
-```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
-| `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
-| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'neutral'` | 의미 색 (type=`static`에서만 적용) |
-| `label` | `string` | required | 라벨 텍스트 |
-| `selected` | `boolean` | - | 선택 상태 |
-| `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
-| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 (static 타입) |
-| `open` | `boolean` | - | 팝업 열림 (filter 타입에서 aria-expanded로 사용) |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `onClick` | `(event) => void` | - | 클릭 핸들러 |
-| `onRemove` | `() => void` | - | 삭제 핸들러 |
-| `removeLabel` | `string` | `'{label} 제거'` | 삭제 버튼 이름 - 칩이 여러 개일 때 대상을 구분한다 |
-
-> **v3.0 변경**: 기존 별도 `Tag` 컴포넌트가 `Chip`의 `type="static"`으로 흡수되었습니다. 카테고리/상태 표시는 `<Chip type="static" tone="..." />`로 마이그레이션하세요.
-
----
-
-### IconButton
-
-```tsx
-import { IconButton } from '@bigtablet/design-system';
-import { Settings } from 'lucide-react';
-
-// Variants
-<IconButton variant="text" icon={<Settings />} aria-label="설정" />
-<IconButton variant="filled" icon={<Settings />} aria-label="설정" />
-<IconButton variant="tonal" icon={<Settings />} aria-label="설정" />
-<IconButton variant="outline" icon={<Settings />} aria-label="설정" />
-
-// Sizes
-<IconButton size="sm" icon={<Settings />} aria-label="설정" />
-<IconButton size="md" icon={<Settings />} aria-label="설정" />
-```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline'` | `'text'` | 스타일. Button 과 같은 이름 |
-| `size` | `'sm' \| 'md'` | `'md'` | 크기 |
-| `icon` | `ReactNode` | required | 표시할 아이콘 |
-| `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
-| `aria-labelledby` | `string` | **둘 중 하나 필수** | 접근성 이름을 제공하는 외부 요소의 id |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
-> ⚠️ **접근성 이름은 타입 레벨에서 필수다.** `icon` 은 항상 `aria-hidden="true"` span 으로 감싸지므로, `aria-label` / `aria-labelledby` 중 하나를 주지 않으면 버튼에 접근성 이름이 전혀 없다 (WCAG 2.1 SC 4.1.2 Name, Role, Value). `IconButtonProps` 는 이를 강제하는 `IconButtonWithAriaLabel | IconButtonWithAriaLabelledBy` union 이라 `<IconButton icon={<X />} />` 는 **컴파일되지 않는다**.
->
-> ```tsx
-> // ❌ 타입 에러 - 접근성 이름 없음
-> <IconButton icon={<X />} />
-> // ✅
-> <IconButton icon={<X />} aria-label="닫기" />
-> <IconButton icon={<X />} aria-labelledby="dialog-title" />
-> ```
-
----
-
-### CopyButton
-
-텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알린다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 쓴다.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
-| `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
-| `aria-label` | `string` | `label` | 이름만 따로. 복사 버튼이 여럿이면 보이는 글자는 짧게 두고 이름에 무엇을 복사하는지 담는다 (`"{값} 주소 복사"`) |
-| `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
-| `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
-| `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
-| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
-| `variant` | `ButtonVariant` | `'outline'` | 문구 버튼의 variant |
-| `resetAfter` | `number` | `2000` | 복사됨 표시 유지 시간(ms) |
-| `onCopy` | `(text: string) => void` | - | 성공 - Toast 를 띄우려면 여기서 |
-| `onError` | `(error: unknown) => void` | - | 실패 (권한 거부 · API 없음 · 폴백 실패) |
-| `disabled` | `boolean` | - | 비활성화 |
-
-#### 접근성 - 복사됨 알림
-
-- 결과는 버튼 옆 **숨긴 `role="status"`** 가 알린다 ("복사됨" / "복사하지 못했습니다"). 화면에는 아이콘 · 문구 변화로 충분하다
-- 버튼 이름(`label`)은 **바꾸지 않는다** - 문구 버튼도 보이는 문구만 "복사됨" 으로 바뀐다. 포커스 중인 버튼의 이름이 바뀌면 status 와 함께 두 번 읽힌다. 보이는 문구가 이름을 포함하므로(복사 → 복사됨) WCAG 2.5.3 Label in Name 도 지킨다
-- **한 화면에 여러 개**(표의 줄마다 등)면 모두 "복사" 로 들려 구분되지 않는다 - `aria-label` 로 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣어 Label in Name 을 지킨다 (`aria-label="192.168.10.1 주소 복사"` + 보이는 "복사")
-- 함수 `text` 가 throw 하면 실패로 처리한다 - "복사하지 못했습니다" 알림 + `onError`
-- `id` · `title` · `data-*` · `aria-describedby` · `ref` 등 `<button>` 속성은 그대로 전달된다
-- Toast 를 함께 띄우면 같은 문구를 두 번 듣게 된다 - 다른 문구("초대 링크를 복사했습니다")로 맥락을 더하거나 하나만 쓴다
-
-### useClipboard / copyText
-
-```tsx
-import { useClipboard, copyText } from "@bigtablet/design-system";
-
-const { copy, status, error, reset } = useClipboard({
-  resetAfter: 2000,
-  onCopy: (text) => toast.success("복사했습니다"),   // 시도마다 - 선택
-  onError: (e) => toast.error("복사하지 못했습니다"),
-});
-// status: "idle" | "copying" | "copied" | "error"
-const ok = await copy(orderNo);   // throw 하지 않는다 - 성공 여부만 돌려준다
-
-await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
-```
-
-- Clipboard API(보안 컨텍스트)를 먼저 쓰고, 없거나 거부되면 `execCommand("copy")` 로 폴백한다 - 인앱 브라우저 · HTTP 사내망. 폴백은 임시 textarea 를 쓰고 **사용자의 선택 영역과 포커스를 되돌린다**
-- 둘 다 실패하면 원래 오류(`NotAllowedError` 등)를 `error` 로 준다
-- 성공 · 실패 반응은 `onCopy` · `onError` 옵션으로 - **시도마다** 불린다. `status`·`error` 를 effect 로 지켜보면 같은 오류가 연달아 날 때 값이 같아 두 번째를 놓친다
-- 연속 클릭하면 마지막 복사만 상태에 반영하고 되돌림 타이머를 새로 시작한다. 언마운트하면 타이머를 지우고 이후 결과를 무시한다
-- SSR 에서 `navigator` · `document` 가 없어도 import 만으로는 아무것도 하지 않는다
-
-**Usage**
-
-```tsx
-// 문구 버튼 + Toast
-<CopyButton text={inviteUrl} label="초대 링크 복사" onCopy={() => toast.success("초대 링크를 복사했습니다")} />
-
-// 아이콘만
-<code>{maskedKey}</code>
-<CopyButton text={apiKey} iconOnly label="API 키 복사" />
-
-// 표의 줄마다 - 보이는 글자는 "복사", 이름은 줄마다 다르게
-<CopyButton text={row.ip} variant="text" aria-label={`${row.ip} 주소 복사`} />
-```
-
----
-
-## Form
-
 ### Combobox
 
 후보를 **서버에서** 가져오는 선택 입력. `Dropdown` 도 `searchable` 로 타이핑 검색을 지원하지만
@@ -719,62 +625,6 @@ await copyText(orderNo);          // 상태 없이 한 번 - 실패하면 reject
 > 방향키로 옮긴 활성 항목은 `Dropdown`·`Combobox` 가 따라 스크롤한다(`block: "nearest"` — 필요한
 > 만큼만 움직이고 페이지는 건드리지 않는다). 포커스는 트리거·입력에 남으므로(APG) 브라우저가
 > 알아서 해 주지 않는다.
-
-### DataView
-
-목록 화면 한 벌 — 검색·필터, 표, 선택 액션, 페이지네이션, 그리고 **네 상태 분기**
-(loading / error / empty / data)를 한 곳에 둔다.
-
-`Table` 은 정렬·선택·스켈레톤을 이미 처리한다. `DataView` 가 파는 것은 **그 위아래를 매번
-다시 만들지 않는 것**이다 — 특히 에러 상태를 빠뜨린 목록이 생기지 않게.
-
-```tsx
-<DataView
-  query={usersQuery}                       // {data, isLoading, error, refetch}
-  columns={columns}
-  rowKey={(u) => u.id}
-  toolbar={{ search: true, searchValue: q, onSearchChange: setQ, filters: <Dropdown … /> }}
-  selectionActions={[
-    { label: "내보내기", onRun: exportRows },
-    { label: "삭제", danger: true, onRun: removeRows },
-  ]}
-  pagination={{ page, totalPages, onPageChange: setPage }}
-/>
-```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `query` | `DataViewQuery<T>` | - | `{data, isLoading, error, refetch}`. 필드 이름을 TanStack Query 에 맞췄지만 어떤 라이브러리도 import 하지 않는다 |
-| `columns` | `TableColumn<T>[]` | - | `Table` 과 같은 정의 |
-| `rowKey` | `(row: T) => string` | - | 행 고유 key |
-| `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
-| `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
-| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다. `pageSize` 를 함께 주면 행 선택 체크박스 라벨이 전체 순번을 쓴다 |
-| `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
-| `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
-| `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
-| `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
-| `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
-| `onRowClick` | `(row: T, index: number) => void` | - | 행 클릭 |
-| `ariaLabel` | `string` | - | 표의 접근성 이름 |
-| `clearSelectionLabel` | `string` | `'선택 해제'` | 선택 해제 버튼 라벨 |
-| `errorTitle` | `string` | `'불러오지 못했습니다'` | 실패 상태 제목 |
-| `retryLabel` | `string` | `'다시 시도'` | 재시도 버튼 라벨 |
-
-동작 규칙 세 가지:
-
-- **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
-- **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
-- **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
-
-> **선택 체크박스 라벨은 기본값이 순번이다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
-> 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
-> 쓴다 - 그 행의 데이터가 그대로 온다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
-> 오프셋 계산이 필요 없다.
->
-> ```tsx
-> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
-> ```
 
 ### 문장 속 링크 (`.text_link`)
 
@@ -1573,6 +1423,69 @@ const [date, setDate] = useState<string | null>(null);
   describeDay={(d) => (events[d] ? `일정 ${events[d].length}개` : undefined)}
 />
 ```
+
+---
+
+### DateRangePicker
+
+시작일·종료일 한 쌍. `DatePicker` 둘을 묶는다.
+
+```tsx
+<Field name="period" label="조회 기간">
+  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `DateRange` | - | `{ start?, end? }` (`"YYYY-MM-DD"`) |
+| `onValueChange` | `(value: DateRange) => void` | - | 범위 변경. **필수** |
+| `startLabel` | `string` | `'시작일'` | 시작일 묶음 라벨 |
+| `endLabel` | `string` | `'종료일'` | 종료일 묶음 라벨 |
+| `startYear` | `number` | `1950` | 연도 범위 시작 |
+| `endYear` | `number` | - | 미지정 시 현재 연도 + 10 |
+| `minDate` | `string` | - | 가장 이른 날짜 |
+| `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
+| `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
+| `clearable` | `boolean` | `false` | 날짜마다 지우기(×). 시작일을 지우면 종료일도 함께 비운다 |
+| `fullWidth` | `boolean` | `true` | |
+
+**거꾸로 된 범위를 만들 수 없다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
+시작일을 종료일보다 뒤로 옮기면 **종료일이 비워진다**(`{ start, end: undefined }`). 조용히
+시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장된다.
+
+시작일을 고르기 전에는 종료일이 잠긴다. 순서가 뒤집힌 입력을 애초에 막는다.
+
+### TimePicker
+
+시·분 선택. `DatePicker` 와 같은 방식으로 `Dropdown` 두 개를 조합한다.
+
+```tsx
+<Field name="pickupAt" label="픽업 시각">
+  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+</Field>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | `"HH:mm"` (24시간) |
+| `onValueChange` | `(value: string) => void` | - | 선택 변경. **필수** |
+| `label` | `string` | - | 위에 표시할 라벨 |
+| `minuteStep` | `number` | `5` | 분 간격. 60 의 약수를 준다 |
+| `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
+| `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
+| `disabled` | `boolean` | - | |
+| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이긴다 |
+| `fullWidth` | `boolean` | `true` | |
+| `hourLabel` | `string` | `'시'` | |
+| `minuteLabel` | `string` | `'분'` | |
+
+`minTime`/`maxTime` 은 **시 목록까지** 좁힌다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
+있고, 그때 분 목록이 비어 막힌 화면이 된다. 경계 시각에서는 분도 좁힌다 — 최소가 09:30 이면
+09시의 분은 30분부터다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮긴다.
+
+값은 24시간 `"HH:mm"` 이다. 12시간 표기는 화면 표시의 문제라 소비자가 포맷한다.
 
 ---
 
@@ -3884,6 +3797,55 @@ import { Badge } from "@bigtablet/design-system";
 
 ---
 
+### Chip
+
+읽을 거리가 있는 태그·카테고리(`static`), 또는 누르고 고르고 지우는 토큰(`basic` · `filter` · `input`).
+
+#### 언제 쓰는가
+
+| 상황 | 선택 |
+|------|------|
+| 태그·카테고리 라벨, 상태 라벨 (`tone`) | ✅ Chip `type="static"` |
+| 필터 토글, 입력된 값 토큰 (지우기 가능) | ✅ Chip `type="filter"` · `"input"` |
+| 개수 · 점 · `New` 같은 짧은 표시 | ❌ [Badge](#badge) |
+| 사용자가 목록에 없는 값을 직접 여러 개 입력 | ❌ [TagInput](#taginput) |
+
+```tsx
+import { Chip } from '@bigtablet/design-system';
+
+// 기본 사용
+<Chip label="태그" />
+
+// 타입별
+<Chip type="basic" label="Basic" onClick={() => {}} />
+<Chip type="input" label="Input" removable onRemove={() => {}} />
+<Chip type="filter" label="Filter" selected onClick={() => {}} />
+
+// v3.0+ Static (구 Tag 대체) - 비인터랙티브 라벨 + tone
+<Chip type="static" tone="success" label="활성" />
+<Chip type="static" tone="warning" label="검토 중" leadingIcon={<AlertIcon />} />
+<Chip type="static" tone="info" label="베타" removable onRemove={() => {}} />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
+| `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
+| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'neutral'` | 의미 색 (type=`static`에서만 적용) |
+| `label` | `string` | required | 라벨 텍스트 |
+| `selected` | `boolean` | - | 선택 상태 |
+| `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
+| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 (static 타입) |
+| `open` | `boolean` | - | 팝업 열림 (filter 타입에서 aria-expanded로 사용) |
+| `disabled` | `boolean` | `false` | 비활성화 |
+| `onClick` | `(event) => void` | - | 클릭 핸들러 |
+| `onRemove` | `() => void` | - | 삭제 핸들러 |
+| `removeLabel` | `string` | `'{label} 제거'` | 삭제 버튼 이름 - 칩이 여러 개일 때 대상을 구분한다 |
+
+> **v3.0 변경**: 기존 별도 `Tag` 컴포넌트가 `Chip`의 `type="static"`으로 흡수되었습니다. 카테고리/상태 표시는 `<Chip type="static" tone="..." />`로 마이그레이션하세요.
+
+---
+
 ### Hero
 
 페이지 상단의 큰 영역. 배경(이미지/색상) + 오버레이 + eyebrow/title/subtitle + CTA 슬롯으로 구성. **마케팅 페이지, 카페 메인, 캠페인 랜딩**의 첫 인상 영역.
@@ -4233,20 +4195,21 @@ import { MediaCard } from "@bigtablet/design-system";
 |------|------|
 | 데이터/항목이 아직 없음 (받은 메일 0개, 첫 프로젝트) | ✅ EmptyState |
 | 검색 결과 없음 | ✅ EmptyState `size="sm"` |
-| 에러로 인한 로드 실패 | △ EmptyState로 가능하지만 [Alert](#alert) `variant="error"`도 고려 |
 | 권한 없어서 못 봄 | ✅ EmptyState (illustration: Lock 아이콘) |
 | 로딩 중 | ❌ [Spinner](#spinner) 또는 Skeleton 권장 |
 | 페이지 없음 (404) | ✅ EmptyState `size="lg"` + `fillHeight` (스토리 `404 (페이지 없음)`) |
-| 서버·네트워크 실패 (500 등) | ❌ [ErrorState](#errorstate) |
+| 불러오기 실패 · 서버 · 네트워크 오류 (500 등) | ❌ [ErrorState](#errorstate) - 재시도 버튼을 붙일 수 있다 |
 
-**EmptyState vs Alert(error) 비교**
+**EmptyState vs ErrorState vs InlineAlert**
 
-| | EmptyState | Alert(error) |
-|---|------------|--------------|
-| 의도 | "지금은 비어있어요" | "문제가 생겼어요" |
-| 톤 | 중립적, 안내/온보딩 | 경고, 사용자 행동 필요 |
-| 위치 | 콘텐츠 영역 전체 차지 | 상단 배너 또는 인라인 |
-| 아이콘 | Inbox, Search, FolderOpen 등 정보성 | AlertCircle, X 등 경고성 |
+| | EmptyState | ErrorState | InlineAlert |
+|---|------------|------------|-------------|
+| 의도 | "지금은 비어있어요" | "불러오지 못했어요" | "알아 둘 것이 있어요" |
+| 톤 | 중립적, 안내/온보딩 | 오류, 재시도 유도 | 정보 · 경고 · 오류 (`tone`) |
+| 위치 | 콘텐츠 영역 전체 차지 | 콘텐츠 영역 전체(`variant="page"`) 또는 위젯 안(`"widget"`) | 콘텐츠 위 · 사이에 끼는 띠 - 내용은 그대로 보인다 |
+| 아이콘 | Inbox, Search, FolderOpen 등 정보성 | 경고 아이콘 (기본) | `tone` 아이콘 |
+
+> [Alert](#alert) 는 화면을 막는 **확인 창**이라 비어 있음 · 실패 표시에 쓰지 않는다.
 
 #### size 선택 가이드
 
@@ -4764,6 +4727,64 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 - 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈한다.
 - `selectable` 이면 **미선택 행도 `aria-selected="false"`** 를 갖는다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없다(APG grid). 선택 개념이 없는 표에는 붙이지 않는다.
 - 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 준다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힌다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산한다.
+
+---
+
+### DataView
+
+목록 화면 한 벌 — 검색·필터, 표, 선택 액션, 페이지네이션, 그리고 **네 상태 분기**
+(loading / error / empty / data)를 한 곳에 둔다.
+
+`Table` 은 정렬·선택·스켈레톤을 이미 처리한다. `DataView` 가 파는 것은 **그 위아래를 매번
+다시 만들지 않는 것**이다 — 특히 에러 상태를 빠뜨린 목록이 생기지 않게.
+
+```tsx
+<DataView
+  query={usersQuery}                       // {data, isLoading, error, refetch}
+  columns={columns}
+  rowKey={(u) => u.id}
+  toolbar={{ search: true, searchValue: q, onSearchChange: setQ, filters: <Dropdown … /> }}
+  selectionActions={[
+    { label: "내보내기", onRun: exportRows },
+    { label: "삭제", danger: true, onRun: removeRows },
+  ]}
+  pagination={{ page, totalPages, onPageChange: setPage }}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `query` | `DataViewQuery<T>` | - | `{data, isLoading, error, refetch}`. 필드 이름을 TanStack Query 에 맞췄지만 어떤 라이브러리도 import 하지 않는다 |
+| `columns` | `TableColumn<T>[]` | - | `Table` 과 같은 정의 |
+| `rowKey` | `(row: T) => string` | - | 행 고유 key |
+| `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
+| `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 든다 |
+| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않는다. `pageSize` 를 함께 주면 행 선택 체크박스 라벨이 전체 순번을 쓴다 |
+| `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
+| `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
+| `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
+| `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
+| `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
+| `onRowClick` | `(row: T, index: number) => void` | - | 행 클릭 |
+| `ariaLabel` | `string` | - | 표의 접근성 이름 |
+| `clearSelectionLabel` | `string` | `'선택 해제'` | 선택 해제 버튼 라벨 |
+| `errorTitle` | `string` | `'불러오지 못했습니다'` | 실패 상태 제목 |
+| `retryLabel` | `string` | `'다시 시도'` | 재시도 버튼 라벨 |
+
+동작 규칙 세 가지:
+
+- **로딩 중에는 빈 상태를 띄우지 않는다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡인다
+- **`refetch` 가 없으면 재시도 버튼도 없다.** 누를 수 없는 버튼을 띄우지 않는다
+- **선택 개수는 `role="status"` 로 알린다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모른다
+
+> **선택 체크박스 라벨은 기본값이 순번이다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
+> 행을 고르는지 번호로만 듣는다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
+> 쓴다 - 그 행의 데이터가 그대로 온다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
+> 오프셋 계산이 필요 없다.
+>
+> ```tsx
+> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
+> ```
 
 ---
 

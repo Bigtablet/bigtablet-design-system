@@ -19,14 +19,22 @@ UI가 **얼마나 빠르게, 얼마나 부드럽게 반응하는지**를 정의�
 👉 버튼 hover, 카드 강조, 모달 등장 같은
 모든 인터랙션 애니메이션에 공통으로 사용됩니다.
 
+### 나타났다 사라지는 컴포넌트 (presence)
+
+Modal · Drawer · Alert · Toast · Tooltip · Popover · Menu · Dropdown · Combobox 는 모두 \`token.presence\` 믹스인 하나로 움직입니다 - \`duration_presence\`(0.3s) + \`easing_presence\`(스프링을 근사한 \`linear()\` 곡선). 진입은 \`@starting-style\`, 퇴출은 \`[data-state="closed"]\` 로의 transition 이라 JS 애니메이션 라이브러리가 없습니다.
+
+\`\`\`scss
+.my-panel { @include token.presence(scale(0.96)); } // 인자 = 닫힌 상태 transform
+\`\`\`
+
 ### 진입 / 퇴출 페어 (Enter / Exit pair)
 
-팝업·모달·드로어·토스트 등 **나타났다 사라지는 컴포넌트**는 진입과 퇴출에 다른 토큰을 사용합니다.
+presence 를 쓰지 않는 직접 만든 전환에는 진입과 퇴출에 다른 토큰을 씁니다.
 
-| 페어 | 진입 | 퇴출 | 사용처 |
-|------|------|------|--------|
-| Fast | \`enterFast\` (0.15s) | \`exitFast\` (0.12s) | Dropdown, Tooltip, Popover |
-| Base | \`enterBase\` (0.2s) | \`exitBase\` (0.15s) | Modal, Drawer, Toast |
+| 페어 | 진입 | 퇴출 |
+|------|------|------|
+| Fast | \`enterFast\` (0.15s) | \`exitFast\` (0.12s) |
+| Base | \`enterBase\` (0.2s) | \`exitBase\` (0.15s) |
 
 규칙: **퇴출이 진입보다 짧음**. 진입은 감속(\`easing.enter\` = expo out), 퇴출은 가속(\`easing.exit\` = ease-in).
 `,

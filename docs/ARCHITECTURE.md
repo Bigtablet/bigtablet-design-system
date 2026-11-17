@@ -20,25 +20,29 @@ bigtablet-design-system/
 │   │   ├── icon/            # 아이콘 사이즈 (xs-xl)
 │   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트 - 8 카테고리 폴더 하위에 컴포넌트
-│   │   ├── display/         # accordion avatar badge card chip divider hero icon list-item media-card table
-│   │   ├── feedback/        # alert empty-state error-state linear-progress skeleton spinner toast top-loading
-│   │   ├── forms/           # checkbox date-picker dropdown file image-cropper otp-input radio radio-group textarea textfield toggle
-│   │   ├── general/         # button icon-button
-│   │   ├── layout/          # container grid section stack
-│   │   ├── navigation/      # bottom-nav breadcrumb menu nav-bar pagination sidebar tabs
+│   ├── ui/                  # UI 컴포넌트 - 8 카테고리 폴더 하위에 컴포넌트 (폴더 이름 = kebab-case)
+│   │   ├── display/         # accordion avatar badge card chip data-view description-list divider hero icon
+│   │   │                    # list-item media-card prose stat table timeline
+│   │   ├── feedback/        # alert empty-state error-state inline-alert linear-progress skeleton spinner toast top-loading
+│   │   ├── forms/           # checkbox combobox date-calendar date-picker date-range-picker dropdown field file
+│   │   │                    # filter-bar form image-cropper otp-input radio radio-group segmented-control
+│   │   │                    # tag-input textarea textfield time-picker toggle
+│   │   ├── general/         # button copy-button icon-button
+│   │   ├── layout/          # app-shell container grid page-header section stack
+│   │   ├── navigation/      # bottom-nav breadcrumb menu nav-bar pagination sidebar stepper tabs
 │   │   ├── overlay/         # drawer modal popover tooltip
-│   │   └── system/          # theme-provider
+│   │   └── system/          # locale-provider theme-provider
 │   │
-│   ├── utils/               # cn + 훅
-│   │   ├── cn.ts
+│   ├── utils/               # 공용 함수 · 훅 - 목록은 utils/index.ts 가 정본
+│   │   ├── cn.ts                   # className 합치기
+│   │   ├── safe-html.ts            # SafeHTMLProps (dangerouslySetInnerHTML 차단)
+│   │   ├── polymorphic.ts          # PolymorphicProps (`as` 로 렌더 요소 바꾸기)
+│   │   ├── use-presence.ts         # 진입/퇴출 모션이 끝날 때까지 마운트 유지
+│   │   ├── use-listbox-popup.ts    # Dropdown · Combobox 공용 팝업 거동 (공개 export)
 │   │   ├── overlay-stack.ts        # 공유 오버레이 Escape 스택 (registerOverlay / useOverlayEscape)
-│   │   ├── use-anchored-position.ts
-│   │   ├── use-focus-trap.ts
-│   │   ├── use-is-mounted.ts
-│   │   ├── use-reduced-motion.ts
-│   │   ├── use-spring-presence.ts  /  use-spring-hover.ts
-│   │   ├── use-safe-layout-effect.ts
+│   │   ├── use-focus-trap.ts  ·  scroll-lock.ts  ·  use-anchored-position.ts
+│   │   ├── sentences.tsx           # 문장 단위 줄바꿈 (Sentences · renderSentences)
+│   │   ├── use-clipboard.ts  ·  hangul-search.ts  ·  reveal-inline.ts  ·  …
 │   │   └── index.ts
 │   │
 │   ├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
@@ -51,11 +55,11 @@ bigtablet-design-system/
 │       ├── scss/            # 컴포넌트별 스타일 partial
 │       └── examples/
 │
-├── docs/                    # 문서 (COMPONENTS, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
+├── docs/                    # 문서 (COMPONENTS, THEMING, MIGRATION, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
 ├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포)
 ├── .storybook/              # Storybook 설정
-├── scripts/                 # 빌드 스크립트 (copy-scss.sh, build-vanilla.sh, ...)
-├── tsup.config.ts           # 빌드 설정
+├── scripts/                 # 빌드 · 검사 스크립트 (build-modules.mjs, build-tokens.mjs, build-vanilla.sh, check-*.py, ...)
+├── tsup.config.ts           # 빌드 설정 (React · Vanilla) - 컴포넌트별 모듈 분리는 scripts/build-modules.mjs
 ├── vitest.config.ts         # 테스트 설정
 └── package.json
 ```
@@ -199,16 +203,18 @@ export { spacing } from "./styles/spacing";
 
 > 새 컴포넌트를 추가하면 `src/index.ts` 에 **직접 export 를 추가해야** 소비자에게 노출된다. 반대로 `src/utils/index.ts` 에만 있고 `src/index.ts` 에 없는 항목(`registerOverlay` / `useOverlayEscape` / `useIsMounted` / `useAnchoredPosition`)은 **내부 전용**이다.
 
-별도 `/next` entry 는 없다. 컴포넌트가 `"use client"` 로 마킹되고(빌드 시 tsup 가 `dist/index.js` 선두에 자동 주입) `next` 가 optional peer dependency 라, 동일한 `.` export 로 Next.js App Router 에서 그대로 동작한다.
+별도 `/next` entry 는 없다. 컴포넌트 소스가 `"use client"` 로 시작하고 모듈 단위 빌드(`dist/esm`)가 파일마다 그 지시문을 맨 앞에 유지해서(`scripts/build-modules.mjs`), 동일한 `.` export 로 Next.js App Router 에서 그대로 동작한다. `next` 는 optional peer dependency 다.
 
 ### Vanilla JS (`/vanilla`)
 
 CDN 또는 직접 import로 사용:
 
 ```html
-<link rel="stylesheet" href="@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 ```
+
+정적 파일로 배포하는 방법(Spring `static/` 등)은 [VANILLA.md 설치](./VANILLA.md#설치).
 
 ---
 
@@ -299,27 +305,15 @@ $easing_exit:     cubic-bezier(0.4, 0, 1, 1);
 
 ### tsup.config.ts
 
-```ts
-import { defineConfig } from "tsup";
+설정은 [`tsup.config.ts`](../tsup.config.ts) 가 정본이다 - 여기에 붙여 두면 어긋난다. 빌드는 세 갈래다.
 
-export default defineConfig([
-    // React 번들 (Next.js 공용) - 빌드 후 dist/index.js 선두에 "use client" 주입
-    {
-        entry: { index: "src/index.ts" },
-        format: ["esm"],
-        dts: true,
-        external: ["react", "react-dom", "lucide-react"],
-    },
-    // Vanilla JS 번들 (IIFE, 전역 Bigtablet)
-    {
-        entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },
-        format: ["iife"],
-        globalName: "Bigtablet",
-    },
-]);
-```
+| 빌드 | 출력 | 용도 |
+|------|------|------|
+| 한 덩어리 (`src/index.ts`) | `dist/index.css`(= `style.css`) · `dist/index.d.ts` | 전체 CSS 와 타입. 이 JS 는 쓰지 않아 `build-modules.mjs` 가 지운다 |
+| 모듈 단위 (`src/**/*.ts(x)`, `bundle: false`) | `dist/esm/**` | 패키지 진입점. 파일 하나 = 모듈 하나라 소비자 번들러가 안 쓰는 컴포넌트를 JS · CSS 째로 뺀다. import 경로 보정 · 컴포넌트별 CSS · `"use client"` 유지는 `scripts/build-modules.mjs` |
+| Vanilla (`src/vanilla/bigtablet.js`) | `dist/vanilla/bigtablet(.min).js` | IIFE, 전역 `Bigtablet` |
 
-별도 Next.js 번들은 없다 (React 번들이 `"use client"` 마킹으로 Next 호환). SCSS 복사·Vanilla CSS 빌드는 `pnpm build` 가 `scripts/copy-scss.sh` · `scripts/build-vanilla.sh` 로 처리.
+`pnpm build` 가 이어서 SCSS 복사(`copy-scss.sh`) · Vanilla CSS(`build-vanilla.sh`) · Tailwind 프리셋(`build-tailwind.mjs`)을 만든다.
 
 ### 빌드 출력
 
@@ -342,22 +336,16 @@ dist/
 
 ### Vitest 설정
 
-```ts
-// vitest.config.ts
-import { defineConfig } from "vitest/config";
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본이다. 프로젝트가 넷으로 나뉜다.
 
-export default defineConfig({
-    test: {
-        environment: "jsdom",
-        setupFiles: ["./src/test/setup.ts"],
-        coverage: {
-            provider: "v8",
-            include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
-            exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}"],
-        },
-    },
-});
-```
+| 프로젝트 | 명령 | 파일 | 환경 |
+|----------|------|------|------|
+| `unit` | `pnpm test` | `*.test.ts(x)` | jsdom, `src/test/setup.ts` |
+| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` | 실제 Chromium (레이아웃 · 잘림 · 스크롤 잠금) |
+| `storybook` | `pnpm test:storybook` | 모든 스토리 | Chromium + axe (a11y) |
+| `visual` | `pnpm test:visual` | `*.visual.test.tsx` | CI 컨테이너 전용 시각 회귀 |
+
+자세한 작성법은 [TESTING.md](./TESTING.md).
 
 ### 테스트 파일 예시
 

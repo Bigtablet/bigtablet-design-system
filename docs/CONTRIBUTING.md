@@ -19,7 +19,7 @@ Bigtablet Design System에 기여해 주셔서 감사합니다!
 
 ### 요구사항
 
-- Node.js 18+
+- Node.js 22 (CI 와 같은 22.14.0 권장) - Vite 8 · Vitest 4 가 Node 18 을 지원하지 않는다
 - Python 3 - `pnpm check:*`·`pnpm coverage:docs` 검사 스크립트가 쓴다 (macOS·Linux 기본 포함, Windows 는 별도 설치)
 - pnpm 10.x (필수) - `package.json` 의 `packageManager` 버전(현재 10.34.6)으로 자동 전환됩니다
 
@@ -42,6 +42,15 @@ pnpm test
 # 빌드
 pnpm build
 ```
+
+### 커밋 훅
+
+`pnpm install` 이 git 훅을 건다 (husky).
+
+- **pre-commit** - 커밋마다 `pnpm test`(unit 전체, 10초 안팎)를 돌린다. 실패하면 커밋되지 않는다
+- **commit-msg** - commitlint 가 제목을 검사한다. `label: message` 형식, 라벨은 [커밋 컨벤션](#커밋-컨벤션) 표의 것만, 제목 100자 이하, **제목에 한글 금지**(본문은 괜찮다)
+
+`--no-verify` 로 건너뛰지 않는다 - CI 가 같은 검사를 다시 돌려, 푸시된 뒤 걸리면 메시지를 고치려고 브랜치를 새로 만들어야 한다.
 
 ### 사용 가능한 스크립트
 

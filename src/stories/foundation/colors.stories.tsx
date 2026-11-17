@@ -26,7 +26,7 @@ const meta: Meta = {
 
 - **Base**: raw 값 (직접 사용 지양)
 - **Semantic**: 역할 기반 (brand / text / bg / state / border / status)
-- **Brand Accent**: 검정(\`brand_primary\`) 기반 accent 토큰 - 페이지 하단 "Accent 토큰 / React-Spring 모션" 참고
+- **Brand Accent**: 검정(\`brand_primary\`) 기반 accent 토큰 - 페이지 하단 "Accent 토큰 (semantic)" 참고
 
 ❗HEX / RGB 값을 하드코딩 하지 말고 **반드시 Semantic 토큰**을 사용하세요.
         `,

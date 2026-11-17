@@ -50,12 +50,12 @@ import { ThemeProvider } from "@bigtablet/design-system";
 |----------|-------|------|
 | bg.solid | #FFFFFF | #0A0A0A (neutral-950) |
 | bg.solid_dim | #F4F4F4 | #141414 (neutral-925) |
-| text.heading | #121212 | #FFFFFF |
+| text.heading | #121212 | #FFFFFF (95%) |
 | text.body | #666666 | #B3B3B3 (neutral-400) |
-| text.caption | #888888 | #777777 (neutral-600) |
+| text.caption | #6F6F6F | #808080 |
 | border.default | #E5E5E5 | #333333 (neutral-800) |
 
-\`brand_primary\`, \`accent.*\`, \`status.*\` 는 라이트/다크 동일 (브랜드 일관성).
+\`brand_primary\` 와 \`status.*\` 의 채움색은 라이트/다크 동일 (브랜드 일관성). \`accent.*\` 는 반전된다 (#121212 ↔ #FFFFFF) - 체크된 체크박스 · 진행 표시처럼 어두운 화면에서 흰색이어야 하는 자리에 쓴다. 상태 색을 글자로 쓸 때는 \`status.*_on_surface\` 가 다크에서 밝은 톤으로 바뀐다.
 
 #### Storybook toolbar
 상단 툴바의 테마 버튼에서 light / dark / system 을 고릅니다. 모든 스토리에 함께 적용됩니다.
@@ -167,7 +167,7 @@ export const TokenComparison: Story = {
 			{ token: "bg.solid_dim", lightHex: "#F4F4F4", darkHex: "#141414" },
 			{ token: "text.heading", lightHex: "#121212", darkHex: "#FFFFFF" },
 			{ token: "text.body", lightHex: "#666666", darkHex: "#B3B3B3" },
-			{ token: "text.caption", lightHex: "#888888", darkHex: "#777777" },
+			{ token: "text.caption", lightHex: "#6F6F6F", darkHex: "#808080" },
 			{ token: "border.default", lightHex: "#E5E5E5", darkHex: "#333333" },
 		];
 		return (

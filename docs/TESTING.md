@@ -18,7 +18,7 @@ Bigtablet Design System의 테스트 작성 가이드입니다.
 
 ### 사용 도구
 
-- **Vitest** - 테스트 러너 (multi-project: `unit` + `storybook`)
+- **Vitest** - 테스트 러너 (multi-project: `unit` · `browser` · `storybook` · `visual`)
 - **React Testing Library** - 컴포넌트 테스트
 - **jsdom** - DOM 환경 (unit 테스트)
 - **Playwright** - 브라우저 환경 (a11y 테스트, headless Chromium)
@@ -27,47 +27,24 @@ Bigtablet Design System의 테스트 작성 가이드입니다.
 
 ### 설정 파일
 
-```ts
-// vitest.config.ts
-import { defineConfig } from "vitest/config";
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본이다 (`globals: true` - `describe` · `it` · `expect` 를 import 없이 써도 된다). 프로젝트는 넷이다.
 
-export default defineConfig({
-    test: {
-        environment: "jsdom",
-        setupFiles: ["./src/test/setup.ts"],
-        include: ["src/**/*.test.{ts,tsx}"],
-        coverage: {
-            provider: "v8",
-            reporter: ["text", "json", "json-summary", "html"],
-            include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
-            exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}"],
-        },
-    },
-});
-```
+| 프로젝트 | 명령 | 파일 | 환경 |
+|----------|------|------|------|
+| `unit` | `pnpm test` | `*.test.ts(x)` | jsdom |
+| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` | 실제 Chromium - 배치 · 잘림 · 스크롤 잠금 |
+| `storybook` | `pnpm test:storybook` | 모든 스토리 | Chromium + axe (a11y) |
+| `visual` | `pnpm test:visual` | `*.visual.test.tsx` | CI 컨테이너 전용 시각 회귀 |
 
 ### Setup 파일
 
-```ts
-// src/test/setup.ts
-import "@testing-library/jest-dom";
-import { vi } from "vitest";
+[`src/test/setup.ts`](../src/test/setup.ts) 가 `unit` 테스트마다 돈다. 하는 일은 셋이다.
 
-// Mock window.matchMedia
-Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn().mockImplementation((query) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-    })),
-});
-```
+- `@testing-library/jest-dom` 매처 등록 (`toBeInTheDocument` 등)
+- jsdom 에 없는 `Element.prototype.scrollIntoView` 스텁
+- Modal · Drawer · Alert 가 공유하는 body 스크롤 잠금 상태를 테스트마다 초기화 - 한 테스트의 잠금이 다음 테스트로 새지 않게
+
+`matchMedia` 는 전역으로 mock 하지 않는다 - 필요한 테스트가 직접 `vi.stubGlobal` 로 둔다.
 
 ---
 
@@ -126,7 +103,7 @@ Vanilla 번들은 컴포넌트별 테스트 파일이 덮는다 - `src/vanilla/b
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돈다.
 
 ```ts
-// UMD 번들이지만 Vite 가 named export 로 노출해준다. 소비자는 `<script>` + 전역 `Bigtablet`
+// 소스가 ES 모듈이라(#926) named export 로 받는다. 소비자는 `<script>` + 전역 `Bigtablet`(빌드된 IIFE)
 // 로 쓰지만 부착 경로만 다르고 검사 대상 로직은 같다. 빌드 산출물이 아니라 소스를 import 해서
 // 소스 변경이 곧 테스트에 걸리게 한다.
 import { Dropdown } from "./bigtablet.js";

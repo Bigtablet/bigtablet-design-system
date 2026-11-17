@@ -66,18 +66,18 @@ export const Overview: Story = {
 				<div style={{ display: "grid", gap: 12 }}>
 					<Step
 						number={1}
-						title="Foundation 확인"
-						description="디자인 토큰(색상, 타이포, 간격 등)이 최신 시안과 일치하는지 확인합니다."
+						title="설치"
+						description="Getting Started / Installation 의 순서대로 패키지를 설치하고 Provider 로 감쌉니다."
 					/>
 					<Step
 						number={2}
-						title="컴포넌트 검증"
-						description="각 컴포넌트의 Props를 조작하며 기대한 대로 동작하는지 확인합니다."
+						title="고르기"
+						description="Components 의 각 문서 첫 표 '언제 쓰는가' 로 상황에 맞는 컴포넌트를 고릅니다. Controls 로 Props 를 바꿔 보며 동작을 확인합니다."
 					/>
 					<Step
 						number={3}
-						title="Chromatic 리뷰"
-						description="PR에 연결된 Chromatic 링크에서 시각적 변경사항을 승인합니다."
+						title="스타일은 토큰으로"
+						description="직접 스타일을 쓸 때는 Foundation 의 토큰(색상 · 간격 · 타이포)을 씁니다. 색 값을 하드코딩하면 다크 모드에서 깨집니다."
 					/>
 				</div>
 			</section>
@@ -95,7 +95,7 @@ export const Overview: Story = {
 					<InfoCard label="패키지" value="@bigtablet/design-system" />
 					<InfoCard label="Storybook" value="v10" />
 					<InfoCard label="React" value="19" />
-					<InfoCard label="시각적 리뷰" value="Chromatic" />
+					<InfoCard label="시각 회귀" value="Playwright (test:visual)" />
 				</div>
 			</section>
 		</div>

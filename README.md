@@ -53,7 +53,7 @@ A complete React + TypeScript design system maintained by Bigtablet for internal
 
 ## What's inside
 
-- **40+ components** across forms, display, feedback, navigation, overlay, and layout<br />
+- **60+ components** across forms, display, feedback, navigation, overlay, and layout<br />
 - **13 token domains** - colors, typography, spacing, motion, radius, elevation, and more - exposed as SCSS variables and CSS custom properties (plus a SCSS-only `layout` domain)<br />
 - **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
 - **Vanilla JS bundle** for non-React backends - Thymeleaf, JSP, PHP, Django<br />
@@ -111,13 +111,14 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ## Components
 
 <table>
-<tr><td><b>Forms</b></td><td>Button · IconButton · CopyButton · TextField · Textarea · Checkbox · Radio · RadioGroup · SegmentedControl · Toggle · Dropdown · FilterBar · DatePicker · DateCalendar · FileInput · ImageCropper · OtpInput</td></tr>
-<tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
-<tr><td><b>Feedback</b></td><td>Alert · Toast · InlineAlert · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState · ErrorState</td></tr>
-<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · BottomNav · NavBar · Breadcrumb · Menu · Pagination</td></tr>
-<tr><td><b>Overlay</b></td><td>Modal · Drawer · Tooltip · Popover</td></tr>
-<tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
-<tr><td><b>System</b></td><td>ThemeProvider</td></tr>
+<tr><td><b>General</b></td><td>Button · CopyButton · IconButton</td></tr>
+<tr><td><b>Forms</b></td><td>Checkbox · Combobox · DateCalendar · DatePicker · DateRangePicker · Dropdown · Field · FileInput · FilterBar · Form · ImageCropper · OtpInput · Radio · RadioGroup · SegmentedControl · TagInput · Textarea · TextField · TimePicker · Toggle</td></tr>
+<tr><td><b>Display</b></td><td>Accordion · Avatar · Badge · Card · Chip · DataView · DescriptionList · Divider · Hero · Icon · ListItem · MediaCard · Prose · Stat · Table · Timeline</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert (<code>useAlert</code> · <code>useConfirm</code>) · EmptyState · ErrorState · InlineAlert · LinearProgress · Skeleton · Spinner · Toast (<code>useToast</code>) · TopLoading</td></tr>
+<tr><td><b>Navigation</b></td><td>BottomNav · Breadcrumb · Menu · NavBar · Pagination · Sidebar · Stepper · Tabs</td></tr>
+<tr><td><b>Overlay</b></td><td>Drawer · Modal · Popover · Tooltip</td></tr>
+<tr><td><b>Layout</b></td><td>AppShell · Container · Grid · PageHeader · Section · Stack</td></tr>
+<tr><td><b>System</b></td><td>LocaleProvider · ThemeProvider</td></tr>
 </table>
 
 →&nbsp;Full API · [`docs/COMPONENTS.md`](./docs/COMPONENTS.md)

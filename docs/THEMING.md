@@ -93,7 +93,6 @@ Next.js App Router 예시 (`app/layout.tsx`):
 
 ```tsx
 import { ThemeProvider } from "@bigtablet/design-system";
-import "@bigtablet/design-system/style.css";
 
 const NO_FLASH_SCRIPT = `
 (function () {
@@ -242,7 +241,7 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-focus-ring` | 포커스 링 box-shadow |
 | `--bt-elevation-level1` ~ `-level5` | elevation shadow |
 
-> 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)는 `src/vanilla/bigtablet.scss` 에서 동일 토큰을 기반으로 하지만 이름이 다른 자체 `--bt-color-*` 변수 세트를 사용하며(예: `--bt-color-primary`, `--bt-color-background`), 현재 `data-theme`/`prefers-color-scheme` 다크 모드 오버라이드가 없습니다. Vanilla 환경과 React 환경의 CSS 변수는 서로 호환되지 않으니 섞어 쓰지 마세요.
+> 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)도 같은 테마 변수를 싣고 다크 모드가 그대로 동작한다 - `<html data-theme="dark">` 또는 OS 다크(`prefers-color-scheme`). Vanilla 는 여기에 짧은 별칭(`--bt-color-primary`, `--bt-color-background` 등)을 더 두는데, 별칭도 테마를 따라 바뀐다. 켜는 법은 [VANILLA.md 다크 모드](./VANILLA.md#다크-모드).
 
 ### 레이아웃·런타임 계약 변수
 
@@ -352,7 +351,7 @@ body:has(.floating_bar) {
 
 Vanilla 번들도 같은 `--bt-z-*` 를 쓰고, 기존 이름 `--bt-z-modal` · `--bt-z-toast` 는 각각 `--bt-z-chrome`(100) · `--bt-z-notification`(200) 의 별칭으로 남습니다. 이전에는 둘 다 `1000` 이라 Vanilla 에서 모달과 토스트의 순서를 정할 수 없었고 React 와도 어긋났습니다.
 
-> **Vanilla 소비자 주의**: 모달이 `1000` → `100` 으로 내려갑니다. 페이지에 `101`~`999` 사이의 자기 레이어가 있으면 그 요소가 모달 위로 올라옵니다. 점검 절차와 되돌리는 방법은 [MIGRATION.md](./MIGRATION.md#v3140-vanilla-z-index-정렬) 에 있습니다.
+> **Vanilla 소비자 주의**: 모달이 `1000` → `100` 으로 내려갑니다. 페이지에 `101`~`999` 사이의 자기 레이어가 있으면 그 요소가 모달 위로 올라옵니다. 점검 절차와 되돌리는 방법은 [MIGRATION.md](./MIGRATION.md#vanilla-z-index-정렬) 에 있습니다.
 >
 > `NavBar` 가 `Toast` 와 같은 `notification`(200) 레이어인 것은 기존 값입니다. 의도가 불분명하지만 값을 바꾸면 동작 변경이라 현재 상태를 그대로 노출했습니다.
 
@@ -657,8 +656,8 @@ html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로 강제한다.
 그대로 두면 그 칸만 옆 칸과 다른 색이 되고, 다크 테마에서는 밝은 상자로 튄다.
 
-`style.css` 가 이걸 대신 막는다 (`src/styles/autofill.scss`). **소비자가 따로 할 일은 없다** -
-`@bigtablet/design-system/style.css` 를 이미 import 하고 있으면 자동 적용된다.
+공통 CSS 가 이걸 대신 막는다 (`src/styles/autofill.scss`). **소비자가 따로 할 일은 없다** -
+컴포넌트를 하나라도 import 하면 공통 CSS 와 함께 실린다 (`style.css` 를 import 하는 앱도 같다).
 
 | 상태 | 배경 | 글자 |
 |---|---|---|
