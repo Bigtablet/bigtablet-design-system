@@ -29,6 +29,14 @@
     // sticky 는 그 자체로 쌓임 맥락이라 Sidebar 접기 버튼의 z-index 가 이 열 안에 갇힌다. 헤더($z_content)
     // 위에 둬야 경계 밖으로 나온 버튼 절반이 헤더에 가려지지 않는다 (#1035). Vanilla `.bt-app-shell` 과 같은 값.
     z-index: token.$z_chrome;
+
+    // 헤더가 있으면 Sidebar 머리를 헤더 높이에 맞춘다 - 두 아래 선이 한 줄로 이어진다. 각자 내용 높이로
+    // 정해지면 계단처럼 어긋났다(Sidebar 머리 69px · NavBar 85px). 헤더 높이는 useTopInset 이 잰 값.
+    // 좁은 화면에서는 Sidebar 가 하단 바로 바뀌며 머리를 숨기므로 따로 막지 않는다.
+    .app_shell:has(.app_shell_header) & .sidebar_header {
+      box-sizing: border-box;
+      min-height: var(--bt-top-inset, 0px);
+    }
   }
 
   &_body {
