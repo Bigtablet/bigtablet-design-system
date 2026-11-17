@@ -582,7 +582,7 @@ React(`style.css`)와 Vanilla(`/vanilla` CSS · JS) 양쪽에 같은 처리가 �
 <details>
 <summary>구현 메모 - 왜 이렇게 잠그는가</summary>
 
-**`html` 과 `body` 양쪽에 `overflow: hidden` 을 겁니다.** `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로, 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을 `auto` 로 만듭니다)을 쓰면 body 만 잠가서는 문서가 그대로 스크롤됩니다 (실측 - 잠금 중 휠로 300 → 300, 해제 뒤 같은 휠로 300 → 800. `scrollTo` 는 `overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없습니다). 잠금 전 인라인 `overflow` 는 축까지 그대로 되살립니다.
+**잠금은 `html` 의 `overflow: hidden` 이 맡습니다.** `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로, 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을 `auto` 로 만듭니다)을 쓰면 body 만 잠가서는 문서가 그대로 스크롤됩니다 (실측 - 잠금 중 휠로 300 → 300, 해제 뒤 같은 휠로 300 → 800. `scrollTo` 는 `overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없습니다). `body` 는 잠그는 동안 `overflow: visible` 로 둡니다. `html` 이 `hidden` 이 되면 `body` 의 overflow 가 `body` 상자에 걸리는데, 그때 `body` 가 `hidden` 이면 `body` 가 새 스크롤 상자가 되어 sticky 헤더 · 사이드바가 스크롤된 만큼 위로 밀려납니다(#1043). 앱이 `body` 를 스크롤 상자로 쓰는 경우(`html` · `body` 둘 다 `visible` 이 아님)에만 `body` 도 `hidden` 으로 잠급니다. 잠금 전 인라인 `overflow` 는 축까지 그대로 되살립니다.
 
 **스크롤바 자리를 색으로 흉내내지 않습니다 (3.21.0 에서 바뀜).** 3.17~3.20 은 잠금 동안 스크롤바 자리를 남기고, 딤이 닿지 않는 그 띠를 루트 배경색에 딤을 합성해 칠했습니다. 문서 배경이 단색일 때만 맞는 방법이라, 띠 옆에 흰 표 · 카드가 닿으면(`#F4F4F4` → 122 대 `#FFFFFF` → 128) 경계에 세로선이 남았습니다 (#635). `width: 100vw` 로 넘겨도 스크롤바 자리에는 페인트가 잘립니다 (#580). 그래서 지금은 띠 자체를 만들지 않습니다.
 

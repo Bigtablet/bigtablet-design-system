@@ -73,6 +73,38 @@ describe("Modal layout (Chromium)", () => {
 		expect(document.body.style.paddingRight).toBe("");
 	});
 
+	// #1043 - html 과 body 를 함께 hidden 으로 잠그면 body 가 새 스크롤 상자가 되어, 스크롤해 둔
+	// 페이지의 sticky 헤더가 스크롤되지 않는 body 를 기준으로 붙어 화면 위로 밀려났다
+	it.each([
+		["no reset", ""],
+		["body { overflow-x: hidden } reset", "hidden"],
+	])("keeps a sticky header in place while locked (%s)", async (_, bodyOverflowX) => {
+		document.body.style.overflowX = bodyOverflowX;
+		try {
+			const Page = ({ open }: { open: boolean }) => (
+				<>
+					<header data-testid="sticky" style={{ position: "sticky", top: 0, height: 48 }}>
+						헤더
+					</header>
+					<div style={{ height: 3000 }}>긴 페이지</div>
+					<Modal open={open} onClose={() => {}} title="제목">
+						본문
+					</Modal>
+				</>
+			);
+			const { rerender } = render(<Page open={false} />);
+			window.scrollTo(0, 900);
+			expect(screen.getByTestId("sticky").getBoundingClientRect().top).toBe(0);
+
+			rerender(<Page open />);
+			await screen.findByRole("dialog");
+			expect(screen.getByTestId("sticky").getBoundingClientRect().top).toBe(0);
+			expect(window.scrollY).toBe(900);
+		} finally {
+			document.body.style.overflowX = "";
+		}
+	});
+
 	it("covers a gutter the app reserved with scrollbar-gutter: stable (#635)", async () => {
 		const html = document.documentElement;
 		html.style.scrollbarGutter = "stable";

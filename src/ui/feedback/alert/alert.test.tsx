@@ -331,7 +331,7 @@ describe("Alert", () => {
 		renderWithProvider(<TestComponent options={{ title: "S" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.body.dataset.openModals).toBe("1");
 
 		fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
@@ -340,7 +340,7 @@ describe("Alert", () => {
 		// 부하가 걸린 러너에서 cleanup 전에 단언이 실행돼 flaky - 잠금 해제까지 함께 기다린다.
 		await waitFor(() => {
 			expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
-			expect(document.body.style.overflow).toBe("");
+			expect(document.documentElement.style.overflow).toBe("");
 			expect(document.body.dataset.openModals).toBeUndefined();
 		});
 	});

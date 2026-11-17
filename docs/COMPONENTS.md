@@ -5004,7 +5004,7 @@ import { AppShell, Button, DataView, NavBar, PageHeader, Sidebar } from '@bigtab
 손으로 조립할 때 조용히 빠지던 넷을 DS 가 소유합니다.
 
 - **문서가 스크롤합니다** — 본문을 `overflow-y: auto` 로 만들면 `Modal`·`Drawer` 의 스크롤 잠금
-  (`body { overflow: hidden }`)이 본문에 닿지 않아 모달 뒤 배경이 계속 스크롤됩니다. 사이드바와
+  (`html { overflow: hidden }`)이 본문에 닿지 않아 모달 뒤 배경이 계속 스크롤됩니다. 사이드바와
   헤더는 `sticky` 입니다
 - **콘텐츠 열은 `minmax(0, 1fr)`** — 자기 넘침을 스스로 처리하지 않는 자식(줄바꿈 없는 긴 문자열
   등)이 열 자체를 늘리는 것을 막습니다. 실측 - 1800px 자식을 넣으면 열이 1024px → 1869px 로 늘어나
