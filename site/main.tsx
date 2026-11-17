@@ -77,7 +77,8 @@ function App() {
 		<div className="site">
 			<header className="site_top">
 				<a className="site_brand" href="#/">
-					Bigtablet <span>Design System</span>
+					<img src="/images/logo/bigtablet.png" alt="Bigtablet" width={66} height={21} />
+					<span>Design System</span>
 				</a>
 				<SiteSearch pages={PAGES} />
 				<div className="site_top_actions">

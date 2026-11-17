@@ -1,6 +1,7 @@
 import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
 import { ChevronRight } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { splitSentences } from "src/utils/sentences";
 import props from "./props.json";
 
 export type PropsName = keyof typeof props;
@@ -67,13 +68,33 @@ function DefaultValue({ value }: { value: string }) {
 	return isCode ? <Code>{value}</Code> : <Md>{value}</Md>;
 }
 
-/** 문서 문자열 속 `코드` 를 <code> 로 */
+/**
+ * 문서 문자열 - `코드` 는 <Code> 로, 두 문장 이상이면 문장마다 한 덩어리로 묶어 줄이 문장 사이에서 먼저 바뀐다.
+ * 어절 단위(keep-all)만으로는 "…기본으로 들어 / 있고" 처럼 한 표현 중간에서 접힌다 - DS Toast 와 같은 방법 (#1005).
+ */
 export function Md({ children }: { children: string }) {
+	// 닫는 괄호 · 코드 바로 뒤에 붙은 조사("PHP)에서도", "`static`에서만")는 브라우저가 그 사이를 줄바꿈 자리로 본다 -
+	// 단어 결합 문자(U+2060)를 끼워 한 어절로 둔다
+	const inline = (text: string) =>
+		text
+			// 짧은 괄호 묶음("(Thymeleaf · JSP · PHP)")은 안에서 갈리지 않게 줄바꿈 없는 공백으로
+			.replace(/\([^()`]{1,32}\)/g, (group) => group.replace(/ /g, "\u00a0"))
+			.replace(/\)(?=[가-힣])/g, ")\u2060")
+			.split(/(`[^`]+`)/)
+			.map((part, i, all) => {
+				if (part.startsWith("`")) return <Code key={i}>{part.slice(1, -1)}</Code>;
+				return all[i - 1]?.startsWith("`") && /^[가-힣]/.test(part) ? `\u2060${part}` : part;
+			});
+	const sentences = splitSentences(children);
+	if (sentences.length < 2) return <>{inline(children)}</>;
 	return (
 		<>
-			{children
-				.split(/(`[^`]+`)/)
-				.map((part, i) => (part.startsWith("`") ? <Code key={i}>{part.slice(1, -1)}</Code> : part))}
+			{sentences.map((s, i) => (
+				<Fragment key={s.start}>
+					{i > 0 && " "}
+					<span className="sentences_item">{inline(s.text)}</span>
+				</Fragment>
+			))}
 		</>
 	);
 }

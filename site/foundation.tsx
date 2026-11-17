@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import tokens from "../src/styles/tokens.json";
-import { Code } from "./docs";
+import { Code, Md } from "./docs";
 import { CodeBlock } from "./guides";
 
 // 토큰 원본(tokens.json)에서 바로 표를 만든다 - 토큰을 바꾸면 문서가 따라온다. 손으로 쓰는 값은 없다.
@@ -103,7 +103,11 @@ function TokenTable({ items, preview }: { items: Token[]; preview: (t: Token) =>
 							<td className="fd_preview_cell">{preview(t)}</td>
 							<td>
 								<strong className="fd_name">{t.name}</strong>
-								{t.description && <span className="fd_desc">{t.description}</span>}
+								{t.description && (
+									<span className="fd_desc">
+										<Md>{t.description}</Md>
+									</span>
+								)}
 							</td>
 							<td>
 								{t.scss && <Code>{t.scss}</Code>}

@@ -1,7 +1,7 @@
 import { Button, CopyButton } from "@bigtablet/design-system";
 import { ArrowRight, Blocks, Code2, Palette, Rocket } from "lucide-react";
 import type { ReactNode } from "react";
-import { Code, ComponentCard, type DocPage } from "./docs";
+import { Code, ComponentCard, type DocPage, Md } from "./docs";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
 const REPO = "https://github.com/Bigtablet/bigtablet-design-system/blob/develop";
@@ -36,6 +36,9 @@ function Block({ id, title, children }: { id: string; title: string; children: R
 
 /* ─── 처음 화면 ─────────────────────────────────────────────────────── */
 
+const LEDE =
+	"Bigtablet 제품을 만드는 React 컴포넌트와 디자인 토큰입니다. 라이트 · 다크 모드가 기본으로 들어 있고, React 없는 서버 템플릿(Thymeleaf · JSP · PHP)에서도 씁니다.";
+
 const FEATURED = ["button", "text-field", "dropdown", "modal", "table", "toast"];
 
 export function Landing({ pages }: { pages: DocPage[] }) {
@@ -46,8 +49,7 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 				<p className="landing_eyebrow">@bigtablet/design-system</p>
 				<h1>Bigtablet Design System</h1>
 				<p className="doc_lede">
-					Bigtablet 제품을 만드는 React 컴포넌트와 디자인 토큰입니다. 라이트 · 다크 모드가 기본으로
-					들어 있고, React 없는 서버 템플릿(Thymeleaf · JSP · PHP)에서도 씁니다.
+					<Md>{LEDE}</Md>
 				</p>
 				<div className="landing_actions">
 					<Button as="a" href="#/install" trailingIcon={<ArrowRight size={16} />}>
@@ -155,8 +157,11 @@ function Install() {
 					설치 <span className="doc_name">Installation</span>
 				</h1>
 				<p className="doc_lede">
-					React 19 · Next.js App Router 프로젝트에 붙이는 순서입니다. 처음이라면 위에서부터 그대로
-					따라 하면 됩니다.
+					<Md>
+						{
+							"React 19 · Next.js App Router 프로젝트에 붙이는 순서입니다. 처음이라면 위에서부터 그대로 따라 하면 됩니다."
+						}
+					</Md>
 				</p>
 			</header>
 
@@ -253,8 +258,11 @@ function Vanilla() {
 					Vanilla <span className="doc_name">HTML · CSS · JS</span>
 				</h1>
 				<p className="doc_lede">
-					React 가 없는 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다. CSS · JS 두 파일을
-					넣고 클래스 이름을 붙이면 됩니다.
+					<Md>
+						{
+							"React 가 없는 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다. CSS · JS 두 파일을 넣고 클래스 이름을 붙이면 됩니다."
+						}
+					</Md>
 				</p>
 			</header>
 

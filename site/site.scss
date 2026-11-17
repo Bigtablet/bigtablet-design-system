@@ -721,32 +721,20 @@ $preview_scale: 0.6;
 }
 
 .landing_stats {
+  // 칸이 좁아지면 칸 수를 줄인다 - 값("React 19 · Vanilla")이 칸 안에서 쪼개지지 않게.
+  // 칸 사이 선은 1px 간격 사이로 비치는 바탕색으로 그린다 (몇 칸으로 접히든 맞는다)
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: token.$border_width_standard;
   margin: token.$spacing_48 0 0;
+  overflow: hidden;
   border: $line;
   border-radius: token.$radius_md;
-
-  @include token.compact {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  background: token.$color_border_default;
 
   div {
     padding: token.$spacing_16 token.$spacing_20;
-
-    & + div {
-      border-left: $line;
-    }
-
-    @include token.compact {
-      &:nth-child(3) {
-        border-left: none;
-      }
-
-      &:nth-child(n + 3) {
-        border-top: $line;
-      }
-    }
+    background: token.$color_bg_solid;
   }
 
   dt {
@@ -757,6 +745,7 @@ $preview_scale: 0.6;
   dd {
     margin: token.$spacing_4 0 0;
     color: token.$color_text_heading;
+    white-space: nowrap;
     font-size: 20px;
     font-weight: 600;
     @include token.tabular_nums;
@@ -953,4 +942,46 @@ $preview_scale: 0.6;
   .doc_table:has(th) {
     min-width: 560px;
   }
+}
+
+// 마지막 줄에 한 어절만 남지 않게 - 문단 · 소개 문장
+p,
+li,
+td {
+  text-wrap: pretty;
+}
+
+.site_brand {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+
+  img {
+    flex-shrink: 0;
+  }
+}
+
+// 검은 로고 - 다크 테마에서는 뒤집어 흰색으로
+@mixin dark_logo {
+  .site_brand img {
+    filter: invert(1);
+  }
+}
+
+[data-theme="dark"] {
+  @include dark_logo;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark_logo;
+  }
+}
+
+// 소개 문장 · 제목처럼 짧은 글은 줄 길이를 고르게 - 마지막 줄에 한 어절만 남지 않는다
+.doc_lede,
+.doc_lede .sentences_item,
+h1,
+h2 {
+  text-wrap: balance;
 }
