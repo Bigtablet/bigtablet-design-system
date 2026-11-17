@@ -1,10 +1,21 @@
-import { Badge, Button, CopyButton, Toggle } from "@bigtablet/design-system";
+import {
+	Button,
+	Card,
+	CopyButton,
+	Dropdown,
+	Field,
+	InlineAlert,
+	TextField,
+} from "@bigtablet/design-system";
 import { Code2, Palette, Rocket } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
+import pkg from "../package.json";
 import { Code, ComponentCard, type DocPage, Md } from "./docs";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
-const REPO = "https://github.com/Bigtablet/bigtablet-design-system/blob/develop";
+export const GITHUB = "https://github.com/Bigtablet/bigtablet-design-system";
+export const NPM = "https://www.npmjs.com/package/@bigtablet/design-system";
+const REPO = `${GITHUB}/blob/develop`;
 
 /** 복사 버튼이 붙은 코드 상자 */
 export function CodeBlock({ code }: { code: string }) {
@@ -34,20 +45,62 @@ function Block({ id, title, children }: { id: string; title: string; children: R
 	);
 }
 
-/* ─── 처음 화면: 등각 격자 상자 위의 마크와 실제 부품 ───────────────────── */
+/* ─── 처음 화면: 등각 격자 바닥 위에 실제로 조립된 화면 하나 ──────────────── */
+
+const FEATURED = ["button", "text-field", "dropdown", "modal", "data-view", "toast"];
+
+/** 격자 위에 올린 실제 화면 - DS 부품으로 조립했고 실제로 동작한다 */
+function InviteDemo() {
+	const [email, setEmail] = useState("");
+	const [role, setRole] = useState<string | null>("member");
+	const [sent, setSent] = useState("");
+	const invalid = email !== "" && !email.includes("@");
+	return (
+		<Card heading="팀원 초대" className="landing_demo_card">
+			<form
+				className="landing_demo_form"
+				onSubmit={(e) => {
+					e.preventDefault();
+					if (!email.includes("@")) return;
+					setSent(email);
+					setEmail("");
+				}}
+			>
+				<Field
+					name="invite-email"
+					label="이메일"
+					error={invalid ? "이메일 형식이 아닙니다" : undefined}
+				>
+					<TextField value={email} onValueChange={setEmail} placeholder="name@bigtablet.com" />
+				</Field>
+				<Field name="invite-role" label="역할">
+					<Dropdown
+						value={role}
+						onValueChange={setRole}
+						options={[
+							{ value: "admin", label: "관리자" },
+							{ value: "member", label: "구성원" },
+							{ value: "viewer", label: "보기 전용" },
+						]}
+					/>
+				</Field>
+				<Button type="submit" fullWidth disabled={!email.includes("@")}>
+					초대 보내기
+				</Button>
+				{sent && <InlineAlert tone="success">{sent} 님에게 초대를 보냈습니다.</InlineAlert>}
+			</form>
+		</Card>
+	);
+}
 
 export function Landing({ pages }: { pages: DocPage[] }) {
-	const groups = [...new Set(pages.map((p) => p.category))].map((name) => ({
-		name,
-		pages: pages.filter((p) => p.category === name),
-	}));
 	return (
-		<article>
+		<article className="landing">
 			<section className="landing_hero">
 				<div className="landing_text">
-					<h1>Bigtablet 화면을 쌓는 부품 상자</h1>
+					<h1>Bigtablet 디자인 시스템</h1>
 					<p className="doc_lede">
-						<Md>{`${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
+						<Md>{`Bigtablet 제품 화면을 만드는 ${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
 					</p>
 					<div className="landing_actions">
 						<Button as="a" href="#/install" size="lg">
@@ -61,38 +114,45 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						<CodeBlock code="pnpm add @bigtablet/design-system" />
 					</div>
 				</div>
-				{/* 그림 역할 - 실제 부품이지만 누르거나 포커스되지 않는다 */}
-				<div className="landing_box" aria-hidden inert>
-					<img className="landing_mark" src="/images/logo/favicon.png" alt="" />
-					<span className="landing_part landing_part_1">
-						<Button size="sm">저장</Button>
-					</span>
-					<span className="landing_part landing_part_2">
-						<Badge tone="success">결제 완료</Badge>
-					</span>
-					<span className="landing_part landing_part_3">
-						<Toggle ariaLabel="알림" defaultChecked />
-					</span>
+				<div className="landing_stage">
+					<InviteDemo />
+					<p className="landing_stage_note">
+						Card · Field · TextField · Dropdown · Button · InlineAlert 로 조립했습니다. 직접 입력해
+						보세요.
+					</p>
 				</div>
 			</section>
 
-			<section className="doc_block landing_groups" aria-label="컴포넌트 묶음">
-				{groups.map((g) => (
-					<div key={g.name} className="landing_group">
-						<h2>
-							{g.name} <span>{g.pages.length}</span>
-						</h2>
-						<ul>
-							{g.pages.map((p) => (
-								<li key={p.slug}>
-									<a href={`#/${p.slug}`}>{p.title}</a>
-									<span>{p.name}</span>
-								</li>
-							))}
-						</ul>
-					</div>
-				))}
-			</section>
+			<dl className="landing_meta">
+				<div>
+					<dt>최신 버전</dt>
+					<dd>
+						<a href={NPM} target="_blank" rel="noreferrer">
+							{pkg.version}
+						</a>
+					</dd>
+				</div>
+				<div>
+					<dt>필요한 것</dt>
+					<dd>React 19 이상</dd>
+				</div>
+				<div>
+					<dt>변경 내역</dt>
+					<dd>
+						<a href={`${GITHUB}/blob/main/CHANGELOG.md`} target="_blank" rel="noreferrer">
+							CHANGELOG
+						</a>
+					</dd>
+				</div>
+				<div>
+					<dt>소스 · 이슈</dt>
+					<dd>
+						<a href={GITHUB} target="_blank" rel="noreferrer">
+							GitHub
+						</a>
+					</dd>
+				</div>
+			</dl>
 
 			<section className="doc_block">
 				<h2>어디서부터 볼까요</h2>
@@ -115,6 +175,19 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						title="Vanilla (HTML · CSS · JS)"
 						desc="React 없이 CSS · JS 두 파일과 클래스 이름으로 씁니다."
 					/>
+				</div>
+			</section>
+
+			<section className="doc_block">
+				<div className="landing_section_head">
+					<h2>자주 쓰는 컴포넌트</h2>
+					<a href="#/components">전체 {pages.length}개 보기</a>
+				</div>
+				<div className="ov_grid">
+					{FEATURED.map((slug) => {
+						const page = pages.find((p) => p.slug === slug);
+						return page && <ComponentCard key={slug} page={page} />;
+					})}
 				</div>
 			</section>
 		</article>
