@@ -1,6 +1,6 @@
 import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
 import { ChevronRight } from "lucide-react";
-import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
+import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import props from "./props.json";
 
 export type PropsName = keyof typeof props;
@@ -40,13 +40,40 @@ const sources = import.meta.glob<string>("./examples/**/*.tsx", {
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
 const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
+/** 코드 이름은 구분 기호(. _ - / | , = 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
+export function Code({ children, className }: { children: string; className?: string }) {
+	// 따옴표 안("year-month")은 값 하나라 끊지 않는다 - 따옴표 밖에서만 구분 기호 뒤에 <wbr>
+	const parts = children
+		.split(/("[^"]*")/)
+		.flatMap((chunk) => (chunk.startsWith('"') ? [chunk] : chunk.split(/(?<=[._\-/|,(<={])/)))
+		.filter(Boolean);
+	return (
+		<code className={className}>
+			{parts.map((part, i) => (
+				<Fragment key={i}>
+					{i > 0 && <wbr />}
+					{part.startsWith('"') ? <span className="code_nobreak">{part}</span> : part}
+				</Fragment>
+			))}
+		</code>
+	);
+}
+
+/** 기본값 칸 - `"md"` · 함수 같은 값은 코드로, "로케일 `x`" · "현재 연도 + 10" 같은 설명은 글로 */
+function DefaultValue({ value }: { value: string }) {
+	const isCode = /^"[^"]*"$/.test(value) || value.includes("=>") || !/[가-힣`]/.test(value);
+	// 함수 기본값은 짧은 한 줄 코드라 통째로 둔다
+	if (value.includes("=>")) return <code className="code_nobreak">{value}</code>;
+	return isCode ? <Code>{value}</Code> : <Md>{value}</Md>;
+}
+
 /** 문서 문자열 속 `코드` 를 <code> 로 */
 export function Md({ children }: { children: string }) {
 	return (
 		<>
 			{children
 				.split(/(`[^`]+`)/)
-				.map((part, i) => (part.startsWith("`") ? <code key={i}>{part.slice(1, -1)}</code> : part))}
+				.map((part, i) => (part.startsWith("`") ? <Code key={i}>{part.slice(1, -1)}</Code> : part))}
 		</>
 	);
 }
@@ -178,9 +205,9 @@ function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 									{p.required && <span className="doc_required">필수</span>}
 								</td>
 								<td>
-									<code className="doc_type">{p.type}</code>
+									<Code className="doc_type">{p.type}</Code>
 								</td>
-								<td>{"default" in p && p.default ? <code>{p.default}</code> : "-"}</td>
+								<td>{"default" in p && p.default ? <DefaultValue value={p.default} /> : "-"}</td>
 								<td>
 									<Md>{p.doc.split("\n")[0] ?? ""}</Md>
 								</td>

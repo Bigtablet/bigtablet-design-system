@@ -31,8 +31,8 @@ for (const name of NAMES) {
 			const t = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(p, decl));
 			let doc = ts.displayPartsToString(p.getDocumentationComment(checker));
 			// 이 저장소는 기본값을 설명 끝 "(기본값: x)" 로 적는다 - 열로 옮긴다
-			const m = doc.match(/\s*\(기본값:\s*([^)]+)\)/);
-			if (m) doc = doc.replace(m[0], "");
+			const found = takeDefault(doc);
+			doc = found.doc;
 			return {
 				name: p.name,
 				// 별칭(ButtonVariant)은 실제 값 목록으로 풀어 보여 준다
@@ -45,11 +45,31 @@ for (const name of NAMES) {
 							),
 				required: !(p.flags & ts.SymbolFlags.Optional),
 				default:
-					ts.displayPartsToString(tags.find((t) => t.name === "default")?.text) || m?.[1].trim(),
+					ts.displayPartsToString(tags.find((t) => t.name === "default")?.text) || found.value,
 				doc,
 			};
 		})
 		.filter((p) => !tagged(p.name, name) && p.name !== "href" && p.name !== "ref");
+}
+
+/**
+ * "(기본값: x)" 를 설명에서 떼어 낸다. 값 안의 괄호("(1–{totalPages})")까지 짝을 맞춰 읽고,
+ * 값 뒤 덧붙임 말("…, type=`static`에서만 적용")은 기본값 칸이 아니라 설명 끝으로 돌려보낸다.
+ */
+function takeDefault(doc: string): { doc: string; value?: string } {
+	const start = doc.indexOf("(기본값:");
+	if (start < 0) return { doc };
+	let depth = 0;
+	let end = start;
+	for (; end < doc.length; end++) {
+		if (doc[end] === "(") depth++;
+		else if (doc[end] === ")" && --depth === 0) break;
+	}
+	const inner = doc.slice(start + "(기본값:".length, end).trim();
+	const rest = doc.slice(0, start).trimEnd() + doc.slice(end + 1);
+	const comma = inner.search(/,\s/);
+	if (comma < 0) return { doc: rest, value: inner };
+	return { doc: `${rest} - ${inner.slice(comma + 1).trim()}`, value: inner.slice(0, comma).trim() };
 }
 
 // @deprecated 는 표에서 뺀다

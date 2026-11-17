@@ -9,8 +9,16 @@ $nav_width: 248px;
 $line: token.$border_width_standard solid token.$color_border_default;
 $mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
+// 문서 글은 어절 단위로만 줄을 바꾼다. DS 의 wrap_keep_all 은 overflow-wrap: anywhere 라 좁은 칸에서
+// 변수명 · 영단어를 글자 중간에서 자른다 - 여기서는 한 줄에 다 안 들어가는 낱말만 마지막 수단으로 끊는다.
+@mixin text_wrap {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 body {
   margin: 0;
+  @include text_wrap;
   background: token.$color_bg_solid;
   color: token.$color_text_body;
   font-family: token.$font_family_primary;
@@ -19,6 +27,9 @@ body {
 
 code {
   font-family: $mono;
+  // 코드 안 한글(기본값 문구 등)도 어절로 - keep-all 은 라틴 글자에는 영향이 없다
+  word-break: keep-all;
+  overflow-wrap: normal;
   font-size: 0.875em;
   padding: 1px token.$spacing_4;
   border-radius: token.$radius_xs;
@@ -335,7 +346,7 @@ code {
 .doc_block_desc {
   margin: 0 0 token.$spacing_16;
   color: token.$color_text_caption;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 .doc_head {
@@ -366,7 +377,7 @@ code {
   color: token.$color_text_caption;
   font-size: 18px;
   line-height: 28px;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 // ── 예제 상자: 무대 + 아래 "코드 보기" 줄 + 펼친 코드 ───────────────────────
@@ -481,7 +492,7 @@ code {
     text-align: left;
     vertical-align: top;
     border-bottom: $line;
-    @include token.wrap_keep_all;
+    @include text_wrap;
   }
 
   tr:last-child td {
@@ -530,7 +541,7 @@ code {
   padding-left: token.$spacing_20;
   display: grid;
   gap: token.$spacing_8;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 // ── 컴포넌트 홈 ──────────────────────────────────────────────────────────
@@ -630,7 +641,7 @@ $preview_scale: 0.6;
 .ov_desc {
   color: token.$color_text_caption;
   @include token.body_small;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 // ── 시작하기 가이드 · 코드 상자 ─────────────────────────────────────────
@@ -640,7 +651,7 @@ $preview_scale: 0.6;
     max-width: 720px;
     margin: token.$spacing_16 0 0;
     line-height: 1.7;
-    @include token.wrap_keep_all;
+    @include text_wrap;
   }
 
   a {
@@ -682,7 +693,7 @@ $preview_scale: 0.6;
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.04em;
-    @include token.wrap_keep_all;
+    @include text_wrap;
 
     @include token.compact {
       font-size: 40px;
@@ -799,7 +810,7 @@ $preview_scale: 0.6;
 .landing_link_desc {
   color: token.$color_text_caption;
   @include token.body_small;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 .doc_block > h2 + .ov_grid {
@@ -813,9 +824,6 @@ $preview_scale: 0.6;
     vertical-align: middle;
   }
 
-  code {
-    white-space: nowrap;
-  }
 }
 
 .fd_preview_cell {
@@ -833,14 +841,14 @@ $preview_scale: 0.6;
   display: block;
   margin-top: token.$spacing_2;
   color: token.$color_text_caption;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 .fd_value {
   color: token.$color_text_caption;
   font-family: $mono;
   font-size: 12px;
-  @include token.wrap_keep_all;
+  @include text_wrap;
 }
 
 .fd_dark {
@@ -933,4 +941,16 @@ $preview_scale: 0.6;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// 따옴표로 묶인 값("year-month")은 한 덩어리
+.code_nobreak {
+  white-space: nowrap;
+}
+
+// 좁은 화면에서 Props 표 칸이 찌그러지지 않게 - 모자라면 표 상자가 가로로 스크롤된다
+@include token.compact {
+  .doc_table:has(th) {
+    min-width: 560px;
+  }
 }

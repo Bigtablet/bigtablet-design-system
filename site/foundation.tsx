@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import tokens from "../src/styles/tokens.json";
+import { Code } from "./docs";
 import { CodeBlock } from "./guides";
 
 // 토큰 원본(tokens.json)에서 바로 표를 만든다 - 토큰을 바꾸면 문서가 따라온다. 손으로 쓰는 값은 없다.
@@ -105,11 +106,11 @@ function TokenTable({ items, preview }: { items: Token[]; preview: (t: Token) =>
 								{t.description && <span className="fd_desc">{t.description}</span>}
 							</td>
 							<td>
-								{t.scss && <code>{t.scss}</code>}
+								{t.scss && <Code>{t.scss}</Code>}
 								{t.css && (
 									<>
 										<br />
-										<code>{t.css}</code>
+										<Code>{t.css}</Code>
 									</>
 								)}
 							</td>
@@ -252,7 +253,7 @@ function Typography() {
 									<span style={style} className="fd_type_sample">
 										다람쥐 헌 쳇바퀴에 타고파 Aa 123
 									</span>
-									<code>{t.scss}</code>
+									{t.scss && <Code>{t.scss}</Code>}
 									<span className="fd_value">
 										{v.fontSize} / {v.lineHeight} · {v.fontWeight}
 									</span>

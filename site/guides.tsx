@@ -1,7 +1,7 @@
 import { Button, CopyButton } from "@bigtablet/design-system";
 import { ArrowRight, Blocks, Code2, Palette, Rocket } from "lucide-react";
 import type { ReactNode } from "react";
-import { ComponentCard, type DocPage } from "./docs";
+import { Code, ComponentCard, type DocPage } from "./docs";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
 const REPO = "https://github.com/Bigtablet/bigtablet-design-system/blob/develop";
@@ -170,8 +170,8 @@ function Install() {
 
 			<Block id="provider" title="2. Provider 로 감싸기">
 				<p>
-					앱 최상위(Next.js 는 <code>app/layout.tsx</code>)에서 한 번 감쌉니다.{" "}
-					<code>useToast</code> · <code>useAlert</code> 는 이 아래의 컴포넌트에서 부릅니다.
+					앱 최상위(Next.js 는 <Code>app/layout.tsx</Code>)에서 한 번 감쌉니다.{" "}
+					<Code>useToast</Code> · <Code>useAlert</Code> 는 이 아래의 컴포넌트에서 부릅니다.
 				</p>
 				<CodeBlock
 					code={`import { AlertProvider, ThemeProvider, ToastProvider } from "@bigtablet/design-system";
@@ -192,8 +192,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				/>
 				<p>
 					CSS 는 따로 import 하지 않습니다 - 컴포넌트가 자기 CSS 와 공통 테마 변수를 함께
-					가져옵니다. Next.js 를 webpack 으로 빌드하면 <code>next.config</code> 의{" "}
-					<code>experimental.optimizePackageImports</code> 에 이 패키지를 넣어야 쓰지 않는 컴포넌트
+					가져옵니다. Next.js 를 webpack 으로 빌드하면 <Code>next.config</Code> 의{" "}
+					<Code>experimental.optimizePackageImports</Code> 에 이 패키지를 넣어야 쓰지 않는 컴포넌트
 					CSS 가 빠집니다 (Turbopack 은 그대로 됩니다).
 				</p>
 			</Block>
@@ -227,7 +227,7 @@ export function SaveButton() {
 }`}
 				/>
 				<p>
-					SCSS 를 쓰지 않으면 <code>var(--bt-color-text-heading)</code> 같은 CSS 변수를 씁니다.
+					SCSS 를 쓰지 않으면 <Code>var(--bt-color-text-heading)</Code> 같은 CSS 변수를 씁니다.
 					자세한 목록은 <a href={`${REPO}/docs/THEMING.md`}>THEMING</a> 문서에 있습니다.
 				</p>
 			</Block>
@@ -265,14 +265,14 @@ function Vanilla() {
 <script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>`}
 				/>
 				<p>
-					CDN 대신 패키지의 <code>dist/vanilla/</code> 에 있는 두 파일을 프로젝트에 복사해도 됩니다.
+					CDN 대신 패키지의 <Code>dist/vanilla/</Code> 에 있는 두 파일을 프로젝트에 복사해도 됩니다.
 				</p>
 			</Block>
 
 			<Block id="classes" title="2. 클래스 붙이기">
 				<p>
-					클래스는 <code>bt-컴포넌트</code> · <code>bt-컴포넌트__부분</code> ·{" "}
-					<code>bt-컴포넌트--변형</code> 순서로 짓습니다. 변형 이름은 React prop 값과 같습니다.
+					클래스는 <Code>bt-컴포넌트</Code> · <Code>bt-컴포넌트__부분</Code> ·{" "}
+					<Code>bt-컴포넌트--변형</Code> 순서로 짓습니다. 변형 이름은 React prop 값과 같습니다.
 				</p>
 				<CodeBlock
 					code={`<button class="bt-button bt-button--md bt-button--filled">저장</button>
@@ -286,7 +286,7 @@ function Vanilla() {
 
 			<Block id="js" title="3. 움직이는 컴포넌트">
 				<p>
-					<code>data-bt-*</code> 속성이 있는 요소는 페이지가 열릴 때 자동으로 동작합니다. 나중에
+					<Code>data-bt-*</Code> 속성이 있는 요소는 페이지가 열릴 때 자동으로 동작합니다. 나중에
 					추가한 요소는 직접 초기화합니다.
 				</p>
 				<CodeBlock
