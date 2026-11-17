@@ -1,9 +1,9 @@
 import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { splitSentences } from "src/utils/sentences";
 import { AGENT_RULES, componentDoc } from "./llms";
-import { Playground, type PlaygroundConfig } from "./playground";
+import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";
 
 export type PropsName = keyof typeof props;
@@ -28,7 +28,7 @@ export interface DocPage {
 	}[];
 	/** 여러 개면 순서대로 표를 하나씩 (Tabs · TabList · Tab …) */
 	props?: PropsName | PropsName[];
-	/** 조합 보기 - 첫 props 표의 값 목록 · boolean prop 으로 컨트롤을 만든다 */
+	/** 첫 예제 박스의 "조절" - 첫 props 표의 값 목록 · boolean prop 으로 컨트롤을 만든다 */
 	playground?: PlaygroundConfig;
 	notes?: string[];
 }
@@ -136,10 +136,22 @@ function Example({
 	desc,
 	frame,
 	theme,
-}: DocPage["examples"][number] & { theme: string }) {
+	page,
+	playground,
+}: DocPage["examples"][number] & {
+	theme: string;
+	page: DocPage;
+	/** 첫 예제만 받는다 - "조절" 을 켜면 이 박스가 조합 데모가 된다 */
+	playground?: PlaygroundConfig;
+}) {
 	const [width, setWidth] = useState<Width>("full");
 	const [showCode, setShowCode] = useState(false);
+	const [adjust, setAdjust] = useState(false);
+	const pg = usePlayground(page, playground);
+	const tuning = adjust && pg;
 	const Comp = exampleOf(id);
+	// 조절 중에는 지금 조합의 코드 - 코드 보기 · 복사가 함께 따라온다
+	const code = tuning ? pg.code : sourceOf(id).trim();
 	return (
 		<section className="doc_block">
 			<h2 id={id}>{title}</h2>
@@ -150,7 +162,11 @@ function Example({
 			)}
 			<div className="doc_demo">
 				<div className="doc_demo_stage">
-					{width === "full" && !frame ? (
+					{tuning ? (
+						<div className="doc_demo_inline doc_demo_tuning" onClickCapture={stayOnPage}>
+							{pg.preview}
+						</div>
+					) : width === "full" && !frame ? (
 						<div className="doc_demo_inline" onClickCapture={stayOnPage}>
 							{Comp && <Comp />}
 						</div>
@@ -163,34 +179,51 @@ function Example({
 						/>
 					)}
 				</div>
+				{tuning && pg.controls}
 				<div className="doc_demo_bar">
-					<button
-						type="button"
-						className="doc_demo_toggle"
-						aria-expanded={showCode}
-						onClick={() => setShowCode(!showCode)}
-					>
-						<ChevronRight size={16} aria-hidden />
-						{showCode ? "코드 접기" : "코드 보기"}
-					</button>
+					<div className="doc_demo_toggles">
+						<button
+							type="button"
+							className="doc_demo_toggle"
+							aria-expanded={showCode}
+							onClick={() => setShowCode(!showCode)}
+						>
+							<ChevronRight size={16} aria-hidden />
+							{showCode ? "코드 접기" : "코드 보기"}
+						</button>
+						{pg && (
+							<button
+								type="button"
+								className="doc_demo_toggle doc_demo_adjust"
+								aria-pressed={adjust}
+								onClick={() => setAdjust(!adjust)}
+							>
+								<SlidersHorizontal size={14} aria-hidden />
+								조절
+							</button>
+						)}
+					</div>
 					<div className="doc_demo_actions">
-						<SegmentedControl<Width>
-							size="sm"
-							aria-label="미리보기 폭"
-							value={width}
-							onValueChange={setWidth}
-							items={[
-								{ value: "full", label: "전체" },
-								{ value: "768", label: "768" },
-								{ value: "375", label: "375" },
-							]}
-						/>
-						<CopyButton size="sm" variant="text" text={sourceOf(id)} label="복사" />
+						{/* 조절 중에는 같은 화면의 값만 바꾸므로 폭 전환(iframe)을 숨긴다 */}
+						{!tuning && (
+							<SegmentedControl<Width>
+								size="sm"
+								aria-label="미리보기 폭"
+								value={width}
+								onValueChange={setWidth}
+								items={[
+									{ value: "full", label: "전체" },
+									{ value: "768", label: "768" },
+									{ value: "375", label: "375" },
+								]}
+							/>
+						)}
+						<CopyButton size="sm" variant="text" text={code} label="복사" />
 					</div>
 				</div>
 				{showCode && (
 					<pre className="doc_code">
-						<code>{sourceOf(id).trim()}</code>
+						<code>{code}</code>
 					</pre>
 				)}
 			</div>
@@ -324,15 +357,15 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				</div>
 			</Section>
 
-			{page.examples.map((ex) => (
-				<Example key={ex.id} {...ex} theme={theme} />
+			{page.examples.map((ex, i) => (
+				<Example
+					key={ex.id}
+					{...ex}
+					theme={theme}
+					page={page}
+					playground={i === 0 ? page.playground : undefined}
+				/>
 			))}
-
-			{page.playground && (
-				<Section id="playground" title="조합 보기">
-					<Playground page={page} config={page.playground} />
-				</Section>
-			)}
 
 			{page.props && (
 				<Section id="props" title="Props">

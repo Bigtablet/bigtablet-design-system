@@ -427,69 +427,81 @@ code {
   background: token.$color_bg_solid;
 }
 
-// 조합 보기 - 무대 | 컨트롤, 아래에 지금 조합의 코드. 좁으면 무대 위 · 컨트롤 아래
-.pg {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  overflow: hidden;
-  border: $line;
-  border-radius: token.$radius_md;
-  background: token.$color_bg_solid;
-
-  @include token.from_expanded {
-    grid-template-columns: minmax(0, 1fr) 260px;
-  }
-}
-
-.pg_stage {
-  @include iso_floor;
-  display: grid;
-  place-items: center;
-  min-height: 220px;
-  padding: token.$spacing_32 token.$spacing_24;
-  box-sizing: border-box;
-  overflow-x: auto;
-}
-
+// 첫 예제의 "조절" - 미리보기와 막대 사이에 가로로 흐르는 컨트롤 줄
 .pg_controls {
-  display: grid;
-  align-content: start;
-  gap: token.$spacing_16;
-  padding: token.$spacing_20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: token.$spacing_12 token.$spacing_20;
+  padding: token.$spacing_16;
   border-top: $line;
-
-  @include token.from_expanded {
-    border-top: none;
-    border-left: $line;
-  }
+  background: token.$color_bg_solid;
 }
 
-.pg_row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: token.$spacing_8;
+.pg_item {
+  display: grid;
+  gap: token.$spacing_6;
 
   code {
-    background: none;
     padding: 0;
-    color: token.$color_text_body;
+    background: none;
+    color: token.$color_text_caption;
+    font-size: 12px;
+  }
+
+  .dropdown {
+    min-width: 120px;
   }
 }
 
-.pg_row_stack {
-  flex-direction: column;
-  align-items: stretch;
+// boolean 은 이름 옆에 스위치 - 칸 높이를 값 목록 칸과 맞춘다
+.pg_item_bool {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  min-height: 32px;
+  cursor: pointer;
 }
 
-.pg_code {
-  grid-column: 1 / -1;
-  border-top: $line;
+.pg_more {
+  align-self: center;
+  padding: token.$spacing_4 token.$spacing_8;
+  border: none;
+  border-radius: token.$radius_sm;
+  background: none;
+  color: token.$color_text_body;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  @include token.body_small;
 
-  .doc_snippet {
-    border: none;
-    border-radius: 0;
+  &:hover {
+    color: token.$color_text_heading;
   }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.doc_demo_toggles {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+}
+
+// 켜진 조절 버튼은 눌린 표면 - 지금 이 박스가 조합 데모라는 표시
+.doc_demo_adjust[aria-pressed="true"] {
+  background: token.$color_bg_solid;
+  color: token.$color_text_heading;
+  box-shadow: inset 0 0 0 token.$border_width_standard token.$color_border_default;
+}
+
+.doc_demo_tuning {
+  display: grid;
+  place-items: center;
 }
 
 // 예제 무대 - 등각 격자 바닥 위에 컴포넌트를 올린다

@@ -1,11 +1,10 @@
-// 조합 보기 - props.json 에서 값이 정해진 prop(variant · size · tone)과 boolean prop 만 골라 컨트롤을
+// 첫 예제 박스의 "조절" - props.json 에서 값이 정해진 prop(variant · size · tone)과 boolean prop 만 골라 컨트롤을
 // 자동으로 만든다. 페이지는 기본 props · children · 뺄 prop 만 적는다. 함수 · ReactNode · 객체 prop 은
 // 열지 않는다 - 이상한 조합을 만들기 쉽고, 그런 쓰임은 예제가 더 잘 보여 준다
 import * as DS from "@bigtablet/design-system";
 import { Dropdown, SegmentedControl, Toggle } from "@bigtablet/design-system";
-import { type ComponentType, useState } from "react";
+import { type ComponentType, type ReactNode, useState } from "react";
 import type { DocPage } from "./docs";
-import { CodeBlock } from "./guides";
 import props from "./props.json";
 
 export interface PlaygroundConfig {
@@ -40,7 +39,23 @@ function toCode(
 	return children ? `<${open}>${children}</${title}>` : `<${open} />`;
 }
 
-export function Playground({ page, config }: { page: DocPage; config: PlaygroundConfig }) {
+// 처음에 보이는 컨트롤 수 - 나머지는 "더 보기" 로 접는다 (Card 처럼 prop 이 많은 컴포넌트에서 줄이 길어지지 않게)
+const VISIBLE = 4;
+
+export interface Playground {
+	/** 지금 조합으로 그린 컴포넌트 */
+	preview: ReactNode;
+	/** 미리보기 아래 가로 컨트롤 줄 */
+	controls: ReactNode;
+	/** 지금 조합의 JSX - 코드 보기 · 복사가 쓴다 */
+	code: string;
+}
+
+/** 예제 박스가 "조절" 을 켰을 때 쓰는 미리보기 · 컨트롤 · 코드. 열 prop 이 없으면 null */
+export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playground | null {
+	const [values, setValues] = useState<Record<string, Value>>({});
+	const [more, setMore] = useState(false);
+	if (!config) return null;
 	const name = [page.props].flat()[0];
 	const Comp = (DS as unknown as Record<string, ComponentType<Record<string, unknown>>>)[
 		page.title
@@ -48,7 +63,6 @@ export function Playground({ page, config }: { page: DocPage; config: Playground
 	const rows = ((name ? props[name] : []) as Row[]).filter(
 		(p) => !config.omit?.includes(p.name) && (p.type === "boolean" || LITERALS.test(p.type)),
 	);
-	const [values, setValues] = useState<Record<string, Value>>({});
 	if (!Comp || rows.length === 0) return null;
 
 	const valueOf = (p: Row): Value =>
@@ -57,69 +71,74 @@ export function Playground({ page, config }: { page: DocPage; config: Playground
 	const picked = Object.fromEntries(
 		rows
 			.map((p) => [p.name, valueOf(p)] as const)
-			.filter(([key, v]) => {
-				const row = rows.find((r) => r.name === key);
-				return v !== "" && v !== false && v !== unquote(row?.default);
-			}),
+			.filter(
+				([key, v]) =>
+					v !== "" && v !== false && v !== unquote(rows.find((r) => r.name === key)?.default),
+			),
 	);
 	const set = (key: string, v: Value) => setValues((prev) => ({ ...prev, [key]: v }));
 
-	return (
-		<div className="pg">
-			<div className="pg_stage">
-				<Comp {...config.base} {...picked}>
-					{config.children}
-				</Comp>
+	const control = (p: Row) => {
+		const id = `pg-${page.slug}-${p.name}`;
+		if (p.type === "boolean") {
+			return (
+				<label key={p.name} className="pg_item pg_item_bool">
+					<code>{p.name}</code>
+					<Toggle
+						size="sm"
+						ariaLabel={p.name}
+						checked={valueOf(p) === true}
+						onCheckedChange={(on) => set(p.name, on)}
+					/>
+				</label>
+			);
+		}
+		// 기본값이 없는 prop 은 "기본" 칸 - 컴포넌트가 정한 값을 그대로 쓴다
+		const items = [
+			...(p.default ? [] : [{ value: "", label: "기본" }]),
+			...optionsOf(p.type).map((o) => ({ value: o, label: o })),
+		];
+		return (
+			<div key={p.name} className="pg_item">
+				<code id={id}>{p.name}</code>
+				{items.length <= 5 ? (
+					<SegmentedControl
+						size="sm"
+						aria-labelledby={id}
+						value={String(valueOf(p))}
+						onValueChange={(v) => set(p.name, v)}
+						items={items}
+					/>
+				) : (
+					<Dropdown
+						size="sm"
+						aria-labelledby={id}
+						value={String(valueOf(p))}
+						onValueChange={(v) => set(p.name, v ?? "")}
+						options={items}
+					/>
+				)}
 			</div>
+		);
+	};
+
+	const shown = more ? rows : rows.slice(0, VISIBLE);
+	return {
+		preview: (
+			<Comp {...config.base} {...picked}>
+				{config.children}
+			</Comp>
+		),
+		controls: (
 			<div className="pg_controls">
-				{rows.map((p) => {
-					const id = `pg-${page.slug}-${p.name}`;
-					if (p.type === "boolean") {
-						return (
-							<div key={p.name} className="pg_row">
-								<code>{p.name}</code>
-								<Toggle
-									size="sm"
-									ariaLabel={p.name}
-									checked={valueOf(p) === true}
-									onCheckedChange={(on) => set(p.name, on)}
-								/>
-							</div>
-						);
-					}
-					const options = optionsOf(p.type);
-					// 기본값이 없는 prop 은 "기본" 칸 - 컴포넌트가 정한 값을 그대로 쓴다
-					const items = [
-						...(p.default ? [] : [{ value: "", label: "기본" }]),
-						...options.map((o) => ({ value: o, label: o })),
-					];
-					return (
-						<div key={p.name} className="pg_row pg_row_stack">
-							<code id={id}>{p.name}</code>
-							{items.length <= 5 ? (
-								<SegmentedControl
-									size="sm"
-									aria-labelledby={id}
-									value={String(valueOf(p))}
-									onValueChange={(v) => set(p.name, v)}
-									items={items}
-								/>
-							) : (
-								<Dropdown
-									size="sm"
-									aria-labelledby={id}
-									value={String(valueOf(p))}
-									onValueChange={(v) => set(p.name, v ?? "")}
-									options={items}
-								/>
-							)}
-						</div>
-					);
-				})}
+				{shown.map(control)}
+				{rows.length > VISIBLE && (
+					<button type="button" className="pg_more" onClick={() => setMore(!more)}>
+						{more ? "접기" : `${rows.length - VISIBLE}개 더 보기`}
+					</button>
+				)}
 			</div>
-			<div className="pg_code">
-				<CodeBlock code={toCode(page.title, config.base, picked, config.children)} />
-			</div>
-		</div>
-	);
+		),
+		code: toCode(page.title, config.base, picked, config.children),
+	};
 }
