@@ -2,13 +2,14 @@ import { IconButton, Menu } from "@bigtablet/design-system";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { type DocPage, exampleOf, Md, Page } from "./docs";
+import { ComponentCard, type DocPage, Page } from "./docs";
+import { GUIDES, Landing } from "./guides";
 import { SiteSearch } from "./search";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
 const CATEGORIES = [
-	"시작하기",
+	"앱 설정",
 	"레이아웃",
 	"버튼",
 	"폼",
@@ -70,7 +71,7 @@ function App() {
 	// 다른 페이지로 가면 사이드바에서 현재 항목이 보이게 - 사이드바 안에서만 움직인다
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
-	}, [page?.slug]);
+	}, [slug]);
 	return (
 		<div className="site">
 			<header className="site_top">
@@ -83,9 +84,18 @@ function App() {
 				</div>
 			</header>
 			<nav className="site_nav" aria-label="컴포넌트">
-				<a href="#/" className="site_nav_home" aria-current={page ? undefined : "page"}>
-					전체 컴포넌트
-				</a>
+				<div className="site_nav_group">
+					<p className="site_nav_title">시작하기</p>
+					{GUIDES.map((g) => (
+						<a
+							key={g.slug}
+							href={`#/${g.slug}`}
+							aria-current={!page && slug === g.slug ? "page" : undefined}
+						>
+							{g.title}
+						</a>
+					))}
+				</div>
 				{GROUPS.map(({ c, pages }) => (
 					<div key={c} className="site_nav_group">
 						<p className="site_nav_title">
@@ -106,7 +116,7 @@ function App() {
 				))}
 			</nav>
 			<main className="site_main">
-				{page ? <Page key={page.slug} page={page} theme={theme} /> : <Overview />}
+				<Route slug={slug} page={page} theme={theme} />
 			</main>
 		</div>
 	);
@@ -138,6 +148,14 @@ function ThemeMenu({ theme, onChange }: { theme: Theme; onChange: (t: Theme) => 
 	);
 }
 
+/** 문서 페이지 · 시작하기 가이드 · 전체 컴포넌트 · 첫 화면. 모르는 주소는 첫 화면 */
+function Route({ slug, page, theme }: { slug: string; page?: DocPage; theme: Theme }) {
+	if (page) return <Page key={page.slug} page={page} theme={theme} />;
+	if (slug === "components") return <Overview />;
+	const Guide = GUIDES.find((g) => g.slug === slug)?.Body;
+	return Guide ? <Guide /> : <Landing pages={PAGES} />;
+}
+
 /** 컴포넌트 홈 - 그룹별 카드(첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명). 검색은 헤더 */
 function Overview() {
 	return (
@@ -155,32 +173,14 @@ function Overview() {
 						{c} <span>{pages.length}</span>
 					</h2>
 					<div className="ov_grid">
-						{pages.map((p) => {
-							const Preview = p.examples[0] && exampleOf(p.examples[0].id);
-							return (
-								<a key={p.slug} href={`#/${p.slug}`} className="ov_card">
-									{/* 미리보기는 그림 역할만 - 누르거나 포커스되지 않게 inert */}
-									<div className="ov_preview" inert>
-										<div className="ov_scale">{Preview && <Preview />}</div>
-									</div>
-									<div className="ov_text">
-										<span className="ov_title">
-											{p.title} <span>{p.name}</span>
-										</span>
-										<span className="ov_desc">
-											<Md>{firstSentence(p.summary)}</Md>
-										</span>
-									</div>
-								</a>
-							);
-						})}
+						{pages.map((p) => (
+							<ComponentCard key={p.slug} page={p} />
+						))}
 					</div>
 				</section>
 			))}
 		</article>
 	);
 }
-
-const firstSentence = (text: string) => text.split(/(?<=다\.)\s/)[0] ?? text;
 
 createRoot(document.getElementById("root")!).render(<App />);

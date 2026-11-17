@@ -258,3 +258,28 @@ function Section({ id, title, children }: { id: string; title: string; children:
 		</section>
 	);
 }
+
+const firstSentence = (text: string) => text.split(/(?<=다\.)\s/)[0] ?? text;
+
+/** 컴포넌트 카드 - 첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명 */
+export function ComponentCard({ page }: { page: DocPage }) {
+	const Preview = page.examples[0] && exampleOf(page.examples[0].id);
+	// 카드 전체를 <a> 로 감싸면 미리보기 안의 링크(Breadcrumb · 건너뛰기 링크)와 겹쳐 a 안에 a 가 된다.
+	// 링크는 제목 하나에 두고, 그 ::after 가 카드 전체를 덮어 어디를 눌러도 이동한다.
+	return (
+		<div className="ov_card">
+			{/* 미리보기는 그림 역할만 - 누르거나 포커스되지 않게 inert */}
+			<div className="ov_preview" inert>
+				<div className="ov_scale">{Preview && <Preview />}</div>
+			</div>
+			<div className="ov_text">
+				<a href={`#/${page.slug}`} className="ov_title">
+					{page.title} <span>{page.name}</span>
+				</a>
+				<span className="ov_desc">
+					<Md>{firstSentence(page.summary)}</Md>
+				</span>
+			</div>
+		</div>
+	);
+}

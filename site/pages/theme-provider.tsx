@@ -2,7 +2,7 @@ import type { DocPage } from "../docs";
 
 export const themeProvider: DocPage = {
 	slug: "theme-provider",
-	category: "시작하기",
+	category: "앱 설정",
 	order: 0,
 	title: "ThemeProvider",
 	name: "테마",

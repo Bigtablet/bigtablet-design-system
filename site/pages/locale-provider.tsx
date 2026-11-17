@@ -2,7 +2,7 @@ import type { DocPage } from "../docs";
 
 export const localeProvider: DocPage = {
 	slug: "locale-provider",
-	category: "시작하기",
+	category: "앱 설정",
 	order: 1,
 	title: "LocaleProvider",
 	name: "다국어",

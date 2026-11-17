@@ -550,6 +550,7 @@ code {
 }
 
 .ov_card {
+  position: relative;
   display: grid;
   overflow: hidden;
   border: $line;
@@ -563,8 +564,7 @@ code {
     border-color: token.$color_text_caption;
   }
 
-  &:focus-visible {
-    outline: none;
+  &:has(.ov_title:focus-visible) {
     box-shadow: token.$focus_ring;
   }
 }
@@ -604,6 +604,19 @@ $preview_scale: 0.6;
 
 .ov_title {
   color: token.$color_text_heading;
+  text-decoration: none;
+
+  // 카드 전체를 누르는 면으로
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
   @include token.body_medium_bold;
 
   span {
@@ -618,4 +631,177 @@ $preview_scale: 0.6;
   color: token.$color_text_caption;
   @include token.body_small;
   @include token.wrap_keep_all;
+}
+
+// ── 시작하기 가이드 · 코드 상자 ─────────────────────────────────────────
+
+.doc_prose {
+  > p {
+    max-width: 720px;
+    margin: token.$spacing_16 0 0;
+    line-height: 1.7;
+    @include token.wrap_keep_all;
+  }
+
+  a {
+    color: token.$color_text_heading;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.doc_snippet {
+  position: relative;
+  border: $line;
+  border-radius: token.$radius_md;
+  overflow: hidden;
+
+  .doc_code {
+    border-top: none;
+    padding-right: token.$spacing_48;
+    background: token.$color_bg_solid_dim;
+  }
+}
+
+.doc_snippet_copy {
+  position: absolute;
+  top: token.$spacing_8;
+  right: token.$spacing_8;
+}
+
+// ── 첫 화면 ─────────────────────────────────────────────────────────────
+
+.landing_hero {
+  padding-top: calc(2 * #{token.$spacing_48});
+  padding-bottom: token.$spacing_48;
+
+  h1 {
+    margin: 0;
+    color: token.$color_text_heading;
+    font-size: 56px; // ponytail: 첫 화면 제목 - 타이포 토큰에 디스플레이 크기가 없다
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    @include token.wrap_keep_all;
+
+    @include token.compact {
+      font-size: 40px;
+    }
+  }
+}
+
+.landing_eyebrow {
+  margin: 0 0 token.$spacing_12;
+  color: token.$color_text_caption;
+  font-family: $mono;
+  @include token.body_small;
+}
+
+.landing_actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: token.$spacing_8;
+  margin-top: token.$spacing_32;
+}
+
+.landing_install {
+  max-width: 480px;
+  margin-top: token.$spacing_24;
+}
+
+.landing_stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: token.$spacing_48 0 0;
+  border: $line;
+  border-radius: token.$radius_md;
+
+  @include token.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  div {
+    padding: token.$spacing_16 token.$spacing_20;
+
+    & + div {
+      border-left: $line;
+    }
+
+    @include token.compact {
+      &:nth-child(3) {
+        border-left: none;
+      }
+
+      &:nth-child(n + 3) {
+        border-top: $line;
+      }
+    }
+  }
+
+  dt {
+    color: token.$color_text_caption;
+    @include token.body_small;
+  }
+
+  dd {
+    margin: token.$spacing_4 0 0;
+    color: token.$color_text_heading;
+    font-size: 20px;
+    font-weight: 600;
+    @include token.tabular_nums;
+  }
+}
+
+.landing_links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: token.$spacing_16;
+  margin-top: token.$spacing_16;
+}
+
+.landing_link {
+  display: grid;
+  gap: token.$spacing_6;
+  padding: token.$spacing_20;
+  border: $line;
+  border-radius: token.$radius_md;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color token.$transition_fast;
+
+  &:hover {
+    border-color: token.$color_text_caption;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.landing_link_icon {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: token.$spacing_8;
+  border: $line;
+  border-radius: token.$radius_sm;
+  color: token.$color_text_heading;
+}
+
+.landing_link_title {
+  color: token.$color_text_heading;
+  @include token.body_medium_bold;
+}
+
+.landing_link_desc {
+  color: token.$color_text_caption;
+  @include token.body_small;
+  @include token.wrap_keep_all;
+}
+
+.doc_block > h2 + .ov_grid {
+  margin-top: token.$spacing_16;
 }
