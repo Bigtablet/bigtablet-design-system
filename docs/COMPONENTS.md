@@ -703,14 +703,14 @@ import { Combobox } from '@bigtablet/design-system';
 
 #### 언제 `Field` 를 쓰고 언제 입력의 prop 을 쓰나
 
-`TextField` 처럼 자체 `label`·`supportingText` 를 가진 입력이 9종 있습니다. 둘은 대체재가 아니라 쓰임이 다릅니다.
+`Field` 가 감싸는 입력 11종 중 9종은 `TextField` 처럼 자체 `label`·`supportingText` 를 가집니다. 둘은 대체재가 아니라 쓰임이 다릅니다.
 
 | 상황 | 쓸 것 |
 |------|-------|
 | 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않습니다 |
 | 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않습니다 |
 
-`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **11종 간 균일성**입니다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
 
 ```tsx
 import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-system';
@@ -733,6 +733,9 @@ import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-syst
 **입력하면서 검증할 때** - `Field` 의 `error` 에 메시지를 넘깁니다. `Form` 의 `errors[name]` 보다 우선하므로 서버 에러와 함께 써도 됩니다. 에러가 있으면 `help` 대신 보이고 입력에 `aria-invalid` 가 붙습니다. 입력(`TextField`)의 `error` 는 `boolean` 이라 `Field` 안에서는 주지 않습니다.
 
 ```tsx
+import { useState } from "react";
+import { Field, TextField } from "@bigtablet/design-system";
+
 const [email, setEmail] = useState("");
 const [touched, setTouched] = useState(false);
 const emailError = touched && !email.includes("@") ? "이메일 형식이 아닙니다" : undefined;
