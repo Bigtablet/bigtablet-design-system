@@ -26,6 +26,9 @@
     align-self: start;
     // 뷰포트 높이만 차지한다. Sidebar 자체가 height: 100% 로 채운다.
     height: 100vh;
+    // sticky 는 그 자체로 쌓임 맥락이라 Sidebar 접기 버튼의 z-index 가 이 열 안에 갇힌다. 헤더($z_content)
+    // 위에 둬야 경계 밖으로 나온 버튼 절반이 헤더에 가려지지 않는다 (#1035). Vanilla `.bt-app-shell` 과 같은 값.
+    z-index: token.$z_chrome;
   }
 
   &_body {
