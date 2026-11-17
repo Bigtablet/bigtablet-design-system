@@ -39,6 +39,15 @@ const sources = import.meta.glob<string>("./examples/**/*.tsx", {
 	query: "?raw",
 	import: "default",
 });
+/**
+ * 예제 속 링크(Breadcrumb · NavLink · Hero 버튼 …)는 누르면 화면만 바뀌고 실제로 이동하지 않는다.
+ * 사이트가 해시 라우팅이라 `href="#"` 를 누르면 문서 첫 화면으로 튕긴다. 캡처 단계에서 기본 동작만 막고
+ * 컴포넌트의 onClick(선택 상태 바꾸기)은 그대로 돈다
+ */
+export function stayOnPage(e: { target: EventTarget | null; preventDefault: () => void }) {
+	if (e.target instanceof Element && e.target.closest("a[href]")) e.preventDefault();
+}
+
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
 export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
@@ -139,7 +148,9 @@ function Example({
 			<div className="doc_demo">
 				<div className="doc_demo_stage">
 					{width === "full" && !frame ? (
-						<div className="doc_demo_inline">{Comp && <Comp />}</div>
+						<div className="doc_demo_inline" onClickCapture={stayOnPage}>
+							{Comp && <Comp />}
+						</div>
 					) : (
 						<Frame
 							id={id}
