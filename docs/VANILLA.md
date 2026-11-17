@@ -30,6 +30,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [FileInput](#fileinput)
   - [AppShell · Sidebar](#appshell--sidebar)
   - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
+- [다크 모드](#다크-모드)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
 
@@ -40,12 +41,14 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
 ### CDN
 
 ```html
-<!-- CSS -->
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+<!-- CSS - 메이저를 고정한다. 버전 없는 URL 은 새 메이저가 나오면 화면이 바로 바뀐다 -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
 
 <!-- JS (선택사항 - 인터랙티브 컴포넌트용) -->
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 ```
+
+`@4` 는 4.x 의 최신을 받는다 - 메이저(깨지는 변경)는 막고 수정은 받는다. 화면을 완전히 고정하려면 `@4.9.1` 처럼 정확한 버전을 쓴다 ([릴리즈 목록](https://github.com/Bigtablet/bigtablet-design-system/releases)).
 
 ### NPM
 
@@ -60,6 +63,16 @@ npm install @bigtablet/design-system
 <!-- 또는 빌드 도구 사용 시 -->
 @import '@bigtablet/design-system/vanilla/style.min.css';
 ```
+
+**Spring Boot(Thymeleaf) · JSP 처럼 정적 파일을 서버가 내보내는 경우** - 두 파일을 정적 리소스 폴더로 복사하고 그 경로로 링크한다. 복사는 빌드 스크립트에 넣어 두면 버전을 올릴 때 함께 바뀐다.
+
+```bash
+cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.* src/main/resources/static/css/
+# → <link rel="stylesheet" th:href="@{/css/bigtablet.min.css}">
+#   <script th:src="@{/css/bigtablet.min.js}"></script>
+```
+
+> 컴포넌트를 한 화면에 모아 둔 예제는 저장소의 [`src/vanilla/examples/index.html`](../src/vanilla/examples/index.html) 이다 (npm 패키지에는 없다). 저장소에서 `pnpm build` 후 `dist/vanilla/examples/index.html` 을 브라우저로 열면 된다.
 
 > 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
 > `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
@@ -1354,6 +1367,22 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 
 ---
 
+## 다크 모드
+
+따로 정의할 것이 없다. 번들에 라이트 · 다크 테마 값이 함께 들어 있어서 아래 둘 중 하나면 전환된다.
+
+```html
+<!-- 1) 강제 - 서버가 사용자 설정을 알면 렌더할 때 넣는다 -->
+<html data-theme="dark">
+
+<!-- 2) 자동 - data-theme 를 두지 않으면 OS 설정(prefers-color-scheme)을 따른다 -->
+<html>
+```
+
+사용자가 고른 테마를 브라우저에 저장해 두는 경우, 첫 화면이 라이트로 번쩍였다가 바뀌지 않게 `<head>` 안 CSS 링크보다 **앞**에 저장값을 먼저 적용하는 스크립트를 둔다 - [THEMING.md SSR / FOUC](./THEMING.md#ssr--fouc) 의 스니펫을 그대로 쓴다.
+
+> 다크 테마의 색 자체를 바꾸고 싶을 때만 아래 [테마 커스터마이징](#css-custom-properties)처럼 `[data-theme="dark"]` 에 값을 덮어쓴다. 켜는 데는 필요 없다.
+
 ## CSS Custom Properties
 
 모든 디자인 토큰을 CSS Custom Properties로 제공합니다. 테마 커스터마이징에 활용하세요.
@@ -1431,7 +1460,7 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
   --bt-radius-md: 12px;
 }
 
-/* 다크 모드 */
+/* 다크 테마 색을 바꿀 때만 - 다크 모드를 켜는 데는 필요 없다 (위 "다크 모드" 참고) */
 [data-theme="dark"] {
   --bt-color-background: #1a1a1a;
   --bt-color-background-secondary: #2a2a2a;

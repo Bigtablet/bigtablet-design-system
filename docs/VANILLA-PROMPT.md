@@ -33,6 +33,13 @@ JS: https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js
 - Pagination: .bt-pagination
 - DatePicker: .bt-date-picker --full-width
 - FileInput: .bt-file-input --disabled
+- InlineAlert: .bt-inline-alert --neutral/info/success/warning/error, 자식 __icon · __content(__title · __message) · __action
+- Badge: .bt-badge --accent(기본)/neutral/info/success/warning/error, --soft (옅은 배경)
+- Table: .bt-table-wrap > .bt-table --sm/lg --fixed --sticky-header --cards(좁은 화면에서 카드로)
+- CopyButton: .bt-button 에 data-bt-copy="복사할 값" (자동 초기화)
+- AppShell · Sidebar: .bt-app-shell(__header · __body · __main), .bt-sidebar --collapsed(__brand · __nav · __section · __item · __footer · __toggle)
+- Alert(확인 창): 마크업 없이 Bigtablet.Alert({ title, message, ... }) 로 띄운다
+- Toast: 마크업 없이 Bigtablet.Toast("메시지", "success" | "error" | "warning" | "info")
 ```
 
 ---
