@@ -2,6 +2,7 @@ import { cn, IconButton, Menu } from "@bigtablet/design-system";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { CATEGORIES } from "./categories";
 import { ComponentCard, type DocPage, Page } from "./docs";
 import { FOUNDATIONS } from "./foundation";
 import { GITHUB, GUIDES, Landing, NPM } from "./guides";
@@ -9,23 +10,6 @@ import { SiteSearch } from "./search";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
-const CATEGORIES = [
-	"앱 설정",
-	"레이아웃",
-	"버튼",
-	"폼",
-	"텍스트 입력",
-	"선택",
-	"날짜 · 시간",
-	"파일",
-	"데이터",
-	"콘텐츠",
-	"라벨 · 아이콘",
-	"알림 · 상태",
-	"로딩",
-	"내비게이션",
-	"오버레이",
-];
 const PAGES = Object.values(
 	import.meta.glob<Record<string, DocPage>>("./pages/*.tsx", { eager: true }),
 )

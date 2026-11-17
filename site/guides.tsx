@@ -306,6 +306,18 @@ export function SaveButton() {
 				</p>
 			</Block>
 
+			<Block id="agents" title="Claude Code 에서 쓰기">
+				<p>
+					패키지에 에이전트용 문서가 함께 실립니다. 컴포넌트마다 언제 쓰는가 · 예제 · Props 가 들어
+					있고, 설치한 버전과 내용이 같아 옛 prop 을 권하는 일이 없습니다. 앱의{" "}
+					<Code>CLAUDE.md</Code> 에 한 줄을 넣어 이 문서를 먼저 읽게 합니다.
+				</p>
+				<CodeBlock
+					code={`## UI
+- 화면은 @bigtablet/design-system 컴포넌트로 만든다. 쓰기 전에 node_modules/@bigtablet/design-system/dist/llms/index.md 를 읽고, 고른 컴포넌트의 문서(dist/llms/components/*.md)를 따른다.`}
+				/>
+			</Block>
+
 			<Block id="upgrade" title="버전을 올릴 때">
 				<p>
 					사내 패키지라 minor 버전에도 하위 호환이 깨지는 변경이 들어갈 수 있습니다. 올리기 전에{" "}

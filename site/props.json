@@ -1,4 +1,30 @@
 {
+	"AccordionItem": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "content",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		}
+	],
 	"AccordionProps": [
 		{
 			"name": "items",
@@ -115,6 +141,26 @@
 			"doc": "count 최댓값 (기본 99)"
 		}
 	],
+	"DescriptionListItem": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 이름"
+		},
+		{
+			"name": "value",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 값"
+		},
+		{
+			"name": "full",
+			"type": "boolean",
+			"required": false,
+			"doc": "이 항목만 값을 한 줄 전체로 (긴 주소·메모)"
+		}
+	],
 	"DescriptionListProps": [
 		{
 			"name": "items",
@@ -168,6 +214,51 @@
 			"type": "ReactNode",
 			"required": false,
 			"doc": "라벨 왼쪽 장식 아이콘"
+		}
+	],
+	"TimelineItem": [
+		{
+			"name": "id",
+			"type": "string | number",
+			"required": true,
+			"doc": "목록 키"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 제목"
+		},
+		{
+			"name": "time",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 오른쪽의 시각"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 아래 설명"
+		},
+		{
+			"name": "status",
+			"type": "\"done\" | \"active\" | \"pending\"",
+			"required": false,
+			"default": "\"pending\"",
+			"doc": "진행 상태"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "인디케이터 안에 넣을 아이콘. 없으면 점"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "항목 아래에 붙일 임의 내용 (첨부, 액션 버튼 등)"
 		}
 	],
 	"TimelineProps": [
@@ -340,6 +431,26 @@
 			"doc": "2–5 개의 `BottomNavItem`"
 		}
 	],
+	"BreadcrumbItem": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "표시 텍스트"
+		},
+		{
+			"name": "onClick",
+			"type": "(e: MouseEvent<HTMLElement>) => void",
+			"required": false,
+			"doc": "클릭 콜백 (href 없이 사용 가능)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "링크를 렌더할 요소. 라우터 `Link`(`next/link` 등)를 끼울 때 쓴다.\n\n`onClick` 에서 `preventDefault` + `router.push` 로도 되지만, 그러면 수정자 클릭\n(`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽어 소비처마다 그 검사를 다시 써야 하고\n프리페치·이동 가드처럼 `Link` 만 아는 것들은 표현할 수 없다.\n\n마지막 항목(현재 페이지)에는 적용되지 않는다 - 그건 링크가 아니라 `aria-current` 텍스트다.\n`href` 없이 주면 무시된다(그 항목은 `<button>` 이다)."
+		}
+	],
 	"BreadcrumbProps": [
 		{
 			"name": "items",
@@ -362,6 +473,44 @@
 			"doc": "`<nav>` 랜드마크 이름. 스크린리더의 리전 목록에 그대로 뜬다"
 		}
 	],
+	"MenuItem": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "onSelect",
+			"type": "() => void",
+			"required": false,
+			"doc": "클릭 시 호출 - 자동으로 메뉴 닫힘"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"doc": "destructive 액션 (삭제 등) - 빨간 텍스트"
+		}
+	],
 	"MenuProps": [
 		{
 			"name": "items",
@@ -380,6 +529,53 @@
 			"type": "\"start\" | \"end\"",
 			"required": false,
 			"doc": "정렬 (기본 \"start\")"
+		}
+	],
+	"NavBarLocaleConfig": [
+		{
+			"name": "current",
+			"type": "string",
+			"required": true,
+			"doc": "현재 선택된 locale 값 (예: \"ko\")"
+		},
+		{
+			"name": "options",
+			"type": "NavBarLocaleOption[]",
+			"required": true,
+			"doc": "가능한 옵션"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(next: string) => void",
+			"required": false,
+			"doc": "locale 변경 콜백 (canonical)"
+		},
+		{
+			"name": "hideLabel",
+			"type": "boolean",
+			"required": false,
+			"doc": "표시 라벨 - 기본은 옵션의 label, 미지정 시 short code 표시"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"default": "현재 옵션의 label",
+			"doc": "locale 트리거 버튼의 접근성 이름.\n`hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.\n\n⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로,\n보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가\n보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반). - 없으면 `current` 대문자"
+		}
+	],
+	"NavBarLocaleOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": ""
 		}
 	],
 	"NavBarProps": [
@@ -573,6 +769,26 @@
 			"type": "(index: number, step: StepperStep) => void",
 			"required": false,
 			"doc": "주면 모든 단계가 버튼이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` 다 -\n아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하는 일이라 컴포넌트가 열지 않는다."
+		}
+	],
+	"StepperStep": [
+		{
+			"name": "id",
+			"type": "string | number",
+			"required": true,
+			"doc": "목록 키"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "단계 이름. 인라인 내용만 - 클릭 가능한 단계는 `<button>` 안에 그려진다"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "이름 아래 짧은 설명. 인라인 내용만"
 		}
 	],
 	"TabListProps": [
@@ -870,6 +1086,32 @@
 			"doc": "삭제 버튼 접근성 레이블 - 칩이 여러 개일 때 대상 구분용"
 		}
 	],
+	"DataViewPagination": [
+		{
+			"name": "page",
+			"type": "number",
+			"required": true,
+			"doc": "현재 페이지 (1-based)"
+		},
+		{
+			"name": "totalPages",
+			"type": "number",
+			"required": true,
+			"doc": "전체 페이지 수"
+		},
+		{
+			"name": "pageSize",
+			"type": "number",
+			"required": false,
+			"doc": "한 쪽에 몇 행인지. 주면 행 선택 체크박스의 기본 라벨이 쪽마다 1 부터 다시 시작하지 않고\n전체 순번을 쓴다 - 없으면 3쪽의 체크박스도 1쪽과 같은 \"1번째 행 선택\" 으로 읽힌다."
+		},
+		{
+			"name": "onPageChange",
+			"type": "(page: number) => void",
+			"required": true,
+			"doc": "페이지 변경 콜백"
+		}
+	],
 	"DataViewProps": [
 		{
 			"name": "query",
@@ -976,6 +1218,84 @@
 			"doc": "재시도 버튼 라벨"
 		}
 	],
+	"DataViewQuery": [
+		{
+			"name": "data",
+			"type": "T[] | undefined",
+			"required": true,
+			"doc": "현재 페이지에 표시할 행"
+		},
+		{
+			"name": "isLoading",
+			"type": "boolean",
+			"required": false,
+			"doc": "첫 로딩 여부. true 면 Table 의 스켈레톤이 나온다"
+		},
+		{
+			"name": "error",
+			"type": "unknown",
+			"required": false,
+			"doc": "실패. 지정하면 표 대신 ErrorState 가 나온다"
+		},
+		{
+			"name": "refetch",
+			"type": "() => void",
+			"required": false,
+			"doc": "재시도. 지정하면 ErrorState 에 버튼이 붙는다"
+		}
+	],
+	"DataViewSelectionAction": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "버튼 라벨"
+		},
+		{
+			"name": "onRun",
+			"type": "(keys: string[]) => void",
+			"required": true,
+			"doc": "선택된 key 를 받아 실행"
+		},
+		{
+			"name": "danger",
+			"type": "boolean",
+			"required": false,
+			"doc": "위험한 액션(삭제 등) - 빨간 강조"
+		}
+	],
+	"DataViewToolbar": [
+		{
+			"name": "search",
+			"type": "boolean",
+			"required": false,
+			"doc": "검색 입력 표시 여부"
+		},
+		{
+			"name": "searchValue",
+			"type": "string",
+			"required": false,
+			"doc": "검색어 (제어형)"
+		},
+		{
+			"name": "onSearchChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "검색어 변경 콜백"
+		},
+		{
+			"name": "searchPlaceholder",
+			"type": "string",
+			"required": false,
+			"doc": "검색 입력 placeholder"
+		},
+		{
+			"name": "filters",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "검색 왼쪽에 놓을 필터 컨트롤 (`Dropdown` 등)"
+		}
+	],
 	"DividerProps": [
 		{
 			"name": "weight",
@@ -983,6 +1303,20 @@
 			"required": false,
 			"default": "\"standard\"",
 			"doc": "구분선 두께"
+		}
+	],
+	"HeroAction": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "버튼 라벨"
+		},
+		{
+			"name": "onClick",
+			"type": "() => void",
+			"required": false,
+			"doc": "클릭 핸들러"
 		}
 	],
 	"HeroProps": [
@@ -1132,6 +1466,20 @@
 			"doc": "클릭 시 콜백"
 		}
 	],
+	"MediaCardImage": [
+		{
+			"name": "src",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "alt",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		}
+	],
 	"MediaCardProps": [
 		{
 			"name": "image",
@@ -1205,6 +1553,58 @@
 			"required": false,
 			"default": "\"md\"",
 			"doc": "본문 스케일.\n- `md`: 공지·FAQ·이메일 프리뷰처럼 좁은 폭에 들어가는 본문 (h1 24 / h2 20 / h3 18)\n- `lg`: 약관·정책처럼 페이지를 채우는 긴 본문 (h1 28 / h2 24 / h3 20, 제목 위 여백도 넓다)"
+		}
+	],
+	"TableColumn": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": "컬럼 식별자 - `data[key]` 자동 렌더링에도 쓰임"
+		},
+		{
+			"name": "header",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "thead에 표시할 헤더 텍스트"
+		},
+		{
+			"name": "render",
+			"type": "(item: T, index: number) => ReactNode",
+			"required": false,
+			"doc": "셀 렌더 함수. 없으면 `item[key]` 자동 렌더"
+		},
+		{
+			"name": "width",
+			"type": "string",
+			"required": false,
+			"doc": "CSS width 값 (예: \"120px\", \"20%\")"
+		},
+		{
+			"name": "align",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "정렬"
+		},
+		{
+			"name": "sortable",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "정렬 가능한 컬럼 여부. 클릭 시 `onSortChange` 발화 - 실제 정렬은 소비자가 수행"
+		},
+		{
+			"name": "truncate",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "한 줄로 두고 넘치면 말줄임으로 자른다. 자동 렌더(문자열 값)면 전체 값을 `title` 로 단다.\n열 폭이 정해져야 잘리므로 `layout=\"fixed\"` + `width` 와 함께 쓴다 - 시각 · IP 처럼 길이가 거의 같은 칸."
+		},
+		{
+			"name": "cardLabel",
+			"type": "string",
+			"required": false,
+			"doc": "`cards` 화면에서 칸 앞에 붙는 라벨. 없으면 `header` 가 문자열일 때 그 글자를 쓴다 - `header` 가 아이콘 ·\n요소라면 이걸 줘야 카드에서 칸이 무슨 값인지 보인다 (칸 머리는 카드에서 화면 읽기용으로만 남는다)."
 		}
 	],
 	"TableProps": [
@@ -1366,6 +1766,180 @@
 			"doc": "선택 변경 콜백"
 		}
 	],
+	"TableSort": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": "정렬 중인 컬럼의 `TableColumn.key`"
+		},
+		{
+			"name": "direction",
+			"type": "\"desc\" | \"asc\"",
+			"required": true,
+			"doc": "정렬 방향"
+		}
+	],
+	"AlertHandle": [
+		{
+			"name": "update",
+			"type": "(patch: Partial<AlertOptions>) => void",
+			"required": true,
+			"doc": "열린 알림의 옵션을 바꾼다 - 예: 입력이 비면 `update({ confirmDisabled: true })`"
+		}
+	],
+	"AlertOptions": [
+		{
+			"name": "tone",
+			"type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"info\"",
+			"doc": "의미 색"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 제목"
+		},
+		{
+			"name": "message",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 본문 메시지"
+		},
+		{
+			"name": "confirmText",
+			"type": "string",
+			"required": false,
+			"doc": "확인 버튼 텍스트"
+		},
+		{
+			"name": "cancelText",
+			"type": "string",
+			"required": false,
+			"doc": "취소 버튼 텍스트"
+		},
+		{
+			"name": "showCancel",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "취소 버튼 표시 여부"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고\n취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능.\n(Material/shadcn/Radix 표준 패턴)"
+		},
+		{
+			"name": "actionsAlign",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "액션 버튼 정렬"
+		},
+		{
+			"name": "showIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "변형 아이콘 표시 여부. 원하면 명시적으로 켜기"
+		},
+		{
+			"name": "onConfirm",
+			"type": "() => unknown",
+			"required": false,
+			"doc": "확인 버튼 클릭 시 호출되는 콜백. Promise 를 돌려주면 끝날 때까지 알림이 열린 채 확인 버튼에\n스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힌다. 실패(reject)하면 열린 채 다시 시도할 수 있다."
+		},
+		{
+			"name": "onCancel",
+			"type": "() => void",
+			"required": false,
+			"doc": "취소 버튼 클릭 시 호출되는 콜백"
+		},
+		{
+			"name": "confirmDisabled",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "확인 버튼 잠금. 창 안 입력에 따라 바꾸려면 `showAlert` 가 돌려준 핸들의\n`update({ confirmDisabled })` 로 - 옵션은 호출 시점에 한 번만 읽힌다. 잠긴 버튼은 포커스를 잃지 않게\n`aria-disabled` 로 막고, 클릭 · Enter 로 확인되지 않는다."
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭으로 닫기 허용 여부.\ndestructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+		}
+	],
+	"ConfirmOptions": [
+		{
+			"name": "onConfirm",
+			"type": "() => unknown",
+			"required": false,
+			"doc": "확인 직후 실행할 작업. Promise 면 끝날 때까지 pending - 성공해야 `true` 로 끝난다"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 제목"
+		},
+		{
+			"name": "tone",
+			"type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"info\"",
+			"doc": "의미 색"
+		},
+		{
+			"name": "message",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 본문 메시지"
+		},
+		{
+			"name": "confirmText",
+			"type": "string",
+			"required": false,
+			"doc": "확인 버튼 텍스트"
+		},
+		{
+			"name": "cancelText",
+			"type": "string",
+			"required": false,
+			"doc": "취소 버튼 텍스트"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고\n취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능.\n(Material/shadcn/Radix 표준 패턴)"
+		},
+		{
+			"name": "actionsAlign",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "액션 버튼 정렬"
+		},
+		{
+			"name": "showIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "변형 아이콘 표시 여부. 원하면 명시적으로 켜기"
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭으로 닫기 허용 여부.\ndestructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+		}
+	],
 	"LinearProgressProps": [
 		{
 			"name": "totalSteps",
@@ -1426,6 +2000,35 @@
 			"type": "string",
 			"required": false,
 			"doc": "스피너 접근성 레이블"
+		}
+	],
+	"ToastAction": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "버튼 라벨 - \"실행 취소\" 등"
+		},
+		{
+			"name": "onClick",
+			"type": "() => void",
+			"required": true,
+			"doc": "누르면 실행되고, 이어서 토스트가 닫힌다"
+		}
+	],
+	"ToastOptions": [
+		{
+			"name": "duration",
+			"type": "number",
+			"required": false,
+			"default": "3000",
+			"doc": "자동 닫힘까지의 ms. `Infinity` 면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용"
+		},
+		{
+			"name": "action",
+			"type": "ToastAction",
+			"required": false,
+			"doc": "메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다"
 		}
 	],
 	"ToastProviderProps": [
@@ -1515,6 +2118,26 @@
 			"doc": "에러 상태 여부"
 		}
 	],
+	"ComboboxOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": "선택 시 돌려줄 값"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "목록과 트리거에 표시할 텍스트"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성 - 키보드 이동에서 건너뛰고 선택되지 않는다"
+		}
+	],
 	"ComboboxProps": [
 		{
 			"name": "value",
@@ -1600,6 +2223,26 @@
 			"type": "string",
 			"required": false,
 			"doc": "로딩 안내"
+		}
+	],
+	"DateCalendarDayInfo": [
+		{
+			"name": "selected",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "today",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
 		}
 	],
 	"DateCalendarProps": [
@@ -1835,6 +2478,20 @@
 			"doc": "값이 바뀔 때 호출된다 - `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`)"
 		}
 	],
+	"DateRange": [
+		{
+			"name": "start",
+			"type": "string",
+			"required": false,
+			"doc": "시작일 (`\"YYYY-MM-DD\"`). 아직 고르지 않았으면 undefined"
+		},
+		{
+			"name": "end",
+			"type": "string",
+			"required": false,
+			"doc": "종료일 (`\"YYYY-MM-DD\"`). 아직 고르지 않았으면 undefined"
+		}
+	],
 	"DateRangePickerProps": [
 		{
 			"name": "value",
@@ -2021,6 +2678,50 @@
 			"type": "string",
 			"required": false,
 			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어\n`<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+		}
+	],
+	"DropdownOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "옵션 아래에 표시할 보조 텍스트"
+		},
+		{
+			"name": "leadingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "옵션 왼쪽 아이콘"
+		},
+		{
+			"name": "trailingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "옵션 오른쪽 아이콘 (미지정 시 선택 상태에 체크 아이콘 자동 표시)"
+		},
+		{
+			"name": "showDivider",
+			"type": "boolean",
+			"required": false,
+			"doc": "아이템 아래 구분선 표시 여부"
 		}
 	],
 	"DropdownProps": [
@@ -2247,6 +2948,38 @@
 			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어\n`<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
 		}
 	],
+	"FieldControl": [
+		{
+			"name": "inputId",
+			"type": "string",
+			"required": true,
+			"doc": "입력에 붙일 id. `Field` 의 `<label htmlFor>` 이 이 값을 가리킨다"
+		},
+		{
+			"name": "labelId",
+			"type": "string | undefined",
+			"required": true,
+			"doc": "라벨 요소의 id. `role=\"group\"` 컨테이너(DatePicker·OtpInput·RadioGroup)는 `htmlFor` 로\n연결되지 않으므로 이 값을 `aria-labelledby` 에 쓴다. 라벨이 없으면 undefined."
+		},
+		{
+			"name": "describedBy",
+			"type": "string | undefined",
+			"required": true,
+			"doc": "help·error 를 함께 가리키는 `aria-describedby` 값. 둘 다 없으면 undefined"
+		},
+		{
+			"name": "invalid",
+			"type": "boolean",
+			"required": true,
+			"doc": "에러 상태 - 입력은 `aria-invalid` 에 반영한다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": true,
+			"doc": "필수 여부 - 입력은 `aria-required` 에 반영한다"
+		}
+	],
 	"FieldProps": [
 		{
 			"name": "name",
@@ -2451,6 +3184,68 @@
 			"type": "ReactNode",
 			"required": true,
 			"doc": ""
+		}
+	],
+	"CropImageSize": [
+		{
+			"name": "width",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "height",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CropOffset": [
+		{
+			"name": "x",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "y",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CropRect": [
+		{
+			"name": "x",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "y",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "size",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"ImageCropperHandle": [
+		{
+			"name": "crop",
+			"type": "() => Promise<Blob>",
+			"required": true,
+			"doc": "현재 보이는 정사각 영역을 잘라 Blob 으로 돌려준다. 소비자의 \"적용\" 버튼에서 호출."
+		},
+		{
+			"name": "reset",
+			"type": "() => void",
+			"required": true,
+			"doc": "배율·위치를 초기 상태(전체가 보이는 zoom=min, 중앙)로 되돌린다."
 		}
 	],
 	"ImageCropperProps": [
@@ -2697,6 +3492,38 @@
 			"type": "ReactNode",
 			"required": true,
 			"doc": "`Radio` 들"
+		}
+	],
+	"SegmentedControlItem": [
+		{
+			"name": "value",
+			"type": "T",
+			"required": true,
+			"doc": "이 칸의 값"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "칸에 보이는 라벨. 아이콘만 둘 때는 `ariaLabel` 을 함께 준다"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라벨 앞 아이콘 (장식 - 보조기기에는 숨긴다)"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름. 라벨이 없거나 라벨만으로 뜻이 모자랄 때"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "이 칸만 비활성화"
 		}
 	],
 	"SegmentedControlProps": [

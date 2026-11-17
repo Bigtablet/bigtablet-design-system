@@ -21,5 +21,8 @@ export const dataView: DocPage = {
 		},
 	],
 	props: "DataViewProps",
-	notes: ["`selectionActions` 를 주면 행 선택과 일괄 동작 바가 생깁니다"],
+	notes: [
+		"`selectionActions` 를 주면 행 선택과 일괄 동작 바가 생깁니다",
+		"검색 · 페이지 나누기는 직접 합니다 - `query.data` 에는 지금 쪽의 행만 넘기고, 전체 쪽 수는 `pagination.totalPages` 로 줍니다",
+	],
 };

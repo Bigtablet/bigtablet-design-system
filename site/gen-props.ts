@@ -10,9 +10,23 @@ const program = ts.createProgram(["src/index.ts"], {
 const checker = program.getTypeChecker();
 const entry = checker.getSymbolAtLocation(program.getSourceFile("src/index.ts")!)!;
 const exports = checker.getExportsOfModule(entry);
-// src/index.ts 가 내보내는 *Props 전부 - 컴포넌트 props 가 아닌 유틸 타입은 뺀다
-const SKIP = new Set(["PolymorphicProps", "LucideProps", "SentencesProps"]);
-const NAMES = exports.map((s) => s.name).filter((n) => n.endsWith("Props") && !SKIP.has(n));
+// src/index.ts 가 내보내는 *Props 전부 + props 안에서 쓰는 src/ui 인터페이스(DataViewToolbar · ConfirmOptions …).
+// 컴포넌트 props 가 아닌 유틸 · 내부 타입은 뺀다
+const SKIP = new Set([
+	"PolymorphicProps",
+	"LucideProps",
+	"SentencesProps",
+	"RadioGroupContextValue",
+	"LocaleMessages",
+]);
+const isUiInterface = (s: ts.Symbol) => {
+	const d = (s.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(s) : s).declarations?.[0];
+	return !!d && ts.isInterfaceDeclaration(d) && d.getSourceFile().fileName.includes("/src/ui/");
+};
+const NAMES = exports
+	.filter((s) => s.name.endsWith("Props") || isUiInterface(s))
+	.map((s) => s.name)
+	.filter((n) => !SKIP.has(n));
 
 const out: Record<
 	string,
