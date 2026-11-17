@@ -379,7 +379,7 @@ describe("Button", () => {
 
 ### GitHub Actions
 
-정본은 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) 입니다. 아래는 그 구조 요약이므로, 실제 값(액션 버전·Node 버전 등)은 워크플로 파일을 확인할 것.
+정본은 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) 입니다. 아래는 그 구조 요약이므로, 실제 값(액션 버전·Node 버전 등)은 워크플로 파일에서 확인합니다.
 
 **트리거**
 - `pull_request` → `develop`, `main`
@@ -394,7 +394,7 @@ describe("Button", () => {
 | `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘깁니다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 됩니다 |
 | `static-checks` | 병합 게이트. `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킵니다. audit 은 조회 실패도 실패로 끝납니다 |
 | `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돕니다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트이기 때문입니다 |
-| `a11y` | Playwright 공식 이미지 컨테이너에서 `pnpm test:storybook` → `pnpm test:browser`(레이아웃) → `pnpm test:visual`(시각 회귀). `code` · `stories` · `vanilla` 가 바뀌면 돕니다. 이미지 태그는 lockfile 의 playwright 버전과 같아야 한다(어긋나면 첫 step 이 실패) |
+| `a11y` | Playwright 공식 이미지 컨테이너에서 `pnpm test:storybook` → `pnpm test:browser`(레이아웃) → `pnpm test:visual`(시각 회귀). `code` · `stories` · `vanilla` 가 바뀌면 돕니다. 이미지 태그는 lockfile 의 playwright 버전과 같아야 합니다(어긋나면 첫 step 이 실패) |
 | `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돕니다 |
 
 `static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돕니다 - 대기 시간이 가장 긴 job 하나로 정해집니다.

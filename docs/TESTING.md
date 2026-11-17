@@ -178,7 +178,7 @@ import { Dropdown } from "./bigtablet.js";
 
 - **jsdom 의 rect 는 전부 0 입니다.** 그래서 "앵커가 뷰포트 밖" 판정(`bottom <= 0`)이 아무것도 안
   했는데 참이 됩니다. `useAnchoredPosition` 이 **앵커 크기가 0 이면 `anchorHidden` 을 false 로
-  두는** 것은 이 때문이다(#624). 이 가드를 빼면 열자마자 닫혀 기존 테스트 6개가 무너집니다 -
+  두는** 것은 이 때문입니다(#624). 이 가드를 빼면 열자마자 닫혀 기존 테스트 6개가 무너집니다 -
   뮤테이션으로 확인된 수치입니다. 위치·가시성을 검사하려면 rect 를 직접 세웁니다:
 
   ```ts
@@ -488,7 +488,7 @@ it("calls callback with correct arguments", () => {
 
 > 이 절의 수치와 표는 `pnpm coverage:docs` 가 씁니다 - unit 테스트를 커버리지와 함께 돌리고
 > `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표와 `CLAUDE.md` 의 한 줄을 갱신합니다.
-> 손으로 고치지 않는다(예전에 788 tests 시절 수치로 굳어 있었습니다). 릴리즈 PR(develop → main)이 열리면 CI
+> 손으로 고치지 않습니다(예전에 788 tests 시절 수치로 굳어 있었습니다). 릴리즈 PR(develop → main)이 열리면 CI
 > (`.github/workflows/coverage-docs.yml`)가 이 명령을 돌려 바뀐 수치를 develop 에 커밋합니다.
 
 ## 컴포넌트별 테스트 예시
