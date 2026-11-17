@@ -1292,7 +1292,7 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
 |------|------|
 | 짧은 라벨 2~5개 중 하나, 한 줄에 다 보임 | ✅ SegmentedControl |
 | 라벨이 길거나 설명이 붙거나 6개 이상 | ❌ [RadioGroup](#radiogroup) |
-| 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) - `fills` 모양이 비슷해도 패널 전환은 Tabs |
+| 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) (밑줄 모양) |
 | 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
 | 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
 
@@ -2218,7 +2218,6 @@ const [page, setPage] = useState(1);
 | 상황 | 선택 |
 |------|------|
 | 카테고리 간 전환 (서로 배타적, 한 번에 하나만) | ✅ Tabs |
-| 같은 영역의 보기 전환을 박스 그룹 모양으로 (목록 / 보드 등) | ✅ Tabs (`fills` variant) |
 | 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **[SegmentedControl](#segmentedcontrol)** (라벨이 길면 RadioGroup) - `tablist`/`tab` 은 "패널을 바꿉니다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속합니다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
@@ -2227,7 +2226,7 @@ const [page, setPage] = useState(1);
 #### variant 선택 가이드
 
 - `variant="line"` (기본) - **하단 underline**. 페이지 내 섹션 전환 (admin 페이지 위계, 제품 상세 등). 가장 흔한 케이스
-- `variant="fills"` - **둥근 박스 그룹**. dim bg 위에서 활성 탭을 박스로 채웁니다. 짧은 라벨 2~4개의 보기 전환(목록/보드, 월/주)처럼 underline 이 약해 보이는 자리. **모양이 segmented control 이어도 패널을 바꾸는 탭입니다** - 값만 고르는 컨트롤로 쓰지 않습니다
+- `variant="fills"` - **deprecated (v4.10.0).** 둥근 박스 그룹 모양이 SegmentedControl 과 같아 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않습니다. 패널을 바꾸면 `line`, 값만 고르면 [SegmentedControl](#segmentedcontrol) 을 씁니다. 지금은 그대로 동작하고 이후 버전에서 제거합니다
 
 #### 제어형 vs 비제어형
 
@@ -2249,7 +2248,7 @@ const [tab, setTab] = useState("overview");
 | `value` | `string` | - | 제어형: 현재 활성 tab의 value |
 | `defaultValue` | `string` | `''` | 비제어형: 초기 활성 tab의 value |
 | `onValueChange` | `(value: string) => void` | - | value 변경 콜백 |
-| `variant` | `'line' \| 'fills'` | `'line'` | 시각 스타일. line=하단 underline, fills=둥근 박스 |
+| `variant` | `'line' \| 'fills'` | `'line'` | 시각 스타일. line=하단 underline. `fills` 는 deprecated |
 | `size` | `'sm' \| 'md'` | `'md'` | 크기 (sm=32px min-height, md=40px) |
 
 **TabList Props**
@@ -2316,9 +2315,9 @@ import { Tabs, TabList, Tab, TabPanel } from "@bigtablet/design-system";
   <TabPanel value="reviews">리뷰 목록</TabPanel>
 </Tabs>
 
-// fills variant - 같은 데이터의 보기 전환 (패널마다 다른 화면)
+// 같은 데이터의 보기 전환 (패널마다 다른 화면) - 패널을 바꾸니 Tabs, 모양은 밑줄
 const [view, setView] = useState("list");
-<Tabs value={view} onValueChange={setView} variant="fills" size="sm">
+<Tabs value={view} onValueChange={setView} size="sm">
   <TabList ariaLabel="보기 방식">
     <Tab value="list">목록</Tab>
     <Tab value="board">보드</Tab>
