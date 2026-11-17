@@ -11,7 +11,7 @@ const meta: Meta = {
 				component: `
 ### 설치 및 설정
 
-프로젝트에 디자인 시스템을 설치하고 사용하는 방법입니다. React/Next.js 와 Vanilla(Thymeleaf, JSP, PHP) 두 환경을 지원합니다.
+프로젝트에 디자인 시스템을 설치하고 쓰는 방법입니다. React · Next.js 와 Vanilla(Thymeleaf · JSP · PHP) 두 환경을 지원합니다.
         `,
 			},
 		},
@@ -28,7 +28,7 @@ export const React: Story = {
 			<Card>
 				<CardHeader
 					title="React / Next.js 설치"
-					subtitle="React 19, Next.js App Router 호환. pnpm/npm/yarn 모두 가능."
+					subtitle="React 19 · Next.js App Router 에서 씁니다. pnpm · npm · yarn 모두 됩니다."
 				/>
 				<div style={{ display: "grid", gap: 20 }}>
 					<Step
@@ -40,7 +40,7 @@ export const React: Story = {
 					<Step
 						number={2}
 						title="Provider 로 감싸기"
-						description="앱 최상위(예: app/layout.tsx)에서 한 번. CSS 는 따로 import 하지 않는다 - 컴포넌트가 자기 CSS 를 함께 가져온다. Next.js 를 webpack 으로 빌드하면 next.config 의 experimental.optimizePackageImports 에 이 패키지를 넣어야 안 쓰는 컴포넌트 CSS 가 빠진다."
+						description="앱 최상위(예: app/layout.tsx)에서 한 번 감쌉니다. CSS 는 따로 import 하지 않습니다 - 컴포넌트가 자기 CSS 를 함께 가져옵니다. Next.js 를 webpack 으로 빌드하면 next.config 의 experimental.optimizePackageImports 에 이 패키지를 넣어야 안 쓰는 컴포넌트 CSS 가 빠집니다. useToast · useAlert 는 이 Provider 아래의 컴포넌트에서 부릅니다."
 						lang="tsx"
 						code={`import { ThemeProvider, AlertProvider, ToastProvider } from "@bigtablet/design-system";
 
@@ -71,7 +71,7 @@ function MyPage() {
 			<Card variant="subtle">
 				<CardHeader
 					title="SCSS 토큰 사용 (선택)"
-					subtitle="컴포넌트 스타일을 커스텀할 때 디자인 토큰을 직접 사용."
+					subtitle="화면 스타일을 직접 쓸 때 색 · 간격 값을 하드코딩하지 않고 토큰을 씁니다. 그래야 다크 모드를 따라갑니다."
 				/>
 				<CodeBlock
 					lang="scss"
@@ -95,21 +95,26 @@ export const Vanilla: Story = {
 			<Card>
 				<CardHeader
 					title="Vanilla 설치"
-					subtitle="React 없는 서버사이드 템플릿 환경. CSS + JS 두 파일만 포함하면 됨."
+					subtitle="React 없는 서버 템플릿 환경입니다. CSS · JS 두 파일만 넣으면 됩니다."
 				/>
 				<div style={{ display: "grid", gap: 20 }}>
 					<Step
 						number={1}
 						title="CSS / JS 포함"
-						description="dist/vanilla/ 의 CSS · JS 를 프로젝트에 복사하거나 CDN 로 로드."
+						description="패키지의 dist/vanilla/ 에 있는 CSS · JS 를 프로젝트에 복사하거나 CDN(unpkg)으로 불러옵니다."
 						lang="html"
-						code={`<link rel="stylesheet" href="/assets/bigtablet.min.css">
-<script src="/assets/bigtablet.min.js"></script>`}
+						code={`<!-- 복사한 파일 -->
+<link rel="stylesheet" href="/assets/bigtablet.min.css">
+<script src="/assets/bigtablet.min.js"></script>
+
+<!-- 또는 CDN -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>`}
 					/>
 					<Step
 						number={2}
 						title="HTML 에서 바로 사용"
-						description="BEM-like 클래스 네이밍. data-bt-* 속성으로 컴포넌트 식별."
+						description="클래스는 bt-컴포넌트 · bt-컴포넌트__부분 · bt-컴포넌트--변형 순서로 짓습니다. 전체 클래스 목록은 docs/VANILLA.md 에 있습니다."
 						lang="html"
 						code={`<!-- 버튼 -->
 <button class="bt-button bt-button--md bt-button--filled">
@@ -127,7 +132,7 @@ export const Vanilla: Story = {
 					<Step
 						number={3}
 						title="JS 자동 초기화"
-						description="data-bt-* 속성 가진 요소는 DOMContentLoaded 에 자동 동작. 수동 init 도 가능."
+						description="data-bt-* 속성이 있는 요소는 페이지가 열릴 때(DOMContentLoaded) 자동으로 동작합니다. 나중에 추가한 요소는 직접 초기화합니다."
 						lang="html"
 						code={`<!-- 자동 -->
 <div class="bt-dropdown" data-bt-dropdown>...</div>
@@ -316,7 +321,8 @@ function CodeBlock({ lang, code }: { lang: Lang; code: string }) {
 					fontSize: 13,
 					lineHeight: 1.65,
 					fontFamily: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
-					overflowX: "auto",
+					whiteSpace: "pre-wrap", // 긴 URL 은 줄바꿈 - 가로 스크롤 영역은 키보드로 닿지 않아 axe 가 막는다
+					overflowWrap: "anywhere",
 				}}
 			>
 				<code>{code}</code>

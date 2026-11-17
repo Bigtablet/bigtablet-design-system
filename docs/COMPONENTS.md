@@ -6,6 +6,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ## 목차
 
+- [비슷한 컴포넌트 고르기](#비슷한-컴포넌트-고르기)
 - [prop 이름 기준](#prop-이름-기준)
 - [v3.0 주요 변경사항](#v30-주요-변경사항)
 - [Foundation](#foundation)
@@ -90,6 +91,26 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 ---
 
 > **모든 컴포넌트는 `dangerouslySetInnerHTML` 을 받지 않습니다** (v3.25.0~). 마크업은 `children` 으로 넘깁니다. 새 컴포넌트는 props 를 `SafeHTMLProps<React.*HTMLAttributes<…>>` 로 선언하고, `src/utils/safe-html.type-test.tsx` 가 공개 export 전체를 `tsc` 로 검사합니다.
+
+---
+
+## 비슷한 컴포넌트 고르기
+
+자주 헷갈리는 묶음은 Storybook 문서 첫머리에 비교표가 있습니다. 묶음 안 어느 컴포넌트 문서에서나 같은 표가 보입니다.
+
+| 고민 | 비교표 |
+|------|------|
+| Badge · Chip · TagInput | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-display-badge--docs) |
+| Spinner · Skeleton · LinearProgress · TopLoading | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-feedback-spinner--docs) |
+| Alert · InlineAlert · Toast | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-feedback-alert--docs) |
+| DatePicker · DateRangePicker · TimePicker | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-datepicker--docs) |
+| Checkbox · Radio · RadioGroup · Toggle · SegmentedControl | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-radiogroup--docs) |
+| FileInput · ImageCropper | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-fileinput--docs) |
+| Sidebar · NavBar · BottomNav | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-navigation-sidebar--docs) |
+| Menu · Popover · Tooltip | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-overlay-popover--docs) |
+| 입력 컨트롤 전체 | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/foundation-form-comparison--docs) |
+
+Modal · Button · TextField · Table · Dropdown 은 이 문서 각 섹션의 "언제 쓰는가" 표를 봅니다.
 
 ---
 

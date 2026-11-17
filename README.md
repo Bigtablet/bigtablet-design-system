@@ -206,8 +206,8 @@ The published Storybook lives at **[bigtablet.github.io/bigtablet-design-system]
 
 | | |
 |---|---|
-| 📚 [Components](./docs/COMPONENTS.md) | Props API + usage per component |
-| 🔄 [Migration](./docs/MIGRATION.md) | Deprecated prop migration guide |
+| 📚 [Components](./docs/COMPONENTS.md) | When to use, examples, and props per component |
+| 🔄 [Migration](./docs/MIGRATION.md) | Upgrade checklist + what to change per version |
 | 🎨 [Theming](./docs/THEMING.md) | Light/dark theme system guide |
 | 🏗️ [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |
