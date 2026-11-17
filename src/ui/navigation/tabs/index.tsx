@@ -4,7 +4,13 @@ import * as React from "react";
 import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
-export type TabsVariant = "line" | "fills";
+export type TabsVariant =
+	| "line"
+	/**
+	 * @deprecated SegmentedControl 과 같아 보여 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않는다 (#1047).
+	 * 패널을 바꾸면 `line`, 값만 고르면 SegmentedControl. 이후 버전에서 제거
+	 */
+	| "fills";
 export type TabsSize = "sm" | "md";
 
 interface TabsContextValue {
