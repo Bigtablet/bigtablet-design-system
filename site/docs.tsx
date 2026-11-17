@@ -1,4 +1,4 @@
-import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
+import { CopyButton, cn, SegmentedControl } from "@bigtablet/design-system";
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import props from "./props.json";
 
@@ -149,7 +149,7 @@ function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 	return (
 		<>
 			{titled && (
-				<h3 className="doc_props_title">
+				<h3 id={name} className="doc_props_title">
 					<code>{name}</code>
 				</h3>
 			)}
@@ -187,67 +187,126 @@ function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 }
 
 export function Page({ page, theme }: { page: DocPage; theme: string }) {
+	const propNames = page.props ? [page.props].flat() : [];
+	const toc: TocItem[] = [
+		{ id: "when", label: "언제 쓰는가" },
+		{ id: "examples", label: "예제" },
+		...page.examples.map((ex) => ({ id: ex.id, label: ex.title, sub: true })),
+		...(propNames.length ? [{ id: "props", label: "Props" }] : []),
+		...(propNames.length > 1
+			? propNames.map((n) => ({ id: n, label: n, sub: true, code: true }))
+			: []),
+		...(page.notes ? [{ id: "notes", label: "알아 둘 것" }] : []),
+	];
 	return (
-		<article className="doc_page">
-			<p className="doc_eyebrow">{page.category}</p>
-			<h1>
-				{page.title} <span className="doc_name">{page.name}</span>
-			</h1>
-			<p className="doc_summary">
-				<Md>{page.summary}</Md>
-			</p>
+		<div className="doc_layout">
+			<article className="doc_page">
+				<p className="doc_eyebrow">{page.category}</p>
+				<h1>
+					{page.title} <span className="doc_name">{page.name}</span>
+				</h1>
+				<p className="doc_summary">
+					<Md>{page.summary}</Md>
+				</p>
 
-			<Section title="언제 쓰는가">
-				<div className="doc_table_wrap">
-					<table className="doc_table">
-						<tbody>
-							{page.when.map(([situation, pick, self]) => (
-								<tr key={situation}>
-									<td>{situation}</td>
-									<td className={self ? "doc_pick_self" : "doc_pick_other"}>
-										{self ? "✓ " : "→ "}
-										<Md>{pick}</Md>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			</Section>
+				<Section id="when" title="언제 쓰는가">
+					<div className="doc_table_wrap">
+						<table className="doc_table">
+							<tbody>
+								{page.when.map(([situation, pick, self]) => (
+									<tr key={situation}>
+										<td>{situation}</td>
+										<td className={self ? "doc_pick_self" : "doc_pick_other"}>
+											{self ? "✓ " : "→ "}
+											<Md>{pick}</Md>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</Section>
 
-			<Section title="예제">
-				{page.examples.map((ex) => (
-					<Example key={ex.id} {...ex} theme={theme} />
-				))}
-			</Section>
-
-			{page.props && (
-				<Section title="Props">
-					{[page.props].flat().map((name, _, all) => (
-						<PropsTable key={name} name={name} titled={all.length > 1} />
+				<Section id="examples" title="예제">
+					{page.examples.map((ex) => (
+						<Example key={ex.id} {...ex} theme={theme} />
 					))}
 				</Section>
-			)}
 
-			{page.notes && (
-				<Section title="알아 둘 것">
-					<ul className="doc_notes">
-						{page.notes.map((n) => (
-							<li key={n}>
-								<Md>{n}</Md>
-							</li>
+				{page.props && (
+					<Section id="props" title="Props">
+						{[page.props].flat().map((name, _, all) => (
+							<PropsTable key={name} name={name} titled={all.length > 1} />
 						))}
-					</ul>
-				</Section>
-			)}
-		</article>
+					</Section>
+				)}
+
+				{page.notes && (
+					<Section id="notes" title="알아 둘 것">
+						<ul className="doc_notes">
+							{page.notes.map((n) => (
+								<li key={n}>
+									<Md>{n}</Md>
+								</li>
+							))}
+						</ul>
+					</Section>
+				)}
+			</article>
+			<Toc items={toc} />
+		</div>
 	);
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+interface TocItem {
+	id: string;
+	label: string;
+	sub?: boolean;
+	code?: boolean;
+}
+
+/** 오른쪽 "이 페이지에서" 목차 - 지금 읽는 절을 표시한다. 해시 라우팅과 겹치지 않게 링크 대신 버튼으로 스크롤 */
+function Toc({ items }: { items: TocItem[] }) {
+	const [active, setActive] = useState(items[0]?.id);
+	useEffect(() => {
+		const onScroll = () => {
+			// 상단 바 아래 120px 선을 지난 마지막 제목이 지금 절
+			let current = items[0]?.id;
+			for (const item of items) {
+				const el = document.getElementById(item.id);
+				if (el && el.getBoundingClientRect().top < 120) current = item.id;
+			}
+			// 맨 아래까지 내렸으면 마지막 절 - 짧은 끝 절은 120px 선에 닿지 못한다
+			const root = document.documentElement;
+			if (window.innerHeight + window.scrollY >= root.scrollHeight - 2) current = items.at(-1)?.id;
+			setActive(current);
+		};
+		onScroll();
+		window.addEventListener("scroll", onScroll, { passive: true });
+		return () => window.removeEventListener("scroll", onScroll);
+	}, [items]);
+	return (
+		<nav className="doc_toc" aria-label="이 페이지에서">
+			<p className="doc_toc_title">이 페이지에서</p>
+			{items.map((item) => (
+				<button
+					key={item.id}
+					type="button"
+					className={cn("doc_toc_item", item.sub && "doc_toc_sub", item.code && "doc_toc_code")}
+					aria-current={active === item.id ? "location" : undefined}
+					onClick={() => document.getElementById(item.id)?.scrollIntoView({ block: "start" })}
+				>
+					{item.label}
+				</button>
+			))}
+		</nav>
+	);
+}
+
+function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
 	return (
 		<section className="doc_section">
-			<h2>{title}</h2>
+			<h2 id={id}>{title}</h2>
 			{children}
 		</section>
 	);

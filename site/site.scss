@@ -461,3 +461,91 @@ code {
   @include token.body_small;
   @include token.wrap_keep_all;
 }
+
+// ── 본문 + 오른쪽 목차 ─────────────────────────────────────────────────
+
+.doc_layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: token.$spacing_48;
+  max-width: 1160px;
+
+  // 목차는 넓은 화면에서만 - 좁으면 본문이 폭을 다 쓴다
+  @media (max-width: 1199px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    .doc_toc {
+      display: none;
+    }
+  }
+}
+
+.doc_layout .doc_page {
+  max-width: none;
+}
+
+// 목차로 이동할 때 제목이 상단 바에 가리지 않게
+.doc_page :is(h2, h3)[id] {
+  scroll-margin-top: calc(#{$top_height} + #{token.$spacing_16});
+}
+
+.doc_toc {
+  position: sticky;
+  top: calc(#{$top_height} + #{token.$spacing_32});
+  align-self: start;
+  display: grid;
+  max-height: calc(100dvh - #{$top_height} - #{token.$spacing_48});
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.doc_toc_title {
+  margin: 0 0 token.$spacing_8;
+  color: token.$color_text_heading;
+  @include token.body_small_bold;
+}
+
+.doc_toc_item {
+  padding: token.$spacing_4 token.$spacing_12;
+  border: none;
+  border-left: token.$border_width_standard solid token.$color_border_default;
+  background: none;
+  color: token.$color_text_caption;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  @include token.body_small;
+  @include token.wrap_keep_all;
+  transition:
+    color token.$transition_fast,
+    border-color token.$transition_fast;
+
+  &:hover {
+    color: token.$color_text_heading;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  &[aria-current="location"] {
+    color: token.$color_text_heading;
+    border-left: token.$border_width_thick solid token.$color_text_heading;
+    font-weight: 600;
+  }
+}
+
+.doc_toc_sub {
+  padding-left: token.$spacing_24;
+}
+
+.doc_toc_code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+// 컴포넌트 홈은 목차가 없으니 카드 격자가 넓게 쓴다
+.doc_overview {
+  max-width: 1160px;
+}
