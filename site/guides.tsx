@@ -518,9 +518,27 @@ function Ai() {
 
 /** 사이드바 맨 위 "시작하기" 묶음 - slug 가 "" 인 첫 화면 포함 */
 export const GUIDES = [
-	{ slug: "", title: "소개", Body: null },
-	{ slug: "install", title: "설치", Body: Install },
-	{ slug: "vanilla", title: "Vanilla", Body: Vanilla },
-	{ slug: "ai", title: "AI 로 쓰기", Body: Ai },
-	{ slug: "components", title: "전체 컴포넌트", Body: null },
+	{ slug: "", title: "소개", name: "Overview", keywords: "시작 홈", Body: null },
+	{
+		slug: "install",
+		title: "설치",
+		name: "Installation",
+		keywords: "pnpm npm next provider 시작하기",
+		Body: Install,
+	},
+	{
+		slug: "vanilla",
+		title: "Vanilla",
+		name: "HTML · CSS · JS",
+		keywords: "thymeleaf jsp php html 서버 템플릿",
+		Body: Vanilla,
+	},
+	{
+		slug: "ai",
+		title: "AI 로 쓰기",
+		name: "AI Agents",
+		keywords: "claude codex cursor agents.md claude.md llms 마크다운 에이전트",
+		Body: Ai,
+	},
+	{ slug: "components", title: "전체 컴포넌트", name: "Components", keywords: "목록", Body: null },
 ] as const;

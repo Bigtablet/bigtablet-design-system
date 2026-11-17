@@ -6,7 +6,7 @@ import { CATEGORIES } from "./categories";
 import { ComponentCard, type DocPage, Page } from "./docs";
 import { FOUNDATIONS } from "./foundation";
 import { GITHUB, GUIDES, Landing, NPM } from "./guides";
-import { SiteSearch } from "./search";
+import { type SearchEntry, SiteSearch } from "./search";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
@@ -19,6 +19,18 @@ const PAGES = Object.values(
 			CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category) ||
 			(a.order ?? 99) - (b.order ?? 99),
 	);
+// 검색은 컴포넌트 → 토큰 → 가이드 순. 컴포넌트 요약은 화면에 안 보이는 키워드로 넘긴다
+const SEARCH: SearchEntry[] = [
+	...PAGES.map((p) => ({
+		slug: p.slug,
+		title: p.title,
+		name: p.name,
+		group: p.category,
+		keywords: p.summary,
+	})),
+	...FOUNDATIONS.map((f) => ({ ...f, group: "토큰" })),
+	...GUIDES.map((g) => ({ ...g, group: "시작하기" })),
+];
 const GROUPS = CATEGORIES.map((c) => ({ c, pages: PAGES.filter((p) => p.category === c) })).filter(
 	(g) => g.pages.length > 0,
 );
@@ -80,7 +92,7 @@ function App() {
 						AI
 					</a>
 				</nav>
-				<SiteSearch pages={PAGES} />
+				<SiteSearch entries={SEARCH} />
 				<div className="site_top_actions">
 					<a className="site_top_link" href={GITHUB} target="_blank" rel="noreferrer">
 						GitHub

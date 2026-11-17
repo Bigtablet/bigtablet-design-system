@@ -474,11 +474,53 @@ function Layout() {
 
 /** 사이드바 "Foundation" 묶음 */
 export const FOUNDATIONS = [
-	{ slug: "tokens/colors", title: "색", Body: Colors },
-	{ slug: "tokens/typography", title: "타이포그래피", Body: Typography },
-	{ slug: "tokens/spacing", title: "간격", Body: Spacing },
-	{ slug: "tokens/radius", title: "모서리", Body: Radius },
-	{ slug: "tokens/elevation", title: "그림자", Body: Elevation },
-	{ slug: "tokens/motion", title: "모션", Body: Motion },
-	{ slug: "tokens/layout", title: "레이아웃 값", Body: Layout },
+	{
+		slug: "tokens/colors",
+		title: "색",
+		name: "Colors",
+		keywords: "color text bg border brand status 다크",
+		Body: Colors,
+	},
+	{
+		slug: "tokens/typography",
+		title: "타이포그래피",
+		name: "Typography",
+		keywords: "font 글꼴 heading body caption 제목 본문",
+		Body: Typography,
+	},
+	{
+		slug: "tokens/spacing",
+		title: "간격",
+		name: "Spacing",
+		keywords: "spacing 여백 padding gap",
+		Body: Spacing,
+	},
+	{
+		slug: "tokens/radius",
+		title: "모서리",
+		name: "Radius",
+		keywords: "radius border-radius 둥글기",
+		Body: Radius,
+	},
+	{
+		slug: "tokens/elevation",
+		title: "그림자",
+		name: "Elevation",
+		keywords: "shadow elevation",
+		Body: Elevation,
+	},
+	{
+		slug: "tokens/motion",
+		title: "모션",
+		name: "Motion",
+		keywords: "duration easing transition 애니메이션",
+		Body: Motion,
+	},
+	{
+		slug: "tokens/layout",
+		title: "레이아웃 값",
+		name: "Breakpoints · Z-index · Icon",
+		keywords: "breakpoint compact 반응형 화면 폭 z-index 겹침 icon 아이콘",
+		Body: Layout,
+	},
 ];

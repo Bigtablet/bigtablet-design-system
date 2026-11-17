@@ -1,12 +1,21 @@
 import { Modal, TextField } from "@bigtablet/design-system";
 import { CornerDownLeft, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { DocPage } from "./docs";
+
+/** 검색 한 줄 - 컴포넌트 · 토큰 · 가이드 페이지를 같은 모양으로 받는다 */
+export interface SearchEntry {
+	slug: string;
+	title: string;
+	name: string;
+	group: string;
+	/** 화면에는 안 보이고 찾기에만 쓰는 말 (요약 · 영어 이름 · 토큰 접두사) */
+	keywords: string;
+}
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 
-/** 헤더 검색 버튼 + ⌘K / Ctrl+K 로 여는 검색 창. 코드명 · 한국어 이름 · 그룹 · 설명으로 찾는다 */
-export function SiteSearch({ pages }: { pages: DocPage[] }) {
+/** 헤더 검색 버튼 + ⌘K / Ctrl+K 로 여는 검색 창. 제목 · 이름 · 묶음 · 키워드로 찾는다 */
+export function SiteSearch({ entries }: { entries: SearchEntry[] }) {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
 	const [active, setActive] = useState(0);
@@ -23,18 +32,20 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 	}, []);
 
 	const q = query.trim().toLowerCase();
+	// 제목 · 이름이 맞는 것을 묶음 · 키워드로만 맞는 것보다 앞에 둔다 ("간격" → 간격 토큰이 Stack 보다 먼저)
+	const hit = (fields: string[]) => fields.some((t) => t.toLowerCase().includes(q));
 	const results = q
-		? pages.filter((p) =>
-				[p.title, p.name, p.category, p.summary].some((t) => t.toLowerCase().includes(q)),
-			)
-		: pages;
+		? entries
+				.filter((p) => hit([p.title, p.name, p.group, p.keywords]))
+				.sort((a, b) => Number(!hit([a.title, a.name])) - Number(!hit([b.title, b.name])))
+		: entries;
 
 	const close = () => {
 		setOpen(false);
 		setQuery("");
 		setActive(0);
 	};
-	const go = (p: DocPage | undefined) => {
+	const go = (p: SearchEntry | undefined) => {
 		if (!p) return;
 		location.hash = `#/${p.slug}`;
 		close();
@@ -47,17 +58,11 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 				<span>검색</span>
 				<kbd>{isMac ? "⌘K" : "Ctrl K"}</kbd>
 			</button>
-			<Modal
-				open={open}
-				onClose={close}
-				ariaLabel="컴포넌트 검색"
-				width={560}
-				showCloseIcon={false}
-			>
+			<Modal open={open} onClose={close} ariaLabel="문서 검색" width={560} showCloseIcon={false}>
 				<div className="site_search">
 					<TextField
-						aria-label="컴포넌트 검색"
-						placeholder="Button, 날짜, 복사 …"
+						aria-label="문서 검색"
+						placeholder="Button, 날짜, 간격, 설치 …"
 						leadingIcon={<Search size={16} />}
 						value={query}
 						onValueChange={(v) => {
@@ -69,7 +74,7 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 						aria-expanded
 						aria-controls="site-search-results"
 						aria-activedescendant={
-							results[active] ? `site-search-${results[active].slug}` : undefined
+							results[active] ? `site-search-${results[active].slug || "home"}` : undefined
 						}
 						onKeyDown={(e) => {
 							if (e.key === "ArrowDown") {
@@ -85,7 +90,7 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 						}}
 					/>
 					{results.length === 0 ? (
-						<p className="site_search_empty">"{query}" 에 맞는 컴포넌트가 없습니다</p>
+						<p className="site_search_empty">"{query}" 에 맞는 문서가 없습니다</p>
 					) : (
 						<div
 							id="site-search-results"
@@ -97,8 +102,8 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 								// biome-ignore lint/a11y/useFocusableInteractive: 포커스는 입력에 남고 aria-activedescendant 로 가리킨다 (combobox 패턴)
 								// biome-ignore lint/a11y/useKeyWithClickEvents: 키보드는 입력의 방향키 · Enter 가 맡는다
 								<div
-									key={p.slug}
-									id={`site-search-${p.slug}`}
+									key={p.slug || "home"}
+									id={`site-search-${p.slug || "home"}`}
 									role="option"
 									aria-selected={i === active}
 									className="site_search_item"
@@ -108,7 +113,7 @@ export function SiteSearch({ pages }: { pages: DocPage[] }) {
 									<span className="site_search_title">
 										{p.title} <span>{p.name}</span>
 									</span>
-									<span className="site_search_group">{p.category}</span>
+									<span className="site_search_group">{p.group}</span>
 									{i === active && (
 										<CornerDownLeft size={14} aria-hidden className="site_search_enter" />
 									)}
