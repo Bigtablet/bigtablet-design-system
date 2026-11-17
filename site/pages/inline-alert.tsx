@@ -14,4 +14,5 @@ export const inlineAlert: DocPage = {
 	],
 	examples: [{ id: "inline-alert/basic", title: "경고 · 닫기" }],
 	props: "InlineAlertProps",
+	playground: { base: { title: "결제 수단 만료 예정" }, children: "설정에서 카드를 바꿔 주세요." },
 };

@@ -14,4 +14,5 @@ export const chip: DocPage = {
 	],
 	examples: [{ id: "chip/filter", title: "필터 · 입력" }],
 	props: "ChipProps",
+	playground: { children: "디자인", omit: ["open", "removable"] },
 };

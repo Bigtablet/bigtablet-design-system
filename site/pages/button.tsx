@@ -27,6 +27,7 @@ export const button: DocPage = {
 		},
 	],
 	props: "ButtonProps",
+	playground: { children: "저장", omit: ["fullWidth"] },
 	notes: [
 		"`disabled` 인 링크(`href`)는 `<a>` 를 유지하고 `aria-disabled` 로 막습니다. 포커스는 그대로 갑니다",
 	],

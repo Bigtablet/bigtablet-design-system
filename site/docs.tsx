@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { splitSentences } from "src/utils/sentences";
 import { AGENT_RULES, componentDoc } from "./llms";
+import { Playground, type PlaygroundConfig } from "./playground";
 import props from "./props.json";
 
 export type PropsName = keyof typeof props;
@@ -27,6 +28,8 @@ export interface DocPage {
 	}[];
 	/** 여러 개면 순서대로 표를 하나씩 (Tabs · TabList · Tab …) */
 	props?: PropsName | PropsName[];
+	/** 조합 보기 - 첫 props 표의 값 목록 · boolean prop 으로 컨트롤을 만든다 */
+	playground?: PlaygroundConfig;
 	notes?: string[];
 }
 
@@ -324,6 +327,12 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 			{page.examples.map((ex) => (
 				<Example key={ex.id} {...ex} theme={theme} />
 			))}
+
+			{page.playground && (
+				<Section id="playground" title="조합 보기">
+					<Playground page={page} config={page.playground} />
+				</Section>
+			)}
 
 			{page.props && (
 				<Section id="props" title="Props">

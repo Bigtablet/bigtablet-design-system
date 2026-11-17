@@ -16,5 +16,9 @@ export const textField: DocPage = {
 	],
 	examples: [{ id: "text-field/basic", title: "기본 · 아이콘 · 에러" }],
 	props: "TextFieldProps",
+	playground: {
+		base: { label: "이메일", placeholder: "name@bigtablet.com" },
+		omit: ["imeStrategy", "showPasswordToggle", "fullWidth", "showLabel"],
+	},
 	notes: ["폼 화면에서는 Field 로 감싸고 `label` 은 Field 에 줍니다"],
 };

@@ -14,5 +14,6 @@ export const badge: DocPage = {
 	],
 	examples: [{ id: "badge/basic", title: "tone · shape" }],
 	props: "BadgeProps",
+	playground: { children: "결제 완료", omit: ["shape"] },
 	notes: ['`shape="dot"` 처럼 글자가 없으면 `aria-label` 로 뜻을 줍니다'],
 };

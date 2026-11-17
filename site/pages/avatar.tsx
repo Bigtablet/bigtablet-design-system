@@ -14,4 +14,5 @@ export const avatar: DocPage = {
 	],
 	examples: [{ id: "avatar/basic", title: "크기 · 모양" }],
 	props: "AvatarProps",
+	playground: { base: { name: "박상민" } },
 };

@@ -35,7 +35,7 @@ import {
 	SlidersHorizontal,
 	TrendingDown,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import pkg from "../package.json";
 import { Code, type DocPage, Md } from "./docs";
 import { AGENT_SNIPPET } from "./llms";

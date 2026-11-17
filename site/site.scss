@@ -427,6 +427,71 @@ code {
   background: token.$color_bg_solid;
 }
 
+// 조합 보기 - 무대 | 컨트롤, 아래에 지금 조합의 코드. 좁으면 무대 위 · 컨트롤 아래
+.pg {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+
+  @include token.from_expanded {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+}
+
+.pg_stage {
+  @include iso_floor;
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  padding: token.$spacing_32 token.$spacing_24;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.pg_controls {
+  display: grid;
+  align-content: start;
+  gap: token.$spacing_16;
+  padding: token.$spacing_20;
+  border-top: $line;
+
+  @include token.from_expanded {
+    border-top: none;
+    border-left: $line;
+  }
+}
+
+.pg_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: token.$spacing_8;
+
+  code {
+    background: none;
+    padding: 0;
+    color: token.$color_text_body;
+  }
+}
+
+.pg_row_stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.pg_code {
+  grid-column: 1 / -1;
+  border-top: $line;
+
+  .doc_snippet {
+    border: none;
+    border-radius: 0;
+  }
+}
+
 // 예제 무대 - 등각 격자 바닥 위에 컴포넌트를 올린다
 .doc_demo_stage {
   @include iso_floor;

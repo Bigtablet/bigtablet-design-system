@@ -14,4 +14,5 @@ export const toggle: DocPage = {
 	],
 	examples: [{ id: "toggle/basic", title: "기본" }],
 	props: "ToggleProps",
+	playground: { base: { ariaLabel: "알림 받기" }, omit: ["checked", "defaultChecked"] },
 };

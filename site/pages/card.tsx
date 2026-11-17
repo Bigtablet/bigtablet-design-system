@@ -14,5 +14,10 @@ export const card: DocPage = {
 	],
 	examples: [{ id: "card/basic", title: "기본 · 테두리" }],
 	props: "CardProps",
+	playground: {
+		base: { heading: "팀 요금제" },
+		children: "인원 제한 없이 월 9만 원입니다.",
+		omit: ["headingAs", "footerAlign"],
+	},
 	notes: ["`interactive` 면 카드 전체가 눌리는 표면이 되므로 안에 다른 버튼을 두지 않습니다"],
 };
