@@ -122,6 +122,24 @@ describe("Vanilla Sidebar collapse · AppShell header (Chromium, #950)", () => {
 		api?.destroy();
 		expect(document.documentElement.style.getPropertyValue("--bt-top-inset")).toBe("");
 	});
+
+	// 사이드바 머리의 아래 선과 헤더 아래 선이 한 줄로 이어진다 (React AppShell 과 같음)
+	it("lines up the sidebar brand rule with the bottom of a fixed header", async () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<div class="bt-app-shell"><aside class="bt-sidebar"><div class="bt-sidebar__brand">BT</div></aside><div class="bt-app-shell__body"><header class="bt-app-shell__header" style="height: 84px">헤더</header><main class="bt-app-shell__main">본문</main></div></div>',
+		);
+		const api = AppShell(container.querySelector(".bt-app-shell") as HTMLElement);
+		const brand = container.querySelector(".bt-sidebar__brand") as HTMLElement;
+		const header = container.querySelector("header") as HTMLElement;
+		await expect
+			.poll(() =>
+				Math.abs(brand.getBoundingClientRect().bottom - header.getBoundingClientRect().bottom),
+			)
+			.toBeLessThan(1);
+		api?.destroy();
+	});
 });
 
 // 현재 메뉴는 채운 배경으로만 표시한다 - 고대비에서는 시스템 선택색으로 칠한다 (#1001)
