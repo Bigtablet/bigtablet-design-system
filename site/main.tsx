@@ -37,6 +37,8 @@ const GROUPS = CATEGORIES.map((c) => ({ c, pages: PAGES.filter((p) => p.category
 
 type Theme = "light" | "dark" | "system";
 
+const SITE_TITLE = "Bigtablet 디자인 시스템";
+
 // ponytail: 해시 라우팅 - 페이지가 수십 개가 되고 검색 · SEO 가 필요해지면 Next.js 로
 function useSlug() {
 	const read = () => location.hash.replace(/^#\/?/, "").split("#")[0] ?? "";
@@ -71,6 +73,12 @@ function App() {
 	}, [slug]);
 	// 첫 화면은 사이드바 없이 넓게 - 문서 한 페이지처럼 보이지 않게
 	const isLanding = !page && slug === "";
+	// 탭 · 북마크 · 공유 미리보기에 어느 페이지인지 보이게. 첫 화면은 index.html 의 제목 그대로
+	useEffect(() => {
+		const title =
+			page?.title ?? [...GUIDES, ...FOUNDATIONS].find((g) => g.slug === slug && slug)?.title;
+		document.title = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+	}, [page, slug]);
 	return (
 		<div className={cn("site", isLanding && "site_landing")}>
 			<header className="site_top">
@@ -78,20 +86,6 @@ function App() {
 					<img src="/images/logo/bigtablet.png" alt="Bigtablet" width={84} height={27} />
 					<span>디자인 시스템</span>
 				</a>
-				<nav className="site_top_nav" aria-label="주 메뉴">
-					<a href="#/components" aria-current={slug === "components" || page ? "page" : undefined}>
-						컴포넌트
-					</a>
-					<a href="#/tokens/colors" aria-current={slug.startsWith("tokens/") ? "page" : undefined}>
-						토큰
-					</a>
-					<a href="#/install" aria-current={slug === "install" ? "page" : undefined}>
-						설치
-					</a>
-					<a href="#/ai" aria-current={slug === "ai" ? "page" : undefined}>
-						AI
-					</a>
-				</nav>
 				<SiteSearch entries={SEARCH} />
 				<div className="site_top_actions">
 					<a className="site_top_link" href={GITHUB} target="_blank" rel="noreferrer">

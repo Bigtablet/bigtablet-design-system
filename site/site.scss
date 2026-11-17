@@ -75,7 +75,8 @@ code {
   top: 0;
   z-index: token.$z_content;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  // 로고 | 빈 칸 | 검색 · 링크 · 테마. 페이지 이동은 사이드바가 맡는다
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: token.$spacing_24;
   align-items: center;
   box-sizing: border-box;
@@ -85,12 +86,7 @@ code {
   border-bottom: $line;
 
   @include token.compact {
-    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: token.$spacing_8;
-
-    .site_top_nav {
-      display: none;
-    }
     padding-left: token.$spacing_16;
   }
 }
@@ -110,23 +106,6 @@ code {
 
   @include token.compact {
     padding-left: 0;
-  }
-}
-
-.site_top_nav {
-  display: flex;
-  gap: token.$spacing_24;
-
-  a {
-    color: token.$color_text_body;
-    text-decoration: none;
-    @include token.body_medium;
-    @include token.text_nowrap;
-
-    &:hover,
-    &[aria-current="page"] {
-      color: token.$color_text_heading;
-    }
   }
 }
 
@@ -861,12 +840,17 @@ $preview_scale: 0.6;
   background: token.$color_border_default;
   border-bottom: $line;
 
+  // 넓을 때만 첫 화면 여백(48)에 맞춘다. 네 칸이 한 줄인 중간 폭에서 48 을 주면 칸 안이 90px
+  // 남짓이라 "CHANGELOG" 가 글자 중간에서 끊겼다
   div {
-    padding: token.$spacing_16 token.$spacing_48;
+    padding: token.$spacing_16 token.$spacing_24;
     background: token.$color_bg_solid;
 
     @include token.compact {
       padding: token.$spacing_12 token.$spacing_16;
+    }
+    @include token.from_large {
+      padding: token.$spacing_16 token.$spacing_48;
     }
   }
 

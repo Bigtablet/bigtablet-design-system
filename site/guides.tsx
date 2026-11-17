@@ -8,7 +8,7 @@ import {
 	SegmentedControl,
 	TextField,
 } from "@bigtablet/design-system";
-import { Code2, Palette, Rocket } from "lucide-react";
+import { Bot, Code2, Palette, Rocket } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import pkg from "../package.json";
 import { Code, ComponentCard, type DocPage, Md } from "./docs";
@@ -176,6 +176,12 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						icon={<Code2 size={20} />}
 						title="Vanilla (HTML · CSS · JS)"
 						desc="React 없이 CSS · JS 두 파일과 클래스 이름으로 씁니다."
+					/>
+					<LinkCard
+						href="#/ai"
+						icon={<Bot size={20} />}
+						title="AI 로 쓰기"
+						desc="Claude Code · Codex · Cursor 가 이 패키지 문서를 읽고 화면을 만들게 합니다."
 					/>
 				</div>
 			</section>
