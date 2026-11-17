@@ -1,4 +1,4 @@
-// Claude Code 같은 에이전트가 읽는 문서 - 사이트와 같은 원본(페이지 데이터 · 예제 파일 · props.json)에서 만든다.
+// Claude Code · Codex 같은 에이전트가 읽는 문서 - 사이트와 같은 원본(페이지 데이터 · 예제 파일 · props.json)에서 만든다.
 // 패키지에 함께 실려(dist/llms) 소비 앱의 에이전트가 설치한 버전과 같은 문서를 읽는다.
 //   node_modules/@bigtablet/design-system/dist/llms/index.md
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";

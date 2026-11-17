@@ -306,11 +306,12 @@ export function SaveButton() {
 				</p>
 			</Block>
 
-			<Block id="agents" title="Claude Code 에서 쓰기">
+			<Block id="agents" title="Claude Code · Codex 에서 쓰기">
 				<p>
 					패키지에 에이전트용 문서가 함께 실립니다. 컴포넌트마다 언제 쓰는가 · 예제 · Props 가 들어
-					있고, 설치한 버전과 내용이 같아 옛 prop 을 권하는 일이 없습니다. 앱의{" "}
-					<Code>CLAUDE.md</Code> 에 한 줄을 넣어 이 문서를 먼저 읽게 합니다.
+					있고, 설치한 버전과 내용이 같아 옛 prop 을 권하는 일이 없습니다. 아래 내용을 Claude Code 는{" "}
+					<Code>CLAUDE.md</Code>, Codex 는 <Code>AGENTS.md</Code> 에 넣어 이 문서를 먼저 읽게
+					합니다. 두 파일을 다 쓰면 양쪽에 같은 줄을 둡니다.
 				</p>
 				<CodeBlock
 					code={`## UI
