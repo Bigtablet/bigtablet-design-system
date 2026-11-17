@@ -19,11 +19,11 @@ export const GITHUB = "https://github.com/Bigtablet/bigtablet-design-system";
 export const NPM = "https://www.npmjs.com/package/@bigtablet/design-system";
 const REPO = `${GITHUB}/blob/develop`;
 
-/** 복사 버튼이 붙은 코드 상자 */
-export function CodeBlock({ code }: { code: string }) {
+/** 복사 버튼이 붙은 코드 상자. prose 는 코드가 아닌 문장(프롬프트 예시) - 본문 글꼴로 줄바꿈한다 */
+export function CodeBlock({ code, prose }: { code: string; prose?: boolean }) {
 	return (
 		<div className="doc_snippet">
-			<pre className="doc_code">
+			<pre className={prose ? "doc_code doc_code_prose" : "doc_code"}>
 				<code>{code.trim()}</code>
 			</pre>
 			<CopyButton
@@ -485,7 +485,10 @@ function Ai() {
 					컴포넌트 이름을 몰라도 화면을 설명하면 됩니다. 에이전트는 각 문서의 "언제 쓰는가" 로
 					컴포넌트를 고릅니다.
 				</p>
-				<CodeBlock code="구성원 관리 화면을 만들어 줘. 제목 옆에 초대 버튼, 검색과 페이지가 있는 구성원 표, 초대는 이메일 · 역할을 받는 대화 상자, 삭제는 한 번 확인받기." />
+				<CodeBlock
+					prose
+					code="구성원 관리 화면을 만들어 줘. 제목 옆에 초대 버튼, 검색과 페이지가 있는 구성원 표, 초대는 이메일 · 역할을 받는 대화 상자, 삭제는 한 번 확인받기."
+				/>
 				<p>문서만 읽은 에이전트가 고르는 조합입니다.</p>
 				<div className="doc_table_wrap">
 					<table className="doc_table">

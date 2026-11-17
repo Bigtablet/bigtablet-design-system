@@ -757,10 +757,22 @@ $preview_scale: 0.6;
   }
 }
 
+// 가로로 스크롤되는 코드가 버튼 밑으로 지나가도 글자와 겹쳐 보이지 않게 바탕을 깐다
 .doc_snippet_copy {
   position: absolute;
   top: token.$spacing_8;
   right: token.$spacing_8;
+  background: token.$color_bg_solid_dim;
+}
+
+.doc_code_prose {
+  white-space: pre-wrap;
+
+  code {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    @include text_wrap;
+  }
 }
 
 // ── 첫 화면: 부품 상자 ──────────────────────────────────────────────────
