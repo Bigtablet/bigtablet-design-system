@@ -497,7 +497,8 @@ def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
                 # (Toast) 표만 컴포넌트 것으로 본다.
                 pascal = "".join(part.capitalize() for part in section.parent.name.split("-")) if section else ""
                 owner = section if section and last_title == f"{pascal}Options" else None
-                last_title = ""  # 제목은 바로 아래 표 하나에만 걸린다
+            # 제목은 바로 아래 표 하나에만 걸린다 - `Prop` · `Option` 표가 끼어도 그 뒤 `필드` 표로 새지 않게 비운다
+            last_title = ""
             in_props_table = owner is not None
             if owner is not None:
                 documented.setdefault(owner, set())
