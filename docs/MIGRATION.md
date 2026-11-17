@@ -636,7 +636,7 @@ v3.3.0 에서 React 가 `on*Change` 패밀리로 통일된 것에 맞춰 Vanilla
 
 구 동작에서는 오버레이 클릭이나 Escape 로 닫으면 `onCancel` 이 호출되지 않아, 취소 정리 로직(롤백 등)이 조용히 우회됐습니다. React `Alert`(`dismiss = onCancel ?? onClose`)와 동일하게 두 경로 모두 `onCancel` 을 먼저 호출한 뒤 닫습니다 (WAI-ARIA APG alertdialog).
 
-- **영향**: `onCancel` 안에서 "취소 버튼을 눌렀습니다"고 가정하고 로그를 남기거나 카운트를 올리던 코드는 이제 오버레이/Escape 에서도 실행됩니다.
+- **영향**: `onCancel` 안에서 "취소 버튼을 눌렀다"고 가정하고 로그를 남기거나 카운트를 올리던 코드는 이제 오버레이/Escape 에서도 실행됩니다.
 - 오버레이 닫힘 자체를 막고 싶으면 `closeOnOverlay: false` 를 쓰세요.
 
 또한 `Bigtablet.Alert` 가 생성하는 확인/취소 버튼의 클래스가 `bt-button--primary` / `bt-button--secondary` → `bt-button--filled` / `bt-button--outline` 로 바뀝니다. 생성된 마크업의 클래스를 셀렉터로 잡아 스타일을 덮어쓰던 CSS 가 있다면 함께 수정하세요.
