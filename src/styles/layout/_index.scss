@@ -37,7 +37,9 @@
 }
 
 /* Glass Effect Mixins */
+// @deprecated 쓰는 곳이 없고 색 · 테두리를 하드코딩한다 - 이후 버전에서 제거 (#1040)
 @mixin glass_light {
+  @warn "token.glass_light 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -62,7 +64,9 @@
 /* Hover Lift Effect */
 // motion.$transition_lift = transform/box-shadow 0.25s $ease_out_expo (= $easing_enter) -
 // 기존 하드코딩 값과 동일한 전용 토큰.
+// @deprecated 쓰는 곳이 없고 그림자를 하드코딩한다 - 이후 버전에서 제거 (#1040)
 @mixin hover_lift($y: -4px, $shadow: 0 12px 24px rgba(0, 0, 0, 0.15)) {
+  @warn "token.hover_lift 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
   transition: motion.$transition_lift;
 
   @include breakpoints.hoverable {
@@ -80,7 +84,9 @@
 }
 
 /* Glow on Hover */
+// @deprecated 쓰는 곳이 없고 단색 DS 에 없는 파란 glow 가 기본값이다 - 이후 버전에서 제거 (#1040)
 @mixin hover_glow($color: rgba(59, 130, 246, 0.4)) {
+  @warn "token.hover_glow 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
   transition: box-shadow motion.$duration_slow motion.$easing_enter;
 
   @include breakpoints.hoverable {

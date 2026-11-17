@@ -8,6 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
+- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 deprecate)](#v4100-쓰이지-않는-scss-믹스인-4개-deprecate)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
@@ -52,6 +53,21 @@
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 deprecate)
+
+DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개를 deprecated 로 표시했습니다. 지금은 그대로 동작하고, 쓰면 컴파일할 때 Sass 경고가 뜹니다. 이후 버전에서 제거합니다.
+
+| 믹스인 | 이유 | 대신 쓸 것 |
+|------|------|------|
+| `glass_light` | 색 · 테두리를 하드코딩합니다 | 카드면 `<Card variant="glass">`. 그 밖에는 쓰던 선언을 앱 SCSS 로 옮기고 색은 토큰으로 바꿉니다 |
+| `hover_lift` | 그림자를 하드코딩합니다 | 카드면 `<Card interactive>`. 그 밖에는 `transition: token.$transition_lift;` 와 `@include token.hoverable { &:hover { box-shadow: token.$elevation_level3; } }` |
+| `hover_glow` | 단색 DS 에 없는 파란 glow 가 기본값입니다 | 강조가 필요하면 `token.$elevation_level*` 그림자나 테두리 색 변화로 바꿉니다 |
+| `slashed_zero` | `legible_identifiers` 가 이미 포함하고, `tabular_nums` 와 같은 선택자에 쓰면 뒤에 온 것만 남습니다 | 식별자 칸은 `@include token.legible_identifiers`. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero;` 를 직접 씁니다 |
+
+**앱 쪽에서 할 일:** `grep -rnE "token\.(glass_light|hover_lift|hover_glow|slashed_zero)\b" --include=*.scss` 로 찾습니다. 빌드 로그의 Sass 경고에도 위치가 나옵니다.
 
 ---
 

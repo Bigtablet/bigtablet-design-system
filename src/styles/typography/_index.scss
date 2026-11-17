@@ -56,7 +56,12 @@
 // 매출/지표 표시할 때 숫자 자릿수 정렬.
 
 @mixin tabular_nums  { font-variant-numeric: tabular-nums; }
-@mixin slashed_zero  { font-variant-numeric: slashed-zero; }
+// @deprecated legible_identifiers 가 slashed-zero 를 포함하고, tabular_nums 와 같은 선택자에 쓰면
+// 뒤에 온 것만 남는다 - 이후 버전에서 제거 (#1040)
+@mixin slashed_zero  {
+  @warn "token.slashed_zero 는 deprecated 입니다 - 이후 버전에서 제거됩니다. legible_identifiers 나 font-variant-numeric 을 직접 쓰세요.";
+  font-variant-numeric: slashed-zero;
+}
 
 // ── Legibility ────────────────────────────────────────────────────────────
 // Pretendard 기본 글자꼴은 l · I · 1 이 거의 같고 0 과 O 도 헷갈린다. 사용자가 한 글자씩
