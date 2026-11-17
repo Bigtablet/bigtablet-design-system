@@ -420,49 +420,6 @@ code {
   @include token.body_large;
 }
 
-.doc_overview_grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: token.$spacing_8;
-}
-
-.doc_overview_item {
-  display: grid;
-  gap: token.$spacing_4;
-  padding: token.$spacing_12 token.$spacing_16;
-  border: token.$border_width_standard solid token.$color_border_default;
-  border-radius: token.$radius_md;
-  color: inherit;
-  text-decoration: none;
-  transition: border-color token.$transition_fast;
-
-  &:hover {
-    border-color: token.$color_text_caption;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: token.$focus_ring;
-  }
-}
-
-.doc_overview_title {
-  color: token.$color_text_heading;
-  @include token.body_medium_bold;
-
-  span {
-    margin-left: token.$spacing_4;
-    color: token.$color_text_caption;
-    font-weight: 400;
-  }
-}
-
-.doc_overview_desc {
-  color: token.$color_text_caption;
-  @include token.body_small;
-  @include token.wrap_keep_all;
-}
-
 // ── 본문 + 오른쪽 목차 ─────────────────────────────────────────────────
 
 .doc_layout {
@@ -549,7 +506,117 @@ code {
 }
 
 // 컴포넌트 홈은 목차가 없으니 카드 격자가 넓게 쓴다
+// ── 컴포넌트 홈 ────────────────────────────────────────────────────────
+
 .doc_overview {
   max-width: 1280px;
   margin-inline: auto;
+
+  h1 {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.heading_large_bold;
+  }
+}
+
+.ov_search {
+  max-width: 480px;
+  margin-top: token.$spacing_20;
+}
+
+.ov_group {
+  margin-top: token.$spacing_40;
+
+  h2 {
+    margin: 0 0 token.$spacing_16;
+    color: token.$color_text_heading;
+    @include token.heading_small_bold;
+
+    span {
+      margin-left: token.$spacing_4;
+      color: token.$color_text_caption;
+      font-weight: 400;
+      @include token.tabular_nums;
+    }
+  }
+}
+
+.ov_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: token.$spacing_16;
+}
+
+.ov_card {
+  display: grid;
+  overflow: hidden;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_lg;
+  background: token.$color_bg_solid;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color token.$transition_fast,
+    box-shadow token.$transition_fast;
+
+  &:hover {
+    border-color: token.$color_text_caption;
+    box-shadow: token.$elevation_level1;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+// 첫 예제를 60% 로 줄여 그림처럼 보여 준다.
+// transform 이 fixed 요소(BottomNav · TopLoading)의 기준 상자가 되어 카드 밖으로 새지 않는다.
+$preview_scale: 0.6;
+
+.ov_preview {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  background: token.$color_bg_solid_dim;
+  border-bottom: token.$border_width_standard solid token.$color_border_default;
+  pointer-events: none;
+}
+
+.ov_scale {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: calc(100% / #{$preview_scale});
+  min-height: calc(100% / #{$preview_scale});
+  box-sizing: border-box;
+  padding: token.$spacing_24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale($preview_scale);
+  transform-origin: top left;
+}
+
+.ov_text {
+  display: grid;
+  gap: token.$spacing_4;
+  padding: token.$spacing_12 token.$spacing_16 token.$spacing_16;
+}
+
+.ov_title {
+  color: token.$color_text_heading;
+  @include token.body_medium_bold;
+
+  span {
+    margin-left: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.body_small;
+  }
+}
+
+.ov_desc {
+  color: token.$color_text_caption;
+  @include token.body_small;
+  @include token.wrap_keep_all;
 }

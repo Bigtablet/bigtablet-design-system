@@ -1,7 +1,8 @@
-import { SegmentedControl } from "@bigtablet/design-system";
+import { EmptyState, SegmentedControl, TextField } from "@bigtablet/design-system";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { type DocPage, Md, Page } from "./docs";
+import { type DocPage, exampleOf, Md, Page } from "./docs";
 import "./site.scss";
 
 // pages/*.tsx 가 내보내는 DocPage 를 모두 모은다 - 페이지 파일을 추가하면 끝
@@ -117,28 +118,60 @@ function App() {
 	);
 }
 
-/** 컴포넌트 홈 - 그룹별로 코드명 · 한국어 이름 · 한 줄 설명 */
+/** 컴포넌트 홈 - 검색 + 그룹별 카드(첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명) */
 function Overview() {
+	const [query, setQuery] = useState("");
+	const q = query.trim().toLowerCase();
+	const match = (p: DocPage) =>
+		!q || [p.title, p.name, p.category, p.summary].some((t) => t.toLowerCase().includes(q));
+	const groups = GROUPS.map((g) => ({ ...g, pages: g.pages.filter(match) })).filter(
+		(g) => g.pages.length,
+	);
 	return (
-		<article className="doc_page doc_overview">
-			<h1>컴포넌트</h1>
-			<p className="doc_summary">
-				{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다. 이름을 누르면 예제와 Props 를 봅니다.
-			</p>
-			{GROUPS.map(({ c, pages }) => (
-				<section key={c} className="doc_section">
-					<h2>{c}</h2>
-					<div className="doc_overview_grid">
-						{pages.map((p) => (
-							<a key={p.slug} href={`#/${p.slug}`} className="doc_overview_item">
-								<span className="doc_overview_title">
-									{p.title} <span>{p.name}</span>
-								</span>
-								<span className="doc_overview_desc">
-									<Md>{firstSentence(p.summary)}</Md>
-								</span>
-							</a>
-						))}
+		<article className="doc_overview">
+			<header className="ov_head">
+				<h1>컴포넌트</h1>
+				<p className="doc_summary">{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다.</p>
+				<div className="ov_search">
+					<TextField
+						aria-label="컴포넌트 검색"
+						placeholder="이름 · 한국어 · 설명으로 찾기 (예: 날짜, Modal, 복사)"
+						leadingIcon={<Search size={16} />}
+						clearable
+						value={query}
+						onValueChange={setQuery}
+						fullWidth
+					/>
+				</div>
+			</header>
+			{groups.length === 0 && (
+				<EmptyState title="찾는 컴포넌트가 없습니다" description="다른 이름으로 찾아 보세요" />
+			)}
+			{groups.map(({ c, pages }) => (
+				<section key={c} className="ov_group">
+					<h2>
+						{c} <span>{pages.length}</span>
+					</h2>
+					<div className="ov_grid">
+						{pages.map((p) => {
+							const Preview = p.examples[0] && exampleOf(p.examples[0].id);
+							return (
+								<a key={p.slug} href={`#/${p.slug}`} className="ov_card">
+									{/* 미리보기는 그림 역할만 - 누르거나 포커스되지 않게 inert */}
+									<div className="ov_preview" inert>
+										<div className="ov_scale">{Preview && <Preview />}</div>
+									</div>
+									<div className="ov_text">
+										<span className="ov_title">
+											{p.title} <span>{p.name}</span>
+										</span>
+										<span className="ov_desc">
+											<Md>{firstSentence(p.summary)}</Md>
+										</span>
+									</div>
+								</a>
+							);
+						})}
 					</div>
 				</section>
 			))}
