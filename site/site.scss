@@ -1,9 +1,13 @@
 @use "src/styles/token" as token;
 
-// 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다
+// 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다.
+// 꼴은 Vercel Geist 문서를 따른다 - 가운데 틀 + 1px 세로선, 구역마다 가로선, 예제 상자 아래 "코드 보기" 줄.
 
-// 상단 바 높이 - 사이드바의 sticky 위치 · 높이가 이 값에 맞춰진다
-$top_height: 60px;
+$frame: 1220px; // 틀 최대 폭
+$top_height: 64px; // 상단 바 높이 - 사이드바의 sticky 위치 · 높이가 이 값에 맞춰진다
+$nav_width: 248px;
+$line: token.$border_width_standard solid token.$color_border_default;
+$mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
 body {
   margin: 0;
@@ -14,7 +18,7 @@ body {
 }
 
 code {
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: $mono;
   font-size: 0.875em;
   padding: 1px token.$spacing_4;
   border-radius: token.$radius_xs;
@@ -22,20 +26,25 @@ code {
   color: token.$color_text_heading;
 }
 
+// 좁은 폭 미리보기 iframe
 .preview body {
   padding: token.$spacing_16;
 }
 
-// ── 셸 ─────────────────────────────────────────────────────────────
+// ── 셸: 가운데 틀 + 상단 바 + 사이드바 ────────────────────────────────────
 
 .site {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: $nav_width minmax(0, 1fr);
   grid-template-rows: auto 1fr;
+  max-width: $frame;
   min-height: 100vh;
+  margin-inline: auto;
+  border-inline: $line;
 
   @include token.compact {
     grid-template-columns: minmax(0, 1fr);
+    border-inline: none;
   }
 }
 
@@ -43,86 +52,103 @@ code {
   grid-column: 1 / -1;
   position: sticky;
   top: 0;
-  z-index: 10;
-  display: flex;
+  z-index: token.$z_content;
+  display: grid;
+  grid-template-columns: $nav_width minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: token.$spacing_16;
   box-sizing: border-box;
   height: $top_height;
-  padding: 0 token.$spacing_24;
+  padding-right: token.$spacing_16;
   background: token.$color_bg_solid;
-  border-bottom: token.$border_width_standard solid token.$color_border_default;
+  border-bottom: $line;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: token.$spacing_8;
+    padding-left: token.$spacing_16;
+  }
 }
 
 .site_brand {
+  padding-left: token.$spacing_24;
   color: token.$color_text_heading;
   text-decoration: none;
-  @include token.body_large_bold;
+  @include token.body_medium_bold;
+  @include token.text_nowrap;
 
   span {
     color: token.$color_text_caption;
     font-weight: 400;
   }
+
+  @include token.compact {
+    padding-left: 0;
+  }
+}
+
+.site_top_actions {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
 }
 
 .site_nav {
   position: sticky;
   top: $top_height;
   align-self: start;
-  // 메뉴가 화면보다 길면 사이드바 안에서만 스크롤한다 - 끝에 닿아도 본문으로 스크롤이 넘어가지 않게
   box-sizing: border-box;
   max-height: calc(100dvh - #{$top_height});
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  padding: token.$spacing_24 token.$spacing_16;
   display: grid;
-  gap: token.$spacing_16;
+  gap: token.$spacing_24;
+  padding: token.$spacing_24 token.$spacing_12 token.$spacing_48;
+  border-right: $line;
 
   @include token.compact {
     position: static;
     max-height: none;
+    overflow-x: auto;
     overflow-y: visible;
     display: flex;
-    gap: token.$spacing_8;
-    overflow-x: auto;
-    padding: token.$spacing_12 token.$spacing_16;
-    border-bottom: token.$border_width_standard solid token.$color_border_default;
-
-    .site_nav_title {
-      display: none;
-    }
+    gap: token.$spacing_4;
+    padding: token.$spacing_8 token.$spacing_16;
+    border-right: none;
+    border-bottom: $line;
   }
 
   a {
-    display: block;
-    // 항목은 그룹 안쪽 세로 선에 붙여 들여 쓴다 - 그룹 제목과 한눈에 갈린다
-    margin-left: token.$spacing_12;
-    padding: token.$spacing_4 token.$spacing_12;
-    border-left: token.$border_width_standard solid token.$color_border_default;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+    padding: token.$spacing_6 token.$spacing_12;
+    border-radius: token.$radius_sm;
     color: token.$color_text_caption;
     text-decoration: none;
     @include token.body_small;
     transition:
       color token.$transition_fast,
-      border-color token.$transition_fast;
+      background-color token.$transition_fast;
 
     &:hover {
       color: token.$color_text_heading;
-      border-left-color: token.$color_text_caption;
     }
 
     &[aria-current="page"] {
+      background: token.$color_bg_solid_dim;
       color: token.$color_text_heading;
-      border-left: token.$border_width_thick solid token.$color_text_heading;
       font-weight: 600;
     }
 
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
     @include token.compact {
-      margin-left: 0;
-      border-left: none;
       white-space: nowrap;
     }
   }
@@ -130,137 +156,274 @@ code {
 
 .site_nav_group {
   display: grid;
-
-  // 그룹 사이는 선으로 끊는다
-  & + & {
-    padding-top: token.$spacing_16;
-    border-top: token.$border_width_standard solid token.$color_border_default;
-  }
+  gap: token.$spacing_2;
 
   @include token.compact {
     display: flex;
-
-    & + & {
-      padding-top: 0;
-      border-top: none;
-    }
   }
 }
 
 .site_nav_title {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 0 token.$spacing_8;
+  margin: 0 0 token.$spacing_4;
   padding: 0 token.$spacing_12;
   color: token.$color_text_heading;
   @include token.body_small_bold;
+  display: flex;
+  justify-content: space-between;
 
   span {
     color: token.$color_text_caption;
     font-weight: 400;
     @include token.tabular_nums;
   }
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+.site_nav_name {
+  color: token.$color_text_caption;
+  font-size: 12px; // ponytail: caption 보다 한 단계 작은 타이포 토큰이 없다
+  font-weight: 400;
+  opacity: 0.8;
+  @include token.text_nowrap;
+
+  @include token.compact {
+    display: none;
+  }
 }
 
 .site_main {
   min-width: 0;
-  padding: token.$spacing_32 token.$spacing_40 token.$spacing_48;
+}
 
+// ── 헤더 검색 ───────────────────────────────────────────────────────────
+
+.site_search_button {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  width: 240px;
+  height: 32px;
+  margin-left: token.$spacing_16;
+  padding: 0 token.$spacing_6 0 token.$spacing_12;
+  border: $line;
+  border-radius: token.$radius_sm;
+  background: token.$color_bg_solid;
+  color: token.$color_text_caption;
+  font: inherit;
+  cursor: pointer;
+  @include token.body_small;
+  transition: border-color token.$transition_fast;
+
+  span {
+    flex: 1;
+    text-align: left;
+  }
+
+  kbd {
+    padding: 0 token.$spacing_4;
+    border: $line;
+    border-radius: token.$radius_xs;
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  &:hover {
+    border-color: token.$color_text_caption;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  // 좁은 화면은 아이콘만
   @include token.compact {
-    padding: token.$spacing_24 token.$spacing_16 token.$spacing_40;
+    width: 32px;
+    margin-left: 0;
+    justify-content: center;
+    padding: 0;
+
+    span,
+    kbd {
+      display: none;
+    }
   }
 }
 
-// ── 문서 페이지 ─────────────────────────────────────────────────────
+.site_search {
+  display: grid;
+  gap: token.$spacing_12;
+}
 
-.doc_page {
-  max-width: 860px;
+.site_search_list {
+  display: grid;
+  gap: token.$spacing_2;
+  max-height: min(420px, 60dvh);
+  overflow-y: auto;
+}
+
+.site_search_item {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_12;
+  padding: token.$spacing_8 token.$spacing_12;
+  border-radius: token.$radius_sm;
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    background: token.$color_bg_solid_dim;
+  }
+}
+
+.site_search_title {
+  flex: 1;
+  color: token.$color_text_heading;
+  @include token.body_medium_medium;
+
+  span {
+    margin-left: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.body_small;
+  }
+}
+
+.site_search_group,
+.site_search_enter {
+  color: token.$color_text_caption;
+  @include token.body_small;
+}
+
+.site_search_empty {
+  margin: token.$spacing_8 0;
+  color: token.$color_text_caption;
+  text-align: center;
+}
+
+// ── 문서 페이지: 구역마다 가로선 ─────────────────────────────────────────
+
+.doc_block {
+  padding: token.$spacing_40 token.$spacing_48;
+  border-bottom: $line;
+
+  @include token.compact {
+    padding: token.$spacing_32 token.$spacing_16;
+  }
+
+  > h2 {
+    margin: 0;
+    color: token.$color_text_heading;
+    font-size: 24px; // ponytail: Geist 구역 제목 크기 - 타이포 토큰에 24px 굵은 제목이 생기면 그걸로
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: -0.02em;
+    scroll-margin-top: calc(#{$top_height} + #{token.$spacing_16});
+  }
+
+  > h2 + * {
+    margin-top: token.$spacing_16;
+  }
+
+  > h2 + .doc_block_desc {
+    margin-top: token.$spacing_8;
+  }
+}
+
+.doc_block_desc {
+  margin: 0 0 token.$spacing_16;
+  color: token.$color_text_caption;
+  @include token.wrap_keep_all;
+}
+
+.doc_head {
+  padding-top: token.$spacing_48;
+  padding-bottom: token.$spacing_48;
 
   h1 {
     margin: 0;
     color: token.$color_text_heading;
-    @include token.heading_large_bold;
+    font-size: 40px; // ponytail: Geist 페이지 제목 크기
+    font-weight: 600;
+    line-height: 48px;
+    letter-spacing: -0.03em;
   }
 }
 
-.doc_eyebrow {
-  margin: 0 0 token.$spacing_4;
+.doc_name {
+  margin-left: token.$spacing_8;
   color: token.$color_text_caption;
-  @include token.body_small_medium;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
-.doc_summary {
-  margin: token.$spacing_8 0 0;
-  color: token.$color_text_body;
-  @include token.body_large;
+.doc_lede {
+  max-width: 720px;
+  margin: token.$spacing_12 0 0;
+  color: token.$color_text_caption;
+  font-size: 18px;
+  line-height: 28px;
   @include token.wrap_keep_all;
 }
 
-.doc_section {
-  margin-top: token.$spacing_48;
+// ── 예제 상자: 무대 + 아래 "코드 보기" 줄 + 펼친 코드 ───────────────────────
 
-  > h2 {
-    margin: 0 0 token.$spacing_16;
-    color: token.$color_text_heading;
-    @include token.heading_medium_bold;
-  }
+.doc_demo {
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
 }
 
-.doc_example {
-  margin-top: token.$spacing_32;
-
-  &:first-of-type {
-    margin-top: 0;
-  }
+.doc_demo_stage {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: token.$spacing_24;
 }
 
-.doc_example_head {
-  margin-bottom: token.$spacing_12;
-
-  h3 {
-    margin: 0;
-    color: token.$color_text_heading;
-    @include token.body_large_bold;
-  }
-
-  p {
-    margin: token.$spacing_4 0 0;
-    color: token.$color_text_caption;
-    @include token.wrap_keep_all;
-  }
+.doc_demo_inline {
+  width: 100%;
 }
 
-.doc_example_bar {
+.doc_demo_bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: token.$spacing_8;
   flex-wrap: wrap;
-  padding: token.$spacing_8 token.$spacing_12;
-  border: token.$border_width_standard solid token.$color_border_default;
-  border-bottom: none;
-  border-radius: token.$radius_md token.$radius_md 0 0;
+  min-height: 44px;
+  padding: 0 token.$spacing_8 0 token.$spacing_4;
+  border-top: $line;
   background: token.$color_bg_solid_dim;
 }
 
-.doc_example_actions {
-  display: flex;
+.doc_demo_toggle {
+  display: inline-flex;
   align-items: center;
-  gap: token.$spacing_4;
-}
-
-.doc_link_button {
-  padding: token.$spacing_4 token.$spacing_8;
+  gap: token.$spacing_6;
+  padding: token.$spacing_6 token.$spacing_8;
   border: none;
   border-radius: token.$radius_sm;
   background: none;
   color: token.$color_text_body;
   font: inherit;
   cursor: pointer;
-  @include token.body_small_medium;
+  @include token.body_small;
+
+  svg {
+    transition: transform token.$transition_base token.$easing_enter;
+  }
+
+  &[aria-expanded="true"] svg {
+    transform: rotate(90deg);
+  }
 
   &:hover {
-    background: token.$color_bg_solid;
+    color: token.$color_text_heading;
   }
 
   &:focus-visible {
@@ -269,18 +432,27 @@ code {
   }
 }
 
-.doc_example_stage {
+.doc_demo_actions {
   display: flex;
-  justify-content: center;
-  padding: token.$spacing_32 token.$spacing_24;
-  border: token.$border_width_standard solid token.$color_border_default;
-  border-radius: 0 0 token.$radius_md token.$radius_md;
-  background: token.$color_bg_solid;
-  overflow-x: auto;
+  align-items: center;
+  gap: token.$spacing_4;
 }
 
-.doc_example_inline {
-  width: 100%;
+.doc_code {
+  margin: 0;
+  padding: token.$spacing_16 token.$spacing_20;
+  overflow-x: auto;
+  border-top: $line;
+  background: token.$color_bg_solid;
+  tab-size: 2;
+
+  code {
+    padding: 0;
+    background: none;
+    color: token.$color_text_heading;
+    font-size: 13px;
+    line-height: 1.7;
+  }
 }
 
 .doc_frame {
@@ -290,40 +462,25 @@ code {
   background: token.$color_bg_solid;
 }
 
-.doc_code {
-  margin: token.$spacing_8 0 0;
-  padding: token.$spacing_16;
-  border-radius: token.$radius_md;
-  background: #0f141a; // ponytail: 코드 배경 토큰이 없다 - 사이트를 정식화할 때 토큰으로
-  color: #e6eaf0;
-  overflow-x: auto;
-  @include token.body_small;
-
-  code {
-    padding: 0;
-    background: none;
-    color: inherit;
-    font-size: 13px;
-    line-height: 1.65;
-  }
-}
+// ── 표 ───────────────────────────────────────────────────────────────────
 
 .doc_table_wrap {
   overflow-x: auto;
-  border: token.$border_width_standard solid token.$color_border_default;
+  border: $line;
   border-radius: token.$radius_md;
 }
 
 .doc_table {
   width: 100%;
   border-collapse: collapse;
+  @include token.body_small;
 
   th,
   td {
-    padding: token.$spacing_10 token.$spacing_12;
+    padding: token.$spacing_12 token.$spacing_16;
     text-align: left;
     vertical-align: top;
-    border-bottom: token.$border_width_standard solid token.$color_border_default;
+    border-bottom: $line;
     @include token.wrap_keep_all;
   }
 
@@ -332,9 +489,20 @@ code {
   }
 
   th {
-    background: token.$color_bg_solid_dim;
     color: token.$color_text_caption;
-    @include token.body_small_medium;
+    font-weight: 500;
+  }
+
+  td:first-child code {
+    white-space: nowrap;
+  }
+}
+
+.doc_props_title {
+  margin: token.$spacing_24 0 token.$spacing_8;
+
+  &:first-child {
+    margin-top: 0;
   }
 }
 
@@ -365,200 +533,34 @@ code {
   @include token.wrap_keep_all;
 }
 
-.doc_table td:first-child code {
-  white-space: nowrap;
-}
+// ── 컴포넌트 홈 ──────────────────────────────────────────────────────────
 
-.doc_code {
-  tab-size: 2;
-}
-
-.doc_props_title {
-  margin: token.$spacing_24 0 token.$spacing_8;
-
-  &:first-child {
-    margin-top: 0;
-  }
-}
-
-// ── 사이드바 이름 · 컴포넌트 홈 ──────────────────────────────────────
-
-.site_nav a {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: token.$spacing_8;
-}
-
-.site_nav_name {
+.ov_group > h2 span {
+  margin-left: token.$spacing_6;
   color: token.$color_text_caption;
-  font-size: 12px; // ponytail: caption 보다 한 단계 작은 타이포 토큰이 없다
+  font-size: 16px;
   font-weight: 400;
-  @include token.text_nowrap;
-
-  @include token.compact {
-    display: none;
-  }
-}
-
-.site_nav .site_nav_home {
-  margin-left: 0;
-  border-left: none;
-  padding-left: token.$spacing_12;
-  color: token.$color_text_heading;
-  @include token.body_small_bold;
-
-  &[aria-current="page"] {
-    border-left: none;
-    text-decoration: underline;
-  }
-}
-
-.doc_name {
-  margin-left: token.$spacing_8;
-  color: token.$color_text_caption;
-  @include token.body_large;
-}
-
-// ── 본문 + 오른쪽 목차 ─────────────────────────────────────────────────
-
-.doc_layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: token.$spacing_48;
-  // 넓은 화면에서는 가운데로 - 왼쪽에 붙이면 오른쪽이 통째로 빈다
-  max-width: 1280px;
-  margin-inline: auto;
-
-  // 목차는 넓은 화면에서만 - 좁으면 본문이 폭을 다 쓴다
-  @media (max-width: 1199px) {
-    grid-template-columns: minmax(0, 1fr);
-
-    .doc_toc {
-      display: none;
-    }
-  }
-}
-
-.doc_layout .doc_page {
-  max-width: none;
-}
-
-// 목차로 이동할 때 제목이 상단 바에 가리지 않게
-.doc_page :is(h2, h3)[id] {
-  scroll-margin-top: calc(#{$top_height} + #{token.$spacing_16});
-}
-
-.doc_toc {
-  position: sticky;
-  top: calc(#{$top_height} + #{token.$spacing_32});
-  align-self: start;
-  display: grid;
-  max-height: calc(100dvh - #{$top_height} - #{token.$spacing_48});
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.doc_toc_title {
-  margin: 0 0 token.$spacing_8;
-  color: token.$color_text_heading;
-  @include token.body_small_bold;
-}
-
-.doc_toc_item {
-  padding: token.$spacing_4 token.$spacing_12;
-  border: none;
-  border-left: token.$border_width_standard solid token.$color_border_default;
-  background: none;
-  color: token.$color_text_caption;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  @include token.body_small;
-  @include token.wrap_keep_all;
-  transition:
-    color token.$transition_fast,
-    border-color token.$transition_fast;
-
-  &:hover {
-    color: token.$color_text_heading;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: token.$focus_ring;
-  }
-
-  &[aria-current="location"] {
-    color: token.$color_text_heading;
-    border-left: token.$border_width_thick solid token.$color_text_heading;
-    font-weight: 600;
-  }
-}
-
-.doc_toc_sub {
-  padding-left: token.$spacing_24;
-}
-
-.doc_toc_code {
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 12px;
-}
-
-// 컴포넌트 홈은 목차가 없으니 카드 격자가 넓게 쓴다
-// ── 컴포넌트 홈 ────────────────────────────────────────────────────────
-
-.doc_overview {
-  max-width: 1280px;
-  margin-inline: auto;
-
-  h1 {
-    margin: 0;
-    color: token.$color_text_heading;
-    @include token.heading_large_bold;
-  }
-}
-
-
-
-.ov_group {
-  margin-top: token.$spacing_40;
-
-  h2 {
-    margin: 0 0 token.$spacing_16;
-    color: token.$color_text_heading;
-    @include token.heading_small_bold;
-
-    span {
-      margin-left: token.$spacing_4;
-      color: token.$color_text_caption;
-      font-weight: 400;
-      @include token.tabular_nums;
-    }
-  }
+  @include token.tabular_nums;
 }
 
 .ov_grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: token.$spacing_16;
 }
 
 .ov_card {
   display: grid;
   overflow: hidden;
-  border: token.$border_width_standard solid token.$color_border_default;
-  border-radius: token.$radius_lg;
+  border: $line;
+  border-radius: token.$radius_md;
   background: token.$color_bg_solid;
   color: inherit;
   text-decoration: none;
-  transition:
-    border-color token.$transition_fast,
-    box-shadow token.$transition_fast;
+  transition: border-color token.$transition_fast;
 
   &:hover {
     border-color: token.$color_text_caption;
-    box-shadow: token.$elevation_level1;
   }
 
   &:focus-visible {
@@ -576,7 +578,7 @@ $preview_scale: 0.6;
   height: 140px;
   overflow: hidden;
   background: token.$color_bg_solid_dim;
-  border-bottom: token.$border_width_standard solid token.$color_border_default;
+  border-bottom: $line;
   pointer-events: none;
 }
 
@@ -616,121 +618,4 @@ $preview_scale: 0.6;
   color: token.$color_text_caption;
   @include token.body_small;
   @include token.wrap_keep_all;
-}
-
-// ── 헤더 검색 · 테마 ───────────────────────────────────────────────────
-
-.site_top_actions {
-  display: flex;
-  align-items: center;
-  gap: token.$spacing_8;
-}
-
-.site_search_button {
-  display: flex;
-  align-items: center;
-  gap: token.$spacing_8;
-  min-width: 220px;
-  height: 36px;
-  padding: 0 token.$spacing_8 0 token.$spacing_12;
-  border: token.$border_width_standard solid token.$color_border_default;
-  border-radius: token.$radius_md;
-  background: token.$color_bg_solid_dim;
-  color: token.$color_text_caption;
-  font: inherit;
-  cursor: pointer;
-  @include token.body_small;
-  transition: border-color token.$transition_fast;
-
-  span {
-    flex: 1;
-    text-align: left;
-  }
-
-  kbd {
-    padding: 1px token.$spacing_6;
-    border: token.$border_width_standard solid token.$color_border_default;
-    border-radius: token.$radius_xs;
-    background: token.$color_bg_solid;
-    font-family: inherit;
-    font-size: 12px;
-  }
-
-  &:hover {
-    border-color: token.$color_text_caption;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: token.$focus_ring;
-  }
-
-  // 좁은 화면은 아이콘만 - 단축키 안내도 뺀다
-  @include token.compact {
-    min-width: 0;
-    width: 36px;
-    justify-content: center;
-    padding: 0;
-
-    span,
-    kbd {
-      display: none;
-    }
-  }
-}
-
-.site_search {
-  display: grid;
-  gap: token.$spacing_12;
-}
-
-.site_search_list {
-  display: grid;
-  gap: token.$spacing_2;
-  max-height: min(420px, 60dvh);
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  list-style: none;
-}
-
-.site_search_item {
-  display: flex;
-  align-items: center;
-  gap: token.$spacing_12;
-  padding: token.$spacing_8 token.$spacing_12;
-  border-radius: token.$radius_sm;
-  cursor: pointer;
-
-  &[aria-selected="true"] {
-    background: token.$color_bg_solid_dim;
-  }
-}
-
-.site_search_title {
-  flex: 1;
-  color: token.$color_text_heading;
-  @include token.body_medium_medium;
-
-  span {
-    margin-left: token.$spacing_4;
-    color: token.$color_text_caption;
-    font-weight: 400;
-    @include token.body_small;
-  }
-}
-
-.site_search_group {
-  color: token.$color_text_caption;
-  @include token.body_small;
-}
-
-.site_search_enter {
-  color: token.$color_text_caption;
-}
-
-.site_search_empty {
-  margin: token.$spacing_8 0;
-  color: token.$color_text_caption;
-  text-align: center;
 }

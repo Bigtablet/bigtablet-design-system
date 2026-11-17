@@ -1,4 +1,5 @@
-import { CopyButton, cn, SegmentedControl } from "@bigtablet/design-system";
+import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
+import { ChevronRight } from "lucide-react";
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import props from "./props.json";
 
@@ -63,51 +64,57 @@ function Example({
 	const [showCode, setShowCode] = useState(false);
 	const Comp = exampleOf(id);
 	return (
-		<section className="doc_example">
-			<header className="doc_example_head">
-				<h3 id={id}>{title}</h3>
-				{desc && (
-					<p>
-						<Md>{desc}</Md>
-					</p>
-				)}
-			</header>
-			<div className="doc_example_bar">
-				<SegmentedControl<Width>
-					size="sm"
-					aria-label="미리보기 폭"
-					value={width}
-					onValueChange={setWidth}
-					items={[
-						{ value: "full", label: "전체" },
-						{ value: "768", label: "태블릿" },
-						{ value: "375", label: "모바일" },
-					]}
-				/>
-				<div className="doc_example_actions">
-					<button type="button" className="doc_link_button" onClick={() => setShowCode(!showCode)}>
+		<section className="doc_block">
+			<h2 id={id}>{title}</h2>
+			{desc && (
+				<p className="doc_block_desc">
+					<Md>{desc}</Md>
+				</p>
+			)}
+			<div className="doc_demo">
+				<div className="doc_demo_stage">
+					{width === "full" && !frame ? (
+						<div className="doc_demo_inline">{Comp && <Comp />}</div>
+					) : (
+						<Frame
+							id={id}
+							width={width === "full" ? "100%" : Number(width)}
+							height={frame}
+							theme={theme}
+						/>
+					)}
+				</div>
+				<div className="doc_demo_bar">
+					<button
+						type="button"
+						className="doc_demo_toggle"
+						aria-expanded={showCode}
+						onClick={() => setShowCode(!showCode)}
+					>
+						<ChevronRight size={16} aria-hidden />
 						{showCode ? "코드 접기" : "코드 보기"}
 					</button>
-					<CopyButton size="sm" variant="text" text={sourceOf(id)} label="복사" />
+					<div className="doc_demo_actions">
+						<SegmentedControl<Width>
+							size="sm"
+							aria-label="미리보기 폭"
+							value={width}
+							onValueChange={setWidth}
+							items={[
+								{ value: "full", label: "전체" },
+								{ value: "768", label: "768" },
+								{ value: "375", label: "375" },
+							]}
+						/>
+						<CopyButton size="sm" variant="text" text={sourceOf(id)} label="복사" />
+					</div>
 				</div>
-			</div>
-			<div className="doc_example_stage">
-				{width === "full" && !frame ? (
-					<div className="doc_example_inline">{Comp && <Comp />}</div>
-				) : (
-					<Frame
-						id={id}
-						width={width === "full" ? "100%" : Number(width)}
-						height={frame}
-						theme={theme}
-					/>
+				{showCode && (
+					<pre className="doc_code">
+						<code>{sourceOf(id).trim()}</code>
+					</pre>
 				)}
 			</div>
-			{showCode && (
-				<pre className="doc_code">
-					<code>{sourceOf(id).trim()}</code>
-				</pre>
-			)}
 		</section>
 	);
 }
@@ -187,125 +194,65 @@ function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 }
 
 export function Page({ page, theme }: { page: DocPage; theme: string }) {
-	const propNames = page.props ? [page.props].flat() : [];
-	const toc: TocItem[] = [
-		{ id: "when", label: "언제 쓰는가" },
-		{ id: "examples", label: "예제" },
-		...page.examples.map((ex) => ({ id: ex.id, label: ex.title, sub: true })),
-		...(propNames.length ? [{ id: "props", label: "Props" }] : []),
-		...(propNames.length > 1
-			? propNames.map((n) => ({ id: n, label: n, sub: true, code: true }))
-			: []),
-		...(page.notes ? [{ id: "notes", label: "알아 둘 것" }] : []),
-	];
 	return (
-		<div className="doc_layout">
-			<article className="doc_page">
-				<p className="doc_eyebrow">{page.category}</p>
+		<article className="doc_page">
+			<header className="doc_block doc_head">
 				<h1>
 					{page.title} <span className="doc_name">{page.name}</span>
 				</h1>
-				<p className="doc_summary">
+				<p className="doc_lede">
 					<Md>{page.summary}</Md>
 				</p>
+			</header>
 
-				<Section id="when" title="언제 쓰는가">
-					<div className="doc_table_wrap">
-						<table className="doc_table">
-							<tbody>
-								{page.when.map(([situation, pick, self]) => (
-									<tr key={situation}>
-										<td>{situation}</td>
-										<td className={self ? "doc_pick_self" : "doc_pick_other"}>
-											{self ? "✓ " : "→ "}
-											<Md>{pick}</Md>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</Section>
+			<Section id="when" title="언제 쓰는가">
+				<div className="doc_table_wrap">
+					<table className="doc_table">
+						<tbody>
+							{page.when.map(([situation, pick, self]) => (
+								<tr key={situation}>
+									<td>{situation}</td>
+									<td className={self ? "doc_pick_self" : "doc_pick_other"}>
+										{self ? "✓ " : "→ "}
+										<Md>{pick}</Md>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</Section>
 
-				<Section id="examples" title="예제">
-					{page.examples.map((ex) => (
-						<Example key={ex.id} {...ex} theme={theme} />
+			{page.examples.map((ex) => (
+				<Example key={ex.id} {...ex} theme={theme} />
+			))}
+
+			{page.props && (
+				<Section id="props" title="Props">
+					{[page.props].flat().map((name, _, all) => (
+						<PropsTable key={name} name={name} titled={all.length > 1} />
 					))}
 				</Section>
+			)}
 
-				{page.props && (
-					<Section id="props" title="Props">
-						{[page.props].flat().map((name, _, all) => (
-							<PropsTable key={name} name={name} titled={all.length > 1} />
+			{page.notes && (
+				<Section id="notes" title="알아 둘 것">
+					<ul className="doc_notes">
+						{page.notes.map((n) => (
+							<li key={n}>
+								<Md>{n}</Md>
+							</li>
 						))}
-					</Section>
-				)}
-
-				{page.notes && (
-					<Section id="notes" title="알아 둘 것">
-						<ul className="doc_notes">
-							{page.notes.map((n) => (
-								<li key={n}>
-									<Md>{n}</Md>
-								</li>
-							))}
-						</ul>
-					</Section>
-				)}
-			</article>
-			<Toc items={toc} />
-		</div>
-	);
-}
-
-interface TocItem {
-	id: string;
-	label: string;
-	sub?: boolean;
-	code?: boolean;
-}
-
-/** 오른쪽 "이 페이지에서" 목차 - 지금 읽는 절을 표시한다. 해시 라우팅과 겹치지 않게 링크 대신 버튼으로 스크롤 */
-function Toc({ items }: { items: TocItem[] }) {
-	const [active, setActive] = useState(items[0]?.id);
-	useEffect(() => {
-		const onScroll = () => {
-			// 상단 바 아래 120px 선을 지난 마지막 제목이 지금 절
-			let current = items[0]?.id;
-			for (const item of items) {
-				const el = document.getElementById(item.id);
-				if (el && el.getBoundingClientRect().top < 120) current = item.id;
-			}
-			// 맨 아래까지 내렸으면 마지막 절 - 짧은 끝 절은 120px 선에 닿지 못한다
-			const root = document.documentElement;
-			if (window.innerHeight + window.scrollY >= root.scrollHeight - 2) current = items.at(-1)?.id;
-			setActive(current);
-		};
-		onScroll();
-		window.addEventListener("scroll", onScroll, { passive: true });
-		return () => window.removeEventListener("scroll", onScroll);
-	}, [items]);
-	return (
-		<nav className="doc_toc" aria-label="이 페이지에서">
-			<p className="doc_toc_title">이 페이지에서</p>
-			{items.map((item) => (
-				<button
-					key={item.id}
-					type="button"
-					className={cn("doc_toc_item", item.sub && "doc_toc_sub", item.code && "doc_toc_code")}
-					aria-current={active === item.id ? "location" : undefined}
-					onClick={() => document.getElementById(item.id)?.scrollIntoView({ block: "start" })}
-				>
-					{item.label}
-				</button>
-			))}
-		</nav>
+					</ul>
+				</Section>
+			)}
+		</article>
 	);
 }
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
 	return (
-		<section className="doc_section">
+		<section className="doc_block">
 			<h2 id={id}>{title}</h2>
 			{children}
 		</section>

@@ -77,8 +77,8 @@ function App() {
 				<a className="site_brand" href="#/">
 					Bigtablet <span>Design System</span>
 				</a>
+				<SiteSearch pages={PAGES} />
 				<div className="site_top_actions">
-					<SiteSearch pages={PAGES} />
 					<ThemeMenu theme={theme} onChange={setTheme} />
 				</div>
 			</header>
@@ -142,15 +142,15 @@ function ThemeMenu({ theme, onChange }: { theme: Theme; onChange: (t: Theme) => 
 function Overview() {
 	return (
 		<article className="doc_overview">
-			<header className="ov_head">
+			<header className="doc_block doc_head">
 				<h1>컴포넌트</h1>
-				<p className="doc_summary">
+				<p className="doc_lede">
 					{PAGES.length}개 컴포넌트를 쓰임새별로 묶었습니다. 이름으로 찾으려면{" "}
 					{isMac ? "⌘K" : "Ctrl K"} 를 누릅니다.
 				</p>
 			</header>
 			{GROUPS.map(({ c, pages }) => (
-				<section key={c} className="ov_group">
+				<section key={c} className="doc_block ov_group">
 					<h2>
 						{c} <span>{pages.length}</span>
 					</h2>
