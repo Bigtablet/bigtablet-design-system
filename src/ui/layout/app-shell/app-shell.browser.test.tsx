@@ -260,3 +260,31 @@ describe("AppShell + Sidebar (Chromium, #984)", () => {
 		expect(bg(screen.getByTestId("light"))).toBe(bg(document.documentElement));
 	});
 });
+
+// Sidebar 의 접기 버튼은 경계 밖으로 반쯤 나와 있다. sticky 사이드바 열이 자기 쌓임 맥락을 만들어
+// 버튼의 z-index 가 그 안에 갇히면, 뒤에 오는 sticky 헤더가 나온 절반을 덮는다 (#1035).
+describe("AppShell sidebar toggle stays on top of the header (Chromium)", () => {
+	afterEach(async () => {
+		await page.viewport(1280, 720);
+	});
+
+	it("paints and takes clicks on the half of the collapse button outside the sidebar", async () => {
+		await page.viewport(1280, 720);
+		render(
+			<AppShell
+				sidebar={
+					<Sidebar header={<strong>Bigtablet</strong>}>
+						<SidebarItem active>대시보드</SidebarItem>
+					</Sidebar>
+				}
+				header={<NavBar layout="fluid" sticky brand={<span>관리자</span>} />}
+			>
+				<p>본문</p>
+			</AppShell>,
+		);
+		const toggle = screen.getByRole("button", { name: "사이드바 토글" });
+		const r = toggle.getBoundingClientRect();
+		const hit = document.elementFromPoint(r.right - 3, r.top + r.height / 2);
+		expect(toggle.contains(hit)).toBe(true);
+	});
+});
