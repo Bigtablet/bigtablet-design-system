@@ -1,0 +1,67 @@
+// 컴포넌트 Props 타입에서 props 표를 뽑는다 - 문서에 손으로 쓰는 표가 없어진다.
+import { writeFileSync } from "node:fs";
+import ts from "typescript";
+
+const program = ts.createProgram(["src/index.ts"], {
+	jsx: ts.JsxEmit.ReactJSX,
+	strict: true,
+	skipLibCheck: true,
+});
+const checker = program.getTypeChecker();
+const entry = checker.getSymbolAtLocation(program.getSourceFile("src/index.ts")!)!;
+const exports = checker.getExportsOfModule(entry);
+// src/index.ts 가 내보내는 *Props 전부 - 컴포넌트 props 가 아닌 유틸 타입은 뺀다
+const SKIP = new Set(["PolymorphicProps", "LucideProps", "SentencesProps"]);
+const NAMES = exports.map((s) => s.name).filter((n) => n.endsWith("Props") && !SKIP.has(n));
+
+const out: Record<
+	string,
+	{ name: string; type: string; required: boolean; default?: string; doc: string }[]
+> = {};
+for (const name of NAMES) {
+	const sym = exports.find((s) => s.name === name)!;
+	const type = checker.getDeclaredTypeOfSymbol(checker.getAliasedSymbol(sym));
+	out[name] = checker
+		.getPropertiesOfType(type)
+		// HTML 속성은 빼고 이 저장소 src/ui 에 선언된 prop 만
+		.filter((p) => p.declarations?.some((d) => d.getSourceFile().fileName.includes("/src/ui/")))
+		.map((p) => {
+			const decl = p.declarations![0];
+			const tags = p.getJsDocTags(checker);
+			const t = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(p, decl));
+			let doc = ts.displayPartsToString(p.getDocumentationComment(checker));
+			// 이 저장소는 기본값을 설명 끝 "(기본값: x)" 로 적는다 - 열로 옮긴다
+			const m = doc.match(/\s*\(기본값:\s*([^)]+)\)/);
+			if (m) doc = doc.replace(m[0], "");
+			return {
+				name: p.name,
+				// 별칭(ButtonVariant)은 실제 값 목록으로 풀어 보여 준다
+				type:
+					t.isUnion() && t.types.every((u) => u.isLiteral())
+						? t.types.map((u) => checker.typeToString(u)).join(" | ")
+						: ((decl as ts.PropertySignature).type?.getText() ?? checker.typeToString(t)).replace(
+								/React\./g,
+								"",
+							),
+				required: !(p.flags & ts.SymbolFlags.Optional),
+				default:
+					ts.displayPartsToString(tags.find((t) => t.name === "default")?.text) || m?.[1].trim(),
+				doc,
+			};
+		})
+		.filter((p) => !tagged(p.name, name) && p.name !== "href" && p.name !== "ref");
+}
+
+// @deprecated 는 표에서 뺀다
+function tagged(prop: string, owner: string) {
+	const sym = exports.find((s) => s.name === owner)!;
+	const p = checker.getDeclaredTypeOfSymbol(checker.getAliasedSymbol(sym)).getProperty(prop);
+	return !!p?.getJsDocTags(checker).some((t) => t.name === "deprecated");
+}
+
+writeFileSync("site/props.json", `${JSON.stringify(out, null, "\t")}\n`);
+console.log(
+	Object.entries(out)
+		.map(([k, v]) => `${k} ${v.length}`)
+		.join(" · "),
+);

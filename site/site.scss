@@ -1,0 +1,338 @@
+@use "src/styles/token" as token;
+
+// 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다
+
+body {
+  margin: 0;
+  background: token.$color_bg_solid;
+  color: token.$color_text_body;
+  font-family: token.$font_family_primary;
+  @include token.body_medium;
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  padding: 1px token.$spacing_4;
+  border-radius: token.$radius_xs;
+  background: token.$color_bg_solid_dim;
+  color: token.$color_text_heading;
+}
+
+.preview body {
+  padding: token.$spacing_16;
+}
+
+// ── 셸 ─────────────────────────────────────────────────────────────
+
+.site {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.site_top {
+  grid-column: 1 / -1;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: token.$spacing_16;
+  padding: token.$spacing_12 token.$spacing_24;
+  background: token.$color_bg_solid;
+  border-bottom: token.$border_width_standard solid token.$color_border_default;
+}
+
+.site_brand {
+  color: token.$color_text_heading;
+  text-decoration: none;
+  @include token.body_large_bold;
+
+  span {
+    color: token.$color_text_caption;
+    font-weight: 400;
+  }
+}
+
+.site_nav {
+  position: sticky;
+  top: 57px;
+  align-self: start;
+  padding: token.$spacing_24 token.$spacing_16;
+  display: grid;
+  gap: token.$spacing_20;
+
+  @include token.compact {
+    position: static;
+    display: flex;
+    gap: token.$spacing_8;
+    overflow-x: auto;
+    padding: token.$spacing_12 token.$spacing_16;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+
+    .site_nav_title {
+      display: none;
+    }
+  }
+
+  a {
+    display: block;
+    padding: token.$spacing_6 token.$spacing_12;
+    border-radius: token.$radius_sm;
+    color: token.$color_text_body;
+    text-decoration: none;
+    transition: background-color token.$transition_fast;
+
+    &:hover {
+      background: token.$color_bg_solid_dim;
+    }
+
+    &[aria-current="page"] {
+      background: token.$color_bg_solid_dim;
+      color: token.$color_text_heading;
+      font-weight: 600;
+    }
+  }
+}
+
+.site_nav_group {
+  display: grid;
+  gap: token.$spacing_2;
+
+  @include token.compact {
+    display: flex;
+  }
+}
+
+.site_nav_title {
+  margin: 0 0 token.$spacing_4;
+  padding: 0 token.$spacing_12;
+  color: token.$color_text_caption;
+  @include token.body_small_medium;
+}
+
+.site_main {
+  min-width: 0;
+  padding: token.$spacing_32 token.$spacing_40 token.$spacing_48;
+
+  @include token.compact {
+    padding: token.$spacing_24 token.$spacing_16 token.$spacing_40;
+  }
+}
+
+// ── 문서 페이지 ─────────────────────────────────────────────────────
+
+.doc_page {
+  max-width: 860px;
+
+  h1 {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.heading_large_bold;
+  }
+}
+
+.doc_eyebrow {
+  margin: 0 0 token.$spacing_4;
+  color: token.$color_text_caption;
+  @include token.body_small_medium;
+}
+
+.doc_summary {
+  margin: token.$spacing_8 0 0;
+  color: token.$color_text_body;
+  @include token.body_large;
+  @include token.wrap_keep_all;
+}
+
+.doc_section {
+  margin-top: token.$spacing_48;
+
+  > h2 {
+    margin: 0 0 token.$spacing_16;
+    color: token.$color_text_heading;
+    @include token.heading_medium_bold;
+  }
+}
+
+.doc_example {
+  margin-top: token.$spacing_32;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.doc_example_head {
+  margin-bottom: token.$spacing_12;
+
+  h3 {
+    margin: 0;
+    color: token.$color_text_heading;
+    @include token.body_large_bold;
+  }
+
+  p {
+    margin: token.$spacing_4 0 0;
+    color: token.$color_text_caption;
+    @include token.wrap_keep_all;
+  }
+}
+
+.doc_example_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: token.$spacing_8;
+  flex-wrap: wrap;
+  padding: token.$spacing_8 token.$spacing_12;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-bottom: none;
+  border-radius: token.$radius_md token.$radius_md 0 0;
+  background: token.$color_bg_solid_dim;
+}
+
+.doc_example_actions {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+}
+
+.doc_link_button {
+  padding: token.$spacing_4 token.$spacing_8;
+  border: none;
+  border-radius: token.$radius_sm;
+  background: none;
+  color: token.$color_text_body;
+  font: inherit;
+  cursor: pointer;
+  @include token.body_small_medium;
+
+  &:hover {
+    background: token.$color_bg_solid;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.doc_example_stage {
+  display: flex;
+  justify-content: center;
+  padding: token.$spacing_32 token.$spacing_24;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: 0 0 token.$radius_md token.$radius_md;
+  background: token.$color_bg_solid;
+  overflow-x: auto;
+}
+
+.doc_example_inline {
+  width: 100%;
+}
+
+.doc_frame {
+  max-width: 100%;
+  border: token.$border_width_standard dashed token.$color_border_default;
+  border-radius: token.$radius_sm;
+  background: token.$color_bg_solid;
+}
+
+.doc_code {
+  margin: token.$spacing_8 0 0;
+  padding: token.$spacing_16;
+  border-radius: token.$radius_md;
+  background: #0f141a; // ponytail: 코드 배경 토큰이 없다 - 사이트를 정식화할 때 토큰으로
+  color: #e6eaf0;
+  overflow-x: auto;
+  @include token.body_small;
+
+  code {
+    padding: 0;
+    background: none;
+    color: inherit;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+}
+
+.doc_table_wrap {
+  overflow-x: auto;
+  border: token.$border_width_standard solid token.$color_border_default;
+  border-radius: token.$radius_md;
+}
+
+.doc_table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: token.$spacing_10 token.$spacing_12;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: token.$border_width_standard solid token.$color_border_default;
+    @include token.wrap_keep_all;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  th {
+    background: token.$color_bg_solid_dim;
+    color: token.$color_text_caption;
+    @include token.body_small_medium;
+  }
+}
+
+.doc_type {
+  white-space: normal;
+}
+
+.doc_required {
+  margin-left: token.$spacing_6;
+  color: token.$color_status_error_on_surface;
+  @include token.body_small_medium;
+}
+
+.doc_pick_self {
+  color: token.$color_text_heading;
+  font-weight: 600;
+}
+
+.doc_pick_other {
+  color: token.$color_text_caption;
+}
+
+.doc_notes {
+  margin: 0;
+  padding-left: token.$spacing_20;
+  display: grid;
+  gap: token.$spacing_8;
+  @include token.wrap_keep_all;
+}
+
+.doc_table td:first-child code {
+  white-space: nowrap;
+}
+
+.doc_code {
+  tab-size: 2;
+}
+
+.doc_props_title {
+  margin: token.$spacing_24 0 token.$spacing_8;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
