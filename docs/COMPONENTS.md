@@ -1019,7 +1019,7 @@ Pretendard 기본 글자꼴은 `l` · `I` · `1` 이 거의 같고 `0` 과 `O` �
 
 Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero` 를 적용합니다. Pretendard 가 아닌 폴백 폰트는 두 feature 를 무시하므로 안전합니다.
 
-앱이 `.text_field_input` 을 직접 뚫어 `font-feature-settings` 를 주지 않아도 됩니다. SCSS 에서 같은 처리가 필요하면 `@include token.legible_identifiers` 를 씁니다 — `tabular_nums` · `slashed_zero` 와 겹쳐 쓰면 안 되는 함정은 [THEMING.md](./THEMING.md#하드코딩-대신-쓸-토큰) 참고.
+앱이 `.text_field_input` 을 직접 뚫어 `font-feature-settings` 를 주지 않아도 됩니다. SCSS 에서 같은 처리가 필요하면 `@include token.legible_identifiers` 를 씁니다. `tabular_nums` 와 겹쳐 쓰면 안 되는 함정은 [THEMING.md](./THEMING.md#하드코딩-대신-쓸-토큰) 참고.
 
 ---
 
