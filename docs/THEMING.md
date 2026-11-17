@@ -195,9 +195,9 @@ DS 컴포넌트나 `cssVars` 를 import 했거나 `style.css` 가 로드돼 있�
 
 | 생성 파일 | 내용 |
 |---|---|
-| `src/styles/<폴더>/_tokens.scss` | SCSS 변수 · typography 역할 mixin. 손으로 쓴 mixin 은 같은 폴더 `_index.scss` 에 남고 이 파일을 `@forward` 한다 |
+| `src/styles/<폴더>/_tokens.scss` | SCSS 변수 · typography 역할 mixin. 손으로 쓴 mixin 은 같은 폴더 `_index.scss` 에 남고 이 파일을 `@forward` 합니다 |
 | `src/styles/<폴더>/index.ts` | TS export(`baseColors` · `colors` · `spacing` · `typography` …) |
-| `src/styles/_theme-tokens.scss` | `--bt-*` 변수의 light/dark 값 - `theme.scss` 가 include 한다 |
+| `src/styles/_theme-tokens.scss` | `--bt-*` 변수의 light/dark 값 - `theme.scss` 가 include 합니다 |
 
 - 값을 바꿀 때는 `tokens.json` 을 고치고 `pnpm tokens` 를 돌린 뒤 생성 파일까지 커밋합니다. 생성 파일을 직접 고치면 `src/styles/tokens.test.ts`(CI 단위 테스트)와 `pnpm check:tokens` 가 실패합니다
 - 각 토큰의 출력 이름은 `$extensions["com.bigtablet"]` 이 정합니다 - `scss`("폴더/변수", `@` 로 시작하면 mixin), `ts`(export 경로), `css`(CSS 변수), `cssMode`(`var` 테마를 따라감 · `fallback` 기본값을 품은 `var()` · `define` CSS 변수만 정의). 이름을 경로에서 추론하지 않는 이유는 `tokens.json` 경로가 Figma 변수 이름으로도 쓰여서입니다(bigtablet-figma-plugins)
@@ -241,7 +241,7 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-focus-ring` | 포커스 링 box-shadow |
 | `--bt-elevation-level1` ~ `-level5` | elevation shadow |
 
-> 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)도 같은 테마 변수를 싣고 다크 모드가 그대로 동작한다 - `<html data-theme="dark">` 또는 OS 다크(`prefers-color-scheme`). Vanilla 는 여기에 짧은 별칭(`--bt-color-primary`, `--bt-color-background` 등)을 더 두는데, 별칭도 테마를 따라 바뀐다. 켜는 법은 [VANILLA.md 다크 모드](./VANILLA.md#다크-모드).
+> 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)도 같은 테마 변수를 싣고 다크 모드가 그대로 동작합니다 - `<html data-theme="dark">` 또는 OS 다크(`prefers-color-scheme`). Vanilla 는 여기에 짧은 별칭(`--bt-color-primary`, `--bt-color-background` 등)을 더 두는데, 별칭도 테마를 따라 바뀝니다. 켜는 법은 [VANILLA.md 다크 모드](./VANILLA.md#다크-모드).
 
 ### 레이아웃·런타임 계약 변수
 
@@ -384,7 +384,7 @@ DS CSS 는 `bigtablet` 레이어 안이라 레이어 밖 `:root` 선언이 특�
 
 #### 번들에 따라 변수 집합이 다릅니다
 
-<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
+<!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장합니다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화됩니다. -->
 React 진입점의 `style.css` 는 `--bt-color-*` · `--bt-elevation-*` · `--bt-focus-*` · `--bt-sidebar-*` · `--bt-bottom-nav-*` · `--bt-bottom-inset*` · `--bt-scrollbar-width` · `--bt-z-*` · `--bt-radius-*` · `--bt-spacing-*` · `--bt-font-family` 만 내보냅니다. font-size · line-height 계열 CSS 변수는 **Vanilla 번들에만** 있습니다. React 쪽에서는 SCSS 믹스인(`token.body_medium` 등)을 쓰세요.
 
 #### 문서와 실제가 갈리지 않게 하려면
@@ -533,7 +533,7 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 
 ## 컴포넌트 마운트 수명
 
-애니메이션이 있는 컴포넌트는 **퇴출 스프링이 끝날 때까지 DOM 에 남습니다.** 그래야 페이드아웃이 보입니다. 이 사실이 앱 코드에 영향을 주는 지점이 있습니다.
+애니메이션이 있는 컴포넌트는 **닫히는 모션이 끝날 때까지 DOM 에 남습니다.** 그래야 페이드아웃이 보입니다. 이 사실이 앱 코드에 영향을 주는 지점이 있습니다.
 
 해당 컴포넌트: `Modal` · `Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast` · `Menu` · `Dropdown`.
 
@@ -557,71 +557,46 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 
 ## 오버레이 스크롤 잠금과 `--bt-scrollbar-width`
 
-Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠근다 - `body` 와 **`html` 양쪽에** `overflow: hidden`.
-`body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로, 앱이 `html { overflow-y: auto }`
-나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을 `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가
-그대로 스크롤됐다(실측 - 잠금 중 휠로 300 → 300, 해제 뒤 같은 휠로 300 → 800. `scrollTo` 는
-`overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없다). 잠금 전 인라인 `overflow` 는
-**축까지 그대로 되살린다** - `html.style.overflowX` 만 잡아둔 앱도 해제 뒤 그 축이 남는다.
-이때 오른쪽에
-**스크롤바도 예약된 거터도 남기지 않는다** - 남으면 그 자리는 캔버스(루트 요소의 배경)가 칠하는
-영역이라 오버레이 딤이 덮지 못하고 밝은 띠가 된다.
-
-| 상황 | 잠금이 하는 일 |
-| --- | --- |
-| 스크롤바나 예약된 거터가 있다(ICB 가 뷰포트보다 좁다) | `scrollbar-gutter: auto` 로 풀고, 회수한 폭만큼 `body` 에 `padding-right` |
-| 회수되지 않았다(앱이 `html { overflow-y: scroll }` 로 스크롤바를 못박음) | padding 보정을 되돌린다 - 안 그러면 콘텐츠만 안쪽으로 밀린다 |
-| ICB 가 뷰포트와 같다(오버레이 스크롤바 · 내부 컨테이너 스크롤) | 아무것도 하지 않는다 |
-
-폭은 `:root` 의 `--bt-scrollbar-width` 로 노출된다. 잠금 밖에서는 `0px` 이라 `var()` 가 항상
-유효하다.
-
-### 거터를 색으로 흉내내지 않는 이유 (3.21.0 에서 바뀜)
-
-3.17~3.20 은 반대 방향이었다 - 잠금 동안 거터를 **예약**해 ICB 폭을 지키고, 딤이 닿지 않는 그 띠를
-루트 배경색에 딤을 합성해 칠했다. 계산은 맞았지만 **문서 배경이 단색일 때만** 성립한다.
-
-```text
-페이지 배경 #F4F4F4 → 딤 적용 122   ← 루트에 칠한 값
-표·카드    #FFFFFF → 딤 적용 128
-```
-
-띠 옆에 표나 카드가 닿으면 6 만큼 차이가 나 그 경계에 세로선이 남았다(#635 - 라이트 모드의 목록
-화면에서 보고됨. 다크는 `3,3,5` 대 `4,4,6` 이라 눈에 띄지 않았다).
-
-`width: 100vw` 로 넘기는 방법도 되지 않는다. Chromium 실측 - 거터 15px 예약 상태에서 `100vw` 가
-거터를 **뺀** 742 로 풀리고, `calc(100vw + 40px)` 로 박스를 억지로 넓혀도 `elementFromPoint` 는
-거터에서 여전히 `null` 이었다(페인트가 잘린다, #580 과 같은 결과).
-
-그래서 지금은 띠 자체를 만들지 않는다.
-
-### 고정 요소의 이동과 상쇄
-
-거터를 풀면 ICB 폭이 스크롤바 폭만큼 넓어져, `position: fixed` 로 가운데 정렬한 요소가 그 절반만큼
-움직인다(#574). DS 오버레이는 자기 컨테이너에 `padding-right: var(--bt-scrollbar-width)` 를 줘서
-상쇄한다 - 패널 중심이 잠금 전후로 같은 자리에 남는다(실측 371 → 371). 오른쪽에 고정된 Toast 도
-같은 변수로 제자리를 지킨다.
-
-**앱 쪽 고정 요소는 소비자가 상쇄한다.** 오른쪽에 붙는 FAB·툴바가 있으면 같은 방식으로 더한다.
+**앱이 할 일: 화면 오른쪽에 고정한 요소(FAB · 툴바)가 있으면 `right` 에 `var(--bt-scrollbar-width, 0px)` 를 더합니다.** 그 밖에는 할 일이 없습니다.
 
 ```css
-/* 오른쪽 고정 요소 - 잠금 중 회수된 폭만큼 되민다 */
+/* 오른쪽 고정 요소 - 잠금 중 사라진 스크롤바 폭만큼 안쪽으로 둡니다 */
 .my-fab { right: calc(16px + var(--bt-scrollbar-width, 0px)); }
 
 /* 잠금 상태를 선택자로 쓰고 싶을 때 */
 html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 ```
 
-> 이 처리는 React(`style.css`)와 Vanilla(`/vanilla` CSS·JS) 양쪽에 동일하게 들어 있다. 중첩 오버레이는
-> 카운터로 조율해 첫 잠금만 스타일을 바꾸고 마지막 해제만 원복한다 - 카운터 이름은 번들마다
-> 다르다 (React `body.dataset.openModals` / Vanilla `body.dataset.btOpenModals`).
+Modal · Drawer · Alert 가 열리면 배경 스크롤을 잠급니다. 잠그는 동안 오른쪽 스크롤바를 치우므로(남기면 그 자리를 딤이 덮지 못해 밝은 띠가 됩니다) 페이지 폭이 스크롤바만큼 넓어집니다. 그 폭이 `:root` 의 `--bt-scrollbar-width` 이고, 잠금 밖에서는 `0px` 이라 `var()` 가 항상 유효합니다.
 
+DS 오버레이와 Toast 는 이 변수로 이미 제자리를 지킵니다 - 열기 전후로 패널 위치가 같습니다. 앱이 직접 고정한 요소만 위처럼 더하면 됩니다.
 
-## status 색: 배경용과 텍스트용을 구분한다
+| 상황 | 잠금이 하는 일 |
+| --- | --- |
+| 스크롤바(또는 예약된 스크롤바 자리)가 있습니다 | 스크롤바 자리를 풀고, 그 폭만큼 `body` 에 `padding-right` 를 줍니다 |
+| 앱이 `html { overflow-y: scroll }` 로 스크롤바를 고정했습니다 | 스크롤바가 남으므로 padding 보정을 되돌립니다 |
+| 스크롤바가 화면 폭을 차지하지 않습니다 (macOS 오버레이 스크롤바 · 내부 컨테이너 스크롤) | 아무것도 하지 않습니다 |
 
-`--bt-color-status-{error,success,warning,info}` 는 **양 테마에서 같은 값**이다(red-700 계열).
-배경과 테두리에는 그대로 쓰지만, **테마에 따라 바뀌는 표면 위의 텍스트로는 쓰지 않는다** -
-다크 표면에서 대비가 무너진다. 실측(Chromium, `data-theme="dark"`):
+React(`style.css`)와 Vanilla(`/vanilla` CSS · JS) 양쪽에 같은 처리가 들어 있습니다. 오버레이를 겹쳐 열면 첫 잠금만 스타일을 바꾸고 마지막 해제만 원래대로 돌립니다.
+
+<details>
+<summary>구현 메모 - 왜 이렇게 잠그는가</summary>
+
+**`html` 과 `body` 양쪽에 `overflow: hidden` 을 겁니다.** `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로, 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을 `auto` 로 만듭니다)을 쓰면 body 만 잠가서는 문서가 그대로 스크롤됩니다 (실측 - 잠금 중 휠로 300 → 300, 해제 뒤 같은 휠로 300 → 800. `scrollTo` 는 `overflow: hidden` 에서도 먹으므로 잠금 확인에 쓸 수 없습니다). 잠금 전 인라인 `overflow` 는 축까지 그대로 되살립니다.
+
+**스크롤바 자리를 색으로 흉내내지 않습니다 (3.21.0 에서 바뀜).** 3.17~3.20 은 잠금 동안 스크롤바 자리를 남기고, 딤이 닿지 않는 그 띠를 루트 배경색에 딤을 합성해 칠했습니다. 문서 배경이 단색일 때만 맞는 방법이라, 띠 옆에 흰 표 · 카드가 닿으면(`#F4F4F4` → 122 대 `#FFFFFF` → 128) 경계에 세로선이 남았습니다 (#635). `width: 100vw` 로 넘겨도 스크롤바 자리에는 페인트가 잘립니다 (#580). 그래서 지금은 띠 자체를 만들지 않습니다.
+
+**고정 요소가 움직이는 이유.** 스크롤바 자리를 풀면 `position: fixed` 의 기준 상자(initial containing block)가 그만큼 넓어져, 가운데 정렬한 요소가 그 절반만큼 움직입니다 (#574). DS 오버레이는 자기 컨테이너에 `padding-right: var(--bt-scrollbar-width)` 를 줘서 상쇄합니다 (실측 371 → 371).
+
+중첩 잠금 카운터는 번들마다 이름이 다릅니다 - React `body.dataset.openModals` / Vanilla `body.dataset.btOpenModals`.
+
+</details>
+
+## status 색: 배경용과 텍스트용을 구분합니다
+
+`--bt-color-status-{error,success,warning,info}` 는 **양 테마에서 같은 값**입니다(red-700 계열).
+배경과 테두리에는 그대로 쓰지만, **테마에 따라 바뀌는 표면 위의 텍스트로는 쓰지 않습니다** -
+다크 표면에서 대비가 무너집니다. 실측(Chromium, `data-theme="dark"`):
 
 | 토큰 | 다크 페이지(#0A0A0A) | 다크 패널(#141414) | `_on_surface` (페이지) |
 | --- | --- | --- | --- |
@@ -631,7 +606,7 @@ html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 | info | 2.95:1 | 2.75:1 | **7.79:1** |
 
 그래서 텍스트에는 `--bt-color-status-*-on-surface`(Vanilla `--bt-color-{error,success,warning,info}-text`)
-를 쓴다 - 다크에서 400 계열로 바뀐다. 라이트에서는 두 토큰의 값이 같아 **라이트 렌더는 바뀌지 않는다.**
+를 씁니다 - 다크에서 400 계열로 바뀝니다. 라이트에서는 두 토큰의 값이 같아 **라이트 렌더는 바뀌지 않습니다.**
 
 | 용도 | 토큰 |
 | --- | --- |
@@ -639,25 +614,25 @@ html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 | 테두리 (입력 error 상태) | `--bt-color-status-error` - 비텍스트는 3:1 기준이라 다크에서도 통과 |
 | 텍스트 (helper, 제목, outline·text 버튼 라벨) | `--bt-color-status-error-on-surface` |
 
-**warning 아이콘·진행 바는 `--bt-color-status-warning-graphic` 을 쓴다.** 라이트의 `status-warning`(amber-700)은
-글자 대비 4.5:1 을 맞춘 값이라, 아이콘·바에 쓰면 갈색으로 보여 error 빨강과 잘 갈리지 않는다. 그래픽은
-3:1 이면 되므로(WCAG 1.4.11) 라이트 amber-600 `#D97706`(흰 배경 3.19:1), 다크 amber-400 `#FBBF24` 를 쓴다.
-**글자에는 쓰지 않는다** - 라이트에서 4.5:1 에 못 미친다. 지금은 Toast 의 warning 아이콘·진행 바가 쓴다.
+**warning 아이콘·진행 바는 `--bt-color-status-warning-graphic` 을 씁니다.** 라이트의 `status-warning`(amber-700)은
+글자 대비 4.5:1 을 맞춘 값이라, 아이콘·바에 쓰면 갈색으로 보여 error 빨강과 잘 갈리지 않습니다. 그래픽은
+3:1 이면 되므로(WCAG 1.4.11) 라이트 amber-600 `#D97706`(흰 배경 3.19:1), 다크 amber-400 `#FBBF24` 를 씁니다.
+**글자에는 쓰지 않습니다** - 라이트에서 4.5:1 에 못 미칩니다. 지금은 Toast 의 warning 아이콘·진행 바가 씁니다.
 
-**고정 표면 위의 텍스트는 예외다.** brand 표면 위 `--bt-color-brand-on-primary`, 스크림·glass 위
+**고정 표면 위의 텍스트는 예외입니다.** brand 표면 위 `--bt-color-brand-on-primary`, 스크림·glass 위
 `--bt-color-text-on-dark-*`, status 표면 위 `-on-default`·`-on-container` 는 표면 자체가 테마와
-무관하므로 대비가 일정하다 - 이름이 그 짝을 밝힌다.
+무관하므로 대비가 일정합니다 - 이름이 그 짝을 밝힙니다.
 
-> `pnpm check:dark-text` 가 이 규약을 지킨다 - 표면 전용 색 토큰이 `color:` 로 쓰이면 실패한다.
-> a11y 스토리 러너는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 본다.
+> `pnpm check:dark-text` 가 이 규약을 지킵니다 - 표면 전용 색 토큰이 `color:` 로 쓰이면 실패합니다.
+> a11y 스토리 러너는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 봅니다.
 
 ## 자동완성(autofill) 입력칸
 
-크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로 강제한다.
-그대로 두면 그 칸만 옆 칸과 다른 색이 되고, 다크 테마에서는 밝은 상자로 튄다.
+크롬/사파리는 자동완성으로 채운 칸에 자체 배경(연한 라벤더)과 글자색을 `!important` 로 강제합니다.
+그대로 두면 그 칸만 옆 칸과 다른 색이 되고, 다크 테마에서는 밝은 상자로 튑니다.
 
-공통 CSS 가 이걸 대신 막는다 (`src/styles/autofill.scss`). **소비자가 따로 할 일은 없다** -
-컴포넌트를 하나라도 import 하면 공통 CSS 와 함께 실린다 (`style.css` 를 import 하는 앱도 같다).
+공통 CSS 가 이걸 대신 막습니다 (`src/styles/autofill.scss`). **소비자가 따로 할 일은 없습니다** -
+컴포넌트를 하나라도 import 하면 공통 CSS 와 함께 실립니다 (`style.css` 를 import 하는 앱도 같습니다).
 
 | 상태 | 배경 | 글자 |
 |---|---|---|
@@ -665,13 +640,13 @@ html[data-bt-scroll-locked] .my-floating-toolbar { display: none; }
 | `variant="filled"` | `--bt-color-bg-solid-dim` (포커스 시 `bg-solid`) | 동일 |
 | `disabled` | `--bt-color-bg-solid-dim` | `--bt-color-text-disabled` |
 
-전부 테마 CSS 변수라 라이트/다크가 자동으로 따라온다. 규칙이 `input` / `textarea` / `select`
-요소 셀렉터라 **DS 컴포넌트로 감싸지 않은 native 입력에도 적용된다**.
+전부 테마 CSS 변수라 라이트/다크가 자동으로 따라옵니다. 규칙이 `input` / `textarea` / `select`
+요소 셀렉터라 **DS 컴포넌트로 감싸지 않은 native 입력에도 적용됩니다**.
 
-> UA 배경은 일반 `background-color` 로 이길 수 없어 큰 inset `box-shadow` 로 덮는다. 그 그림자는
+> UA 배경은 일반 `background-color` 로 이길 수 없어 큰 inset `box-shadow` 로 덮습니다. 그 그림자는
 > 네모라서 TextField/Textarea 는 자동완성된 칸에서만 컨테이너에 `overflow: hidden` 을 걸어
-> 컨테이너 반경으로 자른다(`:has()`). Vanilla(`@bigtablet/design-system/vanilla/style.min.css`)는 입력 요소가 배경과
-> `border-radius` 를 직접 갖고 있어 클리핑이 필요 없고, 색 규칙만 동일하게 적용된다.
+> 컨테이너 반경으로 자릅니다(`:has()`). Vanilla(`@bigtablet/design-system/vanilla/style.min.css`)는 입력 요소가 배경과
+> `border-radius` 를 직접 갖고 있어 클리핑이 필요 없고, 색 규칙만 동일하게 적용됩니다.
 
 ## Storybook
 
