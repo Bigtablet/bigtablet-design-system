@@ -67,9 +67,10 @@ npm install @bigtablet/design-system
 **Spring Boot(Thymeleaf) · JSP 처럼 정적 파일을 서버가 내보내는 경우** - 두 파일을 정적 리소스 폴더로 복사하고 그 경로로 링크한다. 복사는 빌드 스크립트에 넣어 두면 버전을 올릴 때 함께 바뀐다.
 
 ```bash
-cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.* src/main/resources/static/css/
+cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.css src/main/resources/static/css/
+cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main/resources/static/js/
 # → <link rel="stylesheet" th:href="@{/css/bigtablet.min.css}">
-#   <script th:src="@{/css/bigtablet.min.js}"></script>
+#   <script th:src="@{/js/bigtablet.min.js}"></script>
 ```
 
 > 컴포넌트를 한 화면에 모아 둔 예제는 저장소의 [`src/vanilla/examples/index.html`](../src/vanilla/examples/index.html) 이다 (npm 패키지에는 없다). 저장소에서 `pnpm build` 후 `dist/vanilla/examples/index.html` 을 브라우저로 열면 된다.

@@ -37,7 +37,7 @@ src/
 ├── ui/                  # 8 카테고리 폴더 하위에 컴포넌트 폴더
 │   ├── display/  feedback/  forms/  general/
 │   └── layout/  navigation/  overlay/  system/
-├── utils/               # cn + 훅 (use-focus-trap, use-reduced-motion, use-spring-presence/hover, use-safe-layout-effect)
+├── utils/               # cn + 훅 (use-presence, use-focus-trap, use-reduced-motion, use-listbox-popup, use-safe-layout-effect …)
 ├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
 ├── test/                # setup.ts (Vitest)
 ├── types/               # scss.d.ts
