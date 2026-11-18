@@ -26,7 +26,7 @@ const SEARCH: SearchEntry[] = [
 		title: p.title,
 		name: p.name,
 		group: p.category,
-		keywords: p.summary,
+		keywords: [p.summary, p.aka].filter(Boolean).join(" "),
 	})),
 	...FOUNDATIONS.map((f) => ({ ...f, group: "토큰" })),
 	...GUIDES.map((g) => ({ ...g, group: "시작하기" })),

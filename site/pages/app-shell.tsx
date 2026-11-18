@@ -5,7 +5,8 @@ export const appShell: DocPage = {
 	category: "레이아웃",
 	order: 0,
 	title: "AppShell",
-	name: "앱 화면 틀",
+	name: "앱 셸",
+	aka: "앱 화면 틀",
 	summary:
 		"관리자 · 대시보드 화면의 껍데기입니다. 사이드바 열 + 고정 헤더 + 본문을 한 곳에서 잡습니다.",
 	when: [
