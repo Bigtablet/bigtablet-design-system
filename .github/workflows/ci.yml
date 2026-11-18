@@ -296,6 +296,11 @@ jobs:
       - name: Check AGENT_GUIDE props
         run: pnpm check:agent-guide
 
+      # 문서 사이트 props 표(site/props.json)가 소스 타입과 같은지. build:llms 가 이 파일을 다시 만들므로
+      # 커밋본이 낡으면 릴리즈 빌드가 working tree 를 더럽히고 사이트와 dist/llms 가 어긋난다.
+      - name: Check docs site props
+        run: pnpm check:props
+
       # 빌드는 모든 변경에서 검증 (deps/scripts 변경도 빌드 영향 가능)
       - name: Build
         run: pnpm build
