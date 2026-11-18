@@ -93,8 +93,20 @@ const tokenize = (children: React.ReactNode) => {
 	return { tokens, lead, tail: gap };
 };
 
-/** 그린 어절의 폭 - 어절 span 이 줄을 넘어 갈라졌어도(긴 코드) 조각들의 합 */
-const widthOf = (el: Element) => [...el.getClientRects()].reduce((sum, r) => sum + r.width, 0);
+/**
+ * 그린 어절의 폭. 줄을 넘어 갈라진 어절(공백이 든 코드 "update({ confirmDisabled: true })")은 조각을 더하면 갈라진
+ * 자리의 공백이 빠져 모자란다 - 그때만 잠깐 한 줄로 펴서 잰다
+ */
+const widthOf = (el: HTMLElement) => {
+	const rects = [...el.getClientRects()];
+	if (new Set(rects.map((r) => Math.round(r.top))).size < 2)
+		return rects.reduce((sum, r) => sum + r.width, 0);
+	// nowrap 만으로는 안 된다 - 코드 안 <wbr> 은 nowrap 이어도 끊긴다(text.scss 가 잴 때만 끈다)
+	el.classList.add("text_balanced_word_measure");
+	const width = el.getBoundingClientRect().width;
+	el.classList.remove("text_balanced_word_measure");
+	return width;
+};
 
 /** 같은 글꼴은 측정기 하나를 함께 쓴다 - 문단마다 canvas 를 새로 만들지 않게 */
 const measurers = new Map<string, CanvasMeasurer | null>();
@@ -196,14 +208,14 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			if (gaveUp) return;
 			width = contentWidth();
 			const words = latest.current;
-			const spans = [...el.querySelectorAll(".text_balanced_word")];
+			const spans = [...el.querySelectorAll<HTMLElement>(".text_balanced_word")];
 			if (width <= 0 || spans.length !== words.length || fontsPending()) return;
 			if (el.querySelector(".text_balanced_line")) return;
 			const { font, letterSpacing } = fontOf(el);
 			// 어절 사이 공백만 canvas 로 잰다 - 줄 끝 공백은 화면에서 폭이 0 으로 접혀 DOM 으로는 못 잰다
 			const measure = measurerFor(font, letterSpacing);
 			if (!measure) return;
-			const measured = words.map((w, i) => ({ ...w, width: widthOf(spans[i] as Element) }));
+			const measured = words.map((w, i) => ({ ...w, width: widthOf(spans[i] as HTMLElement) }));
 			// 고른 줄은 nowrap 이라 넘치면 그대로 삐져나온다 - 공백 폭(canvas)과 화면의 소수점 차이만큼 1px 여유를 둔다
 			const fit = width - 1;
 			// 줄보다 긴 어절은 브라우저가 그 안에서 끊는다 - 손대지 않는다
@@ -284,6 +296,17 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			observer?.disconnect();
 		};
 	}, [key]);
+
+	// 그린 줄이 상자 밖으로 나가면(측정이 어긋난 경우) inline-block 줄로 바꾼다 - 그 안에서 줄이 바뀌어 넘치지 않는다
+	useSafeLayoutEffect(() => {
+		const el = ref.current;
+		if (!el || !breaks || boxed) return;
+		const right =
+			el.getBoundingClientRect().right - Number.parseFloat(getComputedStyle(el).paddingRight);
+		const lines = el.querySelectorAll(":scope > .text_balanced_line");
+		if ([...lines].some((line) => line.getBoundingClientRect().right > right + 0.5))
+			setChosen((c) => (c ? { ...c, boxed: true } : c));
+	}, [chosen]);
 
 	const word = (i: number) => {
 		const t = tokens[i] as Token;

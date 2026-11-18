@@ -168,4 +168,32 @@ describe("BalancedText (Chromium)", () => {
 		// 줄이 열을 넓히지 않게 inline-block 으로 바꿔 그린다
 		expect(p.querySelector(".text_balanced_line_boxed")).not.toBeNull();
 	});
+
+	it("never overflows when code with spaces and <wbr> wraps natively", async () => {
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 260, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				<code>query</code> 에{" "}
+				<code>
+					{"{ data,"}
+					<wbr />
+					{" isLoading,"}
+					<wbr />
+					{" error,"}
+					<wbr />
+					{" refetch }"}
+				</code>{" "}
+				를 그대로 넘깁니다. React Query 결과와 모양이 같습니다.
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		await new Promise((r) => setTimeout(r, 400));
+		expect(p.scrollWidth).toBeLessThanOrEqual(p.clientWidth + 1);
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(line.getBoundingClientRect().right).toBeLessThanOrEqual(
+				p.getBoundingClientRect().right + 0.5,
+			);
+	});
 });
