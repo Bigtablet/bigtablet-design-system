@@ -1,6 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { renderSentences, Sentences, sentenceText, splitSentences } from "./sentences";
+import {
+	renderPhrases,
+	renderSentences,
+	Sentences,
+	sentenceText,
+	splitSentences,
+} from "./sentences";
 
 const texts = (text: string) => splitSentences(text).map((sentence) => sentence.text);
 
@@ -118,5 +124,56 @@ describe("sentenceText", () => {
 		);
 		expect(screen.queryByText(text)).toBeNull();
 		expect(screen.getByText(sentenceText(text))).toBe(screen.getByTestId("target"));
+	});
+});
+
+// 꾸미는 말과 꾸밈받는 말 사이에서 줄이 갈리지 않게 묶는다 (#1077)
+describe("renderPhrases", () => {
+	const phrases = (text: string) => {
+		const { container } = render(<p>{renderPhrases(text)}</p>);
+		return {
+			groups: [...container.querySelectorAll(".sentences_phrase")].map((el) => el.textContent),
+			text: container.textContent,
+		};
+	};
+
+	it("keeps a ~의 word with the next word", () => {
+		expect(phrases("고객의 신뢰를 먼저 얻습니다").groups).toEqual(["고객의 신뢰를"]);
+	});
+
+	it("chains a determiner and a ~의 word into one phrase", () => {
+		expect(phrases("이 아래의 컴포넌트에서 부릅니다").groups).toEqual(["이 아래의 컴포넌트에서"]);
+	});
+
+	it("caps a phrase at three words", () => {
+		expect(phrases("그 회사의 팀의 자료의 목록").groups).toEqual(["그 회사의 팀의", "자료의 목록"]);
+	});
+
+	it("does not bind across a comma", () => {
+		expect(phrases("고객의, 신뢰").groups).toEqual([]);
+	});
+
+	it("leaves text without such words untouched and keeps the original characters", () => {
+		expect(renderPhrases("저장했어요")).toBe("저장했어요");
+		expect(phrases("이 아래의\u00a0컴포넌트 1\u00a0000원").text).toBe(
+			"이 아래의\u00a0컴포넌트 1\u00a0000원",
+		);
+	});
+
+	it("binds inside each sentence of a multi-sentence text", () => {
+		render(<p data-testid="p">{renderSentences("이 화면을 엽니다. 모든 항목이 보입니다.")}</p>);
+		const groups = [...screen.getByTestId("p").querySelectorAll(".sentences_phrase")].map(
+			(el) => el.textContent,
+		);
+		expect(groups).toEqual(["이 화면을", "모든 항목이"]);
+		expect(screen.getByText(sentenceText("이 화면을 엽니다. 모든 항목이 보입니다."))).toBe(
+			screen.getByTestId("p"),
+		);
+	});
+
+	it("keeps a single sentence string as is", () => {
+		expect(renderSentences("이 아래의 컴포넌트에서 부릅니다")).toBe(
+			"이 아래의 컴포넌트에서 부릅니다",
+		);
 	});
 });

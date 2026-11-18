@@ -14,6 +14,7 @@ export {
 	unlockBodyScroll,
 } from "./scroll-lock";
 export {
+	renderPhrases,
 	renderSentences,
 	Sentences,
 	type SentencesProps,

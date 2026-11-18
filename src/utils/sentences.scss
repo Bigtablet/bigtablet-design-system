@@ -2,3 +2,8 @@
 .sentences_item {
 	display: inline-block;
 }
+
+// 꾸미는 말 + 꾸밈받는 말("이 아래의 컴포넌트에서")은 한 줄에 - 사이에서 줄이 갈리면 어색하다 (#1077)
+.sentences_phrase {
+	white-space: nowrap;
+}
