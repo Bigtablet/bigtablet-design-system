@@ -127,6 +127,9 @@ function takeDefault(doc: string): { doc: string; value?: string } {
 		if (doc[end] === "(") depth++;
 		else if (doc[end] === ")" && --depth === 0) break;
 	}
+	// "기본값:" 은 늘 기본값이다. 짧은 "(기본 x)" · "(기본: x)" 는 문장 중간의 덧붙임("`closeOnOverlay`(기본
+	// `true`), Escape …" - 다른 prop 의 기본값)일 수 있어 설명 · 문단 끝에 올 때만 이 prop 의 기본값으로 본다
+	if (head[0] !== "(기본값:" && !/^\s*(?:\.|$|\n)/.test(doc.slice(end + 1))) return { doc };
 	const inner = doc.slice(start + head[0].length, end).trim();
 	const rest = doc.slice(0, start).trimEnd() + doc.slice(end + 1);
 	const bare = (v: string) => v.trim().replace(/^`(.*)`$/, "$1");

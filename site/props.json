@@ -4643,8 +4643,7 @@
 			"name": "dismissible",
 			"type": "boolean",
 			"required": false,
-			"default": "true",
-			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`, Escape 는 항상 켜짐."
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
 		},
 		{
 			"name": "showCloseIcon",
@@ -4708,8 +4707,7 @@
 			"name": "dismissible",
 			"type": "boolean",
 			"required": false,
-			"default": "true",
-			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`, Escape 는 항상 켜짐."
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
 		},
 		{
 			"name": "width",
