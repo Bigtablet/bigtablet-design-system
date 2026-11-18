@@ -7,19 +7,28 @@ import {
 	SidebarItem,
 	SidebarSection,
 } from "@bigtablet/design-system";
+import { Home, Settings, ShoppingBag, Users } from "lucide-react";
+import { useState } from "react";
 
+// 사이드바 항목에는 아이콘을 둡니다 - 접으면 라벨이 숨고 아이콘만 남습니다. 접힌 머리에는 정사각 로고(headerCollapsed)를
 export default function Example() {
+	const [current, setCurrent] = useState("home");
+	const item = (id: string, label: string, icon: React.ReactNode) => (
+		<SidebarItem icon={icon} active={current === id} onClick={() => setCurrent(id)}>
+			{label}
+		</SidebarItem>
+	);
 	return (
 		<AppShell
 			sidebar={
 				<Sidebar header={<strong>Bigtablet</strong>} headerCollapsed={<strong>B</strong>}>
 					<SidebarSection label="운영">
-						<SidebarItem active>대시보드</SidebarItem>
-						<SidebarItem>주문</SidebarItem>
+						{item("home", "대시보드", <Home size={18} />)}
+						{item("orders", "주문", <ShoppingBag size={18} />)}
 					</SidebarSection>
 					<SidebarSection label="관리">
-						<SidebarItem>구성원</SidebarItem>
-						<SidebarItem>설정</SidebarItem>
+						{item("members", "구성원", <Users size={18} />)}
+						{item("settings", "설정", <Settings size={18} />)}
 					</SidebarSection>
 				</Sidebar>
 			}

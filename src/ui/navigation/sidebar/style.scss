@@ -2,6 +2,9 @@
 
 .sidebar {
   position: relative; // floating collapse btn anchor
+  // 머리(로고) 가운데 줄 - 접기 버튼을 여기 맞춘다. 머리 위 여백 + 로고 줄(28px)의 절반. AppShell 은 머리를 앱 헤더
+  // 높이에 맞추므로 그쪽에서 다시 정한다 (#1091)
+  --bt-sidebar-header-center: calc(#{token.$spacing_20} + 14px);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -165,6 +168,11 @@
       display: inline-flex;
       align-items: center;
     }
+
+    // 아이콘 없는 항목의 라벨 첫 글자 - 접혔을 때만 아이콘 자리에 보인다. 없으면 라벨이 숨어 빈 알약만 남았다 (#1091)
+    &_initial {
+      display: none;
+    }
   }
 
   // ── Collapse 토글 버튼 ───────────────────────────────────────────────
@@ -173,7 +181,9 @@
 
   &_collapse_btn {
     position: absolute;
-    top: token.$spacing_24;
+    // 버튼(24px) 가운데를 머리 가운데 줄에 - 위에서 24px 고정일 때는 로고와 펼침 2px · 접힘 6px 어긋났고, 앱 헤더 높이를
+    // 따르는 AppShell 안에서는 더 벌어졌다. Notiiv 는 앱에서 top 을 덮어써 맞추고 있었다 (#1091)
+    top: calc(var(--bt-sidebar-header-center) - 12px);
     right: -12px; // 절반 sidebar 밖으로
     z-index: token.$z_content;
     display: inline-flex;
@@ -210,6 +220,9 @@
   // ── Collapsed state ─────────────────────────────────────────────────
 
   &_collapsed {
+    // 접힌 머리는 위아래 여백이 16px 이라 가운데 줄도 올라간다
+    --bt-sidebar-header-center: calc(#{token.$spacing_16} + 14px);
+
     // collapsed 헤더: favicon center
     .sidebar_header {
       padding: token.$spacing_16 token.$spacing_8;
@@ -245,6 +258,18 @@
       justify-content: center;
       padding: token.$spacing_8;
       gap: 0; // hidden label 의 gap 제거 → 아이콘 정확히 중앙
+    }
+
+    .sidebar_item_initial {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+
+      &::before {
+        content: attr(data-initial);
+      }
     }
   }
 }
@@ -378,6 +403,10 @@
 
   // collapsed 상태 + mobile + auto → collapsed 무효 (BottomBar 가 우선)
   .sidebar:not(.sidebar_static).sidebar_collapsed {
+    .sidebar_item_initial {
+      display: none;
+    }
+
     .sidebar_item_label {
       // collapsed 가 적용한 visually-hidden 해제 - BottomBar 에선 label 보여야 함.
       // 짝 믹스인을 쓴다 - 손으로 쓰면 clip-path 처럼 한쪽에만 있는 속성을 빠뜨린다.

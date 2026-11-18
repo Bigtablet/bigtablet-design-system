@@ -27,12 +27,35 @@
 
   // 고정 헤더가 있으면 사이드바 머리를 헤더 높이에 맞춘다 - 두 아래 선이 한 줄로 이어진다 (React 와 같음).
   // 머리는 content-box 라 헤더 높이에서 위아래 여백 · 아래 선을 빼고, 원래 최소 높이(28px)는 지킨다.
+  // 머리가 헤더 높이로 늘면 접기 토글도 그 가운데 줄로 - 머리 높이(= 헤더 높이) - 아래 선의 절반. 헤더가 더 낮으면 원래 값
+  &:has(.bt-app-shell__header) > .bt-sidebar {
+    --bt-sidebar-header-center: max(
+      calc((var(--bt-top-inset, 0px) - #{token.$border_width_standard}) / 2),
+      calc(#{token.$spacing_20} + 14px)
+    );
+  }
+
+  &:has(.bt-app-shell__header) > .bt-sidebar--collapsed {
+    --bt-sidebar-header-center: max(
+      calc((var(--bt-top-inset, 0px) - #{token.$border_width_standard}) / 2),
+      calc(#{token.$spacing_16} + 14px)
+    );
+  }
+
   &:has(.bt-app-shell__header) > .bt-sidebar .bt-sidebar__brand {
     // 계산이 content-box 를 전제하므로 못박는다 - 소비 앱의 `* { box-sizing: border-box }` 리셋이면 여백 · 선을 두 번 뺀다
     box-sizing: content-box;
     min-height: max(
       28px,
       calc(var(--bt-top-inset, 0px) - 2 * #{token.$spacing_20} - #{token.$border_width_standard})
+    );
+  }
+
+  // 접힌 머리는 위아래 여백이 16px 이다 - 20px 로 빼면 머리가 8px 짧아져 아래 선이 헤더와 어긋났다 (#1091)
+  &:has(.bt-app-shell__header) > .bt-sidebar--collapsed .bt-sidebar__brand {
+    min-height: max(
+      28px,
+      calc(var(--bt-top-inset, 0px) - 2 * #{token.$spacing_16} - #{token.$border_width_standard})
     );
   }
 
