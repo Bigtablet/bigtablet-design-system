@@ -15,3 +15,9 @@
 .text_balanced_line {
 	display: inline-block;
 }
+
+// BalancedText 의 어절 하나 - 엔진은 어절 안에서 끊지 않는다고 보고 줄을 계산한다. 브라우저는 코드와 바로 붙은
+// 조사 사이("`variant="preview"`면")에서도 끊어 그 가정이 깨진다 - inline-block 으로 맞춘다. 줄보다 길면 그 안에서 끊긴다
+.text_balanced_word {
+	display: inline-block;
+}

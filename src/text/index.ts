@@ -7,6 +7,7 @@ export {
 	type BreakChoice,
 	type Breaks,
 	chooseBreaks,
+	chooseWordBreaks,
 	type LayoutScore,
 	layoutBest,
 	layoutNative,

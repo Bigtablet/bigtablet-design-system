@@ -101,16 +101,21 @@ export function P({ children }: { children: ReactNode }) {
 }
 
 /**
- * 페이지 소개 문구 - 글자만이면 BalancedText 가 실제 폭으로 가장 자연스러운 줄바꿈을 고른다 (#1083).
- * 코드(`…`) · 굵게(**…**)가 섞이면 BalancedText 가 다루지 못해 Md(문장 묶기 · 어절 묶기)로 그린다
+ * 페이지 소개 문구 - BalancedText 가 실제 폭으로 가장 자연스러운 줄바꿈을 고른다 (#1083).
+ * 코드(`…`) · 굵게(**…**)도 그대로 넘긴다 - 그려진 폭을 재서 줄을 정한다. 굵게는 어절마다 <strong> 으로 나눠야
+ * 그 안에서도 줄을 바꿀 수 있다(요소 하나는 한 조각이다)
  */
 export function Lede({ text }: { text: string }) {
-	return /[`*]/.test(text) ? (
-		<p className="doc_lede">
-			<Md>{text}</Md>
-		</p>
-	) : (
-		<BalancedText as="p" className="doc_lede" text={text} />
+	return (
+		<BalancedText as="p" className="doc_lede">
+			{text.split(/\*\*([^*]+)\*\*/).flatMap((part, i) =>
+				part.split(/(`[^`]+`|\s+)/).map((chunk, j) => {
+					const key = `${i}-${j}`;
+					if (/^`.+`$/.test(chunk)) return <Code key={key}>{chunk.slice(1, -1)}</Code>;
+					return i % 2 && chunk.trim() ? <strong key={key}>{chunk}</strong> : chunk;
+				}),
+			)}
+		</BalancedText>
 	);
 }
 

@@ -12,6 +12,8 @@ export interface Word {
 	end: number;
 	/** 앞 조각과 공백으로 떨어져 있는가 - 아니면 같은 어절 안의 끊을 자리(한글 뒤 여는 괄호)다 */
 	spaceBefore: boolean;
+	/** 화면에서 잰 폭 - 있으면 `measure` 대신 쓴다. 코드 · 굵게처럼 글자만으로 폭을 알 수 없는 조각용 (BalancedText) */
+	width?: number;
 }
 
 /**
@@ -64,7 +66,7 @@ const lineWidth = (words: Word[], widths: number[], space: number, from: number,
  * 한 어절이 줄보다 길면 그 어절은 혼자 한 줄이다 (브라우저는 그 안을 다시 끊지만 여기서는 다루지 않는다)
  */
 export const layoutNative = (words: Word[], measure: MeasureText, maxWidth: number): Breaks => {
-	const widths = words.map((w) => measure(w.text));
+	const widths = words.map((w) => w.width ?? measure(w.text));
 	const space = measure(" ");
 	const breaks: Breaks = [];
 	let width = 0;
@@ -93,7 +95,7 @@ export const scoreBreaks = (
 	maxWidth: number,
 	breaks: Breaks,
 ): LayoutScore => {
-	const widths = words.map((w) => measure(w.text));
+	const widths = words.map((w) => w.width ?? measure(w.text));
 	const space = measure(" ");
 	const costs = breakCosts(words);
 	let penalty = 0;
@@ -141,7 +143,7 @@ export const layoutBest = (
 ): Breaks | null => {
 	const n = words.length;
 	if (n === 0 || lines < 1 || lines > n) return null;
-	const widths = words.map((w) => measure(w.text));
+	const widths = words.map((w) => w.width ?? measure(w.text));
 	const space = measure(" ");
 	const costs = breakCosts(words);
 	// cost[k][j] = 어절 0~j 를 k+1 줄에 담는 최소 비용, from[k][j] = 그 마지막 줄의 시작 어절
@@ -199,11 +201,20 @@ export interface BreakChoice {
  * 벌점이 낮아질 때만 바꾼다 - 줄 길이만 조금 고르게 하려고 브라우저 결과를 흔들지 않는다 (semantic-wrap `balance()`).
  * 줄보다 긴 어절이 있으면 손대지 않는다 - 그 어절은 브라우저가 글자 사이에서 끊어 예측이 맞지 않는다
  */
-export const chooseBreaks = (text: string, measure: MeasureText, maxWidth: number): BreakChoice => {
-	const words = toWords(text);
-	const native = layoutNative(words, measure, maxWidth);
+export const chooseBreaks = (text: string, measure: MeasureText, maxWidth: number): BreakChoice =>
+	chooseWordBreaks(toWords(text), measure, maxWidth);
+
+/** `chooseBreaks` 의 어절판 - 어절을 직접 만들었을 때(요소가 섞인 글, 화면에서 잰 폭 · 줄바꿈) */
+export const chooseWordBreaks = (
+	words: Word[],
+	measure: MeasureText,
+	maxWidth: number,
+	/** 브라우저가 실제로 그린 줄바꿈(화면에서 읽은 값) - 없으면 `layoutNative` 로 예측한다 */
+	native: Breaks = layoutNative(words, measure, maxWidth),
+): BreakChoice => {
 	const keep = { breaks: native, native, changed: false };
-	if (native.length === 0 || words.some((w) => measure(w.text) > maxWidth)) return keep;
+	if (native.length === 0 || words.some((w) => (w.width ?? measure(w.text)) > maxWidth))
+		return keep;
 	const best = layoutBest(words, measure, maxWidth, native.length + 1);
 	if (!best) return keep;
 	const a = scoreBreaks(words, measure, maxWidth, native);

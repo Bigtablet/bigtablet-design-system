@@ -14,9 +14,10 @@ describe("BalancedText (Chromium)", () => {
 		const { container } = render(
 			<BalancedText
 				as="p"
-				text={text}
 				style={{ width: 300, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
-			/>,
+			>
+				{text}
+			</BalancedText>,
 		);
 		const p = container.firstElementChild as HTMLElement;
 		const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
@@ -42,13 +43,35 @@ describe("BalancedText (Chromium)", () => {
 		const { container } = render(
 			<BalancedText
 				as="p"
-				text="저장했습니다. 계속할까요?"
 				style={{ width: 120, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
-			/>,
+			>
+				저장했습니다. 계속할까요?
+			</BalancedText>,
 		);
 		const p = container.firstElementChild as HTMLElement;
 		await new Promise((r) => setTimeout(r, 300));
 		expect(p.querySelector(".text_balanced_line")).toBeNull();
 		expect(p.textContent).toBe("저장했습니다. 계속할까요?");
+	});
+
+	it("measures code inside the text and keeps it whole", async () => {
+		const style = { font: "16px/24px sans-serif", wordBreak: "keep-all" as const, margin: 0 };
+		const { container } = render(
+			<BalancedText as="p" style={{ ...style, width: 2000 }}>
+				제목이면 <code>heading</code>, 본문이면 <code>body</code> 입니다.
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		// 한 줄일 때 잰 폭으로 "…body" 까지는 들어가고 "입니다." 는 넘치게 - 코드 글꼴이라 canvas 로는 못 잰다
+		const words = [...p.querySelectorAll(".text_balanced_word")];
+		const left = (words[0] as Element).getBoundingClientRect().left;
+		const upToBody = (words.at(-2) as Element).getBoundingClientRect().right - left;
+		const all = (words.at(-1) as Element).getBoundingClientRect().right - left;
+		p.style.width = `${Math.ceil((upToBody + all) / 2)}px`;
+
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		expect(lineTexts(p).some((line) => line?.endsWith("body"))).toBe(false);
+		expect(p.querySelectorAll("code")).toHaveLength(2);
+		expect(p.textContent).toBe("제목이면 heading, 본문이면 body 입니다.");
 	});
 });
