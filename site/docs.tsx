@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { renderPhrases, splitSentences } from "src/utils/sentences";
+import { renderPhrases, splitSentences } from "src/text";
 import { AGENT_RULES, componentDoc } from "./llms";
 import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";

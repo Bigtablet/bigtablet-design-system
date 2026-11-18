@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { renderSentences } from "./sentences";
+import { renderSentences } from "./index";
 
 // 붙여 둘 어절 묶음(#1077)이 실제 폭에서 어떻게 놓이는지 - jsdom 은 줄바꿈을 재지 못한다
 describe("phrase grouping (Chromium)", () => {
