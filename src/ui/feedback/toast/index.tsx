@@ -336,13 +336,14 @@ export const ToastProvider = ({
 			{isMounted &&
 				createPortal(
 					// 컨테이너는 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(닫기 · 액션 버튼 포함)를 감싸고
-					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다
-					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the landmark for the toast list
+					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다.
+					// 랜드마크는 토스트가 있을 때만 - 비어 있으면 스크린리더 랜드마크 목록에 빈 "알림" 이 늘 떴다 (#1059).
+					// 공지 영역은 첫 알림이 읽히도록 처음부터 둔다
+					// <section> 이 아니라 div + role - 포탈 안에서 섹션 중첩을 만들지 않는다
 					<div
 						className="toast_container"
 						data-placement={placement}
-						role="region"
-						aria-label={regionLabel}
+						{...(toasts.length > 0 && { role: "region", "aria-label": regionLabel })}
 					>
 						<ToastAnnouncer toasts={toasts} />
 						{toasts.map((item) => (
