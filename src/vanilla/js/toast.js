@@ -34,10 +34,6 @@ const ANNOUNCE_MS = 1000;
 /** 공지 영역을 막 만든 뒤 첫 공지까지 기다리는 시간 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 한다 */
 const ANNOUNCE_WARMUP_MS = 100;
 /**
- * 문구 한 줄을 공지 영역에 넣고 잠시 뒤 뺀다. 그 사이 토스트가 닫혔으면(isClosed) 넣지 않는다.
- * 리전의 `_btPending` 이 있으면(공지 영역을 막 만들었다) 거기 모았다가 준비되면 호출 순서대로 넣는다
- */
-/**
  * 토스트가 하나라도 있을 때만 리전을 이름 있는 랜드마크로 둔다 - 비어 있으면 스크린리더 랜드마크 목록에
  * 빈 "알림" 이 남았다 (#1059, React 와 같음). 공지 영역(announcer)은 첫 알림을 위해 그대로 둔다
  */
@@ -51,6 +47,10 @@ function syncLandmark(region) {
 	}
 }
 
+/**
+ * 문구 한 줄을 공지 영역에 넣고 잠시 뒤 뺀다. 그 사이 토스트가 닫혔으면(isClosed) 넣지 않는다.
+ * 리전의 `_btPending` 이 있으면(공지 영역을 막 만들었다) 거기 모았다가 준비되면 호출 순서대로 넣는다
+ */
 function announce(region, announcer, line, isClosed) {
 	if (region._btPending) {
 		region._btPending.push(() => announce(region, announcer, line, isClosed));
