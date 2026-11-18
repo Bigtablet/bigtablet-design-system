@@ -24,7 +24,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "json", "json-summary", "html"],
-			include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
+			include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}", "src/text/**/*.{ts,tsx}"],
 			// `.type-test.*` 는 tsc 가 검사하는 타입 단정 파일이다 - 실행되지 않으니 0% 로 잡혀 수치만 깎는다.
 			exclude: ["**/*.test.{ts,tsx}", "**/*.type-test.{ts,tsx}"],
 		},
