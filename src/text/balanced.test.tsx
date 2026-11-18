@@ -4,7 +4,7 @@ import { BalancedText } from "./balanced";
 
 // jsdom 은 canvas 가 없다 - 계산을 못 하면 글자 규칙만 건 원문 그대로 둔다 (SSR 첫 렌더와 같다)
 describe("BalancedText without canvas", () => {
-	it("renders the original text with phrase grouping and the given element", () => {
+	it("renders the original text as words under the root with a stable id", () => {
 		render(
 			<BalancedText as="h2" className="title">
 				이 아래의 컴포넌트에서 부릅니다
@@ -12,9 +12,11 @@ describe("BalancedText without canvas", () => {
 		);
 		const heading = screen.getByRole("heading", { level: 2 });
 		expect(heading).toHaveTextContent("이 아래의 컴포넌트에서 부릅니다");
-		expect(heading).toHaveClass("title");
+		expect(heading).toHaveClass("title", "text_balanced");
 		expect(heading.querySelector(".text_balanced_line")).toBeNull();
-		expect(heading.querySelector(".sentences_phrase")).toHaveTextContent("이 아래의 컴포넌트에서");
+		// 하이드레이션 전 스크립트가 `:nth-child(n of .text_balanced_word)` 로 세려면 어절이 루트 바로 아래여야 한다
+		expect(heading.querySelectorAll(":scope > .text_balanced_word")).toHaveLength(4);
+		expect(heading.getAttribute("data-balanced")).toBeTruthy();
 	});
 
 	it("keeps inline elements whole and glues text written right after them", () => {

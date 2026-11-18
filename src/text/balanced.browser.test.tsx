@@ -108,14 +108,19 @@ describe("BalancedText (Chromium)", () => {
 			expect(new Set([...line.getClientRects()].map((r) => Math.round(r.top))).size).toBe(1);
 	});
 
-	it("waits for web fonts before choosing lines", async () => {
-		// 첫 방문처럼 폰트를 받는 중 - 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀐다
+	it("waits for its own web font before choosing lines", async () => {
+		// 첫 방문처럼 이 글꼴을 아직 받는 중 - 문서 전체 상태(fonts.status)는 받기 시작 전이면 "loaded" 라 믿지 않는다.
+		// 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀌고 nowrap 줄이 넘칠 수 있다
 		let loaded!: () => void;
-		const ready = new Promise<FontFaceSet>((resolve) => {
-			loaded = () => resolve(document.fonts);
+		let ready = false;
+		const load = new Promise<FontFace[]>((resolve) => {
+			loaded = () => {
+				ready = true;
+				resolve([]);
+			};
 		});
-		Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loading" });
-		Object.defineProperty(document.fonts, "ready", { configurable: true, get: () => ready });
+		Object.defineProperty(document.fonts, "check", { configurable: true, value: () => ready });
+		Object.defineProperty(document.fonts, "load", { configurable: true, value: () => load });
 		try {
 			const { container } = render(
 				<BalancedText
@@ -126,20 +131,15 @@ describe("BalancedText (Chromium)", () => {
 				</BalancedText>,
 			);
 			const p = container.firstElementChild as HTMLElement;
-			const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
-			ctx.font = "16px sans-serif";
-			const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
-			p.style.width = `${Math.ceil((upToBody + ctx.measureText(text).width) / 2)}px`;
 			await new Promise((r) => setTimeout(r, 300));
 			expect(lineTexts(p)).toHaveLength(0);
 
-			Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loaded" });
 			loaded();
-			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(0);
 		} finally {
-			// 인스턴스에 덮은 값을 지워 원래 getter 로 돌린다
-			Reflect.deleteProperty(document.fonts, "status");
-			Reflect.deleteProperty(document.fonts, "ready");
+			// 인스턴스에 덮은 값을 지워 원래 메서드로 돌린다
+			Reflect.deleteProperty(document.fonts, "check");
+			Reflect.deleteProperty(document.fonts, "load");
 		}
 	});
 

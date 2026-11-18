@@ -145,6 +145,7 @@ screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새
 | `renderSentences(text)` · `renderPhrases(text)` | 위 규칙으로 span 을 넣은 React 노드 |
 | `Sentences` · `sentenceText` | 루트 export 와 같음 |
 | `BalancedText` | 실제 폭을 재서 가장 자연스러운 자리에서 줄을 바꾸는 글 - 제목 · 히어로 · 짧은 소개 문구용 (아래) |
+| `BalancedTextScript` · `balancedTextScript` | SSR 앱에서 하이드레이션 전에 서버 HTML 의 줄을 고르는 인라인 스크립트(컴포넌트 · 문자열) (아래) |
 | `chooseBreaks(text, measure, maxWidth)` · `createCanvasMeasurer(font)` | `BalancedText` 의 엔진. React 없음 - 글자만 있으면 canvas 로 재서 다른 렌더러에서도 씁니다. 고르는 기준(아래 벌점 값)은 minor 에서 바뀔 수 있습니다 |
 
 ```ts
@@ -168,7 +169,7 @@ phraseRanges("이 아래의 컴포넌트에서 부릅니다"); // [{ start: 0, e
 | 괄호 안 | 60 |
 | 붙여 둘 자리(`~의` · 관형사 · 서술어 · 의존명사), `·` 로 시작하는 줄, 영문 · 따옴표 · 괄호 뒤 띄어 쓴 조사("prop 을", `"복사" 로`) | 100 |
 
-- 첫 렌더(SSR 포함)는 붙여 둘 어절만 묶은 원문입니다. SSR 은 서버가 폭을 몰라 하이드레이션 뒤 한 번 바뀝니다. 폭이 바뀌는 동안은 브라우저 줄바꿈으로 돌아갔다가 멈추면(100ms) 다시 고릅니다
+- 첫 렌더(SSR 포함)는 원문 그대로입니다(`text-wrap: pretty` - 마지막 줄에 짧은 어절이 혼자 남지 않게). SSR 앱은 아래 `BalancedTextScript` 를 두면 하이드레이션 전에도 같은 줄로 보입니다. 폭이 바뀌는 동안은 브라우저 줄바꿈으로 돌아갔다가 멈추면(100ms) 다시 고릅니다
 - 고른 줄은 `<br>` 이 아니라 줄마다 `white-space: nowrap` 묶음으로 그립니다 - 복사한 글 · `textContent` · 페이지 검색(Ctrl+F)이 원문과 같습니다. 계산할 때 1px 여유를 둬 넘치지 않습니다
 - 폭이 내용으로 정해지는 상자(`table-layout: auto` 표의 칸 등)에서는 nowrap 줄이 열을 넓혀 버려, 그런 상자임을 알아채면 줄을 `inline-block` 으로 바꿔 그립니다 - 이때는 그 문단 안에서 줄 경계를 건너는 페이지 검색이 되지 않습니다. 열 폭을 정해 두면(`table-layout: fixed`) nowrap 으로 그립니다
 - 첫 렌더 뒤 그리기 전(`useLayoutEffect`)에 계산하고, 웹폰트를 받는 중이면 기다렸다 한 번만 고릅니다
@@ -187,6 +188,26 @@ import { BalancedText } from "@bigtablet/design-system/text";
   마크업 없이 <code>useConfirm</code> 훅으로 띄웁니다.
 </BalancedText>
 ```
+
+#### SSR - `BalancedTextScript`
+
+서버는 화면 폭을 몰라 서버 HTML 은 브라우저 줄바꿈입니다. `BalancedTextScript` 를 `<body>` 끝(BalancedText 들 뒤)에 한 번 두면, JS 를 받기 전에 서버 HTML 에서 같은 함수로 줄을 고르고 하이드레이션 뒤 `BalancedText` 가 그 줄을 그대로 넘겨받습니다. 클라이언트에서만 그리는 앱(CSR)에는 필요 없습니다.
+
+```tsx
+// app/layout.tsx (Next App Router)
+import { BalancedTextScript } from "@bigtablet/design-system/text";
+
+<body>
+  {children}
+  <BalancedTextScript nonce={nonce} />
+</body>
+```
+
+- React 가 그린 DOM 은 건드리지 않고 `<style>` 규칙만 넣습니다 - 하이드레이션이 어긋나지 않습니다
+- 칠하기 전에만 고릅니다. 글꼴을 아직 받는 중이면(첫 방문) 손대지 않고 하이드레이션이 고릅니다 - 이미 칠한 어절을 옮기면 레이아웃 이동(CLS)으로 잡히기 때문입니다. 본문 웹폰트를 `<link rel="preload">` 로 받아 두면 첫 방문에도 맞을 때가 많습니다
+- 스크립트 뒤에 오는 글(스트리밍으로 늦게 오는 부분) · `:nth-child(n of S)` 를 모르는 브라우저(Chrome 111 · Firefox 113 미만)는 하이드레이션 때 한 번 바뀝니다
+- 하이드레이션 전에 창 폭이 바뀌면 규칙을 걷어 브라우저 줄바꿈으로 둡니다
+- CSP 를 쓰면 `nonce` 를 넘깁니다. React 없이 HTML 에 넣을 때는 `balancedTextScript` 문자열을 `<script>` 안에 그대로 씁니다
 
 ---
 

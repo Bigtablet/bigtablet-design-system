@@ -47,6 +47,8 @@
 		"build:tailwind": "node scripts/build-tailwind.mjs",
 		"tokens": "node scripts/build-tokens.mjs",
 		"check:tokens": "node scripts/build-tokens.mjs --check",
+		"prehydrate": "node scripts/build-prehydrate.mjs",
+		"check:prehydrate": "node scripts/build-prehydrate.mjs --check",
 		"build:vanilla": "sh scripts/build-vanilla.sh",
 		"copy:scss": "sh scripts/copy-scss.sh",
 		"dev": "tsup --watch",
