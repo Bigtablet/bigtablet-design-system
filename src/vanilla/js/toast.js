@@ -70,7 +70,7 @@ function announce(region, announcer, line, isClosed) {
  * @param {string} message - 본문 (텍스트로 넣는다 - HTML 은 해석하지 않는다)
  * @param {"success"|"error"|"warning"|"info"|"neutral"} [tone="neutral"]
  * @param {Object} [options]
- * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity` 면 닫기 버튼·dismiss 로만 닫힌다
+ * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity`(또는 0 이하)면 닫기 버튼·dismiss 로만 닫힌다
  * @param {{label: string, onClick: Function}} [options.action] - 메시지 옆 텍스트 버튼. 누르면 실행 후 닫힌다
  * @param {string} [options.closeLabel="닫기"] - 닫기 버튼 aria-label
  * @param {string} [options.regionLabel="알림"] - 토스트 리전 이름. 리전을 처음 만들 때만 쓴다
@@ -189,8 +189,9 @@ export function Toast(message, tone = "neutral", options = {}) {
 	closeBtn.addEventListener("click", dismiss);
 	item.appendChild(closeBtn);
 
-	// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다
-	if (Number.isFinite(duration)) {
+	// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
+	// 0 이하도 같다 - 0ms 막대는 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071, React 와 같음)
+	if (Number.isFinite(duration) && duration > 0) {
 		const progress = document.createElement("div");
 		progress.className = `bt-toast__progress bt-toast__progress--${safeTone}`;
 		progress.style.setProperty("--bt-toast-duration", `${duration}ms`);

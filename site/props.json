@@ -2163,7 +2163,7 @@
 			"type": "number",
 			"required": false,
 			"default": "3000",
-			"doc": "자동 닫힘까지의 ms. `Infinity` 면 닫기 버튼·`dismiss` 로만 닫힌다: 진행 토스트용"
+			"doc": "자동 닫힘까지의 ms. `Infinity`(또는 0 이하)면 닫기 버튼·`dismiss` 로만 닫힌다: 진행 토스트용"
 		},
 		{
 			"name": "action",

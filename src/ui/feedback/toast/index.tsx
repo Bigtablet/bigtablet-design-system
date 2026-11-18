@@ -21,7 +21,7 @@ export interface ToastAction {
 }
 
 export interface ToastOptions {
-	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity` 면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
+	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity`(또는 0 이하)면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
 	duration?: number;
 	/** 메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다 */
 	action?: ToastAction;
@@ -131,7 +131,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	}, [item.dismissing, close]);
 
 	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
-	const autoDismisses = Number.isFinite(item.duration);
+	// 0 이하도 같다 - 0ms 진행 바는 animationend 로 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071)
+	const autoDismisses = Number.isFinite(item.duration) && item.duration > 0;
 
 	return (
 		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
