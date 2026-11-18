@@ -15,7 +15,9 @@ createRoot(document.getElementById("root")!).render(Comp ? <Comp /> : <p>예제�
 // 오버레이 예제(`open`) - 첫 버튼을 눌러 열린 모습을 보인다. iframe 안이라 스크롤 잠금이 문서 페이지에
 // 닿지 않는다 (#1060). 다만 모달이 여는 순간 첫 칸으로 옮기는 포커스는 iframe 째로 문서 포커스를 가져가
 // 페이지를 막 연 키보드 사용자가 iframe 안 포커스 가두기에 갇힌다 - 사람이 iframe 을 누르거나 키를 치기
-// 전까지는 focus() 를 막는다
+// 전까지는 focus() 를 막는다.
+// 한계: 그 사이엔 예제 · 컴포넌트의 focus() 가 모두 멈춘다 - Tab 으로 iframe 에 들어온 키보드 사용자는 첫 키부터
+// 모달 포커스 이동 · 가두기가 켜진다(Esc 로 닫힘). 문서 미리보기에서만 이렇고, a11y 테스트는 이 패치 없이 연다
 if (q.has("open")) {
 	const realFocus = HTMLElement.prototype.focus;
 	HTMLElement.prototype.focus = () => {};
