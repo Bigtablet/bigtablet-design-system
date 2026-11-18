@@ -36,6 +36,19 @@ describe("gapPenalty", () => {
 		expect(gapPenalty("body", "입니다.")).toBe(100);
 	});
 
+	it("leans a modifier and a compound noun toward the next word", () => {
+		expect(gapPenalty("붙이는", "순서입니다.")).toBe(6);
+		expect(gapPenalty("읽는", "문서가")).toBe(6);
+		expect(gapPenalty("같은", "모양으로")).toBe(6);
+		expect(gapPenalty("서버", "템플릿에서")).toBe(6);
+		expect(gapPenalty("디자인", "시스템의")).toBe(6);
+		// 주제 조사 · 목적격 조사 뒤는 보통
+		expect(gapPenalty("버튼은", "누르면")).toBe(4);
+		expect(gapPenalty("토큰을", "씁니다.")).toBe(4);
+		expect(gapPenalty("Esc", "닫기")).toBe(6);
+		expect(gapPenalty("prop", "을")).toBe(100);
+	});
+
 	it("keeps a · list together and never starts a line with ·", () => {
 		expect(gapPenalty("·", "Next.js")).toBe(8);
 		expect(gapPenalty("19", "·")).toBe(100);
@@ -102,12 +115,21 @@ describe("layoutBest", () => {
 });
 
 describe("scoreBreaks", () => {
-	it("charges a break inside parentheses like a no-space gap", () => {
+	it("charges a break inside parentheses above a no-space gap", () => {
 		const text = "글 마크업(h · p · ul · a …)에 타이포 규칙을 입힙니다.";
 		const words = toWords(text);
 		const at = (w: string) => words.findIndex((word) => word.text === w);
-		expect(scoreBreaks(words, measure, 1000, [at("ul")]).penalty).toBe(50);
-		expect(scoreBreaks(words, measure, 1000, [at("타이포")]).penalty).toBe(4);
+		expect(scoreBreaks(words, measure, 1000, [at("·")]).penalty).toBe(60);
+		expect(scoreBreaks(words, measure, 1000, [at("규칙을")]).penalty).toBe(4);
+	});
+});
+
+describe("list items", () => {
+	it("charges a split inside a · list item above a split between items", () => {
+		const words = toWords("포커스 트랩 · Esc 닫기 · 배경 잠금");
+		const at = (w: string) => words.findIndex((word) => word.text === w);
+		expect(scoreBreaks(words, measure, 1000, [at("Esc")]).penalty).toBe(10);
+		expect(scoreBreaks(words, measure, 1000, [at("트랩") + 1]).penalty).toBe(8);
 	});
 });
 

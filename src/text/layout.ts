@@ -110,15 +110,18 @@ export const scoreBreaks = (
 
 /**
  * 어절마다 그 뒤에서 끊는 벌점. 공백 없이 맞닿은 자리(괄호 앞뒤)는 끊을 수는 있어도 보기 싫어 높게 둔다 -
- * 브라우저 예측에는 넣되 엔진이 고르지는 않게. 괄호 안("(h · p · ul ·" / "a …)")도 같은 값이다 - 괄호 하나는 한 덩어리다
+ * 브라우저 예측에는 넣되 엔진이 고르지는 않게. 괄호 안("(h · p · ul ·" / "a …)")은 그보다 높다 - 괄호를 통째로 넘기는 쪽이 낫다
  */
 const breakCosts = (words: Word[]) => {
 	let depth = 0;
 	return words.map((word, i) => {
 		for (const ch of word.text) depth = Math.max(0, depth + (ch === "(" ? 1 : ch === ")" ? -1 : 0));
 		const next = words[i + 1];
-		if (next?.spaceBefore === false || depth > 0) return 50;
-		return gapPenalty(word.text, next?.text ?? "");
+		let penalty = gapPenalty(word.text, next?.text ?? "");
+		// 나열 항목 안("Esc 닫기 · …")은 항목 사이(8)보다 어색하다
+		if (penalty === 6 && (words[i - 1]?.text === "·" || words[i + 2]?.text === "·")) penalty = 10;
+		if (depth > 0) return Math.max(60, penalty);
+		return next?.spaceBefore === false ? Math.max(50, penalty) : penalty;
 	});
 };
 
