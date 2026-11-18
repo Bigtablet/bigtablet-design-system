@@ -93,7 +93,7 @@
 			}
 		},
 		{
-			"includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.stories.tsx", "site/**"],
+			"includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.stories.tsx"],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -111,6 +111,23 @@
 						"noStaticElementInteractions": "off",
 						"useValidAnchor": "off",
 						"useSemanticElements": "off"
+					},
+					"performance": {
+						"noImgElement": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["site/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noArrayIndexKey": "off",
+						"noShadowRestrictedNames": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
 					},
 					"performance": {
 						"noImgElement": "off"
