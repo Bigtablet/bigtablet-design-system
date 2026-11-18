@@ -9,3 +9,9 @@
 .sentences_phrase {
 	display: inline-block;
 }
+
+// BalancedText 가 고른 한 줄 (#1083) - 그 안에서는 끊지 않고 줄 사이 공백에서만 바뀐다.
+// inline-block 이라 측정이 어긋나 줄보다 길어지면 그 안에서 평소처럼 끊겨 넘치지 않는다
+.text_balanced_line {
+	display: inline-block;
+}
