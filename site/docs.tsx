@@ -429,7 +429,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 const firstSentence = (text: string) => text.split(/(?<=다\.)\s/)[0] ?? text;
 
 /** 컴포넌트 카드 - 첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명 */
-export function ComponentCard({ page }: { page: DocPage }) {
+export function ComponentCard({ page, theme }: { page: DocPage; theme: string }) {
 	const Preview = page.examples[0] && exampleOf(page.examples[0].id);
 	// 카드 전체를 <a> 로 감싸면 미리보기 안의 링크(Breadcrumb · 건너뛰기 링크)와 겹쳐 a 안에 a 가 된다.
 	// 링크는 제목 하나에 두고, 그 ::after 가 카드 전체를 덮어 어디를 눌러도 이동한다.
@@ -443,7 +443,7 @@ export function ComponentCard({ page }: { page: DocPage }) {
 					<div className="ov_scale ov_scale_frame">
 						<iframe
 							title={`${page.title} 미리보기`}
-							src={`preview.html?ex=${encodeURIComponent(page.examples[0].id)}&theme=${document.documentElement.dataset.theme ?? "system"}&bare&open`}
+							src={`preview.html?ex=${encodeURIComponent(page.examples[0].id)}&theme=${theme}&bare&open`}
 							loading="lazy"
 							tabIndex={-1}
 							className="ov_frame"
