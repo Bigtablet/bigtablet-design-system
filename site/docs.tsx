@@ -332,7 +332,7 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 				</h3>
 			)}
 			<div className="doc_table_wrap">
-				<table className="doc_table">
+				<table className="doc_table doc_props_table">
 					<thead>
 						<tr>
 							<th>Prop</th>

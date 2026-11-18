@@ -629,6 +629,44 @@ code {
   }
 }
 
+// props 표는 열 폭을 정해 둔다 - auto 면 설명 칸 폭이 내용으로 정해져, BalancedText 의 nowrap 줄이 열을 넓히고
+// inline-block 줄로 물러나 그 칸 안에서 페이지 검색이 줄 경계를 건너지 못한다 (#1083)
+.doc_props_table {
+  table-layout: fixed;
+
+  // 열 비율에 안쪽 여백까지 넣는다 - 아니면 칸마다 여백만큼 커져 설명 칸이 좁아진다
+  th {
+    box-sizing: border-box;
+  }
+
+  th:nth-child(1) {
+    width: 22%;
+  }
+
+  th:nth-child(2) {
+    width: 24%;
+  }
+
+  th:nth-child(3) {
+    width: 14%;
+  }
+
+  // 열이 고정이라 아주 긴 이름("selectableRangeUntilTodaySrText")은 칸 안에서 끊는다 - 95% 는 한 줄에 들어간다
+  td:first-child code {
+    white-space: normal;
+  }
+
+  // 구분 기호 없는 긴 이름("HTMLInputAutoCompleteAttribute")은 칸 안에서 글자 사이로 끊는다
+  td code {
+    overflow-wrap: anywhere;
+  }
+
+  // 따옴표 값("오늘까지 선택 가능")도 좁은 기본값 칸에서는 공백에서 줄을 바꾼다 - 넘치는 것보다 낫다
+  td:nth-child(3) .code_nobreak {
+    white-space: normal;
+  }
+}
+
 .doc_props_title {
   margin: token.$spacing_24 0 token.$spacing_8;
 
