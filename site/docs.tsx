@@ -114,14 +114,25 @@ export function Md({ children }: { children: string }) {
 				part
 			);
 		});
+	// JSDoc 이 강조에 쓰는 **굵게** - 별표가 그대로 보이지 않게
+	const rich = (text: string) =>
+		text
+			.split(/\*\*([^*]+)\*\*/)
+			.map((part, i) =>
+				i % 2 ? (
+					<strong key={i}>{inline(part)}</strong>
+				) : (
+					<Fragment key={i}>{inline(part)}</Fragment>
+				),
+			);
 	const sentences = splitSentences(children);
-	if (sentences.length < 2) return <>{inline(children)}</>;
+	if (sentences.length < 2) return <>{rich(children)}</>;
 	return (
 		<>
 			{sentences.map((s, i) => (
 				<Fragment key={s.start}>
 					{i > 0 && " "}
-					<span className="sentences_item">{inline(s.text)}</span>
+					<span className="sentences_item">{rich(s.text)}</span>
 				</Fragment>
 			))}
 		</>
@@ -294,7 +305,11 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 								</td>
 								<td>{"default" in p && p.default ? <DefaultValue value={p.default} /> : null}</td>
 								<td>
-									<Md>{p.doc.split("\n")[0] ?? ""}</Md>
+									{p.doc.split("\n\n").map((para) => (
+										<p key={para} className="doc_table_para">
+											<Md>{para}</Md>
+										</p>
+									))}
 								</td>
 							</tr>
 						))}
