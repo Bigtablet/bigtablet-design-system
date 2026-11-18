@@ -36,7 +36,8 @@
 			"name": "multiple",
 			"type": "boolean",
 			"required": false,
-			"doc": "여러 개 동시에 펼침 허용 (기본 false: 한 번에 하나)"
+			"default": "false",
+			"doc": "여러 개 동시에 펼침 허용: 한 번에 하나"
 		},
 		{
 			"name": "defaultOpenKeys",
@@ -95,8 +96,8 @@
 			"name": "bgColor",
 			"type": "string",
 			"required": false,
-			"default": "accent-default: 검정/흰색 테마 자동",
-			"doc": "색상"
+			"default": "accent-default",
+			"doc": "색상: 검정/흰색 테마 자동"
 		}
 	],
 	"BadgeProps": [
@@ -119,14 +120,14 @@
 			"type": "\"sm\" | \"md\" | \"lg\"",
 			"required": false,
 			"default": "\"md\"",
-			"doc": "사이즈. 웹 기본.: sm: 컴팩트 (아이콘 위 알림 dot, 모바일): md: 일반 웹 (admin/marketing): lg: 강조 (Hero 위 배지, 카테고리)"
+			"doc": "사이즈. 웹 기본.\n\nsm: 컴팩트 (아이콘 위 알림 dot, 모바일)\n\nmd: 일반 웹 (admin/marketing)\n\nlg: 강조 (Hero 위 배지, 카테고리)"
 		},
 		{
 			"name": "appearance",
 			"type": "\"solid\" | \"soft\"",
 			"required": false,
 			"default": "\"solid\"",
-			"doc": "시각 강도.: `solid`: 강한 fill bg + 흰/검 텍스트: 기존 동작 (notification dot, status emphasis): `soft`: tint 배경 + 진한 텍스트: 차분한 정보 라벨 (WCAG AA 통과)"
+			"doc": "시각 강도.\n\n`solid`: 강한 fill bg + 흰/검 텍스트: 기존 동작 (notification dot, status emphasis)\n\n`soft`: tint 배경 + 진한 텍스트: 차분한 정보 라벨 (WCAG AA 통과)"
 		},
 		{
 			"name": "count",
@@ -138,7 +139,8 @@
 			"name": "max",
 			"type": "number",
 			"required": false,
-			"doc": "count 최댓값 (기본 99)"
+			"default": "99",
+			"doc": "count 최댓값"
 		}
 	],
 	"DescriptionListItem": [
@@ -173,7 +175,7 @@
 			"type": "\"row\" | \"stack\"",
 			"required": false,
 			"default": "\"row\"",
-			"doc": "배치.: `row`: 이름 왼쪽, 값 오른쪽. 좁은 화면에서는 자동으로 쌓인다: `stack`: 항상 이름 위, 값 아래"
+			"doc": "배치.\n\n`row`: 이름 왼쪽, 값 오른쪽. 좁은 화면에서는 자동으로 쌓인다\n\n`stack`: 항상 이름 위, 값 아래"
 		},
 		{
 			"name": "divided",
@@ -181,6 +183,12 @@
 			"required": false,
 			"default": "false",
 			"doc": "항목 사이 구분선"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"StatProps": [
@@ -207,13 +215,19 @@
 			"type": "\"neutral\" | \"positive\" | \"negative\"",
 			"required": false,
 			"default": "\"neutral\"",
-			"doc": "변화량의 색.\n방향이 아니라 **좋음/나쁨**을 고른다: 재고 부족이 늘어난 것은 `negative` 다."
+			"doc": "변화량의 색. 방향이 아니라 **좋음/나쁨**을 고른다: 재고 부족이 늘어난 것은 `negative` 다."
 		},
 		{
 			"name": "icon",
 			"type": "ReactNode",
 			"required": false,
 			"doc": "라벨 왼쪽 장식 아이콘"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"TimelineItem": [
@@ -267,6 +281,12 @@
 			"type": "TimelineItem[]",
 			"required": true,
 			"doc": "위에서 아래로 흐르는 순서대로"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLOListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"EmptyStateProps": [
@@ -274,7 +294,7 @@
 			"name": "illustration",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "일러스트 영역 (아이콘/이미지 등). lucide 아이콘은 `size` 에 맞는 원형 배지에 올라가고 크기가\n고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다.\n**장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 포커스 가능한 요소\n(버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가 되므로(WCAG 4.1.2) `action` 을 쓸 것."
+			"doc": "일러스트 영역 (아이콘/이미지 등). lucide 아이콘은 `size` 에 맞는 원형 배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다. **장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 포커스 가능한 요소 (버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가 되므로(WCAG 4.1.2) `action` 을 쓸 것."
 		},
 		{
 			"name": "title",
@@ -298,13 +318,14 @@
 			"name": "size",
 			"type": "\"sm\" | \"md\" | \"lg\"",
 			"required": false,
-			"doc": "크기 (기본 \"md\")"
+			"default": "\"md\"",
+			"doc": "크기"
 		},
 		{
 			"name": "fillHeight",
 			"type": "boolean",
 			"required": false,
-			"doc": "부모 높이를 채우고 내용을 세로 중앙에 둔다 (`flex: 1` + `justify-content: center`).\n404 · 검색 결과 없음 · 빈 목록처럼 영역 한가운데 놓여야 하는 경우에 쓴다.\n**부모가 세로 flex 컨테이너여야 `flex: 1` 이 먹는다**: 아닌 경우 `height: 100%` 를 준 부모\n안에 두거나 부모를 `display: flex; flex-direction: column` 으로 만들 것."
+			"doc": "부모 높이를 채우고 내용을 세로 중앙에 둔다 (`flex: 1` + `justify-content: center`). 404 · 검색 결과 없음 · 빈 목록처럼 영역 한가운데 놓여야 하는 경우에 쓴다. **부모가 세로 flex 컨테이너여야 `flex: 1` 이 먹는다**: 아닌 경우 `height: 100%` 를 준 부모 안에 두거나 부모를 `display: flex; flex-direction: column` 으로 만들 것."
 		}
 	],
 	"ErrorStateProps": [
@@ -312,7 +333,8 @@
 			"name": "title",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "제목 (기본 \"문제가 발생했습니다\")"
+			"default": "\"문제가 발생했습니다\"",
+			"doc": "제목"
 		},
 		{
 			"name": "description",
@@ -324,7 +346,7 @@
 			"name": "icon",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). lucide 아이콘은 `variant` 에 맞는 원형\n배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다.\n**장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이\n이름 없는 bare lucide svg 라서, 빼면 `role=\"alert\"` 이 이름 없는 그래픽까지 읽는다.\n포커스 가능한 요소는 `action` 을 쓸 것 (WCAG 4.1.2)."
+			"doc": "아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). lucide 아이콘은 `variant` 에 맞는 원형 배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다. **장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이 이름 없는 bare lucide svg 라서, 빼면 `role=\"alert\"` 이 이름 없는 그래픽까지 읽는다. 포커스 가능한 요소는 `action` 을 쓸 것 (WCAG 4.1.2)."
 		},
 		{
 			"name": "action",
@@ -336,7 +358,8 @@
 			"name": "variant",
 			"type": "\"page\" | \"widget\"",
 			"required": false,
-			"doc": "레이아웃 모드 (기본 \"page\").: `page`: 전체 화면/영역 채움: error boundary fallback. 배지 96 / 아이콘 48 + 넉넉한 패딩 + min-height.: `widget`: 인라인 컴팩트: 위젯/카드 내부 error fallback. 배지 40 / 아이콘 20 + 좁은 패딩."
+			"default": "\"page\"",
+			"doc": "레이아웃 모드.\n\n`page`: 전체 화면/영역 채움: error boundary fallback. 배지 96 / 아이콘 48 + 넉넉한 패딩 + min-height.\n\n`widget`: 인라인 컴팩트: 위젯/카드 내부 error fallback. 배지 40 / 아이콘 20 + 좁은 패딩."
 		}
 	],
 	"InlineAlertProps": [
@@ -415,6 +438,24 @@
 			"type": "boolean",
 			"required": false,
 			"doc": ""
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
 		}
 	],
 	"BottomNavProps": [
@@ -422,7 +463,8 @@
 			"name": "ariaLabel",
 			"type": "string",
 			"required": false,
-			"doc": "스크린 리더 레이블 (기본 \"주요 메뉴\")"
+			"default": "\"주요 메뉴\"",
+			"doc": "스크린 리더 레이블"
 		},
 		{
 			"name": "children",
@@ -439,6 +481,12 @@
 			"doc": "표시 텍스트"
 		},
 		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": "클릭 시 이동할 URL. 없으면 현재 페이지로 간주"
+		},
+		{
 			"name": "onClick",
 			"type": "(e: MouseEvent<HTMLElement>) => void",
 			"required": false,
@@ -448,7 +496,7 @@
 			"name": "as",
 			"type": "ElementType",
 			"required": false,
-			"doc": "링크를 렌더할 요소. 라우터 `Link`(`next/link` 등)를 끼울 때 쓴다.\n\n`onClick` 에서 `preventDefault` + `router.push` 로도 되지만, 그러면 수정자 클릭\n(`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽어 소비처마다 그 검사를 다시 써야 하고\n프리페치·이동 가드처럼 `Link` 만 아는 것들은 표현할 수 없다.\n\n마지막 항목(현재 페이지)에는 적용되지 않는다: 그건 링크가 아니라 `aria-current` 텍스트다.\n`href` 없이 주면 무시된다(그 항목은 `<button>` 이다)."
+			"doc": "링크를 렌더할 요소. 라우터 `Link`(`next/link` 등)를 끼울 때 쓴다.\n\n`onClick` 에서 `preventDefault` + `router.push` 로도 되지만, 그러면 수정자 클릭 (`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽어 소비처마다 그 검사를 다시 써야 하고 프리페치·이동 가드처럼 `Link` 만 아는 것들은 표현할 수 없다.\n\n마지막 항목(현재 페이지)에는 적용되지 않는다: 그건 링크가 아니라 `aria-current` 텍스트다. `href` 없이 주면 무시된다(그 항목은 `<button>` 이다)."
 		}
 	],
 	"BreadcrumbProps": [
@@ -528,7 +576,8 @@
 			"name": "align",
 			"type": "\"start\" | \"end\"",
 			"required": false,
-			"doc": "정렬 (기본 \"start\")"
+			"default": "\"start\"",
+			"doc": "정렬"
 		}
 	],
 	"NavBarLocaleConfig": [
@@ -561,7 +610,7 @@
 			"type": "string",
 			"required": false,
 			"default": "현재 옵션의 label",
-			"doc": "locale 트리거 버튼의 접근성 이름.\n`hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.\n\n⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로,\n보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가\n보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반).: 없으면 `current` 대문자"
+			"doc": "locale 트리거 버튼의 접근성 이름. `hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.\n\n⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로, 보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가 보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반).: 없으면 `current` 대문자"
 		}
 	],
 	"NavBarLocaleOption": [
@@ -613,7 +662,8 @@
 			"name": "divider",
 			"type": "boolean",
 			"required": false,
-			"doc": "actions / locale 와 profile 사이 수직 divider 표시 (기본 true, profile 있을 때만 표시)"
+			"default": "true",
+			"doc": "actions / locale 와 profile 사이 수직 divider 표시: profile 있을 때만 표시"
 		},
 		{
 			"name": "variant",
@@ -640,6 +690,18 @@
 			"type": "boolean",
 			"required": false,
 			"doc": "현재 활성 페이지 여부"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"SidebarItemProps": [
@@ -647,7 +709,7 @@
 			"name": "disabled",
 			"type": "boolean",
 			"required": false,
-			"doc": "비활성. `<button>` 은 native `disabled`, 그 밖의 요소(anchor·`Link` 등)는\n`aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리한다: native `disabled` 가 없는\n요소에 그냥 넘기면 조용히 무시되고 비활성 항목이 눌린다."
+			"doc": "비활성. `<button>` 은 native `disabled`, 그 밖의 요소(anchor·`Link` 등)는 `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리한다: native `disabled` 가 없는 요소에 그냥 넘기면 조용히 무시되고 비활성 항목이 눌린다."
 		},
 		{
 			"name": "icon",
@@ -666,6 +728,24 @@
 			"type": "ReactNode",
 			"required": false,
 			"doc": "오른쪽 trailing (Badge 등)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
 		}
 	],
 	"SidebarProps": [
@@ -709,31 +789,36 @@
 			"name": "collapsible",
 			"type": "boolean",
 			"required": false,
-			"doc": "내장 collapse 토글 버튼 표시 (기본 true)"
+			"default": "true",
+			"doc": "내장 collapse 토글 버튼 표시"
 		},
 		{
 			"name": "toggleLabel",
 			"type": "string",
 			"required": false,
-			"doc": "토글 버튼 a11y label (기본 \"사이드바 토글\")"
+			"default": "\"사이드바 토글\"",
+			"doc": "토글 버튼 a11y label"
 		},
 		{
 			"name": "width",
 			"type": "number",
 			"required": false,
-			"doc": "너비 (기본 240px)"
+			"default": "240px",
+			"doc": "너비"
 		},
 		{
 			"name": "collapsedWidth",
 			"type": "number",
 			"required": false,
-			"doc": "collapsed 너비 (기본 64px)"
+			"default": "64px",
+			"doc": "collapsed 너비"
 		},
 		{
 			"name": "mode",
 			"type": "\"auto\" | \"static\"",
 			"required": false,
-			"doc": "반응형 모드 (기본 `\"auto\"`).: `\"auto\"`: viewport `< 600px` 에서 자동으로 하단 bar 로 변신.: `\"static\"`: 어떤 viewport 에서도 좌측 rail 유지 (admin desktop-only)."
+			"default": "\"auto\"",
+			"doc": "반응형 모드.\n\n`\"auto\"`: viewport `< 600px` 에서 자동으로 하단 bar 로 변신.\n\n`\"static\"`: 어떤 viewport 에서도 좌측 rail 유지 (admin desktop-only)."
 		}
 	],
 	"SidebarSectionProps": [
@@ -769,6 +854,12 @@
 			"type": "(index: number, step: StepperStep) => void",
 			"required": false,
 			"doc": "주면 모든 단계가 버튼이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` 다: 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하는 일이라 컴포넌트가 열지 않는다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLOListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"StepperStep": [
@@ -810,7 +901,8 @@
 			"name": "unmountInactive",
 			"type": "boolean",
 			"required": false,
-			"doc": "비활성 panel을 unmount 할지 (기본 true). false면 display: none으로 유지"
+			"default": "true",
+			"doc": "비활성 panel을 unmount 할지. false면 display: none으로 유지"
 		}
 	],
 	"TabProps": [
@@ -819,6 +911,12 @@
 			"type": "string",
 			"required": true,
 			"doc": "이 tab의 value"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
 		}
 	],
 	"TabsProps": [
@@ -873,7 +971,7 @@
 			"type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
 			"required": false,
 			"default": "\"bottom\"",
-			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로\n실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
+			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로 실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
 		},
 		{
 			"name": "open",
@@ -898,7 +996,7 @@
 			"name": "aria-label",
 			"type": "string",
 			"required": false,
-			"doc": "팝오버 접근성 레이블. `content` 에 제목이 없으면 이 값이 접근성 이름이 된다.\n폴백이 없으므로 `aria-labelledby` 와 함께 비우면 이름 없는 대화상자가 되고\naxe `aria-dialog-name` 이 잡는다."
+			"doc": "팝오버 접근성 레이블. `content` 에 제목이 없으면 이 값이 접근성 이름이 된다. 폴백이 없으므로 `aria-labelledby` 와 함께 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
 		},
 		{
 			"name": "aria-labelledby",
@@ -925,13 +1023,14 @@
 			"type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
 			"required": false,
 			"default": "\"top\"",
-			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로\n실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
+			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로 실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
 		},
 		{
 			"name": "delay",
 			"type": "number",
 			"required": false,
-			"doc": "hover 후 지연 시간 ms (기본 200)"
+			"default": "200",
+			"doc": "hover 후 지연 시간 ms"
 		},
 		{
 			"name": "disabled",
@@ -986,7 +1085,7 @@
 			"type": "\"accent\" | \"default\" | \"glass\" | \"outline\"",
 			"required": false,
 			"default": "\"default\"",
-			"doc": "카드 variant: \"accent\": inverted bg + white text (강조 카드): \"glass\": 반투명 + backdrop blur (컬러/이미지 배경 위에 권장): \"outline\": 투명 bg + 테두리만 (shadow 무시)"
+			"doc": "카드 variant\n\n\"accent\": inverted bg + white text (강조 카드)\n\n\"glass\": 반투명 + backdrop blur (컬러/이미지 배경 위에 권장)\n\n\"outline\": 투명 bg + 테두리만 (shadow 무시)"
 		},
 		{
 			"name": "interactive",
@@ -1007,6 +1106,12 @@
 			"required": false,
 			"default": "\"end\"",
 			"doc": "footer 정렬"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 div 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"ChipProps": [
@@ -1103,7 +1208,7 @@
 			"name": "pageSize",
 			"type": "number",
 			"required": false,
-			"doc": "한 쪽에 몇 행인지. 주면 행 선택 체크박스의 기본 라벨이 쪽마다 1 부터 다시 시작하지 않고\n전체 순번을 쓴다: 없으면 3쪽의 체크박스도 1쪽과 같은 \"1번째 행 선택\" 으로 읽힌다."
+			"doc": "한 쪽에 몇 행인지. 주면 행 선택 체크박스의 기본 라벨이 쪽마다 1 부터 다시 시작하지 않고 전체 순번을 쓴다: 없으면 3쪽의 체크박스도 1쪽과 같은 \"1번째 행 선택\" 으로 읽힌다."
 		},
 		{
 			"name": "onPageChange",
@@ -1141,7 +1246,7 @@
 			"name": "selectionActions",
 			"type": "DataViewSelectionAction[]",
 			"required": false,
-			"doc": "행을 선택했을 때 나타나는 액션. 지정하면 표에 체크박스 컬럼이 붙는다.\n선택 상태는 `DataView` 가 들고 있다."
+			"doc": "행을 선택했을 때 나타나는 액션. 지정하면 표에 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 들고 있다."
 		},
 		{
 			"name": "pagination",
@@ -1190,7 +1295,7 @@
 			"name": "selectRowAriaLabel",
 			"type": "(index: number, row: T) => string",
 			"required": false,
-			"doc": "행 선택 체크박스의 라벨. 첫 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based),\n둘째는 그 행의 데이터. 기본값은 순번만 읽어 주므로 행을 이름으로 구분하려면 둘째 인자를 쓴다."
+			"doc": "행 선택 체크박스의 라벨. 첫 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based), 둘째는 그 행의 데이터. 기본값은 순번만 읽어 주므로 행을 이름으로 구분하려면 둘째 인자를 쓴다."
 		},
 		{
 			"name": "selectionSummary",
@@ -1221,7 +1326,7 @@
 	"DataViewQuery": [
 		{
 			"name": "data",
-			"type": "T[] | undefined",
+			"type": "T[]",
 			"required": true,
 			"doc": "현재 페이지에 표시할 행"
 		},
@@ -1317,6 +1422,12 @@
 			"type": "() => void",
 			"required": false,
 			"doc": "클릭 핸들러"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": "href 사용 시 anchor로 렌더링"
 		}
 	],
 	"HeroProps": [
@@ -1350,7 +1461,7 @@
 			"name": "overlay",
 			"type": "HeroOverlay",
 			"required": false,
-			"doc": "텍스트 대비를 위한 오버레이.: `true`/\"dark\": 위→아래 검정 그라데이션: \"light\": 흰색 그라데이션"
+			"doc": "텍스트 대비를 위한 오버레이.\n\n`true`/\"dark\": 위→아래 검정 그라데이션\n\n\"light\": 흰색 그라데이션"
 		},
 		{
 			"name": "title",
@@ -1380,8 +1491,8 @@
 			"name": "textColor",
 			"type": "\"default\" | \"auto\" | \"inverse\"",
 			"required": false,
-			"default": "\"auto\": overlay가 dark면 white",
-			"doc": "텍스트 색상: 배경이 어두우면 흰색 권장"
+			"default": "\"auto\"",
+			"doc": "텍스트 색상: 배경이 어두우면 흰색 권장: overlay가 dark면 white"
 		},
 		{
 			"name": "primaryAction",
@@ -1402,6 +1513,24 @@
 			"type": "LucideIcon",
 			"required": true,
 			"doc": "lucide-react 아이콘 컴포넌트"
+		},
+		{
+			"name": "color",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `color` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "strokeWidth",
+			"type": "number | string",
+			"required": false,
+			"doc": "HTML `strokeWidth` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "size",
+			"type": "string | number",
+			"required": false,
+			"doc": "HTML `size` 속성을 그대로 넘깁니다"
 		}
 	],
 	"ListItemProps": [
@@ -1552,7 +1681,13 @@
 			"type": "\"md\" | \"lg\"",
 			"required": false,
 			"default": "\"md\"",
-			"doc": "본문 스케일.: `md`: 공지·FAQ·이메일 프리뷰처럼 좁은 폭에 들어가는 본문 (h1 24 / h2 20 / h3 18): `lg`: 약관·정책처럼 페이지를 채우는 긴 본문 (h1 28 / h2 24 / h3 20, 제목 위 여백도 넓다)"
+			"doc": "본문 스케일.\n\n`md`: 공지·FAQ·이메일 프리뷰처럼 좁은 폭에 들어가는 본문 (h1 24 / h2 20 / h3 18)\n\n`lg`: 약관·정책처럼 페이지를 채우는 긴 본문 (h1 28 / h2 24 / h3 20, 제목 위 여백도 넓다)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 div 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"TableColumn": [
@@ -1598,13 +1733,13 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "한 줄로 두고 넘치면 말줄임으로 자른다. 자동 렌더(문자열 값)면 전체 값을 `title` 로 단다.\n열 폭이 정해져야 잘리므로 `layout=\"fixed\"` + `width` 와 함께 쓴다: 시각 · IP 처럼 길이가 거의 같은 칸."
+			"doc": "한 줄로 두고 넘치면 말줄임으로 자른다. 자동 렌더(문자열 값)면 전체 값을 `title` 로 단다. 열 폭이 정해져야 잘리므로 `layout=\"fixed\"` + `width` 와 함께 쓴다: 시각 · IP 처럼 길이가 거의 같은 칸."
 		},
 		{
 			"name": "cardLabel",
 			"type": "string",
 			"required": false,
-			"doc": "`cards` 화면에서 칸 앞에 붙는 라벨. 없으면 `header` 가 문자열일 때 그 글자를 쓴다: `header` 가 아이콘 ·\n요소라면 이걸 줘야 카드에서 칸이 무슨 값인지 보인다 (칸 머리는 카드에서 화면 읽기용으로만 남는다)."
+			"doc": "`cards` 화면에서 칸 앞에 붙는 라벨. 없으면 `header` 가 문자열일 때 그 글자를 쓴다: `header` 가 아이콘 · 요소라면 이걸 줘야 카드에서 칸이 무슨 값인지 보인다 (칸 머리는 카드에서 화면 읽기용으로만 남는다)."
 		}
 	],
 	"TableProps": [
@@ -1670,7 +1805,7 @@
 			"type": "\"auto\" | \"fixed\"",
 			"required": false,
 			"default": "\"auto\"",
-			"doc": "열 너비 계산 방식.: `auto`: 브라우저가 내용 길이로 잰다: 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다: `fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다.\n  목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때"
+			"doc": "열 너비 계산 방식.\n\n`auto`: 브라우저가 내용 길이로 잰다: 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다\n\n`fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다. 목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때"
 		},
 		{
 			"name": "minWidth",
@@ -1683,7 +1818,7 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "좁은 화면(compact)에서 행을 카드로 쌓는다. 칸 머리는 화면 읽기용으로만 남고, 칸마다\n머리 글자(`header` 가 문자열일 때)를 라벨로 붙인다. 칸이 많아 가로로 넘치는 목록용"
+			"doc": "좁은 화면(compact)에서 행을 카드로 쌓는다. 칸 머리는 화면 읽기용으로만 남고, 칸마다 머리 글자(`header` 가 문자열일 때)를 라벨로 붙인다. 칸이 많아 가로로 넘치는 목록용"
 		},
 		{
 			"name": "ariaLabel",
@@ -1701,14 +1836,14 @@
 			"name": "onRowClick",
 			"type": "(item: T, index: number) => void",
 			"required": false,
-			"doc": "행 클릭 콜백. 주면 행이 키보드로도 동작한다: Enter/Space 로 열고 ↑↓ · PageUp/PageDown · Home/End 로 행을 옮기며, 포커스가\n어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다."
+			"doc": "행 클릭 콜백. 주면 행이 키보드로도 동작한다: Enter/Space 로 열고 ↑↓ · PageUp/PageDown · Home/End 로 행을 옮기며, 포커스가 어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다."
 		},
 		{
 			"name": "rowClickHint",
 			"type": "string",
 			"required": false,
 			"default": "\"클릭 가능한 행\"",
-			"doc": "clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다.\n행마다 셀 데이터가 이미 행을 식별하므로 여기엔 동작만 담으면 된다 (예: \"선택하면 상세 항목으로 이동\").\n`\"\"`(빈 문자열)로 두면 힌트를 붙이지 않는다.\n`aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label`/`role=\"button\"` 은 행/셀의\naccessible name 을 덮거나 셀을 presentational 로 만들어 스크린리더가 셀 데이터를 못 읽는다."
+			"doc": "clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다. 행마다 셀 데이터가 이미 행을 식별하므로 여기엔 동작만 담으면 된다 (예: \"선택하면 상세 항목으로 이동\"). `\"\"`(빈 문자열)로 두면 힌트를 붙이지 않는다. `aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label`/`role=\"button\"` 은 행/셀의 accessible name 을 덮거나 셀을 presentational 로 만들어 스크린리더가 셀 데이터를 못 읽는다."
 		},
 		{
 			"name": "sort",
@@ -1733,13 +1868,13 @@
 			"type": "(index: number, row: T) => string",
 			"required": false,
 			"default": "(i) => `${i+1}번째 행 선택`",
-			"doc": "개별 행 선택 체크박스 aria-label. 첫 인자는 `rowIndexOffset` 이 더해진 **전체 순번**, 둘째는\n그 행의 데이터: 번호 대신 이름으로 읽히게 할 때 쓴다"
+			"doc": "개별 행 선택 체크박스 aria-label. 첫 인자는 `rowIndexOffset` 이 더해진 **전체 순번**, 둘째는 그 행의 데이터: 번호 대신 이름으로 읽히게 할 때 쓴다"
 		},
 		{
 			"name": "rowIndexOffset",
 			"type": "number",
 			"required": false,
-			"doc": "이 표의 첫 행이 전체에서 몇 번째인지 (0-based, 기본 0). 서버 페이지네이션처럼 한 쪽만\n받아 그릴 때 준다.\n\n없으면 쪽마다 행 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은**\n\"1번째 행 선택\" 으로 읽힌다: 스크린리더 사용자는 쪽이 넘어갔는지도, 지금 누른 것이 어느\n행인지도 이름만으로는 구분할 수 없다."
+			"doc": "이 표의 첫 행이 전체에서 몇 번째인지 (0-based, 기본 0). 서버 페이지네이션처럼 한 쪽만 받아 그릴 때 준다.\n\n없으면 쪽마다 행 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** \"1번째 행 선택\" 으로 읽힌다: 스크린리더 사용자는 쪽이 넘어갔는지도, 지금 누른 것이 어느 행인지도 이름만으로는 구분할 수 없다."
 		},
 		{
 			"name": "selectable",
@@ -1832,7 +1967,7 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고\n취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능.\n(Material/shadcn/Radix 표준 패턴)"
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고 취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능. (Material/shadcn/Radix 표준 패턴)"
 		},
 		{
 			"name": "actionsAlign",
@@ -1851,7 +1986,7 @@
 			"name": "onConfirm",
 			"type": "() => unknown",
 			"required": false,
-			"doc": "확인 버튼 클릭 시 호출되는 콜백. Promise 를 돌려주면 끝날 때까지 알림이 열린 채 확인 버튼에\n스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힌다. 실패(reject)하면 열린 채 다시 시도할 수 있다."
+			"doc": "확인 버튼 클릭 시 호출되는 콜백. Promise 를 돌려주면 끝날 때까지 알림이 열린 채 확인 버튼에 스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힌다. 실패(reject)하면 열린 채 다시 시도할 수 있다."
 		},
 		{
 			"name": "onCancel",
@@ -1864,14 +1999,14 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "확인 버튼 잠금. 창 안 입력에 따라 바꾸려면 `showAlert` 가 돌려준 핸들의\n`update({ confirmDisabled })` 로: 옵션은 호출 시점에 한 번만 읽힌다. 잠긴 버튼은 포커스를 잃지 않게\n`aria-disabled` 로 막고, 클릭 · Enter 로 확인되지 않는다."
+			"doc": "확인 버튼 잠금. 창 안 입력에 따라 바꾸려면 `showAlert` 가 돌려준 핸들의 `update({ confirmDisabled })` 로: 옵션은 호출 시점에 한 번만 읽힌다. 잠긴 버튼은 포커스를 잃지 않게 `aria-disabled` 로 막고, 클릭 · Enter 로 확인되지 않는다."
 		},
 		{
 			"name": "closeOnOverlay",
 			"type": "boolean",
 			"required": false,
 			"default": "true",
-			"doc": "오버레이 클릭으로 닫기 허용 여부.\ndestructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+			"doc": "오버레이 클릭으로 닫기 허용 여부. destructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
 		}
 	],
 	"ConfirmOptions": [
@@ -1917,7 +2052,7 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고\n취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능.\n(Material/shadcn/Radix 표준 패턴)"
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고 취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능. (Material/shadcn/Radix 표준 패턴)"
 		},
 		{
 			"name": "actionsAlign",
@@ -1937,7 +2072,7 @@
 			"type": "boolean",
 			"required": false,
 			"default": "true",
-			"doc": "오버레이 클릭으로 닫기 허용 여부.\ndestructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+			"doc": "오버레이 클릭으로 닫기 허용 여부. destructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
 		}
 	],
 	"LinearProgressProps": [
@@ -2077,13 +2212,15 @@
 			"name": "color",
 			"type": "string",
 			"required": false,
-			"doc": "로딩바 색상 (기본: primary)"
+			"default": "primary",
+			"doc": "로딩바 색상"
 		},
 		{
 			"name": "height",
 			"type": "number",
 			"required": false,
-			"doc": "로딩바 높이 (기본: 3px)"
+			"default": "3px",
+			"doc": "로딩바 높이"
 		},
 		{
 			"name": "isLoading",
@@ -2116,6 +2253,48 @@
 			"type": "boolean",
 			"required": false,
 			"doc": "에러 상태 여부"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `defaultChecked` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "value",
+			"type": "string | readonly string[] | number",
+			"required": false,
+			"doc": "HTML `value` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `checked` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
 	"ComboboxOption": [
@@ -2155,7 +2334,7 @@
 			"name": "onSearch",
 			"type": "(query: string) => Promise<ComboboxOption[]>",
 			"required": true,
-			"doc": "검색어가 바뀔 때 호출. 서버에서 후보를 가져오는 자리다.\n`debounceMs` 만큼 기다린 뒤 호출되고, 늦게 도착한 응답은 버려진다."
+			"doc": "검색어가 바뀔 때 호출. 서버에서 후보를 가져오는 자리다. `debounceMs` 만큼 기다린 뒤 호출되고, 늦게 도착한 응답은 버려진다."
 		},
 		{
 			"name": "defaultOptions",
@@ -2323,7 +2502,7 @@
 		},
 		{
 			"name": "describeDay",
-			"type": "(date: string) => string | undefined",
+			"type": "(date: string) => string",
 			"required": false,
 			"doc": "날짜 이름 뒤에 붙일 설명 (\"일정 2개\"): 장식의 뜻을 스크린리더에 전한다"
 		},
@@ -2366,7 +2545,7 @@
 			"type": "\"dropdown\" | \"calendar\"",
 			"required": false,
 			"default": "\"dropdown\"",
-			"doc": "고르는 방식.: `\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.: `\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다.\n  `mode=\"year-month-day\"` 에서만 쓴다: `\"year-month\"` 면 달력이 고를 날이 없어 드롭다운으로 그린다."
+			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다. `mode=\"year-month-day\"` 에서만 쓴다: `\"year-month\"` 면 달력이 고를 날이 없어 드롭다운으로 그린다."
 		},
 		{
 			"name": "placeholder",
@@ -2411,7 +2590,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
 		},
 		{
 			"name": "fullWidth",
@@ -2424,13 +2603,13 @@
 			"type": "\"sm\" | \"md\" | \"lg\"",
 			"required": false,
 			"default": "\"md\"",
-			"doc": "칸 크기. Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다: sm · md 40px, lg 48px (좁은 화면은 한 단계 위)."
+			"doc": "칸 크기. Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다\n\nsm · md 40px, lg 48px (좁은 화면은 한 단계 위)."
 		},
 		{
 			"name": "clearable",
 			"type": "boolean",
 			"required": false,
-			"doc": "값이 있을 때 지우기(×) 버튼을 둔다: 누르면 `onValueChange(\"\")` (#965). 조회 조건처럼\n\"값 없음 = 조건 없음\" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다"
+			"doc": "값이 있을 때 지우기(×) 버튼을 둔다: 누르면 `onValueChange(\"\")` (#965). 조회 조건처럼 \"값 없음 = 조건 없음\" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다"
 		},
 		{
 			"name": "clearLabel",
@@ -2461,8 +2640,8 @@
 			"name": "minDateSrFormat",
 			"type": "string",
 			"required": false,
-			"default": "\"최소 날짜: {date}\"",
-			"doc": "minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.\n`{date}` 자리에 minDate 값이 치환됩니다."
+			"default": "\"최소 날짜",
+			"doc": "minDate 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 minDate 값이 치환됩니다.: {date}\""
 		},
 		{
 			"name": "selectableRangeUntilTodaySrText",
@@ -2553,7 +2732,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
 		},
 		{
 			"name": "fullWidth",
@@ -2628,7 +2807,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽\nDropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
 		},
 		{
 			"name": "size",
@@ -2677,7 +2856,7 @@
 			"name": "name",
 			"type": "string",
 			"required": false,
-			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어\n`<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
 		}
 	],
 	"DropdownOption": [
@@ -2730,25 +2909,25 @@
 			"type": "true",
 			"required": false,
 			"default": "false",
-			"doc": "다중 선택 모드\n다중 선택 모드"
+			"doc": "다중 선택 모드 다중 선택 모드"
 		},
 		{
 			"name": "value",
 			"type": "string[]",
 			"required": false,
-			"doc": "제어형 선택 값 목록\n제어형 선택 값"
+			"doc": "제어형 선택 값 목록 제어형 선택 값"
 		},
 		{
 			"name": "onValueChange",
 			"type": "(values: string[], options: DropdownOption[]) => void",
 			"required": false,
-			"doc": "값 변경 콜백 (canonical). 선택된 값 목록과 옵션 객체 목록을 전달합니다.\n값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다."
+			"doc": "값 변경 콜백 (canonical). 선택된 값 목록과 옵션 객체 목록을 전달합니다. 값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다."
 		},
 		{
 			"name": "defaultValue",
 			"type": "string[]",
 			"required": false,
-			"doc": "비제어형 초기 선택 값 목록\n비제어형 초기 선택 값"
+			"doc": "비제어형 초기 선택 값 목록 비제어형 초기 선택 값"
 		},
 		{
 			"name": "id",
@@ -2784,7 +2963,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽\nDropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
 		},
 		{
 			"name": "size",
@@ -2833,7 +3012,7 @@
 			"name": "name",
 			"type": "string",
 			"required": false,
-			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어\n`<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
 		}
 	],
 	"DropdownSingleProps": [
@@ -2896,7 +3075,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽\nDropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
 		},
 		{
 			"name": "size",
@@ -2945,7 +3124,7 @@
 			"name": "name",
 			"type": "string",
 			"required": false,
-			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어\n`<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
 		}
 	],
 	"FieldControl": [
@@ -2957,13 +3136,13 @@
 		},
 		{
 			"name": "labelId",
-			"type": "string | undefined",
+			"type": "string",
 			"required": true,
-			"doc": "라벨 요소의 id. `role=\"group\"` 컨테이너(DatePicker·OtpInput·RadioGroup)는 `htmlFor` 로\n연결되지 않으므로 이 값을 `aria-labelledby` 에 쓴다. 라벨이 없으면 undefined."
+			"doc": "라벨 요소의 id. `role=\"group\"` 컨테이너(DatePicker·OtpInput·RadioGroup)는 `htmlFor` 로 연결되지 않으므로 이 값을 `aria-labelledby` 에 쓴다. 라벨이 없으면 undefined."
 		},
 		{
 			"name": "describedBy",
-			"type": "string | undefined",
+			"type": "string",
 			"required": true,
 			"doc": "help·error 를 함께 가리키는 `aria-describedby` 값. 둘 다 없으면 undefined"
 		},
@@ -2997,7 +3176,7 @@
 			"name": "labelAction",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "라벨과 **같은 줄 오른쪽**에 놓는 조작 요소(토글·링크 버튼 등).\n\n`<label>` 안이 아니라 형제로 렌더된다: 라벨 클릭이 입력 포커스로 가는 동작과\n조작 요소 클릭이 겹치지 않아야 한다(`TextField` 의 `leadingIcon` 은 `aria-hidden`,\n`leadingAction` 은 아닌 것과 같은 구분)."
+			"doc": "라벨과 **같은 줄 오른쪽**에 놓는 조작 요소(토글·링크 버튼 등).\n\n`<label>` 안이 아니라 형제로 렌더된다: 라벨 클릭이 입력 포커스로 가는 동작과 조작 요소 클릭이 겹치지 않아야 한다(`TextField` 의 `leadingIcon` 은 `aria-hidden`, `leadingAction` 은 아닌 것과 같은 구분)."
 		},
 		{
 			"name": "required",
@@ -3015,7 +3194,7 @@
 			"name": "error",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "에러 메시지. 지정하면 `Form` 의 `errors[name]` 보다 우선한다.\n문자열이 아니어도 되지만 스크린리더가 읽으므로 텍스트를 권장한다."
+			"doc": "에러 메시지. 지정하면 `Form` 의 `errors[name]` 보다 우선한다. 문자열이 아니어도 되지만 스크린리더가 읽으므로 텍스트를 권장한다."
 		},
 		{
 			"name": "children",
@@ -3054,13 +3233,43 @@
 			"type": "\"button\" | \"preview\"",
 			"required": false,
 			"default": "\"button\"",
-			"doc": "표시 형태.: `\"button\"`: 일반 파일 선택 버튼. `preview=true` 면 아래에 작은 썸네일 표시.: `\"preview\"`: 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴). 단일 이미지."
+			"doc": "표시 형태.\n\n`\"button\"`: 일반 파일 선택 버튼. `preview=true` 면 아래에 작은 썸네일 표시.\n\n`\"preview\"`: 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴). 단일 이미지."
 		},
 		{
 			"name": "previewSize",
 			"type": "number",
 			"required": false,
 			"doc": "variant=\"preview\" 박스 크기 (px, 기본값: 160)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "accept",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `accept` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "multiple",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `multiple` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
 	"FilterBarProps": [
@@ -3075,7 +3284,7 @@
 			"type": "\"submit\" | \"instant\"",
 			"required": false,
 			"default": "submit",
-			"doc": "필터 적용 방식\n버튼과 Enter 로 적용하는 기본 모드\n필드 변경 핸들러가 즉시 적용하는 모드. 검색 버튼과 Enter 제출을 만들지 않는다"
+			"doc": "필터 적용 방식 버튼과 Enter 로 적용하는 기본 모드 필드 변경 핸들러가 즉시 적용하는 모드. 검색 버튼과 Enter 제출을 만들지 않는다"
 		},
 		{
 			"name": "onReset",
@@ -3157,21 +3366,21 @@
 			"name": "errors",
 			"type": "Record<string, ReactNode>",
 			"required": false,
-			"doc": "필드 이름 → 에러 메시지. 해당 `Field` 가 자기 이름으로 찾아 표시한다.\n서버 검증 실패(422) 응답을 필드에 꽂는 표준 경로다."
+			"doc": "필드 이름 → 에러 메시지. 해당 `Field` 가 자기 이름으로 찾아 표시한다. 서버 검증 실패(422) 응답을 필드에 꽂는 표준 경로다."
 		},
 		{
 			"name": "errorSummary",
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "폼 위에 에러 요약을 그린다. `errors` 에 값이 있으면 개수와 필드별 링크를 보이고,\n제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 **한 번** 읽힌다. 켜면 필드는\n`errors` 에서 온 에러를 따로 낭독하지 않는다: 여러 필드의 알림이 겹쳐 일부가 빠지던 것 (#993)"
+			"doc": "폼 위에 에러 요약을 그린다. `errors` 에 값이 있으면 개수와 필드별 링크를 보이고, 제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 **한 번** 읽힌다. 켜면 필드는 `errors` 에서 온 에러를 따로 낭독하지 않는다: 여러 필드의 알림이 겹쳐 일부가 빠지던 것 (#993)"
 		},
 		{
 			"name": "errorSummaryTitle",
 			"type": "ReactNode",
 			"required": false,
-			"default": "로케일 `form.errorSummary`: \"{count}개 항목을 확인해 주세요\"",
-			"doc": "요약 제목"
+			"default": "로케일 `form.errorSummary`",
+			"doc": "요약 제목: \"{count}개 항목을 확인해 주세요\""
 		},
 		{
 			"name": "onSubmit",
@@ -3249,6 +3458,12 @@
 		}
 	],
 	"ImageCropperProps": [
+		{
+			"name": "ref",
+			"type": "Ref<ImageCropperHandle>",
+			"required": false,
+			"doc": "크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop)."
+		},
 		{
 			"name": "src",
 			"type": "File | Blob | string",
@@ -3422,6 +3637,18 @@
 			"required": false,
 			"default": "\"md\"",
 			"doc": "라디오 버튼 크기. `RadioGroup` 안에서는 그룹 size 가 기본값."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
 		}
 	],
 	"RadioGroupProps": [
@@ -3689,14 +3916,15 @@
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": false,
-			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후)"
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
 		},
 		{
 			"name": "imeStrategy",
 			"type": "\"delayed\" | \"immediate\"",
 			"required": false,
 			"default": "\"delayed\"",
-			"doc": "IME 조합 중 콜백 전략.\n실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
 		},
 		{
 			"name": "value",
@@ -3720,7 +3948,8 @@
 			"name": "rows",
 			"type": "number",
 			"required": false,
-			"doc": "고정 행 수 (기본 3). `minRows`/`maxRows` 미지정 시 고정 높이.\nauto-grow 를 원하면 `minRows`/`maxRows` 사용."
+			"default": "3",
+			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
 		},
 		{
 			"name": "minRows",
@@ -3744,13 +3973,56 @@
 			"name": "resize",
 			"type": "\"vertical\" | \"none\" | \"both\"",
 			"required": false,
-			"doc": "resize 핸들 제어 (기본 \"vertical\")"
+			"default": "\"vertical\"",
+			"doc": "resize 핸들 제어"
 		},
 		{
 			"name": "toolbar",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는\n컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와\n구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
+			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLTextAreaElement>",
+			"required": false,
+			"doc": "textarea 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
 	"TextFieldProps": [
@@ -3801,37 +4073,37 @@
 			"name": "identifier",
 			"type": "boolean",
 			"required": false,
-			"doc": "식별자(아이디·인증코드·시리얼·사업자번호)를 담는 칸인지. 켜면 `l`/`I`/`1` 과 `0`/`O` 를\n구분되게 렌더한다: 사용자가 한 글자씩 옮겨 적는 값의 오탈자를 줄인다."
+			"doc": "식별자(아이디·인증코드·시리얼·사업자번호)를 담는 칸인지. 켜면 `l`/`I`/`1` 과 `0`/`O` 를 구분되게 렌더한다: 사용자가 한 글자씩 옮겨 적는 값의 오탈자를 줄인다."
 		},
 		{
 			"name": "leadingIcon",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "입력 필드 왼쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다.\n포커스 가능한 요소(버튼 등)를 넣어야 하면 `leadingAction` 을 쓸 것."
+			"doc": "입력 필드 왼쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다. 포커스 가능한 요소(버튼 등)를 넣어야 하면 `leadingAction` 을 쓸 것."
 		},
 		{
 			"name": "trailingIcon",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "입력 필드 오른쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다.\n포커스 가능한 요소(버튼 등)를 넣어야 하면 `trailingAction` 을 쓸 것."
+			"doc": "입력 필드 오른쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다. 포커스 가능한 요소(버튼 등)를 넣어야 하면 `trailingAction` 을 쓸 것."
 		},
 		{
 			"name": "leadingAction",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "입력 필드 왼쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다.\n아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
+			"doc": "입력 필드 왼쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
 		},
 		{
 			"name": "trailingAction",
 			"type": "ReactNode",
 			"required": false,
-			"doc": "입력 필드 오른쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다.\n아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
+			"doc": "입력 필드 오른쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
 		},
 		{
 			"name": "showPasswordToggle",
 			"type": "boolean",
 			"required": false,
-			"doc": "비밀번호 표시/숨기기 토글 버튼을 오른쪽에 내장한다.\n켜면 `type` 을 토글이 직접 관리한다: 숨김 상태는 넘긴 `type`(보통 `\"password\"`), 표시 상태는 `\"text\"`."
+			"doc": "비밀번호 표시/숨기기 토글 버튼을 오른쪽에 내장한다. 켜면 `type` 을 토글이 직접 관리한다: 숨김 상태는 넘긴 `type`(보통 `\"password\"`), 표시 상태는 `\"text\"`."
 		},
 		{
 			"name": "passwordToggleLabels",
@@ -3862,14 +4134,15 @@
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": false,
-			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후)"
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
 		},
 		{
 			"name": "imeStrategy",
 			"type": "\"delayed\" | \"immediate\"",
 			"required": false,
 			"default": "\"delayed\"",
-			"doc": "IME 조합 중 콜백 전략.\n실시간 구독(검색/필터) 이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독(검색/필터) 이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
 		},
 		{
 			"name": "value",
@@ -3888,6 +4161,60 @@
 			"type": "(value: string) => string",
 			"required": false,
 			"doc": "입력값 변환 함수 (예: 숫자만 허용, 대문자 변환)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "type",
+			"type": "HTMLInputTypeAttribute",
+			"required": false,
+			"doc": "HTML `type` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "autoComplete",
+			"type": "HTMLInputAutoCompleteAttribute",
+			"required": false,
+			"doc": "HTML `autoComplete` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
 	"TimePickerProps": [
@@ -3938,7 +4265,7 @@
 			"name": "required",
 			"type": "boolean",
 			"required": false,
-			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다.\n`role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
 		},
 		{
 			"name": "fullWidth",
@@ -3997,6 +4324,12 @@
 			"type": "string",
 			"required": true,
 			"doc": "토글 접근성 레이블(스크린 리더용)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "버튼 요소 참조"
 		}
 	],
 	"ButtonProps": [
@@ -4043,13 +4376,31 @@
 			"name": "danger",
 			"type": "boolean",
 			"required": false,
-			"doc": "위험한 액션 (삭제/취소 등): 빨간 강조.\nfilled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash."
+			"doc": "위험한 액션 (삭제/취소 등): 빨간 강조. filled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash."
 		},
 		{
 			"name": "disabled",
 			"type": "boolean",
 			"required": false,
-			"doc": "비활성화. button 은 native `disabled`, anchor 는 `aria-disabled`+`tabIndex=-1`+\n클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로)."
+			"doc": "비활성화. button 은 native `disabled`, anchor 는 `aria-disabled`+`tabIndex=-1`+ 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로)."
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
 		}
 	],
 	"CopyButtonProps": [
@@ -4070,7 +4421,7 @@
 			"name": "aria-label",
 			"type": "string",
 			"required": false,
-			"doc": "접근성 이름을 보이는 문구와 따로 줄 때 (#966). 표처럼 복사 버튼이 여럿이면 보이는 글자는 \"복사\" 로\n두고 이름은 `\"192.168.10.1 주소 복사\"` 처럼 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣는다\n(WCAG 2.5.3: 음성 입력이 보이는 글자로 버튼을 찾는다). 없으면 `label`"
+			"doc": "접근성 이름을 보이는 문구와 따로 줄 때 (#966). 표처럼 복사 버튼이 여럿이면 보이는 글자는 \"복사\" 로 두고 이름은 `\"192.168.10.1 주소 복사\"` 처럼 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣는다 (WCAG 2.5.3: 음성 입력이 보이는 글자로 버튼을 찾는다). 없으면 `label`"
 		},
 		{
 			"name": "copiedLabel",
@@ -4124,6 +4475,18 @@
 			"type": "(error: unknown) => void",
 			"required": false,
 			"doc": "실패 (권한 거부 · API 없음 · 폴백 실패)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
 		}
 	],
 	"IconButtonProps": [
@@ -4131,13 +4494,13 @@
 			"name": "aria-label",
 			"type": "string",
 			"required": false,
-			"doc": "아이콘 버튼의 접근성 이름 (필수)\n아이콘 버튼의 접근성 이름 (선택)"
+			"doc": "아이콘 버튼의 접근성 이름 (필수) 아이콘 버튼의 접근성 이름 (선택)"
 		},
 		{
 			"name": "aria-labelledby",
 			"type": "string",
 			"required": false,
-			"doc": "접근성 이름을 제공하는 요소 id (선택)\n접근성 이름을 제공하는 요소 id (필수)"
+			"doc": "접근성 이름을 제공하는 요소 id (선택) 접근성 이름을 제공하는 요소 id (필수)"
 		},
 		{
 			"name": "variant",
@@ -4158,6 +4521,24 @@
 			"type": "ReactNode",
 			"required": true,
 			"doc": "표시할 아이콘"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "루트 button 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "type",
+			"type": "\"button\" | \"submit\" | \"reset\"",
+			"required": false,
+			"doc": "HTML `type` 속성을 그대로 넘깁니다"
 		}
 	],
 	"PaginationProps": [
@@ -4197,14 +4578,14 @@
 			"type": "boolean",
 			"required": false,
 			"default": "false",
-			"doc": "현재 쪽 칸을 입력칸으로 바꿔, 번호를 적고 Enter 로 바로 가게 한다. 쪽이 수백·수천 개라\n이전·다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고,\n숫자가 아니면 이동하지 않고 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽 번호로 돌아간다"
+			"doc": "현재 쪽 칸을 입력칸으로 바꿔, 번호를 적고 Enter 로 바로 가게 한다. 쪽이 수백·수천 개라 이전·다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고, 숫자가 아니면 이동하지 않고 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽 번호로 돌아간다"
 		},
 		{
 			"name": "pageJumpLabel",
 			"type": "string",
 			"required": false,
-			"default": "\"현재 {page}쪽 - 이동할 쪽 번호 (1–{totalPages})\"",
-			"doc": "현재 쪽 입력칸의 `aria-label`"
+			"default": "\"현재 {page}쪽",
+			"doc": "현재 쪽 입력칸의 `aria-label`: 이동할 쪽 번호 (1–{totalPages})\""
 		},
 		{
 			"name": "onPageChange",
@@ -4262,7 +4643,8 @@
 			"name": "dismissible",
 			"type": "boolean",
 			"required": false,
-			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라\n따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는\n`closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
+			"default": "true",
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`, Escape 는 항상 켜짐."
 		},
 		{
 			"name": "showCloseIcon",
@@ -4281,25 +4663,25 @@
 			"name": "ariaLabel",
 			"type": "string",
 			"required": false,
-			"doc": "드로어 접근성 레이블. `title` 이 없을 때 이 값이 접근성 이름이 된다.\n둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
+			"doc": "드로어 접근성 레이블. `title` 이 없을 때 이 값이 접근성 이름이 된다. 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
 		},
 		{
 			"name": "initialFocusRef",
 			"type": "RefObject<HTMLElement | null>",
 			"required": false,
-			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는\n화면에서 쓴다: 검색 드로어의 검색 입력, 위험 확인 드로어의 \"취소\" 버튼. 패널 안에 붙어\n있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
+			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는 화면에서 쓴다: 검색 드로어의 검색 입력, 위험 확인 드로어의 \"취소\" 버튼. 패널 안에 붙어 있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
 		},
 		{
 			"name": "onExited",
 			"type": "() => void",
 			"required": false,
-			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다.\n`open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
+			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다. `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
 		},
 		{
 			"name": "disableAnimation",
 			"type": "boolean",
 			"required": false,
-			"doc": "슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. 기본값 `false`.\n화면 전체를 덮는 메뉴처럼 슬라이드가 디자인에 맞지 않는 곳에서 쓴다.\nOS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끈다."
+			"doc": "슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. 기본값 `false`. 화면 전체를 덮는 메뉴처럼 슬라이드가 디자인에 맞지 않는 곳에서 쓴다. OS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끈다."
 		}
 	],
 	"ModalProps": [
@@ -4326,7 +4708,8 @@
 			"name": "dismissible",
 			"type": "boolean",
 			"required": false,
-			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라\n따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는\n`closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
+			"default": "true",
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`, Escape 는 항상 켜짐."
 		},
 		{
 			"name": "width",
@@ -4377,19 +4760,19 @@
 			"name": "ariaLabel",
 			"type": "string",
 			"required": false,
-			"doc": "모달 접근성 레이블. `title` 이 없으면 이 값이 유일한 접근성 이름이다: 폴백이 없으므로\n둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
+			"doc": "모달 접근성 레이블. `title` 이 없으면 이 값이 유일한 접근성 이름이다: 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
 		},
 		{
 			"name": "initialFocusRef",
 			"type": "RefObject<HTMLElement | null>",
 			"required": false,
-			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는\n화면에서 쓴다: 검색 모달의 검색 입력, 위험 확인 모달의 \"취소\" 버튼. 패널 안에 붙어\n있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
+			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는 화면에서 쓴다: 검색 모달의 검색 입력, 위험 확인 모달의 \"취소\" 버튼. 패널 안에 붙어 있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
 		},
 		{
 			"name": "onExited",
 			"type": "() => void",
 			"required": false,
-			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다.\n`open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
+			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다. `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
 		}
 	],
 	"LocaleProviderProps": [
@@ -4467,6 +4850,12 @@
 			"required": false,
 			"default": "로케일 `appShell.skipLink`",
 			"doc": "\"본문으로 건너뛰기\" 링크 문구. 사이드바나 헤더가 있을 때만 그린다"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"ContainerProps": [
@@ -4475,13 +4864,26 @@
 			"type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"full\"",
 			"required": false,
 			"default": "\"xl\"",
-			"doc": "max-width 크기: sm: 640px | md: 768px | lg: 1024px | xl: 1200px | full: 100%"
+			"doc": "max-width 크기\n\nsm: 640px | md: 768px | lg: 1024px | xl: 1200px | full: 100%"
 		},
 		{
 			"name": "center",
 			"type": "boolean",
 			"required": false,
-			"doc": "가운데 정렬 (기본 true)"
+			"default": "true",
+			"doc": "가운데 정렬"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"GridProps": [
@@ -4522,7 +4924,20 @@
 			"name": "singleColOnMobile",
 			"type": "boolean",
 			"required": false,
-			"doc": "반응형: compact(< 600px)에서 강제 1열 (기본 true)"
+			"default": "true",
+			"doc": "반응형: compact(< 600px)에서 강제 1열"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"PageHeaderProps": [
@@ -4555,6 +4970,12 @@
 			"type": "ReactNode",
 			"required": false,
 			"doc": "제목 줄 아래에 붙는 영역. 보통 `TabList`"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"SectionProps": [
@@ -4563,14 +4984,26 @@
 			"type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\"",
 			"required": false,
 			"default": "\"md\"",
-			"doc": "수직 패딩 크기: xs: 32px | sm: 48px | md: 64px | lg: 96px | xl: 128px"
+			"doc": "수직 패딩 크기\n\nxs: 32px | sm: 48px | md: 64px | lg: 96px | xl: 128px"
 		},
 		{
 			"name": "bg",
 			"type": "\"accent\" | \"default\" | \"transparent\" | \"dim\" | \"inverted\"",
 			"required": false,
 			"default": "\"default\"",
-			"doc": "배경색 변형: default: bg-solid | dim: bg-solid-dim | accent: accent-subtle | inverted: accent-default (검정/흰색 반전)"
+			"doc": "배경색 변형\n\ndefault: bg-solid | dim: bg-solid-dim | accent: accent-subtle | inverted: accent-default (검정/흰색 반전)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	],
 	"StackProps": [
@@ -4605,6 +5038,18 @@
 			"type": "\"wrap\" | \"nowrap\" | \"wrap-reverse\"",
 			"required": false,
 			"doc": "flex-wrap"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
 		}
 	]
 }
