@@ -12,5 +12,5 @@ export const timeline: DocPage = {
 		["사용자가 밟아 가는 절차", "Stepper", false],
 	],
 	examples: [{ id: "timeline/order", title: "주문 추적" }],
-	props: "TimelineProps",
+	props: ["TimelineProps", "TimelineItem"],
 };

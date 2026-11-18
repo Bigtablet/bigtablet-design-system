@@ -16,6 +16,6 @@ export const segmentedControl: DocPage = {
 		{ id: "segmented-control/basic", title: "기본" },
 		{ id: "segmented-control/states", title: "비활성" },
 	],
-	props: "SegmentedControlProps",
+	props: ["SegmentedControlProps", "SegmentedControlItem"],
 	notes: ["native radio 기반이라 방향키 이동과 폼 제출을 브라우저가 처리합니다"],
 };

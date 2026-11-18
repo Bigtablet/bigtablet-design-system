@@ -13,5 +13,5 @@ export const mediaCard: DocPage = {
 		["페이지 첫 화면", "Hero", false],
 	],
 	examples: [{ id: "media-card/basic", title: "기본" }],
-	props: "MediaCardProps",
+	props: ["MediaCardProps", "MediaCardImage"],
 };

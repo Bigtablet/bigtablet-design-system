@@ -13,6 +13,6 @@ export const hero: DocPage = {
 		["관리 화면 제목", "PageHeader", false],
 	],
 	examples: [{ id: "hero/basic", title: "기본" }],
-	props: "HeroProps",
+	props: ["HeroProps", "HeroAction"],
 	notes: ["배경 이미지 위 글자는 `overlay` 로 대비를 맞춥니다"],
 };

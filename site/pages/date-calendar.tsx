@@ -14,6 +14,6 @@ export const dateCalendar: DocPage = {
 		["기간 고르기", "DateRangePicker", false],
 	],
 	examples: [{ id: "date-calendar/basic", title: "기본" }],
-	props: "DateCalendarProps",
+	props: ["DateCalendarProps", "DateCalendarDayInfo"],
 	notes: ['값은 `"YYYY-MM-DD"` 문자열입니다. `Date` 로 바꾸면 시간대 때문에 하루 밀릴 수 있습니다'],
 };

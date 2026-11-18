@@ -18,5 +18,5 @@ export const descriptionList: DocPage = {
 			desc: "`full` 인 항목은 한 줄을 다 씁니다.",
 		},
 	],
-	props: "DescriptionListProps",
+	props: ["DescriptionListProps", "DescriptionListItem"],
 };

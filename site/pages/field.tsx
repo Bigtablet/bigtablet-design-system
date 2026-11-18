@@ -25,7 +25,7 @@ export const field: DocPage = {
 			desc: "`errors` 에 이름으로 넘기면 첫 에러 칸으로 포커스가 갑니다. 가입을 눌러 봅니다.",
 		},
 	],
-	props: ["FieldProps", "FormProps", "FormActionsProps"],
+	props: ["FieldProps", "FormProps", "FormActionsProps", "FieldControl"],
 	notes: [
 		"Field 안에서는 입력에 `label` 을 주지 않습니다. 주면 라벨이 두 번 보입니다",
 		"Field 의 `error` 가 Form `errors[name]` 보다 우선합니다",

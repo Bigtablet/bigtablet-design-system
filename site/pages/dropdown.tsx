@@ -19,7 +19,7 @@ export const dropdown: DocPage = {
 		{ id: "dropdown/multiple-search", title: "여러 개 · 검색" },
 		{ id: "dropdown/states", title: "필수 · 비활성" },
 	],
-	props: ["DropdownSingleProps", "DropdownMultipleProps"],
+	props: ["DropdownSingleProps", "DropdownMultipleProps", "DropdownOption"],
 	notes: [
 		"목록은 `body` 로 포털로 렌더되어 `overflow: hidden` 부모에 잘리지 않습니다",
 		"트리거가 스크롤로 화면 밖에 나가면 목록이 닫힙니다",

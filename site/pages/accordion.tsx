@@ -13,6 +13,6 @@ export const accordion: DocPage = {
 		["보기를 바꾸는 탭", "Tabs", false],
 	],
 	examples: [{ id: "accordion/faq", title: "FAQ" }],
-	props: "AccordionProps",
+	props: ["AccordionProps", "AccordionItem"],
 	notes: ["제목은 `headingAs` 로 정한 제목 태그 안의 버튼이라, 문서 구조에 맞춰 h2~h6 을 고릅니다"],
 };

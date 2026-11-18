@@ -18,5 +18,5 @@ export const navBar: DocPage = {
 			desc: "좁은 화면에서는 링크 줄이 가로로 스크롤되고 현재 링크가 보이게 맞춥니다.",
 		},
 	],
-	props: ["NavBarProps", "NavLinkProps"],
+	props: ["NavBarProps", "NavLinkProps", "NavBarLocaleConfig", "NavBarLocaleOption"],
 };

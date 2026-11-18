@@ -15,5 +15,5 @@ export const dateRangePicker: DocPage = {
 		{ id: "date-range-picker/basic", title: "기본" },
 		{ id: "date-range-picker/states", title: "필수 · 비활성" },
 	],
-	props: "DateRangePickerProps",
+	props: ["DateRangePickerProps", "DateRange"],
 };
