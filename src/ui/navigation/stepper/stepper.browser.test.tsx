@@ -217,6 +217,39 @@ describe("Stepper on a phone (Chromium)", () => {
 		}
 		unmount();
 	});
+
+	const phoneSteps = [
+		{ id: "account", label: "계정", description: "이메일과 비밀번호" },
+		{ id: "profile", label: "프로필", description: "이름과 소속" },
+		{ id: "done", label: "완료" },
+	];
+	const shown = (el: Element) => el.getBoundingClientRect().width > 1;
+
+	// 지난 단계 버튼은 글이 화면에서 빠져도 이름이 남아야 눌러 돌아갈 수 있다
+	it("keeps the names of the step buttons whose text is hidden", () => {
+		const { container, unmount } = render(
+			<Stepper steps={phoneSteps} current={2} onStepClick={() => {}} />,
+		);
+		const back = screen.getByRole("button", { name: /계정/ });
+		expect(shown(back.querySelector(".stepper_label_text")!)).toBe(false);
+		expect(screen.getByRole("button", { name: /프로필/ })).toBeInTheDocument();
+		expect(container.querySelector(".stepper_step_active .stepper_label_text")!.textContent).toBe(
+			"완료",
+		);
+		unmount();
+	});
+
+	// 모두 마치면 지금 단계가 없다 - 글이 하나도 안 보이면 어느 절차였는지 알 수 없다
+	it("shows the last step's text once every step is done", () => {
+		const { container, unmount } = render(<Stepper steps={phoneSteps} current={3} />);
+		const steps = [...container.querySelectorAll(".stepper_step")];
+		expect(container.querySelector(".stepper_step_active")).toBeNull();
+		expect(shown(steps.at(-1)!.querySelector(".stepper_label_text")!)).toBe(true);
+		for (const step of steps.slice(0, -1)) {
+			expect(shown(step.querySelector(".stepper_label_text")!)).toBe(false);
+		}
+		unmount();
+	});
 });
 
 /** 두 줄에 걸친 어절 - 줄바꿈이 어절 사이에서만 일어나면 빈 배열이다. */

@@ -213,6 +213,14 @@ $text_offset: token.$spacing_4;
           gap: 0;
         }
       }
+
+      // 모두 마치면(current >= 단계 수) 지금 단계가 없다 - 그때는 마지막 단계 글을 보여 어디서 끝났는지 남긴다
+      &:not(:has(.stepper_step_active)) .stepper_step:last-child {
+        .stepper_label_text,
+        .stepper_description {
+          @include token.visually_hidden_reset;
+        }
+      }
     }
   }
 
