@@ -1,5 +1,9 @@
 @use "../../styles/token" as token;
 
+// 로고 줄 · 접기 토글 크기 - 토글을 로고 가운데 줄에 맞추는 계산이 쓴다 (#1091)
+$_brand_line: 28px;
+$_toggle_size: 24px;
+
 $_chevron_left: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>');
 $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>');
 
@@ -10,6 +14,9 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
    비활성은 aria-disabled="true". 접기 · 펼치기는 JS Sidebar() (data-bt-sidebar) 가 토글을 달고 --collapsed 를 붙인다 - 너비는 --bt-sidebar-width */
 .bt-sidebar {
   position: relative; // 접기 토글의 기준 (AppShell 안에서는 sticky 가 이 역할)
+  // 머리(로고) 가운데 줄 - 접기 토글을 여기 맞춘다. 위 여백 + 로고 줄(28px)의 절반. AppShell 이 다시 정한다 (React 와 같음, #1091)
+  --bt-sidebar-header-natural: calc(#{token.$spacing_20} + #{$_brand_line} / 2);
+  --bt-sidebar-header-center: var(--bt-sidebar-header-natural);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -26,7 +33,7 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    min-height: 28px;
+    min-height: $_brand_line;
     padding: token.$spacing_20 token.$spacing_16;
     border-bottom: token.$border_width_standard solid token.$color_border_default;
   }
@@ -134,14 +141,15 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   // 접기 토글 - 사이드바 오른쪽 가장자리에 반쯤 걸친 원 (React sidebar_collapse_btn)
   &__toggle {
     position: absolute;
-    top: token.$spacing_24;
-    right: -12px;
+    // 토글(24px) 가운데를 머리 가운데 줄에 - 24px 고정이면 로고와 어긋났다 (React sidebar_collapse_btn 과 같음)
+    top: calc(var(--bt-sidebar-header-center) - #{$_toggle_size} / 2);
+    right: calc(#{$_toggle_size} / -2);
     z-index: token.$z_content;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: $_toggle_size;
+    height: $_toggle_size;
     padding: 0;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: 50%;
@@ -176,6 +184,8 @@ $_chevron_right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000
   // ── 접힘 (React sidebar_collapsed) - 64px 레일, 아이콘만. 라벨 · 구역 제목은 스크린리더에 남긴다 ──
   &--collapsed {
     width: var(--bt-sidebar-collapsed-width, 64px);
+    // 접힌 머리는 위아래 여백이 16px - 가운데 줄도 올라간다
+    --bt-sidebar-header-natural: calc(#{token.$spacing_16} + #{$_brand_line} / 2);
 
     .bt-sidebar__brand {
       justify-content: center;

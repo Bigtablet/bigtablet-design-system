@@ -73,6 +73,22 @@ describe("Sidebar", () => {
 		expect(screen.getByText("Main")).toBeInTheDocument();
 	});
 
+	it("gives an icon-less item its first letter for the collapsed rail", () => {
+		// 접으면 라벨이 숨는다 - 아이콘이 없으면 빈 알약만 남아 첫 글자를 아이콘 자리에 둔다 (#1091)
+		const { container } = render(
+			<Sidebar collapsed>
+				<SidebarItem>대시보드</SidebarItem>
+				<SidebarItem icon={<svg />}>주문</SidebarItem>
+			</Sidebar>,
+		);
+		const initials = container.querySelectorAll(".sidebar_item_initial");
+		expect(initials).toHaveLength(1);
+		expect(initials[0]).toHaveAttribute("data-initial", "대");
+		expect(initials[0]).toHaveAttribute("aria-hidden", "true");
+		// 접근성 이름은 라벨 그대로
+		expect(screen.getByRole("button", { name: "대시보드" })).toBeInTheDocument();
+	});
+
 	it("applies collapsed class", () => {
 		const { container } = render(
 			<Sidebar collapsed>

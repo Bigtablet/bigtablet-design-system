@@ -37,6 +37,15 @@
       box-sizing: border-box;
       min-height: var(--bt-top-inset, 0px);
     }
+
+    // 머리가 헤더 높이로 늘면 그 가운데 줄도 내려간다 - 접기 버튼이 따라오게(Sidebar style.scss). 머리 높이 - 아래 선의 절반.
+    // 헤더가 머리보다 낮으면 머리는 원래 높이라 Sidebar 의 본래 가운데(--bt-sidebar-header-natural, 접힘도 따라감)를 쓴다
+    .app_shell:has(.app_shell_header) & .sidebar {
+      --bt-sidebar-header-center: max(
+        calc((var(--bt-top-inset, 0px) - #{token.$border_width_standard}) / 2),
+        var(--bt-sidebar-header-natural)
+      );
+    }
   }
 
   &_body {
