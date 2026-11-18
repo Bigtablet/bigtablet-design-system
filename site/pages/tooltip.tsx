@@ -12,7 +12,7 @@ export const tooltip: DocPage = {
 		["누를 수 있는 내용", "Popover", false],
 		["꼭 읽어야 하는 안내", "InlineAlert", false],
 	],
-	examples: [{ id: "tooltip/basic", title: "아이콘 버튼" }],
+	examples: [{ id: "tooltip/basic", open: true, frame: 160, title: "아이콘 버튼" }],
 	props: "TooltipProps",
 	notes: ["마우스 · 포커스에서만 뜨므로 꼭 알아야 하는 정보는 담지 않습니다"],
 };

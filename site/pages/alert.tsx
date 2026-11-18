@@ -16,6 +16,7 @@ export const alert: DocPage = {
 	examples: [
 		{
 			id: "alert/confirm",
+			open: true,
 			title: "확인 받기",
 			desc: "`await confirm(...)` 이 `true` / `false` 를 돌려줍니다.",
 		},

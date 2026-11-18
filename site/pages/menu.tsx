@@ -12,6 +12,14 @@ export const menu: DocPage = {
 		["값을 고르는 입력", "Dropdown", false],
 		["폼 같은 자유 내용", "Popover", false],
 	],
-	examples: [{ id: "menu/basic", title: "행 동작", desc: "`destructive` 항목은 빨간 글자입니다." }],
+	examples: [
+		{
+			id: "menu/basic",
+			open: true,
+			frame: 240,
+			title: "행 동작",
+			desc: "`destructive` 항목은 빨간 글자입니다.",
+		},
+	],
 	props: ["MenuProps", "MenuItem"],
 };

@@ -25,6 +25,11 @@ export interface DocPage {
 		desc?: string;
 		/** 화면 전체를 쓰는 예제(AppShell · 고정 바) - 전체 폭도 이 높이의 iframe 으로 */
 		frame?: number;
+		/**
+		 * 오버레이 예제 - 첫 버튼을 눌러 열린 모습을 보여 준다 (#1060). 스크롤 잠금 · 포커스 이동이 문서 페이지를
+		 * 건드리지 않게 늘 iframe(높이는 `frame`, 없으면 420)에서 연다
+		 */
+		open?: boolean;
 	}[];
 	/** 여러 개면 순서대로 표를 하나씩 (Tabs · TabList · Tab …) */
 	props?: PropsName | PropsName[];
@@ -146,6 +151,7 @@ function Example({
 	title,
 	desc,
 	frame,
+	open,
 	theme,
 	page,
 	playground,
@@ -177,7 +183,7 @@ function Example({
 						<div className="doc_demo_inline doc_demo_tuning" onClickCapture={stayOnPage}>
 							{pg.preview}
 						</div>
-					) : width === "full" && !frame ? (
+					) : width === "full" && !frame && !open ? (
 						<div className="doc_demo_inline" onClickCapture={stayOnPage}>
 							{Comp && <Comp />}
 						</div>
@@ -185,8 +191,9 @@ function Example({
 						<Frame
 							id={id}
 							width={width === "full" ? "100%" : Number(width)}
-							height={frame}
+							height={frame ?? (open ? OPEN_HEIGHT : undefined)}
 							theme={theme}
+							open={open}
 						/>
 					)}
 				</div>
@@ -242,17 +249,22 @@ function Example({
 	);
 }
 
+/** 열린 오버레이 예제의 iframe 높이 - 모달 · 드로어가 잘리지 않는 최소 */
+const OPEN_HEIGHT = 420;
+
 /** 좁은 폭은 iframe 으로 - 컴포넌트의 미디어 쿼리(600px 미만 등)가 실제로 걸린다 */
 function Frame({
 	id,
 	width,
 	height: fixed,
 	theme,
+	open,
 }: {
 	id: string;
 	width: number | string;
 	height?: number;
 	theme: string;
+	open?: boolean;
 }) {
 	const ref = useRef<HTMLIFrameElement>(null);
 	const [height, setHeight] = useState(160);
@@ -268,7 +280,7 @@ function Frame({
 		<iframe
 			ref={ref}
 			title={`${id} 미리보기`}
-			src={`preview.html?ex=${encodeURIComponent(id)}&theme=${theme}${fixed ? "&bare" : ""}`}
+			src={`preview.html?ex=${encodeURIComponent(id)}&theme=${theme}${fixed ? "&bare" : ""}${open ? "&open" : ""}`}
 			style={{ width, height: fixed ?? Math.max(height, 160) }}
 			className="doc_frame"
 		/>
@@ -425,7 +437,21 @@ export function ComponentCard({ page }: { page: DocPage }) {
 		<div className="ov_card">
 			{/* 미리보기는 그림 역할만 - 누르거나 포커스되지 않게 inert */}
 			<div className="ov_preview" inert>
-				<div className="ov_scale">{Preview && <Preview />}</div>
+				{page.examples[0]?.open ? (
+					// 오버레이는 열린 모습을 iframe 으로 - 이 페이지에서 열면 포탈 · 스크롤 잠금이 목록 페이지를 덮는다.
+					// inert 안이라 iframe 속 포커스 이동도 막힌다
+					<div className="ov_scale ov_scale_frame">
+						<iframe
+							title={`${page.title} 미리보기`}
+							src={`preview.html?ex=${encodeURIComponent(page.examples[0].id)}&theme=${document.documentElement.dataset.theme ?? "system"}&bare&open`}
+							loading="lazy"
+							tabIndex={-1}
+							className="ov_frame"
+						/>
+					</div>
+				) : (
+					<div className="ov_scale">{Preview && <Preview />}</div>
+				)}
 			</div>
 			<div className="ov_text">
 				<a href={`#/${page.slug}`} className="ov_title">
