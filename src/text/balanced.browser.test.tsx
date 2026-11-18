@@ -196,4 +196,30 @@ describe("BalancedText (Chromium)", () => {
 				p.getBoundingClientRect().right + 0.5,
 			);
 	});
+
+	it("does not mistake an outside resize right after drawing for its own growth", async () => {
+		// 줄이 그려지는 바로 그 순간 바깥 상자를 넓힌다 - 예전엔 2프레임 안 넓어짐을 모두 자기 탓으로 봐 inline-block 줄로 굳었다
+		const { container } = render(
+			<div style={{ width: 300 }}>
+				<BalancedText
+					as="p"
+					style={{ font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+				>
+					{`${text} 이 아래의 컴포넌트에서 부르고 글자 크기가 아니라 역할로 고릅니다.`}
+				</BalancedText>
+			</div>,
+		);
+		const box = container.firstElementChild as HTMLElement;
+		const p = box.firstElementChild as HTMLElement;
+		// 마운트 때 그리기 전에(layout effect) 줄을 고르므로 render() 가 돌아오면 이미 줄이 있다 - 같은 작업 안, 칠하기 전이다
+		expect(p.querySelector(".text_balanced_line")).not.toBeNull();
+		box.style.width = "420px";
+		await new Promise((r) => setTimeout(r, 500));
+		expect(p.querySelector(".text_balanced_line_boxed")).toBeNull();
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(0);
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(line.getBoundingClientRect().right).toBeLessThanOrEqual(
+				p.getBoundingClientRect().right + 0.5,
+			);
+	});
 });

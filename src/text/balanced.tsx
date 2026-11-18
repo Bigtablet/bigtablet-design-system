@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cn } from "../utils/cn";
 import type { SafeHTMLProps } from "../utils/safe-html";
 import { useSafeLayoutEffect } from "../utils/use-safe-layout-effect";
 import { gapPenalty } from "./core";
@@ -161,7 +162,12 @@ const MAX_PHRASE = 3;
  *   마크업 없이 <code>useConfirm</code> 훅으로 띄웁니다.
  * </BalancedText>
  */
-export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedTextProps) => {
+export const BalancedText = ({
+	children,
+	as: Tag = "span",
+	className,
+	...props
+}: BalancedTextProps) => {
 	const ref = React.useRef<HTMLElement>(null);
 	const { tokens, lead, tail } = tokenize(children);
 	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다
@@ -176,6 +182,10 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 	const breaks = chosen?.key === key ? chosen.breaks : null;
 	const boxed = chosen?.boxed ?? false;
 	const latest = React.useRef(tokens);
+	/** 지금 그린 줄을 고른 폭 */
+	const drawnFor = React.useRef(0);
+	/** 폭이 내용으로 정해지는 상자인가 - 한 번 알면 다시 고를 때도 inline-block 줄로 그린다 */
+	const contentSized = React.useRef(false);
 	latest.current = tokens;
 
 	// 그리기 전에 잰다 - useEffect 면 브라우저 줄바꿈으로 한 프레임 칠한 뒤 바뀌어 첫 진입 때 줄이 튄다
@@ -193,13 +203,6 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			);
 		};
 		let width = contentWidth();
-		/**
-		 * 고른 줄을 그린다. 내용에 맞춰 폭이 정해지는 상자(auto 표의 칸 · 폭 없는 flex 항목)는 nowrap 줄이 최소 폭을 키워
-		 * 상자가 넓어진다 - 그 변화에 다시 계산하면 브라우저 줄바꿈으로 돌아가 다시 좁아지고, 또 계산해 끝없이 오간다.
-		 * 그래서 그린 직후 상자가 넓어진 건 넘긴다(줄은 원래 폭에 맞췄으니 넓어진 상자에도 들어간다)
-		 */
-		let selfResize = false;
-		let contentSized = false;
 		let churn = 0;
 		let churnReset: ReturnType<typeof setTimeout> | undefined;
 		let gaveUp = false;
@@ -215,14 +218,8 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			churnReset = setTimeout(() => {
 				churn = 0;
 			}, 1000);
-			selfResize = true;
-			setChosen({ key, breaks, boxed: contentSized });
-			// ResizeObserver 는 그 프레임의 레이아웃 뒤에 불린다 - 두 프레임 뒤에는 우리 몫이 끝났다
-			requestAnimationFrame(() =>
-				requestAnimationFrame(() => {
-					selfResize = false;
-				}),
-			);
+			drawnFor.current = width;
+			setChosen({ key, breaks, boxed: contentSized.current });
 		};
 		/** 브라우저 줄바꿈 그대로 그려진 상태에서만 돈다 - 그 줄을 화면에서 읽어 기준으로 삼는다 */
 		const compute = () => {
@@ -309,21 +306,10 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 				? null
 				: new ResizeObserver(() => {
 						// 줄을 바꾸면 높이도 바뀌어 다시 불린다 - 폭이 그대로면 넘긴다
+						// 우리 줄이 넓힌 상자는 그리자마자(아래 layout effect) inline-block 으로 되돌려 이 시점엔 폭이 그대로다
 						const next = contentWidth();
 						if (next === width) return;
-						// 우리 줄이 상자를 넓힌 것 - 줄은 원래 폭에 맞췄으니 그대로 들어간다. 좁아진 건 늘 다시 고른다(넘치면 안 된다)
-						const grownBySelf = selfResize && next > width;
 						width = next;
-						// 우리 줄이 상자를 넓혔다 = 폭이 내용으로 정해지는 상자다. 이제부터 줄을 inline-block 으로 그려 최소 폭을
-						// 가장 긴 어절로 되돌린다(상자가 원래 폭으로 돌아오고, 그 변화로 다시 고른다). 그 상자 안에서만 페이지 검색이
-						// 줄 경계를 건너지 못한다
-						if (grownBySelf) {
-							if (!contentSized) {
-								contentSized = true;
-								setChosen((c) => (c ? { ...c, boxed: true } : c));
-							}
-							return;
-						}
 						recompute();
 					});
 		observer?.observe(el);
@@ -335,15 +321,30 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 		};
 	}, [key]);
 
-	// 그린 줄이 상자 밖으로 나가면(측정이 어긋난 경우) inline-block 줄로 바꾼다 - 그 안에서 줄이 바뀌어 넘치지 않는다
+	// 줄을 그린 직후, 칠하기 전에 본다 (#1083)
+	// - 상자가 넓어졌다: 폭이 내용으로 정해지는 상자(auto 표의 칸 · 폭 없는 flex 항목)다. nowrap 줄이 최소 폭을 줄 길이로 키운
+	//   것이다 - 같은 작업 안이라 바깥 리사이즈일 수 없다. 이 상자는 이제부터 inline-block 줄(최소 폭 = 가장 긴 어절)로 그려
+	//   폭을 원래대로 둔다. 그 상자 안에서만 페이지 검색이 줄 경계를 건너지 못한다
+	// - 줄이 상자 밖으로 나갔다(측정이 어긋남): inline-block 줄로 바꿔 그 안에서 줄이 바뀌게 한다
 	useSafeLayoutEffect(() => {
 		const el = ref.current;
 		if (!el || !breaks || boxed) return;
-		const right =
-			el.getBoundingClientRect().right - Number.parseFloat(getComputedStyle(el).paddingRight);
+		const style = getComputedStyle(el);
+		const inner =
+			el.clientWidth - Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight);
+		// 넓어졌으면 줄을 잠깐 inline-block 으로 바꿔 다시 잰다 - 좁아지면 우리 줄 탓이고, 그대로면 바깥에서 넓어진 것(RO 가 다시 고른다)
+		let grew = false;
+		if (inner > drawnFor.current + 0.5) {
+			const before = el.clientWidth;
+			el.classList.add("text_balanced_probe");
+			grew = el.clientWidth < before - 0.5;
+			el.classList.remove("text_balanced_probe");
+		}
+		const right = el.getBoundingClientRect().right - Number.parseFloat(style.paddingRight);
 		const lines = el.querySelectorAll(":scope > .text_balanced_line");
-		if ([...lines].some((line) => line.getBoundingClientRect().right > right + 0.5))
-			setChosen((c) => (c ? { ...c, boxed: true } : c));
+		const overflow = [...lines].some((line) => line.getBoundingClientRect().right > right + 0.5);
+		if (grew) contentSized.current = true;
+		if (grew || overflow) setChosen((c) => (c ? { ...c, boxed: true } : c));
 	}, [chosen]);
 
 	const word = (i: number) => {
@@ -409,7 +410,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 		}
 	}
 	return (
-		<Tag ref={ref} {...props}>
+		<Tag ref={ref} className={cn("text_balanced", className)} {...props}>
 			{lead}
 			{body}
 			{tail}
