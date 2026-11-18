@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""컴포넌트 폴더의 테스트·스토리 파일 이름이 폴더명과 같은 kebab-case 인지 검사한다.
+"""컴포넌트 폴더의 테스트 파일 이름이 폴더명과 같은 kebab-case 인지 검사한다.
 
 한동안 두 규칙이 섞여 있었다 - 테스트는 PascalCase 62개(`Button.test.tsx`)와
-kebab-case 14개로 갈렸고, 스토리는 폴더명 규칙을 지키고 있었다. 한 폴더 안에서 셋이
+kebab-case 14개로 갈렸고, 당시 스토리는 폴더명 규칙을 지키고 있었다. 한 폴더 안의 파일이
 같은 이름을 공유하면 목록에서 짝이 바로 보이고 폴더를 옮길 때 파일명을 따로 고칠 일이 없다:
 
     src/ui/display/data-view/
     ├── index.tsx
     ├── data-view.test.tsx
-    └── data-view.stories.tsx
+    └── data-view.browser.test.tsx
 
 **허용하는 두 형태**
 
-  {폴더명}.test.tsx / {폴더명}.stories.tsx   컴포넌트 자신의 테스트·스토리
+  {폴더명}.test.tsx / {폴더명}.browser.test.tsx   컴포넌트 자신의 테스트
   {소스파일명}.test.ts                        옆에 같은 이름의 소스가 있는 경우
                                              (`crop.util.ts` ↔ `crop.util.test.ts`)
 
@@ -30,7 +30,7 @@ from pathlib import Path
 
 UI = Path("src/ui")
 # `.browser.test.*` 를 먼저 - 짧은 `.test.tsx` 가 먼저 잡히면 stem 이 `tooltip.browser` 가 된다.
-SUFFIXES = (".browser.test.tsx", ".browser.test.ts", ".test.tsx", ".test.ts", ".stories.tsx", ".stories.ts")
+SUFFIXES = (".browser.test.tsx", ".browser.test.ts", ".test.tsx", ".test.ts")
 
 
 def stem_and_kind(name: str) -> tuple[str, str] | None:
@@ -78,7 +78,7 @@ def main() -> int:
         print("검사 대상 파일이 없다 - 구조가 바뀌었는지 보라", file=sys.stderr)
         return 1
     if problems:
-        print("테스트·스토리 파일 이름이 규약과 다르다:\n", file=sys.stderr)
+        print("테스트 파일 이름이 규약과 다르다:\n", file=sys.stderr)
         for problem in problems:
             print(f"  {problem}", file=sys.stderr)
         print(
@@ -89,7 +89,7 @@ def main() -> int:
         )
         return 1
 
-    print(f"테스트·스토리 파일 {checked}개 - 전부 폴더명과 같은 kebab-case 입니다.")
+    print(f"테스트 파일 {checked}개 - 전부 폴더명과 같은 kebab-case 입니다.")
     return 0
 
 

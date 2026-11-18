@@ -18,7 +18,7 @@ Bigtablet 제품을 만드는 UI 라이브러리입니다.<br />
   <a href="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Bigtablet/bigtablet-design-system/ci.yml?style=for-the-badge&color=10b981&labelColor=000" alt="ci" /></a>
 </p>
 
-[**문서**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Storybook](https://bigtablet.github.io/bigtablet-design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇺🇸 English](./README.md)
+[**문서**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[문서 사이트](https://bigtablet.github.io/bigtablet-design-system/)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇺🇸 English](./README.md)
 
 </div>
 
@@ -57,7 +57,7 @@ Bigtablet 사내 React + TypeScript 디자인 시스템입니다. 참고용으�
 - **토큰 도메인 13개** - colors · typography · spacing · motion · radius · elevation 등. SCSS 변수와 CSS 변수(custom property)를 함께 제공합니다 (SCSS 전용 `layout` 도메인은 별도)<br />
 - **라이트 · 다크 모드** 기본 내장 - `[data-theme="dark"]` 나 OS 설정(`prefers-color-scheme`)만으로 동작합니다. 화면에서 전환하려면 `ThemeProvider` 를 씁니다<br />
 - **Vanilla JS 번들** - Thymeleaf · JSP · PHP · Django 같은 서버 템플릿 환경에서도 씁니다<br />
-- **접근성 테스트** - CI 가 모든 스토리를 axe-core 로 검사합니다. 키보드 조작과 ARIA 속성을 갖췄습니다
+- **접근성 테스트** - CI 가 문서 사이트의 모든 예제를 axe-core 로 검사합니다. 키보드 조작과 ARIA 속성을 갖췄습니다
 
 <br />
 
@@ -193,13 +193,13 @@ React 없이 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다
 
 ```bash
 pnpm install
-pnpm storybook        # localhost:6006
+pnpm site             # 문서 사이트, localhost:6007
 pnpm test             # Vitest unit
-pnpm test:storybook   # a11y + Playwright
+pnpm test:browser     # a11y (문서 예제 axe) + 레이아웃, Playwright
 pnpm build            # tsup + SCSS copy
 ```
 
-배포된 Storybook 은 **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system)** 에 있고 `main` 기준으로 재배포됩니다.
+문서 사이트는 **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system/)** 에 있고 `main` 기준으로 재배포됩니다.
 
 <br />
 

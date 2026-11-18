@@ -1,4 +1,4 @@
-import { SegmentedControl, Tab, TabList, Tabs } from "@bigtablet/design-system";
+import { SegmentedControl, Tab, TabList, TabPanel, Tabs } from "@bigtablet/design-system";
 
 // 위는 Tabs variant="fills", 아래는 SegmentedControl - 하는 일이 다른데 거의 같아 보입니다
 export default function Example() {
@@ -10,6 +10,9 @@ export default function Example() {
 					<Tab value="reviews">후기</Tab>
 					<Tab value="qna">문의</Tab>
 				</TabList>
+				<TabPanel value="info">상품 정보</TabPanel>
+				<TabPanel value="reviews">후기 24건</TabPanel>
+				<TabPanel value="qna">문의 3건</TabPanel>
 			</Tabs>
 			<SegmentedControl
 				aria-label="보기 방식"

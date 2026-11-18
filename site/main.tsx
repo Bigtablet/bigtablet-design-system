@@ -97,7 +97,7 @@ function App() {
 				<a className="site_brand" href="#/">
 					{/* 로고만 - 링크 이름은 alt 가 맡는다 */}
 					<img
-						src="/images/logo/bigtablet.png"
+						src="images/logo/bigtablet.png"
 						alt="Bigtablet 디자인 시스템 홈"
 						width={84}
 						height={27}

@@ -33,8 +33,8 @@ cd bigtablet-design-system
 # 의존성 설치
 pnpm install
 
-# Storybook 실행
-pnpm storybook
+# 문서 사이트 실행 (http://localhost:6007)
+pnpm site
 
 # 테스트 실행
 pnpm test
@@ -56,14 +56,13 @@ pnpm build
 
 | 스크립트 | 설명 |
 |----------|------|
-| `pnpm storybook` | Storybook 개발 서버 (port 6006) |
+| `pnpm site` | 문서 사이트 개발 서버 (port 6007) |
 | `pnpm build` | 라이브러리 빌드 |
 | `pnpm dev` | Watch 모드 개발 |
 | `pnpm test` | 테스트 실행 |
 | `pnpm test:watch` | 테스트 Watch 모드 |
 | `pnpm test:coverage` | 커버리지 리포트 |
-| `pnpm test:storybook` | a11y 테스트 (Storybook + Playwright) |
-| `pnpm test:browser` | 레이아웃 테스트 (실제 Chromium, `*.browser.test.tsx`) |
+| `pnpm test:browser` | 레이아웃 테스트 + 문서 예제 a11y (실제 Chromium, `*.browser.test.tsx`) |
 | `pnpm exec biome check .` | 린트 · 포맷 · import 정렬 (ESLint/Prettier 대신 Biome) |
 | `pnpm exec tsc --noEmit` | TypeScript 타입 체크 |
 
@@ -92,25 +91,24 @@ develop 대상 PR 의 `Closes #` 는 GitHub 이 해석하지 않아 자동으로
 
 ### 3. 개발
 
-컴포넌트 개발 시 다음 구조를 따릅니다. **폴더 이름은 kebab-case** 로 짓고, 테스트·스토리 파일은 그 폴더명을 그대로 씁니다:
+컴포넌트 개발 시 다음 구조를 따릅니다. **폴더 이름은 kebab-case** 로 짓고, 테스트 파일은 그 폴더명을 그대로 씁니다:
 
 ```
 src/ui/{category}/{component-name}/
 ├── index.tsx                       # 컴포넌트 구현
 ├── style.scss                      # Global SCSS 스타일
-├── {component-name}.test.tsx       # 테스트
-└── {component-name}.stories.tsx    # Storybook (선택)
+└── {component-name}.test.tsx       # 테스트
 ```
 
 #### 새 컴포넌트 체크리스트
 
-- [ ] 폴더 `src/ui/{category}/{component-name}/` (kebab-case), 테스트 · 스토리 파일명은 폴더명과 같게
+- [ ] 폴더 `src/ui/{category}/{component-name}/` (kebab-case), 테스트 파일명은 폴더명과 같게
 - [ ] Props 는 `SafeHTMLProps<...>` 로 감싼 HTML 속성을 확장하고 `ref` 는 prop 으로 ([코드 컨벤션](#typescript))
 - [ ] 값은 토큰만, 인터랙션에는 모션 토큰과 `prefers-reduced-motion` 처리
 - [ ] 사용자에게 보이는 문구는 로케일 카탈로그로 (아래)
 - [ ] `src/index.ts` 에 export 추가 - 여기 없으면 소비자에게 보이지 않습니다
 - [ ] 단위 테스트, 배치 · 잘림이 중요하면 `*.browser.test.tsx`, 주요 상태는 visual `shoot` ([TESTING](./TESTING.md))
-- [ ] 스토리 title `Components/{Category}/{ComponentName}`, 설명은 한국어
+- [ ] 문서 사이트 페이지 `site/pages/{slug}.tsx` 와 예제 `site/examples/{slug}/*.tsx`, 설명은 한국어 - 예제는 a11y 검사를 받습니다
 - [ ] `docs/COMPONENTS.md` 섹션(언제 쓰는가 · 예제 · Props 표)과 `docs/AGENT_GUIDE.md` 카탈로그 행 - `check:defaults` · `check:agent-guide` 가 표와 소스를 대조합니다
 
 #### 스크롤되는 영역을 만들 때
@@ -167,17 +165,17 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 (Vanilla `-text`) 쪽을 씁니다. 고정 표면 위 텍스트(`_on_primary`·`_on_dark`·`_on_default`·
 `_on_container`)는 이름으로 예외 처리됩니다. 자세한 표는 [THEMING](./THEMING.md#status-색-배경용과-텍스트용을-구분합니다).
 
-a11y 스토리 러너는 라이트만 돌아 axe 가 이 결함을 못 잡습니다 - 그래서 정적 검사가 필요합니다.
+문서 예제 a11y 검사는 라이트만 돌아 axe 가 이 결함을 못 잡습니다 - 그래서 정적 검사가 필요합니다.
 
-### 파일명: 테스트·스토리는 폴더명을 따릅니다
+### 파일명: 테스트는 폴더명을 따릅니다
 
-컴포넌트 폴더 안의 세 파일이 같은 이름을 공유해야 합니다. `pnpm check:filenames` 가 **테스트·스토리 파일명**을 그 폴더명(또는 같은 폴더의 소스 파일명)과 대조합니다 - 폴더 이름 자체는 검사하지 않으므로 kebab-case 로 짓는 것은 규약으로 지킵니다:
+컴포넌트 폴더 안의 세 파일이 같은 이름을 공유해야 합니다. `pnpm check:filenames` 가 **테스트 파일명**을 그 폴더명(또는 같은 폴더의 소스 파일명)과 대조합니다 - 폴더 이름 자체는 검사하지 않으므로 kebab-case 로 짓는 것은 규약으로 지킵니다:
 
 ```
 src/ui/display/data-view/
 ├── index.tsx
 ├── data-view.test.tsx
-└── data-view.stories.tsx
+└── data-view.browser.test.tsx
 ```
 
 컴포넌트 이름(`DataView`)이 아니라 **폴더 이름**입니다. 목록에서 짝이 바로 보이고, 폴더를 옮길 때
@@ -191,21 +189,20 @@ src/ui/display/data-view/
 이 저장소가 `core.ignorecase=true` 이고 macOS 파일시스템이 대소문자를 구분하지 않아, 임시 이름을
 거친 2단계 `git mv` 가 필요합니다 - 한 번에 옮기면 git 이 같은 파일로 봅니다.
 
-### 스토리: deprecated prop 을 시연하지 않습니다
+### 예제: deprecated prop 을 시연하지 않습니다
 
-`pnpm check:deprecated` 가 막습니다. 스토리는 소비자가 **복사해 가는 자리**라, 폐기된 prop 을
+`pnpm check:deprecated` 가 문서 사이트 예제(`site/examples/{slug}/`)를 그 페이지 컴포넌트의 deprecated prop 과 대조해 막습니다. 예제는 소비자가 **복사해 가는 자리**라, 폐기된 prop 을
 쓰면 그대로 퍼집니다. 타입은 아직 살아 있어 `tsc` 가 잡지 못하고, 대체 prop 과 렌더 결과가 같아
-a11y 러너도 잡지 못합니다.
+a11y 검사도 잡지 못합니다.
 
-검사 방식은 문자열·주석을 지우고 `argTypes` 블록을 떼어낸 뒤 남은 곳에서 `prop=`(JSX 속성)과
-`prop:`(`args` 값)을 찾습니다. 그래서 **`argTypes` 에 deprecated 임을 적어 두는 것은 위반이 아닙니다** -
-props 표에 이유를 남기는 쪽이 오히려 옳습니다.
+검사 방식은 문자열·주석을 지운 뒤 남은 곳에서 `prop=`(JSX 속성)과 `prop:`(객체 값)을 찾습니다.
+그래서 설명 문자열이나 주석에서 deprecated 를 언급하는 것은 위반이 아닙니다.
 
-일부러 시연해야 하면(구 prop 이 아직 동작함을 보이는 마이그레이션 스토리 등) 그 줄이나 윗줄에
+일부러 시연해야 하면(구 prop 이 아직 동작함을 보이는 마이그레이션 예제 등) 그 줄이나 윗줄에
 이유를 적습니다:
 
 ```tsx
-// deprecated-ok: 구 prop 이 아직 동작함을 보이는 스토리
+// deprecated-ok: 구 prop 이 아직 동작함을 보이는 예제
 <Toggle onChange={setOn} ariaLabel="알림" />
 ```
 
@@ -229,7 +226,7 @@ type PaginationCallbacks =
 
 #### 문서를 고칠 때
 
-- `README.md` 는 영어, `README_KR.md` · `docs/` · Storybook 설명은 한국어로 씁니다. 두 README 는 같은 내용을 유지합니다
+- `README.md` 는 영어, `README_KR.md` · `docs/` · 문서 사이트 설명은 한국어로 씁니다. 두 README 는 같은 내용을 유지합니다
 - 한국어 문서는 '~합니다' 체로 씁니다. 코드 블록 · 코드 주석은 예외입니다
 - 해야 할 일을 먼저 쓰고, 이유 · 이력(이슈 번호, 실측, 바뀐 버전)은 뒤에 두거나 `<details>` 로 접습니다
 - 제목을 바꾸면 그 앵커를 가리키는 링크도 함께 고칩니다
@@ -493,11 +490,11 @@ gh pr create --base develop --title "feat/foo" --label Feature --assignee @me --
 ## 작업한 내용
 
 - [x] Foo 컴포넌트 구현
-- [x] 단위 테스트 · 스토리 추가
+- [x] 단위 테스트 · 문서 예제 추가
 
 ## 검증
 
-- unit 통과, storybook a11y 통과
+- unit 통과, browser(레이아웃 · 예제 a11y) 통과
 
 ## 전달할 추가 이슈
 

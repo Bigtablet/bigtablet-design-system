@@ -96,19 +96,18 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
 
 ## 비슷한 컴포넌트 고르기
 
-자주 헷갈리는 묶음은 Storybook 문서 첫머리에 비교표가 있습니다. 묶음 안 어느 컴포넌트 문서에서나 같은 표가 보입니다.
+자주 헷갈리는 묶음은 문서 사이트의 각 컴포넌트 페이지 "언제 쓰는가" 표에서 비교합니다.
 
 | 고민 | 비교표 |
 |------|------|
-| Badge · Chip · TagInput | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-display-badge--docs) |
-| Spinner · Skeleton · LinearProgress · TopLoading | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-feedback-spinner--docs) |
-| Alert · InlineAlert · Toast | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-feedback-alert--docs) |
-| DatePicker · DateRangePicker · TimePicker | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-datepicker--docs) |
-| Checkbox · Radio · RadioGroup · Toggle · SegmentedControl | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-radiogroup--docs) |
-| FileInput · ImageCropper | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-forms-fileinput--docs) |
-| Sidebar · NavBar · BottomNav | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-navigation-sidebar--docs) |
-| Menu · Popover · Tooltip | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/components-overlay-popover--docs) |
-| 입력 컨트롤 전체 | [Storybook](https://bigtablet.github.io/bigtablet-design-system/?path=/docs/foundation-form-comparison--docs) |
+| Badge · Chip · TagInput | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/badge) |
+| Spinner · Skeleton · LinearProgress · TopLoading | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/spinner) |
+| Alert · InlineAlert · Toast | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/alert) |
+| DatePicker · DateRangePicker · TimePicker | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/date-picker) |
+| Checkbox · Radio · RadioGroup · Toggle · SegmentedControl | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/radio-group) |
+| FileInput · ImageCropper | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/file-input) |
+| Sidebar · NavBar · BottomNav | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/sidebar) |
+| Menu · Popover · Tooltip | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/popover) |
 
 Modal · Button · TextField · Table · Dropdown 은 이 문서 각 섹션의 "언제 쓰는가" 표를 봅니다.
 
@@ -4321,7 +4320,7 @@ import { MediaCard } from "@bigtablet/design-system";
 | 검색 결과 없음 | ✅ EmptyState `size="sm"` |
 | 권한 없어서 못 봄 | ✅ EmptyState (illustration: Lock 아이콘) |
 | 로딩 중 | ❌ [Spinner](#spinner) 또는 Skeleton 권장 |
-| 페이지 없음 (404) | ✅ EmptyState `size="lg"` + `fillHeight` (스토리 `404 (페이지 없음)`) |
+| 페이지 없음 (404) | ✅ EmptyState `size="lg"` + `fillHeight`  |
 | 불러오기 실패 · 서버 · 네트워크 오류 (500 등) | ❌ [ErrorState](#errorstate) - 재시도 버튼을 붙일 수 있습니다 |
 
 **EmptyState vs ErrorState vs InlineAlert**

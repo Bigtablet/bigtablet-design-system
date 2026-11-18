@@ -24,6 +24,22 @@ describe("Badge", () => {
 		expect(dot).toHaveClass("badge_shape_dot");
 		expect(dot).toHaveClass("badge_variant_error");
 		expect(dot.textContent).toBe("");
+		expect(dot).not.toHaveAttribute("role");
+	});
+
+	it("reads a labelled dot as an image", () => {
+		render(<Badge shape="dot" tone="success" aria-label="온라인" />);
+		expect(screen.getByRole("img", { name: "온라인" })).toHaveClass("badge_shape_dot");
+	});
+
+	it("reads a dot named by aria-labelledby as an image", () => {
+		render(
+			<>
+				<span id="status">자리 비움</span>
+				<Badge shape="dot" tone="warning" aria-labelledby="status" />
+			</>,
+		);
+		expect(screen.getByRole("img", { name: "자리 비움" })).toHaveClass("badge_shape_dot");
 	});
 
 	it("applies tone class", () => {

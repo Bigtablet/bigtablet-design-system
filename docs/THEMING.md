@@ -21,7 +21,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
 - [컴포넌트 마운트 수명](#컴포넌트-마운트-수명)
 - [오버레이 스크롤 잠금과 `--bt-scrollbar-width`](#오버레이-스크롤-잠금과---bt-scrollbar-width)
 - [자동완성(autofill) 입력칸](#자동완성autofill-입력칸)
-- [Storybook](#storybook)
+- [문서 사이트](#문서-사이트)
 
 ---
 
@@ -421,8 +421,6 @@ scripts/check-css-vars.sh
 &:focus-visible { outline: 2px solid #000; }
 ```
 
-Storybook 의 `foundation/a11y` 페이지에서 실제 렌더를 확인할 수 있습니다.
-
 #### 시각적으로만 숨기기 — `visually_hidden`
 
 라이브 리전, 아이콘 버튼의 텍스트 라벨, 스크린리더 전용 표 헤더처럼 **보이지 않되 보조기기에는 남아야** 하는 내용에 씁니다. `display: none` 과 `visibility: hidden` 은 접근성 트리에서도 빠지므로 쓸 수 없습니다.
@@ -624,7 +622,7 @@ React(`style.css`)와 Vanilla(`/vanilla` CSS · JS) 양쪽에 같은 처리가 �
 무관하므로 대비가 일정합니다 - 이름이 그 짝을 밝힙니다.
 
 > `pnpm check:dark-text` 가 이 규약을 지킵니다 - 표면 전용 색 토큰이 `color:` 로 쓰이면 실패합니다.
-> a11y 스토리 러너는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 봅니다.
+> 문서 예제 a11y 검사는 라이트 테마만 돌아 axe 가 이 결함을 못 잡기 때문에 정적으로 봅니다.
 
 ## 자동완성(autofill) 입력칸
 
@@ -648,8 +646,6 @@ React(`style.css`)와 Vanilla(`/vanilla` CSS · JS) 양쪽에 같은 처리가 �
 > 컨테이너 반경으로 자릅니다(`:has()`). Vanilla(`@bigtablet/design-system/vanilla/style.min.css`)는 입력 요소가 배경과
 > `border-radius` 를 직접 갖고 있어 클리핑이 필요 없고, 색 규칙만 동일하게 적용됩니다.
 
-## Storybook
+## 문서 사이트
 
-`.storybook/preview.ts` 는 `src/styles/theme.scss` 를 직접 import 합니다. `scss/token` 진입점에서 `theme.scss` 가 분리되어 있어, Storybook 에서 컴포넌트 색/다크 모드를 보려면 이 import 가 별도로 필요합니다.
-
-Storybook 은 `ThemeProvider` 를 쓰지 않고 자체 `withTheme` 데코레이터로 `document.documentElement` 에 `data-theme` 를 직접 설정합니다. 툴바의 Theme 토글(light/dark/system)로 `ThemeProvider` 없이도 모든 스토리에서 테마를 바로 전환할 수 있습니다.
+문서 사이트(`site/`)도 `ThemeProvider` 를 쓰지 않고 `document.documentElement` 에 `data-theme` 를 직접 설정합니다. 상단 테마 전환(light/dark/system)은 `bt-docs-theme` 로 저장되고, `index.html` 의 인라인 스크립트가 첫 페인트 전에 적용해 새로고침할 때 색이 깜빡이지 않습니다.

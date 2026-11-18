@@ -93,7 +93,7 @@
 			}
 		},
 		{
-			"includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.stories.tsx"],
+			"includes": ["**/*.test.ts", "**/*.test.tsx"],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -136,7 +136,7 @@
 			}
 		},
 		{
-			"includes": [".storybook/**", "**/*.html"],
+			"includes": ["**/*.html"],
 			"linter": {
 				"rules": {
 					"a11y": {
