@@ -127,3 +127,14 @@ export const phraseRanges = (text: string): { start: number; end: number }[] => 
 	}
 	return ranges;
 };
+
+/**
+ * 두 어절 사이에서 줄을 바꾸면 얼마나 어색한가 - 줄바꿈 엔진(`layout.ts`)의 벌점 (#1083).
+ * 문장 끝 0 · 쉼표 · 쌍점 뒤 1 · 보통 4 · 붙여 둘 자리(`phraseRanges` 와 같은 규칙) 100
+ */
+export const gapPenalty = (before: string, after: string): number => {
+	if (SENTENCE_END.test(before)) return 0;
+	if (bindsNext(before) || bindsPrev(after)) return 100;
+	if (/[,:;·]["')\]”’]*$/.test(before) || after === "·") return 1;
+	return 4;
+};

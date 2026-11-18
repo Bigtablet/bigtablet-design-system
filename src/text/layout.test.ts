@@ -1,0 +1,126 @@
+import { describe, expect, it } from "vitest";
+import { gapPenalty } from "./core";
+import {
+	chooseBreaks,
+	layoutBest,
+	layoutNative,
+	type MeasureText,
+	scoreBreaks,
+	toWords,
+} from "./layout";
+
+// 글자 하나 10px, 공백 10px - 줄 폭을 손으로 셀 수 있게
+const measure: MeasureText = (text) => [...text].length * 10;
+const lines = (text: string, breaks: number[]) => {
+	const words = toWords(text);
+	const out: string[] = [];
+	let from = 0;
+	for (const end of [...breaks, words.length - 1]) {
+		out.push(
+			words
+				.slice(from, end + 1)
+				.map((w) => w.text)
+				.join(" "),
+		);
+		from = end + 1;
+	}
+	return out;
+};
+
+describe("gapPenalty", () => {
+	it("is free after a sentence, cheap after a comma, and costly inside a phrase", () => {
+		expect(gapPenalty("싣습니다.", "사이트와")).toBe(0);
+		expect(gapPenalty("heading,", "본문이면")).toBe(1);
+		expect(gapPenalty("본문이면", "body")).toBe(4);
+		expect(gapPenalty("아래의", "컴포넌트에서")).toBe(100);
+		expect(gapPenalty("body", "입니다.")).toBe(100);
+	});
+});
+
+describe("layoutNative", () => {
+	it("fills words until the next one overflows, like keep-all", () => {
+		// "가나 다라 마바" = 20 + 10 + 20 + 10 + 20 = 80px
+		const text = "가나 다라 마바";
+		expect(lines(text, layoutNative(toWords(text), measure, 80))).toEqual(["가나 다라 마바"]);
+		expect(lines(text, layoutNative(toWords(text), measure, 50))).toEqual(["가나 다라", "마바"]);
+	});
+
+	it("puts a word longer than the line on its own line", () => {
+		const text = "가 나다라마바사 아";
+		expect(lines(text, layoutNative(toWords(text), measure, 40))).toEqual([
+			"가",
+			"나다라마바사",
+			"아",
+		]);
+	});
+});
+
+describe("layoutBest", () => {
+	// "가나다라 이 아래의" = 100px, "이 아래의 컴포넌트에서" = 120px
+	it("moves the break off a phrase it would split", () => {
+		// 폭 120: 브라우저는 "가나다라 이 아래의" / "컴포넌트에서" - 꾸밈 관계 사이에서 끊긴다.
+		// "가나다라" / "이 아래의 컴포넌트에서" 도 두 줄에 들어가므로 그쪽이 낫다
+		const text = "가나다라 이 아래의 컴포넌트에서";
+		const words = toWords(text);
+		expect(lines(text, layoutNative(words, measure, 120))).toEqual([
+			"가나다라 이 아래의",
+			"컴포넌트에서",
+		]);
+		expect(lines(text, layoutBest(words, measure, 120, 2) ?? [])).toEqual([
+			"가나다라",
+			"이 아래의 컴포넌트에서",
+		]);
+	});
+
+	it("keeps an unavoidable split when no same-line-count layout avoids it", () => {
+		// 폭 110 에서는 "이 아래의 컴포넌트에서" 가 한 줄에 안 들어가 피할 수 없다
+		const text = "가나다라 이 아래의 컴포넌트에서";
+		const words = toWords(text);
+		expect(lines(text, layoutBest(words, measure, 110, 2) ?? [])).toEqual([
+			"가나다라 이 아래의",
+			"컴포넌트에서",
+		]);
+	});
+
+	it("returns null when no layout with that many lines fits", () => {
+		expect(layoutBest(toWords("가나다라 마바사아"), measure, 50, 1)).toBeNull();
+	});
+
+	it("never makes a line wider than the width", () => {
+		const text =
+			"모든 항목이 이 아래의 컴포넌트에서 보이고 사용자는 그 목록의 순서를 바꿀 수 있습니다";
+		const words = toWords(text);
+		const native = layoutNative(words, measure, 150);
+		const best = layoutBest(words, measure, 150, native.length + 1) ?? [];
+		for (const line of lines(text, best)) expect(measure(line)).toBeLessThanOrEqual(150);
+	});
+});
+
+describe("chooseBreaks", () => {
+	it("keeps the browser result when it already breaks in good places", () => {
+		const text = "저장했습니다. 계속할까요?";
+		const choice = chooseBreaks(text, measure, 80);
+		expect(choice.changed).toBe(false);
+		expect(choice.breaks).toEqual(choice.native);
+	});
+
+	it("replaces the browser result when it splits a phrase, with the same line count", () => {
+		const text = "제목이면 heading, 본문이면 body 입니다.";
+		// 폭 240: 브라우저는 "body" 뒤에서 끊어 "입니다." 가 혼자 다음 줄
+		const choice = chooseBreaks(text, measure, 240);
+		const native = lines(text, choice.native);
+		expect(native.at(-1)).toBe("입니다.");
+		expect(choice.changed).toBe(true);
+		expect(choice.breaks.length).toBe(choice.native.length);
+		expect(lines(text, choice.breaks).some((line) => line.endsWith("body"))).toBe(false);
+		const words = toWords(text);
+		expect(scoreBreaks(words, measure, 240, choice.breaks).penalty).toBeLessThan(
+			scoreBreaks(words, measure, 240, choice.native).penalty,
+		);
+	});
+
+	it("leaves single-line text and too-long words alone", () => {
+		expect(chooseBreaks("짧은 글", measure, 500).changed).toBe(false);
+		expect(chooseBreaks("가 나다라마바사아자 차", measure, 40).changed).toBe(false);
+	});
+});
