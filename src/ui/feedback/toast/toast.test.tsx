@@ -844,10 +844,11 @@ describe("Toast programmatic control", () => {
 		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
 	});
 
-	it("does not auto-dismiss when duration is Infinity", () => {
+	// 0 이하도 Infinity 와 같다 - 0ms 진행 바가 animationend 로 바로 닫아 토스트가 안 보였다 (#1071)
+	it.each([Infinity, 0, -1])("does not auto-dismiss when duration is %s", (duration) => {
 		render(
 			<ToastProvider>
-				<ToastTrigger fn={(t) => t.info("계속 떠 있음", { duration: Infinity })} />
+				<ToastTrigger fn={(t) => t.info("계속 떠 있음", { duration })} />
 			</ToastProvider>,
 		);
 
