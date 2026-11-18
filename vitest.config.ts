@@ -48,6 +48,8 @@ export default defineConfig({
 				extends: true,
 				// 컴포넌트 SCSS 가 `@use "src/styles/token"` 으로 루트 기준 경로를 쓴다
 				css: { preprocessorOptions: { scss: { loadPaths: [dirname], quietDeps: true } } },
+				// 사이트 예제는 패키지 이름으로 import 한다 - 빌드본(dist)이 아니라 소스를 검사하게 사이트와 같은 alias
+				resolve: { alias: { "@bigtablet/design-system": path.join(dirname, "src/index.ts") } },
 				// 첫 실행 도중 의존성을 새로 발견해 재최적화하면 React 가 두 벌 로드된다(Invalid hook call)
 				optimizeDeps: {
 					include: [
@@ -61,7 +63,7 @@ export default defineConfig({
 				},
 				test: {
 					name: "browser",
-					include: ["src/**/*.browser.test.{ts,tsx}"],
+					include: ["src/**/*.browser.test.{ts,tsx}", "site/**/*.browser.test.{ts,tsx}"],
 					setupFiles: ["./src/test/browser-setup.ts"],
 					browser: {
 						enabled: true,
