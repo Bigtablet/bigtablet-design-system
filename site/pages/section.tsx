@@ -5,7 +5,8 @@ export const section: DocPage = {
 	category: "레이아웃",
 	order: 3,
 	title: "Section",
-	name: "페이지 구역",
+	name: "섹션",
+	aka: "페이지 구역",
 	summary: "마케팅 페이지의 구역입니다. 세로 여백과 배경색을 정하고 `<section>` 으로 렌더합니다.",
 	when: [
 		["페이지를 의미 블록으로 나눔 (히어로 · 기능 · 후기)", "Section", true],

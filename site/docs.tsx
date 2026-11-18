@@ -16,6 +16,8 @@ export interface DocPage {
 	title: string;
 	/** 한국어 이름 - 사이드바 · 목록에서 코드명 옆에 붙는다 */
 	name: string;
+	/** 예전 한국어 이름 · 다른 호칭 - 화면에 안 보이고 검색에만 걸린다 */
+	aka?: string;
 	summary: string;
 	/** [상황, 고를 것, 이 컴포넌트인가] */
 	when: [string, string, boolean][];

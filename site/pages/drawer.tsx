@@ -5,7 +5,8 @@ export const drawer: DocPage = {
 	category: "오버레이",
 	order: 1,
 	title: "Drawer",
-	name: "서랍 패널",
+	name: "드로어",
+	aka: "서랍 패널",
 	summary: "옆이나 아래에서 나오는 패널입니다. 뒤 화면을 일부 보여 줍니다.",
 	when: [
 		["필터 · 상세 보기", "Drawer", true],
