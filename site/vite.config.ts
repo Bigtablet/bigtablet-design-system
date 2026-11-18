@@ -48,7 +48,7 @@ export default defineConfig({
 	// GitHub Pages 는 /bigtablet-design-system/ 아래에 올라간다 - 해시 라우팅이라 상대 경로면 어디에 두어도 된다
 	base: "./",
 	plugins: [pageTitles()],
-	// 파비콘 · 로고는 Storybook 과 같은 저장소 public/ 을 쓴다
+	// 파비콘 · 로고 · 폰트는 저장소 public/ 을 쓴다
 	publicDir: path.join(root, "public"),
 	resolve: {
 		alias: {

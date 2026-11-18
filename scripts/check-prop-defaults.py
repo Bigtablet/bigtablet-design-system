@@ -17,7 +17,7 @@
    문구는 아무도 쓰지 않고, 없는 키를 부르면 `undefined` 가 화면에 나간다. 이관을 스크립트로
    돌리다 절반만 적용되는 사고가 실제로 났다 - 그걸 사람이 눈으로 확인하지 않게 한다.
 2. JSDoc `@default` 가 실제 destructuring 기본값과 일치해야 한다. 값을 바꾸고 JSDoc 을 잊으면
-   Storybook autodocs 와 소비자 문서가 조용히 거짓말을 한다.
+   문서 사이트 props 표와 소비자 문서가 조용히 거짓말을 한다.
 3. `docs/COMPONENTS.md` prop 표의 Default 열이 소스 기본값과 일치해야 한다. 소비자가 읽는
    문서라 어긋나면 그대로 잘못된 코드를 쓴다.
 6. `docs/COMPONENTS.md` 의 문자열 union 값(prop 표 Type 열 `'line' \| 'fills'`, 예제의
