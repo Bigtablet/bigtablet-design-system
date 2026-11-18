@@ -445,7 +445,7 @@ const AGENTS: [Agent, string][] = [
 	["cursor", "Cursor"],
 ];
 
-// 같은 내용을 에이전트마다 읽는 파일에 둔다. Cursor 규칙 파일은 앞머리(frontmatter)가 있어야 늘 적용된다
+// Cursor 규칙 파일은 앞머리(frontmatter)가 있어야 늘 적용된다
 const AGENT_FILES: Record<Agent, { file: string; code: string }> = {
 	// Codex 는 AGENTS.md 를 읽는다. Claude Code 는 CLAUDE.md 에서 불러오게 해 같은 글을 두 벌 두지 않는다
 	agents: { file: "AGENTS.md", code: AGENT_SNIPPET },
