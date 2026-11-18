@@ -11,13 +11,21 @@
 }
 
 // BalancedText 가 고른 한 줄 (#1083) - 그 안에서는 끊지 않고 줄 사이 공백에서만 바뀐다.
-// inline-block 이라 측정이 어긋나 줄보다 길어지면 그 안에서 평소처럼 끊겨 넘치지 않는다
+// inline-block 이 아니라 nowrap - Chrome 은 inline-block 경계를 건너 페이지 검색(Ctrl+F)을 잇지 못한다.
+// 넘치지 않게 계산할 때 1px 여유를 둔다(balanced.tsx). 어절(.text_balanced_word)은 폭을 재는 표시일 뿐 모양이 없다
 .text_balanced_line {
-	display: inline-block;
+	white-space: nowrap;
 }
 
-// BalancedText 의 어절 하나 - 엔진은 어절 안에서 끊지 않는다고 보고 줄을 계산한다. 브라우저는 코드와 바로 붙은
-// 조사 사이("`variant="preview"`면")에서도 끊어 그 가정이 깨진다 - inline-block 으로 맞춘다. 줄보다 길면 그 안에서 끊긴다
-.text_balanced_word {
+// 줄 안의 <wbr>(긴 코드 이름의 끊을 자리)은 nowrap 이어도 끊긴다 - 그러면 다음 줄이 앞 줄 끝에 붙어 시작해 고른 줄이 깨진다.
+// 줄은 이미 폭 안에 들어가게 골랐으니 끈다. 줄 사이의 <wbr>(괄호 앞뒤 자리)은 줄 밖이라 그대로다
+.text_balanced_line wbr {
+	display: none;
+}
+
+// 폭이 내용으로 정해지는 상자(auto 표의 칸 등)의 줄 - nowrap 줄은 상자의 최소 폭을 줄 길이로 키워 표 열이 넓어지고,
+// 그 폭으로 다시 고르면 또 바뀌어 오간다. inline-block 은 최소 폭이 가장 긴 어절이라 상자 폭을 건드리지 않는다
+.text_balanced_line_boxed {
 	display: inline-block;
+	white-space: normal;
 }

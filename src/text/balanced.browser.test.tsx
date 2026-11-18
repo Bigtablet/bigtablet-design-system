@@ -49,16 +49,46 @@ describe("BalancedText (Chromium)", () => {
 			</BalancedText>,
 		);
 		const p = container.firstElementChild as HTMLElement;
-		await new Promise((r) => setTimeout(r, 300));
-		expect(p.querySelector(".text_balanced_line")).toBeNull();
+		// 같은 자리라도 줄로 그린다 - 첫 렌더의 어절 묶음(inline-block)을 걷어 내야 페이지 검색이 이어진다
+		await expect
+			.poll(() => lineTexts(p), { timeout: 2000 })
+			.toEqual(["저장했습니다.", "계속할까요?"]);
+		expect(p.querySelector(".sentences_phrase")).toBeNull();
 		expect(p.textContent).toBe("저장했습니다. 계속할까요?");
+	});
+
+	it("keeps find in page working across words and lines", async () => {
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 200, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				{text}
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		// Chrome 은 inline-block 경계를 건너 찾지 못한다 - 줄 · 어절 묶음이 inline-block 이면 실패한다
+		const find = (q: string) => {
+			window.getSelection()?.removeAllRanges();
+			return (window as unknown as { find: (q: string) => boolean }).find(q);
+		};
+		expect(find("제목이면 heading")).toBe(true);
+		const [first, second] = lineTexts(p);
+		expect(find(`${first?.split(" ").at(-1)} ${second?.split(" ")[0]}`)).toBe(true);
 	});
 
 	it("measures code inside the text and keeps it whole", async () => {
 		const style = { font: "16px/24px sans-serif", wordBreak: "keep-all" as const, margin: 0 };
 		const { container } = render(
 			<BalancedText as="p" style={{ ...style, width: 2000 }}>
-				제목이면 <code>heading</code>, 본문이면 <code>body</code> 입니다.
+				제목이면{" "}
+				<code>
+					hea
+					<wbr />
+					ding
+				</code>
+				, 본문이면 <code>body</code> 입니다.
 			</BalancedText>,
 		);
 		const p = container.firstElementChild as HTMLElement;
@@ -73,6 +103,9 @@ describe("BalancedText (Chromium)", () => {
 		expect(lineTexts(p).some((line) => line?.endsWith("body"))).toBe(false);
 		expect(p.querySelectorAll("code")).toHaveLength(2);
 		expect(p.textContent).toBe("제목이면 heading, 본문이면 body 입니다.");
+		// 코드 안 <wbr> 에서 줄이 다시 갈리지 않는다 - 고른 줄 하나는 화면에서도 한 줄
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(new Set([...line.getClientRects()].map((r) => Math.round(r.top))).size).toBe(1);
 	});
 
 	it("waits for web fonts before choosing lines", async () => {
@@ -108,5 +141,31 @@ describe("BalancedText (Chromium)", () => {
 			Reflect.deleteProperty(document.fonts, "status");
 			Reflect.deleteProperty(document.fonts, "ready");
 		}
+	});
+
+	it("settles in a box that sizes to its content", async () => {
+		// auto 표의 칸은 nowrap 줄이 최소 폭을 키우면 넓어진다 - 그 폭 변화에 다시 계산하면 줄 ↔ 브라우저 줄바꿈을 끝없이 오간다
+		const { container } = render(
+			<table style={{ width: 520, font: "16px/24px sans-serif", wordBreak: "keep-all" }}>
+				<tbody>
+					<tr>
+						<td>
+							<BalancedText as="p" style={{ margin: 0 }}>
+								{`${text} 이 아래의 컴포넌트에서 부르고 글자 크기가 아니라 역할로 고릅니다.`}
+							</BalancedText>
+						</td>
+						<td>짧은 칸과 긴 칸이 나란히 있으면 표가 내용에 맞춰 열 폭을 나눕니다</td>
+					</tr>
+				</tbody>
+			</table>,
+		);
+		const p = container.querySelector("p") as HTMLElement;
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		await new Promise((r) => setTimeout(r, 600));
+		const settled = lineTexts(p);
+		await new Promise((r) => setTimeout(r, 600));
+		expect(lineTexts(p)).toEqual(settled);
+		// 줄이 열을 넓히지 않게 inline-block 으로 바꿔 그린다
+		expect(p.querySelector(".text_balanced_line_boxed")).not.toBeNull();
 	});
 });
