@@ -47,7 +47,7 @@
 		"copy:scss": "sh scripts/copy-scss.sh",
 		"dev": "tsup --watch",
 		"site": "vite --config site/vite.config.ts",
-		"build:site": "tsx site/gen-props.ts && vite build --config site/vite.config.ts",
+		"build:site": "tsx site/gen-props.ts && vite build --config site/vite.config.ts && tsx site/gen-llms.ts --site site-dist",
 		"test": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"test:coverage": "vitest run --project unit --coverage",
