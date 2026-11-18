@@ -61,6 +61,8 @@ jobs:
               - '.github/workflows/**'
             site:
               - 'site/**'
+              # 사이트가 쓰는 파비콘 · 로고 · 폰트
+              - 'public/**'
             deps:
               - 'package.json'
               - 'pnpm-lock.yaml'
