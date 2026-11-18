@@ -86,9 +86,13 @@ const NOUNS_ENDING_IN_UI = new Set([
 	"항의",
 ]);
 
-/** 다음 어절과 붙여 둘 어절인가 - `~의` 로 끝나는 꾸밈말 · 관형사. 쉼표 · 문장 부호로 끝나면 떼도 된다 */
+/**
+ * 다음 어절과 붙여 둘 어절인가 - `~의` 로 끝나는 꾸밈말 · 관형사. 쉼표 · 문장 부호로 끝나면 떼도 된다.
+ * "민주주의" · "자본주의" 처럼 `~주의` 로 끝나는 명사는 목록 대신 끝 모양으로 넘긴다
+ */
 const bindsNext = (word: string) =>
-	(/[가-힣]의$/.test(word) && !NOUNS_ENDING_IN_UI.has(word)) || DETERMINERS.has(word);
+	(/[가-힣]의$/.test(word) && !NOUNS_ENDING_IN_UI.has(word) && !/[가-힣]주의$/.test(word)) ||
+	DETERMINERS.has(word);
 
 /**
  * 앞 어절에 붙여 둘 말 - 혼자서는 뜻이 서지 않아 다음 줄 맨 앞에 혼자 남으면 어색하다 (#1081).

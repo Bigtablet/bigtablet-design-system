@@ -122,14 +122,23 @@ export const scoreBreaks = (
  * 브라우저 예측에는 넣되 엔진이 고르지는 않게. 괄호 안("(h · p · ul ·" / "a …)")은 그보다 높다 - 괄호를 통째로 넘기는 쪽이 낫다
  */
 const breakCosts = (words: Word[]) => {
+	// 닫히지 않는 여는 괄호(":(", "(선택")는 괄호로 보지 않는다 - 그 뒤 모든 자리가 괄호 안으로 묶여 문장 끝도 못 가린다.
+	// 각 어절 뒤에 남은 닫는 괄호 수만큼만 깊이로 친다
+	const closesAfter: number[] = [];
+	let closes = 0;
+	for (let i = words.length - 1; i >= 0; i--) {
+		closesAfter[i] = closes;
+		closes += [...(words[i]?.text ?? "")].filter((ch) => ch === ")").length;
+	}
 	let depth = 0;
 	return words.map((word, i) => {
 		for (const ch of word.text) depth = Math.max(0, depth + (ch === "(" ? 1 : ch === ")" ? -1 : 0));
+		const open = Math.min(depth, closesAfter[i] ?? 0);
 		const next = words[i + 1];
 		let penalty = gapPenalty(word.text, next?.text ?? "");
 		// 나열 항목 안("Esc 닫기 · …")은 항목 사이(8)보다 어색하다
 		if (penalty === 6 && (words[i - 1]?.text === "·" || words[i + 2]?.text === "·")) penalty = 10;
-		if (depth > 0) return Math.max(60, penalty);
+		if (open > 0) return Math.max(60, penalty);
 		return next?.spaceBefore === false ? Math.max(50, penalty) : penalty;
 	});
 };

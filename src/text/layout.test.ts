@@ -51,6 +51,10 @@ describe("gapPenalty", () => {
 		expect(gapPenalty('선택"', "으로")).toBe(100);
 	});
 
+	it("does not bind ~주의 nouns as ~의 modifiers", () => {
+		expect(gapPenalty("자본주의", "사회")).toBe(4);
+	});
+
 	it("keeps the last word of a sentence with the sentence", () => {
 		expect(gapPenalty("패키지에", "싣습니다.")).toBe(12);
 		expect(gapPenalty("순서로", "짓습니다.")).toBe(12);
@@ -128,6 +132,14 @@ describe("scoreBreaks", () => {
 		const at = (w: string) => words.findIndex((word) => word.text === w);
 		expect(scoreBreaks(words, measure, 1000, [at("·")]).penalty).toBe(60);
 		expect(scoreBreaks(words, measure, 1000, [at("에")]).penalty).toBe(4);
+	});
+});
+
+describe("unclosed parentheses", () => {
+	it("do not turn every later gap into an inside-parentheses gap", () => {
+		const words = toWords("안 됐어요 :( 다시 해 볼게요. 다음 문장입니다.");
+		const at = (w: string) => words.findIndex((word) => word.text === w);
+		expect(scoreBreaks(words, measure, 1000, [at("볼게요.")]).penalty).toBe(0);
 	});
 });
 

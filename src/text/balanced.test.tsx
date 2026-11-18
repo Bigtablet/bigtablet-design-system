@@ -29,4 +29,24 @@ describe("BalancedText without canvas", () => {
 		expect(words).toEqual(["마크업", "없이", "useConfirm", "훅으로", "x에서", "띄웁니다."]);
 		expect(p.querySelectorAll("code")).toHaveLength(2);
 	});
+
+	it("splits words inside fragments and keeps empty elements without duplicate keys", () => {
+		const errors: unknown[] = [];
+		const original = console.error;
+		console.error = (...args: unknown[]) => errors.push(args);
+		try {
+			const { container } = render(
+				<BalancedText as="p">
+					보기 <i /> 아이콘 <>여러 어절 문장</>
+				</BalancedText>,
+			);
+			const words = [
+				...(container.firstElementChild as HTMLElement).querySelectorAll(".text_balanced_word"),
+			].map((w) => w.textContent);
+			expect(words).toEqual(["보기", "", "아이콘", "여러", "어절", "문장"]);
+			expect(errors).toHaveLength(0);
+		} finally {
+			console.error = original;
+		}
+	});
 });

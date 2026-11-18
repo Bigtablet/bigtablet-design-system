@@ -40,6 +40,27 @@ const textOf = (node: React.ReactNode): string => {
 	return "";
 };
 
+/** Fragment 를 편다 - `{ok && <>여러 어절</>}` 이 쪼갤 수 없는 한 조각이 되지 않게 */
+const flatten = (children: React.ReactNode): React.ReactNode[] =>
+	React.Children.toArray(children).flatMap((child) =>
+		React.isValidElement<{ children?: React.ReactNode }>(child) && child.type === React.Fragment
+			? flatten(child.props.children)
+			: [child],
+	);
+
+/** 요소의 모양 - 글자가 같아도 요소가 바뀌면(글 → `<code>`) 폭이 달라 다시 재야 한다 */
+const shapeOf = (node: React.ReactNode) => {
+	if (!React.isValidElement(node)) return String(node);
+	const { type } = node;
+	const name =
+		typeof type === "string"
+			? type
+			: ((type as { displayName?: string; name?: string }).displayName ??
+				(type as { name?: string }).name ??
+				"?");
+	return `<${name}>${textOf(node)}`;
+};
+
 /**
  * children 을 어절로 나눈다. 글자는 공백과 Chromium 이 끊는 괄호 자리(`toWords`)에서, 요소는 통째로 한 조각.
  * 앞뒤 공백은 `lead` · `tail` 로 원문 그대로 둔다
@@ -71,7 +92,7 @@ const tokenize = (children: React.ReactNode) => {
 		gap = "";
 		joined = true;
 	};
-	for (const child of React.Children.toArray(children)) {
+	for (const child of flatten(children)) {
 		if (typeof child !== "string" && typeof child !== "number") {
 			add(textOf(child), child, gap !== "");
 			continue;
@@ -144,7 +165,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 	const ref = React.useRef<HTMLElement>(null);
 	const { tokens, lead, tail } = tokenize(children);
 	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다
-	const key = tokens.map((t) => t.text).join("\u0001");
+	const key = tokens.map((t) => t.nodes.map(shapeOf).join("")).join("\u0001");
 	const [chosen, setChosen] = React.useState<{
 		key: string;
 		breaks: Breaks;
@@ -208,9 +229,19 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			if (gaveUp) return;
 			width = contentWidth();
 			const words = latest.current;
-			const spans = [...el.querySelectorAll<HTMLElement>(".text_balanced_word")];
-			if (width <= 0 || spans.length !== words.length || fontsPending()) return;
-			if (el.querySelector(".text_balanced_line")) return;
+			// children 안에 다른 BalancedText 가 있으면 그 어절은 바깥 어절 span 안에 있다 - 빼고 센다
+			const spans = [...el.querySelectorAll<HTMLElement>(".text_balanced_word")].filter(
+				(span) => !el.contains(span.parentElement?.closest(".text_balanced_word") ?? null),
+			);
+			if (width <= 0 || spans.length !== words.length) return;
+			// 숨어 있다 보이며 처음 쓰는 굵기 · 코드 폰트를 받는 중일 수 있다 - 받은 뒤 다시 잰다(폭은 그대로라 RO 가 안 불린다)
+			if (fontsPending()) {
+				document.fonts.ready.then(() => {
+					if (!cancelled) compute();
+				});
+				return;
+			}
+			if (el.querySelector(":scope > .text_balanced_line")) return;
 			const { font, letterSpacing } = fontOf(el);
 			// 어절 사이 공백만 canvas 로 잰다 - 줄 끝 공백은 화면에서 폭이 0 으로 접혀 DOM 으로는 못 잰다
 			const measure = measurerFor(font, letterSpacing);
@@ -221,7 +252,14 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			// 줄보다 긴 어절은 브라우저가 그 안에서 끊는다 - 손대지 않는다
 			if (measured.some((w) => w.width > fit)) return;
 			// 브라우저가 실제로 그린 줄 - 예측(layoutNative)은 코드 뒤 조사 · <wbr> 같은 끊을 자리를 다 알지 못한다
-			const tops = spans.map((span) => [...span.getClientRects()].map((r) => Math.round(r.top)));
+			// 글자도 폭도 없는 어절(빈 요소)은 상자가 없다 - 앞 어절의 줄로 본다
+			let lastTop = 0;
+			const tops = spans.map((span) => {
+				const t = [...span.getClientRects()].map((r) => Math.round(r.top));
+				if (t.length === 0) return [lastTop];
+				lastTop = t.at(-1) ?? lastTop;
+				return t;
+			});
 			const drawn = new Set(tops.flat()).size;
 			// 어절 안에서 끊겼거나("variant=\"preview\" / 면") 첫 렌더의 어절 묶음(inline-block)이 줄을 늘렸으면
 			// 그 줄바꿈은 기준으로 쓸 수 없다 - 묶음 없이 들어가는 줄 수(예측은 줄 수를 많게 잡을 뿐 적게 잡지 않는다)로
@@ -311,7 +349,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 	const word = (i: number) => {
 		const t = tokens[i] as Token;
 		return (
-			<span key={t.start} className="text_balanced_word">
+			<span key={i} className="text_balanced_word">
 				{t.nodes.map((node, j) => (
 					// biome-ignore lint/suspicious/noArrayIndexKey: 어절 안 조각 순서는 바뀌지 않는다
 					<React.Fragment key={j}>{node}</React.Fragment>
