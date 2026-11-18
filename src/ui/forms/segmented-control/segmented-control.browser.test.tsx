@@ -7,6 +7,11 @@ import "./style.scss";
 const emulateForcedColors = (value: "active" | "none") =>
 	cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
 
+const emulateColorScheme = (value: "dark" | "light") =>
+	cdp().send("Emulation.setEmulatedMedia", {
+		features: [{ name: "prefers-color-scheme", value }],
+	});
+
 /** 시스템 색의 실제 rgb - 고대비 팔레트마다 다르므로 같은 페이지에서 잰다 */
 const systemColor = (name: string) => {
 	const probe = document.createElement("span");
@@ -121,15 +126,48 @@ describe("SegmentedControl in forced-colors mode (Chromium)", () => {
 
 	// 다크에서 고른 칸이 트랙보다 어둡고 검은 그림자도 안 보여 1.1:1 차이로만 드러났다 (#1057).
 	// 안쪽 테두리 색이 트랙 위에서 비텍스트 대비 3:1(WCAG 1.4.11)을 넘는지 잰다
-	it("marks the selected item with a 3:1 edge on the dark track", async () => {
+	// 다크는 두 경로로 들어온다 - 명시 테마(data-theme) 와 테마를 안 정했을 때의 시스템 설정
+	const darkPaths = [
+		[
+			"data-theme",
+			async () => document.documentElement.setAttribute("data-theme", "dark"),
+			async () => document.documentElement.removeAttribute("data-theme"),
+		],
+		["prefers-color-scheme", () => emulateColorScheme("dark"), () => emulateColorScheme("light")],
+	] as const;
+
+	it.each(darkPaths)(
+		"marks the selected item with a 3:1 edge on the dark track (%s)",
+		async (_path, on, off) => {
+			await on();
+			try {
+				render(<SegmentedControl aria-label="통화" items={items} defaultValue="USD" />);
+				const usd = screen.getByRole("radio", { name: "USD" }).closest("label") as HTMLElement;
+				const track = usd.parentElement as HTMLElement;
+				await expect.poll(() => getComputedStyle(usd).boxShadow).toMatch(/inset/);
+				const edge = getComputedStyle(usd).boxShadow.match(/rgba?\([^)]+\)/)?.[0] ?? "";
+				expect(contrast(edge, getComputedStyle(track).backgroundColor)).toBeGreaterThanOrEqual(3);
+			} finally {
+				await off();
+			}
+		},
+	);
+
+	// 키보드 포커스에서도 테두리가 포커스 링에 덮여 사라지지 않는다
+	it("keeps the dark edge under the focus ring", async () => {
 		document.documentElement.setAttribute("data-theme", "dark");
 		try {
-			render(<SegmentedControl aria-label="통화" items={items} defaultValue="USD" />);
+			render(
+				<>
+					<button type="button">앞</button>
+					<SegmentedControl aria-label="통화" items={items} defaultValue="USD" />
+				</>,
+			);
+			await userEvent.click(screen.getByRole("button", { name: "앞" }));
+			await userEvent.keyboard("{Tab}");
 			const usd = screen.getByRole("radio", { name: "USD" }).closest("label") as HTMLElement;
-			const track = usd.parentElement as HTMLElement;
-			await expect.poll(() => getComputedStyle(usd).boxShadow).toMatch(/inset/);
-			const edge = getComputedStyle(usd).boxShadow.match(/rgba?\([^)]+\)/)?.[0] ?? "";
-			expect(contrast(edge, getComputedStyle(track).backgroundColor)).toBeGreaterThanOrEqual(3);
+			await expect.poll(() => getComputedStyle(usd).boxShadow).toMatch(/0px 0px 0px 4px/);
+			expect(getComputedStyle(usd).boxShadow).toMatch(/inset/);
 		} finally {
 			document.documentElement.removeAttribute("data-theme");
 		}
