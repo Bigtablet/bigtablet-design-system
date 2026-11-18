@@ -17,7 +17,7 @@ export const localeProvider: DocPage = {
 		{
 			id: "locale-provider/english",
 			title: "영어",
-			desc: '왼쪽은 감싸지 않은 기본(한국어), 오른쪽은 `locale="en"` 입니다. 안내 문구 · 버튼 · 빈 목록처럼 DS 가 직접 그리는 글만 바뀌고 앱이 넘긴 `label` 은 그대로입니다.',
+			desc: '첫 번째는 감싸지 않은 기본(한국어), 두 번째는 `locale="en"` 입니다 - 좁은 화면에서는 위아래로 놓입니다. 안내 문구 · 버튼 · 빈 목록처럼 DS 가 직접 그리는 글만 바뀌고 앱이 넘긴 `label` 은 그대로입니다.',
 		},
 	],
 	props: "LocaleProviderProps",

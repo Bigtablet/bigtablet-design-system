@@ -33,7 +33,8 @@ export default function Example() {
 			style={{
 				display: "grid",
 				gap: 24,
-				gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+				// 예제 칸이 240px 보다 좁으면 그 폭에 맞춘다 - 넘치지 않게
+				gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))",
 			}}
 		>
 			<Sample labels={{ country: "국가", date: "날짜", list: "목록" }} />
