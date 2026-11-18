@@ -45,7 +45,6 @@ bigtablet-design-system/
 │   │   ├── use-clipboard.ts  ·  hangul-search.ts  ·  reveal-inline.ts  ·  …
 │   │   └── index.ts
 │   │
-│   ├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
 │   ├── test/                # setup.ts (Vitest)
 │   ├── types/               # scss.d.ts
 │   └── vanilla/             # Vanilla JS 패키지
@@ -55,9 +54,9 @@ bigtablet-design-system/
 │       ├── scss/            # 컴포넌트별 스타일 partial
 │       └── examples/
 │
+├── site/                    # 문서 사이트 (Vite) - pages/ · examples/ · props.json, dist/llms 생성 원본
 ├── docs/                    # 문서 (COMPONENTS, THEMING, MIGRATION, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
-├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포)
-├── .storybook/              # Storybook 설정
+├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포), pages.yml (문서 사이트 배포)
 ├── scripts/                 # 빌드 · 검사 스크립트 (build-modules.mjs, build-tokens.mjs, build-vanilla.sh, check-*.py, ...)
 ├── tsup.config.ts           # 빌드 설정 (React · Vanilla) - 컴포넌트별 모듈 분리는 scripts/build-modules.mjs
 ├── vitest.config.ts         # 테스트 설정
@@ -74,8 +73,7 @@ bigtablet-design-system/
 src/ui/{category}/{component-name}/
 ├── index.tsx                       # 컴포넌트 구현
 ├── style.scss                      # Global SCSS 스타일
-├── {component-name}.test.tsx       # 단위 테스트
-└── {component-name}.stories.tsx    # Storybook (선택)
+└── {component-name}.test.tsx       # 단위 테스트
 ```
 
 ### 컴포넌트 파일 예시
@@ -341,8 +339,7 @@ dist/
 | 프로젝트 | 명령 | 파일 | 환경 |
 |----------|------|------|------|
 | `unit` | `pnpm test` | `*.test.ts(x)` | jsdom, `src/test/setup.ts` |
-| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` | 실제 Chromium (레이아웃 · 잘림 · 스크롤 잠금) |
-| `storybook` | `pnpm test:storybook` | 모든 스토리 | Chromium + axe (a11y) |
+| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` (`src/` · `site/`) | 실제 Chromium (레이아웃 · 잘림 · 스크롤 잠금, 문서 예제 axe) |
 | `visual` | `pnpm test:visual` | `*.visual.test.tsx` | CI 컨테이너 전용 시각 회귀 |
 
 자세한 작성법은 [TESTING.md](./TESTING.md).
@@ -391,10 +388,10 @@ describe("Button", () => {
 
 | Job | 역할 |
 |------|------|
-| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘깁니다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 됩니다 |
+| `changes` | `dorny/paths-filter` 로 `code` / `site` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘깁니다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 됩니다 |
 | `static-checks` | 병합 게이트. `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킵니다. audit 은 조회 실패도 실패로 끝납니다 |
 | `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돕니다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트이기 때문입니다 |
-| `a11y` | Playwright 공식 이미지 컨테이너에서 `pnpm test:storybook` → `pnpm test:browser`(레이아웃) → `pnpm test:visual`(시각 회귀). `code` · `stories` · `vanilla` 가 바뀌면 돕니다. 이미지 태그는 lockfile 의 playwright 버전과 같아야 합니다(어긋나면 첫 step 이 실패) |
+| `a11y` | Playwright 공식 이미지 컨테이너에서 `pnpm test:browser`(레이아웃 · 문서 예제 axe) → `pnpm test:visual`(시각 회귀). `code` · `site` · `vanilla` 가 바뀌면 돕니다. 이미지 태그는 lockfile 의 playwright 버전과 같아야 합니다(어긋나면 첫 step 이 실패) |
 | `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돕니다 |
 
 `static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돕니다 - 대기 시간이 가장 긴 job 하나로 정해집니다.

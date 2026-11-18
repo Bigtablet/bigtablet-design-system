@@ -18,22 +18,21 @@ Bigtablet Design System 의 테스트 작성 가이드입니다.
 
 ### 사용 도구
 
-- **Vitest** - 테스트 러너 (multi-project: `unit` · `browser` · `storybook` · `visual`)
+- **Vitest** - 테스트 러너 (multi-project: `unit` · `browser` · `visual`)
 - **React Testing Library** - 컴포넌트 테스트
 - **jsdom** - DOM 환경 (unit 테스트)
 - **Playwright** - 브라우저 환경 (a11y 테스트, headless Chromium)
-- **@storybook/addon-a11y** - axe-core 기반 접근성 자동 테스트
+- **axe-core** - 문서 사이트 예제 접근성 자동 테스트
 - **v8** - 커버리지 프로바이더
 
 ### 설정 파일
 
-설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다 (`globals: true` - `describe` · `it` · `expect` 를 import 없이 써도 됩니다). 프로젝트는 넷입니다.
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다 (`globals: true` - `describe` · `it` · `expect` 를 import 없이 써도 됩니다). 프로젝트는 셋입니다.
 
 | 프로젝트 | 명령 | 파일 | 환경 |
 |----------|------|------|------|
 | `unit` | `pnpm test` | `*.test.ts(x)` | jsdom |
-| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` | 실제 Chromium - 배치 · 잘림 · 스크롤 잠금 |
-| `storybook` | `pnpm test:storybook` | 모든 스토리 | Chromium + axe (a11y) |
+| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` (`src/` · `site/`) | 실제 Chromium - 배치 · 잘림 · 스크롤 잠금, 문서 예제 axe (a11y) |
 | `visual` | `pnpm test:visual` | `*.visual.test.tsx` | CI 컨테이너 전용 시각 회귀 |
 
 ### Setup 파일
@@ -63,11 +62,8 @@ pnpm vitest run src/ui/general/button/button.test.tsx
 # 커버리지 리포트
 pnpm test:coverage
 
-# a11y 테스트 (Storybook + Playwright)
-pnpm test:storybook
-
-# 레이아웃 테스트 (*.browser.test.tsx, 실제 Chromium)
-# Chromium 바이너리가 없으면 먼저 한 번 설치한다 (test:storybook 과 같은 바이너리)
+# 레이아웃 테스트 + 문서 예제 a11y (*.browser.test.tsx, 실제 Chromium)
+# Chromium 바이너리가 없으면 먼저 한 번 설치한다
 pnpm exec playwright install chromium
 pnpm test:browser
 
@@ -426,10 +422,6 @@ it("calls callback with correct arguments", () => {
 
 `pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 95 test files / 1884 passed · 1 skipped.
 
-> **스토리북 러너를 커버리지와 함께 돌리면 훨씬 낮은 수치가 나옵니다** - 실측 58.95% stmts.
-> 스토리는 컴포넌트를 렌더할 뿐 상호작용을 끝까지 몰지 않아서고, 회귀가 아닙니다. 예를 들어
-> `src/utils/**` 는 스토리북 48.4% · unit 93.3% 입니다 - 훅과 유틸은 스토리가 거의 건드리지 않습니다.
-> **스토리북 커버리지는 목표 지표가 아닙니다** - 그 러너의 목적은 axe a11y 검증이고 커버리지는 부산물입니다.
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
@@ -610,56 +602,24 @@ describe("Modal", () => {
 
 ### 개요
 
-모든 Storybook 스토리는 `@storybook/addon-a11y` 로 axe-core 접근성 검사를 자동으로 받습니다.
-CI 에서는 Playwright(headless Chromium)로 실제 DOM 에 렌더해 검사합니다.
+문서 사이트의 모든 예제(`site/examples/**/*.tsx`)가 axe-core 검사를 받습니다 - [`site/examples.browser.test.tsx`](../site/examples.browser.test.tsx).
+예제는 문서에 보이는 화면이자 소비자가 복사해 가는 코드라, 실제로 쓰이는 조합이 그대로 검사됩니다.
+`browser` 프로젝트(headless Chromium)에서 돌고, CI 는 `a11y` job 의 `pnpm test:browser` 가 돌립니다.
 
 ### 동작 방식
 
-1. Storybook 스토리가 Playwright 브라우저에서 렌더링
-2. axe-core가 각 스토리에 대해 WCAG 위반 검사
-3. `error` 모드로 설정되어 위반 시 테스트 실패
+1. 예제를 하나씩 실제 DOM 에 렌더 (예제는 패키지 이름으로 import 하지만 `browser` 프로젝트 alias 가 `src/index.ts` 로 돌립니다)
+2. `axe.run` 으로 WCAG 위반 검사 - 기본으로 꺼진 `target-size`(WCAG 2.2 SC 2.5.8)도 켭니다
+3. 위반이 있으면 규칙 id 와 대상 선택자를 실패 메시지로 보여 줍니다
 
-### 설정
+진입 transition 은 `src/test/browser-setup.ts` 가 끕니다 - 보간 중인 opacity 로 색 대비가 흔들리지 않게.
 
-```ts
-// .storybook/preview.ts
-const preview: Preview = {
-    parameters: {
-        a11y: {
-            test: "error",  // 위반 시 에러 발생
-        },
-    },
-};
-```
+### 예외
 
-### 특정 스토리 비활성화
+규칙을 끄는 장치는 두지 않았습니다. 위반이 나면 예제나 컴포넌트를 고칩니다
+(이 검사를 옮기며 찾은 것: aria-label 을 단 Badge dot 의 역할 없음, 패널 없는 Tabs 예제의 `aria-controls`).
 
-의도적으로 접근성 위반을 보여주는 데모 스토리 등에서 사용:
-
-```tsx
-// 스토리 단위 비활성화
-export const DemoStory: Story = {
-    parameters: {
-        a11y: { test: "off" },
-    },
-};
-
-// 스토리 전체를 Vitest에서 제외
-const meta: Meta = {
-    tags: ["autodocs", "!test"],
-};
-```
-
-### CI 파이프라인
-
-```yaml
-# .github/workflows/ci.yml
-- name: Install Playwright browsers
-  run: pnpm exec playwright install --with-deps chromium
-
-- name: Run a11y tests (Storybook)
-  run: pnpm test:storybook
-```
+다크 테마는 렌더하지 않습니다 - 다크 대비는 `pnpm check:dark-text` 가 정적으로 봅니다.
 
 ---
 

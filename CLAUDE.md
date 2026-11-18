@@ -16,10 +16,10 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 
 ```bash
 pnpm install       # Install dependencies
-pnpm storybook     # Start Storybook dev server (port 6006)
+pnpm site          # 문서 사이트 dev 서버 (port 6007, site/)
 pnpm build         # Build library (tsup + copy SCSS)
 pnpm dev           # Watch mode development
-pnpm test:storybook # Run a11y tests via Storybook + Playwright
+pnpm test:browser  # a11y(문서 예제 axe) + 레이아웃 테스트, 실제 Chromium
 ```
 
 ## Architecture
@@ -38,7 +38,6 @@ src/
 │   ├── display/  feedback/  forms/  general/
 │   └── layout/  navigation/  overlay/  system/
 ├── utils/               # cn + 훅 (use-presence, use-focus-trap, use-reduced-motion, use-listbox-popup, use-safe-layout-effect …)
-├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
 ├── test/                # setup.ts (Vitest)
 ├── types/               # scss.d.ts
 └── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)
@@ -53,15 +52,14 @@ src/
 ### Component Files
 - All components use `"use client"` directive
 - Props interfaces extend HTML element attributes **wrapped in `SafeHTMLProps`** (`src/utils/safe-html.ts`) - `extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>>`. 원본 `React.*HTMLAttributes` 를 직접 확장하면 `dangerouslySetInnerHTML` 이 루트로 새고(가이드 W-1-4-6), `src/utils/safe-html.type-test.tsx` 가 `tsc` 에서 실패시킨다. `as` 컴포넌트는 `PolymorphicProps` 가 이미 뺀다
-- Standard structure - **폴더 이름은 kebab-case** 로 짓고, 테스트·스토리 파일은 그 폴더명을 그대로 쓴다:
+- Standard structure - **폴더 이름은 kebab-case** 로 짓고, 테스트 파일은 그 폴더명을 그대로 쓴다:
   ```
   src/ui/{category}/{component-name}/
   ├── index.tsx                       # Component implementation
   ├── style.scss                      # Global SCSS styles
-  ├── {component-name}.test.tsx       # Unit tests
-  └── {component-name}.stories.tsx    # Storybook stories (optional)
+  └── {component-name}.test.tsx       # Unit tests
   ```
-  예: `src/ui/display/data-view/` → `data-view.test.tsx` · `data-view.stories.tsx`.
+  예: `src/ui/display/data-view/` → `data-view.test.tsx` · `data-view.browser.test.tsx`.
   컴포넌트 이름(`DataView`)이 아니라 **폴더 이름**을 쓴다 - 한 폴더 안의 세 파일이 같은 이름을
   공유하면 목록에서 짝이 바로 보이고, 폴더를 옮길 때 파일명을 따로 고칠 일이 없다.
 
@@ -107,10 +105,11 @@ Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.
 - `a11y/` - Accessibility (focus rings, tap targets)
 - `icon/` - Icon sizes (xs 14px - xl 32px, lucide-react `size` prop)
 
-### Storybook
-- Component stories: `Components/{Category}/{ComponentName}`
-- Foundation stories: `foundation/{token-name}`
-- Write descriptions in Korean. 컴포넌트/prop 이름, 코드, `variant` 값 같은 식별자는 원문 그대로 둔다
+### 문서 사이트 (`site/`)
+- 컴포넌트 페이지: `site/pages/{slug}.tsx` (DocPage 데이터) + 예제 `site/examples/{slug}/*.tsx`. 예제는 패키지 이름(`@bigtablet/design-system`)으로 import 한다 - 복사해 가는 코드다
+- props 표는 `site/props.json` (`site/gen-props.ts` 생성, `pnpm check:props` 가 최신인지 본다). 에이전트 문서 `dist/llms` 는 같은 원본에서 `build:llms` 가 만든다
+- 설명은 한국어. 컴포넌트/prop 이름, 코드, `variant` 값 같은 식별자는 원문 그대로 둔다
+- `pnpm build:site` → `site-dist/`, `main` 푸시 시 GitHub Pages 로 배포 (`pages.yml`)
 
 ### Animation (Required for Interactive Components)
 
@@ -246,9 +245,9 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 ## Testing
 
-- **Test Runner**: Vitest (multi-project: `unit` + `storybook`)
-- **a11y Testing**: axe-core via `@storybook/addon-a11y` + Playwright (headless Chromium)
-- **Coverage**: 96.11% stmts / 93.74% branch / 97.03% funcs / 97.41% lines - **`unit` 프로젝트 기준**(스토리북 러너로 재면 훨씬 낮게 나오는데 정상이다). 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Test Runner**: Vitest (multi-project: `unit` · `browser` · `visual`)
+- **a11y Testing**: 문서 사이트 예제마다 axe-core (`site/examples.browser.test.tsx`, `browser` 프로젝트 - headless Chromium)
+- **Coverage**: 96.11% stmts / 93.74% branch / 97.03% funcs / 97.41% lines - **`unit` 프로젝트 기준**. 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests
@@ -257,12 +256,12 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm coverage:docs     # 커버리지를 재고 아래 Coverage 줄·docs/TESTING.md 표를 갱신 (릴리즈 PR 에서 CI 가 자동으로 돈다)
   pnpm tokens            # tokens.json → SCSS·TS·테마 변수 생성 (check:tokens 는 커밋본과 같은지만 본다)
   pnpm check:dark-text   # 표면 전용 색 토큰을 텍스트로 쓰는지 (다크 AA)
-  pnpm check:deprecated  # 스토리가 @deprecated prop 을 쓰는지
-  pnpm check:filenames   # 테스트·스토리 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
+  pnpm check:deprecated  # 문서 사이트 예제가 @deprecated prop 을 쓰는지
+  pnpm check:filenames   # 테스트 **파일명**이 폴더명과 같은지 (폴더명 자체는 검사 안 함)
   pnpm check:agent-guide # docs/AGENT_GUIDE.md 카탈로그의 prop 이 소스에 있는지
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
-  pnpm test:storybook    # Run a11y tests (Storybook stories in Playwright)
-  pnpm test:browser      # 레이아웃 테스트 (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
+  pnpm check:props       # site/props.json 이 소스 타입과 같은지
+  pnpm test:browser      # 레이아웃 테스트 + 문서 예제 axe (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
   pnpm test:visual       # 시각 회귀 (*.visual.test.tsx) - CI 컨테이너 전용. 의도한 렌더 변경이면 pnpm visual:accept <run-id>
   ```
 

@@ -498,18 +498,16 @@ toast.error("Network error", 6000); // custom 6s duration
 
 ---
 
-## Storybook Reference
+## Docs Site Reference
 
-Stories are organized:
-- **Getting Started** - Installation, Introduction
-- **Cookbook** - Composition recipes (Form / Layout / Feedback / Data patterns)
-- **Examples** - Full page patterns (Admin Dashboard, Marketing landing)
-- **Foundation** - Token visualization (colors, spacing, typography, etc.)
-- **Components/{Category}/{Component}** - Each component's variants
+The docs site (`site/`, published at https://bigtablet.github.io/bigtablet-design-system/) has:
+- **Components** - one page per component: examples, when to use, props table, and an "adjust" toggle on the first example
+- **Tokens** - colors, spacing, typography, breakpoints and the other domains
+- **AI Agents** - setup files for Claude Code, Codex and Cursor
 
-Run locally: `pnpm storybook` (port 6006).
+Agent-readable docs ship in the package at `node_modules/@bigtablet/design-system/dist/llms/index.md` (same source as the site, same version as the install).
 
-**Note on Storybook Docs view:** Interactive states (hover, focus, animations) only show in Canvas view (individual story). Docs view renders static snapshots, so Spinner shows frozen, Tooltip won't appear, etc.
+Run locally: `pnpm site` (port 6007).
 
 ---
 
@@ -605,6 +603,6 @@ When asked to generate UI:
 ## Final Reminders
 
 - Read the [Components](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md) doc for full props API per component.
-- Storybook is the source of truth for visual behavior - `pnpm storybook` and explore.
+- The docs site examples are the source of truth for visual behavior - `pnpm site` and explore.
 - When in doubt, **use tokens, use components, use providers**. Don't reinvent.
 - Dark mode bugs are the most common failure mode - test both themes mentally before shipping code.
