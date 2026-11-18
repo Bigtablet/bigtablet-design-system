@@ -20,6 +20,6 @@ export const combobox: DocPage = {
 		},
 		{ id: "combobox/states", title: "비활성" },
 	],
-	props: "ComboboxProps",
+	props: ["ComboboxProps", "ComboboxOption"],
 	notes: ["`onSearch` 는 Promise 를 돌려주고, 그동안 목록에 로딩 표시가 뜹니다"],
 };

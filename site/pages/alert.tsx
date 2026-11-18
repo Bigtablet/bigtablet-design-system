@@ -21,7 +21,7 @@ export const alert: DocPage = {
 		},
 		{ id: "alert/notice", title: "안내" },
 	],
-	props: ["ConfirmOptions", "AlertOptions"],
+	props: ["ConfirmOptions", "AlertOptions", "AlertHandle"],
 	notes: [
 		"앱 최상위에 `AlertProvider` 를 한 번 둡니다",
 		"`onConfirm` 이 Promise 면 끝날 때까지 확인 버튼이 진행 중 상태가 됩니다",

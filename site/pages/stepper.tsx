@@ -30,7 +30,7 @@ export const stepper: DocPage = {
 			desc: "`onStepClick` 을 주면 지나간 단계만 눌립니다.",
 		},
 	],
-	props: "StepperProps",
+	props: ["StepperProps", "StepperStep"],
 	notes: [
 		'`<ol>` 로 렌더되고 현재 단계는 `aria-current="step"` 입니다. 지나간 단계는 "완료" 를 함께 읽습니다',
 	],

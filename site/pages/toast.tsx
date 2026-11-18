@@ -16,7 +16,7 @@ export const toast: DocPage = {
 	examples: [
 		{ id: "toast/basic", title: "종류 · 갱신", desc: "`duration: 0` 이면 닫을 때까지 남습니다." },
 	],
-	props: ["ToastProviderProps", "ToastOptions"],
+	props: ["ToastProviderProps", "ToastOptions", "ToastAction"],
 	notes: [
 		"앱 최상위에 `ToastProvider` 를 한 번 둡니다",
 		"쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤됩니다",

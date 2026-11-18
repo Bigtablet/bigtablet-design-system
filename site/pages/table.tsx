@@ -17,6 +17,6 @@ export const table: DocPage = {
 		{ id: "table/basic", title: "정렬" },
 		{ id: "table/loading", title: "불러오는 중" },
 	],
-	props: "TableProps",
+	props: ["TableProps", "TableColumn", "TableSort"],
 	notes: ["좁은 화면에서 `cards` 면 행이 카드로 바뀝니다"],
 };

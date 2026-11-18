@@ -12,5 +12,5 @@ export const breadcrumb: DocPage = {
 		["단계를 밟아 가는 절차", "Stepper", false],
 	],
 	examples: [{ id: "breadcrumb/basic", title: "기본" }],
-	props: "BreadcrumbProps",
+	props: ["BreadcrumbProps", "BreadcrumbItem"],
 };

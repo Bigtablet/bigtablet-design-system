@@ -13,7 +13,7 @@ export const imageCropper: DocPage = {
 		["그냥 파일 올리기", "FileInput", false],
 	],
 	examples: [{ id: "image-cropper/avatar", title: "원형" }],
-	props: "ImageCropperProps",
+	props: ["ImageCropperProps", "ImageCropperHandle", "CropRect"],
 	notes: [
 		'모달은 포함하지 않습니다. Modal 로 감싸고 "적용" 버튼에서 `crop()` 을 부릅니다',
 		"키보드로도 움직이고(방향키) 확대합니다(+ / -)",
