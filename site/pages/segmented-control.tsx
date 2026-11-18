@@ -6,7 +6,6 @@ export const segmentedControl: DocPage = {
 	order: 5,
 	title: "SegmentedControl",
 	name: "세그먼트 컨트롤",
-	aka: "세그먼트",
 	summary: "짧은 옵션 2~5개 중 하나를 고릅니다. 고른 칸만 떠오른 표면으로 채웁니다.",
 	when: [
 		["보기 방식 · 기간 · 통화처럼 짧은 옵션 몇 개", "SegmentedControl", true],
