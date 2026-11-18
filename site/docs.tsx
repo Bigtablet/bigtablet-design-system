@@ -1,7 +1,15 @@
 import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
-import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
-import { splitSentences } from "src/utils/sentences";
+import {
+	Children,
+	type ComponentType,
+	Fragment,
+	type ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import { renderPhrases, splitSentences } from "src/utils/sentences";
 import { AGENT_RULES, componentDoc } from "./llms";
 import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";
@@ -61,6 +69,17 @@ export function stayOnPage(e: { target: EventTarget | null; preventDefault: () =
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
 export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
+/** 손으로 쓴 문단(가이드 페이지) - 글자 조각에 붙여 둘 어절 규칙을 건다. 코드 · 링크 같은 요소는 그대로 둔다 (#1077) */
+export function P({ children }: { children: ReactNode }) {
+	return (
+		<p>
+			{Children.map(children, (child) =>
+				typeof child === "string" ? renderPhrases(child) : child,
+			)}
+		</p>
+	);
+}
+
 /** 코드 이름은 구분 기호(. _ - / | , = 여는 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
 export function Code({ children, className }: { children: string; className?: string }) {
 	// 따옴표 안("year-month") · Sass 보간(#{$x})은 값 하나라 끊지 않는다 - 따옴표 밖에서만 구분 기호 뒤에 <wbr>
@@ -118,7 +137,8 @@ export function Md({ children }: { children: string }) {
 					{part}
 				</span>
 			) : (
-				part
+				// 꾸미는 말 + 꾸밈받는 말("이 아래의 컴포넌트에서")은 한 줄에 - DS 문장 줄바꿈과 같은 규칙 (#1077)
+				<Fragment key={i}>{renderPhrases(part)}</Fragment>
 			);
 		});
 	// JSDoc 이 강조에 쓰는 **굵게** - 별표가 그대로 보이지 않게

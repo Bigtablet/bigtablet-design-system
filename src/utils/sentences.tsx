@@ -32,6 +32,100 @@ export const splitSentences = (text: string) => {
 };
 
 /**
+ * 다음 어절과 떼지 않는 관형사 - "이 아래의", "모든 항목" 처럼 뒤 말을 꾸미기만 해서 혼자 줄 끝에 남으면 어색하다.
+ * 체언으로도 쓰이는 낱말("이" 는 이빨 · 조사로도 읽힘)은 띄어 쓴 한 글자일 때만이라 관형사로 봐도 틀리지 않는다
+ */
+const DETERMINERS = new Set([
+	"이",
+	"그",
+	"저",
+	"한",
+	"두",
+	"세",
+	"네",
+	"각",
+	"모든",
+	"첫",
+	"새",
+	"몇",
+	"온갖",
+	"여러",
+	"어느",
+	"무슨",
+	"이런",
+	"그런",
+	"저런",
+]);
+/** 한 덩어리 최대 어절 수 - 길게 묶을수록 좁은 폭에서 줄 끝 빈자리가 커진다 */
+const MAX_PHRASE = 3;
+
+/**
+ * `의` 로 끝나지만 조사 `~의` 가 아닌 명사 - "회의 일정을" 은 꾸밈 관계가 아니라 묶을 까닭이 없다.
+ * ponytail: 자주 쓰는 것만 적었다. 빠진 명사는 묶여도 줄 끝 빈자리가 조금 커질 뿐이라 화면에서 보이면 더한다
+ */
+const NOUNS_ENDING_IN_UI = new Set([
+	"회의",
+	"동의",
+	"주의",
+	"협의",
+	"논의",
+	"건의",
+	"합의",
+	"문의",
+	"강의",
+	"정의",
+	"의의",
+	"편의",
+	"예의",
+	"성의",
+	"결의",
+	"모의",
+	"심의",
+	"토의",
+	"질의",
+	"항의",
+]);
+
+/** 다음 어절과 붙여 둘 어절인가 - `~의` 로 끝나는 꾸밈말 · 관형사. 쉼표 · 문장 부호로 끝나면 떼도 된다 */
+const bindsNext = (word: string) =>
+	(/[가-힣]의$/.test(word) && !NOUNS_ENDING_IN_UI.has(word)) || DETERMINERS.has(word);
+
+/**
+ * @description
+ * 꾸미는 말과 꾸밈받는 말("이 아래의 컴포넌트에서", "고객의 신뢰를") 사이에서 줄이 갈리지 않게 그 어절들을
+ * `nowrap` span 하나로 묶는다 (#1077). `keep-all` 은 어절 중간만 막고 어느 어절 사이가 어색한지는 모른다.
+ * 묶음은 최대 3어절이고, 묶이지 않는 글자 · 공백은 원문 그대로 둔다 - 보이지 않는 문자를 넣지 않아 복사한 글이 같다.
+ */
+export const renderPhrases = (text: string): React.ReactNode => {
+	const words = [...text.matchAll(/\S+/g)].map((m) => ({
+		word: m[0],
+		start: m.index ?? 0,
+		end: (m.index ?? 0) + m[0].length,
+	}));
+	const out: React.ReactNode[] = [];
+	let cursor = 0;
+	for (let i = 0; i < words.length; ) {
+		let j = i;
+		while (j < words.length - 1 && j - i + 1 < MAX_PHRASE && bindsNext(words[j]?.word ?? "")) j++;
+		const first = words[i];
+		const last = words[j];
+		if (j > i && first && last) {
+			out.push(text.slice(cursor, first.start));
+			out.push(
+				<span key={first.start} className="sentences_phrase">
+					{text.slice(first.start, last.end)}
+				</span>,
+			);
+			cursor = last.end;
+		}
+		i = j + 1;
+	}
+	if (cursor === 0) return text;
+	out.push(text.slice(cursor));
+	return out;
+};
+
+/**
  * @description
  * 두 문장 이상인 문구를 문장마다 인라인 블록으로 묶어 줄이 문장 사이에서 먼저 끊기게 한다 (#1005).
  * `keep-all` 은 어절 사이 어디서든 끊어 다음 문장의 첫 어절이 앞 줄에 남는다 - 문장 경계는 글자만으로
@@ -47,7 +141,7 @@ export const renderSentences = (content: React.ReactNode): React.ReactNode => {
 		...sentences.map((sentence, index) => (
 			<React.Fragment key={sentence.start}>
 				{content.slice(index > 0 ? (sentences[index - 1]?.end ?? 0) : 0, sentence.start)}
-				<span className="sentences_item">{sentence.text}</span>
+				<span className="sentences_item">{renderPhrases(sentence.text)}</span>
 			</React.Fragment>
 		)),
 		content.slice(last),

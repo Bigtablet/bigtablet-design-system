@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import pkg from "../package.json";
-import { Code, type DocPage, Md } from "./docs";
+import { Code, type DocPage, Md, P } from "./docs";
 import { AGENT_SNIPPET } from "./llms";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
@@ -283,17 +283,17 @@ function Install() {
 
 			<Block id="package" title="1. 패키지 설치">
 				<CodeBlock code="pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react" />
-				<p>
+				<P>
 					React 19 와 lucide-react 0.552 이상이 필요합니다. Next.js 는 선택이며 15 이상입니다. npm ·
 					yarn · bun 도 같은 패키지 이름으로 설치합니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="provider" title="2. Provider 로 감싸기">
-				<p>
+				<P>
 					앱 최상위(Next.js 는 <Code>app/layout.tsx</Code>)에서 한 번 감쌉니다.{" "}
 					<Code>useToast</Code> · <Code>useAlert</Code> 는 이 아래의 컴포넌트에서 부릅니다.
-				</p>
+				</P>
 				<CodeBlock
 					code={`import { AlertProvider, ThemeProvider, ToastProvider } from "@bigtablet/design-system";
 
@@ -311,12 +311,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }`}
 				/>
-				<p>
+				<P>
 					CSS 는 따로 import 하지 않습니다. 컴포넌트가 자기 CSS 와 공통 테마 변수를 함께 가져옵니다.
 					Next.js 를 webpack 으로 빌드하면 <Code>next.config</Code> 의{" "}
 					<Code>experimental.optimizePackageImports</Code> 에 이 패키지를 넣어야 쓰지 않는 컴포넌트
 					CSS 가 빠집니다 (Turbopack 은 그대로 됩니다).
-				</p>
+				</P>
 			</Block>
 
 			<Block id="first" title="3. 첫 컴포넌트">
@@ -329,14 +329,14 @@ export function SaveButton() {
   return <Button onClick={() => toast.success("저장했습니다")}>저장</Button>;
 }`}
 				/>
-				<p>
+				<P>
 					어떤 컴포넌트를 써야 할지 모르겠으면 <a href="#/components">컴포넌트</a> 에서 고르거나 ⌘K
 					로 찾습니다. 페이지마다 맨 위 "언제 쓰는가" 표가 비슷한 컴포넌트 사이를 가려 줍니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="tokens" title="4. 직접 스타일은 토큰으로">
-				<p>색 · 간격 값을 하드코딩하지 않고 토큰을 씁니다. 그래야 다크 모드를 따라갑니다.</p>
+				<P>색 · 간격 값을 하드코딩하지 않고 토큰을 씁니다. 그래야 다크 모드를 따라갑니다.</P>
 				<CodeBlock
 					code={`@use "@bigtablet/design-system/scss/token" as token;
 
@@ -347,25 +347,25 @@ export function SaveButton() {
   background: token.$color_bg_solid;
 }`}
 				/>
-				<p>
+				<P>
 					SCSS 를 쓰지 않으면 <Code>var(--bt-color-text-heading)</Code> 같은 CSS 변수를 씁니다.
 					자세한 목록은 <a href={`${REPO}/docs/THEMING.md`}>THEMING</a> 문서에 있습니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="agents" title="AI 에이전트로 쓰기">
-				<p>
+				<P>
 					Claude Code · Codex · Cursor 가 이 패키지를 제대로 쓰게 하는 설정은{" "}
 					<a href="#/ai">AI 에이전트</a> 에 있습니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="upgrade" title="버전을 올릴 때">
-				<p>
+				<P>
 					사내 패키지라 minor 버전에도 하위 호환이 깨지는 변경이 들어갈 수 있습니다. 올리기 전에{" "}
 					<a href={`${REPO}/docs/MIGRATION.md#업그레이드-체크리스트`}>업그레이드 체크리스트</a> 를
 					봅니다.
-				</p>
+				</P>
 			</Block>
 		</article>
 	);
@@ -395,16 +395,16 @@ function Vanilla() {
 <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
 <script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>`}
 				/>
-				<p>
+				<P>
 					CDN 대신 패키지의 <Code>dist/vanilla/</Code> 에 있는 두 파일을 프로젝트에 복사해도 됩니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="classes" title="2. 클래스 붙이기">
-				<p>
+				<P>
 					클래스는 <Code>bt-컴포넌트</Code> · <Code>bt-컴포넌트__부분</Code> ·{" "}
 					<Code>bt-컴포넌트--변형</Code> 순서로 짓습니다. 변형 이름은 React prop 값과 같습니다.
-				</p>
+				</P>
 				<CodeBlock
 					code={`<button class="bt-button bt-button--md bt-button--filled">저장</button>
 
@@ -416,10 +416,10 @@ function Vanilla() {
 			</Block>
 
 			<Block id="js" title="3. 움직이는 컴포넌트">
-				<p>
+				<P>
 					<Code>data-bt-*</Code> 속성이 있는 요소는 페이지가 열릴 때 자동으로 동작합니다. 나중에
 					추가한 요소는 직접 초기화합니다.
-				</p>
+				</P>
 				<CodeBlock
 					code={`<div class="bt-dropdown" data-bt-dropdown>…</div>
 
@@ -428,9 +428,9 @@ function Vanilla() {
   Bigtablet.Toast("저장했습니다", "success");
 </script>`}
 				/>
-				<p>
+				<P>
 					전체 클래스와 JS API 는 <a href={`${REPO}/docs/VANILLA.md`}>VANILLA</a> 문서에 있습니다.
-				</p>
+				</P>
 			</Block>
 		</article>
 	);
@@ -485,10 +485,10 @@ function Ai() {
 			</header>
 
 			<Block id="setup" title="1. 에이전트에 연결하기">
-				<p>
+				<P>
 					앱 저장소의 에이전트 설정 파일에 아래 내용을 넣습니다. Claude Code 와 Codex 는 같은 파일
 					하나를 읽게 합니다.
-				</p>
+				</P>
 				{/* 에이전트마다 넣을 파일 · 내용이 다른 패널이라 Tabs (값 하나 고르기가 아니다) */}
 				<Tabs defaultValue="agents">
 					<TabList ariaLabel="에이전트">
@@ -500,16 +500,16 @@ function Ai() {
 					</TabList>
 					{AGENTS.map(([value]) => (
 						<TabPanel key={value} value={value}>
-							<p>
+							<P>
 								<Code>{AGENT_FILES[value].file}</Code>
-							</p>
+							</P>
 							<CodeBlock code={AGENT_FILES[value].code} />
 							{value === "agents" && (
 								<>
-									<p>
+									<P>
 										Claude Code 는 <Code>CLAUDE.md</Code> 에 아래 한 줄만 둡니다. 같은 내용을 불러와
 										두 파일을 따로 고칠 일이 없습니다.
-									</p>
+									</P>
 									<CodeBlock code="@AGENTS.md" />
 								</>
 							)}
@@ -519,10 +519,10 @@ function Ai() {
 			</Block>
 
 			<Block id="contents" title="2. 들어 있는 것">
-				<p>
+				<P>
 					<Code>pnpm build</Code> 가 이 사이트와 같은 원본(페이지 데이터 · 예제 파일 · 타입)에서
 					만들어 패키지에 싣습니다. 사이트와 내용이 갈라지지 않습니다.
-				</p>
+				</P>
 				<CodeBlock
 					code={`node_modules/@bigtablet/design-system/dist/llms/
 ├── index.md           # 쓰기 전 규칙 + 묶음별 컴포넌트 목록
@@ -531,7 +531,7 @@ function Ai() {
     ├── data-view.md   # props 가 가리키는 하위 타입(DataViewToolbar …) 표까지
     └── …`}
 				/>
-				<p>
+				<P>
 					패키지를 설치하기 전이거나 웹에서 읽는 에이전트에게는 이 사이트의{" "}
 					<a href="llms.txt">
 						<Code>llms.txt</Code>
@@ -539,27 +539,27 @@ function Ai() {
 					를 알려 줍니다. 내용은 같고, 컴포넌트 문서는 <Code>components/button.md</Code> 처럼 같은
 					자리에 있습니다. 사이트는 main 최신이라 설치한 버전과 다를 수 있으니, 설치했다면 패키지
 					쪽을 우선합니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="copy" title="3. 한 컴포넌트만 붙여 넣기">
-				<p>
+				<P>
 					설정 없이 Claude · ChatGPT 채팅에서 바로 물을 때는 컴포넌트 페이지 맨 위의{" "}
 					<strong>AI 용 문서 복사</strong> 를 누릅니다. 그 컴포넌트 문서에 패키지 규칙까지 붙어
 					복사됩니다.
-				</p>
+				</P>
 			</Block>
 
 			<Block id="prompt" title="4. 이렇게 요청합니다">
-				<p>
+				<P>
 					컴포넌트 이름을 몰라도 화면을 설명하면 됩니다. 에이전트는 각 문서의 "언제 쓰는가" 로
 					컴포넌트를 고릅니다.
-				</p>
+				</P>
 				<CodeBlock
 					prose
 					code="구성원 관리 화면을 만들어 줘. 제목 옆에 초대 버튼, 검색과 페이지가 있는 구성원 표, 초대는 이메일 · 역할을 받는 대화 상자, 삭제는 한 번 확인받기."
 				/>
-				<p>문서만 읽은 에이전트가 고르는 조합입니다.</p>
+				<P>문서만 읽은 에이전트가 고르는 조합입니다.</P>
 				<div className="doc_table_wrap">
 					<table className="doc_table">
 						<tbody>
@@ -577,10 +577,10 @@ function Ai() {
 			</Block>
 
 			<Block id="feedback" title="문서가 틀렸을 때">
-				<p>
+				<P>
 					에이전트가 엉뚱한 컴포넌트를 고르거나 없는 prop 을 쓰면 문서의 빈틈입니다. 요청과 결과를
 					붙여 <a href={`${GITHUB}/issues/new`}>이슈</a> 로 남겨 주세요.
-				</p>
+				</P>
 			</Block>
 		</article>
 	);
