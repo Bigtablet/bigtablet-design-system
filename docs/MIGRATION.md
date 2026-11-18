@@ -8,7 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
-- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate)
+- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
@@ -57,7 +57,7 @@
 
 ---
 
-## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate)
+## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)
 
 DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개를 deprecated 로 표시했습니다. 지금은 그대로 동작하고, 쓰면 컴파일할 때 Sass 경고가 뜹니다. 이후 버전에서 제거합니다.
 
@@ -80,6 +80,20 @@ DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개
 | 패널 없이 값만 고름 (보기 방식 · 기간 · 상태 필터) | `<SegmentedControl items={…} value onValueChange />` |
 
 **앱 쪽에서 할 일:** `grep -rn 'variant="fills"' --include=*.tsx` 로 찾습니다.
+
+### Toast 기본 위치를 오른쪽 아래로
+
+넓은 화면(600px 이상)의 토스트 기본 자리가 오른쪽 위에서 **오른쪽 아래**로 바뀝니다. 오른쪽 위는 화면 머리의 주 동작 버튼(저장 · 추가)을 가렸습니다. 폰 폭은 원래 아래라 그대로입니다.
+
+| 쓰던 곳 | 할 일 |
+|------|------|
+| 기본값을 쓰고 하단에 고정 UI 가 없음 | 없음 - 오른쪽 아래로 내려갑니다 |
+| CSS 로 `.toast_container` 를 아래로 덮어씀 | 그 재정의를 지웁니다. 남겨도 결과는 같습니다 |
+| 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹침 | React `<ToastProvider placement="top-right">`, Vanilla `<html data-bt-toast-placement="top-right">` |
+
+Vanilla 의 `data-bt-toast-placement="bottom-right"` 는 이제 기본과 같아 지워도 됩니다.
+
+**앱 쪽에서 할 일:** `grep -rn "toast_container\|bt-toast-container" --include=*.css --include=*.scss` 로 위치 재정의를 찾습니다.
 
 ---
 
