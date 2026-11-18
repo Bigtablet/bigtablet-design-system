@@ -2203,8 +2203,8 @@
 			"name": "placement",
 			"type": "\"top-right\" | \"bottom-right\"",
 			"required": false,
-			"default": "\"top-right\"",
-			"doc": "넓은 화면에서 뜨는 자리. 머리 오른쪽 주 동작 버튼을 가리면 \"bottom-right\""
+			"default": "\"bottom-right\"",
+			"doc": "넓은 화면에서 뜨는 자리. 위는 머리 오른쪽 주 동작 버튼을 가려 아래가 기본이다 (#1073). 하단에 고정 UI(쿠키 배너 등)가 있어 겹치면 \"top-right\": 폰 폭은 어느 값이든 하단이다"
 		}
 	],
 	"TopLoadingProps": [

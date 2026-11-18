@@ -62,7 +62,10 @@ export interface ToastProviderProps {
 	closeAriaLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
-	/** 넓은 화면에서 뜨는 자리 (기본값: "top-right"). 머리 오른쪽 주 동작 버튼을 가리면 "bottom-right" */
+	/**
+	 * 넓은 화면에서 뜨는 자리 (기본값: "bottom-right"). 위는 머리 오른쪽 주 동작 버튼을 가려 아래가 기본이다 (#1073).
+	 * 하단에 고정 UI(쿠키 배너 등)가 있어 겹치면 "top-right" - 폰 폭은 어느 값이든 하단이다
+	 */
 	placement?: ToastPlacement;
 }
 
@@ -247,7 +250,7 @@ export const ToastProvider = ({
 	maxCount = 5,
 	closeAriaLabel: closeAriaLabelProp,
 	regionLabel: regionLabelProp,
-	placement = "top-right",
+	placement = "bottom-right",
 }: ToastProviderProps) => {
 	const t = useLocaleText();
 	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");

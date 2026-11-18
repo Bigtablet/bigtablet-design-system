@@ -13,6 +13,10 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 
 	it("stacks 360px toasts at the top right, 8px apart, newest first", async () => {
 		await page.viewport(1280, 800);
+		document.documentElement.dataset.btToastPlacement = "top-right";
+		onTestFinished(() => {
+			delete document.documentElement.dataset.btToastPlacement;
+		});
 		Toast("첫 번째", "success");
 		Toast("두 번째", "error");
 
@@ -35,12 +39,9 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 		expect(667 - r.bottom).toBe(16);
 	});
 
-	it("moves to the bottom right with <html data-bt-toast-placement> (#998)", async () => {
+	// 기본은 아래 (#1073) - 위로 올리는 건 data-bt-toast-placement="top-right"
+	it("sits at the bottom right by default", async () => {
 		await page.viewport(1280, 800);
-		document.documentElement.dataset.btToastPlacement = "bottom-right";
-		onTestFinished(() => {
-			delete document.documentElement.dataset.btToastPlacement;
-		});
 		Toast("아래", "success");
 
 		const r = rect(document.querySelector(".bt-toast") as Element);
