@@ -57,6 +57,10 @@ export default defineConfig({
 		},
 	},
 	css: { preprocessorOptions: { scss: { loadPaths: [root], quietDeps: true } } },
-	build: { outDir: path.join(root, "site-dist"), emptyOutDir: true, rollupOptions: { input: ["index.html", "preview.html"] } },
+	build: {
+		outDir: path.join(root, "site-dist"),
+		emptyOutDir: true,
+		rollupOptions: { input: ["index.html", "preview.html"] },
+	},
 	server: { port: 6007 },
 });
