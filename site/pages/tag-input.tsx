@@ -18,6 +18,7 @@ export const tagInput: DocPage = {
 			title: "기본",
 			desc: "Enter 로 추가하고 Backspace 로 마지막 태그를 지웁니다.",
 		},
+		{ id: "tag-input/states", title: "비활성" },
 	],
 	props: "TagInputProps",
 };

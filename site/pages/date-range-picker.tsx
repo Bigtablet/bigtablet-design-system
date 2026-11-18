@@ -11,6 +11,9 @@ export const dateRangePicker: DocPage = {
 		["조회 기간 · 예약 기간", "DateRangePicker", true],
 		["날짜 하나", "DatePicker", false],
 	],
-	examples: [{ id: "date-range-picker/basic", title: "기본" }],
+	examples: [
+		{ id: "date-range-picker/basic", title: "기본" },
+		{ id: "date-range-picker/states", title: "필수 · 비활성" },
+	],
 	props: "DateRangePickerProps",
 };

@@ -51,11 +51,8 @@ export interface Playground {
 	code: string;
 }
 
-/** 예제 박스가 "조절" 을 켰을 때 쓰는 미리보기 · 컨트롤 · 코드. 열 prop 이 없으면 null */
-export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playground | null {
-	const [values, setValues] = useState<Record<string, Value>>({});
-	const [more, setMore] = useState(false);
-	if (!config) return null;
+/** 조절에 여는 prop 과 그릴 컴포넌트 - 예제 a11y 검사(`examples.browser.test.tsx`)도 같은 목록을 쓴다 */
+export function playgroundOf(page: DocPage, config: PlaygroundConfig) {
 	const name = [page.props].flat()[0];
 	const Comp = (DS as unknown as Record<string, ComponentType<Record<string, unknown>>>)[
 		page.title
@@ -63,6 +60,15 @@ export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playgro
 	const rows = ((name ? props[name] : []) as Row[]).filter(
 		(p) => !config.omit?.includes(p.name) && (p.type === "boolean" || LITERALS.test(p.type)),
 	);
+	return { Comp, rows, optionsOf };
+}
+
+/** 예제 박스가 "조절" 을 켰을 때 쓰는 미리보기 · 컨트롤 · 코드. 열 prop 이 없으면 null */
+export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playground | null {
+	const [values, setValues] = useState<Record<string, Value>>({});
+	const [more, setMore] = useState(false);
+	if (!config) return null;
+	const { Comp, rows } = playgroundOf(page, config);
 	if (!Comp || rows.length === 0) return null;
 
 	const valueOf = (p: Row): Value =>

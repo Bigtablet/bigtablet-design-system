@@ -17,6 +17,7 @@ export const dropdown: DocPage = {
 	examples: [
 		{ id: "dropdown/basic", title: "기본" },
 		{ id: "dropdown/multiple-search", title: "여러 개 · 검색" },
+		{ id: "dropdown/states", title: "필수 · 비활성" },
 	],
 	props: ["DropdownSingleProps", "DropdownMultipleProps"],
 	notes: [
