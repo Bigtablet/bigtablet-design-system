@@ -10,7 +10,7 @@ import {
 	toWords,
 	type Word,
 } from "./layout";
-import { createCanvasMeasurer, fontOf } from "./measure";
+import { type CanvasMeasurer, createCanvasMeasurer, fontOf } from "./measure";
 import "./text.scss";
 
 export interface BalancedTextProps
@@ -95,6 +95,14 @@ const tokenize = (children: React.ReactNode) => {
 /** 그린 어절의 폭 - 어절 span 이 줄을 넘어 갈라졌어도(긴 코드) 조각들의 합 */
 const widthOf = (el: Element) => [...el.getClientRects()].reduce((sum, r) => sum + r.width, 0);
 
+/** 같은 글꼴은 측정기 하나를 함께 쓴다 - 문단마다 canvas 를 새로 만들지 않게 */
+const measurers = new Map<string, CanvasMeasurer | null>();
+const measurerFor = (font: string, letterSpacing: number) => {
+	const key = `${font}|${letterSpacing}`;
+	if (!measurers.has(key)) measurers.set(key, createCanvasMeasurer(font, letterSpacing));
+	return measurers.get(key) ?? null;
+};
+
 /** 폭이 바뀐 뒤 이만큼 멈추면 다시 계산한다 - 드래그로 창을 늘리는 동안 매 프레임 계산하지 않게 (semantic-wrap "settled") */
 const SETTLE_MS = 100;
 /** 첫 렌더에서 함께 묶는 최대 어절 수 - `phraseRanges` 와 같다 */
@@ -147,7 +155,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			if (el.querySelector(".text_balanced_line")) return;
 			const { font, letterSpacing } = fontOf(el);
 			// 어절 사이 공백만 canvas 로 잰다 - 줄 끝 공백은 화면에서 폭이 0 으로 접혀 DOM 으로는 못 잰다
-			const measure = createCanvasMeasurer(font, letterSpacing);
+			const measure = measurerFor(font, letterSpacing);
 			if (!measure) return;
 			const measured = words.map((w, i) => ({ ...w, width: widthOf(spans[i] as Element) }));
 			// 줄보다 긴 어절은 브라우저가 그 안에서 끊는다 - 손대지 않는다
@@ -160,11 +168,19 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			// 가장 나은 배치를 고르되, 꼭 붙여 둘 자리(벌점 100)를 끊어야만 들어가면 브라우저 결과를 둔다
 			const split = tops.some((t) => new Set(t).size > 1);
 			const plain = layoutNative(measured, measure, width).length + 1;
+			const acceptable = (lines: number) => {
+				const best = layoutBest(measured, measure, width, lines);
+				return best && scoreBreaks(measured, measure, width, best).penalty < 100 ? best : null;
+			};
 			if (split || plain < drawn) {
-				const best = layoutBest(measured, measure, width, Math.min(plain, drawn));
-				if (best && scoreBreaks(measured, measure, width, best).penalty < 100)
-					setChosen({ key, breaks: best });
-				return;
+				const best = acceptable(Math.min(plain, drawn));
+				if (best) return setChosen({ key, breaks: best });
+				// 줄 수를 줄일 수 없으면 그려진 줄 수 안에서라도 고른다
+				if (split) {
+					const same = acceptable(drawn);
+					if (same) setChosen({ key, breaks: same });
+					return;
+				}
 			}
 			const native = tops.flatMap((t, i) => (i > 0 && t[0] !== tops[i - 1]?.[0] ? [i - 1] : []));
 			const choice = chooseWordBreaks(measured, measure, width, native);
@@ -179,10 +195,14 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			}, SETTLE_MS);
 		};
 		compute();
-		// 웹폰트가 늦게 오면 그 전 폭은 대체 글꼴 것이다
-		document.fonts?.ready.then(() => {
-			if (!cancelled) recompute();
-		});
+		// 웹폰트가 늦게 오면 그 전 폭은 대체 글꼴 것이다 - 이미 다 받았으면(새로고침 · 다른 페이지로 이동) 다시 재지 않는다.
+		// 다시 재면 브라우저 줄바꿈으로 한 번 돌아갔다 오면서 줄이 깜빡인다
+		if (document.fonts && document.fonts.status !== "loaded")
+			document.fonts.ready.then(() => {
+				if (cancelled) return;
+				for (const m of measurers.values()) m?.clear();
+				recompute();
+			});
 		// jsdom 같은 환경에는 없다 - 소비 앱 테스트가 이 컴포넌트를 그려도 깨지지 않게
 		const observer =
 			typeof ResizeObserver === "undefined"
@@ -237,13 +257,13 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			from = end + 1;
 		}
 	} else {
-		// 계산 전(SSR · canvas 없음) - 붙여 둘 어절(`gapPenalty` 100)만 inline-block 으로 묶는다 (`renderPhrases` 와 같은 규칙)
+		// 계산 전(SSR · canvas 없음) - 붙여 둘 어절(`gapPenalty` 100)만 inline-block 으로 묶는다 (`renderPhrases` 와 같은 규칙).
+		// 공백 없이 붙은 자리("(…)는")도 묶는다 - Chromium 은 닫는 괄호 뒤 한글 앞에서도 끊는다
 		for (let i = 0; i < tokens.length; ) {
 			let j = i;
 			while (
 				j < tokens.length - 1 &&
 				j - i + 1 < MAX_PHRASE &&
-				tokens[j + 1]?.spaceBefore &&
 				gapPenalty(tokens[j]?.text ?? "", tokens[j + 1]?.text ?? "") >= 100
 			)
 				j++;

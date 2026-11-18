@@ -37,16 +37,23 @@ describe("gapPenalty", () => {
 	});
 
 	it("leans a modifier and a compound noun toward the next word", () => {
-		expect(gapPenalty("붙이는", "순서입니다.")).toBe(6);
+		expect(gapPenalty("붙이는", "순서를")).toBe(6);
 		expect(gapPenalty("읽는", "문서가")).toBe(6);
 		expect(gapPenalty("같은", "모양으로")).toBe(6);
 		expect(gapPenalty("서버", "템플릿에서")).toBe(6);
 		expect(gapPenalty("디자인", "시스템의")).toBe(6);
 		// 주제 조사 · 목적격 조사 뒤는 보통
 		expect(gapPenalty("버튼은", "누르면")).toBe(4);
-		expect(gapPenalty("토큰을", "씁니다.")).toBe(4);
+		expect(gapPenalty("토큰을", "쓰고")).toBe(4);
 		expect(gapPenalty("Esc", "닫기")).toBe(6);
 		expect(gapPenalty("prop", "을")).toBe(100);
+		expect(gapPenalty("query.data", "에는")).toBe(100);
+		expect(gapPenalty('선택"', "으로")).toBe(100);
+	});
+
+	it("keeps the last word of a sentence with the sentence", () => {
+		expect(gapPenalty("패키지에", "싣습니다.")).toBe(12);
+		expect(gapPenalty("순서로", "짓습니다.")).toBe(12);
 	});
 
 	it("keeps a · list together and never starts a line with ·", () => {
@@ -120,7 +127,7 @@ describe("scoreBreaks", () => {
 		const words = toWords(text);
 		const at = (w: string) => words.findIndex((word) => word.text === w);
 		expect(scoreBreaks(words, measure, 1000, [at("·")]).penalty).toBe(60);
-		expect(scoreBreaks(words, measure, 1000, [at("규칙을")]).penalty).toBe(4);
+		expect(scoreBreaks(words, measure, 1000, [at("에")]).penalty).toBe(4);
 	});
 });
 

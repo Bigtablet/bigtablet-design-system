@@ -154,9 +154,9 @@ const BARE_END = /[이가은는을를에의와과도만로서고며면게지요�
 const isBare = (word: string) =>
 	(/^[가-힣]+$/.test(word) && !BARE_END.test(word)) || /^[A-Za-z0-9][\w.+#-]*$/.test(word);
 
-/** 영문 · 숫자 뒤에 띄어 쓴 조사("prop 을", "Enter 로") - 다음 줄 맨 앞에 혼자 남으면 안 된다 */
+/** 영문 · 숫자 · 닫는 따옴표 · 괄호 뒤에 띄어 쓴 조사("prop 을", `"복사" 로`, "(…) 는") - 다음 줄 맨 앞에 혼자 남으면 안 된다 */
 const SPACED_PARTICLE =
-	/^(?:이|가|은|는|을|를|에|에서|의|와|과|도|만|로|으로|부터|까지|처럼|보다)[.,!?]*$/;
+	/^(?:이|가|은|는|을|를|의|와|과|도|만|로|으로|에|에서|에게|부터|까지|처럼|보다|마다|만큼|이나|나|라고|이라고|하고)(?:는|도|만|의)?[.,!?]*$/;
 
 /** 뒤 어절과 한 덩어리로 읽히는가 - 꾸미는 말 + 명사, 복합명사. 떼도 뜻은 서서 붙여 둘 자리(100)보다 약하다 */
 const leansNext = (before: string, after: string) => {
@@ -167,14 +167,16 @@ const leansNext = (before: string, after: string) => {
 /**
  * 두 어절 사이에서 줄을 바꾸면 얼마나 어색한가 - 줄바꿈 엔진(`layout.ts`)의 벌점 (#1083).
  * 문장 끝 0 · 쉼표 · 쌍점 뒤 1 · 보통 4 · 꾸미는 말 · 복합명사 사이 6 · 나열(`·`) 사이 8 ·
- * 붙여 둘 자리(`phraseRanges` 와 같은 규칙)와 `·` 로 시작하는 줄 100.
+ * 문장 마지막 어절만 넘기는 자리 12 · 붙여 둘 자리(`phraseRanges` 와 같은 규칙)와 `·` 로 시작하는 줄 100.
  * `A · B` 는 쉼표와 달리 한 덩어리 이름으로 읽힌다("React 19 · Next.js") - 끊으면 쉼표보다 어색하다
  */
 export const gapPenalty = (before: string, after: string): number => {
 	if (SENTENCE_END.test(before)) return 0;
 	if (bindsNext(before) || bindsPrev(after) || after === "·") return 100;
-	if (/[A-Za-z0-9]$/.test(before) && SPACED_PARTICLE.test(after)) return 100;
+	if (/[A-Za-z0-9"')\]”’>]$/.test(before) && SPACED_PARTICLE.test(after)) return 100;
 	if (/[,:;]["')\]”’]*$/.test(before)) return 1;
+	// 문장의 마지막 어절(서술어)만 다음 줄로 - "패키지에 / 싣습니다. 다음 문장…" 은 문장이 끝난 듯 읽히다 한 어절이 떨어진다
+	if (SENTENCE_END.test(after)) return 12;
 	if (/·$/.test(before)) return 8;
 	if (leansNext(before, after)) return 6;
 	return 4;

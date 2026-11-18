@@ -54,11 +54,17 @@ export const toWords = (text: string): Word[] => {
 /** 줄바꿈 자리 = 그 줄의 마지막 어절 번호. 마지막 줄은 넣지 않는다 - `[2, 5]` 면 0~2 · 3~5 · 6~끝 세 줄 */
 export type Breaks = number[];
 
-const lineWidth = (words: Word[], widths: number[], space: number, from: number, to: number) => {
-	let width = 0;
-	for (let i = from; i <= to; i++)
-		width += (widths[i] ?? 0) + (i > from && words[i]?.spaceBefore ? space : 0);
-	return width;
+/**
+ * 줄 폭 계산기 - 앞에서부터 쌓은 합으로 한 줄 폭을 덧셈 한 번에 낸다. 줄 앞 공백은 세지 않는다.
+ * 본문 문단(수십 어절 × 여러 줄)을 DP 로 풀 때 줄마다 어절을 다시 더하지 않게
+ */
+const lineWidths = (words: Word[], widths: number[], space: number) => {
+	const sum = [0];
+	words.forEach((w, i) => {
+		sum.push((sum[i] ?? 0) + (widths[i] ?? 0) + (i > 0 && w.spaceBefore ? space : 0));
+	});
+	return (from: number, to: number) =>
+		(sum[to + 1] ?? 0) - (sum[from] ?? 0) - (from > 0 && words[from]?.spaceBefore ? space : 0);
 };
 
 /**
@@ -98,12 +104,13 @@ export const scoreBreaks = (
 	const widths = words.map((w) => w.width ?? measure(w.text));
 	const space = measure(" ");
 	const costs = breakCosts(words);
+	const lineWidth = lineWidths(words, widths, space);
 	let penalty = 0;
 	let ragged = 0;
 	let from = 0;
 	for (const end of breaks) {
 		penalty += costs[end] ?? 0;
-		const slack = (maxWidth - lineWidth(words, widths, space, from, end)) / maxWidth;
+		const slack = (maxWidth - lineWidth(from, end)) / maxWidth;
 		ragged += slack * slack;
 		from = end + 1;
 	}
@@ -151,9 +158,10 @@ export const layoutBest = (
 		new Array<number>(n).fill(Number.POSITIVE_INFINITY),
 	);
 	const from = Array.from({ length: lines }, () => new Array<number>(n).fill(-1));
-	const fits = (a: number, b: number) => lineWidth(words, widths, space, a, b) <= maxWidth;
+	const lineWidth = lineWidths(words, widths, space);
+	const fits = (a: number, b: number) => lineWidth(a, b) <= maxWidth;
 	const slack = (a: number, b: number) => {
-		const s = (maxWidth - lineWidth(words, widths, space, a, b)) / maxWidth;
+		const s = (maxWidth - lineWidth(a, b)) / maxWidth;
 		return s * s * RAGGED_WEIGHT;
 	};
 	for (let j = 0; j < n; j++) if (fits(0, j)) (cost[0] as number[])[j] = 0;
