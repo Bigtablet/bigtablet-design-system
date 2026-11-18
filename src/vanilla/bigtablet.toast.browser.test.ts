@@ -92,16 +92,18 @@ describe("Vanilla Toast (Chromium, #910)", () => {
 
 	it("pauses the timer while hovered and closes once the bar runs out", async () => {
 		await page.viewport(1280, 800);
-		Toast("타이머", "warning", { duration: 300 });
+		// 300ms 였을 때 CI 에서 hover 가 닿기 전에 막대가 다 줄어 토스트가 먼저 닫혔다 - 넉넉히 두고,
+		// 멈춘 동안 그 시간을 넘겨 기다려 "멈춤" 을 확인한다
+		Toast("타이머", "warning", { duration: 1000 });
 		const el = document.querySelector(".bt-toast") as HTMLElement;
 		const bar = el.querySelector(".bt-toast__progress") as HTMLElement;
 
 		await userEvent.hover(el);
 		expect(getComputedStyle(bar).animationPlayState).toBe("paused");
-		await new Promise((r) => setTimeout(r, 500));
+		await new Promise((r) => setTimeout(r, 1200));
 		expect(el.isConnected).toBe(true);
 
 		await userEvent.unhover(el);
-		await expect.poll(() => el.isConnected, { timeout: 2000 }).toBe(false);
+		await expect.poll(() => el.isConnected, { timeout: 3000 }).toBe(false);
 	});
 });
