@@ -130,11 +130,13 @@ export const phraseRanges = (text: string): { start: number; end: number }[] => 
 
 /**
  * 두 어절 사이에서 줄을 바꾸면 얼마나 어색한가 - 줄바꿈 엔진(`layout.ts`)의 벌점 (#1083).
- * 문장 끝 0 · 쉼표 · 쌍점 뒤 1 · 보통 4 · 붙여 둘 자리(`phraseRanges` 와 같은 규칙) 100
+ * 문장 끝 0 · 쉼표 · 쌍점 뒤 1 · 보통 4 · 나열(`·`) 사이 8 · 붙여 둘 자리(`phraseRanges` 와 같은 규칙)와 `·` 로 시작하는 줄 100.
+ * `A · B` 는 쉼표와 달리 한 덩어리 이름으로 읽힌다("React 19 · Next.js") - 끊으면 쉼표보다 어색하다
  */
 export const gapPenalty = (before: string, after: string): number => {
 	if (SENTENCE_END.test(before)) return 0;
-	if (bindsNext(before) || bindsPrev(after)) return 100;
-	if (/[,:;·]["')\]”’]*$/.test(before) || after === "·") return 1;
+	if (bindsNext(before) || bindsPrev(after) || after === "·") return 100;
+	if (/[,:;]["')\]”’]*$/.test(before)) return 1;
+	if (/·$/.test(before)) return 8;
 	return 4;
 };

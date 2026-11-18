@@ -95,11 +95,12 @@ export const scoreBreaks = (
 ): LayoutScore => {
 	const widths = words.map((w) => measure(w.text));
 	const space = measure(" ");
+	const costs = breakCosts(words);
 	let penalty = 0;
 	let ragged = 0;
 	let from = 0;
 	for (const end of breaks) {
-		penalty += breakCost(words, end);
+		penalty += costs[end] ?? 0;
 		const slack = (maxWidth - lineWidth(words, widths, space, from, end)) / maxWidth;
 		ragged += slack * slack;
 		from = end + 1;
@@ -108,13 +109,18 @@ export const scoreBreaks = (
 };
 
 /**
- * `end` 어절 뒤에서 끊는 벌점. 공백 없이 맞닿은 자리(괄호 앞뒤)는 끊을 수는 있어도 보기 싫어 높게 둔다 -
- * 브라우저 예측에는 넣되 엔진이 고르지는 않게
+ * 어절마다 그 뒤에서 끊는 벌점. 공백 없이 맞닿은 자리(괄호 앞뒤)는 끊을 수는 있어도 보기 싫어 높게 둔다 -
+ * 브라우저 예측에는 넣되 엔진이 고르지는 않게. 괄호 안("(h · p · ul ·" / "a …)")도 같은 값이다 - 괄호 하나는 한 덩어리다
  */
-const breakCost = (words: Word[], end: number) =>
-	words[end + 1]?.spaceBefore === false
-		? 50
-		: gapPenalty(words[end]?.text ?? "", words[end + 1]?.text ?? "");
+const breakCosts = (words: Word[]) => {
+	let depth = 0;
+	return words.map((word, i) => {
+		for (const ch of word.text) depth = Math.max(0, depth + (ch === "(" ? 1 : ch === ")" ? -1 : 0));
+		const next = words[i + 1];
+		if (next?.spaceBefore === false || depth > 0) return 50;
+		return gapPenalty(word.text, next?.text ?? "");
+	});
+};
 
 /** 남는 폭 1 비율(빈 줄)이 벌점 몇 점과 맞먹는가 - 줄 길이보다 끊는 자리를 훨씬 무겁게 본다 */
 const RAGGED_WEIGHT = 2;
@@ -134,6 +140,7 @@ export const layoutBest = (
 	if (n === 0 || lines < 1 || lines > n) return null;
 	const widths = words.map((w) => measure(w.text));
 	const space = measure(" ");
+	const costs = breakCosts(words);
 	// cost[k][j] = 어절 0~j 를 k+1 줄에 담는 최소 비용, from[k][j] = 그 마지막 줄의 시작 어절
 	const cost = Array.from({ length: lines }, () =>
 		new Array<number>(n).fill(Number.POSITIVE_INFINITY),
@@ -156,7 +163,7 @@ export const layoutBest = (
 				if (before === Number.POSITIVE_INFINITY) continue;
 				// 앞 줄(…i-1)을 끝낸 자리의 벌점 + 앞 줄 길이 고르기. 마지막 줄의 남는 폭은 세지 않는다
 				const startOfPrev = k - 1 === 0 ? 0 : ((from[k - 1] as number[])[i - 1] ?? 0);
-				const c = before + breakCost(words, i - 1) + slack(startOfPrev, i - 1);
+				const c = before + (costs[i - 1] ?? 0) + slack(startOfPrev, i - 1);
 				if (c < (cur[j] ?? Number.POSITIVE_INFINITY)) {
 					cur[j] = c;
 					at[j] = i;

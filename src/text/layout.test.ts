@@ -35,6 +35,11 @@ describe("gapPenalty", () => {
 		expect(gapPenalty("아래의", "컴포넌트에서")).toBe(100);
 		expect(gapPenalty("body", "입니다.")).toBe(100);
 	});
+
+	it("keeps a · list together and never starts a line with ·", () => {
+		expect(gapPenalty("·", "Next.js")).toBe(8);
+		expect(gapPenalty("19", "·")).toBe(100);
+	});
 });
 
 describe("layoutNative", () => {
@@ -93,6 +98,16 @@ describe("layoutBest", () => {
 		const native = layoutNative(words, measure, 150);
 		const best = layoutBest(words, measure, 150, native.length + 1) ?? [];
 		for (const line of lines(text, best)) expect(measure(line)).toBeLessThanOrEqual(150);
+	});
+});
+
+describe("scoreBreaks", () => {
+	it("charges a break inside parentheses like a no-space gap", () => {
+		const text = "글 마크업(h · p · ul · a …)에 타이포 규칙을 입힙니다.";
+		const words = toWords(text);
+		const at = (w: string) => words.findIndex((word) => word.text === w);
+		expect(scoreBreaks(words, measure, 1000, [at("ul")]).penalty).toBe(50);
+		expect(scoreBreaks(words, measure, 1000, [at("타이포")]).penalty).toBe(4);
 	});
 });
 
