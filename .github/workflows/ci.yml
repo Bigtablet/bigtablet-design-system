@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.filter.outputs.code }}
-      stories: ${{ steps.filter.outputs.stories }}
+      site: ${{ steps.filter.outputs.site }}
       deps: ${{ steps.filter.outputs.deps }}
       vanilla: ${{ steps.filter.outputs.vanilla }}
     steps:
@@ -59,10 +59,8 @@ jobs:
               # 워크플로를 바꾼 PR 도 돌려야 한다 - 그러지 않으면 CI 변경이
               # 검증되지 않은 채 머지된다(이 축이 없어서 그동안 테스트 job 이 스킵됐다)
               - '.github/workflows/**'
-            stories:
-              - 'src/**/*.stories.tsx'
-              - 'src/stories/**'
-              - '.storybook/**'
+            site:
+              - 'site/**'
             deps:
               - 'package.json'
               - 'pnpm-lock.yaml'
@@ -70,13 +68,12 @@ jobs:
               - 'src/vanilla/**'
 
   # 병합 게이트 - 정적 분석 + 의존성 취약점 (시큐어코딩 가이드 제9장 제3조).
-  # 다른 job 과 병렬로 돌아 빨리 실패한다. 조건은 `build` 와 같다 - biome 은 스토리·vanilla JS 도 보고,
-  # tsc 는 스토리 타입도 본다.
+  # 다른 job 과 병렬로 돌아 빨리 실패한다. 조건은 `build` 와 같다 - biome 은 문서 사이트·vanilla JS 도 본다.
   static-checks:
     needs: changes
     if: |
       needs.changes.outputs.code == 'true' ||
-      needs.changes.outputs.stories == 'true' ||
+      needs.changes.outputs.site == 'true' ||
       needs.changes.outputs.deps == 'true' ||
       needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
@@ -155,11 +152,11 @@ jobs:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
 
-  # Storybook a11y - 컴포넌트 / 스토리 / 토큰이 바뀐 경우만 돈다.
+  # a11y · 레이아웃 - 컴포넌트 / 문서 사이트 예제 / 토큰이 바뀐 경우만 돈다.
   a11y:
     needs: changes
     # vanilla - `src/vanilla/*.browser.test.ts` 레이아웃 테스트가 이 job 에서 돈다
-    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.stories == 'true' || needs.changes.outputs.vanilla == 'true'
+    if: needs.changes.outputs.code == 'true' || needs.changes.outputs.site == 'true' || needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
     # Playwright 공식 이미지 - Chromium·시스템 패키지·폰트가 들어 있어 설치 단계가 없다.
     # 예전엔 `playwright install --with-deps` 의 apt 가 Ubuntu 미러에 묶여 가끔 2~11분 멈췄다 (#872).
@@ -202,11 +199,8 @@ jobs:
             exit 1
           fi
 
-      - name: Run a11y tests (Storybook)
-        run: pnpm test:storybook
-
-      # 같은 Chromium 을 쓰므로 별도 job 없이 이어서 돈다 - 배치·잘림·스크롤 잠금 실측.
-      - name: Run layout tests (browser)
+      # 배치·잘림·스크롤 잠금 실측과 문서 사이트 예제 axe 검사(`site/examples.browser.test.tsx`, #1051).
+      - name: Run a11y and layout tests (browser)
         run: pnpm test:browser
 
       # 시각 회귀 - 기준 스크린샷과 픽셀 비교 (#879). 기준 이미지는 이 컨테이너(linux)에서 만든 것이라
@@ -228,7 +222,7 @@ jobs:
     needs: changes
     if: |
       needs.changes.outputs.code == 'true' ||
-      needs.changes.outputs.stories == 'true' ||
+      needs.changes.outputs.site == 'true' ||
       needs.changes.outputs.deps == 'true' ||
       needs.changes.outputs.vanilla == 'true'
     runs-on: ubuntu-latest
@@ -257,10 +251,10 @@ jobs:
 
       # SCSS lint — raw hex / named color / raw 값 금지 (DS 토큰 강제)
       #
-      # 조건을 두지 않는다. 이전 조건(`code || stories`)은 `code` 필터에 src/vanilla/** 가
+      # 조건을 두지 않는다. 이전 조건(`code || stories`, 지금의 `site`)은 `code` 필터에 src/vanilla/** 가
       # 없어서 vanilla 만 바뀐 PR 에서 스킵됐고, `deps` 만 바뀐 PR 도 스킵됐다 - 그런데
       # package.json 이 lint:css 의 글롭 자체를 담고 있다. 조건을 열거하면 이런 구멍이 계속
-      # 생기고, 이 job 이 도는 모든 경우(code/stories/deps/vanilla)에 SCSS 를 봐서 손해가 없다.
+      # 생기고, 이 job 이 도는 모든 경우(code/site/deps/vanilla)에 SCSS 를 봐서 손해가 없다.
       # Build · size · dist 검사들과 같은 방식이다.
       - name: Lint SCSS (Stylelint)
         run: pnpm lint:css
@@ -275,19 +269,17 @@ jobs:
       - name: Check prop defaults
         run: pnpm check:defaults
 
-      # 스토리가 `@deprecated` prop 을 쓰고 있는지. 소스만 읽으므로 여기(Build 앞)에 둔다.
-      # 스토리는 소비자가 복사해 가는 자리라, 폐기된 prop 을 시연하면 그대로 퍼진다.
-      # 타입은 아직 살아 있어서 tsc 가 잡지 못하고, 렌더 결과도 같아서 a11y 러너도 못 잡는다.
-      # 실제로 문서 작업 중 손으로 넷을 찾았고, 이 검사를 붙이자 못 찾은 넷이 더 나왔다
-      # (Accordion·OtpInput 의 `onChange`). `paths-ignore` 는 `docs/**` 와 `**.md` 만 빼므로
-      # 스토리 파일(`src/**`)을 고친 PR 에서는 반드시 돈다.
-      - name: Check deprecated props in stories
+      # 문서 사이트 예제가 `@deprecated` prop 을 쓰고 있는지. 소스만 읽으므로 여기(Build 앞)에 둔다.
+      # 예제는 소비자가 복사해 가는 자리라, 폐기된 prop 을 시연하면 그대로 퍼진다.
+      # 타입은 아직 살아 있어서 tsc 가 잡지 못하고, 렌더 결과도 같아서 a11y 검사도 못 잡는다.
+      # Storybook 시절 이 검사를 붙이자 손으로 못 찾은 넷이 더 나왔다 (Accordion·OtpInput 의 `onChange`).
+      - name: Check deprecated props in examples
         run: pnpm check:deprecated
 
-      # 테스트·스토리 파일 이름이 폴더명과 같은 kebab-case 인지. 한동안 테스트가 PascalCase 62개와
+      # 테스트 파일 이름이 폴더명과 같은 kebab-case 인지. 한동안 테스트가 PascalCase 62개와
       # kebab-case 14개로 갈려 있었다. 파일명 규약은 리뷰 diff 에서 눈에 잘 안 띄어 조용히
       # 다시 갈라진다 - 그래서 정적으로 본다. 소스만 읽으므로 여기(Build 앞)에 둔다.
-      - name: Check test and story filenames
+      - name: Check test filenames
         run: pnpm check:filenames
 
       # AGENT_GUIDE 카탈로그의 prop 이 소스에 있는지. AI 에이전트가 이 표로 코드를 만드는데,
@@ -318,7 +310,7 @@ jobs:
       - name: Check overlay close geometry
         run: pnpm check:geometry
 
-      # 다크에서 재정의되지 않는 표면 색을 텍스트로 쓰는지 - a11y 스토리 러너는 라이트 테마만
+      # 다크에서 재정의되지 않는 표면 색을 텍스트로 쓰는지 - a11y 예제 검사는 라이트 테마만
       # 렌더해 axe 가 이 대비 결함을 못 잡는다(실측 3.06:1 · 2.85:1).
       - name: Check dark-theme text tokens
         run: pnpm check:dark-text

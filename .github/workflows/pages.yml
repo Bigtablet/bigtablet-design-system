@@ -5,10 +5,9 @@ on:
     branches: [main]
     paths:
       - 'src/ui/**'
-      - 'src/stories/**'
       - 'src/styles/**'
-      - 'src/**/*.stories.tsx'
-      - '.storybook/**'
+      - 'site/**'
+      - 'public/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'tsup.config.ts'

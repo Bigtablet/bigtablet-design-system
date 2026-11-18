@@ -1,5 +1,4 @@
 import path from "node:path";
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { configDefaults, defineConfig } from "vitest/config";
 
@@ -20,22 +19,14 @@ export const unitTest = {
 	setupFiles: ["./src/test/setup.ts"],
 };
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
 	test: {
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "json", "json-summary", "html"],
 			include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
-			// `.docs.ts` 는 Storybook meta 설명 전용 문자열이다 - 런타임 import 도, 번들 포함도
-			// 없으므로 테스트 대상이 아니다. `*.test.*`·`*.stories.*` 와 같은 이유로 뺀다.
 			// `.type-test.*` 는 tsc 가 검사하는 타입 단정 파일이다 - 실행되지 않으니 0% 로 잡혀 수치만 깎는다.
-			exclude: [
-				"**/*.test.{ts,tsx}",
-				"**/*.type-test.{ts,tsx}",
-				"**/*.stories.{ts,tsx}",
-				"**/*.docs.{ts,tsx}",
-			],
+			exclude: ["**/*.test.{ts,tsx}", "**/*.type-test.{ts,tsx}"],
 		},
 		projects: [
 			// Unit tests with jsdom
@@ -117,25 +108,6 @@ export default defineConfig({
 							},
 						},
 					},
-				},
-			},
-			// Storybook tests with browser
-			{
-				extends: true,
-				plugins: [
-					// The plugin will run tests for the stories defined in your Storybook config
-					// See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-					storybookTest({ configDir: path.join(dirname, ".storybook") }),
-				],
-				test: {
-					name: "storybook",
-					browser: {
-						enabled: true,
-						headless: true,
-						provider: playwright({}),
-						instances: [{ browser: "chromium" }],
-					},
-					setupFiles: [".storybook/vitest.setup.ts"],
 				},
 			},
 		],
