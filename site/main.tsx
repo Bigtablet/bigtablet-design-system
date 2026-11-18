@@ -37,15 +37,26 @@ const GROUPS = CATEGORIES.map((c) => ({ c, pages: PAGES.filter((p) => p.category
 
 type Theme = "light" | "dark" | "system";
 
+const THEME_KEY = "bt-docs-theme";
+// index.html 선적용 스크립트와 같은 가드 - 저장소가 막혔거나 모르는 값이면 system
+function readTheme(): Theme {
+	try {
+		const saved = localStorage.getItem(THEME_KEY);
+		if (saved === "light" || saved === "dark" || saved === "system") return saved;
+	} catch {}
+	return "system";
+}
+
 const SITE_TITLE = "Bigtablet 디자인 시스템";
 
 // ponytail: 해시 라우팅 - 페이지가 수십 개가 되고 검색 · SEO 가 필요해지면 Next.js 로
+const readSlug = () => location.hash.replace(/^#\/?/, "").split("#")[0] ?? "";
+
 function useSlug() {
-	const read = () => location.hash.replace(/^#\/?/, "").split("#")[0] ?? "";
-	const [slug, setSlug] = useState(read);
+	const [slug, setSlug] = useState(readSlug);
 	useEffect(() => {
 		const on = () => {
-			setSlug(read());
+			setSlug(readSlug());
 			window.scrollTo(0, 0);
 		};
 		window.addEventListener("hashchange", on);
@@ -56,18 +67,21 @@ function useSlug() {
 
 function App() {
 	const slug = useSlug();
-	const [theme, setTheme] = useState<Theme>(
-		() => (localStorage.getItem("bt-docs-theme") as Theme) ?? "system",
-	);
+	const [theme, setTheme] = useState<Theme>(readTheme);
 	useEffect(() => {
 		if (theme === "system") document.documentElement.removeAttribute("data-theme");
 		else document.documentElement.setAttribute("data-theme", theme);
-		localStorage.setItem("bt-docs-theme", theme);
+		try {
+			localStorage.setItem(THEME_KEY, theme);
+		} catch {
+			// 저장소가 막힌 환경 - 이번 방문에만 적용된다
+		}
 	}, [theme]);
 
 	// 없는 주소 · 빈 주소는 컴포넌트 홈
 	const page = PAGES.find((p) => p.slug === slug);
 	// 다른 페이지로 가면 사이드바에서 현재 항목이 보이게 - 사이드바 안에서만 움직인다
+	// biome-ignore lint/correctness/useExhaustiveDependencies: slug 가 바뀐 뒤 그려진 사이드바를 다시 찾는다
 	useEffect(() => {
 		document.querySelector('.site_nav [aria-current="page"]')?.scrollIntoView({ block: "nearest" });
 	}, [slug]);

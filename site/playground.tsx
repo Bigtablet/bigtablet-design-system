@@ -82,7 +82,7 @@ export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playgro
 		const id = `pg-${page.slug}-${p.name}`;
 		if (p.type === "boolean") {
 			return (
-				<label key={p.name} className="pg_item pg_item_bool">
+				<div key={p.name} className="pg_item pg_item_bool">
 					<code>{p.name}</code>
 					<Toggle
 						size="sm"
@@ -90,7 +90,7 @@ export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playgro
 						checked={valueOf(p) === true}
 						onCheckedChange={(on) => set(p.name, on)}
 					/>
-				</label>
+				</div>
 			);
 		}
 		// 기본값이 없는 prop 은 "기본" 칸 - 컴포넌트가 정한 값을 그대로 쓴다
