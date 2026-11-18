@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import pkg from "../package.json";
-import { Code, type DocPage, Md, P } from "./docs";
+import { Code, type DocPage, Lede, P } from "./docs";
 import { AGENT_SNIPPET } from "./llms";
 
 // ponytail: 저장소 문서는 develop 기준 - 릴리즈가 따라오면 main 으로
@@ -145,9 +145,9 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 		<article className="landing">
 			<header className="doc_block doc_head">
 				<h1>Bigtablet 디자인 시스템</h1>
-				<p className="doc_lede">
-					<Md>{`Bigtablet 제품 화면을 만드는 ${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}</Md>
-				</p>
+				<Lede
+					text={`Bigtablet 제품 화면을 만드는 ${pages.length}개 컴포넌트와 디자인 토큰입니다. React와 서버 템플릿(Thymeleaf · JSP · PHP)에서 같은 모양으로 씁니다.`}
+				/>
 				<div className="landing_install">
 					<CodeBlock code="pnpm add @bigtablet/design-system" />
 				</div>
@@ -272,13 +272,11 @@ function Install() {
 				<h1>
 					설치 <span className="doc_name">Installation</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>
-						{
-							"React 19 · Next.js App Router 프로젝트에 붙이는 순서입니다. 처음이라면 위에서부터 그대로 따라 하면 됩니다."
-						}
-					</Md>
-				</p>
+				<Lede
+					text={
+						"React 19 · Next.js App Router 프로젝트에 붙이는 순서입니다. 처음이라면 위에서부터 그대로 따라 하면 됩니다."
+					}
+				/>
 			</header>
 
 			<Block id="package" title="1. 패키지 설치">
@@ -380,13 +378,11 @@ function Vanilla() {
 				<h1>
 					Vanilla <span className="doc_name">HTML · CSS · JS</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>
-						{
-							"React 가 없는 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다. CSS · JS 두 파일을 넣고 클래스 이름을 붙이면 됩니다."
-						}
-					</Md>
-				</p>
+				<Lede
+					text={
+						"React 가 없는 서버 템플릿(Thymeleaf · JSP · PHP · Django)에서 씁니다. CSS · JS 두 파일을 넣고 클래스 이름을 붙이면 됩니다."
+					}
+				/>
 			</header>
 
 			<Block id="include" title="1. CSS · JS 넣기">
@@ -475,13 +471,11 @@ function Ai() {
 				<h1>
 					AI 에이전트 <span className="doc_name">AI Agents</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>
-						{
-							"패키지에 에이전트가 읽는 문서가 함께 실립니다. 설정 한 번이면 에이전트가 이 디자인 시스템의 컴포넌트로 화면을 만들고, 설치한 버전에 없는 prop 을 지어내지 않습니다."
-						}
-					</Md>
-				</p>
+				<Lede
+					text={
+						"패키지에 에이전트가 읽는 문서가 함께 실립니다. 설정 한 번이면 에이전트가 이 디자인 시스템의 컴포넌트로 화면을 만들고, 설치한 버전에 없는 prop 을 지어내지 않습니다."
+					}
+				/>
 			</header>
 
 			<Block id="setup" title="1. 에이전트에 연결하기">

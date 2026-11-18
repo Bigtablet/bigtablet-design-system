@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import tokens from "../src/styles/tokens.json";
-import { Code, Md } from "./docs";
+import { Code, Lede, Md } from "./docs";
 import { CodeBlock } from "./guides";
 import { undash } from "./undash";
 
@@ -149,9 +149,7 @@ function FoundationPage({
 				<h1>
 					{title} <span className="doc_name">{name}</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>{lede}</Md>
-				</p>
+				<Lede text={lede} />
 			</header>
 			{children}
 		</article>

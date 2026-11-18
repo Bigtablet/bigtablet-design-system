@@ -144,11 +144,25 @@ screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새
 | `phraseRanges(text)` | 붙여 둘 어절 묶음의 원문 범위(`start` · `end`). React 없음 |
 | `renderSentences(text)` · `renderPhrases(text)` | 위 규칙으로 span 을 넣은 React 노드 |
 | `Sentences` · `sentenceText` | 루트 export 와 같음 |
+| `BalancedText` | 실제 폭을 재서 가장 자연스러운 자리에서 줄을 바꾸는 글 - 제목 · 히어로 · 짧은 소개 문구용 (아래) |
+| `chooseBreaks` · `layoutNative` · `layoutBest` · `createCanvasMeasurer` | `BalancedText` 의 엔진. React 없음 |
 
 ```ts
 import { phraseRanges } from "@bigtablet/design-system/text";
 
 phraseRanges("이 아래의 컴포넌트에서 부릅니다"); // [{ start: 0, end: 12 }]
+```
+
+`BalancedText` 는 글을 실제 글꼴 · 폭으로 재서(canvas, 어절 폭을 한 번 재고 캐시) 브라우저가 그릴 줄바꿈을 예측하고, 같은 줄 수 안에서 끊는 자리가 더 자연스러운 배치가 있으면 그것으로 바꿉니다. 끊는 자리 벌점은 문장 끝 0 · 쉼표 뒤 1 · 보통 4 · 붙여 둘 자리(`~의` · 관형사 · 서술어 · 의존명사) 100 입니다.
+
+- 첫 렌더(SSR 포함)는 원문이고, 마운트 · 웹폰트 로드 · 폭 변화(100ms 멈춘 뒤) 때 계산합니다. 브라우저 결과보다 나을 때만 바꿉니다
+- 고른 줄은 `<br>` 이 아니라 줄마다 `inline-block` 으로 그립니다 - 복사한 글 · `textContent` 가 원문과 같고, 측정이 어긋나도 넘치지 않습니다
+- 글자만 받습니다. 코드 · 링크가 섞인 문단은 `Sentences` · `renderSentences` 를 씁니다. 수십 어절까지를 위한 계산이라 긴 본문에는 쓰지 않습니다
+
+```tsx
+import { BalancedText } from "@bigtablet/design-system/text";
+
+<BalancedText as="h1" className="hero_title" text="고객의 신뢰를 먼저 얻은 다음에 더 많은 데이터를 요청하세요" />
 ```
 
 ---

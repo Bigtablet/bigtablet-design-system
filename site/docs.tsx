@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { renderPhrases, renderSentences, splitSentences } from "src/text";
+import { BalancedText, renderPhrases, renderSentences, splitSentences } from "src/text";
 import { AGENT_RULES, componentDoc } from "./llms";
 import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";
@@ -92,6 +92,20 @@ export function P({ children }: { children: ReactNode }) {
 				),
 			)}
 		</p>
+	);
+}
+
+/**
+ * 페이지 소개 문구 - 글자만이면 BalancedText 가 실제 폭으로 가장 자연스러운 줄바꿈을 고른다 (#1083).
+ * 코드(`…`) · 굵게(**…**)가 섞이면 BalancedText 가 다루지 못해 Md(문장 묶기 · 어절 묶기)로 그린다
+ */
+export function Lede({ text }: { text: string }) {
+	return /[`*]/.test(text) ? (
+		<p className="doc_lede">
+			<Md>{text}</Md>
+		</p>
+	) : (
+		<BalancedText as="p" className="doc_lede" text={text} />
 	);
 }
 
@@ -395,9 +409,7 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				<h1>
 					{page.title} <span className="doc_name">{page.name}</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>{page.summary}</Md>
-				</p>
+				<Lede text={page.summary} />
 				<div className="doc_head_actions">
 					<AiCopy page={page} />
 				</div>
