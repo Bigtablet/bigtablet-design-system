@@ -47,6 +47,8 @@ export default defineConfig({
 						"react",
 						"react-dom",
 						"react-dom/client",
+						// 서버 렌더 → 하이드레이션 흐름(src/text/prehydrate.browser.test.tsx)도 같은 React 를 쓰게
+						"react-dom/server",
 						"react/jsx-dev-runtime",
 						"@testing-library/react",
 						"lucide-react",

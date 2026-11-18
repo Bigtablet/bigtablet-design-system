@@ -108,14 +108,19 @@ describe("BalancedText (Chromium)", () => {
 			expect(new Set([...line.getClientRects()].map((r) => Math.round(r.top))).size).toBe(1);
 	});
 
-	it("waits for web fonts before choosing lines", async () => {
-		// 첫 방문처럼 폰트를 받는 중 - 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀐다
+	it("waits for its own web font before choosing lines", async () => {
+		// 첫 방문처럼 이 글꼴을 아직 받는 중 - 문서 전체 상태(fonts.status)는 받기 시작 전이면 "loaded" 라 믿지 않는다.
+		// 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀌고 nowrap 줄이 넘칠 수 있다
 		let loaded!: () => void;
-		const ready = new Promise<FontFaceSet>((resolve) => {
-			loaded = () => resolve(document.fonts);
+		let ready = false;
+		const load = new Promise<FontFace[]>((resolve) => {
+			loaded = () => {
+				ready = true;
+				resolve([]);
+			};
 		});
-		Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loading" });
-		Object.defineProperty(document.fonts, "ready", { configurable: true, get: () => ready });
+		Object.defineProperty(document.fonts, "check", { configurable: true, value: () => ready });
+		Object.defineProperty(document.fonts, "load", { configurable: true, value: () => load });
 		try {
 			const { container } = render(
 				<BalancedText
@@ -126,20 +131,15 @@ describe("BalancedText (Chromium)", () => {
 				</BalancedText>,
 			);
 			const p = container.firstElementChild as HTMLElement;
-			const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
-			ctx.font = "16px sans-serif";
-			const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
-			p.style.width = `${Math.ceil((upToBody + ctx.measureText(text).width) / 2)}px`;
 			await new Promise((r) => setTimeout(r, 300));
 			expect(lineTexts(p)).toHaveLength(0);
 
-			Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loaded" });
 			loaded();
-			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(0);
 		} finally {
-			// 인스턴스에 덮은 값을 지워 원래 getter 로 돌린다
-			Reflect.deleteProperty(document.fonts, "status");
-			Reflect.deleteProperty(document.fonts, "ready");
+			// 인스턴스에 덮은 값을 지워 원래 메서드로 돌린다
+			Reflect.deleteProperty(document.fonts, "check");
+			Reflect.deleteProperty(document.fonts, "load");
 		}
 	});
 
@@ -191,6 +191,32 @@ describe("BalancedText (Chromium)", () => {
 		const p = container.firstElementChild as HTMLElement;
 		await new Promise((r) => setTimeout(r, 400));
 		expect(p.scrollWidth).toBeLessThanOrEqual(p.clientWidth + 1);
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(line.getBoundingClientRect().right).toBeLessThanOrEqual(
+				p.getBoundingClientRect().right + 0.5,
+			);
+	});
+
+	it("does not mistake an outside resize right after drawing for its own growth", async () => {
+		// 줄이 그려지는 바로 그 순간 바깥 상자를 넓힌다 - 예전엔 2프레임 안 넓어짐을 모두 자기 탓으로 봐 inline-block 줄로 굳었다
+		const { container } = render(
+			<div style={{ width: 300 }}>
+				<BalancedText
+					as="p"
+					style={{ font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+				>
+					{`${text} 이 아래의 컴포넌트에서 부르고 글자 크기가 아니라 역할로 고릅니다.`}
+				</BalancedText>
+			</div>,
+		);
+		const box = container.firstElementChild as HTMLElement;
+		const p = box.firstElementChild as HTMLElement;
+		// 마운트 때 그리기 전에(layout effect) 줄을 고르므로 render() 가 돌아오면 이미 줄이 있다 - 같은 작업 안, 칠하기 전이다
+		expect(p.querySelector(".text_balanced_line")).not.toBeNull();
+		box.style.width = "420px";
+		await new Promise((r) => setTimeout(r, 500));
+		expect(p.querySelector(".text_balanced_line_boxed")).toBeNull();
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(0);
 		for (const line of p.querySelectorAll(".text_balanced_line"))
 			expect(line.getBoundingClientRect().right).toBeLessThanOrEqual(
 				p.getBoundingClientRect().right + 0.5,
