@@ -702,6 +702,12 @@
 			"type": "PolymorphicRef<T>",
 			"required": false,
 			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"doc": "이동할 주소: 기본 요소 `<a>` 의 `href` 그대로",
+			"required": false
 		}
 	],
 	"SidebarItemProps": [

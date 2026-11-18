@@ -53,6 +53,14 @@ const NATIVE: Record<string, string[]> = {
 	TextareaProps: ["placeholder", "disabled", "readOnly", "required", "name", "maxLength"],
 	IconProps: ["size", "color", "strokeWidth"],
 };
+// `as` 로 요소를 고르는 컴포넌트(PolymorphicProps<T>)는 물려받는 속성이 T 에 달려 타입만으로는 안 나온다.
+// 기본 요소에서 늘 쓰는 것만 손으로 적는다 - NavLink 는 기본이 <a> 라 href 가 곧 핵심 prop 이다
+const POLYMORPHIC: Record<string, { name: string; type: string; doc: string }[]> = {
+	NavLinkProps: [
+		{ name: "href", type: "string", doc: "이동할 주소 - 기본 요소 `<a>` 의 `href` 그대로" },
+	],
+};
+
 const declaredHere = (p: ts.Symbol) =>
 	!!p.declarations?.some((d) => {
 		const file = d.getSourceFile().fileName;
@@ -110,6 +118,10 @@ for (const name of NAMES) {
 			};
 		})
 		.filter((p) => !tagged(p.name, name));
+	for (const extra of POLYMORPHIC[name] ?? []) {
+		if (!out[name].some((p) => p.name === extra.name))
+			out[name].push({ ...extra, required: false, doc: undash(extra.doc) });
+	}
 }
 
 /**
