@@ -24,6 +24,12 @@ describe("Badge", () => {
 		expect(dot).toHaveClass("badge_shape_dot");
 		expect(dot).toHaveClass("badge_variant_error");
 		expect(dot.textContent).toBe("");
+		expect(dot).not.toHaveAttribute("role");
+	});
+
+	it("reads a labelled dot as an image", () => {
+		render(<Badge shape="dot" tone="success" aria-label="온라인" />);
+		expect(screen.getByRole("img", { name: "온라인" })).toHaveClass("badge_shape_dot");
 	});
 
 	it("applies tone class", () => {

@@ -74,6 +74,8 @@ export const Badge = ({
 				`badge_appearance_${appearance}`,
 				className,
 			)}
+			// 글자 없는 dot 은 aria-label 로 뜻을 준다 - 역할 없는 span 에는 aria-label 을 달 수 없어(axe aria-prohibited-attr) 이미지로 읽힌다
+			role={shape === "dot" && props["aria-label"] ? "img" : undefined}
 			{...props}
 		>
 			{content}
