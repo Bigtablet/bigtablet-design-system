@@ -13,7 +13,10 @@ export const table: DocPage = {
 		["한 항목의 상세", "DescriptionList", false],
 		["열 비교가 필요 없는 목록", "ListItem", false],
 	],
-	examples: [{ id: "table/basic", title: "정렬" }],
+	examples: [
+		{ id: "table/basic", title: "정렬" },
+		{ id: "table/loading", title: "불러오는 중" },
+	],
 	props: "TableProps",
 	notes: ["좁은 화면에서 `cards` 면 행이 카드로 바뀝니다"],
 };

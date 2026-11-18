@@ -21,6 +21,7 @@ export const radioGroup: DocPage = {
 			title: "Radio 단독",
 			desc: "그룹 라벨 · 에러가 없을 때만 같은 `name` 으로 묶어 씁니다.",
 		},
+		{ id: "radio-group/states", title: "오류 · 비활성" },
 	],
 	props: ["RadioGroupProps", "RadioProps"],
 };

@@ -18,6 +18,7 @@ export const combobox: DocPage = {
 			title: "서버 검색",
 			desc: "오래된 응답은 버리고 마지막 입력의 결과만 보여 줍니다.",
 		},
+		{ id: "combobox/states", title: "비활성" },
 	],
 	props: "ComboboxProps",
 	notes: ["`onSearch` 는 Promise 를 돌려주고, 그동안 목록에 로딩 표시가 뜹니다"],

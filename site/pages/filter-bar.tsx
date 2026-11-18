@@ -18,6 +18,7 @@ export const filterBar: DocPage = {
 			title: "기본",
 			desc: '기본은 Enter · 검색 버튼으로 적용합니다. `submitMode="instant"` 면 바꾸는 즉시 적용하고 버튼이 없습니다.',
 		},
+		{ id: "filter-bar/states", title: "불러오는 중" },
 	],
 	props: "FilterBarProps",
 	notes: ["입력 중인 값과 적용된 값, URL 동기화는 앱이 가집니다"],

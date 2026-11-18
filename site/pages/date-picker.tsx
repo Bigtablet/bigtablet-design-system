@@ -12,7 +12,10 @@ export const datePicker: DocPage = {
 		["정산 월처럼 월까지만", '`mode="year-month"`', true],
 		["시작 ~ 끝 기간", "DateRangePicker", false],
 	],
-	examples: [{ id: "date-picker/basic", title: "날짜 · 월" }],
+	examples: [
+		{ id: "date-picker/basic", title: "날짜 · 월" },
+		{ id: "date-picker/states", title: "필수 · 비활성" },
+	],
 	props: "DatePickerProps",
 	notes: ['값은 `"YYYY-MM-DD"` (월 모드는 `"YYYY-MM"`) 문자열입니다'],
 };

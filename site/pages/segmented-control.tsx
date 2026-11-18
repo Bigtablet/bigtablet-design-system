@@ -12,7 +12,10 @@ export const segmentedControl: DocPage = {
 		["옵션이 많거나 김", "Dropdown", false],
 		["같은 화면의 내용 패널 전환", "Tabs", false],
 	],
-	examples: [{ id: "segmented-control/basic", title: "기본" }],
+	examples: [
+		{ id: "segmented-control/basic", title: "기본" },
+		{ id: "segmented-control/states", title: "비활성" },
+	],
 	props: "SegmentedControlProps",
 	notes: ["native radio 기반이라 방향키 이동과 폼 제출을 브라우저가 처리합니다"],
 };
