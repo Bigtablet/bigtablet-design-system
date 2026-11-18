@@ -321,7 +321,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 ### Text
 
-- `<Sentences text="..." />` - wraps each sentence in an `inline-block` span so lines break between sentences (same rule Toast/Alert/`supportingText` use). Use it for app-drawn paragraphs instead of your own splitter. In tests, find split text with `getByText(sentenceText("full text"))`.
+- `<Sentences text="..." />` - wraps each sentence in an `inline-block` span so lines break between sentences (same rule Toast/Alert/`supportingText` use). Use it for app-drawn paragraphs instead of your own splitter. In tests, find split text with `getByText(sentenceText("full text"))`. The same rules (sentence split, keeping `~의` modifiers and determiners with the next word) are also exported from `@bigtablet/design-system/text`, including React-free `splitSentences` and `phraseRanges`.
 
 ---
 
