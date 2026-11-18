@@ -523,6 +523,15 @@ function Ai() {
     ├── data-view.md   # props 가 가리키는 하위 타입(DataViewToolbar …) 표까지
     └── …`}
 				/>
+				<p>
+					패키지를 설치하기 전이거나 웹에서 읽는 에이전트에게는 이 사이트의{" "}
+					<a href="llms.txt">
+						<Code>llms.txt</Code>
+					</a>{" "}
+					를 알려 줍니다. 내용은 같고, 컴포넌트 문서는 <Code>components/button.md</Code> 처럼 같은
+					자리에 있습니다. 사이트는 main 최신이라 설치한 버전과 다를 수 있으니, 설치했다면 패키지
+					쪽을 우선합니다.
+				</p>
 			</Block>
 
 			<Block id="copy" title="3. 한 컴포넌트만 붙여 넣기">

@@ -1,6 +1,8 @@
 // Claude Code · Codex 같은 에이전트가 읽는 문서 - 사이트와 같은 원본(페이지 데이터 · 예제 파일 · props.json)에서 만든다.
 // 패키지에 함께 실려(dist/llms) 소비 앱의 에이전트가 설치한 버전과 같은 문서를 읽는다.
 //   node_modules/@bigtablet/design-system/dist/llms/index.md
+// `--site <폴더>` 면 문서 사이트 빌드본에 llms.txt + components/*.md 로 낸다 (#1061) - 패키지를 깔기 전이나
+// 웹에서 읽는 에이전트용. 사이트는 main 최신이라 설치한 버전과 다를 수 있음을 목차에 적는다
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import pkg from "../package.json";
@@ -9,7 +11,9 @@ import type { DocPage } from "./docs";
 import { AGENT_RULES, componentDoc } from "./llms";
 
 const root = import.meta.dirname;
-const out = path.join(root, "..", "dist", "llms");
+const siteAt = process.argv.indexOf("--site");
+const site = siteAt > 0 ? process.argv[siteAt + 1] : undefined;
+const out = site ? path.resolve(site) : path.join(root, "..", "dist", "llms");
 
 const pages: DocPage[] = [];
 for (const file of readdirSync(path.join(root, "pages"))) {
@@ -29,7 +33,9 @@ function indexDoc() {
 	const lines = [
 		`# @bigtablet/design-system ${pkg.version}`,
 		"",
-		"Bigtablet 제품 화면을 만드는 React 컴포넌트와 디자인 토큰입니다. 이 폴더는 에이전트용 문서이며, 설치된 패키지 버전과 내용이 같습니다.",
+		site
+			? "Bigtablet 제품 화면을 만드는 React 컴포넌트와 디자인 토큰입니다. 이 문서는 문서 사이트(main 최신)에서 냅니다. 앱에 설치된 버전과 다를 수 있으니, 설치했다면 node_modules/@bigtablet/design-system/dist/llms/index.md 를 우선합니다."
+			: "Bigtablet 제품 화면을 만드는 React 컴포넌트와 디자인 토큰입니다. 이 폴더는 에이전트용 문서이며, 설치된 패키지 버전과 내용이 같습니다.",
 		"",
 		"## 쓰기 전에",
 		"",
@@ -48,9 +54,12 @@ function indexDoc() {
 	return `${lines.join("\n")}\n`;
 }
 
-rmSync(out, { recursive: true, force: true });
+// 사이트 빌드본은 다른 파일도 있는 폴더라 통째로 지우지 않는다 - 컴포넌트 문서 폴더만 새로
+rmSync(site ? path.join(out, "components") : out, { recursive: true, force: true });
 mkdirSync(path.join(out, "components"), { recursive: true });
 for (const page of pages)
 	writeFileSync(path.join(out, "components", `${page.slug}.md`), componentDoc(page, source));
-writeFileSync(path.join(out, "index.md"), indexDoc());
-console.log(`dist/llms - 컴포넌트 ${pages.length}개 + index.md`);
+// llms.txt 는 사이트 루트의 관례 이름이다 (llmstxt.org)
+const indexName = site ? "llms.txt" : "index.md";
+writeFileSync(path.join(out, indexName), indexDoc());
+console.log(`${path.relative(process.cwd(), out)} - 컴포넌트 ${pages.length}개 + ${indexName}`);
