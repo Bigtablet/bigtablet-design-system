@@ -13,7 +13,13 @@ export const localeProvider: DocPage = {
 		["문구 몇 개만 바꾸기", '`messages={{ "table.empty": … }}`', true],
 		["한 곳만 다르게", "그 컴포넌트의 prop (`closeLabel` 등)", false],
 	],
-	examples: [{ id: "locale-provider/english", title: "영어" }],
+	examples: [
+		{
+			id: "locale-provider/english",
+			title: "영어",
+			desc: '첫 번째는 감싸지 않은 기본(한국어), 두 번째는 `locale="en"` 입니다 - 좁은 화면에서는 위아래로 놓입니다. 안내 문구 · 버튼 · 빈 목록처럼 DS 가 직접 그리는 글만 바뀌고 앱이 넘긴 `label` 은 그대로입니다.',
+		},
+	],
 	props: "LocaleProviderProps",
 	notes: [
 		"우선순위: 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본",
