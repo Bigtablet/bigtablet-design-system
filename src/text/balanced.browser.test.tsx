@@ -74,4 +74,39 @@ describe("BalancedText (Chromium)", () => {
 		expect(p.querySelectorAll("code")).toHaveLength(2);
 		expect(p.textContent).toBe("제목이면 heading, 본문이면 body 입니다.");
 	});
+
+	it("waits for web fonts before choosing lines", async () => {
+		// 첫 방문처럼 폰트를 받는 중 - 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀐다
+		let loaded!: () => void;
+		const ready = new Promise<FontFaceSet>((resolve) => {
+			loaded = () => resolve(document.fonts);
+		});
+		Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loading" });
+		Object.defineProperty(document.fonts, "ready", { configurable: true, get: () => ready });
+		try {
+			const { container } = render(
+				<BalancedText
+					as="p"
+					style={{ width: 300, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+				>
+					{text}
+				</BalancedText>,
+			);
+			const p = container.firstElementChild as HTMLElement;
+			const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+			ctx.font = "16px sans-serif";
+			const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
+			p.style.width = `${Math.ceil((upToBody + ctx.measureText(text).width) / 2)}px`;
+			await new Promise((r) => setTimeout(r, 300));
+			expect(lineTexts(p)).toHaveLength(0);
+
+			Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loaded" });
+			loaded();
+			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		} finally {
+			// 인스턴스에 덮은 값을 지워 원래 getter 로 돌린다
+			Reflect.deleteProperty(document.fonts, "status");
+			Reflect.deleteProperty(document.fonts, "ready");
+		}
+	});
 });

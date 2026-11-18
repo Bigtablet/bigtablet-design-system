@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { SafeHTMLProps } from "../utils/safe-html";
+import { useSafeLayoutEffect } from "../utils/use-safe-layout-effect";
 import { gapPenalty } from "./core";
 import {
 	type Breaks,
@@ -103,6 +104,9 @@ const measurerFor = (font: string, letterSpacing: number) => {
 	return measurers.get(key) ?? null;
 };
 
+/** 웹폰트를 받는 중인가 - 그동안 잰 폭은 대체 글꼴 것이다 */
+const fontsPending = () => typeof document !== "undefined" && document.fonts?.status === "loading";
+
 /** 폭이 바뀐 뒤 이만큼 멈추면 다시 계산한다 - 드래그로 창을 늘리는 동안 매 프레임 계산하지 않게 (semantic-wrap "settled") */
 const SETTLE_MS = 100;
 /** 첫 렌더에서 함께 묶는 최대 어절 수 - `phraseRanges` 와 같다 */
@@ -133,7 +137,8 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 	const latest = React.useRef(tokens);
 	latest.current = tokens;
 
-	React.useEffect(() => {
+	// 그리기 전에 잰다 - useEffect 면 브라우저 줄바꿈으로 한 프레임 칠한 뒤 바뀌어 첫 진입 때 줄이 튄다
+	useSafeLayoutEffect(() => {
 		const el = ref.current;
 		if (!el) return;
 		let timer: ReturnType<typeof setTimeout> | undefined;
@@ -151,7 +156,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 		const compute = () => {
 			const words = latest.current;
 			const spans = [...el.querySelectorAll(".text_balanced_word")];
-			if (width <= 0 || spans.length !== words.length) return;
+			if (width <= 0 || spans.length !== words.length || fontsPending()) return;
 			if (el.querySelector(".text_balanced_line")) return;
 			const { font, letterSpacing } = fontOf(el);
 			// 어절 사이 공백만 canvas 로 잰다 - 줄 끝 공백은 화면에서 폭이 0 으로 접혀 DOM 으로는 못 잰다
@@ -194,15 +199,16 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 				if (!cancelled) compute();
 			}, SETTLE_MS);
 		};
-		compute();
-		// 웹폰트가 늦게 오면 그 전 폭은 대체 글꼴 것이다 - 이미 다 받았으면(새로고침 · 다른 페이지로 이동) 다시 재지 않는다.
-		// 다시 재면 브라우저 줄바꿈으로 한 번 돌아갔다 오면서 줄이 깜빡인다
-		if (document.fonts && document.fonts.status !== "loaded")
+		// 웹폰트가 아직이면 재지 않고 기다린다 - 대체 글꼴 폭으로 고른 줄은 폰트가 오면 틀려 두 번 바뀐다.
+		// 그동안은 브라우저 줄바꿈 그대로고, 폰트가 오면(글꼴이 바뀌며 어차피 줄이 움직이는 때) 한 번만 고른다
+		if (fontsPending()) {
 			document.fonts.ready.then(() => {
 				if (cancelled) return;
 				for (const m of measurers.values()) m?.clear();
-				recompute();
+				width = contentWidth();
+				compute();
 			});
+		} else compute();
 		// jsdom 같은 환경에는 없다 - 소비 앱 테스트가 이 컴포넌트를 그려도 깨지지 않게
 		const observer =
 			typeof ResizeObserver === "undefined"
