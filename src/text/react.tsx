@@ -26,6 +26,16 @@ export const renderPhrases = (text: string): React.ReactNode => {
 	return out;
 };
 
+export interface RenderSentencesOptions {
+	/**
+	 * 이 글이 앞 요소(코드 · 링크)에 이어 붙은 조각인가 - "`pnpm build` 가 …" 의 "가 …". 그러면 첫 문장은 묶지 않는다.
+	 * 묶으면 그 조각이 통째로 다음 줄로 넘어가 앞 요소와 조사가 떨어진다 (#1081)
+	 */
+	continuesFrom?: boolean;
+	/** 이 글 뒤에 같은 문장이 요소로 이어지는가 - "… 이 사이트의 `llms.txt`" 의 앞부분. 그러면 끝나지 않은 마지막 문장은 묶지 않는다 */
+	continuesTo?: boolean;
+}
+
 /**
  * @description
  * 두 문장 이상인 문구를 문장마다 인라인 블록으로 묶어 줄이 문장 사이에서 먼저 끊기게 한다 (#1005).
@@ -33,18 +43,33 @@ export const renderPhrases = (text: string): React.ReactNode => {
  * 알 수 없어 `text-wrap` 으로도 못 막는다. 문장 사이 공백은 원문 그대로 텍스트로 남겨 접근성 이름 · 낭독이 같다.
  * 한 문장짜리와 문자열이 아닌 값은 그대로 돌려준다 - 마크업이 바뀌지 않는다.
  */
-export const renderSentences = (content: React.ReactNode): React.ReactNode => {
+export const renderSentences = (
+	content: React.ReactNode,
+	{ continuesFrom = false, continuesTo = false }: RenderSentencesOptions = {},
+): React.ReactNode => {
 	if (typeof content !== "string") return content;
 	const sentences = splitSentences(content);
-	if (sentences.length < 2) return content;
+	const open = continuesFrom || continuesTo;
+	if (sentences.length < 2 && !open) return content;
 	const last = sentences[sentences.length - 1]?.end ?? content.length;
+	// 마지막 문장이 문장 부호로 끝나지 않으면 뒤 요소와 이어지는 조각이다
+	const unfinished = !/[.!?]["')\]”’」』]*$/.test(content.trimEnd());
 	return [
-		...sentences.map((sentence, index) => (
-			<React.Fragment key={sentence.start}>
-				{content.slice(index > 0 ? (sentences[index - 1]?.end ?? 0) : 0, sentence.start)}
-				<span className="sentences_item">{renderPhrases(sentence.text)}</span>
-			</React.Fragment>
-		)),
+		...sentences.map((sentence, index) => {
+			const partial =
+				(continuesFrom && index === 0) ||
+				(continuesTo && unfinished && index === sentences.length - 1);
+			return (
+				<React.Fragment key={sentence.start}>
+					{content.slice(index > 0 ? (sentences[index - 1]?.end ?? 0) : 0, sentence.start)}
+					{partial ? (
+						renderPhrases(sentence.text)
+					) : (
+						<span className="sentences_item">{renderPhrases(sentence.text)}</span>
+					)}
+				</React.Fragment>
+			);
+		}),
 		content.slice(last),
 	];
 };
