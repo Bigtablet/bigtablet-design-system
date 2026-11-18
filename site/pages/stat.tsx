@@ -13,5 +13,6 @@ export const stat: DocPage = {
 	],
 	examples: [{ id: "stat/basic", title: "변화량" }],
 	props: "StatProps",
+	playground: { base: { label: "이번 달 매출", value: "1,240만 원", delta: "+12%" } },
 	notes: ["`deltaTone` 은 좋음 · 나쁨이라 숫자 부호와 따로 줍니다 (비용이 줄면 positive)"],
 };

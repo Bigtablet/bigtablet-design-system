@@ -13,4 +13,5 @@ export const listItem: DocPage = {
 	],
 	examples: [{ id: "list-item/settings", title: "설정 목록" }],
 	props: "ListItemProps",
+	playground: { base: { label: "알림 설정", supportingText: "푸시 · 이메일" } },
 };

@@ -14,4 +14,7 @@ export const emptyState: DocPage = {
 	],
 	examples: [{ id: "empty-state/basic", title: "기본" }],
 	props: "EmptyStateProps",
+	playground: {
+		base: { title: "아직 주문이 없습니다", description: "첫 주문이 들어오면 여기에 보입니다." },
+	},
 };

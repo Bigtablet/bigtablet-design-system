@@ -20,4 +20,5 @@ export const checkbox: DocPage = {
 		},
 	],
 	props: "CheckboxProps",
+	playground: { base: { label: "이용약관에 동의합니다" } },
 };

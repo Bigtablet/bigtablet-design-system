@@ -13,4 +13,5 @@ export const otpInput: DocPage = {
 	],
 	examples: [{ id: "otp-input/basic", title: "6자리" }],
 	props: "OtpInputProps",
+	playground: { base: { ariaLabel: "인증 번호" }, omit: ["autoFocus"] },
 };

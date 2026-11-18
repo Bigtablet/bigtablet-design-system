@@ -14,4 +14,7 @@ export const errorState: DocPage = {
 	],
 	examples: [{ id: "error-state/basic", title: "위젯" }],
 	props: "ErrorStateProps",
+	playground: {
+		base: { title: "목록을 불러오지 못했습니다", description: "잠시 뒤 다시 시도해 주세요." },
+	},
 };

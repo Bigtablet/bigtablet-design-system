@@ -21,6 +21,9 @@ export const copyButton: DocPage = {
 		},
 	],
 	props: "CopyButtonProps",
+	playground: {
+		base: { text: "pnpm add @bigtablet/design-system", "aria-label": "설치 명령 복사" },
+	},
 	notes: [
 		'버튼 이름은 바뀌지 않고 보이는 문구만 "복사됨" 으로 바뀝니다. 스크린 리더가 두 번 읽지 않게 하려는 것입니다',
 		"Toast 를 함께 띄우면 같은 문구를 두 번 듣습니다. 다른 문구로 맥락을 더하거나 하나만 씁니다",

@@ -13,4 +13,8 @@ export const textarea: DocPage = {
 	],
 	examples: [{ id: "textarea/basic", title: "글자 수 표시" }],
 	props: "TextareaProps",
+	playground: {
+		base: { label: "메모", placeholder: "내용을 입력하세요" },
+		omit: ["imeStrategy", "showLabel", "fullWidth"],
+	},
 };
