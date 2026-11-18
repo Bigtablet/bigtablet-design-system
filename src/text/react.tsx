@@ -50,7 +50,8 @@ export const renderSentences = (
 	if (typeof content !== "string") return content;
 	const sentences = splitSentences(content);
 	const open = continuesFrom || continuesTo;
-	if (sentences.length < 2 && !open) return content;
+	// 문장이 없는 조각(요소 사이 공백뿐)은 그대로 - 비우면 요소 사이 공백이 사라진다
+	if (sentences.length === 0 || (sentences.length < 2 && !open)) return content;
 	const last = sentences[sentences.length - 1]?.end ?? content.length;
 	// 마지막 문장이 문장 부호로 끝나지 않으면 뒤 요소와 이어지는 조각이다
 	const unfinished = !/[.!?]["')\]”’」』]*$/.test(content.trimEnd());
