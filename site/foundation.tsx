@@ -149,7 +149,9 @@ function FoundationPage({
 				<h1>
 					{title} <span className="doc_name">{name}</span>
 				</h1>
-				<p className="doc_lede">{lede}</p>
+				<p className="doc_lede">
+					<Md>{lede}</Md>
+				</p>
 			</header>
 			{children}
 		</article>

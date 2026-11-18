@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { renderPhrases, splitSentences } from "src/text";
+import { renderPhrases, renderSentences, splitSentences } from "src/text";
 import { AGENT_RULES, componentDoc } from "./llms";
 import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";
@@ -69,12 +69,32 @@ export function stayOnPage(e: { target: EventTarget | null; preventDefault: () =
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
 export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
-/** 손으로 쓴 문단(가이드 페이지) - 글자 조각에 붙여 둘 어절 규칙을 건다. 코드 · 링크 같은 요소는 그대로 둔다 (#1077) */
+/**
+ * 손으로 쓴 문단(가이드 페이지) - 글자 조각마다 문장 묶기와 붙여 둘 어절 규칙을 건다 (#1077 · #1081).
+ * 문장 묶기가 없으면 "…싣습니다. 사이트와 내용이 / 갈라지지" 처럼 다음 문장이 줄 중간에서 갈린다.
+ * 코드 · 링크 같은 요소는 그대로 둔다 - 문장이 요소를 건너가면 그 앞뒤 조각이 각자 묶인다
+ */
+/** 한 문장짜리는 renderSentences 가 글자 그대로 돌려준다 - 그때도 어절 묶기는 건다 */
+const withPhrases = (node: ReactNode) => (typeof node === "string" ? renderPhrases(node) : node);
+
 export function P({ children }: { children: ReactNode }) {
+	const parts = Children.toArray(children);
 	return (
 		<p>
-			{Children.map(children, (child) =>
-				typeof child === "string" ? renderPhrases(child) : child,
+			{parts.map((child, index) =>
+				typeof child !== "string" ? (
+					child
+				) : (
+					<Fragment key={index}>
+						{withPhrases(
+							renderSentences(child, {
+								// 코드 · 링크는 문장을 끝내지 않는다 - 앞뒤에 요소가 있으면 그 문장은 요소를 건너 이어진다
+								continuesFrom: index > 0,
+								continuesTo: index < parts.length - 1,
+							}),
+						)}
+					</Fragment>
+				),
 			)}
 		</p>
 	);

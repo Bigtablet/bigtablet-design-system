@@ -155,6 +155,17 @@ describe("renderPhrases", () => {
 		expect(phrases("회의 일정을 확인합니다").groups).toEqual([]);
 	});
 
+	// 혼자 뜻이 서지 않는 말은 앞 어절에 붙인다 (#1081)
+	it("keeps a copula or dependent noun with the word before it", () => {
+		expect(phrases("본문이면 body 입니다.").groups).toEqual(["body 입니다."]);
+		expect(phrases("지금 바꿀 수 있습니다").groups).toEqual(["바꿀 수"]);
+		expect(phrases("진행 중입니다").groups).toEqual(["진행 중입니다"]);
+	});
+
+	it("does not treat a word that merely starts like a dependent noun as one", () => {
+		expect(phrases("내용을 수정한 뒤 저장합니다").groups).toEqual([]);
+	});
+
 	it("does not bind across a comma", () => {
 		expect(phrases("고객의, 신뢰").groups).toEqual([]);
 	});
@@ -191,6 +202,37 @@ describe("phraseRanges", () => {
 		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
 			"모든 항목이",
 			"이 아래의 컴포넌트에서",
+		]);
+	});
+});
+
+// 코드 · 링크 같은 요소에 이어 붙은 조각은 묶지 않는다 - 통째로 다음 줄로 넘어가 요소와 조사가 떨어진다 (#1081)
+describe("renderSentences with surrounding elements", () => {
+	const items = (text: string, options: Parameters<typeof renderSentences>[1]) => {
+		const { container } = render(<p>{renderSentences(text, options)}</p>);
+		return [...container.querySelectorAll(".sentences_item")].map((el) => el.textContent);
+	};
+
+	it("leaves the first sentence open when it continues from an element", () => {
+		expect(items(" 가 이것을 만듭니다. 내용이 같습니다.", { continuesFrom: true })).toEqual([
+			"내용이 같습니다.",
+		]);
+	});
+
+	it("leaves an unfinished last sentence open when an element follows", () => {
+		expect(items("내용이 같습니다. 에이전트에게는 이 사이트의 ", { continuesTo: true })).toEqual([
+			"내용이 같습니다.",
+		]);
+	});
+
+	it("keeps whitespace between two elements", () => {
+		expect(renderSentences(" ", { continuesFrom: true, continuesTo: true })).toBe(" ");
+	});
+
+	it("keeps a finished last sentence grouped even when an element follows", () => {
+		expect(items("첫 문장입니다. 둘째 문장입니다.", { continuesTo: true })).toEqual([
+			"첫 문장입니다.",
+			"둘째 문장입니다.",
 		]);
 	});
 });

@@ -91,8 +91,19 @@ const bindsNext = (word: string) =>
 	(/[가-힣]의$/.test(word) && !NOUNS_ENDING_IN_UI.has(word)) || DETERMINERS.has(word);
 
 /**
+ * 앞 어절에 붙여 둘 말 - 혼자서는 뜻이 서지 않아 다음 줄 맨 앞에 혼자 남으면 어색하다 (#1081).
+ * "body 입니다" 처럼 영문 · 코드 뒤에 띄어 쓴 서술어, "할 수", "본 것" 의 의존명사(뒤에 붙은 조사 · 서술어 · 문장 부호까지).
+ * 의존명사 뒤는 조사 목록으로만 받는다 - 글자 수로 받으면 "수정한" · "때문에" 같은 다른 낱말까지 걸린다
+ */
+const ATTACHES_PREV =
+	/^(?:입니다|입니까|이다|이에요|예요|이죠|이고|이며|이면|(?:수|것|때|줄|뿐|듯|만큼|중)(?:가|도|는|은|을|를|이|에|에서|에는|만|이다|입니다|이에요|예요|이죠)?)[.,!?"')\]”’]*$/;
+
+/** 앞 어절과 붙여 둘 어절인가 */
+const bindsPrev = (word: string) => ATTACHES_PREV.test(word);
+
+/**
  * 붙여 둘 어절 묶음의 원문 범위 - 2어절 이상인 묶음만 돌려준다 (#1077).
- * `~의` 꾸밈말 · 관형사를 다음 어절과 잇고, 이어지면 합치되 최대 3어절까지.
+ * `~의` 꾸밈말 · 관형사를 다음 어절과, 서술어 · 의존명사를 앞 어절과 잇고, 이어지면 합치되 최대 3어절까지.
  */
 export const phraseRanges = (text: string): { start: number; end: number }[] => {
 	const words = [...text.matchAll(/\S+/g)].map((m) => ({
@@ -103,7 +114,12 @@ export const phraseRanges = (text: string): { start: number; end: number }[] => 
 	const ranges: { start: number; end: number }[] = [];
 	for (let i = 0; i < words.length; ) {
 		let j = i;
-		while (j < words.length - 1 && j - i + 1 < MAX_PHRASE && bindsNext(words[j]?.word ?? "")) j++;
+		while (
+			j < words.length - 1 &&
+			j - i + 1 < MAX_PHRASE &&
+			(bindsNext(words[j]?.word ?? "") || bindsPrev(words[j + 1]?.word ?? ""))
+		)
+			j++;
 		const first = words[i];
 		const last = words[j];
 		if (j > i && first && last) ranges.push({ start: first.start, end: last.end });
