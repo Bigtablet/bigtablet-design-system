@@ -10,8 +10,10 @@ $line: token.$border_width_standard solid token.$color_border_default;
 $mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
 // 로고 육면체의 30° 등각 점 격자. 가로 24px, 세로 24·sin60 ≈ 20.78px 간격의 점을 두 겹 엇갈려 찍는다
+// 예제 무대 - 바탕은 앱 바탕(bg_solid)이다. 컴포넌트는 그 위를 기준으로 만들어져 bg_solid_dim 을 자기 채움(SegmentedControl
+// 트랙 · Badge · Stepper 표시 …)으로 쓴다 - 무대도 그 회색이면 같은 색이라 묻힌다 (#1089). 무대는 점 무늬로만 구분한다
 @mixin iso_floor {
-  background-color: token.$color_bg_solid_dim;
+  background-color: token.$color_bg_solid;
   background-image:
     radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px),
     radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px);
