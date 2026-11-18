@@ -1,5 +1,15 @@
 @use "src/styles/token" as token;
 
+@mixin selected_dark {
+  box-shadow: inset 0 0 0 token.$border_width_standard token.$color_border_hover;
+
+  &:has(.segmented_control_input:focus-visible) {
+    box-shadow:
+      inset 0 0 0 token.$border_width_standard token.$color_border_hover,
+      token.$focus_ring;
+  }
+}
+
 // 트랙(dim) 위에서 선택된 칸만 떠오른 표면으로 채운다 - 색만이 아니라 표면·그림자로도 선택을
 // 구분한다(WCAG 1.4.1). 그림자는 떠오른 모양이라 흑백에서도 보인다. 이 알약 모양은 SegmentedControl 만 갖는다 - Tabs `fills` 는 같은 모양이라 deprecated (#1047).
 .segmented_control {
@@ -56,6 +66,17 @@
 
     &:has(.segmented_control_input:focus-visible) {
       box-shadow: token.$elevation_level1, token.$focus_ring;
+    }
+
+    // 다크는 고른 칸 표면(bg_solid #0A0A0A)이 트랙(#141414)보다 어둡고 검은 그림자도 보이지 않아,
+    // 어느 칸을 골랐는지가 1.1:1 차이로만 드러났다(WCAG 1.4.11, #1057). 안쪽 테두리로 4:1 경계를 준다
+    [data-theme="dark"] & {
+      @include selected_dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) & {
+        @include selected_dark;
+      }
     }
   }
 

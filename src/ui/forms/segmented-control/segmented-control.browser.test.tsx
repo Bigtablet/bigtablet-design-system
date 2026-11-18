@@ -118,4 +118,33 @@ describe("SegmentedControl in forced-colors mode (Chromium)", () => {
 			await emulateForcedColors("none");
 		}
 	});
+
+	// 다크에서 고른 칸이 트랙보다 어둡고 검은 그림자도 안 보여 1.1:1 차이로만 드러났다 (#1057).
+	// 안쪽 테두리 색이 트랙 위에서 비텍스트 대비 3:1(WCAG 1.4.11)을 넘는지 잰다
+	it("marks the selected item with a 3:1 edge on the dark track", async () => {
+		document.documentElement.setAttribute("data-theme", "dark");
+		try {
+			render(<SegmentedControl aria-label="통화" items={items} defaultValue="USD" />);
+			const usd = screen.getByRole("radio", { name: "USD" }).closest("label") as HTMLElement;
+			const track = usd.parentElement as HTMLElement;
+			await expect.poll(() => getComputedStyle(usd).boxShadow).toMatch(/inset/);
+			const edge = getComputedStyle(usd).boxShadow.match(/rgba?\([^)]+\)/)?.[0] ?? "";
+			expect(contrast(edge, getComputedStyle(track).backgroundColor)).toBeGreaterThanOrEqual(3);
+		} finally {
+			document.documentElement.removeAttribute("data-theme");
+		}
+	});
 });
+
+/** WCAG 상대 휘도 대비 - "rgb(r, g, b)" 둘 */
+function contrast(a: string, b: string) {
+	const lum = (rgb: string) => {
+		const [r = 0, g = 0, bl = 0] = (rgb.match(/[\d.]+/g) ?? []).map(Number).map((v) => {
+			const c = v / 255;
+			return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+		});
+		return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+	};
+	const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x) as [number, number];
+	return (hi + 0.05) / (lo + 0.05);
+}
