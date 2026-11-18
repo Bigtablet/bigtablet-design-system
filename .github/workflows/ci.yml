@@ -49,6 +49,7 @@ jobs:
               - 'src/ui/**'
               - 'src/styles/**'
               - 'src/utils/**'
+              - 'src/text/**'
               - 'src/index.ts'
               - 'src/test/**'
               - 'tsup.config.ts'
