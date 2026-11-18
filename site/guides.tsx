@@ -438,18 +438,17 @@ function Vanilla() {
 
 /* ─── AI 에이전트 ─────────────────────────────────────────────────────── */
 
-type Agent = "claude" | "codex" | "cursor";
+type Agent = "agents" | "cursor";
 
 const AGENTS: [Agent, string][] = [
-	["claude", "Claude Code"],
-	["codex", "Codex"],
+	["agents", "Claude Code · Codex"],
 	["cursor", "Cursor"],
 ];
 
 // 같은 내용을 에이전트마다 읽는 파일에 둔다. Cursor 규칙 파일은 앞머리(frontmatter)가 있어야 늘 적용된다
 const AGENT_FILES: Record<Agent, { file: string; code: string }> = {
-	claude: { file: "CLAUDE.md", code: AGENT_SNIPPET },
-	codex: { file: "AGENTS.md", code: AGENT_SNIPPET },
+	// Codex 는 AGENTS.md 를 읽는다. Claude Code 는 CLAUDE.md 에서 불러오게 해 같은 글을 두 벌 두지 않는다
+	agents: { file: "AGENTS.md", code: AGENT_SNIPPET },
 	cursor: {
 		file: ".cursor/rules/bigtablet.mdc",
 		code: `---
@@ -487,11 +486,11 @@ function Ai() {
 
 			<Block id="setup" title="1. 에이전트에 연결하기">
 				<p>
-					앱 저장소의 에이전트 설정 파일에 아래 내용을 넣습니다. 여러 에이전트를 쓰면 파일마다 같은
-					내용을 둡니다.
+					앱 저장소의 에이전트 설정 파일에 아래 내용을 넣습니다. Claude Code 와 Codex 는 같은 파일
+					하나를 읽게 합니다.
 				</p>
 				{/* 에이전트마다 넣을 파일 · 내용이 다른 패널이라 Tabs (값 하나 고르기가 아니다) */}
-				<Tabs defaultValue="claude">
+				<Tabs defaultValue="agents">
 					<TabList ariaLabel="에이전트">
 						{AGENTS.map(([value, label]) => (
 							<Tab key={value} value={value}>
@@ -505,6 +504,15 @@ function Ai() {
 								<Code>{AGENT_FILES[value].file}</Code>
 							</p>
 							<CodeBlock code={AGENT_FILES[value].code} />
+							{value === "agents" && (
+								<>
+									<p>
+										Claude Code 는 <Code>CLAUDE.md</Code> 에 아래 한 줄만 둡니다. 같은 내용을 불러와
+										두 파일을 따로 고칠 일이 없습니다.
+									</p>
+									<CodeBlock code="@AGENTS.md" />
+								</>
+							)}
 						</TabPanel>
 					))}
 				</Tabs>
