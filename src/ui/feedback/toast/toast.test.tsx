@@ -169,16 +169,17 @@ describe("Toast display", () => {
 		expect(screen.getByText("두 번째", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
-	it("puts the container at top-right by default and bottom-right on request", () => {
+	// 기본은 아래 - 위는 머리 오른쪽 주 동작 버튼을 가린다 (#1073)
+	it("puts the container at bottom-right by default and top-right on request", () => {
 		const { rerender } = render(<ToastProvider>child</ToastProvider>);
 		expect(document.querySelector(".toast_container")).toHaveAttribute(
 			"data-placement",
-			"top-right",
+			"bottom-right",
 		);
-		rerender(<ToastProvider placement="bottom-right">child</ToastProvider>);
+		rerender(<ToastProvider placement="top-right">child</ToastProvider>);
 		expect(document.querySelector(".toast_container")).toHaveAttribute(
 			"data-placement",
-			"bottom-right",
+			"top-right",
 		);
 	});
 

@@ -21,7 +21,9 @@
 
 .toast_container {
   position: fixed;
-  top: token.$spacing_16;
+  // 기본은 오른쪽 아래 - 위는 머리 오른쪽 주 동작 버튼을 가린다 (#1073, Vanilla 와 같은 구조).
+  // BottomNav 같은 하단 고정 UI 는 --bt-bottom-inset 만큼 밀어 올린다
+  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
   // 오버레이 잠금이 거터를 회수하면 ICB 가 넓어져 오른쪽 고정 요소가 그만큼 튄다(#635).
   // 회수된 폭을 더해 제자리에 남긴다 - 잠금 밖에서는 `0px` 이다.
   right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
@@ -51,10 +53,6 @@
   margin: calc(-1 * #{token.$spacing_20});
 
   @include breakpoint.compact {
-    top: auto;
-    // BottomNav 뒤에 깔려 읽을 수 없던 문제 - 하단을 차지하는 만큼 밀어 올린다.
-    // BottomNav 가 없으면 --bt-bottom-inset 이 0px 이라 여백만 남는다.
-    bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
     left: token.$spacing_16;
     // 좁은 화면에서도 같은 보정 - 이 블록이 위 `right` 를 덮는다.
     right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
@@ -62,10 +60,12 @@
   }
 }
 
-// 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 (#998). compact 는 원래 아래라 위 규칙과 같은 값이다.
-.toast_container[data-placement="bottom-right"] {
-  top: auto;
-  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+// 하단 고정 UI(쿠키 배너 등)와 겹치면 오른쪽 위로. 폰 폭은 하단을 가로로 채우는 배치라 그대로 둔다
+@include breakpoint.from_medium {
+  .toast_container[data-placement="top-right"] {
+    top: token.$spacing_16;
+    bottom: auto;
+  }
 }
 
 // ── Item ─────────────────────────────────────────────────────────────────────

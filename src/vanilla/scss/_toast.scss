@@ -18,7 +18,9 @@
 
 .bt-toast-container {
   position: fixed;
-  top: token.$spacing_16;
+  // 기본은 오른쪽 아래 - 위는 머리 오른쪽 주 동작 버튼을 가린다 (#1073, React 와 같음).
+  // BottomNav 같은 하단 고정 UI 는 --bt-bottom-inset 만큼 밀어 올린다
+  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
   // 오버레이 잠금이 거터를 회수하면 오른쪽 고정 요소가 튄다 - 회수된 폭을 더해 제자리에 둔다(#635).
   right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
   z-index: var(--bt-z-toast);
@@ -47,19 +49,19 @@
   margin: calc(-1 * #{token.$spacing_20});
 
   @include token.compact {
-    top: auto;
-    bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
     left: token.$spacing_16;
     right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
     width: auto;
   }
 }
 
-// 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 (#998) - 컨테이너는 번들이 만들어서 `<html>` 속성으로 고른다.
-// compact 는 원래 아래라 위 규칙과 같은 값이다.
-[data-bt-toast-placement="bottom-right"] .bt-toast-container {
-  top: auto;
-  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+// 하단 고정 UI(쿠키 배너 등)와 겹치면 오른쪽 위로 - 컨테이너는 번들이 만들어서 `<html>` 속성으로 고른다.
+// 폰 폭은 하단을 가로로 채우는 배치라 그대로 둔다. `bottom-right` 는 이제 기본값과 같다 (#998 에서 만든 값)
+@include token.from_medium {
+  [data-bt-toast-placement="top-right"] .bt-toast-container {
+    top: token.$spacing_16;
+    bottom: auto;
+  }
 }
 
 .bt-toast {

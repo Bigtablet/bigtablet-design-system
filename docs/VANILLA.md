@@ -783,8 +783,8 @@ Alert는 JavaScript로만 사용합니다.
 | `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
 | `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
 
-- 오른쪽 위에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
-- 머리 오른쪽의 주 동작 버튼("추가")을 가리면 `<html data-bt-toast-placement="bottom-right">` 로 오른쪽 아래에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 쌓이는 순서는 여기서도 최신이 위다
+- 오른쪽 아래에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹치면 `<html data-bt-toast-placement="top-right">` 로 넓은 화면에서 오른쪽 위에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 예전 값 `bottom-right` 는 이제 기본과 같다
 - 쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤된다 (막대는 숨김 - 휠 · 터치 · Tab). 최신 토스트가 화면 밖으로 밀리지 않는다
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
 - `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
