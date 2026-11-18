@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/ui/**'
       - 'src/styles/**'
+      - 'src/text/**'
       - 'site/**'
       - 'public/**'
       - 'package.json'

@@ -14,6 +14,10 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/esm/index.js"
 		},
+		"./text": {
+			"types": "./dist/text.d.ts",
+			"import": "./dist/esm/text/index.js"
+		},
 		"./style.css": "./dist/index.css",
 		"./tailwind.css": "./dist/tailwind.css",
 		"./scss/token": "./dist/styles/token.scss",

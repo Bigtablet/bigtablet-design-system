@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
+	phraseRanges,
 	renderPhrases,
 	renderSentences,
 	Sentences,
 	sentenceText,
 	splitSentences,
-} from "./sentences";
+} from "./index";
 
 const texts = (text: string) => splitSentences(text).map((sentence) => sentence.text);
 
@@ -180,5 +181,16 @@ describe("renderPhrases", () => {
 		expect(renderSentences("이 아래의 컴포넌트에서 부릅니다")).toBe(
 			"이 아래의 컴포넌트에서 부릅니다",
 		);
+	});
+});
+
+// React 없이 쓰는 순수 규칙 - 앱이 서버 · 다른 렌더러에서도 같은 범위를 얻는다 (#1079)
+describe("phraseRanges", () => {
+	it("returns the source ranges of phrases of two or more words", () => {
+		const text = "모든 항목이 이 아래의 컴포넌트에서 보입니다";
+		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
+			"모든 항목이",
+			"이 아래의 컴포넌트에서",
+		]);
 	});
 });

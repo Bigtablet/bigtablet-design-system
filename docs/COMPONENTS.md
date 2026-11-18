@@ -123,7 +123,7 @@ Modal · Button · TextField · Table · Dropdown 은 이 문서 각 섹션의 "
 
 Alert · Badge · Toast 는 4.1.0 에서 의미 색 prop 이 `variant` → `tone` 으로 바뀌었습니다. 렌더되는 클래스명(`.badge_variant_*`, `.alert_variant_*`)은 그대로입니다.
 
-**문구 줄바꿈** — Toast `message`, Alert `message`, Modal `description`, InlineAlert · MediaCard `children`, EmptyState · ErrorState · PageHeader `description`, Hero `subtitle`, TextField · Textarea · FileInput · OtpInput `supportingText` 는 (문자열일 때) 두 문장 이상이면 문장마다 `.sentences_item`(`inline-block`)으로 묶어 줄이 문장 사이에서 먼저 끊깁니다. 마침표 · 물음표 · 느낌표로 끝나는 어절에서 나누고, 숫자 바로 뒤 마침표(`2026. 5. 21.`)는 날짜라 넘깁니다. 한 문장짜리는 마크업이 그대로이고, 문장 사이 공백이 남아 낭독 내용도 같습니다. 글을 담는 컴포넌트는 루트에 `wrap_keep_all` 이 걸려 어절 중간에서 끊기지 않습니다.
+**문구 줄바꿈** — Toast `message`, Alert `message`, Modal `description`, InlineAlert · MediaCard `children`, EmptyState · ErrorState · PageHeader `description`, Hero `subtitle`, TextField · Textarea · FileInput · OtpInput `supportingText` 는 (문자열일 때) 두 문장 이상이면 문장마다 `.sentences_item`(`inline-block`)으로 묶어 줄이 문장 사이에서 먼저 끊깁니다. 마침표 · 물음표 · 느낌표로 끝나는 어절에서 나누고, 숫자 바로 뒤 마침표(`2026. 5. 21.`)는 날짜라 넘깁니다. 한 문장짜리는 마크업이 그대로이고, 문장 사이 공백이 남아 낭독 내용도 같습니다. 글을 담는 컴포넌트는 루트에 `wrap_keep_all` 이 걸려 어절 중간에서 끊기지 않습니다. 두 문장 이상이면 문장 안에서 `~의` 꾸밈말 · 관형사(이 · 그 · 모든 · 첫 …)와 다음 어절(최대 3어절)을 `.sentences_phrase` 로 묶어 "이 아래의 / 컴포넌트에서" 처럼 꾸밈 관계 사이에서 줄이 갈리지 않습니다.
 
 앱이 직접 그리는 문단도 같은 규칙으로 나누려면 `Sentences` 를 씁니다. 규칙을 앱에 따로 두면 한쪽만 고쳐 화면마다 줄바꿈이 갈립니다. 띄어쓰기 없는 언어(ja · zh)는 나누지 않고 원문 그대로 둡니다.
 
@@ -134,6 +134,21 @@ import { Sentences, sentenceText } from "@bigtablet/design-system";
 
 // 테스트 - 문장이 span 으로 나뉘면 getByText("전체 문장") 은 못 찾는다
 screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새 결제 수단을 등록하세요."));
+```
+
+줄바꿈 규칙만 따로 쓰려면 하위 경로 `@bigtablet/design-system/text` 에서 가져옵니다. 루트의 `Sentences` · `sentenceText` 와 같은 것이고, React 없이 쓰는 순수 함수도 있습니다.
+
+| export | 하는 일 |
+|------|------|
+| `splitSentences(text)` | 문장마다 원문 범위(`text` · `start` · `end`). React 없음 |
+| `phraseRanges(text)` | 붙여 둘 어절 묶음의 원문 범위(`start` · `end`). React 없음 |
+| `renderSentences(text)` · `renderPhrases(text)` | 위 규칙으로 span 을 넣은 React 노드 |
+| `Sentences` · `sentenceText` | 루트 export 와 같음 |
+
+```ts
+import { phraseRanges } from "@bigtablet/design-system/text";
+
+phraseRanges("이 아래의 컴포넌트에서 부릅니다"); // [{ start: 0, end: 12 }]
 ```
 
 ---

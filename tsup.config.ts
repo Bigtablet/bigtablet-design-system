@@ -9,7 +9,9 @@ export default defineConfig([
 	{
 		entry: { index: "src/index.ts" },
 		format: ["esm"],
-		dts: true,
+		// 타입은 루트와 `@bigtablet/design-system/text`(#1079) 둘 - text 의 JS 는 아래 모듈 빌드가 dist/esm/text 로 낸다.
+		// 따로 설정을 두면 이 설정의 clean 과 병렬로 돌아 만든 타입이 지워진다
+		dts: { entry: { index: "src/index.ts", text: "src/text/index.ts" } },
 		clean: true,
 		treeshake: true,
 		sourcemap: false,
