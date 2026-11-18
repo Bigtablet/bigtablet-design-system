@@ -19,6 +19,15 @@ describe("BalancedText without canvas", () => {
 		expect(heading.getAttribute("data-balanced")).toBeTruthy();
 	});
 
+	it("keeps its own data-balanced id even when one is passed in", () => {
+		const { container } = render(
+			<BalancedText as="p" {...{ "data-balanced": "mine" }}>
+				글
+			</BalancedText>,
+		);
+		expect(container.firstElementChild?.getAttribute("data-balanced")).not.toBe("mine");
+	});
+
 	it("keeps inline elements whole and glues text written right after them", () => {
 		const { container } = render(
 			<BalancedText as="p">

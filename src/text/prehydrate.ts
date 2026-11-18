@@ -33,7 +33,12 @@ export const prehydrate = () => {
 		// 이미 하이드레이션돼 BalancedText 가 줄을 그렸다
 		if (!id || el.querySelector(":scope > .text_balanced_line")) return;
 		// 이 글꼴을 아직 받는 중 - 대체 글꼴 폭으로 고른 nowrap 줄은 글꼴이 오면 틀리거나 넘친다(받기는 이 확인이 시작시킨다)
-		if (fontPending(el)) return;
+		const pending = fontPending(el);
+		if (pending) {
+			// 받기가 실패해도(네트워크 · CSP) 하이드레이션 전 스크립트가 unhandledrejection 을 내지 않게
+			pending.catch(() => {});
+			return;
+		}
 		const { font, letterSpacing } = fontOf(el);
 		const measure = createCanvasMeasurer(font, letterSpacing);
 		const breaks = measure && chooseDomBreaks(el, measure);

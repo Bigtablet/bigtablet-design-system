@@ -326,7 +326,8 @@ export const BalancedText = ({
 		body.push(run(0, tokens.length - 1));
 	}
 	return (
-		<Tag ref={ref} className={cn("text_balanced", className)} {...{ [ID_ATTR]: id }} {...props}>
+		// props 를 먼저 펼친다 - 하이드레이션 전 스크립트와 맞추는 식별자(data-balanced)는 소비자 값에 덮이지 않아야 한다
+		<Tag ref={ref} {...props} className={cn("text_balanced", className)} {...{ [ID_ATTR]: id }}>
 			{lead}
 			{body}
 			{tail}
