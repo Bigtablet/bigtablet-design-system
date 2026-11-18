@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { gapPenalty } from "./core";
+import { gapPenalty, phraseRanges } from "./core";
 import {
 	chooseBreaks,
 	layoutBest,
@@ -53,6 +53,11 @@ describe("gapPenalty", () => {
 
 	it("does not bind ~주의 nouns as ~의 modifiers", () => {
 		expect(gapPenalty("자본주의", "사회")).toBe(4);
+		// "주의" 혼자(명사)는 목록에서 걸러지고, "~주의" 규칙은 앞 글자가 있어야 걸린다
+		expect(gapPenalty("주의", "사항")).toBe(4);
+		expect(phraseRanges("이 주의 사항을 읽고 민주주의 사회를 봅니다")).toEqual([
+			{ start: 0, end: 4 },
+		]);
 	});
 
 	it("keeps the last word of a sentence with the sentence", () => {

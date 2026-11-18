@@ -145,7 +145,7 @@ screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새
 | `renderSentences(text)` · `renderPhrases(text)` | 위 규칙으로 span 을 넣은 React 노드 |
 | `Sentences` · `sentenceText` | 루트 export 와 같음 |
 | `BalancedText` | 실제 폭을 재서 가장 자연스러운 자리에서 줄을 바꾸는 글 - 제목 · 히어로 · 짧은 소개 문구용 (아래) |
-| `chooseBreaks` · `chooseWordBreaks` · `layoutNative` · `layoutBest` · `createCanvasMeasurer` | `BalancedText` 의 엔진. React 없음 - 글자만 있으면 canvas 로 재서 서버 · 다른 렌더러에서도 씁니다 |
+| `chooseBreaks(text, measure, maxWidth)` · `createCanvasMeasurer(font)` | `BalancedText` 의 엔진. React 없음 - 글자만 있으면 canvas 로 재서 다른 렌더러에서도 씁니다. 고르는 기준(아래 벌점 값)은 minor 에서 바뀔 수 있습니다 |
 
 ```ts
 import { phraseRanges } from "@bigtablet/design-system/text";

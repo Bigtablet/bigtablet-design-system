@@ -193,7 +193,6 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 			);
 		};
 		let width = contentWidth();
-		/** 브라우저 줄바꿈 그대로 그려진 상태에서만 돈다 - 그 줄을 화면에서 읽어 기준으로 삼는다 */
 		/**
 		 * 고른 줄을 그린다. 내용에 맞춰 폭이 정해지는 상자(auto 표의 칸 · 폭 없는 flex 항목)는 nowrap 줄이 최소 폭을 키워
 		 * 상자가 넓어진다 - 그 변화에 다시 계산하면 브라우저 줄바꿈으로 돌아가 다시 좁아지고, 또 계산해 끝없이 오간다.
@@ -225,6 +224,7 @@ export const BalancedText = ({ children, as: Tag = "span", ...props }: BalancedT
 				}),
 			);
 		};
+		/** 브라우저 줄바꿈 그대로 그려진 상태에서만 돈다 - 그 줄을 화면에서 읽어 기준으로 삼는다 */
 		const compute = () => {
 			if (gaveUp) return;
 			width = contentWidth();
