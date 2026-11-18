@@ -11,7 +11,7 @@ function Buttons() {
 			<Button
 				variant="outline"
 				onClick={() => {
-					const id = toast.info("업로드 중…", { duration: 0 });
+					const id = toast.info("업로드 중…", { duration: Infinity });
 					setTimeout(
 						() => toast.update(id, { tone: "success", message: "업로드 완료", duration: 3000 }),
 						1500,

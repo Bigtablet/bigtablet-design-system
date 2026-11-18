@@ -14,7 +14,11 @@ export const toast: DocPage = {
 		["사용자 확인이 필요함", "Alert", false],
 	],
 	examples: [
-		{ id: "toast/basic", title: "종류 · 갱신", desc: "`duration: 0` 이면 닫을 때까지 남습니다." },
+		{
+			id: "toast/basic",
+			title: "종류 · 갱신",
+			desc: "`duration: Infinity` 면 닫을 때까지 남습니다. `update` 로 내용을 바꾸면서 시간을 다시 줄 수 있습니다.",
+		},
 	],
 	props: ["ToastProviderProps", "ToastOptions", "ToastAction"],
 	notes: [
