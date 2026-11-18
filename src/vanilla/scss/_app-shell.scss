@@ -31,14 +31,7 @@
   &:has(.bt-app-shell__header) > .bt-sidebar {
     --bt-sidebar-header-center: max(
       calc((var(--bt-top-inset, 0px) - #{token.$border_width_standard}) / 2),
-      calc(#{token.$spacing_20} + 14px)
-    );
-  }
-
-  &:has(.bt-app-shell__header) > .bt-sidebar--collapsed {
-    --bt-sidebar-header-center: max(
-      calc((var(--bt-top-inset, 0px) - #{token.$border_width_standard}) / 2),
-      calc(#{token.$spacing_16} + 14px)
+      var(--bt-sidebar-header-natural)
     );
   }
 

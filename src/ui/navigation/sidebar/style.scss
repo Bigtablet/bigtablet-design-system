@@ -1,10 +1,16 @@
 @use "src/styles/token" as token;
 
+// 머리 로고 줄 · 아이콘 자리 · 접기 버튼 크기 - 접기 버튼을 머리 가운데 줄에 맞추는 계산이 이 값들을 쓴다 (#1091)
+$_header_line: 28px;
+$_icon_slot: 20px;
+$_toggle_size: 24px;
+
 .sidebar {
   position: relative; // floating collapse btn anchor
-  // 머리(로고) 가운데 줄 - 접기 버튼을 여기 맞춘다. 머리 위 여백 + 로고 줄(28px)의 절반. AppShell 은 머리를 앱 헤더
-  // 높이에 맞추므로 그쪽에서 다시 정한다 (#1091)
-  --bt-sidebar-header-center: calc(#{token.$spacing_20} + 14px);
+  // 머리(로고) 가운데 줄 - 접기 버튼을 여기 맞춘다. 머리 위 여백 + 로고 줄의 절반이 머리 본래 높이의 가운데(natural)이고,
+  // AppShell 은 머리를 앱 헤더 높이에 맞추므로 그쪽에서 center 를 다시 정한다 (#1091)
+  --bt-sidebar-header-natural: calc(#{token.$spacing_20} + #{$_header_line} / 2);
+  --bt-sidebar-header-center: var(--bt-sidebar-header-natural);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -30,7 +36,7 @@
     &_layers {
       position: relative;
       width: 100%;
-      min-height: 28px; // favicon 크기 보장 (collapsed 시 헤더 높이 유지)
+      min-height: $_header_line; // favicon 크기 보장 (collapsed 시 헤더 높이 유지)
     }
 
     &_layer {
@@ -150,8 +156,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: $_icon_slot;
+      height: $_icon_slot;
     }
 
     &_label {
@@ -183,14 +189,14 @@
     position: absolute;
     // 버튼(24px) 가운데를 머리 가운데 줄에 - 위에서 24px 고정일 때는 로고와 펼침 2px · 접힘 6px 어긋났고, 앱 헤더 높이를
     // 따르는 AppShell 안에서는 더 벌어졌다. Notiiv 는 앱에서 top 을 덮어써 맞추고 있었다 (#1091)
-    top: calc(var(--bt-sidebar-header-center) - 12px);
-    right: -12px; // 절반 sidebar 밖으로
+    top: calc(var(--bt-sidebar-header-center) - #{$_toggle_size} / 2);
+    right: calc(#{$_toggle_size} / -2); // 절반 sidebar 밖으로
     z-index: token.$z_content;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: $_toggle_size;
+    height: $_toggle_size;
     padding: 0;
     border: token.$border_width_standard solid token.$color_border_default;
     border-radius: 50%;
@@ -221,7 +227,7 @@
 
   &_collapsed {
     // 접힌 머리는 위아래 여백이 16px 이라 가운데 줄도 올라간다
-    --bt-sidebar-header-center: calc(#{token.$spacing_16} + 14px);
+    --bt-sidebar-header-natural: calc(#{token.$spacing_16} + #{$_header_line} / 2);
 
     // collapsed 헤더: favicon center
     .sidebar_header {
@@ -264,8 +270,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: $_icon_slot;
+      height: $_icon_slot;
 
       &::before {
         content: attr(data-initial);

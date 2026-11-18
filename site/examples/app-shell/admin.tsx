@@ -10,7 +10,7 @@ import {
 import { Home, Settings, ShoppingBag, Users } from "lucide-react";
 import { useState } from "react";
 
-// 사이드바 항목에는 아이콘을 둡니다 - 접으면 라벨이 숨고 아이콘만 남습니다. 접힌 머리에는 정사각 로고(headerCollapsed)를
+// 사이드바 항목에는 아이콘을 둡니다 - 접으면 라벨이 숨고 아이콘만 남습니다. 접힌 머리에는 정사각 로고(headerCollapsed)를 둡니다.
 export default function Example() {
 	const [current, setCurrent] = useState("home");
 	const item = (id: string, label: string, icon: React.ReactNode) => (
