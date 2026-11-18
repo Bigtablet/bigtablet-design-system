@@ -194,13 +194,13 @@ function ThemeMenu({ theme, onChange }: { theme: Theme; onChange: (t: Theme) => 
 /** 문서 페이지 · 시작하기 가이드 · 전체 컴포넌트 · 첫 화면. 모르는 주소는 첫 화면 */
 function Route({ slug, page, theme }: { slug: string; page?: DocPage; theme: Theme }) {
 	if (page) return <Page key={page.slug} page={page} theme={theme} />;
-	if (slug === "components") return <Overview />;
+	if (slug === "components") return <Overview theme={theme} />;
 	const Guide = [...GUIDES, ...FOUNDATIONS].find((g) => g.slug === slug)?.Body;
 	return Guide ? <Guide /> : <Landing pages={PAGES} />;
 }
 
 /** 컴포넌트 홈 - 그룹별 카드(첫 예제 축소 미리보기 · 코드명 · 한국어 이름 · 한 줄 설명). 검색은 헤더 */
-function Overview() {
+function Overview({ theme }: { theme: Theme }) {
 	return (
 		<article className="doc_overview">
 			<header className="doc_block doc_head">
@@ -217,7 +217,7 @@ function Overview() {
 					</h2>
 					<div className="ov_grid">
 						{pages.map((p) => (
-							<ComponentCard key={p.slug} page={p} />
+							<ComponentCard key={p.slug} page={p} theme={theme} />
 						))}
 					</div>
 				</section>

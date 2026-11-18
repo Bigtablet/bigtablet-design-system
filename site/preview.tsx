@@ -12,6 +12,44 @@ const Comp = exampleOf(q.get("ex") ?? "");
 document.addEventListener("click", stayOnPage, true);
 createRoot(document.getElementById("root")!).render(Comp ? <Comp /> : <p>예제가 없습니다</p>);
 
+// 오버레이 예제(`open`) - 첫 버튼을 눌러 열린 모습을 보인다. iframe 안이라 스크롤 잠금이 문서 페이지에
+// 닿지 않는다 (#1060). 다만 모달이 여는 순간 첫 칸으로 옮기는 포커스는 iframe 째로 문서 포커스를 가져가
+// 페이지를 막 연 키보드 사용자가 iframe 안 포커스 가두기에 갇힌다 - 사람이 iframe 을 누르거나 키를 치기
+// 전까지는 focus() 를 막는다.
+// 한계: 그 사이엔 예제 · 컴포넌트의 focus() 가 모두 멈춘다 - Tab 으로 iframe 에 들어온 키보드 사용자는 첫 키에
+// 막혔던 포커스 자리로 옮겨지고 그때부터 가두기가 켜진다(Esc 로 닫힘). 문서 미리보기에서만 이렇고, a11y 테스트는
+// 이 패치 없이 연다
+if (q.has("open")) {
+	const realFocus = HTMLElement.prototype.focus;
+	// 막은 마지막 포커스 대상 - Menu 처럼 여는 순간 한 번만 첫 항목으로 옮기는 컴포넌트는 다시 부르지 않아,
+	// 키보드로 들어오면 항목(tabIndex -1)에 닿을 길이 없었다. 키로 들어오면 그 자리로 옮겨 준다
+	let pending: HTMLElement | null = null;
+	HTMLElement.prototype.focus = function (this: HTMLElement) {
+		pending = this;
+	};
+	const release = (e: Event) => {
+		HTMLElement.prototype.focus = realFocus;
+		removeEventListener("pointerdown", release, true);
+		removeEventListener("keydown", release, true);
+		if (e.type === "keydown" && pending?.isConnected) pending.focus();
+	};
+	addEventListener("pointerdown", release, true);
+	addEventListener("keydown", release, true);
+
+	// createRoot 렌더는 비동기라 버튼이 생길 때까지 기다린다 - 화면 밖 iframe 은 rAF 가 멈출 수 있어 타이머로
+	const press = (tries = 0) => {
+		const trigger = document.querySelector<HTMLElement>("#root button");
+		if (!trigger) {
+			if (tries < 50) setTimeout(() => press(tries + 1), 20);
+			return;
+		}
+		// 툴팁은 포커스로 뜬다 - 실제 포커스는 옮기지 않고 focusin 만 보낸다
+		trigger.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+		trigger.click();
+	};
+	press();
+}
+
 new ResizeObserver(() =>
 	parent.postMessage({ height: document.documentElement.scrollHeight }, "*"),
 ).observe(document.body);

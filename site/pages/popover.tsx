@@ -15,6 +15,8 @@ export const popover: DocPage = {
 	examples: [
 		{
 			id: "popover/basic",
+			open: true,
+			frame: 260,
 			title: "빠른 메모",
 			desc: "안에 입력이 있으면 스크롤해도 닫히지 않습니다.",
 		},

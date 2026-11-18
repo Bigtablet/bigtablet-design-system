@@ -727,6 +727,17 @@ $preview_scale: 0.6;
   transform-origin: top left;
 }
 
+.ov_scale_frame {
+  padding: 0;
+}
+
+.ov_frame {
+  display: block;
+  width: 100%;
+  height: calc(140px / #{$preview_scale});
+  border: none;
+}
+
 .ov_text {
   display: grid;
   gap: token.$spacing_4;

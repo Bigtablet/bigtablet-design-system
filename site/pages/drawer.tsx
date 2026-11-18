@@ -12,7 +12,7 @@ export const drawer: DocPage = {
 		["모바일 하단 시트", 'Drawer `placement="bottom"`', true],
 		["가운데 대화 상자", "Modal", false],
 	],
-	examples: [{ id: "drawer/filters", title: "필터 패널" }],
+	examples: [{ id: "drawer/filters", open: true, title: "필터 패널" }],
 	props: "DrawerProps",
 	notes: ["포커스 트랩 · Esc 닫기 · 배경 스크롤 잠금은 Modal 과 같습니다"],
 };

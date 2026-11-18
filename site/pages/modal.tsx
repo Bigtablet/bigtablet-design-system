@@ -15,7 +15,12 @@ export const modal: DocPage = {
 		["결과를 잠깐 알림", "Toast", false],
 	],
 	examples: [
-		{ id: "modal/basic", title: "기본", desc: "`footer` 에 버튼을 넣으면 오른쪽 정렬됩니다." },
+		{
+			id: "modal/basic",
+			open: true,
+			title: "기본",
+			desc: "`footer` 에 버튼을 넣으면 오른쪽 정렬됩니다.",
+		},
 		{ id: "modal/form", title: "폼 넣기", desc: "열리면 본문 첫 입력에 포커스가 갑니다." },
 	],
 	props: "ModalProps",
