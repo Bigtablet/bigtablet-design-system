@@ -119,6 +119,23 @@
 			}
 		},
 		{
+			"includes": ["site/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noArrayIndexKey": "off",
+						"noShadowRestrictedNames": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
+					},
+					"performance": {
+						"noImgElement": "off"
+					}
+				}
+			}
+		},
+		{
 			"includes": [".storybook/**", "**/*.html"],
 			"linter": {
 				"rules": {

@@ -1,0 +1,17 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"types": ["vite/client"],
+		"paths": {
+			"@bigtablet/design-system": ["src/index.ts"],
+			"src/*": ["src/*"]
+		},
+		"rootDir": ".."
+	},
+	"include": ["**/*.ts", "**/*.tsx", "../src/types"],
+	"exclude": ["gen-props.ts"]
+}

@@ -4,8 +4,23 @@
 		{
 			"name": "storybook",
 			"runtimeExecutable": "pnpm",
-			"runtimeArgs": ["storybook", "--no-open"],
+			"runtimeArgs": [
+				"storybook",
+				"--no-open"
+			],
 			"port": 6006,
+			"autoPort": false
+		},
+		{
+			"name": "docs-site",
+			"runtimeExecutable": "pnpm",
+			"runtimeArgs": [
+				"exec",
+				"vite",
+				"--config",
+				"site/vite.config.ts"
+			],
+			"port": 6007,
 			"autoPort": false
 		}
 	]
