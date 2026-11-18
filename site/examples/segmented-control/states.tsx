@@ -11,7 +11,7 @@ export default function Example() {
 	return (
 		<div style={{ display: "grid", gap: 16, justifyItems: "start" }}>
 			<SegmentedControl aria-label="보기 방식" defaultValue="list" items={items} />
-			<SegmentedControl aria-label="정렬" defaultValue="list" items={items} disabled />
+			<SegmentedControl aria-label="보관함 보기 방식" defaultValue="list" items={items} disabled />
 		</div>
 	);
 }
