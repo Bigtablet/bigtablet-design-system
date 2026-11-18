@@ -225,6 +225,10 @@ describe("renderSentences with surrounding elements", () => {
 		]);
 	});
 
+	it("keeps whitespace between two elements", () => {
+		expect(renderSentences(" ", { continuesFrom: true, continuesTo: true })).toBe(" ");
+	});
+
 	it("keeps a finished last sentence grouped even when an element follows", () => {
 		expect(items("첫 문장입니다. 둘째 문장입니다.", { continuesTo: true })).toEqual([
 			"첫 문장입니다.",

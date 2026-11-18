@@ -74,6 +74,9 @@ export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
  * 문장 묶기가 없으면 "…싣습니다. 사이트와 내용이 / 갈라지지" 처럼 다음 문장이 줄 중간에서 갈린다.
  * 코드 · 링크 같은 요소는 그대로 둔다 - 문장이 요소를 건너가면 그 앞뒤 조각이 각자 묶인다
  */
+/** 한 문장짜리는 renderSentences 가 글자 그대로 돌려준다 - 그때도 어절 묶기는 건다 */
+const withPhrases = (node: ReactNode) => (typeof node === "string" ? renderPhrases(node) : node);
+
 export function P({ children }: { children: ReactNode }) {
 	const parts = Children.toArray(children);
 	return (
@@ -83,11 +86,13 @@ export function P({ children }: { children: ReactNode }) {
 					child
 				) : (
 					<Fragment key={index}>
-						{renderSentences(child, {
-							// 코드 · 링크는 문장을 끝내지 않는다 - 앞뒤에 요소가 있으면 그 문장은 요소를 건너 이어진다
-							continuesFrom: index > 0,
-							continuesTo: index < parts.length - 1,
-						})}
+						{withPhrases(
+							renderSentences(child, {
+								// 코드 · 링크는 문장을 끝내지 않는다 - 앞뒤에 요소가 있으면 그 문장은 요소를 건너 이어진다
+								continuesFrom: index > 0,
+								continuesTo: index < parts.length - 1,
+							}),
+						)}
 					</Fragment>
 				),
 			)}
