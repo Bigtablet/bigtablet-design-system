@@ -3,7 +3,7 @@ node_modules/
 
 # Build output
 dist/
-storybook-static/
+site-dist/
 *.tsbuildinfo
 tsup.config.bundled_*.mjs
 

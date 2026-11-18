@@ -45,6 +45,8 @@ function pageTitles(): Plugin {
 // 패키지를 빌드하지 않고 src 를 바로 쓴다 - 예제의 import 는 소비자 코드와 같게 둔다
 export default defineConfig({
 	root: site,
+	// GitHub Pages 는 /bigtablet-design-system/ 아래에 올라간다 - 해시 라우팅이라 상대 경로면 어디에 두어도 된다
+	base: "./",
 	plugins: [pageTitles()],
 	// 파비콘 · 로고는 Storybook 과 같은 저장소 public/ 을 쓴다
 	publicDir: path.join(root, "public"),
@@ -55,6 +57,6 @@ export default defineConfig({
 		},
 	},
 	css: { preprocessorOptions: { scss: { loadPaths: [root], quietDeps: true } } },
-	build: { rollupOptions: { input: ["index.html", "preview.html"] } },
+	build: { outDir: path.join(root, "site-dist"), emptyOutDir: true, rollupOptions: { input: ["index.html", "preview.html"] } },
 	server: { port: 6007 },
 });

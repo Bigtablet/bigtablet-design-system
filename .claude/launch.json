@@ -2,24 +2,9 @@
 	"version": "0.0.1",
 	"configurations": [
 		{
-			"name": "storybook",
-			"runtimeExecutable": "pnpm",
-			"runtimeArgs": [
-				"storybook",
-				"--no-open"
-			],
-			"port": 6006,
-			"autoPort": false
-		},
-		{
 			"name": "docs-site",
 			"runtimeExecutable": "pnpm",
-			"runtimeArgs": [
-				"exec",
-				"vite",
-				"--config",
-				"site/vite.config.ts"
-			],
+			"runtimeArgs": ["site"],
 			"port": 6007,
 			"autoPort": false
 		}
