@@ -1,0 +1,199 @@
+import { render } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import { BalancedText } from "./balanced";
+
+const text = "제목이면 heading, 본문이면 body 입니다.";
+
+// 실제 Chromium 에서 마운트 뒤 줄을 계산해 바꾸는지, 바꿔도 원문이 그대로인지 (#1083)
+describe("BalancedText (Chromium)", () => {
+	const lineTexts = (el: HTMLElement) =>
+		[...el.querySelectorAll(".text_balanced_line")].map((line) => line.textContent);
+
+	it("moves a lone copula back so no line ends right before it", async () => {
+		// 폭을 "…본문이면 body" 까지 한 줄에 들어가고 "입니다." 는 넘치게 - 브라우저는 "body / 입니다." 로 끊는다
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 300, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				{text}
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+		ctx.font = "16px sans-serif";
+		const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
+		const all = ctx.measureText(text).width;
+		p.style.width = `${Math.ceil((upToBody + all) / 2)}px`;
+
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		const lines = lineTexts(p);
+		expect(lines.some((line) => line?.endsWith("body"))).toBe(false);
+		// 복사 · 접근성 이름은 원문 그대로
+		expect(p.textContent).toBe(text);
+		const tops = new Set(
+			[...p.querySelectorAll(".text_balanced_line")].map((l) =>
+				Math.round(l.getBoundingClientRect().top),
+			),
+		);
+		expect(tops.size).toBe(lines.length);
+	});
+
+	it("keeps the browser wrapping when it already breaks in good places", async () => {
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 120, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				저장했습니다. 계속할까요?
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		// 같은 자리라도 줄로 그린다 - 첫 렌더의 어절 묶음(inline-block)을 걷어 내야 페이지 검색이 이어진다
+		await expect
+			.poll(() => lineTexts(p), { timeout: 2000 })
+			.toEqual(["저장했습니다.", "계속할까요?"]);
+		expect(p.querySelector(".sentences_phrase")).toBeNull();
+		expect(p.textContent).toBe("저장했습니다. 계속할까요?");
+	});
+
+	it("keeps find in page working across words and lines", async () => {
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 200, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				{text}
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		// Chrome 은 inline-block 경계를 건너 찾지 못한다 - 줄 · 어절 묶음이 inline-block 이면 실패한다
+		const find = (q: string) => {
+			window.getSelection()?.removeAllRanges();
+			return (window as unknown as { find: (q: string) => boolean }).find(q);
+		};
+		expect(find("제목이면 heading")).toBe(true);
+		const [first, second] = lineTexts(p);
+		expect(find(`${first?.split(" ").at(-1)} ${second?.split(" ")[0]}`)).toBe(true);
+	});
+
+	it("measures code inside the text and keeps it whole", async () => {
+		const style = { font: "16px/24px sans-serif", wordBreak: "keep-all" as const, margin: 0 };
+		const { container } = render(
+			<BalancedText as="p" style={{ ...style, width: 2000 }}>
+				제목이면{" "}
+				<code>
+					hea
+					<wbr />
+					ding
+				</code>
+				, 본문이면 <code>body</code> 입니다.
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		// 한 줄일 때 잰 폭으로 "…body" 까지는 들어가고 "입니다." 는 넘치게 - 코드 글꼴이라 canvas 로는 못 잰다
+		const words = [...p.querySelectorAll(".text_balanced_word")];
+		const left = (words[0] as Element).getBoundingClientRect().left;
+		const upToBody = (words.at(-2) as Element).getBoundingClientRect().right - left;
+		const all = (words.at(-1) as Element).getBoundingClientRect().right - left;
+		p.style.width = `${Math.ceil((upToBody + all) / 2)}px`;
+
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		expect(lineTexts(p).some((line) => line?.endsWith("body"))).toBe(false);
+		expect(p.querySelectorAll("code")).toHaveLength(2);
+		expect(p.textContent).toBe("제목이면 heading, 본문이면 body 입니다.");
+		// 코드 안 <wbr> 에서 줄이 다시 갈리지 않는다 - 고른 줄 하나는 화면에서도 한 줄
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(new Set([...line.getClientRects()].map((r) => Math.round(r.top))).size).toBe(1);
+	});
+
+	it("waits for web fonts before choosing lines", async () => {
+		// 첫 방문처럼 폰트를 받는 중 - 대체 글꼴 폭으로 고르면 폰트가 온 뒤 줄이 한 번 더 바뀐다
+		let loaded!: () => void;
+		const ready = new Promise<FontFaceSet>((resolve) => {
+			loaded = () => resolve(document.fonts);
+		});
+		Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loading" });
+		Object.defineProperty(document.fonts, "ready", { configurable: true, get: () => ready });
+		try {
+			const { container } = render(
+				<BalancedText
+					as="p"
+					style={{ width: 300, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+				>
+					{text}
+				</BalancedText>,
+			);
+			const p = container.firstElementChild as HTMLElement;
+			const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+			ctx.font = "16px sans-serif";
+			const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
+			p.style.width = `${Math.ceil((upToBody + ctx.measureText(text).width) / 2)}px`;
+			await new Promise((r) => setTimeout(r, 300));
+			expect(lineTexts(p)).toHaveLength(0);
+
+			Object.defineProperty(document.fonts, "status", { configurable: true, get: () => "loaded" });
+			loaded();
+			await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		} finally {
+			// 인스턴스에 덮은 값을 지워 원래 getter 로 돌린다
+			Reflect.deleteProperty(document.fonts, "status");
+			Reflect.deleteProperty(document.fonts, "ready");
+		}
+	});
+
+	it("settles in a box that sizes to its content", async () => {
+		// auto 표의 칸은 nowrap 줄이 최소 폭을 키우면 넓어진다 - 그 폭 변화에 다시 계산하면 줄 ↔ 브라우저 줄바꿈을 끝없이 오간다
+		const { container } = render(
+			<table style={{ width: 520, font: "16px/24px sans-serif", wordBreak: "keep-all" }}>
+				<tbody>
+					<tr>
+						<td>
+							<BalancedText as="p" style={{ margin: 0 }}>
+								{`${text} 이 아래의 컴포넌트에서 부르고 글자 크기가 아니라 역할로 고릅니다.`}
+							</BalancedText>
+						</td>
+						<td>짧은 칸과 긴 칸이 나란히 있으면 표가 내용에 맞춰 열 폭을 나눕니다</td>
+					</tr>
+				</tbody>
+			</table>,
+		);
+		const p = container.querySelector("p") as HTMLElement;
+		await expect.poll(() => lineTexts(p).length, { timeout: 2000 }).toBeGreaterThan(1);
+		await new Promise((r) => setTimeout(r, 600));
+		const settled = lineTexts(p);
+		await new Promise((r) => setTimeout(r, 600));
+		expect(lineTexts(p)).toEqual(settled);
+		// 줄이 열을 넓히지 않게 inline-block 으로 바꿔 그린다
+		expect(p.querySelector(".text_balanced_line_boxed")).not.toBeNull();
+	});
+
+	it("never overflows when code with spaces and <wbr> wraps natively", async () => {
+		const { container } = render(
+			<BalancedText
+				as="p"
+				style={{ width: 260, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				<code>query</code> 에{" "}
+				<code>
+					{"{ data,"}
+					<wbr />
+					{" isLoading,"}
+					<wbr />
+					{" error,"}
+					<wbr />
+					{" refetch }"}
+				</code>{" "}
+				를 그대로 넘깁니다. React Query 결과와 모양이 같습니다.
+			</BalancedText>,
+		);
+		const p = container.firstElementChild as HTMLElement;
+		await new Promise((r) => setTimeout(r, 400));
+		expect(p.scrollWidth).toBeLessThanOrEqual(p.clientWidth + 1);
+		for (const line of p.querySelectorAll(".text_balanced_line"))
+			expect(line.getBoundingClientRect().right).toBeLessThanOrEqual(
+				p.getBoundingClientRect().right + 0.5,
+			);
+	});
+});

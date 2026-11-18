@@ -1,15 +1,7 @@
 import { CopyButton, SegmentedControl } from "@bigtablet/design-system";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
-import {
-	Children,
-	type ComponentType,
-	Fragment,
-	type ReactNode,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import { renderPhrases, renderSentences, splitSentences } from "src/text";
+import { type ComponentType, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { BalancedText, renderPhrases, splitSentences } from "src/text";
 import { AGENT_RULES, componentDoc } from "./llms";
 import { type PlaygroundConfig, usePlayground } from "./playground";
 import props from "./props.json";
@@ -70,35 +62,41 @@ export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.defaul
 export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
 /**
- * 손으로 쓴 문단(가이드 페이지) - 글자 조각마다 문장 묶기와 붙여 둘 어절 규칙을 건다 (#1077 · #1081).
- * 문장 묶기가 없으면 "…싣습니다. 사이트와 내용이 / 갈라지지" 처럼 다음 문장이 줄 중간에서 갈린다.
- * 코드 · 링크 같은 요소는 그대로 둔다 - 문장이 요소를 건너가면 그 앞뒤 조각이 각자 묶인다
+ * 손으로 쓴 문단(가이드 페이지) - 코드 · 링크가 섞여도 BalancedText 가 그려진 폭으로 줄을 고른다 (#1083).
+ * 문장 사이 · 쉼표 뒤에서 먼저 끊고, 꾸밈 관계 · 서술어 하나만 넘기는 자리는 피한다
  */
-/** 한 문장짜리는 renderSentences 가 글자 그대로 돌려준다 - 그때도 어절 묶기는 건다 */
-const withPhrases = (node: ReactNode) => (typeof node === "string" ? renderPhrases(node) : node);
-
 export function P({ children }: { children: ReactNode }) {
-	const parts = Children.toArray(children);
+	return <BalancedText as="p">{children}</BalancedText>;
+}
+
+/**
+ * 문서 글(`코드` · **굵게** 를 쓴 문자열)을 BalancedText 로 - 실제 폭을 재서 가장 자연스러운 줄바꿈을 고른다 (#1083).
+ * 굵게는 어절마다 <strong> 으로 나눠야 그 안에서도 줄을 바꿀 수 있다(요소 하나는 한 조각이다)
+ */
+export function Prose({
+	text,
+	as = "p",
+	className,
+}: {
+	text: string;
+	as?: "p" | "li" | "span";
+	className?: string;
+}) {
 	return (
-		<p>
-			{parts.map((child, index) =>
-				typeof child !== "string" ? (
-					child
-				) : (
-					<Fragment key={index}>
-						{withPhrases(
-							renderSentences(child, {
-								// 코드 · 링크는 문장을 끝내지 않는다 - 앞뒤에 요소가 있으면 그 문장은 요소를 건너 이어진다
-								continuesFrom: index > 0,
-								continuesTo: index < parts.length - 1,
-							}),
-						)}
-					</Fragment>
-				),
+		<BalancedText as={as} className={className}>
+			{text.split(/\*\*([^*]+)\*\*/).flatMap((part, i) =>
+				part.split(/(`[^`]+`|\s+)/).map((chunk, j) => {
+					const key = `${i}-${j}`;
+					if (/^`.+`$/.test(chunk)) return <Code key={key}>{chunk.slice(1, -1)}</Code>;
+					return i % 2 && chunk.trim() ? <strong key={key}>{chunk}</strong> : chunk;
+				}),
 			)}
-		</p>
+		</BalancedText>
 	);
 }
+
+/** 페이지 소개 문구 */
+export const Lede = ({ text }: { text: string }) => <Prose text={text} className="doc_lede" />;
 
 /** 코드 이름은 구분 기호(. _ - / | , = 여는 괄호) 뒤에서만 줄이 바뀌게 <wbr> 을 넣는다 - 글자 중간에서 끊기지 않는다 */
 export function Code({ children, className }: { children: string; className?: string }) {
@@ -214,11 +212,7 @@ function Example({
 	return (
 		<section className="doc_block">
 			<h2 id={id}>{title}</h2>
-			{desc && (
-				<p className="doc_block_desc">
-					<Md>{desc}</Md>
-				</p>
-			)}
+			{desc && <Prose className="doc_block_desc" text={desc} />}
 			<div className="doc_demo">
 				<div className="doc_demo_stage">
 					{tuning ? (
@@ -338,7 +332,7 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 				</h3>
 			)}
 			<div className="doc_table_wrap">
-				<table className="doc_table">
+				<table className="doc_table doc_props_table">
 					<thead>
 						<tr>
 							<th>Prop</th>
@@ -360,9 +354,7 @@ export function PropsTable({ name, titled }: { name: PropsName; titled: boolean 
 								<td>{"default" in p && p.default ? <DefaultValue value={p.default} /> : null}</td>
 								<td>
 									{p.doc.split("\n\n").map((para) => (
-										<p key={para} className="doc_table_para">
-											<Md>{para}</Md>
-										</p>
+										<Prose key={para} className="doc_table_para" text={para} />
 									))}
 								</td>
 							</tr>
@@ -400,9 +392,7 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				<h1>
 					{page.title} <span className="doc_name">{page.name}</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>{page.summary}</Md>
-				</p>
+				<Lede text={page.summary} />
 				<div className="doc_head_actions">
 					<AiCopy page={page} />
 				</div>
@@ -448,9 +438,7 @@ export function Page({ page, theme }: { page: DocPage; theme: string }) {
 				<Section id="notes" title="알아 둘 것">
 					<ul className="doc_notes">
 						{page.notes.map((n) => (
-							<li key={n}>
-								<Md>{n}</Md>
-							</li>
+							<Prose key={n} as="li" text={n} />
 						))}
 					</ul>
 				</Section>

@@ -144,11 +144,48 @@ screen.getByText(sentenceText("결제 수단이 비활성화되었습니다. 새
 | `phraseRanges(text)` | 붙여 둘 어절 묶음의 원문 범위(`start` · `end`). React 없음 |
 | `renderSentences(text)` · `renderPhrases(text)` | 위 규칙으로 span 을 넣은 React 노드 |
 | `Sentences` · `sentenceText` | 루트 export 와 같음 |
+| `BalancedText` | 실제 폭을 재서 가장 자연스러운 자리에서 줄을 바꾸는 글 - 제목 · 히어로 · 짧은 소개 문구용 (아래) |
+| `chooseBreaks(text, measure, maxWidth)` · `createCanvasMeasurer(font)` | `BalancedText` 의 엔진. React 없음 - 글자만 있으면 canvas 로 재서 다른 렌더러에서도 씁니다. 고르는 기준(아래 벌점 값)은 minor 에서 바뀔 수 있습니다 |
 
 ```ts
 import { phraseRanges } from "@bigtablet/design-system/text";
 
 phraseRanges("이 아래의 컴포넌트에서 부릅니다"); // [{ start: 0, end: 12 }]
+```
+
+`BalancedText` 는 브라우저가 그린 줄과 어절 폭을 화면에서 읽고, 같은 줄 수 안에서 끊는 자리가 더 자연스러운 배치가 있으면 그것으로 바꿉니다. 화면에서 재므로 코드 · 굵게 · 링크가 섞여도 폭이 맞습니다. 끊는 자리 벌점은 다음과 같습니다.
+
+| 자리 | 벌점 |
+|------|------|
+| 문장 끝 | 0 |
+| 쉼표 · 쌍점 뒤 | 1 |
+| 보통 | 4 |
+| 꾸미는 말 + 명사("붙이는 순서") · 복합명사("서버 템플릿") | 6 |
+| 나열(`·`) 항목 사이 | 8 |
+| 나열 항목 안("Esc 닫기") | 10 |
+| 문장 마지막 어절만 다음 줄로("패키지에 / 싣습니다.") | 12 |
+| 공백 없이 붙은 괄호 앞뒤 | 50 |
+| 괄호 안 | 60 |
+| 붙여 둘 자리(`~의` · 관형사 · 서술어 · 의존명사), `·` 로 시작하는 줄, 영문 · 따옴표 · 괄호 뒤 띄어 쓴 조사("prop 을", `"복사" 로`) | 100 |
+
+- 첫 렌더(SSR 포함)는 붙여 둘 어절만 묶은 원문입니다. SSR 은 서버가 폭을 몰라 하이드레이션 뒤 한 번 바뀝니다. 폭이 바뀌는 동안은 브라우저 줄바꿈으로 돌아갔다가 멈추면(100ms) 다시 고릅니다
+- 고른 줄은 `<br>` 이 아니라 줄마다 `white-space: nowrap` 묶음으로 그립니다 - 복사한 글 · `textContent` · 페이지 검색(Ctrl+F)이 원문과 같습니다. 계산할 때 1px 여유를 둬 넘치지 않습니다
+- 폭이 내용으로 정해지는 상자(`table-layout: auto` 표의 칸 등)에서는 nowrap 줄이 열을 넓혀 버려, 그런 상자임을 알아채면 줄을 `inline-block` 으로 바꿔 그립니다 - 이때는 그 문단 안에서 줄 경계를 건너는 페이지 검색이 되지 않습니다. 열 폭을 정해 두면(`table-layout: fixed`) nowrap 으로 그립니다
+- 첫 렌더 뒤 그리기 전(`useLayoutEffect`)에 계산하고, 웹폰트를 받는 중이면 기다렸다 한 번만 고릅니다
+- 요소(`<code>` · `<a>` · `<strong>`) 하나는 쪼개지 않는 한 조각입니다. 여러 어절을 굵게 하려면 어절마다 `<strong>` 으로 나눠야 그 사이에서 줄을 바꿀 수 있습니다
+- 수십 어절까지를 위한 계산이라 긴 본문에는 쓰지 않습니다. 긴 본문은 `Sentences` · `renderSentences` 를 씁니다
+- 꾸미는 말 · 복합명사는 사전 없이 끝 글자로 짐작합니다 - "사이" · "화면" 처럼 조사로 흔히 쓰이는 글자로 끝나는 명사는 놓칩니다
+
+```tsx
+import { BalancedText } from "@bigtablet/design-system/text";
+
+<BalancedText as="h1" className="hero_title">
+  고객의 신뢰를 먼저 얻은 다음에 더 많은 데이터를 요청하세요
+</BalancedText>
+
+<BalancedText as="p">
+  마크업 없이 <code>useConfirm</code> 훅으로 띄웁니다.
+</BalancedText>
 ```
 
 ---

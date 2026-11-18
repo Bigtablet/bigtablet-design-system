@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import tokens from "../src/styles/tokens.json";
-import { Code, Md } from "./docs";
+import { Code, Lede, Md, Prose } from "./docs";
 import { CodeBlock } from "./guides";
 import { undash } from "./undash";
 
@@ -149,9 +149,7 @@ function FoundationPage({
 				<h1>
 					{title} <span className="doc_name">{name}</span>
 				</h1>
-				<p className="doc_lede">
-					<Md>{lede}</Md>
-				</p>
+				<Lede text={lede} />
 			</header>
 			{children}
 		</article>
@@ -162,11 +160,7 @@ function Group({ title, desc, children }: { title: string; desc?: string; childr
 	return (
 		<section className="doc_block">
 			<h2 id={title}>{title}</h2>
-			{desc && (
-				<p className="doc_block_desc">
-					<Md>{desc}</Md>
-				</p>
-			)}
+			{desc && <Prose className="doc_block_desc" text={desc} />}
 			{children}
 		</section>
 	);
