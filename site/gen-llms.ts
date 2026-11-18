@@ -13,6 +13,8 @@ import { AGENT_RULES, componentDoc } from "./llms";
 const root = import.meta.dirname;
 const siteAt = process.argv.indexOf("--site");
 const site = siteAt > 0 ? process.argv[siteAt + 1] : undefined;
+// 값 없이 플래그만 오면 조용히 패키지용으로 빠지지 않게 - 사이트에 llms.txt 가 없는데 빌드가 성공으로 보인다
+if (siteAt > 0 && !site) throw new Error("--site 에는 폴더 경로가 필요합니다");
 const out = site ? path.resolve(site) : path.join(root, "..", "dist", "llms");
 
 const pages: DocPage[] = [];
