@@ -59,8 +59,36 @@ const DETERMINERS = new Set([
 /** 한 덩어리 최대 어절 수 - 길게 묶을수록 좁은 폭에서 줄 끝 빈자리가 커진다 */
 const MAX_PHRASE = 3;
 
+/**
+ * `의` 로 끝나지만 조사 `~의` 가 아닌 명사 - "회의 일정을" 은 꾸밈 관계가 아니라 묶을 까닭이 없다.
+ * ponytail: 자주 쓰는 것만 적었다. 빠진 명사는 묶여도 줄 끝 빈자리가 조금 커질 뿐이라 화면에서 보이면 더한다
+ */
+const NOUNS_ENDING_IN_UI = new Set([
+	"회의",
+	"동의",
+	"주의",
+	"협의",
+	"논의",
+	"건의",
+	"합의",
+	"문의",
+	"강의",
+	"정의",
+	"의의",
+	"편의",
+	"예의",
+	"성의",
+	"결의",
+	"모의",
+	"심의",
+	"토의",
+	"질의",
+	"항의",
+]);
+
 /** 다음 어절과 붙여 둘 어절인가 - `~의` 로 끝나는 꾸밈말 · 관형사. 쉼표 · 문장 부호로 끝나면 떼도 된다 */
-const bindsNext = (word: string) => /[가-힣]의$/.test(word) || DETERMINERS.has(word);
+const bindsNext = (word: string) =>
+	(/[가-힣]의$/.test(word) && !NOUNS_ENDING_IN_UI.has(word)) || DETERMINERS.has(word);
 
 /**
  * @description

@@ -149,6 +149,11 @@ describe("renderPhrases", () => {
 		expect(phrases("그 회사의 팀의 자료의 목록").groups).toEqual(["그 회사의 팀의", "자료의 목록"]);
 	});
 
+	// 조사가 아니라 `의` 로 끝나는 명사 - 꾸밈 관계가 아니라 묶지 않는다
+	it("does not bind a noun that only ends in 의", () => {
+		expect(phrases("회의 일정을 확인합니다").groups).toEqual([]);
+	});
+
 	it("does not bind across a comma", () => {
 		expect(phrases("고객의, 신뢰").groups).toEqual([]);
 	});
