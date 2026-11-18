@@ -32,6 +32,16 @@ describe("Badge", () => {
 		expect(screen.getByRole("img", { name: "온라인" })).toHaveClass("badge_shape_dot");
 	});
 
+	it("reads a dot named by aria-labelledby as an image", () => {
+		render(
+			<>
+				<span id="status">자리 비움</span>
+				<Badge shape="dot" tone="warning" aria-labelledby="status" />
+			</>,
+		);
+		expect(screen.getByRole("img", { name: "자리 비움" })).toHaveClass("badge_shape_dot");
+	});
+
 	it("applies tone class", () => {
 		const { container } = render(<Badge tone="success">OK</Badge>);
 		expect(container.firstChild).toHaveClass("badge_variant_success");
