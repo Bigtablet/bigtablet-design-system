@@ -93,26 +93,6 @@
 			}
 		},
 		{
-			"includes": ["packages/*/src/**"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noExportedImports": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["apps/*/src/shared/**"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noExportedImports": "off"
-					}
-				}
-			}
-		},
-		{
 			"includes": ["**/*.test.ts", "**/*.test.tsx"],
 			"linter": {
 				"rules": {
