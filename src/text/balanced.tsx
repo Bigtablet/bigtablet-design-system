@@ -27,7 +27,10 @@ export interface BalancedTextProps
 	 * 공백 없이 붙은 글자("`useToast` 가" 의 "가" 는 띄었으니 따로, "`x`에서" 는 한 어절)와 한 어절이 된다
 	 */
 	children: React.ReactNode;
-	/** 그릴 요소 (기본값: "span"). 폭을 재므로 루트는 늘 블록으로 놓인다(`.text_balanced`) - 인라인으로 두면 폭이 0 이라 줄을 못 고른다 */
+	/**
+	 * 그릴 요소 (기본값: "span"). 폭을 재므로 블록으로 놓여야 한다 - 기본 span 은 `.text_balanced` 가 블록으로 둔다.
+	 * 다른 요소는 제 display 를 그대로 쓴다(li · td 등) - 인라인 요소(a · strong 등)를 고르면 `display: block` 을 준다
+	 */
 	as?: React.ElementType;
 }
 

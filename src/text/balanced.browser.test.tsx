@@ -60,6 +60,30 @@ describe("BalancedText (Chromium)", () => {
 		expect(lineTexts(span).some((line) => line?.endsWith("body"))).toBe(false);
 	});
 
+	it("lays out only the default span as a block and keeps list items and cells as they are", () => {
+		// li 를 블록으로 두면 번호 · 불릿(::marker)이 사라지고 td 는 표 칸이 깨진다 (#1113 리뷰)
+		const { container } = render(
+			<div>
+				<BalancedText>기본 글</BalancedText>
+				<ol>
+					<BalancedText as="li">항목</BalancedText>
+				</ol>
+				<table>
+					<tbody>
+						<tr>
+							<BalancedText as="td">칸</BalancedText>
+						</tr>
+					</tbody>
+				</table>
+			</div>,
+		);
+		const display = (selector: string) =>
+			getComputedStyle(container.querySelector(selector) as Element).display;
+		expect(display("span.text_balanced")).toBe("block");
+		expect(display("li.text_balanced")).toBe("list-item");
+		expect(display("td.text_balanced")).toBe("table-cell");
+	});
+
 	it("drops lines chosen for an earlier className when it comes back at a new width", async () => {
 		// A(400px 에서 고른 줄) → 숨긴 B → 숨긴 사이 폭 160px → 다시 A. 예전 결과를 그대로 그리면 400px 용 nowrap 줄이
 		// 넘치고, 줄이 이미 있다는 이유로 다시 재지도 않았다 (#1113 리뷰)

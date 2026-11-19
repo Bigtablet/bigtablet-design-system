@@ -13,9 +13,14 @@
 // BalancedText 루트 - 줄을 고르기 전(SSR 첫 화면 · JS 전 · 폭을 바꾸는 동안)의 브라우저 줄바꿈도 마지막 줄에 짧은 어절이
 // 혼자 남지 않게 한다. 지원 안 하는 브라우저(Firefox)는 무시해 그대로다
 .text_balanced {
-	// 폭을 재므로 블록이어야 한다 - 기본값 span(인라인)이면 clientWidth 가 0 이라 줄을 고르지 못한다 (#1113)
-	display: block;
 	text-wrap: pretty;
+}
+
+// 폭을 재므로 블록이어야 한다 - 기본값 span(인라인)이면 clientWidth 가 0 이라 줄을 고르지 못한다 (#1113).
+// span 에만 건다 - li(list-item) · td(table-cell) 에 걸면 번호 · 불릿이 사라지고 표 칸이 깨진다. :where 로 특정도를 클래스
+// 하나와 같게 두어 소비자 클래스가 덮을 수 있다
+:where(span).text_balanced {
+	display: block;
 }
 
 // BalancedText 가 고른 한 줄 (#1083) - 그 안에서는 끊지 않고 줄 사이 공백에서만 바뀐다.

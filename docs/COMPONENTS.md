@@ -4226,7 +4226,7 @@ import { BalancedText } from "@bigtablet/design-system/text";
 />
 ```
 
-- **루트는 늘 블록입니다** - `BalancedText` 는 자기 폭을 줄 폭으로 잽니다. 기본 `span` 이어도 `.text_balanced` 가 `display: block` 이라 제목 슬롯(`h1` 등) 안에 그대로 넣으면 됩니다
+- **기본 `span` 은 블록으로 놓입니다** - `BalancedText` 는 자기 폭을 줄 폭으로 잽니다. 기본 `span` 은 `.text_balanced` 가 `display: block` 으로 두어 제목 슬롯(`h1` 등) 안에 그대로 넣으면 됩니다. `as` 로 고른 요소는 제 display 를 씁니다(`li` · `td` 그대로) - 인라인 요소(`a` 등)를 고르면 `display: block` 을 줍니다
 - 줄을 고르는 기준과 제약은 [문구 줄바꿈](#prop-이름-기준)의 `BalancedText` 설명을 봅니다
 - SSR 앱은 [`BalancedTextScript`](#ssr---balancedtextscript) 를 `<body>` 끝에 한 번 두면 하이드레이션 전에도 같은 줄로 보입니다
 
