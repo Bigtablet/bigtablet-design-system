@@ -316,7 +316,7 @@ label/domain
 - 병합 전 반드시 코드 리뷰어 approve 필요
 
 ### Release & Changelog
-**태그 기반 배포** - semantic-release / changeset 미사용. 절차:
+**태그 기반 배포** - semantic-release / changeset 미사용. 절차를 명령 순서로 옮긴 것이 `.claude/skills/release/SKILL.md` (`/release`) 다 - 규칙의 원본은 이 섹션. 절차:
 
 > **릴리즈는 develop → main PR 하나로 낸다. `release/X.Y.Z` 브랜치를 따로 파지 않는다.**
 > 그게 가능하려면 **develop 에 없는 내용(diff)을 담은 커밋이 main 에 없어야** 한다 (릴리즈 PR 의 merge 커밋 자체는 내용이 없어 괜찮다) - 버전·CHANGELOG 를 main 쪽(release 브랜치)에서 고치면
