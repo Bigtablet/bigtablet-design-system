@@ -519,7 +519,13 @@ function Ai() {
 				</P>
 				<CodeBlock
 					code={`node_modules/@bigtablet/design-system/dist/llms/
-├── index.md           # 쓰기 전 규칙 + 묶음별 컴포넌트 목록
+├── index.md           # 쓰기 전 규칙 + 함께 볼 문서 + 묶음별 컴포넌트 목록
+├── tokens.md          # 토큰 이름 · CSS 변수 · 라이트/다크 값 (여기 없는 토큰은 없다)
+├── recipes.md         # 관리자 목록 · 폼 · 랜딩 화면 조합
+├── avoid.md           # 옛 이름 · 지운 prop · deprecated 와 대신 쓸 것
+├── text.md            # 줄바꿈 하위 경로 (BalancedText · BalancedTextScript)
+├── vanilla.md         # React 없는 서버 템플릿용 클래스 · 스크립트
+├── full.md            # 위 문서와 컴포넌트 문서 전부를 한 파일로 (vanilla 제외)
 └── components/
     ├── button.md      # 언제 쓰는가 · 예제 코드 · Props 표 · 알아 둘 것
     ├── data-view.md   # props 가 가리키는 하위 타입(DataViewToolbar …) 표까지
@@ -531,8 +537,12 @@ function Ai() {
 						<Code>llms.txt</Code>
 					</a>{" "}
 					를 알려 줍니다. 내용은 같고, 컴포넌트 문서는 <Code>components/button.md</Code> 처럼 같은
-					자리에 있습니다. 사이트는 main 최신이라 설치한 버전과 다를 수 있으니, 설치했다면 패키지
-					쪽을 우선합니다.
+					자리에 있습니다. 링크를 따라가지 않고 한 번에 읽히려면{" "}
+					<a href="llms-full.txt">
+						<Code>llms-full.txt</Code>
+					</a>{" "}
+					를 줍니다. 사이트는 main 최신이라 설치한 버전과 다를 수 있으니, 설치했다면 패키지 쪽을
+					우선합니다.
 				</P>
 			</Block>
 
