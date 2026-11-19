@@ -15,6 +15,7 @@ Bigtablet Design System의 라이트/다크 테마 시스템 가이드입니다.
   - [토큰 단일 소스](#토큰-단일-소스)
   - [SCSS 소비자](#scss-소비자)
   - [CSS 변수 직접 사용](#css-변수-직접-사용)
+  - [Tailwind CSS (v4)](#tailwind-css-v4)
   - [레이아웃·런타임 계약 변수](#레이아웃런타임-계약-변수)
   - [접근성 토큰 — 하드코딩하지 마세요](#접근성-토큰--하드코딩하지-마세요)
   - [하드코딩 대신 쓸 토큰](#하드코딩-대신-쓸-토큰)
@@ -242,6 +243,25 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 | `--bt-elevation-level1` ~ `-level5` | elevation shadow |
 
 > 참고: Vanilla JS 패키지(`@bigtablet/design-system/vanilla`)도 같은 테마 변수를 싣고 다크 모드가 그대로 동작합니다 - `<html data-theme="dark">` 또는 OS 다크(`prefers-color-scheme`). Vanilla 는 여기에 짧은 별칭(`--bt-color-primary`, `--bt-color-background` 등)을 더 두는데, 별칭도 테마를 따라 바뀝니다. 켜는 법은 [VANILLA.md 다크 모드](./VANILLA.md#다크-모드).
+
+### Tailwind CSS (v4)
+
+```css
+/* app/globals.css - 레이어 순서가 먼저 정해지도록 tailwindcss 보다 앞에 둡니다 */
+@import "@bigtablet/design-system/tailwind.css";
+@import "tailwindcss";
+```
+
+```tsx
+import "@bigtablet/design-system/style.css"; // --bt-* 값을 정의합니다
+<p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
+```
+
+`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 을 `--shadow-bt-*` 로, `--bt-radius-*` 를 `--radius-bt-*`(`rounded-bt-md`)로, `--bt-spacing-*` 를 `--spacing-bt-*`(`p-bt-16`)로, `--bt-font-family` 를 `--font-bt`(`font-bt`)로 잇습니다. 값은 `var()` 그대로라 다크 모드와 직접 덮어쓴 값을 따라갑니다. `dark:` 는 ThemeProvider 와 같은 조건(`data-theme="dark"`, `data-theme` 가 없으면 OS 다크)에 맞춰집니다.
+
+컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어서, 유틸리티와 레이어 밖의 직접 작성한 CSS 가 특이도 싸움 없이 이깁니다: `<Button className="bg-bt-text-brand" />`.
+
+> 직접 작성한 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)과 전역 포커스 스타일(`:focus-visible { outline: 2px solid ... }`)은 `@layer reset { ... }` 안에 두어야 합니다. 레이어 밖에 두면 모든 DS 컴포넌트를 이기고, 전역 `:focus-visible` outline 이 DS 포커스 링 위에 겹쳐 그려집니다(이중 링).
 
 ### 레이아웃·런타임 계약 변수
 
