@@ -8,17 +8,17 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 - **Type**: React 19 component library with TypeScript + Vanilla JS
 - **Package Manager**: pnpm@10.34.6 (enforced)
 - **Exports** (`package.json` `exports`):
-  - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
+  - React / Next.js (`.`) - 컴포넌트 소스가 `"use client"` 로 시작하고 모듈 빌드(`scripts/build-modules.mjs`)가 파일 맨 앞에 그대로 유지해 Next App Router 와 호환 (별도 `/next` entry 없음)
   - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
   - 줄바꿈 (`./text`) - BalancedText · Sentences 등, 런타임 의존성 없음
-  - SCSS 토큰 (`./scss/token`), CSS (`./style.css`)
+  - SCSS 토큰 (`./scss/token`), CSS (`./style.css`), Tailwind v4 토큰 브리지 (`./tailwind.css`)
 
 ## Quick Commands
 
 ```bash
 pnpm install       # Install dependencies
 pnpm site          # 문서 사이트 dev 서버 (port 6007, site/)
-pnpm build         # Build library (tsup + copy SCSS)
+pnpm build         # Build library (tsup + copy SCSS + Vanilla + tailwind.css + dist/llms)
 pnpm dev           # Watch mode development
 pnpm test:browser  # a11y(문서 예제 axe) + 레이아웃 테스트, 실제 Chromium
 ```
@@ -27,13 +27,13 @@ pnpm test:browser  # a11y(문서 예제 axe) + 레이아웃 테스트, 실제 Ch
 
 ```
 src/
-├── index.ts             # 진입점 (React/Next.js 공용 - 빌드 시 "use client" 자동 주입)
+├── index.ts             # 진입점 (React/Next.js 공용 - 컴포넌트 소스의 "use client" 를 빌드가 유지)
 ├── styles/              # 도메인별 디자인 토큰 (각 폴더 _index.scss + index.ts)
 │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
 │   ├── tokens.json      # 토큰 원본 - pnpm tokens 가 각 폴더 _tokens.scss · index.ts 와 _theme-tokens.scss 를 생성
 │   ├── theme.scss       # :root / [data-theme="dark"] / @media CSS 변수 (style.css 에 포함)
 │   ├── colors/  spacing/  typography/  radius/  elevation/  motion/
-│   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/
+│   ├── breakpoints/  opacity/  border-width/  z-index/  skeleton/  a11y/  icon/
 │   └── layout/          # SCSS only (no TS)
 ├── ui/                  # 8 카테고리 폴더 하위에 컴포넌트 폴더
 │   ├── display/  feedback/  forms/  general/
@@ -97,7 +97,7 @@ const buttonClassName = cn(
 ### Design Tokens
 Domain-based structure in `src/styles/` (each folder has `_index.scss` + `index.ts`). 값의 원본은 `tokens.json` 이고 `_tokens.scss` · `index.ts` · `_theme-tokens.scss` 는 `pnpm tokens` 생성 파일이다 - 직접 고치지 말 것:
 - `colors/` - Brand, background, text, status colors
-- `spacing/` - xs(4px) to 5xl(48px)
+- `spacing/` - 숫자 스케일 `$spacing_0` ~ `$spacing_128` (0 · 1 · 2 · 3 · 4 · 6 · 8 · 10 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 96 · 128 px, 이름 = px 값)
 - `typography/` - Font families, heading/body styles
 - `radius/` - Border radius values
 - `elevation/` - Elevation shadows (level1-5)
@@ -226,7 +226,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 ## Important Files
 
-- `tsup.config.ts` - Build config (2 bundles: React `index.ts` + Vanilla `bigtablet.js`)
+- `tsup.config.ts` - Build config (설정 넷: 전체 CSS(`dist/index.css`) + 타입(`index.d.ts` · `text.d.ts`) / 모듈 단위 ESM `dist/esm` (후처리 `scripts/build-modules.mjs`) / Vanilla IIFE 압축본(배포)·비압축본(examples 용, 배포 제외))
 - `.github/workflows/release.yml` - 태그 기반 배포 (`v*` 태그 → npm publish + GitHub Release)
 - `scripts/copy-scss.sh` - Copies SCSS to dist
 - `scripts/build-vanilla.sh` - Builds Vanilla CSS/JS
@@ -506,6 +506,6 @@ PR 에 리뷰 봇/리뷰어(`@coderabbitai`, Claude 리뷰, 사람 리뷰어)가
    gh api graphql -f query='mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { isResolved } } }' -f threadId="PRRT_..."
    ```
    `threadId` 는 REST 의 `comment_id` 가 아닌 GraphQL 노드 ID(`PRRT_` 접두사) - `pullRequest.reviewThreads` 쿼리의 thread `id` 필드로 얻는다 (`comment_id` → thread 매핑).
-5. **skip 기준** - acknowledgment-only(감사/확인 답신) / status notice(`comment_id` 없는 봇 공지, 예: Chromatic 한도, 빌드 상태) 는 답글·resolve 불필요. 답글 루프 방지.
+5. **skip 기준** - acknowledgment-only(감사/확인 답신) / status notice(`comment_id` 없는 봇 공지, 예: CodeRabbit 한도, 빌드 상태) 는 답글·resolve 불필요. 답글 루프 방지.
 
 > CodeRabbit 은 `.coderabbit.yaml` 로 `develop` 대상 PR 도 자동 리뷰된다.

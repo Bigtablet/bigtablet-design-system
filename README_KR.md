@@ -171,7 +171,7 @@ import "@bigtablet/design-system/style.css"; // --bt-* 값 정의
 <p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
 ```
 
-`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로 매핑합니다(값은 `var()` 그대로라 다크 모드를 따라갑니다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같습니다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮습니다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)은 `@layer reset { ... }` 에 넣어야 합니다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이깁니다.
+`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로, `--bt-radius-*` 를 `--radius-bt-*`(`rounded-bt-md`)로, `--bt-spacing-*` 를 `--spacing-bt-*`(`p-bt-16`)로, `--bt-font-family` 를 `--font-bt`(`font-bt`)로 매핑합니다(값은 `var()` 그대로라 다크 모드와 소비자 덮어쓰기를 따라갑니다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같습니다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮습니다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)과 전역 포커스 스타일(`:focus-visible { outline: 2px solid ... }`)은 `@layer reset { ... }` 에 넣어야 합니다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이기고, 전역 `:focus-visible` outline 이 DS 포커스 링 위에 겹쳐 그려집니다(이중 링).
 
 <br />
 
@@ -198,7 +198,7 @@ pnpm install
 pnpm site             # 문서 사이트, localhost:6007
 pnpm test             # Vitest unit
 pnpm test:browser     # a11y (문서 예제 axe) + 레이아웃, Playwright
-pnpm build            # tsup + SCSS copy
+pnpm build            # tsup + SCSS copy + Vanilla + tailwind.css + dist/llms
 ```
 
 문서 사이트는 **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system/)** 에 있고 `main` 기준으로 재배포됩니다.

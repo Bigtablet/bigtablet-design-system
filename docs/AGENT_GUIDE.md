@@ -21,8 +21,8 @@
 
 | Surface | Stable? | Notes |
 | --- | --- | --- |
-| Exported components and their props | **Yes** | TypeScript types are the contract. A removed or renamed prop is a major |
-| SCSS tokens (`@bigtablet/design-system/scss/token`) | **Yes** | Added in minors, removed only in majors |
+| Exported components and their props | **Yes** | TypeScript types are the contract. A prop can be removed or renamed in a minor — only after a `@deprecated` period or when passing it already broke a rule — with a [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) section giving the replacement |
+| SCSS tokens (`@bigtablet/design-system/scss/token`) | **Yes** | Added in minors. A removal can also ship in a minor, with a MIGRATION.md section |
 | CSS variables (`--bt-*`) from `style.css` | **Yes** | The Vanilla bundle defines a subset — see the Spacing section |
 | Vanilla `bt-*` classes (`/vanilla`) | **Yes** | That bundle's whole API is its classes |
 | **React DOM structure and `component_part` classes** | **No** | `.modal_panel`, `.textarea_container`, `.text_field_input` … internal. They move in patches |
@@ -229,7 +229,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 
 ## Component Catalog
 
-Organized by category. **Always** import from the package root (`@bigtablet/design-system`), never deep paths.
+Organized by category. **Always** import from the package root (`@bigtablet/design-system`). The only other JS entry is `@bigtablet/design-system/text` (`BalancedText` and the other line-breaking exports). Never deep paths into `dist/`.
 
 ### Forms
 
@@ -555,14 +555,14 @@ Dark mode: same `[data-theme="dark"]` attribute works. CSS custom properties exp
 When asked to generate UI:
 
 1. **Always** wrap your output in the appropriate provider chain if the app entry isn't shown.
-2. **Always** import components from `@bigtablet/design-system` root.
+2. **Always** import components from the `@bigtablet/design-system` root (line-breaking exports such as `BalancedText` from `@bigtablet/design-system/text`). Never deep paths into `dist/`.
 3. **Always** use tokens (`var(--bt-color-*)`) for any inline style or custom SCSS.
 4. **Always** check both light and dark modes in your mental model. If a color choice fails in either theme, swap to a flipping token.
 5. **Never** generate a custom Button/Modal/Dropdown/Tooltip when the DS provides one.
 6. **Never** use `useLayoutEffect` for non-DOM-measurement work (Next.js SSR warning). Default to `useEffect`.
 7. **For interactive content**, ensure: `aria-label`/`aria-labelledby`, keyboard support (Enter/Space for buttons, Arrow keys for menus), and `:focus-visible` styling.
 8. **For images**, set `alt` (empty `""` if purely decorative).
-9. **Korean / English text**: both supported. Use `word-break: keep-all` if you set custom long-text styles in Korean contexts.
+9. **Korean / English text**: both supported. Use `@include token.wrap_keep_all;` (`word-break: keep-all` + `overflow-wrap: anywhere`) if you set custom long-text styles in Korean contexts.
 
 ---
 

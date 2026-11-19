@@ -39,7 +39,7 @@
 | 지금 버전 | 읽을 섹션 |
 |------|------|
 | 4.10.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate) (SCSS 믹스인 4개 · Tabs `fills` deprecate. 지금은 동작합니다) |
+| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (SCSS 믹스인 4개 · Tabs `fills` deprecate. 지금은 동작합니다 · Toast 기본 위치가 오른쪽 아래로) |
 | 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
 | Vanilla 를 3.8 미만에서 올림 | [v3.8.0](#v380-vanilla-패키지-정리) 의 치환 스크립트를 먼저 돌립니다 |
@@ -127,8 +127,6 @@ prop 이름이 바뀐 곳은 타입 에러로 다 드러납니다. 다만 **클�
 | Card `variant` | `"outlined"` | `"outline"` |
 | Chip `tone` | `"default"` (기본값) | `"neutral"` (기본값) |
 | Vanilla | `.bt-card--outlined` | `.bt-card--outline` |
-
-Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outline` 으로 바뀌어 스토리 id 도 달라졌습니다.
 
 ### 3. 지워진 prop · 타입
 
