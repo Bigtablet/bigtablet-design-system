@@ -1,6 +1,32 @@
+import { readFileSync } from "node:fs";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { BalancedText } from "./balanced";
+
+describe("BalancedText module", () => {
+	it("starts with the use client directive so Server Components can render it", () => {
+		// 빌드(scripts/build-modules.mjs)가 파일 맨 앞의 지시문을 dist 에 그대로 둔다 - 없으면 Next App Router 의
+		// Server Component 에서 `useRef only works in Client Components` 로 페이지가 깨진다 (#1113)
+		const source = readFileSync("src/text/balanced.tsx", "utf8");
+		expect(source.startsWith('"use client";')).toBe(true);
+	});
+
+	it("waits for a pending font only once", async () => {
+		// 받은 뒤에도 check 가 false 인 글꼴(unicode-range 밖 글자 · 실패한 face) - 다시 물으면 끝없이 돈다 (#1113)
+		const load = vi.fn(() => Promise.resolve([]));
+		Object.defineProperty(document, "fonts", {
+			configurable: true,
+			value: { check: () => false, load },
+		});
+		try {
+			render(<BalancedText as="p">이 아래의 컴포넌트에서 부릅니다</BalancedText>);
+			await new Promise((resolve) => setTimeout(resolve, 20));
+			expect(load).toHaveBeenCalledTimes(1);
+		} finally {
+			Reflect.deleteProperty(document, "fonts");
+		}
+	});
+});
 
 // jsdom 은 canvas 가 없다 - 계산을 못 하면 글자 규칙만 건 원문 그대로 둔다 (SSR 첫 렌더와 같다)
 describe("BalancedText without canvas", () => {

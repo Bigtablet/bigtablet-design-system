@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
 	chooseDomBreaks,
@@ -25,7 +27,10 @@ export interface BalancedTextProps
 	 * 공백 없이 붙은 글자("`useToast` 가" 의 "가" 는 띄었으니 따로, "`x`에서" 는 한 어절)와 한 어절이 된다
 	 */
 	children: React.ReactNode;
-	/** 그릴 요소 (기본값: "span"). 폭을 재므로 블록으로 놓이는 요소(h1 · p 또는 display: block)여야 한다 */
+	/**
+	 * 그릴 요소 (기본값: "span"). 폭을 재므로 블록으로 놓여야 한다 - 기본 span 은 `.text_balanced` 가 블록으로 둔다.
+	 * 다른 요소는 제 display 를 그대로 쓴다(li · td 등) - 인라인 요소(a · strong 등)를 고르면 `display: block` 을 준다
+	 */
 	as?: React.ElementType;
 }
 
@@ -156,8 +161,9 @@ export const BalancedText = ({
 	// 하이드레이션 전 스크립트가 이 루트에만 규칙을 걸 때 쓰는 id - 서버 · 클라이언트가 같은 값을 낸다
 	const id = React.useId();
 	const { tokens, lead, tail } = tokenize(children);
-	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다
-	const key = tokens.map((t) => t.nodes.map(shapeOf).join("")).join("\u0001");
+	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다. className 은 굵기 · 크기를 바꿔도 상자 폭이 그대로라
+	// RO 가 안 불린다 - 그래서 함께 본다
+	const key = `${className ?? ""}\u0002${tokens.map((t) => t.nodes.map(shapeOf).join("")).join("\u0001")}`;
 	const [chosen, setChosen] = React.useState<{
 		key: string;
 		breaks: Breaks;
@@ -178,6 +184,9 @@ export const BalancedText = ({
 	useSafeLayoutEffect(() => {
 		const el = ref.current;
 		if (!el) return;
+		// 다른 글(key)로 고른 줄은 버린다 - A → 숨긴 B → 폭이 바뀐 뒤 A 로 돌아오면 A 의 옛 줄이 그대로 그려지고, 줄이 이미 있어
+		// 아래 compute 가 다시 재지 않는다 (#1113 리뷰). 원문으로 돌아간 다음 렌더에서 지금 폭으로 다시 잰다
+		setChosen((c) => (c && c.key !== key ? null : c));
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		let cancelled = false;
 		let width = contentWidth(el);
@@ -200,16 +209,17 @@ export const BalancedText = ({
 			setChosen({ key, breaks, boxed: contentSized.current });
 		};
 		/** 브라우저 줄바꿈 그대로 그려진 상태에서만 돈다 - 그 줄을 화면에서 읽어 기준으로 삼는다(dom.ts) */
-		const compute = () => {
+		const compute = (fontWaited = false) => {
 			if (gaveUp) return;
-			// 이 글꼴을 아직 받는 중이면(첫 방문 · 숨어 있다 보이며 처음 쓰는 굵기) 받은 뒤 잰다 - 폭은 그대로라 RO 가 안 불린다
-			const pending = fontPending(el);
+			// 이 글꼴을 아직 받는 중이면(첫 방문 · 숨어 있다 보이며 처음 쓰는 굵기) 받은 뒤 잰다 - 폭은 그대로라 RO 가 안 불린다.
+			// 한 번만 기다린다 - 받은 뒤에도 check 가 false 인 글꼴(unicode-range 밖 글자 · 실패한 face)은 다시 물으면 끝없이 돈다 (#1113)
+			const pending = fontWaited ? null : fontPending(el);
 			if (pending) {
 				pending.then(
 					() => {
 						if (cancelled) return;
 						for (const m of measurers.values()) m?.clear();
-						compute();
+						compute(true);
 					},
 					() => {},
 				);

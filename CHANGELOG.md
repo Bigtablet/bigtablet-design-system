@@ -4,6 +4,14 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.10.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.2) - 2026-11-19
+- `BalancedText` 를 Server Component 에서 바로 씁니다 - `"use client"` 가 빠져 Next App Router 에서 `useRef only works in Client Components` 로 페이지가 깨지던 문제를 고쳤습니다
+- (렌더 변경) `BalancedText` 기본 `span` 이 블록으로 놓여 `as` 없이도 줄을 고릅니다 - 인라인이라 폭이 0 이어서 아무 일도 하지 않았습니다. `as` 로 고른 요소(`li` · `td` 등)는 제 display 를 그대로 씁니다
+- (렌더 변경) `BalancedText` 가 다음 문장의 첫 어절만 앞 줄 끝에 남기지 않고("실행은 지금부터. AI가 / 설계하는"), 한두 어절짜리 가운데 줄을 만들지 않습니다
+- (렌더 변경) 문장 단위 줄바꿈(`Sentences` · Toast · Alert `message` 등)이 "e.g." · "(e.g.)" 같은 영문 약어 뒤에서 문장을 나누지 않습니다
+- `BalancedText` 가 받는 중인 글꼴을 한 번만 기다립니다 - 받은 뒤에도 확인되지 않는 글꼴(unicode-range 밖 글자 등)에서 끝없이 다시 묻던 문제를 고쳤습니다
+- `BalancedText` 가 `className` 이 바뀌면 줄을 다시 고르고, 숨겼다 다시 보일 때 이전 폭의 줄을 쓰지 않습니다
+
 ## [4.10.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.1) - 2026-11-19
 - Vanilla Dropdown · Toggle 이 서버가 그린 hidden input 을 재사용할 때도 `name` 옵션 · `data-name` 으로 제출 이름을 맞춥니다 - 그려 둔 옛 이름으로 제출되던 문제를 고쳤습니다
 - (렌더 변경) `@bigtablet/design-system/text` 만 import 할 때 DS 공통 CSS(테마 변수 · autofill · 링크)를 더는 함께 싣지 않습니다 - `./text` 는 DS 없이도 쓰는 진입점입니다
