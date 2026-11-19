@@ -3504,7 +3504,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - 트리거: `aria-haspopup="dialog"`, `aria-expanded={open}`, `aria-controls={popoverId}` (열렸을 때)
 - **포커스**: 열릴 때 패널 내 **첫 focusable**로 이동 (없으면 패널 자체). `Esc`로 닫으면 **trigger로 복귀**
 - **키보드**: <kbd>Tab</kbd> trigger 포커스 → Enter/Space로 토글 / <kbd>Esc</kbd> 닫음 (+ trigger 복귀)
-- 열린 동안 Tab 을 패널 안에 가둡니다 (`useFocusTrap`) - `body` 로 포탈되어 trigger 뒤 Tab 순서가 끊기기 때문입니다. 닫히면 포커스가 trigger 로 돌아갑니다. 바깥 클릭으로는 그대로 닫히므로 페이지 나머지와 상호작용할 수 있습니다
+- 열린 동안 Tab 을 패널 안에 가둡니다 (`useFocusTrap`) - `body` 로 포탈되어 trigger 뒤 Tab 순서가 끊기기 때문입니다. 닫히면 포커스가 **열기 전 자리**로 돌아갑니다 - trigger 로 열었으면 trigger 입니다. `open` 을 바깥 로직으로 바꿔 열었다면 그때 포커스가 있던 요소로 가고, 그 요소가 사라졌거나 닫히는 오버레이 안이면 되돌리지 않습니다. 바깥 클릭으로는 그대로 닫히므로 페이지 나머지와 상호작용할 수 있습니다
 
 > 📌 `dialog`는 접근성 이름이 필요합니다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줍니다. **폴백이 없습니다** — 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡습니다 (Modal · Drawer 와 같은 계약).
 

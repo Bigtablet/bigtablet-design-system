@@ -217,7 +217,7 @@ SCSS 변수/믹스인(spacing, radius, typography, motion 등)이 필요하면 �
 }
 ```
 
-주의할 점: `scss/token` 진입점은 `theme.scss` 를 포함하지 않습니다. `theme.scss` 의 `:root` / `[data-theme]` 규칙이 소비자의 `*.module.scss` 로 새어나가면 CSS Modules 의 pure-selector 검사를 깨뜨리기 때문에 의도적으로 분리되어 있습니다. 따라서 SCSS 변수만 `@use` 해서는 `--bt-color-*` 같은 실제 CSS 변수 값이 따라오지 않고, 이 값은 위 React 섹션처럼 DS 컴포넌트나 `cssVars` 를 import 할 때 함께 실리는 공통 CSS, 또는 `style.css` 로 제공됩니다. SCSS 값과 CSS 변수 값을 함께 써야 한다면 `scss/token` 과 함께 둘 중 하나가 로드돼 있어야 합니다.
+주의할 점: `scss/token` 진입점은 `theme.scss` 를 포함하지 않습니다. `theme.scss` 의 `:root` / `[data-theme]` 규칙이 소비자의 `*.module.scss` 로 새어나가면 CSS Modules 의 pure-selector 검사를 깨뜨리기 때문에 의도적으로 분리되어 있습니다. 따라서 SCSS 변수만 `@use` 해서는 `--bt-color-*` 같은 실제 CSS 변수 값이 따라오지 않고, 이 값은 위 React 섹션처럼 자기 CSS 를 가진 DS 컴포넌트나 `cssVars` 를 import 할 때 함께 실리는 공통 CSS, 또는 `style.css` 로 제공됩니다. `ThemeProvider` 는 CSS 를 싣지 않으므로, 화면에 DS 컴포넌트 없이 `ThemeProvider` 와 SCSS 토큰만 쓴다면 `style.css` 를 로드합니다. SCSS 값과 CSS 변수 값을 함께 써야 한다면 `scss/token` 과 함께 둘 중 하나가 로드돼 있어야 합니다.
 
 ### CSS 변수 직접 사용
 

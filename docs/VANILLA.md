@@ -424,7 +424,7 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 ```
 
 옵션은 위처럼 서버가 렌더링한 `<li data-value>` 마크업에서 자동 파싱됩니다
-(우선순위는 `data-options` JSON 속성 > JS `options` 설정 > `<li>` 마크업 순입니다. 옵션 목록만 속성이 이기고, `multiple` · `searchable` · `placeholder` · `name` 같은 나머지 설정은 JS 옵션이 `data-*` 속성보다 우선합니다).
+(우선순위는 `data-options` JSON 속성 > JS `options` 설정 > `<li>` 마크업 순입니다. 옵션 목록만 속성이 이기고, `multiple` · `searchable` · `placeholder` · `name` 같은 나머지 설정은 JS 옵션이 `data-*` 속성보다 우선합니다). `data-options` · JS `options` 를 주면서 `<li>` 도 그려 두면, `<li>` 는 지우지 않고 그대로 화면에 쓰고 값은 배열에서 **같은 순서(인덱스)** 로 읽습니다 - 두 목록의 순서와 값을 맞추거나, 배열을 줄 때는 `<li>` 를 그리지 않습니다(그러면 JS 가 배열로 그립니다).
 
 **폼 제출 참여 (Thymeleaf/JSP):**
 
@@ -552,7 +552,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 | `data-empty-text` | `emptyText` |
 | `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
 | `data-options` | `options` (JSON 배열) - 둘 다 있으면 **`data-options` 가 우선** |
-| `data-name` | `name` |
+| `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 그대로 쓰고 **이름은 바꾸지 않습니다**. JS `name` 과 다르면 폼은 그려 둔 input 의 `name` 으로 제출됩니다 |
 
 > boolean 속성은 값을 생략해도 되고(`data-multiple`), 끄려면 `data-multiple="false"` 로 명시합니다.
 > `data-options` 를 뺀 나머지 속성은 같은 이름의 JS 옵션을 넘기면 JS 옵션이 우선합니다.
@@ -785,7 +785,7 @@ Alert는 JavaScript로만 사용합니다.
 |------|------|---------|-------------|
 | `message` | `string` | - | 본문. 텍스트로 넣는다 (HTML 은 해석하지 않음) |
 | `tone` | `string` | `'neutral'` | `'success'`, `'error'`, `'warning'`, `'info'`, `'neutral'` |
-| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 이거나 0 이하면 자동으로 닫히지 않고 진행 막대도 없으며, 닫기 버튼·`dismiss` 로만 닫힘 |
+| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 이거나 0 이하면 시간이 지나도 닫히지 않고 진행 막대도 없습니다. 이때도 닫기 버튼 · `dismiss` · `action` 버튼으로 닫히고, 토스트가 5개를 넘으면 가장 오래된 것부터 닫힙니다 |
 | `options.action` | `{ label, onClick }` | - | 메시지 옆 텍스트 버튼. 한 번만 실행되고 토스트를 닫는다 |
 | `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
 | `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`.bt-toast-container`) 이름. 리전은 토스트가 하나 이상 있을 때만 `role="region"` + `aria-label` 을 달고, 비면 둘 다 뗍니다. 이름은 리전을 처음 만들 때(서버가 그린 리전이면 그 `aria-label`)만 정합니다. 읽어 주기는 리전이 아니라 JS 가 안에 만드는 숨은 `.bt-toast__announcer`(`role="status"` · `role="alert"`) 둘이 맡습니다 |
@@ -1635,9 +1635,9 @@ Bigtablet.getLocale();                              // "ko" | "en"
 
 이 하한은 compact 하단 바만큼 본문 아래 여백을 두는 처리(`:has`) 기준입니다. 이보다 오래된 브라우저에서도 화면은 나오지만 그 여백이 빠집니다.
 
-나머지 두 기능은 하한보다 늦게 들어와, 위 버전 이상이어도 브라우저에 따라 빠질 수 있습니다 - 동작에는 문제가 없고 다듬은 부분만 빠집니다.
+나머지 두 기능은 하한보다 늦게 들어와, 위 버전 이상이어도 브라우저에 따라 빠질 수 있습니다.
 
-- 퇴출 모션 동안 포커스를 막는 처리(`inert`) - Safari 15.5+
+- 퇴출 모션 동안 포커스를 막는 처리(`inert`) - Safari 15.5+. 없는 브라우저(Safari 15.4)에서는 Modal · Alert 가 닫히는 모션(약 0.3초) 동안 닫힌 대화상자 안 버튼에 Tab 으로 포커스가 갈 수 있습니다
 - 진입 모션(`@starting-style`) - Chrome · Edge 117+, Safari 17.5+, Firefox 129+. 없으면 모션 없이 바로 나타납니다
 
 ---

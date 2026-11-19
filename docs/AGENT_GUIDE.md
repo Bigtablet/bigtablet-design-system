@@ -229,7 +229,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
 
 ## Component Catalog
 
-Organized by category. **Always** import from the package root (`@bigtablet/design-system`). The only other JS entry is `@bigtablet/design-system/text` (`BalancedText` and the other line-breaking exports). Never deep paths into `dist/`.
+Organized by category. **Always** import from the package root (`@bigtablet/design-system`). The only other React entry is `@bigtablet/design-system/text` (`BalancedText` and the other line-breaking exports). Non-React pages use the Vanilla entries `@bigtablet/design-system/vanilla` (`/vanilla/bigtablet.min.js`, `/vanilla/style.min.css`) - see [Vanilla JS Bundle](#vanilla-js-bundle). Never deep paths into `dist/`.
 
 ### Forms
 

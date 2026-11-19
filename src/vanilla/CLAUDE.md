@@ -391,7 +391,7 @@ Bigtablet.CopyButton('#copy', {
 
 // Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 위, 최대 5개
 const t = Bigtablet.Toast('저장했습니다', 'success', {
-  duration: 3000,           // Infinity 또는 0 이하면 자동 닫힘·진행 막대 없음 - 닫기 버튼·dismiss 로만
+  duration: 3000,           // Infinity 또는 0 이하면 시간으로는 안 닫힘·진행 막대 없음 - 닫기 버튼·dismiss·action, 5개 초과 시 오래된 것부터 닫힘
   action: { label: '실행 취소', onClick: () => {} },
   closeLabel: '닫기',
   regionLabel: '알림'
