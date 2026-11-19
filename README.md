@@ -40,6 +40,8 @@ pnpm add @bigtablet/design-system react@^19 react-dom@^19 lucide-react
 ```
 
 ```tsx
+"use client"; // useToast · onClick need a client component in the Next.js App Router
+
 import { ThemeProvider, ToastProvider, Button, useToast } from "@bigtablet/design-system";
 // No CSS import needed - each component brings its own CSS.
 
@@ -59,7 +61,7 @@ function SaveButton() {
 }
 ```
 
-Next.js App Router works as is. Setup details and SCSS tokens are on the [install page](https://bigtablet.github.io/bigtablet-design-system/#/install), Tailwind v4 in [THEMING](./docs/THEMING.md#tailwind-css-v4).
+Components ship with `"use client"`, so they import straight into the App Router. Setup details and SCSS tokens are on the [install page](https://bigtablet.github.io/bigtablet-design-system/#/install), Tailwind v4 in [THEMING](./docs/THEMING.md#tailwind-css-v4).
 
 <br />
 
