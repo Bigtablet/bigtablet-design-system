@@ -1,6 +1,8 @@
 # Components
 
-Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
+React 컴포넌트별로 언제 쓰는지, 예제, 알아 둘 것, 구현 계약을 적은 문서입니다.
+
+> **props 표는 여기 없습니다.** 소스 타입에서 생성하는 [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/components)의 각 컴포넌트 페이지(원본 `site/props.json`)와 패키지 안 `dist/llms` 에서 봅니다. 손으로 쓴 표는 prop 을 추가할 때마다 한 벌 더 고쳐야 해서 걷어 냈습니다 (#1118).
 
 ---
 
@@ -273,11 +275,6 @@ import { LocaleProvider } from '@bigtablet/design-system';
 </LocaleProvider>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `locale` | `'ko' \| 'en'` | 바깥 Provider, 없으면 `'ko'` | 기준 카탈로그. 중첩하면 바깥의 `locale` · `messages` 를 이어받습니다 (locale 을 바꾸면 바깥 덮어쓰기는 받지 않습니다) |
-| `messages` | `Partial<LocaleMessages>` | - | 기준 위에 덮어쓸 문구 |
-
 **우선순위** — 인스턴스 prop > `messages` > `locale` 카탈로그 > 한국어 기본. Provider 를 감싸지
 않으면 한국어라 기존 화면은 바뀌지 않습니다.
 
@@ -309,14 +306,6 @@ const ja: LocaleMessages = { ...ko, "modal.close": "閉じる" /* … */ };
 ### ThemeProvider
 
 Bigtablet DS의 테마 컨텍스트를 제공합니다. `data-theme` attribute를 root element에 적용해서 CSS 변수 레이어를 전환합니다.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `defaultMode` | `'light' \| 'dark' \| 'system'` | `'system'` | 초기 테마 |
-| `storageKey` | `string \| null` | `'bt-theme'` | localStorage 키 (null이면 저장 안 함) |
-| `targetSelector` | `string` | `document.documentElement` | `data-theme` 적용 대상 selector |
 
 **`useTheme()` 훅**
 
@@ -401,19 +390,6 @@ import { Plus } from 'lucide-react';
 <Button as="a" href="https://example.com" target="_blank" rel="noreferrer">외부 링크</Button>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'filled' \| 'tonal' \| 'outline' \| 'text'` | `'filled'` | 버튼 스타일 |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 버튼 크기 |
-| `danger` | `boolean` | `false` | 위험한 액션(삭제/취소) 빨간 강조. `variant` 와 조합해서 사용 |
-| `leadingIcon` | `ReactNode` | - | 버튼 앞에 표시할 아이콘 |
-| `trailingIcon` | `ReactNode` | - | 버튼 뒤에 표시할 아이콘 |
-| `radius` | `'none' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'full'` | border-radius 토큰 |
-| `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 대상. `as` 를 안 주고 이것만 주면 anchor 로 렌더됩니다. `as='a'` 면 필수 |
-| `disabled` | `boolean` | `false` | 비활성화. anchor 는 `aria-disabled` + 클릭 차단으로 처리 |
-
 **`as` 는 어떤 요소·컴포넌트든 받습니다.** 리터럴 유니온(`'button' | 'a'`)이었을 때는 Next.js
 `Link` 를 넘길 수 없어, 소비자가 DS 를 우회해 자기 버튼을 만들었습니다.
 
@@ -452,15 +428,6 @@ import { Settings } from 'lucide-react';
 <IconButton size="md" icon={<Settings />} aria-label="설정" />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'text' \| 'filled' \| 'tonal' \| 'outline'` | `'text'` | 스타일. Button 과 같은 이름 |
-| `size` | `'sm' \| 'md'` | `'md'` | 크기 |
-| `icon` | `ReactNode` | required | 표시할 아이콘 |
-| `aria-label` | `string` | **둘 중 하나 필수** | 아이콘 버튼의 접근성 이름 |
-| `aria-labelledby` | `string` | **둘 중 하나 필수** | 접근성 이름을 제공하는 외부 요소의 id |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
 > ⚠️ **접근성 이름은 타입 레벨에서 필수입니다.** `icon` 은 항상 `aria-hidden="true"` span 으로 감싸지므로, `aria-label` / `aria-labelledby` 중 하나를 주지 않으면 버튼에 접근성 이름이 전혀 없습니다 (WCAG 2.1 SC 4.1.2 Name, Role, Value). `IconButtonProps` 는 이를 강제하는 `IconButtonWithAriaLabel | IconButtonWithAriaLabelledBy` union 이라 `<IconButton icon={<X />} />` 는 **컴파일되지 않습니다**.
 >
 > ```tsx
@@ -476,23 +443,6 @@ import { Settings } from 'lucide-react';
 ### CopyButton
 
 텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알립니다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 씁니다.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `text` | `string \| (() => string)` | required | 복사할 텍스트. 누를 때 계산하려면 함수 |
-| `label` | `string` | `'복사'` | 버튼 문구 · 아이콘만일 때 접근성 이름 (로케일 `copyButton.copy`) |
-| `aria-label` | `string` | `label` | 이름만 따로. 복사 버튼이 여럿이면 보이는 글자는 짧게 두고 이름에 무엇을 복사하는지 담습니다 (`"{값} 주소 복사"`) |
-| `copiedLabel` | `string` | `'복사됨'` | 복사 직후 문구 (로케일 `copyButton.copied`) |
-| `failedLabel` | `string` | `'복사하지 못했습니다'` | 실패 시 스크린리더 알림 (로케일 `copyButton.failed`) |
-| `iconOnly` | `boolean` | `false` | 아이콘만 (IconButton) |
-| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
-| `variant` | `ButtonVariant` | `'outline'` | 문구 버튼의 variant |
-| `resetAfter` | `number` | `2000` | 복사됨 표시 유지 시간(ms) |
-| `onCopy` | `(text: string) => void` | - | 성공 - Toast 를 띄우려면 여기서 |
-| `onError` | `(error: unknown) => void` | - | 실패 (권한 거부 · API 없음 · 폴백 실패) |
-| `disabled` | `boolean` | - | 비활성화 |
 
 #### 접근성 - 복사됨 알림
 
@@ -669,40 +619,6 @@ const [fruits, setFruits] = useState<string[]>([]);
 
 </details>
 
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `DropdownOption[]` | required | 옵션 목록 |
-| `value` | `string \| null` (single) · `string[]` (multiple) | - | 선택된 값 (controlled) |
-| `defaultValue` | `string \| null` (single) · `string[]` (multiple) | - | 기본 선택값 |
-| `onValueChange` | `(value, option) => void` (single) · `(values, options) => void` (multiple) | - | 변경 핸들러 (canonical) |
-| `multiple` | `boolean` | `false` | 다중 선택 모드. `value`/`onValueChange` 시그니처가 배열로 바뀜 |
-| `searchable` | `boolean` | `false` | 열린 패널 상단에 검색 입력 표시 (`label` 부분 일치 필터 - 대소문자·공백 무시, 한글 초성 `ㅅㅇ` · 조합 중인 글자 `서우` 도 찾습니다) |
-| `searchPlaceholder` | `string` | `'검색…'` | 검색 입력 플레이스홀더 |
-| `emptyText` | `string` | `'결과 없음'` | 필터 결과가 0개일 때 표시할 텍스트 |
-| `selectedSummary` | `(count: number) => string` | ``(count) => `${count}개 선택` `` | 다중 선택 요약 텍스트 |
-| `label` | `string` | - | 플로팅 라벨 (값 선택 시 또는 열릴 때 표시) |
-| `placeholder` | `string` | `'선택…'` | 플레이스홀더 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `name` | `string` | - | 네이티브 폼 제출용 name. 선택 값이 hidden input 으로 렌더됨 (multiple 은 같은 name 반복) |
-| `id` | `string` | 자동 생성 | 드롭다운 요소 id |
-| `className` | `string` | - | 루트 요소에 추가할 className |
-| `variant` | `'outline' \| 'filled'` | `'outline'` | 컨트롤 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 열려 있는 동안 테두리가 드러남 |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이깁니다 |
-
-**DropdownOption:**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `value` | `string` | 옵션 값 |
-| `label` | `string` | 표시 텍스트 |
-| `disabled` | `boolean` | 비활성화 여부 |
-| `supportingText` | `string` | 라벨 아래 보조 텍스트 |
-| `leadingIcon` | `ReactNode` | 왼쪽 아이콘 |
-| `trailingIcon` | `ReactNode` | 오른쪽 아이콘 (미지정 시 선택 상태에 체크 자동 표시) |
-| `showDivider` | `boolean` | 아이템 아래 구분선 |
-
 ---
 
 ### Combobox
@@ -721,23 +637,6 @@ import { Combobox } from '@bigtablet/design-system';
   emptyMessage="일치하는 담당자가 없습니다"
 />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `onSearch` | `(q: string) => Promise<ComboboxOption[]>` | - | 검색어가 바뀌면 디바운스 후 호출. **필수** |
-| `value` | `ComboboxOption \| null` | `null` | 선택된 값 (제어형) |
-| `onValueChange` | `(o: ComboboxOption \| null) => void` | - | 선택 변경 |
-| `defaultOptions` | `ComboboxOption[]` | `[]` | 검색 전 보여줄 초기 후보 |
-| `debounceMs` | `number` | `250` | 검색 호출 간격 |
-| `placeholder` | `string` | `'검색해서 선택'` | |
-| `emptyMessage` | `string` | `'일치하는 항목이 없습니다'` | 결과 없음 |
-| `idleMessage` | `string` | `'검색어를 입력하세요'` | 검색 전 |
-| `renderOption` | `(o: ComboboxOption) => ReactNode` | - | 목록 항목 커스터마이즈 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
-| `disabled` | `boolean` | `false` | 비활성 |
-| `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `ariaLabel` | `string` | - | 접근성 이름 - `Field` 로 감싸면 그쪽 라벨이 우선 |
-| `loadingLabel` | `string` | `'검색 중'` | 조회 중 안내 |
 
 비동기에서 갈리는 네 가지를 DS 가 처리합니다.
 
@@ -875,30 +774,9 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 
 #### Field
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `name` | `string` | - | 필드 이름. `Form` 의 `errors[name]` 을 찾는 키 |
-| `label` | `string` | - | 라벨. 단일 컨트롤은 `htmlFor`, `role="group"` 입력은 `aria-labelledby` 로 연결됩니다 |
-| `labelAction` | `ReactNode` | - | 라벨과 같은 줄 오른쪽에 놓는 조작 요소. `<label>` 밖, 라벨 한 줄 높이로 고정된 슬롯에 렌더됩니다 |
-| `required` | `boolean` | `false` | `*` 표시 + 입력에 `aria-required` |
-| `help` | `ReactNode` | - | 입력 아래 도움말. 에러가 있으면 에러가 대신 보입니다 |
-| `error` | `ReactNode` | - | 에러 메시지. `Form` 의 `errors[name]` 보다 우선합니다. `role="alert"` 로 나타날 때 필드 이름과 함께 낭독됩니다. 여러 필드가 한꺼번에 틀리는 폼(서버 검증)은 `Form` 의 `errorSummary` 를 켭니다 - 요약이 한 번 읽히고 필드는 그 에러를 따로 낭독하지 않습니다(이 prop 으로 준 지역 검증 에러는 그대로 낭독) |
-| `children` | `ReactNode` | - | 입력 하나 |
-
 #### Form
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `errors` | `Record<string, ReactNode>` | - | 필드 이름 → 에러. 서버 검증(422) 결과를 그대로 넣습니다 |
-| `errorSummary` | `boolean` | `false` | 폼 위에 에러 요약(개수 + 필드별 링크)을 그립니다. 제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 한 번 읽히고, 필드는 `errors` 에서 온 에러를 따로 낭독하지 않습니다. 링크를 누르면 그 입력으로 포커스가 갑니다 |
-| `errorSummaryTitle` | `ReactNode` | `'{count}개 항목을 확인해 주세요'` | 요약 제목 (로케일 `form.errorSummary`) |
-| `onSubmit` | `(e) => void` | - | `preventDefault()` 는 `Form` 이 이미 호출한 뒤 부릅니다 |
-
 #### Form.Actions
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `align` | `'start' \| 'center' \| 'end' \| 'between'` | `'end'` | 버튼 정렬 |
 
 > 폼 라이브러리에 의존하지 않습니다. react-hook-form 등은 `errors` 맵을 만들어 넘기는 어댑터 한 겹으로 붙입니다.
 
@@ -928,22 +806,6 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 | 드롭다운 여러 개 + 선택 즉시 적용 (검색 버튼 없음) | ✅ FilterBar `submitMode="instant"` |
 | 검색창 하나뿐 (입력 즉시 거름) | ❌ [DataView](#dataview) `toolbar.search` |
 | 짧은 옵션 하나만 바로 바꿈 (상태 탭 같은 필터) | ❌ [SegmentedControl](#segmentedcontrol) 단독 |
-
-**Props** (`<form>` 속성 상속 - `aria-label` 로 검색 영역 이름을 줍니다)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | required | 필터 입력들 (TextField · Dropdown · DatePicker · SegmentedControl 등) |
-| `submitMode` | `'submit' \| 'instant'` | `'submit'` | `instant` 면 검색 버튼과 Enter 제출을 생략합니다 |
-| `onSubmit` | `() => void` | submit 모드에서 required | 검색 - Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막습니다 |
-| `onReset` | `() => void` | - | 주면 초기화 버튼이 생깁니다. 값을 비우는 건 소비자 몫 |
-| `canSubmit` | `boolean` | `true` | false 면 검색 버튼과 Enter 제출이 막힙니다 |
-| `canReset` | `boolean` | `true` | 비울 것이 없으면 false |
-| `isLoading` | `boolean` | `false` | 적용 중 - `aria-busy`. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용 |
-| `disabled` | `boolean` | `false` | 버튼 전체 비활성화 |
-| `submitLabel` | `string` | `'검색'` | 검색 버튼 문구 (로케일 `filterBar.submit`) |
-| `resetLabel` | `string` | `'초기화'` | 초기화 버튼 문구 (로케일 `filterBar.reset`) |
-| `fieldMinWidth` | `number \| string` | `200` | 필드 한 칸의 최소 폭 - 이보다 좁아지면 줄을 바꿉니다 |
 
 #### 레이아웃
 
@@ -1046,29 +908,6 @@ import { Search, X } from 'lucide-react';
 <TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | - | 라벨 |
-| `showLabel` | `boolean` | `true` | 라벨 표시 여부 (false 면 SR 전용) |
-| `supportingText` | `string` | - | 도움말 텍스트 |
-| `error` | `boolean` | `false` | 에러 상태 (`success` 보다 우선) |
-| `success` | `boolean` | `false` | 성공(검증 통과) 상태. `error` 가 true 면 무시됨 |
-| `identifier` | `boolean` | `false` | 식별자 칸 - `l`/`I`/`1`, `0`/`O` 를 구분되게 렌더 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `variant` | `'outline' \| 'filled'` | `'outline'` | 시각 변형. `filled` 는 테두리 대신 dim 배경으로 채우고, 포커스 시 테두리가 드러남 |
-| `leadingIcon` | `ReactNode` | - | 왼쪽 **장식** 아이콘 (`aria-hidden`) |
-| `trailingIcon` | `ReactNode` | - | 오른쪽 **장식** 아이콘 (`aria-hidden`) |
-| `leadingAction` | `ReactNode` | - | 왼쪽 조작 요소 (`aria-hidden` 없음) |
-| `trailingAction` | `ReactNode` | - | 오른쪽 조작 요소 (`aria-hidden` 없음) |
-| `showPasswordToggle` | `boolean` | `false` | 비밀번호 표시/숨기기 토글 내장 |
-| `passwordToggleLabels` | `{ show: string; hide: string }` | `{ show: '비밀번호 표시', hide: '비밀번호 숨기기' }` | 토글 버튼 `aria-label` |
-| `clearable` | `boolean` | `false` | 값이 있을 때 오른쪽에 지우기(X) 버튼 표시 |
-| `clearLabel` | `string` | `'지우기'` | 지우기 버튼 `aria-label` |
-| `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (호출 시점은 `imeStrategy` 에 따름) |
-| `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략. `immediate` = 조합 중에도 즉시 호출 |
-| `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
-
 > **`error` vs `success` 우선순위**: 둘 다 `true` 면 `error` 가 이깁니다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문입니다. `success` 는 `aria-invalid` 를 켜지 않습니다 (`error` 만 `aria-invalid="true"`).
 >
 > `variant` · `success` 는 Vanilla 의 `.bt-text-field__input--filled` / `--success` 와 1:1 대응합니다.
@@ -1109,19 +948,6 @@ import { Field, TagInput } from '@bigtablet/design-system';
   <TagInput value={tags} onValueChange={setTags} maxTags={10} />
 </Field>
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string[]` | - | 태그 목록 (제어형). 주지 않으면 내부 상태로 동작 |
-| `defaultValue` | `string[]` | `[]` | 비제어형 초기 태그 |
-| `onValueChange` | `(tags: string[]) => void` | - | 추가·제거 시 |
-| `placeholder` | `string` | `'입력 후 Enter'` | |
-| `maxTags` | `number` | - | 최대 개수. 도달하면 입력이 읽기 전용 |
-| `allowDuplicates` | `boolean` | `false` | 같은 값 중복 허용 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | |
-| `disabled` | `boolean` | `false` | |
-| `fullWidth` | `boolean` | `false` | |
-| `ariaLabel` | `string` | - | `Field` 로 감싸면 그쪽 라벨이 우선 |
 
 키보드·붙여넣기 규약:
 
@@ -1164,29 +990,6 @@ import { Textarea } from '@bigtablet/design-system';
 #### 한글 IME
 
 `TextField` 와 동일하게 `imeStrategy` 지원. 조합 중 외부 `value` 구독이 즉시 필요하면 `"immediate"`. 조합 중에는 `transformValue` 가 보류되어 한글 조합이 깨지지 않습니다.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | - | 라벨 |
-| `showLabel` | `boolean` | `true` | 라벨 표시 여부 |
-| `supportingText` | `string` | - | 도움말 텍스트 (error 시 에러 색) |
-| `error` | `boolean` | `false` | 에러 상태 (`aria-invalid` 자동) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `rows` | `number` | `3` | 고정 행 수 (auto-grow 미사용 시) |
-| `minRows` | `number` | - | auto-grow 최소 행 (지정 시 auto-grow 활성) |
-| `maxRows` | `number` | - | auto-grow 최대 행 (초과 시 스크롤) |
-| `maxLength` | `number` | - | 최대 글자 수 |
-| `showCounter` | `boolean` | `false` | 글자 수 카운터 표시 (`maxLength` 와 함께 권장) |
-| `resize` | `'none' \| 'vertical' \| 'both'` | `'vertical'` | resize 핸들 (auto-grow 시 무시) |
-| `toolbar` | `ReactNode` | - | 입력 위, **테두리 안쪽** 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤용. 포커스 테두리가 툴바까지 감싸고 하단 구분선은 DS 가 긋습니다 |
-| `fullWidth` | `boolean` | `false` | 전체 너비 |
-| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 |
-| `imeStrategy` | `'delayed' \| 'immediate'` | `'delayed'` | IME 조합 중 콜백 전략 |
-| `transformValue` | `(value: string) => string` | - | 값 변환 함수 |
-| `value` / `defaultValue` | `string` | - | 제어/비제어 값 |
-| `...rest` | `TextareaHTMLAttributes` | - | `placeholder`, `disabled`, `aria-*` 등 |
 
 #### 접근성
 
@@ -1240,14 +1043,6 @@ const [checked, setChecked] = useState(false);
 <Checkbox label="전체 선택" indeterminate />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `ReactNode` | - | 라벨 |
-| `indeterminate` | `boolean` | `false` | 부분 선택 상태. 클릭으로 지워져도 prop 이 `true` 면 다시 세웁니다 |
-| `error` | `boolean` | - | 에러 상태 (`aria-invalid`) |
-| `checked` | `boolean` | - | 체크 상태 |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
 ---
 
 ### Radio
@@ -1273,15 +1068,6 @@ const [selected, setSelected] = useState('option1');
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `ReactNode` | - | 라벨 |
-| `name` | `string` | - | 그룹 이름 |
-| `value` | `string` | - | 값 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `checked` | `boolean` | - | 선택 상태 |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
 > `RadioGroup` 안에서는 `name` / `checked` / `size` / `disabled` 가 그룹 컨텍스트에서 자동 주입됩니다. 이 경우 `value` 만 지정하면 됩니다. (그룹 밖에서는 위 props 로 standalone 동작)
 
 ---
@@ -1306,21 +1092,6 @@ const [selected, setSelected] = useState('option1');
 - **비제어형**: `defaultValue`
 
 자식 `Radio`는 `value`만 지정 - `name`/`checked`/`size`/`disabled`는 그룹에서 상속.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | 제어형 선택 값 |
-| `defaultValue` | `string` | - | 비제어형 초기 값 |
-| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 |
-| `name` | `string` | (auto) | 그룹 name (미지정 시 자동 생성) |
-| `label` | `ReactNode` | - | 그룹 라벨 (`radiogroup` 접근성 레이블) |
-| `supportingText` | `ReactNode` | - | 보조 설명 (error 시 빨간색) |
-| `error` | `boolean` | `false` | 에러 상태 (`aria-invalid` 자동) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 그룹 사이즈 (자식 Radio 에 전파) |
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 배치 방향 |
-| `disabled` | `boolean` | `false` | 그룹 전체 비활성화 |
 
 #### 접근성
 
@@ -1368,20 +1139,6 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
 | 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) (밑줄 모양) |
 | 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
 | 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `SegmentedControlItem<T>[]` | required | 칸 목록 - `{ value, label?, icon?, ariaLabel?, disabled? }` |
-| `value` | `T` | - | 제어형 선택 값 |
-| `defaultValue` | `T` | - | 비제어형 초기 값 |
-| `onValueChange` | `(value: T) => void` | - | 선택 변경 콜백 |
-| `name` | `string` | (auto) | 폼 제출용 name (미지정 시 자동 생성) |
-| `size` | `'sm' \| 'md'` | `'md'` | 크기 - 칸 높이 32/40px, 터치 화면(< 600px)에서 40/48px |
-| `fullWidth` | `boolean` | `false` | 부모 폭을 채우고 칸을 균등 분배 |
-| `disabled` | `boolean` | `false` | 전체 비활성화. 칸 하나만 막으려면 `items[].disabled` |
-| `required` | `boolean` | `false` | 폼 제출 시 선택이 없으면 막습니다. `Field required` 도 같이 반영 |
 
 `T` 는 `string` 을 좁힌 리터럴 유니온을 받습니다 - `SegmentedControl<"ko" | "en">` 이면 `onValueChange` 가 그 타입으로 옵니다.
 
@@ -1462,15 +1219,6 @@ const [isOn, setIsOn] = useState(false);
 <Toggle ariaLabel="알림 받기" size="md" />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `checked` | `boolean` | - | 켜짐 상태 (controlled) |
-| `defaultChecked` | `boolean` | `false` | 기본 상태 |
-| `onCheckedChange` | `(checked: boolean) => void` | - | 변경 핸들러 |
-| `size` | `'sm' \| 'md'` | `'sm'` | 크기 |
-| `ariaLabel` | `string` | required | 접근성 라벨 (필수) |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
 #### 히트 영역은 트랙보다 넓습니다
 
 트랙은 sm 40×24 · md 48×28 이지만, 스위치는 시각적으로 작은 것이 정상이라 크기를 키우는 대신 **히트 영역만** 넓혔습니다 — 데스크탑 32px, 모바일(<600px) 40px. 절대배치 `::after` 라서 레이아웃 공간은 차지하지 않습니다.
@@ -1478,7 +1226,6 @@ const [isOn, setIsOn] = useState(false);
 > **세로로 쌓을 때는 16px 이상 띄우세요.** 모바일에서 sm 은 트랙 위아래로 8px 씩 넓어지므로, 간격이 그보다 좁으면 인접 토글의 히트 영역이 겹쳐 잘못된 토글이 눌릴 수 있습니다.
 
 Vanilla 번들의 `.bt-toggle` 도 동일하게 동작합니다.
-
 
 ---
 
@@ -1514,26 +1261,6 @@ const [date, setDate] = useState('');
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | - | 라벨 |
-| `value` | `string` | - | 선택된 날짜 (`'YYYY-MM-DD'` 또는 `'YYYY-MM'`) |
-| `onValueChange` | `(value: string) => void` | required | 변경 핸들러 |
-| `mode` | `'year-month' \| 'year-month-day'` | `'year-month-day'` | 날짜 선택 모드 |
-| `variant` | `'dropdown' \| 'calendar'` | `'dropdown'` | 고르는 방식. `calendar` 는 날짜 칸 하나 + 월 달력 팝오버 - `mode="year-month-day"` 에서만 (그 밖은 드롭다운으로 그립니다) |
-| `placeholder` | `string` | `'날짜 선택'` | `variant="calendar"` 에서 값이 없을 때 칸 문구 |
-| `minDate` | `string` | - | 고를 수 있는 최소 날짜 (`'YYYY-MM-DD'`) |
-| `startYear` | `number` | `1950` | 시작 연도 |
-| `endYear` | `number` | `현재년도 + 10` | 종료 연도 |
-| `selectableRange` | `'all' \| 'until-today'` | `'all'` | 선택 가능 범위 |
-| `yearLabel` · `monthLabel` · `dayLabel` | `string` | `'년'` · `'월'` · `'일'` | 드롭다운 각 칸의 라벨 · 플레이스홀더 (로케일 `datePicker.year` · `month` · `day`) |
-| `clearable` | `boolean` | `false` | 값이 있으면 지우기(×) 버튼 - 누르면 `onValueChange("")`. 달력형은 칸에서 Delete · Backspace 로도. 조회 조건처럼 "값 없음 = 조건 없음" 인 칸에, 필수 칸에는 두지 않습니다 |
-| `clearLabel` | `string` | `'날짜 지우기'` | 지우기 버튼 이름 (로케일 `datePicker.clear`) |
-| `fullWidth` | `boolean` | `true` | 전체 너비 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 칸 크기. Dropdown · TextField 와 같은 높이 단계(sm · md 40px, lg 48px)라 한 줄에 두면 맞습니다 - 옆 Button 은 칸 sm · md 면 `md`, lg 면 `lg` |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이깁니다 |
-
 ---
 
 ### DateCalendar
@@ -1548,24 +1275,6 @@ const [date, setDate] = useState('');
 - Date 가 필요하면 **로컬 생성자**로 만듭니다: `const [y, m, d] = value.split("-").map(Number); new Date(y, m - 1, d)`
 - 서버가 `2026-10-16T00:00:00Z` 같은 시각을 주면, 그 날짜를 **어느 시간대 기준으로 볼지 앱이 정해** `"YYYY-MM-DD"` 로 바꿔 넘깁니다
 - `today` 기본값은 기기의 오늘입니다. 서버 기준 날짜를 써야 하면 넘깁니다
-
-**Props** (`<div>` 속성 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string \| null` | - | 제어형: 고른 날 `"YYYY-MM-DD"`. 바깥에서 다른 달로 바뀌면 그 달을 보여 줍니다 (`month` 를 제어하면 그쪽이 정합니다) |
-| `defaultValue` | `string` | - | 비제어형: 처음 고른 날 |
-| `onValueChange` | `(value: string) => void` | - | 날을 고를 때 |
-| `month` | `string` | - | 제어형: 보이는 달 `"YYYY-MM"`. `min`/`max` 밖이면 범위 끝 달에 붙습니다 |
-| `defaultMonth` | `string` | 고른 날 → 오늘의 달 | 비제어형: 처음 보이는 달 |
-| `onMonthChange` | `(month: string) => void` | - | 보이는 달이 바뀔 때 (넘김 버튼 · PageUp/Down · 방향키로 달을 넘을 때) |
-| `min` / `max` | `string` | - | 고를 수 있는 첫날 / 마지막 날. 그 밖의 달로는 넘어가지 않습니다 |
-| `isDateDisabled` | `(date: string) => boolean` | - | 그 밖에 고를 수 없는 날 (휴일 · 마감) |
-| `today` | `string` | 기기의 오늘 | 오늘 표시(테두리 · `aria-current="date"`) 기준 |
-| `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | `0` | 주의 첫 요일 (0 일요일, 1 월요일) |
-| `renderDay` | `(date, { selected, today, disabled }) => ReactNode` | - | 날짜 칸 장식. 숫자 아래에 그려지고 보조기기에는 숨겨집니다 |
-| `describeDay` | `(date: string) => string \| undefined` | - | 날짜 이름 뒤에 붙일 설명 - 장식의 뜻을 스크린리더에 전합니다 |
-| `prevMonthLabel` / `nextMonthLabel` | `string` | `'이전 달'` / `'다음 달'` | 넘김 버튼 이름 (로케일 `datePicker.prevMonth` · `nextMonth`) |
 
 #### 접근성
 
@@ -1606,21 +1315,6 @@ import { DateRangePicker, Field } from '@bigtablet/design-system';
 </Field>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `DateRange` | - | `{ start?, end? }` (`"YYYY-MM-DD"`) |
-| `onValueChange` | `(value: DateRange) => void` | - | 범위 변경. **필수** |
-| `startLabel` | `string` | `'시작일'` | 시작일 묶음 라벨 |
-| `endLabel` | `string` | `'종료일'` | 종료일 묶음 라벨 |
-| `startYear` | `number` | `1950` | 연도 범위 시작 |
-| `endYear` | `number` | - | 미지정 시 현재 연도 + 10 |
-| `minDate` | `string` | - | 가장 이른 날짜 |
-| `selectableRange` | `'all' \| 'until-today'` | `'all'` | `until-today` 면 미래 차단 |
-| `disabled` | `boolean` | - | |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이깁니다 |
-| `clearable` | `boolean` | `false` | 날짜마다 지우기(×). 시작일을 지우면 종료일도 함께 비웁니다 |
-| `fullWidth` | `boolean` | `true` | |
-
 **거꾸로 된 범위를 만들 수 없습니다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
 시작일을 종료일보다 뒤로 옮기면 **종료일이 비워집니다**(`{ start, end: undefined }`). 조용히
 시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장됩니다.
@@ -1638,20 +1332,6 @@ import { Field, TimePicker } from '@bigtablet/design-system';
   <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
 </Field>
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | `"HH:mm"` (24시간) |
-| `onValueChange` | `(value: string) => void` | - | 선택 변경. **필수** |
-| `label` | `string` | - | 위에 표시할 라벨 |
-| `minuteStep` | `number` | `5` | 분 간격. 60 의 약수를 줍니다 |
-| `minTime` | `string` | - | 가장 이른 시각 (`"HH:mm"`) |
-| `maxTime` | `string` | - | 가장 늦은 시각 (`"HH:mm"`) |
-| `disabled` | `boolean` | - | |
-| `required` | `boolean` | `false` | 필수 입력. `Field` 안에서는 `Field` 의 `required` 가 이깁니다 |
-| `fullWidth` | `boolean` | `true` | |
-| `hourLabel` | `string` | `'시'` | |
-| `minuteLabel` | `string` | `'분'` | |
 
 `minTime`/`maxTime` 은 **시 목록까지** 좁힙니다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
 있고, 그때 분 목록이 비어 막힌 화면이 됩니다. 경계 시각에서는 분도 좁힙니다 — 최소가 09:30 이면
@@ -1694,18 +1374,6 @@ import { FileInput } from '@bigtablet/design-system';
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | `'파일 선택'` | 파일 선택 버튼 라벨 / `variant="preview"` 의 빈 상태 텍스트 |
-| `variant` | `'button' \| 'preview'` | `'button'` | 표시 형태. `preview` 는 큰 박스에 이미지를 채우는 단일 이미지 업로더 |
-| `previewSize` | `number` | `160` | `variant="preview"` 박스 한 변 크기 (px) |
-| `preview` | `boolean` | `false` | 이미지 선택 시 64×64 썸네일을 버튼 아래 나열 (`variant="button"` 전용) |
-| `supportingText` | `string` | - | 입력 아래 도움말 텍스트 |
-| `accept` | `string` | - | 허용 파일 타입 |
-| `onFiles` | `(files: FileList \| null) => void` | - | 파일 선택 핸들러. 미리보기 제거 시 `null` 로 호출 |
-| `multiple` | `boolean` | `false` | 다중 선택 (`variant="preview"` 는 항상 단일 이미지) |
-| `disabled` | `boolean` | `false` | 비활성화 |
-
 > 나머지 `input[type=file]` 네이티브 속성(`name`, `required`, `onChange` 등)은 그대로 전달됩니다. `onChange` 를 함께 넘기면 `onFiles` 뒤에 이어서 호출됩니다.
 
 ---
@@ -1724,29 +1392,6 @@ import { FileInput } from '@bigtablet/design-system';
 | 썸네일·커버 이미지의 정사각 영역 지정 | ✅ ImageCropper |
 | 자유 비율(16:9 등) 크롭 | ❌ 미지원 - 결과는 항상 정사각 |
 | 크롭 없이 단순 파일 선택 + 미리보기 | ❌ [FileInput](#fileinput) `variant="preview"` 권장 |
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `File \| Blob \| string` | required | 크롭할 이미지. 로컬 `File`/`Blob` 또는 이미지 URL |
-| `ref` | `Ref<ImageCropperHandle>` | - | `crop()` / `reset()` 을 호출할 imperative 핸들 (React 19 ref-as-prop) |
-| `outputSize` | `number` | `512` | 결과물 한 변 길이 (px) |
-| `outputType` | `'auto' \| 'image/jpeg' \| 'image/png' \| 'image/webp'` | `'auto'` | 결과 MIME. `auto` 는 PNG 만 PNG 로, 나머지는 JPEG |
-| `quality` | `number` | `0.92` | JPEG/WebP 인코딩 품질 (0~1) |
-| `circular` | `boolean` | `false` | 원형 가이드 (아바타용). false 면 둥근 사각형 |
-| `viewportSize` | `number` | `240` | 뷰포트 한 변 길이 (px) |
-| `minZoom` | `number` | `1` | 최소 배율 (1 = 이미지가 뷰포트를 딱 덮음) |
-| `maxZoom` | `number` | `3` | 최대 배율 |
-| `onReady` | `(size: CropImageSize) => void` | - | 이미지 로드 완료 콜백 |
-| `onError` | `() => void` | - | 이미지 디코딩 실패 콜백 (손상 파일 등) |
-| `label` | `string` | `'이미지 위치와 배율 조정'` | 뷰포트 접근성 레이블 |
-| `hint` | `string` | `'드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요.'` | 뷰포트 아래 조작 안내 문구 |
-| `zoomOutLabel` | `string` | `'축소'` | 축소 버튼 접근성 레이블 |
-| `zoomLabel` | `string` | `'배율'` | 배율 슬라이더 접근성 레이블 |
-| `zoomInLabel` | `string` | `'확대'` | 확대 버튼 접근성 레이블 |
-| `noPanHint` | `string` | `'이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.'` | 이동 여유가 없을 때 SR 안내 문구 |
-| `className` | `string` | - | 루트 요소에 추가할 className |
 
 > 루트는 표준 `div` 속성(`id` / `data-*` / `aria-*` / `style` 등)을 그대로 전달받습니다. 단 `onError` 는 이미지 디코드 실패 콜백으로 재정의되어 있고, `children` / `dangerouslySetInnerHTML` 은 루트가 항상 자체 자식을 렌더하므로 받지 않습니다.
 
@@ -1832,18 +1477,6 @@ const [code, setCode] = useState('');
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `length` | `4 \| 6` | `6` | OTP 자릿수 |
-| `value` | `string` | `''` | 제어형 값 (controlled 전용) |
-| `onValueChange` | `(value: string) => void` | - | 값 변경 콜백 (canonical) |
-| `error` | `boolean` | `false` | 에러 상태 |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `supportingText` | `string` | - | 하단 도움말 텍스트 |
-| `autoFocus` | `boolean` | `false` | 첫 번째 입력에 자동 포커스 |
-| `ariaLabel` | `string` | `'OTP 입력'` | 그룹 접근성 레이블 |
-| `className` | `string` | - | 루트 요소에 추가할 className |
-
 > **제어형 전용**: `value` + `onValueChange` 를 항상 함께 넘겨야 합니다 (비제어 모드 없음). 전체 코드를 한 번에 붙여넣거나 SMS 자동완성으로 받으면 각 자리에 자동 분배됩니다.
 
 ---
@@ -1894,22 +1527,6 @@ function YourComponent() {
   return <button onClick={handleDelete}>삭제</button>;
 }
 ```
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `tone` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 의미 색 |
-| `title` | `ReactNode` | - | 제목 |
-| `message` | `ReactNode` | - | 메시지 |
-| `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
-| `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
-| `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
-| `destructive` | `boolean` | `false` | 되돌릴 수 없는 확인 - 확인 버튼을 빨간 강조로, 첫 포커스는 취소 버튼 |
-| `showIcon` | `boolean` | `false` | `tone` 아이콘 표시 |
-| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭으로 닫기. destructive 확인처럼 실수 닫힘을 막으려면 `false` |
-| `actionsAlign` | `'left' \| 'center' \| 'right'` | `'right'` | 버튼 정렬 |
-| `onConfirm` | `() => unknown` | - | 확인 핸들러. Promise 를 돌려주면 끝날 때까지 열린 채 스피너 · 중복 클릭/취소/Escape 차단, 실패하면 열린 채 재시도 |
-| `onCancel` | `() => void` | - | 취소 핸들러 |
-| `confirmDisabled` | `boolean` | `false` | 확인 버튼 잠금 (`aria-disabled` - 포커스 유지, 클릭 · Enter 무시). 바꾸려면 핸들의 `update` |
 
 #### 확인 잠금 - 창 안 입력에 따라
 
@@ -2051,21 +1668,7 @@ toast.dismiss(id);
 | `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫습니다. 없는 id·퇴출 중인 id 는 무시 |
 | `update` | `(id, patch) => void` | `message`·`tone`·`duration`·`action` 을 바꿉니다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작합니다. `action: null` 이면 버튼을 뗍니다 |
 
-**`ToastOptions`**
-
-| 필드 | Type | Default | Description |
-|------|------|---------|-------------|
-| `duration` | `number` | `3000` | 자동 닫힘까지의 ms. **`Infinity`** 면 진행 바가 없고 닫기 버튼·`dismiss` 로만 닫힙니다 - 진행 토스트용 |
-| `action` | `{ label: string; onClick: () => void }` | - | 메시지 옆 텍스트 버튼. 누르면 `onClick` 뒤 토스트가 닫힙니다 |
-
 #### `ToastProvider` props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `maxCount` | `number` | `5` | 동시 표시 상한. 넘치면 가장 오래된 토스트가 **닫기 버튼과 같은 퇴출 모션**으로 나갑니다 - 즉시 잘라내지 않으므로 그 안에 있던 포커스도 인접 토스트로 넘어갑니다 |
-| `placement` | `"top-right" \| "bottom-right"` | `"bottom-right"` | 넓은 화면에서 뜨는 자리. 위는 머리 오른쪽 주 동작 버튼을 가려 아래가 기본입니다. 하단 고정 UI(쿠키 배너 등)와 겹치면 `"top-right"`. compact(600px 미만)는 값과 상관없이 아래쪽. 쌓이는 순서는 어느 자리든 최신이 위 (compact 와 같음). 화면 높이를 넘으면 목록 안에서 스크롤됩니다 |
-| `closeAriaLabel` | `string` | `'닫기'` | 각 토스트의 X 버튼 `aria-label` |
-| `regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`)의 접근성 이름. 스크린리더 리전 목록에 뜹니다 |
 
 > **다국어(ko/en) 앱은 두 값을 주입하세요.** DS 기본값은 한글입니다 — [MIGRATION.md](./MIGRATION.md#v3130-a11y-문자열-기본값-한글화) 참고.
 
@@ -2083,18 +1686,6 @@ toast.dismiss(id);
 | 잠깐 보였습니다 사라지는 결과 알림 | ❌ [Toast](#toast) |
 | 진행 전에 확인을 받아야 함 | ❌ [Alert](#alert) (`AlertProvider` modal) |
 | 화면·위젯 전체가 비었거나 로드 실패 | ❌ [EmptyState](#emptystate) / [ErrorState](#errorstate) |
-
-**Props** (`<div>` 속성 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tone` | `'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 톤 |
-| `title` | `ReactNode` | - | 굵은 한 줄 제목 |
-| `children` | `ReactNode` | - | 본문 설명 |
-| `icon` | `ReactNode` | 톤 기본 아이콘 | 앞 아이콘. `null` 이면 숨깁니다 |
-| `action` | `ReactNode` | - | 본문 아래 버튼·링크 |
-| `onDismiss` | `() => void` | - | 주면 닫기 버튼이 생깁니다. 실제로 지우는 건 부모(상태를 false 로) |
-| `dismissLabel` | `string` | `'알림 닫기'` | 닫기 버튼 접근성 이름 (로케일 `inlineAlert.dismiss`) |
 
 #### 접근성 - 정적 안내 vs 나중에 나타나는 알림
 
@@ -2148,11 +1739,6 @@ import { Spinner } from '@bigtablet/design-system';
 <Spinner size={48} /> // 큰 크기
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `number` | `24` | 스피너 크기 (px) |
-| `ariaLabel` | `string` | `'로딩 중'` | `role="status"` 의 접근성 이름 |
-
 > ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시키고 12개 bar 를 모두 50% 불투명도로 둡니다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춥니다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없습니다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
 
 ---
@@ -2175,14 +1761,6 @@ import { TopLoading } from '@bigtablet/design-system';
 <TopLoading isLoading={false} />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `isLoading` | `boolean` | `true` | 표시 여부 |
-| `progress` | `number` | - | 진행률 (0-100), 없으면 indeterminate |
-| `color` | `string` | primary | 로딩바 색상 |
-| `height` | `number` | `3` | 로딩바 높이 (px) |
-| `ariaLabel` | `string` | `'페이지 로딩 중'` | 접근성 라벨 |
-
 ---
 
 ### LinearProgress
@@ -2196,12 +1774,6 @@ import { LinearProgress } from '@bigtablet/design-system';
 // 완료 상태
 <LinearProgress totalSteps={10} currentStep={10} aria-label="업로드 진행률" />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `totalSteps` | `number` | required | 전체 단계 수 |
-| `currentStep` | `number` | required | 현재 단계 (0~totalSteps) |
-| `aria-label` | `string` | required | 접근성 라벨 (필수) |
 
 ---
 
@@ -2234,13 +1806,6 @@ import { Skeleton } from '@bigtablet/design-system';
 </Stack>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'text' \| 'title' \| 'avatar' \| 'rect'` | `'text'` | 스켈레톤 모양 |
-| `width` | `number \| string` | - | CSS width (`200` → `200px`, `'100%'`, `'16rem'`). `variant="avatar"` 는 height 미지정 시 width 와 동일하게 적용 |
-| `height` | `number \| string` | - | CSS height |
-| `radius` | `'sm' \| 'md' \| 'lg' \| 'full' \| string` | - | border-radius 토큰 또는 임의 CSS 값 |
-
 > 루트는 `div` 이고 `aria-hidden="true"` 가 자동으로 붙습니다 (스크린리더 노이즈 방지). 로딩 상태 자체를 알려야 하면 부모에 `aria-busy` / `role="status"` 를 직접 걸어라. `children` 은 받지 않으며, 그 외 `div` 속성은 그대로 전달됩니다.
 
 ---
@@ -2260,17 +1825,6 @@ const [page, setPage] = useState(1);
   onPageChange={setPage}
 />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `page` | `number` | required | 현재 페이지 |
-| `totalPages` | `number` | required | 전체 페이지 수 |
-| `onPageChange` | `(page: number) => void` | required | 페이지 변경 핸들러 |
-| `prevLabel` | `string` | `'이전 페이지'` | 이전 버튼 `aria-label` |
-| `nextLabel` | `string` | `'다음 페이지'` | 다음 버튼 `aria-label` |
-| `navLabel` | `string` | `'페이지 이동'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜹니다 |
-| `showPageJump` | `boolean` | `false` | 현재 쪽 칸을 입력칸으로 바꿉니다. 번호를 적고 Enter 로 이동하고, 범위 밖 값은 1 ~ 마지막 쪽으로 맞추며 숫자가 아니면 오류로 표시합니다. Esc·포커스 잃음은 현재 쪽으로 되돌립니다 |
-| `pageJumpLabel` | `string` | `'현재 {page}쪽 - 이동할 쪽 번호 (1–{totalPages})'` | 현재 쪽 입력칸 `aria-label` |
 
 쪽이 수백·수천 개인 목록(접속 기록 등)은 `…` 와 이전·다음만으로는 원하는 쪽에 닿을 수 없습니다 - `showPageJump` 를 켭니다.
 켜면 현재 쪽이 검정 채움 대신 **테두리 있는 입력칸**으로 보여 처음부터 "적는 곳" 으로 읽힙니다. 컨트롤이 늘지 않아 좁은
@@ -2313,36 +1867,6 @@ import { Tabs } from '@bigtablet/design-system';
 const [tab, setTab] = useState("overview");
 <Tabs value={tab} onValueChange={setTab}> ... </Tabs>
 ```
-
-**Tabs Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | 제어형: 현재 활성 tab의 value |
-| `defaultValue` | `string` | `''` | 비제어형: 초기 활성 tab의 value |
-| `onValueChange` | `(value: string) => void` | - | value 변경 콜백 |
-| `variant` | `'line' \| 'fills'` | `'line'` | 시각 스타일. line=하단 underline. `fills` 는 deprecated |
-| `size` | `'sm' \| 'md'` | `'md'` | 크기 (sm=32px min-height, md=40px) |
-
-**TabList Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `ariaLabel` | `string` | - | 스크린리더 라벨. 페이지에 Tabs가 여러 개면 권장 |
-
-**Tab Props** (`<button>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | required | 이 tab의 value (matching TabPanel의 value와 일치) |
-| `disabled` | `boolean` | `false` | 비활성화 (포커스 / 키보드 네비게이션 모두 스킵) |
-
-**TabPanel Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | required | 이 panel을 활성화할 tab의 value |
-| `unmountInactive` | `boolean` | `true` | 비활성 panel을 unmount. `false`면 `hidden` 속성으로 DOM 유지 (스크롤 위치/입력 보존이 필요할 때) |
 
 #### 접근성 (WAI-ARIA Tabs 패턴)
 
@@ -2457,38 +1981,6 @@ Admin/dashboard 좌측 메인 네비게이션. **표면 배경(`$color_bg_solid`
 - 아이콘만 가운데 정렬로 표시. 아이콘 없이 문자열 라벨만 있는 아이템은 라벨 첫 글자(`sidebar_item_initial`)를 아이콘 자리에 보여 줍니다
 - `collapsible` 이면 접기 버튼(`button.sidebar_collapse_btn`, `aria-expanded`)이 헤더(로고) 가운데 줄(`--bt-sidebar-header-center`)에 맞춰 우측 가장자리에 반쯤 걸쳐 놓입니다
 - 너비 변화엔 200ms `transition_base` 애니메이션
-
-**Sidebar Props** (`<aside>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `header` | `ReactNode` | - | 상단 brand/로고 영역 (border-bottom 자동) |
-| `footer` | `ReactNode` | - | 하단 영역 (border-top 자동) - 사용자 프로필/설정/로그아웃 |
-| `collapsed` | `boolean` | `false` | 축소 모드. 너비가 줄고 label 숨김 |
-| `defaultCollapsed` | `boolean` | `false` | 비제어 초기값 - `collapsed` 를 주지 않을 때 |
-| `onCollapsedChange` | `(collapsed: boolean) => void` | - | 축소 상태가 바뀔 때 (제어 · 비제어 모두) |
-| `collapsible` | `boolean` | `true` | 내장 축소 토글 버튼 표시 |
-| `toggleLabel` | `string` | `'사이드바 토글'` | 토글 버튼 이름 |
-| `headerCollapsed` | `ReactNode` | - | 축소 상태 헤더(보통 파비콘). 없으면 `header` 를 그대로 씁니다 |
-| `width` | `number` | `240` | 펼쳤을 때 너비 (px) |
-| `collapsedWidth` | `number` | `64` | 접혔을 때 너비 (px) |
-| `mode` | `'auto' \| 'static'` | `'auto'` | 반응형 모드. `auto` = `< 600px` 에서 하단 bar 로 변신 / `static` = 항상 좌측 rail |
-
-**SidebarItem Props** (`<button>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icon` | `ReactNode` | - | 왼쪽 아이콘 (collapsed 모드의 시각 단서). 없으면 접혔을 때 라벨 첫 글자를 보여 줍니다 |
-| `active` | `boolean` | `false` | 현재 활성 상태 (`aria-current="page"` 자동) |
-| `trailing` | `ReactNode` | - | 오른쪽 trailing - Badge, count, 화살표 등 |
-| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
-
-**SidebarSection Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | - | 섹션 라벨 (uppercase 표시, collapsed에선 자동 숨김) |
 
 #### 접근성
 
@@ -2611,26 +2103,6 @@ import Link from "next/link";
 >
 > `Toast` 는 모바일에서 이 값을 이미 반영합니다 - 앱이 `.toast_container` 를 보정하던 CSS 는 지우면 됩니다.
 
-**Props - BottomNav**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `ariaLabel` | `string` | `"주요 메뉴"` | `<nav>` 스크린 리더 레이블 |
-| `children` | `ReactNode` | - | 2-5 `BottomNavItem` |
-| `...rest` | `HTMLAttributes<HTMLElement>` | - | |
-
-**Props - BottomNavItem**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icon` | `ReactNode` | - | 아이콘 (필수) |
-| `label` | `string` | - | 라벨 (필수, 짧게 2-4자) |
-| `active` | `boolean` | `false` | 활성 상태 (`aria-current="page"` 자동) |
-| `badge` | `ReactNode` | - | 아이콘 우상단 dot/카운트 (`Badge` 등) |
-| `disabled` | `boolean` | `false` | 비활성 (anchor 는 `aria-disabled`+`tabIndex=-1`) |
-| `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
-| `href` | `string` | - | 링크 URL. `as` 없이 이것만 줘도 anchor. `as='a'` 면 필수 |
-
 #### 접근성
 
 - `<nav>` + `aria-label`, active item `aria-current="page"` 자동
@@ -2688,27 +2160,6 @@ function App() {
 
 - `sticky={true}`: `position: sticky; top: 0` + `z-index: $z_level3`
 - 스크롤 시 항상 상단 고정. transparent variant와 함께 쓸 때는 스크롤하면서 배경 색을 바꾸는 패턴이 흔함 (외부에서 조건부 variant 전환)
-
-**NavBar Props** (`<header>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `brand` | `ReactNode` | - | 왼쪽 brand/로고 영역 |
-| `searchSlot` | `ReactNode` | - | 중앙 · 우측 검색 영역 (TextField 등) |
-| `actions` | `ReactNode` | - | 오른쪽 액션 영역 (Button, IconButton 등) |
-| `locale` | `{ current, options, onValueChange?, hideLabel?, ariaLabel? }` | - | 언어 셀렉터 (Globe 아이콘 + 드롭다운) |
-| `profile` | `ReactNode` | - | 맨 오른쪽 프로필 영역 (Avatar 등) |
-| `divider` | `boolean` | `true` | `profile` 이 있을 때 actions · locale 과 profile 사이 세로선 |
-| `variant` | `'default' \| 'transparent' \| 'accent'` | `'default'` | 흰 bg / 투명(Hero 위) / 검정 bg |
-| `layout` | `'contained' \| 'fluid'` | `'contained'` | `contained` = 최대 1200px 가운데(마케팅), `fluid` = 전체 폭(어드민 · 대시보드) |
-| `sticky` | `boolean` | `false` | 스크롤 시 상단 고정 |
-
-**NavLink Props** (`<a>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `active` | `boolean` | `false` | 현재 활성 페이지 (`aria-current="page"` 자동) |
-| `href` | `string` | - | 링크 URL |
 
 #### 접근성
 
@@ -2800,23 +2251,6 @@ import { NavBar, NavLink, Button } from "@bigtablet/design-system";
   - `href`가 있으면 → `<a>`로 렌더 (페이지 이동)
   - `href` 없이 `onClick`만 있으면 → `<button>`로 렌더 (SPA 라우터 등)
   - 둘 다 없으면 → `<button>` (no-op)
-
-**Breadcrumb Props** (`<nav>` 속성 모두 상속)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `BreadcrumbItem[]` | required | 경로 아이템 배열. 마지막은 현재 페이지로 자동 처리 |
-| `separator` | `ReactNode` | `<ChevronRight size={14} />` | 아이템 사이 구분자. `/`, `>`, 커스텀 아이콘 등 가능 |
-| `navLabel` | `string` | `'현재 위치'` | `<nav>` 랜드마크 이름. 스크린리더 리전 목록에 뜹니다 |
-
-**BreadcrumbItem**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `label` | `ReactNode` | 표시 텍스트 (또는 아이콘+텍스트) |
-| `href` | `string` | 클릭 시 이동할 URL. 있으면 `<a>` 렌더 |
-| `onClick` | `(e) => void` | 클릭 콜백. `href` 없이 사용하면 `<button>` 렌더 (SPA 라우터 호출 등) |
-| `as` | `ElementType` | `href` 항목을 렌더할 요소. 라우터 `Link` 를 끼울 때 씁니다 (마지막 항목·`href` 없는 항목에는 적용 안 됨) |
 
 라우터 링크가 필요하면 `onClick` 우회 대신 `as` 를 씁니다 - `preventDefault` + `push` 로는
 수정자 클릭(`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽고, 프리페치·이동 가드처럼 `Link` 만 아는
@@ -2930,23 +2364,6 @@ import { Stepper } from '@bigtablet/design-system';
 - `onStepClick` 을 주면 **지나간 단계만** 눌러 되돌아갈 수 있습니다. 앞으로 건너뛰면 그 사이 폼 검증을 우회하므로 막혀 있고, 앞으로 가는 길은 화면의 "다음" 버튼이 맡습니다. 누를 수 없는 단계도 `<button>`(`aria-disabled`)이라 되돌아간 순간 포커스가 사라지지 않습니다
 - 연결선은 마지막 단계에서 끊깁니다. `isLast` 계산은 소비자 몫이 아닙니다
 
-**Stepper Props** (`<ol>` 속성 상속, `onClick` 제외)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `steps` | `StepperStep[]` | required | 순서대로 |
-| `current` | `number` | required | 현재 단계 인덱스 (0-based) |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 배치 방향. 세로는 좁은 패널이나 설명이 긴 단계에 |
-| `onStepClick` | `(index: number, step: StepperStep) => void` | - | 지나간 단계를 눌렀을 때. 주면 모든 단계가 버튼이 되고 지나간 단계만 눌립니다 |
-
-**StepperStep**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `id` | `string \| number` | 목록 키 |
-| `label` | `ReactNode` | 단계 이름. **인라인 내용만** - 클릭 가능한 단계는 `<button>` 안에 그려집니다 |
-| `description` | `ReactNode` | 이름 아래 짧은 설명. 인라인 내용만 |
-
 > 숨김 상태 텍스트("완료"·"현재 단계")는 [LocaleProvider](#localeprovider) 의 `stepper.done`·`stepper.current` 로 바꿉니다.
 
 ---
@@ -2983,23 +2400,6 @@ const [isOpen, setIsOpen] = useState(false);
   <p>모달 내용입니다.</p>
 </Modal>
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | required | 열림 상태 |
-| `onClose` | `() => void` | - | 닫기 핸들러 |
-| `title` | `ReactNode` | - | 제목 |
-| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
-| `description` | `ReactNode` | - | 제목 아래 설명 |
-| `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 영역 자체가 없음 |
-| `footerAlign` | `'end' \| 'between' \| 'start'` | `'end'` | footer 정렬. `between` 은 좌우 분리(destructive 패턴) |
-| `width` | `number \| string` | `480` | 모달 너비 |
-| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
-| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이깁니다 |
-| `showCloseIcon` | `boolean` | `true` | 우상단 X 버튼 표시 |
-| `closeLabel` | `string` | `'닫기'` | X 버튼 `aria-label` |
-| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
-| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어집니다 |
 
 #### 접근성 이름은 필수입니다
 
@@ -3103,23 +2503,6 @@ const [isOpen, setIsOpen] = useState(false);
 </Drawer>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | required | 열림 상태 |
-| `onClose` | `() => void` | - | 닫기 핸들러 |
-| `placement` | `'left' \| 'right' \| 'bottom'` | `'right'` | 슬라이드 방향 |
-| `size` | `number \| string` | `360` | 패널 크기 - left/right 는 너비, bottom 은 높이 (number ⇒ px) |
-| `title` | `ReactNode` | - | 헤더 제목 (있으면 `aria-labelledby` 자동 연결) |
-| `onExited` | `() => void` | - | 퇴출 애니메이션이 끝나 패널이 언마운트된 뒤 호출 |
-| `footer` | `ReactNode` | - | 하단 액션 영역. 미지정 시 footer 영역 미표시 |
-| `closeOnOverlay` | `boolean` | `true` | 오버레이 클릭 시 닫기 |
-| `dismissible` | `boolean` | - | Escape + 오버레이를 한 축으로. 주면 `closeOnOverlay` 를 이깁니다 |
-| `showCloseIcon` | `boolean` | `true` | 우상단 X 닫기 아이콘 표시 |
-| `closeLabel` | `string` | `'닫기'` | X 닫기 버튼 접근성 레이블 |
-| `ariaLabel` | `string` | - | `title` 이 없을 때의 접근성 이름 |
-| `initialFocusRef` | `RefObject<HTMLElement \| null>` | - | 열릴 때 포커스를 둘 요소. 패널 안에 있어야 하고, 없으면 기본 순서로 떨어집니다 |
-| `disableAnimation` | `boolean` | `false` | 슬라이드·페이드 모션을 끄고 즉시 열고 닫습니다. OS reduced-motion 은 이 값과 상관없이 항상 모션을 끕니다 |
-
 > 방향별 슬라이드 진입/퇴출은 CSS transition(`@starting-style` · `data-state`)으로 처리하며 `prefers-reduced-motion: reduce` 시 즉시 표시됩니다. `placement="top"` 과 배경 상호작용(non-modal) 변형은 현재 범위 밖.
 
 **계약은 Modal 과 같습니다** — 아래 네 가지는 [Modal](#modal) 절의 설명과 동일하게 적용됩니다.
@@ -3192,16 +2575,6 @@ hover/focus 시 보조 설명을 띄우는 비차단 오버레이. **아이콘 �
 - 200ms (기본) - 마우스가 잠깐 머무를 때만 노출, 빠른 휙휙 이동에는 안 뜸
 - 0~100ms - 즉시 노출이 필요한 키오스크/접근성 케이스
 - 500ms+ - 자주 hover되는 영역 (테이블 row 등)에서 시각 노이즈 줄이기
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `content` | `ReactNode` | required | 툴팁 콘텐츠 (짧은 텍스트 권장, 최대폭 240px에서 줄바꿈) |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | 트리거 기준 위치 |
-| `delay` | `number` | `200` | hover/focus 후 표시 지연 (ms) |
-| `disabled` | `boolean` | `false` | 비활성화 - children만 그대로 렌더, 툴팁/이벤트 핸들러 모두 미장착 |
-| `children` | `ReactElement` | required | trigger 요소 (단일 ReactElement) |
 
 > ⚠️ `children`은 **반드시 단일 ReactElement**여야 합니다 (`React.cloneElement`로 핸들러 주입). Fragment, 문자열, 배열은 동작하지 않음. trigger가 `<button disabled>`라도 wrapper span에 hover가 잡혀 정상 동작.
 
@@ -3323,25 +2696,6 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 - `IconButton` + `MoreVertical` (케밥) - 행/카드의 잠재 액션 모음
 - `Button` + 캐럿 아이콘 - 명시적인 액션 그룹 (`Actions ▾`)
 - 일반 텍스트 / 링크는 비권장 (어포던스 부족)
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `MenuItem[]` | required | 메뉴 아이템 배열 |
-| `trigger` | `ReactElement` | required | 클릭 시 메뉴를 토글하는 trigger (단일 ReactElement) |
-| `align` | `'start' \| 'end'` | `'start'` | trigger 기준 메뉴 정렬 |
-
-**MenuItem**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `key` | `string` | 고유 key (React list key + 내부 식별자) |
-| `label` | `ReactNode` | 표시 텍스트 (긴 경우 ellipsis 처리) |
-| `icon` | `ReactNode` | 왼쪽 leading icon (선택) |
-| `onSelect` | `() => void` | 클릭 시 호출 - 호출 후 자동으로 메뉴 닫힘 |
-| `destructive` | `boolean` | 빨간 텍스트로 destructive 액션 강조 (삭제/탈퇴 등) |
-| `disabled` | `boolean` | 비활성 - 클릭/포커스 불가, opacity 38% |
 
 > ⚠️ `trigger`는 **반드시 단일 ReactElement**. `cloneElement`로 `onClick`/`aria-*` 주입.
 
@@ -3480,20 +2834,6 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - 비제어 (기본) - `defaultOpen`만 주고 내부 state로 토글. 가장 간단.
 - 제어 - `open` + `onOpenChange`로 외부 state가 소유. 외부 버튼/로직과 연동하거나 닫힘 시점을 직접 제어할 때.
 
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `trigger` | `ReactElement` | required | 클릭 시 팝오버를 토글하는 trigger (단일 ReactElement) |
-| `content` | `ReactNode` | required | 팝오버 내부 콘텐츠 (임의 interactive 노드) |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | trigger 기준 위치 |
-| `open` | `boolean` | - | 제어 모드 열림 상태 (주면 비제어 state 무시) |
-| `defaultOpen` | `boolean` | `false` | 비제어 모드 초기 열림 상태 |
-| `onOpenChange` | `(open: boolean) => void` | - | 열림 상태 변경 콜백 |
-| `aria-label` | `string` | - | dialog 접근성 라벨 (content에 제목 없으면 권장) |
-| `aria-labelledby` | `string` | - | dialog 접근성 라벨 요소 id |
-| `className` | `string` | - | 팝오버 패널에 추가 |
-
 > ⚠️ `trigger`는 **반드시 단일 ReactElement**. `cloneElement`로 `onClick`/`aria-*` 주입 (trigger의 기존 `onClick`은 보존). trigger 컴포넌트는 props를 forward해야 합니다 (`<button {...props}>`).
 
 #### 접근성 (WAI-ARIA non-modal dialog)
@@ -3611,18 +2951,6 @@ import { Card, Button } from '@bigtablet/design-system';
 </Card>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `heading` | `ReactNode` | - | 카드 제목 (header) |
-| `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
-| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline'` | `'default'` | accent=accent 표면(라이트 검정 · 다크 흰색) + 반전 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시) |
-| `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
-| `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
-| `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
-| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (outline/glass 는 자체 처리) |
-| `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | 내부 여백 |
-| `bordered` | `boolean` | `false` | 테두리 표시 |
-
 > ℹ️ `interactive` 는 hover-lift **시각 효과만** 제공합니다 (MediaCard `clickable` 과 동일 범위). 조작은 `onClick` 으로 붙입니다 - `onClick` 을 주면 카드가 `role="button"` + 탭 정지가 되고 Enter·Space 로도 눌립니다(WCAG 2.1.1). `onClick` 이 없으면 탭 순서에 들어가지 않습니다. `ListItem` 과 같은 규칙입니다. **`onClick` 을 줄 때는 `interactive`(MediaCard 는 `clickable`)도 함께 켜라** - 안 켜면 키보드·스크린리더에는 버튼인데 마우스 사용자에게는 눌린다는 단서가 전혀 없는 카드가 됩니다. 카드 **안에** 링크나 버튼을 또 두면 조작 표면이 겹치므로, 그때는 카드에 `onClick` 을 주지 말고 안쪽 요소에 연결하라. `glass` 는 흰 배경 라이트 모드에서는 약하게 보이므로 컬러/이미지 배경 위에 사용합니다.
 
 ---
@@ -3639,15 +2967,6 @@ import { Card, Stat } from '@bigtablet/design-system';
   <Stat label="오늘 매출" value="₩1,284,000" delta="+12%" deltaTone="positive" />
 </Card>
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `ReactNode` | - | 지표 이름. **필수** |
-| `value` | `ReactNode` | - | 지표 값. **필수** |
-| `delta` | `ReactNode` | - | 값 아래 변화량 |
-| `deltaTone` | `'positive' \| 'negative' \| 'neutral'` | `'neutral'` | 변화량 색 |
-| `icon` | `ReactNode` | - | 라벨 왼쪽 장식 아이콘 |
-| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref |
 
 **값은 `tabular-nums` 입니다.** 비례 숫자는 자릿수마다 폭이 달라 값이 갱신될 때 숫자가 좌우로
 흔들리고, 여러 지표를 나란히 두면 자리가 맞지 않습니다. 화면마다 정하게 두면 대부분 빠집니다.
@@ -3673,13 +2992,6 @@ import { DescriptionList } from '@bigtablet/design-system';
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `DescriptionListItem[]` | - | 이름·값 쌍. **필수** |
-| `layout` | `'row' \| 'stack'` | `'row'` | `row` 는 이름 왼쪽·값 오른쪽, `stack` 은 이름 위 |
-| `divided` | `boolean` | `false` | 항목 사이 구분선 |
-| `ref` | `React.Ref<HTMLDListElement>` | - | 루트 요소 ref |
-
 `DescriptionListItem` — `{ label, value, full? }`. `full: true` 면 값이 한 줄을 다 씁니다
 (주소·메모).
 
@@ -3704,11 +3016,6 @@ import { Timeline } from '@bigtablet/design-system';
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `TimelineItem[]` | - | 위에서 아래로 흐르는 순서. **필수** |
-| `ref` | `React.Ref<HTMLOListElement>` | - | 루트 요소 ref |
-
 `TimelineItem` — `{ id, title, time?, description?, status?, icon?, children? }`.
 `status` 는 `'done' \| 'active' \| 'pending'` (기본 `pending`). `icon` 이 없어도 상태가 **모양**으로
 갈립니다 — `done` 은 체크, `active` 는 꽉 찬 점, `pending` 은 빈 원. 배경색만 다르면 색을 구분하지
@@ -3730,10 +3037,6 @@ import { Divider } from '@bigtablet/design-system';
 // 굵은 구분선
 <Divider weight="heavy" />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `weight` | `'standard' \| 'heavy'` | `'standard'` | 구분선 두께 |
 
 ---
 
@@ -3767,19 +3070,6 @@ import { User, MoreVertical } from 'lucide-react';
   supportingText={<span>자세히는 <a href="/changelog">체인지로그</a></span>}
 />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `ReactNode` | required | 주요 텍스트 (string 또는 노드 - `<strong>`/`<a>`/`Badge` 인라인 가능) |
-| `overline` | `ReactNode` | - | 상단 오버라인 (string·노드) |
-| `supportingText` | `ReactNode` | - | 보조 텍스트 (string·노드) |
-| `metadata` | `ReactNode` | - | 메타데이터 (string·노드) |
-| `leadingElement` | `ReactNode` | - | 왼쪽 요소 |
-| `trailingElement` | `ReactNode` | - | 오른쪽 요소 |
-| `alignment` | `'top' \| 'middle'` | 자동 | 요소 정렬. 주지 않으면 `label` 만 있는 한 줄 항목은 `'middle'`, 그 밖은 `'top'` |
-| `selected` | `boolean` | - | 선택 상태. `onClick` 이 있으면 `aria-pressed` 로 노출됩니다 |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `onClick` | `(event) => void` | - | 클릭 핸들러. 안쪽 버튼(`trailingElement` 등)의 클릭 · 키 입력은 행 클릭으로 올라오지 않습니다 |
 
 ---
 
@@ -3820,17 +3110,6 @@ import { User, MoreVertical } from 'lucide-react';
 
 - `circle` (기본) - 사람 프로필. 거의 모든 케이스
 - `square` - 브랜드 로고, 조직/팀 아바타 (회사처럼 느껴짐)
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `string` | - | 이미지 URL. 로드 실패 시 자동으로 initials fallback |
-| `name` | `string` | `''` | 이미지 `alt` + initials 추출 소스. **항상 의미있는 값 권장** |
-| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 크기 |
-| `shape` | `'circle' \| 'square'` | `'circle'` | 모양 |
-| `bgColor` | `string` | `accent-default` (라이트 검정 · 다크 흰색) | initials fallback 배경색 (CSS color string) |
-| `...rest` | `HTMLAttributes<HTMLSpanElement>` | - | `onClick`, `style`, `data-*` 등 |
 
 #### 접근성
 
@@ -3939,19 +3218,6 @@ import { Avatar } from "@bigtablet/design-system";
 | `warning` | status.warning | 경고 |
 | `error` | status.error | 에러/긴급 알림 (배지 카운트의 기본 컬러) |
 
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tone` | `'accent' \| 'neutral' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'accent'` | 의미 색 |
-| `shape` | `'dot' \| 'count' \| 'label'` | `'label'` | 모양 |
-| `appearance` | `'solid' \| 'soft'` | `'solid'` | 시각 강도. `soft` = 옅은 배경 + 진한 글자 (차분한 정보 라벨) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | `sm` 아이콘 위 알림 · 모바일, `md` 일반, `lg` Hero 위 강조 |
-| `count` | `number` | - | shape=`count`일 때 표시 숫자. undefined면 빈 상태 |
-| `max` | `number` | `99` | count 최댓값. 초과 시 `${max}+`로 표시 |
-| `children` | `ReactNode` | - | shape=`label`일 때 라벨 텍스트 |
-| `...rest` | `HTMLAttributes<HTMLSpanElement>` | - | `aria-label`, `role`, `style` 등 |
-
 #### 접근성
 
 - Badge는 시멘틱 없는 `<span>`이라, **스크린리더에게 의미를 전달하려면 직접 `aria-label`을 넣어야 합니다**
@@ -4038,21 +3304,6 @@ import { Chip } from '@bigtablet/design-system';
 <Chip type="static" tone="info" label="베타" removable onRemove={() => {}} />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `'basic' \| 'input' \| 'filter' \| 'static'` | `'basic'` | 칩 유형. `static`은 v3.0+에서 비인터랙티브 라벨 (구 Tag 대체) |
-| `size` | `'sm' \| 'md'` | - | 칩 크기 (미지정 시 32px) |
-| `tone` | `'neutral' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'error'` | `'neutral'` | 의미 색 (type=`static`에서만 적용) |
-| `label` | `string` | required | 라벨 텍스트 |
-| `selected` | `boolean` | - | 선택 상태 |
-| `removable` | `boolean` | - | 삭제 가능 여부 (input / static 타입) |
-| `leadingIcon` | `ReactNode` | - | 왼쪽 아이콘 (static 타입) |
-| `open` | `boolean` | - | 팝업 열림 (filter 타입에서 aria-expanded로 사용) |
-| `disabled` | `boolean` | `false` | 비활성화 |
-| `onClick` | `(event) => void` | - | 클릭 핸들러 |
-| `onRemove` | `() => void` | - | 삭제 핸들러 |
-| `removeLabel` | `string` | `'{label} 제거'` | 삭제 버튼 이름 - 칩이 여러 개일 때 대상을 구분합니다 |
-
 > **v3.0 변경**: 기존 별도 `Tag` 컴포넌트가 `Chip`의 `type="static"`으로 흡수되었습니다. 카테고리/상태 표시는 `<Chip type="static" tone="..." />`로 마이그레이션하세요.
 
 ---
@@ -4114,32 +3365,6 @@ auto =
 ```
 
 배경/오버레이 조합이 특이하면 `textColor="inverse"` 또는 `"default"`로 명시하세요.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `height` | `'sm' \| 'md' \| 'lg' \| 'full'` | `'md'` | 높이 (위 표 참고) |
-| `align` | `'left' \| 'center' \| 'right'` | `'left'` | 텍스트 + CTA 정렬 |
-| `backgroundImage` | `string` | - | 배경 이미지 URL - `background-image: url(...)` |
-| `backgroundColor` | `string` | - | 배경색 (이미지 위에 함께 적용 가능) |
-| `overlay` | `boolean \| 'dark' \| 'light'` | - | 오버레이 그라데이션 |
-| `title` | `ReactNode` | - | **h1** 메인 제목 (display.small.medium) |
-| `subtitle` | `ReactNode` | - | 부제목 (body.large, max-width 640) |
-| `eyebrow` | `ReactNode` | - | 제목 위 카테고리/태그 (uppercase, tight letter-spacing) |
-| `textColor` | `'auto' \| 'inverse' \| 'default'` | `'auto'` | auto는 overlay 기반 자동 결정 |
-| `primaryAction` | `HeroAction` | - | Primary CTA (Button filled size lg) |
-| `secondaryAction` | `HeroAction` | - | Secondary CTA (Button outline size lg) |
-| `children` | `ReactNode` | - | 추가 액션 - `primaryAction`/`secondaryAction` 외 자유 슬롯 |
-| `...rest` | `HTMLAttributes<HTMLElement>` | - | `<section>`에 전달 |
-
-**HeroAction**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `label` | `ReactNode` | 버튼 라벨 |
-| `onClick` | `() => void` | 클릭 핸들러 |
-| `href` | `string` | 주면 버튼을 링크(`<Button as="a" href>`)로 렌더합니다 - 새 탭 열기 · 링크 안내가 그대로 동작합니다. `onClick` 도 함께 걸립니다 |
 
 #### 접근성
 
@@ -4266,23 +3491,6 @@ import { BalancedText } from "@bigtablet/design-system/text";
 - `top`/`left`에서는 `image_wrap`에 적용 (이미지만 비율 유지)
 - `overlay`에서는 **카드 자체**에 적용 (텍스트가 이미지 위에 얹히기 때문)
 - 미지정 시: `top`은 16/9, `overlay`는 4/3, `left`는 비율 없이 width 40% (모바일에서만 16/9)
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `image` | `{ src: string; alt: string }` | **required** | 이미지 정보. `alt=""`는 장식 이미지로 처리됨 |
-| `imagePosition` | `'top' \| 'left' \| 'overlay'` | `'top'` | 이미지 위치 |
-| `aspectRatio` | `string` | - | CSS aspect-ratio 값 (예: `'16/9'`, `'4/3'`, `'1/1'`) |
-| `heading` | `ReactNode` | - | 카드 제목 |
-| `headingAs` | `'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 제목 시멘틱 태그. 페이지 위계에 맞게 선택 |
-| `eyebrow` | `ReactNode` | - | 제목 위 작은 라벨/카테고리 (uppercase) |
-| `meta` | `ReactNode` | - | 본문 아래 메타 (날짜/조회수/작성자) |
-| `shadow` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'sm'` | 그림자 (token.elevation_level1-3 매핑) |
-| `bordered` | `boolean` | `false` | 1px 보더 표시 |
-| `clickable` | `boolean` | `false` | hover lift + cursor pointer |
-| `children` | `ReactNode` | - | 본문 (요약/설명) |
-| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `onClick`, `role`, `aria-*` 등 |
 
 #### 접근성
 
@@ -4461,18 +3669,6 @@ action={
 }
 ```
 
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `illustration` | `ReactNode` | - | 일러스트 영역 (Lucide 아이콘, SVG, 이미지). **장식 전용** - 내부에 `aria-hidden="true"` 자동 적용 |
-| `title` | `ReactNode` | - | 제목 (h3) |
-| `description` | `ReactNode` | - | 보조 설명 (p, max-width 480) |
-| `action` | `ReactNode` | - | 액션 영역 (Button 등) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 크기 |
-| `fillHeight` | `boolean` | `false` | 부모 높이를 채우고 세로 중앙 정렬 (`flex: 1` + `justify-content: center`) |
-| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `role`, `aria-*` 등 |
-
 #### 접근성
 
 - 루트는 `<div>` - 의미 부여가 필요하면 `role="status"` (라이브 영역) 추가 고려
@@ -4583,17 +3779,6 @@ import { Inbox, Search } from "lucide-react";
 
 > **`icon` 은 장식 전용입니다.** 래퍼의 `aria-hidden="true"` 는 필수입니다 - 기본 아이콘이 이름 없는 bare lucide svg 라서 래퍼를 빼면 `role="alert"` 이 이름 없는 그래픽까지 읽습니다. 포커스 가능한 요소는 `action` 슬롯으로 (WCAG 4.1.2). `EmptyState.illustration` 과 같은 계약입니다.
 
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `ReactNode` | `"문제가 발생했습니다"` | 제목 (h3) |
-| `description` | `ReactNode` | - | 보조 설명 |
-| `icon` | `ReactNode` | 경고 아이콘 | 아이콘/일러스트. lucide 아이콘은 variant 에 맞는 원형 배지(`status-error-container`)에 올라가고 크기가 고정됩니다. 이미지·직접 그린 svg 는 그대로. **장식 전용** - `aria-hidden="true"` 래퍼 적용. `null` 로 숨김 |
-| `action` | `ReactNode` | - | 액션 영역 (재시도 버튼 등) |
-| `variant` | `'page' \| 'widget'` | `'page'` | 레이아웃 모드 |
-| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | `aria-*` 등 |
-
 #### 접근성
 
 - 루트 `role="alert"` 자동 - 에러 발생 시 스크린 리더가 즉시 announce
@@ -4660,26 +3845,6 @@ import { Accordion } from '@bigtablet/design-system';
 const [open, setOpen] = useState<string[]>(["q1"]);
 <Accordion items={faq} openKeys={open} onValueChange={setOpen} />
 ```
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `AccordionItem[]` | required | 아이템 목록 |
-| `multiple` | `boolean` | `false` | 여러 개 동시에 펼침 허용 |
-| `defaultOpenKeys` | `string[]` | `[]` | 비제어형 초기 펼침 키 |
-| `openKeys` | `string[]` | - | 제어형 펼침 키 (`onValueChange`와 함께 사용) |
-| `onValueChange` | `(openKeys: string[]) => void` | - | 펼침/접힘 콜백 |
-| `headingAs` | `'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 항목 헤더의 헤딩 태그 - 페이지 헤딩 구조에 맞춥니다 |
-
-**AccordionItem**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `key` | `string` | 고유 key |
-| `title` | `ReactNode` | 헤더 텍스트 |
-| `content` | `ReactNode` | 펼쳤을 때 본문 |
-| `disabled` | `boolean` | 비활성화 - trigger 클릭 / 키보드 활성화 차단 |
 
 #### 접근성 (WAI-ARIA Disclosure pattern)
 
@@ -4755,12 +3920,6 @@ import ReactMarkdown from 'react-markdown';
 </Prose>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `'md' \| 'lg'` | `'md'` | 본문 스케일 |
-| `ref` | `Ref<HTMLDivElement>` | - | 루트 `div` ref (React 19 ref-as-prop) |
-| `...rest` | `HTMLAttributes<HTMLDivElement>` | - | 루트 `div` 로 전달 |
-
 #### `size` 선택
 
 `size` 는 **본문과 제목을 함께** 한 단계 올립니다.
@@ -4831,56 +3990,6 @@ WCAG 1.4.1(Use of Color)상 색만으로 구분하는 것도 **링크와 주변 
  로딩 중에는 헤더를 유지한 채 바디만 [Skeleton](#skeleton) 행으로 대체하고, 정렬·행 선택·행 클릭을 지원합니다.
 
 > DS 는 데이터를 **직접 정렬하지 않습니다**. `sortable` 헤더 클릭 시 `onSortChange` 만 발화하므로, 소비자가 정렬된 `data` 를 다시 내려줘야 합니다.
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `columns` | `TableColumn<T>[]` | required | 컬럼 정의 |
-| `data` | `T[]` | required | 표시할 데이터 배열 |
-| `keyExtractor` | `(item: T, index: number) => string \| number` | required | 행의 고유 key 추출 함수 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 테이블 크기 |
-| `emptyMessage` | `ReactNode` | `'데이터가 없습니다'` | 데이터가 없을 때 표시 |
-| `isLoading` | `boolean` | `false` | 로딩 상태 - 헤더 유지, 바디만 스켈레톤 |
-| `skeletonRows` | `number` | `5` | 로딩 시 스켈레톤 행 개수 |
-| `hoverable` | `boolean` | `true` | 행 hover 강조 |
-| `stickyHeader` | `boolean` | `false` | thead sticky 고정. **표를 감싼 요소에 확정된 높이**(`height: 240px` 등)를 줘야 동작합니다 - 표 래퍼가 그 높이를 물려받아 스스로 스크롤 컨테이너가 됩니다. 높이가 확정이 아니면(`max-height` 만, 또는 페이지 전체 스크롤) 아무 일도 하지 않습니다 |
-| `layout` | `'auto' \| 'fixed'` | `'auto'` | 열 너비 계산. `fixed` 면 열 `width` 를 그대로 써서 쪽을 넘겨도 열 위치가 같습니다 - 너비 없는 열이 남는 폭을 나눠 가지며 줄바꿈 |
-| `minWidth` | `string` | - | 표 최소 폭(예: `"60rem"`, `layout` 과 상관없이). 좁은 화면에서 눌리지 않고 래퍼가 가로로 스크롤. `cards` 로 카드가 된 화면에서는 무시 |
-| `cards` | `boolean` | `false` | 좁은 화면(600px 미만)에서 행을 카드로 쌓습니다. 칸 머리는 화면 읽기용으로 남고 칸마다 `header`(문자열일 때)를 라벨로 붙입니다. 카드는 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버려, 이때만 `role="table/rowgroup/row/columnheader/cell"` 을 명시해 붙잡습니다. 정렬 버튼 · 전체 선택 체크박스는 카드 위 한 줄에 남습니다 |
-| `ariaLabel` | `string` | - | 스크린리더용 테이블 레이블 |
-| `onRowClick` | `(item: T, index: number) => void` | - | 행 클릭 콜백 |
-| `rowClickHint` | `string` | `'클릭 가능한 행'` | clickable 행에 `aria-describedby` 로 연결되는 동작 설명. `''` 면 힌트 미부착 |
-| `sort` | `TableSort` | - | 현재 정렬 상태 (제어형). `undefined` 는 정렬 없음 |
-| `onSortChange` | `(sort: TableSort \| undefined) => void` | - | 정렬 헤더 클릭 시 발화 (none→asc→desc→none 순환) |
-| `selectable` | `boolean` | `false` | 행 선택(체크박스 컬럼) 활성화. `true` 면 `rowKey` **필수** |
-| `rowKey` | `(row: T) => string` | - | 행 고유 key 추출 함수 (`selectable` 시 필수) |
-| `selectedKeys` | `string[]` | - | 선택된 행 key 배열 (제어형) |
-| `onSelectionChange` | `(keys: string[]) => void` | - | 선택 변경 콜백 |
-| `selectAllAriaLabel` | `string` | `'전체 선택'` | 전체 선택 체크박스 aria-label |
-| `selectRowAriaLabel` | `(index: number, row: T) => string` | ``(i) => `${i + 1}번째 행 선택` `` | 개별 행 체크박스 aria-label. `index` 는 `rowIndexOffset` 이 더해진 전체 순번, `row` 는 그 행의 데이터 - 번호 대신 이름으로 읽히게 할 때 |
-| `rowIndexOffset` | `number` | `0` | 이 표의 첫 행이 전체에서 몇 번째인지(0-based). 서버 페이지네이션에서 행 번호가 쪽마다 1 로 되돌아가지 않게 합니다 |
-| `className` | `string` | - | 루트 wrapper 에 추가할 className |
-
-**`TableColumn<T>`**
-
-| 필드 | Type | Default | Description |
-|------|------|---------|-------------|
-| `key` | `string` | required | 컬럼 식별자. `render` 가 없으면 `item[key]` 를 자동 렌더 |
-| `header` | `ReactNode` | required | thead 에 표시할 헤더 |
-| `render` | `(item: T, index: number) => ReactNode` | - | 셀 렌더 함수 |
-| `width` | `string` | - | CSS width 값 (예: `"120px"`, `"20%"`) |
-| `align` | `'left' \| 'center' \| 'right'` | `'left'` | 정렬 |
-| `sortable` | `boolean` | `false` | 정렬 가능 여부. 클릭 시 `onSortChange` 발화 |
-| `cardLabel` | `string` | - | `cards` 화면에서 칸 앞 라벨. 없으면 `header` 가 문자열일 때 그 글자 - 아이콘·요소 머리면 줘야 합니다 |
-| `truncate` | `boolean` | `false` | 한 줄로 두고 넘치면 말줄임. 자동 렌더면 전체 값을 `title` 로 답니다(`render` 칸은 소비자가). `layout="fixed"` + `width` 와 함께 |
-
-**`TableSort`**
-
-| 필드 | Type | Description |
-|------|------|-------------|
-| `key` | `string` | 정렬 중인 컬럼의 `TableColumn.key` |
-| `direction` | `'asc' \| 'desc'` | 정렬 방향 |
 
 **Usage**
 
@@ -4967,25 +4076,6 @@ import { DataView, Dropdown } from '@bigtablet/design-system';
 />
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `query` | `DataViewQuery<T>` | - | `{data, isLoading, error, refetch}`. 필드 이름을 TanStack Query 에 맞췄지만 어떤 라이브러리도 import 하지 않습니다 |
-| `columns` | `TableColumn<T>[]` | - | `Table` 과 같은 정의 |
-| `rowKey` | `(row: T) => string` | - | 행 고유 key |
-| `toolbar` | `DataViewToolbar` | - | `search`·`searchValue`·`onSearchChange`·`searchPlaceholder`·`filters` |
-| `selectionActions` | `DataViewSelectionAction[]` | - | 지정하면 체크박스 컬럼이 붙습니다. 선택 상태는 `DataView` 가 듭니다 |
-| `pagination` | `DataViewPagination` | - | `totalPages` 가 1 이면 렌더하지 않습니다. `pageSize` 를 함께 주면 행 선택 체크박스 라벨이 전체 순번을 씁니다 |
-| `empty` | `ReactNode` | 기본 `EmptyState` | 데이터가 비었을 때 |
-| `sort` / `onSortChange` | `TableSort` / `(s) => void` | - | 정렬 (서버 정렬과 그대로 연결) |
-| `selectionSummary` | `(n: number) => string` | `` (n) => `${n}개 선택됨` `` | 선택 액션 줄 문구 |
-| `selectAllAriaLabel` | `string` | `Table` 기본값 | 전체 선택 체크박스 라벨 |
-| `selectRowAriaLabel` | `(index: number, row: T) => string` | `Table` 기본값 | 행 선택 체크박스 라벨. `index` 는 `pagination.pageSize` 를 반영한 전체 순번, `row` 는 그 행의 데이터 |
-| `onRowClick` | `(row: T, index: number) => void` | - | 행 클릭 |
-| `ariaLabel` | `string` | - | 표의 접근성 이름 |
-| `clearSelectionLabel` | `string` | `'선택 해제'` | 선택 해제 버튼 라벨 |
-| `errorTitle` | `string` | `'불러오지 못했습니다'` | 실패 상태 제목 |
-| `retryLabel` | `string` | `'다시 시도'` | 재시도 버튼 라벨 |
-
 동작 규칙 세 가지:
 
 - **로딩 중에는 빈 상태를 띄우지 않습니다.** `Table` 이 스켈레톤을 그리므로, 빈 배열 + 로딩을 empty 로 처리하면 "없음 → 스켈레톤 → 데이터" 로 두 번 깜빡입니다
@@ -5021,13 +4111,6 @@ import { Search, X } from 'lucide-react';
 import { iconSize } from '@bigtablet/design-system';
 <Icon icon={Search} size={iconSize.md} />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icon` | `LucideIcon` | required | lucide-react 아이콘 컴포넌트 |
-| `size` | `number \| string` | `24` (lucide 기본) | 아이콘 크기 (px). `iconSize` 토큰 사용 권장 |
-| `strokeWidth` | `number \| string` | `2` (lucide 기본) | 선 두께 |
-| `color` | `string` | `currentColor` | 색상 |
 
 > 나머지 `LucideProps`(= SVG 속성)는 그대로 전달됩니다 (`ref` 제외). `iconSize` 토큰: `xs` 14 · `sm` 16 · `md` 18 · `lg` 20 · `xl` 32.
 
@@ -5070,14 +4153,6 @@ import { AppShell, Button, DataView, NavBar, PageHeader, Sidebar } from '@bigtab
 </AppShell>
 ```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `sidebar` | `ReactNode` | - | 좌측 네비게이션. 보통 `Sidebar`. 주지 않으면 열을 만들지 않습니다 |
-| `header` | `ReactNode` | - | 콘텐츠 열 위에 `sticky` 로 붙는 헤더. 보통 `NavBar` |
-| `padded` | `boolean` | `true` | 본문 여백. 자체 여백을 가진 화면은 `false` |
-| `skipLinkLabel` | `string` | 로케일 `appShell.skipLink` ("본문으로 건너뛰기") | 건너뛰기 링크 문구. 사이드바나 헤더가 있을 때만 그립니다 |
-| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
-
 손으로 조립할 때 조용히 빠지던 넷을 DS 가 소유합니다.
 
 - **문서가 스크롤합니다** — 본문을 `overflow-y: auto` 로 만들면 `Modal`·`Drawer` 의 스크롤 잠금
@@ -5109,15 +4184,6 @@ import { Breadcrumb, Button, PageHeader } from '@bigtablet/design-system';
   actions={<Button>주문 추가</Button>}
 />
 ```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `ReactNode` | - | 화면 제목. `h1` 로 렌더됩니다. **필수** |
-| `description` | `ReactNode` | - | 제목 아래 한 줄 설명 |
-| `breadcrumb` | `ReactNode` | - | 제목 위 경로. 보통 `Breadcrumb` |
-| `actions` | `ReactNode` | - | 우측 액션. 보통 `Button` |
-| `tabs` | `ReactNode` | - | 제목 줄 아래 영역. 보통 `TabList` |
-| `ref` | `React.Ref<HTMLDivElement>` | - | 루트 요소 ref (React 19 ref-as-prop) |
 
 제목은 `h1` 입니다 — 화면의 제목이므로 문서에 하나만 있어야 합니다. 겉은 `<header>` 가 아니라 `<div>`
 인데, `<header>` 는 `<main>` 안에 있어도 banner landmark 로 계산돼(`main` 은 sectioning content 가
@@ -5157,14 +4223,6 @@ max-width 제한 + 반응형 수평 패딩을 가진 컨테이너. 마케팅/서
 | `lg` | 1024px | 일반 서비스 페이지 |
 | `xl` | 1200px (기본) | 마케팅 페이지·대시보드 |
 | `full` | 100% | 풀-블리드 (좌우 패딩은 유지) |
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'` | `'xl'` | max-width (sm=640 / md=768 / lg=1024 / xl=1200 / full=100%) |
-| `center` | `boolean` | `true` | 가운데 정렬 (`margin-inline: auto`) |
-| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라옵니다 |
 
 #### 반응형 동작
 
@@ -5226,14 +4284,6 @@ import { Container } from "@bigtablet/design-system";
 | `accent` | `color_accent_subtle` | 부드러운 강조 (테스티모니얼 등) |
 | `inverted` | `color_accent_default` | 강한 강조 (검정/흰색 반전) - 텍스트 색이 자동으로 반전됩니다 |
 | `transparent` | 없음 | 상위 배경 그대로 노출 |
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `spacing` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 수직 패딩 (반응형 - 아래 표 참고) |
-| `bg` | `'default' \| 'dim' \| 'accent' \| 'inverted' \| 'transparent'` | `'default'` | 배경색 변형 |
-| `as` | `React.ElementType` | `'section'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라옵니다 |
 
 #### 반응형 동작
 
@@ -5301,17 +4351,6 @@ Flex 기반 1D 레이아웃. 수직(column) 또는 수평(row) 스택 + 간격/�
 - `align="stretch"`는 자식이 교차축을 꽉 채우게 합니다 (동일 높이 카드 줄에 유용).
 - `justify="between"`은 좌우 끝 정렬 패턴 (헤더의 제목 ↔ 버튼).
 
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | flex 방향 |
-| `gap` | `0 \| 2 \| 4 \| 8 \| 12 \| 16 \| 20 \| 24 \| 32 \| 40 \| 48` | `16` | 아이템 간격 (px) - CSS 변수 `--stack-gap`으로 주입 |
-| `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | - | 교차축 정렬 (`align-items`) |
-| `justify` | `'start' \| 'center' \| 'end' \| 'between' \| 'around' \| 'evenly'` | - | 주축 정렬 (`justify-content`) |
-| `wrap` | `'nowrap' \| 'wrap' \| 'wrap-reverse'` | - | `flex-wrap` |
-| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라옵니다 |
-
 #### 반응형 동작
 
 Stack 자체는 미디어 쿼리를 가지지 않습니다 - flex의 자연스러운 동작에 의존합니다. 모바일에서 한 줄이 좁아지면 `wrap="wrap"`을 함께 지정하거나, 부모에서 `direction` 자체를 바꾸세요 (예: 데스크탑 horizontal → 모바일 vertical은 별도 CSS로 처리).
@@ -5371,18 +4410,6 @@ CSS Grid 기반 2D 레이아웃. 고정 열 수 또는 `auto-fill` 반응형 그
 
 - `gap`은 행/열 모두에 적용됩니다.
 - `rowGap` 또는 `colGap`을 명시하면 `gap`을 그 축에서만 override합니다 (예: 카드 그리드에서 열 간격은 좁히고 행 간격은 넓힐 때).
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `cols` | `1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 'auto'` | `3` | 열 수. `'auto'`=`repeat(auto-fill, minmax(minColWidth, 1fr))` |
-| `minColWidth` | `string` | `'280px'` | `cols="auto"`일 때 최소 열 너비 |
-| `gap` | `0 \| 4 \| 8 \| 12 \| 16 \| 20 \| 24 \| 32 \| 40 \| 48` | `24` | 아이템 간격 (px) |
-| `rowGap` | 위와 동일 | - | 행 간격 (gap을 override) |
-| `colGap` | 위와 동일 | - | 열 간격 (gap을 override) |
-| `singleColOnMobile` | `boolean` | `true` | 모바일(< 600px, compact)에서 강제 1열 |
-| `as` | `React.ElementType` | `'div'` | 렌더할 요소나 컴포넌트. 그 요소의 props 가 타입에 따라옵니다 |
 
 #### 반응형 동작
 

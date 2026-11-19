@@ -44,7 +44,7 @@ export function $$(selector, context = document) {
 }
 
 /** 포커스 가능한 요소 셀렉터 (React useFocusTrap 과 동일 기준) */
-export const FOCUSABLE_SELECTORS = [
+const FOCUSABLE_SELECTORS = [
 	"a[href]",
 	"button:not([disabled])",
 	// type=hidden 은 포커스를 받지 않는다 - Thymeleaf 폼의 _csrf 가 첫 항목이 되면 초기 포커스·Tab 트랩이 깨진다

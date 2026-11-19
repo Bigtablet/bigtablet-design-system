@@ -7,13 +7,13 @@ import { $, $$, generateId, on, parseBoolAttr } from "./utils.js";
      ======================================== */
 
 /** 검색 행 아이콘 (lucide `Search` 와 동일한 path - React Dropdown 이 쓰는 아이콘) */
-export const SEARCH_ICON_SVG =
+const SEARCH_ICON_SVG =
 	'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
 	'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
 	'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>';
 
 /** 다중 선택 체크 아이콘 (lucide `Check`) - 선택 여부는 CSS 가 토글한다 */
-export const CHECK_ICON_SVG =
+const CHECK_ICON_SVG =
 	'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
 	'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
 	'<path d="M20 6 9 17l-5-5"/></svg>';

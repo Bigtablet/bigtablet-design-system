@@ -237,7 +237,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 | Document | Description |
 |----------|-------------|
 | [README.md](./README.md) | 프로젝트 개요 및 빠른 시작 |
-| [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 API 및 사용법 |
+| [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 사용법 · 알아 둘 것 · 구현 계약 (props 표는 `site/props.json`) |
 | [docs/MIGRATION.md](./docs/MIGRATION.md) | deprecated prop 마이그레이션 가이드 |
 | [docs/THEMING.md](./docs/THEMING.md) | 라이트/다크 테마 시스템 가이드 |
 | [docs/VANILLA.md](./docs/VANILLA.md) | HTML/CSS/JS 환경 가이드 |
@@ -263,6 +263,8 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
   pnpm check:agent-guide # docs/AGENT_GUIDE.md 카탈로그의 prop 이 소스에 있는지
   pnpm exec biome check . # lint·format·import 정렬 - 0 건 유지 (security 그룹·noExplicitAny·noFloatingPromises 는 error)
   pnpm check:props       # site/props.json 이 소스 타입과 같은지
+  pnpm check:package     # 배포물 exports - publint(경로 · 필드) + attw(. · ./text 타입). pnpm build 뒤에
+  pnpm check:unused      # 안 쓰는 파일 · export · 의존성 (knip.json)
   pnpm test:browser      # 레이아웃 테스트 + 문서 예제 axe (*.browser.test.tsx - 배치·잘림·스크롤 잠금, 실제 Chromium)
   pnpm test:visual       # 시각 회귀 (*.visual.test.tsx) - CI 컨테이너 전용. 의도한 렌더 변경이면 pnpm visual:accept <run-id>
   ```
@@ -316,7 +318,7 @@ label/domain
 - 병합 전 반드시 코드 리뷰어 approve 필요
 
 ### Release & Changelog
-**태그 기반 배포** - semantic-release / changeset 미사용. 절차:
+**태그 기반 배포** - semantic-release / changeset 미사용. 절차를 명령 순서로 옮긴 것이 `.claude/skills/release/SKILL.md` (`/release`) 다 - 규칙의 원본은 이 섹션. 절차:
 
 > **릴리즈는 develop → main PR 하나로 낸다. `release/X.Y.Z` 브랜치를 따로 파지 않는다.**
 > 그게 가능하려면 **develop 에 없는 내용(diff)을 담은 커밋이 main 에 없어야** 한다 (릴리즈 PR 의 merge 커밋 자체는 내용이 없어 괜찮다) - 버전·CHANGELOG 를 main 쪽(release 브랜치)에서 고치면

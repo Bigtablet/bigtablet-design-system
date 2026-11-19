@@ -11,7 +11,7 @@ import { $, on } from "./utils.js";
  * 2. 폴백 `document.execCommand("copy")` - 인앱 브라우저 · HTTP 사내망처럼 API 가 없거나 거부될 때.
  *    임시 textarea 를 쓰고 원래 선택 영역과 포커스를 되돌린다
  */
-export async function copyText(text) {
+async function copyText(text) {
 	let apiError;
 	if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
 		try {

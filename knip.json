@@ -1,0 +1,13 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"entry": [
+		"src/vanilla/bigtablet.js",
+		"src/**/*.type-test.tsx",
+		"site/gen-*.ts",
+		"site/examples/**/*.tsx",
+		"site/pages/*.tsx",
+		"scripts/*.{mjs,ts}"
+	],
+	"project": ["src/**/*.{ts,tsx,js}", "site/**/*.{ts,tsx}", "scripts/**/*.{mjs,ts}"],
+	"vite": { "config": ["site/vite.config.ts"] }
+}
