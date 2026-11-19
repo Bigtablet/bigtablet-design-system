@@ -304,6 +304,13 @@ jobs:
       - name: Check bundle size
         run: pnpm size
 
+      # 배포물(pnpm pack)의 exports 를 본다 - Build 이후. publint 는 exports 경로 · 필드 · 파일 존재를,
+      # attw 는 JS 진입점(. · ./text)의 타입이 ESM 해석에서 잡히는지를 본다. CSS · SCSS 경로는 JS 가 아니고
+      # vanilla 는 <script> 용 IIFE(끝에 CommonJS · AMD 분기)라 타입 검사 대상이 아니다 - publint 가 이 파일을
+      # "CJS 를 ESM 으로 해석" 으로 경고하지만 경고는 실패가 아니고 CDN 경로(.min.js)를 바꿀 수 없어 그대로 둔다.
+      - name: Check package exports
+        run: pnpm check:package
+
       # 이 검사는 dist 산출물을 읽는다 — 반드시 Build 이후여야 한다.
       # 문서와 빌드 산출물의 어긋남은 어떤 테스트도 보지 않는다.
       - name: Check documented CSS variables
