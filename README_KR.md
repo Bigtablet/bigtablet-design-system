@@ -57,6 +57,8 @@ Bigtablet 사내 React + TypeScript 디자인 시스템입니다. 참고용으�
 - **토큰 도메인 13개** - colors · typography · spacing · motion · radius · elevation 등. SCSS 변수와 CSS 변수(custom property)를 함께 제공합니다 (SCSS 전용 `layout` 도메인은 별도)<br />
 - **라이트 · 다크 모드** 기본 내장 - `[data-theme="dark"]` 나 OS 설정(`prefers-color-scheme`)만으로 동작합니다. 화면에서 전환하려면 `ThemeProvider` 를 씁니다<br />
 - **Vanilla JS 번들** - Thymeleaf · JSP · PHP · Django 같은 서버 템플릿 환경에서도 씁니다<br />
+- **한국어 줄바꿈** - `@bigtablet/design-system/text` 의 `BalancedText` 가 실제 폭을 재서 문장 끝 · 쉼표 뒤에서 줄을 바꿉니다. SSR 앱은 `BalancedTextScript` 로 하이드레이션 전부터 같은 줄로 보입니다. 런타임 의존성은 없습니다<br />
+- **AI 에이전트용 문서** - 패키지(`dist/llms`)와 문서 사이트(`llms.txt` · `llms-full.txt`)에 컴포넌트 · 토큰 전체 · 화면 조합 · 쓰지 말 것을 싣습니다<br />
 - **접근성 테스트** - CI 가 문서 사이트의 모든 예제를 axe-core 로 검사합니다. 키보드 조작과 ARIA 속성을 갖췄습니다
 
 <br />
@@ -214,6 +216,7 @@ pnpm build            # tsup + SCSS copy
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | 개발 환경 · 작업 순서 |
 | 🧪 [Testing](./docs/TESTING.md) | 테스트 작성법 · 접근성 테스트 |
 | 🌐 [Vanilla JS](./docs/VANILLA.md) | HTML · CSS · JS 환경 가이드 |
+| 🤖 [Agent Guide](./docs/AGENT_GUIDE.md) | AI 에이전트 규칙. 생성 문서는 `node_modules/@bigtablet/design-system/dist/llms/index.md` · [llms.txt](https://bigtablet.github.io/bigtablet-design-system/llms.txt) |
 
 <br />
 
