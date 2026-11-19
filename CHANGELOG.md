@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.10.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.1) - 2026-11-19
+- Vanilla Dropdown · Toggle 이 서버가 그린 hidden input 을 재사용할 때도 `name` 옵션 · `data-name` 으로 제출 이름을 맞춥니다 - 그려 둔 옛 이름으로 제출되던 문제를 고쳤습니다
+- (렌더 변경) `@bigtablet/design-system/text` 만 import 할 때 DS 공통 CSS(테마 변수 · autofill · 링크)를 더는 함께 싣지 않습니다 - `./text` 는 DS 없이도 쓰는 진입점입니다
+
 ## [4.10.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.0) - 2026-11-19
 - (렌더 변경) Toast 기본 위치가 넓은 화면에서 오른쪽 아래로 바뀝니다 - 오른쪽 위는 화면 머리의 주 동작 버튼을 가렸습니다. 하단 고정 UI 와 겹치면 `placement="top-right"`(Vanilla `<html data-bt-toast-placement="top-right">`). 폰 폭은 그대로 아래입니다 ([MIGRATION](docs/MIGRATION.md))
 - (렌더 변경) Toast `duration` 이 0 이하면 `Infinity` 처럼 자동으로 닫지 않습니다 - 0 은 뜨자마자 닫혀 토스트가 보이지 않았습니다 (React · Vanilla)

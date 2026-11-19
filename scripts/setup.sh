@@ -61,7 +61,7 @@ else
 fi
 
 # ── Install ───────────────────────────────────────────────────────────────────
-step "1 / 3  Installing packages"
+step "1 / 2  Installing packages"
 
 # run_install: avoids eval while keeping the command visible in logs
 run_install() {
@@ -79,22 +79,8 @@ esac
 
 success "Packages installed"
 
-# ── Print setup instructions ──────────────────────────────────────────────────
-step "2 / 3  CSS import"
-info "Add the following import once at the root of your app:"
-
-if [ "$ENV" = "nextjs" ]; then
-  printf "\n"
-  code "// app/layout.tsx  (or pages/_app.tsx)"
-  code "import '@bigtablet/design-system/style.css';"
-else
-  printf "\n"
-  code "// src/main.tsx  (or index.tsx)"
-  code "import '@bigtablet/design-system/style.css';"
-fi
-
 # ── Provider setup ────────────────────────────────────────────────────────────
-step "3 / 3  Provider setup (Alert & Toast)"
+step "2 / 2  Provider setup (Alert & Toast)"
 info "Wrap your app with the required providers:"
 
 if [ "$ENV" = "nextjs" ]; then

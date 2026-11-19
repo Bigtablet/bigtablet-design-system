@@ -281,6 +281,9 @@ export function Dropdown(element, options = {}) {
 	// 서버 템플릿(th:field 등)이 미리 렌더링한 hidden input 이 있으면 그대로 재사용한다.
 	const hiddenEls = $$('input[type="hidden"]', wrapper);
 	const hiddenName = config.name || wrapper.dataset.name || hiddenEls[0]?.name || null;
+	// 서버가 그린 input 을 재사용해도 JS name · data-name 을 주면 그 이름으로 맞춘다 - 안 맞추면 폼이
+	// 그려 둔 옛 이름으로 제출됐다 (#1106)
+	if (hiddenName) for (const el of hiddenEls) el.name = hiddenName;
 	if (hiddenEls.length === 0 && hiddenName) {
 		const el = document.createElement("input");
 		el.type = "hidden";

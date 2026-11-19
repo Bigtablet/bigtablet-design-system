@@ -47,7 +47,7 @@ function SaveButton() {
 }
 ```
 
-A complete React + TypeScript design system maintained by Bigtablet for internal product work. Open-sourced for reference - external use welcome, but minor versions may include breaking changes.
+A complete React + TypeScript design system maintained by Bigtablet for internal product work. Open-sourced for reference - external use welcome, but minor versions may include breaking changes - check [MIGRATION](./docs/MIGRATION.md#업그레이드-체크리스트) before upgrading.
 
 <br />
 
@@ -57,6 +57,8 @@ A complete React + TypeScript design system maintained by Bigtablet for internal
 - **13 token domains** - colors, typography, spacing, motion, radius, elevation, and more - exposed as SCSS variables and CSS custom properties (plus a SCSS-only `layout` domain)<br />
 - **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
 - **Vanilla JS bundle** for non-React backends - Thymeleaf, JSP, PHP, Django<br />
+- **Korean line breaking** at `@bigtablet/design-system/text` - `BalancedText` measures the real width and breaks at sentence ends and commas, `BalancedTextScript` applies the same lines to server HTML before hydration. No runtime dependencies<br />
+- **Docs for AI agents** in the package (`dist/llms`) and on the docs site (`llms.txt` · `llms-full.txt`) - components, every token, screen recipes and names to avoid<br />
 - **Accessibility tested** with axe-core in CI · keyboard nav · ARIA throughout
 
 <br />
@@ -78,7 +80,7 @@ Requires React 19 + lucide-react ≥ 0.552. Next.js is an optional peer dependen
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-Detects npm / yarn / pnpm / bun and React / Next.js, installs deps, prints CSS + provider setup steps.
+Detects npm / yarn / pnpm / bun and React / Next.js, installs the package and its peer dependencies, and prints the provider setup. No CSS import is needed - importing a component brings its CSS.
 
 </details>
 
@@ -196,7 +198,7 @@ pnpm install
 pnpm site             # docs site, localhost:6007
 pnpm test             # Vitest unit
 pnpm test:browser     # a11y (axe on docs examples) + layout, Playwright
-pnpm build            # tsup + SCSS copy
+pnpm build            # tsup + SCSS copy + Vanilla + tailwind.css + dist/llms
 ```
 
 The docs site lives at **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system/)** and redeploys from `main`.
@@ -214,6 +216,7 @@ The docs site lives at **[bigtablet.github.io/bigtablet-design-system](https://b
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |
 | 🧪 [Testing](./docs/TESTING.md) | Test patterns + a11y testing |
 | 🌐 [Vanilla JS](./docs/VANILLA.md) | HTML/CSS/JS integration |
+| 🤖 [Agent Guide](./docs/AGENT_GUIDE.md) | Rules for AI agents. Generated docs: `node_modules/@bigtablet/design-system/dist/llms/index.md` · [llms.txt](https://bigtablet.github.io/bigtablet-design-system/llms.txt) |
 
 <br />
 

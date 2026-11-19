@@ -32,6 +32,21 @@ describe("Dropdown - 초기화", () => {
 		expect(dd?.getValue()).toEqual(["apple", "grape"]);
 	});
 
+	it("재사용한 hidden input 도 JS name 으로 맞춘다 (#1106)", () => {
+		const wrap = dropdownMarkup();
+		const input = document.createElement("input");
+		input.type = "hidden";
+		input.name = "old";
+		wrap.appendChild(input);
+
+		Dropdown(wrap, { name: "fruit" });
+
+		const names = [...wrap.querySelectorAll<HTMLInputElement>('input[type="hidden"]')].map(
+			(el) => el.name,
+		);
+		expect(names).toEqual(["fruit"]);
+	});
+
 	it("트리거 폭을 하한으로만 쓴다 - 못박으면 옵션 라벨이 잘린다", () => {
 		// 좁은 트리거에서 목록이 자기 옵션 라벨을 ellipsis 로 접었다(#596). 실제 폭은 CSS 의
 		// `width: max-content` 가 정하므로 JS 는 하한·상한만 준다.

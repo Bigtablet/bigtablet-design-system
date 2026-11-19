@@ -57,6 +57,8 @@ Bigtablet 사내 React + TypeScript 디자인 시스템입니다. 참고용으�
 - **토큰 도메인 13개** - colors · typography · spacing · motion · radius · elevation 등. SCSS 변수와 CSS 변수(custom property)를 함께 제공합니다 (SCSS 전용 `layout` 도메인은 별도)<br />
 - **라이트 · 다크 모드** 기본 내장 - `[data-theme="dark"]` 나 OS 설정(`prefers-color-scheme`)만으로 동작합니다. 화면에서 전환하려면 `ThemeProvider` 를 씁니다<br />
 - **Vanilla JS 번들** - Thymeleaf · JSP · PHP · Django 같은 서버 템플릿 환경에서도 씁니다<br />
+- **한국어 줄바꿈** - `@bigtablet/design-system/text` 의 `BalancedText` 가 실제 폭을 재서 문장 끝 · 쉼표 뒤에서 줄을 바꿉니다. SSR 앱은 `BalancedTextScript` 로 하이드레이션 전부터 같은 줄로 보입니다. 런타임 의존성은 없습니다<br />
+- **AI 에이전트용 문서** - 패키지(`dist/llms`)와 문서 사이트(`llms.txt` · `llms-full.txt`)에 컴포넌트 · 토큰 전체 · 화면 조합 · 쓰지 말 것을 싣습니다<br />
 - **접근성 테스트** - CI 가 문서 사이트의 모든 예제를 axe-core 로 검사합니다. 키보드 조작과 ARIA 속성을 갖췄습니다
 
 <br />
@@ -78,7 +80,7 @@ React 19 와 lucide-react 0.552 이상이 필요합니다. Next.js 는 선택 pe
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-npm · yarn · pnpm · bun 과 React · Next.js 를 알아서 감지해 패키지와 peer dependency 를 설치하고, Provider 설정 방법을 출력합니다.
+npm · yarn · pnpm · bun 과 React · Next.js 를 알아서 감지해 패키지와 peer dependency 를 설치하고, Provider 설정 방법을 출력합니다. CSS 는 따로 import 하지 않아도 됩니다 - 컴포넌트를 import 하면 그 CSS 가 함께 실립니다.
 
 </details>
 
@@ -169,7 +171,7 @@ import "@bigtablet/design-system/style.css"; // --bt-* 값 정의
 <p className="text-bt-text-heading shadow-bt-level2 dark:bg-bt-bg-solid" />
 ```
 
-`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로 매핑합니다(값은 `var()` 그대로라 다크 모드를 따라갑니다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같습니다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮습니다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)은 `@layer reset { ... }` 에 넣어야 합니다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이깁니다.
+`tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 를 `--shadow-bt-*` 로, `--bt-radius-*` 를 `--radius-bt-*`(`rounded-bt-md`)로, `--bt-spacing-*` 를 `--spacing-bt-*`(`p-bt-16`)로, `--bt-font-family` 를 `--font-bt`(`font-bt`)로 매핑합니다(값은 `var()` 그대로라 다크 모드와 소비자 덮어쓰기를 따라갑니다). `dark:` 는 ThemeProvider 규칙(`data-theme="dark"`, 또는 `data-theme` 이 없을 때 OS 다크)과 같습니다. 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어 유틸리티와 소비자의 레이어 밖 CSS 가 특이도 싸움 없이 덮습니다: `<Button className="bg-bt-text-brand" />`. 소비자의 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)과 전역 포커스 스타일(`:focus-visible { outline: 2px solid ... }`)은 `@layer reset { ... }` 에 넣어야 합니다 - 레이어 밖에 두면 모든 DS 컴포넌트를 이기고, 전역 `:focus-visible` outline 이 DS 포커스 링 위에 겹쳐 그려집니다(이중 링).
 
 <br />
 
@@ -196,7 +198,7 @@ pnpm install
 pnpm site             # 문서 사이트, localhost:6007
 pnpm test             # Vitest unit
 pnpm test:browser     # a11y (문서 예제 axe) + 레이아웃, Playwright
-pnpm build            # tsup + SCSS copy
+pnpm build            # tsup + SCSS copy + Vanilla + tailwind.css + dist/llms
 ```
 
 문서 사이트는 **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system/)** 에 있고 `main` 기준으로 재배포됩니다.
@@ -214,6 +216,7 @@ pnpm build            # tsup + SCSS copy
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | 개발 환경 · 작업 순서 |
 | 🧪 [Testing](./docs/TESTING.md) | 테스트 작성법 · 접근성 테스트 |
 | 🌐 [Vanilla JS](./docs/VANILLA.md) | HTML · CSS · JS 환경 가이드 |
+| 🤖 [Agent Guide](./docs/AGENT_GUIDE.md) | AI 에이전트 규칙. 생성 문서는 `node_modules/@bigtablet/design-system/dist/llms/index.md` · [llms.txt](https://bigtablet.github.io/bigtablet-design-system/llms.txt) |
 
 <br />
 
