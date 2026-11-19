@@ -4,7 +4,7 @@ import { configDefaults, defineConfig } from "vitest/config";
 
 const dirname = import.meta.dirname;
 
-// `unit` 프로젝트 설정 - 뮤테이션 테스트(`vitest.mutation.config.ts`)도 이 객체를 그대로 쓴다.
+// `unit` 프로젝트 설정 - 뮤테이션 테스트(`tools/mutation/vitest.config.ts`)도 이 객체를 그대로 쓴다.
 export const unitTest = {
 	include: ["src/**/*.test.{ts,tsx}"],
 	// `*.browser.test.*` 는 실제 레이아웃이 필요해 `browser` 프로젝트(Chromium)에서만 돈다.
