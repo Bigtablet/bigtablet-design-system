@@ -37,11 +37,12 @@ Bigtablet Design System 의 테스트 작성 가이드입니다.
 
 ### Setup 파일
 
-[`src/test/setup.ts`](../src/test/setup.ts) 가 `unit` 테스트마다 돕니다. 하는 일은 셋입니다.
+[`src/test/setup.ts`](../src/test/setup.ts) 가 `unit` 테스트마다 돕니다. 하는 일은 넷입니다.
 
 - `@testing-library/jest-dom` 매처 등록 (`toBeInTheDocument` 등)
 - jsdom 에 없는 `Element.prototype.scrollIntoView` 스텁
 - Modal · Drawer · Alert 가 공유하는 body 스크롤 잠금 상태를 테스트마다 초기화 - 한 테스트의 잠금이 다음 테스트로 새지 않게
+- `stubPendingAnimation` 이 건 `getAnimations` 스텁을 테스트마다(`afterEach`) 걷기 (`restoreAnimationStub`, jsdom 에는 원래 없습니다)
 
 `matchMedia` 는 전역으로 mock 하지 않습니다 - 필요한 테스트가 직접 `vi.stubGlobal` 로 둡니다.
 
@@ -72,8 +73,8 @@ pnpm test:visual
 # 의도한 렌더 변경으로 CI 의 시각 회귀가 실패했을 때 - 그 실행의 스크린샷을 기준으로 받는다
 pnpm visual:accept <run-id>
 
-# UI 모드
-pnpm vitest --ui
+# UI 모드 - @vitest/ui 가 devDependencies 에 없어 따로 설치해야 합니다
+# pnpm add -D @vitest/ui && pnpm vitest --ui
 ```
 
 ---
@@ -144,7 +145,7 @@ describe("ComponentName", () => {
 
 ### Vanilla 번들 테스트
 
-Vanilla 번들은 컴포넌트별 테스트 파일이 덮습니다 - `src/vanilla/bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button}.test.ts`.
+Vanilla 번들은 컴포넌트별 테스트 파일이 덮습니다 - unit 은 `src/vanilla/bigtablet.{alert,copy-button,date-picker,dropdown,locale,modal,pagination,sidebar,toast,toggle}.test.ts`, 실제 Chromium 이 필요한 것은 `bigtablet.{alert,badge,copy-button,custom-properties,forced-colors,inline-alert,modal,table,toast}.browser.test.ts` 입니다.
 공용 헬퍼(스크롤바 폭 · 문서 스크롤 세우기, Dropdown 마크업, 키 이벤트)와 테스트마다 DOM 을 비우는
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` 에 있습니다. 새 파일은 맨 위에서 `resetVanillaDom()` 을 부릅니다.
 React 쪽 `unit` 프로젝트에 그대로 포함되므로 `pnpm test` 로 함께 돕니다.
@@ -165,7 +166,7 @@ import { Dropdown } from "./bigtablet.js";
 - **문서화된 마크업으로 시작합니다.** 서버 템플릿이 렌더하는 형태(평면 `<ul>`, 서버가 심어둔 hidden
   input 등)를 그대로 세워야 실제 회귀를 잡습니다 - 실제로 그 두 경로에서 버그가 나왔습니다.
 
-> 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` 만
+> 커버리지 집계(`vitest.config.ts` 의 `coverage.include`)는 아직 `src/ui/**` · `src/utils/**` · `src/text/**` 만
 > 봅니다. Vanilla 를 넣으면 전체 수치가 크게 떨어지므로 별건으로 다룹니다 - 테스트 자체는 이미 돕니다.
 
 ### 앵커 팝업(Dropdown·Combobox·Menu·Popover·Tooltip) 테스트
@@ -261,13 +262,13 @@ it("renders with custom className", () => {
 ```tsx
 it("applies size class", () => {
     const { container } = render(<Button size="lg">Click</Button>);
-    expect(container.firstChild).toHaveClass("size_lg");
+    expect(container.firstChild).toHaveClass("button_size_lg");
 });
 
 it("applies default props", () => {
     const { container } = render(<Button>Click</Button>);
-    expect(container.firstChild).toHaveClass("variant_primary");
-    expect(container.firstChild).toHaveClass("size_md");
+    expect(container.firstChild).toHaveClass("button_variant_filled");
+    expect(container.firstChild).toHaveClass("button_size_md");
 });
 ```
 
@@ -331,7 +332,7 @@ it("calls onValueChange with new value", () => {
 it("shows error state", () => {
     render(<TextField error supportingText="Error message" />);
 
-    expect(screen.getByRole("textbox")).toHaveClass("text_field_input_error");
+    expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByText("Error message")).toBeInTheDocument();
 });
 ```
@@ -542,9 +543,9 @@ describe("Button", () => {
         expect(screen.getByRole("button")).toBeDisabled();
     });
 
-    it("applies fullWidth class", () => {
+    it("applies full width class", () => {
         const { container } = render(<Button fullWidth>Click</Button>);
-        expect(container.firstChild).toHaveClass("fullWidth");
+        expect(container.firstChild).toHaveClass("button_full_width");
     });
 
     it("forwards ref", () => {
@@ -583,7 +584,10 @@ describe("Modal", () => {
         const onClose = vi.fn();
         render(<Modal open onClose={onClose}>Content</Modal>);
 
-        fireEvent.click(screen.getByRole("dialog").parentElement!);
+        // role="dialog" 는 오버레이(.modal) 자체에 있다. 누른 곳과 놓은 곳이 모두 오버레이여야 닫힌다
+        const overlay = screen.getByRole("dialog");
+        fireEvent.pointerDown(overlay);
+        fireEvent.click(overlay);
         expect(onClose).toHaveBeenCalled();
     });
 
@@ -591,7 +595,9 @@ describe("Modal", () => {
         const onClose = vi.fn();
         render(<Modal open onClose={onClose}>Content</Modal>);
 
-        fireEvent.click(screen.getByRole("dialog"));
+        const panel = document.querySelector(".modal_panel")!;
+        fireEvent.pointerDown(panel);
+        fireEvent.click(panel);
         expect(onClose).not.toHaveBeenCalled();
     });
 

@@ -217,7 +217,7 @@ SCSS 변수/믹스인(spacing, radius, typography, motion 등)이 필요하면 �
 }
 ```
 
-주의할 점: `scss/token` 진입점은 `theme.scss` 를 포함하지 않습니다. `theme.scss` 의 `:root` / `[data-theme]` 규칙이 소비자의 `*.module.scss` 로 새어나가면 CSS Modules 의 pure-selector 검사를 깨뜨리기 때문에 의도적으로 분리되어 있습니다. 따라서 SCSS 변수만 `@use` 해서는 `--bt-color-*` 같은 실제 CSS 변수 값이 따라오지 않고, 이 값은 위 React 섹션의 `style.css` 로만 제공됩니다. SCSS 값과 CSS 변수 값을 함께 써야 한다면 `scss/token` 과 `style.css` 를 둘 다 로드해야 합니다.
+주의할 점: `scss/token` 진입점은 `theme.scss` 를 포함하지 않습니다. `theme.scss` 의 `:root` / `[data-theme]` 규칙이 소비자의 `*.module.scss` 로 새어나가면 CSS Modules 의 pure-selector 검사를 깨뜨리기 때문에 의도적으로 분리되어 있습니다. 따라서 SCSS 변수만 `@use` 해서는 `--bt-color-*` 같은 실제 CSS 변수 값이 따라오지 않고, 이 값은 위 React 섹션처럼 자기 CSS 를 가진 DS 컴포넌트나 `cssVars` 를 import 할 때 함께 실리는 공통 CSS, 또는 `style.css` 로 제공됩니다. `ThemeProvider` 는 CSS 를 싣지 않으므로, 화면에 DS 컴포넌트 없이 `ThemeProvider` 와 SCSS 토큰만 쓴다면 `style.css` 를 로드합니다. SCSS 값과 CSS 변수 값을 함께 써야 한다면 `scss/token` 과 함께 둘 중 하나가 로드돼 있어야 합니다.
 
 ### CSS 변수 직접 사용
 
@@ -263,7 +263,7 @@ React/SCSS 빌드 파이프라인 없이 `--bt-color-*` CSS 변수만 직접 참
 
 #### 존재 여부와 값을 혼동하지 마세요
 
-`--bt-bottom-nav-*` 세 변수는 `:root` 에 선언돼 있고 라이브러리 CSS 는 한 파일이므로, **BottomNav 를 렌더하지 않는 화면에서도 항상 정의돼 있습니다.** 하단 고정 요소에서 그대로 더하면 BottomNav 가 없는 페이지에서도 그만큼 밀립니다.
+`--bt-bottom-nav-*` 세 변수는 BottomNav 스타일시트(`src/ui/navigation/bottom-nav/style.scss`)의 `:root` 에 선언돼 있습니다. 4.0.1 부터 CSS 가 컴포넌트별로 나뉘어, 앱 어딘가에서 `BottomNav` 를 import 했거나 `style.css` 를 로드했다면 정의됩니다. 그러면 **BottomNav 를 렌더하지 않는 화면에서도 항상 정의돼 있습니다.** 하단 고정 요소에서 그대로 더하면 BottomNav 가 없는 페이지에서도 그만큼 밀립니다.
 
 실제로 하단이 가려진 높이는 `--bt-bottom-inset` 입니다 — 기본 `0px` 이고, **BottomNav 가 DOM 에 있거나 앱이 `--bt-bottom-inset-app` 을 설정했을 때** 값이 생깁니다 (둘 다면 합).
 
@@ -533,7 +533,7 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 
 애니메이션이 있는 컴포넌트는 **닫히는 모션이 끝날 때까지 DOM 에 남습니다.** 그래야 페이드아웃이 보입니다. 이 사실이 앱 코드에 영향을 주는 지점이 있습니다.
 
-해당 컴포넌트: `Modal` · `Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast` · `Menu` · `Dropdown`.
+해당 컴포넌트: `Modal` · `Drawer` · `Popover` · `Tooltip` · `Alert` · `Toast`. `Menu` · `Dropdown` · `Combobox` 는 닫히면 바로 언마운트됩니다(진입 모션만 있습니다).
 
 **children 을 열림 상태와 같은 값으로 감싸지 마세요.** 감싸면 본문만 먼저 사라지고 껍데기가 페이드아웃되어, 닫힘이 두 단계로 보입니다.
 
@@ -549,7 +549,7 @@ Pretendard 기본 글자꼴에서 `l` · `I` · `1` 이 거의 같은 모양이�
 </Modal>
 ```
 
-`onExited` 는 현재 `Modal` 만 제공합니다. 다른 컴포넌트에서는 열림 상태와 데이터를 분리해 두고, 데이터는 다음 열림 때 덮어쓰는 편이 안전합니다.
+`onExited` 는 현재 `Modal` 과 `Drawer` 만 제공합니다. 다른 컴포넌트에서는 열림 상태와 데이터를 분리해 두고, 데이터는 다음 열림 때 덮어쓰는 편이 안전합니다.
 
 ---
 

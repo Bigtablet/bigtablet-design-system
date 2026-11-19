@@ -75,8 +75,8 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 
 > 컴포넌트를 한 화면에 모아 둔 예제는 저장소의 [`src/vanilla/examples/index.html`](../src/vanilla/examples/index.html) 이다 (npm 패키지에는 없다). 저장소에서 `pnpm build` 후 `dist/vanilla/examples/index.html` 을 브라우저로 열면 된다.
 
-> 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
-> `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
+> 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 93KB, gzip 약 12KB),
+> `bigtablet.min.js`(약 60KB, gzip 약 20KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
 > `files` 에서 제외돼 npm·CDN 어느 쪽에도 없습니다. 소스를 읽어야 하면 저장소의
 > `src/vanilla/js/` · `src/vanilla/scss/`(컴포넌트별 파일)를 보세요.
 
@@ -323,6 +323,8 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   const toggleEl = document.getElementById('my-toggle');
   const myToggle = Bigtablet.Toggle(toggleEl, {
     defaultChecked: false,
+    name: 'notify',   // 주면 hidden input 으로 폼 제출 참여 (data-name 과 같음)
+    disabled: false,  // true 면 비활성으로 시작 (native disabled 와 같음)
     onCheckedChange: (checked) => {
       console.log('Toggle:', checked);
     }
@@ -332,6 +334,8 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   myToggle.isChecked();     // 현재 상태
   myToggle.setChecked(true); // 상태 설정
   myToggle.toggle();        // 토글
+  myToggle.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
+  myToggle.destroy();       // 바인딩한 리스너 해제
 </script>
 ```
 
@@ -420,7 +424,7 @@ React 와 동일하게 `multiple`(다중 선택) / `searchable`(검색)을 지�
 ```
 
 옵션은 위처럼 서버가 렌더링한 `<li data-value>` 마크업에서 자동 파싱됩니다
-(`data-options` JSON 속성 또는 JS `options` 설정이 있으면 그쪽이 우선).
+(우선순위는 `data-options` JSON 속성 > JS `options` 설정 > `<li>` 마크업 순입니다. 옵션 목록만 속성이 이기고, `multiple` · `searchable` · `placeholder` · `name` 같은 나머지 설정은 JS 옵션이 `data-*` 속성보다 우선합니다). `data-options` · JS `options` 를 주면서 `<li>` 도 그려 두면, `<li>` 는 지우지 않고 그대로 화면에 쓰고 값은 배열에서 **같은 순서(인덱스)** 로 읽습니다 - 두 목록의 순서와 값을 맞추거나, 배열을 줄 때는 `<li>` 를 그리지 않습니다(그러면 JS 가 배열로 그립니다).
 
 **폼 제출 참여 (Thymeleaf/JSP):**
 
@@ -547,10 +551,11 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 | `data-search-placeholder` | `searchPlaceholder` |
 | `data-empty-text` | `emptyText` |
 | `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
-| `data-options` | `options` (JSON 배열) |
-| `data-name` | `name` |
+| `data-options` | `options` (JSON 배열) - 둘 다 있으면 **`data-options` 가 우선** |
+| `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 그대로 쓰고 **이름은 바꾸지 않습니다**. JS `name` 과 다르면 폼은 그려 둔 input 의 `name` 으로 제출됩니다 |
 
 > boolean 속성은 값을 생략해도 되고(`data-multiple`), 끄려면 `data-multiple="false"` 로 명시합니다.
+> `data-options` 를 뺀 나머지 속성은 같은 이름의 JS 옵션을 넘기면 JS 옵션이 우선합니다.
 > `selectedSummary` 는 함수라 JS 옵션으로만 지정할 수 있습니다.
 
 **JavaScript 연동:**
@@ -563,6 +568,8 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
   // 자동 초기화된 요소를 다루려면 새로 만들지 말고 `el._btDropdown` 을 재사용할 것.
   const myDropdown = Bigtablet.Dropdown('#fruit-dropdown', {
     placeholder: '선택하세요',
+    defaultValue: 'banana',   // 처음 값 (multiple 이면 배열). onValueChange 는 부르지 않는다
+    disabled: false,          // true 면 비활성으로 시작 (native disabled 나 is-disabled 로 렌더해도 같음)
     options: [
       { value: 'apple', label: '사과' },
       { value: 'banana', label: '바나나' },
@@ -778,10 +785,10 @@ Alert는 JavaScript로만 사용합니다.
 |------|------|---------|-------------|
 | `message` | `string` | - | 본문. 텍스트로 넣는다 (HTML 은 해석하지 않음) |
 | `tone` | `string` | `'neutral'` | `'success'`, `'error'`, `'warning'`, `'info'`, `'neutral'` |
-| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 면 막대 없이 닫기 버튼·`dismiss` 로만 닫힘 |
+| `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 이거나 0 이하면 시간이 지나도 닫히지 않고 진행 막대도 없습니다. 이때도 닫기 버튼 · `dismiss` · `action` 버튼으로 닫히고, 토스트가 5개를 넘으면 가장 오래된 것부터 닫힙니다 |
 | `options.action` | `{ label, onClick }` | - | 메시지 옆 텍스트 버튼. 한 번만 실행되고 토스트를 닫는다 |
 | `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
-| `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
+| `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`.bt-toast-container`) 이름. 리전은 토스트가 하나 이상 있을 때만 `role="region"` + `aria-label` 을 달고, 비면 둘 다 뗍니다. 이름은 리전을 처음 만들 때(서버가 그린 리전이면 그 `aria-label`)만 정합니다. 읽어 주기는 리전이 아니라 JS 가 안에 만드는 숨은 `.bt-toast__announcer`(`role="status"` · `role="alert"`) 둘이 맡습니다 |
 
 - 오른쪽 아래에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
 - 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹치면 `<html data-bt-toast-placement="top-right">` 로 넓은 화면에서 오른쪽 위에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 예전 값 `bottom-right` 는 이제 기본과 같다
@@ -1091,6 +1098,7 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   const pagination = Bigtablet.Pagination('#article-pagination', {
     page: 1,
     totalPages: 20,
+    sibling: 2,      // 현재 쪽 양옆에 보일 번호 수 (기본 2)
     onPageChange: (page) => {
       console.log('Page:', page);
       // 데이터 로드 등
@@ -1100,7 +1108,8 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   // API
   pagination.getPage();       // 현재 페이지
   pagination.setPage(5);      // 페이지 이동
-  pagination.setTotalPages(30); // 총 페이지 수 변경
+  pagination.setTotalPages(30); // 총 페이지 수 변경 (현재 쪽은 범위 안으로 보정)
+  pagination.destroy();       // 그린 버튼과 리스너 제거
 </script>
 ```
 
@@ -1620,10 +1629,16 @@ Bigtablet.getLocale();                              // "ko" | "en"
 
 ## 브라우저 지원
 
-- Chrome 88+
-- Firefox 78+
-- Safari 14+
-- Edge 88+
+- Chrome · Edge 105+
+- Safari 15.4+
+- Firefox 121+
+
+이 하한은 compact 하단 바만큼 본문 아래 여백을 두는 처리(`:has`) 기준입니다. 이보다 오래된 브라우저에서도 화면은 나오지만 그 여백이 빠집니다.
+
+나머지 두 기능은 하한보다 늦게 들어와, 위 버전 이상이어도 브라우저에 따라 빠질 수 있습니다.
+
+- 퇴출 모션 동안 포커스를 막는 처리(`inert`) - Safari 15.5+. 없는 브라우저(Safari 15.4)에서는 Modal · Alert 가 닫히는 모션(약 0.3초) 동안 닫힌 대화상자 안 버튼에 Tab 으로 포커스가 갈 수 있습니다
+- 진입 모션(`@starting-style`) - Chrome · Edge 117+, Safari 17.5+, Firefox 129+. 없으면 모션 없이 바로 나타납니다
 
 ---
 

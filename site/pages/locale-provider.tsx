@@ -7,7 +7,7 @@ export const localeProvider: DocPage = {
 	title: "LocaleProvider",
 	name: "다국어",
 	summary:
-		"DS 가 스스로 렌더하는 문구(닫기 · 이전/다음 · 빈 목록 등 58개)를 한곳에서 정합니다. 감싸지 않으면 한국어입니다.",
+		"DS 가 스스로 렌더하는 문구(닫기 · 이전/다음 · 빈 목록 등 82개)를 한곳에서 정합니다. 감싸지 않으면 한국어입니다.",
 	when: [
 		["영어 화면", '`locale="en"`', true],
 		["문구 몇 개만 바꾸기", '`messages={{ "table.empty": … }}`', true],

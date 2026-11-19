@@ -423,8 +423,8 @@ label/domain
 
 ### PR 대상
 
-- **항상 `develop` 브랜치로 PR 생성**
-- `main` 브랜치로의 직접 PR은 금지
+- **작업 PR 은 항상 `develop` 브랜치로 생성합니다**
+- `main` 으로 가는 PR 은 릴리즈 PR(head `develop` → base `main`, 제목 `merge: release`)과 hotfix 뿐입니다. 그 밖의 브랜치에서 `main` 으로 바로 PR 을 열지 않습니다
 
 ### PR 제목
 

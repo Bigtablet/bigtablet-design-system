@@ -14,7 +14,7 @@ src/vanilla/
 ├── bigtablet.js        # 진입점 - js/* 를 모아 export + DOMContentLoaded 자동 초기화
 ├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
 ├── js/
-│   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS
+│   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS, focusablesIn, trapTab, returnFocusTarget, measureViewportInset
 │   ├── locale.js       # 문구 카탈로그 t() · setLocale · setMessages (React messages.ts 의 부분집합, #949)
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
@@ -36,10 +36,10 @@ src/vanilla/
 ### Build Output
 ```
 dist/vanilla/
-├── bigtablet.css       # Full CSS (~55KB)      - 배포 제외
-├── bigtablet.min.css   # Minified CSS (~38KB)  - 배포됨
-├── bigtablet.js        # Full JS (~58KB, esbuild IIFE) - 배포 제외
-├── bigtablet.min.js    # Minified JS (~19KB)   - 배포됨
+├── bigtablet.css       # Full CSS (약 125KB, gzip 약 22KB)      - 배포 제외
+├── bigtablet.min.css   # Minified CSS (약 93KB, gzip 약 12KB)   - 배포됨
+├── bigtablet.js        # Full JS (약 111KB, gzip 약 28KB, esbuild IIFE) - 배포 제외
+├── bigtablet.min.js    # Minified JS (약 60KB, gzip 약 20KB)    - 배포됨
 └── examples/           # HTML examples         - 배포 제외
 ```
 
@@ -48,9 +48,12 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker}.test.ts` 가 이 번들을 덮는다
-(`pnpm test` 에 포함). 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
-추가하면 그 컴포넌트 파일에 케이스를 더한다(`init` 은 pagination 파일). 공용 헬퍼와
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker,sidebar,locale}.test.ts` 가 이 번들을 덮는다
+(`pnpm test` 에 포함). 실제 Chromium 에서 레이아웃·대비를 재는 `bigtablet.*.browser.test.ts`
+(alert · badge · copy-button · custom-properties · forced-colors · inline-alert · modal · table · toast)는
+`pnpm test:browser` 로 돈다. 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
+추가하면 그 컴포넌트 파일에 케이스를 더한다. `data-bt-*` 자동 초기화(`init`)는 각 컴포넌트 파일이
+자기 속성을 덮고(modal(Dropdown 포함) · pagination · copy-button · date-picker · sidebar), 공통 `describe("init")` 블록은 pagination 파일에 있다. 공용 헬퍼와
 `resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
 
 jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접 세워야 한다. 자세한 주의점은
@@ -75,8 +78,8 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width` | `:disabled` |
 | TextField | `.bt-text-field` | `--full-width` | |
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
-| Checkbox | `.bt-checkbox` | `--sm/md/lg` | `:checked`, `:disabled` |
-| Radio | `.bt-radio` | `--sm/md/lg` | `:checked`, `:disabled` |
+| Checkbox | `.bt-checkbox` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
+| Radio | `.bt-radio` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
 | Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
@@ -87,7 +90,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
 | Modal | `.bt-modal` | | `.is-open` (서버가 붙여 그리면 초기화가 열린 상태로 시작 - #919) |
-| Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다 | | `[data-state="closed"]`(퇴출 중) |
+| Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__announcer`(리전 직속 숨은 `role=status`·`role=alert` 공지 영역 둘), `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다. 리전은 토스트가 하나 이상일 때만 `role="region"` + `aria-label` | | `[data-state="closed"]`(퇴출 중) |
 | InlineAlert | `.bt-inline-alert` (+ `__icon`(빈 span - CSS mask 아이콘), `__content` > `__title` · `__message` · `__action`) - CSS 만 | `--neutral/info/success/warning/error`(기본 info) | `[hidden]` |
 | Badge | `.bt-badge` - CSS 만 (React label · md) | `--accent(기본)/neutral/info/success/warning/error`, `--soft`(기본 solid) | |
 | Table | `.bt-table-wrap`(가로 스크롤 상자, `--sticky-header`) > `table.bt-table` - CSS 만, 소비자가 그린 표에 클래스만 | `--sm/lg`, `--fixed`(+ `--bt-table-min-width`), `--cards`(compact 에서 카드, 칸은 `data-label`) | `tr.is-selected`, `td.bt-table__truncate`, `.bt-table__empty` |
@@ -289,6 +292,8 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   options: [{ value: '1', label: 'One' }],
   placeholder: '선택…',
+  defaultValue: '1',        // 처음 값 (multiple 이면 배열) - onValueChange 는 부르지 않는다
+  disabled: false,
   name: 'field',            // hidden input 으로 폼 제출 참여 (multiple 은 같은 name 반복)
   multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
   searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, 한글 초성·조합 중 매칭)
@@ -317,10 +322,15 @@ modal.close();              // 포커스는 바로, is-open · 스크롤 잠금�
 modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
 
 const sw = Bigtablet.Toggle('#my-toggle', {
+  name: 'notify',           // hidden input 으로 폼 제출 참여 (data-name)
+  disabled: false,
   onCheckedChange: (checked) => console.log(checked)
 });
 sw.toggle();
 sw.setChecked(true);
+sw.isChecked();
+sw.setDisabled(true);       // hidden input 도 disabled - 제출 안 됨
+sw.destroy();
 
 // 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.
 // 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
@@ -335,6 +345,7 @@ const push = Bigtablet.Toggle('#push', {
 const pagination = Bigtablet.Pagination('#my-pagination', {
   page: 1,
   totalPages: 10,
+  sibling: 2,               // 현재 쪽 양옆 번호 수 (기본 2)
   onPageChange: (page) => console.log(page),
   href: null,               // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
   prevLabel: '이전 페이지',  // 이전·다음 버튼 aria-label (data-prev-label · data-next-label)
@@ -343,6 +354,9 @@ const pagination = Bigtablet.Pagination('#my-pagination', {
   showPageJump: false       // true 면 현재 쪽 칸이 입력칸 - 적고 Enter 로 이동 (data-page-jump, 링크 모드면 href 로 이동)
 });
 pagination.setPage(5);
+pagination.getPage();
+pagination.setTotalPages(30); // 현재 쪽은 범위 안으로 보정
+pagination.destroy();       // 그린 버튼·리스너 제거
 
 // DatePicker 달력형 (#937) - 옵션 이름은 React DatePicker · DateCalendar · TimePicker prop 과 같다 (data-* 는 kebab-case)
 const to = Bigtablet.DatePicker('#to', {
@@ -377,7 +391,7 @@ Bigtablet.CopyButton('#copy', {
 
 // Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 위, 최대 5개
 const t = Bigtablet.Toast('저장했습니다', 'success', {
-  duration: 3000,           // Infinity 면 닫기 버튼·dismiss 로만
+  duration: 3000,           // Infinity 또는 0 이하면 시간으로는 안 닫힘·진행 막대 없음 - 닫기 버튼·dismiss·action, 5개 초과 시 오래된 것부터 닫힘
   action: { label: '실행 취소', onClick: () => {} },
   closeLabel: '닫기',
   regionLabel: '알림'

@@ -9,7 +9,7 @@ Bigtablet Design System 의 프로젝트 구조와 아키텍처 문서입니다.
 ```
 bigtablet-design-system/
 ├── src/
-│   ├── index.ts             # React/Next.js 공용 진입점 (빌드 시 "use client" 자동 주입)
+│   ├── index.ts             # React/Next.js 공용 진입점 (컴포넌트 소스의 "use client" 를 빌드가 유지)
 │   │
 │   ├── styles/              # 도메인별 디자인 토큰 (각 폴더에 _index.scss + index.ts)
 │   │   ├── token.scss       # SCSS barrel (@forward all domains) - 소비자 @use 진입점
@@ -174,7 +174,7 @@ cn("button", { active: isActive });  // isActive가 true면 "button active"
 cn(["button", isLarge && "large"]);  // "button large" 또는 "button"
 
 // 외부 className 병합
-cn(styles.button, styles[`size_${size}`], className);
+cn("button", `button_size_${size}`, className);
 ```
 
 ---
@@ -234,12 +234,11 @@ export const baseColors = {
     // ...
 } as const;
 
-// semantic - 컴포넌트가 참조하는 계층 (용도별로 중첩)
+// semantic - 컴포넌트가 참조하는 계층 (용도별로 중첩). 생성 파일이라 base 를 참조하지 않고 값이 풀려 들어간다
 export const colors = {
-    brand:  { primary: baseColors.brandPrimary, onPrimary: baseColors.neutral0 },
-    text:   { heading: baseColors.neutral900, body: baseColors.neutral700, /* ... */ },
-    bg:     { solid: baseColors.neutral0, solidDim: baseColors.neutral50, /* ... */ },
-    border: { default: baseColors.neutral200, focus: baseColors.neutral900, /* ... */ },
+    brand:  { primary: "#121212", onPrimary: "#FFFFFF", /* ... */ },
+    text:   { heading: "#121212", body: "#666666", /* ... */ },
+    bg:     { solid: "#FFFFFF", solidDim: "#F4F4F4", /* ... */ },
     // ...
 } as const;
 
@@ -256,7 +255,7 @@ TS 의 `colors` · `elevation` 은 **light 고정값**입니다. 테마를 따�
 semantic 색상은 `var(--bt-*)` 를 가리킵니다. SCSS 변수 자체가 CSS 변수 참조라서 `[data-theme="dark"]` 전환이 재컴파일 없이 그대로 따라옵니다.
 
 ```scss
-// src/styles/colors/_index.scss - semantic 은 CSS 변수 참조
+// src/styles/colors/_tokens.scss - semantic 은 CSS 변수 참조
 $color_brand_primary:  var(--bt-color-brand-primary);
 $color_bg_solid:       var(--bt-color-bg-solid);
 $color_bg_solid_dim:   var(--bt-color-bg-solid-dim);
@@ -265,34 +264,37 @@ $color_text_body:      var(--bt-color-text-body);
 $color_border_default: var(--bt-color-border-default);
 $color_status_error:   var(--bt-color-status-error);
 
-// src/styles/spacing/_index.scss - 숫자 스케일 (t-shirt 사이즈 아님)
-$spacing_4:  4px;
-$spacing_8:  8px;
-$spacing_16: 16px;
-$spacing_24: 24px;
-$spacing_32: 32px;
+// src/styles/spacing/_tokens.scss - 숫자 스케일 (t-shirt 사이즈 아님)
+// 컴포넌트·소비자용은 `var(--bt-*, 원값)` - :root 에서 덮어쓰면 따라간다
+$spacing_4:  var(--bt-spacing-4, 4px);
+$spacing_8:  var(--bt-spacing-8, 8px);
+$spacing_16: var(--bt-spacing-16, 16px);
+$spacing_24: var(--bt-spacing-24, 24px);
+// 원값(Sass 산술용)은 `_base_` 접두사
+$spacing_base_16: 16px;
 
-// src/styles/typography/_index.scss - 숫자 스케일
+// src/styles/typography/_tokens.scss - 숫자 스케일
 $font_size_14: 14px;
 $font_size_15: 15px;
 $font_size_16: 16px;
 $font_weight_medium: 500;
 
-// src/styles/radius/_index.scss
-$radius_xs:   4px;
-$radius_sm:   6px;
-$radius_md:   8px;
-$radius_full: 9999px;
+// src/styles/radius/_tokens.scss - spacing 과 같은 방식 (원값은 $radius_base_*)
+$radius_xs:   var(--bt-radius-xs, 4px);
+$radius_sm:   var(--bt-radius-sm, 6px);
+$radius_md:   var(--bt-radius-md, 8px);
+$radius_full: var(--bt-radius-full, 9999px);
+$radius_base_md: 8px;
 
-// src/styles/elevation/_index.scss - shadow 도 CSS 변수 참조 (다크 모드 대응)
+// src/styles/elevation/_tokens.scss - shadow 도 CSS 변수 참조 (다크 모드 대응)
 $elevation_level1: var(--bt-elevation-level1);
 $elevation_level2: var(--bt-elevation-level2);
 
-// src/styles/motion/_index.scss
+// src/styles/motion/_tokens.scss
 $duration_fast:   0.1s;
 $duration_base:   0.2s;
-$transition_fast: $duration_fast ease-in-out;
-$transition_base: $duration_base ease-in-out;
+$transition_fast: 0.1s ease-in-out;
+$transition_base: 0.2s ease-in-out;
 $easing_enter:    cubic-bezier(0.16, 1, 0.3, 1);
 $easing_exit:     cubic-bezier(0.4, 0, 1, 1);
 ```
@@ -305,28 +307,36 @@ $easing_exit:     cubic-bezier(0.4, 0, 1, 1);
 
 ### tsup.config.ts
 
-설정은 [`tsup.config.ts`](../tsup.config.ts) 가 정본입니다 - 여기에 붙여 두면 어긋납니다. 빌드는 세 갈래입니다.
+설정은 [`tsup.config.ts`](../tsup.config.ts) 가 정본입니다 - 여기에 붙여 두면 어긋납니다. 설정은 넷입니다(Vanilla 는 압축본 · 비압축본 두 설정).
 
 | 빌드 | 출력 | 용도 |
 |------|------|------|
-| 한 덩어리 (`src/index.ts`) | `dist/index.css`(= `style.css`) · `dist/index.d.ts` | 전체 CSS 와 타입. 이 JS 는 쓰지 않아 `build-modules.mjs` 가 지웁니다 |
+| 한 덩어리 (`src/index.ts`) | `dist/index.css`(= `style.css`) · `dist/index.d.ts` · `dist/text.d.ts` | 전체 CSS 와 타입(루트 · `/text`). CSS 는 `onSuccess` 가 `@layer bigtablet` 로 감쌉니다. 이 JS(`dist/index.js`)는 쓰지 않아 같은 설정의 `onSuccess` 가 지웁니다 |
 | 모듈 단위 (`src/**/*.ts(x)`, `bundle: false`) | `dist/esm/**` | 패키지 진입점. 파일 하나 = 모듈 하나라 소비자 번들러가 안 쓰는 컴포넌트를 JS · CSS 째로 뺍니다. import 경로 보정 · 컴포넌트별 CSS · `"use client"` 유지는 `scripts/build-modules.mjs` |
-| Vanilla (`src/vanilla/bigtablet.js`) | `dist/vanilla/bigtablet(.min).js` | IIFE, 전역 `Bigtablet` |
+| Vanilla (`src/vanilla/bigtablet.js`) × 2 | `dist/vanilla/bigtablet.min.js` · `dist/vanilla/bigtablet.js` | IIFE, 전역 `Bigtablet`. 압축본이 배포물이고 비압축본은 examples 용(배포 제외) |
 
-`pnpm build` 가 이어서 SCSS 복사(`copy-scss.sh`) · Vanilla CSS(`build-vanilla.sh`) · Tailwind 프리셋(`build-tailwind.mjs`)을 만듭니다.
+`pnpm build` 가 tsup 다음에 SCSS 복사(`copy-scss.sh`) · Vanilla CSS(`build-vanilla.sh`) · Tailwind v4 토큰 브리지(`build-tailwind.mjs` → `dist/tailwind.css`) · 에이전트 문서(`build:llms` → `dist/llms/`)를 이어서 만듭니다.
 
 ### 빌드 출력
 
 ```
 dist/
 ├── esm/               # ESM (React/Next.js) 진입점 - 모듈 단위, 컴포넌트마다 style.css
-├── index.d.ts         # TypeScript 타입
+│   └── text/          # /text 진입점 (BalancedText 등)
+├── index.d.ts         # TypeScript 타입 (루트)
+├── text.d.ts          # TypeScript 타입 (/text)
 ├── index.css          # 통합 스타일 (= style.css, theme.scss CSS 변수 포함)
+├── tailwind.css       # Tailwind v4 토큰 브리지 (/tailwind.css)
 ├── styles/token.scss  # SCSS 토큰 (/scss/token)
+├── llms/              # 에이전트 문서 (build:llms)
+│   ├── index.md
+│   ├── components/    # 컴포넌트별 .md
+│   ├── tokens.md · recipes.md · avoid.md · text.md · vanilla.md
+│   └── full.md
 └── vanilla/           # Vanilla JS 패키지
-    ├── bigtablet.css
+    ├── bigtablet.css      # 비압축본 - 로컬(examples) 전용, 배포 제외 (package.json files 의 ! 항목)
     ├── bigtablet.min.css
-    ├── bigtablet.js
+    ├── bigtablet.js       # 비압축본 - 로컬(examples) 전용, 배포 제외
     └── bigtablet.min.js
 ```
 
@@ -336,7 +346,7 @@ dist/
 
 ### Vitest 설정
 
-설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다. 프로젝트가 넷으로 나뉩니다.
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다. 프로젝트가 셋으로 나뉩니다.
 
 | 프로젝트 | 명령 | 파일 | 환경 |
 |----------|------|------|------|
@@ -406,7 +416,7 @@ describe("Button", () => {
 | Setup pnpm (`pnpm/action-setup`) + Node (`actions/setup-node`, `node-version: 22.14.0`, `cache: pnpm`) | 항상 |
 | `pnpm install --frozen-lockfile` | 항상 |
 | `pnpm exec commitlint` | `develop` 대상 PR 이고 dependabot 이 아닐 때 |
-| `pnpm lint:css` · `check:defaults` · `check:deprecated` · `check:filenames` · `check:agent-guide` | 항상 (소스만 읽어 빌드 앞에서 빨리 실패) |
+| `pnpm lint:css` · `check:defaults` · `check:deprecated` · `check:filenames` · `check:agent-guide` · `check:props` | 항상 (소스만 읽어 빌드 앞에서 빨리 실패) |
 | `pnpm build` | 항상 |
 | `pnpm size` · `check:css-vars` · `check:geometry` · `check:dark-text` | 항상 (dist 를 읽어 빌드 뒤) |
 
