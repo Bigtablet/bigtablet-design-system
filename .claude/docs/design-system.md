@@ -6,7 +6,7 @@ prop 표·예시를 여기 다시 옮겨 적지 않는다 - 옮겨 적은 사본
 ## 무엇을 믿나 (우선순위)
 
 1. **소스** - `src/ui/{category}/{component}/index.tsx` 의 props 인터페이스와 `export type …Variant/Tone/Size` union. 문서와 다르면 소스가 맞다
-2. [`docs/COMPONENTS.md`](../../docs/COMPONENTS.md) - 컴포넌트별 props 표·예시. `pnpm check:defaults` 가 표의 union 값을 소스와 대조한다
+2. [`docs/COMPONENTS.md`](../../docs/COMPONENTS.md) - 컴포넌트별 언제 쓰는가·예시·알아 둘 것·구현 계약. `pnpm check:defaults` 가 예제의 union 값을 소스와 대조한다. props 표는 소스에서 생성하는 `site/props.json`(문서 사이트)에 있다
 3. [`docs/AGENT_GUIDE.md`](../../docs/AGENT_GUIDE.md) - 소비 앱에서 DS 를 쓰는 쪽의 가이드 (토큰·다크 모드·조합 패턴·안티 패턴)
 4. [`docs/MIGRATION.md`](../../docs/MIGRATION.md) - 이름이 바뀌거나 지워진 이력. 옛 이름을 보면 여기서 대체를 찾는다
 
