@@ -3,6 +3,7 @@ import {
 	Badge,
 	Button,
 	DataView,
+	iconSize,
 	NavBar,
 	PageHeader,
 	Sidebar,
@@ -55,14 +56,14 @@ export default function Example() {
 			sidebar={
 				<Sidebar header={<strong>Bigtablet</strong>} headerCollapsed={<strong>B</strong>}>
 					<SidebarSection label="운영">
-						<SidebarItem icon={<Home size={18} />}>대시보드</SidebarItem>
-						<SidebarItem icon={<ShoppingBag size={18} />} active>
+						<SidebarItem icon={<Home size={iconSize.md} />}>대시보드</SidebarItem>
+						<SidebarItem icon={<ShoppingBag size={iconSize.md} />} active>
 							주문
 						</SidebarItem>
 					</SidebarSection>
 					<SidebarSection label="관리">
-						<SidebarItem icon={<Users size={18} />}>구성원</SidebarItem>
-						<SidebarItem icon={<Settings size={18} />}>설정</SidebarItem>
+						<SidebarItem icon={<Users size={iconSize.md} />}>구성원</SidebarItem>
+						<SidebarItem icon={<Settings size={iconSize.md} />}>설정</SidebarItem>
 					</SidebarSection>
 				</Sidebar>
 			}

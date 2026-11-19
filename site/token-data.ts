@@ -37,7 +37,6 @@ function lookup(path: string): unknown {
 	return isToken(node) ? node.$value : node;
 }
 
-/** 묶음 아래 토큰을 펼친다 - 이름은 묶음 기준 상대 경로 */
 /**
  * tokens.json 의 $description 은 대부분 유지보수 메모(대비값 · 예전 값 · 결정 이유)라 표에는 짧은 것만 싣는다.
  * 묶음 전체에 해당하는 메모(spacing 0 의 var() 설명 등)는 페이지의 Group desc 가 맡는다.
@@ -48,6 +47,7 @@ const summaryOf = (description: unknown) => {
 	return /\s/.test(text) && text.length <= 60 ? undash(text) : undefined;
 };
 
+/** 묶음 아래 토큰을 펼친다 - 이름은 묶음 기준 상대 경로 */
 export function collect(path: string): Token[] {
 	const root = path.split(".").reduce<unknown>((n, key) => (n as Node)?.[key], tokens) as Node;
 	const out: Token[] = [];

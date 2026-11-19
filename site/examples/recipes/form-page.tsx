@@ -1,10 +1,12 @@
 import {
 	Button,
 	Card,
+	Container,
 	Dropdown,
 	Field,
 	Form,
 	PageHeader,
+	Stack,
 	TextField,
 	ToastProvider,
 	useToast,
@@ -26,30 +28,32 @@ function MemberForm() {
 		toast.success("구성원을 초대했습니다");
 	};
 	return (
-		<div style={{ display: "grid", gap: 16, maxWidth: 480 }}>
-			<PageHeader title="구성원 초대" description="초대 메일을 보냅니다" />
-			<Card>
-				<Form errors={errors} onSubmit={submit}>
-					<Field name="name" label="이름" required>
-						<TextField name="name" />
-					</Field>
-					<Field name="email" label="이메일" required>
-						<TextField name="email" type="email" />
-					</Field>
-					<Field name="role" label="역할">
-						<Dropdown
-							options={[
-								{ value: "admin", label: "관리자" },
-								{ value: "member", label: "구성원" },
-							]}
-						/>
-					</Field>
-					<Form.Actions>
-						<Button type="submit">초대</Button>
-					</Form.Actions>
-				</Form>
-			</Card>
-		</div>
+		<Container size="sm" center={false}>
+			<Stack gap={16}>
+				<PageHeader title="구성원 초대" description="초대 메일을 보냅니다" />
+				<Card>
+					<Form errors={errors} onSubmit={submit}>
+						<Field name="name" label="이름" required>
+							<TextField name="name" />
+						</Field>
+						<Field name="email" label="이메일" required>
+							<TextField name="email" type="email" />
+						</Field>
+						<Field name="role" label="역할">
+							<Dropdown
+								options={[
+									{ value: "admin", label: "관리자" },
+									{ value: "member", label: "구성원" },
+								]}
+							/>
+						</Field>
+						<Form.Actions>
+							<Button type="submit">초대</Button>
+						</Form.Actions>
+					</Form>
+				</Card>
+			</Stack>
+		</Container>
 	);
 }
 
