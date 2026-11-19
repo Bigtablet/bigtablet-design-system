@@ -91,8 +91,12 @@ const barrel = [...indexSource.matchAll(reexport)]
 	})
 	.filter(Boolean);
 code.set(BARREL, `${barrel.join("\n")}\n`);
+// `./text` 는 DS 없이도 쓰는 진입점이고 text.scss 는 CSS 변수를 쓰지 않는다 - 테마 · 링크 규칙을 앱에 싣지 않는다 (#1110)
+const TEXT = join(OUT, "text");
 const needsBase = (file, js) =>
-	file !== BARREL && (/\.css["']/.test(js) || file.endsWith("css-vars.js"));
+	file !== BARREL &&
+	!file.startsWith(TEXT) &&
+	(/\.css["']/.test(js) || file.endsWith("css-vars.js"));
 for (let [file, js] of code) {
 	if (needsBase(file, js)) {
 		const imports = base
