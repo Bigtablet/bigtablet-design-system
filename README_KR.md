@@ -80,7 +80,7 @@ React 19 와 lucide-react 0.552 이상이 필요합니다. Next.js 는 선택 pe
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-npm · yarn · pnpm · bun 과 React · Next.js 를 알아서 감지해 패키지와 peer dependency 를 설치하고, Provider 설정 방법을 출력합니다.
+npm · yarn · pnpm · bun 과 React · Next.js 를 알아서 감지해 패키지와 peer dependency 를 설치하고, Provider 설정 방법을 출력합니다. CSS 는 따로 import 하지 않아도 됩니다 - 컴포넌트를 import 하면 그 CSS 가 함께 실립니다.
 
 </details>
 

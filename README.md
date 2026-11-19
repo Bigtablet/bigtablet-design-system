@@ -80,7 +80,7 @@ Requires React 19 + lucide-react ≥ 0.552. Next.js is an optional peer dependen
 curl -fsSL https://raw.githubusercontent.com/Bigtablet/bigtablet-design-system/main/scripts/setup.sh | sh
 ```
 
-Detects npm / yarn / pnpm / bun and React / Next.js, installs deps, prints CSS + provider setup steps.
+Detects npm / yarn / pnpm / bun and React / Next.js, installs the package and its peer dependencies, and prints the provider setup. No CSS import is needed - importing a component brings its CSS.
 
 </details>
 
