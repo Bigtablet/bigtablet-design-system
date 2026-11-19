@@ -109,6 +109,12 @@ describe("Toggle - 초기화 · API", () => {
 		expect(el.querySelector<HTMLInputElement>('input[type="hidden"]')?.name).toBe("dark");
 	});
 
+	it("renames a reused child hidden input to the JS name (#1106)", () => {
+		const el = mount('<div class="bt-toggle"><input type="hidden" name="old" value="true"></div>');
+		Toggle(el, { name: "notify" });
+		expect(el.querySelector<HTMLInputElement>('input[type="hidden"]')?.name).toBe("notify");
+	});
+
 	it("reuses a server-rendered sibling input and reads lenient on values", () => {
 		for (const raw of ["true", "1", "on", "y", "YES "]) {
 			const el = mount(
