@@ -420,18 +420,25 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 95 test files / 1884 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 98 test files / 1936 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **96.11%** | **93.74%** | **97.03%** | **97.41%** |
+| **All files** | **92.14%** | **90.46%** | **93.41%** | **93.94%** |
 
-아래는 **100% 미만**인 것만 나열한 것입니다 (43개는 전 지표 100% 라 빠져 있습니다).
+아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
+| text/balanced.tsx | 67.61% | 57.84% | 62.96% | 72.37% |
+| text/core.ts | 100% | 89.55% | 100% | 100% |
+| text/dom.ts | 27.91% | 11.29% | 27.78% | 32.84% |
+| text/layout.ts | 98.54% | 82.41% | 100% | 100% |
+| text/measure.ts | 40.91% | 44.44% | 50% | 44.44% |
+| text/prehydrate.ts | 0% | 0% | 0% | 0% |
+| text/react.tsx | 100% | 93.1% | 100% | 100% |
 | ui/display/accordion | 100% | 94.74% | 100% | 100% |
 | ui/display/avatar | 100% | 82.76% | 100% | 100% |
 | ui/display/chip | 96.43% | 98.04% | 85.71% | 100% |
@@ -443,7 +450,7 @@ it("calls callback with correct arguments", () => {
 | ui/display/table | 98.32% | 96.86% | 96.97% | 99.02% |
 | ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
-| ui/feedback/toast | 97.25% | 90.74% | 100% | 100% |
+| ui/feedback/toast | 97.25% | 91.38% | 100% | 100% |
 | ui/forms/checkbox | 95.83% | 91.67% | 100% | 100% |
 | ui/forms/combobox | 100% | 99.12% | 95% | 100% |
 | ui/forms/date-calendar | 99.4% | 98.64% | 100% | 100% |
@@ -458,18 +465,19 @@ it("calls callback with correct arguments", () => {
 | ui/forms/textfield | 94.03% | 93.4% | 100% | 96.72% |
 | ui/forms/time-picker | 94.83% | 96.2% | 100% | 100% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
-| ui/navigation/menu | 98.9% | 96.77% | 100% | 100% |
-| ui/navigation/nav-bar | 80.91% | 70.73% | 82.61% | 85.71% |
+| ui/navigation/menu | 98.92% | 96.92% | 100% | 100% |
+| ui/navigation/nav-bar | 80.17% | 69.05% | 79.17% | 85.44% |
 | ui/navigation/pagination | 100% | 97.87% | 100% | 100% |
-| ui/navigation/sidebar | 84.85% | 89.29% | 80% | 87.5% |
+| ui/navigation/sidebar | 85.29% | 91.94% | 80% | 87.88% |
+| ui/navigation/stepper | 86.67% | 86.84% | 87.5% | 96.15% |
 | ui/navigation/tabs | 96.83% | 89.23% | 100% | 99.07% |
 | ui/overlay/popover | 97.73% | 97.3% | 100% | 100% |
 | ui/overlay/tooltip | 100% | 91.43% | 100% | 100% |
 | ui/system/theme-provider | 96.08% | 89.19% | 100% | 100% |
 | utils/cn.ts | 100% | 87.5% | 100% | 100% |
 | utils/overlay-stack.ts | 93.94% | 83.33% | 87.5% | 96.3% |
-| utils/scroll-lock.ts | 97.59% | 95.24% | 100% | 100% |
-| utils/sentences.tsx | 100% | 83.33% | 100% | 100% |
+| utils/reveal-inline.ts | 71.43% | 50% | 100% | 100% |
+| utils/scroll-lock.ts | 97.7% | 95.83% | 100% | 100% |
 | utils/use-anchored-position.ts | 97.73% | 95% | 100% | 100% |
 | utils/use-clipboard.ts | 98.68% | 83.33% | 100% | 98.63% |
 | utils/use-focus-trap.ts | 100% | 98.04% | 100% | 100% |
