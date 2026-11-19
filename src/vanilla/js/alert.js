@@ -7,8 +7,8 @@ import { escapeHtml, generateId, returnFocusTarget, trapTab } from "./utils.js";
      ======================================== */
 
 // React Alert 와 동일한 버튼 variant (confirm=filled / cancel=outline).
-export const CONFIRM_BUTTON_VARIANT = "bt-button--filled";
-export const CANCEL_BUTTON_VARIANT = "bt-button--outline";
+const CONFIRM_BUTTON_VARIANT = "bt-button--filled";
+const CANCEL_BUTTON_VARIANT = "bt-button--outline";
 
 /**
  * Show Alert dialog

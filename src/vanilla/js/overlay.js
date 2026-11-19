@@ -9,9 +9,9 @@ import { measureViewportInset } from "./utils.js";
  * 핸들러만 부른다. 오버레이마다 document 에 자기 리스너를 걸면 Modal 위에 Alert 를 띄운 뒤
  * Escape 한 번에 둘이 같이 닫힌다 - 실측으로 그랬다. APG 는 최상단만 닫히길 요구한다.
  */
-export const escapeStack = [];
+const escapeStack = [];
 
-export function onEscapeKeyDown(e) {
+function onEscapeKeyDown(e) {
 	// 자식이 preventDefault 로 "처리했다" 고 알린 Escape 는 넘긴다 - React overlay-stack 과 같은
 	// 규약. 안 보면 Modal 안의 Select 목록을 Esc 로 닫는 순간 Modal 까지 닫힌다(#697).
 	if (e.key !== "Escape" || e.defaultPrevented) return;
@@ -52,7 +52,7 @@ export function pushEscape(handler) {
  * 잠금 전 인라인 값으로 `--bt-scrollbar-width` 를 되돌린다 (React 쪽과 같은 규칙).
  * 소비자가 잡아둔 값이 있었으면 살리고, 없었으면 인라인 override 만 지운다.
  */
-export function restoreScrollbarWidthVar(html, body) {
+function restoreScrollbarWidthVar(html, body) {
 	const prev = body.dataset.btOriginalScrollbarWidthVar;
 	if (prev) {
 		html.style.setProperty("--bt-scrollbar-width", prev);
