@@ -202,16 +202,17 @@ export const BalancedText = ({
 			setChosen({ key, breaks, boxed: contentSized.current });
 		};
 		/** 브라우저 줄바꿈 그대로 그려진 상태에서만 돈다 - 그 줄을 화면에서 읽어 기준으로 삼는다(dom.ts) */
-		const compute = () => {
+		const compute = (fontWaited = false) => {
 			if (gaveUp) return;
-			// 이 글꼴을 아직 받는 중이면(첫 방문 · 숨어 있다 보이며 처음 쓰는 굵기) 받은 뒤 잰다 - 폭은 그대로라 RO 가 안 불린다
-			const pending = fontPending(el);
+			// 이 글꼴을 아직 받는 중이면(첫 방문 · 숨어 있다 보이며 처음 쓰는 굵기) 받은 뒤 잰다 - 폭은 그대로라 RO 가 안 불린다.
+			// 한 번만 기다린다 - 받은 뒤에도 check 가 false 인 글꼴(unicode-range 밖 글자 · 실패한 face)은 다시 물으면 끝없이 돈다 (#1113)
+			const pending = fontWaited ? null : fontPending(el);
 			if (pending) {
 				pending.then(
 					() => {
 						if (cancelled) return;
 						for (const m of measurers.values()) m?.clear();
-						compute();
+						compute(true);
 					},
 					() => {},
 				);
