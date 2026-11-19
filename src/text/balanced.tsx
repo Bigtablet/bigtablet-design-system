@@ -181,6 +181,9 @@ export const BalancedText = ({
 	useSafeLayoutEffect(() => {
 		const el = ref.current;
 		if (!el) return;
+		// 다른 글(key)로 고른 줄은 버린다 - A → 숨긴 B → 폭이 바뀐 뒤 A 로 돌아오면 A 의 옛 줄이 그대로 그려지고, 줄이 이미 있어
+		// 아래 compute 가 다시 재지 않는다 (#1113 리뷰). 원문으로 돌아간 다음 렌더에서 지금 폭으로 다시 잰다
+		setChosen((c) => (c && c.key !== key ? null : c));
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		let cancelled = false;
 		let width = contentWidth(el);

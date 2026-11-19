@@ -60,6 +60,50 @@ describe("BalancedText (Chromium)", () => {
 		expect(lineTexts(span).some((line) => line?.endsWith("body"))).toBe(false);
 	});
 
+	it("drops lines chosen for an earlier className when it comes back at a new width", async () => {
+		// A(400px 에서 고른 줄) → 숨긴 B → 숨긴 사이 폭 160px → 다시 A. 예전 결과를 그대로 그리면 400px 용 nowrap 줄이
+		// 넘치고, 줄이 이미 있다는 이유로 다시 재지도 않았다 (#1113 리뷰)
+		const style = document.createElement("style");
+		style.textContent = ".bt-test-hidden { display: none; }";
+		document.head.appendChild(style);
+		const long =
+			"미팅은 끝났지만, 실행은 지금부터. AI가 설계하는 완벽한 후속 일정을 확인하고 바로 공유해 보세요.";
+		const tree = (className: string) => (
+			<div style={{ width: 400 }}>
+				<BalancedText
+					as="p"
+					className={className}
+					style={{ font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+				>
+					{long}
+				</BalancedText>
+			</div>
+		);
+		try {
+			const { container, rerender } = render(tree("a"));
+			const box = container.firstElementChild as HTMLElement;
+			await expect
+				.poll(() => box.querySelectorAll(".text_balanced_line").length, { timeout: 2000 })
+				.toBeGreaterThan(1);
+
+			rerender(tree("bt-test-hidden"));
+			box.style.width = "160px";
+			rerender(tree("a"));
+
+			const p = box.firstElementChild as HTMLElement;
+			const overflows = () => {
+				const right = p.getBoundingClientRect().right;
+				return [...p.querySelectorAll(".text_balanced_line")].some(
+					(line) => line.getBoundingClientRect().right > right + 1,
+				);
+			};
+			await expect.poll(overflows, { timeout: 2000 }).toBe(false);
+			expect(p.textContent).toBe(long);
+		} finally {
+			style.remove();
+		}
+	});
+
 	it("keeps the browser wrapping when it already breaks in good places", async () => {
 		const { container } = render(
 			<BalancedText
