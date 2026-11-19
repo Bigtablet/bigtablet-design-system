@@ -111,7 +111,7 @@
 		"@types/react-dom": "^19.2.4",
 		"@vitest/browser-playwright": "^4.1.10",
 		"@vitest/coverage-v8": "^4.1.10",
-		"axe-core": "4.14.0",
+		"axe-core": "4.14.1",
 		"esbuild-sass-plugin": "^3.7.0",
 		"husky": "^9.1.7",
 		"jsdom": "^29.1.1",
