@@ -322,6 +322,8 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 ### Text
 
 - `<Sentences text="..." />` - wraps each sentence in an `inline-block` span so lines break between sentences (same rule Toast/Alert/`supportingText` use). Use it for app-drawn paragraphs instead of your own splitter. In tests, find split text with `getByText(sentenceText("full text"))`. The same rules (sentence split, keeping `~의` modifiers and determiners with the next word) are also exported from `@bigtablet/design-system/text`, including React-free `splitSentences` and `phraseRanges`.
+- `<BalancedText as="h1">...</BalancedText>` (`@bigtablet/design-system/text`) - for headings, hero copy, lead text and short paragraphs: measures the real width and picks breaks at sentence ends and commas within the same line count. Children may mix text and inline elements (`<code>`, `<strong>`, links). `as` must be block-level. Not for long body text (cost grows with the square of the word count).
+- `<BalancedTextScript />` (`@bigtablet/design-system/text`) - SSR apps only: put it once at the end of `<body>` (after the `BalancedText`s) so server HTML shows the same lines before hydration. Pass your CSP `nonce`. CSR apps do not need it.
 
 ---
 
@@ -505,7 +507,12 @@ The docs site (`site/`, published at https://bigtablet.github.io/bigtablet-desig
 - **Tokens** - colors, spacing, typography, breakpoints and the other domains
 - **AI Agents** - setup files for Claude Code, Codex and Cursor
 
-Agent-readable docs ship in the package at `node_modules/@bigtablet/design-system/dist/llms/index.md` (same source as the site, same version as the install).
+Agent-readable docs ship in the package at `node_modules/@bigtablet/design-system/dist/llms/` (same source as the site, same version as the install):
+- `index.md` - rules before writing UI + the component list; `components/*.md` - one file per component
+- `tokens.md` - every token name and value (use only these), `recipes.md` - admin list / form / landing screens, `avoid.md` - removed props and deprecated names with replacements
+- `text.md` - the `/text` subpath, `vanilla.md` - the Vanilla bundle, `full.md` - everything except Vanilla in one file
+
+The docs site serves the same set from `main` as `llms.txt` (index) and `llms-full.txt` (one file).
 
 Run locally: `pnpm site` (port 6007).
 
