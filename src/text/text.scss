@@ -16,6 +16,13 @@
 	text-wrap: pretty;
 }
 
+// 폭을 재므로 블록이어야 한다 - 기본값 span(인라인)이면 clientWidth 가 0 이라 줄을 고르지 못한다 (#1113).
+// span 에만 건다 - li(list-item) · td(table-cell) 에 걸면 번호 · 불릿이 사라지고 표 칸이 깨진다. :where 로 특정도를 클래스
+// 하나와 같게 두어 소비자 클래스가 덮을 수 있다
+:where(span).text_balanced {
+	display: block;
+}
+
 // BalancedText 가 고른 한 줄 (#1083) - 그 안에서는 끊지 않고 줄 사이 공백에서만 바뀐다.
 // inline-block 이 아니라 nowrap - Chrome 은 inline-block 경계를 건너 페이지 검색(Ctrl+F)을 잇지 못한다.
 // 넘치지 않게 계산할 때 1px 여유를 둔다(balanced.tsx). 어절(.text_balanced_word)은 폭을 재는 표시일 뿐 모양이 없다

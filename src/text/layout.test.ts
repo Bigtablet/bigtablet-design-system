@@ -138,6 +138,52 @@ describe("scoreBreaks", () => {
 		expect(scoreBreaks(words, measure, 1000, [at("·")]).penalty).toBe(60);
 		expect(scoreBreaks(words, measure, 1000, [at("에")]).penalty).toBe(4);
 	});
+
+	it("never leaves only the first word of the next sentence at the end of a line", () => {
+		// "실행은 지금부터. AI가 / 설계하는" - Sentences 가 막는 자리다 (#1113)
+		const words = toWords("미팅은 끝났지만, 실행은 지금부터. AI가 설계하는 완벽한 후속 일정");
+		const at = (w: string) => words.findIndex((word) => word.text === w);
+		expect(scoreBreaks(words, measure, 1000, [at("AI가")]).penalty).toBe(100);
+		expect(scoreBreaks(words, measure, 1000, [at("지금부터.")]).penalty).toBe(0);
+		// 한 어절짜리 문장 뒤는 문장 끝이라 그대로 0 이다
+		const short = toWords("확인했어요. 네. 다음 단계로 갑니다.");
+		expect(scoreBreaks(short, measure, 1000, [1]).penalty).toBe(0);
+	});
+
+	it("charges a middle line that fills less than half the box, but not a short first line", () => {
+		// 폭 100 - "aaaaaaaa"(80) / "b"(10) / "cccccccc": 끊는 자리 4 + 4, 가운데 줄이 짧아 8 (#1113)
+		const words = toWords("aaaaaaaa b cccccccc");
+		expect(scoreBreaks(words, measure, 100, [0, 1]).penalty).toBe(16);
+		// 첫 줄이 짧은 것은 제목 줄("녹음본 업로드. / …")처럼 의도한 모양이라 벌점이 없다
+		expect(scoreBreaks(words, measure, 100, [1]).penalty).toBe(4);
+	});
+});
+
+describe("chooseBreaks across sentences", () => {
+	it.each([130, 150, 170])(
+		"never ends a line with only the first word of the next sentence (width %i)",
+		(width) => {
+			// 예전 엔진은 140~170 에서 "미팅은 끝났지만, / 실행은 지금부터. AI가 / 설계하는 …" 로 바꿨다 (#1113)
+			const text = "미팅은 끝났지만, 실행은 지금부터. AI가 설계하는 완벽한 후속 일정";
+			const { breaks } = chooseBreaks(text, measure, width);
+			expect(lines(text, breaks).some((line) => line.endsWith("AI가"))).toBe(false);
+		},
+	);
+});
+
+describe("chooseBreaks with a short middle line", () => {
+	it("does not trade a compound noun for a middle line of one word", () => {
+		// 폭 200 - 브라우저는 "…작은 결정 / 사항까지, …" 로 끊는다. 예전 엔진은 벌점 합(7)만 보고
+		// "…작은 결정 / 사항까지, / AI가 …" 로 바꿔 가운데 줄이 한 어절이 됐다 (#1113)
+		const text =
+			"스쳐 지나가는 아이디어부터 작은 결정 사항까지, AI가 빠짐없이 기록하고 요약해줘요.";
+		const { breaks } = chooseBreaks(text, measure, 200);
+		expect(lines(text, breaks)).toEqual([
+			"스쳐 지나가는 아이디어부터",
+			"작은 결정 사항까지,",
+			"AI가 빠짐없이 기록하고 요약해줘요.",
+		]);
+	});
 });
 
 describe("unclosed parentheses", () => {

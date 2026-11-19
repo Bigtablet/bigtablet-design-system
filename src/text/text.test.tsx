@@ -17,6 +17,22 @@ describe("splitSentences", () => {
 	});
 
 	// 숫자 바로 뒤 마침표는 날짜 - 문장 끝으로 보지 않는다.
+	it("does not end a sentence on a dotted abbreviation", () => {
+		expect(texts("예시(e.g. 버튼)를 봅니다. 다음입니다.")).toEqual([
+			"예시(e.g. 버튼)를 봅니다.",
+			"다음입니다.",
+		]);
+		// 닫는 괄호 · 따옴표가 바로 붙어도 약어다
+		expect(texts("버튼 (e.g.) 처럼 씁니다. 다음입니다.")).toEqual([
+			"버튼 (e.g.) 처럼 씁니다.",
+			"다음입니다.",
+		]);
+		expect(texts("“i.e.” 로 적습니다. 다음입니다.")).toEqual([
+			"“i.e.” 로 적습니다.",
+			"다음입니다.",
+		]);
+	});
+
 	it("keeps a dotted date inside its sentence", () => {
 		expect(texts("2026. 5. 21. 에 만료돼요. 갱신하세요.")).toEqual([
 			"2026. 5. 21. 에 만료돼요.",
