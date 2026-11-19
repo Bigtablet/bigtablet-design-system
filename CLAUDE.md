@@ -10,6 +10,7 @@ This file helps Claude (and other AI assistants) understand the Bigtablet Design
 - **Exports** (`package.json` `exports`):
   - React / Next.js (`.`) - 컴포넌트가 빌드 시 `"use client"` 자동 주입되어 Next App Router 와 호환 (별도 `/next` entry 없음)
   - Vanilla JS (`./vanilla`) - for Thymeleaf, JSP, PHP, etc.
+  - 줄바꿈 (`./text`) - BalancedText · Sentences 등, 런타임 의존성 없음
   - SCSS 토큰 (`./scss/token`), CSS (`./style.css`)
 
 ## Quick Commands
@@ -38,6 +39,7 @@ src/
 │   ├── display/  feedback/  forms/  general/
 │   └── layout/  navigation/  overlay/  system/
 ├── utils/               # cn + 훅 (use-presence, use-focus-trap, use-reduced-motion, use-listbox-popup, use-safe-layout-effect …)
+├── text/                # 한국어 줄바꿈 (`./text` export) - src/utils · src/ui 를 import 하지 않는다 (biome noRestrictedImports)
 ├── test/                # setup.ts (Vitest)
 ├── types/               # scss.d.ts
 └── vanilla/             # Vanilla JS 패키지 (HTML/CSS/JS)

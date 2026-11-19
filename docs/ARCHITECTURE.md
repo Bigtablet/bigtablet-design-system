@@ -41,9 +41,11 @@ bigtablet-design-system/
 │   │   ├── use-listbox-popup.ts    # Dropdown · Combobox 공용 팝업 거동 (공개 export)
 │   │   ├── overlay-stack.ts        # 공유 오버레이 Escape 스택 (registerOverlay / useOverlayEscape)
 │   │   ├── use-focus-trap.ts  ·  scroll-lock.ts  ·  use-anchored-position.ts
-│   │   ├── sentences.tsx           # 문장 단위 줄바꿈 (Sentences · renderSentences)
 │   │   ├── use-clipboard.ts  ·  hangul-search.ts  ·  reveal-inline.ts  ·  …
 │   │   └── index.ts
+│   │
+│   ├── text/                # 한국어 줄바꿈 - `/text` 하위 경로 (BalancedText · Sentences · renderPhrases …)
+│   │                        # 바깥(utils · ui)을 쓰지 않습니다 - biome noRestrictedImports 가 막습니다. ui → text 방향만
 │   │
 │   ├── test/                # setup.ts (Vitest)
 │   ├── types/               # scss.d.ts
