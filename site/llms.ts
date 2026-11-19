@@ -7,7 +7,8 @@ import props from "./props.json";
 export const AGENT_RULES = [
 	'- 모든 컴포넌트는 `import { Button } from "@bigtablet/design-system"` 로 가져옵니다. CSS 는 따로 import 하지 않습니다.',
 	"- `useToast` 를 쓰면 `ToastProvider`, `useConfirm` · `useAlert` 를 쓰면 `AlertProvider` 를 앱 최상위에 한 번 둡니다. `ThemeProvider` 는 테마를 앱에서 바꿀 때만 필요하고, 없으면 OS 설정을 따릅니다.",
-	'- 색 · 간격 값을 하드코딩하지 않습니다. SCSS 는 `@use "@bigtablet/design-system/scss/token" as token;` 의 토큰, CSS 는 `var(--bt-…)` 를 씁니다.',
+	'- 색 · 간격 값을 하드코딩하지 않습니다. SCSS 는 `@use "@bigtablet/design-system/scss/token" as token;` 의 토큰, CSS 는 `var(--bt-…)` 를 씁니다. 토큰 이름 · 값은 tokens.md 에 있는 것만 씁니다.',
+	"- `onChange` · 의미 색 `variant` 같은 옛 이름을 쓰기 전에 avoid.md 를 봅니다 - 지운 이름은 타입 에러가 납니다.",
 	'- 고를 때는 각 문서의 "언제 쓰는가" 를 먼저 봅니다. 굵은 줄이 그 컴포넌트를 쓰는 경우이고, 나머지는 다른 컴포넌트를 쓰는 경우입니다.',
 ];
 
