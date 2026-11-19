@@ -39,6 +39,27 @@ describe("BalancedText (Chromium)", () => {
 		expect(tops.size).toBe(lines.length);
 	});
 
+	it("balances with the default span element too", async () => {
+		// 기본값 span 은 인라인이라 폭이 0 이었다 - 루트를 블록으로 두어 as 없이도 줄을 고른다 (#1113)
+		const { container } = render(
+			<BalancedText
+				style={{ width: 300, font: "16px/24px sans-serif", wordBreak: "keep-all", margin: 0 }}
+			>
+				{text}
+			</BalancedText>,
+		);
+		const span = container.firstElementChild as HTMLElement;
+		expect(span.tagName).toBe("SPAN");
+		const ctx = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+		ctx.font = "16px sans-serif";
+		const upToBody = ctx.measureText("제목이면 heading, 본문이면 body").width;
+		const all = ctx.measureText(text).width;
+		span.style.width = `${Math.ceil((upToBody + all) / 2)}px`;
+
+		await expect.poll(() => lineTexts(span).length, { timeout: 2000 }).toBeGreaterThan(1);
+		expect(lineTexts(span).some((line) => line?.endsWith("body"))).toBe(false);
+	});
+
 	it("keeps the browser wrapping when it already breaks in good places", async () => {
 		const { container } = render(
 			<BalancedText

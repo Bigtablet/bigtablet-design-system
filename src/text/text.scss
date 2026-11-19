@@ -13,6 +13,8 @@
 // BalancedText 루트 - 줄을 고르기 전(SSR 첫 화면 · JS 전 · 폭을 바꾸는 동안)의 브라우저 줄바꿈도 마지막 줄에 짧은 어절이
 // 혼자 남지 않게 한다. 지원 안 하는 브라우저(Firefox)는 무시해 그대로다
 .text_balanced {
+	// 폭을 재므로 블록이어야 한다 - 기본값 span(인라인)이면 clientWidth 가 0 이라 줄을 고르지 못한다 (#1113)
+	display: block;
 	text-wrap: pretty;
 }
 

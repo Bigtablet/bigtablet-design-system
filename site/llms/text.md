@@ -25,7 +25,7 @@ import { BalancedText, BalancedTextScript, Sentences } from "@bigtablet/design-s
 </BalancedText>
 ```
 
-- `as` 는 블록으로 놓이는 요소(h1 · p 또는 `display: block`)여야 합니다 - 폭을 잽니다. 기본값은 `span`
+- 루트는 늘 `display: block` 입니다 - 자기 폭을 잽니다. 기본값 `span` 도 그대로 동작합니다
 - children 은 글자와 인라인 요소(`<code>` · `<strong>` · 링크)를 섞어도 됩니다. 요소 하나는 쪼개지 않는 한 조각입니다 - 여러 어절을 굵게 하려면 어절마다 `<strong>` 으로 나눕니다
 - 줄은 `<br>` 이 아니라 nowrap 묶음으로 그립니다 - 복사 · 페이지 검색 · 스크린리더가 원문 그대로입니다
 - 폭이 바뀌면 멈춘 뒤(100ms) 다시 고르고, 웹폰트를 받는 중이면 받은 뒤에 고릅니다
