@@ -26,7 +26,10 @@ describe("llms docs", () => {
 	it("writes token names and values from tokens.json", () => {
 		const doc = tokensDoc();
 		expect(doc).toContain("`token.$color_text_heading` | `--bt-color-text-heading` |");
+		// 하위 묶음(heading.large)과 토큰 하나뿐인 경로(caption) 모두
 		expect(doc).toContain("`@include token.heading_large`");
+		expect(doc).toContain("`@include token.caption`");
+		expect(doc).toContain("`token.$font_family_primary`");
 		// 간격 단계는 있고, 지어낸 사이 값은 없다
 		expect(doc).toContain("token.$spacing_16");
 		expect(doc).not.toContain("token.$spacing_18");

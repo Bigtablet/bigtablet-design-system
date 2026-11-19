@@ -47,30 +47,35 @@ const summaryOf = (description: unknown) => {
 	return /\s/.test(text) && text.length <= 60 ? undash(text) : undefined;
 };
 
-/** 묶음 아래 토큰을 펼친다 - 이름은 묶음 기준 상대 경로 */
+const toToken = (name: string, node: Node): Token => {
+	const ext = (node.$extensions ?? {}) as Record<string, Record<string, string>>;
+	const own = ext["com.bigtablet"] ?? {};
+	const scss = own.scss?.split("/")[1];
+	return {
+		name,
+		scss: scss && (scss.startsWith("@") ? `@include token.${scss.slice(1)}` : `token.$${scss}`),
+		css: own.css,
+		light: resolve(node.$value),
+		dark: ext["com.bigtablet.theme"]?.dark && resolve(ext["com.bigtablet.theme"].dark),
+		description: summaryOf(node.$description),
+	};
+};
+
+/**
+ * 묶음 아래 토큰을 펼친다 - 이름은 묶음 기준 상대 경로.
+ * 경로가 토큰 하나(`semantic.typography.caption`)면 그 토큰 하나를 돌려준다
+ */
 export function collect(path: string): Token[] {
-	const root = path.split(".").reduce<unknown>((n, key) => (n as Node)?.[key], tokens) as Node;
+	const keys = path.split(".");
+	const root = keys.reduce<unknown>((n, key) => (n as Node)?.[key], tokens) as Node;
+	if (isToken(root)) return [toToken(keys.at(-1) as string, root)];
 	const out: Token[] = [];
 	const walk = (node: Node, prefix: string) => {
 		for (const [key, child] of Object.entries(node)) {
 			if (key.startsWith("$")) continue;
 			const name = prefix ? `${prefix}.${key}` : key;
-			if (isToken(child)) {
-				const ext = (child.$extensions ?? {}) as Record<string, Record<string, string>>;
-				const own = ext["com.bigtablet"] ?? {};
-				const scss = own.scss?.split("/")[1];
-				out.push({
-					name,
-					scss:
-						scss && (scss.startsWith("@") ? `@include token.${scss.slice(1)}` : `token.$${scss}`),
-					css: own.css,
-					light: resolve(child.$value),
-					dark: ext["com.bigtablet.theme"]?.dark && resolve(ext["com.bigtablet.theme"].dark),
-					description: summaryOf(child.$description),
-				});
-			} else if (child && typeof child === "object") {
-				walk(child as Node, name);
-			}
+			if (isToken(child)) out.push(toToken(name, child));
+			else if (child && typeof child === "object") walk(child as Node, name);
 		}
 	};
 	walk(root, "");

@@ -18,10 +18,13 @@ function MemberForm() {
 	const [errors, setErrors] = useState<Record<string, ReactNode>>({});
 	const submit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const name = new FormData(e.currentTarget).get("name");
-		if (!name) {
+		const data = new FormData(e.currentTarget);
+		const next: Record<string, ReactNode> = {};
+		if (!data.get("name")) next.name = "이름을 입력해 주세요";
+		if (!data.get("email")) next.email = "이메일을 입력해 주세요";
+		if (Object.keys(next).length > 0) {
 			// 서버 · 검증 에러는 이름으로 한 번에 넘깁니다 - 첫 에러 칸으로 포커스가 갑니다
-			setErrors({ name: "이름을 입력해 주세요" });
+			setErrors(next);
 			return;
 		}
 		setErrors({});
@@ -41,6 +44,7 @@ function MemberForm() {
 						</Field>
 						<Field name="role" label="역할">
 							<Dropdown
+								name="role"
 								options={[
 									{ value: "admin", label: "관리자" },
 									{ value: "member", label: "구성원" },

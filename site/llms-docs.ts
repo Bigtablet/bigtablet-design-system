@@ -50,6 +50,11 @@ export function tokensDoc() {
 		}
 	}
 	const groups: [string, string, string][] = [
+		[
+			"글꼴",
+			"semantic.typography.font-family",
+			"크기 · 굵기는 위 믹스인이 정하고, 글꼴만 따로 쓸 때 이 토큰을 씁니다.",
+		],
 		["간격", "semantic.spacing", "여백 · gap 은 이 단계만 씁니다."],
 		["모서리", "semantic.radius", ""],
 		["그림자", "base.elevation", "카드는 level1, 메뉴 · 팝오버는 level2, 모달은 더 높게."],
@@ -162,7 +167,7 @@ export function avoidDoc() {
 	const lines = [
 		"# 쓰지 말 것",
 		"",
-		"예전 버전에 있던 이름이나 지금은 권하지 않는 방법입니다. 이 표의 왼쪽을 쓰고 있다면 오른쪽으로 바꿉니다. 버전별 자세한 내용은 패키지의 docs/MIGRATION.md 에 있습니다.",
+		"예전 버전에 있던 이름이나 지금은 권하지 않는 방법입니다. 이 표의 왼쪽을 쓰고 있다면 오른쪽으로 바꿉니다. 버전별 자세한 내용은 [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md) 에 있습니다.",
 		"",
 		"| 쓰지 말 것 | 대신 | 이유 |",
 		"|---|---|---|",
