@@ -158,8 +158,9 @@ export const BalancedText = ({
 	// 하이드레이션 전 스크립트가 이 루트에만 규칙을 걸 때 쓰는 id - 서버 · 클라이언트가 같은 값을 낸다
 	const id = React.useId();
 	const { tokens, lead, tail } = tokenize(children);
-	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다
-	const key = tokens.map((t) => t.nodes.map(shapeOf).join("")).join("\u0001");
+	// 글이 같으면 다시 계산하지 않는다 - children 은 렌더마다 새 객체다. className 은 굵기 · 크기를 바꿔도 상자 폭이 그대로라
+	// RO 가 안 불린다 - 그래서 함께 본다
+	const key = `${className ?? ""}\u0002${tokens.map((t) => t.nodes.map(shapeOf).join("")).join("\u0001")}`;
 	const [chosen, setChosen] = React.useState<{
 		key: string;
 		breaks: Breaks;
