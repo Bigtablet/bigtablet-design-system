@@ -5,10 +5,10 @@ import * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
+import { renderSentences } from "../../../text";
 import {
 	cn,
 	lockBodyScroll,
-	renderSentences,
 	unlockBodyScroll,
 	useFocusTrap,
 	useOverlayEscape,

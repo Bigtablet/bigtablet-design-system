@@ -1,12 +1,3 @@
-// 줄바꿈 규칙은 src/text 로 옮겼다 (#1079) - 컴포넌트가 쓰던 경로를 그대로 둔다
-export {
-	renderPhrases,
-	renderSentences,
-	Sentences,
-	type SentencesProps,
-	sentenceText,
-	splitSentences,
-} from "../text";
 export { cn } from "./cn";
 export {
 	isFromInnerControl,

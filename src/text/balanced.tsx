@@ -1,7 +1,4 @@
 import * as React from "react";
-import { cn } from "../utils/cn";
-import type { SafeHTMLProps } from "../utils/safe-html";
-import { useSafeLayoutEffect } from "../utils/use-safe-layout-effect";
 import {
 	chooseDomBreaks,
 	contentWidth,
@@ -16,8 +13,13 @@ import { type CanvasMeasurer, createCanvasMeasurer, fontOf } from "./measure";
 import { balancedTextScript } from "./prehydrate-script";
 import "./text.scss";
 
+// src/text 는 바깥(src/utils · src/ui)을 쓰지 않는다 - 따로 떼어 낼 수 있게 (#1095, biome noRestrictedImports).
+// 그래서 src/utils/use-safe-layout-effect.ts 와 같은 한 줄을 여기 둔다. props 의 dangerouslySetInnerHTML 제외도
+// src/utils/safe-html.ts(SafeHTMLProps)와 같은 규칙이다 - 그쪽이 막는 속성을 늘리면 여기도 함께 고친다
+const useSafeLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 export interface BalancedTextProps
-	extends Omit<SafeHTMLProps<React.HTMLAttributes<HTMLElement>>, "children"> {
+	extends Omit<React.HTMLAttributes<HTMLElement>, "children" | "dangerouslySetInnerHTML"> {
 	/**
 	 * 줄을 나눌 글. 글자와 인라인 요소(`<code>` · `<strong>` · 링크)를 섞어도 된다 - 요소 하나는 쪼개지 않는 한 조각이고,
 	 * 공백 없이 붙은 글자("`useToast` 가" 의 "가" 는 띄었으니 따로, "`x`에서" 는 한 어절)와 한 어절이 된다
@@ -327,7 +329,12 @@ export const BalancedText = ({
 	}
 	return (
 		// props 를 먼저 펼친다 - 하이드레이션 전 스크립트와 맞추는 식별자(data-balanced)는 소비자 값에 덮이지 않아야 한다
-		<Tag ref={ref} {...props} className={cn("text_balanced", className)} {...{ [ID_ATTR]: id }}>
+		<Tag
+			ref={ref}
+			{...props}
+			className={className ? `text_balanced ${className}` : "text_balanced"}
+			{...{ [ID_ATTR]: id }}
+		>
 			{lead}
 			{body}
 			{tail}

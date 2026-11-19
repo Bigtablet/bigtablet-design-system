@@ -4,7 +4,8 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { renderSentences, useIsMounted, usePresence } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { useIsMounted, usePresence } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
