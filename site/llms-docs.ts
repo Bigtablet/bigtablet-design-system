@@ -2,7 +2,9 @@
 // 토큰은 사이트 Foundation 페이지와 같은 원본(token-data.ts), 조합은 타입 검사 · axe 검사를 받는 예제 파일(examples/recipes)이다
 import { COLOR_GROUPS, collect, show, type Token, TYPE_GROUPS } from "./token-data";
 
-const cell = (text: string) => text.replace(/\|/g, "\\|").replace(/\n+/g, " ");
+// 표 칸 - 백슬래시를 먼저 겹쳐야 뒤에 넣는 `\|` 와 섞이지 않는다
+const cell = (text: string) =>
+	text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n+/g, " ");
 
 const tokenTable = (items: Token[]) => [
 	"| SCSS | CSS 변수 | 값 | 다크 | 설명 |",

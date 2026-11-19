@@ -16,7 +16,9 @@ export const AGENT_RULES = [
 export const AGENT_SNIPPET = `## UI
 - 화면은 @bigtablet/design-system 컴포넌트로 만든다. 쓰기 전에 node_modules/@bigtablet/design-system/dist/llms/index.md 를 읽고, 고른 컴포넌트의 문서(dist/llms/components/*.md)를 따른다.`;
 
-const cell = (text: string) => text.replace(/\|/g, "\\|").replace(/\n+/g, " ");
+// 표 칸 - 백슬래시를 먼저 겹쳐야 뒤에 넣는 `\|` 와 섞이지 않는다
+const cell = (text: string) =>
+	text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n+/g, " ");
 
 export function componentDoc(page: DocPage, source: (id: string) => string) {
 	const lines = [`# ${page.title} (${page.name})`, "", page.summary, "", "## 언제 쓰는가", ""];

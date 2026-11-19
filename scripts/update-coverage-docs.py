@@ -108,7 +108,7 @@ def render(data):
         f"| **All files** | **{s}%** | **{b}%** | **{f}%** | **{l}%** |",
         path,
     )
-    text = sub(text, r"\(\d+개는 전 지표 100% 라 빠져 있다\)", f"({data['full']}개는 전 지표 100% 라 빠져 있다)", path)
+    text = sub(text, r"\(\d+개는 전 지표 100% 라 빠져 있습니다\)", f"({data['full']}개는 전 지표 100% 라 빠져 있습니다)", path)
     header = "| 파일 | Stmts | Branch | Funcs | Lines |\n|------|-------|--------|-------|-------|\n"
     start = text.find(header)
     end = text.find("\n\n> 이 절의 수치와 표는 `pnpm coverage:docs`", start)
