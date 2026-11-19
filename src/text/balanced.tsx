@@ -13,7 +13,9 @@ import { type CanvasMeasurer, createCanvasMeasurer, fontOf } from "./measure";
 import { balancedTextScript } from "./prehydrate-script";
 import "./text.scss";
 
-// src/text 는 바깥(src/utils · src/ui)을 쓰지 않는다 - 따로 떼어 낼 수 있게 (#1095, biome noRestrictedImports)
+// src/text 는 바깥(src/utils · src/ui)을 쓰지 않는다 - 따로 떼어 낼 수 있게 (#1095, biome noRestrictedImports).
+// 그래서 src/utils/use-safe-layout-effect.ts 와 같은 한 줄을 여기 둔다. props 의 dangerouslySetInnerHTML 제외도
+// src/utils/safe-html.ts(SafeHTMLProps)와 같은 규칙이다 - 그쪽이 막는 속성을 늘리면 여기도 함께 고친다
 const useSafeLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 export interface BalancedTextProps

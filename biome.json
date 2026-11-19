@@ -82,7 +82,14 @@
 							"options": {
 								"patterns": [
 									{
-										"group": ["../utils", "../utils/**", "../ui/**", "../index"],
+										"group": [
+											"../**/utils",
+											"../**/utils/**",
+											"../**/ui",
+											"../**/ui/**",
+											"../index",
+											"../../index"
+										],
 										"message": "src/text 는 바깥을 쓰지 않습니다 - 따로 떼어 낼 수 있게 src/text 안에서 해결합니다 (#1095)"
 									}
 								]
