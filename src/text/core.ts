@@ -8,6 +8,14 @@
  * Safari 16.4 미만(카카오톡 등 인앱 웹뷰 포함)은 그 문법을 파싱하지 못해 이 모듈을 가져오는 번들 전체가 깨진다.
  */
 const SENTENCE_END = /(?:[^\d]\.|[!?])["')\]”’」』]*$/;
+/**
+ * 마침표가 글자마다 붙는 영문 약어("e.g." · "i.e." · "U.S.") - 문장 끝이 아니다 (#1113).
+ * 숫자 뒤 마침표("버전 4.10.1.")는 그대로 넘긴다 - "2026.05.21." 처럼 붙여 쓴 날짜와 글자만으로 갈리지 않는다
+ */
+const ABBREVIATION = /(?:^|[^A-Za-z])(?:[A-Za-z]\.){2,}$/;
+
+/** 문장을 끝내는 어절인가 */
+export const endsSentence = (word: string) => SENTENCE_END.test(word) && !ABBREVIATION.test(word);
 
 /**
  * 어절 단위로 훑어 문장의 원문 범위(`start`·`end`)를 모은다. 글자는 원문에서 잘라 쓴다 - 어절 사이 공백을
@@ -22,7 +30,7 @@ export const splitSentences = (text: string) => {
 		const index = match.index ?? 0;
 		if (start < 0) start = index;
 		end = index + match[0].length;
-		if (SENTENCE_END.test(match[0])) {
+		if (endsSentence(match[0])) {
 			sentences.push({ text: text.slice(start, end), start, end });
 			start = -1;
 		}
@@ -175,12 +183,12 @@ const leansNext = (before: string, after: string) => {
  * `A · B` 는 쉼표와 달리 한 덩어리 이름으로 읽힌다("React 19 · Next.js") - 끊으면 쉼표보다 어색하다
  */
 export const gapPenalty = (before: string, after: string): number => {
-	if (SENTENCE_END.test(before)) return 0;
+	if (endsSentence(before)) return 0;
 	if (bindsNext(before) || bindsPrev(after) || after === "·") return 100;
 	if (/[A-Za-z0-9"')\]”’>]$/.test(before) && SPACED_PARTICLE.test(after)) return 100;
 	if (/[,:;]["')\]”’]*$/.test(before)) return 1;
 	// 문장의 마지막 어절(서술어)만 다음 줄로 - "패키지에 / 싣습니다. 다음 문장…" 은 문장이 끝난 듯 읽히다 한 어절이 떨어진다
-	if (SENTENCE_END.test(after)) return 12;
+	if (endsSentence(after)) return 12;
 	if (/·$/.test(before)) return 8;
 	if (leansNext(before, after)) return 6;
 	return 4;
