@@ -1,7 +1,7 @@
 // 줄바꿈 엔진 - 실제 폭으로 줄을 계산해 가장 자연스러운 줄바꿈을 고른다 (#1083). React · DOM 없음.
 // pretext 의 "한 번 재고 산술로 줄 계산" 과 semantic-wrap 의 "끊을 자리 벌점 · 최적 조합 · 브라우저보다 나을 때만
 // 교체" 를 외부 의존성 없이 옮겼다. 폭은 `measure` 로 받는다 - 브라우저는 createCanvasMeasurer, 테스트는 가짜 폭.
-import { gapPenalty } from "./core";
+import { endsSentence, gapPenalty } from "./core";
 
 /** 글자 폭을 재는 함수 - 같은 글자에는 늘 같은 값을 돌려줘야 한다 */
 export type MeasureText = (text: string) => number;
@@ -109,13 +109,21 @@ export const scoreBreaks = (
 	let ragged = 0;
 	let from = 0;
 	for (const end of breaks) {
-		penalty += costs[end] ?? 0;
 		const slack = (maxWidth - lineWidth(from, end)) / maxWidth;
+		penalty += (costs[end] ?? 0) + (from > 0 ? shortLine(slack) : 0);
 		ragged += slack * slack;
 		from = end + 1;
 	}
 	return { penalty, ragged };
 };
+
+/**
+ * 가운데 줄(첫 줄 · 마지막 줄이 아닌 줄)이 상자 폭의 절반도 못 채우는 벌점 - "결정 / 사항까지, / AI가 …" 처럼 가운데 줄이
+ * 한두 어절이면 끊는 자리 벌점이 조금 낮아도 그 배치가 더 어색하다 (#1113). 줄 길이 고르기(`ragged`)만으로는 벌점 몇 점에
+ * 못 미친다. 첫 줄은 넣지 않는다 - "녹음본 업로드. / 미리 녹음된 …" 처럼 짧은 제목 줄은 의도한 모양이다
+ */
+const SHORT_LINE = 8;
+const shortLine = (slack: number) => (slack > 0.5 ? SHORT_LINE : 0);
 
 /**
  * 어절마다 그 뒤에서 끊는 벌점. 공백 없이 맞닿은 자리(괄호 앞뒤)는 끊을 수는 있어도 보기 싫어 높게 둔다 -
@@ -136,6 +144,10 @@ const breakCosts = (words: Word[]) => {
 		const open = Math.min(depth, closesAfter[i] ?? 0);
 		const next = words[i + 1];
 		let penalty = gapPenalty(word.text, next?.text ?? "");
+		// 새 문장의 첫 어절만 앞 줄에 남기는 자리("실행은 지금부터. AI가 / 설계하는") - 문장 단위 줄바꿈(Sentences)이
+		// 막는 것과 같은 자리라 꼭 피한다. 줄이 하나 늘더라도 문장 경계에서 끊는 쪽이 낫다 (#1113)
+		if (next && i > 0 && endsSentence(words[i - 1]?.text ?? "") && !endsSentence(word.text))
+			penalty = Math.max(100, penalty);
 		// 나열 항목 안("Esc 닫기 · …")은 항목 사이(8)보다 어색하다
 		if (penalty === 6 && (words[i - 1]?.text === "·" || words[i + 2]?.text === "·")) penalty = 10;
 		if (open > 0) return Math.max(60, penalty);
@@ -169,11 +181,15 @@ export const layoutBest = (
 	const from = Array.from({ length: lines }, () => new Array<number>(n).fill(-1));
 	const lineWidth = lineWidths(words, widths, space);
 	const fits = (a: number, b: number) => lineWidth(a, b) <= maxWidth;
-	const slack = (a: number, b: number) => {
+	/** a~b 줄 자체의 비용 - 줄 길이 고르기 + 가운데 줄의 짧은 줄 벌점. 마지막 줄은 세지 않는다(문단 끝은 짧아도 된다) */
+	const lineCost = (a: number, b: number, last: boolean) => {
+		if (last) return 0;
 		const s = (maxWidth - lineWidth(a, b)) / maxWidth;
-		return s * s * RAGGED_WEIGHT;
+		return s * s * RAGGED_WEIGHT + (a > 0 ? shortLine(s) : 0);
 	};
-	for (let j = 0; j < n; j++) if (fits(0, j)) (cost[0] as number[])[j] = 0;
+	// 줄을 닫을 때 그 줄의 비용을 더한다 - 줄의 시작 · 끝을 둘 다 아는 자리라 근사 없이 최소가 나온다
+	for (let j = 0; j < n; j++)
+		if (fits(0, j)) (cost[0] as number[])[j] = lineCost(0, j, lines === 1 && j === n - 1);
 	for (let k = 1; k < lines; k++) {
 		const prev = cost[k - 1] as number[];
 		const cur = cost[k] as number[];
@@ -183,9 +199,8 @@ export const layoutBest = (
 				if (!fits(i, j)) continue;
 				const before = prev[i - 1] ?? Number.POSITIVE_INFINITY;
 				if (before === Number.POSITIVE_INFINITY) continue;
-				// 앞 줄(…i-1)을 끝낸 자리의 벌점 + 앞 줄 길이 고르기. 마지막 줄의 남는 폭은 세지 않는다
-				const startOfPrev = k - 1 === 0 ? 0 : ((from[k - 1] as number[])[i - 1] ?? 0);
-				const c = before + (costs[i - 1] ?? 0) + slack(startOfPrev, i - 1);
+				// 앞 줄(…i-1)을 끝낸 자리의 벌점 + 이 줄(i~j)의 비용
+				const c = before + (costs[i - 1] ?? 0) + lineCost(i, j, k === lines - 1 && j === n - 1);
 				if (c < (cur[j] ?? Number.POSITIVE_INFINITY)) {
 					cur[j] = c;
 					at[j] = i;
