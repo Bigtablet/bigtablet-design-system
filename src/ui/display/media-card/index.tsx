@@ -2,7 +2,8 @@
 
 import type * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { cn, keyActivationProps, renderSentences, type SafeHTMLProps } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 export type MediaCardImagePosition = "top" | "left" | "overlay";

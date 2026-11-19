@@ -2,13 +2,8 @@
 
 import type * as React from "react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import {
-	cn,
-	renderSentences,
-	type SafeHTMLProps,
-	useFormReset,
-	useSafeLayoutEffect,
-} from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn, type SafeHTMLProps, useFormReset, useSafeLayoutEffect } from "../../../utils";
 import { useFieldControl } from "../field";
 import type { ImeStrategy, TextFieldSize } from "../textfield";
 import "./style.scss";

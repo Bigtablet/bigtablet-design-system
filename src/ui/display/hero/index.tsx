@@ -1,7 +1,8 @@
 "use client";
 
 import type * as React from "react";
-import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { Button } from "../../general/button";
 import "./style.scss";
 

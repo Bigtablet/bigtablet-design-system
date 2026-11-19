@@ -3,7 +3,8 @@
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 

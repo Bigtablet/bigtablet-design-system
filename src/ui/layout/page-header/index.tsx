@@ -1,7 +1,8 @@
 "use client";
 
 import type * as React from "react";
-import { cn, renderSentences, type SafeHTMLProps } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
 // HTML 의 `title` 속성(툴팁 문자열)과 이름이 겹친다. 화면 제목은 ReactNode 를 받으므로
