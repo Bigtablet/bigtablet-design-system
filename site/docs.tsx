@@ -59,7 +59,7 @@ export function stayOnPage(e: { target: EventTarget | null; preventDefault: () =
 }
 
 export const exampleOf = (id: string) => modules[`./examples/${id}.tsx`]?.default;
-export const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
+const sourceOf = (id: string) => sources[`./examples/${id}.tsx`] ?? "";
 
 /**
  * 손으로 쓴 문단(가이드 페이지) - 코드 · 링크가 섞여도 BalancedText 가 그려진 폭으로 줄을 고른다 (#1083).
@@ -323,7 +323,7 @@ function Frame({
 	);
 }
 
-export function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
+function PropsTable({ name, titled }: { name: PropsName; titled: boolean }) {
 	return (
 		<>
 			{titled && (
