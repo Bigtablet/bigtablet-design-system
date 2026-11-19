@@ -87,6 +87,7 @@ Bigtablet Design System의 모든 React 컴포넌트 문서입니다.
   - [Stack](#stack)
   - [Grid](#grid)
   - [Layout 합성 예제 (마케팅 페이지)](#layout-합성-예제-마케팅-페이지)
+- [Hooks · 유틸](#hooks--유틸)
 
 ---
 
@@ -253,7 +254,7 @@ import { Chip } from '@bigtablet/design-system';
 
 ### LocaleProvider
 
-DS 가 **스스로 렌더하는 문구**를 한곳에서 정합니다. 소비자가 넘기지 않은 문구가 58개 있습니다 —
+DS 가 **스스로 렌더하는 문구**를 한곳에서 정합니다. 소비자가 넘기지 않은 문구가 82개 있습니다 —
 `Modal` 의 닫기 버튼, `Table` 의 빈 목록, `Pagination` 의 이전/다음, `TagInput` 의 라이브 영역
 안내 등. 지금까지는 인스턴스마다 prop 을 넘겨야 했고, `Modal` 을 40번 쓰는 앱이면 `closeLabel`
 을 40번 적어야 했습니다 — 하나 빠지면 그 화면만 한국어로 남습니다.
@@ -1020,7 +1021,7 @@ import { Search, X } from 'lucide-react';
   }
 />
 
-// 비밀번호 표시/숨기기 - 내장 토글 (문구는 i18n 때문에 앱이 주입)
+// 비밀번호 표시/숨기기 - 내장 토글 (문구는 LocaleProvider 카탈로그, prop 으로 덮어씀)
 <TextField
   label="비밀번호"
   type="password"
@@ -2152,7 +2153,7 @@ import { Spinner } from '@bigtablet/design-system';
 | `size` | `number` | `24` | 스피너 크기 (px) |
 | `ariaLabel` | `string` | `'로딩 중'` | `role="status"` 의 접근성 이름 |
 
-> ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시킵니다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춥니다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없습니다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
+> ℹ️ React 는 12개 bar 가 순차 페이드하는 iOS 스타일이고, `prefers-reduced-motion: reduce` 에서는 애니메이션을 완전히 정지시키고 12개 bar 를 모두 50% 불투명도로 둡니다(멈춰 있어도 12개 spoke 형태가 로딩 위젯으로 읽히기 때문). Vanilla `.bt-spinner` 는 서버 템플릿의 마크업 단순성(빈 요소 하나)을 위해 단일 border ring 이고, 정지 대신 회전을 늦춥니다(0.8s → 2.4s). **의도된 차이이며 통일 계획은 없습니다** - 자세한 근거는 [VANILLA.md#spinner](./VANILLA.md#spinner).
 
 ---
 
@@ -2359,6 +2360,7 @@ const [tab, setTab] = useState("overview");
 #### 애니메이션
 
 - Tab 색상/border: **200ms** `color`, `background`, `border-color` (`transition_base`)
+- 활성 표시기(`span.tabs_indicator`): 활성 tab 위치로 **200ms `left` · `width`** 슬라이드 (`easing_enter`). 첫 렌더에는 모션 없이 놓입니다
 - TabPanel: 전환 자체엔 애니메이션 없음 (활성 panel만 즉시 렌더)
 
 #### DOM 구조 (SCSS override 시 참고)
@@ -2366,6 +2368,7 @@ const [tab, setTab] = useState("overview");
 ```
 .tabs (+ tabs_variant_line | tabs_variant_fills, tabs_size_sm | tabs_size_md)
 ├── .tabs_list (+ tabs_list_line | tabs_list_fills)
+│   ├── span.tabs_indicator (+ tabs_indicator_line | _fills)  ← aria-hidden, 활성 tab 으로 슬라이드
 │   └── button.tabs_tab (+ tabs_tab_active)
 └── .tabs_panel
 ```
@@ -2415,7 +2418,7 @@ const [view, setView] = useState("list");
 
 ### Sidebar
 
-Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** 고정. `SidebarItem` 자식과 함께 사용하며, 선택적으로 `SidebarSection`으로 그룹화. `collapsed` 모드로 아이콘만 표시되는 축소 상태 지원.
+Admin/dashboard 좌측 메인 네비게이션. **표면 배경(`$color_bg_solid`) + 제목 텍스트 색 + 우측 1px 테두리**이고, 다크 테마를 따라갑니다. `SidebarItem` 자식과 함께 사용하며, 선택적으로 `SidebarSection`으로 그룹화. `collapsed` 모드로 아이콘만 표시되는 축소 상태 지원.
 
 #### CSS 변수 (layout 계산용)
 
@@ -2443,15 +2446,16 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 |---|---------|--------|
 | **사용처** | Admin/dashboard 내부 | B2C/마케팅 페이지 |
 | **위치** | 좌측 (세로) | 상단 (가로) |
-| **배경** | navy 고정 | default(흰) / transparent / accent(navy) |
+| **배경** | 표면(`bg_solid`, 다크 테마 따라감) + 우측 테두리 | default(흰) / transparent / accent(검정) |
 | **collapsed** | 지원 (아이콘만) | 미지원 |
 | **링크 형태** | icon + label + trailing | label만 (active 강조) |
 
 #### collapsed 동작
 
 - `collapsed={true}`: 너비가 `width`(기본 240) → `collapsedWidth`(기본 64)로 축소
-- label, trailing, section label은 `opacity: 0 + width: 0`으로 숨김 (DOM 유지)
-- 아이콘만 가운데 정렬로 표시
+- label, trailing, section label은 `visually_hidden` 으로 숨김 - 화면에서만 빠지고 스크린리더는 그대로 읽습니다
+- 아이콘만 가운데 정렬로 표시. 아이콘 없이 문자열 라벨만 있는 아이템은 라벨 첫 글자(`sidebar_item_initial`)를 아이콘 자리에 보여 줍니다
+- `collapsible` 이면 접기 버튼(`button.sidebar_collapse_btn`, `aria-expanded`)이 헤더(로고) 가운데 줄(`--bt-sidebar-header-center`)에 맞춰 우측 가장자리에 반쯤 걸쳐 놓입니다
 - 너비 변화엔 200ms `transition_base` 애니메이션
 
 **Sidebar Props** (`<aside>` 속성 모두 상속)
@@ -2474,7 +2478,7 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `icon` | `ReactNode` | - | 왼쪽 아이콘 (collapsed 모드의 유일한 시각 단서) |
+| `icon` | `ReactNode` | - | 왼쪽 아이콘 (collapsed 모드의 시각 단서). 없으면 접혔을 때 라벨 첫 글자를 보여 줍니다 |
 | `active` | `boolean` | `false` | 현재 활성 상태 (`aria-current="page"` 자동) |
 | `trailing` | `ReactNode` | - | 오른쪽 trailing - Badge, count, 화살표 등 |
 | `as` | `React.ElementType` | `'button'` | 렌더할 요소나 컴포넌트. `href` 만 줘도 anchor 로 분기 |
@@ -2491,29 +2495,34 @@ Admin/dashboard 좌측 메인 네비게이션. **navy 배경 + 흰 텍스트** �
 - `<aside>` 시멘틱 + 내부 `<nav>` 자동
 - SidebarItem `active={true}` → `aria-current="page"` 자동
 - icon은 `aria-hidden="true"` (label이 정보 전달자)
-- focus ring: `0 0 0 2px rgba(255,255,255,0.4)` (navy bg에 맞춰 흰색)
-- collapsed 모드에서도 label은 DOM 유지 (스크린리더 접근 가능, 시각만 숨김)
+- focus ring: `token.$focus_ring` (아이템 · 접기 버튼 공통)
+- collapsed 모드에서도 label은 `visually_hidden` 으로 DOM 유지 (스크린리더 접근 가능, 시각만 숨김)
 
 #### 애니메이션
 
 - Sidebar 너비: **200ms `width`** transition (`transition_base`)
 - Item hover/active 배경: **100ms** (`transition_fast`)
-- label opacity: 100ms - collapsed 토글 시 텍스트 자연스럽게 페이드
+- 헤더 로고 레이어(`header` ↔ `headerCollapsed`): **200ms `opacity`** 크로스페이드 (`transition_base`). 아이템 label 은 페이드 없이 바로 `visually_hidden` 으로 바뀝니다
 
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-aside.sidebar (+ sidebar_collapsed)
+aside.sidebar (+ sidebar_collapsed, sidebar_static)
 ├── .sidebar_header           ← border-bottom
+│   └── .sidebar_header_layers
+│       ├── .sidebar_header_layer.sidebar_header_layer_full   ← header
+│       └── .sidebar_header_layer.sidebar_header_layer_mark   ← headerCollapsed
 ├── nav.sidebar_nav
 │   ├── .sidebar_section
-│   │   ├── .sidebar_section_label  ← uppercase, sr 노출 유지
+│   │   ├── .sidebar_section_label  ← uppercase, 접히면 visually_hidden
 │   │   └── button|a.sidebar_item (+ sidebar_item_active)
-│   │       ├── .sidebar_item_icon
+│   │       ├── .sidebar_item_icon      ← aria-hidden
+│   │       ├── .sidebar_item_initial   ← icon 없을 때, aria-hidden, 접혔을 때만 보임
 │   │       ├── .sidebar_item_label
 │   │       └── .sidebar_item_trailing
 │   └── ...
-└── .sidebar_footer           ← border-top
+├── .sidebar_footer           ← border-top
+└── button.sidebar_collapse_btn   ← collapsible 일 때, aria-expanded, 우측 가장자리에 걸침
 ```
 
 **Usage**
@@ -2658,7 +2667,7 @@ function App() {
 
 ### NavBar
 
-페이지 상단 네비게이션 바. 마케팅/B2C 페이지의 메인 헤더. `NavLink`를 자식으로 사용하며, `brand` / `actions`로 좌우 영역 분리. 3가지 visual variant로 흰 배경 / 투명(hero 위) / navy 배경을 지원.
+페이지 상단 네비게이션 바. 마케팅/B2C 페이지의 메인 헤더. `NavLink`를 자식으로 사용하며, `brand` / `actions`로 좌우 영역 분리. 3가지 visual variant로 흰 배경 / 투명(hero 위) / 검정 배경을 지원.
 
 #### 언제 쓰는가
 
@@ -2673,7 +2682,7 @@ function App() {
 
 - `variant="default"` (기본) - **흰 bg + 하단 회색 border**. 가장 일반적인 헤더
 - `variant="transparent"` - **투명 bg**. Hero 이미지/그라데이션 위에 올릴 때. 부모가 배경을 정의
-- `variant="accent"` - **navy bg + 흰 텍스트**. 강한 brand 톤이 필요한 랜딩, 다크 컨텍스트
+- `variant="accent"` - **검정 bg(`$color_brand_primary`) + 흰 텍스트**, 라이트 · 다크 테마 동일. 강한 brand 톤이 필요한 랜딩, 다크 컨텍스트
 
 #### sticky 동작
 
@@ -2726,8 +2735,14 @@ header.nav_bar (+ nav_bar_variant_default | _transparent | _accent, nav_bar_stic
 └── .nav_bar_inner               ← max-width 1200px, center
     ├── .nav_bar_brand
     ├── nav.nav_bar_links
-    │   └── a.nav_bar_link (+ nav_bar_link_active)
-    └── .nav_bar_actions
+    │   ├── a.nav_bar_link (+ nav_bar_link_active)
+    │   └── span.nav_bar_indicator   ← aria-hidden, 활성 링크 표시
+    ├── .nav_bar_search              ← searchSlot
+    └── .nav_bar_right
+        ├── .nav_bar_actions         ← actions
+        ├── .nav_bar_locale          ← locale
+        ├── span.nav_bar_divider     ← aria-hidden, profile 이 있고 divider 일 때
+        └── .nav_bar_profile         ← profile
 ```
 
 **Usage**
@@ -2823,7 +2838,7 @@ import Link from "next/link";
 
 #### 접근성
 
-- 컨테이너: `<nav aria-label="Breadcrumb">`
+- 컨테이너: `<nav aria-label={navLabel ?? t("breadcrumb.label")}>` - 기본 "현재 위치" (LocaleProvider 카탈로그, `navLabel` 로 덮어씀)
 - 리스트: `<ol>` (순서가 의미를 가짐) - 스크린리더가 위계로 인식
 - 마지막 아이템: `<span aria-current="page">` - "현재 페이지"임을 announce
 - 구분자: `<span aria-hidden="true">` - 스크린리더에서는 무시
@@ -2837,7 +2852,7 @@ import Link from "next/link";
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-nav.breadcrumb (+ aria-label="Breadcrumb")
+nav.breadcrumb (+ aria-label, 기본 "현재 위치")
 └── ol.breadcrumb_list
     └── li.breadcrumb_item
         ├── a.breadcrumb_link            ← items[idx].href 있을 때
@@ -3137,7 +3152,7 @@ const cancelRef = useRef<HTMLButtonElement>(null);
 
 #### 마운트 수명
 
-패널은 닫히는 모션이 끝날 때까지 마운트를 유지합니다. `children` 을 `open` 과 같은 값에 묶으면 본문만 먼저 사라지므로, 데이터는 `onExited` 에서 비웁니다.
+패널은 닫히는 모션이 끝날 때까지 마운트를 유지합니다. 그동안 `children` · `title` · `footer` 는 마지막으로 열려 있던 값으로 고정되므로, `open` 과 같은 값에 묶어도 본문이 먼저 사라지지 않습니다. 데이터 정리는 여전히 `onExited` 에서 합니다.
 
 #### 포털
 
@@ -3336,14 +3351,16 @@ trigger 클릭으로 펼쳐지는 **액션 메뉴**. **컨텍스트 메뉴, 케�
 
 - 메뉴 컨테이너: `role="menu"`, `id={useId()}`
 - 트리거: `aria-haspopup="menu"`, `aria-expanded={open}`, `aria-controls={menuId}` (열렸을 때)
-- 각 아이템: native `<button type="button" role="menuitem">` (Enter/Space로 활성화)
+- 각 아이템: native `<button type="button" role="menuitem" tabIndex={-1}>` (Enter/Space로 활성화) - 아이템은 Tab 순서에 들어가지 않고 화살표로 이동합니다
 - 비활성 아이템은 native `disabled` 속성 → 포커스/클릭 모두 차단
 - **키보드**:
-  - <kbd>Tab</kbd> - trigger 포커스 → Enter/Space로 토글
-  - <kbd>Tab</kbd> - 메뉴 열린 상태에서 아이템 사이 이동 (현재 구현은 native tab 순서 사용, Arrow Up/Down은 미지원)
-  - <kbd>Esc</kbd> - 메뉴 닫음
+  - <kbd>Tab</kbd> - trigger 포커스 → Enter/Space로 토글. 열리면 **첫 활성 아이템**으로 포커스가 갑니다
+  - <kbd>↓</kbd> / <kbd>↑</kbd> - 다음/이전 아이템 (양 끝에서 순환, 비활성 아이템은 건너뜀)
+  - <kbd>Home</kbd> / <kbd>End</kbd> - 첫/마지막 활성 아이템
+  - <kbd>Esc</kbd> - 메뉴 닫음 + trigger 로 포커스 복귀
+  - <kbd>Tab</kbd> (메뉴 안) - 메뉴를 닫고 trigger 로 포커스를 되돌린 뒤 이어서 다음 요소로 이동합니다
   - <kbd>Enter</kbd> / <kbd>Space</kbd> - 아이템 선택 → `onSelect` 호출 + 자동 close
-- focus 관리: 메뉴 닫힐 때 자동 focus 복귀는 없으니 destructive 후 별도 focus 이동이 필요하면 caller가 처리
+- focus 관리: 아이템을 고르거나 Esc 로 닫으면 포커스가 trigger 로 돌아갑니다
 
 > 📌 케밥 트리거 IconButton에는 `aria-label="More options"` 같은 식별 라벨을 꼭 줘야 합니다.
 
@@ -3368,11 +3385,11 @@ CSS transition(`token.presence`):
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-span.menu_wrapper                  ← position: relative; ref 부착 (외부 클릭 판정)
+span.menu_wrapper                  ← ref 부착 (외부 클릭 판정)
 ├── {trigger}                      ← cloneElement로 onClick/aria 주입
-└── div.menu                       ← position: absolute, role="menu"
+└── div.menu                       ← createPortal(body), position: fixed (좌표는 useAnchoredPosition), role="menu"
     ├── menu_align_start | menu_align_end
-    └── button.menu_item × N       ← role="menuitem"
+    └── button.menu_item × N       ← role="menuitem", tabIndex -1
         ├── menu_item_destructive  ← 빨간 텍스트
         ├── menu_item_disabled     ← 비활성
         ├── span.menu_item_icon    ← aria-hidden
@@ -3487,7 +3504,7 @@ trigger 클릭으로 펼쳐지는 **범용 non-modal 패널**. **임의의 inter
 - 트리거: `aria-haspopup="dialog"`, `aria-expanded={open}`, `aria-controls={popoverId}` (열렸을 때)
 - **포커스**: 열릴 때 패널 내 **첫 focusable**로 이동 (없으면 패널 자체). `Esc`로 닫으면 **trigger로 복귀**
 - **키보드**: <kbd>Tab</kbd> trigger 포커스 → Enter/Space로 토글 / <kbd>Esc</kbd> 닫음 (+ trigger 복귀)
-- non-modal이므로 Tab을 트랩하지 않음 (Modal과 차이). 페이지 나머지와 상호작용 가능
+- 열린 동안 Tab 을 패널 안에 가둡니다 (`useFocusTrap`) - `body` 로 포탈되어 trigger 뒤 Tab 순서가 끊기기 때문입니다. 닫히면 포커스가 trigger 로 돌아갑니다. 바깥 클릭으로는 그대로 닫히므로 페이지 나머지와 상호작용할 수 있습니다
 
 > 📌 `dialog`는 접근성 이름이 필요합니다. content에 제목이 없으면 `aria-label`을, 있으면 그 요소 id로 `aria-labelledby`를 줍니다. **폴백이 없습니다** — 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡습니다 (Modal · Drawer 와 같은 계약).
 
@@ -3502,7 +3519,7 @@ CSS transition(`token.presence`):
 #### 외부 클릭/Esc 처리
 
 열린 동안에만 listener 등록:
-- **외부 클릭** (`mousedown`, wrapper 바깥) → close (포커스는 자연 이동, trigger 복귀 안 함)
+- **외부 클릭** (`mousedown`, wrapper · 패널 바깥) → close
 - **Esc 키** (`keydown`) → close + trigger로 포커스 복귀
 - 패널 내부 클릭은 닫지 않음 (interactive 콘텐츠 보호)
 - `open === false`로 바뀌면 listener 모두 cleanup
@@ -3598,7 +3615,7 @@ import { Card, Button } from '@bigtablet/design-system';
 |------|------|---------|-------------|
 | `heading` | `ReactNode` | - | 카드 제목 (header) |
 | `headingAs` | `'h2'~'h6'` | `'h3'` | 제목 시맨틱 태그 |
-| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline'` | `'default'` | accent=navy bg+흰 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시) |
+| `variant` | `'default' \| 'accent' \| 'glass' \| 'outline'` | `'default'` | accent=accent 표면(라이트 검정 · 다크 흰색) + 반전 텍스트 / glass=반투명 frosted+blur(컬러·이미지 배경 위 권장, 흰 텍스트) / outline=투명 bg+테두리(shadow 무시) |
 | `interactive` | `boolean` | `false` | hover-lift (클릭 가능한 카드용 시각 효과) |
 | `footer` | `ReactNode` | - | 카드 하단 영역 (구분선과 함께 표시) |
 | `footerAlign` | `'start' \| 'between' \| 'end'` | `'end'` | footer 정렬 |
@@ -3812,7 +3829,7 @@ import { User, MoreVertical } from 'lucide-react';
 | `name` | `string` | `''` | 이미지 `alt` + initials 추출 소스. **항상 의미있는 값 권장** |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 크기 |
 | `shape` | `'circle' \| 'square'` | `'circle'` | 모양 |
-| `bgColor` | `string` | navy accent | initials fallback 배경색 (CSS color string) |
+| `bgColor` | `string` | `accent-default` (라이트 검정 · 다크 흰색) | initials fallback 배경색 (CSS color string) |
 | `...rest` | `HTMLAttributes<HTMLSpanElement>` | - | `onClick`, `style`, `data-*` 등 |
 
 #### 접근성
@@ -3900,16 +3917,16 @@ import { Avatar } from "@bigtablet/design-system";
 |---|-------|------|
 | 의도 | 작은 상태/카운트 | 사용자 입력 토큰/필터 |
 | 인터랙션 | 없음 (정적) | 클릭/삭제 가능 |
-| 크기 | 매우 작음 (8/18px) | 보통 (28+px) |
+| 크기 | 매우 작음 (dot 8px / count 20px, `md`) | 보통 (28+px) |
 | 위치 | 다른 요소에 부착 (절대 위치 흔함) | 인라인 흐름 |
 
 #### shape 선택 가이드
 
 | shape | 크기 | 용도 |
 |-------|------|------|
-| `dot` | 8×8 (텍스트 없음) | "변경사항 있음" 같은 boolean 알림. 가장 시각적 부담 적음 |
-| `count` | min-width 18, 6px 패딩, 원형 | 알림 개수. `count > max` 시 `${max}+`로 표시 |
-| `label` | 11px 폰트, padding 2×8, uppercase | "NEW", "BETA" 라벨 |
+| `dot` | 8×8 (`md` 기준, 텍스트 없음) | "변경사항 있음" 같은 boolean 알림. 가장 시각적 부담 적음 |
+| `count` | height · min-width 20, 좌우 6px 패딩, 12px 폰트, 원형 (`md` 기준) | 알림 개수. `count > max` 시 `${max}+`로 표시 |
+| `label` | 12px 폰트, padding 3×10 (`md` 기준), 대소문자 변환 없음 | "NEW", "BETA" 라벨 |
 
 #### tone 의미 매핑
 
@@ -4085,12 +4102,11 @@ import { Chip } from '@bigtablet/design-system';
 | `false`/undefined | 없음 | 배경이 단색이거나 어두운 이미지일 때 |
 | `true` / `'dark'` | 위→아래 검정 0.1 → 0.55 | 밝은/혼합 이미지 위 흰 텍스트 |
 | `'light'` | 위→아래 흰색 0.1 → 0.7 | 어두운 이미지 위 어두운 텍스트 |
-| `'navy'` | 위→아래 navy 0 → 0.85 | Bigtablet 브랜드 강조 (마케팅) |
 
 #### textColor 결정 로직 (`textColor="auto"` 기본)
 
 ```
-isDarkOverlay = overlay === 'dark' || overlay === 'navy'
+isDarkOverlay = overlay === 'dark'     (true 는 'dark' 로 취급)
 auto =
   isDarkOverlay                       → inverse (흰색)
   backgroundImage && !overlay         → inverse (이미지 위는 흰색 안전)
@@ -4107,7 +4123,7 @@ auto =
 | `align` | `'left' \| 'center' \| 'right'` | `'left'` | 텍스트 + CTA 정렬 |
 | `backgroundImage` | `string` | - | 배경 이미지 URL - `background-image: url(...)` |
 | `backgroundColor` | `string` | - | 배경색 (이미지 위에 함께 적용 가능) |
-| `overlay` | `boolean \| 'dark' \| 'light' \| 'navy'` | - | 오버레이 그라데이션 |
+| `overlay` | `boolean \| 'dark' \| 'light'` | - | 오버레이 그라데이션 |
 | `title` | `ReactNode` | - | **h1** 메인 제목 (display.small.medium) |
 | `subtitle` | `ReactNode` | - | 부제목 (body.large, max-width 640) |
 | `eyebrow` | `ReactNode` | - | 제목 위 카테고리/태그 (uppercase, tight letter-spacing) |
@@ -4123,7 +4139,7 @@ auto =
 |------|------|-------------|
 | `label` | `ReactNode` | 버튼 라벨 |
 | `onClick` | `() => void` | 클릭 핸들러 |
-| `href` | `string` | 링크 사용 시 (현재 구현은 `onClick`만 wire-up - 외부 링크는 children으로 `<a>` 직접 전달 권장) |
+| `href` | `string` | 주면 버튼을 링크(`<Button as="a" href>`)로 렌더합니다 - 새 탭 열기 · 링크 안내가 그대로 동작합니다. `onClick` 도 함께 걸립니다 |
 
 #### 접근성
 
@@ -4157,14 +4173,14 @@ section.hero (+ hero_height_md + hero_align_left + hero_overlay_dark + hero_text
 **Usage**
 
 ```tsx
-import { Hero, Button } from "@bigtablet/design-system";
+import { Hero } from "@bigtablet/design-system";
 
-// 마케팅 랜딩 - 이미지 + navy overlay + 중앙 CTA
+// 마케팅 랜딩 - 이미지 + dark overlay + 중앙 CTA
 <Hero
   height="lg"
   align="center"
   backgroundImage="/hero.jpg"
-  overlay="navy"
+  overlay="dark"
   eyebrow="Bigtablet Cloud"
   title="더 똑똑한 클라우드 인프라"
   subtitle="개발자가 집중할 수 있는 환경을 만듭니다."
@@ -4181,48 +4197,38 @@ import { Hero, Button } from "@bigtablet/design-system";
   backgroundColor="#F4F4F4"
 />
 
-// 외부 링크 CTA - children으로 직접 anchor
+// 링크 CTA - href 를 주면 anchor 로 렌더
 <Hero
   height="md"
   title="문서 보기"
   backgroundColor="#121212"
   textColor="inverse"
->
-  <a href="https://docs.bigtablet.com" target="_blank" rel="noreferrer">
-    <Button size="lg">문서로 이동</Button>
-  </a>
-</Hero>
+  primaryAction={{ label: "문서로 이동", href: "https://docs.bigtablet.com" }}
+/>
 ```
 
-#### 제목 줄바꿈 - semantic-wrap
+#### 제목 줄바꿈 - `BalancedText`
 
 랜딩 · 캠페인 제목을 의미 단위("고객의 신뢰를 먼저 얻은 다음에 / 더 많은 데이터를 요청하세요")로 끊고 싶으면
-앱에서 [semantic-wrap](https://github.com/woohyun-park/semantic-wrap) 을 직접 설치해 `title` 슬롯에 넣습니다.
-DS 는 의존성으로 갖지 않습니다 - 런타임 의존성 0 · 번들 한도를 지키고, 0.x 라 API 가 아직 바뀝니다.
+`@bigtablet/design-system/text` 의 `BalancedText` 를 `title` 슬롯에 넣습니다. DS 에 들어 있어 따로 설치할 의존성이 없습니다.
 Hero · PageHeader · EmptyState 의 `title` 이 `ReactNode` 라 그대로 들어갑니다.
 
-```bash
-pnpm add @semantic-wrap/core@~0.4.1 @semantic-wrap/react@~0.4.1 @semantic-wrap/ko@~0.4.1
-```
-
 ```tsx
-import { koTitleModel } from "@semantic-wrap/ko";
-import { SemanticWrap } from "@semantic-wrap/react";
+import { Hero } from "@bigtablet/design-system";
+import { BalancedText } from "@bigtablet/design-system/text";
 
-<PageHeader
+<Hero
   title={
-    <SemanticWrap model={koTitleModel} initial="native" resize="settled">
-      <span style={{ display: "block" }}>{title}</span>
-    </SemanticWrap>
+    <BalancedText style={{ display: "block" }}>
+      고객의 신뢰를 먼저 얻은 다음에 더 많은 데이터를 요청하세요
+    </BalancedText>
   }
 />
 ```
 
-- **블록 요소로 감쌉니다** - `SemanticWrap` 은 자식 요소의 폭을 줄 폭으로 잽니다. 인라인 `span` 은 글자 길이만큼만 넓어 끊을 자리가 없다고 보고 `<br>` 를 넣지 않습니다
-- **`initial="native" resize="settled"`** - 원문을 먼저 그리고 계산은 뒤에 붙입니다. 기본값(`resolved`)은 첫 결과까지 제목을 투명하게 둡니다
-- **제목에만** - 폰트 · 폭을 재고 리사이즈마다 다시 계산합니다. 안내 문구 · 본문은 DS 의 문장 단위 줄바꿈과 `text_pretty` 로 충분합니다
-- **버전 고정** (`~0.4.1`) - 한국어 모델(`@semantic-wrap/ko`)은 실험 단계라 붙인 화면은 눈으로 확인합니다
-- **접근성** - 줄바꿈 자리의 공백이 `<br>` 로 바뀌지만 Chrome 접근성 이름은 공백으로 읽어 원문과 같습니다. `textContent` 에서는 공백이 빠지므로 테스트는 `getByText` 대신 `getByRole("heading", { name })` 으로 찾습니다
+- **블록으로 놓습니다** - `BalancedText` 는 기본 `span` 이고 자기 폭을 줄 폭으로 잽니다. 제목 슬롯(`h1` 등) 안에서는 `display: block` 을 줘야 끊을 자리를 찾습니다
+- 줄을 고르는 기준과 제약은 [문구 줄바꿈](#prop-이름-기준)의 `BalancedText` 설명을 봅니다
+- SSR 앱은 [`BalancedTextScript`](#ssr---balancedtextscript) 를 `<body>` 끝에 한 번 두면 하이드레이션 전에도 같은 줄로 보입니다
 
 ---
 
@@ -4246,7 +4252,7 @@ import { SemanticWrap } from "@semantic-wrap/react";
 |----|------|------|
 | `top` (기본) | 위 이미지 + 아래 텍스트, 16/9 기본 | 블로그/뉴스 그리드 - 가장 흔함 |
 | `left` | 좌 이미지(40%) + 우 텍스트, 모바일에서 자동 top | 메일 리스트, 검색 결과, 데스크탑 리스트 뷰 |
-| `overlay` | 이미지 위에 텍스트 + navy 그라데이션, 4/3 기본 | 캠페인/히어로 카드 - 강한 시각 강조 |
+| `overlay` | 이미지 위에 텍스트 + 어두운 scrim 그라데이션(`$color_scrim_dark_clear` → `$color_scrim_dark_heavy`), 4/3 기본 | 캠페인/히어로 카드 - 강한 시각 강조 |
 
 #### shadow / bordered 선택 가이드
 
@@ -4681,7 +4687,7 @@ const [open, setOpen] = useState<string[]>(["q1"]);
 
 - Trigger button: `aria-expanded`, `aria-controls={panelId}`
 - Panel: `role="region"`, `aria-labelledby={headerId}`, `aria-hidden={!isOpen}`
-- 헤더는 `<h3>` 시멘틱 사용 (트리거 위계 보존)
+- 헤더는 `headingAs` 태그(기본 `<h3>`) 사용 (트리거 위계 보존)
 - **키보드**: <kbd>Enter</kbd> / <kbd>Space</kbd>로 토글, <kbd>Tab</kbd>으로 trigger 간 이동
 - `disabled` 아이템은 native `<button disabled>`라 포커스 받지 않음
 
@@ -4697,7 +4703,7 @@ const [open, setOpen] = useState<string[]>(["q1"]);
 ```
 .accordion
 └── .accordion_item (+ accordion_item_open)
-    ├── h3.accordion_header
+    ├── h3.accordion_header        ← headingAs (기본 h3)
     │   └── button.accordion_trigger (+ chevron)
     └── .accordion_panel (+ accordion_panel_open)
         └── .accordion_panel_wrap   ← overflow:hidden (grid item 자르기)
@@ -5416,7 +5422,7 @@ import { Grid, MediaCard } from "@bigtablet/design-system";
 4개의 프리미티브를 합쳐 전형적인 마케팅 랜딩 페이지를 구성하는 패턴.
 
 ```tsx
-import { Section, Container, Stack, Grid, Button, Hero, MediaCard } from "@bigtablet/design-system";
+import { Section, Container, Stack, Grid, Button, MediaCard, Stat } from "@bigtablet/design-system";
 
 export function LandingPage() {
   return (
@@ -5483,3 +5489,25 @@ export function LandingPage() {
 - Section 간 `bg`를 교차로(`default` ↔ `dim` ↔ `inverted` ↔ `accent`) 변경해 페이지 리듬을 만듦.
 - 같은 Section 안에서도 Stack을 중첩해 헤더-본문 간 spacing을 조정.
 - 카드 격자는 Grid, 그 외 한 줄/한 열 흐름은 Stack.
+
+---
+
+## Hooks · 유틸
+
+컴포넌트 밖에서 쓰는 공개 export 입니다. 모두 `@bigtablet/design-system` 루트에서 가져옵니다. 클립보드는 [useClipboard / copyText](#useclipboard--copytext), 문구는 [LocaleProvider](#localeprovider) 를 봅니다.
+
+| export | 하는 일 |
+|------|------|
+| `useReducedMotion()` | OS 의 "동작 줄이기"(`prefers-reduced-motion: reduce`)가 켜졌는지 `boolean` 으로 돌려줍니다. 설정이 바뀌면 다시 렌더하고, SSR 에서는 `false` 입니다. JS 로 움직이는 모션을 끌 때 씁니다 |
+| `useFieldControl()` · `FieldControl` | 감싸는 [`Field`](#field) 의 연결 정보(`inputId` · `labelId` · `describedBy` · `invalid` · `required`)를 돌려줍니다. `Field` 밖에서는 `undefined` 라, 직접 만든 입력은 자기 값을 기본으로 두고 필드가 있을 때만 양보합니다 |
+| `useRadioGroupContext()` | 감싸는 [`RadioGroup`](#radiogroup) 의 `name` · `value` · `onChange` · `size` · `disabled` 를 돌려줍니다. 그룹 밖에서는 `null` 입니다. 직접 만든 라디오를 그룹에 넣을 때 씁니다 |
+| `useFocusTrap(ref, isActive, options?)` | `isActive` 동안 `ref` 요소 안에 Tab 을 가둡니다. 켜질 때 첫 포커스 가능한 요소로 옮기고(`options.initialFocus` · `preferWithin` 으로 지정), 꺼지면 켜기 전 포커스로 되돌립니다. Modal · Drawer · Popover 가 쓰는 훅입니다 |
+| `cn(...classes)` | 클래스 이름을 합칩니다(clsx 와 비슷). 문자열 · 배열 · `{ 클래스: 조건 }` 객체를 받고 falsy 값은 뺍니다 |
+| `catalogs` | 내장 문구 카탈로그 `{ ko, en }`. `LocaleProvider` 의 `locale` 값마다 쓰는 기준 문구입니다 |
+
+```tsx
+import { cn, useReducedMotion } from "@bigtablet/design-system";
+
+const reduced = useReducedMotion();
+<div className={cn("panel", open && "panel_open", { panel_static: reduced })} />
+```
