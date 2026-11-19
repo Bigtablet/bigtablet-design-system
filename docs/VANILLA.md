@@ -552,7 +552,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 | `data-empty-text` | `emptyText` |
 | `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
 | `data-options` | `options` (JSON 배열) - 둘 다 있으면 **`data-options` 가 우선** |
-| `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 그대로 쓰고 **이름은 바꾸지 않습니다**. JS `name` 과 다르면 폼은 그려 둔 input 의 `name` 으로 제출됩니다 |
+| `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 재사용하고 이름을 이 값으로 맞춥니다 |
 
 > boolean 속성은 값을 생략해도 되고(`data-multiple`), 끄려면 `data-multiple="false"` 로 명시합니다.
 > `data-options` 를 뺀 나머지 속성은 같은 이름의 JS 옵션을 넘기면 JS 옵션이 우선합니다.

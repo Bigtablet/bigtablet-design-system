@@ -60,6 +60,8 @@ export function Toggle(element, options = {}) {
 					(el) => el.tagName === "INPUT" && el.type === "hidden" && el.name === fieldName,
 				)
 			: null);
+	// 재사용한 input 도 JS name · data-name 으로 맞춘다 - 안 맞추면 그려 둔 옛 이름으로 제출된다 (#1106)
+	if (hiddenInput && fieldName) hiddenInput.name = fieldName;
 	if (!hiddenInput && fieldName) {
 		hiddenInput = document.createElement("input");
 		hiddenInput.type = "hidden";
