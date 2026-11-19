@@ -7,7 +7,7 @@
 	"style": "dist/index.css",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Bigtablet/bigtablet-design-system.git"
+		"url": "git+https://github.com/Bigtablet/bigtablet-design-system.git"
 	},
 	"exports": {
 		".": {
@@ -71,6 +71,7 @@
 		"check:deprecated": "python3 scripts/check-deprecated-in-examples.py",
 		"check:filenames": "python3 scripts/check-test-filenames.py",
 		"check:props": "tsx site/gen-props.ts && git diff --exit-code site/props.json",
+		"check:package": "publint && attw --pack . --profile esm-only --entrypoints . ./text",
 		"check:agent-guide": "python3 scripts/check-agent-guide.py",
 		"size": "size-limit",
 		"prepare": "husky"
@@ -99,6 +100,7 @@
 		}
 	},
 	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.18.5",
 		"@biomejs/biome": "^2.4.15",
 		"@commitlint/cli": "^21.1.0",
 		"@commitlint/core": "^21.1.0",
@@ -119,6 +121,7 @@
 		"next": "^16.2.12",
 		"playwright": "^1.62.0",
 		"postcss-scss": "^4.0.9",
+		"publint": "^0.3.25",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8",
 		"sass-embedded": "^1.99.0",
