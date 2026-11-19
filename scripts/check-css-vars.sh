@@ -18,7 +18,7 @@ done
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-# 루트 README 도 같은 변수 목록을 싣고 있어 함께 본다 - 한쪽만 갱신하면 문서끼리 갈린다.
+# 루트 README 는 변수 목록을 싣지 않지만(문서 사이트로 넘김) 예시에 이름이 나오면 함께 본다.
 #
 # 이름이 잘린 조각(`--bt-`, `--bt-color-` 같은 접두사 표기)은 대조 대상이 아니다.
 # 반대로 `--bt-focus-ring-error` / `-success` 같은 축약 표기의 뒷부분은 `--bt-` 로 시작하지
@@ -51,7 +51,7 @@ echo "문서의 CSS 변수 $(wc -l < "$tmp/documented" | tr -d ' ')개 - 모두 
 CLAIM_MARK='css-var-claim'
 # 네 번째 주장 파일(THEMING)이 실제로 나타났다 - #511 이 예고한 한계다. 같은 주장을 하는
 # 파일이 늘면 여기에 추가한다. sentinel 이 없는 파일은 검사가 실패로 알려준다.
-CLAIM_FILES="docs/AGENT_GUIDE.md docs/THEMING.md README.md README_KR.md"
+CLAIM_FILES="docs/AGENT_GUIDE.md docs/THEMING.md"
 
 # 계열 추출을 awk 로 하는 이유: sed 의 `t` 분기는 BSD(macOS)와 GNU 에서 동작이 갈린다.
 families_of() {
