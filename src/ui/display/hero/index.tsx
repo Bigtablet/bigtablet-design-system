@@ -1,6 +1,7 @@
 "use client";
 
 import type * as React from "react";
+import { renderSentences } from "../../../text";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import { Button } from "../../general/button";
 import "./style.scss";
@@ -121,7 +122,7 @@ export const Hero = ({
 			<div className="hero_content">
 				{eyebrow && <div className="hero_eyebrow">{eyebrow}</div>}
 				{title && <h1 className="hero_title">{title}</h1>}
-				{subtitle && <p className="hero_subtitle">{subtitle}</p>}
+				{subtitle && <p className="hero_subtitle">{renderSentences(subtitle)}</p>}
 				{(primaryAction || secondaryAction || children) && (
 					<div className="hero_actions">
 						{primaryAction && <HeroActionButton action={primaryAction} variant="filled" />}

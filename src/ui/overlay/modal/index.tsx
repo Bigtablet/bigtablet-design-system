@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
+import { renderSentences } from "../../../text";
 import {
 	cn,
 	lockBodyScroll,
@@ -227,7 +228,9 @@ export const Modal = ({
 						{content.title}
 					</h2>
 				)}
-				{content.description && <div className="modal_description">{content.description}</div>}
+				{content.description && (
+					<div className="modal_description">{renderSentences(content.description)}</div>
+				)}
 				{content.children && (
 					// 본문이 스크롤 컨테이너라 키보드로도 스크롤할 수 있어야 한다(axe
 					// `scrollable-region-focusable`). 넘치는지 여부를 측정해 조건부로 주는 방법도 있지만

@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .stat {
+  @include token.wrap_keep_all;
   display: flex;
   flex-direction: column;
   gap: token.$spacing_4;

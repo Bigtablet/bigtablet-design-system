@@ -7,12 +7,12 @@ export {
 } from "./key-activation";
 export { registerOverlay, useOverlayEscape } from "./overlay-stack";
 export type { PolymorphicProps, PolymorphicRef } from "./polymorphic";
+export { revealInline } from "./reveal-inline";
 export type { SafeHTMLProps } from "./safe-html";
 export {
 	lockBodyScroll,
 	unlockBodyScroll,
 } from "./scroll-lock";
-export { renderSentences, splitSentences } from "./sentences";
 export { splitAriaProps } from "./split-aria-props";
 export {
 	type AnchoredOptions,

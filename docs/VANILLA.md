@@ -30,6 +30,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [FileInput](#fileinput)
   - [AppShell · Sidebar](#appshell--sidebar)
   - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
+- [다크 모드](#다크-모드)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
 
@@ -40,12 +41,14 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
 ### CDN
 
 ```html
-<!-- CSS -->
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+<!-- CSS - 메이저를 고정한다. 버전 없는 URL 은 새 메이저가 나오면 화면이 바로 바뀐다 -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
 
 <!-- JS (선택사항 - 인터랙티브 컴포넌트용) -->
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 ```
+
+`@4` 는 4.x 의 최신을 받는다 - 메이저(깨지는 변경)는 막고 수정은 받는다. 화면을 완전히 고정하려면 `@4.9.1` 처럼 정확한 버전을 쓴다 ([릴리즈 목록](https://github.com/Bigtablet/bigtablet-design-system/releases)).
 
 ### NPM
 
@@ -60,6 +63,17 @@ npm install @bigtablet/design-system
 <!-- 또는 빌드 도구 사용 시 -->
 @import '@bigtablet/design-system/vanilla/style.min.css';
 ```
+
+**Spring Boot(Thymeleaf) · JSP 처럼 정적 파일을 서버가 내보내는 경우** - 두 파일을 정적 리소스 폴더로 복사하고 그 경로로 링크한다. 복사는 빌드 스크립트에 넣어 두면 버전을 올릴 때 함께 바뀐다.
+
+```bash
+cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.css src/main/resources/static/css/
+cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main/resources/static/js/
+# → <link rel="stylesheet" th:href="@{/css/bigtablet.min.css}">
+#   <script th:src="@{/js/bigtablet.min.js}"></script>
+```
+
+> 컴포넌트를 한 화면에 모아 둔 예제는 저장소의 [`src/vanilla/examples/index.html`](../src/vanilla/examples/index.html) 이다 (npm 패키지에는 없다). 저장소에서 `pnpm build` 후 `dist/vanilla/examples/index.html` 을 브라우저로 열면 된다.
 
 > 배포 패키지에 들어가는 Vanilla 산출물은 **압축본 2개뿐**입니다 - `bigtablet.min.css`(약 38KB),
 > `bigtablet.min.js`(약 19KB). 비압축본(`bigtablet.css` / `bigtablet.js`)은 `package.json` 의
@@ -82,7 +96,7 @@ npm install @bigtablet/design-system
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 
   <!-- Bigtablet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
 </head>
 <body>
   <div style="padding: 2rem;">
@@ -101,7 +115,7 @@ npm install @bigtablet/design-system
   </div>
 
   <!-- Bigtablet JS (인터랙티브 컴포넌트용) -->
-  <script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+  <script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 </body>
 </html>
 ```
@@ -769,8 +783,8 @@ Alert는 JavaScript로만 사용합니다.
 | `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
 | `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`role="region"`) 이름. 리전을 처음 만들 때만 쓴다 |
 
-- 오른쪽 위에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
-- 머리 오른쪽의 주 동작 버튼("추가")을 가리면 `<html data-bt-toast-placement="bottom-right">` 로 오른쪽 아래에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 쌓이는 순서는 여기서도 최신이 위다
+- 오른쪽 아래에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹치면 `<html data-bt-toast-placement="top-right">` 로 넓은 화면에서 오른쪽 위에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 예전 값 `bottom-right` 는 이제 기본과 같다
 - 쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤된다 (막대는 숨김 - 휠 · 터치 · Tab). 최신 토스트가 화면 밖으로 밀리지 않는다
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
 - `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
@@ -1315,6 +1329,7 @@ React `AppShell` · `Sidebar` 와 같은 모양의 관리자 화면 틀이다. �
 ```
 
 - `data-bt-sidebar` 를 주면 오른쪽 가장자리에 접기 토글이 생긴다. 접으면 64px 레일에 아이콘만 남고 라벨 · 구역 제목은 스크린리더에 남는다. 600px 아래 하단 바에서는 토글이 숨고 라벨이 보인다
+- 접을 사이드바의 항목에는 `__item-icon` 을 꼭 넣는다 - 접힌 레일은 아이콘만 보인다. React `SidebarItem` 은 아이콘이 없으면 라벨 첫 글자를 대신 보이지만, Vanilla 는 마크업을 서버가 그리므로 그 대신을 두지 않는다
 - 고정 헤더를 쓰면 `__body` 로 헤더와 `__main` 을 감싼다. 번들이 헤더 높이를 `--bt-top-inset` 에 적어 Tab · 앵커 이동 때 포커스가 헤더 밑에 숨지 않는다 (WCAG 2.4.11)
 
 | 옵션 (data-*) | React 대응 | 기본값 | 설명 |
@@ -1353,6 +1368,22 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 - React `AppShell` 은 사이드바나 헤더가 있으면 같은 링크를 스스로 그린다 (`skipLinkLabel`)
 
 ---
+
+## 다크 모드
+
+따로 정의할 것이 없다. 번들에 라이트 · 다크 테마 값이 함께 들어 있어서 아래 둘 중 하나면 전환된다.
+
+```html
+<!-- 1) 강제 - 서버가 사용자 설정을 알면 렌더할 때 넣는다 -->
+<html data-theme="dark">
+
+<!-- 2) 자동 - data-theme 를 두지 않으면 OS 설정(prefers-color-scheme)을 따른다 -->
+<html>
+```
+
+사용자가 고른 테마를 브라우저에 저장해 두는 경우, 첫 화면이 라이트로 번쩍였다가 바뀌지 않게 `<head>` 안 CSS 링크보다 **앞**에 저장값을 먼저 적용하는 스크립트를 둔다 - [THEMING.md SSR / FOUC](./THEMING.md#ssr--fouc) 의 스니펫을 그대로 쓴다.
+
+> 다크 테마의 색 자체를 바꾸고 싶을 때만 아래 [테마 커스터마이징](#css-custom-properties)처럼 `[data-theme="dark"]` 에 값을 덮어쓴다. 켜는 데는 필요 없다.
 
 ## CSS Custom Properties
 
@@ -1431,7 +1462,7 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
   --bt-radius-md: 12px;
 }
 
-/* 다크 모드 */
+/* 다크 테마 색을 바꿀 때만 - 다크 모드를 켜는 데는 필요 없다 (위 "다크 모드" 참고) */
 [data-theme="dark"] {
   --bt-color-background: #1a1a1a;
   --bt-color-background-secondary: #2a2a2a;

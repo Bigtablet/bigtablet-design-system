@@ -1,11 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cdp, page } from "vitest/browser";
 import "../../../vanilla/scss/_custom-properties.scss";
 import "../../../vanilla/scss/_app-shell.scss";
 import "../../../vanilla/scss/_sidebar.scss";
 import { AppShell, Sidebar } from "../../../vanilla/bigtablet.js";
-import { SidebarItem } from "./index";
+import { Sidebar as ReactSidebar, SidebarItem } from "./index";
 import "./style.scss";
 
 // Vanilla AppShell · Sidebar (#941) - 서버가 그린 마크업에 클래스만 붙인다
@@ -121,6 +121,89 @@ describe("Vanilla Sidebar collapse · AppShell header (Chromium, #950)", () => {
 		expect((shell.querySelector("header") as HTMLElement).getBoundingClientRect().top).toBe(0);
 		api?.destroy();
 		expect(document.documentElement.style.getPropertyValue("--bt-top-inset")).toBe("");
+	});
+
+	// 사이드바 머리의 아래 선과 헤더 아래 선이 한 줄로 이어진다 (React AppShell 과 같음)
+	// 소비 앱의 흔한 리셋 `* { box-sizing: border-box }` 가 있어도 같아야 한다 - 계산이 content-box 를 전제한다
+	it.each([
+		["the library defaults", ""],
+		["a global border-box reset", "* { box-sizing: border-box; }"],
+	])(
+		"lines up the sidebar brand rule with the bottom of a fixed header under %s",
+		async (_, reset) => {
+			const style = document.head.appendChild(document.createElement("style"));
+			style.textContent = reset;
+			const { container } = render(<span />);
+			container.insertAdjacentHTML(
+				"beforeend",
+				'<div class="bt-app-shell"><aside class="bt-sidebar"><div class="bt-sidebar__brand">BT</div></aside><div class="bt-app-shell__body"><header class="bt-app-shell__header" style="height: 84px">헤더</header><main class="bt-app-shell__main">본문</main></div></div>',
+			);
+			const api = AppShell(container.querySelector(".bt-app-shell") as HTMLElement);
+			const brand = container.querySelector(".bt-sidebar__brand") as HTMLElement;
+			const header = container.querySelector("header") as HTMLElement;
+			await expect
+				.poll(() =>
+					Math.abs(brand.getBoundingClientRect().bottom - header.getBoundingClientRect().bottom),
+				)
+				.toBeLessThan(1);
+			api?.destroy();
+			style.remove();
+		},
+	);
+});
+
+// 접기 토글의 가운데가 사이드바 머리(로고) 가운데 줄에 온다 - 위에서 24px 고정일 때는 펼침 2px · 접힘 6px,
+// AppShell 안(머리 = 헤더 높이)에서는 더 어긋났다. 접어도 머리 아래 선은 헤더 아래 선과 이어진다 (#1091)
+describe("Sidebar collapse toggle on the header line (Chromium, #1091)", () => {
+	const center = (el: Element) => {
+		const r = el.getBoundingClientRect();
+		return r.top + r.height / 2;
+	};
+
+	beforeEach(async () => {
+		await page.viewport(1024, 768);
+	});
+
+	it("centers the React toggle on the header in both states", () => {
+		const { container } = render(
+			<ReactSidebar header={<strong>Bigtablet</strong>} headerCollapsed={<strong>B</strong>}>
+				<SidebarItem>대시보드</SidebarItem>
+			</ReactSidebar>,
+		);
+		const toggle = container.querySelector(".sidebar_collapse_btn") as HTMLButtonElement;
+		const full = container.querySelector(".sidebar_header_layer_full") as HTMLElement;
+		expect(Math.abs(center(toggle) - center(full))).toBeLessThanOrEqual(0.5);
+		act(() => toggle.click());
+		const mark = container.querySelector(".sidebar_header_layer_mark") as HTMLElement;
+		expect(Math.abs(center(toggle) - center(mark))).toBeLessThanOrEqual(0.5);
+	});
+
+	it("keeps the Vanilla toggle on the brand line inside an AppShell with a tall header, collapsed too", async () => {
+		const { container } = render(<span />);
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<div class="bt-app-shell"><aside class="bt-sidebar"><div class="bt-sidebar__brand">BT</div><nav class="bt-sidebar__nav"></nav></aside><div class="bt-app-shell__body"><header class="bt-app-shell__header" style="height: 84px">헤더</header><main class="bt-app-shell__main">본문</main></div></div>',
+		);
+		const shellApi = AppShell(container.querySelector(".bt-app-shell") as HTMLElement);
+		const sidebar = container.querySelector("aside") as HTMLElement;
+		const sidebarApi = Sidebar(sidebar);
+		const brand = sidebar.querySelector(".bt-sidebar__brand") as HTMLElement;
+		const header = container.querySelector("header") as HTMLElement;
+		const toggle = () => sidebar.querySelector(".bt-sidebar__toggle") as HTMLElement;
+		for (const collapse of [false, true]) {
+			if (collapse) sidebarApi?.collapse();
+			await expect
+				.poll(() =>
+					Math.abs(brand.getBoundingClientRect().bottom - header.getBoundingClientRect().bottom),
+				)
+				.toBeLessThan(1);
+			// 머리 가운데 = 헤더 높이 - 아래 선의 절반
+			expect(
+				Math.abs(center(toggle()) - (brand.getBoundingClientRect().height - 1) / 2),
+			).toBeLessThan(1);
+		}
+		sidebarApi?.destroy?.();
+		shellApi?.destroy();
 	});
 });
 

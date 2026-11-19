@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .accordion {
+  @include token.wrap_keep_all;
   display: flex;
   flex-direction: column;
   border: token.$border_width_standard solid token.$color_border_default;

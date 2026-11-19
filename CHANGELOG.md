@@ -4,6 +4,31 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.10.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.0) - 2026-11-19
+- (렌더 변경) Toast 기본 위치가 넓은 화면에서 오른쪽 아래로 바뀝니다 - 오른쪽 위는 화면 머리의 주 동작 버튼을 가렸습니다. 하단 고정 UI 와 겹치면 `placement="top-right"`(Vanilla `<html data-bt-toast-placement="top-right">`). 폰 폭은 그대로 아래입니다 ([MIGRATION](docs/MIGRATION.md))
+- (렌더 변경) Toast `duration` 이 0 이하면 `Infinity` 처럼 자동으로 닫지 않습니다 - 0 은 뜨자마자 닫혀 토스트가 보이지 않았습니다 (React · Vanilla)
+- 토스트가 없을 때는 빈 "알림" 랜드마크를 두지 않습니다 - 공지 영역은 그대로라 첫 알림도 읽힙니다 (React · Vanilla)
+- `Sentences` 컴포넌트와 테스트 매처 `sentenceText` 를 공개합니다 - 문장 단위 줄바꿈을 앱에서도 같은 규칙으로 씁니다
+- (렌더 변경) 문장 사이에서 먼저 줄을 바꾸는 두 문장 이상의 글(Toast · Alert `message`, `supportingText` 등)이 문장 안에서도 꾸미는 말과 꾸밈받는 말("이 아래의 컴포넌트에서"), 영문 뒤 서술어("body 입니다"), 의존명사("할 수") 사이에서 갈리지 않습니다. "민주주의" 처럼 `~주의` 로 끝나는 명사는 꾸밈말로 묶지 않습니다
+- 하위 경로 `@bigtablet/design-system/text` 를 추가했습니다 - 문장 · 어절 줄바꿈 규칙(`splitSentences` · `phraseRanges` · `renderSentences` · `renderPhrases` · `Sentences` · `sentenceText`)을 앱에서 같은 규칙으로 씁니다. 런타임 의존성은 없습니다
+- `BalancedText`(`/text`)를 추가했습니다 - 실제 폭을 재서 같은 줄 수 안에서 문장 끝 · 쉼표 뒤처럼 가장 자연스러운 자리에서 줄을 바꿉니다. 코드 · 굵게가 섞인 글도 받고, 복사 · 페이지 검색은 원문 그대로입니다. 글꼴 없이 계산하는 `chooseBreaks` · `createCanvasMeasurer` 도 함께 냅니다
+- `BalancedTextScript`(`/text`)를 추가했습니다 - SSR 앱에서 하이드레이션 전에 서버 HTML 의 줄을 같은 기준으로 골라, 글꼴이 이미 있으면(재방문 · preload) JS 가 뜨기 전 첫 화면부터 `BalancedText` 줄바꿈으로 보입니다. `<body>` 끝에 한 번 둡니다
+- (렌더 변경) 글을 담는 컴포넌트 24종이 어절 중간에서 끊기지 않고(`keep-all`), Modal `description` · InlineAlert · EmptyState · ErrorState · PageHeader `description` · Hero `subtitle` 등이 문장 사이에서 먼저 줄바꿈됩니다. Tabs 탭 라벨은 한 줄로 둡니다
+- (렌더 변경) 좁은 폭에서 NavBar 링크 · 가로 Stepper 라벨이 한두 글자씩 세로로 쪼개지지 않습니다 - 모자라면 가로로 스크롤되고 활성 링크 · 현재 단계가 보이게 옮깁니다
+- (렌더 변경) 가로 Stepper 가 폰 폭(600px 미만)에서 지금 단계의 글만 보이고 나머지는 번호 · 선만 남깁니다 - 숨긴 이름은 스크린리더가 그대로 읽습니다. 연결선은 라벨 줄에서 시작하고 지나온 구간은 완료 체크와 같은 초록입니다
+- (렌더 변경) Modal · Drawer · Alert 를 열 때 스크롤해 둔 페이지의 sticky 헤더 · 사이드바가 위로 밀려나지 않습니다 (React · Vanilla)
+- (렌더 변경) 라이트 모드 Skeleton 이 회색 바탕(`bg_solid_dim`) 위에서도 보이게 색을 진하게 했습니다
+- (렌더 변경) 다크 모드 SegmentedControl 의 고른 칸에 테두리를 둡니다 - 트랙과 1.1:1 로만 구분됐습니다
+- (렌더 변경) `glass_dark` 표면(Card `variant="glass"`, Vanilla `.bt-card--glass`)을 진하게 해 흰 배경 위 흰 글자 대비를 2.8:1 에서 4.7:1 로 올렸습니다
+- (렌더 변경) 글자 없는 Badge dot 에 `aria-label` · `aria-labelledby` 를 주면 이미지(`role="img"`)로 읽힙니다
+- (렌더 변경) AppShell 에 사이드바와 헤더를 함께 둘 때 접기 버튼 오른쪽이 헤더에 가려지던 것과 두 아래 선이 어긋나던 것을 고쳤습니다
+- (렌더 변경) Sidebar 접기 버튼이 로고 줄 가운데에 놓입니다 - AppShell 헤더가 있으면 헤더 줄과 높이를 맞춥니다. 아이콘 없는 항목은 접혔을 때 라벨 첫 글자를 보여 줍니다. Vanilla 는 AppShell 안에서 접었을 때 머리 아래 선이 헤더와 8px 어긋나던 것도 고쳤습니다
+- (렌더 변경) Field 안 Dropdown 이 선택값 길이만큼 줄지 않고 Field 폭을 채웁니다
+- Menu 를 열면 첫 항목으로 포커스가 가 방향키 · Enter 로 고를 수 있습니다
+- Tabs `variant="fills"` 와 SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero` 를 deprecated 로 표시했습니다 - 지금은 그대로 동작합니다 ([MIGRATION](docs/MIGRATION.md))
+- 에이전트용 문서를 패키지에 싣습니다 - `node_modules/@bigtablet/design-system/dist/llms/index.md` (컴포넌트별 언제 쓰나 · 예제 · Props)와 토큰 전체(`tokens.md`) · 화면 조합(`recipes.md`) · 쓰지 말 것(`avoid.md`) · `/text` · Vanilla 문서, 한 파일 묶음(`full.md`). 문서 사이트에는 `llms.txt` · `llms-full.txt` 로 올라갑니다
+- 문서를 Storybook 에서 자체 문서 사이트로 옮겼습니다 - 같은 주소(GitHub Pages)에서 예제 · 조절 · Props 표 · AI 에이전트 설정을 봅니다. a11y 검사는 문서 예제와 조절 조합을 axe 로 봅니다
+
 ## [4.9.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.9.1) - 2026-11-16
 - (렌더 변경) 두 문장 이상인 문구가 문장 가운데서 끊기지 않고 문장 사이에서 먼저 줄바꿈됩니다 - Toast `message`, Alert `message`(문자열일 때), TextField · Textarea · FileInput · OtpInput `supportingText`. 한 문장짜리는 마크업이 그대로이고 낭독 내용도 같습니다
 - 앱에서 semantic-wrap 으로 Hero · PageHeader · EmptyState 제목을 의미 단위로 끊는 법을 문서에 추가했습니다

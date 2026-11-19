@@ -1,14 +1,14 @@
-name: Deploy Storybook to GitHub Pages
+name: Deploy docs site to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
       - 'src/ui/**'
-      - 'src/stories/**'
       - 'src/styles/**'
-      - 'src/**/*.stories.tsx'
-      - '.storybook/**'
+      - 'src/text/**'
+      - 'site/**'
+      - 'public/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'tsup.config.ts'
@@ -48,13 +48,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Storybook
-        run: pnpm build:sb
+      - name: Build docs site
+        run: pnpm build:site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: storybook-static
+          path: site-dist
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -16,6 +16,7 @@ $close_inset_medium: token.$spacing_24; // 패널 패딩 32 - 8
 $close_clearance: token.$spacing_24;
 
 .modal {
+  @include token.wrap_keep_all;
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   // 잠금 동안 거터를 풀어 ICB 가 스크롤바 폭만큼 넓어진다(#635). 그만큼 오른쪽에 padding 을

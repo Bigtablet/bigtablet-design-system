@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { cn, renderSentences } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { useFieldControl } from "../field";
 import "./style.scss";

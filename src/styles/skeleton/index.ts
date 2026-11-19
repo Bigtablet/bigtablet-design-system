@@ -3,11 +3,11 @@
 export const skeleton = {
 	color: {
 		/** CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환. fallback 값은 standalone import (colors 미포함) 시 light 동작 보장. */
-		base: "#F3F3F3",
-		wave: "#F0F0F0",
-		highlight: "#FAFAFA",
+		base: "#E5E5E5",
+		wave: "#E2E2E2",
+		highlight: "#F0F0F0",
 	},
-	gradient: "linear-gradient(90deg, #F3F3F3 25%, #FAFAFA 37%, #F0F0F0 63%)",
+	gradient: "linear-gradient(90deg, #E5E5E5 25%, #F0F0F0 37%, #E2E2E2 63%)",
 	radius: {
 		sm: "6px",
 		md: "8px",

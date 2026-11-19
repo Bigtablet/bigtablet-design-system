@@ -1,6 +1,6 @@
 # Architecture
 
-Bigtablet Design System의 프로젝트 구조 및 아키텍처 문서입니다.
+Bigtablet Design System 의 프로젝트 구조와 아키텍처 문서입니다.
 
 ---
 
@@ -20,28 +20,33 @@ bigtablet-design-system/
 │   │   ├── icon/            # 아이콘 사이즈 (xs-xl)
 │   │   └── layout/          # SCSS only
 │   │
-│   ├── ui/                  # UI 컴포넌트 - 8 카테고리 폴더 하위에 컴포넌트
-│   │   ├── display/         # accordion avatar badge card chip divider hero icon list-item media-card table
-│   │   ├── feedback/        # alert empty-state error-state linear-progress skeleton spinner toast top-loading
-│   │   ├── forms/           # checkbox date-picker dropdown file image-cropper otp-input radio radio-group textarea textfield toggle
-│   │   ├── general/         # button icon-button
-│   │   ├── layout/          # container grid section stack
-│   │   ├── navigation/      # bottom-nav breadcrumb menu nav-bar pagination sidebar tabs
+│   ├── ui/                  # UI 컴포넌트 - 8 카테고리 폴더 하위에 컴포넌트 (폴더 이름 = kebab-case)
+│   │   ├── display/         # accordion avatar badge card chip data-view description-list divider hero icon
+│   │   │                    # list-item media-card prose stat table timeline
+│   │   ├── feedback/        # alert empty-state error-state inline-alert linear-progress skeleton spinner toast top-loading
+│   │   ├── forms/           # checkbox combobox date-calendar date-picker date-range-picker dropdown field file
+│   │   │                    # filter-bar form image-cropper otp-input radio radio-group segmented-control
+│   │   │                    # tag-input textarea textfield time-picker toggle
+│   │   ├── general/         # button copy-button icon-button
+│   │   ├── layout/          # app-shell container grid page-header section stack
+│   │   ├── navigation/      # bottom-nav breadcrumb menu nav-bar pagination sidebar stepper tabs
 │   │   ├── overlay/         # drawer modal popover tooltip
-│   │   └── system/          # theme-provider
+│   │   └── system/          # locale-provider theme-provider
 │   │
-│   ├── utils/               # cn + 훅
-│   │   ├── cn.ts
+│   ├── utils/               # 공용 함수 · 훅 - 목록은 utils/index.ts 가 정본
+│   │   ├── cn.ts                   # className 합치기
+│   │   ├── safe-html.ts            # SafeHTMLProps (dangerouslySetInnerHTML 차단)
+│   │   ├── polymorphic.ts          # PolymorphicProps (`as` 로 렌더 요소 바꾸기)
+│   │   ├── use-presence.ts         # 진입/퇴출 모션이 끝날 때까지 마운트 유지
+│   │   ├── use-listbox-popup.ts    # Dropdown · Combobox 공용 팝업 거동 (공개 export)
 │   │   ├── overlay-stack.ts        # 공유 오버레이 Escape 스택 (registerOverlay / useOverlayEscape)
-│   │   ├── use-anchored-position.ts
-│   │   ├── use-focus-trap.ts
-│   │   ├── use-is-mounted.ts
-│   │   ├── use-reduced-motion.ts
-│   │   ├── use-spring-presence.ts  /  use-spring-hover.ts
-│   │   ├── use-safe-layout-effect.ts
+│   │   ├── use-focus-trap.ts  ·  scroll-lock.ts  ·  use-anchored-position.ts
+│   │   ├── use-clipboard.ts  ·  hangul-search.ts  ·  reveal-inline.ts  ·  …
 │   │   └── index.ts
 │   │
-│   ├── stories/             # Storybook 문서 (foundation / getting-started / cookbook / examples)
+│   ├── text/                # 한국어 줄바꿈 - `/text` 하위 경로 (BalancedText · Sentences · renderPhrases …)
+│   │                        # 바깥(utils · ui)을 쓰지 않습니다 - biome noRestrictedImports 가 막습니다. ui → text 방향만
+│   │
 │   ├── test/                # setup.ts (Vitest)
 │   ├── types/               # scss.d.ts
 │   └── vanilla/             # Vanilla JS 패키지
@@ -51,11 +56,11 @@ bigtablet-design-system/
 │       ├── scss/            # 컴포넌트별 스타일 partial
 │       └── examples/
 │
-├── docs/                    # 문서 (COMPONENTS, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
-├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포)
-├── .storybook/              # Storybook 설정
-├── scripts/                 # 빌드 스크립트 (copy-scss.sh, build-vanilla.sh, ...)
-├── tsup.config.ts           # 빌드 설정
+├── site/                    # 문서 사이트 (Vite) - pages/ · examples/ · props.json, dist/llms 생성 원본
+├── docs/                    # 문서 (COMPONENTS, THEMING, MIGRATION, VANILLA, ARCHITECTURE, CONTRIBUTING, TESTING, AGENT_GUIDE)
+├── .github/workflows/       # ci.yml (CI), release.yml (태그 배포), pages.yml (문서 사이트 배포)
+├── scripts/                 # 빌드 · 검사 스크립트 (build-modules.mjs, build-tokens.mjs, build-vanilla.sh, check-*.py, ...)
+├── tsup.config.ts           # 빌드 설정 (React · Vanilla) - 컴포넌트별 모듈 분리는 scripts/build-modules.mjs
 ├── vitest.config.ts         # 테스트 설정
 └── package.json
 ```
@@ -70,87 +75,36 @@ bigtablet-design-system/
 src/ui/{category}/{component-name}/
 ├── index.tsx                       # 컴포넌트 구현
 ├── style.scss                      # Global SCSS 스타일
-├── {component-name}.test.tsx       # 단위 테스트
-└── {component-name}.stories.tsx    # Storybook (선택)
+└── {component-name}.test.tsx       # 단위 테스트
 ```
 
 ### 컴포넌트 파일 예시
 
+가장 단순한 형태 - `src/ui/display/divider/index.tsx` 그대로:
+
 ```tsx
-// src/ui/general/button/index.tsx
 "use client";
 
 import type * as React from "react";
-import { cn } from "../../../utils";
+import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
-export type ButtonVariant = "filled" | "tonal" | "outline" | "text";
-export type ButtonSize = "sm" | "md" | "lg" | "xl";
-
-/** button/anchor 공통 스타일·콘텐츠 props (export 하지 않는 내부 베이스) */
-interface ButtonBaseProps {
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    fullWidth?: boolean;
-    /** 위험한 액션 - variant 와 조합되는 boolean modifier */
-    danger?: boolean;
-    disabled?: boolean;
+export interface DividerProps extends SafeHTMLProps<React.HTMLAttributes<HTMLHRElement>> {
+	/** 구분선 두께 (기본값: "standard") */
+	weight?: "standard" | "heavy";
 }
 
-export interface ButtonAsButton
-    extends ButtonBaseProps,
-        Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> {
-    as?: "button";
-    href?: never;
-    ref?: React.Ref<HTMLButtonElement>;
-}
+export const Divider = ({ weight = "standard", className, ...props }: DividerProps) => {
+	const dividerClassName = cn("divider", `divider_weight_${weight}`, className);
 
-export interface ButtonAsAnchor
-    extends ButtonBaseProps,
-        Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> {
-    as?: "a";
-    href: string;
-    ref?: React.Ref<HTMLAnchorElement>;
-}
-
-/** `as`/`href` 로 button ↔ anchor 를 가르는 discriminated union */
-export type ButtonProps = ButtonAsButton | ButtonAsAnchor;
-
-export const Button = (props: ButtonProps) => {
-    const {
-        variant = "filled",
-        size = "md",
-        fullWidth = false,
-        danger = false,
-        disabled = false,
-        as,
-        className,
-        children,
-        ref,
-        ...rest
-    } = props;
-
-    const buttonClassName = cn(
-        "button",
-        `button_variant_${variant}`,
-        `button_size_${size}`,
-        fullWidth && "button_full_width",
-        danger && "button_danger",
-        disabled && "button_disabled",
-        className
-    );
-
-    // 지면상 button 분기만 표시한 부분 예시. 실제 구현은 as="a" 또는 (as 미지정 + href 존재) 시
-    // <a href={href} {...rest}>{children}</a> 로 렌더링해야 한다 - 그대로 복사하면 링크가 동작하지 않음.
-    return (
-        <button ref={ref as React.Ref<HTMLButtonElement>} disabled={disabled} className={buttonClassName} {...rest}>
-            {children}
-        </button>
-    );
+	return <hr className={dividerClassName} {...props} />;
 };
 ```
 
-> 여러 요소로 렌더될 수 있는 컴포넌트는 이렇게 **discriminated union** 으로 만든다. 대신 소비자가 `interface X extends ButtonProps` 로 확장할 수 없으므로 `React.ComponentProps<typeof Button>` 을 안내한다 ([MIGRATION.md](./MIGRATION.md) 참고).
+- HTML 속성은 **`SafeHTMLProps<...>` 로 감싸서** 확장합니다. `React.*HTMLAttributes` 를 직접 확장하면 `dangerouslySetInnerHTML` 이 루트로 새고, `src/utils/safe-html.type-test.tsx` 가 `tsc` 에서 실패시킵니다
+- `ref` 는 일반 prop 으로 받습니다 (React 19 ref-as-prop). `forwardRef` 는 쓰지 않습니다
+
+> **여러 요소로 렌더되는 컴포넌트**(`as="a"`, `as={Link}`)는 `PolymorphicProps<T, OwnProps>`(`src/utils/polymorphic.ts`)를 씁니다 - `as` 에 준 요소의 props · ref 타입이 그대로 따라오고 `dangerouslySetInnerHTML` 은 이미 빠져 있습니다. 실제 예는 `src/ui/general/button/index.tsx` 의 `ButtonProps`.
 
 ---
 
@@ -247,24 +201,26 @@ export { spacing } from "./styles/spacing";
 // ... 나머지 컴포넌트 / 타입 / 토큰도 동일하게 명시적으로 나열
 ```
 
-> 새 컴포넌트를 추가하면 `src/index.ts` 에 **직접 export 를 추가해야** 소비자에게 노출된다. 반대로 `src/utils/index.ts` 에만 있고 `src/index.ts` 에 없는 항목(`registerOverlay` / `useOverlayEscape` / `useIsMounted` / `useAnchoredPosition`)은 **내부 전용**이다.
+> 새 컴포넌트를 추가하면 `src/index.ts` 에 **직접 export 를 추가해야** 소비자에게 노출됩니다. 반대로 `src/utils/index.ts` 에만 있고 `src/index.ts` 에 없는 항목(`registerOverlay` / `useOverlayEscape` / `useIsMounted` / `useAnchoredPosition`)은 **내부 전용**입니다.
 
-별도 `/next` entry 는 없다. 컴포넌트가 `"use client"` 로 마킹되고(빌드 시 tsup 가 `dist/index.js` 선두에 자동 주입) `next` 가 optional peer dependency 라, 동일한 `.` export 로 Next.js App Router 에서 그대로 동작한다.
+별도 `/next` entry 는 없습니다. 컴포넌트 소스가 `"use client"` 로 시작하고 모듈 단위 빌드(`dist/esm`)가 파일마다 그 지시문을 맨 앞에 유지해서(`scripts/build-modules.mjs`), 동일한 `.` export 로 Next.js App Router 에서 그대로 동작합니다. `next` 는 optional peer dependency 입니다.
 
 ### Vanilla JS (`/vanilla`)
 
 CDN 또는 직접 import로 사용:
 
 ```html
-<link rel="stylesheet" href="@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 ```
+
+정적 파일로 배포하는 방법(Spring `static/` 등)은 [VANILLA.md 설치](./VANILLA.md#설치).
 
 ---
 
 ## 디자인 토큰
 
-토큰은 **base(원시값) → semantic(용도별 별칭)** 2계층이다. 컴포넌트는 **semantic 만** 쓴다 - 다크 모드가 semantic 계층에서 갈리기 때문이다.
+토큰은 **base(원시값) → semantic(용도별 별칭)** 2계층입니다. 컴포넌트는 **semantic 만** 씁니다 - 다크 모드가 semantic 계층에서 갈리기 때문입니다.
 
 ### TypeScript 토큰
 
@@ -291,13 +247,13 @@ export const colors = {
 export const spacing = { "4": "4px", "8": "8px", "16": "16px", "24": "24px", /* ... */ } as const;
 ```
 
-TS 의 `colors` · `elevation` 은 **light 고정값**이다. 테마를 따라가야 하는 인라인 스타일은 같은 키의 `cssVars`(`src/styles/css-vars.ts`, 값이 `var(--bt-*)`)를 쓴다.
+TS 의 `colors` · `elevation` 은 **light 고정값**입니다. 테마를 따라가야 하는 인라인 스타일은 같은 키의 `cssVars`(`src/styles/css-vars.ts`, 값이 `var(--bt-*)`)를 씁니다.
 
-값의 원본은 `src/styles/tokens.json` 이다. `pnpm tokens` 가 SCSS(`<폴더>/_tokens.scss`) · TS(`<폴더>/index.ts`) · 테마 변수(`_theme-tokens.scss`)를 생성하고, `src/styles/tokens.test.ts` 가 커밋된 생성 파일이 원본과 같은지 본다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스). 아래 SCSS 예시의 값은 생성 파일 `_tokens.scss` 에 있다.
+값의 원본은 `src/styles/tokens.json` 입니다. `pnpm tokens` 가 SCSS(`<폴더>/_tokens.scss`) · TS(`<폴더>/index.ts`) · 테마 변수(`_theme-tokens.scss`)를 생성하고, `src/styles/tokens.test.ts` 가 커밋된 생성 파일이 원본과 같은지 봅니다 - [THEMING.md 토큰 단일 소스](./THEMING.md#토큰-단일-소스). 아래 SCSS 예시의 값은 생성 파일 `_tokens.scss` 에 있습니다.
 
 ### SCSS 토큰
 
-semantic 색상은 `var(--bt-*)` 를 가리킨다. SCSS 변수 자체가 CSS 변수 참조라서 `[data-theme="dark"]` 전환이 재컴파일 없이 그대로 따라온다.
+semantic 색상은 `var(--bt-*)` 를 가리킵니다. SCSS 변수 자체가 CSS 변수 참조라서 `[data-theme="dark"]` 전환이 재컴파일 없이 그대로 따라옵니다.
 
 ```scss
 // src/styles/colors/_index.scss - semantic 은 CSS 변수 참조
@@ -341,7 +297,7 @@ $easing_enter:    cubic-bezier(0.16, 1, 0.3, 1);
 $easing_exit:     cubic-bezier(0.4, 0, 1, 1);
 ```
 
-> `$color_primary` / `$color_white` / `$spacing_xs|sm|md|lg` / `$shadow_sm|md` 같은 t-shirt·원시 네이밍 토큰은 **존재하지 않는다**. semantic 이름과 숫자 스케일만 쓴다.
+> `$color_primary` / `$color_white` / `$spacing_xs|sm|md|lg` / `$shadow_sm|md` 같은 t-shirt·원시 네이밍 토큰은 **존재하지 않습니다**. semantic 이름과 숫자 스케일만 씁니다.
 
 ---
 
@@ -349,27 +305,15 @@ $easing_exit:     cubic-bezier(0.4, 0, 1, 1);
 
 ### tsup.config.ts
 
-```ts
-import { defineConfig } from "tsup";
+설정은 [`tsup.config.ts`](../tsup.config.ts) 가 정본입니다 - 여기에 붙여 두면 어긋납니다. 빌드는 세 갈래입니다.
 
-export default defineConfig([
-    // React 번들 (Next.js 공용) - 빌드 후 dist/index.js 선두에 "use client" 주입
-    {
-        entry: { index: "src/index.ts" },
-        format: ["esm"],
-        dts: true,
-        external: ["react", "react-dom", "lucide-react"],
-    },
-    // Vanilla JS 번들 (IIFE, 전역 Bigtablet)
-    {
-        entry: { "vanilla/bigtablet": "src/vanilla/bigtablet.js" },
-        format: ["iife"],
-        globalName: "Bigtablet",
-    },
-]);
-```
+| 빌드 | 출력 | 용도 |
+|------|------|------|
+| 한 덩어리 (`src/index.ts`) | `dist/index.css`(= `style.css`) · `dist/index.d.ts` | 전체 CSS 와 타입. 이 JS 는 쓰지 않아 `build-modules.mjs` 가 지웁니다 |
+| 모듈 단위 (`src/**/*.ts(x)`, `bundle: false`) | `dist/esm/**` | 패키지 진입점. 파일 하나 = 모듈 하나라 소비자 번들러가 안 쓰는 컴포넌트를 JS · CSS 째로 뺍니다. import 경로 보정 · 컴포넌트별 CSS · `"use client"` 유지는 `scripts/build-modules.mjs` |
+| Vanilla (`src/vanilla/bigtablet.js`) | `dist/vanilla/bigtablet(.min).js` | IIFE, 전역 `Bigtablet` |
 
-별도 Next.js 번들은 없다 (React 번들이 `"use client"` 마킹으로 Next 호환). SCSS 복사·Vanilla CSS 빌드는 `pnpm build` 가 `scripts/copy-scss.sh` · `scripts/build-vanilla.sh` 로 처리.
+`pnpm build` 가 이어서 SCSS 복사(`copy-scss.sh`) · Vanilla CSS(`build-vanilla.sh`) · Tailwind 프리셋(`build-tailwind.mjs`)을 만듭니다.
 
 ### 빌드 출력
 
@@ -392,22 +336,15 @@ dist/
 
 ### Vitest 설정
 
-```ts
-// vitest.config.ts
-import { defineConfig } from "vitest/config";
+설정은 [`vitest.config.ts`](../vitest.config.ts) 가 정본입니다. 프로젝트가 넷으로 나뉩니다.
 
-export default defineConfig({
-    test: {
-        environment: "jsdom",
-        setupFiles: ["./src/test/setup.ts"],
-        coverage: {
-            provider: "v8",
-            include: ["src/ui/**/*.{ts,tsx}", "src/utils/**/*.{ts,tsx}"],
-            exclude: ["**/*.test.{ts,tsx}", "**/*.stories.{ts,tsx}"],
-        },
-    },
-});
-```
+| 프로젝트 | 명령 | 파일 | 환경 |
+|----------|------|------|------|
+| `unit` | `pnpm test` | `*.test.ts(x)` | jsdom, `src/test/setup.ts` |
+| `browser` | `pnpm test:browser` | `*.browser.test.ts(x)` (`src/` · `site/`) | 실제 Chromium (레이아웃 · 잘림 · 스크롤 잠금, 문서 예제 axe) |
+| `visual` | `pnpm test:visual` | `*.visual.test.tsx` | CI 컨테이너 전용 시각 회귀 |
+
+자세한 작성법은 [TESTING.md](./TESTING.md).
 
 ### 테스트 파일 예시
 
@@ -441,49 +378,46 @@ describe("Button", () => {
 
 ### GitHub Actions
 
-정본은 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) 이다. 아래는 그 구조 요약이므로, 실제 값(액션 버전·Node 버전 등)은 워크플로 파일을 확인할 것.
+정본은 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) 입니다. 아래는 그 구조 요약이므로, 실제 값(액션 버전·Node 버전 등)은 워크플로 파일에서 확인합니다.
 
 **트리거**
 - `pull_request` → `develop`, `main`
 - `push` → `develop`
-- 양쪽 모두 `paths-ignore` 로 `**.md` · `docs/**` · `.github/ISSUE_TEMPLATE/**` · `LICENSE` 는 제외 (docs-only PR 은 CI 를 돌리지 않는다)
-- **릴리즈/싱크 PR(`develop` → `main`)은 `changes` job 의 `if:` 로 제외** - `push: develop` 이 이미 같은 트리를 검사했다. main 은 develop 의 과거 상태라 머지 결과 트리가 develop tip 과 같아서, develop 에 푸시하면 `push` 실행과 열린 릴리즈 PR 의 `pull_request(synchronize)` 실행이 같은 SHA 를 두 번 돌게 된다. head 가 `develop` 인 경우만 빼므로 hotfix 브랜치 → `main` PR 은 그대로 돈다
+- 양쪽 모두 `paths-ignore` 로 `**.md` · `docs/**` · `.github/ISSUE_TEMPLATE/**` · `LICENSE` 는 제외 (docs-only PR 은 CI 를 돌리지 않습니다)
+- **릴리즈/싱크 PR(`develop` → `main`)은 `changes` job 의 `if:` 로 제외** - `push: develop` 이 이미 같은 트리를 검사했습니다. main 은 develop 의 과거 상태라 머지 결과 트리가 develop tip 과 같아서, develop 에 푸시하면 `push` 실행과 열린 릴리즈 PR 의 `pull_request(synchronize)` 실행이 같은 SHA 를 두 번 돌게 됩니다. head 가 `develop` 인 경우만 빼므로 hotfix 브랜치 → `main` PR 은 그대로 돕니다
 
 **job 구성**
 
 | Job | 역할 |
 |------|------|
-| `changes` | `dorny/paths-filter` 로 `code` / `stories` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘긴다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 된다 |
-| `static-checks` | 병합 게이트(시큐어코딩 가이드 제9장 제3조). `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킨다. audit 은 조회 실패도 실패로 끝난다 |
-| `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돈다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트라서다 |
-| `a11y` | `playwright install --with-deps chromium`(브라우저 캐시) → `pnpm test:storybook` → `pnpm test:browser`(레이아웃). `code` · `stories` 가 바뀌면 돈다 (Chromium ~200MB 라 무겁다) |
-| `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돈다 |
+| `changes` | `dorny/paths-filter` 로 `code` / `site` / `deps` / `vanilla` 변경 여부를 한 번만 판정해 후속 job 의 조건으로 넘깁니다. 릴리즈/싱크 PR(`develop` → `main`)에서는 skip 되고, 나머지 job 도 모두 `needs: changes` 라 함께 skip 됩니다 |
+| `static-checks` | 병합 게이트. `build` 와 같은 조건 - `biome check .` → `tsc --noEmit` → `pnpm audit --prod --audit-level=high`. `tsc` 가 여기서만 돌기 때문에 `src/utils/safe-html.type-test.tsx` 도 이 job 이 지킵니다. audit 은 조회 실패도 실패로 끝납니다 |
+| `unit` | `pnpm test:coverage` → (PR 이면) `davelosert/vitest-coverage-report-action`. `code` · `deps` · `vanilla` 중 하나라도 바뀌면 돕니다 - `src/vanilla/*.test.ts` 도 `unit` 프로젝트이기 때문입니다 |
+| `a11y` | Playwright 공식 이미지 컨테이너에서 `pnpm test:browser`(레이아웃 · 문서 예제 axe) → `pnpm test:visual`(시각 회귀). `code` · `site` · `vanilla` 가 바뀌면 돕니다. 이미지 태그는 lockfile 의 playwright 버전과 같아야 합니다(어긋나면 첫 step 이 실패) |
+| `build` | 소스 검사 + 빌드와 dist 기반 검사. 4개 중 하나라도 바뀌면 돕니다 |
 
-`static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돈다. 한 job 에서 차례로
-돌던 때는 커버리지 → a11y → 빌드가 이어져 150s 안팎이었다 - job 마다 `pnpm install` 을 반복하는
-runner 시간을 내고, 대기 시간을 가장 긴 job 하나로 줄였다.
+`static-checks` · `unit` · `a11y` · `build` 는 서로 기다리지 않고 병렬로 돕니다 - 대기 시간이 가장 긴 job 하나로 정해집니다.
 
 **`build` job 의 step (실행 조건 포함)**
 
 | Step | 조건 |
 |------|------|
-| Checkout (`actions/checkout`, `fetch-depth: 0` - commitlint 가 base 부터 읽는다) | 항상 |
+| Checkout (`actions/checkout`, `fetch-depth: 0` - commitlint 가 base 부터 읽습니다) | 항상 |
 | Setup pnpm (`pnpm/action-setup`) + Node (`actions/setup-node`, `node-version: 22.14.0`, `cache: pnpm`) | 항상 |
 | `pnpm install --frozen-lockfile` | 항상 |
 | `pnpm exec commitlint` | `develop` 대상 PR 이고 dependabot 이 아닐 때 |
-| `pnpm lint:css` · `check:defaults` · `check:deprecated` · `check:filenames` | 항상 (소스만 읽어 빌드 앞에서 빨리 실패) |
+| `pnpm lint:css` · `check:defaults` · `check:deprecated` · `check:filenames` · `check:agent-guide` | 항상 (소스만 읽어 빌드 앞에서 빨리 실패) |
 | `pnpm build` | 항상 |
 | `pnpm size` · `check:css-vars` · `check:geometry` · `check:dark-text` | 항상 (dist 를 읽어 빌드 뒤) |
 
-**권한과 액션 고정** (시큐어코딩 가이드 W-2-3-2 · W-2-15-5)
-- 모든 워크플로 최상단은 `permissions: contents: read` 뿐이다. 쓰기가 필요한 job 만 자기 블록에서 상향한다 (`unit` 의 `pull-requests: write` 는 커버리지 코멘트용). job 레벨 `permissions` 는 최상단 값을 합치지 않고 대체한다
-- `uses:` 는 전부 `owner/action@<40자 SHA> # vX.Y.Z` 로 고정한다. 태그는 옮겨질 수 있어 무결성 보장이 안 된다. 갱신은 `dependabot.yml` 의 `github-actions` ecosystem 이 SHA 와 버전 주석을 함께 올린다
+**권한과 액션 고정**
+- 모든 워크플로 최상단은 `permissions: contents: read` 뿐입니다. 쓰기가 필요한 job 만 자기 블록에서 상향합니다 (`unit` 의 `pull-requests: write` 는 커버리지 코멘트용). job 레벨 `permissions` 는 최상단 값을 합치지 않고 대체합니다
+- `uses:` 는 전부 `owner/action@<40자 SHA> # vX.Y.Z` 로 고정합니다. 태그는 옮겨질 수 있어 무결성 보장이 안 됩니다. 갱신은 `dependabot.yml` 의 `github-actions` ecosystem 이 SHA 와 버전 주석을 함께 올립니다
 
 **size-limit 예산**(`package.json` `size-limit`)은 brotli 기준이고, 각 항목의 `message` 가 마지막
-조정 근거와 남은 여유를 담는다 - 올릴 때는 실측값과 함께 그 문장을 갱신한다. 런타임 의존성은 없다
-(4.0.1 에서 `@react-spring/web` 제거). 진입점 `dist/esm` 은 파일 하나가 모듈 하나인 ESM 이고 공백만 줄여 배포한다 - 이름 압축 · 트리 쉐이킹은 사용처 번들러가 한다.
+조정 근거와 남은 여유를 담습니다 - 올릴 때는 실측값과 함께 그 문장을 갱신합니다. 런타임 의존성은 없습니다. 진입점 `dist/esm` 은 파일 하나가 모듈 하나인 ESM 이고 공백만 줄여 배포합니다 - 이름 압축 · 트리 쉐이킹은 사용처 번들러가 합니다.
 
-배포는 별도 워크플로다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리한다.
+배포는 별도 워크플로입니다 - `v*` 태그 push 시 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 이 `npm publish --provenance` + GitHub Release 를 처리합니다.
 
 ---
 

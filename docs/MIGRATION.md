@@ -1,16 +1,18 @@
 # Migration
 
-Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다.
+버전을 올릴 때 앱 코드에서 고칠 것을 버전별로 모았습니다. 먼저 아래 체크리스트를 보세요.
 
 ---
 
 ## 목차
 
+- [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
+- [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
 - [v4.0.1 (radius·spacing·font SCSS 토큰이 var() 로)](#v401-radiusspacingfont-scss-토큰이-var-로)
-- [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없다)
+- [v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없습니다)](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)
 - [v3.25.0 (컴포넌트 props 에서 dangerouslySetInnerHTML 제거)](#v3250-컴포넌트-props-에서-dangerouslysetinnerhtml-제거)
 - [v3.22.0 (Field 가 감싼 입력의 id·ARIA 우선순위)](#v3220-field-가-감싼-입력의-idaria-우선순위)
 - [v3.14.0 (Prose lg 본문 스케일 · Vanilla z-index 정렬)](#v3140-prose-lg-본문-스케일--vanilla-z-index-정렬)
@@ -26,6 +28,24 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 
 ---
 
+## 업그레이드 체크리스트
+
+1. 지금 쓰는 버전을 확인합니다 - `pnpm why @bigtablet/design-system`.
+2. 아래 표에서 그 버전 줄의 섹션만 **오래된 것부터** 읽고 고칩니다.
+3. 패키지를 올리고 타입 체크(`tsc --noEmit`)를 돌립니다. prop 이름이 바뀐 곳은 여기서 드러납니다.
+4. 타입이 잡지 못하는 것(클래스명 · 테스트의 `vi.mock` stub · 문자열 키)은 각 섹션의 "앱 쪽에서 할 일" 대로 grep 합니다.
+5. 화면을 확인합니다 - [CHANGELOG](../CHANGELOG.md) 에서 지금 버전보다 새로운 `(렌더 변경)` 줄이 확인할 곳입니다.
+
+| 지금 버전 | 읽을 섹션 |
+|------|------|
+| 4.10.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
+| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate) (SCSS 믹스인 4개 · Tabs `fills` deprecate. 지금은 동작합니다) |
+| 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) |
+| 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
+| Vanilla 를 3.8 미만에서 올림 | [v3.8.0](#v380-vanilla-패키지-정리) 의 치환 스크립트를 먼저 돌립니다 |
+
+---
+
 ## 개요
 
 - `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
@@ -34,6 +54,46 @@ Bigtablet Design System의 deprecated prop 마이그레이션 가이드입니다
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)
+
+DS 와 사내 소비 저장소 어디에서도 쓰지 않는 SCSS 믹스인 4개를 deprecated 로 표시했습니다. 지금은 그대로 동작하고, 쓰면 컴파일할 때 Sass 경고가 뜹니다. 이후 버전에서 제거합니다.
+
+| 믹스인 | 이유 | 대신 쓸 것 |
+|------|------|------|
+| `glass_light` | 색 · 테두리를 하드코딩합니다 | 카드면 `<Card variant="glass">`. 그 밖에는 쓰던 선언을 앱 SCSS 로 옮기고 색은 토큰으로 바꿉니다 |
+| `hover_lift` | 그림자를 하드코딩합니다 | 카드면 `<Card interactive>`. 그 밖에는 `transition: token.$transition_lift;` 와 `@include token.hoverable { &:hover { transform: translateY(calc(-1 * #{token.$spacing_4})); box-shadow: token.$elevation_level3; } }`, 그리고 `prefers-reduced-motion: reduce` 에서 `transition: none` |
+| `hover_glow` | 단색 DS 에 없는 파란 glow 가 기본값입니다 | 강조가 필요하면 `token.$elevation_level*` 그림자나 테두리 색 변화로 바꿉니다 |
+| `slashed_zero` | `legible_identifiers` 가 이미 포함하고, `tabular_nums` 와 같은 선택자에 쓰면 뒤에 온 것만 남습니다 | 식별자 칸은 `@include token.legible_identifiers`. 자릿수 정렬까지 필요하면 `font-variant-numeric: tabular-nums slashed-zero;` 를 직접 씁니다 |
+
+**앱 쪽에서 할 일:** `grep -rnE "@include +([A-Za-z0-9_-]+\.)?(glass[-_]light|hover[-_]lift|hover[-_]glow|slashed[-_]zero)\b" --include=*.scss` 로 찾습니다. 네임스페이스(`ds.` · `DS2.` · 없음)와 Sass 가 같게 보는 `-` · `_` 표기를 모두 잡습니다. 빌드 로그의 Sass 경고에도 위치가 나옵니다.
+
+### Tabs `variant="fills"` deprecate
+
+`fills`(채운 둥근 박스 그룹)는 SegmentedControl 과 거의 같아 보여 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않습니다. 둥근 박스 모양은 SegmentedControl 만 갖고, Tabs 는 밑줄(`line`)만 씁니다. `fills` 는 지금 그대로 동작하고 이후 버전에서 제거합니다.
+
+| 쓰던 곳 | 대신 쓸 것 |
+|------|------|
+| 탭마다 다른 패널이 나옴 | `variant` 를 빼서 기본 `line` 으로 |
+| 패널 없이 값만 고름 (보기 방식 · 기간 · 상태 필터) | `<SegmentedControl items={…} value onValueChange />` |
+
+**앱 쪽에서 할 일:** `grep -rn 'variant="fills"' --include=*.tsx` 로 찾습니다.
+
+### Toast 기본 위치를 오른쪽 아래로
+
+넓은 화면(600px 이상)의 토스트 기본 자리가 오른쪽 위에서 **오른쪽 아래**로 바뀝니다. 오른쪽 위는 화면 머리의 주 동작 버튼(저장 · 추가)을 가렸습니다. 폰 폭은 원래 아래라 그대로입니다.
+
+| 쓰던 곳 | 할 일 |
+|------|------|
+| 기본값을 쓰고 하단에 고정 UI 가 없음 | 없음 - 오른쪽 아래로 내려갑니다 |
+| CSS 로 `.toast_container` 를 아래로 덮어씀 | 그 재정의를 지웁니다. 남겨도 결과는 같습니다 |
+| 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹침 | React `<ToastProvider placement="top-right">`, Vanilla `<html data-bt-toast-placement="top-right">` |
+
+Vanilla 의 `data-bt-toast-placement="bottom-right"` 는 이제 기본과 같아 지워도 됩니다.
+
+**앱 쪽에서 할 일:** `grep -rn "toast_container\|bt-toast-container" --include=*.css --include=*.scss` 로 위치 재정의를 찾습니다.
 
 ---
 
@@ -75,7 +135,7 @@ Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outli
 | 컴포넌트 | 지워진 것 | 대신 |
 |------|------|------|
 | Dropdown | `onChange` | `onValueChange` |
-| Dropdown | `fullWidth` · `textAlign` | 없음 (원래 no-op). 인라인 폭은 부모를 `inline-block` + `width` 로 감싼다 |
+| Dropdown | `fullWidth` · `textAlign` | 없음 (원래 no-op). 인라인 폭은 부모를 `inline-block` + `width` 로 감쌉니다 |
 | DatePicker | `onChange` | `onValueChange` (이제 필수) |
 | DatePicker | `width` | `fullWidth` 또는 CSS |
 | Pagination | `onChange` | `onPageChange` (이제 필수) |
@@ -83,7 +143,7 @@ Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outli
 | NavBar | `locale.onChange` | `locale.onValueChange` |
 | Toggle | `onChange` | `onCheckedChange` |
 | FilterBar | `loading` | `isLoading` (DataView · Table 과 같은 이름) |
-| TextField · Textarea | `onChangeAction` | `onValueChange`. 서버 액션도 이 이름으로 넘긴다 - `Action` 접미사는 쓰는 쪽에 필요 없다 |
+| TextField · Textarea | `onChangeAction` | `onValueChange`. 서버 액션도 이 이름으로 넘깁니다 - `Action` 접미사는 쓰는 쪽에 필요 없습니다 |
 | 타입 | `ButtonAsButton` · `ButtonAsAnchor` | `ButtonProps<"button">` · `ButtonProps<"a">` |
 
 ### 앱 쪽에서 할 일
@@ -93,7 +153,7 @@ Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outli
    - 테스트·CSS 에서 옛 클래스명을 잡는 곳: `icon_button_variant_standard` · `icon_button_variant_outlined` · `card_variant_outlined` · `chip_tone_default` · `toast_icon_default` · `toast_progress_default` · `.bt-card--outlined`
    - DS 를 `vi.mock` 으로 갈아 끼운 테스트 stub 이 옛 prop 이름(`onChange` 등)을 받아 호출하는 곳
    - 매핑 객체(`Record<string, BadgeVariant>` 등)의 타입 이름
-   - **변수에 따로 만든 객체로 넘기는 옵션** - `const locale = { …, onChange }` 처럼 객체를 먼저 만들고 넘기면 TS 가 남는 키를 에러로 잡지 않는다. NavBar `locale`, Alert·confirm 옵션, Toast `update` 패치가 여기에 해당한다
+   - **변수에 따로 만든 객체로 넘기는 옵션** - `const locale = { …, onChange }` 처럼 객체를 먼저 만들고 넘기면 TS 가 남는 키를 에러로 잡지 않습니다. NavBar `locale`, Alert·confirm 옵션, Toast `update` 패치가 여기에 해당합니다
 
 ---
 
@@ -105,7 +165,7 @@ Storybook 의 IconButton 스토리 `Standard` · `Outlined` 는 `Text` · `Outli
 
 - `useSpringHover` · `useSpringPresence` export 가 없어졌습니다. `import { animated } from "@react-spring/web"` 도 앱이 직접 의존성으로 두지 않았다면 깨집니다(DS 를 통해 설치돼 있던 것).
 - 오버레이 요소에 `data-state="open" | "closed"` 가 붙고, 인라인 `style` 의 `opacity` · `transform` 은 더 이상 쓰지 않습니다. 테스트에서 `toHaveStyle({ transform: "scale(1) ..." })` 를 보던 코드는 `data-state` 를 보도록 바꾸세요.
-- jsdom 테스트에서는 퇴출 모션 없이 바로 언마운트됩니다(`getAnimations` 가 없다). `Globals.assign({ skipAnimation: true })` 설정은 지워도 됩니다.
+- jsdom 테스트에서는 퇴출 모션 없이 바로 언마운트됩니다(`getAnimations` 가 없습니다). `Globals.assign({ skipAnimation: true })` 설정은 지워도 됩니다.
 
 ### 앱 쪽에서 할 일 - `useSpringHover`
 
@@ -177,22 +237,9 @@ transform: translateY(calc(-1 * #{token.$spacing_4}));
 padding-bottom: token.$spacing_base_48 * 2;
 ```
 
-사내 사용처 (2026-10-23, `calc()` 밖 산술):
-
-| 저장소 | 위치 | 상태 |
-|---|---|---|
-| bigtablet-notiiv-monorepo-web | `apps/status/src/app/page.module.scss:8` (`token.$spacing_48 * 2`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
-| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/page-skeleton.module.scss:9,13,22` (`* 2`, `* 1.5`, `* 2.5`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
-| bigtablet-notiiv-monorepo-web | `apps/status/src/widgets/uptime-bars/bar-tooltip.module.scss:11,12` (`* 4`, `* 6`) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
-| bigtablet-notiiv-monorepo-web | `apps/owner/src/features/signup/ui/consent-section.module.scss:80` (`-(token.$spacing_12)` - 에러 없이 무효한 `-var()` 를 냄) | 수정 완료 (Bigtablet/bigtablet-notiiv-monorepo-web#2078) |
-
-옛 토큰에서도 값이 같게 고쳐 두어 DS 버전을 올릴 때 이 표의 수정은 따로 필요 없다.
-
-bigtablet-homepage-web 은 `calc()` 안에서만 계산해 수정할 곳이 없습니다.
-
 ---
 
-## v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없다)
+## v4.0.1 (컴포넌트별 CSS - style.css import 가 필요 없습니다)
 
 패키지 진입점(`.`)이 한 덩어리 번들에서 모듈 단위 ESM(`dist/esm`)으로 바뀝니다. 컴포넌트마다 자기 CSS 와 공통 CSS(테마 변수 · autofill · 링크)를 import 하므로, 사용처 번들러가 쓰지 않는 컴포넌트를 JS 와 CSS 째로 뺍니다. Button 만 쓰는 페이지의 DS CSS 가 약 20KB → 3KB(gzip)입니다. import 하는 이름과 타입은 그대로입니다.
 
@@ -302,7 +349,7 @@ prop 이 사라지지도, 시그니처가 바뀌지도 않습니다. 바뀌는 �
 
 ---
 
-## v3.21.0 (오버레이 잠금이 거터를 회수한다)
+## v3.21.0 (오버레이 잠금이 스크롤바 자리를 회수합니다)
 
 타입·prop 변경은 없습니다. 잠금 동안의 레이아웃 처리가 바뀌어, **오른쪽에 고정된 앱 요소**가 영향을 받습니다.
 
@@ -740,7 +787,7 @@ Button 이 `as`/`href` 로 anchor 렌더링을 지원하면서 `ButtonProps` 가
 | Dropdown | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string \| null, option?: DropdownOption \| null) => void` |
 | OtpInput | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void` |
 | Toggle | `onChange` | `onCheckedChange` | v3.3.0 | 시그니처 동일: `(checked: boolean) => void` |
-| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 - 서버 액션도 `onValueChange` 로 넘긴다 |
+| TextField | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 - 서버 액션도 `onValueChange` 로 넘깁니다 |
 | Textarea | `onChangeAction` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChangeAction` 제거 |
 | DatePicker | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(value: string) => void`. v4.1.0 에서 `onChange` 제거 - 지금은 `onValueChange` 가 필수 |
 | Accordion | `onChange` | `onValueChange` | v3.3.0 | 시그니처 동일: `(openKeys: string[]) => void` |

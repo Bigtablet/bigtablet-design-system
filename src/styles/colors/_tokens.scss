@@ -72,10 +72,10 @@ $color_base_status_warning_dark_text: #FBBF24;
 $color_base_status_warning_graphic: #D97706;
 // blue-400, on neutral_950 ~9.4:1
 $color_base_status_info_dark_text: #60A5FA;
-// Skeleton - light mode (off-white grays, not in neutral scale)
-$color_base_skeleton_base: #F3F3F3;
-$color_base_skeleton_wave: #F0F0F0;
-$color_base_skeleton_highlight: #FAFAFA;
+// Skeleton - light mode. 회색 페이지 바탕(bg_solid_dim #F4F4F4)과 흰 표면 양쪽에서 자리가 보이는 값 - 예전 #F3F3F3 은 회색 바탕과 같아 사라졌다 (#1045)
+$color_base_skeleton_base: #E5E5E5;
+$color_base_skeleton_wave: #E2E2E2;
+$color_base_skeleton_highlight: #F0F0F0;
 // Alpha
 $color_base_alpha_black_5: rgba(0, 0, 0, 0.05);
 $color_base_alpha_black_8: rgba(0, 0, 0, 0.08);

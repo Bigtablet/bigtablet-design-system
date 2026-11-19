@@ -2,8 +2,9 @@
 
 import { Check } from "lucide-react";
 import type * as React from "react";
+import { useCallback, useRef } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps } from "../../../utils";
+import { cn, revealInline, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -71,9 +72,36 @@ export const Stepper = ({
 	...props
 }: StepperProps) => {
 	const t = useLocaleText();
+	const listRef = useRef<HTMLOListElement | null>(null);
+	const setListRef = useCallback(
+		(node: HTMLOListElement | null) => {
+			listRef.current = node;
+			if (typeof ref === "function") ref(node);
+			else if (ref) ref.current = node;
+		},
+		[ref],
+	);
+
+	// 좁은 폭에서 목록이 가로로 스크롤될 때 현재 단계가 잘린 자리에 있으면 보이게 옮긴다 (#1014).
+	// 웹폰트가 마운트 뒤에 들어오면 단계 폭이 바뀌므로 그때 한 번 더 맞춘다.
+	useSafeLayoutEffect(() => {
+		const reveal = () => {
+			const list = listRef.current;
+			const active = list?.children[current];
+			if (list && active instanceof HTMLElement) revealInline(list, active);
+		};
+		reveal();
+		let disposed = false;
+		void document.fonts?.ready.then(() => {
+			if (!disposed) reveal();
+		});
+		return () => {
+			disposed = true;
+		};
+	}, [current]);
 
 	return (
-		<ol ref={ref} className={cn("stepper", `stepper_${orientation}`, className)} {...props}>
+		<ol ref={setListRef} className={cn("stepper", `stepper_${orientation}`, className)} {...props}>
 			{steps.map((step, index) => {
 				const status: StepperStatus =
 					index < current ? "done" : index === current ? "active" : "pending";
@@ -89,7 +117,9 @@ export const Stepper = ({
 						</span>
 						<span className="stepper_text">
 							<span className="stepper_label">
-								{step.label}
+								{/* 라벨 내용은 한 덩어리 - 가로 연결선은 라벨의 ::after 라, 내용이 여러 조각(텍스트 + <strong>)이면
+								    조각마다 flex 항목이 돼 연결선용 gap 이 단어 사이에도 들어간다. */}
+								<span className="stepper_label_text">{step.label}</span>
 								{/* 색·체크 모양은 보조기술에 닿지 않는다 - 상태를 말로도 붙인다. */}
 								{statusText && <span className="stepper_sr_only"> {statusText}</span>}
 							</span>

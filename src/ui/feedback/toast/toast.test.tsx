@@ -169,16 +169,17 @@ describe("Toast display", () => {
 		expect(screen.getByText("두 번째", { selector: ".toast_message" })).toBeInTheDocument();
 	});
 
-	it("puts the container at top-right by default and bottom-right on request", () => {
+	// 기본은 아래 - 위는 머리 오른쪽 주 동작 버튼을 가린다 (#1073)
+	it("puts the container at bottom-right by default and top-right on request", () => {
 		const { rerender } = render(<ToastProvider>child</ToastProvider>);
 		expect(document.querySelector(".toast_container")).toHaveAttribute(
 			"data-placement",
-			"top-right",
+			"bottom-right",
 		);
-		rerender(<ToastProvider placement="bottom-right">child</ToastProvider>);
+		rerender(<ToastProvider placement="top-right">child</ToastProvider>);
 		expect(document.querySelector(".toast_container")).toHaveAttribute(
 			"data-placement",
-			"bottom-right",
+			"top-right",
 		);
 	});
 
@@ -405,6 +406,7 @@ describe("Toast portal & a11y", () => {
 				<ToastTrigger fn={(t) => t.success("기본 리전 이름")} />
 			</ToastProvider>,
 		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 		expect(screen.getByRole("region", { name: "알림" })).toBeInTheDocument();
 		unmount();
 
@@ -413,8 +415,31 @@ describe("Toast portal & a11y", () => {
 				<ToastTrigger fn={(t) => t.success("커스텀 리전 이름")} />
 			</ToastProvider>,
 		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
 		expect(screen.getByRole("region", { name: "Notifications" })).toBeInTheDocument();
 		expect(screen.queryByRole("region", { name: "알림" })).not.toBeInTheDocument();
+	});
+});
+
+// 비어 있는 리전이 랜드마크 목록에 늘 남지 않게 - 공지 영역은 첫 알림을 위해 처음부터 있다 (#1059)
+describe("Toast region landmark", () => {
+	it("is a landmark only while a toast is shown, and keeps the announcers ready", async () => {
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.success("저장했습니다")} />
+			</ToastProvider>,
+		);
+		expect(screen.queryByRole("region")).not.toBeInTheDocument();
+		expect(document.querySelectorAll(".toast_announcer")).toHaveLength(2);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(screen.getByRole("region", { name: "알림" })).toBeInTheDocument();
+
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+		await waitFor(() => expect(document.querySelector(".toast_item")).toBeNull(), {
+			timeout: 1500,
+		});
+		expect(screen.queryByRole("region")).not.toBeInTheDocument();
 	});
 });
 
@@ -820,10 +845,11 @@ describe("Toast programmatic control", () => {
 		expect(screen.getAllByRole("button", { name: "닫기" })).toHaveLength(1);
 	});
 
-	it("does not auto-dismiss when duration is Infinity", () => {
+	// 0 이하도 Infinity 와 같다 - 0ms 진행 바가 animationend 로 바로 닫아 토스트가 안 보였다 (#1071)
+	it.each([Infinity, 0, -1])("does not auto-dismiss when duration is %s", (duration) => {
 		render(
 			<ToastProvider>
-				<ToastTrigger fn={(t) => t.info("계속 떠 있음", { duration: Infinity })} />
+				<ToastTrigger fn={(t) => t.info("계속 떠 있음", { duration })} />
 			</ToastProvider>,
 		);
 

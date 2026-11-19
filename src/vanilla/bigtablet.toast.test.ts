@@ -142,14 +142,35 @@ describe("Toast", () => {
 		expect(toasts()).toHaveLength(0);
 	});
 
+	// 비면 이름 있는 랜드마크가 아니다 - 스크린리더 랜드마크 목록에 빈 "알림" 이 남지 않게 (#1059).
+	// 공지 영역은 다음 알림을 위해 남는다
+	it("토스트가 모두 닫히면 리전 이름을 떼고, 다시 뜨면 붙인다", () => {
+		const t = Toast("a", "info", { regionLabel: "Notifications" });
+		const region = document.querySelector(".bt-toast-container") as HTMLElement;
+		expect(region.getAttribute("role")).toBe("region");
+
+		t.dismiss();
+		expect(region.hasAttribute("role")).toBe(false);
+		expect(region.hasAttribute("aria-label")).toBe(false);
+		expect(region.querySelectorAll(".bt-toast__announcer")).toHaveLength(2);
+
+		Toast("b");
+		expect(region.getAttribute("role")).toBe("region");
+		expect(region.getAttribute("aria-label")).toBe("Notifications");
+	});
+
 	it("duration 을 막대 시간으로 넘기고, Infinity 면 막대가 없다", () => {
 		Toast("a", "info", { duration: 5000 });
 		Toast("b", "info", { duration: Number.POSITIVE_INFINITY });
+		// 0 이하도 막대가 없다 - 0ms 막대는 뜨자마자 닫았다 (#1071)
+		Toast("c", "info", { duration: 0 });
 
-		const infinite = nth(0);
-		const timed = nth(1);
+		const zero = nth(0);
+		const infinite = nth(1);
+		const timed = nth(2);
 		expect(progressOf(timed).style.getPropertyValue("--bt-toast-duration")).toBe("5000ms");
 		expect(progressOf(infinite)).toBeNull();
+		expect(progressOf(zero)).toBeNull();
 	});
 
 	it("퇴출 모션이 끝날 때까지 남아 있고, 그동안 inert 다", async () => {

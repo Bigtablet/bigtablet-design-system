@@ -1,0 +1,45 @@
+// 문장 하나를 한 덩어리로 - 줄이 문장 사이에서 먼저 끊긴다. 한 줄보다 긴 문장은 그 안에서 평소처럼 끊긴다.
+.sentences_item {
+	display: inline-block;
+}
+
+// 꾸미는 말 + 꾸밈받는 말("이 아래의 컴포넌트에서")은 한 줄에 - 사이에서 줄이 갈리면 어색하다 (#1077).
+// nowrap 이 아니라 inline-block - 문장 묶음과 같이 들어갈 자리가 있으면 통째로 다음 줄로 가고, 한 줄보다 길면
+// 그 안에서 평소처럼 끊겨 좁은 폭에서도 넘치지 않는다
+.sentences_phrase {
+	display: inline-block;
+}
+
+// BalancedText 루트 - 줄을 고르기 전(SSR 첫 화면 · JS 전 · 폭을 바꾸는 동안)의 브라우저 줄바꿈도 마지막 줄에 짧은 어절이
+// 혼자 남지 않게 한다. 지원 안 하는 브라우저(Firefox)는 무시해 그대로다
+.text_balanced {
+	text-wrap: pretty;
+}
+
+// BalancedText 가 고른 한 줄 (#1083) - 그 안에서는 끊지 않고 줄 사이 공백에서만 바뀐다.
+// inline-block 이 아니라 nowrap - Chrome 은 inline-block 경계를 건너 페이지 검색(Ctrl+F)을 잇지 못한다.
+// 넘치지 않게 계산할 때 1px 여유를 둔다(balanced.tsx). 어절(.text_balanced_word)은 폭을 재는 표시일 뿐 모양이 없다
+.text_balanced_line {
+	white-space: nowrap;
+}
+
+// 줄 안의 <wbr>(긴 코드 이름의 끊을 자리)은 nowrap 이어도 끊긴다 - 그러면 다음 줄이 앞 줄 끝에 붙어 시작해 고른 줄이 깨진다.
+// 줄은 이미 폭 안에 들어가게 골랐으니 끈다. 줄 사이의 <wbr>(괄호 앞뒤 자리)은 줄 밖이라 그대로다
+.text_balanced_line wbr,
+.text_balanced_word_measure wbr {
+	display: none;
+}
+
+// 줄을 넘어 갈라진 어절을 잴 때만 잠깐 붙는다 - 한 줄로 편 폭 (balanced.tsx widthOf)
+.text_balanced_word_measure {
+	white-space: nowrap;
+}
+
+// 폭이 내용으로 정해지는 상자(auto 표의 칸 등)의 줄 - nowrap 줄은 상자의 최소 폭을 줄 길이로 키워 표 열이 넓어지고,
+// 그 폭으로 다시 고르면 또 바뀌어 오간다. inline-block 은 최소 폭이 가장 긴 어절이라 상자 폭을 건드리지 않는다.
+// probe 는 그런 상자인지 가리려고 그린 직후 잠깐 붙인다(balanced.tsx)
+.text_balanced_line_boxed,
+.text_balanced_probe > .text_balanced_line {
+	display: inline-block;
+	white-space: normal;
+}

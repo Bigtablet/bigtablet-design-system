@@ -18,7 +18,9 @@
 
 .bt-toast-container {
   position: fixed;
-  top: token.$spacing_16;
+  // 기본은 오른쪽 아래 - 위는 머리 오른쪽 주 동작 버튼을 가린다 (#1073, React 와 같음).
+  // BottomNav 같은 하단 고정 UI 는 --bt-bottom-inset 만큼 밀어 올린다
+  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
   // 오버레이 잠금이 거터를 회수하면 오른쪽 고정 요소가 튄다 - 회수된 폭을 더해 제자리에 둔다(#635).
   right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
   z-index: var(--bt-z-toast);
@@ -37,25 +39,29 @@
   // 막대는 숨긴다 - 상자가 pointer-events: none 이라 잡을 수 없고, 폭(클래식 막대 15px)만큼 토스트가 좁아진다.
   // 휠 · 터치 · Tab(포커스가 가려진 토스트로 스크롤) 으로 움직이고, 아래끝에 잘린 토스트가 더 있음을 보인다
   scrollbar-width: none;
+  // Safari 18.2 미만(구형 iOS 인앱 웹뷰 포함)은 scrollbar-width 를 모른다
+  &::-webkit-scrollbar {
+    display: none;
+  }
   // 스크롤 상자는 내용을 자른다 - 항목 그림자(다크 level2 아래 18px)와 슬라이드 인(translateX 20px)이
   // 들어갈 안쪽 여백을 두고, 같은 만큼 음수 margin 으로 되돌려 자리는 그대로 둔다.
   padding: token.$spacing_20;
   margin: calc(-1 * #{token.$spacing_20});
 
   @include token.compact {
-    top: auto;
-    bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
     left: token.$spacing_16;
     right: calc(#{token.$spacing_16} + var(--bt-scrollbar-width, 0px));
     width: auto;
   }
 }
 
-// 머리 오른쪽 주 동작 버튼을 가리지 않게 아래로 (#998) - 컨테이너는 번들이 만들어서 `<html>` 속성으로 고른다.
-// compact 는 원래 아래라 위 규칙과 같은 값이다.
-[data-bt-toast-placement="bottom-right"] .bt-toast-container {
-  top: auto;
-  bottom: calc(#{token.$spacing_16} + var(--bt-bottom-inset, 0px));
+// 하단 고정 UI(쿠키 배너 등)와 겹치면 오른쪽 위로 - 컨테이너는 번들이 만들어서 `<html>` 속성으로 고른다.
+// 폰 폭은 하단을 가로로 채우는 배치라 그대로 둔다. `bottom-right` 는 이제 기본값과 같다 (#998 에서 만든 값)
+@include token.from_medium {
+  [data-bt-toast-placement="top-right"] .bt-toast-container {
+    top: token.$spacing_16;
+    bottom: auto;
+  }
 }
 
 .bt-toast {

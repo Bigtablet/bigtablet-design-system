@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .hero {
+  @include token.wrap_keep_all;
   position: relative;
   display: flex;
   width: 100%;

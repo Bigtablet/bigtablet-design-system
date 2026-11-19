@@ -17,12 +17,13 @@
    문구는 아무도 쓰지 않고, 없는 키를 부르면 `undefined` 가 화면에 나간다. 이관을 스크립트로
    돌리다 절반만 적용되는 사고가 실제로 났다 - 그걸 사람이 눈으로 확인하지 않게 한다.
 2. JSDoc `@default` 가 실제 destructuring 기본값과 일치해야 한다. 값을 바꾸고 JSDoc 을 잊으면
-   Storybook autodocs 와 소비자 문서가 조용히 거짓말을 한다.
+   문서 사이트 props 표와 소비자 문서가 조용히 거짓말을 한다.
 3. `docs/COMPONENTS.md` prop 표의 Default 열이 소스 기본값과 일치해야 한다. 소비자가 읽는
    문서라 어긋나면 그대로 잘못된 코드를 쓴다.
 6. `docs/COMPONENTS.md` 의 문자열 union 값(prop 표 Type 열 `'line' \| 'fills'`, 예제의
    `<Tabs variant="fills">`)이 소스의 union 타입과 일치해야 한다. Tabs 가 `pills` → `fills` 로
    이름을 바꾼 뒤 문서만 `pills` 로 남아, 문서 예제를 그대로 쓰면 tsc 가 실패했다(#798).
+7. `docs/COMPONENTS.md` prop 표가 소스 `{Name}Props` interface 의 prop 을 빠뜨리지 않아야 한다 (#1018).
 
 exit 1 이면 위반이 있다.
 """
@@ -444,6 +445,90 @@ def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], i
     return problems, compared
 
 
+def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
+    """7. 컴포넌트 `{Name}Props` (훅으로 여는 Alert 는 `{Name}Options`) interface 의 prop 이 `docs/COMPONENTS.md` 의 그 섹션 표에 다 있어야 한다.
+
+    소스에 prop 을 더하고 표를 안 고치면 문서만 읽는 소비자는 그 prop 을 모른다. NavBar `layout`
+    은 다른 섹션 예제(AppShell)가 쓰는데 NavBar 표에는 없었고, Alert 는 바로 아래 예제가 쓰는
+    `destructive` 가 옵션 표에 없었다 (#1018). 머리 첫 칸이 `Prop` · `Option` · `필드` 인 표만 본다 -
+    표 대신 산문으로 설명하는 섹션은 건너뛴다. `**X Props**` 제목 아래 표는 X 의 것이고, 그 표가 끝나면
+    섹션 컴포넌트로 돌아간다. 한 칸에 `` `min` / `max` `` 처럼 여러 이름을 적어도 된다. `type XProps = ...`
+    (polymorphic 등)는 선언을 정규식으로 읽기 어려워 대상이 아니다.
+    """
+    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
+    documented: dict[Path, set[str]] = {}
+    section: Path | None = None  # `###` 섹션의 컴포넌트
+    target: Path | None = None  # 다음 Props 표가 속할 컴포넌트
+    in_props_table = False
+    last_title = ""
+    for line in DOC.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#") and not line.startswith("####"):
+            # 첫 단어가 컴포넌트 이름 - `### Chip - type="static" ...` 같은 소제목도 Chip 섹션이다
+            word = line.lstrip("# ").split(" ")[0]
+            section = target = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
+            in_props_table = False
+            last_title = ""
+            continue
+        # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`). 그 표의 이름이
+        # 본 컴포넌트에 섞이면 본 컴포넌트의 누락이 가려진다 - 제목으로 대상을 바꾸고, 자기 폴더가 없는
+        # 하위 컴포넌트(`NavLink` · `Modal.Header`)의 표는 건너뛴다. 그 표가 끝나면 섹션 컴포넌트로 돌아간다.
+        sub = re.match(r"\*\*([A-Za-z.]+) Props\*\*", line)
+        if sub:
+            target = by_name.get(sub.group(1).replace(".", "").lower())
+            continue
+        # 굵은 제목은 다음 `필드` 표가 어느 타입인지 정한다 (`**BreadcrumbItem**`, `` **`ToastOptions`** ``)
+        title = re.match(r"\*\*`?([A-Za-z.]+)(?:<[^>]*>)?`?:?\*\*", line)
+        if title:
+            last_title = title.group(1)
+            continue
+        if not line.startswith("|"):
+            if in_props_table:
+                target = section
+            in_props_table = False
+            continue
+        cells = cells_of(line)
+        # Props 표만 본다 - 머리 첫 칸이 `Prop`/`Option`/`필드`(Toast 옵션). 같은 섹션의 다른 표(색 · 모양 비교 등) 첫 칸이
+        # 섞이면 같은 이름이 누락을 가린다. 데이터 행이 없는 표도 등록해 prop 전부를 누락으로 잡는다.
+        if cells and cells[0] in ("Prop", "Option", "필드"):
+            owner = target
+            if cells[0] == "필드":
+                # `필드` 표는 보조 타입(`BreadcrumbItem` · `StepperStep` · `TableColumn`)의 필드다. 그 이름이
+                # 섞이면 컴포넌트에서 빠진 같은 이름의 prop 을 가린다 - 섹션 컴포넌트의 `{Name}Options`
+                # (Toast) 표만 컴포넌트 것으로 본다.
+                pascal = "".join(part.capitalize() for part in section.parent.name.split("-")) if section else ""
+                owner = section if section and last_title == f"{pascal}Options" else None
+            # 제목은 바로 아래 표 하나에만 걸린다 - `Prop` · `Option` 표가 끼어도 그 뒤 `필드` 표로 새지 않게 비운다
+            last_title = ""
+            in_props_table = owner is not None
+            if owner is not None:
+                documented.setdefault(owner, set())
+                target = owner
+            continue
+        if in_props_table and line.startswith("| `"):
+            names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells[0])
+            documented[target].update(names)
+
+    problems: list[str] = []
+    compared = 0
+    for path, names in documented.items():
+        pascal = "".join(part.capitalize() for part in path.parent.name.split("-"))
+        match = re.search(
+            rf"export interface {pascal}(?:Props|Options)\b[^{{]*\{{(.*?)\n\}}",
+            path.read_text(encoding="utf-8"),
+            re.S,
+        )
+        if not match:
+            continue
+        props = set(re.findall(r"^\t([a-zA-Z][A-Za-z0-9]*)\??:", match.group(1), re.M))
+        props -= {"children", "className", "style", "ref"}
+        compared += len(props)
+        problems += [
+            f"{DOC}  {pascal} 표에 `{prop}` 이 없다 - {path} 의 {pascal}Props · Options 에 있다"
+            for prop in sorted(props - names)
+        ]
+    return problems, compared
+
+
 def main() -> int:
     files = sorted(UI.rglob("index.tsx"))
     if not files:
@@ -465,6 +550,8 @@ def main() -> int:
     usage_problems, usage_compared = check_doc_usages(files)
     problems += union_problems + usage_problems
     union_compared += usage_compared
+    complete_problems, complete_compared = check_doc_completeness(files)
+    problems += complete_problems
 
     exposed = len(catalog)
     documented = sum(
@@ -474,10 +561,10 @@ def main() -> int:
         if JSDOC_DEFAULT.match(line)
     )
 
-    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0:
+    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0 or complete_compared == 0:
         print(
             f"검사 대상이 사라졌다 (카탈로그 {exposed}, @default {documented},"
-            f" 문서 표 {doc_compared}, union {union_compared})"
+            f" 문서 표 {doc_compared}, union {union_compared}, 표 누락 {complete_compared})"
             " - 정규식이나 파일 구조가 바뀌었는지 확인하라",
             file=sys.stderr,
         )
@@ -493,6 +580,7 @@ def main() -> int:
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
     print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
     print(f"docs/COMPONENTS.md union 값(표 타입 · 예제 속성) {union_compared}개 - 전부 소스와 일치합니다.")
+    print(f"docs/COMPONENTS.md prop 표 {complete_compared}개 prop - 소스 Props interface 에서 빠진 것이 없습니다.")
     print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있고 섹션 안에서 정렬돼 있습니다.")
     return 0
 

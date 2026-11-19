@@ -1,7 +1,10 @@
+@use "../../styles/token" as token;
+
 /* ========================================
    Radio
    ======================================== */
 .bt-radio {
+  @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
   align-items: center;

@@ -1,6 +1,7 @@
 @use "src/styles/token" as token;
 
 .radio_group {
+  @include token.wrap_keep_all;
   display: flex;
   flex-direction: column;
   gap: token.$spacing_8;

@@ -1,0 +1,5059 @@
+{
+	"AccordionItem": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "content",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		}
+	],
+	"AccordionProps": [
+		{
+			"name": "items",
+			"type": "AccordionItem[]",
+			"required": true,
+			"doc": "아이템 목록"
+		},
+		{
+			"name": "multiple",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "여러 개 동시에 펼침 허용: 한 번에 하나"
+		},
+		{
+			"name": "defaultOpenKeys",
+			"type": "string[]",
+			"required": false,
+			"doc": "기본으로 펼쳐진 키들"
+		},
+		{
+			"name": "openKeys",
+			"type": "string[]",
+			"required": false,
+			"doc": "제어형: 펼쳐진 키들"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(openKeys: string[]) => void",
+			"required": false,
+			"doc": "펼침/접힘 콜백 (canonical). 열린 키 배열 전달"
+		},
+		{
+			"name": "headingAs",
+			"type": "\"h2\" | \"h3\" | \"h4\" | \"h5\" | \"h6\"",
+			"required": false,
+			"default": "\"h3\"",
+			"doc": "항목 헤더의 시맨틱 헤딩 태그. 페이지 헤딩 구조에 맞춘다 (Card 와 같은 prop)"
+		}
+	],
+	"AvatarProps": [
+		{
+			"name": "src",
+			"type": "string",
+			"required": false,
+			"doc": "이미지 URL"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "alt 텍스트 (이미지일 때) 또는 initials 추출용 이름"
+		},
+		{
+			"name": "size",
+			"type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "크기. xs=24 / sm=32 / md=40 / lg=48 / xl=64"
+		},
+		{
+			"name": "shape",
+			"type": "\"circle\" | \"square\"",
+			"required": false,
+			"default": "\"circle\"",
+			"doc": "모양"
+		},
+		{
+			"name": "bgColor",
+			"type": "string",
+			"required": false,
+			"default": "accent-default",
+			"doc": "색상: 검정/흰색 테마 자동"
+		}
+	],
+	"BadgeProps": [
+		{
+			"name": "tone",
+			"type": "\"accent\" | \"neutral\" | \"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"accent\"",
+			"doc": "의미 색"
+		},
+		{
+			"name": "shape",
+			"type": "\"dot\" | \"count\" | \"label\"",
+			"required": false,
+			"default": "\"label\"",
+			"doc": "모양. dot=점만 / count=숫자 / label=텍스트"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "사이즈. 웹 기본.\n\nsm: 컴팩트 (아이콘 위 알림 dot, 모바일)\n\nmd: 일반 웹 (admin/marketing)\n\nlg: 강조 (Hero 위 배지, 카테고리)"
+		},
+		{
+			"name": "appearance",
+			"type": "\"solid\" | \"soft\"",
+			"required": false,
+			"default": "\"solid\"",
+			"doc": "시각 강도.\n\n`solid`: 강한 fill bg + 흰/검 텍스트: 기존 동작 (notification dot, status emphasis)\n\n`soft`: tint 배경 + 진한 텍스트: 차분한 정보 라벨 (WCAG AA 통과)"
+		},
+		{
+			"name": "count",
+			"type": "number",
+			"required": false,
+			"doc": "count shape 일 때 표시할 숫자. max를 넘으면 \"max+\""
+		},
+		{
+			"name": "max",
+			"type": "number",
+			"required": false,
+			"default": "99",
+			"doc": "count 최댓값"
+		}
+	],
+	"DescriptionListItem": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 이름"
+		},
+		{
+			"name": "value",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 값"
+		},
+		{
+			"name": "full",
+			"type": "boolean",
+			"required": false,
+			"doc": "이 항목만 값을 한 줄 전체로 (긴 주소·메모)"
+		}
+	],
+	"DescriptionListProps": [
+		{
+			"name": "items",
+			"type": "DescriptionListItem[]",
+			"required": true,
+			"doc": "이름·값 쌍"
+		},
+		{
+			"name": "layout",
+			"type": "\"row\" | \"stack\"",
+			"required": false,
+			"default": "\"row\"",
+			"doc": "배치.\n\n`row`: 이름 왼쪽, 값 오른쪽. 좁은 화면에서는 자동으로 쌓인다\n\n`stack`: 항상 이름 위, 값 아래"
+		},
+		{
+			"name": "divided",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "항목 사이 구분선"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"StatProps": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "지표 이름"
+		},
+		{
+			"name": "value",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "지표 값. 숫자는 `tabular-nums` 로 폭이 고정된다"
+		},
+		{
+			"name": "delta",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "값 아래 변화량 (예: `+12%`)"
+		},
+		{
+			"name": "deltaTone",
+			"type": "\"neutral\" | \"positive\" | \"negative\"",
+			"required": false,
+			"default": "\"neutral\"",
+			"doc": "변화량의 색. 방향이 아니라 **좋음/나쁨**을 고른다: 재고 부족이 늘어난 것은 `negative` 다."
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라벨 왼쪽 장식 아이콘"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"TimelineItem": [
+		{
+			"name": "id",
+			"type": "string | number",
+			"required": true,
+			"doc": "목록 키"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "항목 제목"
+		},
+		{
+			"name": "time",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 오른쪽의 시각"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 아래 설명"
+		},
+		{
+			"name": "status",
+			"type": "\"done\" | \"active\" | \"pending\"",
+			"required": false,
+			"default": "\"pending\"",
+			"doc": "진행 상태"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "인디케이터 안에 넣을 아이콘. 없으면 점"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "항목 아래에 붙일 임의 내용 (첨부, 액션 버튼 등)"
+		}
+	],
+	"TimelineProps": [
+		{
+			"name": "items",
+			"type": "TimelineItem[]",
+			"required": true,
+			"doc": "위에서 아래로 흐르는 순서대로"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLOListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"EmptyStateProps": [
+		{
+			"name": "illustration",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "일러스트 영역 (아이콘/이미지 등). lucide 아이콘은 `size` 에 맞는 원형 배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다. **장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 포커스 가능한 요소 (버튼/링크 등)를 넣으면 포커스는 가는데 보조기기엔 없는 요소가 되므로(WCAG 4.1.2) `action` 을 쓸 것."
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "보조 설명"
+		},
+		{
+			"name": "action",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "액션 영역 (Button 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다."
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "크기"
+		},
+		{
+			"name": "fillHeight",
+			"type": "boolean",
+			"required": false,
+			"doc": "부모 높이를 채우고 내용을 세로 중앙에 둔다 (`flex: 1` + `justify-content: center`). 404 · 검색 결과 없음 · 빈 목록처럼 영역 한가운데 놓여야 하는 경우에 쓴다. **부모가 세로 flex 컨테이너여야 `flex: 1` 이 먹는다**: 아닌 경우 `height: 100%` 를 준 부모 안에 두거나 부모를 `display: flex; flex-direction: column` 으로 만들 것."
+		}
+	],
+	"ErrorStateProps": [
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"default": "\"문제가 발생했습니다\"",
+			"doc": "제목"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "보조 설명"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "아이콘/일러스트 (미지정 시 기본 경고 아이콘. `null` 로 숨김). lucide 아이콘은 `variant` 에 맞는 원형 배지에 올라가고 크기가 고정된다(아이콘의 `size` prop 무시). 이미지·직접 그린 svg 는 그대로 렌더된다. **장식 전용**: `aria-hidden=\"true\"` 래퍼로 접근성 트리에서 제외된다. 래퍼는 필수다: 기본 아이콘이 이름 없는 bare lucide svg 라서, 빼면 `role=\"alert\"` 이 이름 없는 그래픽까지 읽는다. 포커스 가능한 요소는 `action` 을 쓸 것 (WCAG 4.1.2)."
+		},
+		{
+			"name": "action",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "액션 영역 (재시도 버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다."
+		},
+		{
+			"name": "variant",
+			"type": "\"page\" | \"widget\"",
+			"required": false,
+			"default": "\"page\"",
+			"doc": "레이아웃 모드.\n\n`page`: 전체 화면/영역 채움: error boundary fallback. 배지 96 / 아이콘 48 + 넉넉한 패딩 + min-height.\n\n`widget`: 인라인 컴팩트: 위젯/카드 내부 error fallback. 배지 40 / 아이콘 20 + 좁은 패딩."
+		}
+	],
+	"InlineAlertProps": [
+		{
+			"name": "tone",
+			"type": "\"neutral\" | \"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"info\"",
+			"doc": "톤"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "굵은 한 줄 제목"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "본문 설명"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "앞 아이콘. 미지정 시 톤 기본 아이콘, `null` 이면 숨긴다"
+		},
+		{
+			"name": "action",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "본문 아래 액션 (버튼·링크)"
+		},
+		{
+			"name": "onDismiss",
+			"type": "() => void",
+			"required": false,
+			"doc": "주면 닫기 버튼이 생긴다. 실제로 지우는 건 부모다 (보통 상태를 false 로)"
+		},
+		{
+			"name": "dismissLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `inlineAlert.dismiss`",
+			"doc": "닫기 버튼의 접근성 이름"
+		}
+	],
+	"BottomNavItemProps": [
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "아이콘 (필수)"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "라벨 텍스트 (필수, 짧게: 2~4자)"
+		},
+		{
+			"name": "active",
+			"type": "boolean",
+			"required": false,
+			"doc": "활성 상태"
+		},
+		{
+			"name": "badge",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "아이콘 우상단 dot/카운트 (Badge 등)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
+		}
+	],
+	"BottomNavProps": [
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"주요 메뉴\"",
+			"doc": "스크린 리더 레이블"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "2~5 개의 `BottomNavItem`"
+		}
+	],
+	"BreadcrumbItem": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "표시 텍스트"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": "클릭 시 이동할 URL. 없으면 현재 페이지로 간주"
+		},
+		{
+			"name": "onClick",
+			"type": "(e: MouseEvent<HTMLElement>) => void",
+			"required": false,
+			"doc": "클릭 콜백 (href 없이 사용 가능)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "링크를 렌더할 요소. 라우터 `Link`(`next/link` 등)를 끼울 때 쓴다.\n\n`onClick` 에서 `preventDefault` + `router.push` 로도 되지만, 그러면 수정자 클릭 (`cmd`/`ctrl`/`shift`)과 새 탭 열기가 죽어 소비처마다 그 검사를 다시 써야 하고 프리페치·이동 가드처럼 `Link` 만 아는 것들은 표현할 수 없다.\n\n마지막 항목(현재 페이지)에는 적용되지 않는다: 그건 링크가 아니라 `aria-current` 텍스트다. `href` 없이 주면 무시된다(그 항목은 `<button>` 이다)."
+		}
+	],
+	"BreadcrumbProps": [
+		{
+			"name": "items",
+			"type": "BreadcrumbItem[]",
+			"required": true,
+			"doc": "경로 아이템 배열. 마지막은 현재 페이지로 간주"
+		},
+		{
+			"name": "separator",
+			"type": "ReactNode",
+			"required": false,
+			"default": "ChevronRight 아이콘",
+			"doc": "구분자"
+		},
+		{
+			"name": "navLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"현재 위치\"",
+			"doc": "`<nav>` 랜드마크 이름. 스크린리더의 리전 목록에 그대로 뜬다"
+		}
+	],
+	"MenuItem": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "onSelect",
+			"type": "() => void",
+			"required": false,
+			"doc": "클릭 시 호출: 자동으로 메뉴 닫힘"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"doc": "destructive 액션 (삭제 등): 빨간 텍스트"
+		}
+	],
+	"MenuProps": [
+		{
+			"name": "items",
+			"type": "MenuItem[]",
+			"required": true,
+			"doc": "메뉴 아이템들"
+		},
+		{
+			"name": "trigger",
+			"type": "ReactElement",
+			"required": true,
+			"doc": "trigger 요소: 클릭 시 메뉴 열림"
+		},
+		{
+			"name": "align",
+			"type": "\"start\" | \"end\"",
+			"required": false,
+			"default": "\"start\"",
+			"doc": "정렬"
+		}
+	],
+	"NavBarLocaleConfig": [
+		{
+			"name": "current",
+			"type": "string",
+			"required": true,
+			"doc": "현재 선택된 locale 값 (예: \"ko\")"
+		},
+		{
+			"name": "options",
+			"type": "NavBarLocaleOption[]",
+			"required": true,
+			"doc": "가능한 옵션"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(next: string) => void",
+			"required": false,
+			"doc": "locale 변경 콜백 (canonical)"
+		},
+		{
+			"name": "hideLabel",
+			"type": "boolean",
+			"required": false,
+			"doc": "표시 라벨: 기본은 옵션의 label, 미지정 시 short code 표시"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"default": "현재 옵션의 label",
+			"doc": "locale 트리거 버튼의 접근성 이름. `hideLabel` 이 true 면 버튼 안이 아이콘뿐이라 이 값이 유일한 접근성 이름이 된다.\n\n⚠️ `hideLabel` 이 false(기본값)일 때는 이 값이 화면에 보이는 라벨을 덮어쓰므로, 보이는 라벨 텍스트를 **포함**하는 문자열이어야 한다. 그렇지 않으면 음성 제어 사용자가 보이는 대로 말해도 버튼이 잡히지 않는다 (WCAG 2.1 SC 2.5.3 Label in Name 위반).: 없으면 `current` 대문자"
+		}
+	],
+	"NavBarLocaleOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"NavBarProps": [
+		{
+			"name": "brand",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "왼쪽 brand/로고 영역"
+		},
+		{
+			"name": "searchSlot",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "중앙 또는 우측의 검색 영역 (TextField 등)"
+		},
+		{
+			"name": "actions",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "오른쪽 액션 영역 (IconButton, primary CTA Button 등)"
+		},
+		{
+			"name": "locale",
+			"type": "NavBarLocaleConfig",
+			"required": false,
+			"doc": "i18n locale switcher (Globe 아이콘 + 드롭다운)"
+		},
+		{
+			"name": "profile",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "우측 프로필 영역 (Avatar/ProfileButton)"
+		},
+		{
+			"name": "divider",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "actions / locale 와 profile 사이 수직 divider 표시: profile 있을 때만 표시"
+		},
+		{
+			"name": "variant",
+			"type": "\"accent\" | \"default\" | \"transparent\"",
+			"required": false,
+			"doc": "시각 variant: default(흰 bg + 회색 border), transparent(투명, hero 위에), accent(검정 bg)"
+		},
+		{
+			"name": "layout",
+			"type": "\"contained\" | \"fluid\"",
+			"required": false,
+			"doc": "레이아웃: contained(max 1200, marketing) / fluid(full width, admin/dashboard)"
+		},
+		{
+			"name": "sticky",
+			"type": "boolean",
+			"required": false,
+			"doc": "sticky 고정 여부"
+		}
+	],
+	"NavLinkProps": [
+		{
+			"name": "active",
+			"type": "boolean",
+			"required": false,
+			"doc": "현재 활성 페이지 여부"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"doc": "이동할 주소: 기본 요소 `<a>` 의 `href` 그대로",
+			"required": false
+		}
+	],
+	"SidebarItemProps": [
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성. `<button>` 은 native `disabled`, 그 밖의 요소(anchor·`Link` 등)는 `aria-disabled` + `tabIndex={-1}` + 클릭 차단으로 처리한다: native `disabled` 가 없는 요소에 그냥 넘기면 조용히 무시되고 비활성 항목이 눌린다."
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "왼쪽 아이콘"
+		},
+		{
+			"name": "active",
+			"type": "boolean",
+			"required": false,
+			"doc": "현재 활성 상태"
+		},
+		{
+			"name": "trailing",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "오른쪽 trailing (Badge 등)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
+		}
+	],
+	"SidebarProps": [
+		{
+			"name": "header",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "상단 brand 영역 (펼친 상태 로고)"
+		},
+		{
+			"name": "headerCollapsed",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "collapsed 상태 헤더 (보통 favicon). 미지정 시 collapsed 에서도 `header` 사용."
+		},
+		{
+			"name": "footer",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "하단 영역 (사용자/설정/로그아웃 등)"
+		},
+		{
+			"name": "collapsed",
+			"type": "boolean",
+			"required": false,
+			"doc": "collapsed 상태 (controlled)"
+		},
+		{
+			"name": "defaultCollapsed",
+			"type": "boolean",
+			"required": false,
+			"doc": "collapsed 초기값 (uncontrolled). `collapsed` 미지정 시 사용."
+		},
+		{
+			"name": "onCollapsedChange",
+			"type": "(collapsed: boolean) => void",
+			"required": false,
+			"doc": "collapsed 변경 콜백 (controlled/uncontrolled 모두에서 호출)"
+		},
+		{
+			"name": "collapsible",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "내장 collapse 토글 버튼 표시"
+		},
+		{
+			"name": "toggleLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"사이드바 토글\"",
+			"doc": "토글 버튼 a11y label"
+		},
+		{
+			"name": "width",
+			"type": "number",
+			"required": false,
+			"default": "240px",
+			"doc": "너비"
+		},
+		{
+			"name": "collapsedWidth",
+			"type": "number",
+			"required": false,
+			"default": "64px",
+			"doc": "collapsed 너비"
+		},
+		{
+			"name": "mode",
+			"type": "\"auto\" | \"static\"",
+			"required": false,
+			"default": "\"auto\"",
+			"doc": "반응형 모드.\n\n`\"auto\"`: viewport `< 600px` 에서 자동으로 하단 bar 로 변신.\n\n`\"static\"`: 어떤 viewport 에서도 좌측 rail 유지 (admin desktop-only)."
+		}
+	],
+	"SidebarSectionProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "섹션 라벨 (collapsed 상태에선 hidden)"
+		}
+	],
+	"StepperProps": [
+		{
+			"name": "steps",
+			"type": "StepperStep[]",
+			"required": true,
+			"doc": "순서대로"
+		},
+		{
+			"name": "current",
+			"type": "number",
+			"required": true,
+			"doc": "현재 단계 인덱스 (0-based). 앞은 `done`, 뒤는 `pending` 이 된다"
+		},
+		{
+			"name": "orientation",
+			"type": "\"horizontal\" | \"vertical\"",
+			"required": false,
+			"default": "\"horizontal\"",
+			"doc": "배치 방향"
+		},
+		{
+			"name": "onStepClick",
+			"type": "(index: number, step: StepperStep) => void",
+			"required": false,
+			"doc": "주면 모든 단계가 버튼이 되되 **지나간 단계만 눌린다**. 현재·이후 단계는 `aria-disabled` 다: 아직 오지 않은 단계로 건너뛰는 것은 그 사이 폼 검증을 우회하는 일이라 컴포넌트가 열지 않는다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLOListElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"StepperStep": [
+		{
+			"name": "id",
+			"type": "string | number",
+			"required": true,
+			"doc": "목록 키"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "단계 이름. 인라인 내용만: 클릭 가능한 단계는 `<button>` 안에 그려진다"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "이름 아래 짧은 설명. 인라인 내용만"
+		}
+	],
+	"TabListProps": [
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "스크린리더 라벨"
+		}
+	],
+	"TabPanelProps": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": "이 panel을 활성화할 tab의 value"
+		},
+		{
+			"name": "unmountInactive",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "비활성 panel을 unmount 할지. false면 display: none으로 유지"
+		}
+	],
+	"TabProps": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": "이 tab의 value"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		}
+	],
+	"TabsProps": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형: 현재 활성 tab의 value"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형: 초기 활성 tab의 value"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "value 변경 콜백"
+		},
+		{
+			"name": "variant",
+			"type": "\"line\" | \"fills\"",
+			"required": false,
+			"default": "\"line\"",
+			"doc": "시각 스타일. line=하단 underline. `fills`(채운 둥근 박스 그룹)는 deprecated: SegmentedControl 과 거의 같아 보여 \"내용 바꾸기\" 와 \"값 고르기\" 가 구분되지 않는다. 이후 버전에서 제거"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "크기"
+		}
+	],
+	"PopoverProps": [
+		{
+			"name": "trigger",
+			"type": "ReactElement",
+			"required": true,
+			"doc": "trigger 요소: 클릭 시 팝오버 토글"
+		},
+		{
+			"name": "content",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "팝오버 내부 콘텐츠: 임의 ReactNode (폼/설명/액션 조합)"
+		},
+		{
+			"name": "placement",
+			"type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
+			"required": false,
+			"default": "\"bottom\"",
+			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로 실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
+		},
+		{
+			"name": "open",
+			"type": "boolean",
+			"required": false,
+			"doc": "제어 모드: 열림 상태"
+		},
+		{
+			"name": "defaultOpen",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "비제어 모드 초기 열림 상태"
+		},
+		{
+			"name": "onOpenChange",
+			"type": "(open: boolean) => void",
+			"required": false,
+			"doc": "열림 상태 변경 콜백"
+		},
+		{
+			"name": "aria-label",
+			"type": "string",
+			"required": false,
+			"doc": "팝오버 접근성 레이블. `content` 에 제목이 없으면 이 값이 접근성 이름이 된다. 폴백이 없으므로 `aria-labelledby` 와 함께 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
+		},
+		{
+			"name": "aria-labelledby",
+			"type": "string",
+			"required": false,
+			"doc": "dialog 의 접근성 라벨 요소 id"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "추가 className: 팝오버 패널에 적용"
+		}
+	],
+	"TooltipProps": [
+		{
+			"name": "content",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "툴팁 콘텐츠"
+		},
+		{
+			"name": "placement",
+			"type": "\"top\" | \"bottom\" | \"left\" | \"right\"",
+			"required": false,
+			"default": "\"top\"",
+			"doc": "선호 위치. 뷰포트를 벗어나면 반대편으로 flip 되고 교차축으로 shift 되므로 실제 위치는 계산 결과를 따른다(Radix `side` + `collisionPadding` 계약). body 로 포탈된다."
+		},
+		{
+			"name": "delay",
+			"type": "number",
+			"required": false,
+			"default": "200",
+			"doc": "hover 후 지연 시간 ms"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화: children만 그대로 렌더, 툴팁 없음"
+		},
+		{
+			"name": "children",
+			"type": "ReactElement",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CardProps": [
+		{
+			"name": "heading",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "카드 상단에 표시할 제목"
+		},
+		{
+			"name": "headingAs",
+			"type": "\"h2\" | \"h3\" | \"h4\" | \"h5\" | \"h6\"",
+			"required": false,
+			"default": "\"h3\"",
+			"doc": "제목에 사용할 시맨틱 헤딩 태그. 스크린리더 outline에 반영됩니다."
+		},
+		{
+			"name": "shadow",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"none\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "카드 그림자 크기"
+		},
+		{
+			"name": "padding",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"none\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "카드 내부 여백"
+		},
+		{
+			"name": "bordered",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "테두리 표시 여부"
+		},
+		{
+			"name": "variant",
+			"type": "\"accent\" | \"default\" | \"glass\" | \"outline\"",
+			"required": false,
+			"default": "\"default\"",
+			"doc": "카드 variant\n\n\"accent\": inverted bg + white text (강조 카드)\n\n\"glass\": 반투명 + backdrop blur (컬러/이미지 배경 위에 권장)\n\n\"outline\": 투명 bg + 테두리만 (shadow 무시)"
+		},
+		{
+			"name": "interactive",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "hover 시 살짝 떠오르는 인터랙션. 클릭 가능한 카드에 사용"
+		},
+		{
+			"name": "footer",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "카드 하단 영역: 액션 버튼 등 (구분선과 함께 표시)"
+		},
+		{
+			"name": "footerAlign",
+			"type": "\"start\" | \"end\" | \"between\"",
+			"required": false,
+			"default": "\"end\"",
+			"doc": "footer 정렬"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 div 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"ChipProps": [
+		{
+			"name": "type",
+			"type": "\"input\" | \"filter\" | \"static\" | \"basic\"",
+			"required": false,
+			"default": "\"basic\"",
+			"doc": "칩 유형. `static`은 비인터랙티브 라벨 (구 Tag 대체)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"doc": "칩 크기 (미지정 시 기본 32px). \"sm\"=24px, \"md\"=28px"
+		},
+		{
+			"name": "tone",
+			"type": "\"accent\" | \"neutral\" | \"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"neutral\"",
+			"doc": "의미 색. 카테고리/상태 라벨 색 구분: type=`static`에서만 적용"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "라벨 텍스트"
+		},
+		{
+			"name": "selected",
+			"type": "boolean",
+			"required": false,
+			"doc": "선택 상태"
+		},
+		{
+			"name": "removable",
+			"type": "boolean",
+			"required": false,
+			"doc": "삭제 가능 여부 (input / static 타입에서 사용)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 상태. `static` 은 컨트롤이 아닌 텍스트 라벨이라 라벨은 흐려지지 않고 remove 버튼만 흐려진다"
+		},
+		{
+			"name": "open",
+			"type": "boolean",
+			"required": false,
+			"doc": "팝업 열림 상태 (filter 타입에서 aria-expanded로 사용)"
+		},
+		{
+			"name": "leadingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "왼쪽 아이콘 (static 타입에서 사용)"
+		},
+		{
+			"name": "onClick",
+			"type": "(event: MouseEvent<HTMLButtonElement>) => void",
+			"required": false,
+			"doc": "칩 클릭 시 콜백"
+		},
+		{
+			"name": "onRemove",
+			"type": "() => void",
+			"required": false,
+			"doc": "삭제 버튼 클릭 시 콜백"
+		},
+		{
+			"name": "removeLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"{label} 제거\"",
+			"doc": "삭제 버튼 접근성 레이블: 칩이 여러 개일 때 대상 구분용"
+		}
+	],
+	"DataViewPagination": [
+		{
+			"name": "page",
+			"type": "number",
+			"required": true,
+			"doc": "현재 페이지 (1-based)"
+		},
+		{
+			"name": "totalPages",
+			"type": "number",
+			"required": true,
+			"doc": "전체 페이지 수"
+		},
+		{
+			"name": "pageSize",
+			"type": "number",
+			"required": false,
+			"doc": "한 쪽에 몇 행인지. 주면 행 선택 체크박스의 기본 라벨이 쪽마다 1 부터 다시 시작하지 않고 전체 순번을 쓴다: 없으면 3쪽의 체크박스도 1쪽과 같은 \"1번째 행 선택\" 으로 읽힌다."
+		},
+		{
+			"name": "onPageChange",
+			"type": "(page: number) => void",
+			"required": true,
+			"doc": "페이지 변경 콜백"
+		}
+	],
+	"DataViewProps": [
+		{
+			"name": "query",
+			"type": "DataViewQuery<T>",
+			"required": true,
+			"doc": "데이터와 그 상태"
+		},
+		{
+			"name": "columns",
+			"type": "TableColumn<T>[]",
+			"required": true,
+			"doc": "표 컬럼 정의"
+		},
+		{
+			"name": "rowKey",
+			"type": "(row: T) => string",
+			"required": true,
+			"doc": "행 고유 key"
+		},
+		{
+			"name": "toolbar",
+			"type": "DataViewToolbar",
+			"required": false,
+			"doc": "상단 검색·필터 줄"
+		},
+		{
+			"name": "selectionActions",
+			"type": "DataViewSelectionAction[]",
+			"required": false,
+			"doc": "행을 선택했을 때 나타나는 액션. 지정하면 표에 체크박스 컬럼이 붙는다. 선택 상태는 `DataView` 가 들고 있다."
+		},
+		{
+			"name": "pagination",
+			"type": "DataViewPagination",
+			"required": false,
+			"doc": "하단 페이지네이션"
+		},
+		{
+			"name": "empty",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "데이터가 비었을 때. 미지정 시 기본 `EmptyState`"
+		},
+		{
+			"name": "sort",
+			"type": "TableSort",
+			"required": false,
+			"doc": "정렬 상태 (제어형)"
+		},
+		{
+			"name": "onSortChange",
+			"type": "(sort: TableSort | undefined) => void",
+			"required": false,
+			"doc": "정렬 변경 콜백"
+		},
+		{
+			"name": "onRowClick",
+			"type": "(row: T, index: number) => void",
+			"required": false,
+			"doc": "행 클릭"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "표의 접근성 이름"
+		},
+		{
+			"name": "selectAllAriaLabel",
+			"type": "string",
+			"required": false,
+			"default": "`Table` 의 기본 라벨",
+			"doc": "전체 선택 체크박스의 라벨"
+		},
+		{
+			"name": "selectRowAriaLabel",
+			"type": "(index: number, row: T) => string",
+			"required": false,
+			"doc": "행 선택 체크박스의 라벨. 첫 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based), 둘째는 그 행의 데이터. 기본값은 순번만 읽어 주므로 행을 이름으로 구분하려면 둘째 인자를 쓴다."
+		},
+		{
+			"name": "selectionSummary",
+			"type": "(count: number) => string",
+			"required": false,
+			"default": "(n) => `${n}개 선택됨`",
+			"doc": "선택 액션 줄의 안내 문구"
+		},
+		{
+			"name": "clearSelectionLabel",
+			"type": "string",
+			"required": false,
+			"doc": "선택 해제 버튼 라벨"
+		},
+		{
+			"name": "errorTitle",
+			"type": "string",
+			"required": false,
+			"doc": "실패 상태 제목"
+		},
+		{
+			"name": "retryLabel",
+			"type": "string",
+			"required": false,
+			"doc": "재시도 버튼 라벨"
+		}
+	],
+	"DataViewQuery": [
+		{
+			"name": "data",
+			"type": "T[]",
+			"required": true,
+			"doc": "현재 페이지에 표시할 행"
+		},
+		{
+			"name": "isLoading",
+			"type": "boolean",
+			"required": false,
+			"doc": "첫 로딩 여부. true 면 Table 의 스켈레톤이 나온다"
+		},
+		{
+			"name": "error",
+			"type": "unknown",
+			"required": false,
+			"doc": "실패. 지정하면 표 대신 ErrorState 가 나온다"
+		},
+		{
+			"name": "refetch",
+			"type": "() => void",
+			"required": false,
+			"doc": "재시도. 지정하면 ErrorState 에 버튼이 붙는다"
+		}
+	],
+	"DataViewSelectionAction": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "버튼 라벨"
+		},
+		{
+			"name": "onRun",
+			"type": "(keys: string[]) => void",
+			"required": true,
+			"doc": "선택된 key 를 받아 실행"
+		},
+		{
+			"name": "danger",
+			"type": "boolean",
+			"required": false,
+			"doc": "위험한 액션(삭제 등): 빨간 강조"
+		}
+	],
+	"DataViewToolbar": [
+		{
+			"name": "search",
+			"type": "boolean",
+			"required": false,
+			"doc": "검색 입력 표시 여부"
+		},
+		{
+			"name": "searchValue",
+			"type": "string",
+			"required": false,
+			"doc": "검색어 (제어형)"
+		},
+		{
+			"name": "onSearchChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "검색어 변경 콜백"
+		},
+		{
+			"name": "searchPlaceholder",
+			"type": "string",
+			"required": false,
+			"doc": "검색 입력 placeholder"
+		},
+		{
+			"name": "filters",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "검색 왼쪽에 놓을 필터 컨트롤 (`Dropdown` 등)"
+		}
+	],
+	"DividerProps": [
+		{
+			"name": "weight",
+			"type": "\"standard\" | \"heavy\"",
+			"required": false,
+			"default": "\"standard\"",
+			"doc": "구분선 두께"
+		}
+	],
+	"HeroAction": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "버튼 라벨"
+		},
+		{
+			"name": "onClick",
+			"type": "() => void",
+			"required": false,
+			"doc": "클릭 핸들러"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": "href 사용 시 anchor로 렌더링"
+		}
+	],
+	"HeroProps": [
+		{
+			"name": "height",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"full\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "히어로 높이. sm=320 / md=480 / lg=640 / full=100vh"
+		},
+		{
+			"name": "align",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"default": "\"left\"",
+			"doc": "텍스트 정렬"
+		},
+		{
+			"name": "backgroundImage",
+			"type": "string",
+			"required": false,
+			"doc": "배경 이미지 URL (CSS background-image로 사용)"
+		},
+		{
+			"name": "backgroundColor",
+			"type": "string",
+			"required": false,
+			"doc": "배경색: backgroundImage 없을 때 또는 그 위에 색 적용"
+		},
+		{
+			"name": "overlay",
+			"type": "HeroOverlay",
+			"required": false,
+			"doc": "텍스트 대비를 위한 오버레이.\n\n`true`/\"dark\": 위→아래 검정 그라데이션\n\n\"light\": 흰색 그라데이션"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "h1으로 렌더링되는 메인 제목"
+		},
+		{
+			"name": "subtitle",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 아래 부제목"
+		},
+		{
+			"name": "eyebrow",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "Eyebrow 텍스트: 제목 위에 작게 표시되는 카테고리/태그"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "CTA 영역 (Button 등)"
+		},
+		{
+			"name": "textColor",
+			"type": "\"default\" | \"auto\" | \"inverse\"",
+			"required": false,
+			"default": "\"auto\"",
+			"doc": "텍스트 색상: 배경이 어두우면 흰색 권장: overlay가 dark면 white"
+		},
+		{
+			"name": "primaryAction",
+			"type": "HeroAction",
+			"required": false,
+			"doc": "Primary CTA: 미지정 시 children으로 직접 Button 전달 가능"
+		},
+		{
+			"name": "secondaryAction",
+			"type": "HeroAction",
+			"required": false,
+			"doc": "Secondary CTA"
+		}
+	],
+	"IconProps": [
+		{
+			"name": "icon",
+			"type": "LucideIcon",
+			"required": true,
+			"doc": "lucide-react 아이콘 컴포넌트"
+		},
+		{
+			"name": "color",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `color` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "strokeWidth",
+			"type": "number | string",
+			"required": false,
+			"doc": "HTML `strokeWidth` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "size",
+			"type": "string | number",
+			"required": false,
+			"doc": "HTML `size` 속성을 그대로 넘깁니다"
+		}
+	],
+	"ListItemProps": [
+		{
+			"name": "overline",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "오버라인 (상단 작은 글씨). 문자열 또는 노드(강조/링크/아이콘)"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "라벨 (주요 텍스트). 문자열 또는 노드(강조/링크/Badge 등)"
+		},
+		{
+			"name": "supportingText",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "보조 텍스트 (라벨 아래). 문자열 또는 노드"
+		},
+		{
+			"name": "metadata",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "메타데이터 (보조 정보). 문자열 또는 노드"
+		},
+		{
+			"name": "leadingElement",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "왼쪽에 표시할 요소 (아이콘, 이미지, 체크박스 등)"
+		},
+		{
+			"name": "trailingElement",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "오른쪽에 표시할 요소 (아이콘 버튼, 체크박스 등)"
+		},
+		{
+			"name": "alignment",
+			"type": "\"top\" | \"middle\"",
+			"required": false,
+			"doc": "요소 정렬. 미지정 시 자동: OneLine(label 만) → middle, multi-line → top"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 상태"
+		},
+		{
+			"name": "selected",
+			"type": "boolean",
+			"required": false,
+			"doc": "선택 상태: accent.subtle 배경 + accent.default 좌측 인디케이터"
+		},
+		{
+			"name": "onClick",
+			"type": "(event: MouseEvent<HTMLDivElement>) => void",
+			"required": false,
+			"doc": "클릭 시 콜백"
+		}
+	],
+	"MediaCardImage": [
+		{
+			"name": "src",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "alt",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"MediaCardProps": [
+		{
+			"name": "image",
+			"type": "MediaCardImage",
+			"required": true,
+			"doc": "이미지 정보 (src + alt). alt=\"\"는 장식 이미지로 처리됨"
+		},
+		{
+			"name": "imagePosition",
+			"type": "\"top\" | \"left\" | \"overlay\"",
+			"required": false,
+			"default": "\"top\"",
+			"doc": "이미지 위치. overlay = 이미지 위에 텍스트가 얹힘"
+		},
+		{
+			"name": "aspectRatio",
+			"type": "string",
+			"required": false,
+			"doc": "이미지 aspect-ratio (예: \"16/9\", \"4/3\", \"1/1\")"
+		},
+		{
+			"name": "heading",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "카드 제목"
+		},
+		{
+			"name": "headingAs",
+			"type": "\"h2\" | \"h3\" | \"h4\" | \"h5\" | \"h6\"",
+			"required": false,
+			"default": "\"h3\"",
+			"doc": "제목 시맨틱 태그"
+		},
+		{
+			"name": "eyebrow",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "Eyebrow: 제목 위 작은 라벨/카테고리"
+		},
+		{
+			"name": "shadow",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"none\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "카드 그림자"
+		},
+		{
+			"name": "bordered",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "테두리 표시 여부"
+		},
+		{
+			"name": "clickable",
+			"type": "boolean",
+			"required": false,
+			"doc": "카드 클릭 가능 여부 (hover 강조 + cursor)"
+		},
+		{
+			"name": "meta",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "메타 영역 (날짜/작성자/조회수 등): 본문 아래 작은 텍스트"
+		}
+	],
+	"ProseProps": [
+		{
+			"name": "size",
+			"type": "\"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "본문 스케일.\n\n`md`: 공지·FAQ·이메일 프리뷰처럼 좁은 폭에 들어가는 본문 (h1 24 / h2 20 / h3 18)\n\n`lg`: 약관·정책처럼 페이지를 채우는 긴 본문 (h1 28 / h2 24 / h3 20, 제목 위 여백도 넓다)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 div 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"TableColumn": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": "컬럼 식별자: `data[key]` 자동 렌더링에도 쓰임"
+		},
+		{
+			"name": "header",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "thead에 표시할 헤더 텍스트"
+		},
+		{
+			"name": "render",
+			"type": "(item: T, index: number) => ReactNode",
+			"required": false,
+			"doc": "셀 렌더 함수. 없으면 `item[key]` 자동 렌더"
+		},
+		{
+			"name": "width",
+			"type": "string",
+			"required": false,
+			"doc": "CSS width 값 (예: \"120px\", \"20%\")"
+		},
+		{
+			"name": "align",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "정렬"
+		},
+		{
+			"name": "sortable",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "정렬 가능한 컬럼 여부. 클릭 시 `onSortChange` 발화: 실제 정렬은 소비자가 수행"
+		},
+		{
+			"name": "truncate",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "한 줄로 두고 넘치면 말줄임으로 자른다. 자동 렌더(문자열 값)면 전체 값을 `title` 로 단다. 열 폭이 정해져야 잘리므로 `layout=\"fixed\"` + `width` 와 함께 쓴다: 시각 · IP 처럼 길이가 거의 같은 칸."
+		},
+		{
+			"name": "cardLabel",
+			"type": "string",
+			"required": false,
+			"doc": "`cards` 화면에서 칸 앞에 붙는 라벨. 없으면 `header` 가 문자열일 때 그 글자를 쓴다: `header` 가 아이콘 · 요소라면 이걸 줘야 카드에서 칸이 무슨 값인지 보인다 (칸 머리는 카드에서 화면 읽기용으로만 남는다)."
+		}
+	],
+	"TableProps": [
+		{
+			"name": "columns",
+			"type": "TableColumn<T>[]",
+			"required": true,
+			"doc": "컬럼 정의"
+		},
+		{
+			"name": "data",
+			"type": "T[]",
+			"required": true,
+			"doc": "표시할 데이터 배열"
+		},
+		{
+			"name": "keyExtractor",
+			"type": "(item: T, index: number) => string | number",
+			"required": true,
+			"doc": "행의 고유 key 추출 함수"
+		},
+		{
+			"name": "emptyMessage",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "데이터 없을 때 표시"
+		},
+		{
+			"name": "isLoading",
+			"type": "boolean",
+			"required": false,
+			"doc": "로딩 상태: 헤더 유지, 바디만 스켈레톤"
+		},
+		{
+			"name": "skeletonRows",
+			"type": "number",
+			"required": false,
+			"default": "5",
+			"doc": "로딩 시 스켈레톤 행 개수"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "테이블 크기"
+		},
+		{
+			"name": "hoverable",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "행 hover 강조"
+		},
+		{
+			"name": "stickyHeader",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "thead sticky 고정"
+		},
+		{
+			"name": "layout",
+			"type": "\"auto\" | \"fixed\"",
+			"required": false,
+			"default": "\"auto\"",
+			"doc": "열 너비 계산 방식.\n\n`auto`: 브라우저가 내용 길이로 잰다: 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다\n\n`fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다. 목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때"
+		},
+		{
+			"name": "minWidth",
+			"type": "string",
+			"required": false,
+			"doc": "표의 최소 폭 (예: \"60rem\"). 좁은 화면에서 `fixed` 표의 너비 없는 열이 사라질 만큼 눌리지 않게: 넘치면 래퍼가 가로로 스크롤한다. `cards` 로 카드가 된 화면에서는 무시한다."
+		},
+		{
+			"name": "cards",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "좁은 화면(compact)에서 행을 카드로 쌓는다. 칸 머리는 화면 읽기용으로만 남고, 칸마다 머리 글자(`header` 가 문자열일 때)를 라벨로 붙인다. 칸이 많아 가로로 넘치는 목록용"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "스크린 리더용 테이블 레이블"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "루트 wrapper에 추가할 className"
+		},
+		{
+			"name": "onRowClick",
+			"type": "(item: T, index: number) => void",
+			"required": false,
+			"doc": "행 클릭 콜백. 주면 행이 키보드로도 동작한다: Enter/Space 로 열고 ↑↓ · PageUp/PageDown · Home/End 로 행을 옮기며, 포커스가 어디에도 없을 때 ↓ 는 화면의 첫 clickable 표 첫 행으로 들어간다."
+		},
+		{
+			"name": "rowClickHint",
+			"type": "string",
+			"required": false,
+			"default": "\"클릭 가능한 행\"",
+			"doc": "clickable 행(onRowClick)의 동작 설명. 각 clickable 행에 `aria-describedby` 로 연결된다. 행마다 셀 데이터가 이미 행을 식별하므로 여기엔 동작만 담으면 된다 (예: \"선택하면 상세 항목으로 이동\"). `\"\"`(빈 문자열)로 두면 힌트를 붙이지 않는다. `aria-label` 대신 `aria-describedby` 를 쓰는 이유: `<tr>` 의 `aria-label`/`role=\"button\"` 은 행/셀의 accessible name 을 덮거나 셀을 presentational 로 만들어 스크린리더가 셀 데이터를 못 읽는다."
+		},
+		{
+			"name": "sort",
+			"type": "TableSort",
+			"required": false,
+			"doc": "현재 정렬 상태 (제어형). `undefined` 는 정렬 없음"
+		},
+		{
+			"name": "onSortChange",
+			"type": "(sort: TableSort | undefined) => void",
+			"required": false,
+			"doc": "정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음: 정렬된 `data` 를 다시 전달해야 함"
+		},
+		{
+			"name": "selectAllAriaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "전체 선택 체크박스 aria-label"
+		},
+		{
+			"name": "selectRowAriaLabel",
+			"type": "(index: number, row: T) => string",
+			"required": false,
+			"default": "(i) => `${i+1}번째 행 선택`",
+			"doc": "개별 행 선택 체크박스 aria-label. 첫 인자는 `rowIndexOffset` 이 더해진 **전체 순번**, 둘째는 그 행의 데이터: 번호 대신 이름으로 읽히게 할 때 쓴다"
+		},
+		{
+			"name": "rowIndexOffset",
+			"type": "number",
+			"required": false,
+			"doc": "이 표의 첫 행이 전체에서 몇 번째인지 (0-based, 기본 0). 서버 페이지네이션처럼 한 쪽만 받아 그릴 때 준다.\n\n없으면 쪽마다 행 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** \"1번째 행 선택\" 으로 읽힌다: 스크린리더 사용자는 쪽이 넘어갔는지도, 지금 누른 것이 어느 행인지도 이름만으로는 구분할 수 없다."
+		},
+		{
+			"name": "selectable",
+			"type": "true",
+			"required": false,
+			"doc": "행 선택(체크박스 컬럼) 활성화 여부"
+		},
+		{
+			"name": "rowKey",
+			"type": "(row: T) => string",
+			"required": false,
+			"doc": "행 고유 key 추출 함수: `selectable` 사용 시 필수"
+		},
+		{
+			"name": "selectedKeys",
+			"type": "string[]",
+			"required": false,
+			"doc": "선택된 행 key 배열 (제어형)"
+		},
+		{
+			"name": "onSelectionChange",
+			"type": "(keys: string[]) => void",
+			"required": false,
+			"doc": "선택 변경 콜백"
+		}
+	],
+	"TableSort": [
+		{
+			"name": "key",
+			"type": "string",
+			"required": true,
+			"doc": "정렬 중인 컬럼의 `TableColumn.key`"
+		},
+		{
+			"name": "direction",
+			"type": "\"desc\" | \"asc\"",
+			"required": true,
+			"doc": "정렬 방향"
+		}
+	],
+	"AlertHandle": [
+		{
+			"name": "update",
+			"type": "(patch: Partial<AlertOptions>) => void",
+			"required": true,
+			"doc": "열린 알림의 옵션을 바꾼다: 예: 입력이 비면 `update({ confirmDisabled: true })`"
+		}
+	],
+	"AlertOptions": [
+		{
+			"name": "tone",
+			"type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"info\"",
+			"doc": "의미 색"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 제목"
+		},
+		{
+			"name": "message",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 본문 메시지"
+		},
+		{
+			"name": "confirmText",
+			"type": "string",
+			"required": false,
+			"doc": "확인 버튼 텍스트"
+		},
+		{
+			"name": "cancelText",
+			"type": "string",
+			"required": false,
+			"doc": "취소 버튼 텍스트"
+		},
+		{
+			"name": "showCancel",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "취소 버튼 표시 여부"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고 취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능. (Material/shadcn/Radix 표준 패턴)"
+		},
+		{
+			"name": "actionsAlign",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "액션 버튼 정렬"
+		},
+		{
+			"name": "showIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "변형 아이콘 표시 여부. 원하면 명시적으로 켜기"
+		},
+		{
+			"name": "onConfirm",
+			"type": "() => unknown",
+			"required": false,
+			"doc": "확인 버튼 클릭 시 호출되는 콜백. Promise 를 돌려주면 끝날 때까지 알림이 열린 채 확인 버튼에 스피너가 돌고 중복 클릭 · 취소 · Escape 가 막힌다. 실패(reject)하면 열린 채 다시 시도할 수 있다."
+		},
+		{
+			"name": "onCancel",
+			"type": "() => void",
+			"required": false,
+			"doc": "취소 버튼 클릭 시 호출되는 콜백"
+		},
+		{
+			"name": "confirmDisabled",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "확인 버튼 잠금. 창 안 입력에 따라 바꾸려면 `showAlert` 가 돌려준 핸들의 `update({ confirmDisabled })` 로: 옵션은 호출 시점에 한 번만 읽힌다. 잠긴 버튼은 포커스를 잃지 않게 `aria-disabled` 로 막고, 클릭 · Enter 로 확인되지 않는다."
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭으로 닫기 허용 여부. destructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+		}
+	],
+	"ConfirmOptions": [
+		{
+			"name": "onConfirm",
+			"type": "() => unknown",
+			"required": false,
+			"doc": "확인 직후 실행할 작업. Promise 면 끝날 때까지 pending: 성공해야 `true` 로 끝난다"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 제목"
+		},
+		{
+			"name": "tone",
+			"type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+			"required": false,
+			"default": "\"info\"",
+			"doc": "의미 색"
+		},
+		{
+			"name": "message",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "알림 본문 메시지"
+		},
+		{
+			"name": "confirmText",
+			"type": "string",
+			"required": false,
+			"doc": "확인 버튼 텍스트"
+		},
+		{
+			"name": "cancelText",
+			"type": "string",
+			"required": false,
+			"doc": "취소 버튼 텍스트"
+		},
+		{
+			"name": "destructive",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "Destructive 액션 여부. true 시 확인 버튼이 빨간 강조(danger)로 표시되고 취소 버튼은 outline으로 유지. 위험성을 시각적으로 표현해 사용자가 인지 가능. (Material/shadcn/Radix 표준 패턴)"
+		},
+		{
+			"name": "actionsAlign",
+			"type": "\"center\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "액션 버튼 정렬"
+		},
+		{
+			"name": "showIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "변형 아이콘 표시 여부. 원하면 명시적으로 켜기"
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭으로 닫기 허용 여부. destructive 확인처럼 실수 닫힘을 막아야 하면 false 로."
+		}
+	],
+	"LinearProgressProps": [
+		{
+			"name": "totalSteps",
+			"type": "number",
+			"required": true,
+			"doc": "전체 단계 수"
+		},
+		{
+			"name": "currentStep",
+			"type": "number",
+			"required": true,
+			"doc": "현재 단계 (0부터 totalSteps까지)"
+		},
+		{
+			"name": "aria-label",
+			"type": "string",
+			"required": true,
+			"doc": "접근성 레이블 (스크린 리더용)"
+		}
+	],
+	"SkeletonProps": [
+		{
+			"name": "variant",
+			"type": "\"title\" | \"rect\" | \"text\" | \"avatar\"",
+			"required": false,
+			"default": "\"text\"",
+			"doc": "스켈레톤 모양"
+		},
+		{
+			"name": "width",
+			"type": "number | string",
+			"required": false,
+			"doc": "CSS width 값 (예: \"100%\", 200, \"16rem\"). variant=avatar는 width=height로 사용"
+		},
+		{
+			"name": "height",
+			"type": "number | string",
+			"required": false,
+			"doc": "CSS height 값"
+		},
+		{
+			"name": "radius",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"full\" | string",
+			"required": false,
+			"doc": "border-radius 토큰 (sm/md/lg) 또는 임의 CSS 값"
+		}
+	],
+	"SpinnerProps": [
+		{
+			"name": "size",
+			"type": "number",
+			"required": false,
+			"default": "24",
+			"doc": "스피너 크기(px)"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "스피너 접근성 레이블"
+		}
+	],
+	"ToastAction": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "버튼 라벨: \"실행 취소\" 등"
+		},
+		{
+			"name": "onClick",
+			"type": "() => void",
+			"required": true,
+			"doc": "누르면 실행되고, 이어서 토스트가 닫힌다"
+		}
+	],
+	"ToastOptions": [
+		{
+			"name": "duration",
+			"type": "number",
+			"required": false,
+			"default": "3000",
+			"doc": "자동 닫힘까지의 ms. `Infinity`(또는 0 이하)면 닫기 버튼·`dismiss` 로만 닫힌다: 진행 토스트용"
+		},
+		{
+			"name": "action",
+			"type": "ToastAction",
+			"required": false,
+			"doc": "메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다"
+		}
+	],
+	"ToastProviderProps": [
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "앱 루트에서 감싸는 자식 요소"
+		},
+		{
+			"name": "maxCount",
+			"type": "number",
+			"required": false,
+			"default": "5",
+			"doc": "최대 동시 표시 토스트 수"
+		},
+		{
+			"name": "closeAriaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "토스트 닫기 버튼의 aria-label"
+		},
+		{
+			"name": "regionLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"알림\"",
+			"doc": "토스트 리전(`role=\"region\"`)의 접근성 이름. 스크린리더의 리전 목록에 뜬다"
+		},
+		{
+			"name": "placement",
+			"type": "\"top-right\" | \"bottom-right\"",
+			"required": false,
+			"default": "\"bottom-right\"",
+			"doc": "넓은 화면에서 뜨는 자리. 위는 머리 오른쪽 주 동작 버튼을 가려 아래가 기본이다 (#1073). 하단에 고정 UI(쿠키 배너 등)가 있어 겹치면 \"top-right\": 폰 폭은 어느 값이든 하단이다"
+		}
+	],
+	"TopLoadingProps": [
+		{
+			"name": "progress",
+			"type": "number",
+			"required": false,
+			"doc": "진행률 (0-100). undefined면 indeterminate 모드"
+		},
+		{
+			"name": "color",
+			"type": "string",
+			"required": false,
+			"default": "primary",
+			"doc": "로딩바 색상"
+		},
+		{
+			"name": "height",
+			"type": "number",
+			"required": false,
+			"default": "3px",
+			"doc": "로딩바 높이"
+		},
+		{
+			"name": "isLoading",
+			"type": "boolean",
+			"required": false,
+			"doc": "표시 여부"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "프로그레스 바의 접근성 레이블"
+		}
+	],
+	"CheckboxProps": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "체크박스 옆에 표시할 라벨"
+		},
+		{
+			"name": "indeterminate",
+			"type": "boolean",
+			"required": false,
+			"doc": "중간 선택(indeterminate) 상태 여부"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태 여부"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `defaultChecked` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "value",
+			"type": "string | readonly string[] | number",
+			"required": false,
+			"doc": "HTML `value` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `checked` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
+	"ComboboxOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": "선택 시 돌려줄 값"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": "목록과 트리거에 표시할 텍스트"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성: 키보드 이동에서 건너뛰고 선택되지 않는다"
+		}
+	],
+	"ComboboxProps": [
+		{
+			"name": "value",
+			"type": "ComboboxOption | null",
+			"required": false,
+			"doc": "선택된 값 (제어형)"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(option: ComboboxOption | null) => void",
+			"required": false,
+			"doc": "선택 변경 콜백. 열린 채 검색어가 비어 있을 때 Backspace · Delete 를 누르면 `null` 로 선택을 지운다"
+		},
+		{
+			"name": "onSearch",
+			"type": "(query: string) => Promise<ComboboxOption[]>",
+			"required": true,
+			"doc": "검색어가 바뀔 때 호출. 서버에서 후보를 가져오는 자리다. `debounceMs` 만큼 기다린 뒤 호출되고, 늦게 도착한 응답은 버려진다."
+		},
+		{
+			"name": "defaultOptions",
+			"type": "ComboboxOption[]",
+			"required": false,
+			"doc": "검색어 입력 전에 보여줄 초기 후보"
+		},
+		{
+			"name": "debounceMs",
+			"type": "number",
+			"required": false,
+			"default": "250ms",
+			"doc": "검색 호출 간격"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "입력 placeholder"
+		},
+		{
+			"name": "emptyMessage",
+			"type": "string",
+			"required": false,
+			"doc": "결과 없음 문구"
+		},
+		{
+			"name": "idleMessage",
+			"type": "string",
+			"required": false,
+			"doc": "검색 전 안내 문구"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성 여부"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "전체 너비 차지"
+		},
+		{
+			"name": "renderOption",
+			"type": "(option: ComboboxOption) => ReactNode",
+			"required": false,
+			"doc": "목록 항목 렌더 커스터마이즈. 미지정 시 `label`"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름: `Field` 로 감싸면 그쪽 라벨이 우선한다"
+		},
+		{
+			"name": "loadingLabel",
+			"type": "string",
+			"required": false,
+			"doc": "로딩 안내"
+		}
+	],
+	"DateCalendarDayInfo": [
+		{
+			"name": "selected",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "today",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"DateCalendarProps": [
+		{
+			"name": "value",
+			"type": "string | null",
+			"required": false,
+			"doc": "제어형: 고른 날 `\"YYYY-MM-DD\"`. 없으면 null"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형: 처음 고른 날"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "날을 고를 때 `\"YYYY-MM-DD\"`"
+		},
+		{
+			"name": "month",
+			"type": "string",
+			"required": false,
+			"doc": "제어형: 보이는 달 `\"YYYY-MM\"`"
+		},
+		{
+			"name": "defaultMonth",
+			"type": "string",
+			"required": false,
+			"default": "고른 날 → 오늘의 달",
+			"doc": "비제어형: 처음 보이는 달"
+		},
+		{
+			"name": "onMonthChange",
+			"type": "(month: string) => void",
+			"required": false,
+			"doc": "보이는 달이 바뀔 때 `\"YYYY-MM\"` (넘김 버튼 · PageUp/Down · 방향키로 달을 넘을 때)"
+		},
+		{
+			"name": "min",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 첫날 `\"YYYY-MM-DD\"`: 그 앞 달로는 넘어가지 않는다"
+		},
+		{
+			"name": "max",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 마지막 날 `\"YYYY-MM-DD\"`"
+		},
+		{
+			"name": "isDateDisabled",
+			"type": "(date: string) => boolean",
+			"required": false,
+			"doc": "그 밖에 고를 수 없는 날 (휴일 · 마감)"
+		},
+		{
+			"name": "today",
+			"type": "string",
+			"required": false,
+			"default": "기기의 오늘",
+			"doc": "오늘 `\"YYYY-MM-DD\"`. 서버 기준 날짜를 쓰려면 넘긴다"
+		},
+		{
+			"name": "weekStartsOn",
+			"type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+			"required": false,
+			"default": "0 일요일",
+			"doc": "주의 첫 요일"
+		},
+		{
+			"name": "renderDay",
+			"type": "(date: string, info: DateCalendarDayInfo) => ReactNode",
+			"required": false,
+			"doc": "날짜 칸 장식 (일정 점 · 배지). 숫자 아래에 그려지고 보조기기에는 숨겨진다: 뜻은 `describeDay` 로"
+		},
+		{
+			"name": "describeDay",
+			"type": "(date: string) => string",
+			"required": false,
+			"doc": "날짜 이름 뒤에 붙일 설명 (\"일정 2개\"): 장식의 뜻을 스크린리더에 전한다"
+		},
+		{
+			"name": "prevMonthLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `datePicker.prevMonth`",
+			"doc": "이전 달 버튼 이름"
+		},
+		{
+			"name": "nextMonthLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `datePicker.nextMonth`",
+			"doc": "다음 달 버튼 이름"
+		}
+	],
+	"DatePickerProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "데이트 피커 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 날짜 값 (\"YYYY-MM\" 또는 \"YYYY-MM-DD\" 형식)"
+		},
+		{
+			"name": "mode",
+			"type": "\"year-month\" | \"year-month-day\"",
+			"required": false,
+			"doc": "선택 모드"
+		},
+		{
+			"name": "variant",
+			"type": "\"dropdown\" | \"calendar\"",
+			"required": false,
+			"default": "\"dropdown\"",
+			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다. `mode=\"year-month-day\"` 에서만 쓴다: `\"year-month\"` 면 달력이 고를 날이 없어 드롭다운으로 그린다."
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"default": "\"날짜 선택\"",
+			"doc": "`variant=\"calendar\"` 에서 값이 없을 때 칸에 보일 문구"
+		},
+		{
+			"name": "startYear",
+			"type": "number",
+			"required": false,
+			"default": "1950",
+			"doc": "연도 선택 범위 시작"
+		},
+		{
+			"name": "endYear",
+			"type": "number",
+			"required": false,
+			"default": "현재 연도 + 10",
+			"doc": "연도 선택 범위 끝"
+		},
+		{
+			"name": "minDate",
+			"type": "string",
+			"required": false,
+			"doc": "선택 가능한 최소 날짜 (\"YYYY-MM-DD\" 형식)"
+		},
+		{
+			"name": "selectableRange",
+			"type": "\"all\" | \"until-today\"",
+			"required": false,
+			"doc": "선택 가능한 날짜 범위 (\"all\": 제한 없음, \"until-today\": 오늘까지)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "데이트 피커가 컨테이너의 전체 너비를 차지할지 여부"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "칸 크기. Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다\n\nsm · md 40px, lg 48px (좁은 화면은 한 단계 위)."
+		},
+		{
+			"name": "clearable",
+			"type": "boolean",
+			"required": false,
+			"doc": "값이 있을 때 지우기(×) 버튼을 둔다: 누르면 `onValueChange(\"\")` (#965). 조회 조건처럼 \"값 없음 = 조건 없음\" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다"
+		},
+		{
+			"name": "clearLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `datePicker.clear`",
+			"doc": "지우기 버튼 이름"
+		},
+		{
+			"name": "yearLabel",
+			"type": "string",
+			"required": false,
+			"doc": "연도 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "monthLabel",
+			"type": "string",
+			"required": false,
+			"doc": "월 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "dayLabel",
+			"type": "string",
+			"required": false,
+			"doc": "일 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "minDateSrFormat",
+			"type": "string",
+			"required": false,
+			"default": "\"최소 날짜",
+			"doc": "minDate 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 minDate 값이 치환됩니다.: {date}\""
+		},
+		{
+			"name": "selectableRangeUntilTodaySrText",
+			"type": "string",
+			"required": false,
+			"default": "\"오늘까지 선택 가능\"",
+			"doc": "selectableRange=\"until-today\" 설정 시 스크린리더에 전달할 안내 문구."
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": true,
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`)"
+		}
+	],
+	"DateRange": [
+		{
+			"name": "start",
+			"type": "string",
+			"required": false,
+			"doc": "시작일 (`\"YYYY-MM-DD\"`). 아직 고르지 않았으면 undefined"
+		},
+		{
+			"name": "end",
+			"type": "string",
+			"required": false,
+			"doc": "종료일 (`\"YYYY-MM-DD\"`). 아직 고르지 않았으면 undefined"
+		}
+	],
+	"DateRangePickerProps": [
+		{
+			"name": "value",
+			"type": "DateRange",
+			"required": false,
+			"doc": "제어형 값"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: DateRange) => void",
+			"required": true,
+			"doc": "범위 변경. 시작일이 종료일을 넘어서면 종료일이 비워진 값이 온다"
+		},
+		{
+			"name": "startLabel",
+			"type": "string",
+			"required": false,
+			"doc": "시작일 select 묶음의 라벨"
+		},
+		{
+			"name": "endLabel",
+			"type": "string",
+			"required": false,
+			"doc": "종료일 select 묶음의 라벨"
+		},
+		{
+			"name": "startYear",
+			"type": "number",
+			"required": false,
+			"default": "1950",
+			"doc": "연도 선택 범위 시작"
+		},
+		{
+			"name": "endYear",
+			"type": "number",
+			"required": false,
+			"doc": "연도 선택 범위 끝. 미지정 시 현재 연도 + 10"
+		},
+		{
+			"name": "minDate",
+			"type": "string",
+			"required": false,
+			"doc": "선택 가능한 가장 이른 날짜 (`\"YYYY-MM-DD\"`)"
+		},
+		{
+			"name": "selectableRange",
+			"type": "\"all\" | \"until-today\"",
+			"required": false,
+			"default": "\"all\"",
+			"doc": "`\"until-today\"` 면 오늘 이후를 고를 수 없다"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "전체 너비 차지"
+		},
+		{
+			"name": "clearable",
+			"type": "boolean",
+			"required": false,
+			"doc": "날짜마다 지우기(×) 버튼 (#965). 시작일을 지우면 종료일도 함께 비운다: 시작 없는 종료는 고를 수 없다"
+		}
+	],
+	"DropdownMultipleProps": [
+		{
+			"name": "multiple",
+			"type": "true",
+			"required": true,
+			"doc": "다중 선택 모드"
+		},
+		{
+			"name": "value",
+			"type": "string[]",
+			"required": false,
+			"doc": "제어형 선택 값 목록"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(values: string[], options: DropdownOption[]) => void",
+			"required": false,
+			"doc": "값 변경 콜백 (canonical). 선택된 값 목록과 옵션 객체 목록을 전달합니다."
+		},
+		{
+			"name": "defaultValue",
+			"type": "string[]",
+			"required": false,
+			"doc": "비제어형 초기 선택 값 목록"
+		},
+		{
+			"name": "id",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 요소의 id (미입력 시 자동 생성)"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 위에 표시할 플로팅 라벨 텍스트"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "선택 전 표시할 플레이스홀더"
+		},
+		{
+			"name": "options",
+			"type": "DropdownOption[]",
+			"required": true,
+			"doc": "표시할 옵션 목록"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "드롭다운 크기"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "루트 요소에 추가할 className"
+		},
+		{
+			"name": "variant",
+			"type": "\"outline\" | \"filled\"",
+			"required": false,
+			"doc": "컨트롤 시각 변형"
+		},
+		{
+			"name": "searchable",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "검색 가능 여부. 활성화 시 열린 패널 상단에 검색 입력이 표시되고, 옵션 `label` 부분 일치로 필터링됩니다."
+		},
+		{
+			"name": "searchPlaceholder",
+			"type": "string",
+			"required": false,
+			"doc": "검색 입력의 placeholder"
+		},
+		{
+			"name": "emptyText",
+			"type": "string",
+			"required": false,
+			"doc": "필터 결과가 0개일 때 표시할 텍스트"
+		},
+		{
+			"name": "selectedSummary",
+			"type": "(count: number) => string",
+			"required": false,
+			"doc": "멀티 선택 요약 텍스트"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+		}
+	],
+	"DropdownOption": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "옵션 아래에 표시할 보조 텍스트"
+		},
+		{
+			"name": "leadingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "옵션 왼쪽 아이콘"
+		},
+		{
+			"name": "trailingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "옵션 오른쪽 아이콘 (미지정 시 선택 상태에 체크 아이콘 자동 표시)"
+		},
+		{
+			"name": "showDivider",
+			"type": "boolean",
+			"required": false,
+			"doc": "아이템 아래 구분선 표시 여부"
+		}
+	],
+	"DropdownProps": [
+		{
+			"name": "multiple",
+			"type": "true",
+			"required": false,
+			"default": "false",
+			"doc": "다중 선택 모드 다중 선택 모드"
+		},
+		{
+			"name": "value",
+			"type": "string[]",
+			"required": false,
+			"doc": "제어형 선택 값 목록 제어형 선택 값"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(values: string[], options: DropdownOption[]) => void",
+			"required": false,
+			"doc": "값 변경 콜백 (canonical). 선택된 값 목록과 옵션 객체 목록을 전달합니다. 값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다."
+		},
+		{
+			"name": "defaultValue",
+			"type": "string[]",
+			"required": false,
+			"doc": "비제어형 초기 선택 값 목록 비제어형 초기 선택 값"
+		},
+		{
+			"name": "id",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 요소의 id (미입력 시 자동 생성)"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 위에 표시할 플로팅 라벨 텍스트"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "선택 전 표시할 플레이스홀더"
+		},
+		{
+			"name": "options",
+			"type": "DropdownOption[]",
+			"required": true,
+			"doc": "표시할 옵션 목록"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "드롭다운 크기"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "루트 요소에 추가할 className"
+		},
+		{
+			"name": "variant",
+			"type": "\"outline\" | \"filled\"",
+			"required": false,
+			"doc": "컨트롤 시각 변형"
+		},
+		{
+			"name": "searchable",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "검색 가능 여부. 활성화 시 열린 패널 상단에 검색 입력이 표시되고, 옵션 `label` 부분 일치로 필터링됩니다."
+		},
+		{
+			"name": "searchPlaceholder",
+			"type": "string",
+			"required": false,
+			"doc": "검색 입력의 placeholder"
+		},
+		{
+			"name": "emptyText",
+			"type": "string",
+			"required": false,
+			"doc": "필터 결과가 0개일 때 표시할 텍스트"
+		},
+		{
+			"name": "selectedSummary",
+			"type": "(count: number) => string",
+			"required": false,
+			"doc": "멀티 선택 요약 텍스트"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+		}
+	],
+	"DropdownSingleProps": [
+		{
+			"name": "multiple",
+			"type": "false",
+			"required": false,
+			"default": "false",
+			"doc": "다중 선택 모드"
+		},
+		{
+			"name": "value",
+			"type": "string | null",
+			"required": false,
+			"doc": "제어형 선택 값"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string | null, option?: DropdownOption | null) => void",
+			"required": false,
+			"doc": "값 변경 콜백 (canonical). 선택된 값과 전체 옵션 객체를 전달합니다."
+		},
+		{
+			"name": "defaultValue",
+			"type": "string | null",
+			"required": false,
+			"doc": "비제어형 초기 선택 값"
+		},
+		{
+			"name": "id",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 요소의 id (미입력 시 자동 생성)"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "드롭다운 위에 표시할 플로팅 라벨 텍스트"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "선택 전 표시할 플레이스홀더"
+		},
+		{
+			"name": "options",
+			"type": "DropdownOption[]",
+			"required": true,
+			"doc": "표시할 옵션 목록"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 은 `aria-required` 를 받지 못하므로 DatePicker·TimePicker 가 안쪽 Dropdown 마다 이 prop 으로 필수 여부를 내려보낸다."
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "드롭다운 크기"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "루트 요소에 추가할 className"
+		},
+		{
+			"name": "variant",
+			"type": "\"outline\" | \"filled\"",
+			"required": false,
+			"doc": "컨트롤 시각 변형"
+		},
+		{
+			"name": "searchable",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "검색 가능 여부. 활성화 시 열린 패널 상단에 검색 입력이 표시되고, 옵션 `label` 부분 일치로 필터링됩니다."
+		},
+		{
+			"name": "searchPlaceholder",
+			"type": "string",
+			"required": false,
+			"doc": "검색 입력의 placeholder"
+		},
+		{
+			"name": "emptyText",
+			"type": "string",
+			"required": false,
+			"doc": "필터 결과가 0개일 때 표시할 텍스트"
+		},
+		{
+			"name": "selectedSummary",
+			"type": "(count: number) => string",
+			"required": false,
+			"doc": "멀티 선택 요약 텍스트"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "네이티브 폼 제출 참여용 name. 지정 시 선택 값이 hidden input 으로 렌더되어 `<form>` POST 에 포함됩니다 (multiple 은 같은 name 의 hidden input 반복)."
+		}
+	],
+	"FieldControl": [
+		{
+			"name": "inputId",
+			"type": "string",
+			"required": true,
+			"doc": "입력에 붙일 id. `Field` 의 `<label htmlFor>` 이 이 값을 가리킨다"
+		},
+		{
+			"name": "labelId",
+			"type": "string",
+			"required": true,
+			"doc": "라벨 요소의 id. `role=\"group\"` 컨테이너(DatePicker·OtpInput·RadioGroup)는 `htmlFor` 로 연결되지 않으므로 이 값을 `aria-labelledby` 에 쓴다. 라벨이 없으면 undefined."
+		},
+		{
+			"name": "describedBy",
+			"type": "string",
+			"required": true,
+			"doc": "help·error 를 함께 가리키는 `aria-describedby` 값. 둘 다 없으면 undefined"
+		},
+		{
+			"name": "invalid",
+			"type": "boolean",
+			"required": true,
+			"doc": "에러 상태: 입력은 `aria-invalid` 에 반영한다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": true,
+			"doc": "필수 여부: 입력은 `aria-required` 에 반영한다"
+		}
+	],
+	"FieldProps": [
+		{
+			"name": "name",
+			"type": "string",
+			"required": true,
+			"doc": "필드 이름. `Form` 의 `errors[name]` 을 찾는 키이자 입력 id 의 접두사"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "라벨 텍스트. `Field` 가 소유하므로 자식 입력에는 `label` 을 주지 않는다"
+		},
+		{
+			"name": "labelAction",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라벨과 **같은 줄 오른쪽**에 놓는 조작 요소(토글·링크 버튼 등).\n\n`<label>` 안이 아니라 형제로 렌더된다: 라벨 클릭이 입력 포커스로 가는 동작과 조작 요소 클릭이 겹치지 않아야 한다(`TextField` 의 `leadingIcon` 은 `aria-hidden`, `leadingAction` 은 아닌 것과 같은 구분)."
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 표시(*). 자식 입력에 `aria-required` 로도 전달된다"
+		},
+		{
+			"name": "help",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 아래 도움말. 에러가 있으면 에러가 대신 보인다"
+		},
+		{
+			"name": "error",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "에러 메시지. 지정하면 `Form` 의 `errors[name]` 보다 우선한다. 문자열이 아니어도 되지만 스크린리더가 읽으므로 텍스트를 권장한다."
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "입력 하나 (`<TextField />`, `<Dropdown />` 등)"
+		}
+	],
+	"FileInputProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "파일 선택 버튼 라벨 / preview variant 빈 상태 텍스트"
+		},
+		{
+			"name": "onFiles",
+			"type": "(files: FileList | null) => void",
+			"required": false,
+			"doc": "파일 선택 시 호출되는 콜백"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 아래에 표시할 도움말 텍스트 (예: \"PDF, DOC 파일만 업로드 가능합니다\")"
+		},
+		{
+			"name": "preview",
+			"type": "boolean",
+			"required": false,
+			"doc": "이미지 파일 선택 시 64×64 썸네일을 버튼 아래 나열 (variant=\"button\" 전용)"
+		},
+		{
+			"name": "variant",
+			"type": "\"button\" | \"preview\"",
+			"required": false,
+			"default": "\"button\"",
+			"doc": "표시 형태.\n\n`\"button\"`: 일반 파일 선택 버튼. `preview=true` 면 아래에 작은 썸네일 표시.\n\n`\"preview\"`: 큰 박스 안에 이미지 채움 (avatar / 이미지 업로더 패턴). 단일 이미지."
+		},
+		{
+			"name": "previewSize",
+			"type": "number",
+			"required": false,
+			"doc": "variant=\"preview\" 박스 크기 (px, 기본값: 160)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "accept",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `accept` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "multiple",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `multiple` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
+	"FilterBarProps": [
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "필터 입력들 (TextField · Dropdown · DatePicker 등). 반응형 grid 로 배치된다"
+		},
+		{
+			"name": "submitMode",
+			"type": "\"submit\" | \"instant\"",
+			"required": false,
+			"default": "submit",
+			"doc": "필터 적용 방식 버튼과 Enter 로 적용하는 기본 모드 필드 변경 핸들러가 즉시 적용하는 모드. 검색 버튼과 Enter 제출을 만들지 않는다"
+		},
+		{
+			"name": "onReset",
+			"type": "() => void",
+			"required": false,
+			"doc": "주면 초기화 버튼이 생긴다. 값을 비우는 건 소비자 몫이다"
+		},
+		{
+			"name": "canReset",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "초기화할 것이 있는가. 이미 비어 있으면 false 로"
+		},
+		{
+			"name": "isLoading",
+			"type": "boolean",
+			"required": false,
+			"doc": "적용 중: form 에 aria-busy. submit 모드에서는 검색 버튼 스피너와 중복 제출 방지도 적용한다"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "버튼 전체 비활성화"
+		},
+		{
+			"name": "resetLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `filterBar.reset`",
+			"doc": "초기화 버튼 문구"
+		},
+		{
+			"name": "fieldMinWidth",
+			"type": "number | string",
+			"required": false,
+			"default": "200",
+			"doc": "필드 한 칸의 최소 폭: 이보다 좁아지면 줄을 바꾼다"
+		},
+		{
+			"name": "onSubmit",
+			"type": "() => void",
+			"required": false,
+			"doc": "검색: Enter 또는 검색 버튼. 기본 폼 제출(페이지 이동)은 막는다"
+		},
+		{
+			"name": "canSubmit",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "검색할 수 있는 상태인가. false 면 검색 버튼과 Enter 제출이 막힌다"
+		},
+		{
+			"name": "submitLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `filterBar.submit`",
+			"doc": "검색 버튼 문구"
+		}
+	],
+	"FormActionsProps": [
+		{
+			"name": "align",
+			"type": "\"center\" | \"start\" | \"end\" | \"between\"",
+			"required": false,
+			"default": "\"end\"",
+			"doc": "버튼 정렬"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"FormProps": [
+		{
+			"name": "errors",
+			"type": "Record<string, ReactNode>",
+			"required": false,
+			"doc": "필드 이름 → 에러 메시지. 해당 `Field` 가 자기 이름으로 찾아 표시한다. 서버 검증 실패(422) 응답을 필드에 꽂는 표준 경로다."
+		},
+		{
+			"name": "errorSummary",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "폼 위에 에러 요약을 그린다. `errors` 에 값이 있으면 개수와 필드별 링크를 보이고, 제출 뒤(또는 처음부터 에러가 있으면 마운트 때) 요약으로 포커스를 옮겨 **한 번** 읽힌다. 켜면 필드는 `errors` 에서 온 에러를 따로 낭독하지 않는다: 여러 필드의 알림이 겹쳐 일부가 빠지던 것 (#993)"
+		},
+		{
+			"name": "errorSummaryTitle",
+			"type": "ReactNode",
+			"required": false,
+			"default": "로케일 `form.errorSummary`",
+			"doc": "요약 제목: \"{count}개 항목을 확인해 주세요\""
+		},
+		{
+			"name": "onSubmit",
+			"type": "(event: FormEvent<HTMLFormElement>) => void",
+			"required": false,
+			"doc": "제출 콜백. `event.preventDefault()` 는 `Form` 이 이미 호출한 뒤 부른다"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CropImageSize": [
+		{
+			"name": "width",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "height",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CropOffset": [
+		{
+			"name": "x",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "y",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"CropRect": [
+		{
+			"name": "x",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "y",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		},
+		{
+			"name": "size",
+			"type": "number",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"ImageCropperHandle": [
+		{
+			"name": "crop",
+			"type": "() => Promise<Blob>",
+			"required": true,
+			"doc": "현재 보이는 정사각 영역을 잘라 Blob 으로 돌려준다. 소비자의 \"적용\" 버튼에서 호출."
+		},
+		{
+			"name": "reset",
+			"type": "() => void",
+			"required": true,
+			"doc": "배율·위치를 초기 상태(전체가 보이는 zoom=min, 중앙)로 되돌린다."
+		}
+	],
+	"ImageCropperProps": [
+		{
+			"name": "ref",
+			"type": "Ref<ImageCropperHandle>",
+			"required": false,
+			"doc": "크롭/리셋을 호출할 imperative 핸들 (React 19 ref-as-prop)."
+		},
+		{
+			"name": "src",
+			"type": "File | Blob | string",
+			"required": true,
+			"doc": "크롭할 이미지. `File`/`Blob`(로컬) 또는 이미지 URL 문자열."
+		},
+		{
+			"name": "outputSize",
+			"type": "number",
+			"required": false,
+			"doc": "결과물 한 변 길이(px). 기본 512."
+		},
+		{
+			"name": "outputType",
+			"type": "\"auto\" | \"image/jpeg\" | \"image/png\" | \"image/webp\"",
+			"required": false,
+			"doc": "결과 MIME. `\"auto\"`(기본)는 PNG 는 PNG 로, 나머지는 JPEG 로 통일."
+		},
+		{
+			"name": "quality",
+			"type": "number",
+			"required": false,
+			"doc": "JPEG/WebP 인코딩 품질(0~1). 기본 0.92."
+		},
+		{
+			"name": "circular",
+			"type": "boolean",
+			"required": false,
+			"doc": "원형 가이드(아바타용). 기본 false(둥근 사각형 가이드)."
+		},
+		{
+			"name": "viewportSize",
+			"type": "number",
+			"required": false,
+			"doc": "뷰포트 한 변 길이(px). 기본 240."
+		},
+		{
+			"name": "minZoom",
+			"type": "number",
+			"required": false,
+			"doc": "최소 배율. 기본 1(이미지가 뷰포트를 딱 덮음)."
+		},
+		{
+			"name": "maxZoom",
+			"type": "number",
+			"required": false,
+			"doc": "최대 배율. 기본 3."
+		},
+		{
+			"name": "onReady",
+			"type": "(size: CropImageSize) => void",
+			"required": false,
+			"doc": "이미지 로드 완료 시."
+		},
+		{
+			"name": "onError",
+			"type": "() => void",
+			"required": false,
+			"doc": "이미지 디코딩 실패 시(손상 파일 등)."
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "뷰포트 접근성 레이블. 기본 \"이미지 위치와 배율 조정\"."
+		},
+		{
+			"name": "hint",
+			"type": "string",
+			"required": false,
+			"doc": "뷰포트 아래 조작 안내 문구. 기본 \"드래그하거나 가운데로 올 곳을 탭(또는 방향키)해 위치를, 휠·슬라이더로 배율을 맞추세요.\""
+		},
+		{
+			"name": "zoomOutLabel",
+			"type": "string",
+			"required": false,
+			"doc": "축소 버튼 접근성 레이블. 기본 \"축소\"."
+		},
+		{
+			"name": "zoomLabel",
+			"type": "string",
+			"required": false,
+			"doc": "배율 슬라이더 접근성 레이블. 기본 \"배율\"."
+		},
+		{
+			"name": "zoomInLabel",
+			"type": "string",
+			"required": false,
+			"doc": "확대 버튼 접근성 레이블. 기본 \"확대\"."
+		},
+		{
+			"name": "noPanHint",
+			"type": "string",
+			"required": false,
+			"doc": "이동 여유가 없을 때 스크린리더로 알리는 문구. 기본 \"이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.\""
+		}
+	],
+	"OtpInputProps": [
+		{
+			"name": "length",
+			"type": "4 | 6",
+			"required": false,
+			"default": "6",
+			"doc": "OTP 자릿수"
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 값"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "값 변경 콜백 (canonical)"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "하단 도움말 텍스트"
+		},
+		{
+			"name": "autoFocus",
+			"type": "boolean",
+			"required": false,
+			"doc": "첫 번째 입력에 자동 포커스"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 레이블"
+		},
+		{
+			"name": "className",
+			"type": "string",
+			"required": false,
+			"doc": "추가 className"
+		}
+	],
+	"RadioProps": [
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라디오 버튼 옆에 표시할 라벨"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "라디오 버튼 크기. `RadioGroup` 안에서는 그룹 size 가 기본값."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		}
+	],
+	"RadioGroupProps": [
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형: 선택된 value"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형: 초기 선택 value"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"doc": "value 변경 콜백"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "라디오 그룹 name (미지정 시 자동 생성)"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "그룹 라벨 (radiogroup 의 접근성 레이블)"
+		},
+		{
+			"name": "supportingText",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라벨/옵션 아래 보조 설명. error 일 때 에러 색"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "그룹 사이즈: 자식 Radio 에 전파"
+		},
+		{
+			"name": "orientation",
+			"type": "\"horizontal\" | \"vertical\"",
+			"required": false,
+			"default": "\"vertical\"",
+			"doc": "배치 방향"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "그룹 전체 비활성화"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "`Radio` 들"
+		}
+	],
+	"SegmentedControlItem": [
+		{
+			"name": "value",
+			"type": "T",
+			"required": true,
+			"doc": "이 칸의 값"
+		},
+		{
+			"name": "label",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "칸에 보이는 라벨. 아이콘만 둘 때는 `ariaLabel` 을 함께 준다"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "라벨 앞 아이콘 (장식: 보조기기에는 숨긴다)"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름. 라벨이 없거나 라벨만으로 뜻이 모자랄 때"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "이 칸만 비활성화"
+		}
+	],
+	"SegmentedControlProps": [
+		{
+			"name": "items",
+			"type": "SegmentedControlItem<T>[]",
+			"required": true,
+			"doc": "칸 목록 (2~5개 권장)"
+		},
+		{
+			"name": "value",
+			"type": "T",
+			"required": false,
+			"doc": "제어형: 선택된 값"
+		},
+		{
+			"name": "defaultValue",
+			"type": "T",
+			"required": false,
+			"doc": "비제어형: 초기 선택 값"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: T) => void",
+			"required": false,
+			"doc": "선택이 바뀔 때"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "폼 제출용 name (미지정 시 자동 생성)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "크기"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "부모 폭을 채우고 칸을 균등 분배"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "전체 비활성화"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수: 폼 제출 시 선택이 없으면 막는다"
+		}
+	],
+	"TagInputProps": [
+		{
+			"name": "value",
+			"type": "string[]",
+			"required": false,
+			"doc": "태그 목록 (제어형). 주지 않으면 내부 상태로 동작한다"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string[]",
+			"required": false,
+			"doc": "비제어형 초기 태그"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(tags: string[]) => void",
+			"required": false,
+			"doc": "태그가 추가·제거될 때"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "입력 placeholder"
+		},
+		{
+			"name": "maxTags",
+			"type": "number",
+			"required": false,
+			"doc": "최대 개수. 도달하면 더 추가되지 않는다"
+		},
+		{
+			"name": "allowDuplicates",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "같은 값을 여러 번 넣도록 허용"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성 여부"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "전체 너비 차지"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름: `Field` 로 감싸면 그쪽 라벨이 우선한다"
+		}
+	],
+	"TextareaProps": [
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "입력 필드 크기"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "showLabel",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "라벨 표시 여부"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태 여부"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "컨테이너 전체 너비 차지 여부"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
+		},
+		{
+			"name": "imeStrategy",
+			"type": "\"delayed\" | \"immediate\"",
+			"required": false,
+			"default": "\"delayed\"",
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 입력 값"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형 초기 입력 값"
+		},
+		{
+			"name": "transformValue",
+			"type": "(value: string) => string",
+			"required": false,
+			"doc": "입력값 변환 함수"
+		},
+		{
+			"name": "rows",
+			"type": "number",
+			"required": false,
+			"default": "3",
+			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
+		},
+		{
+			"name": "minRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최소 행 수. 지정 시 내용에 따라 높이 자동 증가"
+		},
+		{
+			"name": "maxRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최대 행 수. 초과 시 스크롤"
+		},
+		{
+			"name": "showCounter",
+			"type": "boolean",
+			"required": false,
+			"doc": "글자 수 카운터 표시 (maxLength 와 함께 사용 권장)"
+		},
+		{
+			"name": "resize",
+			"type": "\"vertical\" | \"none\" | \"both\"",
+			"required": false,
+			"default": "\"vertical\"",
+			"doc": "resize 핸들 제어"
+		},
+		{
+			"name": "toolbar",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLTextAreaElement>",
+			"required": false,
+			"doc": "textarea 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
+	"TextFieldProps": [
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"doc": "입력 필드 크기"
+		},
+		{
+			"name": "variant",
+			"type": "\"outline\" | \"filled\"",
+			"required": false,
+			"doc": "입력 필드 시각 변형"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "showLabel",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "라벨 표시 여부"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태 여부. `success` 와 동시에 지정되면 `error` 가 우선한다."
+		},
+		{
+			"name": "success",
+			"type": "boolean",
+			"required": false,
+			"doc": "성공(검증 통과) 상태 여부. `error` 가 true 면 무시된다."
+		},
+		{
+			"name": "identifier",
+			"type": "boolean",
+			"required": false,
+			"doc": "식별자(아이디·인증코드·시리얼·사업자번호)를 담는 칸인지. 켜면 `l`/`I`/`1` 과 `0`/`O` 를 구분되게 렌더한다: 사용자가 한 글자씩 옮겨 적는 값의 오탈자를 줄인다."
+		},
+		{
+			"name": "leadingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 필드 왼쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다. 포커스 가능한 요소(버튼 등)를 넣어야 하면 `leadingAction` 을 쓸 것."
+		},
+		{
+			"name": "trailingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 필드 오른쪽에 표시할 **장식** 아이콘. `aria-hidden` 으로 접근성 트리에서 제외된다. 포커스 가능한 요소(버튼 등)를 넣어야 하면 `trailingAction` 을 쓸 것."
+		},
+		{
+			"name": "leadingAction",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 필드 왼쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
+		},
+		{
+			"name": "trailingAction",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 필드 오른쪽 조작 요소(버튼 등). `aria-hidden` 을 붙이지 않아 보조기기에 그대로 노출된다. 아이콘 칸의 위치·크기 CSS 를 재사용하고, 넘긴 요소가 40x40 히트 영역을 채운다(WCAG 2.5.8)."
+		},
+		{
+			"name": "showPasswordToggle",
+			"type": "boolean",
+			"required": false,
+			"doc": "비밀번호 표시/숨기기 토글 버튼을 오른쪽에 내장한다. 켜면 `type` 을 토글이 직접 관리한다: 숨김 상태는 넘긴 `type`(보통 `\"password\"`), 표시 상태는 `\"text\"`."
+		},
+		{
+			"name": "passwordToggleLabels",
+			"type": "{ show: string; hide: string }",
+			"required": false,
+			"default": "\"비밀번호 표시\" / \"비밀번호 숨기기\"",
+			"doc": "토글 버튼의 `aria-label`. 다국어 앱은 주입할 것"
+		},
+		{
+			"name": "clearable",
+			"type": "boolean",
+			"required": false,
+			"doc": "값이 있을 때 오른쪽에 지우기(X) 버튼 표시 여부"
+		},
+		{
+			"name": "clearLabel",
+			"type": "string",
+			"required": false,
+			"doc": "지우기(X) 버튼의 `aria-label`"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "컨테이너 전체 너비 차지 여부"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
+		},
+		{
+			"name": "imeStrategy",
+			"type": "\"delayed\" | \"immediate\"",
+			"required": false,
+			"default": "\"delayed\"",
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독(검색/필터) 이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 입력 값"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형 초기 입력 값"
+		},
+		{
+			"name": "transformValue",
+			"type": "(value: string) => string",
+			"required": false,
+			"doc": "입력값 변환 함수 (예: 숫자만 허용, 대문자 변환)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLInputElement>",
+			"required": false,
+			"doc": "입력 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "type",
+			"type": "HTMLInputTypeAttribute",
+			"required": false,
+			"doc": "HTML `type` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "autoComplete",
+			"type": "HTMLInputAutoCompleteAttribute",
+			"required": false,
+			"doc": "HTML `autoComplete` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
+	"TimePickerProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "위에 표시할 라벨"
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 값 (`\"HH:mm\"`)"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": true,
+			"doc": "선택 변경"
+		},
+		{
+			"name": "minuteStep",
+			"type": "number",
+			"required": false,
+			"default": "5",
+			"doc": "분 간격. 5·10·15·30 처럼 60 의 약수를 준다"
+		},
+		{
+			"name": "minTime",
+			"type": "string",
+			"required": false,
+			"doc": "선택 가능한 가장 이른 시각 (`\"HH:mm\"`)"
+		},
+		{
+			"name": "maxTime",
+			"type": "string",
+			"required": false,
+			"doc": "선택 가능한 가장 늦은 시각 (`\"HH:mm\"`)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성 여부"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "전체 너비 차지"
+		},
+		{
+			"name": "hourLabel",
+			"type": "string",
+			"required": false,
+			"doc": "시 select 의 라벨/placeholder"
+		},
+		{
+			"name": "minuteLabel",
+			"type": "string",
+			"required": false,
+			"doc": "분 select 의 라벨/placeholder"
+		}
+	],
+	"ToggleProps": [
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "제어형 토글 상태"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "비제어형 초기 토글 상태"
+		},
+		{
+			"name": "onCheckedChange",
+			"type": "(checked: boolean) => void",
+			"required": false,
+			"doc": "상태 변경 콜백 (canonical)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "토글 크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": true,
+			"doc": "토글 접근성 레이블(스크린 리더용)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "버튼 요소 참조"
+		}
+	],
+	"ButtonProps": [
+		{
+			"name": "variant",
+			"type": "\"text\" | \"outline\" | \"filled\" | \"tonal\"",
+			"required": false,
+			"default": "\"filled\"",
+			"doc": "버튼 스타일 변형"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"xl\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "버튼 크기"
+		},
+		{
+			"name": "leadingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "버튼 앞에 표시할 아이콘"
+		},
+		{
+			"name": "trailingIcon",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "버튼 뒤에 표시할 아이콘"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "버튼이 컨테이너의 전체 너비를 차지할지 여부"
+		},
+		{
+			"name": "radius",
+			"type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"none\" | \"full\"",
+			"required": false,
+			"default": "\"full\"",
+			"doc": "border-radius 토큰"
+		},
+		{
+			"name": "danger",
+			"type": "boolean",
+			"required": false,
+			"doc": "위험한 액션 (삭제/취소 등): 빨간 강조. filled: 빨간 bg, outline: 빨간 텍스트/border, tonal: 빨간 wash."
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화. button 은 native `disabled`, anchor 는 `aria-disabled`+`tabIndex=-1`+ 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로)."
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "href",
+			"type": "string",
+			"required": false,
+			"doc": ""
+		}
+	],
+	"CopyButtonProps": [
+		{
+			"name": "text",
+			"type": "string | (() => string)",
+			"required": true,
+			"doc": "복사할 텍스트. 누를 때 계산하려면 함수로"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `copyButton.copy`",
+			"doc": "버튼 문구 · 아이콘만일 때는 접근성 이름"
+		},
+		{
+			"name": "aria-label",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름을 보이는 문구와 따로 줄 때 (#966). 표처럼 복사 버튼이 여럿이면 보이는 글자는 \"복사\" 로 두고 이름은 `\"192.168.10.1 주소 복사\"` 처럼 무엇을 복사하는지 담는다. 보이는 문구를 이름 안에 넣는다 (WCAG 2.5.3: 음성 입력이 보이는 글자로 버튼을 찾는다). 없으면 `label`"
+		},
+		{
+			"name": "copiedLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `copyButton.copied`",
+			"doc": "복사 직후 문구"
+		},
+		{
+			"name": "failedLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `copyButton.failed`",
+			"doc": "실패 시 스크린리더에 알릴 문구"
+		},
+		{
+			"name": "iconOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "아이콘만 (IconButton)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "크기"
+		},
+		{
+			"name": "variant",
+			"type": "\"text\" | \"outline\" | \"filled\" | \"tonal\"",
+			"required": false,
+			"default": "\"outline\"",
+			"doc": "문구 버튼의 variant"
+		},
+		{
+			"name": "resetAfter",
+			"type": "number",
+			"required": false,
+			"default": "2000",
+			"doc": "복사됨 표시를 유지하는 시간(ms)"
+		},
+		{
+			"name": "onCopy",
+			"type": "(text: string) => void",
+			"required": false,
+			"doc": "성공: Toast 를 띄우려면 여기서"
+		},
+		{
+			"name": "onError",
+			"type": "(error: unknown) => void",
+			"required": false,
+			"doc": "실패 (권한 거부 · API 없음 · 폴백 실패)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": ""
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		}
+	],
+	"IconButtonProps": [
+		{
+			"name": "aria-label",
+			"type": "string",
+			"required": false,
+			"doc": "아이콘 버튼의 접근성 이름 (필수) 아이콘 버튼의 접근성 이름 (선택)"
+		},
+		{
+			"name": "aria-labelledby",
+			"type": "string",
+			"required": false,
+			"doc": "접근성 이름을 제공하는 요소 id (선택) 접근성 이름을 제공하는 요소 id (필수)"
+		},
+		{
+			"name": "variant",
+			"type": "\"text\" | \"outline\" | \"filled\" | \"tonal\"",
+			"required": false,
+			"default": "\"text\"",
+			"doc": "아이콘 버튼 스타일 변형. Button 의 variant 이름과 같다"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "아이콘 버튼 크기"
+		},
+		{
+			"name": "icon",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "표시할 아이콘"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "루트 button 요소 ref (React 19 ref-as-prop)"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "type",
+			"type": "\"button\" | \"submit\" | \"reset\"",
+			"required": false,
+			"doc": "HTML `type` 속성을 그대로 넘깁니다"
+		}
+	],
+	"PaginationProps": [
+		{
+			"name": "page",
+			"type": "number",
+			"required": true,
+			"doc": "현재 페이지 번호 (1-based)"
+		},
+		{
+			"name": "totalPages",
+			"type": "number",
+			"required": true,
+			"doc": "전체 페이지 수"
+		},
+		{
+			"name": "prevLabel",
+			"type": "string",
+			"required": false,
+			"doc": "이전 페이지 버튼 aria-label"
+		},
+		{
+			"name": "nextLabel",
+			"type": "string",
+			"required": false,
+			"doc": "다음 페이지 버튼 aria-label"
+		},
+		{
+			"name": "navLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"페이지 이동\"",
+			"doc": "`<nav>` 랜드마크 이름. 스크린리더의 리전 목록에 그대로 뜬다"
+		},
+		{
+			"name": "showPageJump",
+			"type": "boolean",
+			"required": false,
+			"default": "false",
+			"doc": "현재 쪽 칸을 입력칸으로 바꿔, 번호를 적고 Enter 로 바로 가게 한다. 쪽이 수백·수천 개라 이전·다음과 `…` 로는 원하는 쪽에 닿기 어려운 목록에서 켠다. 범위 밖 값은 1 ~ 마지막 쪽으로 맞추고, 숫자가 아니면 이동하지 않고 오류로 표시한다. Esc 나 포커스를 잃으면 현재 쪽 번호로 돌아간다"
+		},
+		{
+			"name": "pageJumpLabel",
+			"type": "string",
+			"required": false,
+			"default": "\"현재 {page}쪽",
+			"doc": "현재 쪽 입력칸의 `aria-label`: 이동할 쪽 번호 (1–{totalPages})\""
+		},
+		{
+			"name": "onPageChange",
+			"type": "(page: number) => void",
+			"required": true,
+			"doc": "페이지를 바꿀 때 호출된다"
+		}
+	],
+	"DrawerProps": [
+		{
+			"name": "open",
+			"type": "boolean",
+			"required": true,
+			"doc": "드로어 열림 여부"
+		},
+		{
+			"name": "onClose",
+			"type": "() => void",
+			"required": false,
+			"doc": "드로어 닫기 콜백"
+		},
+		{
+			"name": "placement",
+			"type": "\"bottom\" | \"left\" | \"right\"",
+			"required": false,
+			"doc": "슬라이드 방향"
+		},
+		{
+			"name": "size",
+			"type": "number | string",
+			"required": false,
+			"default": "360",
+			"doc": "패널 크기: left/right 는 너비, bottom 은 높이. number ⇒ px"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "드로어 제목 (헤더 h2, heading_small_bold)"
+		},
+		{
+			"name": "footer",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "하단 액션 영역 (Button들). 미지정 시 footer 영역 자체가 안 보임"
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭 시 닫기 여부"
+		},
+		{
+			"name": "dismissible",
+			"type": "boolean",
+			"required": false,
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
+		},
+		{
+			"name": "showCloseIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "우상단 X 닫기 아이콘 표시 여부"
+		},
+		{
+			"name": "closeLabel",
+			"type": "string",
+			"required": false,
+			"doc": "X 닫기 버튼 접근성 레이블"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "드로어 접근성 레이블. `title` 이 없을 때 이 값이 접근성 이름이 된다. 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
+		},
+		{
+			"name": "initialFocusRef",
+			"type": "RefObject<HTMLElement | null>",
+			"required": false,
+			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는 화면에서 쓴다: 검색 드로어의 검색 입력, 위험 확인 드로어의 \"취소\" 버튼. 패널 안에 붙어 있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
+		},
+		{
+			"name": "onExited",
+			"type": "() => void",
+			"required": false,
+			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다. `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
+		},
+		{
+			"name": "disableAnimation",
+			"type": "boolean",
+			"required": false,
+			"doc": "슬라이드·페이드 모션을 끄고 즉시 열고 닫는다. 기본값 `false`. 화면 전체를 덮는 메뉴처럼 슬라이드가 디자인에 맞지 않는 곳에서 쓴다. OS 의 reduced-motion 설정은 이 값과 상관없이 항상 모션을 끈다."
+		}
+	],
+	"ModalProps": [
+		{
+			"name": "open",
+			"type": "boolean",
+			"required": true,
+			"doc": "모달 열림 여부"
+		},
+		{
+			"name": "onClose",
+			"type": "() => void",
+			"required": false,
+			"doc": "모달 닫기 콜백"
+		},
+		{
+			"name": "closeOnOverlay",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "오버레이 클릭 시 닫기 여부"
+		},
+		{
+			"name": "dismissible",
+			"type": "boolean",
+			"required": false,
+			"doc": "Escape 와 오버레이 클릭을 한 축으로 묶는다. 사용자에게는 둘 다 \"실수로 닫기\" 축이라 따로 다루면 한쪽만 막는 실수가 나온다. `false` 면 두 경로 모두 닫지 않는다.\n\n주면 `closeOnOverlay` 를 이긴다. 안 주면 기존 동작 그대로다: 오버레이는 `closeOnOverlay`(기본 `true`), Escape 는 항상 켜짐."
+		},
+		{
+			"name": "width",
+			"type": "number | string",
+			"required": false,
+			"default": "480",
+			"doc": "모달 패널 너비"
+		},
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "모달 제목 (h2, heading_large_bold)"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 아래 본문 설명: paragraph로 자동 wrap"
+		},
+		{
+			"name": "footer",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "하단 액션 영역 (Button들). 미지정 시 footer 영역 자체가 안 보임"
+		},
+		{
+			"name": "footerAlign",
+			"type": "\"start\" | \"end\" | \"between\"",
+			"required": false,
+			"default": "\"end\"",
+			"doc": "Footer 정렬. between은 좌우 분리 패턴 (destructive 액션 등)"
+		},
+		{
+			"name": "showCloseIcon",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "우상단 X 닫기 아이콘 표시 여부"
+		},
+		{
+			"name": "closeLabel",
+			"type": "string",
+			"required": false,
+			"doc": "X 닫기 버튼 접근성 레이블"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": false,
+			"doc": "모달 접근성 레이블. `title` 이 없으면 이 값이 유일한 접근성 이름이다: 폴백이 없으므로 둘 다 비우면 이름 없는 대화상자가 되고 axe `aria-dialog-name` 이 잡는다."
+		},
+		{
+			"name": "initialFocusRef",
+			"type": "RefObject<HTMLElement | null>",
+			"required": false,
+			"doc": "열릴 때 포커스를 둘 요소. 기본 순서(본문 첫 컨트롤 → 닫기 버튼 → 패널)가 틀린 자리로 가는 화면에서 쓴다: 검색 모달의 검색 입력, 위험 확인 모달의 \"취소\" 버튼. 패널 안에 붙어 있는 요소여야 하고, 아니면 기본 순서로 떨어진다."
+		},
+		{
+			"name": "onExited",
+			"type": "() => void",
+			"required": false,
+			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다. `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
+		}
+	],
+	"LocaleProviderProps": [
+		{
+			"name": "locale",
+			"type": "\"ko\" | \"en\"",
+			"required": false,
+			"doc": "기준 카탈로그. 주지 않으면 바깥 Provider 를 따르고, 바깥이 없으면 \"ko\""
+		},
+		{
+			"name": "messages",
+			"type": "Partial<LocaleMessages>",
+			"required": false,
+			"doc": "기준 위에 덮어쓸 문구. 한 줄만 바꿀 때 쓴다"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": false,
+			"doc": ""
+		}
+	],
+	"ThemeProviderProps": [
+		{
+			"name": "defaultMode",
+			"type": "\"dark\" | \"light\" | \"system\"",
+			"required": false,
+			"default": "\"system\"",
+			"doc": "초기 테마"
+		},
+		{
+			"name": "storageKey",
+			"type": "string | null",
+			"required": false,
+			"default": "\"bt-theme\"",
+			"doc": "localStorage 키. null이면 저장 안 함"
+		},
+		{
+			"name": "targetSelector",
+			"type": "string",
+			"required": false,
+			"default": "document.documentElement",
+			"doc": "적용 대상 element selector"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": ""
+		}
+	],
+	"AppShellProps": [
+		{
+			"name": "sidebar",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "좌측 네비게이션. 보통 `Sidebar`"
+		},
+		{
+			"name": "header",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "콘텐츠 열 위에 고정되는 헤더. 보통 `NavBar`"
+		},
+		{
+			"name": "padded",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "본문 여백. 자체 여백을 가진 화면은 false"
+		},
+		{
+			"name": "skipLinkLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `appShell.skipLink`",
+			"doc": "\"본문으로 건너뛰기\" 링크 문구. 사이드바나 헤더가 있을 때만 그린다"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"ContainerProps": [
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"full\"",
+			"required": false,
+			"default": "\"xl\"",
+			"doc": "max-width 크기\n\nsm: 640px | md: 768px | lg: 1024px | xl: 1200px | full: 100%"
+		},
+		{
+			"name": "center",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "가운데 정렬"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"GridProps": [
+		{
+			"name": "cols",
+			"type": "1 | \"auto\" | 2 | 3 | 4 | 5 | 6",
+			"required": false,
+			"default": "3",
+			"doc": "열 수. \"auto\" = auto-fill (minColWidth 사용)"
+		},
+		{
+			"name": "minColWidth",
+			"type": "string",
+			"required": false,
+			"default": "\"280px\"",
+			"doc": "auto-fill 모드일 때 최소 열 너비"
+		},
+		{
+			"name": "gap",
+			"type": "0 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48",
+			"required": false,
+			"default": "24",
+			"doc": "아이템 간격 (px). gap과 rowGap/colGap 동시 적용."
+		},
+		{
+			"name": "rowGap",
+			"type": "0 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48",
+			"required": false,
+			"doc": "행 간격 (gap을 override)"
+		},
+		{
+			"name": "colGap",
+			"type": "0 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48",
+			"required": false,
+			"doc": "열 간격 (gap을 override)"
+		},
+		{
+			"name": "singleColOnMobile",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "반응형: compact(< 600px)에서 강제 1열"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"PageHeaderProps": [
+		{
+			"name": "title",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "화면 제목. `h1` 로 렌더된다"
+		},
+		{
+			"name": "description",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 아래 한 줄 설명"
+		},
+		{
+			"name": "breadcrumb",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 위 경로. 보통 `Breadcrumb`"
+		},
+		{
+			"name": "actions",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "우측 액션. 보통 `Button` 하나 또는 둘"
+		},
+		{
+			"name": "tabs",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "제목 줄 아래에 붙는 영역. 보통 `TabList`"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLDivElement>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"SectionProps": [
+		{
+			"name": "spacing",
+			"type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "수직 패딩 크기\n\nxs: 32px | sm: 48px | md: 64px | lg: 96px | xl: 128px"
+		},
+		{
+			"name": "bg",
+			"type": "\"accent\" | \"default\" | \"transparent\" | \"dim\" | \"inverted\"",
+			"required": false,
+			"default": "\"default\"",
+			"doc": "배경색 변형\n\ndefault: bg-solid | dim: bg-solid-dim | accent: accent-subtle | inverted: accent-default (검정/흰색 반전)"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	],
+	"StackProps": [
+		{
+			"name": "direction",
+			"type": "\"horizontal\" | \"vertical\"",
+			"required": false,
+			"default": "\"vertical\"",
+			"doc": "flex 방향"
+		},
+		{
+			"name": "gap",
+			"type": "0 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 32 | 40 | 48",
+			"required": false,
+			"default": "16",
+			"doc": "아이템 간격 (px)"
+		},
+		{
+			"name": "align",
+			"type": "\"center\" | \"start\" | \"end\" | \"stretch\"",
+			"required": false,
+			"doc": "교차축 정렬 (align-items)"
+		},
+		{
+			"name": "justify",
+			"type": "\"center\" | \"start\" | \"end\" | \"between\" | \"around\" | \"evenly\"",
+			"required": false,
+			"doc": "주축 정렬 (justify-content)"
+		},
+		{
+			"name": "wrap",
+			"type": "\"wrap\" | \"nowrap\" | \"wrap-reverse\"",
+			"required": false,
+			"doc": "flex-wrap"
+		},
+		{
+			"name": "as",
+			"type": "ElementType",
+			"required": false,
+			"doc": "렌더할 요소나 컴포넌트"
+		},
+		{
+			"name": "ref",
+			"type": "PolymorphicRef<T>",
+			"required": false,
+			"doc": "루트 요소 ref (React 19 ref-as-prop)"
+		}
+	]
+}

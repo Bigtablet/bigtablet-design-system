@@ -7,6 +7,8 @@
 // 를 계산할 일이 없다 (Timeline 과 같은 규칙).
 
 $indicator: 28px;
+// 라벨 첫 줄을 인디케이터 세로 중심에 맞추는 텍스트 위 여백 - 가로 연결선 위치도 이 값에서 계산한다
+$text_offset: token.$spacing_4;
 
 .stepper {
   margin: 0;
@@ -79,7 +81,7 @@ $indicator: 28px;
     gap: token.$spacing_2;
     min-width: 0;
     // 인디케이터(28px)의 세로 중심에 한 줄 라벨이 맞도록
-    padding-top: token.$spacing_4;
+    padding-top: $text_offset;
   }
 
   &_label {
@@ -127,9 +129,32 @@ $indicator: 28px;
     align-items: flex-start;
     gap: token.$spacing_8;
 
+    // basis 는 내용 폭 - 남는 폭을 단계마다 똑같이 더 받아 그 몫을 선이 채우므로 선 길이가 고르다.
+    // basis 0(같은 칸 폭)이면 라벨이 긴 단계일수록 선이 짧아져 들쭉날쭉했다.
     .stepper_step {
-      flex: 1;
+      flex: 1 1 auto;
       align-items: flex-start;
+    }
+
+    // 좁은 폭에서도 어절은 통째로 (#1014). `overflow-wrap: anywhere` 와 `min-width: 0` 이 있으면
+    // 단계가 한 글자 폭까지 줄어 "프로 / 필" 로 쪼개진다. 어절 사이에서만 줄바꿈하고, 그래도
+    // 모자라면 목록이 가로로 스크롤된다 - 페이지가 넘치지 않는다.
+    overflow-x: auto;
+    scrollbar-width: none;
+    // Safari 18.2 미만(구형 iOS 인앱 웹뷰 포함)은 scrollbar-width 를 모른다
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .stepper_step,
+    .stepper_content,
+    .stepper_text {
+      min-width: auto;
+    }
+
+    .stepper_label,
+    .stepper_description {
+      overflow-wrap: normal;
     }
 
     // 마지막 단계는 선이 없으니 내용 폭만 - 1/N 을 차지하면 오른쪽이 비어 보인다.
@@ -139,19 +164,63 @@ $indicator: 28px;
       flex: 0 1 auto;
     }
 
-    // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 인디케이터 세로 중심에 맞춘다.
-    .stepper_step:not(:last-child)::after {
-      content: "";
-      flex: 1;
-      height: token.$border_width_standard;
-      margin-top: calc($indicator / 2);
-      margin-left: token.$spacing_8;
-      background: token.$color_border_default;
+    // 마지막을 뺀 단계가 남은 폭을 선으로 채운다. 선은 라벨 줄에 붙인다 - 단계 끝(설명 포함)에서
+    // 시작하면 설명이 라벨보다 길 때 "계정 ······· ——" 처럼 라벨과 선 사이가 떠서 어느 단계의
+    // 선인지 흐려진다. 내용 · 텍스트가 남은 폭을 받아 라벨 줄이 단계 끝까지 닿게 한다.
+    .stepper_step:not(:last-child) {
+      .stepper_content,
+      .stepper_text {
+        flex: 1;
+      }
+
+      .stepper_label {
+        display: flex;
+        align-items: flex-start;
+        gap: token.$spacing_8;
+
+        &::after {
+          content: "";
+          flex: 1;
+          // 인디케이터 세로 중심 - 라벨이 두 줄로 접혀도 선은 첫 줄에 남는다.
+          // `.stepper_text` 의 padding-top($text_offset) 만큼 라벨이 내려와 있다.
+          margin-top: calc(#{$indicator} / 2 - #{$text_offset});
+          // 좁아서 목록이 스크롤될 때도 선이 0 으로 사라지지 않게 - 어디까지 왔는지가 선으로도 읽힌다
+          min-width: token.$spacing_16;
+          height: token.$border_width_standard;
+          background: token.$color_border_default;
+        }
+      }
     }
 
-    // 지나온 구간의 선은 진행 색 - 어디까지 왔는지 선으로도 읽힌다.
-    .stepper_step_done:not(:last-child)::after {
-      background: token.$color_accent_default;
+    // 지나온 구간의 선은 완료 체크와 같은 초록 - 어디까지 왔는지 선으로도 읽히고, 체크(초록)와
+    // 선(검정)이 따로 놀지 않는다.
+    .stepper_step_done:not(:last-child) .stepper_label::after {
+      background: token.$color_status_success_on_container;
+    }
+
+    // 폰 폭에서 네 단계 라벨 · 설명을 한 줄에 다 두면 단계마다 80px 남짓이라 설명이 어절마다
+    // 꺾여 세로로 늘어졌다 (#1058). 지금 단계만 글을 보이고 나머지는 번호 · 선만 남긴다.
+    // 숨긴 글은 화면에서만 빠진다 - 스크린리더는 단계 이름을 그대로 읽고, 선(라벨 ::after)도 남는다.
+    @include token.compact {
+      .stepper_step:not(.stepper_step_active) {
+        .stepper_label_text,
+        .stepper_description {
+          @include token.visually_hidden;
+        }
+
+        // 글이 빠진 단계는 내용 폭이 인디케이터뿐이라 선이 남은 폭을 고르게 나눠 갖는다
+        .stepper_label {
+          gap: 0;
+        }
+      }
+
+      // 모두 마치면(current >= 단계 수) 지금 단계가 없다 - 그때는 마지막 단계 글을 보여 어디서 끝났는지 남긴다
+      &:not(:has(.stepper_step_active)) .stepper_step:last-child {
+        .stepper_label_text,
+        .stepper_description {
+          @include token.visually_hidden_reset;
+        }
+      }
     }
   }
 
@@ -179,8 +248,9 @@ $indicator: 28px;
       transform: translateX(-50%);
     }
 
+    // 가로와 같은 완료 초록
     .stepper_step_done:not(:last-child) .stepper_indicator::before {
-      background: token.$color_accent_default;
+      background: token.$color_status_success_on_container;
     }
   }
 }

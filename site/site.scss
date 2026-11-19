@@ -1,0 +1,1352 @@
+@use "src/styles/token" as token;
+
+// 문서 사이트 자체도 DS 토큰만 쓴다 - 다크 모드가 공짜로 따라온다.
+// 꼴은 로고 육면체에서 왔다 - 30° 등각 점 격자를 예제 무대 · 미리보기의 바닥으로 깔고, 나머지는 조용히 둔다.
+
+$frame: 1220px; // 틀 최대 폭
+$top_height: 64px; // 상단 바 높이 - 사이드바의 sticky 위치 · 높이가 이 값에 맞춰진다
+$nav_width: 248px;
+$line: token.$border_width_standard solid token.$color_border_default;
+$mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+// 로고 육면체의 30° 등각 점 격자. 가로 24px, 세로 24·sin60 ≈ 20.78px 간격의 점을 두 겹 엇갈려 찍는다
+// 예제 무대 - 바탕은 앱 바탕(bg_solid)이다. 컴포넌트는 그 위를 기준으로 만들어져 bg_solid_dim 을 자기 채움(SegmentedControl
+// 트랙 · Badge · Stepper 표시 …)으로 쓴다 - 무대도 그 회색이면 같은 색이라 묻힌다 (#1089). 무대는 점 무늬로만 구분한다
+@mixin iso_floor {
+  background-color: token.$color_bg_solid;
+  background-image:
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px),
+    radial-gradient(circle, token.$color_border_hover 1px, transparent 1.5px);
+  background-size: 24px 41.57px;
+  background-position:
+    0 0,
+    12px 20.78px;
+}
+
+// 문서 글은 어절 단위로만 줄을 바꾼다. DS 의 wrap_keep_all 은 overflow-wrap: anywhere 라 좁은 칸에서
+// 변수명 · 영단어를 글자 중간에서 자른다 - 여기서는 한 줄에 다 안 들어가는 낱말만 마지막 수단으로 끊는다.
+@mixin text_wrap {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+body {
+  margin: 0;
+  @include text_wrap;
+  background: token.$color_bg_solid;
+  color: token.$color_text_body;
+  font-family: token.$font_family_primary;
+  @include token.body_medium;
+}
+
+code {
+  font-family: $mono;
+  // 코드 안 한글(기본값 문구 등)도 어절로 - keep-all 은 라틴 글자에는 영향이 없다
+  word-break: keep-all;
+  overflow-wrap: normal;
+  font-size: 0.875em;
+  padding: 1px token.$spacing_4;
+  border-radius: token.$radius_xs;
+  background: token.$color_bg_solid_dim;
+  color: token.$color_text_heading;
+}
+
+// 좁은 폭 미리보기 iframe
+.preview body {
+  padding: token.$spacing_16;
+}
+
+// ── 셸: 가운데 틀 + 상단 바 + 사이드바 ────────────────────────────────────
+
+.site {
+  display: grid;
+  grid-template-columns: $nav_width minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  max-width: $frame;
+  min-height: 100vh;
+  margin-inline: auto;
+
+  @include token.compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.site_top {
+  grid-column: 1 / -1;
+  position: sticky;
+  top: 0;
+  z-index: token.$z_content;
+  display: grid;
+  // 로고 | 빈 칸 | 검색 · 링크 · 테마. 페이지 이동은 사이드바가 맡는다
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: token.$spacing_24;
+  align-items: center;
+  box-sizing: border-box;
+  height: $top_height;
+  padding-right: token.$spacing_16;
+  background: token.$color_bg_solid;
+  border-bottom: $line;
+
+  @include token.compact {
+    gap: token.$spacing_8;
+    padding-left: token.$spacing_16;
+  }
+}
+
+.site_brand {
+  // 1fr 칸을 다 차지하면 로고 오른쪽 빈자리까지 눌린다
+  justify-self: start;
+  padding-left: token.$spacing_24;
+  color: token.$color_text_heading;
+  text-decoration: none;
+  @include token.body_medium_medium;
+  @include token.text_nowrap;
+
+  @include token.compact {
+    padding-left: 0;
+  }
+}
+
+.site_top_actions {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+}
+
+.site_nav {
+  position: sticky;
+  top: $top_height;
+  align-self: start;
+  box-sizing: border-box;
+  max-height: calc(100dvh - #{$top_height});
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  display: grid;
+  gap: token.$spacing_24;
+  padding: token.$spacing_24 token.$spacing_12 token.$spacing_48;
+  border-right: $line;
+
+  @include token.compact {
+    position: static;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+    display: flex;
+    gap: token.$spacing_4;
+    padding: token.$spacing_8 token.$spacing_16;
+    border-right: none;
+    border-bottom: $line;
+  }
+
+  a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: token.$spacing_8;
+    padding: token.$spacing_6 token.$spacing_12;
+    border-radius: token.$radius_sm;
+    color: token.$color_text_caption;
+    text-decoration: none;
+    @include token.body_small;
+    transition:
+      color token.$transition_fast,
+      background-color token.$transition_fast;
+
+    &:hover {
+      color: token.$color_text_heading;
+    }
+
+    &[aria-current="page"] {
+      background: token.$color_bg_solid_dim;
+      color: token.$color_text_heading;
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: token.$focus_ring;
+    }
+
+    @include token.compact {
+      white-space: nowrap;
+    }
+  }
+}
+
+.site_nav_group {
+  display: grid;
+  gap: token.$spacing_2;
+
+  @include token.compact {
+    display: flex;
+  }
+}
+
+.site_nav_title {
+  margin: 0 0 token.$spacing_4;
+  padding: 0 token.$spacing_12;
+  color: token.$color_text_heading;
+  @include token.body_small_bold;
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.tabular_nums;
+  }
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+.site_nav_name {
+  color: token.$color_text_caption;
+  font-size: 12px; // ponytail: caption 보다 한 단계 작은 타이포 토큰이 없다
+  font-weight: 400;
+  opacity: 0.8;
+  @include token.text_nowrap;
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+.site_main {
+  min-width: 0;
+}
+
+// 첫 화면 - 사이드바 없이 본문이 폭을 다 쓴다
+.site_top_link {
+  padding: token.$spacing_6 token.$spacing_8;
+  border-radius: token.$radius_sm;
+  color: token.$color_text_body;
+  text-decoration: none;
+  @include token.body_small_medium;
+
+  &:hover {
+    color: token.$color_text_heading;
+    background: token.$color_bg_solid_dim;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  @include token.compact {
+    display: none;
+  }
+}
+
+// ── 헤더 검색 ───────────────────────────────────────────────────────────
+
+.site_search_button {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  width: 240px;
+  height: 32px;
+  justify-self: end;
+  padding: 0 token.$spacing_6 0 token.$spacing_12;
+  border: $line;
+  border-radius: token.$radius_sm;
+  background: token.$color_bg_solid;
+  color: token.$color_text_caption;
+  font: inherit;
+  cursor: pointer;
+  @include token.body_small;
+  transition: border-color token.$transition_fast;
+
+  span {
+    flex: 1;
+    text-align: left;
+  }
+
+  kbd {
+    padding: 0 token.$spacing_4;
+    border: $line;
+    border-radius: token.$radius_xs;
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  &:hover {
+    border-color: token.$color_text_caption;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+
+  // 헤더가 비좁으면 아이콘만 - 메뉴 링크가 검색 칸에 가려지지 않게
+  @media (max-width: 999px) {
+    width: 32px;
+    margin-left: 0;
+    justify-content: center;
+    padding: 0;
+
+    span,
+    kbd {
+      display: none;
+    }
+  }
+}
+
+.site_search {
+  display: grid;
+  gap: token.$spacing_12;
+}
+
+.site_search_list {
+  display: grid;
+  gap: token.$spacing_2;
+  max-height: min(420px, 60dvh);
+  overflow-y: auto;
+}
+
+.site_search_item {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_12;
+  padding: token.$spacing_8 token.$spacing_12;
+  border-radius: token.$radius_sm;
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    background: token.$color_bg_solid_dim;
+  }
+}
+
+.site_search_title {
+  flex: 1;
+  color: token.$color_text_heading;
+  @include token.body_medium_medium;
+
+  span {
+    margin-left: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.body_small;
+  }
+}
+
+.site_search_group,
+.site_search_enter {
+  color: token.$color_text_caption;
+  @include token.body_small;
+}
+
+.site_search_empty {
+  margin: token.$spacing_8 0;
+  color: token.$color_text_caption;
+  text-align: center;
+}
+
+// ── 문서 페이지: 구역마다 가로선 ─────────────────────────────────────────
+
+.doc_block {
+  padding: token.$spacing_40 token.$spacing_48;
+  border-bottom: $line;
+
+  @include token.compact {
+    padding: token.$spacing_32 token.$spacing_16;
+  }
+
+  > h2 {
+    margin: 0;
+    color: token.$color_text_heading;
+    font-size: 24px; // ponytail: Geist 구역 제목 크기 - 타이포 토큰에 24px 굵은 제목이 생기면 그걸로
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: -0.02em;
+    scroll-margin-top: calc(#{$top_height} + #{token.$spacing_16});
+  }
+
+  > h2 + * {
+    margin-top: token.$spacing_16;
+  }
+
+  > h2 + .doc_block_desc {
+    margin-top: token.$spacing_8;
+  }
+}
+
+.doc_block_desc {
+  margin: 0 0 token.$spacing_16;
+  color: token.$color_text_caption;
+  @include text_wrap;
+}
+
+.doc_head_actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: token.$spacing_12;
+  margin-top: token.$spacing_20;
+}
+
+.doc_head {
+  padding-top: token.$spacing_48;
+  padding-bottom: token.$spacing_48;
+
+  h1 {
+    margin: 0;
+    color: token.$color_text_heading;
+    font-size: 40px; // ponytail: 디스플레이 크기 토큰이 없다
+    font-weight: 800;
+    line-height: 48px;
+    letter-spacing: -0.035em;
+  }
+}
+
+.doc_name {
+  margin-left: token.$spacing_8;
+  color: token.$color_text_caption;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.doc_lede {
+  margin: token.$spacing_12 0 0;
+  color: token.$color_text_caption;
+  font-size: 18px;
+  line-height: 28px;
+  @include text_wrap;
+}
+
+// ── 예제 상자: 무대 + 아래 "코드 보기" 줄 + 펼친 코드 ───────────────────────
+
+.doc_demo {
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+}
+
+// 첫 예제의 "조절" - 미리보기와 막대 사이에 가로로 흐르는 컨트롤 줄
+.pg_controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: token.$spacing_12 token.$spacing_20;
+  padding: token.$spacing_16;
+  border-top: $line;
+  background: token.$color_bg_solid;
+}
+
+.pg_item {
+  display: grid;
+  gap: token.$spacing_6;
+
+  code {
+    padding: 0;
+    background: none;
+    color: token.$color_text_caption;
+    font-size: 12px;
+  }
+
+  .dropdown {
+    min-width: 120px;
+  }
+}
+
+// boolean 은 이름 옆에 스위치 - 칸 높이를 값 목록 칸과 맞춘다
+.pg_item_bool {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.pg_more {
+  align-self: center;
+  padding: token.$spacing_4 token.$spacing_8;
+  border: none;
+  border-radius: token.$radius_sm;
+  background: none;
+  color: token.$color_text_body;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  @include token.body_small;
+
+  &:hover {
+    color: token.$color_text_heading;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.doc_demo_toggles {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+}
+
+// 켜진 조절 버튼은 눌린 표면 - 지금 이 박스가 조합 데모라는 표시
+.doc_demo_adjust[aria-pressed="true"] {
+  background: token.$color_bg_solid;
+  color: token.$color_text_heading;
+  box-shadow: inset 0 0 0 token.$border_width_standard token.$color_border_default;
+}
+
+.doc_demo_tuning {
+  display: grid;
+  place-items: center;
+}
+
+// 예제 무대 - 등각 격자 바닥 위에 컴포넌트를 올린다
+.doc_demo_stage {
+  @include iso_floor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  box-sizing: border-box;
+  overflow-x: auto;
+  padding: token.$spacing_32 token.$spacing_24;
+}
+
+.doc_demo_inline {
+  width: 100%;
+}
+
+.doc_demo_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: token.$spacing_8;
+  flex-wrap: wrap;
+  min-height: 44px;
+  padding: 0 token.$spacing_8 0 token.$spacing_4;
+  border-top: $line;
+  background: token.$color_bg_solid_dim;
+}
+
+.doc_demo_toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: token.$spacing_6;
+  padding: token.$spacing_6 token.$spacing_8;
+  border: none;
+  border-radius: token.$radius_sm;
+  background: none;
+  color: token.$color_text_body;
+  font: inherit;
+  cursor: pointer;
+  @include token.body_small;
+
+  svg {
+    transition: transform token.$transition_base token.$easing_enter;
+  }
+
+  &[aria-expanded="true"] svg {
+    transform: rotate(90deg);
+  }
+
+  &:hover {
+    color: token.$color_text_heading;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: token.$focus_ring;
+  }
+}
+
+.doc_demo_actions {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_4;
+}
+
+.doc_code {
+  margin: 0;
+  padding: token.$spacing_16 token.$spacing_20;
+  overflow-x: auto;
+  border-top: $line;
+  background: token.$color_bg_solid;
+  tab-size: 2;
+
+  code {
+    padding: 0;
+    background: none;
+    color: token.$color_text_heading;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+}
+
+.doc_frame {
+  max-width: 100%;
+  border: token.$border_width_standard dashed token.$color_border_default;
+  border-radius: token.$radius_sm;
+  background: token.$color_bg_solid;
+}
+
+// ── 표 ───────────────────────────────────────────────────────────────────
+
+.doc_table_wrap {
+  overflow-x: auto;
+  border: $line;
+  border-radius: token.$radius_md;
+}
+
+.doc_table {
+  width: 100%;
+  border-collapse: collapse;
+  @include token.body_small;
+
+  th,
+  td {
+    padding: token.$spacing_12 token.$spacing_16;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: $line;
+    @include text_wrap;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  th {
+    color: token.$color_text_caption;
+    font-weight: 500;
+  }
+
+  td:first-child code {
+    white-space: nowrap;
+  }
+}
+
+// props 표는 열 폭을 정해 둔다 - auto 면 설명 칸 폭이 내용으로 정해져, BalancedText 의 nowrap 줄이 열을 넓히고
+// inline-block 줄로 물러나 그 칸 안에서 페이지 검색이 줄 경계를 건너지 못한다 (#1083)
+.doc_props_table {
+  table-layout: fixed;
+
+  // 열 비율에 안쪽 여백까지 넣는다 - 아니면 칸마다 여백만큼 커져 설명 칸이 좁아진다
+  th {
+    box-sizing: border-box;
+  }
+
+  th:nth-child(1) {
+    width: 22%;
+  }
+
+  th:nth-child(2) {
+    width: 24%;
+  }
+
+  th:nth-child(3) {
+    width: 14%;
+  }
+
+  // 열이 고정이라 아주 긴 이름("selectableRangeUntilTodaySrText")은 칸 안에서 끊는다 - 95% 는 한 줄에 들어간다
+  td:first-child code {
+    white-space: normal;
+  }
+
+  // 구분 기호 없는 긴 이름("HTMLInputAutoCompleteAttribute")은 칸 안에서 글자 사이로 끊는다
+  td code {
+    overflow-wrap: anywhere;
+  }
+
+  // 따옴표 값("오늘까지 선택 가능")도 좁은 기본값 칸에서는 공백에서 줄을 바꾼다 - 넘치는 것보다 낫다
+  td:nth-child(3) .code_nobreak {
+    white-space: normal;
+  }
+}
+
+.doc_props_title {
+  margin: token.$spacing_24 0 token.$spacing_8;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.doc_type {
+  white-space: normal;
+}
+
+.doc_required {
+  margin-left: token.$spacing_6;
+  color: token.$color_status_error_on_surface;
+  @include token.body_small_medium;
+}
+
+.doc_pick_self {
+  color: token.$color_text_heading;
+  font-weight: 600;
+}
+
+.doc_pick_other {
+  color: token.$color_text_caption;
+}
+
+.doc_notes {
+  margin: 0;
+  padding-left: token.$spacing_20;
+  display: grid;
+  gap: token.$spacing_8;
+  @include text_wrap;
+}
+
+// ── 컴포넌트 홈 ──────────────────────────────────────────────────────────
+
+.ov_group > h2 span {
+  margin-left: token.$spacing_6;
+  color: token.$color_text_caption;
+  font-size: 16px;
+  font-weight: 400;
+  @include token.tabular_nums;
+}
+
+.ov_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: token.$spacing_16;
+}
+
+.ov_card {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color token.$transition_fast;
+
+  &:hover {
+    border-color: token.$color_text_caption;
+  }
+
+  &:has(.ov_title:focus-visible) {
+    box-shadow: token.$focus_ring;
+  }
+}
+
+// 첫 예제를 60% 로 줄여 그림처럼 보여 준다.
+// transform 이 fixed 요소(BottomNav · TopLoading)의 기준 상자가 되어 카드 밖으로 새지 않는다.
+$preview_scale: 0.6;
+
+.ov_preview {
+  @include iso_floor;
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  border-bottom: $line;
+  pointer-events: none;
+}
+
+.ov_scale {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: calc(100% / #{$preview_scale});
+  min-height: calc(100% / #{$preview_scale});
+  box-sizing: border-box;
+  padding: token.$spacing_24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale($preview_scale);
+  transform-origin: top left;
+}
+
+.ov_scale_frame {
+  padding: 0;
+}
+
+.ov_frame {
+  display: block;
+  width: 100%;
+  height: calc(140px / #{$preview_scale});
+  border: none;
+}
+
+.ov_text {
+  display: grid;
+  gap: token.$spacing_4;
+  padding: token.$spacing_12 token.$spacing_16 token.$spacing_16;
+}
+
+.ov_title {
+  color: token.$color_text_heading;
+  text-decoration: none;
+
+  // 카드 전체를 누르는 면으로
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  @include token.body_medium_bold;
+
+  span {
+    margin-left: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-weight: 400;
+    @include token.body_small;
+  }
+}
+
+.ov_desc {
+  color: token.$color_text_caption;
+  @include token.body_small;
+  @include text_wrap;
+}
+
+// ── 시작하기 가이드 · 코드 상자 ─────────────────────────────────────────
+
+.doc_prose {
+  > p {
+    max-width: 720px;
+    margin: token.$spacing_16 0 0;
+    line-height: 1.7;
+    @include text_wrap;
+  }
+
+  a {
+    color: token.$color_text_heading;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+// 표 바로 아래 붙는 예시 코드
+.doc_table_wrap + .doc_snippet {
+  margin-top: token.$spacing_16;
+}
+
+.doc_snippet {
+  position: relative;
+  border: $line;
+  border-radius: token.$radius_md;
+  overflow: hidden;
+
+  .doc_code {
+    border-top: none;
+    padding-right: token.$spacing_48;
+    background: token.$color_bg_solid_dim;
+  }
+}
+
+// 가로로 스크롤되는 코드가 버튼 밑으로 지나가도 글자와 겹쳐 보이지 않게 바탕을 깐다
+.doc_snippet_copy {
+  position: absolute;
+  top: token.$spacing_8;
+  right: token.$spacing_8;
+  background: token.$color_bg_solid_dim;
+}
+
+.doc_code_prose {
+  white-space: pre-wrap;
+
+  code {
+    font-family: token.$font_family_primary;
+    font-size: token.$font_size_14;
+    @include text_wrap;
+  }
+}
+
+// ── 첫 화면: 칸마다 그 페이지의 축소판 ──────────────────────────────────
+
+.landing_install {
+  max-width: 420px;
+  margin-top: token.$spacing_24;
+}
+
+.landing_meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: token.$spacing_16;
+  margin: token.$spacing_16 0 0;
+  color: token.$color_text_caption;
+  @include token.body_small;
+
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+
+    &:hover {
+      color: token.$color_text_heading;
+    }
+  }
+}
+
+// 칸 사이 선은 1px 간격 사이로 비치는 테두리 색 - 칸마다 테두리를 그리면 맞닿는 곳이 2px 이 된다
+// 두 칸은 840px 이상부터 - 그보다 좁으면 사이드바 옆 본문이 500px 남짓이라 한 칸이 250px 이 되어
+// 색 막대 줄이 칸을 넘는다
+.bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: token.$border_width_standard;
+  background: token.$color_border_default;
+  border-bottom: $line;
+
+  @include token.from_expanded {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.bento_tile {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: token.$spacing_4;
+  padding: token.$spacing_24 token.$spacing_24 token.$spacing_32;
+  background: token.$color_bg_solid;
+  color: inherit;
+  text-decoration: none;
+  transition: background token.$transition_fast;
+
+  @include token.hoverable {
+    &:hover {
+      background: token.$color_bg_solid_dim;
+    }
+  }
+
+  &:focus-visible {
+    position: relative;
+    outline: none;
+    box-shadow: inset token.$focus_ring;
+  }
+}
+
+.bento_preview {
+  display: grid;
+  // minmax(0, …) - 줄바꿈 없는 코드 상자가 칸을 넓혀 테두리가 잘리지 않게
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  height: 168px;
+  margin-bottom: token.$spacing_16;
+  overflow: hidden;
+}
+
+.bento_title {
+  color: token.$color_text_heading;
+  @include token.body_medium_bold;
+}
+
+.bento_desc {
+  color: token.$color_text_caption;
+  @include token.body_small;
+  @include text_wrap;
+}
+
+.bento_parts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: token.$spacing_12;
+  max-width: 320px;
+}
+
+// 색 견본 - 네모 칩 아래 토큰 이름
+.bento_swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 56px);
+  gap: token.$spacing_12 token.$spacing_8;
+
+  > span {
+    display: grid;
+    justify-items: center;
+    gap: token.$spacing_4;
+    color: token.$color_text_caption;
+    font-family: $mono;
+    font-size: 11px;
+
+    span {
+      width: 100%;
+      height: 32px;
+      border: $line;
+      border-radius: token.$radius_sm;
+    }
+  }
+}
+
+.bento_type {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 120px));
+  border: token.$border_width_standard dashed token.$color_border_default;
+  border-radius: token.$radius_sm;
+
+  span {
+    display: grid;
+    place-items: center;
+    height: 64px;
+    color: token.$color_text_heading;
+
+    &:nth-child(odd) {
+      border-right: token.$border_width_standard dashed token.$color_border_default;
+    }
+    &:nth-child(-n + 2) {
+      border-bottom: token.$border_width_standard dashed token.$color_border_default;
+    }
+  }
+}
+
+.bento_type_heading {
+  @include token.heading_medium_bold;
+}
+
+.bento_type_body {
+  @include token.body_large;
+}
+
+.bento_type_caption {
+  color: token.$color_text_caption !important;
+  @include token.body_small;
+}
+
+.bento_type_num {
+  @include token.body_medium_medium;
+  @include token.tabular_nums;
+}
+
+// 간격 단계 - 등각 바닥(A 육면체) 위에 단계 크기의 칸을 바닥선에 맞춰 세운다
+.bento_steps_floor {
+  @include iso_floor;
+  display: flex;
+  align-items: flex-end;
+  gap: token.$spacing_12;
+  padding: token.$spacing_20 token.$spacing_24 token.$spacing_12;
+  border: $line;
+  border-radius: token.$radius_md;
+
+  > span {
+    display: grid;
+    justify-items: center;
+    gap: token.$spacing_6;
+    color: token.$color_text_caption;
+    font-family: $mono;
+    font-size: 11px;
+
+    span {
+      background: token.$color_text_heading;
+      border-radius: token.$radius_xs;
+    }
+  }
+}
+
+.bento_icons {
+  display: grid;
+  grid-template-columns: repeat(8, 18px);
+  gap: token.$spacing_20 token.$spacing_16;
+  color: token.$color_text_body;
+}
+
+.bento_code {
+  box-sizing: border-box;
+  width: min(100%, 320px);
+  margin: 0;
+  padding: token.$spacing_12 token.$spacing_16;
+  border: $line;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid_dim;
+  color: token.$color_text_body;
+  font-family: $mono;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.bento_code_file {
+  color: token.$color_text_caption;
+}
+
+.bento_steps {
+  display: grid;
+  gap: token.$spacing_8;
+  width: min(100%, 220px);
+
+  span {
+    padding: token.$spacing_8 token.$spacing_12;
+    border: $line;
+    border-radius: token.$radius_md;
+    color: token.$color_text_body;
+    font-family: $mono;
+    font-size: 12px;
+  }
+}
+
+.doc_block > h2 + .ov_grid {
+  margin-top: token.$spacing_16;
+}
+
+// ── Foundation ──────────────────────────────────────────────────────────
+
+.fd_table {
+  td {
+    vertical-align: middle;
+  }
+
+}
+
+// 구간 표의 폭 · 믹스인 이름은 짧아 한 줄로 둔다 (그래서 <wbr> 을 넣는 Code 대신 맨 <code>)
+.fd_nowrap {
+  white-space: nowrap;
+}
+
+.fd_preview_cell {
+  width: 88px;
+}
+
+// 토큰 칸 - SCSS 이름이 주, CSS 변수가 그 아래 보조. 복사해 쓰는 글자라 줄을 바꾸지 않는다
+.fd_name,
+.fd_css {
+  display: block;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.fd_name {
+  font-weight: 500;
+}
+
+.fd_css {
+  margin-top: token.$spacing_4;
+  background: none;
+  padding: 0;
+  color: token.$color_text_caption;
+}
+
+.fd_desc {
+  display: block;
+  margin-top: token.$spacing_2;
+  color: token.$color_text_caption;
+  @include text_wrap;
+}
+
+.fd_value {
+  color: token.$color_text_caption;
+  font-family: $mono;
+  font-size: 12px;
+  @include text_wrap;
+}
+
+.fd_dark {
+  display: block;
+  margin-top: token.$spacing_2;
+  opacity: 0.8;
+}
+
+// 라이트 · 다크 값을 나란히 - 페이지 테마와 상관없이 원값으로 칠한다
+.fd_swatch {
+  display: inline-flex;
+  overflow: hidden;
+  border: $line;
+  border-radius: token.$radius_sm;
+  // 흰색 · 반투명 색도 보이게 바둑판 위에 칠한다
+  background: repeating-conic-gradient(token.$color_border_default 0 25%, token.$color_bg_solid 0 50%) 0 0 / 8px 8px;
+
+  span {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.fd_bar {
+  display: block;
+  min-width: 1px;
+  height: 12px;
+  border-radius: token.$radius_xs;
+  background: token.$color_text_heading;
+}
+
+.fd_box {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: $line;
+  background: token.$color_bg_solid_dim;
+}
+
+.fd_box_raised {
+  border: none;
+  border-radius: token.$radius_md;
+  background: token.$color_bg_solid;
+}
+
+.fd_motion {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: token.$radius_full;
+  background: token.$color_text_heading;
+
+  tr:hover & {
+    transform: translateX(48px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none !important;
+  }
+}
+
+.fd_type_list {
+  display: grid;
+  border: $line;
+  border-radius: token.$radius_md;
+}
+
+.fd_type_row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: token.$spacing_4 token.$spacing_16;
+  align-items: baseline;
+  padding: token.$spacing_16 token.$spacing_20;
+
+  & + & {
+    border-top: $line;
+  }
+
+  code {
+    justify-self: end;
+  }
+
+  .fd_value {
+    grid-column: 1 / -1;
+  }
+}
+
+.fd_type_sample {
+  color: token.$color_text_heading;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 따옴표로 묶인 값("year-month")은 한 덩어리
+.code_nobreak {
+  white-space: nowrap;
+}
+
+// 설명이 여러 문단이면 문단 사이만 띄운다
+.doc_table_para {
+  margin: 0;
+
+  & + & {
+    margin-top: token.$spacing_8;
+  }
+}
+
+// 본문 열이 좁으면(사이드바가 있는 태블릿 폭 포함) 네 칸 표는 설명 칸이 가로 스크롤 밖으로 밀려
+// 보이지 않았다 - 행마다 이름 · 타입 · 기본값을 한 줄에, 설명을 그 아래 전체 폭으로 쌓는다.
+// tr 의 display 를 바꾸면 일부 브라우저(예전 WebKit)가 표 시맨틱을 버릴 수 있다. 명시 role 은 biome a11y(noRedundantRoles)와
+// 부딪혀 두지 않았다 - 보조기기에서 표로 안 읽히는 게 확인되면 640px 이하에서만 role 을 붙인다
+.doc_table_wrap {
+  container-type: inline-size;
+}
+
+@container (max-width: 640px) {
+  .doc_table:has(th) {
+    thead {
+      @include token.visually_hidden;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: token.$spacing_12;
+      padding: token.$spacing_12 token.$spacing_16;
+      border-bottom: $line;
+    }
+
+    tr:last-child {
+      border-bottom: none;
+    }
+
+    td {
+      padding: 0;
+      border-bottom: none;
+    }
+
+    // 타입은 이름 옆, 기본값 · 설명은 아래 전체 폭
+    td:nth-child(3),
+    td:nth-child(4) {
+      grid-column: 1 / -1;
+      margin-top: token.$spacing_4;
+    }
+
+    td:nth-child(3):empty {
+      display: none;
+    }
+
+    td:nth-child(3):not(:empty)::before {
+      content: "기본값 ";
+      color: token.$color_text_caption;
+    }
+
+    td:nth-child(4) {
+      color: token.$color_text_body;
+    }
+  }
+}
+
+// 마지막 줄에 한 어절만 남지 않게 - 문단 · 소개 문장
+p,
+li,
+td {
+  text-wrap: pretty;
+}
+
+.site_brand {
+  display: flex;
+  align-items: center;
+  gap: token.$spacing_8;
+
+  img {
+    flex-shrink: 0;
+  }
+}
+
+// 검은 로고 - 다크 테마에서는 뒤집어 흰색으로
+@mixin dark_logo {
+  .site_brand img {
+    filter: invert(1);
+  }
+}
+
+[data-theme="dark"] {
+  @include dark_logo;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark_logo;
+  }
+}
+
+// 소개 문장 · 제목처럼 짧은 글은 줄 길이를 고르게 - 마지막 줄에 한 어절만 남지 않는다
+.doc_lede,
+.doc_lede .sentences_item,
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+// 떨어지면 안 되는 짧은 조각("PHP)에서도") - Md 가 묶는다
+.nowrap {
+  white-space: nowrap;
+}

@@ -30,7 +30,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		const m = Modal(modalMarkup());
 
 		m?.open();
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.body.dataset.btOpenModals).toBe("1");
 
 		m?.close();
@@ -71,7 +71,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		const m = Modal(modalMarkup());
 		m?.open();
 
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.body.style.paddingRight).toBe("15px");
 		expect(document.documentElement.style.getPropertyValue("--bt-scrollbar-width")).toBe("15px");
 
@@ -110,7 +110,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(document.body.dataset.btOpenModals).toBe("2");
 
 		b?.close();
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 		expect(document.documentElement.style.scrollbarGutter).toBe("auto");
 		expect(document.body.style.paddingRight).toBe("15px");
 
@@ -169,7 +169,7 @@ describe("Modal - 바디 스크롤 잠금", () => {
 
 		// destroy 가 자기 몫의 잠금만 반납한 상태 - below 는 아직 열려 있다.
 		expect(document.body.dataset.btOpenModals).toBe("1");
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		// 등록이 남아 있으면 최상단이 파괴된 모달의 close 라, Escape 가 그것을 깨워 below 는
 		// 열린 채로 두고 below 몫의 잠금만 반납한다. 등록이 빠졌으면 below 가 최상단이라 닫힌다.

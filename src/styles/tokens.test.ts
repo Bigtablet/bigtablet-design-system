@@ -119,4 +119,24 @@ describe("design tokens", () => {
 			`var(--bt-font-family, ${root})`,
 		);
 	});
+
+	// #1045 - 라이트 스켈레톤(#F3F3F3)이 회색 페이지 바탕(#F4F4F4)과 같아 자리가 사라졌다.
+	// 비텍스트 대비 기준(3:1)까지는 아니어도 두 바탕 모두에서 눈에 띄게 달라야 한다.
+	// 실측: #E5E5E5 는 회색 바탕 1.145 · 흰 바탕 1.26, 예전 #F3F3F3 은 회색 바탕 1.009
+	it("light skeleton stays visible on both the gray page and white surfaces", () => {
+		const luminance = (hex: string) => {
+			const [r, g, b] = [1, 3, 5].map((i) => {
+				const c = Number.parseInt(hex.slice(i, i + 2), 16) / 255;
+				return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+			});
+			return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b ?? 0);
+		};
+		const contrast = (a: string, b: string) => {
+			const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+			return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05);
+		};
+		for (const bg of [colors.bg.solid, colors.bg.solidDim]) {
+			expect(contrast(colors.skeleton.base, bg)).toBeGreaterThanOrEqual(1.1);
+		}
+	});
 });

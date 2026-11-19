@@ -360,7 +360,7 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		rerender(
 			<Drawer open={false} onClose={() => {}}>
@@ -370,11 +370,11 @@ describe("Drawer", () => {
 		// 닫기 시작 시점에는 아직 잠겨 있어야 한다 - 퇴출 애니메이션 동안 오버레이가 계속
 		// 렌더되므로, 여기서 풀면 `scrollbar-gutter` 보정이 사라져 거터에 빈 띠가 보이고
 		// 배경 콘텐츠가 그만큼 튄다.
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		// 퇴출이 끝나(shouldRender false) 완전히 unmount 되면 풀린다.
 		await act(async () => anim.finish());
-		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		await waitFor(() => expect(document.documentElement.style.overflow).not.toBe("hidden"));
 	});
 
 	it("releases the scroll lock under reduced motion", async () => {
@@ -391,7 +391,7 @@ describe("Drawer", () => {
 				Content
 			</Drawer>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		rerender(
 			<Drawer open={false} onClose={() => {}}>
@@ -399,7 +399,7 @@ describe("Drawer", () => {
 			</Drawer>,
 		);
 
-		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		await waitFor(() => expect(document.documentElement.style.overflow).not.toBe("hidden"));
 		expect(document.body.dataset.openModals).toBeUndefined();
 	});
 
@@ -414,7 +414,7 @@ describe("Drawer", () => {
 				</Drawer>
 			</>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		// 안쪽만 닫힘 - 바깥이 아직 열려 있으므로 잠금 유지 (카운터 1)
 		rerender(
@@ -427,7 +427,7 @@ describe("Drawer", () => {
 				</Drawer>
 			</>,
 		);
-		expect(document.body.style.overflow).toBe("hidden");
+		expect(document.documentElement.style.overflow).toBe("hidden");
 
 		// 마지막까지 닫히면 원래 overflow 복원 (카운터 0)
 		rerender(
@@ -440,7 +440,7 @@ describe("Drawer", () => {
 				</Drawer>
 			</>,
 		);
-		await waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+		await waitFor(() => expect(document.documentElement.style.overflow).not.toBe("hidden"));
 	});
 
 	// ── Reduced motion ───────────────────────────────────────────────────────
@@ -503,7 +503,7 @@ describe("Drawer", () => {
 			await waitFor(() => {
 				expect(onExited).toHaveBeenCalledTimes(1);
 				expect(document.querySelector(".drawer_panel")).toBeNull();
-				expect(document.body.style.overflow).not.toBe("hidden");
+				expect(document.documentElement.style.overflow).not.toBe("hidden");
 			});
 
 			// 한 번만 - 즉시 경로에서 onRest 가 두 번 돌지 않는다.
@@ -531,7 +531,7 @@ describe("Drawer", () => {
 			rerender(el(false));
 			await waitFor(() => {
 				expect(document.querySelector(".drawer_panel")).toBeNull();
-				expect(document.body.style.overflow).not.toBe("hidden");
+				expect(document.documentElement.style.overflow).not.toBe("hidden");
 				expect(document.body.dataset.openModals).toBeUndefined();
 			});
 			expect(onExited).toHaveBeenCalledTimes(1);

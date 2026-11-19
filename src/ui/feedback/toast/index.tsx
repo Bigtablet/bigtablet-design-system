@@ -4,7 +4,8 @@ import { AlertTriangle, Bell, CheckCircle2, Info, X, XCircle } from "lucide-reac
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
-import { renderSentences, useIsMounted, usePresence } from "../../../utils";
+import { renderSentences } from "../../../text";
+import { useIsMounted, usePresence } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
 
@@ -21,7 +22,7 @@ export interface ToastAction {
 }
 
 export interface ToastOptions {
-	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity` 면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
+	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity`(또는 0 이하)면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
 	duration?: number;
 	/** 메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다 */
 	action?: ToastAction;
@@ -62,7 +63,10 @@ export interface ToastProviderProps {
 	closeAriaLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
-	/** 넓은 화면에서 뜨는 자리 (기본값: "top-right"). 머리 오른쪽 주 동작 버튼을 가리면 "bottom-right" */
+	/**
+	 * 넓은 화면에서 뜨는 자리 (기본값: "bottom-right"). 위는 머리 오른쪽 주 동작 버튼을 가려 아래가 기본이다 (#1073).
+	 * 하단에 고정 UI(쿠키 배너 등)가 있어 겹치면 "top-right" - 폰 폭은 어느 값이든 하단이다
+	 */
 	placement?: ToastPlacement;
 }
 
@@ -131,7 +135,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	}, [item.dismissing, close]);
 
 	// Infinity 는 CSS 시간으로 쓸 수 없고, 진행 바가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
-	const autoDismisses = Number.isFinite(item.duration);
+	// 0 이하도 같다 - 0ms 진행 바는 animationend 로 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071)
+	const autoDismisses = Number.isFinite(item.duration) && item.duration > 0;
 
 	return (
 		<div ref={rootRef} className="toast_item" data-state={visible ? "open" : "closed"}>
@@ -247,7 +252,7 @@ export const ToastProvider = ({
 	maxCount = 5,
 	closeAriaLabel: closeAriaLabelProp,
 	regionLabel: regionLabelProp,
-	placement = "top-right",
+	placement = "bottom-right",
 }: ToastProviderProps) => {
 	const t = useLocaleText();
 	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");
@@ -336,13 +341,14 @@ export const ToastProvider = ({
 			{isMounted &&
 				createPortal(
 					// 컨테이너는 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(닫기 · 액션 버튼 포함)를 감싸고
-					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다
-					// biome-ignore lint/a11y/useSemanticElements: <section> would create unwanted nesting in portal; role=region is the landmark for the toast list
+					// 안쪽 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 아래 숨은 영역 둘이 맡는다.
+					// 랜드마크는 토스트가 있을 때만 - 비어 있으면 스크린리더 랜드마크 목록에 빈 "알림" 이 늘 떴다 (#1059).
+					// 공지 영역은 첫 알림이 읽히도록 처음부터 둔다
+					// <section> 이 아니라 div + role - 포탈 안에서 섹션 중첩을 만들지 않는다
 					<div
 						className="toast_container"
 						data-placement={placement}
-						role="region"
-						aria-label={regionLabel}
+						{...(toasts.length > 0 && { role: "region", "aria-label": regionLabel })}
 					>
 						<ToastAnnouncer toasts={toasts} />
 						{toasts.map((item) => (

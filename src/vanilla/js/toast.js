@@ -34,6 +34,20 @@ const ANNOUNCE_MS = 1000;
 /** 공지 영역을 막 만든 뒤 첫 공지까지 기다리는 시간 - 라이브 리전은 내용보다 먼저 DOM 에 있어야 한다 */
 const ANNOUNCE_WARMUP_MS = 100;
 /**
+ * 토스트가 하나라도 있을 때만 리전을 이름 있는 랜드마크로 둔다 - 비어 있으면 스크린리더 랜드마크 목록에
+ * 빈 "알림" 이 남았다 (#1059, React 와 같음). 공지 영역(announcer)은 첫 알림을 위해 그대로 둔다
+ */
+function syncLandmark(region) {
+	if (region.querySelector(":scope > .bt-toast")) {
+		region.setAttribute("role", "region");
+		region.setAttribute("aria-label", region.dataset.btLabel);
+	} else {
+		region.removeAttribute("role");
+		region.removeAttribute("aria-label");
+	}
+}
+
+/**
  * 문구 한 줄을 공지 영역에 넣고 잠시 뒤 뺀다. 그 사이 토스트가 닫혔으면(isClosed) 넣지 않는다.
  * 리전의 `_btPending` 이 있으면(공지 영역을 막 만들었다) 거기 모았다가 준비되면 호출 순서대로 넣는다
  */
@@ -48,15 +62,15 @@ function announce(region, announcer, line, isClosed) {
 }
 
 /**
- * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 위에 최신이 위로 쌓이고(`<html
- * data-bt-toast-placement="bottom-right">` 면 오른쪽 아래), 최대
+ * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 아래에 최신이 위로 쌓이고(`<html
+ * data-bt-toast-placement="top-right">` 면 넓은 화면에서 오른쪽 위), 최대
  * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
  * 포커스가 있으면 멈춘다(WCAG 2.2.1 - CSS).
  *
  * @param {string} message - 본문 (텍스트로 넣는다 - HTML 은 해석하지 않는다)
  * @param {"success"|"error"|"warning"|"info"|"neutral"} [tone="neutral"]
  * @param {Object} [options]
- * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity` 면 닫기 버튼·dismiss 로만 닫힌다
+ * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity`(또는 0 이하)면 닫기 버튼·dismiss 로만 닫힌다
  * @param {{label: string, onClick: Function}} [options.action] - 메시지 옆 텍스트 버튼. 누르면 실행 후 닫힌다
  * @param {string} [options.closeLabel="닫기"] - 닫기 버튼 aria-label
  * @param {string} [options.regionLabel="알림"] - 토스트 리전 이름. 리전을 처음 만들 때만 쓴다
@@ -76,10 +90,11 @@ export function Toast(message, tone = "neutral", options = {}) {
 	if (!region) {
 		region = document.createElement("div");
 		region.className = "bt-toast-container";
-		region.setAttribute("role", "region");
-		region.setAttribute("aria-label", regionLabel);
 		document.body.appendChild(region);
 	}
+	// 랜드마크 이름은 토스트가 있을 때만 붙인다(syncLandmark) - 서버가 그린 리전이면 그 이름을 이어 쓴다
+	if (!region.dataset.btLabel)
+		region.dataset.btLabel = region.getAttribute("aria-label") || regionLabel;
 	// 리전은 랜드마크일 뿐 라이브 리전이 아니다 - 예전에는 aria-live 로 항목 전체(버튼 포함)를 감싸고 안쪽
 	// 메시지가 다시 status · alert 라 라이브 리전이 겹쳤다 (#994). 공지는 안쪽 숨은 영역 둘이 맡는다.
 	// 예전 버전이 만든(또는 서버가 그린) 리전에도 붙인다
@@ -142,7 +157,10 @@ export function Toast(message, tone = "neutral", options = {}) {
 		line.remove();
 		// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게
 		item.setAttribute("inert", "");
-		afterExit([item], () => item.remove());
+		afterExit([item], () => {
+			item.remove();
+			syncLandmark(region);
+		});
 	}
 
 	if (action) {
@@ -171,8 +189,9 @@ export function Toast(message, tone = "neutral", options = {}) {
 	closeBtn.addEventListener("click", dismiss);
 	item.appendChild(closeBtn);
 
-	// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다
-	if (Number.isFinite(duration)) {
+	// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
+	// 0 이하도 같다 - 0ms 막대는 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071, React 와 같음)
+	if (Number.isFinite(duration) && duration > 0) {
 		const progress = document.createElement("div");
 		progress.className = `bt-toast__progress bt-toast__progress--${safeTone}`;
 		progress.style.setProperty("--bt-toast-duration", `${duration}ms`);
@@ -183,6 +202,7 @@ export function Toast(message, tone = "neutral", options = {}) {
 
 	item._btDismiss = dismiss;
 	region.prepend(item);
+	syncLandmark(region);
 	// 넘친 오래된 것은 잘라내지 않고 같은 퇴출 경로로 내보낸다 - 안의 포커스가 body 로 떨어지지 않게
 	for (const el of $$('.bt-toast:not([data-state="closed"])', region).slice(TOAST_MAX_COUNT)) {
 		el._btDismiss?.();

@@ -12,7 +12,8 @@ describe("Textarea auto-grow (Chromium)", () => {
 					aria-label="메모"
 					minRows={1}
 					maxRows={20}
-					defaultValue={"가나다라마바사 ".repeat(8)}
+					// 짧은 어절 - keep-all 은 어절 단위로만 끊어서 긴 어절이면 두 폭에서 줄 수가 같다
+					defaultValue={"가나 다라 ".repeat(16)}
 				/>
 			</div>,
 		);

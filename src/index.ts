@@ -10,6 +10,7 @@ import "./styles/link.scss";
 
 // Hooks / Utils
 
+export { Sentences, type SentencesProps, sentenceText } from "./text";
 export type { PolymorphicProps, PolymorphicRef } from "./utils";
 export {
 	type ClipboardStatus,

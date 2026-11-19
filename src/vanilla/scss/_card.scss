@@ -8,6 +8,7 @@
    variant(accent / glass / outline)는 그 위에 얹는 표면 스타일이다(기본 = default).
    기본값도 React 와 동일하게 shadow=sm / padding=md - 끄려면 --shadow-none / --p-none. */
 .bt-card {
+  @include token.wrap_keep_all;
   background: var(--bt-color-background);
   border-radius: var(--bt-radius-lg);
   box-shadow: var(--bt-elevation-1);

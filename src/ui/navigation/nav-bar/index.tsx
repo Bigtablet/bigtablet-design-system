@@ -4,7 +4,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import type * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { iconSize } from "../../../styles/icon";
-import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
+import { cn, revealInline, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import type { PolymorphicProps } from "../../../utils/polymorphic";
 import { useTopInset } from "../../../utils/use-top-inset";
 import "./style.scss";
@@ -113,6 +113,8 @@ export const NavBar = ({
 			const active = links.querySelector<HTMLElement>(".nav_bar_link_active");
 			if (active) {
 				setIndicator({ left: active.offsetLeft, width: active.offsetWidth });
+				// 링크 영역이 가로로 스크롤될 때 활성 링크가 잘린 자리에 있으면 보이게 옮긴다
+				revealInline(links, active);
 			} else {
 				setIndicator(null);
 			}
@@ -141,7 +143,15 @@ export const NavBar = ({
 		const handleResize = () => update();
 		window.addEventListener("resize", handleResize);
 
+		// 웹폰트가 마운트 뒤에 들어오면 링크 폭이 바뀌는데 `.nav_bar_links` 박스는 그대로라 위
+		// 어느 것도 발화하지 않는다 - 폴백 글꼴 폭으로 잰 indicator 가 어긋난 채 남는다.
+		let disposed = false;
+		void document.fonts?.ready.then(() => {
+			if (!disposed) update();
+		});
+
 		return () => {
+			disposed = true;
 			clearTimeout(mountTimer);
 			mo.disconnect();
 			ro?.disconnect();

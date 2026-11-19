@@ -1,6 +1,7 @@
 "use client";
 
 import type * as React from "react";
+import { renderSentences } from "../../../text";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
@@ -59,7 +60,7 @@ export const PageHeader = ({
 		<div className="page_header_bar">
 			<div className="page_header_titles">
 				<h1 className="page_header_title">{title}</h1>
-				{description && <p className="page_header_description">{description}</p>}
+				{description && <p className="page_header_description">{renderSentences(description)}</p>}
 			</div>
 			{actions && <div className="page_header_actions">{actions}</div>}
 		</div>

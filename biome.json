@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -73,27 +73,34 @@
 	},
 	"overrides": [
 		{
-			"includes": ["packages/*/src/**"],
+			"includes": ["src/text/**", "!**/*.test.ts", "!**/*.test.tsx"],
 			"linter": {
 				"rules": {
 					"style": {
-						"noExportedImports": "off"
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"../**/utils",
+											"../**/utils/**",
+											"../**/ui",
+											"../**/ui/**",
+											"../index",
+											"../../index"
+										],
+										"message": "src/text 는 바깥을 쓰지 않습니다 - 따로 떼어 낼 수 있게 src/text 안에서 해결합니다 (#1095)"
+									}
+								]
+							}
+						}
 					}
 				}
 			}
 		},
 		{
-			"includes": ["apps/*/src/shared/**"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noExportedImports": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.stories.tsx"],
+			"includes": ["**/*.test.ts", "**/*.test.tsx"],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -119,7 +126,24 @@
 			}
 		},
 		{
-			"includes": [".storybook/**", "**/*.html"],
+			"includes": ["site/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noArrayIndexKey": "off",
+						"noShadowRestrictedNames": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
+					},
+					"performance": {
+						"noImgElement": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.html"],
 			"linter": {
 				"rules": {
 					"a11y": {

@@ -110,6 +110,17 @@ const restoreScrollbarWidthVar = (html: HTMLElement, body: HTMLElement): void =>
 	}
 };
 
+/**
+ * 계산된 overflow 가 한 축이라도 `visible` 이 아닌가. `html` · `body` 가 둘 다 그렇다면 `body` 가
+ * 문서의 스크롤 상자다(앱이 `html { height: 100%; overflow: hidden } body { overflow: auto }` 로
+ * 둔 경우). jsdom 처럼 값을 계산하지 않는 환경의 `""` 는 `visible` 로 본다.
+ */
+const isScrollBox = (el: HTMLElement): boolean => {
+	// shorthand 도 본다 - jsdom 은 축 값을 계산하지 않고 shorthand 만 돌려준다
+	const { overflow, overflowX, overflowY } = window.getComputedStyle(el);
+	return [overflow, overflowX, overflowY].some((v) => v !== "" && v !== "visible");
+};
+
 /** 오버레이 하나가 열릴 때 호출. 중첩되면 카운터만 올린다. */
 export function lockBodyScroll(): void {
 	if (typeof document === "undefined") return;
@@ -138,7 +149,12 @@ export function lockBodyScroll(): void {
 			html.style.setProperty(SCROLLBAR_WIDTH_VAR, `${inset}px`);
 		}
 
-		body.style.overflow = "hidden";
+		// 잠금은 `html` 이 맡는다(아래). `body` 는 원래 스크롤 상자였을 때만 같이 잠근다 (#1043).
+		// `html` 을 `hidden` 으로 바꾸면 `body` 의 overflow 는 더는 뷰포트로 넘어가지 않고 `body`
+		// 상자에 걸린다. 그때 `body` 가 `hidden`(또는 리셋의 `overflow-x: hidden`)이면 `body` 가 새
+		// 스크롤 상자가 되고, sticky 헤더 · 사이드바가 스크롤되지 않는 `body` 를 기준으로 붙어
+		// 뷰포트가 스크롤된 만큼 위로 밀려난다. 그래서 평소엔 `visible` 로 못박아 평범한 상자로 둔다.
+		body.style.overflow = isScrollBox(html) && isScrollBox(body) ? "hidden" : "visible";
 		// `html` 에도 건다. `body` 의 overflow 는 `html` 이 `visible` 일 때만 뷰포트로 전파되므로,
 		// 앱이 `html { overflow-y: auto }` 나 흔한 리셋 `html { overflow-x: hidden }`(다른 축을
 		// `auto` 로 만든다)을 쓰면 body 만 잠가도 문서가 그대로 스크롤된다 - 실측으로 잠금 중

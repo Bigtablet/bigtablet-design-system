@@ -27,18 +27,18 @@ const toastRect = async (placement?: ToastPlacement) => {
 };
 
 describe("Toast placement (Chromium, #998)", () => {
-	it("sits 16px from the top right by default", async () => {
+	it("sits 16px from the bottom right by default (#1073)", async () => {
 		await page.viewport(1280, 800);
 		const r = await toastRect();
 		expect(1280 - (r?.right ?? 0)).toBe(16);
-		expect(r?.top).toBe(16);
+		expect(800 - (r?.bottom ?? 0)).toBe(16);
 	});
 
-	it("sits 16px from the bottom right with placement=bottom-right", async () => {
+	it("sits 16px from the top right with placement=top-right", async () => {
 		await page.viewport(1280, 800);
-		const r = await toastRect("bottom-right");
+		const r = await toastRect("top-right");
 		expect(1280 - (r?.right ?? 0)).toBe(16);
-		expect(800 - (r?.bottom ?? 0)).toBe(16);
+		expect(r?.top).toBe(16);
 	});
 
 	it("scrolls inside the list instead of pushing the newest toast off screen (#1000)", async () => {

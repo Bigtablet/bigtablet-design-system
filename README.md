@@ -18,25 +18,32 @@ Crafted for clarity. Built on tokens. Ships with dark mode.
   <a href="https://github.com/Bigtablet/bigtablet-design-system/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Bigtablet/bigtablet-design-system/ci.yml?style=for-the-badge&color=10b981&labelColor=000" alt="ci" /></a>
 </p>
 
-[**Documentation**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Storybook](https://bigtablet.github.io/bigtablet-design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇰🇷 한국어](./README_KR.md)
+[**Documentation**](./docs/COMPONENTS.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Docs site](https://bigtablet.github.io/bigtablet-design-system/)&nbsp;&nbsp;·&nbsp;&nbsp;[NPM](https://www.npmjs.com/package/@bigtablet/design-system)&nbsp;&nbsp;·&nbsp;&nbsp;[🇰🇷 한국어](./README_KR.md)
 
 </div>
 
 <br />
 
 ```tsx
-import { ThemeProvider, Button, Modal, useToast } from "@bigtablet/design-system";
+import { ThemeProvider, ToastProvider, Button, useToast } from "@bigtablet/design-system";
 // No CSS import needed - each component brings its own CSS plus the shared theme variables,
 // so a page that uses only Button ships about 3 kB of DS CSS (gzip) instead of 20 kB.
 // Next.js with webpack: add the package to `experimental.optimizePackageImports` (Turbopack needs nothing).
 
 export default function App() {
-  const toast = useToast();
   return (
     <ThemeProvider>
-      <Button onClick={() => toast.success("Saved")}>Save</Button>
+      <ToastProvider>
+        <SaveButton />
+      </ToastProvider>
     </ThemeProvider>
   );
+}
+
+// useToast() needs a ToastProvider above it - call it in a child, not where the provider is rendered.
+function SaveButton() {
+  const toast = useToast();
+  return <Button onClick={() => toast.success("Saved")}>Save</Button>;
 }
 ```
 
@@ -46,7 +53,7 @@ A complete React + TypeScript design system maintained by Bigtablet for internal
 
 ## What's inside
 
-- **40+ components** across forms, display, feedback, navigation, overlay, and layout<br />
+- **60+ components** across forms, display, feedback, navigation, overlay, and layout<br />
 - **13 token domains** - colors, typography, spacing, motion, radius, elevation, and more - exposed as SCSS variables and CSS custom properties (plus a SCSS-only `layout` domain)<br />
 - **Light + dark mode** out of the box. `[data-theme="dark"]` or `prefers-color-scheme`, no theme provider required (but available via `ThemeProvider` for runtime toggling)<br />
 - **Vanilla JS bundle** for non-React backends - Thymeleaf, JSP, PHP, Django<br />
@@ -104,13 +111,14 @@ showAlert({ title: "Delete?", showCancel: true, onConfirm: ... });
 ## Components
 
 <table>
-<tr><td><b>Forms</b></td><td>Button · IconButton · CopyButton · TextField · Textarea · Checkbox · Radio · RadioGroup · SegmentedControl · Toggle · Dropdown · FilterBar · DatePicker · DateCalendar · FileInput · ImageCropper · OtpInput</td></tr>
-<tr><td><b>Display</b></td><td>Card · MediaCard · Hero · Avatar · Badge · Chip · ListItem · Table · Divider · Icon · Accordion</td></tr>
-<tr><td><b>Feedback</b></td><td>Alert · Toast · InlineAlert · Spinner · TopLoading · LinearProgress · Skeleton · EmptyState · ErrorState</td></tr>
-<tr><td><b>Navigation</b></td><td>Tabs · Sidebar · BottomNav · NavBar · Breadcrumb · Menu · Pagination</td></tr>
-<tr><td><b>Overlay</b></td><td>Modal · Drawer · Tooltip · Popover</td></tr>
-<tr><td><b>Layout</b></td><td>Container · Section · Stack · Grid</td></tr>
-<tr><td><b>System</b></td><td>ThemeProvider</td></tr>
+<tr><td><b>General</b></td><td>Button · CopyButton · IconButton</td></tr>
+<tr><td><b>Forms</b></td><td>Checkbox · Combobox · DateCalendar · DatePicker · DateRangePicker · Dropdown · Field · FileInput · FilterBar · Form · ImageCropper · OtpInput · Radio · RadioGroup · SegmentedControl · TagInput · Textarea · TextField · TimePicker · Toggle</td></tr>
+<tr><td><b>Display</b></td><td>Accordion · Avatar · Badge · Card · Chip · DataView · DescriptionList · Divider · Hero · Icon · ListItem · MediaCard · Prose · Stat · Table · Timeline</td></tr>
+<tr><td><b>Feedback</b></td><td>Alert (<code>useAlert</code> · <code>useConfirm</code>) · EmptyState · ErrorState · InlineAlert · LinearProgress · Skeleton · Spinner · Toast (<code>useToast</code>) · TopLoading</td></tr>
+<tr><td><b>Navigation</b></td><td>BottomNav · Breadcrumb · Menu · NavBar · Pagination · Sidebar · Stepper · Tabs</td></tr>
+<tr><td><b>Overlay</b></td><td>Drawer · Modal · Popover · Tooltip</td></tr>
+<tr><td><b>Layout</b></td><td>AppShell · Container · Grid · PageHeader · Section · Stack</td></tr>
+<tr><td><b>System</b></td><td>LocaleProvider · ThemeProvider</td></tr>
 </table>
 
 →&nbsp;Full API · [`docs/COMPONENTS.md`](./docs/COMPONENTS.md)
@@ -170,8 +178,9 @@ import "@bigtablet/design-system/style.css"; // defines the --bt-* values
 For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<!-- @4 tracks the latest 4.x. Pin an exact version like @4.9.1 to freeze rendering -->
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
@@ -184,13 +193,13 @@ For server-rendered apps (Thymeleaf, JSP, PHP, Django):
 
 ```bash
 pnpm install
-pnpm storybook        # localhost:6006
+pnpm site             # docs site, localhost:6007
 pnpm test             # Vitest unit
-pnpm test:storybook   # a11y + Playwright
+pnpm test:browser     # a11y (axe on docs examples) + layout, Playwright
 pnpm build            # tsup + SCSS copy
 ```
 
-The published Storybook lives at **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system)** and redeploys from `main`.
+The docs site lives at **[bigtablet.github.io/bigtablet-design-system](https://bigtablet.github.io/bigtablet-design-system/)** and redeploys from `main`.
 
 <br />
 
@@ -198,8 +207,8 @@ The published Storybook lives at **[bigtablet.github.io/bigtablet-design-system]
 
 | | |
 |---|---|
-| 📚 [Components](./docs/COMPONENTS.md) | Props API + usage per component |
-| 🔄 [Migration](./docs/MIGRATION.md) | Deprecated prop migration guide |
+| 📚 [Components](./docs/COMPONENTS.md) | When to use, examples, and props per component |
+| 🔄 [Migration](./docs/MIGRATION.md) | Upgrade checklist + what to change per version |
 | 🎨 [Theming](./docs/THEMING.md) | Light/dark theme system guide |
 | 🏗️ [Architecture](./docs/ARCHITECTURE.md) | Project structure + design principles |
 | 🤝 [Contributing](./docs/CONTRIBUTING.md) | Dev setup + workflow |

@@ -175,12 +175,19 @@ export const SidebarItem = <T extends React.ElementType = "button">(props: Sideb
 	const anchorRest = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
 	const Tag = (as ?? (anchorRest.href != null ? "a" : "button")) as React.ElementType;
 
+	// 아이콘이 없으면 접혔을 때 라벨 첫 글자를 아이콘 자리에 둔다 - 라벨이 숨어 빈 알약만 남지 않게 (#1091)
+	const initial = !icon && typeof children === "string" ? [...children.trim()][0] : undefined;
+
 	const inner = (
 		<>
 			{icon && (
 				<span className="sidebar_item_icon" aria-hidden="true">
 					{icon}
 				</span>
+			)}
+			{/* 글자는 CSS(::before)로 그린다 - 텍스트 노드면 한 글자 라벨("홈")이 두 번 들어가 getByText 가 둘을 찾는다 */}
+			{initial && (
+				<span className="sidebar_item_initial" data-initial={initial} aria-hidden="true" />
 			)}
 			<span className="sidebar_item_label">{children}</span>
 			{trailing && <span className="sidebar_item_trailing">{trailing}</span>}

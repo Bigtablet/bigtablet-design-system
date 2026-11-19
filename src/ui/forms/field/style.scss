@@ -5,12 +5,19 @@
 // 두 벌이 되면 Field 를 쓴 화면과 안 쓴 화면의 간격이 갈린다.
 
 .field {
+  @include token.wrap_keep_all;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: token.$spacing_6;
   width: 100%;
   font-family: token.$font_family_primary;
+
+  // 입력은 대부분 내용 폭이고 fullWidth 로 늘린다 - 그래서 위는 flex-start 다. Dropdown 만 "부모 폭을
+  // 채운다" 가 약속이고 폭을 바꿀 prop 이 없어, flex-start 에 눌려 선택값 길이만큼 줄었다 (#1037).
+  > .dropdown {
+    align-self: stretch;
+  }
 
   // ── Label ────────────────────────────────────────────────────────────────
 

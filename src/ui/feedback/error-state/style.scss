@@ -6,6 +6,7 @@
 // variant 는 EmptyState size 에 대응한다 - page ≈ lg, widget ≈ sm (간격·제목 크기가 같다).
 
 .error_state {
+  @include token.wrap_keep_all;
   @include state_block;
 
   &_icon {

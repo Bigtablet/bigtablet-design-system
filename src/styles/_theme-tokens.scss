@@ -75,9 +75,9 @@
 	--bt-color-accent-on-surface: #FFFFFF;
 	// CSS custom property 기반 - `[data-theme="dark"]` 에서 자동 전환.
 	// fallback 값은 standalone import (colors 미포함) 시 light 동작 보장.
-	--bt-color-skeleton-base: #F3F3F3;
-	--bt-color-skeleton-wave: #F0F0F0;
-	--bt-color-skeleton-highlight: #FAFAFA;
+	--bt-color-skeleton-base: #E5E5E5;
+	--bt-color-skeleton-wave: #E2E2E2;
+	--bt-color-skeleton-highlight: #F0F0F0;
 	// 컴포넌트·소비자용 - `var(--bt-*, 원값)`. `:root { --bt-spacing-16: 20px }` 처럼 덮어쓰면 따라간다.
 	// 문자열이라 Sass 산술(`* 2`, 단항 `-`)이 안 된다 - `calc(2 * #{$x})` 를 쓰거나 원값(`_base_`)을 쓴다.
 	--bt-spacing-0: 0px;

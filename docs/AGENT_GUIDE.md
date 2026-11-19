@@ -46,7 +46,8 @@ grep -A30 "interface TextareaProps" node_modules/@bigtablet/design-system/dist/i
 
 # what changed, and which lines need a visual check
 #   entries starting with "(렌더 변경)" alter rendering with no API change
-cat node_modules/@bigtablet/design-system/CHANGELOG.md   # or the GitHub releases page
+# CHANGELOG is not in the npm package - read it on GitHub:
+# https://github.com/Bigtablet/bigtablet-design-system/blob/main/CHANGELOG.md  (or the releases page)
 ```
 
 ---
@@ -80,7 +81,7 @@ export default function RootLayout({ children }) {
 Providers needed:
 - `ThemeProvider` - required for runtime dark mode toggle via `useTheme()`. If you only need OS-preference-based dark mode, you can omit it (CSS handles it).
 - `AlertProvider` - required for `useAlert()` confirmation dialogs.
-- `ToastProvider` - required for `useToast()` snackbar notifications. `placement="bottom-right"` (default `"top-right"`) when toasts would cover a header's primary action.
+- `ToastProvider` - required for `useToast()` snackbar notifications. Toasts sit bottom-right by default; pass `placement="top-right"` when a fixed bottom UI (cookie banner, chat button) would cover them.
 
 ---
 
@@ -89,8 +90,8 @@ Providers needed:
 Always reference tokens - never inline a hex value.
 
 Two surfaces, and they are **not** interchangeable:
-- **SCSS tokens** (`@use "src/styles/token" as token;` → `token.$spacing_16`) - the full set. Use these in component `style.scss`.
-- **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](./THEMING.md#레이아웃런타임-계약-변수).
+- **SCSS tokens** (`@use "@bigtablet/design-system/scss/token" as token;` → `token.$spacing_16`) - the full set. Use these in your SCSS.
+- **CSS custom properties** - read them with `var()` in consumer CSS. `--bt-radius-*` / `--bt-spacing-*` / `--bt-font-family` are emitted by both bundles and can be overridden on `:root`; font-size / line-height CSS vars exist only in the Vanilla bundle. Full contract incl. runtime behaviour: [THEMING.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/THEMING.md#레이아웃런타임-계약-변수).
 
 <!-- css-var-claim: 아래 한 줄이 React entry 의 변수 계열 전부를 주장한다. scripts/check-css-vars.sh 가 이 줄만 검사하므로 예시 변수명을 이 줄에 두지 말 것 - 예시가 계열을 채워 검사가 무력화된다. -->
 The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--bt-focus-*`, `--bt-sidebar-*`, `--bt-bottom-nav-*`, `--bt-bottom-inset*`, `--bt-scrollbar-width`, `--bt-z-*`, `--bt-radius-*`, `--bt-spacing-*`, `--bt-font-family`.
@@ -99,16 +100,16 @@ The React entry's `style.css` emits only `--bt-color-*`, `--bt-elevation-*`, `--
 
 | Token | Light | Dark | When to use |
 |-------|-------|------|-------------|
-| `--bt-color-bg-solid` | white | navy_900 | Page/card background |
-| `--bt-color-bg-solid-dim` | neutral_50 | navy_800 | Elevated surface (panels, dimmed sections) |
-| `--bt-color-text-heading` | neutral_900 | white | Primary headings, body emphasis |
-| `--bt-color-text-body` | neutral_700 | navy_200 | Body text, descriptions |
-| `--bt-color-text-caption` | neutral_500 | neutral_400 | Captions, helper text, placeholders |
-| `--bt-color-border-default` | neutral_200 | navy_700 | Card borders, dividers |
-| `--bt-color-border-hover` | neutral_400 | navy_400 | Hover state borders |
+| `--bt-color-bg-solid` | #FFFFFF | #0A0A0A | Page/card background |
+| `--bt-color-bg-solid-dim` | #F4F4F4 | #141414 | Elevated surface (panels, dimmed sections) |
+| `--bt-color-text-heading` | #121212 | white 95% | Primary headings, body emphasis |
+| `--bt-color-text-body` | #666666 | #B3B3B3 | Body text, descriptions |
+| `--bt-color-text-caption` | #6F6F6F | #808080 | Captions, helper text, placeholders |
+| `--bt-color-border-default` | #E5E5E5 | #333333 | Card borders, dividers |
+| `--bt-color-border-hover` | #B3B3B3 | #777777 | Hover state borders |
 | `--bt-color-brand-primary` | #121212 | #121212 (same) | Button "filled" bg (intentional, both themes) |
 | `--bt-color-brand-on-primary` | white | white (same) | Text on `brand-primary` |
-| `--bt-color-accent-default` | #121212 | white | Indicators that flip in dark (checked checkboxes, active progress) |
+| `--bt-color-accent-default` | #121212 | #FFFFFF | Indicators that flip in dark (checked checkboxes, active progress) |
 | `--bt-color-accent-on-surface` | white | #121212 | Text/icon on top of `accent-default` |
 | `--bt-color-status-success` | green | green (same) | Success states |
 | `--bt-color-status-warning` | amber | amber (same) | Warning states |
@@ -136,7 +137,7 @@ Every step has a CSS var (`--bt-radius-none` … `--bt-radius-full`) in both bun
 
 ### Elevation
 
-`--bt-elevation-level1` through `-level5`. Light = subtle dark drops. Dark = stronger blacks with larger spread for visibility on navy.
+`--bt-elevation-level1` through `-level5`. Light = subtle dark drops. Dark = stronger blacks with larger spread for visibility on the near-black canvas.
 
 ### Motion
 
@@ -197,7 +198,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
    - Pair `accent-default` with `accent-on-surface` for the foreground (auto-inverts)
 
 4. **Panel elevation in dark mode:**
-   - Page bg: `bg-solid` (navy_900)
+   - Page bg: `bg-solid` (#0A0A0A)
    - Elevated panel (dropdown, menu, modal): use the conditional pattern below
 
    ```scss
@@ -205,7 +206,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
      background: var(--bt-color-bg-solid);  // white in light
 
      [data-theme="dark"] & {
-       background: var(--bt-color-bg-solid-dim);  // navy_800 (lighter than canvas)
+       background: var(--bt-color-bg-solid-dim);  // #141414 (lighter than canvas)
      }
      @media (prefers-color-scheme: dark) {
        :root:not([data-theme]) & {
@@ -216,8 +217,7 @@ Reach for an inline style only when the value is genuinely dynamic (computed at 
    ```
 
 5. **Hardcoded whites/darks are allowed for intentional fixed surfaces:**
-   - Navy gradient avatars (decorative, brand-colored)
-   - Hero `_overlay_navy` (always dark gradient)
+   - Hero `overlay="dark"` (always dark gradient)
    - Tooltip body (`accent-strong` token already handles theme)
    - Destructive red modal buttons
 
@@ -260,7 +260,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 |-----------|---------|-----------|
 | `Card` | Generic container (header/body/footer composition). | `heading`, `variant` (default/accent/glass/outline - glass=frosted blur over colored bg, outline=transparent+border), `interactive` (hover-lift for clickable cards), `footer` + `footerAlign` (start/between/end), `bordered`, `shadow` (none/sm/md/lg), `padding` (none/sm/md/lg) |
 | `MediaCard` | Image + content card. | `image` (`{ src, alt }`, required), `imagePosition`, `aspectRatio`, `heading`, `eyebrow`, `meta`, `children` (body), `clickable`, `shadow`, `bordered` |
-| `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (dark/light/navy), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
+| `Hero` | Page-top hero section. | `title`, `subtitle`, `eyebrow`, `backgroundImage`, `overlay` (`true`/`dark`/`light`), `height` (sm/md/lg/full), `align`, `textColor` (auto/inverse/default), `primaryAction`, `secondaryAction` |
 | `Avatar` | User profile circle. | `name` (initials fallback), `src`, `size` (sm/md/lg), `shape` (circle/square) |
 | `Badge` | Number/status pill. | `shape` (dot/count/label), `tone` (accent/neutral/info/success/warning/error), `appearance` (solid/soft - soft = tint bg + dark text, both WCAG AA), `count` |
 | `Chip` | Tag/category pill. | `type` (interactive/static), `tone` (neutral/accent/info/success/warning/error - static only), `size` (sm/md), `selected`, `removable`, `leadingIcon` |
@@ -289,7 +289,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). `variant` (line default / fills). |
+| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). `variant` (line; `fills` is deprecated - it looks like SegmentedControl). |
 | `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`, `mode` (auto/static - auto transforms to bottom bar <600px). Children = `SidebarSection` + `SidebarItem`. |
 | `BottomNav` | Mobile bottom nav bar. | 2-5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
@@ -310,14 +310,18 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Container` | Centered max-width wrapper. | `size` (sm/md/lg/xl/full, default xl), `center` (default true) |
-| `Section` | Page section with vertical rhythm. | `spacing` (xs/sm/md/lg/xl), `bg` (default/dim/accent/navy/transparent) |
+| `Section` | Page section with vertical rhythm. | `spacing` (xs/sm/md/lg/xl), `bg` (default/dim/accent/inverted/transparent) |
 | `Stack` | 1D flex layout. | `direction` (horizontal/vertical), `gap`, `align`, `justify`, `wrap` |
 | `Grid` | CSS Grid layout. | `cols` (number or "auto"), `gap`, `minColWidth` (when `cols="auto"`) |
 
 ### Foundation
 
 - `ThemeProvider` - wraps app for runtime theme control. `defaultMode` (light/dark/system).
-- `useTheme()` - returns `{ mode, setMode, resolvedMode }`.
+- `useTheme()` - returns `{ mode, resolved, setMode }` (`resolved` = the applied `"light" | "dark"`).
+
+### Text
+
+- `<Sentences text="..." />` - wraps each sentence in an `inline-block` span so lines break between sentences (same rule Toast/Alert/`supportingText` use). Use it for app-drawn paragraphs instead of your own splitter. In tests, find split text with `getByText(sentenceText("full text"))`. The same rules (sentence split, keeping `~의` modifiers and determiners with the next word) are also exported from `@bigtablet/design-system/text`, including React-free `splitSentences` and `phraseRanges`.
 
 ---
 
@@ -353,7 +357,7 @@ For your own overlay, use the SCSS mixin. It uses the same curve as the componen
 // Enter + exit: keep it mounted with data-state="closed" until el.getAnimations() settle, then unmount.
 ```
 
-Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See `docs/MIGRATION.md`.
+Hover lift (what `useSpringHover` used to do) is plain CSS: `transform` on `:hover` / `:focus-visible` with `token.$duration_presence token.$easing_presence`. See [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md).
 
 **Reduced motion:** every component respects `prefers-reduced-motion: reduce`. `token.presence` turns its transition off there.
 
@@ -494,18 +498,16 @@ toast.error("Network error", 6000); // custom 6s duration
 
 ---
 
-## Storybook Reference
+## Docs Site Reference
 
-Stories are organized:
-- **Getting Started** - Installation, Introduction
-- **Cookbook** - Composition recipes (Form / Layout / Feedback / Data patterns)
-- **Examples** - Full page patterns (Admin Dashboard, Marketing landing)
-- **Foundation** - Token visualization (colors, spacing, typography, etc.)
-- **Components/{Category}/{Component}** - Each component's variants
+The docs site (`site/`, published at https://bigtablet.github.io/bigtablet-design-system/) has:
+- **Components** - one page per component: examples, when to use, props table, and an "adjust" toggle on the first example
+- **Tokens** - colors, spacing, typography, breakpoints and the other domains
+- **AI Agents** - setup files for Claude Code, Codex and Cursor
 
-Run locally: `pnpm storybook` (port 6006).
+Agent-readable docs ship in the package at `node_modules/@bigtablet/design-system/dist/llms/index.md` (same source as the site, same version as the install).
 
-**Note on Storybook Docs view:** Interactive states (hover, focus, animations) only show in Canvas view (individual story). Docs view renders static snapshots, so Spinner shows frozen, Tooltip won't appear, etc.
+Run locally: `pnpm site` (port 6007).
 
 ---
 
@@ -514,8 +516,8 @@ Run locally: `pnpm storybook` (port 6006).
 For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.css">
-<script src="https://unpkg.com/@bigtablet/design-system/dist/vanilla/bigtablet.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.css">
+<script src="https://unpkg.com/@bigtablet/design-system@4/dist/vanilla/bigtablet.min.js"></script>
 
 <button class="bt-button bt-button--md bt-button--filled">Filled</button>
 ```
@@ -524,7 +526,7 @@ Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
 Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), CopyButton, Card, Spinner, Pagination, DatePicker, FileInput.
 
-Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](./MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
+Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 
 JS API (auto-init on DOMContentLoaded, or manual):
 ```js
@@ -600,7 +602,7 @@ When asked to generate UI:
 
 ## Final Reminders
 
-- Read the [Components](./COMPONENTS.md) doc for full props API per component.
-- Storybook is the source of truth for visual behavior - `pnpm storybook` and explore.
+- Read the [Components](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md) doc for full props API per component.
+- The docs site examples are the source of truth for visual behavior - `pnpm site` and explore.
 - When in doubt, **use tokens, use components, use providers**. Don't reinvent.
 - Dark mode bugs are the most common failure mode - test both themes mentally before shipping code.

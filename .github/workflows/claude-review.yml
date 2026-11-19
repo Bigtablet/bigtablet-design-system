@@ -178,7 +178,7 @@ jobs:
             게시 형식은 "요약 코멘트 1개 + 라인별 인라인 코멘트" 다.
 
             이 저장소는 `@bigtablet/design-system` - React 19 + TypeScript 컴포넌트 라이브러리다
-            (tsup 2 번들: React `src/index.ts` + Vanilla JS `src/vanilla/bigtablet.js`, Storybook,
+            (tsup 2 번들: React `src/index.ts` + Vanilla JS `src/vanilla/bigtablet.js`, 문서 사이트 `site/`,
             `v*` 태그 기반 npm 배포). 단일 패키지이며 `src/ui` 아래 8 카테고리
             (display/feedback/forms/general/layout/navigation/overlay/system)로 컴포넌트를 둔다.
             리뷰 기준(반드시 참고): 루트 `CLAUDE.md`, `.claude/docs/*`. 다음 컨벤션 위반을 우선 지적한다:

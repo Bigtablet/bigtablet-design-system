@@ -2,6 +2,7 @@
 
 import type * as React from "react";
 import { useEffect, useRef, useState } from "react";
+import { renderSentences } from "../../../text";
 import { cn, keyActivationProps, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 
@@ -121,7 +122,7 @@ export const MediaCard = ({
 			<div className="media_card_body">
 				{eyebrow && <div className="media_card_eyebrow">{eyebrow}</div>}
 				{heading && <HeadingTag className="media_card_heading">{heading}</HeadingTag>}
-				{children && <div className="media_card_content">{children}</div>}
+				{children && <div className="media_card_content">{renderSentences(children)}</div>}
 				{meta && <div className="media_card_meta">{meta}</div>}
 			</div>
 		</div>
