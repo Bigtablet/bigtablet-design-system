@@ -62,7 +62,7 @@
 		"test:browser": "vitest run --project browser",
 		"test:visual": "vitest run --project visual",
 		"visual:accept": "scripts/accept-visual.sh",
-		"test:mutation": "pnpm --dir tools/mutation install --frozen-lockfile && tools/mutation/node_modules/.bin/stryker run",
+		"test:mutation": "pnpm --dir tools/mutation install --frozen-lockfile && tools/mutation/node_modules/.bin/stryker run tools/mutation/stryker.config.mjs",
 		"lint:css": "stylelint 'src/ui/**/*.scss' 'src/styles/**/*.scss' 'src/vanilla/**/*.scss'",
 		"check:css-vars": "scripts/check-css-vars.sh",
 		"check:defaults": "python3 scripts/check-prop-defaults.py",

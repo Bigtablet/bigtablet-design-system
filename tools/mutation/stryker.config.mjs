@@ -1,5 +1,5 @@
 /**
- * @fileoverview 뮤테이션 테스트 설정 - `pnpm test:mutation`
+ * @fileoverview 뮤테이션 테스트 설정 - `pnpm test:mutation` (저장소 루트에서 실행 - 아래 경로는 루트 기준)
  *
  * @description
  * 코드를 조금씩 바꾼 사본(뮤턴트)마다 단위 테스트를 돌려, 테스트가 그 변화를 잡는지(killed) 놓치는지
@@ -10,9 +10,9 @@
  */
 export default {
 	testRunner: "vitest",
-	// Stryker 는 저장소 의존성 밖 `tools/mutation` 에 따로 설치한다(이유는 그 폴더의 pnpm-workspace.yaml).
+	// Stryker 는 저장소 의존성 밖 이 폴더에 따로 설치한다(이유는 pnpm-workspace.yaml).
 	plugins: ["@stryker-mutator/vitest-runner"],
-	vitest: { configFile: "vitest.mutation.config.ts" },
+	vitest: { configFile: "tools/mutation/vitest.config.ts" },
 	mutate: [
 		"src/utils/**/*.{ts,tsx}",
 		"!src/utils/**/*.test.{ts,tsx}",
