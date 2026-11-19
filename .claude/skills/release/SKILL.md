@@ -16,7 +16,8 @@ merge commit 머지 → main 에 태그 → `release.yml` 이 npm publish + GitH
 
 - **미결 항목을 먼저 꺼낸다.** 보류한 것 · 설계 판단이 남은 것 · 리뷰가 남긴 후속 항목이 있으면 이 단계에서
   사용자에게 알리고 이번 릴리즈에 넣을지 묻는다. 태그를 푸시한 뒤에는 꺼내지 않는다.
-- 열린 릴리즈 PR 이 이미 있는지: `gh pr list --base main --head develop --state open`
+- 열린 릴리즈 PR 이 이미 있는지: `gh pr list --base main --head develop --state open`. 있으면 새로 만들지 않는다 -
+  head 가 develop 이라 2번의 deploy 커밋이 그 PR 에 실린다. 그 PR 을 이어 쓸지(제목 · 본문 갱신) 사용자에게 확인한다
 - main 에 develop 에 없는 내용이 없는지 - 출력이 비어야 한다. 있으면 먼저 `merge: main` 동기화 PR(head `main` → base `develop`)
   ```bash
   git fetch -q && git log --oneline --no-merges origin/develop..origin/main
@@ -49,6 +50,8 @@ CHANGELOG 는 머리말 바로 아래, 기존 첫 버전 섹션 위에 넣는다
 ```
 
 이 섹션이 그대로 GitHub Release 노트가 된다 (`release.yml` 이 잘라 쓴다) - 한국어로, 소비자 관점으로 쓴다.
+저장소 문서 링크는 `https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/...` 절대 URL 로 쓴다 -
+Release 본문에서는 `docs/X.md` 같은 상대 링크가 깨진다.
 내부 전용 변경(CI · `.claude` · 테스트)은 소비자에게 영향이 없으면 빼거나 한 줄로 묶는다.
 
 ```bash
@@ -77,7 +80,8 @@ gh pr create --base main --head develop --title "merge: release" --label Deploy 
 prop 제거를 minor 로 내는 경우 사내 저장소 사용처 grep 결과를 `## 검증` 에 적는다.
 
 - PR 이 열리면 `coverage-docs.yml` 이 `docs: refresh coverage figures` 커밋을 develop 에 올린다 - 그대로 PR 에 실린다.
-  로컬 develop 은 그 뒤 `git merge --ff-only origin/develop` 로 맞춘다
+  (수치가 같으면 커밋하지 않는다). 그 워크플로가 끝난 뒤 `git fetch -q && git merge -q --ff-only origin/develop` 로
+  로컬 develop 을 맞춘다 - fetch 없이는 `origin/develop` 이 예전 그대로다
 - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 PR 에 따라온다
 
 ## 4. 머지 - 사람 approve 뒤에만

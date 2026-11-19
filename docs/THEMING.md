@@ -259,6 +259,8 @@ import "@bigtablet/design-system/style.css"; // --bt-* 값을 정의합니다
 
 `tailwind.css` 는 `--bt-color-*` 를 `--color-bt-*` 로, `--bt-elevation-*` · `--bt-focus-ring*` 을 `--shadow-bt-*` 로, `--bt-radius-*` 를 `--radius-bt-*`(`rounded-bt-md`)로, `--bt-spacing-*` 를 `--spacing-bt-*`(`p-bt-16`)로, `--bt-font-family` 를 `--font-bt`(`font-bt`)로 잇습니다. 값은 `var()` 그대로라 다크 모드와 직접 덮어쓴 값을 따라갑니다. `dark:` 는 ThemeProvider 와 같은 조건(`data-theme="dark"`, `data-theme` 가 없으면 OS 다크)에 맞춰집니다.
 
+> `dark:` 는 **조상 중 어디든** 다크 조건이 있으면 걸립니다. 그래서 `targetSelector` 등으로 다크 영역 안(또는 `data-theme` 없이 OS 다크인 페이지 안)에 `data-theme="light"` 영역을 중첩하면, DS 컴포넌트와 `--bt-*` 값은 라이트로 돌아오지만 그 안의 `dark:` 유틸리티는 여전히 적용됩니다. 중첩한 라이트 영역 안에서는 `dark:` 대신 `--bt-*` 를 쓰는 유틸리티(`bg-bt-*` · `text-bt-*`)만으로 색을 맞춥니다.
+
 컴포넌트 CSS 는 `bigtablet` cascade layer(`theme, base, reset, bigtablet, components, utilities`) 안에 있어서, 유틸리티와 레이어 밖의 직접 작성한 CSS 가 특이도 싸움 없이 이깁니다: `<Button className="bg-bt-text-brand" />`.
 
 > 직접 작성한 요소 선택자 리셋(`* { padding: 0 }`, `button { background: none }`)과 전역 포커스 스타일(`:focus-visible { outline: 2px solid ... }`)은 `@layer reset { ... }` 안에 두어야 합니다. 레이어 밖에 두면 모든 DS 컴포넌트를 이기고, 전역 `:focus-visible` outline 이 DS 포커스 링 위에 겹쳐 그려집니다(이중 링).
