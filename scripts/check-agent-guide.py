@@ -10,7 +10,7 @@ AI 코딩 에이전트가 이 표를 보고 코드를 만든다. 표에 소스�
     Pagination `pageCount` · `siblingCount` → `totalPages`
     Container  `padding`                  → 없음
 
-COMPONENTS.md 의 props 표는 `check:defaults` 가 보지만 AGENT_GUIDE 는 아무도 보지 않았다.
+COMPONENTS.md 예제는 `check:defaults` 가, props 표(`site/props.json`)는 `check:props` 가 보지만 AGENT_GUIDE 는 아무도 보지 않았다.
 
 **읽는 법**: 카탈로그 표의 행 `` | `Component` | 설명 | props | `` 에서 props 칸의 백틱 식별자를
 꺼내, 주석을 지운 `src/ui/*/{component}/index.tsx` 에 `name:` · `name?:` **선언**이 있는지 본다.

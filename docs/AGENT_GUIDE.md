@@ -609,7 +609,7 @@ When asked to generate UI:
 
 ## Final Reminders
 
-- Read the [Components](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md) doc for full props API per component.
+- Full props per component are in the generated docs (`dist/llms` in the package, or the [docs site](https://bigtablet.github.io/bigtablet-design-system/)); usage notes and contracts are in [Components](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/COMPONENTS.md).
 - The docs site examples are the source of truth for visual behavior - `pnpm site` and explore.
 - When in doubt, **use tokens, use components, use providers**. Don't reinvent.
 - Dark mode bugs are the most common failure mode - test both themes mentally before shipping code.

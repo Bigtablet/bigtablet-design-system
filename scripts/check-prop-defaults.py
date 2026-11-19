@@ -18,12 +18,11 @@
    돌리다 절반만 적용되는 사고가 실제로 났다 - 그걸 사람이 눈으로 확인하지 않게 한다.
 2. JSDoc `@default` 가 실제 destructuring 기본값과 일치해야 한다. 값을 바꾸고 JSDoc 을 잊으면
    문서 사이트 props 표와 소비자 문서가 조용히 거짓말을 한다.
-3. `docs/COMPONENTS.md` prop 표의 Default 열이 소스 기본값과 일치해야 한다. 소비자가 읽는
-   문서라 어긋나면 그대로 잘못된 코드를 쓴다.
-6. `docs/COMPONENTS.md` 의 문자열 union 값(prop 표 Type 열 `'line' \| 'fills'`, 예제의
-   `<Tabs variant="fills">`)이 소스의 union 타입과 일치해야 한다. Tabs 가 `pills` → `fills` 로
-   이름을 바꾼 뒤 문서만 `pills` 로 남아, 문서 예제를 그대로 쓰면 tsc 가 실패했다(#798).
-7. `docs/COMPONENTS.md` prop 표가 소스 `{Name}Props` interface 의 prop 을 빠뜨리지 않아야 한다 (#1018).
+6. `docs/COMPONENTS.md` 예제의 문자열 union 값(`<Tabs variant="fills">`)이 소스의 union 타입과
+   일치해야 한다. Tabs 가 `pills` → `fills` 로 이름을 바꾼 뒤 문서만 `pills` 로 남아, 문서 예제를 그대로 쓰면 tsc 가 실패했다(#798).
+
+COMPONENTS.md 의 props 표(옛 3 · 7번 - 기본값 · 누락 prop 대조)는 #1118 에서 표와 함께 걷어 냈다.
+props 는 소스 타입에서 생성하는 `site/props.json` 이 원본이라 대조할 사본이 없다.
 
 exit 1 이면 위반이 있다.
 """
@@ -33,19 +32,8 @@ import sys
 from pathlib import Path
 
 UI = Path("src/ui")
+DOC = Path("docs/COMPONENTS.md")
 CATALOG = Path("src/ui/system/locale-provider/messages.ts")
-
-# `const placeholder = placeholderProp ?? t("combobox.placeholder");`
-# 포매터가 긴 줄을 `=` 뒤에서 자르므로 줄바꿈된 형태도 받아야 한다. 한 줄만 보던 정규식은
-# `datePicker.rangeUntilTodaySr` 처럼 잘린 항목을 조용히 건너뛰어 문서 표 대조에서 빠뜨렸다.
-# ReactNode prop 은 `null` 을 보존하려고 `undefined` 검사를 쓰므로 그 형태도 함께 받는다.
-LOCALE_BACKED = re.compile(
-    r"const ([a-z][A-Za-z0-9]*) =\s*(?:"
-    r'[a-zA-Z0-9]*Prop \?\? t\("([^"]+)"\)'
-    r'|[a-zA-Z0-9]*Prop === undefined \? t\("([^"]+)"\)'
-    r")"
-)
-
 
 def catalog_ko() -> dict[str, str]:
     """`ko` 카탈로그를 {키: 문구} 로 읽는다. 컴포넌트 기본값의 원본이다."""
@@ -53,18 +41,6 @@ def catalog_ko() -> dict[str, str]:
     body = text.split("export const ko:", 1)[1].split("export const en:", 1)[0]
     return dict(re.findall(r'"([^"]+)":\s*"([^"]*)"', body))
 
-
-def locale_defaults(path: Path, catalog: dict[str, str]) -> dict[str, str]:
-    """컴포넌트가 카탈로그에서 받는 기본값. `prop ?? t("key")` 를 카탈로그 문구로 바꾼다.
-
-    줄 단위가 아니라 파일 전체에서 찾는다 - 포매터가 `=` 뒤에서 줄을 자르기 때문이다.
-    """
-    out: dict[str, str] = {}
-    for m in LOCALE_BACKED.finditer(path.read_text(encoding="utf-8")):
-        key = m.group(2) or m.group(3)
-        if key in catalog:
-            out.setdefault(m.group(1), catalog[key])
-    return out
 
 HANGUL = re.compile(r"[가-힣]")
 
@@ -191,36 +167,6 @@ def check_file(path: Path) -> list[str]:
     return problems
 
 
-# ── docs/COMPONENTS.md prop 표 대조 ──────────────────────────────────────────
-
-DOC = Path("docs/COMPONENTS.md")
-# 표 셀 구분자. 타입 열의 `\|`(escape 된 union 파이프)는 구분자가 아니다.
-CELL_SPLIT = re.compile(r"(?<!\\)\|")
-DEFAULT_HEADER = re.compile(r"^(?:Default|기본값)$", re.IGNORECASE)
-# destructuring 기본값 한 줄. `({` 시그니처와 `const { ... } = props` 두 형태를 모두 잡으려고
-# 블록 경계를 찾지 않고 "탭 들여쓰기 + 이름 = 값 + 쉼표"인 줄만 받는다. JSX 속성은 `=` 양쪽에
-# 공백이 없고, 객체 리터럴은 `:` 를 쓰고, 일반 대입은 `const` 로 시작하므로 섞이지 않는다.
-DESTRUCTURED = re.compile(r"^\t+([a-z][A-Za-z0-9]*)\s+=\s+(.+),$")
-
-
-def destructured_defaults(path: Path) -> dict[str, str]:
-    out: dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        m = DESTRUCTURED.match(line)
-        if m:
-            out.setdefault(m.group(1), normalize(m.group(2)))
-    return out
-
-
-def cells_of(line: str) -> list[str]:
-    parts = CELL_SPLIT.split(line.strip())
-    if parts and parts[0] == "":
-        parts = parts[1:]
-    if parts and parts[-1] == "":
-        parts = parts[:-1]
-    return [c.strip() for c in parts]
-
-
 # `t("modal.close")` - `it("...")` 같은 테스트 함수에 걸리지 않게 앞 문자를 막는다
 T_CALL = re.compile(r'(?<![A-Za-z0-9_])t\(\s*"([^"]+)"')
 
@@ -271,8 +217,6 @@ def check_catalog_order() -> list[str]:
     return problems
 
 
-TYPE_HEADER = re.compile(r"^(?:Type|타입)$", re.IGNORECASE)
-# `export type TabsVariant = "line" | "fills";` - 문자열 리터럴로만 된 union
 UNION_ALIAS = re.compile(r'^export type (\w+) =\s*((?:"[^"]+"\s*\|\s*)*"[^"]+");', re.M)
 # `\tvariant?: TabsVariant;` 또는 `\tsize?: "sm" | "md";`
 PROP_TYPE = re.compile(r"^\t([a-z][A-Za-z0-9]*)\??:\s*([^;]+);", re.M)
@@ -291,57 +235,6 @@ def union_props(path: Path) -> dict[str, set[str]]:
         elif re.fullmatch(r'(?:"[^"]+"\s*\|\s*)*"[^"]+"', typ):
             out.setdefault(prop, set(LITERAL.findall(typ)))
     return out
-
-
-def check_doc_unions(files: list[Path]) -> tuple[list[str], int]:
-    """문서 prop 표 Type 열의 문자열 union 이 소스 union 과 같은지."""
-    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
-    problems: list[str] = []
-    compared = 0
-    component: Path | None = None
-    type_col: int | None = None
-    in_code = False
-
-    for i, line in enumerate(DOC.read_text(encoding="utf-8").splitlines(), start=1):
-        if line.startswith("```"):
-            in_code = not in_code
-            continue
-        if in_code:
-            continue
-        if line.startswith("#"):
-            # `####`(언제 쓰는가 · variant 선택 가이드)는 컴포넌트 섹션 안의 소제목이다 -
-            # 여기서 섹션을 끊으면 그 아래 Props 표와 예제가 통째로 검사에서 빠진다
-            if not line.startswith("####"):
-                key = re.sub(r"[^A-Za-z0-9]", "", line.lstrip("# ")).lower()
-                component = by_name.get(key)
-            type_col = None
-            continue
-        if not line.startswith("|"):
-            type_col = None
-            continue
-        cells = cells_of(line)
-        header = next((n for n, c in enumerate(cells) if TYPE_HEADER.match(c)), None)
-        if header is not None:
-            type_col = header
-            continue
-        if type_col is None or component is None or len(cells) <= type_col:
-            continue
-        prop = normalize(cells[0])
-        documented = cells[type_col].replace("\\|", "|").strip("` ")
-        if not re.fullmatch(r"(?:'[^']+'\s*\|\s*)*'[^']+'", documented):
-            continue
-        allowed = union_props(component).get(prop)
-        if allowed is None:
-            continue
-        compared += 1
-        values = set(LITERAL.findall(documented))
-        if values != allowed:
-            problems.append(
-                f"{DOC}:{i}  {component.parent.name}.{prop} - 문서 {sorted(values)}"
-                f" != 소스 {sorted(allowed)}"
-            )
-
-    return problems, compared
 
 
 # `<Tabs variant="fills" ...>` - 태그는 첫 `>` 에서 끝나지만 `=>`(화살표 함수 prop)는 건너뛴다.
@@ -394,141 +287,6 @@ def check_doc_usages(files: list[Path]) -> tuple[list[str], int]:
     return problems, compared
 
 
-def check_docs(files: list[Path], catalog: dict[str, str]) -> tuple[list[str], int]:
-    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
-    problems: list[str] = []
-    compared = 0
-    component: Path | None = None
-    default_col: int | None = None
-
-    for i, line in enumerate(DOC.read_text(encoding="utf-8").splitlines(), start=1):
-        if line.startswith("#"):
-            # `####` 소제목은 섹션을 끊지 않는다 (check_doc_unions 주석 참고)
-            if not line.startswith("####"):
-                key = re.sub(r"[^A-Za-z0-9]", "", line.lstrip("# ")).lower()
-                component = by_name.get(key)
-            default_col = None
-            continue
-        if not line.startswith("|"):
-            default_col = None
-            continue
-
-        cells = cells_of(line)
-        header = next((n for n, c in enumerate(cells) if DEFAULT_HEADER.match(c)), None)
-        if header is not None:
-            default_col = header
-            continue
-        if default_col is None or component is None or len(cells) <= default_col:
-            continue
-        if set(line.replace("|", "").strip()) <= set("-: "):
-            continue
-
-        prop = normalize(cells[0])
-        if not re.fullmatch(r"[a-z][A-Za-z0-9]*", prop):
-            continue
-        documented = normalize(cells[default_col])
-        # 값이 없거나 산문(`자동 생성`)이거나 함수인 경우는 문자 비교가 의미 없다.
-        if documented in ("", "-", "—", "자동 생성") or "=>" in documented:
-            continue
-
-        actual = {**destructured_defaults(component), **locale_defaults(component, catalog)}
-        if prop not in actual or "=>" in actual[prop]:
-            continue
-
-        compared += 1
-        if actual[prop] != documented:
-            problems.append(
-                f"{DOC}:{i}  {component.parent.name}.{prop} - 문서 {documented!r}"
-                f" != 소스 {actual[prop]!r}"
-            )
-
-    return problems, compared
-
-
-def check_doc_completeness(files: list[Path]) -> tuple[list[str], int]:
-    """7. 컴포넌트 `{Name}Props` (훅으로 여는 Alert 는 `{Name}Options`) interface 의 prop 이 `docs/COMPONENTS.md` 의 그 섹션 표에 다 있어야 한다.
-
-    소스에 prop 을 더하고 표를 안 고치면 문서만 읽는 소비자는 그 prop 을 모른다. NavBar `layout`
-    은 다른 섹션 예제(AppShell)가 쓰는데 NavBar 표에는 없었고, Alert 는 바로 아래 예제가 쓰는
-    `destructive` 가 옵션 표에 없었다 (#1018). 머리 첫 칸이 `Prop` · `Option` · `필드` 인 표만 본다 -
-    표 대신 산문으로 설명하는 섹션은 건너뛴다. `**X Props**` 제목 아래 표는 X 의 것이고, 그 표가 끝나면
-    섹션 컴포넌트로 돌아간다. 한 칸에 `` `min` / `max` `` 처럼 여러 이름을 적어도 된다. `type XProps = ...`
-    (polymorphic 등)는 선언을 정규식으로 읽기 어려워 대상이 아니다.
-    """
-    by_name = {f.parent.name.replace("-", "").lower(): f for f in files}
-    documented: dict[Path, set[str]] = {}
-    section: Path | None = None  # `###` 섹션의 컴포넌트
-    target: Path | None = None  # 다음 Props 표가 속할 컴포넌트
-    in_props_table = False
-    last_title = ""
-    for line in DOC.read_text(encoding="utf-8").splitlines():
-        if line.startswith("#") and not line.startswith("####"):
-            # 첫 단어가 컴포넌트 이름 - `### Chip - type="static" ...` 같은 소제목도 Chip 섹션이다
-            word = line.lstrip("# ").split(" ")[0]
-            section = target = by_name.get(re.sub(r"[^A-Za-z0-9]", "", word).lower())
-            in_props_table = False
-            last_title = ""
-            continue
-        # 한 섹션에 하위 컴포넌트 표가 함께 있다 (`**NavLink Props**`, `**TabList Props**`). 그 표의 이름이
-        # 본 컴포넌트에 섞이면 본 컴포넌트의 누락이 가려진다 - 제목으로 대상을 바꾸고, 자기 폴더가 없는
-        # 하위 컴포넌트(`NavLink` · `Modal.Header`)의 표는 건너뛴다. 그 표가 끝나면 섹션 컴포넌트로 돌아간다.
-        sub = re.match(r"\*\*([A-Za-z.]+) Props\*\*", line)
-        if sub:
-            target = by_name.get(sub.group(1).replace(".", "").lower())
-            continue
-        # 굵은 제목은 다음 `필드` 표가 어느 타입인지 정한다 (`**BreadcrumbItem**`, `` **`ToastOptions`** ``)
-        title = re.match(r"\*\*`?([A-Za-z.]+)(?:<[^>]*>)?`?:?\*\*", line)
-        if title:
-            last_title = title.group(1)
-            continue
-        if not line.startswith("|"):
-            if in_props_table:
-                target = section
-            in_props_table = False
-            continue
-        cells = cells_of(line)
-        # Props 표만 본다 - 머리 첫 칸이 `Prop`/`Option`/`필드`(Toast 옵션). 같은 섹션의 다른 표(색 · 모양 비교 등) 첫 칸이
-        # 섞이면 같은 이름이 누락을 가린다. 데이터 행이 없는 표도 등록해 prop 전부를 누락으로 잡는다.
-        if cells and cells[0] in ("Prop", "Option", "필드"):
-            owner = target
-            if cells[0] == "필드":
-                # `필드` 표는 보조 타입(`BreadcrumbItem` · `StepperStep` · `TableColumn`)의 필드다. 그 이름이
-                # 섞이면 컴포넌트에서 빠진 같은 이름의 prop 을 가린다 - 섹션 컴포넌트의 `{Name}Options`
-                # (Toast) 표만 컴포넌트 것으로 본다.
-                pascal = "".join(part.capitalize() for part in section.parent.name.split("-")) if section else ""
-                owner = section if section and last_title == f"{pascal}Options" else None
-            # 제목은 바로 아래 표 하나에만 걸린다 - `Prop` · `Option` 표가 끼어도 그 뒤 `필드` 표로 새지 않게 비운다
-            last_title = ""
-            in_props_table = owner is not None
-            if owner is not None:
-                documented.setdefault(owner, set())
-                target = owner
-            continue
-        if in_props_table and line.startswith("| `"):
-            names = re.findall(r"`([a-z][A-Za-z0-9]*)`", cells[0])
-            documented[target].update(names)
-
-    problems: list[str] = []
-    compared = 0
-    for path, names in documented.items():
-        pascal = "".join(part.capitalize() for part in path.parent.name.split("-"))
-        match = re.search(
-            rf"export interface {pascal}(?:Props|Options)\b[^{{]*\{{(.*?)\n\}}",
-            path.read_text(encoding="utf-8"),
-            re.S,
-        )
-        if not match:
-            continue
-        props = set(re.findall(r"^\t([a-zA-Z][A-Za-z0-9]*)\??:", match.group(1), re.M))
-        props -= {"children", "className", "style", "ref"}
-        compared += len(props)
-        problems += [
-            f"{DOC}  {pascal} 표에 `{prop}` 이 없다 - {path} 의 {pascal}Props · Options 에 있다"
-            for prop in sorted(props - names)
-        ]
-    return problems, compared
-
-
 def main() -> int:
     files = sorted(UI.rglob("index.tsx"))
     if not files:
@@ -544,14 +302,8 @@ def main() -> int:
     ]
     problems += check_catalog_order()
     problems += check_catalog_wiring(files, catalog)
-    doc_problems, doc_compared = check_docs(files, catalog)
-    problems += doc_problems
-    union_problems, union_compared = check_doc_unions(files)
-    usage_problems, usage_compared = check_doc_usages(files)
-    problems += union_problems + usage_problems
-    union_compared += usage_compared
-    complete_problems, complete_compared = check_doc_completeness(files)
-    problems += complete_problems
+    usage_problems, union_compared = check_doc_usages(files)
+    problems += usage_problems
 
     exposed = len(catalog)
     documented = sum(
@@ -561,10 +313,10 @@ def main() -> int:
         if JSDOC_DEFAULT.match(line)
     )
 
-    if exposed == 0 or documented == 0 or doc_compared == 0 or union_compared == 0 or complete_compared == 0:
+    if exposed == 0 or documented == 0 or union_compared == 0:
         print(
             f"검사 대상이 사라졌다 (카탈로그 {exposed}, @default {documented},"
-            f" 문서 표 {doc_compared}, union {union_compared}, 표 누락 {complete_compared})"
+            f" union {union_compared})"
             " - 정규식이나 파일 구조가 바뀌었는지 확인하라",
             file=sys.stderr,
         )
@@ -578,9 +330,7 @@ def main() -> int:
 
     print(f"로케일 카탈로그 {exposed}개 - 전부 한글입니다.")
     print(f"JSDoc @default {documented}개 - 전부 실제 기본값과 일치합니다.")
-    print(f"docs/COMPONENTS.md prop 표 기본값 {doc_compared}개 - 전부 소스와 일치합니다.")
-    print(f"docs/COMPONENTS.md union 값(표 타입 · 예제 속성) {union_compared}개 - 전부 소스와 일치합니다.")
-    print(f"docs/COMPONENTS.md prop 표 {complete_compared}개 prop - 소스 Props interface 에서 빠진 것이 없습니다.")
+    print(f"docs/COMPONENTS.md 예제 union 값 {union_compared}개 - 전부 소스와 일치합니다.")
     print(f"카탈로그 키 {exposed}개 - 전부 컴포넌트에 배선돼 있고 섹션 안에서 정렬돼 있습니다.")
     return 0
 

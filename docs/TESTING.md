@@ -641,4 +641,4 @@ describe("Modal", () => {
 
 - [Contributing](./CONTRIBUTING.md) - 기여 가이드
 - [Architecture](./ARCHITECTURE.md) - 프로젝트 구조
-- [Components](./COMPONENTS.md) - 컴포넌트 API
+- [Components](./COMPONENTS.md) - 컴포넌트 사용법 · 구현 계약 (props 는 문서 사이트)

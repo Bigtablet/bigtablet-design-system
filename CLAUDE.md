@@ -237,7 +237,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 | Document | Description |
 |----------|-------------|
 | [README.md](./README.md) | 프로젝트 개요 및 빠른 시작 |
-| [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 API 및 사용법 |
+| [docs/COMPONENTS.md](./docs/COMPONENTS.md) | 컴포넌트 사용법 · 알아 둘 것 · 구현 계약 (props 표는 `site/props.json`) |
 | [docs/MIGRATION.md](./docs/MIGRATION.md) | deprecated prop 마이그레이션 가이드 |
 | [docs/THEMING.md](./docs/THEMING.md) | 라이트/다크 테마 시스템 가이드 |
 | [docs/VANILLA.md](./docs/VANILLA.md) | HTML/CSS/JS 환경 가이드 |

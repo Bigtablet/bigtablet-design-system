@@ -109,7 +109,7 @@ src/ui/{category}/{component-name}/
 - [ ] `src/index.ts` 에 export 추가 - 여기 없으면 소비자에게 보이지 않습니다
 - [ ] 단위 테스트, 배치 · 잘림이 중요하면 `*.browser.test.tsx`, 주요 상태는 visual `shoot` ([TESTING](./TESTING.md))
 - [ ] 문서 사이트 페이지 `site/pages/{slug}.tsx` 와 예제 `site/examples/{slug}/*.tsx`, 설명은 한국어 - 예제는 a11y 검사를 받습니다
-- [ ] `docs/COMPONENTS.md` 섹션(언제 쓰는가 · 예제 · Props 표)과 `docs/AGENT_GUIDE.md` 카탈로그 행 - `check:defaults` · `check:agent-guide` 가 표와 소스를 대조합니다
+- [ ] `docs/COMPONENTS.md` 섹션(언제 쓰는가 · 예제 · 알아 둘 것)과 `docs/AGENT_GUIDE.md` 카탈로그 행 - `check:defaults` · `check:agent-guide` 가 예제 · 표를 소스와 대조합니다. props 표는 `pnpm check:props` 가 소스에서 만드는 `site/props.json` 이라 손으로 쓰지 않습니다
 
 #### 스크롤되는 영역을 만들 때
 
@@ -152,9 +152,8 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 2. 카탈로그 문구에 한글이 있는지
 3. 카탈로그 키 ↔ `t("...")` 호출 양방향 — 키만 넣고 배선을 잊거나, 없는 키를 부르는 것
 4. 카탈로그 키가 섹션 안에서 알파벳순인지
-5. `docs/COMPONENTS.md` prop 표의 Default 열이 실제 기본값과 같은지
-6. 문서의 union 값(`'line' \| 'fills'`, `<Tabs variant="fills">`)이 소스 타입에 있는지
-7. 컴포넌트 Props 의 prop 이 `docs/COMPONENTS.md` 표에 빠짐없이 있는지
+5. JSDoc `@default` 가 실제 기본값과 같은지
+6. `docs/COMPONENTS.md` 예제의 union 값(`<Tabs variant="fills">`)이 소스 타입에 있는지
 
 개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아닙니다 — 사용자가 아니라 개발자가 읽습니다.
 
@@ -516,4 +515,4 @@ BODY
 
 - [Architecture](./ARCHITECTURE.md) - 프로젝트 구조
 - [Testing](./TESTING.md) - 테스트 작성 가이드
-- [Components](./COMPONENTS.md) - 컴포넌트 API
+- [Components](./COMPONENTS.md) - 컴포넌트 사용법 · 구현 계약 (props 는 문서 사이트)
