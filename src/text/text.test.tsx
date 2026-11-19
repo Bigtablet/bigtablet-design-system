@@ -22,6 +22,15 @@ describe("splitSentences", () => {
 			"예시(e.g. 버튼)를 봅니다.",
 			"다음입니다.",
 		]);
+		// 닫는 괄호 · 따옴표가 바로 붙어도 약어다
+		expect(texts("버튼 (e.g.) 처럼 씁니다. 다음입니다.")).toEqual([
+			"버튼 (e.g.) 처럼 씁니다.",
+			"다음입니다.",
+		]);
+		expect(texts("“i.e.” 로 적습니다. 다음입니다.")).toEqual([
+			"“i.e.” 로 적습니다.",
+			"다음입니다.",
+		]);
 	});
 
 	it("keeps a dotted date inside its sentence", () => {
