@@ -11,7 +11,7 @@
 //   1. import 경로를 실제 파일로 (`./button` → `./button/index.js`) - ESM 패키지에서 webpack 은 확장자를 요구한다
 //   2. `.scss` import 를 `.css` 로 바꾸고 그 SCSS 를 컴파일해 옆에 둔다 - dist/index.css 와 같은 `bigtablet` 레이어
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { compile } from "sass-embedded";
 
 const OUT = "dist/esm";
@@ -92,7 +92,7 @@ const barrel = [...indexSource.matchAll(reexport)]
 	.filter(Boolean);
 code.set(BARREL, `${barrel.join("\n")}\n`);
 // `./text` 는 DS 없이도 쓰는 진입점이고 text.scss 는 CSS 변수를 쓰지 않는다 - 테마 · 링크 규칙을 앱에 싣지 않는다 (#1110)
-const TEXT = join(OUT, "text");
+const TEXT = join(OUT, "text") + sep;
 const needsBase = (file, js) =>
 	file !== BARREL &&
 	!file.startsWith(TEXT) &&
