@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.10.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.3) - 2026-11-19
+- README 를 문서 사이트 캡처 · 설치 · Quick start 중심으로 줄였습니다 - Tailwind v4 설정과 `@layer reset` 주의는 [THEMING](docs/THEMING.md#tailwind-css-v4) 으로 옮겼습니다
+- README Quick start 예제에 `"use client"` 를 넣었습니다 - App Router 의 `page.tsx` 에 그대로 붙이면 `useToast` 에서 깨졌습니다
+- `docs/COMPONENTS.md` 에서 손으로 쓴 props 표를 뺐습니다 - props 는 소스에서 생성하는 문서 사이트 · `dist/llms` 에서 봅니다. 언제 쓰는가 · 예제 · 알아 둘 것 · 구현 계약은 그대로입니다
+- 문서 사이트 배포물에서 쓰지 않는 폰트 파일(6.6MB)과 이미지를 뺐습니다
+- 배포 전에 패키지 exports(publint · attw)와 안 쓰는 파일 · export · 의존성(knip)을 CI 에서 검사합니다
+
 ## [4.10.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.2) - 2026-11-19
 - `BalancedText` 를 Server Component 에서 바로 씁니다 - `"use client"` 가 빠져 Next App Router 에서 `useRef only works in Client Components` 로 페이지가 깨지던 문제를 고쳤습니다
 - (렌더 변경) `BalancedText` 기본 `span` 이 블록으로 놓여 `as` 없이도 줄을 고릅니다 - 인라인이라 폭이 0 이어서 아무 일도 하지 않았습니다. `as` 로 고른 요소(`li` · `td` 등)는 제 display 를 그대로 씁니다
