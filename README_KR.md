@@ -59,7 +59,7 @@ function SaveButton() {
 }
 ```
 
-Next.js App Router 에서도 그대로 씁니다. 자세한 설정과 Tailwind v4 · SCSS 토큰은 [설치 페이지](https://bigtablet.github.io/bigtablet-design-system/#/install)에 있습니다.
+Next.js App Router 에서도 그대로 씁니다. 자세한 설정과 SCSS 토큰은 [설치 페이지](https://bigtablet.github.io/bigtablet-design-system/#/install)에, Tailwind v4 는 [THEMING](./docs/THEMING.md#tailwind-css-v4)에 있습니다.
 
 <br />
 

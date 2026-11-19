@@ -59,7 +59,7 @@ function SaveButton() {
 }
 ```
 
-Next.js App Router works as is. Setup details, Tailwind v4 and SCSS tokens are on the [install page](https://bigtablet.github.io/bigtablet-design-system/#/install).
+Next.js App Router works as is. Setup details and SCSS tokens are on the [install page](https://bigtablet.github.io/bigtablet-design-system/#/install), Tailwind v4 in [THEMING](./docs/THEMING.md#tailwind-css-v4).
 
 <br />
 
