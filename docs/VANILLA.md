@@ -1082,6 +1082,14 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
      data-href="/logs?page={page}" data-page-jump></nav>
 ```
 
+**칸 수:** 쪽이 많으면 넓은 폭에서는 `2 * sibling + 5` 칸(기본 9), 좁은 폭(600px 미만)에서는
+`1 · … · 현재 · … · 끝` 다섯 칸입니다 - 9칸은 375px 화면에서 넘칩니다 (React Pagination 과 같음). 넓은 폭의 칸 수는
+`data-sibling`(수동 초기화는 `sibling`)으로 바꿉니다. 두 폭의 칸을 함께 그리고 CSS 가 한쪽만 숨겨, 창 크기를 바꿔도 다시 그리지 않습니다.
+
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="8" data-total-pages="16" data-sibling="1"></nav>
+```
+
 **이름:** `<nav>` 에 `aria-label` 이 없으면 `"페이지 이동"` 을 단다 (`data-nav-label` / `navLabel` 로 변경).
 이전·다음 버튼 이름 기본값은 React `ko` 카탈로그와 같은 `"이전 페이지"` · `"다음 페이지"` 다.
 다른 언어 화면이면 `data-prev-label` · `data-next-label` (수동 초기화는 `prevLabel` · `nextLabel` 옵션, React props 와 같은 이름)로 바꾼다.
@@ -1100,7 +1108,7 @@ Thymeleaf `@{...}` 처럼 `{page}` 가 `%7Bpage%7D` 로 인코딩돼 들어와�
   const pagination = Bigtablet.Pagination('#article-pagination', {
     page: 1,
     totalPages: 20,
-    sibling: 2,      // 현재 쪽 양옆에 보일 번호 수 (기본 2)
+    sibling: 2,      // 넓은 폭에서 현재 쪽 양옆에 보일 번호 수 (기본 2, data-sibling). 좁은 폭은 늘 0
     onPageChange: (page) => {
       console.log('Page:', page);
       // 데이터 로드 등

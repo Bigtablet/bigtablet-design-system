@@ -1834,6 +1834,9 @@ const [page, setPage] = useState(1);
 <Pagination page={page} totalPages={3650} onPageChange={setPage} showPageJump />
 ```
 
+쪽이 많으면 넓은 폭에서는 번호 칸이 9개, 좁은 폭(600px 미만)에서는 `1 · … · 현재 · … · 끝` 5개입니다 - 9칸과 이전·다음을 합치면 460px 라 375px 화면에서 넘쳤습니다.
+두 폭의 칸을 함께 그리고 CSS 가 한쪽만 숨겨, 서버 렌더 첫 화면부터 폭에 맞고 창 크기를 바꿔도 다시 그리지 않습니다. 한 폭 안에서는 어느 쪽이든 칸 수가 같아 ‹ › 가 움직이지 않습니다.
+
 ---
 
 ### Tabs

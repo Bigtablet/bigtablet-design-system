@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
+import { paginationItems } from "./items";
 import "./style.scss";
 
 interface PaginationBaseProps {
@@ -30,60 +31,6 @@ interface PaginationBaseProps {
 export type PaginationProps = PaginationBaseProps & {
 	/** 페이지를 바꿀 때 호출된다 */
 	onPageChange: (page: number) => void;
-};
-
-/**
- * 시작-끝 범위의 숫자 배열을 만든다.
- * @param start 시작 값
- * @param end 끝 값
- * @returns 범위 배열
- */
-const range = (start: number, end: number) => {
-	const out: number[] = [];
-	for (let i = start; i <= end; i += 1) out.push(i);
-	return out;
-};
-
-/**
- * 현재 페이지를 기준으로 페이지네이션 아이템을 만든다.
- * 쪽이 많으면 어느 쪽에서든 칸 수가 `2 * sibling + 5` 로 같다 - 앞·뒤쪽은 `…` 대신 번호를 더 채운다
- * (MUI boundaryCount 1 · siblingCount 와 같은 규칙). 칸 수가 바뀌면 가운데 정렬한 ‹ › 가 좌우로 움직인다 (#935).
- * @param page 현재 페이지
- * @param totalPages 전체 페이지 수
- * @returns 페이지 번호와 생략 기호 배열
- */
-const getPaginationItems = (page: number, totalPages: number) => {
-	const sibling = 2;
-	const slots = 2 * sibling + 5;
-	if (totalPages <= slots) return range(1, totalPages);
-
-	const items: Array<number | "ellipsis"> = [];
-	const last = totalPages;
-
-	// 시작 부분 - 1 ~ (2 * sibling + 3), …, last
-	if (page <= sibling + 3) {
-		for (const p of range(1, 2 * sibling + 3)) items.push(p);
-		items.push("ellipsis");
-		items.push(last);
-		return items;
-	}
-
-	// 끝 부분 - 1, …, 마지막 (2 * sibling + 3) 쪽
-	if (page >= last - sibling - 2) {
-		items.push(1);
-		items.push("ellipsis");
-		for (const p of range(last - 2 * sibling - 2, last)) items.push(p);
-		return items;
-	}
-
-	// 중간 부분
-	items.push(1);
-	items.push("ellipsis");
-	for (const p of range(page - sibling, page + sibling)) items.push(p);
-	items.push("ellipsis");
-	items.push(last);
-
-	return items;
 };
 
 /**
@@ -133,7 +80,7 @@ export const Pagination = ({
 	const prevDisabled = page <= 1;
 	const nextDisabled = page >= totalPages;
 
-	const items = React.useMemo(() => getPaginationItems(page, totalPages), [page, totalPages]);
+	const items = React.useMemo(() => paginationItems(page, totalPages), [page, totalPages]);
 
 	const resetJump = () => {
 		setJumpDraft(null);
@@ -166,12 +113,16 @@ export const Pagination = ({
 			</button>
 
 			<ul className="pagination_pages">
-				{items.map((it, idx) => {
+				{items.map(({ value: it, only }, idx) => {
+					// 한 폭에서만 보이는 칸 - 좁은 폭은 1 · … · 현재 · … · 끝 다섯 칸 (#1145)
+					const onlyClassName = only && `pagination_${only}`;
 					if (it === "ellipsis") {
-						const prev = items[idx - 1];
-						const next = items[idx + 1];
 						return (
-							<li key={`e-${prev}-${next}`} className="pagination_ellipsis" aria-hidden="true">
+							<li
+								key={`e-${only ?? "all"}-${items[idx - 1]?.value}`}
+								className={cn("pagination_ellipsis", onlyClassName)}
+								aria-hidden="true"
+							>
 								…
 							</li>
 						);
@@ -224,7 +175,7 @@ export const Pagination = ({
 					const buttonClassName = cn("pagination_page_button", { pagination_active: isActive });
 
 					return (
-						<li key={it}>
+						<li key={it} className={onlyClassName || undefined}>
 							<button
 								type="button"
 								className={buttonClassName}

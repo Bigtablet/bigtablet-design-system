@@ -1,3 +1,5 @@
+@use "../../styles/token" as token;
+
 /* ========================================
    Pagination
    ======================================== */
@@ -126,5 +128,19 @@
     text-align: center;
     font-size: var(--bt-font-size-sm);
     color: var(--bt-color-text-tertiary);
+  }
+}
+
+// 폭마다 다른 칸 수 (#1145) - React .pagination_wide · .pagination_narrow 와 같다. 넓은 폭은 2 * sibling + 5 칸,
+// 좁은 폭(600px 미만)은 1 · … · 현재 · … · 끝 5칸 - 9칸 + 이전 · 다음(460px)이 375px 화면에서 넘쳤다
+.bt-pagination__wide {
+  @include token.compact {
+    display: none;
+  }
+}
+
+.bt-pagination__narrow {
+  @include token.from_medium {
+    display: none;
   }
 }
