@@ -1401,6 +1401,7 @@ React `Sentences` · Toast · Alert `message` 와 같은 규칙으로 두 문장
 
 - 마크업은 React 와 같습니다 - 문장은 `.sentences_item`, 어절 묶음은 `.sentences_phrase` (둘 다 `inline-block`)
 - 한 문장이면 마크업 없이 글자 그대로입니다
+- `apply` 는 한 요소에 한 번만 나눕니다. 나눈 뒤 글자를 JS 로 바꿀 때는 `init()` 을 다시 부르지 말고 `Bigtablet.Sentences.set(el, text)` 를 씁니다
 - 한국어 어절 안에서 끊기지 않게 문단에 `word-break: keep-all` 을 함께 둡니다 (Toast · Alert 메시지는 이미 적용)
 
 ---
