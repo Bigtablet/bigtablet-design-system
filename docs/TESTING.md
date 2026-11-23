@@ -421,13 +421,13 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 98 test files / 1947 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 98 test files / 1949 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **92.34%** | **90.6%** | **93.56%** | **94.15%** |
+| **All files** | **92.34%** | **90.61%** | **93.56%** | **94.16%** |
 
 아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
 
@@ -436,7 +436,7 @@ it("calls callback with correct arguments", () => {
 | text/balanced.tsx | 70.95% | 61.26% | 67.86% | 75.97% |
 | text/core.ts | 100% | 89.86% | 100% | 100% |
 | text/dom.ts | 30.23% | 16.13% | 27.78% | 35.82% |
-| text/layout.ts | 98.6% | 84.68% | 100% | 100% |
+| text/layout.ts | 98.62% | 85.16% | 100% | 100% |
 | text/measure.ts | 40.91% | 44.44% | 50% | 44.44% |
 | text/prehydrate.ts | 0% | 0% | 0% | 0% |
 | text/react.tsx | 100% | 93.1% | 100% | 100% |
