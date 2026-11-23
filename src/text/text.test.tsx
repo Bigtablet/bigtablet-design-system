@@ -230,6 +230,19 @@ describe("phraseRanges", () => {
 			"(선택) 는",
 		]);
 	});
+
+	// JS `\s` 는 nbsp 를 포함한다 - 어절로 나누면 묶음 경계에서 nbsp 가 무시된다 (#1137)
+	it("treats words glued with a no-break space as one word", () => {
+		const text = "2단계 인증을 한 번 더 받습니다. 이 Google 계정으로 엽니다";
+		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
+			"한 번 더",
+			"이 Google 계정으로",
+		]);
+		expect(splitSentences("1 000원입니다. 다음입니다.").map((s) => s.text)).toEqual([
+			"1 000원입니다.",
+			"다음입니다.",
+		]);
+	});
 });
 
 // 코드 · 링크 같은 요소에 이어 붙은 조각은 묶지 않는다 - 통째로 다음 줄로 넘어가 요소와 조사가 떨어진다 (#1081)

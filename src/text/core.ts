@@ -17,6 +17,14 @@ const SENTENCE_END = /(?:[^\d]\.|[!?])["')\]”’」』]*$/;
  */
 const ABBREVIATION = /(?:^|[^A-Za-z])(?:[A-Za-z]\.){2,}["')\]”’」』]*$/;
 
+/**
+ * 줄을 바꿀 수 있는 공백 - JS `\s` 에서 줄바꿈 금지 공백(U+00A0 · U+2007 · U+202F)을 뺐다. `\s` 로 어절을 나누면
+ * "한 번&nbsp;더" 의 "번" · "더" 가 다른 어절이 돼, 묶음 · 줄바꿈 엔진이 nbsp 자리에서 줄을 바꾼다 (#1137)
+ */
+export const BREAK_SPACE = /[^\S\u00a0\u2007\u202f]+/;
+/** 어절 - 줄을 바꿀 수 있는 공백 사이의 글자. nbsp 로 붙인 말은 한 어절이다 */
+export const WORD = /(?:\S|[\u00a0\u2007\u202f])+/g;
+
 /** 문장을 끝내는 어절인가 */
 export const endsSentence = (word: string) => SENTENCE_END.test(word) && !ABBREVIATION.test(word);
 
@@ -29,7 +37,7 @@ export const splitSentences = (text: string) => {
 	const sentences: { text: string; start: number; end: number }[] = [];
 	let start = -1;
 	let end = 0;
-	for (const match of text.matchAll(/\S+/g)) {
+	for (const match of text.matchAll(WORD)) {
 		const index = match.index ?? 0;
 		if (start < 0) start = index;
 		end = index + match[0].length;
@@ -134,7 +142,7 @@ const bindsAcross = (before: string, after: string) =>
  * `~의` 꾸밈말 · 관형사를 다음 어절과, 서술어 · 의존명사 · 영문 뒤 띄어 쓴 조사를 앞 어절과 잇고, 이어지면 합치되 최대 3어절까지.
  */
 export const phraseRanges = (text: string): { start: number; end: number }[] => {
-	const words = [...text.matchAll(/\S+/g)].map((m) => ({
+	const words = [...text.matchAll(WORD)].map((m) => ({
 		word: m[0],
 		start: m.index ?? 0,
 		end: (m.index ?? 0) + m[0].length,

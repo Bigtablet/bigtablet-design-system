@@ -27,6 +27,17 @@ const lines = (text: string, breaks: number[]) => {
 	return out;
 };
 
+// nbsp 는 줄을 바꿀 자리가 아니다 - 엔진이 거기서 끊으면 원문이 막아 둔 줄바꿈이 생긴다 (#1137)
+describe("toWords", () => {
+	it("keeps words glued with a no-break space together", () => {
+		expect(toWords("한 번\u00a0더 받습니다").map((w) => w.text)).toEqual([
+			"한",
+			"번\u00a0더",
+			"받습니다",
+		]);
+	});
+});
+
 describe("gapPenalty", () => {
 	it("is free after a sentence, cheap after a comma, and costly inside a phrase", () => {
 		expect(gapPenalty("싣습니다.", "사이트와")).toBe(0);
