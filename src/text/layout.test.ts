@@ -34,6 +34,7 @@ describe("gapPenalty", () => {
 		expect(gapPenalty("본문이면", "body")).toBe(4);
 		expect(gapPenalty("아래의", "컴포넌트에서")).toBe(100);
 		expect(gapPenalty("body", "입니다.")).toBe(100);
+		expect(gapPenalty("`pagination.totalPages`", "로")).toBe(100);
 	});
 
 	it("leans a modifier and a compound noun toward the next word", () => {
@@ -151,8 +152,8 @@ describe("scoreBreaks", () => {
 	});
 
 	it("charges a middle line that fills less than half the box, but not a short first line", () => {
-		// 폭 100 - "aaaaaaaa"(80) / "b"(10) / "cccccccc": 끊는 자리 4 + 4, 가운데 줄이 짧아 8 (#1113)
-		const words = toWords("aaaaaaaa b cccccccc");
+		// 폭 100 - "aaaaaaaa"(80) / "b"(10) / "cccc dddd": 끊는 자리 4 + 4, 가운데 줄이 짧아 8 (#1113)
+		const words = toWords("aaaaaaaa b cccc dddd");
 		expect(scoreBreaks(words, measure, 100, [0, 1]).penalty).toBe(16);
 		// 첫 줄이 짧은 것은 제목 줄("녹음본 업로드. / …")처럼 의도한 모양이라 벌점이 없다
 		expect(scoreBreaks(words, measure, 100, [1]).penalty).toBe(4);
@@ -183,6 +184,26 @@ describe("chooseBreaks with a short middle line", () => {
 			"작은 결정 사항까지,",
 			"AI가 빠짐없이 기록하고 요약해줘요.",
 		]);
+	});
+});
+
+describe("a lone last word", () => {
+	it("charges leaving only the last word on the last line, unless it is a sentence of its own", () => {
+		const words = toWords("안에 다른 버튼을 두지 않습니다");
+		expect(scoreBreaks(words, measure, 1000, [words.length - 2]).penalty).toBe(12);
+		// 앞 어절에서 문장이 끝났으면 새 문장 하나가 줄을 차지하는 것이다 (#1133)
+		const sentence = toWords("저장했습니다. 계속할까요?");
+		expect(scoreBreaks(sentence, measure, 1000, [0]).penalty).toBe(0);
+	});
+
+	it("moves another word down instead of leaving one alone, with the same line count", () => {
+		// 폭 330 - 브라우저는 "…버튼을 두지 / 않습니다" 로 끊는다 (#1133)
+		const text = "카드 전체가 눌리는 표면이 되므로 안에 다른 버튼을 두지 않습니다";
+		const choice = chooseBreaks(text, measure, 330);
+		expect(lines(text, choice.native).at(-1)).toBe("않습니다");
+		expect(choice.changed).toBe(true);
+		expect(choice.breaks.length).toBe(choice.native.length);
+		expect(lines(text, choice.breaks).at(-1)?.split(" ").length).toBeGreaterThan(1);
 	});
 });
 
