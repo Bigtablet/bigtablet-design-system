@@ -231,6 +231,22 @@ describe("phraseRanges", () => {
 		]);
 	});
 
+	// 문장 뒤 괄호 조각은 앞 문장에 붙고, 괄호 안에서 줄이 갈리지 않게 한 묶음이다 (#1136)
+	it("binds a trailing bracket fragment to the sentence before it as one phrase", () => {
+		const text = "연결하지 못했어요. IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)";
+		expect(texts(text)).toEqual([
+			"연결하지 못했어요.",
+			"IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)",
+		]);
+		const last = "IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)";
+		expect(phraseRanges(last).map(({ start, end }) => last.slice(start, end))).toEqual([
+			"(오류 코드 DEVICE-SERVER)",
+		]);
+		// 문장 부호로 끝나는 괄호 문장 · 뒤 요소로 이어지는 조각은 그대로
+		expect(texts("저장했어요. (자동 저장돼요.)")).toEqual(["저장했어요.", "(자동 저장돼요.)"]);
+		expect(texts("저장했어요. (자세히는 ")).toEqual(["저장했어요.", "(자세히는"]);
+	});
+
 	// JS `\s` 는 nbsp 를 포함한다 - 어절로 나누면 묶음 경계에서 nbsp 가 무시된다 (#1137)
 	it("treats words glued with a no-break space as one word", () => {
 		const text = "2단계 인증을 한 번 더 받습니다. 이 Google 계정으로 엽니다";
