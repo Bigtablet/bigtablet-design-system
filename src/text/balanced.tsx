@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { BREAK_SPACE } from "./core";
 import {
 	chooseDomBreaks,
 	contentWidth,
@@ -106,9 +107,9 @@ const tokenize = (children: React.ReactNode) => {
 			add(textOf(child), child, gap !== "");
 			continue;
 		}
-		for (const chunk of String(child).split(/(\s+)/)) {
+		for (const chunk of String(child).split(new RegExp(`(${BREAK_SPACE.source})`))) {
 			if (!chunk) continue;
-			if (/^\s/.test(chunk)) {
+			if (BREAK_SPACE.test(chunk)) {
 				gap += chunk;
 				joined = false;
 				continue;
