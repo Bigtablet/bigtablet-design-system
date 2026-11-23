@@ -93,9 +93,13 @@ describe("Pagination", () => {
 
 	// ── 뮤테이션 테스트(`pnpm test:mutation`)에서 살아남은 분기 ──────────────────────
 
-	const labels = () =>
-		Array.from(document.querySelectorAll(".pagination_pages > li"), (li) =>
-			(li.textContent ?? "").trim(),
+	// 한 폭에서 보이는 칸 - jsdom 은 CSS 를 적용하지 않아 다른 폭 전용 칸은 직접 거른다 (#1145)
+	const labels = (width: "wide" | "narrow" = "wide") =>
+		Array.from(
+			document.querySelectorAll(
+				`.pagination_pages > li:not(.pagination_${width === "wide" ? "narrow" : "wide"})`,
+			),
+			(li) => (li.textContent ?? "").trim(),
 		);
 
 	it("lays out the start, middle and end windows at their boundaries", () => {
@@ -115,6 +119,31 @@ describe("Pagination", () => {
 			expect(document.querySelectorAll(".pagination_active")).toHaveLength(1);
 			// 쪽이 많으면 칸 수가 늘 9 - ‹ › 가 움직이지 않는다 (#935)
 			if (total > 9) expect(labels()).toHaveLength(9);
+			unmount();
+		}
+	});
+
+	// 좁은 폭(600px 미만)은 1 · … · 현재 · … · 끝 다섯 칸 - 9칸은 375px 화면에서 넘쳤다 (#1145)
+	it("keeps five slots on a narrow screen", () => {
+		const cases: [number, number, string[]][] = [
+			[1, 16, ["1", "2", "3", "…", "16"]],
+			[4, 16, ["1", "…", "4", "…", "16"]],
+			[14, 16, ["1", "…", "14", "15", "16"]],
+			[3, 5, ["1", "2", "3", "4", "5"]],
+		];
+		for (const [page, total, expected] of cases) {
+			const { unmount } = render(
+				<Pagination page={page} totalPages={total} onPageChange={() => {}} />,
+			);
+			expect(labels("narrow")).toEqual(expected);
+			unmount();
+		}
+		for (let page = 1; page <= 16; page++) {
+			const { unmount } = render(
+				<Pagination page={page} totalPages={16} onPageChange={() => {}} />,
+			);
+			expect(labels("narrow"), `page ${page}`).toHaveLength(5);
+			expect(labels("wide"), `page ${page}`).toHaveLength(9);
 			unmount();
 		}
 	});

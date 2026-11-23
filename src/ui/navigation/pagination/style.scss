@@ -125,6 +125,20 @@
   }
 }
 
+// 폭마다 다른 칸 수 (#1145) - 넓은 폭은 9칸, 좁은 폭은 1 · … · 현재 · … · 끝 5칸. 9칸 + 이전 · 다음은 460px 라
+// 375px 화면의 본문에 들어가지 않아 문서 전체에 가로 스크롤이 생겼다. 한 폭 안에서는 어느 쪽이든 칸 수가 같다 (#935)
+.pagination_wide {
+  @include token.compact {
+    display: none;
+  }
+}
+
+.pagination_narrow {
+  @include token.from_medium {
+    display: none;
+  }
+}
+
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .pagination_item,

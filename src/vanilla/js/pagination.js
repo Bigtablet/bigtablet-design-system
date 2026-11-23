@@ -1,3 +1,4 @@
+import { paginationItems } from "../../ui/navigation/pagination/items.ts";
 import { t } from "./locale.js";
 import { $, $$, escapeHtml } from "./utils.js";
 
@@ -70,47 +71,11 @@ export function Pagination(element, options = {}) {
 		return `<button type="button" ${disabled ? "disabled" : ""} ${attrs}>${content}</button>`;
 	}
 
-	function range(start, end) {
-		const out = [];
-		for (let i = start; i <= end; i++) out.push(i);
-		return out;
-	}
-
-	// React getPaginationItems 와 같은 규칙 - 쪽이 많으면 어느 쪽에서든 칸 수가 2 * sibling + 5 로 같다 (#935)
-	function getPaginationItems(page, totalPages) {
-		const sibling = config.sibling;
-		if (totalPages <= 2 * sibling + 5) return range(1, totalPages);
-
-		const items = [];
-		const last = totalPages;
-
-		if (page <= sibling + 3) {
-			for (const p of range(1, 2 * sibling + 3)) items.push(p);
-			items.push("ellipsis");
-			items.push(last);
-			return items;
-		}
-
-		if (page >= last - sibling - 2) {
-			items.push(1);
-			items.push("ellipsis");
-			for (const p of range(last - 2 * sibling - 2, last)) items.push(p);
-			return items;
-		}
-
-		items.push(1);
-		items.push("ellipsis");
-		for (const p of range(page - sibling, page + sibling)) items.push(p);
-		items.push("ellipsis");
-		items.push(last);
-
-		return items;
-	}
-
 	function render() {
 		// 걷힌 인스턴스는 그리지 않는다 - 같은 요소의 새 인스턴스 화면을 옛 리스너로 덮지 않게
 		if (destroyed) return;
-		const items = getPaginationItems(config.page, config.totalPages);
+		// React 와 같은 계산 - 넓은 폭 · 좁은 폭 칸을 함께 그리고 CSS 가 한쪽만 숨긴다 (#1145)
+		const items = paginationItems(config.page, config.totalPages, config.sibling);
 		// innerHTML 을 갈면 누른 버튼이 사라져 포커스가 body 로 떨어진다 - 같은 자리로 되돌린다
 		const focused = container.contains(document.activeElement) ? document.activeElement : null;
 		const focusAction = focused?.dataset.action;
@@ -123,9 +88,10 @@ export function Pagination(element, options = {}) {
 		);
 		html += `<div class="bt-pagination__pages">`;
 
-		items.forEach((item) => {
+		items.forEach(({ value: item, only }) => {
+			const onlyClass = only ? ` bt-pagination__${only}` : "";
 			if (item === "ellipsis") {
-				html += `<span class="bt-pagination__ellipsis" aria-hidden="true">…</span>`;
+				html += `<span class="bt-pagination__ellipsis${onlyClass}" aria-hidden="true">…</span>`;
 			} else if (item === config.page && config.showPageJump) {
 				// 현재 쪽 = 입력칸. size 로 자릿수에 맞춘 폭 (한 자리는 CSS min-width 가 받친다)
 				const label = String(config.pageJumpLabel)
@@ -137,7 +103,7 @@ export function Pagination(element, options = {}) {
 				html += control(
 					item,
 					false,
-					`class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}" data-page="${escapeHtml(item)}"${isActive ? ' aria-current="page"' : ""}`,
+					`class="bt-pagination__page${isActive ? " bt-pagination__page--active" : ""}${onlyClass}" data-page="${escapeHtml(item)}"${isActive ? ' aria-current="page"' : ""}`,
 					escapeHtml(item),
 				);
 			}
