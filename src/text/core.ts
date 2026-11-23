@@ -47,7 +47,28 @@ export const splitSentences = (text: string) => {
 		}
 	}
 	if (start >= 0) sentences.push({ text: text.slice(start, end), start, end });
+	// 문장 뒤 괄호 조각("…알려 주세요. (오류 코드 X)")은 혼자 한 문장이 되면 괄호만 다음 줄에 남는다 - 앞 문장에 붙인다 (#1136).
+	// 닫는 괄호로 끝나야 한다 - "(자세히는 " 처럼 뒤 요소로 이어지는 조각(continuesTo)은 그대로 둔다
+	const last = sentences.at(-1);
+	const prev = sentences.at(-2);
+	if (prev && last && /^\(/.test(last.text) && /\)$/.test(last.text) && !endsSentence(last.text)) {
+		sentences.splice(-2, 2, {
+			text: text.slice(prev.start, last.end),
+			start: prev.start,
+			end: last.end,
+		});
+	}
 	return sentences;
+};
+
+/** 문장 끝 괄호 조각의 첫 어절 번호 - 문장을 끝낸 어절 뒤 "(" 로 시작해 ")" 로 끝나는 2어절 이상. 없으면 -1 */
+const trailingParen = (words: { word: string }[]) => {
+	if (!/\)$/.test(words.at(-1)?.word ?? "")) return -1;
+	for (let k = words.length - 2; k > 0; k--) {
+		if (!/^\(/.test(words[k]?.word ?? "")) continue;
+		return endsSentence(words[k - 1]?.word ?? "") ? k : -1;
+	}
+	return -1;
 };
 
 /**
@@ -140,6 +161,7 @@ const bindsAcross = (before: string, after: string) =>
 /**
  * 붙여 둘 어절 묶음의 원문 범위 - 2어절 이상인 묶음만 돌려준다 (#1077).
  * `~의` 꾸밈말 · 관형사를 다음 어절과, 서술어 · 의존명사 · 영문 뒤 띄어 쓴 조사를 앞 어절과 잇고, 이어지면 합치되 최대 3어절까지.
+ * 문장 끝 괄호 조각("주세요. (오류 코드 X)")은 길이와 상관없이 한 묶음이다.
  */
 export const phraseRanges = (text: string): { start: number; end: number }[] => {
 	const words = [...text.matchAll(WORD)].map((m) => ({
@@ -148,10 +170,13 @@ export const phraseRanges = (text: string): { start: number; end: number }[] => 
 		end: (m.index ?? 0) + m[0].length,
 	}));
 	const ranges: { start: number; end: number }[] = [];
-	for (let i = 0; i < words.length; ) {
+	// 문장 끝 괄호 조각은 통째로 한 덩어리 - 괄호 안에서 줄이 갈리지 않게 (#1136). 3어절 제한은 두지 않는다
+	const paren = trailingParen(words);
+	const until = paren > 0 ? paren : words.length;
+	for (let i = 0; i < until; ) {
 		let j = i;
 		while (
-			j < words.length - 1 &&
+			j < until - 1 &&
 			j - i + 1 < MAX_PHRASE &&
 			bindsAcross(words[j]?.word ?? "", words[j + 1]?.word ?? "")
 		)
@@ -161,6 +186,9 @@ export const phraseRanges = (text: string): { start: number; end: number }[] => 
 		if (j > i && first && last) ranges.push({ start: first.start, end: last.end });
 		i = j + 1;
 	}
+	const open = words[paren];
+	const close = words.at(-1);
+	if (paren > 0 && open && close) ranges.push({ start: open.start, end: close.end });
 	return ranges;
 };
 
