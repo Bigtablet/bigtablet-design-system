@@ -220,6 +220,16 @@ describe("phraseRanges", () => {
 			"이 아래의 컴포넌트에서",
 		]);
 	});
+
+	// gapPenalty 의 붙여 둘 자리와 같은 규칙 - BalancedText 와 문장 단위 줄바꿈이 갈리지 않게 (#1138)
+	it("binds a spaced particle to the English word, code, or bracket before it", () => {
+		const text = "Windows Hello · Touch ID 로 확인합니다. `totalPages` 를 (선택) 는 넘깁니다";
+		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
+			"ID 로",
+			"`totalPages` 를",
+			"(선택) 는",
+		]);
+	});
 });
 
 // 코드 · 링크 같은 요소에 이어 붙은 조각은 묶지 않는다 - 통째로 다음 줄로 넘어가 요소와 조사가 떨어진다 (#1081)
