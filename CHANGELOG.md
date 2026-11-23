@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.11.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.1) - 2026-11-23
+- (렌더 변경) Pagination 이 좁은 화면(600px 미만)에서 쪽 번호를 `1 · … · 현재 · … · 끝` 다섯 칸으로 줄여 375px 화면 밖으로 넘치지 않습니다 - 9칸과 이전 · 다음이 460px 라 문서 전체에 가로 스크롤이 생겼습니다. React · Vanilla 모두
+- Vanilla Pagination 자동 초기화에서 `data-sibling` 으로 넓은 폭의 칸 수를 정할 수 있습니다 (수동 초기화의 `sibling` 과 같음)
+
 ## [4.11.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.0) - 2026-11-23
 - Vanilla 번들에 문장 단위 줄바꿈을 추가했습니다 - `Bigtablet.Sentences.set(el, text)` · `Sentences.apply(el)`, 서버 템플릿용 `data-bt-sentences` 자동 초기화. React 와 같은 규칙 · 마크업(`.sentences_item` · `.sentences_phrase`)이라 앱에 규칙을 따로 옮겨 둘 필요가 없습니다 ([VANILLA](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/VANILLA.md#문장-단위-줄바꿈))
 - (렌더 변경) Vanilla Toast · Alert `message` 도 두 문장 이상이면 문장 사이에서 먼저 줄이 바뀝니다
