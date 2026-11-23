@@ -4,6 +4,7 @@ import { DatePicker } from "./date-picker.js";
 import { Dropdown } from "./dropdown.js";
 import { Modal } from "./modal.js";
 import { Pagination } from "./pagination.js";
+import { Sentences } from "./sentences.js";
 import { Sidebar } from "./sidebar.js";
 import { Toggle } from "./toggle.js";
 import { $$, parseBoolAttr } from "./utils.js";
@@ -16,6 +17,11 @@ import { $$, parseBoolAttr } from "./utils.js";
  * Auto-initialize all components with data-bt attribute
  */
 export function init() {
+	// 문장 단위 줄바꿈 - 서버 템플릿 문단 (#1139). 안쪽 요소는 그대로 두고 바로 아래 글자만 나눈다
+	$$("[data-bt-sentences]").forEach((el) => {
+		Sentences.apply(el);
+	});
+
 	// CopyButton - data-bt-copy 값을 복사한다 (#918)
 	$$("[data-bt-copy]").forEach((el) => {
 		if (!el._btCopyButton) CopyButton(el);

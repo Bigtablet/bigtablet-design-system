@@ -1,5 +1,6 @@
 import { t } from "./locale.js";
 import { afterExit } from "./overlay.js";
+import { Sentences } from "./sentences.js";
 import { $$ } from "./utils.js";
 
 /* ========================================
@@ -126,7 +127,8 @@ export function Toast(message, tone = "neutral", options = {}) {
 		'<div class="bt-toast__live">' +
 		`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
 		'<span class="bt-toast__message"></span></div>';
-	item.querySelector(".bt-toast__message").textContent = message;
+	// React Toast `message` 와 같은 문장 단위 줄바꿈 (#1139) - 글자로만 넣는다
+	Sentences.set(item.querySelector(".bt-toast__message"), message);
 
 	let closing = false;
 
