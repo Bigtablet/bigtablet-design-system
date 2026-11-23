@@ -23,6 +23,7 @@ export { init } from "./js/init.js";
 export { getLocale, setLocale, setMessages } from "./js/locale.js";
 export { Modal } from "./js/modal.js";
 export { Pagination } from "./js/pagination.js";
+export { Sentences } from "./js/sentences.js";
 export { Sidebar } from "./js/sidebar.js";
 export { Toast } from "./js/toast.js";
 export { Toggle } from "./js/toggle.js";

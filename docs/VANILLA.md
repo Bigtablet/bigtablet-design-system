@@ -30,6 +30,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [FileInput](#fileinput)
   - [AppShell · Sidebar](#appshell--sidebar)
   - [건너뛰기 링크 · 기본 포커스 링](#건너뛰기-링크--기본-포커스-링)
+  - [문장 단위 줄바꿈](#문장-단위-줄바꿈)
 - [다크 모드](#다크-모드)
 - [CSS Custom Properties](#css-custom-properties)
 - [JavaScript API](#javascript-api)
@@ -796,6 +797,7 @@ Alert는 JavaScript로만 사용합니다.
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)
 - `error` 는 `role="alert"`, 나머지는 `role="status"` 로 메시지만 읽힌다
 - `prefers-reduced-motion` 에서는 모션만 빠지고 시간은 그대로 간다
+- 두 문장 이상이면 문장 사이에서 먼저 줄이 바뀐다 (React Toast `message` 와 같음 - [문장 단위 줄바꿈](#문장-단위-줄바꿈)). Alert `message` 도 같다
 
 ---
 
@@ -1378,6 +1380,31 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 
 ---
 
+### 문장 단위 줄바꿈
+
+React `Sentences` · Toast · Alert `message` 와 같은 규칙으로 두 문장 이상인 문단을 문장 사이에서 먼저 끊습니다. 꾸미는 말과 꾸밈받는 말("이 아래의 컴포넌트에서"), 영문 뒤 띄어 쓴 조사("Touch ID 로"), 문장 뒤 괄호 조각("(오류 코드 E1)")도 한 덩어리로 둡니다. 규칙은 React 와 같은 소스(`src/text`)를 번들에 실어 앱에 따로 옮겨 둘 필요가 없습니다.
+
+```html
+<!-- 서버 템플릿 - 페이지 로드 때 나눈다 -->
+<p data-bt-sentences th:text="${message}"></p>
+
+<!-- 안쪽 요소는 그대로 두고 바로 아래 글자만 나눈다. 요소에 이어 붙은 문장은 묶지 않아 요소와 조사가 떨어지지 않는다 -->
+<p data-bt-sentences>설정을 바꿨습니다. <strong>저장</strong> 을 누르세요.</p>
+
+<script>
+  // JS 로 넣을 때 - 글자로만 넣는다 (HTML 은 해석하지 않는다)
+  Bigtablet.Sentences.set(el, "저장했어요. 다른 기기에도 곧 반영돼요.");
+  // 이미 있는 글자를 나눌 때 (init() 이 하는 일) - 다시 불러도 한 번만
+  Bigtablet.Sentences.apply(el);
+</script>
+```
+
+- 마크업은 React 와 같습니다 - 문장은 `.sentences_item`, 어절 묶음은 `.sentences_phrase` (둘 다 `inline-block`)
+- 한 문장이면 마크업 없이 글자 그대로입니다
+- 한국어 어절 안에서 끊기지 않게 문단에 `word-break: keep-all` 을 함께 둡니다 (Toast · Alert 메시지는 이미 적용)
+
+---
+
 ## 다크 모드
 
 따로 정의할 것이 없다. 번들에 라이트 · 다크 테마 값이 함께 들어 있어서 아래 둘 중 하나면 전환된다.
@@ -1497,6 +1524,7 @@ nav.collapse(); nav.expand(); nav.toggle(); nav.isCollapsed(); nav.destroy();
 <div data-bt-date-picker>...</div> <!-- DatePicker 자동 초기화 -->
 <button data-bt-copy="값">...</button> <!-- CopyButton 자동 초기화 -->
 <aside data-bt-sidebar>...</aside> <!-- Sidebar 접기 자동 초기화 -->
+<p data-bt-sentences>...</p>      <!-- 문장 단위 줄바꿈 -->
 <div class="bt-app-shell">...</div> <!-- AppShell - .bt-app-shell__header 가 있으면 자동 -->
 ```
 

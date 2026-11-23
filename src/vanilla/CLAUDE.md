@@ -20,6 +20,7 @@ src/vanilla/
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
 │   ├── app-shell.js · sidebar.js  # 고정 헤더 높이 · 사이드바 접기 (#950)
 │   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
+│   ├── sentences.js    # 문장 단위 줄바꿈 - React 와 같은 src/text/core.ts 를 import 해 번들에 싣는다 (#1139)
 │   └── init.js         # data-bt-* 자동 초기화
 └── scss/
     ├── _custom-properties.scss   # :root --bt-* 변수
@@ -48,7 +49,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker,sidebar,locale}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker,sidebar,locale,sentences}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 실제 Chromium 에서 레이아웃·대비를 재는 `bigtablet.*.browser.test.ts`
 (alert · badge · copy-button · custom-properties · forced-colors · inline-alert · modal · table · toast)는
 `pnpm test:browser` 로 돈다. 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
@@ -397,6 +398,11 @@ const t = Bigtablet.Toast('저장했습니다', 'success', {
   regionLabel: '알림'
 });
 t.dismiss();
+
+// 문장 단위 줄바꿈 (#1139) - React renderSentences 와 같은 마크업(.sentences_item · .sentences_phrase).
+// Toast · Alert message 와 data-bt-sentences 요소에 자동 적용
+Bigtablet.Sentences.set(el, '저장했어요. 다른 기기에도 곧 반영돼요.');
+Bigtablet.Sentences.apply(el);  // 이미 있는 글자를 나눈다 - 안쪽 요소는 그대로
 ```
 
 ### CSS Custom Properties
