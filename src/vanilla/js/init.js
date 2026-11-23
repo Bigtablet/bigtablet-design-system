@@ -84,6 +84,9 @@ export function init() {
 			if (el.dataset.prevLabel) labels.prevLabel = el.dataset.prevLabel;
 			if (el.dataset.nextLabel) labels.nextLabel = el.dataset.nextLabel;
 			if (el.dataset.navLabel) labels.navLabel = el.dataset.navLabel;
+			// 넓은 폭의 현재 쪽 양옆 번호 수 (기본 2). 좁은 폭(600px 미만)은 늘 0 (#1145)
+			const sibling = parseInt(el.dataset.sibling, 10);
+			if (sibling >= 0) labels.sibling = sibling;
 			if (parseBoolAttr(el.dataset.pageJump)) labels.showPageJump = true;
 			if (el.dataset.pageJumpLabel) labels.pageJumpLabel = el.dataset.pageJumpLabel;
 			el._btPagination = Pagination(el, { page, totalPages, href, ...labels });

@@ -14,8 +14,9 @@ describe("Pagination", () => {
 		document.body.appendChild(el);
 		return { el, api: Pagination(el, { page, totalPages, onPageChange }) };
 	};
-	const labels = (el: HTMLElement) =>
-		Array.from(el.querySelectorAll(".bt-pagination__pages > *"), (n) =>
+	// 넓은 폭에서 보이는 칸 - jsdom 은 CSS 를 적용하지 않아 좁은 폭 전용 칸은 직접 거른다 (#1145)
+	const labels = (el: HTMLElement, hide = "bt-pagination__narrow") =>
+		Array.from(el.querySelectorAll(`.bt-pagination__pages > :not(.${hide})`), (n) =>
 			n.classList.contains("bt-pagination__ellipsis") ? "…" : (n.textContent ?? "").trim(),
 		);
 
@@ -27,6 +28,19 @@ describe("Pagination", () => {
 		expect(labels(mount(15, 20).el)).toEqual(["1", "…", "13", "14", "15", "16", "17", "…", "20"]);
 		expect(labels(mount(16, 20).el)).toEqual(["1", "…", "14", "15", "16", "17", "18", "19", "20"]);
 		for (let page = 1; page <= 20; page++) expect(labels(mount(page, 20).el)).toHaveLength(9);
+	});
+
+	// 좁은 폭(600px 미만)은 1 · … · 현재 · … · 끝 다섯 칸, data-sibling 은 넓은 폭만 바꾼다 (#1145)
+	it("keeps five slots on a narrow screen and reads data-sibling", () => {
+		expect(labels(mount(4, 16).el, "bt-pagination__wide")).toEqual(["1", "…", "4", "…", "16"]);
+		for (let page = 1; page <= 16; page++)
+			expect(labels(mount(page, 16).el, "bt-pagination__wide")).toHaveLength(5);
+
+		document.body.innerHTML =
+			'<nav class="bt-pagination" data-bt-pagination data-page="8" data-total-pages="16" data-sibling="1"></nav>';
+		init();
+		const el = document.querySelector<HTMLElement>(".bt-pagination") as HTMLElement;
+		expect(labels(el)).toEqual(["1", "…", "7", "8", "9", "…", "16"]);
 	});
 
 	it("marks the current page and disables prev/next at the ends", () => {
