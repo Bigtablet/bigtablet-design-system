@@ -22,7 +22,12 @@ const ABBREVIATION = /(?:^|[^A-Za-z])(?:[A-Za-z]\.){2,}["')\]”’」』]*$/;
  * "한 번&nbsp;더" 의 "번" · "더" 가 다른 어절이 돼, 묶음 · 줄바꿈 엔진이 nbsp 자리에서 줄을 바꾼다 (#1137)
  */
 export const BREAK_SPACE = /[^\S\u00a0\u2007\u202f]+/;
-/** 어절 - 줄을 바꿀 수 있는 공백 사이의 글자. nbsp 로 붙인 말은 한 어절이다 */
+/** `split` 용 - 공백 조각도 결과에 남긴다 */
+export const BREAK_SPACE_SPLIT = new RegExp(`(${BREAK_SPACE.source})`);
+/**
+ * 어절 - 줄을 바꿀 수 있는 공백 사이의 글자. nbsp 로 붙인 말은 한 어절이다.
+ * `g` 플래그를 단 모듈 공유 정규식이라 `matchAll` 전용이다(복제해서 쓴다) - `.test` · `.exec` 는 `lastIndex` 가 남는다
+ */
 export const WORD = /(?:\S|[\u00a0\u2007\u202f])+/g;
 
 /** 문장을 끝내는 어절인가 */
