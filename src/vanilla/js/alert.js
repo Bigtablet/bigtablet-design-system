@@ -1,5 +1,6 @@
 import { t } from "./locale.js";
 import { afterExit, lockScroll, ownsFocus, pushEscape, unlockScroll } from "./overlay.js";
+import { Sentences } from "./sentences.js";
 import { escapeHtml, generateId, returnFocusTarget, trapTab } from "./utils.js";
 
 /* ========================================
@@ -72,6 +73,8 @@ export function Alert(options = {}) {
 			alertPanel.setAttribute("aria-labelledby", titleEl.id);
 		}
 		if (messageEl) {
+			// React Alert `message` 와 같은 문장 단위 줄바꿈 (#1139). 글자는 escapeHtml 로 들어가 있어 노드만 나눈다
+			Sentences.apply(messageEl);
 			messageEl.id = generateId("alert_message");
 			alertPanel.setAttribute("aria-describedby", messageEl.id);
 		}

@@ -4,6 +4,13 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.11.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.0) - 2026-11-23
+- Vanilla 번들에 문장 단위 줄바꿈을 추가했습니다 - `Bigtablet.Sentences.set(el, text)` · `Sentences.apply(el)`, 서버 템플릿용 `data-bt-sentences` 자동 초기화. React 와 같은 규칙 · 마크업(`.sentences_item` · `.sentences_phrase`)이라 앱에 규칙을 따로 옮겨 둘 필요가 없습니다 ([VANILLA](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/VANILLA.md#문장-단위-줄바꿈))
+- (렌더 변경) Vanilla Toast · Alert `message` 도 두 문장 이상이면 문장 사이에서 먼저 줄이 바뀝니다
+- (렌더 변경) 문장 단위 줄바꿈(Toast · Alert `message`, `supportingText`, `Sentences`)이 영문 · 코드 · 괄호 뒤에 띄어 쓴 조사("Touch ID 로")를 다음 줄로 떼지 않습니다 - `BalancedText` 와 같은 규칙입니다
+- (렌더 변경) 줄바꿈 금지 공백(`&nbsp;`)으로 붙인 말("한 번&nbsp;더")이 어절 묶음 · 줄바꿈 엔진에서 갈리지 않습니다
+- (렌더 변경) 문장 뒤 괄호 조각("…알려 주세요. (오류 코드 E1)")이 혼자 한 문장이 되지 않고 앞 문장에 붙으며, 괄호 안에서 줄이 갈리지 않습니다
+
 ## [4.10.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.4) - 2026-11-23
 - (렌더 변경) `BalancedText` 가 문단 마지막 줄에 한 어절만 남기지 않습니다("버튼을 두지 / 않습니다") - 줄 수는 그대로 두고 앞 줄의 어절을 함께 내립니다. 앞 어절에서 문장이 끝났으면 한 어절짜리 새 문장은 그대로 둡니다
 - (렌더 변경) 줄바꿈 엔진이 백틱으로 감싼 코드 뒤 조사("`totalPages` 로")를 다음 줄로 떼지 않습니다

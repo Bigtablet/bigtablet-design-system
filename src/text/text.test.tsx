@@ -220,6 +220,45 @@ describe("phraseRanges", () => {
 			"이 아래의 컴포넌트에서",
 		]);
 	});
+
+	// gapPenalty 의 붙여 둘 자리와 같은 규칙 - BalancedText 와 문장 단위 줄바꿈이 갈리지 않게 (#1138)
+	it("binds a spaced particle to the English word, code, or bracket before it", () => {
+		const text = "Windows Hello · Touch ID 로 확인합니다. `totalPages` 를 (선택) 는 넘깁니다";
+		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
+			"ID 로",
+			"`totalPages` 를",
+			"(선택) 는",
+		]);
+	});
+
+	// 문장 뒤 괄호 조각은 앞 문장에 붙고, 괄호 안에서 줄이 갈리지 않게 한 묶음이다 (#1136)
+	it("binds a trailing bracket fragment to the sentence before it as one phrase", () => {
+		const text = "연결하지 못했어요. IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)";
+		expect(texts(text)).toEqual([
+			"연결하지 못했어요.",
+			"IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)",
+		]);
+		const last = "IT 담당자에게 알려 주세요. (오류 코드 DEVICE-SERVER)";
+		expect(phraseRanges(last).map(({ start, end }) => last.slice(start, end))).toEqual([
+			"(오류 코드 DEVICE-SERVER)",
+		]);
+		// 문장 부호로 끝나는 괄호 문장 · 뒤 요소로 이어지는 조각은 그대로
+		expect(texts("저장했어요. (자동 저장돼요.)")).toEqual(["저장했어요.", "(자동 저장돼요.)"]);
+		expect(texts("저장했어요. (자세히는 ")).toEqual(["저장했어요.", "(자세히는"]);
+	});
+
+	// JS `\s` 는 nbsp 를 포함한다 - 어절로 나누면 묶음 경계에서 nbsp 가 무시된다 (#1137)
+	it("treats words glued with a no-break space as one word", () => {
+		const text = "2단계 인증을 한 번 더 받습니다. 이 Google 계정으로 엽니다";
+		expect(phraseRanges(text).map(({ start, end }) => text.slice(start, end))).toEqual([
+			"한 번 더",
+			"이 Google 계정으로",
+		]);
+		expect(splitSentences("1 000원입니다. 다음입니다.").map((s) => s.text)).toEqual([
+			"1 000원입니다.",
+			"다음입니다.",
+		]);
+	});
 });
 
 // 코드 · 링크 같은 요소에 이어 붙은 조각은 묶지 않는다 - 통째로 다음 줄로 넘어가 요소와 조사가 떨어진다 (#1081)

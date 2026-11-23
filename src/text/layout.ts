@@ -1,7 +1,7 @@
 // 줄바꿈 엔진 - 실제 폭으로 줄을 계산해 가장 자연스러운 줄바꿈을 고른다 (#1083). React · DOM 없음.
 // pretext 의 "한 번 재고 산술로 줄 계산" 과 semantic-wrap 의 "끊을 자리 벌점 · 최적 조합 · 브라우저보다 나을 때만
 // 교체" 를 외부 의존성 없이 옮겼다. 폭은 `measure` 로 받는다 - 브라우저는 createCanvasMeasurer, 테스트는 가짜 폭.
-import { endsSentence, gapPenalty } from "./core";
+import { endsSentence, gapPenalty, WORD } from "./core";
 
 /** 글자 폭을 재는 함수 - 같은 글자에는 늘 같은 값을 돌려줘야 한다 */
 export type MeasureText = (text: string) => number;
@@ -24,7 +24,7 @@ export interface Word {
  */
 export const toWords = (text: string): Word[] => {
 	const words: Word[] = [];
-	for (const m of text.matchAll(/\S+/g)) {
+	for (const m of text.matchAll(WORD)) {
 		const start = m.index ?? 0;
 		let from = 0;
 		for (let i = 1; i < m[0].length; i++) {
