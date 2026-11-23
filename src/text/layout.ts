@@ -148,6 +148,9 @@ const breakCosts = (words: Word[]) => {
 		// 막는 것과 같은 자리라 꼭 피한다. 줄이 하나 늘더라도 문장 경계에서 끊는 쪽이 낫다 (#1113)
 		if (next && i > 0 && endsSentence(words[i - 1]?.text ?? "") && !endsSentence(word.text))
 			penalty = Math.max(100, penalty);
+		// 문단의 마지막 어절만 다음 줄로("버튼을 두지 / 않습니다") - 마침표가 없어도 문장 끝 어절을 떼는 자리(12)와 같다 (#1133).
+		// 앞 어절에서 문장이 끝났으면 새 문장 하나가 줄을 차지하는 것이라 그대로 둔다
+		if (i === words.length - 2 && !endsSentence(word.text)) penalty = Math.max(12, penalty);
 		// 나열 항목 안("Esc 닫기 · …")은 항목 사이(8)보다 어색하다
 		if (penalty === 6 && (words[i - 1]?.text === "·" || words[i + 2]?.text === "·")) penalty = 10;
 		if (open > 0) return Math.max(60, penalty);

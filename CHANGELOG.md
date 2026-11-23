@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.10.4](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.4) - 2026-11-23
+- (렌더 변경) `BalancedText` 가 문단 마지막 줄에 한 어절만 남기지 않습니다("버튼을 두지 / 않습니다") - 줄 수는 그대로 두고 앞 줄의 어절을 함께 내립니다. 앞 어절에서 문장이 끝났으면 한 어절짜리 새 문장은 그대로 둡니다
+- (렌더 변경) 줄바꿈 엔진이 백틱으로 감싼 코드 뒤 조사("`totalPages` 로")를 다음 줄로 떼지 않습니다
+
 ## [4.10.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.10.3) - 2026-11-19
 - README 를 문서 사이트 캡처 · 설치 · Quick start 중심으로 줄였습니다 - Tailwind v4 설정과 `@layer reset` 주의는 [THEMING](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/THEMING.md#tailwind-css-v4) 으로 옮겼습니다
 - README Quick start 예제에 `"use client"` 를 넣었습니다 - App Router 의 `page.tsx` 에 그대로 붙이면 `useToast` 에서 깨졌습니다

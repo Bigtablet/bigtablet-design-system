@@ -188,7 +188,8 @@ const leansNext = (before: string, after: string) => {
 export const gapPenalty = (before: string, after: string): number => {
 	if (endsSentence(before)) return 0;
 	if (bindsNext(before) || bindsPrev(after) || after === "·") return 100;
-	if (/[A-Za-z0-9"')\]”’>]$/.test(before) && SPACED_PARTICLE.test(after)) return 100;
+	// 백틱 - 마크다운 원문을 그대로 넘긴 글("`totalPages` 로")도 코드 뒤 조사를 떼지 않게 (#1133)
+	if (/[A-Za-z0-9"')\]”’>`]$/.test(before) && SPACED_PARTICLE.test(after)) return 100;
 	if (/[,:;]["')\]”’]*$/.test(before)) return 1;
 	// 문장의 마지막 어절(서술어)만 다음 줄로 - "패키지에 / 싣습니다. 다음 문장…" 은 문장이 끝난 듯 읽히다 한 어절이 떨어진다
 	if (endsSentence(after)) return 12;
