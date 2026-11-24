@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.11.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.3) - 2026-11-24
+- (렌더 변경) `TextField` sm · md 에 아이콘 · 지우기 버튼 · action 을 붙이면 데스크톱에서 상자가 40px 대신 42px 로 커지던 문제를 고쳤습니다 - 아이콘 칸은 폭 40px 을 유지하고 높이는 상자 안쪽을 따릅니다. 로딩 스피너를 `trailingIcon` 으로 넣었다 빼도 칸이 출렁이지 않습니다. lg 와 모바일 폭은 그대로입니다
+
 ## [4.11.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.2) - 2026-11-24
 - (렌더 변경) 목록 항목 안에서 첫 문장이 두 줄로 감기면 목록 번호가 둘째 줄 옆으로 내려가던 문제를 고쳤습니다 - 문장 · 어절 묶음(`Sentences`, Toast · Alert `message`, `supportingText`)을 위쪽에 맞춰 번호가 첫 줄 옆에 섭니다. 한 줄짜리 묶음의 자리는 그대로입니다. React · Vanilla 모두
 

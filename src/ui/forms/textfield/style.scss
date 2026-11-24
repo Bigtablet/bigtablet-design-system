@@ -139,9 +139,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    // `&_action > *` 가 이 칸을 그대로 채우므로 두 치수는 같은 토큰이어야 한다 - 갈라지면 자식이 넘친다.
     width: token.$tap_target_compact;
-    height: token.$tap_target_compact;
+    // 높이는 줄(&_inner)을 따른다 - 40px 로 박으면 sm · md 상자(테두리 안 38px)가 42px 로 부풀어
+    // 아이콘을 넣고 뺄 때마다 칸이 출렁였다 (#1151)
+    align-self: stretch;
     border-radius: token.$radius_full;
     color: token.$color_text_heading;
 
@@ -153,7 +154,7 @@
 
   // ── Clear button / action slot ──────────────────────────────────────────
 
-  // `&_action > *` — 앱이 넘긴 조작 요소가 아이콘 칸(40x40)을 그대로 히트 영역으로 쓰게 한다
+  // `&_action > *` — 앱이 넘긴 조작 요소가 아이콘 칸(폭 40, 높이는 상자 안쪽)을 그대로 히트 영역으로 쓰게 한다
   // (WCAG 2.5.8). 내장 clear 버튼과 hover/focus 처리를 공유해 두 슬롯의 시각이 갈리지 않는다.
   &_clear,
   &_action > * {
@@ -162,7 +163,8 @@
     justify-content: center;
     flex-shrink: 0;
     width: token.$tap_target_compact;
-    height: token.$tap_target_compact;
+    // 아이콘 칸과 같은 이유로 높이를 박지 않고 늘린다 - clear 는 줄의, action 자식은 칸의 높이를 채운다
+    align-self: stretch;
     border: none;
     background: transparent;
     cursor: pointer;
