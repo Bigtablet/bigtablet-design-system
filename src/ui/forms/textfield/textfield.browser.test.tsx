@@ -34,43 +34,51 @@ describe("Vanilla TextField focus (Chromium)", () => {
 
 // 아이콘 칸이 40px 고정이던 동안 sm · md 상자(테두리 안 38px)가 42px 로 부풀었다 - 검색 칸이 로딩
 // 스피너를 trailingIcon 으로 넣었다 뺄 때마다 2px 씩 출렁였다 (#1151)
-describe("TextField icon slot height (Chromium)", () => {
-	// 모바일 폭은 상자가 48px 라 40px 칸이 들어가 결함이 안 드러난다 - 데스크톱 폭에서 잰다
+// 결함은 데스크톱 폭에서만 드러난다(모바일은 상자가 48px 이상이라 40px 칸이 들어간다). 모바일은
+// 칸이 늘어난 상자를 따라가도 높이가 그대로인지를 본다.
+describe.each([
+	["desktop", 1280, 800],
+	["mobile", 375, 667],
+] as const)("TextField icon slot height at %s width (Chromium)", (_, width, height) => {
 	beforeEach(async () => {
-		await page.viewport(1280, 800);
+		await page.viewport(width, height);
 	});
 
-	const heightOf = (node: React.ReactElement) => {
+	const measure = (node: React.ReactElement) => {
 		const { container, unmount } = render(node);
-		const h = (
+		const box = (
 			container.querySelector(".text_field_container") as HTMLElement
-		).getBoundingClientRect().height;
+		).getBoundingClientRect();
+		const button = container.querySelector("button")?.getBoundingClientRect();
 		unmount();
-		return h;
+		return { box: box.height, button };
 	};
 
 	it.each(["sm", "md", "lg"] as const)(
 		"keeps the %s box height with an icon, action or clear button",
 		(size) => {
-			const plain = heightOf(<TextField aria-label="검색" size={size} />);
-			expect(heightOf(<TextField aria-label="검색" size={size} trailingIcon={<svg />} />)).toBe(
+			const plain = measure(<TextField aria-label="검색" size={size} />).box;
+			expect(measure(<TextField aria-label="검색" size={size} trailingIcon={<svg />} />).box).toBe(
 				plain,
 			);
-			expect(heightOf(<TextField aria-label="검색" size={size} leadingIcon={<svg />} />)).toBe(
+			expect(measure(<TextField aria-label="검색" size={size} leadingIcon={<svg />} />).box).toBe(
 				plain,
 			);
-			expect(
-				heightOf(
-					<TextField
-						aria-label="검색"
-						size={size}
-						trailingAction={<button type="button">x</button>}
-					/>,
-				),
-			).toBe(plain);
-			expect(
-				heightOf(<TextField aria-label="검색" size={size} clearable defaultValue="값" />),
-			).toBe(plain);
+			for (const slotted of [
+				<TextField
+					key="action"
+					aria-label="검색"
+					size={size}
+					trailingAction={<button type="button">x</button>}
+				/>,
+				<TextField key="clear" aria-label="검색" size={size} clearable defaultValue="값" />,
+			]) {
+				const { box, button } = measure(slotted);
+				expect(box).toBe(plain);
+				// 늘어난 칸을 누름 영역으로 쓴다 - WCAG 2.5.8 의 24×24 를 넘어야 한다
+				expect(button?.width).toBeGreaterThanOrEqual(24);
+				expect(button?.height).toBeGreaterThanOrEqual(24);
+			}
 		},
 	);
 });
