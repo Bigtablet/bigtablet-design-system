@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.11.2](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.2) - 2026-11-24
+- (렌더 변경) 목록 항목 안에서 첫 문장이 두 줄로 감기면 목록 번호가 둘째 줄 옆으로 내려가던 문제를 고쳤습니다 - 문장 · 어절 묶음(`Sentences`, Toast · Alert `message`, `supportingText`)을 위쪽에 맞춰 번호가 첫 줄 옆에 섭니다. 한 줄짜리 묶음의 자리는 그대로입니다. React · Vanilla 모두
+
 ## [4.11.1](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.1) - 2026-11-23
 - (렌더 변경) Pagination 이 좁은 화면(600px 미만)에서 쪽 번호를 `1 · … · 현재 · … · 끝` 다섯 칸으로 줄여 375px 화면 밖으로 넘치지 않습니다 - 9칸과 이전 · 다음이 460px 라 문서 전체에 가로 스크롤이 생겼습니다. React · Vanilla 모두
 - Vanilla Pagination 자동 초기화에서 `data-sibling` 으로 넓은 폭의 칸 수를 정할 수 있습니다 (수동 초기화의 `sibling` 과 같음)
