@@ -7,7 +7,7 @@ export const modal: DocPage = {
 	title: "Modal",
 	name: "모달",
 	summary:
-		"화면 가운데에 뜨는 대화 상자입니다. 포커스 트랩 · Esc 닫기 · 배경 스크롤 잠금을 자동으로 처리합니다.",
+		"화면 위쪽(가로 가운데)에 뜨는 대화 상자입니다. 포커스 트랩 · Esc 닫기 · 배경 스크롤 잠금을 자동으로 처리합니다.",
 	when: [
 		["폼 · 상세 내용처럼 자유로운 내용을 화면 위에 띄움", "Modal", true],
 		['삭제 확인처럼 "예 / 아니요" 만 받으면 됨', "useConfirm", false],
@@ -26,6 +26,7 @@ export const modal: DocPage = {
 	props: "ModalProps",
 	notes: [
 		"`document.body` 로 포털로 렌더되어 부모의 `overflow: hidden` 에 잘리지 않습니다",
+		"패널 윗변은 화면 위쪽 15% 자리에 고정되고 아래로만 자랍니다 - 오류 안내가 나타나도 모달이 튀지 않습니다",
 		"닫히는 모션이 끝날 때까지 DOM 에 남습니다. 본문 데이터는 `onExited` 에서 비웁니다",
 	],
 };

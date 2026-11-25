@@ -49,6 +49,34 @@ describe("CopyButton", () => {
 		expect(first).toHaveTextContent("복사됨");
 	});
 
+	// 글자만 바뀌면 놓치기 쉽다 - 상태 클래스(색)와 아이콘으로도 보인다 (#1158)
+	it("marks the copied and failed states with a class and a different icon", async () => {
+		vi.useFakeTimers();
+		const { container } = render(<CopyButton text="x" resetAfter={500} />);
+		const button = screen.getByRole("button");
+		const iconPath = () => button.querySelector("svg")?.innerHTML;
+		const idleIcon = iconPath();
+
+		await click(button);
+		expect(button).toHaveClass("copy_button", "copy_button_copied");
+		const copiedIcon = iconPath();
+		expect(copiedIcon).not.toBe(idleIcon);
+
+		act(() => vi.advanceTimersByTime(500));
+		expect(button).not.toHaveClass("copy_button_copied");
+		expect(iconPath()).toBe(idleIcon);
+
+		writeText.mockRejectedValue(new Error("denied"));
+		await click(button);
+		expect(button).toHaveClass("copy_button_failed");
+		expect(iconPath()).not.toBe(idleIcon);
+		expect(iconPath()).not.toBe(copiedIcon);
+		// 두 문구를 가상 요소로 잡아 단추 폭이 흔들리지 않게 한다 - 보이는 글자에는 섞이지 않는다
+		const label = container.querySelector(".copy_button_label") as HTMLElement;
+		expect(label.dataset).toMatchObject({ label: "복사", copied: "복사됨" });
+		expect(button).toHaveTextContent(/^복사$/);
+	});
+
 	it("goes back to the copy label after resetAfter", async () => {
 		vi.useFakeTimers();
 		render(<CopyButton text="x" resetAfter={500} />);

@@ -15,6 +15,12 @@ $close_inset_medium: token.$spacing_24; // 패널 패딩 32 - 8
 // inset 도 같이 커지므로 상수다). 그래서 제목 쪽은 반응형 분기가 필요 없다.
 $close_clearance: token.$spacing_24;
 
+// 패널 윗변 자리 (#1157) - 가운데 정렬이면 내용(오류 안내 · 단계)이 늘 때마다 패널이 절반씩 위로 올라가
+// 모달 전체가 튀었다. 윗변을 고정하고 아래로만 자란다. 작은 화면은 32px, 큰 화면은 128px 에서 멈춘다
+$panel_top: clamp(#{token.$spacing_32}, 15vh, #{token.$spacing_128});
+// dvh 판 - 아래 max-height 의 dvh 선언과 같은 기준으로 둔다 (주소창이 접힐 때 윗자리 · 상한이 어긋나지 않게)
+$panel_top_dvh: clamp(#{token.$spacing_32}, 15dvh, #{token.$spacing_128});
+
 .modal {
   @include token.wrap_keep_all;
   position: fixed;
@@ -29,7 +35,13 @@ $close_clearance: token.$spacing_24;
   // 않았다. 기본값(width=480)만으로도 375px 화면에서 패널이 잘리고 우상단 close 가 화면
   // 밖으로 나갔다. minmax(0, 1fr) 로 트랙을 컨테이너에 묶어 100% 가 뷰포트 폭이 되게 한다.
   grid-template-columns: minmax(0, 1fr);
-  place-items: center;
+  place-items: start center;
+  padding-top: $panel_top;
+  padding-top: $panel_top_dvh;
+  // 긴 children 은 패널 안(&_body)에서 스크롤된다. 스크롤 영역 밖의 슬롯(description · footer)만으로 상한을
+  // 넘으면 패널 아래로 넘친다 - 딤도 스크롤돼야 footer 에 닿는다. 페이지 스크롤은 잠겨 있어 밖으로 넘기지 않는다
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome;
   will-change: opacity;
@@ -47,8 +59,10 @@ $close_clearance: token.$spacing_24;
     // 뷰포트보다 긴 내용이 위아래로 잘려 접근 불가가 되던 것을 막는다. body 스크롤이 잠긴 상태라
     // 페이지 스크롤로도 닿을 수 없었다. 제목·푸터는 고정되고 본문만 스크롤된다(&_body).
     // dvh 는 모바일 사파리 주소창을 따라가고, 미지원 브라우저는 위의 vh 선언을 쓴다.
-    max-height: calc(100vh - 2 * #{token.$spacing_32});
-    max-height: calc(100dvh - 2 * #{token.$spacing_32});
+    // 위는 $panel_top, 아래는 32px 를 남긴다. max-height 는 content-box 라 안쪽 여백(위아래)도 뺀다 -
+    // 예전 값은 여백을 빼지 않아 긴 패널이 화면 위아래 끝까지 붙었다
+    max-height: calc(100vh - #{$panel_top} - #{token.$spacing_32} - 2 * #{token.$spacing_24});
+    max-height: calc(100dvh - #{$panel_top_dvh} - #{token.$spacing_32} - 2 * #{token.$spacing_24});
     padding: token.$spacing_24;
     // visible 유지 - hidden 으로 바꾸면 우상단 close 버튼의 focus ring(box-shadow)이 잘린다.
     // 넘치는 내용은 &_body 가 자기 안에서 처리한다.
@@ -58,6 +72,8 @@ $close_clearance: token.$spacing_24;
 
     @include token.from_medium {
       padding: token.$spacing_32;
+      max-height: calc(100vh - #{$panel_top} - #{token.$spacing_32} - 2 * #{token.$spacing_32});
+      max-height: calc(100dvh - #{$panel_top_dvh} - #{token.$spacing_32} - 2 * #{token.$spacing_32});
     }
   }
 

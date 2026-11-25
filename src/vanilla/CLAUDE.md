@@ -92,6 +92,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
 | Modal | `.bt-modal` | | `.is-open` (서버가 붙여 그리면 초기화가 열린 상태로 시작 - #919) |
 | Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__announcer`(리전 직속 숨은 `role=status`·`role=alert` 공지 영역 둘), `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다. 리전은 토스트가 하나 이상일 때만 `role="region"` + `aria-label` | | `[data-state="closed"]`(퇴출 중) |
+| CopyButton | `.bt-copy-button`(JS 가 붙인다) + `__icon`(상태 아이콘) · `__label`(두 문구로 폭 고정) - 버튼 클래스는 `.bt-button` 그대로 | | `[data-state="idle\|copied\|failed"]` - copied 는 성공 색 · 체크, failed 는 오류 색 · X (#1158) |
 | InlineAlert | `.bt-inline-alert` (+ `__icon`(빈 span - CSS mask 아이콘), `__content` > `__title` · `__message` · `__action`) - CSS 만 | `--neutral/info/success/warning/error`(기본 info) | `[hidden]` |
 | Badge | `.bt-badge` - CSS 만 (React label · md) | `--accent(기본)/neutral/info/success/warning/error`, `--soft`(기본 solid) | |
 | Table | `.bt-table-wrap`(가로 스크롤 상자, `--sticky-header`) > `table.bt-table` - CSS 만, 소비자가 그린 표에 클래스만 | `--sm/lg`, `--fixed`(+ `--bt-table-min-width`), `--cards`(compact 에서 카드, 칸은 `data-label`) | `tr.is-selected`, `td.bt-table__truncate`, `.bt-table__empty` |

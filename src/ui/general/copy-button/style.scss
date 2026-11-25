@@ -4,3 +4,58 @@
 .copy_button_status {
   @include token.visually_hidden;
 }
+
+// 복사됨 · 실패를 모양으로도 보인다 (#1158) - 글자만 2초 바뀌면 outline 단추 · 모달 안에서 놓치기 쉬웠다.
+// 아이콘(체크 · X)도 함께 바뀌어 색만으로 전하지 않는다. 글자색은 다크에서 바뀌는 on_surface, 테두리는
+// 비텍스트 3:1 이라 bare (Button danger 와 같은 조합). 채운 단추는 배경을 바꾼다
+.copy_button {
+  &.copy_button_copied {
+    color: token.$color_status_success_on_surface;
+
+    &.button_variant_outline,
+    &.icon_button_variant_outline {
+      border-color: token.$color_status_success;
+    }
+
+    &.button_variant_filled,
+    &.icon_button_variant_filled {
+      background: token.$color_status_success;
+      color: token.$color_brand_on_primary;
+    }
+  }
+
+  &.copy_button_failed {
+    color: token.$color_status_error_on_surface;
+
+    &.button_variant_outline,
+    &.icon_button_variant_outline {
+      border-color: token.$color_status_error;
+    }
+
+    &.button_variant_filled,
+    &.icon_button_variant_filled {
+      background: token.$color_status_error;
+      color: token.$color_brand_on_primary;
+    }
+  }
+}
+
+// 문구 폭 고정 - 보이는 글자와 두 문구(가상 요소, 숨김)를 한 칸에 겹쳐 긴 쪽 폭을 잡는다
+.copy_button_label {
+  display: inline-grid;
+  justify-items: center;
+
+  > *,
+  &::before,
+  &::after {
+    grid-area: 1 / 1;
+  }
+
+  &::before,
+  &::after {
+    visibility: hidden;
+  }
+
+  &::before { content: attr(data-label); }
+  &::after { content: attr(data-copied); }
+}
