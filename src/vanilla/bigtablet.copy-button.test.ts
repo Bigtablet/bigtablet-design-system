@@ -88,6 +88,49 @@ describe("CopyButton (#918)", () => {
 		await vi.waitFor(() => expect(onError).toHaveBeenCalledWith(denied));
 		expect(statusOf(btn).textContent).toBe("복사 실패");
 		expect(btn.textContent).toBe("복사");
+		// 실패도 모양으로 보인다 - 오류 색(CSS)과 X 아이콘 (#1158)
+		expect(btn.dataset.state).toBe("failed");
+		expect(btn.querySelector(".bt-copy-button__icon circle")).not.toBeNull();
+	});
+
+	// 글자만 바뀌면 놓치기 쉽다 - 복사 아이콘이 체크로 바뀌었다 돌아오고, 두 문구로 폭을 잡는다 (#1158)
+	it("평소 복사 아이콘이 복사되면 체크로 바뀌고 되돌아온다 - 두 문구는 폭 잡기용 data 로만", async () => {
+		vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+		setClipboard(() => Promise.resolve());
+		const btn = mount();
+		const api = CopyButton(btn);
+		expect(btn.classList.contains("bt-copy-button")).toBe(true);
+		const label = btn.querySelector(".bt-copy-button__label") as HTMLElement;
+		expect(label.dataset).toMatchObject({ label: "복사", copied: "복사됨" });
+
+		const iconHtml = () => btn.querySelector(".bt-copy-button__icon")?.innerHTML;
+		const idleIcon = iconHtml();
+		expect(btn.firstElementChild?.classList.contains("bt-copy-button__icon")).toBe(true);
+
+		btn.click();
+		await vi.waitFor(() => expect(btn.dataset.state).toBe("copied"));
+		expect(iconHtml()).not.toBe(idleIcon);
+		expect(btn.textContent).toBe("복사됨");
+
+		vi.advanceTimersByTime(2000);
+		expect(btn.dataset.state).toBe("idle");
+		expect(iconHtml()).toBe(idleIcon);
+
+		api?.destroy();
+		expect(btn.classList.contains("bt-copy-button")).toBe(false);
+		expect(btn.innerHTML).toBe("복사");
+	});
+
+	it("버튼에 소비자 아이콘이 있으면 평소엔 그것을 쓰고 결과 동안만 상태 아이콘을 붙인다", async () => {
+		setClipboard(() => Promise.resolve());
+		const btn = mount(
+			'<button class="bt-button bt-button--sm" data-bt-copy="x"><svg></svg><span data-copy-label>복사</span></button>',
+		);
+		CopyButton(btn);
+		expect(btn.querySelector(".bt-copy-button__icon")).toBeNull();
+		btn.click();
+		await vi.waitFor(() => expect(btn.dataset.state).toBe("copied"));
+		expect(btn.querySelector(".bt-copy-button__icon")).not.toBeNull();
 	});
 
 	it("연타하면 마지막 복사만 반영한다", async () => {
