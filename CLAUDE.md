@@ -249,7 +249,7 @@ return <div ref={panelRef} className="panel" data-state={open ? "open" : "closed
 
 - **Test Runner**: Vitest (multi-project: `unit` · `browser` · `visual`)
 - **a11y Testing**: 문서 사이트 예제마다 axe-core (`site/examples.browser.test.tsx`, `browser` 프로젝트 - headless Chromium)
-- **Coverage**: 92.43% stmts / 90.63% branch / 93.7% funcs / 94.18% lines - **`unit` 프로젝트 기준**. 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
+- **Coverage**: 91.87% stmts / 90.3% branch / 93.11% funcs / 93.75% lines - **`unit` 프로젝트 기준**. 자세한 표는 [docs/TESTING.md](./docs/TESTING.md#커버리지)
 - **Commands**:
   ```bash
   pnpm test              # Run unit tests

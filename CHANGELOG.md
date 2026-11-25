@@ -4,6 +4,9 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.14.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.14.0) - 2026-11-25
+- Modal 단계 전환 추가 - React `ModalSteps`(`active`, `direction`) · `ModalStep`(`name`), Vanilla `modal.showStep(name)` · `currentStep()` + `[data-bt-modal-step]`. 입력 → 본인 확인 → 결과처럼 같은 창 안에서 내용을 바꿀 때 창 높이가 이어서 바뀌고(0.2s) 새 단계가 옆에서 밀려 들어와, 모달 위에 모달이 뜬 것처럼 보이지 않습니다. 숨긴 단계의 입력값은 남고, 포커스는 새 단계로 · 돌아가면 그 단계에서 마지막 자리로 옮깁니다. reduced-motion · 닫히는 중에는 바로 바뀝니다
+
 ## [4.13.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.13.0) - 2026-11-25
 - (렌더 변경) Modal 패널 윗변이 화면 높이의 15%(최소 32px · 최대 128px) 자리에 고정되고 아래로만 자랍니다 - 오류 안내가 나타나거나 단계가 바뀌어도 모달이 위아래로 튀지 않습니다. 화면보다 긴 패널은 끝까지 스크롤되고 아래에 32px 가 남습니다 (React 는 설명 · 버튼만으로 넘쳐도 딤이 스크롤되고, Vanilla 는 잘려 닿을 수 없던 아래쪽을 딤 안에서 스크롤합니다). React · Vanilla 모두
 - (렌더 변경) CopyButton 이 복사되면 체크 아이콘 · 성공 색, 실패하면 X 아이콘 · 오류 색으로 바뀝니다. 문구가 "복사" ↔ "복사됨" 으로 바뀌어도 단추 폭이 흔들리지 않습니다. Vanilla 는 평소에도 복사 아이콘을 두고(직접 넣은 아이콘이 있으면 그것), 실패하면 `data-state="failed"` 가 됩니다

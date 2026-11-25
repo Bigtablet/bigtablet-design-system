@@ -274,8 +274,13 @@ export type { PaginationProps } from "./ui/navigation/pagination";
 export { Pagination } from "./ui/navigation/pagination";
 export type { DrawerPlacement, DrawerProps } from "./ui/overlay/drawer";
 export { Drawer } from "./ui/overlay/drawer";
-export type { ModalFooterAlign, ModalProps } from "./ui/overlay/modal";
-export { Modal } from "./ui/overlay/modal";
+export type {
+	ModalFooterAlign,
+	ModalProps,
+	ModalStepProps,
+	ModalStepsProps,
+} from "./ui/overlay/modal";
+export { Modal, ModalStep, ModalSteps } from "./ui/overlay/modal";
 export type {
 	LocaleKey,
 	LocaleMessages,

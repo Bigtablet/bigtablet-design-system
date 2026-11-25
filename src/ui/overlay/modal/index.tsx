@@ -4,9 +4,11 @@ import { X } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { iconSize } from "../../../styles/icon";
+import { motion } from "../../../styles/motion";
 import { renderSentences } from "../../../text";
 import {
 	cn,
+	firstTabbable,
 	lockBodyScroll,
 	type SafeHTMLProps,
 	unlockBodyScroll,
@@ -14,6 +16,8 @@ import {
 	useIsMounted,
 	useOverlayEscape,
 	usePresence,
+	useReducedMotion,
+	useSafeLayoutEffect,
 } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import "./style.scss";
@@ -257,5 +261,175 @@ export const Modal = ({
 			</div>
 		</div>,
 		document.body,
+	);
+};
+
+// ── 단계 전환 (#1162) ─────────────────────────────────────────────────────────
+
+/** 단계 전환 시간 · 곡선 - 진입 토큰(`$transition_enter_base`, 0.2s out-expo) */
+const STEP_MS = Number.parseFloat(motion.transition.enterBase) * 1000;
+const STEP_EASING = motion.easing.enter;
+/** 새 단계가 밀려 들어오는 거리 (px) - 나아가면 오른쪽, 돌아가면 왼쪽에서 */
+const STEP_SHIFT = 16;
+
+const ModalStepContext = React.createContext<string | null>(null);
+
+/** `height` 와 같은 기준(box-sizing)의 높이 - 애니메이션 시작 · 끝 값으로 쓴다 */
+const contentHeight = (el: HTMLElement) => Number.parseFloat(getComputedStyle(el).height);
+
+export interface ModalStepsProps {
+	/** 보이는 단계의 `name` */
+	active: string;
+	/**
+	 * 새 단계가 들어오는 방향. 없으면 `ModalStep` 순서로 정한다 - 뒤 단계로 가면 "forward"(오른쪽에서),
+	 * 앞 단계로 돌아가면 "back"(왼쪽에서)
+	 */
+	direction?: "forward" | "back";
+	/** `ModalStep` 들 */
+	children: React.ReactNode;
+}
+
+export interface ModalStepProps extends SafeHTMLProps<React.HTMLAttributes<HTMLDivElement>> {
+	/** 단계 이름 - `ModalSteps` 의 `active` 와 맞춘다 */
+	name: string;
+}
+
+/**
+ * 모달 안의 단계 하나. 보이지 않는 단계도 마운트된 채 `hidden` 이라, 돌아가면 입력한 값이 그대로 남는다.
+ */
+export const ModalStep = ({ name, ...props }: ModalStepProps) => {
+	const active = React.useContext(ModalStepContext);
+	return <div {...props} data-modal-step={name} hidden={active !== name} />;
+};
+
+/**
+ * 같은 모달 안에서 단계를 바꿔 끼운다 (입력 → 본인 확인 → 결과). 창은 그대로 두고 패널 높이를 이전 높이에서
+ * 새 높이로 이어 바꾸고, 새 단계는 방향에 맞춰 옆에서 밀려 들어온다 - 내용을 한 번에 바꾸면 높이가 툭 바뀌어
+ * 모달 위에 모달이 뜬 것처럼 보였다. 포커스는 새 단계로 옮기고, 돌아가면 그 단계에서 마지막으로 있던 곳으로
+ * 돌린다. reduced-motion 이거나 모달이 닫히는 중이면 바로 바꾼다.
+ *
+ * @example
+ * ```tsx
+ * <Modal open={open} onClose={close} title="기기 등록" footer={step === "form" ? <Next /> : <Done />}>
+ *   <ModalSteps active={step}>
+ *     <ModalStep name="form">...</ModalStep>
+ *     <ModalStep name="verify">...</ModalStep>
+ *   </ModalSteps>
+ * </Modal>
+ * ```
+ */
+export const ModalSteps = ({ active, direction, children }: ModalStepsProps) => {
+	const rootRef = React.useRef<HTMLDivElement>(null);
+	const reducedMotion = useReducedMotion();
+	const previousRef = React.useRef(active);
+	/**
+	 * 마지막으로 잰 패널 높이 - 바뀌기 전 높이는 커밋 뒤에는 읽을 수 없어 ResizeObserver 로 늘 들고 있는다.
+	 * 패널이 content-box 라 `height` 와 같은 기준인 내용 높이다 (offsetHeight 면 안쪽 여백 64px 만큼 커졌다가 끝에 툭 줄었다)
+	 */
+	const heightRef = React.useRef<number | null>(null);
+	const runningRef = React.useRef<Animation[]>([]);
+	/** 전환 동안 넘침을 숨긴 요소와 원래 값 */
+	const clipRef = React.useRef<(readonly [HTMLElement, string])[] | null>(null);
+	/** 단계마다 마지막으로 포커스가 있던 요소 - 돌아갈 때 그 자리로 */
+	const focusRef = React.useRef(new Map<string, HTMLElement>());
+
+	// 단계마다 마지막 포커스 자리를 적어 둔다 - 숨긴 뒤에는 어디 있었는지 알 수 없다
+	React.useEffect(() => {
+		const root = rootRef.current;
+		if (!root) return;
+		const onFocusIn = (e: FocusEvent) => {
+			const target = e.target as HTMLElement;
+			const name = target.closest<HTMLElement>("[data-modal-step]")?.dataset.modalStep;
+			if (name) focusRef.current.set(name, target);
+		};
+		root.addEventListener("focusin", onFocusIn);
+		return () => root.removeEventListener("focusin", onFocusIn);
+	}, []);
+
+	React.useEffect(() => {
+		const panel = rootRef.current?.closest<HTMLElement>(".modal_panel");
+		if (!panel || typeof ResizeObserver === "undefined") return;
+		heightRef.current = contentHeight(panel);
+		const observer = new ResizeObserver(() => {
+			heightRef.current = contentHeight(panel);
+		});
+		observer.observe(panel);
+		return () => observer.disconnect();
+	}, []);
+
+	useSafeLayoutEffect(() => {
+		const previous = previousRef.current;
+		if (previous === active) return;
+		previousRef.current = active;
+		const root = rootRef.current;
+		const panel = root?.closest<HTMLElement>(".modal_panel");
+		// 이 ModalSteps 의 단계들 - DOM 순서라 ModalStep 을 래퍼 · Fragment 로 감싸도 방향이 맞는다. 안에 겹친
+		// 다른 ModalSteps 의 단계는 뺀다
+		const steps = root
+			? Array.from(root.querySelectorAll<HTMLElement>("[data-modal-step]")).filter(
+					(el) => el.closest(".modal_steps") === root,
+				)
+			: [];
+		const stepIndex = (name: string) => steps.findIndex((el) => el.dataset.modalStep === name);
+		const incoming = steps[stepIndex(active)];
+		if (!root || !panel || !incoming || panel.dataset.state === "closed") return;
+
+		for (const animation of runningRef.current) animation.cancel();
+		runningRef.current = [];
+		// 앞 전환이 숨긴 넘침은 여기서 먼저 되돌린다 - 이번 전환이 애니메이션 없이 끝나는 경로(reduced-motion 으로
+		// 바뀜 등)면 아무도 되돌리지 않아 긴 내용이 스크롤되지 않았다. 애니메이션을 돌리면 아래에서 다시 숨긴다
+		if (clipRef.current) {
+			for (const [el, value] of clipRef.current) el.style.overflow = value;
+			clipRef.current = null;
+		}
+		const from = heightRef.current;
+		if (!reducedMotion && from !== null && typeof panel.animate === "function") {
+			const forward = direction ? direction === "forward" : stepIndex(active) > stepIndex(previous);
+			const timing = { duration: STEP_MS, easing: STEP_EASING };
+			// 전환 동안 넘침을 숨긴다 - 창이 새 내용보다 잠깐 작아 본문 스크롤바(15px)가 생기고 내용이 그만큼
+			// 좁아졌다. 끝나면(취소돼도) 원래 값으로
+			// 본문(.modal_body)도 - 패널이 줄어드는 동안 제 스크롤바를 띄운다
+			const clipped = [panel, root.closest<HTMLElement>(".modal_body")].filter(
+				(el): el is HTMLElement => el !== null,
+			);
+			clipRef.current = clipped.map((el) => [el, el.style.overflow] as const);
+			for (const el of clipped) el.style.overflow = "hidden";
+			const height = panel.animate(
+				[{ height: `${from}px` }, { height: `${contentHeight(panel)}px` }],
+				timing,
+			);
+			const content = incoming.animate(
+				[
+					{ opacity: 0, transform: `translateX(${forward ? STEP_SHIFT : -STEP_SHIFT}px)` },
+					{ opacity: 1, transform: "none" },
+				],
+				timing,
+			);
+			runningRef.current = [height, content];
+			void Promise.allSettled([height.finished]).then(() => {
+				// 다음 전환이 이어받았으면 그쪽이 이미 되돌렸다
+				if (runningRef.current[0] !== height || !clipRef.current) return;
+				for (const [el, value] of clipRef.current) el.style.overflow = value;
+				clipRef.current = null;
+			});
+		}
+
+		// 숨긴 단계 안에 포커스가 남지 않게 - 그 단계에서 마지막 자리, 없으면 첫 컨트롤, 그것도 없으면 패널 첫 컨트롤.
+		// 포커스가 어디 있든 옮긴다: 단계를 바꾸는 단추는 보통 footer 에 있고, 단계마다 footer 가 바뀌어 그 단추도
+		// 사라지거나 다음 단계에서 다시 눌러야 할 단추가 된다 - 새 단계의 첫 입력으로 가야 이어서 쓸 수 있다 (#1162)
+		const remembered = focusRef.current.get(active);
+		const target =
+			(remembered?.isConnected && incoming.contains(remembered) && remembered) ||
+			firstTabbable(incoming) ||
+			firstTabbable(panel);
+		target?.focus();
+	}, [active]);
+
+	return (
+		<ModalStepContext.Provider value={active}>
+			<div ref={rootRef} className="modal_steps">
+				{children}
+			</div>
+		</ModalStepContext.Provider>
 	);
 };

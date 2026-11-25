@@ -421,15 +421,15 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 99 test files / 1973 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 99 test files / 1980 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **92.43%** | **90.63%** | **93.7%** | **94.18%** |
+| **All files** | **91.87%** | **90.3%** | **93.11%** | **93.75%** |
 
-아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
+아래는 **100% 미만**인 것만 나열한 것입니다 (43개는 전 지표 100% 라 빠져 있습니다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
@@ -472,6 +472,7 @@ it("calls callback with correct arguments", () => {
 | ui/navigation/sidebar | 85.29% | 91.94% | 80% | 87.88% |
 | ui/navigation/stepper | 86.67% | 86.84% | 87.5% | 96.15% |
 | ui/navigation/tabs | 96.83% | 89.23% | 100% | 99.07% |
+| ui/overlay/modal | 76.56% | 81.72% | 73.91% | 80.58% |
 | ui/overlay/popover | 97.73% | 97.3% | 100% | 100% |
 | ui/overlay/tooltip | 100% | 91.43% | 100% | 100% |
 | ui/system/theme-provider | 96.08% | 89.19% | 100% | 100% |

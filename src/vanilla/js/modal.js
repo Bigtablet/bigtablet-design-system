@@ -1,9 +1,15 @@
 import { afterExit, lockScroll, ownsFocus, pushEscape, unlockScroll } from "./overlay.js";
-import { $, focusablesIn, generateId, on, returnFocusTarget, trapTab } from "./utils.js";
+import { $, $$, focusablesIn, generateId, on, returnFocusTarget, trapTab } from "./utils.js";
 
 /* ========================================
      Modal Component
      ======================================== */
+
+// 단계 전환 (#1162) - React ModalSteps 와 같은 값. 시간 · 곡선은 진입 토큰 `$transition_enter_base`
+const STEP_MS = 200;
+const STEP_EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
+/** 새 단계가 밀려 들어오는 거리 (px) - 나아가면 오른쪽, 돌아가면 왼쪽에서 */
+const STEP_SHIFT = 16;
 
 /**
  * Initialize Modal component
@@ -227,6 +233,70 @@ export function Modal(element, options = {}) {
 		if (e.key === "Tab" && panel && ownsFocus(panel, onEscape)) trapTab(e, panel);
 	}
 
+	// ── 단계 (#1162) ─────────────────────────────────────────────────────────
+	// 패널 안 `[data-bt-modal-step="이름"]` 중 하나만 보인다. 처음엔 hidden 이 아닌 첫 단계(없으면 첫 단계)
+	const stepEls = () => (panel ? $$("[data-bt-modal-step]", panel) : []);
+	const initialSteps = stepEls();
+	let currentStep =
+		(initialSteps.find((el) => !el.hidden) ?? initialSteps[0])?.dataset.btModalStep ?? null;
+	for (const el of initialSteps) el.hidden = el.dataset.btModalStep !== currentStep;
+	/** 단계마다 마지막으로 포커스가 있던 요소 - 돌아갈 때 그 자리로 */
+	const stepFocus = new Map();
+	let stepAnimations = [];
+
+	/**
+	 * 같은 모달 안에서 단계를 바꾼다. 창은 그대로 두고 패널 높이를 이전 높이에서 새 높이로 이어 바꾸고, 새 단계는
+	 * 방향에 맞춰 옆에서 밀려 들어온다 - 내용을 한 번에 바꾸면 높이가 툭 바뀌어 모달 위에 모달이 뜬 것처럼
+	 * 보였다. 포커스는 새 단계로 옮기고, 돌아가면 그 단계에서 마지막으로 있던 곳으로 돌린다. 닫혀 있거나 닫히는
+	 * 중 · reduced-motion 이면 바로 바꾼다 (닫으면서 첫 단계로 되돌려도 움직임이 보이지 않는다).
+	 * @param {string} name - `data-bt-modal-step` 값
+	 * @param {{direction?: "forward"|"back"}} [options] - 없으면 마크업 순서로 정한다
+	 */
+	function showStep(name, { direction } = {}) {
+		const list = stepEls();
+		const incoming = list.find((el) => el.dataset.btModalStep === name);
+		if (!incoming || name === currentStep) return;
+		const previous = currentStep;
+		currentStep = name;
+		const outgoing = list.find((el) => el.dataset.btModalStep === previous);
+		if (outgoing?.contains(document.activeElement)) stepFocus.set(previous, document.activeElement);
+
+		for (const animation of stepAnimations) animation.cancel();
+		stepAnimations = [];
+		// `height` 와 같은 기준(box-sizing)으로 잰다 - offsetHeight 는 안쪽 여백 · 테두리까지라 끝에 툭 줄어든다
+		const heightOf = () => Number.parseFloat(getComputedStyle(panel).height);
+		const from = panel && heightOf();
+		for (const el of list) el.hidden = el !== incoming;
+		if (!state.isOpen) return;
+
+		const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+		if (!reduced && typeof panel.animate === "function") {
+			const forward = direction
+				? direction === "forward"
+				: list.indexOf(incoming) > list.indexOf(outgoing);
+			const timing = { duration: STEP_MS, easing: STEP_EASING };
+			// 넘침은 CSS(.bt-modal__panel overflow: hidden)가 이미 숨긴다 - 줄어드는 동안 스크롤바가 생기지 않는다
+			stepAnimations = [
+				panel.animate([{ height: `${from}px` }, { height: `${heightOf()}px` }], timing),
+				incoming.animate(
+					[
+						{ opacity: 0, transform: `translateX(${forward ? STEP_SHIFT : -STEP_SHIFT}px)` },
+						{ opacity: 1, transform: "none" },
+					],
+					timing,
+				),
+			];
+		}
+
+		// 숨긴 단계 안에 포커스가 남지 않게 - 그 단계에서 마지막 자리, 없으면 첫 컨트롤, 그것도 없으면 패널 첫 컨트롤
+		const remembered = stepFocus.get(name);
+		const target =
+			(remembered?.isConnected && incoming.contains(remembered) && remembered) ||
+			focusablesIn(incoming)[0] ||
+			focusablesIn(panel)[0];
+		target?.focus();
+	}
+
 	// Bind events
 	const cleanups = [
 		on(modal, "pointerdown", onPointerDown),
@@ -240,6 +310,9 @@ export function Modal(element, options = {}) {
 		open,
 		close,
 		toggle: () => (state.isOpen ? close() : open()),
+		showStep,
+		/** 지금 보이는 단계 이름 (단계가 없으면 null) */
+		currentStep: () => currentStep,
 		destroy: () => {
 			cleanups.forEach((cleanup) => {
 				cleanup();

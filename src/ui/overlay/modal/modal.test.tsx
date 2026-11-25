@@ -3,7 +3,7 @@ import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { stubPendingAnimation } from "../../../test/stub-animation";
 import { unlockBodyScroll } from "../../../utils";
-import { Modal } from "./index";
+import { Modal, ModalStep, ModalSteps } from "./index";
 
 const stubReducedMotion = () => {
 	vi.stubGlobal(
@@ -904,5 +904,70 @@ describe("Modal", () => {
 			expect(onExited).not.toHaveBeenCalled();
 			expect(document.querySelector(".modal_panel")).toHaveAttribute("data-state", "open");
 		});
+	});
+});
+
+// 같은 모달 안에서 단계를 바꾼다 (#1162) - 모션은 브라우저 테스트가 본다 (jsdom 에는 animate 가 없다)
+describe("ModalSteps", () => {
+	function Wizard({ step }: { step: string }) {
+		return (
+			<Modal open onClose={() => {}} title="기기 등록">
+				<ModalSteps active={step}>
+					<ModalStep name="form">
+						<input aria-label="이름" />
+						<button type="button">다음</button>
+					</ModalStep>
+					<ModalStep name="verify">
+						<input aria-label="인증 번호" />
+					</ModalStep>
+				</ModalSteps>
+			</Modal>
+		);
+	}
+
+	it("shows only the active step and keeps the others mounted with their values", async () => {
+		const { rerender } = render(<Wizard step="form" />);
+		const name = screen.getByRole("textbox", { name: "이름" }) as HTMLInputElement;
+		fireEvent.change(name, { target: { value: "내 노트북" } });
+		expect(screen.queryByRole("textbox", { name: "인증 번호" })).toBeNull();
+
+		rerender(<Wizard step="verify" />);
+		expect(screen.queryByRole("textbox", { name: "이름" })).toBeNull();
+		expect(screen.getByRole("textbox", { name: "인증 번호" })).toHaveFocus();
+
+		rerender(<Wizard step="form" />);
+		expect(screen.getByRole("textbox", { name: "이름" })).toHaveValue("내 노트북");
+	});
+
+	it("returns focus to where it was in a step when going back", () => {
+		const { rerender } = render(<Wizard step="form" />);
+		const next = screen.getByRole("button", { name: "다음" });
+		next.focus();
+		rerender(<Wizard step="verify" />);
+		rerender(<Wizard step="form" />);
+		expect(next).toHaveFocus();
+	});
+
+	// ModalStep 을 래퍼로 감싸도 DOM 순서로 방향을 정한다 - 직접 자식만 보던 때는 방향이 늘 한쪽이었다
+	it("finds wrapped steps and their order from the DOM", () => {
+		const Wrapped = ({ step }: { step: string }) => (
+			<Modal open onClose={() => {}} title="감싼 단계">
+				<ModalSteps active={step}>
+					<div>
+						<ModalStep name="a">
+							<input aria-label="가" />
+						</ModalStep>
+					</div>
+					<>
+						<ModalStep name="b">
+							<input aria-label="나" />
+						</ModalStep>
+					</>
+				</ModalSteps>
+			</Modal>
+		);
+		const { rerender } = render(<Wrapped step="a" />);
+		rerender(<Wrapped step="b" />);
+		expect(screen.getByRole("textbox", { name: "나" })).toHaveFocus();
 	});
 });

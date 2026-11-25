@@ -26,6 +26,10 @@ const FOCUSABLE_SELECTORS = [
 const isTabbable = (el: HTMLElement) =>
 	!el.closest("[hidden], [inert]") && el.checkVisibility?.() !== false;
 
+/** root 안에서 지금 포커스를 받을 수 있는 첫 요소 - Modal 단계 전환이 새 단계로 포커스를 옮길 때 쓴다 */
+export const firstTabbable = (root: Element): HTMLElement | undefined =>
+	Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).find(isTabbable);
+
 /** 닫히는 중인 오버레이(퇴출 모션 동안 DOM 에 남는다) - 포커스를 돌려줄 자리가 아니다 */
 const CLOSING_OVERLAY = '[aria-modal="true"][data-state="closed"]';
 
