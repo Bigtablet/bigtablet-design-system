@@ -889,6 +889,25 @@ describe("Toast programmatic control", () => {
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(2);
 	});
 
+	// 안전 정수를 넘는 id 로 시퀀스를 밀면 ++ 가 값을 못 바꿔 자동 id 끼리 겹쳤을 것이다
+	it("keeps auto ids distinct after a caller id beyond the safe integer range", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						ids.push(t.info("a", { id: "toast_9007199254740992" }));
+						ids.push(t.info("b"));
+						ids.push(t.info("c"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(new Set(ids).size).toBe(3);
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
+	});
+
 	// 닫히면서 자리를 접는다 - auto 높이는 transition 이 안 돌아 지금 높이를 박는다 (#1154)
 	it("pins the current height inline when closing so the slot can collapse", async () => {
 		const anim = stubPendingAnimation();

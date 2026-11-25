@@ -313,8 +313,9 @@ export const ToastProvider = ({
 		(message: string, tone: ToastTone, options: ToastOptions = {}) => {
 			const { duration = 3000, action } = options;
 			// 자동 id 모양(`toast_N`)을 직접 넘겼으면 시퀀스를 그 뒤로 민다 - 다음 자동 id 가 같은 값이 되어 열린
-			// 두 토스트가 한 id 를 나눠 가지면 dismiss · update 가 둘 다에 걸린다
-			const auto = /^toast_(\d+)$/.exec(options.id ?? "");
+			// 두 토스트가 한 id 를 나눠 가지면 dismiss · update 가 둘 다에 걸린다. 15자리까지만 - 그보다 큰 수는
+			// 시퀀스가 닿을 일이 없어 겹치지 않고, 안전 정수(2^53)를 넘기면 ++ 가 값을 못 바꿔 자동 id 끼리 겹친다
+			const auto = /^toast_(\d{1,15})$/.exec(options.id ?? "");
 			if (auto) toastSeq = Math.max(toastSeq, Number(auto[1]));
 			const uid = ++toastSeq;
 			const id = options.id ?? `toast_${uid}`;
