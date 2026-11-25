@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, XCircle } from "lucide-react";
 import type * as React from "react";
 import { iconSize } from "../../../styles/icon";
-import { type SafeHTMLProps, useClipboard } from "../../../utils";
+import { cn, type SafeHTMLProps, useClipboard } from "../../../utils";
 import { useLocaleText } from "../../system/locale-provider";
 import { Button, type ButtonVariant } from "../button";
 import { IconButton } from "../icon-button";
@@ -83,8 +83,22 @@ export const CopyButton = ({
 		void copy(text);
 	};
 
-	const icon = copied ? <Check size={iconSize.sm} /> : <Copy size={iconSize.sm} />;
-	const message = copied ? copiedLabel : status === "error" ? failedLabel : "";
+	const failed = status === "error";
+	// 글자만 바뀌면 눌렸는지 놓치기 쉽다 - 아이콘 · 색으로도 보인다 (#1158). 색만으로 전하지 않게 아이콘도 바꾼다
+	const icon = copied ? (
+		<Check size={iconSize.sm} />
+	) : failed ? (
+		<XCircle size={iconSize.sm} />
+	) : (
+		<Copy size={iconSize.sm} />
+	);
+	const message = copied ? copiedLabel : failed ? failedLabel : "";
+	const stateClassName = cn(
+		"copy_button",
+		copied && "copy_button_copied",
+		failed && "copy_button_failed",
+		className,
+	);
 
 	return (
 		<>
@@ -96,7 +110,7 @@ export const CopyButton = ({
 					// 이름은 바꾸지 않는다 - 결과는 아래 status 가 알린다. 이름이 바뀌면 포커스 중
 					// 같은 버튼을 두 번 읽는다
 					aria-label={name}
-					className={className}
+					className={stateClassName}
 					onClick={handleClick}
 				/>
 			) : (
@@ -107,10 +121,18 @@ export const CopyButton = ({
 					leadingIcon={icon}
 					// 문구 버튼도 이름은 고정 - 보이는 문구만 "복사됨" 으로 바꾸고 낭독은 status 한 번
 					aria-label={name}
-					className={className}
+					className={stateClassName}
 					onClick={handleClick}
 				>
-					<span aria-hidden="true">{copied ? copiedLabel : label}</span>
+					{/* 두 문구 중 긴 쪽 폭을 미리 잡는다(::before · ::after) - "복사" ↔ "복사됨" 에 단추가 흔들리지 않게 */}
+					<span
+						aria-hidden="true"
+						className="copy_button_label"
+						data-label={label}
+						data-copied={copiedLabel}
+					>
+						<span>{copied ? copiedLabel : label}</span>
+					</span>
 				</Button>
 			)}
 			<span className="copy_button_status" role="status">

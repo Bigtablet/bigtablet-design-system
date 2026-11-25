@@ -66,6 +66,19 @@ function execCopy(text) {
 	return ok;
 }
 
+// 상태 아이콘 - React CopyButton 의 lucide Copy · Check · XCircle(iconSize.sm = 16)과 같은 path (#1158)
+const stateSvg = (body) =>
+	'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+	`stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const STATE_ICONS = {
+	idle: stateSvg(
+		'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>' +
+			'<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+	),
+	copied: stateSvg('<path d="M20 6 9 17l-5-5"/>'),
+	failed: stateSvg('<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>'),
+};
+
 /**
  * 복사 버튼. 누르면 `text`(또는 `data-bt-copy` 값)를 복사하고 보이는 문구를 잠시 "복사됨" 으로 바꾼 뒤
  * 되돌린다. 결과는 버튼 옆에 넣는 숨은 `role="status"` 로 알린다 - 버튼 이름(aria-label)은 바꾸지 않는다
@@ -73,6 +86,10 @@ function execCopy(text) {
  *
  * 보이는 문구는 버튼 안의 `[data-copy-label]` 요소가 있으면 그 글자만, 없으면 버튼 글자 전체를 바꾼다 -
  * 아이콘을 함께 두려면 문구를 `<span data-copy-label>` 로 감싼다.
+ *
+ * 결과는 모양으로도 보인다 (#1158) - `data-state="copied"` 면 체크 아이콘 · 성공 색, `"failed"` 면 X 아이콘 ·
+ * 오류 색. 평소에는 복사 아이콘을 둔다(React 와 같음) - 버튼 바로 안에 소비자 svg 가 있으면 평소엔 그것을 쓰고
+ * 결과 동안만 숨긴다. 아이콘 자리와 문구 폭(두 문구 중 긴 쪽)이 고정돼 단추가 흔들리지 않는다.
  *
  * @param {HTMLElement|string} element - 버튼 또는 셀렉터
  * @param {Object} [options] - React `CopyButton` 과 같은 이름
@@ -109,7 +126,21 @@ export function CopyButton(element, options = {}) {
 	// 이름은 고정 - 보이는 문구가 "복사됨" 으로 바뀌어도 낭독은 아래 status 한 번. 보이는 문구도 처음부터
 	// 이름과 같게 둔다 (label 옵션이 버튼 글자와 다를 때 첫 복사 전까지 어긋나지 않게)
 	btn.setAttribute("aria-label", config.ariaLabel || config.label);
-	labelEl.textContent = config.label;
+	btn.classList.add("bt-copy-button");
+	// 두 문구 중 긴 쪽 폭을 미리 잡는다(CSS ::before · ::after) - "복사" ↔ "복사됨" 에 단추가 흔들리지 않게
+	const label = document.createElement("span");
+	label.className = "bt-copy-button__label";
+	label.dataset.label = config.label;
+	label.dataset.copied = config.copiedLabel;
+	const text = document.createElement("span");
+	text.textContent = config.label;
+	label.appendChild(text);
+	labelEl.replaceChildren(label);
+	const icon = document.createElement("span");
+	icon.className = "bt-copy-button__icon";
+	icon.setAttribute("aria-hidden", "true");
+	// 소비자 아이콘이 있으면 평소엔 그것을 쓴다 - 없으면 복사 아이콘을 둬 결과 아이콘이 붙을 때 폭이 늘지 않게
+	const ownIcon = btn.querySelector(":scope > svg");
 
 	const status = document.createElement("span");
 	status.className = "bt-sr-only";
@@ -120,9 +151,15 @@ export function CopyButton(element, options = {}) {
 	// 연속 클릭 - 마지막 복사만 상태에 반영한다 (React useClipboard 와 같음)
 	let seq = 0;
 
-	function show(copied, message) {
-		btn.dataset.state = copied ? "copied" : "idle";
-		labelEl.textContent = copied ? config.copiedLabel : config.label;
+	/** @param {"idle"|"copied"|"failed"} state */
+	function show(state, message) {
+		btn.dataset.state = state;
+		text.textContent = state === "copied" ? config.copiedLabel : config.label;
+		if (state === "idle" && ownIcon) icon.remove();
+		else {
+			icon.innerHTML = STATE_ICONS[state];
+			if (!icon.isConnected) btn.prepend(icon);
+		}
 		status.textContent = message;
 	}
 
@@ -149,12 +186,13 @@ export function CopyButton(element, options = {}) {
 		}
 		if (id !== seq) return;
 		const ok = failure === undefined;
-		show(ok, ok ? config.copiedLabel : config.failedLabel);
-		if (config.resetAfter > 0) timer = setTimeout(() => show(false, ""), config.resetAfter);
+		show(ok ? "copied" : "failed", ok ? config.copiedLabel : config.failedLabel);
+		if (config.resetAfter > 0) timer = setTimeout(() => show("idle", ""), config.resetAfter);
 		if (ok) notify(config.onCopy, text);
 		else notify(config.onError, failure);
 	}
 
+	show("idle", "");
 	const cleanup = on(btn, "click", () => {
 		void copy();
 	});
@@ -166,6 +204,8 @@ export function CopyButton(element, options = {}) {
 			seq++;
 			clearTimeout(timer);
 			labelEl.textContent = config.label;
+			icon.remove();
+			btn.classList.remove("bt-copy-button");
 			if (originalAriaLabel === null) btn.removeAttribute("aria-label");
 			else btn.setAttribute("aria-label", originalAriaLabel);
 			delete btn.dataset.state;
