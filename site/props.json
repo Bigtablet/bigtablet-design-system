@@ -2159,6 +2159,12 @@
 	],
 	"ToastOptions": [
 		{
+			"name": "id",
+			"type": "string",
+			"required": false,
+			"doc": "같은 id 의 토스트가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고 남은 시간을 다시 센다. 문구는 화면 낭독기에 다시 알린다: 저장을 연달아 눌러도 \"저장했습니다\" 가 하나만 남는다 (#1154). 반환값도 이 id 라 `dismiss`·`update` 에 그대로 넘길 수 있다"
+		},
+		{
 			"name": "duration",
 			"type": "number",
 			"required": false,

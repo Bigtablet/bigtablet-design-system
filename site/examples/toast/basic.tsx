@@ -20,6 +20,13 @@ function Buttons() {
 			>
 				진행 → 완료
 			</Button>
+			{/* 같은 id 는 새로 쌓지 않고 갱신한다 - 연달아 눌러도 하나만 남고 남은 시간을 다시 센다 */}
+			<Button
+				variant="outline"
+				onClick={() => toast.success("설정을 저장했습니다.", { id: "settings-save" })}
+			>
+				같은 토스트 갱신
+			</Button>
 		</div>
 	);
 }

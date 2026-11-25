@@ -67,9 +67,11 @@ describe("Toast placement (Chromium, #998)", () => {
 		await expect.poll(() => document.querySelectorAll(".toast_item").length).toBe(5);
 
 		const region = document.querySelector(".toast_container") as HTMLElement;
-		const newest = document.querySelector(".toast_item") as Element;
+		// 최신은 끝(모서리 쪽 - 맨 아래)에 붙는다 (#1154). 넘치면 그쪽으로 스크롤돼 화면 안에 있다
+		const newest = Array.from(document.querySelectorAll(".toast_item")).at(-1) as Element;
 		expect(region.scrollHeight).toBeGreaterThan(region.clientHeight);
-		expect(newest.getBoundingClientRect().top).toBeGreaterThanOrEqual(16);
+		await expect.poll(() => newest.getBoundingClientRect().top).toBeGreaterThanOrEqual(16);
+		expect(newest.getBoundingClientRect().bottom).toBeLessThanOrEqual(400 - 16);
 		// 상자는 그림자 · 슬라이드용 안쪽 여백(20px)만큼 크다 - 내용 아래끝이 여백 16px 에 남는다
 		expect(region.getBoundingClientRect().bottom - 20).toBe(400 - 16);
 	});
