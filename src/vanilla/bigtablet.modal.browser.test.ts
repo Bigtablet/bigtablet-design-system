@@ -159,3 +159,40 @@ describe("Vanilla Modal layout (Chromium)", () => {
 		expect(document.body.dataset.btOpenModals).toBeUndefined();
 	});
 });
+
+// 같은 모달 안에서 단계를 바꿀 때 높이가 이어진다 (#1162, React ModalSteps 와 같음)
+describe("Vanilla Modal steps (Chromium, #1162)", () => {
+	afterEach(() => {
+		document.body.innerHTML = "";
+	});
+
+	it("eases the panel height into the taller step, slides it in, then leaves no inline height", async () => {
+		await page.viewport(1024, 940);
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = `<div class="bt-modal__panel" style="width: 400px" aria-label="기기 등록">
+			<div class="bt-modal__body">
+				<section data-bt-modal-step="form"><input aria-label="이름"></section>
+				<section data-bt-modal-step="verify"><input aria-label="인증 번호"><div style="height: 160px"></div></section>
+			</div>
+		</div>`;
+		document.body.appendChild(el);
+		const m = createModal(el) as VanillaModal & { showStep: (name: string) => void };
+		m.open();
+		const panel = el.querySelector(".bt-modal__panel") as HTMLElement;
+		const before = panel.getBoundingClientRect().height;
+
+		m.showStep("verify");
+		const verify = el.querySelector('[data-bt-modal-step="verify"]') as HTMLElement;
+		expect(verify.getAnimations().length).toBe(1);
+		await new Promise((r) => setTimeout(r, 60));
+		const during = panel.getBoundingClientRect().height;
+		expect(during).toBeGreaterThan(before);
+
+		await expect.poll(() => panel.getAnimations().length).toBe(0);
+		expect(panel.style.height).toBe("");
+		expect(panel.getBoundingClientRect().height - before).toBeCloseTo(160, 0);
+		m.close();
+		m.destroy?.();
+	});
+});

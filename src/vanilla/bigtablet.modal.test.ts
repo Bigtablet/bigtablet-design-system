@@ -861,3 +861,72 @@ describe("Alert - 콜백 예외 · 초기 포커스 · 겹침 (#973)", () => {
 		expect(document.activeElement).toBe(aConfirm);
 	});
 });
+
+// 같은 모달 안에서 단계를 바꾼다 (#1162) - 모션은 브라우저 테스트가 본다 (jsdom 에는 animate 가 없다)
+describe("Modal - 단계 전환", () => {
+	afterEach(() => {
+		document.body.innerHTML = "";
+	});
+
+	const mount = () => {
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = `<div class="bt-modal__panel" aria-label="기기 등록">
+			<div class="bt-modal__body">
+				<section data-bt-modal-step="form"><input id="name"><button id="next">다음</button></section>
+				<section data-bt-modal-step="verify"><input id="code"></section>
+				<section data-bt-modal-step="done"><p>완료</p></section>
+			</div>
+			<button data-modal-close>닫기</button>
+		</div>`;
+		document.body.appendChild(el);
+		return Modal(el) as ReturnType<typeof Modal> & {
+			showStep: (name: string, options?: { direction?: "forward" | "back" }) => void;
+			currentStep: () => string | null;
+		};
+	};
+	const step = (name: string) =>
+		document.querySelector(`[data-bt-modal-step="${name}"]`) as HTMLElement;
+
+	it("처음엔 첫 단계만 보이고, showStep 으로 하나만 보이게 바꾼다", () => {
+		const m = mount();
+		expect(m.currentStep()).toBe("form");
+		expect([step("form").hidden, step("verify").hidden, step("done").hidden]).toEqual([
+			false,
+			true,
+			true,
+		]);
+
+		m.open();
+		m.showStep("verify");
+		expect(m.currentStep()).toBe("verify");
+		expect([step("form").hidden, step("verify").hidden]).toEqual([true, false]);
+		m.showStep("없는 단계");
+		expect(m.currentStep()).toBe("verify");
+	});
+
+	it("포커스를 새 단계 첫 컨트롤로 옮기고, 돌아가면 그 단계의 마지막 자리로 돌린다", () => {
+		const m = mount();
+		m.open();
+		(document.getElementById("next") as HTMLElement).focus();
+		m.showStep("verify");
+		expect(document.activeElement?.id).toBe("code");
+
+		m.showStep("form");
+		expect(document.activeElement?.id).toBe("next");
+
+		// 컨트롤이 없는 단계면 패널 첫 컨트롤(닫기)로 - 숨긴 단계 안에 남지 않는다
+		m.showStep("done");
+		expect(document.activeElement?.textContent).toBe("닫기");
+	});
+
+	it("닫혀 있으면 포커스를 옮기지 않고 단계만 바꾼다", () => {
+		const m = mount();
+		const outside = document.createElement("button");
+		document.body.appendChild(outside);
+		outside.focus();
+		m.showStep("verify");
+		expect(step("verify").hidden).toBe(false);
+		expect(document.activeElement).toBe(outside);
+	});
+});
