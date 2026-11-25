@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.13.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.13.0) - 2026-11-25
+- (렌더 변경) Modal 패널 윗변이 화면 높이의 15%(최소 32px · 최대 128px) 자리에 고정되고 아래로만 자랍니다 - 오류 안내가 나타나거나 단계가 바뀌어도 모달이 위아래로 튀지 않습니다. 화면보다 긴 패널은 끝까지 스크롤되고 아래에 32px 가 남습니다 (React 는 설명 · 버튼만으로 넘쳐도 딤이 스크롤되고, Vanilla 는 잘려 닿을 수 없던 아래쪽을 딤 안에서 스크롤합니다). React · Vanilla 모두
+- (렌더 변경) CopyButton 이 복사되면 체크 아이콘 · 성공 색, 실패하면 X 아이콘 · 오류 색으로 바뀝니다. 문구가 "복사" ↔ "복사됨" 으로 바뀌어도 단추 폭이 흔들리지 않습니다. Vanilla 는 평소에도 복사 아이콘을 두고(직접 넣은 아이콘이 있으면 그것), 실패하면 `data-state="failed"` 가 됩니다
+
 ## [4.12.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.12.0) - 2026-11-25
 - (렌더 변경) Toast 가 한도(5개)를 넘을 때 묶음이 출렁이지 않습니다 - 최신 토스트는 늘 모서리 쪽에 붙고(기본 오른쪽 아래면 맨 아래, `top-right` 면 맨 위), 넘치면 반대쪽 끝의 가장 오래된 것이 빠집니다. 닫힐 때 자리도 같은 시간 동안 접혀 남은 토스트가 순간 이동하지 않고 따라옵니다. React · Vanilla 모두
 - Toast `id` 옵션 추가 - React `toast.success(message, { id })`, Vanilla `Toast(message, tone, { id })`. 같은 id 가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고 남은 시간을 다시 세며, 화면 낭독기에 다시 알립니다. 저장을 연달아 눌러도 토스트가 하나만 남습니다
