@@ -548,7 +548,7 @@ describe("Toast auto-dismiss", () => {
 // ── Toast unique ids & stack order ──────────────────────────────────────────
 
 describe("Toast stack & ids", () => {
-	it("stacks newer toasts at the top of the container", () => {
+	it("appends newer toasts at the end of the container (corner side, #1154)", () => {
 		function StackTrigger() {
 			const t = useToast();
 			return (
@@ -580,10 +580,8 @@ describe("Toast stack & ids", () => {
 			(el) => el.textContent,
 		);
 
-		// addToast가 prepend(`[new, ...prev]`)이므로 가장 최근 토스트가 맨 앞
-		expect(items[0]).toBe("셋째");
-		expect(items[1]).toBe("둘째");
-		expect(items[2]).toBe("첫째");
+		// 끝에 붙인다 - 기본(아래) 배치에서 모서리 쪽. 위 배치는 CSS column-reverse 가 뒤집는다
+		expect(items).toEqual(["첫째", "둘째", "셋째"]);
 	});
 
 	it("removes the oldest toast when maxCount is exceeded", async () => {
@@ -800,6 +798,154 @@ describe("Toast programmatic control", () => {
 			},
 			{ timeout: 1500 },
 		);
+	});
+
+	// 같은 id 는 새로 쌓지 않고 그 자리에서 갱신한다 - 막대를 새로 돌리고 문구를 다시 공지한다 (#1154)
+	it("show with the same id refreshes the toast in place instead of stacking", () => {
+		vi.useFakeTimers();
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => ids.push(t.info("저장했습니다", { id: "save" }))} />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		const progress = document.querySelector(".toast_progress");
+		act(() => {
+			vi.advanceTimersByTime(1000);
+		});
+		expect(screen.getByRole("status")).toBeEmptyDOMElement();
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		expect(ids).toEqual(["save", "save"]);
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(1);
+		// 같은 문구도 다시 공지하고, 막대는 새로 마운트돼 처음부터 센다
+		expect(screen.getByRole("status")).toHaveTextContent("저장했습니다");
+		expect(document.querySelector(".toast_progress")).not.toBe(progress);
+		vi.useRealTimers();
+	});
+
+	it("a refreshed toast takes the new message, tone and dismiss by id", async () => {
+		const anim = stubPendingAnimation();
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.info("저장 중", { id: "save" })} label="a" />
+				<ToastTrigger fn={(t) => t.success("저장 완료", { id: "save" })} label="b" />
+				<ToastTrigger fn={(t) => t.dismiss("save")} label="c" />
+			</ToastProvider>,
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "a" }));
+		fireEvent.click(screen.getByRole("button", { name: "b" }));
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(1);
+		expect(screen.getByText("저장 완료", { selector: ".toast_message" })).toBeInTheDocument();
+		expect(document.querySelector(".toast_icon_success")).not.toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "c" }));
+		expect(document.querySelector(".toast_item")).toHaveAttribute("data-state", "closed");
+		// 닫히는 중인 같은 id 는 갱신하지 않고 새로 띄운다 - React key 는 내부 uid 라 겹치지 않는다
+		fireEvent.click(screen.getByRole("button", { name: "a" }));
+		expect(
+			Array.from(document.querySelectorAll(".toast_item"), (el) => el.getAttribute("data-state")),
+		).toEqual(["closed", "open"]);
+		await act(async () => anim.finish());
+	});
+
+	it("a toast closed by its button is not refreshed by the same id while it exits", async () => {
+		const anim = stubPendingAnimation();
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.info("저장했습니다", { id: "save" })} />
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		const states = () =>
+			Array.from(document.querySelectorAll(".toast_item"), (el) => el.getAttribute("data-state"));
+		expect(states()).toEqual(["closed", "open"]);
+		// 닫힌 것의 퇴출이 끝나도 새 알림은 남는다
+		await act(async () => anim.finish());
+		await waitFor(() => expect(states()).toEqual(["open"]));
+	});
+
+	it("never hands out an auto id that a caller already chose", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						ids.push(t.info("a", { id: "toast_999999" }));
+						ids.push(t.info("b"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(ids[0]).toBe("toast_999999");
+		expect(ids[1]).not.toBe("toast_999999");
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(2);
+	});
+
+	// 큰 직접 고른 id 둘이 섞여도 자동 id 가 그중 하나와 겹치지 않는다 - 같은 배치에서 앞서 넣은 것까지 본다
+	it("skips auto ids already taken in the queue, even within the same batch", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						// 자동 다음 번호를 직접 고른 뒤, 큰 수를 섞는다 (예전 "시퀀스 밀기" 방식이 겹치던 순서)
+						const next = `toast_${Number(t.info("probe").slice(6)) + 1}`;
+						ids.push(t.info("첫째", { id: next }));
+						ids.push(t.info("큰 수", { id: "toast_999999999999999" }));
+						ids.push(t.info("둘째"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(new Set(ids).size).toBe(3);
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(4);
+	});
+
+	// 안전 정수를 넘는 id 로 시퀀스를 밀면 ++ 가 값을 못 바꿔 자동 id 끼리 겹쳤을 것이다
+	it("keeps auto ids distinct after a caller id beyond the safe integer range", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						ids.push(t.info("a", { id: "toast_9007199254740992" }));
+						ids.push(t.info("b"));
+						ids.push(t.info("c"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(new Set(ids).size).toBe(3);
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(3);
+	});
+
+	// 닫히면서 자리를 접는다 - auto 높이는 transition 이 안 돌아 지금 높이를 박는다 (#1154)
+	it("pins the current height inline when closing so the slot can collapse", async () => {
+		const anim = stubPendingAnimation();
+		const spy = vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(62);
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.info("접힘")} />
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+
+		expect(
+			document.querySelector<HTMLElement>(".toast_item")?.style.getPropertyValue("--toast-height"),
+		).toBe("62px");
+		spy.mockRestore();
+		await act(async () => anim.finish());
 	});
 
 	it("dismiss ignores unknown ids", async () => {

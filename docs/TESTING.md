@@ -421,13 +421,13 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 99 test files / 1959 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 99 test files / 1970 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **92.37%** | **90.62%** | **93.63%** | **94.17%** |
+| **All files** | **92.42%** | **90.62%** | **93.7%** | **94.18%** |
 
 아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
 
@@ -451,7 +451,7 @@ it("calls callback with correct arguments", () => {
 | ui/display/table | 98.32% | 96.86% | 96.97% | 99.02% |
 | ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
-| ui/feedback/toast | 97.25% | 91.38% | 100% | 100% |
+| ui/feedback/toast | 97.81% | 91.03% | 100% | 99.13% |
 | ui/forms/checkbox | 95.83% | 91.67% | 100% | 100% |
 | ui/forms/combobox | 100% | 99.12% | 95% | 100% |
 | ui/forms/date-calendar | 99.4% | 98.64% | 100% | 100% |

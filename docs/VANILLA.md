@@ -774,6 +774,9 @@ Alert는 JavaScript로만 사용합니다.
     action: { label: "실행 취소", onClick: () => restore() },
   });
 
+  // 같은 토스트 갱신 - 연달아 불러도 하나만 남고 남은 시간을 다시 센다
+  Bigtablet.Toast("설정을 저장했습니다.", "success", { id: "settings-save" });
+
   // 저절로 닫히지 않는 진행 토스트 - 돌려받은 dismiss 로 닫는다
   const uploading = Bigtablet.Toast("업로드 중…", "info", { duration: Infinity });
   uploading.dismiss();
@@ -786,12 +789,13 @@ Alert는 JavaScript로만 사용합니다.
 |------|------|---------|-------------|
 | `message` | `string` | - | 본문. 텍스트로 넣는다 (HTML 은 해석하지 않음) |
 | `tone` | `string` | `'neutral'` | `'success'`, `'error'`, `'warning'`, `'info'`, `'neutral'` |
+| `options.id` | `string` | - | 같은 id 의 토스트가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고 남은 시간을 다시 셉니다. 문구는 화면 낭독기에 다시 알립니다 (React `ToastOptions.id` 와 같음). 저장을 연달아 눌러도 토스트가 하나만 남습니다 |
 | `options.duration` | `number` | `3000` | 자동 닫힘까지 ms. `Infinity` 이거나 0 이하면 시간이 지나도 닫히지 않고 진행 막대도 없습니다. 이때도 닫기 버튼 · `dismiss` · `action` 버튼으로 닫히고, 토스트가 5개를 넘으면 가장 오래된 것부터 닫힙니다 |
 | `options.action` | `{ label, onClick }` | - | 메시지 옆 텍스트 버튼. 한 번만 실행되고 토스트를 닫는다 |
 | `options.closeLabel` | `string` | `'닫기'` | 닫기 버튼 `aria-label` |
 | `options.regionLabel` | `string` | `'알림'` | 토스트 리전(`.bt-toast-container`) 이름. 리전은 토스트가 하나 이상 있을 때만 `role="region"` + `aria-label` 을 달고, 비면 둘 다 뗍니다. 이름은 리전을 처음 만들 때(서버가 그린 리전이면 그 `aria-label`)만 정합니다. 읽어 주기는 리전이 아니라 JS 가 안에 만드는 숨은 `.bt-toast__announcer`(`role="status"` · `role="alert"`) 둘이 맡습니다 |
 
-- 오른쪽 아래에 최신이 위로 쌓이고(간격 8px), 최대 5개를 넘은 오래된 것은 퇴출 모션으로 나간다. compact(600px 미만)에서는 아래쪽에 가로로 채운다
+- 오른쪽 아래에 쌓이고(간격 8px) 최신은 늘 모서리 쪽(맨 아래)에 붙습니다. 최대 5개를 넘으면 반대쪽 끝의 가장 오래된 것이 퇴출 모션으로 나가, 남은 토스트는 움직이지 않습니다. 닫힐 때 자리도 같은 시간 동안 접힙니다. compact(600px 미만)에서는 아래쪽에 가로로 채웁니다
 - 하단 고정 UI(쿠키 배너 · 채팅 버튼)와 겹치면 `<html data-bt-toast-placement="top-right">` 로 넓은 화면에서 오른쪽 위에 띄운다 (React `ToastProvider` 의 `placement` 와 같음). CSS 만으로 바뀌어 언제 붙여도 되고, compact 는 그대로다. 예전 값 `bottom-right` 는 이제 기본과 같다
 - 쌓인 토스트가 화면 높이를 넘으면 목록 안에서 스크롤된다 (막대는 숨김 - 휠 · 터치 · Tab). 최신 토스트가 화면 밖으로 밀리지 않는다
 - 아래 막대가 남은 시간이다. 포인터를 올리거나 키보드 포커스가 안에 있으면 멈춘다 (WCAG 2.2.1)

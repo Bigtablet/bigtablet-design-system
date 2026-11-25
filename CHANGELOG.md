@@ -4,6 +4,10 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [4.12.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.12.0) - 2026-11-25
+- (렌더 변경) Toast 가 한도(5개)를 넘을 때 묶음이 출렁이지 않습니다 - 최신 토스트는 늘 모서리 쪽에 붙고(기본 오른쪽 아래면 맨 아래, `top-right` 면 맨 위), 넘치면 반대쪽 끝의 가장 오래된 것이 빠집니다. 닫힐 때 자리도 같은 시간 동안 접혀 남은 토스트가 순간 이동하지 않고 따라옵니다. React · Vanilla 모두
+- Toast `id` 옵션 추가 - React `toast.success(message, { id })`, Vanilla `Toast(message, tone, { id })`. 같은 id 가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고 남은 시간을 다시 세며, 화면 낭독기에 다시 알립니다. 저장을 연달아 눌러도 토스트가 하나만 남습니다
+
 ## [4.11.3](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.11.3) - 2026-11-24
 - (렌더 변경) `TextField` sm · md 에 아이콘 · 지우기 버튼 · action 을 붙이면 데스크톱에서 상자가 40px 대신 42px 로 커지던 문제를 고쳤습니다 - 아이콘 칸은 폭 40px 을 유지하고 높이는 상자 안쪽을 따릅니다. 로딩 스피너를 `trailingIcon` 으로 넣었다 빼도 칸이 출렁이지 않습니다. lg 와 모바일 폭은 그대로입니다
 
