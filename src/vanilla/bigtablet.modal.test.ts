@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // Vanilla 번들은 UMD 다. 소비자는 `<script>` 로 읽어 전역 `Bigtablet` 을 쓰지만, 여기서는
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
+import { motion } from "../styles/motion";
 import { Alert, Dropdown, init, Modal, Modal as ModalFactory } from "./bigtablet.js";
 import {
 	dropdownMarkup,
@@ -859,5 +860,95 @@ describe("Alert - 콜백 예외 · 초기 포커스 · 겹침 (#973)", () => {
 		const b = Alert({ message: "B" });
 		b.close();
 		expect(document.activeElement).toBe(aConfirm);
+	});
+});
+
+// 같은 모달 안에서 단계를 바꾼다 (#1162) - 모션은 브라우저 테스트가 본다 (jsdom 에는 animate 가 없다)
+describe("Modal - 단계 전환", () => {
+	afterEach(() => {
+		document.body.innerHTML = "";
+	});
+
+	const mount = () => {
+		const el = document.createElement("div");
+		el.className = "bt-modal";
+		el.innerHTML = `<div class="bt-modal__panel" aria-label="기기 등록">
+			<div class="bt-modal__body">
+				<section data-bt-modal-step="form"><input id="name"><button id="next">다음</button></section>
+				<section data-bt-modal-step="verify"><input id="code"></section>
+				<section data-bt-modal-step="done"><p>완료</p></section>
+			</div>
+			<button data-modal-close>닫기</button>
+		</div>`;
+		document.body.appendChild(el);
+		return Modal(el) as ReturnType<typeof Modal> & {
+			showStep: (name: string, options?: { direction?: "forward" | "back" }) => void;
+			currentStep: () => string | null;
+		};
+	};
+	const step = (name: string) =>
+		document.querySelector(`[data-bt-modal-step="${name}"]`) as HTMLElement;
+
+	it("처음엔 첫 단계만 보이고, showStep 으로 하나만 보이게 바꾼다", () => {
+		const m = mount();
+		expect(m.currentStep()).toBe("form");
+		expect([step("form").hidden, step("verify").hidden, step("done").hidden]).toEqual([
+			false,
+			true,
+			true,
+		]);
+
+		m.open();
+		m.showStep("verify");
+		expect(m.currentStep()).toBe("verify");
+		expect([step("form").hidden, step("verify").hidden]).toEqual([true, false]);
+		m.showStep("없는 단계");
+		expect(m.currentStep()).toBe("verify");
+	});
+
+	it("포커스를 새 단계 첫 컨트롤로 옮기고, 돌아가면 그 단계의 마지막 자리로 돌린다", () => {
+		const m = mount();
+		m.open();
+		(document.getElementById("next") as HTMLElement).focus();
+		m.showStep("verify");
+		expect(document.activeElement?.id).toBe("code");
+
+		m.showStep("form");
+		expect(document.activeElement?.id).toBe("next");
+
+		// 컨트롤이 없는 단계면 패널 첫 컨트롤(닫기)로 - 숨긴 단계 안에 남지 않는다
+		m.showStep("done");
+		expect(document.activeElement?.textContent).toBe("닫기");
+	});
+
+	// Vanilla 는 SCSS 토큰을 읽지 못해 값을 옮겨 적었다 - 토큰이 바뀌면 여기서 걸려 React 와 어긋나지 않게
+	it("전환 시간 · 곡선이 React 와 같은 진입 토큰이다", () => {
+		const animate = vi.fn(() => ({ cancel() {} }) as unknown as Animation);
+		Object.defineProperty(HTMLElement.prototype, "animate", {
+			configurable: true,
+			writable: true,
+			value: animate,
+		});
+		try {
+			const m = mount();
+			m.open();
+			m.showStep("verify");
+			expect(animate).toHaveBeenCalledWith(expect.any(Array), {
+				duration: Number.parseFloat(motion.transition.enterBase) * 1000,
+				easing: motion.easing.enter,
+			});
+		} finally {
+			delete (HTMLElement.prototype as { animate?: unknown }).animate;
+		}
+	});
+
+	it("닫혀 있으면 포커스를 옮기지 않고 단계만 바꾼다", () => {
+		const m = mount();
+		const outside = document.createElement("button");
+		document.body.appendChild(outside);
+		outside.focus();
+		m.showStep("verify");
+		expect(step("verify").hidden).toBe(false);
+		expect(document.activeElement).toBe(outside);
 	});
 });

@@ -2420,6 +2420,26 @@ const [isOpen, setIsOpen] = useState(false);
 
 패널 윗변은 화면 높이의 15%(최소 32px · 최대 128px) 자리에 고정되고, 내용이 늘면 아래로만 자랍니다. 오류 안내가 나타나거나 단계가 바뀌어도 모달이 위아래로 튀지 않습니다. 예전에는 세로 가운데 정렬이라 늘어난 높이의 절반만큼 위로 올라갔습니다.
 
+#### 단계 바꾸기 — `ModalSteps`
+
+입력 → 본인 확인 → 결과처럼 **같은 창 안에서 내용을 바꿔 끼울 때** 씁니다. 내용을 한 번에 바꾸면 높이가 툭 바뀌어 모달 위에 모달이 뜬 것처럼 보입니다. `ModalSteps` 는 창은 그대로 두고 패널 높이를 이어서 바꾸고(0.2s), 새 단계는 나아가면 오른쪽 · 돌아가면 왼쪽에서 16px 밀려 들어옵니다.
+
+```tsx
+<Modal open={open} onClose={close} onExited={() => setStep("form")} title="기기 등록"
+  footer={step === "form" ? <Button onClick={() => setStep("verify")}>다음</Button> : <Button onClick={close}>닫기</Button>}>
+  <ModalSteps active={step}>
+    <ModalStep name="form">...</ModalStep>
+    <ModalStep name="verify">...</ModalStep>
+  </ModalSteps>
+</Modal>
+```
+
+- 방향은 `ModalStep` 순서로 정합니다. 순서와 다르게 보이려면 `direction="forward" | "back"`
+- 숨긴 단계도 마운트된 채(`hidden`)라 돌아가면 입력한 값이 그대로 남습니다
+- 포커스는 새 단계의 첫 컨트롤로 가고, 돌아가면 그 단계에서 마지막으로 있던 자리로 돌아옵니다. 컨트롤이 없는 단계면 패널 첫 컨트롤(닫기 버튼)로 갑니다
+- 전환 동안 패널 · 본문 넘침을 숨겨 스크롤바가 잠깐 생겨 내용이 좁아지지 않게 합니다
+- `prefers-reduced-motion` 이거나 모달이 닫히는 중이면 바로 바꿉니다. 첫 단계로 되돌리기는 `onExited` 에서 하면 되돌아가는 움직임이 보이지 않습니다
+
 #### 스크롤 — 내용이 길 때
 
 패널은 뷰포트 높이(`100dvh` - 위 자리 - 아래 32px)를 넘지 않고, **제목·푸터는 고정된 채 `children` 영역만 스크롤**됩니다. 앱이 따로 `max-height` 를 줄 필요가 없습니다. 스크롤 영역은 `tabIndex={0}` 을 받아 키보드로도 스크롤됩니다.

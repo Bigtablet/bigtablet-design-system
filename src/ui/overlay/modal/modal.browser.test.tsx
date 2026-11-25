@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { AlertProvider, useAlert } from "../../feedback/alert";
 import "../../feedback/alert/style.scss";
-import { Modal } from "./index";
+import { Modal, ModalStep, ModalSteps } from "./index";
 import "./style.scss";
 
 /** `role="dialog"` 는 화면 전체를 덮는 오버레이(`.modal`)에 있다 - 패널은 그 안의 `.modal_panel` */
@@ -246,5 +246,51 @@ describe("Modal focus trap (Chromium, #982)", () => {
 		await userEvent.click(await screen.findByRole("button", { name: /확인|OK/ }));
 		await waitFor(() => expect(document.querySelector(".modal")).toBeNull());
 		expect(document.activeElement).toBe(trigger);
+	});
+});
+
+// 같은 모달 안에서 단계를 바꿀 때 높이가 이어지고, 전환 중 본문에 스크롤바가 생기지 않는다 (#1162)
+describe("ModalSteps transition (Chromium, #1162)", () => {
+	function Wizard({ step }: { step: string }) {
+		return (
+			<Modal open onClose={() => {}} title="기기 등록">
+				<ModalSteps active={step}>
+					<ModalStep name="form">
+						<input aria-label="이름" />
+					</ModalStep>
+					<ModalStep name="verify">
+						<input aria-label="인증 번호" />
+						<div style={{ height: 160 }} />
+					</ModalStep>
+				</ModalSteps>
+			</Modal>
+		);
+	}
+
+	it("eases the panel height, keeps the body free of a scrollbar, then returns to auto", async () => {
+		await page.viewport(1024, 940);
+		const { rerender } = render(<Wizard step="form" />);
+		await screen.findByRole("dialog");
+		const panel = document.querySelector(".modal_panel") as HTMLElement;
+		const body = document.querySelector(".modal_body") as HTMLElement;
+		// ResizeObserver 가 처음 높이를 잴 틈
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		const before = panel.getBoundingClientRect().height;
+		const top = panel.getBoundingClientRect().top;
+
+		rerender(<Wizard step="verify" />);
+		await new Promise((r) => setTimeout(r, 60));
+		const during = panel.getBoundingClientRect().height;
+		expect(during).toBeGreaterThan(before);
+		expect(panel.style.overflow).toBe("hidden");
+		expect(body.offsetWidth - body.clientWidth).toBe(0);
+		expect(panel.getBoundingClientRect().top).toBe(top);
+
+		await expect.poll(() => panel.getAnimations().length).toBe(0);
+		await expect.poll(() => panel.style.overflow).toBe("");
+		const after = panel.getBoundingClientRect().height;
+		// 중간값을 지나 끝 높이에 닿는다 - 끝 높이를 넘었다가 툭 줄지 않는다
+		expect(during).toBeLessThan(after);
+		expect(after - before).toBeCloseTo(160, 0);
 	});
 });
