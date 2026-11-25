@@ -36,6 +36,65 @@ describe("Modal layout (Chromium)", () => {
 		expect(close.left).toBeGreaterThanOrEqual(panel.left);
 	});
 
+	// 내용이 늘어도 윗변은 제자리, 아래로만 자란다 (#1157) - 가운데 정렬이면 늘어난 만큼 절반씩 위로 튀었다
+	it("keeps the panel top in place when its content grows (#1157)", async () => {
+		await page.viewport(1024, 940);
+		const { rerender } = render(
+			<Modal open onClose={() => {}} title="기기 등록">
+				본문
+			</Modal>,
+		);
+		await screen.findByRole("dialog");
+		const before = panelRect();
+		// 15vh = 141px 은 상한 128px 에서 멈춘다
+		expect(before.top).toBe(128);
+
+		rerender(
+			<Modal open onClose={() => {}} title="기기 등록">
+				<p>본문</p>
+				<p style={{ height: 120 }}>이름을 입력하세요</p>
+			</Modal>,
+		);
+		const after = panelRect();
+		expect(after.height).toBeGreaterThan(before.height + 100);
+		expect(after.top).toBe(before.top);
+	});
+
+	it("caps a long panel below the top offset and scrolls its body", async () => {
+		await page.viewport(800, 600);
+		render(
+			<Modal open onClose={() => {}} title="긴 내용">
+				<div style={{ height: 2000 }}>본문</div>
+			</Modal>,
+		);
+		await screen.findByRole("dialog");
+		const panel = panelRect();
+		// 15vh = 90px 위, 32px 아래
+		expect(panel.top).toBe(90);
+		expect(panel.bottom).toBe(600 - 32);
+		const body = document.querySelector(".modal_body") as HTMLElement;
+		expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
+	});
+
+	// 스크롤 영역(&_body) 밖의 슬롯만으로 상한을 넘으면 딤을 스크롤해 footer 에 닿는다
+	it("lets the overlay scroll to a footer pushed out by a tall description", async () => {
+		await page.viewport(800, 600);
+		render(
+			<Modal
+				open
+				onClose={() => {}}
+				title="긴 설명"
+				description={<div style={{ height: 440 }}>설명</div>}
+				footer={<button type="button">확인</button>}
+			/>,
+		);
+		await screen.findByRole("dialog");
+		const overlay = document.querySelector(".modal") as HTMLElement;
+		overlay.scrollTop = overlay.scrollHeight;
+		const ok = screen.getByRole("button", { name: "확인" }).getBoundingClientRect();
+		expect(ok.bottom).toBeLessThanOrEqual(600);
+	});
+
 	it("locks the page without shifting content and restores the scroll position", async () => {
 		const Page = ({ open }: { open: boolean }) => (
 			<>

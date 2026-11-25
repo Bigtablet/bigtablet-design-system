@@ -76,6 +76,33 @@ describe("Vanilla Modal layout (Chromium)", () => {
 		expect(document.body.style.paddingRight).toBe("");
 	});
 
+	// 내용이 늘어도 윗변은 제자리, 아래로만 자란다 (#1157, React 와 같음)
+	it("keeps the panel top in place when its content grows (#1157)", async () => {
+		await page.viewport(1024, 940);
+		const { el, m } = mount(400);
+		m.open();
+		const before = rect(".bt-modal__panel");
+		expect(before.top).toBe(128);
+
+		const alert = document.createElement("div");
+		alert.style.height = "62px";
+		el.querySelector(".bt-modal__body")?.prepend(alert);
+		const after = rect(".bt-modal__panel");
+		expect(after.height).toBe(before.height + 62);
+		expect(after.top).toBe(before.top);
+	});
+
+	it("scrolls a panel taller than the screen inside the overlay", () => {
+		const { el, m } = mount(400);
+		(el.querySelector(".bt-modal__body") as HTMLElement).style.height = "2000px";
+		m.open();
+		expect(rect(".bt-modal__panel").top).toBe(90);
+		expect(el.scrollHeight).toBeGreaterThan(el.clientHeight);
+		el.scrollTop = el.scrollHeight;
+		// 끝까지 내리면 패널 아래끝이 화면 안 32px 위에 온다 - 잘려서 못 닿지 않는다
+		expect(rect(".bt-modal__panel").bottom).toBe(600 - 32);
+	});
+
 	it("opens a server-rendered is-open modal without moving the scrolled page (#919)", () => {
 		const content = document.createElement("div");
 		content.style.height = "3000px";
