@@ -119,7 +119,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 			);
 			const currentIndex = closeButtons.findIndex((el) => rootRef.current?.contains(el));
 			if (currentIndex !== -1) {
-				// 다음(아래) 우선, 없으면 이전(위) 토스트로 - 논리적 인접 이동
+				// DOM 다음(최신 쪽) 우선, 없으면 이전 토스트로 - 논리적 인접 이동. 아래 배치에서는 아래쪽,
+				// 위 배치(column-reverse)에서는 위쪽 이웃이다 - 보이는 방향이 아니라 읽는 순서를 따른다
 				const next = closeButtons[currentIndex + 1] || closeButtons[currentIndex - 1];
 				next?.focus();
 			}
@@ -127,11 +128,12 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 		onRemove(item.uid);
 	});
 
-	// 묶음이 화면보다 길어 스크롤되면 방금 뜬 토스트가 보이게 - 끝에 붙어 아래 배치에서는 잘린 쪽이다 (#1000).
-	// jsdom 에는 없다
+	// 묶음이 화면보다 길어 스크롤되면 방금 뜬(또는 같은 id 로 갱신된) 토스트가 보이게 - 끝에 붙어 아래
+	// 배치에서는 잘린 쪽이다 (#1000). jsdom 에는 없다
+	// biome-ignore lint/correctness/useExhaustiveDependencies: version 이 바뀔 때(갱신)마다 다시 보인다
 	React.useEffect(() => {
 		rootRef.current?.scrollIntoView?.({ block: "nearest" });
-	}, []);
+	}, [item.version]);
 
 	/**
 	 * 슬라이드 아웃 모션 후 토스트를 제거한다 (usePresence 콜백이 onRemove 호출).

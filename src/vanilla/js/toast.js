@@ -118,6 +118,8 @@ export function Toast(message, tone = "neutral", options = {}) {
 	const existing = id != null && live().find((el) => el._btId === id);
 	if (existing) {
 		existing._btRender(message, tone, options);
+		// 스크롤된 목록 위쪽에 있던 것이면 갱신된 내용이 보이게
+		existing.scrollIntoView?.({ block: "nearest" });
 		return { dismiss: existing._btDismiss };
 	}
 
@@ -206,7 +208,8 @@ export function Toast(message, tone = "neutral", options = {}) {
 		if (closing) return;
 		closing = true;
 		// 포커스가 이 토스트 안이면(닫기 버튼 Enter 등) 걷힐 때 body 로 떨어지지 않게 이웃 토스트의
-		// 닫기 버튼으로 넘긴다 - 다음(최신 쪽) 우선 (React 와 같음, WCAG 2.4.3)
+		// 닫기 버튼으로 넘긴다 - DOM 다음(최신 쪽) 우선 (React 와 같음, WCAG 2.4.3). 아래 배치에서는 아래쪽,
+		// 위 배치(column-reverse)에서는 위쪽 이웃이다 - 보이는 방향이 아니라 읽는 순서를 따른다
 		if (item.contains(document.activeElement)) {
 			const closes = $$('.bt-toast:not([data-state="closed"]) .bt-toast__close', region);
 			const index = closes.findIndex((el) => item.contains(el));
