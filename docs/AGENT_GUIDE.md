@@ -543,7 +543,7 @@ Bigtablet.Dropdown("#multi", { multiple: true, searchable: true, selectedSummary
 const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose, onExited });
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 Bigtablet.CopyButton("#copy", { text: () => input.value, onCopy }); // 또는 <button data-bt-copy="값">
-const toast = Bigtablet.Toast("저장했습니다", "success", { duration: 3000, action: { label, onClick } }); // → { dismiss }
+const toast = Bigtablet.Toast("저장했습니다", "success", { id, duration: 3000, action: { label, onClick } }); // → { dismiss }. 같은 id 는 갱신
 ```
 
 Dark mode: same `[data-theme="dark"]` attribute works. CSS custom properties expose all tokens with `--bt-` prefix.

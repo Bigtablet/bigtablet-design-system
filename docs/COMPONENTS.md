@@ -1656,15 +1656,21 @@ toast.message('항목이 삭제되었습니다', {
   action: { label: '실행 취소', onClick: restore },
 });
 
+// 같은 토스트 갱신 - 저장을 연달아 눌러도 하나만 남고 남은 시간을 다시 센다 (화면 낭독기에도 다시 알림)
+toast.success('설정을 저장했습니다.', { id: 'settings-save' });
+
 // 프로그램으로 닫기
 toast.dismiss(id);
 ```
+
+- 최신 토스트는 늘 모서리 쪽에 붙습니다 (아래 배치면 맨 아래, `placement="top-right"` 면 맨 위). 5개를 넘으면 반대쪽 끝의 가장 오래된 것이 빠져서, 남은 토스트는 움직이지 않습니다
+- 닫힐 때 자리도 같은 시간 동안 접혀, 남은 토스트가 순간 이동하지 않고 미끄러지듯 따라옵니다
 
 #### `useToast()` 반환
 
 | 함수 | 시그니처 | 설명 |
 |------|---------|------|
-| `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환합니다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions` |
+| `success` `error` `warning` `info` `message` | `(message, options?) => string` | 토스트를 띄우고 **id** 를 반환합니다. `options` 는 ms 숫자(예전 방식) 또는 `ToastOptions`. `options.id` 를 주면 그 값을 돌려주고, 같은 id 가 떠 있으면 새로 쌓지 않고 그 토스트를 갱신합니다 |
 | `dismiss` | `(id) => void` | 닫기 버튼과 같은 퇴출 모션으로 닫습니다. 없는 id·퇴출 중인 id 는 무시 |
 | `update` | `(id, patch) => void` | `message`·`tone`·`duration`·`action` 을 바꿉니다. `duration` 이 바뀌면 진행 바가 새 값으로 다시 시작합니다. `action: null` 이면 버튼을 뗍니다 |
 
