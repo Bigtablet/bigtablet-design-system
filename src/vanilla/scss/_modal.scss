@@ -3,6 +3,10 @@
 /* ========================================
    Modal
    ======================================== */
+
+// 패널 윗변 자리 (#1157, React `.modal` 과 같은 값) - 가운데 정렬이면 내용(오류 안내 · 단계)이 늘 때마다
+// 패널이 절반씩 위로 올라가 모달 전체가 튀었다. 윗변을 고정하고 아래로만 자란다
+$panel_top: clamp(#{token.$spacing_32}, 15vh, #{token.$spacing_128});
 .bt-modal {
   @include token.wrap_keep_all;
   position: fixed;
@@ -11,7 +15,12 @@
      패널 중심이 잠금 전후로 같은 자리에 남게 한다 - React 의 `.modal` 과 같은 처리다. */
   padding-right: var(--bt-scrollbar-width, 0px);
   display: none;
-  place-items: center;
+  place-items: start center;
+  padding-top: $panel_top;
+  // 화면보다 긴 패널은 딤 안에서 스크롤한다 - 패널에 높이 상한이 없어(머리 · 꼬리는 소비자 마크업) 넘치면
+  // 아래가 잘려 닿을 수 없었다. 페이지 스크롤은 잠겨 있으니 끝에서 밖으로 넘기지 않는다
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--bt-color-overlay);
   z-index: var(--bt-z-modal);
   // 진입·퇴출 모션 - React `.modal` 과 같은 presence (#913). 진입은 display: none → grid 에서
@@ -26,6 +35,15 @@
     // 않는다. 실측 - 375px 화면에서 `width: 480px` 를 준 패널이 우측으로 89px 잘렸다.
     // React 쪽 `.modal` 과 같은 수정이다.
     grid-template-columns: minmax(0, 1fr);
+    // 행은 내용 높이 그대로 - auto 면 overflow: hidden 패널의 최소 높이가 0 이라 행이 화면 높이에 맞춰
+    // 줄고, 패널은 행 밖으로 넘쳐 스크롤 범위에 들지 않았다
+    grid-auto-rows: max-content;
+
+    // 패널 아래 32px - 그리드 딤의 아래 padding 은 스크롤 끝에 들어가지 않는다. 빈 칸을 다음 행으로 둔다
+    &::after {
+      content: "";
+      height: token.$spacing_32;
+    }
   }
 
   &__panel {
