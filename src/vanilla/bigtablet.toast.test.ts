@@ -6,9 +6,9 @@ import { resetVanillaDom } from "./bigtablet.test-utils";
 resetVanillaDom();
 
 const toasts = () => Array.from(document.querySelectorAll<HTMLElement>(".bt-toast"));
-/** 위에서 i 번째 토스트 (0 = 최신). 없으면 테스트를 바로 실패시킨다 */
+/** 최신부터 i 번째 토스트 (0 = 최신 - DOM 맨 끝). 없으면 테스트를 바로 실패시킨다 */
 const nth = (i: number) => {
-	const el = toasts()[i];
+	const el = toasts().at(-1 - i);
 	if (!el) throw new Error(`toast #${i} not found`);
 	return el;
 };
@@ -115,7 +115,7 @@ describe("Toast", () => {
 		}
 	});
 
-	it("최신이 위로 쌓이고 5개를 넘으면 가장 오래된 것을 퇴출 경로로 내보낸다", () => {
+	it("최신이 끝에 쌓이고 5개를 넘으면 가장 오래된 것을 퇴출 경로로 내보낸다", () => {
 		const anim = stubExitAnimation();
 		for (let i = 1; i <= 6; i++) Toast(`토스트 ${i}`);
 
@@ -231,6 +231,59 @@ describe("Toast", () => {
 		closeOf(newer).click();
 
 		expect(document.activeElement).toBe(closeOf(older));
+	});
+
+	// 같은 id 는 새로 쌓지 않고 그 자리에서 갱신한다 - 막대를 새로 돌리고 문구를 다시 공지한다 (#1154)
+	it("같은 id 로 다시 띄우면 그 토스트를 갱신하고 남은 시간을 다시 센다", () => {
+		vi.useFakeTimers();
+		Toast("다른 것", "info");
+		const first = Toast("저장 중", "info", { id: "save" });
+		vi.advanceTimersByTime(150);
+		const el = nth(0);
+		const oldProgress = progressOf(el);
+
+		const second = Toast("설정을 저장했습니다.", "success", { id: "save", duration: 5000 });
+		const status = document.querySelector('.bt-toast__announcer[role="status"]') as HTMLElement;
+		// 지난 문구는 빼고 새 문구를 넣는다
+		expect(Array.from(status.children, (p) => p.textContent)).toEqual([
+			"다른 것",
+			"설정을 저장했습니다.",
+		]);
+		vi.useRealTimers();
+
+		expect(toasts()).toHaveLength(2);
+		expect(nth(0)).toBe(el);
+		expect(el.querySelector(".bt-toast__message")?.textContent).toBe("설정을 저장했습니다.");
+		expect(el.querySelector(".bt-toast__icon--success")).not.toBeNull();
+		expect(progressOf(el)).not.toBe(oldProgress);
+		expect(progressOf(el).style.getPropertyValue("--bt-toast-duration")).toBe("5000ms");
+		// 두 핸들 모두 같은 토스트를 닫는다
+		expect(second.dismiss).toBe(first.dismiss);
+	});
+
+	it("갱신할 때 닫기 버튼에 있던 포커스를 새 닫기 버튼으로 옮긴다", () => {
+		Toast("a", "info", { id: "x" });
+		(nth(0).querySelector(".bt-toast__close") as HTMLElement).focus();
+		Toast("b", "info", { id: "x" });
+		expect(document.activeElement).toBe(nth(0).querySelector(".bt-toast__close"));
+	});
+
+	it("닫히는 중인 같은 id 는 갱신하지 않고 새로 띄운다", () => {
+		const anim = stubExitAnimation();
+		Toast("a", "info", { id: "x" }).dismiss();
+		Toast("b", "info", { id: "x" });
+		expect(toasts().map((el) => el.dataset.state)).toEqual(["closed", "open"]);
+		anim.done();
+	});
+
+	// 닫히면서 자리를 접는다 - auto 높이는 transition 이 안 돌아 지금 높이를 박는다 (#1154)
+	it("닫을 때 지금 높이를 변수로 박아 접는 transition 의 시작점을 둔다", () => {
+		const anim = stubExitAnimation();
+		const t = Toast("a");
+		vi.spyOn(nth(0), "offsetHeight", "get").mockReturnValue(62);
+		t.dismiss();
+		expect(nth(0).style.getPropertyValue("--bt-toast-height")).toBe("62px");
+		anim.done();
 	});
 
 	it("closeLabel · regionLabel 을 바꿀 수 있다", () => {

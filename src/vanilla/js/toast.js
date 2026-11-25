@@ -63,14 +63,16 @@ function announce(region, announcer, line, isClosed) {
 }
 
 /**
- * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 아래에 최신이 위로 쌓이고(`<html
- * data-bt-toast-placement="top-right">` 면 넓은 화면에서 오른쪽 위), 최대
- * 5개를 넘은 오래된 것은 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를 올리거나 키보드
- * 포커스가 있으면 멈춘다(WCAG 2.2.1 - CSS).
+ * 토스트를 띄운다 (React `useToast().show*` 의 Vanilla 대응). 오른쪽 아래에 최신이 맨 아래(모서리 쪽)로
+ * 쌓이고(`<html data-bt-toast-placement="top-right">` 면 넓은 화면에서 오른쪽 위, 최신이 맨 위), 최대
+ * 5개를 넘은 오래된 것은 모서리 반대쪽 끝에서 퇴출 모션으로 내보낸다. 막대가 다 줄면 닫히고, 포인터를
+ * 올리거나 키보드 포커스가 있으면 멈춘다(WCAG 2.2.1 - CSS).
  *
  * @param {string} message - 본문 (텍스트로 넣는다 - HTML 은 해석하지 않는다)
  * @param {"success"|"error"|"warning"|"info"|"neutral"} [tone="neutral"]
  * @param {Object} [options]
+ * @param {string} [options.id] - 같은 id 의 토스트가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고
+ *   남은 시간을 다시 센다. 문구는 화면 낭독기에 다시 알린다 (React `ToastOptions.id` 와 같음, #1154)
  * @param {number} [options.duration=3000] - 자동 닫힘까지 ms. `Infinity`(또는 0 이하)면 닫기 버튼·dismiss 로만 닫힌다
  * @param {{label: string, onClick: Function}} [options.action] - 메시지 옆 텍스트 버튼. 누르면 실행 후 닫힌다
  * @param {string} [options.closeLabel="닫기"] - 닫기 버튼 aria-label
@@ -78,14 +80,7 @@ function announce(region, announcer, line, isClosed) {
  * @returns {{dismiss: Function}}
  */
 export function Toast(message, tone = "neutral", options = {}) {
-	const {
-		duration = 3000,
-		action,
-		closeLabel = t("toast.close"),
-		regionLabel = t("toast.region"),
-	} = options;
-	// 모르는 tone 은 neutral - `in` 이 아니라 keys 라 "toString" 같은 상속 키도 거른다
-	const safeTone = Object.keys(TOAST_ICONS).includes(tone) ? tone : "neutral";
+	const { id, regionLabel = t("toast.region") } = options;
 
 	let region = document.querySelector(".bt-toast-container");
 	if (!region) {
@@ -118,45 +113,112 @@ export function Toast(message, tone = "neutral", options = {}) {
 		}
 	}
 
+	// 같은 id 가 떠 있으면 그 자리에서 갱신한다 - 같은 문구를 다섯 번 쌓아도 정보가 늘지 않는다 (#1154)
+	const live = () => $$('.bt-toast:not([data-state="closed"])', region);
+	const existing = id != null && live().find((el) => el._btId === id);
+	if (existing) {
+		existing._btRender(message, tone, options);
+		return { dismiss: existing._btDismiss };
+	}
+
 	const item = document.createElement("div");
 	item.className = "bt-toast";
 	item.dataset.state = "open";
-	// 메시지는 토스트 안에 남긴다 - 리전을 훑을 때 버튼이 어느 메시지에 붙었는지 알 수 있게. 공지는 숨은
-	// 공지 영역이 따로 하고, 그 문구는 읽힌 뒤 비워 두 번 나오지 않는다 (React 와 같음, #994)
-	item.innerHTML =
-		'<div class="bt-toast__live">' +
-		`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
-		'<span class="bt-toast__message"></span></div>';
-	// React Toast `message` 와 같은 문장 단위 줄바꿈 (#1139) - 글자로만 넣는다
-	Sentences.set(item.querySelector(".bt-toast__message"), message);
+	item._btId = id;
 
 	let closing = false;
+	/** 지금 내용의 공지 문구 - 갱신하면 바뀐다 */
+	let line = null;
 
-	// 문구만 공지 영역에 넣는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다. error 는 alert 쪽(assertive).
-	// 공지 영역이 준비되기 전에 닫혔으면 넣지 않는다 - 닫힌 토스트 문구가 늦게 공지되고 영역에 남았다
-	const line = document.createElement("p");
-	line.textContent = message;
-	announce(
-		region,
-		region.querySelector(
-			`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
-		),
-		line,
-		() => closing,
-	);
+	function render(message, tone, options) {
+		const { duration = 3000, action, closeLabel = t("toast.close") } = options;
+		// 모르는 tone 은 neutral - `in` 이 아니라 keys 라 "toString" 같은 상속 키도 거른다
+		const safeTone = Object.keys(TOAST_ICONS).includes(tone) ? tone : "neutral";
+		// 갱신은 안쪽을 새로 그린다 - 닫기 버튼에 있던 포커스는 새 닫기 버튼으로 옮긴다
+		const hadFocus = item.contains(document.activeElement);
+
+		// 메시지는 토스트 안에 남긴다 - 리전을 훑을 때 버튼이 어느 메시지에 붙었는지 알 수 있게. 공지는 숨은
+		// 공지 영역이 따로 하고, 그 문구는 읽힌 뒤 비워 두 번 나오지 않는다 (React 와 같음, #994)
+		item.innerHTML =
+			'<div class="bt-toast__live">' +
+			`<span class="bt-toast__icon bt-toast__icon--${safeTone}" aria-hidden="true">${TOAST_ICONS[safeTone]}</span>` +
+			'<span class="bt-toast__message"></span></div>';
+		// React Toast `message` 와 같은 문장 단위 줄바꿈 (#1139) - 글자로만 넣는다
+		Sentences.set(item.querySelector(".bt-toast__message"), message);
+
+		// 문구만 공지 영역에 넣는다 - 닫기 · 액션 버튼 이름이 섞이지 않는다. error 는 alert 쪽(assertive).
+		// 공지 영역이 준비되기 전에 닫혔거나 다시 갱신됐으면 넣지 않는다 - 지난 문구가 늦게 공지되고 영역에 남았다
+		line?.remove();
+		const current = document.createElement("p");
+		current.textContent = message;
+		line = current;
+		announce(
+			region,
+			region.querySelector(
+				`.bt-toast__announcer[role="${safeTone === "error" ? "alert" : "status"}"]`,
+			),
+			current,
+			() => closing || line !== current,
+		);
+
+		if (action) {
+			const actionBtn = document.createElement("button");
+			actionBtn.type = "button";
+			actionBtn.className = "bt-toast__action";
+			actionBtn.textContent = action.label;
+			actionBtn.addEventListener("click", () => {
+				// 퇴출 모션 동안 버튼이 남아 있다 - 연타로 되돌리기가 두 번 돌지 않게
+				if (closing) return;
+				// onClick 이 throw 해도 닫는다 - 남으면 다시 눌러 콜백이 두 번 돈다
+				try {
+					action.onClick?.();
+				} finally {
+					dismiss();
+				}
+			});
+			item.appendChild(actionBtn);
+		}
+
+		const closeBtn = document.createElement("button");
+		closeBtn.type = "button";
+		closeBtn.className = "bt-toast__close";
+		closeBtn.setAttribute("aria-label", closeLabel);
+		closeBtn.innerHTML = TOAST_CLOSE_ICON;
+		closeBtn.addEventListener("click", dismiss);
+		item.appendChild(closeBtn);
+
+		// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
+		// 0 이하도 같다 - 0ms 막대는 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071, React 와 같음).
+		// 막대를 새로 만들어 넣으므로 갱신하면 남은 시간을 처음부터 다시 센다
+		if (Number.isFinite(duration) && duration > 0) {
+			const progress = document.createElement("div");
+			progress.className = `bt-toast__progress bt-toast__progress--${safeTone}`;
+			progress.style.setProperty("--bt-toast-duration", `${duration}ms`);
+			progress.setAttribute("aria-hidden", "true");
+			progress.addEventListener("animationend", dismiss);
+			item.appendChild(progress);
+		}
+
+		if (hadFocus) closeBtn.focus();
+	}
 
 	function dismiss() {
 		if (closing) return;
 		closing = true;
 		// 포커스가 이 토스트 안이면(닫기 버튼 Enter 등) 걷힐 때 body 로 떨어지지 않게 이웃 토스트의
-		// 닫기 버튼으로 넘긴다 - 아래(오래된 쪽) 우선 (React 와 같음, WCAG 2.4.3)
+		// 닫기 버튼으로 넘긴다 - 다음(최신 쪽) 우선 (React 와 같음, WCAG 2.4.3)
 		if (item.contains(document.activeElement)) {
 			const closes = $$('.bt-toast:not([data-state="closed"]) .bt-toast__close', region);
 			const index = closes.findIndex((el) => item.contains(el));
 			(closes[index + 1] || closes[index - 1])?.focus();
 		}
+		// 닫히면서 높이도 접는다 - auto 에서는 transition 이 안 돌아 지금 높이를 먼저 박고, 그 값을 스타일에
+		// 반영(offsetHeight 읽기)한 뒤 닫는다. 자리를 한 번에 비우면 남은 토스트가 한 칸씩 순간 이동했다
+		// (#1154, CSS 는 _toast.scss 의 [data-state="closed"]). 인라인 height 는 CSS 의 0 을 이겨서 변수로 넘긴다
+		item.style.setProperty("--bt-toast-height", `${item.offsetHeight}px`);
+		void item.offsetHeight;
 		item.dataset.state = "closed";
-		line.remove();
+		line?.remove();
 		// 사라지는 중인 버튼에 Tab·스크린리더가 닿지 않게
 		item.setAttribute("inert", "");
 		afterExit([item], () => {
@@ -165,48 +227,18 @@ export function Toast(message, tone = "neutral", options = {}) {
 		});
 	}
 
-	if (action) {
-		const actionBtn = document.createElement("button");
-		actionBtn.type = "button";
-		actionBtn.className = "bt-toast__action";
-		actionBtn.textContent = action.label;
-		actionBtn.addEventListener("click", () => {
-			// 퇴출 모션 동안 버튼이 남아 있다 - 연타로 되돌리기가 두 번 돌지 않게
-			if (closing) return;
-			// onClick 이 throw 해도 닫는다 - 남으면 다시 눌러 콜백이 두 번 돈다
-			try {
-				action.onClick?.();
-			} finally {
-				dismiss();
-			}
-		});
-		item.appendChild(actionBtn);
-	}
-
-	const closeBtn = document.createElement("button");
-	closeBtn.type = "button";
-	closeBtn.className = "bt-toast__close";
-	closeBtn.setAttribute("aria-label", closeLabel);
-	closeBtn.innerHTML = TOAST_CLOSE_ICON;
-	closeBtn.addEventListener("click", dismiss);
-	item.appendChild(closeBtn);
-
-	// Infinity 는 CSS 시간으로 쓸 수 없고, 막대가 없어야 "저절로 안 닫힌다" 가 눈에도 보인다.
-	// 0 이하도 같다 - 0ms 막대는 뜨자마자 닫혀 토스트가 보이지도 않았다 (#1071, React 와 같음)
-	if (Number.isFinite(duration) && duration > 0) {
-		const progress = document.createElement("div");
-		progress.className = `bt-toast__progress bt-toast__progress--${safeTone}`;
-		progress.style.setProperty("--bt-toast-duration", `${duration}ms`);
-		progress.setAttribute("aria-hidden", "true");
-		progress.addEventListener("animationend", dismiss);
-		item.appendChild(progress);
-	}
-
+	render(message, tone, options);
+	item._btRender = render;
 	item._btDismiss = dismiss;
-	region.prepend(item);
+	// 최신을 끝에 붙인다 - 기본(아래) 배치에서 모서리 쪽이라 읽는 순서와 보이는 순서가 같다. 위 배치는
+	// CSS 가 column-reverse 로 뒤집는다. 예전에는 늘 맨 앞에 붙여 아래 배치에서 묶음이 출렁였다 (#1154)
+	region.appendChild(item);
+	// 묶음이 화면보다 길어 스크롤되면 방금 뜬 토스트가 보이게 - 끝에 붙어 아래 배치에서는 잘린 쪽이다 (#1000).
+	// jsdom 에는 없다
+	item.scrollIntoView?.({ block: "nearest" });
 	syncLandmark(region);
-	// 넘친 오래된 것은 잘라내지 않고 같은 퇴출 경로로 내보낸다 - 안의 포커스가 body 로 떨어지지 않게
-	for (const el of $$('.bt-toast:not([data-state="closed"])', region).slice(TOAST_MAX_COUNT)) {
+	// 넘친 오래된 것(앞쪽)은 잘라내지 않고 같은 퇴출 경로로 내보낸다 - 안의 포커스가 body 로 떨어지지 않게
+	for (const el of live().slice(0, -TOAST_MAX_COUNT)) {
 		el._btDismiss?.();
 	}
 

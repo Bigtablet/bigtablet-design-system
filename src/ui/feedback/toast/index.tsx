@@ -22,6 +22,12 @@ export interface ToastAction {
 }
 
 export interface ToastOptions {
+	/**
+	 * 같은 id 의 토스트가 떠 있으면 새로 쌓지 않고 그 자리에서 내용을 바꾸고 남은 시간을 다시 센다. 문구는
+	 * 화면 낭독기에 다시 알린다 - 저장을 연달아 눌러도 "저장했습니다" 가 하나만 남는다 (#1154).
+	 * 반환값도 이 id 라 `dismiss`·`update` 에 그대로 넘길 수 있다
+	 */
+	id?: string;
 	/** 자동 닫힘까지의 ms (기본값: 3000). `Infinity`(또는 0 이하)면 닫기 버튼·`dismiss` 로만 닫힌다 - 진행 토스트용 */
 	duration?: number;
 	/** 메시지 옆 버튼. 한 번 누를 수 있는 되돌리기 같은 동작에 쓴다 */
@@ -37,7 +43,11 @@ export type ToastPatch = Partial<{
 }>;
 
 interface ToastItem {
+	/** React key · 제거용 내부 키. 공개 `id` 는 `options.id` 로 겹칠 수 있다(퇴출 중인 것과 새것) */
+	uid: number;
 	id: string;
+	/** `options.id` 로 갱신된 횟수 - 막대를 다시 돌리고 같은 문구도 다시 공지하는 키 */
+	version: number;
 	message: string;
 	tone: ToastTone;
 	duration: number;
@@ -82,7 +92,7 @@ const TONE_ICONS: Record<ToastTone, React.ReactElement> = {
 
 interface ToastItemComponentProps {
 	item: ToastItem;
-	onRemove: (id: string) => void;
+	onRemove: (uid: number) => void;
 	closeAriaLabel: string;
 }
 
@@ -114,8 +124,14 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 				next?.focus();
 			}
 		}
-		onRemove(item.id);
+		onRemove(item.uid);
 	});
+
+	// 묶음이 화면보다 길어 스크롤되면 방금 뜬 토스트가 보이게 - 끝에 붙어 아래 배치에서는 잘린 쪽이다 (#1000).
+	// jsdom 에는 없다
+	React.useEffect(() => {
+		rootRef.current?.scrollIntoView?.({ block: "nearest" });
+	}, []);
 
 	/**
 	 * 슬라이드 아웃 모션 후 토스트를 제거한다 (usePresence 콜백이 onRemove 호출).
@@ -124,6 +140,14 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 	const close = React.useCallback(() => {
 		if (closingRef.current) return;
 		closingRef.current = true;
+		// 닫히면서 높이도 접는다 - auto 에서는 transition 이 안 돌아 지금 높이를 먼저 박고, 그 값을 스타일에
+		// 반영(offsetHeight 읽기)한 뒤 닫는다. 자리를 한 번에 비우면 남은 토스트가 한 칸씩 순간 이동했다
+		// (#1154, CSS 는 style.scss 의 [data-state="closed"]). 인라인 height 는 CSS 의 0 을 이겨서 변수로 넘긴다
+		const el = rootRef.current;
+		if (el) {
+			el.style.setProperty("--toast-height", `${el.offsetHeight}px`);
+			void el.offsetHeight;
+		}
 		setVisible(false);
 	}, []);
 
@@ -171,8 +195,8 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 
 			{autoDismisses && (
 				<div
-					// duration 이 update 로 바뀌면 key 가 바뀌어 애니메이션이 새 값으로 다시 시작한다.
-					key={item.duration}
+					// duration 이 update 로 바뀌거나 같은 id 로 다시 띄우면 key 가 바뀌어 애니메이션이 처음부터 다시 돈다.
+					key={`${item.duration}:${item.version}`}
 					className={`toast_progress toast_progress_${item.tone}`}
 					style={{ "--toast-duration": `${item.duration}ms` } as React.CSSProperties}
 					onAnimationEnd={close}
@@ -214,7 +238,11 @@ const ToastAnnouncer = ({ toasts }: { toasts: ToastItem[] }) => {
 			.filter((toast) => !toast.dismissing)
 			.map((toast) => {
 				const urgent = toast.tone === "error";
-				return { key: `${toast.id}:${urgent}:${toast.message}`, text: toast.message, urgent };
+				return {
+					key: `${toast.uid}:${toast.version}:${urgent}:${toast.message}`,
+					text: toast.message,
+					urgent,
+				};
 			})
 			.filter((line) => !seenRef.current.has(line.key));
 		if (fresh.length === 0) return;
@@ -262,8 +290,8 @@ export const ToastProvider = ({
 	const isMounted = useIsMounted();
 
 	/**
-	 * 토스트를 큐에 추가한다. maxCount 를 넘는 가장 오래된 항목은 퇴출 표시만 한다 - 실제 제거는
-	 * 그 토스트의 퇴출 모션이 끝난 뒤 `removeToast` 가 한다.
+	 * 토스트를 큐 끝에 추가한다. maxCount 를 넘는 가장 오래된 항목은 퇴출 표시만 한다 - 실제 제거는
+	 * 그 토스트의 퇴출 모션이 끝난 뒤 `removeToast` 가 한다. `options.id` 가 떠 있으면 그것을 갱신한다.
 	 * @param message 표시할 메시지
 	 * @param tone 의미 색
 	 * @param options 자동 닫힘 시간(기본값 3000ms)·액션 버튼
@@ -272,17 +300,30 @@ export const ToastProvider = ({
 	const addToast = React.useCallback(
 		(message: string, tone: ToastTone, options: ToastOptions = {}) => {
 			const { duration = 3000, action } = options;
-			const id = `toast_${++toastSeq}`;
+			const uid = ++toastSeq;
+			const id = options.id ?? `toast_${uid}`;
 			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
 			// 표시만 하는 지금 방식이면 새 토스트가 진입과 동시에 퇴출 모션을 타며 깜빡인다.
 			if (maxCount <= 0) return id;
 			setToasts((prev) => {
-				const next = [{ id, message, tone, duration, action }, ...prev];
-				// 최신이 앞이라 maxCount 뒤는 항상 가장 오래된 것들이다. 이미 퇴출 중인 항목은
-				// 그대로 두고, 새로 밀려난 것만 표시한다.
-				return next.map((toast, index) =>
-					index >= maxCount && !toast.dismissing ? { ...toast, dismissing: true } : toast,
-				);
+				// 같은 id 가 떠 있으면 그 자리에서 갱신한다 - 같은 문구를 다섯 번 쌓아도 정보가 늘지 않는다 (#1154)
+				if (options.id !== undefined && prev.some((t) => t.id === id && !t.dismissing)) {
+					return prev.map((t) =>
+						t.id === id && !t.dismissing
+							? { ...t, message, tone, duration, action, version: t.version + 1 }
+							: t,
+					);
+				}
+				// 최신을 끝에 붙인다 - 기본(아래) 배치에서 모서리 쪽이라 읽는 순서와 보이는 순서가 같다. 위 배치는
+				// CSS 가 column-reverse 로 뒤집는다. 예전에는 맨 앞에 붙여 아래 배치에서 묶음이 출렁였다 (#1154)
+				const next = [...prev, { uid, id, version: 0, message, tone, duration, action }];
+				// 앞쪽이 가장 오래된 것들이다. 이미 퇴출 중인 항목은 세지 않고, 새로 밀려난 것만 표시한다.
+				let excess = next.filter((t) => !t.dismissing).length - maxCount;
+				return next.map((t) => {
+					if (excess <= 0 || t.dismissing) return t;
+					excess--;
+					return { ...t, dismissing: true };
+				});
 			});
 			return id;
 		},
@@ -321,12 +362,12 @@ export const ToastProvider = ({
 	}, []);
 
 	/**
-	 * 특정 id의 토스트를 큐에서 제거한다.
-	 * @param id 제거할 토스트 id
+	 * 퇴출 모션이 끝난 토스트를 큐에서 제거한다.
+	 * @param uid 제거할 토스트의 내부 키
 	 * @returns void
 	 */
-	const removeToast = React.useCallback((id: string) => {
-		setToasts((prev) => prev.filter((t) => t.id !== id));
+	const removeToast = React.useCallback((uid: number) => {
+		setToasts((prev) => prev.filter((t) => t.uid !== uid));
 	}, []);
 
 	// 셋 다 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
@@ -353,7 +394,7 @@ export const ToastProvider = ({
 						<ToastAnnouncer toasts={toasts} />
 						{toasts.map((item) => (
 							<ToastItemComponent
-								key={item.id}
+								key={item.uid}
 								item={item}
 								onRemove={removeToast}
 								closeAriaLabel={closeAriaLabel}
