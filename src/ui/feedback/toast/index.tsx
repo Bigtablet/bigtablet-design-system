@@ -298,6 +298,13 @@ export const ToastProvider = ({
 	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");
 	const regionLabel = regionLabelProp ?? t("toast.region");
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
+	// 큐의 원본 - state 는 렌더용 사본이다. addToast 가 같은 배치에서 앞서 넣은 항목까지 동기로 보아야
+	// 자동 id 가 직접 고른 id 와 겹치지 않는다 (updater 는 렌더 때에야 돈다)
+	const toastsRef = React.useRef<ToastItem[]>([]);
+	const commit = React.useCallback((fn: (prev: ToastItem[]) => ToastItem[]) => {
+		toastsRef.current = fn(toastsRef.current);
+		setToasts(toastsRef.current);
+	}, []);
 	// 포털은 클라이언트 마운트 후에만 렌더 (SSR/hydration 안전) - 공유 훅
 	const isMounted = useIsMounted();
 
@@ -312,17 +319,16 @@ export const ToastProvider = ({
 	const addToast = React.useCallback(
 		(message: string, tone: ToastTone, options: ToastOptions = {}) => {
 			const { duration = 3000, action } = options;
-			// 자동 id 모양(`toast_N`)을 직접 넘겼으면 시퀀스를 그 뒤로 민다 - 다음 자동 id 가 같은 값이 되어 열린
-			// 두 토스트가 한 id 를 나눠 가지면 dismiss · update 가 둘 다에 걸린다. 15자리까지만 - 그보다 큰 수는
-			// 시퀀스가 닿을 일이 없어 겹치지 않고, 안전 정수(2^53)를 넘기면 ++ 가 값을 못 바꿔 자동 id 끼리 겹친다
-			const auto = /^toast_(\d{1,15})$/.exec(options.id ?? "");
-			if (auto) toastSeq = Math.max(toastSeq, Number(auto[1]));
 			const uid = ++toastSeq;
-			const id = options.id ?? `toast_${uid}`;
+			let id = options.id ?? `toast_${uid}`;
+			// 자동 id 가 큐에 있는 직접 고른 id(`toast_N` 모양)와 겹치면 다음 번호로 - 열린 두 토스트가 한 id 를
+			// 나눠 가지면 dismiss · update 가 둘 다에 걸린다
+			while (options.id === undefined && toastsRef.current.some((t) => t.id === id))
+				id = `toast_${++toastSeq}`;
 			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
 			// 표시만 하는 지금 방식이면 새 토스트가 진입과 동시에 퇴출 모션을 타며 깜빡인다.
 			if (maxCount <= 0) return id;
-			setToasts((prev) => {
+			commit((prev) => {
 				// 같은 id 가 떠 있으면 그 자리에서 갱신한다 - 같은 문구를 다섯 번 쌓아도 정보가 늘지 않는다 (#1154)
 				if (options.id !== undefined && prev.some((t) => t.id === id && !t.dismissing)) {
 					return prev.map((t) =>
@@ -344,55 +350,67 @@ export const ToastProvider = ({
 			});
 			return id;
 		},
-		[maxCount],
+		[maxCount, commit],
 	);
 
 	/**
 	 * 토스트를 프로그램으로 닫는다. maxCount 초과·닫기 버튼과 같은 퇴출 경로를 탄다.
 	 * @param id `addToast` 가 반환한 id. 없거나 이미 퇴출 중이면 아무 일도 하지 않는다
 	 */
-	const dismissToast = React.useCallback((id: string) => {
-		setToasts((prev) =>
-			prev.map((toast) =>
-				toast.id === id && !toast.dismissing ? { ...toast, dismissing: true } : toast,
-			),
-		);
-	}, []);
+	const dismissToast = React.useCallback(
+		(id: string) => {
+			commit((prev) =>
+				prev.map((toast) =>
+					toast.id === id && !toast.dismissing ? { ...toast, dismissing: true } : toast,
+				),
+			);
+		},
+		[commit],
+	);
 
 	/**
 	 * 떠 있는 토스트의 내용을 바꾼다 - "업로드 중…" 을 "완료" 로. 퇴출 중인 것은 건드리지 않는다.
 	 * @param id `addToast` 가 반환한 id
 	 * @param patch 바꿀 필드. `action: null` 이면 버튼을 뗀다
 	 */
-	const updateToast = React.useCallback((id: string, patch: ToastPatch) => {
-		setToasts((prev) =>
-			prev.map((toast) => {
-				if (toast.id !== id || toast.dismissing) return toast;
-				const { action, ...rest } = patch;
-				return {
-					...toast,
-					...rest,
-					action: action === null ? undefined : (action ?? toast.action),
-				};
-			}),
-		);
-	}, []);
+	const updateToast = React.useCallback(
+		(id: string, patch: ToastPatch) => {
+			commit((prev) =>
+				prev.map((toast) => {
+					if (toast.id !== id || toast.dismissing) return toast;
+					const { action, ...rest } = patch;
+					return {
+						...toast,
+						...rest,
+						action: action === null ? undefined : (action ?? toast.action),
+					};
+				}),
+			);
+		},
+		[commit],
+	);
 
 	/**
 	 * 퇴출 모션이 끝난 토스트를 큐에서 제거한다.
 	 * @param uid 제거할 토스트의 내부 키
 	 * @returns void
 	 */
-	const removeToast = React.useCallback((uid: number) => {
-		setToasts((prev) => prev.filter((t) => t.uid !== uid));
-	}, []);
+	const removeToast = React.useCallback(
+		(uid: number) => {
+			commit((prev) => prev.filter((t) => t.uid !== uid));
+		},
+		[commit],
+	);
 
 	/** 닫기 버튼 · 막대로 퇴출이 시작된 토스트를 표시한다 - 같은 id 갱신이 그것을 건너뛰게 */
-	const markExiting = React.useCallback((uid: number) => {
-		setToasts((prev) =>
-			prev.map((t) => (t.uid === uid && !t.dismissing ? { ...t, dismissing: true } : t)),
-		);
-	}, []);
+	const markExiting = React.useCallback(
+		(uid: number) => {
+			commit((prev) =>
+				prev.map((t) => (t.uid === uid && !t.dismissing ? { ...t, dismissing: true } : t)),
+			);
+		},
+		[commit],
+	);
 
 	// 셋 다 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
 	const contextValue = React.useMemo(

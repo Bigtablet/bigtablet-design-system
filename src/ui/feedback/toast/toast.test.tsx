@@ -889,6 +889,27 @@ describe("Toast programmatic control", () => {
 		expect(document.querySelectorAll(".toast_item")).toHaveLength(2);
 	});
 
+	// 큰 직접 고른 id 둘이 섞여도 자동 id 가 그중 하나와 겹치지 않는다 - 같은 배치에서 앞서 넣은 것까지 본다
+	it("skips auto ids already taken in the queue, even within the same batch", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						// 자동 다음 번호를 직접 고른 뒤, 큰 수를 섞는다 (예전 "시퀀스 밀기" 방식이 겹치던 순서)
+						const next = `toast_${Number(t.info("probe").slice(6)) + 1}`;
+						ids.push(t.info("첫째", { id: next }));
+						ids.push(t.info("큰 수", { id: "toast_999999999999999" }));
+						ids.push(t.info("둘째"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(new Set(ids).size).toBe(3);
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(4);
+	});
+
 	// 안전 정수를 넘는 id 로 시퀀스를 밀면 ++ 가 값을 못 바꿔 자동 id 끼리 겹쳤을 것이다
 	it("keeps auto ids distinct after a caller id beyond the safe integer range", () => {
 		const ids: string[] = [];
