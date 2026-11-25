@@ -322,6 +322,7 @@ const modal = Bigtablet.Modal('#my-modal', {
 modal.open();
 modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
 modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
+modal.showStep('verify');   // 패널 안 [data-bt-modal-step] 하나만 보이게 - 높이 · 내용 전환, 포커스 이동 (#1162). currentStep() 으로 지금 단계
 
 const sw = Bigtablet.Toggle('#my-toggle', {
   name: 'notify',           // hidden input 으로 폼 제출 참여 (data-name)

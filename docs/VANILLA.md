@@ -673,6 +673,25 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 </script>
 ```
 
+**단계 바꾸기** - 입력 → 본인 확인 → 결과처럼 같은 창 안에서 내용을 바꿀 때 씁니다 (React `ModalSteps` 와 같음).
+패널 안 단계마다 `data-bt-modal-step="이름"` 을 달면 처음엔 `hidden` 이 아닌 첫 단계만 보이고, `showStep` 으로 바꿉니다.
+
+```html
+<div class="bt-modal__body">
+  <section data-bt-modal-step="form">...</section>
+  <section data-bt-modal-step="verify">...</section>
+</div>
+<script>
+  myModal.showStep('verify');                          // 마크업 순서로 방향을 정한다 (뒤 → 오른쪽에서)
+  myModal.showStep('form', { direction: 'back' });      // 방향을 직접 줄 수도 있다
+  myModal.currentStep();                               // 'form'
+</script>
+```
+
+- 창은 그대로 두고 패널 높이를 이어서 바꾸고(0.2s), 새 단계는 나아가면 오른쪽 · 돌아가면 왼쪽에서 16px 밀려 들어옵니다
+- 포커스는 새 단계의 첫 컨트롤로 가고, 돌아가면 그 단계에서 마지막으로 있던 자리로 돌아옵니다
+- 닫혀 있거나 닫히는 중 · `prefers-reduced-motion` 이면 바로 바꿉니다 - `onExited` 에서 `showStep('form')` 으로 되돌리면 움직임이 보이지 않습니다
+
 열고 닫을 때 React Modal 과 같은 모션이 돈다 - 딤은 페이드, 패널은 살짝 작아지며(`scale(0.96)`) 위로 사라진다.
 닫을 때는 포커스를 바로 돌려주고, 모션이 끝난 뒤 `is-open` 을 떼고 스크롤 잠금을 푼다. 그사이 모달에는
 `data-state="closed"` 와 `inert` 가 붙는다. 닫히는 중 `open()` 하면 그 자리에서 되돌아 열리고, `destroy()` 는 기다리지 않고 바로 걷는다.

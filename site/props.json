@@ -4785,6 +4785,34 @@
 			"doc": "퇴출 애니메이션이 끝나 패널이 실제로 언마운트된 뒤 호출된다. `open` 을 끈 직후가 아니라 이 시점에 상세 데이터를 비워야 본문만 먼저 사라지지 않는다."
 		}
 	],
+	"ModalStepProps": [
+		{
+			"name": "name",
+			"type": "string",
+			"required": true,
+			"doc": "단계 이름: `ModalSteps` 의 `active` 와 맞춘다"
+		}
+	],
+	"ModalStepsProps": [
+		{
+			"name": "active",
+			"type": "string",
+			"required": true,
+			"doc": "보이는 단계의 `name`"
+		},
+		{
+			"name": "direction",
+			"type": "\"forward\" | \"back\"",
+			"required": false,
+			"doc": "새 단계가 들어오는 방향. 없으면 `ModalStep` 순서로 정한다: 뒤 단계로 가면 \"forward\"(오른쪽에서), 앞 단계로 돌아가면 \"back\"(왼쪽에서)"
+		},
+		{
+			"name": "children",
+			"type": "ReactNode",
+			"required": true,
+			"doc": "`ModalStep` 들"
+		}
+	],
 	"LocaleProviderProps": [
 		{
 			"name": "locale",

@@ -301,7 +301,8 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Modal` | Centered dialog. | `open`, `onClose`, `title`, `description`, `footer`, `footerAlign` (end/between/start), `showCloseIcon` (default true), `width`, `closeOnOverlay`. X close icon top-right by default. |
+| `Modal` | Dialog, top-anchored (panel top fixed at 15% of the viewport, grows downward). | `open`, `onClose`, `title`, `description`, `footer`, `footerAlign` (end/between/start), `showCloseIcon` (default true), `width`, `closeOnOverlay`. X close icon top-right by default. |
+| `ModalSteps` / `ModalStep` | Swap steps inside one Modal (form → verify → done) with an eased height and a sideways slide. | `active`, `direction` (forward/back) · `name`. Hidden steps stay mounted; focus moves to the new step. |
 | `Tooltip` | Hover info. | `content`, `placement` (top/bottom/left/right), `delay`, `disabled`. Children = single trigger element. Long text wraps with `text-align: center`, max-width 240px. |
 | `Popover` | Click-triggered non-modal panel for arbitrary interactive content (form/explanation/actions). | `trigger` element, `content` (ReactNode), `placement` (top/bottom/left/right, default bottom), `open`/`defaultOpen`/`onOpenChange` (controlled/uncontrolled), `aria-label`/`aria-labelledby`. `role="dialog"`. Focus moves into panel on open; `Esc` closes + returns focus to trigger. Use `Menu` for action lists, `Tooltip` for hover info. Trigger MUST forward props (`<button {...props}>`). |
 
@@ -540,7 +541,7 @@ JS API (auto-init on DOMContentLoaded, or manual):
 const dropdown = Bigtablet.Dropdown("#my-dropdown", { options, onValueChange });
 // React 와 동일한 이름의 multiple / searchable 도 지원 (data-multiple / data-searchable 로도 가능)
 Bigtablet.Dropdown("#multi", { multiple: true, searchable: true, selectedSummary: (n) => `${n}개 선택` });
-const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose, onExited });
+const modal = Bigtablet.Modal("#my-modal", { onOpen, onClose, onExited }); // 단계: [data-bt-modal-step] + modal.showStep(name)
 Bigtablet.Alert({ title, message, showCancel: true, onConfirm });
 Bigtablet.CopyButton("#copy", { text: () => input.value, onCopy }); // 또는 <button data-bt-copy="값">
 const toast = Bigtablet.Toast("저장했습니다", "success", { id, duration: 3000, action: { label, onClick } }); // → { dismiss }. 같은 id 는 갱신
