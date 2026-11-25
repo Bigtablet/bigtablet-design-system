@@ -442,7 +442,7 @@ import { Settings } from 'lucide-react';
 
 ### CopyButton
 
-텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · "복사됨" 으로 바뀌고, 결과를 숨긴 `role="status"` 로 스크린리더에도 알립니다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 씁니다.
+텍스트 복사 버튼. 복사되면 2초간 체크 아이콘 · 성공 색 · "복사됨" 으로 바뀌고, 실패하면 X 아이콘 · 오류 색으로 바뀝니다. 결과는 숨긴 `role="status"` 로 스크린리더에도 알립니다. 단추 폭은 "복사" · "복사됨" 중 긴 쪽으로 고정돼 문구가 바뀌어도 흔들리지 않습니다. 버튼 없이 복사만 필요하면 [`useClipboard`](#useclipboard--copytext) 를 씁니다.
 
 #### 접근성 - 복사됨 알림
 
