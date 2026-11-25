@@ -947,4 +947,27 @@ describe("ModalSteps", () => {
 		rerender(<Wizard step="form" />);
 		expect(next).toHaveFocus();
 	});
+
+	// ModalStep 을 래퍼로 감싸도 DOM 순서로 방향을 정한다 - 직접 자식만 보던 때는 방향이 늘 한쪽이었다
+	it("finds wrapped steps and their order from the DOM", () => {
+		const Wrapped = ({ step }: { step: string }) => (
+			<Modal open onClose={() => {}} title="감싼 단계">
+				<ModalSteps active={step}>
+					<div>
+						<ModalStep name="a">
+							<input aria-label="가" />
+						</ModalStep>
+					</div>
+					<>
+						<ModalStep name="b">
+							<input aria-label="나" />
+						</ModalStep>
+					</>
+				</ModalSteps>
+			</Modal>
+		);
+		const { rerender } = render(<Wrapped step="a" />);
+		rerender(<Wrapped step="b" />);
+		expect(screen.getByRole("textbox", { name: "나" })).toHaveFocus();
+	});
 });

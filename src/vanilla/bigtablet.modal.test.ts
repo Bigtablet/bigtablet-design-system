@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // Vanilla 번들은 UMD 다. 소비자는 `<script>` 로 읽어 전역 `Bigtablet` 을 쓰지만, 여기서는
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
+import { motion } from "../styles/motion";
 import { Alert, Dropdown, init, Modal, Modal as ModalFactory } from "./bigtablet.js";
 import {
 	dropdownMarkup,
@@ -918,6 +919,27 @@ describe("Modal - 단계 전환", () => {
 		// 컨트롤이 없는 단계면 패널 첫 컨트롤(닫기)로 - 숨긴 단계 안에 남지 않는다
 		m.showStep("done");
 		expect(document.activeElement?.textContent).toBe("닫기");
+	});
+
+	// Vanilla 는 SCSS 토큰을 읽지 못해 값을 옮겨 적었다 - 토큰이 바뀌면 여기서 걸려 React 와 어긋나지 않게
+	it("전환 시간 · 곡선이 React 와 같은 진입 토큰이다", () => {
+		const animate = vi.fn(() => ({ cancel() {} }) as unknown as Animation);
+		Object.defineProperty(HTMLElement.prototype, "animate", {
+			configurable: true,
+			writable: true,
+			value: animate,
+		});
+		try {
+			const m = mount();
+			m.open();
+			m.showStep("verify");
+			expect(animate).toHaveBeenCalledWith(expect.any(Array), {
+				duration: Number.parseFloat(motion.transition.enterBase) * 1000,
+				easing: motion.easing.enter,
+			});
+		} finally {
+			delete (HTMLElement.prototype as { animate?: unknown }).animate;
+		}
 	});
 
 	it("닫혀 있으면 포커스를 옮기지 않고 단계만 바꾼다", () => {
