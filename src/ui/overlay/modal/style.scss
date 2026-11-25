@@ -38,6 +38,10 @@ $panel_top_dvh: clamp(#{token.$spacing_32}, 15dvh, #{token.$spacing_128});
   place-items: start center;
   padding-top: $panel_top;
   padding-top: $panel_top_dvh;
+  // 긴 children 은 패널 안(&_body)에서 스크롤된다. 스크롤 영역 밖의 슬롯(description · footer)만으로 상한을
+  // 넘으면 패널 아래로 넘친다 - 딤도 스크롤돼야 footer 에 닿는다. 페이지 스크롤은 잠겨 있어 밖으로 넘기지 않는다
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: token.$color_bg_overlay;
   z-index: token.$z_chrome;
   will-change: opacity;

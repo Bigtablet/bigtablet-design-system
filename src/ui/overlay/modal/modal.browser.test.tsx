@@ -76,6 +76,25 @@ describe("Modal layout (Chromium)", () => {
 		expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
 	});
 
+	// 스크롤 영역(&_body) 밖의 슬롯만으로 상한을 넘으면 딤을 스크롤해 footer 에 닿는다
+	it("lets the overlay scroll to a footer pushed out by a tall description", async () => {
+		await page.viewport(800, 600);
+		render(
+			<Modal
+				open
+				onClose={() => {}}
+				title="긴 설명"
+				description={<div style={{ height: 440 }}>설명</div>}
+				footer={<button type="button">확인</button>}
+			/>,
+		);
+		await screen.findByRole("dialog");
+		const overlay = document.querySelector(".modal") as HTMLElement;
+		overlay.scrollTop = overlay.scrollHeight;
+		const ok = screen.getByRole("button", { name: "확인" }).getBoundingClientRect();
+		expect(ok.bottom).toBeLessThanOrEqual(600);
+	});
+
 	it("locks the page without shifting content and restores the scroll position", async () => {
 		const Page = ({ open }: { open: boolean }) => (
 			<>
