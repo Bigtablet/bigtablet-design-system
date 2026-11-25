@@ -93,6 +93,8 @@ const TONE_ICONS: Record<ToastTone, React.ReactElement> = {
 interface ToastItemComponentProps {
 	item: ToastItem;
 	onRemove: (uid: number) => void;
+	/** 퇴출을 시작했다고 Provider 에 알린다 - 닫히는 중인 것을 같은 id 로 갱신하지 않게 */
+	onExitStart: (uid: number) => void;
 	closeAriaLabel: string;
 }
 
@@ -102,7 +104,12 @@ interface ToastItemComponentProps {
  * @param props 토스트 아이템 속성
  * @returns 렌더링된 토스트 아이템
  */
-const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemComponentProps) => {
+const ToastItemComponent = ({
+	item,
+	onRemove,
+	onExitStart,
+	closeAriaLabel,
+}: ToastItemComponentProps) => {
 	const [visible, setVisible] = React.useState(true);
 	const closingRef = React.useRef(false);
 	const rootRef = React.useRef<HTMLDivElement>(null);
@@ -151,7 +158,10 @@ const ToastItemComponent = ({ item, onRemove, closeAriaLabel }: ToastItemCompone
 			void el.offsetHeight;
 		}
 		setVisible(false);
-	}, []);
+		// 닫기 버튼 · 막대로 닫힐 때도 Provider 가 알아야 한다 - 모르면 그사이 같은 id 로 다시 띄운 것이 닫히는
+		// 토스트를 갱신하고, 퇴출이 끝나면 새 알림까지 함께 사라졌다 (maxCount · dismiss 경로는 이미 표시돼 있다)
+		onExitStart(item.uid);
+	}, [onExitStart, item.uid]);
 
 	// maxCount 에 밀린 토스트도 닫기 버튼과 같은 경로로 나간다 - 퇴출 모션이 끝나면
 	// 퇴출 콜백이 포커스를 인접 토스트로 넘기고 onRemove 를 부른다. 상태에서 바로
@@ -302,6 +312,10 @@ export const ToastProvider = ({
 	const addToast = React.useCallback(
 		(message: string, tone: ToastTone, options: ToastOptions = {}) => {
 			const { duration = 3000, action } = options;
+			// 자동 id 모양(`toast_N`)을 직접 넘겼으면 시퀀스를 그 뒤로 민다 - 다음 자동 id 가 같은 값이 되어 열린
+			// 두 토스트가 한 id 를 나눠 가지면 dismiss · update 가 둘 다에 걸린다
+			const auto = /^toast_(\d+)$/.exec(options.id ?? "");
+			if (auto) toastSeq = Math.max(toastSeq, Number(auto[1]));
 			const uid = ++toastSeq;
 			const id = options.id ?? `toast_${uid}`;
 			// 0 이하는 지원 범위 밖이다. 예전 `slice(0, maxCount)` 는 아무것도 넣지 않았는데,
@@ -372,6 +386,13 @@ export const ToastProvider = ({
 		setToasts((prev) => prev.filter((t) => t.uid !== uid));
 	}, []);
 
+	/** 닫기 버튼 · 막대로 퇴출이 시작된 토스트를 표시한다 - 같은 id 갱신이 그것을 건너뛰게 */
+	const markExiting = React.useCallback((uid: number) => {
+		setToasts((prev) =>
+			prev.map((t) => (t.uid === uid && !t.dismissing ? { ...t, dismissing: true } : t)),
+		);
+	}, []);
+
 	// 셋 다 stable(useCallback) — value 객체만 메모이즈해 소비자 불필요 리렌더 방지
 	const contextValue = React.useMemo(
 		() => ({ addToast, dismissToast, updateToast }),
@@ -399,6 +420,7 @@ export const ToastProvider = ({
 								key={item.uid}
 								item={item}
 								onRemove={removeToast}
+								onExitStart={markExiting}
 								closeAriaLabel={closeAriaLabel}
 							/>
 						))}

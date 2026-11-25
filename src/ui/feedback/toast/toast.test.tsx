@@ -852,6 +852,43 @@ describe("Toast programmatic control", () => {
 		await act(async () => anim.finish());
 	});
 
+	it("a toast closed by its button is not refreshed by the same id while it exits", async () => {
+		const anim = stubPendingAnimation();
+		render(
+			<ToastProvider>
+				<ToastTrigger fn={(t) => t.info("저장했습니다", { id: "save" })} />
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+
+		const states = () =>
+			Array.from(document.querySelectorAll(".toast_item"), (el) => el.getAttribute("data-state"));
+		expect(states()).toEqual(["closed", "open"]);
+		// 닫힌 것의 퇴출이 끝나도 새 알림은 남는다
+		await act(async () => anim.finish());
+		await waitFor(() => expect(states()).toEqual(["open"]));
+	});
+
+	it("never hands out an auto id that a caller already chose", () => {
+		const ids: string[] = [];
+		render(
+			<ToastProvider>
+				<ToastTrigger
+					fn={(t) => {
+						ids.push(t.info("a", { id: "toast_999999" }));
+						ids.push(t.info("b"));
+					}}
+				/>
+			</ToastProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "trigger" }));
+		expect(ids[0]).toBe("toast_999999");
+		expect(ids[1]).not.toBe("toast_999999");
+		expect(document.querySelectorAll(".toast_item")).toHaveLength(2);
+	});
+
 	// 닫히면서 자리를 접는다 - auto 높이는 transition 이 안 돌아 지금 높이를 박는다 (#1154)
 	it("pins the current height inline when closing so the slot can collapse", async () => {
 		const anim = stubPendingAnimation();
