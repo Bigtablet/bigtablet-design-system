@@ -210,8 +210,8 @@ export type {
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FieldControl, FieldProps } from "./ui/forms/field";
 export { Field, useFieldControl } from "./ui/forms/field";
-export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
-export { FileInput } from "./ui/forms/file";
+export type { FileInputProps, FileInputVariant } from "./ui/forms/file-input";
+export { FileInput } from "./ui/forms/file-input";
 export type { FilterBarProps, FilterBarSubmitMode } from "./ui/forms/filter-bar";
 export { FilterBar } from "./ui/forms/filter-bar";
 export type { FormActionsProps, FormProps } from "./ui/forms/form";
@@ -246,18 +246,18 @@ export { SegmentedControl } from "./ui/forms/segmented-control";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {
+	ImeStrategy,
+	TextFieldProps,
+	TextFieldSize,
+	TextFieldVariant,
+} from "./ui/forms/text-field";
+export { TextField } from "./ui/forms/text-field";
+export type {
 	TextareaProps,
 	TextareaResize,
 	TextareaSize,
 } from "./ui/forms/textarea";
 export { Textarea } from "./ui/forms/textarea";
-export type {
-	ImeStrategy,
-	TextFieldProps,
-	TextFieldSize,
-	TextFieldVariant,
-} from "./ui/forms/textfield";
-export { TextField } from "./ui/forms/textfield";
 export type { TimePickerProps } from "./ui/forms/time-picker";
 export { TimePicker } from "./ui/forms/time-picker";
 export type { ToggleProps } from "./ui/forms/toggle";

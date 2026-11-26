@@ -3959,158 +3959,6 @@
 			"doc": "접근성 이름: `Field` 로 감싸면 그쪽 라벨이 우선한다"
 		}
 	],
-	"TextareaProps": [
-		{
-			"name": "size",
-			"type": "\"sm\" | \"md\" | \"lg\"",
-			"required": false,
-			"default": "\"md\"",
-			"doc": "입력 필드 크기"
-		},
-		{
-			"name": "label",
-			"type": "string",
-			"required": false,
-			"doc": "입력 필드 위에 표시할 라벨 텍스트"
-		},
-		{
-			"name": "showLabel",
-			"type": "boolean",
-			"required": false,
-			"default": "true",
-			"doc": "라벨 표시 여부"
-		},
-		{
-			"name": "supportingText",
-			"type": "string",
-			"required": false,
-			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
-		},
-		{
-			"name": "error",
-			"type": "boolean",
-			"required": false,
-			"doc": "에러 상태 여부"
-		},
-		{
-			"name": "fullWidth",
-			"type": "boolean",
-			"required": false,
-			"doc": "컨테이너 전체 너비 차지 여부"
-		},
-		{
-			"name": "onValueChange",
-			"type": "(value: string) => void",
-			"required": false,
-			"default": "조합 완료 후",
-			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
-		},
-		{
-			"name": "imeStrategy",
-			"type": "\"delayed\" | \"immediate\"",
-			"required": false,
-			"default": "\"delayed\"",
-			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
-		},
-		{
-			"name": "value",
-			"type": "string",
-			"required": false,
-			"doc": "제어형 입력 값"
-		},
-		{
-			"name": "defaultValue",
-			"type": "string",
-			"required": false,
-			"doc": "비제어형 초기 입력 값"
-		},
-		{
-			"name": "transformValue",
-			"type": "(value: string) => string",
-			"required": false,
-			"doc": "입력값 변환 함수"
-		},
-		{
-			"name": "rows",
-			"type": "number",
-			"required": false,
-			"default": "3",
-			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
-		},
-		{
-			"name": "minRows",
-			"type": "number",
-			"required": false,
-			"doc": "auto-grow 최소 행 수. 지정 시 내용에 따라 높이 자동 증가"
-		},
-		{
-			"name": "maxRows",
-			"type": "number",
-			"required": false,
-			"doc": "auto-grow 최대 행 수. 초과 시 스크롤"
-		},
-		{
-			"name": "showCounter",
-			"type": "boolean",
-			"required": false,
-			"doc": "글자 수 카운터 표시 (maxLength 와 함께 사용 권장)"
-		},
-		{
-			"name": "resize",
-			"type": "\"vertical\" | \"none\" | \"both\"",
-			"required": false,
-			"default": "\"vertical\"",
-			"doc": "resize 핸들 제어"
-		},
-		{
-			"name": "toolbar",
-			"type": "ReactNode",
-			"required": false,
-			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
-		},
-		{
-			"name": "ref",
-			"type": "Ref<HTMLTextAreaElement>",
-			"required": false,
-			"doc": "textarea 요소 참조"
-		},
-		{
-			"name": "disabled",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "name",
-			"type": "string",
-			"required": false,
-			"doc": "HTML `name` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "maxLength",
-			"type": "number",
-			"required": false,
-			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "placeholder",
-			"type": "string",
-			"required": false,
-			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "readOnly",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "required",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `required` 속성을 그대로 넘깁니다"
-		}
-	],
 	"TextFieldProps": [
 		{
 			"name": "size",
@@ -4277,6 +4125,158 @@
 			"type": "HTMLInputAutoCompleteAttribute",
 			"required": false,
 			"doc": "HTML `autoComplete` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
+	"TextareaProps": [
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "입력 필드 크기"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "showLabel",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "라벨 표시 여부"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태 여부"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "컨테이너 전체 너비 차지 여부"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
+		},
+		{
+			"name": "imeStrategy",
+			"type": "\"delayed\" | \"immediate\"",
+			"required": false,
+			"default": "\"delayed\"",
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 입력 값"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형 초기 입력 값"
+		},
+		{
+			"name": "transformValue",
+			"type": "(value: string) => string",
+			"required": false,
+			"doc": "입력값 변환 함수"
+		},
+		{
+			"name": "rows",
+			"type": "number",
+			"required": false,
+			"default": "3",
+			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
+		},
+		{
+			"name": "minRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최소 행 수. 지정 시 내용에 따라 높이 자동 증가"
+		},
+		{
+			"name": "maxRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최대 행 수. 초과 시 스크롤"
+		},
+		{
+			"name": "showCounter",
+			"type": "boolean",
+			"required": false,
+			"doc": "글자 수 카운터 표시 (maxLength 와 함께 사용 권장)"
+		},
+		{
+			"name": "resize",
+			"type": "\"vertical\" | \"none\" | \"both\"",
+			"required": false,
+			"default": "\"vertical\"",
+			"doc": "resize 핸들 제어"
+		},
+		{
+			"name": "toolbar",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLTextAreaElement>",
+			"required": false,
+			"doc": "textarea 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
 		},
 		{
 			"name": "maxLength",
