@@ -8,7 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
-- [v4.15.0 (날짜 · 시간 prop 이름 통일)](#v4150-날짜--시간-prop-이름-통일)
+- [v4.15.0 (날짜 · 시간 prop 이름 통일 · Toggle → Switch)](#v4150-날짜--시간-prop-이름-통일--toggle--switch)
 - [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
@@ -40,7 +40,7 @@
 | 지금 버전 | 읽을 섹션 |
 |------|------|
 | 4.15.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.10.0 ~ 4.14.x | [v4.15.0](#v4150-날짜--시간-prop-이름-통일) (날짜 · 시간 prop 이름 - 지금은 예전 이름도 동작합니다) |
+| 4.10.0 ~ 4.14.x | [v4.15.0](#v4150-날짜--시간-prop-이름-통일--toggle--switch) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` - 지금은 예전 이름도 동작합니다) |
 | 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (SCSS 믹스인 4개 · Tabs `fills` deprecate - 지금은 동작합니다. Toast 기본 위치가 오른쪽 아래로 바뀝니다) |
 | 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
@@ -59,7 +59,7 @@
 
 ---
 
-## v4.15.0 (날짜 · 시간 prop 이름 통일)
+## v4.15.0 (날짜 · 시간 prop 이름 통일 · Toggle → Switch)
 
 날짜 · 시간 컴포넌트마다 범위를 정하는 prop 이름이 달랐습니다 (`DateCalendar` 는 `min`, `DatePicker` 는 `minDate` · `selectableRange` · `startYear`, `TimePicker` 는 `minTime`). 전부 **`min` · `max`** 로 맞추고, 날마다 막는 `isDateDisabled` 를 `DatePicker` · `DateRangePicker` 에도 넣었습니다. 연 · 월만 고르는 칸은 `MonthPicker` 로 따로 뺐습니다.
 
@@ -79,6 +79,19 @@
 Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였습니다. 이번에 `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
 
 **앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"" --include=*.tsx` 로 찾습니다. 타입 체크에서는 deprecated 취소선으로 보입니다.
+
+### Toggle → Switch
+
+`Toggle` 은 `role="switch"` 인데, 다른 라이브러리(Radix 등)에서 Toggle 은 눌림 버튼(`aria-pressed`)을 뜻합니다. 그래서 이름을 `Switch` 로 바꿨습니다. `Toggle` · `ToggleProps` 는 같은 컴포넌트를 가리키는 deprecated 별칭으로 남아 있고, 다음 major 에서 제거합니다.
+
+| 예전 | 새 이름 |
+|------|------|
+| `import { Toggle } from "@bigtablet/design-system"` | `import { Switch } from "@bigtablet/design-system"` |
+| `ToggleProps` | `SwitchProps` |
+
+렌더 결과는 같습니다. CSS 클래스(`toggle` · `toggle_on` · `toggle_thumb` …)는 소비자 재정의가 깨지지 않게 그대로 두었습니다. Vanilla 는 별칭을 두지 않는 정책이라 `.bt-toggle` · `Bigtablet.Toggle` 도 지금 이름 그대로입니다. 이 둘은 다음 major 에서 한 번에 `switch` 로 바꿉니다.
+
+**앱 쪽에서 할 일:** `grep -rnE "\\bToggle(Props)?\\b" --include=*.tsx --include=*.ts` 로 찾아 `Switch` 로 바꿉니다.
 
 ---
 

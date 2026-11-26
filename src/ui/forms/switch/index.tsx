@@ -5,7 +5,7 @@ import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 import { useFieldControl } from "../field";
 
-export interface ToggleProps
+export interface SwitchProps
 	extends Omit<SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>, "onChange"> {
 	/** 제어형 토글 상태 */
 	checked?: boolean;
@@ -24,12 +24,12 @@ export interface ToggleProps
 }
 
 /**
- * 토글을 렌더링한다.
- * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 토글 UI를 반환한다.
- * @param props 토글 속성
- * @returns 렌더링된 토글 요소
+ * 켜기 / 끄기 스위치 (`role="switch"`). 누르는 즉시 적용되는 설정에 쓴다.
+ * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 스위치 UI를 반환한다.
+ * @param props 스위치 속성
+ * @returns 렌더링된 스위치 요소
  */
-export const Toggle = ({
+export const Switch = ({
 	checked,
 	defaultChecked,
 	onCheckedChange,
@@ -39,7 +39,7 @@ export const Toggle = ({
 	ariaLabel,
 	ref,
 	...props
-}: ToggleProps) => {
+}: SwitchProps) => {
 	const isControlled = checked !== undefined;
 	const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
 	const isOn = isControlled ? !!checked : innerChecked;
@@ -60,6 +60,7 @@ export const Toggle = ({
 	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.
 	const field = useFieldControl();
 
+	// ponytail: 클래스 이름은 `toggle` 그대로 둔다 - 소비자 CSS 재정의가 깨지지 않게. 다음 major 에서 `switch` 로
 	const rootClassName = cn(
 		"toggle",
 		`toggle_size_${size}`,
@@ -93,3 +94,8 @@ export const Toggle = ({
 		</button>
 	);
 };
+
+/** @deprecated `SwitchProps` 를 쓴다. 다음 major 에서 제거한다. */
+export type ToggleProps = SwitchProps;
+/** @deprecated `Switch` 를 쓴다 - 같은 컴포넌트다. 다음 major 에서 제거한다. */
+export const Toggle = (props: SwitchProps) => <Switch {...props} />;
