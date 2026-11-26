@@ -4,6 +4,18 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [5.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v5.0.0) - 2026-11-26
+- 컴포넌트마다 갈리던 prop · 컴포넌트 이름을 통일했습니다. 옛 이름은 별칭 없이 지웠습니다 - 고칠 곳과 grep · 치환 스크립트는 [MIGRATION v5.0.0](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 에 있습니다. 렌더 결과는 그대로입니다
+- 날짜 · 시간 범위 prop 을 `min` · `max` 로 맞췄습니다 - `DatePicker` · `DateRangePicker` 의 `minDate` · `selectableRange` · `startYear` · `endYear`, `TimePicker` 의 `minTime` · `maxTime` 을 지웠습니다. `max="today"` 를 받습니다
+- `MonthPicker` 추가 - 연 · 월만 고르는 칸(`"YYYY-MM"`)입니다. `DatePicker mode="year-month"` 는 지웠습니다
+- `DatePicker` · `DateRangePicker` 에 `isDateDisabled` 추가 - 날마다 막을 수 있습니다. Vanilla `DatePicker()` 도 `"today"` 값과 `isDateDisabled` 옵션을 받습니다
+- `Toggle` → `Switch` - 컴포넌트 · 타입(`SwitchProps`) · CSS 클래스(`.switch*`) · Vanilla(`.bt-switch*` · `data-bt-switch` · `Bigtablet.Switch()`) 이름을 모두 바꿨습니다
+- `useAlert` · `useConfirm` · Vanilla `Alert()` 옵션 `cancelText` · `confirmText` → `cancelLabel` · `confirmLabel`
+- `Dropdown` `emptyText` → `emptyMessage` (Vanilla 옵션 · `data-empty-text` → `data-empty-message` 포함), `ToastProvider` `closeAriaLabel` → `closeLabel`, `Table` · `DataView` `selectAllAriaLabel` · `selectRowAriaLabel` → `selectAllLabel` · `selectRowLabel`
+- `DatePicker` · `MonthPicker` 의 `minDateSrFormat` · `selectableRangeUntilTodaySrText` 를 지웠습니다 - 범위 안내 문구는 `LocaleProvider` `messages`(`datePicker.minDateSr` · `maxDateSr` · `rangeUntilTodaySr`)로 바꿉니다
+- 4.10.0 에 deprecated 된 `Tabs variant="fills"` 와 SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero` 를 지웠습니다
+- 에이전트 문서(`dist/llms/avoid.md`)에 이번에 지운 이름과 대신 쓸 이름을 넣었습니다
+
 ## [4.14.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v4.14.0) - 2026-11-25
 - Modal 단계 전환 추가 - React `ModalSteps`(`active`, `direction`) · `ModalStep`(`name`), Vanilla `modal.showStep(name)` · `currentStep()` + `[data-bt-modal-step]`. 입력 → 본인 확인 → 결과처럼 같은 창 안에서 내용을 바꿀 때 창 높이가 이어서 바뀌고(0.2s) 새 단계가 옆에서 밀려 들어와, 모달 위에 모달이 뜬 것처럼 보이지 않습니다. 숨긴 단계의 입력값은 남고, 포커스는 새 단계로 · 돌아가면 그 단계에서 마지막 자리로 옮깁니다. reduced-motion · 닫히는 중에는 바로 바뀝니다
 
