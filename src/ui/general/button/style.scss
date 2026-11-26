@@ -218,6 +218,34 @@
     }
   }
 
+  // 기다리는 중(loading) - 앞 아이콘 자리의 고리. 글자 크기(1em) · 글자 색을 따라가 variant · size 마다 따로 정하지 않는다
+  &_spinner {
+    position: relative;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 1em;
+    height: 1em;
+    border: token.$border_width_2 solid currentColor;
+    border-right-color: transparent;
+    border-radius: token.$radius_full;
+    animation: button_spin token.$duration_loading_spinner token.$easing_linear infinite;
+  }
+
+  // loading 은 native disabled 가 아니라(포커스 유지) `:not(:disabled)` 인터랙션 규칙이 그대로 걸린다.
+  // 포인터 타깃은 남겨 두고(클릭은 컴포넌트가 막는다 - pointer-events: none 이면 클릭이 뒤의 카드로 샌다)
+  // 눌리는 것처럼 보이는 state layer · 눌림 축소만 끈다. danger 의 hover 배경은 아래 `:not(.button_loading)` 가 막는다
+  &_loading {
+    cursor: progress;
+
+    &::before {
+      display: none;
+    }
+
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
   &_label {
     position: relative;
     white-space: normal;
@@ -237,11 +265,11 @@
       background: token.$color_status_error;
       color: token.$color_brand_on_primary;
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 88%, token.$color_base_neutral_900);
       }
 
-      &:active:not(:disabled) {
+      &:active:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 76%, token.$color_base_neutral_900);
       }
     }
@@ -254,11 +282,11 @@
       color: token.$color_status_error_on_surface;
       border-color: token.$color_status_error;
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 8%, transparent);
       }
 
-      &:active:not(:disabled) {
+      &:active:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 14%, transparent);
       }
     }
@@ -267,7 +295,7 @@
       background: color-mix(in srgb, token.$color_status_error 12%, transparent);
       color: token.$color_status_error_on_surface;
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 18%, transparent);
       }
     }
@@ -275,7 +303,7 @@
     &.button_variant_text {
       color: token.$color_status_error_on_surface;
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.button_loading) {
         background: color-mix(in srgb, token.$color_status_error 8%, transparent);
       }
     }
@@ -300,4 +328,13 @@
   .button_disabled {
     border-color: GrayText;
   }
+}
+
+@keyframes button_spin {
+  to { transform: rotate(360deg); }
+}
+
+// 고리 하나는 멈추면 그냥 원이라 진행 중인지 알 수 없다 - 멈추지 않고 늦춘다 (Vanilla .bt-spinner 와 같은 판단)
+@media (prefers-reduced-motion: reduce) {
+  .button_spinner { animation-duration: token.$duration_loading_spinner * 2; }
 }

@@ -372,6 +372,9 @@ import { Button } from '@bigtablet/design-system';
 <Button danger>삭제</Button>
 <Button variant="outline" danger>삭제</Button>
 
+// 요청을 기다리는 중 - 앞 아이콘 자리에 고리, aria-busy, 눌리지 않음(포커스는 남는다 - disabled 와 다름). 문구는 직접 바꾼다
+<Button loading={isSaving}>{isSaving ? "저장하는 중…" : "저장"}</Button>
+
 // Sizes
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
