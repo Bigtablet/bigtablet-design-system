@@ -29,6 +29,8 @@ const fromIso = (iso: string): CalendarDate => {
 /** 비교용 정수. 일이 0(월까지만 준 값)이면 `emptyDay` 로 읽는다 - 하한은 1일, 상한은 31 */
 const pointOf = ({ year, month, day }: CalendarDate, emptyDay: number) =>
 	year * 10000 + month * 100 + (day || emptyDay);
+/** 범위 안내 문구에 넣을 값 - 일이 없으면(월까지만 준 값) `"YYYY-MM"` */
+const boundLabel = (d: CalendarDate) => (d.day ? toIso(d) : `${d.year}-${pad2(d.month)}`);
 /** `min` · `max` 값 - `"today"` 또는 `"YYYY-MM(-DD)"`. 읽을 수 없으면 null */
 const parseBound = (raw: string | undefined, today: CalendarDate): CalendarDate | null => {
 	if (!raw) return null;
@@ -71,7 +73,9 @@ interface DatePickerBaseProps {
 	max?: string;
 	/**
 	 * 날마다 막을지 정한다 - `"YYYY-MM-DD"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등).
-	 * `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다
+	 * `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다.
+	 * 월 목록을 만들 때 한 달의 날마다 부르므로 안정된 참조(`useCallback` · 모듈 함수)로 넘긴다 -
+	 * 인라인 함수면 렌더마다 목록을 다시 계산한다
 	 */
 	isDateDisabled?: (date: string) => boolean;
 	/** @deprecated `min="YYYY-01-01"` 을 쓴다. 다음 major 에서 제거한다. */
@@ -242,9 +246,13 @@ export const DatePicker = ({
 		todayMonth,
 		todayDay,
 	]);
-	// 스크린리더 안내 - 상한이 오늘이면 "오늘까지", 하한은 준 날짜를 그대로 읽는다
-	const untilToday = selectableRange === "until-today" || maxProp === "today";
-	const minLabel = minProp === "today" ? undefined : (minProp ?? minDate);
+	// 스크린리더 안내는 합친 범위(lo · hi)에서 만든다 - 준 prop 에서 만들면 여럿을 함께 줄 때 실제 범위와 어긋난다
+	const minLabel = lo ? boundLabel(lo) : undefined;
+	const untilToday =
+		!!hi &&
+		(selectableRange === "until-today" || maxProp === "today") &&
+		pointOf(hi, 31) === pointOf({ year: todayYear, month: todayMonth, day: todayDay }, 31);
+	const maxLabel = hi ? boundLabel(hi) : undefined;
 
 	const { year, month, day } = parsed;
 
@@ -437,7 +445,7 @@ export const DatePicker = ({
 	const constraintParts: string[] = [];
 	if (minLabel) constraintParts.push(minDateSrFormat.replace("{date}", minLabel));
 	if (untilToday) constraintParts.push(selectableRangeUntilTodaySrText);
-	else if (maxProp) constraintParts.push(t("datePicker.maxDateSr").replace("{date}", maxProp));
+	else if (maxLabel) constraintParts.push(t("datePicker.maxDateSr").replace("{date}", maxLabel));
 	const constraintDesc = constraintParts.join(". ");
 
 	if (variant === "calendar" && mode === "year-month-day") {
