@@ -492,7 +492,7 @@ describe("Dropdown - 옵션 소스 · 선택 표시", () => {
 				"data-placeholder": "속성 문구",
 				"data-searchable": "",
 				"data-search-placeholder": "찾기",
-				"data-empty-text": "없음",
+				"data-empty-message": "없음",
 			}),
 			{ options: OPTS },
 		);
@@ -511,9 +511,9 @@ describe("Dropdown - 옵션 소스 · 선택 표시", () => {
 				"data-placeholder": "속성",
 				"data-searchable": "",
 				"data-search-placeholder": "x",
-				"data-empty-text": "y",
+				"data-empty-message": "y",
 			}),
-			{ options: OPTS, placeholder: "JS", searchPlaceholder: "JS 찾기", emptyText: "JS 없음" },
+			{ options: OPTS, placeholder: "JS", searchPlaceholder: "JS 찾기", emptyMessage: "JS 없음" },
 		);
 		expect(document.querySelector(".bt-dropdown__placeholder")?.textContent).toBe("JS");
 		expect(

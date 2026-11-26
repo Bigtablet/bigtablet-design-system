@@ -226,8 +226,8 @@ describe("Alert - 마크업 · 버튼", () => {
 			message: "m",
 			showCancel: true,
 			destructive: true,
-			confirmText: "삭제",
-			cancelText: "취소",
+			confirmLabel: "삭제",
+			cancelLabel: "취소",
 			onConfirm,
 			onCancel,
 		});
@@ -275,7 +275,7 @@ describe("Alert - 마크업 · 버튼", () => {
 		trigger.focus();
 		Alert({
 			message: "삭제할까요?",
-			onConfirm: () => Alert({ message: "삭제됨", confirmText: "닫기" }),
+			onConfirm: () => Alert({ message: "삭제됨", confirmLabel: "닫기" }),
 		});
 		(document.querySelector("[data-alert-confirm]") as HTMLButtonElement).click();
 		expect(document.activeElement?.textContent).toBe("닫기");

@@ -13,7 +13,7 @@ function DeleteButton() {
 						tone: "error",
 						title: "프로젝트를 삭제할까요?",
 						message: "삭제하면 되돌릴 수 없습니다.",
-						confirmText: "삭제",
+						confirmLabel: "삭제",
 						destructive: true,
 					});
 					setResult(ok ? "삭제했습니다" : "취소했습니다");

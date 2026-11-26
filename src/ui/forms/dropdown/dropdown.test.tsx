@@ -585,8 +585,8 @@ describe("Dropdown", () => {
 		expect(screen.queryByText("Option 3")).not.toBeInTheDocument();
 	});
 
-	it("shows emptyText when the filter yields no options", () => {
-		render(<Dropdown options={options} searchable emptyText="No results" />);
+	it("shows emptyMessage when the filter yields no options", () => {
+		render(<Dropdown options={options} searchable emptyMessage="No results" />);
 		fireEvent.click(trigger());
 		fireEvent.change(screen.getByPlaceholderText("검색…"), { target: { value: "zzz" } });
 		expect(screen.getByText("No results")).toBeInTheDocument();

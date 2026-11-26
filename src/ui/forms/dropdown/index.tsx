@@ -67,7 +67,7 @@ interface DropdownCommonProps {
 	/** 검색 입력의 placeholder */
 	searchPlaceholder?: string;
 	/** 필터 결과가 0개일 때 표시할 텍스트 */
-	emptyText?: string;
+	emptyMessage?: string;
 	/** 멀티 선택 요약 텍스트 */
 	selectedSummary?: (count: number) => string;
 	/**
@@ -124,13 +124,13 @@ export const Dropdown = (props: DropdownProps) => {
 		className,
 		searchable = false,
 		searchPlaceholder: searchPlaceholderProp,
-		emptyText: emptyTextProp,
+		emptyMessage: emptyMessageProp,
 		selectedSummary: selectedSummaryProp,
 		name,
 	} = props;
 	const placeholder = placeholderProp ?? t("dropdown.placeholder");
 	const searchPlaceholder = searchPlaceholderProp ?? t("dropdown.searchPlaceholder");
-	const emptyText = emptyTextProp ?? t("dropdown.empty");
+	const emptyMessage = emptyMessageProp ?? t("dropdown.empty");
 	const selectedSummary =
 		selectedSummaryProp ?? ((count: number) => t("dropdown.selectedSummary", { count }));
 
@@ -432,7 +432,7 @@ export const Dropdown = (props: DropdownProps) => {
 							aria-multiselectable={multiple || undefined}
 						>
 							{visibleOptions.length === 0
-								? searchable && <div className="dropdown_empty">{emptyText}</div>
+								? searchable && <div className="dropdown_empty">{emptyMessage}</div>
 								: visibleOptions.map((opt, i) => {
 										const selected = selectedValues.includes(opt.value);
 										const active = i === activeIndex;

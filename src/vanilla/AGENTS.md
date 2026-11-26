@@ -215,7 +215,7 @@ React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 
 
 <!-- 검색 - 대소문자·공백 무시 부분 일치. 한글 초성·조합 중 글자도 맞춘다 (React matchesSearch 이식). -->
 <div class="bt-dropdown" data-bt-dropdown data-searchable
-     data-search-placeholder="검색…" data-empty-text="결과 없음">
+     data-search-placeholder="검색…" data-empty-message="결과 없음">
   ...
 </div>
 ```
@@ -300,7 +300,7 @@ const dropdown = Bigtablet.Dropdown('#my-dropdown', {
   multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
   searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, 한글 초성·조합 중 매칭)
   searchPlaceholder: '검색…',
-  emptyText: '결과 없음',
+  emptyMessage: '결과 없음',
   selectedSummary: (count) => `${count}개 선택`,  // multiple 트리거 요약 문구
   onValueChange: (value, option) => console.log(value)
   // multiple 이면 (values: string[], options: Option[]) 로 호출된다

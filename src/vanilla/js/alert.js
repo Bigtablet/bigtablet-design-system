@@ -20,8 +20,8 @@ export function Alert(options = {}) {
 		title: "",
 		message: "",
 		tone: "info", // info, success, warning, error
-		confirmText: t("alert.confirm"),
-		cancelText: t("alert.cancel"),
+		confirmLabel: t("alert.confirm"),
+		cancelLabel: t("alert.cancel"),
 		showCancel: false,
 		// React AlertOptions.destructive 와 동일 - true 면 확인 버튼이 danger(빨강)로 강조된다.
 		destructive: false,
@@ -51,12 +51,12 @@ export function Alert(options = {}) {
 				}">
           ${
 						config.showCancel
-							? `<button class="bt-button bt-button--md ${CANCEL_BUTTON_VARIANT}" data-alert-cancel>${escapeHtml(config.cancelText)}</button>`
+							? `<button class="bt-button bt-button--md ${CANCEL_BUTTON_VARIANT}" data-alert-cancel>${escapeHtml(config.cancelLabel)}</button>`
 							: ""
 					}
           <button class="bt-button bt-button--md ${CONFIRM_BUTTON_VARIANT}${
 						config.destructive ? " bt-button--danger" : ""
-					}" data-alert-confirm>${escapeHtml(config.confirmText)}</button>
+					}" data-alert-confirm>${escapeHtml(config.confirmLabel)}</button>
         </div>
       </div>
     `;

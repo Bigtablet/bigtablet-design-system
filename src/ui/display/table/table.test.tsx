@@ -391,7 +391,7 @@ describe("Table selection", () => {
 		expect(onSelectionChange).toHaveBeenLastCalledWith(["99"]);
 	});
 
-	it("supports custom selectAllAriaLabel / selectRowAriaLabel", () => {
+	it("supports custom selectAllLabel / selectRowLabel", () => {
 		render(
 			<Table
 				columns={columns}
@@ -400,8 +400,8 @@ describe("Table selection", () => {
 				selectable
 				rowKey={(r) => String(r.id)}
 				selectedKeys={[]}
-				selectAllAriaLabel="Select all rows"
-				selectRowAriaLabel={(index) => `Select row ${index + 1}`}
+				selectAllLabel="Select all rows"
+				selectRowLabel={(index) => `Select row ${index + 1}`}
 			/>,
 		);
 		expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument();
@@ -409,7 +409,7 @@ describe("Table selection", () => {
 		expect(screen.getByRole("checkbox", { name: "Select row 2" })).toBeInTheDocument();
 	});
 
-	it("passes the row to selectRowAriaLabel so labels can use its data", () => {
+	it("passes the row to selectRowLabel so labels can use its data", () => {
 		// 번호만으로는 어떤 행인지 알 수 없다 - 라벨을 만드는 쪽이 행을 이미 들고 있으니 넘긴다.
 		render(
 			<Table
@@ -420,7 +420,7 @@ describe("Table selection", () => {
 				rowKey={(r) => String(r.id)}
 				selectedKeys={[]}
 				rowIndexOffset={20}
-				selectRowAriaLabel={(index, row) => `${index + 1}: ${row.name} 선택`}
+				selectRowLabel={(index, row) => `${index + 1}: ${row.name} 선택`}
 			/>,
 		);
 		expect(screen.getByRole("checkbox", { name: `21: ${rows[0]!.name} 선택` })).toBeInTheDocument();
