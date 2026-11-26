@@ -8,7 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
-- [v4.15.0 (날짜 · 시간 prop 이름 통일 · Toggle → Switch)](#v4150-날짜--시간-prop-이름-통일--toggle--switch)
+- [v5.0.0 (deprecated API 제거 · Toggle → Switch 마무리)](#v500-deprecated-api-제거--toggle--switch-마무리)
 - [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
@@ -39,10 +39,10 @@
 
 | 지금 버전 | 읽을 섹션 |
 |------|------|
-| 4.15.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.10.0 ~ 4.14.x | [v4.15.0](#v4150-날짜--시간-prop-이름-통일--toggle--switch) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` - 지금은 예전 이름도 동작합니다) |
-| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (SCSS 믹스인 4개 · Tabs `fills` deprecate - 지금은 동작합니다. Toast 기본 위치가 오른쪽 아래로 바뀝니다) |
-| 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) |
+| 5.0.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
+| 4.10.0 ~ 4.14.x | [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` · `fills` · SCSS 믹스인 제거) |
+| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (Toast 기본 위치) + [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) |
+| 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + 위 |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
 | Vanilla 를 3.8 미만에서 올림 | [v3.8.0](#v380-vanilla-패키지-정리) 의 치환 스크립트를 먼저 돌립니다 |
 
@@ -59,11 +59,13 @@
 
 ---
 
-## v4.15.0 (날짜 · 시간 prop 이름 통일 · Toggle → Switch)
+## v5.0.0 (deprecated API 제거 · Toggle → Switch 마무리)
 
-날짜 · 시간 컴포넌트마다 범위를 정하는 prop 이름이 달랐습니다 (`DateCalendar` 는 `min`, `DatePicker` 는 `minDate` · `selectableRange` · `startYear`, `TimePicker` 는 `minTime`). 전부 **`min` · `max`** 로 맞추고, 날마다 막는 `isDateDisabled` 를 `DatePicker` · `DateRangePicker` 에도 넣었습니다. 연 · 월만 고르는 칸은 `MonthPicker` 로 따로 뺐습니다.
+이름이 갈리던 API 를 정리하고, 4.10.0 부터 deprecated 였던 것을 지웠습니다. 별칭은 남기지 않았습니다 - 타입 체크(`tsc --noEmit`)가 고칠 곳을 모두 짚습니다. Vanilla 는 클래스 이름이 바뀌어 컴파일러가 잡지 못하니 아래 grep 을 꼭 돌립니다.
 
-예전 이름은 `@deprecated` 로 표시했고 **지금도 그대로 동작합니다**. 새 이름과 함께 주면 더 좁은 범위가 이깁니다. 다음 major 에서 제거합니다.
+### 날짜 · 시간 범위 prop 을 `min` · `max` 로
+
+컴포넌트마다 범위 prop 이름이 달랐습니다 (`DateCalendar` 는 `min`, `DatePicker` 는 `minDate` · `selectableRange` · `startYear`, `TimePicker` 는 `minTime`). 전부 **`min` · `max`** 로 맞췄습니다. `"today"` 도 받습니다. 날마다 막는 `isDateDisabled` 를 `DatePicker` · `DateRangePicker` 에도 넣었고, 연 · 월만 고르는 칸은 `MonthPicker` 로 따로 뺐습니다.
 
 | 컴포넌트 | 예전 | 새 이름 |
 |------|------|------|
@@ -74,24 +76,39 @@
 | `DatePicker` | `mode="year-month"` | `<MonthPicker />` (`min` · `max` 는 `"YYYY-MM"`) |
 | `TimePicker` | `minTime` · `maxTime` | `min` · `max` |
 
-`startYear` · `endYear` 는 연 목록만 정했고 `min` · `max` 는 날까지 막습니다. 1월 1일 · 12월 31일을 주면 같습니다.
+`startYear` · `endYear` 는 연 목록만 정했고 `min` · `max` 는 날까지 막습니다. 1월 1일 · 12월 31일을 주면 같습니다. Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였고, `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
 
-Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였습니다. 이번에 `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
-
-**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"" --include=*.tsx` 로 찾습니다. 타입 체크에서는 deprecated 취소선으로 보입니다.
+**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"" --include=*.tsx`
 
 ### Toggle → Switch
 
-`Toggle` 은 `role="switch"` 인데, 다른 라이브러리(Radix 등)에서 Toggle 은 눌림 버튼(`aria-pressed`)을 뜻합니다. 그래서 이름을 `Switch` 로 바꿨습니다. `Toggle` · `ToggleProps` 는 같은 컴포넌트를 가리키는 deprecated 별칭으로 남아 있고, 다음 major 에서 제거합니다.
+`Toggle` 은 `role="switch"` 인데, 다른 라이브러리(Radix 등)에서 Toggle 은 눌림 버튼(`aria-pressed`)을 뜻합니다. 컴포넌트 · CSS 클래스 · Vanilla 이름을 모두 `switch` 로 바꿨습니다. 렌더 결과는 같습니다.
 
 | 예전 | 새 이름 |
 |------|------|
-| `import { Toggle } from "@bigtablet/design-system"` | `import { Switch } from "@bigtablet/design-system"` |
-| `ToggleProps` | `SwitchProps` |
+| `Toggle` · `ToggleProps` | `Switch` · `SwitchProps` |
+| CSS `.toggle` · `.toggle_on` · `.toggle_thumb` · `.toggle_size_*` · `.toggle_disabled` | `.switch` · `.switch_on` · `.switch_thumb` · `.switch_size_*` · `.switch_disabled` |
+| Vanilla `.bt-toggle` · `.bt-toggle--on` · `.bt-toggle--sm/md` · `.bt-toggle__thumb` | `.bt-switch` · `.bt-switch--on` · `.bt-switch--sm/md` · `.bt-switch__thumb` |
+| Vanilla `data-bt-toggle` · `Bigtablet.Toggle()` · `el._btToggle` | `data-bt-switch` · `Bigtablet.Switch()` · `el._btSwitch` |
 
-렌더 결과는 같습니다. CSS 클래스(`toggle` · `toggle_on` · `toggle_thumb` …)는 소비자 재정의가 깨지지 않게 그대로 두었습니다. Vanilla 는 별칭을 두지 않는 정책이라 `.bt-toggle` · `Bigtablet.Toggle` 도 지금 이름 그대로입니다. 이 둘은 다음 major 에서 한 번에 `switch` 로 바꿉니다.
+**앱 쪽에서 할 일:** `grep -rnE "\\bToggle(Props)?\\b|\\btoggle_|[\"' .]toggle[\"' {]|bt-toggle|data-bt-toggle|Bigtablet\\.Toggle|_btToggle" --include=*.tsx --include=*.ts --include=*.scss --include=*.css --include=*.html --include=*.js`. Thymeleaf · JSP 템플릿은 `bt-toggle` → `bt-switch`, `data-bt-toggle` → `data-bt-switch` 치환으로 끝납니다.
 
-**앱 쪽에서 할 일:** `grep -rnE "\\bToggle(Props)?\\b" --include=*.tsx --include=*.ts` 로 찾아 `Switch` 로 바꿉니다.
+### 4.10.0 에 deprecated 된 것 제거
+
+| 지운 것 | 대신 쓸 것 |
+|------|------|
+| `Tabs variant="fills"` | 패널을 바꾸면 기본 `line`, 값만 고르면 `SegmentedControl` |
+| SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero` | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) 표의 대체 방법 |
+
+**앱 쪽에서 할 일:** `grep -rn 'variant="fills"' --include=*.tsx`, `grep -rnE "@include +([A-Za-z0-9_-]+\.)?(glass[-_]light|hover[-_]lift|hover[-_]glow|slashed[-_]zero)\b" --include=*.scss`
+
+### 사내 저장소 사용처 (5.0.0 릴리즈 시점 grep)
+
+| 저장소 | 걸리는 곳 |
+|------|------|
+| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`) |
+| homepage-web | `token.hover_lift` 3곳 (3.2.2 고정 - 올릴 때 교체) |
+| coupon-web · frontend-template | 없음 |
 
 ---
 

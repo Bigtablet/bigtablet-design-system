@@ -1204,7 +1204,7 @@ const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
 
 ### Switch
 
-켜기 / 끄기 스위치 (`role="switch"`)입니다. 4.15.0 전 이름은 `Toggle` 이고, 같은 컴포넌트를 가리키는 deprecated 별칭으로 남아 있습니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일--toggle--switch) 참고. CSS 클래스(`toggle_*`)와 Vanilla(`.bt-toggle` · `Bigtablet.Toggle`)는 다음 major 에서 함께 바꿉니다.
+켜기 / 끄기 스위치 (`role="switch"`)입니다. 5.0.0 전 이름은 `Toggle` 입니다 - [MIGRATION.md](./MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 참고.
 
 ```tsx
 import { Switch } from '@bigtablet/design-system';
@@ -1227,7 +1227,7 @@ const [isOn, setIsOn] = useState(false);
 
 > **세로로 쌓을 때는 16px 이상 띄우세요.** 모바일에서 sm 은 트랙 위아래로 8px 씩 넓어지므로, 간격이 그보다 좁으면 인접 토글의 히트 영역이 겹쳐 잘못된 토글이 눌릴 수 있습니다.
 
-Vanilla 번들의 `.bt-toggle` 도 동일하게 동작합니다.
+Vanilla 번들의 `.bt-switch` 도 동일하게 동작합니다.
 
 ---
 
@@ -1267,7 +1267,7 @@ const [date, setDate] = useState('');
 `"today"` 는 기기의 오늘입니다. 생년월일은 `max="today"`, 예약일은 `min="today"` 처럼 씁니다.
 연 · 월을 바꿔 지금 일이 범위 밖이거나 막혔으면, 그 뒤의 가장 가까운 날로 옮깁니다.
 
-예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 4.15.0 부터 deprecated 입니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일--toggle--switch) 참고.
+예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 5.0.0 에서 지웠습니다 - [MIGRATION.md](./MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 참고.
 
 ---
 
@@ -1888,7 +1888,7 @@ const [page, setPage] = useState(1);
 #### variant 선택 가이드
 
 - `variant="line"` (기본) - **하단 underline**. 페이지 내 섹션 전환 (admin 페이지 위계, 제품 상세 등). 가장 흔한 케이스
-- `variant="fills"` - **deprecated (v4.10.0).** 둥근 박스 그룹 모양이 SegmentedControl 과 같아 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않습니다. 패널을 바꾸면 `line`, 값만 고르면 [SegmentedControl](#segmentedcontrol) 을 씁니다. 지금은 그대로 동작하고 이후 버전에서 제거합니다
+- `variant="fills"` 는 **5.0.0 에서 제거했습니다.** 둥근 박스 그룹 모양이 SegmentedControl 과 같아 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않았습니다. 값만 고르면 [SegmentedControl](#segmentedcontrol) 을 씁니다
 
 #### 제어형 vs 비제어형
 
@@ -1925,9 +1925,9 @@ const [tab, setTab] = useState("overview");
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-.tabs (+ tabs_variant_line | tabs_variant_fills, tabs_size_sm | tabs_size_md)
-├── .tabs_list (+ tabs_list_line | tabs_list_fills)
-│   ├── span.tabs_indicator (+ tabs_indicator_line | _fills)  ← aria-hidden, 활성 tab 으로 슬라이드
+.tabs (+ tabs_variant_line, tabs_size_sm | tabs_size_md)
+├── .tabs_list (+ tabs_list_line)
+│   ├── span.tabs_indicator (+ tabs_indicator_line)  ← aria-hidden, 활성 tab 으로 슬라이드
 │   └── button.tabs_tab (+ tabs_tab_active)
 └── .tabs_panel
 ```

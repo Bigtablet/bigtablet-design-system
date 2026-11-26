@@ -456,9 +456,9 @@ describe("Modal - 점검 회귀 (#898)", () => {
 	});
 
 	it("셀렉터로 무효한 id 의 트리거도 init 을 멈추지 않는다", () => {
-		document.body.innerHTML = `<button data-bt-modal-open="123">t</button><div id="123" class="bt-modal" data-bt-modal><div class="bt-modal__panel" aria-label="x"><button>x</button></div></div><button class="bt-toggle" data-bt-toggle aria-label="t"></button>`;
+		document.body.innerHTML = `<button data-bt-modal-open="123">t</button><div id="123" class="bt-modal" data-bt-modal><div class="bt-modal__panel" aria-label="x"><button>x</button></div></div><button class="bt-switch" data-bt-switch aria-label="t"></button>`;
 		expect(() => init()).not.toThrow();
-		expect(document.querySelector("[data-bt-toggle]")?.getAttribute("role")).toBe("switch");
+		expect(document.querySelector("[data-bt-switch]")?.getAttribute("role")).toBe("switch");
 		(document.querySelector("[data-bt-modal-open]") as HTMLButtonElement).click();
 		expect(document.getElementById("123")?.classList.contains("is-open")).toBe(true);
 	});

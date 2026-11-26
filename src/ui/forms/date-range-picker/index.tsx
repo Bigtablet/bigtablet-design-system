@@ -28,14 +28,6 @@ export interface DateRangePickerProps {
 	max?: string;
 	/** 날마다 막을지 정한다 - 시작일 · 종료일 모두에 걸린다 (`DatePicker` 와 같다) */
 	isDateDisabled?: (date: string) => boolean;
-	/** @deprecated `min="YYYY-01-01"` 을 쓴다. 다음 major 에서 제거한다. */
-	startYear?: number;
-	/** @deprecated `max="YYYY-12-31"` 을 쓴다. 다음 major 에서 제거한다. */
-	endYear?: number;
-	/** @deprecated `min` 을 쓴다. 다음 major 에서 제거한다. */
-	minDate?: string;
-	/** @deprecated `selectableRange="until-today"` 는 `max="today"` 를 쓴다. 다음 major 에서 제거한다. */
-	selectableRange?: "all" | "until-today";
 	/** 비활성 여부 */
 	disabled?: boolean;
 	/**
@@ -76,10 +68,6 @@ export const DateRangePicker = ({
 	min,
 	max,
 	isDateDisabled,
-	startYear,
-	endYear,
-	minDate,
-	selectableRange,
 	disabled,
 	required,
 	fullWidth = true,
@@ -109,8 +97,8 @@ export const DateRangePicker = ({
 		onValueChange({ start, end: next || undefined });
 	};
 
-	// 안쪽 DatePicker 둘이 같은 범위를 받는다. deprecated prop 도 그대로 넘겨 DatePicker 가 합친다.
-	const shared = { max, isDateDisabled, startYear, endYear, minDate, selectableRange };
+	// 안쪽 DatePicker 둘이 같은 상한 · 막는 날을 받는다
+	const shared = { max, isDateDisabled };
 
 	return (
 		<div
@@ -149,7 +137,7 @@ export const DateRangePicker = ({
 						value={end}
 						onValueChange={handleEndChange}
 						{...shared}
-						// 종료일의 하한은 시작일이다 - 이전 날짜는 목록에 아예 없다. DatePicker 는 하한 중 늦은 쪽을 쓴다
+						// 종료일의 하한은 시작일이다 - 이전 날짜는 목록에 아예 없다
 						min={start ?? min}
 						required={isRequired}
 						// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.

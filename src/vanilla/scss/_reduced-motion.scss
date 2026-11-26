@@ -2,7 +2,7 @@
    Reduced Motion (WCAG 2.1 SC 2.3.3)
    ======================================== */
 /* 컴포넌트 partial 이 모두 출력된 뒤 한 블록으로 모아 처리한다 (bigtablet.scss 에서 마지막 @use).
-   Button / TextField / Checkbox / Radio / Toggle / Dropdown / Card / Modal / Pagination /
+   Button / TextField / Checkbox / Radio / Switch / Dropdown / Card / Modal / Pagination /
    DatePicker / FileInput 의 transition 은 전부 --bt-transition-* 를 경유하므로,
    선택자를 나열하는 대신 토큰 자체를 0s 로 눌러 일괄 무효화한다.
    (이후 추가되는 규칙과, 같은 var 를 쓰는 소비자 커스텀 스타일까지 자동으로 커버된다.) */

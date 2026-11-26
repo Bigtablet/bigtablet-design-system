@@ -1,4 +1,4 @@
-import { ListItem, Toggle } from "@bigtablet/design-system";
+import { ListItem, Switch } from "@bigtablet/design-system";
 import { Bell, Lock } from "lucide-react";
 
 export default function Example() {
@@ -8,7 +8,7 @@ export default function Example() {
 				leadingElement={<Bell size={20} />}
 				label="알림"
 				supportingText="주문이 들어오면 알려 줍니다"
-				trailingElement={<Toggle ariaLabel="알림" defaultChecked />}
+				trailingElement={<Switch ariaLabel="알림" defaultChecked />}
 			/>
 			<ListItem
 				leadingElement={<Lock size={20} />}

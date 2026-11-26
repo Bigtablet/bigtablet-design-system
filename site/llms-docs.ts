@@ -132,13 +132,13 @@ export const AVOID: {
 	{
 		avoid: "`Toggle` · `ToggleProps`",
 		use: "`Switch` · `SwitchProps`",
-		why: '4.15.0 에서 이름을 바꿨다 - 같은 컴포넌트 (`role="switch"`). 옛 이름은 deprecated 별칭',
+		why: '5.0.0 에서 이름을 바꿨다 - 같은 컴포넌트 (`role="switch"`). 옛 이름은 없다',
 	},
 	{
 		avoid:
 			'날짜 `minDate` · `selectableRange` · `startYear`/`endYear` · `mode="year-month"`, TimePicker `minTime`/`maxTime`',
 		use: '`min` · `max` (`"today"` 도 받는다) · `isDateDisabled` · `MonthPicker`',
-		why: "4.15.0 에서 날짜 · 시간 범위 prop 이름을 통일했다. 옛 이름은 deprecated",
+		why: "5.0.0 에서 날짜 · 시간 범위 prop 이름을 통일했다. 옛 이름은 없다",
 	},
 	{
 		props: "TextFieldProps",
@@ -154,14 +154,14 @@ export const AVOID: {
 	{
 		avoid: '`Tabs variant="fills"`',
 		use: "패널을 바꾸면 기본 `line`, 값만 고르면 `SegmentedControl`",
-		why: "deprecated - 이후 버전에서 제거",
+		why: "5.0.0 에서 제거 - SegmentedControl 과 같아 보여 역할이 헷갈렸다",
 	},
 	{ avoid: '`IconButton variant="standard"` · `"outlined"`', use: '`"text"` · `"outline"`' },
 	{ avoid: '`Card variant="outlined"`', use: '`"outline"`' },
 	{
 		avoid: "SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero`",
 		use: '`<Card variant="glass">` · `<Card interactive>` · `token.legible_identifiers`',
-		why: "deprecated - 색 · 그림자를 하드코딩한다",
+		why: "5.0.0 에서 제거 - 색 · 그림자를 하드코딩했다",
 	},
 	{
 		avoid: '`import "@bigtablet/design-system/style.css"`',

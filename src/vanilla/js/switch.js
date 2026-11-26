@@ -1,25 +1,25 @@
 import { $, on, parseBoolAttr } from "./utils.js";
 
 /* ========================================
-     Toggle Component
+     Switch Component
      ======================================== */
 
 /**
- * Initialize Toggle component
- * @param {HTMLElement|string} element - Toggle element or selector
+ * Initialize Switch component
+ * @param {HTMLElement|string} element - Switch element or selector
  * @param {Object} options - Configuration options
  */
-export function Toggle(element, options = {}) {
+export function Switch(element, options = {}) {
 	const toggleEl = typeof element === "string" ? $(element) : element;
 	if (!toggleEl) return null;
 	// 같은 요소에 두 번 만들면 앞 인스턴스를 풀고 교체한다 - 클릭 리스너가 둘이면 한 번 누를 때
 	// 두 번 뒤집혀 상태·aria-checked·hidden 값이 갈라진다. 상태는 DOM(클래스·hidden 값)에서 다시 읽는다.
-	toggleEl._btToggle?.destroy();
+	toggleEl._btSwitch?.destroy();
 
 	const config = {
 		defaultChecked: false,
 		disabled: false,
-		// React Toggle 과 동일한 체크 변경 콜백.
+		// React Switch 과 동일한 체크 변경 콜백.
 		onCheckedChange: null,
 		...options,
 	};
@@ -31,15 +31,15 @@ export function Toggle(element, options = {}) {
 	let pending = false;
 
 	const state = {
-		checked: config.defaultChecked || toggleEl.classList.contains("bt-toggle--on"),
+		checked: config.defaultChecked || toggleEl.classList.contains("bt-switch--on"),
 	};
 
 	// 초기 비활성 상태 흡수 - config.disabled 또는 native disabled 를 native `disabled` 로 통일
-	// (React Toggle 과 동일하게 native disabled 사용 → 포커스 제외·:disabled 스타일 적용).
+	// (React Switch 과 동일하게 native disabled 사용 → 포커스 제외·:disabled 스타일 적용).
 	if (toggleEl.disabled) config.disabled = true;
 	toggleEl.disabled = config.disabled;
 
-	// Switch 시맨틱 (React Toggle 과 패리티): role + aria-checked 를 항상 유지
+	// Switch 시맨틱 (React Switch 과 패리티): role + aria-checked 를 항상 유지
 	if (!toggleEl.hasAttribute("role")) toggleEl.setAttribute("role", "switch");
 	// 폼 안에서 클릭이 submit 으로 새지 않도록 (button 기본 type=submit)
 	if (toggleEl.tagName === "BUTTON" && !toggleEl.hasAttribute("type")) {
@@ -75,7 +75,7 @@ export function Toggle(element, options = {}) {
 
 	function setChecked(checked) {
 		state.checked = checked;
-		toggleEl.classList.toggle("bt-toggle--on", checked);
+		toggleEl.classList.toggle("bt-switch--on", checked);
 		toggleEl.setAttribute("aria-checked", checked ? "true" : "false");
 
 		if (hiddenInput) {
@@ -90,7 +90,7 @@ export function Toggle(element, options = {}) {
 	}
 
 	function toggle() {
-		// React Toggle 과 동일하게 native `disabled` 만 본다 (구 --disabled 클래스는 v3.8.0 에서 제거).
+		// React Switch 과 동일하게 native `disabled` 만 본다 (구 --disabled 클래스는 v3.8.0 에서 제거).
 		if (config.disabled || toggleEl.disabled || pending) return;
 		if (!controlled) {
 			setChecked(!state.checked);
@@ -123,7 +123,7 @@ export function Toggle(element, options = {}) {
 			state.checked = true;
 		}
 	}
-	toggleEl.classList.toggle("bt-toggle--on", state.checked);
+	toggleEl.classList.toggle("bt-switch--on", state.checked);
 	toggleEl.setAttribute("aria-checked", state.checked ? "true" : "false");
 	if (hiddenInput) hiddenInput.value = state.checked ? "true" : "false";
 	// 비활성 토글은 제출하지 않는다 - native disabled 컨트롤과 같다 (Dropdown 과 같은 처리, #981)
@@ -140,9 +140,9 @@ export function Toggle(element, options = {}) {
 		},
 		destroy: () => {
 			cleanup();
-			if (toggleEl._btToggle === api) delete toggleEl._btToggle;
+			if (toggleEl._btSwitch === api) delete toggleEl._btSwitch;
 		},
 	};
-	toggleEl._btToggle = api;
+	toggleEl._btSwitch = api;
 	return api;
 }

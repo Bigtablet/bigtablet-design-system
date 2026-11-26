@@ -15,7 +15,7 @@ export const switchPage: DocPage = {
 	examples: [{ id: "switch/basic", title: "기본" }],
 	props: "SwitchProps",
 	notes: [
-		"4.15.0 전 이름은 `Toggle` 입니다 - 같은 컴포넌트를 가리키는 deprecated 별칭으로 남아 있습니다",
+		"5.0.0 전 이름은 `Toggle` 입니다 - CSS 클래스와 Vanilla(`bt-switch`)도 함께 바뀌었습니다",
 	],
 	playground: { base: { ariaLabel: "알림 받기" }, omit: ["checked", "defaultChecked"] },
 };

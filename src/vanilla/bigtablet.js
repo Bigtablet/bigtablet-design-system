@@ -25,8 +25,8 @@ export { Modal } from "./js/modal.js";
 export { Pagination } from "./js/pagination.js";
 export { Sentences } from "./js/sentences.js";
 export { Sidebar } from "./js/sidebar.js";
+export { Switch } from "./js/switch.js";
 export { Toast } from "./js/toast.js";
-export { Toggle } from "./js/toggle.js";
 export { $, $$, generateId, on } from "./js/utils.js";
 
 // Auto-init on DOM ready

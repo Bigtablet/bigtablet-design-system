@@ -243,8 +243,8 @@ export type {
 	SegmentedControlSize,
 } from "./ui/forms/segmented-control";
 export { SegmentedControl } from "./ui/forms/segmented-control";
-export type { SwitchProps, ToggleProps } from "./ui/forms/switch";
-export { Switch, Toggle } from "./ui/forms/switch";
+export type { SwitchProps } from "./ui/forms/switch";
+export { Switch } from "./ui/forms/switch";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {

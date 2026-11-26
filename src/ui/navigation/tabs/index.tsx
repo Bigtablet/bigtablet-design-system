@@ -4,9 +4,8 @@ import * as React from "react";
 import { cn, type SafeHTMLProps, useSafeLayoutEffect } from "../../../utils";
 import "./style.scss";
 
-// `fills` 는 deprecated (#1047) - 설명은 TabsProps.variant. 값 하나에는 `@deprecated` 를 달지 않는다:
-// TS 가 리터럴 유니온 멤버의 태그를 표시하지 않고, check:deprecated 는 prop 단위만 읽어 연결 실패로 막는다
-export type TabsVariant = "line" | "fills";
+// `fills` 는 5.0.0 에서 지웠다 (#1047 · #1174) - 값을 고르는 박스 그룹은 SegmentedControl
+export type TabsVariant = "line";
 export type TabsSize = "sm" | "md";
 
 interface TabsContextValue {
@@ -51,8 +50,8 @@ export interface TabsProps
 	/** value 변경 콜백 */
 	onValueChange?: (value: string) => void;
 	/**
-	 * 시각 스타일 (기본값: "line"). line=하단 underline. `fills`(채운 둥근 박스 그룹)는 deprecated -
-	 * SegmentedControl 과 거의 같아 보여 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않는다. 이후 버전에서 제거
+	 * 시각 스타일 (기본값: "line") - 하단 underline. 채운 박스 그룹이 필요하면 탭이 아니라
+	 * 값을 고르는 것이라 `SegmentedControl` 을 쓴다
 	 */
 	variant?: TabsVariant;
 	/** 크기 (기본값: "md") */
@@ -166,7 +165,7 @@ export const TabList = ({ ariaLabel, className, children, ...props }: TabListPro
 	const [indicator, setIndicator] = React.useState<{ left: number; width: number } | null>(null);
 	const [hasMounted, setHasMounted] = React.useState(false);
 
-	// active tab 위치 추적 - sliding indicator (line=underline / fills=filled box)
+	// active tab 위치 추적 - sliding indicator (underline)
 	useSafeLayoutEffect(() => {
 		const list = listRef.current;
 		if (!list) return;

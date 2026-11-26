@@ -20,10 +20,6 @@ export interface TimePickerProps {
 	min?: string;
 	/** 선택 가능한 가장 늦은 시각 (`"HH:mm"`) */
 	max?: string;
-	/** @deprecated `min` 을 쓴다. 다음 major 에서 제거한다. */
-	minTime?: string;
-	/** @deprecated `max` 를 쓴다. 다음 major 에서 제거한다. */
-	maxTime?: string;
 	/** 비활성 여부 */
 	disabled?: boolean;
 	/**
@@ -79,8 +75,6 @@ export const TimePicker = ({
 	minuteStep = 5,
 	min: minProp,
 	max: maxProp,
-	minTime,
-	maxTime,
 	disabled,
 	required,
 	fullWidth = true,
@@ -99,13 +93,12 @@ export const TimePicker = ({
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
-	// 새 prop 과 deprecated prop 을 함께 주면 좁은 쪽이 이긴다 - DatePicker 와 같은 규칙
-	const mins = [toMinutes(minProp), toMinutes(minTime)].filter((m): m is number => m !== null);
-	const maxes = [toMinutes(maxProp), toMinutes(maxTime)].filter((m): m is number => m !== null);
-	const hasMin = mins.length > 0;
-	const hasMax = maxes.length > 0;
-	const min = hasMin ? Math.max(...mins) : 0;
-	const max = hasMax ? Math.min(...maxes) : 23 * 60 + 59;
+	const minMinutes = toMinutes(minProp);
+	const maxMinutes = toMinutes(maxProp);
+	const hasMin = minMinutes !== null;
+	const hasMax = maxMinutes !== null;
+	const min = minMinutes ?? 0;
+	const max = maxMinutes ?? 23 * 60 + 59;
 
 	const parsed = toMinutes(value);
 	const hour = parsed === null ? null : Math.floor(parsed / 60);
@@ -122,7 +115,7 @@ export const TimePicker = ({
 		[minuteStep, min, max],
 	);
 
-	// 고를 분이 하나도 없는 시는 뺀다 - minuteStep=30, minTime="09:45" 면 09시는 고를 수 없는데 목록에 남았다 (#986)
+	// 고를 분이 하나도 없는 시는 뺀다 - minuteStep=30, min="09:45" 면 09시는 고를 수 없는데 목록에 남았다 (#986)
 	const hourOptions = React.useMemo<DropdownOption[]>(() => {
 		const first = Math.floor(min / 60);
 		const last = Math.floor(max / 60);

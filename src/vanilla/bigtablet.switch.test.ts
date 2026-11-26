@@ -3,16 +3,16 @@ import { describe, expect, it, vi } from "vitest";
 // Vite 가 노출하는 named export 로 같은 팩토리를 직접 부른다 - 부착 경로만 다르고 검사 대상
 // 로직은 동일하다. 빌드 산출물이 아니라 소스를 import 해서, 소스 변경이 곧 테스트에 걸린다.
 import pkg from "../../package.json";
-import { Toggle, version } from "./bigtablet.js";
+import { Switch, version } from "./bigtablet.js";
 import { resetVanillaDom } from "./bigtablet.test-utils";
 
 resetVanillaDom();
 
-describe("Toggle", () => {
+describe("Switch", () => {
 	const toggleMarkup = () => {
 		const el = document.createElement("button");
-		el.className = "bt-toggle";
-		el.innerHTML = '<span class="bt-toggle__thumb"></span>';
+		el.className = "bt-switch";
+		el.innerHTML = '<span class="bt-switch__thumb"></span>';
 		document.body.appendChild(el);
 		return el;
 	};
@@ -20,7 +20,7 @@ describe("Toggle", () => {
 	it("클릭하면 onCheckedChange 를 부른다", () => {
 		const onCheckedChange = vi.fn();
 		const el = toggleMarkup();
-		Toggle(el, { onCheckedChange });
+		Switch(el, { onCheckedChange });
 
 		el.click();
 
@@ -31,7 +31,7 @@ describe("Toggle", () => {
 	it("비활성이면 숨은 input 을 제출하지 않는다 (#981)", () => {
 		const el = toggleMarkup();
 		el.dataset.name = "agree";
-		const api = Toggle(el, { disabled: true });
+		const api = Switch(el, { disabled: true });
 		const hidden = document.querySelector('input[name="agree"]') as HTMLInputElement;
 		expect(hidden.disabled).toBe(true);
 		api?.setDisabled(false);
@@ -44,7 +44,7 @@ describe("Toggle", () => {
 		const onCheckedChange = vi.fn();
 		const el = toggleMarkup();
 		el.disabled = true;
-		Toggle(el, { onCheckedChange });
+		Switch(el, { onCheckedChange });
 
 		el.click();
 
@@ -53,45 +53,45 @@ describe("Toggle", () => {
 
 	it("config.disabled 를 native disabled 로 통일한다", () => {
 		const el = toggleMarkup();
-		Toggle(el, { disabled: true });
+		Switch(el, { disabled: true });
 
 		expect(el.disabled).toBe(true);
 	});
 });
 
-describe("Toggle - 초기화 · API", () => {
-	const mount = (html = '<button class="bt-toggle"></button>') => {
+describe("Switch - 초기화 · API", () => {
+	const mount = (html = '<button class="bt-switch"></button>') => {
 		document.body.innerHTML = `<form>${html}</form>`;
-		return document.querySelector(".bt-toggle") as HTMLButtonElement;
+		return document.querySelector(".bt-switch") as HTMLButtonElement;
 	};
 
 	it("adds switch semantics and type=button without overriding consumer values", () => {
 		const el = mount();
-		Toggle(el);
+		Switch(el);
 		expect(el.getAttribute("role")).toBe("switch");
 		expect(el.getAttribute("type")).toBe("button");
 		expect(el.getAttribute("aria-checked")).toBe("false");
-		expect(el.classList.contains("bt-toggle--on")).toBe(false);
+		expect(el.classList.contains("bt-switch--on")).toBe(false);
 
-		const custom = mount('<button class="bt-toggle" role="checkbox" type="submit"></button>');
-		Toggle(custom);
+		const custom = mount('<button class="bt-switch" role="checkbox" type="submit"></button>');
+		Switch(custom);
 		expect(custom.getAttribute("role")).toBe("checkbox");
 		expect(custom.getAttribute("type")).toBe("submit");
 	});
 
 	it("starts on from defaultChecked or the on class", () => {
 		const a = mount();
-		expect(Toggle(a, { defaultChecked: true })?.isChecked()).toBe(true);
-		expect(a.classList.contains("bt-toggle--on")).toBe(true);
+		expect(Switch(a, { defaultChecked: true })?.isChecked()).toBe(true);
+		expect(a.classList.contains("bt-switch--on")).toBe(true);
 		expect(a.getAttribute("aria-checked")).toBe("true");
 
-		const b = mount('<button class="bt-toggle bt-toggle--on"></button>');
-		expect(Toggle(b)?.isChecked()).toBe(true);
+		const b = mount('<button class="bt-switch bt-switch--on"></button>');
+		expect(Switch(b)?.isChecked()).toBe(true);
 	});
 
 	it("creates a sibling hidden input for a named button and keeps it in sync", () => {
 		const el = mount();
-		const api = Toggle(el, { name: "agree" });
+		const api = Switch(el, { name: "agree" });
 		const input = el.nextElementSibling as HTMLInputElement;
 		expect(input.tagName).toBe("INPUT");
 		expect(input.type).toBe("hidden");
@@ -104,37 +104,37 @@ describe("Toggle - 초기화 · API", () => {
 	});
 
 	it("appends the hidden input inside a non-button toggle and reads data-name", () => {
-		const el = mount('<div class="bt-toggle" data-name="dark"></div>');
-		Toggle(el);
+		const el = mount('<div class="bt-switch" data-name="dark"></div>');
+		Switch(el);
 		expect(el.querySelector<HTMLInputElement>('input[type="hidden"]')?.name).toBe("dark");
 	});
 
 	it("renames a reused child hidden input to the JS name (#1106)", () => {
-		const el = mount('<div class="bt-toggle"><input type="hidden" name="old" value="true"></div>');
-		Toggle(el, { name: "notify" });
+		const el = mount('<div class="bt-switch"><input type="hidden" name="old" value="true"></div>');
+		Switch(el, { name: "notify" });
 		expect(el.querySelector<HTMLInputElement>('input[type="hidden"]')?.name).toBe("notify");
 	});
 
 	it("reuses a server-rendered sibling input and reads lenient on values", () => {
 		for (const raw of ["true", "1", "on", "y", "YES "]) {
 			const el = mount(
-				`<button class="bt-toggle" data-name="n"></button><input type="hidden" name="other" value="true"><input type="hidden" name="n" value="${raw}">`,
+				`<button class="bt-switch" data-name="n"></button><input type="hidden" name="other" value="true"><input type="hidden" name="n" value="${raw}">`,
 			);
-			expect(Toggle(el)?.isChecked()).toBe(true);
+			expect(Switch(el)?.isChecked()).toBe(true);
 			expect(document.querySelectorAll('input[name="n"]')).toHaveLength(1);
 			expect(document.querySelector<HTMLInputElement>('input[name="n"]')?.value).toBe("true");
 			expect(document.querySelector<HTMLInputElement>('input[name="other"]')?.value).toBe("true");
 		}
 		const off = mount(
-			'<button class="bt-toggle" data-name="n"></button><input type="hidden" name="n" value="no">',
+			'<button class="bt-switch" data-name="n"></button><input type="hidden" name="n" value="no">',
 		);
-		expect(Toggle(off)?.isChecked()).toBe(false);
+		expect(Switch(off)?.isChecked()).toBe(false);
 	});
 
 	it("toggles, disables and unbinds through the API", () => {
 		const onCheckedChange = vi.fn();
 		const el = mount();
-		const api = Toggle(el, { onCheckedChange });
+		const api = Switch(el, { onCheckedChange });
 		api?.toggle();
 		expect(api?.isChecked()).toBe(true);
 		api?.setDisabled(true);
@@ -146,16 +146,16 @@ describe("Toggle - 초기화 · API", () => {
 		el.click();
 		expect(api?.isChecked()).toBe(true);
 		expect(onCheckedChange).toHaveBeenCalledTimes(1);
-		expect(Toggle("#missing")).toBeNull();
+		expect(Switch("#missing")).toBeNull();
 	});
 });
 
-describe("Toggle - 점검 회귀 (#898)", () => {
+describe("Switch - 점검 회귀 (#898)", () => {
 	it("문서의 서버 렌더 초기값 마크업(data-name + 형제 hidden input)이 동작한다", () => {
 		document.body.innerHTML =
-			'<form><button class="bt-toggle" data-name="notifications" aria-label="알림"></button><input type="hidden" name="notifications" value="true"></form>';
-		const el = document.querySelector(".bt-toggle") as HTMLButtonElement;
-		const t = Toggle(el);
+			'<form><button class="bt-switch" data-name="notifications" aria-label="알림"></button><input type="hidden" name="notifications" value="true"></form>';
+		const el = document.querySelector(".bt-switch") as HTMLButtonElement;
+		const t = Switch(el);
 		expect(t?.isChecked()).toBe(true);
 		el.click();
 		expect([...new FormData(document.querySelector("form") as HTMLFormElement)]).toEqual([
@@ -164,11 +164,11 @@ describe("Toggle - 점검 회귀 (#898)", () => {
 	});
 
 	it("같은 요소에 두 번 만들면 교체되어 한 번 누를 때 한 번만 뒤집힌다", () => {
-		document.body.innerHTML = '<button class="bt-toggle" aria-label="알림"></button>';
-		const el = document.querySelector(".bt-toggle") as HTMLButtonElement;
-		Toggle(el);
+		document.body.innerHTML = '<button class="bt-switch" aria-label="알림"></button>';
+		const el = document.querySelector(".bt-switch") as HTMLButtonElement;
+		Switch(el);
 		const onCheckedChange = vi.fn();
-		const t = Toggle(el, { onCheckedChange });
+		const t = Switch(el, { onCheckedChange });
 		el.click();
 		expect(t?.isChecked()).toBe(true);
 		expect(el.getAttribute("aria-checked")).toBe("true");
@@ -177,16 +177,16 @@ describe("Toggle - 점검 회귀 (#898)", () => {
 
 	it("name 이 없으면 옆의 무관한 hidden input 을 건드리지 않는다", () => {
 		document.body.innerHTML =
-			'<button class="bt-toggle" aria-label="알림"></button><input type="hidden" name="_csrf" value="token">';
-		Toggle(document.querySelector(".bt-toggle") as HTMLButtonElement);
+			'<button class="bt-switch" aria-label="알림"></button><input type="hidden" name="_csrf" value="token">';
+		Switch(document.querySelector(".bt-switch") as HTMLButtonElement);
 		expect((document.querySelector('[name="_csrf"]') as HTMLInputElement).value).toBe("token");
 	});
 });
 
-describe("Toggle - 제어 모드 (#920)", () => {
+describe("Switch - 제어 모드 (#920)", () => {
 	const mount = (attrs = "") => {
 		const wrap = document.createElement("div");
-		wrap.innerHTML = `<button class="bt-toggle" aria-label="알림 받기" ${attrs}><span class="bt-toggle__thumb"></span></button>`;
+		wrap.innerHTML = `<button class="bt-switch" aria-label="알림 받기" ${attrs}><span class="bt-switch__thumb"></span></button>`;
 		document.body.appendChild(wrap);
 		return wrap.firstElementChild as HTMLButtonElement;
 	};
@@ -194,20 +194,20 @@ describe("Toggle - 제어 모드 (#920)", () => {
 	it("클릭은 onCheckedChange(next) 만 부르고 상태는 바꾸지 않는다", () => {
 		const onCheckedChange = vi.fn();
 		const el = mount();
-		const t = Toggle(el, { controlled: true, onCheckedChange });
+		const t = Switch(el, { controlled: true, onCheckedChange });
 
 		el.click();
 
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 		expect(t?.isChecked()).toBe(false);
 		expect(el.getAttribute("aria-checked")).toBe("false");
-		expect(el.classList.contains("bt-toggle--on")).toBe(false);
+		expect(el.classList.contains("bt-switch--on")).toBe(false);
 	});
 
 	it("소비자가 setChecked 로 확정하고, 그때 콜백이 다시 돌지 않는다", () => {
 		const el = mount('data-name="push"');
 		const onCheckedChange = vi.fn((next: boolean) => t?.setChecked(next));
-		const t = Toggle(el, { controlled: true, onCheckedChange });
+		const t = Switch(el, { controlled: true, onCheckedChange });
 
 		el.click();
 
@@ -219,7 +219,7 @@ describe("Toggle - 제어 모드 (#920)", () => {
 	it("data-controlled 로도 켜진다", () => {
 		const onCheckedChange = vi.fn();
 		const el = mount("data-controlled");
-		Toggle(el, { onCheckedChange });
+		Switch(el, { onCheckedChange });
 
 		el.click();
 
@@ -236,7 +236,7 @@ describe("Toggle - 제어 모드 (#920)", () => {
 				}),
 		);
 		const el = mount();
-		const t = Toggle(el, { controlled: true, onCheckedChange });
+		const t = Switch(el, { controlled: true, onCheckedChange });
 
 		el.click();
 		el.click();
@@ -264,7 +264,7 @@ describe("Toggle - 제어 모드 (#920)", () => {
 
 	it("비제어(기본)는 예전처럼 setChecked 도 onCheckedChange 를 부른다", () => {
 		const onCheckedChange = vi.fn();
-		const t = Toggle(mount(), { onCheckedChange });
+		const t = Switch(mount(), { onCheckedChange });
 
 		t?.setChecked(true);
 

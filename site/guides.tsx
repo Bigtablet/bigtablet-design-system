@@ -2,12 +2,12 @@ import {
 	Badge,
 	Button,
 	CopyButton,
+	Switch,
 	Tab,
 	TabList,
 	TabPanel,
 	Tabs,
 	TextField,
-	Toggle,
 } from "@bigtablet/design-system";
 import {
 	BarChart3,
@@ -176,7 +176,7 @@ export function Landing({ pages }: { pages: DocPage[] }) {
 						<Badge tone="success" appearance="soft">
 							진행 중
 						</Badge>
-						<Toggle size="sm" defaultChecked ariaLabel="알림" />
+						<Switch size="sm" defaultChecked ariaLabel="알림" />
 						<TextField size="sm" placeholder="이메일" aria-label="이메일" />
 					</div>
 				</Tile>

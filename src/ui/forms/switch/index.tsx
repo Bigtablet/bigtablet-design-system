@@ -60,11 +60,10 @@ export const Switch = ({
 	// Field 가 감싸면 id·설명·에러 상태를 그쪽에서 받는다. 밖에서는 undefined.
 	const field = useFieldControl();
 
-	// ponytail: 클래스 이름은 `toggle` 그대로 둔다 - 소비자 CSS 재정의가 깨지지 않게. 다음 major 에서 `switch` 로
 	const rootClassName = cn(
-		"toggle",
-		`toggle_size_${size}`,
-		{ toggle_on: isOn, toggle_disabled: disabled },
+		"switch",
+		`switch_size_${size}`,
+		{ switch_on: isOn, switch_disabled: disabled },
 		className,
 	);
 
@@ -90,12 +89,7 @@ export const Switch = ({
 			onClick={handleToggle}
 			className={rootClassName}
 		>
-			<span className="toggle_thumb" />
+			<span className="switch_thumb" />
 		</button>
 	);
 };
-
-/** @deprecated `SwitchProps` 를 쓴다. 다음 major 에서 제거한다. */
-export type ToggleProps = SwitchProps;
-/** @deprecated `Switch` 를 쓴다 - 같은 컴포넌트다. 다음 major 에서 제거한다. */
-export const Toggle = (props: SwitchProps) => <Switch {...props} />;
