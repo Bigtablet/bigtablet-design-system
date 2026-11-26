@@ -321,9 +321,9 @@ const modal = Bigtablet.Modal('#my-modal', {
   onExited: () => {}        // 퇴출 모션이 끝난 뒤 (React onExited) - #913
 });
 modal.open();
+modal.setDismissible(false); // 열린 뒤 Escape · 오버레이 닫기를 잠근다 (옵션 `dismissible` 과 같음 - closeOnOverlay · closeOnEscape 를 이긴다). undefined 면 옵션으로 돌아감
 modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
 modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
-modal.setDismissible(false); // 열린 뒤 Escape · 오버레이 닫기를 잠근다 (옵션 `dismissible` 과 같음 - closeOnOverlay · closeOnEscape 를 이긴다). undefined 면 옵션으로 돌아감
 modal.showStep('verify');   // 패널 안 [data-bt-modal-step] 하나만 보이게 - 높이 · 내용 전환, 포커스 이동 (#1162). currentStep() 으로 지금 단계
 
 const sw = Bigtablet.Switch('#my-switch', {
