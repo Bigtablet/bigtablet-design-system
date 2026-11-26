@@ -243,6 +243,8 @@ export type {
 	SegmentedControlSize,
 } from "./ui/forms/segmented-control";
 export { SegmentedControl } from "./ui/forms/segmented-control";
+export type { SwitchProps, ToggleProps } from "./ui/forms/switch";
+export { Switch, Toggle } from "./ui/forms/switch";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {
@@ -260,8 +262,6 @@ export type {
 export { TextField } from "./ui/forms/textfield";
 export type { TimePickerProps } from "./ui/forms/time-picker";
 export { TimePicker } from "./ui/forms/time-picker";
-export type { ToggleProps } from "./ui/forms/toggle";
-export { Toggle } from "./ui/forms/toggle";
 export type {
 	ButtonProps,
 	ButtonSize,

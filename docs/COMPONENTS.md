@@ -32,7 +32,7 @@ React 컴포넌트별로 언제 쓰는지, 예제, 알아 둘 것, 구현 계약
   - [Radio](#radio)
   - [RadioGroup](#radiogroup)
   - [SegmentedControl](#segmentedcontrol)
-  - [Toggle](#toggle)
+  - [Switch](#switch)
   - [DatePicker](#datepicker)
   - [DateCalendar](#datecalendar)
   - [DateRangePicker](#daterangepicker)
@@ -107,7 +107,7 @@ React 컴포넌트별로 언제 쓰는지, 예제, 알아 둘 것, 구현 계약
 | Spinner · Skeleton · LinearProgress · TopLoading | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/spinner) |
 | Alert · InlineAlert · Toast | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/alert) |
 | DatePicker · DateRangePicker · TimePicker | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/date-picker) |
-| Checkbox · Radio · RadioGroup · Toggle · SegmentedControl | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/radio-group) |
+| Checkbox · Radio · RadioGroup · Switch · SegmentedControl | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/radio-group) |
 | FileInput · ImageCropper | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/file-input) |
 | Sidebar · NavBar · BottomNav | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/sidebar) |
 | Menu · Popover · Tooltip | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/popover) |
@@ -703,7 +703,7 @@ import { Combobox } from '@bigtablet/design-system';
 | 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않습니다 |
 | 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않습니다 |
 
-`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Switch` 는 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
 
 ```tsx
 import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-system';
@@ -753,7 +753,7 @@ const emailError = touched && !email.includes("@") ? "이메일 형식이 아닙
 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기
 `aria-label` 을 그대로 유지합니다.
 
-슬롯 높이는 **라벨 한 줄**로 고정돼 있습니다. 조작 요소가 그보다 높으면(Toggle `sm` 24px vs 라벨 18px)
+슬롯 높이는 **라벨 한 줄**로 고정돼 있습니다. 조작 요소가 그보다 높으면(Switch `sm` 24px vs 라벨 18px)
 위아래로 넘치게 두고 라벨 줄은 자라지 않습니다 — 자라게 두면 아래 입력이 내려가 같은 그리드 행의
 `labelAction` 없는 칸과 어긋납니다.
 
@@ -765,7 +765,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
   label="소속"
   required
   labelAction={
-    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
+    <Switch ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
   }
 >
   <TextField disabled={noAffiliation} />
@@ -785,7 +785,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 > (axe `aria-allowed-attr`) 묶음 입력 — `DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput` —
 > 은 **안쪽 컨트롤마다** 필수 여부를 붙입니다. 연·월·일 세 목록, 여섯 자리 입력 모두가 필수이므로
 > 읽히는 내용도 사실과 맞습니다. `FileInput` 은 네이티브 `<input type="file">` 이라 `aria-required`
-> 대신 `required` 를 씁니다(폼 제출 검증까지 함께 붙습니다). `Toggle` 은 `role="switch"` 가
+> 대신 `required` 를 씁니다(폼 제출 검증까지 함께 붙습니다). `Switch` 는 `role="switch"` 가
 > `checkbox` 의 하위 role 이라 `aria-required` 를 그대로 받습니다.
 >
 > 개별 `Radio` 는 대상이 아닙니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당합니다.
@@ -1082,7 +1082,7 @@ const [selected, setSelected] = useState('option1');
 |------|------|
 | 여러 옵션 중 하나 선택 (그룹) | ✅ RadioGroup + `Radio value=...` |
 | 단일 라디오 (그룹 아님) | △ [Radio](#radio) standalone |
-| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+| 켜기/끄기 1개 | ❌ [Switch](#switch) |
 | 여러 개 동시 선택 | ❌ [Checkbox](#checkbox) |
 | 짧은 라벨 2~5개를 한 줄로 | ❌ [SegmentedControl](#segmentedcontrol) |
 
@@ -1138,7 +1138,7 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
 | 라벨이 길거나 설명이 붙거나 6개 이상 | ❌ [RadioGroup](#radiogroup) |
 | 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) (밑줄 모양) |
 | 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
-| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+| 켜기/끄기 1개 | ❌ [Switch](#switch) |
 
 `T` 는 `string` 을 좁힌 리터럴 유니온을 받습니다 - `SegmentedControl<"ko" | "en">` 이면 `onValueChange` 가 그 타입으로 옵니다.
 
@@ -1202,21 +1202,23 @@ const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
 
 ---
 
-### Toggle
+### Switch
+
+켜기 / 끄기 스위치 (`role="switch"`)입니다. 4.15.0 전 이름은 `Toggle` 이고, 같은 컴포넌트를 가리키는 deprecated 별칭으로 남아 있습니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일--toggle--switch) 참고. CSS 클래스(`toggle_*`)와 Vanilla(`.bt-toggle` · `Bigtablet.Toggle`)는 다음 major 에서 함께 바꿉니다.
 
 ```tsx
-import { Toggle } from '@bigtablet/design-system';
+import { Switch } from '@bigtablet/design-system';
 
 // 기본 사용 - ariaLabel 은 필수다 (보이는 라벨이 없는 스위치의 이름)
-<Toggle ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
+<Switch ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [isOn, setIsOn] = useState(false);
-<Toggle ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
+<Switch ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
 
 // Sizes
-<Toggle ariaLabel="알림 받기" size="sm" />
-<Toggle ariaLabel="알림 받기" size="md" />
+<Switch ariaLabel="알림 받기" size="sm" />
+<Switch ariaLabel="알림 받기" size="md" />
 ```
 
 #### 히트 영역은 트랙보다 넓습니다
@@ -1265,7 +1267,7 @@ const [date, setDate] = useState('');
 `"today"` 는 기기의 오늘입니다. 생년월일은 `max="today"`, 예약일은 `min="today"` 처럼 씁니다.
 연 · 월을 바꿔 지금 일이 범위 밖이거나 막혔으면, 그 뒤의 가장 가까운 날로 옮깁니다.
 
-예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 4.15.0 부터 deprecated 입니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일) 참고.
+예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 4.15.0 부터 deprecated 입니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일--toggle--switch) 참고.
 
 ---
 
@@ -1881,7 +1883,7 @@ const [page, setPage] = useState(1);
 | 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **[SegmentedControl](#segmentedcontrol)** (라벨이 길면 RadioGroup) - `tablist`/`tab` 은 "패널을 바꿉니다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속합니다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
-| 단순 boolean 토글 1쌍 | ❌ **Toggle** |
+| 단순 boolean 토글 1쌍 | ❌ **Switch** |
 
 #### variant 선택 가이드
 

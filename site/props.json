@@ -3896,6 +3896,96 @@
 			"doc": "필수: 폼 제출 시 선택이 없으면 막는다"
 		}
 	],
+	"SwitchProps": [
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "제어형 토글 상태"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "비제어형 초기 토글 상태"
+		},
+		{
+			"name": "onCheckedChange",
+			"type": "(checked: boolean) => void",
+			"required": false,
+			"doc": "상태 변경 콜백 (canonical)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "토글 크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": true,
+			"doc": "토글 접근성 레이블(스크린 리더용)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "버튼 요소 참조"
+		}
+	],
+	"ToggleProps": [
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "제어형 토글 상태"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "비제어형 초기 토글 상태"
+		},
+		{
+			"name": "onCheckedChange",
+			"type": "(checked: boolean) => void",
+			"required": false,
+			"doc": "상태 변경 콜백 (canonical)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "토글 크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": true,
+			"doc": "토글 접근성 레이블(스크린 리더용)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "버튼 요소 참조"
+		}
+	],
 	"TagInputProps": [
 		{
 			"name": "value",
@@ -4371,51 +4461,6 @@
 			"type": "string",
 			"required": false,
 			"doc": "분 select 의 라벨/placeholder"
-		}
-	],
-	"ToggleProps": [
-		{
-			"name": "checked",
-			"type": "boolean",
-			"required": false,
-			"doc": "제어형 토글 상태"
-		},
-		{
-			"name": "defaultChecked",
-			"type": "boolean",
-			"required": false,
-			"doc": "비제어형 초기 토글 상태"
-		},
-		{
-			"name": "onCheckedChange",
-			"type": "(checked: boolean) => void",
-			"required": false,
-			"doc": "상태 변경 콜백 (canonical)"
-		},
-		{
-			"name": "size",
-			"type": "\"sm\" | \"md\"",
-			"required": false,
-			"default": "\"sm\"",
-			"doc": "토글 크기"
-		},
-		{
-			"name": "disabled",
-			"type": "boolean",
-			"required": false,
-			"doc": "비활성화 여부"
-		},
-		{
-			"name": "ariaLabel",
-			"type": "string",
-			"required": true,
-			"doc": "토글 접근성 레이블(스크린 리더용)"
-		},
-		{
-			"name": "ref",
-			"type": "Ref<HTMLButtonElement>",
-			"required": false,
-			"doc": "버튼 요소 참조"
 		}
 	],
 	"ButtonProps": [

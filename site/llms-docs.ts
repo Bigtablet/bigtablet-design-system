@@ -128,7 +128,18 @@ export const AVOID: {
 	{ props: "DropdownSingleProps", component: "Dropdown", avoid: "onChange", use: "onValueChange" },
 	{ props: "DatePickerProps", component: "DatePicker", avoid: "onChange", use: "onValueChange" },
 	{ props: "PaginationProps", component: "Pagination", avoid: "onChange", use: "onPageChange" },
-	{ props: "ToggleProps", component: "Toggle", avoid: "onChange", use: "onCheckedChange" },
+	{ props: "SwitchProps", component: "Switch", avoid: "onChange", use: "onCheckedChange" },
+	{
+		avoid: "`Toggle` · `ToggleProps`",
+		use: "`Switch` · `SwitchProps`",
+		why: '4.15.0 에서 이름을 바꿨다 - 같은 컴포넌트 (`role="switch"`). 옛 이름은 deprecated 별칭',
+	},
+	{
+		avoid:
+			'날짜 `minDate` · `selectableRange` · `startYear`/`endYear` · `mode="year-month"`, TimePicker `minTime`/`maxTime`',
+		use: '`min` · `max` (`"today"` 도 받는다) · `isDateDisabled` · `MonthPicker`',
+		why: "4.15.0 에서 날짜 · 시간 범위 prop 이름을 통일했다. 옛 이름은 deprecated",
+	},
 	{
 		props: "TextFieldProps",
 		component: "TextField",
