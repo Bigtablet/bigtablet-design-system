@@ -76,12 +76,12 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 
 | Component | Base Class | Modifiers | States |
 |-----------|------------|-----------|--------|
-| Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width` | `:disabled` |
+| Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width`, `--loading`(글자 앞 고리 - `disabled` · `aria-busy="true"` 와 함께) | `:disabled` |
 | TextField | `.bt-text-field` | `--full-width` | |
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
-| Switch | `.bt-switch` | `--sm/md` | `.bt-switch--on`, `:disabled` |
+| Switch | `.bt-switch` | `--sm/md` | `.bt-switch--on`, `.bt-switch--loading`(JS 가 붙인다 - `loading` · `setLoading()` · 제어 모드 Promise 대기), `:disabled` |
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
@@ -99,6 +99,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
 | Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
 | Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
+| Skeleton | `.bt-skeleton` - CSS 만. 블록마다 `aria-hidden="true"` | `--text(기본)/title/avatar/rect`, `--radius-sm/md/lg/full` | |
 | Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
 | Pagination | `.bt-pagination` | | |
 | DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--sm/md/lg`(칸 높이 - Dropdown · TextField 와 같은 단계, JS `size` · `data-size`), `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다, `data-range` 면 범위형 - `DateRangePicker()`) | `[aria-expanded]` |
@@ -322,6 +323,7 @@ const modal = Bigtablet.Modal('#my-modal', {
 modal.open();
 modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
 modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
+modal.setDismissible(false); // 열린 뒤 Escape · 오버레이 닫기를 잠근다 (옵션 `dismissible` 과 같음 - closeOnOverlay · closeOnEscape 를 이긴다). undefined 면 옵션으로 돌아감
 modal.showStep('verify');   // 패널 안 [data-bt-modal-step] 하나만 보이게 - 높이 · 내용 전환, 포커스 이동 (#1162). currentStep() 으로 지금 단계
 
 const sw = Bigtablet.Switch('#my-switch', {
@@ -333,6 +335,7 @@ sw.toggle();
 sw.setChecked(true);
 sw.isChecked();
 sw.setDisabled(true);       // hidden input 도 disabled - 제출 안 됨
+sw.setLoading(true);        // 기다리는 중 - 고리 + aria-busy, 클릭 무시 (React loading)
 sw.destroy();
 
 // 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.

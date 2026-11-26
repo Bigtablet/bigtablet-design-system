@@ -218,6 +218,23 @@
     }
   }
 
+  // 기다리는 중(loading) - 앞 아이콘 자리의 고리. 글자 크기(1em) · 글자 색을 따라가 variant · size 마다 따로 정하지 않는다
+  &_spinner {
+    position: relative;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 1em;
+    height: 1em;
+    border: token.$border_width_2 solid currentColor;
+    border-right-color: transparent;
+    border-radius: token.$radius_full;
+    animation: button_spin token.$duration_loading_spinner token.$easing_linear infinite;
+  }
+
+  &_loading {
+    cursor: progress;
+  }
+
   &_label {
     position: relative;
     white-space: normal;
@@ -300,4 +317,13 @@
   .button_disabled {
     border-color: GrayText;
   }
+}
+
+@keyframes button_spin {
+  to { transform: rotate(360deg); }
+}
+
+// 고리 하나는 멈추면 그냥 원이라 진행 중인지 알 수 없다 - 멈추지 않고 늦춘다 (Vanilla .bt-spinner 와 같은 판단)
+@media (prefers-reduced-motion: reduce) {
+  .button_spinner { animation-duration: token.$duration_loading_spinner * 2; }
 }

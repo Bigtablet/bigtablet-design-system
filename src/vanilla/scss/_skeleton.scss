@@ -1,0 +1,38 @@
+@use "../../styles/token" as token;
+
+/* ========================================
+   Skeleton
+   ======================================== */
+/* React `<Skeleton variant radius>` 와 같은 토큰 · 같은 값. CSS 만 - 크기는 width · height 로 덮어쓴다.
+   자리 표시라 읽을 것이 없다: 요소마다 `aria-hidden="true"` 를 달고, 기다리는 영역에 `aria-busy="true"` 를 단다.
+   예) <div class="bt-skeleton bt-skeleton--title" style="width: 40%" aria-hidden="true"></div> */
+@keyframes bt-skeleton-loading {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.bt-skeleton {
+  display: block;
+  width: 100%;
+  height: token.$skeleton_height_md; // --text 와 같다 - React variant 기본값
+  background: token.$skeleton_gradient;
+  background-size: 400% 100%;
+  border-radius: token.$skeleton_radius_md;
+  animation: bt-skeleton-loading token.$skeleton_animation_duration token.$skeleton_animation_timing infinite;
+
+  &--text { height: token.$skeleton_height_md; }
+  &--title { height: token.$skeleton_height_xl; }
+
+  &--avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: token.$skeleton_radius_lg;
+  }
+
+  &--rect { height: 5rem; }
+
+  &--radius-sm { border-radius: token.$skeleton_radius_sm; }
+  &--radius-md { border-radius: token.$skeleton_radius_md; }
+  &--radius-lg { border-radius: token.$skeleton_radius_lg; }
+  &--radius-full { border-radius: var(--bt-radius-full); }
+}

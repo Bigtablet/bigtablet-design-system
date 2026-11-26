@@ -46,7 +46,14 @@
      정지해도 12개 spoke 라는 형태 자체가 "로딩 위젯"으로 읽히기 때문이다. Vanilla 의
      단일 border ring 은 정지하면 그냥 원 하나라 상태 정보가 사라지므로 감속을 택했다.
      둘의 차이는 렌더 형태 차이에서 나온 의도된 divergence 다 (docs/VANILLA.md#spinner). */
-  .bt-spinner {
+  /* React Skeleton 과 같이 물결을 멈춘다 - 멈춰도 회색 자리 표시로 읽힌다 */
+  .bt-skeleton {
+    animation: none;
+  }
+
+  .bt-spinner,
+  .bt-button--loading::before,
+  .bt-switch--loading .bt-switch__thumb::after {
     animation-duration: 2.4s;
   }
 }

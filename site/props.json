@@ -3901,6 +3901,12 @@
 			"doc": "비활성화 여부"
 		},
 		{
+			"name": "loading",
+			"type": "boolean",
+			"required": false,
+			"doc": "지금 상태를 읽거나 저장하는 중. 손잡이에 고리를 돌리고 `aria-busy` 를 달며 눌러도 바뀌지 않는다. `disabled` 와 달리 포커스는 남는다: 곧 다시 누를 수 있는 상태다."
+		},
+		{
 			"name": "ariaLabel",
 			"type": "string",
 			"required": true,
@@ -4441,6 +4447,12 @@
 			"type": "boolean",
 			"required": false,
 			"doc": "비활성화. button 은 native `disabled`, anchor 는 `aria-disabled`+`tabIndex=-1`+ 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로)."
+		},
+		{
+			"name": "loading",
+			"type": "boolean",
+			"required": false,
+			"doc": "요청을 기다리는 중. 앞 아이콘 자리에 스피너를 그리고 `aria-busy` 를 달며, `disabled` 처럼 눌리지 않는다. 라벨은 바꾸지 않는다: \"저장하는 중…\" 같은 문구는 children 으로 넘긴다."
 		},
 		{
 			"name": "as",

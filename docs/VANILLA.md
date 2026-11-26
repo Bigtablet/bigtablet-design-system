@@ -148,6 +148,9 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 <button class="bt-button bt-button--lg bt-button--filled">Large</button>
 <button class="bt-button bt-button--xl bt-button--filled">XLarge</button>
 
+<!-- 기다리는 중 (React <Button loading>) - 글자 앞에 고리가 돈다. 눌림을 막는 것은 disabled 다 -->
+<button class="bt-button bt-button--md bt-button--filled bt-button--loading" disabled aria-busy="true">저장하는 중…</button>
+
 <!-- 전체 너비 -->
 <button class="bt-button bt-button--md bt-button--filled bt-button--full-width">전체 너비</button>
 
@@ -336,6 +339,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   mySwitch.setChecked(true); // 상태 설정
   mySwitch.toggle();        // 토글
   mySwitch.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
+  mySwitch.setLoading(true);  // 기다리는 중 - 손잡이에 고리 + aria-busy, 클릭 무시. 포커스는 남는다 (React loading, 옵션 loading 으로도)
   mySwitch.destroy();       // 바인딩한 리스너 해제
 </script>
 ```
@@ -659,6 +663,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
   const myModal = Bigtablet.Modal(modalEl, {
     closeOnOverlay: true,
     closeOnEscape: true,
+    // dismissible: false,  // 주면 위 둘을 이긴다 (React dismissible 과 같음) - false 는 Escape · 오버레이 모두 막음
     onOpen: () => console.log('Modal opened'),
     onClose: () => console.log('Modal closed'),      // 닫기를 시작할 때 바로
     onExited: () => console.log('Modal hidden')       // 퇴출 모션이 끝나 사라진 뒤 (React onExited 와 같음)
@@ -669,6 +674,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
   myModal.close();  // 닫기
   myModal.toggle(); // 토글
   myModal.isOpen(); // 상태 확인
+  myModal.setDismissible(false); // 열린 뒤에 Escape · 오버레이 닫기를 잠근다 (요청을 기다리는 동안). 풀 때는 true, 옵션으로 돌아가려면 undefined
   myModal.destroy(); // 바인딩 해제. 열린 채 부르면 close() 와 같은 정리(Escape·스크롤 잠금·포커스 복원)를 하되 onClose 는 부르지 않는다
 </script>
 ```
@@ -1039,6 +1045,23 @@ Alert는 JavaScript로만 사용합니다.
 > 그림자(sm)·여백(md)을 갖습니다. 없애려면 `--shadow-none` / `--p-none` 을 명시하세요.
 
 ---
+
+### Skeleton
+
+내용을 불러오는 동안 자리를 잡아 두는 회색 블록입니다. React `<Skeleton variant radius>` 와 같은 값이고 CSS 만 씁니다.
+
+```html
+<div aria-busy="true">
+  <div class="bt-skeleton bt-skeleton--title" style="width: 40%" aria-hidden="true"></div>
+  <div class="bt-skeleton bt-skeleton--text" aria-hidden="true"></div>
+  <div class="bt-skeleton bt-skeleton--avatar" aria-hidden="true"></div>
+  <div class="bt-skeleton bt-skeleton--rect bt-skeleton--radius-lg" aria-hidden="true"></div>
+</div>
+```
+
+- 모양: `--text`(기본) · `--title` · `--avatar` · `--rect`. 크기는 `style` 의 `width` · `height` 로 덮어씁니다
+- 모서리: `--radius-sm/md/lg/full`
+- 블록마다 `aria-hidden="true"` 를 달고, 기다리는 영역에 `aria-busy="true"` 를 답니다 - React 는 `aria-hidden` 을 자동으로 답니다
 
 ### Spinner
 

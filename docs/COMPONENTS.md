@@ -370,6 +370,9 @@ import { Button } from '@bigtablet/design-system';
 
 // 위험한 액션 - variant 와 조합하는 boolean prop (variant="danger" 는 존재하지 않음)
 <Button danger>삭제</Button>
+
+// 요청을 기다리는 중 - 앞 아이콘 자리에 고리, aria-busy, 눌리지 않음. 문구는 직접 바꾼다
+<Button loading={isSaving}>{isSaving ? "저장하는 중…" : "저장"}</Button>
 <Button variant="outline" danger>삭제</Button>
 
 // Sizes
@@ -1219,6 +1222,9 @@ const [isOn, setIsOn] = useState(false);
 // Sizes
 <Switch ariaLabel="알림 받기" size="sm" />
 <Switch ariaLabel="알림 받기" size="md" />
+
+// 상태를 읽거나 저장하는 중 - 손잡이에 고리, aria-busy, 눌러도 바뀌지 않음. disabled 와 달리 포커스는 남는다
+<Switch ariaLabel="알림 받기" checked={isOn} loading={isSaving} onCheckedChange={save} />
 ```
 
 #### 히트 영역은 트랙보다 넓습니다

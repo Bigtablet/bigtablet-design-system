@@ -156,6 +156,40 @@ describe("Modal - 바디 스크롤 잠금", () => {
 		expect(below?.isOpen()).toBe(false);
 	});
 
+	it("dismissible: false 는 Escape · 오버레이를 함께 막고 setDismissible 로 되돌린다", () => {
+		// React Modal 의 dismissible 과 같다. 요청 중에만 잠갔다 푸는 것은 setDismissible 로 한다
+		setViewportInset(0);
+		const el = modalMarkup("locked");
+		const m = Modal(el, { dismissible: false });
+		m?.open();
+		pressEscape();
+		el.click();
+		expect(m?.isOpen()).toBe(true);
+		m?.setDismissible(true);
+		el.click();
+		expect(m?.isOpen()).toBe(false);
+		m?.open();
+		m?.setDismissible(false);
+		pressEscape();
+		expect(m?.isOpen()).toBe(true);
+		// undefined 로 돌리면 closeOnEscape(기본 true)를 다시 따른다
+		m?.setDismissible(undefined);
+		pressEscape();
+		expect(m?.isOpen()).toBe(false);
+	});
+
+	it("dismissible 을 주면 closeOnOverlay · closeOnEscape 를 이긴다", () => {
+		setViewportInset(0);
+		const el = modalMarkup("override");
+		const m = Modal(el, { dismissible: true, closeOnOverlay: false, closeOnEscape: false });
+		m?.open();
+		pressEscape();
+		expect(m?.isOpen()).toBe(false);
+		m?.open();
+		el.click();
+		expect(m?.isOpen()).toBe(false);
+	});
+
 	it("열린 채 destroy 하면 Escape 등록도 함께 빠진다", () => {
 		// 등록이 남으면 스택 최상단이 파괴된 모달의 close 라 다음 Escape 에 그게 다시 돌고,
 		// state.isOpen 이 true 라 가드를 통과해 unlockScroll 이 한 번 더 불린다 - 그 시점에

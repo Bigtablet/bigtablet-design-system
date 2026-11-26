@@ -17,6 +17,11 @@ export interface SwitchProps
 	size?: "sm" | "md";
 	/** 비활성화 여부 */
 	disabled?: boolean;
+	/**
+	 * 지금 상태를 읽거나 저장하는 중. 손잡이에 고리를 돌리고 `aria-busy` 를 달며 눌러도 바뀌지 않는다.
+	 * `disabled` 와 달리 포커스는 남는다 - 곧 다시 누를 수 있는 상태다.
+	 */
+	loading?: boolean;
 	/** 토글 접근성 레이블(스크린 리더용) */
 	ariaLabel: string;
 	/** 버튼 요소 참조 */
@@ -35,6 +40,7 @@ export const Switch = ({
 	onCheckedChange,
 	size = "sm",
 	disabled,
+	loading = false,
 	className,
 	ariaLabel,
 	ref,
@@ -51,7 +57,7 @@ export const Switch = ({
 	 */
 	const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
 		props.onClick?.(e);
-		if (disabled || e.defaultPrevented) return;
+		if (disabled || loading || e.defaultPrevented) return;
 		const next = !isOn;
 		if (!isControlled) setInnerChecked(next);
 		onCheckedChange?.(next);
@@ -63,7 +69,7 @@ export const Switch = ({
 	const rootClassName = cn(
 		"switch",
 		`switch_size_${size}`,
-		{ switch_on: isOn, switch_disabled: disabled },
+		{ switch_on: isOn, switch_disabled: disabled, switch_loading: loading },
 		className,
 	);
 
@@ -86,6 +92,7 @@ export const Switch = ({
 			aria-labelledby={field?.labelId}
 			aria-label={field?.labelId ? undefined : ariaLabel}
 			disabled={disabled}
+			aria-busy={loading || undefined}
 			onClick={handleToggle}
 			className={rootClassName}
 		>

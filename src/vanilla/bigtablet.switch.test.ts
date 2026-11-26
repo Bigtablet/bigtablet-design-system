@@ -28,6 +28,45 @@ describe("Switch", () => {
 		expect(el.getAttribute("aria-checked")).toBe("true");
 	});
 
+	it("loading 이면 고리 클래스 · aria-busy 를 달고 클릭을 무시한다", () => {
+		const onCheckedChange = vi.fn();
+		const el = toggleMarkup();
+		const api = Switch(el, { loading: true, onCheckedChange });
+		expect(el.classList.contains("bt-switch--loading")).toBe(true);
+		expect(el.getAttribute("aria-busy")).toBe("true");
+		// 비활성과 달리 포커스는 남는다
+		expect(el.disabled).toBe(false);
+		el.click();
+		expect(onCheckedChange).not.toHaveBeenCalled();
+		api?.setLoading(false);
+		expect(el.classList.contains("bt-switch--loading")).toBe(false);
+		expect(el.hasAttribute("aria-busy")).toBe(false);
+		el.click();
+		expect(onCheckedChange).toHaveBeenCalledWith(true);
+	});
+
+	it("제어 모드 콜백의 Promise 를 기다리는 동안에도 같은 고리를 보인다", async () => {
+		let finish: () => void = () => {};
+		const el = toggleMarkup();
+		const api = Switch(el, {
+			controlled: true,
+			onCheckedChange: () =>
+				new Promise<void>((resolve) => {
+					finish = resolve;
+				}),
+		});
+		el.click();
+		expect(el.classList.contains("bt-switch--loading")).toBe(true);
+		// 소비자가 그 사이 loading 을 껐다 켜도 Promise 가 끝나기 전에는 풀리지 않는다
+		api?.setLoading(false);
+		expect(el.getAttribute("aria-busy")).toBe("true");
+		finish();
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(el.classList.contains("bt-switch--loading")).toBe(false);
+		expect(el.hasAttribute("aria-busy")).toBe(false);
+	});
+
 	it("비활성이면 숨은 input 을 제출하지 않는다 (#981)", () => {
 		const el = toggleMarkup();
 		el.dataset.name = "agree";

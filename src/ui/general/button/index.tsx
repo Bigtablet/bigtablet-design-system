@@ -32,6 +32,11 @@ interface ButtonBaseProps {
 	 * 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로).
 	 */
 	disabled?: boolean;
+	/**
+	 * 요청을 기다리는 중. 앞 아이콘 자리에 스피너를 그리고 `aria-busy` 를 달며, `disabled` 처럼 눌리지 않는다.
+	 * 라벨은 바꾸지 않는다 - "저장하는 중…" 같은 문구는 children 으로 넘긴다.
+	 */
+	loading?: boolean;
 }
 
 /**
@@ -76,13 +81,17 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		fullWidth = false,
 		radius,
 		danger = false,
-		disabled = false,
+		disabled: disabledProp = false,
+		loading = false,
 		as,
 		className,
 		children,
 		ref,
 		...rest
 	} = props;
+
+	// 기다리는 동안은 다시 눌리면 안 된다 - 비활성과 같은 경로로 막는다
+	const disabled = disabledProp || loading;
 
 	const buttonClassName = cn(
 		"button",
@@ -93,15 +102,20 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		danger && "button_danger",
 		// anchor 엔 native :disabled 가 안 먹으므로 클래스로 비활성 스타일 적용 (button 도 무해)
 		disabled && "button_disabled",
+		loading && "button_loading",
 		className,
 	);
 
 	const content = (
 		<>
-			{leadingIcon && (
-				<span className="button_icon" aria-hidden="true">
-					{leadingIcon}
-				</span>
+			{loading ? (
+				<span className="button_spinner" aria-hidden="true" />
+			) : (
+				leadingIcon && (
+					<span className="button_icon" aria-hidden="true">
+						{leadingIcon}
+					</span>
+				)
 			)}
 			{children && <span className="button_label">{children}</span>}
 			{trailingIcon && (
@@ -131,6 +145,7 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 				ref={ref as React.Ref<HTMLButtonElement>}
 				type={type}
 				disabled={disabled}
+				aria-busy={loading || undefined}
 				className={buttonClassName}
 				{...buttonRest}
 			>
@@ -146,6 +161,7 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 			ref={ref}
 			className={buttonClassName}
 			aria-disabled={disabled || undefined}
+			aria-busy={loading || undefined}
 			tabIndex={disabled ? -1 : tabIndex}
 			onClick={
 				disabled

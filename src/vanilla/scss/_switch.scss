@@ -96,6 +96,31 @@
     }
   }
 
+  /* React `<Switch loading>` - JS 가 붙인다(`loading` 옵션 · setLoading(), 제어 모드 콜백의 Promise 대기).
+     손잡이 가장자리를 도는 고리. 색은 트랙 색이라 흰 손잡이 위에서 보인다 */
+  &--loading {
+    cursor: progress;
+
+    .bt-switch__thumb {
+      color: token.$color_base_neutral_600;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-sizing: border-box;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: bt-spinner-spin token.$duration_loading_spinner linear infinite;
+      }
+    }
+
+    &.bt-switch--on .bt-switch__thumb {
+      color: var(--bt-color-accent);
+    }
+  }
+
   /* React Switch 과 동일하게 native `disabled` 속성만 지원한다.
      (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
   &:disabled {
