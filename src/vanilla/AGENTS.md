@@ -1,0 +1,452 @@
+# Vanilla JS Package (src/vanilla/)
+
+> src/vanilla 작업 시 로드되는 참조. 전체 프로젝트 규약은 루트 [AGENTS.md](../../AGENTS.md).
+
+
+For non-React environments (Thymeleaf, JSP, PHP, Django, etc.)
+
+### Source Layout
+
+소스는 컴포넌트별로 나뉘어 있고(#926) 배포물은 파일 하나씩으로 묶인다 - 소비자에게는 차이가 없다.
+
+```
+src/vanilla/
+├── bigtablet.js        # 진입점 - js/* 를 모아 export + DOMContentLoaded 자동 초기화
+├── bigtablet.scss      # 진입점 - 토큰·테마 @use 후 scss/* 를 캐스케이드 순서대로 @use
+├── js/
+│   ├── utils.js        # $, $$, on, generateId, escapeHtml, parseBoolAttr, FOCUSABLE_SELECTORS, focusablesIn, trapTab, returnFocusTarget, measureViewportInset
+│   ├── locale.js       # 문구 카탈로그 t() · setLocale · setMessages (React messages.ts 의 부분집합, #949)
+│   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
+│   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
+│   ├── app-shell.js · sidebar.js  # 고정 헤더 높이 · 사이드바 접기 (#950)
+│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
+│   ├── sentences.js    # 문장 단위 줄바꿈 - React 와 같은 src/text/core.ts 를 import 해 번들에 싣는다 (#1139)
+│   └── init.js         # data-bt-* 자동 초기화
+└── scss/
+    ├── _custom-properties.scss   # :root --bt-* 변수
+    ├── _{component}.scss         # button · text-field · … · toast
+    ├── _utilities.scss · _autofill.scss
+    └── _reduced-motion.scss      # 앞 규칙을 덮어야 해서 마지막
+```
+
+**컴포넌트를 추가할 때:** `js/{name}.js` 에서 `export function {Name}` → `bigtablet.js` 에 `export { {Name} } from` 한 줄
+(자동 초기화가 필요하면 `init.js` 에도). 스타일은 `scss/_{name}.scss` 를 만들고 `bigtablet.scss` 의 `_utilities` 앞에
+`@use` 한다 - 토큰을 쓰면 partial 맨 위에 `@use "../../styles/token" as token;`. 테스트는 지금처럼
+`bigtablet.{name}.test.ts` 에서 `./bigtablet.js` 를 import 한다.
+
+### Build Output
+```
+dist/vanilla/
+├── bigtablet.css       # Full CSS (약 125KB, gzip 약 22KB)      - 배포 제외
+├── bigtablet.min.css   # Minified CSS (약 93KB, gzip 약 12KB)   - 배포됨
+├── bigtablet.js        # Full JS (약 111KB, gzip 약 28KB, esbuild IIFE) - 배포 제외
+├── bigtablet.min.js    # Minified JS (약 60KB, gzip 약 20KB)    - 배포됨
+└── examples/           # HTML examples         - 배포 제외
+```
+
+"배포 제외" 는 `package.json` `files` 의 `!dist/vanilla/...` 로 npm tarball 에서 빠진다는 뜻이다
+(로컬 빌드에는 생성된다). 소비자에게 안내할 경로는 압축본 2개뿐 - `docs/VANILLA.md#설치` 참고.
+
+### 테스트
+
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker,sidebar,locale,sentences}.test.ts` 가 이 번들을 덮는다
+(`pnpm test` 에 포함). 실제 Chromium 에서 레이아웃·대비를 재는 `bigtablet.*.browser.test.ts`
+(alert · badge · copy-button · custom-properties · forced-colors · inline-alert · modal · table · toast)는
+`pnpm test:browser` 로 돈다. 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
+추가하면 그 컴포넌트 파일에 케이스를 더한다. `data-bt-*` 자동 초기화(`init`)는 각 컴포넌트 파일이
+자기 속성을 덮고(modal(Dropdown 포함) · pagination · copy-button · date-picker · sidebar), 공통 `describe("init")` 블록은 pagination 파일에 있다. 공용 헬퍼와
+`resetVanillaDom()` 은 `bigtablet.test-utils.ts` - 새 테스트 파일은 맨 위에서 `resetVanillaDom()` 을 부른다.
+
+jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접 세워야 한다. 자세한 주의점은
+[docs/TESTING.md](../../docs/TESTING.md#vanilla-번들-테스트) 참고.
+
+### Class Naming Convention (BEM-like)
+```
+.bt-{component}
+.bt-{component}__{element}
+.bt-{component}--{modifier}
+.bt-{component}.is-{state}
+```
+
+### Component Classes Reference
+
+클래스 이름·JS 옵션 이름은 대응하는 React 컴포넌트의 prop 값과 **같게 맞춘다**. deprecated 별칭은
+두지 않는다 - 이름이 갈라지면 별칭을 추가하는 대신 구 이름을 제거하고
+[docs/MIGRATION.md](../../docs/MIGRATION.md) 에 old → new 표를 남긴다 (v3.8.0 에서 정리 완료).
+
+| Component | Base Class | Modifiers | States |
+|-----------|------------|-----------|--------|
+| Button | `.bt-button` | `--sm/md/lg/xl`, `--filled/tonal/outline/text`, `--danger`(variant 와 직교), `--radius-none/xs/sm/md/lg/xl/full`(기본 full), `--full-width` | `:disabled` |
+| TextField | `.bt-text-field` | `--full-width` | |
+| TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
+| Checkbox | `.bt-checkbox` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
+| Radio | `.bt-radio` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
+| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
+| Dropdown | `.bt-dropdown` | | |
+| Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
+| Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
+| Dropdown Search | `.bt-dropdown__search` (+ `__search-icon`, `__search-input`) | | |
+| Dropdown Options | `.bt-dropdown__options` (role=listbox 스크롤 컨테이너) | | |
+| Dropdown Option | `.bt-dropdown__option` | | `.is-selected`, `.is-active`, `.is-disabled`, `[hidden]`(필터로 숨김) |
+| Dropdown Option Check | `.bt-dropdown__option-check` (multiple 전용 좌측 체크 슬롯) | | |
+| Dropdown Empty | `.bt-dropdown__empty` (검색 결과 0개) | | |
+| Modal | `.bt-modal` | | `.is-open` (서버가 붙여 그리면 초기화가 열린 상태로 시작 - #919) |
+| Toast | `.bt-toast-container`(리전) > `.bt-toast` (+ `__announcer`(리전 직속 숨은 `role=status`·`role=alert` 공지 영역 둘), `__live`, `__icon--{tone}`, `__message`, `__action`, `__close`, `__progress--{tone}`) - JS 가 만든다. 리전은 토스트가 하나 이상일 때만 `role="region"` + `aria-label` | | `[data-state="closed"]`(퇴출 중) |
+| CopyButton | `.bt-copy-button`(JS 가 붙인다) + `__icon`(상태 아이콘) · `__label`(두 문구로 폭 고정) - 버튼 클래스는 `.bt-button` 그대로 | | `[data-state="idle\|copied\|failed"]` - copied 는 성공 색 · 체크, failed 는 오류 색 · X (#1158) |
+| InlineAlert | `.bt-inline-alert` (+ `__icon`(빈 span - CSS mask 아이콘), `__content` > `__title` · `__message` · `__action`) - CSS 만 | `--neutral/info/success/warning/error`(기본 info) | `[hidden]` |
+| Badge | `.bt-badge` - CSS 만 (React label · md) | `--accent(기본)/neutral/info/success/warning/error`, `--soft`(기본 solid) | |
+| Table | `.bt-table-wrap`(가로 스크롤 상자, `--sticky-header`) > `table.bt-table` - CSS 만, 소비자가 그린 표에 클래스만 | `--sm/lg`, `--fixed`(+ `--bt-table-min-width`), `--cards`(compact 에서 카드, 칸은 `data-label`) | `tr.is-selected`, `td.bt-table__truncate`, `.bt-table__empty` |
+| Card | `.bt-card` | `--bordered`, `--shadow-none/sm/md/lg`(기본 sm), `--p-none/sm/md/lg`(기본 md), `--accent/glass/outline`, `--interactive` | |
+| Card Title / Body | `.bt-card__title`(h2~h6), `.bt-card__body` | | |
+| Card Footer | `.bt-card__footer` | `--start/between/end`(기본 end) | |
+| Spinner | `.bt-spinner` | 없음 - 크기는 `--bt-spinner-size` (기본 24px) | |
+| Pagination | `.bt-pagination` | | |
+| DatePicker | `.bt-date-picker` (연·월·일 select, CSS 만) | `--full-width`, `--sm/md/lg`(칸 높이 - Dropdown · TextField 와 같은 단계, JS `size` · `data-size`), `--calendar`(JS `DatePicker()` · `data-bt-date-picker` 가 칸 · 달력 팝오버 · 시각 칸을 그린다, `data-range` 면 범위형 - `DateRangePicker()`) | `[aria-expanded]` |
+| FileInput | `.bt-file-input` | | `.bt-file-input--disabled` |
+| AppShell | `.bt-app-shell` > `.bt-sidebar` + `.bt-app-shell__main` (고정 헤더면 `__body` > `__header` + `__main`) - 헤더 높이는 JS `AppShell()` 가 `--bt-top-inset` 으로 | `__main--flush` | |
+| Sidebar | `.bt-sidebar` (+ `__brand`(`__brand-full` · `__brand-mark`), `__toggle`(JS), `__nav`, `__section`, `__section-label`, `__item`, `__item-icon`, `__item-label`, `__footer`) - CSS 만, 너비 `--bt-sidebar-width` | `--static`(< 600px 하단 바로 바뀌지 않음), `--collapsed`(JS `Sidebar()` · `data-bt-sidebar`) | `[aria-current="page"]` · `.is-active`, `[aria-disabled="true"]` |
+| 유틸리티 | `.bt-hidden`(`display:none`), `.bt-sr-only`(시각적으로만 숨김), `.bt-sr-only-focusable`(포커스 시 드러남), `.bt-skip-link`(포커스 때 왼쪽 위에 뜨는 건너뛰기 링크 - 레이아웃 칸 없음) | | |
+
+`.bt-sr-only` 계열은 React 의 `token.visually_hidden` 믹스인과 **같은 소스**에서 생성된다 - 두 번들이 갈라지지 않는다.
+
+```html
+<!-- 라이브 리전: 화면에는 안 보이고 스크린리더만 읽는다 -->
+<span class="bt-sr-only" role="status" aria-live="polite">저장되었습니다</span>
+
+<!-- 스킵 링크: Tab 을 누르면 왼쪽 위에 뜬다. 대상은 <main id="main" tabindex="-1"> -->
+<a href="#main" class="bt-skip-link">본문으로 건너뛰기</a>
+```
+
+`_utilities.scss` 는 DS 밖 요소(`a[href]` · `[tabindex]` · `summary`)의 키보드 포커스에 `--bt-focus-ring` 을 그린다 -
+`:where()` 라 특이도 0, 컴포넌트 규칙이 언제나 이긴다. 방향키로 옮기는 `tabindex="-1"` 항목도 포함하고,
+건너뛰기 대상 `<main tabindex="-1">` 만 링 · 기본 outline 을 지운다 (#940).
+
+### HTML Examples
+
+#### Button
+```html
+<button class="bt-button bt-button--md bt-button--filled">Filled</button>
+<button class="bt-button bt-button--md bt-button--tonal">Tonal</button>
+<button class="bt-button bt-button--md bt-button--outline">Outline</button>
+<button class="bt-button bt-button--md bt-button--text">Text</button>
+<button class="bt-button bt-button--md bt-button--outline bt-button--danger">Delete</button>
+```
+
+#### TextField
+```html
+<div class="bt-text-field">
+  <label class="bt-text-field__label" for="field-1">Label</label>
+  <div class="bt-text-field__wrap">
+    <input id="field-1" type="text" class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md" placeholder="Enter...">
+  </div>
+  <span class="bt-text-field__helper">Helper text</span>
+</div>
+
+<!-- Error state -->
+<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--error">
+<span class="bt-text-field__helper bt-text-field__helper--error">Error message</span>
+
+<!-- 식별자 칸 - l/I/1 과 0/O 를 구분되게 렌더 (아이디·인증코드·시리얼·사업자번호) -->
+<input class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md bt-text-field__input--identifier">
+```
+
+#### Checkbox
+```html
+<label class="bt-checkbox">
+  <input type="checkbox" class="bt-checkbox__input">
+  <span class="bt-checkbox__box"></span>
+  <span class="bt-checkbox__label">Label</span>
+</label>
+```
+
+#### Radio
+```html
+<label class="bt-radio">
+  <input type="radio" name="group" class="bt-radio__input">
+  <span class="bt-radio__dot"></span>
+  <span class="bt-radio__label">Option</span>
+</label>
+```
+
+#### Toggle
+```html
+<button class="bt-toggle" data-bt-toggle aria-label="알림 받기">
+  <span class="bt-toggle__thumb"></span>
+</button>
+
+<!-- On state -->
+<button class="bt-toggle bt-toggle--on" data-bt-toggle aria-label="알림 받기">
+  <span class="bt-toggle__thumb"></span>
+</button>
+```
+
+#### Dropdown
+```html
+<div class="bt-dropdown" data-bt-dropdown>
+  <label class="bt-dropdown__label" for="my-dropdown-control">Label</label>
+  <button type="button" id="my-dropdown-control" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">선택…</span>
+    <span class="bt-dropdown__icon">▼</span>
+  </button>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="1">Option 1</li>
+    <li class="bt-dropdown__option" data-value="2">Option 2</li>
+    <li class="bt-dropdown__option is-disabled" data-value="3">Disabled</li>
+  </ul>
+</div>
+```
+
+React 와 동일하게 `multiple` / `searchable` 을 지원한다. 마크업은 그대로 두고
+`data-multiple` / `data-searchable` 만 붙이면 되고, 검색 행(`__search`)·스크롤 컨테이너
+(`__options`)·빈 결과(`__empty`)·체크 슬롯(`__option-check`)은 JS 가 만들어 넣는다.
+
+```html
+<!-- 다중 선택 - 옵션 토글 시 패널 유지, 트리거는 "N개 선택" 요약, hidden input 은 같은 name 반복 -->
+<div class="bt-dropdown" data-bt-dropdown data-multiple data-name="topping">
+  <button type="button" class="bt-dropdown__control bt-dropdown__control--outline bt-dropdown__control--md">
+    <span class="bt-dropdown__placeholder">토핑을 고르세요...</span>
+    <span class="bt-dropdown__icon">▼</span>
+  </button>
+  <ul class="bt-dropdown__list">
+    <li class="bt-dropdown__option" data-value="cheese">치즈</li>
+    <li class="bt-dropdown__option" data-value="bacon">베이컨</li>
+  </ul>
+</div>
+
+<!-- 검색 - 대소문자·공백 무시 부분 일치. 한글 초성·조합 중 글자도 맞춘다 (React matchesSearch 이식). -->
+<div class="bt-dropdown" data-bt-dropdown data-searchable
+     data-search-placeholder="검색…" data-empty-text="결과 없음">
+  ...
+</div>
+```
+
+#### Modal
+```html
+<button data-bt-modal-open="my-modal">Open</button>
+
+<div id="my-modal" class="bt-modal" data-bt-modal>
+  <div class="bt-modal__panel" style="width: 480px;">
+    <button class="bt-modal__close" data-modal-close aria-label="닫기">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="bt-modal__header">Title</div>
+    <div class="bt-modal__body">Content</div>
+    <div class="bt-modal__footer">
+      <button class="bt-button bt-button--md bt-button--outline" data-modal-close>Cancel</button>
+      <button class="bt-button bt-button--md bt-button--filled" data-modal-close>Confirm</button>
+    </div>
+  </div>
+</div>
+```
+
+접근성 이름은 필수다 - `.bt-modal__header` 가 있으면 `aria-labelledby` 로 잇고, 없으면 `.bt-modal__panel` 에
+`aria-label` 을 직접 단다. 번들은 이름을 지어내지 않고 `console.warn` 만 남긴다 (React Modal #473 과 같은 결론).
+
+#### Card
+```html
+<!-- title / body / footer 3단 구성 (React Card 의 heading / children / footer 와 동일).
+     제목은 React `headingAs`(기본 h3)와 맞춰 시맨틱 헤딩 태그를 쓴다. -->
+<div class="bt-card bt-card--bordered bt-card--p-md">
+  <h3 class="bt-card__title">Title</h3>
+  <div class="bt-card__body">
+    <p>Content</p>
+  </div>
+  <div class="bt-card__footer">  <!-- --start / --between / --end (기본 end) -->
+    <button class="bt-button bt-button--sm bt-button--text">Cancel</button>
+    <button class="bt-button bt-button--sm bt-button--filled">Save</button>
+  </div>
+</div>
+
+<div class="bt-card bt-card--shadow-md bt-card--p-lg">
+  Shadow card
+</div>
+
+<div class="bt-card bt-card--accent bt-card--interactive">
+  Accent + interactive card
+</div>
+```
+
+#### Spinner
+```html
+<!-- 기본 24px (React <Spinner /> 기본값) -->
+<span class="bt-spinner" role="status" aria-label="로딩 중"></span>
+<!-- 임의 크기 -->
+<span class="bt-spinner" style="--bt-spinner-size: 32px" role="status" aria-label="로딩 중"></span>
+```
+
+#### Pagination
+```html
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10">
+  <!-- JS renders automatically -->
+</nav>
+
+<!-- 링크 모드 - 번호·이전·다음을 <a href> 로. {page} 만 치환, 끝쪽 이전/다음은 disabled 버튼 -->
+<nav class="bt-pagination" data-bt-pagination data-page="1" data-total-pages="10"
+     data-href="/logs?page={page}"></nav>
+```
+
+### JavaScript API
+
+```javascript
+// Auto-init: elements with data-bt-* are initialized on DOMContentLoaded
+
+// Manual initialization - 옵션 이름은 React Dropdown prop 과 동일 (별칭 없음)
+const dropdown = Bigtablet.Dropdown('#my-dropdown', {
+  options: [{ value: '1', label: 'One' }],
+  placeholder: '선택…',
+  defaultValue: '1',        // 처음 값 (multiple 이면 배열) - onValueChange 는 부르지 않는다
+  disabled: false,
+  name: 'field',            // hidden input 으로 폼 제출 참여 (multiple 은 같은 name 반복)
+  multiple: false,          // true 면 값이 string[] 이고 선택해도 패널이 닫히지 않는다
+  searchable: false,        // true 면 패널 상단 검색 입력 (대소문자·공백 무시, 한글 초성·조합 중 매칭)
+  searchPlaceholder: '검색…',
+  emptyText: '결과 없음',
+  selectedSummary: (count) => `${count}개 선택`,  // multiple 트리거 요약 문구
+  onValueChange: (value, option) => console.log(value)
+  // multiple 이면 (values: string[], options: Option[]) 로 호출된다
+});
+dropdown.getValue();        // 단일 → string | null / 다중 → string[]
+dropdown.setValue('1');     // 다중 모드는 배열도 받는다: setValue(['1', '2'])
+dropdown.open();
+dropdown.close();
+dropdown.toggle();
+dropdown.setDisabled(true);
+dropdown.destroy();         // 바인딩한 리스너 해제
+
+const modal = Bigtablet.Modal('#my-modal', {
+  closeOnOverlay: true,
+  onOpen: () => {},
+  onClose: () => {},        // 닫기 시작할 때
+  onExited: () => {}        // 퇴출 모션이 끝난 뒤 (React onExited) - #913
+});
+modal.open();
+modal.close();              // 포커스는 바로, is-open · 스크롤 잠금은 모션 뒤에 걷힌다 (그사이 data-state="closed")
+modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
+modal.showStep('verify');   // 패널 안 [data-bt-modal-step] 하나만 보이게 - 높이 · 내용 전환, 포커스 이동 (#1162). currentStep() 으로 지금 단계
+
+const sw = Bigtablet.Toggle('#my-toggle', {
+  name: 'notify',           // hidden input 으로 폼 제출 참여 (data-name)
+  disabled: false,
+  onCheckedChange: (checked) => console.log(checked)
+});
+sw.toggle();
+sw.setChecked(true);
+sw.isChecked();
+sw.setDisabled(true);       // hidden input 도 disabled - 제출 안 됨
+sw.destroy();
+
+// 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.
+// 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
+const push = Bigtablet.Toggle('#push', {
+  controlled: true,
+  onCheckedChange: async (next) => {
+    try { if (await save(next)) push.setChecked(next); else showError(); }
+    catch { showError(); } // reject 도 실패 - 잡지 않으면 대기만 풀리고 사용자는 모른다
+  }
+});
+
+const pagination = Bigtablet.Pagination('#my-pagination', {
+  page: 1,
+  totalPages: 10,
+  sibling: 2,               // 현재 쪽 양옆 번호 수 (기본 2)
+  onPageChange: (page) => console.log(page),
+  href: null,               // '/logs?page={page}' 를 주면 링크 모드 (onPageChange 안 부름)
+  prevLabel: '이전 페이지',  // 이전·다음 버튼 aria-label (data-prev-label · data-next-label)
+  nextLabel: '다음 페이지',
+  navLabel: '페이지 이동',   // <nav> aria-label (이미 있으면 그대로, data-nav-label)
+  showPageJump: false       // true 면 현재 쪽 칸이 입력칸 - 적고 Enter 로 이동 (data-page-jump, 링크 모드면 href 로 이동)
+});
+pagination.setPage(5);
+pagination.getPage();
+pagination.setTotalPages(30); // 현재 쪽은 범위 안으로 보정
+pagination.destroy();       // 그린 버튼·리스너 제거
+
+// DatePicker 달력형 (#937) - 옵션 이름은 React DatePicker · DateCalendar · TimePicker prop 과 같다 (data-* 는 kebab-case)
+const to = Bigtablet.DatePicker('#to', {
+  name: 'to', time: true, minuteStep: 1,  // 값 "YYYY-MM-DDTHH:mm" (datetime-local 과 같은 형식)
+  min: '2026-01-01', minFrom: '#from',    // 다른 DatePicker 값을 최소로 따른다 (시작 ~ 종료는 칸 두 개)
+  onValueChange: (value) => {}
+});
+to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
+// size: 'sm' | 'md'(기본) | 'lg' (data-size) - 폼 칸 · Button 은 React 와 같은 높이 단계라 한 줄에 맞는다 (#960)
+// clearable: true (data-clearable) - 값이 있으면 × · Delete 로 비운다 → onValueChange(null), 범위면 { start: null, end: null } (#965)
+
+// 로케일 (#949) - <html lang> 을 따르고, 자동 초기화 전에 바꾼다. 컴포넌트 기본 문구는 하드코딩하지 말고 t(key) 로
+Bigtablet.setLocale('en'); Bigtablet.setMessages({ 'pagination.prev': 'Prev' });
+
+// Alert (no element needed)
+Bigtablet.Alert({
+  title: 'Title',
+  message: 'Message',
+  tone: 'info',  // info, success, warning, error
+  showCancel: true,
+  onConfirm: () => {},
+  onCancel: () => {}
+});
+
+// CopyButton (#918) - <button data-bt-copy="값"> 는 자동 초기화. 옵션 이름은 React CopyButton 과 같다
+Bigtablet.CopyButton('#copy', {
+  text: () => input.value,   // 또는 data-bt-copy. 바뀌는 문구만 [data-copy-label] 로 감쌀 수 있다
+  copiedLabel: '복사됨', failedLabel: '복사하지 못했습니다', resetAfter: 2000,
+  ariaLabel: '192.168.10.1 주소 복사', // 이름만 따로 (data-aria-label, #966) - 버튼에 직접 쓴 aria-label 은 label 로 덮인다
+  onCopy: (text) => {}, onError: (error) => {}
+});
+
+// Toast (no element needed) - React useToast 와 같은 모양·동작. 최신이 모서리 쪽(아래 배치면 맨 아래), 최대 5개
+const t = Bigtablet.Toast('저장했습니다', 'success', {
+  id: 'save',               // 같은 id 가 떠 있으면 새로 쌓지 않고 갱신 - 남은 시간을 다시 세고 다시 공지 (#1154)
+  duration: 3000,           // Infinity 또는 0 이하면 시간으로는 안 닫힘·진행 막대 없음 - 닫기 버튼·dismiss·action, 5개 초과 시 오래된 것부터 닫힘
+  action: { label: '실행 취소', onClick: () => {} },
+  closeLabel: '닫기',
+  regionLabel: '알림'
+});
+t.dismiss();
+
+// 문장 단위 줄바꿈 (#1139) - React renderSentences 와 같은 마크업(.sentences_item · .sentences_phrase).
+// Toast · Alert message 와 data-bt-sentences 요소에 자동 적용
+Bigtablet.Sentences.set(el, '저장했어요. 다른 기기에도 곧 반영돼요.');
+Bigtablet.Sentences.apply(el);  // 이미 있는 글자를 나눈다 - 안쪽 요소는 그대로
+```
+
+### CSS Custom Properties
+
+All design tokens available as CSS variables:
+```css
+:root {
+  --bt-color-primary: #121212;
+  --bt-color-background: #ffffff;
+  --bt-color-text-primary: #121212;
+  --bt-color-border: #e5e5e5;
+  --bt-color-error: #b91c1c;
+  --bt-color-success: #047857;
+  --bt-color-info: #1d4ed8;
+  --bt-spacing-xs: 0.25rem;
+  --bt-spacing-sm: 0.5rem;
+  --bt-spacing-md: 0.75rem;
+  --bt-spacing-lg: 1rem;
+  --bt-radius-sm: 6px;
+  --bt-radius-md: 8px;
+  --bt-radius-full: 9999px;
+  --bt-elevation-1: 0 1px 1px -1px rgba(0,0,0,0.20), 0 3px 3px 0 rgba(0,0,0,0.12);
+  --bt-transition-base: 0.2s ease-in-out;
+}
+```
+
+### Thymeleaf Example
+```html
+<form th:action="@{/submit}" method="post">
+  <div class="bt-text-field">
+    <label class="bt-text-field__label" for="name">Name</label>  <!-- th:field 가 id="name" 을 만든다 -->
+    <input type="text"
+           th:field="*{name}"
+           class="bt-text-field__input bt-text-field__input--outline bt-text-field__input--md"
+           th:classappend="${#fields.hasErrors('name')} ? 'bt-text-field__input--error' : ''">
+    <span class="bt-text-field__helper bt-text-field__helper--error"
+          th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}"></span>
+  </div>
+
+  <button type="submit" class="bt-button bt-button--md bt-button--filled">Submit</button>
+</form>
+```
+

@@ -5,8 +5,8 @@ description: "@bigtablet/design-system 릴리즈 - 버전 등급 판단, develop
 
 # 릴리즈
 
-규칙의 원본은 CLAUDE.md `### Release & Changelog` 다 (버전 등급 · `(렌더 변경)` · CHANGELOG 양식).
-이 스킬은 순서와 명령만 담는다. 둘이 다르면 CLAUDE.md 가 맞다.
+규칙의 원본은 AGENTS.md `### Release & Changelog` 다 (버전 등급 · `(렌더 변경)` · CHANGELOG 양식).
+이 스킬은 순서와 명령만 담는다. 둘이 다르면 AGENTS.md 가 맞다.
 
 **흐름**: develop 에 `deploy: X.Y.Z` 커밋 하나 → develop→main PR 하나(`merge: release`) → 사람 approve →
 merge commit 머지 → main 에 태그 → `release.yml` 이 npm publish + GitHub Release.
@@ -30,10 +30,7 @@ git log --oneline --no-merges origin/main..origin/develop
 git diff --stat origin/main origin/develop
 ```
 
-- 공개 표면(`src/index.ts` export · `/vanilla` · `/text` · SCSS 토큰 · CSS 변수 · `style.css` · `tailwind.css`)에서
-  제거 · 이름 변경 · 시그니처 변경 → major. 새 export · prop · 토큰 → minor. 그 밖(버그 · 문서 · 내부) → patch
-- 렌더가 바뀌면: 결함 수정이면 patch, 의도적 디자인 변경이면 minor. 어느 쪽이든 CHANGELOG 줄 앞에 `(렌더 변경)`
-- 한 주기에 모인 변경은 릴리즈 하나로, 가장 높은 등급으로 낸다. patch 를 따로 쪼개자고 먼저 권하지 않는다
+- 등급 · `(렌더 변경)` · 묶음 규칙은 AGENTS.md `### Release & Changelog` 1번을 따른다 - 여기 옮겨 적지 않는다
 - 문서 · 사이트 · `.claude` 만 바뀌어도 npm README 가 바뀌면 patch 로 낸다
 - 등급이 애매하면(prop 제거인데 minor 로 갈지 등) 근거를 들어 사용자에게 묻는다
 

@@ -489,7 +489,7 @@ it("calls callback with correct arguments", () => {
 | utils/use-safe-layout-effect.ts | 100% | 50% | 100% | 100% |
 
 > 이 절의 수치와 표는 `pnpm coverage:docs` 가 씁니다 - unit 테스트를 커버리지와 함께 돌리고
-> `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표와 `CLAUDE.md` 의 한 줄을 갱신합니다.
+> `scripts/update-coverage-docs.py` 가 `coverage/coverage-summary.json` 기준으로 이 표를 갱신합니다.
 > 손으로 고치지 않습니다(예전에 788 tests 시절 수치로 굳어 있었습니다). 릴리즈 PR(develop → main)이 열리면 CI
 > (`.github/workflows/coverage-docs.yml`)가 이 명령을 돌려 바뀐 수치를 develop 에 커밋합니다.
 
