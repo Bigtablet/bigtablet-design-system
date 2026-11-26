@@ -111,8 +111,16 @@
 | Vanilla `Dropdown()` | `emptyText` 옵션 · `data-empty-text` | `emptyMessage` · `data-empty-message` |
 | `ToastProvider` | `closeAriaLabel` | `closeLabel` (`Modal` · `Drawer` 와 같음) |
 | `Table` · `DataView` | `selectAllAriaLabel` · `selectRowAriaLabel` | `selectAllLabel` · `selectRowLabel` |
+| `useAlert` · `useConfirm` 옵션 | `cancelText` · `confirmText` | `cancelLabel` · `confirmLabel` (버튼 문구는 다른 컴포넌트처럼 `*Label`) |
+| Vanilla `Alert()` 옵션 | `cancelText` · `confirmText` | `cancelLabel` · `confirmLabel` |
 
-**앱 쪽에서 할 일:** `grep -rnE "emptyText|data-empty-text|closeAriaLabel|select(All|Row)AriaLabel" --include=*.tsx --include=*.ts --include=*.html --include=*.js`. Vanilla 의 `data-empty-text` 는 컴파일러가 잡지 못합니다 - 남겨 두면 기본 문구("결과 없음")가 나옵니다.
+**앱 쪽에서 할 일:** `grep -rnE "emptyText|data-empty-text|closeAriaLabel|select(All|Row)AriaLabel|cancelText|confirmText" --include=*.tsx --include=*.ts --include=*.html --include=*.js`. Vanilla 의 `data-empty-text` 는 컴파일러가 잡지 못합니다 - 남겨 두면 기본 문구("결과 없음")가 나옵니다.
+
+`cancelText` · `confirmText` 는 쓰는 곳이 많습니다. 옵션 객체를 `alert({ ... })` 에 바로 넘긴 곳은 타입 체크가 잡지만, 변수에 담아 넘기거나 테스트에서 `vi.mock` 한 `alert` 의 인자를 단언하는 곳(`expect(lastAlert?.confirmText)`)은 잡지 못합니다 - 남으면 버튼이 기본 문구("확인" · "취소")로 나옵니다. 아래 치환으로 한 번에 바꿉니다 (같은 이름의 앱 자체 prop 이 있으면 치환 뒤 diff 를 확인합니다).
+
+```bash
+grep -rlE "\b(cancelText|confirmText)\b" apps packages src --include=*.ts --include=*.tsx | xargs perl -pi -e 's/\bcancelText\b/cancelLabel/g; s/\bconfirmText\b/confirmLabel/g'
+```
 
 ### 4.10.0 에 deprecated 된 것 제거
 
@@ -127,9 +135,10 @@
 
 | 저장소 | 걸리는 곳 |
 |------|------|
-| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`), `ToastProvider` `closeAriaLabel` 2곳 |
-| homepage-web | `token.hover_lift` 3곳 (3.2.2 고정 - 올릴 때 교체) |
-| coupon-web · frontend-template | 없음 |
+| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`), `ToastProvider` `closeAriaLabel` 2곳, Alert `cancelText` · `confirmText` 115줄 |
+| homepage-web | `token.hover_lift` 3곳, Alert `cancelText` · `confirmText` 2줄 (3.2.2 고정 - 올릴 때 교체) |
+| coupon-web | Alert `cancelText` · `confirmText` 2줄 |
+| frontend-template | 없음 |
 
 ---
 

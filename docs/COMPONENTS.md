@@ -1543,8 +1543,8 @@ function YourComponent() {
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
       showCancel: true,
-      confirmText: '삭제',
-      cancelText: '취소',
+      confirmLabel: '삭제',
+      cancelLabel: '취소',
       onConfirm: () => console.log('삭제됨'),
       onCancel: () => console.log('취소됨'),
     });
@@ -1575,7 +1575,7 @@ const alert = showAlert({
     />
   ),
   showCancel: true,
-  confirmText: "저장",
+  confirmLabel: "저장",
   confirmDisabled: true,
   onConfirm: () => savePolicy({ reason }),
 });
@@ -1601,8 +1601,8 @@ if (await confirm({
   tone: "warning",
   title: "변경사항을 버릴까요?",
   message: "저장하지 않은 내용은 복구할 수 없습니다.",
-  confirmText: "버리기",
-  cancelText: "계속 편집",
+  confirmLabel: "버리기",
+  cancelLabel: "계속 편집",
   destructive: true,
 })) {
   discard();
@@ -1612,7 +1612,7 @@ if (await confirm({
 await confirm({
   tone: "error",
   title: `${order.no} 를 삭제할까요?`,
-  confirmText: "삭제",
+  confirmLabel: "삭제",
   destructive: true,
   onConfirm: () => deleteOrder(order.id),   // Promise
 });

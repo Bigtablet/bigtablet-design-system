@@ -734,7 +734,7 @@ Alert는 JavaScript로만 사용합니다.
       title: '알림',
       message: '작업이 완료되었습니다.',
       tone: 'info',  // 'info', 'success', 'warning', 'error'
-      confirmText: '확인'
+      confirmLabel: '확인'
     });
   }
 
@@ -745,8 +745,8 @@ Alert는 JavaScript로만 사용합니다.
       message: '정말 삭제하시겠습니까?',
       tone: 'warning',
       showCancel: true,
-      confirmText: '삭제',
-      cancelText: '취소',
+      confirmLabel: '삭제',
+      cancelLabel: '취소',
       actionsAlign: 'right',  // 'left', 'center', 'right'
       onConfirm: () => {
         console.log('삭제됨');
@@ -766,8 +766,8 @@ Alert는 JavaScript로만 사용합니다.
 | `title` | `string` | - | 제목 |
 | `message` | `string` | - | 메시지 |
 | `tone` | `string` | `'info'` | `'info'`, `'success'`, `'warning'`, `'error'` |
-| `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
-| `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
+| `confirmLabel` | `string` | `'확인'` | 확인 버튼 텍스트 |
+| `cancelLabel` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
 | `destructive` | `boolean` | `false` | 확인 버튼을 danger(빨강)로 강조 (React `AlertOptions.destructive` 와 동일) |
 | `actionsAlign` | `string` | `'right'` | 버튼 정렬 |
