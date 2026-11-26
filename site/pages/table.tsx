@@ -18,5 +18,8 @@ export const table: DocPage = {
 		{ id: "table/loading", title: "불러오는 중" },
 	],
 	props: ["TableProps", "TableColumn", "TableSort"],
-	notes: ["좁은 화면에서 `cards` 면 행이 카드로 바뀝니다"],
+	notes: [
+		"좁은 화면에서 `cards` 면 행이 카드로 바뀝니다",
+		'상태 배지 · 바뀌는 버튼 글자처럼 행마다 길이가 달라지는 칸이 있으면 `layout="fixed"` 로 둡니다. 바뀌는 칸은 가장 긴 값으로 `width` 를 재고, 이름처럼 길이를 모르는 열 하나는 너비 없이 `truncate` 로 남는 폭을 가져가게 합니다',
+	],
 };

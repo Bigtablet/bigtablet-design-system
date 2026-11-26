@@ -919,10 +919,14 @@ Alert는 JavaScript로만 사용합니다.
 |---|---|
 | `.bt-table-wrap` | 가로 스크롤 상자 (테두리 · 둥근 모서리). `--sticky-header` 면 머리가 붙는다 - 감싼 요소에 확정된 높이가 있어야 한다 (React `stickyHeader` 와 같음) |
 | `.bt-table` | 머리 · 칸 여백, 구분선, 14px, 행 hover. `--sm` · `--lg` 는 React `size` |
-| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘겨도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
+| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘기거나 칸 글자가 바뀌어도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
 | `td.bt-table__truncate` | 한 줄 칸 - 넘치면 말줄임. 전체 값은 `title` 로 단다 (React `truncate`) |
 | `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다. 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버리므로 **`table`·`thead`/`tbody`·`tr`·`th`·`td` 에 `role="table"`·`"rowgroup"`·`"row"`·`"columnheader"`·`"cell"` 을 단다** (React 는 `cards` 일 때 자동) |
 | `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
+
+**`--fixed` 를 쓰는 표** - 쪽으로 넘기는 기록 표만이 아닙니다. 행마다 길이가 달라지는 값(상태 배지 "사용 중" ↔ "사용 중지", 바뀌는 버튼 글자 "사용 중지" ↔ "다시 사용", 연결 상태 문구)이 있는 표도 `--fixed` 로 둡니다. 기본(자동 너비) 표는 그 칸 글자가 바뀔 때마다 열이 넓어지거나 좁아져 다른 열이 통째로 밀립니다.
+
+너비는 이렇게 정합니다 - 바뀌는 칸은 가장 긴 값 기준으로 재고, 이름처럼 길이를 모르는 열 하나는 너비 없이 두어 남는 폭을 가져가게 합니다. 그 열에는 `bt-table__truncate` 와 `title` 을 답니다.
 
 - 상자가 가로로 넘칠 수 있으면(`--bt-table-min-width` · 칸이 많은 표) `tabindex="0"` 과 `aria-label` 을 준다 - 키보드 사용자가 상자에 포커스를 두고 ←→ 로 가려진 열을 본다. CSS 는 넘침을 알 수 없어 React 처럼 자동으로 달지 못한다 (axe `scrollable-region-focusable`)
 - 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
