@@ -421,13 +421,13 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 100 test files / 1995 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 100 test files / 2002 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **91.9%** | **90.23%** | **93.19%** | **93.78%** |
+| **All files** | **91.9%** | **90.27%** | **93.19%** | **93.78%** |
 
 아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
 
