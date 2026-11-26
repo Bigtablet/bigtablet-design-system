@@ -77,5 +77,5 @@ jobs:
           git add docs/TESTING.md
           git commit -m "docs: refresh coverage figures"
           # 체크아웃 뒤 develop 에 다른 커밋이 들어왔으면 non-fast-forward 로 거절된다 - 한 번만 다시 얹어 민다.
-          # 문서 두 파일만 바꾸므로 보통 충돌이 없고, 충돌하면 job 이 실패해 다음 develop 푸시 때 다시 돈다.
+          # 문서 한 파일만 바꾸므로 보통 충돌이 없고, 충돌하면 job 이 실패해 다음 develop 푸시 때 다시 돈다.
           git push origin HEAD:develop || { git pull --rebase origin develop && git push origin HEAD:develop; }
