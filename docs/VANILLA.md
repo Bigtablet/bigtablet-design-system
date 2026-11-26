@@ -14,7 +14,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [TextField](#textfield)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
-  - [Toggle](#toggle)
+  - [Switch](#switch)
   - [Dropdown](#dropdown)
   - [Modal](#modal)
   - [Alert](#alert)
@@ -286,57 +286,57 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 
 ---
 
-### Toggle
+### Switch
 
 ```html
 <!-- 기본 (Off) - 이름은 필수다. 보이는 라벨이 있으면 aria-labelledby 로 잇는다 -->
-<button type="button" class="bt-toggle" data-bt-toggle aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <!-- On 상태 -->
 <span id="dark-label">다크 모드</span>
-<button type="button" class="bt-toggle bt-toggle--on" data-bt-toggle aria-labelledby="dark-label">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch bt-switch--on" data-bt-switch aria-labelledby="dark-label">
+  <span class="bt-switch__thumb"></span>
 </button>
 
-<!-- Sizes (React ToggleSize 와 동일) -->
-<button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle aria-label="...">...</button>  <!-- 기본값 -->
-<button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle aria-label="...">...</button>
+<!-- Sizes (React Switch `size` 와 동일) -->
+<button type="button" class="bt-switch bt-switch--sm" data-bt-switch aria-label="...">...</button>  <!-- 기본값 -->
+<button type="button" class="bt-switch bt-switch--md" data-bt-switch aria-label="...">...</button>
 
-<!-- 비활성화 - React Toggle 과 동일하게 native disabled 속성을 쓴다 -->
-<button type="button" class="bt-toggle" data-bt-toggle disabled aria-label="자동 저장">
-  <span class="bt-toggle__thumb"></span>
+<!-- 비활성화 - React Switch 와 동일하게 native disabled 속성을 쓴다 -->
+<button type="button" class="bt-switch" data-bt-switch disabled aria-label="자동 저장">
+  <span class="bt-switch__thumb"></span>
 </button>
 ```
 
 **JavaScript 연동:**
 
 ```html
-<button type="button" class="bt-toggle" data-bt-toggle id="my-toggle" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch id="my-switch" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <script>
-  // 자동 초기화 (data-bt-toggle 속성이 있으면 자동으로 초기화됨)
+  // 자동 초기화 (data-bt-switch 속성이 있으면 자동으로 초기화됨)
 
   // 또는 수동 초기화 - 자동 초기화된 요소에 다시 부르면 앞 인스턴스를 풀고 교체한다 (Modal 도 같음)
-  const toggleEl = document.getElementById('my-toggle');
-  const myToggle = Bigtablet.Toggle(toggleEl, {
+  const switchEl = document.getElementById('my-switch');
+  const mySwitch = Bigtablet.Switch(switchEl, {
     defaultChecked: false,
     name: 'notify',   // 주면 hidden input 으로 폼 제출 참여 (data-name 과 같음)
     disabled: false,  // true 면 비활성으로 시작 (native disabled 와 같음)
     onCheckedChange: (checked) => {
-      console.log('Toggle:', checked);
+      console.log('Switch:', checked);
     }
   });
 
   // API
-  myToggle.isChecked();     // 현재 상태
-  myToggle.setChecked(true); // 상태 설정
-  myToggle.toggle();        // 토글
-  myToggle.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
-  myToggle.destroy();       // 바인딩한 리스너 해제
+  mySwitch.isChecked();     // 현재 상태
+  mySwitch.setChecked(true); // 상태 설정
+  mySwitch.toggle();        // 토글
+  mySwitch.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
+  mySwitch.destroy();       // 바인딩한 리스너 해제
 </script>
 ```
 
@@ -346,12 +346,12 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 클릭은 `onCheckedChange(next)` 만 부르고 켜짐/꺼짐은 그대로 둔다 - 결과에 맞게 `setChecked()` 로 정한다. 실패하면 부르지 않으면 원래 상태로 남는다.
 
 ```html
-<button type="button" class="bt-toggle" id="push-toggle" aria-label="이 단말로 알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" id="push-toggle" aria-label="이 단말로 알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <script>
-  const push = Bigtablet.Toggle('#push-toggle', {
+  const push = Bigtablet.Switch('#push-toggle', {
     controlled: true,
     onCheckedChange: async (next) => {
       try {
@@ -359,7 +359,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
         if (!ok) throw new Error('push subscription failed');
         push.setChecked(next);
       } catch {
-        // reject 도 실패다 - 잡지 않으면 Toggle 은 대기만 풀고 사용자는 실패를 모른다
+        // reject 도 실패다 - 잡지 않으면 Switch 는 대기만 풀고 사용자는 실패를 모른다
         Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
       }
     }
@@ -384,13 +384,13 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 
 ```html
 <!-- data-name 으로 자동 생성 -->
-<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch data-name="notifications" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <!-- 또는 서버 렌더링 초기값 - data-name 과 같은 name 의 형제 hidden input 을 읽고 갱신한다 -->
-<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch data-name="notifications" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 <input type="hidden" name="notifications" th:value="${enabled}">
 ```
@@ -1556,7 +1556,7 @@ React `Sentences` · Toast · Alert `message` 와 같은 규칙으로 두 문장
 ```html
 <div data-bt-dropdown>...</div>   <!-- Dropdown 자동 초기화 -->
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
-<button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
+<button data-bt-switch>...</button> <!-- Switch 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
 <div data-bt-date-picker>...</div> <!-- DatePicker 자동 초기화 -->
 <button data-bt-copy="값">...</button> <!-- CopyButton 자동 초기화 -->
@@ -1579,8 +1579,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Modal
   const modal = Bigtablet.Modal('#my-modal', options);
 
-  // Toggle
-  const sw = Bigtablet.Toggle('#my-toggle', options);
+  // Switch
+  const sw = Bigtablet.Switch('#my-switch', options);
 
   // Pagination
   const pagination = Bigtablet.Pagination('#my-pagination', options);
@@ -1604,7 +1604,7 @@ Bigtablet.init();
 | 컴포넌트 | 콜백 |
 |---|---|
 | `Bigtablet.Dropdown` | `onValueChange(value, option)` |
-| `Bigtablet.Toggle` | `onCheckedChange(checked)` |
+| `Bigtablet.Switch` | `onCheckedChange(checked)` |
 | `Bigtablet.Pagination` | `onPageChange(page)` (`href` 링크 모드에서는 호출 안 함) |
 
 ### 유틸리티

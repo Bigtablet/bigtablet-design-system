@@ -19,7 +19,7 @@ src/vanilla/
 │   ├── overlay.js      # Escape 스택 · 스크롤 잠금 · afterExit(퇴출 모션 대기)
 │   ├── search.js       # 한글 초성·조합 검색 (Dropdown)
 │   ├── app-shell.js · sidebar.js  # 고정 헤더 높이 · 사이드바 접기 (#950)
-│   ├── dropdown.js · modal.js · alert.js · toast.js · toggle.js · pagination.js · copy-button.js · date-picker.js
+│   ├── dropdown.js · modal.js · alert.js · toast.js · switch.js · pagination.js · copy-button.js · date-picker.js
 │   ├── sentences.js    # 문장 단위 줄바꿈 - React 와 같은 src/text/core.ts 를 import 해 번들에 싣는다 (#1139)
 │   └── init.js         # data-bt-* 자동 초기화
 └── scss/
@@ -49,7 +49,7 @@ dist/vanilla/
 
 ### 테스트
 
-컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,toggle,pagination,copy-button,date-picker,sidebar,locale,sentences}.test.ts` 가 이 번들을 덮는다
+컴포넌트별 `bigtablet.{dropdown,modal,alert,toast,switch,pagination,copy-button,date-picker,sidebar,locale,sentences}.test.ts` 가 이 번들을 덮는다
 (`pnpm test` 에 포함). 실제 Chromium 에서 레이아웃·대비를 재는 `bigtablet.*.browser.test.ts`
 (alert · badge · copy-button · custom-properties · forced-colors · inline-alert · modal · table · toast)는
 `pnpm test:browser` 로 돈다. 소스를 직접 import 하므로 여기 코드를 고치면 테스트가 먼저 걸린다. 새 동작을
@@ -81,7 +81,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
-| Toggle | `.bt-toggle` | `--sm/md` | `.bt-toggle--on`, `:disabled` |
+| Switch | `.bt-switch` | `--sm/md` | `.bt-switch--on`, `:disabled` |
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
@@ -168,15 +168,15 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 </label>
 ```
 
-#### Toggle
+#### Switch
 ```html
-<button class="bt-toggle" data-bt-toggle aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button class="bt-switch" data-bt-switch aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <!-- On state -->
-<button class="bt-toggle bt-toggle--on" data-bt-toggle aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button class="bt-switch bt-switch--on" data-bt-switch aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 ```
 
@@ -324,7 +324,7 @@ modal.close();              // 포커스는 바로, is-open · 스크롤 잠금�
 modal.destroy();            // 바인딩 해제. 열린 채(또는 닫히는 중) 부르면 기다리지 않고 바로 걷되 onClose 는 안 부름
 modal.showStep('verify');   // 패널 안 [data-bt-modal-step] 하나만 보이게 - 높이 · 내용 전환, 포커스 이동 (#1162). currentStep() 으로 지금 단계
 
-const sw = Bigtablet.Toggle('#my-toggle', {
+const sw = Bigtablet.Switch('#my-switch', {
   name: 'notify',           // hidden input 으로 폼 제출 참여 (data-name)
   disabled: false,
   onCheckedChange: (checked) => console.log(checked)
@@ -337,7 +337,7 @@ sw.destroy();
 
 // 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.
 // 제어 모드의 setChecked 는 콜백을 안 부르고, 콜백이 Promise 면 끝날 때까지 aria-busy + 클릭 무시
-const push = Bigtablet.Toggle('#push', {
+const push = Bigtablet.Switch('#push', {
   controlled: true,
   onCheckedChange: async (next) => {
     try { if (await save(next)) push.setChecked(next); else showError(); }

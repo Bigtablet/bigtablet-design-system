@@ -2,7 +2,7 @@
 // 자동으로 만든다. 페이지는 기본 props · children · 뺄 prop 만 적는다. 함수 · ReactNode · 객체 prop 은
 // 열지 않는다 - 이상한 조합을 만들기 쉽고, 그런 쓰임은 예제가 더 잘 보여 준다
 import * as DS from "@bigtablet/design-system";
-import { Dropdown, SegmentedControl, Toggle } from "@bigtablet/design-system";
+import { Dropdown, SegmentedControl, Switch } from "@bigtablet/design-system";
 import { type ComponentType, type ReactNode, useState } from "react";
 import type { DocPage } from "./docs";
 import props from "./props.json";
@@ -90,7 +90,7 @@ export function usePlayground(page: DocPage, config?: PlaygroundConfig): Playgro
 			return (
 				<div key={p.name} className="pg_item pg_item_bool">
 					<code>{p.name}</code>
-					<Toggle
+					<Switch
 						size="sm"
 						ariaLabel={p.name}
 						checked={valueOf(p) === true}

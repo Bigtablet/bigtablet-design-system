@@ -1,6 +1,6 @@
 @use "src/styles/token" as token;
 
-.toggle {
+.switch {
   @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
@@ -23,7 +23,7 @@
 
   // 트랙은 24~28px 이라 그대로는 $tap_target_dense(32) 에 못 미친다. 스위치는 시각적으로 작은
   // 것이 정상이므로(Material 트랙 32x20 / 타깃 48) 크기를 키우는 대신 히트 영역만 넓힌다.
-  // Checkbox 처럼 padding 으로 넓히면 레이아웃 공간을 차지하는데, Toggle 은 설정 행에 인라인으로
+  // Checkbox 처럼 padding 으로 넓히면 레이아웃 공간을 차지하는데, Switch 는 설정 행에 인라인으로
   // 놓여 행 높이를 밀면 안 된다. 절대배치 ::after 는 흐름에 영향을 주지 않는다.
   &::after {
     content: "";
@@ -63,19 +63,19 @@
   &_on {
     background: token.$color_accent_default;
 
-    .toggle_thumb {
+    .switch_thumb {
       width: token.$spacing_20;
       height: token.$spacing_20;
       background: token.$color_accent_on_surface;
       transform: translate(calc(16px - 50%), -50%); // 40 - 24
     }
 
-    // disabled overrides on-state (specificity 0,2,0 beats .toggle_on 0,1,0)
-    &.toggle_disabled {
+    // disabled overrides on-state (specificity 0,2,0 beats .switch_on 0,1,0)
+    &.switch_disabled {
       background: token.$color_base_neutral_400;
       border-color: transparent;
 
-      .toggle_thumb {
+      .switch_thumb {
         background: token.$color_accent_on_surface;
       }
     }
@@ -96,7 +96,7 @@
 
   // ── States: Active/Pressed ─────────────────────────────────────────────
 
-  &:not(:disabled):active .toggle_thumb {
+  &:not(:disabled):active .switch_thumb {
     width: token.$spacing_20;
     height: token.$spacing_20;
   }
@@ -112,19 +112,19 @@
     width: token.$spacing_48;
     height: 28px; // lg 트랙 - 스위치 전용 치수라 간격 토큰과 맞는 값이 없다
 
-    .toggle_thumb {
+    .switch_thumb {
       left: token.$spacing_12; // 28/2 - 2
       width: token.$spacing_16;
       height: token.$spacing_16;
     }
 
-    &.toggle_on .toggle_thumb {
+    &.switch_on .switch_thumb {
       width: token.$spacing_24;
       height: token.$spacing_24;
       transform: translate(calc(20px - 50%), -50%); // 48 - 28
     }
 
-    &:not(:disabled):active .toggle_thumb {
+    &:not(:disabled):active .switch_thumb {
       width: token.$spacing_24;
       height: token.$spacing_24;
     }
@@ -137,7 +137,7 @@
     border-color: transparent;
     background: token.$color_base_neutral_400;
 
-    .toggle_thumb {
+    .switch_thumb {
       background: token.$color_brand_on_primary;
     }
   }
@@ -145,36 +145,36 @@
 
 // ── Reduced motion (WCAG 2.3.3) ──────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-  .toggle,
-  .toggle_thumb { transition: none; }
+  .switch,
+  .switch_thumb { transition: none; }
 }
 
 // ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
 // 손잡이 · 켜진 트랙을 배경으로만 그린다 - 고대비가 배경을 지우면 손잡이가 사라져 켬/끔을 알 수 없다.
 // 손잡이는 글자색, 켜진 트랙은 시스템 선택색, 비활성은 GrayText 로 칠한다. 선택자는 위 규칙과 같은 특이도로 맞춰 뒤에서 이긴다.
 @media (forced-colors: active) {
-  .toggle_thumb {
+  .switch_thumb {
     forced-color-adjust: none;
     background: CanvasText;
   }
 
-  .toggle_on {
+  .switch_on {
     forced-color-adjust: none;
     background: Highlight;
     border-color: Highlight;
 
-    .toggle_thumb {
+    .switch_thumb {
       background: HighlightText;
     }
   }
 
-  .toggle_disabled,
-  .toggle_on.toggle_disabled {
+  .switch_disabled,
+  .switch_on.switch_disabled {
     forced-color-adjust: none;
     background: Canvas;
     border-color: GrayText;
 
-    .toggle_thumb {
+    .switch_thumb {
       background: GrayText;
     }
   }

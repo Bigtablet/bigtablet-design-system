@@ -29,7 +29,7 @@ const CHECK_ICON_SVG =
 export function Dropdown(element, options = {}) {
 	const wrapper = typeof element === "string" ? $(element) : element;
 	if (!wrapper) return null;
-	// 같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다 (Modal · Toggle 과 같음) - document 리스너와
+	// 같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다 (Modal · Switch 와 같음) - document 리스너와
 	// body 로 옮겨진 패널이 이중으로 남지 않게. 새 인스턴스는 앞이 만든 구조(검색 행·__options)를 재사용한다.
 	wrapper._btDropdown?.destroy();
 

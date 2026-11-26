@@ -6,7 +6,7 @@ import { Modal } from "./modal.js";
 import { Pagination } from "./pagination.js";
 import { Sentences } from "./sentences.js";
 import { Sidebar } from "./sidebar.js";
-import { Toggle } from "./toggle.js";
+import { Switch } from "./switch.js";
 import { $$, parseBoolAttr } from "./utils.js";
 
 /* ========================================
@@ -67,10 +67,10 @@ export function init() {
 		}
 	});
 
-	// Toggle
-	$$("[data-bt-toggle]").forEach((el) => {
-		if (!el._btToggle) {
-			el._btToggle = Toggle(el);
+	// Switch
+	$$("[data-bt-switch]").forEach((el) => {
+		if (!el._btSwitch) {
+			el._btSwitch = Switch(el);
 		}
 	});
 

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { cdp } from "vitest/browser";
 import { Switch } from "./index";
 import "./style.scss";
-import "../../../vanilla/scss/_toggle.scss";
+import "../../../vanilla/scss/_switch.scss";
 
 const emulateForcedColors = (value: "active" | "none") =>
 	cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
@@ -43,17 +43,17 @@ describe("Switch thumb position (Chromium)", () => {
 		render(
 			<button
 				type="button"
-				className={`bt-toggle bt-toggle--${size}`}
+				className={`bt-switch bt-switch--${size}`}
 				role="switch"
 				aria-checked="false"
 			>
-				<span className="bt-toggle__thumb" />
+				<span className="bt-switch__thumb" />
 			</button>,
 		);
 		const track = screen.getByRole("switch");
 		await expect.poll(() => insets(track)).toMatchObject(OFF);
 
-		track.classList.add("bt-toggle--on");
+		track.classList.add("bt-switch--on");
 		await expect.poll(() => insets(track)).toMatchObject(ON);
 	});
 });
@@ -71,8 +71,8 @@ describe("Switch in forced-colors mode (Chromium)", () => {
 			);
 			const host = document.createElement("div");
 			host.innerHTML =
-				'<button class="bt-toggle" aria-label="v끔"><span class="bt-toggle__thumb"></span></button>' +
-				'<button class="bt-toggle bt-toggle--on" aria-label="v켬"><span class="bt-toggle__thumb"></span></button>';
+				'<button class="bt-switch" aria-label="v끔"><span class="bt-switch__thumb"></span></button>' +
+				'<button class="bt-switch bt-switch--on" aria-label="v켬"><span class="bt-switch__thumb"></span></button>';
 			document.body.appendChild(host);
 
 			const thumb = (name: string) =>

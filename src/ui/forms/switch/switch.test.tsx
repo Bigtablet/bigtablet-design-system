@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Field } from "../field";
-import { Switch, Toggle } from "./index";
+import { Switch } from "./index";
 
 describe("Switch", () => {
 	it("renders with aria-label", () => {
@@ -50,12 +50,12 @@ describe("Switch", () => {
 
 	it("applies size class", () => {
 		render(<Switch ariaLabel="Switch" size="md" />);
-		expect(screen.getByRole("switch")).toHaveClass("toggle_size_md");
+		expect(screen.getByRole("switch")).toHaveClass("switch_size_md");
 	});
 
-	it("applies toggle_on class when checked", () => {
+	it("applies switch_on class when checked", () => {
 		render(<Switch ariaLabel="Switch" checked />);
-		expect(screen.getByRole("switch")).toHaveClass("toggle_on");
+		expect(screen.getByRole("switch")).toHaveClass("switch_on");
 	});
 
 	it("controlled mode works correctly", () => {
@@ -138,13 +138,5 @@ describe("Switch", () => {
 		);
 
 		expect(screen.getByRole("switch")).not.toHaveAttribute("aria-required");
-	});
-
-	it("Toggle 은 Switch 의 deprecated 별칭이다 - 같은 마크업 (#1167)", () => {
-		const onCheckedChange = vi.fn();
-		render(<Toggle ariaLabel="알림" onCheckedChange={onCheckedChange} />);
-		fireEvent.click(screen.getByRole("switch", { name: "알림" }));
-		expect(onCheckedChange).toHaveBeenCalledWith(true);
-		expect(screen.getByRole("switch")).toHaveClass("toggle", "toggle_on");
 	});
 });
