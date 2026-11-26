@@ -546,7 +546,7 @@ const [fruit, setFruit] = useState<string | null>(null);
 />
 
 // 검색 가능 (label 부분 일치 필터)
-<Dropdown options={options} searchable searchPlaceholder="과일 검색…" emptyText="일치하는 과일 없음" />
+<Dropdown options={options} searchable searchPlaceholder="과일 검색…" emptyMessage="일치하는 과일 없음" />
 
 // 다중 선택
 const [fruits, setFruits] = useState<string[]>([]);
@@ -4105,7 +4105,7 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 
 - 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출됩니다.
 - `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결됩니다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 씁니다.
-- 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈합니다.
+- 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllLabel` / `selectRowLabel` 로 레이블을 커스터마이즈합니다.
 - `selectable` 이면 **미선택 행도 `aria-selected="false"`** 를 갖습니다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없습니다(APG grid). 선택 개념이 없는 표에는 붙이지 않습니다.
 - 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 줍니다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힙니다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없습니다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산합니다.
 
@@ -4142,12 +4142,12 @@ import { DataView, Dropdown } from '@bigtablet/design-system';
 - **선택 개수는 `role="status"` 로 알립니다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모릅니다
 
 > **선택 체크박스 라벨은 기본값이 순번입니다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
-> 행을 고르는지 번호로만 듣습니다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
+> 행을 고르는지 번호로만 듣습니다. 행을 이름으로 구분하려면 `selectRowLabel` 의 **둘째 인자**를
 > 씁니다 - 그 행의 데이터가 그대로 옵니다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
 > 오프셋 계산이 필요 없습니다.
 >
 > ```tsx
-> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
+> <DataView selectRowLabel={(_, row) => `${row.name} 선택`} />
 > ```
 
 ---

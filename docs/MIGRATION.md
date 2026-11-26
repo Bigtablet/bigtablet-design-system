@@ -40,7 +40,7 @@
 | 지금 버전 | 읽을 섹션 |
 |------|------|
 | 5.0.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.10.0 ~ 4.14.x | [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` · `fills` · SCSS 믹스인 제거) |
+| 4.10.0 ~ 4.14.x | [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` · 표기만 다르던 prop 이름 · `fills` · SCSS 믹스인 제거) |
 | 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (Toast 기본 위치) + [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) |
 | 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + 위 |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
@@ -101,6 +101,19 @@
 
 **앱 쪽에서 할 일:** `grep -rnE "\\bToggle(Props)?\\b|\\btoggle_|[\"' .]toggle[\"' {]|bt-toggle|data-bt-toggle|Bigtablet\\.Toggle|_btToggle" --include=*.tsx --include=*.ts --include=*.scss --include=*.css --include=*.html --include=*.js`. Thymeleaf · JSP 템플릿은 `bt-toggle` → `bt-switch`, `data-bt-toggle` → `data-bt-switch` 치환으로 끝납니다.
 
+### 표기만 다르던 prop 이름
+
+뜻이 같은데 컴포넌트마다 이름이 달랐던 것을 다수 쪽에 맞췄습니다. 값 · 동작은 그대로입니다.
+
+| 컴포넌트 | 예전 | 새 이름 |
+|------|------|------|
+| `Dropdown` | `emptyText` | `emptyMessage` (`Combobox` · `Table` 과 같음) |
+| Vanilla `Dropdown()` | `emptyText` 옵션 · `data-empty-text` | `emptyMessage` · `data-empty-message` |
+| `ToastProvider` | `closeAriaLabel` | `closeLabel` (`Modal` · `Drawer` 와 같음) |
+| `Table` · `DataView` | `selectAllAriaLabel` · `selectRowAriaLabel` | `selectAllLabel` · `selectRowLabel` |
+
+**앱 쪽에서 할 일:** `grep -rnE "emptyText|data-empty-text|closeAriaLabel|select(All|Row)AriaLabel" --include=*.tsx --include=*.ts --include=*.html --include=*.js`. Vanilla 의 `data-empty-text` 는 컴파일러가 잡지 못합니다 - 남겨 두면 기본 문구("결과 없음")가 나옵니다.
+
 ### 4.10.0 에 deprecated 된 것 제거
 
 | 지운 것 | 대신 쓸 것 |
@@ -114,7 +127,7 @@
 
 | 저장소 | 걸리는 곳 |
 |------|------|
-| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`) |
+| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`), `ToastProvider` `closeAriaLabel` 2곳 |
 | homepage-web | `token.hover_lift` 3곳 (3.2.2 고정 - 올릴 때 교체) |
 | coupon-web · frontend-template | 없음 |
 

@@ -491,7 +491,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 `data-searchable` 또는 JS `searchable: true` 를 주면 패널 상단에 검색 행이 생깁니다.
 필터는 옵션 `label` 부분 일치이고 **대소문자·공백을 무시**합니다. 한글은 **초성**(`ㅅㅇ` → 서울)으로도 찾습니다 (React `matchesSearch` 와 같은 규칙).
 패널을 열면 검색 입력에 포커스가 가고, 닫으면 검색어가 초기화됩니다.
-결과가 0개면 `emptyText`(기본 `결과 없음`)가 표시됩니다.
+결과가 0개면 `emptyMessage`(기본 `결과 없음`)가 표시됩니다.
 
 > **한글 IME**: 조합이 끝나기를 기다리지 않고 입력마다 거릅니다. 조합 중인 마지막 글자도
 > 받아 줍니다 - `서우`, `성`(받침이 다음 글자 초성) 모두 "서울" 에 맞습니다. 조합 중 Enter 는
@@ -550,7 +550,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 | `data-multiple` | `multiple` |
 | `data-searchable` | `searchable` |
 | `data-search-placeholder` | `searchPlaceholder` |
-| `data-empty-text` | `emptyText` |
+| `data-empty-message` | `emptyMessage` |
 | `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
 | `data-options` | `options` (JSON 배열) - 둘 다 있으면 **`data-options` 가 우선** |
 | `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 재사용하고 이름을 이 값으로 맞춥니다 |
@@ -586,7 +586,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
     multiple: true,
     searchable: true,
     searchPlaceholder: '도시 검색…',
-    emptyText: '일치하는 도시가 없습니다',
+    emptyMessage: '일치하는 도시가 없습니다',
     selectedSummary: (count) => `도시 ${count}곳`,
     options: [
       { value: 'seoul', label: '서울 Seoul' },
