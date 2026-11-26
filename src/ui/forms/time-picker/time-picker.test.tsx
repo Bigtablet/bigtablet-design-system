@@ -39,6 +39,12 @@ describe("TimePicker", () => {
 		expect(openAndRead(hourTrigger())).toEqual(["09", "10", "11"]);
 	});
 
+	it("min · max 는 minTime · maxTime 과 같다 (#1167)", () => {
+		render(<TimePicker value="10:00" onValueChange={vi.fn()} min="09:00" max="11:00" />);
+
+		expect(openAndRead(hourTrigger())).toEqual(["09", "10", "11"]);
+	});
+
 	it("narrows the minutes at the boundary hour", () => {
 		// 최소가 09:30 이면 09시의 분은 30분부터 시작한다.
 		render(<TimePicker value="09:30" onValueChange={vi.fn()} minuteStep={15} minTime="09:30" />);

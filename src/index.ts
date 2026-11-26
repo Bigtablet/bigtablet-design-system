@@ -224,6 +224,8 @@ export type {
 	ImageCropperProps,
 } from "./ui/forms/image-cropper";
 export { ImageCropper } from "./ui/forms/image-cropper";
+export type { MonthPickerProps } from "./ui/forms/month-picker";
+export { MonthPicker } from "./ui/forms/month-picker";
 export type { OtpInputProps } from "./ui/forms/otp-input";
 export { OtpInput } from "./ui/forms/otp-input";
 export type { RadioProps } from "./ui/forms/radio";

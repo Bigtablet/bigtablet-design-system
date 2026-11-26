@@ -84,8 +84,11 @@ export function DatePicker(element, options = {}) {
 		// 시각까지 고른다 - 값이 "YYYY-MM-DDTHH:mm" 가 된다
 		time: pick("time", ds.time, parseBoolAttr) ?? false,
 		minuteStep: pick("minuteStep", ds.minuteStep, Number) ?? 5,
+		// "YYYY-MM-DD"(시각을 켜면 "...THH:mm") 또는 "today"
 		min: pick("min", ds.min),
 		max: pick("max", ds.max),
+		// 날마다 막는다 - "YYYY-MM-DD" 를 받아 true 면 고를 수 없다 (함수라 JS 옵션으로만)
+		isDateDisabled: options.isDateDisabled ?? null,
 		// 다른 DatePicker 의 값을 최소 · 최대로 따른다 (시작 ~ 종료). 셀렉터 또는 요소
 		minFrom: pick("minFrom", ds.minFrom),
 		maxFrom: pick("maxFrom", ds.maxFrom),
@@ -305,7 +308,7 @@ export function DatePicker(element, options = {}) {
 		return el?._btDatePicker ? parse(el._btDatePicker.getValue()) : null;
 	};
 	const bound = (own, ref, pickTighter) => {
-		const a = parse(own);
+		const a = own === "today" ? { ...today, minutes: null } : parse(own);
 		const b = linked(ref);
 		if (!a || !b) return a ?? b;
 		return pickTighter(a, b);
@@ -317,7 +320,11 @@ export function DatePicker(element, options = {}) {
 	const dayDisabled = (d) => {
 		const lo = minBound();
 		const hi = maxBound();
-		return (!!lo && compareDay(d, lo) < 0) || (!!hi && compareDay(d, hi) > 0);
+		return (
+			(!!lo && compareDay(d, lo) < 0) ||
+			(!!hi && compareDay(d, hi) > 0) ||
+			!!config.isDateDisabled?.(dayKey(d))
+		);
 	};
 	/** 그날 고를 수 있는 분 범위 [lo, hi] - min · max 가 같은 날일 때만 좁아진다 */
 	const minuteRange = (d) => {

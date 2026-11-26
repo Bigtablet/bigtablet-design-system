@@ -524,6 +524,34 @@ describe("DatePicker variant=calendar", () => {
 		expect(screen.getByRole("button", { name: "다음 달" })).toBeDisabled();
 	});
 
+	it('max="today" 는 selectableRange=until-today 와 같다 (#1167)', () => {
+		render(<DatePicker variant="calendar" max="today" onValueChange={vi.fn()} />);
+		open();
+
+		expect(day(12)).not.toHaveAttribute("aria-disabled");
+		expect(day(13)).toHaveAttribute("aria-disabled", "true");
+		expect(screen.getByRole("button", { name: "다음 달" })).toBeDisabled();
+		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
+	});
+
+	it("isDateDisabled 가 막은 날은 고를 수 없다 (#1167)", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				variant="calendar"
+				isDateDisabled={(d) => d === "2026-10-14"}
+				onValueChange={onValueChange}
+			/>,
+		);
+		open();
+
+		expect(day(14)).toHaveAttribute("aria-disabled", "true");
+		fireEvent.click(day(14));
+		expect(onValueChange).not.toHaveBeenCalled();
+		fireEvent.click(day(15));
+		expect(onValueChange).toHaveBeenCalledWith("2026-10-15");
+	});
+
 	it("넘김 버튼으로 달을 바꿔도 포커스는 버튼에 남는다", () => {
 		render(<DatePicker variant="calendar" value="2026-10-12" onValueChange={vi.fn()} />);
 		open();
@@ -930,5 +958,94 @@ describe("DatePicker variant=calendar 분기", () => {
 		);
 		open();
 		expect(screen.getByRole("button", { name: "다음 달" })).toBeEnabled();
+	});
+});
+
+describe("DatePicker min · max · isDateDisabled (#1167)", () => {
+	beforeEach(() => {
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date(2026, 8, 15));
+	});
+	afterEach(() => vi.useRealTimers());
+
+	const openList = (index: number) => fireEvent.click(screen.getAllByRole("combobox")[index]!);
+	const optionTexts = () => screen.getAllByRole("option").map((o) => o.textContent);
+
+	it("min · max 가 연 목록의 처음과 끝이 된다", () => {
+		render(<DatePicker min="2020-03-10" max="2022-11-20" onValueChange={vi.fn()} />);
+		openList(0);
+		expect(optionTexts()).toEqual(["2020", "2021", "2022"]);
+	});
+
+	it("경계 달에서는 월 · 일도 좁힌다", () => {
+		const picker = (
+			<DatePicker value="2022-11-01" min="2020-03-10" max="2022-11-20" onValueChange={vi.fn()} />
+		);
+		const { unmount } = render(picker);
+		openList(1);
+		expect(optionTexts().at(-1)).toBe("11");
+		unmount();
+		render(picker);
+		openList(2);
+		expect(optionTexts().at(-1)).toBe("20");
+	});
+
+	it("연도를 바꾸면 일이 min 안으로 들어온다 - minDate 와 같다", () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker value="2030-01-01" min="2020-06-15" onValueChange={onValueChange} />);
+		openList(0);
+		fireEvent.click(screen.getByText("2020"));
+		expect(onValueChange).toHaveBeenCalledWith("2020-06-15");
+	});
+
+	it('max="today" 면 오늘 뒤를 내보내지 않는다', () => {
+		const onValueChange = vi.fn();
+		render(<DatePicker value="2025-12-31" max="today" onValueChange={onValueChange} />);
+		openList(0);
+		expect(optionTexts().at(-1)).toBe("2026");
+		fireEvent.click(screen.getByText("2026"));
+		expect(onValueChange).toHaveBeenCalledWith("2026-09-15");
+	});
+
+	it("새 prop 과 deprecated prop 을 함께 주면 좁은 쪽이 이긴다", () => {
+		render(
+			<DatePicker min="2021-01-01" minDate="2023-01-01" startYear={2019} onValueChange={vi.fn()} />,
+		);
+		openList(0);
+		expect(optionTexts()[0]).toBe("2023");
+	});
+
+	it("max 를 스크린리더에 알린다", () => {
+		render(<DatePicker max="2030-12-31" onValueChange={vi.fn()} />);
+		expect(screen.getByText("최대 날짜: 2030-12-31")).toBeInTheDocument();
+	});
+
+	it("isDateDisabled 가 막은 날은 일 목록에서 빠지고, 다 막힌 달은 월 목록에서 빠진다", () => {
+		// 2026년 2월 전체와 3월 1일을 막는다
+		const blocked = (d: string) => d.startsWith("2026-02") || d === "2026-03-01";
+		const picker = (
+			<DatePicker value="2026-03-02" isDateDisabled={blocked} onValueChange={vi.fn()} />
+		);
+		const { unmount } = render(picker);
+		openList(1);
+		expect(optionTexts()).not.toContain("02");
+		unmount();
+		render(picker);
+		openList(2);
+		expect(optionTexts()[0]).toBe("02");
+	});
+
+	it("달을 옮겨 예전 일이 막혔으면 그 뒤의 가장 가까운 날을 내보낸다", () => {
+		const onValueChange = vi.fn();
+		render(
+			<DatePicker
+				value="2026-03-05"
+				isDateDisabled={(d) => d === "2026-04-05" || d === "2026-04-06"}
+				onValueChange={onValueChange}
+			/>,
+		);
+		openList(1);
+		fireEvent.click(screen.getByText("04"));
+		expect(onValueChange).toHaveBeenCalledWith("2026-04-07");
 	});
 });
