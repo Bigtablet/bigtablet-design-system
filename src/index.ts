@@ -246,18 +246,18 @@ export { SegmentedControl } from "./ui/forms/segmented-control";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
 export type {
-	TextareaProps,
-	TextareaResize,
-	TextareaSize,
-} from "./ui/forms/textarea";
-export { Textarea } from "./ui/forms/textarea";
-export type {
 	ImeStrategy,
 	TextFieldProps,
 	TextFieldSize,
 	TextFieldVariant,
 } from "./ui/forms/text-field";
 export { TextField } from "./ui/forms/text-field";
+export type {
+	TextareaProps,
+	TextareaResize,
+	TextareaSize,
+} from "./ui/forms/textarea";
+export { Textarea } from "./ui/forms/textarea";
 export type { TimePickerProps } from "./ui/forms/time-picker";
 export { TimePicker } from "./ui/forms/time-picker";
 export type { ToggleProps } from "./ui/forms/toggle";
