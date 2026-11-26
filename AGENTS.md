@@ -324,7 +324,7 @@ label/domain
 - main 배포: `merge: release` (`--delete-branch` 없이 - head 가 `develop`)
 - 항상 merge commit - squash · rebase 금지
 - **일반 PR**(→ develop): CI 가 모두 통과하고 리뷰 봇 지적을 처리했으면 작성자(에이전트 포함)가 머지한다. 사람 approve 를 기다리지 않는다
-- **릴리즈 PR**(develop → main): 사람이 approve 하고 머지한다. 에이전트는 머지하지 않는다
+- **릴리즈 PR**(develop → main): 사람 approve 를 기다리지 않는다. 사용자가 릴리즈를 지시했으면 CI 가 모두 통과한 뒤 작성자(에이전트 포함)가 머지한다. 지시 없이 에이전트가 릴리즈를 시작하지는 않는다 (2026-11-26 사용자 결정)
 
 ### Release & Changelog
 **태그 기반 배포** - semantic-release / changeset 미사용. 절차를 명령 순서로 옮긴 것이 `.claude/skills/release/SKILL.md` (`/release`) 다 - 규칙의 원본은 이 섹션. 절차:
@@ -347,7 +347,7 @@ label/domain
 2. **릴리즈 PR** - head `develop` → base `main`, 제목 `merge: release` (head 가 `develop` 이라 "PR 제목 = 브랜치명" 의 예외 - Merge Convention 의 `main 배포` 규칙을 따른다).
    - 이번 릴리즈에 담긴 이슈 번호를 `## 작업 개요` 에 나열한다 (기록용). 이슈는 이미 각 PR 이 develop 에 머지될 때 닫혀 있다 - 아래 "이슈 닫기" 참고. 배포 후 Dependabot 알림처럼 main 반영이 필요한 것만 실제로 닫혔는지 확인한다.
    - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 릴리즈 PR 에 자동으로 따라온다.
-3. 사람이 approve 하고 **merge commit 으로 머지** (squash·rebase 금지 - main 에 develop 에 없는 커밋이 생겨 다시 어긋난다).
+3. CI 가 모두 통과하면 **merge commit 으로 머지** - approve 는 기다리지 않는다, 사용자가 릴리즈를 지시한 경우 에이전트가 머지한다 (squash·rebase 금지 - main 에 develop 에 없는 커밋이 생겨 다시 어긋난다).
    squash 는 저장소 설정에서 꺼 두었다(2026-10-01). **rebase merging 은 설정상 아직 켜져 있으니** 머지 버튼 드롭다운이 "Create a merge commit" 인지 확인한다 - rebase 로 머지하면 develop 커밋이 새 SHA 로 main 에 복제돼 `git log origin/develop..origin/main` 에 내용 있는 커밋으로 잡힌다.
 4. main 에서 `git tag -a vX.Y.Z -m "vX.Y.Z"` → `git push origin vX.Y.Z`.
 5. `release.yml`(GitHub Actions)이 `npm publish --provenance` + GitHub Release 자동 생성.
@@ -496,7 +496,7 @@ EOF
 - Write PR body in Korean
 - 라벨/담당자를 항상 확인 - 워크플로가 자동으로 붙이지만 누락 시 수동 보정
 - Create issues first if needed and link them to PR
-- 머지 조건은 위 Merge Convention (일반 PR 은 CI 통과 후 작성자 머지, 릴리즈 PR 은 사람)
+- 머지 조건은 위 Merge Convention (일반 PR · 릴리즈 PR 모두 CI 통과 후 작성자 머지 - 릴리즈는 사용자가 지시했을 때만 시작한다)
 
 ---
 

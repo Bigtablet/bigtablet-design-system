@@ -504,7 +504,7 @@ BODY
 
 ### 리뷰 및 머지
 
-- 리뷰어 approve 뒤 머지합니다. 리뷰 봇(CodeRabbit · Claude)의 지적은 현재 소스로 재확인하고, 반영하거나 이유를 답글로 남긴 뒤 스레드를 resolve 합니다
+- 사람 approve 는 기다리지 않습니다 - CI 가 모두 통과하고 리뷰 봇 지적을 처리했으면 작성자가 머지합니다. 리뷰 봇(CodeRabbit · Claude)의 지적은 현재 소스로 재확인하고, 반영하거나 이유를 답글로 남긴 뒤 스레드를 resolve 합니다
 - **merge commit** 으로 머지합니다 (squash · rebase 금지 - 저장소 설정에서 rebase 가 아직 켜져 있으니 드롭다운을 확인). 커밋 메시지는 `merge: 브랜치명 (#PR)`
 - 머지 직전에 PR 의 head 커밋이 마지막으로 푸시한 커밋인지 봅니다 - 푸시와 머지가 겹치면 마지막 커밋이 빠집니다
 - 머지되면 브랜치를 지우고, 연관 이슈를 `gh issue close <번호> --reason completed --comment "#<PR> 로 develop 에 머지 완료."` 로 닫습니다
