@@ -4,6 +4,11 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [5.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v5.1.0) - 2026-11-26
+- `Button` 에 `loading` 추가 - 요청을 기다리는 동안 앞 아이콘 자리에 고리를 그리고 `aria-busy` 를 답니다. 눌리지 않지만 `disabled` 와 달리 포커스는 남습니다. Vanilla 는 `.bt-button--loading` 클래스이고, 눌림은 `disabled` 로 막습니다
+- Vanilla `Modal()` 에 `dismissible` 옵션 · `setDismissible()` 추가 - React `dismissible` 과 같이 Escape · 오버레이 닫기를 함께 정하고, 열린 뒤에도 잠그고 풀 수 있습니다 (저장 요청 중에만 잠그기)
+- Vanilla 에 `.bt-skeleton` 추가 - React `Skeleton` 과 같은 값입니다 (`--text/title/avatar/rect`, `--radius-sm/md/lg/full`)
+
 ## [5.0.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v5.0.0) - 2026-11-26
 - 컴포넌트마다 갈리던 prop · 컴포넌트 이름을 통일했습니다. 옛 이름은 별칭 없이 지웠습니다 - 고칠 곳과 grep · 치환 스크립트는 [MIGRATION v5.0.0](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 에 있습니다. 렌더 결과는 그대로입니다
 - 날짜 · 시간 범위 prop 을 `min` · `max` 로 맞췄습니다 - `DatePicker` · `DateRangePicker` 의 `minDate` · `selectableRange` · `startYear` · `endYear`, `TimePicker` 의 `minTime` · `maxTime` 을 지웠습니다. `max="today"` 를 받습니다
