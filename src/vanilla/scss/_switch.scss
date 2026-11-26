@@ -109,7 +109,7 @@
         position: absolute;
         inset: 0;
         box-sizing: border-box;
-        border: 2px solid currentColor;
+        border: token.$border_width_2 solid currentColor;
         border-right-color: transparent;
         border-radius: 50%;
         animation: bt-spinner-spin token.$duration_loading_spinner linear infinite;

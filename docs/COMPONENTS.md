@@ -370,10 +370,10 @@ import { Button } from '@bigtablet/design-system';
 
 // 위험한 액션 - variant 와 조합하는 boolean prop (variant="danger" 는 존재하지 않음)
 <Button danger>삭제</Button>
+<Button variant="outline" danger>삭제</Button>
 
 // 요청을 기다리는 중 - 앞 아이콘 자리에 고리, aria-busy, 눌리지 않음. 문구는 직접 바꾼다
 <Button loading={isSaving}>{isSaving ? "저장하는 중…" : "저장"}</Button>
-<Button variant="outline" danger>삭제</Button>
 
 // Sizes
 <Button size="sm">Small</Button>
