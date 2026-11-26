@@ -5,7 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { renderSentences } from "../../../text";
 import { cn, type SafeHTMLProps, useFormReset, useSafeLayoutEffect } from "../../../utils";
 import { useFieldControl } from "../field";
-import type { ImeStrategy, TextFieldSize } from "../textfield";
+import type { ImeStrategy, TextFieldSize } from "../text-field";
 import "./style.scss";
 
 export type TextareaSize = TextFieldSize;

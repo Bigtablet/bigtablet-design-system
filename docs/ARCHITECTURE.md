@@ -193,8 +193,8 @@ export { cn, useFocusTrap, useReducedMotion } from "./utils";
 
 export type { ButtonProps } from "./ui/general/button";
 export { Button } from "./ui/general/button";
-export type { ImeStrategy, TextFieldProps, TextFieldSize } from "./ui/forms/textfield";
-export { TextField } from "./ui/forms/textfield";
+export type { ImeStrategy, TextFieldProps, TextFieldSize } from "./ui/forms/text-field";
+export { TextField } from "./ui/forms/text-field";
 
 export { colors, baseColors } from "./styles/colors";
 export { spacing } from "./styles/spacing";

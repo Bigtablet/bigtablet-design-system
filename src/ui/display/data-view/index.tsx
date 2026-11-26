@@ -7,7 +7,7 @@ import { iconSize } from "../../../styles/icon";
 import { cn, type SafeHTMLProps } from "../../../utils";
 import { EmptyState } from "../../feedback/empty-state";
 import { ErrorState } from "../../feedback/error-state";
-import { TextField } from "../../forms/textfield";
+import { TextField } from "../../forms/text-field";
 import { Button } from "../../general/button";
 import { Pagination } from "../../navigation/pagination";
 import { useLocaleText } from "../../system/locale-provider";
