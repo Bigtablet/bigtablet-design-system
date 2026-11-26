@@ -32,6 +32,12 @@ interface ButtonBaseProps {
 	 * 클릭 차단으로 처리(anchor 엔 native disabled 가 없으므로).
 	 */
 	disabled?: boolean;
+	/**
+	 * 요청을 기다리는 중. 앞 아이콘 자리에 스피너를 그리고 `aria-busy` 를 달며 눌리지 않는다.
+	 * `disabled` 와 달리 포커스는 남는다(`aria-disabled` + 클릭 차단) - 누른 버튼이 포커스를 잃으면 키보드 사용자가 자리를 잃는다.
+	 * 라벨은 바꾸지 않는다 - "저장하는 중…" 같은 문구는 children 으로 넘긴다.
+	 */
+	loading?: boolean;
 }
 
 /**
@@ -77,12 +83,22 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		radius,
 		danger = false,
 		disabled = false,
+		loading = false,
 		as,
 		className,
 		children,
 		ref,
 		...rest
 	} = props;
+
+	// 눌림을 막는 두 경우. disabled 는 포커스에서도 빠지고, loading 은 포커스를 남긴 채 클릭만 막는다
+	const inert = disabled || loading;
+	// native disabled button 은 click 이 아예 발생하지 않는다. 기본 동작만 막으면 이벤트가 위로
+	// 계속 올라가, 클릭 가능한 Card 안의 눌리지 않는 버튼이 카드를 누른다.
+	const blockClick = (event: React.MouseEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
 
 	const buttonClassName = cn(
 		"button",
@@ -93,15 +109,20 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		danger && "button_danger",
 		// anchor 엔 native :disabled 가 안 먹으므로 클래스로 비활성 스타일 적용 (button 도 무해)
 		disabled && "button_disabled",
+		loading && "button_loading",
 		className,
 	);
 
 	const content = (
 		<>
-			{leadingIcon && (
-				<span className="button_icon" aria-hidden="true">
-					{leadingIcon}
-				</span>
+			{loading ? (
+				<span className="button_spinner" aria-hidden="true" />
+			) : (
+				leadingIcon && (
+					<span className="button_icon" aria-hidden="true">
+						{leadingIcon}
+					</span>
+				)
 			)}
 			{children && <span className="button_label">{children}</span>}
 			{trailingIcon && (
@@ -124,6 +145,7 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		const {
 			type = "button",
 			href: _href,
+			onClick: onButtonClick,
 			...buttonRest
 		} = rest as React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string };
 		return (
@@ -133,6 +155,11 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 				disabled={disabled}
 				className={buttonClassName}
 				{...buttonRest}
+				// 소비자 props 뒤에 둔다 - 앞에 두면 `aria-busy={false}` 같은 값이 loading 을 덮는다
+				aria-busy={loading || buttonRest["aria-busy"]}
+				aria-disabled={loading || buttonRest["aria-disabled"]}
+				// submit 버튼의 기본 동작(폼 제출)도 여기서 막힌다
+				onClick={loading ? blockClick : onButtonClick}
 			>
 				{content}
 			</button>
@@ -145,18 +172,10 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 			{...tagProps}
 			ref={ref}
 			className={buttonClassName}
-			aria-disabled={disabled || undefined}
+			aria-disabled={inert || undefined}
+			aria-busy={loading || tagProps["aria-busy"]}
 			tabIndex={disabled ? -1 : tabIndex}
-			onClick={
-				disabled
-					? (event: React.MouseEvent) => {
-							// native disabled button 은 click 이 아예 발생하지 않는다. 기본 동작만 막으면
-							// 이벤트가 위로 계속 올라가, 클릭 가능한 Card 안의 비활성 버튼이 카드를 누른다.
-							event.preventDefault();
-							event.stopPropagation();
-						}
-					: onClick
-			}
+			onClick={inert ? blockClick : onClick}
 		>
 			{content}
 		</Tag>

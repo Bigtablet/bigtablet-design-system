@@ -161,6 +161,24 @@
   &--radius-xl   { border-radius: var(--bt-radius-xl); }
   &--radius-full { border-radius: var(--bt-radius-full); }
 
+  /* React `<Button loading>` - 클래스와 함께 `disabled` · `aria-busy="true"` 를 단다(눌림을 막는 것은 disabled 다).
+     고리는 ::before 로 그려 마크업을 더하지 않는다. 글자 크기 · 글자 색을 따라간다 */
+  &--loading {
+    cursor: progress;
+
+    &::before {
+      content: "";
+      flex-shrink: 0;
+      box-sizing: border-box;
+      width: 1em;
+      height: 1em;
+      border: token.$border_width_2 solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: bt-spinner-spin token.$duration_loading_spinner linear infinite;
+    }
+  }
+
   &--full-width {
     width: 100%;
   }

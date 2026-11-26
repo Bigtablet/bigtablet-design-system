@@ -30,6 +30,9 @@ export function Modal(element, options = {}) {
 	const config = {
 		closeOnOverlay: true,
 		closeOnEscape: true,
+		// React Modal 의 `dismissible` 과 같다 - 주면 closeOnOverlay · closeOnEscape 를 둘 다 이긴다.
+		// 안 주면(undefined) 두 옵션 그대로. 열린 뒤에는 setDismissible() 로 바꾼다 (저장 요청 중에만 잠그기)
+		dismissible: undefined,
 		onOpen: null,
 		onClose: null,
 		// 퇴출 모션이 끝나 화면에서 사라진 뒤 - React Modal 의 onExited 와 같다. onClose 는 닫기를
@@ -217,14 +220,14 @@ export function Modal(element, options = {}) {
 			close();
 			return;
 		}
-		if (config.closeOnOverlay && e.target === modal && !fromInside) {
+		if ((config.dismissible ?? config.closeOnOverlay) && e.target === modal && !fromInside) {
 			close();
 		}
 	}
 
 	// 이 모달만의 핸들러 - 공용 noop 을 쓰면 스택 최상단이 어느 모달인지 가릴 수 없다 (ownsFocus)
 	function onEscape() {
-		if (config.closeOnEscape) close();
+		if (config.dismissible ?? config.closeOnEscape) close();
 	}
 
 	function onKeyDown(e) {
@@ -313,6 +316,14 @@ export function Modal(element, options = {}) {
 		showStep,
 		/** 지금 보이는 단계 이름 (단계가 없으면 null) */
 		currentStep: () => currentStep,
+		/**
+		 * Escape · 오버레이 클릭으로 닫히는지를 열린 뒤에 바꾼다 - React 는 `dismissible` prop 을 다시 넘기면 된다.
+		 * `false` 면 둘 다 막고, `true` 면 둘 다 열고, `undefined` 면 closeOnOverlay · closeOnEscape 로 돌아간다.
+		 * `data-modal-close` 단추와 close() 는 막지 않는다 - 그 단추는 소비자가 `disabled` 로 막는다.
+		 */
+		setDismissible: (dismissible) => {
+			config.dismissible = dismissible;
+		},
 		destroy: () => {
 			cleanups.forEach((cleanup) => {
 				cleanup();

@@ -8,7 +8,7 @@ description: "@bigtablet/design-system 릴리즈 - 버전 등급 판단, develop
 규칙의 원본은 AGENTS.md `### Release & Changelog` 다 (버전 등급 · `(렌더 변경)` · CHANGELOG 양식).
 이 스킬은 순서와 명령만 담는다. 둘이 다르면 AGENTS.md 가 맞다.
 
-**흐름**: develop 에 `deploy: X.Y.Z` 커밋 하나 → develop→main PR 하나(`merge: release`) → 사람 approve →
+**흐름**: develop 에 `deploy: X.Y.Z` 커밋 하나 → develop→main PR 하나(`merge: release`) → CI 통과 →
 merge commit 머지 → main 에 태그 → `release.yml` 이 npm publish + GitHub Release.
 `release/X.Y.Z` 브랜치 · `deploy/` PR 은 만들지 않는다.
 
@@ -81,9 +81,10 @@ prop 제거를 minor 로 내는 경우 사내 저장소 사용처 grep 결과를
   로컬 develop 을 맞춘다 - fetch 없이는 `origin/develop` 이 예전 그대로다
 - 리뷰에서 고칠 게 나오면 develop 에 커밋하면 PR 에 따라온다
 
-## 4. 머지 - 사람 approve 뒤에만
+## 4. 머지 - CI 통과 뒤
 
-릴리즈 PR 은 Claude 가 스스로 머지하지 않는다. 사용자가 머지하거나, approve 후 머지하라고 할 때만 한다.
+approve 는 기다리지 않는다. 사용자가 릴리즈를 지시했으면 CI 가 모두 통과한 뒤 Claude 가 머지한다 (2026-11-26 사용자 결정).
+릴리즈 자체는 사용자가 지시했을 때만 시작한다.
 
 ```bash
 gh pr merge <N> --merge --match-head-commit "$(gh pr view <N> --json headRefOid --jq .headRefOid)"

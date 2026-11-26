@@ -62,6 +62,82 @@ describe("Button", () => {
 		expect(handleClick).toHaveBeenCalledTimes(1);
 	});
 
+	it("loading 이면 스피너를 그리고 aria-busy 를 달며 눌리지 않지만 포커스는 남는다", () => {
+		const handleClick = vi.fn();
+		render(
+			<Button loading leadingIcon={<svg data-testid="lead" />} onClick={handleClick}>
+				저장하는 중…
+			</Button>,
+		);
+		const button = screen.getByRole("button", { name: "저장하는 중…" });
+		// native disabled 면 누른 버튼이 포커스를 잃어 키보드 사용자가 자리를 잃는다
+		expect(button).not.toBeDisabled();
+		expect(button).toHaveAttribute("aria-disabled", "true");
+		expect(button).not.toHaveClass("button_disabled");
+		button.focus();
+		expect(button).toHaveFocus();
+		expect(button).toHaveAttribute("aria-busy", "true");
+		expect(button).toHaveClass("button_loading");
+		// 앞 아이콘 자리를 스피너가 대신한다 - 둘이 같이 서면 폭이 늘어 버튼이 튄다
+		expect(button.querySelector(".button_spinner")).toHaveAttribute("aria-hidden", "true");
+		expect(screen.queryByTestId("lead")).toBeNull();
+		fireEvent.click(button);
+		expect(handleClick).not.toHaveBeenCalled();
+	});
+
+	it("loading 인 submit 버튼은 폼을 제출하지 않고 클릭이 바깥으로 올라가지 않는다", () => {
+		const handleSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+		const handleOuterClick = vi.fn();
+		render(
+			<form onSubmit={handleSubmit}>
+				<Button type="submit" loading>
+					저장하는 중…
+				</Button>
+			</form>,
+		);
+		// 버튼 바깥에서 클릭을 듣는 쪽(클릭 가능한 카드 등)을 흉내 낸다 - React 루트 위의 native 리스너
+		document.body.addEventListener("click", handleOuterClick);
+		fireEvent.click(screen.getByRole("button"));
+		document.body.removeEventListener("click", handleOuterClick);
+		expect(handleSubmit).not.toHaveBeenCalled();
+		expect(handleOuterClick).not.toHaveBeenCalled();
+	});
+
+	it("소비자가 준 aria-busy 가 loading 을 덮지 못하고, loading 이 아니면 그대로 남는다", () => {
+		const { rerender } = render(
+			<Button loading aria-busy={false}>
+				저장
+			</Button>,
+		);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true");
+		rerender(<Button aria-busy={true}>저장</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true");
+	});
+
+	it("loading 이 아니면 aria-busy · 스피너가 없다", () => {
+		render(<Button>저장</Button>);
+		const button = screen.getByRole("button");
+		expect(button).not.toHaveAttribute("aria-busy");
+		expect(button.querySelector(".button_spinner")).toBeNull();
+	});
+
+	it("loading 인 anchor 는 aria-disabled 로 막는다", () => {
+		const handleClick = vi.fn();
+		render(
+			<Button as="a" href="/x" loading onClick={handleClick}>
+				이동
+			</Button>,
+		);
+		const link = screen.getByText("이동").closest("a") as HTMLElement;
+		expect(link).toHaveAttribute("aria-busy", "true");
+		expect(link).toHaveAttribute("aria-disabled", "true");
+		// disabled 와 달리 포커스 순서에 남고, 클릭이 뒤로 새는 pointer-events: none(button_disabled)을 쓰지 않는다
+		expect(link).not.toHaveAttribute("tabindex");
+		expect(link).not.toHaveClass("button_disabled");
+		fireEvent.click(link);
+		expect(handleClick).not.toHaveBeenCalled();
+	});
+
 	it("can be disabled", () => {
 		const handleClick = vi.fn();
 		render(
