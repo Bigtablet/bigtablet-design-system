@@ -163,12 +163,12 @@ describe("DatePicker", () => {
 		expect(container.firstChild).not.toHaveClass("date_picker_full_width");
 	});
 
-	it("renders sr-only constraint description when minDate is set", () => {
+	it("renders sr-only constraint description when min is set", () => {
 		render(<DatePicker min="2020-01-01" onValueChange={() => {}} />);
 		expect(screen.getByText(/최소 날짜: 2020-01-01/)).toBeInTheDocument();
 	});
 
-	it("renders sr-only constraint description when selectableRange is until-today", () => {
+	it("renders sr-only constraint description when max is today", () => {
 		render(<DatePicker max="today" onValueChange={() => {}} />);
 		expect(screen.getByText(/오늘까지 선택 가능/)).toBeInTheDocument();
 	});
@@ -188,22 +188,18 @@ describe("DatePicker", () => {
 		expect(group).not.toHaveAttribute("aria-describedby");
 	});
 
-	it("uses custom minDateSrFormat when provided", () => {
+	it("takes constraint wording from LocaleProvider messages", () => {
 		render(
-			<DatePicker min="2020-01-01" minDateSrFormat="최소 날짜: {date}" onValueChange={() => {}} />,
+			<LocaleProvider
+				messages={{
+					"datePicker.minDateSr": "{date} 부터",
+					"datePicker.rangeUntilTodaySr": "오늘까지만",
+				}}
+			>
+				<DatePicker min="2020-01-01" max="today" onValueChange={() => {}} />
+			</LocaleProvider>,
 		);
-		expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
-	});
-
-	it("uses custom selectableRangeUntilTodaySrText when provided", () => {
-		render(
-			<DatePicker
-				max="today"
-				selectableRangeUntilTodaySrText="오늘까지 선택 가능"
-				onValueChange={() => {}}
-			/>,
-		);
-		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
+		expect(screen.getByText("2020-01-01 부터. 오늘까지만")).toBeInTheDocument();
 	});
 
 	it("calls onValueChange (canonical) when year is selected", () => {

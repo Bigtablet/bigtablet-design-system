@@ -98,16 +98,6 @@ interface DatePickerBaseProps {
 	monthLabel?: string;
 	/** 일 select의 라벨/플레이스홀더 */
 	dayLabel?: string;
-	/**
-	 * `min` 설정 시 스크린리더에 전달할 안내 문구 포맷.
-	 * `{date}` 자리에 `min` 값이 치환됩니다. (기본값: "최소 날짜: {date}")
-	 */
-	minDateSrFormat?: string;
-	/**
-	 * `max="today"` 설정 시 스크린리더에 전달할 안내 문구.
-	 * (기본값: "오늘까지 선택 가능")
-	 */
-	selectableRangeUntilTodaySrText?: string;
 }
 
 // DatePicker 는 controlled 전용(내부 value 상태 없음) → 값 콜백이 필수다.
@@ -155,17 +145,12 @@ export const DateFields = ({
 	yearLabel: yearLabelProp,
 	monthLabel: monthLabelProp,
 	dayLabel: dayLabelProp,
-	minDateSrFormat: minDateSrFormatProp,
-	selectableRangeUntilTodaySrText: selectableRangeUntilTodaySrTextProp,
 }: DateFieldsProps) => {
 	const t = useLocaleText();
 	const localeName = useLocaleName();
 	const yearLabel = yearLabelProp ?? t("datePicker.year");
 	const monthLabel = monthLabelProp ?? t("datePicker.month");
 	const dayLabel = dayLabelProp ?? t("datePicker.day");
-	const minDateSrFormat = minDateSrFormatProp ?? t("datePicker.minDateSr");
-	const selectableRangeUntilTodaySrText =
-		selectableRangeUntilTodaySrTextProp ?? t("datePicker.rangeUntilTodaySr");
 	// Field 가 감싸면 Field 라벨이 그룹 이름이 된다.
 	const field = useFieldControl();
 	// role="group" 은 aria-required 를 받지 못한다(axe aria-allowed-attr) - 필수 여부는
@@ -397,8 +382,9 @@ export const DateFields = ({
 	});
 
 	const constraintParts: string[] = [];
-	if (minLabel) constraintParts.push(minDateSrFormat.replace("{date}", minLabel));
-	if (untilToday) constraintParts.push(selectableRangeUntilTodaySrText);
+	// 범위 안내 문구는 prop 이 아니라 LocaleProvider `messages` 로 바꾼다 (min · max · today 가 같은 길)
+	if (minLabel) constraintParts.push(t("datePicker.minDateSr").replace("{date}", minLabel));
+	if (untilToday) constraintParts.push(t("datePicker.rangeUntilTodaySr"));
 	else if (maxLabel) constraintParts.push(t("datePicker.maxDateSr").replace("{date}", maxLabel));
 	const constraintDesc = constraintParts.join(". ");
 

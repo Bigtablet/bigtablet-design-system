@@ -297,20 +297,20 @@ it("does not call onClick when disabled", () => {
 ```tsx
 describe("controlled mode", () => {
     it("uses value prop", () => {
-        const { rerender } = render(<Toggle checked={false} onCheckedChange={() => {}} />);
-        expect(screen.getByRole("switch")).not.toHaveClass("toggle_on");
+        const { rerender } = render(<Switch checked={false} onCheckedChange={() => {}} />);
+        expect(screen.getByRole("switch")).not.toHaveClass("switch_on");
 
-        rerender(<Toggle checked={true} onCheckedChange={() => {}} />);
-        expect(screen.getByRole("switch")).toHaveClass("toggle_on");
+        rerender(<Switch checked={true} onCheckedChange={() => {}} />);
+        expect(screen.getByRole("switch")).toHaveClass("switch_on");
     });
 });
 
 describe("uncontrolled mode", () => {
     it("manages internal state", () => {
-        render(<Toggle defaultChecked={false} />);
+        render(<Switch defaultChecked={false} />);
 
         fireEvent.click(screen.getByRole("switch"));
-        expect(screen.getByRole("switch")).toHaveClass("toggle_on");
+        expect(screen.getByRole("switch")).toHaveClass("switch_on");
     });
 });
 ```

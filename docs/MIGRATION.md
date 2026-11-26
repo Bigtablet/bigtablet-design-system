@@ -50,7 +50,7 @@
 
 ## 개요
 
-- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
+- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 지운 버전의 섹션에 대체 방법을 남깁니다. 사용처가 적은 제거는 minor 로 내기도 했고(v4.1.0), 이름을 넓게 바꾼 v5.0.0 은 major 로 냈습니다.
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
 - deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 에 deprecated 된 콜백(`onChange` 계열 · `onChangeAction`)은 v4.1.0 에서 모두 지워졌습니다.
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
@@ -78,7 +78,15 @@
 
 `startYear` · `endYear` 는 연 목록만 정했고 `min` · `max` 는 날까지 막습니다. 1월 1일 · 12월 31일을 주면 같습니다. Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였고, `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
 
-**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"" --include=*.tsx`
+화면 낭독기 안내 문구 prop `minDateSrFormat` · `selectableRangeUntilTodaySrText` 도 지웠습니다 (지운 prop 이름을 달고 있었고, `max` 날짜 안내는 prop 이 없었습니다). 문구는 `LocaleProvider` 의 `messages` 로 바꿉니다.
+
+| 예전 | 새 방법 |
+|------|------|
+| `minDateSrFormat="{date} 부터"` | `<LocaleProvider messages={{ "datePicker.minDateSr": "{date} 부터" }}>` |
+| `selectableRangeUntilTodaySrText="오늘까지만"` | `messages={{ "datePicker.rangeUntilTodaySr": "오늘까지만" }}` |
+| (없었음) `max` 날짜 안내 | `messages={{ "datePicker.maxDateSr": "{date} 까지" }}` |
+
+**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"|minDateSrFormat|selectableRangeUntilTodaySrText" --include=*.tsx`
 
 ### Toggle → Switch
 
@@ -559,6 +567,8 @@ label="권한", "관리자" 선택   → "권한 관리자"
 | `Dropdown` | `placeholder` | `"Select…"` | `"선택…"` |
 | `DatePicker` | `minDateSrFormat` | `"Minimum date: {date}"` | `"최소 날짜: {date}"` |
 | `DatePicker` | `selectableRangeUntilTodaySrText` | `"Selectable up to today"` | `"오늘까지 선택 가능"` |
+
+`minDateSrFormat` · `selectableRangeUntilTodaySrText` 는 v5.0.0 에서 지웠습니다 - 문구는 `LocaleProvider` `messages` 로 바꿉니다 ([v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리)).
 
 `FileInput` 의 `label` 은 `aria-label` 이 아니라 **화면에 보이는 버튼 텍스트**입니다 - 영어 화면에서 가장 눈에 띕니다.
 
