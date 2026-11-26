@@ -61,6 +61,16 @@ describe("TimePicker", () => {
 		expect(screen.getByText(/10:00.*11:00/)).toBeInTheDocument();
 	});
 
+	it("합친 하한이 상한보다 늦으면 고를 시가 없고 값을 내보내지 않는다", () => {
+		// 개발자 실수 영역 - 넓은 쪽으로 풀면 범위 밖 시각이 나간다
+		const onValueChange = vi.fn();
+		render(<TimePicker onValueChange={onValueChange} min="12:00" maxTime="10:00" />);
+
+		fireEvent.click(hourTrigger());
+		expect(screen.queryAllByRole("option")).toHaveLength(0);
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
 	it("narrows the minutes at the boundary hour", () => {
 		// 최소가 09:30 이면 09시의 분은 30분부터 시작한다.
 		render(<TimePicker value="09:30" onValueChange={vi.fn()} minuteStep={15} minTime="09:30" />);
