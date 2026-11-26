@@ -128,7 +128,35 @@ export const AVOID: {
 	{ props: "DropdownSingleProps", component: "Dropdown", avoid: "onChange", use: "onValueChange" },
 	{ props: "DatePickerProps", component: "DatePicker", avoid: "onChange", use: "onValueChange" },
 	{ props: "PaginationProps", component: "Pagination", avoid: "onChange", use: "onPageChange" },
-	{ props: "ToggleProps", component: "Toggle", avoid: "onChange", use: "onCheckedChange" },
+	{ props: "SwitchProps", component: "Switch", avoid: "onChange", use: "onCheckedChange" },
+	{
+		avoid: "`Toggle` · `ToggleProps`",
+		use: "`Switch` · `SwitchProps`",
+		why: '5.0.0 에서 이름을 바꿨다 - 같은 컴포넌트 (`role="switch"`). 옛 이름은 없다',
+	},
+	{
+		avoid:
+			'날짜 `minDate` · `selectableRange` · `startYear`/`endYear` · `mode="year-month"`, TimePicker `minTime`/`maxTime`',
+		use: '`min` · `max` (`"today"` 도 받는다) · `isDateDisabled` · `MonthPicker`',
+		why: "5.0.0 에서 날짜 · 시간 범위 prop 이름을 통일했다. 옛 이름은 없다",
+	},
+	{
+		avoid: "DatePicker · MonthPicker `minDateSrFormat` · `selectableRangeUntilTodaySrText`",
+		use: '`LocaleProvider` `messages` 의 `"datePicker.minDateSr"` · `"datePicker.maxDateSr"` · `"datePicker.rangeUntilTodaySr"`',
+		why: "5.0.0 에서 제거 - 범위 안내 문구는 LocaleProvider 한 길로만 바꾼다",
+	},
+	{ props: "DropdownSingleProps", component: "Dropdown", avoid: "emptyText", use: "emptyMessage" },
+	{
+		props: "ToastProviderProps",
+		component: "ToastProvider",
+		avoid: "closeAriaLabel",
+		use: "closeLabel",
+	},
+	{ props: "TableProps", component: "Table", avoid: "selectAllAriaLabel", use: "selectAllLabel" },
+	{ props: "TableProps", component: "Table", avoid: "selectRowAriaLabel", use: "selectRowLabel" },
+	{ props: "AlertOptions", component: "useAlert", avoid: "cancelText", use: "cancelLabel" },
+	{ props: "AlertOptions", component: "useAlert", avoid: "confirmText", use: "confirmLabel" },
+	{ props: "ConfirmOptions", component: "useConfirm", avoid: "confirmText", use: "confirmLabel" },
 	{
 		props: "TextFieldProps",
 		component: "TextField",
@@ -143,14 +171,14 @@ export const AVOID: {
 	{
 		avoid: '`Tabs variant="fills"`',
 		use: "패널을 바꾸면 기본 `line`, 값만 고르면 `SegmentedControl`",
-		why: "deprecated - 이후 버전에서 제거",
+		why: "5.0.0 에서 제거 - SegmentedControl 과 같아 보여 역할이 헷갈렸다",
 	},
 	{ avoid: '`IconButton variant="standard"` · `"outlined"`', use: '`"text"` · `"outline"`' },
 	{ avoid: '`Card variant="outlined"`', use: '`"outline"`' },
 	{
 		avoid: "SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero`",
 		use: '`<Card variant="glass">` · `<Card interactive>` · `token.legible_identifiers`',
-		why: "deprecated - 색 · 그림자를 하드코딩한다",
+		why: "5.0.0 에서 제거 - 색 · 그림자를 하드코딩했다",
 	},
 	{
 		avoid: '`import "@bigtablet/design-system/style.css"`',

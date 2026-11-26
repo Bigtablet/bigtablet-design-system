@@ -946,10 +946,10 @@
 		},
 		{
 			"name": "variant",
-			"type": "\"line\" | \"fills\"",
+			"type": "TabsVariant",
 			"required": false,
 			"default": "\"line\"",
-			"doc": "시각 스타일. line=하단 underline. `fills`(채운 둥근 박스 그룹)는 deprecated: SegmentedControl 과 거의 같아 보여 \"내용 바꾸기\" 와 \"값 고르기\" 가 구분되지 않는다. 이후 버전에서 제거"
+			"doc": "시각 스타일: 하단 underline. 채운 박스 그룹이 필요하면 탭이 아니라 값을 고르는 것이라 `SegmentedControl` 을 쓴다"
 		},
 		{
 			"name": "size",
@@ -1291,14 +1291,14 @@
 			"doc": "표의 접근성 이름"
 		},
 		{
-			"name": "selectAllAriaLabel",
+			"name": "selectAllLabel",
 			"type": "string",
 			"required": false,
 			"default": "`Table` 의 기본 라벨",
 			"doc": "전체 선택 체크박스의 라벨"
 		},
 		{
-			"name": "selectRowAriaLabel",
+			"name": "selectRowLabel",
 			"type": "(index: number, row: T) => string",
 			"required": false,
 			"doc": "행 선택 체크박스의 라벨. 첫 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based), 둘째는 그 행의 데이터. 기본값은 순번만 읽어 주므로 행을 이름으로 구분하려면 둘째 인자를 쓴다."
@@ -1811,7 +1811,7 @@
 			"type": "\"auto\" | \"fixed\"",
 			"required": false,
 			"default": "\"auto\"",
-			"doc": "열 너비 계산 방식.\n\n`auto`: 브라우저가 내용 길이로 잰다: 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다\n\n`fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다. 목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때"
+			"doc": "열 너비 계산 방식.\n\n`auto`: 브라우저가 내용 길이로 잰다: 쪽마다 내용이 달라 쪽을 넘기면 열 위치가 바뀐다\n\n`fixed`: 열의 `width` 를 그대로 쓴다. 너비를 주지 않은 열이 남는 폭을 나눠 가지며 줄바꿈한다. 목록을 쪽으로 넘기는 기록 표처럼 열 위치가 그대로 있어야 할 때. 행마다 길이가 달라지는 값 (상태 배지 · 바뀌는 버튼 글자 · 연결 상태 문구)이 있는 표도: `auto` 면 글자가 바뀔 때 다른 열이 밀린다. 바뀌는 칸은 가장 긴 값으로 너비를 재고, 이름처럼 길이를 모르는 열 하나는 너비 없이 `truncate` 로 둔다"
 		},
 		{
 			"name": "minWidth",
@@ -1864,13 +1864,13 @@
 			"doc": "정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음: 정렬된 `data` 를 다시 전달해야 함"
 		},
 		{
-			"name": "selectAllAriaLabel",
+			"name": "selectAllLabel",
 			"type": "string",
 			"required": false,
 			"doc": "전체 선택 체크박스 aria-label"
 		},
 		{
-			"name": "selectRowAriaLabel",
+			"name": "selectRowLabel",
 			"type": "(index: number, row: T) => string",
 			"required": false,
 			"default": "(i) => `${i+1}번째 행 선택`",
@@ -1950,13 +1950,13 @@
 			"doc": "알림 본문 메시지"
 		},
 		{
-			"name": "confirmText",
+			"name": "confirmLabel",
 			"type": "string",
 			"required": false,
 			"doc": "확인 버튼 텍스트"
 		},
 		{
-			"name": "cancelText",
+			"name": "cancelLabel",
 			"type": "string",
 			"required": false,
 			"doc": "취소 버튼 텍스트"
@@ -2042,13 +2042,13 @@
 			"doc": "알림 본문 메시지"
 		},
 		{
-			"name": "confirmText",
+			"name": "confirmLabel",
 			"type": "string",
 			"required": false,
 			"doc": "확인 버튼 텍스트"
 		},
 		{
-			"name": "cancelText",
+			"name": "cancelLabel",
 			"type": "string",
 			"required": false,
 			"doc": "취소 버튼 텍스트"
@@ -2193,7 +2193,7 @@
 			"doc": "최대 동시 표시 토스트 수"
 		},
 		{
-			"name": "closeAriaLabel",
+			"name": "closeLabel",
 			"type": "string",
 			"required": false,
 			"doc": "토스트 닫기 버튼의 aria-label"
@@ -2547,17 +2547,11 @@
 			"doc": "제어형 날짜 값 (\"YYYY-MM\" 또는 \"YYYY-MM-DD\" 형식)"
 		},
 		{
-			"name": "mode",
-			"type": "\"year-month\" | \"year-month-day\"",
-			"required": false,
-			"doc": "선택 모드"
-		},
-		{
 			"name": "variant",
 			"type": "\"dropdown\" | \"calendar\"",
 			"required": false,
 			"default": "\"dropdown\"",
-			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다. `mode=\"year-month-day\"` 에서만 쓴다: `\"year-month\"` 면 달력이 고를 날이 없어 드롭다운으로 그린다."
+			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다."
 		},
 		{
 			"name": "placeholder",
@@ -2567,30 +2561,22 @@
 			"doc": "`variant=\"calendar\"` 에서 값이 없을 때 칸에 보일 문구"
 		},
 		{
-			"name": "startYear",
-			"type": "number",
-			"required": false,
-			"default": "1950",
-			"doc": "연도 선택 범위 시작"
-		},
-		{
-			"name": "endYear",
-			"type": "number",
-			"required": false,
-			"default": "현재 연도 + 10",
-			"doc": "연도 선택 범위 끝"
-		},
-		{
-			"name": "minDate",
+			"name": "min",
 			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 최소 날짜 (\"YYYY-MM-DD\" 형식)"
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해부터 시작한다 (없으면 1950)"
 		},
 		{
-			"name": "selectableRange",
-			"type": "\"all\" | \"until-today\"",
+			"name": "max",
+			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 날짜 범위 (\"all\": 제한 없음, \"until-today\": 오늘까지)"
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해에서 끝난다 (없으면 현재 연도 + 10)"
+		},
+		{
+			"name": "isDateDisabled",
+			"type": "(date: string) => boolean",
+			"required": false,
+			"doc": "날마다 막을지 정한다: `\"YYYY-MM-DD\"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등). `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다. 월 목록을 만들 때 한 달의 날마다 부르므로 안정된 참조(`useCallback` · 모듈 함수)로 넘긴다: 인라인 함수면 렌더마다 목록을 다시 계산한다"
 		},
 		{
 			"name": "disabled",
@@ -2649,24 +2635,10 @@
 			"doc": "일 select의 라벨/플레이스홀더"
 		},
 		{
-			"name": "minDateSrFormat",
-			"type": "string",
-			"required": false,
-			"default": "\"최소 날짜",
-			"doc": "minDate 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 minDate 값이 치환됩니다.: {date}\""
-		},
-		{
-			"name": "selectableRangeUntilTodaySrText",
-			"type": "string",
-			"required": false,
-			"default": "\"오늘까지 선택 가능\"",
-			"doc": "selectableRange=\"until-today\" 설정 시 스크린리더에 전달할 안내 문구."
-		},
-		{
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": true,
-			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`)"
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD`"
 		}
 	],
 	"DateRange": [
@@ -2709,30 +2681,22 @@
 			"doc": "종료일 select 묶음의 라벨"
 		},
 		{
-			"name": "startYear",
-			"type": "number",
-			"required": false,
-			"default": "1950",
-			"doc": "연도 선택 범위 시작"
-		},
-		{
-			"name": "endYear",
-			"type": "number",
-			"required": false,
-			"doc": "연도 선택 범위 끝. 미지정 시 현재 연도 + 10"
-		},
-		{
-			"name": "minDate",
+			"name": "min",
 			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 가장 이른 날짜 (`\"YYYY-MM-DD\"`)"
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` 또는 `\"today\"`. 종료일은 시작일이 하한이 된다"
 		},
 		{
-			"name": "selectableRange",
-			"type": "\"all\" | \"until-today\"",
+			"name": "max",
+			"type": "string",
 			"required": false,
-			"default": "\"all\"",
-			"doc": "`\"until-today\"` 면 오늘 이후를 고를 수 없다"
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` 또는 `\"today\"`"
+		},
+		{
+			"name": "isDateDisabled",
+			"type": "(date: string) => boolean",
+			"required": false,
+			"doc": "날마다 막을지 정한다: 시작일 · 종료일 모두에 걸린다 (`DatePicker` 와 같다)"
 		},
 		{
 			"name": "disabled",
@@ -2853,7 +2817,7 @@
 			"doc": "검색 입력의 placeholder"
 		},
 		{
-			"name": "emptyText",
+			"name": "emptyMessage",
 			"type": "string",
 			"required": false,
 			"doc": "필터 결과가 0개일 때 표시할 텍스트"
@@ -3009,7 +2973,7 @@
 			"doc": "검색 입력의 placeholder"
 		},
 		{
-			"name": "emptyText",
+			"name": "emptyMessage",
 			"type": "string",
 			"required": false,
 			"doc": "필터 결과가 0개일 때 표시할 텍스트"
@@ -3121,7 +3085,7 @@
 			"doc": "검색 입력의 placeholder"
 		},
 		{
-			"name": "emptyText",
+			"name": "emptyMessage",
 			"type": "string",
 			"required": false,
 			"doc": "필터 결과가 0개일 때 표시할 텍스트"
@@ -3579,6 +3543,88 @@
 			"doc": "이동 여유가 없을 때 스크린리더로 알리는 문구. 기본 \"이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.\""
 		}
 	],
+	"MonthPickerProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "데이트 피커 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 날짜 값 (\"YYYY-MM\" 또는 \"YYYY-MM-DD\" 형식) 제어형 값 (`\"YYYY-MM\"`)"
+		},
+		{
+			"name": "max",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해에서 끝난다 (없으면 현재 연도 + 10) 고를 수 있는 가장 늦은 달: `\"YYYY-MM\"` 또는 `\"today\"`(이번 달)"
+		},
+		{
+			"name": "min",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해부터 시작한다 (없으면 1950) 고를 수 있는 가장 이른 달: `\"YYYY-MM\"` 또는 `\"today\"`(이번 달)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "칸 크기. Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다\n\nsm · md 40px, lg 48px (좁은 화면은 한 단계 위)."
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "데이트 피커가 컨테이너의 전체 너비를 차지할지 여부"
+		},
+		{
+			"name": "clearable",
+			"type": "boolean",
+			"required": false,
+			"doc": "값이 있을 때 지우기(×) 버튼을 둔다: 누르면 `onValueChange(\"\")` (#965). 조회 조건처럼 \"값 없음 = 조건 없음\" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다"
+		},
+		{
+			"name": "clearLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `datePicker.clear`",
+			"doc": "지우기 버튼 이름"
+		},
+		{
+			"name": "yearLabel",
+			"type": "string",
+			"required": false,
+			"doc": "연도 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "monthLabel",
+			"type": "string",
+			"required": false,
+			"doc": "월 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": true,
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` 값이 바뀔 때 호출된다: `\"YYYY-MM\"`"
+		}
+	],
 	"OtpInputProps": [
 		{
 			"name": "length",
@@ -3822,6 +3868,51 @@
 			"doc": "필수: 폼 제출 시 선택이 없으면 막는다"
 		}
 	],
+	"SwitchProps": [
+		{
+			"name": "checked",
+			"type": "boolean",
+			"required": false,
+			"doc": "제어형 토글 상태"
+		},
+		{
+			"name": "defaultChecked",
+			"type": "boolean",
+			"required": false,
+			"doc": "비제어형 초기 토글 상태"
+		},
+		{
+			"name": "onCheckedChange",
+			"type": "(checked: boolean) => void",
+			"required": false,
+			"doc": "상태 변경 콜백 (canonical)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\"",
+			"required": false,
+			"default": "\"sm\"",
+			"doc": "토글 크기"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "ariaLabel",
+			"type": "string",
+			"required": true,
+			"doc": "토글 접근성 레이블(스크린 리더용)"
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLButtonElement>",
+			"required": false,
+			"doc": "버튼 요소 참조"
+		}
+	],
 	"TagInputProps": [
 		{
 			"name": "value",
@@ -3883,158 +3974,6 @@
 			"type": "string",
 			"required": false,
 			"doc": "접근성 이름: `Field` 로 감싸면 그쪽 라벨이 우선한다"
-		}
-	],
-	"TextareaProps": [
-		{
-			"name": "size",
-			"type": "\"sm\" | \"md\" | \"lg\"",
-			"required": false,
-			"default": "\"md\"",
-			"doc": "입력 필드 크기"
-		},
-		{
-			"name": "label",
-			"type": "string",
-			"required": false,
-			"doc": "입력 필드 위에 표시할 라벨 텍스트"
-		},
-		{
-			"name": "showLabel",
-			"type": "boolean",
-			"required": false,
-			"default": "true",
-			"doc": "라벨 표시 여부"
-		},
-		{
-			"name": "supportingText",
-			"type": "string",
-			"required": false,
-			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
-		},
-		{
-			"name": "error",
-			"type": "boolean",
-			"required": false,
-			"doc": "에러 상태 여부"
-		},
-		{
-			"name": "fullWidth",
-			"type": "boolean",
-			"required": false,
-			"doc": "컨테이너 전체 너비 차지 여부"
-		},
-		{
-			"name": "onValueChange",
-			"type": "(value: string) => void",
-			"required": false,
-			"default": "조합 완료 후",
-			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
-		},
-		{
-			"name": "imeStrategy",
-			"type": "\"delayed\" | \"immediate\"",
-			"required": false,
-			"default": "\"delayed\"",
-			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
-		},
-		{
-			"name": "value",
-			"type": "string",
-			"required": false,
-			"doc": "제어형 입력 값"
-		},
-		{
-			"name": "defaultValue",
-			"type": "string",
-			"required": false,
-			"doc": "비제어형 초기 입력 값"
-		},
-		{
-			"name": "transformValue",
-			"type": "(value: string) => string",
-			"required": false,
-			"doc": "입력값 변환 함수"
-		},
-		{
-			"name": "rows",
-			"type": "number",
-			"required": false,
-			"default": "3",
-			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
-		},
-		{
-			"name": "minRows",
-			"type": "number",
-			"required": false,
-			"doc": "auto-grow 최소 행 수. 지정 시 내용에 따라 높이 자동 증가"
-		},
-		{
-			"name": "maxRows",
-			"type": "number",
-			"required": false,
-			"doc": "auto-grow 최대 행 수. 초과 시 스크롤"
-		},
-		{
-			"name": "showCounter",
-			"type": "boolean",
-			"required": false,
-			"doc": "글자 수 카운터 표시 (maxLength 와 함께 사용 권장)"
-		},
-		{
-			"name": "resize",
-			"type": "\"vertical\" | \"none\" | \"both\"",
-			"required": false,
-			"default": "\"vertical\"",
-			"doc": "resize 핸들 제어"
-		},
-		{
-			"name": "toolbar",
-			"type": "ReactNode",
-			"required": false,
-			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
-		},
-		{
-			"name": "ref",
-			"type": "Ref<HTMLTextAreaElement>",
-			"required": false,
-			"doc": "textarea 요소 참조"
-		},
-		{
-			"name": "disabled",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "name",
-			"type": "string",
-			"required": false,
-			"doc": "HTML `name` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "maxLength",
-			"type": "number",
-			"required": false,
-			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "placeholder",
-			"type": "string",
-			"required": false,
-			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "readOnly",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
-		},
-		{
-			"name": "required",
-			"type": "boolean",
-			"required": false,
-			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
 	"TextFieldProps": [
@@ -4229,6 +4168,158 @@
 			"doc": "HTML `required` 속성을 그대로 넘깁니다"
 		}
 	],
+	"TextareaProps": [
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "입력 필드 크기"
+		},
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "showLabel",
+			"type": "boolean",
+			"required": false,
+			"default": "true",
+			"doc": "라벨 표시 여부"
+		},
+		{
+			"name": "supportingText",
+			"type": "string",
+			"required": false,
+			"doc": "입력 필드 아래에 표시할 도움말 텍스트"
+		},
+		{
+			"name": "error",
+			"type": "boolean",
+			"required": false,
+			"doc": "에러 상태 여부"
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "컨테이너 전체 너비 차지 여부"
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": false,
+			"default": "조합 완료 후",
+			"doc": "값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름"
+		},
+		{
+			"name": "imeStrategy",
+			"type": "\"delayed\" | \"immediate\"",
+			"required": false,
+			"default": "\"delayed\"",
+			"doc": "IME 조합 중 콜백 전략. 실시간 구독이 필요하면 \"immediate\": 한글 조합 중에도 매 입력 즉시 반영."
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 입력 값"
+		},
+		{
+			"name": "defaultValue",
+			"type": "string",
+			"required": false,
+			"doc": "비제어형 초기 입력 값"
+		},
+		{
+			"name": "transformValue",
+			"type": "(value: string) => string",
+			"required": false,
+			"doc": "입력값 변환 함수"
+		},
+		{
+			"name": "rows",
+			"type": "number",
+			"required": false,
+			"default": "3",
+			"doc": "고정 행 수. `minRows`/`maxRows` 미지정 시 고정 높이. auto-grow 를 원하면 `minRows`/`maxRows` 사용."
+		},
+		{
+			"name": "minRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최소 행 수. 지정 시 내용에 따라 높이 자동 증가"
+		},
+		{
+			"name": "maxRows",
+			"type": "number",
+			"required": false,
+			"doc": "auto-grow 최대 행 수. 초과 시 스크롤"
+		},
+		{
+			"name": "showCounter",
+			"type": "boolean",
+			"required": false,
+			"doc": "글자 수 카운터 표시 (maxLength 와 함께 사용 권장)"
+		},
+		{
+			"name": "resize",
+			"type": "\"vertical\" | \"none\" | \"both\"",
+			"required": false,
+			"default": "\"vertical\"",
+			"doc": "resize 핸들 제어"
+		},
+		{
+			"name": "toolbar",
+			"type": "ReactNode",
+			"required": false,
+			"doc": "입력 영역 위, **테두리 안쪽**에 붙는 슬롯. 서식 툴바처럼 입력과 한 박스로 보여야 하는 컨트롤을 넣는다. 컨테이너가 품으므로 `:focus-within` 테두리가 툴바까지 감싸고, 모서리와 구분선을 DS 가 처리한다. 미지정 시 DOM·스타일이 이전과 동일하다."
+		},
+		{
+			"name": "ref",
+			"type": "Ref<HTMLTextAreaElement>",
+			"required": false,
+			"doc": "textarea 요소 참조"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `disabled` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `name` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "maxLength",
+			"type": "number",
+			"required": false,
+			"doc": "HTML `maxLength` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "placeholder",
+			"type": "string",
+			"required": false,
+			"doc": "HTML `placeholder` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "readOnly",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `readOnly` 속성을 그대로 넘깁니다"
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "HTML `required` 속성을 그대로 넘깁니다"
+		}
+	],
 	"TimePickerProps": [
 		{
 			"name": "label",
@@ -4256,13 +4347,13 @@
 			"doc": "분 간격. 5·10·15·30 처럼 60 의 약수를 준다"
 		},
 		{
-			"name": "minTime",
+			"name": "min",
 			"type": "string",
 			"required": false,
 			"doc": "선택 가능한 가장 이른 시각 (`\"HH:mm\"`)"
 		},
 		{
-			"name": "maxTime",
+			"name": "max",
 			"type": "string",
 			"required": false,
 			"doc": "선택 가능한 가장 늦은 시각 (`\"HH:mm\"`)"
@@ -4297,51 +4388,6 @@
 			"type": "string",
 			"required": false,
 			"doc": "분 select 의 라벨/placeholder"
-		}
-	],
-	"ToggleProps": [
-		{
-			"name": "checked",
-			"type": "boolean",
-			"required": false,
-			"doc": "제어형 토글 상태"
-		},
-		{
-			"name": "defaultChecked",
-			"type": "boolean",
-			"required": false,
-			"doc": "비제어형 초기 토글 상태"
-		},
-		{
-			"name": "onCheckedChange",
-			"type": "(checked: boolean) => void",
-			"required": false,
-			"doc": "상태 변경 콜백 (canonical)"
-		},
-		{
-			"name": "size",
-			"type": "\"sm\" | \"md\"",
-			"required": false,
-			"default": "\"sm\"",
-			"doc": "토글 크기"
-		},
-		{
-			"name": "disabled",
-			"type": "boolean",
-			"required": false,
-			"doc": "비활성화 여부"
-		},
-		{
-			"name": "ariaLabel",
-			"type": "string",
-			"required": true,
-			"doc": "토글 접근성 레이블(스크린 리더용)"
-		},
-		{
-			"name": "ref",
-			"type": "Ref<HTMLButtonElement>",
-			"required": false,
-			"doc": "버튼 요소 참조"
 		}
 	],
 	"ButtonProps": [

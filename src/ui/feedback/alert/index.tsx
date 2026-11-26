@@ -37,9 +37,9 @@ export interface AlertOptions {
 	/** 알림 본문 메시지 */
 	message?: React.ReactNode;
 	/** 확인 버튼 텍스트 */
-	confirmText?: string;
+	confirmLabel?: string;
 	/** 취소 버튼 텍스트 */
-	cancelText?: string;
+	cancelLabel?: string;
 	/** 취소 버튼 표시 여부 (기본값: false) */
 	showCancel?: boolean;
 	/**
@@ -104,7 +104,7 @@ const AlertContext = createContext<AlertContextValue | null>(null);
  * @example
  * ```tsx
  * const confirm = useConfirm();
- * if (await confirm({ tone: "warning", title: "변경사항을 버릴까요?", confirmText: "버리기", destructive: true })) {
+ * if (await confirm({ tone: "warning", title: "변경사항을 버릴까요?", confirmLabel: "버리기", destructive: true })) {
  *   discard();
  * }
  * ```
@@ -244,8 +244,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	tone = "info",
 	title,
 	message,
-	confirmText: confirmTextProp,
-	cancelText: cancelTextProp,
+	confirmLabel: confirmLabelProp,
+	cancelLabel: cancelLabelProp,
 	showCancel = false,
 	destructive = false,
 	actionsAlign = "right",
@@ -261,8 +261,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
 	const t = useLocaleText();
 	// 진행 중이면 스피너가 우선 - 잠금 모양(흐림)은 pending 이 아닐 때만
 	const locked = confirmDisabled && !pending;
-	const confirmText = confirmTextProp ?? t("alert.confirm");
-	const cancelText = cancelTextProp ?? t("alert.cancel");
+	const confirmLabel = confirmLabelProp ?? t("alert.confirm");
+	const cancelLabel = cancelLabelProp ?? t("alert.cancel");
 	// Escape/overlay 닫힘은 취소 동작과 동등해야 한다 (APG alertdialog) - onCancel 경로로
 	// 보내 소비자의 취소 정리 로직(롤백 등)이 우회되지 않게 한다.
 	const dismiss = onCancel ?? onClose;
@@ -378,7 +378,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 							aria-disabled={pending || undefined}
 							onClick={onCancel}
 						>
-							{cancelText}
+							{cancelLabel}
 						</Button>
 					)}
 					<Button
@@ -399,7 +399,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 						}
 						onClick={onConfirm}
 					>
-						{confirmText}
+						{confirmLabel}
 					</Button>
 				</div>
 			</div>

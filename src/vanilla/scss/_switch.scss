@@ -1,9 +1,9 @@
 @use "../../styles/token" as token;
 
 /* ========================================
-   Toggle
+   Switch
    ======================================== */
-.bt-toggle {
+.bt-switch {
   @include token.wrap_keep_all;
   position: relative;
   display: inline-flex;
@@ -12,10 +12,10 @@
   width: 40px;
   height: 24px;
   padding: 0;
-  // React Toggle 과 같은 투명 테두리 - 손잡이 위치 계산이 두 번들에서 같아지고, 고대비 모드에서는 트랙 윤곽이 된다
+  // React Switch 과 같은 투명 테두리 - 손잡이 위치 계산이 두 번들에서 같아지고, 고대비 모드에서는 트랙 윤곽이 된다
   border: 2px solid transparent;
   border-radius: var(--bt-radius-full);
-  // 흰 손잡이와 3:1 (WCAG 1.4.11) - border-light(#B3B3B3) 는 2.1:1 이었다. React Toggle 과 같은 토큰
+  // 흰 손잡이와 3:1 (WCAG 1.4.11) - border-light(#B3B3B3) 는 2.1:1 이었다. React Switch 과 같은 토큰
   background: token.$color_base_neutral_600;
   transition: background var(--bt-transition-base);
   cursor: pointer;
@@ -27,7 +27,7 @@
 
   /* 트랙은 24~28px 이라 그대로는 터치 하한(32px)에 못 미친다. 스위치는 시각적으로 작은 것이
      정상이므로 크기를 키우는 대신 히트 영역만 넓힌다 - 절대배치라 레이아웃에 영향이 없다.
-     React `Toggle` 과 동일한 처리 (src/ui/forms/toggle/style.scss).
+     React `Switch` 와 동일한 처리 (src/ui/forms/switch/style.scss).
      세로로 쌓을 때는 16px 이상 띄울 것 - 그보다 좁으면 인접 토글끼리 히트 영역이 겹친다. */
   &::after {
     content: "";
@@ -46,7 +46,7 @@
   }
 
   /* 손잡이는 중심 기준 - 꺼짐 중심은 왼쪽 끝에서 트랙 높이/2, 켜짐 중심은 오른쪽 끝에서 트랙 높이/2.
-     위·아래·옆 여백이 같아진다. React Toggle 과 같은 계산 (src/ui/forms/toggle/style.scss) */
+     위·아래·옆 여백이 같아진다. React Switch 와 같은 계산 (src/ui/forms/switch/style.scss) */
   &__thumb {
     position: absolute;
     top: 50%;
@@ -64,7 +64,7 @@
   &--on {
     background: var(--bt-color-accent);
 
-    .bt-toggle__thumb {
+    .bt-switch__thumb {
       width: 20px;
       height: 20px;
       background: var(--bt-color-accent-on-surface);
@@ -83,32 +83,32 @@
     width: 48px;
     height: 28px;
 
-    .bt-toggle__thumb {
+    .bt-switch__thumb {
       left: 12px; // 28/2 - 테두리 2
       width: 16px;
       height: 16px;
     }
 
-    &.bt-toggle--on .bt-toggle__thumb {
+    &.bt-switch--on .bt-switch__thumb {
       width: 24px;
       height: 24px;
       transform: translate(calc(20px - 50%), -50%); // 48 - 28
     }
   }
 
-  /* React Toggle 과 동일하게 native `disabled` 속성만 지원한다.
+  /* React Switch 과 동일하게 native `disabled` 속성만 지원한다.
      (구 `--disabled` 클래스는 v3.8.0 에서 제거 - docs/MIGRATION.md 참고) */
   &:disabled {
     cursor: not-allowed;
-    // React Toggle 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
+    // React Switch 과 같은 neutral_400 트랙 - border-light 면 다크에서 활성 off 와 구분되지 않았다
     background: token.$color_base_neutral_400;
 
-    // React Toggle 과 같은 토큰 - off 는 on_primary, on 은 accent_on_surface (#976)
-    .bt-toggle__thumb {
+    // React Switch 과 같은 토큰 - off 는 on_primary, on 은 accent_on_surface (#976)
+    .bt-switch__thumb {
       background: var(--bt-color-on-primary);
     }
 
-    &.bt-toggle--on .bt-toggle__thumb {
+    &.bt-switch--on .bt-switch__thumb {
       background: var(--bt-color-accent-on-surface);
     }
   }
@@ -117,28 +117,28 @@
 // ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
 // 손잡이 · 켜진 트랙을 배경으로만 그린다 - 고대비가 배경을 지우면 손잡이가 사라져 켬/끔을 알 수 없다 (React 와 같음).
 @media (forced-colors: active) {
-  .bt-toggle__thumb {
+  .bt-switch__thumb {
     forced-color-adjust: none;
     background: CanvasText;
   }
 
-  .bt-toggle--on {
+  .bt-switch--on {
     forced-color-adjust: none;
     background: Highlight;
     border-color: Highlight;
 
-    .bt-toggle__thumb {
+    .bt-switch__thumb {
       background: HighlightText;
     }
   }
 
-  .bt-toggle:disabled {
+  .bt-switch:disabled {
     forced-color-adjust: none;
     background: Canvas;
     border-color: GrayText;
 
-    .bt-toggle__thumb,
-    &.bt-toggle--on .bt-toggle__thumb {
+    .bt-switch__thumb,
+    &.bt-switch--on .bt-switch__thumb {
       background: GrayText;
     }
   }

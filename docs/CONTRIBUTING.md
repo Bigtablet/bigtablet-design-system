@@ -153,7 +153,7 @@ const Foo = ({ hint: hintProp }: FooProps) => {
 3. 카탈로그 키 ↔ `t("...")` 호출 양방향 — 키만 넣고 배선을 잊거나, 없는 키를 부르는 것
 4. 카탈로그 키가 섹션 안에서 알파벳순인지
 5. JSDoc `@default` 가 실제 기본값과 같은지
-6. `docs/COMPONENTS.md` 예제의 union 값(`<Tabs variant="fills">`)이 소스 타입에 있는지
+6. `docs/COMPONENTS.md` 예제의 union 값(`<Button variant="tonal">`)이 소스 타입에 있는지
 
 개발자 콘솔로만 나가는 메시지(`[Bigtablet DS] …`)는 대상이 아닙니다 — 사용자가 아니라 개발자가 읽습니다.
 

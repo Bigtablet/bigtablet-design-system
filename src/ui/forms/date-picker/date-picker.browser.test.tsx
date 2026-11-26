@@ -9,14 +9,14 @@ import "../../../vanilla/scss/_modal.scss";
 import "../../../vanilla/scss/_text-field.scss";
 import { Button } from "../../general/button";
 import { Dropdown } from "../dropdown";
-import { TextField } from "../textfield";
+import { TextField } from "../text-field";
 import { DatePicker } from "./index";
 import "./style.scss";
 import "../../overlay/popover/style.scss";
 import "../../general/button/style.scss";
 import "../../general/icon-button/style.scss";
 import "../dropdown/style.scss";
-import "../textfield/style.scss";
+import "../text-field/style.scss";
 
 const openAt = async (pos: React.CSSProperties) => {
 	render(

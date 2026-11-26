@@ -42,6 +42,7 @@ export interface LocaleMessages {
 	"datePicker.calendar": string;
 	"datePicker.clear": string;
 	"datePicker.day": string;
+	"datePicker.maxDateSr": string; // {date}
 	"datePicker.minDateSr": string; // {date}
 	"datePicker.month": string;
 	"datePicker.nextMonth": string;
@@ -136,6 +137,7 @@ export const ko: LocaleMessages = {
 	"datePicker.calendar": "달력",
 	"datePicker.clear": "날짜 지우기",
 	"datePicker.day": "일",
+	"datePicker.maxDateSr": "최대 날짜: {date}",
 	"datePicker.minDateSr": "최소 날짜: {date}",
 	"datePicker.month": "월",
 	"datePicker.nextMonth": "다음 달",
@@ -227,6 +229,7 @@ export const en: LocaleMessages = {
 	"datePicker.calendar": "Calendar",
 	"datePicker.clear": "Clear date",
 	"datePicker.day": "Day",
+	"datePicker.maxDateSr": "Latest date: {date}",
 	"datePicker.minDateSr": "Earliest date: {date}",
 	"datePicker.month": "Month",
 	"datePicker.nextMonth": "Next month",

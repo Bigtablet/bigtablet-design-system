@@ -14,7 +14,7 @@ import { $, $$, escapeHtml } from "./utils.js";
 export function Pagination(element, options = {}) {
 	const container = typeof element === "string" ? $(element) : element;
 	if (!container) return null;
-	// 같은 요소에 다시 만들면 앞 인스턴스를 걷고 교체한다 (Modal · Toggle 과 같음). 인스턴스를 등록해 두면
+	// 같은 요소에 다시 만들면 앞 인스턴스를 걷고 교체한다 (Modal · Switch 와 같음). 인스턴스를 등록해 두면
 	// 수동 초기화 뒤 자동 초기화(init)가 콜백 없는 인스턴스로 덮지 않는다 (#976)
 	container._btPagination?.destroy();
 

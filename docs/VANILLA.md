@@ -14,7 +14,7 @@ React 없이 순수 HTML/CSS/JS 환경에서 사용하는 가이드입니다.
   - [TextField](#textfield)
   - [Checkbox](#checkbox)
   - [Radio](#radio)
-  - [Toggle](#toggle)
+  - [Switch](#switch)
   - [Dropdown](#dropdown)
   - [Modal](#modal)
   - [Alert](#alert)
@@ -286,57 +286,57 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 
 ---
 
-### Toggle
+### Switch
 
 ```html
 <!-- 기본 (Off) - 이름은 필수다. 보이는 라벨이 있으면 aria-labelledby 로 잇는다 -->
-<button type="button" class="bt-toggle" data-bt-toggle aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <!-- On 상태 -->
 <span id="dark-label">다크 모드</span>
-<button type="button" class="bt-toggle bt-toggle--on" data-bt-toggle aria-labelledby="dark-label">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch bt-switch--on" data-bt-switch aria-labelledby="dark-label">
+  <span class="bt-switch__thumb"></span>
 </button>
 
-<!-- Sizes (React ToggleSize 와 동일) -->
-<button type="button" class="bt-toggle bt-toggle--sm" data-bt-toggle aria-label="...">...</button>  <!-- 기본값 -->
-<button type="button" class="bt-toggle bt-toggle--md" data-bt-toggle aria-label="...">...</button>
+<!-- Sizes (React Switch `size` 와 동일) -->
+<button type="button" class="bt-switch bt-switch--sm" data-bt-switch aria-label="...">...</button>  <!-- 기본값 -->
+<button type="button" class="bt-switch bt-switch--md" data-bt-switch aria-label="...">...</button>
 
-<!-- 비활성화 - React Toggle 과 동일하게 native disabled 속성을 쓴다 -->
-<button type="button" class="bt-toggle" data-bt-toggle disabled aria-label="자동 저장">
-  <span class="bt-toggle__thumb"></span>
+<!-- 비활성화 - React Switch 와 동일하게 native disabled 속성을 쓴다 -->
+<button type="button" class="bt-switch" data-bt-switch disabled aria-label="자동 저장">
+  <span class="bt-switch__thumb"></span>
 </button>
 ```
 
 **JavaScript 연동:**
 
 ```html
-<button type="button" class="bt-toggle" data-bt-toggle id="my-toggle" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch id="my-switch" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <script>
-  // 자동 초기화 (data-bt-toggle 속성이 있으면 자동으로 초기화됨)
+  // 자동 초기화 (data-bt-switch 속성이 있으면 자동으로 초기화됨)
 
   // 또는 수동 초기화 - 자동 초기화된 요소에 다시 부르면 앞 인스턴스를 풀고 교체한다 (Modal 도 같음)
-  const toggleEl = document.getElementById('my-toggle');
-  const myToggle = Bigtablet.Toggle(toggleEl, {
+  const switchEl = document.getElementById('my-switch');
+  const mySwitch = Bigtablet.Switch(switchEl, {
     defaultChecked: false,
     name: 'notify',   // 주면 hidden input 으로 폼 제출 참여 (data-name 과 같음)
     disabled: false,  // true 면 비활성으로 시작 (native disabled 와 같음)
     onCheckedChange: (checked) => {
-      console.log('Toggle:', checked);
+      console.log('Switch:', checked);
     }
   });
 
   // API
-  myToggle.isChecked();     // 현재 상태
-  myToggle.setChecked(true); // 상태 설정
-  myToggle.toggle();        // 토글
-  myToggle.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
-  myToggle.destroy();       // 바인딩한 리스너 해제
+  mySwitch.isChecked();     // 현재 상태
+  mySwitch.setChecked(true); // 상태 설정
+  mySwitch.toggle();        // 토글
+  mySwitch.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
+  mySwitch.destroy();       // 바인딩한 리스너 해제
 </script>
 ```
 
@@ -346,12 +346,12 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 클릭은 `onCheckedChange(next)` 만 부르고 켜짐/꺼짐은 그대로 둔다 - 결과에 맞게 `setChecked()` 로 정한다. 실패하면 부르지 않으면 원래 상태로 남는다.
 
 ```html
-<button type="button" class="bt-toggle" id="push-toggle" aria-label="이 단말로 알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" id="push-toggle" aria-label="이 단말로 알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <script>
-  const push = Bigtablet.Toggle('#push-toggle', {
+  const push = Bigtablet.Switch('#push-toggle', {
     controlled: true,
     onCheckedChange: async (next) => {
       try {
@@ -359,7 +359,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
         if (!ok) throw new Error('push subscription failed');
         push.setChecked(next);
       } catch {
-        // reject 도 실패다 - 잡지 않으면 Toggle 은 대기만 풀고 사용자는 실패를 모른다
+        // reject 도 실패다 - 잡지 않으면 Switch 는 대기만 풀고 사용자는 실패를 모른다
         Bigtablet.Toast('알림 받기를 켜지 못했습니다', 'error');
       }
     }
@@ -384,13 +384,13 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 
 ```html
 <!-- data-name 으로 자동 생성 -->
-<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch data-name="notifications" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 
 <!-- 또는 서버 렌더링 초기값 - data-name 과 같은 name 의 형제 hidden input 을 읽고 갱신한다 -->
-<button type="button" class="bt-toggle" data-bt-toggle data-name="notifications" aria-label="알림 받기">
-  <span class="bt-toggle__thumb"></span>
+<button type="button" class="bt-switch" data-bt-switch data-name="notifications" aria-label="알림 받기">
+  <span class="bt-switch__thumb"></span>
 </button>
 <input type="hidden" name="notifications" th:value="${enabled}">
 ```
@@ -491,7 +491,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 `data-searchable` 또는 JS `searchable: true` 를 주면 패널 상단에 검색 행이 생깁니다.
 필터는 옵션 `label` 부분 일치이고 **대소문자·공백을 무시**합니다. 한글은 **초성**(`ㅅㅇ` → 서울)으로도 찾습니다 (React `matchesSearch` 와 같은 규칙).
 패널을 열면 검색 입력에 포커스가 가고, 닫으면 검색어가 초기화됩니다.
-결과가 0개면 `emptyText`(기본 `결과 없음`)가 표시됩니다.
+결과가 0개면 `emptyMessage`(기본 `결과 없음`)가 표시됩니다.
 
 > **한글 IME**: 조합이 끝나기를 기다리지 않고 입력마다 거릅니다. 조합 중인 마지막 글자도
 > 받아 줍니다 - `서우`, `성`(받침이 다음 글자 초성) 모두 "서울" 에 맞습니다. 조합 중 Enter 는
@@ -550,7 +550,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
 | `data-multiple` | `multiple` |
 | `data-searchable` | `searchable` |
 | `data-search-placeholder` | `searchPlaceholder` |
-| `data-empty-text` | `emptyText` |
+| `data-empty-message` | `emptyMessage` |
 | `data-placeholder` | `placeholder` (미지정 시 `.bt-dropdown__placeholder` 의 마크업 텍스트를 이어받음) |
 | `data-options` | `options` (JSON 배열) - 둘 다 있으면 **`data-options` 가 우선** |
 | `data-name` | `name` - 서버가 hidden input 을 미리 그려 뒀으면 그 input 을 재사용하고 이름을 이 값으로 맞춥니다 |
@@ -586,7 +586,7 @@ Spring 처럼 "필드 없음" 을 "바꾸지 않음" 으로 보는 서버(`@Sess
     multiple: true,
     searchable: true,
     searchPlaceholder: '도시 검색…',
-    emptyText: '일치하는 도시가 없습니다',
+    emptyMessage: '일치하는 도시가 없습니다',
     selectedSummary: (count) => `도시 ${count}곳`,
     options: [
       { value: 'seoul', label: '서울 Seoul' },
@@ -734,7 +734,7 @@ Alert는 JavaScript로만 사용합니다.
       title: '알림',
       message: '작업이 완료되었습니다.',
       tone: 'info',  // 'info', 'success', 'warning', 'error'
-      confirmText: '확인'
+      confirmLabel: '확인'
     });
   }
 
@@ -745,8 +745,8 @@ Alert는 JavaScript로만 사용합니다.
       message: '정말 삭제하시겠습니까?',
       tone: 'warning',
       showCancel: true,
-      confirmText: '삭제',
-      cancelText: '취소',
+      confirmLabel: '삭제',
+      cancelLabel: '취소',
       actionsAlign: 'right',  // 'left', 'center', 'right'
       onConfirm: () => {
         console.log('삭제됨');
@@ -766,8 +766,8 @@ Alert는 JavaScript로만 사용합니다.
 | `title` | `string` | - | 제목 |
 | `message` | `string` | - | 메시지 |
 | `tone` | `string` | `'info'` | `'info'`, `'success'`, `'warning'`, `'error'` |
-| `confirmText` | `string` | `'확인'` | 확인 버튼 텍스트 |
-| `cancelText` | `string` | `'취소'` | 취소 버튼 텍스트 |
+| `confirmLabel` | `string` | `'확인'` | 확인 버튼 텍스트 |
+| `cancelLabel` | `string` | `'취소'` | 취소 버튼 텍스트 |
 | `showCancel` | `boolean` | `false` | 취소 버튼 표시 |
 | `destructive` | `boolean` | `false` | 확인 버튼을 danger(빨강)로 강조 (React `AlertOptions.destructive` 와 동일) |
 | `actionsAlign` | `string` | `'right'` | 버튼 정렬 |
@@ -919,10 +919,14 @@ Alert는 JavaScript로만 사용합니다.
 |---|---|
 | `.bt-table-wrap` | 가로 스크롤 상자 (테두리 · 둥근 모서리). `--sticky-header` 면 머리가 붙는다 - 감싼 요소에 확정된 높이가 있어야 한다 (React `stickyHeader` 와 같음) |
 | `.bt-table` | 머리 · 칸 여백, 구분선, 14px, 행 hover. `--sm` · `--lg` 는 React `size` |
-| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘겨도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
+| `--fixed` | 열 너비 고정 (React `layout="fixed"`). 너비는 `<colgroup>` 으로 준다 - 쪽을 넘기거나 칸 글자가 바뀌어도 열 위치가 같다. 최소 폭은 `--bt-table-min-width` |
 | `td.bt-table__truncate` | 한 줄 칸 - 넘치면 말줄임. 전체 값은 `title` 로 단다 (React `truncate`) |
 | `--cards` | 좁은 화면(600px 미만)에서 행을 카드로 쌓는다 (React `cards`). 칸 머리는 화면 읽기용으로 남고, 칸의 `data-label` 이 라벨로 보인다. 표 요소를 `display: block` 으로 바꾸는데 Safari(VoiceOver)가 그러면 표 의미를 버리므로 **`table`·`thead`/`tbody`·`tr`·`th`·`td` 에 `role="table"`·`"rowgroup"`·`"row"`·`"columnheader"`·`"cell"` 을 단다** (React 는 `cards` 일 때 자동) |
 | `tr.is-selected` · `.bt-table__empty` | 선택된 행 강조 · 빈 목록 문구 (표 아래 `<div>`) |
+
+**`--fixed` 를 쓰는 표** - 쪽으로 넘기는 기록 표만이 아닙니다. 행마다 길이가 달라지는 값(상태 배지 "사용 중" ↔ "사용 중지", 바뀌는 버튼 글자 "사용 중지" ↔ "다시 사용", 연결 상태 문구)이 있는 표도 `--fixed` 로 둡니다. 기본(자동 너비) 표는 그 칸 글자가 바뀔 때마다 열이 넓어지거나 좁아져 다른 열이 통째로 밀립니다.
+
+너비는 이렇게 정합니다 - 바뀌는 칸은 가장 긴 값 기준으로 재고, 이름처럼 길이를 모르는 열 하나는 너비 없이 두어 남는 폭을 가져가게 합니다. 그 열에는 `bt-table__truncate` 와 `title` 을 답니다.
 
 - 상자가 가로로 넘칠 수 있으면(`--bt-table-min-width` · 칸이 많은 표) `tabindex="0"` 과 `aria-label` 을 준다 - 키보드 사용자가 상자에 포커스를 두고 ←→ 로 가려진 열을 본다. CSS 는 넘침을 알 수 없어 React 처럼 자동으로 달지 못한다 (axe `scrollable-region-focusable`)
 - 칸은 세로 가운데 맞춤이라 행 안의 `bt-button--sm` 이 글자 줄보다 높아도 글씨가 처지지 않는다 - 따로 당길 필요 없다
@@ -1232,7 +1236,8 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `defaultValue` (`data-value`) | `DateCalendar defaultValue` | 숨은 input 값 | 처음 값 `YYYY-MM-DD` · `YYYY-MM-DDTHH:mm` |
 | `time` (`data-time`) | `TimePicker` | `false` | 시 · 분까지 고른다 |
 | `minuteStep` (`data-minute-step`) | `TimePicker minuteStep` | `5` | 분 간격. 60 의 약수 |
-| `min` · `max` (`data-min` · `data-max`) | `DateCalendar min` · `max`, `TimePicker minTime` · `maxTime` | - | 고를 수 있는 범위. 시각까지 주면 그날의 시 · 분도 막는다 |
+| `min` · `max` (`data-min` · `data-max`) | `DatePicker` · `DateCalendar` · `TimePicker` 의 `min` · `max` | - | 고를 수 있는 범위. `"today"` 는 기기의 오늘(`today` 옵션을 주면 그 날). 시각까지 주면 그날의 시 · 분도 막는다 |
+| `isDateDisabled` | `isDateDisabled` | - | 날마다 막는다 - `"YYYY-MM-DD"` 를 받아 true 면 고를 수 없다. 함수라 JS 옵션으로만 준다 |
 | `minFrom` · `maxFrom` (`data-min-from` · `data-max-from`) | - | - | 다른 DatePicker(셀렉터 · 요소)의 값을 최소 · 최대로 따른다. 그 값이 바뀌면 범위 밖 값은 경계로 맞춘다 |
 | `today` (`data-today`) | `DateCalendar today` | 기기의 오늘 | 서버 기준 날짜를 쓸 때 |
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |
@@ -1555,7 +1560,7 @@ React `Sentences` · Toast · Alert `message` 와 같은 규칙으로 두 문장
 ```html
 <div data-bt-dropdown>...</div>   <!-- Dropdown 자동 초기화 -->
 <div data-bt-modal>...</div>      <!-- Modal 자동 초기화 -->
-<button data-bt-toggle>...</button> <!-- Toggle 자동 초기화 -->
+<button data-bt-switch>...</button> <!-- Switch 자동 초기화 -->
 <nav data-bt-pagination>...</nav> <!-- Pagination 자동 초기화 -->
 <div data-bt-date-picker>...</div> <!-- DatePicker 자동 초기화 -->
 <button data-bt-copy="값">...</button> <!-- CopyButton 자동 초기화 -->
@@ -1578,8 +1583,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Modal
   const modal = Bigtablet.Modal('#my-modal', options);
 
-  // Toggle
-  const sw = Bigtablet.Toggle('#my-toggle', options);
+  // Switch
+  const sw = Bigtablet.Switch('#my-switch', options);
 
   // Pagination
   const pagination = Bigtablet.Pagination('#my-pagination', options);
@@ -1603,7 +1608,7 @@ Bigtablet.init();
 | 컴포넌트 | 콜백 |
 |---|---|
 | `Bigtablet.Dropdown` | `onValueChange(value, option)` |
-| `Bigtablet.Toggle` | `onCheckedChange(checked)` |
+| `Bigtablet.Switch` | `onCheckedChange(checked)` |
 | `Bigtablet.Pagination` | `onPageChange(page)` (`href` 링크 모드에서는 호출 안 함) |
 
 ### 유틸리티

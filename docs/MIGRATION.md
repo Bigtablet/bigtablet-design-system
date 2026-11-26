@@ -8,6 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
+- [v5.0.0 (deprecated API 제거 · Toggle → Switch 마무리)](#v500-deprecated-api-제거--toggle--switch-마무리)
 - [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
@@ -38,9 +39,10 @@
 
 | 지금 버전 | 읽을 섹션 |
 |------|------|
-| 4.10.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
-| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (SCSS 믹스인 4개 · Tabs `fills` deprecate - 지금은 동작합니다. Toast 기본 위치가 오른쪽 아래로 바뀝니다) |
-| 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) |
+| 5.0.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
+| 4.10.0 ~ 4.14.x | [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) (날짜 · 시간 prop 이름 · `Toggle` → `Switch` · 표기만 다르던 prop 이름 · `fills` · SCSS 믹스인 제거) |
+| 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (Toast 기본 위치) + [v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리) |
+| 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + 위 |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
 | Vanilla 를 3.8 미만에서 올림 | [v3.8.0](#v380-vanilla-패키지-정리) 의 치환 스크립트를 먼저 돌립니다 |
 
@@ -48,12 +50,95 @@
 
 ## 개요
 
-- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 사내 패키지라 제거도 minor 로 냅니다 - 지운 버전의 섹션에 대체 방법을 남깁니다 (v4.1.0 참고).
+- `@deprecated` 로 표시된 prop 은 표시된 동안 계속 동작합니다. 지운 버전의 섹션에 대체 방법을 남깁니다. 사용처가 적은 제거는 minor 로 내기도 했고(v4.1.0), 이름을 넓게 바꾼 v5.0.0 은 major 로 냈습니다.
 - deprecated prop 외에, **동작·타입 레벨 변경**(예: 렌더링 위치 변경, 타입 형태 변경)도 소비자에게 영향이 있으면 해당 버전 섹션에 함께 정리합니다 (v3.5.0 참고).
 - deprecated 별칭이 남아 있는 동안에는 신규(canonical) prop 과 구 prop 을 동시에 넘겨도 안전합니다. 내부가 `canonical ?? deprecated` 순서로 읽어 신규 prop 이 이깁니다. v3.3.0 에 deprecated 된 콜백(`onChange` 계열 · `onChangeAction`)은 v4.1.0 에서 모두 지워졌습니다.
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v5.0.0 (deprecated API 제거 · Toggle → Switch 마무리)
+
+이름이 갈리던 API 를 정리하고, 4.10.0 부터 deprecated 였던 것을 지웠습니다. 별칭은 남기지 않았습니다 - 타입 체크(`tsc --noEmit`)가 고칠 곳을 모두 짚습니다. Vanilla 는 클래스 이름이 바뀌어 컴파일러가 잡지 못하니 아래 grep 을 꼭 돌립니다.
+
+### 날짜 · 시간 범위 prop 을 `min` · `max` 로
+
+컴포넌트마다 범위 prop 이름이 달랐습니다 (`DateCalendar` 는 `min`, `DatePicker` 는 `minDate` · `selectableRange` · `startYear`, `TimePicker` 는 `minTime`). 전부 **`min` · `max`** 로 맞췄습니다. `"today"` 도 받습니다. 날마다 막는 `isDateDisabled` 를 `DatePicker` · `DateRangePicker` 에도 넣었고, 연 · 월만 고르는 칸은 `MonthPicker` 로 따로 뺐습니다.
+
+| 컴포넌트 | 예전 | 새 이름 |
+|------|------|------|
+| `DatePicker` · `DateRangePicker` | `minDate="2020-01-01"` | `min="2020-01-01"` |
+| `DatePicker` · `DateRangePicker` | `selectableRange="until-today"` | `max="today"` |
+| `DatePicker` · `DateRangePicker` | `startYear={1950}` | `min="1950-01-01"` |
+| `DatePicker` · `DateRangePicker` | `endYear={2030}` | `max="2030-12-31"` |
+| `DatePicker` | `mode="year-month"` | `<MonthPicker />` (`min` · `max` 는 `"YYYY-MM"`) |
+| `TimePicker` | `minTime` · `maxTime` | `min` · `max` |
+
+`startYear` · `endYear` 는 연 목록만 정했고 `min` · `max` 는 날까지 막습니다. 1월 1일 · 12월 31일을 주면 같습니다. Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였고, `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
+
+화면 낭독기 안내 문구 prop `minDateSrFormat` · `selectableRangeUntilTodaySrText` 도 지웠습니다 (지운 prop 이름을 달고 있었고, `max` 날짜 안내는 prop 이 없었습니다). 문구는 `LocaleProvider` 의 `messages` 로 바꿉니다.
+
+| 예전 | 새 방법 |
+|------|------|
+| `minDateSrFormat="{date} 부터"` | `<LocaleProvider messages={{ "datePicker.minDateSr": "{date} 부터" }}>` |
+| `selectableRangeUntilTodaySrText="오늘까지만"` | `messages={{ "datePicker.rangeUntilTodaySr": "오늘까지만" }}` |
+| (없었음) `max` 날짜 안내 | `messages={{ "datePicker.maxDateSr": "{date} 까지" }}` |
+
+**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"|minDateSrFormat|selectableRangeUntilTodaySrText" --include=*.tsx`
+
+### Toggle → Switch
+
+`Toggle` 은 `role="switch"` 인데, 다른 라이브러리(Radix 등)에서 Toggle 은 눌림 버튼(`aria-pressed`)을 뜻합니다. 컴포넌트 · CSS 클래스 · Vanilla 이름을 모두 `switch` 로 바꿨습니다. 렌더 결과는 같습니다.
+
+| 예전 | 새 이름 |
+|------|------|
+| `Toggle` · `ToggleProps` | `Switch` · `SwitchProps` |
+| CSS `.toggle` · `.toggle_on` · `.toggle_thumb` · `.toggle_size_*` · `.toggle_disabled` | `.switch` · `.switch_on` · `.switch_thumb` · `.switch_size_*` · `.switch_disabled` |
+| Vanilla `.bt-toggle` · `.bt-toggle--on` · `.bt-toggle--sm/md` · `.bt-toggle__thumb` | `.bt-switch` · `.bt-switch--on` · `.bt-switch--sm/md` · `.bt-switch__thumb` |
+| Vanilla `data-bt-toggle` · `Bigtablet.Toggle()` · `el._btToggle` | `data-bt-switch` · `Bigtablet.Switch()` · `el._btSwitch` |
+
+**앱 쪽에서 할 일:** `grep -rnE "\\bToggle(Props)?\\b|\\btoggle_|[\"' .]toggle[\"' {]|bt-toggle|data-bt-toggle|Bigtablet\\.Toggle|_btToggle" --include=*.tsx --include=*.ts --include=*.scss --include=*.css --include=*.html --include=*.js`. Thymeleaf · JSP 템플릿은 `bt-toggle` → `bt-switch`, `data-bt-toggle` → `data-bt-switch` 치환으로 끝납니다.
+
+### 표기만 다르던 prop 이름
+
+뜻이 같은데 컴포넌트마다 이름이 달랐던 것을 다수 쪽에 맞췄습니다. 값 · 동작은 그대로입니다.
+
+| 컴포넌트 | 예전 | 새 이름 |
+|------|------|------|
+| `Dropdown` | `emptyText` | `emptyMessage` (`Combobox` · `Table` 과 같음) |
+| Vanilla `Dropdown()` | `emptyText` 옵션 · `data-empty-text` | `emptyMessage` · `data-empty-message` |
+| `ToastProvider` | `closeAriaLabel` | `closeLabel` (`Modal` · `Drawer` 와 같음) |
+| `Table` · `DataView` | `selectAllAriaLabel` · `selectRowAriaLabel` | `selectAllLabel` · `selectRowLabel` |
+| `useAlert` · `useConfirm` 옵션 | `cancelText` · `confirmText` | `cancelLabel` · `confirmLabel` (버튼 문구는 다른 컴포넌트처럼 `*Label`) |
+| Vanilla `Alert()` 옵션 | `cancelText` · `confirmText` | `cancelLabel` · `confirmLabel` |
+
+**앱 쪽에서 할 일:** `grep -rnE "emptyText|data-empty-text|closeAriaLabel|select(All|Row)AriaLabel|cancelText|confirmText" --include=*.tsx --include=*.ts --include=*.html --include=*.js`. Vanilla 의 `data-empty-text` 는 컴파일러가 잡지 못합니다 - 남겨 두면 기본 문구("결과 없음")가 나옵니다.
+
+`cancelText` · `confirmText` 는 쓰는 곳이 많습니다. 옵션 객체를 `alert({ ... })` 에 바로 넘긴 곳은 타입 체크가 잡지만, 변수에 담아 넘기거나 테스트에서 `vi.mock` 한 `alert` 의 인자를 단언하는 곳(`expect(lastAlert?.confirmText)`)은 잡지 못합니다 - 남으면 버튼이 기본 문구("확인" · "취소")로 나옵니다. 아래 치환으로 한 번에 바꿉니다 (같은 이름의 앱 자체 prop 이 있으면 치환 뒤 diff 를 확인합니다).
+
+```bash
+grep -rlE "\b(cancelText|confirmText)\b" apps packages src --include=*.ts --include=*.tsx | xargs perl -pi -e 's/\bcancelText\b/cancelLabel/g; s/\bconfirmText\b/confirmLabel/g'
+```
+
+### 4.10.0 에 deprecated 된 것 제거
+
+| 지운 것 | 대신 쓸 것 |
+|------|------|
+| `Tabs variant="fills"` | 패널을 바꾸면 기본 `line`, 값만 고르면 `SegmentedControl` |
+| SCSS 믹스인 `glass_light` · `hover_lift` · `hover_glow` · `slashed_zero` | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) 표의 대체 방법 |
+
+**앱 쪽에서 할 일:** `grep -rn 'variant="fills"' --include=*.tsx`, `grep -rnE "@include +([A-Za-z0-9_-]+\.)?(glass[-_]light|hover[-_]lift|hover[-_]glow|slashed[-_]zero)\b" --include=*.scss`
+
+### 사내 저장소 사용처 (5.0.0 릴리즈 시점 grep)
+
+| 저장소 | 걸리는 곳 |
+|------|------|
+| notiiv-monorepo-web | `DatePicker` `startYear` · `endYear` 5곳 (owner `event-form`, admin `notice/form`), `ToastProvider` `closeAriaLabel` 2곳, Alert `cancelText` · `confirmText` 115줄 |
+| homepage-web | `token.hover_lift` 3곳, Alert `cancelText` · `confirmText` 2줄 (3.2.2 고정 - 올릴 때 교체) |
+| coupon-web | Alert `cancelText` · `confirmText` 2줄 |
+| frontend-template | 없음 |
 
 ---
 
@@ -504,6 +589,8 @@ label="권한", "관리자" 선택   → "권한 관리자"
 | `Dropdown` | `placeholder` | `"Select…"` | `"선택…"` |
 | `DatePicker` | `minDateSrFormat` | `"Minimum date: {date}"` | `"최소 날짜: {date}"` |
 | `DatePicker` | `selectableRangeUntilTodaySrText` | `"Selectable up to today"` | `"오늘까지 선택 가능"` |
+
+`minDateSrFormat` · `selectableRangeUntilTodaySrText` 는 v5.0.0 에서 지웠습니다 - 문구는 `LocaleProvider` `messages` 로 바꿉니다 ([v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리)).
 
 `FileInput` 의 `label` 은 `aria-label` 이 아니라 **화면에 보이는 버튼 텍스트**입니다 - 영어 화면에서 가장 눈에 띕니다.
 

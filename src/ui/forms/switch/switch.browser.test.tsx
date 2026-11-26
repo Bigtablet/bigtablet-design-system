@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { cdp } from "vitest/browser";
-import { Toggle } from "./index";
+import { Switch } from "./index";
 import "./style.scss";
-import "../../../vanilla/scss/_toggle.scss";
+import "../../../vanilla/scss/_switch.scss";
 
 const emulateForcedColors = (value: "active" | "none") =>
 	cdp().send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value }] });
@@ -29,13 +29,13 @@ const insets = (track: HTMLElement) => {
 const OFF = { left: 6, top: 6 };
 const ON = { top: 2, right: 2 };
 
-describe("Toggle thumb position (Chromium)", () => {
+describe("Switch thumb position (Chromium)", () => {
 	it.each(["sm", "md"] as const)("centers the React %s thumb with equal insets", async (size) => {
-		const { rerender } = render(<Toggle ariaLabel="알림" size={size} checked={false} />);
+		const { rerender } = render(<Switch ariaLabel="알림" size={size} checked={false} />);
 		const track = screen.getByRole("switch");
 		await expect.poll(() => insets(track)).toMatchObject(OFF);
 
-		rerender(<Toggle ariaLabel="알림" size={size} checked />);
+		rerender(<Switch ariaLabel="알림" size={size} checked />);
 		await expect.poll(() => insets(track)).toMatchObject(ON);
 	});
 
@@ -43,36 +43,36 @@ describe("Toggle thumb position (Chromium)", () => {
 		render(
 			<button
 				type="button"
-				className={`bt-toggle bt-toggle--${size}`}
+				className={`bt-switch bt-switch--${size}`}
 				role="switch"
 				aria-checked="false"
 			>
-				<span className="bt-toggle__thumb" />
+				<span className="bt-switch__thumb" />
 			</button>,
 		);
 		const track = screen.getByRole("switch");
 		await expect.poll(() => insets(track)).toMatchObject(OFF);
 
-		track.classList.add("bt-toggle--on");
+		track.classList.add("bt-switch--on");
 		await expect.poll(() => insets(track)).toMatchObject(ON);
 	});
 });
 
 // 손잡이 · 켜진 트랙을 배경으로만 그린다 - 고대비에서도 켬/끔이 보여야 한다 (#1001)
-describe("Toggle in forced-colors mode (Chromium)", () => {
+describe("Switch in forced-colors mode (Chromium)", () => {
 	it("draws the thumb in CanvasText and the on track in Highlight, React and Vanilla", async () => {
 		await emulateForcedColors("active");
 		try {
 			render(
 				<>
-					<Toggle ariaLabel="끔" />
-					<Toggle ariaLabel="켬" defaultChecked />
+					<Switch ariaLabel="끔" />
+					<Switch ariaLabel="켬" defaultChecked />
 				</>,
 			);
 			const host = document.createElement("div");
 			host.innerHTML =
-				'<button class="bt-toggle" aria-label="v끔"><span class="bt-toggle__thumb"></span></button>' +
-				'<button class="bt-toggle bt-toggle--on" aria-label="v켬"><span class="bt-toggle__thumb"></span></button>';
+				'<button class="bt-switch" aria-label="v끔"><span class="bt-switch__thumb"></span></button>' +
+				'<button class="bt-switch bt-switch--on" aria-label="v켬"><span class="bt-switch__thumb"></span></button>';
 			document.body.appendChild(host);
 
 			const thumb = (name: string) =>

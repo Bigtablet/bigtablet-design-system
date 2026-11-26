@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../system/locale-provider";
-import { TextField } from "../textfield";
+import { TextField } from "../text-field";
 import { FilterBar } from "./index";
 
 type SubmitFilterBarProps = Extract<

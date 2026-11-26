@@ -16,7 +16,7 @@
     border-bottom: token.$border_width_standard solid token.$color_border_default;
   }
 
-  // ── Sliding indicator (line + fills 양쪽 지원) ───────────────────────
+  // ── Sliding indicator ─────────────────────────────────────────────────
   // active tab 위치/너비로 transform - 좌우 부드럽게 이동
 
   &_indicator {
@@ -37,28 +37,6 @@
       background: token.$color_accent_default;
       border-radius: 1px;
     }
-
-    // fills - tab 전체 영역을 채우는 박스 (active tab 배경 역할)
-    &_fills {
-      top: token.$spacing_4;
-      bottom: token.$spacing_4;
-      background: token.$color_accent_default;
-      border-radius: token.$radius_md;
-      z-index: 0;     // tab text 아래
-    }
-  }
-
-  // fills variant - tab 자체에 background 없음 (indicator가 처리)
-  &_variant_fills .tabs_tab {
-    position: relative;
-    z-index: 1;       // indicator 위 - text 보임
-  }
-
-  &_list_fills {
-    background: token.$color_bg_solid_dim;
-    padding: token.$spacing_4;
-    border-radius: token.$radius_lg;
-    width: fit-content;
   }
 
   &_tab {
@@ -118,21 +96,6 @@
     font-weight: token.$font_weight_semi_bold;
   }
 
-  // ── Variant: fills ───────────────────────────────────────────────────
-  // background는 sliding indicator가 처리. active tab은 text 색만 변경.
-
-  &_variant_fills .tabs_tab {
-    border-radius: token.$radius_md;
-  }
-
-  &_variant_fills .tabs_tab_active {
-    color: token.$color_accent_on_surface;
-  }
-
-  &_variant_fills .tabs_tab_active:hover {
-    color: token.$color_accent_on_surface;
-  }
-
   // ── Panel ────────────────────────────────────────────────────────────
 
   &_panel {
@@ -153,16 +116,10 @@
 }
 
 // ── 고대비(forced-colors, #1001) ─────────────────────────────────────────
-// 현재 탭을 표시기(배경을 칠한 요소)로만 그린다 - 고대비가 배경을 지우면 밑줄 · 채운 상자가 사라진다.
+// 현재 탭을 표시기(배경을 칠한 요소)로만 그린다 - 고대비가 배경을 지우면 밑줄이 사라진다.
 @media (forced-colors: active) {
   .tabs_indicator {
     forced-color-adjust: none;
     background: Highlight;
-  }
-
-  .tabs_variant_fills .tabs_tab_active {
-    // `!important` - hover 처럼 특이도가 더 높은 배경 규칙을 이 미디어 안에서만 이긴다 (theme.scss 포커스 규칙과 같은 이유)
-    forced-color-adjust: none;
-    color: HighlightText !important;
   }
 }

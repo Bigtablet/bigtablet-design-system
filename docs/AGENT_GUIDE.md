@@ -245,11 +245,12 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
 | `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
-| `Toggle` | On/off switch. | `ariaLabel` (required), `checked`/`onCheckedChange`, `size` (sm/md), `disabled` |
+| `Switch` | On/off switch (`role="switch"`). Named `Toggle` before 5.0.0. | `ariaLabel` (required), `checked`/`onCheckedChange`, `size` (sm/md), `disabled` |
 | `Dropdown` | Value-selection menu. | `options` (each `{ value, label, supportingText?, leadingIcon?, disabled?, showDivider? }`), `value`, `onValueChange`, `label`, `placeholder`, `size`. Block-level - fills parent. |
 | `Combobox` | Async search-and-pick input. | `onSearch` (returns `Promise<ComboboxOption[]>`), `value`/`onValueChange` (`null` clears - Backspace on an empty query), `defaultOptions`, `debounceMs` (default 250), `placeholder`, `emptyMessage`, `idleMessage`, `renderOption`, `size`, `fullWidth`, `disabled`. |
 | `TagInput` | Free-text tags (Enter to add). | `value`/`defaultValue`/`onValueChange` (`string[]`), `placeholder`, `maxTags`, `allowDuplicates`, `size`, `fullWidth`, `disabled`, `ariaLabel`. |
-| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `mode` (year-month/year-month-day), `variant` (dropdown default / calendar - day field + month popover, year-month-day only), `placeholder` (calendar), `minDate`, `selectableRange` (all/until-today), `startYear`/`endYear`, `label`, `fullWidth`, `size` (sm/md/lg - same field height as Dropdown/TextField), `clearable` (× button + Delete, emits `""`; DateRangePicker clears both) |
+| `DatePicker` | Year/month/day select. | `value`, `onValueChange`, `variant` (dropdown default / calendar - day field + month popover), `placeholder` (calendar), `min`/`max` (`"YYYY-MM-DD"` or `"today"` - also bound the year list), `isDateDisabled` (block single days), `label`, `fullWidth`, `size` (sm/md/lg - same field height as Dropdown/TextField), `clearable` (× button + Delete, emits `""`; DateRangePicker clears both). (Removed in 5.0.0: mode - use MonthPicker, minDate, selectableRange, startYear/endYear) |
+| `MonthPicker` | Year/month select (`"YYYY-MM"`) - settlement month, card expiry. | `value`, `onValueChange`, `min`/`max` (`"YYYY-MM"` or `"today"`), rest as DatePicker (label, clearable, size). Replaces `DatePicker mode="year-month"` |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
 | `OtpInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
@@ -275,7 +276,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
 | `Alert` (via `useAlert`) | Confirm/alert dialog. | `showAlert({ title, message, tone, showCancel, destructive, confirmDisabled, onConfirm, onCancel })` → handle `{ update(patch) }` (e.g. lock confirm until a reason is typed). `confirmDisabled` uses `aria-disabled` and blocks click/Enter. |
-| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, tone, destructive, confirmText, cancelText, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
+| `useConfirm` | Promise-based confirm on the same `AlertProvider`. | `const ok = await confirm({ title, message, tone, destructive, confirmLabel, cancelLabel, onConfirm })` → `true` on confirm, `false` on cancel/Escape/overlay (exactly once). A new confirm replaces an open one (old → `false`). Async `onConfirm` keeps it open with a spinner and blocks double submit; reject keeps it open for retry. |
 | `Toast` (via `useToast`) | Transient notification. | `toast.success("...")` / `.error(...)` / `.warning(...)` / `.info(...)` / `.message(...)`. Second arg = duration ms. |
 | `InlineAlert` | Persistent in-page notice (expiring plan, maintenance, dev env, save result). Not transient (`Toast`) or confirm (`AlertProvider`). | `tone` (neutral/info/success/warning/error), `title`, `children`, `icon` (`null` hides), `action`, `onDismiss` (shows close button; parent removes it), `dismissLabel`. No live region by default - pass `role="status"`/`role="alert"` only when it appears later. |
 | `Spinner` | Inline loading indicator. | `size` (px), `ariaLabel`. Vercel-style 12-bar fade. |
@@ -289,7 +290,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). `variant` (line; `fills` is deprecated - it looks like SegmentedControl). |
+| `Tabs` | Compound tab pattern. | Wrap `Tab` items in `TabList`; render content via `TabPanel`. `defaultValue` (uncontrolled), `value`/`onValueChange` (controlled). `variant` (line only - `fills` was removed in 5.0.0; use SegmentedControl to pick a value). |
 | `Sidebar` | Admin left nav. | `header`, `headerCollapsed` (collapse crossfade), `footer`, `collapsed`, `collapsible`, `collapsedWidth`, `mode` (auto/static - auto transforms to bottom bar <600px). Children = `SidebarSection` + `SidebarItem`. |
 | `BottomNav` | Mobile bottom nav bar. | 2-5 `BottomNavItem` (`icon`, `label`, `active`, `badge`, `as`/`href`). `position: fixed; bottom: 0` + iOS safe-area. Use `BottomNavSpacer` at page end to avoid content overlap. mobile-first flat nav. |
 | `NavBar` | Top nav. | `brand`, `actions`, `variant` (default/transparent/accent), `layout` (contained/fluid). Children = `NavLink`. Sliding active indicator built in. |
@@ -403,7 +404,7 @@ const { showAlert } = useAlert();
       message: "This cannot be undone.",
       showCancel: true,
       destructive: true,
-      confirmText: "Delete",
+      confirmLabel: "Delete",
       onConfirm: handleDelete,
     })
   }
@@ -532,7 +533,7 @@ For non-React contexts (Thymeleaf, JSP, PHP, Django):
 
 Class naming: `.bt-{component}` + `--{modifier}` + `.is-{state}` (BEM-like).
 
-Components available: Button, TextField, Checkbox, Radio, Toggle, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), CopyButton, Card, Spinner, Pagination, DatePicker, FileInput.
+Components available: Button, TextField, Checkbox, Radio, Switch, Dropdown, Modal, Alert, Toast, InlineAlert (CSS only), Badge (CSS only), Table (CSS only), CopyButton, Card, Spinner, Pagination, DatePicker, FileInput.
 
 Class names and JS option names mirror the React API exactly - there are no deprecated aliases. See [MIGRATION.md](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v380-vanilla-패키지-정리) for the v3.8.0 old → new map.
 

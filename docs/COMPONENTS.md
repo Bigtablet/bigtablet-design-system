@@ -32,7 +32,7 @@ React 컴포넌트별로 언제 쓰는지, 예제, 알아 둘 것, 구현 계약
   - [Radio](#radio)
   - [RadioGroup](#radiogroup)
   - [SegmentedControl](#segmentedcontrol)
-  - [Toggle](#toggle)
+  - [Switch](#switch)
   - [DatePicker](#datepicker)
   - [DateCalendar](#datecalendar)
   - [DateRangePicker](#daterangepicker)
@@ -107,7 +107,7 @@ React 컴포넌트별로 언제 쓰는지, 예제, 알아 둘 것, 구현 계약
 | Spinner · Skeleton · LinearProgress · TopLoading | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/spinner) |
 | Alert · InlineAlert · Toast | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/alert) |
 | DatePicker · DateRangePicker · TimePicker | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/date-picker) |
-| Checkbox · Radio · RadioGroup · Toggle · SegmentedControl | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/radio-group) |
+| Checkbox · Radio · RadioGroup · Switch · SegmentedControl | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/radio-group) |
 | FileInput · ImageCropper | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/file-input) |
 | Sidebar · NavBar · BottomNav | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/sidebar) |
 | Menu · Popover · Tooltip | [문서 사이트](https://bigtablet.github.io/bigtablet-design-system/#/popover) |
@@ -546,7 +546,7 @@ const [fruit, setFruit] = useState<string | null>(null);
 />
 
 // 검색 가능 (label 부분 일치 필터)
-<Dropdown options={options} searchable searchPlaceholder="과일 검색…" emptyText="일치하는 과일 없음" />
+<Dropdown options={options} searchable searchPlaceholder="과일 검색…" emptyMessage="일치하는 과일 없음" />
 
 // 다중 선택
 const [fruits, setFruits] = useState<string[]>([]);
@@ -703,7 +703,7 @@ import { Combobox } from '@bigtablet/design-system';
 | 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않습니다 |
 | 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않습니다 |
 
-`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Toggle` 은 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
+`Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Switch` 는 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
 
 ```tsx
 import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-system';
@@ -753,7 +753,7 @@ const emailError = touched && !email.includes("@") ? "이메일 형식이 아닙
 라벨 클릭(입력 포커스)과 조작 요소 클릭이 겹치지 않고, `Field` 의 context 밖이라 그 요소는 자기
 `aria-label` 을 그대로 유지합니다.
 
-슬롯 높이는 **라벨 한 줄**로 고정돼 있습니다. 조작 요소가 그보다 높으면(Toggle `sm` 24px vs 라벨 18px)
+슬롯 높이는 **라벨 한 줄**로 고정돼 있습니다. 조작 요소가 그보다 높으면(Switch `sm` 24px vs 라벨 18px)
 위아래로 넘치게 두고 라벨 줄은 자라지 않습니다 — 자라게 두면 아래 입력이 내려가 같은 그리드 행의
 `labelAction` 없는 칸과 어긋납니다.
 
@@ -765,7 +765,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
   label="소속"
   required
   labelAction={
-    <Toggle ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
+    <Switch ariaLabel="소속 없음" size="sm" checked={noAffiliation} onCheckedChange={setNoAffiliation} />
   }
 >
   <TextField disabled={noAffiliation} />
@@ -785,7 +785,7 @@ const [noAffiliation, setNoAffiliation] = useState(false);
 > (axe `aria-allowed-attr`) 묶음 입력 — `DatePicker`·`DateRangePicker`·`TimePicker`·`OtpInput` —
 > 은 **안쪽 컨트롤마다** 필수 여부를 붙입니다. 연·월·일 세 목록, 여섯 자리 입력 모두가 필수이므로
 > 읽히는 내용도 사실과 맞습니다. `FileInput` 은 네이티브 `<input type="file">` 이라 `aria-required`
-> 대신 `required` 를 씁니다(폼 제출 검증까지 함께 붙습니다). `Toggle` 은 `role="switch"` 가
+> 대신 `required` 를 씁니다(폼 제출 검증까지 함께 붙습니다). `Switch` 는 `role="switch"` 가
 > `checkbox` 의 하위 role 이라 `aria-required` 를 그대로 받습니다.
 >
 > 개별 `Radio` 는 대상이 아닙니다 — 필수는 `RadioGroup`(`role="radiogroup"`)이 담당합니다.
@@ -1082,7 +1082,7 @@ const [selected, setSelected] = useState('option1');
 |------|------|
 | 여러 옵션 중 하나 선택 (그룹) | ✅ RadioGroup + `Radio value=...` |
 | 단일 라디오 (그룹 아님) | △ [Radio](#radio) standalone |
-| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+| 켜기/끄기 1개 | ❌ [Switch](#switch) |
 | 여러 개 동시 선택 | ❌ [Checkbox](#checkbox) |
 | 짧은 라벨 2~5개를 한 줄로 | ❌ [SegmentedControl](#segmentedcontrol) |
 
@@ -1138,7 +1138,7 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
 | 라벨이 길거나 설명이 붙거나 6개 이상 | ❌ [RadioGroup](#radiogroup) |
 | 고른 값에 따라 **콘텐츠 패널**이 바뀜 | ❌ [Tabs](#tabs) (밑줄 모양) |
 | 입력 토큰 · 여러 개를 켜고 끄는 필터 칩 | ❌ [Chip](#chip) |
-| 켜기/끄기 1개 | ❌ [Toggle](#toggle) |
+| 켜기/끄기 1개 | ❌ [Switch](#switch) |
 
 `T` 는 `string` 을 좁힌 리터럴 유니온을 받습니다 - `SegmentedControl<"ko" | "en">` 이면 `onValueChange` 가 그 타입으로 옵니다.
 
@@ -1202,21 +1202,23 @@ const [currency, setCurrency] = useState<"USD" | "KRW">("USD");
 
 ---
 
-### Toggle
+### Switch
+
+켜기 / 끄기 스위치 (`role="switch"`)입니다. 5.0.0 전 이름은 `Toggle` 입니다 - [MIGRATION.md](./MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 참고.
 
 ```tsx
-import { Toggle } from '@bigtablet/design-system';
+import { Switch } from '@bigtablet/design-system';
 
 // 기본 사용 - ariaLabel 은 필수다 (보이는 라벨이 없는 스위치의 이름)
-<Toggle ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
+<Switch ariaLabel="알림 받기" onCheckedChange={(checked) => console.log(checked)} />
 
 // Controlled
 const [isOn, setIsOn] = useState(false);
-<Toggle ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
+<Switch ariaLabel="알림 받기" checked={isOn} onCheckedChange={setIsOn} />
 
 // Sizes
-<Toggle ariaLabel="알림 받기" size="sm" />
-<Toggle ariaLabel="알림 받기" size="md" />
+<Switch ariaLabel="알림 받기" size="sm" />
+<Switch ariaLabel="알림 받기" size="md" />
 ```
 
 #### 히트 영역은 트랙보다 넓습니다
@@ -1225,7 +1227,7 @@ const [isOn, setIsOn] = useState(false);
 
 > **세로로 쌓을 때는 16px 이상 띄우세요.** 모바일에서 sm 은 트랙 위아래로 8px 씩 넓어지므로, 간격이 그보다 좁으면 인접 토글의 히트 영역이 겹쳐 잘못된 토글이 눌릴 수 있습니다.
 
-Vanilla 번들의 `.bt-toggle` 도 동일하게 동작합니다.
+Vanilla 번들의 `.bt-switch` 도 동일하게 동작합니다.
 
 ---
 
@@ -1242,24 +1244,46 @@ const [date, setDate] = useState('');
   onValueChange={setDate}
 />
 
-// 연-월 모드
-<DatePicker
-  label="시작 월"
-  mode="year-month"
-  value={date}
-  onValueChange={setDate}
-/>
-
-// 범위 제한
+// 범위 · 막는 날
 <DatePicker
   label="예약일"
-  startYear={2020}
-  endYear={2030}
-  selectableRange="until-today"
+  min="today"
+  max="2026-12-31"
+  isDateDisabled={(d) => holidays.has(d)}
   value={date}
   onValueChange={setDate}
 />
 ```
+
+#### 고를 수 있는 날 정하기
+
+날짜 · 시간 컴포넌트는 같은 이름을 씁니다 - `min` · `max` 는 값과 같은 형식의 문자열이고, 날마다 막을 때는 `isDateDisabled` 입니다.
+
+| prop | 값 | 하는 일 |
+|------|------|------|
+| `min` · `max` | `"YYYY-MM-DD"` 또는 `"today"` | 가장 이른 · 늦은 날. **연 목록도 이 범위로 좁힙니다** (없으면 1950 ~ 올해 + 10) |
+| `isDateDisabled` | `(date: string) => boolean` | true 인 날은 고를 수 없습니다 - 휴무일 · 주말 등. 날이 모두 막힌 달은 월 목록에서도 빠집니다 |
+
+`"today"` 는 기기의 오늘입니다. 생년월일은 `max="today"`, 예약일은 `min="today"` 처럼 씁니다.
+연 · 월을 바꿔 지금 일이 범위 밖이거나 막혔으면, 그 뒤의 가장 가까운 날로 옮깁니다.
+
+예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 5.0.0 에서 지웠습니다 - [MIGRATION.md](./MIGRATION.md#v500-deprecated-api-제거--toggle--switch-마무리) 참고.
+
+---
+
+### MonthPicker
+
+연 · 월 선택 (`"YYYY-MM"`). 정산 월 · 카드 유효기간처럼 날까지는 고르지 않는 칸에 씁니다. `DatePicker` 의 연 · 월 드롭다운을 그대로 써서 범위 계산 · 지우기 · `Field` 연결이 같습니다.
+
+```tsx
+import { Field, MonthPicker } from '@bigtablet/design-system';
+
+<Field name="settledMonth" label="정산 월">
+  <MonthPicker value={month} onValueChange={setMonth} max="today" />
+</Field>
+```
+
+`min` · `max` 는 `"YYYY-MM"` 으로 줍니다. `"today"` 는 이번 달입니다.
 
 ---
 
@@ -1269,7 +1293,7 @@ const [date, setDate] = useState('');
 
 #### 날짜 값과 시간대
 
-값은 **`"YYYY-MM-DD"` 문자열**입니다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `minDate` 와 같은 형식입니다.
+값은 **`"YYYY-MM-DD"` 문자열**입니다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `min` · `max` 와 같은 형식입니다.
 
 - 시간대가 없습니다 - `new Date("2026-10-16")` 은 **UTC 자정**으로 해석돼 한국(UTC+9)에서는 맞지만 미국에서는 하루 전날이 됩니다. 문자열이라 이 변환이 끼어들 자리가 없습니다
 - Date 가 필요하면 **로컬 생성자**로 만듭니다: `const [y, m, d] = value.split("-").map(Number); new Date(y, m - 1, d)`
@@ -1311,15 +1335,17 @@ const [date, setDate] = useState<string | null>(null);
 import { DateRangePicker, Field } from '@bigtablet/design-system';
 
 <Field name="period" label="조회 기간">
-  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+  <DateRangePicker value={period} onValueChange={setPeriod} max="today" />
 </Field>
 ```
 
-**거꾸로 된 범위를 만들 수 없습니다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
+**거꾸로 된 범위를 만들 수 없습니다.** 종료일의 `min` 이 시작일이라 이전 날짜가 목록에 없고,
 시작일을 종료일보다 뒤로 옮기면 **종료일이 비워집니다**(`{ start, end: undefined }`). 조용히
 시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장됩니다.
 
 시작일을 고르기 전에는 종료일이 잠깁니다. 순서가 뒤집힌 입력을 애초에 막습니다.
+
+`min` · `max` · `isDateDisabled` 는 시작일 · 종료일 모두에 걸립니다 ([DatePicker](#고를-수-있는-날-정하기) 와 같습니다).
 
 ### TimePicker
 
@@ -1329,11 +1355,11 @@ import { DateRangePicker, Field } from '@bigtablet/design-system';
 import { Field, TimePicker } from '@bigtablet/design-system';
 
 <Field name="pickupAt" label="픽업 시각">
-  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+  <TimePicker value={time} onValueChange={setTime} minuteStep={30} min="09:00" max="21:00" />
 </Field>
 ```
 
-`minTime`/`maxTime` 은 **시 목록까지** 좁힙니다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
+`min`/`max` 는 **시 목록까지** 좁힙니다 (`"HH:mm"`, 예전 이름 `minTime`/`maxTime`). 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
 있고, 그때 분 목록이 비어 막힌 화면이 됩니다. 경계 시각에서는 분도 좁힙니다 — 최소가 09:30 이면
 09시의 분은 30분부터입니다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮깁니다.
 
@@ -1517,8 +1543,8 @@ function YourComponent() {
       title: '삭제 확인',
       message: '정말 삭제하시겠습니까?',
       showCancel: true,
-      confirmText: '삭제',
-      cancelText: '취소',
+      confirmLabel: '삭제',
+      cancelLabel: '취소',
       onConfirm: () => console.log('삭제됨'),
       onCancel: () => console.log('취소됨'),
     });
@@ -1549,7 +1575,7 @@ const alert = showAlert({
     />
   ),
   showCancel: true,
-  confirmText: "저장",
+  confirmLabel: "저장",
   confirmDisabled: true,
   onConfirm: () => savePolicy({ reason }),
 });
@@ -1575,8 +1601,8 @@ if (await confirm({
   tone: "warning",
   title: "변경사항을 버릴까요?",
   message: "저장하지 않은 내용은 복구할 수 없습니다.",
-  confirmText: "버리기",
-  cancelText: "계속 편집",
+  confirmLabel: "버리기",
+  cancelLabel: "계속 편집",
   destructive: true,
 })) {
   discard();
@@ -1586,7 +1612,7 @@ if (await confirm({
 await confirm({
   tone: "error",
   title: `${order.no} 를 삭제할까요?`,
-  confirmText: "삭제",
+  confirmLabel: "삭제",
   destructive: true,
   onConfirm: () => deleteOrder(order.id),   // Promise
 });
@@ -1857,12 +1883,12 @@ const [page, setPage] = useState(1);
 | 패널 없이 **값만** 고르는 설정·필터 (통화 USD/KRW, 로케일, 목록 상태 필터) | ❌ **[SegmentedControl](#segmentedcontrol)** (라벨이 길면 RadioGroup) - `tablist`/`tab` 은 "패널을 바꿉니다" 는 뜻이라, 패널이 없으면 스크린리더에 없는 패널을 약속합니다 |
 | 점진적 노출, 여러 섹션 동시 펼침 가능 | ❌ **Accordion** |
 | 페이지 간 이동 (URL 자체가 바뀜) | ❌ **NavBar / Sidebar** |
-| 단순 boolean 토글 1쌍 | ❌ **Toggle** |
+| 단순 boolean 토글 1쌍 | ❌ **Switch** |
 
 #### variant 선택 가이드
 
 - `variant="line"` (기본) - **하단 underline**. 페이지 내 섹션 전환 (admin 페이지 위계, 제품 상세 등). 가장 흔한 케이스
-- `variant="fills"` - **deprecated (v4.10.0).** 둥근 박스 그룹 모양이 SegmentedControl 과 같아 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않습니다. 패널을 바꾸면 `line`, 값만 고르면 [SegmentedControl](#segmentedcontrol) 을 씁니다. 지금은 그대로 동작하고 이후 버전에서 제거합니다
+- `variant="fills"` 는 **5.0.0 에서 제거했습니다.** 둥근 박스 그룹 모양이 SegmentedControl 과 같아 "내용 바꾸기" 와 "값 고르기" 가 구분되지 않았습니다. 값만 고르면 [SegmentedControl](#segmentedcontrol) 을 씁니다
 
 #### 제어형 vs 비제어형
 
@@ -1899,9 +1925,9 @@ const [tab, setTab] = useState("overview");
 #### DOM 구조 (SCSS override 시 참고)
 
 ```
-.tabs (+ tabs_variant_line | tabs_variant_fills, tabs_size_sm | tabs_size_md)
-├── .tabs_list (+ tabs_list_line | tabs_list_fills)
-│   ├── span.tabs_indicator (+ tabs_indicator_line | _fills)  ← aria-hidden, 활성 tab 으로 슬라이드
+.tabs (+ tabs_variant_line, tabs_size_sm | tabs_size_md)
+├── .tabs_list (+ tabs_list_line)
+│   ├── span.tabs_indicator (+ tabs_indicator_line)  ← aria-hidden, 활성 tab 으로 슬라이드
 │   └── button.tabs_tab (+ tabs_tab_active)
 └── .tabs_panel
 ```
@@ -4079,7 +4105,7 @@ function UserTable({ users, isLoading }: { users: User[]; isLoading: boolean }) 
 
 - 정렬 헤더는 `<button>` 이고 현재 상태가 `aria-sort` 로 노출됩니다.
 - `onRowClick` 이 있는 행에는 `rowClickHint` 가 `aria-describedby` 로 연결됩니다. `<tr>` 에 `aria-label` / `role="button"` 을 쓰면 셀 데이터를 스크린리더가 못 읽으므로 의도적으로 `aria-describedby` 를 씁니다.
-- 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllAriaLabel` / `selectRowAriaLabel` 로 레이블을 커스터마이즈합니다.
+- 선택 체크박스는 [Checkbox](#checkbox) 를 사용하며 `selectAllLabel` / `selectRowLabel` 로 레이블을 커스터마이즈합니다.
 - `selectable` 이면 **미선택 행도 `aria-selected="false"`** 를 갖습니다. 속성이 없으면 보조기술은 "선택 개념이 없는 행" 으로 읽어 고를 수 있는지 알 수 없습니다(APG grid). 선택 개념이 없는 표에는 붙이지 않습니다.
 - 한 쪽만 받아 그리는 표는 `rowIndexOffset` 을 줍니다. 없으면 쪽마다 번호가 1 부터 다시 시작해, 3쪽의 체크박스도 1쪽과 **글자까지 같은** 이름으로 읽힙니다 - 스크린리더 사용자는 쪽이 넘어갔는지 알 수 없습니다. `DataView` 는 `pagination.pageSize` 를 주면 자동으로 계산합니다.
 
@@ -4116,12 +4142,12 @@ import { DataView, Dropdown } from '@bigtablet/design-system';
 - **선택 개수는 `role="status"` 로 알립니다.** 액션 줄이 시각적으로만 나타나면 키보드 사용자는 무엇이 가능해졌는지 모릅니다
 
 > **선택 체크박스 라벨은 기본값이 순번입니다.** `"13번째 행 선택"` 이라 스크린리더 사용자는 어떤
-> 행을 고르는지 번호로만 듣습니다. 행을 이름으로 구분하려면 `selectRowAriaLabel` 의 **둘째 인자**를
+> 행을 고르는지 번호로만 듣습니다. 행을 이름으로 구분하려면 `selectRowLabel` 의 **둘째 인자**를
 > 씁니다 - 그 행의 데이터가 그대로 옵니다. 첫 인자는 `Table` 과 같은 전체 순번이라 페이지가 있어도
 > 오프셋 계산이 필요 없습니다.
 >
 > ```tsx
-> <DataView selectRowAriaLabel={(_, row) => `${row.name} 선택`} />
+> <DataView selectRowLabel={(_, row) => `${row.name} 선택`} />
 > ```
 
 ---

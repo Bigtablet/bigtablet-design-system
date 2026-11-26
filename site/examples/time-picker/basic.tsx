@@ -5,7 +5,14 @@ export default function Example() {
 	const [time, setTime] = useState("");
 	return (
 		<div style={{ maxWidth: 320 }}>
-			<TimePicker label="알림 시각" value={time} onValueChange={setTime} minuteStep={15} />
+			<TimePicker
+				label="알림 시각"
+				value={time}
+				onValueChange={setTime}
+				minuteStep={15}
+				min="09:00"
+				max="18:00"
+			/>
 		</div>
 	);
 }

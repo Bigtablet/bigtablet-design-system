@@ -386,10 +386,10 @@ describe("Toast portal & a11y", () => {
 		expect(screen.getByRole("status").querySelectorAll("p")).toHaveLength(4);
 	});
 
-	it("respects custom closeAriaLabel prop", () => {
+	it("respects custom closeLabel prop", () => {
 		render(
 			// 기본값이 "닫기" 이므로 커스텀 값은 그와 달라야 주입이 실제로 먹었는지 알 수 있다
-			<ToastProvider closeAriaLabel="Dismiss">
+			<ToastProvider closeLabel="Dismiss">
 				<ToastTrigger fn={(t) => t.success("커스텀 라벨")} />
 			</ToastProvider>,
 		);

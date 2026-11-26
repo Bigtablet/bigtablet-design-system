@@ -17,11 +17,11 @@ import {
 	InlineAlert,
 	Pagination,
 	Radio,
+	Switch,
 	Tab,
 	TabList,
 	Tabs,
 	TextField,
-	Toggle,
 } from "../index";
 
 /**
@@ -222,9 +222,9 @@ describe.each(THEMES)("visual %s", (theme) => {
 					<Radio name="r" value="b" label="미선택" />
 				</div>
 				<div style={row}>
-					<Toggle ariaLabel="켜짐" defaultChecked />
-					<Toggle ariaLabel="꺼짐" />
-					<Toggle ariaLabel="비활성" disabled />
+					<Switch ariaLabel="켜짐" defaultChecked />
+					<Switch ariaLabel="꺼짐" />
+					<Switch ariaLabel="비활성" disabled />
 				</div>
 			</div>,
 		);
@@ -247,7 +247,7 @@ describe.each(THEMES)("visual %s", (theme) => {
 		await shoot(
 			`tabs-${theme}`,
 			<div style={col}>
-				{(["line", "fills"] as const).map((variant) => (
+				{(["line"] as const).map((variant) => (
 					<Tabs key={variant} variant={variant} defaultValue="a">
 						<TabList ariaLabel={variant}>
 							<Tab value="a">첫째</Tab>

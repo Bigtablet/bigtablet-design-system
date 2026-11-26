@@ -29,6 +29,27 @@ describe("DateRangePicker", () => {
 		expect(triggers()[3]).not.toBeDisabled();
 	});
 
+	it("min · max · isDateDisabled 를 두 칸 모두에 건다 (#1167)", () => {
+		render(
+			<DateRangePicker
+				value={{ start: "2024-05-10" }}
+				min="2023-01-01"
+				max="2025-12-31"
+				isDateDisabled={(d) => d === "2024-05-11"}
+				onValueChange={vi.fn()}
+			/>,
+		);
+		const years = (index: number) => {
+			fireEvent.click(triggers()[index]!);
+			const list = screen.getAllByRole("option").map((o) => o.textContent);
+			fireEvent.click(triggers()[index]!);
+			return list;
+		};
+		expect(years(0)).toEqual(["2023", "2024", "2025"]);
+		// 종료일은 시작일이 하한
+		expect(years(3)).toEqual(["2024", "2025"]);
+	});
+
 	it("keeps dates before the start out of the end options", () => {
 		// 거꾸로 된 범위는 목록에 아예 없어야 한다.
 		render(<DateRangePicker value={{ start: "2026-05-10" }} onValueChange={vi.fn()} />);

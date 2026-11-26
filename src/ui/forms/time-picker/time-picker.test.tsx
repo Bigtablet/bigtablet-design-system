@@ -34,14 +34,24 @@ describe("TimePicker", () => {
 
 	it("narrows the hours to the allowed range", () => {
 		// 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수 있고, 그때 분 목록이 비어 막힌다.
-		render(<TimePicker value="10:00" onValueChange={vi.fn()} minTime="09:00" maxTime="11:00" />);
+		render(<TimePicker value="10:00" onValueChange={vi.fn()} min="09:00" max="11:00" />);
 
 		expect(openAndRead(hourTrigger())).toEqual(["09", "10", "11"]);
 	});
 
+	it("합친 하한이 상한보다 늦으면 고를 시가 없고 값을 내보내지 않는다", () => {
+		// 개발자 실수 영역 - 넓은 쪽으로 풀면 범위 밖 시각이 나간다
+		const onValueChange = vi.fn();
+		render(<TimePicker onValueChange={onValueChange} min="12:00" max="10:00" />);
+
+		fireEvent.click(hourTrigger());
+		expect(screen.queryAllByRole("option")).toHaveLength(0);
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
 	it("narrows the minutes at the boundary hour", () => {
 		// 최소가 09:30 이면 09시의 분은 30분부터 시작한다.
-		render(<TimePicker value="09:30" onValueChange={vi.fn()} minuteStep={15} minTime="09:30" />);
+		render(<TimePicker value="09:30" onValueChange={vi.fn()} minuteStep={15} min="09:30" />);
 
 		expect(openAndRead(minuteTrigger())).toEqual(["30", "45"]);
 	});
@@ -49,9 +59,7 @@ describe("TimePicker", () => {
 	it("moves the minute into range when the hour changes", () => {
 		// 09:00~ 인데 분이 00 인 상태로 09시를 고르면 범위 밖 값이 남는다.
 		const onValueChange = vi.fn();
-		render(
-			<TimePicker value="10:00" onValueChange={onValueChange} minuteStep={30} minTime="09:30" />,
-		);
+		render(<TimePicker value="10:00" onValueChange={onValueChange} minuteStep={30} min="09:30" />);
 
 		fireEvent.click(hourTrigger());
 		fireEvent.click(screen.getByRole("option", { name: "09" }));
@@ -84,7 +92,7 @@ describe("TimePicker", () => {
 
 	it("announces the allowed range to screen readers", () => {
 		const { container } = render(
-			<TimePicker value="09:00" onValueChange={vi.fn()} minTime="09:00" maxTime="18:00" />,
+			<TimePicker value="09:00" onValueChange={vi.fn()} min="09:00" max="18:00" />,
 		);
 
 		const sr = container.querySelector(".time_picker_sr_only");
@@ -151,15 +159,13 @@ describe("TimePicker", () => {
 	});
 
 	it("includes the maximum minute at the boundary hour", () => {
-		render(<TimePicker value="10:00" minuteStep={15} maxTime="10:30" onValueChange={vi.fn()} />);
+		render(<TimePicker value="10:00" minuteStep={15} max="10:30" onValueChange={vi.fn()} />);
 		expect(openAndRead(minuteTrigger())).toEqual(["00", "15", "30"]);
 	});
 
 	it("snaps to the first stepped minute inside minTime when the hour changes", () => {
 		const onValueChange = vi.fn();
-		render(
-			<TimePicker value="10:00" minuteStep={15} minTime="09:20" onValueChange={onValueChange} />,
-		);
+		render(<TimePicker value="10:00" minuteStep={15} min="09:20" onValueChange={onValueChange} />);
 		fireEvent.click(hourTrigger());
 		fireEvent.click(screen.getByRole("option", { name: "09" }));
 		expect(onValueChange).toHaveBeenCalledWith("09:30");
@@ -167,9 +173,7 @@ describe("TimePicker", () => {
 
 	it("keeps a minute that sits exactly on maxTime when the hour changes", () => {
 		const onValueChange = vi.fn();
-		render(
-			<TimePicker value="10:15" minuteStep={15} maxTime="14:15" onValueChange={onValueChange} />,
-		);
+		render(<TimePicker value="10:15" minuteStep={15} max="14:15" onValueChange={onValueChange} />);
 		fireEvent.click(hourTrigger());
 		fireEvent.click(screen.getByRole("option", { name: "14" }));
 		expect(onValueChange).toHaveBeenCalledWith("14:15");
@@ -177,7 +181,7 @@ describe("TimePicker", () => {
 
 	it("leaves out an hour that has no stepped minute in range (#986)", () => {
 		// 09:50 이 최소인데 30분 간격이면 09시에 고를 분이 없다 - 목록에 남기지 않는다
-		render(<TimePicker value="10:00" minuteStep={30} minTime="09:50" onValueChange={vi.fn()} />);
+		render(<TimePicker value="10:00" minuteStep={30} min="09:50" onValueChange={vi.fn()} />);
 		fireEvent.click(hourTrigger());
 		expect(screen.queryByRole("option", { name: "09" })).toBeNull();
 		expect(screen.getByRole("option", { name: "10" })).toBeInTheDocument();
@@ -193,7 +197,7 @@ describe("TimePicker", () => {
 
 	it("announces a one-sided range and nothing without a range", () => {
 		const { container, rerender } = render(
-			<TimePicker value="10:00" minTime="09:00" onValueChange={vi.fn()} />,
+			<TimePicker value="10:00" min="09:00" onValueChange={vi.fn()} />,
 		);
 		const sr = () => container.querySelector(".time_picker_sr_only");
 		expect(sr()).toHaveTextContent("09:00 부터 23:59 까지 선택 가능");

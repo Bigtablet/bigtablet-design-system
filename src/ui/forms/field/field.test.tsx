@@ -5,9 +5,9 @@ import { DatePicker } from "../date-picker";
 import { DateRangePicker } from "../date-range-picker";
 import { Radio } from "../radio";
 import { RadioGroup } from "../radio-group";
-import { TextField } from "../textfield";
+import { Switch } from "../switch";
+import { TextField } from "../text-field";
 import { TimePicker } from "../time-picker";
-import { Toggle } from "../toggle";
 import { Field } from "./index";
 
 describe("Field", () => {
@@ -88,7 +88,7 @@ describe("Field", () => {
 	it("puts labelAction on the label row, outside the label element", () => {
 		// `<label>` 안에 넣으면 라벨 클릭 → 입력 포커스 동작과 토글 클릭이 겹친다.
 		render(
-			<Field name="companyName" label="소속" labelAction={<Toggle ariaLabel="소속 없음" />}>
+			<Field name="companyName" label="소속" labelAction={<Switch ariaLabel="소속 없음" />}>
 				<TextField />
 			</Field>,
 		);
@@ -99,7 +99,7 @@ describe("Field", () => {
 		// 조작 요소 높이로 자라 아래 입력이 내려간다(#618). 높이는 jsdom 이 계산하지 않아
 		// 구조만 지킨다.
 		expect(toggle.parentElement).toHaveClass("field_label_action");
-		// 라벨 줄은 FieldContext 밖이다 - 안이면 Toggle 이 자기 ariaLabel 을 버리고
+		// 라벨 줄은 FieldContext 밖이다 - 안이면 Switch 가 자기 ariaLabel 을 버리고
 		// Field 라벨("소속")을 자기 이름으로 삼아 이름 없는 토글이 된다.
 		expect(toggle).toHaveAccessibleName("소속 없음");
 		expect(toggle.closest(".field_label_row")).not.toBeNull();
@@ -241,7 +241,7 @@ describe("Field", () => {
 
 		rerender(
 			<Field name="agree" error="약관에 동의해야 합니다">
-				<Toggle ariaLabel="동의" />
+				<Switch ariaLabel="동의" />
 			</Field>,
 		);
 		expect(screen.getByRole("switch")).toHaveAttribute("aria-invalid", "true");

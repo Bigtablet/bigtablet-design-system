@@ -210,8 +210,8 @@ export type {
 export { Dropdown } from "./ui/forms/dropdown";
 export type { FieldControl, FieldProps } from "./ui/forms/field";
 export { Field, useFieldControl } from "./ui/forms/field";
-export type { FileInputProps, FileInputVariant } from "./ui/forms/file";
-export { FileInput } from "./ui/forms/file";
+export type { FileInputProps, FileInputVariant } from "./ui/forms/file-input";
+export { FileInput } from "./ui/forms/file-input";
 export type { FilterBarProps, FilterBarSubmitMode } from "./ui/forms/filter-bar";
 export { FilterBar } from "./ui/forms/filter-bar";
 export type { FormActionsProps, FormProps } from "./ui/forms/form";
@@ -224,6 +224,8 @@ export type {
 	ImageCropperProps,
 } from "./ui/forms/image-cropper";
 export { ImageCropper } from "./ui/forms/image-cropper";
+export type { MonthPickerProps } from "./ui/forms/month-picker";
+export { MonthPicker } from "./ui/forms/month-picker";
 export type { OtpInputProps } from "./ui/forms/otp-input";
 export { OtpInput } from "./ui/forms/otp-input";
 export type { RadioProps } from "./ui/forms/radio";
@@ -241,25 +243,25 @@ export type {
 	SegmentedControlSize,
 } from "./ui/forms/segmented-control";
 export { SegmentedControl } from "./ui/forms/segmented-control";
+export type { SwitchProps } from "./ui/forms/switch";
+export { Switch } from "./ui/forms/switch";
 export type { TagInputProps, TagInputSize } from "./ui/forms/tag-input";
 export { TagInput } from "./ui/forms/tag-input";
+export type {
+	ImeStrategy,
+	TextFieldProps,
+	TextFieldSize,
+	TextFieldVariant,
+} from "./ui/forms/text-field";
+export { TextField } from "./ui/forms/text-field";
 export type {
 	TextareaProps,
 	TextareaResize,
 	TextareaSize,
 } from "./ui/forms/textarea";
 export { Textarea } from "./ui/forms/textarea";
-export type {
-	ImeStrategy,
-	TextFieldProps,
-	TextFieldSize,
-	TextFieldVariant,
-} from "./ui/forms/textfield";
-export { TextField } from "./ui/forms/textfield";
 export type { TimePickerProps } from "./ui/forms/time-picker";
 export { TimePicker } from "./ui/forms/time-picker";
-export type { ToggleProps } from "./ui/forms/toggle";
-export { Toggle } from "./ui/forms/toggle";
 export type {
 	ButtonProps,
 	ButtonSize,

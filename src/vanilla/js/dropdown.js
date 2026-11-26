@@ -29,7 +29,7 @@ const CHECK_ICON_SVG =
 export function Dropdown(element, options = {}) {
 	const wrapper = typeof element === "string" ? $(element) : element;
 	if (!wrapper) return null;
-	// 같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다 (Modal · Toggle 과 같음) - document 리스너와
+	// 같은 요소에 다시 만들면 앞 인스턴스를 풀고 교체한다 (Modal · Switch 와 같음) - document 리스너와
 	// body 로 옮겨진 패널이 이중으로 남지 않게. 새 인스턴스는 앞이 만든 구조(검색 행·__options)를 재사용한다.
 	wrapper._btDropdown?.destroy();
 
@@ -40,7 +40,7 @@ export function Dropdown(element, options = {}) {
 		multiple: false,
 		searchable: false,
 		searchPlaceholder: t("dropdown.searchPlaceholder"),
-		emptyText: t("dropdown.empty"),
+		emptyMessage: t("dropdown.empty"),
 		selectedSummary: (count) => t("dropdown.selectedSummary", { count }),
 		// React Dropdown 과 동일한 값 변경 콜백.
 		onValueChange: null,
@@ -60,8 +60,8 @@ export function Dropdown(element, options = {}) {
 	if (options.searchPlaceholder === undefined && wrapper.dataset.searchPlaceholder) {
 		config.searchPlaceholder = wrapper.dataset.searchPlaceholder;
 	}
-	if (options.emptyText === undefined && wrapper.dataset.emptyText) {
-		config.emptyText = wrapper.dataset.emptyText;
+	if (options.emptyMessage === undefined && wrapper.dataset.emptyMessage) {
+		config.emptyMessage = wrapper.dataset.emptyMessage;
 	}
 	if (options.placeholder === undefined && wrapper.dataset.placeholder) {
 		config.placeholder = wrapper.dataset.placeholder;
@@ -269,7 +269,7 @@ export function Dropdown(element, options = {}) {
 		}
 		// listbox 의 자식은 option 만 - <li> 의 암시적 listitem 역할을 지운다 (React 는 <div>)
 		emptyEl.setAttribute("role", "presentation");
-		emptyEl.textContent = config.emptyText;
+		emptyEl.textContent = config.emptyMessage;
 		emptyEl.hidden = true;
 	}
 

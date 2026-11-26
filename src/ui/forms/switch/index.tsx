@@ -5,7 +5,7 @@ import { cn, type SafeHTMLProps } from "../../../utils";
 import "./style.scss";
 import { useFieldControl } from "../field";
 
-export interface ToggleProps
+export interface SwitchProps
 	extends Omit<SafeHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>>, "onChange"> {
 	/** 제어형 토글 상태 */
 	checked?: boolean;
@@ -24,12 +24,12 @@ export interface ToggleProps
 }
 
 /**
- * 토글을 렌더링한다.
- * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 토글 UI를 반환한다.
- * @param props 토글 속성
- * @returns 렌더링된 토글 요소
+ * 켜기 / 끄기 스위치 (`role="switch"`). 누르는 즉시 적용되는 설정에 쓴다.
+ * 제어형/비제어형 상태를 판별해 토글 로직을 수행하고 버튼 형태의 스위치 UI를 반환한다.
+ * @param props 스위치 속성
+ * @returns 렌더링된 스위치 요소
  */
-export const Toggle = ({
+export const Switch = ({
 	checked,
 	defaultChecked,
 	onCheckedChange,
@@ -39,7 +39,7 @@ export const Toggle = ({
 	ariaLabel,
 	ref,
 	...props
-}: ToggleProps) => {
+}: SwitchProps) => {
 	const isControlled = checked !== undefined;
 	const [innerChecked, setInnerChecked] = React.useState(!!defaultChecked);
 	const isOn = isControlled ? !!checked : innerChecked;
@@ -61,9 +61,9 @@ export const Toggle = ({
 	const field = useFieldControl();
 
 	const rootClassName = cn(
-		"toggle",
-		`toggle_size_${size}`,
-		{ toggle_on: isOn, toggle_disabled: disabled },
+		"switch",
+		`switch_size_${size}`,
+		{ switch_on: isOn, switch_disabled: disabled },
 		className,
 	);
 
@@ -89,7 +89,7 @@ export const Toggle = ({
 			onClick={handleToggle}
 			className={rootClassName}
 		>
-			<span className="toggle_thumb" />
+			<span className="switch_thumb" />
 		</button>
 	);
 };

@@ -145,7 +145,7 @@ describe("init", () => {
 			</div>
 			<button id="opener" data-bt-modal-open="m">open</button>
 			<div id="m" class="bt-modal" data-bt-modal><div class="bt-modal__panel"><button>x</button></div></div>
-			<button class="bt-toggle" data-bt-toggle></button>
+			<button class="bt-switch" data-bt-switch></button>
 			<nav class="bt-pagination" data-bt-pagination data-page="3" data-total-pages="9"></nav>
 			<nav id="p2" class="bt-pagination" data-bt-pagination></nav>
 			<nav id="p3" class="bt-pagination" data-bt-pagination data-page="2" data-total-pages="3" data-href="?page={page}"></nav>`;
@@ -155,8 +155,8 @@ describe("init", () => {
 		type Bound = HTMLElement & Record<string, { getPage?: () => number } | undefined>;
 		const $el = (sel: string) => document.querySelector(sel) as Bound;
 		expect($el("[data-bt-dropdown]")._btDropdown).toBeTruthy();
-		expect($el("[data-bt-toggle]")._btToggle).toBeTruthy();
-		expect($el("[data-bt-toggle]").getAttribute("role")).toBe("switch");
+		expect($el("[data-bt-switch]")._btSwitch).toBeTruthy();
+		expect($el("[data-bt-switch]").getAttribute("role")).toBe("switch");
 		expect($el("[data-bt-pagination]")._btPagination?.getPage?.()).toBe(3);
 		expect($el("#p2")._btPagination?.getPage?.()).toBe(1);
 		expect($el("#p3").querySelector('[data-page="3"]')?.getAttribute("href")).toBe("?page=3");

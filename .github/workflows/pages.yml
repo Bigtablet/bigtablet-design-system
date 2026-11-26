@@ -17,7 +17,7 @@ on:
   # 수동 트리거 (브랜드 / 도메인 외부 콘텐츠 갱신 필요할 때)
   workflow_dispatch:
 
-# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). 쓰기 권한은 아래 job 에서 상향한다.
+# 기본은 읽기만 (시큐어코딩 가이드 W-2-3-2). 쓰기 권한은 deploy job 에서만 상향한다.
 permissions:
   contents: read
 
@@ -26,15 +26,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  # 빌드·업로드와 배포를 job 으로 나눈다 (GitHub 공식 템플릿 구조). 한 job 에서 업로드 직후 배포하면
+  # artifact 조회가 늦게 잡혀 deploy-pages 가 "Found 0 artifact(s)" 로 실패할 때가 있었다 (#1165).
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
@@ -56,6 +53,16 @@ jobs:
         with:
           path: site-dist
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

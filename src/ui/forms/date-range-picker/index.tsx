@@ -22,14 +22,12 @@ export interface DateRangePickerProps {
 	startLabel?: string;
 	/** 종료일 select 묶음의 라벨 */
 	endLabel?: string;
-	/** 연도 선택 범위 시작 (기본값: 1950) */
-	startYear?: number;
-	/** 연도 선택 범위 끝. 미지정 시 현재 연도 + 10 */
-	endYear?: number;
-	/** 선택 가능한 가장 이른 날짜 (`"YYYY-MM-DD"`) */
-	minDate?: string;
-	/** `"until-today"` 면 오늘 이후를 고를 수 없다 (기본값: "all") */
-	selectableRange?: "all" | "until-today";
+	/** 고를 수 있는 가장 이른 날 - `"YYYY-MM-DD"` 또는 `"today"`. 종료일은 시작일이 하한이 된다 */
+	min?: string;
+	/** 고를 수 있는 가장 늦은 날 - `"YYYY-MM-DD"` 또는 `"today"` */
+	max?: string;
+	/** 날마다 막을지 정한다 - 시작일 · 종료일 모두에 걸린다 (`DatePicker` 와 같다) */
+	isDateDisabled?: (date: string) => boolean;
 	/** 비활성 여부 */
 	disabled?: boolean;
 	/**
@@ -58,7 +56,7 @@ export interface DateRangePickerProps {
  * @example
  * ```tsx
  * <Field name="period" label="조회 기간">
- *   <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+ *   <DateRangePicker value={period} onValueChange={setPeriod} max="today" />
  * </Field>
  * ```
  */
@@ -67,10 +65,9 @@ export const DateRangePicker = ({
 	onValueChange,
 	startLabel: startLabelProp,
 	endLabel: endLabelProp,
-	startYear,
-	endYear,
-	minDate,
-	selectableRange = "all",
+	min,
+	max,
+	isDateDisabled,
 	disabled,
 	required,
 	fullWidth = true,
@@ -100,8 +97,8 @@ export const DateRangePicker = ({
 		onValueChange({ start, end: next || undefined });
 	};
 
-	// 종료일의 최소값은 시작일이다 - 이전 날짜는 목록에 아예 없다.
-	const endMinDate = start ?? minDate;
+	// 안쪽 DatePicker 둘이 같은 상한 · 막는 날을 받는다
+	const shared = { max, isDateDisabled };
 
 	return (
 		<div
@@ -128,10 +125,8 @@ export const DateRangePicker = ({
 						label={startLabel}
 						value={start}
 						onValueChange={handleStartChange}
-						startYear={startYear}
-						endYear={endYear}
-						minDate={minDate}
-						selectableRange={selectableRange}
+						{...shared}
+						min={min}
 						required={isRequired}
 						disabled={disabled}
 						clearable={clearable}
@@ -141,10 +136,9 @@ export const DateRangePicker = ({
 						label={endLabel}
 						value={end}
 						onValueChange={handleEndChange}
-						startYear={startYear}
-						endYear={endYear}
-						minDate={endMinDate}
-						selectableRange={selectableRange}
+						{...shared}
+						// 종료일의 하한은 시작일이다 - 이전 날짜는 목록에 아예 없다
+						min={start ?? min}
 						required={isRequired}
 						// 시작일을 고르기 전에는 종료일을 열지 않는다 - 순서가 뒤집힌 입력을 막는다.
 						disabled={disabled || !start}
