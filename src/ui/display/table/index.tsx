@@ -127,16 +127,16 @@ export type TableProps<T extends object> = {
 	/** 정렬 가능한 헤더 클릭 시 발화 (none→asc→desc→none 순환). DS는 데이터를 직접 정렬하지 않음 - 정렬된 `data` 를 다시 전달해야 함 */
 	onSortChange?: (sort: TableSort | undefined) => void;
 	/** 전체 선택 체크박스 aria-label */
-	selectAllAriaLabel?: string;
+	selectAllLabel?: string;
 	/**
 	 * 개별 행 선택 체크박스 aria-label. 첫 인자는 `rowIndexOffset` 이 더해진 **전체 순번**, 둘째는
 	 * 그 행의 데이터 - 번호 대신 이름으로 읽히게 할 때 쓴다 (기본값: (i) => `${i+1}번째 행 선택`)
 	 * @example
 	 * ```tsx
-	 * selectRowAriaLabel={(_, row) => `${row.name} 선택`}
+	 * selectRowLabel={(_, row) => `${row.name} 선택`}
 	 * ```
 	 */
-	selectRowAriaLabel?: (index: number, row: T) => string;
+	selectRowLabel?: (index: number, row: T) => string;
 	/**
 	 * 이 표의 첫 행이 전체에서 몇 번째인지 (0-based, 기본 0). 서버 페이지네이션처럼 한 쪽만
 	 * 받아 그릴 때 준다.
@@ -172,8 +172,8 @@ export const Table = <T extends object>({
 	rowClickHint: rowClickHintProp,
 	sort,
 	onSortChange,
-	selectAllAriaLabel: selectAllAriaLabelProp,
-	selectRowAriaLabel: selectRowAriaLabelProp,
+	selectAllLabel: selectAllLabelProp,
+	selectRowLabel: selectRowLabelProp,
 	rowIndexOffset = 0,
 	selectable = false,
 	rowKey,
@@ -185,9 +185,9 @@ export const Table = <T extends object>({
 	// ReactNode 라 `null` 이 유효하다 - `emptyMessage={null}` 로 빈 상태 문구를 숨긴 소비자의
 	// 화면이 `??` 로는 기본 문구로 되돌아간다. undefined 만 카탈로그에서 받는다.
 	const emptyMessage = emptyMessageProp === undefined ? t("table.empty") : emptyMessageProp;
-	const selectAllAriaLabel = selectAllAriaLabelProp ?? t("table.selectAll");
-	const selectRowAriaLabel =
-		selectRowAriaLabelProp ??
+	const selectAllLabel = selectAllLabelProp ?? t("table.selectAll");
+	const selectRowLabel =
+		selectRowLabelProp ??
 		((index: number, _row: T) => t("table.selectRow", { index: index + 1 }));
 	/** 쪽 안의 인덱스를 전체 순번으로 옮긴다. 기본 오프셋 0 이면 지금까지와 같은 값이다. */
 	const toGlobalIndex = (rowIndex: number) => rowIndex + rowIndexOffset;
@@ -370,7 +370,7 @@ export const Table = <T extends object>({
 								className="table_th table_th_checkbox"
 							>
 								<Checkbox
-									aria-label={selectAllAriaLabel}
+									aria-label={selectAllLabel}
 									checked={isAllSelected}
 									indeterminate={isSomeSelected}
 									disabled={isLoading || allRowKeys.length === 0}
@@ -515,7 +515,7 @@ export const Table = <T extends object>({
 												onKeyDown={(e) => e.stopPropagation()}
 											>
 												<Checkbox
-													aria-label={selectRowAriaLabel(toGlobalIndex(rowIndex), item)}
+													aria-label={selectRowLabel(toGlobalIndex(rowIndex), item)}
 													checked={isSelected}
 													onChange={() => handleToggleRow(rowIdentity)}
 												/>

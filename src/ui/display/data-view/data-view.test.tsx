@@ -241,8 +241,8 @@ describe("DataView", () => {
 				columns={COLUMNS}
 				rowKey={rowKey}
 				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
-				selectAllAriaLabel="사용자 전체 선택"
-				selectRowAriaLabel={(_, row) => `${row.name} 선택`}
+				selectAllLabel="사용자 전체 선택"
+				selectRowLabel={(_, row) => `${row.name} 선택`}
 			/>,
 		);
 
@@ -260,7 +260,7 @@ describe("DataView", () => {
 				rowKey={rowKey}
 				selectionActions={[{ label: "삭제", onRun: vi.fn() }]}
 				pagination={{ page: 3, totalPages: 5, pageSize: 10, onPageChange: vi.fn() }}
-				selectRowAriaLabel={(index, row) => `${index + 1}행 ${row.name} 선택`}
+				selectRowLabel={(index, row) => `${index + 1}행 ${row.name} 선택`}
 			/>,
 		);
 

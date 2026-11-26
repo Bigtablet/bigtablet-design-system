@@ -40,7 +40,7 @@ export function Dropdown(element, options = {}) {
 		multiple: false,
 		searchable: false,
 		searchPlaceholder: t("dropdown.searchPlaceholder"),
-		emptyText: t("dropdown.empty"),
+		emptyMessage: t("dropdown.empty"),
 		selectedSummary: (count) => t("dropdown.selectedSummary", { count }),
 		// React Dropdown 과 동일한 값 변경 콜백.
 		onValueChange: null,
@@ -60,8 +60,8 @@ export function Dropdown(element, options = {}) {
 	if (options.searchPlaceholder === undefined && wrapper.dataset.searchPlaceholder) {
 		config.searchPlaceholder = wrapper.dataset.searchPlaceholder;
 	}
-	if (options.emptyText === undefined && wrapper.dataset.emptyText) {
-		config.emptyText = wrapper.dataset.emptyText;
+	if (options.emptyMessage === undefined && wrapper.dataset.emptyMessage) {
+		config.emptyMessage = wrapper.dataset.emptyMessage;
 	}
 	if (options.placeholder === undefined && wrapper.dataset.placeholder) {
 		config.placeholder = wrapper.dataset.placeholder;
@@ -269,7 +269,7 @@ export function Dropdown(element, options = {}) {
 		}
 		// listbox 의 자식은 option 만 - <li> 의 암시적 listitem 역할을 지운다 (React 는 <div>)
 		emptyEl.setAttribute("role", "presentation");
-		emptyEl.textContent = config.emptyText;
+		emptyEl.textContent = config.emptyMessage;
 		emptyEl.hidden = true;
 	}
 

@@ -95,16 +95,16 @@ export interface DataViewProps<T extends object>
 	/** 표의 접근성 이름 */
 	ariaLabel?: string;
 	/** 전체 선택 체크박스의 라벨 (기본값: `Table` 의 기본 라벨) */
-	selectAllAriaLabel?: string;
+	selectAllLabel?: string;
 	/**
 	 * 행 선택 체크박스의 라벨. 첫 인자는 `pagination.pageSize` 를 반영한 **전체 순번**(0-based),
 	 * 둘째는 그 행의 데이터. 기본값은 순번만 읽어 주므로 행을 이름으로 구분하려면 둘째 인자를 쓴다.
 	 * @example
 	 * ```tsx
-	 * selectRowAriaLabel={(_, row) => `${row.name} 선택`}
+	 * selectRowLabel={(_, row) => `${row.name} 선택`}
 	 * ```
 	 */
-	selectRowAriaLabel?: (index: number, row: T) => string;
+	selectRowLabel?: (index: number, row: T) => string;
 	/** 선택 액션 줄의 안내 문구 (기본값: (n) => `${n}개 선택됨`) */
 	selectionSummary?: (count: number) => string;
 	/** 선택 해제 버튼 라벨 */
@@ -150,8 +150,8 @@ export const DataView = <T extends object>({
 	onSortChange,
 	onRowClick,
 	ariaLabel,
-	selectAllAriaLabel,
-	selectRowAriaLabel,
+	selectAllLabel,
+	selectRowLabel,
 	selectionSummary: selectionSummaryProp,
 	clearSelectionLabel: clearSelectionLabelProp,
 	errorTitle: errorTitleProp,
@@ -304,8 +304,8 @@ export const DataView = <T extends object>({
 					onRowClick={onRowClick}
 					ariaLabel={ariaLabel}
 					selectable
-					selectAllAriaLabel={selectAllAriaLabel}
-					selectRowAriaLabel={selectRowAriaLabel}
+					selectAllLabel={selectAllLabel}
+					selectRowLabel={selectRowLabel}
 					rowKey={rowKey}
 					selectedKeys={selectedKeys}
 					onSelectionChange={setSelectedKeys}

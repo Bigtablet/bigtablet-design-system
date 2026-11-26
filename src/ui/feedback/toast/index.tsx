@@ -70,7 +70,7 @@ export interface ToastProviderProps {
 	/** 최대 동시 표시 토스트 수 (기본값: 5) */
 	maxCount?: number;
 	/** 토스트 닫기 버튼의 aria-label */
-	closeAriaLabel?: string;
+	closeLabel?: string;
 	/** 토스트 리전(`role="region"`)의 접근성 이름 (기본값: "알림"). 스크린리더의 리전 목록에 뜬다 */
 	regionLabel?: string;
 	/**
@@ -95,7 +95,7 @@ interface ToastItemComponentProps {
 	onRemove: (uid: number) => void;
 	/** 퇴출을 시작했다고 Provider 에 알린다 - 닫히는 중인 것을 같은 id 로 갱신하지 않게 */
 	onExitStart: (uid: number) => void;
-	closeAriaLabel: string;
+	closeLabel: string;
 }
 
 /**
@@ -108,7 +108,7 @@ const ToastItemComponent = ({
 	item,
 	onRemove,
 	onExitStart,
-	closeAriaLabel,
+	closeLabel,
 }: ToastItemComponentProps) => {
 	const [visible, setVisible] = React.useState(true);
 	const closingRef = React.useRef(false);
@@ -201,7 +201,7 @@ const ToastItemComponent = ({
 				</button>
 			)}
 
-			<button type="button" className="toast_close" onClick={close} aria-label={closeAriaLabel}>
+			<button type="button" className="toast_close" onClick={close} aria-label={closeLabel}>
 				<X size={iconSize.xs} />
 			</button>
 
@@ -290,12 +290,12 @@ const ToastAnnouncer = ({ toasts }: { toasts: ToastItem[] }) => {
 export const ToastProvider = ({
 	children,
 	maxCount = 5,
-	closeAriaLabel: closeAriaLabelProp,
+	closeLabel: closeLabelProp,
 	regionLabel: regionLabelProp,
 	placement = "bottom-right",
 }: ToastProviderProps) => {
 	const t = useLocaleText();
-	const closeAriaLabel = closeAriaLabelProp ?? t("toast.close");
+	const closeLabel = closeLabelProp ?? t("toast.close");
 	const regionLabel = regionLabelProp ?? t("toast.region");
 	const [toasts, setToasts] = React.useState<ToastItem[]>([]);
 	// 큐의 원본 - state 는 렌더용 사본이다. addToast 가 같은 배치에서 앞서 넣은 항목까지 동기로 보아야
@@ -440,7 +440,7 @@ export const ToastProvider = ({
 								item={item}
 								onRemove={removeToast}
 								onExitStart={markExiting}
-								closeAriaLabel={closeAriaLabel}
+								closeLabel={closeLabel}
 							/>
 						))}
 					</div>,
