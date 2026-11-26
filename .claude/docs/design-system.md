@@ -10,7 +10,7 @@ prop 표·예시를 여기 다시 옮겨 적지 않는다 - 옮겨 적은 사본
 3. [`docs/AGENT_GUIDE.md`](../../docs/AGENT_GUIDE.md) - 소비 앱에서 DS 를 쓰는 쪽의 가이드 (토큰·다크 모드·조합 패턴·안티 패턴)
 4. [`docs/MIGRATION.md`](../../docs/MIGRATION.md) - 이름이 바뀌거나 지워진 이력. 옛 이름을 보면 여기서 대체를 찾는다
 
-규약(파일 구조·SCSS·애니메이션·커밋)은 루트 [`CLAUDE.md`](../../CLAUDE.md), Vanilla 는 [`src/vanilla/CLAUDE.md`](../../src/vanilla/CLAUDE.md).
+규약(파일 구조·SCSS·애니메이션·커밋)은 루트 [`AGENTS.md`](../../AGENTS.md), Vanilla 는 [`src/vanilla/AGENTS.md`](../../src/vanilla/AGENTS.md).
 
 ## 자주 틀리는 이름
 

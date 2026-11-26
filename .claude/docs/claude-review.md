@@ -61,7 +61,7 @@ CodeRabbit(`.coderabbit.yaml`) 는 그대로 병행한다 (중복 리뷰 허용)
 
 ## 리뷰 기준
 
-프롬프트가 우리 컨벤션을 직접 참조한다: 루트 `CLAUDE.md`, `.claude/docs/*`.
+프롬프트가 우리 컨벤션을 직접 참조한다: 루트 `AGENTS.md`, `.claude/docs/*`.
 우선 지적 대상 - Global SCSS / className 패턴, 디자인 토큰 강제(하드코딩/raw hex 금지),
 motion 토큰 + `prefers-reduced-motion`, WCAG AA / ARIA / 키보드 / focus, additive(비파괴) 공개 API.
 사소한 포매팅은 Biome 가 강제하므로 지적하지 않는다.

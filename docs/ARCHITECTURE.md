@@ -127,7 +127,7 @@ export const Divider = ({ weight = "standard", className, ...props }: DividerPro
     border: none;
     cursor: pointer;
     border-radius: token.$radius_full;
-    // `transition: all` 금지 - 바뀌는 속성만 명시한다 (CLAUDE.md 애니메이션 규칙)
+    // `transition: all` 금지 - 바뀌는 속성만 명시한다 (AGENTS.md 애니메이션 규칙)
     transition:
         background-color token.$transition_fast,
         color token.$transition_fast,

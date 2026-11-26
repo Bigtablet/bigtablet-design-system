@@ -7,7 +7,6 @@
 - coverage/test-results.json      - 테스트 파일·통과·skip 수 (vitest json reporter)
 
 고치는 곳:
-- CLAUDE.md          `- **Coverage**: …` 한 줄
 - docs/TESTING.md    "현재 커버리지 현황" 의 테스트 수, All files 행, 100% 미만 표
 
 `--check` 를 주면 쓰지 않고, 문서가 실측과 다르면 실패한다(CI 에 걸 때).
@@ -84,15 +83,6 @@ def sub(text, pattern, repl, where):
 def render(data):
     s, b, f, l = data["total"]
     out = {}
-
-    path = "CLAUDE.md"
-    text = open(os.path.join(ROOT, path), encoding="utf-8").read()
-    out[path] = sub(
-        text,
-        r"^- \*\*Coverage\*\*: [\d.]+% stmts / [\d.]+% branch / [\d.]+% funcs / [\d.]+% lines",
-        f"- **Coverage**: {s}% stmts / {b}% branch / {f}% funcs / {l}% lines",
-        path,
-    )
 
     path = "docs/TESTING.md"
     text = open(os.path.join(ROOT, path), encoding="utf-8").read()

@@ -181,7 +181,7 @@ jobs:
             (tsup 2 번들: React `src/index.ts` + Vanilla JS `src/vanilla/bigtablet.js`, 문서 사이트 `site/`,
             `v*` 태그 기반 npm 배포). 단일 패키지이며 `src/ui` 아래 8 카테고리
             (display/feedback/forms/general/layout/navigation/overlay/system)로 컴포넌트를 둔다.
-            리뷰 기준(반드시 참고): 루트 `CLAUDE.md`, `.claude/docs/*`. 다음 컨벤션 위반을 우선 지적한다:
+            리뷰 기준(반드시 참고): 루트 `AGENTS.md`, `.claude/docs/*`. 다음 컨벤션 위반을 우선 지적한다:
             - Global SCSS(`style.scss`, CSS Modules 아님). className 은 `component_변형_값` 패턴 또는 `cn()`.
             - 디자인 토큰 강제 - 색/간격/모션/radius 등 하드코딩 금지, `@use "src/styles/token" as token`.
               raw hex 는 stylelint `color-no-hex` 가 CI 에서 막는다.

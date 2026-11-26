@@ -23,7 +23,7 @@ export default {
 	],
 	rules: {
 		"header-english-only": [2, "always"],
-		// git-workflow.md 기준 허용 라벨
+		// AGENTS.md `Commit Labels` 기준 허용 라벨
 		"type-enum": [
 			2,
 			"always",
