@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { TextField } from "../textfield";
-import "../textfield/style.scss";
+import { TextField } from "../text-field";
+import "../text-field/style.scss";
 import "../../general/button/style.scss";
 import { FilterBar } from "./index";
 import "./style.scss";

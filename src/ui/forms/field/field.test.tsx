@@ -6,7 +6,7 @@ import { DateRangePicker } from "../date-range-picker";
 import { Radio } from "../radio";
 import { RadioGroup } from "../radio-group";
 import { Switch } from "../switch";
-import { TextField } from "../textfield";
+import { TextField } from "../text-field";
 import { TimePicker } from "../time-picker";
 import { Field } from "./index";
 

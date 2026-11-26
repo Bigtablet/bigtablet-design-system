@@ -50,6 +50,8 @@ const toMinutes = (value: string | undefined) => {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+/** 분 → `"HH:mm"` */
+const clock = (minutes: number) => `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 
 /**
  * 시·분 선택. `DatePicker` 와 같은 방식으로 DS `Dropdown` 두 개를 조합한다.
@@ -97,10 +99,13 @@ export const TimePicker = ({
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
-	const minText = minProp ?? minTime;
-	const maxText = maxProp ?? maxTime;
-	const min = toMinutes(minText) ?? 0;
-	const max = toMinutes(maxText) ?? 23 * 60 + 59;
+	// 새 prop 과 deprecated prop 을 함께 주면 좁은 쪽이 이긴다 - DatePicker 와 같은 규칙
+	const mins = [toMinutes(minProp), toMinutes(minTime)].filter((m): m is number => m !== null);
+	const maxes = [toMinutes(maxProp), toMinutes(maxTime)].filter((m): m is number => m !== null);
+	const hasMin = mins.length > 0;
+	const hasMax = maxes.length > 0;
+	const min = hasMin ? Math.max(...mins) : 0;
+	const max = hasMax ? Math.min(...maxes) : 23 * 60 + 59;
 
 	const parsed = toMinutes(value);
 	const hour = parsed === null ? null : Math.floor(parsed / 60);
@@ -151,9 +156,7 @@ export const TimePicker = ({
 	};
 
 	const constraint =
-		minText || maxText
-			? t("timePicker.rangeSr", { min: minText ?? "00:00", max: maxText ?? "23:59" })
-			: "";
+		hasMin || hasMax ? t("timePicker.rangeSr", { min: clock(min), max: clock(max) }) : "";
 
 	return (
 		<div

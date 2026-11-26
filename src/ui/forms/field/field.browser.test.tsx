@@ -2,8 +2,8 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Dropdown } from "../dropdown";
 import "../dropdown/style.scss";
-import { TextField } from "../textfield";
-import "../textfield/style.scss";
+import { TextField } from "../text-field";
+import "../text-field/style.scss";
 import { Field } from "./index";
 import "./style.scss";
 

@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "../../general/button";
 import { Field } from "../field";
-import { TextField } from "../textfield";
+import { TextField } from "../text-field";
 import { Form } from "./index";
 
 describe("Form", () => {
