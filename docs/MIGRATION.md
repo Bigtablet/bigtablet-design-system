@@ -568,6 +568,8 @@ label="권한", "관리자" 선택   → "권한 관리자"
 | `DatePicker` | `minDateSrFormat` | `"Minimum date: {date}"` | `"최소 날짜: {date}"` |
 | `DatePicker` | `selectableRangeUntilTodaySrText` | `"Selectable up to today"` | `"오늘까지 선택 가능"` |
 
+`minDateSrFormat` · `selectableRangeUntilTodaySrText` 는 v5.0.0 에서 지웠습니다 - 문구는 `LocaleProvider` `messages` 로 바꿉니다 ([v5.0.0](#v500-deprecated-api-제거--toggle--switch-마무리)).
+
 `FileInput` 의 `label` 은 `aria-label` 이 아니라 **화면에 보이는 버튼 텍스트**입니다 - 영어 화면에서 가장 눈에 띕니다.
 
 ### 신설된 prop — 이전엔 교체 수단이 아예 없었습니다
