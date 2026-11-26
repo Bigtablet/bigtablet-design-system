@@ -2547,12 +2547,6 @@
 			"doc": "제어형 날짜 값 (\"YYYY-MM\" 또는 \"YYYY-MM-DD\" 형식)"
 		},
 		{
-			"name": "mode",
-			"type": "\"year-month\" | \"year-month-day\"",
-			"required": false,
-			"doc": "선택 모드"
-		},
-		{
 			"name": "variant",
 			"type": "\"dropdown\" | \"calendar\"",
 			"required": false,
@@ -2567,30 +2561,22 @@
 			"doc": "`variant=\"calendar\"` 에서 값이 없을 때 칸에 보일 문구"
 		},
 		{
-			"name": "startYear",
-			"type": "number",
-			"required": false,
-			"default": "1950",
-			"doc": "연도 선택 범위 시작"
-		},
-		{
-			"name": "endYear",
-			"type": "number",
-			"required": false,
-			"default": "현재 연도 + 10",
-			"doc": "연도 선택 범위 끝"
-		},
-		{
-			"name": "minDate",
+			"name": "min",
 			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 최소 날짜 (\"YYYY-MM-DD\" 형식)"
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해부터 시작한다 (없으면 1950)"
 		},
 		{
-			"name": "selectableRange",
-			"type": "\"all\" | \"until-today\"",
+			"name": "max",
+			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 날짜 범위 (\"all\": 제한 없음, \"until-today\": 오늘까지)"
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해에서 끝난다 (없으면 현재 연도 + 10)"
+		},
+		{
+			"name": "isDateDisabled",
+			"type": "(date: string) => boolean",
+			"required": false,
+			"doc": "날마다 막을지 정한다: `\"YYYY-MM-DD\"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등). `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다"
 		},
 		{
 			"name": "disabled",
@@ -2653,14 +2639,14 @@
 			"type": "string",
 			"required": false,
 			"default": "\"최소 날짜",
-			"doc": "minDate 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 minDate 값이 치환됩니다.: {date}\""
+			"doc": "`min` 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 `min` 값이 치환됩니다.: {date}\""
 		},
 		{
 			"name": "selectableRangeUntilTodaySrText",
 			"type": "string",
 			"required": false,
 			"default": "\"오늘까지 선택 가능\"",
-			"doc": "selectableRange=\"until-today\" 설정 시 스크린리더에 전달할 안내 문구."
+			"doc": "`max=\"today\"` 설정 시 스크린리더에 전달할 안내 문구."
 		},
 		{
 			"name": "onValueChange",
@@ -2709,30 +2695,22 @@
 			"doc": "종료일 select 묶음의 라벨"
 		},
 		{
-			"name": "startYear",
-			"type": "number",
-			"required": false,
-			"default": "1950",
-			"doc": "연도 선택 범위 시작"
-		},
-		{
-			"name": "endYear",
-			"type": "number",
-			"required": false,
-			"doc": "연도 선택 범위 끝. 미지정 시 현재 연도 + 10"
-		},
-		{
-			"name": "minDate",
+			"name": "min",
 			"type": "string",
 			"required": false,
-			"doc": "선택 가능한 가장 이른 날짜 (`\"YYYY-MM-DD\"`)"
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` 또는 `\"today\"`. 종료일은 시작일이 하한이 된다"
 		},
 		{
-			"name": "selectableRange",
-			"type": "\"all\" | \"until-today\"",
+			"name": "max",
+			"type": "string",
 			"required": false,
-			"default": "\"all\"",
-			"doc": "`\"until-today\"` 면 오늘 이후를 고를 수 없다"
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` 또는 `\"today\"`"
+		},
+		{
+			"name": "isDateDisabled",
+			"type": "(date: string) => boolean",
+			"required": false,
+			"doc": "날마다 막을지 정한다: 시작일 · 종료일 모두에 걸린다 (`DatePicker` 와 같다)"
 		},
 		{
 			"name": "disabled",
@@ -3579,6 +3557,102 @@
 			"doc": "이동 여유가 없을 때 스크린리더로 알리는 문구. 기본 \"이미지가 뷰포트를 딱 채워 이동 여유가 없습니다.\""
 		}
 	],
+	"MonthPickerProps": [
+		{
+			"name": "label",
+			"type": "string",
+			"required": false,
+			"doc": "데이트 피커 위에 표시할 라벨 텍스트"
+		},
+		{
+			"name": "disabled",
+			"type": "boolean",
+			"required": false,
+			"doc": "비활성화 여부"
+		},
+		{
+			"name": "value",
+			"type": "string",
+			"required": false,
+			"doc": "제어형 날짜 값 (\"YYYY-MM\" 또는 \"YYYY-MM-DD\" 형식) 제어형 값 (`\"YYYY-MM\"`)"
+		},
+		{
+			"name": "max",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 가장 늦은 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해에서 끝난다 (없으면 현재 연도 + 10) 고를 수 있는 가장 늦은 달: `\"YYYY-MM\"` 또는 `\"today\"`(이번 달)"
+		},
+		{
+			"name": "min",
+			"type": "string",
+			"required": false,
+			"doc": "고를 수 있는 가장 이른 날: `\"YYYY-MM-DD\"` (MonthPicker 는 `\"YYYY-MM\"`) 또는 `\"today\"`. 연 목록도 이 해부터 시작한다 (없으면 1950) 고를 수 있는 가장 이른 달: `\"YYYY-MM\"` 또는 `\"today\"`(이번 달)"
+		},
+		{
+			"name": "size",
+			"type": "\"sm\" | \"md\" | \"lg\"",
+			"required": false,
+			"default": "\"md\"",
+			"doc": "칸 크기. Dropdown · TextField · Button 과 같은 높이 단계라 한 줄에 두면 맞는다\n\nsm · md 40px, lg 48px (좁은 화면은 한 단계 위)."
+		},
+		{
+			"name": "required",
+			"type": "boolean",
+			"required": false,
+			"doc": "필수 입력 여부. `Field` 안에서는 `Field` 의 `required` 가 이긴다. `role=\"group\"` 에는 `aria-required` 를 붙일 수 없어 안쪽 컨트롤마다 내려보낸다."
+		},
+		{
+			"name": "fullWidth",
+			"type": "boolean",
+			"required": false,
+			"doc": "데이트 피커가 컨테이너의 전체 너비를 차지할지 여부"
+		},
+		{
+			"name": "clearable",
+			"type": "boolean",
+			"required": false,
+			"doc": "값이 있을 때 지우기(×) 버튼을 둔다: 누르면 `onValueChange(\"\")` (#965). 조회 조건처럼 \"값 없음 = 조건 없음\" 인 칸에 쓴다. 필수 칸에는 두지 않는다. 달력형은 칸에서 Delete · Backspace 로도 지운다"
+		},
+		{
+			"name": "clearLabel",
+			"type": "string",
+			"required": false,
+			"default": "로케일 `datePicker.clear`",
+			"doc": "지우기 버튼 이름"
+		},
+		{
+			"name": "yearLabel",
+			"type": "string",
+			"required": false,
+			"doc": "연도 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "monthLabel",
+			"type": "string",
+			"required": false,
+			"doc": "월 select의 라벨/플레이스홀더"
+		},
+		{
+			"name": "minDateSrFormat",
+			"type": "string",
+			"required": false,
+			"default": "\"최소 날짜",
+			"doc": "`min` 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 `min` 값이 치환됩니다.: {date}\""
+		},
+		{
+			"name": "selectableRangeUntilTodaySrText",
+			"type": "string",
+			"required": false,
+			"default": "\"오늘까지 선택 가능\"",
+			"doc": "`max=\"today\"` 설정 시 스크린리더에 전달할 안내 문구."
+		},
+		{
+			"name": "onValueChange",
+			"type": "(value: string) => void",
+			"required": true,
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`) 값이 바뀔 때 호출된다: `\"YYYY-MM\"`"
+		}
+	],
 	"OtpInputProps": [
 		{
 			"name": "length",
@@ -4256,13 +4330,13 @@
 			"doc": "분 간격. 5·10·15·30 처럼 60 의 약수를 준다"
 		},
 		{
-			"name": "minTime",
+			"name": "min",
 			"type": "string",
 			"required": false,
 			"doc": "선택 가능한 가장 이른 시각 (`\"HH:mm\"`)"
 		},
 		{
-			"name": "maxTime",
+			"name": "max",
 			"type": "string",
 			"required": false,
 			"doc": "선택 가능한 가장 늦은 시각 (`\"HH:mm\"`)"

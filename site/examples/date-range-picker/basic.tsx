@@ -10,6 +10,7 @@ export default function Example() {
 				onValueChange={setRange}
 				startLabel="시작일"
 				endLabel="종료일"
+				max="today"
 				clearable
 			/>
 		</div>

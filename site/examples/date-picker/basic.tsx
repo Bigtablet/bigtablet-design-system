@@ -3,17 +3,16 @@ import { useState } from "react";
 
 export default function Example() {
 	const [date, setDate] = useState("");
-	const [month, setMonth] = useState("");
 	return (
-		<div style={{ display: "grid", gap: 16, maxWidth: 420 }}>
+		<div style={{ maxWidth: 420 }}>
 			<DatePicker
 				label="생년월일"
 				value={date}
 				onValueChange={setDate}
-				startYear={1950}
+				min="1950-01-01"
+				max="today"
 				clearable
 			/>
-			<DatePicker label="정산 월" mode="year-month" value={month} onValueChange={setMonth} />
 		</div>
 	);
 }

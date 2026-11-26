@@ -1232,7 +1232,8 @@ React `DatePicker variant="calendar"` · `TimePicker` 에 대응한다. 칸을 �
 | `defaultValue` (`data-value`) | `DateCalendar defaultValue` | 숨은 input 값 | 처음 값 `YYYY-MM-DD` · `YYYY-MM-DDTHH:mm` |
 | `time` (`data-time`) | `TimePicker` | `false` | 시 · 분까지 고른다 |
 | `minuteStep` (`data-minute-step`) | `TimePicker minuteStep` | `5` | 분 간격. 60 의 약수 |
-| `min` · `max` (`data-min` · `data-max`) | `DateCalendar min` · `max`, `TimePicker minTime` · `maxTime` | - | 고를 수 있는 범위. 시각까지 주면 그날의 시 · 분도 막는다 |
+| `min` · `max` (`data-min` · `data-max`) | `DatePicker` · `DateCalendar` · `TimePicker` 의 `min` · `max` | - | 고를 수 있는 범위. `"today"` 는 기기의 오늘(`today` 옵션을 주면 그 날). 시각까지 주면 그날의 시 · 분도 막는다 |
+| `isDateDisabled` | `isDateDisabled` | - | 날마다 막는다 - `"YYYY-MM-DD"` 를 받아 true 면 고를 수 없다. 함수라 JS 옵션으로만 준다 |
 | `minFrom` · `maxFrom` (`data-min-from` · `data-max-from`) | - | - | 다른 DatePicker(셀렉터 · 요소)의 값을 최소 · 최대로 따른다. 그 값이 바뀌면 범위 밖 값은 경계로 맞춘다 |
 | `today` (`data-today`) | `DateCalendar today` | 기기의 오늘 | 서버 기준 날짜를 쓸 때 |
 | `weekStartsOn` (`data-week-starts-on`) | `DateCalendar weekStartsOn` | `0` (일) | 주의 첫 요일 |

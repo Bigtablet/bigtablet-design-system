@@ -368,6 +368,7 @@ const to = Bigtablet.DatePicker('#to', {
   onValueChange: (value) => {}
 });
 to.getValue(); to.setValue('2026-10-03T10:00'); to.setMin(...); to.setMax(...); to.destroy();
+// min · max 는 "today" 도 받는다. isDateDisabled: (d) => holidays.has(d) 로 날마다 막는다 (JS 옵션만, #1167)
 // size: 'sm' | 'md'(기본) | 'lg' (data-size) - 폼 칸 · Button 은 React 와 같은 높이 단계라 한 줄에 맞는다 (#960)
 // clearable: true (data-clearable) - 값이 있으면 × · Delete 로 비운다 → onValueChange(null), 범위면 { start: null, end: null } (#965)
 
