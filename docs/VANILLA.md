@@ -341,7 +341,6 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
   mySwitch.setChecked(true); // 상태 설정
   mySwitch.toggle();        // 토글
   mySwitch.setDisabled(true); // 비활성화 (hidden input 도 disabled 라 제출되지 않음)
-  mySwitch.setLoading(true);  // 기다리는 중 - 손잡이에 고리 + aria-busy, 클릭 무시. 포커스는 남는다 (React loading, 옵션 loading 으로도)
   mySwitch.destroy();       // 바인딩한 리스너 해제
 </script>
 ```

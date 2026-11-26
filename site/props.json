@@ -3901,12 +3901,6 @@
 			"doc": "비활성화 여부"
 		},
 		{
-			"name": "loading",
-			"type": "boolean",
-			"required": false,
-			"doc": "지금 상태를 읽거나 저장하는 중. 손잡이에 고리를 돌리고 `aria-busy` 를 달며 눌러도 바뀌지 않는다. `disabled` 와 달리 포커스는 남는다: 곧 다시 누를 수 있는 상태다."
-		},
-		{
 			"name": "ariaLabel",
 			"type": "string",
 			"required": true,

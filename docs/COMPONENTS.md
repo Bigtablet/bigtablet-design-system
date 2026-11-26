@@ -1222,9 +1222,6 @@ const [isOn, setIsOn] = useState(false);
 // Sizes
 <Switch ariaLabel="알림 받기" size="sm" />
 <Switch ariaLabel="알림 받기" size="md" />
-
-// 상태를 읽거나 저장하는 중 - 손잡이에 고리, aria-busy, 눌러도 바뀌지 않음. disabled 와 달리 포커스는 남는다
-<Switch ariaLabel="알림 받기" checked={isOn} loading={isSaving} onCheckedChange={save} />
 ```
 
 #### 히트 영역은 트랙보다 넓습니다

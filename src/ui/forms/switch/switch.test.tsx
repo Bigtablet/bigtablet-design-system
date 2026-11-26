@@ -19,23 +19,6 @@ describe("Switch", () => {
 		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
 	});
 
-	it("loading 이면 aria-busy 를 달고 눌러도 바뀌지 않지만 포커스는 받는다", () => {
-		const onChange = vi.fn();
-		render(<Switch ariaLabel="Switch" loading onCheckedChange={onChange} />);
-		const el = screen.getByRole("switch");
-		expect(el).toHaveAttribute("aria-busy", "true");
-		expect(el).toHaveClass("switch_loading");
-		expect(el).not.toBeDisabled();
-		fireEvent.click(el);
-		expect(onChange).not.toHaveBeenCalled();
-		expect(el).toHaveAttribute("aria-checked", "false");
-	});
-
-	it("loading 이 아니면 aria-busy 가 없다", () => {
-		render(<Switch ariaLabel="Switch" />);
-		expect(screen.getByRole("switch")).not.toHaveAttribute("aria-busy");
-	});
-
 	it("toggles on click", () => {
 		const onChange = vi.fn();
 		render(<Switch ariaLabel="Switch" onCheckedChange={onChange} />);

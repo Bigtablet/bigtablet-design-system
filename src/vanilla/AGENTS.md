@@ -81,7 +81,7 @@ jsdom 은 레이아웃을 하지 않으니 스크롤바 폭 같은 값은 직접
 | TextField Input | `.bt-text-field__input` | `--outline/filled`, `--sm/md/lg`, `--error/success`, `--identifier` | `:disabled` |
 | Checkbox | `.bt-checkbox` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
 | Radio | `.bt-radio` | `--sm/lg` (md 는 기본 - 클래스 없음) | `:checked`, `:disabled` |
-| Switch | `.bt-switch` | `--sm/md` | `.bt-switch--on`, `.bt-switch--loading`(JS 가 붙인다 - `loading` · `setLoading()` · 제어 모드 Promise 대기), `:disabled` |
+| Switch | `.bt-switch` | `--sm/md` | `.bt-switch--on`, `:disabled` |
 | Dropdown | `.bt-dropdown` | | |
 | Dropdown Control | `.bt-dropdown__control` | `--outline/filled`, `--sm/md/lg` | `.is-open`, `.is-disabled` |
 | Dropdown List | `.bt-dropdown__list` | `--up` (opens upward) | |
@@ -335,7 +335,6 @@ sw.toggle();
 sw.setChecked(true);
 sw.isChecked();
 sw.setDisabled(true);       // hidden input 도 disabled - 제출 안 됨
-sw.setLoading(true);        // 기다리는 중 - 고리 + aria-busy, 클릭 무시 (React loading)
 sw.destroy();
 
 // 제어 모드 (#920, data-controlled 로도) - 클릭은 onCheckedChange(next) 만, 상태는 setChecked 로 확정.

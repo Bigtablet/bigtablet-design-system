@@ -19,8 +19,6 @@ export function Switch(element, options = {}) {
 	const config = {
 		defaultChecked: false,
 		disabled: false,
-		// React Switch 의 `loading` - 처음 상태를 읽는 동안처럼 소비자가 직접 켜고 끄는 대기. setLoading() 으로 바꾼다
-		loading: false,
 		// React Switch 과 동일한 체크 변경 콜백.
 		onCheckedChange: null,
 		...options,
@@ -91,17 +89,9 @@ export function Switch(element, options = {}) {
 		}
 	}
 
-	// 기다리는 표시는 한 곳에서 - 소비자가 켠 loading 이든 제어 모드 콜백의 Promise 든 같은 모양 · 같은 aria-busy 다
-	function syncBusy() {
-		const busy = config.loading || pending;
-		toggleEl.classList.toggle("bt-switch--loading", busy);
-		if (busy) toggleEl.setAttribute("aria-busy", "true");
-		else toggleEl.removeAttribute("aria-busy");
-	}
-
 	function toggle() {
 		// React Switch 과 동일하게 native `disabled` 만 본다 (구 --disabled 클래스는 v3.8.0 에서 제거).
-		if (config.disabled || toggleEl.disabled || pending || config.loading) return;
+		if (config.disabled || toggleEl.disabled || pending) return;
 		if (!controlled) {
 			setChecked(!state.checked);
 			return;
@@ -109,10 +99,10 @@ export function Switch(element, options = {}) {
 		const result = config.onCheckedChange?.(!state.checked);
 		if (result && typeof result.then === "function") {
 			pending = true;
-			syncBusy();
+			toggleEl.setAttribute("aria-busy", "true");
 			const settle = () => {
 				pending = false;
-				syncBusy();
+				toggleEl.removeAttribute("aria-busy");
 			};
 			// 실패해도 풀되 에러는 삼키지 않는다 - 처리 안 된 예외처럼 콘솔 · window "error" 로 보낸다
 			result.then(settle, (error) => {
@@ -138,7 +128,6 @@ export function Switch(element, options = {}) {
 	if (hiddenInput) hiddenInput.value = state.checked ? "true" : "false";
 	// 비활성 토글은 제출하지 않는다 - native disabled 컨트롤과 같다 (Dropdown 과 같은 처리, #981)
 	if (hiddenInput) hiddenInput.disabled = config.disabled;
-	if (config.loading) syncBusy();
 
 	const api = {
 		isChecked: () => state.checked,
@@ -148,11 +137,6 @@ export function Switch(element, options = {}) {
 			config.disabled = disabled;
 			toggleEl.disabled = disabled;
 			if (hiddenInput) hiddenInput.disabled = disabled;
-		},
-		/** 기다리는 중 표시를 켜고 끈다 - 켜져 있는 동안 클릭은 무시한다 (포커스는 남는다) */
-		setLoading: (loading) => {
-			config.loading = !!loading;
-			syncBusy();
 		},
 		destroy: () => {
 			cleanup();

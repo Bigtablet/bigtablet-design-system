@@ -52,8 +52,7 @@
   }
 
   .bt-spinner,
-  .bt-button--loading::before,
-  .bt-switch--loading .bt-switch__thumb::after {
+  .bt-button--loading::before {
     animation-duration: 2.4s;
   }
 }
