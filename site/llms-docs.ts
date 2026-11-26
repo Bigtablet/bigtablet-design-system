@@ -141,6 +141,23 @@ export const AVOID: {
 		why: "5.0.0 에서 날짜 · 시간 범위 prop 이름을 통일했다. 옛 이름은 없다",
 	},
 	{
+		avoid: "DatePicker · MonthPicker `minDateSrFormat` · `selectableRangeUntilTodaySrText`",
+		use: '`LocaleProvider` `messages` 의 `"datePicker.minDateSr"` · `"datePicker.maxDateSr"` · `"datePicker.rangeUntilTodaySr"`',
+		why: "5.0.0 에서 제거 - 범위 안내 문구는 LocaleProvider 한 길로만 바꾼다",
+	},
+	{ props: "DropdownSingleProps", component: "Dropdown", avoid: "emptyText", use: "emptyMessage" },
+	{
+		props: "ToastProviderProps",
+		component: "ToastProvider",
+		avoid: "closeAriaLabel",
+		use: "closeLabel",
+	},
+	{ props: "TableProps", component: "Table", avoid: "selectAllAriaLabel", use: "selectAllLabel" },
+	{ props: "TableProps", component: "Table", avoid: "selectRowAriaLabel", use: "selectRowLabel" },
+	{ props: "AlertOptions", component: "useAlert", avoid: "cancelText", use: "cancelLabel" },
+	{ props: "AlertOptions", component: "useAlert", avoid: "confirmText", use: "confirmLabel" },
+	{ props: "ConfirmOptions", component: "useConfirm", avoid: "confirmText", use: "confirmLabel" },
+	{
 		props: "TextFieldProps",
 		component: "TextField",
 		avoid: "onChangeAction",
