@@ -1015,6 +1015,11 @@ describe("DatePicker min · max · isDateDisabled (#1167)", () => {
 		expect(optionTexts()[0]).toBe("2023");
 	});
 
+	it('안내 문구는 합친 범위를 읽는다 - min="today" 와 더 늦은 minDate 를 함께 주면 minDate', () => {
+		render(<DatePicker min="today" minDate="2026-10-01" onValueChange={vi.fn()} />);
+		expect(screen.getByText("최소 날짜: 2026-10-01")).toBeInTheDocument();
+	});
+
 	it("max 를 스크린리더에 알린다", () => {
 		render(<DatePicker max="2030-12-31" onValueChange={vi.fn()} />);
 		expect(screen.getByText("최대 날짜: 2030-12-31")).toBeInTheDocument();

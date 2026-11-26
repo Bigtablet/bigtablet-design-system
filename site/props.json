@@ -2576,7 +2576,7 @@
 			"name": "isDateDisabled",
 			"type": "(date: string) => boolean",
 			"required": false,
-			"doc": "날마다 막을지 정한다: `\"YYYY-MM-DD\"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등). `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다"
+			"doc": "날마다 막을지 정한다: `\"YYYY-MM-DD\"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등). `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다. 월 목록을 만들 때 한 달의 날마다 부르므로 안정된 참조(`useCallback` · 모듈 함수)로 넘긴다: 인라인 함수면 렌더마다 목록을 다시 계산한다"
 		},
 		{
 			"name": "disabled",
