@@ -417,7 +417,7 @@ gh issue close <이슈번호> --reason completed --comment "#<PR> 로 develop �
 ### 4. Commit
 바꾼 경로만 스테이징한다 - 전체 스테이징(`-A` · `.` · `commit -a`)은 다른 세션의 미커밋 파일을 끌고 와서 훅이 막는다.
 ```bash
-git add src/ui/forms/toggle/index.tsx src/ui/forms/toggle/style.scss
+git add src/ui/forms/switch/index.tsx src/ui/forms/switch/style.scss
 git commit -m "label: commit message" -m "Co-Authored-By: <에이전트 이름> <noreply@...>"
 ```
 - 제목은 100자 이하 (commitlint). `--no-verify` 금지 - commitlint 를 건너뛰면 CI 에서 걸려 force push 없이는 못 고친다
