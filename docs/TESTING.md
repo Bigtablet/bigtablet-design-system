@@ -421,15 +421,15 @@ it("calls callback with correct arguments", () => {
 
 ### 현재 커버리지 현황
 
-`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 99 test files / 1980 passed · 1 skipped.
+`pnpm test:coverage` (v8, **`unit` 프로젝트**) 기준 - 100 test files / 1995 passed · 1 skipped.
 
 > 아래 표와 CI 리포트는 모두 `unit` 프로젝트 기준입니다.
 
 | 전체 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
-| **All files** | **91.87%** | **90.3%** | **93.11%** | **93.75%** |
+| **All files** | **91.9%** | **90.23%** | **93.19%** | **93.78%** |
 
-아래는 **100% 미만**인 것만 나열한 것입니다 (43개는 전 지표 100% 라 빠져 있습니다).
+아래는 **100% 미만**인 것만 나열한 것입니다 (44개는 전 지표 100% 라 빠져 있습니다).
 
 | 파일 | Stmts | Branch | Funcs | Lines |
 |------|-------|--------|-------|-------|
@@ -448,23 +448,23 @@ it("calls callback with correct arguments", () => {
 | ui/display/list-item | 100% | 93.55% | 100% | 100% |
 | ui/display/media-card | 93.75% | 88.24% | 100% | 100% |
 | ui/display/prose | 75.68% | 53.33% | 100% | 78.79% |
-| ui/display/table | 98.32% | 96.86% | 96.97% | 99.02% |
+| ui/display/table | 98.32% | 96.86% | 96.97% | 99.01% |
 | ui/feedback/alert | 99.06% | 93.75% | 100% | 100% |
 | ui/feedback/linear-progress | 100% | 66.67% | 100% | 100% |
 | ui/feedback/toast | 97.81% | 91.03% | 100% | 99.13% |
 | ui/forms/checkbox | 95.83% | 91.67% | 100% | 100% |
 | ui/forms/combobox | 100% | 99.12% | 95% | 100% |
 | ui/forms/date-calendar | 99.4% | 98.64% | 100% | 100% |
-| ui/forms/date-picker | 96.71% | 95.18% | 100% | 100% |
+| ui/forms/date-picker | 96.49% | 93.75% | 100% | 100% |
 | ui/forms/dropdown | 97.83% | 92.99% | 100% | 98.75% |
-| ui/forms/file | 89.47% | 89.23% | 100% | 93.06% |
+| ui/forms/file-input | 89.47% | 89.23% | 100% | 93.06% |
 | ui/forms/form | 100% | 92% | 100% | 100% |
 | ui/forms/image-cropper | 81.82% | 82.24% | 71.88% | 83.23% |
 | ui/forms/segmented-control | 97.22% | 94.34% | 100% | 100% |
 | ui/forms/tag-input | 98.85% | 95.35% | 100% | 100% |
+| ui/forms/text-field | 94.03% | 93.4% | 100% | 96.72% |
 | ui/forms/textarea | 80% | 70.64% | 85.71% | 81.94% |
-| ui/forms/textfield | 94.03% | 93.4% | 100% | 96.72% |
-| ui/forms/time-picker | 94.83% | 96.2% | 100% | 100% |
+| ui/forms/time-picker | 95.31% | 96% | 100% | 100% |
 | ui/navigation/bottom-nav | 95.83% | 91.67% | 100% | 95.83% |
 | ui/navigation/menu | 98.92% | 96.92% | 100% | 100% |
 | ui/navigation/nav-bar | 80.17% | 69.05% | 79.17% | 85.44% |
