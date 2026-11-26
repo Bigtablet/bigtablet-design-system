@@ -1950,13 +1950,13 @@
 			"doc": "알림 본문 메시지"
 		},
 		{
-			"name": "confirmText",
+			"name": "confirmLabel",
 			"type": "string",
 			"required": false,
 			"doc": "확인 버튼 텍스트"
 		},
 		{
-			"name": "cancelText",
+			"name": "cancelLabel",
 			"type": "string",
 			"required": false,
 			"doc": "취소 버튼 텍스트"
@@ -2042,13 +2042,13 @@
 			"doc": "알림 본문 메시지"
 		},
 		{
-			"name": "confirmText",
+			"name": "confirmLabel",
 			"type": "string",
 			"required": false,
 			"doc": "확인 버튼 텍스트"
 		},
 		{
-			"name": "cancelText",
+			"name": "cancelLabel",
 			"type": "string",
 			"required": false,
 			"doc": "취소 버튼 텍스트"

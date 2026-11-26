@@ -111,7 +111,7 @@ describe("Alert", () => {
 	});
 
 	it("shows confirm button with custom text", () => {
-		renderWithProvider(<TestComponent options={{ confirmText: "OK" }} />);
+		renderWithProvider(<TestComponent options={{ confirmLabel: "OK" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		expect(screen.getByText("OK")).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe("Alert", () => {
 	});
 
 	it("shows cancel button with custom text", () => {
-		renderWithProvider(<TestComponent options={{ showCancel: true, cancelText: "No" }} />);
+		renderWithProvider(<TestComponent options={{ showCancel: true, cancelLabel: "No" }} />);
 
 		fireEvent.click(screen.getByText("Show Alert"));
 		expect(screen.getByText("No")).toBeInTheDocument();
@@ -537,7 +537,7 @@ describe("useConfirm", () => {
 	it("puts the first focus on cancel, so a destructive confirm is not one Enter away", async () => {
 		render(
 			<AlertProvider>
-				<Opener onResult={() => {}} options={{ destructive: true, confirmText: "삭제" }} />
+				<Opener onResult={() => {}} options={{ destructive: true, confirmLabel: "삭제" }} />
 			</AlertProvider>,
 		);
 		open();
