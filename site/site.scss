@@ -653,7 +653,7 @@ code {
     width: 14%;
   }
 
-  // 열이 고정이라 아주 긴 이름("selectableRangeUntilTodaySrText")은 칸 안에서 끊는다 - 95% 는 한 줄에 들어간다
+  // 열이 고정이라 아주 긴 이름("passwordToggleLabels")은 칸 안에서 끊는다 - 95% 는 한 줄에 들어간다
   td:first-child code {
     white-space: normal;
   }

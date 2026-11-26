@@ -2635,20 +2635,6 @@
 			"doc": "일 select의 라벨/플레이스홀더"
 		},
 		{
-			"name": "minDateSrFormat",
-			"type": "string",
-			"required": false,
-			"default": "\"최소 날짜",
-			"doc": "`min` 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 `min` 값이 치환됩니다.: {date}\""
-		},
-		{
-			"name": "selectableRangeUntilTodaySrText",
-			"type": "string",
-			"required": false,
-			"default": "\"오늘까지 선택 가능\"",
-			"doc": "`max=\"today\"` 설정 시 스크린리더에 전달할 안내 문구."
-		},
-		{
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": true,
@@ -3631,20 +3617,6 @@
 			"type": "string",
 			"required": false,
 			"doc": "월 select의 라벨/플레이스홀더"
-		},
-		{
-			"name": "minDateSrFormat",
-			"type": "string",
-			"required": false,
-			"default": "\"최소 날짜",
-			"doc": "`min` 설정 시 스크린리더에 전달할 안내 문구 포맷. `{date}` 자리에 `min` 값이 치환됩니다.: {date}\""
-		},
-		{
-			"name": "selectableRangeUntilTodaySrText",
-			"type": "string",
-			"required": false,
-			"default": "\"오늘까지 선택 가능\"",
-			"doc": "`max=\"today\"` 설정 시 스크린리더에 전달할 안내 문구."
 		},
 		{
 			"name": "onValueChange",
