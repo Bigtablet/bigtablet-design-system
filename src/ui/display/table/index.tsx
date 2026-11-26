@@ -187,8 +187,7 @@ export const Table = <T extends object>({
 	const emptyMessage = emptyMessageProp === undefined ? t("table.empty") : emptyMessageProp;
 	const selectAllLabel = selectAllLabelProp ?? t("table.selectAll");
 	const selectRowLabel =
-		selectRowLabelProp ??
-		((index: number, _row: T) => t("table.selectRow", { index: index + 1 }));
+		selectRowLabelProp ?? ((index: number, _row: T) => t("table.selectRow", { index: index + 1 }));
 	/** 쪽 안의 인덱스를 전체 순번으로 옮긴다. 기본 오프셋 0 이면 지금까지와 같은 값이다. */
 	const toGlobalIndex = (rowIndex: number) => rowIndex + rowIndexOffset;
 	/**
