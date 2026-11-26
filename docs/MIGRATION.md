@@ -8,6 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
+- [v4.15.0 (날짜 · 시간 prop 이름 통일)](#v4150-날짜--시간-prop-이름-통일)
 - [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
 - [v4.0.1 (react-spring 제거 · useSpringHover / useSpringPresence 삭제)](#v401-react-spring-제거--usespringhover--usespringpresence-삭제)
@@ -38,7 +39,8 @@
 
 | 지금 버전 | 읽을 섹션 |
 |------|------|
-| 4.10.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
+| 4.15.0 이상 | 없음. API 는 그대로입니다. CHANGELOG 의 `(렌더 변경)` 만 확인합니다 |
+| 4.10.0 ~ 4.14.x | [v4.15.0](#v4150-날짜--시간-prop-이름-통일) (날짜 · 시간 prop 이름 - 지금은 예전 이름도 동작합니다) |
 | 4.1.0 ~ 4.9.x | [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) (SCSS 믹스인 4개 · Tabs `fills` deprecate - 지금은 동작합니다. Toast 기본 위치가 오른쪽 아래로 바뀝니다) |
 | 4.0.x | [v4.1.0](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일) + [v4.10.0](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치) |
 | 3.x | 위 + v4.0.1 세 섹션([react-spring](#v401-react-spring-제거--usespringhover--usespringpresence-삭제) · [SCSS 토큰](#v401-radiusspacingfont-scss-토큰이-var-로) · [컴포넌트별 CSS](#v401-컴포넌트별-css---stylecss-import-가-필요-없습니다)) + 지금 버전보다 새로운 v3.x 섹션 |
@@ -54,6 +56,29 @@
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v4.15.0 (날짜 · 시간 prop 이름 통일)
+
+날짜 · 시간 컴포넌트마다 범위를 정하는 prop 이름이 달랐습니다 (`DateCalendar` 는 `min`, `DatePicker` 는 `minDate` · `selectableRange` · `startYear`, `TimePicker` 는 `minTime`). 전부 **`min` · `max`** 로 맞추고, 날마다 막는 `isDateDisabled` 를 `DatePicker` · `DateRangePicker` 에도 넣었습니다. 연 · 월만 고르는 칸은 `MonthPicker` 로 따로 뺐습니다.
+
+예전 이름은 `@deprecated` 로 표시했고 **지금도 그대로 동작합니다**. 새 이름과 함께 주면 더 좁은 범위가 이깁니다. 다음 major 에서 제거합니다.
+
+| 컴포넌트 | 예전 | 새 이름 |
+|------|------|------|
+| `DatePicker` · `DateRangePicker` | `minDate="2020-01-01"` | `min="2020-01-01"` |
+| `DatePicker` · `DateRangePicker` | `selectableRange="until-today"` | `max="today"` |
+| `DatePicker` · `DateRangePicker` | `startYear={1950}` | `min="1950-01-01"` |
+| `DatePicker` · `DateRangePicker` | `endYear={2030}` | `max="2030-12-31"` |
+| `DatePicker` | `mode="year-month"` | `<MonthPicker />` (`min` · `max` 는 `"YYYY-MM"`) |
+| `TimePicker` | `minTime` · `maxTime` | `min` · `max` |
+
+`startYear` · `endYear` 는 연 목록만 정했고 `min` · `max` 는 날까지 막습니다. 1월 1일 · 12월 31일을 주면 같습니다.
+
+Vanilla `DatePicker()` 는 처음부터 `min` · `max` 였습니다. 이번에 `"today"` 값과 `isDateDisabled` 옵션이 더해졌습니다.
+
+**앱 쪽에서 할 일:** `grep -rnE "minDate=|selectableRange=|startYear=|endYear=|minTime=|maxTime=|mode=\"year-month\"" --include=*.tsx` 로 찾습니다. 타입 체크에서는 deprecated 취소선으로 보입니다.
 
 ---
 

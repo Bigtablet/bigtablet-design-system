@@ -26,6 +26,16 @@ const fromIso = (iso: string): CalendarDate => {
 	const [year = 0, month = 0, day = 0] = iso.split("-").map(Number);
 	return { year, month, day };
 };
+/** 비교용 정수. 일이 0(월까지만 준 값)이면 `emptyDay` 로 읽는다 - 하한은 1일, 상한은 31 */
+const pointOf = ({ year, month, day }: CalendarDate, emptyDay: number) =>
+	year * 10000 + month * 100 + (day || emptyDay);
+/** `min` · `max` 값 - `"today"` 또는 `"YYYY-MM(-DD)"`. 읽을 수 없으면 null */
+const parseBound = (raw: string | undefined, today: CalendarDate): CalendarDate | null => {
+	if (!raw) return null;
+	if (raw === "today") return today;
+	const { year, month, day } = fromIso(raw);
+	return year > 0 ? { year, month: month || 0, day: day || 0 } : null;
+};
 
 type DatePickerVariant = "dropdown" | "calendar";
 type SelectableRange = "all" | "until-today";
@@ -35,7 +45,10 @@ interface DatePickerBaseProps {
 	label?: string;
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
 	value?: string;
-	/** 선택 모드 */
+	/**
+	 * 선택 모드
+	 * @deprecated 연·월만 고르려면 `MonthPicker` 를 쓴다. 다음 major 에서 제거한다.
+	 */
 	mode?: DatePickerMode;
 	/**
 	 * 고르는 방식 (기본값: "dropdown").
@@ -46,13 +59,28 @@ interface DatePickerBaseProps {
 	variant?: DatePickerVariant;
 	/** `variant="calendar"` 에서 값이 없을 때 칸에 보일 문구 (기본값: "날짜 선택") */
 	placeholder?: string;
-	/** 연도 선택 범위 시작 (기본값: 1950) */
+	/**
+	 * 고를 수 있는 가장 이른 날 - `"YYYY-MM-DD"` (MonthPicker 는 `"YYYY-MM"`) 또는 `"today"`.
+	 * 연 목록도 이 해부터 시작한다 (없으면 1950)
+	 */
+	min?: string;
+	/**
+	 * 고를 수 있는 가장 늦은 날 - `"YYYY-MM-DD"` (MonthPicker 는 `"YYYY-MM"`) 또는 `"today"`.
+	 * 연 목록도 이 해에서 끝난다 (없으면 현재 연도 + 10)
+	 */
+	max?: string;
+	/**
+	 * 날마다 막을지 정한다 - `"YYYY-MM-DD"` 를 받아 true 면 고를 수 없다 (휴무일 · 마감일 등).
+	 * `min` · `max` 와 함께 걸린다. MonthPicker 에는 없다
+	 */
+	isDateDisabled?: (date: string) => boolean;
+	/** @deprecated `min="YYYY-01-01"` 을 쓴다. 다음 major 에서 제거한다. */
 	startYear?: number;
-	/** 연도 선택 범위 끝 (기본값: 현재 연도 + 10) */
+	/** @deprecated `max="YYYY-12-31"` 을 쓴다. 다음 major 에서 제거한다. */
 	endYear?: number;
-	/** 선택 가능한 최소 날짜 ("YYYY-MM-DD" 형식) */
+	/** @deprecated `min` 을 쓴다. 다음 major 에서 제거한다. */
 	minDate?: string;
-	/** 선택 가능한 날짜 범위 ("all": 제한 없음, "until-today": 오늘까지) */
+	/** @deprecated `selectableRange="until-today"` 는 `max="today"` 를 쓴다. 다음 major 에서 제거한다. */
 	selectableRange?: SelectableRange;
 	/** 비활성화 여부 */
 	disabled?: boolean;
@@ -82,12 +110,12 @@ interface DatePickerBaseProps {
 	/** 일 select의 라벨/플레이스홀더 */
 	dayLabel?: string;
 	/**
-	 * minDate 설정 시 스크린리더에 전달할 안내 문구 포맷.
-	 * `{date}` 자리에 minDate 값이 치환됩니다. (기본값: "최소 날짜: {date}")
+	 * `min` 설정 시 스크린리더에 전달할 안내 문구 포맷.
+	 * `{date}` 자리에 `min` 값이 치환됩니다. (기본값: "최소 날짜: {date}")
 	 */
 	minDateSrFormat?: string;
 	/**
-	 * selectableRange="until-today" 설정 시 스크린리더에 전달할 안내 문구.
+	 * `max="today"` 설정 시 스크린리더에 전달할 안내 문구.
 	 * (기본값: "오늘까지 선택 가능")
 	 */
 	selectableRangeUntilTodaySrText?: string;
@@ -120,8 +148,11 @@ export const DatePicker = ({
 	mode = "year-month-day",
 	variant = "dropdown",
 	placeholder: placeholderProp,
-	startYear = 1950,
-	endYear: endYearProp,
+	min: minProp,
+	max: maxProp,
+	isDateDisabled,
+	startYear,
+	endYear,
 	minDate,
 	selectableRange = "all",
 	disabled,
@@ -165,8 +196,6 @@ export const DatePicker = ({
 		};
 	}, []);
 
-	const endYear = endYearProp ?? todayYear + 10;
-
 	// value 파싱 (NaN → 0으로 통일)
 	const parsed = React.useMemo(() => {
 		if (!value) return { year: 0, month: 0, day: 0 };
@@ -178,26 +207,56 @@ export const DatePicker = ({
 		};
 	}, [value]);
 
-	// minDate 파싱
-	const min = React.useMemo(() => {
-		if (!minDate) return { year: 0, month: 0, day: 0 };
-		const [y, m, d] = minDate.split("-").map(Number);
+	// 범위 - 새 prop(min · max)과 deprecated prop 을 한 쌍으로 합친다. 여럿이면 더 좁은 쪽이 이긴다.
+	// 월까지만 주면(`"YYYY-MM"`) 일은 0 - 아래 계산이 하한은 1일, 상한은 그 달 말일로 읽는다.
+	const { lo, hi } = React.useMemo(() => {
+		const today = { year: todayYear, month: todayMonth, day: todayDay };
+		const los = [
+			parseBound(minProp, today),
+			parseBound(minDate, today),
+			startYear ? { year: startYear, month: 1, day: 1 } : null,
+		].filter((d): d is CalendarDate => d !== null);
+		const his = [
+			parseBound(maxProp, today),
+			selectableRange === "until-today" ? today : null,
+			endYear ? { year: endYear, month: 12, day: 31 } : null,
+		].filter((d): d is CalendarDate => d !== null);
 		return {
-			year: y || 0,
-			month: m || 0,
-			day: d || 0,
+			lo: los.reduce<CalendarDate | null>(
+				(a, d) => (!a || pointOf(d, 1) > pointOf(a, 1) ? d : a),
+				null,
+			),
+			hi: his.reduce<CalendarDate | null>(
+				(a, d) => (!a || pointOf(d, 31) < pointOf(a, 31) ? d : a),
+				null,
+			),
 		};
-	}, [minDate]);
+	}, [
+		minProp,
+		maxProp,
+		minDate,
+		startYear,
+		endYear,
+		selectableRange,
+		todayYear,
+		todayMonth,
+		todayDay,
+	]);
+	// 스크린리더 안내 - 상한이 오늘이면 "오늘까지", 하한은 준 날짜를 그대로 읽는다
+	const untilToday = selectableRange === "until-today" || maxProp === "today";
+	const minLabel = minProp === "today" ? undefined : (minProp ?? minDate);
 
 	const { year, month, day } = parsed;
 
 	// ── 범위 계산 ────────────────────────────────────────────────────────
 
-	const maxYear = selectableRange === "until-today" ? todayYear : endYear;
+	// 연 목록은 하한·상한이 있으면 그 해까지, 없으면 1950 ~ 현재 연도 + 10
+	const minYear = lo?.year ?? 1950;
+	const maxYear = hi?.year ?? todayYear + 10;
 
-	const minMonth = min.year > 0 && year === min.year ? Math.min(12, Math.max(1, min.month)) : 1;
+	const minMonth = lo && year === lo.year ? Math.min(12, Math.max(1, lo.month)) : 1;
 
-	const maxMonth = selectableRange === "until-today" && year === todayYear ? todayMonth : 12;
+	const maxMonth = hi && year === hi.year ? Math.min(12, Math.max(1, hi.month || 12)) : 12;
 
 	/**
 	 * 주어진 연·월에서 고를 수 있는 일의 범위. **목록과 emit 이 같은 계산을 써야 한다** -
@@ -208,37 +267,52 @@ export const DatePicker = ({
 		(yy: number, mm: number) => {
 			if (!yy || !mm) return { min: 1, max: 31 };
 			const daysInMonth = getDaysInMonth(yy, mm);
-			const lo =
-				min.year > 0 && min.month > 0 && yy === min.year && mm === min.month
-					? Math.min(daysInMonth, Math.max(1, min.day))
+			const first =
+				lo && lo.month > 0 && yy === lo.year && mm === lo.month
+					? Math.min(daysInMonth, Math.max(1, lo.day))
 					: 1;
-			const hi =
-				selectableRange === "until-today" && yy === todayYear && mm === todayMonth
-					? Math.min(daysInMonth, todayDay)
+			const last =
+				hi && yy === hi.year && mm === hi.month
+					? Math.min(daysInMonth, hi.day || daysInMonth)
 					: daysInMonth;
-			// `lo > hi` 는 두 제약의 교집합이 빈 경우다 - `minDate="2026-09-20"` 과
-			// `selectableRange="until-today"`(오늘 2026-09-15) 를 함께 주면 그렇게 된다.
+			// `first > last` 는 두 제약의 교집합이 빈 경우다 - `min="2026-09-20"` 과
+			// `max="today"`(오늘 2026-09-15) 를 함께 주면 그렇게 된다.
 			// `Math.max` 로 넓히면 **미래 날짜가 선택 가능해진다** - 이 컴포넌트가 막으려는
-			// 바로 그 값이다. 좁은 쪽(hi)을 그대로 두어 일 목록이 비고, emit 은 hi 를 넘지 않는다.
-			return { min: lo, max: hi };
+			// 바로 그 값이다. 좁은 쪽(last)을 그대로 두어 일 목록이 비고, emit 은 last 를 넘지 않는다.
+			return { min: first, max: last };
 		},
-		[min.year, min.month, min.day, selectableRange, todayYear, todayMonth, todayDay],
+		[lo, hi],
+	);
+	/** 그 연·월에 고를 수 있는 날 - 범위 안이면서 `isDateDisabled` 가 막지 않은 날 */
+	const daysFor = React.useCallback(
+		(yy: number, mm: number) => {
+			const bounds = dayBoundsFor(yy, mm);
+			if (bounds.max < bounds.min) return [];
+			const days = range(bounds.min, bounds.max);
+			return isDateDisabled
+				? days.filter((d) => !isDateDisabled(`${yy}-${pad(mm)}-${pad(d)}`))
+				: days;
+		},
+		[dayBoundsFor, isDateDisabled],
 	);
 
-	const { min: minDay, max: maxDay } = React.useMemo(
-		() => dayBoundsFor(year, month),
-		[dayBoundsFor, year, month],
+	/** 그 달이 고를 날을 하나라도 가졌는지. year-month 모드는 날을 고르지 않아 `isDateDisabled` 를 보지 않는다 */
+	const monthSelectable = React.useCallback(
+		(yy: number, mm: number) => {
+			if (mode === "year-month") {
+				const bounds = dayBoundsFor(yy, mm);
+				return bounds.max >= bounds.min;
+			}
+			return daysFor(yy, mm).length > 0;
+		},
+		[mode, dayBoundsFor, daysFor],
 	);
-	/** 교집합이 비면 고를 수 있는 일이 없다 - 목록을 비워 그 상태를 화면에도 드러낸다. */
-	const hasSelectableDay = maxDay >= minDay;
 
 	// ── DropdownOption[] 변환 ──────────────────────────────────────────────
 
-	// minDate 는 연 목록도 좁힌다. 월·일만 좁히면 minDate 보다 이전 **연도**가 그대로 남아
-	// (minDate="2020-01-01" 인데 1950 이 목록 첫 항목이었다) 그 해를 고르는 순간 제약이
-	// 무의미해진다 - 월·일 제한은 `year === min.year` 일 때만 걸리기 때문이다.
-	const minYear = min.year > 0 ? Math.max(startYear, min.year) : startYear;
-
+	// 하한은 연 목록도 좁힌다. 월·일만 좁히면 하한보다 이전 **연도**가 그대로 남아
+	// (min="2020-01-01" 인데 1950 이 목록 첫 항목이었다) 그 해를 고르는 순간 제약이
+	// 무의미해진다 - 월·일 제한은 `year === lo.year` 일 때만 걸리기 때문이다.
 	const yearOptions = React.useMemo<DropdownOption[]>(
 		() =>
 			range(minYear, maxYear).map((y) => ({
@@ -249,57 +323,47 @@ export const DatePicker = ({
 	);
 
 	// 그 달에 고를 수 있는 날이 하나도 없으면 월 목록에서도 뺀다. `minMonth`/`maxMonth` 는 일을
-	// 보지 않으므로, `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 처럼 같은 달 안에서
-	// 교집합이 비는 경우를 잡지 못한다. 목록에만 남겨 두면 골라도 아무 일이 없는 항목이 된다 -
-	// 이 파일이 세운 "목록과 emit 이 같은 계산을 쓴다" 원칙이 깨지는 자리다.
+	// 보지 않으므로, `min="2026-09-20"` + `max="today"`(오늘 2026-09-15) 처럼 같은 달 안에서
+	// 교집합이 비거나 `isDateDisabled` 가 그 달을 다 막은 경우를 잡지 못한다. 목록에만 남겨 두면
+	// 골라도 아무 일이 없는 항목이 된다 - 이 파일이 세운 "목록과 emit 이 같은 계산을 쓴다" 원칙이 깨지는 자리다.
 	const monthOptions = React.useMemo<DropdownOption[]>(
 		() =>
 			range(minMonth, maxMonth)
-				.filter((m) => {
-					const bounds = dayBoundsFor(year, m);
-					return bounds.max >= bounds.min;
-				})
+				.filter((m) => !year || monthSelectable(year, m))
 				.map((m) => ({
 					value: String(m),
 					label: pad(m),
 				})),
-		[minMonth, maxMonth, dayBoundsFor, year],
+		[minMonth, maxMonth, monthSelectable, year],
 	);
 
+	/** 교집합이 비면 고를 수 있는 일이 없다 - 목록을 비워 그 상태를 화면에도 드러낸다. */
 	const dayOptions = React.useMemo<DropdownOption[]>(
 		() =>
-			hasSelectableDay
-				? range(minDay, maxDay).map((d) => ({
-						value: String(d),
-						label: pad(d),
-					}))
-				: [],
-		[minDay, maxDay, hasSelectableDay],
+			(year && month ? daysFor(year, month) : range(1, 31)).map((d) => ({
+				value: String(d),
+				label: pad(d),
+			})),
+		[year, month, daysFor],
 	);
 
 	// ── emit: 선택 값을 포맷팅해 onValueChange 로 전달 ─────────────────────────
 
 	/**
 	 * 마지막 관문. 목록을 아무리 좁혀도 **월 단위로 넘어가는 경로**가 남는다 -
-	 * `minDate="2026-12-01"` + `until-today`(오늘 2026-09-15) 처럼 교집합이 비면 월 목록에 12 가
+	 * `min="2026-12-01"` + `max="today"`(오늘 2026-09-15) 처럼 교집합이 비면 월 목록에 12 가
 	 * 남고, 그것을 고르면 `dayBoundsFor` 는 그 달의 일수만 보므로 미래 날짜가 그대로 나간다.
 	 * 여기서 한 번 더 확인해 범위 밖이면 **아무것도 내보내지 않는다** - 잘못된 값을 소비자 상태에
 	 * 넣는 것보다 낫고, 화면에는 빈 일 목록으로 충돌 상태가 드러난다.
 	 */
 	const withinRange = React.useCallback(
 		(yy: number, mm: number, dd: number) => {
-			const point = yy * 10000 + mm * 100 + dd;
-			if (min.year > 0) {
-				const floor = min.year * 10000 + Math.max(1, min.month) * 100 + Math.max(1, min.day);
-				if (point < floor) return false;
-			}
-			if (selectableRange === "until-today") {
-				const ceiling = todayYear * 10000 + todayMonth * 100 + todayDay;
-				if (point > ceiling) return false;
-			}
+			const point = pointOf({ year: yy, month: mm, day: dd }, 1);
+			if (lo && point < pointOf(lo, 1)) return false;
+			if (hi && point > pointOf(hi, 31)) return false;
 			return true;
 		},
-		[min.year, min.month, min.day, selectableRange, todayYear, todayMonth, todayDay],
+		[lo, hi],
 	);
 
 	const emit = React.useCallback(
@@ -307,19 +371,23 @@ export const DatePicker = ({
 			if (mode === "year-month") {
 				// 목록과 **같은 계산**을 쓴다. 대표일을 하나 골라 검사하면 목록에는 있는데 고르면
 				// 아무 반응이 없는 달이 생긴다.
-				const monthBounds = dayBoundsFor(yy, mm);
-				if (monthBounds.max < monthBounds.min) return;
+				if (!monthSelectable(yy, mm)) return;
 				onValueChange(`${yy}-${pad(mm)}`);
 				return;
 			}
-			const bounds = dayBoundsFor(yy, mm);
-			// 교집합이 비면 내보낼 날이 없다.
-			if (bounds.max < bounds.min) return;
-			const safeDay = Math.min(Math.max(dd ?? bounds.min, bounds.min), bounds.max);
+			const days = daysFor(yy, mm);
+			const first = days[0];
+			// 교집합이 비거나 모두 막혔으면 내보낼 날이 없다.
+			if (first === undefined) return;
+			// 연·월을 옮기면 예전 일이 그 달에 없거나 막혔을 수 있다 - 그 뒤의 가장 가까운 날, 없으면 마지막 날
+			const want = dd ?? first;
+			const safeDay = days.includes(want)
+				? want
+				: (days.find((d) => d > want) ?? days[days.length - 1] ?? first);
 			if (!withinRange(yy, mm, safeDay)) return;
 			onValueChange(`${yy}-${pad(mm)}-${pad(safeDay)}`);
 		},
-		[mode, onValueChange, dayBoundsFor, withinRange],
+		[mode, onValueChange, monthSelectable, daysFor, withinRange],
 	);
 
 	// ── 핸들러: 연/월 변경 시 하위 값 자동 보정 ──────────────────────────
@@ -329,9 +397,8 @@ export const DatePicker = ({
 			if (!raw) return;
 			const newYear = Number(raw);
 			let newMonth = month;
-			const newMinMonth = min.year > 0 && newYear === min.year ? min.month : 1;
-			const newMaxMonth =
-				selectableRange === "until-today" && newYear === todayYear ? todayMonth : 12;
+			const newMinMonth = lo && newYear === lo.year ? Math.max(1, lo.month) : 1;
+			const newMaxMonth = hi && newYear === hi.year ? hi.month || 12 : 12;
 			if (newMonth > 0 && newMonth < newMinMonth) newMonth = newMinMonth;
 			if (newMonth > newMaxMonth) newMonth = newMaxMonth;
 
@@ -341,7 +408,7 @@ export const DatePicker = ({
 				emit(newYear, newMinMonth, day || undefined);
 			}
 		},
-		[month, day, min.year, min.month, selectableRange, todayYear, todayMonth, emit],
+		[month, day, lo, hi, emit],
 	);
 
 	const handleMonthChange = React.useCallback(
@@ -368,8 +435,9 @@ export const DatePicker = ({
 	});
 
 	const constraintParts: string[] = [];
-	if (minDate) constraintParts.push(minDateSrFormat.replace("{date}", minDate));
-	if (selectableRange === "until-today") constraintParts.push(selectableRangeUntilTodaySrText);
+	if (minLabel) constraintParts.push(minDateSrFormat.replace("{date}", minLabel));
+	if (untilToday) constraintParts.push(selectableRangeUntilTodaySrText);
+	else if (maxProp) constraintParts.push(t("datePicker.maxDateSr").replace("{date}", maxProp));
 	const constraintDesc = constraintParts.join(". ");
 
 	if (variant === "calendar" && mode === "year-month-day") {
@@ -392,15 +460,18 @@ export const DatePicker = ({
 				selected={year && month && day ? { year, month, day } : null}
 				today={{ year: todayYear, month: todayMonth, day: todayDay }}
 				isSelectable={({ year: yy, month: mm, day: dd }) =>
-					yy >= minYear && yy <= maxYear && withinRange(yy, mm, dd)
+					yy >= minYear &&
+					yy <= maxYear &&
+					withinRange(yy, mm, dd) &&
+					!isDateDisabled?.(`${yy}-${pad(mm)}-${pad(dd)}`)
 				}
 				minMonth={{
 					year: minYear,
-					month: min.year > 0 && minYear === min.year ? Math.max(1, min.month) : 1,
+					month: lo && minYear === lo.year ? Math.max(1, lo.month) : 1,
 				}}
 				maxMonth={{
 					year: maxYear,
-					month: selectableRange === "until-today" && maxYear === todayYear ? todayMonth : 12,
+					month: hi && maxYear === hi.year ? hi.month || 12 : 12,
 				}}
 				intlLocale={localeName === "en" ? "en-US" : "ko-KR"}
 				placeholder={placeholderProp ?? t("datePicker.placeholder")}

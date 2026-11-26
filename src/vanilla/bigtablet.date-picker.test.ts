@@ -97,6 +97,30 @@ describe("DatePicker (달력형, #937)", () => {
 		expect(prev.disabled && next.disabled).toBe(true);
 	});
 
+	it('max="today" 는 오늘까지 - React DatePicker 와 같은 값 (#1167)', () => {
+		const root = mount('data-max="today"');
+		DatePicker(root, { today: "2026-10-15" });
+		trigger(root).click();
+		expect(day(root, 15).getAttribute("aria-disabled")).toBeNull();
+		expect(day(root, 16).getAttribute("aria-disabled")).toBe("true");
+	});
+
+	it("isDateDisabled 가 막은 날은 고를 수 없다 (#1167)", () => {
+		const onValueChange = vi.fn();
+		const root = mount();
+		DatePicker(root, {
+			today: "2026-10-15",
+			isDateDisabled: (d: string) => d === "2026-10-20",
+			onValueChange,
+		});
+		trigger(root).click();
+		expect(day(root, 20).getAttribute("aria-disabled")).toBe("true");
+		day(root, 20).click();
+		expect(onValueChange).not.toHaveBeenCalled();
+		day(root, 21).click();
+		expect(onValueChange).toHaveBeenCalledWith("2026-10-21");
+	});
+
 	it("시각을 켜면 YYYY-MM-DDTHH:mm 로 싣고 minuteStep 을 따른다", () => {
 		const root = mount('data-time data-minute-step="15"');
 		const api = DatePicker(root, { name: "from", today: "2026-10-01" });

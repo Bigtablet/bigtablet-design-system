@@ -1242,24 +1242,46 @@ const [date, setDate] = useState('');
   onValueChange={setDate}
 />
 
-// 연-월 모드
-<DatePicker
-  label="시작 월"
-  mode="year-month"
-  value={date}
-  onValueChange={setDate}
-/>
-
-// 범위 제한
+// 범위 · 막는 날
 <DatePicker
   label="예약일"
-  startYear={2020}
-  endYear={2030}
-  selectableRange="until-today"
+  min="today"
+  max="2026-12-31"
+  isDateDisabled={(d) => holidays.has(d)}
   value={date}
   onValueChange={setDate}
 />
 ```
+
+#### 고를 수 있는 날 정하기
+
+날짜 · 시간 컴포넌트는 같은 이름을 씁니다 - `min` · `max` 는 값과 같은 형식의 문자열이고, 날마다 막을 때는 `isDateDisabled` 입니다.
+
+| prop | 값 | 하는 일 |
+|------|------|------|
+| `min` · `max` | `"YYYY-MM-DD"` 또는 `"today"` | 가장 이른 · 늦은 날. **연 목록도 이 범위로 좁힙니다** (없으면 1950 ~ 올해 + 10) |
+| `isDateDisabled` | `(date: string) => boolean` | true 인 날은 고를 수 없습니다 - 휴무일 · 주말 등. 날이 모두 막힌 달은 월 목록에서도 빠집니다 |
+
+`"today"` 는 기기의 오늘입니다. 생년월일은 `max="today"`, 예약일은 `min="today"` 처럼 씁니다.
+연 · 월을 바꿔 지금 일이 범위 밖이거나 막혔으면, 그 뒤의 가장 가까운 날로 옮깁니다.
+
+예전 이름(`minDate` · `selectableRange` · `startYear` · `endYear` · `mode`)은 4.15.0 부터 deprecated 입니다 - [MIGRATION.md](./MIGRATION.md#v4150-날짜--시간-prop-이름-통일) 참고.
+
+---
+
+### MonthPicker
+
+연 · 월 선택 (`"YYYY-MM"`). 정산 월 · 카드 유효기간처럼 날까지는 고르지 않는 칸에 씁니다. `DatePicker` 의 연 · 월 드롭다운을 그대로 써서 범위 계산 · 지우기 · `Field` 연결이 같습니다.
+
+```tsx
+import { Field, MonthPicker } from '@bigtablet/design-system';
+
+<Field name="settledMonth" label="정산 월">
+  <MonthPicker value={month} onValueChange={setMonth} max="today" />
+</Field>
+```
+
+`min` · `max` 는 `"YYYY-MM"` 으로 줍니다. `"today"` 는 이번 달입니다.
 
 ---
 
@@ -1269,7 +1291,7 @@ const [date, setDate] = useState('');
 
 #### 날짜 값과 시간대
 
-값은 **`"YYYY-MM-DD"` 문자열**입니다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `minDate` 와 같은 형식입니다.
+값은 **`"YYYY-MM-DD"` 문자열**입니다 (보이는 달은 `"YYYY-MM"`). DatePicker 의 `value` · `min` · `max` 와 같은 형식입니다.
 
 - 시간대가 없습니다 - `new Date("2026-10-16")` 은 **UTC 자정**으로 해석돼 한국(UTC+9)에서는 맞지만 미국에서는 하루 전날이 됩니다. 문자열이라 이 변환이 끼어들 자리가 없습니다
 - Date 가 필요하면 **로컬 생성자**로 만듭니다: `const [y, m, d] = value.split("-").map(Number); new Date(y, m - 1, d)`
@@ -1311,15 +1333,17 @@ const [date, setDate] = useState<string | null>(null);
 import { DateRangePicker, Field } from '@bigtablet/design-system';
 
 <Field name="period" label="조회 기간">
-  <DateRangePicker value={period} onValueChange={setPeriod} selectableRange="until-today" />
+  <DateRangePicker value={period} onValueChange={setPeriod} max="today" />
 </Field>
 ```
 
-**거꾸로 된 범위를 만들 수 없습니다.** 종료일의 `minDate` 가 시작일이라 이전 날짜가 목록에 없고,
+**거꾸로 된 범위를 만들 수 없습니다.** 종료일의 `min` 이 시작일이라 이전 날짜가 목록에 없고,
 시작일을 종료일보다 뒤로 옮기면 **종료일이 비워집니다**(`{ start, end: undefined }`). 조용히
 시작일로 맞추지 않는 이유 — 사용자가 고르지 않은 날짜가 그대로 조회·저장됩니다.
 
 시작일을 고르기 전에는 종료일이 잠깁니다. 순서가 뒤집힌 입력을 애초에 막습니다.
+
+`min` · `max` · `isDateDisabled` 는 시작일 · 종료일 모두에 걸립니다 ([DatePicker](#고를-수-있는-날-정하기) 와 같습니다).
 
 ### TimePicker
 
@@ -1329,11 +1353,11 @@ import { DateRangePicker, Field } from '@bigtablet/design-system';
 import { Field, TimePicker } from '@bigtablet/design-system';
 
 <Field name="pickupAt" label="픽업 시각">
-  <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+  <TimePicker value={time} onValueChange={setTime} minuteStep={30} min="09:00" max="21:00" />
 </Field>
 ```
 
-`minTime`/`maxTime` 은 **시 목록까지** 좁힙니다. 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
+`min`/`max` 는 **시 목록까지** 좁힙니다 (`"HH:mm"`, 예전 이름 `minTime`/`maxTime`). 분만 걸러 두면 09:00 이 최소인데 08시를 고를 수
 있고, 그때 분 목록이 비어 막힌 화면이 됩니다. 경계 시각에서는 분도 좁힙니다 — 최소가 09:30 이면
 09시의 분은 30분부터입니다. 시를 바꿀 때 지금 분이 범위 밖이면 가장 이른 분으로 옮깁니다.
 

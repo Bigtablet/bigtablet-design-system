@@ -17,8 +17,12 @@ export interface TimePickerProps {
 	/** 분 간격 (기본값: 5). 5·10·15·30 처럼 60 의 약수를 준다 */
 	minuteStep?: number;
 	/** 선택 가능한 가장 이른 시각 (`"HH:mm"`) */
-	minTime?: string;
+	min?: string;
 	/** 선택 가능한 가장 늦은 시각 (`"HH:mm"`) */
+	max?: string;
+	/** @deprecated `min` 을 쓴다. 다음 major 에서 제거한다. */
+	minTime?: string;
+	/** @deprecated `max` 를 쓴다. 다음 major 에서 제거한다. */
 	maxTime?: string;
 	/** 비활성 여부 */
 	disabled?: boolean;
@@ -53,7 +57,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * 손으로 만들면 갈리는 것들을 여기서 소유한다.
  *
  * - **분 간격** — 예약·근무 시간은 5분·30분 단위인데 60개 옵션을 다 그리면 고르기 어렵다
- * - **영업시간 밖 차단** — `minTime`/`maxTime` 이 시 목록까지 좁힌다. 분만 걸러 두면 09:00 이
+ * - **영업시간 밖 차단** — `min`/`max` 가 시 목록까지 좁힌다. 분만 걸러 두면 09:00 이
  *   최소인데 08시를 고를 수 있고, 그때 분 목록이 비어 막힌 화면이 된다
  * - **경계에서의 분 목록** — 최소가 09:30 이면 09시의 분은 30분부터 시작한다
  *
@@ -62,7 +66,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * @example
  * ```tsx
  * <Field name="pickupAt" label="픽업 시각">
- *   <TimePicker value={time} onValueChange={setTime} minuteStep={30} minTime="09:00" maxTime="21:00" />
+ *   <TimePicker value={time} onValueChange={setTime} minuteStep={30} min="09:00" max="21:00" />
  * </Field>
  * ```
  */
@@ -71,6 +75,8 @@ export const TimePicker = ({
 	value,
 	onValueChange,
 	minuteStep = 5,
+	min: minProp,
+	max: maxProp,
 	minTime,
 	maxTime,
 	disabled,
@@ -91,8 +97,10 @@ export const TimePicker = ({
 	const groupId = React.useId();
 	const constraintId = React.useId();
 
-	const min = toMinutes(minTime) ?? 0;
-	const max = toMinutes(maxTime) ?? 23 * 60 + 59;
+	const minText = minProp ?? minTime;
+	const maxText = maxProp ?? maxTime;
+	const min = toMinutes(minText) ?? 0;
+	const max = toMinutes(maxText) ?? 23 * 60 + 59;
 
 	const parsed = toMinutes(value);
 	const hour = parsed === null ? null : Math.floor(parsed / 60);
@@ -143,8 +151,8 @@ export const TimePicker = ({
 	};
 
 	const constraint =
-		minTime || maxTime
-			? t("timePicker.rangeSr", { min: minTime ?? "00:00", max: maxTime ?? "23:59" })
+		minText || maxText
+			? t("timePicker.rangeSr", { min: minText ?? "00:00", max: maxText ?? "23:59" })
 			: "";
 
 	return (
