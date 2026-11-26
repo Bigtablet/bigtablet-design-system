@@ -1,5 +1,5 @@
 /// <reference types="@vitest/browser-playwright" />
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { cdp } from "vitest/browser";
 import { Tab, TabList, Tabs, type TabsProps } from "./index";
