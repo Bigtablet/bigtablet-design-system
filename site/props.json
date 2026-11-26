@@ -946,10 +946,10 @@
 		},
 		{
 			"name": "variant",
-			"type": "\"line\" | \"fills\"",
+			"type": "TabsVariant",
 			"required": false,
 			"default": "\"line\"",
-			"doc": "시각 스타일. line=하단 underline. `fills`(채운 둥근 박스 그룹)는 deprecated: SegmentedControl 과 거의 같아 보여 \"내용 바꾸기\" 와 \"값 고르기\" 가 구분되지 않는다. 이후 버전에서 제거"
+			"doc": "시각 스타일: 하단 underline. 채운 박스 그룹이 필요하면 탭이 아니라 값을 고르는 것이라 `SegmentedControl` 을 쓴다"
 		},
 		{
 			"name": "size",
@@ -2551,7 +2551,7 @@
 			"type": "\"dropdown\" | \"calendar\"",
 			"required": false,
 			"default": "\"dropdown\"",
-			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다. `mode=\"year-month-day\"` 에서만 쓴다: `\"year-month\"` 면 달력이 고를 날이 없어 드롭다운으로 그린다."
+			"doc": "고르는 방식.\n\n`\"dropdown\"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.\n\n`\"calendar\"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다."
 		},
 		{
 			"name": "placeholder",
@@ -2652,7 +2652,7 @@
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": true,
-			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`)"
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD`"
 		}
 	],
 	"DateRange": [
@@ -3650,7 +3650,7 @@
 			"name": "onValueChange",
 			"type": "(value: string) => void",
 			"required": true,
-			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`) 값이 바뀔 때 호출된다: `\"YYYY-MM\"`"
+			"doc": "값이 바뀔 때 호출된다: `YYYY-MM-DD` 값이 바뀔 때 호출된다: `\"YYYY-MM\"`"
 		}
 	],
 	"OtpInputProps": [
@@ -3897,51 +3897,6 @@
 		}
 	],
 	"SwitchProps": [
-		{
-			"name": "checked",
-			"type": "boolean",
-			"required": false,
-			"doc": "제어형 토글 상태"
-		},
-		{
-			"name": "defaultChecked",
-			"type": "boolean",
-			"required": false,
-			"doc": "비제어형 초기 토글 상태"
-		},
-		{
-			"name": "onCheckedChange",
-			"type": "(checked: boolean) => void",
-			"required": false,
-			"doc": "상태 변경 콜백 (canonical)"
-		},
-		{
-			"name": "size",
-			"type": "\"sm\" | \"md\"",
-			"required": false,
-			"default": "\"sm\"",
-			"doc": "토글 크기"
-		},
-		{
-			"name": "disabled",
-			"type": "boolean",
-			"required": false,
-			"doc": "비활성화 여부"
-		},
-		{
-			"name": "ariaLabel",
-			"type": "string",
-			"required": true,
-			"doc": "토글 접근성 레이블(스크린 리더용)"
-		},
-		{
-			"name": "ref",
-			"type": "Ref<HTMLButtonElement>",
-			"required": false,
-			"doc": "버튼 요소 참조"
-		}
-	],
-	"ToggleProps": [
 		{
 			"name": "checked",
 			"type": "boolean",
