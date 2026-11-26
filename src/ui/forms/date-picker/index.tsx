@@ -40,7 +40,6 @@ const parseBound = (raw: string | undefined, today: CalendarDate): CalendarDate 
 };
 
 type DatePickerVariant = "dropdown" | "calendar";
-type SelectableRange = "all" | "until-today";
 
 interface DatePickerBaseProps {
 	/** 데이트 피커 위에 표시할 라벨 텍스트 */
@@ -48,15 +47,9 @@ interface DatePickerBaseProps {
 	/** 제어형 날짜 값 ("YYYY-MM" 또는 "YYYY-MM-DD" 형식) */
 	value?: string;
 	/**
-	 * 선택 모드
-	 * @deprecated 연·월만 고르려면 `MonthPicker` 를 쓴다. 다음 major 에서 제거한다.
-	 */
-	mode?: DatePickerMode;
-	/**
 	 * 고르는 방식 (기본값: "dropdown").
 	 * - `"dropdown"`: 연 · 월 · 일 드롭다운 3개. 생년월일처럼 먼 과거의 연도를 고를 때 맞다.
 	 * - `"calendar"`: 날짜 칸 하나 + 월 달력 팝오버. 일정처럼 가까운 날을 요일과 함께 볼 때 맞다.
-	 *   `mode="year-month-day"` 에서만 쓴다 - `"year-month"` 면 달력이 고를 날이 없어 드롭다운으로 그린다.
 	 */
 	variant?: DatePickerVariant;
 	/** `variant="calendar"` 에서 값이 없을 때 칸에 보일 문구 (기본값: "날짜 선택") */
@@ -78,14 +71,6 @@ interface DatePickerBaseProps {
 	 * 인라인 함수면 렌더마다 목록을 다시 계산한다
 	 */
 	isDateDisabled?: (date: string) => boolean;
-	/** @deprecated `min="YYYY-01-01"` 을 쓴다. 다음 major 에서 제거한다. */
-	startYear?: number;
-	/** @deprecated `max="YYYY-12-31"` 을 쓴다. 다음 major 에서 제거한다. */
-	endYear?: number;
-	/** @deprecated `min` 을 쓴다. 다음 major 에서 제거한다. */
-	minDate?: string;
-	/** @deprecated `selectableRange="until-today"` 는 `max="today"` 를 쓴다. 다음 major 에서 제거한다. */
-	selectableRange?: SelectableRange;
 	/** 비활성화 여부 */
 	disabled?: boolean;
 	/**
@@ -127,9 +112,12 @@ interface DatePickerBaseProps {
 
 // DatePicker 는 controlled 전용(내부 value 상태 없음) → 값 콜백이 필수다.
 export type DatePickerProps = DatePickerBaseProps & {
-	/** 값이 바뀔 때 호출된다 - `YYYY-MM-DD` (year-month 모드는 `YYYY-MM`) */
+	/** 값이 바뀔 때 호출된다 - `YYYY-MM-DD` */
 	onValueChange: (value: string) => void;
 };
+
+/** 구현이 받는 props - `mode` 는 `MonthPicker` 만 쓰는 내부 값이라 공개 타입에 없다 */
+type DateFieldsProps = DatePickerProps & { mode?: DatePickerMode };
 
 /** 숫자를 두 자리 문자열로 보정한다. */
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -145,7 +133,10 @@ const range = (start: number, end: number) =>
  * 연/월/일 선택형 데이트 피커를 렌더링한다.
  * 내부적으로 DS Dropdown 3개를 조합해 드롭다운 UX 일관성을 유지한다.
  */
-export const DatePicker = ({
+export const DatePicker = (props: DatePickerProps) => <DateFields {...props} />;
+
+/** DatePicker · MonthPicker 의 공통 구현. `mode="year-month"` 면 연 · 월만 그린다 */
+export const DateFields = ({
 	label,
 	value,
 	onValueChange,
@@ -155,10 +146,6 @@ export const DatePicker = ({
 	min: minProp,
 	max: maxProp,
 	isDateDisabled,
-	startYear,
-	endYear,
-	minDate,
-	selectableRange = "all",
 	disabled,
 	required,
 	fullWidth = true,
@@ -170,7 +157,7 @@ export const DatePicker = ({
 	dayLabel: dayLabelProp,
 	minDateSrFormat: minDateSrFormatProp,
 	selectableRangeUntilTodaySrText: selectableRangeUntilTodaySrTextProp,
-}: DatePickerProps) => {
+}: DateFieldsProps) => {
 	const t = useLocaleText();
 	const localeName = useLocaleName();
 	const yearLabel = yearLabelProp ?? t("datePicker.year");
@@ -211,47 +198,14 @@ export const DatePicker = ({
 		};
 	}, [value]);
 
-	// 범위 - 새 prop(min · max)과 deprecated prop 을 한 쌍으로 합친다. 여럿이면 더 좁은 쪽이 이긴다.
-	// 월까지만 주면(`"YYYY-MM"`) 일은 0 - 아래 계산이 하한은 1일, 상한은 그 달 말일로 읽는다.
+	// 범위 - 월까지만 주면(`"YYYY-MM"`) 일은 0. 아래 계산이 하한은 1일, 상한은 그 달 말일로 읽는다.
 	const { lo, hi } = React.useMemo(() => {
 		const today = { year: todayYear, month: todayMonth, day: todayDay };
-		const los = [
-			parseBound(minProp, today),
-			parseBound(minDate, today),
-			startYear ? { year: startYear, month: 1, day: 1 } : null,
-		].filter((d): d is CalendarDate => d !== null);
-		const his = [
-			parseBound(maxProp, today),
-			selectableRange === "until-today" ? today : null,
-			endYear ? { year: endYear, month: 12, day: 31 } : null,
-		].filter((d): d is CalendarDate => d !== null);
-		return {
-			lo: los.reduce<CalendarDate | null>(
-				(a, d) => (!a || pointOf(d, 1) > pointOf(a, 1) ? d : a),
-				null,
-			),
-			hi: his.reduce<CalendarDate | null>(
-				(a, d) => (!a || pointOf(d, 31) < pointOf(a, 31) ? d : a),
-				null,
-			),
-		};
-	}, [
-		minProp,
-		maxProp,
-		minDate,
-		startYear,
-		endYear,
-		selectableRange,
-		todayYear,
-		todayMonth,
-		todayDay,
-	]);
-	// 스크린리더 안내는 합친 범위(lo · hi)에서 만든다 - 준 prop 에서 만들면 여럿을 함께 줄 때 실제 범위와 어긋난다
+		return { lo: parseBound(minProp, today), hi: parseBound(maxProp, today) };
+	}, [minProp, maxProp, todayYear, todayMonth, todayDay]);
+	// 스크린리더 안내 - 상한이 오늘이면 "오늘까지", 아니면 날짜를 그대로 읽는다
 	const minLabel = lo ? boundLabel(lo) : undefined;
-	const untilToday =
-		!!hi &&
-		(selectableRange === "until-today" || maxProp === "today") &&
-		pointOf(hi, 31) === pointOf({ year: todayYear, month: todayMonth, day: todayDay }, 31);
+	const untilToday = maxProp === "today";
 	const maxLabel = hi ? boundLabel(hi) : undefined;
 
 	const { year, month, day } = parsed;

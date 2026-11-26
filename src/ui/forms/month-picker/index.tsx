@@ -1,18 +1,10 @@
 "use client";
 
-import { DatePicker, type DatePickerProps } from "../date-picker";
+import { DateFields, type DatePickerProps } from "../date-picker";
 
 export type MonthPickerProps = Omit<
 	DatePickerProps,
-	| "mode"
-	| "variant"
-	| "placeholder"
-	| "dayLabel"
-	| "isDateDisabled"
-	| "startYear"
-	| "endYear"
-	| "minDate"
-	| "selectableRange"
+	"variant" | "placeholder" | "dayLabel" | "isDateDisabled"
 > & {
 	/** 제어형 값 (`"YYYY-MM"`) */
 	value?: string;
@@ -36,4 +28,4 @@ export type MonthPickerProps = Omit<
  * </Field>
  * ```
  */
-export const MonthPicker = (props: MonthPickerProps) => <DatePicker {...props} mode="year-month" />;
+export const MonthPicker = (props: MonthPickerProps) => <DateFields {...props} mode="year-month" />;

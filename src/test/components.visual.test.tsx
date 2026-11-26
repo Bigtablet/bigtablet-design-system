@@ -247,7 +247,7 @@ describe.each(THEMES)("visual %s", (theme) => {
 		await shoot(
 			`tabs-${theme}`,
 			<div style={col}>
-				{(["line", "fills"] as const).map((variant) => (
+				{(["line"] as const).map((variant) => (
 					<Tabs key={variant} variant={variant} defaultValue="a">
 						<TabList ariaLabel={variant}>
 							<Tab value="a">첫째</Tab>

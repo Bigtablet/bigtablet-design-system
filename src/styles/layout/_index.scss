@@ -1,7 +1,5 @@
 @use "../a11y" as a11y;
-@use "../breakpoints" as breakpoints;
 @use "../colors" as colors;
-@use "../motion" as motion;
 @use "../radius" as radius;
 @use "../spacing" as spacing;
 @use "../typography" as typography;
@@ -37,15 +35,6 @@
 }
 
 /* Glass Effect Mixins */
-// @deprecated 쓰는 곳이 없고 색 · 테두리를 하드코딩한다 - 이후 버전에서 제거 (#1040)
-@mixin glass_light {
-  @warn "token.glass_light 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
 @mixin glass_dark {
   // 흰 글자를 얹는 표면이다. 0.4 는 흰 배경 위에서 #999 가 되어 흰 글자 대비가 2.8:1 이었다 -
   // 0.55 면 가장 밝은 배경(흰색) 위에서도 #737373, 4.7:1 로 AA 를 넘는다 (#1053)
@@ -61,46 +50,6 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-/* Hover Lift Effect */
-// motion.$transition_lift = transform/box-shadow 0.25s $ease_out_expo (= $easing_enter) -
-// 기존 하드코딩 값과 동일한 전용 토큰.
-// @deprecated 쓰는 곳이 없고 그림자를 하드코딩한다 - 이후 버전에서 제거 (#1040)
-@mixin hover_lift($y: -4px, $shadow: 0 12px 24px rgba(0, 0, 0, 0.15)) {
-  @warn "token.hover_lift 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
-  transition: motion.$transition_lift;
-
-  @include breakpoints.hoverable {
-    &:hover {
-      transform: translateY($y);
-      box-shadow: $shadow;
-    }
-  }
-
-  // WCAG 2.1 SC 2.3.3 - mixin 은 호출 지점을 모르므로 guard 를 body 안에 둔다.
-  // Sass 가 @media 를 호출 선택자와 함께 밖으로 빼주어 소비처마다 자동 적용된다.
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-/* Glow on Hover */
-// @deprecated 쓰는 곳이 없고 단색 DS 에 없는 파란 glow 가 기본값이다 - 이후 버전에서 제거 (#1040)
-@mixin hover_glow($color: rgba(59, 130, 246, 0.4)) {
-  @warn "token.hover_glow 는 deprecated 입니다 - 이후 버전에서 제거됩니다. docs/MIGRATION.md 의 대체 방법을 보세요.";
-  transition: box-shadow motion.$duration_slow motion.$easing_enter;
-
-  @include breakpoints.hoverable {
-    &:hover {
-      box-shadow: 0 0 30px $color;
-    }
-  }
-
-  // WCAG 2.1 SC 2.3.3 - hover_lift 와 동일하게 mixin body 안에서 guard.
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
 }
 
 /* Overlay list scroll cap - dropdown/menu/select 등 오버레이 옵션 리스트의 최대 높이 */

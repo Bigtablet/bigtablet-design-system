@@ -2,7 +2,8 @@ import { act, fireEvent, render, screen, waitFor, within } from "@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../system/locale-provider";
 import { Field } from "../field";
-import { DatePicker } from "./index";
+// `mode="year-month"` 는 MonthPicker 의 내부 구현이라 DateFields 로 직접 검사한다
+import { DateFields, DatePicker } from "./index";
 
 describe("DatePicker", () => {
 	it("renders with label", () => {
@@ -58,29 +59,29 @@ describe("DatePicker", () => {
 	});
 
 	it("renders day select in year-month-day mode", () => {
-		render(<DatePicker mode="year-month-day" onValueChange={() => {}} />);
+		render(<DatePicker onValueChange={() => {}} />);
 		expect(screen.getAllByText("일").length).toBeGreaterThan(0);
 	});
 
 	it("does not render day select in year-month mode", () => {
-		render(<DatePicker mode="year-month" onValueChange={() => {}} />);
+		render(<DateFields mode="year-month" onValueChange={() => {}} />);
 		expect(screen.queryByText("일")).not.toBeInTheDocument();
 	});
 
 	it("renders 3 select buttons in year-month-day mode", () => {
-		render(<DatePicker mode="year-month-day" onValueChange={() => {}} />);
+		render(<DatePicker onValueChange={() => {}} />);
 		expect(screen.getAllByRole("combobox")).toHaveLength(3);
 	});
 
 	it("renders 2 select buttons in year-month mode", () => {
-		render(<DatePicker mode="year-month" onValueChange={() => {}} />);
+		render(<DateFields mode="year-month" onValueChange={() => {}} />);
 		expect(screen.getAllByRole("combobox")).toHaveLength(2);
 	});
 
 	it("calls onChange when year is selected (year-month mode)", () => {
 		const onChange = vi.fn();
 		render(
-			<DatePicker mode="year-month" startYear={2020} endYear={2025} onValueChange={onChange} />,
+			<DateFields mode="year-month" min="2020-01-01" max="2025-12-31" onValueChange={onChange} />,
 		);
 
 		// 첫 Select 버튼(연도) 열고 "2024" 클릭
@@ -163,17 +164,17 @@ describe("DatePicker", () => {
 	});
 
 	it("renders sr-only constraint description when minDate is set", () => {
-		render(<DatePicker minDate="2020-01-01" onValueChange={() => {}} />);
+		render(<DatePicker min="2020-01-01" onValueChange={() => {}} />);
 		expect(screen.getByText(/최소 날짜: 2020-01-01/)).toBeInTheDocument();
 	});
 
 	it("renders sr-only constraint description when selectableRange is until-today", () => {
-		render(<DatePicker selectableRange="until-today" onValueChange={() => {}} />);
+		render(<DatePicker max="today" onValueChange={() => {}} />);
 		expect(screen.getByText(/오늘까지 선택 가능/)).toBeInTheDocument();
 	});
 
 	it("links group to constraint description via aria-describedby", () => {
-		render(<DatePicker minDate="2020-01-01" onValueChange={() => {}} />);
+		render(<DatePicker min="2020-01-01" onValueChange={() => {}} />);
 		const group = document.querySelector("[role='group']") as HTMLElement;
 		const descId = group.getAttribute("aria-describedby");
 
@@ -189,11 +190,7 @@ describe("DatePicker", () => {
 
 	it("uses custom minDateSrFormat when provided", () => {
 		render(
-			<DatePicker
-				minDate="2020-01-01"
-				minDateSrFormat="최소 날짜: {date}"
-				onValueChange={() => {}}
-			/>,
+			<DatePicker min="2020-01-01" minDateSrFormat="최소 날짜: {date}" onValueChange={() => {}} />,
 		);
 		expect(screen.getByText("최소 날짜: 2020-01-01")).toBeInTheDocument();
 	});
@@ -201,7 +198,7 @@ describe("DatePicker", () => {
 	it("uses custom selectableRangeUntilTodaySrText when provided", () => {
 		render(
 			<DatePicker
-				selectableRange="until-today"
+				max="today"
 				selectableRangeUntilTodaySrText="오늘까지 선택 가능"
 				onValueChange={() => {}}
 			/>,
@@ -212,10 +209,10 @@ describe("DatePicker", () => {
 	it("calls onValueChange (canonical) when year is selected", () => {
 		const onValueChange = vi.fn();
 		render(
-			<DatePicker
+			<DateFields
 				mode="year-month"
-				startYear={2020}
-				endYear={2025}
+				min="2020-01-01"
+				max="2025-12-31"
 				onValueChange={onValueChange}
 			/>,
 		);
@@ -228,7 +225,7 @@ describe("DatePicker", () => {
 	it("keeps years before minDate out of the list", () => {
 		// 월·일만 좁히면 minDate 이전 연도가 남는다 - 그 해를 고르는 순간 제약이 무의미해진다
 		// (월·일 제한은 `year === min.year` 일 때만 걸린다). 실제로 1950 이 첫 항목이었다.
-		render(<DatePicker value="2026-05-01" minDate="2020-01-01" onValueChange={vi.fn()} />);
+		render(<DatePicker value="2026-05-01" min="2020-01-01" onValueChange={vi.fn()} />);
 
 		fireEvent.click(screen.getAllByRole("combobox")[0]!);
 		const years = screen.getAllByRole("option").map((o) => o.textContent);
@@ -240,7 +237,7 @@ describe("DatePicker", () => {
 		// 연도를 바꾸면 월은 minDate 로 당겨지는데 일은 그대로 나갔다. 결과가 minDate 보다
 		// 앞선 날짜인데도 onValueChange 로 흘러나간다 - 이 컴포넌트가 막으려는 바로 그 값이다.
 		const onValueChange = vi.fn();
-		render(<DatePicker value="2030-01-01" minDate="2020-06-15" onValueChange={onValueChange} />);
+		render(<DatePicker value="2030-01-01" min="2020-06-15" onValueChange={onValueChange} />);
 
 		const buttons = screen.getAllByRole("combobox");
 		fireEvent.click(buttons[0]!);
@@ -255,13 +252,7 @@ describe("DatePicker", () => {
 		vi.setSystemTime(new Date(2026, 8, 15));
 		try {
 			const onValueChange = vi.fn();
-			render(
-				<DatePicker
-					value="2025-12-31"
-					selectableRange="until-today"
-					onValueChange={onValueChange}
-				/>,
-			);
+			render(<DatePicker value="2025-12-31" max="today" onValueChange={onValueChange} />);
 
 			const buttons = screen.getAllByRole("combobox");
 			fireEvent.click(buttons[0]!);
@@ -282,8 +273,8 @@ describe("DatePicker", () => {
 			render(
 				<DatePicker
 					value="2026-09-10"
-					minDate="2026-09-20"
-					selectableRange="until-today"
+					min="2026-09-20"
+					max="today"
 					onValueChange={onValueChange}
 				/>,
 			);
@@ -298,7 +289,7 @@ describe("DatePicker", () => {
 		}
 	});
 	it("offers no month when the whole window is empty", () => {
-		// 일 목록을 비우는 것만으로는 부족하다 - `minDate="2026-12-01"` + `until-today` 면
+		// 일 목록을 비우는 것만으로는 부족하다 - `min="2026-12-01"` + `until-today` 면
 		// 월 목록에 12 가 남고, 그것을 고르면 그 달의 일수만 보고 미래 날짜가 그대로 나갔다.
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date(2026, 8, 15));
@@ -307,8 +298,8 @@ describe("DatePicker", () => {
 			render(
 				<DatePicker
 					value="2026-09-10"
-					minDate="2026-12-01"
-					selectableRange="until-today"
+					min="2026-12-01"
+					max="today"
 					onValueChange={onValueChange}
 				/>,
 			);
@@ -324,7 +315,7 @@ describe("DatePicker", () => {
 		}
 	});
 	it("hides a month whose days are all out of range in year-month mode", () => {
-		// `minDate="2026-09-20"` + `until-today`(오늘 2026-09-15) 면 9월에 고를 수 있는 날이
+		// `min="2026-09-20"` + `until-today`(오늘 2026-09-15) 면 9월에 고를 수 있는 날이
 		// 하나도 없다. 월 목록은 일을 보지 않으므로 9월이 그대로 떴고, 고르면 emit 이 조용히
 		// 막혀 드롭다운이 반응 없이 멈췄다 - 목록과 emit 이 다른 계산을 쓴 자리다.
 		vi.useFakeTimers();
@@ -332,11 +323,11 @@ describe("DatePicker", () => {
 		try {
 			const onValueChange = vi.fn();
 			render(
-				<DatePicker
+				<DateFields
 					mode="year-month"
 					value="2026-09"
-					minDate="2026-09-20"
-					selectableRange="until-today"
+					min="2026-09-20"
+					max="today"
 					onValueChange={onValueChange}
 				/>,
 			);
@@ -501,7 +492,7 @@ describe("DatePicker variant=calendar", () => {
 		render(
 			<DatePicker
 				variant="calendar"
-				minDate="2026-10-10"
+				min="2026-10-10"
 				value="2026-10-12"
 				onValueChange={onValueChange}
 			/>,
@@ -516,7 +507,7 @@ describe("DatePicker variant=calendar", () => {
 	});
 
 	it("selectableRange=until-today 면 내일부터 막고 다음 달로 넘어가지 않는다", () => {
-		render(<DatePicker variant="calendar" selectableRange="until-today" onValueChange={vi.fn()} />);
+		render(<DatePicker variant="calendar" max="today" onValueChange={vi.fn()} />);
 		open();
 
 		expect(day(12)).not.toHaveAttribute("aria-disabled");
@@ -585,7 +576,7 @@ describe("DatePicker variant=calendar", () => {
 	});
 
 	it("mode=year-month 면 고를 날이 없어 드롭다운으로 그린다", () => {
-		render(<DatePicker variant="calendar" mode="year-month" onValueChange={vi.fn()} />);
+		render(<DateFields variant="calendar" mode="year-month" onValueChange={vi.fn()} />);
 
 		expect(screen.getAllByRole("combobox")).toHaveLength(2);
 	});
@@ -628,30 +619,28 @@ describe("DatePicker 범위 분기", () => {
 	afterEach(() => vi.useRealTimers());
 
 	it("ends the year list at today + 10 by default and at today for until-today", () => {
-		const { rerender } = render(<DatePicker startYear={2020} onValueChange={vi.fn()} />);
+		const { rerender } = render(<DatePicker min="2020-01-01" onValueChange={vi.fn()} />);
 		expect(optionsOf(0).at(-1)).toBe("2036");
-		rerender(<DatePicker startYear={2020} selectableRange="until-today" onValueChange={vi.fn()} />);
+		rerender(<DatePicker min="2020-01-01" max="today" onValueChange={vi.fn()} />);
 		expect(optionsOf(0).at(-1)).toBe("2026");
 	});
 
 	it("starts the month list at minDate's month only in minDate's year", () => {
 		const { rerender } = render(
-			<DatePicker value="2020-07-01" minDate="2020-06-15" onValueChange={vi.fn()} />,
+			<DatePicker value="2020-07-01" min="2020-06-15" onValueChange={vi.fn()} />,
 		);
 		expect(optionsOf(1)[0]).toBe("06");
 		expect(optionsOf(1)).toHaveLength(7);
-		rerender(<DatePicker value="2021-07-01" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		rerender(<DatePicker value="2021-07-01" min="2020-06-15" onValueChange={vi.fn()} />);
 		expect(optionsOf(1)).toHaveLength(12);
 	});
 
 	it("ends the month list at this month only for until-today in this year", () => {
 		const { rerender } = render(
-			<DatePicker value="2026-03-01" selectableRange="until-today" onValueChange={vi.fn()} />,
+			<DatePicker value="2026-03-01" max="today" onValueChange={vi.fn()} />,
 		);
 		expect(optionsOf(1).at(-1)).toBe("09");
-		rerender(
-			<DatePicker value="2025-03-01" selectableRange="until-today" onValueChange={vi.fn()} />,
-		);
+		rerender(<DatePicker value="2025-03-01" max="today" onValueChange={vi.fn()} />);
 		expect(optionsOf(1).at(-1)).toBe("12");
 		rerender(<DatePicker value="2026-03-01" onValueChange={vi.fn()} />);
 		expect(optionsOf(1).at(-1)).toBe("12");
@@ -659,21 +648,17 @@ describe("DatePicker 범위 분기", () => {
 
 	it("narrows the day list only in minDate's month and in this month for until-today", () => {
 		const { rerender } = render(
-			<DatePicker value="2020-06-20" minDate="2020-06-15" onValueChange={vi.fn()} />,
+			<DatePicker value="2020-06-20" min="2020-06-15" onValueChange={vi.fn()} />,
 		);
 		expect(optionsOf(2)[0]).toBe("15");
-		rerender(<DatePicker value="2020-07-20" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		rerender(<DatePicker value="2020-07-20" min="2020-06-15" onValueChange={vi.fn()} />);
 		expect(optionsOf(2)[0]).toBe("01");
-		rerender(<DatePicker value="2021-06-20" minDate="2020-06-15" onValueChange={vi.fn()} />);
+		rerender(<DatePicker value="2021-06-20" min="2020-06-15" onValueChange={vi.fn()} />);
 		expect(optionsOf(2)[0]).toBe("01");
 
-		rerender(
-			<DatePicker value="2026-09-01" selectableRange="until-today" onValueChange={vi.fn()} />,
-		);
+		rerender(<DatePicker value="2026-09-01" max="today" onValueChange={vi.fn()} />);
 		expect(optionsOf(2).at(-1)).toBe("15");
-		rerender(
-			<DatePicker value="2026-08-01" selectableRange="until-today" onValueChange={vi.fn()} />,
-		);
+		rerender(<DatePicker value="2026-08-01" max="today" onValueChange={vi.fn()} />);
 		expect(optionsOf(2).at(-1)).toBe("31");
 		rerender(<DatePicker value="2026-09-01" onValueChange={vi.fn()} />);
 		expect(optionsOf(2).at(-1)).toBe("30");
@@ -683,12 +668,7 @@ describe("DatePicker 범위 분기", () => {
 		// minDate 와 오늘이 같은 날 - 고를 수 있는 날이 하나뿐이어도 비우면 안 된다
 		const onValueChange = vi.fn();
 		render(
-			<DatePicker
-				value="2026-08-10"
-				minDate="2026-09-15"
-				selectableRange="until-today"
-				onValueChange={onValueChange}
-			/>,
+			<DatePicker value="2026-08-10" min="2026-09-15" max="today" onValueChange={onValueChange} />,
 		);
 		expect(optionsOf(1)).toEqual(["09"]);
 		pick(1, "09");
@@ -698,11 +678,11 @@ describe("DatePicker 범위 분기", () => {
 	it("emits a one-day month in year-month mode", () => {
 		const onValueChange = vi.fn();
 		render(
-			<DatePicker
+			<DateFields
 				mode="year-month"
 				value="2026-08"
-				minDate="2026-09-15"
-				selectableRange="until-today"
+				min="2026-09-15"
+				max="today"
 				onValueChange={onValueChange}
 			/>,
 		);
@@ -714,12 +694,7 @@ describe("DatePicker 범위 분기", () => {
 		// 2026 으로 바꾸면 월은 오늘(9월)로 당겨지지만 minDate 는 12월 - 일 범위만으로는 못 거른다
 		const onValueChange = vi.fn();
 		render(
-			<DatePicker
-				value="2025-12-10"
-				minDate="2026-12-01"
-				selectableRange="until-today"
-				onValueChange={onValueChange}
-			/>,
+			<DatePicker value="2025-12-10" min="2026-12-01" max="today" onValueChange={onValueChange} />,
 		);
 		pick(0, "2026");
 		expect(onValueChange).not.toHaveBeenCalled();
@@ -728,14 +703,12 @@ describe("DatePicker 범위 분기", () => {
 	it("keeps the month on a year change outside minDate's year and below until-today's year", () => {
 		const onValueChange = vi.fn();
 		const { rerender } = render(
-			<DatePicker value="2030-03-10" minDate="2020-06-15" onValueChange={onValueChange} />,
+			<DatePicker value="2030-03-10" min="2020-06-15" onValueChange={onValueChange} />,
 		);
 		pick(0, "2021");
 		expect(onValueChange).toHaveBeenLastCalledWith("2021-03-10");
 
-		rerender(
-			<DatePicker value="2025-11-10" selectableRange="until-today" onValueChange={onValueChange} />,
-		);
+		rerender(<DatePicker value="2025-11-10" max="today" onValueChange={onValueChange} />);
 		pick(0, "2024");
 		expect(onValueChange).toHaveBeenLastCalledWith("2024-11-10");
 	});
@@ -784,7 +757,7 @@ describe("DatePicker variant=calendar 분기", () => {
 		expect(screen.getByRole("dialog", { name: "달력" })).toBeInTheDocument();
 
 		rerender(
-			<DatePicker variant="calendar" label="시작일" minDate="2026-10-01" onValueChange={vi.fn()} />,
+			<DatePicker variant="calendar" label="시작일" min="2026-10-01" onValueChange={vi.fn()} />,
 		);
 		expect(screen.getByRole("dialog", { name: "시작일" })).toBeInTheDocument();
 		const constraint = document.querySelector(".date_picker_sr_only") as HTMLElement;
@@ -796,7 +769,7 @@ describe("DatePicker variant=calendar 분기", () => {
 	it("joins the Field description and the constraint", () => {
 		render(
 			<Field name="d" label="날짜" help="도움말">
-				<DatePicker variant="calendar" minDate="2026-10-01" onValueChange={vi.fn()} />
+				<DatePicker variant="calendar" min="2026-10-01" onValueChange={vi.fn()} />
 			</Field>,
 		);
 		const trigger = screen.getAllByRole("button")[0] as HTMLElement;
@@ -875,7 +848,7 @@ describe("DatePicker variant=calendar 분기", () => {
 		render(
 			<DatePicker
 				variant="calendar"
-				minDate="2026-10-10"
+				min="2026-10-10"
 				value="2026-10-12"
 				onValueChange={onValueChange}
 			/>,
@@ -888,36 +861,21 @@ describe("DatePicker variant=calendar 분기", () => {
 
 	it("starts on the selected day inside the bounding months and clamps outside ones", () => {
 		const { unmount } = render(
-			<DatePicker
-				variant="calendar"
-				minDate="2026-10-10"
-				value="2026-10-12"
-				onValueChange={vi.fn()}
-			/>,
+			<DatePicker variant="calendar" min="2026-10-10" value="2026-10-12" onValueChange={vi.fn()} />,
 		);
 		open();
 		expect(focusedDay()).toBe("12");
 		unmount();
 
 		const second = render(
-			<DatePicker
-				variant="calendar"
-				selectableRange="until-today"
-				value="2026-10-05"
-				onValueChange={vi.fn()}
-			/>,
+			<DatePicker variant="calendar" max="today" value="2026-10-05" onValueChange={vi.fn()} />,
 		);
 		open();
 		expect(focusedDay()).toBe("5");
 		second.unmount();
 
 		const third = render(
-			<DatePicker
-				variant="calendar"
-				minDate="2026-10-10"
-				value="2026-08-01"
-				onValueChange={vi.fn()}
-			/>,
+			<DatePicker variant="calendar" min="2026-10-10" value="2026-08-01" onValueChange={vi.fn()} />,
 		);
 		open();
 		expect(title()).toBe("2026년 10월");
@@ -925,39 +883,11 @@ describe("DatePicker variant=calendar 분기", () => {
 		third.unmount();
 
 		render(
-			<DatePicker
-				variant="calendar"
-				selectableRange="until-today"
-				value="2026-12-01"
-				onValueChange={vi.fn()}
-			/>,
+			<DatePicker variant="calendar" max="today" value="2026-12-01" onValueChange={vi.fn()} />,
 		);
 		open();
 		expect(title()).toBe("2026년 10월");
 		expect(focusedDay()).toBe("31");
-	});
-
-	it("bounds months by startYear/endYear alone when minDate is earlier and the range is open", () => {
-		// minDate 의 월(6월)은 minDate 의 해에만 걸린다 - startYear 가 더 늦으면 그 해 1월부터
-		const { unmount } = render(
-			<DatePicker
-				variant="calendar"
-				startYear={2026}
-				minDate="2020-06-01"
-				value="2026-02-10"
-				onValueChange={vi.fn()}
-			/>,
-		);
-		open();
-		expect(title()).toBe("2026년 2월");
-		unmount();
-
-		// endYear 가 올해여도 "all" 이면 12월까지 넘어간다
-		render(
-			<DatePicker variant="calendar" endYear={2026} value="2026-10-12" onValueChange={vi.fn()} />,
-		);
-		open();
-		expect(screen.getByRole("button", { name: "다음 달" })).toBeEnabled();
 	});
 });
 
@@ -1005,25 +935,6 @@ describe("DatePicker min · max · isDateDisabled (#1167)", () => {
 		expect(optionTexts().at(-1)).toBe("2026");
 		fireEvent.click(screen.getByText("2026"));
 		expect(onValueChange).toHaveBeenCalledWith("2026-09-15");
-	});
-
-	it("새 prop 과 deprecated prop 을 함께 주면 좁은 쪽이 이긴다", () => {
-		render(
-			<DatePicker min="2021-01-01" minDate="2023-01-01" startYear={2019} onValueChange={vi.fn()} />,
-		);
-		openList(0);
-		expect(optionTexts()[0]).toBe("2023");
-	});
-
-	it('안내 문구는 합친 범위를 읽는다 - min="today" 와 더 늦은 minDate 를 함께 주면 minDate', () => {
-		render(<DatePicker min="today" minDate="2026-10-01" onValueChange={vi.fn()} />);
-		expect(screen.getByText("최소 날짜: 2026-10-01")).toBeInTheDocument();
-	});
-
-	it('max="today" 와 오늘과 같은 날의 다른 상한을 함께 주면 "오늘까지" 로 읽는다', () => {
-		render(<DatePicker max="today" endYear={2026} onValueChange={vi.fn()} />);
-		expect(screen.getByText("오늘까지 선택 가능")).toBeInTheDocument();
-		expect(screen.queryByText(/최대 날짜/)).toBeNull();
 	});
 
 	it("max 를 스크린리더에 알린다", () => {

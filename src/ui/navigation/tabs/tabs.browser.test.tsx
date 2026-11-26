@@ -20,30 +20,22 @@ const systemColor = (name: string) => {
 
 // 현재 탭을 배경을 칠한 표시기로만 그린다 - 고대비에서는 시스템 선택색으로 (#1001)
 describe("Tabs in forced-colors mode (Chromium)", () => {
-	it.each<TabsProps["variant"]>(["line", "fills"])(
-		"keeps the %s indicator visible",
-		async (variant) => {
-			await emulateForcedColors("active");
-			try {
-				render(
-					<Tabs defaultValue="a" variant={variant}>
-						<TabList ariaLabel="탭">
-							<Tab value="a">A</Tab>
-							<Tab value="b">B</Tab>
-						</TabList>
-					</Tabs>,
-				);
-				await expect.poll(() => document.querySelector(".tabs_indicator")).not.toBeNull();
-				const indicator = document.querySelector(".tabs_indicator") as Element;
-				expect(getComputedStyle(indicator).backgroundColor).toBe(systemColor("Highlight"));
-				if (variant === "fills") {
-					expect(getComputedStyle(screen.getByRole("tab", { name: "A" })).color).toBe(
-						systemColor("HighlightText"),
-					);
-				}
-			} finally {
-				await emulateForcedColors("none");
-			}
-		},
-	);
+	it.each<TabsProps["variant"]>(["line"])("keeps the %s indicator visible", async (variant) => {
+		await emulateForcedColors("active");
+		try {
+			render(
+				<Tabs defaultValue="a" variant={variant}>
+					<TabList ariaLabel="탭">
+						<Tab value="a">A</Tab>
+						<Tab value="b">B</Tab>
+					</TabList>
+				</Tabs>,
+			);
+			await expect.poll(() => document.querySelector(".tabs_indicator")).not.toBeNull();
+			const indicator = document.querySelector(".tabs_indicator") as Element;
+			expect(getComputedStyle(indicator).backgroundColor).toBe(systemColor("Highlight"));
+		} finally {
+			await emulateForcedColors("none");
+		}
+	});
 });

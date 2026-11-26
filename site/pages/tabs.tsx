@@ -19,11 +19,6 @@ export const tabs: DocPage = {
 			title: "SegmentedControl 과 함께",
 			desc: "밑줄 탭은 내용 패널을 바꾸고, 알약 모양 SegmentedControl 은 그 안의 값 하나를 고릅니다. 모양으로 역할이 구분됩니다.",
 		},
-		{
-			id: "tabs/fills-lookalike",
-			title: "`fills` 를 쓰지 않는 이유",
-			desc: '`variant="fills"`(위)는 SegmentedControl(아래)과 거의 같아 보여 역할이 헷갈립니다. 밑줄(`line`)을 씁니다.',
-		},
 	],
 	props: ["TabsProps", "TabListProps", "TabProps", "TabPanelProps"],
 	notes: ["화면 제목 줄에 탭을 둘 때는 PageHeader `tabs` 를 씁니다"],
