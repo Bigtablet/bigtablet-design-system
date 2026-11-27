@@ -4,6 +4,15 @@
 
 이 문서는 [GitHub Releases](https://github.com/Bigtablet/bigtablet-design-system/releases) 를 기준으로 정리됩니다. 릴리즈는 `v*` 태그 푸시로 배포됩니다.
 
+## [5.2.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v5.2.0) - 2026-11-27
+- 5.0.0 에서 맞추지 못한 prop 이름 넷을 마저 맞췄습니다. 옛 이름은 별칭 없이 지웠습니다 - 고칠 곳과 grep 은 [MIGRATION v5.2.0](https://github.com/Bigtablet/bigtablet-design-system/blob/main/docs/MIGRATION.md#v520-입력-error--invalid--field-help--supportingtext--button-isloading) 에 있습니다. JSX 에 직접 쓴 prop 은 타입 체크가 짚고, 객체에 담아 펼친 prop 은 짚지 못합니다
+- `TextField` · `Textarea` · `Checkbox` · `RadioGroup` · `OtpInput` 의 `error`(boolean) → `invalid`. `Field` 의 `error`(문구)는 그대로입니다
+- `Field` `help` → `supportingText` (입력들과 같은 이름)
+- `Button` `loading` → `isLoading` (`Table` · `DataView` · `FilterBar` 와 같은 이름). Vanilla `.bt-button--loading` 클래스는 그대로입니다
+- `NavBar` `locale.hideLabel` → `showLabel` (기본 `true`, 숨기려면 `false`)
+- (렌더 변경) `Modal` 패널이 `box-sizing: border-box` 를 스스로 정합니다 - `* { box-sizing: border-box }` 를 건 앱에서 긴 패널 아래에 32px 가 아니라 80~96px 가 남고 본문이 그만큼 일찍 스크롤되던 것을 고쳤습니다. 리셋이 없는 앱에서는 패널 폭이 안쪽 여백만큼(48~64px) 줄어 `width` 값과 같아집니다
+- 에이전트 문서(`dist/llms/avoid.md`)에 이번에 지운 이름과 대신 쓸 이름을 넣었습니다
+
 ## [5.1.0](https://github.com/Bigtablet/bigtablet-design-system/releases/tag/v5.1.0) - 2026-11-26
 - `Button` 에 `loading` 추가 - 요청을 기다리는 동안 앞 아이콘 자리에 고리를 그리고 `aria-busy` 를 답니다. 눌리지 않지만 `disabled` 와 달리 포커스는 남습니다. Vanilla 는 `.bt-button--loading` 클래스이고, 눌림은 `disabled` 로 막습니다
 - Vanilla `Modal()` 에 `dismissible` 옵션 · `setDismissible()` 추가 - React `dismissible` 과 같이 Escape · 오버레이 닫기를 함께 정하고, 열린 뒤에도 잠그고 풀 수 있습니다 (저장 요청 중에만 잠그기)
