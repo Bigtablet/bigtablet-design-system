@@ -110,7 +110,7 @@ describe("OtpInput", () => {
 	});
 
 	it("applies error class when error is true", () => {
-		render(<OtpInput length={6} error ariaLabel="OTP" />);
+		render(<OtpInput length={6} invalid ariaLabel="OTP" />);
 		const inputs = screen.getAllByRole("textbox");
 		expect(inputs[0]!.className).toContain("otp_input_box_error");
 	});
@@ -371,7 +371,7 @@ describe("OtpInput", () => {
 
 	describe("Supporting text", () => {
 		it("applies error class to supporting text when error is true", () => {
-			render(<OtpInput length={6} error supportingText="잘못된 코드입니다" ariaLabel="OTP" />);
+			render(<OtpInput length={6} invalid supportingText="잘못된 코드입니다" ariaLabel="OTP" />);
 			const helper = screen.getByText("잘못된 코드입니다");
 			expect(helper.className).toContain("otp_input_supporting_error");
 		});
@@ -533,13 +533,13 @@ describe("OtpInput", () => {
 		expect(boxes()[0]).not.toHaveAttribute("aria-required");
 		expect(boxes()[0]).not.toHaveAttribute("aria-describedby");
 
-		rerender(<OtpInput length={4} value="" error supportingText="코드가 틀렸어요" />);
+		rerender(<OtpInput length={4} value="" invalid supportingText="코드가 틀렸어요" />);
 		expect(boxes()[0]).toHaveAttribute("aria-invalid", "true");
 		const supportingId = container.querySelector(".otp_input_supporting")?.id;
 		expect(boxes()[0]).toHaveAttribute("aria-describedby", supportingId);
 
 		rerender(
-			<Field name="otp" label="인증 코드" error="필수" help="문자로 받은 코드">
+			<Field name="otp" label="인증 코드" error="필수" supportingText="문자로 받은 코드">
 				<OtpInput length={4} value="" supportingText="도움말" />
 			</Field>,
 		);

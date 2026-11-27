@@ -187,7 +187,7 @@ describe.each(THEMES)("visual %s", (theme) => {
 				<TextField
 					label="오류"
 					defaultValue="잘못된 값"
-					error
+					invalid
 					supportingText="형식이 맞지 않습니다"
 				/>
 				<TextField label="비활성" defaultValue="수정 불가" disabled />

@@ -764,7 +764,7 @@ describe("DatePicker variant=calendar 분기", () => {
 
 	it("joins the Field description and the constraint", () => {
 		render(
-			<Field name="d" label="날짜" help="도움말">
+			<Field name="d" label="날짜" supportingText="도움말">
 				<DatePicker variant="calendar" min="2026-10-01" onValueChange={vi.fn()} />
 			</Field>,
 		);

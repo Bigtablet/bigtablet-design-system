@@ -15,7 +15,7 @@ describe("TextField", () => {
 	});
 
 	it("shows error state", () => {
-		render(<TextField error supportingText="Invalid email" />);
+		render(<TextField invalid supportingText="Invalid email" />);
 		const root = screen.getByRole("textbox").closest(".text_field");
 		expect(root).toHaveClass("text_field_error");
 		expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
@@ -168,7 +168,7 @@ describe("TextField", () => {
 	});
 
 	it("lets error win over success when both are set", () => {
-		render(<TextField error success supportingText="Invalid email" />);
+		render(<TextField invalid success supportingText="Invalid email" />);
 		const input = screen.getByRole("textbox");
 		const root = input.closest(".text_field");
 		expect(root).toHaveClass("text_field_error");

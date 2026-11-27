@@ -3,7 +3,7 @@ import { Radio, RadioGroup } from "@bigtablet/design-system";
 export default function Example() {
 	return (
 		<div style={{ display: "grid", gap: 24 }}>
-			<RadioGroup name="ship" label="배송 방법" supportingText="하나를 골라 주세요" error>
+			<RadioGroup name="ship" label="배송 방법" supportingText="하나를 골라 주세요" invalid>
 				<Radio value="parcel" label="택배" />
 				<Radio value="pickup" label="매장 수령" />
 			</RadioGroup>

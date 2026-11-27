@@ -65,7 +65,7 @@ describe("Button", () => {
 	it("loading 이면 스피너를 그리고 aria-busy 를 달며 눌리지 않지만 포커스는 남는다", () => {
 		const handleClick = vi.fn();
 		render(
-			<Button loading leadingIcon={<svg data-testid="lead" />} onClick={handleClick}>
+			<Button isLoading leadingIcon={<svg data-testid="lead" />} onClick={handleClick}>
 				저장하는 중…
 			</Button>,
 		);
@@ -90,7 +90,7 @@ describe("Button", () => {
 		const handleOuterClick = vi.fn();
 		render(
 			<form onSubmit={handleSubmit}>
-				<Button type="submit" loading>
+				<Button type="submit" isLoading>
 					저장하는 중…
 				</Button>
 			</form>,
@@ -105,7 +105,7 @@ describe("Button", () => {
 
 	it("소비자가 준 aria-busy 가 loading 을 덮지 못하고, loading 이 아니면 그대로 남는다", () => {
 		const { rerender } = render(
-			<Button loading aria-busy={false}>
+			<Button isLoading aria-busy={false}>
 				저장
 			</Button>,
 		);
@@ -124,7 +124,7 @@ describe("Button", () => {
 	it("loading 인 anchor 는 aria-disabled 로 막는다", () => {
 		const handleClick = vi.fn();
 		render(
-			<Button as="a" href="/x" loading onClick={handleClick}>
+			<Button as="a" href="/x" isLoading onClick={handleClick}>
 				이동
 			</Button>,
 		);

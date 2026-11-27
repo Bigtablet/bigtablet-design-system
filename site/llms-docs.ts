@@ -164,6 +164,18 @@ export const AVOID: {
 		use: "onValueChange",
 	},
 	{ props: "FilterBarProps", component: "FilterBar", avoid: "loading", use: "isLoading" },
+	{ props: "ButtonProps", component: "Button", avoid: "loading", use: "isLoading" },
+	{ props: "FieldProps", component: "Field", avoid: "help", use: "supportingText" },
+	{ props: "TextFieldProps", component: "TextField", avoid: "error", use: "invalid" },
+	{ props: "TextareaProps", component: "Textarea", avoid: "error", use: "invalid" },
+	{ props: "CheckboxProps", component: "Checkbox", avoid: "error", use: "invalid" },
+	{ props: "RadioGroupProps", component: "RadioGroup", avoid: "error", use: "invalid" },
+	{ props: "OtpInputProps", component: "OtpInput", avoid: "error", use: "invalid" },
+	{
+		avoid: "NavBar `locale.hideLabel`",
+		use: "`locale.showLabel` (기본 true, 숨기려면 `false`)",
+		why: "5.2.0 에서 이름을 바꿨다 - TextField · Textarea 의 `showLabel` 과 같은 방향",
+	},
 	{
 		avoid: '`<Badge variant="success">` · Alert · Toast 의 `variant` 로 의미 색',
 		use: "`tone` (info · success · warning · error)",

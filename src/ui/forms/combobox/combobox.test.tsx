@@ -357,7 +357,7 @@ describe("Combobox", () => {
 
 	it("lets Field win over consumer aria-*", () => {
 		render(
-			<Field name="owner" label="담당자" help="이름으로 검색">
+			<Field name="owner" label="담당자" supportingText="이름으로 검색">
 				<Combobox onSearch={vi.fn()} aria-label="무시됨" aria-describedby="무시됨" />
 			</Field>,
 		);
