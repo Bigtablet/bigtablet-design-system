@@ -41,9 +41,9 @@ export interface TextFieldProps
 	showLabel?: boolean;
 	/** 입력 필드 아래에 표시할 도움말 텍스트 */
 	supportingText?: string;
-	/** 에러 상태 여부. `success` 와 동시에 지정되면 `error` 가 우선한다. */
-	error?: boolean;
-	/** 성공(검증 통과) 상태 여부. `error` 가 true 면 무시된다. */
+	/** 에러 상태 여부. `success` 와 동시에 지정되면 `invalid` 가 우선한다. */
+	invalid?: boolean;
+	/** 성공(검증 통과) 상태 여부. `invalid` 가 true 면 무시된다. */
 	success?: boolean;
 	/**
 	 * 식별자(아이디·인증코드·시리얼·사업자번호)를 담는 칸인지. 켜면 `l`/`I`/`1` 과 `0`/`O` 를
@@ -115,7 +115,7 @@ export const TextField = ({
 	label,
 	showLabel = true,
 	supportingText,
-	error,
+	invalid: error,
 	success,
 	identifier,
 	leadingIcon,
@@ -229,7 +229,7 @@ export const TextField = ({
 		resolvedType = passwordRevealed ? "text" : (type ?? "password");
 	}
 
-	// error 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
+	// invalid 가 success 를 이긴다 - 둘 다 켜진 건 대개 검증 상태 전환 중인 순간이고,
 	// 그때 실패를 성공처럼 보여주면 사용자가 잘못된 값을 그대로 제출하게 된다.
 	const isError = !!error || !!field?.invalid;
 	const isSuccess = !!success && !isError;

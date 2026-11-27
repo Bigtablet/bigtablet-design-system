@@ -12,7 +12,7 @@ export interface CheckboxProps
 	/** 중간 선택(indeterminate) 상태 여부 */
 	indeterminate?: boolean;
 	/** 에러 상태 여부 */
-	error?: boolean;
+	invalid?: boolean;
 	/** 입력 요소 참조 */
 	ref?: React.Ref<HTMLInputElement>;
 }
@@ -26,7 +26,7 @@ export interface CheckboxProps
 export const Checkbox = ({
 	label,
 	indeterminate,
-	error,
+	invalid: error,
 	className,
 	ref,
 	...props

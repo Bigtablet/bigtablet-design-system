@@ -20,7 +20,7 @@ export interface FieldControl {
 	 * 연결되지 않으므로 이 값을 `aria-labelledby` 에 쓴다. 라벨이 없으면 undefined.
 	 */
 	labelId: string | undefined;
-	/** help·error 를 함께 가리키는 `aria-describedby` 값. 둘 다 없으면 undefined */
+	/** supportingText·error 를 함께 가리키는 `aria-describedby` 값. 둘 다 없으면 undefined */
 	describedBy: string | undefined;
 	/** 에러 상태 - 입력은 `aria-invalid` 에 반영한다 */
 	invalid: boolean;
@@ -78,7 +78,7 @@ export interface FieldProps
 	/** 필수 표시(*). 자식 입력에 `aria-required` 로도 전달된다 */
 	required?: boolean;
 	/** 입력 아래 도움말. 에러가 있으면 에러가 대신 보인다 */
-	help?: React.ReactNode;
+	supportingText?: React.ReactNode;
 	/**
 	 * 에러 메시지. 지정하면 `Form` 의 `errors[name]` 보다 우선한다.
 	 * 문자열이 아니어도 되지만 스크린리더가 읽으므로 텍스트를 권장한다.
@@ -99,7 +99,7 @@ export interface FieldProps
  *
  * @example
  * ```tsx
- * <Field name="email" label="이메일" required help="로그인 ID 로 사용됩니다">
+ * <Field name="email" label="이메일" required supportingText="로그인 ID 로 사용됩니다">
  *   <TextField />
  * </Field>
  * ```
@@ -109,7 +109,7 @@ export const Field = ({
 	label,
 	labelAction,
 	required = false,
-	help,
+	supportingText: help,
 	error: errorProp,
 	children,
 	className,

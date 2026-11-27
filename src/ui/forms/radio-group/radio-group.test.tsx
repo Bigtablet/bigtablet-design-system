@@ -105,7 +105,7 @@ describe("RadioGroup", () => {
 
 	it("error: sets aria-invalid + links supportingText", () => {
 		render(
-			<RadioGroup label="g" error supportingText="필수 항목">
+			<RadioGroup label="g" invalid supportingText="필수 항목">
 				<Radio value="a" label="A" />
 			</RadioGroup>,
 		);
@@ -205,7 +205,7 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 
 	it("lets the group label and Field win over consumer aria-*", () => {
 		render(
-			<Field name="ship" label="배송" help="영업일 기준">
+			<Field name="ship" label="배송" supportingText="영업일 기준">
 				<RadioGroup aria-label="무시됨" aria-describedby="무시됨">
 					<Radio value="a" label="A" />
 				</RadioGroup>
@@ -236,7 +236,7 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		// `<label for>` 가 첫 라디오를 잡아, 라디오 이름이 옆 문구가 아니라 그룹 라벨이 된다.
 		// 라벨 · 설명 · 필수 연결은 `role="radiogroup"` 이 이미 한다.
 		const { container } = render(
-			<Field name="lang" label="언어" help="고르세요" required>
+			<Field name="lang" label="언어" supportingText="고르세요" required>
 				<RadioGroup>
 					<Radio value="ko" label="한국어" />
 					<Radio value="en" label="English" />
@@ -261,7 +261,7 @@ describe("Radio standalone (no RadioGroup) — 기존 동작 보존", () => {
 		// error 는 이 컴포넌트에 직접 준 신호다 - Checkbox 와 같은 순서를 쓴다.
 		render(
 			<Field name="ship" label="배송">
-				<RadioGroup error>
+				<RadioGroup invalid>
 					<Radio value="a" label="A" />
 				</RadioGroup>
 			</Field>,

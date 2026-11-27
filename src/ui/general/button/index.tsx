@@ -37,7 +37,7 @@ interface ButtonBaseProps {
 	 * `disabled` 와 달리 포커스는 남는다(`aria-disabled` + 클릭 차단) - 누른 버튼이 포커스를 잃으면 키보드 사용자가 자리를 잃는다.
 	 * 라벨은 바꾸지 않는다 - "저장하는 중…" 같은 문구는 children 으로 넘긴다.
 	 */
-	loading?: boolean;
+	isLoading?: boolean;
 }
 
 /**
@@ -83,7 +83,7 @@ export const Button = <T extends React.ElementType = "button">(props: ButtonProp
 		radius,
 		danger = false,
 		disabled = false,
-		loading = false,
+		isLoading: loading = false,
 		as,
 		className,
 		children,

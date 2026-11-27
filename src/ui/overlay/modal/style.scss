@@ -59,10 +59,11 @@ $panel_top_dvh: clamp(#{token.$spacing_32}, 15dvh, #{token.$spacing_128});
     // 뷰포트보다 긴 내용이 위아래로 잘려 접근 불가가 되던 것을 막는다. body 스크롤이 잠긴 상태라
     // 페이지 스크롤로도 닿을 수 없었다. 제목·푸터는 고정되고 본문만 스크롤된다(&_body).
     // dvh 는 모바일 사파리 주소창을 따라가고, 미지원 브라우저는 위의 vh 선언을 쓴다.
-    // 위는 $panel_top, 아래는 32px 를 남긴다. max-height 는 content-box 라 안쪽 여백(위아래)도 뺀다 -
-    // 예전 값은 여백을 빼지 않아 긴 패널이 화면 위아래 끝까지 붙었다
-    max-height: calc(100vh - #{$panel_top} - #{token.$spacing_32} - 2 * #{token.$spacing_24});
-    max-height: calc(100dvh - #{$panel_top_dvh} - #{token.$spacing_32} - 2 * #{token.$spacing_24});
+    // 위는 $panel_top, 아래는 32px 를 남긴다. box-sizing 을 못박는다 - 호스트의 값을 그대로 받으면
+    // `* { box-sizing: border-box }` 를 건 앱과 안 건 앱에서 상한이 안쪽 여백만큼(48~64px) 갈린다
+    box-sizing: border-box;
+    max-height: calc(100vh - #{$panel_top} - #{token.$spacing_32});
+    max-height: calc(100dvh - #{$panel_top_dvh} - #{token.$spacing_32});
     padding: token.$spacing_24;
     // visible 유지 - hidden 으로 바꾸면 우상단 close 버튼의 focus ring(box-shadow)이 잘린다.
     // 넘치는 내용은 &_body 가 자기 안에서 처리한다.
@@ -72,8 +73,6 @@ $panel_top_dvh: clamp(#{token.$spacing_32}, 15dvh, #{token.$spacing_128});
 
     @include token.from_medium {
       padding: token.$spacing_32;
-      max-height: calc(100vh - #{$panel_top} - #{token.$spacing_32} - 2 * #{token.$spacing_32});
-      max-height: calc(100dvh - #{$panel_top_dvh} - #{token.$spacing_32} - 2 * #{token.$spacing_32});
     }
   }
 

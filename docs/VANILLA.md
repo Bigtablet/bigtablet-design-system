@@ -148,7 +148,7 @@ cp node_modules/@bigtablet/design-system/dist/vanilla/bigtablet.min.js  src/main
 <button class="bt-button bt-button--lg bt-button--filled">Large</button>
 <button class="bt-button bt-button--xl bt-button--filled">XLarge</button>
 
-<!-- 기다리는 중 (React <Button loading>) - 글자 앞에 고리가 돈다. 클래스는 모양뿐이라 눌림은 disabled 로 막는다.
+<!-- 기다리는 중 (React <Button isLoading>) - 글자 앞에 고리가 돈다. 클래스는 모양뿐이라 눌림은 disabled 로 막는다.
      React 는 포커스를 남기려 aria-disabled + 클릭 차단을 쓰지만 CSS 만으로는 클릭을 막을 수 없다 - 포커스를 남기려면
      disabled 대신 aria-disabled="true" 를 달고 클릭을 직접 막는다 -->
 <button class="bt-button bt-button--md bt-button--filled bt-button--loading" disabled aria-busy="true">저장하는 중…</button>

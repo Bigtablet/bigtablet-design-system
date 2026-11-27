@@ -44,7 +44,7 @@ describe("Checkbox", () => {
 	});
 
 	it("applies error state", () => {
-		render(<Checkbox error />);
+		render(<Checkbox invalid />);
 		const label = screen.getByRole("checkbox").closest("label");
 		expect(label).toHaveClass("checkbox_error");
 	});

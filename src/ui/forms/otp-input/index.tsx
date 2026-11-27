@@ -15,7 +15,7 @@ export interface OtpInputProps {
 	/** 값 변경 콜백 (canonical) */
 	onValueChange?: (value: string) => void;
 	/** 에러 상태 */
-	error?: boolean;
+	invalid?: boolean;
 	/** 비활성화 */
 	disabled?: boolean;
 	/** 하단 도움말 텍스트 */
@@ -38,7 +38,7 @@ export const OtpInput = ({
 	length = 6,
 	value = "",
 	onValueChange,
-	error = false,
+	invalid: error = false,
 	disabled = false,
 	supportingText,
 	autoFocus = false,
@@ -194,7 +194,7 @@ export const OtpInput = ({
 
 	const rootClassName = cn("otp_input", className);
 	const supportingId = React.useId();
-	// Field 가 감싸면 그 설명(help/error)을 그룹이 가리킨다.
+	// Field 가 감싸면 그 설명(supportingText/error)을 그룹이 가리킨다.
 	const field = useFieldControl();
 
 	return (
@@ -228,7 +228,7 @@ export const OtpInput = ({
 						onPaste={handlePaste}
 						disabled={disabled}
 						aria-label={t("otpInput.digit", { index: i + 1 })}
-						// error/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
+						// invalid/supportingText 를 AT 에 전달 (시각 전용이던 문제 수정)
 						aria-invalid={error || field?.invalid || undefined}
 						// 자리마다 붙인다 - role="group" 은 aria-required 를 허용하지 않고(axe
 						// aria-allowed-attr), 여섯 자리는 하나만 비어도 코드가 완성되지 않는다.

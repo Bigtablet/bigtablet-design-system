@@ -330,7 +330,7 @@ it("calls onValueChange with new value", () => {
 });
 
 it("shows error state", () => {
-    render(<TextField error supportingText="Error message" />);
+    render(<TextField invalid supportingText="Error message" />);
 
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByText("Error message")).toBeInTheDocument();

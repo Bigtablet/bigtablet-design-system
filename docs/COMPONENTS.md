@@ -373,7 +373,7 @@ import { Button } from '@bigtablet/design-system';
 <Button variant="outline" danger>삭제</Button>
 
 // 요청을 기다리는 중 - 앞 아이콘 자리에 고리, aria-busy, 눌리지 않음(포커스는 남는다 - disabled 와 다름). 문구는 직접 바꾼다
-<Button loading={isSaving}>{isSaving ? "저장하는 중…" : "저장"}</Button>
+<Button isLoading={isSaving}>{isSaving ? "저장하는 중…" : "저장"}</Button>
 
 // Sizes
 <Button size="sm">Small</Button>
@@ -703,7 +703,7 @@ import { Combobox } from '@bigtablet/design-system';
 
 | 상황 | 쓸 것 |
 |------|-------|
-| 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`error` 를 주지 않습니다 |
+| 폼 화면 — 필드가 여럿, 서버 에러 배분, 필드 간 간격이 균일해야 함 | **`Field`.** 입력에는 `label`·`supportingText`·`invalid` 를 주지 않습니다 |
 | 단독 입력 — 검색창, 설정 행, 테이블 필터 | **입력의 자체 prop.** `Field` 로 감싸지 않습니다 |
 
 `Field` 가 파는 것은 `TextField` 하나에 대한 이득이 아니라 **입력 11종 사이의 균일성**입니다. `Dropdown`·`DatePicker`·`Switch` 는 에러를 표시할 수단이 아예 없어, 한 폼에 세로로 놓으면 라벨 위치와 에러 문구 자리가 갈립니다.
@@ -712,7 +712,7 @@ import { Combobox } from '@bigtablet/design-system';
 import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-system';
 
 <Form onSubmit={save} errors={serverErrors}>
-  <Field name="email" label="이메일" required help="로그인 ID 로 사용됩니다">
+  <Field name="email" label="이메일" required supportingText="로그인 ID 로 사용됩니다">
     <TextField />
   </Field>
   <Field name="role" label="권한">
@@ -726,7 +726,7 @@ import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-syst
 
 `Field` 안에서는 입력에 `label` 을 주지 않습니다 — 라벨이 두 번 보입니다.
 
-**입력하면서 검증할 때** - `Field` 의 `error` 에 메시지를 넘깁니다. `Form` 의 `errors[name]` 보다 우선하므로 서버 에러와 함께 써도 됩니다. 에러가 있으면 `help` 대신 보이고 입력에 `aria-invalid` 가 붙습니다. 입력(`TextField`)의 `error` 는 `boolean` 이라 `Field` 안에서는 주지 않습니다.
+**입력하면서 검증할 때** - `Field` 의 `error` 에 메시지를 넘깁니다. `Form` 의 `errors[name]` 보다 우선하므로 서버 에러와 함께 써도 됩니다. 에러가 있으면 `supportingText` 대신 보이고 입력에 `aria-invalid` 가 붙습니다. 입력(`TextField`)의 상태 prop 은 `invalid`(`boolean`)이고, `Field` 가 에러 상태를 넘겨 주므로 `Field` 안에서는 주지 않습니다.
 
 ```tsx
 import { useState } from "react";
@@ -870,7 +870,7 @@ import { TextField } from '@bigtablet/design-system';
 <TextField label="이름" placeholder="이름을 입력하세요" />
 
 // 상태 표시
-<TextField label="이메일" error supportingText="유효하지 않은 이메일입니다" />
+<TextField label="이메일" invalid supportingText="유효하지 않은 이메일입니다" />
 
 // 장식 아이콘 - aria-hidden 으로 접근성 트리에서 제외된다
 import { Search, X } from 'lucide-react';
@@ -911,7 +911,7 @@ import { Search, X } from 'lucide-react';
 <TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 ```
 
-> **`error` vs `success` 우선순위**: 둘 다 `true` 면 `error` 가 이깁니다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문입니다. `success` 는 `aria-invalid` 를 켜지 않습니다 (`error` 만 `aria-invalid="true"`).
+> **`invalid` vs `success` 우선순위**: 둘 다 `true` 면 `invalid` 가 이깁니다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문입니다. `success` 는 `aria-invalid` 를 켜지 않습니다 (`invalid` 만 `aria-invalid="true"`).
 >
 > `variant` · `success` 는 Vanilla 의 `.bt-text-field__input--filled` / `--success` 와 1:1 대응합니다.
 >
@@ -947,7 +947,7 @@ Pretendard 의 `cv05`(l 에 꼬리) · `cv08`(I 에 세리프) 와 `slashed-zero
 ```tsx
 import { Field, TagInput } from '@bigtablet/design-system';
 
-<Field name="keywords" label="키워드" help="Enter 또는 쉼표로 구분합니다">
+<Field name="keywords" label="키워드" supportingText="Enter 또는 쉼표로 구분합니다">
   <TagInput value={tags} onValueChange={setTags} maxTags={10} />
 </Field>
 ```
@@ -996,7 +996,7 @@ import { Textarea } from '@bigtablet/design-system';
 
 #### 접근성
 
-- `error` 시 `aria-invalid="true"` + `supportingText` 가 `aria-describedby` 로 연결
+- `invalid` 시 `aria-invalid="true"` + `supportingText` 가 `aria-describedby` 로 연결
 - `showLabel={false}` 면 `label` 이 `aria-label` 로 적용 (시각 라벨 숨김)
 - 카운터는 `aria-hidden` - 스크린 리더용 글자수 안내가 필요하면 `supportingText` 로 별도 제공
 
@@ -1021,7 +1021,7 @@ import { Textarea } from "@bigtablet/design-system";
 <Textarea label="마크다운" imeStrategy="immediate" value={md} onValueChange={setMd} />
 
 // 에러
-<Textarea label="문의 내용" error supportingText="내용을 입력해주세요." rows={4} />
+<Textarea label="문의 내용" invalid supportingText="내용을 입력해주세요." rows={4} />
 ```
 
 ---
@@ -1119,7 +1119,7 @@ import { RadioGroup, Radio } from "@bigtablet/design-system";
   value={method}
   onValueChange={setMethod}
   orientation="horizontal"
-  error={!method}
+  invalid={!method}
   supportingText={!method ? "결제 수단을 선택해 주세요." : undefined}
 >
   <Radio value="card" label="카드" />
@@ -1501,7 +1501,7 @@ const [code, setCode] = useState('');
 <OtpInput
   value={code}
   onValueChange={setCode}
-  error
+  invalid
   supportingText="인증번호가 일치하지 않습니다"
 />
 ```

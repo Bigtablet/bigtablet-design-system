@@ -10,7 +10,7 @@ export default function Example() {
 			<TextField
 				label="이메일"
 				defaultValue="hello@"
-				error
+				invalid
 				supportingText="이메일 형식이 아닙니다"
 			/>
 		</div>
