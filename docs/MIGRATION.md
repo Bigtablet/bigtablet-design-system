@@ -8,6 +8,7 @@
 
 - [업그레이드 체크리스트](#업그레이드-체크리스트)
 - [개요](#개요)
+- [v5.2.0 (입력 error → invalid · Field help → supportingText · Button isLoading)](#v520-입력-error--invalid--field-help--supportingtext--button-isloading)
 - [v5.0.0 (deprecated API 제거 · Toggle → Switch 마무리)](#v500-deprecated-api-제거--toggle--switch-마무리)
 - [v4.10.0 (쓰이지 않는 SCSS 믹스인 4개 · Tabs fills deprecate · Toast 기본 위치)](#v4100-쓰이지-않는-scss-믹스인-4개--tabs-fills-deprecate--toast-기본-위치)
 - [v4.1.0 (옛 이름 일괄 제거 · 의미 색 prop 을 tone 으로 · variant 값 이름 통일)](#v410-옛-이름-일괄-제거--의미-색-prop-을-tone-으로--variant-값-이름-통일)
@@ -56,6 +57,51 @@
 - 각 버전 섹션은 그 버전 시점에 코드에 있던 deprecated prop 기준입니다. 지금 남아 있는 것은 `grep -rn "@deprecated" src/ui --include=index.tsx` 로 확인하세요.
 - **Vanilla JS 패키지(`/vanilla`)는 deprecated 유예 없이 한 번에 정리**했습니다. 클래스 이름은 컴파일러가 잡아주지 않으므로 [v3.8.0 섹션](#v380-vanilla-패키지-정리)의 old → new 표와 치환 스크립트를 그대로 사용하세요.
 - 버전은 semver 내림차순으로 정렬되어 있습니다.
+
+---
+
+## v5.2.0 (입력 error → invalid · Field help → supportingText · Button isLoading)
+
+5.0.0 에서 맞추지 못한 이름 넷을 마저 맞췄습니다. 별칭은 없고, 이름을 바꾼 넷은 값 · 동작 · 렌더 결과가 그대로입니다 (렌더가 바뀌는 것은 아래 "함께 고친 것" 의 `Modal` 하나입니다). JSX 에 직접 쓴 prop 은 타입 체크(`tsc --noEmit`)가 짚습니다 - 객체에 담아 펼친 것(`{...props}`)은 짚지 못하니 아래 grep 을 함께 돌립니다.
+
+prop 이름이 바뀌는데 minor 인 이유: 사내 소비자가 모두 정확한 버전으로 고정해 두어(`"5.1.0"`) 저절로 받는 앱이 없습니다.
+
+| 컴포넌트 | 예전 | 새 이름 | 왜 |
+|------|------|------|------|
+| `TextField` · `Textarea` · `Checkbox` · `RadioGroup` · `OtpInput` | `error` (boolean) | `invalid` | `Field` 의 `error` 는 **문구**(ReactNode)인데 입력의 `error` 는 **상태**(boolean)라, 같은 이름이 자리에 따라 타입이 달랐습니다. 입력 쪽을 `aria-invalid` · `FieldControl.invalid` 와 같은 이름으로 맞췄습니다 |
+| `Field` | `help` | `supportingText` | 입력 6종(`TextField` · `Textarea` · `RadioGroup` · `OtpInput` · `FileInput` · `ListItem`)이 쓰는 이름입니다 |
+| `Button` | `loading` | `isLoading` | `Table` · `DataView` · `FilterBar` · `TopLoading` 과 같은 이름입니다 (5.1.0 에서 하루 나간 이름) |
+| `NavBar` `locale` | `hideLabel: true` | `showLabel: false` | `TextField` · `Textarea` 의 `showLabel` 과 방향을 맞췄습니다. 기본값(라벨 보임)은 그대로입니다 |
+
+`Field` 의 `error`(문구)는 **그대로**입니다 - `error` 를 통째로 치환하면 안 됩니다. 타입 체크가 짚는 곳만 고칩니다.
+
+```tsx
+// Before
+<Field name="email" label="이메일" help="로그인 ID" error={errors.email?.message}>
+  <TextField error={!!errors.email} />
+</Field>
+
+// After
+<Field name="email" label="이메일" supportingText="로그인 ID" error={errors.email?.message}>
+  <TextField invalid={!!errors.email} />
+</Field>
+```
+
+`Field` 안의 입력은 `Field` 가 `aria-invalid` 와 에러 색을 넘겨 주므로 `invalid` 를 따로 주지 않아도 됩니다. react-hook-form 이면 `fieldState.invalid` 를 그대로 넘길 수 있습니다.
+
+**앱 쪽에서 할 일:** 버전을 올리고 `tsc --noEmit` 을 돌립니다. 미리 세어 보려면 `grep -rnE "(^|[[:space:]])(help=|hideLabel|loading[ =>])" --include=*.tsx` 와 `grep -rnE "<(TextField|Textarea|Checkbox|RadioGroup|OtpInput)" -A8 --include=*.tsx | grep -E "[[:space:]]error([ =>/]|$)"`. `vi.mock` 으로 DS 를 가린 테스트는 타입 체크가 잡지 못하니 mock 이 받는 prop 이름도 같이 봅니다.
+
+**객체에 담아 펼치는 자리는 타입 체크가 통과시킵니다.** `const props = { loading: true }; <Button {...props} />` 는 남는 속성 검사를 받지 않아 에러 없이 컴파일되고, 스피너와 클릭 차단이 조용히 사라집니다. 입력의 `error` · `Field` 의 `help` 도 같습니다 (`help` 는 `Field` 의 `<div>` 속성으로 흘러가 도움말이 화면에서 사라집니다). 객체 속성과 래퍼 컴포넌트가 넘기는 prop 을 따로 찾습니다: `grep -rnE "\b(loading|help|hideLabel|error): " --include=*.ts --include=*.tsx` - `error:` 는 다른 뜻으로도 흔하니 DS 입력으로 펼쳐지는 객체인지 보고 고릅니다.
+
+### 함께 고친 것
+
+- (렌더 변경) `Modal` 패널이 `box-sizing: border-box` 를 스스로 정합니다. 호스트의 값을 그대로 받아, `* { box-sizing: border-box }` 를 건 앱에서는 긴 패널 아래에 32px 가 아니라 80~96px 가 남고 본문이 그만큼 일찍 스크롤됐습니다. 리셋이 없는 앱에서는 패널 폭이 안쪽 여백만큼(48~64px) 줄어 `width` 값과 같아집니다
+
+### 사내 저장소 사용처 (5.2.0 작업 시점 grep)
+
+| 저장소 | 걸리는 곳 |
+|------|------|
+| notiiv-monorepo-web | `Field` `help` 6곳, 입력 · `Field` 의 `error` 141줄 중 boolean 을 넘기는 쪽(대략 절반 - 타입 체크로 확정), `Button` `loading` 0곳, `hideLabel` 0곳 |
 
 ---
 

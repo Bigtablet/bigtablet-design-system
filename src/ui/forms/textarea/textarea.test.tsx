@@ -25,7 +25,7 @@ describe("Textarea", () => {
 	});
 
 	it("applies error class + aria-invalid", () => {
-		const { container } = render(<Textarea label="내용" error />);
+		const { container } = render(<Textarea label="내용" invalid />);
 		expect(container.firstChild).toHaveClass("textarea_error");
 		expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
 	});

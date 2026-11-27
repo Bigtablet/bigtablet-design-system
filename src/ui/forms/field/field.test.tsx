@@ -24,7 +24,7 @@ describe("Field", () => {
 
 	it("describes the input with its help text", () => {
 		render(
-			<Field name="email" label="이메일" help="로그인 ID 로 사용됩니다">
+			<Field name="email" label="이메일" supportingText="로그인 ID 로 사용됩니다">
 				<TextField />
 			</Field>,
 		);
@@ -40,7 +40,12 @@ describe("Field", () => {
 	it("swaps help for the error and points the input at it", () => {
 		// 둘을 동시에 띄우면 어느 쪽을 고쳐야 하는지 흐려지고 세로 간격이 필드마다 달라진다.
 		render(
-			<Field name="email" label="이메일" help="로그인 ID" error="이미 사용 중인 이메일입니다">
+			<Field
+				name="email"
+				label="이메일"
+				supportingText="로그인 ID"
+				error="이미 사용 중인 이메일입니다"
+			>
 				<TextField />
 			</Field>,
 		);
@@ -69,7 +74,7 @@ describe("Field", () => {
 		// role="group" 컨테이너는 <label htmlFor> 로 이름이 붙지 않는다. DatePicker·OtpInput·
 		// RadioGroup 이 그 형태라, Field 는 labelId 도 함께 내려준다.
 		render(
-			<Field name="plan" label="요금제" help="언제든 변경할 수 있습니다">
+			<Field name="plan" label="요금제" supportingText="언제든 변경할 수 있습니다">
 				<RadioGroup name="plan">
 					<Radio value="a" label="A" />
 				</RadioGroup>
@@ -257,7 +262,7 @@ describe("Field", () => {
 		// 입력이 화면에 그린 supportingText 를 aria-describedby 가 안 가리키면, 눈으로 보이는
 		// 제약이 스크린리더에는 전달되지 않는다.
 		render(
-			<Field name="email" label="이메일" help="로그인 ID 로 사용됩니다">
+			<Field name="email" label="이메일" supportingText="로그인 ID 로 사용됩니다">
 				<TextField supportingText="회사 이메일만 사용하세요" />
 			</Field>,
 		);

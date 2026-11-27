@@ -235,14 +235,14 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 
 | Component | Purpose | Key props |
 |-----------|---------|-----------|
-| `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth`, `loading` |
+| `Button` | Primary action button. | `variant` (filled/outline/tonal/text), `size` (sm/md/lg/xl), `danger`, `radius`, `leadingIcon`, `trailingIcon`, `fullWidth`, `isLoading` |
 | `IconButton` | Icon-only button. | `variant` (text/filled/tonal/outline), `size` (sm/md), `icon`, `aria-label` (required) |
 | `CopyButton` | Copy-to-clipboard button: shows "copied" for 2s and announces via hidden `role="status"`. Hook: `useClipboard()` → `{ copy, status, error, reset }`; `copyText()` one-shot. Falls back to `execCommand` (in-app browsers, http). | `text` (string or fn), `label`/`copiedLabel`/`failedLabel`, `iconOnly` (label = accessible name), `aria-label` (name apart from the visible label - give each of many buttons its own), `size`, `variant`, `resetAfter`, `onCopy`, `onError`. |
-| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `error`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
-| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `error`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onValueChange`, `imeStrategy`. Same tokens/visuals as TextField. |
-| `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `error`, `label` |
+| `TextField` | Single-line text input with label. | `label`, `placeholder`, `supportingText`, `invalid`, `size`, `leadingIcon`/`trailingIcon` (decorative only - `aria-hidden`), `leadingAction`/`trailingAction` (focusable content), `showPasswordToggle` + `passwordToggleLabels` (app-injected i18n), `clearable`, `onValueChange`, `imeStrategy` (delayed/immediate - use `immediate` for live search w/ Korean IME) |
+| `Textarea` | Multi-line text input. | `label`, `placeholder`, `supportingText`, `invalid`, `size`, `rows`, `minRows`/`maxRows` (auto-grow), `maxLength` + `showCounter`, `resize` (none/vertical/both), `onValueChange`, `imeStrategy`. Same tokens/visuals as TextField. |
+| `Checkbox` | Boolean selection. | `checked`, `indeterminate`, `disabled`, `invalid`, `label` |
 | `Radio` | Single choice. | `value`, `checked`, `name`, `size`, `label`. Standalone, or auto-wired inside `RadioGroup`. |
-| `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `error`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
+| `RadioGroup` | Groups `Radio`s via Context. | `value`/`defaultValue`/`onValueChange`, `name` (auto), `label`, `supportingText`, `invalid`, `size`, `orientation` (vertical/horizontal), `disabled`. Children = `Radio value=...`. |
 | `SegmentedControl` | One value from 2-5 short options on one line (currency, locale, period). Not for panel switching (use `Tabs`). | `items` (`{ value, label?, icon?, ariaLabel?, disabled? }[]`), `value`/`defaultValue`/`onValueChange` (generic `T extends string`), `size` (sm/md), `fullWidth`, `disabled`, `required`, `name`. Needs `aria-label` or a `Field`. |
 | `FilterBar` | List-page filter form: field grid with submit or instant-apply mode. Holds no filter state. | `children` (fields), `submitMode` (`submit` default or `instant` without search button), `onSubmit` (submit mode), `onReset` (shows reset), `canSubmit`, `canReset`, `isLoading`, `disabled`, `submitLabel`/`resetLabel`, `fieldMinWidth` (default 200). Renders `<form role="search">` - give it `aria-label`. Fits `DataView` `toolbar.filters`. |
 | `Switch` | On/off switch (`role="switch"`). Named `Toggle` before 5.0.0. | `ariaLabel` (required), `checked`/`onCheckedChange`, `size` (sm/md), `disabled` |
@@ -253,7 +253,7 @@ Organized by category. **Always** import from the package root (`@bigtablet/desi
 | `MonthPicker` | Year/month select (`"YYYY-MM"`) - settlement month, card expiry. | `value`, `onValueChange`, `min`/`max` (`"YYYY-MM"` or `"today"`), rest as DatePicker (label, clearable, size). Replaces `DatePicker mode="year-month"` |
 | `DateCalendar` | Standalone month calendar (single date). Also the DatePicker calendar popover. | Values are `"YYYY-MM-DD"` strings (month `"YYYY-MM"`) - no time zone. `value`/`defaultValue`/`onValueChange`, `month`/`defaultMonth`/`onMonthChange`, `min`/`max`, `isDateDisabled`, `today`, `weekStartsOn`, `renderDay` (decoration, aria-hidden) + `describeDay` (adds meaning to the accessible name). |
 | `FileInput` | File upload. | `variant` (button/preview), `multiple`, `accept`, `onFiles`, `previewSize` (for preview variant), `disabled` |
-| `OtpInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `error` |
+| `OtpInput` | Single-digit code boxes. | `length`, `value`, `onValueChange`, `autoFocus`, `invalid` |
 
 ### Display
 

@@ -147,7 +147,7 @@ describe("SegmentedControl", () => {
 
 	it("takes its name, description, error and required state from Field", () => {
 		render(
-			<Field name="currency" label="통화" help="결제 통화" error="고르세요" required>
+			<Field name="currency" label="통화" supportingText="결제 통화" error="고르세요" required>
 				<SegmentedControl items={currencies} />
 			</Field>,
 		);

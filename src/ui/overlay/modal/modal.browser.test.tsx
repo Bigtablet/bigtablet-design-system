@@ -76,6 +76,28 @@ describe("Modal layout (Chromium)", () => {
 		expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
 	});
 
+	// 소비 앱은 대개 `* { box-sizing: border-box }` 를 건다. 패널이 호스트의 box-sizing 을 그대로 받으면
+	// max-height 식이 안쪽 여백을 한 번 더 빼서 아래에 32px 가 아니라 96px 가 남았다
+	it("leaves the same 32px below a long panel when the host resets box-sizing", async () => {
+		await page.viewport(800, 600);
+		const reset = document.createElement("style");
+		reset.textContent = "*, *::before, *::after { box-sizing: border-box; }";
+		document.head.appendChild(reset);
+		try {
+			render(
+				<Modal open onClose={() => {}} title="긴 내용">
+					<div style={{ height: 2000 }}>본문</div>
+				</Modal>,
+			);
+			await screen.findByRole("dialog");
+			const panel = panelRect();
+			expect(panel.top).toBe(90);
+			expect(panel.bottom).toBe(600 - 32);
+		} finally {
+			reset.remove();
+		}
+	});
+
 	// 스크롤 영역(&_body) 밖의 슬롯만으로 상한을 넘으면 딤을 스크롤해 footer 에 닿는다
 	it("lets the overlay scroll to a footer pushed out by a tall description", async () => {
 		await page.viewport(800, 600);

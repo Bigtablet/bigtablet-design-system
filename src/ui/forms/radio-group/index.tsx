@@ -43,10 +43,10 @@ export interface RadioGroupProps
 	name?: string;
 	/** 그룹 라벨 (radiogroup 의 접근성 레이블) */
 	label?: React.ReactNode;
-	/** 라벨/옵션 아래 보조 설명. error 일 때 에러 색 */
+	/** 라벨/옵션 아래 보조 설명. invalid 일 때 에러 색 */
 	supportingText?: React.ReactNode;
 	/** 에러 상태 */
-	error?: boolean;
+	invalid?: boolean;
 	/** 그룹 사이즈 — 자식 Radio 에 전파 (기본값: "md") */
 	size?: RadioGroupSize;
 	/** 배치 방향 (기본값: "vertical") */
@@ -80,7 +80,7 @@ export const RadioGroup = ({
 	name: nameProp,
 	label,
 	supportingText,
-	error = false,
+	invalid: error = false,
 	size = "md",
 	orientation = "vertical",
 	disabled = false,

@@ -207,7 +207,7 @@ describe("TagInput", () => {
 
 	it("takes its label and description from a surrounding Field", () => {
 		render(
-			<Field name="keywords" label="키워드" required help="쉼표로 여러 개">
+			<Field name="keywords" label="키워드" required supportingText="쉼표로 여러 개">
 				<TagInput />
 			</Field>,
 		);
@@ -228,7 +228,7 @@ describe("TagInput", () => {
 
 	it("lets Field win over consumer aria-*", () => {
 		render(
-			<Field name="keywords" label="키워드" help="쉼표로 여러 개">
+			<Field name="keywords" label="키워드" supportingText="쉼표로 여러 개">
 				<TagInput aria-label="무시됨" aria-describedby="무시됨" />
 			</Field>,
 		);

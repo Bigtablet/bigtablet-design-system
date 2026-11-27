@@ -25,7 +25,7 @@ export interface TextareaProps
 	/** 입력 필드 아래에 표시할 도움말 텍스트 */
 	supportingText?: string;
 	/** 에러 상태 여부 */
-	error?: boolean;
+	invalid?: boolean;
 	/** 컨테이너 전체 너비 차지 여부 */
 	fullWidth?: boolean;
 	/** 값 변경 콜백. 호출 시점은 `imeStrategy` 에 따름 (기본: 조합 완료 후) */
@@ -85,7 +85,7 @@ export const Textarea = ({
 	label,
 	showLabel = true,
 	supportingText,
-	error,
+	invalid: error,
 	fullWidth,
 	size = "md",
 	className,
