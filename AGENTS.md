@@ -335,13 +335,20 @@ label/domain
 > main 을 먼저 병합하게 된다(3.22.0 ~ 3.25.0 이 그렇게 갈라져 develop 이 `3.21.0` 에 머물렀다 - #706 으로 동기화).
 
 1. **버전·CHANGELOG 는 develop 에 `deploy: X.Y.Z` 커밋 하나로 바로 올린다** - 별도 브랜치·PR 없이. 이 커밋이 2번의 릴리즈 PR 에 그대로 실려 리뷰된다. 담을 것:
-   - `package.json` `version` bump (SemVer). 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`). 하위 호환이 깨지는 변경(export·토큰·CSS 변수 제거, 이름·시그니처 변경, prop 제거 등)은 major, 새 export·prop·토큰 추가는 minor, 버그/문서/내부 전용(미export) 변경은 patch.
-     - **렌더 결과가 바뀌는 변경은 의도로 가른다.** API 가 그대로여도 소비자 화면은 바뀌므로 CHANGELOG 항목 앞에 **`(렌더 변경)` 을 반드시 붙인다** - 버전과 무관하게.
-       - **결함 수정**(지금 렌더가 틀렸다) → **patch**. `~3.16.0` 처럼 patch 만 받는 앱에도 수정이 닿아야 한다. minor 로 올리면 가장 보수적으로 고정한 소비자가 그 수정을 못 받는다.
-         예 - Prose `h1` 이 `h3` 보다 가늘던 것(3.14.1), close 버튼이 내용 열 밖 20px(3.15.0), Vanilla 모달이 375px 에서 잘림(3.15.2).
-       - **의도적 디자인 변경**(지금도 틀리지 않았는데 다르게 바꾼다) → **minor**. 기본 size·간격 스케일·컴포넌트 재디자인 등. 받을지를 소비자가 고르게 한다.
-     - **한 주기에 모인 변경은 릴리즈 하나로 묶는다 - patch 를 따로 쪼개 내지 않는다.** 사내 패키지라 버전을 보수적으로 고정한 외부 소비자가 없다. 결함 수정과 minor 감이 같이 있으면 가장 높은 등급(minor) 하나로 낸다. 위의 "결함 수정 → patch" 는 **결함 수정만 있는 릴리즈**의 등급이다. 분리를 먼저 권하지 않는다 (3.23.0·3.25.0 - 사용자 결정)
-     - **prop 제거라도 minor 로 갈 수 있는 경우**: 그 prop 을 넘기는 것 자체가 이미 규칙 위반이고 사내 저장소 사용처가 0 일 때 - `docs/MIGRATION.md` 에 섹션을 두고 minor (3.25.0 `dangerouslySetInnerHTML` 제거). 사용처를 grep 한 결과를 릴리즈 PR 에 적는다
+   - `package.json` `version` bump. 공개 API 기준은 `package.json` `exports`의 모든 표면 - React export(`src/index.ts`), Vanilla JS/CSS(`/vanilla`), SCSS 토큰·CSS 변수(`/scss/token`, `style.css`).
+     - **등급은 "소비자가 고칠 곳을 도구가 짚어 주는가" 로 가른다.** 사내 패키지이고 소비 저장소가 모두 **정확한 버전으로 고정**해 둔다(`"5.1.0"` - `^` · `~` 없음, 2026-11-27 로컬 체크아웃 3곳 확인). 버전을 올려도 저절로 받는 앱이 없으니, 공개 SemVer 처럼 "호환이 깨지면 무조건 major" 로 가를 이유가 없다. 숫자는 **올릴 때 드는 수고의 크기**를 알리는 용도로 쓴다.
+
+       | 등급 | 넣는 것 | 올리는 쪽이 할 일 |
+       |------|------|------|
+       | **patch** | 결함 수정 · 문서 · 내부 전용(미export) 변경**만** 있는 릴리즈 | 없음 |
+       | **minor** | 새 export · prop · 토큰, 의도적 디자인 변경, **타입 체크나 빌드가 전부 짚는** 이름 변경 · 제거 (React prop · export 이름, SCSS 토큰 · 믹스인 - 없는 이름은 `tsc` · sass 가 실패한다) | `tsc --noEmit` · 빌드가 짚는 곳을 고친다 |
+       | **major** | **도구가 못 짚는** 호환 파괴 (Vanilla 클래스 · `data-bt-*` · JS 옵션 이름, CSS 변수 `--bt-*` 이름 - 남겨 두면 에러 없이 기본값으로 떨어진다), peer 요구 상향(React · Next major), 화면마다 다시 짜야 하는 구조 개편 | MIGRATION 의 grep 을 돌려 손으로 찾는다 |
+
+     - **이름을 바꾸거나 지우는 릴리즈는 등급과 무관하게** `docs/MIGRATION.md` 에 절을 둔다 - 예전 · 새 이름 표, 미리 세어 볼 grep, 사내 저장소 사용처 수. `site/llms-docs.ts` 의 `AVOID` 에도 넣는다. 별칭은 남기지 않는다 (5.0.0 · 5.2.0).
+     - **타입 체크가 못 잡는 자리를 MIGRATION 에 따로 적는다** - 변수에 담아 넘긴 옵션 객체, `vi.mock` 으로 DS 를 가린 테스트의 prop 이름. minor 로 냈어도 이 둘은 손으로 봐야 한다 (5.0.0 `cancelText` 115줄 중 테스트 mock 이 그랬다).
+     - **렌더 결과가 바뀌는 변경은** API 가 그대로여도 소비자 화면이 바뀌므로 CHANGELOG 항목 앞에 **`(렌더 변경)` 을 반드시 붙인다** - 등급과 무관하게. 결함 수정(지금 렌더가 틀렸다)은 patch 감, 의도적 디자인 변경(틀리지 않았는데 다르게 바꾼다)은 minor 감이다.
+     - **한 주기에 모인 변경은 릴리즈 하나로 묶고, 그중 가장 높은 등급으로 낸다 - patch 를 따로 쪼개 내지 않는다.** 결함 수정과 minor 감이 같이 있으면 minor 하나다. 분리를 먼저 권하지 않는다 (3.23.0·3.25.0 - 사용자 결정)
+     - 소비 저장소가 범위(`^` · `~`)로 받기 시작하면 이 표는 맞지 않는다 - 그때는 이름 변경 · 제거를 major 로 되돌린다.
    - `CHANGELOG.md` 맨 위에 새 버전 섹션 추가 (아래 양식, semver 내림차순 유지).
    - 커버리지 수치는 손대지 않는다 - 2번의 릴리즈 PR 이 열리면 CI(`.github/workflows/coverage-docs.yml`)가 `pnpm coverage:docs` 로 다시 재서 `docs: refresh coverage figures` 커밋을 develop 에 올린다. 그 커밋도 릴리즈 PR 에 그대로 실린다.
 2. **릴리즈 PR** - head `develop` → base `main`, 제목 `merge: release` (head 가 `develop` 이라 "PR 제목 = 브랜치명" 의 예외 - Merge Convention 의 `main 배포` 규칙을 따른다).
