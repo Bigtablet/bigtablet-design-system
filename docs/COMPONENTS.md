@@ -911,7 +911,7 @@ import { Search, X } from 'lucide-react';
 <TextField label="이메일" success supportingText="사용 가능한 이메일입니다" />
 ```
 
-> **`invalid` vs `success` 우선순위**: 둘 다 `true` 면 `invalid` 가 이깁니다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문입니다. `success` 는 `aria-invalid` 를 켜지 않습니다 (`error` 만 `aria-invalid="true"`).
+> **`invalid` vs `success` 우선순위**: 둘 다 `true` 면 `invalid` 가 이깁니다. 검증 실패를 성공처럼 칠하면 사용자가 잘못된 값을 그대로 제출하게 되기 때문입니다. `success` 는 `aria-invalid` 를 켜지 않습니다 (`invalid` 만 `aria-invalid="true"`).
 >
 > `variant` · `success` 는 Vanilla 의 `.bt-text-field__input--filled` / `--success` 와 1:1 대응합니다.
 >
