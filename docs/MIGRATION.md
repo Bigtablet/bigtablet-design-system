@@ -91,7 +91,7 @@ prop 이름이 바뀌는데 minor 인 이유: 사내 소비자가 모두 정확�
 
 **앱 쪽에서 할 일:** 버전을 올리고 `tsc --noEmit` 을 돌립니다. 미리 세어 보려면 `grep -rnE "(^|[[:space:]])(help=|hideLabel|loading[ =>])" --include=*.tsx` 와 `grep -rnE "<(TextField|Textarea|Checkbox|RadioGroup|OtpInput)" -A8 --include=*.tsx | grep -E "[[:space:]]error([ =>/]|$)"`. `vi.mock` 으로 DS 를 가린 테스트는 타입 체크가 잡지 못하니 mock 이 받는 prop 이름도 같이 봅니다.
 
-**객체에 담아 펼치는 자리는 타입 체크가 통과시킵니다.** `const props = { loading: true }; <Button {...props} />` 는 남는 속성 검사를 받지 않아 에러 없이 컴파일되고, 스피너와 클릭 차단이 조용히 사라집니다. 입력의 `error` · `Field` 의 `help` 도 같습니다 (`help` 는 `<div>` 로 흘러가 DOM 속성 경고가 납니다). 객체 속성과 래퍼 컴포넌트가 넘기는 prop 을 따로 찾습니다: `grep -rnE "\b(loading|help|hideLabel|error): " --include=*.ts --include=*.tsx` - `error:` 는 다른 뜻으로도 흔하니 DS 입력으로 펼쳐지는 객체인지 보고 고릅니다.
+**객체에 담아 펼치는 자리는 타입 체크가 통과시킵니다.** `const props = { loading: true }; <Button {...props} />` 는 남는 속성 검사를 받지 않아 에러 없이 컴파일되고, 스피너와 클릭 차단이 조용히 사라집니다. 입력의 `error` · `Field` 의 `help` 도 같습니다 (`help` 는 `Field` 의 `<div>` 속성으로 흘러가 도움말이 화면에서 사라집니다). 객체 속성과 래퍼 컴포넌트가 넘기는 prop 을 따로 찾습니다: `grep -rnE "\b(loading|help|hideLabel|error): " --include=*.ts --include=*.tsx` - `error:` 는 다른 뜻으로도 흔하니 DS 입력으로 펼쳐지는 객체인지 보고 고릅니다.
 
 ### 함께 고친 것
 
