@@ -726,7 +726,7 @@ import { Button, Dropdown, Field, Form, TextField } from '@bigtablet/design-syst
 
 `Field` 안에서는 입력에 `label` 을 주지 않습니다 — 라벨이 두 번 보입니다.
 
-**입력하면서 검증할 때** - `Field` 의 `error` 에 메시지를 넘깁니다. `Form` 의 `errors[name]` 보다 우선하므로 서버 에러와 함께 써도 됩니다. 에러가 있으면 `help` 대신 보이고 입력에 `aria-invalid` 가 붙습니다. 입력(`TextField`)의 `error` 는 `boolean` 이라 `Field` 안에서는 주지 않습니다.
+**입력하면서 검증할 때** - `Field` 의 `error` 에 메시지를 넘깁니다. `Form` 의 `errors[name]` 보다 우선하므로 서버 에러와 함께 써도 됩니다. 에러가 있으면 `supportingText` 대신 보이고 입력에 `aria-invalid` 가 붙습니다. 입력(`TextField`)의 상태 prop 은 `invalid`(`boolean`)이고, `Field` 가 에러 상태를 넘겨 주므로 `Field` 안에서는 주지 않습니다.
 
 ```tsx
 import { useState } from "react";
